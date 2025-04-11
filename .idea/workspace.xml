@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/indicator_logic.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/indicator_logic.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +34,9 @@
     "accountId": "e162d701-1f1e-4665-9b63-91eb6a8aeedc"
   }
 }]]></component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>

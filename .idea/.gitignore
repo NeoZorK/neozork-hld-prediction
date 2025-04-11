@@ -61,18 +61,18 @@ env.bak/
 venv.bak/
 
 # PyCharm specific
-.idea/ # Настройки PyCharm для проекта
+.idea/ # Настройки PyCharm для проекта
 
 # VS Code specific
 .vscode/
 
-# Data files (ВАЖНО: Раскомментируйте, если не хотите добавлять данные в Git)
+# Data files (ВАЖНО: Раскомментируйте, если не хотите добавлять данные в Git)
 data/
 *.csv
 *.parquet
 *.feather
 
-# Model files (ВАЖНО: Раскомментируйте, если не хотите добавлять модели в Git)
+# Model files (ВАЖНО: Раскомментируйте, если не хотите добавлять модели в Git)
 models/
 *.pkl
 *.joblib
@@ -84,3 +84,4 @@ models/
 
 # macOS files
 .DS_Store
+/workspace.xml
