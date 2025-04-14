@@ -33,10 +33,20 @@ def plot_indicator_results(df_results: pd.DataFrame, rule: TradingRule, title: s
     if 'LWMA' in df_results.columns:
         plots.append(mpf.make_addplot(df_results['LWMA'], panel=0, color='blue', width=0.7, title="LWMA"))
 
+    # --- Add PPrice1 and PPrice2 to main panel (panel 0) ---
+    if 'PPrice1' in df_results.columns:
+        plots.append(mpf.make_addplot(df_results['PPrice1'], panel=0, color='green', width=0.9, linestyle='dotted', title="PPrice1"))
+    if 'PPrice2' in df_results.columns:
+         plots.append(mpf.make_addplot(df_results['PPrice2'], panel=0, color='red', width=0.9, linestyle='dotted', title="PPrice2"))
+
+    # --- Add indicator panels ---
+    panel_map = {} # Keep track of which indicator is on which panel
+
     # Add CORE1 in a separate panel if it exists
     if 'CORE1' in df_results.columns:
         panel_count += 1
-        core1_panel = panel_count
+        panel_map['CORE1'] = panel_count
+        core1_panel = panel_map['CORE1']
         plots.append(mpf.make_addplot(df_results['CORE1'], panel=core1_panel, color='purple', width=0.8, ylabel='CORE1', ylim=(0, 100)))
         plots.append(mpf.make_addplot(pd.Series(70, index=df_results.index), panel=core1_panel, color='red', linestyle='--', width=0.5))
         plots.append(mpf.make_addplot(pd.Series(30, index=df_results.index), panel=core1_panel, color='green', linestyle='--', width=0.5))
@@ -44,12 +54,30 @@ def plot_indicator_results(df_results: pd.DataFrame, rule: TradingRule, title: s
     # Add PV in a separate panel if it exists
     if 'PV' in df_results.columns:
         panel_count += 1
-        pv_panel = panel_count
-        plots.append(mpf.make_addplot(df_results['PV'].fillna(0), panel=pv_panel, color='orange', width=0.8, ylabel='PV')) # Fill NaN for plotting PV
+        panel_map['PV'] = panel_count
+        pv_panel = panel_map['PV']
+        # Fill NaN for plotting PV, NaNs might break scatter plots otherwise
+        plots.append(mpf.make_addplot(df_results['PV'].fillna(0), panel=pv_panel, color='orange', width=0.8, ylabel='PV'))
         plots.append(mpf.make_addplot(pd.Series(0, index=df_results.index), panel=pv_panel, color='gray', linestyle=':', width=0.5))
 
-    # --- Add rule-specific plots ---
-    # Visualize Direction signals as markers on the main chart
+    # --- Add NEW panels for HL and Pressure ---
+    if 'HL' in df_results.columns:
+        panel_count += 1
+        panel_map['HL'] = panel_count
+        hl_panel = panel_map['HL']
+        plots.append(mpf.make_addplot(df_results['HL'].fillna(0), panel=hl_panel, color='brown', width=0.8, ylabel='HL (Points)'))
+        # Optionally add a zero line if HL can be zero or negative (though unlikely here)
+        # plots.append(mpf.make_addplot(pd.Series(0, index=df_results.index), panel=hl_panel, color='gray', linestyle=':', width=0.5))
+
+    if 'Pressure' in df_results.columns:
+        panel_count += 1
+        panel_map['Pressure'] = panel_count
+        pressure_panel = panel_map['Pressure']
+        plots.append(mpf.make_addplot(df_results['Pressure'].fillna(0), panel=pressure_panel, color='dodgerblue', width=0.8, ylabel='Pressure'))
+        plots.append(mpf.make_addplot(pd.Series(0, index=df_results.index), panel=pressure_panel, color='gray', linestyle=':', width=0.5))
+
+
+    # --- Add rule-specific plots (e.g., Direction markers) ---
     if 'Direction' in df_results.columns:
         # Place markers slightly offset from High/Low
         buy_signals = df_results['Low'] * 0.998
@@ -74,7 +102,7 @@ def plot_indicator_results(df_results: pd.DataFrame, rule: TradingRule, title: s
     plot_volume = 'Volume' in df_results.columns
 
     # Define panel ratios dynamically
-    # Main panel gets larger share (e.g., 3 or 4), subplots get 1
+    # Main panel gets larger share (e.g., 4), subplots get 1
     ratios = (4,) + (1,) * panel_count if panel_count > 0 else (1,)
 
     try:
