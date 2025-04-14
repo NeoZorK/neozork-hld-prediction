@@ -5,7 +5,7 @@ import pandas as pd
 from src.constants import TradingRule
 from src.indicator import calculate_pressure_vector
 from src.plotting import plot_indicator_results
-from src import __version__ # Импортируем версию
+from src import __version__ # Import version from __init__.py
 
 print("Pressure Vector Calculation Module", __version__)
 

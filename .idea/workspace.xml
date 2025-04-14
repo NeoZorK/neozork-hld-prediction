@@ -7,7 +7,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="del old ryn analysis" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="move run analysis">
+      <change beforePath="$PROJECT_DIR$/run_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/indicator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/indicator.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -53,6 +56,7 @@
   "keyToString": {
     "Python.indicator.executor": "Run",
     "Python.indicator_logic.executor": "Run",
+    "Python.run_analysis.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "v0.1.0",
@@ -156,7 +160,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744638631589</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="move run analysis">
+      <option name="closed" value="true" />
+      <created>1744638877895</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1744638877895</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -191,6 +203,7 @@
     <MESSAGE value="remove old indicator" />
     <MESSAGE value="add ryn analysis" />
     <MESSAGE value="del old ryn analysis" />
-    <option name="LAST_COMMIT_MESSAGE" value="del old ryn analysis" />
+    <MESSAGE value="move run analysis" />
+    <option name="LAST_COMMIT_MESSAGE" value="move run analysis" />
   </component>
 </project>
