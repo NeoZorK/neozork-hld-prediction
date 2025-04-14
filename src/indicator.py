@@ -8,7 +8,7 @@ Orchestrates calls to core calculations and rule-specific logic.
 
 import pandas as pd
 import numpy as np
-import __init__ # For version access
+from . import __version__ # Import version from the package's __init__.py
 
 # Import from other modules within the src package
 from .constants import TradingRule, EMPTY_VALUE
