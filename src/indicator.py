@@ -68,6 +68,7 @@ def calculate_pressure_vector(
 
     # Make a copy to avoid modifying the original DataFrame
     df_out = df.copy()
+
     # Rename TickVolume for consistency and plotting
     df_out.rename(columns={'TickVolume': 'Volume'}, inplace=True)
 
