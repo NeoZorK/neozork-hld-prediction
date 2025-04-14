@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 # src/indicator_logic.py
 
+'''
+Project: Shcherbyna Pressure Vector Indicator
+Author: Shcherbyna Rostyslav
+Date: 2025-04-14
+Description: This module implements the Shcherbyna Pressure Vector indicator, based on the MQL5 code.
+'''
+
+import __init__
 import pandas as pd
 import numpy as np
 from enum import Enum # For Trading Rule Switch
@@ -85,17 +93,17 @@ def calculate_pressure_vector(
          print(f"Warning: core_back <= 1 ({core_back}) is unusual for CORE smoothing, using span=2 instead.")
          core_span = 2
     else:
-         # Convert period N to span for ewm: span = N (adjust=False approximates MQL recursive filter)
-         # The MQL formula (_PosDiff[i+1]*(N+1) + new_val)/N is unusual
+         # Convert period n to span for ewm: span = n (adjust=False approximates MQL recursive filter)
+         # The MQL formula (_PosDiff[i+1]*(n+1) + new_val)/n is unusual
          # Let's map it approximately to standard EMA/SMMA span for ewm
-         # Standard Wilder smoothing (RSI) uses span = 2*N - 1.
-         # The MQL code divides by N. Let's use span = core_back for simplicity,
+         # Standard Wilder smoothing (RSI) uses span = 2*n - 1.
+         # The MQL code divides by n. Let's use span = core_back for simplicity,
          # acknowledging it might not be a perfect match to the strange MQL smoothing.
-         # A span of N in ewm(span=N, adjust=False) corresponds roughly to alpha = 2/(N+1)
-         # The MQL formula divides by N, closer to alpha = 1/N (SMMA)
-         # So, let's use span = core_back * 2 -1 for SMMA like smoothing alpha=1/N
-         # Update: MQL code: prev*(N+1)/N + new/N -- this is WRONG for EMA/SMMA.
-         # It should be prev*(N-1)/N + new/N for SMMA or prev*(1-alpha) + new*alpha for EMA.
+         # A span of n in ewm(span=n, adjust=False) corresponds roughly to alpha = 2/(n+1)
+         # The MQL formula divides by n, closer to alpha = 1/n (SMMA)
+         # So, let's use span = core_back * 2 -1 for SMMA like smoothing alpha=1/n
+         # Update: MQL code: prev*(n+1)/n + new/n -- this is WRONG for EMA/SMMA.
+         # It should be prev*(n-1)/n + new/n for SMMA or prev*(1-alpha) + new*alpha for EMA.
          # Let's replicate the *written* calculation iteratively for CORE as ewm mapping is ambiguous.
          # We'll use ewm for LWMA/SMMA as that formula is standard SMMA.
          pass # Iterative calculation will handle core_back
@@ -156,8 +164,8 @@ def calculate_pressure_vector(
     df_out['PosDiff'] = np.nan
     df_out['NegDiff'] = np.nan # MQL code seems to use same smoothing for both? Very unusual. Let's replicate.
 
-    # MQL formula: _PosDiff[i] = (_PosDiff[i+1]*(N+1) + new_val)/N  where new_val = PriceDiff > 0 ? PriceDiff : 0
-    # This increases the previous average and adds the new value, divided by N. This is not standard EMA/SMMA.
+    # MQL formula: _PosDiff[i] = (_PosDiff[i+1]*(n+1) + new_val)/n  where new_val = PriceDiff > 0 ? PriceDiff : 0
+    # This increases the previous average and adds the new value, divided by n. This is not standard EMA/SMMA.
     # Let's replicate iteratively, although the formula itself seems questionable for its purpose.
     # Initialize first valid value
     first_valid_index = df_out['PriceDiff'].first_valid_index()
@@ -171,28 +179,28 @@ def calculate_pressure_vector(
         # Iterative calculation (Note: slow for large data!)
         pos_diff_prev = pos_val_init
         neg_diff_prev = neg_val_init
-        N = core_back # Using N directly from MQL formula
+        n = core_back # Using n directly from MQL formula
 
         for idx in df_out.index[df_out.index > first_valid_index]:
             price_diff_curr = df_out.loc[idx, 'PriceDiff']
             new_pos = price_diff_curr if price_diff_curr > 0.0 else 0.0
             # This line replicates the strange MQL logic for NegDiff smoothing
             new_neg = price_diff_curr if price_diff_curr > 0.0 else 0.0
-            # MQL smoothing: Prev * (N+1)/N + New/N - this formula amplifies previous average - likely incorrect intent.
-            # Let's assume the intent was SMMA like: Prev * (N-1)/N + New/N for alpha=1/N
-            # Using the exact MQL formula: (Prev * (N+1) + New) / N
-            # Update: Realized the MQL code is likely wrong. (N+1) factor looks like a typo.
-            # Should probably be (N-1) for SMMA or different logic for EMA.
-            # Given the uncertainty, let's use standard Wilder's smoothing (EMA with alpha=1/N)
-            # which is commonly used for RSI. Span = 2*N-1
+            # MQL smoothing: Prev * (n+1)/n + New/n - this formula amplifies previous average - likely incorrect intent.
+            # Let's assume the intent was SMMA like: Prev * (n-1)/n + New/n for alpha=1/n
+            # Using the exact MQL formula: (Prev * (n+1) + New) / n
+            # Update: Realized the MQL code is likely wrong. (n+1) factor looks like a typo.
+            # Should probably be (n-1) for SMMA or different logic for EMA.
+            # Given the uncertainty, let's use standard Wilder's smoothing (EMA with alpha=1/n)
+            # which is commonly used for RSI. Span = 2*n-1
             # Reverting to try and replicate *written* MQL logic, despite potential flaws.
             # This requires access to the previous calculated value, hence the loop.
             # Let's stick to the problematic MQL formula replication for now.
 
-            if N > 0: # Avoid division by zero if core_back is accidentally <= 0
+            if n > 0: # Avoid division by zero if core_back is accidentally <= 0
                  # Use .loc for safe setting
-                 df_out.loc[idx, 'PosDiff'] = (pos_diff_prev * (N + 1) + new_pos) / N if N > 0 else new_pos
-                 df_out.loc[idx, 'NegDiff'] = (neg_diff_prev * (N + 1) + new_neg) / N if N > 0 else new_neg
+                 df_out.loc[idx, 'PosDiff'] = (pos_diff_prev * (n + 1) + new_pos) / n if n > 0 else new_pos
+                 df_out.loc[idx, 'NegDiff'] = (neg_diff_prev * (n + 1) + new_neg) / n if n > 0 else new_neg
             else:
                  df_out.loc[idx, 'PosDiff'] = new_pos
                  df_out.loc[idx, 'NegDiff'] = new_neg
@@ -369,7 +377,7 @@ def calculate_pressure_vector(
 
     for col in cols_to_ffill:
         if col in df_out.columns:
-            df_out[col] = df_out[col].fillna(method='ffill')
+            df_out[col] = df_out[col].ffill()
 
 
     # --- Apply Reverse Signal if requested ---
@@ -393,6 +401,11 @@ def calculate_pressure_vector(
 
 # --- Example Usage (requires a DataFrame 'ohlcv_df' with correct columns) ---
 if __name__ == '__main__':
+
+    # Version
+    print("Pressure Vector Calculation Module", __init__.__version__)
+
+
     # This is example data - replace with your actual data loading
     data = {
         'Open': [1.1, 1.11, 1.12, 1.115, 1.125, 1.13, 1.128, 1.135, 1.14, 1.138],
