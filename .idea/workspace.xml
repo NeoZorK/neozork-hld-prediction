@@ -7,8 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix import version">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add high low prediction">
       <change beforePath="$PROJECT_DIR$/src/plotting.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -56,6 +55,7 @@
   "keyToString": {
     "Python.indicator.executor": "Run",
     "Python.indicator_logic.executor": "Run",
+    "Python.plotting.executor": "Run",
     "Python.run_analysis.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -181,7 +181,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744639254592</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="add high low prediction">
+      <option name="closed" value="true" />
+      <created>1744639948341</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1744639948341</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -218,6 +226,7 @@
     <MESSAGE value="del old ryn analysis" />
     <MESSAGE value="move run analysis" />
     <MESSAGE value="fix import version" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix import version" />
+    <MESSAGE value="add high low prediction" />
+    <option name="LAST_COMMIT_MESSAGE" value="add high low prediction" />
   </component>
 </project>

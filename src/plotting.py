@@ -30,8 +30,8 @@ def plot_indicator_results(df_results: pd.DataFrame, rule: TradingRule, title: s
     panel_count = 0 # Start with main panel 0
 
     # --- Add common indicators ---
-    if 'LWMA' in df_results.columns:
-        plots.append(mpf.make_addplot(df_results['LWMA'], panel=0, color='blue', width=0.7, title="LWMA"))
+    #if 'LWMA' in df_results.columns:
+    #   plots.append(mpf.make_addplot(df_results['LWMA'], panel=0, color='blue', width=0.7, title="LWMA"))
 
     # --- Add PPrice1 and PPrice2 to main panel (panel 0) ---
     if 'PPrice1' in df_results.columns:
@@ -43,13 +43,13 @@ def plot_indicator_results(df_results: pd.DataFrame, rule: TradingRule, title: s
     panel_map = {} # Keep track of which indicator is on which panel
 
     # Add CORE1 in a separate panel if it exists
-    if 'CORE1' in df_results.columns:
-        panel_count += 1
-        panel_map['CORE1'] = panel_count
-        core1_panel = panel_map['CORE1']
-        plots.append(mpf.make_addplot(df_results['CORE1'], panel=core1_panel, color='purple', width=0.8, ylabel='CORE1', ylim=(0, 100)))
-        plots.append(mpf.make_addplot(pd.Series(70, index=df_results.index), panel=core1_panel, color='red', linestyle='--', width=0.5))
-        plots.append(mpf.make_addplot(pd.Series(30, index=df_results.index), panel=core1_panel, color='green', linestyle='--', width=0.5))
+    # if 'CORE1' in df_results.columns:
+    #     panel_count += 1
+    #     panel_map['CORE1'] = panel_count
+    #     core1_panel = panel_map['CORE1']
+    #     plots.append(mpf.make_addplot(df_results['CORE1'], panel=core1_panel, color='purple', width=0.8, ylabel='CORE1', ylim=(0, 100)))
+    #     plots.append(mpf.make_addplot(pd.Series(70, index=df_results.index), panel=core1_panel, color='red', linestyle='--', width=0.5))
+    #     plots.append(mpf.make_addplot(pd.Series(30, index=df_results.index), panel=core1_panel, color='green', linestyle='--', width=0.5))
 
     # Add PV in a separate panel if it exists
     if 'PV' in df_results.columns:
