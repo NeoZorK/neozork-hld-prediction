@@ -43,6 +43,7 @@ def get_demo_data() -> pd.DataFrame:
     start_date = date.today() - timedelta(days=len(data['Open'])-1)
     index = pd.date_range(start=start_date, periods=len(data['Open']), freq='D')
     df = pd.DataFrame(data, index=index)
+
     # Rename columns for mplfinance compatibility (it expects capitalized names)
     df.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
     return df
