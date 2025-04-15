@@ -215,16 +215,6 @@ def main():
     indicator_group = parser.add_argument_group('Indicator Options')
     indicator_group.add_argument('--rule', default=TradingRule.PV_HighLow.name, choices=TradingRule.__members__.keys(),
                                  help="Trading rule to apply.")
-    indicator_group.add_argument('--core_back', type=int, default=5,
-                                 help="Period for CORE1 calculation.")
-    indicator_group.add_argument('--strength_back', type=int, default=3,
-                                 help="Period for LWMA calculation.")
-    indicator_group.add_argument('--limit', type=int, default=1000,
-                                 help="Limit for Tick_Volume_Limit rule.")
-    indicator_group.add_argument('--pv_tp_multy', type=int, default=10,
-                                 help="Multiplier for PV TakeProfit rules.")
-    indicator_group.add_argument('--reverse', action='store_true', default=False,
-                                 help="Reverse the final signals.")
 
     # --- Version Argument ---
     parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
@@ -360,12 +350,7 @@ def main():
             result_df = calculate_pressure_vector(
                 df=ohlcv_df_renamed.copy(), # Pass a copy of the renamed df
                 point=point_size,
-                core_back=args.core_back,
-                limit=args.limit,
-                strength_back=args.strength_back,
                 tr_num=selected_rule,
-                pv_tp_multy=args.pv_tp_multy,
-                reverse_signal=args.reverse
             )
         except Exception as e:
              print(f"\n--- ERROR CALCULATION ---")
