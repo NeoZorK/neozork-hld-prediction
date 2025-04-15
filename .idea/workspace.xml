@@ -7,10 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add commands and yfinance">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_analysis.py" afterDir="false" />
-    </list>
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="del lwma core and tock vol" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -261,7 +258,55 @@
       <option name="project" value="LOCAL" />
       <updated>1744642812612</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="uncomment lwma and core plot">
+      <option name="closed" value="true" />
+      <created>1744714594698</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1744714594698</updated>
+    </task>
+    <task id="LOCAL-00017" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744715126743</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1744715126743</updated>
+    </task>
+    <task id="LOCAL-00018" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744715607972</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1744715607972</updated>
+    </task>
+    <task id="LOCAL-00019" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744715614987</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1744715614987</updated>
+    </task>
+    <task id="LOCAL-00020" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744715893621</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1744715893621</updated>
+    </task>
+    <task id="LOCAL-00021" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744716046060</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1744716046060</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -301,7 +346,9 @@
     <MESSAGE value="add high low prediction" />
     <MESSAGE value="disable core and lwma plot" />
     <MESSAGE value="add commands and yfinance" />
-    <option name="LAST_COMMIT_MESSAGE" value="add commands and yfinance" />
+    <MESSAGE value="uncomment lwma and core plot" />
+    <MESSAGE value="del lwma core and tock vol" />
+    <option name="LAST_COMMIT_MESSAGE" value="del lwma core and tock vol" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

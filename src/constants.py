@@ -21,11 +21,5 @@ EMPTY_VALUE = np.nan
 class TradingRule(Enum):
     PV_HighLow = 0
     Support_Resistants = 1
-    Tick_Volume_Limit = 2
-    Pressure_Vector = 3
-    Pressure_Vector_TakeProfit = 4
-    Pressure_Vector_TakeProfit2 = 5
-    Pressure_Vector_TakeProfit3 = 6
-    PV_Plus_Pressure = 7
-    LWMA = 8
-    CORE1 = 9
+    Pressure_Vector = 2
+

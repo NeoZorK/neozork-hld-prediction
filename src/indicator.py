@@ -8,7 +8,6 @@ Orchestrates calls to core calculations and rule-specific logic.
 
 import pandas as pd
 import numpy as np
-from . import __version__ # Import version from the package's __init__.py
 
 # Import from other modules within the src package
 from .constants import TradingRule, EMPTY_VALUE
@@ -16,23 +15,14 @@ from .core_calculations import (
     calculate_hl,
     calculate_pressure,
     calculate_pv,
-    calculate_lwma,
-    calculate_core1,
-    reverse_signal_value
 )
 from .rules import apply_trading_rule
-from .plotting import plot_indicator_results # Import plotting function
 
 # --- Main Calculation Orchestrator ---
 def calculate_pressure_vector(
     df: pd.DataFrame,
     point: float, # Instrument's point size (e.g., 0.00001 for EURUSD)
-    core_back: int = 2,
-    limit: int = 1000,
-    strength_back: int = 1,
     tr_num: TradingRule = TradingRule.PV_HighLow,
-    pv_tp_multy: int = 10,
-    reverse_signal: bool = False
 ) -> pd.DataFrame:
     """
     Calculates the Shcherbyna Pressure Vector indicator by orchestrating
@@ -42,12 +32,7 @@ def calculate_pressure_vector(
         df (pd.DataFrame): Input DataFrame with 'Open', 'High', 'Low', 'Close', 'TickVolume'.
                            Index should be DateTime. Sorted ascending.
         point (float): Instrument point size. Cannot be zero.
-        core_back (int): Period for CORE1 calculation. Default is 2.
-        limit (int): Threshold for Tick_Volume_Limit rule. Default is 1000.
-        strength_back (int): Period for LWMA (SMMA) calculation. Default is 1. Must be >= 1.
         tr_num (TradingRule): Enum selecting the calculation mode/output rule.
-        pv_tp_multy (int): Multiplication factor for PV TakeProfit rules. Default is 10.
-        reverse_signal (bool): Whether to reverse the final signals. Default is False.
 
     Returns:
         pd.DataFrame: DataFrame with original data and calculated indicator values/signals.
@@ -61,10 +46,6 @@ def calculate_pressure_vector(
         raise ValueError(f"Input DataFrame must contain columns: {required_cols}")
     if point == 0:
         raise ValueError("Point size cannot be zero.")
-    if strength_back < 1:
-        print("Warning: strength_back < 1, LWMA will be NaN.")
-        # Allow strength_back=0 or less, handled in calculate_lwma
-    # core_back validation handled within calculate_core1
 
     # Make a copy to avoid modifying the original DataFrame
     df_out = df.copy()
@@ -91,12 +72,6 @@ def calculate_pressure_vector(
     # Calculate PV
     df_out['PV'] = calculate_pv(df_out['Pressure'], pressure_prev)
 
-    # Calculate LWMA
-    df_out['LWMA'] = calculate_lwma(df_out['Open'], strength_back)
-
-    # Calculate CORE1
-    df_out['CORE1'] = calculate_core1(df_out['Open'], open_prev, core_back)
-
 
     # --- Apply Trading Rule ---
     # Initialize output columns before applying rule
@@ -108,14 +83,14 @@ def calculate_pressure_vector(
     df_out['Diff'] = EMPTY_VALUE
 
     # Apply the selected rule using the dispatcher function
-    df_out = apply_trading_rule(df_out, tr_num, point, limit, pv_tp_multy)
+    df_out = apply_trading_rule(df_out, tr_num, point)
 
 
     # --- Post-processing ---
     # Forward fill NaNs created during core calculations IF NEEDED.
     # Often better to handle NaNs within specific rules or downstream logic.
     # Let's comment this out for now, as rules handle NaNs partially.
-    # cols_to_ffill = ['HL', 'Pressure', 'PV', 'LWMA', 'CORE1']
+    # cols_to_ffill = ['HL', 'Pressure', 'PV']
     # for col in cols_to_ffill:
     #     if col in df_out.columns:
     #         df_out[col] = df_out[col].ffill()
@@ -130,18 +105,11 @@ def calculate_pressure_vector(
             df_out[col] = df_out[col].replace(EMPTY_VALUE, np.nan)
 
 
-    # Apply Reverse Signal if requested
-    if reverse_signal:
-        for col in ['PColor1', 'PColor2', 'Direction']:
-            if col in df_out.columns:
-                df_out[col] = df_out[col].apply(lambda x: reverse_signal_value(x) if pd.notna(x) else x)
-
-
     # --- Select and return final columns ---
     # Define expected output columns
     output_columns = [
-        'Open', 'High', 'Low', 'Close', 'Volume', # Original Data (Volume renamed)
-        'HL', 'Pressure', 'PV', 'LWMA', 'CORE1', # Intermediate Calculations
+        'Open', 'High', 'Low', 'Close', 'Volume',                       # Original Data (Volume renamed)
+        'HL', 'Pressure', 'PV',                                         # Intermediate Calculations
         'PPrice1', 'PColor1', 'PPrice2', 'PColor2', 'Direction', 'Diff' # Final Outputs
     ]
     # Filter to only columns that actually exist in the DataFrame
