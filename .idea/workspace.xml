@@ -7,11 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="del lwma core and tock vol">
-      <change beforePath="$PROJECT_DIR$/.idea/NeoZorK HLD.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/NeoZorK HLD.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core_calculations.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/core_calculations.py" afterDir="false" />
-    </list>
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix exception e" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,11 +37,11 @@
 }</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/run_analysis.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/constants.py" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/src/core_calculations.py" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/src/indicator.py" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/src/plotting.py" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/src/rules.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/constants.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/core_calculations.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/indicator.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/plotting.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/rules.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProblemsViewState">
     <hideBySeverity>
@@ -80,11 +76,20 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Shell Script.help command.executor": "Run",
+    "ToolWindow.Problems View.ShowToolbar": "false",
     "git-widget-placeholder": "v0.1.0",
     "run.code.analysis.last.selected.profile": "aDefault",
     "settings.editor.selected.configurable": "preferences.keymap"
   }
 }]]></component>
+  <component name="QodanaReportsService">
+    <option name="descriptions">
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="066e1dc3-09ec-43f2-a12d-97173d97333a" reportId="NeoZorK HLD/qodana/2025-04-15" />
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output4/qodana.sarif.json" reportGuid="5d12f7a3-468f-47c6-ba4f-fec558854eb5" reportId="NeoZorK HLD/qodana/2025-04-15" />
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output2/qodana.sarif.json" reportGuid="8ddf284d-c100-4777-bd02-6cf558b6dc1a" reportId="NeoZorK HLD/qodana/2025-04-15" />
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output1/qodana.sarif.json" reportGuid="8b079198-9c73-498b-8d9f-d02ab07c5223" reportId="NeoZorK HLD/qodana/2025-04-15" />
+    </option>
+  </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -334,7 +339,23 @@
       <option name="project" value="LOCAL" />
       <updated>1744716349452</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744717923499</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1744717923499</updated>
+    </task>
+    <task id="LOCAL-00024" summary="fix exception e">
+      <option name="closed" value="true" />
+      <created>1744718774674</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1744718774674</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -376,14 +397,15 @@
     <MESSAGE value="add commands and yfinance" />
     <MESSAGE value="uncomment lwma and core plot" />
     <MESSAGE value="del lwma core and tock vol" />
-    <option name="LAST_COMMIT_MESSAGE" value="del lwma core and tock vol" />
+    <MESSAGE value="fix exception e" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix exception e" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/run_analysis.py</url>
-          <line>426</line>
+          <line>418</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
