@@ -58,7 +58,6 @@ def calculate_pressure_vector(
     # Shifted values needed for calculations
     high_prev = df_out['High'].shift(1)
     low_prev = df_out['Low'].shift(1)
-    open_prev = df_out['Open'].shift(1)
     volume_prev = df_out['Volume'].shift(1) # Use renamed 'Volume'
 
     # Calculate HL

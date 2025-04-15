@@ -2,3 +2,4 @@
 /.idea/workspace.xml
 *.cpython-312.pyc
 *.xml
+/qodana.yaml

@@ -353,11 +353,7 @@ def main():
                 tr_num=selected_rule,
             )
         except Exception as e:
-             print(f"\n--- ERROR CALCULATION ---")
-             print(f"An error occurred during indicator calculation:")
-             import traceback
-             traceback.print_exc()
-             print(f"--- END ERROR CALCULATION ---")
+             print(f"An error occurred during indicator calculation:", e)
              sys.exit(1)
 
         end_time_calc = time.perf_counter()
@@ -383,11 +379,7 @@ def main():
             plot_indicator_results(result_df, rule=selected_rule, title=chart_title)
             print("\nPlot displayed. Close the plot window to continue/exit.")
         except Exception as e:
-             print(f"\n--- ERROR PLOTTING ---")
-             print(f"An error occurred during plotting:")
-             import traceback
-             traceback.print_exc()
-             print(f"--- END ERROR PLOTTING ---")
+             print(f"An error occurred during plotting:",e)
              # Don't exit here, timing info is still useful
         finally:
              end_time_plot = time.perf_counter()
