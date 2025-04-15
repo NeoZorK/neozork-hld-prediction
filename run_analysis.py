@@ -189,7 +189,7 @@ def main():
     )
 
     # --- Command Line Arguments ---
-    parser.add_argument('mode', choices=['demo', 'yfinance', 'yf'], # Added 'yf' alias
+    parser.add_argument('mode', choices=['demo', 'yfinance', 'yf'],
                         help="Operating mode: 'demo' uses built-in data, 'yfinance' or 'yf' fetches data.")
 
     # --- Yahoo Finance Specific Arguments ---
