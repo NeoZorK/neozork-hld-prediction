@@ -23,6 +23,8 @@ def calculate_pressure(tick_volume_prev: pd.Series, hl_prev2: pd.Series) -> pd.S
     """Calculates Pressure based on previous volume and HL of bar before previous."""
     # Ensure hl_prev2 is numeric and handle potential division by zero
     hl_prev2_numeric = pd.to_numeric(hl_prev2, errors='coerce').replace(0, np.nan)
+
+    # Select only calculated (not NA)
     pressure = np.where(
         (tick_volume_prev.notna()) & (hl_prev2_numeric.notna()),
         tick_volume_prev / hl_prev2_numeric,
