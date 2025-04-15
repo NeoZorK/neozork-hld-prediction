@@ -330,7 +330,7 @@ def main():
 
         # Map rule string to enum
         try:
-             selected_rule = TradingRule[args.rule]
+             selected_rule = TradingRule(TradingRule[args.rule])
         except KeyError:
              print(f"[Error] Invalid rule name '{args.rule}'. Use one of {list(TradingRule.__members__.keys())}")
              sys.exit(1)
