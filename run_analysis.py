@@ -4,7 +4,7 @@
 import sys
 import time
 from datetime import date
-import pandas as pd
+#import pandas as pd # Keep pandas import here if used in debugging print
 
 # Imports from the src package
 from src import __version__ # Import version for display
@@ -32,9 +32,10 @@ def main():
     # --- Data Acquisition ---
     start_time_data = time.perf_counter()
     ohlcv_df = None
+    # Initialize point_size and estimated_point here
     point_size = None
+    estimated_point = False
     data_source_label = ""
-    estimated_point = False # Flag to track if point size was estimated
     yf_ticker = None # Store mapped ticker if applicable
     yf_interval = None # Store mapped interval if applicable
     current_period = None # Store effective period
@@ -47,18 +48,19 @@ def main():
     if effective_mode == 'demo':
         logger.print_info("--- Mode: Demo ---")
         data_source_label = "Demo Data"
-        ohlcv_df = get_demo_data()
-        # Use a fixed point size for demo data
-        point_size = 0.00001
-        logger.print_info(f"[Info] Using built-in demo data. Point size set to: {point_size}")
+        ohlcv_df = get_demo_data() # get_demo_data itself logs info
+        # --- SET point_size EXPLICITLY FOR DEMO ---
+        point_size = 0.00001 # Use fixed value
+        estimated_point = False # Not estimated
+        logger.print_info(f"Using built-in demo data. Point size set to: {point_size}")
+        # Point size logic moved out of this block
 
     elif effective_mode == 'yfinance':
         logger.print_info("--- Mode: Yahoo Finance ---")
         # Validate required arguments for yfinance mode
         if not args.ticker:
-             logger.print_error("[Error] Ticker (--ticker) is required for yfinance mode.")
+             logger.print_error("Ticker (--ticker) is required for yfinance mode.")
              sys.exit(1)
-        # Point size is optional now
 
         data_source_label = args.ticker # Use ticker for plot title
 
@@ -66,33 +68,33 @@ def main():
         try:
             yf_interval = map_interval(args.interval)
         except ValueError as e:
-            logger.print_error(f"[Error] {e}")
+            logger.print_error(str(e)) # Log the error message
             sys.exit(1)
 
         # Map ticker (optional enhancement)
-        yf_ticker = map_ticker(args.ticker)
+        yf_ticker = map_ticker(args.ticker) # yf_ticker gets assigned value here
 
         # Determine history parameters
         period_arg = args.period
         start_arg = args.start
         end_arg = args.end
 
-        # Handle date logic
+        # Handle date logic (using your previous logic with default start)
         if args.start and not args.end:
             end_arg = date.today().strftime('%Y-%m-%d')
-            logger.print_info(f"[Info] End date not specified, using today: {end_arg}")
+            logger.print_info(f"End date not specified, using today: {end_arg}")
         elif args.end and not args.start:
             start_arg = "2000-01-01"  # Default start date
-            logger.print_info(f"[Info] Start date not specified, using default: {start_arg}")
+            logger.print_info(f"Start date not specified, using default: {start_arg}")
 
         # Determine effective period/dates for download
         if start_arg and end_arg:
             current_start = start_arg
             current_end = end_arg
-            logger.print_info(f"[Info] Fetching data for interval '{yf_interval}' from {current_start} to {current_end}")
+            logger.print_info(f"Fetching data for interval '{yf_interval}' from {current_start} to {current_end}")
         else:
             current_period = period_arg
-            logger.print_info(f"[Info] Fetching data for interval '{yf_interval}' for period '{current_period}'")
+            logger.print_info(f"Fetching data for interval '{yf_interval}' for period '{current_period}'")
 
         # Fetch data using the function from data_utils
         ohlcv_df = fetch_yfinance_data(
@@ -102,12 +104,31 @@ def main():
             start_date=current_start,
             end_date=current_end
         )
-        # Check if data was fetched successfully
-        if ohlcv_df is None or ohlcv_df.empty:
-            logger.print_warning("[Warning] DataFrame is empty. Skipping indicator calculation and plotting.")
-            ohlcv_df = None  # Reset to None to avoid further processing
 
+        # --- Point Size Determination/Override MOVED HERE (inside yfinance block, AFTER fetch) ---
+        # Determine point size only if data fetch was successful
+        if ohlcv_df is not None and not ohlcv_df.empty:
+            if args.point is not None:
+                 # User provided point size - override estimation
+                 if args.point <= 0:
+                      logger.print_error("Provided point size (--point) must be positive.")
+                      sys.exit(1)
+                 point_size = args.point
+                 estimated_point = False # Set flag correctly
+                 logger.print_info(f"Using user-provided point size: {point_size}")
+            else:
+                 # Estimate point size ONLY if not provided by user
+                 point_size = determine_point_size(yf_ticker, ohlcv_df) # Call is safe now
+                 estimated_point = True # Set flag correctly
+                 logger.print_warning(f"Automatically estimated point size: {point_size:.8f}. "
+                                      f"This is an estimate and might be inaccurate. "
+                                      f"Use the --point argument to specify it accurately.")
+        # If ohlcv_df is None here, point_size remains None
 
+        # This check from your code is good, keep it here
+        # if ohlcv_df is None or ohlcv_df.empty:
+        #     logger.print_warning("[Warning] DataFrame is empty. Skipping indicator calculation and plotting.")
+        #     ohlcv_df = None # Ensure it stays None if fetch failed
 
     # Record data acquisition time and size
     end_time_data = time.perf_counter()
@@ -123,24 +144,15 @@ def main():
     result_df = None
     calc_duration = 0
     selected_rule = None # Define here for use in summary
+    # Check if we have data AND a valid point size before proceeding
     if ohlcv_df is not None and not ohlcv_df.empty:
+        # Crucial check: Ensure point_size was determined
+        if point_size is None:
+             logger.print_error("Point size could not be determined (data fetch likely failed or estimation failed). Cannot calculate indicator.")
+             # Exit here if point size is mandatory for calculation step
+             sys.exit(1)
 
-        # --- Point Size Determination/Override ---
-        if args.point is not None:
-             # User provided point size - override estimation
-             if args.point <= 0:
-                  logger.print_error("[Error] Provided point size (--point) must be positive.")
-                  sys.exit(1)
-             point_size = args.point
-             logger.print_info(f"[Info] Using user-provided point size: {point_size}")
-        else:
-             # Estimate point size using the function from utils
-             point_size = determine_point_size(yf_ticker, ohlcv_df)
-             estimated_point = True
-             logger.print_warning(f"[Warning] Automatically estimated point size: {point_size:.8f}. "
-                   f"This is an estimate and might be inaccurate. "
-                   f"Use the --point argument to specify it accurately for reliable calculations.")
-
+        # --- Continue with calculation ---
         logger.print_info(f"\nCalculating indicator using rule: {args.rule}...")
         start_time_calc = time.perf_counter()
 
@@ -148,102 +160,119 @@ def main():
         try:
              selected_rule = TradingRule[args.rule]
         except KeyError:
-             logger.print_error(f"[Error] Invalid rule name '{args.rule}'. Use one of {list(TradingRule.__members__.keys())}")
+             logger.print_error(f"Invalid rule name '{args.rule}'. Use one of {list(TradingRule.__members__.keys())}")
              sys.exit(1)
 
-        # Check for required columns and rename Volume->TickVolume before passing
+        # Check required columns and rename Volume->TickVolume
         required_cols_indicator = ['Open', 'High', 'Low', 'Close', 'Volume']
         if not all(col in ohlcv_df.columns for col in required_cols_indicator):
-            logger.print_error(f"[Error] DataFrame is missing required columns for calculation: {required_cols_indicator}. Available: {ohlcv_df.columns.tolist()}")
+            logger.print_error(f"DataFrame is missing required columns for calculation: {required_cols_indicator}. Available: {ohlcv_df.columns.tolist()}")
             sys.exit(1)
+        # Rename just before passing, operate on a copy
         ohlcv_df_renamed = ohlcv_df.rename(columns={'Volume': 'TickVolume'}, errors='ignore')
 
         try:
-            # Existing calculation call
+            # Call the simplified calculation function
             result_df = calculate_pressure_vector(
-                df=ohlcv_df_renamed.copy(),  # Pass copy
+                df=ohlcv_df_renamed.copy(),
                 point=point_size,
-                tr_num=TradingRule(selected_rule),
+                tr_num=TradingRule(selected_rule), # Pass the enum member directly
             )
 
-            # --- DEBUGGING PRINT ---
-            # Print the last 5 rows of key differentiating columns BEFORE plotting
+            # --- DEBUGGING PRINT (Keep if needed, uses logger.print_debug) ---
             logger.print_debug(f"\n--- DEBUG: Result DF Tail for Rule: {selected_rule.name} ---")
             cols_to_debug = ['Open', 'PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']
-            # Filter columns that actually exist in the result_df
             existing_cols_to_debug = [col for col in cols_to_debug if col in result_df.columns]
             if existing_cols_to_debug:
-                # Use display options to prevent truncation
-                with pd.option_context('display.max_rows', None,
-                                       'display.max_columns', None,
-                                       'display.width', 1000):
-                    logger.print_debug(result_df[existing_cols_to_debug].tail())
+                 # Use display options to prevent truncation
+                 # Removed pd.option_context, just print tail directly for debug
+                 # Limit rows printed to avoid issues
+                 debug_tail_str = result_df[existing_cols_to_debug].tail().to_string()
+                 logger.print_debug(debug_tail_str)
             else:
-                logger.print_debug("No differentiating columns found to print.")
+                 logger.print_debug("No differentiating columns found to print.")
             logger.print_debug(f"--- END DEBUG ---")
             # --- END DEBUGGING PRINT ---
 
         except Exception as e:
              logger.print_error(f"An error occurred during indicator calculation:{e}")
+             # Print traceback if needed
+             import traceback
+             print(traceback.format_exc())
              sys.exit(1)
 
         end_time_calc = time.perf_counter()
         calc_duration = end_time_calc - start_time_calc
+
+    # Handle cases where data was not loaded or empty after fetch
     elif ohlcv_df is None:
-         logger.print_error("[Error] No data loaded, cannot calculate indicator.")
-         sys.exit(1)
+         logger.print_error("No data loaded, cannot calculate indicator.")
+         # Allow script to continue to print summary without exiting here
     else: # DataFrame exists but is empty
-         logger.print_warning("[Warning] Loaded DataFrame is empty, skipping calculation.")
+         logger.print_warning("Loaded DataFrame is empty, skipping calculation.")
 
 
     # --- Plotting Results ---
     plot_duration = 0
+    # Check if calculation was successful before plotting
     if result_df is not None and not result_df.empty:
         logger.print_info("\nPlotting results...")
         start_time_plot = time.perf_counter()
-        chart_title = f"{data_source_label} | {args.interval} | Rule: {selected_rule.name}"
-        if estimated_point:
-            chart_title += f" | Est. Point: {point_size:.8f}"
+        # Construct title (ensure selected_rule is not None)
+        chart_title = f"{data_source_label} | {args.interval} | Rule: {selected_rule.name if selected_rule else 'N/A'}"
+        if estimated_point and point_size is not None: # Add point size only if estimated
+            point_format = ".8f" if point_size < 0.001 else ".5f" if point_size < 0.1 else ".2f"
+            chart_title += f" | Est. Point: {point_size:{point_format}}"
 
         try:
-            # Pass the result_df which should have 'Volume'
-            # Check if the selected rule is valid for plotting
+            # Pass the result_df and the selected rule (enum member)
             if selected_rule is not None:
-                plot_indicator_results(result_df, TradingRule(selected_rule), title=chart_title)
+                plot_indicator_results(result_df, TradingRule(selected_rule), title=chart_title) # Pass enum directly
             else:
-                logger.print_error("[Error] No valid trading rule selected. Skipping plotting.")
+                # This case should not happen if logic above is correct, but added for safety
+                 logger.print_error("No valid trading rule determined. Skipping plotting.")
+
             logger.print_info("\nPlot displayed. Close the plot window to continue/exit.")
         except Exception as e:
              logger.print_error(f"An error occurred during plotting:{e}")
+             import traceback
+             print(traceback.format_exc())
         finally:
              end_time_plot = time.perf_counter()
              plot_duration = end_time_plot - start_time_plot
 
-    elif result_df is None and ohlcv_df is not None:
+    # Handle cases where calculation didn't run or produced no results
+    elif ohlcv_df is not None: # Data was loaded but calculation failed/skipped
         logger.print_info("Skipping plotting as indicator calculation did not produce results.")
-    else:
-        logger.print_info("Skipping plotting as no data was loaded.")
+    # else: # No data was loaded initially - handled above
 
 
     # --- Timing and Size Summary ---
     end_time_total = time.perf_counter()
     total_duration = end_time_total - start_time_total
 
+    # Print summary using logger and formatting function
     logger.print_info("\n--- Execution Summary ---")
-    logger.print_info(
-        logger.format_summary_line("Data Source:", data_source_label if effective_mode != 'demo' else 'Demo'))
+    logger.print_info(logger.format_summary_line("Data Source:", data_source_label if effective_mode != 'demo' else 'Demo'))
     if effective_mode == 'yfinance':
-        logger.print_info(logger.format_summary_line("Ticker:", yf_ticker))
-        logger.print_info(
-            logger.format_summary_line("Interval Requested:", f"{args.interval} (mapped to {yf_interval})"))
+        logger.print_info(logger.format_summary_line("Ticker:", yf_ticker if yf_ticker else 'N/A'))
+        logger.print_info(logger.format_summary_line("Interval Requested:", f"{args.interval} (mapped to {yf_interval if yf_interval else 'N/A'})"))
         if current_start and current_end:
             logger.print_info(logger.format_summary_line("Date Range:", f"{current_start} to {current_end}"))
         else:
-            logger.print_info(logger.format_summary_line("Period:", current_period))
-    point_format = ".8f" if point_size < 0.001 else ".5f" if point_size < 0.1 else ".2f"
-    logger.print_info(logger.format_summary_line("Point Size Used:",
-                                                 f"{point_size:{point_format}}{' (Estimated)' if estimated_point else ''}"))
-    logger.print_info("-" * (25 + 1 + 20))  # Adjust separator width
+            logger.print_info(logger.format_summary_line("Period:", current_period if current_period else 'N/A'))
+
+    if point_size is not None:
+        point_format = ".8f" if point_size < 0.001 else ".5f" if point_size < 0.1 else ".2f"
+        logger.print_info(logger.format_summary_line("Point Size Used:", f"{point_size:{point_format}}{' (Estimated)' if estimated_point else ''}"))
+    else:
+         # Provide context why point size is N/A
+         reason = "(Data load failed)" if ohlcv_df is None else "(Not applicable for demo/failed fetch)"
+         logger.print_info(logger.format_summary_line("Point Size Used:", f"N/A {reason}"))
+
+    # Use args.rule for display as selected_rule might be None if calc failed early
+    logger.print_info(logger.format_summary_line("Rule Applied:", args.rule))
+    logger.print_info("-" * (25 + 1 + 20)) # Adjust separator width based on format_summary_line
     logger.print_info(logger.format_summary_line("Data Size:", f"{data_size_mb:.3f} MB ({data_size_bytes:,} bytes)"))
     logger.print_info(logger.format_summary_line("Data Fetch/Load Time:", f"{data_fetch_duration:.3f} seconds"))
     logger.print_info(logger.format_summary_line("Indicator Calc Time:", f"{calc_duration:.3f} seconds"))
