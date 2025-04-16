@@ -7,7 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="Add Exported CSV Original MQL5 file from SCHR_PRESSURE Indicator" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -397,7 +397,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744726999890</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Add Exported CSV Original MQL5 file from SCHR_PRESSURE Indicator">
+      <option name="closed" value="true" />
+      <created>1744727365418</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1744727365418</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -442,7 +450,8 @@
     <MESSAGE value="fix exception e" />
     <MESSAGE value="fix TradingRule type" />
     <MESSAGE value="Add Original MQL5 file of SCHR_PRESSURE Indicator" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Original MQL5 file of SCHR_PRESSURE Indicator" />
+    <MESSAGE value="Add Exported CSV Original MQL5 file from SCHR_PRESSURE Indicator" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Exported CSV Original MQL5 file from SCHR_PRESSURE Indicator" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
