@@ -153,19 +153,9 @@ def main():
             result_df = calculate_pressure_vector(
                 df=ohlcv_df_renamed.copy(), # Pass copy
                 point=point_size,
-                core_back=args.core_back,
-                limit=args.limit,
-                strength_back=args.strength_back,
-                tr_num=selected_rule,
-                pv_tp_multy=args.pv_tp_multy,
-                reverse_signal=args.reverse
             )
         except Exception as e:
-             print(f"\n--- ERROR CALCULATION ---")
-             print(f"An error occurred during indicator calculation:")
-             import traceback
-             traceback.print_exc()
-             print(f"--- END ERROR CALCULATION ---")
+             print(f"An error occurred during indicator calculation:",e)
              sys.exit(1)
 
         end_time_calc = time.perf_counter()
@@ -188,14 +178,10 @@ def main():
 
         try:
             # Pass the result_df which should have 'Volume'
-            plot_indicator_results(result_df, rule=selected_rule, title=chart_title)
+            plot_indicator_results(result_df, TradingRule(rule=selected_rule), title=chart_title)
             print("\nPlot displayed. Close the plot window to continue/exit.")
         except Exception as e:
-             print(f"\n--- ERROR PLOTTING ---")
-             print(f"An error occurred during plotting:")
-             import traceback
-             traceback.print_exc()
-             print(f"--- END ERROR PLOTTING ---")
+             print(f"An error occurred during plotting:",e)
         finally:
              end_time_plot = time.perf_counter()
              plot_duration = end_time_plot - start_time_plot

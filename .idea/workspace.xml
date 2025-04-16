@@ -7,8 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="delete todo">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix import">
+      <change beforePath="$PROJECT_DIR$/run_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_analysis.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -415,7 +415,55 @@
       <option name="project" value="LOCAL" />
       <updated>1744791249880</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="add data utils">
+      <option name="closed" value="true" />
+      <created>1744793992000</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1744793992000</updated>
+    </task>
+    <task id="LOCAL-00033" summary="add  utils">
+      <option name="closed" value="true" />
+      <created>1744794016312</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1744794016312</updated>
+    </task>
+    <task id="LOCAL-00034" summary="add  cli">
+      <option name="closed" value="true" />
+      <created>1744794049915</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1744794049915</updated>
+    </task>
+    <task id="LOCAL-00035" summary="refactor run analysis">
+      <option name="closed" value="true" />
+      <created>1744794107510</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1744794107510</updated>
+    </task>
+    <task id="LOCAL-00036" summary="del core and no needed calculations">
+      <option name="closed" value="true" />
+      <created>1744794261157</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1744794261157</updated>
+    </task>
+    <task id="LOCAL-00037" summary="fix import">
+      <option name="closed" value="true" />
+      <created>1744794489453</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1744794489453</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -442,7 +490,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add constants" />
     <MESSAGE value="add core_calculations.py" />
     <MESSAGE value="add rules" />
     <MESSAGE value="add plotting" />
@@ -462,22 +509,12 @@
     <MESSAGE value="Add Original MQL5 file of SCHR_PRESSURE Indicator" />
     <MESSAGE value="Add Exported CSV Original MQL5 file from SCHR_PRESSURE Indicator" />
     <MESSAGE value="delete todo" />
-    <option name="LAST_COMMIT_MESSAGE" value="delete todo" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/run_analysis.py</url>
-          <line>418</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/run_analysis.py</url>
-          <line>225</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="add data utils" />
+    <MESSAGE value="add  utils" />
+    <MESSAGE value="add  cli" />
+    <MESSAGE value="refactor run analysis" />
+    <MESSAGE value="del core and no needed calculations" />
+    <MESSAGE value="fix import" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix import" />
   </component>
 </project>
