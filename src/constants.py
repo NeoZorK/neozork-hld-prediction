@@ -22,4 +22,5 @@ class TradingRule(Enum):
     PV_HighLow = 0
     Support_Resistants = 1
     Pressure_Vector = 2
+    Predict_High_Low_Direction = 3
 
