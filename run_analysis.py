@@ -178,7 +178,11 @@ def main():
 
         try:
             # Pass the result_df which should have 'Volume'
-            plot_indicator_results(result_df, TradingRule(rule=selected_rule), title=chart_title)
+            # Check if the selected rule is valid for plotting
+            if selected_rule is not None:
+                plot_indicator_results(result_df, TradingRule(selected_rule), title=chart_title)
+            else:
+                print("[Error] No valid trading rule selected. Skipping plotting.")
             print("\nPlot displayed. Close the plot window to continue/exit.")
         except Exception as e:
              print(f"An error occurred during plotting:",e)
