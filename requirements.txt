@@ -102,4 +102,4 @@ wrapt==1.17.2
 xgboost==3.0.0
 yfinance==0.2.55
 colorama==0.4.6
-rich-argparse==0.2.0
+rich-argparse==1.7.0
