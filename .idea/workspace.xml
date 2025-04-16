@@ -7,7 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix fetchng from yfinance">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="Fix demo again">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_analysis.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -163,14 +164,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00002" summary="add core_calculations.py">
-      <option name="closed" value="true" />
-      <created>1744637161084</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1744637161084</updated>
     </task>
     <task id="LOCAL-00003" summary="add rules">
       <option name="closed" value="true" />
@@ -556,7 +549,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744809789622</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="Fix demo again">
+      <option name="closed" value="true" />
+      <created>1744810217783</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1744810217783</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -583,7 +584,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="del lwma core and tock vol" />
     <MESSAGE value="fix exception e" />
     <MESSAGE value="fix TradingRule type" />
     <MESSAGE value="Add Original MQL5 file of SCHR_PRESSURE Indicator" />
@@ -608,6 +608,7 @@
     <MESSAGE value="fix no yahoo data" />
     <MESSAGE value="add debug version of fetchin yfinance &#10;add separate module for test fetching data from yfinance" />
     <MESSAGE value="fix fetchng from yfinance" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix fetchng from yfinance" />
+    <MESSAGE value="Fix demo again" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix demo again" />
   </component>
 </project>
