@@ -31,11 +31,13 @@ def plot_indicator_results(df_results: pd.DataFrame, rule: TradingRule, title: s
     panel_count = 0 # Start with main panel 0
 
     # --- Add PPrice1 and PPrice2 to main panel (panel 0) ---
+    # Исправленный код:
     if 'PPrice1' in df_results.columns:
-        plots.append(mpf.make_addplot(df_results['PPrice1'], panel=0, color='green', width=0.9, linestyle='dotted', title="PPrice1"))
+        plots.append(mpf.make_addplot(df_results['PPrice1'], panel=0, color='green', width=0.9, linestyle='dotted',
+                                      title="PPrice1", secondary_y=True))
     if 'PPrice2' in df_results.columns:
-         plots.append(mpf.make_addplot(df_results['PPrice2'], panel=0, color='red', width=0.9, linestyle='dotted', title="PPrice2"))
-
+        plots.append(mpf.make_addplot(df_results['PPrice2'], panel=0, color='red', width=0.9, linestyle='dotted',
+                                      title="PPrice2", secondary_y=True))
     # --- Add indicator panels ---
     panel_map = {} # Keep track of which indicator is on which panel
 

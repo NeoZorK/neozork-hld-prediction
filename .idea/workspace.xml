@@ -7,11 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="comment debug check">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils.py" afterDir="false" />
-    </list>
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="try to fix auto size calculation" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -165,14 +161,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00004" summary="add plotting">
-      <option name="closed" value="true" />
-      <created>1744637723815</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1744637723815</updated>
     </task>
     <task id="LOCAL-00005" summary="add indicator">
       <option name="closed" value="true" />
@@ -558,7 +546,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744811803223</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="try to fix auto size calculation">
+      <option name="closed" value="true" />
+      <created>1744812898809</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1744812898809</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -585,7 +581,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix TradingRule type" />
     <MESSAGE value="Add Original MQL5 file of SCHR_PRESSURE Indicator" />
     <MESSAGE value="Add Exported CSV Original MQL5 file from SCHR_PRESSURE Indicator" />
     <MESSAGE value="delete todo" />
@@ -610,6 +605,7 @@
     <MESSAGE value="fix fetchng from yfinance" />
     <MESSAGE value="Fix demo again" />
     <MESSAGE value="comment debug check" />
-    <option name="LAST_COMMIT_MESSAGE" value="comment debug check" />
+    <MESSAGE value="try to fix auto size calculation" />
+    <option name="LAST_COMMIT_MESSAGE" value="try to fix auto size calculation" />
   </component>
 </project>
