@@ -32,6 +32,7 @@ def main():
     # --- Data Acquisition ---
     start_time_data = time.perf_counter()
     ohlcv_df = None
+
     # Initialize point_size and estimated_point here
     point_size = None
     estimated_point = False
@@ -49,6 +50,7 @@ def main():
         logger.print_info("--- Mode: Demo ---")
         data_source_label = "Demo Data"
         ohlcv_df = get_demo_data() # get_demo_data itself logs info
+
         # --- SET point_size EXPLICITLY FOR DEMO ---
         point_size = 0.00001 # Use fixed value
         estimated_point = False # Not estimated

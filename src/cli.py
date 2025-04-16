@@ -70,7 +70,7 @@ def parse_arguments():
     # These are the only rules left after the removal step
     rule_choices = list(TradingRule.__members__.keys())
     # Default value PV_HighLow.name will be shown by the formatter
-    indicator_group.add_argument('--rule', default=TradingRule.PV_HighLow.name, choices=rule_choices,
+    indicator_group.add_argument('--rule', default=TradingRule.Predict_High_Low_Direction.name, choices=rule_choices,
                                  help="Trading rule to apply.")
 
     # Arguments for core_back, strength_back, limit, pv_tp_multy, reverse are removed
