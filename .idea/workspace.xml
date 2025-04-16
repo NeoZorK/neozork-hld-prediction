@@ -7,8 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add rich-argparse">
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix rich-argparse">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -532,7 +532,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744807305516</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="fix rich-argparse">
+      <option name="closed" value="true" />
+      <created>1744807632294</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1744807632294</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -559,7 +567,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add high low prediction" />
     <MESSAGE value="disable core and lwma plot" />
     <MESSAGE value="add commands and yfinance" />
     <MESSAGE value="uncomment lwma and core plot" />
@@ -584,6 +591,7 @@
     <MESSAGE value="add logger" />
     <MESSAGE value="chg print to color print" />
     <MESSAGE value="add rich-argparse" />
-    <option name="LAST_COMMIT_MESSAGE" value="add rich-argparse" />
+    <MESSAGE value="fix rich-argparse" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix rich-argparse" />
   </component>
 </project>

@@ -107,21 +107,6 @@ def main():
             logger.print_warning("[Warning] DataFrame is empty. Skipping indicator calculation and plotting.")
             ohlcv_df = None  # Reset to None to avoid further processing
 
-        # --- Point Size Determination/Override ---
-        if args.point is not None:
-             # User provided point size - override estimation
-             if args.point <= 0:
-                  logger.print_error("[Error] Provided point size (--point) must be positive.")
-                  sys.exit(1)
-             point_size = args.point
-             logger.print_info(f"[Info] Using user-provided point size: {point_size}")
-        else:
-             # Estimate point size using the function from utils
-             point_size = determine_point_size(yf_ticker, ohlcv_df)
-             estimated_point = True
-             logger.print_warning(f"[Warning] Automatically estimated point size: {point_size:.8f}. "
-                   f"This is an estimate and might be inaccurate. "
-                   f"Use the --point argument to specify it accurately for reliable calculations.")
 
 
     # Record data acquisition time and size
@@ -139,6 +124,23 @@ def main():
     calc_duration = 0
     selected_rule = None # Define here for use in summary
     if ohlcv_df is not None and not ohlcv_df.empty:
+
+        # --- Point Size Determination/Override ---
+        if args.point is not None:
+             # User provided point size - override estimation
+             if args.point <= 0:
+                  logger.print_error("[Error] Provided point size (--point) must be positive.")
+                  sys.exit(1)
+             point_size = args.point
+             logger.print_info(f"[Info] Using user-provided point size: {point_size}")
+        else:
+             # Estimate point size using the function from utils
+             point_size = determine_point_size(yf_ticker, ohlcv_df)
+             estimated_point = True
+             logger.print_warning(f"[Warning] Automatically estimated point size: {point_size:.8f}. "
+                   f"This is an estimate and might be inaccurate. "
+                   f"Use the --point argument to specify it accurately for reliable calculations.")
+
         logger.print_info(f"\nCalculating indicator using rule: {args.rule}...")
         start_time_calc = time.perf_counter()
 
