@@ -7,6 +7,7 @@ Plotting functions for visualizing indicator results using mplfinance.
 
 import pandas as pd
 import mplfinance as mpf
+import numpy as np
 from .constants import TradingRule, BUY, SELL # Import constants
 
 def plot_indicator_results(df_results: pd.DataFrame, rule: TradingRule, title: str = "Indicator Results"):
@@ -64,24 +65,38 @@ def plot_indicator_results(df_results: pd.DataFrame, rule: TradingRule, title: s
 
 
     # --- Add rule-specific plots (e.g., Direction markers) ---
-    if 'Direction' in df_results.columns:
-        # Place markers slightly offset from High/Low
-        buy_signals = df_results['Low'] * 0.998
-        sell_signals = df_results['High'] * 1.002
+        # --- Add rule-specific plots (e.g., Direction markers) ---
+        if 'Direction' in df_results.columns and 'Low' in df_results.columns and 'High' in df_results.columns:
+            # Ensure Low and High are numeric before calculation
+            low_numeric = pd.to_numeric(df_results['Low'], errors='coerce')
+            high_numeric = pd.to_numeric(df_results['High'], errors='coerce')
 
-        # Ensure signals are numeric before comparison
-        direction_numeric = pd.to_numeric(df_results['Direction'], errors='coerce')
+            # Calculate marker positions slightly offset from High/Low
+            # Use obj.ffill() or obj.bfill() instead of fillna(method=...)
+            buy_signals_y_pos = low_numeric.ffill().bfill() * 0.998
+            sell_signals_y_pos = high_numeric.ffill().bfill() * 1.002
 
-        # Plot BUY markers where Direction is BUY (1.0)
-        buy_marker_data = buy_signals[direction_numeric == BUY]
-        if not buy_marker_data.dropna().empty:
-             plots.append(mpf.make_addplot(buy_marker_data,
-                                           type='scatter', markersize=50, marker='^', color='lime', panel=0))
-        # Plot SELL markers where Direction is SELL (2.0)
-        sell_marker_data = sell_signals[direction_numeric == SELL]
-        if not sell_marker_data.dropna().empty:
-             plots.append(mpf.make_addplot(sell_marker_data,
-                                          type='scatter', markersize=50, marker='v', color='red', panel=0))
+            # Ensure signals are numeric before comparison
+            direction_numeric = pd.to_numeric(df_results['Direction'], errors='coerce')
+
+            # --- CORRECTED MARKER LOGIC ---
+            # Create full-size series with NaN where condition is false
+            buy_markers_y = np.where(direction_numeric == BUY, buy_signals_y_pos, np.nan)
+            sell_markers_y = np.where(direction_numeric == SELL, sell_signals_y_pos, np.nan)
+
+            # Create Pandas Series with the same index as the main DataFrame
+            # This ensures alignment for plotting
+            buy_markers_series = pd.Series(buy_markers_y, index=df_results.index)
+            sell_markers_series = pd.Series(sell_markers_y, index=df_results.index)
+
+            # Add scatter plots using the full-size NaN-filled series
+            # mplfinance/matplotlib will ignore NaNs automatically when plotting points
+            if not buy_markers_series.dropna().empty:
+                plots.append(mpf.make_addplot(buy_markers_series,
+                                              type='scatter', markersize=50, marker='^', color='lime', panel=0))
+            if not sell_markers_series.dropna().empty:
+                plots.append(mpf.make_addplot(sell_markers_series,
+                                              type='scatter', markersize=50, marker='v', color='red', panel=0))
 
     # --- Create the plot ---
     # Ensure volume is plotted if available

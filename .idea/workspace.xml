@@ -7,9 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix trading rule type conversion">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add debug print">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plotting.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +55,7 @@
       <option value="15" />
       <option value="16" />
     </hideBySeverity>
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -87,8 +87,8 @@
   <component name="QodanaHighlightedReportService">
     <option name="localRunNotPublishedPersistedInfo">
       <LocalReportPersistedInfo>
-        <option name="path" value="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output1/qodana.sarif.json" />
-        <option name="reportGuid" value="f9a355ca-154f-4d3a-b153-cb74b89f82de" />
+        <option name="path" value="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output2/qodana.sarif.json" />
+        <option name="reportGuid" value="b76850a7-2294-439d-8b94-2f8eef18ff48" />
         <option name="reportName" value="NeoZorK HLD/qodana/2025-04-16" />
       </LocalReportPersistedInfo>
     </option>
@@ -99,6 +99,7 @@
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="251918fa-e5fe-422e-a782-7dbfc495464c" reportId="NeoZorK HLD/qodana/2025-04-16" />
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output2/qodana.sarif.json" reportGuid="b76850a7-2294-439d-8b94-2f8eef18ff48" reportId="NeoZorK HLD/qodana/2025-04-16" />
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output1/qodana.sarif.json" reportGuid="f9a355ca-154f-4d3a-b153-cb74b89f82de" reportId="NeoZorK HLD/qodana/2025-04-16" />
     </option>
   </component>
@@ -495,7 +496,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744795827074</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="add debug print">
+      <option name="closed" value="true" />
+      <created>1744797227647</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1744797227647</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -522,7 +531,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add indicator" />
     <MESSAGE value="remove old indicator" />
     <MESSAGE value="add ryn analysis" />
     <MESSAGE value="del old ryn analysis" />
@@ -547,6 +555,7 @@
     <MESSAGE value="fix e" />
     <MESSAGE value="fix error with start date" />
     <MESSAGE value="fix trading rule type conversion" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix trading rule type conversion" />
+    <MESSAGE value="add debug print" />
+    <option name="LAST_COMMIT_MESSAGE" value="add debug print" />
   </component>
 </project>
