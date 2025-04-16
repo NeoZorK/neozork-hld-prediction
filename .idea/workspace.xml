@@ -1,33 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="ANALYZE_INJECTED_CODE" value="false" />
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="all fixed" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;NeoZorK&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/NeoZorK/neozork-hld-prediction.git&quot;,
+    &quot;accountId&quot;: &quot;e162d701-1f1e-4665-9b63-91eb6a8aeedc&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/run_analysis.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/constants.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/core_calculations.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/indicator.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/plotting.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/rules.py" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="ProblemsViewState">
+    <hideBySeverity>
+      <option value="11" />
+      <option value="12" />
+      <option value="13" />
+      <option value="14" />
+      <option value="15" />
+      <option value="16" />
+    </hideBySeverity>
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
   <component name="ProjectId" id="2vVA6AwLKuWjB5NRHOrlUJPrsGs" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.demo command.executor&quot;: &quot;Run&quot;,
+    &quot;Python.help command.executor&quot;: &quot;Run&quot;,
+    &quot;Python.indicator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.indicator_logic.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plotting.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_analysis.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Shell Script.help command.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;v0.1.0&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
   }
-}]]></component>
+}</component>
+  <component name="QodanaReportsService">
+    <option name="descriptions">
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="251918fa-e5fe-422e-a782-7dbfc495464c" reportId="NeoZorK HLD/qodana/2025-04-16" />
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output2/qodana.sarif.json" reportGuid="b76850a7-2294-439d-8b94-2f8eef18ff48" reportId="NeoZorK HLD/qodana/2025-04-16" />
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output1/qodana.sarif.json" reportGuid="f9a355ca-154f-4d3a-b153-cb74b89f82de" reportId="NeoZorK HLD/qodana/2025-04-16" />
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output3/qodana.sarif.json" reportGuid="5bb6fc09-c134-405e-915f-31c4d3f688af" reportId="NeoZorK HLD/qodana/2025-04-16" />
+    </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.demo command">
+    <configuration name="demo command" type="PythonConfigurationType" factoryName="Python">
+      <module name="NeoZorK HLD" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.13 (NeoZorK HLD)" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/run_analysis.py" />
+      <option name="PARAMETERS" value="demo" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="help command" type="PythonConfigurationType" factoryName="Python">
+      <module name="NeoZorK HLD" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="Python 3.12 (NeoZorK HLD)" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/run_analysis.py" />
+      <option name="PARAMETERS" value="-h" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.demo command" />
+      <item itemvalue="Python.help command" />
+    </list>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -44,6 +162,399 @@
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
     </task>
+    <task id="LOCAL-00007" summary="add ryn analysis">
+      <option name="closed" value="true" />
+      <created>1744638408138</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1744638408138</updated>
+    </task>
+    <task id="LOCAL-00008" summary="add ryn analysis">
+      <option name="closed" value="true" />
+      <created>1744638500014</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1744638500014</updated>
+    </task>
+    <task id="LOCAL-00009" summary="del old ryn analysis">
+      <option name="closed" value="true" />
+      <created>1744638507995</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1744638507995</updated>
+    </task>
+    <task id="LOCAL-00010" summary="del old ryn analysis">
+      <option name="closed" value="true" />
+      <created>1744638631589</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1744638631589</updated>
+    </task>
+    <task id="LOCAL-00011" summary="move run analysis">
+      <option name="closed" value="true" />
+      <created>1744638877895</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1744638877895</updated>
+    </task>
+    <task id="LOCAL-00012" summary="fix import version">
+      <option name="closed" value="true" />
+      <created>1744639254592</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1744639254592</updated>
+    </task>
+    <task id="LOCAL-00013" summary="add high low prediction">
+      <option name="closed" value="true" />
+      <created>1744639948341</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1744639948341</updated>
+    </task>
+    <task id="LOCAL-00014" summary="disable core and lwma plot">
+      <option name="closed" value="true" />
+      <created>1744640495709</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1744640495709</updated>
+    </task>
+    <task id="LOCAL-00015" summary="add commands and yfinance">
+      <option name="closed" value="true" />
+      <created>1744642812612</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1744642812612</updated>
+    </task>
+    <task id="LOCAL-00016" summary="uncomment lwma and core plot">
+      <option name="closed" value="true" />
+      <created>1744714594698</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1744714594698</updated>
+    </task>
+    <task id="LOCAL-00017" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744715126743</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1744715126743</updated>
+    </task>
+    <task id="LOCAL-00018" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744715607972</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1744715607972</updated>
+    </task>
+    <task id="LOCAL-00019" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744715614987</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1744715614987</updated>
+    </task>
+    <task id="LOCAL-00020" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744715893621</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1744715893621</updated>
+    </task>
+    <task id="LOCAL-00021" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744716046060</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1744716046060</updated>
+    </task>
+    <task id="LOCAL-00022" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744716349452</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1744716349452</updated>
+    </task>
+    <task id="LOCAL-00023" summary="del lwma core and tock vol">
+      <option name="closed" value="true" />
+      <created>1744717923499</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1744717923499</updated>
+    </task>
+    <task id="LOCAL-00024" summary="fix exception e">
+      <option name="closed" value="true" />
+      <created>1744718774674</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1744718774674</updated>
+    </task>
+    <task id="LOCAL-00025" summary="fix exception e">
+      <option name="closed" value="true" />
+      <created>1744718843214</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1744718843214</updated>
+    </task>
+    <task id="LOCAL-00026" summary="fix exception e">
+      <option name="closed" value="true" />
+      <created>1744718885323</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1744718885323</updated>
+    </task>
+    <task id="LOCAL-00027" summary="fix TradingRule type">
+      <option name="closed" value="true" />
+      <created>1744720234871</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1744720234871</updated>
+    </task>
+    <task id="LOCAL-00028" summary="fix TradingRule type">
+      <option name="closed" value="true" />
+      <created>1744724247360</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1744724247360</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Add Original MQL5 file of SCHR_PRESSURE Indicator">
+      <option name="closed" value="true" />
+      <created>1744726999890</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1744726999890</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Add Exported CSV Original MQL5 file from SCHR_PRESSURE Indicator">
+      <option name="closed" value="true" />
+      <created>1744727365418</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1744727365418</updated>
+    </task>
+    <task id="LOCAL-00031" summary="delete todo">
+      <option name="closed" value="true" />
+      <created>1744791249879</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1744791249880</updated>
+    </task>
+    <task id="LOCAL-00032" summary="add data utils">
+      <option name="closed" value="true" />
+      <created>1744793992000</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1744793992000</updated>
+    </task>
+    <task id="LOCAL-00033" summary="add  utils">
+      <option name="closed" value="true" />
+      <created>1744794016312</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1744794016312</updated>
+    </task>
+    <task id="LOCAL-00034" summary="add  cli">
+      <option name="closed" value="true" />
+      <created>1744794049915</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1744794049915</updated>
+    </task>
+    <task id="LOCAL-00035" summary="refactor run analysis">
+      <option name="closed" value="true" />
+      <created>1744794107510</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1744794107510</updated>
+    </task>
+    <task id="LOCAL-00036" summary="del core and no needed calculations">
+      <option name="closed" value="true" />
+      <created>1744794261157</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1744794261157</updated>
+    </task>
+    <task id="LOCAL-00037" summary="fix import">
+      <option name="closed" value="true" />
+      <created>1744794489453</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1744794489453</updated>
+    </task>
+    <task id="LOCAL-00038" summary="fix e">
+      <option name="closed" value="true" />
+      <created>1744794665927</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1744794665927</updated>
+    </task>
+    <task id="LOCAL-00039" summary="fix error with start date">
+      <option name="closed" value="true" />
+      <created>1744795283490</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1744795283490</updated>
+    </task>
+    <task id="LOCAL-00040" summary="fix trading rule type conversion">
+      <option name="closed" value="true" />
+      <created>1744795827074</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1744795827074</updated>
+    </task>
+    <task id="LOCAL-00041" summary="add debug print">
+      <option name="closed" value="true" />
+      <created>1744797227647</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1744797227647</updated>
+    </task>
+    <task id="LOCAL-00042" summary="fix debug plotting">
+      <option name="closed" value="true" />
+      <created>1744799442363</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1744799442363</updated>
+    </task>
+    <task id="LOCAL-00043" summary="fix security issue &#10;add colorama for colored print">
+      <option name="closed" value="true" />
+      <created>1744799916987</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1744799916987</updated>
+    </task>
+    <task id="LOCAL-00044" summary="add logger">
+      <option name="closed" value="true" />
+      <created>1744799958900</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1744799958900</updated>
+    </task>
+    <task id="LOCAL-00045" summary="chg print to color print">
+      <option name="closed" value="true" />
+      <created>1744801113598</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1744801113598</updated>
+    </task>
+    <task id="LOCAL-00046" summary="add rich-argparse">
+      <option name="closed" value="true" />
+      <created>1744807305516</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1744807305516</updated>
+    </task>
+    <task id="LOCAL-00047" summary="fix rich-argparse">
+      <option name="closed" value="true" />
+      <created>1744807632294</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1744807632294</updated>
+    </task>
+    <task id="LOCAL-00048" summary="fix no yahoo data">
+      <option name="closed" value="true" />
+      <created>1744808983517</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1744808983517</updated>
+    </task>
+    <task id="LOCAL-00049" summary="add debug version of fetchin yfinance &#10;add separate module for test fetching data from yfinance">
+      <option name="closed" value="true" />
+      <created>1744809409548</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1744809409548</updated>
+    </task>
+    <task id="LOCAL-00050" summary="fix fetchng from yfinance">
+      <option name="closed" value="true" />
+      <created>1744809789622</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1744809789622</updated>
+    </task>
+    <task id="LOCAL-00051" summary="Fix demo again">
+      <option name="closed" value="true" />
+      <created>1744810217783</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1744810217783</updated>
+    </task>
+    <task id="LOCAL-00052" summary="comment debug check">
+      <option name="closed" value="true" />
+      <created>1744811803223</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1744811803223</updated>
+    </task>
+    <task id="LOCAL-00053" summary="try to fix auto size calculation">
+      <option name="closed" value="true" />
+      <created>1744812898809</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1744812898809</updated>
+    </task>
+    <task id="LOCAL-00054" summary="New TR Predict High Lo Direction -&gt; showing 3 predictions at same time for every point">
+      <option name="closed" value="true" />
+      <created>1744817625921</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1744817625921</updated>
+    </task>
+    <task id="LOCAL-00055" summary="all fixed">
+      <option name="closed" value="true" />
+      <created>1744819229380</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1744819229381</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -51,10 +562,50 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="HEAD" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="delete todo" />
+    <MESSAGE value="add data utils" />
+    <MESSAGE value="add  utils" />
+    <MESSAGE value="add  cli" />
+    <MESSAGE value="refactor run analysis" />
+    <MESSAGE value="del core and no needed calculations" />
+    <MESSAGE value="fix import" />
+    <MESSAGE value="fix e" />
+    <MESSAGE value="fix error with start date" />
+    <MESSAGE value="fix trading rule type conversion" />
+    <MESSAGE value="add debug print" />
+    <MESSAGE value="fix debug plotting" />
+    <MESSAGE value="fix security issue &#10;add colorama for colored print" />
+    <MESSAGE value="add logger" />
+    <MESSAGE value="chg print to color print" />
+    <MESSAGE value="add rich-argparse" />
+    <MESSAGE value="fix rich-argparse" />
+    <MESSAGE value="fix no yahoo data" />
+    <MESSAGE value="add debug version of fetchin yfinance &#10;add separate module for test fetching data from yfinance" />
+    <MESSAGE value="fix fetchng from yfinance" />
+    <MESSAGE value="Fix demo again" />
+    <MESSAGE value="comment debug check" />
+    <MESSAGE value="try to fix auto size calculation" />
+    <MESSAGE value="New TR Predict High Lo Direction -&gt; showing 3 predictions at same time for every point" />
+    <MESSAGE value="all fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="all fixed" />
   </component>
 </project>
