@@ -4,7 +4,7 @@
 import sys
 import time
 from datetime import date
-#import pandas as pd # Keep pandas import here if used in debugging print
+#import pandas as pd
 
 # Imports from the src package
 from src import __version__ # Import version for display
@@ -106,32 +106,45 @@ def main():
             end_date=current_end
         )
 
-        # --- Point Size Determination/Override (AFTER fetch, only if successful) ---
+        # --- Point Size Determination/Override (with estimation fallback) ---
         if ohlcv_df is not None and not ohlcv_df.empty:
-            # First debug print (already exists in your code)
             logger.print_debug(f"Columns returned by fetch_yfinance_data: {ohlcv_df.columns.tolist()}")
             if args.point is not None:
-                 # User provided point size - override estimation
-                 if args.point <= 0:
-                      logger.print_error("Provided point size (--point) must be positive.")
-                      sys.exit(1)
-                 point_size = args.point
-                 estimated_point = False # Set flag correctly
-                 logger.print_info(f"Using user-provided point size: {point_size}")
+                # User provided point size
+                if args.point <= 0:
+                    logger.print_error("Provided point size (--point) must be positive.")
+                    sys.exit(1)
+                point_size = args.point
+                estimated_point = False
+                logger.print_info(f"Using user-provided point size: {point_size}")
             else:
-                 # Estimate point size ONLY if not provided by user
-                 point_size = determine_point_size(yf_ticker, ohlcv_df) # Call is safe now
-                 estimated_point = True # Set flag correctly
-                 logger.print_warning(f"Automatically estimated point size: {point_size:.8f}. "
-                                      f"This is an estimate and might be inaccurate. "
-                                      f"Use the --point argument to specify it accurately.")
-        # If ohlcv_df is None here, point_size remains None
+                # --- Attempt automatic estimation ---
+                logger.print_info("Attempting to estimate point size automatically...")
+                point_size = determine_point_size(yf_ticker)  # Call estimation
+                if point_size is not None:
+                    # Estimation succeeded (though might be inaccurate)
+                    estimated_point = True
+                    logger.print_warning(f"Automatically estimated point size: {point_size:.8f}. "
+                                         f"This is an ESTIMATE and might be inaccurate. "
+                                         f"Use the --point argument for calculations requiring precision.")
+                else:
+                    # Estimation failed (function returned None)
+                    logger.print_error(f"Automatic point size estimation failed for {yf_ticker}. "
+                                       f"Please provide the correct value using the --point argument.")
+                    # Exit if point size is crucial and couldn't be estimated
+                    sys.exit(1)
+                    # Alternatively, fallback to a default like 0.01 with a strong warning,
+                    # but exiting is safer if calculations depend heavily on it.
+                    # point_size = 0.01
+                    # logger.print_warning("Falling back to default point size 0.01, calculations may be incorrect!")
+        # --- END Point Size Logic ---
 
     # Record data acquisition time and size
     end_time_data = time.perf_counter()
     data_fetch_duration = end_time_data - start_time_data
     data_size_bytes = 0
     data_size_mb = 0
+
     # Calculate size only if df exists
     if ohlcv_df is not None:
         data_size_bytes = ohlcv_df.memory_usage(deep=True).sum()
@@ -145,10 +158,14 @@ def main():
     # Check if we have data AND a valid point size before proceeding
     if ohlcv_df is not None and not ohlcv_df.empty:
         # Crucial check: Ensure point_size was determined
-        if point_size is None:
-             logger.print_error("Point size could not be determined (data fetch likely failed or estimation failed). Cannot calculate indicator.")
-             # Exit here if point size is mandatory for calculation step
-             sys.exit(1)
+        if point_size is not None:
+            point_format = ".8f" if point_size < 0.001 else ".5f" if point_size < 0.1 else ".2f"
+            # Add '(Estimated)' tag to summary if it was estimated
+            size_str = f"{point_size:{point_format}}{' (Estimated)' if estimated_point else ''}"
+            logger.print_info(logger.format_summary_line("Point Size Used:", size_str))
+        else:
+            reason = "(Data load failed)" if ohlcv_df is None else "(Estimation failed)"
+            logger.print_info(logger.format_summary_line("Point Size Used:", f"N/A {reason}"))
 
         # --- Continue with calculation ---
         logger.print_info(f"\nCalculating indicator using rule: {args.rule}...")
