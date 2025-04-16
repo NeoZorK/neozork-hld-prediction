@@ -66,14 +66,35 @@ def parse_arguments():
     # --- Indicator Options (Simplified) ---
     # Another group for indicator parameters
     indicator_group = parser.add_argument_group('Indicator Options')
+
     # Get available rules dynamically AFTER updating TradingRule enum
     # These are the only rules left after the removal step
     rule_choices = list(TradingRule.__members__.keys())
-    # Default value PV_HighLow.name will be shown by the formatter
-    indicator_group.add_argument('--rule', default=TradingRule.Predict_High_Low_Direction.name, choices=rule_choices,
-                                 help="Trading rule to apply.")
 
-    # Arguments for core_back, strength_back, limit, pv_tp_multy, reverse are removed
+    # Map rule choices to their corresponding TradingRule enum values
+    rule_aliases = {
+        'PHLD': 'Predict_High_Low_Direction',
+        'PV': 'Pressure_Vector',
+        'SR': 'Support_Resistants'
+    }
+
+    # Add aliases to the rule choices
+    rule_names = list(TradingRule.__members__.keys())
+
+    # Create a list of all rule choices including aliases
+    all_rule_choices = rule_names + list(rule_aliases.keys())
+
+    # Set default rule to Predict_High_Low_Direction
+    default_rule_name = TradingRule.Predict_High_Low_Direction.name
+
+    # Add argument for rule selection
+    indicator_group.add_argument(
+        '--rule',
+        default=default_rule_name,
+        choices=all_rule_choices,  # use all_rule_choices
+        help=f"Trading rule to apply. Default: {default_rule_name}. "
+             f"Aliases: PHLD=Predict_High_Low_Direction."  # add alias info
+    )
 
     # --- Version ---
     # Standard version argument, using rich markup for the version string output

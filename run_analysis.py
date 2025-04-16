@@ -173,18 +173,39 @@ def main():
         logger.print_info(f"\nCalculating indicator using rule: {args.rule}...")
         start_time_calc = time.perf_counter()
 
-        # Map rule string to enum
+        # --- Rule Name Conversion ---
+        rule_input_str = args.rule
+
+        # Define a mapping for rule aliases to canonical names
+        rule_aliases_map = {
+            'PHLD': 'Predict_High_Low_Direction',
+            'PV': 'Pressure_Vector',
+            'SR': 'Support_Resistants'
+        }
+
+        # Convert rule input to uppercase and check against aliases
+        rule_name_str = rule_aliases_map.get(rule_input_str.upper(),
+                                             rule_input_str)  # Default to input if not found
+        # --- END Rule Name Conversion ---
+
+        # Map rule string (canonical name) to enum
         try:
-             selected_rule = TradingRule[args.rule]
+            selected_rule = TradingRule[rule_name_str]
+            logger.print_debug(f"Mapped rule input '{args.rule}' to enum member '{selected_rule.name}'")
         except KeyError:
-             logger.print_error(f"Invalid rule name '{args.rule}'. Use one of {list(TradingRule.__members__.keys())}")
-             sys.exit(1)
+            # Handle case where rule name is not valid
+            available_rules = list(TradingRule.__members__.keys()) + list(rule_aliases_map.keys())
+            logger.print_error(f"Invalid rule name or alias '{args.rule}'. Use one of {available_rules}")
+            sys.exit(1)
 
         # Check required columns and rename Volume->TickVolume
         required_cols_indicator = ['Open', 'High', 'Low', 'Close', 'Volume']
+
+        # Check if the DataFrame has the required columns
         if not all(col in ohlcv_df.columns for col in required_cols_indicator):
             logger.print_error(f"DataFrame is missing required columns for calculation: {required_cols_indicator}. Available: {ohlcv_df.columns.tolist()}")
             sys.exit(1)
+
         # Rename just before passing, operate on a copy
         ohlcv_df_renamed = ohlcv_df.rename(columns={'Volume': 'TickVolume'}, errors='ignore')
 
@@ -283,9 +304,15 @@ def main():
     total_duration = end_time_total - start_time_total
 
     # Print summary using logger and formatting function
+
+
+    # Print summary using logger and formatting function
     logger.print_info("\n--- Execution Summary ---")
     logger.print_info(logger.format_summary_line("Data Source:", data_source_label if effective_mode != 'demo' else 'Demo'))
+    logger.print_info(logger.format_summary_line("Rule Applied:", args.rule))
+
     if effective_mode == 'yfinance':
+        logger.print_warning("--- YFinance Data Not have Volume for FOREX Tickers ---")
         logger.print_info(logger.format_summary_line("Ticker:", yf_ticker if yf_ticker else 'N/A'))
         logger.print_info(logger.format_summary_line("Interval Requested:", f"{args.interval} (mapped to {yf_interval if yf_interval else 'N/A'})"))
         if current_start and current_end:

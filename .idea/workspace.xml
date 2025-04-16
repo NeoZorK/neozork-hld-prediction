@@ -7,12 +7,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="try to fix auto size calculation">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="New TR Predict High Lo Direction -&gt; showing 3 predictions at same time for every point">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_analysis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/cli.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/indicator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/indicator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/rules.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/rules.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -167,14 +165,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00005" summary="add indicator">
-      <option name="closed" value="true" />
-      <created>1744637856843</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1744637856843</updated>
     </task>
     <task id="LOCAL-00006" summary="remove old indicator">
       <option name="closed" value="true" />
@@ -560,7 +550,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744812898809</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="New TR Predict High Lo Direction -&gt; showing 3 predictions at same time for every point">
+      <option name="closed" value="true" />
+      <created>1744817625921</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1744817625921</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -587,7 +585,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add Original MQL5 file of SCHR_PRESSURE Indicator" />
     <MESSAGE value="Add Exported CSV Original MQL5 file from SCHR_PRESSURE Indicator" />
     <MESSAGE value="delete todo" />
     <MESSAGE value="add data utils" />
@@ -612,6 +609,7 @@
     <MESSAGE value="Fix demo again" />
     <MESSAGE value="comment debug check" />
     <MESSAGE value="try to fix auto size calculation" />
-    <option name="LAST_COMMIT_MESSAGE" value="try to fix auto size calculation" />
+    <MESSAGE value="New TR Predict High Lo Direction -&gt; showing 3 predictions at same time for every point" />
+    <option name="LAST_COMMIT_MESSAGE" value="New TR Predict High Lo Direction -&gt; showing 3 predictions at same time for every point" />
   </component>
 </project>
