@@ -7,9 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix rich-argparse">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix no yahoo data" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -540,7 +538,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744807632294</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="fix no yahoo data">
+      <option name="closed" value="true" />
+      <created>1744808983517</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1744808983517</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -567,7 +573,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="disable core and lwma plot" />
     <MESSAGE value="add commands and yfinance" />
     <MESSAGE value="uncomment lwma and core plot" />
     <MESSAGE value="del lwma core and tock vol" />
@@ -592,6 +597,7 @@
     <MESSAGE value="chg print to color print" />
     <MESSAGE value="add rich-argparse" />
     <MESSAGE value="fix rich-argparse" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix rich-argparse" />
+    <MESSAGE value="fix no yahoo data" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix no yahoo data" />
   </component>
 </project>
