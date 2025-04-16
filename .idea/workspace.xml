@@ -7,7 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix debug plotting" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix security issue &#10;add colorama for colored print" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -52,7 +52,7 @@
       <option value="15" />
       <option value="16" />
     </hideBySeverity>
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -81,11 +81,24 @@
     "settings.editor.selected.configurable": "preferences.keymap"
   }
 }]]></component>
+  <component name="QodanaHighlightedReportService">
+    <option name="localRunNotPublishedPersistedInfo">
+      <LocalReportPersistedInfo>
+        <option name="path" value="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output3/qodana.sarif.json" />
+        <option name="reportGuid" value="5bb6fc09-c134-405e-915f-31c4d3f688af" />
+        <option name="reportName" value="NeoZorK HLD/qodana/2025-04-16" />
+      </LocalReportPersistedInfo>
+    </option>
+  </component>
+  <component name="QodanaIsSelectedPersistenceService">
+    <option name="selectedOrLoading" value="true" />
+  </component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="251918fa-e5fe-422e-a782-7dbfc495464c" reportId="NeoZorK HLD/qodana/2025-04-16" />
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output2/qodana.sarif.json" reportGuid="b76850a7-2294-439d-8b94-2f8eef18ff48" reportId="NeoZorK HLD/qodana/2025-04-16" />
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output1/qodana.sarif.json" reportGuid="f9a355ca-154f-4d3a-b153-cb74b89f82de" reportId="NeoZorK HLD/qodana/2025-04-16" />
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output3/qodana.sarif.json" reportGuid="5bb6fc09-c134-405e-915f-31c4d3f688af" reportId="NeoZorK HLD/qodana/2025-04-16" />
     </option>
   </component>
   <component name="RecentsManager">
@@ -497,7 +510,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744799442363</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="fix security issue &#10;add colorama for colored print">
+      <option name="closed" value="true" />
+      <created>1744799916987</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1744799916987</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -524,7 +545,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add ryn analysis" />
     <MESSAGE value="del old ryn analysis" />
     <MESSAGE value="move run analysis" />
     <MESSAGE value="fix import version" />
@@ -549,6 +569,7 @@
     <MESSAGE value="fix trading rule type conversion" />
     <MESSAGE value="add debug print" />
     <MESSAGE value="fix debug plotting" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix debug plotting" />
+    <MESSAGE value="fix security issue &#10;add colorama for colored print" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix security issue &#10;add colorama for colored print" />
   </component>
 </project>
