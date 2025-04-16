@@ -7,7 +7,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix no yahoo data" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add debug version of fetchin yfinance &#10;add separate module for test fetching data from yfinance">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data_utils.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -546,7 +549,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744808983517</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="add debug version of fetchin yfinance &#10;add separate module for test fetching data from yfinance">
+      <option name="closed" value="true" />
+      <created>1744809409548</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1744809409548</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -573,7 +584,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add commands and yfinance" />
     <MESSAGE value="uncomment lwma and core plot" />
     <MESSAGE value="del lwma core and tock vol" />
     <MESSAGE value="fix exception e" />
@@ -598,6 +608,7 @@
     <MESSAGE value="add rich-argparse" />
     <MESSAGE value="fix rich-argparse" />
     <MESSAGE value="fix no yahoo data" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix no yahoo data" />
+    <MESSAGE value="add debug version of fetchin yfinance &#10;add separate module for test fetching data from yfinance" />
+    <option name="LAST_COMMIT_MESSAGE" value="add debug version of fetchin yfinance &#10;add separate module for test fetching data from yfinance" />
   </component>
 </project>

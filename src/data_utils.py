@@ -8,6 +8,8 @@ import pandas as pd
 import yfinance as yf
 import time
 from datetime import date, timedelta
+
+# Assuming logger is imported if used
 from . import logger
 
 def get_demo_data() -> pd.DataFrame:
@@ -134,44 +136,86 @@ def map_ticker(ticker_input: str) -> str:
 #         return None
 
 def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_date: str = None, end_date: str = None) -> pd.DataFrame | None:
-    """Downloads data from Yahoo Finance with progress bar and error handling."""
-    print(f"[Info] Attempting to fetch data for ticker: {ticker} | interval: {interval}")
+    """Downloads data from Yahoo Finance, handles MultiIndex columns, and validates."""
+    logger.print_info(f"Attempting to fetch data for ticker: {ticker} | interval: {interval}")
     try:
-        # Use yfinance's built-in progress bar (based on tqdm)
         df = yf.download(
-            tickers=ticker,
+            tickers=ticker, # Single ticker string
             period=period,
             interval=interval,
             start=start_date,
             end=end_date,
             progress=True,
             auto_adjust=False,
-            actions=False
+            actions=False,
+            # group_by='ticker' # Often forces MultiIndex, good practice for consistency
         )
-        if df.empty:
-            logger.print_warning(f"[Warning] No data returned for ticker '{ticker}' with specified parameters.")
+
+        if df is None or df.empty:
+            logger.print_warning(f"No data returned for ticker '{ticker}' with specified parameters.")
             return None
 
-        # Check for required columns
+        # --- Handle Potential MultiIndex Columns ---
+        # Check if columns are MultiIndex (returned when downloading single ticker sometimes)
+        if isinstance(df.columns, pd.MultiIndex):
+            logger.print_debug("Detected MultiIndex columns. Simplifying by dropping ticker level...")
+            # Assuming the structure is (ValueType, Ticker) like ('Open', 'GOOG')
+            # Drop the second level (Ticker) to get simple column names ('Open', 'High', ...)
+            # Check number of levels first to be safe
+            if df.columns.nlevels > 1:
+                 original_cols = df.columns # Keep original for potential debug messages
+                 try:
+                     df.columns = df.columns.droplevel(1) # Drop the ticker level (level 1)
+                     logger.print_debug(f"Simplified columns: {df.columns.tolist()}")
+                 except Exception as multi_index_error:
+                     logger.print_error(f"Failed to simplify MultiIndex columns: {multi_index_error}")
+                     logger.print_error(f"Original MultiIndex columns were: {original_cols}")
+                     return None # Cannot proceed if columns aren't simplified
+            else:
+                 # Handle cases where it's MultiIndex but only one level? Unlikely but possible.
+                 logger.print_warning("MultiIndex detected but only one level found. Attempting basic flatten.")
+                 try:
+                    df.columns = ['_'.join(map(str, col)).strip() for col in df.columns.values]
+                 except Exception as flatten_error:
+                    logger.print_error(f"Failed to flatten unusual MultiIndex: {flatten_error}")
+                    return None
+
+        # --- Validate Columns and Data (using potentially simplified column names) ---
         required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
-        if not all(col in df.columns for col in required_cols):
-             logger.print_warning(f"[Warning] Downloaded data for '{ticker}' is missing required columns (needs Open, High, Low, Close, Volume). Available: {df.columns.tolist()}")
-             return None
+        missing_cols = [col for col in required_cols if col not in df.columns]
+        if missing_cols:
+            logger.print_warning(f"Downloaded data for '{ticker}' is missing required columns: {missing_cols}. Available columns after potential simplification: {df.columns.tolist()}")
+            return None # Return None if essential columns are missing
 
-        # Drop rows where all essential price columns are NaN
-        df.dropna(subset=['Open', 'High', 'Low', 'Close'], how='all', inplace=True)
-        if df.empty:
-            logger.print_warning(f"[Warning] Data for '{ticker}' became empty after removing NaN rows.")
+        # --- Drop Rows with NaNs in essential price columns ---
+        # Now this should work because columns are simple strings
+        initial_rows = len(df)
+        try:
+            # Use standard OHLC column names here
+            df.dropna(subset=['Open', 'High', 'Low', 'Close'], how='all', inplace=True)
+        except KeyError as ke:
+            # This shouldn't happen if the check above passed, but as a safeguard
+            logger.print_error(f"KeyError during dropna, columns might not be simplified correctly: {ke}")
+            logger.print_error(f"Columns at time of dropna: {df.columns.tolist()}")
             return None
-        logger.print_success(f"[Info] Successfully fetched {len(df)} rows.")
+
+        rows_dropped = initial_rows - len(df)
+        if rows_dropped > 0:
+             logger.print_debug(f"Dropped {rows_dropped} rows with NaNs in OHLC columns.")
+
+        if df.empty:
+            logger.print_warning(f"Data for '{ticker}' became empty after removing NaN rows.")
+            return None
+
+        logger.print_success(f"Successfully fetched and validated {len(df)} rows.")
         return df
 
     except Exception as e:
-        logger.print_error(f"\n--- ERROR DOWNLOADING ---")
-        logger.print_error(f"An error occurred during yfinance download for ticker '{ticker}': {e}")
-        if "No data found" in str(e):
-             logger.print_warning("Hint: Check if the ticker symbol is correct and data exists for the requested period/interval.")
-        elif "invalid interval" in str(e):
-             logger.print_warning("Hint: Check if the interval format is valid for the requested period (e.g., minute data often has limited history).")
-        print(f"--- END ERROR DOWNLOADING ---")
+        # General exception handler
+        logger.print_error(f"\n--- ERROR DOWNLOADING/PROCESSING ---")
+        logger.print_error(f"An unexpected error occurred for ticker '{ticker}': {type(e).__name__}: {e}")
+        import traceback
+        # Print traceback with error color
+        print(f"{logger.ERROR_COLOR}Traceback:\n{traceback.format_exc()}{logger.RESET_ALL}")
+        logger.print_error(f"--- END ERROR ---")
         return None
