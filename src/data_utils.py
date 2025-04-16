@@ -8,7 +8,6 @@ import pandas as pd
 import yfinance as yf
 import time
 from datetime import date, timedelta
-import sys # For exit
 
 def get_demo_data() -> pd.DataFrame:
     """Returns the demonstration DataFrame."""
@@ -36,6 +35,7 @@ def get_demo_data() -> pd.DataFrame:
     start_date_idx = date.today() - timedelta(days=len(data['Open'])-1)
     index = pd.date_range(start=start_date_idx, periods=len(data['Open']), freq='D')
     df = pd.DataFrame(data, index=index)
+
     # Rename columns for mplfinance compatibility
     df.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
     return df
@@ -43,6 +43,7 @@ def get_demo_data() -> pd.DataFrame:
 def map_interval(tf_input: str) -> str:
     """Maps user-friendly timeframe input to yfinance interval string."""
     tf_input_upper = tf_input.upper()
+
     # Mapping from user input (like M1, D1) to yfinance interval (like 1m, 1d)
     mapping = {
         "M1": "1m", "M5": "5m", "M15": "15m", "M30": "30m",
@@ -65,12 +66,14 @@ def map_interval(tf_input: str) -> str:
 def map_ticker(ticker_input: str) -> str:
     """Optional: Adds standard suffixes for common yfinance ticker patterns."""
     ticker = ticker_input.upper()
+
     # Example: Add '=X' for 6-char currency pairs without a suffix
     if len(ticker) == 6 and '=' not in ticker and '-' not in ticker:
          is_likely_forex = all(c.isalpha() for c in ticker)
          if is_likely_forex:
              print(f"[Info] Assuming '{ticker}' is Forex, appending '=X'. -> '{ticker}=X'")
              return f"{ticker}=X"
+
     # Return the ticker as is if no rules matched
     return ticker
 
@@ -92,11 +95,13 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
         if df.empty:
             print(f"[Warning] No data returned for ticker '{ticker}' with specified parameters.")
             return None
+
         # Check for required columns
         required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
         if not all(col in df.columns for col in required_cols):
              print(f"[Warning] Downloaded data for '{ticker}' is missing required columns (needs Open, High, Low, Close, Volume). Available: {df.columns.tolist()}")
              return None
+
         # Drop rows where all essential price columns are NaN
         df.dropna(subset=['Open', 'High', 'Low', 'Close'], how='all', inplace=True)
         if df.empty:
@@ -104,6 +109,7 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
             return None
         print(f"[Info] Successfully fetched {len(df)} rows.")
         return df
+
     except Exception as e:
         print(f"\n--- ERROR DOWNLOADING ---")
         print(f"An error occurred during yfinance download for ticker '{ticker}': {e}")
