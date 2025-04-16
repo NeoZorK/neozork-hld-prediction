@@ -75,8 +75,8 @@ def main():
             end_arg = date.today().strftime('%Y-%m-%d')
             print(f"[Info] End date not specified, using today: {end_arg}")
         elif args.end and not args.start:
-            print("[Error] Start date (--start) must be specified if end date (--end) is used.")
-            sys.exit(1)
+            start_arg = "2000-01-01"  # Default start date
+            print(f"[Info] Start date not specified, using default: {start_arg}")
 
         # Determine effective period/dates for download
         if start_arg and end_arg:
@@ -95,10 +95,10 @@ def main():
             start_date=current_start,
             end_date=current_end
         )
-
+        # Check if data was fetched successfully
         if ohlcv_df is None or ohlcv_df.empty:
-            print("[Error] Could not fetch valid data from Yahoo Finance. Exiting.")
-            sys.exit(1)
+            print("[Warning] DataFrame is empty. Skipping indicator calculation and plotting.")
+            ohlcv_df = None  # Reset to None to avoid further processing
 
         # --- Point Size Determination/Override ---
         if args.point is not None:
