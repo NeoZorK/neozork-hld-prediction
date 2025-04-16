@@ -43,16 +43,6 @@ def parse_arguments():
     rule_choices = list(TradingRule.__members__.keys())
     indicator_group.add_argument('--rule', default=TradingRule.PV_HighLow.name, choices=rule_choices,
                                  help="Trading rule to apply.")
-    indicator_group.add_argument('--core_back', type=int, default=5,
-                                 help="Period for CORE1 calculation.")
-    indicator_group.add_argument('--strength_back', type=int, default=3,
-                                 help="Period for LWMA calculation.")
-    indicator_group.add_argument('--limit', type=int, default=1000,
-                                 help="Limit for Tick_Volume_Limit rule.")
-    indicator_group.add_argument('--pv_tp_multy', type=int, default=10,
-                                 help="Multiplier for PV TakeProfit rules.")
-    indicator_group.add_argument('--reverse', action='store_true', default=False,
-                                 help="Reverse the final signals.")
 
     # --- Version ---
     parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
