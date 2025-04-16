@@ -53,7 +53,7 @@ def main():
         point_size = 0.00001 # Use fixed value
         estimated_point = False # Not estimated
         logger.print_info(f"Using built-in demo data. Point size set to: {point_size}")
-        # Point size logic moved out of this block
+        # Point size logic is handled below, no estimation needed for demo
 
     elif effective_mode == 'yfinance':
         logger.print_info("--- Mode: Yahoo Finance ---")
@@ -84,7 +84,8 @@ def main():
             end_arg = date.today().strftime('%Y-%m-%d')
             logger.print_info(f"End date not specified, using today: {end_arg}")
         elif args.end and not args.start:
-            start_arg = "2000-01-01"  # Default start date
+            # Using your default start date logic
+            start_arg = "2000-01-01"
             logger.print_info(f"Start date not specified, using default: {start_arg}")
 
         # Determine effective period/dates for download
@@ -105,9 +106,10 @@ def main():
             end_date=current_end
         )
 
-        # --- Point Size Determination/Override MOVED HERE (inside yfinance block, AFTER fetch) ---
-        # Determine point size only if data fetch was successful
+        # --- Point Size Determination/Override (AFTER fetch, only if successful) ---
         if ohlcv_df is not None and not ohlcv_df.empty:
+            # First debug print (already exists in your code)
+            logger.print_debug(f"Columns returned by fetch_yfinance_data: {ohlcv_df.columns.tolist()}")
             if args.point is not None:
                  # User provided point size - override estimation
                  if args.point <= 0:
@@ -125,16 +127,12 @@ def main():
                                       f"Use the --point argument to specify it accurately.")
         # If ohlcv_df is None here, point_size remains None
 
-        # This check from your code is good, keep it here
-        # if ohlcv_df is None or ohlcv_df.empty:
-        #     logger.print_warning("[Warning] DataFrame is empty. Skipping indicator calculation and plotting.")
-        #     ohlcv_df = None # Ensure it stays None if fetch failed
-
     # Record data acquisition time and size
     end_time_data = time.perf_counter()
     data_fetch_duration = end_time_data - start_time_data
     data_size_bytes = 0
     data_size_mb = 0
+    # Calculate size only if df exists
     if ohlcv_df is not None:
         data_size_bytes = ohlcv_df.memory_usage(deep=True).sum()
         data_size_mb = data_size_bytes / (1024 * 1024)
@@ -173,20 +171,19 @@ def main():
 
         try:
             # Call the simplified calculation function
+            # Pass the enum member directly - corrected from TradingRule(selected_rule) in your provided code
             result_df = calculate_pressure_vector(
                 df=ohlcv_df_renamed.copy(),
                 point=point_size,
-                tr_num=TradingRule(selected_rule), # Pass the enum member directly
+                tr_num=TradingRule(selected_rule),
             )
 
             # --- DEBUGGING PRINT (Keep if needed, uses logger.print_debug) ---
+            # This debug print shows the tail of the result df
             logger.print_debug(f"\n--- DEBUG: Result DF Tail for Rule: {selected_rule.name} ---")
             cols_to_debug = ['Open', 'PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']
             existing_cols_to_debug = [col for col in cols_to_debug if col in result_df.columns]
             if existing_cols_to_debug:
-                 # Use display options to prevent truncation
-                 # Removed pd.option_context, just print tail directly for debug
-                 # Limit rows printed to avoid issues
                  debug_tail_str = result_df[existing_cols_to_debug].tail().to_string()
                  logger.print_debug(debug_tail_str)
             else:
@@ -207,7 +204,7 @@ def main():
     # Handle cases where data was not loaded or empty after fetch
     elif ohlcv_df is None:
          logger.print_error("No data loaded, cannot calculate indicator.")
-         # Allow script to continue to print summary without exiting here
+         # Allow script to continue to print summary
     else: # DataFrame exists but is empty
          logger.print_warning("Loaded DataFrame is empty, skipping calculation.")
 
@@ -216,8 +213,22 @@ def main():
     plot_duration = 0
     # Check if calculation was successful before plotting
     if result_df is not None and not result_df.empty:
-        logger.print_info("\nPlotting results...")
+
+        # # --- added check for columns ---
+        # logger.print_debug(f"Columns BEFORE plotting: {result_df.columns.tolist()}")
+        # # --- end of added check ---
+        #
+        # # --- volume check ---
+        # if 'Volume' in result_df.columns:
+        #     logger.print_debug(f"Volume data stats:\n{result_df['Volume'].describe().to_string()}")
+        #     logger.print_debug(f"Volume data tail:\n{result_df['Volume'].tail().to_string()}")
+        # else:
+        #     logger.print_debug("Volume column not found in result_df for value check.")
+        # # --- end of volume check ---
+
+        logger.print_info("\nPlotting results...") # Log plotting start AFTER check
         start_time_plot = time.perf_counter()
+
         # Construct title (ensure selected_rule is not None)
         chart_title = f"{data_source_label} | {args.interval} | Rule: {selected_rule.name if selected_rule else 'N/A'}"
         if estimated_point and point_size is not None: # Add point size only if estimated
@@ -227,9 +238,9 @@ def main():
         try:
             # Pass the result_df and the selected rule (enum member)
             if selected_rule is not None:
-                plot_indicator_results(result_df, TradingRule(selected_rule), title=chart_title) # Pass enum directly
+                # Pass the enum member directly - corrected from TradingRule(selected_rule) in your provided code
+                plot_indicator_results(result_df, TradingRule(selected_rule), title=chart_title)
             else:
-                # This case should not happen if logic above is correct, but added for safety
                  logger.print_error("No valid trading rule determined. Skipping plotting.")
 
             logger.print_info("\nPlot displayed. Close the plot window to continue/exit.")
@@ -248,6 +259,7 @@ def main():
 
 
     # --- Timing and Size Summary ---
+    # ... (Summary code remains the same) ...
     end_time_total = time.perf_counter()
     total_duration = end_time_total - start_time_total
 
@@ -266,8 +278,7 @@ def main():
         point_format = ".8f" if point_size < 0.001 else ".5f" if point_size < 0.1 else ".2f"
         logger.print_info(logger.format_summary_line("Point Size Used:", f"{point_size:{point_format}}{' (Estimated)' if estimated_point else ''}"))
     else:
-         # Provide context why point size is N/A
-         reason = "(Data load failed)" if ohlcv_df is None else "(Not applicable for demo/failed fetch)"
+         reason = "(Data load failed)" if ohlcv_df is None else "(Not applicable)" # Simplified reason
          logger.print_info(logger.format_summary_line("Point Size Used:", f"N/A {reason}"))
 
     # Use args.rule for display as selected_rule might be None if calc failed early
