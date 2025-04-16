@@ -10,6 +10,7 @@ Each function updates the DataFrame with rule-specific outputs
 import pandas as pd
 import numpy as np
 from .constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
+from . import  logger
 
 # Helper to safely get series or default
 def _get_series(df, col_name, default_val=0):
@@ -84,7 +85,7 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule, point: float) -> pd.
         pd.DataFrame: DataFrame with added/updated rule-specific columns.
     """
     if rule not in RULE_DISPATCHER:
-        print(f"Warning: TradingRule '{rule.name}' not recognized. Applying default (Support_Resistants).")
+        logger.print_warning(f"Warning: TradingRule '{rule.name}' not recognized. Applying default (Support_Resistants).")
         rule_func = RULE_DISPATCHER[TradingRule.Support_Resistants]
         # Pass only relevant args for the default
         return rule_func(df, point=point)

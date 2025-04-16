@@ -8,6 +8,7 @@ import pandas as pd
 import yfinance as yf
 import time
 from datetime import date, timedelta
+from . import logger
 
 def get_demo_data() -> pd.DataFrame:
     """Returns the demonstration DataFrame."""
@@ -71,7 +72,7 @@ def map_ticker(ticker_input: str) -> str:
     if len(ticker) == 6 and '=' not in ticker and '-' not in ticker:
          is_likely_forex = all(c.isalpha() for c in ticker)
          if is_likely_forex:
-             print(f"[Info] Assuming '{ticker}' is Forex, appending '=X'. -> '{ticker}=X'")
+             logger.print_info(f"[Info] Assuming '{ticker}' is Forex, appending '=X'. -> '{ticker}=X'")
              return f"{ticker}=X"
 
     # Return the ticker as is if no rules matched
@@ -93,29 +94,29 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
             actions=False
         )
         if df.empty:
-            print(f"[Warning] No data returned for ticker '{ticker}' with specified parameters.")
+            logger.print_warning(f"[Warning] No data returned for ticker '{ticker}' with specified parameters.")
             return None
 
         # Check for required columns
         required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
         if not all(col in df.columns for col in required_cols):
-             print(f"[Warning] Downloaded data for '{ticker}' is missing required columns (needs Open, High, Low, Close, Volume). Available: {df.columns.tolist()}")
+             logger.print_warning(f"[Warning] Downloaded data for '{ticker}' is missing required columns (needs Open, High, Low, Close, Volume). Available: {df.columns.tolist()}")
              return None
 
         # Drop rows where all essential price columns are NaN
         df.dropna(subset=['Open', 'High', 'Low', 'Close'], how='all', inplace=True)
         if df.empty:
-            print(f"[Warning] Data for '{ticker}' became empty after removing NaN rows.")
+            logger.print_warning(f"[Warning] Data for '{ticker}' became empty after removing NaN rows.")
             return None
-        print(f"[Info] Successfully fetched {len(df)} rows.")
+        logger.print_success(f"[Info] Successfully fetched {len(df)} rows.")
         return df
 
     except Exception as e:
-        print(f"\n--- ERROR DOWNLOADING ---")
-        print(f"An error occurred during yfinance download for ticker '{ticker}': {e}")
+        logger.print_error(f"\n--- ERROR DOWNLOADING ---")
+        logger.print_error(f"An error occurred during yfinance download for ticker '{ticker}': {e}")
         if "No data found" in str(e):
-             print("Hint: Check if the ticker symbol is correct and data exists for the requested period/interval.")
+             logger.print_warning("Hint: Check if the ticker symbol is correct and data exists for the requested period/interval.")
         elif "invalid interval" in str(e):
-             print("Hint: Check if the interval format is valid for the requested period (e.g., minute data often has limited history).")
+             logger.print_warning("Hint: Check if the interval format is valid for the requested period (e.g., minute data often has limited history).")
         print(f"--- END ERROR DOWNLOADING ---")
         return None

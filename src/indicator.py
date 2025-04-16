@@ -8,6 +8,7 @@ Orchestrates calls to core calculations and rule-specific logic.
 
 import pandas as pd
 import numpy as np
+from . import logger
 
 # Import from other modules within the src package
 from .constants import TradingRule, EMPTY_VALUE
@@ -40,7 +41,7 @@ def calculate_pressure_vector(
     """
     # --- Input Validation ---
     if not isinstance(df.index, pd.DatetimeIndex):
-        print("Warning: DataFrame index is not a DatetimeIndex. Plotting might be affected.")
+        logger.print_warning("Warning: DataFrame index is not a DatetimeIndex. Plotting might be affected.")
     required_cols = ['Open', 'High', 'Low', 'Close', 'TickVolume']
     if not all(col in df.columns for col in required_cols):
         raise ValueError(f"Input DataFrame must contain columns: {required_cols}")

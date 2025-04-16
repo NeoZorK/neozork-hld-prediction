@@ -9,6 +9,7 @@ import pandas as pd
 import mplfinance as mpf
 import numpy as np
 from .constants import TradingRule, BUY, SELL # Import constants
+from . import logger
 
 def plot_indicator_results(df_results: pd.DataFrame, rule: TradingRule, title: str = "Indicator Results"):
     """
@@ -120,5 +121,5 @@ def plot_indicator_results(df_results: pd.DataFrame, rule: TradingRule, title: s
                  warn_too_much_data=10000 # Adjust threshold if needed
                  )
     except Exception as e:
-        print(f"Error during plotting: {e}")
-        print("Ensure your DataFrame has sufficient data and correct columns.")
+        logger.print_error(f"Error during plotting: {e}")
+        logger.print_warning("Ensure your DataFrame has sufficient data and correct columns.")
