@@ -6,15 +6,16 @@ All comments are in English.
 """
 import pandas as pd
 import numpy as np
+from . import logger
 
 def determine_point_size(ticker: str, df: pd.DataFrame) -> float:
     """Estimates the instrument's point size based on ticker and price data."""
-    print("[Info] Estimating point size...")
+    logger.print_info("[Info] Estimating point size...")
     ticker_upper = ticker.upper()
 
     # 1. Forex Heuristic (ticker ends with =X)
     if ticker_upper.endswith("=X"):
-        print("[Info] Ticker ends with '=X', assuming Forex point size: 0.00001")
+        logger.print_info("[Info] Ticker ends with '=X', assuming Forex point size: 0.00001")
         return 0.00001
 
     # 2. Calculate minimum non-zero High-Low difference
@@ -28,11 +29,11 @@ def determine_point_size(ticker: str, df: pd.DataFrame) -> float:
             # Replace 0 with NaN before finding the minimum non-zero difference
             min_hl_diff = hl_diff.replace(0, np.nan).min()
         else:
-             print("[Warning] Could not calculate H-L difference due to non-numeric data.")
+             logger.print_warning("[Warning] Could not calculate H-L difference due to non-numeric data.")
 
 
     if pd.notna(min_hl_diff) and min_hl_diff > 1e-12: # Check > 0 with tolerance
-        print(f"[Debug] Minimum non-zero H-L difference: {min_hl_diff:.8f}")
+        logger.print_debug(f"[Debug] Minimum non-zero H-L difference: {min_hl_diff:.8f}")
         # 3. Estimate based on order of magnitude of min H-L difference
         log_diff = np.log10(min_hl_diff)
         # Estimate point size as 10^(floor(log10(min_diff)) - 1), ensuring reasonable bounds
@@ -44,16 +45,16 @@ def determine_point_size(ticker: str, df: pd.DataFrame) -> float:
         if log_diff < -2.5: # Likely Forex or similar high precision (e.g., < 0.003)
             estimated_point = 10**(np.floor(log_diff) - 1)
             estimated_point = max(0.000001, estimated_point) # Ensure minimum
-            print(f"[Info] Low H-L diff suggests high precision, estimating point size: {estimated_point:.8f}")
+            logger.print_info(f"[Info] Low H-L diff suggests high precision, estimating point size: {estimated_point:.8f}")
             # Refine for common 5-decimal Forex
             if -6 < log_diff < -3.5: estimated_point=0.00001
 
         elif log_diff < -0.5: # Likely stocks, indices, crypto (e.g., < 0.3)
             estimated_point = 0.01
-            print(f"[Info] Moderate H-L diff suggests stock/index/crypto precision, estimating point size: {estimated_point:.2f}")
+            logger.print_info(f"[Info] Moderate H-L diff suggests stock/index/crypto precision, estimating point size: {estimated_point:.2f}")
         else: # Larger differences
              estimated_point = 0.1 if log_diff < 1.5 else 1.0
-             print(f"[Info] Large H-L diff, estimating point size: {estimated_point:.1f}")
+             logger.print_info(f"[Info] Large H-L diff, estimating point size: {estimated_point:.1f}")
 
         # Safety check for extremely small values
         return max(estimated_point, 1e-8)
