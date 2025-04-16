@@ -4,8 +4,10 @@
 import sys
 import time
 from datetime import date
+import pandas as pd
 
 # Imports from the src package
+from src import __version__ # Import version for display
 from src.cli import parse_arguments # Import argument parsing function
 from src.data_utils import get_demo_data, map_interval, map_ticker, fetch_yfinance_data # Import data functions
 from src.utils import determine_point_size # Import point size estimation
@@ -16,6 +18,10 @@ from src.plotting import plot_indicator_results
 # --- Main Execution Function ---
 def main():
     """Main function to run the analysis."""
+
+    # Print version information
+    print(f"Shcherbyna Pressure Vector Indicator - Version: {__version__}")
+
     # Start overall timer
     start_time_total = time.perf_counter()
 
@@ -150,10 +156,30 @@ def main():
         ohlcv_df_renamed = ohlcv_df.rename(columns={'Volume': 'TickVolume'}, errors='ignore')
 
         try:
+            # Existing calculation call
             result_df = calculate_pressure_vector(
-                df=ohlcv_df_renamed.copy(), # Pass copy
+                df=ohlcv_df_renamed.copy(),  # Pass copy
                 point=point_size,
+                tr_num=TradingRule(selected_rule),
             )
+
+            # --- DEBUGGING PRINT ---
+            # Print the last 5 rows of key differentiating columns BEFORE plotting
+            print(f"\n--- DEBUG: Result DF Tail for Rule: {selected_rule.name} ---")
+            cols_to_debug = ['Open', 'PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']
+            # Filter columns that actually exist in the result_df
+            existing_cols_to_debug = [col for col in cols_to_debug if col in result_df.columns]
+            if existing_cols_to_debug:
+                # Use display options to prevent truncation
+                with pd.option_context('display.max_rows', None,
+                                       'display.max_columns', None,
+                                       'display.width', 1000):
+                    print(result_df[existing_cols_to_debug].tail())
+            else:
+                print("No differentiating columns found to print.")
+            print(f"--- END DEBUG ---")
+            # --- END DEBUGGING PRINT ---
+
         except Exception as e:
              print(f"An error occurred during indicator calculation:",e)
              sys.exit(1)
