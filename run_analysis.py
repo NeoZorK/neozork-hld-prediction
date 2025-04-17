@@ -299,11 +299,8 @@ def main():
 
 
     # --- Timing and Size Summary ---
-    # ... (Summary code remains the same) ...
     end_time_total = time.perf_counter()
     total_duration = end_time_total - start_time_total
-
-    # Print summary using logger and formatting function
 
 
     # Print summary using logger and formatting function
