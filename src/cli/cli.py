@@ -45,7 +45,8 @@ def parse_arguments():
     # Use RichHelpFormatter for colored and formatted help output
     parser = argparse.ArgumentParser(
         description="Calculate and plot Shcherbyna Pressure Vector indicator using demo data or fetching from Yahoo Finance.",
-        formatter_class=argparse.RawDescriptionHelpFormatter, epilog=examples # <--- USE RICH FORMATTER
+        formatter_class=RichHelpFormatter,
+        epilog=examples # <--- USE RICH FORMATTER
     )
 
     # --- Arguments ---
