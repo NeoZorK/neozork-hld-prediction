@@ -7,7 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix everything">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="added 14 unit tests">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -162,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00014" summary="disable core and lwma plot">
-      <option name="closed" value="true" />
-      <created>1744640495709</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1744640495709</updated>
     </task>
     <task id="LOCAL-00015" summary="add commands and yfinance">
       <option name="closed" value="true" />
@@ -555,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744899677811</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="added 14 unit tests">
+      <option name="closed" value="true" />
+      <created>1744901628922</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1744901628922</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix import" />
     <MESSAGE value="fix e" />
     <MESSAGE value="fix error with start date" />
     <MESSAGE value="fix trading rule type conversion" />
@@ -607,6 +606,7 @@
     <MESSAGE value="refactor module structure with ne subfolders" />
     <MESSAGE value="refactor module structure with ne subfolders 2" />
     <MESSAGE value="fix everything" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix everything" />
+    <MESSAGE value="added 14 unit tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="added 14 unit tests" />
   </component>
 </project>
