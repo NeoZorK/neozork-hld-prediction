@@ -3,6 +3,7 @@
 import unittest
 import pandas as pd
 import numpy as np
+from unittest.mock import patch
 
 # Import functions and constants to test/use
 from src.calculation.rules import (
@@ -12,7 +13,7 @@ from src.calculation.rules import (
     apply_rule_pressure_vector,
     apply_trading_rule # Dispatcher
 )
-from src.common.constants import TradingRule, BUY, SELL, NOTRADE, EMPTY_VALUE
+from src.common.constants import TradingRule, BUY, SELL, NOTRADE #, EMPTY_VALUE
 
 # Unit tests for rule application functions
 class TestRules(unittest.TestCase):

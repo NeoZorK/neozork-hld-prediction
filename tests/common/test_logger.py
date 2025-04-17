@@ -1,9 +1,9 @@
 # tests/common/test_logger.py
 
 import unittest
-from unittest.mock import patch, call
+from unittest.mock import patch #, call
 import io # For capturing print output
-from colorama import Fore, Style
+from colorama import Style #, Fore
 
 # Import functions from the module to be tested
 # Adjust the import path based on your test runner's root directory

@@ -1,7 +1,7 @@
 # tests/plotting/test_plotting_generation.py
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch #, MagicMock
 import argparse
 import pandas as pd
 
@@ -39,7 +39,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
     # Test successful plot generation
     @patch('src.plotting.plotting_generation.logger', new_callable=MockLogger)
     @patch('src.plotting.plotting_generation.plot_indicator_results') # Mock the actual plotting function
-    def test_generate_plot_success(self, mock_plot_indicator_results, mock_logger):
+    def test_generate_plot_success(self, mock_plot_indicator_results, _):
         generate_plot(self.args, self.data_info, self.result_df, self.selected_rule, self.point_size, self.estimated_point)
 
         # Check if the core plotting function was called
@@ -56,7 +56,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
     # Test plot generation with estimated point size (title should reflect it)
     @patch('src.plotting.plotting_generation.logger', new_callable=MockLogger)
     @patch('src.plotting.plotting_generation.plot_indicator_results')
-    def test_generate_plot_estimated_point(self, mock_plot_indicator_results, mock_logger):
+    def test_generate_plot_estimated_point(self, mock_plot_indicator_results, _):
         estimated_point = True
         point_size_small = 0.00001 # Should use .8f format
         generate_plot(self.args, self.data_info, self.result_df, self.selected_rule, point_size_small, estimated_point)
@@ -78,43 +78,43 @@ class TestPlottingGenerationStep(unittest.TestCase):
     # Test skipping plot when result_df is None
     @patch('src.plotting.plotting_generation.logger') # Use MagicMock logger
     @patch('src.plotting.plotting_generation.plot_indicator_results')
-    def test_generate_plot_skip_none_df(self, mock_plot_indicator_results, mock_logger_instance):
+    def test_generate_plot_skip_none_df(self, mock_plot_indicator_results, __instance):
         generate_plot(self.args, self.data_info, None, self.selected_rule, self.point_size, self.estimated_point)
 
         # Check plotting function was NOT called
         mock_plot_indicator_results.assert_not_called()
         # Check info message was logged
-        mock_logger_instance.print_info.assert_called_with("Skipping plotting as no valid calculation results are available.")
+        __instance.print_info.assert_called_with("Skipping plotting as no valid calculation results are available.")
 
     # Test skipping plot when result_df is empty
     @patch('src.plotting.plotting_generation.logger')
     @patch('src.plotting.plotting_generation.plot_indicator_results')
-    def test_generate_plot_skip_empty_df(self, mock_plot_indicator_results, mock_logger_instance):
+    def test_generate_plot_skip_empty_df(self, mock_plot_indicator_results, __instance):
         empty_df = pd.DataFrame()
         generate_plot(self.args, self.data_info, empty_df, self.selected_rule, self.point_size, self.estimated_point)
 
         # Check plotting function was NOT called
         mock_plot_indicator_results.assert_not_called()
         # Check info message was logged
-        mock_logger_instance.print_info.assert_called_with("Skipping plotting as no valid calculation results are available.")
+        __instance.print_info.assert_called_with("Skipping plotting as no valid calculation results are available.")
 
     # Test when selected_rule is None (should log warning and skip plotting)
     @patch('src.plotting.plotting_generation.logger')
     @patch('src.plotting.plotting_generation.plot_indicator_results')
-    def test_generate_plot_none_rule(self, mock_plot_indicator_results, mock_logger_instance):
+    def test_generate_plot_none_rule(self, mock_plot_indicator_results, __instance):
         generate_plot(self.args, self.data_info, self.result_df, None, self.point_size, self.estimated_point)
 
         # Check plotting function was NOT called
         mock_plot_indicator_results.assert_not_called()
         # Check warning message was logged
-        mock_logger_instance.print_warning.assert_called_with("No valid rule selected, cannot generate plot accurately.")
+        __instance.print_warning.assert_called_with("No valid rule selected, cannot generate plot accurately.")
 
 
     # Test when core plotting function raises an exception
     @patch('src.plotting.plotting_generation.logger')
     @patch('src.plotting.plotting_generation.plot_indicator_results')
     @patch('traceback.format_exc') # Mock traceback printing
-    def test_generate_plot_exception_handling(self, mock_traceback, mock_plot_indicator_results, mock_logger_instance):
+    def test_generate_plot_exception_handling(self, mock_traceback, mock_plot_indicator_results, __instance):
         error_message = "Core plot failed"
         mock_plot_indicator_results.side_effect = Exception(error_message)
         mock_traceback.return_value = "Traceback details here" # Mock traceback output
@@ -126,8 +126,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
             self.fail(f"generate_plot raised an exception unexpectedly: {e}")
 
         # Check error was logged
-        mock_logger_instance.print_error.assert_called_once()
-        self.assertIn(f"An error occurred during plotting:{error_message}", mock_logger_instance.print_error.call_args[0][0])
+        __instance.print_error.assert_called_once()
+        self.assertIn(f"An error occurred during plotting:{error_message}", __instance.print_error.call_args[0][0])
         # Check traceback was printed (or attempted to be printed via format_exc)
         mock_traceback.assert_called_once()
 

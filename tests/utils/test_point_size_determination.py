@@ -1,7 +1,7 @@
 # tests/utils/test_point_size_determination.py
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch #, MagicMock
 import argparse
 import pandas as pd
 
@@ -26,7 +26,7 @@ class TestPointSizeDetermination(unittest.TestCase):
     # Patch the logger and the determine_point_size utility function
     @patch('src.utils.point_size_determination.logger', new_callable=MockLogger)
     @patch('src.utils.point_size_determination.determine_point_size')
-    def test_get_point_size_demo_mode(self, mock_determine_point_size, mock_logger):
+    def test_get_point_size_demo_mode(self, mock_determine_point_size, _):
         args = create_mock_args() # Point not provided
         # data_info for demo mode
         data_info = {
@@ -43,7 +43,7 @@ class TestPointSizeDetermination(unittest.TestCase):
 
     @patch('src.utils.point_size_determination.logger', new_callable=MockLogger)
     @patch('src.utils.point_size_determination.determine_point_size')
-    def test_get_point_size_yfinance_user_provided(self, mock_determine_point_size, mock_logger):
+    def test_get_point_size_yfinance_user_provided(self, mock_determine_point_size, _):
         user_point = 0.001
         args = create_mock_args(point=user_point) # User provides point
         data_info = {
@@ -60,7 +60,7 @@ class TestPointSizeDetermination(unittest.TestCase):
 
     @patch('src.utils.point_size_determination.logger', new_callable=MockLogger)
     @patch('src.utils.point_size_determination.determine_point_size')
-    def test_get_point_size_yfinance_estimated_success(self, mock_determine_point_size, mock_logger):
+    def test_get_point_size_yfinance_estimated_success(self, mock_determine_point_size, _):
         estimated_point_val = 0.01
         mock_determine_point_size.return_value = estimated_point_val # Simulate successful estimation
         args = create_mock_args() # Point not provided
@@ -78,7 +78,7 @@ class TestPointSizeDetermination(unittest.TestCase):
 
     @patch('src.utils.point_size_determination.logger', new_callable=MockLogger)
     @patch('src.utils.point_size_determination.determine_point_size')
-    def test_get_point_size_yfinance_estimated_fail(self, mock_determine_point_size, mock_logger):
+    def test_get_point_size_yfinance_estimated_fail(self, mock_determine_point_size, _):
         mock_determine_point_size.return_value = None # Simulate estimation failure
         args = create_mock_args() # Point not provided
         data_info = {
@@ -94,7 +94,7 @@ class TestPointSizeDetermination(unittest.TestCase):
         mock_determine_point_size.assert_called_once_with("UNKNOWN")
 
     @patch('src.utils.point_size_determination.logger', new_callable=MockLogger)
-    def test_get_point_size_yfinance_no_data(self, mock_logger):
+    def test_get_point_size_yfinance_no_data(self, _):
         args = create_mock_args() # Point not provided
         data_info = {
             "ohlcv_df": None, # No DataFrame provided
@@ -108,7 +108,7 @@ class TestPointSizeDetermination(unittest.TestCase):
         self.assertIn("Cannot determine point size without valid data", str(cm.exception))
 
     @patch('src.utils.point_size_determination.logger', new_callable=MockLogger)
-    def test_get_point_size_yfinance_empty_data(self, mock_logger):
+    def test_get_point_size_yfinance_empty_data(self, _):
         args = create_mock_args() # Point not provided
         data_info = {
             "ohlcv_df": pd.DataFrame(), # Empty DataFrame
@@ -122,7 +122,7 @@ class TestPointSizeDetermination(unittest.TestCase):
         self.assertIn("Cannot determine point size without valid data", str(cm.exception))
 
     @patch('src.utils.point_size_determination.logger', new_callable=MockLogger)
-    def test_get_point_size_yfinance_invalid_user_point(self, mock_logger):
+    def test_get_point_size_yfinance_invalid_user_point(self, _):
         args = create_mock_args(point=-0.001) # Invalid point provided
         data_info = {
             "ohlcv_df": pd.DataFrame({'Close': [100]}),
