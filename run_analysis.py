@@ -4,16 +4,13 @@
 import sys
 import time
 
-# Imports from the src package
-from src import __version__ # Import version for display
-# Import argument parsing function from the cli module
-from src.cli import parse_arguments
-# Import the main workflow orchestrator function
-from src.workflow import run_indicator_workflow
-# Import the summary printing function from the reporting module
-from src.reporting import print_summary
-# Import the logger utility
-from src import logger
+# Imports from the src package using new paths
+from src import __version__
+from src.cli.cli import parse_arguments
+from src.workflow.workflow import run_indicator_workflow
+from src.reporting.reporting import print_summary
+from src.common.logger import logger
+
 
 # --- Main Execution Function ---
 def main():

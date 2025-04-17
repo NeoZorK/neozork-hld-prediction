@@ -5,14 +5,10 @@ Command Line Interface setup using argparse and RichHelpFormatter for colored he
 Removed arguments related to LWMA, CORE1, etc.
 All comments are in English.
 """
-
 import argparse
-# Import RichHelpFormatter from rich_argparse
 try:
-    # Recommended import path
     from rich_argparse import RichHelpFormatter
 except ImportError:
-    # Fallback for older rich versions or different installation methods
     try:
         from rich.argparse import RichHelpFormatter
     except ImportError:
@@ -22,11 +18,9 @@ except ImportError:
         # Use the standard formatter as a fallback
         RichHelpFormatter = argparse.ArgumentDefaultsHelpFormatter
 
-
 # Use relative imports for constants and version within the src package
-# Import the updated TradingRule enum
-from .constants import TradingRule
-from . import __version__
+from ..common.constants import TradingRule
+from .. import __version__
 
 def parse_arguments():
     """Sets up argument parser using RichHelpFormatter and returns the parsed arguments."""

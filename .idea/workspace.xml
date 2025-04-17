@@ -7,23 +7,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="refactor module structure">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="refactor module structure with ne subfolders">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cli.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/constants.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core_calculations.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data_acquisition.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data_utils.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/indicator.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/indicator_calculation.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/logger.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plotting.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plotting_generation.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/point_size_determination.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reporting.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/rules.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/workflow.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/calculation/indicator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/indicator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/calculation/indicator_calculation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/indicator_calculation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/calculation/rules.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/rules.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cli/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/cli/cli.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plotting/plotting.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting/plotting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plotting/plotting_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting/plotting_generation.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,14 +172,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00011" summary="move run analysis">
-      <option name="closed" value="true" />
-      <created>1744638877895</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1744638877895</updated>
     </task>
     <task id="LOCAL-00012" summary="fix import version">
       <option name="closed" value="true" />
@@ -571,7 +557,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744896825071</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="refactor module structure with ne subfolders">
+      <option name="closed" value="true" />
+      <created>1744897671274</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1744897671274</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -598,7 +592,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add  cli" />
     <MESSAGE value="refactor run analysis" />
     <MESSAGE value="del core and no needed calculations" />
     <MESSAGE value="fix import" />
@@ -623,6 +616,7 @@
     <MESSAGE value="v0.1.1" />
     <MESSAGE value="clear comments" />
     <MESSAGE value="refactor module structure" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor module structure" />
+    <MESSAGE value="refactor module structure with ne subfolders" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor module structure with ne subfolders" />
   </component>
 </project>

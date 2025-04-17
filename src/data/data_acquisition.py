@@ -5,8 +5,9 @@ Workflow Step 1: Handles data acquisition based on mode (demo/yfinance).
 All comments are in English.
 """
 from datetime import date
+
 # Use relative imports within the src package
-from . import logger
+from ..common import logger
 from .data_utils import get_demo_data, map_interval, map_ticker, fetch_yfinance_data
 
 def acquire_data(args):

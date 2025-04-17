@@ -5,10 +5,10 @@ Workflow Step 3: Calculates the indicator.
 All comments are in English.
 """
 
-import pandas as pd # Keep pandas import if used within this module (e.g., for type hints or checks)
+import pandas as pd
 # Use relative imports within the src package
-from . import logger
-from .constants import TradingRule
+from ..common import logger
+from ..common.constants import TradingRule
 # Import the main calculation function from indicator module
 from .indicator import calculate_pressure_vector
 
