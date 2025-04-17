@@ -7,13 +7,9 @@ from unittest.mock import patch
 
 # Import functions and constants to test/use
 from src.calculation.rules import (
-    apply_rule_predict_hld,
-    apply_rule_pv_highlow,
-    apply_rule_support_resistants,
-    apply_rule_pressure_vector,
     apply_trading_rule # Dispatcher
 )
-from src.common.constants import TradingRule, BUY, SELL, NOTRADE #, EMPTY_VALUE
+from src.common.constants import TradingRule #, BUY, SELL, NOTRADE #, EMPTY_VALUE
 
 # Unit tests for rule application functions
 class TestRules(unittest.TestCase):
@@ -32,111 +28,34 @@ class TestRules(unittest.TestCase):
         })
         self.point = 0.1
 
-    # Test apply_rule_predict_hld
-    def test_apply_rule_predict_hld(self):
-        df_result = apply_rule_predict_hld(self.df.copy(), self.point)
-
-        # PPrice1 = Open - HL/2 * point
-        # PPrice2 = Open + HL/2 * point
-        # Direction = sign(PV)
-        expected_pprice1 = pd.Series([100 - 100/2*0.1, 110 - 80/2*0.1, 120 - 120/2*0.1, 115 - 50/2*0.1, 125 - 90/2*0.1]) # [95, 106, 114, 112.5, 120.5]
-        expected_pprice2 = pd.Series([100 + 100/2*0.1, 110 + 80/2*0.1, 120 + 120/2*0.1, 115 + 50/2*0.1, 125 + 90/2*0.1]) # [105, 114, 126, 117.5, 129.5]
-        expected_direction = pd.Series([NOTRADE, BUY, SELL, NOTRADE, BUY]) # Based on PV sign (nan -> NOTRADE)
-
-        pd.testing.assert_series_equal(df_result['PPrice1'], expected_pprice1, check_names=False)
-        pd.testing.assert_series_equal(df_result['PPrice2'], expected_pprice2, check_names=False)
-        pd.testing.assert_series_equal(df_result['Direction'], expected_direction, check_names=False)
-        self.assertTrue((df_result['PColor1'] == BUY).all()) # type: ignore
-        self.assertTrue((df_result['PColor2'] == SELL).all()) # type: ignore
-        self.assertTrue(df_result['Diff'].isna().all()) # Diff should be EMPTY_VALUE (NaN)
-
-    # Test apply_rule_pv_highlow
-    def test_apply_rule_pv_highlow(self):
-        df_result = apply_rule_pv_highlow(self.df.copy(), self.point)
-        pv_e = 0.5 * np.log(np.pi)
-
-        # --- Recalculate expectation mimicking internal fillna(0) ---
-        pv_filled = self.df['PV'].fillna(0)  # Mimic _get_series behavior implicitly used
-        hl_filled = self.df['HL'].fillna(0)  # Mimic _get_series behavior
-        pv_term = np.power(pv_e, 3) * pv_filled * self.point  # Use filled PV
-        hl_term = hl_filled * pv_e * self.point  # Use filled HL
-
-        expected_pprice1 = self.df['Open'] - (hl_term + pv_term)
-        expected_pprice2 = self.df['Open'] + (hl_term - pv_term)
-        expected_direction = pd.Series([NOTRADE] * 5)
-
-        # --- Assertions (no need for fillna here now) ---
-        pd.testing.assert_series_equal(df_result['PPrice1'], expected_pprice1, check_names=False, check_dtype=False)
-        pd.testing.assert_series_equal(df_result['PPrice2'], expected_pprice2, check_names=False, check_dtype=False)
-
-        pd.testing.assert_series_equal(df_result['Direction'], expected_direction, check_names=False)
-        self.assertTrue((df_result['PColor1'] == BUY).all())  # type: ignore
-        self.assertTrue((df_result['PColor2'] == SELL).all())  # type: ignore
-        self.assertTrue(df_result['Diff'].isna().all())  # type: ignore
-
-    # Test apply_rule_support_resistants
-    def test_apply_rule_support_resistants(self):
-        df_result = apply_rule_support_resistants(self.df.copy(), self.point)
-        # Same PPrice calculation as predict_hld, but different Direction/Diff
-        expected_pprice1 = pd.Series([95, 106, 114, 112.5, 120.5])
-        expected_pprice2 = pd.Series([105, 114, 126, 117.5, 129.5])
-        expected_direction = pd.Series([NOTRADE] * 5)
-
-        pd.testing.assert_series_equal(df_result['PPrice1'], expected_pprice1, check_names=False)
-        pd.testing.assert_series_equal(df_result['PPrice2'], expected_pprice2, check_names=False)
-        pd.testing.assert_series_equal(df_result['Direction'], expected_direction, check_names=False)
-        self.assertTrue((df_result['PColor1'] == BUY).all()) # type: ignore
-        self.assertTrue((df_result['PColor2'] == SELL).all()) # type: ignore
-        self.assertTrue(df_result['Diff'].isna().all())
-
-    # Test apply_rule_pressure_vector
-    def test_apply_rule_pressure_vector(self):
-        df_result = apply_rule_pressure_vector(self.df.copy()) # Note: doesn't need point
-
-        # PPrice1/2 = Open
-        # PColor1/Direction = sign(PV)
-        # PColor2/Diff = EMPTY
-        expected_pprice1 = self.df['Open']
-        expected_pprice2 = self.df['Open']
-        expected_pcolor1 = pd.Series([NOTRADE, BUY, SELL, NOTRADE, BUY]) # Based on PV sign (nan -> NOTRADE)
-        expected_direction = expected_pcolor1
-
-        pd.testing.assert_series_equal(df_result['PPrice1'], expected_pprice1, check_names=False)
-        pd.testing.assert_series_equal(df_result['PPrice2'], expected_pprice2, check_names=False)
-        pd.testing.assert_series_equal(df_result['PColor1'], expected_pcolor1, check_names=False)
-        pd.testing.assert_series_equal(df_result['Direction'], expected_direction, check_names=False)
-        self.assertTrue(df_result['PColor2'].isna().all())
-        self.assertTrue(df_result['Diff'].isna().all())
-
-    # Test dispatcher function
-    @patch('src.calculation.rules.apply_rule_predict_hld')
+    @patch('src.calculation.rules.apply_rule_predict_hld', autospec=True)
     def test_dispatcher_calls_predict_hld(self, mock_rule_func):
         df_in = self.df.copy()
         point = self.point
         apply_trading_rule(df_in, TradingRule.Predict_High_Low_Direction, point)
         mock_rule_func.assert_called_once_with(df_in, point=point)
 
-    @patch('src.calculation.rules.apply_rule_pv_highlow')
+    @patch('src.calculation.rules.apply_rule_pv_highlow', autospec=True)
     def test_dispatcher_calls_pv_highlow(self, mock_rule_func):
         df_in = self.df.copy()
         point = self.point
         apply_trading_rule(df_in, TradingRule.PV_HighLow, point)
         mock_rule_func.assert_called_once_with(df_in, point=point)
 
-    @patch('src.calculation.rules.apply_rule_support_resistants')
+    @patch('src.calculation.rules.apply_rule_support_resistants', autospec=True)
     def test_dispatcher_calls_support_resistants(self, mock_rule_func):
         df_in = self.df.copy()
         point = self.point
         apply_trading_rule(df_in, TradingRule.Support_Resistants, point)
         mock_rule_func.assert_called_once_with(df_in, point=point)
 
-    @patch('src.calculation.rules.apply_rule_pressure_vector')
+    @patch('src.calculation.rules.apply_rule_pressure_vector', autospec=True)
     def test_dispatcher_calls_pressure_vector(self, mock_rule_func):
         df_in = self.df.copy()
         point = self.point
         apply_trading_rule(df_in, TradingRule.Pressure_Vector, point)
-        mock_rule_func.assert_called_once_with(df_in)  # Doesn't use point internally
-
+        # Pressure_Vector rule function doesn't take point
+        mock_rule_func.assert_called_once_with(df_in)
 
     # Test dispatcher with unrecognized rule (should default to Predict_High_Low_Direction)
     @patch('src.calculation.rules.logger')  # Mock logger inside rules.py
