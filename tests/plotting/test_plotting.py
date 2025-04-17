@@ -142,6 +142,29 @@ class TestPlottingFunction(unittest.TestCase):
         # Mock make_addplot to avoid errors if data is unexpected, just count calls
         mock_make_addplot.return_value = {}
 
+        # Mock mpf.plot to avoid rendering errors
+        print("\n--- Debug test_plot_minimal_columns ---")
+        low_numeric = pd.to_numeric(minimal_df['Low'], errors='coerce')
+        high_numeric = pd.to_numeric(minimal_df['High'], errors='coerce')
+        buy_signals_y_pos = low_numeric.ffill().bfill() * 0.998
+        sell_signals_y_pos = high_numeric.ffill().bfill() * 1.002
+        direction_numeric = pd.to_numeric(minimal_df['Direction'], errors='coerce')
+        buy_markers_y = np.where(direction_numeric == BUY, buy_signals_y_pos, np.nan)
+        sell_markers_y = np.where(direction_numeric == SELL, sell_signals_y_pos, np.nan)
+        buy_markers_series = pd.Series(buy_markers_y, index=minimal_df.index)
+        sell_markers_series = pd.Series(sell_markers_y, index=minimal_df.index)
+        print("Direction:", minimal_df['Direction'].tolist())
+        print("direction_numeric == BUY:", (direction_numeric == BUY).tolist())
+        print("direction_numeric == SELL:", (direction_numeric == SELL).tolist())
+        print("buy_signals_y_pos:", buy_signals_y_pos.tolist())
+        print("sell_signals_y_pos:", sell_signals_y_pos.tolist())
+        print("buy_markers_series:\n", buy_markers_series)
+        print("sell_markers_series:\n", sell_markers_series)
+        print("buy_markers_series non-NA empty:", buy_markers_series.dropna().empty)
+        print("sell_markers_series non-NA empty:", sell_markers_series.dropna().empty)
+        print("--- End Debug ---")
+
+
         plot_indicator_results(minimal_df, rule, "Minimal Plot")
 
         # Check based on Direction data: [NOTRADE, BUY, SELL, NOTRADE, BUY]

@@ -165,9 +165,8 @@ class TestIndicatorCalculationStep(unittest.TestCase):
     # Test debug print tail is called for valid result
     @patch('src.calculation.indicator_calculation.logger')
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
-    def test_calculate_indicator_debug_print(self, mock_calc_pv_func, __instance, mock_logger_instance=None):
+    def test_calculate_indicator_debug_print(self, mock_calc_pv_func, mock_logger_module):
         args = create_mock_args()
-        # Need a result df with some expected debug columns
         mock_result_df = pd.DataFrame({
             'Open': [100, 110], 'PPrice1': [99, 109], 'PPrice2': [101, 111],
             'Direction': [1.0, 0.0], 'PColor1': [1.0, 1.0], 'PColor2': [2.0, 2.0]
@@ -176,22 +175,21 @@ class TestIndicatorCalculationStep(unittest.TestCase):
 
         calculate_indicator(args, self.ohlcv_df, self.point_size)
 
-        # Check if print_debug was called with the tail info title
-        debug_calls = mock_logger_instance.print_debug.call_args_list
+        # Access call list directly from the patched object's print_debug method
+        debug_calls = mock_logger_module.print_debug.call_args_list
+
         # Find the call with the title
         title_call_index = -1
         for i, call_obj in enumerate(debug_calls):
-            if "DEBUG: Result DF Tail" in str(call_obj):
+            # call_obj is a tuple like (('message',), {})
+            if len(call_obj[0]) > 0 and "DEBUG: Result DF Tail" in str(call_obj[0][0]):
                 title_call_index = i
                 break
 
         self.assertNotEqual(title_call_index, -1, "Debug title message not found")
         # Check if there was at least one debug call *after* the title call
         self.assertTrue(len(debug_calls) > title_call_index + 1, "No debug data logged after title")
-        # Optionally, check the content of the next call more loosely:
-        # next_call_str = str(debug_calls[title_call_index + 1])
-        # self.assertIn("Open", next_call_str) # Check if column names are present
-        # self.assertIn(str(mock_result_df['Open'].iloc[-1]), next_call_str) # Check last value
+
 
 # Allow running the tests directly
 if __name__ == '__main__':

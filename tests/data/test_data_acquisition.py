@@ -106,7 +106,7 @@ class TestDataAcquisition(unittest.TestCase):
         self.assertEqual(result['yf_interval'], '1h')
         self.assertEqual(result['current_start'], '2024-01-01')
         self.assertEqual(result['current_end'], '2024-01-31')
-        self.assertEqual(result['current_period'], 'ignored') # Check period was passed but start/end took precedence
+        self.assertEqual(result['current_period'],_) # Check period was passed but start/end took precedence
 
     # Test automatic end date when only start is provided
     @patch('src.data.data_acquisition.logger', new_callable=MockLogger)

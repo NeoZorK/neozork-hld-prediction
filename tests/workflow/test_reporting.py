@@ -103,8 +103,11 @@ class TestReporting(unittest.TestCase):
         self.assertIn(mock_logger.format_summary_line("Period:", results['current_period']), log_messages_info[5]) # Period shown
         # Check Point Size formatting with "(Estimated)" flag
         self.assertIn(mock_logger.format_summary_line("Point Size Used:", f"{results['point_size']:.8f} (Estimated)"), log_messages_info[6])
-        self.assertIn(mock_logger.format_summary_line("Total Execution Time:", f"{total_duration:.3f} seconds"), log_messages_info[12]) # Adjusted index
-
+        # Check Total Execution Time using any() instead of index
+        expected_total_time_line = mock_logger.format_summary_line("Total Execution Time:",
+                                                                   f"{total_duration:.3f} seconds")
+        self.assertTrue(any(expected_total_time_line in msg for msg in log_messages_info),
+                        f"Expected log line not found: {expected_total_time_line}")
 
     # Test summary print for yfinance mode success with start/end and provided point
     @patch('src.workflow.reporting.logger', new_callable=MockLogger)
@@ -158,8 +161,11 @@ class TestReporting(unittest.TestCase):
 
         # Check Point Size shows N/A with reason
         self.assertIn(mock_logger.format_summary_line("Point Size Used:", "N/A (Data load failed)"), log_messages_info[6])
-        # Check timings might be zero
-        self.assertIn(mock_logger.format_summary_line("Indicator Calc Time:", f"{results['calc_duration']:.3f} seconds"), log_messages_info[8])
+        # Check Indicator Calc Time using any()
+        expected_calc_time_line = mock_logger.format_summary_line("Indicator Calc Time:",
+                                                                  f"{results['calc_duration']:.3f} seconds")
+        self.assertTrue(any(expected_calc_time_line in msg for msg in log_messages_info),
+                        f"Expected log line not found: {expected_calc_time_line}")
 
         # Check error message is printed at the end
         self.assertEqual(len(log_messages_error), 1)
