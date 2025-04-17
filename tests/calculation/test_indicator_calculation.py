@@ -4,20 +4,13 @@ import unittest
 from unittest.mock import patch #, MagicMock, ANY
 import argparse
 import pandas as pd
+import io
 #import numpy as np
 
 # Import the function to test
 from src.calculation.indicator_calculation import calculate_indicator
 # Import dependencies to mock or use
 from src.common.constants import TradingRule
-
-# Dummy logger
-class MockLogger:
-    def print_info(self, msg): pass
-    def print_warning(self, msg): pass
-    def print_error(self, msg): pass
-    def print_debug(self, msg): pass
-
 
 # Create a dummy args namespace
 def create_mock_args(rule='PHLD'): # Default to an alias
@@ -38,7 +31,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         self.point_size = 0.1
 
     # Test successful calculation with a valid rule alias
-    @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
+    @patch('src.calculation.indicator_calculation.logger')
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
     def test_calculate_indicator_success_alias(self, mock_calc_pv_func, _):
         args = create_mock_args(rule='PHLD') # Use alias
@@ -66,7 +59,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
 
 
     # Test successful calculation with a direct enum name
-    @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
+    @patch('src.calculation.indicator_calculation.logger')
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
     def test_calculate_indicator_success_direct_name(self, mock_calc_pv_func, _):
         rule_name = 'PV_HighLow'
@@ -83,7 +76,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         self.assertEqual(mock_calc_pv_func.call_args[1]['tr_num'], expected_rule_enum)
 
     # Test with invalid rule name
-    @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
+    @patch('src.calculation.indicator_calculation.logger')
     def test_calculate_indicator_invalid_rule(self, _):
         args = create_mock_args(rule='InvalidRuleName')
         with self.assertRaises(ValueError) as cm:
@@ -91,7 +84,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         self.assertIn("Invalid rule name or alias 'InvalidRuleName'", str(cm.exception))
 
     # Test with missing required columns in input DataFrame
-    @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
+    @patch('src.calculation.indicator_calculation.logger')
     def test_calculate_indicator_missing_columns(self, _):
         args = create_mock_args()
         df_missing = self.ohlcv_df.drop(columns=['High'])
@@ -101,7 +94,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         self.assertIn("'High'", str(cm.exception)) # Check specific missing col
 
     # Test with None DataFrame input
-    @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
+    @patch('src.calculation.indicator_calculation.logger')
     def test_calculate_indicator_none_dataframe(self, _):
         args = create_mock_args()
         with self.assertRaises(ValueError) as cm:
@@ -109,7 +102,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         self.assertIn("No data available for calculation", str(cm.exception))
 
     # Test with empty DataFrame input
-    @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
+    @patch('src.calculation.indicator_calculation.logger')
     def test_calculate_indicator_empty_dataframe(self, _):
         args = create_mock_args()
         with self.assertRaises(ValueError) as cm:
@@ -117,7 +110,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         self.assertIn("No data available for calculation", str(cm.exception))
 
     # Test with None point size input
-    @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
+    @patch('src.calculation.indicator_calculation.logger')
     def test_calculate_indicator_none_point_size(self, _):
         args = create_mock_args()
         with self.assertRaises(ValueError) as cm:
@@ -125,7 +118,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         self.assertIn("Point size is None", str(cm.exception))
 
     # Test when calculation function itself raises an error
-    @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
+    @patch('src.calculation.indicator_calculation.logger')
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
     def test_calculate_indicator_calc_exception(self, mock_calc_pv_func, _):
         args = create_mock_args()
@@ -163,10 +156,10 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         debug_calls = [call for call in __instance.print_debug.call_args_list if "DEBUG: Result DF Tail" in str(call)]
         self.assertEqual(len(debug_calls), 0)
 
-    # Test debug print tail is called for valid result
-    @patch('src.calculation.indicator_calculation.logger')
+    @patch('sys.stdout', new_callable=io.StringIO)
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
-    def test_calculate_indicator_debug_print(self, mock_calc_pv_func, _, mock_logger_instance=None):
+    # Mock the logger to capture print statements
+    def test_calculate_indicator_debug_print(self, mock_calc_pv_func, mock_stdout):
         args = create_mock_args()
         mock_result_df = pd.DataFrame({
             'Open': [100, 110], 'PPrice1': [99, 109], 'PPrice2': [101, 111],
@@ -175,13 +168,14 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         mock_calc_pv_func.return_value = mock_result_df
 
         try:
-            # Просто вызываем функцию, ожидая, что она не упадет из-за логирования
             calculate_indicator(args, self.ohlcv_df, self.point_size)
-            # Проверка, что print_debug был вызван хотя бы раз (нестрогая проверка)
-            mock_logger_instance.print_debug.assert_called()
+            output = mock_stdout.getvalue()
+            lines_with_debug = [line for line in output.splitlines() if "Debug: " in line]
+            self.assertTrue(len(lines_with_debug) > 0,
+                            "No 'Debug: ' prefix found in stdout, logger.print_debug likely wasn't called.")
+
         except Exception as e:
             self.fail(f"calculate_indicator failed unexpectedly during logging test: {e}")
-
 
 # Allow running the tests directly
 if __name__ == '__main__':

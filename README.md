@@ -236,6 +236,44 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 
 ## Usage Examples
 
+### Running Analysis (`run_analysis.py`)
+
+Replace ticker symbols, intervals, dates, and point sizes as needed.
+
+* **Run with demo data using the default rule (Predict_High_Low_Direction):**
+    ```bash
+    python run_analysis.py demo
+    ```
+
+* **Run with demo data using a specific rule (e.g., Pressure_Vector alias 'PV'):**
+    ```bash
+    python run_analysis.py demo --rule PV
+    ```
+
+* **Fetch Yahoo Finance data for a Forex pair, specific interval, last 3 months, estimated point size, specific rule:**
+    ```bash
+    python run_analysis.py yf --ticker "EURUSD=X" --interval H1 --period 3mo --rule PV_HighLow
+    ```
+
+* **Fetch Yahoo Finance data for a stock, specific date range, user-provided point size, specific rule alias 'SR':**
+    ```bash
+    python run_analysis.py yfinance --ticker AAPL --start 2024-01-01 --end 2024-04-15 --point 0.01 --rule SR
+    ```
+
+* **Fetch Yahoo Finance data for crypto, default interval (D1), specific period, overriding point size:**
+    ```bash
+    python run_analysis.py yf --ticker "BTC-USD" --period 6mo --point 0.01 --rule PHLD
+    ```
+
+### Testing Yahoo Finance Connection (`test_yfinance.py`)
+
+This script performs a minimal download test using `yfinance` for a default ticker ('GOOG').
+
+```bash
+python test_yfinance.py
+
+## Usage Examples
+
 (Illustrative command-line examples; implement using `argparse` in scripts)
 
 ```bash

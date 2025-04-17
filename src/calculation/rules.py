@@ -6,12 +6,12 @@ Functions implementing the specific logic for each TradingRule.
 Each function updates the DataFrame with rule-specific outputs
 (PPrice1, PColor1, PPrice2, PColor2, Direction, Diff).
 """
-from typing import Any
 
 import pandas as pd
 import numpy as np
 from ..common import logger
 from ..common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
+from typing import Any
 
 
 # Helper to safely get series or default
@@ -102,49 +102,57 @@ RULE_DISPATCHER = {
     TradingRule.Predict_High_Low_Direction: apply_rule_predict_hld,
 }
 
-def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float) -> pd.DataFrame: # Allow Any type hint for rule
+def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float) -> pd.DataFrame:
     """
     Applies the selected trading rule logic to the DataFrame.
-    Simplified signature again.
     """
-    selected_rule = None # Keep track of the potentially valid rule
+    selected_rule: TradingRule | None = None
+    rule_func = None
     is_valid_rule = False
 
-    # Check if the rule is a valid TradingRule member
     if isinstance(rule, TradingRule):
-         selected_rule = rule
-         if rule in RULE_DISPATCHER:
-             is_valid_rule = True
-             rule_func = RULE_DISPATCHER[rule]
-         else:
-             # It's a TradingRule instance but not in dispatcher (e.g., future rule)
-             pass # is_valid_rule remains False
+        selected_rule = rule
+        if rule in RULE_DISPATCHER:
+            is_valid_rule = True
+            rule_func = RULE_DISPATCHER[rule]
+        else:
+            pass # is_valid_rule останется False
 
-    # If not a valid rule instance or not in dispatcher, try default and log warning
     if not is_valid_rule:
-         # Log warning - use repr(rule) for safety as it might not have .name
-         logger.print_warning(
-             f"TradingRule {repr(rule)} not recognized or supported. "
-             f"Applying default ({TradingRule.Predict_High_Low_Direction.name})."
-         )
-         selected_rule = TradingRule.Predict_High_Low_Direction # Use default rule enum
-         rule_func = RULE_DISPATCHER[selected_rule]
+        logger.print_warning(
+            f"TradingRule {repr(rule)} not recognized or supported. "
+            f"Applying default ({TradingRule.Predict_High_Low_Direction.name})."
+        )
+        selected_rule = TradingRule.Predict_High_Low_Direction
+        rule_func = RULE_DISPATCHER[selected_rule]
 
-    # --- Now apply the selected or default rule function ---
+    # Call the rule function with the DataFrame and point
     if selected_rule in [TradingRule.PV_HighLow, TradingRule.Support_Resistants, TradingRule.Predict_High_Low_Direction]:
-         return rule_func(df, point=point)
+        return rule_func(df, point=point)
     elif selected_rule == TradingRule.Pressure_Vector:
-         return rule_func(df)
+        if rule_func:
+             return rule_func(df)
+        else:
+             logger.print_error("Rule function assignment failed unexpectedly.")
+             return df
     else:
-         # Fallback for rules potentially added later that might need different args
+         # Fallback logic for unsupported rules
+         # selected_rule
          logger.print_warning(f"Rule '{selected_rule.name}' dispatcher logic needs update or rule is unsupported.")
+
          try:
-              # Try calling without args first, maybe it's simple
-              return rule_func(df)
+             if rule_func:
+                return rule_func(df)
+             else:
+                logger.print_error("Rule function assignment failed unexpectedly in fallback.")
+                return df
          except TypeError:
-              # If it fails, try with point (common case)
-              try:
-                  return rule_func(df, point=point)
-              except Exception as e:
-                  logger.print_error(f"Failed to execute rule function for {selected_rule.name}: {e}")
-                  return df # Return original df on error
+             try:
+                 if rule_func:
+                    return rule_func(df, point=point)
+                 else:
+                    logger.print_error("Rule function assignment failed unexpectedly in fallback TypeError.")
+                    return df
+             except Exception as e:
+                 logger.print_error(f"Failed to execute rule function for {selected_rule.name}: {e}")
+                 return df
