@@ -9,10 +9,10 @@ import time
 # Use relative imports within the src package
 from ..common import logger 
 # Import functions from the specific step modules using relative paths
-from ..data_acquisition import acquire_data
-from ..point_size_determination import get_point_size 
-from ..indicator_calculation import calculate_indicator 
-from ..plotting_generation import generate_plot 
+from ..data.data_acquisition import acquire_data
+from ..utils.point_size_determination import get_point_size
+from ..calculation.indicator_calculation import calculate_indicator
+from ..plotting.plotting_generation import generate_plot
 
 # --- Main Workflow Orchestrator ---
 def run_indicator_workflow(args):

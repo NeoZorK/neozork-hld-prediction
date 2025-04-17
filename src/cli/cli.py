@@ -62,7 +62,7 @@ def parse_arguments():
 
     # Get available rules dynamically AFTER updating TradingRule enum
     # These are the only rules left after the removal step
-    rule_choices = list(TradingRule.__members__.keys())
+    #rule_choices = list(TradingRule.__members__.keys())
 
     # Map rule choices to their corresponding TradingRule enum values
     rule_aliases = {

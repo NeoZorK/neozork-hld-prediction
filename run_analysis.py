@@ -8,8 +8,8 @@ import time
 from src import __version__
 from src.cli.cli import parse_arguments
 from src.workflow.workflow import run_indicator_workflow
-from src.reporting.reporting import print_summary
-from src.common.logger import logger
+from src.workflow.reporting import print_summary
+from src.common import logger
 
 
 # --- Main Execution Function ---

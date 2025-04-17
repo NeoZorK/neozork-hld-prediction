@@ -24,8 +24,6 @@ def determine_point_size(ticker: str) -> float | None:
         # Try different price fields, as availability varies
         market_price = info.get('regularMarketPrice') or info.get('currentPrice') or info.get('bid') or info.get('ask')
 
-        point = None # Default to None if no rule matches
-
         if quote_type == 'CURRENCY':
             # Forex pairs: 0.00001 generally, 0.001 for JPY pairs
             if 'JPY' in ticker.upper() or currency == 'JPY':
