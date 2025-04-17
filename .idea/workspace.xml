@@ -7,21 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="added __init__ to each tests">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/calculation/test_indicator.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/calculation/test_indicator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/calculation/test_indicator_calculation.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/calculation/test_indicator_calculation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/calculation/test_rules.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/calculation/test_rules.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/cli/test_cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/cli/test_cli.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/common/test_logger.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/common/test_logger.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/data/test_data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/test_data_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/plotting/test_plotting.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/plotting/test_plotting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/plotting/test_plotting_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/plotting/test_plotting_generation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/utils/test_point_size_determination.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/utils/test_point_size_determination.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/utils/test_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/utils/test_utils.py" afterDir="false" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix all warnings">
       <change beforePath="$PROJECT_DIR$/tests/workflow/test_reporting.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/workflow/test_reporting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/workflow/test_workflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/workflow/test_workflow.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00016" summary="uncomment lwma and core plot">
-      <option name="closed" value="true" />
-      <created>1744714594698</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1744714594698</updated>
     </task>
     <task id="LOCAL-00017" summary="del lwma core and tock vol">
       <option name="closed" value="true" />
@@ -568,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744902549681</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="fix all warnings">
+      <option name="closed" value="true" />
+      <created>1744903274145</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1744903274145</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -595,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix error with start date" />
     <MESSAGE value="fix trading rule type conversion" />
     <MESSAGE value="add debug print" />
     <MESSAGE value="fix debug plotting" />
@@ -620,6 +606,7 @@
     <MESSAGE value="fix everything" />
     <MESSAGE value="added 14 unit tests" />
     <MESSAGE value="added __init__ to each tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="added __init__ to each tests" />
+    <MESSAGE value="fix all warnings" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix all warnings" />
   </component>
 </project>

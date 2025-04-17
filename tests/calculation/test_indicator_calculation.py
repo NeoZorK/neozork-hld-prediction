@@ -104,7 +104,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
     def test_calculate_indicator_none_dataframe(self, _):
         args = create_mock_args()
         with self.assertRaises(ValueError) as cm:
-            calculate_indicator(args, None, self.point_size)
+            calculate_indicator(args, None, self.point_size) # type: ignore
         self.assertIn("No data available for calculation", str(cm.exception))
 
     # Test with empty DataFrame input
@@ -120,7 +120,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
     def test_calculate_indicator_none_point_size(self, _):
         args = create_mock_args()
         with self.assertRaises(ValueError) as cm:
-            calculate_indicator(args, self.ohlcv_df, None)
+            calculate_indicator(args, self.ohlcv_df, None) # type: ignore
         self.assertIn("Point size is None", str(cm.exception))
 
     # Test when calculation function itself raises an error

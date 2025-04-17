@@ -46,8 +46,8 @@ class TestRules(unittest.TestCase):
         pd.testing.assert_series_equal(df_result['PPrice1'], expected_pprice1, check_names=False)
         pd.testing.assert_series_equal(df_result['PPrice2'], expected_pprice2, check_names=False)
         pd.testing.assert_series_equal(df_result['Direction'], expected_direction, check_names=False)
-        self.assertTrue((df_result['PColor1'] == BUY).all())
-        self.assertTrue((df_result['PColor2'] == SELL).all())
+        self.assertTrue((df_result['PColor1'] == BUY).all()) # type: ignore
+        self.assertTrue((df_result['PColor2'] == SELL).all()) # type: ignore
         self.assertTrue(df_result['Diff'].isna().all()) # Diff should be EMPTY_VALUE (NaN)
 
     # Test apply_rule_pv_highlow
@@ -68,8 +68,8 @@ class TestRules(unittest.TestCase):
         pd.testing.assert_series_equal(df_result['PPrice2'], expected_pprice2.fillna(self.df['Open']), check_names=False, check_dtype=False)
 
         pd.testing.assert_series_equal(df_result['Direction'], expected_direction, check_names=False)
-        self.assertTrue((df_result['PColor1'] == BUY).all())
-        self.assertTrue((df_result['PColor2'] == SELL).all())
+        self.assertTrue((df_result['PColor1'] == BUY).all()) # type: ignore
+        self.assertTrue((df_result['PColor2'] == SELL).all()) # type: ignore
         self.assertTrue(df_result['Diff'].isna().all())
 
     # Test apply_rule_support_resistants
@@ -83,8 +83,8 @@ class TestRules(unittest.TestCase):
         pd.testing.assert_series_equal(df_result['PPrice1'], expected_pprice1, check_names=False)
         pd.testing.assert_series_equal(df_result['PPrice2'], expected_pprice2, check_names=False)
         pd.testing.assert_series_equal(df_result['Direction'], expected_direction, check_names=False)
-        self.assertTrue((df_result['PColor1'] == BUY).all())
-        self.assertTrue((df_result['PColor2'] == SELL).all())
+        self.assertTrue((df_result['PColor1'] == BUY).all()) # type: ignore
+        self.assertTrue((df_result['PColor2'] == SELL).all()) # type: ignore
         self.assertTrue(df_result['Diff'].isna().all())
 
     # Test apply_rule_pressure_vector
