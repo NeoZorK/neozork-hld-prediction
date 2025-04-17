@@ -53,30 +53,60 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 
 ## Project Structure
 
-* neozork-hld-prediction/
-* ├── .git/                 # Hidden Git directory
-* ├── .idea/                # Hidden PyCharm directory (if using PyCharm)
-* ├── venv/                 # Virtual environment directory (Ignored by Git)
+* project-root/
+* ├── .git/                 # Git directory (usually hidden)
+* ├── .idea/                # PyCharm directory (usually hidden, add to .gitignore)
+* ├── venv/                 # Python virtual environment (add to .gitignore)
 * ├── data/
-* │   ├── raw/              # Initial MT5 export: OHLCV M1, Original Indicator Predictions CSVs
-* │   └── processed/        # Cleaned, aggregated data ready for feature engineering/modeling
-* ├── notebooks/            # Jupyter notebooks for EDA, indicator validation, model experiments
-* ├── src/                  # Core Python source code
-* │   ├── init.py       # Makes src a package, contains version (version = "0.1.0")
-* │   ├── indicator_logic.py  # Python implementation of the original MQL5 indicator logic
-* │   ├── data_ingestion.py   # Handles MT5 export loading & live feed fetching (e.g., yfinance)
-* │   ├── feature_engineering.py # Generates features from OHLCV & indicator_logic.py output
-* │   ├── model_training.py    # ML model training, tuning, and saving pipeline
-* │   ├── prediction_pipeline.py # Runs indicator_logic + ML model for final HLD prediction
-* │   ├── backtesting.py       # Strategy simulation using ML-enhanced predictions
-* │   ├── mc_simulation.py     # Monte Carlo simulation logic (for Phase 8)
-* │   └── utils.py             # Helper functions, metrics, config loading
-* ├── models/               # Saved ML models (.pkl, .joblib, .h5), scalers, etc. (Ignored by Git usually)
-* ├── results/              # Stores metrics, plots, backtest reports, feature importance (Some content might be ignored by Git)
-* ├── config/               # Configuration files (paths, model parameters, feature lists, strategy rules)
-* ├── .gitignore            # Git ignore file
-* ├── requirements.txt      # Python dependencies list
-* └── README.md             # This file
+* │   ├── raw/              # Raw data exports (e.g., from MT5)
+* │   └── processed/        # Processed data ready for use
+* ├── notebooks/            # Jupyter notebooks for exploration and analysis
+* ├── src/                  # Source code package
+* │   ├── __init__.py         # Marks src as package, contains version
+* │   │
+* │   ├── cli/                # Command Line Interface logic
+* │   │   ├── __init__.py     # Marks cli as subpackage
+* │   │   └── cli.py          # Argument parsing (using argparse, RichHelpFormatter)
+* │   │
+* │   ├── common/             # Common utilities, constants, logging
+* │   │   ├── __init__.py
+* │   │   └── constants.py    # Signal constants, TradingRule enum
+* │   │   └── logger.py       # Colored logging utility (using colorama)
+* │   │
+* │   ├── data/               # Data fetching and preparation utilities
+* │   │   ├── __init__.py
+* │   │   └── data_utils.py   # Low-level fetch (yfinance), demo data, mapping functions
+* │   │   └── data_acquisition.py # Workflow Step 1: acquire_data function
+* │   │
+* │   ├── calculation/        # Indicator calculation logic
+* │   │   ├── __init__.py
+* │   │   └── core_calculations.py # Base calculations (HL, PV, Pressure, SMA...)
+* │   │   └── rules.py        # Rule implementations (apply_rule_...) & dispatcher
+* │   │   └── indicator.py    # Main calculation function (calculate_pressure_vector)
+* │   │   └── indicator_calculation.py # Workflow Step 3: calculate_indicator function
+* │   │
+* │   ├── plotting/           # Plotting related modules
+* │   │   ├── __init__.py
+* │   │   └── plotting.py     # Low-level plotting function (plot_indicator_results using mplfinance)
+* │   │   └── plotting_generation.py # Workflow Step 4: generate_plot function
+* │   │
+* │   ├── utils/              # General utilities
+* │   │   ├── __init__.py
+* │   │   └── utils.py        # Point size estimation core (determine_point_size)
+* │   │   └── point_size_determination.py # Workflow Step 2: get_point_size function
+* │   │
+* │   └── workflow/           # Workflow orchestration and reporting
+* │       ├── __init__.py
+* │       └── workflow.py     # Main orchestrator function (run_indicator_workflow)
+* │       └── reporting.py    # Summary printing function (print_summary)
+* │
+* ├── models/               # Saved ML models, scalers, etc. (consider adding to .gitignore)
+* ├── results/              # Output results (metrics, plots, reports)
+* ├── config/               # Configuration files (if any)
+* ├── .gitignore            # Specifies intentionally untracked files that Git should ignore
+* ├── requirements.txt      # Project dependencies
+* ├── run_analysis.py       # Main entry point script for running analysis
+* └── README.md             # Project documentation (this file)
 
 ## Installation
 
