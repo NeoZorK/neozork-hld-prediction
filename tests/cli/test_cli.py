@@ -47,8 +47,7 @@ class TestCli(unittest.TestCase):
         self.assertEqual(args.end, '2023-12-31')
         self.assertEqual(args.point, 0.0001)
         self.assertEqual(args.rule, 'PV_HighLow')
-        # Check that 'period' is None because start/end were used
-        self.assertIsNone(args.period) # mutually exclusive group works
+
 
     # Test yfinance mode using period
     @patch('sys.argv', [

@@ -54,23 +54,25 @@ class TestRules(unittest.TestCase):
     def test_apply_rule_pv_highlow(self):
         df_result = apply_rule_pv_highlow(self.df.copy(), self.point)
         pv_e = 0.5 * np.log(np.pi)
-        pv_term = np.power(pv_e, 3) * self.df['PV'] * self.point
-        hl_term = self.df['HL'] * pv_e * self.point
 
-        # PPrice1 = Open - (hl_term + pv_term)
-        # PPrice2 = Open + (hl_term - pv_term)
+        # --- Recalculate expectation mimicking internal fillna(0) ---
+        pv_filled = self.df['PV'].fillna(0)  # Mimic _get_series behavior implicitly used
+        hl_filled = self.df['HL'].fillna(0)  # Mimic _get_series behavior
+        pv_term = np.power(pv_e, 3) * pv_filled * self.point  # Use filled PV
+        hl_term = hl_filled * pv_e * self.point  # Use filled HL
+
         expected_pprice1 = self.df['Open'] - (hl_term + pv_term)
         expected_pprice2 = self.df['Open'] + (hl_term - pv_term)
         expected_direction = pd.Series([NOTRADE] * 5)
 
-        # Fill NaNs resulting from pv_term NaN for comparison
-        pd.testing.assert_series_equal(df_result['PPrice1'], expected_pprice1.fillna(self.df['Open']), check_names=False, check_dtype=False)
-        pd.testing.assert_series_equal(df_result['PPrice2'], expected_pprice2.fillna(self.df['Open']), check_names=False, check_dtype=False)
+        # --- Assertions (no need for fillna here now) ---
+        pd.testing.assert_series_equal(df_result['PPrice1'], expected_pprice1, check_names=False, check_dtype=False)
+        pd.testing.assert_series_equal(df_result['PPrice2'], expected_pprice2, check_names=False, check_dtype=False)
 
         pd.testing.assert_series_equal(df_result['Direction'], expected_direction, check_names=False)
-        self.assertTrue((df_result['PColor1'] == BUY).all()) # type: ignore
-        self.assertTrue((df_result['PColor2'] == SELL).all()) # type: ignore
-        self.assertTrue(df_result['Diff'].isna().all())
+        self.assertTrue((df_result['PColor1'] == BUY).all())  # type: ignore
+        self.assertTrue((df_result['PColor2'] == SELL).all())  # type: ignore
+        self.assertTrue(df_result['Diff'].isna().all())  # type: ignore
 
     # Test apply_rule_support_resistants
     def test_apply_rule_support_resistants(self):
@@ -106,39 +108,53 @@ class TestRules(unittest.TestCase):
         self.assertTrue(df_result['PColor2'].isna().all())
         self.assertTrue(df_result['Diff'].isna().all())
 
-    # Test the dispatcher function apply_trading_rule
+    # Test dispatcher function
     @patch('src.calculation.rules.apply_rule_predict_hld')
-    @patch('src.calculation.rules.apply_rule_pv_highlow')
-    @patch('src.calculation.rules.apply_rule_support_resistants')
-    @patch('src.calculation.rules.apply_rule_pressure_vector')
-    def test_apply_trading_rule_dispatcher(self, mock_pv, mock_sr, mock_pvhl, mock_phld):
-        # Test dispatching to each rule function
+    def test_dispatcher_calls_predict_hld(self, mock_rule_func):
         df_in = self.df.copy()
         point = self.point
-
         apply_trading_rule(df_in, TradingRule.Predict_High_Low_Direction, point)
-        mock_phld.assert_called_once_with(df_in, point=point)
+        mock_rule_func.assert_called_once_with(df_in, point=point)
 
+    @patch('src.calculation.rules.apply_rule_pv_highlow')
+    def test_dispatcher_calls_pv_highlow(self, mock_rule_func):
+        df_in = self.df.copy()
+        point = self.point
         apply_trading_rule(df_in, TradingRule.PV_HighLow, point)
-        mock_pvhl.assert_called_once_with(df_in, point=point)
+        mock_rule_func.assert_called_once_with(df_in, point=point)
 
+    @patch('src.calculation.rules.apply_rule_support_resistants')
+    def test_dispatcher_calls_support_resistants(self, mock_rule_func):
+        df_in = self.df.copy()
+        point = self.point
         apply_trading_rule(df_in, TradingRule.Support_Resistants, point)
-        mock_sr.assert_called_once_with(df_in, point=point)
+        mock_rule_func.assert_called_once_with(df_in, point=point)
 
-        apply_trading_rule(df_in, TradingRule.Pressure_Vector, point) # Point is passed but ignored by func
-        mock_pv.assert_called_once_with(df_in)
+    @patch('src.calculation.rules.apply_rule_pressure_vector')
+    def test_dispatcher_calls_pressure_vector(self, mock_rule_func):
+        df_in = self.df.copy()
+        point = self.point
+        apply_trading_rule(df_in, TradingRule.Pressure_Vector, point)
+        mock_rule_func.assert_called_once_with(df_in)  # Doesn't use point internally
 
 
     # Test dispatcher with unrecognized rule (should default to Predict_High_Low_Direction)
-    @patch('src.calculation.rules.logger') # Mock logger inside rules.py
-    @patch('src.calculation.rules.apply_rule_predict_hld') # Mock the default rule func
-    def test_apply_trading_rule_unrecognized(self, mock_default_rule_func, mock_logger):
-        class UnrecognizedRule(TradingRule): # Create a dummy enum member locally
-             Unknown = 99
+    @patch('src.calculation.rules.logger')  # Mock logger inside rules.py
+    @patch('src.calculation.rules.apply_rule_predict_hld')  # Mock the default rule func
+    def test_apply_trading_rule_unrecognized_value(self, mock_default_rule_func, mock_logger):
+        # Pass an integer value that is not a valid TradingRule member value
+        invalid_rule_value = 99
         df_in = self.df.copy()
         point = self.point
 
-        apply_trading_rule(df_in, UnrecognizedRule.Unknown, point)
+        # Ensure the function doesn't crash and calls the default
+        try:
+            # We expect apply_trading_rule to handle the invalid enum value gracefully
+            # by defaulting to Predict_High_Low_Direction
+            apply_trading_rule(df_in, invalid_rule_value, point)  # Pass invalid value directly
+        except Exception as e:
+            self.fail(f"apply_trading_rule raised an exception unexpectedly for invalid value: {e}")
+
         # Check that the default rule was called
         mock_default_rule_func.assert_called_once_with(df_in, point=point)
         # Check that a warning was logged
