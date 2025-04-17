@@ -7,9 +7,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="clear comments">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="refactor module structure">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cli.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core_calculations.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data_acquisition.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/indicator.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/indicator_calculation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/logger.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plotting.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plotting_generation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/point_size_determination.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reporting.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/rules.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/workflow.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -164,14 +178,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00010" summary="del old ryn analysis">
-      <option name="closed" value="true" />
-      <created>1744638631589</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1744638631589</updated>
     </task>
     <task id="LOCAL-00011" summary="move run analysis">
       <option name="closed" value="true" />
@@ -557,7 +563,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744879596318</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="refactor module structure">
+      <option name="closed" value="true" />
+      <created>1744896825071</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1744896825071</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -584,7 +598,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add  utils" />
     <MESSAGE value="add  cli" />
     <MESSAGE value="refactor run analysis" />
     <MESSAGE value="del core and no needed calculations" />
@@ -609,6 +622,7 @@
     <MESSAGE value="all fixed" />
     <MESSAGE value="v0.1.1" />
     <MESSAGE value="clear comments" />
-    <option name="LAST_COMMIT_MESSAGE" value="clear comments" />
+    <MESSAGE value="refactor module structure" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor module structure" />
   </component>
 </project>
