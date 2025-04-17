@@ -7,10 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="better colors">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/data/test_data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/test_data_utils.py" afterDir="false" />
-    </list>
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="all fixed" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -85,20 +82,9 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
   }
 }</component>
-  <component name="QodanaHighlightedReportService">
-    <option name="localRunNotPublishedPersistedInfo">
-      <LocalReportPersistedInfo>
-        <option name="path" value="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output2/qodana.sarif.json" />
-        <option name="reportGuid" value="36c148bb-7a71-4c07-ac1e-95a88d28b0ea" />
-        <option name="reportName" value="NeoZorK HLD/qodana/2025-04-17" />
-      </LocalReportPersistedInfo>
-    </option>
-  </component>
-  <component name="QodanaIsSelectedPersistenceService">
-    <option name="selectedOrLoading" value="true" />
-  </component>
   <component name="QodanaReportsService">
     <option name="descriptions">
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output6/qodana.sarif.json" reportGuid="113280ab-c65e-4d1f-b948-969c766af59f" reportId="NeoZorK HLD/qodana/2025-04-17" />
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output2/qodana.sarif.json" reportGuid="36c148bb-7a71-4c07-ac1e-95a88d28b0ea" reportId="NeoZorK HLD/qodana/2025-04-17" />
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output1/qodana.sarif.json" reportGuid="8f0346d6-1889-4c61-93d3-f24c6cee1473" reportId="NeoZorK HLD/qodana/2025-04-17" />
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="187581a2-7139-4847-89da-fa7e4e921223" reportId="NeoZorK HLD/qodana/2025-04-17" />
@@ -176,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00026" summary="fix exception e">
-      <option name="closed" value="true" />
-      <created>1744718885323</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1744718885323</updated>
     </task>
     <task id="LOCAL-00027" summary="fix TradingRule type">
       <option name="closed" value="true" />
@@ -569,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744911538985</updated>
     </task>
-    <option name="localTasksCounter" value="75" />
+    <task id="LOCAL-00075" summary="all fixed">
+      <option name="closed" value="true" />
+      <created>1744912287127</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1744912287127</updated>
+    </task>
+    <option name="localTasksCounter" value="76" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -602,7 +588,6 @@
     <MESSAGE value="comment debug check" />
     <MESSAGE value="try to fix auto size calculation" />
     <MESSAGE value="New TR Predict High Lo Direction -&gt; showing 3 predictions at same time for every point" />
-    <MESSAGE value="all fixed" />
     <MESSAGE value="v0.1.1" />
     <MESSAGE value="clear comments" />
     <MESSAGE value="refactor module structure" />
@@ -621,6 +606,7 @@
     <MESSAGE value="add -h examples" />
     <MESSAGE value="best varian for formating" />
     <MESSAGE value="better colors" />
-    <option name="LAST_COMMIT_MESSAGE" value="better colors" />
+    <MESSAGE value="all fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="all fixed" />
   </component>
 </project>
