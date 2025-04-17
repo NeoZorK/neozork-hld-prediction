@@ -269,6 +269,44 @@ Replace ticker symbols, intervals, dates, and point sizes as needed.
 
 This script performs a minimal download test using `yfinance` for a default ticker ('GOOG').
 
+## Testing
+
+This project uses Python's built-in `unittest` framework for unit testing.
+
+### Prerequisites
+
+1.  **Activate Environment:** Ensure your Python virtual environment (e.g., `venv`) is activated.
+2.  **Install Dependencies:** Make sure all project dependencies, including any required for testing, are installed from `requirements.txt`:
+    ```bash
+    pip install -r requirements.txt
+    # or using uv:
+    # uv pip install -r requirements.txt
+    ```
+3.  **Test Directory Structure:** Verify that you have a `tests/` directory in your project root, mirroring the structure of `src/`, and that **all** directories within `tests` (including `tests` itself) contain an empty `__init__.py` file. This allows Python's test discovery mechanism to find the tests. Example:
+    ```
+    NeoZorK HLD/
+    ├── src/
+    │   ├── __init__.py
+    │   └── ...
+    ├── tests/
+    │   ├── __init__.py  # <--- Required
+    │   ├── calculation/
+    │   │   ├── __init__.py # <--- Required
+    │   │   └── test_rules.py
+    │   │   └── ...
+    │   └── ...
+    ├── run_analysis.py
+    └── requirements.txt
+    ```
+
+### Running All Tests
+
+To discover and run all unit tests automatically, execute the following command from the **root directory** of your project (the directory containing `src/` and `tests/`):
+
+```bash
+python -m unittest discover tests
+
+
 ```bash
 python test_yfinance.py
 
