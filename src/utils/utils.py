@@ -4,11 +4,8 @@
 General utility functions, including point size estimation using yfinance info.
 All comments are in English.
 """
-import pandas as pd
-import numpy as np
-import yfinance as yf # Import yfinance here
-# Import logger relative to src package
-from . import logger
+import yfinance as yf
+from ..common import logger
 
 def determine_point_size(ticker: str) -> float | None:
     """
@@ -26,8 +23,6 @@ def determine_point_size(ticker: str) -> float | None:
         currency = info.get('currency', '').upper()
         # Try different price fields, as availability varies
         market_price = info.get('regularMarketPrice') or info.get('currentPrice') or info.get('bid') or info.get('ask')
-
-        point = None # Default to None if no rule matches
 
         if quote_type == 'CURRENCY':
             # Forex pairs: 0.00001 generally, 0.001 for JPY pairs

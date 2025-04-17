@@ -10,7 +10,7 @@ import time
 from datetime import date, timedelta
 
 # Assuming logger is imported if used
-from . import logger
+from ..common import logger
 
 def get_demo_data() -> pd.DataFrame:
     """Returns the demonstration DataFrame."""
@@ -80,60 +80,6 @@ def map_ticker(ticker_input: str) -> str:
     # Return the ticker as is if no rules matched
     return ticker
 
-# debug version
-# def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_date: str = None, end_date: str = None) -> pd.DataFrame | None:
-#     """Downloads data from Yahoo Finance with progress bar and error handling."""
-#     logger.print_info(f"Attempting to fetch data for ticker: {ticker} | interval: {interval}")
-#     try:
-#         # The yf.download call remains the same
-#         df = yf.download(
-#             tickers=ticker,
-#             period=period,
-#             interval=interval,
-#             start=start_date,
-#             end=end_date,
-#             progress=True,
-#             auto_adjust=False,
-#             actions=False
-#         )
-#
-#         # Checks for empty or invalid DataFrame remain the same
-#         if df.empty:
-#             logger.print_warning(f"No data returned for ticker '{ticker}' with specified parameters.")
-#             return None
-#         required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
-#         if not all(col in df.columns for col in required_cols):
-#              logger.print_warning(f"Downloaded data for '{ticker}' is missing required columns (needs Open, High, Low, Close, Volume). Available: {df.columns.tolist()}")
-#              return None
-#         df.dropna(subset=['Open', 'High', 'Low', 'Close'], how='all', inplace=True)
-#         if df.empty:
-#             logger.print_warning(f"Data for '{ticker}' became empty after removing NaN rows.")
-#             return None
-#
-#         logger.print_success(f"Successfully fetched {len(df)} rows.") # Use success logger
-#         return df
-#
-#     except Exception as e:
-#         # --- IMPROVED ERROR REPORTING ---
-#         # Log the type of the exception as well as its message
-#         logger.print_error(f"\n--- ERROR DOWNLOADING ---")
-#         logger.print_error(f"An error occurred during yfinance download for ticker '{ticker}':")
-#         # Print exception type and the exception message itself
-#         logger.print_error(f"Exception Type: {type(e).__name__}")
-#         logger.print_error(f"Exception Details: {e}")
-#         import traceback
-#         # Print traceback for more context, perhaps also in red or default color
-#         print(f"{logger.ERROR_COLOR}Traceback:\n{traceback.format_exc()}{logger.RESET_ALL}")
-#         # Provide hints for common issues
-#         if "No data found" in str(e) or "404" in str(e):
-#              logger.print_info("Hint: Check if the ticker symbol is correct and exists on Yahoo Finance.")
-#         elif "invalid interval" in str(e):
-#              logger.print_info("Hint: Check if the interval format is valid for the requested period (e.g., minute data often has limited history).")
-#         else:
-#              logger.print_info("Hint: Check network connection and status of Yahoo Finance API.")
-#         logger.print_error(f"--- END ERROR DOWNLOADING ---")
-#         # --- END IMPROVED ERROR REPORTING ---
-#         return None
 
 def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_date: str = None, end_date: str = None) -> pd.DataFrame | None:
     """Downloads data from Yahoo Finance, handles MultiIndex columns, and validates."""

@@ -5,14 +5,12 @@ Command Line Interface setup using argparse and RichHelpFormatter for colored he
 Removed arguments related to LWMA, CORE1, etc.
 All comments are in English.
 """
-
 import argparse
-# Import RichHelpFormatter from rich_argparse
+import textwrap # Import textwrap for cleaner epilog formatting
+
 try:
-    # Recommended import path
     from rich_argparse import RichHelpFormatter
 except ImportError:
-    # Fallback for older rich versions or different installation methods
     try:
         from rich.argparse import RichHelpFormatter
     except ImportError:
@@ -22,18 +20,43 @@ except ImportError:
         # Use the standard formatter as a fallback
         RichHelpFormatter = argparse.ArgumentDefaultsHelpFormatter
 
-
 # Use relative imports for constants and version within the src package
-# Import the updated TradingRule enum
-from .constants import TradingRule
-from . import __version__
+from ..common.constants import TradingRule
+from .. import __version__
 
 def parse_arguments():
     """Sets up argument parser using RichHelpFormatter and returns the parsed arguments."""
-    # Use RichHelpFormatter for colored and formatted help output
+
+    # --- Main description ---
+    main_description = textwrap.dedent("""
+       Calculate and plot Shcherbyna Pressure Vector indicator using demo data
+       or fetching from Yahoo Finance.
+       """)
+
+    # --- Example epilog ---
+    example_lines = [
+        "[bold]Examples:[/bold]",
+        "",
+        "  [dim]# Run with demo data and default rule[/]",
+        "  [bold cyan]python run_analysis.py demo[/]",
+        "",
+        "  [dim]# Run with demo data and Pressure_Vector rule[/]",
+        "  [bold cyan]python run_analysis.py demo --rule PV[/]",
+        "",
+        "  [dim]# Fetch 1 year of Daily EUR/USD data, estimate point size, use PV_HighLow rule[/]",
+        "  [bold cyan]python run_analysis.py yf --ticker \"EURUSD=X\" --period 1y --interval D1 --rule PV_HighLow[/]",
+        "",
+        "  [dim]# Fetch AAPL data for a specific date range, H1 interval, explicitly set point size[/]",
+        "  [bold cyan]python run_analysis.py yfinance --ticker AAPL --interval H1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule PHLD[/]"
+    ]
+    # Join example lines with newlines for better formatting
+    examples_epilog = "\n".join(example_lines)
+
+    #--- Argument Parser Setup ---
     parser = argparse.ArgumentParser(
-        description="Calculate and plot Shcherbyna Pressure Vector indicator using demo data or fetching from Yahoo Finance.",
-        formatter_class=RichHelpFormatter # <--- USE RICH FORMATTER
+        description=main_description,
+        formatter_class=RichHelpFormatter,
+        epilog=examples_epilog
     )
 
     # --- Arguments ---
@@ -64,12 +87,11 @@ def parse_arguments():
     yf_group.add_argument('--end', help="End date for yfinance data (YYYY-MM-DD). Use with [bold]--start[/].")
 
     # --- Indicator Options (Simplified) ---
-    # Another group for indicator parameters
     indicator_group = parser.add_argument_group('Indicator Options')
 
     # Get available rules dynamically AFTER updating TradingRule enum
     # These are the only rules left after the removal step
-    rule_choices = list(TradingRule.__members__.keys())
+    #rule_choices = list(TradingRule.__members__.keys())
 
     # Map rule choices to their corresponding TradingRule enum values
     rule_aliases = {
