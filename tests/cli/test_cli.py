@@ -2,7 +2,7 @@
 
 import unittest
 from unittest.mock import patch
-import argparse
+#import argparse
 
 # Import the function to test
 from src.cli.cli import parse_arguments
@@ -87,7 +87,7 @@ class TestCli(unittest.TestCase):
     # We patch argparse.ArgumentParser._print_message to prevent version printing to stdout/stderr
     @patch('argparse.ArgumentParser._print_message')
     @patch('sys.argv', ['run_analysis.py', '--version'])
-    def test_parse_arguments_version(self, mock_print_message):
+    def test_parse_arguments_version(self, _):
         with self.assertRaises(SystemExit) as cm:
             parse_arguments()
         self.assertEqual(cm.exception.code, 0) # Expect clean exit (code 0) for --version

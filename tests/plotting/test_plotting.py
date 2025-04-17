@@ -1,7 +1,7 @@
 # tests/plotting/test_plotting.py
 
 import unittest
-from unittest.mock import patch, MagicMock, call
+from unittest.mock import patch, call, ANY #, MagicMock
 import pandas as pd
 import numpy as np
 
@@ -52,7 +52,7 @@ class TestPlottingFunction(unittest.TestCase):
     @patch('src.plotting.plotting.mpf.make_addplot')
     @patch('src.plotting.plotting.mpf.plot')
     @patch('src.plotting.plotting.logger', new_callable=MockLogger) # Mock logger in plotting.py
-    def test_plot_calls_and_addplots(self, mock_logger, mock_mpf_plot, mock_make_addplot):
+    def test_plot_calls_and_addplots(self, _, mock_mpf_plot, mock_make_addplot):
         # Define unique return values for make_addplot calls to track them
         mock_make_addplot.side_effect = lambda data, **kwargs: {"data": data.name if isinstance(data, pd.Series) else 'signal', "kwargs": kwargs}
 
@@ -134,7 +134,7 @@ class TestPlottingFunction(unittest.TestCase):
     @patch('src.plotting.plotting.mpf.make_addplot')
     @patch('src.plotting.plotting.mpf.plot')
     @patch('src.plotting.plotting.logger', new_callable=MockLogger)
-    def test_plot_minimal_columns(self, mock_logger, mock_mpf_plot, mock_make_addplot):
+    def test_plot_minimal_columns(self, _, mock_mpf_plot, mock_make_addplot):
         minimal_df = self.df_results[['Open', 'High', 'Low', 'Close', 'Direction']].copy()
         rule = TradingRule.Pressure_Vector # Rule that might only produce Direction
 
@@ -156,7 +156,7 @@ class TestPlottingFunction(unittest.TestCase):
     # Test plotting when mpf.plot raises an exception
     @patch('src.plotting.plotting.mpf.plot')
     @patch('src.plotting.plotting.logger') # Use MagicMock to check error logging
-    def test_plot_exception_handling(self, mock_logger_instance, mock_mpf_plot):
+    def test_plot_exception_handling(self, __instance, mock_mpf_plot):
         mock_mpf_plot.side_effect = Exception("MPF Render Error")
 
         # The function should catch the exception and log it, not crash
@@ -167,9 +167,9 @@ class TestPlottingFunction(unittest.TestCase):
              self.fail(f"plot_indicator_results raised an exception unexpectedly: {e}")
 
         # Check that the error was logged
-        mock_logger_instance.print_error.assert_called_once()
-        self.assertIn("Error during plotting: MPF Render Error", mock_logger_instance.print_error.call_args[0][0])
-        mock_logger_instance.print_warning.assert_called_once() # Warning about data also called
+        __instance.print_error.assert_called_once()
+        self.assertIn("Error during plotting: MPF Render Error", __instance.print_error.call_args[0][0])
+        __instance.print_warning.assert_called_once() # Warning about data also called
 
 # Allow running the tests directly
 if __name__ == '__main__':

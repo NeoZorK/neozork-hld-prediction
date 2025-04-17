@@ -1,16 +1,13 @@
 # tests/data/test_data_acquisition.py
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch #, MagicMock
 import argparse
 import pandas as pd
 from datetime import date
 
 # Import the function to test
 from src.data.data_acquisition import acquire_data
-
-# Mock the dependencies
-from src.data import data_utils # To patch functions inside it
 
 # Create a dummy logger class
 class MockLogger:
@@ -34,7 +31,7 @@ class TestDataAcquisition(unittest.TestCase):
     @patch('src.data.data_acquisition.logger', new_callable=MockLogger)
     # Patch the functions from data_utils that acquire_data calls
     @patch('src.data.data_acquisition.get_demo_data')
-    def test_acquire_data_demo_mode(self, mock_get_demo_data, mock_logger):
+    def test_acquire_data_demo_mode(self, mock_get_demo_data, _ ):
         # Setup mock for get_demo_data
         demo_df = pd.DataFrame({'Open': [1], 'High': [1.1], 'Low': [0.9], 'Close': [1], 'Volume': [100]})
         mock_get_demo_data.return_value = demo_df
@@ -59,7 +56,7 @@ class TestDataAcquisition(unittest.TestCase):
     @patch('src.data.data_acquisition.map_interval')
     @patch('src.data.data_acquisition.map_ticker')
     @patch('src.data.data_acquisition.fetch_yfinance_data')
-    def test_acquire_data_yfinance_mode_period(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, mock_logger):
+    def test_acquire_data_yfinance_mode_period(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, _):
         # Setup mocks
         yf_df = pd.DataFrame({'Open': [10], 'High': [11], 'Low': [9], 'Close': [10], 'Volume': [1000]})
         mock_fetch_yfinance_data.return_value = yf_df
@@ -87,7 +84,7 @@ class TestDataAcquisition(unittest.TestCase):
     @patch('src.data.data_acquisition.map_interval')
     @patch('src.data.data_acquisition.map_ticker')
     @patch('src.data.data_acquisition.fetch_yfinance_data')
-    def test_acquire_data_yfinance_mode_start_end(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, mock_logger):
+    def test_acquire_data_yfinance_mode_start_end(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, _):
         # Setup mocks
         yf_df = pd.DataFrame({'Open': [20], 'High': [21], 'Low': [19], 'Close': [20], 'Volume': [2000]})
         mock_fetch_yfinance_data.return_value = yf_df
@@ -116,7 +113,7 @@ class TestDataAcquisition(unittest.TestCase):
     @patch('src.data.data_acquisition.map_interval')
     @patch('src.data.data_acquisition.map_ticker')
     @patch('src.data.data_acquisition.fetch_yfinance_data')
-    def test_acquire_data_yfinance_mode_start_only(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, mock_logger):
+    def test_acquire_data_yfinance_mode_start_only(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, _):
         yf_df = pd.DataFrame({'Open': [30], 'Close': [30]})
         mock_fetch_yfinance_data.return_value = yf_df
         mock_map_interval.return_value = '1d'
@@ -135,7 +132,7 @@ class TestDataAcquisition(unittest.TestCase):
     @patch('src.data.data_acquisition.map_interval')
     @patch('src.data.data_acquisition.map_ticker')
     @patch('src.data.data_acquisition.fetch_yfinance_data')
-    def test_acquire_data_yfinance_mode_end_only(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, mock_logger):
+    def test_acquire_data_yfinance_mode_end_only(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, _):
         yf_df = pd.DataFrame({'Open': [40], 'Close': [40]})
         mock_fetch_yfinance_data.return_value = yf_df
         mock_map_interval.return_value = '1wk'
@@ -151,7 +148,7 @@ class TestDataAcquisition(unittest.TestCase):
 
     # Test yfinance mode missing ticker - should raise ValueError
     @patch('src.data.data_acquisition.logger', new_callable=MockLogger)
-    def test_acquire_data_yfinance_missing_ticker(self, mock_logger):
+    def test_acquire_data_yfinance_missing_ticker(self, _):
         args = create_mock_args(mode='yf', ticker=None) # Missing ticker
         with self.assertRaises(ValueError) as cm:
             acquire_data(args)
@@ -160,7 +157,7 @@ class TestDataAcquisition(unittest.TestCase):
     # Test yfinance mode invalid interval - map_interval should raise error (tested separately, but check propagation)
     @patch('src.data.data_acquisition.logger', new_callable=MockLogger)
     @patch('src.data.data_acquisition.map_interval')
-    def test_acquire_data_yfinance_invalid_interval(self, mock_map_interval, mock_logger):
+    def test_acquire_data_yfinance_invalid_interval(self, mock_map_interval, _):
         mock_map_interval.side_effect = ValueError("Invalid interval")
         args = create_mock_args(mode='yf', ticker='ANY', interval='INVALID')
         with self.assertRaises(ValueError) as cm:
@@ -172,7 +169,7 @@ class TestDataAcquisition(unittest.TestCase):
     @patch('src.data.data_acquisition.map_interval')
     @patch('src.data.data_acquisition.map_ticker')
     @patch('src.data.data_acquisition.fetch_yfinance_data')
-    def test_acquire_data_yfinance_fetch_fail(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, mock_logger):
+    def test_acquire_data_yfinance_fetch_fail(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, _):
         mock_fetch_yfinance_data.return_value = None # Simulate fetch failure
         mock_map_interval.return_value = '1d'
         mock_map_ticker.return_value = 'FAIL'

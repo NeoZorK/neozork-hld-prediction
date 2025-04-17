@@ -1,10 +1,10 @@
 # tests/workflow/test_workflow.py
 
 import unittest
-from unittest.mock import patch, MagicMock, ANY
+from unittest.mock import patch #, MagicMock, ANY
 import argparse
 import pandas as pd
-import time
+#import time
 
 # Import the function to test
 from src.workflow.workflow import run_indicator_workflow
@@ -34,7 +34,7 @@ class TestWorkflow(unittest.TestCase):
     @patch('src.workflow.workflow.calculate_indicator')
     @patch('src.workflow.workflow.generate_plot')
     @patch('time.perf_counter') # Mock time to control durations
-    def test_run_workflow_success(self, mock_perf_counter, mock_generate_plot, mock_calculate_indicator, mock_get_point_size, mock_acquire_data, mock_logger):
+    def test_run_workflow_success(self, mock_perf_counter, mock_generate_plot, mock_calculate_indicator, mock_get_point_size, mock_acquire_data, _):
         # --- Setup Mocks ---
         args = create_mock_args(mode='demo')
         # Mock time sequence
@@ -95,7 +95,7 @@ class TestWorkflow(unittest.TestCase):
     @patch('src.workflow.workflow.calculate_indicator')
     @patch('src.workflow.workflow.generate_plot')
     @patch('time.perf_counter')
-    def test_run_workflow_fail_data_acquisition(self, mock_perf_counter, mock_generate_plot, mock_calculate_indicator, mock_get_point_size, mock_acquire_data, mock_logger):
+    def test_run_workflow_fail_data_acquisition(self, mock_perf_counter, mock_generate_plot, mock_calculate_indicator, mock_get_point_size, mock_acquire_data, _):
         args = create_mock_args(mode='yf')
         mock_perf_counter.side_effect = [0.0, 0.1] # Only time until data fetch fails
         error_message = "Ticker required"
@@ -126,7 +126,7 @@ class TestWorkflow(unittest.TestCase):
     @patch('src.workflow.workflow.calculate_indicator')
     @patch('src.workflow.workflow.generate_plot')
     @patch('time.perf_counter')
-    def test_run_workflow_fail_point_size(self, mock_perf_counter, mock_generate_plot, mock_calculate_indicator, mock_get_point_size, mock_acquire_data, mock_logger):
+    def test_run_workflow_fail_point_size(self, mock_perf_counter, mock_generate_plot, mock_calculate_indicator, mock_get_point_size, mock_acquire_data, _):
         args = create_mock_args(mode='yf')
         mock_perf_counter.side_effect = [0.0, 0.1, 0.1] # Time until point size fails
         mock_ohlcv_df = pd.DataFrame({'Close': [1]})
@@ -155,7 +155,7 @@ class TestWorkflow(unittest.TestCase):
     @patch('src.workflow.workflow.calculate_indicator')
     @patch('src.workflow.workflow.generate_plot')
     @patch('time.perf_counter')
-    def test_run_workflow_fail_calculation(self, mock_perf_counter, mock_generate_plot, mock_calculate_indicator, mock_get_point_size, mock_acquire_data, mock_logger):
+    def test_run_workflow_fail_calculation(self, mock_perf_counter, mock_generate_plot, mock_calculate_indicator, mock_get_point_size, mock_acquire_data, _):
         args = create_mock_args(mode='demo')
         mock_perf_counter.side_effect = [0.0, 0.1, 0.1, 0.3] # Time until calc fails
         mock_ohlcv_df = pd.DataFrame({'Close': [1]})
@@ -187,7 +187,7 @@ class TestWorkflow(unittest.TestCase):
     @patch('src.workflow.workflow.calculate_indicator')
     @patch('src.workflow.workflow.generate_plot')
     @patch('time.perf_counter')
-    def test_run_workflow_success_calc_returns_empty(self, mock_perf_counter, mock_generate_plot, mock_calculate_indicator, mock_get_point_size, mock_acquire_data, mock_logger_instance):
+    def test_run_workflow_success_calc_returns_empty(self, mock_perf_counter, mock_generate_plot, mock_calculate_indicator, mock_get_point_size, mock_acquire_data, _):
         args = create_mock_args(mode='demo')
         mock_perf_counter.side_effect = [0.0, 0.1, 0.1, 0.3, 0.3, 0.5]
         mock_ohlcv_df = pd.DataFrame({'Close': [1]})

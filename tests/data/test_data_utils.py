@@ -1,9 +1,9 @@
 # tests/data/test_data_utils.py
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch #, MagicMock
 import pandas as pd
-from datetime import date, timedelta
+#from datetime import date, timedelta
 import numpy as np
 
 # Import functions from the module to be tested
@@ -64,7 +64,7 @@ class TestDataUtils(unittest.TestCase):
 
     # Test map_ticker function
     @patch('src.data.data_utils.logger', new_callable=MockLogger) # Mock logger inside data_utils
-    def test_map_ticker(self, mock_logger):
+    def test_map_ticker(self, _):
         # Test Forex pair needing =X
         self.assertEqual(map_ticker("EURUSD"), "EURUSD=X")
         # Test Forex pair already having =X
@@ -87,7 +87,7 @@ class TestDataUtils(unittest.TestCase):
     # Patch yf.download and logger for fetch_yfinance_data tests
     @patch('src.data.data_utils.yf.download')
     @patch('src.data.data_utils.logger', new_callable=MockLogger)
-    def test_fetch_yfinance_data_success_simple_cols(self, mock_logger, mock_yf_download):
+    def test_fetch_yfinance_data_success_simple_cols(self, _, mock_yf_download):
         # Configure the mock to return a simple DataFrame
         mock_df = pd.DataFrame({
             'Open': [100, 101], 'High': [102, 103], 'Low': [99, 98],
@@ -106,7 +106,7 @@ class TestDataUtils(unittest.TestCase):
     # Test case where yf.download returns an empty DataFrame
     @patch('src.data.data_utils.yf.download')
     @patch('src.data.data_utils.logger', new_callable=MockLogger)
-    def test_fetch_yfinance_data_empty(self, mock_logger, mock_yf_download):
+    def test_fetch_yfinance_data_empty(self, _, mock_yf_download):
         mock_yf_download.return_value = pd.DataFrame() # Empty DF
 
         result_df = fetch_yfinance_data('EMPTY', '1d', period='1d')
@@ -117,7 +117,7 @@ class TestDataUtils(unittest.TestCase):
     # Test case with missing required columns
     @patch('src.data.data_utils.yf.download')
     @patch('src.data.data_utils.logger', new_callable=MockLogger)
-    def test_fetch_yfinance_data_missing_cols(self, mock_logger, mock_yf_download):
+    def test_fetch_yfinance_data_missing_cols(self, _, mock_yf_download):
         mock_df = pd.DataFrame({'Open': [100], 'High': [102], 'Volume': [1000]}) # Missing Low, Close
         mock_yf_download.return_value = mock_df
 
@@ -129,7 +129,7 @@ class TestDataUtils(unittest.TestCase):
     # Test case with NaN values in OHLC columns (should be dropped)
     @patch('src.data.data_utils.yf.download')
     @patch('src.data.data_utils.logger', new_callable=MockLogger)
-    def test_fetch_yfinance_data_with_nans(self, mock_logger, mock_yf_download):
+    def test_fetch_yfinance_data_with_nans(self, _, mock_yf_download):
         mock_df = pd.DataFrame({
             'Open': [100, 101, np.nan], 'High': [102, 103, 104],
             'Low': [99, np.nan, 98], 'Close': [101, 102, 103],
@@ -146,7 +146,7 @@ class TestDataUtils(unittest.TestCase):
     # Test case handling MultiIndex columns returned by yfinance
     @patch('src.data.data_utils.yf.download')
     @patch('src.data.data_utils.logger', new_callable=MockLogger)
-    def test_fetch_yfinance_data_multiindex_cols(self, mock_logger, mock_yf_download):
+    def test_fetch_yfinance_data_multiindex_cols(self, _, mock_yf_download):
         # Create a DataFrame with MultiIndex columns typical for single ticker download
         arrays = [['Open', 'High', 'Low', 'Close', 'Volume'], ['GOOG', 'GOOG', 'GOOG', 'GOOG', 'GOOG']]
         tuples = list(zip(*arrays))
@@ -169,7 +169,7 @@ class TestDataUtils(unittest.TestCase):
     # Test case where yf.download raises an exception
     @patch('src.data.data_utils.yf.download')
     @patch('src.data.data_utils.logger', new_callable=MockLogger)
-    def test_fetch_yfinance_data_exception(self, mock_logger, mock_yf_download):
+    def test_fetch_yfinance_data_exception(self, _, mock_yf_download):
         mock_yf_download.side_effect = Exception("Network Error") # Simulate an error
 
         result_df = fetch_yfinance_data('ERROR', '1d', period='1d')

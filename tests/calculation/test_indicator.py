@@ -1,7 +1,7 @@
 # tests/calculation/test_indicator.py
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch #, MagicMock
 import pandas as pd
 import numpy as np
 
@@ -9,7 +9,7 @@ import numpy as np
 from src.calculation.indicator import calculate_pressure_vector
 # Import dependencies to mock or use
 from src.common.constants import TradingRule, BUY, SELL, NOTRADE, EMPTY_VALUE
-from src.calculation import core_calculations, rules
+#from src.calculation import core_calculations, rules
 
 # Dummy logger
 class MockLogger:
@@ -34,7 +34,7 @@ class TestIndicatorCalculation(unittest.TestCase):
 
     # Test with invalid input DataFrame (missing columns)
     @patch('src.calculation.indicator.logger', new_callable=MockLogger)
-    def test_calculate_pv_missing_columns(self, mock_logger):
+    def test_calculate_pv_missing_columns(self, _):
         df_missing = self.df_input.drop(columns=['Low', 'TickVolume'])
         with self.assertRaises(ValueError) as cm:
             calculate_pressure_vector(df_missing, self.point, TradingRule.Predict_High_Low_Direction)
@@ -42,7 +42,7 @@ class TestIndicatorCalculation(unittest.TestCase):
 
     # Test with zero point size
     @patch('src.calculation.indicator.logger', new_callable=MockLogger)
-    def test_calculate_pv_zero_point(self, mock_logger):
+    def test_calculate_pv_zero_point(self, _):
         with self.assertRaises(ValueError) as cm:
             calculate_pressure_vector(self.df_input, 0, TradingRule.Predict_High_Low_Direction)
         self.assertIn("Point size cannot be zero", str(cm.exception))
@@ -54,7 +54,7 @@ class TestIndicatorCalculation(unittest.TestCase):
     @patch('src.calculation.indicator.calculate_pressure')
     @patch('src.calculation.indicator.calculate_pv')
     @patch('src.calculation.indicator.apply_trading_rule')
-    def test_calculate_pv_flow_predict_hld(self, mock_apply_rule, mock_calc_pv, mock_calc_pressure, mock_calc_hl, mock_logger):
+    def test_calculate_pv_flow_predict_hld(self, mock_apply_rule, mock_calc_pv, mock_calc_pressure, mock_calc_hl, _):
         # --- Setup Mocks ---
         # Make mock functions return series with correct index and some dummy data
         mock_hl = pd.Series([100, 80, 120, 50, 90], index=self.df_input.index, dtype=float)

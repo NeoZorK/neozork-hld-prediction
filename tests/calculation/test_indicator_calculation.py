@@ -1,10 +1,10 @@
 # tests/calculation/test_indicator_calculation.py
 
 import unittest
-from unittest.mock import patch, MagicMock, ANY
+from unittest.mock import patch #, MagicMock, ANY
 import argparse
 import pandas as pd
-import numpy as np
+#import numpy as np
 
 # Import the function to test
 from src.calculation.indicator_calculation import calculate_indicator
@@ -39,7 +39,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
     # Test successful calculation with a valid rule alias
     @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
-    def test_calculate_indicator_success_alias(self, mock_calc_pv_func, mock_logger):
+    def test_calculate_indicator_success_alias(self, mock_calc_pv_func, _):
         args = create_mock_args(rule='PHLD') # Use alias
         expected_rule_enum = TradingRule.Predict_High_Low_Direction
         # Mock the main calculation function to return a dummy DataFrame
@@ -67,7 +67,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
     # Test successful calculation with a direct enum name
     @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
-    def test_calculate_indicator_success_direct_name(self, mock_calc_pv_func, mock_logger):
+    def test_calculate_indicator_success_direct_name(self, mock_calc_pv_func, _):
         rule_name = 'PV_HighLow'
         args = create_mock_args(rule=rule_name)
         expected_rule_enum = TradingRule.PV_HighLow
@@ -83,7 +83,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
 
     # Test with invalid rule name
     @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
-    def test_calculate_indicator_invalid_rule(self, mock_logger):
+    def test_calculate_indicator_invalid_rule(self, _):
         args = create_mock_args(rule='InvalidRuleName')
         with self.assertRaises(ValueError) as cm:
             calculate_indicator(args, self.ohlcv_df, self.point_size)
@@ -91,7 +91,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
 
     # Test with missing required columns in input DataFrame
     @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
-    def test_calculate_indicator_missing_columns(self, mock_logger):
+    def test_calculate_indicator_missing_columns(self, _):
         args = create_mock_args()
         df_missing = self.ohlcv_df.drop(columns=['High'])
         with self.assertRaises(ValueError) as cm:
@@ -101,7 +101,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
 
     # Test with None DataFrame input
     @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
-    def test_calculate_indicator_none_dataframe(self, mock_logger):
+    def test_calculate_indicator_none_dataframe(self, _):
         args = create_mock_args()
         with self.assertRaises(ValueError) as cm:
             calculate_indicator(args, None, self.point_size)
@@ -109,7 +109,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
 
     # Test with empty DataFrame input
     @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
-    def test_calculate_indicator_empty_dataframe(self, mock_logger):
+    def test_calculate_indicator_empty_dataframe(self, _):
         args = create_mock_args()
         with self.assertRaises(ValueError) as cm:
             calculate_indicator(args, pd.DataFrame(), self.point_size)
@@ -117,7 +117,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
 
     # Test with None point size input
     @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
-    def test_calculate_indicator_none_point_size(self, mock_logger):
+    def test_calculate_indicator_none_point_size(self, _):
         args = create_mock_args()
         with self.assertRaises(ValueError) as cm:
             calculate_indicator(args, self.ohlcv_df, None)
@@ -126,7 +126,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
     # Test when calculation function itself raises an error
     @patch('src.calculation.indicator_calculation.logger', new_callable=MockLogger)
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
-    def test_calculate_indicator_calc_exception(self, mock_calc_pv_func, mock_logger):
+    def test_calculate_indicator_calc_exception(self, mock_calc_pv_func, _):
         args = create_mock_args()
         mock_calc_pv_func.side_effect = RuntimeError("Calculation failed inside")
 
@@ -137,7 +137,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
     # Test when calculation function returns None or empty (should log warning but not fail step)
     @patch('src.calculation.indicator_calculation.logger') # Use MagicMock for logger to check calls
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
-    def test_calculate_indicator_calc_returns_none(self, mock_calc_pv_func, mock_logger_instance):
+    def test_calculate_indicator_calc_returns_none(self, mock_calc_pv_func, __instance):
         args = create_mock_args()
         mock_calc_pv_func.return_value = None # Simulate calculation returning None
 
@@ -145,11 +145,11 @@ class TestIndicatorCalculationStep(unittest.TestCase):
 
         self.assertIsNone(result_df)
         self.assertEqual(selected_rule, TradingRule.Predict_High_Low_Direction) # Should still return selected rule
-        mock_logger_instance.print_warning.assert_called_once_with("Indicator calculation returned None or empty DataFrame.")
+        __instance.print_warning.assert_called_once_with("Indicator calculation returned None or empty DataFrame.")
 
     @patch('src.calculation.indicator_calculation.logger')
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
-    def test_calculate_indicator_calc_returns_empty(self, mock_calc_pv_func, mock_logger_instance):
+    def test_calculate_indicator_calc_returns_empty(self, mock_calc_pv_func, __instance):
         args = create_mock_args(rule='Pressure_Vector')
         mock_calc_pv_func.return_value = pd.DataFrame() # Simulate calculation returning empty DF
 
@@ -157,15 +157,15 @@ class TestIndicatorCalculationStep(unittest.TestCase):
 
         self.assertTrue(result_df.empty)
         self.assertEqual(selected_rule, TradingRule.Pressure_Vector)
-        mock_logger_instance.print_warning.assert_called_once_with("Indicator calculation returned None or empty DataFrame.")
+        __instance.print_warning.assert_called_once_with("Indicator calculation returned None or empty DataFrame.")
         # Check debug print is not attempted for empty df
-        debug_calls = [call for call in mock_logger_instance.print_debug.call_args_list if "DEBUG: Result DF Tail" in str(call)]
+        debug_calls = [call for call in __instance.print_debug.call_args_list if "DEBUG: Result DF Tail" in str(call)]
         self.assertEqual(len(debug_calls), 0)
 
     # Test debug print tail is called for valid result
     @patch('src.calculation.indicator_calculation.logger')
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
-    def test_calculate_indicator_debug_print(self, mock_calc_pv_func, mock_logger_instance):
+    def test_calculate_indicator_debug_print(self, mock_calc_pv_func, __instance):
         args = create_mock_args()
         # Need a result df with some expected debug columns
         mock_result_df = pd.DataFrame({
@@ -177,7 +177,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         calculate_indicator(args, self.ohlcv_df, self.point_size)
 
         # Check if print_debug was called with the tail info
-        debug_calls = mock_logger_instance.print_debug.call_args_list
+        debug_calls = __instance.print_debug.call_args_list
         self.assertTrue(any("DEBUG: Result DF Tail" in str(call) for call in debug_calls))
         # Check if the DataFrame string was printed (at least one call after the title)
         self.assertTrue(any(mock_result_df.tail().to_string() in str(call) for call in debug_calls))

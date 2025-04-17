@@ -1,7 +1,7 @@
 # tests/utils/test_utils.py
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch #, MagicMock
 
 # Import the function to test
 from src.utils.utils import determine_point_size
@@ -32,7 +32,7 @@ class TestUtils(unittest.TestCase):
     # Patch the logger and yfinance.Ticker in the utils module
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_currency_non_jpy(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_currency_non_jpy(self, mock_yf_ticker, _):
         ticker_info = {'quoteType': 'CURRENCY', 'currency': 'USD'}
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info)
         point = determine_point_size("EURUSD=X")
@@ -41,7 +41,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_currency_jpy_in_ticker(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_currency_jpy_in_ticker(self, mock_yf_ticker, _):
         ticker_info = {'quoteType': 'CURRENCY', 'currency': 'JPY'} # Currency might be USD, but ticker implies JPY
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info)
         point = determine_point_size("USDJPY=X")
@@ -50,7 +50,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_currency_jpy_in_currency(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_currency_jpy_in_currency(self, mock_yf_ticker, _):
         ticker_info = {'quoteType': 'CURRENCY', 'currency': 'JPY'}
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info)
         point = determine_point_size("AUDCAD=X") # Ticker doesn't contain JPY
@@ -59,7 +59,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_equity(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_equity(self, mock_yf_ticker, _):
         ticker_info = {'quoteType': 'EQUITY', 'currency': 'USD'}
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info)
         point = determine_point_size("AAPL")
@@ -68,7 +68,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_index(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_index(self, mock_yf_ticker, _):
         ticker_info = {'quoteType': 'INDEX', 'currency': 'USD'}
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info)
         point = determine_point_size("^GSPC")
@@ -77,7 +77,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_crypto_high_value(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_crypto_high_value(self, mock_yf_ticker, _):
         # Using regularMarketPrice
         ticker_info = {'quoteType': 'CRYPTOCURRENCY', 'regularMarketPrice': 60000, 'currency': 'USD'}
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info)
@@ -87,7 +87,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_crypto_low_value(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_crypto_low_value(self, mock_yf_ticker, _):
          # Using currentPrice as fallback
         ticker_info = {'quoteType': 'CRYPTOCURRENCY', 'currentPrice': 0.5, 'currency': 'USD'}
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info)
@@ -97,7 +97,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_crypto_very_low_value(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_crypto_very_low_value(self, mock_yf_ticker, _):
          # Using ask as fallback
         ticker_info = {'quoteType': 'CRYPTOCURRENCY', 'ask': 0.0005, 'currency': 'USD'}
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info)
@@ -107,7 +107,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_crypto_mid_value(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_crypto_mid_value(self, mock_yf_ticker, _):
         ticker_info = {'quoteType': 'CRYPTOCURRENCY', 'bid': 150, 'currency': 'USD'}
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info)
         point = determine_point_size("ETH-USD")
@@ -116,7 +116,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_crypto_no_price(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_crypto_no_price(self, mock_yf_ticker, _):
         ticker_info = {'quoteType': 'CRYPTOCURRENCY', 'currency': 'USD'} # No price fields
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info)
         point = determine_point_size("NOCOIN-USD")
@@ -125,7 +125,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_future(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_future(self, mock_yf_ticker, _):
         ticker_info = {'quoteType': 'FUTURE', 'currency': 'USD'}
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info)
         point = determine_point_size("ES=F")
@@ -134,7 +134,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_unknown_type(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_unknown_type(self, mock_yf_ticker, _):
         ticker_info = {'quoteType': 'UNKNOWN', 'currency': 'XXX'}
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info)
         point = determine_point_size("UNKNOWNTICKER")
@@ -143,7 +143,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_yfinance_exception(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_yfinance_exception(self, mock_yf_ticker, _):
         # Configure the mock Ticker to raise an exception when .info is accessed
         mock_yf_ticker.return_value = MockYFinanceTicker(raise_exception=True)
         point = determine_point_size("ERRORTICKER")
@@ -152,7 +152,7 @@ class TestUtils(unittest.TestCase):
 
     @patch('src.utils.utils.logger', new_callable=MockLogger)
     @patch('src.utils.utils.yf.Ticker')
-    def test_determine_point_size_no_info(self, mock_yf_ticker, mock_logger):
+    def test_determine_point_size_no_info(self, mock_yf_ticker, _):
         # Simulate yf.Ticker().info returning an empty dict or None (less likely)
         mock_yf_ticker.return_value = MockYFinanceTicker(ticker_info={})
         point = determine_point_size("NOINFO")
