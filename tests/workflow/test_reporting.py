@@ -22,8 +22,8 @@ class MockLogger:
         self.calls.append(('error', msg))
 
     # Helper to format summary line similar to the real logger for assertion checks
-    #@staticmethod
-    def format_summary_line(self, key, value, key_width=25):
+    @staticmethod
+    def format_summary_line(key, value, key_width=25):
         padded_key = f"{key+':':<{key_width}}"
         return f"{padded_key} {value}" # Simplified version without colors for test comparison
 

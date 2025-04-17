@@ -6,6 +6,8 @@ Removed arguments related to LWMA, CORE1, etc.
 All comments are in English.
 """
 import argparse
+import textwrap # Import textwrap for cleaner epilog formatting
+
 try:
     from rich_argparse import RichHelpFormatter
 except ImportError:
@@ -24,10 +26,28 @@ from .. import __version__
 
 def parse_arguments():
     """Sets up argument parser using RichHelpFormatter and returns the parsed arguments."""
+
+    # --- Define examples for the help epilog ---
+    examples = textwrap.dedent("""
+     Examples:
+       # Run with demo data and default rule
+       python run_analysis.py demo
+
+       # Run with demo data and Pressure_Vector rule
+       python run_analysis.py demo --rule PV
+
+       # Fetch 1 year of Daily EUR/USD data, estimate point size, use PV_HighLow rule
+       python run_analysis.py yf --ticker "EURUSD=X" --period 1y --interval D1 --rule PV_HighLow
+
+       # Fetch AAPL data for a specific date range, H1 interval, explicitly set point size
+       python run_analysis.py yfinance --ticker AAPL --interval H1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule PHLD
+     """)  # Use textwrap.dedent to remove leading whitespace
+
+
     # Use RichHelpFormatter for colored and formatted help output
     parser = argparse.ArgumentParser(
         description="Calculate and plot Shcherbyna Pressure Vector indicator using demo data or fetching from Yahoo Finance.",
-        formatter_class=RichHelpFormatter # <--- USE RICH FORMATTER
+        formatter_class=RichHelpFormatter, epilog=examples # <--- USE RICH FORMATTER
     )
 
     # --- Arguments ---
