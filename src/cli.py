@@ -64,7 +64,6 @@ def parse_arguments():
     yf_group.add_argument('--end', help="End date for yfinance data (YYYY-MM-DD). Use with [bold]--start[/].")
 
     # --- Indicator Options (Simplified) ---
-    # Another group for indicator parameters
     indicator_group = parser.add_argument_group('Indicator Options')
 
     # Get available rules dynamically AFTER updating TradingRule enum
