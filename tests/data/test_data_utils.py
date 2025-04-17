@@ -1,10 +1,11 @@
 # tests/data/test_data_utils.py
 
 import unittest
-from unittest.mock import patch #, MagicMock
+from unittest.mock import patch
 import pandas as pd
 #from datetime import date, timedelta
 import numpy as np
+
 
 # Import functions from the module to be tested
 from src.data.data_utils import (
@@ -73,7 +74,7 @@ class TestDataUtils(unittest.TestCase):
 
     # Test map_ticker function
     @patch('src.data.data_utils.logger', new_callable=MockLogger) # Mock logger inside data_utils
-    def test_map_ticker(self, _):
+    def test_map_ticker(self, _): # Используем _ для неиспользуемого mock_logger
         # Test Forex pair needing =X
         self.assertEqual(map_ticker("EURUSD"), "EURUSD=X")
         # Test Forex pair already having =X
@@ -113,7 +114,7 @@ class TestDataUtils(unittest.TestCase):
         required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
         for col in required_cols:
             self.assertIn(col, result_df.columns)
-        # self.assertListEqual(list(result_df.columns), required_cols) # <-- Заменить старую проверку
+
         self.assertEqual(len(result_df), 2)
         mock_yf_download.assert_called_once()
 
@@ -140,7 +141,7 @@ class TestDataUtils(unittest.TestCase):
         self.assertIsNone(result_df) # Should return None if required cols missing
         mock_yf_download.assert_called_once()
 
-    # Test case with NaN values in OHLC columns (should be dropped)
+    # Test case with NaN values in OHLC columns (should NOT be dropped with how='all')
     @patch('src.data.data_utils.yf.download')
     @patch('src.data.data_utils.logger', new_callable=MockLogger)
     def test_fetch_yfinance_data_with_nans(self, _, mock_yf_download):
@@ -155,10 +156,16 @@ class TestDataUtils(unittest.TestCase):
 
         self.assertIsInstance(result_df, pd.DataFrame)
         # Correct expectation for how='all'
-        self.assertEqual(len(result_df), 3)  # <--- ИЗМЕНЕНИЕ: Ожидаем 3 строки
+        self.assertEqual(len(result_df), 3)
         # Check remaining indices (should be all original indices)
         expected_indices = pd.to_datetime(['2023-01-01', '2023-01-02', '2023-01-03'])
-        pd.testing.assert_index_equal(result_df.index, expected_indices)
+
+        # --- ИЗМЕНЕНИЕ: Явно приводим тип перед сравнением ---
+        # Хотя это не должно быть нужно, попробуем на случай странного поведения
+        index_to_check = pd.Index(result_df.index)
+        expected_indices_as_index = pd.Index(expected_indices)
+        pd.testing.assert_index_equal(index_to_check, expected_indices_as_index)
+        # --- Конец изменения ---
 
     # Test case handling MultiIndex columns returned by yfinance
     @patch('src.data.data_utils.yf.download')
@@ -184,17 +191,9 @@ class TestDataUtils(unittest.TestCase):
         self.assertEqual(len(result_df), 1)
 
     # Test case where yf.download raises an exception
-    @patch('src.data.data_utils.yf.download')
-    @patch('src.data.data_utils.logger', new_callable=MockLogger)
-    def test_fetch_yfinance_data_exception(self, _, mock_yf_download):
-        mock_yf_download.side_effect = Exception("Network Error") # Simulate an error
+    # Удаляем первый дублирующийся тест test_fetch_yfinance_data_exception
 
-        result_df = fetch_yfinance_data('ERROR', '1d', period='1d')
-
-        self.assertIsNone(result_df) # Should return None on exception
-        mock_yf_download.assert_called_once()
-
-    # Test case where yf.download raises an exception
+    # Test case where yf.download raises an exception (с моком traceback)
     # Add patch for traceback if needed, though the error is now color attr
     @patch('src.data.data_utils.yf.download')
     @patch('src.data.data_utils.logger', new_callable=MockLogger)
