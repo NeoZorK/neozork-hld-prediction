@@ -7,12 +7,12 @@ All comments are in English.
 """
 import time
 # Use relative imports within the src package
-from . import logger
-# Import functions from the new step modules
-from .data_acquisition import acquire_data
-from .point_size_determination import get_point_size
-from .indicator_calculation import calculate_indicator
-from .plotting_generation import generate_plot
+from ..common import logger 
+# Import functions from the specific step modules using relative paths
+from ..data_acquisition import acquire_data
+from ..point_size_determination import get_point_size 
+from ..indicator_calculation import calculate_indicator 
+from ..plotting_generation import generate_plot 
 
 # --- Main Workflow Orchestrator ---
 def run_indicator_workflow(args):

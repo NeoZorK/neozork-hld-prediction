@@ -7,9 +7,9 @@ All comments are in English.
 import pandas as pd
 import traceback
 # Use relative imports within the src package
-from . import logger
-from .constants import TradingRule
-# Import the actual plotting function
+from ..common import logger
+from ..common.constants import TradingRule
+# Import from sibling module plotting.py
 from .plotting import plot_indicator_results
 
 def generate_plot(args, data_info: dict, result_df: pd.DataFrame | None, selected_rule: TradingRule | None, point_size: float | None, estimated_point: bool):

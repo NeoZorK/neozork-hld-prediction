@@ -10,7 +10,7 @@ import time
 from datetime import date, timedelta
 
 # Assuming logger is imported if used
-from . import logger
+from ..common import logger
 
 def get_demo_data() -> pd.DataFrame:
     """Returns the demonstration DataFrame."""

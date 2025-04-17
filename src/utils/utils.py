@@ -4,11 +4,8 @@
 General utility functions, including point size estimation using yfinance info.
 All comments are in English.
 """
-import pandas as pd
-import numpy as np
-import yfinance as yf # Import yfinance here
-# Import logger relative to src package
-from . import logger
+import yfinance as yf
+from ..common import logger
 
 def determine_point_size(ticker: str) -> float | None:
     """

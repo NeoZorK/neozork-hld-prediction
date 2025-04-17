@@ -4,7 +4,7 @@
 Functions for reporting results and summaries.
 All comments are in English.
 """
-from . import logger
+from ..common import logger
 
 def print_summary(results: dict, total_duration: float, args):
     """

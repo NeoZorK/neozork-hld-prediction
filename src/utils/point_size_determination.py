@@ -4,10 +4,9 @@
 Workflow Step 2: Determines the point size to use.
 All comments are in English.
 """
-
 # Use relative imports within the src package
-from . import logger
-from .utils import determine_point_size # Import the core estimation function
+from ..common import logger
+from .utils import determine_point_size
 
 def get_point_size(args, data_info: dict):
     """
