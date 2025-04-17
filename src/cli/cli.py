@@ -27,26 +27,36 @@ from .. import __version__
 def parse_arguments():
     """Sets up argument parser using RichHelpFormatter and returns the parsed arguments."""
 
-    # --- Define examples with explicit newlines ---
-    # Используем f-string и textwrap.dedent для чистоты, добавляя \n в конце каждой строки примера
-    examples = textwrap.dedent(f"""
-        Examples:
-          # Run with demo data and default rule
-          python run_analysis.py demo\n
-          # Run with demo data and Pressure_Vector rule
-          python run_analysis.py demo --rule PV\n
-          # Fetch 1 year of Daily EUR/USD data, estimate point size, use PV_HighLow rule
-          python run_analysis.py yf --ticker "EURUSD=X" --period 1y --interval D1 --rule PV_HighLow\n
-          # Fetch AAPL data for a specific date range, H1 interval, explicitly set point size
-          python run_analysis.py yfinance --ticker AAPL --interval H1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule PHLD\n
-        """)
+    # --- Main description ---
+    main_description = textwrap.dedent("""
+       Calculate and plot Shcherbyna Pressure Vector indicator using demo data
+       or fetching from Yahoo Finance.
+       """)
 
+    # --- Example epilog ---
+    example_lines = [
+        "[bold]Examples:[/bold]",
+        "",
+        "  [dim]# Run with demo data and default rule[/]",
+        "  [bold cyan]python run_analysis.py demo[/]",
+        "",
+        "  [dim]# Run with demo data and Pressure_Vector rule[/]",
+        "  [bold cyan]python run_analysis.py demo --rule PV[/]",
+        "",
+        "  [dim]# Fetch 1 year of Daily EUR/USD data, estimate point size, use PV_HighLow rule[/]",
+        "  [bold cyan]python run_analysis.py yf --ticker \"EURUSD=X\" --period 1y --interval D1 --rule PV_HighLow[/]",
+        "",
+        "  [dim]# Fetch AAPL data for a specific date range, H1 interval, explicitly set point size[/]",
+        "  [bold cyan]python run_analysis.py yfinance --ticker AAPL --interval H1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule PHLD[/]"
+    ]
+    # Join example lines with newlines for better formatting
+    examples_epilog = "\n".join(example_lines)
 
-    # Use RichHelpFormatter for colored and formatted help output
+    #--- Argument Parser Setup ---
     parser = argparse.ArgumentParser(
-        description="Calculate and plot Shcherbyna Pressure Vector indicator using demo data or fetching from Yahoo Finance.",
+        description=main_description,
         formatter_class=RichHelpFormatter,
-        epilog=examples # <--- USE RICH FORMATTER
+        epilog=examples_epilog
     )
 
     # --- Arguments ---
