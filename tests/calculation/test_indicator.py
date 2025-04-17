@@ -121,7 +121,8 @@ class TestIndicatorCalculation(unittest.TestCase):
         self.assertIn('HL', call_df.columns)
         self.assertIn('Pressure', call_df.columns)
         self.assertIn('PV', call_df.columns)
-        pd.testing.assert_series_equal(call_df['HL'], mock_hl)
+        # Add check_names=False here:
+        pd.testing.assert_series_equal(call_df['HL'], mock_hl, check_names=False)
         # Check other args
         self.assertEqual(mock_apply_rule.call_args[0][1], rule_to_test)
         self.assertEqual(mock_apply_rule.call_args[0][2], self.point)

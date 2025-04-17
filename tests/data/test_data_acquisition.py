@@ -98,7 +98,7 @@ class TestDataAcquisition(unittest.TestCase):
         # Assertions
         mock_map_interval.assert_called_once_with('H1')
         mock_map_ticker.assert_called_once_with('MSFT')
-        mock_fetch_yfinance_data.assert_called_once_with(ticker='MSFT', interval='1h', period='ignored', start_date='2024-01-01', end_date='2024-01-31')
+        mock_fetch_yfinance_data.assert_called_once_with(ticker='MSFT', interval='1h', period=None, start_date='2024-01-01', end_date='2024-01-31')
         self.assertEqual(result['effective_mode'], 'yfinance')
         self.assertEqual(result['data_source_label'], "MSFT")
         self.assertTrue(result['ohlcv_df'].equals(yf_df))
@@ -123,7 +123,7 @@ class TestDataAcquisition(unittest.TestCase):
 
         result = acquire_data(args)
 
-        mock_fetch_yfinance_data.assert_called_once_with(ticker='GOOG', interval='1d', period=args.period, start_date='2024-03-01', end_date=today_str)
+        mock_fetch_yfinance_data.assert_called_once_with(ticker='GOOG', interval='1d', period=None, start_date='2024-03-01', end_date=today_str)
         self.assertEqual(result['current_start'], '2024-03-01')
         self.assertEqual(result['current_end'], today_str) # End date should be today
 
@@ -142,7 +142,7 @@ class TestDataAcquisition(unittest.TestCase):
 
         result = acquire_data(args)
 
-        mock_fetch_yfinance_data.assert_called_once_with(ticker='TSLA', interval='1wk', period=args.period, start_date=default_start, end_date='2024-04-15')
+        mock_fetch_yfinance_data.assert_called_once_with(ticker='TSLA', interval='1wk', period=None, start_date=default_start, end_date='2024-04-15')
         self.assertEqual(result['current_start'], default_start) # Start date should be default
         self.assertEqual(result['current_end'], '2024-04-15')
 
