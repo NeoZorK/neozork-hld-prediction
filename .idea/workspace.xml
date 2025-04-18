@@ -7,8 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="all fixed">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix oanda 012">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,22 +69,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.demo command.executor&quot;: &quot;Run&quot;,
-    &quot;Python.help command.executor&quot;: &quot;Run&quot;,
-    &quot;Python.indicator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.indicator_logic.executor&quot;: &quot;Run&quot;,
-    &quot;Python.plotting.executor&quot;: &quot;Run&quot;,
-    &quot;Python.run_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Shell Script.help command.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.demo command.executor": "Run",
+    "Python.help command.executor": "Run",
+    "Python.indicator.executor": "Run",
+    "Python.indicator_logic.executor": "Run",
+    "Python.plotting.executor": "Run",
+    "Python.run_analysis.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Shell Script.help command.executor": "Run",
+    "git-widget-placeholder": "v0.1.2",
+    "run.code.analysis.last.selected.profile": "aDefault",
+    "settings.editor.selected.configurable": "preferences.keymap"
   }
-}</component>
+}]]></component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="6fa55ea4-5cda-4afe-9673-652cfffb17a1" reportId="NeoZorK HLD/qodana/2025-04-18" />
@@ -161,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00027" summary="fix TradingRule type">
-      <option name="closed" value="true" />
-      <created>1744720234871</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1744720234871</updated>
     </task>
     <task id="LOCAL-00028" summary="fix TradingRule type">
       <option name="closed" value="true" />
@@ -554,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744912287127</updated>
     </task>
-    <option name="localTasksCounter" value="76" />
+    <task id="LOCAL-00076" summary="fix oanda 012">
+      <option name="closed" value="true" />
+      <created>1744963159296</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1744963159296</updated>
+    </task>
+    <option name="localTasksCounter" value="77" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -581,8 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add debug version of fetchin yfinance &#10;add separate module for test fetching data from yfinance" />
-    <MESSAGE value="fix fetchng from yfinance" />
     <MESSAGE value="Fix demo again" />
     <MESSAGE value="comment debug check" />
     <MESSAGE value="try to fix auto size calculation" />
@@ -605,7 +604,9 @@
     <MESSAGE value="add -h examples" />
     <MESSAGE value="best varian for formating" />
     <MESSAGE value="better colors" />
+    <MESSAGE value="v0.1.2 Init" />
     <MESSAGE value="all fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="all fixed" />
+    <MESSAGE value="fix oanda 012" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix oanda 012" />
   </component>
 </project>
