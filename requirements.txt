@@ -52,7 +52,7 @@ namex==0.0.8
 networkx==3.4.2
 numba==0.61.2
 numpy==1.26.4
-oandapyV20>=0.7.4 # Added for Oanda
+oandapyV20>=0.7.2 # Added for Oanda
 opt_einsum==3.4.0
 optree==0.15.0
 packaging==24.2
