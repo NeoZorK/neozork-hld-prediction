@@ -6,7 +6,7 @@ This project focuses on the **professional enhancement of a proprietary trading 
 
 The primary goal is to significantly improve the accuracy and robustness of forecasts for the next period's **High, Low, and Direction (HLD)** for financial instruments (e.g., Forex pairs). The system leverages historical Minute-level (M1) OHLCV data and the output of the Python-replicated proprietary indicator as inputs for sophisticated ML models.
 
-The workflow involves an initial one-time data export from MetaTrader 5 (MT5), followed by the use of live data feeds (e.g., Yahoo Finance via `yfinance`, CSV files) for ongoing analysis and prediction generation. The ultimate aim is to create a highly accurate forecasting system suitable for potentially profitable automated trading strategies.
+The workflow involves an initial one-time data export from MetaTrader 5 (MT5), followed by the use of live data feeds (e.g., Yahoo Finance via `yfinance`, CSV files, Polygon.io API) for ongoing analysis and prediction generation. The ultimate aim is to create a highly accurate forecasting system suitable for potentially profitable automated trading strategies.
 
 ## Core Goals
 
@@ -22,7 +22,7 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 1.  **Indicator Logic Replication (Python):** Translate the mathematical and logical steps of the MQL5 indicator into an equivalent Python function or class. Validate its output against the original MQL5 version using the exported historical predictions.
 2.  **Data Ingestion & Management:**
     * **Initial Load:** Process the one-time export of M1 OHLCV and original MQL5 indicator predictions from MT5.
-    * **Data Feeds:** Implement functionality to fetch and update OHLCV data from sources like Yahoo Finance (`yfinance`), CSV files, or other chosen data providers (Oanda, Polygon planned).
+    * **Data Feeds:** Implement functionality to fetch and update OHLCV data from sources like Yahoo Finance (`yfinance`), CSV files, Polygon.io API, or other chosen data providers (Oanda planned).
 3.  **Feature Engineering (ML-Centric):**
     * Derive features primarily from M1 OHLCV data (e.g., price transformations, volatility measures, time-based patterns, candlestick patterns).
     * Crucially, incorporate the outputs (predicted H/L/D, internal states) of the **Python-replicated indicator** as key features for the ML model.
@@ -42,7 +42,7 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 
 Based on comparisons using the `mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv` file:
 
-* **Core Calculations (Pressure/PV):** Validation shows that the Python implementation of `Pressure` and `PV` (Pressure Vector) calculations is **highly accurate**, matching the `pressure` and `pressure_vector` columns from the CSV very closely (Correlation=1.0, minimal Mean Absolute Difference, <1% mismatches beyond float tolerance).
+* **Core Calculations (Pressure/PV):** Validation shows that the Python implementation of `Pressure` and `PV` (Pressure Vector) calculations is **highly accurate**, matching the `pressure` and `pressure_vector` columns from the CSV very closely (Correlation=1.0, minimal Mean Absolute Difference, <5% mismatches beyond float tolerance).
 * **Predicted Low/High (PHLD/SR Rules):** The current Python implementation for `PPrice1` (plotted green) and `PPrice2` (plotted red) in rules `PHLD` and `SR` uses a formula based on `Current Open +/- (Previous_High - Previous_Low) / 2`. Comparison with `predicted_low` and `predicted_high` columns from the sample MQL5 CSV shows a **systematic difference** (approx. 6.8 points Mean Absolute Difference in the sample XAUUSD MN1 data, although Correlation > 0.999). This indicates that the original MQL5 indicator uses a **different formula** for these specific predictions. Achieving an exact match would require implementing the original MQL5 formula in `src/calculation/rules.py`.
 
 ## Tech Stack
@@ -51,7 +51,7 @@ Based on comparisons using the `mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv` file:
 * **Core Libraries:** `pandas`, `numpy`
 * **ML / Deep Learning:** `scikit-learn`, `xgboost`, `lightgbm`, `tensorflow` or `pytorch`
 * **Feature Engineering:** `ta` (or `TA-Lib`)
-* **Data Feeds:** `yfinance`, CSV reader (implemented), `oandapyV20` (planned), `polygon-api-client` (planned)
+* **Data Feeds:** `yfinance`, CSV reader (implemented), `polygon-api-client` (implemented), `oandapyV20` (planned)
 * **Backtesting:** `VectorBT`, `Backtrader`
 * **Plotting:** `mplfinance`, `matplotlib`, `seaborn`, `rich`, `colorama`
 * **Environment:** `venv`
@@ -80,13 +80,13 @@ project-root/
 │   │   └── logger.py       # Colored logging utility (using colorama)
 │   ├── data/               # Data fetching and preparation utilities
 │   │   ├── __init__.py
-│   │   └── data_utils.py   # Low-level fetch (yfinance, csv), demo data, mapping functions
+│   │   └── data_utils.py   # Low-level fetch (yfinance, csv, polygon), demo data, mapping functions
 │   │   └── data_acquisition.py # Workflow Step 1: acquire_data function
 │   ├── calculation/        # Indicator calculation logic
 │   │   ├── __init__.py
-│   │   └── core_calculations.py # Base calculations (HL, PV, Pressure)
-│   │   └── rules.py        # Rule implementations (apply_rule_...) & dispatcher
-│   │   └── indicator.py    # Main calculation function (calculate_pressure_vector)
+│   │   └── core_calculations.py
+│   │   └── rules.py
+│   │   └── indicator.py
 │   │   └── indicator_calculation.py # Workflow Step 3: calculate_indicator function (with validation)
 │   ├── plotting/           # Plotting related modules
 │   │   ├── __init__.py
@@ -94,7 +94,7 @@ project-root/
 │   │   └── plotting_generation.py # Workflow Step 4: generate_plot function
 │   ├── utils/              # General utilities
 │   │   ├── __init__.py
-│   │   └── utils.py        # Point size estimation core (determine_point_size)
+│   │   └── utils.py
 │   │   └── point_size_determination.py # Workflow Step 2: get_point_size function
 │   └── workflow/           # Workflow orchestration and reporting
 │       ├── __init__.py
@@ -144,9 +144,7 @@ project-root/
     * Windows: Download binaries or build from source.
     * Then install the Python wrapper: `pip install TA-Lib`
 
-## Project Workflow / Detailed Plan (Status Updated [YYYY-MM-DD])
-
-*Replace [YYYY-MM-DD] with the current date.*
+## Project Workflow / Detailed Plan (Status Updated 2025-04-18)
 
 ### Phase 0: Setup & Foundation
 * [x] 0.1. Version Control Setup (Local Git, GitHub Remote, `.gitignore`)
@@ -156,20 +154,20 @@ project-root/
 * [~] 1.1. Understand Original MQL5 Logic (Inputs, Calculations, Outputs) & Document. *(Partially understood via CSV analysis)*
 * [x] 1.2. Python Implementation (`src/calculation/...`): Core logic translated.
 * [~] 1.3. Unit Testing: Basic tests exist, need expansion.
-* [~] 1.4. Plan Replication Validation Strategy: Comparison implemented for CSV mode.
+* [x] 1.4. Plan Replication Validation Strategy: Comparison implemented for CSV mode.
 * [x] 1.5. Add Project Versioning (`src/__init__.py`, Git Tag).
 
 ### Phase 2: Data Ingestion & Preparation
 * [ ] 2.1. Export Original MQL5 Indicator Predictions (CSV from MT5, M1, 5-10 years). *(Sample MN1 provided)*
 * [ ] 2.2. Export M1 OHLCV Data (CSV from MT5, same period/instrument). *(Sample MN1 provided)*
-* [x] 2.3. Load Data in Python: Implemented for CSV (`Workspace_csv_data`).
-* [ ] 2.4. Merge & Align Data (Handle timestamps, missing values). *(Basic handling in fetch_csv_data)*
+* [x] 2.3. Load Data in Python: Implemented for CSV, yfinance, Polygon.
+* [~] 2.4. Merge & Align Data (Handle timestamps, missing values). *(Basic handling in fetch functions)*
 * [x] 2.5. Calculate Python Indicator Predictions on historical data (Done within workflow).
 * [~] 2.6. **Validate Python Replication:** Done for `Pressure`/`PV` (good match). Known difference for `predicted_low`/`high` due to different formulas in current Python rules (`PHLD`/`SR`).
 * [ ] 2.7. Define Ground Truth (Actual future H/L/D).
 * [ ] 2.8. Clean & Save Final Processed Data (`data/processed/`, e.g., Parquet format).
-* *Note: Added CSV data source integration (CLI, data_acquisition).*
-* *Note: Oanda/Polygon fetch logic pending.*
+* *Note: Added CSV & Polygon data source integration (CLI, data_acquisition, point_size).*
+* *Note: Oanda fetch logic pending API key.*
 
 ### Phase 3: Exploratory Data Analysis (EDA)
 * [ ] 3.1. Load Processed Data (`notebooks/`).
@@ -178,11 +176,12 @@ project-root/
 * [ ] 3.4. Calculate **Baseline Performance** (Python indicator vs Ground Truth).
 * [ ] 3.5. Analyze Indicator Errors.
 
-### Phase 4: Feature Engineering
+### Phase 4: Feature Engineering & Unit Testing
 * [ ] 4.1. Develop Feature Ideas.
 * [ ] 4.2. Implement Feature Generation (`src/feature_engineering.py`).
 * [ ] 4.3. Feature Scaling/Normalization Plan.
 * [ ] 4.4. Save Final Feature Set.
+* [ ] 4.5. **Write Unit Tests** for data loading/processing (`fetch_csv_data`, `fetch_polygon_data`, `resolve_polygon_ticker`, `data_acquisition`, `point_size_determination`).
 
 ### Phase 5: ML Model Development & Training
 * [ ] 5.1. Define ML Problem & Targets.
@@ -213,7 +212,7 @@ project-root/
 * [ ] 8.6. Document Robustness Findings.
 
 ### Phase 9: Live Data Integration & Forward Testing
-* [ ] 9.1. Implement Live Data Feed (Oanda/Polygon pending).
+* [ ] 9.1. Implement Live Data Feed (Oanda pending).
 * [ ] 9.2. Adapt Prediction Pipeline for live data.
 * [ ] 9.3. Setup Forward Testing (Paper Trading).
 * [ ] 9.4. Monitor Forward Test.
@@ -247,6 +246,18 @@ project-root/
     * `--point`: **Required** for CSV mode. You must provide the correct point size for the instrument in the CSV file (e.g., 0.01 or 0.1 for XAUUSD).
     * `--rule`: Select the calculation rule (e.g., `PHLD`, `SR`, `PV`, `PV_HighLow`).
 
+* **Run using data from Polygon.io API:**
+    ```bash
+    # Replace ticker, dates, and point size as needed. API key must be in .env
+    # Use base tickers like AAPL, EURUSD, BTCUSD
+    python run_analysis.py polygon --ticker AAPL --interval D1 --start 2024-04-10 --end 2024-04-17 --point 0.01
+    python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2024-04-10 --end 2024-04-17 --point 0.00001
+    ```
+    * `--ticker`: Base ticker symbol (e.g., `AAPL`, `EURUSD`, `BTCUSD`). The script will try to resolve the correct prefixed ticker.
+    * `--interval`, `--start`, `--end`: Specify the desired timeframe and date range.
+    * `--point`: **Required** for Polygon mode. Provide the correct point size.
+    * Ensure `POLYGON_API_KEY` is set in your `.env` file.
+
 * **Fetch Yahoo Finance data for a Forex pair, specific interval, last 3 months, estimated point size, specific rule:**
     ```bash
     python run_analysis.py yf --ticker "EURUSD=X" --interval H1 --period 3mo --rule PV_HighLow
@@ -255,11 +266,6 @@ project-root/
 * **Fetch Yahoo Finance data for a stock, specific date range, user-provided point size, specific rule alias 'SR':**
     ```bash
     python run_analysis.py yfinance --ticker AAPL --start 2024-01-01 --end 2024-04-15 --point 0.01 --rule SR
-    ```
-
-* **Fetch Yahoo Finance data for crypto, default interval (D1), specific period, overriding point size:**
-    ```bash
-    python run_analysis.py yf --ticker "BTC-USD" --period 6mo --point 0.01 --rule PHLD
     ```
 
 ### Running Tests
