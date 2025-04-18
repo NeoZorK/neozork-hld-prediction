@@ -8,8 +8,10 @@ from datetime import date, timedelta
 from dotenv import load_dotenv
 # Import the RESTClient from the polygon package
 # Note: The package installed is polygon-api-client, but it's imported as 'polygon'
+# noinspection PackageRequirements
+# 2 Week Warnings -> simply Ignore this!!!
 import polygon
-from polygon.exceptions import NoResultsError, BadResponse
+from polygon.exceptions import BadResponse
 
 # Load environment variables from .env file
 # Loads environment variables from a .env file if it exists.
@@ -92,9 +94,7 @@ try:
                 f"Volume: {getattr(agg, 'volume', 'N/A')}"
             )
 
-# Specific Polygon exceptions
-except NoResultsError as e:
-     print(f"\n[Info] The query for {test_ticker} returned no results for the period {start_date} to {end_date}.")
+    # Optionally, you can convert the list of aggregates to a DataFrame for easier manipulation.
 except BadResponse as e:
     # Handles specific API errors returned by Polygon (e.g., bad key, rate limit).
     print(f"\n[Error] Polygon API Error: {e}")
