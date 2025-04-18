@@ -128,7 +128,7 @@ class TestDataUtils(unittest.TestCase):
     # --- Tests for fetch_csv_data ---
     @patch('pandas.read_csv')
     @patch('pathlib.Path.is_file', return_value=True)
-    def test_fetch_csv_success(self, mock_read_csv, _):
+    def test_fetch_csv_success(self, mock_is_file, mock_read_csv, _):
         # Test setup as corrected in Turn 61/63
         expected_data_read = {
             'DateTime': ['2024.04.17 00:00', '2024.04.18 00:00'],
@@ -150,20 +150,20 @@ class TestDataUtils(unittest.TestCase):
 
 
     @patch('pathlib.Path.is_file', return_value=False)
-    def test_fetch_csv_file_not_found(self, _):
+    def test_fetch_csv_file_not_found(self, mock_is_file, _):
         result_df = fetch_csv_data("nonexistent/path.csv")
         self.assertIsNone(result_df)
 
     @patch('pandas.read_csv')
     @patch('pathlib.Path.is_file', return_value=True)
-    def test_fetch_csv_empty_file(self, mock_read_csv, _):
+    def test_fetch_csv_empty_file(self, mock_is_file, mock_read_csv, _):
         mock_read_csv.return_value = pd.DataFrame()
         result_df = fetch_csv_data("dummy/empty.csv")
         self.assertIsNone(result_df)
 
     @patch('pandas.read_csv', side_effect=pd.errors.ParserError("Mock parse error"))
     @patch('pathlib.Path.is_file', return_value=True)
-    def test_fetch_csv_parse_error(self, _):
+    def test_fetch_csv_parse_error(self, mock_is_file, mock_read_csv, _):
         result_df = fetch_csv_data("dummy/bad_format.csv")
         self.assertIsNone(result_df)
 
