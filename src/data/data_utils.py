@@ -171,7 +171,7 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
         if isinstance(df.columns, pd.MultiIndex):
             logger.print_debug("Detected MultiIndex columns from yfinance. Simplifying...")
             if df.columns.nlevels > 1:
-                 original_cols = df.columns
+                 #original_cols = df.columns
                  try: df.columns = df.columns.droplevel(1)
                  except Exception as multi_index_error: logger.print_error(f"Failed to simplify yfinance MultiIndex columns: {multi_index_error}"); return None
             else:
@@ -225,93 +225,122 @@ def map_polygon_ticker(ticker_input: str) -> str:
         return f"X:{ticker}"
     return ticker
 
+# Fetches aggregate bars (OHLCV) data from Polygon.io API.
 def fetch_polygon_data(ticker: str, interval: str, start_date: str, end_date: str) -> pd.DataFrame | None:
-    """Downloads OHLCV data from Polygon.io REST API."""
+    """
+    Downloads OHLCV data from Polygon.io REST API for a specified date range.
+    Assumes POLYGON_API_KEY is already loaded into environment variables.
+
+    Args:
+        ticker (str): The ticker symbol to fetch (e.g., 'AAPL', 'EURUSD').
+        interval (str): The timeframe interval (e.g., 'D1', 'H1', 'M1').
+        start_date (str): Start date in 'YYYY-MM-DD' format.
+        end_date (str): End date in 'YYYY-MM-DD' format.
+
+    Returns:
+        pd.DataFrame | None: DataFrame with OHLCV data and DatetimeIndex, or None on failure.
+                              Standard columns: Open, High, Low, Close, Volume.
+    """
     if not POLYGON_AVAILABLE:
         logger.print_error("Polygon API client library ('polygon-api-client') is not installed. Cannot fetch Polygon data.")
         return None
+
     logger.print_info(f"Attempting to fetch Polygon.io data for: {ticker} | interval: {interval}")
+
+    # --- Get API Key from environment ---
+    # Environment should be loaded by the calling function (e.g., acquire_data)
     api_key = os.getenv("POLYGON_API_KEY")
     if not api_key:
-        logger.print_error("POLYGON_API_KEY not found in environment variables or .env file.")
+        # This error message remains, but load_dotenv() call is removed
+        logger.print_error("POLYGON_API_KEY not found in environment variables.")
         return None
+    # --- REMOVED load_dotenv() call from here ---
+
+    # Map interval and ticker
     interval_map = map_polygon_interval(interval)
     if interval_map is None: return None
     timespan, multiplier = interval_map
     mapped_ticker = map_polygon_ticker(ticker)
+
+    # Convert dates
     try:
         start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
         end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
     except ValueError:
         logger.print_error(f"Invalid date format for start_date ('{start_date}') or end_date ('{end_date}'). Use YYYY-MM-DD.")
         return None
+
+    # Initialize client
     try:
         client = polygon.RESTClient(api_key=api_key)
     except Exception as e:
         logger.print_error(f"Failed to initialize Polygon client: {type(e).__name__}: {e}")
         return None
+
+    # Fetch data
     try:
         logger.print_info(f"Requesting aggregates for {mapped_ticker} ({timespan} x{multiplier}) from {start_date_obj} to {end_date_obj}")
-        # Use type hint for agg if Agg was imported successfully
-        aggs_iter = client.get_aggs(ticker=mapped_ticker, multiplier=multiplier, timespan=timespan, from_=start_date_obj, to=end_date_obj, adjusted=False, limit=50000)
+        aggs_iter = client.get_aggs(
+            ticker=mapped_ticker, multiplier=multiplier, timespan=timespan,
+            from_=start_date_obj, to=end_date_obj, adjusted=False, limit=50000
+        )
+
         agg_data = [
-            {
-                'DateTime': pd.to_datetime(agg.timestamp, unit='ms') if hasattr(agg, 'timestamp') else None, # Use hasattr for safety
-                'Open': getattr(agg, 'open', None),
-                'High': getattr(agg, 'high', None),
-                'Low': getattr(agg, 'low', None),
-                'Close': getattr(agg, 'close', None),
-                'Volume': getattr(agg, 'volume', None)
-            }
-            # Add type hint here if Agg was imported successfully
+            {'DateTime': pd.to_datetime(agg.timestamp, unit='ms') if hasattr(agg, 'timestamp') else None,
+             'Open': getattr(agg, 'open', None), 'High': getattr(agg, 'high', None),
+             'Low': getattr(agg, 'low', None), 'Close': getattr(agg, 'close', None),
+             'Volume': getattr(agg, 'volume', None)}
             for agg in aggs_iter
         ]
+
         if not agg_data:
             logger.print_warning(f"No Polygon data returned for '{mapped_ticker}' in the specified range.")
             return None
+
         df = pd.DataFrame(agg_data)
-        # Drop rows where DateTime failed to parse (shouldn't happen with timestamp ms)
         df.dropna(subset=['DateTime'], inplace=True)
         if df.empty:
              logger.print_warning(f"Polygon data became empty after handling potential DateTime errors.")
              return None
         df.set_index('DateTime', inplace=True)
+
         required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
         missing_cols = [col for col in required_cols if col not in df.columns]
         if missing_cols:
-             # Use list() for safety
              logger.print_error(f"Polygon data is missing required columns: {missing_cols}. Columns found: {list(df.columns)}")
              return None
+
         df.dropna(subset=required_cols, inplace=True)
         if df.empty:
              logger.print_warning(f"Polygon data for '{mapped_ticker}' became empty after removing NaN rows.")
              return None
+
         logger.print_success(f"Successfully fetched and processed {len(df)} rows from Polygon.io.")
         if len(agg_data) == 50000: logger.print_warning("Reached Polygon API limit (50k bars). Result may be incomplete. Pagination not implemented.")
         return df
+
     except BadResponse as e:
+        # ... (Error handling for BadResponse remains the same) ...
         logger.print_error(f"Polygon API Error: {e}")
-        response = getattr(e, 'response', None) # Safely get response
+        response = getattr(e, 'response', None)
         if response is not None:
-            # Safely access attributes from response object
             url = getattr(response, 'url', 'N/A')
             status_code = getattr(response, 'status_code', 'N/A')
             logger.print_error(f"  URL: {url}")
             logger.print_error(f"  Status Code: {status_code}")
             try:
-                # Use response.json() method if available and likely to succeed
                 response_details = response.json()
-                # Log dictionary directly or format as needed
                 logger.print_error(f"  Details: {response_details}")
-            except Exception as e: # Catch JSONDecodeError or other potential errors
-                 # Fallback to raw text if .json() fails or response is not JSON
-                 logger.print_error(f"An unexpected error occurred ...: {type(e).__name__}: {e}")
+            except Exception as e:
                  raw_text = getattr(response, 'text', 'N/A')
+                 logger.print_error(f"An unexpected error occurred for ticker : {type(e).__name__}: {e}")
                  logger.print_error(f"  Raw Response Text (truncated): {raw_text[:500]}...")
         else:
              logger.print_error("  (Could not retrieve response details from exception)")
         return None
+    # noinspection PyBroadException
     except Exception as e:
+        # ... (Error handling for general Exception remains the same) ...
         logger.print_error(f"\n--- ERROR FETCHING/PROCESSING POLYGON ---")
         logger.print_error(f"An unexpected error occurred for ticker '{ticker}': {type(e).__name__}: {e}")
         import traceback
