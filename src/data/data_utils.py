@@ -12,8 +12,6 @@ from datetime import date, timedelta, datetime
 from pathlib import Path
 import numpy as np
 import os
-from dotenv import load_dotenv # Keep for potential direct use elsewhere, though acquire_data loads it
-import json # Needed for polygon error parsing
 import traceback # For logging tracebacks
 
 # Polygon specific imports
@@ -226,12 +224,12 @@ def map_polygon_interval(tf_input: str) -> tuple[str, int] | None:
     else: logger.print_error(f"Invalid Polygon timeframe input: '{tf_input}'. Use formats like M1, H1, D1 etc."); return None
 
 
-# --- REVISED FUNCTION: resolve_polygon_ticker with corrected error handling v3.3 ---
+# --- REVISED FUNCTION: resolve_polygon_ticker with rate limit handling v3.5 ---
 # noinspection PyUnresolvedReferences
 def resolve_polygon_ticker(user_ticker: str, client: polygon.RESTClient) -> str | None:
     """
     Uses Polygon API get_ticker_details to find the canonical ticker by trying common prefixes.
-    Includes robust check for 404 / "NOT_FOUND" errors.
+    Includes robust check for 404 / "NOT_FOUND" errors and adds delay for rate limiting.
 
     Args:
         user_ticker (str): The ticker provided by the user (e.g., 'EURUSD', 'AAPL', 'SPX').
@@ -258,51 +256,47 @@ def resolve_polygon_ticker(user_ticker: str, client: polygon.RESTClient) -> str 
             return potential_ticker # Found it!
 
         except BadResponse as e:
-            # --- CORRECTED ERROR HANDLING Block v3.3 ---
             logger.print_debug(f"Caught BadResponse for {potential_ticker}. Exception: {e}")
-            status_code = None
             is_not_found = False
+            status_code = None
             response = getattr(e, 'response', None)
-
-            # Try to get status code
             if response is not None:
                 status_code = getattr(response, 'status_code', None)
 
-            # Check if it's definitely a 404
+            # Check if it's definitely a 404 or contains "NOT_FOUND"
             if status_code == 404:
                 is_not_found = True
             else:
-                # Fallback: Check the exception message string if status code wasn't 404 or was None
                 try:
-                    # Convert exception to string and check for "NOT_FOUND" variations
                     error_msg_upper = str(e).upper()
-                    if '"STATUS":"NOT_FOUND"' in error_msg_upper or '"NOT_FOUND"' in error_msg_upper:
+                    if '"STATUS":"NOT_FOUND"' in error_msg_upper or 'TICKER NOT FOUND' in error_msg_upper:
                         logger.print_debug("Detected 'NOT_FOUND' in exception message as fallback.")
                         is_not_found = True
                 except Exception as str_err:
-                    logger.print_warning(f"Could not convert BadResponse exception to string: {str_err}")
+                     logger.print_warning(f"Could not analyze BadResponse exception string for 'NOT_FOUND': {str_err}")
 
             logger.print_debug(f"Extracted status code: {status_code}, Determined Not Found: {is_not_found}")
 
-            # Now, act based on whether it was determined to be a "Not Found" error
             if is_not_found:
-                logger.print_debug(f"Ticker format '{potential_ticker}' not found. Trying next format...")
-                continue # <<< Continue to the next iteration of the loop
+                logger.print_debug(f"Ticker format '{potential_ticker}' not found. Adding delay before trying next format...")
+                # --- ADDED DELAY FOR RATE LIMIT ---
+                wait_seconds = 15 # Wait 15 seconds (generous for 5 req/min limit)
+                logger.print_info(f"Rate limit precaution: waiting for {wait_seconds} seconds...")
+                time.sleep(wait_seconds)
+                # --- END ADDED DELAY ---
+                continue # Continue to the next iteration of the loop
             else:
-                # For any other BadResponse error (non-404 or unknown)
-                logger.print_error(f"Non-404 Polygon API Error or status unknown for '{potential_ticker}': {e}")
+                # For any other BadResponse error
+                logger.print_error(f"Non-404 Polygon API Error or unrecognized error format for '{potential_ticker}': {e}")
                 # Try to log details safely
                 if response is not None:
-                    url = getattr(response, 'url', 'N/A')
-                    status_code_display = status_code if status_code else 'N/A'
-                    logger.print_error(f"  URL: {url}")
-                    logger.print_error(f"  Status Code: {status_code_display}")
+                    url = getattr(response, 'url', 'N/A'); status_code_display = status_code if status_code else 'N/A'
+                    logger.print_error(f"  URL: {url}"); logger.print_error(f"  Status Code: {status_code_display}")
                     try: response_details = response.json(); logger.print_error(f"  Details: {response_details}")
                     except Exception: raw_text = getattr(response, 'text', 'N/A'); logger.print_error(f"  Raw Response Text (truncated): {raw_text[:500]}...")
                 else: logger.print_error("  (Could not retrieve response details from exception object)")
                 logger.print_error("Stopping ticker resolution attempt due to non-404/unknown API error.")
-                return None # Stop trying
-            # --- END CORRECTED ERROR HANDLING Block ---
+                return None
 
         # noinspection PyBroadException
         except Exception as e:
