@@ -1,16 +1,16 @@
 # tests/data/test_data_acquisition.py # MODIFIED
 
 import unittest
-from unittest.mock import patch, MagicMock # Import MagicMock if needed later
+from unittest.mock import patch # Import MagicMock if needed later
 import argparse
 import pandas as pd
-from datetime import date
+
 
 # Import the function to test
 from src.data.data_acquisition import acquire_data
 # Import the functions that acquire_data will call, for patching
 # These imports might seem unused but are needed targets for patch
-from src.data.data_utils import fetch_csv_data, fetch_polygon_data # Added imports
+
 
 
 # Create a dummy logger class
