@@ -7,7 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="v 0.1.2" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="new tests for data utils" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -159,22 +159,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00042" summary="fix debug plotting">
-      <option name="closed" value="true" />
-      <created>1744799442363</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1744799442363</updated>
-    </task>
-    <task id="LOCAL-00043" summary="fix security issue &#10;add colorama for colored print">
-      <option name="closed" value="true" />
-      <created>1744799916987</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1744799916987</updated>
     </task>
     <task id="LOCAL-00044" summary="add logger">
       <option name="closed" value="true" />
@@ -552,7 +536,23 @@
       <option name="project" value="LOCAL" />
       <updated>1744988153179</updated>
     </task>
-    <option name="localTasksCounter" value="91" />
+    <task id="LOCAL-00091" summary="update readme">
+      <option name="closed" value="true" />
+      <created>1744988421275</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1744988421275</updated>
+    </task>
+    <task id="LOCAL-00092" summary="new tests for data utils">
+      <option name="closed" value="true" />
+      <created>1744988793414</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1744988793414</updated>
+    </task>
+    <option name="localTasksCounter" value="93" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -579,7 +579,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix all warnings" />
     <MESSAGE value="fix all warnings 2" />
     <MESSAGE value="fix tests" />
     <MESSAGE value="fix tests 2" />
@@ -597,13 +596,14 @@
     <MESSAGE value="add test file for polygon import" />
     <MESSAGE value="all 3 files tested (withput oanda, wait email key)" />
     <MESSAGE value="add comparison mql5 and python indicator logic. Ok" />
-    <MESSAGE value="update readme" />
     <MESSAGE value="fix polygon" />
     <MESSAGE value="automatic ticker search for polygon" />
     <MESSAGE value="polygon fix feed type fx,crypto,stocks" />
     <MESSAGE value="working polygon" />
     <MESSAGE value="add query time limit for polygon" />
     <MESSAGE value="v 0.1.2" />
-    <option name="LAST_COMMIT_MESSAGE" value="v 0.1.2" />
+    <MESSAGE value="update readme" />
+    <MESSAGE value="new tests for data utils" />
+    <option name="LAST_COMMIT_MESSAGE" value="new tests for data utils" />
   </component>
 </project>
