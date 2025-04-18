@@ -7,7 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="working polygon">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="polygon fix feed type fx,crypto,stocks">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/data/data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_utils.py" afterDir="false" />
     </list>
@@ -162,22 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00037" summary="fix import">
-      <option name="closed" value="true" />
-      <created>1744794489453</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1744794489453</updated>
-    </task>
-    <task id="LOCAL-00038" summary="fix e">
-      <option name="closed" value="true" />
-      <created>1744794665927</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1744794665927</updated>
     </task>
     <task id="LOCAL-00039" summary="fix error with start date">
       <option name="closed" value="true" />
@@ -555,7 +539,23 @@
       <option name="project" value="LOCAL" />
       <updated>1744984205454</updated>
     </task>
-    <option name="localTasksCounter" value="86" />
+    <task id="LOCAL-00086" summary="automatic ticker search for polygon">
+      <option name="closed" value="true" />
+      <created>1744985167990</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1744985167990</updated>
+    </task>
+    <task id="LOCAL-00087" summary="polygon fix feed type fx,crypto,stocks">
+      <option name="closed" value="true" />
+      <created>1744985404718</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1744985404718</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,8 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="refactor module structure with ne subfolders 2" />
-    <MESSAGE value="fix everything" />
     <MESSAGE value="added 14 unit tests" />
     <MESSAGE value="added __init__ to each tests" />
     <MESSAGE value="fix all warnings" />
@@ -607,6 +605,8 @@
     <MESSAGE value="update readme" />
     <MESSAGE value="fix polygon" />
     <MESSAGE value="working polygon" />
-    <option name="LAST_COMMIT_MESSAGE" value="working polygon" />
+    <MESSAGE value="automatic ticker search for polygon" />
+    <MESSAGE value="polygon fix feed type fx,crypto,stocks" />
+    <option name="LAST_COMMIT_MESSAGE" value="polygon fix feed type fx,crypto,stocks" />
   </component>
 </project>

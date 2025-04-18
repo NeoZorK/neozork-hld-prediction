@@ -1,4 +1,4 @@
-# src/data_utils.py # MODIFIED with new Polygon Ticker Resolution logic
+# src/data_utils.py # MODIFIED with corrected Polygon Ticker Resolution logic (v3)
 
 """
 Utility functions for fetching and preparing data (demo, yfinance, csv, polygon).
@@ -12,6 +12,8 @@ from datetime import date, timedelta, datetime
 from pathlib import Path
 import numpy as np
 import os
+from dotenv import load_dotenv # Keep for potential direct use elsewhere, though acquire_data loads it
+import json # Needed for polygon error parsing
 import traceback # For logging tracebacks
 
 # Polygon specific imports
@@ -46,6 +48,7 @@ from ..common import logger
 # ---------------------------------------------------------------------------- #
 #                             CSV Data Functions                               #
 # ---------------------------------------------------------------------------- #
+
 
 # Reads data from a CSV file (expected format from MQL5)
 def fetch_csv_data(filepath: str) -> pd.DataFrame | None:
@@ -105,8 +108,7 @@ def fetch_csv_data(filepath: str) -> pd.DataFrame | None:
         missing_cols = [col for col in required_cols if col not in df.columns]
         if missing_cols:
             logger.print_error(f"CSV data is missing required columns after processing: {missing_cols}")
-            # Use list() to fix potential tolist warning
-            logger.print_error(f"Available columns: {list(df.columns)}")
+            logger.print_error(f"Available columns: {list(df.columns)}") # Use list()
             return None
 
         logger.print_info(f"Successfully read and processed {len(df)} rows from {filepath}")
@@ -224,11 +226,12 @@ def map_polygon_interval(tf_input: str) -> tuple[str, int] | None:
     else: logger.print_error(f"Invalid Polygon timeframe input: '{tf_input}'. Use formats like M1, H1, D1 etc."); return None
 
 
-# --- REVISED FUNCTION: resolve_polygon_ticker ---
+# --- REVISED FUNCTION: resolve_polygon_ticker with corrected error handling v3.3 ---
 # noinspection PyUnresolvedReferences
 def resolve_polygon_ticker(user_ticker: str, client: polygon.RESTClient) -> str | None:
     """
     Uses Polygon API get_ticker_details to find the canonical ticker by trying common prefixes.
+    Includes robust check for 404 / "NOT_FOUND" errors.
 
     Args:
         user_ticker (str): The ticker provided by the user (e.g., 'EURUSD', 'AAPL', 'SPX').
@@ -240,12 +243,6 @@ def resolve_polygon_ticker(user_ticker: str, client: polygon.RESTClient) -> str 
     search_term = user_ticker.upper()
     logger.print_info(f"Resolving Polygon ticker for: '{search_term}'...")
 
-    # Define potential tickers to try, in likely order of preference/commonality
-    # No prefix (Stocks, ETFs usually)
-    # C: Currency pairs
-    # X: Crypto pairs
-    # I: Indices
-    # O: Options (probably not needed for OHLCV)
     tickers_to_try = [
         search_term,           # Try exact match first (e.g., AAPL)
         f"C:{search_term}",    # Try Currency prefix
@@ -256,44 +253,64 @@ def resolve_polygon_ticker(user_ticker: str, client: polygon.RESTClient) -> str 
     for potential_ticker in tickers_to_try:
         try:
             logger.print_debug(f"Attempting to get details for ticker: {potential_ticker}")
-            # This call succeeds if the ticker exists, otherwise raises BadResponse (often 404)
-            # We don't actually need the details content here, just confirmation it exists.
-            # The response object isn't assigned to save a variable.
             client.get_ticker_details(potential_ticker)
             logger.print_success(f"Resolved '{user_ticker}' to Polygon ticker: '{potential_ticker}'")
-            return potential_ticker # Found a valid ticker format
+            return potential_ticker # Found it!
 
         except BadResponse as e:
-            # Check if the error is a 'Not Found' (404) error
-            status_code = getattr(getattr(e, 'response', None), 'status_code', None)
+            # --- CORRECTED ERROR HANDLING Block v3.3 ---
+            logger.print_debug(f"Caught BadResponse for {potential_ticker}. Exception: {e}")
+            status_code = None
+            is_not_found = False
+            response = getattr(e, 'response', None)
+
+            # Try to get status code
+            if response is not None:
+                status_code = getattr(response, 'status_code', None)
+
+            # Check if it's definitely a 404
             if status_code == 404:
-                 logger.print_debug(f"Ticker format '{potential_ticker}' not found (404). Trying next format...")
-                 continue # Try the next potential ticker format
+                is_not_found = True
             else:
-                 # Handle other API errors (authentication, rate limits, etc.)
-                 logger.print_error(f"Polygon API Error resolving ticker '{potential_ticker}': {e}")
-                 response = getattr(e, 'response', None)
-                 if response is not None:
-                     url = getattr(response, 'url', 'N/A')
-                     logger.print_error(f"  URL: {url}")
-                     logger.print_error(f"  Status Code: {status_code}")
-                     try: response_details = response.json(); logger.print_error(f"  Details: {response_details}")
-                     except Exception as e:
-                            raw_text = getattr(response, 'text', 'N/A')
-                            logger.print_error(f"  Failed to parse JSON response: {e}")
-                            logger.print_error(f"  Raw Response Text (truncated): {raw_text[:500]}...")
-                 else: logger.print_error("  (Could not retrieve response details from exception)")
-                 return None # Return None on definitive API errors other than 404
+                # Fallback: Check the exception message string if status code wasn't 404 or was None
+                try:
+                    # Convert exception to string and check for "NOT_FOUND" variations
+                    error_msg_upper = str(e).upper()
+                    if '"STATUS":"NOT_FOUND"' in error_msg_upper or '"NOT_FOUND"' in error_msg_upper:
+                        logger.print_debug("Detected 'NOT_FOUND' in exception message as fallback.")
+                        is_not_found = True
+                except Exception as str_err:
+                    logger.print_warning(f"Could not convert BadResponse exception to string: {str_err}")
+
+            logger.print_debug(f"Extracted status code: {status_code}, Determined Not Found: {is_not_found}")
+
+            # Now, act based on whether it was determined to be a "Not Found" error
+            if is_not_found:
+                logger.print_debug(f"Ticker format '{potential_ticker}' not found. Trying next format...")
+                continue # <<< Continue to the next iteration of the loop
+            else:
+                # For any other BadResponse error (non-404 or unknown)
+                logger.print_error(f"Non-404 Polygon API Error or status unknown for '{potential_ticker}': {e}")
+                # Try to log details safely
+                if response is not None:
+                    url = getattr(response, 'url', 'N/A')
+                    status_code_display = status_code if status_code else 'N/A'
+                    logger.print_error(f"  URL: {url}")
+                    logger.print_error(f"  Status Code: {status_code_display}")
+                    try: response_details = response.json(); logger.print_error(f"  Details: {response_details}")
+                    except Exception: raw_text = getattr(response, 'text', 'N/A'); logger.print_error(f"  Raw Response Text (truncated): {raw_text[:500]}...")
+                else: logger.print_error("  (Could not retrieve response details from exception object)")
+                logger.print_error("Stopping ticker resolution attempt due to non-404/unknown API error.")
+                return None # Stop trying
+            # --- END CORRECTED ERROR HANDLING Block ---
 
         # noinspection PyBroadException
         except Exception as e:
-            # Handle any other unexpected errors during the API call
             logger.print_error(f"Unexpected error resolving ticker '{potential_ticker}': {type(e).__name__}: {e}")
             logger.print_error(f"Traceback:\n{traceback.format_exc()}")
-            # Continue trying other formats? Or return None? Let's return None on unexpected errors.
             return None
 
-    # If the loop completes without finding a valid ticker
+    # If loop completes without finding a valid ticker
     logger.print_warning(f"Could not resolve user ticker '{user_ticker}' using common formats (Stock, C:, X:, I:).")
     return None
 # --- END REVISED FUNCTION ---
@@ -305,16 +322,6 @@ def fetch_polygon_data(ticker: str, interval: str, start_date: str, end_date: st
     Downloads OHLCV data from Polygon.io REST API for a specified date range.
     Attempts to automatically resolve the user-provided ticker to the canonical Polygon ticker.
     Assumes POLYGON_API_KEY is already loaded into environment variables.
-
-    Args:
-        ticker (str): The ticker symbol to fetch (e.g., 'AAPL', 'EURUSD').
-        interval (str): The timeframe interval (e.g., 'D1', 'H1', 'M1').
-        start_date (str): Start date in 'YYYY-MM-DD' format.
-        end_date (str): End date in 'YYYY-MM-DD' format.
-
-    Returns:
-        pd.DataFrame | None: DataFrame with OHLCV data and DatetimeIndex, or None on failure.
-                              Standard columns: Open, High, Low, Close, Volume.
     """
     if not POLYGON_AVAILABLE:
         logger.print_error("Polygon API client library ('polygon-api-client') is not installed.")
@@ -336,7 +343,7 @@ def fetch_polygon_data(ticker: str, interval: str, start_date: str, end_date: st
         logger.print_error(f"Failed to initialize Polygon client: {type(e).__name__}: {e}")
         return None
 
-    # --- Resolve Ticker using the new function ---
+    # --- Resolve Ticker using the revised function ---
     resolved_ticker = resolve_polygon_ticker(ticker, client)
     if not resolved_ticker:
         # Error already logged by resolve_polygon_ticker
@@ -410,10 +417,7 @@ def fetch_polygon_data(ticker: str, interval: str, start_date: str, end_date: st
             logger.print_error(f"  URL: {url}")
             logger.print_error(f"  Status Code: {status_code}")
             try: response_details = response.json(); logger.print_error(f"  Details: {response_details}")
-            except Exception as e:
-                   raw_text = getattr(response, 'text', 'N/A')
-                   logger.print_error(f"  Failed to parse JSON response: {e}")
-                   logger.print_error(f"  Raw Response Text (truncated): {raw_text[:500]}...")
+            except Exception: raw_text = getattr(response, 'text', 'N/A'); logger.print_error(f"  Raw Response Text (truncated): {raw_text[:500]}...")
         else: logger.print_error("  (Could not retrieve response details from exception)")
         return None
     # noinspection PyBroadException
