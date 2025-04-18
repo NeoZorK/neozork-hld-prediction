@@ -7,9 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix oanda 012">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix polygon">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,14 +161,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00028" summary="fix TradingRule type">
-      <option name="closed" value="true" />
-      <created>1744724247360</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1744724247360</updated>
     </task>
     <task id="LOCAL-00029" summary="Add Original MQL5 file of SCHR_PRESSURE Indicator">
       <option name="closed" value="true" />
@@ -555,7 +546,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744963159296</updated>
     </task>
-    <option name="localTasksCounter" value="77" />
+    <task id="LOCAL-00077" summary="fix polygon">
+      <option name="closed" value="true" />
+      <created>1744963815249</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1744963815249</updated>
+    </task>
+    <option name="localTasksCounter" value="78" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,7 +581,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fix demo again" />
     <MESSAGE value="comment debug check" />
     <MESSAGE value="try to fix auto size calculation" />
     <MESSAGE value="New TR Predict High Lo Direction -&gt; showing 3 predictions at same time for every point" />
@@ -607,6 +605,7 @@
     <MESSAGE value="v0.1.2 Init" />
     <MESSAGE value="all fixed" />
     <MESSAGE value="fix oanda 012" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix oanda 012" />
+    <MESSAGE value="fix polygon" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix polygon" />
   </component>
 </project>
