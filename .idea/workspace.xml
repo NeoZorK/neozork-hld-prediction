@@ -7,9 +7,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add test file for polygon import">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="all 3 files tested (withput oanda, wait email key)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_polygon_connection.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_polygon_connection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/calculation/indicator_calculation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/indicator_calculation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cli/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/cli/cli.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/point_size_determination.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/point_size_determination.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,22 +73,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.demo command.executor": "Run",
-    "Python.help command.executor": "Run",
-    "Python.indicator.executor": "Run",
-    "Python.indicator_logic.executor": "Run",
-    "Python.plotting.executor": "Run",
-    "Python.run_analysis.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Shell Script.help command.executor": "Run",
-    "git-widget-placeholder": "v0.1.2",
-    "run.code.analysis.last.selected.profile": "aDefault",
-    "settings.editor.selected.configurable": "preferences.keymap"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.demo command.executor&quot;: &quot;Run&quot;,
+    &quot;Python.help command.executor&quot;: &quot;Run&quot;,
+    &quot;Python.indicator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.indicator_logic.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plotting.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_analysis.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Shell Script.help command.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;v0.1.2&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
   }
-}]]></component>
+}</component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="6fa55ea4-5cda-4afe-9673-652cfffb17a1" reportId="NeoZorK HLD/qodana/2025-04-18" />
@@ -162,14 +166,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00032" summary="add data utils">
-      <option name="closed" value="true" />
-      <created>1744793992000</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1744793992000</updated>
     </task>
     <task id="LOCAL-00033" summary="add  utils">
       <option name="closed" value="true" />
@@ -555,7 +551,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744968669189</updated>
     </task>
-    <option name="localTasksCounter" value="81" />
+    <task id="LOCAL-00081" summary="all 3 files tested (withput oanda, wait email key)">
+      <option name="closed" value="true" />
+      <created>1744969384928</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1744969384928</updated>
+    </task>
+    <option name="localTasksCounter" value="82" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,7 +586,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="v0.1.1" />
     <MESSAGE value="clear comments" />
     <MESSAGE value="refactor module structure" />
     <MESSAGE value="refactor module structure with ne subfolders" />
@@ -607,6 +610,7 @@
     <MESSAGE value="add test file for CSV" />
     <MESSAGE value="add test file for oanda import" />
     <MESSAGE value="add test file for polygon import" />
-    <option name="LAST_COMMIT_MESSAGE" value="add test file for polygon import" />
+    <MESSAGE value="all 3 files tested (withput oanda, wait email key)" />
+    <option name="LAST_COMMIT_MESSAGE" value="all 3 files tested (withput oanda, wait email key)" />
   </component>
 </project>
