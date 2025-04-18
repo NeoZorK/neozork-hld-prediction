@@ -7,7 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="all fixed" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix all tests" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -77,17 +77,14 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;Shell Script.help command.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;v0.1.1&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;v0.1.2&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
   }
 }</component>
   <component name="QodanaReportsService">
     <option name="descriptions">
-      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output6/qodana.sarif.json" reportGuid="113280ab-c65e-4d1f-b948-969c766af59f" reportId="NeoZorK HLD/qodana/2025-04-17" />
-      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output2/qodana.sarif.json" reportGuid="36c148bb-7a71-4c07-ac1e-95a88d28b0ea" reportId="NeoZorK HLD/qodana/2025-04-17" />
-      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output1/qodana.sarif.json" reportGuid="8f0346d6-1889-4c61-93d3-f24c6cee1473" reportId="NeoZorK HLD/qodana/2025-04-17" />
-      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="187581a2-7139-4847-89da-fa7e4e921223" reportId="NeoZorK HLD/qodana/2025-04-17" />
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="6fa55ea4-5cda-4afe-9673-652cfffb17a1" reportId="NeoZorK HLD/qodana/2025-04-18" />
     </option>
   </component>
   <component name="RecentsManager">
@@ -150,7 +147,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-4f4e415b4190-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.26053.29" />
+        <option value="bundled-python-sdk-348a24fa61fa-5312c7369657-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-251.23774.444" />
       </set>
     </attachedChunks>
   </component>
@@ -162,198 +159,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00027" summary="fix TradingRule type">
-      <option name="closed" value="true" />
-      <created>1744720234871</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1744720234871</updated>
-    </task>
-    <task id="LOCAL-00028" summary="fix TradingRule type">
-      <option name="closed" value="true" />
-      <created>1744724247360</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1744724247360</updated>
-    </task>
-    <task id="LOCAL-00029" summary="Add Original MQL5 file of SCHR_PRESSURE Indicator">
-      <option name="closed" value="true" />
-      <created>1744726999890</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1744726999890</updated>
-    </task>
-    <task id="LOCAL-00030" summary="Add Exported CSV Original MQL5 file from SCHR_PRESSURE Indicator">
-      <option name="closed" value="true" />
-      <created>1744727365418</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1744727365418</updated>
-    </task>
-    <task id="LOCAL-00031" summary="delete todo">
-      <option name="closed" value="true" />
-      <created>1744791249879</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1744791249880</updated>
-    </task>
-    <task id="LOCAL-00032" summary="add data utils">
-      <option name="closed" value="true" />
-      <created>1744793992000</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1744793992000</updated>
-    </task>
-    <task id="LOCAL-00033" summary="add  utils">
-      <option name="closed" value="true" />
-      <created>1744794016312</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1744794016312</updated>
-    </task>
-    <task id="LOCAL-00034" summary="add  cli">
-      <option name="closed" value="true" />
-      <created>1744794049915</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1744794049915</updated>
-    </task>
-    <task id="LOCAL-00035" summary="refactor run analysis">
-      <option name="closed" value="true" />
-      <created>1744794107510</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1744794107510</updated>
-    </task>
-    <task id="LOCAL-00036" summary="del core and no needed calculations">
-      <option name="closed" value="true" />
-      <created>1744794261157</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1744794261157</updated>
-    </task>
-    <task id="LOCAL-00037" summary="fix import">
-      <option name="closed" value="true" />
-      <created>1744794489453</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1744794489453</updated>
-    </task>
-    <task id="LOCAL-00038" summary="fix e">
-      <option name="closed" value="true" />
-      <created>1744794665927</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1744794665927</updated>
-    </task>
-    <task id="LOCAL-00039" summary="fix error with start date">
-      <option name="closed" value="true" />
-      <created>1744795283490</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1744795283490</updated>
-    </task>
-    <task id="LOCAL-00040" summary="fix trading rule type conversion">
-      <option name="closed" value="true" />
-      <created>1744795827074</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1744795827074</updated>
-    </task>
-    <task id="LOCAL-00041" summary="add debug print">
-      <option name="closed" value="true" />
-      <created>1744797227647</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1744797227647</updated>
-    </task>
-    <task id="LOCAL-00042" summary="fix debug plotting">
-      <option name="closed" value="true" />
-      <created>1744799442363</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1744799442363</updated>
-    </task>
-    <task id="LOCAL-00043" summary="fix security issue &#10;add colorama for colored print">
-      <option name="closed" value="true" />
-      <created>1744799916987</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1744799916987</updated>
-    </task>
-    <task id="LOCAL-00044" summary="add logger">
-      <option name="closed" value="true" />
-      <created>1744799958900</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1744799958900</updated>
-    </task>
-    <task id="LOCAL-00045" summary="chg print to color print">
-      <option name="closed" value="true" />
-      <created>1744801113598</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1744801113598</updated>
-    </task>
-    <task id="LOCAL-00046" summary="add rich-argparse">
-      <option name="closed" value="true" />
-      <created>1744807305516</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1744807305516</updated>
-    </task>
-    <task id="LOCAL-00047" summary="fix rich-argparse">
-      <option name="closed" value="true" />
-      <created>1744807632294</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1744807632294</updated>
-    </task>
-    <task id="LOCAL-00048" summary="fix no yahoo data">
-      <option name="closed" value="true" />
-      <created>1744808983517</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1744808983517</updated>
-    </task>
-    <task id="LOCAL-00049" summary="add debug version of fetchin yfinance &#10;add separate module for test fetching data from yfinance">
-      <option name="closed" value="true" />
-      <created>1744809409548</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1744809409548</updated>
-    </task>
-    <task id="LOCAL-00050" summary="fix fetchng from yfinance">
-      <option name="closed" value="true" />
-      <created>1744809789622</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1744809789622</updated>
     </task>
     <task id="LOCAL-00051" summary="Fix demo again">
       <option name="closed" value="true" />
@@ -555,7 +360,199 @@
       <option name="project" value="LOCAL" />
       <updated>1744912287127</updated>
     </task>
-    <option name="localTasksCounter" value="76" />
+    <task id="LOCAL-00076" summary="fix oanda 012">
+      <option name="closed" value="true" />
+      <created>1744963159296</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1744963159296</updated>
+    </task>
+    <task id="LOCAL-00077" summary="fix polygon">
+      <option name="closed" value="true" />
+      <created>1744963815249</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1744963815249</updated>
+    </task>
+    <task id="LOCAL-00078" summary="add test file for CSV">
+      <option name="closed" value="true" />
+      <created>1744964596522</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1744964596522</updated>
+    </task>
+    <task id="LOCAL-00079" summary="add test file for oanda import">
+      <option name="closed" value="true" />
+      <created>1744966606015</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1744966606015</updated>
+    </task>
+    <task id="LOCAL-00080" summary="add test file for polygon import">
+      <option name="closed" value="true" />
+      <created>1744968669189</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1744968669189</updated>
+    </task>
+    <task id="LOCAL-00081" summary="all 3 files tested (withput oanda, wait email key)">
+      <option name="closed" value="true" />
+      <created>1744969384928</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1744969384928</updated>
+    </task>
+    <task id="LOCAL-00082" summary="add comparison mql5 and python indicator logic. Ok">
+      <option name="closed" value="true" />
+      <created>1744981032319</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1744981032319</updated>
+    </task>
+    <task id="LOCAL-00083" summary="update readme">
+      <option name="closed" value="true" />
+      <created>1744981938664</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1744981938664</updated>
+    </task>
+    <task id="LOCAL-00084" summary="fix polygon">
+      <option name="closed" value="true" />
+      <created>1744982857756</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1744982857756</updated>
+    </task>
+    <task id="LOCAL-00085" summary="working polygon">
+      <option name="closed" value="true" />
+      <created>1744984205453</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1744984205454</updated>
+    </task>
+    <task id="LOCAL-00086" summary="automatic ticker search for polygon">
+      <option name="closed" value="true" />
+      <created>1744985167990</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1744985167990</updated>
+    </task>
+    <task id="LOCAL-00087" summary="polygon fix feed type fx,crypto,stocks">
+      <option name="closed" value="true" />
+      <created>1744985404718</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1744985404718</updated>
+    </task>
+    <task id="LOCAL-00088" summary="working polygon">
+      <option name="closed" value="true" />
+      <created>1744986612131</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1744986612131</updated>
+    </task>
+    <task id="LOCAL-00089" summary="add query time limit for polygon">
+      <option name="closed" value="true" />
+      <created>1744987935620</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1744987935620</updated>
+    </task>
+    <task id="LOCAL-00090" summary="v 0.1.2">
+      <option name="closed" value="true" />
+      <created>1744988153179</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1744988153179</updated>
+    </task>
+    <task id="LOCAL-00091" summary="update readme">
+      <option name="closed" value="true" />
+      <created>1744988421275</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1744988421275</updated>
+    </task>
+    <task id="LOCAL-00092" summary="new tests for data utils">
+      <option name="closed" value="true" />
+      <created>1744988793414</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1744988793414</updated>
+    </task>
+    <task id="LOCAL-00093" summary="new tests for data utils">
+      <option name="closed" value="true" />
+      <created>1744988948255</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1744988948255</updated>
+    </task>
+    <task id="LOCAL-00094" summary="fix tests">
+      <option name="closed" value="true" />
+      <created>1744989460568</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1744989460568</updated>
+    </task>
+    <task id="LOCAL-00095" summary="fix tests">
+      <option name="closed" value="true" />
+      <created>1744991341444</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1744991341444</updated>
+    </task>
+    <task id="LOCAL-00096" summary="fix both tests">
+      <option name="closed" value="true" />
+      <created>1744991501521</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1744991501521</updated>
+    </task>
+    <task id="LOCAL-00097" summary="fix both tests1">
+      <option name="closed" value="true" />
+      <created>1744991550358</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1744991550358</updated>
+    </task>
+    <task id="LOCAL-00098" summary="fix rename to debug tests">
+      <option name="closed" value="true" />
+      <created>1744992798223</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1744992798223</updated>
+    </task>
+    <task id="LOCAL-00099" summary="fix all tests">
+      <option name="closed" value="true" />
+      <created>1744993646694</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1744993646694</updated>
+    </task>
+    <option name="localTasksCounter" value="100" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,31 +579,31 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add debug version of fetchin yfinance &#10;add separate module for test fetching data from yfinance" />
-    <MESSAGE value="fix fetchng from yfinance" />
-    <MESSAGE value="Fix demo again" />
-    <MESSAGE value="comment debug check" />
-    <MESSAGE value="try to fix auto size calculation" />
-    <MESSAGE value="New TR Predict High Lo Direction -&gt; showing 3 predictions at same time for every point" />
-    <MESSAGE value="v0.1.1" />
-    <MESSAGE value="clear comments" />
-    <MESSAGE value="refactor module structure" />
-    <MESSAGE value="refactor module structure with ne subfolders" />
-    <MESSAGE value="refactor module structure with ne subfolders 2" />
-    <MESSAGE value="fix everything" />
-    <MESSAGE value="added 14 unit tests" />
-    <MESSAGE value="added __init__ to each tests" />
-    <MESSAGE value="fix all warnings" />
-    <MESSAGE value="fix all warnings 2" />
-    <MESSAGE value="fix tests" />
-    <MESSAGE value="fix tests 2" />
-    <MESSAGE value="fix tests 3" />
-    <MESSAGE value="all tests ok," />
     <MESSAGE value="add testing to markdown" />
     <MESSAGE value="add -h examples" />
     <MESSAGE value="best varian for formating" />
     <MESSAGE value="better colors" />
+    <MESSAGE value="v0.1.2 Init" />
     <MESSAGE value="all fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="all fixed" />
+    <MESSAGE value="fix oanda 012" />
+    <MESSAGE value="add test file for CSV" />
+    <MESSAGE value="add test file for oanda import" />
+    <MESSAGE value="add test file for polygon import" />
+    <MESSAGE value="all 3 files tested (withput oanda, wait email key)" />
+    <MESSAGE value="add comparison mql5 and python indicator logic. Ok" />
+    <MESSAGE value="fix polygon" />
+    <MESSAGE value="automatic ticker search for polygon" />
+    <MESSAGE value="polygon fix feed type fx,crypto,stocks" />
+    <MESSAGE value="working polygon" />
+    <MESSAGE value="add query time limit for polygon" />
+    <MESSAGE value="v 0.1.2" />
+    <MESSAGE value="update readme" />
+    <MESSAGE value="new tests for data utils" />
+    <MESSAGE value="fix tests" />
+    <MESSAGE value="fix both tests" />
+    <MESSAGE value="fix both tests1" />
+    <MESSAGE value="fix rename to debug tests" />
+    <MESSAGE value="fix all tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix all tests" />
   </component>
 </project>
