@@ -1,27 +1,43 @@
-# src/data_acquisition.py
+# src/data_acquisition.py # MODIFIED
 
 """
-Workflow Step 1: Handles data acquisition based on mode (demo/yfinance).
+Workflow Step 1: Handles data acquisition based on mode (demo/yfinance/csv/polygon).
 All comments are in English.
 """
-from datetime import date
+
+from dotenv import load_dotenv # ADDED import
 
 # Use relative imports within the src package
 from ..common import logger
-from .data_utils import get_demo_data, map_interval, map_ticker, fetch_yfinance_data
+# Import all fetch functions
+from .data_utils import (
+    get_demo_data, map_interval, map_ticker, fetch_yfinance_data, fetch_csv_data,
+    fetch_polygon_data
+)
 
+
+# Definition of the acquire_data function
 def acquire_data(args):
     """
-    Acquires data based on args.mode.
+    Acquires data based on args.mode (demo, yfinance, csv, polygon).
+    Loads environment variables from .env file at the beginning.
 
     Args:
-        args (argparse.Namespace): Parsed command-line arguments.
+        args (argparse.Namespace): Parsed command-line arguments from cli.py.
 
     Returns:
-        dict: Contains 'ohlcv_df' and metadata like 'effective_mode',
+        dict: Contains 'ohlcv_df' (DataFrame or None) and metadata like 'effective_mode',
               'data_source_label', 'yf_ticker', 'yf_interval', etc.
-              Returns df as None if acquisition fails.
     """
+    # --- Load Environment Variables --- ADDED ---
+    # Load variables from .env file into environment. Should be called early.
+    # Returns True if .env was found and loaded, False otherwise.
+    dotenv_loaded = load_dotenv()
+    if not dotenv_loaded:
+         logger.print_warning("Could not find or load .env file. API keys must be set as environment variables.")
+    # -----------------------------------------
+
+    # Initialize variables
     ohlcv_df = None
     data_source_label = ""
     yf_ticker = None
@@ -30,47 +46,64 @@ def acquire_data(args):
     current_start = None
     current_end = None
 
+    # Determine effective mode, handling 'yf' alias
     effective_mode = 'yfinance' if args.mode == 'yf' else args.mode
 
+    # --- Demo Mode ---
     if effective_mode == 'demo':
         logger.print_info("--- Step 1: Acquiring Data (Mode: Demo) ---")
         data_source_label = "Demo Data"
         ohlcv_df = get_demo_data()
+
+    # --- CSV Mode ---
+    elif effective_mode == 'csv':
+        logger.print_info("--- Step 1: Acquiring Data (Mode: CSV File) ---")
+        data_source_label = args.csv_file
+        ohlcv_df = fetch_csv_data(filepath=args.csv_file)
+
+    # --- Polygon.io Mode ---
+    elif effective_mode == 'polygon':
+        logger.print_info("--- Step 1: Acquiring Data (Mode: Polygon.io) ---")
+        data_source_label = args.ticker
+        current_start = args.start
+        current_end = args.end
+        # fetch_polygon_data will now find the key in the already loaded environment
+        ohlcv_df = fetch_polygon_data(
+            ticker=args.ticker,
+            interval=args.interval,
+            start_date=args.start,
+            end_date=args.end
+        )
+        yf_ticker = None
+        yf_interval = None
+        current_period = None
+
+    # --- Yahoo Finance Mode ---
     elif effective_mode == 'yfinance':
         logger.print_info("--- Step 1: Acquiring Data (Mode: Yahoo Finance) ---")
-        if not args.ticker:
-             # Raising error here stops execution early
-             raise ValueError("Ticker (--ticker) is required for yfinance mode.")
-
         data_source_label = args.ticker
-        yf_interval = map_interval(args.interval) # Raises ValueError on error
+        try:
+            yf_interval = map_interval(args.interval)
+        except ValueError as e:
+             logger.print_error(f"Failed to map yfinance interval: {e}")
+             raise
         yf_ticker = map_ticker(args.ticker)
         period_arg = args.period
         start_arg = args.start
         end_arg = args.end
-
-        if args.start and not args.end:
-            end_arg = date.today().strftime('%Y-%m-%d')
-            logger.print_info(f"End date not specified, using today: {end_arg}")
-        elif args.end and not args.start:
-            start_arg = "2000-01-01"
-            logger.print_info(f"Start date not specified, using default: {start_arg}")
-
-        if start_arg and end_arg:
-            current_start = start_arg
-            current_end = end_arg
-            logger.print_info(f"Fetching data for interval '{yf_interval}' from {current_start} to {current_end}")
+        if args.start and args.end:
+             current_start = args.start
+             current_end = args.end
+             logger.print_info(f"Fetching yfinance data for interval '{yf_interval}' from {current_start} to {current_end}")
         else:
-            current_period = period_arg
-            logger.print_info(f"Fetching data for interval '{yf_interval}' for period '{current_period}'")
-
-        ohlcv_df = fetch_yfinance_data( # fetch_yfinance_data logs its own details
+             current_period = period_arg
+             logger.print_info(f"Fetching yfinance data for interval '{yf_interval}' for period '{current_period}'")
+        ohlcv_df = fetch_yfinance_data(
             ticker=yf_ticker, interval=yf_interval, period=current_period,
             start_date=current_start, end_date=current_end
         )
-        # Don't raise error here if df is None, let orchestrator handle it
 
-    # Return data and metadata
+    # --- Return Results ---
     return {
         "ohlcv_df": ohlcv_df,
         "effective_mode": effective_mode,
