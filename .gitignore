@@ -4,3 +4,4 @@
 *.xml
 /qodana.yaml
 /.env
+/.yf_cache/cookies.db
