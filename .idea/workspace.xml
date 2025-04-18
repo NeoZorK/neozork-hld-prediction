@@ -7,10 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="working polygon">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_utils.py" afterDir="false" />
-    </list>
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="v 0.1.2" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -162,22 +159,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00040" summary="fix trading rule type conversion">
-      <option name="closed" value="true" />
-      <created>1744795827074</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1744795827074</updated>
-    </task>
-    <task id="LOCAL-00041" summary="add debug print">
-      <option name="closed" value="true" />
-      <created>1744797227647</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1744797227647</updated>
     </task>
     <task id="LOCAL-00042" summary="fix debug plotting">
       <option name="closed" value="true" />
@@ -555,7 +536,23 @@
       <option name="project" value="LOCAL" />
       <updated>1744986612131</updated>
     </task>
-    <option name="localTasksCounter" value="89" />
+    <task id="LOCAL-00089" summary="add query time limit for polygon">
+      <option name="closed" value="true" />
+      <created>1744987935620</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1744987935620</updated>
+    </task>
+    <task id="LOCAL-00090" summary="v 0.1.2">
+      <option name="closed" value="true" />
+      <created>1744988153179</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1744988153179</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,8 +579,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added 14 unit tests" />
-    <MESSAGE value="added __init__ to each tests" />
     <MESSAGE value="fix all warnings" />
     <MESSAGE value="fix all warnings 2" />
     <MESSAGE value="fix tests" />
@@ -607,6 +602,8 @@
     <MESSAGE value="automatic ticker search for polygon" />
     <MESSAGE value="polygon fix feed type fx,crypto,stocks" />
     <MESSAGE value="working polygon" />
-    <option name="LAST_COMMIT_MESSAGE" value="working polygon" />
+    <MESSAGE value="add query time limit for polygon" />
+    <MESSAGE value="v 0.1.2" />
+    <option name="LAST_COMMIT_MESSAGE" value="v 0.1.2" />
   </component>
 </project>
