@@ -8,9 +8,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix both tests1">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.yf_cache/cookies.db" beforeDir="false" afterPath="$PROJECT_DIR$/.yf_cache/cookies.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/utils/test_point_size_determination.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/utils/test_point_size_determination.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_csv_reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/debug_csv_reader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_oanda_connection.py" beforeDir="false" afterPath="$PROJECT_DIR$/debug_oanda_connection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_polygon_connection.py" beforeDir="false" afterPath="$PROJECT_DIR$/debug_polygon_connection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/calculation/test_indicator_calculation.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/calculation/test_indicator_calculation.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

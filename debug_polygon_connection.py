@@ -1,4 +1,4 @@
-# NeoZorK HLD/test_polygon_connection.py
+# NeoZorK HLD/debug_polygon_connection.py
 
 import os
 import sys

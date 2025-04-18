@@ -1,4 +1,4 @@
-# NeoZorK HLD/test_oanda_connection.py
+# NeoZorK HLD/debug_oanda_connection.py
 
 import os
 import sys

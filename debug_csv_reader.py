@@ -1,4 +1,4 @@
-# NeoZorK HLD/test_csv_reader.py
+# NeoZorK HLD/debug_csv_reader.py
 
 import pandas as pd
 import argparse
