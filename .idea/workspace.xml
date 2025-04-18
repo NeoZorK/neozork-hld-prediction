@@ -7,13 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="all 3 files tested (withput oanda, wait email key)">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add comparison mql5 and python indicator logic. Ok">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/calculation/indicator_calculation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/indicator_calculation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cli/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/cli/cli.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/point_size_determination.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/point_size_determination.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -166,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00033" summary="add  utils">
-      <option name="closed" value="true" />
-      <created>1744794016312</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1744794016312</updated>
     </task>
     <task id="LOCAL-00034" summary="add  cli">
       <option name="closed" value="true" />
@@ -559,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744969384928</updated>
     </task>
-    <option name="localTasksCounter" value="82" />
+    <task id="LOCAL-00082" summary="add comparison mql5 and python indicator logic. Ok">
+      <option name="closed" value="true" />
+      <created>1744981032319</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1744981032319</updated>
+    </task>
+    <option name="localTasksCounter" value="83" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -586,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="clear comments" />
     <MESSAGE value="refactor module structure" />
     <MESSAGE value="refactor module structure with ne subfolders" />
     <MESSAGE value="refactor module structure with ne subfolders 2" />
@@ -611,6 +606,7 @@
     <MESSAGE value="add test file for oanda import" />
     <MESSAGE value="add test file for polygon import" />
     <MESSAGE value="all 3 files tested (withput oanda, wait email key)" />
-    <option name="LAST_COMMIT_MESSAGE" value="all 3 files tested (withput oanda, wait email key)" />
+    <MESSAGE value="add comparison mql5 and python indicator logic. Ok" />
+    <option name="LAST_COMMIT_MESSAGE" value="add comparison mql5 and python indicator logic. Ok" />
   </component>
 </project>
