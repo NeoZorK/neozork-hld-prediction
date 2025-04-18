@@ -7,7 +7,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="new tests for data utils" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix tests">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/data/test_data_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/test_data_utils.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -159,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00045" summary="chg print to color print">
-      <option name="closed" value="true" />
-      <created>1744801113598</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1744801113598</updated>
     </task>
     <task id="LOCAL-00046" summary="add rich-argparse">
       <option name="closed" value="true" />
@@ -552,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744988948255</updated>
     </task>
-    <option name="localTasksCounter" value="94" />
+    <task id="LOCAL-00094" summary="fix tests">
+      <option name="closed" value="true" />
+      <created>1744989460568</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1744989460568</updated>
+    </task>
+    <option name="localTasksCounter" value="95" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -580,7 +583,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fix all warnings 2" />
-    <MESSAGE value="fix tests" />
     <MESSAGE value="fix tests 2" />
     <MESSAGE value="fix tests 3" />
     <MESSAGE value="all tests ok," />
@@ -604,6 +606,7 @@
     <MESSAGE value="v 0.1.2" />
     <MESSAGE value="update readme" />
     <MESSAGE value="new tests for data utils" />
-    <option name="LAST_COMMIT_MESSAGE" value="new tests for data utils" />
+    <MESSAGE value="fix tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix tests" />
   </component>
 </project>
