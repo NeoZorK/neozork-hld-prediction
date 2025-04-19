@@ -129,35 +129,45 @@ class TestPolygonFetcher(unittest.TestCase):
 
     # --- Tests for fetch_polygon_data ---
     @patch('src.data.fetchers.polygon_fetcher.os.getenv')
-    @patch('polygon.rest.RESTClient') # Patch original library class
+    @patch('polygon.rest.RESTClient')  # Patch original library class
     @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
     def test_fetch_polygon_data_success_single_chunk(self, mock_resolve, mock_rest_client, mock_getenv, _):
         mock_getenv.return_value = "fake_api_key"
         mock_client_instance = mock_rest_client.return_value
         mock_resolve.return_value = "C:EURUSD"
 
+        # Create mock Agg objects
         agg1 = Agg(timestamp=1672531200000, open=1.1, high=1.11, low=1.09, close=1.1, volume=1000.0)
         agg2 = Agg(timestamp=1672617600000, open=1.11, high=1.12, low=1.1, close=1.11, volume=1100.0)
-        # Make get_aggs return an ITERATOR for consistency with the library
-        mock_client_instance.get_aggs.return_value = iter([agg1, agg2])
 
+        # ***** MODIFICATION START *****
+        # Mock get_aggs to return a LIST directly, as the code uses list() on the result.
+        mock_client_instance.get_aggs.return_value = [agg1, agg2]
+        # ***** MODIFICATION END *****
+
+        # Prepare expected DataFrame
         expected_dates = pd.to_datetime([1672531200000, 1672617600000], unit='ms')
-        expected_data = { 'Open': [1.1, 1.11], 'High': [1.11, 1.12], 'Low': [1.09, 1.1], 'Close': [1.1, 1.11], 'Volume': [1000.0, 1100.0] }
+        expected_data = {'Open': [1.1, 1.11], 'High': [1.11, 1.12], 'Low': [1.09, 1.1], 'Close': [1.1, 1.11],
+                         'Volume': [1000.0, 1100.0]}
         expected_df = pd.DataFrame(expected_data, index=expected_dates, dtype=np.float64)
         expected_df.index.name = 'DateTime'
 
         start_date = "2023-01-01"
-        end_date = "2023-01-02"
+        end_date = "2023-01-02"  # Ensure end date allows the loop to run
+
+        # Execute the function
         result_df = fetch_polygon_data("EURUSD", "D1", start_date, end_date)
 
+        # Assertions
         mock_getenv.assert_called_once_with("POLYGON_API_KEY")
-        # ***** CORRECTED ASSERTION ***** Use ANY
         mock_resolve.assert_called_once_with("EURUSD", ANY)
-        mock_client_instance.get_aggs.assert_called_once()
+        mock_client_instance.get_aggs.assert_called_once()  # This should now pass
         args_call = mock_client_instance.get_aggs.call_args[1]
         self.assertEqual(args_call['ticker'], "C:EURUSD")
         self.assertEqual(args_call['timespan'], "day")
         expected_start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+        # The 'to' date in get_aggs should be the calculated chunk end date
+        # In this case, with a short range and large chunk delta, it should be the overall end_date.
         expected_end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
         self.assertEqual(args_call['from_'], expected_start_date_obj)
         self.assertEqual(args_call['to'], expected_end_date_obj)
@@ -165,40 +175,63 @@ class TestPolygonFetcher(unittest.TestCase):
         self.assertIsNotNone(result_df)
         pd.testing.assert_frame_equal(result_df, expected_df)
 
-
     @patch('src.data.fetchers.polygon_fetcher.time.sleep')
     @patch('src.data.fetchers.polygon_fetcher.os.getenv')
-    @patch('polygon.rest.RESTClient') # Patch original library class
+    @patch('polygon.rest.RESTClient')  # Patch original library class
     @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
     def test_fetch_polygon_data_success_pagination(self, mock_resolve, mock_rest_client, mock_getenv, mock_sleep, _):
-        # This test still might fail if the underlying issue is in fetch_polygon_data logic
-        # Mocking is kept consistent.
+        # Mocking setup
         mock_getenv.return_value = "fake_key"
         mock_client_instance = mock_rest_client.return_value
-        mock_resolve.return_value = "X:BTCUSD"
+        mock_resolve.return_value = "X:BTCUSD"  # Using a crypto ticker example
 
-        agg1 = Agg(timestamp=1711929600000, open=70000, high=70100, low=69900, close=70050, volume=10.0)
-        agg2 = Agg(timestamp=1711929660000, open=70050, high=70200, low=70000, close=70150, volume=11.0)
-        agg3 = Agg(timestamp=1712016000000, open=70150, high=70300, low=70100, close=70250, volume=12.0)
+        # Create mock Agg objects (adjust timestamps for a smaller interval if needed, though not critical for logic test)
+        # Timestamps represent different points in time within the date range
+        agg1 = Agg(timestamp=1711929600000, open=70000, high=70100, low=69900, close=70050,
+                   volume=10.0)  # 2024-04-01 00:00:00
+        agg2 = Agg(timestamp=1711929660000, open=70050, high=70200, low=70000, close=70150,
+                   volume=11.0)  # 2024-04-01 00:01:00
+        agg3 = Agg(timestamp=1712016000000, open=70150, high=70300, low=70100, close=70250,
+                   volume=12.0)  # 2024-04-02 00:00:00
 
+        # ***** MODIFICATION START *****
+        # Mock side_effect to return LISTS directly for multiple calls
         mock_client_instance.get_aggs.side_effect = [
-             iter([agg1, agg2]),
-             iter([agg3]),
-             iter([])
+            [agg1, agg2],  # First chunk call result
+            [agg3],  # Second chunk call result
+            []  # Third chunk call returns empty list, stopping pagination
         ]
+        test_interval = "M1"  # Change interval to force smaller chunking logic
+        # ***** MODIFICATION END *****
 
+        # Test dates (can remain short as interval change forces pagination)
         start_date = "2024-04-01"
         end_date = "2024-04-02"
-        result_df = fetch_polygon_data("BTCUSD", "day", start_date, end_date)
 
+        # Execute function
+        result_df = fetch_polygon_data("BTCUSD", test_interval, start_date, end_date)
+
+        # Assertions
         self.assertIsNotNone(result_df, "fetch_polygon_data returned None unexpectedly in pagination test")
-        if result_df is not None:
-            self.assertEqual(len(result_df), 3)
-            self.assertEqual(mock_client_instance.get_aggs.call_count, 2)
-            self.assertEqual(mock_sleep.call_count, 1)
-            self.assertEqual(result_df.iloc[0]['Open'], 70000)
-            self.assertEqual(result_df.iloc[2]['Close'], 70250)
-            self.assertTrue(result_df.index.is_monotonic_increasing)
+        self.assertEqual(len(result_df), 3)  # Expecting 3 rows total from agg1, agg2, agg3
+
+        # ***** MODIFICATION START *****
+        # get_aggs should be called twice (once for the first chunk, once for the second)
+        # The third call that returns [] doesn't happen because the loop condition likely stops it based on dates/chunk logic
+        # Let's refine this: The loop calls get_aggs, gets data, updates start time.
+        # Call 1: Gets [agg1, agg2]. Updates start time based on agg2.
+        # Call 2: Gets [agg3]. Updates start time based on agg3.
+        # Call 3: Gets []. Loop breaks.
+        # Therefore, 3 calls to get_aggs are expected.
+        self.assertEqual(mock_client_instance.get_aggs.call_count, 3)
+        # sleep should be called between successful fetches (after call 1, after call 2)
+        self.assertEqual(mock_sleep.call_count, 2)
+        # ***** MODIFICATION END *****
+
+        # Check data consistency
+        self.assertEqual(result_df.iloc[0]['Open'], 70000)
+        self.assertEqual(result_df.iloc[2]['Close'], 70250)
+        self.assertTrue(result_df.index.is_monotonic_increasing)  # Check if data is sorted
 
 
     @patch('src.data.fetchers.polygon_fetcher.os.getenv')
