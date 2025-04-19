@@ -7,8 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed csv tests">
-      <change beforePath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" afterDir="false" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed polygon module">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/data/fetchers/test_binance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/fetchers/test_binance_fetcher.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/data/fetchers/test_polygon_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/fetchers/test_polygon_fetcher.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -162,14 +163,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00067" summary="fix tests">
-      <option name="closed" value="true" />
-      <created>1744905513087</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1744905513087</updated>
     </task>
     <task id="LOCAL-00068" summary="fix tests 2">
       <option name="closed" value="true" />
@@ -555,7 +548,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745070811768</updated>
     </task>
-    <option name="localTasksCounter" value="116" />
+    <task id="LOCAL-00116" summary="fixed polygon module">
+      <option name="closed" value="true" />
+      <created>1745073280875</created>
+      <option name="number" value="00116" />
+      <option name="presentableId" value="LOCAL-00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1745073280875</updated>
+    </task>
+    <option name="localTasksCounter" value="117" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,7 +583,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add query time limit for polygon" />
     <MESSAGE value="v 0.1.2" />
     <MESSAGE value="update readme" />
     <MESSAGE value="new tests for data utils" />
@@ -607,6 +607,7 @@
     <MESSAGE value="try 6 to fix all tests" />
     <MESSAGE value="fixing csv tests" />
     <MESSAGE value="fixed csv tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed csv tests" />
+    <MESSAGE value="fixed polygon module" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed polygon module" />
   </component>
 </project>
