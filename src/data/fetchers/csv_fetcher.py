@@ -1,4 +1,4 @@
-# src/data/fetchers/csv_fetcher.py # CORRECTED Cleaning Sequence
+# src/data/fetchers/csv_fetcher.py # Re-verified Cleaning Sequence
 
 """
 Contains the function to fetch and process data from a CSV file.
@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 from ...common import logger # Relative import from parent's sibling
+import traceback # Import traceback for detailed error logging
 
 
 # Definition of the fetch_csv_data function
@@ -27,7 +28,7 @@ def fetch_csv_data(filepath: str) -> pd.DataFrame | None:
         df = pd.read_csv(file_path_obj, sep=',', header=1, skipinitialspace=True, low_memory=False)
         if df.empty:
             logger.print_warning(f"CSV file is empty: {filepath}")
-            return None
+            return None # Return None if DataFrame is empty after read
 
         # 2. Clean column names
         original_columns = df.columns.tolist()
@@ -43,11 +44,11 @@ def fetch_csv_data(filepath: str) -> pd.DataFrame | None:
             logger.print_error("Mandatory 'DateTime' column not found in CSV.")
             return None
         df['DateTime'] = pd.to_datetime(df['DateTime'], format='%Y.%m.%d %H:%M', errors='coerce')
-        rows_before_dropna = len(df)
+        rows_before_dropna_dt = len(df)
         df.dropna(subset=['DateTime'], inplace=True)
-        rows_after_dropna = len(df)
-        if rows_before_dropna > rows_after_dropna:
-            logger.print_warning(f"Dropped {rows_before_dropna - rows_after_dropna} rows with invalid DateTime format.")
+        rows_after_dropna_dt = len(df)
+        if rows_before_dropna_dt > rows_after_dropna_dt:
+            logger.print_warning(f"Dropped {rows_before_dropna_dt - rows_after_dropna_dt} rows with invalid DateTime format.")
         if df.empty:
             logger.print_warning("DataFrame became empty after removing rows with invalid dates.")
             return None
@@ -57,23 +58,24 @@ def fetch_csv_data(filepath: str) -> pd.DataFrame | None:
         df.rename(columns={'TickVolume': 'Volume'}, inplace=True, errors='ignore')
 
         # 5. Convert potentially numeric columns to numeric (coerce errors)
-        # Identify potential numeric columns (exclude known non-numeric if any)
-        potential_numeric_cols = df.columns # Assume all might be numeric for now
+        potential_numeric_cols = df.columns
         for col in potential_numeric_cols:
-            # Avoid reconverting index or already numeric columns
             if col not in df.select_dtypes(include=[np.number]).columns:
                  try:
                      df[col] = pd.to_numeric(df[col], errors='coerce')
-                     logger.print_debug(f"Coerced column '{col}' to numeric.")
                  except Exception as e:
                       logger.print_warning(f"Could not coerce column '{col}' to numeric during general conversion: {e}")
 
         # 6. Replace infinite values with NaN in numeric columns
         numeric_cols = df.select_dtypes(include=[np.number]).columns
-        inf_mask = np.isinf(df[numeric_cols])
-        if inf_mask.any().any():
-            logger.print_warning("Replacing infinite values (inf, -inf) with NaN.")
-            df.replace([np.inf, -np.inf], np.nan, inplace=True)
+        if not numeric_cols.empty:
+            inf_mask = np.isinf(df[numeric_cols])
+            if inf_mask.any().any():
+                logger.print_warning("Replacing infinite values (inf, -inf) with NaN.")
+                df.replace([np.inf, -np.inf], np.nan, inplace=True)
+        else:
+            logger.print_warning("No numeric columns found after coercion to replace inf values.")
+
 
         # 7. Check for required OHLCV columns AFTER cleaning and type coercion
         required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
@@ -84,12 +86,11 @@ def fetch_csv_data(filepath: str) -> pd.DataFrame | None:
             return None
 
         # 8. Drop rows if *any* of the required OHLCV columns have NaN AFTER conversion
-        # This handles NaNs introduced by coercion or original NaNs/Infs
-        initial_rows = len(df)
+        initial_rows_after_dt = len(df)
         df.dropna(subset=required_cols, how='any', inplace=True)
-        rows_dropped = initial_rows - len(df)
-        if rows_dropped > 0:
-            logger.print_debug(f"Dropped {rows_dropped} rows with NaN in required OHLCV columns after conversion.")
+        rows_dropped_nan = initial_rows_after_dt - len(df)
+        if rows_dropped_nan > 0:
+            logger.print_debug(f"Dropped {rows_dropped_nan} rows with NaN in required OHLCV columns after conversion/inf handling.")
 
         if df.empty:
             logger.print_warning("DataFrame became empty after removing rows with NaN in required columns.")
@@ -102,7 +103,4 @@ def fetch_csv_data(filepath: str) -> pd.DataFrame | None:
     except pd.errors.EmptyDataError: logger.print_error(f"CSV file is empty: {filepath}"); return None
     except pd.errors.ParserError as e: logger.print_error(f"Failed to parse CSV file: {filepath} - Error: {e}"); return None
     except KeyError as e: logger.print_error(f"Missing expected column during processing: {e} in file {filepath}"); return None
-    except Exception as e:
-        logger.print_error(f"An unexpected error occurred while processing CSV {filepath}: {type(e).__name__}: {e}")
-        #traceback.print_exc()
-        return None # Print traceback on generic error
+    except Exception as e: logger.print_error(f"An unexpected error occurred while processing CSV {filepath}: {type(e).__name__}: {e}"); traceback.print_exc(); return None
