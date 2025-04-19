@@ -262,6 +262,9 @@ def fetch_polygon_data(ticker: str, interval: str, start_date: str, end_date: st
             # noinspection PyBroadException
             except Exception as e:
                 logger.print_error(f"\n--- UNEXPECTED ERROR DURING POLYGON CHUNK FETCH ---")
+                logger.print_error("--- TRACEBACK START ---")
+                traceback.print_exc()
+                logger.print_error("--- TRACEBACK END ---")
                 logger.print_error(f"Chunk: {current_start_dt}-{current_end_chunk} (Attempt {attempt}/{max_attempts_per_chunk})")
                 logger.print_error(f"Ticker: '{resolved_ticker}', Error: {type(e).__name__}: {e}")
                 logger.print_error(f"Traceback:\n{traceback.format_exc()}")
