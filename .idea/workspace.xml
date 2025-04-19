@@ -7,7 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="del data utils" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix errors" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -159,14 +159,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00057" summary="v0.1.1">
-      <option name="closed" value="true" />
-      <created>1744878588986</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1744878588986</updated>
     </task>
     <task id="LOCAL-00058" summary="clear comments">
       <option name="closed" value="true" />
@@ -552,7 +544,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745063457231</updated>
     </task>
-    <option name="localTasksCounter" value="106" />
+    <task id="LOCAL-00106" summary="fix errors">
+      <option name="closed" value="true" />
+      <created>1745063564695</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1745063564695</updated>
+    </task>
+    <option name="localTasksCounter" value="107" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -579,7 +579,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix oanda 012" />
     <MESSAGE value="add test file for CSV" />
     <MESSAGE value="add test file for oanda import" />
     <MESSAGE value="add test file for polygon import" />
@@ -604,6 +603,7 @@
     <MESSAGE value="add refactored binance fetcher" />
     <MESSAGE value="add binance requirments" />
     <MESSAGE value="del data utils" />
-    <option name="LAST_COMMIT_MESSAGE" value="del data utils" />
+    <MESSAGE value="fix errors" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix errors" />
   </component>
 </project>
