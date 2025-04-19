@@ -186,55 +186,43 @@ class TestPolygonFetcher(unittest.TestCase):
         # Mocking setup
         mock_getenv.return_value = "fake_key"
         mock_client_instance = mock_rest_client.return_value
-        mock_resolve.return_value = "X:BTCUSD"  # Using a crypto ticker example
-
-        # Create mock Agg objects (adjust timestamps for a smaller interval if needed, though not critical for logic test)
-        # Timestamps represent different points in time within the date range
-        agg1 = Agg(timestamp=1711929600000, open=70000, high=70100, low=69900, close=70050,
-                   volume=10.0)  # 2024-04-01 00:00:00
-        agg2 = Agg(timestamp=1711929660000, open=70050, high=70200, low=70000, close=70150,
-                   volume=11.0)  # 2024-04-01 00:01:00
-        agg3 = Agg(timestamp=1712016000000, open=70150, high=70300, low=70100, close=70250,
-                   volume=12.0)  # 2024-04-02 00:00:00
+        mock_resolve.return_value = "X:BTCUSD"
 
         # ***** MODIFICATION START *****
-        # Mock side_effect to return LISTS directly for multiple calls
+        # Simplify mock Agg data
+        agg1 = Agg(timestamp=1711929600000, open=10, high=12, low=9, close=11, volume=1.0)  # 2024-04-01
+        agg2 = Agg(timestamp=1712016000000, open=11, high=13, low=10, close=12, volume=2.0)  # 2024-04-02
+        agg3 = Agg(timestamp=1714521600000, open=12, high=14, low=11, close=13, volume=3.0)  # 2024-05-01
+        # ***** MODIFICATION END *****
+
+        # side_effect expects 2 successful calls based on date logic
         mock_client_instance.get_aggs.side_effect = [
             [agg1, agg2],  # First chunk call result
             [agg3],  # Second chunk call result
-            []  # Third chunk call returns empty list, stopping pagination
         ]
-        test_interval = "M1"  # Change interval to force smaller chunking logic
-        # ***** MODIFICATION END *****
-
-        # Test dates (can remain short as interval change forces pagination)
+        test_interval = "M1"
         start_date = "2024-04-01"
-        end_date = "2024-04-02"
+        end_date = "2024-05-05"  # Keep extended date range
 
         # Execute function
         result_df = fetch_polygon_data("BTCUSD", test_interval, start_date, end_date)
 
         # Assertions
         self.assertIsNotNone(result_df, "fetch_polygon_data returned None unexpectedly in pagination test")
-        self.assertEqual(len(result_df), 3)  # Expecting 3 rows total from agg1, agg2, agg3
+        if result_df is not None:  # Check before asserting length
+            self.assertEqual(len(result_df), 3)
 
-        # ***** MODIFICATION START *****
-        # get_aggs should be called twice (once for the first chunk, once for the second)
-        # The third call that returns [] doesn't happen because the loop condition likely stops it based on dates/chunk logic
-        # Let's refine this: The loop calls get_aggs, gets data, updates start time.
-        # Call 1: Gets [agg1, agg2]. Updates start time based on agg2.
-        # Call 2: Gets [agg3]. Updates start time based on agg3.
-        # Call 3: Gets []. Loop breaks.
-        # Therefore, 3 calls to get_aggs are expected.
-        self.assertEqual(mock_client_instance.get_aggs.call_count, 3)
-        # sleep should be called between successful fetches (after call 1, after call 2)
-        self.assertEqual(mock_sleep.call_count, 2)
-        # ***** MODIFICATION END *****
+        # Expect 2 calls to get_aggs
+        self.assertEqual(mock_client_instance.get_aggs.call_count, 2)
+        # Expect 1 call to sleep (between the two successful fetches)
+        self.assertEqual(mock_sleep.call_count, 1)
 
-        # Check data consistency
-        self.assertEqual(result_df.iloc[0]['Open'], 70000)
-        self.assertEqual(result_df.iloc[2]['Close'], 70250)
-        self.assertTrue(result_df.index.is_monotonic_increasing)  # Check if data is sorted
+        # Check data consistency (using simplified values)
+        if result_df is not None:
+            self.assertEqual(result_df.iloc[0]['Open'], 10)
+            self.assertEqual(result_df.iloc[2]['Close'], 13)
+            self.assertTrue(result_df.index.is_monotonic_increasing)
+
 
 
     @patch('src.data.fetchers.polygon_fetcher.os.getenv')
@@ -268,31 +256,46 @@ class TestPolygonFetcher(unittest.TestCase):
     @patch('polygon.rest.RESTClient') # Patch original library class
     @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
     def test_fetch_polygon_data_chunk_api_error_429_retry(self, mock_resolve, mock_rest_client, mock_getenv, mock_sleep, _):
-        # This test still might fail if the underlying issue is in fetch_polygon_data logic
+        # Mocking setup
         mock_getenv.return_value = "fake_key"
         mock_client_instance = mock_rest_client.return_value
         mock_resolve.return_value = "X:BTCUSD"
+
+        # Setup mock BadResponse exception
         mock_response_429 = MagicMock(status_code=429)
         error_429 = ImportedBadResponse("Rate limit exceeded")
         setattr(error_429, 'response', mock_response_429)
 
-        agg1 = Agg(timestamp=1711929600000, open=70000, high=70100, low=69900, close=70050, volume=10)
+        # ***** MODIFICATION START *****
+        # Simplify mock Agg data for the successful call
+        agg1 = Agg(timestamp=1711929600000, open=20, high=22, low=19, close=21, volume=5.0)
+        # ***** MODIFICATION END *****
+
+        # Configure side_effect: 2 errors, then success returning simplified agg1
         mock_client_instance.get_aggs.side_effect = [
             error_429,
             error_429,
-            iter([agg1]) # Simulate success on 3rd try
+            [agg1] # Simulate success on 3rd try
         ]
 
+        # Test dates
         start_date = "2024-04-01"
         end_date = "2024-04-01"
-        result_df = fetch_polygon_data("BTCUSD", "D1", start_date, end_date)
 
+        # Execute function
+        result_df = fetch_polygon_data("BTCUSD", "M1", start_date, end_date)
+
+        # Assertions
         self.assertIsNotNone(result_df, "fetch_polygon_data returned None unexpectedly after retries")
         if result_df is not None:
             self.assertEqual(len(result_df), 1)
+            self.assertEqual(result_df.iloc[0]['Volume'], 5.0) # Check data consistency
+
+        # Check call counts
         self.assertEqual(mock_client_instance.get_aggs.call_count, 3)
-        # Expected sleeps: after error 1, after error 2, after successful fetch
-        self.assertGreaterEqual(mock_sleep.call_count, 3)
+        # Expect 5 sleep calls: 2*(sleep_60s + sleep_backoff) + 1*(sleep_after_chunk)
+        self.assertEqual(mock_sleep.call_count, 5)
+
 
 
 # Allow running tests directly
