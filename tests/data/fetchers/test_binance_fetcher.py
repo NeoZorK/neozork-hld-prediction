@@ -1,4 +1,4 @@
-# tests/data/fetchers/test_binance_fetcher.py # CORRECTED Round 2
+# tests/data/fetchers/test_binance_fetcher.py # CORRECTED Round 3
 
 import unittest
 from unittest.mock import patch, MagicMock, call
@@ -17,7 +17,6 @@ try:
     from binance.client import Client as BinanceClient_orig
 except ImportError:
     class BinanceClient_orig: # Dummy if not installed
-        # Define constants used in the code if library is missing
         KLINE_INTERVAL_1MINUTE = '1m'; KLINE_INTERVAL_5MINUTE = '5m'; KLINE_INTERVAL_15MINUTE = '15m';
         KLINE_INTERVAL_30MINUTE = '30m'; KLINE_INTERVAL_1HOUR = '1h'; KLINE_INTERVAL_4HOUR = '4h';
         KLINE_INTERVAL_1DAY = '1d'; KLINE_INTERVAL_1WEEK = '1w'; KLINE_INTERVAL_1MONTH = '1M'
@@ -37,9 +36,9 @@ class MockLogger:
 class TestBinanceFetcher(unittest.TestCase):
 
     # --- Tests for map_binance_interval ---
+    # (Keep existing map_interval tests, using constants is fine here)
     def test_map_binance_interval_mql(self, _):
-        # Map should return the string value associated with the key
-        self.assertEqual(map_binance_interval("M1"), BinanceClient_orig.KLINE_INTERVAL_1MINUTE) # Still compare value
+        self.assertEqual(map_binance_interval("M1"), BinanceClient_orig.KLINE_INTERVAL_1MINUTE)
         self.assertEqual(map_binance_interval("H1"), BinanceClient_orig.KLINE_INTERVAL_1HOUR)
         self.assertEqual(map_binance_interval("D"), BinanceClient_orig.KLINE_INTERVAL_1DAY)
         self.assertEqual(map_binance_interval("W1"), BinanceClient_orig.KLINE_INTERVAL_1WEEK)
@@ -55,22 +54,23 @@ class TestBinanceFetcher(unittest.TestCase):
 
 
     # --- Tests for map_binance_ticker ---
+    # (Keep existing map_ticker tests)
     def test_map_binance_ticker(self, _):
         self.assertEqual(map_binance_ticker("BTC/USDT"), "BTCUSDT")
         self.assertEqual(map_binance_ticker("eth-usd"), "ETHUSD")
         self.assertEqual(map_binance_ticker("xrpusd"), "XRPUSD")
-        self.assertEqual(map_binance_ticker("SOLUSDT"), "SOLUSDT") # No change
+        self.assertEqual(map_binance_ticker("SOLUSDT"), "SOLUSDT")
 
 
     # --- Tests for fetch_binance_data ---
     @patch('src.data.fetchers.binance_fetcher.os.getenv')
     @patch('src.data.fetchers.binance_fetcher.BinanceClient') # Patch the client import
     def test_fetch_binance_data_success_single_chunk(self, MockBinanceClient, mock_getenv, __):
+        # (Setup remains the same)
         mock_getenv.side_effect = lambda k: "fake_key" if k == "BINANCE_API_KEY" else "fake_secret"
         mock_client_instance = MockBinanceClient.return_value
         kline1 = [1672531200000, '40000.0', '40100.5', '39900.1', '40050.2', '100.5', 1672531259999, '...', 50, '50', '...', '0']
         kline2 = [1672531260000, '40050.2', '40200.0', '40000.0', '40150.9', '110.1', 1672531319999, '...', 55, '60', '...', '0']
-        # Simulate returning less than limit, so only one call is needed
         mock_client_instance.get_historical_klines.return_value = [kline1, kline2]
 
         expected_dates = pd.to_datetime([1672531200000, 1672531260000], unit='ms')
@@ -83,21 +83,24 @@ class TestBinanceFetcher(unittest.TestCase):
 
         start_date = "2023-01-01"
         end_date = "2023-01-01"
-        # Assuming map_binance_interval('M1') returns '1m'
         result_df = fetch_binance_data("BTCUSDT", "M1", start_date, end_date)
 
         MockBinanceClient.assert_called_once_with(api_key="fake_key", api_secret="fake_secret")
         mock_client_instance.get_historical_klines.assert_called_once()
         args_call = mock_client_instance.get_historical_klines.call_args[1]
         self.assertEqual(args_call['symbol'], "BTCUSDT")
-        # ***** REVERTED ASSERTION *****
-        # The fetcher calls map_interval('M1') -> '1m', and passes '1m' to get_historical_klines
-        self.assertEqual(args_call['interval'], '1m')
+
+        # ***** CORRECTED ASSERTION (Round 3) *****
+        # map_interval("M1") returns the mock constant BinanceClient.KLINE_INTERVAL_1MINUTE
+        # Assert that the interval passed to the mocked get_historical_klines
+        # is the same mocked constant object.
+        # We access the mocked constant via the MockBinanceClient class mock.
+        self.assertEqual(args_call['interval'], MockBinanceClient.KLINE_INTERVAL_1MINUTE)
 
         self.assertIsNotNone(result_df)
         pd.testing.assert_frame_equal(result_df, expected_df)
 
-
+    # (Keep other binance tests as corrected previously)
     @patch('src.data.fetchers.binance_fetcher.time.sleep')
     @patch('src.data.fetchers.binance_fetcher.os.getenv')
     @patch('src.data.fetchers.binance_fetcher.BinanceClient')
@@ -131,9 +134,8 @@ class TestBinanceFetcher(unittest.TestCase):
         mock_getenv.return_value = None
         mock_client_instance = MockBinanceClient.return_value
         error_text = "Server Error Text"
-        mock_response = MagicMock(status_code=500, text=error_text) # Add text to mock
+        mock_response = MagicMock(status_code=500, text=error_text)
         mock_response.headers = {}
-        # ***** CORRECTED Instantiation *****
         # Provide the required 'text' argument
         api_exception = BinanceAPIException(response=mock_response, status_code=500, text=error_text)
         mock_client_instance.get_historical_klines.side_effect = api_exception
@@ -152,10 +154,9 @@ class TestBinanceFetcher(unittest.TestCase):
         mock_getenv.return_value = None
         mock_client_instance = MockBinanceClient.return_value
         error_text = '{"code": -1121, "msg": "Invalid symbol."}'
-        mock_response = MagicMock(status_code=400, text=error_text) # Add text
+        mock_response = MagicMock(status_code=400, text=error_text)
         mock_response.headers = {}
         mock_response.json.return_value = {"code": -1121, "msg": "Invalid symbol."}
-        # ***** CORRECTED Instantiation *****
         # Provide the required 'text' argument
         error_exception = BinanceAPIException(response=mock_response, status_code=400, text=error_text)
         setattr(error_exception, 'code', -1121)
@@ -167,6 +168,7 @@ class TestBinanceFetcher(unittest.TestCase):
 
         self.assertIsNone(result_df)
         mock_client_instance.get_historical_klines.assert_called_once()
+
 
 # Allow running tests directly
 if __name__ == '__main__':
