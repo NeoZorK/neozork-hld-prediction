@@ -7,7 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="try 4 to fix all tests" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="try 6 to fix all tests" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -159,14 +159,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00064" summary="added __init__ to each tests">
-      <option name="closed" value="true" />
-      <created>1744902549681</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
-      <option name="project" value="LOCAL" />
-      <updated>1744902549681</updated>
     </task>
     <task id="LOCAL-00065" summary="fix all warnings">
       <option name="closed" value="true" />
@@ -552,7 +544,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745068083871</updated>
     </task>
-    <option name="localTasksCounter" value="113" />
+    <task id="LOCAL-00113" summary="try 6 to fix all tests">
+      <option name="closed" value="true" />
+      <created>1745070159461</created>
+      <option name="number" value="00113" />
+      <option name="presentableId" value="LOCAL-00113" />
+      <option name="project" value="LOCAL" />
+      <updated>1745070159461</updated>
+    </task>
+    <option name="localTasksCounter" value="114" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -579,7 +579,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="automatic ticker search for polygon" />
     <MESSAGE value="polygon fix feed type fx,crypto,stocks" />
     <MESSAGE value="working polygon" />
     <MESSAGE value="add query time limit for polygon" />
@@ -604,6 +603,7 @@
     <MESSAGE value="try 2 to fix all tests" />
     <MESSAGE value="try 3 to fix all tests" />
     <MESSAGE value="try 4 to fix all tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="try 4 to fix all tests" />
+    <MESSAGE value="try 6 to fix all tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="try 6 to fix all tests" />
   </component>
 </project>
