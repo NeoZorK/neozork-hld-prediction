@@ -1,8 +1,9 @@
-# tests/data/fetchers/test_yfinance_fetcher.py # CORRECTED MultiIndex test
+# tests/data/fetchers/test_yfinance_fetcher.py # CORRECTED dtype
 
 import unittest
 from unittest.mock import patch, MagicMock
 import pandas as pd
+import numpy as np # Import numpy
 
 # Functions to test
 from src.data.fetchers.yfinance_fetcher import fetch_yfinance_data, map_interval, map_ticker
@@ -52,14 +53,12 @@ class TestYfinanceFetcher(unittest.TestCase):
         self.assertEqual(map_ticker("^GSPC"), "^GSPC")     # Index example
 
     # --- Tests for fetch_yfinance_data ---
-    # Mock the yf.download function itself
     @patch('src.data.fetchers.yfinance_fetcher.yf.download')
     def test_fetch_yfinance_data_success_period(self, mock_yf_download, _):
-        # Simulate successful download
         mock_df = pd.DataFrame({
-            'Open': [100], 'High': [101], 'Low': [99], 'Close': [100], 'Volume': [1000]
-        }, index=pd.to_datetime(['2023-01-01']))
-        mock_yf_download.return_value = mock_df.copy() # Return a copy
+            'Open': [100.0], 'High': [101.0], 'Low': [99.0], 'Close': [100.0], 'Volume': [1000.0]
+        }, index=pd.to_datetime(['2023-01-01']), dtype=np.float64) # Specify dtype
+        mock_yf_download.return_value = mock_df.copy()
 
         result_df = fetch_yfinance_data(ticker="AAPL", interval="1d", period="1d")
 
@@ -73,8 +72,8 @@ class TestYfinanceFetcher(unittest.TestCase):
     @patch('src.data.fetchers.yfinance_fetcher.yf.download')
     def test_fetch_yfinance_data_success_start_end(self, mock_yf_download, _):
         mock_df = pd.DataFrame({
-            'Open': [200], 'High': [202], 'Low': [198], 'Close': [200], 'Volume': [2000]
-        }, index=pd.to_datetime(['2024-02-01']))
+            'Open': [200.0], 'High': [202.0], 'Low': [198.0], 'Close': [200.0], 'Volume': [2000.0]
+        }, index=pd.to_datetime(['2024-02-01']), dtype=np.float64) # Specify dtype
         mock_yf_download.return_value = mock_df.copy()
 
         result_df = fetch_yfinance_data(ticker="MSFT", interval="1h", start_date="2024-02-01", end_date="2024-02-02")
@@ -88,7 +87,6 @@ class TestYfinanceFetcher(unittest.TestCase):
 
     @patch('src.data.fetchers.yfinance_fetcher.yf.download')
     def test_fetch_yfinance_data_download_fails(self, mock_yf_download, _):
-        # Simulate download returning None or empty df
         mock_yf_download.return_value = None
         result_df = fetch_yfinance_data(ticker="FAIL", interval="1d", period="1d")
         self.assertIsNone(result_df)
@@ -99,40 +97,35 @@ class TestYfinanceFetcher(unittest.TestCase):
 
     @patch('src.data.fetchers.yfinance_fetcher.yf.download')
     def test_fetch_yfinance_data_missing_columns(self, mock_yf_download, _):
-        # Simulate df missing essential columns
-        mock_df = pd.DataFrame({'Open': [100], 'volume': [1000]}, index=pd.to_datetime(['2023-01-01'])) # Lowercase volume
+        mock_df = pd.DataFrame({'Open': [100], 'volume': [1000]}, index=pd.to_datetime(['2023-01-01']))
         mock_yf_download.return_value = mock_df.copy()
-
         result_df = fetch_yfinance_data(ticker="BAD", interval="1d", period="1d")
-        self.assertIsNone(result_df) # Should fail because High, Low, Close are missing
+        self.assertIsNone(result_df)
 
     @patch('src.data.fetchers.yfinance_fetcher.yf.download')
     def test_fetch_yfinance_data_multiindex_success(self, mock_yf_download, _):
-        # Simulate MultiIndex columns (sometimes happens)
-        # Structure: Level 0 = Attribute, Level 1 = Ticker (common for >1 ticker download)
-        # For single ticker download, sometimes Level 0 is Ticker, Level 1 is Attribute,
-        # or sometimes it's just flat columns. Test a common case.
+        # Simulate MultiIndex columns
         cols = pd.MultiIndex.from_tuples([
              ('Open', 'AAPL'), ('High', 'AAPL'), ('Low', 'AAPL'), ('Close', 'AAPL'), ('Volume', 'AAPL')
         ])
-        mock_df_multi = pd.DataFrame([[100, 101, 99, 100, 1000]],
+        # Use float data in mock to avoid int64 inference
+        mock_df_multi = pd.DataFrame([[100.0, 101.0, 99.0, 100.0, 1000.0]],
             index=pd.to_datetime(['2023-01-01']),
             columns=cols
         )
         mock_yf_download.return_value = mock_df_multi.copy()
 
-        # Expected result after simplification (dropping level 1 'AAPL')
+        # Expected result after simplification
         expected_df = pd.DataFrame({
             'Open': [100.0], 'High': [101.0], 'Low': [99.0], 'Close': [100.0], 'Volume': [1000.0]
-        }, index=pd.to_datetime(['2023-01-01']))
-
+        }, index=pd.to_datetime(['2023-01-01']), dtype=np.float64) # CORRECTED: Specify dtype
 
         result_df = fetch_yfinance_data(ticker="AAPL", interval="1d", period="1d")
 
-        self.assertIsNotNone(result_df) # CORRECTED: Should not be None if handled
+        self.assertIsNotNone(result_df)
         self.assertFalse(isinstance(result_df.columns, pd.MultiIndex))
         self.assertListEqual(list(result_df.columns), ['Open', 'High', 'Low', 'Close', 'Volume'])
-        pd.testing.assert_frame_equal(result_df, expected_df)
+        pd.testing.assert_frame_equal(result_df, expected_df) # Should pass now
 
 
 # Allow running tests directly

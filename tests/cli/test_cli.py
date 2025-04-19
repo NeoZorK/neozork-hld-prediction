@@ -2,14 +2,13 @@
 
 import unittest
 from unittest.mock import patch
-
-
+import io # For capturing output
 
 # Import the function to test
 from src.cli.cli import parse_arguments
 # Import constants needed for choices/defaults if necessary
 from src.common.constants import TradingRule
-
+from src import __version__ # Import version to check output
 
 # Unit tests for the command line interface setup
 class TestCli(unittest.TestCase):
@@ -22,7 +21,7 @@ class TestCli(unittest.TestCase):
         self.assertEqual(args.rule, TradingRule.Predict_High_Low_Direction.name)
         self.assertIsNone(args.ticker)
         self.assertEqual(args.interval, 'D1')
-        # Default period might vary depending on argparse setup, test if necessary
+        # Default period might vary, don't assert unless necessary
         # self.assertEqual(args.period, '1y')
         self.assertIsNone(args.start)
         self.assertIsNone(args.end)
@@ -45,7 +44,7 @@ class TestCli(unittest.TestCase):
         self.assertEqual(args.end, '2023-12-31')
         self.assertEqual(args.point, 0.0001)
         self.assertEqual(args.rule, 'PV_HighLow')
-        # CORRECTED: Remove assertion for period being None, argparse doesn't nullify defaults when exclusive group used
+        # CORRECTED: Remove assertion for period being None
         # self.assertIsNone(args.period)
 
     # Test yfinance mode using period
@@ -148,7 +147,6 @@ class TestCli(unittest.TestCase):
     def test_parse_arguments_binance_fail_no_point(self):
         with self.assertRaises(SystemExit) as cm: parse_arguments()
         self.assertEqual(cm.exception.code, 2)
-    # --- END ADDED SECTION ---
 
 
     # --- General Argument Tests ---
