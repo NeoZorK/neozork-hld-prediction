@@ -7,7 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixing binance and polygon modules 1">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixing binance and polygon modules 2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" afterDir="false" />
     </list>
@@ -87,7 +87,7 @@
 }</component>
   <component name="QodanaReportsService">
     <option name="descriptions">
-      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="1aa1bcef-11ca-4bf7-ae20-3c73dacd29e4" reportId="NeoZorK HLD/qodana/2025-04-19" />
+      <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="fd695039-1346-4bbb-b7b7-3a2bbd6f2741" reportId="NeoZorK HLD/qodana/2025-04-19" />
     </option>
   </component>
   <component name="RecentsManager">
@@ -162,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00070" summary="all tests ok,">
-      <option name="closed" value="true" />
-      <created>1744909413801</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
-      <option name="project" value="LOCAL" />
-      <updated>1744909413801</updated>
     </task>
     <task id="LOCAL-00071" summary="add testing to markdown">
       <option name="closed" value="true" />
@@ -555,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745074304455</updated>
     </task>
-    <option name="localTasksCounter" value="119" />
+    <task id="LOCAL-00119" summary="fixing binance and polygon modules 2">
+      <option name="closed" value="true" />
+      <created>1745075312600</created>
+      <option name="number" value="00119" />
+      <option name="presentableId" value="LOCAL-00119" />
+      <option name="project" value="LOCAL" />
+      <updated>1745075312600</updated>
+    </task>
+    <option name="localTasksCounter" value="120" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="new tests for data utils" />
     <MESSAGE value="fix tests" />
     <MESSAGE value="fix both tests" />
     <MESSAGE value="fix both tests1" />
@@ -607,6 +606,7 @@
     <MESSAGE value="fixed polygon module" />
     <MESSAGE value="fixing binance and polygon modules" />
     <MESSAGE value="fixing binance and polygon modules 1" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixing binance and polygon modules 1" />
+    <MESSAGE value="fixing binance and polygon modules 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixing binance and polygon modules 2" />
   </component>
 </project>
