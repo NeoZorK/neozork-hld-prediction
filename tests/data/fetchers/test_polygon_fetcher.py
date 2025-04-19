@@ -1,10 +1,10 @@
-# tests/data/fetchers/test_polygon_fetcher.py # CORRECTED
+# tests/data/fetchers/test_polygon_fetcher.py # FINAL CORRECTIONS
 
 import unittest
 from unittest.mock import patch, MagicMock, call # Import call
 import pandas as pd
 from datetime import date, timedelta
-import numpy as np # For dtype check
+import numpy as np # Import numpy
 
 # Functions/classes to test or mock
 from src.data.fetchers.polygon_fetcher import (
@@ -22,18 +22,14 @@ class MockLogger:
 
 # Mock the Agg object structure if polygon lib is installed
 if POLYGON_AVAILABLE:
-    # If polygon is installed, use the real Agg for structure reference
-    # This helps if tests rely on specific attributes existing.
     try:
         from polygon.rest.models.aggs import Agg
     except ImportError:
-        # Fallback dummy if even that fails
-        class Agg:
+        class Agg: # Dummy
             def __init__(self, timestamp=None, open=None, high=None, low=None, close=None, volume=None):
                  self.timestamp=timestamp; self.open=open; self.high=high; self.low=low; self.close=close; self.volume=volume
 else:
-    # Create a dummy Agg that can be instantiated if lib is not installed
-    class Agg:
+    class Agg: # Dummy
         def __init__(self, timestamp=None, open=None, high=None, low=None, close=None, volume=None):
             self.timestamp=timestamp; self.open=open; self.high=high; self.low=low; self.close=close; self.volume=volume
 
@@ -71,12 +67,10 @@ class TestPolygonFetcher(unittest.TestCase):
     @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient')
     def test_resolve_polygon_ticker_success_currency(self, MockRESTClient, mock_sleep, __):
         mock_client = MockRESTClient.return_value
-        # CORRECTED: Simulate 404 using a mock response object and setting side_effect
-        mock_response_404 = MagicMock()
-        mock_response_404.status_code = 404
-        # Create exception instances
-        error_404 = BadResponse()
-        setattr(error_404, 'response', mock_response_404) # Set response attribute
+        # CORRECTED: Simulate 404 using BadResponse with message and mock response
+        mock_response_404 = MagicMock(status_code=404)
+        error_404 = BadResponse("Ticker not found") # Pass message
+        setattr(error_404, 'response', mock_response_404) # Set attribute
 
         mock_client.get_ticker_details.side_effect = [
             error_404,      # Raise 404 for "EURUSD"
@@ -87,18 +81,17 @@ class TestPolygonFetcher(unittest.TestCase):
         self.assertEqual(resolved, "C:EURUSD") # Should now resolve correctly
         self.assertEqual(mock_client.get_ticker_details.call_count, 2)
         mock_client.get_ticker_details.assert_has_calls([call("EURUSD"), call("C:EURUSD")])
-        mock_sleep.assert_called_once() # Ensure delay happened after 404
+        mock_sleep.assert_called_once()
 
     @patch('src.data.fetchers.polygon_fetcher.time.sleep')
     @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient')
     def test_resolve_polygon_ticker_fail_not_found(self, MockRESTClient, mock_sleep, __):
         mock_client = MockRESTClient.return_value
-        # CORRECTED: Simulate 404 using a mock response object and setting side_effect
-        mock_response_404 = MagicMock()
-        mock_response_404.status_code = 404
-        error_404 = BadResponse()
+        # CORRECTED: Simulate 404
+        mock_response_404 = MagicMock(status_code=404)
+        error_404 = BadResponse("Ticker not found")
         setattr(error_404, 'response', mock_response_404)
-        mock_client.get_ticker_details.side_effect = error_404 # Raise 404 for all attempts
+        mock_client.get_ticker_details.side_effect = error_404
 
         client_instance = MockRESTClient()
         resolved = resolve_polygon_ticker("NOTFOUND", client_instance)
@@ -106,7 +99,7 @@ class TestPolygonFetcher(unittest.TestCase):
         expected_calls = [call("NOTFOUND"), call("C:NOTFOUND"), call("X:NOTFOUND"), call("I:NOTFOUND")]
         mock_client.get_ticker_details.assert_has_calls(expected_calls) # Should now try all
         self.assertEqual(mock_client.get_ticker_details.call_count, 4)
-        self.assertEqual(mock_sleep.call_count, 4) # Should sleep after each 404
+        self.assertEqual(mock_sleep.call_count, 4)
 
 
     @patch('src.data.fetchers.polygon_fetcher.time.sleep')
@@ -117,7 +110,7 @@ class TestPolygonFetcher(unittest.TestCase):
         mock_response_401 = MagicMock(status_code=401, url='http://test.url')
         mock_response_401.json.side_effect = ValueError("No JSON")
         mock_response_401.text = "Unauthorized"
-        error_401 = BadResponse()
+        error_401 = BadResponse("Unauthorized")
         setattr(error_401, 'response', mock_response_401)
         mock_client.get_ticker_details.side_effect = error_401
 
@@ -139,10 +132,10 @@ class TestPolygonFetcher(unittest.TestCase):
         agg2 = Agg(timestamp=1672617600000, open=1.11, high=1.12, low=1.1, close=1.11, volume=1100.0)
         mock_client_instance.get_aggs.return_value = [agg1, agg2]
 
-        expected_dates = pd.to_datetime([1672531200000, 1672617600000], unit='ms')
+        expected_dates = pd.to_datetime([1672531200000, 1672617600000], unit='ms', name='DateTime') # Set name
         expected_data = { 'Open': [1.1, 1.11], 'High': [1.11, 1.12], 'Low': [1.09, 1.1], 'Close': [1.1, 1.11], 'Volume': [1000.0, 1100.0] }
         expected_df = pd.DataFrame(expected_data, index=expected_dates, dtype=np.float64)
-
+        expected_df.index.name = 'DateTime' # CORRECTED: Set index name
 
         start_date = "2023-01-01"
         end_date = "2023-01-02"
@@ -154,12 +147,9 @@ class TestPolygonFetcher(unittest.TestCase):
         mock_client_instance.get_aggs.assert_called_once()
         args_call = mock_client_instance.get_aggs.call_args[1]
         self.assertEqual(args_call['ticker'], "C:EURUSD")
-        # Note: The 'to' date might be adjusted based on chunk logic even if only one chunk needed
-        # self.assertEqual(args_call['from_'], date(2023, 1, 1))
-        # self.assertEqual(args_call['to'], date(2023, 1, 2))
 
         self.assertIsNotNone(result_df)
-        pd.testing.assert_frame_equal(result_df, expected_df)
+        pd.testing.assert_frame_equal(result_df, expected_df) # Should pass now
 
 
     @patch('src.data.fetchers.polygon_fetcher.time.sleep')
@@ -181,12 +171,13 @@ class TestPolygonFetcher(unittest.TestCase):
         ]
 
         start_date = "2024-04-01"
-        end_date = "2024-04-03"
+        # CORRECTED: Extend end date to ensure multiple chunks are possible with default delta
+        end_date = "2024-04-05"
         result_df = fetch_polygon_data("BTCUSD", "D1", start_date, end_date)
 
         self.assertIsNotNone(result_df)
         self.assertEqual(len(result_df), 3) # Expect all 3 rows
-        self.assertEqual(mock_client_instance.get_aggs.call_count, 3)
+        self.assertEqual(mock_client_instance.get_aggs.call_count, 3) # 2 data + 1 empty
         self.assertEqual(mock_sleep.call_count, 2) # Slept between successful chunk calls
 
         self.assertEqual(result_df.iloc[0]['Open'], 70000)
@@ -227,8 +218,9 @@ class TestPolygonFetcher(unittest.TestCase):
         mock_client_instance = MockRESTClient.return_value
         # CORRECTED: Simulate 429 error correctly
         mock_response_429 = MagicMock(status_code=429)
-        error_429 = BadResponse()
+        error_429 = BadResponse("Rate limit")
         setattr(error_429, 'response', mock_response_429)
+
         agg1 = Agg(timestamp=1711929600000, open=70000, high=70100, low=69900, close=70050, volume=10)
         mock_client_instance.get_aggs.side_effect = [
             error_429, # First attempt fails (429)
@@ -243,10 +235,10 @@ class TestPolygonFetcher(unittest.TestCase):
 
         self.assertIsNotNone(result_df)
         self.assertEqual(len(result_df), 1)
-        # Check that retries happened for the first chunk, then called again for next chunk
-        self.assertEqual(mock_client_instance.get_aggs.call_count, 4) # 3 attempts for first chunk + 1 for empty
-        self.assertEqual(mock_sleep.call_count, 3) # 2 for 429 retries, 1 between successful chunks
-
+        # CORRECTED: Check call count (2 fails + 1 success for first chunk + 1 empty call)
+        self.assertEqual(mock_client_instance.get_aggs.call_count, 4)
+        # Check sleeps (1 after each 429 + 1 between successful chunk fetches)
+        self.assertEqual(mock_sleep.call_count, 3)
 
 # Allow running tests directly
 if __name__ == '__main__':
