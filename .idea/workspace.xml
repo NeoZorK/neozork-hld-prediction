@@ -7,16 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix binance fetcher">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/fetchers/binance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/binance_fetcher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/fetchers/yfinance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/yfinance_fetcher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/cli/test_cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/cli/test_cli.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/utils/test_point_size_determination.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/utils/test_point_size_determination.py" afterDir="false" />
-    </list>
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="del data utils" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -168,30 +159,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00054" summary="New TR Predict High Lo Direction -&gt; showing 3 predictions at same time for every point">
-      <option name="closed" value="true" />
-      <created>1744817625921</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1744817625921</updated>
-    </task>
-    <task id="LOCAL-00055" summary="all fixed">
-      <option name="closed" value="true" />
-      <created>1744819229380</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1744819229381</updated>
-    </task>
-    <task id="LOCAL-00056" summary="all fixed">
-      <option name="closed" value="true" />
-      <created>1744819291596</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1744819291596</updated>
     </task>
     <task id="LOCAL-00057" summary="v0.1.1">
       <option name="closed" value="true" />
@@ -561,7 +528,31 @@
       <option name="project" value="LOCAL" />
       <updated>1745061819676</updated>
     </task>
-    <option name="localTasksCounter" value="103" />
+    <task id="LOCAL-00103" summary="add refactored binance fetcher">
+      <option name="closed" value="true" />
+      <created>1745063255873</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1745063255873</updated>
+    </task>
+    <task id="LOCAL-00104" summary="add binance requirments">
+      <option name="closed" value="true" />
+      <created>1745063383835</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1745063383835</updated>
+    </task>
+    <task id="LOCAL-00105" summary="del data utils">
+      <option name="closed" value="true" />
+      <created>1745063457231</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1745063457231</updated>
+    </task>
+    <option name="localTasksCounter" value="106" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -588,9 +579,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="better colors" />
-    <MESSAGE value="v0.1.2 Init" />
-    <MESSAGE value="all fixed" />
     <MESSAGE value="fix oanda 012" />
     <MESSAGE value="add test file for CSV" />
     <MESSAGE value="add test file for oanda import" />
@@ -613,6 +601,9 @@
     <MESSAGE value="fixed markdown project structure" />
     <MESSAGE value="refactor modules fetchers" />
     <MESSAGE value="fix binance fetcher" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix binance fetcher" />
+    <MESSAGE value="add refactored binance fetcher" />
+    <MESSAGE value="add binance requirments" />
+    <MESSAGE value="del data utils" />
+    <option name="LAST_COMMIT_MESSAGE" value="del data utils" />
   </component>
 </project>

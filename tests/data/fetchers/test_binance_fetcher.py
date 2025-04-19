@@ -1,14 +1,13 @@
 # tests/data/fetchers/test_binance_fetcher.py
 
 import unittest
-from unittest.mock import patch, MagicMock, call
-import pandas as pd
+from unittest.mock import patch
 from datetime import datetime
 
 # Functions/classes to test or mock
 from src.data.fetchers.binance_fetcher import (
     fetch_binance_data, map_binance_interval, map_binance_ticker,
-    BINANCE_AVAILABLE, BinanceAPIException, BinanceRequestException # Import exceptions
+    BINANCE_AVAILABLE, BinanceAPIException # Import exceptions
 )
 
 # Dummy logger
