@@ -7,8 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix all tests">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed markdown project structure">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/data_utils.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,14 +164,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00051" summary="Fix demo again">
-      <option name="closed" value="true" />
-      <created>1744810217783</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1744810217783</updated>
     </task>
     <task id="LOCAL-00052" summary="comment debug check">
       <option name="closed" value="true" />
@@ -554,7 +549,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744993646694</updated>
     </task>
-    <option name="localTasksCounter" value="100" />
+    <task id="LOCAL-00100" summary="fixed markdown project structure">
+      <option name="closed" value="true" />
+      <created>1745055952162</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1745055952162</updated>
+    </task>
+    <option name="localTasksCounter" value="101" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -581,7 +584,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add testing to markdown" />
     <MESSAGE value="add -h examples" />
     <MESSAGE value="best varian for formating" />
     <MESSAGE value="better colors" />
@@ -606,6 +608,7 @@
     <MESSAGE value="fix both tests1" />
     <MESSAGE value="fix rename to debug tests" />
     <MESSAGE value="fix all tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix all tests" />
+    <MESSAGE value="fixed markdown project structure" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed markdown project structure" />
   </component>
 </project>
