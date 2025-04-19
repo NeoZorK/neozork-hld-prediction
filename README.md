@@ -60,58 +60,6 @@ Based on comparisons using the `mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv` file:
 
 ## Project Structure
 
-project-root/
-├── .git/                 # Git directory (usually hidden)
-├── .idea/                # PyCharm directory (usually hidden, add to .gitignore)
-├── venv/                 # Python virtual environment (add to .gitignore)
-├── data/
-│   ├── raw/              # Raw data exports (e.g., from MT5)
-│   └── processed/        # Processed data ready for use
-├── mql5_feed/            # Sample MQL5 CSV exports
-├── notebooks/            # Jupyter notebooks for exploration and analysis
-├── src/                  # Source code package
-│   ├── __init__.py         # Marks src as package, contains version
-│   ├── cli/                # Command Line Interface logic
-│   │   ├── __init__.py
-│   │   └── cli.py          # Argument parsing (using argparse, RichHelpFormatter)
-│   ├── common/             # Common utilities, constants, logging
-│   │   ├── __init__.py
-│   │   └── constants.py    # Signal constants, TradingRule enum
-│   │   └── logger.py       # Colored logging utility (using colorama)
-│   ├── data/               # Data fetching and preparation utilities
-│   │   ├── __init__.py
-│   │   └── data_utils.py   # Low-level fetch (yfinance, csv, polygon), demo data, mapping functions
-│   │   └── data_acquisition.py # Workflow Step 1: acquire_data function
-│   ├── calculation/        # Indicator calculation logic
-│   │   ├── __init__.py
-│   │   └── core_calculations.py
-│   │   └── rules.py
-│   │   └── indicator.py
-│   │   └── indicator_calculation.py # Workflow Step 3: calculate_indicator function (with validation)
-│   ├── plotting/           # Plotting related modules
-│   │   ├── __init__.py
-│   │   └── plotting.py     # Low-level plotting function (plot_indicator_results using mplfinance)
-│   │   └── plotting_generation.py # Workflow Step 4: generate_plot function
-│   ├── utils/              # General utilities
-│   │   ├── __init__.py
-│   │   └── utils.py
-│   │   └── point_size_determination.py # Workflow Step 2: get_point_size function
-│   └── workflow/           # Workflow orchestration and reporting
-│       ├── __init__.py
-│       └── workflow.py     # Main orchestrator function (run_indicator_workflow)
-│       └── reporting.py    # Summary printing function (print_summary)
-├── models/               # Saved ML models, scalers, etc. (consider adding to .gitignore)
-├── results/              # Output results (metrics, plots, reports)
-├── config/               # Configuration files (if any)
-├── tests/                # Unit tests
-│   └── ...               # Mirrored structure of src/
-├── .env                  # Environment variables (API Keys etc. - MUST be in .gitignore)
-├── .gitignore            # Specifies intentionally untracked files that Git should ignore
-├── requirements.txt      # Project dependencies
-├── run_analysis.py       # Main entry point script for running analysis
-├── test_*.py             # Connection test scripts (e.g., test_yfinance.py)
-└── README.md             # Project documentation (this file)
-
 
 ## Installation
 
