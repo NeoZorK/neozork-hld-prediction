@@ -194,6 +194,7 @@ def fetch_polygon_data(ticker: str, interval: str, start_date: str, end_date: st
         chunk_label = "2-year"
 
     max_attempts_per_chunk = 3 # Max retries for a single chunk
+    request_delay_sec = 0.5 # Small delay between requests to be polite
 
     while current_start_dt <= overall_end_dt:
         # Calculate end date for the current chunk (inclusive for Polygon 'to')
@@ -279,6 +280,8 @@ def fetch_polygon_data(ticker: str, interval: str, start_date: str, end_date: st
 
         # Move to the next chunk start date (day after the current chunk ended)
         current_start_dt = current_end_chunk + timedelta(days=1)
+        time.sleep(request_delay_sec) # Be polite between chunk requests
+
 
     # --- Combine and Process All Fetched Data ---
     if not all_aggs_data:

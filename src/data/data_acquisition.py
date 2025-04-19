@@ -106,7 +106,15 @@ def acquire_data(args):
                 start_date=None, end_date=None
              )
         else:
-             raise ValueError("For yfinance mode, either --period or both --start and --end must be provided.")
+             # If only mode/ticker provided, yfinance uses default period ('1y' from cli default)
+             current_period = period_arg if period_arg else args.period # Use default if None
+             current_start = None; current_end = None
+             logger.print_info(f"Fetching yfinance data for interval '{yf_interval}' for default period '{current_period}'")
+             ohlcv_df = fetch_yfinance_data( # Call yfinance fetcher
+                 ticker=yf_ticker, interval=yf_interval, period=current_period,
+                 start_date=None, end_date=None
+             )
+             # raise ValueError("For yfinance mode, either --period or both --start and --end must be provided.")
 
     elif effective_mode == 'binance':
         logger.print_info("--- Step 1: Acquiring Data (Mode: Binance) ---")
