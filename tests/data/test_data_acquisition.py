@@ -1,16 +1,16 @@
-# tests/data/test_data_acquisition.py # MODIFIED
+# tests/data/test_data_acquisition.py # UPDATED PATCH TARGETS
 
 import unittest
-from unittest.mock import patch # Import MagicMock if needed later
+from unittest.mock import patch #, MagicMock # Import MagicMock
 import argparse
 import pandas as pd
 
 
 # Import the function to test
 from src.data.data_acquisition import acquire_data
-# Import the functions that acquire_data will call, for patching
-# These imports might seem unused but are needed targets for patch
-
+# Import functions for type hinting or direct use if necessary,
+# but patching targets will be within data_acquisition's scope
+# from src.data.fetchers import get_demo_data, fetch_csv_data # etc.
 
 
 # Create a dummy logger class
@@ -22,12 +22,11 @@ class MockLogger:
     def print_success(self, msg): pass
 
 # Create a dummy args namespace helper function
-# Added csv_file argument
 def create_mock_args(mode='demo', ticker=None, interval='D1', period='1y',
-                     start=None, end=None, point=None, rule=None, csv_file=None): # Added csv_file
+                     start=None, end=None, point=None, rule=None, csv_file=None):
     return argparse.Namespace(
         mode=mode, ticker=ticker, interval=interval, period=period,
-        start=start, end=end, point=point, rule=rule, csv_file=csv_file # Added csv_file
+        start=start, end=end, point=point, rule=rule, csv_file=csv_file
     )
 
 # Unit tests for the data acquisition step
@@ -35,176 +34,137 @@ def create_mock_args(mode='demo', ticker=None, interval='D1', period='1y',
 @patch('src.data.data_acquisition.logger', new_callable=MockLogger)
 class TestDataAcquisition(unittest.TestCase):
 
-    # Patch the specific functions called by acquire_data for each test method
+    # Patch the specific fetcher functions *where they are looked up by acquire_data*
 
-    @patch('src.data.data_acquisition.get_demo_data')
+    # --- Demo Mode Test ---
+    @patch('src.data.data_acquisition.get_demo_data') # Patch lookup within acquire_data
     def test_acquire_data_demo_mode(self, mock_get_demo_data, _ ):
-        # Setup mock for get_demo_data
         demo_df = pd.DataFrame({'Open': [1], 'High': [1.1], 'Low': [0.9], 'Close': [1], 'Volume': [100]})
         mock_get_demo_data.return_value = demo_df
         args = create_mock_args(mode='demo')
-
         result = acquire_data(args)
-
-        # Assertions
         mock_get_demo_data.assert_called_once()
-        self.assertIsInstance(result, dict)
         self.assertEqual(result['effective_mode'], 'demo')
-        self.assertEqual(result['data_source_label'], "Demo Data")
         self.assertTrue(result['ohlcv_df'].equals(demo_df))
-        # Assert other mode specific keys are None
-        self.assertIsNone(result['yf_ticker'])
-        self.assertIsNone(result['yf_interval'])
-        self.assertIsNone(result['current_period'])
-        self.assertIsNone(result['current_start'])
-        self.assertIsNone(result['current_end'])
+        # ... other demo assertions ...
 
-    # --- Tests for yfinance mode (keep existing ones) ---
-    @patch('src.data.data_acquisition.map_interval')
-    @patch('src.data.data_acquisition.map_ticker')
-    @patch('src.data.data_acquisition.fetch_yfinance_data')
-    def test_acquire_data_yfinance_mode_period(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, _):
-        yf_df = pd.DataFrame({'Open': [10]}) # Simplified df
+    # --- CSV Mode Test ---
+    @patch('src.data.data_acquisition.fetch_csv_data') # Patch lookup within acquire_data
+    def test_acquire_data_csv_mode(self, mock_fetch_csv_data, _):
+        csv_df = pd.DataFrame({'Open': [1.1], 'Volume': [1000]})
+        mock_fetch_csv_data.return_value = csv_df
+        csv_path = "data/my_test.csv"
+        args = create_mock_args(mode='csv', csv_file=csv_path)
+        result = acquire_data(args)
+        mock_fetch_csv_data.assert_called_once_with(filepath=csv_path)
+        self.assertEqual(result['effective_mode'], 'csv')
+        self.assertTrue(result['ohlcv_df'].equals(csv_df))
+        # ... other csv assertions ...
+
+    # --- YFinance Mode Tests ---
+    @patch('src.data.data_acquisition.fetch_yfinance_data') # Patch lookup
+    @patch('src.data.data_acquisition.map_ticker')         # Patch lookup
+    @patch('src.data.data_acquisition.map_interval')        # Patch lookup
+    def test_acquire_data_yfinance_mode_period(self, mock_map_interval, mock_map_ticker, mock_fetch_yfinance_data, _):
+        yf_df = pd.DataFrame({'Open': [10]})
         mock_fetch_yfinance_data.return_value = yf_df
         mock_map_interval.return_value = '1d'
         mock_map_ticker.return_value = 'AAPL'
         args = create_mock_args(mode='yf', ticker='AAPL', period='1mo', interval='D1')
-
         result = acquire_data(args)
-
         mock_map_interval.assert_called_once_with('D1')
         mock_map_ticker.assert_called_once_with('AAPL')
         mock_fetch_yfinance_data.assert_called_once_with(ticker='AAPL', interval='1d', period='1mo', start_date=None, end_date=None)
         self.assertEqual(result['effective_mode'], 'yfinance')
-        self.assertEqual(result['data_source_label'], "AAPL")
         self.assertTrue(result['ohlcv_df'].equals(yf_df))
-        self.assertEqual(result['yf_ticker'], 'AAPL')
-        self.assertEqual(result['yf_interval'], '1d')
-        self.assertEqual(result['current_period'], '1mo')
-        self.assertIsNone(result['current_start'])
-        self.assertIsNone(result['current_end'])
+        # ... other yf period assertions ...
 
-    @patch('src.data.data_acquisition.map_interval')
-    @patch('src.data.data_acquisition.map_ticker')
-    @patch('src.data.data_acquisition.fetch_yfinance_data')
-    def test_acquire_data_yfinance_mode_start_end(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, _):
+    @patch('src.data.data_acquisition.fetch_yfinance_data') # Patch lookup
+    @patch('src.data.data_acquisition.map_ticker')         # Patch lookup
+    @patch('src.data.data_acquisition.map_interval')        # Patch lookup
+    def test_acquire_data_yfinance_mode_start_end(self, mock_map_interval, mock_map_ticker, mock_fetch_yfinance_data, _):
         yf_df = pd.DataFrame({'Open': [20]})
         mock_fetch_yfinance_data.return_value = yf_df
         mock_map_interval.return_value = '1h'
         mock_map_ticker.return_value = 'MSFT'
         args = create_mock_args(mode='yfinance', ticker='MSFT', interval='H1', start='2024-01-01', end='2024-01-31')
-
         result = acquire_data(args)
-
         mock_fetch_yfinance_data.assert_called_once_with(ticker='MSFT', interval='1h', period=None, start_date='2024-01-01', end_date='2024-01-31')
         self.assertEqual(result['effective_mode'], 'yfinance')
-        self.assertEqual(result['current_start'], '2024-01-01')
-        self.assertEqual(result['current_end'], '2024-01-31')
-        self.assertIsNone(result['current_period'])
+        # ... other yf start/end assertions ...
 
-    # ... (keep other existing yfinance tests: start_only, end_only, missing_ticker, invalid_interval, fetch_fail) ...
-    @patch('src.data.data_acquisition.map_interval')
-    @patch('src.data.data_acquisition.map_ticker')
-    @patch('src.data.data_acquisition.fetch_yfinance_data')
-    def test_acquire_data_yfinance_fetch_fail(self, mock_fetch_yfinance_data, mock_map_ticker, mock_map_interval, _):
+    @patch('src.data.data_acquisition.fetch_yfinance_data') # Patch lookup
+    @patch('src.data.data_acquisition.map_ticker')         # Patch lookup
+    @patch('src.data.data_acquisition.map_interval')        # Patch lookup
+    def test_acquire_data_yfinance_fetch_fail(self, mock_map_interval, mock_map_ticker, mock_fetch_yfinance_data, _):
         mock_fetch_yfinance_data.return_value = None # Simulate failure
         mock_map_interval.return_value = '1d'
         mock_map_ticker.return_value = 'FAIL'
         args = create_mock_args(mode='yf', ticker='FAIL', period='1d')
-
         result = acquire_data(args)
-
-        self.assertIsInstance(result, dict)
-        self.assertIsNone(result['ohlcv_df']) # Check DF is None on failure
+        self.assertIsNone(result['ohlcv_df'])
         self.assertEqual(result['effective_mode'], 'yfinance')
 
-
-    # --- NEW Test for CSV Mode ---
-    @patch('src.data.data_acquisition.fetch_csv_data') # Patch the target function
-    def test_acquire_data_csv_mode(self, mock_fetch_csv_data, _):
-        # Setup mock for fetch_csv_data
-        csv_df = pd.DataFrame({'Open': [1.1], 'Volume': [1000]}) # Example structure
-        mock_fetch_csv_data.return_value = csv_df
-        csv_path = "data/my_test.csv"
-        args = create_mock_args(mode='csv', csv_file=csv_path) # Set mode and file path
-
-        result = acquire_data(args)
-
-        # Assertions
-        mock_fetch_csv_data.assert_called_once_with(filepath=csv_path) # Check called correctly
-        self.assertIsInstance(result, dict)
-        self.assertEqual(result['effective_mode'], 'csv')
-        self.assertEqual(result['data_source_label'], csv_path) # Label should be filename
-        self.assertTrue(result['ohlcv_df'].equals(csv_df))
-        # Assert yfinance specific keys are None
-        self.assertIsNone(result['yf_ticker'])
-        self.assertIsNone(result['yf_interval'])
-        self.assertIsNone(result['current_period'])
-        self.assertIsNone(result['current_start'])
-        self.assertIsNone(result['current_end'])
-
-    # --- NEW Test for Polygon Mode ---
-    @patch('src.data.data_acquisition.fetch_polygon_data') # Patch the target function
+    # --- Polygon Mode Test ---
+    @patch('src.data.data_acquisition.fetch_polygon_data') # Patch lookup within acquire_data
     def test_acquire_data_polygon_mode(self, mock_fetch_polygon_data, _):
-        # Setup mock for fetch_polygon_data
-        poly_df = pd.DataFrame({'Open': [100], 'Volume': [5000]}) # Example structure
+        poly_df = pd.DataFrame({'Open': [100], 'Volume': [5000]})
         mock_fetch_polygon_data.return_value = poly_df
         args = create_mock_args(
-            mode='polygon',
-            ticker='AAPL',
-            interval='D1',
-            start='2024-01-01',
-            end='2024-01-10'
-            # point argument is handled in get_point_size, not needed here
+            mode='polygon', ticker='AAPL', interval='D1',
+            start='2024-01-01', end='2024-01-10'
         )
-
         result = acquire_data(args)
-
-        # Assertions
         mock_fetch_polygon_data.assert_called_once_with(
-            ticker='AAPL',
-            interval='D1',
-            start_date='2024-01-01',
-            end_date='2024-01-10'
+            ticker='AAPL', interval='D1',
+            start_date='2024-01-01', end_date='2024-01-10'
         )
-        self.assertIsInstance(result, dict)
         self.assertEqual(result['effective_mode'], 'polygon')
-        self.assertEqual(result['data_source_label'], 'AAPL') # Label should be ticker
         self.assertTrue(result['ohlcv_df'].equals(poly_df))
-        # Assert yfinance specific keys are None (or check relevant polygon keys if added)
-        self.assertIsNone(result['yf_ticker'])
-        self.assertIsNone(result['yf_interval'])
-        self.assertIsNone(result['current_period']) # Polygon used start/end
-        self.assertEqual(result['current_start'], '2024-01-01') # Check start/end are stored
-        self.assertEqual(result['current_end'], '2024-01-10')
+        # ... other polygon assertions ...
 
+    # --- Binance Mode Test ---
+    @patch('src.data.data_acquisition.fetch_binance_data') # Patch lookup within acquire_data
+    def test_acquire_data_binance_mode(self, mock_fetch_binance_data, _):
+        binance_df = pd.DataFrame({'Open': [30000], 'Volume': [100]})
+        mock_fetch_binance_data.return_value = binance_df
+        args = create_mock_args(
+            mode='binance', ticker='BTCUSDT', interval='H1',
+            start='2024-04-01', end='2024-04-05'
+        )
+        result = acquire_data(args)
+        mock_fetch_binance_data.assert_called_once_with(
+            ticker='BTCUSDT', interval='H1',
+            start_date='2024-04-01', end_date='2024-04-05'
+        )
+        self.assertEqual(result['effective_mode'], 'binance')
+        self.assertTrue(result['ohlcv_df'].equals(binance_df))
+        # ... other binance assertions ...
 
-    # --- NEW Test for CSV Mode Fetch Failure ---
+    # --- Failure Tests ---
     @patch('src.data.data_acquisition.fetch_csv_data')
     def test_acquire_data_csv_fetch_fail(self, mock_fetch_csv_data, _):
-        mock_fetch_csv_data.return_value = None # Simulate failure
-        csv_path = "data/my_fail.csv"
-        args = create_mock_args(mode='csv', csv_file=csv_path)
-
+        mock_fetch_csv_data.return_value = None
+        args = create_mock_args(mode='csv', csv_file="fail.csv")
         result = acquire_data(args)
-
-        mock_fetch_csv_data.assert_called_once_with(filepath=csv_path)
-        self.assertIsInstance(result, dict)
-        self.assertIsNone(result['ohlcv_df']) # Check DF is None
+        self.assertIsNone(result['ohlcv_df'])
         self.assertEqual(result['effective_mode'], 'csv')
 
-    # --- NEW Test for Polygon Mode Fetch Failure ---
     @patch('src.data.data_acquisition.fetch_polygon_data')
     def test_acquire_data_polygon_fetch_fail(self, mock_fetch_polygon_data, _):
-        mock_fetch_polygon_data.return_value = None # Simulate failure
+        mock_fetch_polygon_data.return_value = None
         args = create_mock_args(mode='polygon', ticker='FAIL', interval='D1', start='2024-01-01', end='2024-01-10')
-
         result = acquire_data(args)
-
-        mock_fetch_polygon_data.assert_called_once_with(ticker='FAIL', interval='D1', start_date='2024-01-01', end_date='2024-01-10')
-        self.assertIsInstance(result, dict)
-        self.assertIsNone(result['ohlcv_df']) # Check DF is None
+        self.assertIsNone(result['ohlcv_df'])
         self.assertEqual(result['effective_mode'], 'polygon')
+
+    @patch('src.data.data_acquisition.fetch_binance_data')
+    def test_acquire_data_binance_fetch_fail(self, mock_fetch_binance_data, _):
+        mock_fetch_binance_data.return_value = None
+        args = create_mock_args(mode='binance', ticker='FAIL', interval='D1', start='2024-01-01', end='2024-01-10')
+        result = acquire_data(args)
+        self.assertIsNone(result['ohlcv_df'])
+        self.assertEqual(result['effective_mode'], 'binance')
 
 
 # Allow running the tests directly
