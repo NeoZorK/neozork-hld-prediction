@@ -1,10 +1,10 @@
 # tests/data/fetchers/test_csv_fetcher.py # FINAL CORRECTIONS V7 (Revert dtype forcing in invalid_datetime test)
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import pandas as pd
 import numpy as np # Import numpy for other uses if needed
-from pathlib import Path
+
 
 # Function to test
 from src.data.fetchers.csv_fetcher import fetch_csv_data
