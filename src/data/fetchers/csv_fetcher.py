@@ -102,4 +102,7 @@ def fetch_csv_data(filepath: str) -> pd.DataFrame | None:
     except pd.errors.EmptyDataError: logger.print_error(f"CSV file is empty: {filepath}"); return None
     except pd.errors.ParserError as e: logger.print_error(f"Failed to parse CSV file: {filepath} - Error: {e}"); return None
     except KeyError as e: logger.print_error(f"Missing expected column during processing: {e} in file {filepath}"); return None
-    except Exception as e: logger.print_error(f"An unexpected error occurred while processing CSV {filepath}: {type(e).__name__}: {e}"); traceback.print_exc(); return None # Print traceback on generic error
+    except Exception as e:
+        logger.print_error(f"An unexpected error occurred while processing CSV {filepath}: {type(e).__name__}: {e}")
+        #traceback.print_exc()
+        return None # Print traceback on generic error
