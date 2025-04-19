@@ -72,8 +72,8 @@ def parse_arguments():
 
     # --- Main Mode Argument ---
     # Updated choices to include 'polygon'
-    parser.add_argument('mode', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon'], # ADDED 'polygon'
-                        help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon'.")
+    parser.add_argument('mode', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance'], # ADDED 'polygon'
+                        help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance' .")
 
     # --- Data Source Specific Options ---
     # Group for CSV options
@@ -127,18 +127,19 @@ def parse_arguments():
     # Check requirements for CSV mode
     if args.mode == 'csv' and not args.csv_file:
         parser.error("argument --csv-file is required when mode is 'csv'")
-    # Add checks for other modes if needed (e.g., ticker for yfinance/polygon)
-    if args.mode in ['yfinance', 'yf', 'polygon'] and not args.ticker:
-         parser.error("argument --ticker is required when mode is 'yfinance' or 'polygon'")
-    # Check date requirements for Polygon (and yfinance if using start/end)
-    if args.mode == 'polygon' and (not args.start or not args.end):
-         parser.error("arguments --start and --end are required when mode is 'polygon'")
+    # Add checks for other modes if needed (e.g., ticker for yfinance/polygon/binance)
+    if args.mode in ['yfinance', 'yf', 'polygon', 'binance'] and not args.ticker:
+         parser.error("argument --ticker is required when mode is 'yfinance', 'polygon', or 'binance'")
+    # Check date requirements for Polygon/Binance (and yfinance if using start/end)
+    if args.mode in ['polygon', 'binance'] and (not args.start or not args.end):
+         parser.error("arguments --start and --end are required when mode is 'polygon' or 'binance'")
     if args.mode in ['yfinance', 'yf'] and args.start and not args.end:
          # Yfinance can work with only start (goes to present), but let's require both if start is given
          # Or modify fetch_yfinance to handle only start better if needed
          parser.error("argument --end is required when --start is provided for yfinance mode")
     if args.mode in ['yfinance', 'yf'] and args.end and not args.start:
          parser.error("argument --start is required when --end is provided for yfinance mode")
+    
 
     # Point size check for csv/polygon might be better handled in get_point_size function
 

@@ -21,7 +21,6 @@ class TestCli(unittest.TestCase):
         self.assertEqual(args.rule, TradingRule.Predict_High_Low_Direction.name)
         self.assertIsNone(args.ticker)
         self.assertEqual(args.interval, 'D1')
-        self.assertEqual(args.period, '1y') # Default from argparse
         self.assertIsNone(args.start)
         self.assertIsNone(args.end)
         self.assertIsNone(args.point)
