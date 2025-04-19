@@ -58,7 +58,11 @@ class TestYfinanceFetcher(unittest.TestCase):
         mock_df = pd.DataFrame({
             'Open': [100.0], 'High': [101.0], 'Low': [99.0], 'Close': [100.0], 'Volume': [1000.0]
         }, index=pd.to_datetime(['2023-01-01']), dtype=np.float64) # Specify dtype
+        mock_df.index.name = 'Date' # yfinance often names index 'Date' or 'Datetime'
         mock_yf_download.return_value = mock_df.copy()
+
+        expected_df = mock_df.copy()
+        expected_df.index.name = 'DateTime' # Ensure consistent index name for comparison
 
         result_df = fetch_yfinance_data(ticker="AAPL", interval="1d", period="1d")
 
@@ -67,14 +71,19 @@ class TestYfinanceFetcher(unittest.TestCase):
             progress=True, auto_adjust=False, actions=False
         )
         self.assertIsNotNone(result_df)
-        pd.testing.assert_frame_equal(result_df, mock_df)
+        result_df.index.name = 'DateTime' # Standardize index name before compare
+        pd.testing.assert_frame_equal(result_df, expected_df)
 
     @patch('src.data.fetchers.yfinance_fetcher.yf.download')
     def test_fetch_yfinance_data_success_start_end(self, mock_yf_download, _):
         mock_df = pd.DataFrame({
             'Open': [200.0], 'High': [202.0], 'Low': [198.0], 'Close': [200.0], 'Volume': [2000.0]
-        }, index=pd.to_datetime(['2024-02-01']), dtype=np.float64) # Specify dtype
+        }, index=pd.to_datetime(['2024-02-01']), dtype=np.float64)
+        mock_df.index.name='Date'
         mock_yf_download.return_value = mock_df.copy()
+
+        expected_df = mock_df.copy()
+        expected_df.index.name = 'DateTime'
 
         result_df = fetch_yfinance_data(ticker="MSFT", interval="1h", start_date="2024-02-01", end_date="2024-02-02")
 
@@ -83,7 +92,8 @@ class TestYfinanceFetcher(unittest.TestCase):
             progress=True, auto_adjust=False, actions=False
         )
         self.assertIsNotNone(result_df)
-        pd.testing.assert_frame_equal(result_df, mock_df)
+        result_df.index.name = 'DateTime'
+        pd.testing.assert_frame_equal(result_df, expected_df)
 
     @patch('src.data.fetchers.yfinance_fetcher.yf.download')
     def test_fetch_yfinance_data_download_fails(self, mock_yf_download, _):
@@ -104,28 +114,26 @@ class TestYfinanceFetcher(unittest.TestCase):
 
     @patch('src.data.fetchers.yfinance_fetcher.yf.download')
     def test_fetch_yfinance_data_multiindex_success(self, mock_yf_download, _):
-        # Simulate MultiIndex columns
         cols = pd.MultiIndex.from_tuples([
              ('Open', 'AAPL'), ('High', 'AAPL'), ('Low', 'AAPL'), ('Close', 'AAPL'), ('Volume', 'AAPL')
-        ])
-        # Use float data in mock to avoid int64 inference
+        ], names=['Price', 'Ticker']) # Add names for clarity
         mock_df_multi = pd.DataFrame([[100.0, 101.0, 99.0, 100.0, 1000.0]],
-            index=pd.to_datetime(['2023-01-01']),
+            index=pd.to_datetime(['2023-01-01'], name='Date'), # Add name
             columns=cols
         )
         mock_yf_download.return_value = mock_df_multi.copy()
 
-        # Expected result after simplification
         expected_df = pd.DataFrame({
             'Open': [100.0], 'High': [101.0], 'Low': [99.0], 'Close': [100.0], 'Volume': [1000.0]
-        }, index=pd.to_datetime(['2023-01-01']), dtype=np.float64) # CORRECTED: Specify dtype
+        }, index=pd.to_datetime(['2023-01-01'], name='DateTime'), dtype=np.float64) # CORRECTED dtype and name
 
         result_df = fetch_yfinance_data(ticker="AAPL", interval="1d", period="1d")
 
         self.assertIsNotNone(result_df)
         self.assertFalse(isinstance(result_df.columns, pd.MultiIndex))
         self.assertListEqual(list(result_df.columns), ['Open', 'High', 'Low', 'Close', 'Volume'])
-        pd.testing.assert_frame_equal(result_df, expected_df) # Should pass now
+        result_df.index.name = 'DateTime' # Standardize name before compare
+        pd.testing.assert_frame_equal(result_df, expected_df)
 
 
 # Allow running tests directly
