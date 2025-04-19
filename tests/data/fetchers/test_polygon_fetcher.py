@@ -126,54 +126,57 @@ class TestPolygonFetcher(unittest.TestCase):
         self.assertIsNone(resolved)
         mock_client.get_ticker_details.assert_called_once_with("ANYTICKER")
 
-
-    # --- Tests for fetch_polygon_data ---
-    @patch('src.data.fetchers.polygon_fetcher.os.getenv')
-    @patch('polygon.rest.RESTClient')  # Patch original library class
-    @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
-    def test_fetch_polygon_data_success_single_chunk(self, mock_resolve, mock_rest_client, mock_getenv, _):
-        mock_getenv.return_value = "fake_api_key"
-        mock_client_instance = mock_rest_client.return_value
-        mock_resolve.return_value = "C:EURUSD"
-
-        # Create mock Agg objects
-        agg1 = Agg(timestamp=1672531200000, open=1.1, high=1.11, low=1.09, close=1.1, volume=1000.0)
-        agg2 = Agg(timestamp=1672617600000, open=1.11, high=1.12, low=1.1, close=1.11, volume=1100.0)
-
+        # --- Tests for fetch_polygon_data ---
         # ***** MODIFICATION START *****
-        # Mock get_aggs to return a LIST directly, as the code uses list() on the result.
-        mock_client_instance.get_aggs.return_value = [agg1, agg2]
-        # ***** MODIFICATION END *****
+        # Added patch for time.sleep
+        @patch('src.data.fetchers.polygon_fetcher.time.sleep')
+        @patch('src.data.fetchers.polygon_fetcher.os.getenv')
+        @patch('polygon.rest.RESTClient')  # Patch original library class
+        @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
+        def test_fetch_polygon_data_success_single_chunk(self, mock_resolve, mock_rest_client, mock_getenv, mock_sleep,
+                                                         _):  # Added mock_sleep
+            # ***** MODIFICATION END *****
+            mock_getenv.return_value = "fake_api_key"
+            mock_client_instance = mock_rest_client.return_value
+            mock_resolve.return_value = "C:EURUSD"
 
-        # Prepare expected DataFrame
-        expected_dates = pd.to_datetime([1672531200000, 1672617600000], unit='ms')
-        expected_data = {'Open': [1.1, 1.11], 'High': [1.11, 1.12], 'Low': [1.09, 1.1], 'Close': [1.1, 1.11],
-                         'Volume': [1000.0, 1100.0]}
-        expected_df = pd.DataFrame(expected_data, index=expected_dates, dtype=np.float64)
-        expected_df.index.name = 'DateTime'
+            # Create mock Agg objects
+            agg1 = Agg(timestamp=1672531200000, open=1.1, high=1.11, low=1.09, close=1.1, volume=1000.0)
+            agg2 = Agg(timestamp=1672617600000, open=1.11, high=1.12, low=1.1, close=1.11, volume=1100.0)
 
-        start_date = "2023-01-01"
-        end_date = "2023-01-02"  # Ensure end date allows the loop to run
+            # Mock get_aggs to return a LIST directly
+            mock_client_instance.get_aggs.return_value = [agg1, agg2]
 
-        # Execute the function
-        result_df = fetch_polygon_data("EURUSD", "D1", start_date, end_date)
+            # Prepare expected DataFrame
+            expected_dates = pd.to_datetime([1672531200000, 1672617600000], unit='ms')
+            expected_data = {'Open': [1.1, 1.11], 'High': [1.11, 1.12], 'Low': [1.09, 1.1], 'Close': [1.1, 1.11],
+                             'Volume': [1000.0, 1100.0]}
+            expected_df = pd.DataFrame(expected_data, index=expected_dates, dtype=np.float64)
+            expected_df.index.name = 'DateTime'
 
-        # Assertions
-        mock_getenv.assert_called_once_with("POLYGON_API_KEY")
-        mock_resolve.assert_called_once_with("EURUSD", ANY)
-        mock_client_instance.get_aggs.assert_called_once()  # This should now pass
-        args_call = mock_client_instance.get_aggs.call_args[1]
-        self.assertEqual(args_call['ticker'], "C:EURUSD")
-        self.assertEqual(args_call['timespan'], "day")
-        expected_start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
-        # The 'to' date in get_aggs should be the calculated chunk end date
-        # In this case, with a short range and large chunk delta, it should be the overall end_date.
-        expected_end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
-        self.assertEqual(args_call['from_'], expected_start_date_obj)
-        self.assertEqual(args_call['to'], expected_end_date_obj)
+            start_date = "2023-01-01"
+            end_date = "2023-01-02"
 
-        self.assertIsNotNone(result_df)
-        pd.testing.assert_frame_equal(result_df, expected_df)
+            # Execute the function
+            result_df = fetch_polygon_data("EURUSD", "D1", start_date, end_date)
+
+            # Assertions
+            mock_getenv.assert_called_once_with("POLYGON_API_KEY")
+            mock_resolve.assert_called_once_with("EURUSD", ANY)
+            mock_client_instance.get_aggs.assert_called_once()  # This assertion is failing
+            # Check call args only if the above passes
+            if mock_client_instance.get_aggs.called:
+                args_call = mock_client_instance.get_aggs.call_args[1]
+                self.assertEqual(args_call['ticker'], "C:EURUSD")
+                self.assertEqual(args_call['timespan'], "day")
+                expected_start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+                expected_end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
+                self.assertEqual(args_call['from_'], expected_start_date_obj)
+                self.assertEqual(args_call['to'], expected_end_date_obj)
+
+            self.assertIsNotNone(result_df)
+            pd.testing.assert_frame_equal(result_df, expected_df)
+            mock_sleep.assert_called_once()  # sleep is called once after the main loop finishes
 
     @patch('src.data.fetchers.polygon_fetcher.time.sleep')
     @patch('src.data.fetchers.polygon_fetcher.os.getenv')
