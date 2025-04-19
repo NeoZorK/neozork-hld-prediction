@@ -1,4 +1,4 @@
-# tests/utils/test_point_size_determination.py # ADDED BINANCE TESTS
+# tests/utils/test_point_size_determination.py # CORRECTED Assertions
 
 import unittest
 from unittest.mock import patch #, MagicMock
@@ -145,7 +145,7 @@ class TestPointSizeDetermination(unittest.TestCase):
         self.assertIn("must be positive", str(cm.exception))
         mock_determine_point_size.assert_not_called()
 
-    # --- Binance Mode Tests --- ADDED SECTION ---
+    # --- Binance Mode Tests --- CORRECTED Assertions ---
     @patch('src.utils.point_size_determination.determine_point_size')
     def test_get_point_size_binance_mode_point_provided(self, mock_determine_point_size, _):
         user_point = 0.01
@@ -162,6 +162,7 @@ class TestPointSizeDetermination(unittest.TestCase):
         data_info = {"ohlcv_df": pd.DataFrame({'Close': [40000]}), "effective_mode": "binance"}
         with self.assertRaises(ValueError) as cm:
             get_point_size(args, data_info)
+        # Check the specific error message from the 'binance' block
         self.assertIn("must be provided when using binance mode", str(cm.exception))
         mock_determine_point_size.assert_not_called()
 
@@ -171,9 +172,10 @@ class TestPointSizeDetermination(unittest.TestCase):
         data_info = {"ohlcv_df": pd.DataFrame({'Close': [40000]}), "effective_mode": "binance"}
         with self.assertRaises(ValueError) as cm:
             get_point_size(args_neg, data_info)
+        # Check the specific error message from the 'binance' block
         self.assertIn("must be positive", str(cm.exception))
         mock_determine_point_size.assert_not_called()
-    # --- END ADDED SECTION ---
+    # --- END CORRECTED Assertions ---
 
 
 # Allow running the tests directly
