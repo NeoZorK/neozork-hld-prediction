@@ -1,4 +1,4 @@
-# tests/cli/test_cli.py # CORRECTED
+# tests/cli/test_cli.py # CORRECTED V2
 
 import unittest
 from unittest.mock import patch
@@ -21,7 +21,8 @@ class TestCli(unittest.TestCase):
         self.assertEqual(args.rule, TradingRule.Predict_High_Low_Direction.name)
         self.assertIsNone(args.ticker)
         self.assertEqual(args.interval, 'D1')
-        # Default period might vary, don't assert unless necessary
+        # Default period is set in cli.py, let's test against that default if it exists
+        # Assuming default period is '1y' as hinted in comments, adjust if different
         # self.assertEqual(args.period, '1y')
         self.assertIsNone(args.start)
         self.assertIsNone(args.end)
@@ -44,8 +45,7 @@ class TestCli(unittest.TestCase):
         self.assertEqual(args.end, '2023-12-31')
         self.assertEqual(args.point, 0.0001)
         self.assertEqual(args.rule, 'PV_HighLow')
-        # CORRECTED: Remove assertion for period being None
-        # self.assertIsNone(args.period)
+        self.assertIsNone(args.period) # Period is None because start/end are provided
 
     # Test yfinance mode using period
     @patch('sys.argv', [
@@ -72,16 +72,16 @@ class TestCli(unittest.TestCase):
         self.assertEqual(args.point, 0.1)
         self.assertEqual(args.rule, TradingRule.Predict_High_Low_Direction.name) # Default rule
 
+    # ***** CORRECTED: Added required --point argument *****
     @patch('sys.argv', ['run_analysis.py', 'csv', '--point', '0.1']) # Missing csv-file
     def test_parse_arguments_csv_fail_no_file(self):
-        # CORRECTED: Call parse_arguments directly inside assertRaises
         with self.assertRaises(SystemExit) as cm:
              parse_arguments()
         self.assertEqual(cm.exception.code, 2) # argparse error exit code
 
+    # ***** CORRECTED: Added required --csv-file argument *****
     @patch('sys.argv', ['run_analysis.py', 'csv', '--csv-file', 'mydata.csv']) # Missing point
     def test_parse_arguments_csv_fail_no_point(self):
-        # CORRECTED: Call parse_arguments directly inside assertRaises
         with self.assertRaises(SystemExit) as cm:
             parse_arguments()
         self.assertEqual(cm.exception.code, 2)
@@ -96,21 +96,25 @@ class TestCli(unittest.TestCase):
         self.assertEqual(args.end, '2024-02-01')
         self.assertEqual(args.point, 0.01)
 
+    # ***** CORRECTED: Added other required args (start, end, point) *****
     @patch('sys.argv', ['run_analysis.py', 'polygon', '--start', '2024-01-01', '--end', '2024-02-01', '--point', '0.01']) # Missing ticker
     def test_parse_arguments_polygon_fail_no_ticker(self):
         with self.assertRaises(SystemExit) as cm: parse_arguments()
         self.assertEqual(cm.exception.code, 2)
 
+    # ***** CORRECTED: Added other required args (ticker, end, point) *****
     @patch('sys.argv', ['run_analysis.py', 'polygon', '--ticker', 'MSFT', '--end', '2024-02-01', '--point', '0.01']) # Missing start
     def test_parse_arguments_polygon_fail_no_start(self):
         with self.assertRaises(SystemExit) as cm: parse_arguments()
         self.assertEqual(cm.exception.code, 2)
 
+    # ***** CORRECTED: Added other required args (ticker, start, point) *****
     @patch('sys.argv', ['run_analysis.py', 'polygon', '--ticker', 'MSFT', '--start', '2024-01-01', '--point', '0.01']) # Missing end
     def test_parse_arguments_polygon_fail_no_end(self):
         with self.assertRaises(SystemExit) as cm: parse_arguments()
         self.assertEqual(cm.exception.code, 2)
 
+    # ***** CORRECTED: Added other required args (ticker, start, end) *****
     @patch('sys.argv', ['run_analysis.py', 'polygon', '--ticker', 'MSFT', '--start', '2024-01-01', '--end', '2024-02-01']) # Missing point
     def test_parse_arguments_polygon_fail_no_point(self):
         with self.assertRaises(SystemExit) as cm: parse_arguments()
@@ -128,21 +132,25 @@ class TestCli(unittest.TestCase):
         self.assertEqual(args.point, 0.01)
         self.assertEqual(args.interval, 'M1') # Check non-default interval
 
+    # ***** CORRECTED: Added other required args (start, end, point) *****
     @patch('sys.argv', ['run_analysis.py', 'binance', '--start', '2024-04-01', '--end', '2024-04-10', '--point', '0.01']) # Missing ticker
     def test_parse_arguments_binance_fail_no_ticker(self):
         with self.assertRaises(SystemExit) as cm: parse_arguments()
         self.assertEqual(cm.exception.code, 2)
 
+    # ***** CORRECTED: Added other required args (ticker, end, point) *****
     @patch('sys.argv', ['run_analysis.py', 'binance', '--ticker', 'BTCUSDT', '--end', '2024-04-10', '--point', '0.01']) # Missing start
     def test_parse_arguments_binance_fail_no_start(self):
         with self.assertRaises(SystemExit) as cm: parse_arguments()
         self.assertEqual(cm.exception.code, 2)
 
+    # ***** CORRECTED: Added other required args (ticker, start, point) *****
     @patch('sys.argv', ['run_analysis.py', 'binance', '--ticker', 'BTCUSDT', '--start', '2024-04-01', '--point', '0.01']) # Missing end
     def test_parse_arguments_binance_fail_no_end(self):
         with self.assertRaises(SystemExit) as cm: parse_arguments()
         self.assertEqual(cm.exception.code, 2)
 
+    # ***** CORRECTED: Added other required args (ticker, start, end) *****
     @patch('sys.argv', ['run_analysis.py', 'binance', '--ticker', 'BTCUSDT', '--start', '2024-04-01', '--end', '2024-04-10']) # Missing point
     def test_parse_arguments_binance_fail_no_point(self):
         with self.assertRaises(SystemExit) as cm: parse_arguments()
@@ -160,18 +168,22 @@ class TestCli(unittest.TestCase):
         args = parse_arguments()
         self.assertEqual(args.rule, 'PV')
 
-    # Test asking for version - CORRECTED
+    # Test asking for version
     @patch('sys.argv', ['run_analysis.py', '--version'])
-    def test_parse_arguments_version(self):
-        # action='version' raises SystemExit(0) after printing
+    # Redirect stdout to check output, although action='version' handles printing
+    @patch('sys.stdout', new_callable=io.StringIO)
+    def test_parse_arguments_version(self, mock_stdout):
         with self.assertRaises(SystemExit) as cm:
             parse_arguments()
-        self.assertEqual(cm.exception.code, 0) # Check for clean exit
+        self.assertEqual(cm.exception.code, 0) # Check for clean exit (0)
+        # Optionally check if the version string was printed
+        # output = mock_stdout.getvalue()
+        # self.assertIn(__version__, output)
 
 
     # Test mutually exclusive group (period vs start/end) for yfinance
     @patch('sys.argv', [
-        'run_analysis.py', 'yf', '--ticker', 'XYZ', '--period', '1y', '--start', '2023-01-01'
+        'run_analysis.py', 'yf', '--ticker', 'XYZ', '--period', '1y', '--start', '2023-01-01', '--end', '2023-01-31' # Provide both start/end with period
     ])
     def test_parse_arguments_mutually_exclusive_fail(self):
         with self.assertRaises(SystemExit) as cm: parse_arguments()
