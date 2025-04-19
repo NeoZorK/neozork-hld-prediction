@@ -7,10 +7,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="refactor modules fetchers">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix binance fetcher">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/data/fetchers/binance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/binance_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/yfinance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/yfinance_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/cli/test_cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/cli/test_cli.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/utils/test_point_size_determination.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/utils/test_point_size_determination.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,14 +168,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00053" summary="try to fix auto size calculation">
-      <option name="closed" value="true" />
-      <created>1744812898809</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1744812898809</updated>
     </task>
     <task id="LOCAL-00054" summary="New TR Predict High Lo Direction -&gt; showing 3 predictions at same time for every point">
       <option name="closed" value="true" />
@@ -556,7 +553,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745060447777</updated>
     </task>
-    <option name="localTasksCounter" value="102" />
+    <task id="LOCAL-00102" summary="fix binance fetcher">
+      <option name="closed" value="true" />
+      <created>1745061819676</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1745061819676</updated>
+    </task>
+    <option name="localTasksCounter" value="103" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -583,7 +588,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="best varian for formating" />
     <MESSAGE value="better colors" />
     <MESSAGE value="v0.1.2 Init" />
     <MESSAGE value="all fixed" />
@@ -608,6 +612,7 @@
     <MESSAGE value="fix all tests" />
     <MESSAGE value="fixed markdown project structure" />
     <MESSAGE value="refactor modules fetchers" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor modules fetchers" />
+    <MESSAGE value="fix binance fetcher" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix binance fetcher" />
   </component>
 </project>

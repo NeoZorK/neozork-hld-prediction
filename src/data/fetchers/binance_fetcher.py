@@ -137,12 +137,12 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
         logger.print_error(f"Invalid date format for start_date ('{start_date}') or end_date ('{end_date}'). Use YYYY-MM-DD.")
         return None
 
-    # --- Pagination Logic ---
+    # --- Pagination Logic for Binance get_historical_klines ---
     all_klines_raw = []
-    limit_per_request = 1000
+    limit_per_request = 1000 # Binance API limit
     current_start_ms = start_ms
     max_attempts_per_chunk = 5
-    request_delay_sec = 0.2
+    request_delay_sec = 0.2 # Small delay between successful requests
 
     logger.print_info(f"Fetching Binance klines in chunks for '{binance_ticker}' ({binance_interval})...")
 
@@ -160,60 +160,79 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                     symbol=binance_ticker,
                     interval=binance_interval,
                     start_str=str(current_start_ms),
-                    end_str=str(end_ms),
+                    end_str=str(end_ms), # Pass overall end time to potentially limit last chunk
                     limit=limit_per_request
                 )
-                success = True
+                success = True # Mark successful if no exception
 
             except (BinanceAPIException, BinanceRequestException) as e:
                 logger.print_error(f"    Binance API Error on chunk attempt {attempt}/{max_attempts_per_chunk}: Status={getattr(e, 'status_code', 'N/A')}, Code={getattr(e, 'code', 'N/A')}, Msg={e}")
                 status_code = getattr(e, 'status_code', None)
                 error_code = getattr(e, 'code', None)
-                if status_code == 429:
-                    wait_time = 60; time.sleep(wait_time)
-                elif status_code == 418:
-                    wait_time = 120; time.sleep(wait_time)
+                #wait_time = 0
+                if status_code == 429: # Rate limit
+                    wait_time = 60
+                    logger.print_warning(f"      Rate limit likely hit (HTTP {status_code}). Waiting {wait_time} seconds before retry...")
+                elif status_code == 418: # IP Ban
+                    wait_time = 120
+                    logger.print_warning(f"      IP ban likely (HTTP {status_code}). Waiting {wait_time} seconds before retry...")
                 elif error_code == -1121: # Invalid symbol
                      logger.print_error(f"      Invalid symbol '{binance_ticker}' reported by Binance API. Stopping fetch.")
-                     return None
-                else:
+                     return None # Cannot recover from invalid symbol
+                else: # Other API errors
+                    logger.print_error(f"      Non-retriable or unknown API error. Skipping chunk fetch.")
                     break # Break inner retry loop
+
+                if wait_time > 0:
+                    time.sleep(wait_time)
+                    continue # Go to next attempt without breaking
+
+                # If we didn't continue or return, break the retry loop
+                break
 
             # noinspection PyBroadException
             except Exception as e:
                 logger.print_error(f"    Unexpected error during Binance chunk fetch attempt {attempt}/{max_attempts_per_chunk}: {type(e).__name__}: {e}")
                 logger.print_error(f"Traceback:\n{traceback.format_exc()}")
+                logger.print_error(f"    Skipping chunk fetch due to unexpected error.")
                 break # Break inner retry loop
 
             if not success and attempt < max_attempts_per_chunk:
-                time.sleep(3 * attempt)
+                logger.print_info(f"    Retrying chunk in {3 * attempt} seconds...")
+                time.sleep(3 * attempt) # Simple backoff
 
+        # --- After attempting a chunk ---
         if not success:
             logger.print_error(f"Failed to fetch Binance chunk starting {datetime.fromtimestamp(current_start_ms / 1000)} after {max_attempts_per_chunk} attempts. Stopping.")
-            return None
+            return None # Stop fetching if a chunk fails
 
-        if not klines_chunk:
+        if not klines_chunk: # If chunk is empty, we've reached the end of the specified range
             logger.print_debug("  Received empty kline chunk, assuming end of data range reached.")
             break
 
         all_klines_raw.extend(klines_chunk)
         logger.print_debug(f"    Fetched {len(klines_chunk)} klines.")
 
-        last_kline_time_ms = klines_chunk[-1][0]
-        current_start_ms = last_kline_time_ms + 1
+        # Update start time for the next chunk
+        last_kline_time_ms = klines_chunk[-1][0] # Open time of the last kline
+        current_start_ms = last_kline_time_ms + 1 # Start next request just after the last one
 
+        # Break if the last chunk was smaller than the limit (means we got all remaining data)
         if len(klines_chunk) < limit_per_request:
              logger.print_debug("  Received less than limit, assuming end of data for range.")
              break
 
+        # Be polite to the API
         time.sleep(request_delay_sec)
 
-    # --- Combine and Process ---
+    # --- Combine and Process All Fetched Data ---
     if not all_klines_raw:
         logger.print_warning(f"No Binance data returned for '{binance_ticker}' in the specified range {start_date} to {end_date}.")
         return None
 
     logger.print_info(f"Converting {len(all_klines_raw)} raw klines to DataFrame...")
+
+    # Define columns based on Binance documentation
     columns = [
         'OpenTime', 'Open', 'High', 'Low', 'Close', 'Volume',
         'CloseTime', 'QuoteAssetVolume', 'NumberTrades',
@@ -221,21 +240,38 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     ]
     df = pd.DataFrame(all_klines_raw, columns=columns)
 
+    # --- Data Type Conversion and Selection ---
     df['DateTime'] = pd.to_datetime(df['OpenTime'], unit='ms', errors='coerce')
     df.dropna(subset=['DateTime'], inplace=True)
-    if df.empty: return None
+    if df.empty:
+         logger.print_warning("Binance data became empty after handling DateTime errors.")
+         return None
     df.set_index('DateTime', inplace=True)
 
+    # Convert essential columns to numeric
     ohlcv_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
     for col in ohlcv_cols:
         df[col] = pd.to_numeric(df[col], errors='coerce')
 
+    # Drop rows with NaN in OHLC columns (Volume can sometimes be 0)
     df.dropna(subset=['Open', 'High', 'Low', 'Close'], inplace=True)
+
+    # Select and rename standard columns (already matches required names)
     df = df[ohlcv_cols]
+
+    # Remove duplicates (shouldn't occur with proper pagination)
+    initial_rows = len(df)
     df = df[~df.index.duplicated(keep='first')]
+    rows_dropped = initial_rows - len(df)
+    if rows_dropped > 0:
+        logger.print_debug(f"Removed {rows_dropped} duplicate rows from Binance data.")
+
+    # Sort index (should be sorted, but enforce)
     df.sort_index(inplace=True)
 
-    if df.empty: return None
+    if df.empty:
+        logger.print_warning(f"Binance data for '{binance_ticker}' became empty after processing.")
+        return None
 
     logger.print_success(f"Successfully fetched and processed {len(df)} rows from Binance for '{binance_ticker}'.")
     return df

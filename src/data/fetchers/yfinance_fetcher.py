@@ -90,7 +90,13 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
                 original_cols = df.columns
                 try:
                     # Drop the upper level (usually 'Attributes') and keep the lower ('Ticker')
-                    df.columns = df.columns.droplevel(0) # Or use droplevel(1) depending on structure
+                    # Verify which level to drop based on typical yf output for single ticker with interval
+                    # Often the structure might be just OHLCV directly, but this handles the case it's nested.
+                    # Let's assume the structure is ('Open', 'Ticker'), ('High', 'Ticker') etc. -> droplevel(1)
+                    # Or ('Ticker', 'Open'), ('Ticker', 'High') -> droplevel(0)
+                    # A safer approach might be to select columns if expected names are known.
+                    # For now, assume simple structure where first level is OHLC type if multi-index
+                    df.columns = df.columns.droplevel(0) # Example: If structure is ('Open', <ticker_name>)
                     logger.print_debug(f"Simplified columns: {list(df.columns)}")
                 except Exception as multi_index_error:
                     logger.print_error(f"Failed to simplify MultiIndex columns: {multi_index_error}")
@@ -98,7 +104,7 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
                     # Attempt flattening as fallback
                     try:
                          logger.print_warning("Attempting to flatten MultiIndex as fallback...")
-                         df.columns = ['_'.join(map(str, col)).strip() for col in original_cols.values]
+                         df.columns = ['_'.join(map(str, col)).strip().rstrip('_') for col in original_cols.values]
                          logger.print_debug(f"Flattened columns: {list(df.columns)}")
                     except Exception as flatten_error:
                          logger.print_error(f"Failed to flatten MultiIndex: {flatten_error}")
@@ -107,23 +113,29 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
                 # Handle single-level MultiIndex (less common)
                 logger.print_warning("Single-level MultiIndex detected. Flattening...")
                 try:
-                    df.columns = ['_'.join(map(str, col)).strip() for col in df.columns.values]
+                    df.columns = ['_'.join(map(str, col)).strip().rstrip('_') for col in df.columns.values]
                 except Exception as flatten_error:
                     logger.print_error(f"Failed to flatten unusual MultiIndex: {flatten_error}")
                     return None
 
         # Ensure required columns are present after potential simplification
         required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
+        # Check case-insensitively and rename if necessary
+        rename_map = {}
+        current_cols_lower = {c.lower(): c for c in df.columns}
+        for req_col in required_cols:
+             req_col_lower = req_col.lower()
+             if req_col_lower in current_cols_lower and current_cols_lower[req_col_lower] != req_col:
+                  rename_map[current_cols_lower[req_col_lower]] = req_col
+        if rename_map:
+             logger.print_debug(f"Renaming columns for case consistency: {rename_map}")
+             df.rename(columns=rename_map, inplace=True)
+
+
         missing_cols = [col for col in required_cols if col not in df.columns]
         if missing_cols:
-            logger.print_warning(f"Downloaded data for '{ticker}' is missing required columns: {missing_cols}. Available columns: {list(df.columns)}")
-            # Try to find alternative names (case variations) - less reliable
-            # Example: if 'volume' in df.columns and 'Volume' not in df.columns: df.rename(columns={'volume':'Volume'}, inplace=True)
-            # Recalculate missing after trying alternatives
-            missing_cols = [col for col in required_cols if col not in df.columns]
-            if missing_cols:
-                 logger.print_error(f"Still missing required columns after checks: {missing_cols}")
-                 return None
+            logger.print_error(f"Downloaded data for '{ticker}' is missing required columns after processing: {missing_cols}. Available columns: {list(df.columns)}")
+            return None
 
         # Drop rows where essential OHLC data might be missing (e.g., market holidays)
         initial_rows = len(df)
