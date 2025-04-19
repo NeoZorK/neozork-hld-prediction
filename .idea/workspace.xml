@@ -8,7 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed csv tests">
-      <change beforePath="$PROJECT_DIR$/tests/data/fetchers/test_csv_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/fetchers/test_csv_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/data/fetchers/test_polygon_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/fetchers/test_polygon_fetcher.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
