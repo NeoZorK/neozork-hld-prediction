@@ -7,8 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="test workflow fetcher">
-      <change beforePath="$PROJECT_DIR$/tests/workflow/test_reporting.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/workflow/test_reporting.py" afterDir="false" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="test reporting fetcher">
+      <change beforePath="$PROJECT_DIR$/tests/data/fetchers/test_polygon_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/fetchers/test_polygon_fetcher.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,14 +161,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00089" summary="add query time limit for polygon">
-      <option name="closed" value="true" />
-      <created>1744987935620</created>
-      <option name="number" value="00089" />
-      <option name="presentableId" value="LOCAL-00089" />
-      <option name="project" value="LOCAL" />
-      <updated>1744987935620</updated>
     </task>
     <task id="LOCAL-00090" summary="v 0.1.2">
       <option name="closed" value="true" />
@@ -554,7 +546,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745174197819</updated>
     </task>
-    <option name="localTasksCounter" value="138" />
+    <task id="LOCAL-00138" summary="test reporting fetcher">
+      <option name="closed" value="true" />
+      <created>1745174467061</created>
+      <option name="number" value="00138" />
+      <option name="presentableId" value="LOCAL-00138" />
+      <option name="project" value="LOCAL" />
+      <updated>1745174467061</updated>
+    </task>
+    <option name="localTasksCounter" value="139" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -581,7 +581,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="try 6 to fix all tests" />
     <MESSAGE value="fixing csv tests" />
     <MESSAGE value="fixed csv tests" />
     <MESSAGE value="fixed polygon module" />
@@ -606,6 +605,7 @@
     <MESSAGE value="test binance fetcher" />
     <MESSAGE value="test data fetcher" />
     <MESSAGE value="test workflow fetcher" />
-    <option name="LAST_COMMIT_MESSAGE" value="test workflow fetcher" />
+    <MESSAGE value="test reporting fetcher" />
+    <option name="LAST_COMMIT_MESSAGE" value="test reporting fetcher" />
   </component>
 </project>
