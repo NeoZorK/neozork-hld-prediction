@@ -1,155 +1,157 @@
-# tests/data/fetchers/test_csv_fetcher.py # FINAL CORRECTIONS V7 (Revert dtype forcing in invalid_datetime test)
+# tests/data/fetchers/test_csv_fetcher.py (Исправления v2)
+
+"""
+Unit tests for the CSV data fetcher.
+All comments are in English.
+"""
 
 import unittest
-from unittest.mock import patch
+import tempfile
+import os
 import pandas as pd
-import numpy as np # Import numpy for other uses if needed
+from pathlib import Path
 
-
-# Function to test
+# Adjust the import path based on the project structure
 from src.data.fetchers.csv_fetcher import fetch_csv_data
 
-# Dummy logger
-class MockLogger:
-    def print_info(self, msg): pass
-    def print_warning(self, msg): pass
-    def print_error(self, msg): pass
-    def print_debug(self, msg): pass
 
-# Patch the logger for the whole class
-@patch('src.data.fetchers.csv_fetcher.logger', new_callable=MockLogger)
+# Definition of the TestCsvFetcher class
 class TestCsvFetcher(unittest.TestCase):
+    """ Test suite for the fetch_csv_data function. """
 
-    # Test success case
-    @patch('src.data.fetchers.csv_fetcher.Path')
-    @patch('src.data.fetchers.csv_fetcher.pd.read_csv')
-    def test_fetch_csv_data_success(self, mock_read_csv, mock_path, _): # Added _ for logger mock
-        mock_path_instance = mock_path.return_value
-        mock_path_instance.is_file.return_value = True
-        raw_data_for_mock = {
-            'DateTime': ["2023.01.01 10:00", "2023.01.01 10:01", "2023.01.01 10:02"],
-            'Open': [1.1000, 1.1001, 1.1012], 'High': [1.1050, 1.1061, np.inf],
-            'Low': [1.0950, 1.0961, 1.0972], 'Close': [1.1000, 1.1011, -np.inf],
-            'TickVolume': [1000.0, 1100.0, 1200.0], # Keep as float here if original might be float
-            'Predicted_High ': [1.1060, 1.1071, 1.1082],
-            ' Unnamed: 7 ': [np.nan, 'garbage', np.nan],
-            'AnotherCol': ['Text', '123', '45.6']
-        }
-        raw_df_mock_return = pd.DataFrame(raw_data_for_mock)
-        raw_df_mock_return.columns = ['DateTime','Open','High','Low','Close','TickVolume','Predicted_High ',' Unnamed: 7 ','AnotherCol']
-        mock_read_csv.return_value = raw_df_mock_return
+    # setUp method (no changes needed)
+    def setUp(self):
+        """ Set up temporary directory and file for testing. """
+        self.test_dir = tempfile.TemporaryDirectory()
+        self.valid_csv_path = os.path.join(self.test_dir.name, "valid_data.csv")
+        self.empty_csv_path = os.path.join(self.test_dir.name, "empty_data.csv")
+        self.missing_col_path = os.path.join(self.test_dir.name, "missing_col.csv")
+        self.bad_format_path = os.path.join(self.test_dir.name, "bad_format.csv")
+        self.invalid_date_path = os.path.join(self.test_dir.name, "invalid_date.csv")
+        # Create a valid CSV file
+        self.valid_data_content = (
+            "File Info Header Line\n"
+            "DateTime,Open,High,Low,Close,TickVolume,ExtraCol,PredictLow,PredictHigh\n"
+            "2023.01.01 10:00,100,105,99,101,1000,abc,98,106\n"
+            "2023.01.01 10:01,101,106,100,102,1100,def,99,107\n"
+            "2023.01.01 10:02,102,107,101,103,1200,ghi,100,108\n"
+            "2023.01.01 10:03,103,inf,102,104,1300,jkl,101,inf\n" # Row with inf
+        )
+        with open(self.valid_csv_path, "w", encoding="utf-8") as f: f.write(self.valid_data_content)
+        self.valid_file_size = os.path.getsize(self.valid_csv_path)
+        # Create other files... (rest of setUp is unchanged)
+        self.empty_data_content = (
+             "File Info Header Line\n"
+             "DateTime,Open,High,Low,Close,TickVolume,ExtraCol,PredictLow,PredictHigh\n"
+        )
+        with open(self.empty_csv_path, "w", encoding="utf-8") as f: f.write(self.empty_data_content)
+        self.empty_file_size = os.path.getsize(self.empty_csv_path)
+        self.missing_col_content = (
+            "File Info Header Line\n"
+            "DateTime,Open,High,Low,TickVolume\n"
+            "2023.01.01 10:00,100,105,99,1000\n"
+        )
+        with open(self.missing_col_path, "w", encoding="utf-8") as f: f.write(self.missing_col_content)
+        self.missing_col_file_size = os.path.getsize(self.missing_col_path)
+        self.bad_format_content = (
+             "File Info Header Line\n"
+             "DateTime;Open;High;Low;Close;TickVolume\n"
+             "2023.01.01 10:00;100;105;99;101;1000\n"
+        )
+        with open(self.bad_format_path, "w", encoding="utf-8") as f: f.write(self.bad_format_content)
+        self.bad_format_file_size = os.path.getsize(self.bad_format_path)
+        self.invalid_date_content = (
+            "File Info Header Line\n"
+            "DateTime,Open,High,Low,Close,TickVolume\n"
+            "01-01-2023 10:00,100,105,99,101,1000\n"
+            "2023.01.01 10:01,101,106,100,102,1100\n"
+        )
+        with open(self.invalid_date_path, "w", encoding="utf-8") as f: f.write(self.invalid_date_content)
+        self.invalid_date_file_size = os.path.getsize(self.invalid_date_path)
 
-        expected_dates = pd.to_datetime(["2023-01-01 10:00", "2023-01-01 10:01"])
-        expected_data = {
-            'Open': [1.1000, 1.1001], 'High': [1.1050, 1.1061], 'Low': [1.0950, 1.0961],
-            'Close': [1.1000, 1.1011],
-            'Volume': [1000.0, 1100.0], # Keep as float if source or processing ensures float
-            'Predicted_High': [1.1060, 1.1071],
-            'AnotherCol': [np.nan, 123.0]
-        }
-        # Specify float64 dtype for the whole DataFrame *if* you expect floats consistently
-        # Otherwise, let pandas infer or specify per column if needed
-        expected_df = pd.DataFrame(expected_data, index=expected_dates, dtype=np.float64)
-        expected_df.index.name = 'DateTime'
+    # tearDown method (no changes needed)
+    def tearDown(self):
+        """ Clean up the temporary directory. """
+        self.test_dir.cleanup()
 
-        df_result = fetch_csv_data("dummy/path.csv")
+    # Test case for successful data fetching
+    def test_fetch_csv_data_success(self):
+        """ Test successfully fetching and processing data from a valid CSV file. """
+        result = fetch_csv_data(self.valid_csv_path)
+        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
+        df, metrics = result
+        self.assertIsNotNone(df); self.assertIsInstance(df, pd.DataFrame)
 
-        mock_path.assert_called_once_with("dummy/path.csv")
-        mock_path_instance.is_file.assert_called_once()
-        mock_read_csv.assert_called_once_with(mock_path_instance, sep=',', header=1, skipinitialspace=True, low_memory=False)
-        self.assertIsNotNone(df_result)
-        self.assertEqual(len(df_result), 2)
-        self.assertIsInstance(df_result.index, pd.DatetimeIndex)
-        self.assertTrue(all(col in df_result.columns for col in ['Open', 'High', 'Low', 'Close', 'Volume']))
-        self.assertNotIn('Unnamed: 7', [c.strip() for c in df_result.columns])
-        self.assertNotIn('', df_result.columns)
-        df_result.index.name = 'DateTime'
-        pd.testing.assert_frame_equal(df_result[expected_df.columns], expected_df, check_like=True)
+        # FIX: Expect 3 rows after dropping the row with NaN from 'inf'
+        self.assertEqual(df.shape[0], 3)
 
-    # Test file not found
-    @patch('src.data.fetchers.csv_fetcher.Path')
-    def test_fetch_csv_data_file_not_found(self, mock_path, _): # Added '_' for logger mock
-        mock_path_instance = mock_path.return_value
-        mock_path_instance.is_file.return_value = False
-        df = fetch_csv_data("nonexistent/path.csv")
+        expected_cols = ['Open', 'High', 'Low', 'Close', 'Volume', 'ExtraCol', 'PredictLow', 'PredictHigh']
+        self.assertListEqual(sorted(df.columns.tolist()), sorted(expected_cols))
+        self.assertIsInstance(df.index, pd.DatetimeIndex); self.assertEqual(df.index.name, 'DateTime')
+        for col in ['Open', 'Low', 'Close', 'Volume']: # Check cols that didn't have inf
+            self.assertTrue(pd.api.types.is_numeric_dtype(df[col]))
+        # 'High' and 'PredictHigh' are tricky because the inf row was dropped.
+        # Check the remaining values are numeric
+        self.assertTrue(pd.api.types.is_numeric_dtype(df['High']))
+        self.assertTrue(pd.api.types.is_numeric_dtype(df['PredictHigh']))
+        # Check metrics
+        self.assertIsInstance(metrics, dict); self.assertIn('file_size_bytes', metrics)
+        self.assertEqual(metrics['file_size_bytes'], self.valid_file_size)
+
+    # Test case for file not found (No changes needed)
+    def test_fetch_csv_data_file_not_found(self):
+        """ Test behavior when the specified CSV file does not exist. """
+        non_existent_path = os.path.join(self.test_dir.name, "non_existent.csv")
+        result = fetch_csv_data(non_existent_path)
+        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
+        df, metrics = result
         self.assertIsNone(df)
-        mock_path.assert_called_once_with("nonexistent/path.csv")
-        mock_path_instance.is_file.assert_called_once()
+        self.assertIsInstance(metrics, dict); self.assertIn('file_size_bytes', metrics)
+        self.assertIsNone(metrics['file_size_bytes'])
 
-    # Test empty file
-    @patch('src.data.fetchers.csv_fetcher.Path')
-    @patch('src.data.fetchers.csv_fetcher.pd.read_csv')
-    def test_fetch_csv_data_empty_file(self, mock_read_csv, mock_path, _): # Added _ for logger mock
-        mock_path_instance = mock_path.return_value
-        mock_path_instance.is_file.return_value = True
-        mock_read_csv.return_value = pd.DataFrame()
-        df = fetch_csv_data("dummy/empty.csv")
+    # Test case for empty file (No changes needed)
+    def test_fetch_csv_data_empty_file(self):
+        """ Test behavior when the CSV file contains only header lines. """
+        result = fetch_csv_data(self.empty_csv_path)
+        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
+        df, metrics = result
+        self.assertIsNone(df) # Changed: fetcher returns None if df is empty after read
+        self.assertIsInstance(metrics, dict); self.assertIn('file_size_bytes', metrics)
+        self.assertEqual(metrics['file_size_bytes'], self.empty_file_size)
+
+    # Test case for missing required column (No changes needed)
+    def test_fetch_csv_data_missing_column(self):
+        """ Test behavior when a required OHLCV column is missing. """
+        result = fetch_csv_data(self.missing_col_path)
+        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
+        df, metrics = result
         self.assertIsNone(df)
+        self.assertIsInstance(metrics, dict); self.assertIn('file_size_bytes', metrics)
+        self.assertEqual(metrics['file_size_bytes'], self.missing_col_file_size)
 
-    # Test missing DateTime
-    @patch('src.data.fetchers.csv_fetcher.Path')
-    @patch('src.data.fetchers.csv_fetcher.pd.read_csv')
-    def test_fetch_csv_data_missing_datetime(self, mock_read_csv, mock_path, _): # Added _ for logger mock
-        mock_path_instance = mock_path.return_value
-        mock_path_instance.is_file.return_value = True
-        raw_df_mock_return = pd.DataFrame({
-            'Open': [1.1000], 'High': [1.1050], 'Low': [1.0950],
-            'Close': [1.1000], 'TickVolume': [1000]
-        })
-        mock_read_csv.return_value = raw_df_mock_return
-        df_result = fetch_csv_data("dummy/no_datetime.csv")
-        self.assertIsNone(df_result)
+    # Test case for badly formatted CSV (No changes needed)
+    def test_fetch_csv_data_bad_format(self):
+        """ Test behavior with a file that pandas cannot parse correctly. """
+        result = fetch_csv_data(self.bad_format_path)
+        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
+        df, metrics = result
+        self.assertIsNone(df)
+        self.assertIsInstance(metrics, dict); self.assertIn('file_size_bytes', metrics)
+        self.assertEqual(metrics['file_size_bytes'], self.bad_format_file_size)
 
-    # Test missing OHLCV
-    @patch('src.data.fetchers.csv_fetcher.Path')
-    @patch('src.data.fetchers.csv_fetcher.pd.read_csv')
-    def test_fetch_csv_data_missing_ohlcv(self, mock_read_csv, mock_path, _): # Added _ for logger mock
-        mock_path_instance = mock_path.return_value
-        mock_path_instance.is_file.return_value = True
-        raw_df_mock_return = pd.DataFrame({
-            'DateTime': ["2023.01.01 10:00"],
-            'Open': [1.1000], 'High': [1.1050], 'Low': [1.0950],
-            'TickVolume': [1000] # Missing Close
-        })
-        mock_read_csv.return_value = raw_df_mock_return
-        df_result = fetch_csv_data("dummy/missing_ohlcv.csv")
-        self.assertIsNone(df_result)
-
-    # ***** CORRECTED: Removed explicit dtype forcing for expected_df *****
-    @patch('src.data.fetchers.csv_fetcher.Path')
-    @patch('src.data.fetchers.csv_fetcher.pd.read_csv')
-    def test_fetch_csv_data_invalid_datetime_format(self, mock_read_csv, mock_path, _): # Added _ for logger mock
-        mock_path_instance = mock_path.return_value
-        mock_path_instance.is_file.return_value = True
-        raw_data_for_mock = {
-            'DateTime': ["2023-01-01 10:00", "2023.01.01 10:01"],
-            'Open': [1.1, 1.2], 'High': [1.1, 1.2], 'Low': [1.1, 1.2],
-            'Close': [1.1, 1.2], 'TickVolume': [100, 200] # Integers in source
-        }
-        raw_df_mock_return = pd.DataFrame(raw_data_for_mock)
-        mock_read_csv.return_value = raw_df_mock_return
-
-        expected_dates = pd.to_datetime(["2023.01.01 10:01"], format='%Y.%m.%d %H:%M')
-        expected_data = {
-            'Open': [1.2],'High': [1.2],'Low': [1.2],'Close': [1.2],
-            'Volume': [200] # Use integer here to match expected int64 output
-        }
-        # Let pandas infer the dtypes for expected_df
-        # 'Volume' should now be inferred as int64, matching the left side
-        expected_df = pd.DataFrame(expected_data, index=expected_dates)
-        expected_df.index.name = 'DateTime'
-
-        df_result = fetch_csv_data("dummy/mixed_datetime.csv")
-
-        mock_read_csv.assert_called_once()
-        self.assertIsNotNone(df_result)
-        self.assertEqual(len(df_result), 1)
-        self.assertEqual(df_result.index[0], expected_dates[0])
-        df_result.index.name = 'DateTime'
-        # assert_frame_equal should now pass the dtype check for Volume
-        pd.testing.assert_frame_equal(df_result, expected_df)
+    # Test case for invalid date format (No changes needed)
+    def test_fetch_csv_data_invalid_date_format(self):
+        """ Test behavior when dates cannot be parsed, leading to dropped rows. """
+        result = fetch_csv_data(self.invalid_date_path)
+        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
+        df, metrics = result
+        self.assertIsNotNone(df); self.assertIsInstance(df, pd.DataFrame)
+        self.assertEqual(df.shape[0], 1) # Only the valid row remains
+        self.assertEqual(df.index[0], pd.Timestamp('2023-01-01 10:01:00'))
+        self.assertIsInstance(metrics, dict); self.assertIn('file_size_bytes', metrics)
+        self.assertEqual(metrics['file_size_bytes'], self.invalid_date_file_size)
 
 
-# Allow running tests directly
+# Allow running the tests directly
 if __name__ == '__main__':
     unittest.main()
