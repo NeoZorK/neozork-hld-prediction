@@ -1,4 +1,4 @@
-# src/reporting.py
+# src/workflow/reporting.py
 
 """
 Functions for reporting results and summaries.
@@ -6,6 +6,7 @@ All comments are in English.
 """
 from ..common import logger
 
+# Definition of the print_summary function
 def print_summary(results: dict, total_duration: float, args):
     """
     Prints the execution summary based on the results dictionary.
@@ -29,6 +30,10 @@ def print_summary(results: dict, total_duration: float, args):
     estimated_point = results.get("estimated_point", False)
     data_size_mb = results.get("data_size_mb", 0)
     data_size_bytes = results.get("data_size_bytes", 0)
+    # NEW: Get row/column counts
+    rows_count = results.get("rows_count", 0)
+    columns_count = results.get("columns_count", 0)
+    # ---
     data_fetch_duration = results.get("data_fetch_duration", 0)
     calc_duration = results.get("calc_duration", 0)
     plot_duration = results.get("plot_duration", 0)
@@ -57,7 +62,12 @@ def print_summary(results: dict, total_duration: float, args):
 
     separator = "-" * (25 + 1 + 20) # Adjust width as needed based on format_summary_line
     logger.print_info(separator)
-    logger.print_info(logger.format_summary_line("Data Size:", f"{data_size_mb:.3f} MB ({data_size_bytes:,} bytes)"))
+    # NEW: Print DataFrame shape
+    if rows_count > 0 or columns_count > 0: # Only print if data was loaded
+        logger.print_info(logger.format_summary_line("DataFrame Shape:", f"{rows_count} rows, {columns_count} columns"))
+    # Print Memory Usage (Already present)
+    logger.print_info(logger.format_summary_line("Memory Usage:", f"{data_size_mb:.3f} MB ({data_size_bytes:,} bytes)"))
+    # ---
     logger.print_info(logger.format_summary_line("Data Fetch/Load Time:", f"{data_fetch_duration:.3f} seconds"))
     logger.print_info(logger.format_summary_line("Indicator Calc Time:", f"{calc_duration:.3f} seconds"))
     logger.print_info(logger.format_summary_line("Plotting Time:", f"{plot_duration:.3f} seconds"))
