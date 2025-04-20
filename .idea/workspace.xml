@@ -7,7 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed tests1" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed all" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -159,22 +159,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00102" summary="fix binance fetcher">
-      <option name="closed" value="true" />
-      <created>1745061819676</created>
-      <option name="number" value="00102" />
-      <option name="presentableId" value="LOCAL-00102" />
-      <option name="project" value="LOCAL" />
-      <updated>1745061819676</updated>
-    </task>
-    <task id="LOCAL-00103" summary="add refactored binance fetcher">
-      <option name="closed" value="true" />
-      <created>1745063255873</created>
-      <option name="number" value="00103" />
-      <option name="presentableId" value="LOCAL-00103" />
-      <option name="project" value="LOCAL" />
-      <updated>1745063255873</updated>
     </task>
     <task id="LOCAL-00104" summary="add binance requirments">
       <option name="closed" value="true" />
@@ -552,7 +536,23 @@
       <option name="project" value="LOCAL" />
       <updated>1745182142788</updated>
     </task>
-    <option name="localTasksCounter" value="151" />
+    <task id="LOCAL-00151" summary="fixed tests2">
+      <option name="closed" value="true" />
+      <created>1745182474695</created>
+      <option name="number" value="00151" />
+      <option name="presentableId" value="LOCAL-00151" />
+      <option name="project" value="LOCAL" />
+      <updated>1745182474695</updated>
+    </task>
+    <task id="LOCAL-00152" summary="fixed all">
+      <option name="closed" value="true" />
+      <created>1745182523694</created>
+      <option name="number" value="00152" />
+      <option name="presentableId" value="LOCAL-00152" />
+      <option name="project" value="LOCAL" />
+      <updated>1745182523694</updated>
+    </task>
+    <option name="localTasksCounter" value="153" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -579,8 +579,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added memore and rows calculation" />
-    <MESSAGE value="add input file for csv mode" />
     <MESSAGE value="added api time" />
     <MESSAGE value="add parket save" />
     <MESSAGE value="fixed parket save" />
@@ -604,6 +602,8 @@
     <MESSAGE value="try to fix fetchers test 8" />
     <MESSAGE value="try to fix fetchers test 9" />
     <MESSAGE value="fixed tests1" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed tests1" />
+    <MESSAGE value="fixed tests2" />
+    <MESSAGE value="fixed all" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed all" />
   </component>
 </project>
