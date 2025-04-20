@@ -17,6 +17,17 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 * **Performance Evaluation:** Quantify the improvement over the baseline Python-replicated indicator using statistical metrics and realistic backtesting simulations.
 * **Profitability Focus:** Structure the project towards creating forecasts that provide a demonstrable statistical edge for potential trading profitability.
 
+## Features
+* Supports multiple data sources: Demo data, CSV files (MT5 export format), Yahoo Finance, Polygon.io, and Binance Spot.
+* Calculates the core "Pressure Vector" indicator components and derived rules (`PV_HighLow`, `Support_Resistants`, `Pressure_Vector`, `Predict_High_Low_Direction`).
+* Provides validation of Python calculations against original MQL5 results when using CSV mode.
+* Generates plots using `mplfinance` to visualize OHLCV data, indicator lines, and signals.
+* **NEW:** Automatically saves raw OHLCV data fetched from API sources (Yahoo Finance, Polygon.io, Binance) to efficient `.parquet` files in the `data/raw_parquet/` directory for later use or analysis.
+* **NEW:** Displays enhanced execution summary in the console, including DataFrame shape, memory usage, data fetch duration, and API request latency.
+* Includes utility scripts for debugging connections to various APIs (`debug_*.py`).
+* Modular structure with clear separation of concerns (data fetching, calculation, plotting, workflow).
+* Includes unit tests for key components.
+
 ## Core Methodology (ML Emphasis)
 
 1.  **Indicator Logic Replication (Python):** Translate the mathematical and logical steps of the MQL5 indicator into an equivalent Python function or class. Validate its output against the original MQL5 version using the exported historical predictions.
@@ -184,6 +195,12 @@ Based on comparisons using the `mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv` file:
     ```bash
     python run_analysis.py demo --rule PV
     ```
+  
+* ** Run with demo data using a specific rule with point size (e.g., Pressure_Vector_HighLow alias 'PV_HighLow'):**
+    ```bash
+    python run_analysis.py demo --rule PV_HighLow --point 0.01
+    ```
+
 
 * **  Fetch Binance data for BTC/USDT, M1 interval, specific dates
 * ** (Requires --point specified, API keys optional for public data)
@@ -205,6 +222,13 @@ Based on comparisons using the `mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv` file:
     * `--point`: **Required** for CSV mode. You must provide the correct point size for the instrument in the CSV file (e.g., 0.01 or 0.1 for XAUUSD).
     * `--rule`: Select the calculation rule (e.g., `PHLD`, `SR`, `PV`, `PV_HighLow`).
 
+* **Run with CSV file:
+    ```bash
+    # Example with a specific CSV file and rule
+    python run_analysis.py csv --csv-file mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv --rule Predict_High_Low_Direction --point 0.01 
+    ```
+
+
 * **Run using data from Polygon.io API:**
     ```bash
     # Replace ticker, dates, and point size as needed. API key must be in .env
@@ -217,6 +241,15 @@ Based on comparisons using the `mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv` file:
     * `--point`: **Required** for Polygon mode. Provide the correct point size.
     * Ensure `POLYGON_API_KEY` is set in your `.env` file.
 
+* **Run with Polygon.io (requires API key in .env):**
+* Fetches Forex EUR/USD minute data
+    ```bash
+    # Fetches Forex EUR/USD minute data
+    python run_analysis.py polygon --ticker C:EURUSD --interval M1 --start 2024-04-15 --end 2024-04-19 --rule Support_Resistants --point 0.00001
+    # Note: This will also save raw data to data/raw_parquet/polygon_C_EURUSD_M1_2024-04-15_2024-04-19.parquet
+    ```
+
+
 * **Fetch Yahoo Finance data for a Forex pair, specific interval, last 3 months, estimated point size, specific rule:**
     ```bash
     python run_analysis.py yf --ticker "EURUSD=X" --interval H1 --period 3mo --rule PV_HighLow
@@ -226,6 +259,13 @@ Based on comparisons using the `mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv` file:
     ```bash
     python run_analysis.py yfinance --ticker AAPL --start 2024-01-01 --end 2024-04-15 --point 0.01 --rule SR
     ```
+
+
+## The script produces the following outputs:
+
+1.  **Console Summary:** Detailed summary printed to the console at the end of execution, including selected parameters, timing metrics for different steps, data shape, memory usage, API latency (if applicable), and overall success status.
+2.  **Plots (Optional):** If not disabled via CLI arguments, generates plots displaying OHLCV data along with the calculated indicator lines and signals using `mplfinance`. Plots are typically shown interactively or saved if configured.
+3.  **NEW: Raw Data Parquet Files:** When run with API data sources (`yfinance`, `polygon`, `binance`), the script automatically saves the downloaded raw OHLCV data into a `.parquet` file within the `data/raw_parquet/` directory. The filename typically includes the source, ticker, interval, and date range. This allows for easy reloading and reuse of the fetched data without hitting the APIs again.
 
 ### Running Tests
 
