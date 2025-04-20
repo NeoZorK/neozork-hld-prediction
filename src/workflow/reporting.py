@@ -30,9 +30,10 @@ def print_summary(results: dict, total_duration: float, args):
     estimated_point = results.get("estimated_point", False)
     data_size_mb = results.get("data_size_mb", 0)
     data_size_bytes = results.get("data_size_bytes", 0)
-    # NEW: Get row/column counts
     rows_count = results.get("rows_count", 0)
     columns_count = results.get("columns_count", 0)
+    # NEW: Get file size (specific to CSV mode)
+    file_size_bytes = results.get("file_size_bytes") # Get value if exists
     # ---
     data_fetch_duration = results.get("data_fetch_duration", 0)
     calc_duration = results.get("calc_duration", 0)
@@ -43,6 +44,7 @@ def print_summary(results: dict, total_duration: float, args):
     # Display rule requested by user
     logger.print_info(logger.format_summary_line("Rule Applied:", args.rule))
 
+    # --- YFinance Specific Output ---
     if effective_mode == 'yfinance':
         logger.print_warning("--- YFinance Data Note: Volume might be zero/missing for Forex/Indices ---")
         logger.print_info(logger.format_summary_line("Ticker:", yf_ticker if yf_ticker else 'N/A'))
@@ -52,6 +54,7 @@ def print_summary(results: dict, total_duration: float, args):
         else:
             logger.print_info(logger.format_summary_line("Period:", current_period if current_period else 'N/A'))
 
+    # --- Point Size ---
     if point_size is not None:
         point_format = ".8f" if point_size < 0.001 else ".5f" if point_size < 0.1 else ".2f"
         size_str = f"{point_size:{point_format}}{' (Estimated)' if estimated_point else ''}"
@@ -60,15 +63,25 @@ def print_summary(results: dict, total_duration: float, args):
          reason = "(Data load failed)" if results.get("error_message") else "(Not applicable)"
          logger.print_info(logger.format_summary_line("Point Size Used:", f"N/A {reason}"))
 
+    # --- Separator and Data Metrics ---
     separator = "-" * (25 + 1 + 20) # Adjust width as needed based on format_summary_line
     logger.print_info(separator)
-    # NEW: Print DataFrame shape
+
+    # NEW: Print Input File Size (only for CSV mode if available)
+    if effective_mode == 'csv' and file_size_bytes is not None and file_size_bytes > 0:
+        file_size_mb = file_size_bytes / (1024 * 1024)
+        logger.print_info(logger.format_summary_line("Input File Size:", f"{file_size_mb:.3f} MB ({file_size_bytes:,} bytes)"))
+
+    # Print DataFrame Shape (from previous step)
     if rows_count > 0 or columns_count > 0: # Only print if data was loaded
         logger.print_info(logger.format_summary_line("DataFrame Shape:", f"{rows_count} rows, {columns_count} columns"))
     # Print Memory Usage (Already present)
     logger.print_info(logger.format_summary_line("Memory Usage:", f"{data_size_mb:.3f} MB ({data_size_bytes:,} bytes)"))
     # ---
+
+    # --- Timing Metrics ---
     logger.print_info(logger.format_summary_line("Data Fetch/Load Time:", f"{data_fetch_duration:.3f} seconds"))
+    # TODO (Next Step): Add Latency output here
     logger.print_info(logger.format_summary_line("Indicator Calc Time:", f"{calc_duration:.3f} seconds"))
     logger.print_info(logger.format_summary_line("Plotting Time:", f"{plot_duration:.3f} seconds"))
     logger.print_info(separator)
