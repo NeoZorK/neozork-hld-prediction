@@ -7,9 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="added memore and rows calculation">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add input file for csv mode">
       <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/fetchers/csv_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/csv_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/binance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/binance_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/yfinance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/yfinance_fetcher.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/workflow/reporting.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/workflow/reporting.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -163,14 +165,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00078" summary="add test file for CSV">
-      <option name="closed" value="true" />
-      <created>1744964596522</created>
-      <option name="number" value="00078" />
-      <option name="presentableId" value="LOCAL-00078" />
-      <option name="project" value="LOCAL" />
-      <updated>1744964596522</updated>
     </task>
     <task id="LOCAL-00079" summary="add test file for oanda import">
       <option name="closed" value="true" />
@@ -556,7 +550,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745168728753</updated>
     </task>
-    <option name="localTasksCounter" value="127" />
+    <task id="LOCAL-00127" summary="add input file for csv mode">
+      <option name="closed" value="true" />
+      <created>1745169162588</created>
+      <option name="number" value="00127" />
+      <option name="presentableId" value="LOCAL-00127" />
+      <option name="project" value="LOCAL" />
+      <updated>1745169162588</updated>
+    </task>
+    <option name="localTasksCounter" value="128" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -583,7 +585,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix binance fetcher" />
     <MESSAGE value="add refactored binance fetcher" />
     <MESSAGE value="add binance requirments" />
     <MESSAGE value="del data utils" />
@@ -608,6 +609,7 @@
     <MESSAGE value="remain only 2 errors (fixing) now 3 errors" />
     <MESSAGE value="fixed all tests!" />
     <MESSAGE value="added memore and rows calculation" />
-    <option name="LAST_COMMIT_MESSAGE" value="added memore and rows calculation" />
+    <MESSAGE value="add input file for csv mode" />
+    <option name="LAST_COMMIT_MESSAGE" value="add input file for csv mode" />
   </component>
 </project>

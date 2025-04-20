@@ -32,16 +32,16 @@ def print_summary(results: dict, total_duration: float, args):
     data_size_bytes = results.get("data_size_bytes", 0)
     rows_count = results.get("rows_count", 0)
     columns_count = results.get("columns_count", 0)
-    # NEW: Get file size (specific to CSV mode)
-    file_size_bytes = results.get("file_size_bytes") # Get value if exists
+    file_size_bytes = results.get("file_size_bytes")
+    # NEW: Get API latency
+    api_latency_sec = results.get("api_latency_sec")
     # ---
-    data_fetch_duration = results.get("data_fetch_duration", 0)
+    data_fetch_duration = results.get("data_fetch_duration", 0) # This includes fetcher execution time + internal logic
     calc_duration = results.get("calc_duration", 0)
     plot_duration = results.get("plot_duration", 0)
 
-
+    # --- Print Basic Info ---
     logger.print_info(logger.format_summary_line("Data Source:", data_source_label if effective_mode != 'demo' else 'Demo'))
-    # Display rule requested by user
     logger.print_info(logger.format_summary_line("Rule Applied:", args.rule))
 
     # --- YFinance Specific Output ---
@@ -66,22 +66,22 @@ def print_summary(results: dict, total_duration: float, args):
     # --- Separator and Data Metrics ---
     separator = "-" * (25 + 1 + 20) # Adjust width as needed based on format_summary_line
     logger.print_info(separator)
-
-    # NEW: Print Input File Size (only for CSV mode if available)
     if effective_mode == 'csv' and file_size_bytes is not None and file_size_bytes > 0:
         file_size_mb = file_size_bytes / (1024 * 1024)
         logger.print_info(logger.format_summary_line("Input File Size:", f"{file_size_mb:.3f} MB ({file_size_bytes:,} bytes)"))
-
-    # Print DataFrame Shape (from previous step)
-    if rows_count > 0 or columns_count > 0: # Only print if data was loaded
+    if rows_count > 0 or columns_count > 0:
         logger.print_info(logger.format_summary_line("DataFrame Shape:", f"{rows_count} rows, {columns_count} columns"))
-    # Print Memory Usage (Already present)
     logger.print_info(logger.format_summary_line("Memory Usage:", f"{data_size_mb:.3f} MB ({data_size_bytes:,} bytes)"))
-    # ---
 
     # --- Timing Metrics ---
     logger.print_info(logger.format_summary_line("Data Fetch/Load Time:", f"{data_fetch_duration:.3f} seconds"))
-    # TODO (Next Step): Add Latency output here
+    # NEW: Print API Latency if available
+    if api_latency_sec is not None and effective_mode in ['yfinance', 'polygon', 'binance']:
+        latency_label = "API Request Latency:"
+        if effective_mode == 'yfinance': latency_label = "yf.download Latency:"
+        elif effective_mode in ['polygon', 'binance']: latency_label = "API Chunks Total Latency:"
+        logger.print_info(logger.format_summary_line(latency_label, f"{api_latency_sec:.3f} seconds"))
+    # ---
     logger.print_info(logger.format_summary_line("Indicator Calc Time:", f"{calc_duration:.3f} seconds"))
     logger.print_info(logger.format_summary_line("Plotting Time:", f"{plot_duration:.3f} seconds"))
     logger.print_info(separator)
