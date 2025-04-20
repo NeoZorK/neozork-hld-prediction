@@ -7,10 +7,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed all tests!">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="added memore and rows calculation">
+      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/csv_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/csv_fetcher.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/workflow/reporting.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/workflow/reporting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/workflow/workflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/workflow/workflow.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,14 +163,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00077" summary="fix polygon">
-      <option name="closed" value="true" />
-      <created>1744963815249</created>
-      <option name="number" value="00077" />
-      <option name="presentableId" value="LOCAL-00077" />
-      <option name="project" value="LOCAL" />
-      <updated>1744963815249</updated>
     </task>
     <task id="LOCAL-00078" summary="add test file for CSV">
       <option name="closed" value="true" />
@@ -556,7 +548,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745079645936</updated>
     </task>
-    <option name="localTasksCounter" value="126" />
+    <task id="LOCAL-00126" summary="added memore and rows calculation">
+      <option name="closed" value="true" />
+      <created>1745168728753</created>
+      <option name="number" value="00126" />
+      <option name="presentableId" value="LOCAL-00126" />
+      <option name="project" value="LOCAL" />
+      <updated>1745168728753</updated>
+    </task>
+    <option name="localTasksCounter" value="127" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -583,7 +583,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="refactor modules fetchers" />
     <MESSAGE value="fix binance fetcher" />
     <MESSAGE value="add refactored binance fetcher" />
     <MESSAGE value="add binance requirments" />
@@ -608,6 +607,7 @@
     <MESSAGE value="remain only 2 errors (fixing)" />
     <MESSAGE value="remain only 2 errors (fixing) now 3 errors" />
     <MESSAGE value="fixed all tests!" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed all tests!" />
+    <MESSAGE value="added memore and rows calculation" />
+    <option name="LAST_COMMIT_MESSAGE" value="added memore and rows calculation" />
   </component>
 </project>
