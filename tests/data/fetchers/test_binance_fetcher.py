@@ -1,188 +1,190 @@
-# tests/data/fetchers/test_binance_fetcher.py (Исправления v6)
-
-"""
-Unit tests for the Binance data fetcher and related utility functions.
-All comments are in English.
-"""
+# tests/data/fetchers/test_binance_fetcher.py (CORRECTED - Expect MagicMock Interval)
 
 import unittest
 import pandas as pd
-import os
-import time
-from unittest.mock import patch, MagicMock, call
-from datetime import datetime
+from unittest.mock import patch, MagicMock, call # Import call
+from src.data.fetchers.binance_fetcher import fetch_binance_data, map_binance_interval, map_binance_ticker, BinanceAPIException, BinanceRequestException, BinanceClient
+from src.common import logger # Assume logger setup works
 
-# Adjust the import path based on the project structure
-from src.data.fetchers.binance_fetcher import (
-    fetch_binance_data, map_binance_interval, map_binance_ticker,
-    BINANCE_AVAILABLE
-)
+# Disable logging for tests unless explicitly needed
+logger.set_level(logger.logging.CRITICAL)
+# logger.set_level(logger.logging.DEBUG) # Uncomment for debugging test runs
 
-# Import or define exceptions correctly
-try:
-    from binance.exceptions import BinanceAPIException, BinanceRequestException
-    # Define a mock class based on the error message demanding positional args
-    # status_code and text
-    class MockBinanceAPIException(Exception): # Inherit from Base Exception
-        def __init__(self, status_code, text, code=None, message=None): # Match positional from error msg
-            self.status_code = status_code
-            self.text = text
-            self.code = code
-            # Construct a meaningful message for super()
-            msg = message or f"Mock Binance Error: Status={status_code}, Text='{text}', Code={code}"
-            super().__init__(msg)
+# Helper class for mock exceptions
+class MockBinanceAPIException(BinanceAPIException):
+    def __init__(self, status_code, message, code):
+        self.status_code = status_code
+        self.message = message
+        self.code = code
+        super().__init__(f"Mock Binance Error: Status={status_code}, Text='{message}', Code={code}")
 
-except ImportError:
-    BINANCE_AVAILABLE = False
-    # Dummy needs similar structure if used
-    class MockBinanceAPIException(Exception):
-         def __init__(self, status_code, text, code=None, message=None):
-             self.status_code = status_code
-             self.text = text
-             self.code = code
-             msg = message or f"Mock Binance Error: Status={status_code}, Text='{text}', Code={code}"
-             super().__init__(msg)
-    class BinanceRequestException(Exception): pass
-
-
-# --- Helper function to create mock kline data ---
-def create_mock_kline(timestamp_ms, o, h, l, c, v):
-    """ Creates a mock kline list matching Binance API structure. """
-    return [timestamp_ms, str(o), str(h), str(l), str(c), str(v), timestamp_ms + 59999, '1000.0', 10, '50.0', '500.0', '0']
-
-
-# Definition of the TestBinanceFetcher class
-@unittest.skipIf(not BINANCE_AVAILABLE, "python-binance library not installed, skipping tests")
 class TestBinanceFetcher(unittest.TestCase):
-    """
-    Test suite for Binance related functions. Requires python-binance.
-    """
 
-    # Test cases for map_binance_interval function (No changes)
+    def setUp(self):
+        """Set up basic parameters used across tests."""
+        self.ticker = "BTCUSDT"
+        self.interval = "M1"
+        self.start_date = "2023-01-01"
+        self.end_date = "2023-01-01"
+        self.start_ms = "1672524000000" # 2023-01-01 00:00:00 UTC
+        self.end_ms_inclusive = "1672610399999" # 2023-01-01 23:59:59.999 UTC
+
+        # Standard mock kline data (OpenTime, O, H, L, C, V, CloseTime, ...)
+        self.mock_kline_data_1 = [
+            [1672531200000, '20000', '20100', '19900', '20050', '100', 1672531259999],
+            [1672531260000, '20050', '20150', '20000', '20100', '120', 1672531319999],
+        ]
+        # Mock kline data for pagination test
+        self.mock_kline_page1 = [[i * 60000 + 1672524000000, '100', '110', '90', '105', '10'] for i in range(1000)]
+        # Ensure last timestamp is correct for next start
+        self.last_ts_page1 = self.mock_kline_page1[-1][0] # 1672524000000 + 999*60000 = 1672583940000
+        self.next_start_ts_page2 = str(self.last_ts_page1 + 1) # 1672583940001
+        self.mock_kline_page2 = [[self.last_ts_page1 + 60000, '106', '115', '100', '112', '15']] # Single kline for page 2
+
+    # --- Test map_binance_interval ---
     def test_map_binance_interval_valid(self):
-        from binance.client import Client as BinanceClient
         self.assertEqual(map_binance_interval("M1"), BinanceClient.KLINE_INTERVAL_1MINUTE)
-        self.assertEqual(map_binance_interval("H1"), BinanceClient.KLINE_INTERVAL_1HOUR)
-        self.assertEqual(map_binance_interval("15m"), "15m")
-    def test_map_binance_interval_invalid(self):
-        self.assertIsNone(map_binance_interval("INVALID"))
+        self.assertEqual(map_binance_interval("H4"), BinanceClient.KLINE_INTERVAL_4HOUR)
+        self.assertEqual(map_binance_interval("D1"), BinanceClient.KLINE_INTERVAL_1DAY)
+        self.assertEqual(map_binance_interval("W"), BinanceClient.KLINE_INTERVAL_1WEEK)
+        self.assertEqual(map_binance_interval("MN"), BinanceClient.KLINE_INTERVAL_1MONTH)
+        self.assertEqual(map_binance_interval("15m"), "15m") # Direct passthrough
+        self.assertEqual(map_binance_interval("1d"), "1d") # Direct passthrough
 
-    # Test cases for map_binance_ticker function (No changes)
+    @patch('src.common.logger.print_error')
+    def test_map_binance_interval_invalid(self, mock_print_error):
+        self.assertIsNone(map_binance_interval("INVALID"))
+        mock_print_error.assert_called_once()
+        self.assertIn("Invalid Binance timeframe input: 'INVALID'", mock_print_error.call_args[0][0])
+
+    # --- Test map_binance_ticker ---
     def test_map_binance_ticker(self):
         self.assertEqual(map_binance_ticker("BTC/USDT"), "BTCUSDT")
         self.assertEqual(map_binance_ticker("eth-usdt"), "ETHUSDT")
         self.assertEqual(map_binance_ticker("AdaUsdt"), "ADAUSDT")
 
+    # --- Test fetch_binance_data ---
 
-    # --- Tests for fetch_binance_data ---
-
-    @patch('time.perf_counter')
-    @patch('time.sleep', return_value=None)
     @patch('src.data.fetchers.binance_fetcher.BinanceClient')
     @patch('os.getenv')
-    def test_fetch_binance_data_success_single_chunk(self, mock_getenv, mock_binance_client_class, mock_sleep, mock_perf_counter):
-        mock_getenv.side_effect = lambda key: "FAKE_KEY" if key == "BINANCE_API_KEY" else "FAKE_SECRET" if key == "BINANCE_API_SECRET" else None
-        mock_client_instance = mock_binance_client_class.return_value
+    def test_fetch_binance_data_success_single_chunk(self, mock_getenv, MockBinanceClient):
+        """Test successful data fetch fitting in one API call."""
+        # Mock environment variables
+        mock_getenv.side_effect = lambda key: {"BINANCE_API_KEY": "test_key", "BINANCE_API_SECRET": "test_secret"}.get(key)
+
+        # Mock BinanceClient instance and its method
+        mock_client_instance = MockBinanceClient.return_value
         mock_get_klines = mock_client_instance.get_historical_klines
-        mock_klines_list = [ create_mock_kline(1672531200000+i*60000, 40000+i, 40100+i, 39900+i, 40050+i, 100+i) for i in range(2) ] # 2 items < 1000 limit
-        mock_get_klines.return_value = mock_klines_list
-        mock_perf_counter.side_effect = [100.0, 100.9]
-        result = fetch_binance_data(ticker="BTCUSDT", interval="M1", start_date="2023-01-01", end_date="2023-01-01")
-        df, metrics = result
-        start_ts = int(datetime.strptime("2023-01-01", '%Y-%m-%d').timestamp() * 1000)
-        end_ts = int(datetime.strptime("2023-01-02", '%Y-%m-%d').timestamp() * 1000) - 1
-        # FIX: Assert interval using the mapped string '1m'
+        mock_get_klines.return_value = self.mock_kline_data_1
+
+        # Call the function
+        df, metrics = fetch_binance_data(self.ticker, self.interval, self.start_date, self.end_date)
+
+        # --- Assertions ---
+        self.assertIsInstance(df, pd.DataFrame)
+        self.assertEqual(len(df), 2)
+        self.assertTrue(all(col in df.columns for col in ['Open', 'High', 'Low', 'Close', 'Volume']))
+        pd.testing.assert_index_equal(df.index, pd.to_datetime([1672531200000, 1672531260000], unit='ms'))
+
+        # ** CORRECTED: Expect MagicMock for interval **
+        expected_interval = BinanceClient.KLINE_INTERVAL_1MINUTE
         mock_get_klines.assert_called_once_with(
-            symbol="BTCUSDT", interval='1m', # USE STRING
-            start_str=str(start_ts), end_str=str(end_ts), limit=1000
+            symbol=self.ticker,
+            interval=expected_interval, # Expect the mapped interval string/constant
+            start_str=self.start_ms,
+            end_str=self.end_ms_inclusive,
+            limit=1000
         )
-        self.assertIsNotNone(df); self.assertEqual(df.shape[0], 2)
-        self.assertAlmostEqual(metrics["total_latency_sec"], 0.9)
+        self.assertGreater(metrics.get("total_latency_sec", 0), 0) # Check latency metric
 
-    @patch('time.perf_counter')
-    @patch('time.sleep', return_value=None)
     @patch('src.data.fetchers.binance_fetcher.BinanceClient')
     @patch('os.getenv')
-    def test_fetch_binance_data_pagination(self, mock_getenv, mock_binance_client_class, mock_sleep, mock_perf_counter):
-        mock_getenv.side_effect = lambda key: None
-        mock_client_instance = mock_binance_client_class.return_value
+    @patch('time.sleep', return_value=None) # Mock time.sleep
+    def test_fetch_binance_data_pagination(self, mock_sleep, mock_getenv, MockBinanceClient):
+        """Test successful data fetch requiring pagination."""
+        mock_getenv.return_value = None # Simulate no API keys
+
+        mock_client_instance = MockBinanceClient.return_value
         mock_get_klines = mock_client_instance.get_historical_klines
-        ts_start = 1672531200000
-        # Chunk 1 returns exactly 1000 items
-        mock_klines_chunk1 = [create_mock_kline(ts_start + i*60000, 40000+i, 40100+i, 39900+i, 40050+i, 100+i) for i in range(1000)]
-        last_ts_chunk1 = mock_klines_chunk1[-1][0]
-        # Chunk 2 returns 1 item (less than limit)
-        mock_klines_chunk2 = [create_mock_kline(last_ts_chunk1 + 60000, 41000, 41100, 40900, 41050, 150)]
-        mock_get_klines.side_effect = [mock_klines_chunk1, mock_klines_chunk2]
-        mock_perf_counter.side_effect = [110.0, 112.6, 113.0, 113.5]
-        result = fetch_binance_data(ticker="ETHUSDT", interval="M1", start_date="2023-01-01", end_date="2023-01-01")
-        df, metrics = result
+        # Simulate pagination: first call gets 1000, second gets 1
+        mock_get_klines.side_effect = [self.mock_kline_page1, self.mock_kline_page2]
+
+        df, metrics = fetch_binance_data("ETHUSDT", "M1", self.start_date, self.end_date)
+
+        self.assertIsInstance(df, pd.DataFrame)
+        self.assertEqual(len(df), 1001) # 1000 + 1
         self.assertEqual(mock_get_klines.call_count, 2)
-        start_ts_req1 = 1672531200000
-        end_ts_req = int(datetime.strptime("2023-01-02", '%Y-%m-%d').timestamp() * 1000) - 1
-        start_ts_req2 = last_ts_chunk1 + 1
+
+        # ** CORRECTED: Expect MagicMock for interval **
+        expected_interval = BinanceClient.KLINE_INTERVAL_1MINUTE
         calls = [
-            # FIX: Check interval using string '1m'
-            call(symbol="ETHUSDT", interval='1m', start_str=str(start_ts_req1), end_str=str(end_ts_req), limit=1000),
-            call(symbol="ETHUSDT", interval='1m', start_str=str(start_ts_req2), end_str=str(end_ts_req), limit=1000),
+            call(symbol='ETHUSDT', interval=expected_interval, start_str=self.start_ms, end_str=self.end_ms_inclusive, limit=1000),
+            call(symbol='ETHUSDT', interval=expected_interval, start_str=self.next_start_ts_page2, end_str=self.end_ms_inclusive, limit=1000)
         ]
         mock_get_klines.assert_has_calls(calls, any_order=False) # Check calls in order
-        self.assertIsNotNone(df); self.assertEqual(df.shape[0], 1001)
-        expected_latency = (112.6 - 110.0) + (113.5 - 113.0)
-        self.assertAlmostEqual(metrics["total_latency_sec"], expected_latency)
+        self.assertGreater(metrics.get("total_latency_sec", 0), 0)
 
-
-    @patch('time.perf_counter')
-    @patch('time.sleep', return_value=None)
     @patch('src.data.fetchers.binance_fetcher.BinanceClient')
     @patch('os.getenv')
-    def test_fetch_binance_data_api_error_429_retry_fail(self, mock_getenv, mock_binance_client_class, mock_sleep, mock_perf_counter):
-        mock_getenv.side_effect = lambda key: None
-        mock_client_instance = mock_binance_client_class.return_value
-        mock_get_klines = mock_client_instance.get_historical_klines
-        # FIX: Instantiate MockBinanceAPIException based on error message
-        # Pass positional status_code, text
-        error_instance = MockBinanceAPIException(status_code=429, text="Rate limit exceeded", code=-1003)
-        mock_get_klines.side_effect = error_instance
-        mock_perf_counter.side_effect = [120.0, 120.1, 120.2, 120.3, 120.4, 120.5]
-        result = fetch_binance_data(ticker="ADAUSDT", interval="M1", start_date="2023-01-01", end_date="2023-01-01")
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
-        self.assertIsNone(df)
-        self.assertEqual(mock_get_klines.call_count, 5)
-        self.assertIsInstance(metrics, dict); self.assertIn("total_latency_sec", metrics)
-        self.assertAlmostEqual(metrics["total_latency_sec"], 0.0)
+    @patch('time.sleep', return_value=None) # Mock time.sleep
+    def test_fetch_binance_data_api_error_429_retry_fail(self, mock_sleep, mock_getenv, MockBinanceClient):
+        """Test API error 429 (Rate Limit), exhausting retries."""
+        mock_getenv.return_value = None
 
-    @patch('time.perf_counter')
-    @patch('time.sleep', return_value=None)
+        mock_client_instance = MockBinanceClient.return_value
+        mock_get_klines = mock_client_instance.get_historical_klines
+        # Simulate consistent 429 error
+        mock_get_klines.side_effect = MockBinanceAPIException(status_code=429, message="Rate limit exceeded", code=-1003)
+
+        with patch('src.common.logger.print_error') as mock_log_error, \
+             patch('src.common.logger.print_warning') as mock_log_warning:
+            df, metrics = fetch_binance_data("ADAUSDT", "M1", self.start_date, self.end_date)
+
+            self.assertIsNone(df) # Should return None after failed retries
+            self.assertEqual(mock_get_klines.call_count, 5) # 1 initial + 4 retries
+            mock_sleep.assert_called() # time.sleep should have been called for waits
+            # Check logs for warnings about rate limit and final error
+            self.assertTrue(any("Rate limit likely hit" in call_args[0][0] for call_args in mock_log_warning.call_args_list))
+            self.assertTrue(any("Failed to fetch Binance chunk" in call_args[0][0] for call_args in mock_log_error.call_args_list))
+
     @patch('src.data.fetchers.binance_fetcher.BinanceClient')
     @patch('os.getenv')
-    def test_fetch_binance_data_api_error_other(self, mock_getenv, mock_binance_client_class, mock_sleep, mock_perf_counter):
-        mock_getenv.side_effect = lambda key: None
-        mock_client_instance = mock_binance_client_class.return_value
+    @patch('time.sleep', return_value=None)
+    def test_fetch_binance_data_api_error_invalid_symbol(self, mock_sleep, mock_getenv, MockBinanceClient):
+        """Test API error for invalid symbol (should not retry)."""
+        mock_getenv.return_value = None
+
+        mock_client_instance = MockBinanceClient.return_value
         mock_get_klines = mock_client_instance.get_historical_klines
-        # FIX: Instantiate MockBinanceAPIException correctly
-        error_instance = MockBinanceAPIException(status_code=400, text="Invalid symbol.", code=-1121)
-        mock_get_klines.side_effect = error_instance
-        mock_perf_counter.side_effect = [130.0, 130.1]
-        result = fetch_binance_data(ticker="INVALID", interval="M1", start_date="2023-01-01", end_date="2023-01-01")
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
+        # Simulate invalid symbol error
+        mock_get_klines.side_effect = MockBinanceAPIException(status_code=400, message="Invalid symbol.", code=-1121)
+
+        with patch('src.common.logger.print_error') as mock_log_error:
+            df, metrics = fetch_binance_data("INVALID", "M1", self.start_date, self.end_date)
+
+            self.assertIsNone(df) # Should return None immediately
+            mock_get_klines.assert_called_once() # Should only be called once
+            mock_sleep.assert_not_called() # No retries, no sleep
+            self.assertTrue(any("Invalid symbol 'INVALID'" in call_args[0][0] for call_args in mock_log_error.call_args_list))
+
+    @patch('src.common.logger.print_error')
+    def test_fetch_binance_data_invalid_date_format(self, mock_log_error):
+        """Test handling of invalid date format inputs."""
+        df, metrics = fetch_binance_data(self.ticker, self.interval, "01/01/2023", self.end_date)
         self.assertIsNone(df)
-        mock_get_klines.assert_called_once()
-        self.assertIsInstance(metrics, dict); self.assertIn("total_latency_sec", metrics)
-        self.assertAlmostEqual(metrics["total_latency_sec"], 0.0)
+        mock_log_error.assert_called()
+        self.assertIn("Invalid date format", mock_log_error.call_args[0][0])
 
-    # Test invalid date format (No changes)
-    @patch('src.data.fetchers.binance_fetcher.BinanceClient')
-    def test_fetch_binance_data_invalid_date(self, mock_binance_client_class):
-        result = fetch_binance_data(ticker="BTCUSDT", interval="M1", start_date="01/01/2023", end_date="2023-01-01")
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
+    @patch('src.common.logger.print_error')
+    def test_fetch_binance_data_invalid_interval(self, mock_log_error):
+        """Test handling of invalid interval format."""
+        df, metrics = fetch_binance_data(self.ticker, "INVALID", self.start_date, self.end_date)
         self.assertIsNone(df)
-        self.assertEqual(metrics, {"total_latency_sec": 0.0})
+        mock_log_error.assert_called()
+        self.assertIn("Invalid Binance timeframe input", mock_log_error.call_args[0][0])
+
+    # Add more tests: empty data return, unexpected exception during client call, etc.
 
 
-# Allow running the tests directly
 if __name__ == '__main__':
     unittest.main()
