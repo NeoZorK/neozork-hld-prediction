@@ -7,7 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="test polygon fetcher" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="test workflow fetcher">
+      <change beforePath="$PROJECT_DIR$/tests/workflow/test_reporting.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/workflow/test_reporting.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -159,30 +161,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00086" summary="automatic ticker search for polygon">
-      <option name="closed" value="true" />
-      <created>1744985167990</created>
-      <option name="number" value="00086" />
-      <option name="presentableId" value="LOCAL-00086" />
-      <option name="project" value="LOCAL" />
-      <updated>1744985167990</updated>
-    </task>
-    <task id="LOCAL-00087" summary="polygon fix feed type fx,crypto,stocks">
-      <option name="closed" value="true" />
-      <created>1744985404718</created>
-      <option name="number" value="00087" />
-      <option name="presentableId" value="LOCAL-00087" />
-      <option name="project" value="LOCAL" />
-      <updated>1744985404718</updated>
-    </task>
-    <task id="LOCAL-00088" summary="working polygon">
-      <option name="closed" value="true" />
-      <created>1744986612131</created>
-      <option name="number" value="00088" />
-      <option name="presentableId" value="LOCAL-00088" />
-      <option name="project" value="LOCAL" />
-      <updated>1744986612131</updated>
     </task>
     <task id="LOCAL-00089" summary="add query time limit for polygon">
       <option name="closed" value="true" />
@@ -552,7 +530,31 @@
       <option name="project" value="LOCAL" />
       <updated>1745173938635</updated>
     </task>
-    <option name="localTasksCounter" value="135" />
+    <task id="LOCAL-00135" summary="test binance fetcher">
+      <option name="closed" value="true" />
+      <created>1745173980250</created>
+      <option name="number" value="00135" />
+      <option name="presentableId" value="LOCAL-00135" />
+      <option name="project" value="LOCAL" />
+      <updated>1745173980250</updated>
+    </task>
+    <task id="LOCAL-00136" summary="test data fetcher">
+      <option name="closed" value="true" />
+      <created>1745174082523</created>
+      <option name="number" value="00136" />
+      <option name="presentableId" value="LOCAL-00136" />
+      <option name="project" value="LOCAL" />
+      <updated>1745174082523</updated>
+    </task>
+    <task id="LOCAL-00137" summary="test workflow fetcher">
+      <option name="closed" value="true" />
+      <created>1745174197819</created>
+      <option name="number" value="00137" />
+      <option name="presentableId" value="LOCAL-00137" />
+      <option name="project" value="LOCAL" />
+      <updated>1745174197819</updated>
+    </task>
+    <option name="localTasksCounter" value="138" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -579,9 +581,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="try 2 to fix all tests" />
-    <MESSAGE value="try 3 to fix all tests" />
-    <MESSAGE value="try 4 to fix all tests" />
     <MESSAGE value="try 6 to fix all tests" />
     <MESSAGE value="fixing csv tests" />
     <MESSAGE value="fixed csv tests" />
@@ -604,6 +603,9 @@
     <MESSAGE value="test csv fetcher" />
     <MESSAGE value="test yf fetcher" />
     <MESSAGE value="test polygon fetcher" />
-    <option name="LAST_COMMIT_MESSAGE" value="test polygon fetcher" />
+    <MESSAGE value="test binance fetcher" />
+    <MESSAGE value="test data fetcher" />
+    <MESSAGE value="test workflow fetcher" />
+    <option name="LAST_COMMIT_MESSAGE" value="test workflow fetcher" />
   </component>
 </project>
