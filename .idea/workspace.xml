@@ -7,8 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="try to fix fetchers test 7">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="try to fix fetchers test 8">
       <change beforePath="$PROJECT_DIR$/tests/data/fetchers/test_binance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/fetchers/test_binance_fetcher.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/workflow/test_workflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/workflow/test_workflow.py" afterDir="false" />
     </list>
@@ -163,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00099" summary="fix all tests">
-      <option name="closed" value="true" />
-      <created>1744993646694</created>
-      <option name="number" value="00099" />
-      <option name="presentableId" value="LOCAL-00099" />
-      <option name="project" value="LOCAL" />
-      <updated>1744993646694</updated>
     </task>
     <task id="LOCAL-00100" summary="fixed markdown project structure">
       <option name="closed" value="true" />
@@ -556,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745180369095</updated>
     </task>
-    <option name="localTasksCounter" value="148" />
+    <task id="LOCAL-00148" summary="try to fix fetchers test 8">
+      <option name="closed" value="true" />
+      <created>1745181173434</created>
+      <option name="number" value="00148" />
+      <option name="presentableId" value="LOCAL-00148" />
+      <option name="project" value="LOCAL" />
+      <updated>1745181173434</updated>
+    </task>
+    <option name="localTasksCounter" value="149" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -583,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="remain only 2 errors (fixing)" />
     <MESSAGE value="remain only 2 errors (fixing) now 3 errors" />
     <MESSAGE value="fixed all tests!" />
     <MESSAGE value="added memore and rows calculation" />
@@ -608,6 +606,7 @@
     <MESSAGE value="try to fix fetchers test 5" />
     <MESSAGE value="try to fix fetchers test 6" />
     <MESSAGE value="try to fix fetchers test 7" />
-    <option name="LAST_COMMIT_MESSAGE" value="try to fix fetchers test 7" />
+    <MESSAGE value="try to fix fetchers test 8" />
+    <option name="LAST_COMMIT_MESSAGE" value="try to fix fetchers test 8" />
   </component>
 </project>
