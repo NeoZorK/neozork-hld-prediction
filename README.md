@@ -185,6 +185,17 @@ Based on comparisons using the `mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv` file:
     python run_analysis.py demo --rule PV
     ```
 
+* **  Fetch Binance data for BTC/USDT, M1 interval, specific dates
+* ** (Requires --point specified, API keys optional for public data)
+  ```bash
+    python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2024-04-01 --end 2024-04-18 --point 0.01
+  ```
+
+* ** Or using the ticker format 'btc/usdt'
+  ```bash
+  python run_analysis.py binance --ticker btc/usdt --interval M1 --start 2024-04-01 --end 2024-04-18 --point 0.01
+  ```
+
 * **Run using data from a CSV file:**
     ```bash
     # Replace path/to/your/data.csv and provide the correct point size
