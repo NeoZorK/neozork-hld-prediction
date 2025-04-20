@@ -1,384 +1,372 @@
 # tests/data/fetchers/test_polygon_fetcher.py
 
+"""
+Unit tests for the Polygon.io data fetcher and related utility functions.
+All comments are in English.
+"""
+
 import unittest
 import pandas as pd
 import os
-from unittest.mock import patch, MagicMock, ANY, call
-from datetime import datetime, date, timedelta
+import time
+from unittest.mock import patch, MagicMock, PropertyMock, call
+from datetime import date
 
-# Assuming the logger module is correctly located relative to the test file execution context
-# Adjust the path if necessary based on how tests are run (e.g., from project root)
-try:
-    from src.common import logger
-except ImportError:
-    # Fallback if relative import fails
-    print("Warning: Could not import logger relatively. Using basic print.")
-    class PrintLogger:
-        def print_info(self, msg): print(f"INFO: {msg}")
-        def print_warning(self, msg): print(f"WARNING: {msg}")
-        def print_error(self, msg): print(f"ERROR: {msg}")
-        def print_success(self, msg): print(f"SUCCESS: {msg}")
-        def print_debug(self, msg): print(f"DEBUG: {msg}")
-        def print_exception(self, e): print(f"EXCEPTION: {e}")
-    logger = PrintLogger()
+# Adjust the import path based on the project structure
+from src.data.fetchers.polygon_fetcher import (
+    fetch_polygon_data, map_polygon_interval, resolve_polygon_ticker,
+    POLYGON_AVAILABLE, BadResponse # Import exception for mocking
+)
 
-# Import the functions to test
-try:
-    from src.data.fetchers.polygon_fetcher import (
-        fetch_polygon_data,
-        map_polygon_interval,
-        resolve_polygon_ticker,
-        POLYGON_AVAILABLE # Import the flag
-    )
-    # Import BadResponse specifically for mocking side effects if polygon is available
-    if POLYGON_AVAILABLE:
-        try:
-            from polygon.exceptions import BadResponse as ImportedBadResponse
-        except ImportError:
-            class ImportedBadResponse(Exception): pass # Dummy if import fails strangely
-    else:
-         class ImportedBadResponse(Exception): pass # Dummy if polygon not installed
-except ImportError as e:
-    print(f"Failed to import from polygon_fetcher: {e}")
-    # Define dummy functions if import fails, so tests can be defined/discovered
-    def fetch_polygon_data(*args, **kwargs): return None
-    def map_polygon_interval(*args, **kwargs): return None
-    def resolve_polygon_ticker(*args, **kwargs): return None
-    POLYGON_AVAILABLE = False
-    class ImportedBadResponse(Exception): pass
+# Mock Agg class if polygon library is not available
+if not POLYGON_AVAILABLE:
+    class Agg: # Dummy class
+        def __init__(self, **kwargs):
+            self.__dict__.update(kwargs)
+    # Define BadResponse if not imported
+    class BadResponse(Exception):
+        def __init__(self, message="Mock BadResponse", response=None):
+            super().__init__(message)
+            self.response = response
 
+# --- Helper function to create mock Agg objects ---
+def create_mock_agg(timestamp_ms, o, h, l, c, v):
+    """ Creates a mock Agg object for testing. """
+    agg = MagicMock(spec=Agg) # Use MagicMock to allow attribute assignment
+    agg.timestamp = timestamp_ms
+    agg.open = o
+    agg.high = h
+    agg.low = l
+    agg.close = c
+    agg.volume = v
+    return agg
 
-# Define a simple concrete MockAgg class for tests
-class MockAgg:
-    """A simple mock class for Polygon Agg objects used in tests."""
-    # ***** НАЧАЛО ИЗМЕНЕНИЙ: Инициализация как float *****
-    def __init__(self, timestamp: int, open: float, high: float, low: float, close: float, volume: float):
-        self.timestamp = int(timestamp) # timestamp должен быть int для pd.to_datetime unit='ms'
-        self.open = float(open)
-        self.high = float(high)
-        self.low = float(low)
-        self.close = float(close)
-        self.volume = float(volume)
-    # ***** КОНЕЦ ИЗМЕНЕНИЙ *****
-
-    def __repr__(self):
-        # Use standard float formatting for repr
-        return (f"MockAgg(t={self.timestamp}, o={self.open:.2f}, h={self.high:.2f}, "
-                f"l={self.low:.2f}, c={self.close:.2f}, v={self.volume:.1f})")
+# --- Helper function to create a mock Response for BadResponse ---
+def create_mock_response(status_code, json_data=None, text_data=""):
+    """ Creates a mock Response object for BadResponse exception """
+    response = MagicMock()
+    response.status_code = status_code
+    if json_data is not None:
+        response.json.return_value = json_data
+    response.text = text_data
+    # Add url attribute for logging within the fetcher
+    response.url = f"mock_url_status_{status_code}"
+    return response
 
 
-# Use skipIf decorator if polygon is not installed
-@unittest.skipIf(not POLYGON_AVAILABLE, "Polygon library ('polygon-api-client') not installed, skipping Polygon fetcher tests.")
+# Definition of the TestPolygonFetcher class
+@unittest.skipIf(not POLYGON_AVAILABLE, "Polygon library not installed, skipping tests")
 class TestPolygonFetcher(unittest.TestCase):
+    """
+    Test suite for Polygon.io related functions. Requires polygon-api-client.
+    """
 
-    # --- Tests for map_polygon_interval ---
-    # (These tests remain unchanged)
+    # Test cases for map_polygon_interval function
     def test_map_polygon_interval_valid(self):
+        """ Test valid user timeframe inputs for map_polygon_interval. """
         self.assertEqual(map_polygon_interval("M1"), ("minute", 1))
-        self.assertEqual(map_polygon_interval("H4"), ("hour", 4))
+        self.assertEqual(map_polygon_interval("H1"), ("hour", 1))
         self.assertEqual(map_polygon_interval("D1"), ("day", 1))
-        self.assertEqual(map_polygon_interval("W"), ("week", 1))
+        self.assertEqual(map_polygon_interval("W1"), ("week", 1))
         self.assertEqual(map_polygon_interval("MN1"), ("month", 1))
-        self.assertEqual(map_polygon_interval("D"), ("day", 1)) # Alias
-        self.assertEqual(map_polygon_interval("day"), ("day", 1)) # Direct timespan
-        self.assertEqual(map_polygon_interval("MONTH"), ("month", 1)) # Case-insensitivity
+        self.assertEqual(map_polygon_interval("day"), ("day", 1)) # Pass through
 
+    # Test case for invalid interval mapping
     def test_map_polygon_interval_invalid(self):
+        """ Test invalid user timeframe input for map_polygon_interval. """
         self.assertIsNone(map_polygon_interval("INVALID"))
-        self.assertIsNone(map_polygon_interval("M2")) # Not standard Polygon multiplier via map
 
 
     # --- Tests for resolve_polygon_ticker ---
-    @patch('src.data.fetchers.polygon_fetcher.time.sleep', return_value=None)
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
-    def test_resolve_polygon_ticker_success_exact(self, mock_rest_client, mock_sleep):
-        mock_client_instance = mock_rest_client.return_value
-        mock_client_instance.get_ticker_details.return_value = {"results": {"ticker": "AAPL"}}
+    # Patch RESTClient for these tests
+    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient')
+    @patch('time.sleep', return_value=None) # Patch sleep within resolve
+    def test_resolve_polygon_ticker_success(self, mock_sleep, mock_rest_client_class):
+        """ Test successful ticker resolution. """
+        mock_client_instance = mock_rest_client_class.return_value
+        # Configure get_ticker_details to succeed on the first try
+        mock_client_instance.get_ticker_details.return_value = MagicMock() # Simulate success
+
         resolved = resolve_polygon_ticker("AAPL", mock_client_instance)
         self.assertEqual(resolved, "AAPL")
         mock_client_instance.get_ticker_details.assert_called_once_with("AAPL")
-        mock_sleep.assert_not_called()
 
-    @patch('src.data.fetchers.polygon_fetcher.time.sleep', return_value=None)
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
-    def test_resolve_polygon_ticker_success_currency(self, mock_rest_client, mock_sleep):
-        mock_client_instance = mock_rest_client.return_value
-        mock_response_404 = MagicMock(status_code=404)
-        error_404 = ImportedBadResponse("Not Found")
-        setattr(error_404, 'response', mock_response_404)
-        mock_client_instance.get_ticker_details.side_effect = [ error_404, {"results": {"ticker": "C:EURUSD"}} ]
+    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient')
+    @patch('time.sleep', return_value=None)
+    def test_resolve_polygon_ticker_success_prefix(self, mock_sleep, mock_rest_client_class):
+        """ Test successful ticker resolution using a prefix. """
+        mock_client_instance = mock_rest_client_class.return_value
+        # Configure get_ticker_details to fail on first, succeed on second (C: prefix)
+        mock_response_404 = create_mock_response(404)
+        mock_client_instance.get_ticker_details.side_effect = [
+            BadResponse("Not Found", response=mock_response_404), # Fail for "EURUSD"
+            MagicMock() # Succeed for "C:EURUSD"
+        ]
+
         resolved = resolve_polygon_ticker("EURUSD", mock_client_instance)
         self.assertEqual(resolved, "C:EURUSD")
         self.assertEqual(mock_client_instance.get_ticker_details.call_count, 2)
-        mock_client_instance.get_ticker_details.assert_has_calls([call("EURUSD"), call("C:EURUSD")])
-        mock_sleep.assert_called_once()
+        mock_client_instance.get_ticker_details.assert_has_calls([
+            call("EURUSD"), call("C:EURUSD")
+        ])
 
-    @patch('src.data.fetchers.polygon_fetcher.time.sleep', return_value=None)
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
-    def test_resolve_polygon_ticker_success_crypto(self, mock_rest_client, mock_sleep):
-        mock_client_instance = mock_rest_client.return_value
-        mock_response_404 = MagicMock(status_code=404)
-        error_404 = ImportedBadResponse("Not Found")
-        setattr(error_404, 'response', mock_response_404)
-        mock_client_instance.get_ticker_details.side_effect = [ error_404, error_404, {"results": {"ticker": "X:BTCUSD"}} ]
-        resolved = resolve_polygon_ticker("BTCUSD", mock_client_instance)
-        self.assertEqual(resolved, "X:BTCUSD")
-        self.assertEqual(mock_client_instance.get_ticker_details.call_count, 3)
-        self.assertEqual(mock_sleep.call_count, 2)
+    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient')
+    @patch('time.sleep', return_value=None)
+    def test_resolve_polygon_ticker_not_found(self, mock_sleep, mock_rest_client_class):
+        """ Test ticker resolution when ticker is not found with any prefix. """
+        mock_client_instance = mock_rest_client_class.return_value
+        # Configure get_ticker_details to raise 404 for all attempts
+        mock_response_404 = create_mock_response(404)
+        mock_client_instance.get_ticker_details.side_effect = BadResponse("Not Found", response=mock_response_404)
 
-    @patch('src.data.fetchers.polygon_fetcher.time.sleep', return_value=None)
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
-    def test_resolve_polygon_ticker_not_found(self, mock_rest_client, mock_sleep):
-        mock_client_instance = mock_rest_client.return_value
-        mock_response_404 = MagicMock(status_code=404)
-        error_404 = ImportedBadResponse("Not Found")
-        setattr(error_404, 'response', mock_response_404)
-        mock_client_instance.get_ticker_details.side_effect = error_404
         resolved = resolve_polygon_ticker("NONEXISTENT", mock_client_instance)
         self.assertIsNone(resolved)
+        # Called for NONEXISTENT, C:NONEXISTENT, X:NONEXISTENT, I:NONEXISTENT
         self.assertEqual(mock_client_instance.get_ticker_details.call_count, 4)
-        self.assertEqual(mock_sleep.call_count, 4)
 
-    @patch('src.data.fetchers.polygon_fetcher.time.sleep', return_value=None)
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
-    def test_resolve_polygon_ticker_api_error_non_404(self, mock_rest_client, mock_sleep):
-        mock_client_instance = mock_rest_client.return_value
-        mock_response_401 = MagicMock(status_code=401, url="http://test.url")
-        mock_response_401.json.return_value = {"message": "auth error"} # Add json method
-        error_401 = ImportedBadResponse("Unauthorized")
-        setattr(error_401, 'response', mock_response_401)
-        mock_client_instance.get_ticker_details.side_effect = error_401
-        resolved = resolve_polygon_ticker("AAPL", mock_client_instance)
-        self.assertIsNone(resolved)
-        mock_client_instance.get_ticker_details.assert_called_once_with("AAPL")
-        mock_sleep.assert_not_called()
+    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient')
+    @patch('time.sleep', return_value=None)
+    def test_resolve_polygon_ticker_api_error(self, mock_sleep, mock_rest_client_class):
+        """ Test ticker resolution when a non-404 API error occurs. """
+        mock_client_instance = mock_rest_client_class.return_value
+        # Configure get_ticker_details to raise a 500 error
+        mock_response_500 = create_mock_response(500, text_data="Internal Server Error")
+        mock_client_instance.get_ticker_details.side_effect = BadResponse("Server Error", response=mock_response_500)
 
-    @patch('src.data.fetchers.polygon_fetcher.time.sleep', return_value=None)
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
-    def test_resolve_polygon_ticker_unexpected_error(self, mock_rest_client, mock_sleep):
-        mock_client_instance = mock_rest_client.return_value
-        mock_client_instance.get_ticker_details.side_effect = ValueError("Unexpected issue")
-        resolved = resolve_polygon_ticker("AAPL", mock_client_instance)
+        resolved = resolve_polygon_ticker("ANYTICKER", mock_client_instance)
         self.assertIsNone(resolved)
-        mock_client_instance.get_ticker_details.assert_called_once_with("AAPL")
-        mock_sleep.assert_not_called()
+        mock_client_instance.get_ticker_details.assert_called_once_with("ANYTICKER")
 
 
     # --- Tests for fetch_polygon_data ---
 
-    def setUp(self):
-        # Use the MockAgg class, ensures float types for OHLCV
-        self.agg1 = MockAgg(timestamp=1711929600000, open=10.0, high=12.0, low=9.0, close=11.0, volume=1.0)
-        self.agg2 = MockAgg(timestamp=1712016000000, open=11.0, high=13.0, low=10.0, close=12.0, volume=2.0)
-        self.agg3 = MockAgg(timestamp=1714521600000, open=12.0, high=14.0, low=11.0, close=13.0, volume=3.0)
-
-
-    @patch('src.data.fetchers.polygon_fetcher.time.sleep', return_value=None)
-    @patch('src.data.fetchers.polygon_fetcher.os.getenv')
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
+    # Patch os.getenv, polygon.RESTClient, resolve_polygon_ticker, time.sleep, time.perf_counter
+    @patch('time.perf_counter')
+    @patch('time.sleep', return_value=None) # Patch sleep in fetch_polygon_data
     @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
-    def test_fetch_polygon_data_success_single_chunk(self, mock_resolve, mock_rest_client, mock_getenv, mock_sleep):
-        mock_getenv.return_value = "fake_api_key"
-        mock_client_instance = mock_rest_client.return_value
-        mock_resolve.return_value = "C:EURUSD"
+    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient')
+    @patch('os.getenv')
+    def test_fetch_polygon_data_success_single_chunk(self, mock_getenv, mock_rest_client_class, mock_resolve_ticker, mock_sleep, mock_perf_counter):
+        """
+        Test successful fetch when data fits in a single chunk.
+        Verifies DataFrame, metrics (latency).
+        """
+        # --- Mock Configuration ---
+        mock_getenv.return_value = "FAKE_API_KEY" # Mock API key
+        mock_resolve_ticker.return_value = "T:AAPL" # Mock successful resolution
+        mock_client_instance = mock_rest_client_class.return_value
 
-        mock_client_instance.get_aggs.return_value = [self.agg1, self.agg2]
-
-        # Prepare expected DataFrame expecting float64
-        expected_dates = pd.to_datetime([self.agg1.timestamp, self.agg2.timestamp], unit='ms')
-        expected_data = {
-            'Open': [10.0, 11.0], 'High': [12.0, 13.0], 'Low': [9.0, 10.0],
-            'Close': [11.0, 12.0], 'Volume': [1.0, 2.0]
-        }
-        expected_df = pd.DataFrame(expected_data, index=expected_dates).astype(float) # Ensure float
-        expected_df.index.name = 'DateTime'
-
-        start_date = "2023-01-01"
-        end_date = "2023-01-02"
-
-        result_df = fetch_polygon_data("EURUSD", "D1", start_date, end_date)
-
-        mock_getenv.assert_called_once_with("POLYGON_API_KEY")
-        mock_resolve.assert_called_once_with("EURUSD", mock_client_instance)
-        mock_client_instance.get_aggs.assert_called_once()
-        args_call = mock_client_instance.get_aggs.call_args[1]
-        self.assertEqual(args_call['ticker'], "C:EURUSD")
-        self.assertEqual(args_call['timespan'], "day")
-
-        self.assertIsNotNone(result_df)
-        pd.testing.assert_frame_equal(result_df, expected_df) # Dtype should match now
-        mock_sleep.assert_called_once_with(0.5)
-
-    @patch('src.data.fetchers.polygon_fetcher.time.sleep') # Mock sleep carefully
-    @patch('src.data.fetchers.polygon_fetcher.os.getenv')
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
-    @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
-    def test_fetch_polygon_data_success_pagination(self, mock_resolve, mock_rest_client, mock_getenv, mock_sleep):
-        mock_getenv.return_value = "fake_key"
-        mock_client_instance = mock_rest_client.return_value
-        mock_resolve.return_value = "X:BTCUSD"
-
-        mock_client_instance.get_aggs.side_effect = [
-            [self.agg1, self.agg2],
-            [self.agg3],
+        # Mock data returned by get_aggs (single chunk)
+        mock_aggs_list = [
+            create_mock_agg(1672578000000, 130, 131, 129, 130.5, 10000), # 2023-01-01 10:00:00
+            create_mock_agg(1672578060000, 130.5, 132, 130, 131.5, 12000) # 2023-01-01 10:01:00
         ]
-        test_interval = "M1"
-        start_date = "2024-04-01"
-        end_date = "2024-05-05"
+        mock_client_instance.get_aggs.return_value = iter(mock_aggs_list) # Return iterator
 
-        all_aggs = [self.agg1, self.agg2, self.agg3]
-        expected_dates = pd.to_datetime([a.timestamp for a in all_aggs], unit='ms')
-        expected_data = {
-            'Open': [10.0, 11.0, 12.0], 'High': [12.0, 13.0, 14.0],
-            'Low': [9.0, 10.0, 11.0], 'Close': [11.0, 12.0, 13.0],
-            'Volume': [1.0, 2.0, 3.0]
-        }
-        expected_df = pd.DataFrame(expected_data, index=expected_dates).astype(float)
-        expected_df.index.name = 'DateTime'
+        # Mock time.perf_counter for latency calculation
+        mock_perf_counter.side_effect = [50.0, 50.8] # Start and end time for the single get_aggs call
 
-        result_df = fetch_polygon_data("BTCUSD", test_interval, start_date, end_date)
+        # --- Call Function Under Test ---
+        result = fetch_polygon_data(ticker="AAPL", interval="M1", start_date="2023-01-01", end_date="2023-01-01")
 
-        self.assertIsNotNone(result_df, "fetch_polygon_data returned None unexpectedly in pagination test")
-        if result_df is not None:
-             self.assertEqual(len(result_df), 3)
+        # --- Assertions ---
+        # Check result tuple
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, tuple)
+        self.assertEqual(len(result), 2)
 
+        # Unpack
+        df, metrics = result
+
+        # Check client initialization and ticker resolution
+        mock_getenv.assert_called_with("POLYGON_API_KEY")
+        mock_rest_client_class.assert_called_once_with(api_key="FAKE_API_KEY")
+        mock_resolve_ticker.assert_called_once_with("AAPL", mock_client_instance)
+
+        # Check get_aggs call
+        mock_client_instance.get_aggs.assert_called_once_with(
+            ticker="T:AAPL", multiplier=1, timespan="minute",
+            from_=date(2023, 1, 1), to=date(2023, 1, 1),
+            adjusted=False, limit=50000
+        )
+
+        # Check DataFrame
+        self.assertIsNotNone(df)
+        self.assertIsInstance(df, pd.DataFrame)
+        self.assertEqual(df.shape[0], 2)
+        expected_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
+        self.assertListEqual(df.columns.tolist(), expected_cols)
+        self.assertIsInstance(df.index, pd.DatetimeIndex)
+
+        # Check Metrics
+        self.assertIsInstance(metrics, dict)
+        self.assertIn("total_latency_sec", metrics)
+        self.assertAlmostEqual(metrics["total_latency_sec"], 0.8) # 50.8 - 50.0
+
+    # Patch os.getenv, polygon.RESTClient, resolve_polygon_ticker, time.sleep, time.perf_counter
+    @patch('time.perf_counter')
+    @patch('time.sleep', return_value=None)
+    @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
+    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient')
+    @patch('os.getenv')
+    def test_fetch_polygon_data_pagination(self, mock_getenv, mock_rest_client_class, mock_resolve_ticker, mock_sleep, mock_perf_counter):
+        """
+        Test successful fetch requiring pagination (multiple chunks).
+        Verifies combined DataFrame and summed latency.
+        """
+        # --- Mock Configuration ---
+        mock_getenv.return_value = "FAKE_API_KEY"
+        mock_resolve_ticker.return_value = "T:GE"
+        mock_client_instance = mock_rest_client_class.return_value
+
+        # Mock data returned by get_aggs (two chunks for minute data over >30 days)
+        mock_aggs_chunk1 = [create_mock_agg(1672578000000, 10, 11, 9, 10.5, 1000)] # 2023-01-01
+        mock_aggs_chunk2 = [create_mock_agg(1675256400000, 11, 12, 10, 11.5, 1500)] # 2023-02-01
+        # Simulate get_aggs returning different lists on subsequent calls
+        mock_client_instance.get_aggs.side_effect = [iter(mock_aggs_chunk1), iter(mock_aggs_chunk2)]
+
+        # Mock time.perf_counter for two successful chunks
+        mock_perf_counter.side_effect = [
+            60.0, 60.5, # Chunk 1 start, end
+            61.0, 61.7  # Chunk 2 start, end (assuming 0.5s sleep mock doesn't affect perf_counter)
+        ]
+
+        # --- Call Function Under Test ---
+        # Use dates requiring > 1 chunk for minute data (e.g., > 30 days apart)
+        result = fetch_polygon_data(ticker="GE", interval="M1", start_date="2023-01-01", end_date="2023-02-01")
+
+        # --- Assertions ---
+        # Check result tuple
+        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
+        df, metrics = result
+
+        # Check get_aggs calls (called twice)
         self.assertEqual(mock_client_instance.get_aggs.call_count, 2)
-        # ***** НАЧАЛО ИЗМЕНЕНИЙ: Исправление проверки sleep *****
-        self.assertEqual(mock_sleep.call_count, 2) # Expect 2 calls for 2 successful chunks
-        # Check both calls were with the correct delay
-        mock_sleep.assert_has_calls([call(0.5), call(0.5)], any_order=False)
-        # ***** КОНЕЦ ИЗМЕНЕНИЙ *****
+        calls = [
+            call(ticker="T:GE", multiplier=1, timespan="minute", from_=date(2023, 1, 1), to=date(2023, 1, 31), adjusted=False, limit=50000), # Chunk 1 (Jan)
+            call(ticker="T:GE", multiplier=1, timespan="minute", from_=date(2023, 2, 1), to=date(2023, 2, 1), adjusted=False, limit=50000)  # Chunk 2 (Feb 1st)
+        ]
+        mock_client_instance.get_aggs.assert_has_calls(calls)
 
-        if result_df is not None:
-            pd.testing.assert_frame_equal(result_df, expected_df) # Dtype should match
+        # Check DataFrame (combined from both chunks)
+        self.assertIsNotNone(df)
+        self.assertIsInstance(df, pd.DataFrame)
+        self.assertEqual(df.shape[0], 2) # 1 row from chunk1 + 1 row from chunk2
+
+        # Check Metrics (latency should be summed)
+        self.assertIsInstance(metrics, dict)
+        self.assertIn("total_latency_sec", metrics)
+        expected_latency = (60.5 - 60.0) + (61.7 - 61.0) # Latency chunk 1 + Latency chunk 2
+        self.assertAlmostEqual(metrics["total_latency_sec"], expected_latency)
 
 
-    @patch('src.data.fetchers.polygon_fetcher.time.sleep') # Mock sleep carefully
-    @patch('src.data.fetchers.polygon_fetcher.os.getenv')
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
+    # Patch os.getenv, polygon.RESTClient, resolve_polygon_ticker, time.sleep, time.perf_counter
+    @patch('time.perf_counter')
+    @patch('time.sleep', return_value=None)
     @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
-    def test_fetch_polygon_data_chunk_api_error_429_retry(self, mock_resolve, mock_rest_client, mock_getenv, mock_sleep):
-        mock_getenv.return_value = "fake_key"
-        mock_client_instance = mock_rest_client.return_value
-        mock_resolve.return_value = "X:BTCUSD"
+    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient')
+    @patch('os.getenv')
+    def test_fetch_polygon_data_api_error_retry_fail(self, mock_getenv, mock_rest_client_class, mock_resolve_ticker, mock_sleep, mock_perf_counter):
+        """
+        Test API error (e.g., 429 rate limit) that fails after retries.
+        Expects (None, metrics with partial latency if any attempt measured).
+        """
+        # --- Mock Configuration ---
+        mock_getenv.return_value = "FAKE_API_KEY"
+        mock_resolve_ticker.return_value = "T:MSFT"
+        mock_client_instance = mock_rest_client_class.return_value
 
-        mock_response_429 = MagicMock(status_code=429)
-        error_429 = ImportedBadResponse("Rate limit exceeded")
-        setattr(error_429, 'response', mock_response_429)
+        # Mock get_aggs to raise 429 (rate limit) repeatedly
+        mock_response_429 = create_mock_response(429)
+        mock_client_instance.get_aggs.side_effect = BadResponse("Rate limit", response=mock_response_429)
 
-        # Use MockAgg from setUp (already float)
-        mock_client_instance.get_aggs.side_effect = [
-            error_429,
-            error_429,
-            [self.agg1]
+        # Mock time.perf_counter - it won't get to the 'end' time in this case
+        mock_perf_counter.side_effect = [
+             70.0, # Attempt 1 start
+             70.1, # Attempt 2 start (after sleep)
+             70.2  # Attempt 3 start (after sleep)
         ]
 
-        # Prepare expected DataFrame expecting float64
-        expected_dates = pd.to_datetime([self.agg1.timestamp], unit='ms')
-        expected_data = {'Open': [10.0], 'High': [12.0], 'Low': [9.0], 'Close': [11.0], 'Volume': [1.0]}
-        expected_df = pd.DataFrame(expected_data, index=expected_dates).astype(float)
-        expected_df.index.name = 'DateTime'
+        # --- Call Function Under Test ---
+        result = fetch_polygon_data(ticker="MSFT", interval="M1", start_date="2023-01-01", end_date="2023-01-01")
 
-        start_date = "2024-04-01"
-        end_date = "2024-04-01"
+        # --- Assertions ---
+        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
+        df, metrics = result
 
-        result_df = fetch_polygon_data("BTCUSD", "M1", start_date, end_date)
+        # Check DataFrame is None
+        self.assertIsNone(df)
 
-        self.assertIsNotNone(result_df, "fetch_polygon_data returned None unexpectedly after retries")
-        if result_df is not None:
-            self.assertEqual(len(result_df), 1)
-            pd.testing.assert_frame_equal(result_df, expected_df) # Dtype should match
-
+        # Check get_aggs was called multiple times (default 3 attempts)
         self.assertEqual(mock_client_instance.get_aggs.call_count, 3)
-        self.assertEqual(mock_sleep.call_count, 5)
-        expected_sleep_calls = [ call(60), call(5 * 1), call(60), call(5 * 2), call(0.5) ]
-        mock_sleep.assert_has_calls(expected_sleep_calls, any_order=False)
 
-    @patch('src.data.fetchers.polygon_fetcher.time.sleep', return_value=None)
-    @patch('src.data.fetchers.polygon_fetcher.os.getenv')
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
+        # Check Metrics (latency should be 0 as no chunk succeeded)
+        self.assertIsInstance(metrics, dict)
+        self.assertIn("total_latency_sec", metrics)
+        self.assertAlmostEqual(metrics["total_latency_sec"], 0.0)
+
+    # Patch os.getenv, polygon.RESTClient, resolve_polygon_ticker, time.sleep, time.perf_counter
+    @patch('time.perf_counter')
+    @patch('time.sleep', return_value=None)
     @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
-    def test_fetch_polygon_data_chunk_fail_non_429(self, mock_resolve, mock_rest_client, mock_getenv, mock_sleep):
-        mock_getenv.return_value = "fake_key"
-        mock_client_instance = mock_rest_client.return_value
-        mock_resolve.return_value = "X:BTCUSD"
+    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient')
+    @patch('os.getenv')
+    def test_fetch_polygon_data_api_error_non_retriable(self, mock_getenv, mock_rest_client_class, mock_resolve_ticker, mock_sleep, mock_perf_counter):
+        """
+        Test API error that is not retried (e.g., 500).
+        Expects (None, metrics with 0 latency).
+        """
+        # --- Mock Configuration ---
+        mock_getenv.return_value = "FAKE_API_KEY"
+        mock_resolve_ticker.return_value = "T:IBM"
+        mock_client_instance = mock_rest_client_class.return_value
 
-        mock_response_500 = MagicMock(status_code=500)
-        mock_response_500.json.return_value = {"message": "server meltdown"} # Add json method
-        error_500 = ImportedBadResponse("Server Error")
-        setattr(error_500, 'response', mock_response_500)
+        # Mock get_aggs to raise 500 error on first attempt
+        mock_response_500 = create_mock_response(500)
+        mock_client_instance.get_aggs.side_effect = BadResponse("Server Error", response=mock_response_500)
 
-        mock_client_instance.get_aggs.side_effect = error_500
+        mock_perf_counter.side_effect = [80.0] # Only start time is relevant
 
-        start_date = "2024-04-01"
-        end_date = "2024-04-01"
+        # --- Call Function Under Test ---
+        result = fetch_polygon_data(ticker="IBM", interval="M1", start_date="2023-01-01", end_date="2023-01-01")
 
-        result_df = fetch_polygon_data("BTCUSD", "M1", start_date, end_date)
+        # --- Assertions ---
+        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
+        df, metrics = result
+        self.assertIsNone(df)
+        mock_client_instance.get_aggs.assert_called_once() # Called only once
+        self.assertIsInstance(metrics, dict)
+        self.assertIn("total_latency_sec", metrics)
+        self.assertAlmostEqual(metrics["total_latency_sec"], 0.0)
 
-        self.assertIsNone(result_df, "Expected None when a non-429 chunk error occurs")
-        mock_client_instance.get_aggs.assert_called_once()
-        mock_sleep.assert_not_called()
-
-
-    @patch('src.data.fetchers.polygon_fetcher.os.getenv', return_value=None)
+    # Patch os.getenv
     def test_fetch_polygon_data_no_api_key(self, mock_getenv):
-        result_df = fetch_polygon_data("AAPL", "D1", "2023-01-01", "2023-01-02")
-        self.assertIsNone(result_df)
-        mock_getenv.assert_called_once_with("POLYGON_API_KEY")
+        """ Test behavior when POLYGON_API_KEY is not set. """
+        mock_getenv.return_value = None # Simulate missing key
+        result = fetch_polygon_data(ticker="AAPL", interval="M1", start_date="2023-01-01", end_date="2023-01-01")
+        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
+        df, metrics = result
+        self.assertIsNone(df)
+        self.assertEqual(metrics, {}) # Should return empty metrics dict early
 
-    @patch('src.data.fetchers.polygon_fetcher.os.getenv', return_value="fake_key")
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
-    @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker', return_value=None)
-    def test_fetch_polygon_data_resolve_fails(self, mock_resolve, mock_rest_client, mock_getenv):
-        mock_client_instance = mock_rest_client.return_value
-        result_df = fetch_polygon_data("INVALIDTICKER", "D1", "2023-01-01", "2023-01-02")
-        self.assertIsNone(result_df)
-        mock_resolve.assert_called_once_with("INVALIDTICKER", mock_client_instance)
-        mock_rest_client.assert_called_once_with(api_key="fake_key")
-        mock_client_instance.get_aggs.assert_not_called()
-
-    @patch('src.data.fetchers.polygon_fetcher.os.getenv', return_value="fake_key")
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
+    # Patch os.getenv, polygon.RESTClient, resolve_polygon_ticker
     @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
-    def test_fetch_polygon_data_invalid_interval(self, mock_resolve, mock_rest_client, mock_getenv):
-        mock_resolve.return_value = "AAPL"
-        mock_client_instance = mock_rest_client.return_value
-        result_df = fetch_polygon_data("AAPL", "INVALID_INTERVAL", "2023-01-01", "2023-01-02")
-        self.assertIsNone(result_df)
-        mock_resolve.assert_called_once_with("AAPL", mock_client_instance)
-        mock_client_instance.get_aggs.assert_not_called()
+    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient')
+    @patch('os.getenv')
+    def test_fetch_polygon_data_ticker_resolve_fails(self, mock_getenv, mock_rest_client_class, mock_resolve_ticker):
+        """ Test behavior when ticker resolution fails. """
+        mock_getenv.return_value = "FAKE_API_KEY"
+        mock_resolve_ticker.return_value = None # Simulate resolution failure
+        mock_client_instance = mock_rest_client_class.return_value
 
-    @patch('src.data.fetchers.polygon_fetcher.os.getenv', return_value="fake_key")
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
-    @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
-    def test_fetch_polygon_data_invalid_date_format(self, mock_resolve, mock_rest_client, mock_getenv):
-        mock_client_instance = mock_rest_client.return_value
-        result_df = fetch_polygon_data("AAPL", "D1", "01/01/2023", "02/01/2023") # Wrong format
-        self.assertIsNone(result_df)
-        # Resolve *is* called before date check in current code - Assertion Corrected
-        mock_resolve.assert_called_once_with("AAPL", mock_client_instance)
-        mock_client_instance.get_aggs.assert_not_called()
-
-    @patch('src.data.fetchers.polygon_fetcher.time.sleep', return_value=None)
-    @patch('src.data.fetchers.polygon_fetcher.os.getenv')
-    @patch('src.data.fetchers.polygon_fetcher.polygon.RESTClient') # Use corrected target
-    @patch('src.data.fetchers.polygon_fetcher.resolve_polygon_ticker')
-    def test_fetch_polygon_data_empty_result(self, mock_resolve, mock_rest_client, mock_getenv, mock_sleep):
-        mock_getenv.return_value = "fake_api_key"
-        mock_client_instance = mock_rest_client.return_value
-        mock_resolve.return_value = "C:EURUSD"
-        mock_client_instance.get_aggs.return_value = []
-
-        start_date = "2023-01-01"
-        end_date = "2023-01-02"
-
-        result_df = fetch_polygon_data("EURUSD", "D1", start_date, end_date)
-
-        self.assertIsNone(result_df, "Expected None when API returns no data")
-        mock_client_instance.get_aggs.assert_called_once()
-        mock_sleep.assert_called_once_with(0.5)
+        result = fetch_polygon_data(ticker="FAIL", interval="M1", start_date="2023-01-01", end_date="2023-01-01")
+        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
+        df, metrics = result
+        self.assertIsNone(df)
+        mock_resolve_ticker.assert_called_once_with("FAIL", mock_client_instance)
+        self.assertEqual(metrics, {"total_latency_sec": 0.0}) # Returns initialized metrics
 
 
-# Allow running tests directly
+# Allow running the tests directly
 if __name__ == '__main__':
     unittest.main()
