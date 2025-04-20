@@ -1,4 +1,4 @@
-# src/data/fetchers/binance_fetcher.py # CORRECTED
+# NeoZorK HLD/src/data/fetchers/binance_fetcher.py (CORRECTED V3 - Retry Logic Fixed)
 
 """
 Contains functions related to fetching data from Binance Spot API.
@@ -62,6 +62,7 @@ def map_binance_ticker(ticker_input: str) -> str:
 
 # Definition of fetch_binance_data function
 # MODIFIED: Return type is now tuple[pd.DataFrame | None, dict]
+# MODIFIED: Retry logic fully corrected
 def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: str) -> tuple[pd.DataFrame | None, dict]:
     """
     Downloads OHLCV data from Binance Spot API for a specified date range.
@@ -78,8 +79,9 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
 
     # --- Map Ticker and Interval ---
     binance_ticker = map_binance_ticker(ticker)
-    binance_interval = map_binance_interval(interval)
-    if binance_interval is None: return None, metrics
+    # Store the *string* representation returned by map_binance_interval
+    binance_interval_str = map_binance_interval(interval)
+    if binance_interval_str is None: return None, metrics
 
     # --- Get API Key/Secret (Optional) ---
     api_key = os.getenv("BINANCE_API_KEY")
@@ -91,10 +93,6 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     try:
         client = BinanceClient(api_key=api_key, api_secret=api_secret)
         logger.print_debug("Binance client initialized.")
-        # Optional: Test connection if keys are provided
-        # if api_key and api_secret:
-        #     client.ping() # Ping might require authenticated client? Test this.
-        #     logger.print_debug("Binance API ping successful.")
     except Exception as e:
         logger.print_error(f"Failed to initialize Binance client: {type(e).__name__}: {e}")
         return None, metrics
@@ -103,7 +101,6 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     try:
         start_dt_obj = datetime.strptime(start_date, '%Y-%m-%d')
         end_dt_obj = datetime.strptime(end_date, '%Y-%m-%d')
-        # Ensure end date includes the full day for Binance API
         end_dt_inclusive = end_dt_obj + timedelta(days=1) - timedelta(milliseconds=1)
         start_ms = int(start_dt_obj.timestamp() * 1000)
         end_ms = int(end_dt_inclusive.timestamp() * 1000)
@@ -114,39 +111,39 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
 
     # --- Pagination Logic for Binance get_historical_klines ---
     all_klines_raw = []
-    limit_per_request = 1000 # Binance API limit
+    limit_per_request = 1000
     current_start_ms = start_ms
     max_attempts_per_chunk = 5
-    request_delay_sec = 0.15 # Be polite, adjust if rate limits hit (~6-7 req/sec allowed typically)
+    request_delay_sec = 0.15
 
-    logger.print_info(f"Fetching Binance klines in chunks for '{binance_ticker}' ({binance_interval})...")
+    logger.print_info(f"Fetching Binance klines in chunks for '{binance_ticker}' ({binance_interval_str})...")
 
     while current_start_ms <= end_ms:
         logger.print_debug(f"  Fetching chunk starting from {datetime.fromtimestamp(current_start_ms / 1000)}")
         attempt = 0
-        success = False
-        klines_chunk = None
-        chunk_latency = 0 # Track latency for this attempt
+        chunk_latency = 0
+        klines_chunk = None # Initialize klines_chunk here for the outer loop
 
-        while attempt < max_attempts_per_chunk and not success:
+        while attempt < max_attempts_per_chunk: # Loop for retries
             attempt += 1
-            wait_time = 0 # Reset wait time for each attempt
+            wait_time = 0
+            success = False # Reset success flag for each attempt
+
             try:
-                # Measure time for the API call
                 start_chunk_time = time.perf_counter()
                 klines_chunk = client.get_historical_klines(
                     symbol=binance_ticker,
-                    interval=binance_interval,
+                    interval=binance_interval_str, # Use the string interval
                     start_str=str(current_start_ms),
-                    end_str=str(end_ms), # Pass overall end time
+                    end_str=str(end_ms),
                     limit=limit_per_request
                 )
                 end_chunk_time = time.perf_counter()
                 chunk_latency = end_chunk_time - start_chunk_time
-                success = True # Mark successful if no exception
-                metrics["total_latency_sec"] += chunk_latency # Add latency of successful attempt
+                success = True # Mark as successful
+                metrics["total_latency_sec"] += chunk_latency
                 logger.print_debug(f"    Chunk fetch attempt {attempt} successful ({chunk_latency:.3f} sec).")
-
+                break # --- Exit retry loop on SUCCESS ---
 
             except (BinanceAPIException, BinanceRequestException) as e:
                 logger.print_error(f"    Binance API Error on chunk attempt {attempt}/{max_attempts_per_chunk}: Status={getattr(e, 'status_code', 'N/A')}, Code={getattr(e, 'code', 'N/A')}, Msg={e}")
@@ -155,56 +152,59 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
 
                 if status_code == 429: wait_time = 60; logger.print_warning(f"      Rate limit likely hit (HTTP {status_code}). Waiting {wait_time} seconds...")
                 elif status_code == 418: wait_time = 120; logger.print_warning(f"      IP ban likely (HTTP {status_code}). Waiting {wait_time} seconds...")
-                elif error_code == -1121: # Invalid symbol
-                     logger.print_error(f"      Invalid symbol '{binance_ticker}' reported by Binance API. Stopping fetch.")
-                     return None, metrics # Cannot recover
-                else: # Other API errors
+                elif error_code == -1121:
+                    logger.print_error(f"      Invalid symbol '{binance_ticker}' reported by Binance API. Stopping fetch.")
+                    # --- Break retry loop and return None for Invalid Symbol ---
+                    return None, metrics # Exit function entirely
+                else:
                     logger.print_error(f"      Non-retriable or unknown API error. Skipping chunk fetch.")
-                    break # Break inner retry loop
+                    # --- Break retry loop for other non-retriable API errors ---
+                    break # Exit the inner retry loop
 
-                if wait_time > 0:
-                    time.sleep(wait_time)
-                    continue # Go to next attempt without breaking inner loop
-
-                break # Break inner retry loop if no specific wait condition met
-
-            # noinspection PyBroadException
             except Exception as e:
                 logger.print_error(f"    Unexpected error during Binance chunk fetch attempt {attempt}/{max_attempts_per_chunk}: {type(e).__name__}: {e}")
                 logger.print_error(f"Traceback:\n{traceback.format_exc()}")
                 logger.print_error(f"    Skipping chunk fetch due to unexpected error.")
-                break # Break inner retry loop
+                # --- Break retry loop for unexpected errors ---
+                break # Exit the inner retry loop
 
-            # Backoff only if an error occurred and more retries are left
-            if not success and attempt < max_attempts_per_chunk:
+            # --- Wait if needed (for retriable errors like 429/418) ---
+            if wait_time > 0 and attempt < max_attempts_per_chunk:
+                time.sleep(wait_time)
+                # --- Continue to next attempt in the inner retry loop ---
+                continue # Explicitly continue to the next attempt
+
+            # --- Backoff only if an error occurred, we didn't already wait, and more retries are left ---
+            if not success and wait_time == 0 and attempt < max_attempts_per_chunk:
                 backoff_time = 3 * attempt
                 logger.print_info(f"    Retrying chunk in {backoff_time} seconds...")
                 time.sleep(backoff_time)
+                # --- Continue to next attempt in the inner retry loop ---
+                continue # Explicitly continue to the next attempt
 
-        # --- After attempting a chunk ---
+        # --- After attempting a chunk (inner loop finished or broken) ---
         if not success:
             logger.print_error(f"Failed to fetch Binance chunk starting {datetime.fromtimestamp(current_start_ms / 1000)} after {max_attempts_per_chunk} attempts. Stopping.")
-            return None, metrics # Stop fetching if a chunk fails
+            # --- Return None if all retry attempts failed ---
+            return None, metrics
 
+        # --- Process successful chunk ---
         if not klines_chunk:
             logger.print_debug("  Received empty kline chunk, assuming end of data range reached.")
-            break
+            break # Exit outer pagination loop
 
         all_klines_raw.extend(klines_chunk)
         logger.print_debug(f"    Fetched {len(klines_chunk)} klines.")
 
-        # Update start time for the next chunk
         last_kline_time_ms = klines_chunk[-1][0]
-        current_start_ms = last_kline_time_ms + 1 # +1 ms to avoid overlap
+        current_start_ms = last_kline_time_ms + 1
 
-        # Break if the last chunk was smaller than the limit
         if len(klines_chunk) < limit_per_request:
              logger.print_debug("  Received less than limit, assuming end of data for range.")
-             break
+             break # Exit outer pagination loop
 
-        # Be polite to the API (only if more requests are expected)
         if current_start_ms <= end_ms:
-             time.sleep(request_delay_sec)
+             time.sleep(request_delay_sec) # Delay before next pagination request
 
     # --- Combine and Process All Fetched Data ---
     if not all_klines_raw:
@@ -232,17 +232,13 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
     for col in ohlcv_cols:
         df[col] = pd.to_numeric(df[col], errors='coerce')
 
-    # Drop rows with NaN in OHLC only (Volume can be 0)
     df.dropna(subset=['Open', 'High', 'Low', 'Close'], inplace=True)
 
-    # Select and potentially rename standard columns
-    # Current column names already match standard, so just select
     if not all(col in df.columns for col in ohlcv_cols):
         logger.print_error(f"Internal error: Required OHLCV columns not found after processing Binance data. Found: {df.columns.tolist()}")
         return None, metrics
-    df = df[ohlcv_cols] # Ensure only these columns remain
+    df = df[ohlcv_cols]
 
-    # Remove duplicates
     initial_rows = len(df)
     df = df[~df.index.duplicated(keep='first')]
     rows_dropped = initial_rows - len(df)
@@ -257,5 +253,4 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
 
     logger.print_success(f"Successfully fetched and processed {len(df)} rows from Binance for '{binance_ticker}'.")
     logger.print_debug(f"Total Binance API call latency (sum of successful chunks): {metrics['total_latency_sec']:.3f} seconds")
-    # Return DataFrame and metrics
     return df, metrics

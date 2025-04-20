@@ -7,9 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="try to fix fetchers test 2">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="try to fix fetchers test 3">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/data/fetchers/test_polygon_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/fetchers/test_polygon_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/binance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/binance_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/workflow/workflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/workflow/workflow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/data/fetchers/test_binance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/fetchers/test_binance_fetcher.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/workflow/test_reporting.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/workflow/test_reporting.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -163,14 +165,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00094" summary="fix tests">
-      <option name="closed" value="true" />
-      <created>1744989460568</created>
-      <option name="number" value="00094" />
-      <option name="presentableId" value="LOCAL-00094" />
-      <option name="project" value="LOCAL" />
-      <updated>1744989460568</updated>
     </task>
     <task id="LOCAL-00095" summary="fix tests">
       <option name="closed" value="true" />
@@ -556,7 +550,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745176800427</updated>
     </task>
-    <option name="localTasksCounter" value="143" />
+    <task id="LOCAL-00143" summary="try to fix fetchers test 3">
+      <option name="closed" value="true" />
+      <created>1745177738185</created>
+      <option name="number" value="00143" />
+      <option name="presentableId" value="LOCAL-00143" />
+      <option name="project" value="LOCAL" />
+      <updated>1745177738185</updated>
+    </task>
+    <option name="localTasksCounter" value="144" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -583,7 +585,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixing binance and polygon modules 1" />
     <MESSAGE value="fixing binance and polygon modules 2" />
     <MESSAGE value="only 3 tests remain for polygon fixing" />
     <MESSAGE value="last try to fix 1" />
@@ -608,6 +609,7 @@
     <MESSAGE value="fix 3 fetchers" />
     <MESSAGE value="try to fix fetchers test 1" />
     <MESSAGE value="try to fix fetchers test 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="try to fix fetchers test 2" />
+    <MESSAGE value="try to fix fetchers test 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="try to fix fetchers test 3" />
   </component>
 </project>
