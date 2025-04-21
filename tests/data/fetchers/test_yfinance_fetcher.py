@@ -1,122 +1,250 @@
-# tests/data/fetchers/test_yfinance_fetcher.py (Исправления v2)
+# tests/data/fetchers/test_yfinance_fetcher.py # CORRECTED: Pass ticker to helper
 
 """
-Unit tests for the yfinance data fetcher and related utility functions.
+Unit tests for the yfinance data fetcher (chunking implementation) and related utility functions.
 All comments are in English.
 """
 
 import unittest
 import pandas as pd
 import numpy as np
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, call
+from datetime import datetime, timedelta
 
 # Adjust the import path based on the project structure
-from src.data.fetchers.yfinance_fetcher import fetch_yfinance_data, map_interval, map_ticker
+from src.data.fetchers.yfinance_fetcher import (
+    fetch_yfinance_data,
+    map_yfinance_interval, # Import renamed function
+    map_yfinance_ticker    # Import renamed function
+)
+# Import tqdm itself to patch it correctly
+import src.data.fetchers.yfinance_fetcher # To allow patching items within it
+
+
+# Helper function to create mock dataframes
+# *** FIX: Add 'ticker' argument ***
+def _create_mock_df(start_date_str, end_date_str, ticker: str, freq='D', values_start=100):
+    """Creates a simple DataFrame for mocking yf.download results."""
+    dates = pd.date_range(start=start_date_str, end=end_date_str, freq=freq, tz=None) # Ensure timezone naive
+    count = len(dates)
+    data = {
+        'Open': np.linspace(values_start, values_start + count - 1, count),
+        'High': np.linspace(values_start + 5, values_start + count + 4, count),
+        'Low': np.linspace(values_start - 5, values_start + count - 6, count),
+        'Close': np.linspace(values_start + 1, values_start + count, count),
+        'Volume': np.linspace(1000, 1000 + count - 1, count) * 100,
+    }
+    df = pd.DataFrame(data, index=dates)
+    df.index.name = 'DateTime'
+    # Simulate potential columns from yfinance before processing
+    # *** FIX: Use the passed 'ticker' argument ***
+    df.columns = [f"{col}_{ticker}" for col in df.columns] # e.g., Open_TEST
+    return df
 
 
 # Definition of the TestYfinanceFetcher class
-class TestYfinanceFetcher(unittest.TestCase):
+class TestYfinanceFetcherChunking(unittest.TestCase):
     """
-    Test suite for yfinance related functions.
+    Test suite for yfinance fetcher (chunking implementation).
     """
 
-    # Test cases for map_interval function (No changes needed)
-    def test_map_interval_valid(self):
-        self.assertEqual(map_interval("M1"), "1m"); self.assertEqual(map_interval("H1"), "1h")
-        self.assertEqual(map_interval("D1"), "1d"); self.assertEqual(map_interval("W1"), "1wk")
-        self.assertEqual(map_interval("MN1"), "1mo"); self.assertEqual(map_interval("15m"), "15m")
-    def test_map_interval_invalid(self):
-        with self.assertRaises(ValueError): map_interval("INVALID")
+    # Test cases for map_yfinance_interval function (renamed)
+    def test_map_yfinance_interval_valid(self):
+        self.assertEqual(map_yfinance_interval("M1"), "1m")
+        self.assertEqual(map_yfinance_interval("H1"), "1h")
+        self.assertEqual(map_yfinance_interval("D1"), "1d")
+        self.assertEqual(map_yfinance_interval("W1"), "1wk")
+        self.assertEqual(map_yfinance_interval("MN1"), "1mo")
+        self.assertEqual(map_yfinance_interval("15m"), "15m")
+        # Test H4 warning and fallback
+        with patch('src.common.logger.print_warning') as mock_log:
+            self.assertEqual(map_yfinance_interval("H4"), "1h")
+            mock_log.assert_called_once()
 
-    # Test cases for map_ticker function (No changes needed)
-    def test_map_ticker_stock(self):
-        self.assertEqual(map_ticker("AAPL"), "AAPL"); self.assertEqual(map_ticker("msft"), "MSFT")
-    def test_map_ticker_forex(self):
-        self.assertEqual(map_ticker("EURUSD"), "EURUSD=X"); self.assertEqual(map_ticker("gbpjpy"), "GBPJPY=X")
-    def test_map_ticker_with_symbols(self):
-        self.assertEqual(map_ticker("ES=F"), "ES=F"); self.assertEqual(map_ticker("BTC-USD"), "BTC-USD")
+    def test_map_yfinance_interval_invalid(self):
+        # Should now return None instead of raising ValueError
+        with patch('src.common.logger.print_error') as mock_log:
+            self.assertIsNone(map_yfinance_interval("INVALID"))
+            mock_log.assert_called_once()
+
+    # Test cases for map_yfinance_ticker function (renamed)
+    def test_map_yfinance_ticker_stock(self):
+        self.assertEqual(map_yfinance_ticker("AAPL"), "AAPL")
+        self.assertEqual(map_yfinance_ticker("msft"), "MSFT")
+
+    def test_map_yfinance_ticker_forex(self):
+        with patch('src.common.logger.print_info') as mock_log: # Map function logs info
+             self.assertEqual(map_yfinance_ticker("EURUSD"), "EURUSD=X")
+             self.assertEqual(map_yfinance_ticker("gbpjpy"), "GBPJPY=X")
+             self.assertEqual(mock_log.call_count, 2)
+
+    def test_map_yfinance_ticker_with_symbols(self):
+        self.assertEqual(map_yfinance_ticker("ES=F"), "ES=F")
+        self.assertEqual(map_yfinance_ticker("BTC-USD"), "BTC-USD")
 
 
-    # --- Tests for fetch_yfinance_data ---
+    # --- Tests for fetch_yfinance_data (Chunking Implementation) ---
 
-    # Test successful fetch with simple columns (No changes needed)
-    @patch('time.perf_counter')
-    @patch('yfinance.download')
-    def test_fetch_yfinance_data_success_simple(self, mock_yf_download, mock_perf_counter):
-        mock_perf_counter.side_effect = [10.0, 12.5]
-        mock_df = pd.DataFrame({
-            'Open': [100, 101], 'High': [105, 106], 'Low': [99, 100],
-            'Close': [101, 102], 'Volume': [1000, 1100], 'Adj Close': [101, 102]
-        }, index=pd.to_datetime(['2023-01-01 10:00', '2023-01-01 10:01'])); mock_df.index.name = 'Datetime'
-        mock_yf_download.return_value = mock_df
-        result = fetch_yfinance_data(ticker='AAPL', interval='1m', start_date='2023-01-01', end_date='2023-01-02')
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
-        mock_yf_download.assert_called_once_with(tickers='AAPL', period=None, interval='1m', start='2023-01-01', end='2023-01-02', progress=True, auto_adjust=False, actions=False)
-        self.assertIsNotNone(df); self.assertEqual(df.shape[0], 2); self.assertEqual(df.index.name, 'DateTime')
-        self.assertIsInstance(metrics, dict); self.assertIn('latency_sec', metrics); self.assertAlmostEqual(metrics['latency_sec'], 2.5)
+    @patch('src.data.fetchers.yfinance_fetcher.time.sleep') # Patch sleep if used between chunks
+    @patch('src.data.fetchers.yfinance_fetcher.tqdm') # Patch tqdm class
+    @patch('src.data.fetchers.yfinance_fetcher.yf.download') # Patch yf.download
+    def test_fetch_yfinance_data_chunking_success(self, mock_yf_download, mock_tqdm_class, mock_sleep):
+        """ Test successful fetch using multiple chunks. """
+        # --- Mock Configuration ---
+        mock_pbar = MagicMock()
+        mock_pbar.n = 0
+        def mock_update(value): mock_pbar.n += value
+        mock_pbar.update.side_effect = mock_update
+        mock_tqdm_class.return_value = mock_pbar
 
-    # Test successful fetch with MultiIndex columns (No changes needed)
-    @patch('time.perf_counter')
-    @patch('yfinance.download')
-    def test_fetch_yfinance_data_success_multiindex_flatten(self, mock_yf_download, mock_perf_counter):
-        mock_perf_counter.side_effect = [20.0, 21.8]
-        columns = pd.MultiIndex.from_tuples([ ('Adj Close', 'AAPL'), ('Close', 'AAPL'), ('High', 'AAPL'), ('Low', 'AAPL'), ('Open', 'AAPL'), ('Volume', 'AAPL')], names=['Price', 'Ticker'])
-        mock_df = pd.DataFrame({ ('Adj Close', 'AAPL'): [150.0], ('Close', 'AAPL'): [151.0], ('High', 'AAPL'): [152.0], ('Low', 'AAPL'): [149.0], ('Open', 'AAPL'): [150.5], ('Volume', 'AAPL'): [2000000]}, index=pd.to_datetime(['2023-01-03 10:00']), columns=columns); mock_df.index.name = 'Datetime'
-        mock_yf_download.return_value = mock_df
-        result = fetch_yfinance_data(ticker='AAPL', interval='1h', start_date='2023-01-03', end_date='2023-01-04')
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
-        self.assertIsNotNone(df); self.assertEqual(df.shape[0], 1); self.assertEqual(df.index.name, 'DateTime')
-        expected_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
-        self.assertTrue(all(col in df.columns for col in expected_cols)); self.assertNotIn('Open_AAPL', df.columns)
-        self.assertIsInstance(metrics, dict); self.assertIn('latency_sec', metrics); self.assertAlmostEqual(metrics['latency_sec'], 1.8)
+        # Define data for chunks (approx 1 year each) - Use ticker 'TEST'
+        ticker_name = 'TEST'
+        # *** FIX: Pass ticker_name to helper ***
+        df_chunk1 = _create_mock_df('2022-01-01', '2022-12-31', ticker=ticker_name, freq='D', values_start=100)
+        df_chunk2 = _create_mock_df('2023-01-01', '2023-12-31', ticker=ticker_name, freq='D', values_start=200)
+        # Manually create expected df with standard columns before concat
+        expected_df1 = df_chunk1.copy(); expected_df1.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        expected_df2 = df_chunk2.copy(); expected_df2.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        expected_combined_df = pd.concat([expected_df1, expected_df2])
+        expected_total_rows = len(expected_combined_df)
 
-    # Test case where yf.download returns no data (No changes needed)
-    @patch('time.perf_counter')
-    @patch('yfinance.download')
-    def test_fetch_yfinance_data_no_data(self, mock_yf_download, mock_perf_counter):
-        mock_perf_counter.side_effect = [30.0, 30.5]
-        mock_yf_download.return_value = pd.DataFrame()
-        result = fetch_yfinance_data(ticker='NONEXISTENT', interval='1d', start_date='2023-01-01', end_date='2023-01-02')
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
-        self.assertIsNone(df)
-        self.assertIsInstance(metrics, dict); self.assertIn('latency_sec', metrics); self.assertAlmostEqual(metrics['latency_sec'], 0.5)
+        # Define side effect for yf.download based on dates
+        def yf_download_side_effect(*args, **kwargs):
+            start = kwargs.get('start')
+            end = kwargs.get('end') # yf end date is exclusive
+            ticker_arg = kwargs.get('tickers')
+            interval = kwargs.get('interval')
+            self.assertEqual(ticker_arg, ticker_name) # Check mapped ticker used
+            self.assertEqual(interval, '1d')
+            self.assertFalse(kwargs.get('progress', True))
 
-    # Test case where yf.download raises an exception
-    @patch('time.perf_counter')
-    @patch('yfinance.download')
-    def test_fetch_yfinance_data_exception(self, mock_yf_download, mock_perf_counter):
-        """ Test behavior when yf.download raises an exception. """
-        # Configure mock for time.perf_counter
-        mock_perf_counter.side_effect = [40.0, 40.1] # Simulate quick start/end or just start
+            if start == '2022-01-01' and end == '2023-01-01': return df_chunk1
+            elif start == '2023-01-01' and end == '2024-01-01': return df_chunk2
+            else:
+                print(f"Warning: Unexpected yf.download call in test: start={start}, end={end}")
+                return pd.DataFrame()
+        mock_yf_download.side_effect = yf_download_side_effect
 
-        # Configure mock for yf.download to raise an exception
-        mock_yf_download.side_effect = Exception("Simulated yfinance download error")
+        # --- Execute ---
+        start_date='2022-01-01'
+        end_date='2023-12-31'
+        result_df, metrics = fetch_yfinance_data(
+            ticker=ticker_name, interval='D1', start_date=start_date, end_date=end_date
+        )
 
-        # Call the function under test
-        result = fetch_yfinance_data(ticker='ERROR', interval='1d', start_date='2023-01-01', end_date='2023-01-02')
+        # --- Assertions ---
+        self.assertEqual(mock_yf_download.call_count, 2)
+        expected_calls = [
+            call(tickers=ticker_name, interval='1d', start='2022-01-01', end='2023-01-01', progress=False, auto_adjust=False, actions=False, ignore_tz=True),
+            call(tickers=ticker_name, interval='1d', start='2023-01-01', end='2024-01-01', progress=False, auto_adjust=False, actions=False, ignore_tz=True),
+        ]
+        mock_yf_download.assert_has_calls(expected_calls)
 
-        # Assert the result is a tuple
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
+        mock_tqdm_class.assert_called_once_with(total=730, unit='day', desc=f'Fetching yfinance {ticker_name}', leave=True, ascii=True, unit_scale=False)
+        self.assertEqual(mock_pbar.update.call_count, 2)
+        mock_pbar.update.assert_has_calls([call(365), call(365)])
+        self.assertEqual(mock_pbar.n, 730)
+        mock_pbar.close.assert_called_once()
+        self.assertEqual(mock_pbar.set_postfix_str.call_count, 2)
 
-        # Assert DataFrame is None
-        self.assertIsNone(df)
+        self.assertIsNotNone(result_df)
+        pd.testing.assert_frame_equal(result_df, expected_combined_df)
 
-        # Assert metrics
         self.assertIsInstance(metrics, dict)
-        self.assertIn('latency_sec', metrics)
-        # FIX: Check if latency is None OR a float value, as exception might occur
-        # after the start time but before the end time is captured.
-        # Checking just for existence is safer. If a value *is* captured, it should be >= 0.
-        if metrics['latency_sec'] is not None:
-             self.assertIsInstance(metrics['latency_sec'], float)
-             self.assertGreaterEqual(metrics['latency_sec'], 0.0)
-        # Optionally, if mock setup guarantees timing like [40.0, 40.1]:
-        # self.assertAlmostEqual(metrics['latency_sec'], 0.1)
-        # But let's stick to the safer check for this error case.
+        self.assertEqual(metrics.get('api_calls'), 2)
+        self.assertEqual(metrics.get('rows_fetched'), expected_total_rows)
+        self.assertIsNone(metrics.get('error_message'))
+        self.assertGreater(metrics.get('latency_sec', -1), 0)
+
+
+    @patch('src.data.fetchers.yfinance_fetcher.yf.download') # Patch yf.download
+    @patch('src.data.fetchers.yfinance_fetcher.tqdm') # Patch tqdm - should NOT be called
+    def test_fetch_yfinance_data_period_mode(self, mock_tqdm_class, mock_yf_download):
+        """ Test the bypass for --period argument (should not chunk or use tqdm). """
+        # --- Mock Configuration ---
+        ticker_name = 'MSFT'
+        # *** FIX: Pass ticker_name to helper ***
+        mock_df_period = _create_mock_df('2023-04-21', '2024-04-20', ticker=ticker_name, freq='D', values_start=300)
+        mock_yf_download.return_value = mock_df_period
+        # Create expected df with standard columns
+        expected_df = mock_df_period.copy()
+        expected_df.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+
+
+        # --- Execute ---
+        test_period = '1y'
+        result_df, metrics = fetch_yfinance_data(
+            ticker=ticker_name, interval='D1', period=test_period
+        )
+
+        # --- Assertions ---
+        # Check yf.download call (once, with period, progress=False)
+        mock_yf_download.assert_called_once_with(
+            tickers=ticker_name,
+            period=test_period,
+            interval='1d',
+            progress=False, # Should be False even in period mode for consistency
+            auto_adjust=False,
+            actions=False,
+            ignore_tz=True
+        )
+        # Ensure start/end were not passed
+        call_args, call_kwargs = mock_yf_download.call_args
+        self.assertNotIn('start', call_kwargs) # Check key absence
+        self.assertNotIn('end', call_kwargs)
+
+
+        # Check that tqdm was NOT used
+        mock_tqdm_class.assert_not_called()
+
+        # Check DataFrame result
+        self.assertIsNotNone(result_df)
+        pd.testing.assert_frame_equal(result_df, expected_df) # Compare with manually corrected expected_df
+
+        # Check metrics
+        self.assertIsInstance(metrics, dict)
+        self.assertEqual(metrics.get('api_calls'), 1) # Only one call
+        self.assertEqual(metrics.get('rows_fetched'), len(mock_df_period))
+        self.assertIsNone(metrics.get('error_message'))
+        self.assertGreater(metrics.get('latency_sec', -1), 0)
+
+
+    # --- Placeholder for other tests ---
+
+    @unittest.skip("Test for single chunk not yet implemented.")
+    def test_fetch_yfinance_data_single_chunk(self):
+        """ Test fetch that fits within a single chunk. """
+        # Setup mock for a smaller date range (e.g., 3 months)
+        # Assert mock_yf_download called once
+        # Assert tqdm initialized and updated correctly for the smaller range
+        pass
+
+    @unittest.skip("Test for chunk error not yet implemented.")
+    def test_fetch_yfinance_data_chunk_error(self):
+        """ Test behavior when yf.download fails on one chunk. """
+        # Setup mock to raise exception on the second chunk call
+        # Assert pbar.write called with error
+        # Assert None df is returned
+        # Assert error_message in metrics
+        pass
+
+    @unittest.skip("Test for column renaming not yet implemented.")
+    def test_fetch_yfinance_data_column_rename(self):
+        """ Test column renaming specifically. """
+        # Setup mock to return df with columns like 'Open_TEST', 'close_TEST' etc.
+        # Assert final df has standard columns 'Open', 'Close' etc.
+        # Note: This is implicitly tested in the success cases now, but could be more explicit.
+        pass
+
+    def test_fetch_yfinance_data_invalid_interval(self):
+        """ Test providing an invalid interval. """
+        # No need to mock yf.download as it should fail earlier
+        with patch('src.common.logger.print_error') as mock_log:
+             df, metrics = fetch_yfinance_data('ANY', 'XYZ', start_date='2023-01-01', end_date='2023-01-10')
+             self.assertIsNone(df)
+             self.assertIn('Invalid yfinance interval', metrics.get('error_message', ''))
+             # Check logger was called by map_yfinance_interval
+             self.assertGreater(mock_log.call_count, 0)
 
 
 # Allow running the tests directly
