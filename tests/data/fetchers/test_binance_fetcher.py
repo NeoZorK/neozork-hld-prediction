@@ -153,11 +153,10 @@ class TestBinanceFetcher(unittest.TestCase):
         # *** FIX: Check the specific error message set in metrics ***
         expected_metrics_message = "Invalid symbol 'INVALID'. Stopping."
         self.assertEqual(metrics['error_message'], expected_metrics_message)
-        # Check that pbar.write was called with the error message
-        mock_pbar.write.assert_called_once()
-        logged_error_message = mock_pbar.write.call_args[0][0]
-        # Check if the stop message is in the logged message
-        self.assertIn(expected_metrics_message, logged_error_message)
+        # Check that pbar.write was called the expected number of times
+        self.assertEqual(mock_pbar.write.call_count, 2)  # First for API error, second for specific message
+        # Check that the second call contains the expected error message
+        self.assertIn(expected_metrics_message, mock_pbar.write.call_args_list[1][0][0])
         # Check pbar was closed
         mock_pbar.close.assert_called_once()
 
