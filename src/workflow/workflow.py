@@ -1,4 +1,4 @@
-# src/workflow/workflow.py (Removed Parquet saving)
+# src/workflow/workflow.py (Removed Parquet saving block)
 
 """
 Main workflow execution logic for the indicator analysis.
@@ -59,12 +59,8 @@ def run_indicator_workflow(args):
             # Error message should already be in data_info from acquire_data
             raise ValueError(data_info.get("error_message", "Cannot proceed without valid data."))
 
-        # Log DataFrame Metrics (moved calculation inside acquire_data)
+        # Log DataFrame Metrics (info now comes from data_info)
         logger.print_debug(f"DataFrame Metrics: Rows={data_info.get('rows_count', 0)}, Cols={data_info.get('columns_count', 0)}, Memory={data_info.get('data_size_mb', 0):.3f} MB")
-
-
-        # --- REMOVED Parquet Saving Block ---
-        # Saving is now handled within acquire_data
 
 
         # --- Step 2: Get Point Size ---
@@ -115,9 +111,7 @@ def run_indicator_workflow(args):
             workflow_results["steps_duration"]["calculate"] = workflow_results["calc_duration"]
         elif 't_point_start' in locals() and 'point_size' not in workflow_results['steps_duration']:
              workflow_results["steps_duration"]["point_size"] = t_except - t_point_start
-        elif 't_acq_start' in locals() and 'acquire' not in workflow_results['steps_duration']: # Should be set already
-             workflow_results["data_fetch_duration"] = t_except - t_acq_start
-             workflow_results["steps_duration"]["acquire"] = workflow_results["data_fetch_duration"]
+        # No need to time acquire step here as it's always first
 
         error_msg = f"{type(e).__name__}: {e}"
         logger.print_error(f"Workflow failed: {error_msg}")
