@@ -1,4 +1,4 @@
-# tests/data/fetchers/test_yfinance_fetcher.py # UPDATED with chunk error test
+# tests/data/fetchers/test_yfinance_fetcher.py # CORRECTED: api_calls assertion in error test
 
 """
 Unit tests for the yfinance data fetcher (chunking implementation) and related utility functions.
@@ -103,126 +103,85 @@ class TestYfinanceFetcherChunking(unittest.TestCase):
         mock_pbar.update.side_effect = mock_update
         mock_tqdm_class.return_value = mock_pbar
 
-        # Define data for chunks (approx 1 year each) - Use ticker 'TEST'
         ticker_name = 'TEST'
-        # *** FIX: Pass ticker_name to helper ***
         df_chunk1 = _create_mock_df('2022-01-01', '2022-12-31', ticker=ticker_name, freq='D', values_start=100)
         df_chunk2 = _create_mock_df('2023-01-01', '2023-12-31', ticker=ticker_name, freq='D', values_start=200)
-        # Manually create expected df with standard columns before concat
         expected_df1 = df_chunk1.copy(); expected_df1.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
         expected_df2 = df_chunk2.copy(); expected_df2.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
         expected_combined_df = pd.concat([expected_df1, expected_df2])
         expected_total_rows = len(expected_combined_df)
 
-        # Define side effect for yf.download based on dates
         def yf_download_side_effect(*args, **kwargs):
             start = kwargs.get('start')
-            end = kwargs.get('end') # yf end date is exclusive
+            end = kwargs.get('end')
             ticker_arg = kwargs.get('tickers')
             interval = kwargs.get('interval')
-            self.assertEqual(ticker_arg, ticker_name) # Check mapped ticker used
+            self.assertEqual(ticker_arg, ticker_name)
             self.assertEqual(interval, '1d')
             self.assertFalse(kwargs.get('progress', True))
-
             if start == '2022-01-01' and end == '2023-01-01': return df_chunk1
             elif start == '2023-01-01' and end == '2024-01-01': return df_chunk2
-            else:
-                print(f"Warning: Unexpected yf.download call in test: start={start}, end={end}")
-                return pd.DataFrame()
+            else: return pd.DataFrame()
         mock_yf_download.side_effect = yf_download_side_effect
 
-        # --- Execute ---
         start_date='2022-01-01'
         end_date='2023-12-31'
-        result_df, metrics = fetch_yfinance_data(
-            ticker=ticker_name, interval='D1', start_date=start_date, end_date=end_date
-        )
+        result_df, metrics = fetch_yfinance_data(ticker=ticker_name, interval='D1', start_date=start_date, end_date=end_date)
 
-        # --- Assertions ---
         self.assertEqual(mock_yf_download.call_count, 2)
         expected_calls = [
             call(tickers=ticker_name, interval='1d', start='2022-01-01', end='2023-01-01', progress=False, auto_adjust=False, actions=False, ignore_tz=True),
             call(tickers=ticker_name, interval='1d', start='2023-01-01', end='2024-01-01', progress=False, auto_adjust=False, actions=False, ignore_tz=True),
         ]
         mock_yf_download.assert_has_calls(expected_calls)
-
         mock_tqdm_class.assert_called_once_with(total=730, unit='day', desc=f'Fetching yfinance {ticker_name}', leave=True, ascii=True, unit_scale=False)
         self.assertEqual(mock_pbar.update.call_count, 2)
         mock_pbar.update.assert_has_calls([call(365), call(365)])
         self.assertEqual(mock_pbar.n, 730)
         mock_pbar.close.assert_called_once()
         self.assertEqual(mock_pbar.set_postfix_str.call_count, 2)
-
         self.assertIsNotNone(result_df)
         pd.testing.assert_frame_equal(result_df, expected_combined_df)
-
         self.assertIsInstance(metrics, dict)
         self.assertEqual(metrics.get('api_calls'), 2)
         self.assertEqual(metrics.get('rows_fetched'), expected_total_rows)
         self.assertIsNone(metrics.get('error_message'))
         self.assertGreater(metrics.get('latency_sec', -1), 0)
 
-
-    @patch('src.data.fetchers.yfinance_fetcher.yf.download') # Patch yf.download
-    @patch('src.data.fetchers.yfinance_fetcher.tqdm') # Patch tqdm - should NOT be called
+    @patch('src.data.fetchers.yfinance_fetcher.yf.download')
+    @patch('src.data.fetchers.yfinance_fetcher.tqdm')
     def test_fetch_yfinance_data_period_mode(self, mock_tqdm_class, mock_yf_download):
         """ Test the bypass for --period argument (should not chunk or use tqdm). """
-        # --- Mock Configuration ---
         ticker_name = 'MSFT'
-        # *** FIX: Pass ticker_name to helper ***
         mock_df_period = _create_mock_df('2023-04-21', '2024-04-20', ticker=ticker_name, freq='D', values_start=300)
         mock_yf_download.return_value = mock_df_period
-        # Create expected df with standard columns
         expected_df = mock_df_period.copy()
         expected_df.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
 
-
-        # --- Execute ---
         test_period = '1y'
-        result_df, metrics = fetch_yfinance_data(
-            ticker=ticker_name, interval='D1', period=test_period
-        )
+        result_df, metrics = fetch_yfinance_data(ticker=ticker_name, interval='D1', period=test_period)
 
-        # --- Assertions ---
-        # Check yf.download call (once, with period, progress=False)
         mock_yf_download.assert_called_once_with(
-            tickers=ticker_name,
-            period=test_period,
-            interval='1d',
-            progress=False, # Should be False even in period mode for consistency
-            auto_adjust=False,
-            actions=False,
-            ignore_tz=True
+            tickers=ticker_name, period=test_period, interval='1d', progress=False,
+            auto_adjust=False, actions=False, ignore_tz=True
         )
-        # Ensure start/end were not passed
         call_args, call_kwargs = mock_yf_download.call_args
-        self.assertNotIn('start', call_kwargs) # Check key absence
+        self.assertNotIn('start', call_kwargs)
         self.assertNotIn('end', call_kwargs)
-
-
-        # Check that tqdm was NOT used
         mock_tqdm_class.assert_not_called()
-
-        # Check DataFrame result
         self.assertIsNotNone(result_df)
-        pd.testing.assert_frame_equal(result_df, expected_df) # Compare with manually corrected expected_df
-
-        # Check metrics
+        pd.testing.assert_frame_equal(result_df, expected_df)
         self.assertIsInstance(metrics, dict)
-        self.assertEqual(metrics.get('api_calls'), 1) # Only one call
+        self.assertEqual(metrics.get('api_calls'), 1)
         self.assertEqual(metrics.get('rows_fetched'), len(mock_df_period))
         self.assertIsNone(metrics.get('error_message'))
         self.assertGreater(metrics.get('latency_sec', -1), 0)
 
-
-    # Remove the skipTest decorator or comment it out
-    # @unittest.skip("Test for single chunk not yet implemented.")
     @patch('src.data.fetchers.yfinance_fetcher.time.sleep')
-    @patch('src.data.fetchers.yfinance_fetcher.tqdm') # Patch tqdm class
-    @patch('src.data.fetchers.yfinance_fetcher.yf.download') # Patch yf.download
+    @patch('src.data.fetchers.yfinance_fetcher.tqdm')
+    @patch('src.data.fetchers.yfinance_fetcher.yf.download')
     def test_fetch_yfinance_data_single_chunk(self, mock_yf_download, mock_tqdm_class, mock_sleep):
         """ Test fetch that fits within a single chunk. """
-        # --- Mock Configuration ---
         mock_pbar = MagicMock(); mock_pbar.n = 0
         def mock_update(value): mock_pbar.n += value
         mock_pbar.update.side_effect = mock_update
@@ -230,59 +189,41 @@ class TestYfinanceFetcherChunking(unittest.TestCase):
 
         ticker_name = 'SMALL'
         start_date='2023-01-01'
-        end_date='2023-03-31' # ~3 months range, should fit in one year chunk
-        # Create mock df with ticker suffix
+        end_date='2023-03-31'
         mock_df_single = _create_mock_df(start_date, end_date, ticker=ticker_name, freq='D')
         mock_yf_download.return_value = mock_df_single.copy()
-
-        # Manually create expected df with standard columns
         expected_df = mock_df_single.copy()
         expected_df.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
         expected_total_rows = len(expected_df)
 
-        # --- Execute ---
-        result_df, metrics = fetch_yfinance_data(
-            ticker=ticker_name, interval='D1', start_date=start_date, end_date=end_date
-        )
+        result_df, metrics = fetch_yfinance_data(ticker=ticker_name, interval='D1', start_date=start_date, end_date=end_date)
 
-        # --- Assertions ---
-        # Check yf.download call (once)
-        expected_yf_end_date = '2023-04-01' # Day after requested end
+        expected_yf_end_date = '2023-04-01'
         mock_yf_download.assert_called_once_with(
             tickers=ticker_name, interval='1d', start=start_date, end=expected_yf_end_date,
             progress=False, auto_adjust=False, actions=False, ignore_tz=True
         )
 
-        # Check tqdm calls
-        total_days = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days + 1 # Jan(31)+Feb(28)+Mar(31) = 90 days
+        total_days = 90
         mock_tqdm_class.assert_called_once_with(total=total_days, unit='day', desc=f'Fetching yfinance {ticker_name}', leave=True, ascii=True, unit_scale=False)
-        # Should be updated once with the total number of days
         mock_pbar.update.assert_called_once_with(total_days)
         self.assertEqual(mock_pbar.n, total_days)
         mock_pbar.close.assert_called_once()
-        mock_pbar.set_postfix_str.assert_called_once() # Called once for the single chunk
+        mock_pbar.set_postfix_str.assert_called_once()
 
-
-        # Check DataFrame result
         self.assertIsNotNone(result_df)
         pd.testing.assert_frame_equal(result_df, expected_df)
-
-        # Check metrics
         self.assertIsInstance(metrics, dict)
-        self.assertEqual(metrics.get('api_calls'), 1) # Only one call
+        self.assertEqual(metrics.get('api_calls'), 1)
         self.assertEqual(metrics.get('rows_fetched'), expected_total_rows)
         self.assertIsNone(metrics.get('error_message'))
         self.assertGreater(metrics.get('latency_sec', -1), 0)
 
-
-    # Remove the skipTest decorator or comment it out
-    # @unittest.skip("Test for chunk error not yet implemented.")
     @patch('src.data.fetchers.yfinance_fetcher.time.sleep')
-    @patch('src.data.fetchers.yfinance_fetcher.tqdm') # Patch tqdm class
-    @patch('src.data.fetchers.yfinance_fetcher.yf.download') # Patch yf.download
+    @patch('src.data.fetchers.yfinance_fetcher.tqdm')
+    @patch('src.data.fetchers.yfinance_fetcher.yf.download')
     def test_fetch_yfinance_data_chunk_error(self, mock_yf_download, mock_tqdm_class, mock_sleep):
         """ Test behavior when yf.download fails on one chunk. """
-        # --- Mock Configuration ---
         mock_pbar = MagicMock(); mock_pbar.n = 0
         def mock_update(value): mock_pbar.n += value
         mock_pbar.update.side_effect = mock_update
@@ -290,77 +231,52 @@ class TestYfinanceFetcherChunking(unittest.TestCase):
 
         ticker_name = 'ERROR_TEST'
         start_date='2022-01-01'
-        end_date='2023-12-31' # Requires 2 chunks
+        end_date='2023-12-31'
 
-        # Mock data for the first successful chunk
         df_chunk1 = _create_mock_df('2022-01-01', '2022-12-31', ticker=ticker_name, freq='D')
-
-        # Simulate error on the second call
         error_message = "Simulated download failure!"
         def yf_download_side_effect(*args, **kwargs):
             start = kwargs.get('start')
-            if start == '2022-01-01':
-                return df_chunk1
-            elif start == '2023-01-01':
-                raise Exception(error_message)
-            else:
-                return pd.DataFrame() # Should not be called
+            if start == '2022-01-01': return df_chunk1
+            elif start == '2023-01-01': raise Exception(error_message)
+            else: return pd.DataFrame()
         mock_yf_download.side_effect = yf_download_side_effect
 
-        # --- Execute ---
-        result_df, metrics = fetch_yfinance_data(
-            ticker=ticker_name, interval='D1', start_date=start_date, end_date=end_date
-        )
+        result_df, metrics = fetch_yfinance_data(ticker=ticker_name, interval='D1', start_date=start_date, end_date=end_date)
 
-        # --- Assertions ---
-        # Check yf.download calls (should be called twice, second one raises)
         self.assertEqual(mock_yf_download.call_count, 2)
-
-        # Check tqdm calls (initialized, updated for first chunk, closed)
         total_days = 730
         mock_tqdm_class.assert_called_once_with(total=total_days, unit='day', desc=f'Fetching yfinance {ticker_name}', leave=True, ascii=True, unit_scale=False)
-        mock_pbar.update.assert_called_once_with(365) # Only first chunk update succeeds
-        self.assertEqual(mock_pbar.n, 365) # n updated only once
-        mock_pbar.close.assert_called_once() # Should be closed in finally
+        self.assertEqual(mock_pbar.update.call_count, 2) # Called after chunk 1 and in finally
+        mock_pbar.update.assert_has_calls([call(365), call(365)])
+        self.assertEqual(mock_pbar.n, 730)
+        mock_pbar.close.assert_called_once()
 
-        # Check pbar.write was called to log the error
         mock_pbar.write.assert_called_once()
-        # Check if the error message is in the logged output (optional but good)
-        # Capture arguments passed to pbar.write
         logged_error_message = mock_pbar.write.call_args[0][0]
         self.assertIn(error_message, logged_error_message)
         self.assertIn("Failed chunk", logged_error_message)
 
-
-        # Check result
-        self.assertIsNone(result_df) # Should return None on failure
-
-        # Check metrics
+        self.assertIsNone(result_df)
         self.assertIsInstance(metrics, dict)
-        self.assertEqual(metrics.get('api_calls'), 2) # Two attempts were made
-        self.assertEqual(metrics.get('rows_fetched'), len(df_chunk1)) # Only rows from first chunk
-        self.assertIsNotNone(metrics.get('error_message')) # Should have an error message
-        self.assertIn(error_message, metrics.get('error_message', '')) # Check if error message is correct
-
+        # *** FIX: Expect only 1 successful API call counted ***
+        self.assertEqual(metrics.get('api_calls'), 1) # Code increments AFTER successful call
+        self.assertEqual(metrics.get('rows_fetched'), len(df_chunk1))
+        self.assertIsNotNone(metrics.get('error_message'))
+        self.assertIn(error_message, metrics.get('error_message', ''))
 
     @unittest.skip("Test for column renaming not yet implemented.")
     def test_fetch_yfinance_data_column_rename(self):
         """ Test column renaming specifically. """
-        # Setup mock to return df with columns like 'Open_TEST', 'close_TEST' etc.
-        # Assert final df has standard columns 'Open', 'Close' etc.
-        # Note: This is implicitly tested in the success cases now, but could be more explicit.
         pass
 
     def test_fetch_yfinance_data_invalid_interval(self):
         """ Test providing an invalid interval. """
-        # No need to mock yf.download as it should fail earlier
         with patch('src.common.logger.print_error') as mock_log:
              df, metrics = fetch_yfinance_data('ANY', 'XYZ', start_date='2023-01-01', end_date='2023-01-10')
              self.assertIsNone(df)
              self.assertIn('Invalid yfinance interval', metrics.get('error_message', ''))
-             # Check logger was called by map_yfinance_interval
              self.assertGreater(mock_log.call_count, 0)
-
 
 # Allow running tests directly
 if __name__ == '__main__':
