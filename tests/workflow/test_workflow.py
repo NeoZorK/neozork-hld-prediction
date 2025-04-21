@@ -1,4 +1,4 @@
-# tests/workflow/test_workflow.py # CORRECTED v3: More time values for mocks
+# tests/workflow/test_workflow.py # CORRECTED v5: Mocks for get_point_size/generate_plot
 
 import unittest
 from unittest.mock import patch, MagicMock, ANY
@@ -36,6 +36,7 @@ class TestWorkflow(unittest.TestCase):
             'Volume': [1000, 1100, 1200, 1300]
         }, index=pd.to_datetime(['2023-01-01', '2023-01-02', '2023-01-03', '2023-01-04']))
         self.sample_df.index.name = 'DateTime' # Ensure index name is set
+        # Sample data_info dictionary RETURNED BY acquire_data
         self.sample_data_info = {
              'ohlcv_df': self.sample_df.copy(), 'ticker': 'TEST', 'interval': 'D1',
              'data_source_label': 'yfinance_TEST', 'effective_mode': 'yfinance',
@@ -60,22 +61,27 @@ class TestWorkflow(unittest.TestCase):
                                             mock_generate_plot, mock_calculate_indicator,
                                             mock_get_point_size, mock_acquire_data):
         """Test a successful workflow run using yfinance mode."""
-        mock_acquire_data.return_value = {**self.sample_data_info}
-        mock_get_point_size.return_value = (0.01, False)
+        # Mock acquire_data to return the dictionary
+        mock_data_info_returned = {**self.sample_data_info}
+        mock_acquire_data.return_value = mock_data_info_returned
+        mock_get_point_size.return_value = (0.01, False) # point_size, estimated_flag
         mock_calculate_indicator.return_value = (self.sample_df.copy(), TradingRule.Pressure_Vector)
-        mock_generate_plot.return_value = None
+        mock_generate_plot.return_value = None # generate_plot returns None
 
         with patch('time.perf_counter') as mock_perf_counter:
-            # *** FIX: Provide 10+ values for success path ***
             mock_perf_counter.side_effect = [x * 0.1 for x in range(15)] # Provide more than enough
             results = run_indicator_workflow(self.mock_args)
 
+        # Assertions
         mock_acquire_data.assert_called_once_with(self.mock_args)
-        mock_get_point_size.assert_called_once_with(self.mock_args, results) # Pass results dict now
+        # *** FIX: Assert get_point_size called with data_info (mock return value) ***
+        mock_get_point_size.assert_called_once_with(self.mock_args, mock_data_info_returned)
+        # Check other calls
         pd.testing.assert_frame_equal(mock_calculate_indicator.call_args[0][1], self.sample_df)
         mock_calculate_indicator.assert_called_once_with(self.mock_args, ANY, 0.01)
         pd.testing.assert_frame_equal(mock_generate_plot.call_args[0][2], self.sample_df)
-        mock_generate_plot.assert_called_once_with(self.mock_args, results, ANY, TradingRule.Pressure_Vector, 0.01, False) # Pass results dict
+        # *** FIX: Assert generate_plot called with data_info (mock return value) ***
+        mock_generate_plot.assert_called_once_with(self.mock_args, mock_data_info_returned, ANY, TradingRule.Pressure_Vector, 0.01, False)
         self.assertTrue(results['success'])
         self.assertIsNone(results['error_message'])
 
@@ -97,16 +103,18 @@ class TestWorkflow(unittest.TestCase):
         mock_generate_plot.return_value = None
 
         with patch('time.perf_counter') as mock_perf_counter:
-            # *** FIX: Provide 10+ values for success path ***
             mock_perf_counter.side_effect = [x * 0.1 for x in range(15)]
             results = run_indicator_workflow(csv_args)
 
+        # Assertions
         mock_acquire_data.assert_called_once_with(csv_args)
-        mock_get_point_size.assert_called_once_with(csv_args, results) # Pass results dict
+        # *** FIX: Assert get_point_size called with csv_data_info (mock return value) ***
+        mock_get_point_size.assert_called_once_with(csv_args, csv_data_info)
         pd.testing.assert_frame_equal(mock_calculate_indicator.call_args[0][1], self.sample_df)
         mock_calculate_indicator.assert_called_once_with(csv_args, ANY, 0.001)
         pd.testing.assert_frame_equal(mock_generate_plot.call_args[0][2], self.sample_df)
-        mock_generate_plot.assert_called_once_with(csv_args, results, ANY, TradingRule.Predict_High_Low_Direction, 0.001, False) # Pass results dict
+         # *** FIX: Assert generate_plot called with csv_data_info (mock return value) ***
+        mock_generate_plot.assert_called_once_with(csv_args, csv_data_info, ANY, TradingRule.Predict_High_Low_Direction, 0.001, False)
         self.assertTrue(results['success'])
         self.assertIsNone(results['parquet_cache_file'])
         self.assertIsNone(results['error_message'])
@@ -130,13 +138,10 @@ class TestWorkflow(unittest.TestCase):
         mock_traceback.return_value = "Mocked Traceback"
 
         with patch('time.perf_counter') as mock_perf_counter:
-            # *** FIX: Provide 8+ values for path ending in except block during calc ***
             mock_perf_counter.side_effect = [x * 0.1 for x in range(10)]
             results = run_indicator_workflow(self.mock_args)
 
-        mock_acquire_data.assert_called_once()
-        mock_get_point_size.assert_called_once()
-        mock_calculate_indicator.assert_called_once()
+        mock_acquire_data.assert_called_once(); mock_get_point_size.assert_called_once(); mock_calculate_indicator.assert_called_once()
         mock_generate_plot.assert_not_called()
         self.assertFalse(results['success'])
         self.assertIsNotNone(results['error_message'])
@@ -156,19 +161,10 @@ class TestWorkflow(unittest.TestCase):
                                                   mock_get_point_size, mock_acquire_data):
         """Test workflow handles acquire_data failure by checking returned dict."""
         acquire_fail_msg = 'Simulated acquisition failure'
-        # Ensure mock dict has keys expected by workflow even on failure
-        mock_acquire_data.return_value = {
-            'ohlcv_df': None, 'effective_mode': 'yfinance', 'data_source_label': 'yfinance_FAIL',
-            'error_message': acquire_fail_msg, 'ticker': 'FAIL', 'interval': 'D1',
-            'data_metrics': {}, 'parquet_cache_used': False, 'steps_duration': {}, # Add steps_duration
-             # Add other keys with default values expected by later steps or reporting
-             'point_size': None, 'estimated_point': False, 'selected_rule': None,
-             'parquet_cache_file': None
-        }
+        mock_acquire_data.return_value = { 'ohlcv_df': None, 'effective_mode': 'yfinance', 'data_source_label': 'yfinance_FAIL', 'error_message': acquire_fail_msg, 'ticker': 'FAIL', 'interval': 'D1', 'data_metrics': {}, 'parquet_cache_used': False, 'steps_duration': {}, 'point_size': None, 'estimated_point': False, 'selected_rule': None, 'parquet_cache_file': None }
         mock_traceback.return_value = "Mocked Traceback"
 
         with patch('time.perf_counter') as mock_perf_counter:
-             # *** FIX: Provide 5+ values for path ending in except block after acquire ***
             mock_perf_counter.side_effect = [x * 0.1 for x in range(7)]
             results = run_indicator_workflow(self.mock_args)
 

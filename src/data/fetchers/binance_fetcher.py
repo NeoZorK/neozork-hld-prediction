@@ -145,7 +145,13 @@ def fetch_binance_data(ticker: str, interval: str, start_date: str, end_date: st
                     status_code = getattr(e, 'status_code', None); error_code = getattr(e, 'code', None)
                     if status_code == 429: wait_time = 60; pbar.write("Warning: Rate limit likely hit. Waiting...")
                     elif status_code == 418: wait_time = 120; pbar.write("Warning: IP ban likely. Waiting...")
-                    elif error_code == -1121: pbar.write(f"Error: Invalid symbol '{binance_ticker}'. Stopping."); return None, {**metrics, "error_message": f"Invalid symbol '{binance_ticker}'"}
+                    elif error_code == -1121:
+                        # Use pbar.write for the specific error
+                        error_msg_text = f"Invalid symbol '{binance_ticker}'. Stopping."
+                        pbar.write(f"Error: {error_msg_text}")
+                        # *** ADD THIS LINE ***
+                        metrics["error_message"] = error_msg_text  # Store specific error message
+                        break  # Stop retrying for invalid symbol
                     else: pbar.write("Error: Non-retriable/unknown API error."); break
                 except Exception as e:
                     pbar.write(f"Error: Unexpected error attempt {attempt}/{max_attempts_per_chunk}: {type(e).__name__}: {e}")

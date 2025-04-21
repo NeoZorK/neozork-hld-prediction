@@ -1,4 +1,4 @@
-# tests/data/fetchers/test_binance_fetcher.py # CORRECTED v9: Assertions and Patch target
+# tests/data/fetchers/test_binance_fetcher.py # CORRECTED v13: Final Assertions
 
 import unittest
 import pandas as pd
@@ -13,9 +13,9 @@ try:
         fetch_binance_data, map_binance_interval, map_binance_ticker,
         BinanceAPIException, BinanceRequestException, BinanceClient
     )
-    # Use logger potentially defined within the fetcher module if that's the case
-    # from src.data.fetchers.binance_fetcher import logger # <-- If logger is local
     from src.common import logger # Assuming logger is imported from common
+    # Import tqdm for patching within the fetcher module context
+    import src.data.fetchers.binance_fetcher # Needed for patching tqdm correctly
 except ImportError:
     # Fallback for running script directly (adjust path as needed)
     from src.data.fetchers.binance_fetcher import (
@@ -23,6 +23,7 @@ except ImportError:
         BinanceAPIException, BinanceRequestException, BinanceClient
     )
     from src.common import logger
+    import src.data.fetchers.binance_fetcher
 
 # --- Standard Logging Setup ---
 logging.basicConfig(level=logging.CRITICAL)
@@ -42,7 +43,6 @@ class MockBinanceAPIException(BinanceAPIException):
 class TestBinanceFetcher(unittest.TestCase):
 
     def setUp(self):
-        """Set up basic parameters used across tests."""
         self.ticker = "BTCUSDT"; self.interval = "M1"; self.mapped_interval = BinanceClient.KLINE_INTERVAL_1MINUTE
         self.start_date = "2023-01-01"; self.end_date = "2023-01-01"
         self.start_dt = datetime.strptime(f"{self.start_date} 00:00:00", "%Y-%m-%d %H:%M:%S")
@@ -96,10 +96,16 @@ class TestBinanceFetcher(unittest.TestCase):
     @patch('src.data.fetchers.binance_fetcher.BinanceClient')
     @patch('os.getenv')
     @patch('time.sleep', return_value=None)
-    # *** FIX: Patch logger used inside the fetcher ***
+    # Patch tqdm to check pbar.write
+    @patch('src.data.fetchers.binance_fetcher.tqdm')
+    # We still patch the logger in case pbar is None in some future code path
     @patch('src.data.fetchers.binance_fetcher.logger')
-    def test_fetch_binance_data_api_error_429_retry_fail(self, mock_logger, mock_sleep, mock_getenv, MockBinanceClient):
+    def test_fetch_binance_data_api_error_429_retry_fail(self, mock_logger, mock_tqdm_class, mock_sleep, mock_getenv, MockBinanceClient):
         """Test API error 429 (Rate Limit), exhausting retries."""
+        # Setup mock pbar to check pbar.write
+        mock_pbar = MagicMock(); mock_pbar.n = 0; mock_pbar.total = 86400000 # Simulate 1 day range
+        mock_tqdm_class.return_value = mock_pbar
+
         mock_getenv.return_value = None
         mock_client_instance = MockBinanceClient.return_value
         mock_get_klines = mock_client_instance.get_historical_klines
@@ -109,21 +115,28 @@ class TestBinanceFetcher(unittest.TestCase):
 
         self.assertIsNone(df)
         self.assertEqual(mock_get_klines.call_count, 5)
-        # *** FIX: Expect 4 calls to sleep, not 5 ***
-        self.assertEqual(mock_sleep.call_count, 4)
+        self.assertEqual(mock_sleep.call_count, 4) # Sleep called 4 times
         self.assertIsNotNone(metrics.get('error_message'))
         self.assertIn("Failed to fetch Binance chunk after 5 attempts", metrics['error_message'])
-        # Check logs (using the correctly patched logger)
-        self.assertGreaterEqual(mock_logger.print_error.call_count, 1) # Final error logged
-        self.assertEqual(mock_logger.print_warning.call_count, 4) # Rate limit warnings before sleep
+        # *** FIX: Check pbar.write call count ***
+        # Check that pbar.write was called the expected number of times
+        self.assertEqual(mock_pbar.write.call_count, 10)  # 5 error logs + 4 wait logs + 1 final fail log
+        # Remove check for logger.print_error call count
+        # self.assertGreaterEqual(mock_logger.print_error.call_count, 1)
+        # Check pbar was closed
+        mock_pbar.close.assert_called_once()
+
 
     @patch('src.data.fetchers.binance_fetcher.BinanceClient')
     @patch('os.getenv')
     @patch('time.sleep', return_value=None)
-    # *** FIX: Patch logger used inside the fetcher ***
-    @patch('src.data.fetchers.binance_fetcher.logger')
-    def test_fetch_binance_data_api_error_invalid_symbol(self, mock_logger, mock_sleep, mock_getenv, MockBinanceClient):
+    @patch('src.data.fetchers.binance_fetcher.tqdm') # Patch tqdm
+    def test_fetch_binance_data_api_error_invalid_symbol(self, mock_tqdm_class, mock_sleep, mock_getenv, MockBinanceClient):
         """Test API error for invalid symbol (should not retry)."""
+        # Setup mock pbar to check pbar.write
+        mock_pbar = MagicMock(); mock_pbar.n = 0; mock_pbar.total = 86400000
+        mock_tqdm_class.return_value = mock_pbar
+
         mock_getenv.return_value = None
         mock_client_instance = MockBinanceClient.return_value
         mock_get_klines = mock_client_instance.get_historical_klines
@@ -137,23 +150,19 @@ class TestBinanceFetcher(unittest.TestCase):
         mock_get_klines.assert_called_once()
         mock_sleep.assert_not_called()
         self.assertIsNotNone(metrics.get('error_message'))
-        # *** FIX: Check for the actual error message logged by the fetcher ***
-        # The fetcher logs the exception string representation
-        expected_log_part = str(mock_exception) # Use the exception's __str__ output
-        # Check if any of the calls to print_error contained the expected string
-        found_log = False
-        for call_args_tuple in mock_logger.print_error.call_args_list:
-             log_message = call_args_tuple[0][0] # Get the first positional arg of the call
-             # Check if expected part is in the message OR if the message is exactly the expected part
-             if expected_log_part in log_message or log_message == expected_log_part:
-                  found_log = True
-                  break
-        self.assertTrue(found_log, f"Expected log message part '{expected_log_part}' not found in logger calls: {mock_logger.print_error.call_args_list}")
-        # Also check the returned metrics message
-        self.assertIn(expected_log_part, metrics['error_message'])
+        # *** FIX: Check the specific error message set in metrics ***
+        expected_metrics_message = "Invalid symbol 'INVALID'. Stopping."
+        self.assertEqual(metrics['error_message'], expected_metrics_message)
+        # Check that pbar.write was called with the error message
+        mock_pbar.write.assert_called_once()
+        logged_error_message = mock_pbar.write.call_args[0][0]
+        # Check if the stop message is in the logged message
+        self.assertIn(expected_metrics_message, logged_error_message)
+        # Check pbar was closed
+        mock_pbar.close.assert_called_once()
 
 
-    @patch('src.common.logger.print_error') # This logger is used by top-level try-except
+    @patch('src.common.logger.print_error')
     def test_fetch_binance_data_invalid_date_format(self, mock_log_error_common):
         """Test handling of invalid date format inputs."""
         df, metrics = fetch_binance_data(self.ticker, self.interval, "01/01/2023", self.end_date)
@@ -161,16 +170,13 @@ class TestBinanceFetcher(unittest.TestCase):
         self.assertIn("Invalid date format", metrics.get('error_message',''))
         mock_log_error_common.assert_called()
 
-    # Test handling of invalid interval format - error logged by map_binance_interval
-    @patch('src.data.fetchers.binance_fetcher.map_binance_interval', return_value=None) # Mock map to fail
-    @patch('src.data.fetchers.binance_fetcher.logger.print_error') # Patch logger inside fetcher
+    @patch('src.data.fetchers.binance_fetcher.map_binance_interval', return_value=None)
+    @patch('src.data.fetchers.binance_fetcher.logger.print_error')
     def test_fetch_binance_data_invalid_interval(self, mock_log_error_fetcher, mock_map_interval):
         """Test handling of invalid interval format."""
         df, metrics = fetch_binance_data(self.ticker, "INVALID", self.start_date, self.end_date)
         self.assertIsNone(df)
-        # *** FIX: Expect the correct error message format ***
         self.assertEqual(metrics.get('error_message'), "Invalid interval: INVALID")
-        # fetch_binance_data now returns early, doesn't log its own error here
         mock_log_error_fetcher.assert_not_called()
 
 
