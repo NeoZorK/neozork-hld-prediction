@@ -7,9 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix test for yfinance 3">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix test for yfinance 5">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/data/fetchers/test_binance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/fetchers/test_binance_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/plotting/test_plotting_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/plotting/test_plotting_generation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/workflow/test_workflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/workflow/test_workflow.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,22 +164,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00118" summary="fixing binance and polygon modules 1">
-      <option name="closed" value="true" />
-      <created>1745074304455</created>
-      <option name="number" value="00118" />
-      <option name="presentableId" value="LOCAL-00118" />
-      <option name="project" value="LOCAL" />
-      <updated>1745074304455</updated>
-    </task>
-    <task id="LOCAL-00119" summary="fixing binance and polygon modules 2">
-      <option name="closed" value="true" />
-      <created>1745075312600</created>
-      <option name="number" value="00119" />
-      <option name="presentableId" value="LOCAL-00119" />
-      <option name="project" value="LOCAL" />
-      <updated>1745075312600</updated>
     </task>
     <task id="LOCAL-00120" summary="only 3 tests remain for polygon fixing">
       <option name="closed" value="true" />
@@ -555,7 +541,23 @@
       <option name="project" value="LOCAL" />
       <updated>1745255177410</updated>
     </task>
-    <option name="localTasksCounter" value="167" />
+    <task id="LOCAL-00167" summary="fix test for yfinance 4">
+      <option name="closed" value="true" />
+      <created>1745255700037</created>
+      <option name="number" value="00167" />
+      <option name="presentableId" value="LOCAL-00167" />
+      <option name="project" value="LOCAL" />
+      <updated>1745255700037</updated>
+    </task>
+    <task id="LOCAL-00168" summary="fix test for yfinance 5">
+      <option name="closed" value="true" />
+      <created>1745255854405</created>
+      <option name="number" value="00168" />
+      <option name="presentableId" value="LOCAL-00168" />
+      <option name="project" value="LOCAL" />
+      <updated>1745255854405</updated>
+    </task>
+    <option name="localTasksCounter" value="169" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,8 +584,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="try to fix fetchers test 2" />
-    <MESSAGE value="try to fix fetchers test 3" />
     <MESSAGE value="try to fix fetchers test 4" />
     <MESSAGE value="try to fix fetchers test 5" />
     <MESSAGE value="try to fix fetchers test 6" />
@@ -607,6 +607,8 @@
     <MESSAGE value="fix test for yfinance 1" />
     <MESSAGE value="fix test for yfinance 2" />
     <MESSAGE value="fix test for yfinance 3" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix test for yfinance 3" />
+    <MESSAGE value="fix test for yfinance 4" />
+    <MESSAGE value="fix test for yfinance 5" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix test for yfinance 5" />
   </component>
 </project>
