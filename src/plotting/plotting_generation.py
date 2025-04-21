@@ -1,53 +1,66 @@
-# src/plotting_generation.py
+# src/plotting/plotting_generation.py (Removed tqdm wrapper for plotting)
 
 """
-Workflow Step 4: Generates and displays the plot.
+Workflow step for generating plots based on indicator results.
 All comments are in English.
 """
 import pandas as pd
+# Removed: from tqdm import tqdm
 import traceback
-# Use relative imports within the src package
+
+# Relative imports
 from ..common import logger
 from ..common.constants import TradingRule
-# Import from sibling module plotting.py
 from .plotting import plot_indicator_results
 
-def generate_plot(args, data_info: dict, result_df: pd.DataFrame | None, selected_rule: TradingRule | None, point_size: float | None, estimated_point: bool):
+# Definition of generate_plot function
+def generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point):
     """
-    Generates and displays the plot if results are available.
+    Generates and potentially saves a plot based on calculation results.
 
     Args:
-        args (argparse.Namespace): Parsed command-line arguments.
-        data_info (dict): Dictionary with info from data acquisition step.
-        result_df (pd.DataFrame | None): The DataFrame with indicator results.
-        selected_rule (TradingRule | None): The enum member for the rule used.
-        point_size (float | None): The point size used.
-        estimated_point (bool): Flag indicating if point size was estimated.
+        args (argparse.Namespace): Command-line arguments.
+        data_info (dict): Dictionary containing data source information.
+        result_df (pd.DataFrame | None): DataFrame with OHLCV and calculation results.
+        selected_rule (TradingRule | None): The specific trading rule enum member used.
+        point_size (float | None): The point size used for calculations.
+        estimated_point (bool): Flag indicating if point_size was estimated.
     """
     if result_df is None or result_df.empty:
         logger.print_info("Skipping plotting as no valid calculation results are available.")
-        return # Exit plotting function
+        return
+    if selected_rule is None:
+         logger.print_warning("No valid rule selected, cannot generate plot accurately.")
+         return
 
-    logger.print_debug(f"Columns BEFORE plotting: {result_df.columns.tolist()}")
-    logger.print_info("\n--- Step 4: Plotting Results ---")
+    # Construct plot title
+    title_parts = [
+        data_info.get('data_source_label', 'Unknown Source'),
+        str(args.interval)
+    ]
+    if point_size is not None:
+         try:
+              precision = 8 if abs(point_size) < 0.001 else 4 if abs(point_size) < 0.1 else 2
+              point_str = f"{point_size:.{precision}f}"
+              title_parts.append(f"Point: {point_str}{' (Est.)' if estimated_point else ''}")
+         except TypeError:
+              logger.print_warning(f"Could not format point size for title: {point_size}")
 
-    # Construct title
-    data_source_label = data_info.get('data_source_label','N/A')
-    chart_title = f"{data_source_label} | {args.interval} | Rule: {selected_rule.name if selected_rule else 'N/A'}"
-    if data_info.get("effective_mode") == 'yfinance' and estimated_point and point_size is not None:
-        point_format = ".8f" if point_size < 0.001 else ".5f" if point_size < 0.1 else ".2f"
-        chart_title += f" | Est. Point: {point_size:{point_format}}"
+    title = " | ".join(title_parts)
 
     try:
-        if selected_rule is None:
-            logger.print_warning("No valid rule selected, cannot generate plot accurately.")
-            return
+        logger.print_info("Generating plot...") # Log start
 
-        # Call the actual plotting function from plotting.py
-        plot_indicator_results(result_df, selected_rule, title=chart_title)
-        logger.print_info("\nPlot displayed. Close the plot window to continue/exit.")
+        # --- Call plotting function directly without tqdm wrapper ---
+        plot_indicator_results(
+            result_df,
+            selected_rule,
+            title
+        )
+        # --- End of direct call ---
+
+        logger.print_success("Plot generation finished successfully.")
 
     except Exception as e:
-         logger.print_error(f"An error occurred during plotting:{e}")
-         print(traceback.format_exc()) # Keep traceback for plotting errors
-         # Log error but don't necessarily stop the whole workflow here
+        logger.print_error(f"An error occurred during plotting: {type(e).__name__}: {e}")
+        logger.print_debug(f"Traceback:\n{traceback.format_exc()}")
