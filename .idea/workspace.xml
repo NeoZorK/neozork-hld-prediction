@@ -7,10 +7,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="binance add progress bar fix">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="binance all works!">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_BTCUSDT_D1_2012-01-01_2025-04-01.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_BTCUSDT_D1_2021-01-01_2025-04-01.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_BTCUSDT_D1_2024-05-05_2025-04-05.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_BTCUSDT_H1_2012-01-01_2025-04-01.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_ETHUSDT_H1_2012-01-01_2025-04-01.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_ETHUSDT_H1_2020-01-01_2021-01-01.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_ETHUSDT_H1_2020-01-01_2022-01-01.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/polygon_AAPL_D1_2022-01-01_2025-04-01.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/polygon_AAPL_D1_2024-01-01_2025-04-01.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/polygon_AAPL_D1_2025-01-01_2025-04-01.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/polygon_AAPL_W1_2024-08-01_2025-08-01.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/yfinance_AAPL_D1_1y.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/yfinance_AAPL_D1_2024-08-01_2025-01-01.parquet" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw_parquet/yfinance_AAPl_D1_2025-01-01_2025-04-01.parquet" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plotting/plotting_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting/plotting_generation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/workflow/workflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/workflow/workflow.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,14 +177,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00107" summary="add debug connection for binance">
-      <option name="closed" value="true" />
-      <created>1745063812209</created>
-      <option name="number" value="00107" />
-      <option name="presentableId" value="LOCAL-00107" />
-      <option name="project" value="LOCAL" />
-      <updated>1745063812209</updated>
     </task>
     <task id="LOCAL-00108" summary="ver 0.1.3">
       <option name="closed" value="true" />
@@ -556,7 +562,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745226971568</updated>
     </task>
-    <option name="localTasksCounter" value="156" />
+    <task id="LOCAL-00156" summary="binance all works!">
+      <option name="closed" value="true" />
+      <created>1745227413817</created>
+      <option name="number" value="00156" />
+      <option name="presentableId" value="LOCAL-00156" />
+      <option name="project" value="LOCAL" />
+      <updated>1745227413817</updated>
+    </task>
+    <option name="localTasksCounter" value="157" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -583,7 +597,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add to readme new functionallity" />
     <MESSAGE value="test csv fetcher" />
     <MESSAGE value="test yf fetcher" />
     <MESSAGE value="test polygon fetcher" />
@@ -608,6 +621,7 @@
     <MESSAGE value="v0.1.5" />
     <MESSAGE value="binance add progress bar" />
     <MESSAGE value="binance add progress bar fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="binance add progress bar fix" />
+    <MESSAGE value="binance all works!" />
+    <option name="LAST_COMMIT_MESSAGE" value="binance all works!" />
   </component>
 </project>
