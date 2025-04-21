@@ -97,11 +97,11 @@ def parse_arguments():
                                    help="Instrument point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto). Overrides yfinance estimation. Required for 'csv', 'polygon', 'binance' modes.")
     # History selection (period or start/end dates)
     history_group = data_source_group.add_mutually_exclusive_group()
-    history_group.add_argument('-p', '--period',
+    history_group.add_argument('--period', # Removed '-p' alias for clarity, use full name
                                help="History period for yfinance (e.g., '1mo', '1y'). Not used if --start/--end are provided. Not used by Polygon/Binance.")
-    history_group.add_argument('--start', help="Start date (YYYY-MM-DD). Used by yfinance, required by polygon/binance.")
-    # Make --end required if --start is used for API modes
-    data_source_group.add_argument('--end', help="End date (YYYY-MM-DD). Used by yfinance, required by polygon/binance if --start is used.")
+    history_group.add_argument('--start', help="Start date (YYYY-MM-DD). Used by yfinance, polygon, binance.")
+    # Make --end related only to --start (not period)
+    data_source_group.add_argument('--end', help="End date (YYYY-MM-DD). Used by yfinance, polygon, binance. Required if --start is used.")
 
 
     # --- Indicator Options Group ---
@@ -137,6 +137,9 @@ def parse_arguments():
     except SystemExit as e:
          # Catch SystemExit raised by argparse on error/help/version
          # We re-raise it to ensure tests expecting SystemExit work correctly
+         # Avoid printing traceback for simple exits like --help
+         if e.code != 0:
+              print(f"Argument parsing error (Code: {e.code}). Exiting.", file=sys.stderr)
          sys.exit(e.code) # Exit with the same code argparse intended
 
 
@@ -158,12 +161,18 @@ def parse_arguments():
 
     # Check date/period requirements for yfinance
     if effective_mode == 'yfinance':
+         # User must provide EITHER --period OR (--start AND --end)
+         if not args.period and not (args.start and args.end):
+             parser.error("for yfinance mode, provide either --period OR both --start and --end")
+         # If --start is given, --end is also mandatory
          if args.start and not args.end:
              parser.error("argument --end is required when --start is provided for yfinance mode")
+         # If --end is given, --start is also mandatory
          if args.end and not args.start:
              parser.error("argument --start is required when --end is provided for yfinance mode")
-         # If neither period nor start is given, argparse uses the default period ('1y')
-         # So no explicit error check needed here unless default is removed.
+         # Cannot use --period together with --start or --end
+         if args.period and (args.start or args.end):
+              parser.error("cannot use --period together with --start or --end for yfinance mode")
 
     # Check requirements for Polygon & Binance
     polygon_binance_modes = ['polygon', 'binance']
