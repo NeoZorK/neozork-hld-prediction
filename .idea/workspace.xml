@@ -7,9 +7,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="binance all works! fixed">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="polygon all works! fixed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/polygon_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cli/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/cli/cli.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/yfinance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/yfinance_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/workflow/workflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/workflow/workflow.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,22 +73,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.demo command.executor": "Run",
-    "Python.help command.executor": "Run",
-    "Python.indicator.executor": "Run",
-    "Python.indicator_logic.executor": "Run",
-    "Python.plotting.executor": "Run",
-    "Python.run_analysis.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Shell Script.help command.executor": "Run",
-    "git-widget-placeholder": "v0.1.5",
-    "run.code.analysis.last.selected.profile": "aDefault",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.demo command.executor&quot;: &quot;Run&quot;,
+    &quot;Python.help command.executor&quot;: &quot;Run&quot;,
+    &quot;Python.indicator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.indicator_logic.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plotting.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_analysis.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Shell Script.help command.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;v0.1.5&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="fd695039-1346-4bbb-b7b7-3a2bbd6f2741" reportId="NeoZorK HLD/qodana/2025-04-19" />
@@ -162,14 +166,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00109" summary="try 1 to fix all tests">
-      <option name="closed" value="true" />
-      <created>1745067030564</created>
-      <option name="number" value="00109" />
-      <option name="presentableId" value="LOCAL-00109" />
-      <option name="project" value="LOCAL" />
-      <updated>1745067030564</updated>
     </task>
     <task id="LOCAL-00110" summary="try 2 to fix all tests">
       <option name="closed" value="true" />
@@ -555,7 +551,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745230748814</updated>
     </task>
-    <option name="localTasksCounter" value="158" />
+    <task id="LOCAL-00158" summary="polygon all works! fixed">
+      <option name="closed" value="true" />
+      <created>1745233509774</created>
+      <option name="number" value="00158" />
+      <option name="presentableId" value="LOCAL-00158" />
+      <option name="project" value="LOCAL" />
+      <updated>1745233509775</updated>
+    </task>
+    <option name="localTasksCounter" value="159" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,7 +586,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="test yf fetcher" />
     <MESSAGE value="test polygon fetcher" />
     <MESSAGE value="test binance fetcher" />
     <MESSAGE value="test data fetcher" />
@@ -607,6 +610,7 @@
     <MESSAGE value="binance add progress bar fix" />
     <MESSAGE value="binance all works!" />
     <MESSAGE value="binance all works! fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="binance all works! fixed" />
+    <MESSAGE value="polygon all works! fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="polygon all works! fixed" />
   </component>
 </project>

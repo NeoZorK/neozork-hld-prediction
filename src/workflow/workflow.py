@@ -1,4 +1,4 @@
-# src/workflow/workflow.py (Removed Parquet saving block)
+# src/workflow/workflow.py
 
 """
 Main workflow execution logic for the indicator analysis.
@@ -36,7 +36,7 @@ def run_indicator_workflow(args):
         "calc_duration": 0, "plot_duration": 0, "point_size": None, "estimated_point": False,
         "selected_rule": None, "error_message": None, "error_traceback": None,
         # Keep fields populated by acquire_data
-        "data_source_label": "N/A", "effective_mode": args.mode,
+        "data_source_label": "N/A", "effective_mode": args.mode, # effective_mode updated by acquire_data
         "parquet_cache_used": False, "parquet_cache_file": None,
         "data_metrics": {},
         "steps_duration": {}
@@ -56,8 +56,9 @@ def run_indicator_workflow(args):
 
         # --- Critical Check ---
         if ohlcv_df is None or ohlcv_df.empty:
-            # Error message should already be in data_info from acquire_data
-            raise ValueError(data_info.get("error_message", "Cannot proceed without valid data."))
+            # *** FIX: Improved fallback error message ***
+            error_msg_from_data = data_info.get("error_message") or "Data acquisition returned None or empty DataFrame."
+            raise ValueError(error_msg_from_data)
 
         # Log DataFrame Metrics (info now comes from data_info)
         logger.print_debug(f"DataFrame Metrics: Rows={data_info.get('rows_count', 0)}, Cols={data_info.get('columns_count', 0)}, Memory={data_info.get('data_size_mb', 0):.3f} MB")
@@ -113,13 +114,15 @@ def run_indicator_workflow(args):
              workflow_results["steps_duration"]["point_size"] = t_except - t_point_start
         # No need to time acquire step here as it's always first
 
-        error_msg = f"{type(e).__name__}: {e}"
+        # Use the error message if already set (e.g., from ValueError raised above), otherwise format exception
+        error_msg = workflow_results.get("error_message") or f"{type(e).__name__}: {e}"
         logger.print_error(f"Workflow failed: {error_msg}")
         traceback_str = traceback.format_exc()
         logger.print_error("Traceback:")
         try: print(f"{logger.ERROR_COLOR}{traceback_str}{logger.RESET_ALL}")
         except AttributeError: print(traceback_str)
-        workflow_results["error_message"] = str(e)
+        # Store the primary error message and traceback
+        workflow_results["error_message"] = str(e) # Store the original exception string if not already set
         workflow_results["error_traceback"] = traceback_str
 
     # Add overall duration to results

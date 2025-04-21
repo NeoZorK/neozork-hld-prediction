@@ -1,4 +1,4 @@
-# src/data/fetchers/__init__.py
+# src/data/fetchers/__init__.py # CORRECTED
 
 """
 Initializes the fetchers package and exposes the main data fetching functions
@@ -13,7 +13,8 @@ from .polygon_fetcher import fetch_polygon_data
 from .binance_fetcher import fetch_binance_data
 
 # Import specific mapping functions needed by data_acquisition.py
-from .yfinance_fetcher import map_interval, map_ticker
+# *** FIX: Use the renamed functions ***
+from .yfinance_fetcher import map_yfinance_interval, map_yfinance_ticker
 
 # Define what symbols are exported when 'from .fetchers import *' is used
 # (Good practice, though we use direct imports in data_acquisition)
@@ -23,6 +24,7 @@ __all__ = [
     'fetch_yfinance_data',
     'fetch_polygon_data',
     'fetch_binance_data',
-    'map_interval',  # For yfinance
-    'map_ticker',    # For yfinance
+    # *** FIX: Update __all__ with the new names ***
+    'map_yfinance_interval',  # For yfinance
+    'map_yfinance_ticker',    # For yfinance
 ]
