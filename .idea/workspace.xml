@@ -9,22 +9,10 @@
   <component name="ChangeListManager">
     <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="binance all works!">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_BTCUSDT_D1_2012-01-01_2025-04-01.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_BTCUSDT_D1_2021-01-01_2025-04-01.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_BTCUSDT_D1_2024-05-05_2025-04-05.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_BTCUSDT_H1_2012-01-01_2025-04-01.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_ETHUSDT_H1_2012-01-01_2025-04-01.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_ETHUSDT_H1_2020-01-01_2021-01-01.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/binance_ETHUSDT_H1_2020-01-01_2022-01-01.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/polygon_AAPL_D1_2022-01-01_2025-04-01.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/polygon_AAPL_D1_2024-01-01_2025-04-01.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/polygon_AAPL_D1_2025-01-01_2025-04-01.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/polygon_AAPL_W1_2024-08-01_2025-08-01.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/yfinance_AAPL_D1_1y.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/yfinance_AAPL_D1_2024-08-01_2025-01-01.parquet" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw_parquet/yfinance_AAPl_D1_2025-01-01_2025-04-01.parquet" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/workflow/workflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/workflow/workflow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/workflow/test_workflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/workflow/test_workflow.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

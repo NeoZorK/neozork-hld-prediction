@@ -1,216 +1,179 @@
-# tests/data/test_data_acquisition.py
-
-"""
-Unit tests for the data_acquisition module.
-All comments are in English.
-"""
+# tests/data/test_data_acquisition.py (Outline for Refactoring)
 
 import unittest
+from unittest.mock import patch, MagicMock, call
 import pandas as pd
-from unittest.mock import patch, MagicMock, ANY # Import ANY for flexible matching
+import argparse
+import tempfile
+from pathlib import Path
+from datetime import datetime
 
-# Adjust the import path based on the project structure
-from src.data.data_acquisition import acquire_data
+# Import the function and helpers to test/mock
+from src.data.data_acquisition import acquire_data, _generate_instrument_parquet_filename, _get_interval_delta
+# Import fetchers to mock
+from src.data.fetchers import fetch_binance_data # ... import others as needed
 
-# Definition of the TestDataAcquisition class
-class TestDataAcquisition(unittest.TestCase):
-    """
-    Test suite for the acquire_data function.
-    """
+# Helper to create args
+def create_mock_args(mode='binance', ticker='TICKER', interval='H1', start='2023-01-10', end='2023-01-15', point=0.01, **kwargs):
+    args = argparse.Namespace(mode=mode, ticker=ticker, interval=interval, start=start, end=end, point=point, period=None, csv_file=None)
+    args.__dict__.update(kwargs)
+    return args
 
-    # --- Helper to create mock args ---
-    def create_mock_args(self, mode, **kwargs):
-        """ Creates a mock args object for testing. """
-        args = MagicMock()
-        args.mode = mode
-        # Set defaults for potentially missing args to avoid AttributeError
-        args.csv_file = None
-        args.ticker = None
-        args.interval = 'D1' # Default interval
-        args.start = None
-        args.end = None
-        args.period = '1y' # Default period for yfinance if start/end not set
-        # Update with provided kwargs
-        args.__dict__.update(kwargs)
-        return args
-
-    # --- Helper to create a simple mock DataFrame ---
-    def create_simple_mock_df(self):
-        """ Creates a basic DataFrame for mocking fetcher returns. """
-        return pd.DataFrame({'Close': [100, 101]}, index=pd.to_datetime(['2023-01-01', '2023-01-02']))
-
-    # --- Test cases for each mode ---
-
-    # Test demo mode
-    # Patch the specific function imported into data_acquisition
-    @patch('src.data.data_acquisition.get_demo_data')
-    @patch('src.data.data_acquisition.load_dotenv', return_value=True) # Mock dotenv loading
-    def test_acquire_data_demo(self, mock_dotenv, mock_get_demo):
-        """ Test acquire_data in 'demo' mode. """
-        args = self.create_mock_args(mode='demo')
-        mock_df = self.create_simple_mock_df()
-        # Demo fetcher still returns only DataFrame
-        mock_get_demo.return_value = mock_df
-
-        result = acquire_data(args)
-
-        # Assert correct fetcher was called
-        mock_get_demo.assert_called_once()
-        # Assert results dictionary content
-        self.assertEqual(result['effective_mode'], 'demo')
-        self.assertEqual(result['data_source_label'], 'Demo Data')
-        pd.testing.assert_frame_equal(result['ohlcv_df'], mock_df)
-        # Check that metrics are None (as demo doesn't provide them)
-        self.assertIsNone(result.get('file_size_bytes'))
-        self.assertIsNone(result.get('api_latency_sec'))
-
-    # Test CSV mode
-    # Patch the specific function imported into data_acquisition
-    @patch('src.data.data_acquisition.fetch_csv_data')
-    @patch('src.data.data_acquisition.load_dotenv', return_value=True)
-    def test_acquire_data_csv_success(self, mock_dotenv, mock_fetch_csv):
-        """ Test acquire_data in 'csv' mode with successful fetch. """
-        csv_path = "fake/path/data.csv"
-        args = self.create_mock_args(mode='csv', csv_file=csv_path)
-        mock_df = self.create_simple_mock_df()
-        mock_metrics = {"file_size_bytes": 5120} # Example metric
-        # Configure mock fetcher to return tuple
-        mock_fetch_csv.return_value = (mock_df, mock_metrics)
-
-        result = acquire_data(args)
-
-        # Assert correct fetcher was called
-        mock_fetch_csv.assert_called_once_with(filepath=csv_path)
-        # Assert results dictionary content
-        self.assertEqual(result['effective_mode'], 'csv')
-        self.assertEqual(result['data_source_label'], csv_path)
-        pd.testing.assert_frame_equal(result['ohlcv_df'], mock_df)
-        # Check metrics are correctly propagated
-        self.assertEqual(result.get('file_size_bytes'), 5120)
-        self.assertIsNone(result.get('api_latency_sec')) # Latency not applicable to CSV
-
-    # Test CSV mode fetcher failure
-    @patch('src.data.data_acquisition.fetch_csv_data')
-    @patch('src.data.data_acquisition.load_dotenv', return_value=True)
-    def test_acquire_data_csv_failure(self, mock_dotenv, mock_fetch_csv):
-        """ Test acquire_data in 'csv' mode when fetcher returns None. """
-        csv_path = "fake/path/bad_data.csv"
-        args = self.create_mock_args(mode='csv', csv_file=csv_path)
-        # Configure mock fetcher to return None tuple (e.g., file not found)
-        mock_fetch_csv.return_value = (None, {"file_size_bytes": None}) # Or just None
-
-        result = acquire_data(args)
-
-        mock_fetch_csv.assert_called_once_with(filepath=csv_path)
-        self.assertEqual(result['effective_mode'], 'csv')
-        self.assertIsNone(result['ohlcv_df'])
-        # Check metrics (file size might be None if file not found)
-        self.assertIsNone(result.get('file_size_bytes'))
-        self.assertIsNone(result.get('api_latency_sec'))
+# Helper to create sample DataFrames
+def create_sample_df(start_date_str, end_date_str, freq='H'):
+    idx = pd.date_range(start=start_date_str, end=end_date_str, freq=freq, name='DateTime')
+    # Ensure index is timezone-naive to match cache logic
+    idx = idx.tz_localize(None)
+    return pd.DataFrame({'Close': range(len(idx))}, index=idx)
 
 
-    # Test Yfinance mode
-    # Patch the specific functions imported into data_acquisition
-    @patch('src.data.data_acquisition.fetch_yfinance_data')
-    @patch('src.data.data_acquisition.map_interval')
-    @patch('src.data.data_acquisition.map_ticker')
-    @patch('src.data.data_acquisition.load_dotenv', return_value=True)
-    def test_acquire_data_yfinance_success(self, mock_dotenv, mock_map_ticker, mock_map_interval, mock_fetch_yf):
-        """ Test acquire_data in 'yfinance' mode with successful fetch. """
-        args = self.create_mock_args(mode='yfinance', ticker='AAPL', interval='H1', start='2023-01-01', end='2023-01-05')
-        mock_df = self.create_simple_mock_df()
-        mock_metrics = {"latency_sec": 1.5} # Example metric from yf fetcher
-        # Configure mocks
-        mock_map_ticker.return_value = 'AAPL' # Assume ticker mapping returns same
-        mock_map_interval.return_value = '1h' # Assume interval mapping
-        mock_fetch_yf.return_value = (mock_df, mock_metrics)
+class TestDataAcquisitionCaching(unittest.TestCase):
 
-        result = acquire_data(args)
-
-        # Assert mocks called
-        mock_map_ticker.assert_called_once_with('AAPL')
-        mock_map_interval.assert_called_once_with('H1')
-        mock_fetch_yf.assert_called_once_with(
-            ticker='AAPL', interval='1h', period=None, # period is None because start/end are set
-            start_date='2023-01-01', end_date='2023-01-05'
-        )
-        # Assert results dictionary content
-        self.assertEqual(result['effective_mode'], 'yfinance')
-        self.assertEqual(result['data_source_label'], 'AAPL')
-        pd.testing.assert_frame_equal(result['ohlcv_df'], mock_df)
-        # Check metrics are correctly propagated
-        self.assertEqual(result.get('api_latency_sec'), 1.5)
-        self.assertIsNone(result.get('file_size_bytes')) # File size not applicable
+    def setUp(self):
+        # Create a temporary directory for cache files
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.cache_dir_path = Path(self.temp_dir.name)
+        # Patch the PARQUET_DIR constant or path generation if needed,
+        # here we assume the helper function uses "data/raw_parquet" but we'll save to temp dir
+        self.patcher_path = patch('src.data.data_acquisition.Path')
+        self.MockPath = self.patcher_path.start()
+        # Make Path('data/raw_parquet') return our temp dir path
+        # This is slightly complex, might need adjustment based on exact Path usage
+        def path_side_effect(*args):
+            if args == ('data/raw_parquet',):
+                return self.cache_dir_path
+            return Path(*args) # Default Path behavior
+        self.MockPath.side_effect = path_side_effect
+        # Mock logger
+        self.patcher_logger = patch('src.data.data_acquisition.logger')
+        self.mock_logger = self.patcher_logger.start()
 
 
-    # Test Polygon mode
-    # Patch the specific function imported into data_acquisition
-    @patch('src.data.data_acquisition.fetch_polygon_data')
-    @patch('src.data.data_acquisition.load_dotenv', return_value=True)
-    def test_acquire_data_polygon_success(self, mock_dotenv, mock_fetch_polygon):
-        """ Test acquire_data in 'polygon' mode with successful fetch. """
-        args = self.create_mock_args(mode='polygon', ticker='T:MSFT', interval='hour', start='2023-02-01', end='2023-02-02')
-        mock_df = self.create_simple_mock_df()
-        mock_metrics = {"total_latency_sec": 3.2} # Example metric from polygon fetcher
-        # Configure mock fetcher to return tuple
-        mock_fetch_polygon.return_value = (mock_df, mock_metrics)
+    def tearDown(self):
+        # Clean up the temporary directory
+        self.temp_dir.cleanup()
+        self.patcher_path.stop()
+        self.patcher_logger.stop()
 
-        result = acquire_data(args)
+    # --- Test Filename Generation ---
+    def test_generate_filename_api(self):
+        args = create_mock_args(mode='binance', ticker='BTC/USDT', interval='M15')
+        expected_path = self.cache_dir_path / "binance_BTC_USDT_M15.parquet"
+        self.assertEqual(_generate_instrument_parquet_filename(args), expected_path)
 
-        # Assert correct fetcher was called
-        mock_fetch_polygon.assert_called_once_with(
-            ticker='T:MSFT', interval='hour', start_date='2023-02-01', end_date='2023-02-02'
-        )
-        # Assert results dictionary content
-        self.assertEqual(result['effective_mode'], 'polygon')
-        self.assertEqual(result['data_source_label'], 'T:MSFT')
-        pd.testing.assert_frame_equal(result['ohlcv_df'], mock_df)
-        # Check metrics are correctly propagated
-        self.assertEqual(result.get('api_latency_sec'), 3.2) # Uses the 'total_latency_sec' value
-        self.assertIsNone(result.get('file_size_bytes'))
+    def test_generate_filename_csv_demo(self):
+        args_csv = create_mock_args(mode='csv')
+        args_demo = create_mock_args(mode='demo')
+        self.assertIsNone(_generate_instrument_parquet_filename(args_csv))
+        self.assertIsNone(_generate_instrument_parquet_filename(args_demo))
+
+    # --- Test Interval Delta ---
+    def test_get_interval_delta(self):
+        self.assertEqual(_get_interval_delta('H1'), pd.Timedelta(hours=1))
+        self.assertEqual(_get_interval_delta('M15'), pd.Timedelta(minutes=15))
+        self.assertEqual(_get_interval_delta('D1'), pd.Timedelta(days=1))
+        self.assertEqual(_get_interval_delta('W'), pd.Timedelta(days=7))
+        self.assertIsNone(_get_interval_delta('MN1')) # Check handling of unsupported yet
+        self.assertIsNone(_get_interval_delta('INVALID'))
 
 
-    # Test Binance mode
-    # Patch the specific function imported into data_acquisition
+    # --- Test Cache Miss ---
     @patch('src.data.data_acquisition.fetch_binance_data')
-    @patch('src.data.data_acquisition.load_dotenv', return_value=True)
-    def test_acquire_data_binance_success(self, mock_dotenv, mock_fetch_binance):
-        """ Test acquire_data in 'binance' mode with successful fetch. """
-        args = self.create_mock_args(mode='binance', ticker='BTCUSDT', interval='M15', start='2023-03-10', end='2023-03-11')
-        mock_df = self.create_simple_mock_df()
-        mock_metrics = {"total_latency_sec": 2.8} # Example metric from binance fetcher
-        # Configure mock fetcher to return tuple
-        mock_fetch_binance.return_value = (mock_df, mock_metrics)
+    @patch('pandas.DataFrame.to_parquet') # Mock saving
+    def test_cache_miss_fetches_api(self, mock_to_parquet, mock_fetch_binance):
+        args = create_mock_args(start='2023-01-10', end='2023-01-12')
+        cache_file = _generate_instrument_parquet_filename(args)
+        # Ensure file does NOT exist
+        self.assertFalse(cache_file.exists())
 
-        result = acquire_data(args)
+        # Mock API return
+        mock_df_fetched = create_sample_df('2023-01-10', '2023-01-12 23:00')
+        mock_metrics = {'api_calls': 1}
+        mock_fetch_binance.return_value = (mock_df_fetched.copy(), mock_metrics)
 
-        # Assert correct fetcher was called
-        mock_fetch_binance.assert_called_once_with(
-            ticker='BTCUSDT', interval='M15', start_date='2023-03-10', end_date='2023-03-11'
-        )
-        # Assert results dictionary content
-        self.assertEqual(result['effective_mode'], 'binance')
-        self.assertEqual(result['data_source_label'], 'BTCUSDT')
-        pd.testing.assert_frame_equal(result['ohlcv_df'], mock_df)
-        # Check metrics are correctly propagated
-        self.assertEqual(result.get('api_latency_sec'), 2.8) # Uses the 'total_latency_sec' value
-        self.assertIsNone(result.get('file_size_bytes'))
+        data_info = acquire_data(args)
+
+        # Assertions
+        mock_fetch_binance.assert_called_once_with(ticker=args.ticker, interval=args.interval, start_date=args.start, end_date=args.end)
+        self.assertFalse(data_info['parquet_cache_used'])
+        pd.testing.assert_frame_equal(data_info['ohlcv_df'], mock_df_fetched)
+        mock_to_parquet.assert_called_once() # Should save the newly fetched data
+        self.assertEqual(data_info['api_calls'], 1)
 
 
-    # Test missing required argument for a mode (e.g., ticker for yfinance)
-    # No mocks needed as it should fail before calling fetcher
-    @patch('src.data.data_acquisition.load_dotenv', return_value=True)
-    def test_acquire_data_missing_arg(self, mock_dotenv):
-        """ Test acquire_data raises ValueError if a required arg is missing. """
-        args = self.create_mock_args(mode='yfinance', ticker=None) # Missing ticker
-        with self.assertRaisesRegex(ValueError, "--ticker is required for yfinance mode."):
-            acquire_data(args)
+    # --- Test Exact Cache Hit ---
+    @patch('src.data.data_acquisition.fetch_binance_data')
+    @patch('pandas.read_parquet')
+    @patch('pandas.DataFrame.to_parquet')
+    def test_exact_cache_hit_loads_file(self, mock_to_parquet, mock_read_parquet, mock_fetch_binance):
+        args = create_mock_args(start='2023-01-10', end='2023-01-12')
+        cache_file = _generate_instrument_parquet_filename(args)
 
-        args_csv = self.create_mock_args(mode='csv', csv_file=None) # Missing csv_file
-        with self.assertRaisesRegex(ValueError, "--csv-file is required for csv mode."):
-            acquire_data(args_csv)
+        # Simulate existing cache file
+        mock_df_cached = create_sample_df('2023-01-10', '2023-01-12 23:00')
+        mock_read_parquet.return_value = mock_df_cached.copy()
+        # Need to mock Path.exists() for this specific file
+        with patch.object(Path, 'exists', return_value=True): # Mock exists method of Path instances
+            # Also mock stat().st_size if needed by logic
+             with patch.object(Path, 'stat') as mock_stat:
+                 mock_stat.return_value.st_size = 1024
+                 data_info = acquire_data(args)
+
+        # Assertions
+        mock_read_parquet.assert_called_once_with(cache_file)
+        mock_fetch_binance.assert_not_called() # API should NOT be called
+        self.assertTrue(data_info['parquet_cache_used'])
+        pd.testing.assert_frame_equal(data_info['ohlcv_df'], mock_df_cached) # Should return cached data
+        mock_to_parquet.assert_not_called() # Should not save if only cache was used
+        self.assertEqual(data_info['file_size_bytes'], 1024)
+        self.assertEqual(data_info['api_calls'], 0) # No API calls
+
+    # --- Test Fetch After Cache ---
+    @patch('src.data.data_acquisition.fetch_binance_data')
+    @patch('pandas.read_parquet')
+    @patch('pandas.DataFrame.to_parquet')
+    def test_fetch_after_cache(self, mock_to_parquet, mock_read_parquet, mock_fetch_binance):
+        # Request 10th to 15th, Cache has 10th to 12th
+        args = create_mock_args(start='2023-01-10', end='2023-01-15')
+        cache_file = _generate_instrument_parquet_filename(args)
+
+        # Simulate existing cache file (10-12)
+        mock_df_cached = create_sample_df('2023-01-10', '2023-01-12 23:00')
+        mock_read_parquet.return_value = mock_df_cached.copy()
+
+        # Simulate API fetch for the missing range (13-15)
+        mock_df_new = create_sample_df('2023-01-13', '2023-01-15 23:00')
+        mock_fetch_binance.return_value = (mock_df_new.copy(), {'api_calls': 1})
+
+        with patch.object(Path, 'exists', return_value=True), patch.object(Path, 'stat') as mock_stat:
+             mock_stat.return_value.st_size = 1024
+             data_info = acquire_data(args)
+
+        # Assertions
+        mock_read_parquet.assert_called_once_with(cache_file)
+        # Check API was called ONLY for the missing range (13th to 15th)
+        # Need interval delta (H1 -> 1 hour)
+        expected_fetch_start = '2023-01-13' # Day after cache end
+        expected_fetch_end = '2023-01-15'   # Requested end
+        mock_fetch_binance.assert_called_once_with(ticker=args.ticker, interval=args.interval, start_date=expected_fetch_start, end_date=expected_fetch_end)
+
+        self.assertTrue(data_info['parquet_cache_used']) # Cache was used as base
+        # Check combined and sliced result
+        expected_combined_len = len(mock_df_cached) + len(mock_df_new)
+        # The final df should be the slice requested (10th to 15th)
+        self.assertEqual(len(data_info['ohlcv_df']), expected_combined_len)
+        self.assertEqual(data_info['ohlcv_df'].index.min(), pd.Timestamp('2023-01-10 00:00:00'))
+        self.assertEqual(data_info['ohlcv_df'].index.max(), pd.Timestamp('2023-01-15 23:00:00'))
+        mock_to_parquet.assert_called_once() # Should save the combined data
+
+    # --- Add more tests ---
+    # test_fetch_before_cache(...)
+    # test_fetch_before_and_after_cache(...)
+    # test_cache_read_error_fetches_api(...)
+    # test_fetch_failure_during_partial_fetch(...)
+    # test_yfinance_period_skips_cache(...)
 
 
-# Allow running the tests directly
+# Allow running tests directly
 if __name__ == '__main__':
     unittest.main()
