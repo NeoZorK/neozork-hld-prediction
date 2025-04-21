@@ -1,159 +1,149 @@
-# src/data/data_acquisition.py # REFACTORED IMPORTS
+# src/data/data_acquisition.py
 
 """
-Workflow Step 1: Handles data acquisition based on mode (demo/yfinance/csv/polygon/binance).
-Imports fetchers from the 'fetchers' subpackage.
+Handles the overall data acquisition process by dispatching to specific fetchers based on mode.
 All comments are in English.
 """
-
+import os
+import traceback
 from dotenv import load_dotenv
+import pandas as pd # Keep pandas import
 
-# Use relative imports within the src package
-from ..common import logger
-# Import functions from the fetchers subpackage via its __init__.py
+# Use relative imports for fetchers within the same package
 from .fetchers import (
-    get_demo_data,
-    fetch_csv_data,
-    fetch_yfinance_data,
-    map_interval, map_ticker, # YFinance specific utils needed here
-    fetch_polygon_data,
-    fetch_binance_data
+    fetch_csv_data, fetch_yfinance_data, fetch_polygon_data,
+    fetch_binance_data, get_demo_data
 )
+# Use relative import for logger
+from ..common import logger
 
-
-# Definition of the acquire_data function
-def acquire_data(args):
+# Definition of acquire_data function
+def acquire_data(args) -> dict:
     """
-    Acquires data based on args.mode by calling the appropriate fetcher.
-    Loads environment variables from .env file at the beginning.
+    Acquires OHLCV data based on the specified mode and arguments.
 
     Args:
-        args (argparse.Namespace): Parsed command-line arguments from cli.py.
+        args (argparse.Namespace): Parsed command-line arguments.
 
     Returns:
-        dict: Contains 'ohlcv_df' (DataFrame or None) and metadata including fetcher metrics.
+        dict: A dictionary containing the DataFrame ('ohlcv_df') and acquisition metrics.
+              Returns {'ohlcv_df': None} on failure.
     """
-    # --- Load Environment Variables ---
-    dotenv_loaded = load_dotenv()
-    if not dotenv_loaded:
-         logger.print_warning("Could not find or load .env file. API keys must be set as environment variables.")
-    # -----------------------------------------
+    # --- Load environment variables ---
+    dotenv_path = '.env'
+    if os.path.exists(dotenv_path):
+        load_dotenv(dotenv_path=dotenv_path)
+        logger.print_debug(".env file loaded.")
+    else:
+        logger.print_debug(".env file not found, proceeding without it.")
 
-    # Initialize variables
-    ohlcv_df = None
-    data_source_label = ""
-    yf_ticker = None
-    yf_interval = None
-    current_period = None
-    current_start = args.start
-    current_end = args.end
-    fetcher_metrics = {} # Initialize dictionary for fetcher metrics
-
-    effective_mode = 'yfinance' if args.mode == 'yf' else args.mode
-
-    # --- Select Fetcher based on Mode ---
-    if effective_mode == 'demo':
-        logger.print_info("--- Step 1: Acquiring Data (Mode: Demo) ---")
-        data_source_label = "Demo Data"
-        ohlcv_df = get_demo_data()
-        # Demo has no specific fetcher metrics like latency or file size
-        fetcher_metrics = {"latency_sec": None, "file_size_bytes": None}
-
-    elif effective_mode == 'csv':
-        logger.print_info("--- Step 1: Acquiring Data (Mode: CSV File) ---")
-        if not args.csv_file: raise ValueError("--csv-file is required for csv mode.")
-        data_source_label = args.csv_file
-        result_tuple = fetch_csv_data(filepath=args.csv_file)
-        if result_tuple: ohlcv_df, fetcher_metrics = result_tuple
-        else: ohlcv_df, fetcher_metrics = None, {}
-        # fetcher_metrics now contains 'file_size_bytes'
-
-    elif effective_mode == 'polygon':
-        logger.print_info("--- Step 1: Acquiring Data (Mode: Polygon.io) ---")
-        if not args.ticker or not args.start or not args.end: raise ValueError("--ticker, --start, and --end are required for polygon mode.")
-        data_source_label = args.ticker
-        # MODIFIED: Expect tuple (df, metrics)
-        result_tuple = fetch_polygon_data(
-            ticker=args.ticker,
-            interval=args.interval,
-            start_date=current_start,
-            end_date=current_end
-        )
-        if result_tuple: ohlcv_df, fetcher_metrics = result_tuple
-        else: ohlcv_df, fetcher_metrics = None, {}
-        # fetcher_metrics now contains 'total_latency_sec'
-        yf_ticker = None; yf_interval = None; current_period = None # Clear yf vars
-
-    elif effective_mode == 'yfinance':
-        logger.print_info("--- Step 1: Acquiring Data (Mode: Yahoo Finance) ---")
-        if not args.ticker: raise ValueError("--ticker is required for yfinance mode.")
-        data_source_label = args.ticker
-        try: yf_interval = map_interval(args.interval)
-        except ValueError as e: logger.print_error(f"Failed to map yfinance interval: {e}"); raise
-        yf_ticker = map_ticker(args.ticker)
-        period_arg = args.period
-
-        # MODIFIED: Expect tuple (df, metrics)
-        result_tuple = None
-        if current_start and current_end:
-             logger.print_info(f"Fetching yfinance data for interval '{yf_interval}' from {current_start} to {current_end}")
-             current_period = None
-             result_tuple = fetch_yfinance_data(
-                ticker=yf_ticker, interval=yf_interval, period=None,
-                start_date=current_start, end_date=current_end
-             )
-        elif period_arg:
-             current_period = period_arg; current_start = None; current_end = None
-             logger.print_info(f"Fetching yfinance data for interval '{yf_interval}' for period '{current_period}'")
-             result_tuple = fetch_yfinance_data(
-                ticker=yf_ticker, interval=yf_interval, period=current_period,
-                start_date=None, end_date=None
-             )
-        else:
-             current_period = period_arg if period_arg else args.period
-             current_start = None; current_end = None
-             logger.print_info(f"Fetching yfinance data for interval '{yf_interval}' for default period '{current_period}'")
-             result_tuple = fetch_yfinance_data(
-                 ticker=yf_ticker, interval=yf_interval, period=current_period,
-                 start_date=None, end_date=None
-             )
-
-        if result_tuple: ohlcv_df, fetcher_metrics = result_tuple
-        else: ohlcv_df, fetcher_metrics = None, {}
-        # fetcher_metrics now contains 'latency_sec'
-
-    elif effective_mode == 'binance':
-        logger.print_info("--- Step 1: Acquiring Data (Mode: Binance) ---")
-        if not args.ticker or not args.start or not args.end: raise ValueError("--ticker, --start, and --end are required for binance mode.")
-        data_source_label = args.ticker
-        # MODIFIED: Expect tuple (df, metrics)
-        result_tuple = fetch_binance_data(
-            ticker=args.ticker,
-            interval=args.interval,
-            start_date=current_start,
-            end_date=current_end
-        )
-        if result_tuple: ohlcv_df, fetcher_metrics = result_tuple
-        else: ohlcv_df, fetcher_metrics = None, {}
-        # fetcher_metrics now contains 'total_latency_sec'
-        yf_ticker = None; yf_interval = None; current_period = None # Clear yf vars
-
-    # --- Return Results ---
-    results = {
-        "ohlcv_df": ohlcv_df,
-        "effective_mode": effective_mode,
-        "data_source_label": data_source_label,
-        "yf_ticker": yf_ticker,
-        "yf_interval": yf_interval,
-        "current_period": current_period,
-        "current_start": current_start,
-        "current_end": current_end,
+    # Initialize result structure
+    data_info = {
+        "ohlcv_df": None, "ticker": args.ticker, "interval": args.interval,
+        "data_source_label": "N/A", "effective_mode": args.mode,
+        "yf_ticker": None, "yf_interval": None, "current_period": None,
+        "current_start": args.start, "current_end": args.end,
+        "file_size_bytes": None, "api_latency_sec": None,
+        "api_calls": None, "successful_chunks": None, "rows_fetched": None,
+        "error_message": None, "data_metrics": {}
     }
-    # Use a consistent key for latency in the final results, e.g., 'api_latency_sec'
-    # Handle different keys returned by fetchers ('latency_sec' vs 'total_latency_sec')
-    latency_value = fetcher_metrics.get("latency_sec") or fetcher_metrics.get("total_latency_sec")
-    results["api_latency_sec"] = latency_value
-    # Add other metrics like file size
-    results["file_size_bytes"] = fetcher_metrics.get("file_size_bytes")
 
-    return results
+    logger.print_info(f"--- Step 1: Acquiring Data (Mode: {args.mode.capitalize()}) ---")
+
+    df = None # Initialize df
+    metrics = {} # Initialize metrics
+
+    # --- No tqdm wrapper here ---
+    try:
+        # --- Dispatch based on mode ---
+        if args.mode == 'demo':
+            data_info["data_source_label"] = "Demo Data"
+            df = get_demo_data() # Demo returns only df
+            metrics = {} # No specific metrics for demo
+
+        elif args.mode == 'csv':
+            if not args.csv_file: raise ValueError("--csv-file is required for csv mode.")
+            if args.point is None: raise ValueError("--point must be provided when using csv mode.") # Check point for CSV
+            data_info["data_source_label"] = args.csv_file
+            # CSV fetcher returns df, metrics tuple
+            df, metrics = fetch_csv_data(filepath=args.csv_file)
+
+        elif args.mode in ['yfinance', 'yf']:
+            if not args.ticker: raise ValueError("--ticker is required for yfinance mode.")
+            data_info["data_source_label"] = args.ticker
+            data_info["yf_ticker"] = args.ticker # Store original ticker for estimation
+            data_info["yf_interval"] = args.interval
+            data_info["current_period"] = args.period
+            # Yfinance fetcher returns df, metrics tuple
+            df, metrics = fetch_yfinance_data(
+                ticker=args.ticker, interval=args.interval, period=args.period,
+                start_date=args.start, end_date=args.end
+            )
+
+        elif args.mode == 'polygon':
+            if not args.ticker: raise ValueError("--ticker is required for polygon mode.")
+            if not args.start or not args.end: raise ValueError("--start and --end are required for polygon mode.")
+            if args.point is None: raise ValueError("--point must be provided when using polygon mode.") # Check point for Polygon
+            data_info["data_source_label"] = args.ticker
+            # Polygon fetcher returns df, metrics tuple
+            df, metrics = fetch_polygon_data(
+                ticker=args.ticker, interval=args.interval,
+                start_date=args.start, end_date=args.end
+            )
+
+        elif args.mode == 'binance':
+            if not args.ticker: raise ValueError("--ticker is required for binance mode.")
+            if not args.start or not args.end: raise ValueError("--start and --end are required for binance mode.")
+            if args.point is None: raise ValueError("--point must be provided when using binance mode.") # Check point for Binance
+            data_info["data_source_label"] = args.ticker
+            # Binance fetcher returns df, metrics tuple
+            df, metrics = fetch_binance_data(
+                ticker=args.ticker, interval=args.interval,
+                start_date=args.start, end_date=args.end
+            )
+        else:
+            # This case should ideally be caught by argparse choices
+            raise ValueError(f"Invalid mode specified: {args.mode}")
+
+    except ValueError as ve:
+        logger.print_error(f"Configuration error for mode '{args.mode}': {ve}")
+        data_info["error_message"] = str(ve)
+        # Return immediately on config error before fetchers are called
+        return data_info
+    except ImportError as ie:
+         logger.print_error(f"Missing library for mode '{args.mode}': {ie}")
+         data_info["error_message"] = f"Missing library for {args.mode}: {ie}"
+         return data_info # Return on import error
+    except Exception as e:
+        # Catch potential errors during the fetcher call itself
+        logger.print_error(f"An unexpected error occurred during data acquisition for mode '{args.mode}': {e}")
+        logger.print_error(f"Traceback:\n{traceback.format_exc()}")
+        data_info["error_message"] = f"Fetch error: {e}"
+        # df remains None
+        metrics = metrics or {} # Ensure metrics is a dict even if fetch failed early
+        metrics["error_message"] = data_info["error_message"] # Add error to metrics too
+
+
+    # --- Post-fetch processing ---
+    data_info["ohlcv_df"] = df
+    # Merge fetched metrics into data_info, prioritizing fetched values
+    if isinstance(metrics, dict):
+        # Map specific metric names if needed
+        if "file_size_bytes" in metrics: data_info["file_size_bytes"] = metrics["file_size_bytes"]
+        # Use 'total_latency_sec' if available, else 'latency_sec'
+        if "total_latency_sec" in metrics: data_info["api_latency_sec"] = metrics["total_latency_sec"]
+        elif "latency_sec" in metrics: data_info["api_latency_sec"] = metrics["latency_sec"]
+        if "api_calls" in metrics: data_info["api_calls"] = metrics["api_calls"]
+        if "successful_chunks" in metrics: data_info["successful_chunks"] = metrics["successful_chunks"]
+        if "rows_fetched" in metrics: data_info["rows_fetched"] = metrics["rows_fetched"]
+        if "error_message" in metrics: # Propagate error from fetcher if not already set
+             if data_info["error_message"] is None: data_info["error_message"] = metrics["error_message"]
+        # Store the raw metrics dict as well
+        data_info["data_metrics"].update(metrics)
+
+
+    if df is None: logger.print_warning("Data acquisition resulted in None DataFrame.")
+    elif df.empty: logger.print_warning("Data acquisition resulted in an empty DataFrame.")
+    else: logger.print_info(f"Data acquired successfully: {len(df)} rows.")
+
+    return data_info
