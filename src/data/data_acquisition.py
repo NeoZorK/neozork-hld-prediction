@@ -1,4 +1,4 @@
-# src/data/data_acquisition.py
+# src/data/data_acquisition.py # CORRECTED v5: Date calculation for fetch before cache
 
 """
 Handles the overall data acquisition process by dispatching to specific fetchers based on mode.
@@ -23,21 +23,32 @@ from ..common import logger
 
 # Helper function to get interval delta
 def _get_interval_delta(interval_str: str) -> pd.Timedelta | None:
-    """Converts interval string (e.g., 'H1', 'D1', 'M1') to pandas Timedelta."""
+    """Converts interval string (e.g., 'h1', 'D1', 'M1') to pandas Timedelta."""
     simple_map = {
         'M1': '1min', 'M5': '5min', 'M15': '15min', 'M30': '30min',
-        'H1': '1h', 'H4': '4h', 'D1': '1d', 'D': '1d',
+        'H1': '1h', 'h1': '1h', # Added 'h1'
+        'H4': '4h', 'D1': '1d', 'D': '1d',
         'W': '7d', 'W1': '7d',
         'MN': '30d', 'MN1': '30d' # Approximation for month delta check
     }
-    pd_freq = simple_map.get(interval_str.upper(), interval_str) # Use upper for mapping keys
+    # Handle direct pandas frequency strings if passed
     try:
-        delta = pd.Timedelta(pd_freq)
-        # Return None if delta is zero or negative (invalid interval for delta logic)
+        # Try direct conversion first
+        delta = pd.Timedelta(pd.tseries.frequencies.to_offset(interval_str))
         return delta if delta.total_seconds() > 0 else None
     except ValueError:
-        logger.print_warning(f"Could not parse interval '{interval_str}' to Timedelta. Cache delta logic may be affected.")
-        return None # Return None if parsing fails
+         # Fallback to mapping if direct conversion fails
+         pd_freq = simple_map.get(interval_str.upper()) # Use upper for mapping keys
+         if pd_freq:
+             try:
+                 delta = pd.Timedelta(pd_freq)
+                 return delta if delta.total_seconds() > 0 else None
+             except ValueError:
+                 pass # Continue to final warning if mapping fails
+
+    logger.print_warning(f"Could not parse interval '{interval_str}' to Timedelta. Cache delta logic may be affected.")
+    return None # Return None if parsing fails
+
 
 # Helper function for Parquet filename (Mode, Ticker, Interval based)
 def _generate_instrument_parquet_filename(args) -> Path | None:
@@ -87,38 +98,36 @@ def acquire_data(args) -> dict:
 
     df = None; metrics = {}; cached_df = None; cache_filepath = None
     fetch_ranges = []; req_start_dt = None; req_end_dt_inclusive = None # Initialize
-    combined_metrics = {} # *** FIX: Initialize combined_metrics here ***
+    combined_metrics = {} # Initialize combined_metrics
 
     # --- Handle non-cacheable modes first ---
     if effective_mode == 'demo':
         data_info["data_source_label"] = "Demo Data"; df = get_demo_data(); metrics = {}
-        data_info["ohlcv_df"] = df; return data_info
+        data_info["ohlcv_df"] = df; return data_info # Return early
     elif effective_mode == 'csv':
-        # Validation now happens in cli.py
         data_info["data_source_label"] = args.csv_file
         df, metrics = fetch_csv_data(filepath=args.csv_file)
-        data_info["ohlcv_df"] = df
-        combined_metrics = metrics or {} # Assign to combined_metrics
-        if isinstance(metrics, dict): data_info["data_metrics"].update(metrics) # Update metrics
-        if "file_size_bytes" in data_info["data_metrics"]: data_info["file_size_bytes"] = data_info["data_metrics"]["file_size_bytes"]
-        # Need to populate other fields from combined_metrics at the end
-        # return data_info # Don't return early, let final update happen
+        combined_metrics = metrics or {}
+        # Don't return early, let final update happen
 
     # --- Logic for Cacheable API Modes ---
     elif effective_mode in ['yfinance', 'polygon', 'binance']:
         try:
-            # --- Date Parsing (moved from cli, handles period vs start/end) ---
+            # --- Date Parsing & Validation ---
             is_period_request = effective_mode == 'yfinance' and args.period
+            cache_start_dt = None # Initialize
+            cache_end_dt = None # Initialize
+
             if not is_period_request: # Using start/end dates
                  try:
                       req_start_dt = pd.to_datetime(args.start, errors='raise').tz_localize(None)
-                      # Fetch up to the *beginning* of the day *after* end_date to be inclusive for daily/longer intervals
-                      req_end_dt_inclusive = pd.to_datetime(args.end, errors='raise').tz_localize(None) + timedelta(days=1) - timedelta(milliseconds=1)
+                      req_end_dt_input = pd.to_datetime(args.end, errors='raise').tz_localize(None)
+                      req_end_dt_inclusive = req_end_dt_input + timedelta(days=1) - timedelta(milliseconds=1)
                       if req_start_dt >= req_end_dt_inclusive: raise ValueError("Start date must be before end date.")
                  except Exception as date_err:
                       raise ValueError(f"Invalid start/end date format or range: {date_err}")
             else: # Using yfinance period
-                 req_start_dt, req_end_dt_inclusive = None, None # Mark as period request
+                 req_start_dt, req_end_dt_inclusive = None, None
 
             # --- Check Cache ---
             cache_filepath = _generate_instrument_parquet_filename(args)
@@ -144,46 +153,51 @@ def acquire_data(args) -> dict:
                 except Exception as e: logger.print_warning(f"Failed to load cache file {cache_filepath}: {e}")
 
             # --- Determine Fetch Ranges ---
-            if not is_period_request: # Only determine fetch ranges if start/end provided
+            if not is_period_request:
                 interval_delta = _get_interval_delta(args.interval)
-                if cache_load_success and interval_delta:
+                if cache_load_success and interval_delta and cache_start_dt and cache_end_dt: # Ensure cache dates are valid
                     # Fetch data before cache if needed
                     if req_start_dt < cache_start_dt:
-                        fetch_before_end = cache_start_dt - interval_delta # Fetch up to the bar *before* cache starts
+                        fetch_before_end = cache_start_dt - interval_delta # Last timestamp needed before cache
                         if fetch_before_end >= req_start_dt:
-                            fetch_ranges.append((req_start_dt, fetch_before_end))
+                             # Store cache_start_dt to signal this is a "before" fetch for date calc later
+                            fetch_ranges.append((req_start_dt, fetch_before_end, cache_start_dt))
                     # Fetch data after cache if needed
                     if req_end_dt_inclusive > cache_end_dt:
-                        fetch_after_start = cache_end_dt + interval_delta # Fetch from the bar *after* cache ends
+                        fetch_after_start = cache_end_dt + interval_delta # First timestamp needed after cache
                         if fetch_after_start <= req_end_dt_inclusive:
-                             fetch_ranges.append((fetch_after_start, req_end_dt_inclusive))
+                             fetch_ranges.append((fetch_after_start, req_end_dt_inclusive, None)) # Signal not "before" fetch
 
                     if not fetch_ranges: logger.print_info("Requested range is fully covered by cache.")
                     else: logger.print_info(f"Found {len(fetch_ranges)} missing range(s) to fetch.")
-
                 elif not cache_load_success: # No cache, fetch full range
-                    fetch_ranges.append((req_start_dt, req_end_dt_inclusive))
+                    fetch_ranges.append((req_start_dt, req_end_dt_inclusive, None))
                     logger.print_info(f"No cache found/usable. Fetching full range: {args.start} to {args.end}")
                 elif not interval_delta: # Cache loaded but couldn't get delta
                      logger.print_warning("Could not determine interval delta, cannot fetch partial data. Using cache only.")
-                     # Proceed with only cached_df
 
             # --- Fetch Missing Data ---
             new_data_list = []; fetch_failed = False
             if fetch_ranges:
                 data_info["data_source_label"] = args.ticker # Set label to ticker since we fetch from API
-                for fetch_start, fetch_end in fetch_ranges:
-                    fetch_start_str = fetch_start.strftime('%Y-%m-%d')
-                    # For fetch_end, we need the end date string for the API call
-                    # Add back the millisecond we subtracted earlier, then format
-                    fetch_end_inclusive = fetch_end + timedelta(milliseconds=1)
-                    fetch_end_str = fetch_end_inclusive.strftime('%Y-%m-%d')
+                for fetch_range_data in fetch_ranges:
+                    fetch_start, fetch_end, signal_cache_start = fetch_range_data # Unpack tuple
 
-                    logger.print_info(f"Fetching range: {fetch_start_str} to {fetch_end_str} from {effective_mode}...")
+                    fetch_start_str = fetch_start.strftime('%Y-%m-%d')
+                    # *** FIX: Calculate fetch_end_str correctly for API calls ***
+                    if signal_cache_start is not None: # This is the "fetch before" range
+                         # End date for API call should be the day the cache starts (exclusive)
+                         fetch_end_str = signal_cache_start.strftime('%Y-%m-%d')
+                    else: # This is a "fetch after" or "full range" fetch
+                         # End date for API call should be day after the last needed timestamp
+                         fetch_end_inclusive = fetch_end + timedelta(milliseconds=1)
+                         fetch_end_str = fetch_end_inclusive.strftime('%Y-%m-%d')
+
+
+                    logger.print_info(f"Fetching range: {fetch_start_str} to {fetch_end.strftime('%Y-%m-%d')} from {effective_mode}... (API Call end: {fetch_end_str})")
                     new_df_part = None; metrics_part = {}
                     try:
                         if effective_mode == 'yfinance':
-                            # Pass period=None when using start/end
                             new_df_part, metrics_part = fetch_yfinance_data(ticker=args.ticker, interval=args.interval, start_date=fetch_start_str, end_date=fetch_end_str, period=None)
                         elif effective_mode == 'polygon':
                             new_df_part, metrics_part = fetch_polygon_data(ticker=args.ticker, interval=args.interval, start_date=fetch_start_str, end_date=fetch_end_str)
@@ -193,15 +207,14 @@ def acquire_data(args) -> dict:
                         if new_df_part is not None and not new_df_part.empty:
                             if isinstance(new_df_part.index, pd.DatetimeIndex): new_df_part.index = new_df_part.index.tz_localize(None)
                             new_data_list.append(new_df_part); logger.print_success(f"Fetched {len(new_df_part)} new rows.")
-                        else: logger.print_warning(f"No data returned for range {fetch_start_str} to {fetch_end_str}.")
+                        else: logger.print_warning(f"No data returned for range {fetch_start_str} to {fetch_end.strftime('%Y-%m-%d')}.")
                         # Accumulate metrics
                         if isinstance(metrics_part, dict):
                             for key, value in metrics_part.items():
                                 if key == "error_message" and value and "error_message" not in combined_metrics: combined_metrics["error_message"] = value # Store first error
                                 elif isinstance(value, (int, float)): combined_metrics[key] = combined_metrics.get(key, 0) + value
-                                # Optionally accumulate other metrics if needed
                     except Exception as e:
-                        logger.print_error(f"Failed to fetch range {fetch_start_str} to {fetch_end_str}: {e}"); fetch_failed = True
+                        logger.print_error(f"Failed to fetch range {fetch_start_str} to {fetch_end.strftime('%Y-%m-%d')}: {e}"); fetch_failed = True
                         combined_metrics["error_message"] = f"Failed fetch: {e}"; break # Stop fetching on error
             elif is_period_request: # Handle yfinance period request (no caching attempt)
                  data_info["data_source_label"] = args.ticker
@@ -226,7 +239,7 @@ def acquire_data(args) -> dict:
                 logger.print_info(f"Combining {len(all_dfs)} DataFrame(s)...")
                 try:
                     combined_df = pd.concat(all_dfs)
-                    if not isinstance(combined_df.index, pd.DatetimeIndex): raise TypeError("Index type error")
+                    if not isinstance(combined_df.index, pd.DatetimeIndex): raise TypeError("Index type error after concat")
                     combined_df.sort_index(inplace=True)
                     rows_before_dedup = len(combined_df)
                     combined_df = combined_df[~combined_df.index.duplicated(keep='first')]
@@ -236,12 +249,16 @@ def acquire_data(args) -> dict:
                 except Exception as e: logger.print_error(f"Error combining data: {e}"); data_info["error_message"] = f"Error combining data: {e}"; combined_df = cached_df # Fallback
 
             # --- Save Updated Cache ---
-            if combined_df is not None and new_data_list and not fetch_failed and cache_filepath:
-                logger.print_info(f"Attempting to overwrite cache file: {cache_filepath}")
+            # Save if new data was fetched OR if it was a period request (to potentially overwrite stale cache)
+            should_save = (new_data_list and not fetch_failed and cache_filepath) or \
+                          (is_period_request and combined_df is not None and not combined_df.empty and cache_filepath)
+            if should_save:
+                logger.print_info(f"Attempting to save/overwrite cache file: {cache_filepath}")
                 try:
                     os.makedirs(cache_filepath.parent, exist_ok=True)
+                    # Save the *combined* dataframe, even for period requests
                     combined_df.to_parquet(cache_filepath, index=True, engine='pyarrow')
-                    logger.print_success(f"Successfully updated cache file: {cache_filepath}")
+                    logger.print_success(f"Successfully saved/updated cache file: {cache_filepath}")
                     data_info["parquet_save_path"] = str(cache_filepath)
                 except ImportError: logger.print_error("Failed to save Parquet: pyarrow not installed.")
                 except Exception as e: logger.print_error(f"Failed to save updated cache file {cache_filepath}: {e}")
@@ -254,8 +271,7 @@ def acquire_data(args) -> dict:
                     # Use original start/end dates for slicing
                     slice_start = pd.to_datetime(args.start).tz_localize(None)
                     slice_end = pd.to_datetime(args.end).tz_localize(None)
-                    # Slice inclusive of both start and end dates
-                    final_df = combined_df.loc[slice_start:slice_end].copy()
+                    final_df = combined_df.loc[slice_start:slice_end].copy() # Slice is inclusive
                     if final_df.empty: logger.print_warning("Requested date range resulted in empty slice.")
                     else: logger.print_info(f"Final DataFrame slice has {len(final_df)} rows.")
                 except Exception as e: logger.print_error(f"Error slicing combined DataFrame: {e}"); final_df = None

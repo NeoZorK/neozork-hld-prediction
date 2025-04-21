@@ -1,4 +1,4 @@
-# tests/data/test_data_acquisition.py # CORRECTED v7: Ensure correct date assertion
+# tests/data/test_data_acquisition.py # CORRECTED v8: Assertions for before cache and period tests
 
 import unittest
 from unittest.mock import patch, MagicMock, call
@@ -17,6 +17,10 @@ from src.data.fetchers import fetch_binance_data, fetch_yfinance_data # Import y
 def create_mock_args(mode='binance', ticker='TICKER', interval='h1', start='2023-01-10', end='2023-01-11', point=0.01, **kwargs): # Default to 2 days 'h1'
     args = argparse.Namespace(mode=mode, ticker=ticker, interval=interval, start=start, end=end, point=point, period=None, csv_file=None)
     if mode == 'yf': args = argparse.Namespace(mode='yf', ticker=ticker, interval=interval, start=start, end=end, point=point, period=None, csv_file=None)
+    # Clear start/end if period is provided
+    if 'period' in kwargs and kwargs['period'] is not None:
+        args.start = None
+        args.end = None
     args.__dict__.update(kwargs)
     return args
 
@@ -274,7 +278,6 @@ class TestDataAcquisitionCaching(unittest.TestCase):
     # --- Test Fetch After Cache for YFinance ---
     @patch('src.data.data_acquisition.fetch_yfinance_data')
     def test_yf_fetch_after_cache(self, mock_fetch_yfinance):
-        """ Test YF: Fetches data after cached range. """
         args = create_mock_args(mode='yf', ticker='AAPL', interval='D1', start='2023-01-10', end='2023-01-13', point=0.01) # Req 10-13
         cache_file = _generate_instrument_parquet_filename(args)
 
@@ -325,7 +328,6 @@ class TestDataAcquisitionCaching(unittest.TestCase):
     # --- Test Fetch Before Cache for YFinance ---
     @patch('src.data.data_acquisition.fetch_yfinance_data')
     def test_yf_fetch_before_cache(self, mock_fetch_yfinance):
-        """ Test YF: Fetches data before cached range. """
         args = create_mock_args(mode='yf', ticker='AAPL', interval='D1', start='2023-01-10', end='2023-01-13', point=0.01) # Req 10-13
         cache_file = _generate_instrument_parquet_filename(args)
 
@@ -350,8 +352,8 @@ class TestDataAcquisitionCaching(unittest.TestCase):
 
         # Check API call dates
         expected_fetch_start = '2023-01-10'
-        # *** FIX: Correct expected end date based on calculation trace ***
-        expected_fetch_end = '2023-01-11' # Fetch up to day before cache start (12th) -> pass 11th as exclusive end
+        # *** FIX: Expect end_date='2023-01-12' (day cache starts) ***
+        expected_fetch_end = '2023-01-12'
         mock_fetch_yfinance.assert_called_once_with(
             ticker=args.ticker, interval=args.interval,
             start_date=expected_fetch_start, end_date=expected_fetch_end, period=None
@@ -373,7 +375,6 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         self.assertEqual(data_info['api_calls'], 1)
         self.assertEqual(data_info['rows_fetched'], len(mock_df_new))
 
-
     # --- Test Fetch Before and After Cache for YFinance ---
     @patch('src.data.data_acquisition.fetch_yfinance_data')
     def test_yf_fetch_before_and_after_cache(self, mock_fetch_yfinance):
@@ -381,83 +382,101 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         args = create_mock_args(mode='yf', ticker='MSFT', interval='D1', start='2023-01-10', end='2023-01-15', point=0.01) # Req 10-15
         cache_file = _generate_instrument_parquet_filename(args)
 
-        # Simulate existing cache file (Jan 12-13)
-        mock_df_cached = create_sample_df('2023-01-12', '2023-01-13', freq='D')
+        mock_df_cached = create_sample_df('2023-01-12', '2023-01-13', freq='D') # Cache 12-13
         mock_df_cached.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
         self.mock_read_parquet.return_value = mock_df_cached.copy()
         self.mock_path_exists.return_value = True
         self.mock_path_stat.return_value.st_size = 1024
 
-        # Simulate API fetch for the missing ranges
-        mock_df_before = create_sample_df('2023-01-10', '2023-01-11', freq='D')
+        mock_df_before = create_sample_df('2023-01-10', '2023-01-11', freq='D') # API returns 10-11
         mock_df_before.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
         mock_metrics_before = {'api_calls': 1, 'rows_fetched': len(mock_df_before), 'latency_sec': 0.2}
 
-        mock_df_after = create_sample_df('2023-01-14', '2023-01-15', freq='D')
+        mock_df_after = create_sample_df('2023-01-14', '2023-01-15', freq='D') # API returns 14-15
         mock_df_after.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
         mock_metrics_after = {'api_calls': 1, 'rows_fetched': len(mock_df_after), 'latency_sec': 0.3}
 
-        # Configure side effect for fetcher to return correct df based on call
         def fetch_side_effect(*args_call, **kwargs_call):
             start_date = kwargs_call.get('start_date')
-            end_date = kwargs_call.get('end_date') # End date passed to fetcher
-            if start_date == '2023-01-10' and end_date == '2023-01-11': # Fetch before
+            end_date = kwargs_call.get('end_date')
+            # *** FIX: Expect end_date='2023-01-12' for "before" call ***
+            if start_date == '2023-01-10' and end_date == '2023-01-12':
                 return (mock_df_before.copy(), mock_metrics_before)
-            elif start_date == '2023-01-14' and end_date == '2023-01-16': # Fetch after
+            elif start_date == '2023-01-14' and end_date == '2023-01-16':
                  return (mock_df_after.copy(), mock_metrics_after)
-            else:
-                 raise ValueError(f"Unexpected fetch call in test: start={start_date}, end={end_date}")
+            else: raise ValueError(f"Unexpected fetch call in test: start={start_date}, end={end_date}")
         mock_fetch_yfinance.side_effect = fetch_side_effect
 
-        # Execute acquire_data
         data_info = acquire_data(args)
 
-        # --- Assertions ---
-        # Check cache read path
         self.mock_read_parquet.assert_called_once()
         call_args_read, _ = self.mock_read_parquet.call_args
         self.assertEqual(call_args_read[0].name, 'yfinance_MSFT_D1.parquet')
 
-        # Check API calls (should be two)
+        # Check API calls
         self.assertEqual(mock_fetch_yfinance.call_count, 2)
-        # Fetch before: cache starts 12th, fetch ends 11th -> end_date='2023-01-11'
+        # *** FIX: Correct expected end_date for "before" call ***
         expected_fetch_before_start = '2023-01-10'
-        expected_fetch_before_end = '2023-01-11' # day after 11th is 12th, cache starts 12th, fetch needs end date BEFORE cache starts. acquire_data calculates fetch end = '2023-01-11'. Pass day after that = '2023-01-12'
-        expected_fetch_before_end_calc = '2023-01-11' # Calculated end date by acquire_data for the fetch_ranges tuple
-        expected_fetch_before_end_arg = (pd.to_datetime(expected_fetch_before_end_calc) + pd.Timedelta(milliseconds=1)).strftime('%Y-%m-%d') # Should be 2023-01-11
-
-        # Fetch after: cache ends 13th, delta=1D, fetch starts 14th. Req ends 15th.
-        expected_fetch_after_start = '2023-01-14' # day after cache end (13th)
-        expected_fetch_after_end = '2023-01-16' # day after requested end (15th)
-
+        expected_fetch_before_end = '2023-01-12' # Fetch up to cache start (12th) -> exclusive end
+        expected_fetch_after_start = '2023-01-14'
+        expected_fetch_after_end = '2023-01-16'
         expected_calls = [
-             call(ticker=args.ticker, interval=args.interval, start_date=expected_fetch_before_start, end_date=expected_fetch_before_end_arg, period=None),
+             call(ticker=args.ticker, interval=args.interval, start_date=expected_fetch_before_start, end_date=expected_fetch_before_end, period=None),
              call(ticker=args.ticker, interval=args.interval, start_date=expected_fetch_after_start, end_date=expected_fetch_after_end, period=None)
         ]
-        mock_fetch_yfinance.assert_has_calls(expected_calls, any_order=True) # Order might vary
-
+        mock_fetch_yfinance.assert_has_calls(expected_calls, any_order=True)
 
         self.assertTrue(data_info['parquet_cache_used'])
-        # Check final slice correctness
         self.assertIsInstance(data_info['ohlcv_df'], pd.DataFrame)
         self.assertFalse(data_info['ohlcv_df'].empty)
-        self.assertEqual(data_info['ohlcv_df'].index.min(), pd.Timestamp('2023-01-10')) # Original start
-        self.assertEqual(data_info['ohlcv_df'].index.max(), pd.Timestamp('2023-01-15')) # Original end
-        self.assertEqual(len(data_info['ohlcv_df']), 6) # 6 days total (10,11,12,13,14,15)
+        self.assertEqual(data_info['ohlcv_df'].index.min(), pd.Timestamp('2023-01-10'))
+        self.assertEqual(data_info['ohlcv_df'].index.max(), pd.Timestamp('2023-01-15'))
+        self.assertEqual(len(data_info['ohlcv_df']), 6)
 
-        # Check save path
         self.mock_to_parquet.assert_called_once()
         call_args_save, call_kwargs_save = self.mock_to_parquet.call_args
         self.assertEqual(call_args_save[0].name, 'yfinance_MSFT_D1.parquet')
 
-        # Check combined metrics
         self.assertEqual(data_info['api_calls'], 2)
         self.assertEqual(data_info['rows_fetched'], len(mock_df_before) + len(mock_df_after))
-        self.assertAlmostEqual(data_info['api_latency_sec'], 0.5) # 0.2 + 0.3
+        self.assertAlmostEqual(data_info['api_latency_sec'], 0.5)
+
+    # --- Test Period argument skips cache check ---
+    @patch('src.data.data_acquisition.fetch_yfinance_data')
+    def test_yf_period_skips_cache(self, mock_fetch_yfinance):
+        """ Test YF: Using --period skips cache read and fetches fresh data. """
+        args = create_mock_args(mode='yf', ticker='IBM', interval='D1', period='6mo', point=0.01) # Use period
+        cache_file = _generate_instrument_parquet_filename(args)
+
+        self.mock_path_exists.return_value = True # Simulate cache file existing
+        self.mock_path_stat.return_value.st_size = 4096
+
+        mock_df_period = create_sample_df('2023-10-21', '2024-04-20', freq='D')
+        mock_df_period.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        mock_metrics = {'api_calls': 1, 'rows_fetched': len(mock_df_period), 'latency_sec': 0.6}
+        mock_fetch_yfinance.return_value = (mock_df_period.copy(), mock_metrics)
+
+        data_info = acquire_data(args)
+
+        self.mock_read_parquet.assert_not_called() # Cache should NOT be read
+        self.assertFalse(data_info['parquet_cache_used'])
+
+        # *** FIX: Remove start_date/end_date from assertion ***
+        mock_fetch_yfinance.assert_called_once_with(
+            ticker=args.ticker, interval=args.interval, period=args.period
+        )
+
+        pd.testing.assert_frame_equal(data_info['ohlcv_df'], mock_df_period)
+
+        # Check save path (current logic saves period fetches)
+        self.mock_to_parquet.assert_called_once()
+        call_args_save, _ = self.mock_to_parquet.call_args
+        actual_path_save = call_args_save[0]
+        self.assertEqual(actual_path_save.parent, self.cache_dir_path)
+        self.assertEqual(actual_path_save.name, 'yfinance_IBM_D1.parquet')
 
 
     # --- Add more tests ---
-    # test_yf_period_skips_cache(...) # Important!
     # test_cache_read_error_fetches_api(...)
     # test_fetch_failure_during_partial_fetch(...)
 
