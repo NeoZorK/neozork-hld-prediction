@@ -1,4 +1,4 @@
-# tests/plotting/test_plotting_generation.py # CORRECTED v2: Assertions
+# tests/plotting/test_plotting_generation.py # CORRECTED v3: Title format assertions
 
 import unittest
 from unittest.mock import patch, ANY # Import ANY
@@ -79,9 +79,9 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
 
     # Test skipping plot when result_df is None
-    @patch('src.plotting.plotting_generation.logger')
+    @patch('src.plotting.plotting_generation.logger') # Use MagicMock logger
     @patch('src.plotting.plotting_generation.plot_indicator_results')
-    def test_generate_plot_skip_none_df(self, mock_plot_indicator_results, mock_logger):
+    def test_generate_plot_skip_none_df(self, mock_plot_indicator_results, mock_logger): # Change name
         generate_plot(self.args, self.data_info, None, self.selected_rule, self.point_size, self.estimated_point)
         mock_plot_indicator_results.assert_not_called()
         mock_logger.print_info.assert_called_with("Skipping plotting as no valid calculation results are available.")
@@ -89,7 +89,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
     # Test skipping plot when result_df is empty
     @patch('src.plotting.plotting_generation.logger')
     @patch('src.plotting.plotting_generation.plot_indicator_results')
-    def test_generate_plot_skip_empty_df(self, mock_plot_indicator_results, mock_logger):
+    def test_generate_plot_skip_empty_df(self, mock_plot_indicator_results, mock_logger): # Change name
         empty_df = pd.DataFrame()
         generate_plot(self.args, self.data_info, empty_df, self.selected_rule, self.point_size, self.estimated_point)
         mock_plot_indicator_results.assert_not_called()
@@ -98,7 +98,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
     # Test when selected_rule is None
     @patch('src.plotting.plotting_generation.logger')
     @patch('src.plotting.plotting_generation.plot_indicator_results')
-    def test_generate_plot_none_rule(self, mock_plot_indicator_results, mock_logger):
+    def test_generate_plot_none_rule(self, mock_plot_indicator_results, mock_logger): # Change name
         generate_plot(self.args, self.data_info, self.result_df, None, self.point_size, self.estimated_point)
         mock_plot_indicator_results.assert_not_called()
         mock_logger.print_warning.assert_called_with("No valid rule selected, cannot generate plot accurately.")
@@ -108,9 +108,10 @@ class TestPlottingGenerationStep(unittest.TestCase):
     @patch('src.plotting.plotting_generation.logger')
     @patch('src.plotting.plotting_generation.plot_indicator_results')
     @patch('traceback.format_exc')
-    def test_generate_plot_exception_handling(self, mock_traceback, mock_plot_indicator_results, mock_logger):
+    def test_generate_plot_exception_handling(self, mock_traceback, mock_plot_indicator_results, mock_logger): # Change name
         error_message = "Core plot failed"
-        mock_plot_indicator_results.side_effect = Exception(error_message)
+        # Use a standard exception type
+        mock_plot_indicator_results.side_effect = ValueError(error_message)
         mock_traceback.return_value = "Traceback details here"
 
         try:
@@ -119,13 +120,11 @@ class TestPlottingGenerationStep(unittest.TestCase):
             self.fail(f"generate_plot raised an exception unexpectedly: {e}")
 
         mock_logger.print_error.assert_called_once()
-        # *** FIX: Expect exception type AND message in the logged string ***
-        expected_log_message = f"An error occurred during plotting: Exception: {error_message}"
+        # *** FIX: Expect exception type name AND message in the logged string ***
+        expected_log_message = f"An error occurred during plotting: ValueError: {error_message}"
         actual_call_args = mock_logger.print_error.call_args[0]
-        # Use assertIn to be less brittle about exact surrounding text
         self.assertIn(expected_log_message, actual_call_args[0])
         mock_traceback.assert_called_once()
-
 
 # Allow running the tests directly
 if __name__ == '__main__':
