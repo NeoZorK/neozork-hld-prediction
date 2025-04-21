@@ -7,9 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="working all">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="test for yfinance">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/data/fetchers/test_yfinance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/fetchers/test_yfinance_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00113" summary="try 6 to fix all tests">
-      <option name="closed" value="true" />
-      <created>1745070159461</created>
-      <option name="number" value="00113" />
-      <option name="presentableId" value="LOCAL-00113" />
-      <option name="project" value="LOCAL" />
-      <updated>1745070159461</updated>
     </task>
     <task id="LOCAL-00114" summary="fixing csv tests">
       <option name="closed" value="true" />
@@ -555,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745251941173</updated>
     </task>
-    <option name="localTasksCounter" value="162" />
+    <task id="LOCAL-00162" summary="test for yfinance">
+      <option name="closed" value="true" />
+      <created>1745252901189</created>
+      <option name="number" value="00162" />
+      <option name="presentableId" value="LOCAL-00162" />
+      <option name="project" value="LOCAL" />
+      <updated>1745252901189</updated>
+    </task>
+    <option name="localTasksCounter" value="163" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="test workflow fetcher" />
     <MESSAGE value="test reporting fetcher" />
     <MESSAGE value="fix 2 fetchers" />
     <MESSAGE value="fix 3 fetchers" />
@@ -607,6 +606,7 @@
     <MESSAGE value="fix yfinance" />
     <MESSAGE value="working yfinance" />
     <MESSAGE value="working all" />
-    <option name="LAST_COMMIT_MESSAGE" value="working all" />
+    <MESSAGE value="test for yfinance" />
+    <option name="LAST_COMMIT_MESSAGE" value="test for yfinance" />
   </component>
 </project>
