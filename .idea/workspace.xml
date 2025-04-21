@@ -7,13 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="polygon all works! fixed">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix yfinance">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cli/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/cli/cli.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/fetchers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/data/fetchers/yfinance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/yfinance_fetcher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/workflow/workflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/workflow/workflow.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -166,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00110" summary="try 2 to fix all tests">
-      <option name="closed" value="true" />
-      <created>1745067198146</created>
-      <option name="number" value="00110" />
-      <option name="presentableId" value="LOCAL-00110" />
-      <option name="project" value="LOCAL" />
-      <updated>1745067198147</updated>
     </task>
     <task id="LOCAL-00111" summary="try 3 to fix all tests">
       <option name="closed" value="true" />
@@ -559,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745233509775</updated>
     </task>
-    <option name="localTasksCounter" value="159" />
+    <task id="LOCAL-00159" summary="fix yfinance">
+      <option name="closed" value="true" />
+      <created>1745246070545</created>
+      <option name="number" value="00159" />
+      <option name="presentableId" value="LOCAL-00159" />
+      <option name="project" value="LOCAL" />
+      <updated>1745246070546</updated>
+    </task>
+    <option name="localTasksCounter" value="160" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -586,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="test polygon fetcher" />
     <MESSAGE value="test binance fetcher" />
     <MESSAGE value="test data fetcher" />
     <MESSAGE value="test workflow fetcher" />
@@ -611,6 +606,7 @@
     <MESSAGE value="binance all works!" />
     <MESSAGE value="binance all works! fixed" />
     <MESSAGE value="polygon all works! fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="polygon all works! fixed" />
+    <MESSAGE value="fix yfinance" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix yfinance" />
   </component>
 </project>
