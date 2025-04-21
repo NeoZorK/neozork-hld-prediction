@@ -1,4 +1,4 @@
-# tests/data/test_data_acquisition.py # CORRECTED v6: Slicing Assertions
+# tests/data/test_data_acquisition.py # UPDATED with YF fetch after cache test
 
 import unittest
 from unittest.mock import patch, MagicMock, call
@@ -21,24 +21,21 @@ def create_mock_args(mode='binance', ticker='TICKER', interval='h1', start='2023
     return args
 
 # Helper to create sample DataFrames
-def create_sample_df(start_date_str, end_date_str, freq='h', prefix_col_name=None): # FIX: Use 'h' default
+def create_sample_df(start_date_str, end_date_str, freq='h', prefix_col_name=None):
     """ Creates a sample DataFrame. """
     idx = pd.date_range(start=start_date_str, end=end_date_str, freq=freq, name='DateTime')
     idx = idx.tz_localize(None) # Ensure timezone naive
     if idx.empty: return pd.DataFrame() # Handle empty range case
 
     df = pd.DataFrame({
-        'Open': range(100, 100 + len(idx)),
-        'High': range(105, 105 + len(idx)),
-        'Low': range(95, 95 + len(idx)),
-        'Close': range(101, 101 + len(idx)),
+        'Open': range(100, 100 + len(idx)), 'High': range(105, 105 + len(idx)),
+        'Low': range(95, 95 + len(idx)), 'Close': range(101, 101 + len(idx)),
         'Volume': range(1000, 1000 + len(idx)),
     }, index=idx)
     # Adjust columns if needed
     if prefix_col_name:
          df.columns = [f"{col}_{prefix_col_name}" for col in df.columns]
     return df
-
 
 class TestDataAcquisitionCaching(unittest.TestCase):
 
@@ -74,7 +71,6 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         self.patcher_to_parquet = patch('pandas.DataFrame.to_parquet')
         self.mock_to_parquet = self.patcher_to_parquet.start()
 
-
     def tearDown(self):
         self.temp_dir.cleanup()
         self.patcher_gen_path.stop()
@@ -104,7 +100,6 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         self.assertEqual(_get_interval_delta('MN1'), pd.Timedelta(days=30))
         self.assertIsNone(_get_interval_delta('INVALID'))
 
-
     # --- Test Cache Miss (Generic API - using Binance mock) ---
     @patch('src.data.data_acquisition.fetch_binance_data')
     def test_cache_miss_fetches_api(self, mock_fetch_api):
@@ -112,26 +107,21 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         cache_file = _generate_instrument_parquet_filename(args)
         self.mock_path_exists.return_value = False
 
-        # Mock API return larger than needed
         mock_df_fetched = create_sample_df('2023-01-09 23:00', '2023-01-12 01:00', freq='h')
         mock_metrics = {'api_calls': 1}
         mock_fetch_api.return_value = (mock_df_fetched.copy(), mock_metrics)
 
         data_info = acquire_data(args)
 
-        # Assertions
         expected_fetch_end_date = '2023-01-12'
         mock_fetch_api.assert_called_once_with(ticker=args.ticker, interval=args.interval, start_date=args.start, end_date=expected_fetch_end_date)
         self.assertFalse(data_info['parquet_cache_used'])
-        # *** FIX: Check slice based on observed pandas behavior for h1 ***
         self.assertIsInstance(data_info['ohlcv_df'], pd.DataFrame)
         self.assertFalse(data_info['ohlcv_df'].empty)
         self.assertEqual(data_info['ohlcv_df'].index.min(), pd.Timestamp('2023-01-10 00:00:00'))
-        # Slice '2023-01-10':'2023-01-11' includes 00:00 of end date
-        self.assertEqual(data_info['ohlcv_df'].index.max(), pd.Timestamp('2023-01-11 00:00:00'))
-        self.assertEqual(len(data_info['ohlcv_df']), 25) # 24 hours for day 1 + 1 hour for day 2 midnight
+        self.assertEqual(data_info['ohlcv_df'].index.max(), pd.Timestamp('2023-01-11 00:00:00')) # Adjusted expectation
+        self.assertEqual(len(data_info['ohlcv_df']), 25) # Adjusted expectation
 
-        # Check path argument for save
         self.mock_to_parquet.assert_called_once()
         call_args, call_kwargs = self.mock_to_parquet.call_args
         actual_path_saved = call_args[0]
@@ -141,14 +131,12 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         self.assertEqual(call_kwargs.get('index'), True)
         self.assertEqual(data_info['api_calls'], 1)
 
-
     # --- Test Exact Cache Hit (Generic API - using Binance mock) ---
     @patch('src.data.data_acquisition.fetch_binance_data')
     def test_exact_cache_hit_loads_file(self, mock_fetch_api):
         args = create_mock_args(mode='binance', start='2023-01-10', end='2023-01-11', interval='h1')
         cache_file = _generate_instrument_parquet_filename(args)
 
-        # Simulate existing cache file
         mock_df_cached = create_sample_df('2023-01-09 22:00', '2023-01-12 02:00', freq='h')
         self.mock_read_parquet.return_value = mock_df_cached.copy()
         self.mock_path_exists.return_value = True
@@ -156,8 +144,6 @@ class TestDataAcquisitionCaching(unittest.TestCase):
 
         data_info = acquire_data(args)
 
-        # Assertions
-        # Check path argument for read
         self.mock_read_parquet.assert_called_once()
         call_args, _ = self.mock_read_parquet.call_args
         actual_path_read = call_args[0]
@@ -167,17 +153,15 @@ class TestDataAcquisitionCaching(unittest.TestCase):
 
         mock_fetch_api.assert_not_called()
         self.assertTrue(data_info['parquet_cache_used'])
-        # *** FIX: Check slice based on observed pandas behavior for h1 ***
         self.assertIsInstance(data_info['ohlcv_df'], pd.DataFrame)
         self.assertFalse(data_info['ohlcv_df'].empty)
         self.assertEqual(data_info['ohlcv_df'].index.min(), pd.Timestamp('2023-01-10 00:00:00'))
-        self.assertEqual(data_info['ohlcv_df'].index.max(), pd.Timestamp('2023-01-11 00:00:00')) # Includes midnight of end date
-        self.assertEqual(len(data_info['ohlcv_df']), 25) # 24 hours + 1 midnight hour
+        self.assertEqual(data_info['ohlcv_df'].index.max(), pd.Timestamp('2023-01-11 00:00:00')) # Adjusted expectation
+        self.assertEqual(len(data_info['ohlcv_df']), 25) # Adjusted expectation
 
         self.mock_to_parquet.assert_not_called()
         self.assertEqual(data_info['file_size_bytes'], 1024)
         self.assertEqual(data_info['api_calls'], 0)
-
 
     # --- Test Fetch After Cache (Generic API - using Binance mock) ---
     @patch('src.data.data_acquisition.fetch_binance_data')
@@ -185,20 +169,16 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         args = create_mock_args(mode='binance', start='2023-01-10', end='2023-01-13', interval='h1') # Req 10-13
         cache_file = _generate_instrument_parquet_filename(args)
 
-        # Simulate existing cache file (10-11) -> ends 2023-01-11 23:00
-        mock_df_cached = create_sample_df('2023-01-10 00:00', '2023-01-11 23:00', freq='h')
+        mock_df_cached = create_sample_df('2023-01-10 00:00', '2023-01-11 23:00', freq='h') # Cache 10-11
         self.mock_read_parquet.return_value = mock_df_cached.copy()
         self.mock_path_exists.return_value = True
         self.mock_path_stat.return_value.st_size = 1024
 
-        # Simulate API fetch for the missing range (12-13) -> starts 2023-01-12 00:00
-        mock_df_new = create_sample_df('2023-01-12 00:00', '2023-01-13 23:00', freq='h')
+        mock_df_new = create_sample_df('2023-01-12 00:00', '2023-01-13 23:00', freq='h') # API returns 12-13
         mock_fetch_api.return_value = (mock_df_new.copy(), {'api_calls': 1})
 
         data_info = acquire_data(args)
 
-        # Assertions
-        # Check path argument for read
         self.mock_read_parquet.assert_called_once()
         call_args_read, _ = self.mock_read_parquet.call_args
         actual_path_read = call_args_read[0]
@@ -206,20 +186,17 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         self.assertEqual(actual_path_read.parent, self.cache_dir_path)
         self.assertEqual(actual_path_read.name, 'binance_TICKER_h1.parquet')
 
-        # Check API call dates
-        expected_fetch_start = '2023-01-12' # Day after cache end
-        expected_fetch_end = '2023-01-14' # Day after requested end
+        expected_fetch_start = '2023-01-12'
+        expected_fetch_end = '2023-01-14'
         mock_fetch_api.assert_called_once_with(ticker=args.ticker, interval=args.interval, start_date=expected_fetch_start, end_date=expected_fetch_end)
 
         self.assertTrue(data_info['parquet_cache_used'])
-        # *** FIX: Check slice based on observed pandas behavior for h1 ***
         self.assertIsInstance(data_info['ohlcv_df'], pd.DataFrame)
         self.assertFalse(data_info['ohlcv_df'].empty)
-        self.assertEqual(data_info['ohlcv_df'].index.min(), pd.Timestamp('2023-01-10 00:00:00')) # Original start
-        self.assertEqual(data_info['ohlcv_df'].index.max(), pd.Timestamp('2023-01-13 00:00:00')) # Midnight of original end date
-        self.assertEqual(len(data_info['ohlcv_df']), 73) # 24*3 + 1 hours (for days 10, 11, 12, plus midnight of 13th)
+        self.assertEqual(data_info['ohlcv_df'].index.min(), pd.Timestamp('2023-01-10 00:00:00'))
+        self.assertEqual(data_info['ohlcv_df'].index.max(), pd.Timestamp('2023-01-13 00:00:00')) # Adjusted expectation
+        self.assertEqual(len(data_info['ohlcv_df']), 73) # Adjusted expectation (24*3 + 1)
 
-        # Check path argument for save
         self.mock_to_parquet.assert_called_once()
         call_args_save, call_kwargs_save = self.mock_to_parquet.call_args
         actual_path_save = call_args_save[0]
@@ -235,26 +212,22 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         cache_file = _generate_instrument_parquet_filename(args)
         self.mock_path_exists.return_value = False
 
-        # Mock API return (fetcher returns processed df)
-        mock_df_fetched = create_sample_df('2023-01-09', '2023-01-13', freq='D') # Fetch slightly larger
+        mock_df_fetched = create_sample_df('2023-01-09', '2023-01-13', freq='D')
         mock_df_fetched.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
         mock_metrics = {'api_calls': 1, 'latency_sec': 0.5, 'rows_fetched': len(mock_df_fetched)}
         mock_fetch_yfinance.return_value = (mock_df_fetched.copy(), mock_metrics)
 
         data_info = acquire_data(args)
 
-        # Assertions
         expected_fetch_end_date = '2023-01-13'
         mock_fetch_yfinance.assert_called_once_with(ticker=args.ticker, interval=args.interval, start_date=args.start, end_date=expected_fetch_end_date, period=None)
         self.assertFalse(data_info['parquet_cache_used'])
-        # Check slice correctness (D1 slice includes end date)
         self.assertIsInstance(data_info['ohlcv_df'], pd.DataFrame)
         self.assertFalse(data_info['ohlcv_df'].empty)
         self.assertEqual(data_info['ohlcv_df'].index.min(), pd.Timestamp('2023-01-10'))
         self.assertEqual(data_info['ohlcv_df'].index.max(), pd.Timestamp('2023-01-12'))
-        self.assertEqual(len(data_info['ohlcv_df']), 3) # 3 days inclusive
+        self.assertEqual(len(data_info['ohlcv_df']), 3)
 
-        # Check path argument for save
         self.mock_to_parquet.assert_called_once()
         call_args_save, call_kwargs_save = self.mock_to_parquet.call_args
         actual_path_save = call_args_save[0]
@@ -262,10 +235,8 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         self.assertEqual(actual_path_save.parent, self.cache_dir_path)
         self.assertEqual(actual_path_save.name, 'yfinance_AAPL_D1.parquet')
         self.assertEqual(call_kwargs_save.get('index'), True)
-
         self.assertEqual(data_info['api_calls'], 1)
         self.assertEqual(data_info['rows_fetched'], len(mock_df_fetched))
-
 
     # --- Test Exact Cache Hit for YFinance ---
     @patch('src.data.data_acquisition.fetch_yfinance_data')
@@ -273,8 +244,7 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         args = create_mock_args(mode='yf', ticker='AAPL', interval='D1', start='2023-01-10', end='2023-01-12', point=0.01)
         cache_file = _generate_instrument_parquet_filename(args)
 
-        # Simulate existing cache file
-        mock_df_cached = create_sample_df('2023-01-09', '2023-01-13', freq='D') # Cache larger
+        mock_df_cached = create_sample_df('2023-01-09', '2023-01-13', freq='D')
         mock_df_cached.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
         self.mock_read_parquet.return_value = mock_df_cached.copy()
         self.mock_path_exists.return_value = True
@@ -282,8 +252,6 @@ class TestDataAcquisitionCaching(unittest.TestCase):
 
         data_info = acquire_data(args)
 
-        # Assertions
-        # Check path argument for read
         self.mock_read_parquet.assert_called_once()
         call_args_read, _ = self.mock_read_parquet.call_args
         actual_path_read = call_args_read[0]
@@ -293,19 +261,77 @@ class TestDataAcquisitionCaching(unittest.TestCase):
 
         mock_fetch_yfinance.assert_not_called()
         self.assertTrue(data_info['parquet_cache_used'])
-        # Check slice correctness (D1 slice includes end date)
         self.assertIsInstance(data_info['ohlcv_df'], pd.DataFrame)
         self.assertFalse(data_info['ohlcv_df'].empty)
         self.assertEqual(data_info['ohlcv_df'].index.min(), pd.Timestamp('2023-01-10'))
         self.assertEqual(data_info['ohlcv_df'].index.max(), pd.Timestamp('2023-01-12'))
-        self.assertEqual(len(data_info['ohlcv_df']), 3) # 3 days inclusive
+        self.assertEqual(len(data_info['ohlcv_df']), 3)
 
         self.mock_to_parquet.assert_not_called()
         self.assertEqual(data_info['file_size_bytes'], 2048)
         self.assertEqual(data_info['api_calls'], 0)
 
+    # --- Test Fetch After Cache for YFinance ---
+    @patch('src.data.data_acquisition.fetch_yfinance_data')
+    def test_yf_fetch_after_cache(self, mock_fetch_yfinance):
+        """ Test YF: Fetches data after cached range. """
+        args = create_mock_args(mode='yf', ticker='AAPL', interval='D1', start='2023-01-10', end='2023-01-13', point=0.01) # Req 10-13
+        cache_file = _generate_instrument_parquet_filename(args)
+
+        # Simulate existing cache file (Jan 10-11)
+        mock_df_cached = create_sample_df('2023-01-10', '2023-01-11', freq='D')
+        mock_df_cached.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        self.mock_read_parquet.return_value = mock_df_cached.copy()
+        self.mock_path_exists.return_value = True
+        self.mock_path_stat.return_value.st_size = 1024
+
+        # Simulate API fetch for the missing range (Jan 12-13)
+        mock_df_new = create_sample_df('2023-01-12', '2023-01-13', freq='D')
+        mock_df_new.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        mock_metrics_new = {'api_calls': 1, 'rows_fetched': len(mock_df_new), 'latency_sec': 0.3}
+        mock_fetch_yfinance.return_value = (mock_df_new.copy(), mock_metrics_new)
+
+        # Execute acquire_data
+        data_info = acquire_data(args)
+
+        # --- Assertions ---
+        # Check cache read path
+        self.mock_read_parquet.assert_called_once()
+        call_args_read, _ = self.mock_read_parquet.call_args
+        actual_path_read = call_args_read[0]
+        self.assertIsInstance(actual_path_read, Path)
+        self.assertEqual(actual_path_read.parent, self.cache_dir_path)
+        self.assertEqual(actual_path_read.name, 'yfinance_AAPL_D1.parquet')
+
+        # Check API call dates
+        expected_fetch_start = '2023-01-12' # Day after cache end (11th)
+        expected_fetch_end = '2023-01-14' # Day after requested end (13th)
+        mock_fetch_yfinance.assert_called_once_with(
+            ticker=args.ticker, interval=args.interval,
+            start_date=expected_fetch_start, end_date=expected_fetch_end, period=None
+        )
+
+        self.assertTrue(data_info['parquet_cache_used'])
+        # Check final slice correctness (D1 includes end date)
+        self.assertIsInstance(data_info['ohlcv_df'], pd.DataFrame)
+        self.assertFalse(data_info['ohlcv_df'].empty)
+        self.assertEqual(data_info['ohlcv_df'].index.min(), pd.Timestamp('2023-01-10')) # Original start
+        self.assertEqual(data_info['ohlcv_df'].index.max(), pd.Timestamp('2023-01-13')) # Original end
+        self.assertEqual(len(data_info['ohlcv_df']), 4) # 4 days total (10, 11, 12, 13)
+
+        # Check save path
+        self.mock_to_parquet.assert_called_once()
+        call_args_save, call_kwargs_save = self.mock_to_parquet.call_args
+        actual_path_save = call_args_save[0]
+        self.assertIsInstance(actual_path_save, Path)
+        self.assertEqual(actual_path_save.parent, self.cache_dir_path)
+        self.assertEqual(actual_path_save.name, 'yfinance_AAPL_D1.parquet')
+
+        self.assertEqual(data_info['api_calls'], 1)
+        self.assertEqual(data_info['rows_fetched'], len(mock_df_new))
+
+
     # --- Add more tests ---
-    # test_yf_fetch_after_cache(...)
     # test_yf_fetch_before_cache(...)
     # test_yf_fetch_before_and_after_cache(...)
     # test_yf_period_skips_cache(...) # Important!
