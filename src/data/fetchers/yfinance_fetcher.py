@@ -1,4 +1,4 @@
-# src/data/fetchers/yfinance_fetcher.py # CORRECTED COLUMN RENAMING
+# src/data/fetchers/yfinance_fetcher.py # CORRECTED: Use yf_ticker for rename check
 
 """
 Contains functions related to fetching data from Yahoo Finance using yfinance.
@@ -55,15 +55,14 @@ def map_yfinance_ticker(ticker_input: str) -> str:
     ticker = ticker_input.upper()
     # Example: Auto-append '=X' for assumed Forex pairs
     if len(ticker) == 6 and '=' not in ticker and '-' not in ticker and ticker.isalpha():
-        logger.print_info(f"Assuming '{ticker}' is Forex, checking '{ticker}=X'.")
-        # Ideally, we'd verify with yf.Ticker(f"{ticker}=X").info here, but that's slow.
-        # For now, we just append based on pattern. User should verify tickers.
-        return f"{ticker}=X"
-    return ticker
+        mapped_ticker = f"{ticker}=X"
+        logger.print_info(f"Input ticker '{ticker_input}' matches Forex pattern, using '{mapped_ticker}'.")
+        return mapped_ticker
+    return ticker # Return original if no mapping applied
 
 
 # Definition of the fetch_yfinance_data function
-# MODIFIED: Corrected column handling after MultiIndex flattening
+# MODIFIED: Corrected rename check to use yf_ticker
 def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_date: str = None, end_date: str = None) -> tuple[pd.DataFrame | None, dict]:
     """
     Downloads OHLCV data from Yahoo Finance using yfinance library.
@@ -71,8 +70,8 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
     Measures the download latency and propagates error messages.
 
     Args:
-        ticker (str): The ticker symbol to download (should be yfinance compatible).
-        interval (str): The data interval (should be mapped to yfinance format).
+        ticker (str): The ticker symbol to download (will be mapped).
+        interval (str): The data interval (user provided, will be mapped).
         period (str, optional): The period string (e.g., '1y', '6mo'). Defaults to None.
         start_date (str, optional): The start date string (YYYY-MM-DD). Defaults to None.
         end_date (str, optional): The end date string (YYYY-MM-DD). Defaults to None.
@@ -82,11 +81,15 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
             - pd.DataFrame: The downloaded and processed OHLCV data, or None on failure.
             - dict: A dictionary containing metrics ('latency_sec', 'error_message').
     """
-    logger.print_info(f"Attempting to fetch yfinance data for: {ticker} | interval: {interval} | period: {period} | start: {start_date} | end: {end_date}")
+    # Map ticker and interval first
+    yf_ticker = map_yfinance_ticker(ticker)
+    yf_interval = map_yfinance_interval(interval)
+
+    logger.print_info(f"Attempting to fetch yfinance data for: {yf_ticker} (original: {ticker}) | interval: {yf_interval} (original: {interval}) | period: {period} | start: {start_date} | end: {end_date}")
     metrics = {"latency_sec": 0.0, "error_message": None} # Initialize error_message
     df = None
-    yf_interval = map_yfinance_interval(interval)
-    if yf_interval is None: # Check if mapping failed
+
+    if yf_interval is None: # Check if interval mapping failed
         metrics["error_message"] = f"Invalid yfinance interval provided: {interval}"
         return None, metrics
 
@@ -104,8 +107,9 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
     try:
         # Measure latency of the download call
         start_time = time.perf_counter()
+        # Use mapped yf_ticker and yf_interval
         df = yf.download(
-            tickers=ticker, period=period, interval=yf_interval,
+            tickers=yf_ticker, period=period, interval=yf_interval,
             start=start_date, end=end_date_adjusted, # Use adjusted end date here
             progress=True, auto_adjust=False, actions=False, # Keep standard settings
             ignore_tz=True # Typically safer for OHLCV consistency
@@ -118,7 +122,7 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
         if df is None or df.empty:
             # Check if yfinance logged errors (often available in stderr or captured logs)
             # We don't have direct access here, rely on df being empty as indicator
-            warning_msg = f"No yfinance data returned for '{ticker}' with specified parameters."
+            warning_msg = f"No yfinance data returned for '{yf_ticker}' with specified parameters."
             logger.print_warning(warning_msg)
             metrics["error_message"] = warning_msg # Set error message
             return None, metrics
@@ -130,7 +134,7 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
              # Basic flatten strategy
              df.columns = ['_'.join(map(str, col)).strip().rstrip('_') for col in df.columns.values]
 
-        # --- Column Renaming and Validation --- (REVISED LOGIC)
+        # --- Column Renaming and Validation --- (REVISED LOGIC AGAIN)
         required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
         rename_map = {}
         current_cols = df.columns.tolist() # Get current column names
@@ -140,15 +144,14 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
         # Iterate through current columns to build the rename map
         for col in current_cols:
             col_str = str(col) # Ensure it's a string
-            # Check if column starts with a required name (case insensitive) + '_' + ticker
-            # Example: 'Open_AAPL', 'close_AAPL', 'Volume_AAPL'
             found_match = False
             for req_col in required_cols:
-                # Check for pattern like "Open_TICKER" or "close_TICKER"
-                # Match case-insensitively
-                expected_prefix = f"{req_col.lower()}_{ticker.lower()}" # e.g., open_aapl
-                if col_str.lower() == expected_prefix: # Exact match needed here
-                    rename_map[col] = req_col # Map 'open_aapl' to 'Open'
+                # *** FIX: Use yf_ticker (mapped ticker) here ***
+                expected_prefix_ticker = f"{req_col.lower()}_{yf_ticker.lower()}" # e.g., open_eurusd=x
+
+                # Check for pattern like "Open_TICKER" or "close_TICKER" (case insensitive)
+                if col_str.lower() == expected_prefix_ticker: # Exact match needed here
+                    rename_map[col] = req_col # Map 'open_eurusd=x' to 'Open'
                     found_match = True
                     break
                 # Check for pattern like "Open" or "close" (case insensitive)
@@ -172,7 +175,7 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
         # Check for missing required columns *AFTER* potential renaming
         missing_cols = [col for col in required_cols if col not in df.columns]
         if missing_cols:
-            error_msg = f"Data for '{ticker}' missing required columns after processing: {missing_cols}. Available columns: {list(df.columns)}"
+            error_msg = f"Data for '{yf_ticker}' missing required columns after processing: {missing_cols}. Available columns: {list(df.columns)}" # Use yf_ticker here too
             logger.print_error(error_msg)
             metrics["error_message"] = error_msg
             return None, metrics # Return error
@@ -185,7 +188,7 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
         if rows_dropped > 0: logger.print_debug(f"Dropped {rows_dropped} rows with NaNs in OHLC columns.")
 
         if df.empty:
-             warning_msg = f"Data for '{ticker}' became empty after removing NaN rows."
+             warning_msg = f"Data for '{yf_ticker}' became empty after removing NaN rows."
              logger.print_warning(warning_msg)
              metrics["error_message"] = warning_msg
              return None, metrics
@@ -203,7 +206,8 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
         yf_error_msg = str(e)
         # Example: Check for common yfinance error patterns if needed here
 
-        error_msg = f"yf.download or processing failed: {error_type}: {yf_error_msg}"
+        # Use the mapped ticker in the error message
+        error_msg = f"yf.download or processing failed for '{yf_ticker}': {error_type}: {yf_error_msg}"
         logger.print_error(error_msg)
         tb_str = traceback.format_exc()
         try: print(f"{logger.ERROR_COLOR}Traceback:\n{tb_str}{logger.RESET_ALL}")
