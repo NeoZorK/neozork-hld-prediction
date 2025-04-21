@@ -1,4 +1,4 @@
-# tests/data/test_data_acquisition.py # CORRECTED v8: Assertions for before cache and period tests
+# tests/data/test_data_acquisition.py # UPDATED with cache read error test
 
 import unittest
 from unittest.mock import patch, MagicMock, call
@@ -352,8 +352,7 @@ class TestDataAcquisitionCaching(unittest.TestCase):
 
         # Check API call dates
         expected_fetch_start = '2023-01-10'
-        # *** FIX: Expect end_date='2023-01-12' (day cache starts) ***
-        expected_fetch_end = '2023-01-12'
+        expected_fetch_end = '2023-01-12' # Fetch up to day cache starts (exclusive end)
         mock_fetch_yfinance.assert_called_once_with(
             ticker=args.ticker, interval=args.interval,
             start_date=expected_fetch_start, end_date=expected_fetch_end, period=None
@@ -399,10 +398,9 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         def fetch_side_effect(*args_call, **kwargs_call):
             start_date = kwargs_call.get('start_date')
             end_date = kwargs_call.get('end_date')
-            # *** FIX: Expect end_date='2023-01-12' for "before" call ***
-            if start_date == '2023-01-10' and end_date == '2023-01-12':
+            if start_date == '2023-01-10' and end_date == '2023-01-12': # Expect correct end date for 'before'
                 return (mock_df_before.copy(), mock_metrics_before)
-            elif start_date == '2023-01-14' and end_date == '2023-01-16':
+            elif start_date == '2023-01-14' and end_date == '2023-01-16': # Expect correct dates for 'after'
                  return (mock_df_after.copy(), mock_metrics_after)
             else: raise ValueError(f"Unexpected fetch call in test: start={start_date}, end={end_date}")
         mock_fetch_yfinance.side_effect = fetch_side_effect
@@ -415,11 +413,10 @@ class TestDataAcquisitionCaching(unittest.TestCase):
 
         # Check API calls
         self.assertEqual(mock_fetch_yfinance.call_count, 2)
-        # *** FIX: Correct expected end_date for "before" call ***
         expected_fetch_before_start = '2023-01-10'
-        expected_fetch_before_end = '2023-01-12' # Fetch up to cache start (12th) -> exclusive end
-        expected_fetch_after_start = '2023-01-14'
-        expected_fetch_after_end = '2023-01-16'
+        expected_fetch_before_end = '2023-01-12' # Fetch up to cache start
+        expected_fetch_after_start = '2023-01-14' # Fetch after cache end
+        expected_fetch_after_end = '2023-01-16' # Day after requested end
         expected_calls = [
              call(ticker=args.ticker, interval=args.interval, start_date=expected_fetch_before_start, end_date=expected_fetch_before_end, period=None),
              call(ticker=args.ticker, interval=args.interval, start_date=expected_fetch_after_start, end_date=expected_fetch_after_end, period=None)
@@ -448,7 +445,7 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         args = create_mock_args(mode='yf', ticker='IBM', interval='D1', period='6mo', point=0.01) # Use period
         cache_file = _generate_instrument_parquet_filename(args)
 
-        self.mock_path_exists.return_value = True # Simulate cache file existing
+        self.mock_path_exists.return_value = True
         self.mock_path_stat.return_value.st_size = 4096
 
         mock_df_period = create_sample_df('2023-10-21', '2024-04-20', freq='D')
@@ -458,7 +455,7 @@ class TestDataAcquisitionCaching(unittest.TestCase):
 
         data_info = acquire_data(args)
 
-        self.mock_read_parquet.assert_not_called() # Cache should NOT be read
+        self.mock_read_parquet.assert_not_called()
         self.assertFalse(data_info['parquet_cache_used'])
 
         # *** FIX: Remove start_date/end_date from assertion ***
@@ -472,12 +469,55 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         self.mock_to_parquet.assert_called_once()
         call_args_save, _ = self.mock_to_parquet.call_args
         actual_path_save = call_args_save[0]
+        self.assertIsInstance(actual_path_save, Path)
         self.assertEqual(actual_path_save.parent, self.cache_dir_path)
         self.assertEqual(actual_path_save.name, 'yfinance_IBM_D1.parquet')
 
 
+    # --- Add new test: Cache read error triggers API fetch ---
+    @patch('src.data.data_acquisition.fetch_yfinance_data')
+    def test_cache_read_error_fetches_api(self, mock_fetch_yfinance):
+        """ Test YF: Cache read error ignores cache and fetches from API. """
+        args = create_mock_args(mode='yf', ticker='CSCO', interval='D1', start='2023-02-01', end='2023-02-05', point=0.01)
+        cache_file = _generate_instrument_parquet_filename(args)
+        self.mock_path_exists.return_value = True # Simulate cache exists
+
+        # Simulate read_parquet raising an error
+        self.mock_read_parquet.side_effect = Exception("Simulated Parquet read error")
+
+        # Mock API return for the full range
+        mock_df_api = create_sample_df('2023-02-01', '2023-02-05', freq='D')
+        mock_df_api.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        mock_metrics = {'api_calls': 1, 'latency_sec': 0.7, 'rows_fetched': len(mock_df_api)}
+        mock_fetch_yfinance.return_value = (mock_df_api.copy(), mock_metrics)
+
+        # Execute acquire_data
+        data_info = acquire_data(args)
+
+        # --- Assertions ---
+        # Check cache read was attempted
+        self.mock_read_parquet.assert_called_once()
+        # Check API was called for the full range as fallback
+        expected_fetch_end_date = '2023-02-06' # Day after end date
+        mock_fetch_yfinance.assert_called_once_with(
+            ticker=args.ticker, interval=args.interval,
+            start_date=args.start, end_date=expected_fetch_end_date, period=None
+        )
+        # Check cache status - should be False as read failed
+        self.assertFalse(data_info['parquet_cache_used'])
+        # Check returned DataFrame matches API result
+        self.assertIsInstance(data_info['ohlcv_df'], pd.DataFrame)
+        pd.testing.assert_frame_equal(data_info['ohlcv_df'], mock_df_api)
+        # Check data was saved (to overwrite broken cache)
+        self.mock_to_parquet.assert_called_once()
+        call_args_save, _ = self.mock_to_parquet.call_args
+        self.assertEqual(call_args_save[0].name, 'yfinance_CSCO_D1.parquet')
+
+        self.assertEqual(data_info['api_calls'], 1)
+        self.assertEqual(data_info['rows_fetched'], len(mock_df_api))
+
+
     # --- Add more tests ---
-    # test_cache_read_error_fetches_api(...)
     # test_fetch_failure_during_partial_fetch(...)
 
 # Allow running tests directly
