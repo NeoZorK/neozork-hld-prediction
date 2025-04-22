@@ -7,8 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix test for yfinance 8">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="init v0.1.6">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/csv_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/csv_fetcher.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,22 +69,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.demo command.executor&quot;: &quot;Run&quot;,
-    &quot;Python.help command.executor&quot;: &quot;Run&quot;,
-    &quot;Python.indicator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.indicator_logic.executor&quot;: &quot;Run&quot;,
-    &quot;Python.plotting.executor&quot;: &quot;Run&quot;,
-    &quot;Python.run_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Shell Script.help command.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.demo command.executor": "Run",
+    "Python.help command.executor": "Run",
+    "Python.indicator.executor": "Run",
+    "Python.indicator_logic.executor": "Run",
+    "Python.plotting.executor": "Run",
+    "Python.run_analysis.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Shell Script.help command.executor": "Run",
+    "git-widget-placeholder": "v0.1.6",
+    "run.code.analysis.last.selected.profile": "aDefault",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="fd695039-1346-4bbb-b7b7-3a2bbd6f2741" reportId="NeoZorK HLD/qodana/2025-04-19" />
@@ -161,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00123" summary="remain only 2 errors (fixing)">
-      <option name="closed" value="true" />
-      <created>1745078253913</created>
-      <option name="number" value="00123" />
-      <option name="presentableId" value="LOCAL-00123" />
-      <option name="project" value="LOCAL" />
-      <updated>1745078253913</updated>
     </task>
     <task id="LOCAL-00124" summary="remain only 2 errors (fixing) now 3 errors">
       <option name="closed" value="true" />
@@ -554,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745258924382</updated>
     </task>
-    <option name="localTasksCounter" value="172" />
+    <task id="LOCAL-00172" summary="init v0.1.6">
+      <option name="closed" value="true" />
+      <created>1745300375890</created>
+      <option name="number" value="00172" />
+      <option name="presentableId" value="LOCAL-00172" />
+      <option name="project" value="LOCAL" />
+      <updated>1745300375890</updated>
+    </task>
+    <option name="localTasksCounter" value="173" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -581,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="try to fix fetchers test 7" />
     <MESSAGE value="try to fix fetchers test 8" />
     <MESSAGE value="try to fix fetchers test 9" />
     <MESSAGE value="fixed tests1" />
@@ -606,6 +606,7 @@
     <MESSAGE value="fix test for yfinance 6" />
     <MESSAGE value="fix test for yfinance 7" />
     <MESSAGE value="fix test for yfinance 8" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix test for yfinance 8" />
+    <MESSAGE value="init v0.1.6" />
+    <option name="LAST_COMMIT_MESSAGE" value="init v0.1.6" />
   </component>
 </project>

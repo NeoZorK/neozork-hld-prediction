@@ -110,7 +110,7 @@ def acquire_data(args) -> dict:
         data_info["ohlcv_df"] = df; return data_info # Return early
     elif effective_mode == 'csv':
         data_info["data_source_label"] = args.csv_file
-        df, metrics = fetch_csv_data(filepath=args.csv_file)
+        df, metrics = fetch_csv_data(file_path=args.csv_file)
         combined_metrics = metrics or {}
         # Let final update outside handle metrics
 
