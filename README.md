@@ -56,6 +56,22 @@ Based on comparisons using the `mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv` file:
 * **Core Calculations (Pressure/PV):** Validation shows that the Python implementation of `Pressure` and `PV` (Pressure Vector) calculations is **highly accurate**, matching the `pressure` and `pressure_vector` columns from the CSV very closely (Correlation=1.0, minimal Mean Absolute Difference, <5% mismatches beyond float tolerance).
 * **Predicted Low/High (PHLD/SR Rules):** The current Python implementation for `PPrice1` (plotted green) and `PPrice2` (plotted red) in rules `PHLD` and `SR` uses a formula based on `Current Open +/- (Previous_High - Previous_Low) / 2`. Comparison with `predicted_low` and `predicted_high` columns from the sample MQL5 CSV shows a **systematic difference** (approx. 6.8 points Mean Absolute Difference in the sample XAUUSD MN1 data, although Correlation > 0.999). This indicates that the original MQL5 indicator uses a **different formula** for these specific predictions. Achieving an exact match would require implementing the original MQL5 formula in `src/calculation/rules.py`.
 
+### Data Caching Mechanism
+
+To speed up subsequent runs and reduce API load, the script utilizes data caching in Parquet format:
+
+* **CSV Mode (`--mode csv`):**
+    * On the first run with a specific CSV file, the processed data (after cleaning, column standardization, and type conversion) is saved to a `.parquet` file in the `data/cache/csv_converted/` directory.
+    * The cache filename corresponds to the original CSV filename (e.g., `CSVExport_XAUUSD_PERIOD_MN1.parquet`).
+    * On subsequent runs with the same CSV file, the script will load data directly from this Parquet cache, skipping the CSV reading and processing steps.
+* **API Modes (`polygon`, `binance`, `yfinance`):**
+    * Data fetched from APIs is cached in the `data/raw_parquet/` directory.
+    * A separate file is created for each instrument (ticker + interval + mode), e.g., `polygon_XAUUSD_M1.parquet`.
+    * The script automatically identifies missing date ranges compared to the requested period and fetches only the missing data, updating the cache file incrementally.
+    * *Note:* The `yfinance` mode, when using the `--period` argument (instead of `--start`/`--end`), always re-downloads the data for that period and does not use the cache for incremental fetching logic. It will, however, overwrite the cache file for that instrument.
+
+* **Important:** If you make changes to the code responsible for **data loading or initial processing** (e.g., files in `src/data/fetchers/` or the logic in `src/data/data_acquisition.py`, especially concerning type conversions or column handling), the **existing cache might become outdated**. To see the effects of your code changes, you may need to **manually delete** the relevant `.parquet` cache files from the `data/cache/csv_converted/` or `data/raw_parquet/` directories before running the script again.
+
 ## Tech Stack
 
 * **Language:** Python 3.12+
