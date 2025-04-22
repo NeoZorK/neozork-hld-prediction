@@ -163,7 +163,7 @@ class TestDataAcquisitionCaching(unittest.TestCase):
     # --- Test API Exact Cache Hit ---
     @patch('src.data.data_acquisition.fetch_yfinance_data')
     def test_exact_cache_hit_loads_file(self, mock_fetch_api):
-        """Test YF: Exact cache hit loads file, no API call."""
+        """Test YF: Exact cache_manager hit loads file, no API call."""
         args = create_mock_args(mode='yf', start='2023-01-10', end='2023-01-11', interval='1d', ticker='MSFT')
         cache_file = self.cache_dir_path / "raw_parquet" / "yfinance_MSFT_1d.parquet"
         self.mock_gen_path.return_value = cache_file
@@ -280,10 +280,10 @@ class TestDataAcquisitionCaching(unittest.TestCase):
         self.assertEqual(data_info['rows_fetched'], len(mock_df_before) + len(mock_df_after))
         self.assertAlmostEqual(data_info['api_latency_sec'], 0.5)
 
-    # --- Test Period argument skips cache check ---
+    # --- Test Period argument skips cache_manager check ---
     @patch('src.data.data_acquisition.fetch_yfinance_data')
     def test_yf_period_skips_cache(self, mock_fetch_yfinance):
-        """ Test YF: Using --period skips cache read and fetches fresh data. """
+        """ Test YF: Using --period skips cache_manager read and fetches fresh data. """
         args = create_mock_args(mode='yf', ticker='IBM', interval='1d', period='6mo')
         cache_file = self.cache_dir_path / "raw_parquet" / "yfinance_IBM_1d.parquet"
         self.mock_gen_path.return_value = cache_file
@@ -303,7 +303,7 @@ class TestDataAcquisitionCaching(unittest.TestCase):
     # --- Test Cache read error triggers API fetch ---
     @patch('src.data.data_acquisition.fetch_yfinance_data')
     def test_cache_read_error_fetches_api(self, mock_fetch_yfinance):
-        """ Test YF: Cache read error ignores cache and fetches from API. """
+        """ Test YF: Cache read error ignores cache_manager and fetches from API. """
         args = create_mock_args(mode='yf', ticker='CSCO', interval='1d', start='2023-02-01', end='2023-02-05')
         cache_file = self.cache_dir_path / "raw_parquet" / "yfinance_CSCO_1d.parquet"
         self.mock_gen_path.return_value = cache_file

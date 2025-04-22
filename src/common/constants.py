@@ -1,26 +1,37 @@
-# -*- coding: utf-8 -*-
-# src/constants.py
+# src/common/constants.py
 
 """
-Constants and enumerations used in the indicator calculations.
+Defines constants used throughout the application, including trading rules,
+signal values, and valid data source identifiers.
+All comments are in English.
 """
 
-import numpy as np
-from enum import Enum
+from enum import Enum, auto
 
-# --- Define constants for signals ---
-NOTRADE = 0.0
+# --- Trading Rules Enum ---
+# Defines the different calculation/trading rules available.
+class TradingRule(Enum):
+    Predict_High_Low_Direction = auto() # Original complex rule
+    Pressure_Vector = auto()           # Simpler rule focusing on PV
+    Support_Resistants = auto()        # Rule based on S/R levels (potentially derived from PV/Pressure)
+    # Add other rules here if needed
+
+# --- Signal Values ---
+# Standardized values for trade direction signals.
 BUY = 1.0
 SELL = 2.0
-DBL_BUY = 3.0       # Not used in core calculations shown, but defined for completeness
-DBL_SELL = 4.0      # Not used in core calculations shown, but defined for completeness
-BUY_AND_SELL = 5.0 # Not used in core calculations shown, but defined for completeness
-EMPTY_VALUE = np.nan
+NOTRADE = 0.0
 
-# --- Define Enum for Trading Rule Switch ---
-class TradingRule(Enum):
-    PV_HighLow = 0
-    Support_Resistants = 1
-    Pressure_Vector = 2
-    Predict_High_Low_Direction = 3
+# --- Valid Data Sources for API Cache ---
+# Used by cache_manager and potentially CLI to validate source names.
+# Excludes 'csv' and 'demo' as they have different caching mechanisms or no cache.
+VALID_DATA_SOURCES = ['yfinance', 'polygon', 'binance']
+
+# --- Other Constants ---
+# Example: Default number of rows for demo data
+DEFAULT_DEMO_ROWS = 30
+
+# Example: Default colors (though plotting logic might override)
+DEFAULT_PPRICE1_COLOR = 'lime'
+DEFAULT_PPRICE2_COLOR = 'red'
 

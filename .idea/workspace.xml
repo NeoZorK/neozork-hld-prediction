@@ -7,11 +7,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add both flags to plot">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="plot both variants on HTML">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plotting/plotting.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting/plotting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plotting/plotting_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting/plotting_generation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/debug_yfinance.py" beforeDir="false" afterPath="$PROJECT_DIR$/debug_yfinance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cli/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/cli/cli.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/constants.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/csv_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/csv_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/yfinance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/yfinance_fetcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -164,14 +168,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00131" summary="add to readme new functionallity">
-      <option name="closed" value="true" />
-      <created>1745173115512</created>
-      <option name="number" value="00131" />
-      <option name="presentableId" value="LOCAL-00131" />
-      <option name="project" value="LOCAL" />
-      <updated>1745173115512</updated>
     </task>
     <task id="LOCAL-00132" summary="test csv fetcher">
       <option name="closed" value="true" />
@@ -557,7 +553,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745326903049</updated>
     </task>
-    <option name="localTasksCounter" value="180" />
+    <task id="LOCAL-00180" summary="plot both variants on HTML">
+      <option name="closed" value="true" />
+      <created>1745329684688</created>
+      <option name="number" value="00180" />
+      <option name="presentableId" value="LOCAL-00180" />
+      <option name="project" value="LOCAL" />
+      <updated>1745329684688</updated>
+    </task>
+    <option name="localTasksCounter" value="181" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -584,7 +588,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="binance add progress bar fix" />
     <MESSAGE value="binance all works!" />
     <MESSAGE value="binance all works! fixed" />
     <MESSAGE value="polygon all works! fixed" />
@@ -609,6 +612,7 @@
     <MESSAGE value="all tests fixed" />
     <MESSAGE value="ok" />
     <MESSAGE value="add both flags to plot" />
-    <option name="LAST_COMMIT_MESSAGE" value="add both flags to plot" />
+    <MESSAGE value="plot both variants on HTML" />
+    <option name="LAST_COMMIT_MESSAGE" value="plot both variants on HTML" />
   </component>
 </project>

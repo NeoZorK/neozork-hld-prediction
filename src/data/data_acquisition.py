@@ -3,7 +3,7 @@
 
 """
 Handles the overall data acquisition process by dispatching to specific fetchers based on mode.
-Checks for existing single Parquet cache file per instrument and fetches only missing data.
+Checks for existing single Parquet cache_manager file per instrument and fetches only missing data.
 All comments are in English.
 """
 import os
@@ -75,7 +75,7 @@ def acquire_data(args) -> dict:
     """
     Acquires OHLCV data based on the specified mode and arguments.
     Uses a single Parquet file per instrument for caching API data, fetching only missing data.
-    CSV data uses a separate cache mechanism within fetch_csv_data.
+    CSV data uses a separate cache_manager mechanism within fetch_csv_data.
 
     Args:
         args (argparse.Namespace): Parsed command-line arguments.
@@ -165,17 +165,17 @@ def acquire_data(args) -> dict:
             cache_load_success = False
 
             if cache_filepath and cache_filepath.exists() and not is_period_request:
-                print_info(f"Found existing API cache file: {cache_filepath}")
+                print_info(f"Found existing API cache_manager file: {cache_filepath}")
                 try:
                     cached_df = pd.read_parquet(cache_filepath)
                     if not isinstance(cached_df.index, pd.DatetimeIndex) or cached_df.empty:
-                        print_warning("Cache file invalid. Ignoring cache.")
+                        print_warning("Cache file invalid. Ignoring cache_manager.")
                         cached_df = None
                     else:
                         if cached_df.index.tz is not None: cached_df.index = cached_df.index.tz_localize(None)
                         cache_start_dt = cached_df.index.min();
                         cache_end_dt = cached_df.index.max()
-                        print_success(f"Loaded {len(cached_df)} rows from cache ({cache_start_dt} to {cache_end_dt}).")
+                        print_success(f"Loaded {len(cached_df)} rows from cache_manager ({cache_start_dt} to {cache_end_dt}).")
                         data_info["parquet_cache_used"] = True;
                         cache_load_success = True
                         try:
@@ -183,7 +183,7 @@ def acquire_data(args) -> dict:
                         except Exception:
                             pass
                 except Exception as e:
-                    print_warning(f"Failed to load cache file {cache_filepath}: {e}")
+                    print_warning(f"Failed to load cache_manager file {cache_filepath}: {e}")
                     cached_df = None;
                     cache_load_success = False;
                     data_info["parquet_cache_used"] = False
@@ -205,14 +205,14 @@ def acquire_data(args) -> dict:
                             # End timestamp is the overall required inclusive end
                             fetch_ranges.append((fetch_after_start, req_end_dt_inclusive, None))
                     if not fetch_ranges:
-                        print_info("Requested range is fully covered by cache.")
+                        print_info("Requested range is fully covered by cache_manager.")
                     else:
                         print_info(f"Found {len(fetch_ranges)} missing range(s) to fetch.")
                 elif not cache_load_success:
                     fetch_ranges.append((req_start_dt, req_end_dt_inclusive, None))
-                    print_info(f"No cache found/usable. Fetching full range: {args.start} to {args.end}")
+                    print_info(f"No cache_manager found/usable. Fetching full range: {args.start} to {args.end}")
                 elif not interval_delta:
-                    print_warning("Could not determine interval delta, cannot fetch partial data. Using cache only.")
+                    print_warning("Could not determine interval delta, cannot fetch partial data. Using cache_manager only.")
 
             new_data_list = [];
             fetch_failed = False
@@ -226,11 +226,11 @@ def acquire_data(args) -> dict:
                     fetch_end_str = ""  # Initialize
 
                     # Calculate the API end date string (needs to be exclusive / day after last included)
-                    if signal_cache_start is not None:  # Fetching BEFORE cache
-                        # API call end date should be the day the cache starts (exclusive)
-                        fetch_end_api_call_dt = signal_cache_start.normalize()  # Start of the day cache begins
+                    if signal_cache_start is not None:  # Fetching BEFORE cache_manager
+                        # API call end date should be the day the cache_manager starts (exclusive)
+                        fetch_end_api_call_dt = signal_cache_start.normalize()  # Start of the day cache_manager begins
                         fetch_end_str = fetch_end_api_call_dt.strftime('%Y-%m-%d')
-                    else:  # Fetching AFTER cache or FULL range
+                    else:  # Fetching AFTER cache_manager or FULL range
                         # --- CORRECTED LOGIC ---
                         # API end date needs to cover the *entire* last day included in fetch_end.
                         # Add 1 day to the last included timestamp's date for the API call end date string.
@@ -314,7 +314,7 @@ def acquire_data(args) -> dict:
                 else:
                     new_data_list = []
             elif cache_load_success:
-                print_info("Using only data from cache.")
+                print_info("Using only data from cache_manager.")
                 data_info["data_source_label"] = args.ticker
             else:
                 print_warning("No data fetching triggered.")
@@ -353,21 +353,21 @@ def acquire_data(args) -> dict:
             should_save = (new_data_list and not fetch_failed and cache_filepath) or \
                           (is_period_request and combined_df is not None and not combined_df.empty and cache_filepath)
             if should_save:
-                print_info(f"Attempting to save/overwrite API cache file: {cache_filepath}")
+                print_info(f"Attempting to save/overwrite API cache_manager file: {cache_filepath}")
                 try:
                     os.makedirs(cache_filepath.parent, exist_ok=True)
                     if combined_df is not None:
                         if combined_df.index.tz is not None: combined_df.index = combined_df.index.tz_localize(None)
                         combined_df.to_parquet(cache_filepath, index=True, engine='pyarrow')
                         print_success(
-                            f"Successfully saved/updated API cache file: {cache_filepath}")  # Use print_success
+                            f"Successfully saved/updated API cache_manager file: {cache_filepath}")  # Use print_success
                         data_info["parquet_save_path"] = str(cache_filepath)
                     else:
-                        print_warning("Combined DataFrame is None, cannot save API cache.")
+                        print_warning("Combined DataFrame is None, cannot save API cache_manager.")
                 except ImportError:
                     print_error("Failed to save Parquet: pyarrow not installed.")
                 except Exception as e:
-                    print_error(f"Failed to save updated API cache file {cache_filepath}: {e}")
+                    print_error(f"Failed to save updated API cache_manager file {cache_filepath}: {e}")
 
             # --- Return Requested Slice ---
             final_df = None

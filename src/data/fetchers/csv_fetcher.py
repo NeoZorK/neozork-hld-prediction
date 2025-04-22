@@ -17,7 +17,7 @@ try:
 except NameError:
     PROJECT_ROOT = Path('.').resolve()
 
-CSV_CACHE_DIR = PROJECT_ROOT / "data" / "cache" / "csv_converted"
+CSV_CACHE_DIR = PROJECT_ROOT / "data" / "cache_manager" / "csv_converted"
 # --- End Cache Directory Definition ---
 
 
@@ -74,7 +74,7 @@ def fetch_csv_data(
         try:
              CSV_CACHE_DIR.mkdir(parents=True, exist_ok=True)
         except OSError as e:
-             print_error(f"Could not create cache directory {CSV_CACHE_DIR}: {e}")
+             print_error(f"Could not create cache_manager directory {CSV_CACHE_DIR}: {e}")
 
         if parquet_path.is_file():
             try:
@@ -84,10 +84,10 @@ def fetch_csv_data(
                     raise ValueError("Cached Parquet missing required OHLC columns.")
                 if not isinstance(df.index, pd.DatetimeIndex) or df.index.name != 'Timestamp':
                      raise ValueError("Cached Parquet needs DatetimeIndex named 'Timestamp'.")
-                print_info(f"Successfully loaded {len(df)} rows from Parquet cache: {parquet_path}")
+                print_info(f"Successfully loaded {len(df)} rows from Parquet cache_manager: {parquet_path}")
                 return df
             except Exception as e:
-                print_warning(f"Failed to load/validate Parquet cache {parquet_path}: {e}. Reading CSV.")
+                print_warning(f"Failed to load/validate Parquet cache_manager {parquet_path}: {e}. Reading CSV.")
                 try: os.remove(parquet_path)
                 except OSError: pass
         # --- End Parquet Cache Check ---
@@ -234,15 +234,15 @@ def fetch_csv_data(
         # --- Save Processed DataFrame to Parquet Cache ---
         if len(df) > 0:
              try:
-                 print_info(f"Saving processed data to Parquet cache: {parquet_path}")
+                 print_info(f"Saving processed data to Parquet cache_manager: {parquet_path}")
                  df.to_parquet(parquet_path, index=True)
                  print_debug(f"Data successfully saved to {parquet_path}")
              except Exception as e:
-                 print_error(f"CRITICAL: Failed to save data to Parquet cache {parquet_path}: {e}")
+                 print_error(f"CRITICAL: Failed to save data to Parquet cache_manager {parquet_path}: {e}")
                  print_error("Traceback for Parquet save error:")
                  traceback.print_exc()
         else:
-             print_warning("Processed DataFrame is empty. Skipping Parquet cache saving.")
+             print_warning("Processed DataFrame is empty. Skipping Parquet cache_manager saving.")
 
         return df
 

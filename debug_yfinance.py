@@ -13,7 +13,7 @@ try:
     # Set display options for pandas DataFrame
     pd.set_option('display.max_rows', 10)
     pd.set_option('display.max_columns', 10)
-    yf.set_tz_cache_location(".yf_cache") # Set cache location for yfinance
+    yf.set_tz_cache_location(".yf_cache") # Set cache_manager location for yfinance
 
     data = yf.download(
         tickers=ticker,

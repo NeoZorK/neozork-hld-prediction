@@ -188,7 +188,7 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
                      error_msg = f"Failed chunk {chunk_start_str}-{chunk_end_str}: {type(e).__name__}: {e}"
                      pbar.write(f" Error: {error_msg}")
                      # Decide whether to stop or continue on chunk failure
-                     # For now, let's stop to avoid partial data misleading cache
+                     # For now, let's stop to avoid partial data misleading cache_manager
                      metrics["error_message"] = error_msg
                      tb_str = traceback.format_exc()
                      try: print(f"{logger.ERROR_COLOR}Traceback:\n{tb_str}{logger.RESET_ALL}")
