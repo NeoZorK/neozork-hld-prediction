@@ -7,12 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix tr errors">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/calculation/indicator_calculation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/indicator_calculation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/fetchers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/point_size_determination.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/point_size_determination.py" afterDir="false" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed demo">
+      <change beforePath="$PROJECT_DIR$/src/calculation/indicator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/indicator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -166,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00135" summary="test binance fetcher">
-      <option name="closed" value="true" />
-      <created>1745173980250</created>
-      <option name="number" value="00135" />
-      <option name="presentableId" value="LOCAL-00135" />
-      <option name="project" value="LOCAL" />
-      <updated>1745173980250</updated>
     </task>
     <task id="LOCAL-00136" summary="test data fetcher">
       <option name="closed" value="true" />
@@ -559,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745333953113</updated>
     </task>
-    <option name="localTasksCounter" value="184" />
+    <task id="LOCAL-00184" summary="fixed demo">
+      <option name="closed" value="true" />
+      <created>1745336254238</created>
+      <option name="number" value="00184" />
+      <option name="presentableId" value="LOCAL-00184" />
+      <option name="project" value="LOCAL" />
+      <updated>1745336254238</updated>
+    </task>
+    <option name="localTasksCounter" value="185" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -586,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix yfinance" />
     <MESSAGE value="working yfinance" />
     <MESSAGE value="working all" />
     <MESSAGE value="test for yfinance" />
@@ -611,6 +606,7 @@
     <MESSAGE value="add new mode show" />
     <MESSAGE value="add init to files" />
     <MESSAGE value="fix tr errors" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix tr errors" />
+    <MESSAGE value="fixed demo" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed demo" />
   </component>
 </project>
