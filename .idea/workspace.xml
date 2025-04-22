@@ -7,8 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed demo">
-      <change beforePath="$PROJECT_DIR$/src/calculation/indicator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/indicator.py" afterDir="false" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed demo2">
+      <change beforePath="$PROJECT_DIR$/results/plots/Demo Data_D1_Predict_High_Low_Direction_plotly.html" beforeDir="false" afterPath="$PROJECT_DIR$/results/plots/Demo Data_D1_Predict_High_Low_Direction_plotly.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00136" summary="test data fetcher">
-      <option name="closed" value="true" />
-      <created>1745174082523</created>
-      <option name="number" value="00136" />
-      <option name="presentableId" value="LOCAL-00136" />
-      <option name="project" value="LOCAL" />
-      <updated>1745174082523</updated>
     </task>
     <task id="LOCAL-00137" summary="test workflow fetcher">
       <option name="closed" value="true" />
@@ -555,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745336254238</updated>
     </task>
-    <option name="localTasksCounter" value="185" />
+    <task id="LOCAL-00185" summary="fixed demo2">
+      <option name="closed" value="true" />
+      <created>1745336410153</created>
+      <option name="number" value="00185" />
+      <option name="presentableId" value="LOCAL-00185" />
+      <option name="project" value="LOCAL" />
+      <updated>1745336410154</updated>
+    </task>
+    <option name="localTasksCounter" value="186" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="working yfinance" />
     <MESSAGE value="working all" />
     <MESSAGE value="test for yfinance" />
     <MESSAGE value="fix test for yfinance" />
@@ -607,6 +606,7 @@
     <MESSAGE value="add init to files" />
     <MESSAGE value="fix tr errors" />
     <MESSAGE value="fixed demo" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed demo" />
+    <MESSAGE value="fixed demo2" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed demo2" />
   </component>
 </project>
