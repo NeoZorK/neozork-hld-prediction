@@ -1,131 +1,152 @@
 # src/workflow/workflow.py
 
 """
-Main workflow execution logic for the indicator analysis.
-Orchestrates calls to different step modules.
+Defines the main data processing and analysis workflow.
+Orchestrates data acquisition, calculation, plotting, and reporting steps.
 All comments are in English.
 """
+
 import time
-import os # Keep os import if needed elsewhere
+import traceback
+
 import pandas as pd
-import traceback # Keep traceback
+from typing import Dict, Tuple, Optional # Import Optional
 
-# Use relative imports within the src package
+# Use relative imports for workflow steps and common modules
+from ..data import acquire_data
+from ..calculation import calculate_indicator
+from ..plotting import generate_plot
+from ..utils import determine_point_size
 from ..common import logger
-from ..data.data_acquisition import acquire_data
-from ..utils.point_size_determination import get_point_size
-from ..calculation.indicator_calculation import calculate_indicator
-from ..plotting.plotting_generation import generate_plot
+from ..common.constants import TradingRule
 
-# Definition of the run_indicator_workflow function
-def run_indicator_workflow(args):
+# Definition of the main workflow function
+def run_workflow(args, selected_rule: TradingRule, preloaded_data_info: Optional[Dict] = None) -> Tuple[Optional[pd.DataFrame], Optional[Dict], Optional[Dict]]:
     """
-    Orchestrates the main steps by calling functions from specific step modules.
-    Data saving is now handled within acquire_data.
+    Executes the main analysis workflow steps.
 
     Args:
         args (argparse.Namespace): Parsed command-line arguments.
+        selected_rule (TradingRule): The trading rule enum member to use.
+        preloaded_data_info (Optional[Dict]): If provided, contains pre-loaded data
+                                               (from cache) and skips acquisition.
+                                               Expected keys: 'dataframe', 'mode'='cache',
+                                               'data_source_label', 'interval', 'ticker',
+                                               'point_size', 'estimated_point'.
 
     Returns:
-        dict: A dictionary containing results and metrics of the workflow.
+        Tuple[Optional[pd.DataFrame], Optional[Dict], Optional[Dict]]:
+            - The final DataFrame with results (or None on failure).
+            - A dictionary containing information about the data source and parameters.
+            - A dictionary containing execution times for each step.
     """
-    t_start_workflow = time.perf_counter()
-    # Initialize results dictionary with defaults
-    workflow_results = {
-        "success": False, "data_fetch_duration": 0,
-        "calc_duration": 0, "plot_duration": 0, "point_size": None, "estimated_point": False,
-        "selected_rule": None, "error_message": None, "error_traceback": None,
-        # Keep fields populated by acquire_data
-        "data_source_label": "N/A", "effective_mode": args.mode, # effective_mode updated by acquire_data
-        "parquet_cache_used": False, "parquet_cache_file": None,
-        "data_metrics": {},
-        "steps_duration": {}
-    }
-    result_df = None # Initialize result_df
+    exec_times = {} # Dictionary to store execution times
+    data_info = {} # Dictionary to store data source info
+    result_df = None # Initialize result DataFrame
 
     try:
-        # --- Step 1: Acquire Data (Handles Caching Internally) ---
-        t_acq_start = time.perf_counter()
-        data_info = acquire_data(args)
-        t_acq_end = time.perf_counter()
-        workflow_results.update(data_info) # Merge all info from acquire_data
-        workflow_results["data_fetch_duration"] = t_acq_end - t_acq_start
-        workflow_results["steps_duration"]["acquire"] = workflow_results["data_fetch_duration"]
+        # --- Step 1: Data Acquisition (or use preloaded) ---
+        step_start_time = time.time()
+        raw_df = None
+        if preloaded_data_info and preloaded_data_info.get('mode') == 'cache':
+            logger.print_info("--- Step 1: Using Preloaded Data from Cache ---")
+            data_info = preloaded_data_info # Use provided info
+            raw_df = data_info.get('dataframe')
+            if raw_df is None:
+                 logger.print_error("Preloaded data info provided, but DataFrame is missing.")
+                 return None, data_info, exec_times # Cannot proceed
+            # Ensure point size is present in data_info for cached data
+            if 'point_size' not in data_info or data_info['point_size'] is None:
+                 logger.print_error("Point size (--point) must be provided when plotting from cache.")
+                 return None, data_info, exec_times
+            logger.print_success(f"Using cached data: {data_info.get('data_source_label', 'N/A')}")
+        else:
+            logger.print_info("--- Step 1: Acquiring Data ---")
+            # Call the data acquisition module if not using cache
+            raw_df, data_info = acquire_data(args)
 
-        ohlcv_df = data_info.get("ohlcv_df") # Get DataFrame
+        exec_times['data_acquisition'] = time.time() - step_start_time
 
-        # --- Critical Check ---
-        if ohlcv_df is None or ohlcv_df.empty:
-            # *** FIX: Improved fallback error message ***
-            error_msg_from_data = data_info.get("error_message") or "Data acquisition returned None or empty DataFrame."
-            raise ValueError(error_msg_from_data)
+        if raw_df is None or raw_df.empty:
+            logger.print_warning("No data acquired or loaded. Workflow cannot continue.")
+            # data_info might still contain partial info (like mode)
+            return None, data_info, exec_times
 
-        # Log DataFrame Metrics (info now comes from data_info)
-        logger.print_debug(f"DataFrame Metrics: Rows={data_info.get('rows_count', 0)}, Cols={data_info.get('columns_count', 0)}, Memory={data_info.get('data_size_mb', 0):.3f} MB")
-
-
-        # --- Step 2: Get Point Size ---
+        # --- Step 2: Determine Point Size (if not already set, e.g., from cache) ---
+        step_start_time = time.time()
         logger.print_info("--- Step 2: Determining Point Size ---")
-        t_point_start = time.perf_counter()
-        # Pass data_info which now contains all necessary details
-        point_size, estimated_point = get_point_size(args, data_info)
-        t_point_end = time.perf_counter()
-        workflow_results["point_size"] = point_size
-        workflow_results["estimated_point"] = estimated_point
-        workflow_results["steps_duration"]["point_size"] = t_point_end - t_point_start
+        # If point size is already in data_info (e.g., from cache or required args), use it
+        if 'point_size' in data_info and data_info['point_size'] is not None:
+             point_size = data_info['point_size']
+             estimated_point = data_info.get('estimated_point', False) # Get flag if exists
+             logger.print_info(f"Using specified/cached point size: {point_size}")
+        else:
+             # Otherwise, determine it (primarily for yfinance or if not provided)
+             point_size, estimated_point = determine_point_size(args, raw_df, data_info)
+             # Store determined point size back into data_info
+             data_info['point_size'] = point_size
+             data_info['estimated_point'] = estimated_point
 
+        exec_times['point_determination'] = time.time() - step_start_time
+
+        if point_size is None:
+            logger.print_error("Could not determine point size. Workflow cannot continue.")
+            return raw_df, data_info, exec_times # Return raw_df as result_df is None
 
         # --- Step 3: Calculate Indicator ---
-        logger.print_info(f"--- Step 3: Calculating Indicator (Rule: {args.rule}) ---")
-        t_calc_start = time.perf_counter()
-        # Pass the DataFrame obtained from data_info
-        result_df, selected_rule = calculate_indicator(args, ohlcv_df.copy(), point_size)
-        t_calc_end = time.perf_counter()
-        workflow_results["selected_rule"] = selected_rule
-        workflow_results["calc_duration"] = t_calc_end - t_calc_start
-        workflow_results["steps_duration"]["calculate"] = workflow_results["calc_duration"]
+        step_start_time = time.time()
+        logger.print_info(f"--- Step 3: Calculating Indicator (Rule: {selected_rule.name}) ---")
+        result_df = calculate_indicator(raw_df, selected_rule, point_size, data_info)
+        exec_times['indicator_calculation'] = time.time() - step_start_time
 
         if result_df is None or result_df.empty:
-            logger.print_warning("Indicator calculation returned empty results.")
-
+             logger.print_warning("Indicator calculation failed or returned empty DataFrame.")
+             # Return raw_df as result_df is None, data_info might be useful
+             return raw_df, data_info, exec_times
 
         # --- Step 4: Generate Plot ---
+        step_start_time = time.time()
         logger.print_info("--- Step 4: Generating Plot ---")
-        t_plot_start = time.perf_counter()
-        # Pass data_info, result_df (which might be None/empty), selected_rule etc.
         generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
-        t_plot_end = time.perf_counter()
-        workflow_results["plot_duration"] = t_plot_end - t_plot_start
-        workflow_results["steps_duration"]["plot"] = workflow_results["plot_duration"]
+        exec_times['plotting'] = time.time() - step_start_time
 
-        workflow_results["success"] = True
         logger.print_success("Workflow completed successfully.")
+        return result_df, data_info, exec_times
 
     except Exception as e:
-        t_except = time.perf_counter() # Time of exception
-        # Try to capture duration of step that failed
-        if 't_plot_start' in locals() and 'plot' not in workflow_results['steps_duration']:
-            workflow_results["plot_duration"] = t_except - t_plot_start
-            workflow_results["steps_duration"]["plot"] = workflow_results["plot_duration"]
-        elif 't_calc_start' in locals() and 'calculate' not in workflow_results['steps_duration']:
-            workflow_results["calc_duration"] = t_except - t_calc_start
-            workflow_results["steps_duration"]["calculate"] = workflow_results["calc_duration"]
-        elif 't_point_start' in locals() and 'point_size' not in workflow_results['steps_duration']:
-             workflow_results["steps_duration"]["point_size"] = t_except - t_point_start
-        # No need to time acquire step here as it's always first
+        logger.print_error(f"An error occurred during the workflow: {type(e).__name__}: {e}")
+        logger.print_debug(f"Traceback (workflow):\n{traceback.format_exc()}")
+        # Return current state even on error for potential partial results/info
+        return result_df, data_info, exec_times
 
-        # Use the error message if already set (e.g., from ValueError raised above), otherwise format exception
-        error_msg = workflow_results.get("error_message") or f"{type(e).__name__}: {e}"
-        logger.print_error(f"Workflow failed: {error_msg}")
-        traceback_str = traceback.format_exc()
-        logger.print_error("Traceback:")
-        try: print(f"{logger.ERROR_COLOR}{traceback_str}{logger.RESET_ALL}")
-        except AttributeError: print(traceback_str)
-        # Store the primary error message and traceback
-        workflow_results["error_message"] = str(e) # Store the original exception string if not already set
-        workflow_results["error_traceback"] = traceback_str
+# Function to display the execution summary
+def display_summary(data_info: Optional[Dict], selected_rule: Optional[TradingRule], exec_times: Optional[Dict]):
+     """Displays a summary of the execution."""
+     if not data_info or not selected_rule or not exec_times:
+          logger.print_warning("Cannot display summary due to missing information.")
+          return
 
-    # Add overall duration to results
-    workflow_results["total_duration_sec"] = time.perf_counter() - t_start_workflow
+     logger.print_info("\n--- Execution Summary ---")
+     source_label = data_info.get('data_source_label', 'N/A')
+     mode = data_info.get('mode', 'N/A')
+     rule_name = selected_rule.name
+     point_size = data_info.get('point_size')
+     estimated = data_info.get('estimated_point', False)
+     point_str = f"{point_size:.8f}" if point_size is not None else "N/A"
 
-    return workflow_results
+     print(f"Data Source::         {source_label} (Mode: {mode})")
+     print(f"Rule Applied::        {rule_name}")
+     print(f"Point Size Used::     {point_str}{' (Estimated)' if estimated else ''}")
+     print("-" * 45) # Separator line
+     # Memory usage might be harder to track accurately per step without specific tools
+     # print(f"Memory Usage::        {data_info.get('memory_usage_mb', 'N/A'):.3f} MB")
+     print(f"Data Fetch/Load Time:: {exec_times.get('data_acquisition', 0):.3f} seconds")
+     if 'point_determination' in exec_times: # Only show if step ran
+          print(f"Point Determ. Time::  {exec_times.get('point_determination', 0):.3f} seconds")
+     print(f"Indicator Calc Time:: {exec_times.get('indicator_calculation', 0):.3f} seconds")
+     print(f"Plotting Time::       {exec_times.get('plotting', 0):.3f} seconds")
+     print("-" * 45) # Separator line
+     total_workflow_time = sum(exec_times.values())
+     print(f"Total Workflow Time:: {total_workflow_time:.3f} seconds") # Sum of tracked steps
+     logger.print_info("--- End Summary ---")
+
