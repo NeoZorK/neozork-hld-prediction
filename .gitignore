@@ -6,3 +6,4 @@
 /.env
 /.yf_cache/cookies.db
 *.parquet
+*.html
