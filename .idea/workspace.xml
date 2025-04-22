@@ -7,8 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="init v0.1.6">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="try convert csv to parket">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/data/fetchers/csv_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/csv_fetcher.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -162,14 +163,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00124" summary="remain only 2 errors (fixing) now 3 errors">
-      <option name="closed" value="true" />
-      <created>1745079539038</created>
-      <option name="number" value="00124" />
-      <option name="presentableId" value="LOCAL-00124" />
-      <option name="project" value="LOCAL" />
-      <updated>1745079539039</updated>
     </task>
     <task id="LOCAL-00125" summary="fixed all tests!">
       <option name="closed" value="true" />
@@ -555,7 +548,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745300375890</updated>
     </task>
-    <option name="localTasksCounter" value="173" />
+    <task id="LOCAL-00173" summary="try convert csv to parket">
+      <option name="closed" value="true" />
+      <created>1745303004901</created>
+      <option name="number" value="00173" />
+      <option name="presentableId" value="LOCAL-00173" />
+      <option name="project" value="LOCAL" />
+      <updated>1745303004901</updated>
+    </task>
+    <option name="localTasksCounter" value="174" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,7 +583,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="try to fix fetchers test 8" />
     <MESSAGE value="try to fix fetchers test 9" />
     <MESSAGE value="fixed tests1" />
     <MESSAGE value="fixed tests2" />
@@ -607,6 +607,7 @@
     <MESSAGE value="fix test for yfinance 7" />
     <MESSAGE value="fix test for yfinance 8" />
     <MESSAGE value="init v0.1.6" />
-    <option name="LAST_COMMIT_MESSAGE" value="init v0.1.6" />
+    <MESSAGE value="try convert csv to parket" />
+    <option name="LAST_COMMIT_MESSAGE" value="try convert csv to parket" />
   </component>
 </project>
