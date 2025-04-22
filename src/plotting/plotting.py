@@ -39,7 +39,8 @@ def plot_indicator_results_plotly(df_results: pd.DataFrame, rule: TradingRule, t
         logger.print_warning("Input DataFrame is None or empty. Cannot create plot.")
         return None
     if not all(col in df_results.columns for col in required_cols):
-        logger.print_error(f"Input DataFrame must contain columns: {required_cols}. Found: {list(df_results.columns)}")
+        # logger.print_error(f"Input DataFrame must contain columns: {required_cols}. Found: {list(df_results.columns)}")
+        raise ValueError(f"Input DataFrame must contain columns: {required_cols}. Found: {list(df_results.columns)}")
         return None
     if not isinstance(df_results.index, pd.DatetimeIndex):
         logger.print_warning("DataFrame index is not a DatetimeIndex. Plotting might be affected.")
@@ -192,6 +193,7 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         rule (TradingRule): The trading rule used, to customize plotting.
         title (str): The title for the chart.
     """
+
     # --- Input Validation ---
     required_cols = ['Open', 'High', 'Low', 'Close']
     if df_results is None or df_results.empty:
@@ -287,3 +289,12 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         logger.print_error(f"Error during mplfinance plotting: {e}")
         logger.print_warning("Ensure your DataFrame has sufficient data and correct columns for mplfinance.")
 
+# --- Wrapper function to call either Plotly or mplfinance ---
+def plot_indicator_results(df_results, rule, title="Indicator Results", use_plotly=True):
+    """
+    Wrapper function to call either Plotly or mplfinance plotting functions.
+    """
+    if use_plotly:
+        return plot_indicator_results_plotly(df_results, rule, title)
+    else:
+        return plot_indicator_results_mplfinance(df_results, rule, title)

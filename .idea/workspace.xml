@@ -8,9 +8,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add both flags to plot">
-      <change beforePath="$PROJECT_DIR$/results/plots/BTCUSDT_MN1_Predict_High_Low_Direction_plotly.html" beforeDir="false" afterPath="$PROJECT_DIR$/results/plots/BTCUSDT_MN1_Predict_High_Low_Direction_plotly.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/plots/BTCUSD_MN1_Predict_High_Low_Direction_plotly.html" beforeDir="false" afterPath="$PROJECT_DIR$/results/plots/BTCUSD_MN1_Predict_High_Low_Direction_plotly.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/plots/Demo Data_D1_Predict_High_Low_Direction_plotly.html" beforeDir="false" afterPath="$PROJECT_DIR$/results/plots/Demo Data_D1_Predict_High_Low_Direction_plotly.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plotting/plotting.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting/plotting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/plotting/test_plotting.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/plotting/test_plotting.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
