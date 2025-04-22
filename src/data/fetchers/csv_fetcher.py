@@ -1,144 +1,290 @@
-# src/data/fetchers/csv_fetcher.py # Re-verified Cleaning Sequence
+# File: src/data/fetchers/csv_fetcher.py
+# -*- coding: utf-8 -*-
 
-"""
-Contains the function to fetch and process data from a CSV file.
-"""
-import os # Import os to get file size, or use pathlib more
 import pandas as pd
-import numpy as np
+import os
 from pathlib import Path
-from ...common import logger # Relative import from parent's sibling
-import traceback # Import traceback for detailed error logging
+from typing import Optional, Dict
+import traceback  # Import traceback for exception details
+
+# Use relative import for print functions from the custom logger
+from ...common.logger import print_info, print_warning, print_error, print_debug
+
+# --- Define Cache Directory ---
+try:
+    # Assumes the script runs from the project root directory ('NeoZorK HLD')
+    PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+except NameError:
+    PROJECT_ROOT = Path('.').resolve()
+
+CSV_CACHE_DIR = PROJECT_ROOT / "data" / "cache" / "csv_converted"
 
 
-# Definition of the fetch_csv_data function
-# MODIFIED: Return type is now tuple[pd.DataFrame | None, dict]
-def fetch_csv_data(filepath: str) -> tuple[pd.DataFrame | None, dict]:
+# --- End Cache Directory Definition ---
+
+
+# Function to fetch data from CSV with Parquet caching enhancement
+def fetch_csv_data(
+        file_path: str,
+        ohlc_columns: Optional[Dict[str, str]] = None,
+        date_column: Optional[str] = None,
+        time_column: Optional[str] = None,
+        datetime_column: Optional[str] = None,
+        date_format: Optional[str] = None,
+        skiprows: int = 0,
+        separator: str = ',',
+) -> pd.DataFrame:
     """
-    Reads historical OHLCV and indicator data from a specified CSV file.
-    Performs cleaning: strips column names, handles datetimes, converts numerics, replaces inf.
-    Returns a tuple: (DataFrame or None, metrics dictionary).
-    """
-    logger.print_debug(f"Attempting to read CSV file: {filepath}")
-    file_path_obj = Path(filepath)
-    metrics = {"file_size_bytes": None} # Initialize metrics dict
+    Fetches data from a CSV file, handling various formats and standardizing column names.
+    Includes Parquet caching logic: reads from Parquet if available, otherwise reads CSV and saves to Parquet.
+    Uses custom print functions for logging.
 
-    if not file_path_obj.is_file():
-        logger.print_error(f"CSV file not found at path: {file_path_obj}")
-        return None, metrics # Return None df and basic metrics
+    Args:
+        file_path (str): The path to the CSV file.
+        ohlc_columns (Optional[dict[str, str]]): Mapping from standard names ('Open', 'High', 'Low', 'Close', 'Volume')
+                                                to actual column names in the CSV. Defaults used if None.
+        date_column (Optional[str]): Name of the date column if date and time are separate.
+        time_column (Optional[str]): Name of the time column if date and time are separate.
+        datetime_column (Optional[str]): Name of the single datetime column.
+        date_format (Optional[str]): The strptime format string for parsing dates/datetimes. Auto-detection if None.
+        skiprows (int): Number of rows to skip at the beginning of the file.
+        separator (str): The delimiter used in the CSV file.
+
+    Returns:
+        pd.DataFrame: DataFrame with standardized columns ('Open', 'High', 'Low', 'Close', 'Volume')
+                      and a DatetimeIndex named 'Timestamp'. Returns an empty DataFrame on error.
+    """
+    default_ohlc_columns = {
+        'Open': 'Open',
+        'High': 'High',
+        'Low': 'Low',
+        'Close': 'Close',
+        'Volume': 'Volume'  # Adjust if your MT5 exports 'Tick Volume' or 'Real Volume'
+    }
+    column_mapping = {**(ohlc_columns or default_ohlc_columns)}
+    # Ensure Volume is included, even if default (can be 'Volume', 'Tick Volume', etc.)
+    volume_keys_to_check = ['Volume', 'Tick Volume', 'Real Volume']
+    mapped_volume_key = 'Volume'  # The standard key we want internally
+
+    provided_volume_source = None
+    for std_key, csv_key in column_mapping.items():
+        if std_key == mapped_volume_key:
+            provided_volume_source = csv_key
+            break
+
+    if provided_volume_source is None:
+        for vol_key in volume_keys_to_check:
+            if vol_key in default_ohlc_columns.values():
+                provided_volume_source = vol_key
+                column_mapping[mapped_volume_key] = vol_key  # Add mapping explicitly
+                break
+        if provided_volume_source is None:
+            provided_volume_source = 'Volume'
+            column_mapping[mapped_volume_key] = 'Volume'
+
+    required_std_cols = {'Open', 'High', 'Low', 'Close'}
 
     try:
-        # Get file size BEFORE reading
-        metrics["file_size_bytes"] = file_path_obj.stat().st_size
-        logger.print_debug(f"File size: {metrics['file_size_bytes']} bytes")
+        input_path = Path(file_path).resolve()  # Use resolved absolute path
+        if not input_path.is_file():
+            print_error(f"CSV file not found: {file_path} (Resolved: {input_path})")
+            return pd.DataFrame()
 
-        # 1. Read the CSV file using pandas
-        # Pass explicit types to potentially reduce memory and handle specific columns better
-        # Example: Specify types for known numeric columns if possible
-        # dtype_spec = {'Open': float, 'High': float, 'Low': float, 'Close': float, 'TickVolume': float}
-        # df = pd.read_csv(file_path_obj, sep=',', header=1, skipinitialspace=True, low_memory=False, dtype=dtype_spec)
-        # Or read as default first:
-        df = pd.read_csv(file_path_obj, sep=',', header=1, skipinitialspace=True, low_memory=False)
+        # --- Parquet Cache Logic ---
+        parquet_filename = input_path.stem + ".parquet"
+        parquet_path = CSV_CACHE_DIR / parquet_filename
 
-        if df.empty:
-            logger.print_warning(f"CSV file is empty: {filepath}")
-            # Return empty DataFrame and metrics if needed, or None
-            return None, metrics # Return None df if file is empty
+        try:
+            CSV_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        except OSError as e:
+            print_error(f"Could not create cache directory {CSV_CACHE_DIR}: {e}")
+            # Continue without caching if directory creation fails
 
-        # 2. Clean column names (rest of the logic remains the same)
-        original_columns = df.columns.tolist()
-        cleaned_columns = [str(col).strip().rstrip(',') for col in original_columns]
-        df.columns = cleaned_columns
-        unnamed_cols = [col for col in df.columns if col == '' or 'Unnamed' in col]
-        if unnamed_cols:
-            logger.print_debug(f"Dropping unnamed/empty columns: {unnamed_cols}")
-            df.drop(columns=unnamed_cols, inplace=True, errors='ignore')
+        if parquet_path.is_file():
+            try:
+                print_info(f"Attempting to load cached CSV data from Parquet: {parquet_path}")
+                df = pd.read_parquet(parquet_path)
+                # Basic validation after loading cache
+                if not required_std_cols.issubset(df.columns):
+                    raise ValueError(
+                        f"Cached Parquet missing required OHLC columns: {required_std_cols - set(df.columns)}")
+                if mapped_volume_key not in df.columns:
+                    print_warning(f"Cached Parquet missing '{mapped_volume_key}' column.")
+                if not isinstance(df.index, pd.DatetimeIndex) or df.index.name != 'Timestamp':
+                    raise ValueError("Cached Parquet does not have a valid DatetimeIndex named 'Timestamp'.")
 
-        # 3. Parse and set DateTime index
-        if 'DateTime' not in df.columns:
-            logger.print_error("Mandatory 'DateTime' column not found in CSV.")
-            return None, metrics
-        df['DateTime'] = pd.to_datetime(df['DateTime'], format='%Y.%m.%d %H:%M', errors='coerce')
-        rows_before_dropna_dt = len(df)
-        df.dropna(subset=['DateTime'], inplace=True)
-        rows_after_dropna_dt = len(df)
-        if rows_before_dropna_dt > rows_after_dropna_dt:
-            logger.print_warning(f"Dropped {rows_before_dropna_dt - rows_after_dropna_dt} rows with invalid DateTime format.")
-        if df.empty:
-            logger.print_warning("DataFrame became empty after removing rows with invalid dates.")
-            return None, metrics
-        df.set_index('DateTime', inplace=True)
+                print_info(f"Successfully loaded {len(df)} rows from Parquet cache: {parquet_path}")
+                return df
+            except Exception as e:
+                print_warning(
+                    f"Failed to load or validate Parquet cache {parquet_path}: {e}. Will read CSV and attempt to overwrite cache.")
+                try:
+                    os.remove(parquet_path)
+                    print_info(f"Removed potentially corrupted cache file: {parquet_path}")
+                except OSError as rm_err:
+                    print_warning(f"Could not remove potentially corrupted cache file {parquet_path}: {rm_err}")
+        # --- End Parquet Cache Check ---
 
-        # 4. Rename TickVolume to Volume for consistency
-        df.rename(columns={'TickVolume': 'Volume'}, inplace=True, errors='ignore')
+        # --- CSV Reading Logic ---
+        print_info(f"Reading CSV data from: {file_path}")
 
-        # 5. Convert potentially numeric columns to numeric (coerce errors)
-        potential_numeric_cols = df.columns
-        for col in potential_numeric_cols:
-            # Check if the column is not already numeric before trying conversion
-            if col in df.columns and not pd.api.types.is_numeric_dtype(df[col]):
-                 try:
-                     # Attempt conversion
-                     converted_col = pd.to_numeric(df[col], errors='coerce')
-                     # Check if conversion actually changed the type (it might coerce object to object if all fail)
-                     if pd.api.types.is_numeric_dtype(converted_col):
-                          df[col] = converted_col
-                          logger.print_debug(f"Coerced column '{col}' to numeric.")
-                     # else: # Optional: Log if coercion didn't result in numeric
-                     #    logger.print_debug(f"Column '{col}' could not be fully coerced to numeric (remains {df[col].dtype}).")
-                 except ValueError: # Catch errors during to_numeric if needed, though 'coerce' handles most
-                      logger.print_warning(f"Could not coerce column '{col}' to numeric during general conversion due to ValueError.")
-                 except Exception as e:
-                      logger.print_warning(f"Could not coerce column '{col}' to numeric during general conversion: {type(e).__name__}")
+        csv_cols_to_read = list(column_mapping.values())
+        datetime_source_cols = []
+        if datetime_column and datetime_column not in csv_cols_to_read:
+            datetime_source_cols.append(datetime_column)
+        if date_column and date_column not in csv_cols_to_read:
+            datetime_source_cols.append(date_column)
+        if time_column and time_column not in csv_cols_to_read:
+            datetime_source_cols.append(time_column)
 
+        csv_use_cols = list(set(csv_cols_to_read + datetime_source_cols))
+        print_debug(f"Reading columns from CSV: {csv_use_cols}")
 
-        # 6. Replace infinite values with NaN in numeric columns
-        numeric_cols = df.select_dtypes(include=[np.number]).columns
-        if not numeric_cols.empty:
-            inf_mask = np.isinf(df[numeric_cols])
-            if inf_mask.any().any():
-                logger.print_warning("Replacing infinite values (inf, -inf) with NaN.")
-                df.replace([np.inf, -np.inf], np.nan, inplace=True)
+        df = pd.read_csv(
+            file_path,
+            skiprows=skiprows,
+            sep=separator,
+            usecols=csv_use_cols,
+            low_memory=False
+        )
+        print_debug(f"Read {len(df)} rows from CSV initially.")
+
+        # --- Timestamp Processing ---
+        timestamp_col_data = None
+        if datetime_column:
+            if datetime_column not in df.columns:
+                raise ValueError(f"Specified datetime_column '{datetime_column}' not found in CSV.")
+            timestamp_col_data = df[datetime_column]
+            print_debug(f"Using single datetime column: {datetime_column}")
+        elif date_column and time_column:
+            if date_column not in df.columns or time_column not in df.columns:
+                raise ValueError(f"Specified date_column '{date_column}' or time_column '{time_column}' not found.")
+            timestamp_col_data = df[date_column].astype(str) + ' ' + df[time_column].astype(str)
+            print_debug(f"Combining date '{date_column}' and time '{time_column}' columns.")
+        elif date_column:  # Handle date only if time is missing
+            if date_column not in df.columns:
+                raise ValueError(f"Specified date_column '{date_column}' not found in CSV.")
+            timestamp_col_data = df[date_column]
+            print_debug(f"Using date column only: {date_column}")
         else:
-            logger.print_warning("No numeric columns found after coercion to replace inf values.")
+            common_dt_cols = ['Timestamp', 'Date', 'time', 'date']
+            found_dt_col = None
+            for col in common_dt_cols:
+                if col in df.columns:
+                    found_dt_col = col
+                    print_warning(f"No date/time column specified, auto-detected '{found_dt_col}'.")
+                    break
+            if found_dt_col:
+                timestamp_col_data = df[found_dt_col]
+            else:
+                raise ValueError(
+                    "Must specify 'datetime_column' or ('date_column' and 'time_column'), or have a standard 'Timestamp'/'Date' column.")
 
+        try:
+            parsed_timestamps = pd.to_datetime(timestamp_col_data, format=date_format, errors='coerce')
+            if parsed_timestamps.isnull().sum() > 0.5 * len(df):
+                print_error(
+                    f"High number of timestamp parsing errors ({parsed_timestamps.isnull().sum()}/{len(df)}). Check date format and data.")
+                print_error("Sample values that might be causing issues:")
+                print_error(str(timestamp_col_data[parsed_timestamps.isnull()].head()))  # Use str() for safety
+                # raise ValueError("Timestamp parsing failed for too many rows.")
+            elif parsed_timestamps.isnull().sum() > 0:
+                print_warning(
+                    f"{parsed_timestamps.isnull().sum()} rows had timestamp parsing errors and were set to NaT.")
 
-        # 7. Check for required OHLCV columns AFTER cleaning and type coercion
-        required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
-        missing_cols = [col for col in required_cols if col not in df.columns]
-        if missing_cols:
-            logger.print_error(f"CSV data is missing required columns after processing: {missing_cols}")
-            logger.print_error(f"Available columns: {list(df.columns)}")
-            return None, metrics
+            df['Timestamp'] = parsed_timestamps
+            df = df.dropna(subset=['Timestamp'])
+            df = df.set_index('Timestamp')
+            print_debug("Timestamp index created successfully.")
 
-        # 8. Drop rows if *any* of the required OHLCV columns have NaN AFTER conversion
-        initial_rows_after_dt = len(df)
-        df.dropna(subset=required_cols, how='any', inplace=True)
-        rows_dropped_nan = initial_rows_after_dt - len(df)
-        if rows_dropped_nan > 0:
-            logger.print_debug(f"Dropped {rows_dropped_nan} rows with NaN in required OHLCV columns after conversion/inf handling.")
+        except Exception as e:
+            print_error(f"Error parsing timestamp data: {e}")
+            print_error("Sample values being parsed:")
+            try:
+                print_error(str(timestamp_col_data.head()))  # Use str() for safety
+            except AttributeError:
+                print_error("Could not display sample timestamp data.")
+            raise
 
-        if df.empty:
-            logger.print_warning("DataFrame became empty after removing rows with NaN in required columns.")
-            return None, metrics
+            # --- Column Renaming and Selection ---
+        rename_map = {v: k for k, v in column_mapping.items() if v in df.columns}
+        df = df.rename(columns=rename_map)
 
-        logger.print_info(f"Successfully read and processed {len(df)} rows from {filepath}")
-        # Return DataFrame and metrics dict
-        return df, metrics
+        current_cols = set(df.columns)
+        missing_std_cols = required_std_cols - current_cols
+        if missing_std_cols:
+            raise ValueError(
+                f"Missing required standard columns after mapping/renaming: {missing_std_cols}. Available columns: {list(current_cols)}. Check source CSV and 'ohlc_columns' mapping.")
 
+        final_columns = list(required_std_cols)
+        if mapped_volume_key in df.columns:
+            final_columns.append(mapped_volume_key)
+        else:
+            print_warning(
+                f"Standard volume column '{mapped_volume_key}' not found after processing CSV. Volume data will be missing.")
+
+        df = df[final_columns]
+        print_debug(f"Selected final columns: {final_columns}")
+
+        # --- Data Type Conversion and Cleaning ---
+        for col in required_std_cols:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+
+        if mapped_volume_key in df.columns:
+            df[mapped_volume_key] = pd.to_numeric(df[mapped_volume_key], errors='coerce').astype('Int64')
+
+        initial_rows = len(df)
+        df = df.dropna(subset=list(required_std_cols))
+        dropped_rows = initial_rows - len(df)
+        if dropped_rows > 0:
+            print_warning(
+                f"Dropped {dropped_rows} rows due to NaN values in required OHLC columns after numeric conversion.")
+
+        df = df.sort_index()
+        if not df.index.is_monotonic_increasing:
+            print_warning(
+                "Timestamp index is not monotonically increasing after sorting. Check for duplicate timestamps.")
+
+        print_info(f"Successfully processed {len(df)} rows from CSV: {file_path}")
+        # --- End CSV Reading Logic ---
+
+        # --- Save Processed DataFrame to Parquet Cache ---
+        if len(df) > 0:
+            try:
+                print_info(f"Saving processed data to Parquet cache: {parquet_path}")
+                df.to_parquet(parquet_path, index=True)
+                print_debug(f"Data successfully saved to {parquet_path}")
+            except Exception as e:
+                print_error(f"CRITICAL: Failed to save data to Parquet cache {parquet_path}: {e}")
+                print_error("The data is processed in memory but will not be cached for the next run.")
+                # Print traceback for save error
+                print_error("Traceback for Parquet save error:")
+                traceback.print_exc()
+        else:
+            print_warning("Processed DataFrame is empty. Skipping Parquet cache saving.")
+
+        # --- Return the Processed DataFrame ---
+        return df
+
+    # --- Exception Handling for the entire function ---
     except FileNotFoundError:
-        logger.print_error(f"CSV file not found at path: {file_path_obj}")
-        return None, metrics
-    except pd.errors.EmptyDataError:
-        logger.print_error(f"CSV file is empty: {filepath}")
-        return None, metrics
-    except pd.errors.ParserError as e:
-        logger.print_error(f"Failed to parse CSV file: {filepath} - Error: {e}")
-        return None, metrics
-    except KeyError as e:
-        logger.print_error(f"Missing expected column during processing: {e} in file {filepath}")
-        return None, metrics
+        print_error(f"File Not Found Error: {file_path}")
+        return pd.DataFrame()
+    except ValueError as ve:
+        print_error(f"Data Validation or Configuration Error processing CSV {file_path}: {ve}")
+        return pd.DataFrame()
+    except KeyError as ke:
+        print_error(
+            f"Column Not Found Error (KeyError) processing CSV {file_path}: {ke}. Check column names and mappings.")
+        return pd.DataFrame()
+    except ImportError as ie:
+        print_error(f"ImportError: Missing dependency required for Parquet Caching: {ie}")
+        print_error("Please install 'pyarrow' or 'fastparquet': pip install pyarrow")
+        raise ie  # Re-raise to halt execution
     except Exception as e:
-        logger.print_error(f"An unexpected error occurred while processing CSV {filepath}: {type(e).__name__}: {e}")
+        print_error(f"An unexpected error occurred while processing CSV {file_path}: {e}")
+        # Print traceback for unexpected errors
+        print_error("Traceback for unexpected error:")
         traceback.print_exc()
-        return None, metrics
+        return pd.DataFrame()
