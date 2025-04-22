@@ -7,12 +7,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add init to files">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix tr errors">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/calculation/indicator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/indicator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/calculation/rules.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/rules.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/constants.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/calculation/indicator_calculation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/indicator_calculation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/data_acquisition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/fetchers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/point_size_determination.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/point_size_determination.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -166,14 +166,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00134" summary="test polygon fetcher">
-      <option name="closed" value="true" />
-      <created>1745173938635</created>
-      <option name="number" value="00134" />
-      <option name="presentableId" value="LOCAL-00134" />
-      <option name="project" value="LOCAL" />
-      <updated>1745173938635</updated>
     </task>
     <task id="LOCAL-00135" summary="test binance fetcher">
       <option name="closed" value="true" />
@@ -559,7 +551,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745332276902</updated>
     </task>
-    <option name="localTasksCounter" value="183" />
+    <task id="LOCAL-00183" summary="fix tr errors">
+      <option name="closed" value="true" />
+      <created>1745333953113</created>
+      <option name="number" value="00183" />
+      <option name="presentableId" value="LOCAL-00183" />
+      <option name="project" value="LOCAL" />
+      <updated>1745333953113</updated>
+    </task>
+    <option name="localTasksCounter" value="184" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -586,7 +586,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="polygon all works! fixed" />
     <MESSAGE value="fix yfinance" />
     <MESSAGE value="working yfinance" />
     <MESSAGE value="working all" />
@@ -611,6 +610,7 @@
     <MESSAGE value="plot both variants on HTML" />
     <MESSAGE value="add new mode show" />
     <MESSAGE value="add init to files" />
-    <option name="LAST_COMMIT_MESSAGE" value="add init to files" />
+    <MESSAGE value="fix tr errors" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix tr errors" />
   </component>
 </project>

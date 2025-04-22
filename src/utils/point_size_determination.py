@@ -1,105 +1,85 @@
-# src/utils/point_size_determination.py # Re-verified
+# src/utils/point_size_determination.py
 
 """
-Workflow Step 2: Determines the point size to use.
+Workflow step responsible for determining the instrument's point size.
+Uses provided arguments or attempts estimation for specific modes like yfinance.
 All comments are in English.
 """
-# Use relative imports within the src package
-from ..common import logger
-from .utils import determine_point_size # For yfinance estimation
 
-# Definition of the get_point_size function
-def get_point_size(args, data_info: dict):
+import pandas as pd
+from typing import Tuple, Dict, Optional
+
+# Use relative imports for logger and potentially the estimation utility
+from ..common import logger
+# Assuming the actual estimation logic is in utils.py
+from .utils import determine_point_size as estimate_point_size_from_yf
+
+# Definition of the workflow step function
+def determine_point_size(args, df: Optional[pd.DataFrame], data_info: Dict) -> Tuple[Optional[float], bool]:
     """
-    Determines point size based on args or estimation using data_info.
-    Handles 'demo', 'csv', 'polygon', 'yfinance', and 'binance' modes.
+    Determines the point size based on mode and arguments.
 
     Args:
-        args (argparse.Namespace): Parsed command-line arguments. Must contain 'point'.
-        data_info (dict): Dictionary containing info from the data acquisition step,
-                          including 'ohlcv_df', 'effective_mode', 'yf_ticker'.
+        args (argparse.Namespace): Parsed command-line arguments.
+        df (Optional[pd.DataFrame]): The raw data DataFrame (needed for yfinance estimation).
+        data_info (Dict): Dictionary containing data source information (like mode).
 
     Returns:
-        tuple: (point_size, estimated_point) or raises ValueError on failure.
+        Tuple[Optional[float], bool]:
+            - The determined point size (float) or None if not determinable.
+            - A boolean flag indicating if the point size was estimated (True) or provided/fixed (False).
     """
-    logger.print_info("--- Step 2: Determining Point Size ---")
-    # Initialize variables
-    point_size = None
-    estimated_point = False
-    # Extract needed info from the data_info dictionary
-    ohlcv_df = data_info.get("ohlcv_df")
-    effective_mode = data_info.get("effective_mode")
-    yf_ticker = data_info.get("yf_ticker") # Used only in yfinance mode
+    point_size: Optional[float] = None
+    estimated: bool = False
+    effective_mode = data_info.get('mode', 'unknown') # Get mode from data_info
 
-    # --- Handle point size based on mode ---
+    # 1. Check if point size was explicitly provided via CLI argument
+    if args.point is not None:
+        logger.print_info(f"Using explicitly provided point size: {args.point}")
+        point_size = args.point
+        estimated = False
+        return point_size, estimated
 
-    # Demo Mode
+    # 2. Handle modes where point size is fixed or required
     if effective_mode == 'demo':
-        point_size = 0.00001 # Fixed point size for demonstration data
-        estimated_point = False
+        # Use a fixed default point size for demo data
+        point_size = 1e-5 # Example default for demo EURUSD-like data
+        estimated = False
         logger.print_info(f"Using fixed point size for demo: {point_size}")
+        return point_size, estimated
 
-    # CSV Mode
-    elif effective_mode == 'csv':
-        logger.print_info("Checking for user-provided point size (required for CSV mode)...")
-        if args.point is None:
-            # Error should be raised by CLI parser, but double-check
-            raise ValueError("Point size (--point) must be provided when using csv mode.")
-        elif args.point <= 0:
-            raise ValueError("Provided point size (--point) must be positive.")
+    if effective_mode in ['csv', 'polygon', 'binance']:
+        # For these modes, --point should have been required by CLI validation.
+        # If we reach here and args.point is None, it's an unexpected state.
+        logger.print_error(f"Point size (--point) was required but not provided or found for mode '{effective_mode}'.")
+        return None, False # Cannot determine point size
+
+    # 3. Handle yfinance mode (potential estimation)
+    if effective_mode == 'yfinance':
+        logger.print_info("Attempting to determine point size for yfinance...")
+        # Check if the estimation function exists and df is available
+        if df is not None and not df.empty:
+            try:
+                # Call the actual estimation function (renamed import)
+                estimated_value = estimate_point_size_from_yf(df)
+                if estimated_value is not None:
+                    point_size = estimated_value
+                    estimated = True
+                    logger.print_success(f"Estimated point size using yfinance data: {point_size}")
+                else:
+                    logger.print_warning("Could not estimate point size from yfinance data.")
+            except Exception as e:
+                logger.print_error(f"Error during yfinance point size estimation: {e}")
         else:
-            point_size = args.point
-            estimated_point = False
-            logger.print_info(f"Using user-provided point size for CSV: {point_size}")
+            logger.print_warning("DataFrame is empty or None, cannot estimate point size for yfinance.")
 
-    # Polygon Mode
-    elif effective_mode == 'polygon':
-        logger.print_info("Checking for user-provided point size (required for Polygon mode)...")
-        if args.point is None:
-            raise ValueError("Point size (--point) must be provided when using polygon mode.")
-        elif args.point <= 0:
-            raise ValueError("Provided point size (--point) must be positive.")
-        else:
-            point_size = args.point
-            estimated_point = False
-            logger.print_info(f"Using user-provided point size for Polygon: {point_size}")
+        if point_size is None:
+             logger.print_error("Failed to determine point size for yfinance. Please provide it using --point.")
+             return None, estimated # Return None, estimation status might be True if tried
 
-    # Binance Mode - CORRECTED Block (logic was ok, ensure flow)
-    elif effective_mode == 'binance':
-        logger.print_info("Checking for user-provided point size (required for Binance mode)...")
-        if args.point is None:
-            raise ValueError("Point size (--point) must be provided when using binance mode (estimation not reliable).")
-        elif args.point <= 0:
-            raise ValueError("Provided point size (--point) must be positive.")
-        else:
-            point_size = args.point # Assign point size here
-            estimated_point = False # Point size is provided by user
-            logger.print_info(f"Using user-provided point size for Binance: {point_size}")
+        return point_size, estimated
 
-    # YFinance Mode
-    elif effective_mode == 'yfinance':
-        if ohlcv_df is None or ohlcv_df.empty:
-             raise ValueError("Cannot determine point size without valid data (yfinance fetch failed?).")
-        # Use provided point if available
-        if args.point is not None:
-            if args.point <= 0:
-                raise ValueError("Provided point size (--point) must be positive.")
-            point_size = args.point
-            estimated_point = False
-            logger.print_info(f"Using user-provided point size: {point_size}")
-        # Otherwise, attempt estimation
-        else:
-            logger.print_info(f"Attempting to estimate point size automatically for {yf_ticker}...")
-            point_size = determine_point_size(yf_ticker) # Calls the estimation utility
-            if point_size is None:
-                raise ValueError(f"Automatic point size estimation failed for {yf_ticker}. Use --point argument.")
-            estimated_point = True
-            logger.print_warning(f"Using estimated point size: {point_size:.8f}. Note: This is an ESTIMATE. Use --point for accuracy.")
+    # 4. Fallback for unknown modes or unhandled cases
+    logger.print_error(f"Could not determine point size for mode '{effective_mode}'.")
+    return None, False
 
-    # Final fallback check
-    if point_size is None:
-        # This should ideally not be reached if all modes and validation work correctly
-         raise ValueError(f"Internal Error: Failed to determine point size for mode '{effective_mode}'. Logic might be flawed.")
-
-    logger.print_debug(f"Point size determined: {point_size} (Estimated: {estimated_point})")
-    return point_size, estimated_point

@@ -1,30 +1,22 @@
-# src/data/fetchers/__init__.py # CORRECTED
+# src/data/fetchers/__init__.py
 
 """
-Initializes the fetchers package and exposes the main data fetching functions
-and necessary mapping utilities for use by data_acquisition.
+Makes data fetching functions available for import.
 """
 
-# Import the main fetch function from each module
+# Import functions from specific fetcher modules
+from .demo_fetcher import get_demo_data # Correct function name
 from .csv_fetcher import fetch_csv_data
-from .demo_fetcher import get_demo_data
 from .yfinance_fetcher import fetch_yfinance_data
 from .polygon_fetcher import fetch_polygon_data
 from .binance_fetcher import fetch_binance_data
 
-# Import specific mapping functions needed by data_acquisition.py
-# *** FIX: Use the renamed functions ***
-from .yfinance_fetcher import map_yfinance_interval, map_yfinance_ticker
-
-# Define what symbols are exported when 'from .fetchers import *' is used
-# (Good practice, though we use direct imports in data_acquisition)
+# Define __all__ to control what `from src.data.fetchers import *` imports
+# and to clearly state the public interface of this package.
 __all__ = [
+    'get_demo_data', # Correct function name
     'fetch_csv_data',
-    'get_demo_data',
     'fetch_yfinance_data',
     'fetch_polygon_data',
     'fetch_binance_data',
-    # *** FIX: Update __all__ with the new names ***
-    'map_yfinance_interval',  # For yfinance
-    'map_yfinance_ticker',    # For yfinance
 ]
