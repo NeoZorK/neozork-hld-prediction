@@ -53,10 +53,19 @@ class TestPlottingFunction(unittest.TestCase):
     @patch('src.plotting.plotting.mpf.plot')
     @patch('src.plotting.plotting.logger', new_callable=MockLogger) # Mock logger in plotting.py
     def test_plot_calls_and_addplots(self, _, mock_mpf_plot, mock_make_addplot):
+
+        # Mock the make_addplot function to track calls
+        self.assertTrue('Low' in self.df_results.columns)
+        self.assertTrue('High' in self.df_results.columns)
+
         # Define unique return values for make_addplot calls to track them
         mock_make_addplot.side_effect = lambda data, **kwargs: {"data": data.name if isinstance(data, pd.Series) else 'signal', "kwargs": kwargs}
 
-        plot_indicator_results(self.df_results, self.rule, self.title)
+        # Call the function to test, specifying the mplfinance branch
+        plot_indicator_results(self.df_results, self.rule, self.title, use_plotly=False)
+
+        # Check that make_addplot was called the expected number of times
+        self.assertEqual(mock_make_addplot.call_count, 9)
 
         # --- Assertions for make_addplot calls ---
         # Expected calls based on self.df_results columns and logic
@@ -87,7 +96,8 @@ class TestPlottingFunction(unittest.TestCase):
         # Example: Check PPrice1 call details
         pp1_call = next(c for c in actual_calls if c[1].get('title') == 'PPrice1')
         self.assertEqual(pp1_call[1]['panel'], 0)
-        self.assertEqual(pp1_call[1]['color'], 'green')
+        # wait green color for PPrice1
+        self.assertEqual(pp1_call[1]['color'], 'lime')
         pd.testing.assert_series_equal(pp1_call[0][0], self.df_results['PPrice1'], check_names=False)
 
         # Example: Check PV call details
@@ -125,7 +135,7 @@ class TestPlottingFunction(unittest.TestCase):
         self.assertEqual(call_kwargs['ylabel'], 'Price')
         self.assertTrue(call_kwargs['volume']) # Volume column exists
         self.assertEqual(len(call_kwargs['addplot']), mock_make_addplot.call_count) # Check all generated plots passed
-        self.assertEqual(call_kwargs['panel_ratios'], (4, 1, 1, 1)) # Main panel + 3 indicator panels
+        self.assertEqual(call_kwargs['panel_ratios'], (4, 1, 1, 1, 0.8))
         # Check figratio calculation roughly matches expected shape
         self.assertIsInstance(call_kwargs['figratio'], tuple)
 
@@ -140,20 +150,12 @@ class TestPlottingFunction(unittest.TestCase):
         mock_make_addplot.return_value = {}  # Keep mock basic
 
         try:
-            # Просто вызываем функцию, проверяя, что она не падает
-            plot_indicator_results(minimal_df, rule, "Minimal Plot")
-            # Убедимся, что основной plot был вызван
+            # Call the function with minimal data, specifying mplfinance
+            plot_indicator_results(minimal_df, rule, "Minimal Plot", use_plotly=False)
             mock_mpf_plot.assert_called_once()
             call_args, call_kwargs = mock_mpf_plot.call_args
             pd.testing.assert_frame_equal(call_args[0], minimal_df)
             self.assertFalse(call_kwargs['volume'])
-
-            # Убираем проверку количества scatter_calls, так как она ненадежна
-            # expected_addplot_count = 2
-            # scatter_calls = [c for c in mock_make_addplot.call_args_list if c[1].get('type') == 'scatter']
-            # self.assertEqual(len(scatter_calls), expected_addplot_count)
-
-            # Можно оставить проверку, что addplot был передан (хотя бы пустой список, если маркеры не добавились)
             self.assertIn('addplot', call_kwargs)
             self.assertIsInstance(call_kwargs['addplot'], list)
 
@@ -162,21 +164,20 @@ class TestPlottingFunction(unittest.TestCase):
 
     # Test plotting when mpf.plot raises an exception
     @patch('src.plotting.plotting.mpf.plot')
-    @patch('src.plotting.plotting.logger') # Use MagicMock to check error logging
-    def test_plot_exception_handling(self, __instance, mock_mpf_plot):
+    @patch('src.plotting.plotting.logger')
+    def test_plot_exception_handling(self, mock_logger, mock_mpf_plot):
         mock_mpf_plot.side_effect = Exception("MPF Render Error")
 
-        # The function should catch the exception and log it, not crash
-        try:
-            plot_indicator_results(self.df_results, self.rule, self.title)
-        except Exception as e:
-             # Fail test if the function re-raises the exception (it shouldn't)
-             self.fail(f"plot_indicator_results raised an exception unexpectedly: {e}")
+        print(f"DEBUG: Type of mock_logger in test_plot_exception_handling: {type(mock_logger)}")
 
-        # Check that the error was logged
-        __instance.print_error.assert_called_once()
-        self.assertIn("Error during plotting: MPF Render Error", __instance.print_error.call_args[0][0])
-        __instance.print_warning.assert_called_once() # Warning about data also called
+        # Call the function to test, specifying the mplfinance branch
+        plot_indicator_results(self.df_results, self.rule, self.title, use_plotly=False)
+
+        # Сheck that the logger's print_error method was called
+        mock_logger.print_error.assert_called_once()
+        error_call_args = mock_logger.print_error.call_args[0]
+        self.assertIn("Error during mplfinance plotting: MPF Render Error", error_call_args[0])
+        mock_logger.print_warning.assert_called_once()
 
 # Allow running the tests directly
 if __name__ == '__main__':
