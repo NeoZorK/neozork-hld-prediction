@@ -7,11 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix test for yfinance 8">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/fetchers/binance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/fetchers/binance_fetcher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/data/fetchers/test_binance_fetcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/fetchers/test_binance_fetcher.py" afterDir="false" />
-    </list>
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="ok" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -70,22 +66,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.demo command.executor&quot;: &quot;Run&quot;,
-    &quot;Python.help command.executor&quot;: &quot;Run&quot;,
-    &quot;Python.indicator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.indicator_logic.executor&quot;: &quot;Run&quot;,
-    &quot;Python.plotting.executor&quot;: &quot;Run&quot;,
-    &quot;Python.run_analysis.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Shell Script.help command.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;v0.1.5&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.demo command.executor": "Run",
+    "Python.help command.executor": "Run",
+    "Python.indicator.executor": "Run",
+    "Python.indicator_logic.executor": "Run",
+    "Python.plotting.executor": "Run",
+    "Python.run_analysis.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Shell Script.help command.executor": "Run",
+    "git-widget-placeholder": "v0.1.6",
+    "run.code.analysis.last.selected.profile": "aDefault",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="fd695039-1346-4bbb-b7b7-3a2bbd6f2741" reportId="NeoZorK HLD/qodana/2025-04-19" />
@@ -163,62 +159,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00123" summary="remain only 2 errors (fixing)">
-      <option name="closed" value="true" />
-      <created>1745078253913</created>
-      <option name="number" value="00123" />
-      <option name="presentableId" value="LOCAL-00123" />
-      <option name="project" value="LOCAL" />
-      <updated>1745078253913</updated>
-    </task>
-    <task id="LOCAL-00124" summary="remain only 2 errors (fixing) now 3 errors">
-      <option name="closed" value="true" />
-      <created>1745079539038</created>
-      <option name="number" value="00124" />
-      <option name="presentableId" value="LOCAL-00124" />
-      <option name="project" value="LOCAL" />
-      <updated>1745079539039</updated>
-    </task>
-    <task id="LOCAL-00125" summary="fixed all tests!">
-      <option name="closed" value="true" />
-      <created>1745079645935</created>
-      <option name="number" value="00125" />
-      <option name="presentableId" value="LOCAL-00125" />
-      <option name="project" value="LOCAL" />
-      <updated>1745079645936</updated>
-    </task>
-    <task id="LOCAL-00126" summary="added memore and rows calculation">
-      <option name="closed" value="true" />
-      <created>1745168728753</created>
-      <option name="number" value="00126" />
-      <option name="presentableId" value="LOCAL-00126" />
-      <option name="project" value="LOCAL" />
-      <updated>1745168728753</updated>
-    </task>
-    <task id="LOCAL-00127" summary="add input file for csv mode">
-      <option name="closed" value="true" />
-      <created>1745169162588</created>
-      <option name="number" value="00127" />
-      <option name="presentableId" value="LOCAL-00127" />
-      <option name="project" value="LOCAL" />
-      <updated>1745169162588</updated>
-    </task>
-    <task id="LOCAL-00128" summary="added api time">
-      <option name="closed" value="true" />
-      <created>1745169550231</created>
-      <option name="number" value="00128" />
-      <option name="presentableId" value="LOCAL-00128" />
-      <option name="project" value="LOCAL" />
-      <updated>1745169550231</updated>
-    </task>
-    <task id="LOCAL-00129" summary="add parket save">
-      <option name="closed" value="true" />
-      <created>1745169766712</created>
-      <option name="number" value="00129" />
-      <option name="presentableId" value="LOCAL-00129" />
-      <option name="project" value="LOCAL" />
-      <updated>1745169766712</updated>
     </task>
     <task id="LOCAL-00130" summary="fixed parket save">
       <option name="closed" value="true" />
@@ -556,7 +496,63 @@
       <option name="project" value="LOCAL" />
       <updated>1745258924382</updated>
     </task>
-    <option name="localTasksCounter" value="172" />
+    <task id="LOCAL-00172" summary="init v0.1.6">
+      <option name="closed" value="true" />
+      <created>1745300375890</created>
+      <option name="number" value="00172" />
+      <option name="presentableId" value="LOCAL-00172" />
+      <option name="project" value="LOCAL" />
+      <updated>1745300375890</updated>
+    </task>
+    <task id="LOCAL-00173" summary="try convert csv to parket">
+      <option name="closed" value="true" />
+      <created>1745303004901</created>
+      <option name="number" value="00173" />
+      <option name="presentableId" value="LOCAL-00173" />
+      <option name="project" value="LOCAL" />
+      <updated>1745303004901</updated>
+    </task>
+    <task id="LOCAL-00174" summary="fixed convert csv to parket">
+      <option name="closed" value="true" />
+      <created>1745304069068</created>
+      <option name="number" value="00174" />
+      <option name="presentableId" value="LOCAL-00174" />
+      <option name="project" value="LOCAL" />
+      <updated>1745304069068</updated>
+    </task>
+    <task id="LOCAL-00175" summary="fixed convert csv to parket add to readme">
+      <option name="closed" value="true" />
+      <created>1745304271915</created>
+      <option name="number" value="00175" />
+      <option name="presentableId" value="LOCAL-00175" />
+      <option name="project" value="LOCAL" />
+      <updated>1745304271915</updated>
+    </task>
+    <task id="LOCAL-00176" summary="1 test remain">
+      <option name="closed" value="true" />
+      <created>1745309138332</created>
+      <option name="number" value="00176" />
+      <option name="presentableId" value="LOCAL-00176" />
+      <option name="project" value="LOCAL" />
+      <updated>1745309138332</updated>
+    </task>
+    <task id="LOCAL-00177" summary="all tests fixed">
+      <option name="closed" value="true" />
+      <created>1745309873183</created>
+      <option name="number" value="00177" />
+      <option name="presentableId" value="LOCAL-00177" />
+      <option name="project" value="LOCAL" />
+      <updated>1745309873183</updated>
+    </task>
+    <task id="LOCAL-00178" summary="ok">
+      <option name="closed" value="true" />
+      <created>1745312135813</created>
+      <option name="number" value="00178" />
+      <option name="presentableId" value="LOCAL-00178" />
+      <option name="project" value="LOCAL" />
+      <updated>1745312135813</updated>
+    </task>
+    <option name="localTasksCounter" value="179" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -583,13 +579,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="try to fix fetchers test 7" />
-    <MESSAGE value="try to fix fetchers test 8" />
-    <MESSAGE value="try to fix fetchers test 9" />
-    <MESSAGE value="fixed tests1" />
-    <MESSAGE value="fixed tests2" />
-    <MESSAGE value="fixed all" />
-    <MESSAGE value="v0.1.5" />
     <MESSAGE value="binance add progress bar" />
     <MESSAGE value="binance add progress bar fix" />
     <MESSAGE value="binance all works!" />
@@ -608,6 +597,13 @@
     <MESSAGE value="fix test for yfinance 6" />
     <MESSAGE value="fix test for yfinance 7" />
     <MESSAGE value="fix test for yfinance 8" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix test for yfinance 8" />
+    <MESSAGE value="init v0.1.6" />
+    <MESSAGE value="try convert csv to parket" />
+    <MESSAGE value="fixed convert csv to parket" />
+    <MESSAGE value="fixed convert csv to parket add to readme" />
+    <MESSAGE value="1 test remain" />
+    <MESSAGE value="all tests fixed" />
+    <MESSAGE value="ok" />
+    <option name="LAST_COMMIT_MESSAGE" value="ok" />
   </component>
 </project>
