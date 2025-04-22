@@ -2,12 +2,13 @@
 
 """
 Workflow step for generating plots based on indicator results using the selected library (Plotly or mplfinance).
-Saves Plotly plots as HTML, displays mplfinance plots.
+Saves Plotly plots as HTML and attempts to open them, displays mplfinance plots.
 """
 import pandas as pd
 import traceback
 import os
 from pathlib import Path
+import webbrowser # <--- Import webbrowser
 
 # Relative imports
 from ..common import logger
@@ -19,7 +20,7 @@ from .plotting import plot_indicator_results_plotly, plot_indicator_results_mplf
 def generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point):
     """
     Generates and potentially saves/displays a plot based on calculation results
-    using the library specified in args.draw.
+    using the library specified in args.draw. Attempts to open saved HTML plots.
 
     Args:
         args (argparse.Namespace): Command-line arguments (must contain 'draw').
@@ -39,6 +40,19 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     if not hasattr(args, 'draw'):
          logger.print_error("Argument 'draw' missing in args. Cannot determine plotting library.")
          return
+
+    # --- DEBUG: Print DataFrame info before plotting ---
+    logger.print_debug("--- DataFrame before plotting ---")
+    logger.print_debug(f"Columns: {result_df.columns.tolist()}")
+    logger.print_debug(f"Index type: {type(result_df.index)}")
+    logger.print_debug(f"Shape: {result_df.shape}")
+    logger.print_debug("First 5 rows:")
+    # Use pandas option to display more columns if needed
+    with pd.option_context('display.max_rows', 5, 'display.max_columns', None):
+        logger.print_debug(f"\n{result_df.head().to_string()}")
+    logger.print_debug("--- End DataFrame info ---")
+    # --- End DEBUG ---
+
 
     # --- Construct Title ---
     title_parts = []
@@ -107,6 +121,24 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
             try:
                 fig.write_html(str(filepath), include_plotlyjs='cdn')
                 logger.print_success(f"Interactive Plotly plot saved successfully to: {filepath}")
+
+                # --- Attempt to open the saved HTML file ---
+                try:
+                    # --- FIX: Use absolute path ---
+                    # Get the absolute path first
+                    absolute_filepath = filepath.resolve()
+                    # Convert the absolute Path object to a file URI
+                    file_uri = absolute_filepath.as_uri()
+                    # --- End of FIX ---
+
+                    webbrowser.open(file_uri)
+                    logger.print_info(f"Attempting to open {filepath} in default browser...")
+                except Exception as e_open:
+                    # Log the specific error encountered during opening
+                    logger.print_warning(f"Could not automatically open the plot in browser: {type(e_open).__name__}: {e_open}")
+                    logger.print_debug(f"Traceback (open plot):\n{traceback.format_exc()}") # Add traceback for debugging
+                # --- End of auto-open block ---
+
             except Exception as e_save:
                 logger.print_error(f"Failed to save Plotly plot to {filepath}: {type(e_save).__name__}: {e_save}")
                 logger.print_debug(f"Traceback (save plot):\n{traceback.format_exc()}")

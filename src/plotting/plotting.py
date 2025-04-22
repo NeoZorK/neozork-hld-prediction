@@ -47,21 +47,32 @@ def plot_indicator_results_plotly(df_results: pd.DataFrame, rule: TradingRule, t
             df_results.index = pd.to_datetime(df_results.index)
         except Exception:
             logger.print_error("Failed to convert index to DatetimeIndex.")
-            # return None # Decide if this should be fatal
+            # return None
 
-    # --- Determine number of subplots needed ---
+    # --- Determine number of subplots needed (Dynamic approach restored) ---
     indicators_to_plot = {
         'Volume': 'Volume',
         'PV': 'PV',
         'HL': 'HL (Points)',
         'Pressure': 'Pressure'
     }
+    # Check which indicator columns exist and are not entirely null
     valid_indicator_cols = [col for col in indicators_to_plot if col in df_results.columns and not df_results[col].isnull().all()]
+    logger.print_debug(f"Plotly: Found valid indicator columns for subplots: {valid_indicator_cols}")
     num_indicator_subplots = len(valid_indicator_cols)
-    total_rows = 1 + num_indicator_subplots
+    total_rows = 1 + num_indicator_subplots # Dynamic total rows
+    logger.print_debug(f"Plotly: Total rows for subplots: {total_rows}")
 
-    # --- Create Subplots ---
-    row_heights = [0.6] + [0.4 / num_indicator_subplots] * num_indicator_subplots if num_indicator_subplots > 0 else [1.0]
+
+    # --- Create Subplots (Dynamic approach restored) ---
+    # Handle case where no indicators are valid to avoid division by zero
+    if num_indicator_subplots > 0:
+        # Distribute remaining height among indicator subplots
+        row_heights = [0.6] + [0.4 / num_indicator_subplots] * num_indicator_subplots
+    else:
+        row_heights = [1.0] # Only the price chart
+
+    # Dynamic subplot titles based on valid indicators
     subplot_titles = ["Price / Signals"] + [indicators_to_plot[col] for col in valid_indicator_cols]
 
     fig = make_subplots(
@@ -69,9 +80,10 @@ def plot_indicator_results_plotly(df_results: pd.DataFrame, rule: TradingRule, t
         cols=1,
         shared_xaxes=True,
         vertical_spacing=0.03,
-        row_heights=row_heights,
-        subplot_titles=subplot_titles
+        row_heights=row_heights, # Use dynamic heights
+        subplot_titles=subplot_titles # Use dynamic titles
     )
+
 
     # --- Add Price Candlestick Trace (Row 1) ---
     fig.add_trace(go.Candlestick(
@@ -87,16 +99,17 @@ def plot_indicator_results_plotly(df_results: pd.DataFrame, rule: TradingRule, t
     if 'PPrice1' in df_results.columns:
         fig.add_trace(go.Scatter(
             x=df_results.index, y=df_results['PPrice1'], mode='lines',
-            line=dict(color='lime', width=1, dash='dot'), name='PPrice1 (Predicted Low?)'
+            line=dict(color='lime', width=1, dash='dot'), name='PPrice1'
         ), row=1, col=1)
     if 'PPrice2' in df_results.columns:
         fig.add_trace(go.Scatter(
             x=df_results.index, y=df_results['PPrice2'], mode='lines',
-            line=dict(color='red', width=1, dash='dot'), name='PPrice2 (Predicted High?)'
+            line=dict(color='red', width=1, dash='dot'), name='PPrice2'
         ), row=1, col=1)
 
     # --- Add Direction Markers (Row 1) ---
     if 'Direction' in df_results.columns:
+        # (Code for direction markers remains the same)
         low_numeric = pd.to_numeric(df_results['Low'], errors='coerce')
         high_numeric = pd.to_numeric(df_results['High'], errors='coerce')
         buy_signals_y_pos = low_numeric * 0.998
@@ -104,59 +117,69 @@ def plot_indicator_results_plotly(df_results: pd.DataFrame, rule: TradingRule, t
         direction_numeric = pd.to_numeric(df_results['Direction'], errors='coerce')
         buy_mask = (direction_numeric == BUY)
         sell_mask = (direction_numeric == SELL)
-
         if buy_mask.any():
-            fig.add_trace(go.Scatter(
-                x=df_results.index[buy_mask], y=buy_signals_y_pos[buy_mask],
-                mode='markers', marker=dict(symbol='triangle-up', size=8, color='lime'),
-                name='BUY Signal'
-            ), row=1, col=1)
+            fig.add_trace(go.Scatter(x=df_results.index[buy_mask], y=buy_signals_y_pos[buy_mask], mode='markers', marker=dict(symbol='triangle-up', size=8, color='lime'), name='BUY Signal'), row=1, col=1)
         if sell_mask.any():
-            fig.add_trace(go.Scatter(
-                x=df_results.index[sell_mask], y=sell_signals_y_pos[sell_mask],
-                mode='markers', marker=dict(symbol='triangle-down', size=8, color='red'),
-                name='SELL Signal'
-            ), row=1, col=1)
+            fig.add_trace(go.Scatter(x=df_results.index[sell_mask], y=sell_signals_y_pos[sell_mask], mode='markers', marker=dict(symbol='triangle-down', size=8, color='red'), name='SELL Signal'), row=1, col=1)
 
-    # --- Add Indicator Subplots ---
-    current_row = 2
-    for indicator_col in valid_indicator_cols:
+
+    # --- Add Indicator Subplots (Dynamic row assignment restored) ---
+    current_row = 2 # Start from row 2
+    logger.print_debug(f"Plotly: Starting loop to add indicator traces. Valid columns: {valid_indicator_cols}")
+    for indicator_col in valid_indicator_cols: # Loop through only valid indicators
+        logger.print_debug(f"Plotly: Processing indicator column '{indicator_col}' for dynamic row {current_row}")
         indicator_name = indicators_to_plot[indicator_col]
+        # Keep the fillna(0) as it seems necessary
+        indicator_data = df_results[indicator_col].fillna(0)
+
         if indicator_col == 'Volume':
+            logger.print_debug(f"Plotly: Adding Bar trace for '{indicator_col}' to row {current_row}")
             fig.add_trace(go.Bar(
-                x=df_results.index, y=df_results['Volume'], name='Volume',
+                x=df_results.index, y=indicator_data, name=indicator_name,
                 marker_color='rgba(100, 100, 100, 0.5)'
-            ), row=current_row, col=1)
+            ), row=current_row, col=1) # Use current_row
         else:
             line_color = 'orange' if indicator_col == 'PV' else \
                          'brown' if indicator_col == 'HL' else \
                          'dodgerblue' if indicator_col == 'Pressure' else 'purple'
+            logger.print_debug(f"Plotly: Adding Scatter trace for '{indicator_col}' to row {current_row}")
             fig.add_trace(go.Scatter(
-                x=df_results.index, y=df_results[indicator_col], mode='lines',
+                x=df_results.index, y=indicator_data, mode='lines',
                 line=dict(color=line_color, width=1), name=indicator_name
-            ), row=current_row, col=1)
+            ), row=current_row, col=1) # Use current_row
+
             if indicator_col in ['PV', 'Pressure']:
-                fig.add_hline(y=0, line_width=1, line_dash="dash", line_color="grey", row=current_row, col=1)
+                 logger.print_debug(f"Plotly: Adding hline for '{indicator_col}' to row {current_row}")
+                 fig.add_hline(y=0, line_width=1, line_dash="dash", line_color="grey", row=current_row, col=1) # Use current_row
+
+        # Update the y-axis title for the current subplot row
         fig.update_yaxes(title_text=indicator_name, row=current_row, col=1)
-        current_row += 1
+        current_row += 1 # Increment row for the next valid indicator
+    logger.print_debug(f"Plotly: Finished loop adding indicator traces. Next row would be: {current_row}")
+
 
     # --- Update Layout ---
     chart_layout_title = f"{title} - Rule: {rule.name}"
     fig.update_layout(
         title=chart_layout_title,
-        height=350 * total_rows,
+        height=350 * total_rows, # Height based on dynamic number of rows
         xaxis_rangeslider_visible=False,
         showlegend=True,
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        margin=dict(l=50, r=50, t=80, b=50)
+        legend=dict(
+            orientation="v", yanchor="top", y=1, xanchor="left", x=1.02
+        ),
+        margin=dict(l=50, r=150, t=80, b=50)
     )
     fig.update_xaxes(rangeslider_visible=False)
     fig.update_yaxes(title_text="Price", row=1, col=1)
+    # No need for the explicit loop to update y-axis titles here,
+    # as it's done inside the main loop now.
 
     return fig
 
 
 # --- Function to create the mplfinance plot ---
+# (mplfinance function remains unchanged)
 def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRule, title: str = "Indicator Results"):
     """
     Plots the OHLC data along with selected indicator results using mplfinance.
@@ -179,24 +202,20 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         return
     if not isinstance(df_results.index, pd.DatetimeIndex):
         logger.print_warning("DataFrame index is not a DatetimeIndex. Plotting might be affected.")
-        # Mplfinance might handle non-datetime index better, but it's not ideal
 
-    plots_to_add = [] # List to hold additional plots (addplot)
-    panel_count = 0 # Start with main panel 0
+    plots_to_add = []
+    panel_count = 0
 
     # --- Add PPrice Lines (Panel 0, Secondary Y) ---
-    # Mplfinance often needs secondary_y=True for lines overlaid on price
     if 'PPrice1' in df_results.columns:
         plots_to_add.append(mpf.make_addplot(df_results['PPrice1'], panel=0, color='lime', width=0.9, linestyle='dotted',
-                                             title="PPrice1", secondary_y=True)) # Keep secondary_y
+                                             title="PPrice1", secondary_y=True))
     if 'PPrice2' in df_results.columns:
         plots_to_add.append(mpf.make_addplot(df_results['PPrice2'], panel=0, color='red', width=0.9, linestyle='dotted',
-                                             title="PPrice2", secondary_y=True)) # Keep secondary_y
+                                             title="PPrice2", secondary_y=True))
 
     # --- Add indicator panels ---
-    panel_map = {} # Keep track of which indicator is on which panel
-
-    # Add PV in a separate panel if it exists
+    panel_map = {}
     if 'PV' in df_results.columns and not df_results['PV'].isnull().all():
         panel_count += 1
         panel_map['PV'] = panel_count
@@ -204,14 +223,12 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         plots_to_add.append(mpf.make_addplot(df_results['PV'].fillna(0), panel=pv_panel, color='orange', width=0.8, ylabel='PV'))
         plots_to_add.append(mpf.make_addplot(pd.Series(0, index=df_results.index), panel=pv_panel, color='gray', linestyle=':', width=0.5))
 
-    # Add HL in a separate panel if it exists
     if 'HL' in df_results.columns and not df_results['HL'].isnull().all():
         panel_count += 1
         panel_map['HL'] = panel_count
         hl_panel = panel_map['HL']
         plots_to_add.append(mpf.make_addplot(df_results['HL'].fillna(0), panel=hl_panel, color='brown', width=0.8, ylabel='HL (Points)'))
 
-    # Add Pressure in a separate panel if it exists
     if 'Pressure' in df_results.columns and not df_results['Pressure'].isnull().all():
         panel_count += 1
         panel_map['Pressure'] = panel_count
@@ -226,10 +243,8 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         buy_signals_y_pos = low_numeric.ffill().bfill() * 0.998
         sell_signals_y_pos = high_numeric.ffill().bfill() * 1.002
         direction_numeric = pd.to_numeric(df_results['Direction'], errors='coerce')
-
         buy_markers_y = np.where(direction_numeric == BUY, buy_signals_y_pos, np.nan)
         sell_markers_y = np.where(direction_numeric == SELL, sell_signals_y_pos, np.nan)
-
         buy_markers_series = pd.Series(buy_markers_y, index=df_results.index)
         sell_markers_series = pd.Series(sell_markers_y, index=df_results.index)
 
@@ -242,24 +257,16 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
 
     # --- Create the plot ---
     plot_volume = 'Volume' in df_results.columns and not df_results['Volume'].isnull().all()
-    volume_panel = 1 # Default volume panel if no indicators
-
-    # If indicators are plotted, volume goes below them
+    volume_panel = 1
     if panel_count > 0:
-        volume_panel = panel_count + 1 # Volume gets its own panel below indicators
-        # Add Volume panel definition if volume exists and indicators exist
+        volume_panel = panel_count + 1
         if plot_volume:
-             # Add a placeholder plot for the volume panel if needed, or let mpf handle it
-             # Example: add a dummy plot to ensure the panel exists if volume is plotted alone
-             # pass # mpf usually handles volume panel creation if volume=True
              pass
 
-    # Define panel ratios dynamically
-    # Main panel gets larger share (e.g., 4), indicators get 1, volume gets 0.8
-    ratios = [4] # Price panel ratio
-    ratios.extend([1] * panel_count) # Indicator panel ratios
+    ratios = [4]
+    ratios.extend([1] * panel_count)
     if plot_volume:
-         ratios.append(0.8) # Volume panel ratio
+         ratios.append(0.8)
 
     try:
         mpf.plot(df_results,
@@ -267,13 +274,13 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
                  style='yahoo',
                  title=f"{title} - Rule: {rule.name}",
                  ylabel='Price',
-                 volume=plot_volume, # Plot volume if column exists
-                 volume_panel=volume_panel if plot_volume else 0, # Specify volume panel
-                 addplot=plots_to_add, # Add the extra indicator plots
-                 panel_ratios=tuple(ratios), # Convert ratios list to tuple
-                 figratio=(12, 6 + panel_count * 1.5 + (1 if plot_volume else 0)), # Adjust fig size
+                 volume=plot_volume,
+                 volume_panel=volume_panel if plot_volume else 0,
+                 addplot=plots_to_add,
+                 panel_ratios=tuple(ratios),
+                 figratio=(12, 6 + panel_count * 1.5 + (1 if plot_volume else 0)),
                  figscale=1.1,
-                 warn_too_much_data=10000 # Adjust threshold if needed
+                 warn_too_much_data=10000
                  )
         logger.print_success("Mplfinance plot displayed.")
     except Exception as e:
