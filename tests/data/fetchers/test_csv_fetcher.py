@@ -1,4 +1,5 @@
-# tests/data/fetchers/test_csv_fetcher.py (Исправления v2)
+# tests/data/fetchers/test_csv_fetcher.py
+# -*- coding: utf-8 -*-
 
 """
 Unit tests for the CSV data fetcher.
@@ -9,6 +10,7 @@ import unittest
 import tempfile
 import os
 import pandas as pd
+import numpy as np # Import numpy
 from pathlib import Path
 
 # Adjust the import path based on the project structure
@@ -19,7 +21,6 @@ from src.data.fetchers.csv_fetcher import fetch_csv_data
 class TestCsvFetcher(unittest.TestCase):
     """ Test suite for the fetch_csv_data function. """
 
-    # setUp method (no changes needed)
     def setUp(self):
         """ Set up temporary directory and file for testing. """
         self.test_dir = tempfile.TemporaryDirectory()
@@ -28,7 +29,10 @@ class TestCsvFetcher(unittest.TestCase):
         self.missing_col_path = os.path.join(self.test_dir.name, "missing_col.csv")
         self.bad_format_path = os.path.join(self.test_dir.name, "bad_format.csv")
         self.invalid_date_path = os.path.join(self.test_dir.name, "invalid_date.csv")
-        # Create a valid CSV file
+
+        # Create a valid CSV file (MT5 style with info line and header with trailing commas/tabs)
+        # Using simple comma separation here for simplicity in test file creation
+        # The fetcher should handle cleaning. Use TickVolume, DateTime.
         self.valid_data_content = (
             "File Info Header Line\n"
             "DateTime,Open,High,Low,Close,TickVolume,ExtraCol,PredictLow,PredictHigh\n"
@@ -38,119 +42,145 @@ class TestCsvFetcher(unittest.TestCase):
             "2023.01.01 10:03,103,inf,102,104,1300,jkl,101,inf\n" # Row with inf
         )
         with open(self.valid_csv_path, "w", encoding="utf-8") as f: f.write(self.valid_data_content)
-        self.valid_file_size = os.path.getsize(self.valid_csv_path)
-        # Create other files... (rest of setUp is unchanged)
+
+        # Create other files
         self.empty_data_content = (
              "File Info Header Line\n"
              "DateTime,Open,High,Low,Close,TickVolume,ExtraCol,PredictLow,PredictHigh\n"
         )
         with open(self.empty_csv_path, "w", encoding="utf-8") as f: f.write(self.empty_data_content)
-        self.empty_file_size = os.path.getsize(self.empty_csv_path)
+
         self.missing_col_content = (
             "File Info Header Line\n"
-            "DateTime,Open,High,Low,TickVolume\n"
+            "DateTime,Open,High,Low,TickVolume\n" # Missing Close
             "2023.01.01 10:00,100,105,99,1000\n"
         )
         with open(self.missing_col_path, "w", encoding="utf-8") as f: f.write(self.missing_col_content)
-        self.missing_col_file_size = os.path.getsize(self.missing_col_path)
+
         self.bad_format_content = (
              "File Info Header Line\n"
-             "DateTime;Open;High;Low;Close;TickVolume\n"
+             "DateTime;Open;High;Low;Close;TickVolume\n" # Wrong separator
              "2023.01.01 10:00;100;105;99;101;1000\n"
         )
         with open(self.bad_format_path, "w", encoding="utf-8") as f: f.write(self.bad_format_content)
-        self.bad_format_file_size = os.path.getsize(self.bad_format_path)
+
         self.invalid_date_content = (
             "File Info Header Line\n"
             "DateTime,Open,High,Low,Close,TickVolume\n"
-            "01-01-2023 10:00,100,105,99,101,1000\n"
-            "2023.01.01 10:01,101,106,100,102,1100\n"
+            "01-01-2023 10:00,100,105,99,101,1000\n" # Invalid date format for default parser
+            "2023.01.01 10:01,101,106,100,102,1100\n" # Valid date
         )
         with open(self.invalid_date_path, "w", encoding="utf-8") as f: f.write(self.invalid_date_content)
-        self.invalid_date_file_size = os.path.getsize(self.invalid_date_path)
 
-    # tearDown method (no changes needed)
+        # Define the expected column mapping for these test files
+        self.test_ohlc_map = {
+             'Open': 'Open', 'High': 'High', 'Low': 'Low', 'Close': 'Close',
+             'Volume': 'TickVolume' # Map internal 'Volume' to CSV's 'TickVolume'
+        }
+        self.test_dt_col = 'DateTime'
+
     def tearDown(self):
         """ Clean up the temporary directory. """
         self.test_dir.cleanup()
 
-    # Test case for successful data fetching
     def test_fetch_csv_data_success(self):
         """ Test successfully fetching and processing data from a valid CSV file. """
-        result = fetch_csv_data(self.valid_csv_path)
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
-        self.assertIsNotNone(df); self.assertIsInstance(df, pd.DataFrame)
-
-        # FIX: Expect 3 rows after dropping the row with NaN from 'inf'
-        self.assertEqual(df.shape[0], 3)
-
+        # Pass the specific mapping and datetime column used in the test file
+        result = fetch_csv_data(
+            self.valid_csv_path,
+            ohlc_columns=self.test_ohlc_map,
+            datetime_column=self.test_dt_col,
+            skiprows=1 # Standard skip for MT5 format
+        )
+        # --- FIXED ASSERTIONS ---
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertFalse(result.empty)
+        # Expect all 4 rows, as inf doesn't cause drop based on OHLC NaN check
+        self.assertEqual(result.shape[0], 4)
+        # Check expected columns after standard renaming + others found
         expected_cols = ['Open', 'High', 'Low', 'Close', 'Volume', 'ExtraCol', 'PredictLow', 'PredictHigh']
-        self.assertListEqual(sorted(df.columns.tolist()), sorted(expected_cols))
-        self.assertIsInstance(df.index, pd.DatetimeIndex); self.assertEqual(df.index.name, 'DateTime')
-        for col in ['Open', 'Low', 'Close', 'Volume']: # Check cols that didn't have inf
-            self.assertTrue(pd.api.types.is_numeric_dtype(df[col]))
-        # 'High' and 'PredictHigh' are tricky because the inf row was dropped.
-        # Check the remaining values are numeric
-        self.assertTrue(pd.api.types.is_numeric_dtype(df['High']))
-        self.assertTrue(pd.api.types.is_numeric_dtype(df['PredictHigh']))
-        # Check metrics
-        self.assertIsInstance(metrics, dict); self.assertIn('file_size_bytes', metrics)
-        self.assertEqual(metrics['file_size_bytes'], self.valid_file_size)
+        self.assertListEqual(sorted(result.columns.tolist()), sorted(expected_cols))
+        self.assertIsInstance(result.index, pd.DatetimeIndex)
+        self.assertEqual(result.index.name, 'Timestamp') # Check standard index name
+        # Check types (should be float after latest changes)
+        for col in ['Open', 'High', 'Low', 'Close', 'Volume', 'PredictLow', 'PredictHigh']:
+            self.assertTrue(pd.api.types.is_numeric_dtype(result[col]))
+        # Check inf was handled correctly (became np.inf, which is numeric)
+        self.assertTrue(np.isinf(result.loc[pd.Timestamp('2023-01-01 10:03:00'), 'High']))
+        self.assertTrue(np.isinf(result.loc[pd.Timestamp('2023-01-01 10:03:00'), 'PredictHigh']))
+        # --- END FIXED ASSERTIONS ---
 
-    # Test case for file not found (No changes needed)
     def test_fetch_csv_data_file_not_found(self):
         """ Test behavior when the specified CSV file does not exist. """
         non_existent_path = os.path.join(self.test_dir.name, "non_existent.csv")
         result = fetch_csv_data(non_existent_path)
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
-        self.assertIsNone(df)
-        self.assertIsInstance(metrics, dict); self.assertIn('file_size_bytes', metrics)
-        self.assertIsNone(metrics['file_size_bytes'])
+        # --- FIXED ASSERTIONS ---
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertTrue(result.empty) # Expect empty dataframe on error
+        # --- END FIXED ASSERTIONS ---
 
-    # Test case for empty file (No changes needed)
     def test_fetch_csv_data_empty_file(self):
         """ Test behavior when the CSV file contains only header lines. """
-        result = fetch_csv_data(self.empty_csv_path)
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
-        self.assertIsNone(df) # Changed: fetcher returns None if df is empty after read
-        self.assertIsInstance(metrics, dict); self.assertIn('file_size_bytes', metrics)
-        self.assertEqual(metrics['file_size_bytes'], self.empty_file_size)
+        result = fetch_csv_data(
+            self.empty_csv_path,
+            ohlc_columns=self.test_ohlc_map,
+            datetime_column=self.test_dt_col,
+            skiprows=1
+            )
+        # --- FIXED ASSERTIONS ---
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertTrue(result.empty) # Expect empty dataframe if no data rows
+         # --- END FIXED ASSERTIONS ---
 
-    # Test case for missing required column (No changes needed)
     def test_fetch_csv_data_missing_column(self):
-        """ Test behavior when a required OHLCV column is missing. """
-        result = fetch_csv_data(self.missing_col_path)
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
-        self.assertIsNone(df)
-        self.assertIsInstance(metrics, dict); self.assertIn('file_size_bytes', metrics)
-        self.assertEqual(metrics['file_size_bytes'], self.missing_col_file_size)
+        """ Test behavior when a required OHLC column is missing. """
+        # Expect ValueError internally, resulting in empty DataFrame
+        result = fetch_csv_data(
+            self.missing_col_path,
+             ohlc_columns=self.test_ohlc_map, # Mapping still includes 'Close'
+             datetime_column=self.test_dt_col,
+             skiprows=1
+        )
+         # --- FIXED ASSERTIONS ---
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertTrue(result.empty) # Expect empty dataframe on error
+         # --- END FIXED ASSERTIONS ---
 
-    # Test case for badly formatted CSV (No changes needed)
     def test_fetch_csv_data_bad_format(self):
-        """ Test behavior with a file that pandas cannot parse correctly. """
-        result = fetch_csv_data(self.bad_format_path)
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
-        self.assertIsNone(df)
-        self.assertIsInstance(metrics, dict); self.assertIn('file_size_bytes', metrics)
-        self.assertEqual(metrics['file_size_bytes'], self.bad_format_file_size)
+        """ Test behavior with a file that pandas cannot parse correctly (wrong separator). """
+        # Expect pandas error internally, resulting in empty DataFrame
+        result = fetch_csv_data(
+            self.bad_format_path,
+            ohlc_columns={'Open':'Open', 'High':'High', 'Low':'Low', 'Close':'Close', 'Volume':'TickVolume'}, # Use ; names? No, map std to expected bad ones
+            datetime_column='DateTime', # Expect this name
+            skiprows=1,
+            separator=',' # Force comma separator to cause failure
+            )
+         # --- FIXED ASSERTIONS ---
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertTrue(result.empty) # Expect empty dataframe on error
+         # --- END FIXED ASSERTIONS ---
 
-    # Test case for invalid date format (No changes needed)
     def test_fetch_csv_data_invalid_date_format(self):
         """ Test behavior when dates cannot be parsed, leading to dropped rows. """
-        result = fetch_csv_data(self.invalid_date_path)
-        self.assertIsNotNone(result); self.assertIsInstance(result, tuple); self.assertEqual(len(result), 2)
-        df, metrics = result
-        self.assertIsNotNone(df); self.assertIsInstance(df, pd.DataFrame)
-        self.assertEqual(df.shape[0], 1) # Only the valid row remains
-        self.assertEqual(df.index[0], pd.Timestamp('2023-01-01 10:01:00'))
-        self.assertIsInstance(metrics, dict); self.assertIn('file_size_bytes', metrics)
-        self.assertEqual(metrics['file_size_bytes'], self.invalid_date_file_size)
-
+        result = fetch_csv_data(
+             self.invalid_date_path,
+             ohlc_columns=self.test_ohlc_map,
+             datetime_column=self.test_dt_col,
+             skiprows=1
+             )
+        # --- FIXED ASSERTIONS ---
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, pd.DataFrame)
+        # Only the second row with the valid date format should remain
+        self.assertEqual(result.shape[0], 1)
+        self.assertEqual(result.index[0], pd.Timestamp('2023-01-01 10:01:00'))
+        # --- END FIXED ASSERTIONS ---
 
 # Allow running the tests directly
 if __name__ == '__main__':
