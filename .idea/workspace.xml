@@ -7,9 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="1 test remain">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="all tests fixed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/data/test_data_acquisition.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,14 +161,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00128" summary="added api time">
-      <option name="closed" value="true" />
-      <created>1745169550231</created>
-      <option name="number" value="00128" />
-      <option name="presentableId" value="LOCAL-00128" />
-      <option name="project" value="LOCAL" />
-      <updated>1745169550231</updated>
     </task>
     <task id="LOCAL-00129" summary="add parket save">
       <option name="closed" value="true" />
@@ -555,7 +546,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745309138332</updated>
     </task>
-    <option name="localTasksCounter" value="177" />
+    <task id="LOCAL-00177" summary="all tests fixed">
+      <option name="closed" value="true" />
+      <created>1745309873183</created>
+      <option name="number" value="00177" />
+      <option name="presentableId" value="LOCAL-00177" />
+      <option name="project" value="LOCAL" />
+      <updated>1745309873183</updated>
+    </task>
+    <option name="localTasksCounter" value="178" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,7 +581,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed all" />
     <MESSAGE value="v0.1.5" />
     <MESSAGE value="binance add progress bar" />
     <MESSAGE value="binance add progress bar fix" />
@@ -607,6 +605,7 @@
     <MESSAGE value="fixed convert csv to parket" />
     <MESSAGE value="fixed convert csv to parket add to readme" />
     <MESSAGE value="1 test remain" />
-    <option name="LAST_COMMIT_MESSAGE" value="1 test remain" />
+    <MESSAGE value="all tests fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="all tests fixed" />
   </component>
 </project>
