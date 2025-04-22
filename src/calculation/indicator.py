@@ -1,116 +1,112 @@
-# -*- coding: utf-8 -*-
-# src/indicator.py
+# src/calculation/indicator.py
 
 """
-Main module for calculating the Shcherbyna Pressure Vector indicator.
-Orchestrates calls to core calculations and rule-specific logic.
+Core logic for calculating the Pressure Vector indicator and related metrics.
+Integrates core calculations and applies selected trading rules.
+All comments are in English.
 """
+import traceback
 
 import pandas as pd
 import numpy as np
+from typing import Optional, Tuple # Import Tuple
 
-# Use relative imports within the src package
-from ..common import logger
+# Use relative imports for constants, core calculations, rules, and logger
 from ..common.constants import TradingRule, EMPTY_VALUE
-from .core_calculations import (
-    calculate_hl, calculate_pressure, calculate_pv
-)
+from ..common import logger
+from .core_calculations import calculate_hl, calculate_pressure, calculate_pv
 from .rules import apply_trading_rule
 
-# --- Main Calculation Orchestrator ---
+# Main function to calculate the indicator and apply rules
 def calculate_pressure_vector(
     df: pd.DataFrame,
-    point: float, # Instrument's point size (e.g., 0.00001 for EURUSD)
-    tr_num: TradingRule = TradingRule.PV_HighLow,
-) -> pd.DataFrame:
+    point_size: float,
+    rule: TradingRule, # Use the passed rule directly
+    # *** CORRECTED: Removed default value with non-existent rule ***
+    # Original problematic line:
+    # tr_num: TradingRule = TradingRule.PV_HighLow, # This was causing the error
+) -> Optional[pd.DataFrame]:
     """
-    Calculates the Shcherbyna Pressure Vector indicator by orchestrating
-    core calculations and applying the selected trading rule.
+    Calculates HL, Pressure, PV and applies the specified trading rule.
 
     Args:
-        df (pd.DataFrame): Input DataFrame with 'Open', 'High', 'Low', 'Close', 'TickVolume'.
-                           Index should be DateTime. Sorted ascending.
-        point (float): Instrument point size. Cannot be zero.
-        tr_num (TradingRule): Enum selecting the calculation mode/output rule.
+        df (pd.DataFrame): Input DataFrame with OHLCV data.
+                           Must have 'High', 'Low', 'Close', 'Volume'.
+                           Index should be DatetimeIndex.
+        point_size (float): The point size of the instrument.
+        rule (TradingRule): The specific trading rule enum member to apply.
 
     Returns:
-        pd.DataFrame: DataFrame with original data and calculated indicator values/signals.
-                      Includes 'Volume' instead of 'TickVolume'.
+        Optional[pd.DataFrame]: DataFrame with original OHLCV data plus calculated
+                                HL, Pressure, PV, and rule-specific columns
+                                (PPrice1, PPrice2, Direction, etc.), or None on failure.
     """
-    # --- Input Validation ---
-    if not isinstance(df.index, pd.DatetimeIndex):
-        logger.print_warning("Warning: DataFrame index is not a DatetimeIndex. Plotting might be affected.")
-    required_cols = ['Open', 'High', 'Low', 'Close', 'TickVolume']
+    if df is None or df.empty:
+        logger.print_error("Input DataFrame is empty or None.")
+        return None
+
+    required_cols = ['High', 'Low', 'Close', 'Volume']
     if not all(col in df.columns for col in required_cols):
-        raise ValueError(f"Input DataFrame must contain columns: {required_cols}")
-    if point == 0:
-        raise ValueError("Point size cannot be zero.")
+        logger.print_error(f"Input DataFrame missing required columns: {required_cols}. Found: {list(df.columns)}")
+        return None
 
-    # Make a copy to avoid modifying the original DataFrame
-    df_out = df.copy()
-
-    # Rename TickVolume for consistency and plotting
-    df_out.rename(columns={'TickVolume': 'Volume'}, inplace=True, errors='ignore')
-
+    df_calc = df.copy()
 
     # --- Core Calculations ---
-    # Shifted values needed for calculations
-    high_prev = df_out['High'].shift(1)
-    low_prev = df_out['Low'].shift(1)
-    volume_prev = df_out['Volume'].shift(1) # Use renamed 'Volume'
+    try:
+        logger.print_debug("Calculating HL...")
+        df_calc = calculate_hl(df_calc, point_size)
 
-    # Calculate HL
-    df_out['HL'] = calculate_hl(high_prev, low_prev, point)
-    hl_prev2 = df_out['HL'].shift(1) # HL from bar before previous
+        logger.print_debug("Calculating Pressure...")
+        df_calc = calculate_pressure(df_calc)
 
-    # Calculate Pressure
-    df_out['Pressure'] = calculate_pressure(volume_prev, hl_prev2)
-    pressure_prev = df_out['Pressure'].shift(1)
+        logger.print_debug("Calculating PV...")
+        df_calc = calculate_pv(df_calc)
 
-    # Calculate PV
-    df_out['PV'] = calculate_pv(df_out['Pressure'], pressure_prev)
-
+    except Exception as e:
+        logger.print_error(f"Error during core calculations: {type(e).__name__}: {e}")
+        logger.print_debug(f"Traceback (core calc):\n{traceback.format_exc()}")
+        # Return df with potentially partial calculations? Or None? Returning None for safety.
+        return None
 
     # --- Apply Trading Rule ---
-    # Initialize output columns before applying rule
-    df_out['PPrice1'] = df_out['Open']
-    df_out['PColor1'] = EMPTY_VALUE
-    df_out['PPrice2'] = df_out['Open']
-    df_out['PColor2'] = EMPTY_VALUE
-    df_out['Direction'] = EMPTY_VALUE
-    df_out['Diff'] = EMPTY_VALUE
+    logger.print_debug(f"Applying selected trading rule: {rule.name}")
+    rule_output_df = apply_trading_rule(df_calc, rule, point_size)
 
-    # Apply the selected rule using the dispatcher function
-    df_out = apply_trading_rule(df_out, tr_num, point)
+    if rule_output_df is None:
+        logger.print_error(f"Failed to apply trading rule {rule.name}. Returning core calculations only.")
+        # Return df_calc which contains OHLCV + HL, Pressure, PV
+        # Ensure standard output columns exist even if rule failed
+        for col in ['PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']:
+             if col not in df_calc:
+                  df_calc[col] = EMPTY_VALUE
+        return df_calc
+    else:
+        # Merge rule output with the main DataFrame
+        # Ensure index alignment before merging/joining
+        if not df_calc.index.equals(rule_output_df.index):
+             logger.print_warning("Index mismatch between calculation df and rule output df. Attempting reindex.")
+             # This shouldn't happen if rules preserve index, but as a safeguard:
+             try:
+                 rule_output_df = rule_output_df.reindex(df_calc.index)
+             except Exception as e_reindex:
+                 logger.print_error(f"Failed to reindex rule output: {e_reindex}. Cannot merge rule results.")
+                 # Fallback to returning core calculations
+                 for col in ['PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']:
+                      if col not in df_calc:
+                           df_calc[col] = EMPTY_VALUE
+                 return df_calc
+
+        # Use update or join. Update is often safer for adding/overwriting columns based on index.
+        df_final = df_calc.copy() # Start with core calcs
+        # Update with rule output columns (PPrice1, PPrice2, Direction, etc.)
+        df_final.update(rule_output_df)
+        # Verify columns were added/updated
+        added_cols = rule_output_df.columns
+        if not all(col in df_final.columns for col in added_cols):
+             logger.print_warning(f"Not all rule output columns ({added_cols}) seem to be present after update/join.")
 
 
-    # --- Post-processing ---
-    # Forward fill NaNs created during core calculations IF NEEDED.
-    # Often better to handle NaNs within specific rules or downstream logic.
-    # Let's comment this out for now, as rules handle NaNs partially.
-    # cols_to_ffill = ['HL', 'Pressure', 'PV']
-    # for col in cols_to_ffill:
-    #     if col in df_out.columns:
-    #         df_out[col] = df_out[col].ffill()
+        logger.print_debug("Successfully merged rule results.")
+        return df_final
 
-    # Forward fill rule outputs where EMPTY_VALUE was placeholder,
-    # replace final EMPTY_VALUE with NaN for clarity/plotting.
-    rule_output_cols = ['PPrice1', 'PColor1', 'PPrice2', 'PColor2', 'Direction', 'Diff']
-    for col in rule_output_cols:
-        if col in df_out.columns:
-            # Ffill might propagate signals incorrectly, use with caution
-            # df_out[col] = df_out[col].ffill()
-            df_out[col] = df_out[col].replace(EMPTY_VALUE, np.nan)
-
-
-    # --- Select and return final columns ---
-    # Define expected output columns
-    output_columns = [
-        'Open', 'High', 'Low', 'Close', 'Volume',                       # Original Data (Volume renamed)
-        'HL', 'Pressure', 'PV',                                         # Intermediate Calculations
-        'PPrice1', 'PColor1', 'PPrice2', 'PColor2', 'Direction', 'Diff' # Final Outputs
-    ]
-    # Filter to only columns that actually exist in the DataFrame
-    final_columns = [col for col in output_columns if col in df_out.columns]
-
-    return df_out[final_columns]

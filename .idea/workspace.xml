@@ -7,13 +7,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add new mode show">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add init to files">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/calculation/indicator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/indicator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/calculation/rules.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/calculation/rules.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/common/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/workflow/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/workflow/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/workflow/workflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/workflow/workflow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/constants.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -167,14 +166,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00133" summary="test yf fetcher">
-      <option name="closed" value="true" />
-      <created>1745173858393</created>
-      <option name="number" value="00133" />
-      <option name="presentableId" value="LOCAL-00133" />
-      <option name="project" value="LOCAL" />
-      <updated>1745173858393</updated>
     </task>
     <task id="LOCAL-00134" summary="test polygon fetcher">
       <option name="closed" value="true" />
@@ -560,7 +551,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745331522224</updated>
     </task>
-    <option name="localTasksCounter" value="182" />
+    <task id="LOCAL-00182" summary="add init to files">
+      <option name="closed" value="true" />
+      <created>1745332276902</created>
+      <option name="number" value="00182" />
+      <option name="presentableId" value="LOCAL-00182" />
+      <option name="project" value="LOCAL" />
+      <updated>1745332276902</updated>
+    </task>
+    <option name="localTasksCounter" value="183" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -587,7 +586,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="binance all works! fixed" />
     <MESSAGE value="polygon all works! fixed" />
     <MESSAGE value="fix yfinance" />
     <MESSAGE value="working yfinance" />
@@ -612,6 +610,7 @@
     <MESSAGE value="add both flags to plot" />
     <MESSAGE value="plot both variants on HTML" />
     <MESSAGE value="add new mode show" />
-    <option name="LAST_COMMIT_MESSAGE" value="add new mode show" />
+    <MESSAGE value="add init to files" />
+    <option name="LAST_COMMIT_MESSAGE" value="add init to files" />
   </component>
 </project>

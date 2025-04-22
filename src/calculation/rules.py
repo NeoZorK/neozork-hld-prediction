@@ -1,158 +1,188 @@
-# -*- coding: utf-8 -*-
-# src/rules.py
+# src/calculation/rules.py
 
 """
-Functions implementing the specific logic for each TradingRule.
-Each function updates the DataFrame with rule-specific outputs
-(PPrice1, PColor1, PPrice2, PColor2, Direction, Diff).
+Implements different trading rule calculations based on core indicator values.
+All comments are in English.
 """
+import traceback
 
 import pandas as pd
 import numpy as np
+from typing import Dict, Callable, Optional # Import Optional
+
+# Use relative imports for constants and logger
+from ..common.constants import TradingRule, BUY, SELL, NOTRADE, EMPTY_VALUE
 from ..common import logger
-from ..common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
-from typing import Any
 
+# --- Rule Implementation Functions ---
 
-# Helper to safely get series or default
-def _get_series(df, col_name, default_val=0):
-    if col_name in df.columns:
-        return df[col_name].fillna(default_val)
-    return pd.Series(default_val, index=df.index)
-
-# Predict High/Low Direction
-def apply_rule_predict_hld(df: pd.DataFrame, point: float):
+# Placeholder/Example function for Predict_High_Low_Direction
+def apply_rule_predict_hld(df: pd.DataFrame, point_size: float) -> pd.DataFrame:
     """
-    Combines Support/Resistants levels with Pressure Vector direction.
-    Calculates PPrice1/2 based on Open +/- HL/2.
-    Calculates Direction based on PV sign.
+    Applies the 'Predict_High_Low_Direction' rule.
+    Calculates PPrice1, PPrice2 based on Open +/- HL/2 * point_size.
+    Generates a simple alternating Buy/Sell direction signal.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing 'Open', 'HL'.
+        point_size (float): The point size of the instrument.
+
+    Returns:
+        pd.DataFrame: DataFrame with added 'PPrice1', 'PPrice2', 'Direction',
+                      'PColor1', 'PColor2' columns.
     """
-    open_curr = _get_series(df, 'Open')
-    hl_val = _get_series(df, 'HL') # HL in points
-    pv_val = _get_series(df, 'PV') # Original PV
+    logger.print_debug("Applying rule: Predict_High_Low_Direction")
+    df_res = df.copy()
 
-    # --- Calculate PPrice1/PPrice2 (from Support_Resistants) ---
-    hl_term = hl_val / 2.0 * point # HL in price units
-    df['PPrice1'] = open_curr - hl_term
-    df['PPrice2'] = open_curr + hl_term
-    # Assign colors like Support_Resistants
-    df['PColor1'] = BUY
-    df['PColor2'] = SELL
+    # Ensure HL is numeric and handle potential NaNs from calculation
+    hl_numeric = pd.to_numeric(df_res['HL'], errors='coerce').fillna(0) # Fill NaN HL with 0 for calculation
 
-    # --- Calculate Direction (from Pressure_Vector) ---
-    df['Direction'] = np.where(pv_val > 0, BUY, np.where(pv_val < 0, SELL, NOTRADE))
+    # Calculate PPrice1 and PPrice2
+    # This formula might differ from the original MQL5 logic for these levels
+    df_res['PPrice1'] = df_res['Open'] - (hl_numeric / 2 * point_size)
+    df_res['PPrice2'] = df_res['Open'] + (hl_numeric / 2 * point_size)
 
-    # --- Set other outputs ---
-    df['Diff'] = EMPTY_VALUE # Not calculated for this rule
+    # --- Simple Direction Logic (Example) ---
+    # This is a placeholder and likely needs to be replaced with actual logic
+    # based on PV, Pressure, or other factors if available.
+    # For now, let's create a simple alternating signal for demonstration.
+    signal = np.resize([BUY, SELL], len(df_res)) # Simple alternating Buy/Sell
+    # Set first signal based on some condition? Or start fixed?
+    # Let's make it NOTRADE for the first row where calculations might be incomplete
+    if len(signal) > 0:
+        signal[0] = NOTRADE
+    df_res['Direction'] = signal
+    # --- End Simple Direction Logic ---
 
-    return df
+    # Add color columns (assuming fixed colors for this rule for now)
+    df_res['PColor1'] = BUY # Example: Lime for PPrice1
+    df_res['PColor2'] = SELL # Example: Red for PPrice2
 
-def apply_rule_pv_highlow(df: pd.DataFrame, point: float):
-    """Applies PV_HighLow rule logic."""
-    open_curr = _get_series(df, 'Open')
-    hl_val = _get_series(df, 'HL')
-    pv_val = _get_series(df, 'PV')
-    pv_e = 0.5 * np.log(np.pi) # approx 0.57236
+    # Ensure specific columns exist, adding them with EMPTY_VALUE if not
+    for col in ['PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']:
+         if col not in df_res:
+              df_res[col] = EMPTY_VALUE
 
-    pv_term = np.power(pv_e, 3) * pv_val * point
-    hl_term = hl_val * pv_e * point
+    return df_res[['PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']]
 
-    df['PPrice1'] = open_curr - (hl_term + pv_term)
-    df['PColor1'] = BUY
-    df['PPrice2'] = open_curr + (hl_term - pv_term)
-    df['PColor2'] = SELL
-    df['Direction'] = NOTRADE
-    df['Diff'] = EMPTY_VALUE
-    return df
 
-def apply_rule_support_resistants(df: pd.DataFrame, point: float):
-    """Applies Support_Resistants rule logic."""
-    open_curr = _get_series(df, 'Open')
-    hl_val = _get_series(df, 'HL')
-    hl_term = hl_val / 2.0 * point
+# Placeholder/Example function for Pressure_Vector rule
+def apply_rule_pressure_vector(df: pd.DataFrame, point_size: float) -> pd.DataFrame:
+    """
+    Applies the 'Pressure_Vector' rule (Placeholder).
+    This rule might focus solely on PV signals or simple thresholds.
 
-    df['PPrice1'] = open_curr - hl_term
-    df['PColor1'] = BUY
-    df['PPrice2'] = open_curr + hl_term
-    df['PColor2'] = SELL
-    df['Direction'] = NOTRADE
-    df['Diff'] = EMPTY_VALUE
-    return df
+    Args:
+        df (pd.DataFrame): DataFrame potentially containing 'PV'.
+        point_size (float): The point size (may not be used directly here).
 
-def apply_rule_pressure_vector(df: pd.DataFrame):
-    """Applies Pressure_Vector rule logic."""
-    open_curr = _get_series(df, 'Open')
-    pv_val = _get_series(df, 'PV')
+    Returns:
+        pd.DataFrame: DataFrame with added 'Direction' column (and others if needed).
+    """
+    logger.print_debug("Applying rule: Pressure_Vector (Placeholder)")
+    df_res = df.copy()
 
-    df['PPrice1'] = open_curr
-    df['PPrice2'] = open_curr
-    df['PColor1'] = np.where(pv_val > 0, BUY, np.where(pv_val < 0, SELL, NOTRADE))
-    df['PColor2'] = EMPTY_VALUE
-    df['Direction'] = df['PColor1']
-    df['Diff'] = EMPTY_VALUE
-    return df
+    # --- Example Logic: Signal based on PV sign ---
+    if 'PV' in df_res.columns:
+        pv_numeric = pd.to_numeric(df_res['PV'], errors='coerce').fillna(0)
+        df_res['Direction'] = np.where(pv_numeric > 0, BUY, np.where(pv_numeric < 0, SELL, NOTRADE))
+    else:
+        logger.print_warning("PV column not found for Pressure_Vector rule. Setting Direction to NOTRADE.")
+        df_res['Direction'] = NOTRADE
+    # --- End Example Logic ---
+
+    # Ensure specific columns exist, adding them with EMPTY_VALUE if not
+    for col in ['PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']:
+         if col not in df_res:
+              df_res[col] = EMPTY_VALUE # Add placeholder columns if missing
+
+    # Return only the columns relevant to this rule's output
+    return df_res[['PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']]
+
+
+# Placeholder/Example function for Support_Resistants rule
+def apply_rule_support_resistants(df: pd.DataFrame, point_size: float) -> pd.DataFrame:
+    """
+    Applies the 'Support_Resistants' rule (Placeholder).
+    This rule might calculate S/R levels based on Pressure, PV, or price action.
+
+    Args:
+        df (pd.DataFrame): DataFrame potentially containing 'Pressure', 'PV', OHLC.
+        point_size (float): The point size.
+
+    Returns:
+        pd.DataFrame: DataFrame with added 'PPrice1' (Support?), 'PPrice2' (Resistance?),
+                      'Direction' columns.
+    """
+    logger.print_debug("Applying rule: Support_Resistants (Placeholder)")
+    df_res = df.copy()
+
+    # --- Example Logic: Placeholder S/R ---
+    # Replace with actual S/R calculation logic
+    df_res['PPrice1'] = df_res['Low'].rolling(window=5).min() # Example: 5-period low as support
+    df_res['PPrice2'] = df_res['High'].rolling(window=5).max() # Example: 5-period high as resistance
+    df_res['Direction'] = NOTRADE # Example: No direction signal from S/R levels alone
+    # --- End Example Logic ---
+
+    # Ensure specific columns exist, adding them with EMPTY_VALUE if not
+    for col in ['PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']:
+         if col not in df_res:
+              df_res[col] = EMPTY_VALUE
+
+    return df_res[['PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']]
 
 
 # --- Rule Dispatcher ---
-# Maps TradingRule enum to the corresponding function
-RULE_DISPATCHER = {
-    TradingRule.PV_HighLow: apply_rule_pv_highlow,
-    TradingRule.Support_Resistants: apply_rule_support_resistants,
-    TradingRule.Pressure_Vector: apply_rule_pressure_vector,
+
+# Dictionary mapping TradingRule enum members to their implementation functions
+# *** CORRECTED: Removed reference to non-existent PV_HighLow ***
+RULE_IMPLEMENTATIONS: Dict[TradingRule, Callable[[pd.DataFrame, float], pd.DataFrame]] = {
     TradingRule.Predict_High_Low_Direction: apply_rule_predict_hld,
+    TradingRule.Pressure_Vector: apply_rule_pressure_vector,
+    TradingRule.Support_Resistants: apply_rule_support_resistants,
+    # Add mappings for other rules if defined in TradingRule Enum
 }
 
-def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float) -> pd.DataFrame:
+
+# Main function to apply the selected trading rule
+def apply_trading_rule(df: pd.DataFrame, rule: TradingRule, point_size: float) -> Optional[pd.DataFrame]:
     """
-    Applies the selected trading rule logic to the DataFrame.
+    Applies the specified trading rule function to the DataFrame.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing necessary columns (OHLC, PV, Pressure, etc.).
+        rule (TradingRule): The enum member representing the rule to apply.
+        point_size (float): The instrument's point size.
+
+    Returns:
+        Optional[pd.DataFrame]: DataFrame with added columns based on the rule
+                                ('PPrice1', 'PPrice2', 'Direction', etc.), or None if rule not found.
     """
-    selected_rule: TradingRule | None = None
-    rule_func = None
-    is_valid_rule = False
+    rule_function = RULE_IMPLEMENTATIONS.get(rule)
 
-    if isinstance(rule, TradingRule):
-        selected_rule = rule
-        if rule in RULE_DISPATCHER:
-            is_valid_rule = True
-            rule_func = RULE_DISPATCHER[rule]
-        else:
-            pass # is_valid_rule останется False
+    if rule_function:
+        logger.print_debug(f"Found implementation for rule: {rule.name}")
+        try:
+            # Apply the selected rule function
+            rule_output_df = rule_function(df, point_size)
+            # Ensure the output is a DataFrame
+            if not isinstance(rule_output_df, pd.DataFrame):
+                 logger.print_error(f"Rule function {rule.name} did not return a DataFrame.")
+                 return None
+            # Ensure expected output columns exist, even if filled with NaN/EMPTY_VALUE
+            expected_cols = ['PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']
+            for col in expected_cols:
+                 if col not in rule_output_df.columns:
+                      logger.print_warning(f"Rule '{rule.name}' output missing column '{col}'. Adding with empty values.")
+                      rule_output_df[col] = EMPTY_VALUE
 
-    if not is_valid_rule:
-        logger.print_warning(
-            f"TradingRule {repr(rule)} not recognized or supported. "
-            f"Applying default ({TradingRule.Predict_High_Low_Direction.name})."
-        )
-        selected_rule = TradingRule.Predict_High_Low_Direction
-        rule_func = RULE_DISPATCHER[selected_rule]
+            return rule_output_df[expected_cols] # Return only the standard output columns
 
-    # Call the rule function with the DataFrame and point
-    if selected_rule in [TradingRule.PV_HighLow, TradingRule.Support_Resistants, TradingRule.Predict_High_Low_Direction]:
-        return rule_func(df, point=point)
-    elif selected_rule == TradingRule.Pressure_Vector:
-        if rule_func:
-             return rule_func(df)
-        else:
-             logger.print_error("Rule function assignment failed unexpectedly.")
-             return df
+        except Exception as e:
+            logger.print_error(f"Error applying rule '{rule.name}': {type(e).__name__}: {e}")
+            logger.print_debug(f"Traceback (apply rule):\n{traceback.format_exc()}")
+            return None # Return None on error during rule application
     else:
-         # Fallback logic for unsupported rules
-         # selected_rule
-         logger.print_warning(f"Rule '{selected_rule.name}' dispatcher logic needs update or rule is unsupported.")
+        logger.print_error(f"No implementation found for trading rule: {rule.name}")
+        return None # Return None if no function is mapped to the rule
 
-         try:
-             if rule_func:
-                return rule_func(df)
-             else:
-                logger.print_error("Rule function assignment failed unexpectedly in fallback.")
-                return df
-         except TypeError:
-             try:
-                 if rule_func:
-                    return rule_func(df, point=point)
-                 else:
-                    logger.print_error("Rule function assignment failed unexpectedly in fallback TypeError.")
-                    return df
-             except Exception as e:
-                 logger.print_error(f"Failed to execute rule function for {selected_rule.name}: {e}")
-                 return df

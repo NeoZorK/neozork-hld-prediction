@@ -7,6 +7,7 @@ All comments are in English.
 """
 
 from enum import Enum, auto
+import numpy as np # <-- Import numpy
 
 # --- Trading Rules Enum ---
 # Defines the different calculation/trading rules available.
@@ -21,6 +22,9 @@ class TradingRule(Enum):
 BUY = 1.0
 SELL = 2.0
 NOTRADE = 0.0
+
+# --- Placeholder for Empty/Missing Numerical Values ---
+EMPTY_VALUE = np.nan # <-- Define EMPTY_VALUE as NaN
 
 # --- Valid Data Sources for API Cache ---
 # Used by cache_manager and potentially CLI to validate source names.
