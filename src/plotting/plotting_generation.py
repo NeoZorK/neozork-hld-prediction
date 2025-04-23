@@ -1,4 +1,6 @@
 # src/plotting/plotting_generation.py
+from .plotting import plot_indicator_results_plotly, plot_indicator_results_mplfinance
+from .fast_plot import plot_indicator_results_fast
 
 """
 Workflow step for generating plots based on indicator results using the selected library (Plotly or mplfinance).
@@ -77,28 +79,29 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     try:
         if use_mplfinance:
             logger.print_info("Generating plot using mplfinance...")
-            # Call the mplfinance plotting function (displays plot by default)
             plot_indicator_results_mplfinance(
                 result_df,
                 selected_rule,
                 plot_title
             )
-            # Note: No figure object is returned by the mplfinance function here
             logger.print_success("Mplfinance plot generation finished (should display).")
-
-        else: # Default to Plotly
+        elif args.draw == 'fast':
+            logger.print_info("Generating plot using Dask+Datashader+Bokeh (fast)...")
+            plot_indicator_results_fast(
+                result_df,
+                selected_rule,
+                plot_title
+            )
+        else:
             logger.print_info("Generating plot using Plotly...")
-            # Call the Plotly plotting function (returns a figure object)
             fig = plot_indicator_results_plotly(
                 result_df,
                 selected_rule,
                 plot_title
             )
-
             if fig is None:
                 logger.print_warning("Plotly generation returned None. Skipping save.")
                 return
-
             # --- Save Plotly Plot as HTML ---
             output_dir = Path("results/plots")
             try:
@@ -106,43 +109,30 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
             except OSError as e:
                 logger.print_error(f"Could not create plot output directory {output_dir}: {e}")
                 return
-
             # Construct filename
             filename_parts = [
-                data_label.replace(':', '_').replace('/', '_').replace('\\', '_'),
+                data_label.replace(':', '_').replace('/', '_').replace('\\\\', '_'),
                 interval_str,
                 selected_rule.name,
-                "plotly" # Add suffix to distinguish from potential mplfinance saves
+                "plotly"
             ]
             filename = "_".join(filter(None, filename_parts)) + ".html"
             filepath = output_dir / filename
-
-            # Save the figure
             try:
                 fig.write_html(str(filepath), include_plotlyjs='cdn')
                 logger.print_success(f"Interactive Plotly plot saved successfully to: {filepath}")
-
-                # --- Attempt to open the saved HTML file ---
                 try:
-                    # --- FIX: Use absolute path ---
-                    # Get the absolute path first
                     absolute_filepath = filepath.resolve()
-                    # Convert the absolute Path object to a file URI
                     file_uri = absolute_filepath.as_uri()
-                    # --- End of FIX ---
-
                     webbrowser.open(file_uri)
                     logger.print_info(f"Attempting to open {filepath} in default browser...")
                 except Exception as e_open:
-                    # Log the specific error encountered during opening
-                    logger.print_warning(f"Could not automatically open the plot in browser: {type(e_open).__name__}: {e_open}")
-                    logger.print_debug(f"Traceback (open plot):\n{traceback.format_exc()}") # Add traceback for debugging
-                # --- End of auto-open block ---
-
+                    logger.print_warning(
+                        f"Could not automatically open the plot in browser: {type(e_open).__name__}: {e_open}")
+                    logger.print_debug(f"Traceback (open plot):\n{traceback.format_exc()}")
             except Exception as e_save:
                 logger.print_error(f"Failed to save Plotly plot to {filepath}: {type(e_save).__name__}: {e_save}")
                 logger.print_debug(f"Traceback (save plot):\n{traceback.format_exc()}")
-
     except Exception as e_gen:
         logger.print_error(f"An error occurred during plot generation: {type(e_gen).__name__}: {e_gen}")
         logger.print_debug(f"Traceback (generate plot):\n{traceback.format_exc()}")

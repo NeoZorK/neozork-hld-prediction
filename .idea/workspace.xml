@@ -7,7 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add to readme" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add fast plot">
+      <change beforePath="$PROJECT_DIR$/src/plotting/plotting_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting/plotting_generation.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -159,22 +161,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00135" summary="test binance fetcher">
-      <option name="closed" value="true" />
-      <created>1745173980250</created>
-      <option name="number" value="00135" />
-      <option name="presentableId" value="LOCAL-00135" />
-      <option name="project" value="LOCAL" />
-      <updated>1745173980250</updated>
-    </task>
-    <task id="LOCAL-00136" summary="test data fetcher">
-      <option name="closed" value="true" />
-      <created>1745174082523</created>
-      <option name="number" value="00136" />
-      <option name="presentableId" value="LOCAL-00136" />
-      <option name="project" value="LOCAL" />
-      <updated>1745174082523</updated>
     </task>
     <task id="LOCAL-00137" summary="test workflow fetcher">
       <option name="closed" value="true" />
@@ -552,7 +538,23 @@
       <option name="project" value="LOCAL" />
       <updated>1745428526438</updated>
     </task>
-    <option name="localTasksCounter" value="184" />
+    <task id="LOCAL-00184" summary="add fast as default">
+      <option name="closed" value="true" />
+      <created>1745428672024</created>
+      <option name="number" value="00184" />
+      <option name="presentableId" value="LOCAL-00184" />
+      <option name="project" value="LOCAL" />
+      <updated>1745428672024</updated>
+    </task>
+    <task id="LOCAL-00185" summary="add fast plot">
+      <option name="closed" value="true" />
+      <created>1745428769014</created>
+      <option name="number" value="00185" />
+      <option name="presentableId" value="LOCAL-00185" />
+      <option name="project" value="LOCAL" />
+      <updated>1745428769014</updated>
+    </task>
+    <option name="localTasksCounter" value="186" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -579,8 +581,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix yfinance" />
-    <MESSAGE value="working yfinance" />
     <MESSAGE value="working all" />
     <MESSAGE value="test for yfinance" />
     <MESSAGE value="fix test for yfinance" />
@@ -604,6 +604,8 @@
     <MESSAGE value="fix all tests" />
     <MESSAGE value="add dask datashader bokeh в requirments" />
     <MESSAGE value="add to readme" />
-    <option name="LAST_COMMIT_MESSAGE" value="add to readme" />
+    <MESSAGE value="add fast as default" />
+    <MESSAGE value="add fast plot" />
+    <option name="LAST_COMMIT_MESSAGE" value="add fast plot" />
   </component>
 </project>
