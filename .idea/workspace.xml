@@ -7,9 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add fast plot">
-      <change beforePath="$PROJECT_DIR$/src/plotting/plotting_generation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting/plotting_generation.py" afterDir="false" />
-    </list>
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add fast plotting generation" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -161,14 +159,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00137" summary="test workflow fetcher">
-      <option name="closed" value="true" />
-      <created>1745174197819</created>
-      <option name="number" value="00137" />
-      <option name="presentableId" value="LOCAL-00137" />
-      <option name="project" value="LOCAL" />
-      <updated>1745174197819</updated>
     </task>
     <task id="LOCAL-00138" summary="test reporting fetcher">
       <option name="closed" value="true" />
@@ -554,7 +544,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745428769014</updated>
     </task>
-    <option name="localTasksCounter" value="186" />
+    <task id="LOCAL-00186" summary="add fast plotting generation">
+      <option name="closed" value="true" />
+      <created>1745428943064</created>
+      <option name="number" value="00186" />
+      <option name="presentableId" value="LOCAL-00186" />
+      <option name="project" value="LOCAL" />
+      <updated>1745428943064</updated>
+    </task>
+    <option name="localTasksCounter" value="187" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -581,7 +579,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="working all" />
     <MESSAGE value="test for yfinance" />
     <MESSAGE value="fix test for yfinance" />
     <MESSAGE value="fix test for yfinance 1" />
@@ -606,6 +603,7 @@
     <MESSAGE value="add to readme" />
     <MESSAGE value="add fast as default" />
     <MESSAGE value="add fast plot" />
-    <option name="LAST_COMMIT_MESSAGE" value="add fast plot" />
+    <MESSAGE value="add fast plotting generation" />
+    <option name="LAST_COMMIT_MESSAGE" value="add fast plotting generation" />
   </component>
 </project>
