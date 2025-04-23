@@ -65,14 +65,14 @@ def plot_indicator_results_fast(
     )
     p.add_layout(Title(text="(Fast Mode: Datashader+Bokeh)", align="center", text_font_size="10pt"), 'above')
 
-    # Convert Datashader image to RGBA and plot as image_rgba
+    # Bokeh expects a numpy uint32 RGBA array, not a PIL image!
     bokeh_img = tf.dynspread(img, threshold=0.5, max_px=4)
+    rgba_array = bokeh_img.to_numpy()  # shape (height, width), dtype=uint32
 
-    # Bokeh's image_rgba expects coordinates in data units: x, y, dw, dh
     x_span = (df['index'].min().value, df['index'].max().value)
     y_span = (df['Low'].min(), df['High'].max())
     p.image_rgba(
-        image=[bokeh_img.to_pil()],
+        image=[rgba_array],
         x=x_span[0],
         y=y_span[0],
         dw=x_span[1] - x_span[0],
