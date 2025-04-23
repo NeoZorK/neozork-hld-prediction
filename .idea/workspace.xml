@@ -7,10 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix 1 test for fast&#10;v6">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="bars for fast mode">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/plots/Demo Data_D1_Predict_High_Low_Direction_plotly.html" beforeDir="false" afterPath="$PROJECT_DIR$/results/plots/Demo Data_D1_Predict_High_Low_Direction_plotly.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plotting/fast_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting/fast_plot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,22 +161,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00146" summary="try to fix fetchers test 6">
-      <option name="closed" value="true" />
-      <created>1745180204362</created>
-      <option name="number" value="00146" />
-      <option name="presentableId" value="LOCAL-00146" />
-      <option name="project" value="LOCAL" />
-      <updated>1745180204362</updated>
-    </task>
-    <task id="LOCAL-00147" summary="try to fix fetchers test 7">
-      <option name="closed" value="true" />
-      <created>1745180369095</created>
-      <option name="number" value="00147" />
-      <option name="presentableId" value="LOCAL-00147" />
-      <option name="project" value="LOCAL" />
-      <updated>1745180369095</updated>
     </task>
     <task id="LOCAL-00148" summary="try to fix fetchers test 8">
       <option name="closed" value="true" />
@@ -556,7 +538,23 @@
       <option name="project" value="LOCAL" />
       <updated>1745431717811</updated>
     </task>
-    <option name="localTasksCounter" value="195" />
+    <task id="LOCAL-00195" summary="fix 1 test for fast&#10;v8 working but without CANDLES!">
+      <option name="closed" value="true" />
+      <created>1745433266156</created>
+      <option name="number" value="00195" />
+      <option name="presentableId" value="LOCAL-00195" />
+      <option name="project" value="LOCAL" />
+      <updated>1745433266156</updated>
+    </task>
+    <task id="LOCAL-00196" summary="bars for fast mode">
+      <option name="closed" value="true" />
+      <created>1745433525931</created>
+      <option name="number" value="00196" />
+      <option name="presentableId" value="LOCAL-00196" />
+      <option name="project" value="LOCAL" />
+      <updated>1745433525931</updated>
+    </task>
+    <option name="localTasksCounter" value="197" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -583,8 +581,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix test for yfinance 7" />
-    <MESSAGE value="fix test for yfinance 8" />
     <MESSAGE value="init v0.1.6" />
     <MESSAGE value="try convert csv to parket" />
     <MESSAGE value="fixed convert csv to parket" />
@@ -608,6 +604,8 @@
     <MESSAGE value="fix 1 test for fast&#10;v4" />
     <MESSAGE value="fix 1 test for fast&#10;v5" />
     <MESSAGE value="fix 1 test for fast&#10;v6" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix 1 test for fast&#10;v6" />
+    <MESSAGE value="fix 1 test for fast&#10;v8 working but without CANDLES!" />
+    <MESSAGE value="bars for fast mode" />
+    <option name="LAST_COMMIT_MESSAGE" value="bars for fast mode" />
   </component>
 </project>
