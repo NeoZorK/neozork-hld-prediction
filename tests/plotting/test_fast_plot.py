@@ -1,23 +1,34 @@
+import unittest
+import os
 import pandas as pd
 import numpy as np
+
+# Import here your plotting function
 from src.plotting.fast_plot import plot_indicator_results_fast
 
-def test_fast_plot_smoke(tmp_path):
-    """
-    Smoke test for fast plot: plot a simple OHLCV DataFrame and ensure file is created.
-    """
-    # Generate sample data
-    n = 10000
-    idx = pd.date_range("2024-01-01", freq="T", periods=n)
-    df = pd.DataFrame({
-        "Open": np.random.rand(n) * 100,
-        "High": np.random.rand(n) * 100 + 1,
-        "Low": np.random.rand(n) * 100 - 1,
-        "Close": np.random.rand(n) * 100,
-    }, index=idx)
-    class DummyRule:
-        name = "DummyRule"
-    plot_indicator_results_fast(df, DummyRule, title="Test Fast Plot")
-    # Check output file exists
-    out_plot = tmp_path / "results" / "plots" / "fast_plot.html"
-    assert out_plot.exists() or (tmp_path / "fast_plot.html").exists()
+class DummyRule:
+    name = "DummyRule"
+
+class TestFastPlot(unittest.TestCase):
+    def setUp(self):
+        # Create artificial OHLC data
+        self.df = pd.DataFrame({
+            "Open": np.random.rand(1000) * 100,
+            "High": np.random.rand(1000) * 100 + 1,
+            "Low": np.random.rand(1000) * 100 - 1,
+            "Close": np.random.rand(1000) * 100,
+        }, index=pd.date_range("2024-01-01", periods=1000, freq="min"))  # 'min' instead of 'T'
+        # Add index as a column for Datashader compatibility
+        self.df = self.df.reset_index().rename(columns={"index": "index"})
+        self.rule = DummyRule()
+
+    def test_fast_plot_smoke(self):
+        """
+        Smoke-test: ensure that fast plot runs and creates an output file.
+        """
+        plot_indicator_results_fast(self.df, self.rule, title="Test Fast Plot")
+        out_file = os.path.join("results", "plots", "fast_plot.html")
+        self.assertTrue(os.path.exists(out_file))
+
+if __name__ == '__main__':
+    unittest.main()
