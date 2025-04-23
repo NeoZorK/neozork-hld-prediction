@@ -7,7 +7,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add fast plotting generation" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add 2 tests for fast">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/plotting/test_fast_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/plotting/test_fast_plot.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -159,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00138" summary="test reporting fetcher">
-      <option name="closed" value="true" />
-      <created>1745174467061</created>
-      <option name="number" value="00138" />
-      <option name="presentableId" value="LOCAL-00138" />
-      <option name="project" value="LOCAL" />
-      <updated>1745174467061</updated>
     </task>
     <task id="LOCAL-00139" summary="fix 2 fetchers">
       <option name="closed" value="true" />
@@ -552,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745428943064</updated>
     </task>
-    <option name="localTasksCounter" value="187" />
+    <task id="LOCAL-00187" summary="add 2 tests for fast">
+      <option name="closed" value="true" />
+      <created>1745429291013</created>
+      <option name="number" value="00187" />
+      <option name="presentableId" value="LOCAL-00187" />
+      <option name="project" value="LOCAL" />
+      <updated>1745429291013</updated>
+    </task>
+    <option name="localTasksCounter" value="188" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -579,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="test for yfinance" />
     <MESSAGE value="fix test for yfinance" />
     <MESSAGE value="fix test for yfinance 1" />
     <MESSAGE value="fix test for yfinance 2" />
@@ -604,6 +606,7 @@
     <MESSAGE value="add fast as default" />
     <MESSAGE value="add fast plot" />
     <MESSAGE value="add fast plotting generation" />
-    <option name="LAST_COMMIT_MESSAGE" value="add fast plotting generation" />
+    <MESSAGE value="add 2 tests for fast" />
+    <option name="LAST_COMMIT_MESSAGE" value="add 2 tests for fast" />
   </component>
 </project>
