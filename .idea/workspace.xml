@@ -7,9 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix all tests">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="add to readme" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -161,22 +159,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00133" summary="test yf fetcher">
-      <option name="closed" value="true" />
-      <created>1745173858393</created>
-      <option name="number" value="00133" />
-      <option name="presentableId" value="LOCAL-00133" />
-      <option name="project" value="LOCAL" />
-      <updated>1745173858393</updated>
-    </task>
-    <task id="LOCAL-00134" summary="test polygon fetcher">
-      <option name="closed" value="true" />
-      <created>1745173938635</created>
-      <option name="number" value="00134" />
-      <option name="presentableId" value="LOCAL-00134" />
-      <option name="project" value="LOCAL" />
-      <updated>1745173938635</updated>
     </task>
     <task id="LOCAL-00135" summary="test binance fetcher">
       <option name="closed" value="true" />
@@ -554,7 +536,23 @@
       <option name="project" value="LOCAL" />
       <updated>1745362016569</updated>
     </task>
-    <option name="localTasksCounter" value="182" />
+    <task id="LOCAL-00182" summary="add dask datashader bokeh в requirments">
+      <option name="closed" value="true" />
+      <created>1745428153615</created>
+      <option name="number" value="00182" />
+      <option name="presentableId" value="LOCAL-00182" />
+      <option name="project" value="LOCAL" />
+      <updated>1745428153615</updated>
+    </task>
+    <task id="LOCAL-00183" summary="add to readme">
+      <option name="closed" value="true" />
+      <created>1745428526438</created>
+      <option name="number" value="00183" />
+      <option name="presentableId" value="LOCAL-00183" />
+      <option name="project" value="LOCAL" />
+      <updated>1745428526438</updated>
+    </task>
+    <option name="localTasksCounter" value="184" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -581,8 +579,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="binance all works! fixed" />
-    <MESSAGE value="polygon all works! fixed" />
     <MESSAGE value="fix yfinance" />
     <MESSAGE value="working yfinance" />
     <MESSAGE value="working all" />
@@ -606,6 +602,8 @@
     <MESSAGE value="add both flags to plot" />
     <MESSAGE value="fix tests.plotting.test_plotting" />
     <MESSAGE value="fix all tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix all tests" />
+    <MESSAGE value="add dask datashader bokeh в requirments" />
+    <MESSAGE value="add to readme" />
+    <option name="LAST_COMMIT_MESSAGE" value="add to readme" />
   </component>
 </project>
