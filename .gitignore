@@ -7,3 +7,4 @@
 /.yf_cache/cookies.db
 *.parquet
 *.html
+workspace.xml
