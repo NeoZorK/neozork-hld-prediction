@@ -207,6 +207,18 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
     python run_analysis.py demo
     ```
 
+### Fast mode for large charts (default)
+
+* **For accelerated plotting of large OHLCV datasets (millions of rows, M1) use the new 'fast' mode (Dask+Datashader+Bokeh), now default:
+
+    ```bash
+    python run_analysis.py demo -d fast
+    ```
+#### Old modes:
+- `-d plotly`: interactive Plotly HTML chart
+- `-d mpl` or `-d mplfinance`: static chart via mplfinance/matplotlib
+
+
 * **Run with demo data using a specific rule (e.g., Pressure_Vector alias 'PV'):**
     ```bash
     python run_analysis.py demo --rule PV
