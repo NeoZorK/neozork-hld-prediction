@@ -1,25 +1,27 @@
 import os
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-from plotly.offline import plot
-
 import pandas as pd
+from bokeh.plotting import figure, output_file, save
+from bokeh.layouts import column
+from bokeh.models import Legend, LegendItem, Span, Title
+import webbrowser
 
 def plot_indicator_results_fast(
     df,
     rule,
     title='',
     output_path="results/plots/fast_plot.html",
-    auto_open=True,
+    width=1800,
+    height=1100,
     **kwargs
 ):
     """
-    Render an all-in-one dashboard plot using Plotly with the same structure as plt mode:
-    - Main panel: OHLC candles, indicator lines, buy/sell markers, legend.
-    - Subpanels: Volume (bar), PV, HL, Pressure.
-    Saves as a single interactive HTML and opens in browser if requested.
+    Draws a combined dashboard plot in fast mode:
+    - Main panel: pseudo-candlesticks (OHLC bars), predicted high/low lines, predicted direction arrows, legend.
+    - Subpanels: Volume, PV, HL, Pressure.
+    - Opens plot in default browser.
     """
-    # Ensure index column for plotly
+
+    # Ensure index column
     if 'index' not in df.columns:
         if isinstance(df.index, pd.DatetimeIndex):
             df = df.copy()
@@ -28,158 +30,140 @@ def plot_indicator_results_fast(
             raise ValueError("DataFrame must have datetime index or 'index' column.")
     df['index'] = pd.to_datetime(df['index'])
 
-    # Create subplots: 1 big (candles+signals+lines), 4 small (Volume, PV, HL, Pressure)
-    fig = make_subplots(
-        rows=5, cols=1,
-        shared_xaxes=True,
-        vertical_spacing=0.02,
-        row_heights=[0.45, 0.13, 0.14, 0.14, 0.14],
-        subplot_titles=[
-            "Price / Signals", "Volume", "PV", "HL (Points)", "Pressure"
-        ]
+    # Calculate up/down direction for coloring bars
+    df['direction'] = (df['Close'] >= df['Open'])
+    inc = df['direction']
+    dec = ~df['direction']
+
+    width_ms = 12 * 60 * 60 * 1000  # half day in ms, for bar tick width
+
+    # ======================= MAIN PANEL (PRICE & SIGNALS) =========================
+    p_main = figure(
+        width=width, height=int(height*0.48),
+        x_axis_type="datetime", title=title,
+        background_fill_color="#f5f7fa"
+    )
+    p_main.yaxis.axis_label = "Price"
+
+    # Plot pseudo-candlesticks (OHLC bars)
+    # High-low line (black)
+    p_main.segment(df['index'], df['High'], df['index'], df['Low'], color="black", line_width=1.5, legend_label="OHLC Bar")
+    # Open tick (left)
+    p_main.segment(
+        df['index'] - pd.to_timedelta(width_ms // 2, unit='ms'),
+        df['Open'],
+        df['index'],
+        df['Open'],
+        color=["green" if x else "red" for x in inc],
+        line_width=3,
+        legend_label=None
+    )
+    # Close tick (right)
+    p_main.segment(
+        df['index'],
+        df['Close'],
+        df['index'] + pd.to_timedelta(width_ms // 2, unit='ms'),
+        df['Close'],
+        color=["green" if x else "red" for x in inc],
+        line_width=3,
+        legend_label=None
     )
 
-    # --- Row 1: Candles, indicators, signals ---
-    fig.add_trace(go.Candlestick(
-        x=df['index'],
-        open=df['Open'],
-        high=df['High'],
-        low=df['Low'],
-        close=df['Close'],
-        name="OHLC",
-        increasing_line_color='green',
-        decreasing_line_color='red',
-        showlegend=True
-    ), row=1, col=1)
-
-    # Indicator lines (PPrice1, PPrice2, PV, Pressure)
+    # Predicted High / Low Lines
     if 'PPrice1' in df.columns:
-        fig.add_trace(go.Scatter(
-            x=df['index'], y=df['PPrice1'],
-            mode='lines',
-            name='PPrice1',
-            line=dict(color='lime', width=1, dash='dot')
-        ), row=1, col=1)
+        p_main.line(df['index'], df['PPrice1'], line_color='green', line_dash='dotted', line_width=2, legend_label="Predicted Low (PPrice1)")
     if 'PPrice2' in df.columns:
-        fig.add_trace(go.Scatter(
-            x=df['index'], y=df['PPrice2'],
-            mode='lines',
-            name='PPrice2',
-            line=dict(color='red', width=1, dash='dot')
-        ), row=1, col=1)
-    if 'PV' in df.columns:
-        fig.add_trace(go.Scatter(
-            x=df['index'], y=df['PV'],
-            mode='lines',
-            name='PV',
-            line=dict(color='gold', width=1, dash='dash')
-        ), row=1, col=1)
-    if 'Pressure' in df.columns:
-        fig.add_trace(go.Scatter(
-            x=df['index'], y=df['Pressure'],
-            mode='lines',
-            name='Pressure',
-            line=dict(color='blue', width=1, dash='solid')
-        ), row=1, col=1)
+        p_main.line(df['index'], df['PPrice2'], line_color='red', line_dash='dotted', line_width=2, legend_label="Predicted High (PPrice2)")
 
-    # Buy/Sell signals (Direction: 1=buy, 2=sell)
+    # Predicted Direction Arrows (triangle up/down)
     if 'Direction' in df.columns:
-        buy_mask = df['Direction'] == 1
-        sell_mask = df['Direction'] == 2
-        fig.add_trace(go.Scatter(
-            x=df.loc[buy_mask, 'index'],
-            y=df.loc[buy_mask, 'Low'],
-            mode='markers',
-            marker=dict(symbol='triangle-up', size=12, color='lime'),
-            name='BUY Signal',
-            showlegend=True
-        ), row=1, col=1)
-        fig.add_trace(go.Scatter(
-            x=df.loc[sell_mask, 'index'],
-            y=df.loc[sell_mask, 'High'],
-            mode='markers',
-            marker=dict(symbol='triangle-down', size=12, color='red'),
-            name='SELL Signal',
-            showlegend=True
-        ), row=1, col=1)
+        # 1=buy prediction (up, green), 2=sell prediction (down, red)
+        buy_idx = df['Direction'] == 1
+        sell_idx = df['Direction'] == 2
 
-    # --- Row 2: Volume (bar) ---
-    if 'Volume' in df.columns:
-        fig.add_trace(go.Bar(
-            x=df['index'],
-            y=df['Volume'],
-            name='Volume',
-            marker=dict(color='grey'),
-            opacity=0.7,
-            showlegend=False
-        ), row=2, col=1)
+        # Plot up arrows for predicted up
+        p_main.triangle(
+            x=df.loc[buy_idx, 'index'],
+            y=df.loc[buy_idx, 'Low'] - (df['High'] - df['Low']).mean() * 0.08,
+            size=16, color="lime", legend_label="Predicted UP", angle=0, alpha=0.9
+        )
+        # Plot down arrows for predicted down
+        p_main.inverted_triangle(
+            x=df.loc[sell_idx, 'index'],
+            y=df.loc[sell_idx, 'High'] + (df['High'] - df['Low']).mean() * 0.08,
+            size=16, color="red", legend_label="Predicted DOWN", angle=0, alpha=0.9
+        )
 
-    # --- Row 3: PV (line, zero baseline) ---
-    if 'PV' in df.columns:
-        fig.add_trace(go.Scatter(
-            x=df['index'], y=df['PV'],
-            mode='lines+markers',
-            name='PV',
-            line=dict(color='orange'),
-            marker=dict(size=5),
-            showlegend=False
-        ), row=3, col=1)
-        # zero baseline
-        fig.add_trace(go.Scatter(
-            x=[df['index'].min(), df['index'].max()],
-            y=[0, 0],
-            mode='lines',
-            line=dict(color='gray', width=1, dash='dash'),
-            showlegend=False,
-            hoverinfo='skip'
-        ), row=3, col=1)
+    # Overlay legend
+    p_main.legend.location = "top_left"
+    p_main.legend.click_policy = "hide"
+    p_main.legend.label_text_font_size = "13pt"
 
-    # --- Row 4: HL (Points) ---
-    if 'HL' in df.columns:
-        fig.add_trace(go.Scatter(
-            x=df['index'],
-            y=df['HL'],
-            mode='lines+markers',
-            name='HL (Points)',
-            line=dict(color='brown'),
-            marker=dict(size=5),
-            showlegend=False
-        ), row=4, col=1)
+    # Add chart subtitle
+    subtitle = Title(text="Fast Mode: OHLC bars, predicted lines/arrows, indicators", align="center", text_font_size="11pt")
+    p_main.add_layout(subtitle, 'above')
 
-    # --- Row 5: Pressure ---
-    if 'Pressure' in df.columns:
-        fig.add_trace(go.Scatter(
-            x=df['index'],
-            y=df['Pressure'],
-            mode='lines+markers',
-            name='Pressure',
-            line=dict(color='blue'),
-            marker=dict(size=5),
-            showlegend=False
-        ), row=5, col=1)
-        # zero baseline
-        fig.add_trace(go.Scatter(
-            x=[df['index'].min(), df['index'].max()],
-            y=[0, 0],
-            mode='lines',
-            line=dict(color='gray', width=1, dash='dash'),
-            showlegend=False,
-            hoverinfo='skip'
-        ), row=5, col=1)
-
-    # Layout and axis formatting
-    fig.update_layout(
-        title=title,
-        template='plotly_white',
-        height=1200,
-        xaxis5=dict(title='Date'),  # Only bottom x axis title
-        legend=dict(orientation='v', x=1.01, y=1),
-        margin=dict(t=80, r=30, b=40, l=60)
+    # ======================= VOLUME PANEL =========================
+    p_vol = figure(
+        width=width, height=int(height*0.13), x_axis_type="datetime",
+        x_range=p_main.x_range, background_fill_color="#f5f7fa"
     )
-    for i in range(2, 6):
-        fig.update_yaxes(showgrid=True, row=i, col=1)
-    fig.update_xaxes(showgrid=True, row=5, col=1)
+    p_vol.yaxis.axis_label = "Volume"
+    if 'Volume' in df.columns:
+        p_vol.vbar(x=df['index'], top=df['Volume'], width=width_ms, color="#888888", alpha=0.55, legend_label="Volume")
+        p_vol.legend.location = "top_left"
+        p_vol.legend.label_text_font_size = "10pt"
 
-    # Save and open file
+    # ======================= PV PANEL =========================
+    p_pv = figure(
+        width=width, height=int(height*0.13), x_axis_type="datetime",
+        x_range=p_main.x_range, background_fill_color="#f5f7fa"
+    )
+    p_pv.yaxis.axis_label = "PV"
+    if 'PV' in df.columns:
+        p_pv.line(df['index'], df['PV'], color="orange", line_width=2, legend_label="PV")
+        # Baseline
+        zero = Span(location=0, dimension='width', line_color='gray', line_dash='dashed', line_width=1)
+        p_pv.add_layout(zero)
+        p_pv.legend.location = "top_left"
+        p_pv.legend.label_text_font_size = "10pt"
+
+    # ======================= HL PANEL =========================
+    p_hl = figure(
+        width=width, height=int(height*0.13), x_axis_type="datetime",
+        x_range=p_main.x_range, background_fill_color="#f5f7fa"
+    )
+    p_hl.yaxis.axis_label = "HL (Points)"
+    if 'HL' in df.columns:
+        p_hl.line(df['index'], df['HL'], color="brown", line_width=2, legend_label="HL (Points)")
+        p_hl.legend.location = "top_left"
+        p_hl.legend.label_text_font_size = "10pt"
+
+    # ======================= PRESSURE PANEL =========================
+    p_pressure = figure(
+        width=width, height=int(height*0.13), x_axis_type="datetime",
+        x_range=p_main.x_range, background_fill_color="#f5f7fa"
+    )
+    p_pressure.yaxis.axis_label = "Pressure"
+    if 'Pressure' in df.columns:
+        p_pressure.line(df['index'], df['Pressure'], color="blue", line_width=2, legend_label="Pressure")
+        zero2 = Span(location=0, dimension='width', line_color='gray', line_dash='dashed', line_width=1)
+        p_pressure.add_layout(zero2)
+        p_pressure.legend.location = "top_left"
+        p_pressure.legend.label_text_font_size = "10pt"
+
+    # ======================= COMBINE AND SAVE =========================
+    layout = column(
+        p_main,
+        p_vol,
+        p_pv,
+        p_hl,
+        p_pressure,
+        sizing_mode="scale_width"
+    )
+
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    plot(fig, filename=output_path, auto_open=auto_open)
+    output_file(output_path, title=title)
+    save(layout)
+    abs_path = os.path.abspath(output_path)
+    webbrowser.open_new_tab(f"file://{abs_path}")
