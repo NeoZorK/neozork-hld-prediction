@@ -108,9 +108,9 @@ def parse_arguments():
     plotting_group = parser.add_argument_group('Plotting Options')
     plotting_group.add_argument(
         '-d', '--draw',
-        choices=['plotly', 'plt', 'mplfinance', 'mpl'],
-        default='plotly', # Default to plotly
-        help="Choose plotting library: 'plotly'/'plt' (interactive HTML) or 'mplfinance'/'mpl' (static image). Default: plotly."
+        choices=['fast', 'plotly', 'plt', 'mplfinance', 'mpl'],
+        default='fast',
+        help="Choose plotting library: 'fast' (Dask+Datashader+Bokeh, default), 'plotly'/'plt' (interactive HTML), or 'mplfinance'/'mpl' (static image)."
     )
 
     # --- Other Options Group ---
