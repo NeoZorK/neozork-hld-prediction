@@ -7,7 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="ok" />
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fix all tests">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -66,22 +68,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.demo command.executor": "Run",
-    "Python.help command.executor": "Run",
-    "Python.indicator.executor": "Run",
-    "Python.indicator_logic.executor": "Run",
-    "Python.plotting.executor": "Run",
-    "Python.run_analysis.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Shell Script.help command.executor": "Run",
-    "git-widget-placeholder": "v0.1.6",
-    "run.code.analysis.last.selected.profile": "aDefault",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.demo command.executor&quot;: &quot;Run&quot;,
+    &quot;Python.help command.executor&quot;: &quot;Run&quot;,
+    &quot;Python.indicator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.indicator_logic.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plotting.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_analysis.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Shell Script.help command.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;v0.1.7&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="QodanaReportsService">
     <option name="descriptions">
       <ReportDescription localRun="true" path="/private/var/folders/wn/z1lcmxns23l819nmrf4mvktm0000gn/T/qodana_output/qodana.sarif.json" reportGuid="fd695039-1346-4bbb-b7b7-3a2bbd6f2741" reportId="NeoZorK HLD/qodana/2025-04-19" />
@@ -159,30 +161,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00130" summary="fixed parket save">
-      <option name="closed" value="true" />
-      <created>1745171883974</created>
-      <option name="number" value="00130" />
-      <option name="presentableId" value="LOCAL-00130" />
-      <option name="project" value="LOCAL" />
-      <updated>1745171883974</updated>
-    </task>
-    <task id="LOCAL-00131" summary="add to readme new functionallity">
-      <option name="closed" value="true" />
-      <created>1745173115512</created>
-      <option name="number" value="00131" />
-      <option name="presentableId" value="LOCAL-00131" />
-      <option name="project" value="LOCAL" />
-      <updated>1745173115512</updated>
-    </task>
-    <task id="LOCAL-00132" summary="test csv fetcher">
-      <option name="closed" value="true" />
-      <created>1745173774962</created>
-      <option name="number" value="00132" />
-      <option name="presentableId" value="LOCAL-00132" />
-      <option name="project" value="LOCAL" />
-      <updated>1745173774962</updated>
     </task>
     <task id="LOCAL-00133" summary="test yf fetcher">
       <option name="closed" value="true" />
@@ -552,7 +530,31 @@
       <option name="project" value="LOCAL" />
       <updated>1745312135813</updated>
     </task>
-    <option name="localTasksCounter" value="179" />
+    <task id="LOCAL-00179" summary="add both flags to plot">
+      <option name="closed" value="true" />
+      <created>1745326903048</created>
+      <option name="number" value="00179" />
+      <option name="presentableId" value="LOCAL-00179" />
+      <option name="project" value="LOCAL" />
+      <updated>1745326903049</updated>
+    </task>
+    <task id="LOCAL-00180" summary="fix tests.plotting.test_plotting">
+      <option name="closed" value="true" />
+      <created>1745359204605</created>
+      <option name="number" value="00180" />
+      <option name="presentableId" value="LOCAL-00180" />
+      <option name="project" value="LOCAL" />
+      <updated>1745359204606</updated>
+    </task>
+    <task id="LOCAL-00181" summary="fix all tests">
+      <option name="closed" value="true" />
+      <created>1745362016569</created>
+      <option name="number" value="00181" />
+      <option name="presentableId" value="LOCAL-00181" />
+      <option name="project" value="LOCAL" />
+      <updated>1745362016569</updated>
+    </task>
+    <option name="localTasksCounter" value="182" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -579,9 +581,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="binance add progress bar" />
-    <MESSAGE value="binance add progress bar fix" />
-    <MESSAGE value="binance all works!" />
     <MESSAGE value="binance all works! fixed" />
     <MESSAGE value="polygon all works! fixed" />
     <MESSAGE value="fix yfinance" />
@@ -604,6 +603,9 @@
     <MESSAGE value="1 test remain" />
     <MESSAGE value="all tests fixed" />
     <MESSAGE value="ok" />
-    <option name="LAST_COMMIT_MESSAGE" value="ok" />
+    <MESSAGE value="add both flags to plot" />
+    <MESSAGE value="fix tests.plotting.test_plotting" />
+    <MESSAGE value="fix all tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix all tests" />
   </component>
 </project>

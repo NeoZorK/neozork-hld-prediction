@@ -85,3 +85,4 @@ models/
 # macOS files
 .DS_Store
 /workspace.xml
+*.xml
