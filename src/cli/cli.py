@@ -1,4 +1,4 @@
-# src/cli/cli.py # CORRECTED
+# src/cli/cli.py
 
 """
 Command Line Interface setup using argparse and RichHelpFormatter for colored help.
@@ -30,45 +30,32 @@ def parse_arguments():
     """Sets up argument parser using RichHelpFormatter and returns the parsed arguments."""
 
     # --- Main description ---
-    # Updated description to include all data sources
     main_description = textwrap.dedent("""
        Calculate and plot Shcherbyna Pressure Vector indicator using demo data,
        fetching from Yahoo Finance, reading from a CSV file, fetching from Polygon.io,
-       or fetching from Binance.
+       or fetching from Binance. Allows choosing the plotting library.
        """)
 
     # --- Example epilog ---
-    # Added example for Binance mode
     example_lines = [
         "[bold]Examples:[/bold]",
         "",
-        "  [dim]# Run with demo data and default rule[/]",
+        "  [dim]# Run with demo data (default plotly plot)[/]",
         "  [bold cyan]python run_analysis.py demo[/]",
         "",
-        "  [dim]# Run with demo data and Pressure_Vector rule[/]",
-        "  [bold cyan]python run_analysis.py demo --rule PV[/]",
+        "  [dim]# Run with demo data using mplfinance for plotting[/]",
+        "  [bold cyan]python run_analysis.py demo -d mpl[/]",
         "",
-         "  [dim]# Run using data from a specific CSV file[/]",
-         "  [bold cyan]python run_analysis.py csv --csv-file path/to/data.csv --point 0.01[/]",
-         "",
-         "  [dim]# Fetch Polygon.io data for Forex EUR/USD, D1 interval, specific dates[/]",
-         "  [dim]# (Requires POLYGON_API_KEY in .env and --point specified)[/]",
-         "  [bold cyan]python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2024-01-01 --end 2024-04-18 --point 0.00001[/]",
-         "",
-         "  [dim]# Fetch Binance data for BTC/USDT, M1 interval, specific dates[/]",
-         "  [dim]# (Requires --point specified, API keys optional for public data)[/]",
-         "  [bold cyan]python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2024-04-01 --end 2024-04-18 --point 0.01[/]",
-         "",
-        "  [dim]# Fetch Yahoo Finance data for 1 year of Daily EUR/USD, estimate point size, use PV_HighLow rule[/]",
-        "  [bold cyan]python run_analysis.py yf --ticker \"EURUSD=X\" --period 1y --interval D1 --rule PV_HighLow[/]",
+        "  [dim]# Run using data from a specific CSV file (plotly plot)[/]",
+        "  [bold cyan]python run_analysis.py csv --csv-file path/to/data.csv --point 0.01[/]",
         "",
-        "  [dim]# Fetch Yahoo Finance data for AAPL, H1 interval, specific date range, explicitly set point size[/]",
-        "  [bold cyan]python run_analysis.py yfinance --ticker AAPL --interval H1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule PHLD[/]"
+        "  [dim]# Fetch Polygon.io data and plot using mplfinance[/]",
+        "  [bold cyan]python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2024-01-01 --end 2024-04-18 --point 0.00001 -d mplfinance[/]",
+        # ... (keep other examples) ...
     ]
     examples_epilog = "\n".join(example_lines)
 
     #--- Argument Parser Setup ---
-    # Initializes the parser with description, formatter, and epilog.
     parser = argparse.ArgumentParser(
         description=main_description,
         formatter_class=RichHelpFormatter,
@@ -78,7 +65,6 @@ def parse_arguments():
 
     # --- Required Arguments Group ---
     required_group = parser.add_argument_group('Required Arguments')
-    # CORRECTED: Added 'binance' to choices
     required_group.add_argument('mode', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance'],
                                 help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance'.")
 
@@ -97,7 +83,7 @@ def parse_arguments():
                                    help="Instrument point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto). Overrides yfinance estimation. Required for 'csv', 'polygon', 'binance' modes.")
     # History selection (period or start/end dates)
     history_group = data_source_group.add_mutually_exclusive_group()
-    history_group.add_argument('--period', # Removed '-p' alias for clarity, use full name
+    history_group.add_argument('--period',
                                help="History period for yfinance (e.g., '1mo', '1y'). Not used if --start/--end are provided. Not used by Polygon/Binance.")
     history_group.add_argument('--start', help="Start date (YYYY-MM-DD). Used by yfinance, polygon, binance.")
     # Make --end related only to --start (not period)
@@ -107,7 +93,6 @@ def parse_arguments():
     # --- Indicator Options Group ---
     indicator_group = parser.add_argument_group('Indicator Options')
     rule_aliases_map = {'PHLD': 'Predict_High_Low_Direction', 'PV': 'Pressure_Vector', 'SR': 'Support_Resistants'}
-    # Get rule names directly from the Enum
     rule_names = list(TradingRule.__members__.keys())
     all_rule_choices = rule_names + list(rule_aliases_map.keys())
     default_rule_name = TradingRule.Predict_High_Low_Direction.name
@@ -119,6 +104,15 @@ def parse_arguments():
              f"Aliases: PHLD=Predict_High_Low_Direction, PV=Pressure_Vector, SR=Support_Resistants."
     )
 
+    # --- Plotting Options Group --- # <-- NEW GROUP
+    plotting_group = parser.add_argument_group('Plotting Options')
+    plotting_group.add_argument(
+        '-d', '--draw',
+        choices=['plotly', 'plt', 'mplfinance', 'mpl'],
+        default='plotly', # Default to plotly
+        help="Choose plotting library: 'plotly'/'plt' (interactive HTML) or 'mplfinance'/'mpl' (static image). Default: plotly."
+    )
+
     # --- Other Options Group ---
     other_group = parser.add_argument_group('Other Options')
     other_group.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
@@ -128,22 +122,15 @@ def parse_arguments():
                              help="Show program's version number and exit.")
 
     # --- Parse Arguments ---
-    # Use parse_known_args to handle potential extra args gracefully if needed,
-    # or just parse_args if no extra args are expected.
-    # args = parser.parse_args()
-    # Using parse_args which will exit on error automatically
     try:
         args = parser.parse_args()
     except SystemExit as e:
-         # Catch SystemExit raised by argparse on error/help/version
-         # We re-raise it to ensure tests expecting SystemExit work correctly
-         # Avoid printing traceback for simple exits like --help
          if e.code != 0:
               print(f"Argument parsing error (Code: {e.code}). Exiting.", file=sys.stderr)
-         sys.exit(e.code) # Exit with the same code argparse intended
+         sys.exit(e.code)
 
 
-    # --- Post-parsing validation --- CORRECTED/ENHANCED ---
+    # --- Post-parsing validation ---
     effective_mode = 'yfinance' if args.mode == 'yf' else args.mode
 
     # Check requirements for CSV mode
@@ -161,16 +148,12 @@ def parse_arguments():
 
     # Check date/period requirements for yfinance
     if effective_mode == 'yfinance':
-         # User must provide EITHER --period OR (--start AND --end)
          if not args.period and not (args.start and args.end):
              parser.error("for yfinance mode, provide either --period OR both --start and --end")
-         # If --start is given, --end is also mandatory
          if args.start and not args.end:
              parser.error("argument --end is required when --start is provided for yfinance mode")
-         # If --end is given, --start is also mandatory
          if args.end and not args.start:
              parser.error("argument --start is required when --end is provided for yfinance mode")
-         # Cannot use --period together with --start or --end
          if args.period and (args.start or args.end):
               parser.error("cannot use --period together with --start or --end for yfinance mode")
 
