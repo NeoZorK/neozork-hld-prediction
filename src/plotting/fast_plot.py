@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from bokeh.plotting import figure, output_file, save
 from bokeh.layouts import column
-from bokeh.models import HoverTool, Span, Title, ColumnDataSource
+from bokeh.models import HoverTool, Span, Title, ColumnDataSource, NumeralTickFormatter
 import webbrowser
 
 def plot_indicator_results_fast(
@@ -17,12 +17,12 @@ def plot_indicator_results_fast(
     """
     Draws a combined dashboard plot in fast mode using Bokeh:
     - Main panel: pseudo-candlesticks (OHLC bars), predicted high/low lines, predicted direction arrows, legend, interactive tooltips.
-    - Subpanels: Volume, PV, HL, Pressure.
+    - Subpanels: Volume, PV, HL, Pressure - each with its own hover tooltip.
     - All panels are adaptive in size with right margin for scrollbar.
     - Opens plot in default browser after saving.
     """
 
-    # Ensure index column exists and is datetime
+    # Ensure that the index column exists and is of datetime type
     if 'index' not in df.columns:
         if isinstance(df.index, pd.DatetimeIndex):
             df = df.copy()
@@ -50,6 +50,8 @@ def plot_indicator_results_fast(
         margin=(30, 80, 10, 60)  # (top, right, bottom, left)
     )
     p_main.yaxis.axis_label = "Price"
+    # Set Y axis formatter for 5 decimal places
+    p_main.yaxis.formatter = NumeralTickFormatter(format="0.00000")
 
     # Draw pseudo-candlesticks (OHLC bars)
     ohlc_segment = p_main.segment(
@@ -58,7 +60,7 @@ def plot_indicator_results_fast(
     )
 
     # Add hover tool for interactive tooltips only for ohlc_segment
-    hover = HoverTool(
+    hover_main = HoverTool(
         renderers=[ohlc_segment],
         tooltips=[
             ("Date", "@index{%F}"),
@@ -77,7 +79,7 @@ def plot_indicator_results_fast(
         formatters={"@index": "datetime"},
         mode='vline'
     )
-    p_main.add_tools(hover)
+    p_main.add_tools(hover_main)
 
     # Open tick (left)
     p_main.segment(
@@ -139,10 +141,24 @@ def plot_indicator_results_fast(
         sizing_mode="stretch_width", margin=(5, 80, 5, 60)
     )
     p_vol.yaxis.axis_label = "Volume"
+    vbar_vol = None
     if 'Volume' in df.columns:
-        p_vol.vbar(x='index', top='Volume', width=width_ms, color="#888888", alpha=0.55, legend_label="Volume", source=source)
+        vbar_vol = p_vol.vbar(x='index', top='Volume', width=width_ms, color="#888888", alpha=0.55, legend_label="Volume", source=source)
         p_vol.legend.location = "top_left"
         p_vol.legend.label_text_font_size = "10pt"
+
+    # Add hover tool for volume panel (no decimals for volume)
+    if vbar_vol:
+        hover_vol = HoverTool(
+            renderers=[vbar_vol],
+            tooltips=[
+                ("Date", "@index{%F}"),
+                ("Volume", "@Volume{0}")
+            ],
+            formatters={"@index": "datetime"},
+            mode='vline'
+        )
+        p_vol.add_tools(hover_vol)
 
     # ======================= PV PANEL =========================
     p_pv = figure(
@@ -151,12 +167,27 @@ def plot_indicator_results_fast(
         sizing_mode="stretch_width", margin=(5, 80, 5, 60)
     )
     p_pv.yaxis.axis_label = "PV"
+    p_pv.yaxis.formatter = NumeralTickFormatter(format="0.00000")
+    line_pv = None
     if 'PV' in df.columns:
-        p_pv.line('index', 'PV', color="orange", line_width=2, legend_label="PV", source=source)
+        line_pv = p_pv.line('index', 'PV', color="orange", line_width=2, legend_label="PV", source=source)
         zero = Span(location=0, dimension='width', line_color='gray', line_dash='dashed', line_width=1)
         p_pv.add_layout(zero)
         p_pv.legend.location = "top_left"
         p_pv.legend.label_text_font_size = "10pt"
+
+    # Add hover tool for PV panel
+    if line_pv:
+        hover_pv = HoverTool(
+            renderers=[line_pv],
+            tooltips=[
+                ("Date", "@index{%F}"),
+                ("PV", "@PV{0.5f}")
+            ],
+            formatters={"@index": "datetime"},
+            mode='vline'
+        )
+        p_pv.add_tools(hover_pv)
 
     # ======================= HL PANEL =========================
     p_hl = figure(
@@ -165,10 +196,25 @@ def plot_indicator_results_fast(
         sizing_mode="stretch_width", margin=(5, 80, 5, 60)
     )
     p_hl.yaxis.axis_label = "HL (Points)"
+    p_hl.yaxis.formatter = NumeralTickFormatter(format="0.00000")
+    line_hl = None
     if 'HL' in df.columns:
-        p_hl.line('index', 'HL', color="brown", line_width=2, legend_label="HL (Points)", source=source)
+        line_hl = p_hl.line('index', 'HL', color="brown", line_width=2, legend_label="HL (Points)", source=source)
         p_hl.legend.location = "top_left"
         p_hl.legend.label_text_font_size = "10pt"
+
+    # Add hover tool for HL panel
+    if line_hl:
+        hover_hl = HoverTool(
+            renderers=[line_hl],
+            tooltips=[
+                ("Date", "@index{%F}"),
+                ("HL", "@HL{0.5f}")
+            ],
+            formatters={"@index": "datetime"},
+            mode='vline'
+        )
+        p_hl.add_tools(hover_hl)
 
     # ======================= PRESSURE PANEL =========================
     p_pressure = figure(
@@ -177,12 +223,27 @@ def plot_indicator_results_fast(
         sizing_mode="stretch_width", margin=(5, 80, 10, 60)
     )
     p_pressure.yaxis.axis_label = "Pressure"
+    p_pressure.yaxis.formatter = NumeralTickFormatter(format="0.00000")
+    line_pressure = None
     if 'Pressure' in df.columns:
-        p_pressure.line('index', 'Pressure', color="blue", line_width=2, legend_label="Pressure", source=source)
+        line_pressure = p_pressure.line('index', 'Pressure', color="blue", line_width=2, legend_label="Pressure", source=source)
         zero2 = Span(location=0, dimension='width', line_color='gray', line_dash='dashed', line_width=1)
         p_pressure.add_layout(zero2)
         p_pressure.legend.location = "top_left"
         p_pressure.legend.label_text_font_size = "10pt"
+
+    # Add hover tool for Pressure panel
+    if line_pressure:
+        hover_pressure = HoverTool(
+            renderers=[line_pressure],
+            tooltips=[
+                ("Date", "@index{%F}"),
+                ("Pressure", "@Pressure{0.5f}")
+            ],
+            formatters={"@index": "datetime"},
+            mode='vline'
+        )
+        p_pressure.add_tools(hover_pressure)
 
     # ======================= COMBINE AND SAVE =========================
     layout = column(
