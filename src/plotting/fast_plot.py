@@ -5,6 +5,7 @@ import datashader.transfer_functions as tf
 import pandas as pd
 from bokeh.plotting import output_file, save, figure
 from bokeh.models import Title
+import webbrowser  # Added for opening HTML automatically
 
 def plot_indicator_results_fast(
     df,
@@ -16,7 +17,7 @@ def plot_indicator_results_fast(
     **kwargs
 ):
     """
-    Render a fast OHLC/indicator plot using Dask+Datashader+Bokeh.
+    Render a fast OHLC/indicator plot using Dask+Datashader+Bokeh and open it in the browser.
 
     Args:
         df (pd.DataFrame): DataFrame with at least columns ['Open', 'High', 'Low', 'Close'] and DateTimeIndex or index column.
@@ -27,7 +28,7 @@ def plot_indicator_results_fast(
         **kwargs: Not used (for signature compatibility).
 
     Returns:
-        None (saves interactive HTML to output_path)
+        None (saves interactive HTML to output_path and opens it in browser)
     """
 
     # Ensure there is a column 'index' of type datetime64[ns] for datashader
@@ -83,3 +84,7 @@ def plot_indicator_results_fast(
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     output_file(output_path, title=title)
     save(p)
+
+    # Automatically open the plot in the default web browser
+    abs_path = os.path.abspath(output_path)
+    webbrowser.open_new_tab(f"file://{abs_path}")
