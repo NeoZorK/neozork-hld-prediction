@@ -56,7 +56,7 @@ def plot_indicator_results_fast(
         df['Open'],
         color=["green" if x else "red" for x in inc],
         line_width=3,
-        legend_label=None
+        #legend_label=None
     )
     # Close tick (right)
     p_main.segment(
@@ -66,7 +66,7 @@ def plot_indicator_results_fast(
         df['Close'],
         color=["green" if x else "red" for x in inc],
         line_width=3,
-        legend_label=None
+       # legend_label=None
     )
 
     # Predicted High / Low Lines
