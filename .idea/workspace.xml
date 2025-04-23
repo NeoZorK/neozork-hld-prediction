@@ -7,8 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="bars for fast mode">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed fast demo">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plotting/fast_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting/fast_plot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00148" summary="try to fix fetchers test 8">
-      <option name="closed" value="true" />
-      <created>1745181173434</created>
-      <option name="number" value="00148" />
-      <option name="presentableId" value="LOCAL-00148" />
-      <option name="project" value="LOCAL" />
-      <updated>1745181173434</updated>
     </task>
     <task id="LOCAL-00149" summary="try to fix fetchers test 9">
       <option name="closed" value="true" />
@@ -554,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745433525931</updated>
     </task>
-    <option name="localTasksCounter" value="197" />
+    <task id="LOCAL-00197" summary="fixed fast demo">
+      <option name="closed" value="true" />
+      <created>1745434684207</created>
+      <option name="number" value="00197" />
+      <option name="presentableId" value="LOCAL-00197" />
+      <option name="project" value="LOCAL" />
+      <updated>1745434684207</updated>
+    </task>
+    <option name="localTasksCounter" value="198" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -581,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="init v0.1.6" />
     <MESSAGE value="try convert csv to parket" />
     <MESSAGE value="fixed convert csv to parket" />
     <MESSAGE value="fixed convert csv to parket add to readme" />
@@ -606,6 +606,7 @@
     <MESSAGE value="fix 1 test for fast&#10;v6" />
     <MESSAGE value="fix 1 test for fast&#10;v8 working but without CANDLES!" />
     <MESSAGE value="bars for fast mode" />
-    <option name="LAST_COMMIT_MESSAGE" value="bars for fast mode" />
+    <MESSAGE value="fixed fast demo" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed fast demo" />
   </component>
 </project>
