@@ -7,9 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed fast demo&#10;fix v6">
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed fast mode">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plotting/fast_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting/fast_plot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/plotting/test_fast_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/plotting/test_fast_plot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,14 +162,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00154" summary="binance add progress bar">
-      <option name="closed" value="true" />
-      <created>1745225145882</created>
-      <option name="number" value="00154" />
-      <option name="presentableId" value="LOCAL-00154" />
-      <option name="project" value="LOCAL" />
-      <updated>1745225145882</updated>
     </task>
     <task id="LOCAL-00155" summary="binance add progress bar fix">
       <option name="closed" value="true" />
@@ -555,7 +547,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745489102688</updated>
     </task>
-    <option name="localTasksCounter" value="203" />
+    <task id="LOCAL-00203" summary="fixed fast mode">
+      <option name="closed" value="true" />
+      <created>1745496854716</created>
+      <option name="number" value="00203" />
+      <option name="presentableId" value="LOCAL-00203" />
+      <option name="project" value="LOCAL" />
+      <updated>1745496854717</updated>
+    </task>
+    <option name="localTasksCounter" value="204" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,7 +582,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="ok" />
     <MESSAGE value="add both flags to plot" />
     <MESSAGE value="fix tests.plotting.test_plotting" />
     <MESSAGE value="fix all tests" />
@@ -607,6 +606,7 @@
     <MESSAGE value="fixed fast demo&#10;fix v4" />
     <MESSAGE value="fixed fast demo&#10;fix v5" />
     <MESSAGE value="fixed fast demo&#10;fix v6" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed fast demo&#10;fix v6" />
+    <MESSAGE value="fixed fast mode" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed fast mode" />
   </component>
 </project>
