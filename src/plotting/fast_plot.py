@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+# src/plotting/fast_plot.py
+#
+# Fast plotting routines for indicator dashboard visualization using Bokeh.
+# Author: NeoZorK (https://github.com/neozork)
+# This module provides a fast dashboard plot for OHLC financial data and indicator signals.
+# It is intended for use in research and quick result visualization, not for production trading.
+# All plotting functions are designed for Python 3.x and require Bokeh, Pandas, and related scientific libraries.
+
 import os
 import pandas as pd
 from bokeh.plotting import figure, output_file, save
@@ -7,43 +16,6 @@ from bokeh.models import (
 )
 import webbrowser
 
-
-def get_dynamic_half_width(index):
-    # Calculate dynamic bar half-width based on minimum difference between x values
-    if len(index) < 2:
-        return pd.Timedelta(milliseconds=18000000)  # fallback (5h)
-    diffs = (index[1:] - index[:-1]).total_seconds()
-    min_diff = min(diffs) if len(diffs) > 0 else 43200  # 12h in seconds fallback
-    return pd.Timedelta(seconds=min_diff * 0.4)  # 40% of the minimal bar width
-
-
-def get_unique_tooltips(df):
-    # Define the fields you want to appear, in order, and filter out missing or duplicates
-    preferred = [
-        ("Date", "@index{%F}"),
-        ("Open", "@Open{0.5f}"),
-        ("High", "@High{0.5f}"),
-        ("Low", "@Low{0.5f}"),
-        ("Close", "@Close{0.5f}"),
-        ("PPrice1", "@PPrice1{0.5f}"),
-        ("PPrice2", "@PPrice2{0.5f}"),
-        ("Direction", "@Direction"),
-        ("Pressure", "@Pressure{0.5f}"),
-        ("PV", "@PV{0.5f}"),
-        ("HL", "@HL{0.5f}"),
-        ("Volume", "@Volume{0}")
-    ]
-    existing = set(df.columns) | {"index"}
-    result = []
-    seen = set()
-    for label, expr in preferred:
-        col = expr.split("{")[0][1:] if expr.startswith("@") else None
-        if col and col in existing and label not in seen:
-            result.append((label, expr))
-            seen.add(label)
-    return result
-
-
 def plot_indicator_results_fast(
     df,
     rule,
@@ -52,14 +24,16 @@ def plot_indicator_results_fast(
     width=1800,
     height=1100,
     mode="fast",
+    data_source="demo",
     **kwargs
 ):
     """
     Draws fast mode dashboard plot using Bokeh.
-    - Trading rule is displayed at the very top above the figure.
-    - Main panel: OHLC bars, open/close ticks (with dynamic width!), open/close points, predicted high/low lines, direction arrows, legend, interactive tooltips.
+    - The trading rule is displayed at the very top above the figure.
+    - Main panel: OHLC bars, open/close ticks (fixed pixel length), open/close points, predicted high/low lines, direction arrows, legend, interactive tooltips.
     - Subpanels: Volume, PV, HL, Pressure - each with its own hover tooltip.
     - All panels are adaptive in size with right margin for scrollbar.
+    - Tooltip in 'csv' (parquet) mode is concise and not duplicated.
     - Opens plot in default browser after saving.
     """
 
@@ -74,17 +48,29 @@ def plot_indicator_results_fast(
 
     # Compute direction for coloring bars
     df['direction'] = (df['Close'] >= df['Open'])
-    inc = df['direction']
-    dec = ~df['direction']
 
-    # Dynamic bar width for open/close ticks
-    index = df['index'].values
-    if len(index) > 1:
-        diffs = (df['index'][1:] - df['index'][:-1]).total_seconds()
-        min_diff = min(diffs) if len(diffs) > 0 else 43200  # 12h fallback
-        dynamic_half_width = pd.to_timedelta(min_diff * 0.4, unit='s')
+    # Prepare color columns for open/close ticks
+    df['open_tick_color'] = df['direction'].apply(lambda x: "green" if x else "red")
+    df['close_tick_color'] = df['direction'].apply(lambda x: "green" if x else "red")
+
+    # Calculate tick offsets for open/close ticks
+    if len(df) > 1:
+        approx_bar_width = (df['index'].iloc[1] - df['index'].iloc[0]).total_seconds() * 1000
     else:
-        dynamic_half_width = pd.Timedelta(hours=6)
+        approx_bar_width = 12 * 60 * 60 * 1000
+    tick_ms = approx_bar_width // 3
+
+    # Calculate columns for open/close tick segment coordinates
+    df['open_tick_x0'] = df['index'] - pd.to_timedelta(tick_ms, unit='ms')
+    df['open_tick_x1'] = df['index']
+    df['open_tick_y0'] = df['Open']
+    df['open_tick_y1'] = df['Open']
+
+    df['close_tick_x0'] = df['index']
+    df['close_tick_x1'] = df['index'] + pd.to_timedelta(tick_ms, unit='ms')
+    df['close_tick_y0'] = df['Close']
+    df['close_tick_y1'] = df['Close']
+
     # Prepare ColumnDataSource for interactive tooltips
     source = ColumnDataSource(df)
 
@@ -111,26 +97,28 @@ def plot_indicator_results_fast(
         color="black", line_width=1.5, source=source, legend_label="OHLC Bar"
     )
 
-    # Draw open tick (left) - dynamic width
+    # Draw open tick (left) using only column names with source
     p_main.segment(
-        x0=df['index'] - dynamic_half_width,
-        y0=df['Open'],
-        x1=df['index'],
-        y1=df['Open'],
-        color=["green" if x else "red" for x in inc],
+        x0='open_tick_x0',
+        y0='open_tick_y0',
+        x1='open_tick_x1',
+        y1='open_tick_y1',
+        color='open_tick_color',
         line_width=3,
-        legend_label="Open"
+        legend_label="Open",
+        source=source
     )
 
-    # Draw close tick (right) - dynamic width
+    # Draw close tick (right) using only column names with source
     p_main.segment(
-        x0=df['index'],
-        y0=df['Close'],
-        x1=df['index'] + dynamic_half_width,
-        y1=df['Close'],
-        color=["green" if x else "red" for x in inc],
+        x0='close_tick_x0',
+        y0='close_tick_y0',
+        x1='close_tick_x1',
+        y1='close_tick_y1',
+        color='close_tick_color',
         line_width=3,
-        legend_label="Close"
+        legend_label="Close",
+        source=source
     )
 
     # Draw open and close points as circles for clarity
@@ -190,15 +178,44 @@ def plot_indicator_results_fast(
     )
     p_main.add_layout(subtitle, 'above')
 
-    # Hover tool for main chart (unique tooltips only)
-    unique_tooltips = get_unique_tooltips(df)
+    # ================== TOOLTIP CONFIG ===================================
+    # For parquet/csv, short tooltip (no repeats)
+    if data_source == "csv":
+        tooltip_fields = [
+            ("Date", "@index{%F}"),
+            ("Open", "@Open{0.5f}"),
+            ("High", "@High{0.5f}"),
+            ("Low", "@Low{0.5f}"),
+            ("Close", "@Close{0.5f}"),
+            ("Volume", "@Volume{0}"),
+            ("HL", "@HL{0.5f}"),
+            ("Pressure", "@Pressure{0.5f}"),
+            ("PV", "@PV{0.5f}")
+        ]
+    else:
+        tooltip_fields = [
+            ("Date", "@index{%F}"),
+            ("Open", "@Open{0.5f}"),
+            ("High", "@High{0.5f}"),
+            ("Low", "@Low{0.5f}"),
+            ("Close", "@Close{0.5f}"),
+            ("PPrice1", "@PPrice1{0.5f}"),
+            ("PPrice2", "@PPrice2{0.5f}"),
+            ("Direction", "@Direction"),
+            ("Pressure", "@Pressure{0.5f}"),
+            ("PV", "@PV{0.5f}"),
+            ("HL", "@HL{0.5f}"),
+            ("Volume", "@Volume{0}")
+        ]
+
     hover_main = HoverTool(
         renderers=[ohlc_segment],
-        tooltips=unique_tooltips,
+        tooltips=tooltip_fields,
         formatters={"@index": "datetime"},
         mode='vline'
     )
     p_main.add_tools(hover_main)
+    # ======================================================================
 
     # === VOLUME PANEL ===
     p_vol = figure(
@@ -209,13 +226,16 @@ def plot_indicator_results_fast(
     p_vol.yaxis.axis_label = "Volume"
     vbar_vol = None
     if 'Volume' in df.columns:
-        vbar_vol = p_vol.vbar(x='index', top='Volume', width=dynamic_half_width * 2, color="#888888", alpha=0.55, legend_label="Volume", source=source)
+        vbar_vol = p_vol.vbar(x='index', top='Volume', width=approx_bar_width//2 if 'approx_bar_width' in locals() else 1000000, color="#888888", alpha=0.55, legend_label="Volume", source=source)
         p_vol.legend.location = "top_left"
         p_vol.legend.label_text_font_size = "10pt"
     if vbar_vol:
         hover_vol = HoverTool(
             renderers=[vbar_vol],
-            tooltips=[("Date", "@index{%F}"), ("Volume", "@Volume{0}")],
+            tooltips=[
+                ("Date", "@index{%F}"),
+                ("Volume", "@Volume{0}")
+            ],
             formatters={"@index": "datetime"},
             mode='vline'
         )
@@ -239,7 +259,10 @@ def plot_indicator_results_fast(
     if line_pv:
         hover_pv = HoverTool(
             renderers=[line_pv],
-            tooltips=[("Date", "@index{%F}"), ("PV", "@PV{0.5f}")],
+            tooltips=[
+                ("Date", "@index{%F}"),
+                ("PV", "@PV{0.5f}")
+            ],
             formatters={"@index": "datetime"},
             mode='vline'
         )
@@ -261,7 +284,10 @@ def plot_indicator_results_fast(
     if line_hl:
         hover_hl = HoverTool(
             renderers=[line_hl],
-            tooltips=[("Date", "@index{%F}"), ("HL", "@HL{0.5f}")],
+            tooltips=[
+                ("Date", "@index{%F}"),
+                ("HL", "@HL{0.5f}")
+            ],
             formatters={"@index": "datetime"},
             mode='vline'
         )
@@ -285,7 +311,10 @@ def plot_indicator_results_fast(
     if line_pressure:
         hover_pressure = HoverTool(
             renderers=[line_pressure],
-            tooltips=[("Date", "@index{%F}"), ("Pressure", "@Pressure{0.5f}")],
+            tooltips=[
+                ("Date", "@index{%F}"),
+                ("Pressure", "@Pressure{0.5f}")
+            ],
             formatters={"@index": "datetime"},
             mode='vline'
         )
