@@ -2,7 +2,9 @@ import os
 import pandas as pd
 from bokeh.plotting import figure, output_file, save
 from bokeh.layouts import column
-from bokeh.models import HoverTool, Span, Title, ColumnDataSource, NumeralTickFormatter
+from bokeh.models import (
+    HoverTool, Span, Title, ColumnDataSource, NumeralTickFormatter, Label
+)
 import webbrowser
 
 def plot_indicator_results_fast(
@@ -12,13 +14,16 @@ def plot_indicator_results_fast(
     output_path="results/plots/fast_plot.html",
     width=1800,
     height=1100,
+    mode="fast",
     **kwargs
 ):
     """
-    Draws a combined dashboard plot in fast mode using Bokeh:
+    Draw fast mode combined dashboard plot using Bokeh:
     - Main panel: pseudo-candlesticks (OHLC bars), predicted high/low lines, predicted direction arrows, legend, interactive tooltips.
     - Subpanels: Volume, PV, HL, Pressure - each with its own hover tooltip.
     - All panels are adaptive in size with right margin for scrollbar.
+    - Displays trading rule on top.
+    - Only in 'demo' mode are open/close ticks drawn on bars.
     - Opens plot in default browser after saving.
     """
 
@@ -41,25 +46,24 @@ def plot_indicator_results_fast(
     # Prepare ColumnDataSource for interactive tooltips
     source = ColumnDataSource(df)
 
-    # ======================= MAIN PANEL (PRICE & SIGNALS) =========================
+    # =========== MAIN PANEL (PRICE & SIGNALS) ===========
     p_main = figure(
         width=width, height=int(height*0.48),
         x_axis_type="datetime", title=title,
         background_fill_color="#f5f7fa",
         sizing_mode="stretch_width",
-        margin=(30, 80, 10, 60)  # (top, right, bottom, left)
+        margin=(50, 80, 10, 60)  # (top, right, bottom, left)
     )
     p_main.yaxis.axis_label = "Price"
-    # Set Y axis formatter for 5 decimal places
     p_main.yaxis.formatter = NumeralTickFormatter(format="0.00000")
 
-    # Draw pseudo-candlesticks (OHLC bars)
+    # Draw main OHLC bar (vertical segment)
     ohlc_segment = p_main.segment(
         x0='index', y0='High', x1='index', y1='Low',
         color="black", line_width=1.5, source=source, legend_label="OHLC Bar"
     )
 
-    # Add hover tool for interactive tooltips only for ohlc_segment
+    # Add hover tool for OHLC segment only
     hover_main = HoverTool(
         renderers=[ohlc_segment],
         tooltips=[
@@ -81,44 +85,44 @@ def plot_indicator_results_fast(
     )
     p_main.add_tools(hover_main)
 
-    # Open tick (left)
-    p_main.segment(
-        x0=df['index'] - pd.to_timedelta(width_ms // 2, unit='ms'),
-        y0=df['Open'],
-        x1=df['index'],
-        y1=df['Open'],
-        color=["green" if x else "red" for x in inc],
-        line_width=3
-    )
-    # Close tick (right)
-    p_main.segment(
-        x0=df['index'],
-        y0=df['Close'],
-        x1=df['index'] + pd.to_timedelta(width_ms // 2, unit='ms'),
-        y1=df['Close'],
-        color=["green" if x else "red" for x in inc],
-        line_width=3
-    )
+    # Draw open/close horizontal ticks ONLY in demo mode
+    if mode == "demo":
+        # Open tick (left)
+        p_main.segment(
+            x0=df['index'] - pd.to_timedelta(width_ms // 2, unit='ms'),
+            y0=df['Open'],
+            x1=df['index'],
+            y1=df['Open'],
+            color=["green" if x else "red" for x in inc],
+            line_width=3
+        )
+        # Close tick (right)
+        p_main.segment(
+            x0=df['index'],
+            y0=df['Close'],
+            x1=df['index'] + pd.to_timedelta(width_ms // 2, unit='ms'),
+            y1=df['Close'],
+            color=["green" if x else "red" for x in inc],
+            line_width=3
+        )
 
-    # Predicted High / Low Lines
+    # Predicted high/low lines
     if 'PPrice1' in df.columns:
         p_main.line('index', 'PPrice1', line_color='green', line_dash='dotted', line_width=2, legend_label="Predicted Low (PPrice1)", source=source)
     if 'PPrice2' in df.columns:
         p_main.line('index', 'PPrice2', line_color='red', line_dash='dotted', line_width=2, legend_label="Predicted High (PPrice2)", source=source)
 
-    # Predicted Direction Arrows (triangle up/down)
+    # Predicted direction arrows
     if 'Direction' in df.columns:
-        # 1 = buy prediction (up, green), 2 = sell prediction (down, red)
         buy_idx = df['Direction'] == 1
         sell_idx = df['Direction'] == 2
-
-        # Plot up arrows for predicted up
+        # Up arrows for predicted up
         p_main.triangle(
             x=df.loc[buy_idx, 'index'],
             y=df.loc[buy_idx, 'Low'] - (df['High'] - df['Low']).mean() * 0.08,
             size=16, color="lime", legend_label="Predicted UP", alpha=0.9
         )
-        # Plot down arrows for predicted down
+        # Down arrows for predicted down
         p_main.inverted_triangle(
             x=df.loc[sell_idx, 'index'],
             y=df.loc[sell_idx, 'High'] + (df['High'] - df['Low']).mean() * 0.08,
@@ -130,11 +134,24 @@ def plot_indicator_results_fast(
     p_main.legend.click_policy = "hide"
     p_main.legend.label_text_font_size = "13pt"
 
-    # Add chart subtitle
+    # Add chart subtitle and TRADING RULE on top
     subtitle = Title(text="Fast Mode: OHLC bars, predicted lines/arrows, indicators", align="center", text_font_size="11pt")
     p_main.add_layout(subtitle, 'above')
+    # Trading rule in a colored label at the very top
+    rule_label = Label(
+        x=0, y=0, x_units='screen', y_units='screen',
+        text=f"Trading Rule: {rule}",
+        render_mode='css',
+        text_font_size="15pt",
+        text_color="#2e5cb8",
+        background_fill_color="#f7f7f7",
+        background_fill_alpha=0.9,
+        border_line_alpha=0,
+        y_offset=30
+    )
+    p_main.add_layout(rule_label)
 
-    # ======================= VOLUME PANEL =========================
+    # =========== VOLUME PANEL ===========
     p_vol = figure(
         width=width, height=int(height*0.13), x_axis_type="datetime",
         x_range=p_main.x_range, background_fill_color="#f5f7fa",
@@ -146,8 +163,6 @@ def plot_indicator_results_fast(
         vbar_vol = p_vol.vbar(x='index', top='Volume', width=width_ms, color="#888888", alpha=0.55, legend_label="Volume", source=source)
         p_vol.legend.location = "top_left"
         p_vol.legend.label_text_font_size = "10pt"
-
-    # Add hover tool for volume panel (no decimals for volume)
     if vbar_vol:
         hover_vol = HoverTool(
             renderers=[vbar_vol],
@@ -160,7 +175,7 @@ def plot_indicator_results_fast(
         )
         p_vol.add_tools(hover_vol)
 
-    # ======================= PV PANEL =========================
+    # =========== PV PANEL ===========
     p_pv = figure(
         width=width, height=int(height*0.13), x_axis_type="datetime",
         x_range=p_main.x_range, background_fill_color="#f5f7fa",
@@ -175,8 +190,6 @@ def plot_indicator_results_fast(
         p_pv.add_layout(zero)
         p_pv.legend.location = "top_left"
         p_pv.legend.label_text_font_size = "10pt"
-
-    # Add hover tool for PV panel
     if line_pv:
         hover_pv = HoverTool(
             renderers=[line_pv],
@@ -189,7 +202,7 @@ def plot_indicator_results_fast(
         )
         p_pv.add_tools(hover_pv)
 
-    # ======================= HL PANEL =========================
+    # =========== HL PANEL ===========
     p_hl = figure(
         width=width, height=int(height*0.13), x_axis_type="datetime",
         x_range=p_main.x_range, background_fill_color="#f5f7fa",
@@ -202,8 +215,6 @@ def plot_indicator_results_fast(
         line_hl = p_hl.line('index', 'HL', color="brown", line_width=2, legend_label="HL (Points)", source=source)
         p_hl.legend.location = "top_left"
         p_hl.legend.label_text_font_size = "10pt"
-
-    # Add hover tool for HL panel
     if line_hl:
         hover_hl = HoverTool(
             renderers=[line_hl],
@@ -216,7 +227,7 @@ def plot_indicator_results_fast(
         )
         p_hl.add_tools(hover_hl)
 
-    # ======================= PRESSURE PANEL =========================
+    # =========== PRESSURE PANEL ===========
     p_pressure = figure(
         width=width, height=int(height*0.13), x_axis_type="datetime",
         x_range=p_main.x_range, background_fill_color="#f5f7fa",
@@ -231,8 +242,6 @@ def plot_indicator_results_fast(
         p_pressure.add_layout(zero2)
         p_pressure.legend.location = "top_left"
         p_pressure.legend.label_text_font_size = "10pt"
-
-    # Add hover tool for Pressure panel
     if line_pressure:
         hover_pressure = HoverTool(
             renderers=[line_pressure],
@@ -245,7 +254,7 @@ def plot_indicator_results_fast(
         )
         p_pressure.add_tools(hover_pressure)
 
-    # ======================= COMBINE AND SAVE =========================
+    # =========== COMBINE AND SAVE ===========
     layout = column(
         p_main,
         p_vol,
