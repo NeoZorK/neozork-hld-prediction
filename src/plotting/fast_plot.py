@@ -3,7 +3,7 @@ import pandas as pd
 from bokeh.plotting import figure, output_file, save
 from bokeh.layouts import column
 from bokeh.models import (
-    HoverTool, Span, Title, ColumnDataSource, NumeralTickFormatter, Label
+    HoverTool, Span, Title, ColumnDataSource, NumeralTickFormatter, Div
 )
 import webbrowser
 
@@ -18,16 +18,15 @@ def plot_indicator_results_fast(
     **kwargs
 ):
     """
-    Draw fast mode combined dashboard plot using Bokeh:
-    - Main panel: pseudo-candlesticks (OHLC bars), predicted high/low lines, predicted direction arrows, legend, interactive tooltips.
+    Draws fast mode dashboard plot using Bokeh.
+    - The trading rule is displayed at the very top above the figure.
+    - Main panel: OHLC bars, open/close ticks, open/close points, predicted high/low lines, direction arrows, legend, interactive tooltips.
     - Subpanels: Volume, PV, HL, Pressure - each with its own hover tooltip.
     - All panels are adaptive in size with right margin for scrollbar.
-    - Displays trading rule on top.
-    - Only in 'demo' mode are open/close ticks drawn on bars.
     - Opens plot in default browser after saving.
     """
 
-    # Ensure that the index column exists and is of datetime type
+    # Ensure the index column exists and is datetime type
     if 'index' not in df.columns:
         if isinstance(df.index, pd.DatetimeIndex):
             df = df.copy()
@@ -36,34 +35,119 @@ def plot_indicator_results_fast(
             raise ValueError("DataFrame must have datetime index or 'index' column.")
     df['index'] = pd.to_datetime(df['index'])
 
-    # Calculate up/down direction for coloring bars
+    # Compute direction for coloring bars
     df['direction'] = (df['Close'] >= df['Open'])
     inc = df['direction']
     dec = ~df['direction']
 
-    width_ms = 12 * 60 * 60 * 1000  # Half a day in milliseconds for bar width
+    width_ms = 12 * 60 * 60 * 1000  # Half a day in ms for bar width
 
     # Prepare ColumnDataSource for interactive tooltips
     source = ColumnDataSource(df)
 
-    # =========== MAIN PANEL (PRICE & SIGNALS) ===========
+    # === TRADING RULE HEADER ===
+    trading_rule_div = Div(
+        text=f"<b style='font-size:18pt;color:#2e5cb8;text-align:center;display:block;'>Trading Rule: {rule}</b>",
+        width=width, height=40
+    )
+
+    # === MAIN PANEL (PRICE & SIGNALS) ===
     p_main = figure(
         width=width, height=int(height*0.48),
         x_axis_type="datetime", title=title,
         background_fill_color="#f5f7fa",
         sizing_mode="stretch_width",
-        margin=(50, 80, 10, 60)  # (top, right, bottom, left)
+        margin=(10, 80, 10, 60)
     )
     p_main.yaxis.axis_label = "Price"
     p_main.yaxis.formatter = NumeralTickFormatter(format="0.00000")
 
-    # Draw main OHLC bar (vertical segment)
+    # Draw OHLC bar (vertical segment)
     ohlc_segment = p_main.segment(
         x0='index', y0='High', x1='index', y1='Low',
         color="black", line_width=1.5, source=source, legend_label="OHLC Bar"
     )
 
-    # Add hover tool for OHLC segment only
+    # Draw open tick (left)
+    p_main.segment(
+        x0=df['index'] - pd.to_timedelta(width_ms // 2, unit='ms'),
+        y0=df['Open'],
+        x1=df['index'],
+        y1=df['Open'],
+        color=["green" if x else "red" for x in inc],
+        line_width=3,
+        legend_label="Open"
+    )
+
+    # Draw close tick (right)
+    p_main.segment(
+        x0=df['index'],
+        y0=df['Close'],
+        x1=df['index'] + pd.to_timedelta(width_ms // 2, unit='ms'),
+        y1=df['Close'],
+        color=["green" if x else "red" for x in inc],
+        line_width=3,
+        legend_label="Close"
+    )
+
+    # Draw open and close points as circles for clarity
+    p_main.scatter(
+        x='index',
+        y='Open',
+        marker="circle",
+        size=7,
+        color="green",
+        source=source,
+        alpha=0.7,
+        legend_label="Open Point"
+    )
+    p_main.scatter(
+        x='index',
+        y='Close',
+        marker="circle",
+        size=7,
+        color="red",
+        source=source,
+        alpha=0.7,
+        legend_label="Close Point"
+    )
+
+    # Draw predicted high/low lines
+    if 'PPrice1' in df.columns:
+        p_main.line('index', 'PPrice1', line_color='green', line_dash='dotted', line_width=2, legend_label="Predicted Low (PPrice1)", source=source)
+    if 'PPrice2' in df.columns:
+        p_main.line('index', 'PPrice2', line_color='red', line_dash='dotted', line_width=2, legend_label="Predicted High (PPrice2)", source=source)
+
+    # Draw predicted direction arrows
+    if 'Direction' in df.columns:
+        buy_idx = df['Direction'] == 1
+        sell_idx = df['Direction'] == 2
+        # Up arrows for predicted up
+        p_main.scatter(
+            x=df.loc[buy_idx, 'index'],
+            y=df.loc[buy_idx, 'Low'] - (df['High'] - df['Low']).mean() * 0.08,
+            size=16, color="lime", marker="triangle", legend_label="Predicted UP", alpha=0.9
+        )
+        # Down arrows for predicted down
+        p_main.scatter(
+            x=df.loc[sell_idx, 'index'],
+            y=df.loc[sell_idx, 'High'] + (df['High'] - df['Low']).mean() * 0.08,
+            size=16, color="red", marker="inverted_triangle", legend_label="Predicted DOWN", alpha=0.9
+        )
+
+    # Overlay legend
+    p_main.legend.location = "top_left"
+    p_main.legend.click_policy = "hide"
+    p_main.legend.label_text_font_size = "13pt"
+
+    # Add chart subtitle
+    subtitle = Title(
+        text="Fast Mode: OHLC bars, open/close points, predicted lines/arrows, indicators",
+        align="center", text_font_size="11pt"
+    )
+    p_main.add_layout(subtitle, 'above')
+
+    # Hover tool for main chart
     hover_main = HoverTool(
         renderers=[ohlc_segment],
         tooltips=[
@@ -85,73 +169,7 @@ def plot_indicator_results_fast(
     )
     p_main.add_tools(hover_main)
 
-    # Draw open/close horizontal ticks ONLY in demo mode
-    if mode == "demo":
-        # Open tick (left)
-        p_main.segment(
-            x0=df['index'] - pd.to_timedelta(width_ms // 2, unit='ms'),
-            y0=df['Open'],
-            x1=df['index'],
-            y1=df['Open'],
-            color=["green" if x else "red" for x in inc],
-            line_width=3
-        )
-        # Close tick (right)
-        p_main.segment(
-            x0=df['index'],
-            y0=df['Close'],
-            x1=df['index'] + pd.to_timedelta(width_ms // 2, unit='ms'),
-            y1=df['Close'],
-            color=["green" if x else "red" for x in inc],
-            line_width=3
-        )
-
-    # Predicted high/low lines
-    if 'PPrice1' in df.columns:
-        p_main.line('index', 'PPrice1', line_color='green', line_dash='dotted', line_width=2, legend_label="Predicted Low (PPrice1)", source=source)
-    if 'PPrice2' in df.columns:
-        p_main.line('index', 'PPrice2', line_color='red', line_dash='dotted', line_width=2, legend_label="Predicted High (PPrice2)", source=source)
-
-    # Predicted direction arrows
-    if 'Direction' in df.columns:
-        buy_idx = df['Direction'] == 1
-        sell_idx = df['Direction'] == 2
-        # Up arrows for predicted up
-        p_main.triangle(
-            x=df.loc[buy_idx, 'index'],
-            y=df.loc[buy_idx, 'Low'] - (df['High'] - df['Low']).mean() * 0.08,
-            size=16, color="lime", legend_label="Predicted UP", alpha=0.9
-        )
-        # Down arrows for predicted down
-        p_main.inverted_triangle(
-            x=df.loc[sell_idx, 'index'],
-            y=df.loc[sell_idx, 'High'] + (df['High'] - df['Low']).mean() * 0.08,
-            size=16, color="red", legend_label="Predicted DOWN", alpha=0.9
-        )
-
-    # Overlay legend
-    p_main.legend.location = "top_left"
-    p_main.legend.click_policy = "hide"
-    p_main.legend.label_text_font_size = "13pt"
-
-    # Add chart subtitle and TRADING RULE on top
-    subtitle = Title(text="Fast Mode: OHLC bars, predicted lines/arrows, indicators", align="center", text_font_size="11pt")
-    p_main.add_layout(subtitle, 'above')
-    # Trading rule in a colored label at the very top
-    rule_label = Label(
-        x=0, y=0, x_units='screen', y_units='screen',
-        text=f"Trading Rule: {rule}",
-        render_mode='css',
-        text_font_size="15pt",
-        text_color="#2e5cb8",
-        background_fill_color="#f7f7f7",
-        background_fill_alpha=0.9,
-        border_line_alpha=0,
-        y_offset=30
-    )
-    p_main.add_layout(rule_label)
-
-    # =========== VOLUME PANEL ===========
+    # === VOLUME PANEL ===
     p_vol = figure(
         width=width, height=int(height*0.13), x_axis_type="datetime",
         x_range=p_main.x_range, background_fill_color="#f5f7fa",
@@ -175,7 +193,7 @@ def plot_indicator_results_fast(
         )
         p_vol.add_tools(hover_vol)
 
-    # =========== PV PANEL ===========
+    # === PV PANEL ===
     p_pv = figure(
         width=width, height=int(height*0.13), x_axis_type="datetime",
         x_range=p_main.x_range, background_fill_color="#f5f7fa",
@@ -202,7 +220,7 @@ def plot_indicator_results_fast(
         )
         p_pv.add_tools(hover_pv)
 
-    # =========== HL PANEL ===========
+    # === HL PANEL ===
     p_hl = figure(
         width=width, height=int(height*0.13), x_axis_type="datetime",
         x_range=p_main.x_range, background_fill_color="#f5f7fa",
@@ -227,7 +245,7 @@ def plot_indicator_results_fast(
         )
         p_hl.add_tools(hover_hl)
 
-    # =========== PRESSURE PANEL ===========
+    # === PRESSURE PANEL ===
     p_pressure = figure(
         width=width, height=int(height*0.13), x_axis_type="datetime",
         x_range=p_main.x_range, background_fill_color="#f5f7fa",
@@ -254,8 +272,9 @@ def plot_indicator_results_fast(
         )
         p_pressure.add_tools(hover_pressure)
 
-    # =========== COMBINE AND SAVE ===========
+    # === COMBINE AND SAVE ===
     layout = column(
+        trading_rule_div,
         p_main,
         p_vol,
         p_pv,
