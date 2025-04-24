@@ -7,10 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed fast demo&#10;fix v4">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plotting/fast_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plotting/fast_plot.py" afterDir="false" />
-    </list>
+    <list default="true" id="866a82a7-05ff-4507-8caa-6a430dc818af" name="Changes" comment="fixed fast demo&#10;fix v5" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -162,14 +159,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1744219690111</updated>
-    </task>
-    <task id="LOCAL-00152" summary="fixed all">
-      <option name="closed" value="true" />
-      <created>1745182523694</created>
-      <option name="number" value="00152" />
-      <option name="presentableId" value="LOCAL-00152" />
-      <option name="project" value="LOCAL" />
-      <updated>1745182523694</updated>
     </task>
     <task id="LOCAL-00153" summary="v0.1.5">
       <option name="closed" value="true" />
@@ -555,7 +544,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745487002497</updated>
     </task>
-    <option name="localTasksCounter" value="201" />
+    <task id="LOCAL-00201" summary="fixed fast demo&#10;fix v5">
+      <option name="closed" value="true" />
+      <created>1745487966535</created>
+      <option name="number" value="00201" />
+      <option name="presentableId" value="LOCAL-00201" />
+      <option name="project" value="LOCAL" />
+      <updated>1745487966535</updated>
+    </task>
+    <option name="localTasksCounter" value="202" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -582,7 +579,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="1 test remain" />
     <MESSAGE value="all tests fixed" />
     <MESSAGE value="ok" />
     <MESSAGE value="add both flags to plot" />
@@ -607,6 +603,7 @@
     <MESSAGE value="fixed fast demo&#10;fix v1" />
     <MESSAGE value="fixed fast demo&#10;fix v3" />
     <MESSAGE value="fixed fast demo&#10;fix v4" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed fast demo&#10;fix v4" />
+    <MESSAGE value="fixed fast demo&#10;fix v5" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed fast demo&#10;fix v5" />
   </component>
 </project>
