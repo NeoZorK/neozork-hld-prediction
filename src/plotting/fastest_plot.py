@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 # src/plotting/fastest_plot.py
-#
-# Fastest plotting routines for indicator dashboard visualization using Plotly + Dask + Datashader.
-# Author: NeoZorK (https://github.com/neozork)
-# This module provides the highest performance dashboard plot for OHLC financial data and indicator signals.
-# It is intended for very large datasets where maximum performance is required.
-# All plotting functions are designed for Python 3.x and require Plotly, Dask, Datashader, and related libraries.
 
 import os
 import pandas as pd
@@ -15,23 +9,22 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import datashader as ds
 import datashader.transfer_functions as tf
-from datashader.colors import inferno, viridis, Greys9
+from datashader.colors import Greys9
 import colorcet as cc
 import plotly.io as pio
 import webbrowser
 from functools import partial
 
-
 def plot_indicator_results_fastest(
-        df,
-        rule,
-        title='',
-        output_path="results/plots/fastest_plot.html",
-        width=1800,
-        height=1100,
-        mode="fastest",
-        data_source="demo",
-        **kwargs
+    df,
+    rule,
+    title='',
+    output_path="results/plots/fastest_plot.html",
+    width=1800,
+    height=1100,
+    mode="fastest",
+    data_source="demo",
+    **kwargs
 ):
     """
     Draws fastest mode dashboard plot using Plotly + Dask + Datashader for extremely large datasets.
@@ -76,16 +69,17 @@ def plot_indicator_results_fastest(
     # Compute a subset of data if very large (for initial visualization)
     if len(ddf) > 50000:
         # Sample data for initial display
-        display_df = ddf.sample(frac=min(1.0, 50000 / len(ddf)), random_state=42).compute()
+        display_df = ddf.sample(frac=min(1.0, 50000/len(ddf)), random_state=42).compute()
         # Sort by index for proper display
         display_df = display_df.sort_values('index')
     else:
         display_df = ddf.compute()
 
     # Compute direction for coloring
-    display_df['direction'] = (display_df['Close'] >= display_df['Open'])
-    display_df['increasing'] = display_df['direction']
-    display_df['decreasing'] = ~display_df['direction']
+    display_df = display_df.copy()  # Ensure no view warning
+    display_df.loc[:, 'direction'] = (display_df['Close'] >= display_df['Open'])
+    display_df.loc[:, 'increasing'] = display_df['direction']
+    display_df.loc[:, 'decreasing'] = ~display_df['direction']
 
     # Create subplots layout
     fig = make_subplots(
@@ -173,7 +167,7 @@ def plot_indicator_results_fastest(
         # Use datashader to efficiently render large volume data
         if len(display_df) > 10000:
             # Create canvas
-            cvs = ds.Canvas(plot_width=width, plot_height=int(height * 0.13))
+            cvs = ds.Canvas(plot_width=width, plot_height=int(height*0.13))
             # Aggregate volume data
             agg = cvs.line(display_df, 'index', 'Volume')
             # Convert to image
@@ -329,15 +323,8 @@ def plot_indicator_results_fastest(
         pressure_max = max(0, display_df['Pressure'].max() * 1.1)
         fig.update_yaxes(title_text="Pressure", row=5, col=1, tickformat=".5f", range=[pressure_min, pressure_max])
 
-    # Configure hover information
-    fig.update_traces(
-        hovertemplate="<b>%{x|%Y-%m-%d}</b><br>" +
-                      "Open: %{open:.5f}<br>" +
-                      "High: %{high:.5f}<br>" +
-                      "Low: %{low:.5f}<br>" +
-                      "Close: %{close:.5f}<br>",
-        selector=dict(type='candlestick')
-    )
+    # Do not set hovertemplate for candlestick, as it's not supported
+    # To customize hover, consider using hovertext/hoverinfo if needed
 
     # Save the figure to HTML
     pio.write_html(fig, output_path, auto_open=False)
@@ -347,7 +334,6 @@ def plot_indicator_results_fastest(
     webbrowser.open_new_tab(f"file://{abs_path}")
 
     return fig
-
 
 def render_large_dataset(ddf, canvas_width=1000, x_field='index', y_field='Close'):
     """
