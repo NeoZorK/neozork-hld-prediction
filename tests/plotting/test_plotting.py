@@ -8,6 +8,7 @@ import numpy as np
 # Import the function to test and dependencies
 from src.plotting.plotting import plot_indicator_results
 from src.common.constants import TradingRule, BUY, SELL, NOTRADE
+from src.plotting.fastest_plot import plot_indicator_results_fastest
 
 # Dummy logger
 class MockLogger:
@@ -41,12 +42,15 @@ class TestPlottingFunction(unittest.TestCase):
         self.rule = TradingRule.Predict_High_Low_Direction
         self.title = "Test Chart Title"
 
-    # Test with missing OHLC columns - should raise error
+    # Test with missing OHLC columns - should log error and return None
     def test_plot_missing_ohlc(self):
         df_missing = self.df_results.drop(columns=['Low'])
-        with self.assertRaises(ValueError) as cm:
-            plot_indicator_results(df_missing, self.rule, self.title)
-        self.assertIn("Input DataFrame must contain columns:", str(cm.exception))
+        with patch('src.plotting.plotting.logger') as mock_logger:
+            result = plot_indicator_results(df_missing, self.rule, self.title)
+            self.assertIsNone(result)
+            mock_logger.print_error.assert_called_once()
+            error_msg = mock_logger.print_error.call_args[0][0]
+            self.assertIn("must contain columns", error_msg)
 
     # Test the generation of addplot list and call to mpf.plot
     @patch('src.plotting.plotting.mpf.make_addplot')
@@ -62,8 +66,8 @@ class TestPlottingFunction(unittest.TestCase):
         mock_make_addplot.side_effect = lambda data, **kwargs: {"data": data.name if isinstance(data, pd.Series) else 'signal', "kwargs": kwargs}
 
         # Call the function to test, specifying the mplfinance branch
-        plot_indicator_results(self.df_results, self.rule, self.title, use_plotly=False)
-
+        # Call the function to test, specifying the mplfinance mode
+        plot_indicator_results(self.df_results, self.rule, self.title, mode="mplfinance")
         # Check that make_addplot was called the expected number of times
         self.assertEqual(mock_make_addplot.call_count, 9)
 
@@ -151,8 +155,8 @@ class TestPlottingFunction(unittest.TestCase):
 
         try:
             # Call the function with minimal data, specifying mplfinance
-            plot_indicator_results(minimal_df, rule, "Minimal Plot", use_plotly=False)
-            mock_mpf_plot.assert_called_once()
+            # Call the function with minimal data, specifying mplfinance
+            plot_indicator_results(minimal_df, rule, "Minimal Plot", mode="mplfinance")
             call_args, call_kwargs = mock_mpf_plot.call_args
             pd.testing.assert_frame_equal(call_args[0], minimal_df)
             self.assertFalse(call_kwargs['volume'])
@@ -171,13 +175,147 @@ class TestPlottingFunction(unittest.TestCase):
         print(f"DEBUG: Type of mock_logger in test_plot_exception_handling: {type(mock_logger)}")
 
         # Call the function to test, specifying the mplfinance branch
-        plot_indicator_results(self.df_results, self.rule, self.title, use_plotly=False)
-
+        # Call the function to test, specifying the mplfinance mode
+        plot_indicator_results(self.df_results, self.rule, self.title, mode="mplfinance")
         # Сheck that the logger's print_error method was called
         mock_logger.print_error.assert_called_once()
         error_call_args = mock_logger.print_error.call_args[0]
         self.assertIn("Error during mplfinance plotting: MPF Render Error", error_call_args[0])
         mock_logger.print_warning.assert_called_once()
+
+    # Test the mode parameter for fastest mode
+    @patch('src.plotting.plotting.plot_indicator_results_fastest')
+    @patch('src.plotting.plotting.logger')
+    def test_plot_fastest_mode(self, mock_logger, mock_fastest_plot):
+        """Test that plot_indicator_results correctly calls plot_indicator_results_fastest when mode='fastest'"""
+        # Call the function with fastest mode
+        result = plot_indicator_results(
+            self.df_results, self.rule, self.title, 
+            mode="fastest", data_source="demo", 
+            output_path="results/test_fastest_plot.html"
+        )
+        
+        # Check logger was called with the correct message
+        mock_logger.print_info.assert_called_with("Using 'fastest' mode (Plotly + Dask + Datashader) for plotting...")
+        
+        # Check the fastest plot function was called with the correct parameters
+        mock_fastest_plot.assert_called_once()
+        call_args = mock_fastest_plot.call_args
+        
+        # Check that the first positional arg is the dataframe
+        pd.testing.assert_frame_equal(call_args[0][0], self.df_results)
+        # Check that the second positional arg is the rule
+        self.assertEqual(call_args[0][1], self.rule)
+        # Check the keyword arguments
+        self.assertEqual(call_args[1]['title'], self.title)
+        self.assertEqual(call_args[1]['data_source'], "demo")
+        self.assertEqual(call_args[1]['output_path'], "results/test_fastest_plot.html")
+        self.assertEqual(call_args[1]['mode'], "fastest")
+        
+        # Check that the function returns None as expected
+        self.assertIsNone(result)
+
+    # Test error handling for fastest mode
+    @patch('src.plotting.plotting.plot_indicator_results_fastest')
+    @patch('src.plotting.plotting.plot_indicator_results_plotly')
+    @patch('src.plotting.plotting.logger')
+    def test_plot_fastest_mode_error_handling(self, mock_logger, mock_plotly_plot, mock_fastest_plot):
+        """Test that plot_indicator_results handles errors in fastest mode and falls back to plotly"""
+        # Set up the fastest plot function to raise an exception
+        mock_fastest_plot.side_effect = Exception("Fastest plot error")
+        mock_plotly_plot.return_value = "Plotly plot result"
+        
+        # Call the function with fastest mode
+        result = plot_indicator_results(
+            self.df_results, self.rule, self.title, 
+            mode="fastest", data_source="demo"
+        )
+        
+        # Check that the error was logged
+        mock_logger.print_error.assert_called_once()
+        self.assertIn("Error in plot_indicator_results with mode='fastest'", 
+                      mock_logger.print_error.call_args[0][0])
+        
+        # Check that the fallback warning was logged
+        mock_logger.print_warning.assert_called_once()
+        self.assertEqual("Falling back to 'plotly' mode due to error...", 
+                       mock_logger.print_warning.call_args[0][0])
+        
+        # Check that the plotly plot function was called as a fallback
+        mock_plotly_plot.assert_called_once()
+        # Check that the function returns the plotly result
+        self.assertEqual(result, "Plotly plot result")
+
+    # Test large dataset handling with fastest mode
+    @patch('src.plotting.plotting.plot_indicator_results_fastest')
+    @patch('src.plotting.plotting.logger')
+    def test_plot_fastest_mode_large_dataset(self, mock_logger, mock_fastest_plot):
+        """Test that plot_indicator_results correctly handles large datasets with fastest mode"""
+        # Create a large dataset by repeating the existing one
+        large_df = pd.concat([self.df_results] * 1000, ignore_index=True)
+        # Reset the index to be datetime
+        large_df.index = pd.date_range(start='2023-01-01', periods=len(large_df), freq='h')
+        
+        # Call the function with fastest mode
+        result = plot_indicator_results(
+            large_df, self.rule, "Large Dataset Test", 
+            mode="fastest", data_source="demo"
+        )
+        
+        # Check the fastest plot function was called with the large dataframe
+        mock_fastest_plot.assert_called_once()
+        call_args = mock_fastest_plot.call_args
+        self.assertEqual(len(call_args[0][0]), 5000)  # Check dataframe size
+        
+        # Verify the function returns None
+        self.assertIsNone(result)
+
+    # Test integration of different modes in the plotting workflow
+    @patch('src.plotting.plotting.plot_indicator_results_fastest')
+    @patch('src.plotting.plotting.plot_indicator_results_fast')
+    @patch('src.plotting.plotting.plot_indicator_results_plotly')
+    @patch('src.plotting.plotting.plot_indicator_results_mplfinance')
+    @patch('src.plotting.plotting.logger')
+    def test_plot_mode_integration(self, mock_logger, mock_mpl, mock_plotly, mock_fast, mock_fastest):
+        """Test that plot_indicator_results correctly routes to different plotting functions based on mode"""
+        # Set return values for the mocked functions
+        mock_plotly.return_value = "Plotly result"
+        mock_mpl.return_value = "MPL result"
+        
+        # Test fastest mode
+        result_fastest = plot_indicator_results(self.df_results, self.rule, self.title, mode="fastest")
+        mock_fastest.assert_called_once()
+        self.assertIsNone(result_fastest)
+        mock_fastest.reset_mock()
+        
+        # Test fast mode
+        result_fast = plot_indicator_results(self.df_results, self.rule, self.title, mode="fast")
+        mock_fast.assert_called_once()
+        self.assertIsNone(result_fast)
+        mock_fast.reset_mock()
+        
+        # Test plotly mode
+        result_plotly = plot_indicator_results(self.df_results, self.rule, self.title, mode="plotly")
+        mock_plotly.assert_called_once()
+        self.assertEqual(result_plotly, "Plotly result")
+        mock_plotly.reset_mock()
+        
+        # Test plt alias for plotly
+        result_plt = plot_indicator_results(self.df_results, self.rule, self.title, mode="plt")
+        mock_plotly.assert_called_once()
+        self.assertEqual(result_plt, "Plotly result")
+        mock_plotly.reset_mock()
+        
+        # Test mplfinance mode
+        result_mpl = plot_indicator_results(self.df_results, self.rule, self.title, mode="mplfinance")
+        mock_mpl.assert_called_once()
+        self.assertEqual(result_mpl, "MPL result")
+        mock_mpl.reset_mock()
+        
+        # Test mpl alias for mplfinance
+        result_mpl_alias = plot_indicator_results(self.df_results, self.rule, self.title, mode="mpl")
+        mock_mpl.assert_called_once()
+        self.assertEqual(result_mpl_alias, "MPL result")
 
 # Allow running the tests directly
 if __name__ == '__main__':
