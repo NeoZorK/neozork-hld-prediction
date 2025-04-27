@@ -106,13 +106,13 @@ def parse_arguments():
 
     # --- Plotting Options Group --- # <-- NEW GROUP
     plotting_group = parser.add_argument_group('Plotting Options')
+    plotting_group = parser.add_argument_group('Plotting Options')
     plotting_group.add_argument(
         '-d', '--draw',
-        choices=['fast', 'plotly', 'plt', 'mplfinance', 'mpl'],
+        choices=['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl'],
         default='fast',
-        help="Choose plotting library: 'fast' (Dask+Datashader+Bokeh, default), 'plotly'/'plt' (interactive HTML), or 'mplfinance'/'mpl' (static image)."
+        help="Choose plotting library: 'fastest' (Plotly+Dask+Datashader for extremely large datasets), 'fast' (Dask+Datashader+Bokeh, default), 'plotly'/'plt' (interactive HTML), or 'mplfinance'/'mpl' (static image)."
     )
-
     # --- Other Options Group ---
     other_group = parser.add_argument_group('Other Options')
     other_group.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
