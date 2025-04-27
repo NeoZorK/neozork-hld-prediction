@@ -20,3 +20,7 @@ env/
 # Data files
 *.parquet
 *.html
+
+# Project specific
+.env
+qodana.yaml
