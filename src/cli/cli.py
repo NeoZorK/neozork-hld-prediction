@@ -38,19 +38,30 @@ def parse_arguments():
 
     # --- Example epilog ---
     example_lines = [
-        "[bold]Examples:[/bold]",
+        "[bold yellow]╭────────────────────────────────────────────────────────────────────────────╮[/bold yellow]",
+        "[bold yellow]│[/bold yellow] [bold]EXAMPLES[/bold]                                                              [bold yellow]│[/bold yellow]",
+        "[bold yellow]╰────────────────────────────────────────────────────────────────────────────╯[/bold yellow]",
         "",
+        "[bold cyan]┌─ Basic Usage ─────────────────────────────────────────────────────────────┐[/bold cyan]",
         "  [dim]# Run with demo data (using fastest mode by default)[/]",
         "  [bold cyan]python run_analysis.py demo[/]",
+        "[bold cyan]└────────────────────────────────────────────────────────────────────────────┘[/bold cyan]",
         "",
+        "[bold cyan]┌─ Alternative Visualization ────────────────────────────────────────────────┐[/bold cyan]",
         "  [dim]# Run with demo data using mplfinance for plotting[/]",
         "  [bold cyan]python run_analysis.py demo -d mpl[/]",
+        "[bold cyan]└────────────────────────────────────────────────────────────────────────────┘[/bold cyan]",
         "",
+        "[bold cyan]┌─ CSV Data Source ──────────────────────────────────────────────────────────┐[/bold cyan]",
         "  [dim]# Run using data from a specific CSV file (using fastest mode)[/]",
         "  [bold cyan]python run_analysis.py csv --csv-file path/to/data.csv --point 0.01[/]",
+        "[bold cyan]└────────────────────────────────────────────────────────────────────────────┘[/bold cyan]",
         "",
+        "[bold cyan]┌─ External API Data ─────────────────────────────────────────────────────────┐[/bold cyan]",
         "  [dim]# Fetch Polygon.io data and plot using mplfinance[/]",
-        "  [bold cyan]python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2024-01-01 --end 2024-04-18 --point 0.00001 -d mplfinance[/]",
+        "  [bold cyan]python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2024-01-01 \[/]",
+        "  [bold cyan]                          --end 2024-04-18 --point 0.00001 -d mplfinance[/]",
+        "[bold cyan]└────────────────────────────────────────────────────────────────────────────┘[/bold cyan]",
         # ... (keep other examples) ...
     ]
     examples_epilog = "\n".join(example_lines)
