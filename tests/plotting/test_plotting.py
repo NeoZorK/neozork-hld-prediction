@@ -42,12 +42,15 @@ class TestPlottingFunction(unittest.TestCase):
         self.rule = TradingRule.Predict_High_Low_Direction
         self.title = "Test Chart Title"
 
-    # Test with missing OHLC columns - should raise error
+    # Test with missing OHLC columns - should log error and return None
     def test_plot_missing_ohlc(self):
         df_missing = self.df_results.drop(columns=['Low'])
-        with self.assertRaises(ValueError) as cm:
-            plot_indicator_results(df_missing, self.rule, self.title)
-        self.assertIn("Input DataFrame must contain columns:", str(cm.exception))
+        with patch('src.plotting.plotting.logger') as mock_logger:
+            result = plot_indicator_results(df_missing, self.rule, self.title)
+            self.assertIsNone(result)
+            mock_logger.print_error.assert_called_once()
+            error_msg = mock_logger.print_error.call_args[0][0]
+            self.assertIn("must contain columns", error_msg)
 
     # Test the generation of addplot list and call to mpf.plot
     @patch('src.plotting.plotting.mpf.make_addplot')
@@ -63,8 +66,8 @@ class TestPlottingFunction(unittest.TestCase):
         mock_make_addplot.side_effect = lambda data, **kwargs: {"data": data.name if isinstance(data, pd.Series) else 'signal', "kwargs": kwargs}
 
         # Call the function to test, specifying the mplfinance branch
-        plot_indicator_results(self.df_results, self.rule, self.title, use_plotly=False)
-
+        # Call the function to test, specifying the mplfinance mode
+        plot_indicator_results(self.df_results, self.rule, self.title, mode="mplfinance")
         # Check that make_addplot was called the expected number of times
         self.assertEqual(mock_make_addplot.call_count, 9)
 
@@ -152,8 +155,8 @@ class TestPlottingFunction(unittest.TestCase):
 
         try:
             # Call the function with minimal data, specifying mplfinance
-            plot_indicator_results(minimal_df, rule, "Minimal Plot", use_plotly=False)
-            mock_mpf_plot.assert_called_once()
+            # Call the function with minimal data, specifying mplfinance
+            plot_indicator_results(minimal_df, rule, "Minimal Plot", mode="mplfinance")
             call_args, call_kwargs = mock_mpf_plot.call_args
             pd.testing.assert_frame_equal(call_args[0], minimal_df)
             self.assertFalse(call_kwargs['volume'])
@@ -172,8 +175,8 @@ class TestPlottingFunction(unittest.TestCase):
         print(f"DEBUG: Type of mock_logger in test_plot_exception_handling: {type(mock_logger)}")
 
         # Call the function to test, specifying the mplfinance branch
-        plot_indicator_results(self.df_results, self.rule, self.title, use_plotly=False)
-
+        # Call the function to test, specifying the mplfinance mode
+        plot_indicator_results(self.df_results, self.rule, self.title, mode="mplfinance")
         # Сheck that the logger's print_error method was called
         mock_logger.print_error.assert_called_once()
         error_call_args = mock_logger.print_error.call_args[0]
@@ -251,7 +254,7 @@ class TestPlottingFunction(unittest.TestCase):
         # Create a large dataset by repeating the existing one
         large_df = pd.concat([self.df_results] * 1000, ignore_index=True)
         # Reset the index to be datetime
-        large_df.index = pd.date_range(start='2023-01-01', periods=len(large_df), freq='H')
+        large_df.index = pd.date_range(start='2023-01-01', periods=len(large_df), freq='h')
         
         # Call the function with fastest mode
         result = plot_indicator_results(
