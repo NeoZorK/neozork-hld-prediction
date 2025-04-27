@@ -38,19 +38,26 @@ def parse_arguments():
 
     # --- Example epilog ---
     example_lines = [
-        "[bold]Examples:[/bold]",
+        "[bold]EXAMPLES:[/bold]",
         "",
-        "  [dim]# Run with demo data (default plotly plot)[/]",
-        "  [bold cyan]python run_analysis.py demo[/]",
+        "[bold cyan]─── Basic Usage ───[/bold cyan]",
+        "  [dim]# Run with demo data (using fastest mode by default)[/dim]",
+        "  [bold]python run_analysis.py demo[/bold]",
         "",
-        "  [dim]# Run with demo data using mplfinance for plotting[/]",
-        "  [bold cyan]python run_analysis.py demo -d mpl[/]",
+        "[bold cyan]─── Alternative Visualization ───[/bold cyan]",
+        "  [dim]# Run with demo data using mplfinance for plotting[/dim]",
+        "  [bold]python run_analysis.py demo -d mpl[/bold]",
         "",
-        "  [dim]# Run using data from a specific CSV file (plotly plot)[/]",
-        "  [bold cyan]python run_analysis.py csv --csv-file path/to/data.csv --point 0.01[/]",
+        "[bold cyan]─── CSV Data Source ───[/bold cyan]",
+        "  [dim]# Run using data from a specific CSV file (using fastest mode)[/dim]",
+        "  [bold]python run_analysis.py csv --csv-file path/to/data.csv --point 0.01[/bold]",
         "",
-        "  [dim]# Fetch Polygon.io data and plot using mplfinance[/]",
-        "  [bold cyan]python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2024-01-01 --end 2024-04-18 --point 0.00001 -d mplfinance[/]",
+        "[bold cyan]─── External API Data ───[/bold cyan]",
+        "  [dim]# Fetch Polygon.io data and plot using mplfinance[/dim]",
+        "  [bold]python run_analysis.py polygon --ticker EURUSD --interval D1 \\[/bold]",
+        "  [bold]                         --start 2024-01-01 --end 2024-04-18 \\[/bold]",
+        "  [bold]                         --point 0.00001 -d mpl[/bold]",
+        "",
         # ... (keep other examples) ...
     ]
     examples_epilog = "\n".join(example_lines)
@@ -106,13 +113,13 @@ def parse_arguments():
 
     # --- Plotting Options Group --- # <-- NEW GROUP
     plotting_group = parser.add_argument_group('Plotting Options')
+    plotting_group = parser.add_argument_group('Plotting Options')
     plotting_group.add_argument(
         '-d', '--draw',
-        choices=['fast', 'plotly', 'plt', 'mplfinance', 'mpl'],
-        default='fast',
-        help="Choose plotting library: 'fast' (Dask+Datashader+Bokeh, default), 'plotly'/'plt' (interactive HTML), or 'mplfinance'/'mpl' (static image)."
+        choices=['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl'],
+        default='fastest',
+        help="Choose plotting library: 'fastest' (Plotly+Dask+Datashader for extremely large datasets, default), 'fast' (Dask+Datashader+Bokeh), 'plotly'/'plt' (interactive HTML), or 'mplfinance'/'mpl' (static image)."
     )
-
     # --- Other Options Group ---
     other_group = parser.add_argument_group('Other Options')
     other_group.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
