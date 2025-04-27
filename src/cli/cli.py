@@ -59,8 +59,8 @@ def parse_arguments():
         "",
         "[bold cyan]┌─ External API Data ─────────────────────────────────────────────────────────┐[/bold cyan]",
         "  [dim]# Fetch Polygon.io data and plot using mplfinance[/]",
-        "  [bold cyan]python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2024-01-01 \[/]",
-        "  [bold cyan]                          --end 2024-04-18 --point 0.00001 -d mplfinance[/]",
+        "  [bold cyan]python run_analysis.py polygon --ticker EURUSD --interval D1 \\[/]",
+        "  [bold cyan]              --start 2024-01-01 --end 2024-04-18 --point 0.00001 -d mpl[/]",
         "[bold cyan]└────────────────────────────────────────────────────────────────────────────┘[/bold cyan]",
         # ... (keep other examples) ...
     ]
