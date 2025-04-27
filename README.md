@@ -33,7 +33,7 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 1.  **Indicator Logic Replication (Python):** Translate the mathematical and logical steps of the MQL5 indicator into an equivalent Python function or class. Validate its output against the original MQL5 version using the exported historical predictions.
 2.  **Data Ingestion & Management:**
     * **Initial Load:** Process the one-time export of M1 OHLCV and original MQL5 indicator predictions from MT5.
-    * **Data Feeds:** Implement functionality to fetch and update OHLCV data from sources like Yahoo Finance (`yfinance`), CSV files, Polygon.io API, or other chosen data providers (Oanda planned).
+    * **Data Feeds:** Implement functionality to fetch and update OHLCV data from sources like Yahoo Finance (`yfinance`), CSV files, Polygon.io API, or other chosen data providers.
 3.  **Feature Engineering (ML-Centric):**
     * Derive features primarily from M1 OHLCV data (e.g., price transformations, volatility measures, time-based patterns, candlestick patterns).
     * Crucially, incorporate the outputs (predicted H/L/D, internal states) of the **Python-replicated indicator** as key features for the ML model.
@@ -54,7 +54,7 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 Based on comparisons using the `mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv` file:
 
 * **Core Calculations (Pressure/PV):** Validation shows that the Python implementation of `Pressure` and `PV` (Pressure Vector) calculations is **highly accurate**, matching the `pressure` and `pressure_vector` columns from the CSV very closely (Correlation=1.0, minimal Mean Absolute Difference, <5% mismatches beyond float tolerance).
-* **Predicted Low/High (PHLD/SR Rules):** The current Python implementation for `PPrice1` (plotted green) and `PPrice2` (plotted red) in rules `PHLD` and `SR` uses a formula based on `Current Open +/- (Previous_High - Previous_Low) / 2`. Comparison with `predicted_low` and `predicted_high` columns from the sample MQL5 CSV shows a **systematic difference** (approx. 6.8 points Mean Absolute Difference in the sample XAUUSD MN1 data, although Correlation > 0.999). This indicates that the original MQL5 indicator uses a **different formula** for these specific predictions. Achieving an exact match would require implementing the original MQL5 formula in `src/calculation/rules.py`.
+* **Predicted Low/High (PHLD/SR Rules):** The current Python implementation for `PPrice1` (plotted green) and `PPrice2` (plotted red) in rules `PHLD` and `SR` uses a formula based on `Current Open +/- (Previous_High - Previous_Low) / 2`. Comparison with `predicted_low` and `predicted_high` columns from the sample MQL5 CSV shows a **systematic difference** (approx. 6.8 points Mean Absolute Difference in the sample XAUUSD MN1 data, although Correlation > 0.999).
 
 ### Data Caching Mechanism
 
@@ -78,7 +78,7 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 * **Core Libraries:** `pandas`, `numpy`
 * **ML / Deep Learning:** `scikit-learn`, `xgboost`, `lightgbm`, `tensorflow` or `pytorch`
 * **Feature Engineering:** `ta` (or `TA-Lib`)
-* **Data Feeds:** `yfinance`, CSV reader (implemented), `polygon-api-client` (implemented), `oandapyV20` (planned)
+* **Data Feeds:** `yfinance`, CSV reader (implemented), `polygon-api-client` (implemented)
 * **Backtesting:** `VectorBT`, `Backtrader`
 * **Plotting:** `mplfinance`, `matplotlib`, `seaborn`, `rich`, `colorama`
 * **Environment:** `venv`
@@ -133,16 +133,14 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 * [x] 1.5. Add Project Versioning (`src/__init__.py`, Git Tag).
 
 ### Phase 2: Data Ingestion & Preparation
-* [ ] 2.1. Export Original MQL5 Indicator Predictions (CSV from MT5, M1, 5-10 years). *(Sample MN1 provided)*
-* [ ] 2.2. Export M1 OHLCV Data (CSV from MT5, same period/instrument). *(Sample MN1 provided)*
+* [x] 2.1. Export Original MQL5 Indicator Predictions (CSV from MT5, M1, 5-10 years). *(Sample MN1 provided)*
+* [x] 2.2. Export M1 OHLCV Data (CSV from MT5, same period/instrument). *(Sample MN1 provided)*
 * [x] 2.3. Load Data in Python: Implemented for CSV, yfinance, Polygon.
 * [~] 2.4. Merge & Align Data (Handle timestamps, missing values). *(Basic handling in fetch functions)*
 * [x] 2.5. Calculate Python Indicator Predictions on historical data (Done within workflow).
-* [~] 2.6. **Validate Python Replication:** Done for `Pressure`/`PV` (good match). Known difference for `predicted_low`/`high` due to different formulas in current Python rules (`PHLD`/`SR`).
-* [ ] 2.7. Define Ground Truth (Actual future H/L/D).
-* [ ] 2.8. Clean & Save Final Processed Data (`data/processed/`, e.g., Parquet format).
+* [ ] 2.6. Define Ground Truth (Actual future H/L/D).
+* [ ] 2.7. Clean & Save Final Processed Data (`data/processed/`, e.g., Parquet format).
 * *Note: Added CSV & Polygon data source integration (CLI, data_acquisition, point_size).*
-* *Note: Oanda fetch logic pending API key.*
 
 ### Phase 3: Exploratory Data Analysis (EDA)
 * [ ] 3.1. Load Processed Data (`notebooks/`).
@@ -187,10 +185,9 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 * [ ] 8.6. Document Robustness Findings.
 
 ### Phase 9: Live Data Integration & Forward Testing
-* [ ] 9.1. Implement Live Data Feed (Oanda pending).
-* [ ] 9.2. Adapt Prediction Pipeline for live data.
-* [ ] 9.3. Setup Forward Testing (Paper Trading).
-* [ ] 9.4. Monitor Forward Test.
+* [ ] 9.1. Adapt Prediction Pipeline for live data.
+* [ ] 9.2. Setup Forward Testing (Paper Trading).
+* [ ] 9.3. Monitor Forward Test.
 
 ### Phase 10: Monitoring & Maintenance
 * [ ] 10.1. Continuous Performance Monitoring.
@@ -209,14 +206,15 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 
 ### Fast mode for large charts (default)
 
-* **For accelerated plotting of large OHLCV datasets (millions of rows, M1) use the new 'fast' mode (Dask+Datashader+Bokeh), now default:
+* **For accelerated plotting of large OHLCV datasets (millions of rows, M1) use the new 'fastest' mode, now default:
 
     ```bash
-    python run_analysis.py demo -d fast
+    python run_analysis.py demo -d fastest
     ```
 #### Old modes:
 - `-d plotly`: interactive Plotly HTML chart
 - `-d mpl` or `-d mplfinance`: static chart via mplfinance/matplotlib
+- `-d fast` : run plotly
 
 
 * **Run with demo data using a specific rule (e.g., Pressure_Vector alias 'PV'):**
