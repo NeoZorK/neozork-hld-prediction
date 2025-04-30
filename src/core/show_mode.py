@@ -49,7 +49,7 @@ def count_files_by_source():
         'polygon': 0,
         'binance': 0,
         'other': 0,
-        'csv_converted_count': 0  # Специальный счетчик для файлов в папке csv_converted
+        'csv_converted_count': 0  # Special counter for files in csv_converted folder
     }
     
     for search_dir in SEARCH_DIRS:
@@ -65,7 +65,7 @@ def count_files_by_source():
                     source_counts['yfinance'] += 1
                 elif filename_lower.startswith('csv_'):
                     source_counts['csv'] += 1
-                    # Специальный подсчет файлов в папке csv_converted
+                    # Special counting of files in csv_converted folder
                     if 'csv_converted' in str(search_dir).lower():
                         source_counts['csv_converted_count'] += 1
                 # Все файлы в папке csv_converted считаются CSV файлами независимо от их имени
@@ -142,7 +142,7 @@ def handle_show_mode(args):
         source_counts = count_files_by_source()
         
         print("\n=== AVAILABLE DATA FILES ===")
-        # Исключаем csv_converted_count из общего подсчета, так как это дополнительная информация
+        
         total_files = sum([count for source, count in source_counts.items() 
                           if source not in ['csv_converted_count']])
         
@@ -154,7 +154,7 @@ def handle_show_mode(args):
             
         print(f"Total cached data files: {total_files}")
         for source, count in source_counts.items():
-            # Пропускаем вывод служебных счетчиков
+            # Skip service counters output
             if source in ['csv_converted_count']:
                 continue
                 
@@ -190,16 +190,16 @@ def handle_show_mode(args):
             if item.is_file() and item.suffix == '.parquet':
                 filename_lower = item.name.lower()
                 
-                # Специальная логика для режима CSV
+                # Special logic for CSV mode
                 if search_prefix.lower() == 'csv':
-                    # Показываем файлы, которые либо начинаются с 'csv_', либо находятся в папке csv_converted
+                    # Show files that either start with 'csv_' or are located in the csv_converted folder
                     is_match = (filename_lower.startswith('csv_') or 
                                'csv_converted' in str(search_dir).lower())
                 else:
-                    # Для остальных источников проверяем префикс как обычно
+                    # For other sources, check the prefix as usual
                     is_match = filename_lower.startswith(search_prefix.lower() + '_')
                 
-                # Проверяем совпадение с шаблоном поиска и ключевыми словами
+                # Check for match with search pattern and keywords
                 if is_match and all(keyword in filename_lower for keyword in search_keywords):
                     try:
                         file_size_bytes = item.stat().st_size
@@ -368,6 +368,3 @@ def handle_show_mode(args):
         except Exception as e:
             print(f"Error plotting file: {e}")
             traceback.print_exc()
-
-
-# Все необходимые импорты уже выполнены вверху файла
