@@ -13,15 +13,15 @@ def show_help():
     print("The 'show' mode allows you to list and inspect cached data files.")
     print("Usage: python run_analysis.py show <source> [keywords...]")
     print("\nAvailable sources:")
-    print("  - yfinance/yf: Yahoo Finance data files")
     print("  - csv: Converted CSV data files")
+    print("  - yfinance/yf: Yahoo Finance data files")
     print("  - polygon: Polygon.io API data files")
     print("  - binance: Binance API data files")
     print("\nExamples:")
     print("  python run_analysis.py show                  # Show statistics for all sources")
     print("  python run_analysis.py show yf               # List all Yahoo Finance files")
     print("  python run_analysis.py show yf aapl          # List YF files containing 'aapl'")
-    print("  python run_analysis.py show binance btc usdt # List Binance files with 'btc' and 'usdt'")
+    print("  python run_analysis.py show binance btc MN1  # List Binance files with 'btc' and timeframe 'MN1'")
 
 # To avoid circular imports when workflow.py imports this
 # This way we'll be importing generate_plot only when we actually call it
@@ -40,14 +40,15 @@ def count_files_by_source():
     Counts Parquet files by their source prefix (yfinance, csv, polygon, binance).
     
     Returns:
-        Dictionary with counts for each source type.
+        Dictionary with counts for each source type and additional stats.
     """
     source_counts = {
         'yfinance': 0,
         'csv': 0,
         'polygon': 0,
         'binance': 0,
-        'other': 0
+        'other': 0,
+        'csv_converted_count': 0  # Специальный счетчик для файлов в папке csv_converted
     }
     
     for search_dir in SEARCH_DIRS:
@@ -63,6 +64,9 @@ def count_files_by_source():
                     source_counts['yfinance'] += 1
                 elif filename_lower.startswith('csv_'):
                     source_counts['csv'] += 1
+                    # Специальный подсчет файлов в папке csv_converted
+                    if str(search_dir).endswith('csv_converted'):
+                        source_counts['csv_converted_count'] += 1
                 elif filename_lower.startswith('polygon_'):
                     source_counts['polygon'] += 1
                 elif filename_lower.startswith('binance_'):
@@ -133,7 +137,8 @@ def handle_show_mode(args):
         source_counts = count_files_by_source()
         
         print("\n=== AVAILABLE DATA FILES ===")
-        total_files = sum(source_counts.values())
+        # Исключаем csv_converted_count из общего подсчета, так как это дополнительная информация
+        total_files = sum([count for source, count in source_counts.items() if source != 'csv_converted_count'])
         
         if total_files == 0:
             print("No data files found. Use other modes to download or import data first.")
@@ -141,8 +146,16 @@ def handle_show_mode(args):
             
         print(f"Total cached data files: {total_files}")
         for source, count in source_counts.items():
+            # Пропускаем вывод служебного счетчика
+            if source == 'csv_converted_count':
+                continue
+                
             if count > 0:
-                print(f"  - {source.capitalize()}: {count} file(s)")
+                if source == 'csv':
+                    csv_converted = source_counts.get('csv_converted_count', 0)
+                    print(f"  - {source.capitalize()}: {count} file(s) (including {csv_converted} converted from CSV)")
+                else:
+                    print(f"  - {source.capitalize()}: {count} file(s)")
                 
         print("\nTo view specific files, use: python run_analysis.py show <source> [keywords...]")
         return
