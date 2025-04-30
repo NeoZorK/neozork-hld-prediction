@@ -72,7 +72,7 @@ def count_files_by_source():
                 elif filename_lower.startswith('binance_'):
                     source_counts['binance'] += 1
                 else:
-                    source_counts['csv_converted'] += 1
+                    source_counts['other'] += 1
                     
     return source_counts
 
@@ -158,7 +158,7 @@ def handle_show_mode(args):
                 elif source == 'other':
                     print(f"  - Converted from CSV: {count} file(s)")
                 else:
-                    if source == 'csv_converted':
+                    if source == 'other':
                         print(f"  - Converted from CSV: {count} file(s)")
                     else:
                         print(f"  - {source.capitalize()}: {count} file(s)")
