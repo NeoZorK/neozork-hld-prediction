@@ -217,7 +217,7 @@ def handle_show_mode(args):
 
     if not found_files:
         return # Exit if no files found
-                        elif len(found_files) == 1:
+    elif len(found_files) == 1:
         print("Single CSV file found. Will automatically open chart in browser.")
 
     # Sort files by name for consistent listing
