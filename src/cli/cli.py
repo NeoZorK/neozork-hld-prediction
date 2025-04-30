@@ -72,8 +72,8 @@ def parse_arguments():
 
     # --- Required Arguments Group ---
     required_group = parser.add_argument_group('Required Arguments')
-    required_group.add_argument('mode', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance'],
-                                help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance'.")
+    required_group.add_argument('mode', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance', 'show'],
+                                help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance', 'show'.")
 
     # --- Data Source Specific Options Group ---
     data_source_group = parser.add_argument_group('Data Source Options')
@@ -111,6 +111,18 @@ def parse_arguments():
              f"Aliases: PHLD=Predict_High_Low_Direction, PV=Pressure_Vector, SR=Support_Resistants."
     )
 
+    # --- Show Mode Options Group ---
+    show_group = parser.add_argument_group('Show Mode Options')
+    show_group.add_argument(
+        '--source', default='yfinance',
+        choices=['yfinance', 'yf', 'csv', 'polygon', 'binance'],
+        help="Filter files by data source type. Default: 'yfinance'."
+    )
+    show_group.add_argument(
+        '--keywords', nargs='+', default=[],
+        help="Additional keywords to filter files by (e.g., ticker symbol or date). Default: show all files from the source."
+    )
+    
     # --- Plotting Options Group --- # <-- NEW GROUP
     plotting_group = parser.add_argument_group('Plotting Options')
     plotting_group = parser.add_argument_group('Plotting Options')
@@ -176,4 +188,8 @@ def parse_arguments():
     if args.point is not None and args.point <= 0:
         parser.error("argument --point: value must be positive")
 
+    # Normalize source for show mode
+    if effective_mode == 'show' and args.source == 'yf':
+        args.source = 'yfinance'
+    
     return args
