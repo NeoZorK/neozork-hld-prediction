@@ -90,21 +90,48 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 
 ## Installation
 
-1.  **Clone Repository:**
+## Quick Start: Directory and Environment Setup
+
+Before running the project, create all required folders by executing the initialization script:
+
+```bash
+./init_dirs.sh
+```
+This script will set up the directory structure for data, cache, and source files.
+
+1.  **Install Python 3.12+**: Ensure you have Python 3.12 or higher installed on your system. You can download it from the official Python website: [python.org](https://www.python.org/downloads/).
+
+* macOS:
+Install Homebrew if not already installed, then run:
+  ```bash
+  brew install python@3.12
+  ```
+* Windows:
+Download and install Python 3.12 from the official website.
+* Linux:
+Use your package manager, for example:
+    ```bash
+    sudo apt-get update
+    sudo apt-get install python3.12 python3.12-venv
+    ```
+
+
+2. **Clone Repository:**
     ```bash
     git clone <your_repository_url>
     cd <project-root>
     ```
 
-2.  **Create & Activate Virtual Environment (Recommended: Python 3.12):**
+3. **Create & Activate Virtual Environment (Recommended: Python 3.12):**
     ```bash
     # Make sure Python 3.12 is installed and accessible
     python3.12 -m venv venv
-    source venv/bin/activate # On Linux/macOS
+    source .venv/bin/activate # On Linux/macOS
+    pip install --upgrade pip
     # venv\Scripts\activate # On Windows
     ```
 
-3.  **Install Dependencies:**
+4. **Install Dependencies:**
     ```bash
     pip install --upgrade pip
     pip install -r requirements.txt
@@ -113,7 +140,7 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
     # uv pip install -r requirements.txt
     ```
 
-4.  **(If needed) Install TA-Lib C Library:** (Only if using `TA-Lib` python package)
+5. **(If needed) Install TA-Lib C Library:** (Only if using `TA-Lib` python package)
     * macOS: `brew install ta-lib`
     * Linux: Check package manager (e.g., `sudo apt-get install libta-lib-dev`)
     * Windows: Download binaries or build from source.
