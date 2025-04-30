@@ -190,7 +190,7 @@ def handle_show_mode(args):
                 filename_lower = item.name.lower()
                 
                 # Специальная логика для режима CSV
-                if special_csv_mode:
+                if search_prefix.lower() == 'csv':
                     # Показываем файлы, которые либо начинаются с 'csv_', либо находятся в папке csv_converted
                     is_match = (filename_lower.startswith('csv_') or 
                                'csv_converted' in str(search_dir).lower())
