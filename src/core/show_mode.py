@@ -5,6 +5,7 @@ from pathlib import Path
 import pyarrow.parquet as pq
 import pandas as pd # We might need pandas later for date parsing if reading rows
 import sys
+import traceback
 
 # To avoid circular imports when workflow.py imports this
 # This way we'll be importing generate_plot only when we actually call it
@@ -200,9 +201,7 @@ def handle_show_mode(args):
             
         except Exception as e:
             print(f"Error plotting file: {e}")
-            import traceback
             traceback.print_exc()
 
 
-# Placeholder for imports needed within this file, like sys for stderr
-import sys
+# Все необходимые импорты уже выполнены вверху файла

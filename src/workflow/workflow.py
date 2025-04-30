@@ -45,7 +45,7 @@ def run_indicator_workflow(args):
                 "total_duration_sec": 0  # We're not tracking time for show mode
             }
         except Exception as e:
-            import traceback
+            # traceback already imported at module level
             traceback_str = traceback.format_exc()
             # Return error information
             return {
