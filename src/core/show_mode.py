@@ -300,6 +300,9 @@ def handle_show_mode(args):
         print("To display a chart, re-run the command with more specific keywords:")
         print(f"Example: python run_analysis.py show {args.source} <additional_keywords>")
     elif len(found_files) == 1:
+        # Set default draw mode to 'fastest' if not explicitly specified
+        if not hasattr(args, 'draw') or not args.draw:
+            args.draw = 'fastest'
         print(f"Found one file. Triggering plot with method: '{args.draw}'...")
         # Call the plotting function for the found file
         print(f"Loading file data and triggering plot with method: '{args.draw}'...")
@@ -353,10 +356,14 @@ def handle_show_mode(args):
             selected_rule = args.rule if hasattr(args, 'rule') else 'Predict_High_Low_Direction'
             estimated_point = True
             
+            # Ensure 'draw' parameter is set to 'fastest' for optimal chart display
+            if not hasattr(args, 'draw') or not args.draw:
+                args.draw = 'fastest'
+                
             # Call generate_plot with the necessary parameters
             generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
             
-            print(f"Successfully plotted data from '{found_files[0]['name']}'")
+            print(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode")
             
         except Exception as e:
             print(f"Error plotting file: {e}")
