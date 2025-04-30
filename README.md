@@ -54,7 +54,7 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 Based on comparisons using the `mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv` file:
 
 * **Core Calculations (Pressure/PV):** Validation shows that the Python implementation of `Pressure` and `PV` (Pressure Vector) calculations is **highly accurate**, matching the `pressure` and `pressure_vector` columns from the CSV very closely (Correlation=1.0, minimal Mean Absolute Difference, <5% mismatches beyond float tolerance).
-* **Predicted Low/High (PHLD/SR Rules):** The current Python implementation for `PPrice1` (plotted green) and `PPrice2` (plotted red) in rules `PHLD` and `SR` uses a formula based on `Current Open +/- (Previous_High - Previous_Low) / 2`. Comparison with `predicted_low` and `predicted_high` columns from the sample MQL5 CSV shows a **systematic difference** (approx. 6.8 points Mean Absolute Difference in the sample XAUUSD MN1 data, although Correlation > 0.999).
+* **Predicted Low/High (PHLD/SR Rules):** The current Python implementation for `PPrice1` (plotted green) and `PPrice2` (plotted red) in rules `PHLD` and `SR`. Comparison with `predicted_low` and `predicted_high` columns from the sample MQL5 CSV shows a **systematic difference** (approx. 6.8 points Mean Absolute Difference in the sample XAUUSD MN1 data, although Correlation > 0.999).
 
 ### Data Caching Mechanism
 
@@ -85,7 +85,62 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 * **Version Control:** `git`
 * **Package Installation Speedup (Optional):** `uv`
 
-## Project Structure
+
+# Project Structure
+├── data/  
+│   ├── cache/  
+│   │   └── csv_converted/  
+│   ├── processed/  
+│   └── raw_parquet/  
+├── mql5_feed/  
+├── notebooks/  
+├── src/  
+│   ├── cli/  
+│   │   └── cli.py  
+│   ├── calculation/  
+│   ├── data/  
+│   ├── feature_engineering.py  
+│   └── __init__.py  
+├── tests/  
+├── .env  
+├── .gitignore  
+├── init_dirs.sh  
+├── README.md  
+├── requirements.txt  
+└── run_analysis.py  
+
+## Directory and File Descriptions
+
+`data/`: Central storage for all data-related files.  
+`cache/`: Holds temporary intermediate data.  
+`csv_converted/`: Stores CSV files converted from other formats.  
+
+
+`processed/`: Contains processed data ready for analysis.  
+`raw_parquet/`: Stores raw data in Parquet format for efficient storage and querying.  
+
+
+`mql5_feed/`: Directory for CSV files exported from MQL5/MT5 platforms.  
+`notebooks/`: Contains Jupyter notebooks used for exploratory data analysis (EDA) and experimental workflows.  
+`src/`: Main source code directory for the project.  
+`cli/`: Command-line interface scripts.  
+`cli.py`: Primary script for running CLI commands.  
+
+
+`calculation/`: Modules for performing calculations and computations.  
+`data/`: Modules for data loading, cleaning, and preprocessing.  
+`feature_engineering.py`: Script for creating and transforming features for analysis or modeling.  
+`init.py`: Initializes the src directory as a Python package.  
+
+
+`tests/`: Directory for unit tests to ensure code reliability.  
+`.env`: Stores environment variables, such as API keys and configuration settings.  
+`.gitignore`: Specifies files and directories to be ignored by Git version control.  
+`init_dirs.sh`: Shell script to set up project directories and initialize the .env file.  
+`README.md:` This file, providing an overview and documentation of the project.  
+`requirements.txt`: Lists Python dependencies required for the project.  
+`run_analysis.py`: Main entry point script to execute the data analysis pipeline.  
+
 
 
 ## Installation
