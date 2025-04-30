@@ -1,4 +1,3 @@
-
 # Python
 __pycache__/
 *.py[cod]
@@ -12,15 +11,20 @@ env/
 # IDE
 .idea/
 .vscode/
+*.iml
+*.xml
 
 # Cache and temp files
 .cache/
+.yf_cache/
 *.db
 
 # Data files
 *.parquet
 *.html
+mql5_feed/
 
 # Project specific
 .env
 qodana.yaml
+.DS_Store

@@ -10,7 +10,7 @@ except ImportError:
     sys.exit(1)
 
 if len(sys.argv) < 2:
-    print("Usage: python check_parquet.py <path_to_parquet_file>")
+    print("Usage: python debug_check_parquet.py <path_to_parquet_file>")
     sys.exit(1)
 
 file_path = sys.argv[1]
