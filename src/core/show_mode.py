@@ -7,6 +7,22 @@ import pandas as pd # We might need pandas later for date parsing if reading row
 import sys
 import traceback
 
+def show_help():
+    """Displays help for the 'show' mode."""
+    print("\n=== SHOW MODE HELP ===")
+    print("The 'show' mode allows you to list and inspect cached data files.")
+    print("Usage: python run_analysis.py show <source> [keywords...]")
+    print("\nAvailable sources:")
+    print("  - yfinance/yf: Yahoo Finance data files")
+    print("  - csv: Converted CSV data files")
+    print("  - polygon: Polygon.io API data files")
+    print("  - binance: Binance API data files")
+    print("\nExamples:")
+    print("  python run_analysis.py show                  # Show statistics for all sources")
+    print("  python run_analysis.py show yf               # List all Yahoo Finance files")
+    print("  python run_analysis.py show yf aapl          # List YF files containing 'aapl'")
+    print("  python run_analysis.py show binance btc usdt # List Binance files with 'btc' and 'usdt'")
+
 # To avoid circular imports when workflow.py imports this
 # This way we'll be importing generate_plot only when we actually call it
 def import_generate_plot():
@@ -18,6 +34,43 @@ SEARCH_DIRS = [
     Path("data/raw_parquet"),
     Path("data/cache/csv_converted")
 ]
+
+def count_files_by_source():
+    """
+    Counts Parquet files by their source prefix (yfinance, csv, polygon, binance).
+    
+    Returns:
+        Dictionary with counts for each source type.
+    """
+    source_counts = {
+        'yfinance': 0,
+        'csv': 0,
+        'polygon': 0,
+        'binance': 0,
+        'other': 0
+    }
+    
+    for search_dir in SEARCH_DIRS:
+        if not search_dir.is_dir():
+            continue
+            
+        for item in search_dir.iterdir():
+            if item.is_file() and item.suffix == '.parquet':
+                filename_lower = item.name.lower()
+                
+                # Check source prefix
+                if filename_lower.startswith('yfinance_'):
+                    source_counts['yfinance'] += 1
+                elif filename_lower.startswith('csv_'):
+                    source_counts['csv'] += 1
+                elif filename_lower.startswith('polygon_'):
+                    source_counts['polygon'] += 1
+                elif filename_lower.startswith('binance_'):
+                    source_counts['binance'] += 1
+                else:
+                    source_counts['other'] += 1
+                    
+    return source_counts
 
 def get_parquet_metadata(file_path: Path) -> dict:
     """
@@ -72,6 +125,28 @@ def handle_show_mode(args):
     Args:
         args: The parsed command-line arguments from argparse.
     """
+    # Show help and file statistics if no source is specified
+    if not args.source or args.source == 'help':
+        show_help()
+        
+        # Display stats about available files
+        source_counts = count_files_by_source()
+        
+        print("\n=== AVAILABLE DATA FILES ===")
+        total_files = sum(source_counts.values())
+        
+        if total_files == 0:
+            print("No data files found. Use other modes to download or import data first.")
+            return
+            
+        print(f"Total cached data files: {total_files}")
+        for source, count in source_counts.items():
+            if count > 0:
+                print(f"  - {source.capitalize()}: {count} file(s)")
+                
+        print("\nTo view specific files, use: python run_analysis.py show <source> [keywords...]")
+        return
+        
     print(f"Searching for '{args.source}' files with keywords: {args.keywords}...")
 
     # Normalize source 'yf' to 'yfinance' for matching filenames like 'yfinance_...'
