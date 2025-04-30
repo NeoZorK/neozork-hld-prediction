@@ -165,17 +165,20 @@ def parse_arguments():
     effective_mode = 'yfinance' if args.mode == 'yf' else args.mode
 
     # Handle positional arguments for 'show' mode
-    if effective_mode == 'show' and args.show_args:
-        # First positional argument is the source (if provided)
-        if len(args.show_args) > 0:
+    if effective_mode == 'show':
+        # Default to empty source if no args provided (will show help)
+        if not args.show_args:
+            args.source = ''
+        else:
+            # First positional argument is the source (if provided)
             args.source = args.show_args[0]
             # Normalize 'yf' to 'yfinance'
             if args.source == 'yf':
                 args.source = 'yfinance'
         
-        # Remaining arguments are keywords
-        if len(args.show_args) > 1:
-            args.keywords = args.show_args[1:]
+            # Remaining arguments are keywords
+            if len(args.show_args) > 1:
+                args.keywords = args.show_args[1:]
     
     # Check requirements for CSV mode
     if effective_mode == 'csv':
