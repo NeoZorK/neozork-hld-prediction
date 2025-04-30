@@ -58,6 +58,14 @@ def parse_arguments():
         "  [bold]                         --start 2024-01-01 --end 2024-04-18 \\[/bold]",
         "  [bold]                         --point 0.00001 -d mpl[/bold]",
         "",
+        "[bold cyan]─── Show Mode ───[/bold cyan]",
+        "  [dim]# Show all cached YFinance files[/dim]",
+        "  [bold]python run_analysis.py show yf[/bold]",
+        "  [dim]# Search for YFinance files with 'aapl' and 'mn1' in the name[/dim]", 
+        "  [bold]python run_analysis.py show yf aapl mn1[/bold]",
+        "  [dim]# Search for Binance files with 'btc' in the name[/dim]",
+        "  [bold]python run_analysis.py show binance btc[/bold]",
+        "",
         # ... (keep other examples) ...
     ]
     examples_epilog = "\n".join(example_lines)
@@ -72,9 +80,13 @@ def parse_arguments():
 
     # --- Required Arguments Group ---
     required_group = parser.add_argument_group('Required Arguments')
-    required_group.add_argument('mode', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance'],
-                                help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance'.")
+    required_group.add_argument('mode', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance', 'show'],
+                                help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance', 'show'.")
 
+    # --- Show Mode Positional Arguments ---
+    parser.add_argument('show_args', nargs='*', default=[],
+                         help=argparse.SUPPRESS)  # Hide from help but collect positional args after 'mode'
+    
     # --- Data Source Specific Options Group ---
     data_source_group = parser.add_argument_group('Data Source Options')
     # CSV options
@@ -95,8 +107,8 @@ def parse_arguments():
     history_group.add_argument('--start', help="Start date (YYYY-MM-DD). Used by yfinance, polygon, binance.")
     # Make --end related only to --start (not period)
     data_source_group.add_argument('--end', help="End date (YYYY-MM-DD). Used by yfinance, polygon, binance. Required if --start is used.")
-
-
+    
+    
     # --- Indicator Options Group ---
     indicator_group = parser.add_argument_group('Indicator Options')
     rule_aliases_map = {'PHLD': 'Predict_High_Low_Direction', 'PV': 'Pressure_Vector', 'SR': 'Support_Resistants'}
@@ -110,7 +122,19 @@ def parse_arguments():
         help=f"Trading rule to apply. Default: {default_rule_name}. "
              f"Aliases: PHLD=Predict_High_Low_Direction, PV=Pressure_Vector, SR=Support_Resistants."
     )
-
+    
+    # --- Show Mode Options Group ---
+    show_group = parser.add_argument_group('Show Mode Options')
+    show_group.add_argument(
+        '--source', default='yfinance',
+        choices=['yfinance', 'yf', 'csv', 'polygon', 'binance'],
+        help="Filter files by data source type. Can also use first positional argument after 'show'. Default: 'yfinance'."
+    )
+    show_group.add_argument(
+        '--keywords', nargs='+', default=[],
+        help="Additional keywords to filter files by (e.g., ticker symbol or date). Can also use remaining positional arguments after source. Default: show all files from the source."
+    )
+    
     # --- Plotting Options Group --- # <-- NEW GROUP
     plotting_group = parser.add_argument_group('Plotting Options')
     plotting_group = parser.add_argument_group('Plotting Options')
@@ -140,6 +164,22 @@ def parse_arguments():
     # --- Post-parsing validation ---
     effective_mode = 'yfinance' if args.mode == 'yf' else args.mode
 
+    # Handle positional arguments for 'show' mode
+    if effective_mode == 'show':
+        # Default to empty source if no args provided (will show help)
+        if not args.show_args:
+            args.source = ''
+        else:
+            # First positional argument is the source (if provided)
+            args.source = args.show_args[0]
+            # Normalize 'yf' to 'yfinance'
+            if args.source == 'yf':
+                args.source = 'yfinance'
+        
+            # Remaining arguments are keywords
+            if len(args.show_args) > 1:
+                args.keywords = args.show_args[1:]
+    
     # Check requirements for CSV mode
     if effective_mode == 'csv':
         if not args.csv_file:
@@ -176,4 +216,8 @@ def parse_arguments():
     if args.point is not None and args.point <= 0:
         parser.error("argument --point: value must be positive")
 
+    # Normalize source for show mode
+    if effective_mode == 'show' and args.source == 'yf':
+        args.source = 'yfinance'
+    
     return args

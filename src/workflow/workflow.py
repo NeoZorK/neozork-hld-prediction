@@ -16,6 +16,7 @@ from ..data.data_acquisition import acquire_data
 from ..utils.point_size_determination import get_point_size
 from ..calculation.indicator_calculation import calculate_indicator
 from ..plotting.plotting_generation import generate_plot
+from ..core.show_mode import handle_show_mode
 
 # Definition of the run_indicator_workflow function
 def run_indicator_workflow(args):
@@ -29,6 +30,33 @@ def run_indicator_workflow(args):
     Returns:
         dict: A dictionary containing results and metrics of the workflow.
     """
+    # Special case: handle 'show' mode differently
+    if args.mode == 'show':
+        try:
+            # Call the show mode handler
+            handle_show_mode(args)
+            # Return a simplified success result
+            return {
+                "success": True,
+                "effective_mode": "show",
+                "data_source_label": f"Show mode (source: {args.source})",
+                "error_message": None,
+                "error_traceback": None,
+                "total_duration_sec": 0  # We're not tracking time for show mode
+            }
+        except Exception as e:
+            # traceback already imported at module level
+            traceback_str = traceback.format_exc()
+            # Return error information
+            return {
+                "success": False,
+                "effective_mode": "show",
+                "data_source_label": f"Show mode (source: {args.source})",
+                "error_message": str(e),
+                "error_traceback": traceback_str,
+                "total_duration_sec": 0
+            }
+    
     t_start_workflow = time.perf_counter()
     # Initialize results dictionary with defaults
     workflow_results = {
@@ -41,6 +69,10 @@ def run_indicator_workflow(args):
         "data_metrics": {},
         "steps_duration": {}
     }
+    
+    # For show mode, set success=True by default to avoid errors
+    if hasattr(args, 'mode') and args.mode == 'show':
+        workflow_results["success"] = True
     result_df = None # Initialize result_df
 
     try:
