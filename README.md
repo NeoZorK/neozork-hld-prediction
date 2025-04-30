@@ -33,7 +33,7 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 1.  **Indicator Logic Replication (Python):** Translate the mathematical and logical steps of the MQL5 indicator into an equivalent Python function or class. Validate its output against the original MQL5 version using the exported historical predictions.
 2.  **Data Ingestion & Management:**
     * **Initial Load:** Process the one-time export of M1 OHLCV and original MQL5 indicator predictions from MT5.
-    * **Data Feeds:** Implement functionality to fetch and update OHLCV data from sources like Yahoo Finance (`yfinance`), CSV files, Polygon.io API, or other chosen data providers (Oanda planned).
+    * **Data Feeds:** Implement functionality to fetch and update OHLCV data from sources like Yahoo Finance (`yfinance`), CSV files, Polygon.io API, or other chosen data providers.
 3.  **Feature Engineering (ML-Centric):**
     * Derive features primarily from M1 OHLCV data (e.g., price transformations, volatility measures, time-based patterns, candlestick patterns).
     * Crucially, incorporate the outputs (predicted H/L/D, internal states) of the **Python-replicated indicator** as key features for the ML model.
@@ -54,7 +54,7 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 Based on comparisons using the `mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv` file:
 
 * **Core Calculations (Pressure/PV):** Validation shows that the Python implementation of `Pressure` and `PV` (Pressure Vector) calculations is **highly accurate**, matching the `pressure` and `pressure_vector` columns from the CSV very closely (Correlation=1.0, minimal Mean Absolute Difference, <5% mismatches beyond float tolerance).
-* **Predicted Low/High (PHLD/SR Rules):** The current Python implementation for `PPrice1` (plotted green) and `PPrice2` (plotted red) in rules `PHLD` and `SR` uses a formula based on `Current Open +/- (Previous_High - Previous_Low) / 2`. Comparison with `predicted_low` and `predicted_high` columns from the sample MQL5 CSV shows a **systematic difference** (approx. 6.8 points Mean Absolute Difference in the sample XAUUSD MN1 data, although Correlation > 0.999). This indicates that the original MQL5 indicator uses a **different formula** for these specific predictions. Achieving an exact match would require implementing the original MQL5 formula in `src/calculation/rules.py`.
+* **Predicted Low/High (PHLD/SR Rules):** The current Python implementation for `PPrice1` (plotted green) and `PPrice2` (plotted red) in rules `PHLD` and `SR`. Comparison with `predicted_low` and `predicted_high` columns from the sample MQL5 CSV shows a **systematic difference** (approx. 6.8 points Mean Absolute Difference in the sample XAUUSD MN1 data, although Correlation > 0.999).
 
 ### Data Caching Mechanism
 
@@ -78,33 +78,137 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 * **Core Libraries:** `pandas`, `numpy`
 * **ML / Deep Learning:** `scikit-learn`, `xgboost`, `lightgbm`, `tensorflow` or `pytorch`
 * **Feature Engineering:** `ta` (or `TA-Lib`)
-* **Data Feeds:** `yfinance`, CSV reader (implemented), `polygon-api-client` (implemented), `oandapyV20` (planned)
+* **Data Feeds:** `yfinance`, CSV reader (implemented), `polygon-api-client` (implemented)
 * **Backtesting:** `VectorBT`, `Backtrader`
 * **Plotting:** `mplfinance`, `matplotlib`, `seaborn`, `rich`, `colorama`
 * **Environment:** `venv`
 * **Version Control:** `git`
 * **Package Installation Speedup (Optional):** `uv`
 
-## Project Structure
+
+# Project Structure
+├── data/  
+│   ├── cache/  
+│   │   └── csv_converted/  
+│   ├── processed/  
+│   └── raw_parquet/  
+├── mql5_feed/  
+├── notebooks/  
+├── src/  
+│   ├── cli/  
+│   │   └── cli.py  
+│   ├── calculation/  
+│   ├── data/  
+│   ├── feature_engineering.py  
+│   └── __init__.py  
+├── tests/  
+├── .env  
+├── .gitignore  
+├── init_dirs.sh  
+├── README.md  
+├── requirements.txt  
+└── run_analysis.py  
+
+## Directory and File Descriptions
+
+`data/`: Central storage for all data-related files.  
+`cache/`: Holds temporary intermediate data.  
+`csv_converted/`: Stores CSV files converted from other formats.  
+
+
+`processed/`: Contains processed data ready for analysis.  
+`raw_parquet/`: Stores raw data in Parquet format for efficient storage and querying.  
+
+
+`mql5_feed/`: Directory for CSV files exported from MQL5/MT5 platforms.  
+`notebooks/`: Contains Jupyter notebooks used for exploratory data analysis (EDA) and experimental workflows.  
+`src/`: Main source code directory for the project.  
+`cli/`: Command-line interface scripts.  
+`cli.py`: Primary script for running CLI commands.  
+
+
+`calculation/`: Modules for performing calculations and computations.  
+`data/`: Modules for data loading, cleaning, and preprocessing.  
+`feature_engineering.py`: Script for creating and transforming features for analysis or modeling.  
+`init.py`: Initializes the src directory as a Python package.  
+
+
+`tests/`: Directory for unit tests to ensure code reliability.  
+`.env`: Stores environment variables, such as API keys and configuration settings.  
+`.gitignore`: Specifies files and directories to be ignored by Git version control.  
+`init_dirs.sh`: Shell script to set up project directories and initialize the .env file.  
+`README.md:` This file, providing an overview and documentation of the project.  
+`requirements.txt`: Lists Python dependencies required for the project.  
+`run_analysis.py`: Main entry point script to execute the data analysis pipeline.  
+
 
 
 ## Installation
 
-1.  **Clone Repository:**
+## Quick Start: Directory and Environment Setup
+
+Before running the project, create all required folders by executing the initialization script:
+
+```bash
+./init_dirs.sh
+```
+This script will set up the directory structure for data, cache, and source files.
+
+## Environment Variables (.env)
+
+The `.env` file must be located in the project root (next to `README.md` and `requirements.txt`).  
+It stores API keys and other sensitive configuration values required for data sources.
+
+**Example `.env` content:**
+```env
+# Polygon.io API key
+POLYGON_API_KEY=your_polygon_api_key_here
+
+# Binance API keys
+BINANCE_API_KEY=your_binance_api_key_here
+BINANCE_API_SECRET=your_binance_api_secret_here
+
+# Add other environment variables as needed
+```
+* The .env file is created automatically by the init_dirs.sh script if it does not exist.
+* Do not commit .env to version control; it is already listed in .gitignore.
+* Update the values with your actual API keys before running the scripts.
+
+
+
+1.  **Install Python 3.12+**: Ensure you have Python 3.12 or higher installed on your system. You can download it from the official Python website: [python.org](https://www.python.org/downloads/).
+
+* macOS:
+Install Homebrew if not already installed, then run:
+  ```bash
+  brew install python@3.12
+  ```
+* Windows:
+Download and install Python 3.12 from the official website.
+* Linux:
+Use your package manager, for example:
+    ```bash
+    sudo apt-get update
+    sudo apt-get install python3.12 python3.12-venv
+    ```
+
+
+2. **Clone Repository:**
     ```bash
     git clone <your_repository_url>
     cd <project-root>
     ```
 
-2.  **Create & Activate Virtual Environment (Recommended: Python 3.12):**
+3. **Create & Activate Virtual Environment (Recommended: Python 3.12):**
     ```bash
     # Make sure Python 3.12 is installed and accessible
     python3.12 -m venv venv
-    source venv/bin/activate # On Linux/macOS
+    source .venv/bin/activate # On Linux/macOS
+    pip install --upgrade pip
     # venv\Scripts\activate # On Windows
     ```
 
-3.  **Install Dependencies:**
+4. **Install Dependencies:**
     ```bash
     pip install --upgrade pip
     pip install -r requirements.txt
@@ -113,7 +217,7 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
     # uv pip install -r requirements.txt
     ```
 
-4.  **(If needed) Install TA-Lib C Library:** (Only if using `TA-Lib` python package)
+5. **(If needed) Install TA-Lib C Library:** (Only if using `TA-Lib` python package)
     * macOS: `brew install ta-lib`
     * Linux: Check package manager (e.g., `sudo apt-get install libta-lib-dev`)
     * Windows: Download binaries or build from source.
@@ -133,16 +237,14 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 * [x] 1.5. Add Project Versioning (`src/__init__.py`, Git Tag).
 
 ### Phase 2: Data Ingestion & Preparation
-* [ ] 2.1. Export Original MQL5 Indicator Predictions (CSV from MT5, M1, 5-10 years). *(Sample MN1 provided)*
-* [ ] 2.2. Export M1 OHLCV Data (CSV from MT5, same period/instrument). *(Sample MN1 provided)*
+* [x] 2.1. Export Original MQL5 Indicator Predictions (CSV from MT5, M1, 5-10 years). *(Sample MN1 provided)*
+* [x] 2.2. Export M1 OHLCV Data (CSV from MT5, same period/instrument). *(Sample MN1 provided)*
 * [x] 2.3. Load Data in Python: Implemented for CSV, yfinance, Polygon.
 * [~] 2.4. Merge & Align Data (Handle timestamps, missing values). *(Basic handling in fetch functions)*
 * [x] 2.5. Calculate Python Indicator Predictions on historical data (Done within workflow).
-* [~] 2.6. **Validate Python Replication:** Done for `Pressure`/`PV` (good match). Known difference for `predicted_low`/`high` due to different formulas in current Python rules (`PHLD`/`SR`).
-* [ ] 2.7. Define Ground Truth (Actual future H/L/D).
-* [ ] 2.8. Clean & Save Final Processed Data (`data/processed/`, e.g., Parquet format).
+* [X] 2.6. Define Ground Truth (Actual future H/L/D).
+* [x] 2.7. Clean & Save Final Processed Data (`data/processed/`, e.g., Parquet format).
 * *Note: Added CSV & Polygon data source integration (CLI, data_acquisition, point_size).*
-* *Note: Oanda fetch logic pending API key.*
 
 ### Phase 3: Exploratory Data Analysis (EDA)
 * [ ] 3.1. Load Processed Data (`notebooks/`).
@@ -187,10 +289,9 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 * [ ] 8.6. Document Robustness Findings.
 
 ### Phase 9: Live Data Integration & Forward Testing
-* [ ] 9.1. Implement Live Data Feed (Oanda pending).
-* [ ] 9.2. Adapt Prediction Pipeline for live data.
-* [ ] 9.3. Setup Forward Testing (Paper Trading).
-* [ ] 9.4. Monitor Forward Test.
+* [ ] 9.1. Adapt Prediction Pipeline for live data.
+* [ ] 9.2. Setup Forward Testing (Paper Trading).
+* [ ] 9.3. Monitor Forward Test.
 
 ### Phase 10: Monitoring & Maintenance
 * [ ] 10.1. Continuous Performance Monitoring.
@@ -209,14 +310,15 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 
 ### Fast mode for large charts (default)
 
-* **For accelerated plotting of large OHLCV datasets (millions of rows, M1) use the new 'fast' mode (Dask+Datashader+Bokeh), now default:
+* **For accelerated plotting of large OHLCV datasets (millions of rows, M1) use the new 'fastest' mode, now default:
 
     ```bash
-    python run_analysis.py demo -d fast
+    python run_analysis.py demo -d fastest
     ```
 #### Old modes:
 - `-d plotly`: interactive Plotly HTML chart
 - `-d mpl` or `-d mplfinance`: static chart via mplfinance/matplotlib
+- `-d fast` : run plotly
 
 
 * **Run with demo data using a specific rule (e.g., Pressure_Vector alias 'PV'):**
