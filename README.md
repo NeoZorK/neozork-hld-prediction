@@ -99,6 +99,28 @@ Before running the project, create all required folders by executing the initial
 ```
 This script will set up the directory structure for data, cache, and source files.
 
+## Environment Variables (.env)
+
+The `.env` file must be located in the project root (next to `README.md` and `requirements.txt`).  
+It stores API keys and other sensitive configuration values required for data sources.
+
+**Example `.env` content:**
+```env
+# Polygon.io API key
+POLYGON_API_KEY=your_polygon_api_key_here
+
+# Binance API keys
+BINANCE_API_KEY=your_binance_api_key_here
+BINANCE_API_SECRET=your_binance_api_secret_here
+
+# Add other environment variables as needed
+```
+* The .env file is created automatically by the init_dirs.sh script if it does not exist.
+* Do not commit .env to version control; it is already listed in .gitignore.
+* Update the values with your actual API keys before running the scripts.
+
+
+
 1.  **Install Python 3.12+**: Ensure you have Python 3.12 or higher installed on your system. You can download it from the official Python website: [python.org](https://www.python.org/downloads/).
 
 * macOS:
