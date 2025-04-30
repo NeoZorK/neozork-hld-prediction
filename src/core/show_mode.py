@@ -5,6 +5,7 @@ from pathlib import Path
 import pyarrow.parquet as pq
 import pandas as pd # We might need pandas later for date parsing if reading rows
 import sys
+import webbrowser
 import traceback
 
 def show_help():
@@ -216,6 +217,8 @@ def handle_show_mode(args):
 
     if not found_files:
         return # Exit if no files found
+                        elif len(found_files) == 1:
+        print("Single CSV file found. Will automatically open chart in browser.")
 
     # Sort files by name for consistent listing
     found_files.sort(key=lambda x: x['name'])
