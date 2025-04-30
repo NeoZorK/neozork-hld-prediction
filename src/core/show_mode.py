@@ -138,7 +138,8 @@ def handle_show_mode(args):
         
         print("\n=== AVAILABLE DATA FILES ===")
         # Исключаем csv_converted_count из общего подсчета, так как это дополнительная информация
-        total_files = sum([count for source, count in source_counts.items() if source != 'csv_converted_count'])
+        total_files = sum([count for source, count in source_counts.items() 
+                          if source not in ['csv_converted_count']])
         
         if total_files == 0:
             print("No data files found. Use other modes to download or import data first.")
@@ -146,14 +147,16 @@ def handle_show_mode(args):
             
         print(f"Total cached data files: {total_files}")
         for source, count in source_counts.items():
-            # Пропускаем вывод служебного счетчика
-            if source == 'csv_converted_count':
+            # Пропускаем вывод служебных счетчиков
+            if source in ['csv_converted_count']:
                 continue
                 
             if count > 0:
                 if source == 'csv':
                     csv_converted = source_counts.get('csv_converted_count', 0)
                     print(f"  - {source.capitalize()}: {count} file(s) (including {csv_converted} converted from CSV)")
+                elif source == 'other':
+                    print(f"  - Converted from CSV: {count} file(s)")
                 else:
                     if source == 'csv_converted':
                         print(f"  - Converted from CSV: {count} file(s)")
