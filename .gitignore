@@ -11,6 +11,8 @@ env/
 # IDE
 .idea/
 .vscode/
+*.iml
+*.xml
 
 # Cache and temp files
 .cache/
