@@ -65,8 +65,12 @@ def count_files_by_source():
                 elif filename_lower.startswith('csv_'):
                     source_counts['csv'] += 1
                     # Специальный подсчет файлов в папке csv_converted
-                    if str(search_dir).endswith('csv_converted'):
+                    if 'csv_converted' in str(search_dir).lower():
                         source_counts['csv_converted_count'] += 1
+                # Все файлы в папке csv_converted считаются CSV файлами независимо от их имени
+                elif 'csv_converted' in str(search_dir).lower():
+                    source_counts['csv'] += 1
+                    source_counts['csv_converted_count'] += 1
                 elif filename_lower.startswith('polygon_'):
                     source_counts['polygon'] += 1
                 elif filename_lower.startswith('binance_'):
@@ -143,6 +147,8 @@ def handle_show_mode(args):
         
         if total_files == 0:
             print("No data files found. Use other modes to download or import data first.")
+            print("\nTo convert a CSV file, use the 'csv' mode:")
+            print("  python run_analysis.py csv --csv-file path/to/data.csv --point 0.01")
             return
             
         print(f"Total cached data files: {total_files}")
@@ -179,11 +185,21 @@ def handle_show_mode(args):
             continue
 
         for item in search_dir.iterdir():
-            # Check if it's a file, ends with .parquet, and starts with the source prefix
-            if item.is_file() and item.suffix == '.parquet' and item.name.lower().startswith(search_prefix + '_'):
-                # Check if all keywords are present in the filename (case-insensitive)
+            # Check if it's a file and ends with .parquet
+            if item.is_file() and item.suffix == '.parquet':
                 filename_lower = item.name.lower()
-                if all(keyword in filename_lower for keyword in search_keywords):
+                
+                # Специальная логика для режима CSV
+                if special_csv_mode:
+                    # Показываем файлы, которые либо начинаются с 'csv_', либо находятся в папке csv_converted
+                    is_match = (filename_lower.startswith('csv_') or 
+                               'csv_converted' in str(search_dir).lower())
+                else:
+                    # Для остальных источников проверяем префикс как обычно
+                    is_match = filename_lower.startswith(search_prefix.lower() + '_')
+                
+                # Проверяем совпадение с шаблоном поиска и ключевыми словами
+                if is_match and all(keyword in filename_lower for keyword in search_keywords):
                     try:
                         file_size_bytes = item.stat().st_size
                         file_size_mb = file_size_bytes / (1024 * 1024)
