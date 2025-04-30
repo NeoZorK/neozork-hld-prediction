@@ -242,8 +242,8 @@ Use your package manager, for example:
 * [x] 2.3. Load Data in Python: Implemented for CSV, yfinance, Polygon.
 * [~] 2.4. Merge & Align Data (Handle timestamps, missing values). *(Basic handling in fetch functions)*
 * [x] 2.5. Calculate Python Indicator Predictions on historical data (Done within workflow).
-* [ ] 2.6. Define Ground Truth (Actual future H/L/D).
-* [ ] 2.7. Clean & Save Final Processed Data (`data/processed/`, e.g., Parquet format).
+* [X] 2.6. Define Ground Truth (Actual future H/L/D).
+* [x] 2.7. Clean & Save Final Processed Data (`data/processed/`, e.g., Parquet format).
 * *Note: Added CSV & Polygon data source integration (CLI, data_acquisition, point_size).*
 
 ### Phase 3: Exploratory Data Analysis (EDA)
