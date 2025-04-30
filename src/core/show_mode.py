@@ -39,7 +39,8 @@ def get_parquet_metadata(file_path: Path) -> dict:
         # Read first and last row with all fields
         if metadata['num_rows'] > 0:
             # Read the first row with all columns
-            df_head = pd.read_parquet(file_path, nrows=1)
+            # Note: pd.read_parquet doesn't support nrows, so we use head(1)
+            df_head = pd.read_parquet(file_path).head(1)
             if not df_head.empty:
                 metadata['first_row'] = df_head.iloc[0]
                 # Keep first_date for backward compatibility
@@ -48,7 +49,7 @@ def get_parquet_metadata(file_path: Path) -> dict:
             # Read the last row if there's more than one row
             if metadata['num_rows'] > 1:
                 # For the last row, we'll read the whole file but only take the last row
-                # This is not very efficient for large files, but simpler to implement
+                # This is not very efficient for large files, but it's a simple approach
                 df_tail = pd.read_parquet(file_path).tail(1)
                 if not df_tail.empty:
                     metadata['last_row'] = df_tail.iloc[0]
@@ -60,7 +61,7 @@ def get_parquet_metadata(file_path: Path) -> dict:
 
     except Exception as e:
         print(f"Warning: Could not read metadata for {file_path.name}. Error: {e}", file=sys.stderr)
-        traceback.print_exc(file=sys.stderr)
+        # Don't print full traceback to reduce console output noise
     return metadata
 
 
@@ -123,33 +124,61 @@ def handle_show_mode(args):
 
         # Print extra info only if exactly one file is found
         if len(found_files) == 1:
-             print(f"    Columns ({len(file_info['columns'])}): {', '.join(file_info['columns'])}")
-             
-             # Display full first row
-             if file_info['first_row'] is not None:
-                 print(f"    First Row:")
-                 # If it's a Series object, display it nicely with indentation
-                 if isinstance(file_info['first_row'], pd.Series):
-                     for col_name, value in file_info['first_row'].items():
-                         # Format timestamps nicely
-                         if isinstance(value, pd.Timestamp):
-                             value = value.strftime('%Y-%m-%d %H:%M:%S')
-                         print(f"        {col_name}: {value}")
-                 else:
-                     print(f"        {file_info['first_row']}")
-             
-             # Display full last row
-             if file_info['last_row'] is not None and file_info['num_rows'] > 1:
-                 print(f"    Last Row:")
-                 # If it's a Series object, display it nicely with indentation
-                 if isinstance(file_info['last_row'], pd.Series):
-                     for col_name, value in file_info['last_row'].items():
-                         # Format timestamps nicely
-                         if isinstance(value, pd.Timestamp):
-                             value = value.strftime('%Y-%m-%d %H:%M:%S')
-                         print(f"        {col_name}: {value}")
-                 else:
-                     print(f"        {file_info['last_row']}")
+            print(f"    Columns ({len(file_info['columns'])}): {', '.join(file_info['columns'])}")
+            
+            # Extract and format dates from first and last rows
+            first_date = None
+            last_date = None
+            
+            # Format first date/time if available
+            if file_info['first_date'] is not None:
+                if isinstance(file_info['first_date'], pd.Timestamp):
+                    first_date = file_info['first_date'].strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    first_date = str(file_info['first_date'])
+                
+            # Format last date/time if available
+            if file_info['last_date'] is not None:
+                if isinstance(file_info['last_date'], pd.Timestamp):
+                    last_date = file_info['last_date'].strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    last_date = str(file_info['last_date'])
+            
+            # Print date range summary
+            if first_date and last_date and first_date != last_date:
+                print(f"    Date Range: {first_date} → {last_date}")
+            elif first_date:
+                print(f"    Date: {first_date}")
+            
+            # Display first row in a compact format
+            if file_info['first_row'] is not None:
+                print(f"    First Row: ", end="")
+                # If it's a Series object, display it nicely in a single line
+                if isinstance(file_info['first_row'], pd.Series):
+                    values = []
+                    for col_name, value in file_info['first_row'].items():
+                        # Format timestamps nicely
+                        if isinstance(value, pd.Timestamp):
+                            value = value.strftime('%Y-%m-%d %H:%M:%S')
+                        values.append(f"{col_name}={value}")
+                    print(" | ".join(values))
+                else:
+                    print(f"{file_info['first_row']}")
+            
+            # Display last row in a compact format (if different from first)
+            if file_info['last_row'] is not None and file_info['num_rows'] > 1:
+                print(f"    Last Row:  ", end="")
+                # If it's a Series object, display it nicely in a single line
+                if isinstance(file_info['last_row'], pd.Series):
+                    values = []
+                    for col_name, value in file_info['last_row'].items():
+                        # Format timestamps nicely
+                        if isinstance(value, pd.Timestamp):
+                            value = value.strftime('%Y-%m-%d %H:%M:%S')
+                        values.append(f"{col_name}={value}")
+                    print(" | ".join(values))
+                else:
+                    print(f"{file_info['last_row']}")
 
     print("-" * 40) # Separator
 
