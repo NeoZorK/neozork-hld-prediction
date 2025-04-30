@@ -11,9 +11,21 @@ mkdir -p src
 mkdir -p tests
 mkdir -p mql5_feed
 
-# Optional: create virtual environment and cache folders
-#mkdir -p .cache
-#mkdir -p .idea
-#mkdir -p .vscode
+# Create .env file with default fields if it does not exist
+if [ ! -f .env ]; then
+cat > .env <<EOL
+# Polygon.io API key
+POLYGON_API_KEY=your_polygon_api_key_here
+
+# Binance API keys
+BINANCE_API_KEY=your_binance_api_key_here
+BINANCE_API_SECRET=your_binance_api_secret_here
+
+# Add other environment variables as needed
+EOL
+    echo ".env file created with default fields."
+else
+    echo ".env file already exists, not overwritten."
+fi
 
 echo "All required directories have been created."
