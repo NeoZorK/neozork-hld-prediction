@@ -138,8 +138,8 @@ def handle_show_mode(args):
 
     # Print hint or trigger plot
     if len(found_files) > 1:
-        print("To display a chart, re-run the command specifying the file index or full name:")
-        print(f"Example: python run_analysis.py <plot_mode> --file <filename_or_index> ...") # Adjust this command structure later
+        print("To display a chart, re-run the command with more specific keywords:")
+        print(f"Example: python run_analysis.py show {args.source} <additional_keywords>")
     elif len(found_files) == 1:
         print(f"Found one file. Triggering plot with method: '{args.draw}'...")
         # Call the plotting function for the found file
