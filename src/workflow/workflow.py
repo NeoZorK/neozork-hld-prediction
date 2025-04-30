@@ -69,6 +69,10 @@ def run_indicator_workflow(args):
         "data_metrics": {},
         "steps_duration": {}
     }
+    
+    # Для режима show устанавливаем success=True по умолчанию, чтобы избежать ошибок
+    if hasattr(args, 'mode') and args.mode == 'show':
+        workflow_results["success"] = True
     result_df = None # Initialize result_df
 
     try:
