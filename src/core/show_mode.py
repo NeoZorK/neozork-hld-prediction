@@ -106,20 +106,27 @@ def get_parquet_metadata(file_path: Path) -> dict:
 def _print_indicator_result(df, datetime_column=None):
     """
     Prints a DataFrame with ohlcv+datetime+indicator columns to the console.
+    Includes core indicator fields: PV, HL, Pressure.
     """
     base_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
+    core_indicator_cols = ['PV', 'HL', 'Pressure']
     indicator_cols = ['PPrice1', 'PColor1', 'PPrice2', 'PColor2', 'Direction', 'Diff']
     cols_to_show = []
     if datetime_column and datetime_column in df.columns:
         cols_to_show.append(datetime_column)
-    for col in base_cols + indicator_cols:
+    # Always include index if it's DatetimeIndex and not present as column
+    if datetime_column is None and isinstance(df.index, pd.DatetimeIndex):
+        cols_to_show.append(df.index.name if df.index.name else 'index')
+        df = df.copy()
+        df['index'] = df.index
+    for col in base_cols + core_indicator_cols + indicator_cols:
         if col in df.columns:
             cols_to_show.append(col)
     if not cols_to_show:
         print("No standard columns found to print after indicator calculation.")
         return
     print("\n=== CALCULATED INDICATOR DATA ===")
-    print(df[cols_to_show].to_string(index=True))
+    print(df[cols_to_show].to_string(index=False))
 
 def _extract_datetime_filter_args(args):
     """
