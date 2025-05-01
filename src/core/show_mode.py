@@ -6,7 +6,6 @@ from pathlib import Path
 import pyarrow.parquet as pq
 import pandas as pd
 import sys
-import webbrowser
 import traceback
 
 # Import for indicator calculation; fallback for different relative import
@@ -193,11 +192,10 @@ def _filter_dataframe_by_date(df, start, end):
 
 def _should_draw_plot(args):
     """
-    Helper to determine if plot should be drawn after indicator calculation.
-    Returns True if --draw is one of 'fastest', 'fast', 'plt', 'mpl', 'mplfinance', 'plotly'.
+    Returns True if the draw flag is set and is one of supported modes.
     """
     plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly"}
-    return hasattr(args, "draw") and args.draw and args.draw in plot_modes
+    return hasattr(args, "draw") and args.draw is not None and args.draw in plot_modes
 
 def handle_show_mode(args):
     """
@@ -351,7 +349,7 @@ def handle_show_mode(args):
                 datetime_column = result_df.index.name or 'datetime'
             _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
             print(f"\nIndicator '{selected_rule.name}' calculated and shown above.")
-            # Draw plot after indicator calculation if draw flag is set to supported mode
+            # Draw plot after indicator calculation only if draw flag is set to supported mode
             if _should_draw_plot(args):
                 print(f"\nDrawing plot after indicator calculation with method: '{args.draw}'...")
                 try:
@@ -384,8 +382,9 @@ def handle_show_mode(args):
         print("To display a chart, re-run the command with more specific keywords:")
         print(f"Example: python run_analysis.py show {args.source} <additional_keywords>")
     elif len(found_files) == 1:
-        if not hasattr(args, 'draw') or not args.draw:
-            args.draw = 'fastest'
+        # Only plot if draw flag is specified and is supported
+        if not _should_draw_plot(args):
+            return
         print(f"Found one file. Triggering plot with method: '{args.draw}'...")
         print(f"Loading file data and triggering plot with method: '{args.draw}'...")
         try:
@@ -422,8 +421,6 @@ def handle_show_mode(args):
             result_df = None
             selected_rule = args.rule if hasattr(args, 'rule') else 'Predict_High_Low_Direction'
             estimated_point = True
-            if not hasattr(args, 'draw') or not args.draw:
-                args.draw = 'fastest'
             generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
             print(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode")
         except Exception as e:
