@@ -6,17 +6,18 @@ from pathlib import Path
 import pyarrow.parquet as pq
 import pandas as pd
 import sys
-import webbrowser
 import traceback
 
-# Modular import for indicator calculation
+# Import for indicator calculation; fallback for different relative import
 try:
     from ..calculation.indicator_calculation import calculate_indicator
 except ImportError:
     from src.calculation.indicator_calculation import calculate_indicator
 
 def show_help():
-    """Displays help for the 'show' mode."""
+    """
+    Displays help for the 'show' mode.
+    """
     print("\n=== SHOW MODE HELP ===")
     print("The 'show' mode allows you to list and inspect cached data files.")
     print("Usage: python run_analysis.py show <source> [keywords...]")
@@ -34,6 +35,9 @@ def show_help():
     print("  --start, --end or --show-start, --show-end for date range filtering.")
 
 def import_generate_plot():
+    """
+    Dynamically imports the generate_plot function for plotting.
+    """
     from ..plotting.plotting_generation import generate_plot
     return generate_plot
 
@@ -108,7 +112,6 @@ def _get_relevant_columns_for_rule(rule_name: str) -> list:
     Returns the relevant columns to output for the given rule,
     according to clarified user logic.
     """
-    # Always show DateTime
     base_cols = ['DateTime', 'Open', 'High', 'Low', 'Close', 'Volume', 'HL', 'Pressure', 'PV']
     rule_aliases_map = {
         'PHLD': 'Predict_High_Low_Direction',
@@ -117,20 +120,15 @@ def _get_relevant_columns_for_rule(rule_name: str) -> list:
     }
     rule_name_upper = rule_name.upper()
     canonical_rule = rule_aliases_map.get(rule_name_upper, rule_name)
-    # PHLD и Predict_High_Low_Direction: убрать PColor1, PColor2, Diff, оставить Direction
     if canonical_rule in ['Predict_High_Low_Direction']:
         return base_cols + ['PPrice1', 'PPrice2', 'Direction']
-    # PV: убрать PColor1, PColor2, Diff, оставить Direction
     elif canonical_rule in ['Pressure_Vector']:
         return base_cols + ['PPrice1', 'Direction']
-    # SR: убрать Direction, PColor1, PColor2, Diff
     elif canonical_rule in ['Support_Resistants']:
         return base_cols + ['PPrice1', 'PPrice2']
-    # PV_HighLow: логика аналогична SR
     elif canonical_rule == 'PV_HighLow':
         return base_cols + ['PPrice1', 'PPrice2']
     else:
-        # Fallback — показать все стандартные, а из кастома только Direction
         return base_cols + ['PPrice1', 'PPrice2', 'Direction']
 
 def _print_indicator_result(df, rule_name, datetime_column=None):
@@ -139,7 +137,6 @@ def _print_indicator_result(df, rule_name, datetime_column=None):
     Always includes DateTime.
     """
     df_to_show = df.copy()
-    # Add DateTime column if missing
     if datetime_column and datetime_column in df_to_show.columns:
         pass
     elif isinstance(df_to_show.index, pd.DatetimeIndex):
@@ -153,10 +150,8 @@ def _print_indicator_result(df, rule_name, datetime_column=None):
     else:
         df_to_show['DateTime'] = df_to_show.index
         datetime_column = 'DateTime'
-
     columns_to_show = _get_relevant_columns_for_rule(rule_name)
     columns_to_show_existing = [col for col in columns_to_show if col in df_to_show.columns]
-
     row_count = df_to_show.shape[0]
     print(f"\n=== CALCULATED INDICATOR DATA === ({row_count} rows in selected range)")
     if columns_to_show_existing:
@@ -194,6 +189,13 @@ def _filter_dataframe_by_date(df, start, end):
         end_dt = pd.to_datetime(end) if end else date_index.max()
         df = df[(date_index >= start_dt) & (date_index <= end_dt)]
     return df
+
+def _should_draw_plot(args):
+    """
+    Returns True if the draw flag is set and is one of supported modes.
+    """
+    plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly"}
+    return hasattr(args, "draw") and args.draw is not None and args.draw in plot_modes
 
 def handle_show_mode(args):
     """
@@ -313,18 +315,15 @@ def handle_show_mode(args):
                     print(f"{file_info['last_row']}")
     print("-" * 40)
 
-    # --- Date filtering and indicator calculation ---
+    # Date filtering and indicator calculation
     if len(found_files) == 1 and hasattr(args, 'rule') and args.rule:
         try:
             print(f"\n=== INDICATOR CALCULATION MODE ===")
             print(f"Loading file data and calculating indicator '{args.rule}' ...")
             df = pd.read_parquet(found_files[0]['path'])
-
-            # --- Date filtering ---
             start, end = _extract_datetime_filter_args(args)
             if start or end:
                 df = _filter_dataframe_by_date(df, start, end)
-
             point_size = None
             if 'point' in found_files[0]['name'].lower():
                 try:
@@ -342,28 +341,50 @@ def handle_show_mode(args):
                 else:
                     point_size = 0.01
                 print(f"Point size not found in filename, using default: {point_size}")
-
             if not hasattr(args, 'mode'):
                 args.mode = 'parquet'
-
             result_df, selected_rule = calculate_indicator(args, df, point_size)
             datetime_column = None
             if isinstance(result_df.index, pd.DatetimeIndex):
                 datetime_column = result_df.index.name or 'datetime'
             _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
             print(f"\nIndicator '{selected_rule.name}' calculated and shown above.")
+            # Draw plot after indicator calculation only if draw flag is set to supported mode
+            if _should_draw_plot(args):
+                print(f"\nDrawing plot after indicator calculation with method: '{args.draw}'...")
+                try:
+                    generate_plot = import_generate_plot()
+                    data_info = {
+                        "ohlcv_df": df,
+                        "data_source_label": f"Parquet file: {found_files[0]['name']}",
+                        "rows_count": len(df),
+                        "columns_count": len(df.columns),
+                        "data_size_mb": found_files[0]['size_mb'],
+                        "first_date": found_files[0]['first_date'],
+                        "last_date": found_files[0]['last_date'],
+                        "parquet_cache_used": True,
+                        "parquet_cache_file": str(found_files[0]['path'])
+                    }
+                    estimated_point = True
+                    generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
+                    print(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode after indicator calculation.")
+                except Exception as e:
+                    print(f"Error plotting after indicator calculation: {e}")
+                    traceback.print_exc()
             return
         except Exception as e:
             print(f"Error calculating indicator: {e}")
             traceback.print_exc()
             return
 
+    # Plot chart when one file found and no indicator calculation requested
     if len(found_files) > 1:
         print("To display a chart, re-run the command with more specific keywords:")
         print(f"Example: python run_analysis.py show {args.source} <additional_keywords>")
     elif len(found_files) == 1:
-        if not hasattr(args, 'draw') or not args.draw:
-            args.draw = 'fastest'
+        # Only plot if draw flag is specified and is supported
+        if not _should_draw_plot(args):
+            return
         print(f"Found one file. Triggering plot with method: '{args.draw}'...")
         print(f"Loading file data and triggering plot with method: '{args.draw}'...")
         try:
@@ -400,8 +421,6 @@ def handle_show_mode(args):
             result_df = None
             selected_rule = args.rule if hasattr(args, 'rule') else 'Predict_High_Low_Direction'
             estimated_point = True
-            if not hasattr(args, 'draw') or not args.draw:
-                args.draw = 'fastest'
             generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
             print(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode")
         except Exception as e:
