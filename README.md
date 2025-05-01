@@ -423,6 +423,9 @@ python run_analysis.py show yf aapl --show-start 2024-01-01 --show-end 2024-04-0
 
 # Specify a particular indicator rule (default is Predict_High_Low_Direction)
 python run_analysis.py show yf aapl --rule PV
+
+# Specify a particular indicator date, rule, drawing style (mplfinance, mpl, plotly, plt, fast, fastest (default))
+python run_analysis.py show yf aapl --start 2024-01-01 --end 2024-06-01 --rule SR -d mpl
 ```
 
 ### How it works
@@ -433,6 +436,7 @@ python run_analysis.py show yf aapl --rule PV
     - prints a table with main indicator values directly to the console;
     - indicator values are **never saved**—they are always shown in the current session only.
 - For visualization, you can use the `--draw` parameter to select the charting style.
+- The default drawing style is `fastest`, which is the fastest mode for large datasets (millions of rows). It uses `mplfinance` for fast rendering of OHLCV data and indicator lines.
 
 ### Features
 
