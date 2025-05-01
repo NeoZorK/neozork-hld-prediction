@@ -389,7 +389,63 @@ Use your package manager, for example:
     ```bash
     python run_analysis.py yfinance --ticker AAPL --start 2024-01-01 --end 2024-04-15 --point 0.01 --rule SR
     ```
+## Show Mode
 
+The `show` mode is designed for interactive browsing, analysis, and visualization of locally cached datasets in Parquet format, which are used for indicator calculations. It allows you to quickly find needed files, filter them by data source and keywords, and instantly calculate an indicator on the selected data—without querying an API or re-downloading data.
+
+**Key features of `show` mode:**
+- Lists all cached Parquet data files in the `data/raw_parquet` and `data/cache/csv_converted` directories.
+- Allows filtering files by data source (`yfinance`, `polygon`, `binance`, `csv`) and by keywords (such as ticker, timeframe).
+- For each found file, it displays a summary: filename, size, number of rows, date range, column structure, first/last rows.
+- If only one file matches the filter, the indicator is calculated on this data and the result is printed in the console (or a chart is displayed if indicator calculation is not explicitly requested).
+- **Note:** Indicator values are _always calculated on the fly_ and are **never saved** anywhere.  
+  Each time you run an indicator calculation in `show` mode, the indicator is recomputed from scratch on the selected data.
+
+### How to use `show` mode
+
+Example commands for `show` mode:
+
+```bash
+# Show help and statistics for all cached data
+python run_analysis.py show
+
+# List all files received from Yahoo Finance (YF)
+python run_analysis.py show yf
+
+# Find all YF files containing 'aapl' in the name
+python run_analysis.py show yf aapl
+
+# Find Binance files containing 'btc' and 'MN1' in the name
+python run_analysis.py show binance btc MN1
+
+# Restrict the date range for indicator calculation
+python run_analysis.py show yf aapl --show-start 2024-01-01 --show-end 2024-04-01
+
+# Specify a particular indicator rule (default is Predict_High_Low_Direction)
+python run_analysis.py show yf aapl --rule PV
+```
+
+### How it works
+
+- If multiple files are found, the CLI suggests refining the filter or shows a brief summary for each file.
+- If exactly one file is found, `show` mode:
+    - computes the selected indicator for the loaded data;
+    - prints a table with main indicator values directly to the console;
+    - indicator values are **never saved**—they are always shown in the current session only.
+- For visualization, you can use the `--draw` parameter to select the charting style.
+
+### Features
+
+- The `show` mode never modifies or overwrites cached parquet files.
+- All indicator calculations and visualizations are temporary and do not affect the original data.
+- It is a fast way for interactive inspection and analysis of your data and indicator results, without re-downloading or storing intermediate computations.
+
+---
+
+For more information about parameters, see the "EXAMPLES" section or run:
+```bash
+python run_analysis.py show --help
+```
 
 ## The script produces the following outputs:
 
