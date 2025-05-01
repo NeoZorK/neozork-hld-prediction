@@ -8,7 +8,7 @@ import sys
 import webbrowser
 import traceback
 from ..common import logger  # Import the logger module for consistent output
-from ..indicator.indicator import calculate_indicator  # Import indicator calculator
+from ..calculation.indicator_calculation import calculate_indicator  # Import indicator calculator
 from ..common.constants import TradingRule
 
 def show_help():
@@ -65,10 +65,10 @@ def calculate_and_display_indicator(file_path, args, point_size=0.01):
         logger.print_info(f"Using trading rule: {rule.name}")
         
         # Calculate the indicator
-        result_df = calculate_indicator(
+        result_df, _ = calculate_indicator(
+            args,
             df.copy(), 
-            point_size=point_size,
-            rule=rule
+            point_size
         )
         
         if result_df is None:
