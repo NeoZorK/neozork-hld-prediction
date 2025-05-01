@@ -8,6 +8,8 @@ import sys
 import webbrowser
 import traceback
 from ..common import logger  # Import the logger module for consistent output
+from ..indicator.indicator import calculate_indicator  # Import indicator calculator
+from ..common.constants import TradingRule
 
 def show_help():
     """Displays help for the 'show' mode."""
@@ -17,6 +19,87 @@ def show_help():
     logger.print_info("\nAvailable sources:")
     logger.print_info("  - csv: Converted CSV data files")
     logger.print_info("  - yfinance/yf: Yahoo Finance data files")
+    logger.print_info("  - polygon: Polygon.io data files")
+    logger.print_info("  - binance: Binance data files")
+    logger.print_info("\nWhen a single file is found with the filters, you can calculate the indicator:")
+    logger.print_info("  python run_analysis.py show binance d1 eth")
+
+
+def calculate_and_display_indicator(file_path, args, point_size=0.01):
+    """
+    Calculates the indicator for a single file and displays the results.
+    
+    Args:
+        file_path: Path to the Parquet file
+        args: Command-line arguments
+        point_size: Point size for the instrument (default 0.01)
+    
+    Returns:
+        DataFrame with the calculated indicator data
+    """
+    logger.print_info(f"Calculating indicator for: {os.path.basename(file_path)}")
+    
+    try:
+        # Load data from Parquet file
+        df = pq.read_table(file_path).to_pandas()
+        logger.print_info(f"Loaded {len(df)} rows of data")
+        
+        # Ensure OHLCV columns are present and correctly named
+        required_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
+        for col in required_cols:
+            if col not in df.columns:
+                logger.print_error(f"Missing required column: {col}")
+                return None
+                
+        # Determine which trading rule to use
+        rule = None
+        if hasattr(args, 'show_rule') and args.show_rule:
+            # Convert rule name or alias to actual TradingRule enum value
+            rule_aliases_map = {'PHLD': 'Predict_High_Low_Direction', 'PV': 'Pressure_Vector', 'SR': 'Support_Resistants'}
+            rule_name = rule_aliases_map.get(args.show_rule, args.show_rule)
+            rule = TradingRule[rule_name]
+        else:
+            # Use default rule
+            rule = TradingRule.Predict_High_Low_Direction
+        
+        logger.print_info(f"Using trading rule: {rule.name}")
+        
+        # Calculate the indicator
+        result_df = calculate_indicator(
+            df.copy(), 
+            point_size=point_size,
+            rule=rule
+        )
+        
+        if result_df is None:
+            logger.print_error("Failed to calculate indicator")
+            return None
+            
+        # Display basic statistics about the calculated indicator
+        logger.print_success(f"Successfully calculated indicator with {len(result_df)} rows")
+        
+        # Display indicator columns (those added during calculation)
+        ohlcv_cols = ['Open', 'High', 'Low', 'Close', 'Volume', 'Date']
+        indicator_cols = [col for col in result_df.columns if col not in ohlcv_cols]
+        
+        logger.print_info("Indicator columns:")
+        for col in indicator_cols:
+            logger.print_info(f"  - {col}")
+        
+        # Display a sample of the data with indicator values
+        logger.print_info("\nSample data with indicator values:")
+        pd.set_option('display.max_columns', None)  # Show all columns
+        pd.set_option('display.width', 1000)        # Wider display
+        sample_cols = ['Date', 'Open', 'High', 'Low', 'Close'] + indicator_cols
+        display_cols = [col for col in sample_cols if col in result_df.columns]
+        logger.print_info(result_df[display_cols].head(10).to_string())
+        
+        return result_df
+        
+    except Exception as e:
+        logger.print_error(f"Error calculating indicator: {str(e)}")
+        traceback.print_exc()
+        return None
     logger.print_info("  - polygon: Polygon.io API data files")
     logger.print_info("  - binance: Binance API data files")
     logger.print_info("\nExamples:")
