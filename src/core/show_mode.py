@@ -103,21 +103,45 @@ def get_parquet_metadata(file_path: Path) -> dict:
         print(f"Warning: Could not read metadata for {file_path.name}. Error: {e}", file=sys.stderr)
     return metadata
 
-def _print_indicator_result(df, datetime_column=None):
+def _get_relevant_columns_for_rule(rule_name: str) -> list:
     """
-    Prints a DataFrame with ohlcv+datetime+indicator columns to the console.
-    Includes core indicator fields: PV, HL, Pressure and always adds DateTime column.
-    Displays number of rows in the selected date range.
+    Returns the relevant columns to output for the given rule,
+    according to clarified user logic.
     """
-    base_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
-    core_indicator_cols = ['PV', 'HL', 'Pressure']
-    indicator_cols = ['PPrice1', 'PColor1', 'PPrice2', 'PColor2', 'Direction', 'Diff']
+    # Always show DateTime
+    base_cols = ['DateTime', 'Open', 'High', 'Low', 'Close', 'Volume', 'HL', 'Pressure', 'PV']
+    rule_aliases_map = {
+        'PHLD': 'Predict_High_Low_Direction',
+        'PV': 'Pressure_Vector',
+        'SR': 'Support_Resistants'
+    }
+    rule_name_upper = rule_name.upper()
+    canonical_rule = rule_aliases_map.get(rule_name_upper, rule_name)
+    # PHLD и Predict_High_Low_Direction: убрать PColor1, PColor2, Diff, оставить Direction
+    if canonical_rule in ['Predict_High_Low_Direction']:
+        return base_cols + ['PPrice1', 'PPrice2', 'Direction']
+    # PV: убрать PColor1, PColor2, Diff, оставить Direction
+    elif canonical_rule in ['Pressure_Vector']:
+        return base_cols + ['PPrice1', 'Direction']
+    # SR: убрать Direction, PColor1, PColor2, Diff
+    elif canonical_rule in ['Support_Resistants']:
+        return base_cols + ['PPrice1', 'PPrice2']
+    # PV_HighLow: логика аналогична SR
+    elif canonical_rule == 'PV_HighLow':
+        return base_cols + ['PPrice1', 'PPrice2']
+    else:
+        # Fallback — показать все стандартные, а из кастома только Direction
+        return base_cols + ['PPrice1', 'PPrice2', 'Direction']
 
-    # Always add a DateTime column for output, reconstruct if needed
+def _print_indicator_result(df, rule_name, datetime_column=None):
+    """
+    Prints a DataFrame with only the relevant columns for the rule.
+    Always includes DateTime.
+    """
     df_to_show = df.copy()
-    # Try to get datetime as a column for display
+    # Add DateTime column if missing
     if datetime_column and datetime_column in df_to_show.columns:
-        pass  # Already present
+        pass
     elif isinstance(df_to_show.index, pd.DatetimeIndex):
         df_to_show['DateTime'] = df_to_show.index
         datetime_column = 'DateTime'
@@ -127,23 +151,18 @@ def _print_indicator_result(df, datetime_column=None):
         df_to_show['DateTime'] = df_to_show['datetime']
         datetime_column = 'DateTime'
     else:
-        # Fallback: just show row index as DateTime
         df_to_show['DateTime'] = df_to_show.index
         datetime_column = 'DateTime'
 
-    # Prepare columns to show, always start with DateTime
-    cols_to_show = []
-    if datetime_column and datetime_column in df_to_show.columns:
-        cols_to_show.append(datetime_column)
-    for col in base_cols + core_indicator_cols + indicator_cols:
-        if col in df_to_show.columns:
-            cols_to_show.append(col)
-    if not cols_to_show:
-        print("No standard columns found to print after indicator calculation.")
-        return
+    columns_to_show = _get_relevant_columns_for_rule(rule_name)
+    columns_to_show_existing = [col for col in columns_to_show if col in df_to_show.columns]
+
     row_count = df_to_show.shape[0]
     print(f"\n=== CALCULATED INDICATOR DATA === ({row_count} rows in selected range)")
-    print(df_to_show[cols_to_show].to_string(index=False))
+    if columns_to_show_existing:
+        print(df_to_show[columns_to_show_existing].to_string(index=False))
+    else:
+        print("No relevant columns found in DataFrame to display.")
 
 def _extract_datetime_filter_args(args):
     """
@@ -331,7 +350,7 @@ def handle_show_mode(args):
             datetime_column = None
             if isinstance(result_df.index, pd.DatetimeIndex):
                 datetime_column = result_df.index.name or 'datetime'
-            _print_indicator_result(result_df, datetime_column=datetime_column)
+            _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
             print(f"\nIndicator '{selected_rule.name}' calculated and shown above.")
             return
         except Exception as e:
