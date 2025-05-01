@@ -106,29 +106,44 @@ def get_parquet_metadata(file_path: Path) -> dict:
 def _print_indicator_result(df, datetime_column=None):
     """
     Prints a DataFrame with ohlcv+datetime+indicator columns to the console.
-    Includes core indicator fields: PV, HL, Pressure.
+    Includes core indicator fields: PV, HL, Pressure and always adds DateTime column.
     Displays number of rows in the selected date range.
     """
     base_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
     core_indicator_cols = ['PV', 'HL', 'Pressure']
     indicator_cols = ['PPrice1', 'PColor1', 'PPrice2', 'PColor2', 'Direction', 'Diff']
+
+    # Always add a DateTime column for output, reconstruct if needed
+    df_to_show = df.copy()
+    # Try to get datetime as a column for display
+    if datetime_column and datetime_column in df_to_show.columns:
+        pass  # Already present
+    elif isinstance(df_to_show.index, pd.DatetimeIndex):
+        df_to_show['DateTime'] = df_to_show.index
+        datetime_column = 'DateTime'
+    elif 'DateTime' in df_to_show.columns:
+        datetime_column = 'DateTime'
+    elif 'datetime' in df_to_show.columns:
+        df_to_show['DateTime'] = df_to_show['datetime']
+        datetime_column = 'DateTime'
+    else:
+        # Fallback: just show row index as DateTime
+        df_to_show['DateTime'] = df_to_show.index
+        datetime_column = 'DateTime'
+
+    # Prepare columns to show, always start with DateTime
     cols_to_show = []
-    if datetime_column and datetime_column in df.columns:
+    if datetime_column and datetime_column in df_to_show.columns:
         cols_to_show.append(datetime_column)
-    # Always include index if it's DatetimeIndex and not present as column
-    if datetime_column is None and isinstance(df.index, pd.DatetimeIndex):
-        cols_to_show.append(df.index.name if df.index.name else 'index')
-        df = df.copy()
-        df['index'] = df.index
     for col in base_cols + core_indicator_cols + indicator_cols:
-        if col in df.columns:
+        if col in df_to_show.columns:
             cols_to_show.append(col)
     if not cols_to_show:
         print("No standard columns found to print after indicator calculation.")
         return
-    row_count = df.shape[0]
+    row_count = df_to_show.shape[0]
     print(f"\n=== CALCULATED INDICATOR DATA === ({row_count} rows in selected range)")
-    print(df[cols_to_show].to_string(index=False))
+    print(df_to_show[cols_to_show].to_string(index=False))
 
 def _extract_datetime_filter_args(args):
     """
