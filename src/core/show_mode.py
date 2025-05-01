@@ -7,22 +7,23 @@ import pandas as pd # We might need pandas later for date parsing if reading row
 import sys
 import webbrowser
 import traceback
+from ..common import logger  # Import the logger module for consistent output
 
 def show_help():
     """Displays help for the 'show' mode."""
-    print("\n=== SHOW MODE HELP ===")
-    print("The 'show' mode allows you to list and inspect cached data files.")
-    print("Usage: python run_analysis.py show <source> [keywords...]")
-    print("\nAvailable sources:")
-    print("  - csv: Converted CSV data files")
-    print("  - yfinance/yf: Yahoo Finance data files")
-    print("  - polygon: Polygon.io API data files")
-    print("  - binance: Binance API data files")
-    print("\nExamples:")
-    print("  python run_analysis.py show                  # Show statistics for all sources")
-    print("  python run_analysis.py show yf               # List all Yahoo Finance files")
-    print("  python run_analysis.py show yf aapl          # List YF files containing 'aapl'")
-    print("  python run_analysis.py show binance btc MN1  # List Binance files with 'btc' and timeframe 'MN1'")
+    logger.print_info("\n=== SHOW MODE HELP ===")
+    logger.print_info("The 'show' mode allows you to list and inspect cached data files.")
+    logger.print_info("Usage: python run_analysis.py show <source> [keywords...]")
+    logger.print_info("\nAvailable sources:")
+    logger.print_info("  - csv: Converted CSV data files")
+    logger.print_info("  - yfinance/yf: Yahoo Finance data files")
+    logger.print_info("  - polygon: Polygon.io API data files")
+    logger.print_info("  - binance: Binance API data files")
+    logger.print_info("\nExamples:")
+    logger.print_info("  python run_analysis.py show                  # Show statistics for all sources")
+    logger.print_info("  python run_analysis.py show yf               # List all Yahoo Finance files")
+    logger.print_info("  python run_analysis.py show yf aapl          # List YF files containing 'aapl'")
+    logger.print_info("  python run_analysis.py show binance btc MN1  # List Binance files with 'btc' and timeframe 'MN1'")
 
 # To avoid circular imports when workflow.py imports this
 # This way we'll be importing generate_plot only when we actually call it
@@ -122,7 +123,7 @@ def get_parquet_metadata(file_path: Path) -> dict:
                 metadata['last_date'] = metadata['first_date']
 
     except Exception as e:
-        print(f"Warning: Could not read metadata for {file_path.name}. Error: {e}", file=sys.stderr)
+        logger.print_warning(f"Could not read metadata for {file_path.name}. Error: {e}")
         # Don't print full traceback to reduce console output noise
     return metadata
 
@@ -141,18 +142,18 @@ def handle_show_mode(args):
         # Display stats about available files
         source_counts = count_files_by_source()
         
-        print("\n=== AVAILABLE DATA FILES ===")
+        logger.print_info("\n=== AVAILABLE DATA FILES ===")
         
         total_files = sum([count for source, count in source_counts.items() 
                           if source not in ['csv_converted_count']])
         
         if total_files == 0:
-            print("No data files found. Use other modes to download or import data first.")
-            print("\nTo convert a CSV file, use the 'csv' mode:")
-            print("  python run_analysis.py csv --csv-file path/to/data.csv --point 0.01")
+            logger.print_warning("No data files found. Use other modes to download or import data first.")
+            logger.print_info("\nTo convert a CSV file, use the 'csv' mode:")
+            logger.print_info("  python run_analysis.py csv --csv-file path/to/data.csv --point 0.01")
             return
             
-        print(f"Total cached data files: {total_files}")
+        logger.print_info(f"Total cached data files: {total_files}")
         for source, count in source_counts.items():
             # Skip service counters output
             if source in ['csv_converted_count']:
@@ -161,19 +162,19 @@ def handle_show_mode(args):
             if count > 0:
                 if source == 'csv':
                     csv_converted = source_counts.get('csv_converted_count', 0)
-                    print(f"  - {source.capitalize()}: {count} file(s) (including {csv_converted} converted from CSV)")
+                    logger.print_info(f"  - {source.capitalize()}: {count} file(s) (including {csv_converted} converted from CSV)")
                 elif source == 'other':
-                    print(f"  - Converted from CSV: {count} file(s)")
+                    logger.print_info(f"  - Converted from CSV: {count} file(s)")
                 else:
                     if source == 'other':
-                        print(f"  - Converted from CSV: {count} file(s)")
+                        logger.print_info(f"  - Converted from CSV: {count} file(s)")
                     else:
-                        print(f"  - {source.capitalize()}: {count} file(s)")
+                        logger.print_info(f"  - {source.capitalize()}: {count} file(s)")
                 
-        print("\nTo view specific files, use: python run_analysis.py show <source> [keywords...]")
+        logger.print_info("\nTo view specific files, use: python run_analysis.py show <source> [keywords...]")
         return
         
-    print(f"Searching for '{args.source}' files with keywords: {args.keywords}...")
+    logger.print_info(f"Searching for '{args.source}' files with keywords: {args.keywords}...")
 
     # Normalize source 'yf' to 'yfinance' for matching filenames like 'yfinance_...'
     search_prefix = 'yfinance' if args.source == 'yf' else args.source
@@ -182,9 +183,9 @@ def handle_show_mode(args):
     found_files = []
     for search_dir in SEARCH_DIRS:
         if not search_dir.is_dir():
-            print(f"Warning: Directory not found: {search_dir}")
+            logger.print_warning(f"Directory not found: {search_dir}")
             continue
-
+    
         for item in search_dir.iterdir():
             # Check if it's a file and ends with .parquet
             if item.is_file() and item.suffix == '.parquet':
@@ -210,34 +211,34 @@ def handle_show_mode(args):
                             'size_mb': file_size_mb
                         })
                     except OSError as e:
-                         print(f"Warning: Could not get stats for file {item.name}. Error: {e}", file=sys.stderr)
-
-
-    print(f"Found {len(found_files)} file(s).")
-
+                         logger.print_warning(f"Could not get stats for file {item.name}. Error: {e}")
+    
+    
+    logger.print_info(f"Found {len(found_files)} file(s).")
+    
     if not found_files:
         return # Exit if no files found
     elif len(found_files) == 1:
-        print("Single CSV file found. Will automatically open chart in browser.")
+        logger.print_success("Single CSV file found. Will automatically open chart in browser.")
 
     # Sort files by name for consistent listing
     found_files.sort(key=lambda x: x['name'])
 
     # Get metadata and print list
-    print("-" * 40) # Separator
+    logger.print_info("-" * 40) # Separator
     for idx, file_info in enumerate(found_files):
         metadata = get_parquet_metadata(file_info['path'])
         file_info.update(metadata) # Add metadata to the dict
-        print(f"[{idx}] {file_info['name']}")
-        print(f"    Size: {file_info['size_mb']:.3f} MB")
+        logger.print_info(f"[{idx}] {file_info['name']}")
+        logger.print_info(f"    Size: {file_info['size_mb']:.3f} MB")
         if metadata['num_rows'] != -1:
-            print(f"    Rows: {file_info['num_rows']:,}") # Formatted number
+            logger.print_info(f"    Rows: {file_info['num_rows']:,}") # Formatted number
         else:
-            print(f"    Rows: Could not determine")
-
+            logger.print_info(f"    Rows: Could not determine")
+    
         # Print extra info only if exactly one file is found
         if len(found_files) == 1:
-            print(f"    Columns ({len(file_info['columns'])}): {', '.join(file_info['columns'])}")
+            logger.print_info(f"    Columns ({len(file_info['columns'])}): {', '.join(file_info['columns'])}")
             
             # Extract and format dates from first and last rows
             first_date = None
@@ -259,13 +260,13 @@ def handle_show_mode(args):
             
             # Print date range summary
             if first_date and last_date and first_date != last_date:
-                print(f"    Date Range: {first_date} → {last_date}")
+                logger.print_info(f"    Date Range: {first_date} → {last_date}")
             elif first_date:
-                print(f"    Date: {first_date}")
+                logger.print_info(f"    Date: {first_date}")
             
             # Display first row in a compact format
             if file_info['first_row'] is not None:
-                print(f"    First Row: ", end="")
+                first_row_str = "    First Row: "
                 # If it's a Series object, display it nicely in a single line
                 if isinstance(file_info['first_row'], pd.Series):
                     values = []
@@ -274,13 +275,14 @@ def handle_show_mode(args):
                         if isinstance(value, pd.Timestamp):
                             value = value.strftime('%Y-%m-%d %H:%M:%S')
                         values.append(f"{col_name}={value}")
-                    print(" | ".join(values))
+                    first_row_str += " | ".join(values)
                 else:
-                    print(f"{file_info['first_row']}")
+                    first_row_str += f"{file_info['first_row']}"
+                logger.print_info(first_row_str)
             
             # Display last row in a compact format (if different from first)
             if file_info['last_row'] is not None and file_info['num_rows'] > 1:
-                print(f"    Last Row:  ", end="")
+                last_row_str = "    Last Row:  "
                 # If it's a Series object, display it nicely in a single line
                 if isinstance(file_info['last_row'], pd.Series):
                     values = []
@@ -289,23 +291,23 @@ def handle_show_mode(args):
                         if isinstance(value, pd.Timestamp):
                             value = value.strftime('%Y-%m-%d %H:%M:%S')
                         values.append(f"{col_name}={value}")
-                    print(" | ".join(values))
+                    last_row_str += " | ".join(values)
                 else:
-                    print(f"{file_info['last_row']}")
-
-    print("-" * 40) # Separator
+                    last_row_str += f"{file_info['last_row']}"
+                logger.print_info(last_row_str)
+    
+    logger.print_info("-" * 40) # Separator
 
     # Print hint or trigger plot
     if len(found_files) > 1:
-        print("To display a chart, re-run the command with more specific keywords:")
-        print(f"Example: python run_analysis.py show {args.source} <additional_keywords>")
+        logger.print_info("To display a chart, re-run the command with more specific keywords:")
+        logger.print_info(f"Example: python run_analysis.py show {args.source} <additional_keywords>")
     elif len(found_files) == 1:
         # Set default draw mode to 'fastest' if not explicitly specified
         if not hasattr(args, 'draw') or not args.draw:
             args.draw = 'fastest'
-        print(f"Found one file. Triggering plot with method: '{args.draw}'...")
-        # Call the plotting function for the found file
-        print(f"Loading file data and triggering plot with method: '{args.draw}'...")
+        logger.print_info(f"Found one file. Triggering plot with method: '{args.draw}'...")
+        logger.print_info(f"Loading file data and triggering plot with method: '{args.draw}'...")
         
         try:
             # Read the parquet file into a dataframe
@@ -346,7 +348,7 @@ def handle_show_mode(args):
                 else:
                     point_size = 0.01  # Default for stocks and other assets
                 
-                print(f"Point size not found in filename, using default: {point_size}")
+                logger.print_warning(f"Point size not found in filename, using default: {point_size}")
             
             # Import here to avoid circular imports
             generate_plot = import_generate_plot()
@@ -363,8 +365,8 @@ def handle_show_mode(args):
             # Call generate_plot with the necessary parameters
             generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
             
-            print(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode")
+            logger.print_success(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode")
             
         except Exception as e:
-            print(f"Error plotting file: {e}")
+            logger.print_error(f"Error plotting file: {e}")
             traceback.print_exc()
