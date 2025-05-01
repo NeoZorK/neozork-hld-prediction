@@ -349,7 +349,19 @@ def handle_show_mode(args):
             
             # Display first row in a compact format
             if file_info['first_row'] is not None:
-                first_row_str = "    First Row: "
+                # Extract date from first row for header
+                date_str = ""
+                if isinstance(file_info['first_row'], pd.Series):
+                    # Try to find Date or timestamp column
+                    if 'Date' in file_info['first_row']:
+                        date_val = file_info['first_row']['Date']
+                        if isinstance(date_val, pd.Timestamp):
+                            date_str = f" [{date_val.strftime('%Y-%m-%d %H:%M:%S')}]"
+                    # If no Date column, check if index is timestamp
+                    elif isinstance(file_info['first_date'], pd.Timestamp):
+                        date_str = f" [{file_info['first_date'].strftime('%Y-%m-%d %H:%M:%S')}]"
+                
+                first_row_str = f"    First Row{date_str}: "
                 # If it's a Series object, display it nicely in a single line
                 if isinstance(file_info['first_row'], pd.Series):
                     values = []
@@ -365,7 +377,19 @@ def handle_show_mode(args):
             
             # Display last row in a compact format (if different from first)
             if file_info['last_row'] is not None and file_info['num_rows'] > 1:
-                last_row_str = "    Last Row:  "
+                # Extract date from last row for header
+                date_str = ""
+                if isinstance(file_info['last_row'], pd.Series):
+                    # Try to find Date or timestamp column
+                    if 'Date' in file_info['last_row']:
+                        date_val = file_info['last_row']['Date']
+                        if isinstance(date_val, pd.Timestamp):
+                            date_str = f" [{date_val.strftime('%Y-%m-%d %H:%M:%S')}]"
+                    # If no Date column, check if we have last_date
+                    elif isinstance(file_info['last_date'], pd.Timestamp):
+                        date_str = f" [{file_info['last_date'].strftime('%Y-%m-%d %H:%M:%S')}]"
+                
+                last_row_str = f"    Last Row{date_str}:  "
                 # If it's a Series object, display it nicely in a single line
                 if isinstance(file_info['last_row'], pd.Series):
                     values = []
