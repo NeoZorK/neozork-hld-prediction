@@ -135,11 +135,11 @@ def parse_arguments():
         help="Additional keywords to filter files by (e.g., ticker symbol or date). Can also use remaining positional arguments after source. Default: show all files from the source."
     )
     show_group.add_argument(
-        '--start', type=str, default=None,
+        '--show-start', type=str, default=None,
         help="Start date/datetime (YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) to filter data before calculation."
     )
     show_group.add_argument(
-        '--end', type=str, default=None,
+        '--show-end', type=str, default=None,
         help="End date/datetime (YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) to filter data before calculation."
     )
     show_group.add_argument(
