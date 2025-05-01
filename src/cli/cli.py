@@ -143,12 +143,11 @@ def parse_arguments():
         help="End date/datetime (YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) to filter data before calculation."
     )
     show_group.add_argument(
-        '--rule', type=str, choices=all_rule_choices, default=None,
+        '--show-rule', type=str, choices=all_rule_choices, default=None,
         help="Trading rule to apply for indicator calculation when showing a single file."
     )
     
-    # --- Plotting Options Group --- # <-- NEW GROUP
-    plotting_group = parser.add_argument_group('Plotting Options')
+    # --- Plotting Options Group ---
     plotting_group = parser.add_argument_group('Plotting Options')
     plotting_group.add_argument(
         '-d', '--draw',
