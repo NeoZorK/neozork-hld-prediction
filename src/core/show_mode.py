@@ -107,6 +107,7 @@ def _print_indicator_result(df, datetime_column=None):
     """
     Prints a DataFrame with ohlcv+datetime+indicator columns to the console.
     Includes core indicator fields: PV, HL, Pressure.
+    Displays number of rows in the selected date range.
     """
     base_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
     core_indicator_cols = ['PV', 'HL', 'Pressure']
@@ -125,7 +126,8 @@ def _print_indicator_result(df, datetime_column=None):
     if not cols_to_show:
         print("No standard columns found to print after indicator calculation.")
         return
-    print("\n=== CALCULATED INDICATOR DATA ===")
+    row_count = df.shape[0]
+    print(f"\n=== CALCULATED INDICATOR DATA === ({row_count} rows in selected range)")
     print(df[cols_to_show].to_string(index=False))
 
 def _extract_datetime_filter_args(args):
