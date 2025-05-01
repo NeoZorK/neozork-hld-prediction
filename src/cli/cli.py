@@ -134,9 +134,20 @@ def parse_arguments():
         '--keywords', nargs='+', default=[],
         help="Additional keywords to filter files by (e.g., ticker symbol or date). Can also use remaining positional arguments after source. Default: show all files from the source."
     )
+    show_group.add_argument(
+        '--show-start', type=str, default=None,
+        help="Start date/datetime (YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) to filter data before calculation."
+    )
+    show_group.add_argument(
+        '--show-end', type=str, default=None,
+        help="End date/datetime (YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) to filter data before calculation."
+    )
+    show_group.add_argument(
+        '--show-rule', type=str, choices=all_rule_choices, default=None,
+        help="Trading rule to apply for indicator calculation when showing a single file."
+    )
     
-    # --- Plotting Options Group --- # <-- NEW GROUP
-    plotting_group = parser.add_argument_group('Plotting Options')
+    # --- Plotting Options Group ---
     plotting_group = parser.add_argument_group('Plotting Options')
     plotting_group.add_argument(
         '-d', '--draw',
