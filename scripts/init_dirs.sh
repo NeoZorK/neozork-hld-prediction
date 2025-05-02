@@ -1,9 +1,21 @@
+# -*- coding: utf-8 -*-
+# scripts/init_dirs.sh
+
 #!/bin/bash
 
 # Create main data directories
 mkdir -p data/cache/csv_converted
 mkdir -p data/raw_parquet
 mkdir -p data/processed
+
+# Log and results directories
+mkdir -p logs
+mkdir -p results
+
+# Source and script directories
+mkdir -p src/eda
+mkdir -p scripts/debug_scripts
+mkdir -p scripts/log_analysis
 
 # Create directories for notebooks, source, tests, and MQL5 feed
 mkdir -p notebooks

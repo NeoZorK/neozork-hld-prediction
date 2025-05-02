@@ -3,6 +3,7 @@
 
 import os
 import warnings
+import subprocess
 from typing import List, Dict
 from tqdm import tqdm
 import logging
@@ -37,13 +38,6 @@ def setup_logger(log_file: str = "eda_batch_check.log") -> logging.Logger:
 def find_data_files(folder_path: str, extensions: List[str] = [".parquet", ".csv"]) -> List[str]:
     """
     Recursively find all files with given extensions in the folder and its subfolders.
-
-    Args:
-        folder_path (str): Path to the folder.
-        extensions (List[str]): List of file extensions to include.
-
-    Returns:
-        List[str]: List of found file paths.
     """
     data_files = []
     for root, dirs, files in os.walk(folder_path):
@@ -55,11 +49,6 @@ def find_data_files(folder_path: str, extensions: List[str] = [".parquet", ".csv
 def log_file_info(df, file_path, logger):
     """
     Log detailed information about the dataframe to the logger.
-
-    Args:
-        df (pd.DataFrame): Dataframe to log.
-        file_path (str): File path for context.
-        logger (logging.Logger): Logger instance.
     """
     logger.info(f"CHECKING: {file_path}")
     logger.info(f"Shape: {df.shape}")
@@ -83,10 +72,6 @@ def suppress_warnings():
 def check_file(file_path: str, logger: logging.Logger) -> None:
     """
     Perform EDA-check on a single file, log all outputs.
-
-    Args:
-        file_path (str): Path to the file.
-        logger (logging.Logger): Logger instance.
     """
     ext = os.path.splitext(file_path)[-1].lower()
     file_type = "parquet" if ext == ".parquet" else "csv"
@@ -96,18 +81,12 @@ def check_file(file_path: str, logger: logging.Logger) -> None:
             df = load_data(file_path, file_type=file_type)
             log_file_info(df, file_path, logger)
     except Exception as e:
-        # Only print errors to console, all other info goes to log
         tqdm.write(f"ERROR processing {file_path}: {e}")
         logger.error(f"ERROR processing {file_path}: {e}")
 
 def process_folder(folder_path: str, logger: logging.Logger, progress_bar: tqdm) -> None:
     """
     Process all data files in a folder with progress bar.
-
-    Args:
-        folder_path (str): Path to the folder.
-        logger (logging.Logger): Logger instance.
-        progress_bar (tqdm): Shared tqdm instance.
     """
     logger.info(f"Processing folder: {folder_path}")
     data_files = find_data_files(folder_path)
@@ -120,6 +99,7 @@ def main():
     """
     Main function to check all data files in specified folders with a single progress bar and per-folder output.
     Suppresses all warnings and errors from libraries to keep tqdm progress bar clean.
+    At the end, runs log analysis script.
     """
     suppress_warnings()
 
@@ -133,7 +113,6 @@ def main():
     all_data_files: Dict[str, List[str]] = {}
     total_files = 0
 
-    # Find all files and count total for progress bar
     for folder in target_folders:
         files = find_data_files(folder)
         all_data_files[folder] = files
@@ -150,6 +129,19 @@ def main():
 
     tqdm.write(f"\nLog file: eda_batch_check.log")
     logger.info("EDA batch check completed.")
+
+    # Automatically analyze log after main process
+    log_analyze_script = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "scripts", "log_analysis", "log_analyze.py"
+    )
+    if os.path.exists(log_analyze_script):
+        print("\n--- Running log analysis ---\n")
+        try:
+            subprocess.run(["python", log_analyze_script], check=True)
+        except Exception as e:
+            print(f"Log analysis failed: {e}")
+    else:
+        print("Log analysis script not found.")
 
 if __name__ == "__main__":
     main()
