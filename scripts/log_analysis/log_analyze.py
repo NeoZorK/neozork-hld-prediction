@@ -2,7 +2,24 @@
 # scripts/log_analysis/log_analyze.py
 
 import os
+import sys
 import re
+
+def find_log_file(log_file_arg=None):
+    """
+    Find the log file. Try argument, then current dir, then project root.
+    """
+    possible_paths = []
+    if log_file_arg:
+        possible_paths.append(log_file_arg)
+    possible_paths.append("eda_batch_check.log")
+    # Try project root
+    repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    possible_paths.append(os.path.join(repo_root, "eda_batch_check.log"))
+    for path in possible_paths:
+        if os.path.exists(path):
+            return path
+    return None
 
 def analyze_log(log_path: str) -> None:
     """
@@ -148,4 +165,9 @@ def analyze_log(log_path: str) -> None:
     print("\n--- End of Report ---\n")
 
 if __name__ == "__main__":
-    analyze_log("eda_batch_check.log")
+    log_file_arg = sys.argv[1] if len(sys.argv) > 1 else None
+    log_path = find_log_file(log_file_arg)
+    if not log_path:
+        print("Log file 'eda_batch_check.log' not found. (Tried current dir and project root)")
+        sys.exit(1)
+    analyze_log(log_path)
