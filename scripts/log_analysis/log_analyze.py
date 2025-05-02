@@ -14,65 +14,75 @@ def analyze_log(log_path: str) -> None:
 
     error_pattern = re.compile(r"ERROR processing (.*?): (.*)")
     empty_shape_pattern = re.compile(r"Shape: \((0, 0)\)")
-    many_missing_pattern = re.compile(r"Missing values:\n(.+)")
     many_duplicates_pattern = re.compile(r"Number of duplicate rows: (\d+)")
     nan_columns_pattern = re.compile(r"Columns with NaN values: \[(.*?)\]")
+    missing_values_pattern = re.compile(r"Missing values:\n((?:.+\n)+?)(?:\n|$)")
 
     errors = []
     empty_files = []
-    files_with_many_missing = []
     files_with_duplicates = []
     files_with_nan_columns = []
+    files_with_many_missing = []
 
     current_file = None
-    current_missing = None
 
     with open(log_path, encoding="utf-8") as f:
-        for line in f:
-            # Detect errors in file processing
-            error_match = error_pattern.search(line)
-            if error_match:
-                errors.append((error_match.group(1), error_match.group(2)))
-                continue
+        lines = f.readlines()
 
-            # Detect start of file analysis
-            if line.startswith("CHECKING: "):
-                current_file = line.strip().split("CHECKING: ")[-1]
-                continue
+    i = 0
+    while i < len(lines):
+        line = lines[i]
 
-            # Detect empty DataFrame
-            if empty_shape_pattern.search(line):
-                if current_file:
-                    empty_files.append(current_file)
-                continue
+        # Error
+        error_match = error_pattern.search(line)
+        if error_match:
+            errors.append((error_match.group(1), error_match.group(2)))
+            i += 1
+            continue
 
-            # Detect many missing values
-            if line.startswith("Missing values:"):
-                current_missing = []
-                continue
-            if current_missing is not None:
-                if line.strip() == "":
-                    if current_missing and current_file:
-                        files_with_many_missing.append((current_file, current_missing.copy()))
-                    current_missing = None
-                else:
-                    current_missing.append(line.strip())
-                continue
+        # New file section
+        if line.startswith("CHECKING: "):
+            current_file = line.strip().split("CHECKING: ", 1)[-1]
+            i += 1
+            continue
 
-            # Detect duplicates
-            dup_match = many_duplicates_pattern.search(line)
-            if dup_match and int(dup_match.group(1)) > 0:
-                if current_file:
-                    files_with_duplicates.append((current_file, int(dup_match.group(1))))
-                continue
+        # Empty shape
+        if empty_shape_pattern.search(line):
+            if current_file:
+                empty_files.append(current_file)
+            i += 1
+            continue
 
-            # Detect NaN columns
-            nan_match = nan_columns_pattern.search(line)
-            if nan_match and nan_match.group(1).strip():
-                if current_file:
-                    cols = [col.strip().strip("'") for col in nan_match.group(1).split(",") if col.strip()]
-                    files_with_nan_columns.append((current_file, cols))
-                continue
+        # Duplicates
+        dup_match = many_duplicates_pattern.search(line)
+        if dup_match and int(dup_match.group(1)) > 0:
+            if current_file:
+                files_with_duplicates.append((current_file, int(dup_match.group(1))))
+            i += 1
+            continue
+
+        # NaN columns
+        nan_match = nan_columns_pattern.search(line)
+        if nan_match and nan_match.group(1).strip():
+            if current_file:
+                cols = [col.strip().strip("'") for col in nan_match.group(1).split(",") if col.strip()]
+                files_with_nan_columns.append((current_file, cols))
+            i += 1
+            continue
+
+        # Missing values block
+        if line.startswith("Missing values:"):
+            # Read next lines until a blank line or non-indented line
+            missing_lines = []
+            i += 1
+            while i < len(lines) and lines[i].strip() != "" and not lines[i].startswith(" "):
+                missing_lines.append(lines[i].strip())
+                i += 1
+            if missing_lines and current_file:
+                files_with_many_missing.append((current_file, missing_lines))
+            continue
+
+        i += 1
 
     print("\n--- EDA Log Analysis Report ---\n")
 
