@@ -20,30 +20,19 @@ from src.eda.data_overview import (
 
 def setup_logger(log_file: str = "eda_batch_check.log") -> logging.Logger:
     """
-    Set up the logger to write info and errors to a file.
-    In console, print only errors using tqdm.write.
+    Set up a logger to write info and errors to a file.
+    All console output (including errors) should use tqdm.write for progressbar stability.
     """
     logger = logging.getLogger("eda_batch_check")
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
 
-    # File handler for full log
     file_handler = logging.FileHandler(log_file, encoding="utf-8")
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.INFO)
     logger.addHandler(file_handler)
 
-    # Stream handler for errors only, uses custom filter
-    class ErrorFilter(logging.Filter):
-        def filter(self, record):
-            return record.levelno >= logging.ERROR
-
-    stream_handler = logging.StreamHandler(sys.stdout)
-    stream_handler.setFormatter(formatter)
-    stream_handler.setLevel(logging.ERROR)
-    stream_handler.addFilter(ErrorFilter())
-    logger.addHandler(stream_handler)
-
+    # Prevent propagation to root logger
     logger.propagate = False
     return logger
 
@@ -117,7 +106,9 @@ def process_folder(folder_path: str, logger: logging.Logger, progress_bar: tqdm)
     data_files = find_data_files(folder_path)
     logger.info(f"Found {len(data_files)} data files in '{folder_path}'.")
     if len(data_files) == 0:
-        return
+        tqdm.write(f"No data in {folder_path}.")
+    else:
+        tqdm.write(f"\n--- Scanning folder: {folder_path} ---")
     for file_path in data_files:
         check_file(file_path, logger)
         progress_bar.update(1)
@@ -143,16 +134,15 @@ def main():
         total_files += len(files)
 
     if total_files == 0:
-        tqdm.write("Нет файлов для проверки в указанных папках.")
+        tqdm.write("No files found for checking in the specified folders.")
         logger.info("No files found for checking.")
         return
 
     with tqdm(total=total_files, desc="EDA CHECK", unit="file", position=0, leave=True) as progress_bar:
         for folder in target_folders:
-            tqdm.write(f"\n--- Проверка папки: {folder} ---")
             process_folder(folder, logger, progress_bar)
 
-    tqdm.write(f"\nЛог файл: eda_batch_check.log")
+    tqdm.write(f"\nLog file: eda_batch_check.log")
     logger.info("EDA batch check completed.")
 
 if __name__ == "__main__":
