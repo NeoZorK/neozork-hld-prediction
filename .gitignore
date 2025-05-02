@@ -24,6 +24,11 @@ env/
 *.html
 mql5_feed/
 
+# Ignore log files from batch EDA and any other logs
+*.log
+logs/
+!/.gitkeep
+
 # Project specific
 .env
 qodana.yaml
