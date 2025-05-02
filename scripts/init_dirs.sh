@@ -1,7 +1,10 @@
+#!/bin/bash
+
 # -*- coding: utf-8 -*-
 # scripts/init_dirs.sh
 
-#!/bin/bash
+# Always run from the root of the repository, regardless of the current directory
+cd "$(dirname "$0")/.." || exit 1
 
 # Create main data directories
 mkdir -p data/cache/csv_converted
