@@ -2,7 +2,7 @@
 # eda_batch_check.py
 
 import os
-import sys
+import warnings
 from typing import List, Dict
 from tqdm import tqdm
 import logging
@@ -21,7 +21,6 @@ from src.eda.data_overview import (
 def setup_logger(log_file: str = "eda_batch_check.log") -> logging.Logger:
     """
     Set up a logger to write info and errors to a file.
-    All console output (including errors) should use tqdm.write for progressbar stability.
     """
     logger = logging.getLogger("eda_batch_check")
     logger.setLevel(logging.INFO)
@@ -32,7 +31,6 @@ def setup_logger(log_file: str = "eda_batch_check.log") -> logging.Logger:
     file_handler.setLevel(logging.INFO)
     logger.addHandler(file_handler)
 
-    # Prevent propagation to root logger
     logger.propagate = False
     return logger
 
@@ -76,6 +74,12 @@ def log_file_info(df, file_path, logger):
     logger.info(f"Columns with NaN values: {nan_cols}")
     logger.info(f"Statistical summary:\n{df.describe()}")
 
+def suppress_warnings():
+    """
+    Suppress all warnings from being printed to stderr, to keep tqdm progress bar clear.
+    """
+    warnings.filterwarnings("ignore")
+
 def check_file(file_path: str, logger: logging.Logger) -> None:
     """
     Perform EDA-check on a single file, log all outputs.
@@ -87,11 +91,14 @@ def check_file(file_path: str, logger: logging.Logger) -> None:
     ext = os.path.splitext(file_path)[-1].lower()
     file_type = "parquet" if ext == ".parquet" else "csv"
     try:
-        df = load_data(file_path, file_type=file_type)
-        log_file_info(df, file_path, logger)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            df = load_data(file_path, file_type=file_type)
+            log_file_info(df, file_path, logger)
     except Exception as e:
-        logger.error(f"ERROR processing {file_path}: {e}")
+        # Only print errors to console, all other info goes to log
         tqdm.write(f"ERROR processing {file_path}: {e}")
+        logger.error(f"ERROR processing {file_path}: {e}")
 
 def process_folder(folder_path: str, logger: logging.Logger, progress_bar: tqdm) -> None:
     """
@@ -102,13 +109,9 @@ def process_folder(folder_path: str, logger: logging.Logger, progress_bar: tqdm)
         logger (logging.Logger): Logger instance.
         progress_bar (tqdm): Shared tqdm instance.
     """
-    logger.info(f"\n--- Processing folder: {folder_path} ---")
+    logger.info(f"Processing folder: {folder_path}")
     data_files = find_data_files(folder_path)
     logger.info(f"Found {len(data_files)} data files in '{folder_path}'.")
-    if len(data_files) == 0:
-        tqdm.write(f"No data in {folder_path}.")
-    else:
-        tqdm.write(f"\n--- Scanning folder: {folder_path} ---")
     for file_path in data_files:
         check_file(file_path, logger)
         progress_bar.update(1)
@@ -116,7 +119,10 @@ def process_folder(folder_path: str, logger: logging.Logger, progress_bar: tqdm)
 def main():
     """
     Main function to check all data files in specified folders with a single progress bar and per-folder output.
+    Suppresses all warnings and errors from libraries to keep tqdm progress bar clean.
     """
+    suppress_warnings()
+
     target_folders = [
         "data/cache/csv_converted",
         "data/raw_parquet",
