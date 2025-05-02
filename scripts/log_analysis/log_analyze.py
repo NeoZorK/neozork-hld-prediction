@@ -21,12 +21,48 @@ def find_log_file(log_file_arg=None):
             return path
     return None
 
+def parse_duplicate_count(line):
+    """
+    Parse duplicate count from a log line.
+    Works with both INFO prefix and without.
+    """
+    # Example with prefix: 2025-05-02 13:11:09,090 | INFO | Number of duplicate rows: 67449
+    # Example without: Number of duplicate rows: 67449
+    match = re.search(r"Number of duplicate rows:\s*(\d+)", line)
+    if match:
+        return int(match.group(1))
+    return None
+
+def parse_nan_columns(line):
+    """
+    Parse list of columns with NaN from a log line.
+    """
+    # Example with prefix: 2025-05-02 13:11:05,867 | INFO | Columns with NaN values: []
+    match = re.search(r"Columns with NaN values:\s*\[(.*?)\]", line)
+    if match:
+        raw = match.group(1)
+        if raw.strip() == "":
+            return []
+        # Split by comma, strip quotes and spaces
+        return [col.strip().strip("'\"") for col in raw.split(",") if col.strip()]
+    return None
+
+def parse_checking_file(line):
+    """
+    Parse file path being checked from a log line.
+    Supports both with and without INFO prefix.
+    """
+    # Example: 2025-05-02 13:11:10,662 | INFO | CHECKING: data/cache/csv_converted/CSVExport_AAPL.NAS_PERIOD_W1.parquet
+    match = re.search(r"CHECKING:\s*(\S.*)$", line)
+    if match:
+        return match.group(1).strip()
+    return None
+
 def analyze_log(log_path: str) -> None:
     """
     Analyze the log file for common EDA problems and print a concise report.
     Print file statistics before analysis.
     """
-    # Check if log file exists
     if not os.path.exists(log_path):
         print(f"Log file '{log_path}' not found.")
         return
@@ -43,77 +79,70 @@ def analyze_log(log_path: str) -> None:
     print(f"Line count: {num_lines}")
     print("Starting log analysis...\n")
 
-    # Regular expression patterns for matching log lines
-    error_pattern = re.compile(r"ERROR processing (.*?): (.*)")
-    checking_pattern = re.compile(r"CHECKING: (.+)")
-    empty_shape_pattern = re.compile(r"Shape: \((0, 0)\)")
-    duplicate_pattern = re.compile(r"Number of duplicate rows: (\d+)")
-    nan_columns_pattern = re.compile(r"Columns with NaN values: \[(.*?)\]")
-    missing_value_start = re.compile(r"Missing values:\n?$")
-
-    # Data structures for collecting issues
     errors = []
     empty_files = []
-    files_with_duplicates = []
-    files_with_nan_columns = []
-    files_with_many_missing = []
-
-    current_file = None
     file_duplicates = {}
     file_nan_columns = {}
     file_missing = {}
+    current_file = None
 
     i = 0
     while i < len(lines):
         line = lines[i]
-        # Match file start
-        match_chk = checking_pattern.match(line)
-        if match_chk:
-            current_file = match_chk.group(1)
+
+        # 1. CHECKING: <file>
+        checking_file = parse_checking_file(line)
+        if checking_file:
+            current_file = checking_file
             i += 1
             continue
 
-        # Match errors
-        match_err = error_pattern.match(line)
-        if match_err:
-            errors.append((match_err.group(1), match_err.group(2)))
+        # 2. Error
+        if "ERROR processing" in line:
+            match = re.search(r"ERROR processing (.*?): (.*)", line)
+            if match:
+                errors.append((match.group(1), match.group(2)))
             i += 1
             continue
 
-        # Match empty shape
-        if empty_shape_pattern.search(line):
-            if current_file:
-                empty_files.append(current_file)
+        # 3. Empty shape
+        if "Shape: (0, 0)" in line and current_file:
+            empty_files.append(current_file)
             i += 1
             continue
 
-        # Match duplicates
-        match_dup = duplicate_pattern.match(line)
-        if match_dup and current_file:
-            count = int(match_dup.group(1))
-            if count > 0:
-                file_duplicates.setdefault(current_file, 0)
-                file_duplicates[current_file] += count
+        # 4. Duplicates
+        dup_count = parse_duplicate_count(line)
+        if dup_count is not None and current_file:
+            if dup_count > 0:
+                file_duplicates[current_file] = dup_count
             i += 1
             continue
 
-        # Match NaN columns
-        match_nan = nan_columns_pattern.match(line)
-        if match_nan and current_file:
-            nan_cols = [col.strip().strip("'") for col in match_nan.group(1).split(",") if col.strip()]
-            if nan_cols:
-                file_nan_columns.setdefault(current_file, set())
-                file_nan_columns[current_file].update(nan_cols)
+        # 5. NaN columns
+        nan_cols = parse_nan_columns(line)
+        if nan_cols is not None and current_file:
+            if len(nan_cols) > 0:
+                file_nan_columns[current_file] = nan_cols
             i += 1
             continue
 
-        # Match missing values
-        if missing_value_start.match(line) and current_file:
+        # 6. Missing values block (Series([], dtype: int64) or real)
+        if "Missing values:" in line and current_file:
             missing_lines = []
             i += 1
-            # Collect missing values until next empty line or section
-            while i < len(lines) and lines[i].strip() and not checking_pattern.match(lines[i]):
-                missing_lines.append(lines[i].strip())
+            while i < len(lines):
+                next_line = lines[i].strip()
+                # End block on empty line, next section, or other known keywords
+                if next_line == "" or "Number of duplicate rows:" in next_line or \
+                   "Column types:" in next_line or "Columns with NaN values:" in next_line or \
+                   "First 3 rows:" in next_line or "Statistical summary:" in next_line or \
+                   "CHECKING:" in next_line:
+                    break
+                # Skip empty Series
+                if next_line.startswith("Series([], dtype: int64)"):
+                    break
+                missing_lines.append(next_line)
                 i += 1
             if missing_lines:
                 file_missing.setdefault(current_file, [])
