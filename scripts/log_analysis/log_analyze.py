@@ -7,17 +7,34 @@ import re
 def analyze_log(log_path: str) -> None:
     """
     Analyze the log file for common EDA problems and print a concise report.
+    Print file statistics before analysis.
     """
+    # Check if log file exists
     if not os.path.exists(log_path):
         print(f"Log file '{log_path}' not found.")
         return
 
-    error_pattern = re.compile(r"ERROR processing (.*?): (.*)")
-    empty_shape_pattern = re.compile(r"Shape: \((0, 0)\)")
-    many_duplicates_pattern = re.compile(r"Number of duplicate rows: (\d+)")
-    nan_columns_pattern = re.compile(r"Columns with NaN values: \[(.*?)\]")
-    missing_values_pattern = re.compile(r"Missing values:\n((?:.+\n)+?)(?:\n|$)")
+    # Gather file statistics
+    file_size_bytes = os.path.getsize(log_path)
+    file_size_mb = file_size_bytes / (1024 * 1024)
+    with open(log_path, encoding="utf-8") as f:
+        lines = f.readlines()
+    num_lines = len(lines)
 
+    print(f"\nLog file '{log_path}' found.")
+    print(f"File size: {file_size_mb:.2f} MB")
+    print(f"Line count: {num_lines}")
+    print("Starting log analysis...\n")
+
+    # Regular expression patterns for matching log lines
+    error_pattern = re.compile(r"ERROR processing (.*?): (.*)")
+    checking_pattern = re.compile(r"CHECKING: (.+)")
+    empty_shape_pattern = re.compile(r"Shape: \((0, 0)\)")
+    duplicate_pattern = re.compile(r"Number of duplicate rows: (\d+)")
+    nan_columns_pattern = re.compile(r"Columns with NaN values: \[(.*?)\]")
+    missing_value_start = re.compile(r"Missing values:\n?$")
+
+    # Data structures for collecting issues
     errors = []
     empty_files = []
     files_with_duplicates = []
@@ -25,65 +42,70 @@ def analyze_log(log_path: str) -> None:
     files_with_many_missing = []
 
     current_file = None
-
-    with open(log_path, encoding="utf-8") as f:
-        lines = f.readlines()
+    file_duplicates = {}
+    file_nan_columns = {}
+    file_missing = {}
 
     i = 0
     while i < len(lines):
         line = lines[i]
-
-        # Error
-        error_match = error_pattern.search(line)
-        if error_match:
-            errors.append((error_match.group(1), error_match.group(2)))
+        # Match file start
+        match_chk = checking_pattern.match(line)
+        if match_chk:
+            current_file = match_chk.group(1)
             i += 1
             continue
 
-        # New file section
-        if line.startswith("CHECKING: "):
-            current_file = line.strip().split("CHECKING: ", 1)[-1]
+        # Match errors
+        match_err = error_pattern.match(line)
+        if match_err:
+            errors.append((match_err.group(1), match_err.group(2)))
             i += 1
             continue
 
-        # Empty shape
+        # Match empty shape
         if empty_shape_pattern.search(line):
             if current_file:
                 empty_files.append(current_file)
             i += 1
             continue
 
-        # Duplicates
-        dup_match = many_duplicates_pattern.search(line)
-        if dup_match and int(dup_match.group(1)) > 0:
-            if current_file:
-                files_with_duplicates.append((current_file, int(dup_match.group(1))))
+        # Match duplicates
+        match_dup = duplicate_pattern.match(line)
+        if match_dup and current_file:
+            count = int(match_dup.group(1))
+            if count > 0:
+                file_duplicates.setdefault(current_file, 0)
+                file_duplicates[current_file] += count
             i += 1
             continue
 
-        # NaN columns
-        nan_match = nan_columns_pattern.search(line)
-        if nan_match and nan_match.group(1).strip():
-            if current_file:
-                cols = [col.strip().strip("'") for col in nan_match.group(1).split(",") if col.strip()]
-                files_with_nan_columns.append((current_file, cols))
+        # Match NaN columns
+        match_nan = nan_columns_pattern.match(line)
+        if match_nan and current_file:
+            nan_cols = [col.strip().strip("'") for col in match_nan.group(1).split(",") if col.strip()]
+            if nan_cols:
+                file_nan_columns.setdefault(current_file, set())
+                file_nan_columns[current_file].update(nan_cols)
             i += 1
             continue
 
-        # Missing values block
-        if line.startswith("Missing values:"):
-            # Read next lines until a blank line or non-indented line
+        # Match missing values
+        if missing_value_start.match(line) and current_file:
             missing_lines = []
             i += 1
-            while i < len(lines) and lines[i].strip() != "" and not lines[i].startswith(" "):
+            # Collect missing values until next empty line or section
+            while i < len(lines) and lines[i].strip() and not checking_pattern.match(lines[i]):
                 missing_lines.append(lines[i].strip())
                 i += 1
-            if missing_lines and current_file:
-                files_with_many_missing.append((current_file, missing_lines))
+            if missing_lines:
+                file_missing.setdefault(current_file, [])
+                file_missing[current_file].extend(missing_lines)
             continue
 
         i += 1
 
+    # Output report
     print("\n--- EDA Log Analysis Report ---\n")
 
     if errors:
@@ -101,22 +123,22 @@ def analyze_log(log_path: str) -> None:
         print("  None")
 
     print("\nFiles with duplicate rows:")
-    if files_with_duplicates:
-        for path, count in files_with_duplicates:
+    if file_duplicates:
+        for path, count in file_duplicates.items():
             print(f"  {path}: {count} duplicates")
     else:
         print("  None")
 
     print("\nFiles with columns containing NaN values:")
-    if files_with_nan_columns:
-        for path, cols in files_with_nan_columns:
+    if file_nan_columns:
+        for path, cols in file_nan_columns.items():
             print(f"  {path}: {', '.join(cols)}")
     else:
         print("  None")
 
     print("\nFiles with many missing values (partial list):")
-    if files_with_many_missing:
-        for path, missings in files_with_many_missing:
+    if file_missing:
+        for path, missings in file_missing.items():
             print(f"  {path}:")
             for miss in missings:
                 print(f"    {miss}")
