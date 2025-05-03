@@ -96,6 +96,9 @@ def process_folder(folder_path: str, logger: logging.Logger, progress_bar: tqdm)
         check_file(file_path, logger)
         progress_bar.update(1)
 
+# Global variable to store initial data analysis results
+initial_data_analysis = None
+
 def main():
     """
     Main function to check all data files in specified folders with a single progress bar and per-folder output.
@@ -147,12 +150,15 @@ def main():
         "mql5_feed"
     ]
 
+    # Define logger variable in the outer scope first
+    logger = None
+    
     def run_eda_check(folders_to_check):
         """Inner function to run EDA check on specified folders"""
         nonlocal logger
         
         # Reset if logger already exists
-        if 'logger' in locals() or 'logger' in globals():
+        if logger is not None:
             for handler in logger.handlers[:]:
                 logger.removeHandler(handler)
         
@@ -178,6 +184,8 @@ def main():
                 if os.path.exists(folder):
                     process_folder(folder, logger, progress_bar)
 
+        # Clear line to prevent overlap with future output
+        print("\033[K", end="\r")
         tqdm.write(f"\nLog file: eda_batch_check.log")
         logger.info("EDA batch check completed.")
         return True
@@ -193,9 +201,24 @@ def main():
         os.path.dirname(os.path.abspath(__file__)), "scripts", "log_analysis", "log_analyze.py"
     )
     if os.path.exists(log_analyze_script):
-        print("\n--- Running log analysis ---\n")
+        print("\n--- Running log analysis on initial data ---\n")
         try:
-            subprocess.run(["python", log_analyze_script], check=True)
+            # Import the module directly instead of using subprocess for better integration
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("log_analyze", log_analyze_script)
+            log_analyze = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(log_analyze)
+            
+            # Use the global variable if available
+            if initial_data_analysis:
+                eda_log_report = initial_data_analysis
+            
+            # Analyze the log file and store the results for later comparison
+            initial_log_report = log_analyze.analyze_log("eda_batch_check.log")
+            
+            # Save the analysis results in a global variable for later comparison
+            global initial_data_analysis
+            initial_data_analysis = initial_log_report
         except Exception as e:
             print(f"Log analysis failed: {e}")
     else:
@@ -203,10 +226,17 @@ def main():
     
     # Run data cleaner if requested
     if args.clean:
-        data_cleaner_script = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 
-            "scripts", "data_processing", "data_cleaner_v2.py"
+        data_cleaner_script_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "scripts", "data_processing"
         )
+        
+        data_cleaner_script = os.path.join(
+            data_cleaner_script_dir, "data_cleaner_v2.py"
+        )
+        
+        # Ensure the directory exists
+        os.makedirs(data_cleaner_script_dir, exist_ok=True)
         
         if os.path.exists(data_cleaner_script):
             print("\n--- Running data cleaner ---\n")
@@ -228,11 +258,17 @@ def main():
                 
                 # Ask user if they want to verify cleaned files
                 if not args.skip_verification:
+                    # Clear any leftovers from progress bar
+                    print("\033[K", end="\r")
                     verification = input("\nWould you like to verify the cleaned files with another EDA check? (Y/n): ")
                     if verification.lower() != 'n':
                         print(f"\n--- Running EDA check on cleaned data in '{args.output_dir}' ---\n")
-                        run_eda_check([args.output_dir])
-                        print("\nVerification complete. Check the log file for results.")
+                        # Ensure output directory exists to avoid warning message
+                        if os.path.exists(args.output_dir):
+                            run_eda_check([args.output_dir])
+                            print("\nVerification complete. Check the log file for results.")
+                        else:
+                            print(f"Output directory {args.output_dir} not found or not created yet. No files to verify.")
                     else:
                         print("\nSkipping verification. You can run verification manually with:")
                         print(f"python eda_batch_check.py # after modifying target_folders in code")
