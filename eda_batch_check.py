@@ -4,6 +4,7 @@
 import os
 import warnings
 import subprocess
+import argparse
 from typing import List, Dict
 from tqdm import tqdm
 import logging
@@ -99,8 +100,45 @@ def main():
     """
     Main function to check all data files in specified folders with a single progress bar and per-folder output.
     Suppresses all warnings and errors from libraries to keep tqdm progress bar clean.
-    At the end, runs log analysis script.
+    At the end, runs log analysis script and optionally runs data cleaner.
     """
+    parser = argparse.ArgumentParser(
+        description="Perform EDA checks on data files and optionally clean the data.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(
+        "--clean", 
+        action="store_true",
+        help="Run data cleaner after log analysis to fix issues"
+    )
+    parser.add_argument(
+        "--output-dir", 
+        default="data/cleaned",
+        help="Output directory for cleaned data files"
+    )
+    parser.add_argument(
+        "--csv-delimiter", 
+        default="\t",
+        help="Delimiter for CSV files (default is tab which works for mql5_feed)"
+    )
+    parser.add_argument(
+        "--csv-header", 
+        default="0",
+        help="CSV header row (0 = first row, or 'infer')"
+    )
+    parser.add_argument(
+        "--handle-nan", 
+        default="ffill",
+        choices=['ffill', 'dropna_rows', 'none'],
+        help="Strategy for handling NaN values"
+    )
+    parser.add_argument(
+        "--skip-verification",
+        action="store_true",
+        help="Skip asking to verify cleaned files with another EDA check"
+    )
+    args = parser.parse_args()
+
     suppress_warnings()
 
     target_folders = [
@@ -109,26 +147,46 @@ def main():
         "mql5_feed"
     ]
 
-    logger = setup_logger()
-    all_data_files: Dict[str, List[str]] = {}
-    total_files = 0
+    def run_eda_check(folders_to_check):
+        """Inner function to run EDA check on specified folders"""
+        nonlocal logger
+        
+        # Reset if logger already exists
+        if 'logger' in locals() or 'logger' in globals():
+            for handler in logger.handlers[:]:
+                logger.removeHandler(handler)
+        
+        logger = setup_logger()
+        all_data_files: Dict[str, List[str]] = {}
+        total_files = 0
 
-    for folder in target_folders:
-        files = find_data_files(folder)
-        all_data_files[folder] = files
-        total_files += len(files)
+        for folder in folders_to_check:
+            if not os.path.exists(folder):
+                tqdm.write(f"Warning: Folder not found: {folder}")
+                continue
+            files = find_data_files(folder)
+            all_data_files[folder] = files
+            total_files += len(files)
 
-    if total_files == 0:
-        tqdm.write("No files found for checking in the specified folders.")
-        logger.info("No files found for checking.")
+        if total_files == 0:
+            tqdm.write("No files found for checking in the specified folders.")
+            logger.info("No files found for checking.")
+            return False
+
+        with tqdm(total=total_files, desc="EDA CHECK", unit="file", position=0, leave=True) as progress_bar:
+            for folder in folders_to_check:
+                if os.path.exists(folder):
+                    process_folder(folder, logger, progress_bar)
+
+        tqdm.write(f"\nLog file: eda_batch_check.log")
+        logger.info("EDA batch check completed.")
+        return True
+
+    # Run initial EDA check on original folders
+    initial_check_success = run_eda_check(target_folders)
+    
+    if not initial_check_success:
         return
-
-    with tqdm(total=total_files, desc="EDA CHECK", unit="file", position=0, leave=True) as progress_bar:
-        for folder in target_folders:
-            process_folder(folder, logger, progress_bar)
-
-    tqdm.write(f"\nLog file: eda_batch_check.log")
-    logger.info("EDA batch check completed.")
 
     # Automatically analyze log after main process
     log_analyze_script = os.path.join(
@@ -142,6 +200,47 @@ def main():
             print(f"Log analysis failed: {e}")
     else:
         print("Log analysis script not found.")
+    
+    # Run data cleaner if requested
+    if args.clean:
+        data_cleaner_script = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 
+            "scripts", "data_processing", "data_cleaner_v2.py"
+        )
+        
+        if os.path.exists(data_cleaner_script):
+            print("\n--- Running data cleaner ---\n")
+            try:
+                # Build the command with all necessary arguments
+                cmd = [
+                    "python", data_cleaner_script,
+                    "--input-dirs"] + target_folders + [
+                    "--output-dir", args.output_dir,
+                    "--handle-duplicates", "remove",
+                    "--handle-nan", args.handle_nan,
+                    "--csv-delimiter", args.csv_delimiter,
+                    "--csv-header", args.csv_header,
+                    "--log-file", "data_cleaner_run.log"
+                ]
+                print(f"Running: {' '.join(cmd)}")
+                subprocess.run(cmd, check=True)
+                print(f"\nCleaned data saved to: {args.output_dir}")
+                
+                # Ask user if they want to verify cleaned files
+                if not args.skip_verification:
+                    verification = input("\nWould you like to verify the cleaned files with another EDA check? (Y/n): ")
+                    if verification.lower() != 'n':
+                        print(f"\n--- Running EDA check on cleaned data in '{args.output_dir}' ---\n")
+                        run_eda_check([args.output_dir])
+                        print("\nVerification complete. Check the log file for results.")
+                    else:
+                        print("\nSkipping verification. You can run verification manually with:")
+                        print(f"python eda_batch_check.py # after modifying target_folders in code")
+            except Exception as e:
+                print(f"Data cleaning failed: {e}")
+        else:
+            print(f"Data cleaner script not found at: {data_cleaner_script}")
+            print("Please create scripts/data_processing/data_cleaner_v2.py first.")
 
 if __name__ == "__main__":
     main()
