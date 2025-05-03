@@ -12,6 +12,9 @@ env/
 .idea/
 .vscode/
 *.iml
+
+# Project specific
+data/cleaned/
 *.xml
 
 # Cache and temp files
