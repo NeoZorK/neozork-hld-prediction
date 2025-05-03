@@ -9,29 +9,37 @@ import pandas as pd
 from tqdm import tqdm
 import sys # For exiting on critical errors
 
+# Global logger instance
+logger = None
+
 # --- Logging Configuration ---
 def setup_logger(log_file: str) -> logging.Logger:
     """Configure logger for file and console output."""
-    logger = logging.getLogger("data_cleaner_v2")
-    logger.setLevel(logging.INFO)
+    # Use a local name for clarity
+    log_instance = logging.getLogger("data_cleaner_v2")
+    log_instance.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
 
-    # Prevent adding handlers if they already exist (on repeated calls)
-    if not logger.handlers:
-        # File handler (overwrite mode)
-        file_handler = logging.FileHandler(log_file, encoding="utf-8", mode='w')
-        file_handler.setFormatter(formatter)
-        file_handler.setLevel(logging.INFO)
-        logger.addHandler(file_handler)
+    # Remove existing handlers if any
+    if log_instance.handlers:
+        for handler in log_instance.handlers[:]:
+            log_instance.removeHandler(handler)
+            
+    # Add new handlers
+    # File handler (overwrite mode)
+    file_handler = logging.FileHandler(log_file, encoding="utf-8", mode='w')
+    file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging.INFO)
+    log_instance.addHandler(file_handler)
 
-        # Console handler
-        stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(formatter)
-        stream_handler.setLevel(logging.INFO) # Output INFO and above to console
-        logger.addHandler(stream_handler)
+    # Console handler
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    stream_handler.setLevel(logging.INFO) # Output INFO and above to console
+    log_instance.addHandler(stream_handler)
 
-    logger.propagate = False
-    return logger
+    log_instance.propagate = False
+    return log_instance
 
 # --- File Processing Functions ---
 def find_data_files(folder_paths: List[str], extensions: List[str] = [".parquet", ".csv"]) -> List[Tuple[str, str]]:
@@ -84,8 +92,8 @@ def clean_file(
         output_dir = os.path.dirname(output_path)
         os.makedirs(output_dir, exist_ok=True) # Create subdirectories if they don't exist
     except Exception as e:
-         logger.error(f"Error creating output path for {input_path} (base: {input_base_dir}): {e}")
-         return False
+        logger.error(f"Error creating output path for {input_path} (base: {input_base_dir}): {e}")
+        return False
 
     try:
         # --- Loading data ---
@@ -99,37 +107,37 @@ def clean_file(
                 logger.info(f"  Successfully loaded CSV: delimiter='{csv_delimiter}', header={header_arg}")
                 load_successful = True
             except Exception as load_err:
-                 logger.error(f"  Error loading CSV file {input_path} with delimiter='{csv_delimiter}' header={header_arg}: {load_err}")
-                 # Could try with other parameters, but for now just report the error
-                 return False # Consider it an error if loading fails
+                logger.error(f"  Error loading CSV file {input_path} with delimiter='{csv_delimiter}' header={header_arg}: {load_err}")
+                # Could try with other parameters, but for now just report the error
+                return False # Consider it an error if loading fails
         else: # parquet
             try:
                 df = pd.read_parquet(input_path)
                 logger.info(f"  Successfully loaded Parquet.")
                 load_successful = True
             except Exception as load_err:
-                 logger.error(f"  Error loading Parquet file {input_path}: {load_err}")
-                 return False
-    
+                logger.error(f"  Error loading Parquet file {input_path}: {load_err}")
+                return False
+        
         if not load_successful or df is None: # Additional check
-             logger.error(f"  DataFrame was not loaded for file: {input_path}")
-             return False
-    
+            logger.error(f"  DataFrame was not loaded for file: {input_path}")
+            return False
+        
         # Check for strange parsing (one column with \t in name) - as a signal of a problem
         if file_type == "csv" and df.shape[1] == 1 and '\t' in str(df.columns[0]):
-             logger.warning(f"  Detected only one column with name '{df.columns[0]}'. "
-                           f"Likely incorrect CSV delimiter specified (delimiter='{csv_delimiter}'). "
-                           f"Try running with --csv-delimiter '\\t'.")
-             # Could decide to abort processing this file or continue as is
-             # return False # Uncomment if we want to stop processing such files
-    
+            logger.warning(f"  Detected only one column with name '{df.columns[0]}'. "
+                          f"Likely incorrect CSV delimiter specified (delimiter='{csv_delimiter}'). "
+                          f"Try running with --csv-delimiter '\\t'.")
+            # Could decide to abort processing this file or continue as is
+            # return False # Uncomment if we want to stop processing such files
+        
         if df.empty:
             logger.warning(f"  File is empty or became empty after loading, skipping cleaning: {input_path}")
             # Decide whether to save empty files. For now, don't save them.
             # If you need to save empty files, create an empty file at output_path
             # open(output_path, 'w').close() # Example for CSV
             return True # Consider it a "success" since there's nothing to process
-    
+        
         original_shape = df.shape
         logger.info(f"  Original size: {original_shape}")
 
@@ -143,9 +151,9 @@ def clean_file(
             else:
                 logger.info(f"  No duplicates found.")
         elif handle_duplicates == 'none':
-             logger.info(f"  Duplicate handling skipped (as per --handle-duplicates=none).")
+            logger.info(f"  Duplicate handling skipped (as per --handle-duplicates=none).")
         else:
-             logger.warning(f"  Unknown action for duplicates: {handle_duplicates}")
+            logger.warning(f"  Unknown action for duplicates: {handle_duplicates}")
         
         
         if df.empty:
@@ -161,27 +169,27 @@ def clean_file(
                 # After ffill, NaN values may remain at the beginning. Fill them backward.
                 nan_after_ffill = df.isnull().sum().sum()
                 if nan_after_ffill > 0:
-                     logger.info(f"    NaN after ffill: {nan_after_ffill}. Applying bfill...")
-                     df.fillna(method='bfill', inplace=True)
+                    logger.info(f"    NaN after ffill: {nan_after_ffill}. Applying bfill...")
+                    df.fillna(method='bfill', inplace=True)
                 nan_after_bfill = df.isnull().sum().sum()
                 logger.info(f"  Applied NaN strategy: 'ffill' (with subsequent 'bfill'). NaN after: {nan_after_bfill}")
             elif handle_nan == 'dropna_rows':
-                 rows_before_dropna = df.shape[0]
-                 df.dropna(axis=0, inplace=True)
-                 rows_removed = rows_before_dropna - df.shape[0]
-                 logger.info(f"  Applied NaN strategy: 'dropna_rows'. Rows removed: {rows_removed}. NaN after: {df.isnull().sum().sum()}")
+                rows_before_dropna = df.shape[0]
+                df.dropna(axis=0, inplace=True)
+                rows_removed = rows_before_dropna - df.shape[0]
+                logger.info(f"  Applied NaN strategy: 'dropna_rows'. Rows removed: {rows_removed}. NaN after: {df.isnull().sum().sum()}")
             elif handle_nan == 'none':
-                 logger.info(f"  NaN handling skipped (as per --handle-nan=none).")
+                logger.info(f"  NaN handling skipped (as per --handle-nan=none).")
             else:
-                 logger.warning(f"  Unknown NaN handling strategy: '{handle_nan}'. NaN values NOT processed.")
+                logger.warning(f"  Unknown NaN handling strategy: '{handle_nan}'. NaN values NOT processed.")
             logger.info(f"  Size after NaN handling: {df.shape}")
         else:
-             logger.info(f"  No missing values (NaN) found.")
+            logger.info(f"  No missing values (NaN) found.")
 
         # --- Saving results ---
         if df.empty:
-             logger.warning(f"  DataFrame became empty after full cleaning. NOT saving: {output_path}")
-             return True # Consider it successful, as cleaning is complete
+            logger.warning(f"  DataFrame became empty after full cleaning. NOT saving: {output_path}")
+            return True # Consider it successful, as cleaning is complete
         
         logger.info(f"  Saving cleaned file to: {output_path}")
         if file_type == "csv":
@@ -194,52 +202,52 @@ def clean_file(
         logger.info(f"  File successfully saved.")
         return True
         
-            except Exception as e:
+    except Exception as e:
         logger.error(f"Critical error processing file {input_path}: {e}", exc_info=True) # exc_info for traceback
         return False
 
-# --- Вспомогательная функция для парсинга header ---
+# --- Helper function for header parsing ---
 def parse_header(value: str) -> Optional[int]:
     if value.lower() == 'infer' or value.lower() == 'none':
         return None
     try:
         return int(value)
     except ValueError:
-        raise argparse.ArgumentTypeError(f"Значение --csv-header должно быть целым числом или 'infer'. Получено: '{value}'")
+        raise argparse.ArgumentTypeError(f"Value for --csv-header must be an integer or 'infer'. Received: '{value}'")
 
-# --- Основная функция ---
+# --- Main function ---
 def main():
     parser = argparse.ArgumentParser(
-        description="Очистка данных CSV и Parquet: удаление дубликатов и обработка NaN с настраиваемым парсингом CSV.",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter # Показывает значения по умолчанию в --help
+        description="Clean CSV and Parquet data: remove duplicates and handle NaN with customizable CSV parsing.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter # Shows default values in --help
     )
     parser.add_argument(
         "-i", "--input-dirs",
         nargs='+',
-        required=True, # Входные директории обязательны
-        help="Список ИСХОДНЫХ директорий для рекурсивного поиска файлов .csv и .parquet."
+        required=True, # Input directories are required
+        help="List of SOURCE directories for recursive search of .csv and .parquet files."
     )
     parser.add_argument(
         "-o", "--output-dir",
-        required=True, # Выходная директория обязательна
-        help="Базовая ВЫХОДНАЯ директория для сохранения очищенных файлов (сохраняет структуру подпапок)."
+        required=True, # Output directory is required
+        help="Base OUTPUT directory for saving cleaned files (preserves subfolder structure)."
     )
     parser.add_argument(
         "--handle-duplicates",
         default="remove",
         choices=['remove', 'none'],
-        help="Действие для полных дубликатов строк."
+        help="Action for complete row duplicates."
     )
     parser.add_argument(
         "--handle-nan",
         default="ffill",
         choices=['ffill', 'dropna_rows', 'none'],
-        help="Стратегия обработки NaN: 'ffill' (заполнение вперед + назад), 'dropna_rows' (удалить строки с NaN), 'none' (не обрабатывать)."
+        help="NaN handling strategy: 'ffill' (forward+backward fill), 'dropna_rows' (remove rows with NaN), 'none' (don't process)."
     )
     parser.add_argument(
         "--csv-delimiter",
         default=",",
-        help="Разделитель для чтения CSV файлов. Используйте '\\t' для табуляции."
+        help="Delimiter for reading CSV files. Use '\\t' for tab."
     )
     parser.add_argument(
         "--csv-header",
@@ -292,9 +300,9 @@ def main():
     # Check if output directory exists (don't create it here, clean_file will create subfolders)
     # But it's useful to check if it's not a file
     if os.path.exists(args.output_dir) and not os.path.isdir(args.output_dir):
-         logger.error(f"Output directory path '{args.output_dir}' exists but is not a directory!")
-         print(f"Error: Output directory path '{args.output_dir}' exists but is not a directory!")
-         sys.exit(1)
+        logger.error(f"Output directory path '{args.output_dir}' exists but is not a directory!")
+        print(f"Error: Output directory path '{args.output_dir}' exists but is not a directory!")
+        sys.exit(1)
     
     data_files = find_data_files(args.input_dirs)
     
@@ -308,8 +316,14 @@ def main():
     success_count = 0
     error_count = 0
     
+    # Clear any previous output
+    print("\033[K", end="\r")
+    
     with tqdm(total=len(data_files), desc="Cleaning files", unit="file", position=0, leave=True) as pbar:
         for file_path, input_base in data_files:
+            # Clear line before status update to avoid overlapping text
+            print("\033[K", end="\r")
+            
             if clean_file(
                 input_path=file_path,
                 input_base_dir=input_base,
@@ -327,6 +341,9 @@ def main():
     logger.info("--- Data cleaner script v2 completed ---")
     logger.info(f"Successfully processed/saved: {success_count}")
     logger.info(f"Errors during processing: {error_count}")
+    
+    # Clear line to ensure clean output after progress bar
+    print("\033[K", end="\r")
     print(f"\nCleaning completed. Success: {success_count}, Errors: {error_count}. Log: {args.log_file}")
     if error_count > 0:
         print("Warning: Errors occurred during processing. Check the log for details.")
