@@ -3,115 +3,77 @@
 
 import os
 import sys
+
+# Add the root of the project to sys.path for absolute imports
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+
 import re
+from collections import defaultdict
+from typing import List, Dict, Optional, Tuple
 
-def find_log_file(log_file_arg=None):
-    """
-    Find the log file. Try argument, then current dir, then project root.
-    """
-    possible_paths = []
-    if log_file_arg:
-        possible_paths.append(log_file_arg)
-    possible_paths.append("eda_batch_check.log")
-    # Try project root
-    repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    possible_paths.append(os.path.join(repo_root, "eda_batch_check.log"))
-    for path in possible_paths:
-        if os.path.exists(path):
-            return path
-    return None
+from scripts.log_analysis.log_file_utils import (
+    find_log_file,
+    get_file_stats,
+)
+from scripts.log_analysis.log_parse_utils import (
+    parse_duplicate_count,
+    parse_nan_columns,
+    parse_checking_file,
+    parse_error_line,
+    is_empty_shape,
+    is_missing_values_block_start,
+    parse_missing_lines,
+)
 
-def parse_duplicate_count(line):
+def analyze_log(log_path: str) -> Dict[str, any]:
     """
-    Parse duplicate count from a log line.
-    Works with both INFO prefix and without.
-    """
-    # Example with prefix: 2025-05-02 13:11:09,090 | INFO | Number of duplicate rows: 67449
-    # Example without: Number of duplicate rows: 67449
-    match = re.search(r"Number of duplicate rows:\s*(\d+)", line)
-    if match:
-        return int(match.group(1))
-    return None
-
-def parse_nan_columns(line):
-    """
-    Parse list of columns with NaN from a log line.
-    """
-    # Example with prefix: 2025-05-02 13:11:05,867 | INFO | Columns with NaN values: []
-    match = re.search(r"Columns with NaN values:\s*\[(.*?)\]", line)
-    if match:
-        raw = match.group(1)
-        if raw.strip() == "":
-            return []
-        # Split by comma, strip quotes and spaces
-        return [col.strip().strip("'\"") for col in raw.split(",") if col.strip()]
-    return None
-
-def parse_checking_file(line):
-    """
-    Parse file path being checked from a log line.
-    Supports both with and without INFO prefix.
-    """
-    # Example: 2025-05-02 13:11:10,662 | INFO | CHECKING: data/cache/csv_converted/CSVExport_AAPL.NAS_PERIOD_W1.parquet
-    match = re.search(r"CHECKING:\s*(\S.*)$", line)
-    if match:
-        return match.group(1).strip()
-    return None
-
-def analyze_log(log_path: str) -> None:
-    """
-    Analyze the log file for common EDA problems and print a concise report.
-    Print file statistics before analysis.
+    Analyze the log file for common EDA problems and return a report dictionary.
     """
     if not os.path.exists(log_path):
         print(f"Log file '{log_path}' not found.")
-        return
+        return {}
 
-    # Gather file statistics
-    file_size_bytes = os.path.getsize(log_path)
-    file_size_mb = file_size_bytes / (1024 * 1024)
-    with open(log_path, encoding="utf-8") as f:
-        lines = f.readlines()
-    num_lines = len(lines)
-
+    file_size_mb, num_lines = get_file_stats(log_path)
     print(f"\nLog file '{log_path}' found.")
     print(f"File size: {file_size_mb:.2f} MB")
     print(f"Line count: {num_lines}")
     print("Starting log analysis...\n")
 
-    errors = []
-    empty_files = []
-    file_duplicates = {}
-    file_nan_columns = {}
-    file_missing = {}
-    current_file = None
+    errors: List[Tuple[str, str]] = []
+    empty_files: List[str] = []
+    file_duplicates: Dict[str, int] = {}
+    file_nan_columns: Dict[str, List[str]] = {}
+    file_missing: Dict[str, List[str]] = defaultdict(list)
+    current_file: Optional[str] = None
+
+    with open(log_path, encoding="utf-8") as f:
+        lines = f.readlines()
 
     i = 0
     while i < len(lines):
         line = lines[i]
 
-        # 1. CHECKING: <file>
+        # Parse file section start
         checking_file = parse_checking_file(line)
         if checking_file:
             current_file = checking_file
             i += 1
             continue
 
-        # 2. Error
-        if "ERROR processing" in line:
-            match = re.search(r"ERROR processing (.*?): (.*)", line)
-            if match:
-                errors.append((match.group(1), match.group(2)))
+        # Parse errors
+        error = parse_error_line(line)
+        if error:
+            errors.append(error)
             i += 1
             continue
 
-        # 3. Empty shape
-        if "Shape: (0, 0)" in line and current_file:
+        # Parse empty files
+        if is_empty_shape(line) and current_file:
             empty_files.append(current_file)
             i += 1
             continue
 
-        # 4. Duplicates
+        # Parse duplicates
         dup_count = parse_duplicate_count(line)
         if dup_count is not None and current_file:
             if dup_count > 0:
@@ -119,7 +81,7 @@ def analyze_log(log_path: str) -> None:
             i += 1
             continue
 
-        # 5. NaN columns
+        # Parse NaN columns
         nan_cols = parse_nan_columns(line)
         if nan_cols is not None and current_file:
             if len(nan_cols) > 0:
@@ -127,33 +89,35 @@ def analyze_log(log_path: str) -> None:
             i += 1
             continue
 
-        # 6. Missing values block (Series([], dtype: int64) or real)
-        if "Missing values:" in line and current_file:
-            missing_lines = []
-            i += 1
-            while i < len(lines):
-                next_line = lines[i].strip()
-                # End block on empty line, next section, or other known keywords
-                if next_line == "" or "Number of duplicate rows:" in next_line or \
-                   "Column types:" in next_line or "Columns with NaN values:" in next_line or \
-                   "First 3 rows:" in next_line or "Statistical summary:" in next_line or \
-                   "CHECKING:" in next_line:
-                    break
-                # Skip empty Series
-                if next_line.startswith("Series([], dtype: int64)"):
-                    break
-                missing_lines.append(next_line)
-                i += 1
+        # Parse missing values block
+        if is_missing_values_block_start(line) and current_file:
+            missing_lines, i = parse_missing_lines(lines, i + 1)
             if missing_lines:
-                file_missing.setdefault(current_file, [])
                 file_missing[current_file].extend(missing_lines)
             continue
 
         i += 1
 
-    # Output report
+    report = {
+        "file_size_mb": file_size_mb,
+        "num_lines": num_lines,
+        "errors": errors,
+        "empty_files": empty_files,
+        "file_duplicates": file_duplicates,
+        "file_nan_columns": file_nan_columns,
+        "file_missing": dict(file_missing)
+    }
+    print_report(report)
+    return report
+
+def print_report(report: Dict[str, any]) -> None:
+    """
+    Print the parsed EDA log analysis report.
+    """
     print("\n--- EDA Log Analysis Report ---\n")
 
+    # Errors
+    errors = report.get("errors", [])
     if errors:
         print("Files with errors:")
         for path, msg in errors:
@@ -161,28 +125,36 @@ def analyze_log(log_path: str) -> None:
     else:
         print("No file processing errors found.")
 
+    # Empty files
     print("\nEmpty files (Shape: (0, 0)):")
+    empty_files = report.get("empty_files", [])
     if empty_files:
         for path in empty_files:
             print(f"  {path}")
     else:
         print("  None")
 
+    # Duplicates
     print("\nFiles with duplicate rows:")
+    file_duplicates = report.get("file_duplicates", {})
     if file_duplicates:
-        for path, count in file_duplicates.items():
+        for path, count in sorted(file_duplicates.items(), key=lambda t: t[1], reverse=True):
             print(f"  {path}: {count} duplicates")
     else:
         print("  None")
 
+    # NaN columns
     print("\nFiles with columns containing NaN values:")
+    file_nan_columns = report.get("file_nan_columns", {})
     if file_nan_columns:
         for path, cols in file_nan_columns.items():
             print(f"  {path}: {', '.join(cols)}")
     else:
         print("  None")
 
+    # Missing values
     print("\nFiles with many missing values (partial list):")
+    file_missing = report.get("file_missing", {})
     if file_missing:
         for path, missings in file_missing.items():
             print(f"  {path}:")
