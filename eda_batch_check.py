@@ -272,27 +272,30 @@ Example usage:
         os.path.dirname(os.path.abspath(__file__)), "scripts", "log_analysis", "log_analyze.py"
     )
     if os.path.exists(log_analyze_script):
-        print("\n--- Running log analysis on initial data ---\n")
-        try:
-            # Import the module directly instead of using subprocess for better integration
-            import importlib.util
-            spec = importlib.util.spec_from_file_location("log_analyze", log_analyze_script)
-            log_analyze = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(log_analyze)
-            
-            # Use the global variable if available
-            if initial_data_analysis:
-                eda_log_report = initial_data_analysis
-            
-            # Analyze the log file and store the results for later comparison
-            initial_log_report = log_analyze.analyze_log(args.log_file)
-            
-            # Save the analysis results in a global variable for later comparison
-            initial_data_analysis = initial_log_report
-        except Exception as e:
-            print(f"Log analysis failed: {e}")
+        with tqdm(total=1, desc="ANALYZING LOG", unit="file", position=0, leave=True) as progress_bar:
+            try:
+                # Change the exception handling for better error visibility
+                # Import the module directly instead of using subprocess for better integration
+                import importlib.util
+                spec = importlib.util.spec_from_file_location("log_analyze", log_analyze_script)
+                log_analyze = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(log_analyze)
+                
+                # Use the global variable if available
+                if initial_data_analysis:
+                    eda_log_report = initial_data_analysis
+                
+                # Analyze the log file and store the results for later comparison
+                initial_log_report = log_analyze.analyze_log(args.log_file)
+                
+                # Save the analysis results in a global variable for later comparison
+                initial_data_analysis = initial_log_report
+                progress_bar.update(1)
+            except Exception as e:
+                tqdm.write(f"Log analysis failed: {e}")
+                progress_bar.update(1)
     else:
-        print("Log analysis script not found.")
+        tqdm.write("Log analysis script not found.")
     
     # Run data cleaner if requested
     if args.clean:
@@ -309,8 +312,13 @@ Example usage:
         os.makedirs(data_cleaner_script_dir, exist_ok=True)
         
         if os.path.exists(data_cleaner_script):
-            print("\n--- Running data cleaner ---\n")
+            # Minimal output with progress bar
             try:
+                # Ensure the log file goes to logs directory
+                logs_dir = Path("logs")
+                logs_dir.mkdir(exist_ok=True, parents=True)
+                cleaner_log_file = logs_dir / "data_cleaner_run.log"
+                
                 # Build the command with all necessary arguments
                 cmd = [
                     "python", data_cleaner_script,
@@ -320,74 +328,91 @@ Example usage:
                     "--handle-nan", args.handle_nan,
                     "--csv-delimiter", args.csv_delimiter,
                     "--csv-header", args.csv_header,
-                    "--log-file", "data_cleaner_run.log"
+                    "--log-file", str(cleaner_log_file)
                 ]
-                print(f"Running: {' '.join(cmd)}")
-                subprocess.run(cmd, check=True)
-                print(f"\nCleaned data saved to: {args.output_dir}")
-                
+                # Only show progress bar, suppress output from subprocess
+                with tqdm(total=1, desc="CLEANING DATA", unit="process", position=0, leave=True) as progress_bar:
+                    # Run subprocess with minimal output
+                    result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+                    progress_bar.update(1)
+                    
+                    # Check if process succeeded
+                    if result.returncode != 0:
+                        # Only show error message without full command details
+                        tqdm.write(f"Data cleaning failed with exit code {result.returncode}")
+                        if result.stderr:
+                            tqdm.write(f"Error: {result.stderr.splitlines()[0]}")
+                        tqdm.write(f"Check log file: {cleaner_log_file}")
+                        return
+                    
+                    # Show minimal success message
+                    tqdm.write(f"Data cleaning completed. Files saved to: {args.output_dir}")
+
                 # Ask user if they want to verify cleaned files
                 if not args.skip_verification:
                     # Clear any leftovers from progress bar
                     print("\033[K", end="\r")
-                    verification = input("\nWould you like to verify the cleaned files with another EDA check? (Y/n): ")
+                    verification = input("\nVerify cleaned files with another EDA check? (Y/n): ")
                     if verification.lower() != 'n':
-                        print(f"\n--- Running EDA check on cleaned data in '{args.output_dir}' ---\n")
                         # Ensure output directory exists to avoid warning message
                         if os.path.exists(args.output_dir):
                             run_eda_check([args.output_dir])
-                            print("\nVerification complete. Check the log file for results.")
-                            
+
                             # Analyze data_cleaner_run.log
-                            print("\n--- Analyzing data cleaning log (data_cleaner_run.log) ---\n")
+                            cleaner_log_file = Path("logs") / "data_cleaner_run.log"
                             try:
-                                if os.path.exists("data_cleaner_run.log"):
-                                    # Analyze the cleaning log
-                                    with open("data_cleaner_run.log", "r", encoding="utf-8") as f:
-                                        log_content = f.read()
-                                    
-                                    # Extract statistics from log
-                                    total_files = log_content.count("Processing file:")
-                                    files_with_nan = log_content.count("NaN values detected")
-                                    files_with_duplicates = log_content.count("Duplicates removed")
-                                    
-                                    # Calculate total rows removed
-                                    total_rows_removed = 0
-                                    for line in log_content.split("\n"):
-                                        if "Duplicates removed:" in line:
-                                            try:
-                                                removed = int(line.split(":")[1].split(".")[0].strip())
-                                                total_rows_removed += removed
-                                            except (ValueError, IndexError):
-                                                continue
-                                    
-                                    # Get final summary
-                                    final_summary = None
-                                    for line in reversed(log_content.split("\n")):
-                                        if "Successfully processed/saved:" in line:
-                                            final_summary = line
-                                            break
-                                    
-                                    print("\nData Cleaning Results:")
-                                    print("-" * 50)
-                                    print(f"Total files processed: {total_files}")
-                                    print(f"Files with NaN values: {files_with_nan}")
-                                    print(f"Files with duplicates: {files_with_duplicates}")
-                                    print(f"Total rows removed: {total_rows_removed}")
-                                    if final_summary:
-                                        print(f"\nFinal Summary: {final_summary}")
-                                    print("-" * 50)
+                                if os.path.exists(cleaner_log_file):
+                                    # Analyze the cleaning log with minimal output
+                                    with tqdm(total=1, desc="ANALYZING CLEANING RESULTS", unit="log", position=0, leave=True) as progress_bar:
+                                        with open(cleaner_log_file, "r", encoding="utf-8") as f:
+                                            log_content = f.read()
+
+                                        # Extract statistics from log
+                                        total_files = log_content.count("Processing file:")
+                                        files_with_nan = log_content.count("NaN values detected")
+                                        files_with_duplicates = log_content.count("Duplicates removed")
+
+                                        # Calculate total rows removed
+                                        total_rows_removed = 0
+                                        for line in log_content.split("\n"):
+                                            if "Duplicates removed:" in line:
+                                                try:
+                                                    removed = int(line.split(":")[1].split(".")[0].strip())
+                                                    total_rows_removed += removed
+                                                except (ValueError, IndexError):
+                                                    continue
+
+                                        # Get final summary
+                                        final_summary = None
+                                        for line in reversed(log_content.split("\n")):
+                                            if "Successfully processed/saved:" in line:
+                                                final_summary = line
+                                                break
+
+                                        progress_bar.update(1)
+
+                                        # Display summary directly on the screen
+                                        tqdm.write("\n" + "-" * 50)
+                                        tqdm.write("Data Cleaning Results:")
+                                        tqdm.write(f"Total files processed: {total_files}")
+                                        tqdm.write(f"Files with NaN values: {files_with_nan}")
+                                        tqdm.write(f"Files with duplicates: {files_with_duplicates}")
+                                        tqdm.write(f"Total rows removed: {total_rows_removed}")
+                                        if final_summary:
+                                            tqdm.write(f"\nFinal Summary: {final_summary}")
+                                        tqdm.write("-" * 50)
                                 else:
-                                    print("Data cleaning log file not found.")
+                                    tqdm.write(f"Data cleaning log file not found at: {cleaner_log_file}")
                             except Exception as e:
-                                print(f"Error analyzing cleaning log: {e}")
+                                tqdm.write(f"Error analyzing cleaning log: {e}")
                         else:
-                            print(f"Output directory {args.output_dir} not found or not created yet. No files to verify.")
+                            tqdm.write(f"Output directory {args.output_dir} not found. No files to verify.")
                     else:
-                        print("\nSkipping verification. You can run verification manually with:")
-                        print(f"python eda_batch_check.py # after modifying target_folders in code")
+                        tqdm.write("\nSkipping verification. Run manually with: python eda_batch_check.py --target-folders {args.output_dir}")
             except Exception as e:
-                print(f"Data cleaning failed: {e}")
+                # Упрощенное сообщение об ошибке без вывода полной команды
+                print(f"Error during data cleaning: {str(e).split(':')[0]}")
+                print("Check logs directory for details.")
         else:
             print(f"Data cleaner script not found at: {data_cleaner_script}")
             print("Please create scripts/data_processing/data_cleaner_v2.py first.")
