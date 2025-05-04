@@ -96,15 +96,16 @@ def process_folder(folder_path: str, logger: logging.Logger, progress_bar: tqdm)
         check_file(file_path, logger)
         progress_bar.update(1)
 
-# Global variable to store initial data analysis results
-initial_data_analysis = None
-
 def main():
     """
     Main function to check all data files in specified folders with a single progress bar and per-folder output.
     Suppresses all warnings and errors from libraries to keep tqdm progress bar clean.
     At the end, runs log analysis script and optionally runs data cleaner.
     """
+    # Declare global variable at the beginning of the function
+    global initial_data_analysis
+    initial_data_analysis = None
+
     parser = argparse.ArgumentParser(
         description="Perform EDA checks on data files and optionally clean the data.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -217,7 +218,6 @@ def main():
             initial_log_report = log_analyze.analyze_log("eda_batch_check.log")
             
             # Save the analysis results in a global variable for later comparison
-            global initial_data_analysis
             initial_data_analysis = initial_log_report
         except Exception as e:
             print(f"Log analysis failed: {e}")
