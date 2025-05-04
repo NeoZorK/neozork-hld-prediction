@@ -267,6 +267,50 @@ def main():
                         if os.path.exists(args.output_dir):
                             run_eda_check([args.output_dir])
                             print("\nVerification complete. Check the log file for results.")
+                            
+                            # Analyze data_cleaner_run.log
+                            print("\n--- Analyzing data cleaning log (data_cleaner_run.log) ---\n")
+                            try:
+                                if os.path.exists("data_cleaner_run.log"):
+                                    # Analyze the cleaning log
+                                    with open("data_cleaner_run.log", "r", encoding="utf-8") as f:
+                                        log_content = f.read()
+                                    
+                                    # Extract statistics from log
+                                    total_files = log_content.count("Processing file:")
+                                    files_with_nan = log_content.count("NaN values detected")
+                                    files_with_duplicates = log_content.count("Duplicates removed")
+                                    
+                                    # Calculate total rows removed
+                                    total_rows_removed = 0
+                                    for line in log_content.split("\n"):
+                                        if "Duplicates removed:" in line:
+                                            try:
+                                                removed = int(line.split(":")[1].split(".")[0].strip())
+                                                total_rows_removed += removed
+                                            except (ValueError, IndexError):
+                                                continue
+                                    
+                                    # Get final summary
+                                    final_summary = None
+                                    for line in reversed(log_content.split("\n")):
+                                        if "Successfully processed/saved:" in line:
+                                            final_summary = line
+                                            break
+                                    
+                                    print("\nData Cleaning Results:")
+                                    print("-" * 50)
+                                    print(f"Total files processed: {total_files}")
+                                    print(f"Files with NaN values: {files_with_nan}")
+                                    print(f"Files with duplicates: {files_with_duplicates}")
+                                    print(f"Total rows removed: {total_rows_removed}")
+                                    if final_summary:
+                                        print(f"\nFinal Summary: {final_summary}")
+                                    print("-" * 50)
+                                else:
+                                    print("Data cleaning log file not found.")
+                            except Exception as e:
+                                print(f"Error analyzing cleaning log: {e}")
                         else:
                             print(f"Output directory {args.output_dir} not found or not created yet. No files to verify.")
                     else:

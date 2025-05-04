@@ -32,10 +32,10 @@ def setup_logger(log_file: str) -> logging.Logger:
     file_handler.setLevel(logging.INFO)
     log_instance.addHandler(file_handler)
 
-    # Console handler
+    # Console handler - only for ERROR and CRITICAL messages
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
-    stream_handler.setLevel(logging.INFO) # Output INFO and above to console
+    stream_handler.setLevel(logging.ERROR)  # Only show ERROR and above in console
     log_instance.addHandler(stream_handler)
 
     log_instance.propagate = False
@@ -165,12 +165,12 @@ def clean_file(
         if nan_before > 0:
             logger.info(f"  NaN values detected: {nan_before}")
             if handle_nan == 'ffill':
-                df.fillna(method='ffill', inplace=True)
+                df.ffill(inplace=True)
                 # After ffill, NaN values may remain at the beginning. Fill them backward.
                 nan_after_ffill = df.isnull().sum().sum()
                 if nan_after_ffill > 0:
                     logger.info(f"    NaN after ffill: {nan_after_ffill}. Applying bfill...")
-                    df.fillna(method='bfill', inplace=True)
+                    df.bfill(inplace=True)
                 nan_after_bfill = df.isnull().sum().sum()
                 logger.info(f"  Applied NaN strategy: 'ffill' (with subsequent 'bfill'). NaN after: {nan_after_bfill}")
             elif handle_nan == 'dropna_rows':
