@@ -5,7 +5,7 @@ import os
 import warnings
 import subprocess
 import argparse
-from typing import List, Dict
+from typing import List, Dict, Union
 from tqdm import tqdm
 import logging
 
@@ -23,28 +23,59 @@ from src.eda.data_overview import (
 def setup_logger(log_file: str = "eda_batch_check.log") -> logging.Logger:
     """
     Set up a logger to write info and errors to a file.
+    
+    Args:
+        log_file: Path to the log file (default: "eda_batch_check.log")
+    
+    Returns:
+        Logger instance with file and console handlers
     """
     logger = logging.getLogger("eda_batch_check")
+    
+    # Remove any existing handlers
+    for handler in logger.handlers[:]:
+        logger.removeHandler(handler)
+    
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
 
+    # Add file handler
     file_handler = logging.FileHandler(log_file, encoding="utf-8")
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.INFO)
     logger.addHandler(file_handler)
 
+    # Add console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    console_handler.setLevel(logging.INFO)
+    logger.addHandler(console_handler)
+
     logger.propagate = False
     return logger
 
-def find_data_files(folder_path: str, extensions: List[str] = [".parquet", ".csv"]) -> List[str]:
+def find_data_files(folder_path: Union[str, List[str]], extensions: List[str] = [".parquet", ".csv"]) -> List[str]:
     """
     Recursively find all files with given extensions in the folder and its subfolders.
+    
+    Args:
+        folder_path: Path to folder or list of folder paths to search
+        extensions: List of file extensions to look for (default: [".parquet", ".csv"])
+    
+    Returns:
+        List of found file paths
     """
     data_files = []
-    for root, dirs, files in os.walk(folder_path):
-        for file in files:
-            if any(file.lower().endswith(ext) for ext in extensions):
-                data_files.append(os.path.join(root, file))
+    
+    # Convert single path to list if needed
+    if isinstance(folder_path, str):
+        folder_path = [folder_path]
+    
+    for folder in folder_path:
+        for root, dirs, files in os.walk(folder):
+            for file in files:
+                if any(file.lower().endswith(ext) for ext in extensions):
+                    data_files.append(os.path.join(root, file))
     return data_files
 
 def log_file_info(df, file_path, logger):
@@ -107,8 +138,23 @@ def main():
     initial_data_analysis = None
 
     parser = argparse.ArgumentParser(
-        description="Perform EDA checks on data files and optionally clean the data.",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        description="""Perform EDA checks on data files and optionally clean the data.
+        
+This script performs exploratory data analysis (EDA) on CSV and Parquet files in specified directories.
+It checks for missing values, duplicates, data types, and provides statistical summaries.
+Optionally, it can run the data cleaner to fix identified issues.
+        
+Example usage:
+    # Basic EDA check
+    python eda_batch_check.py
+    
+    # Run EDA check and clean data
+    python eda_batch_check.py --clean
+    
+    # Specify custom output directory and NaN handling
+    python eda_batch_check.py --clean --output-dir data/cleaned --handle-nan ffill
+        """,
+        formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
         "--clean", 
@@ -134,22 +180,29 @@ def main():
         "--handle-nan", 
         default="ffill",
         choices=['ffill', 'dropna_rows', 'none'],
-        help="Strategy for handling NaN values"
+        help="Strategy for handling NaN values: 'ffill' (forward fill), 'dropna_rows' (remove rows with NaN), 'none' (don't process)"
     )
     parser.add_argument(
         "--skip-verification",
         action="store_true",
         help="Skip asking to verify cleaned files with another EDA check"
     )
+    parser.add_argument(
+        "--log-file",
+        default="eda_batch_check.log",
+        help="Log file name for recording the EDA process"
+    )
+    parser.add_argument(
+        "--target-folders",
+        nargs="+",
+        default=["data/cache/csv_converted", "data/raw_parquet", "mql5_feed"],
+        help="List of folders to check (default: data/cache/csv_converted data/raw_parquet mql5_feed)"
+    )
     args = parser.parse_args()
 
     suppress_warnings()
 
-    target_folders = [
-        "data/cache/csv_converted",
-        "data/raw_parquet",
-        "mql5_feed"
-    ]
+    target_folders = args.target_folders
 
     # Define logger variable in the outer scope first
     logger = None
@@ -163,7 +216,7 @@ def main():
             for handler in logger.handlers[:]:
                 logger.removeHandler(handler)
         
-        logger = setup_logger()
+        logger = setup_logger(args.log_file)
         all_data_files: Dict[str, List[str]] = {}
         total_files = 0
 
@@ -187,7 +240,7 @@ def main():
 
         # Clear line to prevent overlap with future output
         print("\033[K", end="\r")
-        tqdm.write(f"\nLog file: eda_batch_check.log")
+        tqdm.write(f"\nLog file: {args.log_file}")
         logger.info("EDA batch check completed.")
         return True
 
@@ -215,7 +268,7 @@ def main():
                 eda_log_report = initial_data_analysis
             
             # Analyze the log file and store the results for later comparison
-            initial_log_report = log_analyze.analyze_log("eda_batch_check.log")
+            initial_log_report = log_analyze.analyze_log(args.log_file)
             
             # Save the analysis results in a global variable for later comparison
             initial_data_analysis = initial_log_report
