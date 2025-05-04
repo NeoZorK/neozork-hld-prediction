@@ -370,61 +370,120 @@ Example usage:
                 os.makedirs(raw_parquet_dir, exist_ok=True)
                 os.makedirs(csv_converted_dir, exist_ok=True)
                 
+                # Находим все файлы в target_folders
+                all_files = []
+                for folder in target_folders:
+                    if os.path.exists(folder):
+                        all_files.extend(find_data_files(folder))
+                
                 # Группируем файлы по типу для обработки
-                parquet_files = [f for f in target_folders if f.lower().endswith('.parquet')]
-                csv_files = [f for f in target_folders if f.lower().endswith('.csv')]
+                parquet_files = [f for f in all_files if f.lower().endswith('.parquet')]
+                csv_files = [f for f in all_files if f.lower().endswith('.csv')]
                 
                 # Запускаем два отдельных процесса для каждого типа файлов
                 cmds = []
                 
+                # Проверяем наличие директории logs и создаем ее, если она не существует
+                os.makedirs("logs", exist_ok=True)
+                
+                # Принудительное создание пустого лог-файла перед запуском
+                with open(cleaner_log_file, "w", encoding="utf-8") as f:
+                    f.write("# Data cleaner log file\n")
+                
+                # Убедимся, что директории для выходных файлов существуют
+                os.makedirs(raw_parquet_dir, exist_ok=True)
+                os.makedirs(csv_converted_dir, exist_ok=True)
+                
+                # Сгруппировать файлы по директориям
+                parquet_dirs = set(os.path.dirname(f) for f in parquet_files)
+                csv_dirs = set(os.path.dirname(f) for f in csv_files)
+                
                 # Команда для parquet файлов
                 if parquet_files:
-                    cmd_parquet = [
-                        "python", data_cleaner_script,
-                        "-i"] + parquet_files + [
-                        "-o", raw_parquet_dir,
-                        "--handle-duplicates", "remove",
-                        "--handle-nan", args.handle_nan,
-                        "--csv-delimiter", args.csv_delimiter,
-                        "--csv-header", args.csv_header,
-                        "--log-file", str(cleaner_log_file)
-                    ]
-                    cmds.append(('parquet', cmd_parquet))
+                    for parquet_dir in parquet_dirs:
+                        if not parquet_dir:  # Пропустить пустые директории
+                            continue
+                            
+                        cmd_parquet = [
+                            "python", data_cleaner_script,
+                            "-i", parquet_dir,
+                            "-o", raw_parquet_dir,
+                            "--handle-duplicates", "remove",
+                            "--handle-nan", args.handle_nan,
+                            "--csv-delimiter", args.csv_delimiter,
+                            "--csv-header", args.csv_header,
+                            "--log-file", str(cleaner_log_file)
+                        ]
+                        cmds.append(('parquet', cmd_parquet))
                 
                 # Команда для csv файлов
                 if csv_files:
-                    cmd_csv = [
-                        "python", data_cleaner_script,
-                        "-i"] + csv_files + [
-                        "-o", csv_converted_dir,
-                        "--handle-duplicates", "remove",
-                        "--handle-nan", args.handle_nan,
-                        "--csv-delimiter", args.csv_delimiter,
-                        "--csv-header", args.csv_header,
-                        "--log-file", str(cleaner_log_file)
-                    ]
-                    cmds.append(('csv', cmd_csv))
+                    for csv_dir in csv_dirs:
+                        if not csv_dir:  # Пропустить пустые директории
+                            continue
+                            
+                        cmd_csv = [
+                            "python", data_cleaner_script,
+                            "-i", csv_dir,
+                            "-o", csv_converted_dir,
+                            "--handle-duplicates", "remove",
+                            "--handle-nan", args.handle_nan,
+                            "--csv-delimiter", args.csv_delimiter,
+                            "--csv-header", args.csv_header,
+                            "--log-file", str(cleaner_log_file)
+                        ]
+                        cmds.append(('csv', cmd_csv))
                 
                 if not cmds:
                     tqdm.write("Не найдено CSV или Parquet файлов для обработки.")
                     return
                 # Only show progress bar, suppress output from subprocess
-                with tqdm(total=1, desc="CLEANING DATA", unit="process", position=0, leave=True) as progress_bar:
-                    # Run subprocess with minimal output
-                    result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
-                    progress_bar.update(1)
+                with tqdm(total=len(cmds), desc="CLEANING DATA", unit="process", position=0, leave=True) as progress_bar:
+                    all_success = True
                     
-                    # Check if process succeeded
-                    if result.returncode != 0:
-                        # Only show error message without full command details
-                        tqdm.write(f"Data cleaning failed with exit code {result.returncode}")
-                        if result.stderr:
-                            tqdm.write(f"Error: {result.stderr.splitlines()[0]}")
-                        tqdm.write(f"Check log file: {cleaner_log_file}")
-                        return
+                    for file_type, cmd in cmds:
+                        # Run subprocess with minimal output
+                        tqdm.write(f"Processing {file_type} files...")
+                        
+                        # Запись команды в лог для диагностики
+                        with open(cleaner_log_file, "a", encoding="utf-8") as f:
+                            f.write(f"\nRunning command: {' '.join(cmd)}\n")
+                        
+                        # Выполняем команду
+                        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                        progress_bar.update(1)
+                        
+                        # Check if process succeeded
+                        if result.returncode != 0:
+                            # Only show error message without full command details
+                            tqdm.write(f"Data cleaning for {file_type} files failed with exit code {result.returncode}")
+                            
+                            # Записать stderr в лог-файл
+                            with open(cleaner_log_file, "a", encoding="utf-8") as f:
+                                f.write(f"\nError output:\n{result.stderr}\n")
+                            
+                            # Показать первую строку ошибки
+                            if result.stderr:
+                                tqdm.write(f"Error: {result.stderr.splitlines()[0]}")
+                                # Показать полную команду для отладки
+                                tqdm.write(f"Command: {' '.join(cmd)}")
+                            
+                            tqdm.write(f"Check log file: {cleaner_log_file}")
+                            all_success = False
+                        else:
+                            # Записать stdout в лог-файл
+                            with open(cleaner_log_file, "a", encoding="utf-8") as f:
+                                f.write(f"\nOutput:\n{result.stdout}\n")
+                                
+                            # Показать количество обработанных файлов
+                            processed_files = result.stdout.count("Processing file:")
+                            tqdm.write(f"Successfully processed {processed_files} {file_type} files")
                     
                     # Show minimal success message
-                    tqdm.write(f"Data cleaning completed. Files saved to: {args.output_dir}")
+                    if all_success:
+                        tqdm.write(f"Data cleaning completed. Files saved to: {args.output_dir}")
+                    else:
+                        tqdm.write(f"Data cleaning completed with some errors. Check log file: {cleaner_log_file}")
 
                 # Ask user if they want to verify cleaned files
                 if not args.skip_verification:
