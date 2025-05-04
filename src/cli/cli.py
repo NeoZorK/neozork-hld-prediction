@@ -37,45 +37,21 @@ def parse_arguments():
        """)
 
     # --- Example epilog ---
-    example_lines = [
-        "[bold]EXAMPLES:[/bold]",
-        "",
-        "[bold cyan]─── Basic Usage ───[/bold cyan]",
-        "  [dim]# Run with demo data (using fastest mode by default)[/dim]",
-        "  [bold]python run_analysis.py demo[/bold]",
-        "",
-        "[bold cyan]─── Alternative Visualization ───[/bold cyan]",
-        "  [dim]# Run with demo data using mplfinance for plotting[/dim]",
-        "  [bold]python run_analysis.py demo -d mpl[/bold]",
-        "",
-        "[bold cyan]─── CSV Data Source ───[/bold cyan]",
-        "  [dim]# Run using data from a specific CSV file (using fastest mode)[/dim]",
-        "  [bold]python run_analysis.py csv --csv-file path/to/data.csv --point 0.01[/bold]",
-        "",
-        "[bold cyan]─── External API Data ───[/bold cyan]",
-        "  [dim]# Fetch Polygon.io data and plot using mplfinance[/dim]",
-        "  [bold]python run_analysis.py polygon --ticker EURUSD --interval D1 \\[/bold]",
-        "  [bold]                         --start 2024-01-01 --end 2024-04-18 \\[/bold]",
-        "  [bold]                         --point 0.00001 -d mpl[/bold]",
-        "",
-        "[bold cyan]─── Show Mode ───[/bold cyan]",
-        "  [dim]# Show all cached YFinance files[/dim]",
-        "  [bold]python run_analysis.py show yf[/bold]",
-        "  [dim]# Search for YFinance files with 'aapl' and 'mn1' in the name[/dim]", 
-        "  [bold]python run_analysis.py show yf aapl mn1[/bold]",
-        "  [dim]# Search for Binance files with 'btc' in the name[/dim]",
-        "  [bold]python run_analysis.py show binance btc[/bold]",
-        "",
-        # ... (keep other examples) ...
-    ]
-    examples_epilog = "\n".join(example_lines)
+    examples_epilog = None  # Убираем epilog
 
     #--- Argument Parser Setup ---
     parser = argparse.ArgumentParser(
         description=main_description,
         formatter_class=RichHelpFormatter,
-        epilog=examples_epilog,
+        epilog=None,  # epilog убран
         add_help=False # Disable default help to add it to a specific group
+    )
+
+    # --- Examples Option ---
+    parser.add_argument(
+        '--examples',
+        action='store_true',
+        help='Show usage examples and exit.'
     )
 
     # --- Required Arguments Group ---
@@ -169,7 +145,75 @@ def parse_arguments():
         if len(sys.argv) == 1:
             parser.print_help()
             sys.exit(0)
-            
+        # Если пользователь запросил примеры
+        if '--examples' in sys.argv:
+            print("""
+EXAMPLES (run: python run_analysis.py --examples):
+
+  # 1. DEMO DATA MODES
+  python run_analysis.py demo
+  python run_analysis.py demo -d mpl
+  python run_analysis.py demo --rule PV_HighLow
+  python run_analysis.py demo --rule PHLD -d plotly
+
+  # 2. CSV FILE MODES
+  python run_analysis.py csv --csv-file data.csv --point 0.01
+  python run_analysis.py csv --csv-file data.csv --point 0.01 --rule SR
+  python run_analysis.py csv --csv-file data.csv --point 0.01 -d mplfinance
+  python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw fastest
+
+  # 3. YAHOO FINANCE (YF) MODES
+  python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001
+  python run_analysis.py yfinance -t AAPL --period 6mo --point 0.01
+  python run_analysis.py yf -t BTC-USD --start 2023-01-01 --end 2023-12-31 --point 0.01
+  python run_analysis.py yf -t EURUSD=X --start 2024-01-01 --end 2024-04-18 --point 0.00001 -d mpl
+  python run_analysis.py yf -t AAPL --period 1y --rule SR
+
+  # 4. POLYGON.IO MODES
+  python run_analysis.py polygon --ticker AAPL --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01
+  python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2022-01-01 --end 2022-06-01 --point 0.00001 --rule PV
+
+  # 5. BINANCE MODES
+  python run_analysis.py binance --ticker BTCUSDT --interval H1 --start 2024-01-01 --end 2024-04-18 --point 0.01
+  python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR
+
+  # 6. SHOW MODE (CACHE/FILES)
+  python run_analysis.py show yf
+  python run_analysis.py show yf aapl mn1
+  python run_analysis.py show binance btc
+  python run_analysis.py show csv EURUSD MN1
+  python run_analysis.py show polygon AAPL 2023
+  python run_analysis.py show yf --show-rule PV
+  python run_analysis.py show yf --show-start 2023-01-01 --show-end 2023-12-31
+
+  # 7. ADVANCED/EDGE CASES
+  python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PHLD --draw plotly
+  python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001 --rule PV --draw fastest
+  python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2022-01-01 --end 2022-12-31 --point 0.00001 --rule SR --draw mpl
+  python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2023-01-01 --end 2023-01-31 --point 0.01 --rule PHLD
+
+  # 8. HELP, VERSION, EXAMPLES
+  python run_analysis.py -h
+  python run_analysis.py --version
+  python run_analysis.py --examples
+
+  # 9. CACHE/DEBUG
+  # Remove cache and rerun
+  rm data/cache/csv_converted/*.parquet
+  python run_analysis.py csv --csv-file data.csv --point 0.01
+
+  # 10. ERROR CASES (will show error/help)
+  python run_analysis.py csv --csv-file data.csv   # (missing --point)
+  python run_analysis.py yf -t EURUSD=X            # (missing --period or --start/--end)
+
+Note:
+- For all API modes (yfinance, polygon, binance), the --point parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).
+- Use -d/--draw to select plotting backend: fastest, fast, plotly, mplfinance, etc.
+- Use --rule to select trading rule: PV_HighLow, Support_Resistants, Pressure_Vector, Predict_High_Low_Direction, PHLD, PV, SR.
+- SHOW mode allows filtering cached files by source, keywords, date, and rule.
+- For more details, see README.md or run with -h for full help.
+""")
+            sys.exit(0)
         args = parser.parse_args()
     except SystemExit as e:
          if e.code != 0:
