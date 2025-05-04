@@ -1,3 +1,38 @@
+"""Shcherbyna Pressure Vector Indicator Analysis Tool
+
+This script performs analysis of pressure vector indicators based on provided data.
+
+Description:
+    The tool calculates and visualizes pressure vector indicators using the Shcherbyna
+    method. It processes input data, performs necessary calculations, and generates
+    visual representations of the results.
+
+Usage:
+    python run_analysis.py [options]
+
+Options:
+    --input-file PATH       Path to the input data file
+    --output-dir PATH      Directory for saving output files
+    --plot-type TYPE       Type of plot to generate (default: 'standard')
+    --verbose             Enable detailed logging output
+    --version            Show program's version number and exit
+
+Examples:
+    # Basic usage with default settings
+    python run_analysis.py --input-file data.csv
+
+    # Generate specific plot type with custom output directory
+    python run_analysis.py --input-file data.csv --output-dir ./results --plot-type detailed
+
+    # Run with verbose logging
+    python run_analysis.py --input-file data.csv --verbose
+
+Notes:
+    - Input file should be in CSV format with appropriate headers
+    - Output directory will be created if it doesn't exist
+    - Requires Python 3.8 or higher
+"""
+
 # /run_analysis.py (in NeoZorK HLD/ root folder)
 
 # Standard library imports
@@ -14,7 +49,21 @@ from src.common import logger
 
 # --- Main Execution Function ---
 def main():
-    """Main entry point script."""
+    """Main execution function for the Shcherbyna Pressure Vector Indicator analysis.
+
+    This function orchestrates the entire workflow of the analysis:
+    1. Displays version information
+    2. Parses command line arguments
+    3. Executes the analysis workflow
+    4. Generates and displays the summary report
+
+    The function handles errors gracefully and provides appropriate exit codes:
+    - Exit code 0: Successful execution
+    - Exit code 1: Error in argument parsing or workflow execution
+
+    Returns:
+        None
+    """
 
     # Print version information using the logger
     logger.print_info(f"Shcherbyna Pressure Vector Indicator - Version: {__version__}")
