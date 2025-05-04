@@ -165,6 +165,11 @@ def parse_arguments():
 
     # --- Parse Arguments ---
     try:
+        # If no arguments provided, show help
+        if len(sys.argv) == 1:
+            parser.print_help()
+            sys.exit(0)
+            
         args = parser.parse_args()
     except SystemExit as e:
          if e.code != 0:
