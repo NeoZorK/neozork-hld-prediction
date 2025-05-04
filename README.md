@@ -362,94 +362,101 @@ Use your package manager, for example:
 
 ## Usage Examples
 
-### Running Analysis (`run_analysis.py`)
+### Quick Reference: Show All CLI Examples
 
-* **Run with demo data using the default rule (Predict_High_Low_Direction):**
-    ```bash
-    python run_analysis.py demo
-    ```
+You can view a comprehensive list of usage examples for all modes and options by running:
 
-### Fast mode for large charts (default)
+```bash
+python run_analysis.py --examples
+```
 
-* **For accelerated plotting of large OHLCV datasets (millions of rows, M1) use the new 'fastest' mode, now default:
+This will print a categorized, multi-line list of real-world command-line examples for demo, CSV, yfinance, polygon, binance, show, plotting, rules, cache, and error cases.
 
-    ```bash
-    python run_analysis.py demo -d fastest
-    ```
-#### Old modes:
-- `-d plotly`: interactive Plotly HTML chart
-- `-d mpl` or `-d mplfinance`: static chart via mplfinance/matplotlib
-- `-d fast` : run plotly
+### Most Useful Examples
 
+# 1. DEMO DATA MODES
+```bash
+python run_analysis.py demo
+python run_analysis.py demo -d mpl
+python run_analysis.py demo --rule PV_HighLow
+python run_analysis.py demo --rule PHLD -d plotly
+```
 
-* **Run with demo data using a specific rule (e.g., Pressure_Vector alias 'PV'):**
-    ```bash
-    python run_analysis.py demo --rule PV
-    ```
-  
-* ** Run with demo data using a specific rule with point size (e.g., Pressure_Vector_HighLow alias 'PV_HighLow'):**
-    ```bash
-    python run_analysis.py demo --rule PV_HighLow --point 0.01
-    ```
+# 2. CSV FILE MODES
+```bash
+python run_analysis.py csv --csv-file data.csv --point 0.01
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule SR
+python run_analysis.py csv --csv-file data.csv --point 0.01 -d mplfinance
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw fastest
+```
 
+# 3. YAHOO FINANCE (YF) MODES
+```bash
+python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001
+python run_analysis.py yfinance -t AAPL --period 6mo --point 0.01
+python run_analysis.py yf -t BTC-USD --start 2023-01-01 --end 2023-12-31 --point 0.01
+python run_analysis.py yf -t EURUSD=X --start 2024-01-01 --end 2024-04-18 --point 0.00001 -d mpl
+python run_analysis.py yf -t AAPL --period 1y --rule SR
+```
 
-* **  Fetch Binance data for BTC/USDT, M1 interval, specific dates
-* ** (Requires --point specified, API keys optional for public data)
-  ```bash
-    python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2024-04-01 --end 2024-04-18 --point 0.01
-  ```
+# 4. POLYGON.IO MODES
+```bash
+python run_analysis.py polygon --ticker AAPL --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01
+python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2022-01-01 --end 2022-06-01 --point 0.00001 --rule PV
+```
 
-* ** Or using the ticker format 'btc/usdt'
-  ```bash
-  python run_analysis.py binance --ticker btc/usdt --interval M1 --start 2024-04-01 --end 2024-04-18 --point 0.01
-  ```
+# 5. BINANCE MODES
+```bash
+python run_analysis.py binance --ticker BTCUSDT --interval H1 --start 2024-01-01 --end 2024-04-18 --point 0.01
+python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR
+```
 
-* **Run using data from a CSV file:**
-    ```bash
-    # Replace path/to/your/data.csv and provide the correct point size
-    python run_analysis.py csv --csv-file path/to/your/data.csv --rule PHLD --point 0.01
-    ```
-    * `--csv-file`: Specifies the path to your input CSV file.
-    * `--point`: **Required** for CSV mode. You must provide the correct point size for the instrument in the CSV file (e.g., 0.01 or 0.1 for XAUUSD).
-    * `--rule`: Select the calculation rule (e.g., `PHLD`, `SR`, `PV`, `PV_HighLow`).
+# 6. SHOW MODE (CACHE/FILES)
+```bash
+python run_analysis.py show yf
+python run_analysis.py show yf aapl mn1
+python run_analysis.py show binance btc
+python run_analysis.py show csv EURUSD MN1
+python run_analysis.py show polygon AAPL 2023
+python run_analysis.py show yf --show-rule PV
+python run_analysis.py show yf --show-start 2023-01-01 --show-end 2023-12-31
+```
 
-* **Run with CSV file:
-    ```bash
-    # Example with a specific CSV file and rule
-    python run_analysis.py csv --csv-file mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv --rule Predict_High_Low_Direction --point 0.01 
-    ```
+# 7. ADVANCED/EDGE CASES
+```bash
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PHLD --draw plotly
+python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001 --rule PV --draw fastest
+python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2022-01-01 --end 2022-12-31 --point 0.00001 --rule SR --draw mpl
+python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2023-01-01 --end 2023-01-31 --point 0.01 --rule PHLD
+```
 
+# 8. HELP, VERSION, EXAMPLES
+```bash
+python run_analysis.py -h
+python run_analysis.py --version
+python run_analysis.py --examples
+```
 
-* **Run using data from Polygon.io API:**
-    ```bash
-    # Replace ticker, dates, and point size as needed. API key must be in .env
-    # Use base tickers like AAPL, EURUSD, BTCUSD
-    python run_analysis.py polygon --ticker AAPL --interval D1 --start 2024-04-10 --end 2024-04-17 --point 0.01
-    python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2024-04-10 --end 2024-04-17 --point 0.00001
-    ```
-    * `--ticker`: Base ticker symbol (e.g., `AAPL`, `EURUSD`, `BTCUSD`). The script will try to resolve the correct prefixed ticker.
-    * `--interval`, `--start`, `--end`: Specify the desired timeframe and date range.
-    * `--point`: **Required** for Polygon mode. Provide the correct point size.
-    * Ensure `POLYGON_API_KEY` is set in your `.env` file.
+# 9. CACHE/DEBUG
+```bash
+# Remove cache and rerun
+rm data/cache/csv_converted/*.parquet
+python run_analysis.py csv --csv-file data.csv --point 0.01
+```
 
-* **Run with Polygon.io (requires API key in .env):**
-* Fetches Forex EUR/USD minute data
-    ```bash
-    # Fetches Forex EUR/USD minute data
-    python run_analysis.py polygon --ticker C:EURUSD --interval M1 --start 2024-04-15 --end 2024-04-19 --rule Support_Resistants --point 0.00001
-    # Note: This will also save raw data to data/raw_parquet/polygon_C_EURUSD_M1_2024-04-15_2024-04-19.parquet
-    ```
+# 10. ERROR CASES (will show error/help)
+```bash
+python run_analysis.py csv --csv-file data.csv   # (missing --point)
+python run_analysis.py yf -t EURUSD=X            # (missing --period or --start/--end)
+```
 
+**Note:**
+- For all API modes (yfinance, polygon, binance), the `--point` parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).
+- Use `-d/--draw` to select plotting backend: fastest, fast, plotly, mplfinance, etc.
+- Use `--rule` to select trading rule: PV_HighLow, Support_Resistants, Pressure_Vector, Predict_High_Low_Direction, PHLD, PV, SR.
+- SHOW mode allows filtering cached files by source, keywords, date, and rule.
+- For more details, see `python run_analysis.py -h` for full help.
 
-* **Fetch Yahoo Finance data for a Forex pair, specific interval, last 3 months, estimated point size, specific rule:**
-    ```bash
-    python run_analysis.py yf --ticker "EURUSD=X" --interval H1 --period 3mo --rule PV_HighLow
-    ```
-
-* **Fetch Yahoo Finance data for a stock, specific date range, user-provided point size, specific rule alias 'SR':**
-    ```bash
-    python run_analysis.py yfinance --ticker AAPL --start 2024-01-01 --end 2024-04-15 --point 0.01 --rule SR
-    ```
 ## Show Mode
 
 The `show` mode is designed for interactive browsing, analysis, and visualization of locally cached datasets in Parquet format, which are used for indicator calculations. It allows you to quickly find needed files, filter them by data source and keywords, and instantly calculate an indicator on the selected data—without querying an API or re-downloading data.
