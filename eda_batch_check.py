@@ -70,25 +70,65 @@ def setup_logger(log_file: str = None) -> logging.Logger:
     logger.propagate = False
     return logger
 
-def find_data_files(folder_path: Union[str, List[str]], extensions: List[str] = [".parquet", ".csv"]) -> List[str]:
+def sort_files_by_type(base_dir: str, parquet_dir: str, csv_dir: str) -> None:
     """
-    Recursively find all files with given extensions in the folder and its subfolders.
+    Сортирует очищенные файлы по типу в соответствующие директории.
     
     Args:
-        folder_path: Path to folder or list of folder paths to search
-        extensions: List of file extensions to look for (default: [".parquet", ".csv"])
+        base_dir: Базовая директория, где находятся очищенные файлы
+        parquet_dir: Директория для parquet файлов
+        csv_dir: Директория для CSV файлов
+    """
+    # Убеждаемся, что директории существуют
+    os.makedirs(parquet_dir, exist_ok=True)
+    os.makedirs(csv_dir, exist_ok=True)
+    
+    # Ищем все файлы в базовой директории
+    for file in os.listdir(base_dir):
+        file_path = os.path.join(base_dir, file)
+        
+        # Обрабатываем только файлы (не директории)
+        if os.path.isfile(file_path):
+            # Определяем тип файла и перемещаем его в соответствующую директорию
+            if file.lower().endswith('.parquet'):
+                target_path = os.path.join(parquet_dir, file)
+                shutil.move(file_path, target_path)
+                print(f"  Перемещен парк-файл: {file} -> {target_path}")
+            elif file.lower().endswith('.csv'):
+                target_path = os.path.join(csv_dir, file)
+                shutil.move(file_path, target_path)
+                print(f"  Перемещен CSV-файл: {file} -> {target_path}")
+
+def find_data_files(folder_path: Union[str, List[str]], extensions: List[str] = [".parquet", ".csv"], exclude_paths: List[str] = None) -> List[str]:
+    """
+    Рекурсивно находит все файлы с указанными расширениями в папке и ее подпапках.
+    
+    Args:
+        folder_path: Путь к папке или список путей для поиска
+        extensions: Список расширений файлов для поиска (по умолчанию: [".parquet", ".csv"])
+        exclude_paths: Список путей, которые следует исключить из поиска
     
     Returns:
-        List of found file paths
+        Список найденных путей к файлам
     """
     data_files = []
     
-    # Convert single path to list if needed
+    # Преобразуем одиночный путь в список при необходимости
     if isinstance(folder_path, str):
         folder_path = [folder_path]
     
+    # Преобразуем пути исключения в абсолютные для корректного сравнения
+    exclude_abs_paths = []
+    if exclude_paths:
+        exclude_abs_paths = [os.path.abspath(p) for p in exclude_paths]
+    
     for folder in folder_path:
         for root, dirs, files in os.walk(folder):
+            # Проверяем, не находится ли текущая папка в путях исключения
+            current_abs_path = os.path.abspath(root)
+            if exclude_abs_paths and any(current_abs_path.startswith(p) for p in exclude_abs_paths):
+                continue
+                
             for file in files:
                 if any(file.lower().endswith(ext) for ext in extensions):
                     data_files.append(os.path.join(root, file))
@@ -180,7 +220,7 @@ Example usage:
     parser.add_argument(
         "--output-dir", 
         default="cleaned",
-        help="Output directory for cleaned data files (relative to 'data' folder)"
+        help="Выходная директория для очищенных файлов (относительно папки 'data')"
     )
     parser.add_argument(
         "--csv-delimiter", 
@@ -321,20 +361,53 @@ Example usage:
                 logs_dir.mkdir(exist_ok=True, parents=True)
                 cleaner_log_file = logs_dir / "data_cleaner_run.log"
                 
-                # Ensure output directory is properly formed
-                output_dir = os.path.join("data", args.output_dir)
+                # Настройка структуры выходных директорий
+                base_output_dir = os.path.join("data", args.output_dir)
+                raw_parquet_dir = os.path.join(base_output_dir, "raw_parquet")
+                csv_converted_dir = os.path.join(base_output_dir, "cache", "csv_converted")
                 
-                # Build the command with all necessary arguments - use proper format for each parameter
-                cmd = [
-                    "python", data_cleaner_script,
-                    "-i"] + target_folders + [
-                    "-o", output_dir,
-                    "--handle-duplicates", "remove",
-                    "--handle-nan", args.handle_nan,
-                    "--csv-delimiter", args.csv_delimiter,
-                    "--csv-header", args.csv_header,
-                    "--log-file", str(cleaner_log_file)
-                ]
+                # Создаем директории заранее
+                os.makedirs(raw_parquet_dir, exist_ok=True)
+                os.makedirs(csv_converted_dir, exist_ok=True)
+                
+                # Группируем файлы по типу для обработки
+                parquet_files = [f for f in target_folders if f.lower().endswith('.parquet')]
+                csv_files = [f for f in target_folders if f.lower().endswith('.csv')]
+                
+                # Запускаем два отдельных процесса для каждого типа файлов
+                cmds = []
+                
+                # Команда для parquet файлов
+                if parquet_files:
+                    cmd_parquet = [
+                        "python", data_cleaner_script,
+                        "-i"] + parquet_files + [
+                        "-o", raw_parquet_dir,
+                        "--handle-duplicates", "remove",
+                        "--handle-nan", args.handle_nan,
+                        "--csv-delimiter", args.csv_delimiter,
+                        "--csv-header", args.csv_header,
+                        "--log-file", str(cleaner_log_file)
+                    ]
+                    cmds.append(('parquet', cmd_parquet))
+                
+                # Команда для csv файлов
+                if csv_files:
+                    cmd_csv = [
+                        "python", data_cleaner_script,
+                        "-i"] + csv_files + [
+                        "-o", csv_converted_dir,
+                        "--handle-duplicates", "remove",
+                        "--handle-nan", args.handle_nan,
+                        "--csv-delimiter", args.csv_delimiter,
+                        "--csv-header", args.csv_header,
+                        "--log-file", str(cleaner_log_file)
+                    ]
+                    cmds.append(('csv', cmd_csv))
+                
+                if not cmds:
+                    tqdm.write("Не найдено CSV или Parquet файлов для обработки.")
+                    return
                 # Only show progress bar, suppress output from subprocess
                 with tqdm(total=1, desc="CLEANING DATA", unit="process", position=0, leave=True) as progress_bar:
                     # Run subprocess with minimal output
