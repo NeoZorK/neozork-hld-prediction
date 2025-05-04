@@ -40,6 +40,12 @@ def setup_logger(log_file: str = None) -> logging.Logger:
     # Set default log file path if not provided
     if log_file is None:
         log_file = logs_dir / "eda_batch_check.log"
+    else:
+        # Ensure the log file is in the logs directory
+        log_path = Path(log_file)
+        if not log_path.is_absolute():
+            if not str(log_path).startswith("logs/"):
+                log_file = logs_dir / log_path.name
     
     logger = logging.getLogger("eda_batch_check")
     
@@ -197,8 +203,8 @@ Example usage:
     )
     parser.add_argument(
         "--log-file",
-        default="eda_batch_check.log",
-        help="Log file name for recording the EDA process"
+        default="logs/eda_batch_check.log",
+        help="Log file name for recording the EDA process (will be created in logs directory)"
     )
     parser.add_argument(
         "--target-folders",
@@ -248,7 +254,10 @@ Example usage:
 
         # Clear line to prevent overlap with future output
         print("\033[K", end="\r")
-        tqdm.write(f"\nLog file: {args.log_file}")
+        log_path = Path(args.log_file)
+        if not log_path.is_absolute():
+            log_path = Path("logs") / log_path.name if not str(log_path).startswith("logs/") else log_path
+        tqdm.write(f"\nLog file: {log_path}")
         logger.info("EDA batch check completed.")
         return True
 
