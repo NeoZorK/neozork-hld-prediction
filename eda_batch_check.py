@@ -8,6 +8,8 @@ import argparse
 from typing import List, Dict, Union
 from tqdm import tqdm
 import logging
+from pathlib import Path
+import sys
 
 from src.eda.data_overview import (
     load_data,
@@ -20,36 +22,42 @@ from src.eda.data_overview import (
     get_summary
 )
 
-def setup_logger(log_file: str = "eda_batch_check.log") -> logging.Logger:
+def setup_logger(log_file: str = None) -> logging.Logger:
     """
-    Set up a logger to write info and errors to a file.
+    Set up a logger to write info and errors to a file in 'logs' directory.
+    No console output to keep terminal clean for progress bar.
     
     Args:
-        log_file: Path to the log file (default: "eda_batch_check.log")
+        log_file: Path to the log file (default: "logs/eda_batch_check.log")
     
     Returns:
-        Logger instance with file and console handlers
+        Logger instance with file handler only
     """
+    # Create logs directory if it doesn't exist
+    logs_dir = Path("logs")
+    logs_dir.mkdir(exist_ok=True, parents=True)
+    
+    # Set default log file path if not provided
+    if log_file is None:
+        log_file = logs_dir / "eda_batch_check.log"
+    
     logger = logging.getLogger("eda_batch_check")
     
     # Remove any existing handlers
     for handler in logger.handlers[:]:
         logger.removeHandler(handler)
+        handler.close()  # Properly close the handler
     
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
 
-    # Add file handler
+    # Add file handler only
     file_handler = logging.FileHandler(log_file, encoding="utf-8")
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.INFO)
     logger.addHandler(file_handler)
 
-    # Add console handler
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(formatter)
-    console_handler.setLevel(logging.INFO)
-    logger.addHandler(console_handler)
+    # Console handler removed - to keep progress bar visible alone
 
     logger.propagate = False
     return logger
@@ -195,8 +203,8 @@ Example usage:
     parser.add_argument(
         "--target-folders",
         nargs="+",
-        default=["data/cache/csv_converted", "data/raw_parquet", "mql5_feed"],
-        help="List of folders to check (default: data/cache/csv_converted data/raw_parquet mql5_feed)"
+        default=["data/cache/csv_converted", "data/raw_parquet"],
+        help="List of folders to check (default: data/cache/csv_converted data/raw_parquet)"
     )
     args = parser.parse_args()
 
