@@ -27,6 +27,12 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
   - Supports multiple NaN handling strategies (ffill, dropna_rows, none)
   - Preserves directory structure when cleaning multiple files
   - Detailed logging of cleaning operations
+* **NEW:** Batch EDA checking with `eda_batch_check.py`:
+  - Performs comprehensive data quality checks on CSV and Parquet files
+  - Checks for missing values, duplicates, and data types
+  - Provides statistical summaries and detailed logging
+  - Optionally runs data cleaner to fix identified issues
+  - Supports custom target folders and output directories
 * **NEW:** Automatically saves raw OHLCV data fetched from API sources (Yahoo Finance, Polygon.io, Binance) to efficient `.parquet` files in the `data/raw_parquet/` directory for later use or analysis.
 * **NEW:** Displays enhanced execution summary in the console, including DataFrame shape, memory usage, data fetch duration, and API request latency.
 * Includes utility scripts for debugging connections to various APIs (`debug_*.py`).
@@ -171,6 +177,38 @@ Before running the project, create all required folders by executing the initial
 ./init_dirs.sh
 ```
 This script will set up the directory structure for data, cache, and source files.
+
+### Testing init_dirs.sh
+
+The project includes unit tests for the initialization script using BATS (Bash Automated Testing System).
+
+1. Install BATS:
+   ```bash
+   # macOS
+   brew install bats-core
+   
+   # Linux (Ubuntu/Debian)
+   sudo apt-get install bats
+   
+   # From source
+   git clone https://github.com/bats-core/bats-core.git
+   cd bats-core
+   ./install.sh /usr/local
+   ```
+
+2. Run the tests:
+   ```bash
+   bats tests/scripts/test_init_dirs.bats
+   ```
+
+The tests verify that:
+- All required directories are created correctly
+- The `.env` file is created with necessary fields
+- Existing `.env` files are not overwritten
+- The script works when run from different directories
+- Directories have correct permissions
+- Error handling works as expected
+- The script is idempotent (can be run multiple times safely)
 
 ## Environment Variables (.env)
 
@@ -489,3 +527,46 @@ This project uses Python's built-in `unittest` framework.
     ```bash
     python -m unittest discover tests
     ```
+
+## EDA Tools
+
+The project includes several tools for exploratory data analysis and data quality checking:
+
+### Batch EDA Checker (`eda_batch_check.py`)
+
+This tool performs comprehensive data quality checks on CSV and Parquet files in specified directories. It's particularly useful for:
+- Checking data quality across multiple files
+- Identifying missing values and duplicates
+- Validating data types and formats
+- Generating statistical summaries
+- Optionally cleaning data using `data_cleaner_v2.py`
+
+Usage examples:
+```bash
+# Basic EDA check
+python eda_batch_check.py
+
+# Run EDA check and clean data
+python eda_batch_check.py --clean
+
+# Specify custom output directory and NaN handling
+python eda_batch_check.py --clean --output-dir data/cleaned --handle-nan ffill
+
+# Check specific folders
+python eda_batch_check.py --target-folders data/raw_parquet mql5_feed
+```
+
+Available options:
+- `--clean`: Run data cleaner after analysis
+- `--output-dir`: Output directory for cleaned files
+- `--csv-delimiter`: Delimiter for CSV files (default: tab)
+- `--csv-header`: CSV header row (0 or 'infer')
+- `--handle-nan`: NaN handling strategy (ffill, dropna_rows, none)
+- `--skip-verification`: Skip verification of cleaned files
+- `--log-file`: Custom log file name
+- `--target-folders`: List of folders to check
+
+For more information, run:
+```bash
+python eda_batch_check.py --help
+```
