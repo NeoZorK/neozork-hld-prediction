@@ -7,6 +7,8 @@ import subprocess
 import argparse
 from typing import List, Dict, Union
 from tqdm import tqdm
+import glob
+import shutil
 import logging
 from pathlib import Path
 import sys
@@ -322,22 +324,16 @@ Example usage:
                 # Ensure output directory is properly formed
                 output_dir = os.path.join("data", args.output_dir)
                 
-                # Prepare structure for nested folders
-                for subfolder in ["raw_parquet", os.path.join("cache", "csv_converted")]:
-                    nested_path = os.path.join(output_dir, subfolder)
-                    os.makedirs(nested_path, exist_ok=True)
-                
-                # Build the command with all necessary arguments
+                # Build the command with all necessary arguments - use proper format for each parameter
                 cmd = [
                     "python", data_cleaner_script,
-                    "--input-dirs"] + target_folders + [
-                    "--output-dir", output_dir,
+                    "-i"] + target_folders + [
+                    "-o", output_dir,
                     "--handle-duplicates", "remove",
                     "--handle-nan", args.handle_nan,
                     "--csv-delimiter", args.csv_delimiter,
                     "--csv-header", args.csv_header,
-                    "--log-file", str(cleaner_log_file),
-                    "--preserve-structure"  # Add this flag to preserve directory structure
+                    "--log-file", str(cleaner_log_file)
                 ]
                 # Only show progress bar, suppress output from subprocess
                 with tqdm(total=1, desc="CLEANING DATA", unit="process", position=0, leave=True) as progress_bar:
@@ -423,10 +419,9 @@ Example usage:
                 print("Check logs directory for details.")
                 
                 # Try to provide guidance about the issue
-                if "preserve-structure" in str(e) or "unrecognized arguments" in str(e):
-                    print("\nNOTE: Your data_cleaner_v2.py script may need to be updated to support the '--preserve-structure' flag.")
-                    print("This flag tells the cleaner to maintain the original directory structure in the output directory.")
-                    print("Add this parameter to your script's argument parser to fix this issue.")
+                if "unrecognized arguments" in str(e):
+                    print("\nNOTE: There may be a mismatch between the arguments expected by data_cleaner_v2.py")
+                    print("and those being passed. Check the script documentation for correct usage.")
         else:
             print(f"Data cleaner script not found at: {data_cleaner_script}")
             print("Please create scripts/data_processing/data_cleaner_v2.py first.")
