@@ -30,6 +30,7 @@
     "import matplotlib.pyplot as plt\n",
     "import seaborn as sns\n",
     "import os\n",
+    "from pathlib import Path\n",
     "\n",
     "# Set styles for plots\n",
     "sns.set(style=\"darkgrid\")\n",
@@ -56,6 +57,66 @@
     "print(df.info())\n",
     "print(df.isnull().sum())\n",
     "print(f\"Дубликатов: {df.duplicated().sum()}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 2. Анализ результатов очистки данных\n",
+    "- Сравнение данных до и после очистки\n",
+    "- Анализ удаленных дубликатов и пропущенных значений\n",
+    "- Визуализация изменений в распределениях"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "metadata": {},
+   "source": [
+    "# Загрузка лога очистки данных\n",
+    "log_path = '../data_cleaner_run.log'\n",
+    "if os.path.exists(log_path):\n",
+    "    with open(log_path, 'r') as f:\n",
+    "        log_content = f.read()\n",
+    "    \n",
+    "    # Извлечение статистики из лога\n",
+    "    total_files = log_content.count(\"Processing file:\")\n",
+    "    files_with_nan = log_content.count(\"NaN values detected\")\n",
+    "    files_with_duplicates = log_content.count(\"Duplicates removed\")\n",
+    "    \n",
+    "    # Расчет общего количества удаленных строк\n",
+    "    total_rows_removed = 0\n",
+    "    for line in log_content.split(\"\\n\"):\n",
+    "        if \"Duplicates removed:\" in line:\n",
+    "            try:\n",
+    "                removed = int(line.split(\":\")[1].split(\".\")[0].strip())\n",
+    "                total_rows_removed += removed\n",
+    "            except (ValueError, IndexError):\n",
+    "                continue\n",
+    "    \n",
+    "    print(\"Статистика очистки данных:\")\n",
+    "    print(\"-\" * 50)\n",
+    "    print(f\"Всего обработано файлов: {total_files}\")\n",
+    "    print(f\"Файлов с NaN значениями: {files_with_nan}\")\n",
+    "    print(f\"Файлов с дубликатами: {files_with_duplicates}\")\n",
+    "    print(f\"Всего удалено строк: {total_rows_removed}\")\n",
+    "    print(\"-\" * 50)\n",
+    "else:\n",
+    "    print(\"Лог-файл очистки данных не найден.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "metadata": {},
+   "source": [
+    "# Визуализация изменений в данных после очистки\n",
+    "if 'original_size' in df.columns and 'cleaned_size' in df.columns:\n",
+    "    plt.figure(figsize=(10, 6))\n",
+    "    plt.bar(['До очистки', 'После очистки'], \n",
+    "            [df['original_size'].mean(), df['cleaned_size'].mean()])\n",
+    "    plt.title('Средний размер датасета до и после очистки')\n",
+    "    plt.ylabel('Количество строк')\n",
+    "    plt.show()"
    ]
   },
   {

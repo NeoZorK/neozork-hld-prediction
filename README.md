@@ -22,6 +22,11 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 * Calculates the core "Pressure Vector" indicator components and derived rules (`PV_HighLow`, `Support_Resistants`, `Pressure_Vector`, `Predict_High_Low_Direction`).
 * Provides validation of Python calculations against original MQL5 results when using CSV mode.
 * Generates plots using `mplfinance` to visualize OHLCV data, indicator lines, and signals.
+* **NEW:** Advanced data cleaning capabilities with `data_cleaner_v2.py`:
+  - Handles duplicates and NaN values in CSV and Parquet files
+  - Supports multiple NaN handling strategies (ffill, dropna_rows, none)
+  - Preserves directory structure when cleaning multiple files
+  - Detailed logging of cleaning operations
 * **NEW:** Automatically saves raw OHLCV data fetched from API sources (Yahoo Finance, Polygon.io, Binance) to efficient `.parquet` files in the `data/raw_parquet/` directory for later use or analysis.
 * **NEW:** Displays enhanced execution summary in the console, including DataFrame shape, memory usage, data fetch duration, and API request latency.
 * Includes utility scripts for debugging connections to various APIs (`debug_*.py`).
@@ -94,6 +99,12 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 │   └── raw_parquet/  
 ├── mql5_feed/  
 ├── notebooks/  
+├── scripts/
+│   ├── data_processing/
+│   │   ├── data_cleaner_v2.py
+│   │   └── __init__.py
+│   ├── log_analysis/
+│   └── debug_scripts/
 ├── src/  
 │   ├── cli/  
 │   │   └── cli.py  
@@ -122,15 +133,22 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 
 `mql5_feed/`: Directory for CSV files exported from MQL5/MT5 platforms.  
 `notebooks/`: Contains Jupyter notebooks used for exploratory data analysis (EDA) and experimental workflows.  
+`scripts/`: Contains utility scripts for data processing and analysis.
+`data_processing/`: Scripts for data cleaning and preprocessing.
+`log_analysis/`: Scripts for analyzing log files and generating reports.
+`debug_scripts/`: Scripts for debugging and testing various components.
+
 `src/`: Main source code directory for the project.  
 `cli/`: Command-line interface scripts.  
 `cli.py`: Primary script for running CLI commands.  
+
 
 
 `calculation/`: Modules for performing calculations and computations.  
 `data/`: Modules for data loading, cleaning, and preprocessing.  
 `feature_engineering.py`: Script for creating and transforming features for analysis or modeling.  
 `init.py`: Initializes the src directory as a Python package.  
+
 
 
 `tests/`: Directory for unit tests to ensure code reliability.  
@@ -222,6 +240,11 @@ Use your package manager, for example:
     * Linux: Check package manager (e.g., `sudo apt-get install libta-lib-dev`)
     * Windows: Download binaries or build from source.
     * Then install the Python wrapper: `pip install TA-Lib`
+
+6. **Install Testing Dependencies:**
+    ```bash
+    pip install pytest  # Required for running unit tests
+    ```
 
 ## Project Workflow / Detailed Plan (Status Updated 2025-04-18)
 

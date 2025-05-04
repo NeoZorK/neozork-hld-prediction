@@ -19,6 +19,7 @@ mkdir -p results
 mkdir -p src/eda
 mkdir -p scripts/debug_scripts
 mkdir -p scripts/log_analysis
+mkdir -p scripts/data_processing
 
 # Create directories for notebooks, source, tests, and MQL5 feed
 mkdir -p notebooks
