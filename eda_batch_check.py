@@ -387,6 +387,10 @@ Example usage:
                         # Ensure output directory exists to avoid warning message
                         # Since files are saved to base_output_dir, we need to check that path
                         if os.path.exists(base_output_dir):
+                            # Clear the EDA log file before verification run
+                            with open(args.log_file, "w", encoding="utf-8") as f:
+                                f.write("")  # Truncate the log file
+
                             run_eda_check([base_output_dir])
 
                             # Analyze data_cleaner_run.log
