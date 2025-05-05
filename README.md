@@ -370,7 +370,7 @@ You can view a comprehensive list of usage examples for all modes and options by
 python run_analysis.py --examples
 ```
 
-This will print a categorized, multi-line list of real-world command-line examples for demo, CSV, yfinance, polygon, binance, show, plotting, rules, cache, and error cases.
+This will print a categorized, multi-line list of real-world command-line examples for `demo, CSV, yfinance, polygon, binance, show, plotting, rules`, cache, and error cases.
 
 ### Most Useful Examples
 
@@ -452,9 +452,9 @@ python run_analysis.py yf -t EURUSD=X            # (missing --period or --start/
 
 **Note:**
 - For all API modes (yfinance, polygon, binance), the `--point` parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).
-- Use `-d/--draw` to select plotting backend: fastest, fast, plotly, mplfinance, etc.
-- Use `--rule` to select trading rule: PV_HighLow, Support_Resistants, Pressure_Vector, Predict_High_Low_Direction, PHLD, PV, SR.
-- SHOW mode allows filtering cached files by source, keywords, date, and rule.
+- Use `-d/--draw` to select plotting backend: `fastest, fast, plotly, mplfinance`, etc.
+- Use `--rule` to select trading rule: `PV_HighLow`, `Support_Resistants`, `Pressure_Vector`, `Predict_High_Low_Direction`, `PHLD`, `PV`, `SR`.
+- `SHOW` mode allows filtering cached files by `source, keywords, date, and rule`.
 - For more details, see `python run_analysis.py -h` for full help.
 
 ## Show Mode
@@ -504,7 +504,7 @@ python run_analysis.py show yf aapl --start 2024-01-01 --end 2024-06-01 --rule S
     - prints a table with main indicator values directly to the console;
     - indicator values are **never saved**—they are always shown in the current session only.
 - For visualization, you can use the `--draw` parameter to select the charting style.
-- The default drawing style is `fastest`, which is the fastest mode for large datasets (millions of rows). It uses `mplfinance` for fast rendering of OHLCV data and indicator lines.
+- The default drawing style is `fastest`, which is the fastest mode for large datasets (millions of rows). It uses `mplfinance` for fast rendering of `OHLCV` data and indicator lines.
 
 ### Features
 
@@ -522,8 +522,8 @@ python run_analysis.py show --help
 ## The script produces the following outputs:
 
 1.  **Console Summary:** Detailed summary printed to the console at the end of execution, including selected parameters, timing metrics for different steps, data shape, memory usage, API latency (if applicable), and overall success status.
-2.  **Plots (Optional):** If not disabled via CLI arguments, generates plots displaying OHLCV data along with the calculated indicator lines and signals using `mplfinance`. Plots are typically shown interactively or saved if configured.
-3.  **NEW: Raw Data Parquet Files:** When run with API data sources (`yfinance`, `polygon`, `binance`), the script automatically saves the downloaded raw OHLCV data into a `.parquet` file within the `data/raw_parquet/` directory. The filename typically includes the source, ticker, interval, and date range. This allows for easy reloading and reuse of the fetched data without hitting the APIs again.
+2.  **Plots (Optional):** If not disabled via CLI arguments, generates plots displaying `OHLCV` data along with the calculated indicator lines and signals using `mplfinance`. Plots are typically shown interactively or saved if configured.
+3.  **NEW: Raw Data Parquet Files:** When run with API data sources (`yfinance`, `polygon`, `binance`), the script automatically saves the downloaded raw `OHLCV` data into a `.parquet` file within the `data/raw_parquet/` directory. The filename typically includes the `source`, `ticker`, `interval`, and `date range`. This allows for easy reloading and reuse of the fetched data without hitting the APIs again.
 
 ### Running Tests
 
@@ -540,13 +540,20 @@ This project uses Python's built-in `unittest` framework.
 The project includes several tools for exploratory data analysis and data quality checking:
 
 ### Batch EDA Checker (`eda_batch_check.py`)
+`eda_batch_check.py` is a tool for performing batch Exploratory Data Analysis (EDA) on `CSV` and `Parquet` files. It helps identify data quality issues such as missing values, duplicates, and incorrect data types, while also providing statistical summaries. Optionally, it can clean the data automatically.
 
-This tool performs comprehensive data quality checks on CSV and Parquet files in specified directories. It's particularly useful for:
-- Checking data quality across multiple files
-- Identifying missing values and duplicates
-- Validating data types and formats
-- Generating statistical summaries
-- Optionally cleaning data using `data_cleaner_v2.py`
+
+#### **Key Features**
+- **Data Quality Checks**:
+  - Detects missing values `(NaN)`.
+  - Removes duplicates.
+  - Validates data types.
+  - Generates statistical summaries.
+- **File Format Support**: Works with `CSV` and `Parquet` files.
+- **Logging**: Logs all operations to a file.
+- **Data Cleaning**: Optionally cleans data using `data_cleaner_v2.py`.
+- **Comparison**: Compares data before and after cleaning.
+- **Customizable**: Supports user-defined folders and output directories.
 
 Usage examples:
 ```bash
@@ -575,5 +582,33 @@ Available options:
 
 For more information, run:
 ```bash
-python eda_batch_check.py --help
+python eda_batch_check.py --help,-h
 ```
+Log Example
+After running the script, the log file (e.g., `test.log`) contains details about processed files, detected issues, and actions taken.  
+Example:
+
+Processing file: `data/raw_parquet/sample.parquet`  
+`NaN` values detected: `15 ` 
+Duplicates removed: `3`  
+File processed successfully.  
+
+Comparison Before and After Cleaning  
+The script compares data statistics before and after cleaning. Example output:  
+
+=== EDA Summary Change (Before → After Cleaning) ===  
+Total Files: 10 → 10 `(+0)`  
+NaN Values: 150 → 0 `(-150)`  
+Duplicates: 30 → 0 `(-30)`  
+====================================================  
+Integration  
+`eda_batch_check.py` is part of the `src.eda` module and uses the following components:  
+`eda_logging:` Logging setup.  
+`eda_batch_processor:` File and folder processing.  
+`eda_file_utils:` File search and sorting.  
+`eda_log_analysis:` Log analysis.  
+`eda_data_cleaner:` Data cleaning.  
+Recommendations  
+Use `--clean` to automatically clean data.  
+Ensure the target folders contain `CSV` or `Parquet` files.  
+For large datasets, use `tqdm` to track progress.  
