@@ -472,92 +472,94 @@ Example usage:
                 if not cmds:
                     tqdm.write("Не найдено CSV или Parquet файлов для обработки.")
                     return
-                # Only show progress bar, suppress output from subprocess
-                with tqdm(total=len(cmds), desc="CLEANING DATA", unit="process", position=0, leave=True) as progress_bar:
-                    all_success = True
+                # Process data cleaning without progress bar 
+                all_success = True
+                total_processed_files = 0
+                
+                for file_type, cmd in cmds:
+                    # Run subprocess with minimal output
+                    print(f"Processing {file_type} files...")
                     
-                    for file_type, cmd in cmds:
-                        # Run subprocess with minimal output
-                        print(f"Processing {file_type} files...")
+                    # Save the command to cleaner_log_file
+                    with open(cleaner_log_file, "a", encoding="utf-8") as f:
+                        f.write(f"\nRunning command: {' '.join(cmd)}\n")
+                    
+                    # Create a debug log file for this command
+                    debug_log_file = f"logs/debug_cleaner_{file_type}_{int(time.time())}.log"
+                    
+                    # Save the command and current directory to the debug log
+                    with open(debug_log_file, "w", encoding="utf-8") as f:
+                        f.write(f"Debug log for {file_type} command\n")
+                        f.write(f"Command: {' '.join(cmd)}\n\n")
+                        f.write(f"Current directory: {os.getcwd()}\n")
+                    
+                    # Run the command
+                    start_time = time.time()
+                    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                    elapsed_time = time.time() - start_time
+                    
+                    # Analyze the output
+                    stdout_lines = result.stdout.splitlines()
+                    stderr_lines = result.stderr.splitlines()
+                    
+                    # Search for specific messages in the output
+                    processed_count = 0
+                    processed_msg = None
+                    for line in stdout_lines:
+                        if "Processing file:" in line:
+                            processed_count += 1
+                        if "Successfully processed" in line:
+                            processed_msg = line.strip()
+                    
+                    # Save the command output to the debug log
+                    with open(debug_log_file, "a", encoding="utf-8") as f:
+                        f.write("\n=== COMMAND OUTPUT ===\n")
+                        f.write(f"Exit code: {result.returncode}\n")
+                        f.write(f"Execution time: {elapsed_time:.2f} seconds\n\n")
+                        f.write("=== STDOUT ===\n")
+                        f.write(result.stdout)
+                        f.write("\n\n=== STDERR ===\n")
+                        f.write(result.stderr)
+                        f.write("\n\n=== ANALYSIS ===\n")
+                        f.write(f"Files processed according to output: {processed_count}\n")
+                        if processed_msg:
+                            f.write(f"Success message: {processed_msg}\n")
+                    
+                    # Check if process succeeded
+                    if result.returncode != 0:
+                        # Only show error message without full command details
+                        print(f"Data cleaning for {file_type} files failed with exit code {result.returncode}")
                         
-                        # Save the command to cleaner_log_file
+                        # Save error output to log file
                         with open(cleaner_log_file, "a", encoding="utf-8") as f:
-                            f.write(f"\nRunning command: {' '.join(cmd)}\n")
+                            f.write(f"\nError output:\n{result.stderr}\n")
                         
-                        # Create a debug log file for this command
-                        debug_log_file = f"logs/debug_cleaner_{file_type}_{int(time.time())}.log"
-                        
-                        # Save the command and current directory to the debug log
-                        with open(debug_log_file, "w", encoding="utf-8") as f:
-                            f.write(f"Debug log for {file_type} command\n")
-                            f.write(f"Command: {' '.join(cmd)}\n\n")
-                            f.write(f"Current directory: {os.getcwd()}\n")
-                        
-                        # Run the command
-                        start_time = time.time()
-                        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                        elapsed_time = time.time() - start_time
-                        
-                        # Analyze the output
-                        stdout_lines = result.stdout.splitlines()
-                        stderr_lines = result.stderr.splitlines()
-                        
-                        # Search for specific messages in the output
-                        processed_count = 0
-                        processed_msg = None
-                        for line in stdout_lines:
-                            if "Processing file:" in line:
-                                processed_count += 1
-                            if "Successfully processed" in line:
-                                processed_msg = line.strip()
-                        
-                        # Save the command output to the debug log
-                        with open(debug_log_file, "a", encoding="utf-8") as f:
-                            f.write("\n=== COMMAND OUTPUT ===\n")
-                            f.write(f"Exit code: {result.returncode}\n")
-                            f.write(f"Execution time: {elapsed_time:.2f} seconds\n\n")
-                            f.write("=== STDOUT ===\n")
-                            f.write(result.stdout)
-                            f.write("\n\n=== STDERR ===\n")
-                            f.write(result.stderr)
-                            f.write("\n\n=== ANALYSIS ===\n")
-                            f.write(f"Files processed according to output: {processed_count}\n")
-                            if processed_msg:
-                                f.write(f"Success message: {processed_msg}\n")
-                                
-                        progress_bar.update(1)
-                        
-                        # Check if process succeeded
-                        if result.returncode != 0:
-                            # Only show error message without full command details
-                            print(f"Data cleaning for {file_type} files failed with exit code {result.returncode}")
-                            
-                            # Save error output to log file
-                            with open(cleaner_log_file, "a", encoding="utf-8") as f:
-                                f.write(f"\nError output:\n{result.stderr}\n")
-                            
-                            # Show error message
-                            if result.stderr:
-                                print(f"Error: {result.stderr.splitlines()[0]}")
-                                # Show first 3 lines of stderr
-                                print(f"Command: {' '.join(cmd)}")
-
-                            print(f"Check log file: {cleaner_log_file}")
-                            all_success = False
-                        else:
-                            # Save success output to log file
-                            with open(cleaner_log_file, "a", encoding="utf-8") as f:
-                                f.write(f"\nOutput:\n{result.stdout}\n")
-
-                            #
-                            processed_files = result.stdout.count("Processing file:")
-                            print(f"Successfully processed {processed_files} {file_type} files")
-
-                    # Show minimal success message
-                    if all_success:
-                        print(f"Data cleaning completed. Files saved to: {base_output_dir}")
+                        # Show error message
+                        if result.stderr:
+                            print(f"Error: {result.stderr.splitlines()[0]}")
+                            # Show first 3 lines of stderr
+                            print(f"Command: {' '.join(cmd)}")
+                
+                        print(f"Check log file: {cleaner_log_file}")
+                        all_success = False
                     else:
-                        print(f"Data cleaning completed with some errors. Check log file: {cleaner_log_file}")
+                        # Save success output to log file
+                        with open(cleaner_log_file, "a", encoding="utf-8") as f:
+                            f.write(f"\nOutput:\n{result.stdout}\n")
+                
+                        processed_files = result.stdout.count("Processing file:")
+                        total_processed_files += processed_files
+                        print(f"Successfully processed {processed_files} {file_type} files")
+                
+                # Show minimal success message
+                if all_success:
+                    print(f"Data cleaning completed. Files saved to: {base_output_dir}")
+                else:
+                    print(f"Data cleaning completed with some errors. Check log file: {cleaner_log_file}")
+                
+                # Display progress bar right before verification prompt
+                with tqdm(total=1, desc="CLEANING DATA", unit="process", position=0, leave=True) as progress_bar:
+                    progress_bar.update(1)
 
                 # Ask user if they want to verify cleaned files
                 if not args.skip_verification:
