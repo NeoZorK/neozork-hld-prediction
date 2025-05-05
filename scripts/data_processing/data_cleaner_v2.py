@@ -165,13 +165,23 @@ def clean_file(
         # Create output path based on file type
         output_filename = os.path.basename(input_path)
         
-        # Handle file path differently depending on file type to avoid recreating "data" folder
+        # Handle file path differently depending on file type and filename pattern
         if file_type == 'csv':
-            # For CSV files - save to output_base_dir/cache/csv_converted
-            output_dir = os.path.join(output_base_dir, "cache", "csv_converted")
+            # For CSV files, check if they came from csv_converted directory
+            if "csv_converted" in input_path:
+                # Save to output_base_dir/cache/csv_converted
+                output_dir = os.path.join(output_base_dir, "cache", "csv_converted")
+            else:
+                # Other CSV files save to raw_parquet
+                output_dir = os.path.join(output_base_dir, "raw_parquet")
         else:  # parquet
-            # For Parquet files - save to output_base_dir/raw_parquet
-            output_dir = os.path.join(output_base_dir, "raw_parquet")
+            # For Parquet files with CSVExport_ prefix, save to cache/csv_converted
+            if output_filename.startswith("CSVExport_"):
+                output_dir = os.path.join(output_base_dir, "cache", "csv_converted")
+                logger.info(f"  CSVExport parquet file detected, saving to csv_converted directory")
+            else:
+                # For other Parquet files - save to output_base_dir/raw_parquet
+                output_dir = os.path.join(output_base_dir, "raw_parquet")
         
         output_path = os.path.join(output_dir, output_filename)
         
@@ -299,8 +309,8 @@ def main():
     logger.info("--- Starting data cleaner script v2 ---")
     logger.info(f"Source directories: {args.input_dirs}")
     logger.info(f"Output directory: {args.output_dir}")
-    logger.info(f"Files will be saved to: {os.path.join(args.output_dir, 'raw_parquet')} (parquet files)")
-    logger.info(f"                      : {os.path.join(args.output_dir, 'cache/csv_converted')} (csv files)")
+    logger.info(f"Files will be saved to: {os.path.join(args.output_dir, 'raw_parquet')} (most parquet files + standard csv files)")
+    logger.info(f"                      : {os.path.join(args.output_dir, 'cache/csv_converted')} (csv files from csv_converted + CSVExport_*.parquet files)")
     logger.info(f"Handling duplicates: {args.handle_duplicates}")
     logger.info(f"Handling NaN: {args.handle_nan}")
     logger.info(f"CSV delimiter: '{args.csv_delimiter}'")
