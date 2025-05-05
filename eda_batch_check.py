@@ -626,7 +626,7 @@ Example usage:
                     
                     for file_type, cmd in cmds:
                         # Run subprocess with minimal output
-                        tqdm.write(f"Processing {file_type} files...")
+                        print(f"Processing {file_type} files...")
                         print(f"[DEBUG] ===== Running {file_type} command =====")
                         print(f"[DEBUG] Command: {' '.join(cmd)}")
                         
@@ -742,7 +742,7 @@ Example usage:
                         # Check if process succeeded
                         if result.returncode != 0:
                             # Only show error message without full command details
-                            tqdm.write(f"Data cleaning for {file_type} files failed with exit code {result.returncode}")
+                            print(f"Data cleaning for {file_type} files failed with exit code {result.returncode}")
                             
                             # Save error output to log file
                             with open(cleaner_log_file, "a", encoding="utf-8") as f:
@@ -750,26 +750,26 @@ Example usage:
                             
                             # Show error message
                             if result.stderr:
-                                tqdm.write(f"Error: {result.stderr.splitlines()[0]}")
+                                print(f"Error: {result.stderr.splitlines()[0]}")
                                 # Show first 3 lines of stderr
-                                tqdm.write(f"Command: {' '.join(cmd)}")
-                            
-                            tqdm.write(f"Check log file: {cleaner_log_file}")
+                                print(f"Command: {' '.join(cmd)}")
+
+                            print(f"Check log file: {cleaner_log_file}")
                             all_success = False
                         else:
                             # Save success output to log file
                             with open(cleaner_log_file, "a", encoding="utf-8") as f:
                                 f.write(f"\nOutput:\n{result.stdout}\n")
-                                
+
                             #
                             processed_files = result.stdout.count("Processing file:")
-                            tqdm.write(f"Successfully processed {processed_files} {file_type} files")
-                    
+                            print(f"Successfully processed {processed_files} {file_type} files")
+
                     # Show minimal success message
                     if all_success:
-                        tqdm.write(f"Data cleaning completed. Files saved to: {base_output_dir}")
+                        print(f"Data cleaning completed. Files saved to: {base_output_dir}")
                     else:
-                        tqdm.write(f"Data cleaning completed with some errors. Check log file: {cleaner_log_file}")
+                        print(f"Data cleaning completed with some errors. Check log file: {cleaner_log_file}")
 
                 # Ask user if they want to verify cleaned files
                 if not args.skip_verification:
