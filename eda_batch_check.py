@@ -2,20 +2,11 @@
 # eda_batch_check.py
 
 import os
-import warnings
-import subprocess
-import argparse
-from typing import List, Dict, Union
+from typing import List, Dict
 from tqdm import tqdm
-import glob
-import shutil
-import logging
 from pathlib import Path
-import sys
-import time
 
 # This script is designed to perform exploratory data analysis (EDA) on CSV and Parquet files
-from src.eda.eda_file_utils import find_data_files, sort_files_by_type
 from src.eda.eda_logging import setup_logger, suppress_warnings, log_file_info
 from src.eda.eda_batch_processor import check_file, process_folder
 from src.eda.eda_file_utils import find_data_files, sort_files_by_type
