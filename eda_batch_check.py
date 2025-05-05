@@ -115,6 +115,12 @@ def main():
                                  "cache", "csv_converted"),
                 ]
                 tqdm.write(f"\nRunning EDA check on cleaned data: {cleaned_folders}")
+
+                # Clear the log file before the second EDA check
+                with open(args.log_file, "w", encoding="utf-8") as f:
+                    f.write("")
+
+                # Run EDA check on cleaned folders
                 run_eda_check(cleaned_folders)
 
                 # Analyze and print the new log summary
