@@ -96,23 +96,32 @@ class TestDataCleaner(unittest.TestCase):
         self.assertEqual(len(df), 3, "The cleaned file does not have the expected number of rows.")
 
     def test_clean_file_parquet_nan(self):
-        """Test cleaning Parquet file with NaN values."""
-        result = clean_file(
-            input_path=self.sample_parquet_path,
-            input_base_dir=self.temp_dir,
-            output_base_dir=self.output_dir,
-            handle_duplicates="remove",
-            handle_nan="ffill",
-            csv_delimiter=",",
-            csv_header=0
-        )
-        
-        self.assertTrue(result)
-        output_file = os.path.join(self.output_dir, "test.parquet")
-        self.assertTrue(os.path.exists(output_file))
-        
-        df = pd.read_parquet(output_file)
-        self.assertEqual(df.isnull().sum().sum(), 0)  # No NaN values should remain
+            """Test cleaning Parquet file with NaN values."""
+            output_file = os.path.join(self.output_dir, "raw_parquet", "test.parquet")  # Updated path
+            print(f"Expected output file path: {output_file}")  # Debug log
+
+            # Run the cleaning process
+            result = clean_file(
+                input_path=self.sample_parquet_path,
+                input_base_dir=self.temp_dir,
+                output_base_dir=self.output_dir,
+                handle_duplicates="remove",
+                handle_nan="ffill",
+                csv_delimiter=",",
+                csv_header=0
+            )
+
+            # Check if the cleaning process succeeded
+            self.assertTrue(result, "The clean_file function returned False.")
+
+            # Check if the file exists
+            if not os.path.exists(output_file):
+                print(f"File not found at: {output_file}")  # Debug log
+            self.assertTrue(os.path.exists(output_file), f"Output file not found at {output_file}")
+
+            # Verify the contents of the cleaned file
+            df = pd.read_parquet(output_file)
+            self.assertEqual(df.isnull().sum().sum(), 0, "NaN values remain in the cleaned file.")
 
     def test_clean_file_invalid_input(self):
         """Test handling of invalid input file."""
