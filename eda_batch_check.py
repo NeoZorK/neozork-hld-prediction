@@ -15,6 +15,7 @@ import sys
 import time
 
 from src.eda.eda_file_utils import find_data_files, sort_files_by_type
+from src.eda.eda_logging import setup_logger, suppress_warnings, log_file_info
 from src.eda.data_overview import (
     load_data,
     show_basic_info,
@@ -26,51 +27,51 @@ from src.eda.data_overview import (
     get_summary
 )
 
-def setup_logger(log_file: str = None) -> logging.Logger:
-    """
-    Set up a logger to write info and errors to a file in 'logs' directory.
-    No console output to keep terminal clean for progress bar.
-    
-    Args:
-        log_file: Path to the log file (default: "logs/eda_batch_check.log")
-    
-    Returns:
-        Logger instance with file handler only
-    """
-    # Create logs directory if it doesn't exist
-    logs_dir = Path("logs")
-    logs_dir.mkdir(exist_ok=True, parents=True)
-    
-    # Set default log file path if not provided
-    if log_file is None:
-        log_file = logs_dir / "eda_batch_check.log"
-    else:
-        # Ensure the log file is in the logs directory
-        log_path = Path(log_file)
-        if not log_path.is_absolute():
-            if not str(log_path).startswith("logs/"):
-                log_file = logs_dir / log_path.name
-    
-    logger = logging.getLogger("eda_batch_check")
-    
-    # Remove any existing handlers
-    for handler in logger.handlers[:]:
-        logger.removeHandler(handler)
-        handler.close()  # Properly close the handler
-    
-    logger.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
-
-    # Add file handler only
-    file_handler = logging.FileHandler(log_file, encoding="utf-8")
-    file_handler.setFormatter(formatter)
-    file_handler.setLevel(logging.INFO)
-    logger.addHandler(file_handler)
-
-    # Console handler removed - to keep progress bar visible alone
-
-    logger.propagate = False
-    return logger
+# def setup_logger(log_file: str = None) -> logging.Logger:
+#     """
+#     Set up a logger to write info and errors to a file in 'logs' directory.
+#     No console output to keep terminal clean for progress bar.
+#
+#     Args:
+#         log_file: Path to the log file (default: "logs/eda_batch_check.log")
+#
+#     Returns:
+#         Logger instance with file handler only
+#     """
+#     # Create logs directory if it doesn't exist
+#     logs_dir = Path("logs")
+#     logs_dir.mkdir(exist_ok=True, parents=True)
+#
+#     # Set default log file path if not provided
+#     if log_file is None:
+#         log_file = logs_dir / "eda_batch_check.log"
+#     else:
+#         # Ensure the log file is in the logs directory
+#         log_path = Path(log_file)
+#         if not log_path.is_absolute():
+#             if not str(log_path).startswith("logs/"):
+#                 log_file = logs_dir / log_path.name
+#
+#     logger = logging.getLogger("eda_batch_check")
+#
+#     # Remove any existing handlers
+#     for handler in logger.handlers[:]:
+#         logger.removeHandler(handler)
+#         handler.close()  # Properly close the handler
+#
+#     logger.setLevel(logging.INFO)
+#     formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
+#
+#     # Add file handler only
+#     file_handler = logging.FileHandler(log_file, encoding="utf-8")
+#     file_handler.setFormatter(formatter)
+#     file_handler.setLevel(logging.INFO)
+#     logger.addHandler(file_handler)
+#
+#     # Console handler removed - to keep progress bar visible alone
+#
+#     logger.propagate = False
+#     return logger
 
 # def sort_files_by_type(base_dir: str, parquet_dir: str, csv_dir: str) -> None:
 #     """
@@ -146,11 +147,11 @@ def log_file_info(df, file_path, logger):
     logger.info(f"Columns with NaN values: {nan_cols}")
     logger.info(f"Statistical summary:\n{df.describe()}")
 
-def suppress_warnings():
-    """
-    Suppress all warnings from being printed to stderr, to keep tqdm progress bar clear.
-    """
-    warnings.filterwarnings("ignore")
+# def suppress_warnings():
+#     """
+#     Suppress all warnings from being printed to stderr, to keep tqdm progress bar clear.
+#     """
+#     warnings.filterwarnings("ignore")
 
 def check_file(file_path: str, logger: logging.Logger) -> None:
     """
