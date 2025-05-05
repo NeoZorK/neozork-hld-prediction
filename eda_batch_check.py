@@ -484,14 +484,7 @@ Example usage:
                     with open(cleaner_log_file, "a", encoding="utf-8") as f:
                         f.write(f"\nRunning command: {' '.join(cmd)}\n")
                     
-                    # Create a debug log file for this command
-                    debug_log_file = f"logs/debug_cleaner_{file_type}_{int(time.time())}.log"
-                    
-                    # Save the command and current directory to the debug log
-                    with open(debug_log_file, "w", encoding="utf-8") as f:
-                        f.write(f"Debug log for {file_type} command\n")
-                        f.write(f"Command: {' '.join(cmd)}\n\n")
-                        f.write(f"Current directory: {os.getcwd()}\n")
+                    # Debug log files with prefix debug_cleaner_parquet_ have been removed by request
                     
                     # Run the command
                     start_time = time.time()
@@ -511,19 +504,7 @@ Example usage:
                         if "Successfully processed" in line:
                             processed_msg = line.strip()
                     
-                    # Save the command output to the debug log
-                    with open(debug_log_file, "a", encoding="utf-8") as f:
-                        f.write("\n=== COMMAND OUTPUT ===\n")
-                        f.write(f"Exit code: {result.returncode}\n")
-                        f.write(f"Execution time: {elapsed_time:.2f} seconds\n\n")
-                        f.write("=== STDOUT ===\n")
-                        f.write(result.stdout)
-                        f.write("\n\n=== STDERR ===\n")
-                        f.write(result.stderr)
-                        f.write("\n\n=== ANALYSIS ===\n")
-                        f.write(f"Files processed according to output: {processed_count}\n")
-                        if processed_msg:
-                            f.write(f"Success message: {processed_msg}\n")
+                    # Debug logging to debug_cleaner files has been removed by request
                     
                     # Check if process succeeded
                     if result.returncode != 0:
