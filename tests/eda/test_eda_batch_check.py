@@ -61,7 +61,9 @@ class TestEDABatchCheck(unittest.TestCase):
             from eda_batch_check import analyze_log
             assert analyze_log.call_count == 2
 
+
     def test_main_data_cleaning_failure(self):
+        """Test: main() exits with code 2 if data cleaning fails"""
         with patch('argparse.ArgumentParser.parse_args') as mock_args, \
              patch('sys.exit') as mock_exit, \
              patch('src.eda.eda_data_cleaner.run_data_cleaner', return_value=False), \
@@ -80,7 +82,7 @@ class TestEDABatchCheck(unittest.TestCase):
                 'log_file': self.log_file,
                 'target_folders': [self.test_dir]
             })
-            from eda_batch_check import main
+            from eda_batch_check import main  # Import here, after patching
             main()
             mock_exit.assert_called_with(2)
 
