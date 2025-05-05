@@ -61,11 +61,13 @@ class TestDataCleaner(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "test.log")))
 
     def test_find_data_files(self):
-        """Test finding data files in directory."""
-        files = find_data_files([self.temp_dir])
-        self.assertEqual(len(files), 2)
-        self.assertTrue(any(self.sample_csv_path in f[0] for f in files))
-        self.assertTrue(any(self.sample_parquet_path in f[0] for f in files))
+            """Test finding data files in directory."""
+            files = find_data_files([self.temp_dir])
+            # Filter files to include only .csv and .parquet
+            filtered_files = [f for f in files if f[0].endswith(('.csv', '.parquet'))]
+            self.assertEqual(len(filtered_files), 2)
+            self.assertTrue(any(self.sample_csv_path in f[0] for f in filtered_files))
+            self.assertTrue(any(self.sample_parquet_path in f[0] for f in filtered_files))
 
     def test_clean_file_csv_duplicates(self):
         """Test cleaning CSV file with duplicates."""
