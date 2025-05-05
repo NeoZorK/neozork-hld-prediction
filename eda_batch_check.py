@@ -2,6 +2,7 @@
 # eda_batch_check.py
 
 import os
+import sys
 from typing import List, Dict
 from tqdm import tqdm
 from pathlib import Path
@@ -83,7 +84,7 @@ def main():
     initial_check_success = run_eda_check(target_folders)
     
     if not initial_check_success:
-        return
+        sys.exit(1)  # Exit with error if EDA check failed (return)
 
     # Analyze the log file and store the results for later comparison
     initial_log_report = analyze_log(args.log_file)
@@ -96,7 +97,9 @@ def main():
     
     # Run data cleaner if requested
     if args.clean:
-        run_data_cleaner(args, target_folders)
+        result = run_data_cleaner(args, target_folders)
+        if result is False:
+            sys.exit(2)  # Exit with error if cleaning failed
 
         # Post-cleaning verification
         if not args.skip_verification:
