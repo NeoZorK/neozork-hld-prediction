@@ -401,6 +401,14 @@ Example usage:
                         folder_files = find_data_files(folder)
                         all_files.extend(folder_files)
                 
+                # Make sure we include both data/raw_parquet and data/cache/csv_converted
+                # This ensures we process all 63 files (19 from raw_parquet + 44 from csv_converted)
+                required_folders = ["data/raw_parquet", "data/cache/csv_converted"]
+                for folder in required_folders:
+                    if folder not in target_folders and os.path.exists(folder):
+                        folder_files = find_data_files(folder)
+                        all_files.extend(folder_files)
+                
                 # Group files by type
                 parquet_files = [f for f in all_files if f.lower().endswith('.parquet')]
                 csv_files = [f for f in all_files if f.lower().endswith('.csv')]
@@ -421,53 +429,52 @@ Example usage:
                 os.makedirs(raw_parquet_dir, exist_ok=True)
                 os.makedirs(csv_converted_dir, exist_ok=True)
                         
-                # Get unique directories for parquet and csv files
-                parquet_dirs = set(os.path.dirname(f) for f in parquet_files)
-                csv_dirs = set(os.path.dirname(f) for f in csv_files)
+                # Collect all unique directories containing data files
+                all_dirs = set()
                 
-                # Process directories
+                # Add directories containing parquet files
                 if parquet_files:
-                    for parquet_dir in parquet_dirs:
-                        if not parquet_dir:  # Skip empty directories
-                            continue
-                        
-                        # Create command for parquet files
-                        cmd_parquet = [
-                            "python", data_cleaner_script,
-                            "-i", parquet_dir,
-                            "-o", base_output_dir,
-                            "--handle-duplicates", "remove",
-                            "--handle-nan", args.handle_nan,
-                            "--csv-delimiter", args.csv_delimiter,
-                            "--csv-header", args.csv_header,
-                            "--log-file", str(cleaner_log_file),
-                            "--verbose"
-                        ]
-                        cmds.append(('parquet', cmd_parquet))
-                                        
-                # Check if any CSV files were found
+                    parquet_dirs = set(os.path.dirname(f) for f in parquet_files)
+                    all_dirs.update([d for d in parquet_dirs if d])  # Skip empty strings
+                
+                # Add directories containing CSV files
                 if csv_files:
-                    for csv_dir in csv_dirs:
-                        if not csv_dir:  # Skip empty directories
-                            continue
-                        
-                        # Count CSV files in this directory
-                        dir_csv_files = [f for f in csv_files if os.path.dirname(f) == csv_dir]
-                        
-                        # Prepare for command generation
-                        
-                        cmd_csv = [
-                            "python", data_cleaner_script,
-                            "-i", csv_dir,
-                            "-o", base_output_dir,
-                            "--handle-duplicates", "remove",
-                            "--handle-nan", args.handle_nan,
-                            "--csv-delimiter", args.csv_delimiter,
-                            "--csv-header", args.csv_header,
-                            "--log-file", str(cleaner_log_file),
-                            "--verbose"
-                        ]
-                        cmds.append(('csv', cmd_csv))
+                    csv_dirs = set(os.path.dirname(f) for f in csv_files)
+                    all_dirs.update([d for d in csv_dirs if d])  # Skip empty strings
+                
+                # Make sure both required directories are included
+                if "data/raw_parquet" not in all_dirs and os.path.exists("data/raw_parquet"):
+                    all_dirs.add("data/raw_parquet")
+                    
+                if "data/cache/csv_converted" not in all_dirs and os.path.exists("data/cache/csv_converted"):
+                    all_dirs.add("data/cache/csv_converted")
+                
+                # Convert set to list
+                all_dirs_list = list(all_dirs)
+                
+                if all_dirs_list:
+                    # Create a single command for all directories
+                    cmd = [
+                        "python", data_cleaner_script,
+                        "-i"
+                    ]
+                    
+                    # Add all directories to the command
+                    cmd.extend(all_dirs_list)
+                    
+                    # Add the rest of the arguments
+                    cmd.extend([
+                        "-o", base_output_dir,
+                        "--handle-duplicates", "remove",
+                        "--handle-nan", args.handle_nan,
+                        "--csv-delimiter", args.csv_delimiter,
+                        "--csv-header", args.csv_header,
+                        "--log-file", str(cleaner_log_file),
+                        "--verbose"
+                    ])
+                    
+                    # Add the command to the list
+                    cmds.append(('all', cmd))
                 
                 if not cmds:
                     tqdm.write("Не найдено CSV или Parquet файлов для обработки.")
