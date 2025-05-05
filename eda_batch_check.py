@@ -18,184 +18,9 @@ import time
 from src.eda.eda_file_utils import find_data_files, sort_files_by_type
 from src.eda.eda_logging import setup_logger, suppress_warnings, log_file_info
 from src.eda.eda_batch_processor import check_file, process_folder
+from src.eda.eda_file_utils import find_data_files, sort_files_by_type
+from src.eda.eda_log_analysis import analyze_log
 
-
-from src.eda.data_overview import (
-    load_data,
-    show_basic_info,
-    show_head,
-    check_missing_values,
-    check_duplicates,
-    get_column_types,
-    get_nan_columns,
-    get_summary
-)
-
-# def setup_logger(log_file: str = None) -> logging.Logger:
-#     """
-#     Set up a logger to write info and errors to a file in 'logs' directory.
-#     No console output to keep terminal clean for progress bar.
-#
-#     Args:
-#         log_file: Path to the log file (default: "logs/eda_batch_check.log")
-#
-#     Returns:
-#         Logger instance with file handler only
-#     """
-#     # Create logs directory if it doesn't exist
-#     logs_dir = Path("logs")
-#     logs_dir.mkdir(exist_ok=True, parents=True)
-#
-#     # Set default log file path if not provided
-#     if log_file is None:
-#         log_file = logs_dir / "eda_batch_check.log"
-#     else:
-#         # Ensure the log file is in the logs directory
-#         log_path = Path(log_file)
-#         if not log_path.is_absolute():
-#             if not str(log_path).startswith("logs/"):
-#                 log_file = logs_dir / log_path.name
-#
-#     logger = logging.getLogger("eda_batch_check")
-#
-#     # Remove any existing handlers
-#     for handler in logger.handlers[:]:
-#         logger.removeHandler(handler)
-#         handler.close()  # Properly close the handler
-#
-#     logger.setLevel(logging.INFO)
-#     formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
-#
-#     # Add file handler only
-#     file_handler = logging.FileHandler(log_file, encoding="utf-8")
-#     file_handler.setFormatter(formatter)
-#     file_handler.setLevel(logging.INFO)
-#     logger.addHandler(file_handler)
-#
-#     # Console handler removed - to keep progress bar visible alone
-#
-#     logger.propagate = False
-#     return logger
-
-# def sort_files_by_type(base_dir: str, parquet_dir: str, csv_dir: str) -> None:
-#     """
-#     Sort files in the base directory into parquet and csv directories.
-#     """
-#     # Create directories if they don't exist
-#     os.makedirs(parquet_dir, exist_ok=True)
-#     os.makedirs(csv_dir, exist_ok=True)
-#
-#     # Search for all files in the base directory
-#     for file in os.listdir(base_dir):
-#         file_path = os.path.join(base_dir, file)
-#
-#         # Process only files, not directories
-#         if os.path.isfile(file_path):
-#             # Determine the file type and move it to the appropriate directory
-#             if file.lower().endswith('.parquet'):
-#                 target_path = os.path.join(parquet_dir, file)
-#                 shutil.move(file_path, target_path)
-#                 print(f"  Moved paquet file: {file} -> {target_path}")
-#             elif file.lower().endswith('.csv'):
-#                 target_path = os.path.join(csv_dir, file)
-#                 shutil.move(file_path, target_path)
-#                 print(f"  Move CSV File: {file} -> {target_path}")
-
-# def find_data_files(folder_path: Union[str, List[str]], extensions: List[str] = [".parquet", ".csv"], exclude_paths: List[str] = None) -> List[str]:
-#     """
-#     Find all data files in the specified folder(s) with given extensions.
-#     """
-#     data_files = []
-#
-#     # Transform folder_path to a list if it's a string
-#     if isinstance(folder_path, str):
-#         folder_path = [folder_path]
-#
-#     # Transform exclude_paths to absolute paths if provided
-#     exclude_abs_paths = []
-#     if exclude_paths:
-#         exclude_abs_paths = [os.path.abspath(p) for p in exclude_paths]
-#
-#     for folder in folder_path:
-#         if not os.path.exists(folder):
-#             continue
-#
-#         for root, dirs, files in os.walk(folder):
-#             # Check if the current directory is in the exclude paths
-#             current_abs_path = os.path.abspath(root)
-#
-#             if exclude_abs_paths and any(current_abs_path.startswith(p) for p in exclude_abs_paths):
-#                 continue
-#
-#             for file in files:
-#                 if any(file.lower().endswith(ext) for ext in extensions):
-#                     file_path = os.path.join(root, file)
-#                     data_files.append(file_path)
-#
-#     return data_files
-
-def log_file_info(df, file_path, logger):
-    """
-    Log detailed information about the dataframe to the logger.
-    """
-    logger.info(f"CHECKING: {file_path}")
-    logger.info(f"Shape: {df.shape}")
-    logger.info(f"Columns: {df.columns.tolist()}")
-    logger.info(f"First 3 rows:\n{df.head(3).to_string()}")
-    missing = df.isnull().sum()
-    logger.info(f"Missing values:\n{missing[missing > 0]}")
-    num_dup = df.duplicated().sum()
-    logger.info(f"Number of duplicate rows: {num_dup}")
-    logger.info(f"Column types:\n{df.dtypes}")
-    nan_cols = df.columns[df.isnull().any()].tolist()
-    logger.info(f"Columns with NaN values: {nan_cols}")
-    logger.info(f"Statistical summary:\n{df.describe()}")
-
-# def suppress_warnings():
-#     """
-#     Suppress all warnings from being printed to stderr, to keep tqdm progress bar clear.
-#     """
-#     warnings.filterwarnings("ignore")
-
-# def check_file(file_path: str, logger: logging.Logger) -> None:
-#     """
-#     Perform EDA-check on a single file, log all outputs.
-#     """
-#     ext = os.path.splitext(file_path)[-1].lower()
-#     file_type = "parquet" if ext == ".parquet" else "csv"
-#     try:
-#         with warnings.catch_warnings():
-#             warnings.simplefilter("ignore")
-#             df = load_data(file_path, file_type=file_type)
-#             log_file_info(df, file_path, logger)
-#     except Exception as e:
-#         tqdm.write(f"ERROR processing {file_path}: {e}")
-#         logger.error(f"ERROR processing {file_path}: {e}")
-
-# def process_folder(folder_path: str, logger: logging.Logger, progress_bar: tqdm) -> None:
-#     """
-#     Process all data files in a folder with progress bar.
-#     """
-#     logger.info(f"Processing folder: {folder_path}")
-#
-#     try:
-#         if not os.path.exists(folder_path):
-#             logger.error(f"Folder does not exist: {folder_path}")
-#             return
-#
-#         if not os.path.isdir(folder_path):
-#             logger.error(f"Path is not a directory: {folder_path}")
-#             return
-#
-#         data_files = find_data_files(folder_path)
-#         logger.info(f"Found {len(data_files)} data files in '{folder_path}'.")
-#
-#         for file_path in data_files:
-#             check_file(file_path, logger)
-#             progress_bar.update(1)
-#     except Exception as e:
-#         error_msg = f"Error processing folder {folder_path}: {str(e)}"
-#         logger.error(error_msg)
 
 def main():
     """
@@ -345,17 +170,15 @@ Example usage:
                 eda_log_report = initial_data_analysis
             
             # Analyze the log file and store the results for later comparison
-            initial_log_report = log_analyze.analyze_log(args.log_file)
+            initial_log_report = analyze_log(args.log_file)
             
             # Save the analysis results in a global variable for later comparison
             initial_data_analysis = initial_log_report
-            
-            # Print analysis statistics
-            print("\033[K", end="\r")  # Clear line
-            tqdm.write("\n=== Log Analysis Summary ===")
-            for category, stats in initial_log_report.items():
-                tqdm.write(f"{category}: {stats}")
-            tqdm.write("==========================\n")
+            if initial_log_report:
+                tqdm.write("\n=== Log Analysis Summary ===")
+                for category, value in initial_log_report.items():
+                    tqdm.write(f"{category}: {value}")
+                tqdm.write("==========================\n")
         except Exception as e:
             print("\033[K", end="\r")  # Clear line
             tqdm.write(f"\nLog analysis failed: {e}")
