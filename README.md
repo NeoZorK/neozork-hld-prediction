@@ -22,6 +22,17 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 * Calculates the core "Pressure Vector" indicator components and derived rules (`PV_HighLow`, `Support_Resistants`, `Pressure_Vector`, `Predict_High_Low_Direction`).
 * Provides validation of Python calculations against original MQL5 results when using CSV mode.
 * Generates plots using `mplfinance` to visualize OHLCV data, indicator lines, and signals.
+* **NEW:** Advanced data cleaning capabilities with `data_cleaner_v2.py`:
+  - Handles duplicates and NaN values in CSV and Parquet files
+  - Supports multiple NaN handling strategies (ffill, dropna_rows, none)
+  - Preserves directory structure when cleaning multiple files
+  - Detailed logging of cleaning operations
+* **NEW:** Batch EDA checking with `eda_batch_check.py`:
+  - Performs comprehensive data quality checks on CSV and Parquet files
+  - Checks for missing values, duplicates, and data types
+  - Provides statistical summaries and detailed logging
+  - Optionally runs data cleaner to fix identified issues
+  - Supports custom target folders and output directories
 * **NEW:** Automatically saves raw OHLCV data fetched from API sources (Yahoo Finance, Polygon.io, Binance) to efficient `.parquet` files in the `data/raw_parquet/` directory for later use or analysis.
 * **NEW:** Displays enhanced execution summary in the console, including DataFrame shape, memory usage, data fetch duration, and API request latency.
 * Includes utility scripts for debugging connections to various APIs (`debug_*.py`).
@@ -94,6 +105,12 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 │   └── raw_parquet/  
 ├── mql5_feed/  
 ├── notebooks/  
+├── scripts/
+│   ├── data_processing/
+│   │   ├── data_cleaner_v2.py
+│   │   └── __init__.py
+│   ├── log_analysis/
+│   └── debug_scripts/
 ├── src/  
 │   ├── cli/  
 │   │   └── cli.py  
@@ -122,15 +139,22 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 
 `mql5_feed/`: Directory for CSV files exported from MQL5/MT5 platforms.  
 `notebooks/`: Contains Jupyter notebooks used for exploratory data analysis (EDA) and experimental workflows.  
+`scripts/`: Contains utility scripts for data processing and analysis.
+`data_processing/`: Scripts for data cleaning and preprocessing.
+`log_analysis/`: Scripts for analyzing log files and generating reports.
+`debug_scripts/`: Scripts for debugging and testing various components.
+
 `src/`: Main source code directory for the project.  
 `cli/`: Command-line interface scripts.  
 `cli.py`: Primary script for running CLI commands.  
+
 
 
 `calculation/`: Modules for performing calculations and computations.  
 `data/`: Modules for data loading, cleaning, and preprocessing.  
 `feature_engineering.py`: Script for creating and transforming features for analysis or modeling.  
 `init.py`: Initializes the src directory as a Python package.  
+
 
 
 `tests/`: Directory for unit tests to ensure code reliability.  
@@ -153,6 +177,38 @@ Before running the project, create all required folders by executing the initial
 ./init_dirs.sh
 ```
 This script will set up the directory structure for data, cache, and source files.
+
+### Testing init_dirs.sh
+
+The project includes unit tests for the initialization script using BATS (Bash Automated Testing System).
+
+1. Install BATS:
+   ```bash
+   # macOS
+   brew install bats-core
+   
+   # Linux (Ubuntu/Debian)
+   sudo apt-get install bats
+   
+   # From source
+   git clone https://github.com/bats-core/bats-core.git
+   cd bats-core
+   ./install.sh /usr/local
+   ```
+
+2. Run the tests:
+   ```bash
+   bats tests/scripts/test_init_dirs.bats
+   ```
+
+The tests verify that:
+- All required directories are created correctly
+- The `.env` file is created with necessary fields
+- Existing `.env` files are not overwritten
+- The script works when run from different directories
+- Directories have correct permissions
+- Error handling works as expected
+- The script is idempotent (can be run multiple times safely)
 
 ## Environment Variables (.env)
 
@@ -222,6 +278,11 @@ Use your package manager, for example:
     * Linux: Check package manager (e.g., `sudo apt-get install libta-lib-dev`)
     * Windows: Download binaries or build from source.
     * Then install the Python wrapper: `pip install TA-Lib`
+
+6. **Install Testing Dependencies:**
+    ```bash
+    pip install pytest  # Required for running unit tests
+    ```
 
 ## Project Workflow / Detailed Plan (Status Updated 2025-04-18)
 
@@ -301,94 +362,101 @@ Use your package manager, for example:
 
 ## Usage Examples
 
-### Running Analysis (`run_analysis.py`)
+### Quick Reference: Show All CLI Examples
 
-* **Run with demo data using the default rule (Predict_High_Low_Direction):**
-    ```bash
-    python run_analysis.py demo
-    ```
+You can view a comprehensive list of usage examples for all modes and options by running:
 
-### Fast mode for large charts (default)
+```bash
+python run_analysis.py --examples
+```
 
-* **For accelerated plotting of large OHLCV datasets (millions of rows, M1) use the new 'fastest' mode, now default:
+This will print a categorized, multi-line list of real-world command-line examples for `demo, CSV, yfinance, polygon, binance, show, plotting, rules`, cache, and error cases.
 
-    ```bash
-    python run_analysis.py demo -d fastest
-    ```
-#### Old modes:
-- `-d plotly`: interactive Plotly HTML chart
-- `-d mpl` or `-d mplfinance`: static chart via mplfinance/matplotlib
-- `-d fast` : run plotly
+### Most Useful Examples
 
+# 1. DEMO DATA MODES
+```bash
+python run_analysis.py demo
+python run_analysis.py demo -d mpl
+python run_analysis.py demo --rule PV_HighLow
+python run_analysis.py demo --rule PHLD -d plotly
+```
 
-* **Run with demo data using a specific rule (e.g., Pressure_Vector alias 'PV'):**
-    ```bash
-    python run_analysis.py demo --rule PV
-    ```
-  
-* ** Run with demo data using a specific rule with point size (e.g., Pressure_Vector_HighLow alias 'PV_HighLow'):**
-    ```bash
-    python run_analysis.py demo --rule PV_HighLow --point 0.01
-    ```
+# 2. CSV FILE MODES
+```bash
+python run_analysis.py csv --csv-file data.csv --point 0.01
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule SR
+python run_analysis.py csv --csv-file data.csv --point 0.01 -d mplfinance
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw fastest
+```
 
+# 3. YAHOO FINANCE (YF) MODES
+```bash
+python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001
+python run_analysis.py yfinance -t AAPL --period 6mo --point 0.01
+python run_analysis.py yf -t BTC-USD --start 2023-01-01 --end 2023-12-31 --point 0.01
+python run_analysis.py yf -t EURUSD=X --start 2024-01-01 --end 2024-04-18 --point 0.00001 -d mpl
+python run_analysis.py yf -t AAPL --period 1y --rule SR
+```
 
-* **  Fetch Binance data for BTC/USDT, M1 interval, specific dates
-* ** (Requires --point specified, API keys optional for public data)
-  ```bash
-    python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2024-04-01 --end 2024-04-18 --point 0.01
-  ```
+# 4. POLYGON.IO MODES
+```bash
+python run_analysis.py polygon --ticker AAPL --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01
+python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2022-01-01 --end 2022-06-01 --point 0.00001 --rule PV
+```
 
-* ** Or using the ticker format 'btc/usdt'
-  ```bash
-  python run_analysis.py binance --ticker btc/usdt --interval M1 --start 2024-04-01 --end 2024-04-18 --point 0.01
-  ```
+# 5. BINANCE MODES
+```bash
+python run_analysis.py binance --ticker BTCUSDT --interval H1 --start 2024-01-01 --end 2024-04-18 --point 0.01
+python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR
+```
 
-* **Run using data from a CSV file:**
-    ```bash
-    # Replace path/to/your/data.csv and provide the correct point size
-    python run_analysis.py csv --csv-file path/to/your/data.csv --rule PHLD --point 0.01
-    ```
-    * `--csv-file`: Specifies the path to your input CSV file.
-    * `--point`: **Required** for CSV mode. You must provide the correct point size for the instrument in the CSV file (e.g., 0.01 or 0.1 for XAUUSD).
-    * `--rule`: Select the calculation rule (e.g., `PHLD`, `SR`, `PV`, `PV_HighLow`).
+# 6. SHOW MODE (CACHE/FILES)
+```bash
+python run_analysis.py show yf
+python run_analysis.py show yf aapl mn1
+python run_analysis.py show binance btc
+python run_analysis.py show csv EURUSD MN1
+python run_analysis.py show polygon AAPL 2023
+python run_analysis.py show yf --show-rule PV
+python run_analysis.py show yf --show-start 2023-01-01 --show-end 2023-12-31
+```
 
-* **Run with CSV file:
-    ```bash
-    # Example with a specific CSV file and rule
-    python run_analysis.py csv --csv-file mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv --rule Predict_High_Low_Direction --point 0.01 
-    ```
+# 7. ADVANCED/EDGE CASES
+```bash
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PHLD --draw plotly
+python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001 --rule PV --draw fastest
+python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2022-01-01 --end 2022-12-31 --point 0.00001 --rule SR --draw mpl
+python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2023-01-01 --end 2023-01-31 --point 0.01 --rule PHLD
+```
 
+# 8. HELP, VERSION, EXAMPLES
+```bash
+python run_analysis.py -h
+python run_analysis.py --version
+python run_analysis.py --examples
+```
 
-* **Run using data from Polygon.io API:**
-    ```bash
-    # Replace ticker, dates, and point size as needed. API key must be in .env
-    # Use base tickers like AAPL, EURUSD, BTCUSD
-    python run_analysis.py polygon --ticker AAPL --interval D1 --start 2024-04-10 --end 2024-04-17 --point 0.01
-    python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2024-04-10 --end 2024-04-17 --point 0.00001
-    ```
-    * `--ticker`: Base ticker symbol (e.g., `AAPL`, `EURUSD`, `BTCUSD`). The script will try to resolve the correct prefixed ticker.
-    * `--interval`, `--start`, `--end`: Specify the desired timeframe and date range.
-    * `--point`: **Required** for Polygon mode. Provide the correct point size.
-    * Ensure `POLYGON_API_KEY` is set in your `.env` file.
+# 9. CACHE/DEBUG
+```bash
+# Remove cache and rerun
+rm data/cache/csv_converted/*.parquet
+python run_analysis.py csv --csv-file data.csv --point 0.01
+```
 
-* **Run with Polygon.io (requires API key in .env):**
-* Fetches Forex EUR/USD minute data
-    ```bash
-    # Fetches Forex EUR/USD minute data
-    python run_analysis.py polygon --ticker C:EURUSD --interval M1 --start 2024-04-15 --end 2024-04-19 --rule Support_Resistants --point 0.00001
-    # Note: This will also save raw data to data/raw_parquet/polygon_C_EURUSD_M1_2024-04-15_2024-04-19.parquet
-    ```
+# 10. ERROR CASES (will show error/help)
+```bash
+python run_analysis.py csv --csv-file data.csv   # (missing --point)
+python run_analysis.py yf -t EURUSD=X            # (missing --period or --start/--end)
+```
 
+**Note:**
+- For all API modes (yfinance, polygon, binance), the `--point` parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).
+- Use `-d/--draw` to select plotting backend: `fastest, fast, plotly, mplfinance`, etc.
+- Use `--rule` to select trading rule: `PV_HighLow`, `Support_Resistants`, `Pressure_Vector`, `Predict_High_Low_Direction`, `PHLD`, `PV`, `SR`.
+- `SHOW` mode allows filtering cached files by `source, keywords, date, and rule`.
+- For more details, see `python run_analysis.py -h` for full help.
 
-* **Fetch Yahoo Finance data for a Forex pair, specific interval, last 3 months, estimated point size, specific rule:**
-    ```bash
-    python run_analysis.py yf --ticker "EURUSD=X" --interval H1 --period 3mo --rule PV_HighLow
-    ```
-
-* **Fetch Yahoo Finance data for a stock, specific date range, user-provided point size, specific rule alias 'SR':**
-    ```bash
-    python run_analysis.py yfinance --ticker AAPL --start 2024-01-01 --end 2024-04-15 --point 0.01 --rule SR
-    ```
 ## Show Mode
 
 The `show` mode is designed for interactive browsing, analysis, and visualization of locally cached datasets in Parquet format, which are used for indicator calculations. It allows you to quickly find needed files, filter them by data source and keywords, and instantly calculate an indicator on the selected data—without querying an API or re-downloading data.
@@ -436,7 +504,7 @@ python run_analysis.py show yf aapl --start 2024-01-01 --end 2024-06-01 --rule S
     - prints a table with main indicator values directly to the console;
     - indicator values are **never saved**—they are always shown in the current session only.
 - For visualization, you can use the `--draw` parameter to select the charting style.
-- The default drawing style is `fastest`, which is the fastest mode for large datasets (millions of rows). It uses `mplfinance` for fast rendering of OHLCV data and indicator lines.
+- The default drawing style is `fastest`, which is the fastest mode for large datasets (millions of rows). It uses `mplfinance` for fast rendering of `OHLCV` data and indicator lines.
 
 ### Features
 
@@ -454,8 +522,8 @@ python run_analysis.py show --help
 ## The script produces the following outputs:
 
 1.  **Console Summary:** Detailed summary printed to the console at the end of execution, including selected parameters, timing metrics for different steps, data shape, memory usage, API latency (if applicable), and overall success status.
-2.  **Plots (Optional):** If not disabled via CLI arguments, generates plots displaying OHLCV data along with the calculated indicator lines and signals using `mplfinance`. Plots are typically shown interactively or saved if configured.
-3.  **NEW: Raw Data Parquet Files:** When run with API data sources (`yfinance`, `polygon`, `binance`), the script automatically saves the downloaded raw OHLCV data into a `.parquet` file within the `data/raw_parquet/` directory. The filename typically includes the source, ticker, interval, and date range. This allows for easy reloading and reuse of the fetched data without hitting the APIs again.
+2.  **Plots (Optional):** If not disabled via CLI arguments, generates plots displaying `OHLCV` data along with the calculated indicator lines and signals using `mplfinance`. Plots are typically shown interactively or saved if configured.
+3.  **NEW: Raw Data Parquet Files:** When run with API data sources (`yfinance`, `polygon`, `binance`), the script automatically saves the downloaded raw `OHLCV` data into a `.parquet` file within the `data/raw_parquet/` directory. The filename typically includes the `source`, `ticker`, `interval`, and `date range`. This allows for easy reloading and reuse of the fetched data without hitting the APIs again.
 
 ### Running Tests
 
@@ -466,3 +534,81 @@ This project uses Python's built-in `unittest` framework.
     ```bash
     python -m unittest discover tests
     ```
+
+## EDA Tools
+
+The project includes several tools for exploratory data analysis and data quality checking:
+
+### Batch EDA Checker (`eda_batch_check.py`)
+`eda_batch_check.py` is a tool for performing batch Exploratory Data Analysis (EDA) on `CSV` and `Parquet` files. It helps identify data quality issues such as missing values, duplicates, and incorrect data types, while also providing statistical summaries. Optionally, it can clean the data automatically.
+
+
+#### **Key Features**
+- **Data Quality Checks**:
+  - Detects missing values `(NaN)`.
+  - Removes duplicates.
+  - Validates data types.
+  - Generates statistical summaries.
+- **File Format Support**: Works with `CSV` and `Parquet` files.
+- **Logging**: Logs all operations to a file.
+- **Data Cleaning**: Optionally cleans data using `data_cleaner_v2.py`.
+- **Comparison**: Compares data before and after cleaning.
+- **Customizable**: Supports user-defined folders and output directories.
+
+Usage examples:
+```bash
+# Basic EDA check
+python eda_batch_check.py
+
+# Run EDA check and clean data
+python eda_batch_check.py --clean
+
+# Specify custom output directory and NaN handling
+python eda_batch_check.py --clean --output-dir data/cleaned --handle-nan ffill
+
+# Check specific folders
+python eda_batch_check.py --target-folders data/raw_parquet mql5_feed
+```
+
+Available options:
+- `--clean`: Run data cleaner after analysis
+- `--output-dir`: Output directory for cleaned files
+- `--csv-delimiter`: Delimiter for CSV files (default: tab)
+- `--csv-header`: CSV header row (0 or 'infer')
+- `--handle-nan`: NaN handling strategy (ffill, dropna_rows, none)
+- `--skip-verification`: Skip verification of cleaned files
+- `--log-file`: Custom log file name
+- `--target-folders`: List of folders to check
+
+For more information, run:
+```bash
+python eda_batch_check.py --help,-h
+```
+Log Example
+After running the script, the log file (e.g., `test.log`) contains details about processed files, detected issues, and actions taken.  
+Example:
+
+Processing file: `data/raw_parquet/sample.parquet`  
+`NaN` values detected: `15 ` 
+Duplicates removed: `3`  
+File processed successfully.  
+
+Comparison Before and After Cleaning  
+The script compares data statistics before and after cleaning. Example output:  
+
+=== EDA Summary Change (Before → After Cleaning) ===  
+Total Files: 10 → 10 `(+0)`  
+NaN Values: 150 → 0 `(-150)`  
+Duplicates: 30 → 0 `(-30)`  
+====================================================  
+Integration  
+`eda_batch_check.py` is part of the `src.eda` module and uses the following components:  
+`eda_logging:` Logging setup.  
+`eda_batch_processor:` File and folder processing.  
+`eda_file_utils:` File search and sorting.  
+`eda_log_analysis:` Log analysis.  
+`eda_data_cleaner:` Data cleaning.  
+Recommendations  
+Use `--clean` to automatically clean data.  
+Ensure the target folders contain `CSV` or `Parquet` files.  
+For large datasets, use `tqdm` to track progress.  
