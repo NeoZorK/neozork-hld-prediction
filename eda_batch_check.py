@@ -101,24 +101,17 @@ def find_data_files(folder_path: Union[str, List[str]], extensions: List[str] = 
     """
     data_files = []
     
-    # Debug output
-    print(f"[DEBUG] find_data_files: Looking for files with extensions {extensions}")
-    
     # Transform folder_path to a list if it's a string
     if isinstance(folder_path, str):
         folder_path = [folder_path]
-        print(f"[DEBUG] find_data_files: Converted folder_path to list: {folder_path}")
     
     # Transform exclude_paths to absolute paths if provided
     exclude_abs_paths = []
     if exclude_paths:
         exclude_abs_paths = [os.path.abspath(p) for p in exclude_paths]
-        print(f"[DEBUG] find_data_files: Exclude paths: {exclude_abs_paths}")
     
     for folder in folder_path:
-        print(f"[DEBUG] find_data_files: Searching in folder: {folder}")
         if not os.path.exists(folder):
-            print(f"[DEBUG] find_data_files: WARNING - Folder does not exist: {folder}")
             continue
             
         for root, dirs, files in os.walk(folder):
@@ -126,20 +119,13 @@ def find_data_files(folder_path: Union[str, List[str]], extensions: List[str] = 
             current_abs_path = os.path.abspath(root)
             
             if exclude_abs_paths and any(current_abs_path.startswith(p) for p in exclude_abs_paths):
-                print(f"[DEBUG] find_data_files: Skipping excluded directory: {current_abs_path}")
                 continue
-            
-            # Debug info for each directory
-            if len(files) > 0:
-                print(f"[DEBUG] find_data_files: Directory {root} contains {len(files)} files")
                 
             for file in files:
                 if any(file.lower().endswith(ext) for ext in extensions):
                     file_path = os.path.join(root, file)
                     data_files.append(file_path)
-                    print(f"[DEBUG] find_data_files: Found file: {file_path}")
     
-    print(f"[DEBUG] find_data_files: Total files found: {len(data_files)}")
     return data_files
 
 def log_file_info(df, file_path, logger):
@@ -184,40 +170,26 @@ def process_folder(folder_path: str, logger: logging.Logger, progress_bar: tqdm)
     """
     Process all data files in a folder with progress bar.
     """
-    print(f"[DEBUG] process_folder: Starting to process folder: {folder_path}")
-    print(f"[DEBUG] process_folder: Absolute path: {os.path.abspath(folder_path)}")
-    
     logger.info(f"Processing folder: {folder_path}")
     
     try:
         if not os.path.exists(folder_path):
-            print(f"[DEBUG] process_folder: ERROR - Folder does not exist: {folder_path}")
             logger.error(f"Folder does not exist: {folder_path}")
             return
             
         if not os.path.isdir(folder_path):
-            print(f"[DEBUG] process_folder: ERROR - Path is not a directory: {folder_path}")
             logger.error(f"Path is not a directory: {folder_path}")
             return
             
         data_files = find_data_files(folder_path)
-        print(f"[DEBUG] process_folder: Found {len(data_files)} data files")
-        
         logger.info(f"Found {len(data_files)} data files in '{folder_path}'.")
         
         for file_path in data_files:
-            print(f"[DEBUG] process_folder: Processing file: {file_path}")
             check_file(file_path, logger)
             progress_bar.update(1)
-            
-        print(f"[DEBUG] process_folder: Completed processing folder: {folder_path}")
     except Exception as e:
         error_msg = f"Error processing folder {folder_path}: {str(e)}"
-        print(f"[DEBUG] process_folder: ERROR - {error_msg}")
         logger.error(error_msg)
-        # Print exception traceback for debugging
-        import traceback
-        traceback.print_exc()
 
 def main():
     """
@@ -229,10 +201,6 @@ def main():
     global initial_data_analysis
     initial_data_analysis = None
     
-    # Debug output: Display current directory
-    current_dir = os.getcwd()
-    print(f"[DEBUG] Current working directory: {current_dir}")
-
     parser = argparse.ArgumentParser(
         description="""Perform EDA checks on data files and optionally clean the data.
         
@@ -299,22 +267,6 @@ Example usage:
     suppress_warnings()
 
     target_folders = args.target_folders
-    
-    # Debug: Print arguments and paths
-    print(f"[DEBUG] Command arguments:")
-    print(f"[DEBUG] - target_folders: {target_folders}")
-    print(f"[DEBUG] - output_dir: {args.output_dir}")
-    print(f"[DEBUG] - log_file: {args.log_file}")
-    print(f"[DEBUG] - clean option: {args.clean}")
-    print(f"[DEBUG] - csv_delimiter: {repr(args.csv_delimiter)}")
-    
-    # Debug: Check if target folders exist
-    for folder in target_folders:
-        folder_exists = os.path.exists(folder)
-        print(f"[DEBUG] Folder '{folder}' exists: {folder_exists}")
-        if folder_exists:
-            print(f"[DEBUG] - Absolute path: {os.path.abspath(folder)}")
-            print(f"[DEBUG] - Files in directory: {len(os.listdir(folder)) if os.path.isdir(folder) else 'Not a directory'}")
 
     # Define logger variable in the outer scope first
     logger = None
@@ -323,40 +275,24 @@ Example usage:
         """Inner function to run EDA check on specified folders"""
         nonlocal logger
         
-        print(f"[DEBUG] run_eda_check: Starting EDA check for folders: {folders_to_check}")
-        
         # Reset if logger already exists
         if logger is not None:
-            print(f"[DEBUG] run_eda_check: Resetting existing logger")
             for handler in logger.handlers[:]:
                 logger.removeHandler(handler)
         
         logger = setup_logger(args.log_file)
-        print(f"[DEBUG] run_eda_check: Logger setup complete. Log file: {args.log_file}")
         
         all_data_files: Dict[str, List[str]] = {}
         total_files = 0
     
         for folder in folders_to_check:
-            print(f"[DEBUG] run_eda_check: Checking folder: {folder}")
-            
             if not os.path.exists(folder):
                 error_msg = f"Warning: Folder not found: {folder}"
-                print(f"[DEBUG] run_eda_check: {error_msg}")
                 tqdm.write(error_msg)
                 continue
                 
-            print(f"[DEBUG] run_eda_check: Folder exists, absolute path: {os.path.abspath(folder)}")
-            print(f"[DEBUG] run_eda_check: Finding data files in: {folder}")
-            
             files = find_data_files(folder)
             all_data_files[folder] = files
-            
-            print(f"[DEBUG] run_eda_check: Found {len(files)} files in folder: {folder}")
-            print(f"[DEBUG] run_eda_check: Sample file paths (up to 3):")
-            for i, file_path in enumerate(files[:3]):
-                print(f"[DEBUG]   - {i+1}: {file_path}")
-                
             total_files += len(files)
 
         if total_files == 0:
@@ -389,9 +325,11 @@ Example usage:
         os.path.dirname(os.path.abspath(__file__)), "scripts", "log_analysis", "log_analyze.py"
     )
     if os.path.exists(log_analyze_script):
+        # Clear previous line
+        print("\033[K", end="\r")
+        
         with tqdm(total=1, desc="ANALYZING LOG", unit="file", position=0, leave=True) as progress_bar:
             try:
-                # Change the exception handling for better error visibility
                 # Import the module directly instead of using subprocess for better integration
                 import importlib.util
                 spec = importlib.util.spec_from_file_location("log_analyze", log_analyze_script)
@@ -408,9 +346,17 @@ Example usage:
                 # Save the analysis results in a global variable for later comparison
                 initial_data_analysis = initial_log_report
                 progress_bar.update(1)
+                
+                # Print analysis statistics after progress bar completes
+                print("\033[K", end="\r")  # Clear line
+                tqdm.write("\n=== Log Analysis Summary ===")
+                for category, stats in initial_log_report.items():
+                    tqdm.write(f"{category}: {stats}")
+                tqdm.write("==========================\n")
             except Exception as e:
-                tqdm.write(f"Log analysis failed: {e}")
                 progress_bar.update(1)
+                print("\033[K", end="\r")  # Clear line
+                tqdm.write(f"\nLog analysis failed: {e}")
     else:
         tqdm.write("Log analysis script not found.")
     
