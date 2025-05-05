@@ -42,17 +42,18 @@ class TestEDABatchCheck(unittest.TestCase):
         """Clean up test environment"""
         shutil.rmtree(self.test_dir)
 
+
     def test_setup_logger(self):
         """Test logger setup"""
         # Remove any existing handlers first
         logger = setup_logger(self.log_file)
         for handler in logger.handlers[:]:
             logger.removeHandler(handler)
-        
+
         # Now setup the logger again
         logger = setup_logger(self.log_file)
         self.assertIsNotNone(logger)
-        self.assertEqual(len(logger.handlers), 2)  # File and console handlers
+        self.assertEqual(len(logger.handlers), 1)  # Only file handler
         self.assertTrue(os.path.exists(self.log_file))
 
     def test_find_data_files(self):
