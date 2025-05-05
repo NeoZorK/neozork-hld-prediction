@@ -14,6 +14,7 @@ from pathlib import Path
 import sys
 import time
 
+from src.eda.eda_file_utils import find_data_files, sort_files_by_type
 from src.eda.data_overview import (
     load_data,
     show_basic_info,
@@ -71,62 +72,62 @@ def setup_logger(log_file: str = None) -> logging.Logger:
     logger.propagate = False
     return logger
 
-def sort_files_by_type(base_dir: str, parquet_dir: str, csv_dir: str) -> None:
-    """
-    Sort files in the base directory into parquet and csv directories.
-    """
-    # Create directories if they don't exist
-    os.makedirs(parquet_dir, exist_ok=True)
-    os.makedirs(csv_dir, exist_ok=True)
-    
-    # Search for all files in the base directory
-    for file in os.listdir(base_dir):
-        file_path = os.path.join(base_dir, file)
-        
-        # Process only files, not directories
-        if os.path.isfile(file_path):
-            # Determine the file type and move it to the appropriate directory
-            if file.lower().endswith('.parquet'):
-                target_path = os.path.join(parquet_dir, file)
-                shutil.move(file_path, target_path)
-                print(f"  Moved paquet file: {file} -> {target_path}")
-            elif file.lower().endswith('.csv'):
-                target_path = os.path.join(csv_dir, file)
-                shutil.move(file_path, target_path)
-                print(f"  Move CSV File: {file} -> {target_path}")
+# def sort_files_by_type(base_dir: str, parquet_dir: str, csv_dir: str) -> None:
+#     """
+#     Sort files in the base directory into parquet and csv directories.
+#     """
+#     # Create directories if they don't exist
+#     os.makedirs(parquet_dir, exist_ok=True)
+#     os.makedirs(csv_dir, exist_ok=True)
+#
+#     # Search for all files in the base directory
+#     for file in os.listdir(base_dir):
+#         file_path = os.path.join(base_dir, file)
+#
+#         # Process only files, not directories
+#         if os.path.isfile(file_path):
+#             # Determine the file type and move it to the appropriate directory
+#             if file.lower().endswith('.parquet'):
+#                 target_path = os.path.join(parquet_dir, file)
+#                 shutil.move(file_path, target_path)
+#                 print(f"  Moved paquet file: {file} -> {target_path}")
+#             elif file.lower().endswith('.csv'):
+#                 target_path = os.path.join(csv_dir, file)
+#                 shutil.move(file_path, target_path)
+#                 print(f"  Move CSV File: {file} -> {target_path}")
 
-def find_data_files(folder_path: Union[str, List[str]], extensions: List[str] = [".parquet", ".csv"], exclude_paths: List[str] = None) -> List[str]:
-    """
-    Find all data files in the specified folder(s) with given extensions.
-    """
-    data_files = []
-    
-    # Transform folder_path to a list if it's a string
-    if isinstance(folder_path, str):
-        folder_path = [folder_path]
-    
-    # Transform exclude_paths to absolute paths if provided
-    exclude_abs_paths = []
-    if exclude_paths:
-        exclude_abs_paths = [os.path.abspath(p) for p in exclude_paths]
-    
-    for folder in folder_path:
-        if not os.path.exists(folder):
-            continue
-            
-        for root, dirs, files in os.walk(folder):
-            # Check if the current directory is in the exclude paths
-            current_abs_path = os.path.abspath(root)
-            
-            if exclude_abs_paths and any(current_abs_path.startswith(p) for p in exclude_abs_paths):
-                continue
-                
-            for file in files:
-                if any(file.lower().endswith(ext) for ext in extensions):
-                    file_path = os.path.join(root, file)
-                    data_files.append(file_path)
-    
-    return data_files
+# def find_data_files(folder_path: Union[str, List[str]], extensions: List[str] = [".parquet", ".csv"], exclude_paths: List[str] = None) -> List[str]:
+#     """
+#     Find all data files in the specified folder(s) with given extensions.
+#     """
+#     data_files = []
+#
+#     # Transform folder_path to a list if it's a string
+#     if isinstance(folder_path, str):
+#         folder_path = [folder_path]
+#
+#     # Transform exclude_paths to absolute paths if provided
+#     exclude_abs_paths = []
+#     if exclude_paths:
+#         exclude_abs_paths = [os.path.abspath(p) for p in exclude_paths]
+#
+#     for folder in folder_path:
+#         if not os.path.exists(folder):
+#             continue
+#
+#         for root, dirs, files in os.walk(folder):
+#             # Check if the current directory is in the exclude paths
+#             current_abs_path = os.path.abspath(root)
+#
+#             if exclude_abs_paths and any(current_abs_path.startswith(p) for p in exclude_abs_paths):
+#                 continue
+#
+#             for file in files:
+#                 if any(file.lower().endswith(ext) for ext in extensions):
+#                     file_path = os.path.join(root, file)
+#                     data_files.append(file_path)
+#
+#     return data_files
 
 def log_file_info(df, file_path, logger):
     """
