@@ -437,8 +437,11 @@ Example usage:
                 cleaner_log_file = logs_dir / "data_cleaner_run.log"
                 
                 # Create the output directory if it doesn't exist
-                # Here we set output directory as data/cleaned directly
-                base_output_dir = "data/cleaned"
+                # Use args.output_dir but ensure it's prefixed with "data/" if not already
+                if args.output_dir.startswith("data/"):
+                    base_output_dir = args.output_dir
+                else:
+                    base_output_dir = os.path.join("data", args.output_dir)
                 raw_parquet_dir = os.path.join(base_output_dir, "raw_parquet")
                 csv_converted_dir = os.path.join(base_output_dir, "cache", "csv_converted")
                 
@@ -822,7 +825,7 @@ Example usage:
                     
                     # Show minimal success message
                     if all_success:
-                        tqdm.write(f"Data cleaning completed. Files saved to: {args.output_dir}")
+                        tqdm.write(f"Data cleaning completed. Files saved to: {base_output_dir}")
                     else:
                         tqdm.write(f"Data cleaning completed with some errors. Check log file: {cleaner_log_file}")
 
@@ -833,8 +836,9 @@ Example usage:
                     verification = input("\nVerify cleaned files with another EDA check? (Y/n): ")
                     if verification.lower() != 'n':
                         # Ensure output directory exists to avoid warning message
-                        if os.path.exists(args.output_dir):
-                            run_eda_check([args.output_dir])
+                        # Since files are saved to base_output_dir, we need to check that path
+                        if os.path.exists(base_output_dir):
+                            run_eda_check([base_output_dir])
 
                             # Analyze data_cleaner_run.log
                             cleaner_log_file = Path("logs") / "data_cleaner_run.log"
@@ -886,7 +890,7 @@ Example usage:
                         else:
                             tqdm.write(f"Output directory {args.output_dir} not found. No files to verify.")
                     else:
-                        tqdm.write("\nSkipping verification. Run manually with: python eda_batch_check.py --target-folders {args.output_dir}")
+                        tqdm.write(f"\nSkipping verification. Run manually with: python eda_batch_check.py --target-folders {base_output_dir}")
             except Exception as e:
                 print(f"Error during data cleaning: {str(e).split(':')[0]}")
                 print("Check logs directory for details.")
