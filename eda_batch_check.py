@@ -15,6 +15,18 @@ from src.eda.eda_log_analysis import analyze_log
 from src.eda.eda_argparse import get_eda_args
 from src.eda.eda_data_cleaner import run_data_cleaner
 
+
+# Compare and print summary difference
+def print_summary_diff(before: dict, after: dict):
+    tqdm.write("\n=== EDA Summary Change (Before → After Cleaning) ===")
+    for key in before.keys():
+        before_val = before.get(key, 0)
+        after_val = after.get(key, 0)
+        diff = after_val - before_val
+        sign = "+" if diff > 0 else ""
+        tqdm.write(f"{key}: {before_val} → {after_val} ({sign}{diff})")
+    tqdm.write("====================================================\n")
+
 def main():
     """
     Main function to check all data files in specified folders with a single progress bar and per-folder output.
@@ -134,6 +146,9 @@ def main():
                         tqdm.write(f"{category}: {value}")
                     tqdm.write("============================================\n")
 
+                # Compare and print the summary difference
+                if args.clean and not args.skip_verification and initial_log_report and new_log_report:
+                    print_summary_diff(initial_log_report, new_log_report)
 
 
 if __name__ == "__main__":
