@@ -387,59 +387,25 @@ Example usage:
                 raw_parquet_dir = os.path.join(base_output_dir, "raw_parquet")
                 csv_converted_dir = os.path.join(base_output_dir, "cache", "csv_converted")
                 
-                print(f"[DEBUG] Output directories:")
-                print(f"[DEBUG] - Base output dir: {base_output_dir} (absolute: {os.path.abspath(base_output_dir)})")
-                print(f"[DEBUG] - Raw parquet dir: {raw_parquet_dir} (absolute: {os.path.abspath(raw_parquet_dir)})")
-                print(f"[DEBUG] - CSV converted dir: {csv_converted_dir} (absolute: {os.path.abspath(csv_converted_dir)})")
-                
                 # Create directories for cleaned data
-                print(f"[DEBUG] Creating output directories...")
                 try:
                     os.makedirs(raw_parquet_dir, exist_ok=True)
-                    print(f"[DEBUG] Created directory: {raw_parquet_dir}")
-                    
                     os.makedirs(csv_converted_dir, exist_ok=True)
-                    print(f"[DEBUG] Created directory: {csv_converted_dir}")
                 except Exception as e:
-                    print(f"[DEBUG] ERROR creating directories: {str(e)}")
-                    print(f"[DEBUG] Current permissions: {oct(os.stat('.').st_mode)[-3:]}")
+                    print(f"Error creating directories: {str(e)}")
                 
                 # Find all files in the specified folders
                 all_files = []
-                print(f"[DEBUG] Looking for files in target folders: {target_folders}")
                 for folder in target_folders:
                     if os.path.exists(folder):
-                        print(f"[DEBUG] Scanning folder: {folder}")
                         folder_files = find_data_files(folder)
-                        print(f"[DEBUG] Found {len(folder_files)} files in folder {folder}")
                         all_files.extend(folder_files)
-                    else:
-                        print(f"[DEBUG] WARNING: Folder does not exist: {folder}")
-                
-                print(f"[DEBUG] Total files found across all folders: {len(all_files)}")
                 
                 # Group files by type
                 parquet_files = [f for f in all_files if f.lower().endswith('.parquet')]
                 csv_files = [f for f in all_files if f.lower().endswith('.csv')]
                 
-                # Debug: print detailed file type breakdown
-                print(f"[DEBUG] Detailed file type breakdown:")
-                print(f"[DEBUG] - Parquet files: {len(parquet_files)}")
-                print(f"[DEBUG] - CSV files: {len(csv_files)}")
-                print(f"[DEBUG] - Other files: {len(all_files) - len(parquet_files) - len(csv_files)}")
-                
-                # Check if any files were found
-                if parquet_files:
-                    print(f"[DEBUG] First 3 parquet files:")
-                    for i, f in enumerate(parquet_files[:3]):
-                        file_size = os.path.getsize(f) if os.path.exists(f) else "File not found"
-                        print(f"[DEBUG]   {i+1}. {f} (Size: {file_size} bytes)")
-                        
-                if csv_files:
-                    print(f"[DEBUG] First 3 CSV files:")
-                    for i, f in enumerate(csv_files[:3]):
-                        file_size = os.path.getsize(f) if os.path.exists(f) else "File not found"
-                        print(f"[DEBUG]   {i+1}. {f} (Size: {file_size} bytes)")
+                # Files have been collected
                 
                 # Run data cleaner
                 cmds = []
@@ -454,83 +420,16 @@ Example usage:
                 # Create output directories if they don't exist
                 os.makedirs(raw_parquet_dir, exist_ok=True)
                 os.makedirs(csv_converted_dir, exist_ok=True)
-                
-                # Check if any files were found
-                if parquet_files:
-                    try:
-                        first_parquet = parquet_files[0]
-                        print(f"[DEBUG] Testing parquet file: {first_parquet}")
-                        
-                        # Check if pyarrow is installed
-                        try:
-                            import pyarrow
-                            print(f"[DEBUG] Using pyarrow version: {pyarrow.__version__}")
-                        except ImportError:
-                            print("[DEBUG] WARNING: pyarrow not installed, which is required to read parquet files")
-                            
-                        # Check if pandas is installed
-                        try:
-                            import pandas as pd
-                            print(f"[DEBUG] Using pandas version: {pd.__version__}")
-                        except ImportError:
-                            print("[DEBUG] WARNING: pandas not installed")
-                        
-                        # Check if the file exists
-                        try:
-                            if os.path.exists(first_parquet):
-                                # Pandas read
-                                df = pd.read_parquet(first_parquet)
-                                print(f"[DEBUG] Successfully read parquet file. Shape: {df.shape}")
-                                print(f"[DEBUG] Columns: {df.columns[:5].tolist()}...")
-                            else:
-                                print(f"[DEBUG] ERROR: Parquet file not found: {first_parquet}")
-                        except Exception as e:
-                            print(f"[DEBUG] ERROR reading parquet file: {type(e).__name__}: {str(e)}")
-                            
-                            # Pyarrow read
-                            try:
-                                table = pyarrow.parquet.read_table(first_parquet)
-                                print(f"[DEBUG] pyarrow read successful. Schema: {table.schema}")
-                            except Exception as e2:
-                                print(f"[DEBUG] pyarrow read also failed: {type(e2).__name__}: {str(e2)}")
-                    except Exception as e:
-                        print(f"[DEBUG] Error during parquet file testing: {str(e)}")
-                else:
-                    print(f"[DEBUG] No parquet files to test")
                         
                 # Get unique directories for parquet and csv files
                 parquet_dirs = set(os.path.dirname(f) for f in parquet_files)
                 csv_dirs = set(os.path.dirname(f) for f in csv_files)
                 
-                print(f"[DEBUG] Parquet directories: {parquet_dirs}")
-                print(f"[DEBUG] CSV directories: {csv_dirs}")
-                
                 # Process directories
                 if parquet_files:
-                    print(f"[DEBUG] Found {len(parquet_files)} parquet files in {len(parquet_dirs)} directories")
                     for parquet_dir in parquet_dirs:
                         if not parquet_dir:  # Skip empty directories
-                            print(f"[DEBUG] Skipping empty directory")
                             continue
-                            
-                        print(f"[DEBUG] Creating command for parquet directory: {parquet_dir}")
-                        # Check if the directory exists
-                        if not os.path.exists(parquet_dir):
-                            print(f"[DEBUG] WARNING: Parquet directory does not exist: {parquet_dir}")
-                        else:
-                            print(f"[DEBUG] Parquet directory exists: {parquet_dir} (absolute: {os.path.abspath(parquet_dir)})")
-                            
-                        # Count parquet files in this directory
-                        dir_parquet_files = [f for f in parquet_files if os.path.dirname(f) == parquet_dir]
-                        print(f"[DEBUG] Found {len(dir_parquet_files)} parquet files in {parquet_dir}")
-                        
-                        # Check the contents of the directory
-                        extensions = {}
-                        if os.path.exists(parquet_dir) and os.path.isdir(parquet_dir):
-                            for f in os.listdir(parquet_dir):
-                                ext = os.path.splitext(f)[1].lower()
-                                extensions[ext] = extensions.get(ext, 0) + 1
-                            print(f"[DEBUG] File extensions in {parquet_dir}: {extensions}")
                         
                         # Create command for parquet files
                         cmd_parquet = [
@@ -545,63 +444,17 @@ Example usage:
                             "--verbose"
                         ]
                         cmds.append(('parquet', cmd_parquet))
-                        print(f"[DEBUG] Added parquet command: {' '.join(cmd_parquet)}")
-                
+                                        
                 # Check if any CSV files were found
                 if csv_files:
-                    print(f"[DEBUG] Found {len(csv_files)} CSV files in {len(csv_dirs)} directories")
                     for csv_dir in csv_dirs:
                         if not csv_dir:  # Skip empty directories
-                            print(f"[DEBUG] Skipping empty directory")
                             continue
                         
-                        print(f"[DEBUG] Creating command for CSV directory: {csv_dir}")
-                        # Check if the directory exists
-                        if not os.path.exists(csv_dir):
-                            print(f"[DEBUG] WARNING: CSV directory does not exist: {csv_dir}")
-                        else:
-                            print(f"[DEBUG] CSV directory exists: {csv_dir} (absolute: {os.path.abspath(csv_dir)})")
-                            # Count CSV files in this directory
-                            files_in_dir = [f for f in os.listdir(csv_dir) if f.lower().endswith('.csv')]
-                            print(f"[DEBUG] Number of CSV files in directory: {len(files_in_dir)}")
-                            
                         # Count CSV files in this directory
                         dir_csv_files = [f for f in csv_files if os.path.dirname(f) == csv_dir]
-                        print(f"[DEBUG] Found {len(dir_csv_files)} CSV files in {csv_dir}")
                         
-                        # Check the contents of the directory
-                        if dir_csv_files:
-                            try:
-                                first_csv = dir_csv_files[0]
-                                print(f"[DEBUG] Testing CSV file: {first_csv}")
-                                if os.path.exists(first_csv):
-                                    with open(first_csv, 'r', encoding='utf-8', errors='replace') as f:
-                                        first_lines = [next(f, None) for _ in range(5)]
-                                        first_lines = [line.strip() if line else None for line in first_lines]
-                                    
-                                    print(f"[DEBUG] First 5 lines of CSV file:")
-                                    for i, line in enumerate(first_lines):
-                                        if line:
-                                            print(f"[DEBUG]   Line {i+1}: {line[:100]}{'...' if len(line) > 100 else ''}")
-                                        else:
-                                            print(f"[DEBUG]   Line {i+1}: <None>")
-                                            
-                                    # Determine the most likely delimiter
-                                    if first_lines and first_lines[0]:
-                                        first_line = first_lines[0]
-                                        potential_delimiters = {',': first_line.count(','), 
-                                                               '\t': first_line.count('\t'),
-                                                               ';': first_line.count(';'),
-                                                               '|': first_line.count('|')}
-                                        likely_delimiter = max(potential_delimiters.items(), key=lambda x: x[1])[0]
-                                        print(f"[DEBUG] Likely delimiter counts: {potential_delimiters}")
-                                        print(f"[DEBUG] Most likely delimiter: '{likely_delimiter}' (ascii {ord(likely_delimiter)})")
-                                        
-                                    # Check if the specified delimiter is valid
-                                    specified_delimiter = args.csv_delimiter
-                                    print(f"[DEBUG] Specified delimiter: '{specified_delimiter}' (ascii {ord(specified_delimiter[0]) if specified_delimiter else 'None'})")
-                            except Exception as e:
-                                print(f"[DEBUG] Error while checking CSV file: {str(e)}")
+                        # Prepare for command generation
                         
                         cmd_csv = [
                             "python", data_cleaner_script,
@@ -615,7 +468,6 @@ Example usage:
                             "--verbose"
                         ]
                         cmds.append(('csv', cmd_csv))
-                        print(f"[DEBUG] Added CSV command: {' '.join(cmd_csv)}")
                 
                 if not cmds:
                     tqdm.write("Не найдено CSV или Parquet файлов для обработки.")
@@ -627,14 +479,6 @@ Example usage:
                     for file_type, cmd in cmds:
                         # Run subprocess with minimal output
                         print(f"Processing {file_type} files...")
-                        print(f"[DEBUG] ===== Running {file_type} command =====")
-                        print(f"[DEBUG] Command: {' '.join(cmd)}")
-                        
-                        # Debug: проверить существование скрипта data_cleaner
-                        cleaner_exists = os.path.exists(data_cleaner_script)
-                        print(f"[DEBUG] Data cleaner script exists: {cleaner_exists}")
-                        if cleaner_exists:
-                            print(f"[DEBUG] Data cleaner script size: {os.path.getsize(data_cleaner_script)} bytes")
                         
                         # Save the command to cleaner_log_file
                         with open(cleaner_log_file, "a", encoding="utf-8") as f:
@@ -649,54 +493,10 @@ Example usage:
                             f.write(f"Command: {' '.join(cmd)}\n\n")
                             f.write(f"Current directory: {os.getcwd()}\n")
                         
-                        # Check if the input directory exists
-                        input_dir_index = cmd.index("-i") + 1
-                        if input_dir_index < len(cmd):
-                            input_dir = cmd[input_dir_index]
-                            print(f"[DEBUG] Input directory: {input_dir}")
-                            print(f"[DEBUG] Input directory exists: {os.path.exists(input_dir)}")
-                            
-                            # Write input directory info to debug log
-                            with open(debug_log_file, "a", encoding="utf-8") as f:
-                                f.write(f"Input directory: {input_dir}\n")
-                                f.write(f"Input directory exists: {os.path.exists(input_dir)}\n")
-                            
-                            if os.path.exists(input_dir):
-                                files_in_dir = os.listdir(input_dir)
-                                print(f"[DEBUG] Files in input directory: {len(files_in_dir)}")
-                                
-                                # Detailed file type breakdown
-                                print(f"[DEBUG] File extensions in input directory:")
-                                extensions = {}
-                                for file in files_in_dir:
-                                    ext = os.path.splitext(file)[1].lower()
-                                    extensions[ext] = extensions.get(ext, 0) + 1
-                                print(f"[DEBUG] Extensions: {extensions}")
-                                
-                                # Write file type breakdown to debug log
-                                with open(debug_log_file, "a", encoding="utf-8") as f:
-                                    f.write(f"Files in input directory: {len(files_in_dir)}\n")
-                                    f.write(f"File extensions in input directory: {extensions}\n")
-                                    f.write("\nFirst 10 files in directory:\n")
-                                    for i, filename in enumerate(files_in_dir[:10]):
-                                        file_path = os.path.join(input_dir, filename)
-                                        file_size = os.path.getsize(file_path) if os.path.exists(file_path) else "File not found"
-                                        f.write(f"{i+1}. {filename} (Size: {file_size} bytes)\n")
-                        
-                        # Check if the output directory exists
-                        output_dir_index = cmd.index("-o") + 1
-                        if output_dir_index < len(cmd):
-                            output_dir = cmd[output_dir_index]
-                            print(f"[DEBUG] Output directory: {output_dir}")
-                            print(f"[DEBUG] Output directory exists: {os.path.exists(output_dir)}")
-                        
                         # Run the command
-                        print(f"[DEBUG] Executing subprocess...")
                         start_time = time.time()
-                        # Run the command
                         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                         elapsed_time = time.time() - start_time
-                        print(f"[DEBUG] Command completed in {elapsed_time:.2f} seconds with exit code: {result.returncode}")
                         
                         # Analyze the output
                         stdout_lines = result.stdout.splitlines()
@@ -711,10 +511,6 @@ Example usage:
                             if "Successfully processed" in line:
                                 processed_msg = line.strip()
                         
-                        print(f"[DEBUG] Files processed according to output: {processed_count}")
-                        if processed_msg:
-                            print(f"[DEBUG] Success message: {processed_msg}")
-                            
                         # Save the command output to the debug log
                         with open(debug_log_file, "a", encoding="utf-8") as f:
                             f.write("\n=== COMMAND OUTPUT ===\n")
@@ -728,14 +524,6 @@ Example usage:
                             f.write(f"Files processed according to output: {processed_count}\n")
                             if processed_msg:
                                 f.write(f"Success message: {processed_msg}\n")
-                        
-                        print(f"[DEBUG] Debug log saved to: {debug_log_file}")
-                        
-                        # If there is any error output, print the first 3 lines
-                        if result.stderr:
-                            print(f"[DEBUG] STDERR (first 3 lines):")
-                            for i, line in enumerate(stderr_lines[:3]):
-                                print(f"[DEBUG]   {line}")
                                 
                         progress_bar.update(1)
                         
