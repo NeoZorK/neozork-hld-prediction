@@ -36,6 +36,27 @@ class TestEDABatchCheck(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.test_dir)
 
+    @patch('pandas.read_csv')
+    @patch('pandas.read_parquet')
+    def test_check_file(self, mock_read_parquet, mock_read_csv):
+        from eda_batch_check import setup_logger, check_file
+        logger = setup_logger(self.log_file)
+        mock_read_csv.return_value = pd.DataFrame({'test': [1, 2, 3]})
+        check_file(self.csv_file, logger)
+        mock_read_csv.assert_called_once()
+        mock_read_parquet.return_value = pd.DataFrame({'test': [1, 2, 3]})
+        check_file(self.parquet_file, logger)
+        mock_read_parquet.assert_called_once()
+
+    @patch('tqdm.tqdm')
+    def test_process_folder(self, mock_tqdm):
+        from eda_batch_check import setup_logger, process_folder
+        logger = setup_logger(self.log_file)
+        mock_progress_bar = MagicMock()
+        mock_tqdm.return_value = mock_progress_bar
+        process_folder(self.test_dir, logger, mock_progress_bar)
+        mock_progress_bar.update.assert_called()
+
     def test_main_data_cleaning_failure(self):
         """Test: main() exits with code 2 if data cleaning fails"""
         with patch('argparse.ArgumentParser.parse_args') as mock_args, \
@@ -85,7 +106,6 @@ class TestEDABatchCheck(unittest.TestCase):
             from eda_batch_check import analyze_log
             assert analyze_log.call_count == 2
 
-
     def test_main_no_files_found(self):
         empty_dir = tempfile.mkdtemp()
         try:
@@ -106,62 +126,6 @@ class TestEDABatchCheck(unittest.TestCase):
                 mock_exit.assert_called_with(1)
         finally:
             shutil.rmtree(empty_dir)
-
-    def test_setup_logger(self):
-        from eda_batch_check import setup_logger
-        logger = setup_logger(self.log_file)
-        for handler in logger.handlers[:]:
-            logger.removeHandler(handler)
-        logger = setup_logger(self.log_file)
-        self.assertIsNotNone(logger)
-        self.assertEqual(len(logger.handlers), 1)
-        self.assertTrue(os.path.exists(self.log_file))
-
-    def test_find_data_files(self):
-        from eda_batch_check import find_data_files
-        files = find_data_files(self.test_dir)
-        self.assertEqual(len(files), 2)
-        self.assertTrue(any(f.endswith('.csv') for f in files))
-        self.assertTrue(any(f.endswith('.parquet') for f in files))
-
-    def test_log_file_info(self):
-        from eda_batch_check import setup_logger, log_file_info
-        logger = setup_logger(self.log_file)
-        df = pd.read_csv(self.csv_file, sep='\t')
-        log_file_info(df, self.csv_file, logger)
-        with open(self.log_file, 'r') as f:
-            log_content = f.read()
-            self.assertIn("CHECKING", log_content)
-            self.assertIn("Shape", log_content)
-            self.assertIn("Columns", log_content)
-
-    def test_suppress_warnings(self):
-        with self.assertNoLogs(level='WARNING'):
-            from eda_batch_check import suppress_warnings
-            suppress_warnings()
-            import warnings
-            warnings.warn("Test warning")
-
-    @patch('pandas.read_csv')
-    @patch('pandas.read_parquet')
-    def test_check_file(self, mock_read_parquet, mock_read_csv):
-        from eda_batch_check import setup_logger, check_file
-        logger = setup_logger(self.log_file)
-        mock_read_csv.return_value = pd.DataFrame({'test': [1, 2, 3]})
-        check_file(self.csv_file, logger)
-        mock_read_csv.assert_called_once()
-        mock_read_parquet.return_value = pd.DataFrame({'test': [1, 2, 3]})
-        check_file(self.parquet_file, logger)
-        mock_read_parquet.assert_called_once()
-
-    @patch('tqdm.tqdm')
-    def test_process_folder(self, mock_tqdm):
-        from eda_batch_check import setup_logger, process_folder
-        logger = setup_logger(self.log_file)
-        mock_progress_bar = MagicMock()
-        mock_tqdm.return_value = mock_progress_bar
-        process_folder(self.test_dir, logger, mock_progress_bar)
-        mock_progress_bar.update.assert_called()
 
     def test_main_with_clean(self):
         with patch('argparse.ArgumentParser.parse_args') as mock_args:
@@ -275,6 +239,41 @@ class TestEDABatchCheck(unittest.TestCase):
             main()
             from eda_batch_check import analyze_log
             assert analyze_log.call_count == 1
+
+    def test_setup_logger(self):
+        from eda_batch_check import setup_logger
+        logger = setup_logger(self.log_file)
+        for handler in logger.handlers[:]:
+            logger.removeHandler(handler)
+        logger = setup_logger(self.log_file)
+        self.assertIsNotNone(logger)
+        self.assertEqual(len(logger.handlers), 1)
+        self.assertTrue(os.path.exists(self.log_file))
+
+    def test_find_data_files(self):
+        from eda_batch_check import find_data_files
+        files = find_data_files(self.test_dir)
+        self.assertEqual(len(files), 2)
+        self.assertTrue(any(f.endswith('.csv') for f in files))
+        self.assertTrue(any(f.endswith('.parquet') for f in files))
+
+    def test_log_file_info(self):
+        from eda_batch_check import setup_logger, log_file_info
+        logger = setup_logger(self.log_file)
+        df = pd.read_csv(self.csv_file, sep='\t')
+        log_file_info(df, self.csv_file, logger)
+        with open(self.log_file, 'r') as f:
+            log_content = f.read()
+            self.assertIn("CHECKING", log_content)
+            self.assertIn("Shape", log_content)
+            self.assertIn("Columns", log_content)
+
+    def test_suppress_warnings(self):
+        with self.assertNoLogs(level='WARNING'):
+            from eda_batch_check import suppress_warnings
+            suppress_warnings()
+            import warnings
+            warnings.warn("Test warning")
 
 if __name__ == '__main__':
     unittest.main()
