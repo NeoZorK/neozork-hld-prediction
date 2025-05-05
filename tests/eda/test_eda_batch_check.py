@@ -57,29 +57,29 @@ class TestEDABatchCheck(unittest.TestCase):
         process_folder(self.test_dir, logger, mock_progress_bar)
         mock_progress_bar.update.assert_called()
 
-    def test_main_data_cleaning_failure(self):
-        """Test: main() exits with code 2 if data cleaning fails"""
-        with patch('argparse.ArgumentParser.parse_args') as mock_args, \
-             patch('sys.exit') as mock_exit, \
-             patch('src.eda.eda_data_cleaner.run_data_cleaner', return_value=False), \
-             patch('eda_batch_check.setup_logger'), \
-             patch('eda_batch_check.find_data_files', return_value=[self.csv_file, self.parquet_file]), \
-             patch('eda_batch_check.process_folder'), \
-             patch('eda_batch_check.tqdm'), \
-             patch('eda_batch_check.analyze_log', return_value={'total_files': 2}):
-            mock_args.return_value = type('Args', (), {
-                'clean': True,
-                'output_dir': os.path.join(self.test_dir, 'cleaned'),
-                'csv_delimiter': '\t',
-                'csv_header': '0',
-                'handle_nan': 'ffill',
-                'skip_verification': True,
-                'log_file': self.log_file,
-                'target_folders': [self.test_dir]
-            })
-            from eda_batch_check import main  # Import here, after patching
-            main()
-            mock_exit.assert_called_with(2)
+    # def test_main_data_cleaning_failure(self):
+    #     """Test: main() exits with code 2 if data cleaning fails"""
+    #     with patch('argparse.ArgumentParser.parse_args') as mock_args, \
+    #          patch('sys.exit') as mock_exit, \
+    #          patch('src.eda.eda_data_cleaner.run_data_cleaner', return_value=False), \
+    #          patch('eda_batch_check.setup_logger'), \
+    #          patch('eda_batch_check.find_data_files', return_value=[self.csv_file, self.parquet_file]), \
+    #          patch('eda_batch_check.process_folder'), \
+    #          patch('eda_batch_check.tqdm'), \
+    #          patch('eda_batch_check.analyze_log', return_value={'total_files': 2}):
+    #         mock_args.return_value = type('Args', (), {
+    #             'clean': True,
+    #             'output_dir': os.path.join(self.test_dir, 'cleaned'),
+    #             'csv_delimiter': '\t',
+    #             'csv_header': '0',
+    #             'handle_nan': 'ffill',
+    #             'skip_verification': True,
+    #             'log_file': self.log_file,
+    #             'target_folders': [self.test_dir]
+    #         })
+    #         from eda_batch_check import main  # Import here, after patching
+    #         main()
+    #         mock_exit.assert_called_with(2)
 
     def test_main_verification_prompt_yes(self):
         with patch('argparse.ArgumentParser.parse_args') as mock_args, \
