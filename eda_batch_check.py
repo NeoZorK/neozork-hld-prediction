@@ -310,7 +310,6 @@ Example usage:
         log_path = Path(args.log_file)
         if not log_path.is_absolute():
             log_path = Path("logs") / log_path.name if not str(log_path).startswith("logs/") else log_path
-        tqdm.write(f"\nLog file: {log_path}")
         logger.info("EDA batch check completed.")
         return True
 
