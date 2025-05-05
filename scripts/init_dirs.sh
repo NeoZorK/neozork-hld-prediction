@@ -1,9 +1,25 @@
 #!/bin/bash
 
+# -*- coding: utf-8 -*-
+# scripts/init_dirs.sh
+
+# Always run from the root of the repository, regardless of the current directory
+cd "$(dirname "$0")/.." || exit 1
+
 # Create main data directories
 mkdir -p data/cache/csv_converted
 mkdir -p data/raw_parquet
 mkdir -p data/processed
+
+# Log and results directories
+mkdir -p logs
+mkdir -p results
+
+# Source and script directories
+mkdir -p src/eda
+mkdir -p scripts/debug_scripts
+mkdir -p scripts/log_analysis
+mkdir -p scripts/data_processing
 
 # Create directories for notebooks, source, tests, and MQL5 feed
 mkdir -p notebooks
