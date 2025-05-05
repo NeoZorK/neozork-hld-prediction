@@ -69,6 +69,10 @@ class TestDataCleaner(unittest.TestCase):
 
     def test_clean_file_csv_duplicates(self):
         """Test cleaning CSV file with duplicates."""
+        output_file = os.path.join(self.output_dir, "raw_parquet", "test.csv")  # Updated path
+        print(f"Expected output file path: {output_file}")  # Debug log
+
+        # Run the cleaning process
         result = clean_file(
             input_path=self.sample_csv_path,
             input_base_dir=self.temp_dir,
@@ -78,13 +82,18 @@ class TestDataCleaner(unittest.TestCase):
             csv_delimiter=",",
             csv_header=0
         )
-        
-        self.assertTrue(result)
-        output_file = os.path.join(self.output_dir, "test.csv")
-        self.assertTrue(os.path.exists(output_file))
-        
+
+        # Check if the cleaning process succeeded
+        self.assertTrue(result, "The clean_file function returned False.")
+
+        # Check if the file exists
+        if not os.path.exists(output_file):
+            print(f"File not found at: {output_file}")  # Debug log
+        self.assertTrue(os.path.exists(output_file), f"Output file not found at {output_file}")
+
+        # Verify the contents of the cleaned file
         df = pd.read_csv(output_file)
-        self.assertEqual(len(df), 3)  # Should have 3 unique rows
+        self.assertEqual(len(df), 3, "The cleaned file does not have the expected number of rows.")
 
     def test_clean_file_parquet_nan(self):
         """Test cleaning Parquet file with NaN values."""
