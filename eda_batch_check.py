@@ -593,6 +593,109 @@ Example usage:
                                         tqdm.write(f"Files with NaN values: {files_with_nan}")
                                         tqdm.write(f"Files with duplicates: {files_with_duplicates}")
                                         tqdm.write(f"Total rows removed: {total_rows_removed}")
+                                        
+                                        # Process log to extract file-specific information
+                                        tqdm.write("\nDetailed Changes Summary:")
+                                        
+                                        # Extract and organize file changes
+                                        file_changes = {}
+                                        current_file = None
+                                        log_lines = log_content.split("\n")
+                                        
+                                        for i, line in enumerate(log_lines):
+                                            # Identify the file being processed
+                                            if "Processing file:" in line:
+                                                file_path = line.split("Processing file:")[1].strip()
+                                                current_file = os.path.basename(file_path)
+                                                file_changes[current_file] = {
+                                                    "original_size": None,
+                                                    "duplicates_removed": 0,
+                                                    "nan_values": 0,
+                                                    "nan_strategy": "none",
+                                                    "final_size": None,
+                                                    "output_path": None
+                                                }
+                                            
+                                            # Skip if no current file being processed
+                                            if not current_file:
+                                                continue
+                                                
+                                            # Extract original size
+                                            if "Original size:" in line and current_file in file_changes:
+                                                try:
+                                                    size_str = line.split("Original size:")[1].strip()
+                                                    file_changes[current_file]["original_size"] = size_str
+                                                except (IndexError, ValueError):
+                                                    pass
+                                                    
+                                            # Extract duplicates info
+                                            if "Duplicates removed:" in line and current_file in file_changes:
+                                                try:
+                                                    duplicates_str = line.split("Duplicates removed:")[1].split(".")[0].strip()
+                                                    file_changes[current_file]["duplicates_removed"] = int(duplicates_str)
+                                                except (IndexError, ValueError):
+                                                    pass
+                                                    
+                                            # Extract NaN values info
+                                            if "NaN values detected:" in line and current_file in file_changes:
+                                                try:
+                                                    nan_str = line.split("NaN values detected:")[1].strip()
+                                                    file_changes[current_file]["nan_values"] = int(nan_str)
+                                                except (IndexError, ValueError):
+                                                    pass
+                                                    
+                                            # Extract NaN strategy
+                                            if "Applied NaN strategy:" in line and current_file in file_changes:
+                                                try:
+                                                    strategy = line.split("Applied NaN strategy:")[1].split(".")[0].strip()
+                                                    file_changes[current_file]["nan_strategy"] = strategy.strip("'")
+                                                except (IndexError, ValueError):
+                                                    pass
+                                                    
+                                            # Extract final size after NaN handling
+                                            if "Size after NaN handling:" in line and current_file in file_changes:
+                                                try:
+                                                    size_str = line.split("Size after NaN handling:")[1].strip()
+                                                    file_changes[current_file]["final_size"] = size_str
+                                                except (IndexError, ValueError):
+                                                    pass
+                                                    
+                                            # Extract output path
+                                            if "Saving cleaned file to:" in line and current_file in file_changes:
+                                                try:
+                                                    output_path = line.split("Saving cleaned file to:")[1].strip()
+                                                    file_changes[current_file]["output_path"] = output_path
+                                                except (IndexError, ValueError):
+                                                    pass
+                                        
+                                        # Display detailed file changes
+                                        files_with_changes = []
+                                        files_just_copied = []
+                                        
+                                        for filename, changes in file_changes.items():
+                                            # If file had duplicates removed or NaN values fixed
+                                            if changes["duplicates_removed"] > 0 or changes["nan_values"] > 0:
+                                                files_with_changes.append(filename)
+                                                tqdm.write(f"\n► File: {filename}")
+                                                if changes["original_size"]:
+                                                    tqdm.write(f"  - Original size: {changes['original_size']}")
+                                                if changes["duplicates_removed"] > 0:
+                                                    tqdm.write(f"  - Duplicates removed: {changes['duplicates_removed']}")
+                                                if changes["nan_values"] > 0:
+                                                    tqdm.write(f"  - NaN values fixed: {changes['nan_values']} using strategy '{changes['nan_strategy']}'")
+                                                if changes["final_size"]:
+                                                    tqdm.write(f"  - Final size: {changes['final_size']}")
+                                                if changes["output_path"]:
+                                                    output_dir = os.path.dirname(changes["output_path"])
+                                                    tqdm.write(f"  - Saved to: {output_dir}")
+                                            else:
+                                                files_just_copied.append(filename)
+                                        
+                                        # Show summary counts of different file types
+                                        tqdm.write(f"\nSummary of changes:")
+                                        tqdm.write(f"  - Files with changes (duplicates/NaN fixed): {len(files_with_changes)}")
+                                        tqdm.write(f"  - Files copied unchanged: {len(files_just_copied)}")
+                                        
                                         if final_summary:
                                             tqdm.write(f"\nFinal Summary: {final_summary}")
                                         tqdm.write("-" * 50)
