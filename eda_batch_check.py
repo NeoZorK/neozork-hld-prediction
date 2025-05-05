@@ -98,5 +98,34 @@ def main():
     if args.clean:
         run_data_cleaner(args, target_folders)
 
+        # Post-cleaning verification
+        if not args.skip_verification:
+            tqdm.write("\nWould you like to verify the cleaned files with another EDA check? [Y/n]: ")
+            try:
+                user_input = input().strip().lower()
+            except EOFError:
+                user_input = "n"
+            if user_input in ("", "y", "yes"):
+                cleaned_folders = [
+                    os.path.join(args.output_dir if args.output_dir.startswith("data/") else os.path.join("data",
+                                                                                                          args.output_dir),
+                                 "raw_parquet"),
+                    os.path.join(args.output_dir if args.output_dir.startswith("data/") else os.path.join("data",
+                                                                                                          args.output_dir),
+                                 "cache", "csv_converted"),
+                ]
+                tqdm.write(f"\nRunning EDA check on cleaned data: {cleaned_folders}")
+                run_eda_check(cleaned_folders)
+
+                # Analyze and print the new log summary
+                new_log_report = analyze_log(args.log_file)
+                if new_log_report:
+                    tqdm.write("\n=== Log Analysis Summary (After Cleaning) ===")
+                    for category, value in new_log_report.items():
+                        tqdm.write(f"{category}: {value}")
+                    tqdm.write("============================================\n")
+
+
+
 if __name__ == "__main__":
     main()
