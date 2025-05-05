@@ -13,18 +13,40 @@ import sys # For exiting on critical errors
 logger = None
 
 # --- Logging Configuration ---
-def setup_logger(log_file: str) -> logging.Logger:
-    """Set up logging to both file and console."""
+def setup_logger(log_file: str, verbose: bool = False) -> logging.Logger:
+    """Set up logging to both file and console.
+    
+    Args:
+        log_file (str): Path to log file.
+        verbose (bool, optional): Enable verbose (DEBUG level) logging. Defaults to False.
+        
+    Returns:
+        logging.Logger: Configured logger instance.
+    """
     global logger
     if logger is not None:
         return logger
 
     logger = logging.getLogger('data_cleaner')
-    logger.setLevel(logging.INFO)
+    
+    # Set logger level based on verbose flag
+    if verbose:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
 
     # Create handlers
     file_handler = logging.FileHandler(log_file)
     console_handler = logging.StreamHandler()
+    
+    # File handler always logs at DEBUG level
+    file_handler.setLevel(logging.DEBUG)
+    
+    # Console handler level depends on verbose flag
+    if verbose:
+        console_handler.setLevel(logging.DEBUG)
+    else:
+        console_handler.setLevel(logging.INFO)
 
     # Create formatters and add it to handlers
     log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -35,6 +57,9 @@ def setup_logger(log_file: str) -> logging.Logger:
     # Add handlers to the logger
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
+    
+    if verbose:
+        logger.debug("Verbose logging enabled")
 
     return logger
 
@@ -137,18 +162,45 @@ def clean_file(
                 logger.info("  NaN handling skipped (as per --handle-nan=none).")
         logger.info(f"  Size after NaN handling: {df.shape}")
 
-        # Create output path
-        rel_path = os.path.relpath(input_path, input_base_dir)
-        output_path = os.path.join(output_base_dir, rel_path)
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        # Create output path based on file type
+        output_filename = os.path.basename(input_path)
+        
+        # Handle file path differently depending on file type to avoid recreating "data" folder
+        if file_type == 'csv':
+            # For CSV files - save to output_base_dir/cache/csv_converted
+            output_dir = os.path.join(output_base_dir, "cache", "csv_converted")
+        else:  # parquet
+            # For Parquet files - save to output_base_dir/raw_parquet
+            output_dir = os.path.join(output_base_dir, "raw_parquet")
+        
+        output_path = os.path.join(output_dir, output_filename)
+        
+        # Create output directory structure if it doesn't exist
+        os.makedirs(output_dir, exist_ok=True)  # Create subdirectory
+        
+        logger.debug(f"Saving to output directory: {output_dir}")
+        logger.debug(f"Full output path: {output_path}")
 
         # Save cleaned file
         logger.info(f"  Saving cleaned file to: {output_path}")
-        if file_type == 'csv':
-            df.to_csv(output_path, index=False)
-        else:  # parquet
-            df.to_parquet(output_path, index=False)
-        logger.info("  File successfully saved.")
+        try:
+            if file_type == 'csv':
+                df.to_csv(output_path, index=False)
+                logger.debug(f"Successfully wrote CSV file with shape {df.shape}")
+            else:  # parquet
+                df.to_parquet(output_path, index=False)
+                logger.debug(f"Successfully wrote Parquet file with shape {df.shape}")
+            
+            logger.info(f"  File successfully saved to {output_dir}")
+            
+            # Verify file exists after saving
+            if os.path.exists(output_path):
+                logger.debug(f"Verified file exists at: {output_path}")
+            else:
+                logger.error(f"File was not created at: {output_path}")
+        except Exception as e:
+            logger.error(f"Error saving file to {output_path}: {str(e)}")
+            return False
 
         return True
 
@@ -205,6 +257,12 @@ def main():
         type=str, # Read as string, then convert
         help="Header row in CSV files (0-based index) or 'infer' for auto-detection."
     )
+    
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Enable verbose output"
+    )
     parser.add_argument(
         "--log-file",
         default="data_cleaner_v2.log",
@@ -236,11 +294,13 @@ def main():
     
     # Set up the logger
     global logger
-    logger = setup_logger(args.log_file)
+    logger = setup_logger(args.log_file, verbose=args.verbose)
     
     logger.info("--- Starting data cleaner script v2 ---")
     logger.info(f"Source directories: {args.input_dirs}")
     logger.info(f"Output directory: {args.output_dir}")
+    logger.info(f"Files will be saved to: {os.path.join(args.output_dir, 'raw_parquet')} (parquet files)")
+    logger.info(f"                      : {os.path.join(args.output_dir, 'cache/csv_converted')} (csv files)")
     logger.info(f"Handling duplicates: {args.handle_duplicates}")
     logger.info(f"Handling NaN: {args.handle_nan}")
     logger.info(f"CSV delimiter: '{args.csv_delimiter}'")
