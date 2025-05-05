@@ -154,40 +154,14 @@ Example usage:
     if not initial_check_success:
         return
 
-    # Automatically analyze log after main process
-    log_analyze_script = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "scripts", "log_analysis", "log_analyze.py"
-    )
-    if os.path.exists(log_analyze_script):
-        # Clear previous line
-        print("\033[K", end="\r")
-        
-        try:
-            # Import the module directly instead of using subprocess for better integration
-            import importlib.util
-            spec = importlib.util.spec_from_file_location("log_analyze", log_analyze_script)
-            log_analyze = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(log_analyze)
-            
-            # Use the global variable if available
-            if initial_data_analysis:
-                eda_log_report = initial_data_analysis
-            
-            # Analyze the log file and store the results for later comparison
-            initial_log_report = analyze_log(args.log_file)
-            
-            # Save the analysis results in a global variable for later comparison
-            initial_data_analysis = initial_log_report
-            if initial_log_report:
-                tqdm.write("\n=== Log Analysis Summary ===")
-                for category, value in initial_log_report.items():
-                    tqdm.write(f"{category}: {value}")
-                tqdm.write("==========================\n")
-        except Exception as e:
-            print("\033[K", end="\r")  # Clear line
-            tqdm.write(f"\nLog analysis failed: {e}")
-    else:
-        tqdm.write("Log analysis script not found.")
+    # Analyze the log file and store the results for later comparison
+    initial_log_report = analyze_log(args.log_file)
+    if initial_log_report:
+        tqdm.write("\n=== Log Analysis Summary ===")
+        for category, value in initial_log_report.items():
+            tqdm.write(f"{category}: {value}")
+        tqdm.write("==========================\n")
+
     
     # Run data cleaner if requested
     if args.clean:
