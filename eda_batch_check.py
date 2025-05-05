@@ -327,35 +327,32 @@ Example usage:
         # Clear previous line
         print("\033[K", end="\r")
         
-        with tqdm(total=1, desc="ANALYZING LOG", unit="file", position=0, leave=True) as progress_bar:
-            try:
-                # Import the module directly instead of using subprocess for better integration
-                import importlib.util
-                spec = importlib.util.spec_from_file_location("log_analyze", log_analyze_script)
-                log_analyze = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(log_analyze)
-                
-                # Use the global variable if available
-                if initial_data_analysis:
-                    eda_log_report = initial_data_analysis
-                
-                # Analyze the log file and store the results for later comparison
-                initial_log_report = log_analyze.analyze_log(args.log_file)
-                
-                # Save the analysis results in a global variable for later comparison
-                initial_data_analysis = initial_log_report
-                progress_bar.update(1)
-                
-                # Print analysis statistics after progress bar completes
-                print("\033[K", end="\r")  # Clear line
-                tqdm.write("\n=== Log Analysis Summary ===")
-                for category, stats in initial_log_report.items():
-                    tqdm.write(f"{category}: {stats}")
-                tqdm.write("==========================\n")
-            except Exception as e:
-                progress_bar.update(1)
-                print("\033[K", end="\r")  # Clear line
-                tqdm.write(f"\nLog analysis failed: {e}")
+        try:
+            # Import the module directly instead of using subprocess for better integration
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("log_analyze", log_analyze_script)
+            log_analyze = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(log_analyze)
+            
+            # Use the global variable if available
+            if initial_data_analysis:
+                eda_log_report = initial_data_analysis
+            
+            # Analyze the log file and store the results for later comparison
+            initial_log_report = log_analyze.analyze_log(args.log_file)
+            
+            # Save the analysis results in a global variable for later comparison
+            initial_data_analysis = initial_log_report
+            
+            # Print analysis statistics
+            print("\033[K", end="\r")  # Clear line
+            tqdm.write("\n=== Log Analysis Summary ===")
+            for category, stats in initial_log_report.items():
+                tqdm.write(f"{category}: {stats}")
+            tqdm.write("==========================\n")
+        except Exception as e:
+            print("\033[K", end="\r")  # Clear line
+            tqdm.write(f"\nLog analysis failed: {e}")
     else:
         tqdm.write("Log analysis script not found.")
     
