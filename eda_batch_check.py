@@ -97,6 +97,10 @@ Example usage:
 
     suppress_warnings()
 
+    # Truncate the log file at the start of each run
+    with open(args.log_file, "w", encoding="utf-8") as f:
+        f.write("")
+
     target_folders = args.target_folders
 
     # Define logger variable in the outer scope first
