@@ -51,10 +51,11 @@ def plot_indicator_results_seaborn(
 
     # --- Hover annotations ---
     annot = axes[0].annotate("", xy=(0,0), xytext=(20,20),textcoords="offset points",
-                             bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.5))
+                             bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.5),
+                             arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
     annot.set_visible(False)
 
-    def update_annot(event, ax):
+    def update_annot(event, ax, df):
         if event.inaxes == ax:
             x, y = event.xdata, event.ydata
             annot.xy = (x,y)
@@ -74,16 +75,16 @@ def plot_indicator_results_seaborn(
                 annot.set_visible(False)
                 fig.canvas.draw_idle()
 
-    def connect_hover(ax):
+    def connect_hover(ax, df):
         def hover(event):
-            update_annot(event, ax)
+            update_annot(event, ax, df)
         fig.canvas.mpl_connect("motion_notify_event", hover)
 
     # --- Panel 1: OHLC + predicted + signals ---
     ax = axes[0]
     idx = df.index
 
-    connect_hover(ax)
+    connect_hover(ax, df)
 
     # Plot OHLC as lines (not candlestick, for simplicity)
     if 'Open' in df.columns and 'High' in df.columns and 'Low' in df.columns and 'Close' in df.columns:
@@ -155,7 +156,7 @@ def plot_indicator_results_seaborn(
             ax_panel.axhline(0, color='gray', linestyle='--', linewidth=1)
             ax_panel.set_ylabel('Pressure')
         ax_panel.legend(loc='upper left', fontsize=9)
-        connect_hover(ax_panel) # Connect hover to each subplot
+        connect_hover(ax_panel, df)
         panel_idx += 1
 
     axes[-1].set_xlabel("Time")
