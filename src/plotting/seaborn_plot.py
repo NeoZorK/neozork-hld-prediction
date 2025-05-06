@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
-import mplcursors
 
 def plot_indicator_results_seaborn(
     df: pd.DataFrame,
@@ -126,9 +125,6 @@ def plot_indicator_results_seaborn(
         panel_idx += 1
 
     axes[-1].set_xlabel("Time")
-
-    # --- Add interactive cursors ---
-    mplcursors.cursor(axes, hover=True)
 
     plt.tight_layout()
     plt.show()
