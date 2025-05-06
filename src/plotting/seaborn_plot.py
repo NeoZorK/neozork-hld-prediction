@@ -52,7 +52,7 @@ def plot_indicator_results_seaborn(
     # --- Hover annotations ---
     annot = axes[0].annotate("", xy=(0,0), xytext=(20,20),textcoords="offset points",
                              bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.5),
-                             arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+                             fontsize=12)  # Increased fontsize, removed arrowprops
     annot.set_visible(False)
 
     def update_annot(event, ax, df):
@@ -64,12 +64,12 @@ def plot_indicator_results_seaborn(
                 return  # Handle cases where xdata or ydata is None
 
             annot.xy = (x,y)
-            text = f"x: {x:.2f}, y: {y:.2f}\n"
+            text = f"X: {x:.2f}, Y: {y:.2f}\n"  # Uppercase X and Y
             for col in df.columns:
                 if pd.api.types.is_numeric_dtype(df[col]):
                     try:
                         value = df.iloc[x][col]
-                        text += f"{col} = {value:.2f}\n"
+                        text += f"{col.upper()} = {value:.2f}\n"  # Uppercase column names
                     except (IndexError, ValueError):
                         pass
             annot.set_text(text)
@@ -168,4 +168,3 @@ def plot_indicator_results_seaborn(
 
     plt.tight_layout()
     plt.show()
-
