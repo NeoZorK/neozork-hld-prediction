@@ -1,24 +1,23 @@
+# -*- coding: utf-8 -*-
 # src/plotting/plotting_generation.py
-from .plotting import plot_indicator_results_plotly, plot_indicator_results_mplfinance
+
+from .mplfinance_plot import plot_indicator_results_mplfinance
+from .plotly_plot import plot_indicator_results_plotly
 from .fast_plot import plot_indicator_results_fast
+from .seaborn_plot import plot_indicator_results_seaborn
 
 """
-Workflow step for generating plots based on indicator results using the selected library (Plotly or mplfinance).
-Saves Plotly plots as HTML and attempts to open them, displays mplfinance plots.
+Workflow step for generating plots based on indicator results using the selected library (Plotly, mplfinance, fast, seaborn).
+Saves Plotly plots as HTML and attempts to open them, displays mplfinance and seaborn plots.
 """
 import pandas as pd
 import traceback
-import os
 from pathlib import Path
-import webbrowser # <--- Import webbrowser
+import webbrowser
 
-# Relative imports
 from ..common import logger
 from ..common.constants import TradingRule
-# Import BOTH plotting functions
-from .plotting import plot_indicator_results_plotly, plot_indicator_results_mplfinance
 
-# Definition of generate_plot function
 def generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point):
     """
     Generates and potentially saves/displays a plot based on calculation results
@@ -40,8 +39,8 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
         logger.print_warning("No valid rule selected, cannot generate plot accurately.")
         return
     if not hasattr(args, 'draw'):
-         logger.print_error("Argument 'draw' missing in args. Cannot determine plotting library.")
-         return
+        logger.print_error("Argument 'draw' missing in args. Cannot determine plotting library.")
+        return
 
     # --- DEBUG: Print DataFrame info before plotting ---
     logger.print_debug("--- DataFrame before plotting ---")
@@ -49,18 +48,15 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     logger.print_debug(f"Index type: {type(result_df.index)}")
     logger.print_debug(f"Shape: {result_df.shape}")
     logger.print_debug("First 5 rows:")
-    # Use pandas option to display more columns if needed
     with pd.option_context('display.max_rows', 5, 'display.max_columns', None):
         logger.print_debug(f"\n{result_df.head().to_string()}")
     logger.print_debug("--- End DataFrame info ---")
-    # --- End DEBUG ---
-
 
     # --- Construct Title ---
     title_parts = []
     data_label = data_info.get('data_source_label', 'Unknown Source')
     if isinstance(data_label, str) and ('/' in data_label or '\\' in data_label):
-         data_label = Path(data_label).stem
+        data_label = Path(data_label).stem
     title_parts.append(data_label)
     interval_str = str(args.interval) if hasattr(args, 'interval') else data_info.get('interval', 'UnknownInterval')
     title_parts.append(interval_str)
@@ -74,7 +70,9 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     plot_title = " | ".join(filter(None, title_parts))
 
     # --- Choose Plotting Function based on args.draw ---
-    use_mplfinance = args.draw in ['mplfinance', 'mpl']
+    draw_mode = getattr(args, 'draw', 'fastest').lower()
+    use_mplfinance = draw_mode in ['mplfinance', 'mpl']
+    use_seaborn = draw_mode in ['seaborn', 'sb']
 
     try:
         if use_mplfinance:
@@ -85,7 +83,15 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                 plot_title
             )
             logger.print_success("Mplfinance plot generation finished (should display).")
-        elif args.draw == 'fast':
+        elif use_seaborn:
+            logger.print_info("Generating plot using seaborn...")
+            plot_indicator_results_seaborn(
+                result_df,
+                selected_rule,
+                plot_title
+            )
+            logger.print_success("Seaborn plot generation finished (should display).")
+        elif draw_mode == 'fast':
             logger.print_info("Generating plot using Dask+Datashader+Bokeh (fast)...")
             plot_indicator_results_fast(
                 result_df,
@@ -136,4 +142,3 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     except Exception as e_gen:
         logger.print_error(f"An error occurred during plot generation: {type(e_gen).__name__}: {e_gen}")
         logger.print_debug(f"Traceback (generate plot):\n{traceback.format_exc()}")
-
