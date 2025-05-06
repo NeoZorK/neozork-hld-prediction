@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
 def plot_indicator_results_seaborn(
     df: pd.DataFrame,
@@ -51,6 +52,34 @@ def plot_indicator_results_seaborn(
     # --- Panel 1: OHLC + predicted + signals ---
     ax = axes[0]
     idx = df.index
+
+    # --- Hover annotations ---
+    annot = ax.annotate("", xy=(0,0), xytext=(20,20),textcoords="offset points",
+                        bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.5),
+                        arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+    annot.set_visible(False)
+
+    def update_annot(event):
+        if event.inaxes == ax:
+            x, y = event.xdata, event.ydata
+            annot.xy = (x,y)
+            text = ""
+            for col in df.columns:
+                if pd.api.types.is_numeric_dtype(df[col]):
+                    try:
+                        value = df.iloc[int(x)][col]
+                        text += f"{col}: {value:.2f}\n"
+                    except IndexError:
+                        pass
+            annot.set_text(text)
+            annot.set_visible(True)
+            fig.canvas.draw_idle()
+        else:
+            if annot.get_visible():
+                annot.set_visible(False)
+                fig.canvas.draw_idle()
+
+    fig.canvas.mpl_connect("motion_notify_event", update_annot)
 
     # Plot OHLC as lines (not candlestick, for simplicity)
     if 'Open' in df.columns and 'High' in df.columns and 'Low' in df.columns and 'Close' in df.columns:
