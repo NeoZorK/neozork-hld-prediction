@@ -535,6 +535,31 @@ This project uses Python's built-in `unittest` framework.
     python -m unittest discover tests
     ```
 
+3.  **To run all tests in a folder:
+    ```bash
+    python -m unitest discover tests/cli  
+    ```
+    
+4.  **To run a specific test file:
+    ```bash
+    python -m unittest tests.cli.test_cli_all_commands
+    ```
+    
+5.  **To run a specific test case:
+    ```bash
+    python -m unittest tests.cli.test_cli_all_commands.TestCliAllCommands.test_help
+    ```
+    
+6.  **To Test All CLI Commands:**
+    ```bash
+    python tests/cli/test_cli_all_commands.py
+    ```
+
+Delayed between tests is set to 2 seconds to avoid overwhelming the API with requests.
+
+
+
+
 ## EDA Tools
 
 The project includes several tools for exploratory data analysis and data quality checking:
