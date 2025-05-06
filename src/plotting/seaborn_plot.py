@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import numpy as np
 
 def plot_indicator_results_seaborn(
     df: pd.DataFrame,
@@ -18,43 +19,78 @@ def plot_indicator_results_seaborn(
             close_col = col
             break
     if close_col is None:
-        # Try common alternatives
         for alt in ['Close', 'CLOSE', 'closing_price', 'price']:
             if alt in df.columns:
                 close_col = alt
                 break
-
     if close_col is None:
         print("Error: 'close' column not found in DataFrame.")
         print("Available columns:", list(df.columns))
         print("DataFrame head:\n", df.head())
         return
 
+    # --- Prepare subplots: 1. OHLC + signals, 2. Volume, 3. PV, 4. HL, 5. Pressure ---
+    nrows = 1
+    indicator_panels = []
+    if 'Volume' in df.columns:
+        indicator_panels.append('Volume')
+    if 'PV' in df.columns:
+        indicator_panels.append('PV')
+    if 'HL' in df.columns:
+        indicator_panels.append('HL')
+    if 'Pressure' in df.columns:
+        indicator_panels.append('Pressure')
+    nrows += len(indicator_panels)
+
     sns.set(style="darkgrid", context="talk")
-    fig, ax = plt.subplots(figsize=(16, 7))
+    fig, axes = plt.subplots(nrows=nrows, ncols=1, figsize=(18, 3.5 * nrows), sharex=True, gridspec_kw={'height_ratios': [2] + [1]*(nrows-1)})
 
-    # Plot all numeric columns except volume and signal as lines
-    exclude_cols = {'volume', 'signal', 'predicted_direction'}
-    color_cycle = plt.cm.tab10.colors
-    color_map = {}
-    i = 0
-    for col in df.columns:
-        if col in exclude_cols or not pd.api.types.is_numeric_dtype(df[col]):
-            continue
-        if col == close_col:
-            color_map[col] = 'blue'
-            ax.plot(df.index, df[col], label='Close', color='blue', linewidth=1.5, zorder=10)
+    if nrows == 1:
+        axes = [axes]
+
+    # --- Panel 1: OHLC + predicted + signals ---
+    ax = axes[0]
+    idx = df.index
+
+    # Plot OHLC as lines (not candlestick, for simplicity)
+    if 'Open' in df.columns and 'High' in df.columns and 'Low' in df.columns and 'Close' in df.columns:
+        ax.plot(idx, df['Open'], label='Open', color='orange', linewidth=1, alpha=0.7)
+        ax.plot(idx, df['High'], label='High', color='purple', linewidth=1, alpha=0.7)
+        ax.plot(idx, df['Low'], label='Low', color='brown', linewidth=1, alpha=0.7)
+        ax.plot(idx, df['Close'], label='Close', color='blue', linewidth=1.5, zorder=10)
+    else:
+        ax.plot(idx, df[close_col], label='Close', color='blue', linewidth=1.5, zorder=10)
+
+    # Plot predicted high/low if present (PPrice1/PPrice2 or predicted_high/predicted_low)
+    if 'PPrice1' in df.columns:
+        ax.plot(idx, df['PPrice1'], label='Predicted Low (PPrice1)', color='lime', linestyle='--', linewidth=1.5)
+    if 'PPrice2' in df.columns:
+        ax.plot(idx, df['PPrice2'], label='Predicted High (PPrice2)', color='red', linestyle='--', linewidth=1.5)
+    if 'predicted_low' in df.columns:
+        ax.plot(idx, df['predicted_low'], label='Predicted Low', color='lime', linestyle='--', linewidth=1.5)
+    if 'predicted_high' in df.columns:
+        ax.plot(idx, df['predicted_high'], label='Predicted High', color='red', linestyle='--', linewidth=1.5)
+
+    # Plot predicted_direction or Direction as markers
+    direction_col = None
+    for dcol in ['Direction', 'predicted_direction']:
+        if dcol in df.columns:
+            direction_col = dcol
+            break
+    if direction_col is not None:
+        # For compatibility with plotly/fastest: 1=BUY, 2=SELL
+        buy_mask = (df[direction_col] == 1) | (df[direction_col] > 0)
+        sell_mask = (df[direction_col] == 2) | (df[direction_col] < 0)
+        if 'Low' in df.columns:
+            buy_y = df['Low'] * 0.998
         else:
-            color_map[col] = color_cycle[i % len(color_cycle)]
-            ax.plot(df.index, df[col], label=col.replace('_', ' ').title(), color=color_map[col], linewidth=1, alpha=0.8)
-            i += 1
-
-    # Plot predicted_direction as markers/arrows if present
-    if 'predicted_direction' in df.columns:
-        up_idx = df[df['predicted_direction'] > 0].index
-        down_idx = df[df['predicted_direction'] < 0].index
-        ax.scatter(up_idx, df.loc[up_idx, close_col], marker='^', color='deepskyblue', s=60, label='Predicted Up', zorder=20)
-        ax.scatter(down_idx, df.loc[down_idx, close_col], marker='v', color='darkred', s=60, label='Predicted Down', zorder=20)
+            buy_y = df[close_col]
+        if 'High' in df.columns:
+            sell_y = df['High'] * 1.002
+        else:
+            sell_y = df[close_col]
+        ax.scatter(df.index[buy_mask], buy_y[buy_mask], marker='^', color='lime', s=80, label='Predicted UP', zorder=20)
+        ax.scatter(df.index[sell_mask], sell_y[sell_mask], marker='v', color='red', s=80, label='Predicted DOWN', zorder=20)
 
     # Plot buy/sell signals if present
     if 'signal' in df.columns:
@@ -63,22 +99,31 @@ def plot_indicator_results_seaborn(
         ax.scatter(buy_signals.index, buy_signals[close_col], marker='o', color='green', s=80, label='Buy Signal', zorder=30)
         ax.scatter(sell_signals.index, sell_signals[close_col], marker='x', color='red', s=80, label='Sell Signal', zorder=30)
 
-    # Optionally plot volume
-    if 'volume' in df.columns:
-        ax2 = ax.twinx()
-        ax2.bar(df.index, df['volume'], color='gray', alpha=0.2, width=1, label='Volume')
-        ax2.set_ylabel('Volume', fontsize=11)
-        ax2.set_yticks([])
-
-    # Avoid duplicate labels in legend
-    handles, labels = ax.get_legend_handles_labels()
-    unique = dict(zip(labels, handles))
-    ax.legend(unique.values(), unique.keys(), loc='upper left', fontsize=10, frameon=True)
-
-    rule_name = str(selected_rule) if selected_rule is not None else ""
-    title = plot_title or f"Seaborn Plot - {rule_name}"
-    ax.set_title(title, fontsize=16)
-    ax.set_xlabel("Time")
     ax.set_ylabel("Price")
+    ax.set_title(f"{plot_title or 'Seaborn Plot'} - Rule: {getattr(selected_rule, 'name', selected_rule)}")
+    ax.legend(loc='upper left', fontsize=9, ncol=2)
+
+    # --- Additional panels: Volume, PV, HL, Pressure ---
+    panel_idx = 1
+    for panel in indicator_panels:
+        ax_panel = axes[panel_idx]
+        if panel == 'Volume':
+            ax_panel.bar(idx, df['Volume'], color='gray', alpha=0.3, width=1, label='Volume')
+            ax_panel.set_ylabel('Volume')
+        elif panel == 'PV':
+            ax_panel.plot(idx, df['PV'], color='orange', label='PV')
+            ax_panel.axhline(0, color='gray', linestyle='--', linewidth=1)
+            ax_panel.set_ylabel('PV')
+        elif panel == 'HL':
+            ax_panel.plot(idx, df['HL'], color='brown', label='HL (Points)')
+            ax_panel.set_ylabel('HL')
+        elif panel == 'Pressure':
+            ax_panel.plot(idx, df['Pressure'], color='dodgerblue', label='Pressure')
+            ax_panel.axhline(0, color='gray', linestyle='--', linewidth=1)
+            ax_panel.set_ylabel('Pressure')
+        ax_panel.legend(loc='upper left', fontsize=9)
+        panel_idx += 1
+
+    axes[-1].set_xlabel("Time")
     plt.tight_layout()
     plt.show()
