@@ -7,7 +7,6 @@ def plot_indicator_results_seaborn(
     selected_rule,
     plot_title: str = ""
 ):
-    # ...existing code up to sns.set...
     if df is None or df.empty:
         print("No data to plot.")
         return
@@ -34,20 +33,27 @@ def plot_indicator_results_seaborn(
     sns.set(style="darkgrid", context="talk")
     fig, ax = plt.subplots(figsize=(16, 7))
 
-    # Plot open, high, low, close
+    # Plot open, high, low, close as lines if present
+    plotted = set()
     if 'open' in df.columns:
         ax.plot(df.index, df['open'], label='Open', color='orange', linewidth=1, alpha=0.7)
+        plotted.add('open')
     if 'high' in df.columns:
         ax.plot(df.index, df['high'], label='High', color='purple', linewidth=1, alpha=0.7)
+        plotted.add('high')
     if 'low' in df.columns:
         ax.plot(df.index, df['low'], label='Low', color='brown', linewidth=1, alpha=0.7)
+        plotted.add('low')
     ax.plot(df.index, df[close_col], label='Close', color='blue', linewidth=1.2)
+    plotted.add('close')
 
     # Plot predicted_high and predicted_low if present
     if 'predicted_high' in df.columns:
         ax.plot(df.index, df['predicted_high'], label='Predicted High', color='lime', linestyle='--', linewidth=1.2)
+        plotted.add('predicted_high')
     if 'predicted_low' in df.columns:
         ax.plot(df.index, df['predicted_low'], label='Predicted Low', color='red', linestyle='--', linewidth=1.2)
+        plotted.add('predicted_low')
 
     # Plot predicted_direction as markers/arrows if present
     if 'predicted_direction' in df.columns:
@@ -70,9 +76,13 @@ def plot_indicator_results_seaborn(
         ax2.set_ylabel('Volume', fontsize=11)
         ax2.set_yticks([])
 
+    # Avoid duplicate labels in legend
+    handles, labels = ax.get_legend_handles_labels()
+    unique = dict(zip(labels, handles))
+    ax.legend(unique.values(), unique.keys(), loc='upper left', fontsize=10)
+
     ax.set_title(plot_title or "Seaborn Plot", fontsize=16)
     ax.set_xlabel("Time")
     ax.set_ylabel("Price")
-    ax.legend(loc='upper left', fontsize=10)
     plt.tight_layout()
     plt.show()
