@@ -49,27 +49,22 @@ def plot_indicator_results_seaborn(
     if nrows == 1:
         axes = [axes]
 
-    # --- Panel 1: OHLC + predicted + signals ---
-    ax = axes[0]
-    idx = df.index
-
     # --- Hover annotations ---
-    annot = ax.annotate("", xy=(0,0), xytext=(20,20),textcoords="offset points",
-                        bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.5),
-                        arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2"))
+    annot = axes[0].annotate("", xy=(0,0), xytext=(20,20),textcoords="offset points",
+                             bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.5))
     annot.set_visible(False)
 
-    def update_annot(event):
+    def update_annot(event, ax):
         if event.inaxes == ax:
             x, y = event.xdata, event.ydata
             annot.xy = (x,y)
-            text = ""
+            text = f"x: {x:.2f}, y: {y:.2f}\n"
             for col in df.columns:
                 if pd.api.types.is_numeric_dtype(df[col]):
                     try:
                         value = df.iloc[int(x)][col]
-                        text += f"{col}: {value:.2f}\n"
-                    except IndexError:
+                        text += f"{col} = {value:.2f}\n"
+                    except (IndexError, ValueError):
                         pass
             annot.set_text(text)
             annot.set_visible(True)
@@ -79,26 +74,35 @@ def plot_indicator_results_seaborn(
                 annot.set_visible(False)
                 fig.canvas.draw_idle()
 
-    fig.canvas.mpl_connect("motion_notify_event", update_annot)
+    def connect_hover(ax):
+        def hover(event):
+            update_annot(event, ax)
+        fig.canvas.mpl_connect("motion_notify_event", hover)
+
+    # --- Panel 1: OHLC + predicted + signals ---
+    ax = axes[0]
+    idx = df.index
+
+    connect_hover(ax)
 
     # Plot OHLC as lines (not candlestick, for simplicity)
     if 'Open' in df.columns and 'High' in df.columns and 'Low' in df.columns and 'Close' in df.columns:
-        open_line, = ax.plot(idx, df['Open'], label='Open', color='orange', linewidth=1, alpha=0.7)
-        high_line, = ax.plot(idx, df['High'], label='High', color='purple', linewidth=1, alpha=0.7)
-        low_line, = ax.plot(idx, df['Low'], label='Low', color='brown', linewidth=1, alpha=0.7)
-        close_line, = ax.plot(idx, df['Close'], label='Close', color='blue', linewidth=1.5, zorder=10)
+        ax.plot(idx, df['Open'], label='Open', color='orange', linewidth=1, alpha=0.7)
+        ax.plot(idx, df['High'], label='High', color='purple', linewidth=1, alpha=0.7)
+        ax.plot(idx, df['Low'], label='Low', color='brown', linewidth=1, alpha=0.7)
+        ax.plot(idx, df['Close'], label='Close', color='blue', linewidth=1.5, zorder=10)
     else:
-        close_line, = ax.plot(idx, df[close_col], label='Close', color='blue', linewidth=1.5, zorder=10)
+        ax.plot(idx, df[close_col], label='Close', color='blue', linewidth=1.5, zorder=10)
 
     # Plot predicted high/low if present (PPrice1/PPrice2 or predicted_high/predicted_low)
     if 'PPrice1' in df.columns:
-        pprice1_line, = ax.plot(idx, df['PPrice1'], label='Predicted Low (PPrice1)', color='lime', linestyle='--', linewidth=1.5)
+        ax.plot(idx, df['PPrice1'], label='Predicted Low (PPrice1)', color='lime', linestyle='--', linewidth=1.5)
     if 'PPrice2' in df.columns:
-        pprice2_line, = ax.plot(idx, df['PPrice2'], label='Predicted High (PPrice2)', color='red', linestyle='--', linewidth=1.5)
+        ax.plot(idx, df['PPrice2'], label='Predicted High (PPrice2)', color='red', linestyle='--', linewidth=1.5)
     if 'predicted_low' in df.columns:
-        predicted_low_line, = ax.plot(idx, df['predicted_low'], label='Predicted Low', color='lime', linestyle='--', linewidth=1.5)
+        ax.plot(idx, df['predicted_low'], label='Predicted Low', color='lime', linestyle='--', linewidth=1.5)
     if 'predicted_high' in df.columns:
-        predicted_high_line, = ax.plot(idx, df['predicted_high'], label='Predicted High', color='red', linestyle='--', linewidth=1.5)
+        ax.plot(idx, df['predicted_high'], label='Predicted High', color='red', linestyle='--', linewidth=1.5)
 
     # Plot predicted_direction or Direction as markers
     direction_col = None
@@ -118,15 +122,15 @@ def plot_indicator_results_seaborn(
             sell_y = df['High'] * 1.002
         else:
             sell_y = df[close_col]
-        buy_scatter = ax.scatter(df.index[buy_mask], buy_y[buy_mask], marker='^', color='lime', s=80, label='Predicted UP', zorder=20)
-        sell_scatter = ax.scatter(df.index[sell_mask], sell_y[sell_mask], marker='v', color='red', s=80, label='Predicted DOWN', zorder=20)
+        ax.scatter(df.index[buy_mask], buy_y[buy_mask], marker='^', color='lime', s=80, label='Predicted UP', zorder=20)
+        ax.scatter(df.index[sell_mask], sell_y[sell_mask], marker='v', color='red', s=80, label='Predicted DOWN', zorder=20)
 
     # Plot buy/sell signals if present
     if 'signal' in df.columns:
         buy_signals = df[df['signal'] > 0]
         sell_signals = df[df['signal'] < 0]
-        buy_signal_scatter = ax.scatter(buy_signals.index, buy_signals[close_col], marker='o', color='green', s=80, label='Buy Signal', zorder=30)
-        sell_signal_scatter = ax.scatter(sell_signals.index, sell_signals[close_col], marker='x', color='red', s=80, label='Sell Signal', zorder=30)
+        ax.scatter(buy_signals.index, buy_signals[close_col], marker='o', color='green', s=80, label='Buy Signal', zorder=30)
+        ax.scatter(sell_signals.index, sell_signals[close_col], marker='x', color='red', s=80, label='Sell Signal', zorder=30)
 
     ax.set_ylabel("Price")
     ax.set_title(f"{plot_title or 'Seaborn Plot'} - Rule: {getattr(selected_rule, 'name', selected_rule)}")
@@ -137,20 +141,21 @@ def plot_indicator_results_seaborn(
     for panel in indicator_panels:
         ax_panel = axes[panel_idx]
         if panel == 'Volume':
-            volume_bars = ax_panel.bar(idx, df['Volume'], color='gray', alpha=0.3, width=1, label='Volume')
+            ax_panel.bar(idx, df['Volume'], color='gray', alpha=0.3, width=1, label='Volume')
             ax_panel.set_ylabel('Volume')
         elif panel == 'PV':
-            pv_line, = ax_panel.plot(idx, df['PV'], color='orange', label='PV')
+            ax_panel.plot(idx, df['PV'], color='orange', label='PV')
             ax_panel.axhline(0, color='gray', linestyle='--', linewidth=1)
             ax_panel.set_ylabel('PV')
         elif panel == 'HL':
-            hl_line, = ax_panel.plot(idx, df['HL'], color='brown', label='HL (Points)')
+            ax_panel.plot(idx, df['HL'], color='brown', label='HL (Points)')
             ax_panel.set_ylabel('HL')
         elif panel == 'Pressure':
-            pressure_line, = ax_panel.plot(idx, df['Pressure'], color='dodgerblue', label='Pressure')
+            ax_panel.plot(idx, df['Pressure'], color='dodgerblue', label='Pressure')
             ax_panel.axhline(0, color='gray', linestyle='--', linewidth=1)
             ax_panel.set_ylabel('Pressure')
         ax_panel.legend(loc='upper left', fontsize=9)
+        connect_hover(ax_panel) # Connect hover to each subplot
         panel_idx += 1
 
     axes[-1].set_xlabel("Time")
