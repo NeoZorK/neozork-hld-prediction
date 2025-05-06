@@ -57,13 +57,18 @@ def plot_indicator_results_seaborn(
 
     def update_annot(event, ax, df):
         if event.inaxes == ax:
-            x, y = event.xdata, event.ydata
+            try:
+                x = int(event.xdata)
+                y = event.ydata
+            except TypeError:
+                return  # Handle cases where xdata or ydata is None
+
             annot.xy = (x,y)
             text = f"x: {x:.2f}, y: {y:.2f}\n"
             for col in df.columns:
                 if pd.api.types.is_numeric_dtype(df[col]):
                     try:
-                        value = df.iloc[int(x)][col]
+                        value = df.iloc[x][col]
                         text += f"{col} = {value:.2f}\n"
                     except (IndexError, ValueError):
                         pass
@@ -163,3 +168,4 @@ def plot_indicator_results_seaborn(
 
     plt.tight_layout()
     plt.show()
+
