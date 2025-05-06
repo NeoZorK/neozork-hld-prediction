@@ -10,30 +10,30 @@ PYTHON = sys.executable
 SCRIPT = os.path.join(PROJECT_ROOT, 'run_analysis.py')
 LOG_FILE = os.path.join(PROJECT_ROOT, 'test_cli_all_commands.log')
 
-# Все режимы, правила, plot-режимы, edge-cases
+# All rules and draw modes
 rules = [
     'PHLD', 'PV', 'SR', 'Predict_High_Low_Direction', 'Pressure_Vector', 'Support_Resistants'
 ]
 draw_modes = ['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl']
 
-# Базовые команды
+# Base commands
 commands = [
     [PYTHON, SCRIPT, '-h'],
     [PYTHON, SCRIPT, '--version'],
     [PYTHON, SCRIPT, '--examples'],
     [PYTHON, SCRIPT, 'demo'],
 ]
-# demo + все правила и plot
+# demo + all rules
 for rule in rules:
     commands.append([PYTHON, SCRIPT, 'demo', '--rule', rule])
     for draw in draw_modes:
         commands.append([PYTHON, SCRIPT, 'demo', '--rule', rule, '-d', draw])
-# csv режимы
-csv_file = 'data.csv'  # Можно заменить на существующий файл для реального теста
+# csv modes
+csv_file = 'data.csv'  # Can be any valid CSV file path
 for rule in rules:
     for draw in draw_modes:
         commands.append([PYTHON, SCRIPT, 'csv', '--csv-file', csv_file, '--point', '0.01', '--rule', rule, '-d', draw])
-# yfinance/yf режимы
+# yfinance/yf mods
 for mode in ['yf', 'yfinance']:
     for rule in rules:
         for draw in draw_modes:
@@ -43,19 +43,19 @@ for mode in ['yf', 'yfinance']:
             commands.append([
                 PYTHON, SCRIPT, mode, '--ticker', 'AAPL', '--start', '2024-01-01', '--end', '2024-04-01', '--point', '0.01', '--rule', rule, '-d', draw
             ])
-# polygon режимы
+# polygon mods
 for rule in rules:
     for draw in draw_modes:
         commands.append([
             PYTHON, SCRIPT, 'polygon', '--ticker', 'AAPL', '--interval', 'D1', '--start', '2024-01-01', '--end', '2024-04-01', '--point', '0.01', '--rule', rule, '-d', draw
         ])
-# binance режимы
+# binance mods
 for rule in rules:
     for draw in draw_modes:
         commands.append([
             PYTHON, SCRIPT, 'binance', '--ticker', 'BTCUSDT', '--interval', 'H1', '--start', '2024-01-01', '--end', '2024-04-01', '--point', '0.01', '--rule', rule, '-d', draw
         ])
-# show режимы
+# show mods
 show_sources = ['yf', 'yfinance', 'csv', 'polygon', 'binance']
 for source in show_sources:
     commands.append([PYTHON, SCRIPT, 'show', source])
@@ -66,14 +66,14 @@ for source in show_sources:
     commands.append([PYTHON, SCRIPT, 'show', source, '--show-start', '2024-01-01', '--show-end', '2024-04-01'])
     commands.append([PYTHON, SCRIPT, 'show', source, 'AAPL', '2024'])
 
-# Ошибочные кейсы (ожидаем код возврата != 0)
+# Error cases (waiting returns != 0)
 error_commands = [
-    [PYTHON, SCRIPT, 'csv', '--csv-file', csv_file],  # нет --point
-    [PYTHON, SCRIPT, 'csv', '--point', '0.01'],       # нет --csv-file
-    [PYTHON, SCRIPT, 'yf', '--ticker', 'AAPL'],       # нет period/start/end
-    [PYTHON, SCRIPT, 'binance', '--ticker', 'BTCUSDT', '--start', '2024-01-01', '--point', '0.01'], # нет end
-    [PYTHON, SCRIPT, 'binance', '--ticker', 'BTCUSDT', '--end', '2024-04-01', '--point', '0.01'],   # нет start
-    [PYTHON, SCRIPT, 'binance', '--start', '2024-01-01', '--end', '2024-04-01', '--point', '0.01'], # нет ticker
+    [PYTHON, SCRIPT, 'csv', '--csv-file', csv_file],  # no --point
+    [PYTHON, SCRIPT, 'csv', '--point', '0.01'],       # no --csv-file
+    [PYTHON, SCRIPT, 'yf', '--ticker', 'AAPL'],       # no period/start/end
+    [PYTHON, SCRIPT, 'binance', '--ticker', 'BTCUSDT', '--start', '2024-01-01', '--point', '0.01'], # no end
+    [PYTHON, SCRIPT, 'binance', '--ticker', 'BTCUSDT', '--end', '2024-04-01', '--point', '0.01'],   # no start
+    [PYTHON, SCRIPT, 'binance', '--start', '2024-01-01', '--end', '2024-04-01', '--point', '0.01'], # no ticker
     [PYTHON, SCRIPT, 'demo', '--rule', 'INVALID_RULE'],
     [PYTHON, SCRIPT, 'invalid_mode'],
 ]
@@ -101,7 +101,8 @@ def run_all():
             res = future.result()
             results.append(res)
             pbar.update(1)
-    # Сохраняем лог
+
+    # Save results to log file
     with open(LOG_FILE, 'w', encoding='utf-8') as log:
         for res in results:
             log.write(f"\n[TEST] {' '.join(str(x) for x in res['cmd'])}\n")
@@ -119,7 +120,8 @@ def run_all():
                     log.write("[OK - error as expected]\n")
                 else:
                     log.write("[OK]\n")
-    # Анализ лога и summary
+
+    # Analyze results
     total_ok = 0
     total_fail = 0
     tracebacks = 0
