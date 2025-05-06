@@ -3,6 +3,11 @@
 import unittest
 from unittest.mock import patch
 import io # For capturing output
+import sys
+import os
+
+# Add the src directory to the path to import the module
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 # Import the function to test
 from src.cli.cli import parse_arguments
