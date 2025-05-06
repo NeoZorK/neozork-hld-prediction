@@ -19,6 +19,12 @@ def plot_indicator_results_seaborn(
         print("No data to plot.")
         return
 
+    if 'close' not in df.columns:
+        print("Error: 'close' column not found in DataFrame.")
+        print("Available columns:", list(df.columns))
+        print("DataFrame head:\n", df.head())
+        return
+
     sns.set(style="darkgrid", context="talk")
     fig, ax = plt.subplots(figsize=(16, 7))
 
