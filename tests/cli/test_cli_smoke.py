@@ -8,7 +8,7 @@ class TestCLIDrawModes(unittest.TestCase):
         """
         Check that CLI accepts all draw modes and shows help.
         """
-        for mode in ["fast", "plotly", "mpl", "mplfinance"]:
+        for mode in ["fast", "plotly", "fastest", "mplfinance", "seaborn"]:
             result = subprocess.run(
                 [sys.executable, "run_analysis.py", "demo", "-d", mode, "--help"],
                 capture_output=True,
