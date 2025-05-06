@@ -19,7 +19,20 @@ def plot_indicator_results_seaborn(
         print("No data to plot.")
         return
 
-    if 'close' not in df.columns:
+    # Try to find a column similar to 'close' if it's missing
+    close_col = None
+    for col in df.columns:
+        if col.lower() == 'close':
+            close_col = col
+            break
+    if close_col is None:
+        # Try common alternatives
+        for alt in ['Close', 'CLOSE', 'closing_price', 'price']:
+            if alt in df.columns:
+                close_col = alt
+                break
+
+    if close_col is None:
         print("Error: 'close' column not found in DataFrame.")
         print("Available columns:", list(df.columns))
         print("DataFrame head:\n", df.head())
@@ -29,14 +42,14 @@ def plot_indicator_results_seaborn(
     fig, ax = plt.subplots(figsize=(16, 7))
 
     # Plot close price
-    ax.plot(df.index, df['close'], label='Close', color='blue', linewidth=1.2)
+    ax.plot(df.index, df[close_col], label='Close', color='blue', linewidth=1.2)
 
     # Plot buy/sell signals if present
     if 'signal' in df.columns:
         buy_signals = df[df['signal'] > 0]
         sell_signals = df[df['signal'] < 0]
-        ax.scatter(buy_signals.index, buy_signals['close'], marker='^', color='green', s=80, label='Buy Signal')
-        ax.scatter(sell_signals.index, sell_signals['close'], marker='v', color='red', s=80, label='Sell Signal')
+        ax.scatter(buy_signals.index, buy_signals[close_col], marker='^', color='green', s=80, label='Buy Signal')
+        ax.scatter(sell_signals.index, sell_signals[close_col], marker='v', color='red', s=80, label='Sell Signal')
 
     # Optionally plot volume
     if 'volume' in df.columns:
@@ -51,3 +64,4 @@ def plot_indicator_results_seaborn(
     ax.legend(loc='upper left')
     plt.tight_layout()
     plt.show()
+
