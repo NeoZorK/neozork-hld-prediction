@@ -17,7 +17,7 @@ LOG_FILE = os.path.join(LOG_DIR, 'test_cli_all_commands.log')
 rules = [
     'PHLD', 'PV', 'SR', 'Predict_High_Low_Direction', 'Pressure_Vector', 'Support_Resistants'
 ]
-draw_modes = ['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl']
+draw_modes = ['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb']
 
 # Base commands
 commands = [
