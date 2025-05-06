@@ -8,7 +8,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PYTHON = sys.executable
 SCRIPT = os.path.join(PROJECT_ROOT, 'run_analysis.py')
-LOG_FILE = os.path.join(PROJECT_ROOT, 'test_cli_all_commands.log')
+LOG_DIR = os.path.join(PROJECT_ROOT, 'log')
+os.makedirs(LOG_DIR, exist_ok=True)  # Create log directory if it doesn't exist
+LOG_FILE = os.path.join(LOG_DIR, 'test_cli_all_commands.log')
+
 
 # All rules and draw modes
 rules = [
