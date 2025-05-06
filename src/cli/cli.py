@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # src/cli/cli.py
 
 """
@@ -129,9 +130,9 @@ def parse_arguments():
     plotting_group = parser.add_argument_group('Plotting Options')
     plotting_group.add_argument(
         '-d', '--draw',
-        choices=['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl'],
+        choices=['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb'],
         default='fastest',
-        help="Choose plotting library: 'fastest' (Plotly+Dask+Datashader for extremely large datasets, default), 'fast' (Dask+Datashader+Bokeh), 'plotly'/'plt' (interactive HTML), or 'mplfinance'/'mpl' (static image)."
+        help="Choose plotting library: 'fastest' (Plotly+Dask+Datashader for extremely large datasets, default), 'fast' (Dask+Datashader+Bokeh), 'plotly'/'plt' (interactive HTML), 'mplfinance'/'mpl' (static image), or 'seaborn'/'sb' (statistical plots)."
     )
     # --- Other Options Group ---
     other_group = parser.add_argument_group('Other Options')
