@@ -28,6 +28,8 @@ def show_cli_examples(terminal_console):
         "[dim]# CSV with mplfinance backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 -d mplfinance[/bold green]")
     console.print(
         "[dim]# CSV with PV rule, fastest backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw fastest[/bold green]\n")
+    console.print(
+        "[dim]# CSV with PV rule, seaborn backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw seaborn[/bold green]\n")
 
     console.print("[bold]3. YAHOO FINANCE (YF) MODES[/bold]")
     console.print(
@@ -52,6 +54,8 @@ def show_cli_examples(terminal_console):
         "[dim]# BTCUSDT, H1, date range, point size[/dim]\n[bold green]python run_analysis.py binance --ticker BTCUSDT --interval H1 --start 2024-01-01 --end 2024-04-18 --point 0.01[/bold green]")
     console.print(
         "[dim]# ETHUSDT, D1, date range, Support_Resistants rule[/dim]\n[bold green]python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR[/bold green]\n")
+    console.print(
+        "[dim]# ETHUSDT, D1, date range, Support_Resistants rule with SeaBorn plot[/dim]\n[bold green]python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR -d sb[/bold green]\n")
 
     console.print("[bold]6. SHOW MODE (CACHE/FILES)[/bold]")
     console.print(
@@ -60,6 +64,8 @@ def show_cli_examples(terminal_console):
         "[dim]# Show YFinance files with 'aapl' and 'mn1' in name[/dim]\n[bold green]python run_analysis.py show yf aapl mn1[/bold green]")
     console.print(
         "[dim]# Show Binance files with 'btc' in name[/dim]\n[bold green]python run_analysis.py show binance btc[/bold green]")
+    console.print(
+        "[dim]# Show Binance files with 'btc' in name with SeaBorn plot[/dim]\n[bold green]python run_analysis.py show binance btc -d seaborn[/bold green]")
     console.print(
         "[dim]# Show CSV files with EURUSD MN1[/dim]\n[bold green]python run_analysis.py show csv EURUSD MN1[/bold green]")
     console.print(
@@ -99,11 +105,12 @@ def show_cli_examples(terminal_console):
     console.print(
         "[bold yellow]Note:[/bold yellow] For all API modes (yfinance, polygon, binance), the --point parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).\n")
     console.print(
-        "[yellow]- Use -d/--draw to select plotting backend: fastest, fast, plotly, mplfinance, etc.")
+        "[yellow]- Use -d/--draw to select plotting backend: fastest, fast, plotly, mplfinance, seaborn, sb, etc.")
     console.print(
         "- Use --rule to select trading rule: PV_HighLow, Support_Resistants, Pressure_Vector, Predict_High_Low_Direction, PHLD, PV, SR.")
     console.print("- SHOW mode allows filtering cached files by source, keywords, date, and rule.")
     console.print("- For more details, see README.md or run with -h for full help.\n")
+
 
 def print_cli_examples():
     """
@@ -118,12 +125,14 @@ def print_cli_examples():
       python run_analysis.py demo -d mpl
       python run_analysis.py demo --rule PV_HighLow
       python run_analysis.py demo --rule PHLD -d plotly
+      python run_analysis.py demo --rule SR -d seaborn
 
       # 2. CSV FILE MODES
       python run_analysis.py csv --csv-file data.csv --point 0.01
       python run_analysis.py csv --csv-file data.csv --point 0.01 --rule SR
       python run_analysis.py csv --csv-file data.csv --point 0.01 -d mplfinance
       python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw fastest
+      python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw sb
 
       # 3. YAHOO FINANCE (YF) MODES
       python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001
@@ -131,14 +140,17 @@ def print_cli_examples():
       python run_analysis.py yf -t BTC-USD --start 2023-01-01 --end 2023-12-31 --point 0.01
       python run_analysis.py yf -t EURUSD=X --start 2024-01-01 --end 2024-04-18 --point 0.00001 -d mpl
       python run_analysis.py yf -t AAPL --period 1y --rule SR
+      python run_analysis.py yf -t AAPL --period 1y --rule SR -d seaborn
 
       # 4. POLYGON.IO MODES
       python run_analysis.py polygon --ticker AAPL --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01
       python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2022-01-01 --end 2022-06-01 --point 0.00001 --rule PV
+      python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2022-01-01 --end 2022-06-01 --point 0.00001 --rule PV --sb
 
       # 5. BINANCE MODES
       python run_analysis.py binance --ticker BTCUSDT --interval H1 --start 2024-01-01 --end 2024-04-18 --point 0.01
       python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR
+      python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR -d seaborn
 
       # 6. SHOW MODE (CACHE/FILES)
       python run_analysis.py show yf
@@ -146,6 +158,7 @@ def print_cli_examples():
       python run_analysis.py show binance btc
       python run_analysis.py show csv EURUSD MN1
       python run_analysis.py show polygon AAPL 2023
+      python run_analysis.py show polygon AAPL 2023 -d seaborn
       python run_analysis.py show yf --show-rule PV
       python run_analysis.py show yf --show-start 2023-01-01 --show-end 2023-12-31
 
@@ -171,7 +184,7 @@ def print_cli_examples():
 
     Note:
     - For all API modes (yfinance, polygon, binance), the --point parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).
-    - Use -d/--draw to select plotting backend: fastest, fast, plotly, mplfinance, etc.
+    - Use -d/--draw to select plotting backend: fastest, fast, plotly, mplfinance, seaborn, sb etc.
     - Use --rule to select trading rule: PV_HighLow, Support_Resistants, Pressure_Vector, Predict_High_Low_Direction, PHLD, PV, SR.
     - SHOW mode allows filtering cached files by source, keywords, date, and rule.
     - For more details, see README.md or run with -h for full help.\n""")
