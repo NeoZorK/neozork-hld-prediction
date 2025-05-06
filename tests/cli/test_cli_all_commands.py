@@ -29,10 +29,11 @@ for rule in rules:
     for draw in draw_modes:
         commands.append([PYTHON, SCRIPT, 'demo', '--rule', rule, '-d', draw])
 # csv modes
-csv_file = 'data.csv'  # Can be any valid CSV file path
+csv_file = 'mql5_feed/CSVExport_AAPL.NAS_PERIOD_D1.csv'
 for rule in rules:
     for draw in draw_modes:
         commands.append([PYTHON, SCRIPT, 'csv', '--csv-file', csv_file, '--point', '0.01', '--rule', rule, '-d', draw])
+
 # yfinance/yf mods
 for mode in ['yf', 'yfinance']:
     for rule in rules:
@@ -43,18 +44,22 @@ for mode in ['yf', 'yfinance']:
             commands.append([
                 PYTHON, SCRIPT, mode, '--ticker', 'AAPL', '--start', '2024-01-01', '--end', '2024-04-01', '--point', '0.01', '--rule', rule, '-d', draw
             ])
+            time.sleep(1)  # Avoid hitting API limits
+
 # polygon mods
 for rule in rules:
     for draw in draw_modes:
         commands.append([
             PYTHON, SCRIPT, 'polygon', '--ticker', 'AAPL', '--interval', 'D1', '--start', '2024-01-01', '--end', '2024-04-01', '--point', '0.01', '--rule', rule, '-d', draw
         ])
+
 # binance mods
 for rule in rules:
     for draw in draw_modes:
         commands.append([
             PYTHON, SCRIPT, 'binance', '--ticker', 'BTCUSDT', '--interval', 'H1', '--start', '2024-01-01', '--end', '2024-04-01', '--point', '0.01', '--rule', rule, '-d', draw
         ])
+
 # show mods
 show_sources = ['yf', 'yfinance', 'csv', 'polygon', 'binance']
 for source in show_sources:
