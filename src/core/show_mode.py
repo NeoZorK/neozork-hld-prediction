@@ -194,7 +194,7 @@ def _should_draw_plot(args):
     """
     Returns True if the draw flag is set and is one of supported modes.
     """
-    plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly"}
+    plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly", "seaborn", "sb"}
     return hasattr(args, "draw") and args.draw is not None and args.draw in plot_modes
 
 def handle_show_mode(args):
