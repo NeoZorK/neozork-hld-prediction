@@ -33,41 +33,35 @@ def plot_indicator_results_seaborn(
     sns.set(style="darkgrid", context="talk")
     fig, ax = plt.subplots(figsize=(16, 7))
 
-    # Plot open, high, low, close as lines if present
-    plotted = set()
-    if 'open' in df.columns:
-        ax.plot(df.index, df['open'], label='Open', color='orange', linewidth=1, alpha=0.7)
-        plotted.add('open')
-    if 'high' in df.columns:
-        ax.plot(df.index, df['high'], label='High', color='purple', linewidth=1, alpha=0.7)
-        plotted.add('high')
-    if 'low' in df.columns:
-        ax.plot(df.index, df['low'], label='Low', color='brown', linewidth=1, alpha=0.7)
-        plotted.add('low')
-    ax.plot(df.index, df[close_col], label='Close', color='blue', linewidth=1.2)
-    plotted.add('close')
-
-    # Plot predicted_high and predicted_low if present
-    if 'predicted_high' in df.columns:
-        ax.plot(df.index, df['predicted_high'], label='Predicted High', color='lime', linestyle='--', linewidth=1.2)
-        plotted.add('predicted_high')
-    if 'predicted_low' in df.columns:
-        ax.plot(df.index, df['predicted_low'], label='Predicted Low', color='red', linestyle='--', linewidth=1.2)
-        plotted.add('predicted_low')
+    # Plot all numeric columns except volume and signal as lines
+    exclude_cols = {'volume', 'signal', 'predicted_direction'}
+    color_cycle = plt.cm.tab10.colors
+    color_map = {}
+    i = 0
+    for col in df.columns:
+        if col in exclude_cols or not pd.api.types.is_numeric_dtype(df[col]):
+            continue
+        if col == close_col:
+            color_map[col] = 'blue'
+            ax.plot(df.index, df[col], label='Close', color='blue', linewidth=1.5, zorder=10)
+        else:
+            color_map[col] = color_cycle[i % len(color_cycle)]
+            ax.plot(df.index, df[col], label=col.replace('_', ' ').title(), color=color_map[col], linewidth=1, alpha=0.8)
+            i += 1
 
     # Plot predicted_direction as markers/arrows if present
     if 'predicted_direction' in df.columns:
         up_idx = df[df['predicted_direction'] > 0].index
         down_idx = df[df['predicted_direction'] < 0].index
-        ax.scatter(up_idx, df.loc[up_idx, close_col], marker='^', color='deepskyblue', s=60, label='Predicted Up')
-        ax.scatter(down_idx, df.loc[down_idx, close_col], marker='v', color='darkred', s=60, label='Predicted Down')
+        ax.scatter(up_idx, df.loc[up_idx, close_col], marker='^', color='deepskyblue', s=60, label='Predicted Up', zorder=20)
+        ax.scatter(down_idx, df.loc[down_idx, close_col], marker='v', color='darkred', s=60, label='Predicted Down', zorder=20)
 
     # Plot buy/sell signals if present
     if 'signal' in df.columns:
         buy_signals = df[df['signal'] > 0]
         sell_signals = df[df['signal'] < 0]
-        ax.scatter(buy_signals.index, buy_signals[close_col], marker='o', color='green', s=80, label='Buy Signal')
-        ax.scatter(sell_signals.index, sell_signals[close_col], marker='x', color='red', s=80, label='Sell Signal')
+        ax.scatter(buy_signals.index, buy_signals[close_col], marker='o', color='green', s=80, label='Buy Signal', zorder=30)
+        ax.scatter(sell_signals.index, sell_signals[close_col], marker='x', color='red', s=80, label='Sell Signal', zorder=30)
 
     # Optionally plot volume
     if 'volume' in df.columns:
@@ -79,9 +73,11 @@ def plot_indicator_results_seaborn(
     # Avoid duplicate labels in legend
     handles, labels = ax.get_legend_handles_labels()
     unique = dict(zip(labels, handles))
-    ax.legend(unique.values(), unique.keys(), loc='upper left', fontsize=10)
+    ax.legend(unique.values(), unique.keys(), loc='upper left', fontsize=10, frameon=True)
 
-    ax.set_title(plot_title or "Seaborn Plot", fontsize=16)
+    rule_name = str(selected_rule) if selected_rule is not None else ""
+    title = plot_title or f"Seaborn Plot - {rule_name}"
+    ax.set_title(title, fontsize=16)
     ax.set_xlabel("Time")
     ax.set_ylabel("Price")
     plt.tight_layout()
