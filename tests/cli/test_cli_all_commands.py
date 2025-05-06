@@ -41,10 +41,11 @@ for mode in ['yf', 'yfinance']:
             commands.append([
                 PYTHON, SCRIPT, mode, '--ticker', 'AAPL', '--period', '1mo', '--point', '0.01', '--rule', rule, '-d', draw
             ])
+            time.sleep(2)  # Avoid hitting API limits
             commands.append([
                 PYTHON, SCRIPT, mode, '--ticker', 'AAPL', '--start', '2024-01-01', '--end', '2024-04-01', '--point', '0.01', '--rule', rule, '-d', draw
             ])
-            time.sleep(1)  # Avoid hitting API limits
+
 
 # polygon mods
 for rule in rules:
