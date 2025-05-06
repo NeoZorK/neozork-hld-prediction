@@ -111,3 +111,4 @@ pyarrow>=10.0.0
 dask
 datashader
 bokeh
+seaborn
