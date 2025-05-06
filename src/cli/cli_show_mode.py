@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/core/show_mode.py
+# src/core/cli_show_mode.py
 
 import os
 from pathlib import Path
@@ -10,7 +10,7 @@ import traceback
 
 # Import for indicator calculation; fallback for different relative import
 try:
-    from ..calculation.indicator_calculation import calculate_indicator
+    from src.calculation.indicator_calculation import calculate_indicator
 except ImportError:
     from src.calculation.indicator_calculation import calculate_indicator
 
