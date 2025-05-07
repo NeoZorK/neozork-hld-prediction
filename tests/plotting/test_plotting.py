@@ -191,6 +191,9 @@ class TestPlottingFunction(unittest.TestCase):
     @patch('src.plotting.plotting.logger')
     def test_plot_fastest_mode(self, mock_logger, mock_fastest_plot):
         """Test that plot_indicator_results correctly calls plot_indicator_results_fastest when mode='fastest'"""
+        # Configure mock to return None
+        mock_fastest_plot.return_value = None
+        
         # Call the function with fastest mode
         result = plot_indicator_results(
             self.df_results, self.rule, self.title, 
@@ -254,6 +257,9 @@ class TestPlottingFunction(unittest.TestCase):
     @patch('src.plotting.plotting.logger')
     def test_plot_fastest_mode_large_dataset(self, mock_logger, mock_fastest_plot):
         """Test that plot_indicator_results correctly handles large datasets with fastest mode"""
+        # Configure mock to return None
+        mock_fastest_plot.return_value = None
+        
         # Create a large dataset by repeating the existing one
         large_df = pd.concat([self.df_results] * 1000, ignore_index=True)
         # Reset the index to be datetime
@@ -323,4 +329,3 @@ class TestPlottingFunction(unittest.TestCase):
 # Allow running the tests directly
 if __name__ == '__main__':
     unittest.main()
-
