@@ -403,12 +403,14 @@ python run_analysis.py yf -t AAPL --period 1y --rule SR
 ```bash
 python run_analysis.py polygon --ticker AAPL --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01
 python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2022-01-01 --end 2022-06-01 --point 0.00001 --rule PV
+python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2023-01-01 --end 2024-02-01 --point 0.00001 --rule SR -d seaborn
 ```
 
 # 5. BINANCE MODES
 ```bash
 python run_analysis.py binance --ticker BTCUSDT --interval H1 --start 2024-01-01 --end 2024-04-18 --point 0.01
 python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR
+python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2024-05-01 --end 2024-08-10 --point 0.001 --rule PHLD -d sb
 ```
 
 # 6. SHOW MODE (CACHE/FILES)
@@ -418,6 +420,7 @@ python run_analysis.py show yf aapl mn1
 python run_analysis.py show binance btc
 python run_analysis.py show csv EURUSD MN1
 python run_analysis.py show polygon AAPL 2023
+python run_analysis.py show polygon TSLA 2025 -d seaborn
 python run_analysis.py show yf --show-rule PV
 python run_analysis.py show yf --show-start 2023-01-01 --show-end 2023-12-31
 ```
@@ -428,6 +431,7 @@ python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PHLD --draw p
 python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001 --rule PV --draw fastest
 python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2022-01-01 --end 2022-12-31 --point 0.00001 --rule SR --draw mpl
 python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2023-01-01 --end 2023-01-31 --point 0.01 --rule PHLD
+python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2023-01-01 --end 2023-01-31 --point 0.01 --rule PV -d sb
 ```
 
 # 8. HELP, VERSION, EXAMPLES
@@ -452,7 +456,7 @@ python run_analysis.py yf -t EURUSD=X            # (missing --period or --start/
 
 **Note:**
 - For all API modes (yfinance, polygon, binance), the `--point` parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).
-- Use `-d/--draw` to select plotting backend: `fastest, fast, plotly, mplfinance`, etc.
+- Use `-d/--draw` to select plotting backend: `fastest, fast, plotly, mplfinance, seaborn`, etc.
 - Use `--rule` to select trading rule: `PV_HighLow`, `Support_Resistants`, `Pressure_Vector`, `Predict_High_Low_Direction`, `PHLD`, `PV`, `SR`.
 - `SHOW` mode allows filtering cached files by `source, keywords, date, and rule`.
 - For more details, see `python run_analysis.py -h` for full help.
@@ -492,8 +496,8 @@ python run_analysis.py show yf aapl --show-start 2024-01-01 --show-end 2024-04-0
 # Specify a particular indicator rule (default is Predict_High_Low_Direction)
 python run_analysis.py show yf aapl --rule PV
 
-# Specify a particular indicator date, rule, drawing style (mplfinance, mpl, plotly, plt, fast, fastest (default))
-python run_analysis.py show yf aapl --start 2024-01-01 --end 2024-06-01 --rule SR -d mpl
+# Specify a particular indicator date, rule, drawing style (mplfinance, mpl, seaborn, sb, plotly, plt, fast, fastest (default))
+python run_analysis.py show yf aapl --start 2024-01-01 --end 2024-06-01 --rule SR -d sb
 ```
 
 ### How it works
@@ -534,6 +538,31 @@ This project uses Python's built-in `unittest` framework.
     ```bash
     python -m unittest discover tests
     ```
+
+3.  **To run all tests in a folder:
+    ```bash
+    python -m unitest discover tests/cli  
+    ```
+    
+4.  **To run a specific test file:
+    ```bash
+    python -m unittest tests.cli.test_cli_all_commands
+    ```
+    
+5.  **To run a specific test case:
+    ```bash
+    python -m unittest tests.cli.test_cli_all_commands.TestCliAllCommands.test_help
+    ```
+    
+6.  **To Test All CLI Commands:**
+    ```bash
+    python tests/cli/test_cli_all_commands.py
+    ```
+
+Delayed between tests is set to 2 seconds to avoid overwhelming the API with requests.
+
+
+
 
 ## EDA Tools
 
