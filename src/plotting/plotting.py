@@ -40,39 +40,48 @@ def plot_indicator_results(df_results, rule, title="Indicator Results", mode="pl
         - None for 'fast' and 'fastest' modes (these save to disk and open in browser)
     """
     try:
+        # Check required OHLC columns
+        required_columns = ['Open', 'High', 'Low', 'Close']
+        if not all(col in df_results.columns for col in required_columns):
+            logger.print_error(f"DataFrame must contain columns {required_columns}")
+            return None
+
         # Standardize the mode parameter
         mode = mode.lower() if isinstance(mode, str) else 'plotly'
         
         # Route to the appropriate plotting function
         if mode == 'fastest':
             logger.print_info(f"Using 'fastest' mode (Plotly + Dask + Datashader) for plotting...")
-            plot_indicator_results_fastest(df_results, rule, title=title, data_source=data_source, 
+            return plot_indicator_results_fastest(df_results, rule, title=title, data_source=data_source, 
                                          output_path=output_path or "results/plots/fastest_plot.html", 
                                          mode=mode)
-            return None
         elif mode in ['fast', 'dask']:
             logger.print_info(f"Using 'fast' mode (Dask + Datashader + Bokeh) for plotting...")
-            plot_indicator_results_fast(df_results, rule, title=title, data_source=data_source, 
+            return plot_indicator_results_fast(df_results, rule, title=title, data_source=data_source, 
                                       output_path=output_path or "results/plots/fast_plot.html", 
                                       mode=mode)
-            return None
         elif mode in ['plotly', 'plt']:
             logger.print_info(f"Using 'plotly' mode for plotting...")
             return plot_indicator_results_plotly(df_results, rule, title)
         elif mode in ['mplfinance', 'mpl']:
             logger.print_info(f"Using 'mplfinance' mode for plotting...")
-            return plot_indicator_results_mplfinance(df_results, rule, title)
+            try:
+                return plot_indicator_results_mplfinance(df_results, rule, title)
+            except Exception as e:
+                error_msg = f"Error in plot_indicator_results with mode='mplfinance': {str(e)}"
+                logger.print_error(error_msg)
+                logger.print_warning("Falling back to 'plotly' mode due to error...")
+                return plot_indicator_results_plotly(df_results, rule, title)
         else:
             logger.print_warning(f"Unknown plotting mode '{mode}', defaulting to 'plotly'...")
             return plot_indicator_results_plotly(df_results, rule, title)
     except Exception as e:
-        logger.print_error(f"Error in plot_indicator_results with mode='{mode}': {str(e)}")
-        # Try to fallback to plotly if another mode fails
+        error_msg = f"Error in plot_indicator_results with mode='{mode}': {str(e)}"
+        logger.print_error(error_msg)
         if mode != 'plotly':
-            logger.print_warning(f"Falling back to 'plotly' mode due to error...")
+            logger.print_warning("Falling back to 'plotly' mode due to error...")
             try:
                 return plot_indicator_results_plotly(df_results, rule, title)
             except Exception as fallback_error:
                 logger.print_error(f"Fallback to 'plotly' also failed: {str(fallback_error)}")
-                return None
         return None
