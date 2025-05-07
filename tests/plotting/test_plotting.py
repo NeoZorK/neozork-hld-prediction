@@ -165,21 +165,33 @@ class TestPlottingFunction(unittest.TestCase):
             self.fail(f"plot_indicator_results failed unexpectedly in minimal test: {e}")
 
     # Test plotting when mpf.plot raises an exception
-    @patch('src.plotting.plotting.mpf.plot')
+    @patch('src.plotting.mplfinance_plot.mpf')
+    @patch('src.plotting.plotting.plot_indicator_results_mplfinance')
+    @patch('src.plotting.plotting.plot_indicator_results_plotly')
     @patch('src.plotting.plotting.logger')
-    def test_plot_exception_handling(self, mock_logger, mock_mpf_plot):
-        mock_mpf_plot.side_effect = Exception("MPF Render Error")
+    def test_plot_exception_handling(self, mock_logger, mock_plotly, mock_mplfinance, mock_mpf):
+        # Configure the mocks
+        mock_mplfinance.side_effect = Exception("MPF Render Error")
+        mock_plotly.return_value = None
 
-        print(f"DEBUG: Type of mock_logger in test_plot_exception_handling: {type(mock_logger)}")
+        # Call the function with mplfinance mode
+        result = plot_indicator_results(self.df_results, self.rule, self.title, mode="mplfinance")
 
-        # Call the function to test, specifying the mplfinance branch
-        # Call the function to test, specifying the mplfinance mode
-        plot_indicator_results(self.df_results, self.rule, self.title, mode="mplfinance")
-        # Сheck that the logger's print_error method was called
-        mock_logger.print_error.assert_called_once()
-        error_call_args = mock_logger.print_error.call_args[0]
-        self.assertIn("Error during mplfinance plotting: MPF Render Error", error_call_args[0])
-        mock_logger.print_warning.assert_called_once()
+        # Verify error was logged
+        mock_logger.print_error.assert_called_with(
+            "Error in plot_indicator_results with mode='mplfinance': MPF Render Error"
+        )
+
+        # Verify fallback warning was logged
+        mock_logger.print_warning.assert_called_with(
+            "Falling back to 'plotly' mode due to error..."
+        )
+
+        # Verify plotly fallback was called
+        mock_plotly.assert_called_once_with(self.df_results, self.rule, self.title)
+
+        # Verify the final result
+        self.assertIsNone(result)
 
     # Test the mode parameter for fastest mode
     @patch('src.plotting.plotting.plot_indicator_results_fastest')
@@ -318,3 +330,4 @@ class TestPlottingFunction(unittest.TestCase):
 # Allow running the tests directly
 if __name__ == '__main__':
     unittest.main()
+
