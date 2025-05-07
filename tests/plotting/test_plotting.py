@@ -287,7 +287,9 @@ class TestPlottingFunction(unittest.TestCase):
     @patch('src.plotting.plotting.logger')
     def test_plot_mode_integration(self, mock_logger, mock_mpl, mock_plotly, mock_fast, mock_fastest):
         """Test that plot_indicator_results correctly routes to different plotting functions based on mode"""
-        # Set return values for the mocked functions
+        # Set return values for all mocked functions
+        mock_fastest.return_value = None
+        mock_fast.return_value = None
         mock_plotly.return_value = "Plotly result"
         mock_mpl.return_value = "MPL result"
         
@@ -329,3 +331,4 @@ class TestPlottingFunction(unittest.TestCase):
 # Allow running the tests directly
 if __name__ == '__main__':
     unittest.main()
+
