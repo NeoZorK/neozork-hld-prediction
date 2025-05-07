@@ -38,16 +38,17 @@ for rule in rules:
         commands.append([PYTHON, SCRIPT, 'csv', '--csv-file', csv_file, '--point', '0.01', '--rule', rule, '-d', draw])
 
 # yfinance/yf mods
-for mode in ['yf', 'yfinance']:
-    for rule in rules:
-        for draw in draw_modes:
-            commands.append([
-                PYTHON, SCRIPT, mode, '--ticker', 'AAPL', '--period', '1mo', '--point', '0.01', '--rule', rule, '-d', draw
-            ])
-            time.sleep(2)  # Avoid hitting API limits
-            commands.append([
-                PYTHON, SCRIPT, mode, '--ticker', 'AAPL', '--start', '2024-01-01', '--end', '2024-04-01', '--point', '0.01', '--rule', rule, '-d', draw
-            ])
+# yfinance/yf modes was disabled due API limits
+# for mode in ['yf', 'yfinance']:
+#     for rule in rules:
+#         for draw in draw_modes:
+#             commands.append([
+#                 PYTHON, SCRIPT, mode, '--ticker', 'AAPL', '--period', '1mo', '--point', '0.01', '--rule', rule, '-d', draw
+#             ])
+#             time.sleep(2)  # Avoid hitting API limits
+#             commands.append([
+#                 PYTHON, SCRIPT, mode, '--ticker', 'AAPL', '--start', '2024-01-01', '--end', '2024-04-01', '--point', '0.01', '--rule', rule, '-d', draw
+#             ])
 
 
 # polygon mods
