@@ -143,10 +143,9 @@ class TestPlottingFunction(unittest.TestCase):
         # Check figratio calculation roughly matches expected shape
         self.assertIsInstance(call_kwargs['figratio'], tuple)
 
-
     # Test plotting with minimal columns (only OHLC + Direction for markers)
-    @patch('src.plotting.plotting.mpf.make_addplot')
-    @patch('src.plotting.plotting.mpf.plot')
+    @patch('src.plotting.mplfinance_plot.mpf.make_addplot')
+    @patch('src.plotting.mplfinance_plot.mpf.plot')
     @patch('src.plotting.plotting.logger', new_callable=MockLogger)
     def test_plot_minimal_columns(self, _, mock_mpf_plot, mock_make_addplot):
         minimal_df = self.df_results[['Open', 'High', 'Low', 'Close', 'Direction']].copy()
@@ -154,8 +153,7 @@ class TestPlottingFunction(unittest.TestCase):
         mock_make_addplot.return_value = {}  # Keep mock basic
 
         try:
-            # Call the function with minimal data, specifying mplfinance
-            # Call the function with minimal data, specifying mplfinance
+            # Call the function with minimal data, specifying mplfinance mode
             plot_indicator_results(minimal_df, rule, "Minimal Plot", mode="mplfinance")
             call_args, call_kwargs = mock_mpf_plot.call_args
             pd.testing.assert_frame_equal(call_args[0], minimal_df)
