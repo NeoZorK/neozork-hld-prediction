@@ -53,29 +53,24 @@ class TestPlottingFunction(unittest.TestCase):
             self.assertIn("must contain columns", error_msg)
 
     # Test the generation of addplot list and call to mpf.plot
-    @patch('src.plotting.plotting.mpf.make_addplot')
-    @patch('src.plotting.plotting.mpf.plot')
+    @patch('src.plotting.mplfinance_plot.mpf')
     @patch('src.plotting.plotting.logger', new_callable=MockLogger) # Mock logger in plotting.py
-    def test_plot_calls_and_addplots(self, _, mock_mpf_plot, mock_make_addplot):
+    def test_plot_calls_and_addplots(self, mock_logger, mock_mpf):
+        # Configure mpf mock
+        mock_mpf.make_addplot.side_effect = lambda data, **kwargs: {"data": data.name if isinstance(data, pd.Series) else 'signal', "kwargs": kwargs}
+        mock_mpf.plot.return_value = None
 
-        # Mock the make_addplot function to track calls
-        self.assertTrue('Low' in self.df_results.columns)
-        self.assertTrue('High' in self.df_results.columns)
-
-        # Define unique return values for make_addplot calls to track them
-        mock_make_addplot.side_effect = lambda data, **kwargs: {"data": data.name if isinstance(data, pd.Series) else 'signal', "kwargs": kwargs}
-
-        # Call the function to test, specifying the mplfinance branch
         # Call the function to test, specifying the mplfinance mode
         plot_indicator_results(self.df_results, self.rule, self.title, mode="mplfinance")
+
         # Check that make_addplot was called the expected number of times
-        self.assertEqual(mock_make_addplot.call_count, 9)
+        self.assertEqual(mock_mpf.make_addplot.call_count, 9)
 
         # --- Assertions for make_addplot calls ---
         # Expected calls based on self.df_results columns and logic
         expected_addplot_calls = [
             # PPrice1
-            call(self.df_results['PPrice1'], panel=0, color='green', width=0.9, linestyle='dotted', title="PPrice1", secondary_y=True),
+            call(self.df_results['PPrice1'], panel=0, color='lime', width=0.9, linestyle='dotted', title="PPrice1", secondary_y=True),
             # PPrice2
             call(self.df_results['PPrice2'], panel=0, color='red', width=0.9, linestyle='dotted', title="PPrice2", secondary_y=True),
             # PV (panel 1)
@@ -93,14 +88,13 @@ class TestPlottingFunction(unittest.TestCase):
         ]
 
         # Check the number of calls matches expected plots
-        self.assertEqual(mock_make_addplot.call_count, len(expected_addplot_calls))
+        self.assertEqual(mock_mpf.make_addplot.call_count, len(expected_addplot_calls))
 
         # More detailed check of kwargs for specific plots (e.g., PPrice1, PV, signals)
-        actual_calls = mock_make_addplot.call_args_list
+        actual_calls = mock_mpf.make_addplot.call_args_list
         # Example: Check PPrice1 call details
         pp1_call = next(c for c in actual_calls if c[1].get('title') == 'PPrice1')
         self.assertEqual(pp1_call[1]['panel'], 0)
-        # wait green color for PPrice1
         self.assertEqual(pp1_call[1]['color'], 'lime')
         pd.testing.assert_series_equal(pp1_call[0][0], self.df_results['PPrice1'], check_names=False)
 
@@ -124,10 +118,9 @@ class TestPlottingFunction(unittest.TestCase):
         self.assertTrue(np.isnan(buy_signal_data.iloc[3])) # NOTRADE
         self.assertFalse(np.isnan(buy_signal_data.iloc[4])) # BUY
 
-
         # --- Assertions for mpf.plot call ---
-        mock_mpf_plot.assert_called_once()
-        call_args, call_kwargs = mock_mpf_plot.call_args
+        mock_mpf.plot.assert_called_once()
+        call_args, call_kwargs = mock_mpf.plot.call_args
 
         # Check the DataFrame passed
         pd.testing.assert_frame_equal(call_args[0], self.df_results)
@@ -138,15 +131,14 @@ class TestPlottingFunction(unittest.TestCase):
         self.assertEqual(call_kwargs['title'], f"{self.title} - Rule: {self.rule.name}")
         self.assertEqual(call_kwargs['ylabel'], 'Price')
         self.assertTrue(call_kwargs['volume']) # Volume column exists
-        self.assertEqual(len(call_kwargs['addplot']), mock_make_addplot.call_count) # Check all generated plots passed
+        self.assertEqual(len(call_kwargs['addplot']), mock_mpf.make_addplot.call_count) # Check all generated plots passed
         self.assertEqual(call_kwargs['panel_ratios'], (4, 1, 1, 1, 0.8))
         # Check figratio calculation roughly matches expected shape
         self.assertIsInstance(call_kwargs['figratio'], tuple)
 
-
     # Test plotting with minimal columns (only OHLC + Direction for markers)
-    @patch('src.plotting.plotting.mpf.make_addplot')
-    @patch('src.plotting.plotting.mpf.plot')
+    @patch('src.plotting.mplfinance_plot.mpf.make_addplot')
+    @patch('src.plotting.mplfinance_plot.mpf.plot')
     @patch('src.plotting.plotting.logger', new_callable=MockLogger)
     def test_plot_minimal_columns(self, _, mock_mpf_plot, mock_make_addplot):
         minimal_df = self.df_results[['Open', 'High', 'Low', 'Close', 'Direction']].copy()
@@ -154,8 +146,7 @@ class TestPlottingFunction(unittest.TestCase):
         mock_make_addplot.return_value = {}  # Keep mock basic
 
         try:
-            # Call the function with minimal data, specifying mplfinance
-            # Call the function with minimal data, specifying mplfinance
+            # Call the function with minimal data, specifying mplfinance mode
             plot_indicator_results(minimal_df, rule, "Minimal Plot", mode="mplfinance")
             call_args, call_kwargs = mock_mpf_plot.call_args
             pd.testing.assert_frame_equal(call_args[0], minimal_df)
@@ -167,27 +158,42 @@ class TestPlottingFunction(unittest.TestCase):
             self.fail(f"plot_indicator_results failed unexpectedly in minimal test: {e}")
 
     # Test plotting when mpf.plot raises an exception
-    @patch('src.plotting.plotting.mpf.plot')
+    @patch('src.plotting.mplfinance_plot.mpf')
+    @patch('src.plotting.plotting.plot_indicator_results_mplfinance')
+    @patch('src.plotting.plotting.plot_indicator_results_plotly')
     @patch('src.plotting.plotting.logger')
-    def test_plot_exception_handling(self, mock_logger, mock_mpf_plot):
-        mock_mpf_plot.side_effect = Exception("MPF Render Error")
+    def test_plot_exception_handling(self, mock_logger, mock_plotly, mock_mplfinance, mock_mpf):
+        # Configure the mocks
+        mock_mplfinance.side_effect = Exception("MPF Render Error")
+        mock_plotly.return_value = None
 
-        print(f"DEBUG: Type of mock_logger in test_plot_exception_handling: {type(mock_logger)}")
+        # Call the function with mplfinance mode
+        result = plot_indicator_results(self.df_results, self.rule, self.title, mode="mplfinance")
 
-        # Call the function to test, specifying the mplfinance branch
-        # Call the function to test, specifying the mplfinance mode
-        plot_indicator_results(self.df_results, self.rule, self.title, mode="mplfinance")
-        # Сheck that the logger's print_error method was called
-        mock_logger.print_error.assert_called_once()
-        error_call_args = mock_logger.print_error.call_args[0]
-        self.assertIn("Error during mplfinance plotting: MPF Render Error", error_call_args[0])
-        mock_logger.print_warning.assert_called_once()
+        # Verify error was logged
+        mock_logger.print_error.assert_called_with(
+            "Error in plot_indicator_results with mode='mplfinance': MPF Render Error"
+        )
+
+        # Verify fallback warning was logged
+        mock_logger.print_warning.assert_called_with(
+            "Falling back to 'plotly' mode due to error..."
+        )
+
+        # Verify plotly fallback was called
+        mock_plotly.assert_called_once_with(self.df_results, self.rule, self.title)
+
+        # Verify the final result
+        self.assertIsNone(result)
 
     # Test the mode parameter for fastest mode
     @patch('src.plotting.plotting.plot_indicator_results_fastest')
     @patch('src.plotting.plotting.logger')
     def test_plot_fastest_mode(self, mock_logger, mock_fastest_plot):
         """Test that plot_indicator_results correctly calls plot_indicator_results_fastest when mode='fastest'"""
+        # Configure mock to return None
+        mock_fastest_plot.return_value = None
+        
         # Call the function with fastest mode
         result = plot_indicator_results(
             self.df_results, self.rule, self.title, 
@@ -251,6 +257,9 @@ class TestPlottingFunction(unittest.TestCase):
     @patch('src.plotting.plotting.logger')
     def test_plot_fastest_mode_large_dataset(self, mock_logger, mock_fastest_plot):
         """Test that plot_indicator_results correctly handles large datasets with fastest mode"""
+        # Configure mock to return None
+        mock_fastest_plot.return_value = None
+        
         # Create a large dataset by repeating the existing one
         large_df = pd.concat([self.df_results] * 1000, ignore_index=True)
         # Reset the index to be datetime
@@ -278,7 +287,9 @@ class TestPlottingFunction(unittest.TestCase):
     @patch('src.plotting.plotting.logger')
     def test_plot_mode_integration(self, mock_logger, mock_mpl, mock_plotly, mock_fast, mock_fastest):
         """Test that plot_indicator_results correctly routes to different plotting functions based on mode"""
-        # Set return values for the mocked functions
+        # Set return values for all mocked functions
+        mock_fastest.return_value = None
+        mock_fast.return_value = None
         mock_plotly.return_value = "Plotly result"
         mock_mpl.return_value = "MPL result"
         
@@ -320,3 +331,4 @@ class TestPlottingFunction(unittest.TestCase):
 # Allow running the tests directly
 if __name__ == '__main__':
     unittest.main()
+
