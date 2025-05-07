@@ -6,8 +6,6 @@ Orchestrates calls to different step modules.
 All comments are in English.
 """
 import time
-import os # Keep os import if needed elsewhere
-import pandas as pd
 import traceback # Keep traceback
 
 # Use relative imports within the src package
@@ -16,7 +14,7 @@ from ..data.data_acquisition import acquire_data
 from ..utils.point_size_determination import get_point_size
 from ..calculation.indicator_calculation import calculate_indicator
 from ..plotting.plotting_generation import generate_plot
-from ..core.show_mode import handle_show_mode
+from src.cli.cli_show_mode import handle_show_mode
 
 # Definition of the run_indicator_workflow function
 def run_indicator_workflow(args):

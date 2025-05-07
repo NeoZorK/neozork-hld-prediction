@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# src/core/show_mode.py
+# src/core/cli_show_mode.py
 
 import os
 from pathlib import Path
@@ -10,7 +10,7 @@ import traceback
 
 # Import for indicator calculation; fallback for different relative import
 try:
-    from ..calculation.indicator_calculation import calculate_indicator
+    from src.calculation.indicator_calculation import calculate_indicator
 except ImportError:
     from src.calculation.indicator_calculation import calculate_indicator
 
@@ -194,7 +194,7 @@ def _should_draw_plot(args):
     """
     Returns True if the draw flag is set and is one of supported modes.
     """
-    plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly"}
+    plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly", "seaborn", "sb"}
     return hasattr(args, "draw") and args.draw is not None and args.draw in plot_modes
 
 def handle_show_mode(args):
