@@ -12,6 +12,7 @@ env/
 .idea/
 .vscode/
 *.iml
+misc.xml
 
 # Project specific
 data/cleaned/
