@@ -41,6 +41,11 @@ def main():
 
     suppress_warnings()
 
+    # Ensure the log directory exists before writing the log file
+    log_dir = os.path.dirname(args.log_file)
+    if log_dir and not os.path.exists(log_dir):
+        os.makedirs(log_dir, exist_ok=True)
+
     # Truncate the log file at the start of each run
     with open(args.log_file, "w", encoding="utf-8") as f:
         f.write("")
@@ -153,3 +158,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
