@@ -162,6 +162,23 @@ def clean_file(
                 logger.info("  NaN handling skipped (as per --handle-nan=none).")
         logger.info(f"  Size after NaN handling: {df.shape}")
 
+        # --- Ensure date column is preserved ---
+        # Try to preserve a date column if present (timestamp, DateTime, or datetime)
+        date_col_candidates = [col for col in df.columns if col.lower() in ['timestamp', 'datetime', 'date', 'datetime_']]
+        if not date_col_candidates:
+            # If index is DatetimeIndex, reset it to a column
+            if isinstance(df.index, pd.DatetimeIndex):
+                df = df.reset_index()
+                date_col_candidates = [col for col in df.columns if col.lower() in ['timestamp', 'datetime', 'date', 'datetime_']]
+        # Always keep the first found date column at the front
+        if date_col_candidates:
+            date_col = date_col_candidates[0]
+            # Move date column to front if not already
+            cols = list(df.columns)
+            if cols[0] != date_col:
+                cols.insert(0, cols.pop(cols.index(date_col)))
+                df = df[cols]
+
         # Create output path based on file type
         output_filename = os.path.basename(input_path)
         
