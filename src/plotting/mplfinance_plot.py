@@ -30,7 +30,16 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         logger.print_error(f"Input DataFrame must contain columns: {required_cols}. Found: {list(df_results.columns)}")
         return
     if not isinstance(df_results.index, pd.DatetimeIndex):
-        logger.print_warning("DataFrame index is not a DatetimeIndex. Plotting might be affected.")
+        # Try to set DatetimeIndex from 'Timestamp' or similar column
+        for col in ['Timestamp', 'timestamp', 'Date', 'date', 'Datetime', 'datetime']:
+            if col in df_results.columns:
+                df_results = df_results.copy()
+                df_results[col] = pd.to_datetime(df_results[col], errors='coerce')
+                df_results = df_results.set_index(col)
+                logger.print_info(f"Set DataFrame index to DatetimeIndex using column '{col}' for mplfinance plot.")
+                break
+        if not isinstance(df_results.index, pd.DatetimeIndex):
+            logger.print_warning("DataFrame index is not a DatetimeIndex after attempted conversion. Plotting might fail.")
 
     plots_to_add = []
     panel_count = 0
