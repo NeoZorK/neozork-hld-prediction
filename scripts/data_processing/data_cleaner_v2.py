@@ -176,13 +176,18 @@ def clean_file(
             if cols[0] != date_col:
                 cols.insert(0, cols.pop(cols.index(date_col)))
                 df = df[cols]
-            # Convert to datetime and set as index if not already
+            # Always convert date column to datetime (even after reset_index)
+            df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+            # Set as index if not already
             if not isinstance(df.index, pd.DatetimeIndex) or df.index.name != date_col:
-                df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
                 df = df.set_index(date_col)
         # --- Ensure date column is present in columns before saving ---
         if isinstance(df.index, pd.DatetimeIndex):
             df = df.reset_index()
+            # Ensure the date column is still datetime after reset_index
+            if date_col_candidates:
+                date_col = date_col_candidates[0]
+                df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
 
         # Create output path based on file type
         output_filename = os.path.basename(input_path)
