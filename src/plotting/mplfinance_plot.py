@@ -98,28 +98,28 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
     volume_panel = 1
     if panel_count > 0:
         volume_panel = panel_count + 1
-        if plot_volume:
-             pass
 
+    # Ensure ratios are correctly calculated
     ratios = [4]
     ratios.extend([1] * panel_count)
     if plot_volume:
-         ratios.append(0.8)
+        ratios.append(0.8)
 
     try:
-        mpf.plot(df_results,
-                 type='candle',
-                 style='yahoo',
-                 title=f"{title} - Rule: {rule.name}",
-                 ylabel='Price',
-                 volume=plot_volume,
-                 volume_panel=volume_panel if plot_volume else 0,
-                 addplot=plots_to_add,
-                 panel_ratios=tuple(ratios),
-                 figratio=(12, 6 + panel_count * 1.5 + (1 if plot_volume else 0)),
-                 figscale=1.1,
-                 warn_too_much_data=10000
-                 )
+        mpf.plot(
+            df_results,
+            type='candle',
+            style='yahoo',
+            title=f"{title} - Rule: {rule.name}",
+            ylabel='Price',
+            volume=plot_volume,
+            volume_panel=volume_panel if plot_volume else 0,
+            addplot=plots_to_add,
+            panel_ratios=tuple(ratios),
+            figratio=(12, 6 + panel_count * 1.5 + (1 if plot_volume else 0)),
+            figscale=1.1,
+            warn_too_much_data=10000
+        )
         logger.print_success("Mplfinance plot displayed.")
     except Exception as e:
         logger.print_error(f"Error during mplfinance plotting: {e}")
