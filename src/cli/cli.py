@@ -235,14 +235,16 @@ def parse_arguments():
         if args.show_args:
             # If the first positional arg is a valid source, treat as source
             valid_sources = ['yfinance', 'yf', 'csv', 'polygon', 'binance']
-            if args.show_args[0] in valid_sources:
-                args.source = args.show_args[0]
-                args.keywords = args.show_args[1:]
-                if args.source == 'yf':
-                    args.source = 'yfinance'
-            else:
-                # If not a valid source, treat all as keywords (source stays default)
-                args.keywords = args.show_args
+            # Remove any flags from show_args (e.g. --raw, --cleaned, --draw, etc.)
+            filtered_args = [a for a in args.show_args if not a.startswith('--')]
+            if filtered_args:
+                if filtered_args[0] in valid_sources:
+                    args.source = filtered_args[0]
+                    args.keywords = filtered_args[1:]
+                    if args.source == 'yf':
+                        args.source = 'yfinance'
+                else:
+                    args.keywords = filtered_args
 
     return args
 
