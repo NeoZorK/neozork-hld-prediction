@@ -229,5 +229,20 @@ def parse_arguments():
     if effective_mode == 'show' and args.source == 'yf':
         args.source = 'yfinance'
 
+    # --- Fix: Merge positional show_args into source/keywords for show mode ---
+    if effective_mode == 'show':
+        # If user provided positional arguments after 'show', use them as source/keywords
+        if args.show_args:
+            # If the first positional arg is a valid source, treat as source
+            valid_sources = ['yfinance', 'yf', 'csv', 'polygon', 'binance']
+            if args.show_args[0] in valid_sources:
+                args.source = args.show_args[0]
+                args.keywords = args.show_args[1:]
+                if args.source == 'yf':
+                    args.source = 'yfinance'
+            else:
+                # If not a valid source, treat all as keywords (source stays default)
+                args.keywords = args.show_args
+
     return args
 
