@@ -181,9 +181,7 @@ def clean_file(
             if not isinstance(df.index, pd.DatetimeIndex) or df.index.name != date_col:
                 df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
                 df = df.set_index(date_col)
-                # Remove duplicate date columns if set_index created duplicate
-                if date_col in df.columns:
-                    df = df.drop(columns=[date_col])
+                # Do NOT drop the date_col from columns after set_index, so it will be preserved in output
 
         # Create output path based on file type
         output_filename = os.path.basename(input_path)
