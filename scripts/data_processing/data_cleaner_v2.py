@@ -195,6 +195,10 @@ def clean_file(
                 cols_with_index.remove('index')
                 cols_with_index.append('index')
                 df = df[cols_with_index]
+            # Set 'index' as DatetimeIndex for plotting compatibility
+            if 'index' in df.columns:
+                df['index'] = pd.to_datetime(df['index'], errors='coerce')
+                df = df.set_index('index')
 
         # Create output path based on file type
         output_filename = os.path.basename(input_path)
