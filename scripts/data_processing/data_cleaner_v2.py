@@ -176,8 +176,16 @@ def clean_file(
             df = df[~df[date_col].isna()]
             # --- Reorder columns: all except date_col, then date_col last ---
             cols = [col for col in df.columns if col != date_col]
-            cols.append(date_col)
-            df = df[cols]
+            # Ensure the order matches the required schema if possible
+            preferred_order = [
+                'Open', 'Low', 'Close', 'High', 'Volume',
+                'predicted_low', 'predicted_high', 'pressure', 'pressure_vector'
+            ]
+            ordered_cols = [col for col in preferred_order if col in cols]
+            # Add any other columns not in preferred_order
+            ordered_cols += [col for col in cols if col not in ordered_cols]
+            ordered_cols.append(date_col)
+            df = df[ordered_cols]
 
         # Create output path based on file type
         output_filename = os.path.basename(input_path)
