@@ -96,7 +96,8 @@ def clean_file(
     handle_duplicates: str = "remove",
     handle_nan: str = "ffill",
     csv_delimiter: str = ",",
-    csv_header: Union[int, str, None] = 0
+    csv_header: Union[int, str, None] = 0,
+    preserve_structure: bool = False  # New parameter to preserve structure
 ) -> bool:
     """Clean a single data file."""
     global logger
@@ -132,116 +133,46 @@ def clean_file(
             logger.info("  Empty DataFrame detected, skipping processing")
             return True
 
-        # Handle duplicates first
-        if handle_duplicates == "remove":
-            original_len = len(df)
-            df = df.drop_duplicates()  # By default, considers all columns and keeps first occurrence
-            duplicates_removed = original_len - len(df)
-            logger.info(f"  Duplicates removed: {duplicates_removed}. Size after: {df.shape}")
-
-        # Handle NaN values
-        nan_count = df.isna().sum().sum()
-        if nan_count > 0:
-            logger.info(f"  NaN values detected: {nan_count}")
-            if handle_nan == "ffill":
-                df = df.ffill().bfill()  # Use non-deprecated methods
-                logger.info("  Applied NaN strategy: 'ffill' (with subsequent 'bfill'). NaN after: 0")
-                # Remove any duplicates that might have been created by NaN handling
-                if handle_duplicates == "remove":
-                    original_len = len(df)
-                    df = df.drop_duplicates()
-                    duplicates_removed = original_len - len(df)
-                    if duplicates_removed > 0:
-                        logger.info(f"  Additional duplicates removed after NaN handling: {duplicates_removed}. Size after: {df.shape}")
-            elif handle_nan == "dropna_rows":
+        if not preserve_structure:
+            # Handle duplicates first
+            if handle_duplicates == "remove":
                 original_len = len(df)
-                df = df.dropna()
-                rows_removed = original_len - len(df)
-                logger.info(f"  Applied NaN strategy: 'dropna_rows'. Rows removed: {rows_removed}. NaN after: 0")
-            else:
-                logger.info("  NaN handling skipped (as per --handle-nan=none).")
-        logger.info(f"  Size after NaN handling: {df.shape}")
+                df = df.drop_duplicates()  # By default, considers all columns and keeps first occurrence
+                duplicates_removed = original_len - len(df)
+                logger.info(f"  Duplicates removed: {duplicates_removed}. Size after: {df.shape}")
 
-        # --- Ensure date column is preserved and set as DatetimeIndex ---
-        date_col_candidates = [col for col in df.columns if col.lower() in ['timestamp', 'datetime', 'date', 'datetime_']]
-        if not date_col_candidates:
-            # If index is DatetimeIndex, reset it to a column
-            if isinstance(df.index, pd.DatetimeIndex):
-                df = df.reset_index()
-                date_col_candidates = [col for col in df.columns if col.lower() in ['timestamp', 'datetime', 'date', 'datetime_']]
-        if date_col_candidates:
-            date_col = date_col_candidates[0]
-            # Ensure date column is datetime and no NaT
-            df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
-            df = df[~df[date_col].isna()]
-            # --- Reorder columns: all except date_col, then date_col last ---
-            cols = [col for col in df.columns if col != date_col]
-            # Ensure the order matches the required schema if possible
-            preferred_order = [
-                'Open', 'Low', 'Close', 'High', 'Volume',
-                'predicted_low', 'predicted_high', 'pressure', 'pressure_vector'
-            ]
-            ordered_cols = [col for col in preferred_order if col in cols]
-            # Add any other columns not in preferred_order
-            ordered_cols += [col for col in cols if col not in ordered_cols]
-            ordered_cols.append(date_col)
-            df = df[ordered_cols]
-            # Add 'index' column as a copy of date_col if not present, for plotting compatibility
-            if 'index' not in df.columns:
-                df['index'] = df[date_col]
-            # Move 'index' column to the last position (after Timestamp)
-            if 'index' in df.columns:
-                cols_with_index = list(df.columns)
-                cols_with_index.remove('index')
-                cols_with_index.append('index')
-                df = df[cols_with_index]
-            # Set 'index' as DatetimeIndex for plotting compatibility
-            if 'index' in df.columns:
-                df['index'] = pd.to_datetime(df['index'], errors='coerce')
-                df = df.set_index('index')
+            # Handle NaN values
+            nan_count = df.isna().sum().sum()
+            if nan_count > 0:
+                logger.info(f"  NaN values detected: {nan_count}")
+                if handle_nan == "ffill":
+                    df = df.ffill().bfill()  # Use non-deprecated methods
+                    logger.info("  Applied NaN strategy: 'ffill' (with subsequent 'bfill'). NaN after: 0")
+                elif handle_nan == "dropna_rows":
+                    original_len = len(df)
+                    df = df.dropna()
+                    rows_removed = original_len - len(df)
+                    logger.info(f"  Applied NaN strategy: 'dropna_rows'. Rows removed: {rows_removed}. NaN after: 0")
+                else:
+                    logger.info("  NaN handling skipped (as per --handle-nan=none).")
 
         # Create output path based on file type
         output_filename = os.path.basename(input_path)
-        
-        # Handle file path differently depending on file type and filename pattern
-        if file_type == 'csv':
-            # For CSV files, check if they came from csv_converted directory
-            if "csv_converted" in input_path:
-                # Save to output_base_dir/cache/csv_converted
-                output_dir = os.path.join(output_base_dir, "cache", "csv_converted")
-            else:
-                # Other CSV files save to raw_parquet
-                output_dir = os.path.join(output_base_dir, "raw_parquet")
-        else:  # parquet
-            # For Parquet files with CSVExport_ prefix, save to cache/csv_converted
-            if output_filename.startswith("CSVExport_"):
-                output_dir = os.path.join(output_base_dir, "cache", "csv_converted")
-                logger.info(f"  CSVExport parquet file detected, saving to csv_converted directory")
-            else:
-                # For other Parquet files - save to output_base_dir/raw_parquet
-                output_dir = os.path.join(output_base_dir, "raw_parquet")
-        
+        output_dir = os.path.join(output_base_dir, "raw_parquet")
         output_path = os.path.join(output_dir, output_filename)
-        
-        # Create output directory structure if it doesn't exist
-        os.makedirs(output_dir, exist_ok=True)  # Create subdirectory
-        
-        logger.debug(f"Saving to output directory: {output_dir}")
-        logger.debug(f"Full output path: {output_path}")
 
-        # Save cleaned file
+        # Create output directory structure if it doesn't exist
+        os.makedirs(output_dir, exist_ok=True)
+
         logger.info(f"  Saving cleaned file to: {output_path}")
         try:
             if file_type == 'csv':
                 df.to_csv(output_path, index=False)
-                logger.debug(f"Successfully wrote CSV file with shape {df.shape}")
             else:  # parquet
                 df.to_parquet(output_path, index=False)
-                logger.debug(f"Successfully wrote Parquet file with shape {df.shape}")
-            
+
             logger.info(f"  File successfully saved to {output_dir}")
-            
-            # Verify file exists after saving
+
             if os.path.exists(output_path):
                 logger.debug(f"Verified file exists at: {output_path}")
             else:
@@ -305,7 +236,6 @@ def main():
         type=str, # Read as string, then convert
         help="Header row in CSV files (0-based index) or 'infer' for auto-detection."
     )
-    
     parser.add_argument(
         "--verbose",
         action="store_true",
@@ -316,11 +246,11 @@ def main():
         default="data_cleaner_v2.log",
         help="Log file name for recording the cleaning process."
     )
-    # parser.add_argument( # Overwrite option - removed for now, overwriting by default in output_dir
-    #     "--overwrite",
-    #     action='store_true',
-    #     help="Allow overwriting files in the output directory if they already exist."
-    # )
+    parser.add_argument(
+        "--clean",
+        action="store_true",
+        help="Preserve all fields in the output file without removing columns or indices."
+    )
 
     args = parser.parse_args()
 
@@ -389,7 +319,8 @@ def main():
                 handle_duplicates=args.handle_duplicates,
                 handle_nan=args.handle_nan,
                 csv_delimiter=args.csv_delimiter,
-                csv_header=parsed_header
+                csv_header=parsed_header,
+                preserve_structure=args.clean
             ):
                 success_count += 1
             else:
