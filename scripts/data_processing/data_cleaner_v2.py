@@ -162,15 +162,14 @@ def clean_file(
                 logger.info("  NaN handling skipped (as per --handle-nan=none).")
         logger.info(f"  Size after NaN handling: {df.shape}")
 
-        # --- Ensure date column is preserved ---
-        # Try to preserve a date column if present (timestamp, DateTime, or datetime)
+        # --- Ensure date column is preserved and set as DatetimeIndex ---
         date_col_candidates = [col for col in df.columns if col.lower() in ['timestamp', 'datetime', 'date', 'datetime_']]
         if not date_col_candidates:
             # If index is DatetimeIndex, reset it to a column
             if isinstance(df.index, pd.DatetimeIndex):
                 df = df.reset_index()
                 date_col_candidates = [col for col in df.columns if col.lower() in ['timestamp', 'datetime', 'date', 'datetime_']]
-        # Always keep the first found date column at the front
+        # Always keep the first found date column at the front and set as DatetimeIndex
         if date_col_candidates:
             date_col = date_col_candidates[0]
             # Move date column to front if not already
@@ -178,6 +177,13 @@ def clean_file(
             if cols[0] != date_col:
                 cols.insert(0, cols.pop(cols.index(date_col)))
                 df = df[cols]
+            # Convert to datetime and set as index if not already
+            if not isinstance(df.index, pd.DatetimeIndex) or df.index.name != date_col:
+                df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+                df = df.set_index(date_col)
+                # Remove duplicate date columns if set_index created duplicate
+                if date_col in df.columns:
+                    df = df.drop(columns=[date_col])
 
         # Create output path based on file type
         output_filename = os.path.basename(input_path)
