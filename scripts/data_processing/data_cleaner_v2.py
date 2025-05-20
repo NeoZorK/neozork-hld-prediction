@@ -186,6 +186,15 @@ def clean_file(
             ordered_cols += [col for col in cols if col not in ordered_cols]
             ordered_cols.append(date_col)
             df = df[ordered_cols]
+            # Add 'index' column as a copy of date_col if not present, for plotting compatibility
+            if 'index' not in df.columns:
+                df['index'] = df[date_col]
+            # Move 'index' column to the last position (after Timestamp)
+            if 'index' in df.columns:
+                cols_with_index = list(df.columns)
+                cols_with_index.remove('index')
+                cols_with_index.append('index')
+                df = df[cols_with_index]
 
         # Create output path based on file type
         output_filename = os.path.basename(input_path)
