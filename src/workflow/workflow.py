@@ -7,6 +7,7 @@ All comments are in English.
 """
 import time
 import traceback # Keep traceback
+import pandas as pd
 
 # Use relative imports within the src package
 from ..common import logger
@@ -90,6 +91,10 @@ def run_indicator_workflow(args):
             error_msg_from_data = data_info.get("error_message") or "Data acquisition returned None or empty DataFrame."
             raise ValueError(error_msg_from_data)
 
+        # Validate that ohlcv_df has a DatetimeIndex
+        if not isinstance(ohlcv_df.index, pd.DatetimeIndex):
+            raise ValueError("The DataFrame does not have a valid DatetimeIndex. Ensure the datetime column is correctly parsed.")
+
         # Log DataFrame Metrics (info now comes from data_info)
         logger.print_debug(f"DataFrame Metrics: Rows={data_info.get('rows_count', 0)}, Cols={data_info.get('columns_count', 0)}, Memory={data_info.get('data_size_mb', 0):.3f} MB")
 
@@ -159,3 +164,4 @@ def run_indicator_workflow(args):
     workflow_results["total_duration_sec"] = time.perf_counter() - t_start_workflow
 
     return workflow_results
+
