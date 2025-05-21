@@ -526,12 +526,24 @@ python src/eda/eda_batch_check.py [flags]
 ```bash
 python src/eda/eda_batch_check.py --nan-check --duplicate-check
 ```
-
-
-
-
-
-
+```bash
+python src/eda/eda_batch_check.py --data-quality-checks --basic-stats
+```
+```bash
+python src/eda/eda_batch_check.py -dqc --basic-stats
+```
+```bash
+python src/eda/eda_batch_check.py --correlation-analysis
+```
+```bash
+python src/eda/eda_batch_check.py --feature-importance
+```
+```bash
+python src/eda/eda_batch_check.py --data-quality-checks --fix-files
+```
+```bash
+python src/eda/eda_batch_check.py --nan-check --gap-check --zero-check --basic-stats
+```
 
 ### Running Tests
 
@@ -545,19 +557,19 @@ This project uses Python's built-in `unittest` framework.
 
 3.  **To run all tests in a folder:
     ```bash
-    python -m unitest discover tests/cli  
+    python -m unitest discover tests/cli
     ```
-    
+
 4.  **To run a specific test file:
     ```bash
     python -m unittest tests.cli.test_cli_all_commands
     ```
-    
+
 5.  **To run a specific test case:
     ```bash
     python -m unittest tests.cli.test_cli_all_commands.TestCliAllCommands.test_help
     ```
-    
+
 6.  **To Test All CLI Commands:**
     ```bash
     python tests/cli/test_cli_all_commands.py
@@ -568,3 +580,4 @@ This project uses Python's built-in `unittest` framework.
     ```
 
 *** Conclusion: ***
+
