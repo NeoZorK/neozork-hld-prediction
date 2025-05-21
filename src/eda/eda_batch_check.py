@@ -77,7 +77,7 @@ def main():
             import pandas as pd
             df = pd.read_parquet(file)
             print(f"  {Fore.GREEN}First 5 rows:{Style.RESET_ALL}\n", df.head(5).to_string())
-            print(f"  {Fore.GREEN}First 100 rows:{Style.RESET_ALL}\n", df.head(100).to_string())
+            print(f"  {Fore.GREEN}First 25 rows:{Style.RESET_ALL}\n", df.head(25).to_string())
             print(f"  {Fore.GREEN}Last 5 rows:{Style.RESET_ALL}\n", df.tail(5).to_string())
         except Exception as e:
             print(f"  {Fore.RED}Error reading rows:{Style.RESET_ALL} {e}")
