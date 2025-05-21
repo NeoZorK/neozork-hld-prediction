@@ -29,6 +29,9 @@ def show_help():
     print("\nExamples:")
     print("  python run_analysis.py show                  # Show statistics for all sources")
     print("  python run_analysis.py show yf               # List all Yahoo Finance files")
+    print("  python run_analysis.py show csv              # List all CSV-converted files")
+    print("  python run_analysis.py show binance          # List all Binance files")
+    print("  python run_analysis.py show polygon          # List all Polygon.io files")
     print("  python run_analysis.py show yf aapl          # List YF files containing 'aapl'")
     print("  python run_analysis.py show binance btc MN1  # List Binance files with 'btc' and timeframe 'MN1'")
     print("\nDate filtering:")
@@ -41,15 +44,24 @@ def import_generate_plot():
     from ..plotting.plotting_generation import generate_plot
     return generate_plot
 
-SEARCH_DIRS = [
-    Path("data/raw_parquet"),
-    Path("data/cache/csv_converted")
-]
+def get_search_dirs(args):
+    """
+    Returns the search directories for show mode (raw data only).
+    """
+    return [
+        Path("data/raw_parquet"),
+        Path("data/cache/csv_converted")
+    ]
 
-def count_files_by_source():
+def count_files_by_source(args=None):
     """
     Counts Parquet files by their source prefix (yfinance, csv, polygon, binance).
+    Uses get_search_dirs(args) for directory selection.
     """
+    search_dirs = get_search_dirs(args) if args is not None else [
+        Path("data/raw_parquet"),
+        Path("data/cache/csv_converted")
+    ]
     source_counts = {
         'yfinance': 0,
         'csv': 0,
@@ -58,7 +70,7 @@ def count_files_by_source():
         'other': 0,
         'csv_converted_count': 0
     }
-    for search_dir in SEARCH_DIRS:
+    for search_dir in search_dirs:
         if not search_dir.is_dir():
             continue
         for item in search_dir.iterdir():
@@ -154,6 +166,12 @@ def _print_indicator_result(df, rule_name, datetime_column=None):
     columns_to_show_existing = [col for col in columns_to_show if col in df_to_show.columns]
     row_count = df_to_show.shape[0]
     print(f"\n=== CALCULATED INDICATOR DATA === ({row_count} rows in selected range)")
+
+    # Limit to first 100 rows
+    if row_count > 100:
+        df_to_show = df_to_show.head(100)
+        print("(Showing only the first 100 rows)")
+
     if columns_to_show_existing:
         print(df_to_show[columns_to_show_existing].to_string(index=False))
     else:
@@ -201,9 +219,12 @@ def handle_show_mode(args):
     """
     Handles the 'show' mode logic: finds files, displays info, and potentially triggers plot or indicator calculation.
     """
+    # Always use raw data directories
+    search_dirs = get_search_dirs(args)
+
     if not args.source or args.source == 'help':
         show_help()
-        source_counts = count_files_by_source()
+        source_counts = count_files_by_source(args)
         print("\n=== AVAILABLE DATA FILES ===")
         total_files = sum([count for source, count in source_counts.items() if source not in ['csv_converted_count']])
         if total_files == 0:
@@ -234,7 +255,7 @@ def handle_show_mode(args):
     search_prefix = 'yfinance' if args.source == 'yf' else args.source
     search_keywords = [k.lower() for k in args.keywords]
     found_files = []
-    for search_dir in SEARCH_DIRS:
+    for search_dir in search_dirs:
         if not search_dir.is_dir():
             print(f"Warning: Directory not found: {search_dir}")
             continue
@@ -270,7 +291,7 @@ def handle_show_mode(args):
         print(f"[{idx}] {file_info['name']}")
         print(f"    Size: {file_info['size_mb']:.3f} MB")
         if metadata['num_rows'] != -1:
-            print(f"    Rows: {file_info['num_rows']:,}")
+            print(f"    Rows: {metadata['num_rows']:,}")
         else:
             print(f"    Rows: Could not determine")
         if len(found_files) == 1:
@@ -426,3 +447,4 @@ def handle_show_mode(args):
         except Exception as e:
             print(f"Error plotting file: {e}")
             traceback.print_exc()
+
