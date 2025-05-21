@@ -490,6 +490,49 @@ python run_analysis.py show --help
 2.  **Plots (Optional):** If not disabled via CLI arguments, generates plots displaying `OHLCV` data along with the calculated indicator lines and signals using `mplfinance`. Plots are typically shown interactively or saved if configured.
 3.  **NEW: Raw Data Parquet Files:** When run with API data sources (`yfinance`, `polygon`, `binance`), the script automatically saves the downloaded raw `OHLCV` data into a `.parquet` file within the `data/raw_parquet/` directory. The filename typically includes the `source`, `ticker`, `interval`, and `date range`. This allows for easy reloading and reuse of the fetched data without hitting the APIs again.
 
+
+# Using `src/eda/eda_batch_check.py`
+
+The `eda_batch_check.py` script is designed to perform batch Exploratory Data Analysis (EDA) and data quality checks on Parquet files. It supports various checks such as missing values, duplicates, gaps, zero values, negative values, and infinite values. Additionally, it provides options for basic statistics, correlation analysis, and feature importance.
+
+## Usage
+
+Run the script with the desired flags to perform specific checks or analyses:
+
+```bash
+python src/eda/eda_batch_check.py [flags]
+```
+
+# Flags
+
+## Data Quality Checks
+- `--nan-check`: Check for missing values (NaN) in columns.
+- `--duplicate-check`: Find fully duplicated rows and duplicated values in string columns.
+- `--gap-check`: Find gaps in time series (abnormally large intervals in datetime columns).
+- `--zero-check`: Find zero values in numeric columns (with anomaly heuristics).
+- `--negative-check`: Find negative values in OHLCV and datetime columns.
+- `--inf-check`: Find +inf and -inf values in numeric columns.
+- `--data-quality-checks`, `-dqc`: Run all data quality checks (NaN, duplicates, gaps, zeros, negatives, inf).
+
+## Other Features
+- `--fix-files`: Fix data in the original Parquet files.
+- `--basic-stats`: Show basic statistics for files.
+- `--correlation-analysis`: Perform correlation analysis between numeric features.
+- `--feature-importance`: Perform feature importance analysis.
+
+# Examples
+
+### Run specific checks:
+```bash
+python src/eda/eda_batch_check.py --nan-check --duplicate-check
+```
+
+
+
+
+
+
+
 ### Running Tests
 
 This project uses Python's built-in `unittest` framework.
