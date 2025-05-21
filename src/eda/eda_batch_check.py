@@ -12,14 +12,38 @@ Flags:
     --negative-check           Find negative values in OHLCV and datetime columns
     --inf-check                Find +inf and -inf values in numeric columns
     --data-quality-checks      Run all data quality checks (NaN, duplicates, gaps, zeros, negatives, inf)
-    --fix-files                Fix data in original parquet files
+
+    --fix-nan                  Fix NaN values in columns
+    --fix-duplicates           Fix fully duplicated rows
+    --fix-gaps                 Fix gaps in time series
+    --fix-zeros                Fix zero values in numeric columns
+    --fix-negatives            Fix negative values in OHLCV columns
+    --fix-infs                 Fix infinity values in numeric columns
+    --fix-all                  Fix all detected problems
+    --fix-files                General flag for fixing (must be used with specific fix flags)
+    --restore-backups          Restore original files from .bak backups
+
     --basic-stats              Show basic statistics for files
     --correlation-analysis     Correlation analysis between numeric features
     --feature-importance       Feature importance analysis
 
 Examples:
+    # Check data quality issues
     python eda_batch_check.py --nan-check --duplicate-check
-    python eda_batch_check.py --data-quality-checks --basic-stats
+    python eda_batch_check.py --data-quality-checks
+
+    # Fix specific issues
+    python eda_batch_check.py --fix-files --fix-nan --fix-duplicates
+    python eda_batch_check.py --fix-files --fix-zeros --fix-negatives
+
+    # Fix all detected issues
+    python eda_batch_check.py --fix-files --fix-all
+
+    # Restore original files from backups
+    python eda_batch_check.py --restore-backups
+
+    # Combine analysis with fixing
+    python eda_batch_check.py --data-quality-checks --fix-files --fix-all
 """
 import argparse
 from tqdm import tqdm
@@ -63,16 +87,39 @@ def main():
   {Fore.GREEN}--inf-check{Style.RESET_ALL}                Find +inf and -inf values in numeric columns
   {Fore.GREEN}--data-quality-checks, -dqc{Style.RESET_ALL} Run all data quality checks (NaN, duplicates, gaps, zeros, negatives, inf)
 
+{Fore.YELLOW}Fix Flags:{Style.RESET_ALL}
+  {Fore.GREEN}--fix-nan{Style.RESET_ALL}                  Fix NaN values in columns
+  {Fore.GREEN}--fix-duplicates{Style.RESET_ALL}           Fix fully duplicated rows
+  {Fore.GREEN}--fix-gaps{Style.RESET_ALL}                 Fix gaps in time series
+  {Fore.GREEN}--fix-zeros{Style.RESET_ALL}                Fix zero values in numeric columns
+  {Fore.GREEN}--fix-negatives{Style.RESET_ALL}            Fix negative values in OHLCV columns
+  {Fore.GREEN}--fix-infs{Style.RESET_ALL}                 Fix infinity values in numeric columns
+  {Fore.GREEN}--fix-all{Style.RESET_ALL}                  Fix all detected problems
+  {Fore.GREEN}--fix-files{Style.RESET_ALL}                General flag for fixing (must be used with specific fix flags)
+  {Fore.GREEN}--restore-backups{Style.RESET_ALL}          Restore original files from .bak backups
+
 {Fore.YELLOW}Other Flags:{Style.RESET_ALL}
-  {Fore.GREEN}--fix-files{Style.RESET_ALL}                Fix data in original parquet files
   {Fore.GREEN}--basic-stats{Style.RESET_ALL}              Show basic statistics for files
   {Fore.GREEN}--correlation-analysis{Style.RESET_ALL}     Correlation analysis between numeric features
   {Fore.GREEN}--feature-importance{Style.RESET_ALL}       Feature importance analysis
 
 {Fore.YELLOW}Examples:{Style.RESET_ALL}
+  # Check data quality issues
   python eda_batch_check.py --nan-check --duplicate-check
-  python eda_batch_check.py --data-quality-checks --basic-stats
-  python eda_batch_check.py -dqc --basic-stats
+  python eda_batch_check.py --data-quality-checks
+  
+  # Fix specific issues
+  python eda_batch_check.py --fix-files --fix-nan --fix-duplicates
+  python eda_batch_check.py --fix-files --fix-zeros --fix-negatives
+  
+  # Fix all detected issues
+  python eda_batch_check.py --fix-files --fix-all
+  
+  # Restore original files from backups
+  python eda_batch_check.py --restore-backups
+  
+  # Combine analysis with fixing
+  python eda_batch_check.py --data-quality-checks --fix-files --fix-all
 """
     parser = argparse.ArgumentParser(
         description=help_header,
@@ -88,8 +135,17 @@ def main():
     parser.add_argument('--inf-check', action='store_true', help='Find +inf and -inf values in numeric columns')
     # Grouped data quality checks (with short flag)
     parser.add_argument('--data-quality-checks', '-dqc', action='store_true', help='Run all data quality checks (NaN, duplicates, gaps, zeros, negatives, inf)')
+    # Fix flags
+    parser.add_argument('--fix-nan', action='store_true', help='Fix NaN values in columns')
+    parser.add_argument('--fix-duplicates', action='store_true', help='Fix fully duplicated rows')
+    parser.add_argument('--fix-gaps', action='store_true', help='Fix gaps in time series')
+    parser.add_argument('--fix-zeros', action='store_true', help='Fix zero values in numeric columns')
+    parser.add_argument('--fix-negatives', action='store_true', help='Fix negative values in OHLCV columns')
+    parser.add_argument('--fix-infs', action='store_true', help='Fix infinity values in numeric columns')
+    parser.add_argument('--fix-all', action='store_true', help='Fix all detected problems')
+    parser.add_argument('--fix-files', action='store_true', help='General flag for fixing (must be used with specific fix flags)')
+    parser.add_argument('--restore-backups', action='store_true', help='Restore original files from .bak backups')
     # Other features
-    parser.add_argument('--fix-files', action='store_true')
     parser.add_argument('--basic-stats', action='store_true')
     parser.add_argument('--correlation-analysis', action='store_true')
     parser.add_argument('--feature-importance', action='store_true')
@@ -206,7 +262,63 @@ def main():
             print(f"    {Fore.YELLOW}Total size:{Style.RESET_ALL} {stats['total_size_mb']} MB")
             print(f"    {Fore.YELLOW}File count:{Style.RESET_ALL} {stats['file_count']}")
 
-    # Placeholder for flag-based operations
+    # Handle fix operations if requested
+    if args.fix_files and (args.fix_nan or args.fix_duplicates or args.fix_gaps or
+                          args.fix_zeros or args.fix_negatives or args.fix_infs or args.fix_all):
+        print(f"\n{Fore.BLUE + Style.BRIGHT}Starting data fix operations:{Style.RESET_ALL}")
+
+        # Check which fix operations to perform
+        fix_nan = args.fix_nan or args.fix_all
+        fix_duplicates = args.fix_duplicates or args.fix_all
+        fix_gaps = args.fix_gaps or args.fix_all
+        fix_zeros = args.fix_zeros or args.fix_all
+        fix_negatives = args.fix_negatives or args.fix_all
+        fix_infs = args.fix_infs or args.fix_all
+
+        # Process each parquet file
+        with tqdm(total=len(parquet_files), desc="Fixing files", position=0, leave=True) as pbar:
+            fixed_count = 0
+            total_count = 0
+
+            for file in parquet_files:
+                try:
+                    was_fixed = fix_files.fix_file(
+                        file,
+                        fix_nan_flag=fix_nan,
+                        fix_duplicates_flag=fix_duplicates,
+                        fix_gaps_flag=fix_gaps,
+                        fix_zeros_flag=fix_zeros,
+                        fix_negatives_flag=fix_negatives,
+                        fix_infs_flag=fix_infs
+                    )
+                    if was_fixed:
+                        fixed_count += 1
+                    total_count += 1
+                except Exception as e:
+                    print(f"\n{Fore.RED}Error fixing file {file}: {str(e)}{Style.RESET_ALL}")
+
+                pbar.update(1)
+
+        print(f"\n{Fore.GREEN}Fixed {fixed_count} out of {total_count} files{Style.RESET_ALL}")
+
+        if fixed_count > 0:
+            print(f"\n{Fore.YELLOW}Note: Original files were backed up with .bak extension{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}To restore them, use: mv file.parquet.bak file.parquet{Style.RESET_ALL}")
+
+    # Restore backups if requested
+    if args.restore_backups:
+        print(f"\n{Fore.BLUE + Style.BRIGHT}Restoring original files from backups:{Style.RESET_ALL}")
+        restored_count = 0
+        for file in parquet_files:
+            backup_file = f"{file}.bak"
+            if os.path.exists(backup_file):
+                try:
+                    os.rename(backup_file, file)
+                    restored_count += 1
+                    print(f"{Fore.GREEN}Restored:{Style.RESET_ALL} {file}")
+                except Exception as e:
+                    print(f"{Fore.RED}Error restoring file {file}: {str(e)}{Style.RESET_ALL}")
+        print(f"\n{Fore.GREEN}Restored {restored_count} files{Style.RESET_ALL}")
 
 if __name__ == "__main__":
     main()
