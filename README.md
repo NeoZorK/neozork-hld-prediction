@@ -22,17 +22,6 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 * Calculates the core "Pressure Vector" indicator components and derived rules (`PV_HighLow`, `Support_Resistants`, `Pressure_Vector`, `Predict_High_Low_Direction`).
 * Provides validation of Python calculations against original MQL5 results when using CSV mode.
 * Generates plots using `mplfinance` to visualize OHLCV data, indicator lines, and signals.
-* **NEW:** Advanced data cleaning capabilities with `data_cleaner_v2.py`:
-  - Handles duplicates and NaN values in CSV and Parquet files
-  - Supports multiple NaN handling strategies (ffill, dropna_rows, none)
-  - Preserves directory structure when cleaning multiple files
-  - Detailed logging of cleaning operations
-* **NEW:** Batch EDA checking with `eda_batch_check.py`:
-  - Performs comprehensive data quality checks on CSV and Parquet files
-  - Checks for missing values, duplicates, and data types
-  - Provides statistical summaries and detailed logging
-  - Optionally runs data cleaner to fix identified issues
-  - Supports custom target folders and output directories
 * **NEW:** Automatically saves raw OHLCV data fetched from API sources (Yahoo Finance, Polygon.io, Binance) to efficient `.parquet` files in the `data/raw_parquet/` directory for later use or analysis.
 * **NEW:** Displays enhanced execution summary in the console, including DataFrame shape, memory usage, data fetch duration, and API request latency.
 * Includes utility scripts for debugging connections to various APIs (`debug_*.py`).
@@ -100,24 +89,11 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 # Project Structure
 ├── data/  
 │   ├── cache/  
-│   │   └── csv_converted/  
-│   ├── processed/  
+│   │   └── csv_converted/   
 │   └── raw_parquet/  
-├── mql5_feed/  
-├── notebooks/  
+├── mql5_feed/
 ├── scripts/
-│   ├── data_processing/
-│   │   ├── data_cleaner_v2.py
-│   │   └── __init__.py
-│   ├── log_analysis/
 │   └── debug_scripts/
-├── src/  
-│   ├── cli/  
-│   │   └── cli.py  
-│   ├── calculation/  
-│   ├── data/  
-│   ├── feature_engineering.py  
-│   └── __init__.py  
 ├── tests/  
 ├── .env  
 ├── .gitignore  
@@ -132,30 +108,14 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 `cache/`: Holds temporary intermediate data.  
 `csv_converted/`: Stores CSV files converted from other formats.  
 
-
-`processed/`: Contains processed data ready for analysis.  
 `raw_parquet/`: Stores raw data in Parquet format for efficient storage and querying.  
 
-
 `mql5_feed/`: Directory for CSV files exported from MQL5/MT5 platforms.  
-`notebooks/`: Contains Jupyter notebooks used for exploratory data analysis (EDA) and experimental workflows.  
+  
 `scripts/`: Contains utility scripts for data processing and analysis.
-`data_processing/`: Scripts for data cleaning and preprocessing.
-`log_analysis/`: Scripts for analyzing log files and generating reports.
 `debug_scripts/`: Scripts for debugging and testing various components.
 
 `src/`: Main source code directory for the project.  
-`cli/`: Command-line interface scripts.  
-`cli.py`: Primary script for running CLI commands.  
-
-
-
-`calculation/`: Modules for performing calculations and computations.  
-`data/`: Modules for data loading, cleaning, and preprocessing.  
-`feature_engineering.py`: Script for creating and transforming features for analysis or modeling.  
-`init.py`: Initializes the src directory as a Python package.  
-
-
 
 `tests/`: Directory for unit tests to ensure code reliability.  
 `.env`: Stores environment variables, such as API keys and configuration settings.  
@@ -164,8 +124,6 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 `README.md:` This file, providing an overview and documentation of the project.  
 `requirements.txt`: Lists Python dependencies required for the project.  
 `run_analysis.py`: Main entry point script to execute the data analysis pipeline.  
-
-
 
 ## Installation
 
@@ -308,18 +266,21 @@ Use your package manager, for example:
 * *Note: Added CSV & Polygon data source integration (CLI, data_acquisition, point_size).*
 
 ### Phase 3: Exploratory Data Analysis (EDA)
-* [ ] 3.1. Load Processed Data (`notebooks/`).
-* [ ] 3.2. Analyze Distributions & Statistics.
-* [ ] 3.3. Visualize Time Series.
-* [ ] 3.4. Calculate **Baseline Performance** (Python indicator vs Ground Truth).
-* [ ] 3.5. Analyze Indicator Errors.
+* [x] 3.1. Load Processed Data (`Data/`).
+* [x] 3.2. Quality Check: Missing values, duplicates, data types, gaps, NaN, corrupt Values: Zero, inf, negative.
+* [ ] 3.3. Data Cleaning: Remove duplicates, fill gaps, handle NaN values.
+* [ ] 3.4. Base Statistics
+* [ ] 3.5. Correlation Analysis: Correlation matrix, feature correlation with target.
+* [ ] 3.6. Analyze Distributions & Statistics.
+* [x] 3.7. Visualize Time Series.
+* [ ] 3.8. Calculate **Baseline Performance** (Python indicator vs Ground Truth).
+* [ ] 3.9. Analyze Indicator Errors and Data leakage check for future data.
 
-### Phase 4: Feature Engineering & Unit Testing
+### Phase 4: Feature Engineering
 * [ ] 4.1. Develop Feature Ideas.
-* [ ] 4.2. Implement Feature Generation (`src/feature_engineering.py`).
+* [ ] 4.2. Implement Feature Generation.
 * [ ] 4.3. Feature Scaling/Normalization Plan.
 * [ ] 4.4. Save Final Feature Set.
-* [ ] 4.5. **Write Unit Tests** for data loading/processing (`fetch_csv_data`, `fetch_polygon_data`, `resolve_polygon_ticker`, `data_acquisition`, `point_size_determination`).
 
 ### Phase 5: ML Model Development & Training
 * [ ] 5.1. Define ML Problem & Targets.
@@ -470,7 +431,7 @@ The `show` mode is designed for interactive browsing, analysis, and visualizatio
 - Allows filtering files by data source (`yfinance`, `polygon`, `binance`, `csv`) and by keywords (such as ticker, timeframe).
 - For each found file, it displays a summary: filename, size, number of rows, date range, column structure, first/last rows.
 - If only one file matches the filter, the indicator is calculated on this data and the result is printed in the console (or a chart is displayed if indicator calculation is not explicitly requested).
-- **Note:** Indicator values are _always calculated on the fly_ and are **never saved** anywhere.  
+- **Note:** Indicator values are _always calculated on the fly_ and are **never saved** anywhere.
   Each time you run an indicator calculation in `show` mode, the indicator is recomputed from scratch on the selected data.
 
 ### How to use `show` mode
@@ -529,6 +490,61 @@ python run_analysis.py show --help
 2.  **Plots (Optional):** If not disabled via CLI arguments, generates plots displaying `OHLCV` data along with the calculated indicator lines and signals using `mplfinance`. Plots are typically shown interactively or saved if configured.
 3.  **NEW: Raw Data Parquet Files:** When run with API data sources (`yfinance`, `polygon`, `binance`), the script automatically saves the downloaded raw `OHLCV` data into a `.parquet` file within the `data/raw_parquet/` directory. The filename typically includes the `source`, `ticker`, `interval`, and `date range`. This allows for easy reloading and reuse of the fetched data without hitting the APIs again.
 
+
+# Using `src/eda/eda_batch_check.py`
+
+The `eda_batch_check.py` script is designed to perform batch Exploratory Data Analysis (EDA) and data quality checks on Parquet files. It supports various checks such as missing values, duplicates, gaps, zero values, negative values, and infinite values. Additionally, it provides options for basic statistics, correlation analysis, and feature importance.
+
+## Usage
+
+Run the script with the desired flags to perform specific checks or analyses:
+
+```bash
+python src/eda/eda_batch_check.py [flags]
+```
+
+# Flags
+
+## Data Quality Checks
+- `--nan-check`: Check for missing values (NaN) in columns.
+- `--duplicate-check`: Find fully duplicated rows and duplicated values in string columns.
+- `--gap-check`: Find gaps in time series (abnormally large intervals in datetime columns).
+- `--zero-check`: Find zero values in numeric columns (with anomaly heuristics).
+- `--negative-check`: Find negative values in OHLCV and datetime columns.
+- `--inf-check`: Find +inf and -inf values in numeric columns.
+- `--data-quality-checks`, `-dqc`: Run all data quality checks (NaN, duplicates, gaps, zeros, negatives, inf).
+
+## Other Features
+- `--fix-files`: Fix data in the original Parquet files.
+- `--basic-stats`: Show basic statistics for files.
+- `--correlation-analysis`: Perform correlation analysis between numeric features.
+- `--feature-importance`: Perform feature importance analysis.
+
+# Examples
+
+### Run specific checks:
+```bash
+python src/eda/eda_batch_check.py --nan-check --duplicate-check
+```
+```bash
+python src/eda/eda_batch_check.py --data-quality-checks --basic-stats
+```
+```bash
+python src/eda/eda_batch_check.py -dqc --basic-stats
+```
+```bash
+python src/eda/eda_batch_check.py --correlation-analysis
+```
+```bash
+python src/eda/eda_batch_check.py --feature-importance
+```
+```bash
+python src/eda/eda_batch_check.py --data-quality-checks --fix-files
+```
+```bash
+python src/eda/eda_batch_check.py --nan-check --gap-check --zero-check --basic-stats
+```
+
 ### Running Tests
 
 This project uses Python's built-in `unittest` framework.
@@ -541,103 +557,27 @@ This project uses Python's built-in `unittest` framework.
 
 3.  **To run all tests in a folder:
     ```bash
-    python -m unitest discover tests/cli  
+    python -m unitest discover tests/cli
     ```
-    
+
 4.  **To run a specific test file:
     ```bash
     python -m unittest tests.cli.test_cli_all_commands
     ```
-    
+
 5.  **To run a specific test case:
     ```bash
     python -m unittest tests.cli.test_cli_all_commands.TestCliAllCommands.test_help
     ```
-    
+
 6.  **To Test All CLI Commands:**
     ```bash
     python tests/cli/test_cli_all_commands.py
     ```
+7.  **To Test All using pytest:**
+    ```bash
+    pytest tests/ --maxfail=3 --disable-warnings -v
+    ```
 
-Delayed between tests is set to 2 seconds to avoid overwhelming the API with requests.
+*** Conclusion: ***
 
-
-
-
-## EDA Tools
-
-The project includes several tools for exploratory data analysis and data quality checking:
-
-### Batch EDA Checker (`eda_batch_check.py`)
-`eda_batch_check.py` is a tool for performing batch Exploratory Data Analysis (EDA) on `CSV` and `Parquet` files. It helps identify data quality issues such as missing values, duplicates, and incorrect data types, while also providing statistical summaries. Optionally, it can clean the data automatically.
-
-
-#### **Key Features**
-- **Data Quality Checks**:
-  - Detects missing values `(NaN)`.
-  - Removes duplicates.
-  - Validates data types.
-  - Generates statistical summaries.
-- **File Format Support**: Works with `CSV` and `Parquet` files.
-- **Logging**: Logs all operations to a file.
-- **Data Cleaning**: Optionally cleans data using `data_cleaner_v2.py`.
-- **Comparison**: Compares data before and after cleaning.
-- **Customizable**: Supports user-defined folders and output directories.
-
-Usage examples:
-```bash
-# Basic EDA check
-python eda_batch_check.py
-
-# Run EDA check and clean data
-python eda_batch_check.py --clean
-
-# Specify custom output directory and NaN handling
-python eda_batch_check.py --clean --output-dir data/cleaned --handle-nan ffill
-
-# Check specific folders
-python eda_batch_check.py --target-folders data/raw_parquet mql5_feed
-```
-
-Available options:
-- `--clean`: Run data cleaner after analysis
-- `--output-dir`: Output directory for cleaned files
-- `--csv-delimiter`: Delimiter for CSV files (default: tab)
-- `--csv-header`: CSV header row (0 or 'infer')
-- `--handle-nan`: NaN handling strategy (ffill, dropna_rows, none)
-- `--skip-verification`: Skip verification of cleaned files
-- `--log-file`: Custom log file name
-- `--target-folders`: List of folders to check
-
-For more information, run:
-```bash
-python eda_batch_check.py --help,-h
-```
-Log Example
-After running the script, the log file (e.g., `test.log`) contains details about processed files, detected issues, and actions taken.  
-Example:
-
-Processing file: `data/raw_parquet/sample.parquet`  
-`NaN` values detected: `15 ` 
-Duplicates removed: `3`  
-File processed successfully.  
-
-Comparison Before and After Cleaning  
-The script compares data statistics before and after cleaning. Example output:  
-
-=== EDA Summary Change (Before → After Cleaning) ===  
-Total Files: 10 → 10 `(+0)`  
-NaN Values: 150 → 0 `(-150)`  
-Duplicates: 30 → 0 `(-30)`  
-====================================================  
-Integration  
-`eda_batch_check.py` is part of the `src.eda` module and uses the following components:  
-`eda_logging:` Logging setup.  
-`eda_batch_processor:` File and folder processing.  
-`eda_file_utils:` File search and sorting.  
-`eda_log_analysis:` Log analysis.  
-`eda_data_cleaner:` Data cleaning.  
-Recommendations  
-Use `--clean` to automatically clean data.  
-Ensure the target folders contain `CSV` or `Parquet` files.  
-For large datasets, use `tqdm` to track progress.  
