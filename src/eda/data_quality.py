@@ -145,19 +145,33 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
         gaps = time_deltas[time_deltas > expected * 2]
     if not gaps.empty:
         print(f"  {Fore.MAGENTA}Gap Check: Found {len(gaps)} gaps in '{dt_col if dt_col else 'index'}' (interval > {expected * 2}){Style.RESET_ALL}")
-        for i, (idx, delta) in enumerate(gaps.items()):
+        # Преобразуем gaps в Series для удобного доступа к индексу и значениям
+        import pandas as pd
+        gaps_series = pd.Series(gaps)
+        for i, (idx, delta) in enumerate(gaps_series.items()):
             # idx is the index in datetimes where the gap is detected
-            if use_iloc:
-                curr_pos = datetimes.index.get_loc(idx)
-                prev_time = datetimes.iloc[curr_pos - 1]
-                curr_time = datetimes.iloc[curr_pos]
-            else:
-                curr_pos = datetimes.get_loc(idx)
-                prev_time = datetimes[curr_pos - 1]
-                curr_time = datetimes[curr_pos]
-            if i < 5:
-                print(f"    Gap from {prev_time} to {curr_time}: {delta}")
-            gap_summary.append({'file': file_name, 'column': dt_col if dt_col else 'index', 'from': prev_time, 'to': curr_time, 'delta': delta})
+            try:
+                if use_iloc:
+                    curr_pos = datetimes.index.get_loc(idx)
+                    prev_time = datetimes.iloc[curr_pos - 1]
+                    curr_time = datetimes.iloc[curr_pos]
+                else:
+                    if idx in datetimes.index:
+                        curr_pos = datetimes.get_loc(idx)
+                        prev_time = datetimes[curr_pos - 1]
+                        curr_time = datetimes[curr_pos]
+                    else:
+                        # Ищем ближайший индекс
+                        nearest_idx = datetimes.index[datetimes.index.get_indexer([idx], method='nearest')[0]]
+                        curr_pos = datetimes.get_loc(nearest_idx)
+                        prev_time = datetimes.iloc[max(0, curr_pos - 1)]
+                        curr_time = datetimes.iloc[curr_pos]
+
+                if i < 5:
+                    print(f"    Gap from {prev_time} to {curr_time}: {delta}")
+                gap_summary.append({'file': file_name, 'column': dt_col if dt_col else 'index', 'from': prev_time, 'to': curr_time, 'delta': delta})
+            except Exception as e:
+                print(f"    {Fore.RED}Error processing gap at index {idx}: {e}{Style.RESET_ALL}")
     else:
         print(f"  {Fore.MAGENTA}Gap Check: No significant gaps found in '{dt_col if dt_col else 'index'}'.{Style.RESET_ALL}")
 
