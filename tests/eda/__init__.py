@@ -1,2 +1,2 @@
 # -*- coding: utf-8 -*-
-# tests/data/__init__.py
+# tests/eda/__init__.py
