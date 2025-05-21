@@ -57,6 +57,7 @@ def main():
         nan_summary_all = []
         dupe_summary_all = []
         gap_summary_all = []
+        zero_summary_all = []  # Collect zero value summary for all files
         for idx, file in enumerate(parquet_files, 1):
             info = file_info.get_file_info(file)
             if args.data_quality_checks:
@@ -74,6 +75,7 @@ def main():
                     print(f"  {Fore.RED} Error reading file for checking NaN:{Style.RESET_ALL} {e}")
                 if df is not None:
                     print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
+                    # Data quality checks: nan, duplicates, gaps, zeros
                     data_quality.data_quality_checks(
                         df,
                         nan_summary_all,
@@ -82,7 +84,8 @@ def main():
                         Fore,
                         Style,
                         schema_datetime_fields=info.get('datetime_or_timestamp_fields'),
-                        file_name=info.get('file_path')
+                        file_name=info.get('file_path'),
+                        zero_summary=zero_summary_all
                     )
                 pbar.update(1)
                 continue
@@ -116,6 +119,7 @@ def main():
         data_quality.print_nan_summary(nan_summary_all, Fore, Style)
         data_quality.print_duplicate_summary(dupe_summary_all, Fore, Style)
         data_quality.print_gap_summary(gap_summary_all, Fore, Style)
+        data_quality.print_zero_summary(zero_summary_all, Fore, Style)
 
     print("\n" + Fore.BLUE + Style.BRIGHT + "Folder statistics:" + Style.RESET_ALL)
 
