@@ -160,7 +160,7 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
     else:
         print(f"  {Fore.MAGENTA}Gap Check: No significant gaps found in '{dt_col if dt_col else 'index'}'.{Style.RESET_ALL}")
 
-def zero_check(df, zero_summary, Fore, Style):
+def zero_check(df, zero_summary, Fore, Style, file_name=None):
     """
     Checks for zero values in numeric columns. Prints columns with zeros and their counts.
     Marks columns where zeros are likely normal (e.g., volume) or likely anomalous (e.g., price).
@@ -184,14 +184,14 @@ def zero_check(df, zero_summary, Fore, Style):
                 note = f"{Fore.YELLOW}Check meaning{Style.RESET_ALL}"
                 anomaly = None
             print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {n_zeros} zeros. {note}")
-            zero_summary.append({'column': col, 'zeros': n_zeros, 'anomaly': anomaly})
+            zero_summary.append({'column': col, 'zeros': n_zeros, 'anomaly': anomaly, 'df': df, 'file': file_name})
 
 def data_quality_checks(df, nan_summary, dupe_summary, gap_summary, Fore, Style, schema_datetime_fields=None, file_name=None, zero_summary=None):
     nan_check(df, nan_summary, Fore, Style)
     duplicate_check(df, dupe_summary, Fore, Style)
     gap_check(df, gap_summary, Fore, Style, schema_datetime_fields=schema_datetime_fields, file_name=file_name)
     if zero_summary is not None:
-        zero_check(df, zero_summary, Fore, Style)
+        zero_check(df, zero_summary, Fore, Style, file_name=file_name)
 
 def print_nan_summary(nan_summary, Fore, Style):
     """
@@ -238,17 +238,38 @@ def print_gap_summary(gap_summary, Fore, Style):
 
 def print_zero_summary(zero_summary, Fore, Style):
     """
-    Prints summary of zero values for all files after processing.
+    Prints summary of zero values for all files after processing, grouped by file.
+    Shows only columns where zeros are anomaly or require check, with example rows and their index.
     """
     if zero_summary:
-        print(f"\n{Fore.MAGENTA}Zero Value Summary for all files:{Style.RESET_ALL}")
+        from collections import defaultdict
+        zeros_by_file = defaultdict(list)
         for entry in zero_summary:
-            status = (
-                f"{Fore.GREEN}OK{Style.RESET_ALL}" if entry['anomaly'] is False else
-                f"{Fore.RED}ANOMALY?{Style.RESET_ALL}" if entry['anomaly'] else
-                f"{Fore.YELLOW}Check{Style.RESET_ALL}"
-            )
-            print(f"  {Fore.YELLOW}{entry['column']}{Style.RESET_ALL}: {entry['zeros']} zeros. {status}")
+            zeros_by_file[entry.get('file', 'Unknown file')].append(entry)
+        print(f"\n{Fore.MAGENTA}Zero Value Summary for all files (grouped by file):{Style.RESET_ALL}")
+        for file, zeros in zeros_by_file.items():
+            # Filter only anomaly or check
+            filtered = [z for z in zeros if z['anomaly'] is not False]
+            if not filtered:
+                continue
+            print(f"  {Fore.CYAN}File: {file}{Style.RESET_ALL}")
+            for entry in filtered:
+                status = (
+                    f"{Fore.RED}ANOMALY?{Style.RESET_ALL}" if entry['anomaly'] else
+                    f"{Fore.YELLOW}Check{Style.RESET_ALL}"
+                )
+                print(f"    {Fore.YELLOW}{entry['column']}{Style.RESET_ALL}: {entry['zeros']} zeros. {status}")
+                # Print example rows with zero in this column, including index and row number
+                df = entry.get('df')
+                if df is not None:
+                    example_rows = df[df[entry['column']] == 0].head(3)
+                    if not example_rows.empty:
+                        print(f"      Example rows with zero in {entry['column']} (index and row number shown):")
+                        for i, (idx, row) in enumerate(example_rows.iterrows()):
+                            row_number = example_rows.index.get_loc(idx)
+                            print(f"        [index: {idx}] [row: {row_number}]")
+                            for k, v in row.items():
+                                print(f"          {k}: {v}")
     else:
         print(f"\n{Fore.MAGENTA}Zero Value Summary for all files: No zeros found.{Style.RESET_ALL}")
 
