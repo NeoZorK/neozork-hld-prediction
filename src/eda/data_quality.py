@@ -186,12 +186,45 @@ def zero_check(df, zero_summary, Fore, Style, file_name=None):
             print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {n_zeros} zeros. {note}")
             zero_summary.append({'column': col, 'zeros': n_zeros, 'anomaly': anomaly, 'df': df, 'file': file_name})
 
-def data_quality_checks(df, nan_summary, dupe_summary, gap_summary, Fore, Style, schema_datetime_fields=None, file_name=None, zero_summary=None):
+def negative_check(df, negative_summary, Fore, Style, file_name=None):
+    """
+    Checks for negative values in OHLCV and datetime columns. Prints columns with negatives and their counts.
+    Shows example rows with negative values (index and row number).
+    Adds info to negative_summary.
+    """
+    import numpy as np
+    import pandas as pd
+    print(f"  {Fore.MAGENTA}Data Quality Check: Negative values{Style.RESET_ALL}")
+    # Define relevant columns by name
+    ohlcv_keys = ['open', 'high', 'low', 'close', 'volume', 'amount', 'qty']
+    # Numeric columns with OHLCV-like names
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    check_cols = [col for col in numeric_cols if any(key in col.lower() for key in ohlcv_keys)]
+    # Add datetime columns (as int/float)
+    datetime_cols = [col for col in df.columns if pd.api.types.is_datetime64_any_dtype(df[col])]
+    for col in check_cols:
+        n_neg = (df[col] < 0).sum()
+        if n_neg > 0:
+            print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {n_neg} negative values. {Fore.RED}ANOMALY!{Style.RESET_ALL}")
+            negative_summary.append({'column': col, 'negatives': n_neg, 'df': df, 'file': file_name})
+    for col in datetime_cols:
+        # Check if any datetime values are negative (as timestamp)
+        if pd.api.types.is_datetime64_any_dtype(df[col]):
+            # Convert to int64 (nanoseconds since epoch)
+            negatives = df[col].dropna().astype('int64') < 0
+            n_neg = negatives.sum()
+            if n_neg > 0:
+                print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {n_neg} negative datetime values. {Fore.RED}ANOMALY!{Style.RESET_ALL}")
+                negative_summary.append({'column': col, 'negatives': n_neg, 'df': df, 'file': file_name, 'is_datetime': True})
+
+def data_quality_checks(df, nan_summary, dupe_summary, gap_summary, Fore, Style, schema_datetime_fields=None, file_name=None, zero_summary=None, negative_summary=None):
     nan_check(df, nan_summary, Fore, Style)
     duplicate_check(df, dupe_summary, Fore, Style)
     gap_check(df, gap_summary, Fore, Style, schema_datetime_fields=schema_datetime_fields, file_name=file_name)
     if zero_summary is not None:
         zero_check(df, zero_summary, Fore, Style, file_name=file_name)
+    if negative_summary is not None:
+        negative_check(df, negative_summary, Fore, Style, file_name=file_name)
 
 def print_nan_summary(nan_summary, Fore, Style):
     """
@@ -272,4 +305,17 @@ def print_zero_summary(zero_summary, Fore, Style):
                                 print(f"          {k}: {v}")
     else:
         print(f"\n{Fore.MAGENTA}Zero Value Summary for all files: No zeros found.{Style.RESET_ALL}")
+
+def print_negative_summary(negative_summary, Fore, Style):
+    """
+    Prints summary of negative values for all files after processing, grouped by file.
+    Shows only columns with negatives, with example rows and their index.
+    """
+    if negative_summary:
+        from collections import defaultdict
+        neg_by_file = defaultdict(list)
+        for entry in negative_summary:
+            neg_by_file[entry.get('file', 'Unknown file')].append(entry)
+        print(f"\n{Fore.MAGENTA}Negative Value Summary for all files (grouped by file):{Style.RESET_ALL}")
+        for file, negs in neg_by_file.items():
 
