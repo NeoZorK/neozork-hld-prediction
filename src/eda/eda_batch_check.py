@@ -1,18 +1,24 @@
 """
-EDA Batch Check Script
+Batch EDA Batch Check Script
 
 Usage:
-    python eda_batch_check.py [--data-quality-checks] [--quality-checks] [--fix-files] [--basic-stats] [--correlation-analysis] [--feature-importance]
+    python eda_batch_check.py [flags]
 
 Flags:
-    --data-quality-checks    Run data quality checks (missing, duplicates, unique values)
-    --quality-checks         Run extended quality checks (NaN, duplicates, gaps, zeros, negatives, inf)
-    --fix-files              Fix data in original .parquet files
-    --basic-stats            Compute basic statistics
-    --correlation-analysis   Compute correlations between numerical features
-    --feature-importance     Perform feature importance analysis
+    --nan-check                Check for missing values (NaN) in columns
+    --duplicate-check          Find fully duplicated rows and duplicated values in string columns
+    --gap-check                Find gaps in time series (abnormally large intervals in datetime columns)
+    --zero-check               Find zero values in numeric columns (with anomaly heuristics)
+    --negative-check           Find negative values in OHLCV and datetime columns
+    --inf-check                Find +inf and -inf values in numeric columns
+    --data-quality-checks      Run all data quality checks (NaN, duplicates, gaps, zeros, negatives, inf)
+    --fix-files                Fix data in original parquet files
+    --basic-stats              Show basic statistics for files
+    --correlation-analysis     Correlation analysis between numeric features
+    --feature-importance       Feature importance analysis
 
 Examples:
+    python eda_batch_check.py --nan-check --duplicate-check
     python eda_batch_check.py --data-quality-checks --basic-stats
 """
 import argparse
@@ -41,9 +47,48 @@ def print_nan_check(df, nan_summary):
 # Main function to handle command line arguments and execute the appropriate functions
 def main():
     """Main function to handle command line arguments and execute the appropriate functions."""
-    parser = argparse.ArgumentParser(description="Batch EDA and Data Quality Checks on Parquet Files")
-    parser.add_argument('-dqc', '--data-quality-checks', action='store_true', help='Perform data quality checks (NaN, duplicates, unique values, etc.)')
-    parser.add_argument('-qdc', '--quality-checks', action='store_true', help='Проверка качества данных (NaN, дубликаты, пропуски, нули, отрицательные значения, inf)')
+    # Colorful help message
+    help_header = f"""
+{Fore.CYAN + Style.BRIGHT}Batch EDA and Data Quality Checks on Parquet Files{Style.RESET_ALL}
+
+{Fore.YELLOW}Usage:{Style.RESET_ALL}
+  python eda_batch_check.py [flags]
+
+{Fore.YELLOW}Data Quality Flags:{Style.RESET_ALL}
+  {Fore.GREEN}--nan-check{Style.RESET_ALL}                Check for missing values (NaN) in columns
+  {Fore.GREEN}--duplicate-check{Style.RESET_ALL}          Find fully duplicated rows and duplicated values in string columns
+  {Fore.GREEN}--gap-check{Style.RESET_ALL}                Find gaps in time series (abnormally large intervals in datetime columns)
+  {Fore.GREEN}--zero-check{Style.RESET_ALL}               Find zero values in numeric columns (with anomaly heuristics)
+  {Fore.GREEN}--negative-check{Style.RESET_ALL}           Find negative values in OHLCV and datetime columns
+  {Fore.GREEN}--inf-check{Style.RESET_ALL}                Find +inf and -inf values in numeric columns
+  {Fore.GREEN}--data-quality-checks, -dqc{Style.RESET_ALL} Run all data quality checks (NaN, duplicates, gaps, zeros, negatives, inf)
+
+{Fore.YELLOW}Other Flags:{Style.RESET_ALL}
+  {Fore.GREEN}--fix-files{Style.RESET_ALL}                Fix data in original parquet files
+  {Fore.GREEN}--basic-stats{Style.RESET_ALL}              Show basic statistics for files
+  {Fore.GREEN}--correlation-analysis{Style.RESET_ALL}     Correlation analysis between numeric features
+  {Fore.GREEN}--feature-importance{Style.RESET_ALL}       Feature importance analysis
+
+{Fore.YELLOW}Examples:{Style.RESET_ALL}
+  python eda_batch_check.py --nan-check --duplicate-check
+  python eda_batch_check.py --data-quality-checks --basic-stats
+  python eda_batch_check.py -dqc --basic-stats
+"""
+    parser = argparse.ArgumentParser(
+        description=help_header,
+        formatter_class=argparse.RawTextHelpFormatter,
+        add_help=True
+    )
+    # Individual checks
+    parser.add_argument('--nan-check', action='store_true', help='Check for missing values (NaN) in columns')
+    parser.add_argument('--duplicate-check', action='store_true', help='Find fully duplicated rows and duplicated values in string columns')
+    parser.add_argument('--gap-check', action='store_true', help='Find gaps in time series (abnormally large intervals in datetime columns)')
+    parser.add_argument('--zero-check', action='store_true', help='Find zero values in numeric columns (with anomaly heuristics)')
+    parser.add_argument('--negative-check', action='store_true', help='Find negative values in OHLCV and datetime columns')
+    parser.add_argument('--inf-check', action='store_true', help='Find +inf and -inf values in numeric columns')
+    # Grouped data quality checks (with short flag)
+    parser.add_argument('--data-quality-checks', '-dqc', action='store_true', help='Run all data quality checks (NaN, duplicates, gaps, zeros, negatives, inf)')
+    # Other features
     parser.add_argument('--fix-files', action='store_true')
     parser.add_argument('--basic-stats', action='store_true')
     parser.add_argument('--correlation-analysis', action='store_true')
@@ -59,12 +104,15 @@ def main():
         nan_summary_all = []
         dupe_summary_all = []
         gap_summary_all = []
-        zero_summary_all = []  # Collect zero value summary for all files
-        negative_summary_all = []  # Collect negative value summary for all files
-        inf_summary_all = []  # Collect inf value summary for all files
+        zero_summary_all = []
+        negative_summary_all = []
+        inf_summary_all = []
         for idx, file in enumerate(parquet_files, 1):
             info = file_info.get_file_info(file)
-            if args.data_quality_checks or args.quality_checks:
+            if (
+                args.data_quality_checks or args.nan_check or args.duplicate_check or args.gap_check or
+                args.zero_check or args.negative_check or args.inf_check
+            ):
                 if 'error' in info:
                     print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
                     print(f"  {Fore.RED}Error reading file:{Style.RESET_ALL} {info['error']}")
@@ -79,20 +127,19 @@ def main():
                     print(f"  {Fore.RED} Error reading file for checking NaN:{Style.RESET_ALL} {e}")
                 if df is not None:
                     print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
-                    # Data quality checks: nan, duplicates, gaps, zeros, negatives, inf
-                    data_quality.data_quality_checks(
-                        df,
-                        nan_summary_all,
-                        dupe_summary_all,
-                        gap_summary_all,
-                        Fore,
-                        Style,
-                        schema_datetime_fields=info.get('datetime_or_timestamp_fields'),
-                        file_name=info.get('file_path'),
-                        zero_summary=zero_summary_all,
-                        negative_summary=negative_summary_all,
-                        inf_summary=inf_summary_all
-                    )
+                    # Individual checks
+                    if args.data_quality_checks or args.nan_check:
+                        data_quality.nan_check(df, nan_summary_all, Fore, Style)
+                    if args.data_quality_checks or args.duplicate_check:
+                        data_quality.duplicate_check(df, dupe_summary_all, Fore, Style)
+                    if args.data_quality_checks or args.gap_check:
+                        data_quality.gap_check(df, gap_summary_all, Fore, Style, schema_datetime_fields=info.get('datetime_or_timestamp_fields'), file_name=info.get('file_path'))
+                    if args.data_quality_checks or args.zero_check:
+                        data_quality.zero_check(df, zero_summary_all, Fore, Style, file_name=info.get('file_path'))
+                    if args.data_quality_checks or args.negative_check:
+                        data_quality.negative_check(df, negative_summary_all, Fore, Style, file_name=info.get('file_path'))
+                    if args.data_quality_checks or args.inf_check:
+                        data_quality.inf_check(df, inf_summary_all, Fore, Style, file_name=info.get('file_path'))
                 pbar.update(1)
                 continue
             print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
@@ -120,13 +167,18 @@ def main():
             except Exception as e:
                 print(f"  {Fore.RED}Error reading rows:{Style.RESET_ALL} {e}")
             pbar.update(1)
-    # NaN, duplicate, and gap summary after all files
-    if args.data_quality_checks or args.quality_checks:
+    # Print summaries
+    if args.data_quality_checks or args.nan_check:
         data_quality.print_nan_summary(nan_summary_all, Fore, Style)
+    if args.data_quality_checks or args.duplicate_check:
         data_quality.print_duplicate_summary(dupe_summary_all, Fore, Style)
+    if args.data_quality_checks or args.gap_check:
         data_quality.print_gap_summary(gap_summary_all, Fore, Style)
+    if args.data_quality_checks or args.zero_check:
         data_quality.print_zero_summary(zero_summary_all, Fore, Style)
+    if args.data_quality_checks or args.negative_check:
         data_quality.print_negative_summary(negative_summary_all, Fore, Style)
+    if args.data_quality_checks or args.inf_check:
         data_quality.print_inf_summary(inf_summary_all, Fore, Style)
 
     print("\n" + Fore.BLUE + Style.BRIGHT + "Folder statistics:" + Style.RESET_ALL)
