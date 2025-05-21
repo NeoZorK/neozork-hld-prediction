@@ -1,4 +1,5 @@
-# src/data/fetchers/__init__.py # CORRECTED
+# -*- coding: utf-8 -*-
+# src/data/fetchers/__init__.py
 
 """
 Initializes the fetchers package and exposes the main data fetching functions
