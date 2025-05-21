@@ -2,6 +2,7 @@
 
 import os
 
+# This script computes the size and number of Parquet files in a given folder.
 def get_folder_stats(folder_path):
     total_size = 0
     file_count = 0
