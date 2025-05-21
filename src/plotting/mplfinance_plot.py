@@ -30,7 +30,16 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         logger.print_error(f"Input DataFrame must contain columns: {required_cols}. Found: {list(df_results.columns)}")
         return
     if not isinstance(df_results.index, pd.DatetimeIndex):
-        logger.print_warning("DataFrame index is not a DatetimeIndex. Plotting might be affected.")
+        # Try to set DatetimeIndex from 'Timestamp' or similar column
+        for col in ['Timestamp', 'timestamp', 'Date', 'date', 'Datetime', 'datetime']:
+            if col in df_results.columns:
+                df_results = df_results.copy()
+                df_results[col] = pd.to_datetime(df_results[col], errors='coerce')
+                df_results = df_results.set_index(col)
+                logger.print_info(f"Set DataFrame index to DatetimeIndex using column '{col}' for mplfinance plot.")
+                break
+        if not isinstance(df_results.index, pd.DatetimeIndex):
+            logger.print_warning("DataFrame index is not a DatetimeIndex after attempted conversion. Plotting might fail.")
 
     plots_to_add = []
     panel_count = 0
@@ -89,28 +98,28 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
     volume_panel = 1
     if panel_count > 0:
         volume_panel = panel_count + 1
-        if plot_volume:
-             pass
 
+    # Ensure ratios are correctly calculated
     ratios = [4]
     ratios.extend([1] * panel_count)
     if plot_volume:
-         ratios.append(0.8)
+        ratios.append(0.8)
 
     try:
-        mpf.plot(df_results,
-                 type='candle',
-                 style='yahoo',
-                 title=f"{title} - Rule: {rule.name}",
-                 ylabel='Price',
-                 volume=plot_volume,
-                 volume_panel=volume_panel if plot_volume else 0,
-                 addplot=plots_to_add,
-                 panel_ratios=tuple(ratios),
-                 figratio=(12, 6 + panel_count * 1.5 + (1 if plot_volume else 0)),
-                 figscale=1.1,
-                 warn_too_much_data=10000
-                 )
+        mpf.plot(
+            df_results,
+            type='candle',
+            style='yahoo',
+            title=f"{title} - Rule: {rule.name}",
+            ylabel='Price',
+            volume=plot_volume,
+            volume_panel=volume_panel if plot_volume else 0,
+            addplot=plots_to_add,
+            panel_ratios=tuple(ratios),
+            figratio=(12, 6 + panel_count * 1.5 + (1 if plot_volume else 0)),
+            figscale=1.1,
+            warn_too_much_data=10000
+        )
         logger.print_success("Mplfinance plot displayed.")
     except Exception as e:
         logger.print_error(f"Error during mplfinance plotting: {e}")

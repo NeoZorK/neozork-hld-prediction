@@ -1,2 +1,2 @@
-# src/__init__.py
-
+# -*- coding: utf-8 -*-
+# tests/plotting/__init__.py
