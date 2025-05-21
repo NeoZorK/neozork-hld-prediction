@@ -4,17 +4,20 @@ import os
 import pandas as pd
 import pyarrow.parquet as pq
 
+# Handles file information extraction
 def get_file_info(filepath):
+   # Get file information
     info = {}
     info['file_path'] = filepath
     info['file_name'] = os.path.basename(filepath)
     info['file_size_mb'] = round(os.path.getsize(filepath) / (1024 * 1024), 2)
     try:
-        # Получаем схему parquet-файла через pyarrow
+        # Get Parquet file schema
         parquet_file = pq.ParquetFile(filepath)
         schema = parquet_file.schema
         info['parquet_schema'] = str(schema)
-        # Получаем ArrowSchema для корректного доступа к типам
+
+        # Get schema fields
         schema_arrow = schema.to_arrow_schema()
         datetime_fields = []
         for name, typ in zip(schema_arrow.names, schema_arrow.types):
@@ -26,7 +29,8 @@ def get_file_info(filepath):
         info['n_rows'], info['n_cols'] = df.shape
         info['columns'] = list(df.columns)
         info['dtypes'] = dict(df.dtypes.apply(lambda x: str(x)))
-        # Поиск столбцов с типом datetime или timestamp
+
+        # Separate datetime and timestamp columns
         datetime_cols = [col for col in df.columns if pd.api.types.is_datetime64_any_dtype(df[col])]
         timestamp_cols = [col for col in df.columns if str(df.dtypes[col]).startswith('datetime64[ns]') or str(df.dtypes[col]).startswith('timestamp')]
         info['datetime_columns'] = datetime_cols
