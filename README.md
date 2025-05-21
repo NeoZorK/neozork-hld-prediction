@@ -22,17 +22,6 @@ The workflow involves an initial one-time data export from MetaTrader 5 (MT5), f
 * Calculates the core "Pressure Vector" indicator components and derived rules (`PV_HighLow`, `Support_Resistants`, `Pressure_Vector`, `Predict_High_Low_Direction`).
 * Provides validation of Python calculations against original MQL5 results when using CSV mode.
 * Generates plots using `mplfinance` to visualize OHLCV data, indicator lines, and signals.
-* **NEW:** Advanced data cleaning capabilities with `data_cleaner_v2.py`:
-  - Handles duplicates and NaN values in CSV and Parquet files
-  - Supports multiple NaN handling strategies (ffill, dropna_rows, none)
-  - Preserves directory structure when cleaning multiple files
-  - Detailed logging of cleaning operations
-* **NEW:** Batch EDA checking with `eda_batch_check.py`:
-  - Performs comprehensive data quality checks on CSV and Parquet files
-  - Checks for missing values, duplicates, and data types
-  - Provides statistical summaries and detailed logging
-  - Optionally runs data cleaner to fix identified issues
-  - Supports custom target folders and output directories
 * **NEW:** Automatically saves raw OHLCV data fetched from API sources (Yahoo Finance, Polygon.io, Binance) to efficient `.parquet` files in the `data/raw_parquet/` directory for later use or analysis.
 * **NEW:** Displays enhanced execution summary in the console, including DataFrame shape, memory usage, data fetch duration, and API request latency.
 * Includes utility scripts for debugging connections to various APIs (`debug_*.py`).
@@ -100,24 +89,11 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 # Project Structure
 ├── data/  
 │   ├── cache/  
-│   │   └── csv_converted/  
-│   ├── processed/  
+│   │   └── csv_converted/   
 │   └── raw_parquet/  
-├── mql5_feed/  
-├── notebooks/  
+├── mql5_feed/
 ├── scripts/
-│   ├── data_processing/
-│   │   ├── data_cleaner_v2.py
-│   │   └── __init__.py
-│   ├── log_analysis/
 │   └── debug_scripts/
-├── src/  
-│   ├── cli/  
-│   │   └── cli.py  
-│   ├── calculation/  
-│   ├── data/  
-│   ├── feature_engineering.py  
-│   └── __init__.py  
 ├── tests/  
 ├── .env  
 ├── .gitignore  
@@ -132,30 +108,14 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 `cache/`: Holds temporary intermediate data.  
 `csv_converted/`: Stores CSV files converted from other formats.  
 
-
-`processed/`: Contains processed data ready for analysis.  
 `raw_parquet/`: Stores raw data in Parquet format for efficient storage and querying.  
 
-
 `mql5_feed/`: Directory for CSV files exported from MQL5/MT5 platforms.  
-`notebooks/`: Contains Jupyter notebooks used for exploratory data analysis (EDA) and experimental workflows.  
+  
 `scripts/`: Contains utility scripts for data processing and analysis.
-`data_processing/`: Scripts for data cleaning and preprocessing.
-`log_analysis/`: Scripts for analyzing log files and generating reports.
 `debug_scripts/`: Scripts for debugging and testing various components.
 
 `src/`: Main source code directory for the project.  
-`cli/`: Command-line interface scripts.  
-`cli.py`: Primary script for running CLI commands.  
-
-
-
-`calculation/`: Modules for performing calculations and computations.  
-`data/`: Modules for data loading, cleaning, and preprocessing.  
-`feature_engineering.py`: Script for creating and transforming features for analysis or modeling.  
-`init.py`: Initializes the src directory as a Python package.  
-
-
 
 `tests/`: Directory for unit tests to ensure code reliability.  
 `.env`: Stores environment variables, such as API keys and configuration settings.  
@@ -164,8 +124,6 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 `README.md:` This file, providing an overview and documentation of the project.  
 `requirements.txt`: Lists Python dependencies required for the project.  
 `run_analysis.py`: Main entry point script to execute the data analysis pipeline.  
-
-
 
 ## Installation
 
@@ -308,18 +266,21 @@ Use your package manager, for example:
 * *Note: Added CSV & Polygon data source integration (CLI, data_acquisition, point_size).*
 
 ### Phase 3: Exploratory Data Analysis (EDA)
-* [ ] 3.1. Load Processed Data (`notebooks/`).
-* [ ] 3.2. Analyze Distributions & Statistics.
-* [ ] 3.3. Visualize Time Series.
-* [ ] 3.4. Calculate **Baseline Performance** (Python indicator vs Ground Truth).
-* [ ] 3.5. Analyze Indicator Errors.
+* [x] 3.1. Load Processed Data (`Data/`).
+* [x] 3.2. Quality Check: Missing values, duplicates, data types, gaps, NaN, corrupt Values: Zero, inf, negative.
+* [ ] 3.3. Data Cleaning: Remove duplicates, fill gaps, handle NaN values.
+* [ ] 3.4. Base Statistics
+* [ ] 3.5. Correlation Analysis: Correlation matrix, feature correlation with target.
+* [ ] 3.6. Analyze Distributions & Statistics.
+* [x] 3.7. Visualize Time Series.
+* [ ] 3.8. Calculate **Baseline Performance** (Python indicator vs Ground Truth).
+* [ ] 3.9. Analyze Indicator Errors and Data leakage check for future data.
 
-### Phase 4: Feature Engineering & Unit Testing
+### Phase 4: Feature Engineering
 * [ ] 4.1. Develop Feature Ideas.
-* [ ] 4.2. Implement Feature Generation (`src/feature_engineering.py`).
+* [ ] 4.2. Implement Feature Generation.
 * [ ] 4.3. Feature Scaling/Normalization Plan.
 * [ ] 4.4. Save Final Feature Set.
-* [ ] 4.5. **Write Unit Tests** for data loading/processing (`fetch_csv_data`, `fetch_polygon_data`, `resolve_polygon_ticker`, `data_acquisition`, `point_size_determination`).
 
 ### Phase 5: ML Model Development & Training
 * [ ] 5.1. Define ML Problem & Targets.
@@ -470,7 +431,7 @@ The `show` mode is designed for interactive browsing, analysis, and visualizatio
 - Allows filtering files by data source (`yfinance`, `polygon`, `binance`, `csv`) and by keywords (such as ticker, timeframe).
 - For each found file, it displays a summary: filename, size, number of rows, date range, column structure, first/last rows.
 - If only one file matches the filter, the indicator is calculated on this data and the result is printed in the console (or a chart is displayed if indicator calculation is not explicitly requested).
-- **Note:** Indicator values are _always calculated on the fly_ and are **never saved** anywhere.  
+- **Note:** Indicator values are _always calculated on the fly_ and are **never saved** anywhere.
   Each time you run an indicator calculation in `show` mode, the indicator is recomputed from scratch on the selected data.
 
 ### How to use `show` mode
@@ -558,6 +519,9 @@ This project uses Python's built-in `unittest` framework.
     ```bash
     python tests/cli/test_cli_all_commands.py
     ```
+7.  **To Test All using pytest:**
+    ```bash
+    pytest tests/ --maxfail=3 --disable-warnings -v
+    ```
 
-Delayed between tests is set to 2 seconds to avoid overwhelming the API with requests.
-
+*** Conclusion: ***
