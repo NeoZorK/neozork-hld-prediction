@@ -52,39 +52,66 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
     """
     import pandas as pd
     dt_col = None
-    # 1. Try to use explicit argument
+    # 1. Try explicit argument
     if datetime_col and datetime_col in df.columns:
         dt_col = datetime_col
-    # 2. Try to auto-detect by dtype
+    # 2. Try dtype
     if not dt_col:
         for col in df.columns:
             if pd.api.types.is_datetime64_any_dtype(df[col]):
                 dt_col = col
                 break
-    # 3. Try to auto-detect by name
+    # 3. Try name
     if not dt_col:
         for col in df.columns:
             if any(name in col.lower() for name in ["date", "time", "datetime", "timestamp"]):
                 try:
-                    df[col] = pd.to_datetime(df[col], errors='coerce')
+                    # Try to convert only if not already datetime
+                    if not pd.api.types.is_datetime64_any_dtype(df[col]):
+                        df[col] = pd.to_datetime(df[col], errors='coerce')
                     if pd.api.types.is_datetime64_any_dtype(df[col]):
                         dt_col = col
                         break
                 except Exception:
                     continue
-    # 4. Try to use schema info if provided
+    # 4. Try schema info (case-insensitive match, partial match)
     if not dt_col and schema_datetime_fields:
-        for col in schema_datetime_fields:
-            if col in df.columns:
-                try:
-                    df[col] = pd.to_datetime(df[col], errors='coerce')
-                    if pd.api.types.is_datetime64_any_dtype(df[col]):
-                        dt_col = col
-                        break
-                except Exception:
-                    continue
+        found_in_schema = False
+        for schema_col in schema_datetime_fields:
+            # Exact match (case-insensitive)
+            for col in df.columns:
+                if col.lower() == schema_col.lower():
+                    found_in_schema = True
+                    try:
+                        if not pd.api.types.is_datetime64_any_dtype(df[col]):
+                            df[col] = pd.to_datetime(df[col], errors='coerce')
+                        if pd.api.types.is_datetime64_any_dtype(df[col]):
+                            dt_col = col
+                            break
+                    except Exception:
+                        continue
+            if dt_col:
+                break
+        # Partial match if exact not found
+        if not dt_col:
+            for schema_col in schema_datetime_fields:
+                for col in df.columns:
+                    if schema_col.lower() in col.lower() or col.lower() in schema_col.lower():
+                        print(f"  {Fore.YELLOW}Gap Check: Using partial match for datetime column: '{col}' ~ '{schema_col}'{Style.RESET_ALL}")
+                        try:
+                            if not pd.api.types.is_datetime64_any_dtype(df[col]):
+                                df[col] = pd.to_datetime(df[col], errors='coerce')
+                            if pd.api.types.is_datetime64_any_dtype(df[col]):
+                                dt_col = col
+                                break
+                        except Exception:
+                            continue
+                if dt_col:
+                    break
+        if not found_in_schema:
+            print(f"  {Fore.YELLOW}Gap Check: Columns from schema {schema_datetime_fields} not found in DataFrame columns {list(df.columns)}{Style.RESET_ALL}")
     if not dt_col:
-        print(f"  {Fore.MAGENTA}Gap Check: No datetime-like column found (by dtype, name, or schema).{Style.RESET_ALL}")
+        print(f"  {Fore.MAGENTA}Gap Check: No datetime-like column found (by dtype, name, or schema, tried columns: {list(df.columns)}, schema: {schema_datetime_fields}){Style.RESET_ALL}")
         return
     # Ensure sorted by datetime
     df_sorted = df.sort_values(dt_col)
