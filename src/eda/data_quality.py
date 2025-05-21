@@ -145,19 +145,106 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
         gaps = time_deltas[time_deltas > expected * 2]
     if not gaps.empty:
         print(f"  {Fore.MAGENTA}Gap Check: Found {len(gaps)} gaps in '{dt_col if dt_col else 'index'}' (interval > {expected * 2}){Style.RESET_ALL}")
-        for i, (idx, delta) in enumerate(gaps.items()):
+        # Transform gaps to timedelta for better readability
+        import pandas as pd
+        gaps_series = pd.Series(gaps)
+        for i, (idx, delta) in enumerate(gaps_series.items()):
             # idx is the index in datetimes where the gap is detected
-            if use_iloc:
-                curr_pos = datetimes.index.get_loc(idx)
-                prev_time = datetimes.iloc[curr_pos - 1]
-                curr_time = datetimes.iloc[curr_pos]
-            else:
-                curr_pos = datetimes.get_loc(idx)
-                prev_time = datetimes[curr_pos - 1]
-                curr_time = datetimes[curr_pos]
-            if i < 5:
-                print(f"    Gap from {prev_time} to {curr_time}: {delta}")
-            gap_summary.append({'file': file_name, 'column': dt_col if dt_col else 'index', 'from': prev_time, 'to': curr_time, 'delta': delta})
+            try:
+                if use_iloc:
+                    # For non-datetime index - use iloc to get the previous and current elements
+                    curr_pos = datetimes.index.get_loc(idx)
+                    prev_time = datetimes.iloc[curr_pos - 1]
+                    curr_time = datetimes.iloc[curr_pos]
+                    # Calculate the real difference again
+                    delta = curr_time - prev_time
+                else:
+                    # For datetime index - use the index directly
+                    # The index is already sorted, so we can use it directly
+
+                    # Check if idx is a valid index in datetimes
+                    if isinstance(idx, (int, float)) and pd.api.types.is_datetime64_dtype(datetimes):
+                        # If idx is an integer, convert it to the corresponding datetime
+                        if idx >= 0 and idx < len(datetimes):
+                            curr_pos = int(idx)
+                            prev_pos = max(0, curr_pos - 1)
+                            if curr_pos > prev_pos:  # Not the first element
+                                prev_time = datetimes[prev_pos]
+                                curr_time = datetimes[curr_pos]
+                                # Calculate the real difference again
+                                delta = curr_time - prev_time
+                            else:
+                                # If this is the first element, take it twice
+                                prev_time = datetimes[0]
+                                curr_time = datetimes[0]
+                                delta = pd.Timedelta(0)
+                        else:
+                            raise ValueError(f"Index position {idx} out of bounds for DatetimeIndex of size {len(datetimes)}")
+                    elif idx in datetimes:
+                        curr_pos = datetimes.get_loc(idx)
+                        # Get the previous and current elements
+                        if curr_pos > 0:
+                            prev_time = datetimes[curr_pos - 1]
+                            curr_time = datetimes[curr_pos]
+                            # Get the real difference again
+                            delta = curr_time - prev_time
+                        else:
+                            # If this is the first element, take it twice
+                            prev_time = datetimes[0]
+                            curr_time = datetimes[0]
+                            delta = pd.Timedelta(0)
+                    else:
+                        # Search for the nearest index
+
+                        # Check if idx is a valid index in datetimes
+                        try:
+                            if pd.api.types.is_datetime64_dtype(datetimes) and not pd.api.types.is_datetime64_dtype(pd.Index([idx])):
+                                # Transform idx to datetime
+                                idx = pd.to_datetime(idx)
+                        except Exception:
+                            # If idx is not a valid datetime, try to convert it to a timestamp
+                            if isinstance(idx, (int, float)) and idx >= 0 and idx < len(datetimes):
+                                curr_pos = int(idx)
+                                prev_pos = max(0, curr_pos - 1)
+                                prev_time = datetimes[prev_pos]
+                                curr_time = datetimes[curr_pos]
+                                # Calculate the real difference again
+                                delta = curr_time - prev_time if curr_pos > prev_pos else pd.Timedelta(0)
+                                if i < 5:
+                                    print(f"    Gap from {prev_time} to {curr_time}: {delta}")
+                                gap_summary.append({'file': file_name, 'column': dt_col if dt_col else 'index', 'from': prev_time, 'to': curr_time, 'delta': delta})
+                                continue
+
+                        # Try to find the nearest index
+                        try:
+                            nearest_pos = datetimes.get_indexer([idx], method='nearest')[0]
+                            if nearest_pos >= 0:
+                                curr_pos = nearest_pos
+                                prev_pos = max(0, curr_pos - 1)
+                                prev_time = datetimes[prev_pos]
+                                curr_time = datetimes[curr_pos]
+                                # Calculate the real difference again
+                                delta = curr_time - prev_time if curr_pos > prev_pos else pd.Timedelta(0)
+                            else:
+                                # If the nearest position is negative, it means the index is not found
+                                raise ValueError(f"Index {idx} not found in datetime index and no nearest match")
+                        except Exception as e:
+                            # If the nearest position is negative, it means the index is not found
+                            if isinstance(idx, (int, float)):
+                                idx_pos = min(max(0, int(idx)), len(datetimes) - 1)
+                                prev_pos = max(0, idx_pos - 1)
+                                prev_time = datetimes[prev_pos]
+                                curr_time = datetimes[idx_pos]
+                                # Calculate the real difference again
+                                delta = curr_time - prev_time if idx_pos > prev_pos else pd.Timedelta(0)
+                            else:
+                                raise ValueError(f"Cannot process index {idx} of type {type(idx)} with datetime index")
+
+                if i < 5:
+                    print(f"    Gap from {prev_time} to {curr_time}: {delta}")
+                gap_summary.append({'file': file_name, 'column': dt_col if dt_col else 'index', 'from': prev_time, 'to': curr_time, 'delta': delta})
+            except Exception as e:
+                print(f"    {Fore.RED}Error processing gap at index {idx} (type {type(idx)}): {e}{Style.RESET_ALL}")
     else:
         print(f"  {Fore.MAGENTA}Gap Check: No significant gaps found in '{dt_col if dt_col else 'index'}'.{Style.RESET_ALL}")
 
