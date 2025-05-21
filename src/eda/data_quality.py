@@ -135,7 +135,8 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
         df_sorted = df.sort_index()
         datetimes = df_sorted.index
         use_iloc = False
-    time_deltas = datetimes.to_series().diff().dropna()
+    # Исправлено: Series не имеет метода to_series()
+    time_deltas = datetimes.diff().dropna()
     if freq is not None:
         expected = pd.to_timedelta(freq)
         gaps = time_deltas[time_deltas > expected]
