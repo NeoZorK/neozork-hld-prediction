@@ -352,6 +352,10 @@ def fix_negatives(df, negative_summary=None):
                     fixed_df[col] = fixed_df[col].fillna(median_pos)
 
                 print(f"Fixed {neg_count} negative values in volume column '{col}' by interpolation")
+            else:
+                # For other columns specified in negative_summary, take absolute values as default
+                fixed_df.loc[neg_mask, col] = df.loc[neg_mask, col].abs()
+                print(f"Fixed {neg_count} negative values in column '{col}' by taking absolute values (default behavior)")
 
     return fixed_df
 
