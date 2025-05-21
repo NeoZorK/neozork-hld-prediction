@@ -42,7 +42,7 @@ def fix_nan(df, nan_summary=None):
 
         elif pd.api.types.is_datetime64_any_dtype(df[col]):
             # For datetime, try forward fill then backward fill
-            fixed_df[col] = df[col].fillna(method='ffill').fillna(method='bfill')
+            fixed_df[col] = df[col].ffill().bfill()
             print(f"Fixed NaN in datetime column '{col}' with forward/backward fill")
 
         elif pd.api.types.is_string_dtype(df[col]) or df[col].dtype == 'object':
@@ -57,7 +57,7 @@ def fix_nan(df, nan_summary=None):
 
         else:
             # For other types, use forward fill
-            fixed_df[col] = df[col].fillna(method='ffill').fillna(method='bfill')
+            fixed_df[col] = df[col].ffill().bfill()
             print(f"Fixed NaN in column '{col}' with forward/backward fill")
 
     return fixed_df
@@ -233,7 +233,7 @@ def fix_zeros(df, zero_summary=None):
         for col in df.select_dtypes(include=[np.number]).columns:
             col_lower = col.lower()
             # Only fix price columns, not volume/quantity columns
-            if any(key in col_lower for key in ['price', 'close', 'open', 'high', 'low']):
+            if any(key in col_lower for key in ['price', 'close', 'open', 'high', 'low', 'pressure']):
                 columns_to_fix.append(col)
 
     for col in columns_to_fix:
@@ -248,7 +248,7 @@ def fix_zeros(df, zero_summary=None):
         if zero_count > 0:
             # Get previous and next non-zero values for each zero
             fixed_df[col] = df[col].replace(0, np.nan)
-            fixed_df[col] = fixed_df[col].fillna(method='ffill').fillna(method='bfill')
+            fixed_df[col] = fixed_df[col].ffill().bfill()
 
             # If still NaN (e.g., at the start/end), use median of non-zero values
             if fixed_df[col].isna().any():
@@ -302,7 +302,7 @@ def fix_negatives(df, negative_summary=None):
             elif any(key in col_lower for key in ['volume', 'amount', 'qty']):
                 # For volume, if negative, replace with previous/next values
                 fixed_df.loc[neg_mask, col] = np.nan
-                fixed_df[col] = fixed_df[col].fillna(method='ffill').fillna(method='bfill')
+                fixed_df[col] = fixed_df[col].ffill().bfill()
 
                 # If still NaN, use median of positive values
                 if fixed_df[col].isna().any():
@@ -351,7 +351,7 @@ def fix_infs(df, inf_summary=None):
             fixed_df[col] = df[col].replace([np.inf, -np.inf], np.nan)
 
             # Fill with previous/next valid values
-            fixed_df[col] = fixed_df[col].interpolate(method='linear').fillna(method='ffill').fillna(method='bfill')
+            fixed_df[col] = fixed_df[col].interpolate(method='linear').ffill().bfill()
 
             # If still NaN (e.g., at the start/end), use median
             if fixed_df[col].isna().any():
