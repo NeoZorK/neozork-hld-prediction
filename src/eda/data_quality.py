@@ -288,91 +288,100 @@ def print_gap_summary(gap_summary, Fore, Style):
 
 def print_zero_summary(zero_summary, Fore, Style):
     """
-    Prints summary of zero values for all files after processing, grouped by file.
-    Shows only columns where zeros are anomaly or require check, with example rows and their index.
+    Prints summary of zero values for all files after processing, grouped by file and row index.
+    Shows only columns where zeros are anomaly or require check, in a grouped and readable format per file.
+    For каждой строки выводит номер строки, индекс, столбец и значение (по одному на строку, красиво).
     """
     if zero_summary:
         from collections import defaultdict
         zeros_by_file = defaultdict(list)
         for entry in zero_summary:
             zeros_by_file[entry.get('file', 'Unknown file')].append(entry)
-        print(f"\n{Fore.MAGENTA}Zero Value Summary for all files (grouped by file):{Style.RESET_ALL}")
+        print(f"\n{Fore.MAGENTA}Zero Value Summary for all files (grouped by file, grouped by row index):{Style.RESET_ALL}")
         for file, zeros in zeros_by_file.items():
-            # Filter only anomaly or check
             filtered = [z for z in zeros if z['anomaly'] is not False]
             if not filtered:
                 continue
-            print(f"  {Fore.CYAN}File: {file}{Style.RESET_ALL}")
+            row_col_val = []
             for entry in filtered:
-                status = (
-                    f"{Fore.RED}ANOMALY?{Style.RESET_ALL}" if entry['anomaly'] else
-                    f"{Fore.YELLOW}Check{Style.RESET_ALL}"
-                )
-                print(f"    {Fore.YELLOW}{entry['column']}{Style.RESET_ALL}: {entry['zeros']} zeros. {status}")
-                # Print example rows with zero in this column, including index and row number
+                col = entry['column']
                 df = entry.get('df')
                 if df is not None:
-                    example_rows = df[df[entry['column']] == 0].head(3)
-                    if not example_rows.empty:
-                        print(f"      Example rows with zero in {entry['column']} (index and row number shown):")
-                        for i, (idx, row) in enumerate(example_rows.iterrows()):
-                            row_number = example_rows.index.get_loc(idx)
-                            print(f"        [index: {idx}] [row: {row_number}]")
-                            for k, v in row.items():
-                                print(f"          {k}: {v}")
+                    zero_rows = df[df[col] == 0]
+                    for i, idx in enumerate(zero_rows.index[:20]):
+                        rownum = zero_rows.index.get_loc(idx)
+                        val = zero_rows.loc[idx, col]
+                        row_col_val.append((rownum, idx, col, val))
+            if not row_col_val:
+                continue
+            print(f"\n  {Fore.CYAN}File: {file}{Style.RESET_ALL}")
+            print(f"    {'Row':<8} {'Index':<12} {'Column':<30} {'Value':<15}")
+            print(f"    {'-'*70}")
+            for rownum, idx, col, val in sorted(row_col_val, key=lambda x: (x[0], x[2])):
+                print(f"    {str(rownum):<8} {str(idx):<12} {col:<30} {str(val):<15}")
     else:
         print(f"\n{Fore.MAGENTA}Zero Value Summary for all files: No zeros found.{Style.RESET_ALL}")
 
 def print_negative_summary(negative_summary, Fore, Style):
     """
-    Prints summary of negative values for all files after processing, grouped by file.
-    Shows only columns with negatives, with example rows and their index.
+    Prints summary of negative values for all files after processing, grouped by file and row index.
+    Shows только строки с отрицательными значениями, по одной строке на каждое значение (красиво).
     """
     if negative_summary:
         from collections import defaultdict
         neg_by_file = defaultdict(list)
         for entry in negative_summary:
             neg_by_file[entry.get('file', 'Unknown file')].append(entry)
-        print(f"\n{Fore.MAGENTA}Negative Value Summary for all files (grouped by file):{Style.RESET_ALL}")
+        print(f"\n{Fore.MAGENTA}Negative Value Summary for all files (grouped by file, grouped by row index):{Style.RESET_ALL}")
         for file, negs in neg_by_file.items():
-                    print(f"  {Fore.CYAN}File: {file}{Style.RESET_ALL}")
-                    for entry in negs:
-                        print(f"    {Fore.YELLOW}{entry['column']}{Style.RESET_ALL}: {entry['negatives']} negatives")
-                        df = entry.get('df')
-                        if df is not None:
-                            example_rows = df[df[entry['column']] < 0].head(3)
-                            if not example_rows.empty:
-                                print(f"      Example rows with negative in {entry['column']} (index and row number shown):")
-                                for i, (idx, row) in enumerate(example_rows.iterrows()):
-                                    row_number = example_rows.index.get_loc(idx)
-                                    print(f"        [index: {idx}] [row: {row_number}]")
-                                    for k, v in row.items():
-                                        print(f"          {k}: {v}")
+            row_col_val = []
+            for entry in negs:
+                col = entry['column']
+                df = entry.get('df')
+                if df is not None:
+                    neg_rows = df[df[col] < 0]
+                    for i, idx in enumerate(neg_rows.index[:20]):
+                        rownum = neg_rows.index.get_loc(idx)
+                        val = neg_rows.loc[idx, col]
+                        row_col_val.append((rownum, idx, col, val))
+            if not row_col_val:
+                continue
+            print(f"\n  {Fore.CYAN}File: {file}{Style.RESET_ALL}")
+            print(f"    {'Row':<8} {'Index':<12} {'Column':<30} {'Value':<15}")
+            print(f"    {'-'*70}")
+            for rownum, idx, col, val in sorted(row_col_val, key=lambda x: (x[0], x[2])):
+                print(f"    {str(rownum):<8} {str(idx):<12} {col:<30} {str(val):<15}")
+    else:
+        print(f"\n{Fore.MAGENTA}Negative Value Summary for all files: No negatives found.{Style.RESET_ALL}")
 
 def print_inf_summary(inf_summary, Fore, Style):
     """
-    Prints summary of inf values for all files after processing, grouped by file.
-    Shows only columns with infs, with example rows and their index.
+    Prints summary of inf values for all files after processing, grouped by file and row index.
+    Shows только строки с inf, по одной строке на каждое значение (красиво).
     """
     if inf_summary:
         from collections import defaultdict
         infs_by_file = defaultdict(list)
         for entry in inf_summary:
             infs_by_file[entry.get('file', 'Unknown file')].append(entry)
-        print(f"\n{Fore.MAGENTA}Inf Value Summary for all files (grouped by file):{Style.RESET_ALL}")
+        print(f"\n{Fore.MAGENTA}Inf Value Summary for all files (grouped by file, grouped by row index):{Style.RESET_ALL}")
         for file, infs in infs_by_file.items():
-            print(f"  {Fore.CYAN}File: {file}{Style.RESET_ALL}")
+            row_col_val = []
             for entry in infs:
-                print(f"    {Fore.YELLOW}{entry['column']}{Style.RESET_ALL}: +inf: {entry['posinf']}, -inf: {entry['neginf']}")
+                col = entry['column']
                 df = entry.get('df')
                 if df is not None:
-                    example_rows = df[(df[entry['column']] == float('inf')) | (df[entry['column']] == float('-inf'))].head(3)
-                    if not example_rows.empty:
-                        print(f"      Example rows with inf in {entry['column']} (index and row number shown):")
-                        for i, (idx, row) in enumerate(example_rows.iterrows()):
-                            row_number = example_rows.index.get_loc(idx)
-                            print(f"        [index: {idx}] [row: {row_number}]")
-                            for k, v in row.items():
-                                print(f"          {k}: {v}")
+                    inf_rows = df[(df[col] == float('inf')) | (df[col] == float('-inf'))]
+                    for i, idx in enumerate(inf_rows.index[:20]):
+                        rownum = inf_rows.index.get_loc(idx)
+                        val = inf_rows.loc[idx, col]
+                        row_col_val.append((rownum, idx, col, val))
+            if not row_col_val:
+                continue
+            print(f"\n  {Fore.CYAN}File: {file}{Style.RESET_ALL}")
+            print(f"    {'Row':<8} {'Index':<12} {'Column':<30} {'Value':<15}")
+            print(f"    {'-'*70}")
+            for rownum, idx, col, val in sorted(row_col_val, key=lambda x: (x[0], x[2])):
+                print(f"    {str(rownum):<8} {str(idx):<12} {col:<30} {str(val):<15}")
     else:
         print(f"\n{Fore.MAGENTA}Inf Value Summary for all files: No infs found.{Style.RESET_ALL}")
