@@ -66,7 +66,6 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
         for col in df.columns:
             if any(name in col.lower() for name in ["date", "time", "datetime", "timestamp"]):
                 try:
-                    # Try to convert only if not already datetime
                     if not pd.api.types.is_datetime64_any_dtype(df[col]):
                         df[col] = pd.to_datetime(df[col], errors='coerce')
                     if pd.api.types.is_datetime64_any_dtype(df[col]):
@@ -74,17 +73,24 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
                         break
                 except Exception:
                     continue
-    # 4. Try schema info (case-insensitive match, partial match)
+    # 4. Try schema info (case-insensitive match, partial match, try convert from int/float)
     if not dt_col and schema_datetime_fields:
         found_in_schema = False
         for schema_col in schema_datetime_fields:
-            # Exact match (case-insensitive)
+            schema_col_norm = schema_col.lower().replace('_', '')
             for col in df.columns:
-                if col.lower() == schema_col.lower():
+                col_norm = col.lower().replace('_', '')
+                if col_norm == schema_col_norm:
                     found_in_schema = True
                     try:
                         if not pd.api.types.is_datetime64_any_dtype(df[col]):
-                            df[col] = pd.to_datetime(df[col], errors='coerce')
+                            if pd.api.types.is_integer_dtype(df[col]) or pd.api.types.is_float_dtype(df[col]):
+                                try:
+                                    df[col] = pd.to_datetime(df[col], unit='s', errors='coerce')
+                                except Exception:
+                                    df[col] = pd.to_datetime(df[col], unit='ms', errors='coerce')
+                            else:
+                                df[col] = pd.to_datetime(df[col], errors='coerce')
                         if pd.api.types.is_datetime64_any_dtype(df[col]):
                             dt_col = col
                             break
@@ -95,8 +101,10 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
         # Partial match if exact not found
         if not dt_col:
             for schema_col in schema_datetime_fields:
+                schema_col_norm = schema_col.lower().replace('_', '')
                 for col in df.columns:
-                    if schema_col.lower() in col.lower() or col.lower() in schema_col.lower():
+                    col_norm = col.lower().replace('_', '')
+                    if schema_col_norm in col_norm or col_norm in schema_col_norm:
                         print(f"  {Fore.YELLOW}Gap Check: Using partial match for datetime column: '{col}' ~ '{schema_col}'{Style.RESET_ALL}")
                         try:
                             if not pd.api.types.is_datetime64_any_dtype(df[col]):
@@ -110,29 +118,43 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
                     break
         if not found_in_schema:
             print(f"  {Fore.YELLOW}Gap Check: Columns from schema {schema_datetime_fields} not found in DataFrame columns {list(df.columns)}{Style.RESET_ALL}")
+    # 5. Try index if still not found
     if not dt_col:
-        print(f"  {Fore.MAGENTA}Gap Check: No datetime-like column found (by dtype, name, or schema, tried columns: {list(df.columns)}, schema: {schema_datetime_fields}){Style.RESET_ALL}")
-        return
+        if pd.api.types.is_datetime64_any_dtype(df.index):
+            dt_col = None  # special marker: use index
+            print(f"  {Fore.YELLOW}Gap Check: Using DataFrame index as datetime column.{Style.RESET_ALL}")
+        else:
+            print(f"  {Fore.MAGENTA}Gap Check: No datetime-like column or index found (by dtype, name, or schema, tried columns: {list(df.columns)}, schema: {schema_datetime_fields}){Style.RESET_ALL}")
+            return
     # Ensure sorted by datetime
-    df_sorted = df.sort_values(dt_col)
-    time_deltas = df_sorted[dt_col].diff().dropna()
+    if dt_col is not None:
+        df_sorted = df.sort_values(dt_col)
+        datetimes = df_sorted[dt_col]
+        use_iloc = True
+    else:
+        df_sorted = df.sort_index()
+        datetimes = df_sorted.index
+        use_iloc = False
+    time_deltas = datetimes.to_series().diff().dropna()
     if freq is not None:
-        # Use expected frequency if provided
         expected = pd.to_timedelta(freq)
         gaps = time_deltas[time_deltas > expected]
     else:
-        # Use median as expected interval
         expected = time_deltas.median()
         gaps = time_deltas[time_deltas > expected * 2]
     if not gaps.empty:
-        print(f"  {Fore.MAGENTA}Gap Check: Found {len(gaps)} gaps in '{dt_col}' (interval > {expected * 2}){Style.RESET_ALL}")
-        for idx, delta in gaps.head(5).items():
-            prev_time = df_sorted.loc[idx - 1, dt_col]
-            curr_time = df_sorted.loc[idx, dt_col]
+        print(f"  {Fore.MAGENTA}Gap Check: Found {len(gaps)} gaps in '{dt_col if dt_col else 'index'}' (interval > {expected * 2}){Style.RESET_ALL}")
+        for i, (idx, delta) in enumerate(gaps.head(5).items()):
+            if use_iloc:
+                prev_time = datetimes.iloc[i]
+                curr_time = datetimes.iloc[i + 1]
+            else:
+                prev_time = datetimes[i]
+                curr_time = datetimes[i + 1]
             print(f"    Gap from {prev_time} to {curr_time}: {delta}")
-            gap_summary.append({'column': dt_col, 'from': prev_time, 'to': curr_time, 'delta': delta})
+            gap_summary.append({'column': dt_col if dt_col else 'index', 'from': prev_time, 'to': curr_time, 'delta': delta})
     else:
-        print(f"  {Fore.MAGENTA}Gap Check: No significant gaps found in '{dt_col}'.{Style.RESET_ALL}")
+        print(f"  {Fore.MAGENTA}Gap Check: No significant gaps found in '{dt_col if dt_col else 'index'}'.{Style.RESET_ALL}")
 
 def data_quality_checks(df, nan_summary, dupe_summary, gap_summary, Fore, Style, schema_datetime_fields=None):
     nan_check(df, nan_summary, Fore, Style)
