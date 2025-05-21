@@ -160,10 +160,38 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
     else:
         print(f"  {Fore.MAGENTA}Gap Check: No significant gaps found in '{dt_col if dt_col else 'index'}'.{Style.RESET_ALL}")
 
-def data_quality_checks(df, nan_summary, dupe_summary, gap_summary, Fore, Style, schema_datetime_fields=None, file_name=None):
+def zero_check(df, zero_summary, Fore, Style):
+    """
+    Checks for zero values in numeric columns. Prints columns with zeros and their counts.
+    Marks columns where zeros are likely normal (e.g., volume) or likely anomalous (e.g., price).
+    Adds info to zero_summary.
+    """
+    import numpy as np
+    print(f"  {Fore.MAGENTA}Data Quality Check: Zero values (0){Style.RESET_ALL}")
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    for col in numeric_cols:
+        n_zeros = (df[col] == 0).sum()
+        if n_zeros > 0:
+            # Heuristic: columns with 'volume' or 'qty' in name are likely to allow zeros
+            col_lower = col.lower()
+            if any(key in col_lower for key in ['volume', 'qty', 'amount']):
+                note = f"{Fore.GREEN}OK (likely normal){Style.RESET_ALL}"
+                anomaly = False
+            elif any(key in col_lower for key in ['price', 'close', 'open', 'high', 'low']):
+                note = f"{Fore.RED}ANOMALY? (check!){Style.RESET_ALL}"
+                anomaly = True
+            else:
+                note = f"{Fore.YELLOW}Check meaning{Style.RESET_ALL}"
+                anomaly = None
+            print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {n_zeros} zeros. {note}")
+            zero_summary.append({'column': col, 'zeros': n_zeros, 'anomaly': anomaly})
+
+def data_quality_checks(df, nan_summary, dupe_summary, gap_summary, Fore, Style, schema_datetime_fields=None, file_name=None, zero_summary=None):
     nan_check(df, nan_summary, Fore, Style)
     duplicate_check(df, dupe_summary, Fore, Style)
     gap_check(df, gap_summary, Fore, Style, schema_datetime_fields=schema_datetime_fields, file_name=file_name)
+    if zero_summary is not None:
+        zero_check(df, zero_summary, Fore, Style)
 
 def print_nan_summary(nan_summary, Fore, Style):
     """
@@ -207,3 +235,20 @@ def print_gap_summary(gap_summary, Fore, Style):
                 print(f"    {Fore.YELLOW}Gap in '{entry['column']}':{Style.RESET_ALL} from {entry['from']} to {entry['to']} (delta: {entry['delta']})")
     else:
         print(f"\n{Fore.MAGENTA}Gap Summary for all files: No significant gaps found.{Style.RESET_ALL}")
+
+def print_zero_summary(zero_summary, Fore, Style):
+    """
+    Prints summary of zero values for all files after processing.
+    """
+    if zero_summary:
+        print(f"\n{Fore.MAGENTA}Zero Value Summary for all files:{Style.RESET_ALL}")
+        for entry in zero_summary:
+            status = (
+                f"{Fore.GREEN}OK{Style.RESET_ALL}" if entry['anomaly'] is False else
+                f"{Fore.RED}ANOMALY?{Style.RESET_ALL}" if entry['anomaly'] else
+                f"{Fore.YELLOW}Check{Style.RESET_ALL}"
+            )
+            print(f"  {Fore.YELLOW}{entry['column']}{Style.RESET_ALL}: {entry['zeros']} zeros. {status}")
+    else:
+        print(f"\n{Fore.MAGENTA}Zero Value Summary for all files: No zeros found.{Style.RESET_ALL}")
+
