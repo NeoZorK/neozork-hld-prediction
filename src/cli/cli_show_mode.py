@@ -180,6 +180,12 @@ def _print_indicator_result(df, rule_name, datetime_column=None):
     columns_to_show_existing = [col for col in columns_to_show if col in df_to_show.columns]
     row_count = df_to_show.shape[0]
     print(f"\n=== CALCULATED INDICATOR DATA === ({row_count} rows in selected range)")
+
+    # Limit to first 100 rows
+    if row_count > 100:
+        df_to_show = df_to_show.head(100)
+        print("(Showing only the first 100 rows)")
+
     if columns_to_show_existing:
         print(df_to_show[columns_to_show_existing].to_string(index=False))
     else:
