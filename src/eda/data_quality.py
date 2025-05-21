@@ -43,9 +43,74 @@ def duplicate_check(df, dupe_summary, Fore, Style):
             print(f"      Example duplicated values in '{col}': {dupe_vals.unique()[:5]}")
             dupe_summary.append({'type': 'column', 'column': col, 'count': n_col_dupes, 'examples': dupe_vals.unique()[:5]})
 
-def data_quality_checks(df, nan_summary, dupe_summary, Fore, Style):
+def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema_datetime_fields=None):
+    """
+    Checks for gaps in a datetime column: finds abnormally large time intervals between consecutive records.
+    If datetime_col is None, tries to auto-detect the first datetime column by dtype, name, or schema info.
+    freq can be set to expected frequency (e.g. '1H', '1D') for more precise gap detection.
+    Adds info to gap_summary.
+    """
+    import pandas as pd
+    dt_col = None
+    # 1. Try to use explicit argument
+    if datetime_col and datetime_col in df.columns:
+        dt_col = datetime_col
+    # 2. Try to auto-detect by dtype
+    if not dt_col:
+        for col in df.columns:
+            if pd.api.types.is_datetime64_any_dtype(df[col]):
+                dt_col = col
+                break
+    # 3. Try to auto-detect by name
+    if not dt_col:
+        for col in df.columns:
+            if any(name in col.lower() for name in ["date", "time", "datetime", "timestamp"]):
+                try:
+                    df[col] = pd.to_datetime(df[col], errors='coerce')
+                    if pd.api.types.is_datetime64_any_dtype(df[col]):
+                        dt_col = col
+                        break
+                except Exception:
+                    continue
+    # 4. Try to use schema info if provided
+    if not dt_col and schema_datetime_fields:
+        for col in schema_datetime_fields:
+            if col in df.columns:
+                try:
+                    df[col] = pd.to_datetime(df[col], errors='coerce')
+                    if pd.api.types.is_datetime64_any_dtype(df[col]):
+                        dt_col = col
+                        break
+                except Exception:
+                    continue
+    if not dt_col:
+        print(f"  {Fore.MAGENTA}Gap Check: No datetime-like column found (by dtype, name, or schema).{Style.RESET_ALL}")
+        return
+    # Ensure sorted by datetime
+    df_sorted = df.sort_values(dt_col)
+    time_deltas = df_sorted[dt_col].diff().dropna()
+    if freq is not None:
+        # Use expected frequency if provided
+        expected = pd.to_timedelta(freq)
+        gaps = time_deltas[time_deltas > expected]
+    else:
+        # Use median as expected interval
+        expected = time_deltas.median()
+        gaps = time_deltas[time_deltas > expected * 2]
+    if not gaps.empty:
+        print(f"  {Fore.MAGENTA}Gap Check: Found {len(gaps)} gaps in '{dt_col}' (interval > {expected * 2}){Style.RESET_ALL}")
+        for idx, delta in gaps.head(5).items():
+            prev_time = df_sorted.loc[idx - 1, dt_col]
+            curr_time = df_sorted.loc[idx, dt_col]
+            print(f"    Gap from {prev_time} to {curr_time}: {delta}")
+            gap_summary.append({'column': dt_col, 'from': prev_time, 'to': curr_time, 'delta': delta})
+    else:
+        print(f"  {Fore.MAGENTA}Gap Check: No significant gaps found in '{dt_col}'.{Style.RESET_ALL}")
+
+def data_quality_checks(df, nan_summary, dupe_summary, gap_summary, Fore, Style, schema_datetime_fields=None):
     nan_check(df, nan_summary, Fore, Style)
     duplicate_check(df, dupe_summary, Fore, Style)
+    gap_check(df, gap_summary, Fore, Style, schema_datetime_fields=schema_datetime_fields)
 
 def print_nan_summary(nan_summary, Fore, Style):
     """
@@ -72,3 +137,13 @@ def print_duplicate_summary(dupe_summary, Fore, Style):
     else:
         print(f"\n{Fore.MAGENTA}Duplicate Summary for all files: No duplicates found.{Style.RESET_ALL}")
 
+def print_gap_summary(gap_summary, Fore, Style):
+    """
+    Prints summary of gaps for all files after processing.
+    """
+    if gap_summary:
+        print(f"\n{Fore.MAGENTA}Gap Summary for all files:{Style.RESET_ALL}")
+        for entry in gap_summary:
+            print(f"  {Fore.YELLOW}Gap in '{entry['column']}':{Style.RESET_ALL} from {entry['from']} to {entry['to']} (delta: {entry['delta']})")
+    else:
+        print(f"\n{Fore.MAGENTA}Gap Summary for all files: No significant gaps found.{Style.RESET_ALL}")
