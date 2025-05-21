@@ -289,8 +289,8 @@ def print_gap_summary(gap_summary, Fore, Style):
 def print_zero_summary(zero_summary, Fore, Style):
     """
     Prints summary of zero values for all files after processing, grouped by file and row index.
-    Shows only columns where zeros are anomaly or require check, in a grouped and readable format per file.
-    For каждой строки выводит номер строки, индекс, столбец и значение (по одному на строку, красиво).
+    Only shows columns where zeros are anomaly or require check, in a grouped and readable format per file.
+    For each row prints row number, index, column and value (one per line, pretty format).
     """
     if zero_summary:
         from collections import defaultdict
@@ -325,7 +325,7 @@ def print_zero_summary(zero_summary, Fore, Style):
 def print_negative_summary(negative_summary, Fore, Style):
     """
     Prints summary of negative values for all files after processing, grouped by file and row index.
-    Shows только строки с отрицательными значениями, по одной строке на каждое значение (красиво).
+    Only shows rows with negative values, one per value (pretty format).
     """
     if negative_summary:
         from collections import defaultdict
@@ -357,7 +357,7 @@ def print_negative_summary(negative_summary, Fore, Style):
 def print_inf_summary(inf_summary, Fore, Style):
     """
     Prints summary of inf values for all files after processing, grouped by file and row index.
-    Shows только строки с inf, по одной строке на каждое значение (красиво).
+    Only shows rows with inf, one per value (pretty format).
     """
     if inf_summary:
         from collections import defaultdict
