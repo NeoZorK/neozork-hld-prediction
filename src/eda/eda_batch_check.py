@@ -55,6 +55,7 @@ def main():
     # Check if there are any parquet files in the directory
     with tqdm(total=len(parquet_files), desc="Processing files", position=0, leave=True) as pbar:
         nan_summary_all = []
+        dupe_summary_all = []
         for idx, file in enumerate(parquet_files, 1):
             info = file_info.get_file_info(file)
             if args.data_quality_checks:
@@ -72,7 +73,7 @@ def main():
                     print(f"  {Fore.RED} Error reading file for checking NaN:{Style.RESET_ALL} {e}")
                 if df is not None:
                     print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
-                    data_quality.data_quality_checks(df, nan_summary_all, Fore, Style)
+                    data_quality.data_quality_checks(df, nan_summary_all, dupe_summary_all, Fore, Style)
                 pbar.update(1)
                 continue
             print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
@@ -100,9 +101,10 @@ def main():
             except Exception as e:
                 print(f"  {Fore.RED}Error reading rows:{Style.RESET_ALL} {e}")
             pbar.update(1)
-    # NaN summary after all files
+    # NaN and duplicate summary after all files
     if args.data_quality_checks:
         data_quality.print_nan_summary(nan_summary_all, Fore, Style)
+        data_quality.print_duplicate_summary(dupe_summary_all, Fore, Style)
 
     print("\n" + Fore.BLUE + Style.BRIGHT + "Folder statistics:" + Style.RESET_ALL)
 
