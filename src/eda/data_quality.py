@@ -152,29 +152,29 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
             # idx is the index in datetimes where the gap is detected
             try:
                 if use_iloc:
-                    # Для DataFrame колонки - получаем позицию в индексе
+                    # For non-datetime index - use iloc to get the previous and current elements
                     curr_pos = datetimes.index.get_loc(idx)
                     prev_time = datetimes.iloc[curr_pos - 1]
                     curr_time = datetimes.iloc[curr_pos]
-                    # Рассчитываем реальную разницу заново
+                    # Calculate the real difference again
                     delta = curr_time - prev_time
                 else:
-                    # Для DatetimeIndex - работаем напрямую с индексами
-                    # Здесь datetimes сам является индексом, в отличие от случая use_iloc=True
+                    # For datetime index - use the index directly
+                    # The index is already sorted, so we can use it directly
 
-                    # Проверяем тип idx и преобразуем его при необходимости
+                    # Check if idx is a valid index in datetimes
                     if isinstance(idx, (int, float)) and pd.api.types.is_datetime64_dtype(datetimes):
-                        # Если idx числовой, а datetimes - даты, сначала найдем позицию по номеру
+                        # If idx is an integer, convert it to the corresponding datetime
                         if idx >= 0 and idx < len(datetimes):
                             curr_pos = int(idx)
                             prev_pos = max(0, curr_pos - 1)
-                            if curr_pos > prev_pos:  # Не первый элемент
+                            if curr_pos > prev_pos:  # Not the first element
                                 prev_time = datetimes[prev_pos]
                                 curr_time = datetimes[curr_pos]
-                                # Рассчитываем реальную разницу заново
+                                # Calculate the real difference again
                                 delta = curr_time - prev_time
                             else:
-                                # Если это первый элемент, берём его самого дважды
+                                # If this is the first element, take it twice
                                 prev_time = datetimes[0]
                                 curr_time = datetimes[0]
                                 delta = pd.Timedelta(0)
@@ -182,40 +182,40 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
                             raise ValueError(f"Index position {idx} out of bounds for DatetimeIndex of size {len(datetimes)}")
                     elif idx in datetimes:
                         curr_pos = datetimes.get_loc(idx)
-                        # Получаем предыдущий и текущий элементы по их позиции
+                        # Get the previous and current elements
                         if curr_pos > 0:
                             prev_time = datetimes[curr_pos - 1]
                             curr_time = datetimes[curr_pos]
-                            # Рассчитываем реальную разницу заново
+                            # Get the real difference again
                             delta = curr_time - prev_time
                         else:
-                            # Если это первый элемент, берём его самого дважды
+                            # If this is the first element, take it twice
                             prev_time = datetimes[0]
                             curr_time = datetimes[0]
                             delta = pd.Timedelta(0)
                     else:
-                        # Поиск ближайшего индекса, если точное соответствие не найдено
+                        # Search for the nearest index
 
-                        # Убедимся, что idx имеет совместимый тип с datetimes
+                        # Check if idx is a valid index in datetimes
                         try:
                             if pd.api.types.is_datetime64_dtype(datetimes) and not pd.api.types.is_datetime64_dtype(pd.Index([idx])):
-                                # Преобразуем idx к datetime, если возможно
+                                # Transform idx to datetime
                                 idx = pd.to_datetime(idx)
                         except Exception:
-                            # Если не получается преобразовать, попробуем найти по позиции
+                            # If idx is not a valid datetime, try to convert it to a timestamp
                             if isinstance(idx, (int, float)) and idx >= 0 and idx < len(datetimes):
                                 curr_pos = int(idx)
                                 prev_pos = max(0, curr_pos - 1)
                                 prev_time = datetimes[prev_pos]
                                 curr_time = datetimes[curr_pos]
-                                # Рассчитываем реальную разницу заново
+                                # Calculate the real difference again
                                 delta = curr_time - prev_time if curr_pos > prev_pos else pd.Timedelta(0)
                                 if i < 5:
                                     print(f"    Gap from {prev_time} to {curr_time}: {delta}")
                                 gap_summary.append({'file': file_name, 'column': dt_col if dt_col else 'index', 'from': prev_time, 'to': curr_time, 'delta': delta})
                                 continue
 
-                        # Теперь попробуем найти ближайший индекс
+                        # Try to find the nearest index
                         try:
                             nearest_pos = datetimes.get_indexer([idx], method='nearest')[0]
                             if nearest_pos >= 0:
@@ -223,19 +223,19 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
                                 prev_pos = max(0, curr_pos - 1)
                                 prev_time = datetimes[prev_pos]
                                 curr_time = datetimes[curr_pos]
-                                # Рассчитываем реальную разницу заново
+                                # Calculate the real difference again
                                 delta = curr_time - prev_time if curr_pos > prev_pos else pd.Timedelta(0)
                             else:
-                                # Если и ближайший не найден, используем первый и последний
+                                # If the nearest position is negative, it means the index is not found
                                 raise ValueError(f"Index {idx} not found in datetime index and no nearest match")
                         except Exception as e:
-                            # Если всё ещё не работает, используем позицию по номеру
+                            # If the nearest position is negative, it means the index is not found
                             if isinstance(idx, (int, float)):
                                 idx_pos = min(max(0, int(idx)), len(datetimes) - 1)
                                 prev_pos = max(0, idx_pos - 1)
                                 prev_time = datetimes[prev_pos]
                                 curr_time = datetimes[idx_pos]
-                                # Рассчитываем реальную разницу заново
+                                # Calculate the real difference again
                                 delta = curr_time - prev_time if idx_pos > prev_pos else pd.Timedelta(0)
                             else:
                                 raise ValueError(f"Cannot process index {idx} of type {type(idx)} with datetime index")
