@@ -493,7 +493,7 @@ python run_analysis.py show --help
 
 # Using `src/eda/eda_batch_check.py`
 
-The `eda_batch_check.py` script is designed to perform batch Exploratory Data Analysis (EDA) and data quality checks on Parquet files. It supports various checks such as missing values, duplicates, gaps, zero values, negative values, and infinite values. Additionally, it provides options for basic statistics, correlation analysis, and feature importance.
+The `eda_batch_check.py` script is designed to perform batch Exploratory Data Analysis (EDA) and data quality checks on Parquet files. It supports various checks such as missing values, duplicates, gaps, zero values, negative values, and infinite values. Additionally, it provides options for fixing data issues, basic statistics, correlation analysis, and feature importance.
 
 ## Usage
 
@@ -503,47 +503,86 @@ Run the script with the desired flags to perform specific checks or analyses:
 python src/eda/eda_batch_check.py [flags]
 ```
 
-# Flags
+## Flags
 
-## Data Quality Checks
-- `--nan-check`: Check for missing values (NaN) in columns.
-- `--duplicate-check`: Find fully duplicated rows and duplicated values in string columns.
-- `--gap-check`: Find gaps in time series (abnormally large intervals in datetime columns).
-- `--zero-check`: Find zero values in numeric columns (with anomaly heuristics).
-- `--negative-check`: Find negative values in OHLCV and datetime columns.
-- `--inf-check`: Find +inf and -inf values in numeric columns.
-- `--data-quality-checks`, `-dqc`: Run all data quality checks (NaN, duplicates, gaps, zeros, negatives, inf).
+### Data Quality Check Flags
+- `--nan-check`: Check for missing values (NaN) in columns
+- `--duplicate-check`: Find fully duplicated rows and duplicated values in string columns
+- `--gap-check`: Find gaps in time series (abnormally large intervals in datetime columns)
+- `--zero-check`: Find zero values in numeric columns (with anomaly heuristics)
+- `--negative-check`: Find negative values in OHLCV and datetime columns
+- `--inf-check`: Find +inf and -inf values in numeric columns
+- `--data-quality-checks`, `-dqc`: Run all data quality checks (NaN, duplicates, gaps, zeros, negatives, inf)
 
-## Other Features
-- `--fix-files`: Fix data in the original Parquet files.
-- `--basic-stats`: Show basic statistics for files.
-- `--correlation-analysis`: Perform correlation analysis between numeric features.
-- `--feature-importance`: Perform feature importance analysis.
+### Fix Flags
+- `--fix-nan`: Fix NaN values in columns
+- `--fix-duplicates`: Fix fully duplicated rows
+- `--fix-gaps`: Fix gaps in time series 
+- `--fix-zeros`: Fix zero values in numeric columns
+- `--fix-negatives`: Fix negative values in OHLCV columns
+- `--fix-infs`: Fix infinity values in numeric columns
+- `--fix-all`: Fix all detected problems
+- `--fix-files`: General flag for fixing (must be used with specific fix flags)
+- `--restore-backups`: Restore original files from .bak backups
 
-# Examples
+### Analysis and Other Flags
+- `--basic-stats`: Show basic statistics for files
+- `--correlation-analysis`: Correlation analysis between numeric features
+- `--feature-importance`: Feature importance analysis
 
-### Run specific checks:
+## Examples
+
+### Check data quality issues
 ```bash
 python src/eda/eda_batch_check.py --nan-check --duplicate-check
+python src/eda/eda_batch_check.py --data-quality-checks
 ```
+
+### Fix specific issues
 ```bash
-python src/eda/eda_batch_check.py --data-quality-checks --basic-stats
+python src/eda/eda_batch_check.py --fix-files --fix-nan --fix-duplicates
+python src/eda/eda_batch_check.py --fix-files --fix-zeros --fix-negatives
 ```
+
+### Fix all detected issues
 ```bash
-python src/eda/eda_batch_check.py -dqc --basic-stats
+python src/eda/eda_batch_check.py --fix-files --fix-all
 ```
+
+### Restore original files from backups
 ```bash
-python src/eda/eda_batch_check.py --correlation-analysis
+python src/eda/eda_batch_check.py --restore-backups
 ```
+
+### Combine analysis with fixing
 ```bash
-python src/eda/eda_batch_check.py --feature-importance
+python src/eda/eda_batch_check.py --data-quality-checks --fix-files --fix-all
 ```
-```bash
-python src/eda/eda_batch_check.py --data-quality-checks --fix-files
-```
+
+### Run multiple checks with basic statistics
 ```bash
 python src/eda/eda_batch_check.py --nan-check --gap-check --zero-check --basic-stats
 ```
+
+## How It Works
+
+The script automatically processes all Parquet files in the data directory. For each file:
+
+1. **Data Loading**: Files are loaded one by one and checked according to the specified flags.
+2. **Quality Checks**: The script performs the requested quality checks and collects results.
+3. **Summary Reports**: After processing all files, comprehensive summaries are displayed for each type of check.
+4. **Fixing Issues**: If fix flags are used, the script applies the appropriate fixes to each file while creating backups.
+5. **Backup Management**: Original files are backed up with `.bak` extension before modifications.
+
+When fixing data issues:
+- NaN values are filled based on column type (median for numeric, mode for strings, etc.)
+- Duplicate rows are removed while keeping the first occurrence
+- Gaps in time series are fixed by interpolation and reindexing
+- Zero values in price-related columns are replaced with interpolated values
+- Negative values are fixed according to column type (absolute values for prices)
+- Infinite values are replaced with meaningful finite values
+
+The script is designed to be safe (creates backups) and efficient (processes large datasets with minimal memory footprint).
 
 ### Running Tests
 
