@@ -217,7 +217,22 @@ def negative_check(df, negative_summary, Fore, Style, file_name=None):
                 print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {n_neg} negative datetime values. {Fore.RED}ANOMALY!{Style.RESET_ALL}")
                 negative_summary.append({'column': col, 'negatives': n_neg, 'df': df, 'file': file_name, 'is_datetime': True})
 
-def data_quality_checks(df, nan_summary, dupe_summary, gap_summary, Fore, Style, schema_datetime_fields=None, file_name=None, zero_summary=None, negative_summary=None):
+def inf_check(df, inf_summary, Fore, Style, file_name=None):
+    """
+    Checks for -inf and +inf values in numeric columns. Prints columns with infs and their counts.
+    Adds info to inf_summary.
+    """
+    import numpy as np
+    print(f"  {Fore.MAGENTA}Data Quality Check: Inf values (+inf, -inf){Style.RESET_ALL}")
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    for col in numeric_cols:
+        n_posinf = (df[col] == np.inf).sum()
+        n_neginf = (df[col] == -np.inf).sum()
+        if n_posinf > 0 or n_neginf > 0:
+            print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: +inf: {n_posinf}, -inf: {n_neginf}")
+            inf_summary.append({'column': col, 'posinf': n_posinf, 'neginf': n_neginf, 'df': df, 'file': file_name})
+
+def data_quality_checks(df, nan_summary, dupe_summary, gap_summary, Fore, Style, schema_datetime_fields=None, file_name=None, zero_summary=None, negative_summary=None, inf_summary=None):
     nan_check(df, nan_summary, Fore, Style)
     duplicate_check(df, dupe_summary, Fore, Style)
     gap_check(df, gap_summary, Fore, Style, schema_datetime_fields=schema_datetime_fields, file_name=file_name)
@@ -225,6 +240,8 @@ def data_quality_checks(df, nan_summary, dupe_summary, gap_summary, Fore, Style,
         zero_check(df, zero_summary, Fore, Style, file_name=file_name)
     if negative_summary is not None:
         negative_check(df, negative_summary, Fore, Style, file_name=file_name)
+    if inf_summary is not None:
+        inf_check(df, inf_summary, Fore, Style, file_name=file_name)
 
 def print_nan_summary(nan_summary, Fore, Style):
     """
@@ -318,4 +335,44 @@ def print_negative_summary(negative_summary, Fore, Style):
             neg_by_file[entry.get('file', 'Unknown file')].append(entry)
         print(f"\n{Fore.MAGENTA}Negative Value Summary for all files (grouped by file):{Style.RESET_ALL}")
         for file, negs in neg_by_file.items():
+                    print(f"  {Fore.CYAN}File: {file}{Style.RESET_ALL}")
+                    for entry in negs:
+                        print(f"    {Fore.YELLOW}{entry['column']}{Style.RESET_ALL}: {entry['negatives']} negatives")
+                        df = entry.get('df')
+                        if df is not None:
+                            example_rows = df[df[entry['column']] < 0].head(3)
+                            if not example_rows.empty:
+                                print(f"      Example rows with negative in {entry['column']} (index and row number shown):")
+                                for i, (idx, row) in enumerate(example_rows.iterrows()):
+                                    row_number = example_rows.index.get_loc(idx)
+                                    print(f"        [index: {idx}] [row: {row_number}]")
+                                    for k, v in row.items():
+                                        print(f"          {k}: {v}")
 
+def print_inf_summary(inf_summary, Fore, Style):
+    """
+    Prints summary of inf values for all files after processing, grouped by file.
+    Shows only columns with infs, with example rows and their index.
+    """
+    if inf_summary:
+        from collections import defaultdict
+        infs_by_file = defaultdict(list)
+        for entry in inf_summary:
+            infs_by_file[entry.get('file', 'Unknown file')].append(entry)
+        print(f"\n{Fore.MAGENTA}Inf Value Summary for all files (grouped by file):{Style.RESET_ALL}")
+        for file, infs in infs_by_file.items():
+            print(f"  {Fore.CYAN}File: {file}{Style.RESET_ALL}")
+            for entry in infs:
+                print(f"    {Fore.YELLOW}{entry['column']}{Style.RESET_ALL}: +inf: {entry['posinf']}, -inf: {entry['neginf']}")
+                df = entry.get('df')
+                if df is not None:
+                    example_rows = df[(df[entry['column']] == float('inf')) | (df[entry['column']] == float('-inf'))].head(3)
+                    if not example_rows.empty:
+                        print(f"      Example rows with inf in {entry['column']} (index and row number shown):")
+                        for i, (idx, row) in enumerate(example_rows.iterrows()):
+                            row_number = example_rows.index.get_loc(idx)
+                            print(f"        [index: {idx}] [row: {row_number}]")
+                            for k, v in row.items():
+                                print(f"          {k}: {v}")
+    else:
+        print(f"\n{Fore.MAGENTA}Inf Value Summary for all files: No infs found.{Style.RESET_ALL}")
