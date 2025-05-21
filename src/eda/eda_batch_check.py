@@ -2,10 +2,11 @@
 EDA Batch Check Script
 
 Usage:
-    python eda_batch_check.py [--data-quality-checks] [--fix-files] [--basic-stats] [--correlation-analysis] [--feature-importance]
+    python eda_batch_check.py [--data-quality-checks] [--quality-checks] [--fix-files] [--basic-stats] [--correlation-analysis] [--feature-importance]
 
 Flags:
     --data-quality-checks    Run data quality checks (missing, duplicates, unique values)
+    --quality-checks         Run extended quality checks (NaN, duplicates, gaps, zeros, negatives, inf)
     --fix-files              Fix data in original .parquet files
     --basic-stats            Compute basic statistics
     --correlation-analysis   Compute correlations between numerical features
@@ -42,6 +43,7 @@ def main():
     """Main function to handle command line arguments and execute the appropriate functions."""
     parser = argparse.ArgumentParser(description="Batch EDA and Data Quality Checks on Parquet Files")
     parser.add_argument('-dqc', '--data-quality-checks', action='store_true', help='Perform data quality checks (NaN, duplicates, unique values, etc.)')
+    parser.add_argument('-qdc', '--quality-checks', action='store_true', help='Проверка качества данных (NaN, дубликаты, пропуски, нули, отрицательные значения, inf)')
     parser.add_argument('--fix-files', action='store_true')
     parser.add_argument('--basic-stats', action='store_true')
     parser.add_argument('--correlation-analysis', action='store_true')
@@ -59,9 +61,10 @@ def main():
         gap_summary_all = []
         zero_summary_all = []  # Collect zero value summary for all files
         negative_summary_all = []  # Collect negative value summary for all files
+        inf_summary_all = []  # Collect inf value summary for all files
         for idx, file in enumerate(parquet_files, 1):
             info = file_info.get_file_info(file)
-            if args.data_quality_checks:
+            if args.data_quality_checks or args.quality_checks:
                 if 'error' in info:
                     print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
                     print(f"  {Fore.RED}Error reading file:{Style.RESET_ALL} {info['error']}")
@@ -76,7 +79,7 @@ def main():
                     print(f"  {Fore.RED} Error reading file for checking NaN:{Style.RESET_ALL} {e}")
                 if df is not None:
                     print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
-                    # Data quality checks: nan, duplicates, gaps, zeros, negatives
+                    # Data quality checks: nan, duplicates, gaps, zeros, negatives, inf
                     data_quality.data_quality_checks(
                         df,
                         nan_summary_all,
@@ -87,7 +90,8 @@ def main():
                         schema_datetime_fields=info.get('datetime_or_timestamp_fields'),
                         file_name=info.get('file_path'),
                         zero_summary=zero_summary_all,
-                        negative_summary=negative_summary_all
+                        negative_summary=negative_summary_all,
+                        inf_summary=inf_summary_all
                     )
                 pbar.update(1)
                 continue
@@ -117,12 +121,13 @@ def main():
                 print(f"  {Fore.RED}Error reading rows:{Style.RESET_ALL} {e}")
             pbar.update(1)
     # NaN, duplicate, and gap summary after all files
-    if args.data_quality_checks:
+    if args.data_quality_checks or args.quality_checks:
         data_quality.print_nan_summary(nan_summary_all, Fore, Style)
         data_quality.print_duplicate_summary(dupe_summary_all, Fore, Style)
         data_quality.print_gap_summary(gap_summary_all, Fore, Style)
         data_quality.print_zero_summary(zero_summary_all, Fore, Style)
         data_quality.print_negative_summary(negative_summary_all, Fore, Style)
+        data_quality.print_inf_summary(inf_summary_all, Fore, Style)
 
     print("\n" + Fore.BLUE + Style.BRIGHT + "Folder statistics:" + Style.RESET_ALL)
 
