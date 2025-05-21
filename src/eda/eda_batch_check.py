@@ -156,7 +156,7 @@ def main():
     parquet_files = [y for x in os.walk(data_dir) for y in glob.glob(os.path.join(x[0], '*.parquet'))]
 
     # Check if there are any parquet files in the directory
-    with tqdm(total=len(parquet_files), desc="Processing files", position=0, leave=True) as pbar:
+    with tqdm(total=len(parquet_files), desc="Processing files", position=0, leave=True, ncols=100, bar_format='{desc} [{n_fmt}/{total_fmt}] {bar} {percentage:3.0f}%') as pbar:
         nan_summary_all = []
         dupe_summary_all = []
         gap_summary_all = []
@@ -276,7 +276,7 @@ def main():
         fix_infs = args.fix_infs or args.fix_all
 
         # Process each parquet file
-        with tqdm(total=len(parquet_files), desc="Fixing files", position=0, leave=True) as pbar:
+        with tqdm(total=len(parquet_files), desc="Fixing files", position=0, leave=True, ncols=100, bar_format='{desc} [{n_fmt}/{total_fmt}] {bar} {percentage:3.0f}%') as pbar:
             fixed_count = 0
             total_count = 0
 
