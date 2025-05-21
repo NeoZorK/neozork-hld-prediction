@@ -145,13 +145,17 @@ def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema
     if not gaps.empty:
         print(f"  {Fore.MAGENTA}Gap Check: Found {len(gaps)} gaps in '{dt_col if dt_col else 'index'}' (interval > {expected * 2}){Style.RESET_ALL}")
         for i, (idx, delta) in enumerate(gaps.items()):
+            # idx is the index in datetimes where the gap is detected
             if use_iloc:
-                prev_time = datetimes.iloc[i]
-                curr_time = datetimes.iloc[i + 1]
+                curr_pos = datetimes.index.get_loc(idx)
+                prev_time = datetimes.iloc[curr_pos - 1]
+                curr_time = datetimes.iloc[curr_pos]
             else:
-                prev_time = datetimes[i]
-                curr_time = datetimes[i + 1]
-            print(f"    Gap from {prev_time} to {curr_time}: {delta}") if i < 5 else None
+                curr_pos = datetimes.get_loc(idx)
+                prev_time = datetimes[curr_pos - 1]
+                curr_time = datetimes[curr_pos]
+            if i < 5:
+                print(f"    Gap from {prev_time} to {curr_time}: {delta}")
             gap_summary.append({'file': file_name, 'column': dt_col if dt_col else 'index', 'from': prev_time, 'to': curr_time, 'delta': delta})
     else:
         print(f"  {Fore.MAGENTA}Gap Check: No significant gaps found in '{dt_col if dt_col else 'index'}'.{Style.RESET_ALL}")
