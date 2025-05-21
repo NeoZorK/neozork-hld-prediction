@@ -81,7 +81,8 @@ def main():
                         gap_summary_all,
                         Fore,
                         Style,
-                        schema_datetime_fields=info.get('datetime_or_timestamp_fields')
+                        schema_datetime_fields=info.get('datetime_or_timestamp_fields'),
+                        file_name=info.get('file_path')
                     )
                 pbar.update(1)
                 continue
