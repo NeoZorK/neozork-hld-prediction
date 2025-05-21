@@ -20,25 +20,18 @@ def show_help():
     """
     print("\n=== SHOW MODE HELP ===")
     print("The 'show' mode allows you to list and inspect cached data files.")
-    print("Usage: python run_analysis.py show <source> [keywords...] [--cleaned | --raw]")
+    print("Usage: python run_analysis.py show <source> [keywords...]")
     print("\nAvailable sources:")
     print("  - csv: Converted CSV data files")
     print("  - yfinance/yf: Yahoo Finance data files")
     print("  - polygon: Polygon.io API data files")
     print("  - binance: Binance API data files")
-    print("\nFlags:")
-    print("  --cleaned   Use cleaned data directories (default)")
-    print("  --raw       Use raw/original data directories")
     print("\nExamples:")
-    print("  python run_analysis.py show                  # Show statistics for all sources (cleaned by default)")
-    print("  python run_analysis.py show yf               # List all Yahoo Finance files (cleaned)")
-    print("  python run_analysis.py show --raw yf         # List all Yahoo Finance files (raw/original)")
-    print("  python run_analysis.py show csv              # List all CSV-converted files (cleaned)")
-    print("  python run_analysis.py show --raw csv        # List all CSV-converted files (raw/original)")
-    print("  python run_analysis.py show binance          # List all Binance files (cleaned)")
-    print("  python run_analysis.py show --raw binance    # List all Binance files (raw/original)")
-    print("  python run_analysis.py show polygon          # List all Polygon.io files (cleaned)")
-    print("  python run_analysis.py show --raw polygon    # List all Polygon.io files (raw/original)")
+    print("  python run_analysis.py show                  # Show statistics for all sources")
+    print("  python run_analysis.py show yf               # List all Yahoo Finance files")
+    print("  python run_analysis.py show csv              # List all CSV-converted files")
+    print("  python run_analysis.py show binance          # List all Binance files")
+    print("  python run_analysis.py show polygon          # List all Polygon.io files")
     print("  python run_analysis.py show yf aapl          # List YF files containing 'aapl'")
     print("  python run_analysis.py show binance btc MN1  # List Binance files with 'btc' and timeframe 'MN1'")
     print("\nDate filtering:")
@@ -53,18 +46,11 @@ def import_generate_plot():
 
 def get_search_dirs(args):
     """
-    Returns the appropriate SEARCH_DIRS based on the 'cleaned' or 'raw' flag in args.
-    'cleaned' is True by default. If 'raw' is set, use raw paths.
+    Returns the search directories for show mode (raw data only).
     """
-    if hasattr(args, 'raw') and args.raw:
-        return [
-            Path("data/raw_parquet"),
-            Path("data/cache/csv_converted")
-        ]
-    # Default to cleaned if not raw
     return [
-        Path("data/cleaned/raw_parquet"),
-        Path("data/cleaned/cache/csv_converted")
+        Path("data/raw_parquet"),
+        Path("data/cache/csv_converted")
     ]
 
 def count_files_by_source(args=None):
@@ -233,16 +219,7 @@ def handle_show_mode(args):
     """
     Handles the 'show' mode logic: finds files, displays info, and potentially triggers plot or indicator calculation.
     """
-    # Set default for cleaned/raw flags
-    if not hasattr(args, 'cleaned'):
-        args.cleaned = True
-    if not hasattr(args, 'raw'):
-        args.raw = not args.cleaned
-    # If both are missing, default to cleaned
-    if not hasattr(args, 'cleaned') and not hasattr(args, 'raw'):
-        args.cleaned = True
-        args.raw = False
-
+    # Always use raw data directories
     search_dirs = get_search_dirs(args)
 
     if not args.source or args.source == 'help':
