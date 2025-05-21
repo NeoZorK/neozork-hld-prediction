@@ -116,25 +116,66 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
         if gap_summary and len(gap_summary) > 0 and 'column' in gap_summary[0]:
             dt_col = gap_summary[0]['column']
         else:
-            # Try to detect from DataFrame
+            # Try to detect from DataFrame by dtype first
             for col in df.columns:
                 if pd.api.types.is_datetime64_any_dtype(df[col]):
                     dt_col = col
+                    print(f"Found datetime column: {col} by dtype")
                     break
 
-            # If still not found, try common column names
+            # If still not found, try common date/time column names (case-insensitive)
             if not dt_col:
-                for col in ['date', 'time', 'datetime', 'timestamp']:
-                    if col in df.columns:
-                        try:
-                            df[col] = pd.to_datetime(df[col])
-                            dt_col = col
-                            break
-                        except:
-                            pass
+                common_datetime_names = ['date', 'time', 'datetime', 'timestamp', 'time_open',
+                                        'date_time', 'day', 'time_close', 'timeopen', 'timeclose']
+
+                for name in common_datetime_names:
+                    for col in df.columns:
+                        if name in col.lower():
+                            try:
+                                df[col] = pd.to_datetime(df[col])
+                                dt_col = col
+                                print(f"Found and converted datetime column: {col} by name")
+                                break
+                            except:
+                                pass
+                    if dt_col:
+                        break
+
+                # Check if there's a column that might be numeric timestamp
+                if not dt_col:
+                    for col in df.select_dtypes(include=['int64', 'float64']).columns:
+                        # Try to convert numeric column if it looks like a timestamp (high values)
+                        if df[col].mean() > 1000000:  # Likely timestamp (seconds or milliseconds since epoch)
+                            try:
+                                # Try seconds format first
+                                test_dt = pd.to_datetime(df[col].iloc[0], unit='s')
+                                if test_dt.year > 1990 and test_dt.year < 2050:  # Sensible year range
+                                    df[col] = pd.to_datetime(df[col], unit='s')
+                                    dt_col = col
+                                    print(f"Converted numeric column {col} to datetime (seconds)")
+                                    break
+                            except:
+                                try:
+                                    # Try milliseconds format
+                                    test_dt = pd.to_datetime(df[col].iloc[0], unit='ms')
+                                    if test_dt.year > 1990 and test_dt.year < 2050:  # Sensible year range
+                                        df[col] = pd.to_datetime(df[col], unit='ms')
+                                        dt_col = col
+                                        print(f"Converted numeric column {col} to datetime (milliseconds)")
+                                        break
+                                except:
+                                    pass
+
+                # If still no column found but index is datetime, use index
+                if not dt_col and pd.api.types.is_datetime64_any_dtype(df.index):
+                    dt_col = 'index'
+                    print("Using DataFrame index as datetime")
 
     if not dt_col:
         print("Warning: Could not identify datetime column, cannot fix gaps")
+        # Print column names and types to help diagnose the issue
+        for col in df.columns:
+            print(f"Column: {col}, Type: {df[col].dtype}, Sample: {df[col].iloc[0] if not df.empty else None}")
         return df
 
     if dt_col != 'index' and dt_col in df.columns:
@@ -142,8 +183,9 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
         if not pd.api.types.is_datetime64_any_dtype(df[dt_col]):
             try:
                 df[dt_col] = pd.to_datetime(df[dt_col])
-            except:
-                print(f"Warning: Could not convert '{dt_col}' to datetime, cannot fix gaps")
+                print(f"Converted '{dt_col}' to datetime")
+            except Exception as e:
+                print(f"Warning: Could not convert '{dt_col}' to datetime: {e}")
                 return df
 
         # Sort by datetime column
