@@ -57,30 +57,40 @@ def main():
         nan_summary_all = []
         for idx, file in enumerate(parquet_files, 1):
             info = file_info.get_file_info(file)
+            if args.data_quality_checks:
+                if 'error' in info:
+                    print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
+                    print(f"  {Fore.RED}Error reading file:{Style.RESET_ALL} {info['error']}")
+                    pbar.update(1)
+                    continue
+                df = None
+                try:
+                    import pandas as pd
+                    df = pd.read_parquet(file)
+                except Exception as e:
+                    print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
+                    print(f"  {Fore.RED} Error reading file for checking NaN:{Style.RESET_ALL} {e}")
+                if df is not None:
+                    print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
+                    data_quality.data_quality_checks(df, nan_summary_all, Fore, Style)
+                pbar.update(1)
+                continue
             print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
             print(f"  {Fore.YELLOW}Name:{Style.RESET_ALL} {info.get('file_name')}")
             print(f"  {Fore.YELLOW}Size:{Style.RESET_ALL} {info.get('file_size_mb')} MB")
-
-            # Check for errors in file reading
             if 'error' in info:
                 print(f"  {Fore.RED}Error reading file:{Style.RESET_ALL} {info['error']}")
                 pbar.update(1)
                 continue
             print(f"  {Fore.YELLOW}Rows:{Style.RESET_ALL} {info.get('n_rows')}, {Fore.YELLOW}Columns:{Style.RESET_ALL} {info.get('n_cols')}")
             print(f"  {Fore.YELLOW}Columns:{Style.RESET_ALL} {info.get('columns')}")
-
-            # Print schema
             dtypes_dict = info.get('dtypes')
             if dtypes_dict:
                 print(f"  {Fore.YELLOW}Dtypes:{Style.RESET_ALL}")
                 max_col_len = max(len(str(col)) for col in dtypes_dict.keys()) if dtypes_dict else 0
-
-                # Print dtypes with aligned columns
                 for col, dtype in dtypes_dict.items():
                     print(f"    {col.ljust(max_col_len)} : {dtype}")
             print(f"  {Fore.MAGENTA}DateTime/Timestamp fields (schema):{Style.RESET_ALL} {info.get('datetime_or_timestamp_fields')}")
-
-            # Print datetime and timestamp columns
             try:
                 import pandas as pd
                 df = pd.read_parquet(file)
@@ -89,23 +99,10 @@ def main():
                 print(f"  {Fore.GREEN}Last 5 rows:{Style.RESET_ALL}\n", df.tail(5).to_string())
             except Exception as e:
                 print(f"  {Fore.RED}Error reading rows:{Style.RESET_ALL} {e}")
-
-            if args.data_quality_checks:
-                if 'error' not in info:
-                    df = None
-                    try:
-                        import pandas as pd
-                        df = pd.read_parquet(file)
-                    except Exception as e:
-                        print(f"  {Fore.RED} Error reading file for checking NaN:{Style.RESET_ALL} {e}")
-                    if df is not None:
-                        data_quality.data_quality_checks(df, nan_summary_all, Fore, Style)
             pbar.update(1)
     # NaN summary after all files
-    if args.data_quality_checks and nan_summary_all:
+    if args.data_quality_checks:
         data_quality.print_nan_summary(nan_summary_all, Fore, Style)
-    elif args.data_quality_checks:
-        data_quality.print_nan_summary([], Fore, Style)
 
     print("\n" + Fore.BLUE + Style.BRIGHT + "Folder statistics:" + Style.RESET_ALL)
 
