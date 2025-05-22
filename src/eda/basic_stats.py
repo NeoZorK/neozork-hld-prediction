@@ -34,6 +34,58 @@ def compute_basic_stats(df):
             }
     return stats
 
+def print_basic_stats_summary(stats_result):
+    """Print summary and recommendations for basic statistics."""
+    # Identify columns with high missing values
+    high_missing_cols = []
+    numeric_cols = []
+    categorical_cols = []
+    high_cardinality_cols = []
+    low_cardinality_cols = []
+
+    for col, stats in stats_result.items():
+        # Check for numeric columns
+        if 'std' in stats:
+            numeric_cols.append(col)
+
+            # Check for high missing values
+            if stats['missing'] > 0:
+                missing_pct = stats['missing'] / (stats['missing'] + stats['unique']) * 100
+                if missing_pct > 5:
+                    high_missing_cols.append((col, missing_pct))
+        else:
+            categorical_cols.append(col)
+            # Check cardinality
+            if stats['unique'] > 100:
+                high_cardinality_cols.append((col, stats['unique']))
+            elif stats['unique'] < 5 and stats['unique'] > 1:
+                low_cardinality_cols.append((col, stats['unique']))
+
+    # Print summary
+    print("\n\033[1m\033[95mSummary and Recommendations:\033[0m")
+    print(f"  • Dataset contains {len(numeric_cols)} numeric and {len(categorical_cols)} non-numeric columns")
+
+    if high_missing_cols:
+        print(f"  • {len(high_missing_cols)} columns have significant missing values (>5%):")
+        for col, pct in sorted(high_missing_cols, key=lambda x: x[1], reverse=True)[:5]:  # Show top 5
+            print(f"    - {col}: {pct:.1f}% missing")
+        if len(high_missing_cols) > 5:
+            print(f"    - ... and {len(high_missing_cols) - 5} more columns")
+        print("  • Consider handling missing values with imputation or feature removal")
+
+    if high_cardinality_cols:
+        print(f"  • High cardinality categorical features: {len(high_cardinality_cols)} columns")
+        print("  • Consider encoding methods like target encoding for these columns")
+
+    if low_cardinality_cols:
+        print(f"  • Low cardinality features: {len(low_cardinality_cols)} columns")
+        print("  • These might be good candidates for one-hot encoding")
+
+    print("  • Next steps:")
+    print("    - Run --descriptive-stats for more detailed statistics")
+    print("    - Check distributions with --distribution-analysis")
+    print("    - Run --correlation-analysis to understand relationships between features")
+
 def descriptive_stats(df):
     """
     Compute detailed descriptive statistics for numeric columns.
