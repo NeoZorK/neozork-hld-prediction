@@ -477,3 +477,206 @@ def generate_outlier_analysis_report(df, file_path):
 
     return report_path
 
+def descriptive_stats(df):
+    """
+    Compute detailed descriptive statistics for each numeric column.
+    Returns a dictionary with stats for each column.
+    """
+    result = {}
+    for col in df.select_dtypes(include=['number']).columns:
+        try:
+            col_data = df[col].dropna()
+            if len(col_data) == 0:
+                result[col] = {'error': 'No non-null data points'}
+                continue
+
+            result[col] = {
+                'mean': col_data.mean(),
+                'median': col_data.median(),
+                'mode': col_data.mode().iloc[0] if not col_data.mode().empty else None,
+                'std': col_data.std(),
+                'var': col_data.var(),
+                'min': col_data.min(),
+                'max': col_data.max(),
+                '25%': col_data.quantile(0.25),
+                '50%': col_data.quantile(0.5),
+                '75%': col_data.quantile(0.75),
+                'iqr': col_data.quantile(0.75) - col_data.quantile(0.25),
+                'range': col_data.max() - col_data.min(),
+                'coef_variation': col_data.std() / col_data.mean() if col_data.mean() != 0 else float('inf'),
+                'data_points': len(col_data),
+                'missing': df[col].isna().sum(),
+                'missing_percent': df[col].isna().sum() / len(df) * 100
+            }
+        except Exception as e:
+            result[col] = {'error': str(e)}
+
+    return result
+
+def print_descriptive_stats(desc_stats):
+    """Print descriptive statistics with color formatting."""
+    # Group columns by type
+    column_groups = {}
+    for col in desc_stats.keys():
+        # Group by OHLCV pattern
+        if 'open' in col.lower() or 'high' in col.lower() or 'low' in col.lower() or 'close' in col.lower():
+            group = 'price_ohlc'
+        elif 'volume' in col.lower():
+            group = 'volume'
+        else:
+            group = 'other'
+
+        if group not in column_groups:
+            column_groups[group] = []
+        column_groups[group].append(col)
+
+    # Print each group
+    for group, columns in column_groups.items():
+        if group == 'price_ohlc':
+            print("\n\033[96mPrice Data (OHLC):\033[0m")
+        elif group == 'volume':
+            print("\n\033[96mVolume Data:\033[0m")
+        else:
+            print("\n\033[96mOther Data:\033[0m")
+
+        for col in columns:
+            stats = desc_stats[col]
+            print(f"\n\033[93mColumn: {col}\033[0m")
+            if 'error' in stats:
+                print(f"  Error: {stats['error']}")
+                continue
+
+            print(f"  Mean: {stats['mean']:.4f}")
+            print(f"  Median: {stats['median']:.4f}")
+            print(f"  Mode: {stats['mode']}")
+            print(f"  Standard Deviation: {stats['std']:.4f}")
+            print(f"  Variance: {stats['var']:.4f}")
+            print(f"  Range: {stats['range']:.4f} (Min: {stats['min']:.4f}, Max: {stats['max']:.4f})")
+            print(f"  IQR: {stats['iqr']:.4f} (Q1: {stats['25%']:.4f}, Q3: {stats['75%']:.4f})")
+            print(f"  Coefficient of Variation: {stats['coef_variation']:.4f}")
+            print(f"  Data Points: {stats['data_points']} (Missing: {stats['missing']} - {stats['missing_percent']:.2f}%)")
+
+def distribution_analysis(df):
+    """
+    Analyze distributions of numeric columns (skewness, kurtosis, normality).
+    Returns a dictionary with distribution stats for each column.
+    """
+    result = {}
+    for col in df.select_dtypes(include=['number']).columns:
+        try:
+            col_data = df[col].dropna()
+            if len(col_data) < 8:  # Need sufficient data for distribution analysis
+                result[col] = {'error': 'Insufficient data points for distribution analysis'}
+                continue
+
+            # Compute skewness and kurtosis
+            skewness = col_data.skew()
+            kurtosis = col_data.kurt()
+
+            # Test for normality (Shapiro-Wilk)
+            from scipy import stats as scipy_stats
+            # Use sample if dataset is large (Shapiro-Wilk has a limit)
+            sample = col_data.sample(min(5000, len(col_data))) if len(col_data) > 5000 else col_data
+            shapiro_test = scipy_stats.shapiro(sample)
+
+            # Test for normality with D'Agostino-Pearson test
+            normality_test = scipy_stats.normaltest(sample)
+
+            # Determine if distribution is normal based on tests and skewness
+            # More cautious interpretation using both tests and skewness/kurtosis
+            is_normal = "Yes" if (
+                (shapiro_test.pvalue > 0.05 or normality_test.pvalue > 0.05) and  # At least one test passes
+                abs(skewness) < 0.5 and  # Skewness within reasonable bounds
+                abs(kurtosis - 3) < 1  # Kurtosis close to normal distribution value of 3
+            ) else "No"
+
+            result[col] = {
+                'skewness': skewness,
+                'kurtosis': kurtosis,
+                'shapiro_test_pvalue': shapiro_test.pvalue,
+                'dagostino_test_pvalue': normality_test.pvalue,
+                'is_normal': is_normal,
+                'skew_interpretation': interpret_skewness(skewness),
+                'kurtosis_interpretation': interpret_kurtosis(kurtosis),
+                'transformation_suggestion': suggest_transformation(skewness, kurtosis)
+            }
+        except Exception as e:
+            result[col] = {'error': str(e)}
+
+    return result
+
+def interpret_skewness(skew):
+    """
+    Interpret the skewness value of a distribution.
+
+    Parameters:
+    - skew: Skewness value
+
+    Returns:
+    - String interpretation of the skewness
+    """
+    if abs(skew) < 0.5:
+        return "Approximately symmetric"
+    elif 0.5 <= skew < 1:
+        return "Moderately positively skewed"
+    elif skew >= 1:
+        return "Highly positively skewed"
+    elif -1 < skew <= -0.5:
+        return "Moderately negatively skewed"
+    else:  # skew <= -1
+        return "Highly negatively skewed"
+
+def interpret_kurtosis(kurt):
+    """
+    Interpret the kurtosis value of a distribution.
+
+    Parameters:
+    - kurt: Kurtosis value
+
+    Returns:
+    - String interpretation of the kurtosis
+    """
+    # Note: SciPy's kurtosis is already adjusted (excess kurtosis, normal = 0)
+    # But pandas' kurt() returns the raw kurtosis where normal = 3
+    if abs(kurt - 3) < 0.5:
+        return "Mesokurtic (normal-like tails)"
+    elif kurt < 3:
+        return "Platykurtic (thinner tails than normal)"
+    else:  # kurt > 3
+        return "Leptokurtic (heavier tails than normal)"
+
+def suggest_transformation(skew, kurt):
+    """
+    Suggest transformation based on skewness and kurtosis values.
+
+    Parameters:
+    - skew: Skewness value
+    - kurt: Kurtosis value
+
+    Returns:
+    - String with transformation suggestion
+    """
+    # Default recommendation
+    recommendation = "No transformation needed"
+
+    # Check for extreme cases
+    if abs(skew) >= 1 or abs(kurt - 3) >= 2:
+        if skew > 1:
+            if kurt > 5:  # Highly right-skewed with heavy tails
+                recommendation = "Try log or Box-Cox transformation"
+            else:
+                recommendation = "Try square root transformation"
+        elif skew < -1:  # Highly left-skewed
+            recommendation = "Try square transformation or reflect-and-log"
+        elif kurt > 5:  # Heavy tails but not highly skewed
+            recommendation = "Consider Winsorizing outliers or robust scaling"
+        elif kurt < 1:  # Very light tails
+            recommendation = "Consider power transformation"
+    elif 0.5 <= abs(skew) < 1:  # Moderate skewness
+        if skew > 0:
+            recommendation = "Consider mild transformation like square root"
+        else:
+            recommendation = "Consider mild power transformation"
+
+    return recommendation
+
