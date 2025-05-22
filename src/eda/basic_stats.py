@@ -11,6 +11,7 @@ import warnings
 from matplotlib.figure import Figure
 from io import BytesIO
 import base64
+import webbrowser
 
 # Suppress matplotlib warnings for cleaner output
 warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
@@ -27,6 +28,14 @@ def ensure_plots_directory():
         os.makedirs(plots_dir)
 
     return plots_dir
+
+def open_last_plot_in_browser(plot_path):
+    """Open the last created plot in the default web browser."""
+    if os.path.exists(plot_path):
+        webbrowser.open(f'file://{os.path.abspath(plot_path)}')
+        print(f"\033[93m[INFO]\033[0m Last plot opened in your default browser: {plot_path}")
+    else:
+        print(f"\033[91m[ERROR]\033[0m Plot file not found: {plot_path}")
 
 def compute_basic_stats(df):
     """
@@ -108,6 +117,25 @@ def print_basic_stats_summary(stats_result):
     print("    - Run --descriptive-stats for more detailed statistics")
     print("    - Check distributions with --distribution-analysis")
     print("    - Run --correlation-analysis to understand relationships between features")
+
+    # Visualization for basic stats
+    plots_dir = ensure_plots_directory()
+    numeric_cols = [col for col, s in stats_result.items() if 'std' in s]
+    if numeric_cols:
+        plt.figure(figsize=(10, 6))
+        means = [stats_result[col]['mean'] for col in numeric_cols]
+        stds = [stats_result[col]['std'] for col in numeric_cols]
+        sns.barplot(x=numeric_cols, y=means, color='skyblue', edgecolor='black')
+        plt.xticks(rotation=45)
+        plt.ylabel('Mean Value')
+        plt.title('Mean of Numeric Columns (Basic Stats)')
+        plt.tight_layout()
+        plot_path = os.path.join(plots_dir, 'basic_stats_means.png')
+        plt.savefig(plot_path)
+        print(f"\033[96m[INFO]\033[0m Basic stats mean plot saved to: {plot_path}")
+        plt.close()
+        open_last_plot_in_browser(plot_path)
+        print(f"\033[93m[INFO]\033[0m All generated plots can be found in: {plots_dir}")
 
 def descriptive_stats(df):
     """
@@ -615,6 +643,25 @@ def print_descriptive_stats(desc_stats):
     print("  • If IQR (Q3-Q1) is wide, the data has high spread and may contain outliers")
     print("  • Next steps: Check distributions and detect anomalies using --distribution-analysis and --outlier-analysis")
 
+    # Visualization for descriptive stats
+    plots_dir = ensure_plots_directory()
+    numeric_cols = [col for col, s in desc_stats.items() if 'mean' in s and 'std' in s and 'error' not in s]
+    if numeric_cols:
+        plt.figure(figsize=(10, 6))
+        data = {col: [desc_stats[col]['mean'], desc_stats[col]['std'], desc_stats[col]['min'], desc_stats[col]['max']] for col in numeric_cols}
+        df_plot = pd.DataFrame(data, index=['mean', 'std', 'min', 'max']).T
+        df_plot.plot(kind='bar', figsize=(12, 6))
+        plt.title('Descriptive Stats: Mean, Std, Min, Max')
+        plt.ylabel('Value')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plot_path = os.path.join(plots_dir, 'descriptive_stats_summary.png')
+        plt.savefig(plot_path)
+        print(f"\033[96m[INFO]\033[0m Descriptive stats summary plot saved to: {plot_path}")
+        plt.close()
+        open_last_plot_in_browser(plot_path)
+        print(f"\033[93m[INFO]\033[0m All generated plots can be found in: {plots_dir}")
+
 def print_distribution_analysis(dist_stats):
     """Print distribution analysis in a readable format."""
     print("\n\033[1m\033[94mDistribution Analysis:\033[0m")
@@ -677,6 +724,25 @@ def print_distribution_analysis(dist_stats):
     print("  • Non-normal distributions may require special treatment in modeling")
     print("  • Next steps: Run outlier analysis with --outlier-analysis to identify anomalous values")
 
+    # Visualization for distribution analysis
+    plots_dir = ensure_plots_directory()
+    numeric_cols = [col for col, s in dist_stats.items() if 'skewness' in s and 'error' not in s]
+    if numeric_cols:
+        plt.figure(figsize=(10, 6))
+        skews = [dist_stats[col]['skewness'] for col in numeric_cols]
+        kurts = [dist_stats[col]['kurtosis'] for col in numeric_cols]
+        sns.barplot(x=numeric_cols, y=skews, color='orange', edgecolor='black')
+        plt.xticks(rotation=45)
+        plt.ylabel('Skewness')
+        plt.title('Skewness of Numeric Columns')
+        plt.tight_layout()
+        plot_path = os.path.join(plots_dir, 'distribution_skewness.png')
+        plt.savefig(plot_path)
+        print(f"\033[96m[INFO]\033[0m Distribution skewness plot saved to: {plot_path}")
+        plt.close()
+        open_last_plot_in_browser(plot_path)
+        print(f"\033[93m[INFO]\033[0m All generated plots can be found in: {plots_dir}")
+
 def print_outlier_analysis(outlier_stats):
     """Print outlier analysis in a readable format."""
     print("\n\033[1m\033[94mOutlier Analysis:\033[0m")
@@ -730,6 +796,24 @@ def print_outlier_analysis(outlier_stats):
 
     print("  • The presence of outliers can significantly impact statistical analyses and modeling")
     print("  • Next steps: Run time series analysis with --time-series-analysis to investigate temporal patterns")
+
+    # Visualization for outlier analysis
+    plots_dir = ensure_plots_directory()
+    numeric_cols = [col for col, s in outlier_stats.items() if 'iqr_method' in s and 'error' not in s]
+    if numeric_cols:
+        plt.figure(figsize=(10, 6))
+        outlier_pcts = [outlier_stats[col]['iqr_method']['outlier_percentage'] for col in numeric_cols]
+        sns.barplot(x=numeric_cols, y=outlier_pcts, color='red', edgecolor='black')
+        plt.xticks(rotation=45)
+        plt.ylabel('Outlier Percentage (IQR)')
+        plt.title('Outlier Percentage by Column (IQR Method)')
+        plt.tight_layout()
+        plot_path = os.path.join(plots_dir, 'outlier_percentages.png')
+        plt.savefig(plot_path)
+        print(f"\033[96m[INFO]\033[0m Outlier percentage plot saved to: {plot_path}")
+        plt.close()
+        open_last_plot_in_browser(plot_path)
+        print(f"\033[93m[INFO]\033[0m All generated plots can be found in: {plots_dir}")
 
 def print_time_series_analysis(ts_stats):
     """Print time series analysis in a readable format."""
@@ -817,4 +901,19 @@ def print_time_series_analysis(ts_stats):
     print("  • Time series properties directly impact forecasting strategy and model selection")
     print("  • Next steps: Perform correlation analysis with --correlation-analysis to identify relationships")
 
-
+    # Visualization for time series analysis
+    plots_dir = ensure_plots_directory()
+    if 'features' in ts_stats and ts_stats['features']:
+        for feature, stats in ts_stats['features'].items():
+            if isinstance(stats, dict) and all(isinstance(v, (int, float)) for v in stats.values()):
+                plt.figure(figsize=(8, 4))
+                plt.bar(list(stats.keys()), list(stats.values()), color='purple', edgecolor='black')
+                plt.title(f"Time Series Feature: {feature}")
+                plt.ylabel('Value')
+                plt.tight_layout()
+                plot_path = os.path.join(plots_dir, f'ts_feature_{feature}.png')
+                plt.savefig(plot_path)
+                print(f"\033[96m[INFO]\033[0m Time series feature plot saved to: {plot_path}")
+                plt.close()
+                open_last_plot_in_browser(plot_path)
+    print(f"\033[93m[INFO]\033[0m All generated plots can be found in: {plots_dir}")
