@@ -137,25 +137,51 @@ def time_series_analysis(df):
     """
     ts_stats = {'features': {}, 'stationarity': {}, 'seasonality': {}}
 
-    # Try to identify datetime column
+    # First try to identify pre-existing datetime columns
     datetime_cols = [col for col in df.columns if pd.api.types.is_datetime64_any_dtype(df[col])]
 
-    # Try to identify date-like string columns if no datetime columns are found
+    # Common timestamp column names to check if we don't find datetime columns
+    common_date_cols = ['date', 'time', 'timestamp', 'datetime', 'dt', 'created_at', 'updated_at',
+                        'date_time', 'trade_date', 'effective_date', 'execution_date']
+
+    # If no datetime columns found, try to convert potential date columns based on column names
     if not datetime_cols:
-        # Try to convert string columns that might contain dates
+        df_copy = df.copy()  # Create a copy to avoid modifying the original dataframe
+
+        # Try common date column names first
         for col in df.columns:
-            if pd.api.types.is_string_dtype(df[col]) or pd.api.types.is_object_dtype(df[col]):
+            col_lower = col.lower()
+            if any(date_name in col_lower for date_name in common_date_cols):
                 try:
-                    # Attempt to convert the first non-null value to datetime
-                    sample = df[col].dropna().iloc[0] if not df[col].dropna().empty else None
-                    if sample and pd.to_datetime(sample, errors='coerce') is not pd.NaT:
-                        # If conversion successful, try to convert the whole column
-                        df = df.copy()  # Create a copy to avoid modifying the original dataframe
-                        df[col] = pd.to_datetime(df[col], errors='coerce')
-                        if not df[col].isna().all():  # If not all values became NaN
-                            datetime_cols.append(col)
+                    df_copy[col] = pd.to_datetime(df_copy[col], errors='coerce')
+                    if not df_copy[col].isna().all():  # If not all values became NaN
+                        datetime_cols.append(col)
                 except:
                     continue
+
+        # If still no datetime columns, try any string/object columns
+        if not datetime_cols:
+            for col in df.columns:
+                if pd.api.types.is_string_dtype(df[col]) or pd.api.types.is_object_dtype(df[col]):
+                    try:
+                        # Check if first few non-null values look like dates
+                        sample_values = df[col].dropna().iloc[:5].tolist()
+                        if not sample_values:
+                            continue
+
+                        # Try to convert sample values to see if they look like dates
+                        converted = pd.to_datetime(sample_values, errors='coerce')
+                        if not converted.isna().all():  # If at least one converted successfully
+                            # Convert the whole column
+                            df_copy[col] = pd.to_datetime(df_copy[col], errors='coerce')
+                            if not df_copy[col].isna().all() and df_copy[col].notna().sum() > len(df) * 0.5:  # If >50% converted
+                                datetime_cols.append(col)
+                    except:
+                        continue
+
+        # If we found datetime columns, use the copy with converted dates
+        if datetime_cols:
+            df = df_copy
 
     # Try to identify OHLCV columns
     ohlc_patterns = [
@@ -164,13 +190,30 @@ def time_series_analysis(df):
         any(pat in col.lower() for pat in ['open', 'high', 'low', 'close', 'volume'])
     ]
 
-    # If we don't have datetime or OHLC columns, return with a message
+    # If we don't have OHLCV columns, try to identify any numeric columns for analysis
+    if not ohlc_patterns:
+        numeric_cols = [col for col in df.columns if pd.api.types.is_numeric_dtype(df[col])]
+        # For non-OHLCV data, we'll still do some analysis if we have numeric columns
+        if numeric_cols:
+            ohlc_patterns = numeric_cols[:min(5, len(numeric_cols))]  # Use up to 5 numeric columns
+            ts_stats['warning'] = 'No OHLCV columns detected, using available numeric columns for limited analysis.'
+
+    # If we don't have datetime columns, try to create a synthetic time index
+    if not datetime_cols and len(df) > 1:
+        ts_stats['warning'] = 'No datetime columns found. Creating a synthetic time index for analysis.'
+        # Create a time index spanning the length of the DataFrame
+        df = df.copy()  # Create a copy to avoid modifying the original
+        synthetic_index = pd.date_range(start='2000-01-01', periods=len(df), freq='D')
+        df['synthetic_datetime'] = synthetic_index
+        datetime_cols = ['synthetic_datetime']
+
+    # If we still don't have datetime or numeric columns, return with a message
     if not datetime_cols:
-        ts_stats['error'] = 'No datetime columns found for time series analysis. Consider converting date columns to datetime type first.'
+        ts_stats['error'] = 'No datetime columns found and unable to create synthetic index.'
         return ts_stats
 
     if not ohlc_patterns:
-        ts_stats['error'] = 'No OHLCV columns detected for time series analysis.'
+        ts_stats['error'] = 'No numeric columns found for time series analysis.'
         return ts_stats
 
     # Use the first datetime column as the index
@@ -178,28 +221,46 @@ def time_series_analysis(df):
     df_ts = df.copy()
     df_ts.set_index(date_col, inplace=True)
 
-    # Calculate derived features if we have OHLC data
-    if len([col for col in ohlc_patterns if 'high' in col.lower()]) > 0 and len([col for col in ohlc_patterns if 'low' in col.lower()]) > 0:
-        high_col = [col for col in ohlc_patterns if 'high' in col.lower()][0]
-        low_col = [col for col in ohlc_patterns if 'low' in col.lower()][0]
-        ts_stats['features']['daily_range'] = {
+    # Calculate derived features if we have appropriate data
+    # If we have both high and low columns, calculate daily range
+    high_cols = [col for col in ohlc_patterns if 'high' in col.lower()]
+    low_cols = [col for col in ohlc_patterns if 'low' in col.lower()]
+    if high_cols and low_cols:
+        high_col = high_cols[0]
+        low_col = low_cols[0]
+        ts_stats['features']['price_range'] = {
             'mean': (df_ts[high_col] - df_ts[low_col]).mean(),
             'median': (df_ts[high_col] - df_ts[low_col]).median(),
             'std': (df_ts[high_col] - df_ts[low_col]).std()
         }
 
-    if len([col for col in ohlc_patterns if 'open' in col.lower()]) > 0 and len([col for col in ohlc_patterns if 'close' in col.lower()]) > 0:
-        open_col = [col for col in ohlc_patterns if 'open' in col.lower()][0]
-        close_col = [col for col in ohlc_patterns if 'close' in col.lower()][0]
-        ts_stats['features']['daily_change'] = {
+    # If we have both open and close columns, calculate daily change
+    open_cols = [col for col in ohlc_patterns if 'open' in col.lower()]
+    close_cols = [col for col in ohlc_patterns if 'close' in col.lower()]
+    if open_cols and close_cols:
+        open_col = open_cols[0]
+        close_col = close_cols[0]
+        ts_stats['features']['price_change'] = {
             'mean': (df_ts[close_col] - df_ts[open_col]).mean(),
             'median': (df_ts[close_col] - df_ts[open_col]).median(),
             'std': (df_ts[close_col] - df_ts[open_col]).std()
         }
 
-    # Stationarity test (ADF)
+    # For each numeric column, calculate some time series features
     for col in ohlc_patterns:
         if df_ts[col].count() > 10:  # Need sufficient data points
+            # Calculate rolling statistics
+            try:
+                ts_stats['features'][f'{col}_trends'] = {
+                    'rolling_mean_7': df_ts[col].rolling(7).mean().iloc[-1] if len(df_ts) >= 7 else None,
+                    'rolling_std_7': df_ts[col].rolling(7).std().iloc[-1] if len(df_ts) >= 7 else None,
+                    'pct_change_mean': df_ts[col].pct_change().mean(),
+                    'pct_change_std': df_ts[col].pct_change().std()
+                }
+            except:
+                pass
+
+            # Stationarity test (ADF)
             try:
                 adf_result = adfuller(df_ts[col].dropna())
                 ts_stats['stationarity'][col] = {
@@ -213,14 +274,26 @@ def time_series_analysis(df):
 
     # Basic seasonality check - day of week patterns
     if hasattr(df_ts.index, 'dayofweek'):
-        for col in ohlc_patterns:
-            if 'close' in col.lower():
+        try:
+            # For OHLCV data, prefer using close price for seasonality
+            if close_cols:
+                col = close_cols[0]
+            else:
+                col = ohlc_patterns[0]  # Use first numeric column
+
+            # Calculate mean value by day of week
+            day_means = df_ts.groupby(df_ts.index.dayofweek)[col].mean()
+            ts_stats['seasonality']['day_of_week'] = {day: mean for day, mean in enumerate(day_means)}
+
+            # Check if there's any monthly seasonality
+            if hasattr(df_ts.index, 'month') and len(df_ts) >= 60:  # Need enough data for monthly patterns
                 try:
-                    # Calculate mean closing price by day of week
-                    day_means = df_ts.groupby(df_ts.index.dayofweek)[col].mean()
-                    ts_stats['seasonality']['day_of_week'] = {day: mean for day, mean in enumerate(day_means)}
+                    month_means = df_ts.groupby(df_ts.index.month)[col].mean()
+                    ts_stats['seasonality']['month'] = {month: mean for month, mean in enumerate(month_means, 1)}
                 except:
-                    ts_stats['seasonality']['day_of_week'] = {'error': 'Day of week analysis failed'}
+                    pass
+        except:
+            ts_stats['seasonality']['error'] = 'Seasonality analysis failed'
 
     return ts_stats
 
