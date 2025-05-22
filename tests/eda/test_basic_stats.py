@@ -293,15 +293,15 @@ def test_print_distribution_analysis():
 
     captured_output = StringIO()
     sys.stdout = captured_output
-    # Implement basic_stats.print_distribution_analysis or remove this test
-    # basic_stats.print_distribution_analysis(stats)
+    basic_stats.print_distribution_analysis(stats)
     sys.stdout = sys.__stdout__
 
     output = captured_output.getvalue()
-    # Adjust assertion if basic_stats.print_distribution_analysis is implemented
-    # assert "Distribution Analysis" in output
-    # assert "skewed" in output.lower()
-    assert True  # Placeholder assertion until function is implemented
+    assert "Distribution Analysis" in output
+    assert "skewed" in output.lower()
+    assert "Slightly positive skewed" in output  # For open with skewness 0.1
+    assert "Highly positive skewed" in output  # For close with skewness 1.5
+    assert "Leptokurtic" in output  # For close with kurtosis 4.0
 
 def test_print_outlier_analysis():
     """Test print_outlier_analysis doesn't raise exceptions."""
