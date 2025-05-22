@@ -4,6 +4,29 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 from statsmodels.tsa.stattools import adfuller
+import seaborn as sns
+import matplotlib.pyplot as plt
+import os
+import warnings
+from matplotlib.figure import Figure
+from io import BytesIO
+import base64
+
+# Suppress matplotlib warnings for cleaner output
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
+
+# Set seaborn style for better looking plots
+sns.set(style="whitegrid")
+
+def ensure_plots_directory():
+    """Ensure plots directory exists for saving visualizations."""
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    plots_dir = os.path.join(base_dir, 'results', 'plots')
+
+    if not os.path.exists(plots_dir):
+        os.makedirs(plots_dir)
+
+    return plots_dir
 
 def compute_basic_stats(df):
     """
@@ -115,6 +138,170 @@ def descriptive_stats(df):
             else:
                 desc_stats[col] = {'error': 'No valid data points'}
     return desc_stats
+
+def visualize_descriptive_stats(df, desc_stats, file_name="descriptive_stats"):
+    """Create visualizations for descriptive statistics."""
+    plots_dir = ensure_plots_directory()
+
+    # Only process numeric columns
+    numeric_cols = [col for col in df.columns if pd.api.types.is_numeric_dtype(df[col])]
+    if not numeric_cols:
+        return
+
+    # Select first few columns to visualize (up to 5)
+    cols_to_plot = numeric_cols[:min(5, len(numeric_cols))]
+
+    # 1. Create boxplot of key numeric columns
+    plt.figure(figsize=(12, 6))
+    ax = sns.boxplot(data=df[cols_to_plot])
+    plt.title("Boxplot of Key Numeric Features", fontsize=14)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+
+    # Save plot
+    box_plot_path = os.path.join(plots_dir, f"{file_name}_boxplot.png")
+    plt.savefig(box_plot_path)
+    print(f"\n\033[96mBoxplot saved to: {box_plot_path}\033[0m")
+    plt.close()
+
+    # 2. Create a pairplot for selected numeric columns if there are at least 2
+    if len(cols_to_plot) >= 2:
+        plt.figure(figsize=(10, 8))
+        scatter_plot = sns.pairplot(
+            df[cols_to_plot],
+            diag_kind='kde',
+            plot_kws={'alpha': 0.6, 's': 30, 'edgecolor': 'k'}
+        )
+        plt.suptitle("Pairwise Relationships Between Features", y=1.02, fontsize=16)
+
+        # Save plot
+        pairplot_path = os.path.join(plots_dir, f"{file_name}_pairplot.png")
+        scatter_plot.savefig(pairplot_path)
+        print(f"\033[96mPairplot saved to: {pairplot_path}\033[0m")
+        plt.close()
+
+    # 3. Create correlation heatmap
+    if len(cols_to_plot) >= 2:
+        plt.figure(figsize=(10, 8))
+        corr = df[cols_to_plot].corr()
+        mask = np.triu(np.ones_like(corr, dtype=bool))
+        heatmap = sns.heatmap(
+            corr,
+            mask=mask,
+            annot=True,
+            fmt=".2f",
+            cmap='coolwarm',
+            square=True,
+            linewidths=.5,
+            cbar_kws={"shrink": .8}
+        )
+        plt.title("Correlation Heatmap", fontsize=14)
+        plt.tight_layout()
+
+        # Save plot
+        heatmap_path = os.path.join(plots_dir, f"{file_name}_correlation_heatmap.png")
+        plt.savefig(heatmap_path)
+        print(f"\033[96mCorrelation heatmap saved to: {heatmap_path}\033[0m")
+        plt.close()
+
+def visualize_distribution_analysis(df, dist_stats, file_name="distribution_analysis"):
+    """Create visualizations for distribution analysis."""
+    plots_dir = ensure_plots_directory()
+
+    # Only process numeric columns
+    numeric_cols = [col for col in df.columns if pd.api.types.is_numeric_dtype(df[col])]
+    if not numeric_cols:
+        return
+
+    # Select columns with different distribution characteristics for visualization (up to 4)
+    normal_cols = [col for col in numeric_cols if col in dist_stats and
+                  'is_normal' in dist_stats[col] and dist_stats[col]['is_normal'] == 'Yes']
+    highly_skewed_cols = [col for col in numeric_cols if col in dist_stats and
+                         'skewness' in dist_stats[col] and abs(dist_stats[col]['skewness']) > 1]
+
+    # Select a mix of normal and skewed columns for better visualization variety
+    cols_to_plot = []
+    if normal_cols:
+        cols_to_plot.extend(normal_cols[:2])
+    if highly_skewed_cols:
+        cols_to_plot.extend(highly_skewed_cols[:2])
+
+    # If we still don't have enough columns, add other numeric columns
+    remaining_cols = [col for col in numeric_cols if col not in cols_to_plot]
+    cols_to_plot.extend(remaining_cols[:4 - len(cols_to_plot)])
+
+    # Limit to 4 columns for better visualization
+    cols_to_plot = cols_to_plot[:4]
+
+    if not cols_to_plot:
+        return
+
+    # 1. Create histograms with density plots for selected columns
+    fig, axes = plt.subplots(len(cols_to_plot), 1, figsize=(10, 3 * len(cols_to_plot)), constrained_layout=True)
+    if len(cols_to_plot) == 1:
+        axes = [axes]
+
+    for i, col in enumerate(cols_to_plot):
+        # Get distribution statistics
+        if col in dist_stats and 'error' not in dist_stats[col]:
+            skew = dist_stats[col].get('skewness', 'N/A')
+            kurt = dist_stats[col].get('kurtosis', 'N/A')
+            is_normal = dist_stats[col].get('is_normal', 'Unknown')
+
+            # Plot histogram with KDE
+            sns.histplot(df[col].dropna(), kde=True, ax=axes[i], color='skyblue', edgecolor='black')
+
+            # Add distribution information as title
+            axes[i].set_title(f'{col} (Skew: {skew:.2f}, Kurt: {kurt:.2f}, Normal: {is_normal})')
+            axes[i].set_ylabel('Frequency')
+
+            # Add a vertical line for mean and median
+            mean_val = df[col].mean()
+            median_val = df[col].median()
+            axes[i].axvline(mean_val, color='r', linestyle='-', linewidth=1, label=f'Mean: {mean_val:.2f}')
+            axes[i].axvline(median_val, color='g', linestyle='--', linewidth=1, label=f'Median: {median_val:.2f}')
+            axes[i].legend()
+        else:
+            axes[i].text(0.5, 0.5, f"No valid data for {col}", horizontalalignment='center',
+                        verticalalignment='center', transform=axes[i].transAxes)
+
+    fig.suptitle("Distribution Analysis: Histograms with Density Curves", fontsize=16)
+
+    # Save the plot
+    hist_path = os.path.join(plots_dir, f"{file_name}_histograms.png")
+    plt.savefig(hist_path)
+    print(f"\n\033[96mDistribution histograms saved to: {hist_path}\033[0m")
+    plt.close()
+
+    # 2. Create QQ plots for normality check
+    fig, axes = plt.subplots(len(cols_to_plot), 1, figsize=(10, 3 * len(cols_to_plot)), constrained_layout=True)
+    if len(cols_to_plot) == 1:
+        axes = [axes]
+
+    for i, col in enumerate(cols_to_plot):
+        # Get distribution statistics
+        if col in dist_stats and 'error' not in dist_stats[col]:
+            # Create QQ plot
+            from scipy import stats as scipy_stats
+            col_data = df[col].dropna()
+            if len(col_data) > 0:
+                qq = scipy_stats.probplot(col_data, dist="norm", plot=axes[i])
+                is_normal = dist_stats[col].get('is_normal', 'Unknown')
+                axes[i].set_title(f'QQ Plot for {col} (Normal: {is_normal})')
+            else:
+                axes[i].text(0.5, 0.5, f"No valid data for {col}", horizontalalignment='center',
+                            verticalalignment='center', transform=axes[i].transAxes)
+        else:
+            axes[i].text(0.5, 0.5, f"No valid data for {col}", horizontalalignment='center',
+                        verticalalignment='center', transform=axes[i].transAxes)
+
+    fig.suptitle("Distribution Analysis: QQ Plots for Normality Check", fontsize=16)
+
+    # Save the plot
+    qq_path = os.path.join(plots_dir, f"{file_name}_qqplots.png")
+    plt.savefig(qq_path)
+    print(f"\033[96mQQ plots saved to: {qq_path}\033[0m")
+    plt.close()
 
 def distribution_analysis(df):
     """
@@ -629,3 +816,5 @@ def print_time_series_analysis(ts_stats):
 
     print("  • Time series properties directly impact forecasting strategy and model selection")
     print("  • Next steps: Perform correlation analysis with --correlation-analysis to identify relationships")
+
+
