@@ -32,6 +32,8 @@ Flags:
     --correlation-analysis     Correlation analysis between numeric features
     --feature-importance       Feature importance analysis
 
+    --clean-stats-logs         Remove all statistics log files
+
 Examples:
     # Check data quality issues
     python eda_batch_check.py --nan-check --duplicate-check
@@ -51,6 +53,9 @@ Examples:
     python eda_batch_check.py --descriptive-stats
     python eda_batch_check.py --all-stats
 
+    # Clean statistics log files
+    python eda_batch_check.py --clean-stats-logs
+
     # Combine analysis with fixing
     python eda_batch_check.py --data-quality-checks --fix-files --fix-all
 """
@@ -60,6 +65,8 @@ import glob
 import sys
 import colorama
 from colorama import Fore, Style
+import json
+import datetime
 
 # Initialize colorama for colored output
 colorama.init(autoreset=True)
@@ -68,7 +75,7 @@ colorama.init(autoreset=True)
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 # Import necessary modules
-from src.eda import file_info, folder_stats, data_quality, fix_files, basic_stats, correlation_analysis, feature_importance
+from src.eda import file_info, folder_stats, data_quality, fix_files, basic_stats, correlation_analysis, feature_importance, stats_logger
 
 
 def print_nan_check(df, nan_summary):
@@ -270,10 +277,11 @@ def main():
   {Fore.GREEN}--descriptive-stats{Style.RESET_ALL}        Detailed descriptive statistics for numeric columns
   {Fore.GREEN}--distribution-analysis{Style.RESET_ALL}    Analyze distributions (skewness, kurtosis)
   {Fore.GREEN}--outlier-analysis{Style.RESET_ALL}         Detect outliers using IQR and Z-score methods
-  {Fore.GREEN}--time-series-analysis{Style.RESET_ALL}     Basic time series analysis (trends, seasonality)
+  {Fore.GREEN}--time-series-analysis{Style.RESET_ALL}     Basic time series analysis (trends, seasonality, stationarity)
   {Fore.GREEN}--all-stats{Style.RESET_ALL}                Run all statistical analyses
   {Fore.GREEN}--correlation-analysis{Style.RESET_ALL}     Correlation analysis between numeric features
   {Fore.GREEN}--feature-importance{Style.RESET_ALL}       Feature importance analysis
+  {Fore.GREEN}--clean-stats-logs{Style.RESET_ALL}         Remove all statistics log files
 
 {Fore.YELLOW}Examples:{Style.RESET_ALL}
   # Check data quality issues
@@ -293,6 +301,9 @@ def main():
   # Run statistical analyses
   python eda_batch_check.py --descriptive-stats
   python eda_batch_check.py --all-stats
+  
+  # Clean statistics log files
+  python eda_batch_check.py --clean-stats-logs
   
   # Combine analysis with fixing
   python eda_batch_check.py --data-quality-checks --fix-files --fix-all
@@ -330,7 +341,15 @@ def main():
     parser.add_argument('--all-stats', action='store_true', help='Run all statistical analyses')
     parser.add_argument('--correlation-analysis', action='store_true', help='Correlation analysis between numeric features')
     parser.add_argument('--feature-importance', action='store_true', help='Feature importance analysis')
+    parser.add_argument('--clean-stats-logs', action='store_true', help='Remove all statistics log files')
     args = parser.parse_args()
+
+    # Handle the clean logs request if specified
+    if args.clean_stats_logs:
+        count = stats_logger.clean_stats_logs()
+        print(f"{Fore.GREEN}Cleaned {count} statistics log files{Style.RESET_ALL}")
+        if not any(getattr(args, arg) for arg in vars(args) if arg != 'clean_stats_logs'):
+            return  # Exit if no other flags are specified
 
     # Check if at least one flag is provided
     data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', 'data')
@@ -343,6 +362,14 @@ def main():
     zero_summary_all = []
     negative_summary_all = []
     inf_summary_all = []
+
+    # Lists to store results for logging
+    basic_stats_results = []
+    desc_stats_results = []
+    dist_analysis_results = []
+    outlier_analysis_results = []
+    ts_analysis_results = []
+    processed_file_paths = []
 
     # Initialize stats collector for global summaries
     stats_collector = StatsCollector()
@@ -377,6 +404,9 @@ def main():
                 continue
 
             if df is not None:
+                # Track this file for logging
+                processed_file_paths.append(file)
+
                 # Print file header with extra newlines for better separation
                 print(f"\n\n{Fore.CYAN}[{idx}/{total_files}] File: {info.get('file_path')}{Style.RESET_ALL}")
 
@@ -398,6 +428,7 @@ def main():
                 if args.all_stats or args.basic_stats:
                     print(f"\n{Fore.BLUE + Style.BRIGHT}Basic Statistics for {info.get('file_path')}:{Style.RESET_ALL}")
                     basic_stats_result = basic_stats.compute_basic_stats(df)
+                    basic_stats_results.append(basic_stats_result)
 
                     # Group columns by type (similar to print_descriptive_stats)
                     column_groups = {}
@@ -440,27 +471,34 @@ def main():
                                 print(f"  {metric.capitalize()}: {' | '.join(values)}")
                         print()  # Extra line for readability
 
+                    # Print basic stats summary
+                    basic_stats.print_basic_stats_summary(basic_stats_result)
+
                 # Run more detailed statistical analyses
                 if args.all_stats or args.descriptive_stats:
                     desc_stats_result = basic_stats.descriptive_stats(df)
+                    desc_stats_results.append(desc_stats_result)
                     basic_stats.print_descriptive_stats(desc_stats_result)
                     # Update global stats
                     stats_collector.update_descriptive_stats(file, desc_stats_result)
 
                 if args.all_stats or args.distribution_analysis:
                     dist_analysis_result = basic_stats.distribution_analysis(df)
+                    dist_analysis_results.append(dist_analysis_result)
                     basic_stats.print_distribution_analysis(dist_analysis_result)
                     # Update global stats
                     stats_collector.update_distribution_stats(file, dist_analysis_result)
 
                 if args.all_stats or args.outlier_analysis:
                     outlier_analysis_result = basic_stats.outlier_analysis(df)
+                    outlier_analysis_results.append(outlier_analysis_result)
                     basic_stats.print_outlier_analysis(outlier_analysis_result)
                     # Update global stats
                     stats_collector.update_outlier_stats(file, outlier_analysis_result)
 
                 if args.all_stats or args.time_series_analysis:
                     ts_analysis_result = basic_stats.time_series_analysis(df)
+                    ts_analysis_results.append(ts_analysis_result)
                     basic_stats.print_time_series_analysis(ts_analysis_result)
                     # Update global stats
                     stats_collector.update_time_series_stats(file, ts_analysis_result)
@@ -544,6 +582,32 @@ def main():
     if (args.all_stats or args.descriptive_stats or args.distribution_analysis or
         args.outlier_analysis or args.time_series_analysis):
         stats_collector.print_global_summary(args)
+
+        # Log global statistics summary
+        global_log_path = stats_logger.log_global_stats_summary(stats_collector)
+        print(f"\n{Fore.GREEN}Global statistics summary logged to: {global_log_path}{Style.RESET_ALL}")
+
+    # Log individual statistics if they were computed
+    if processed_file_paths:
+        if args.basic_stats or args.all_stats:
+            log_path = stats_logger.log_basic_stats(basic_stats_results, processed_file_paths)
+            print(f"{Fore.GREEN}Basic statistics logged to: {log_path}{Style.RESET_ALL}")
+
+        if args.descriptive_stats or args.all_stats:
+            log_path = stats_logger.log_descriptive_stats(desc_stats_results, processed_file_paths)
+            print(f"{Fore.GREEN}Descriptive statistics logged to: {log_path}{Style.RESET_ALL}")
+
+        if args.distribution_analysis or args.all_stats:
+            log_path = stats_logger.log_distribution_analysis(dist_analysis_results, processed_file_paths)
+            print(f"{Fore.GREEN}Distribution analysis logged to: {log_path}{Style.RESET_ALL}")
+
+        if args.outlier_analysis or args.all_stats:
+            log_path = stats_logger.log_outlier_analysis(outlier_analysis_results, processed_file_paths)
+            print(f"{Fore.GREEN}Outlier analysis logged to: {log_path}{Style.RESET_ALL}")
+
+        if args.time_series_analysis or args.all_stats:
+            log_path = stats_logger.log_time_series_analysis(ts_analysis_results, processed_file_paths)
+            print(f"{Fore.GREEN}Time series analysis logged to: {log_path}{Style.RESET_ALL}")
 
     # Print folder statistics
     print("\n" + Fore.BLUE + Style.BRIGHT + "Folder statistics:" + Style.RESET_ALL)
