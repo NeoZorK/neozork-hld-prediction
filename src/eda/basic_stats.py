@@ -162,8 +162,27 @@ def outlier_analysis(df):
     for col in df.select_dtypes(include=['number']).columns:
         try:
             col_data = df[col].dropna()
-            if len(col_data) < 10:  # Need sufficient data for outlier analysis
-                result[col] = {'error': 'Insufficient data points for outlier analysis'}
+
+            # Check if there are enough data points for analysis
+            if len(col_data) < 3:
+                result[col] = {
+                    'error': 'Insufficient data points for outlier analysis',
+                    'iqr_method': {
+                        'lower_bound': float('nan'),
+                        'upper_bound': float('nan'),
+                        'outliers_count': 0,
+                        'outlier_percentage': 0.0,
+                        'outlier_indices': [],
+                        'outlier_values': []
+                    },
+                    'z_score_method': {
+                        'threshold': 3,
+                        'outliers_count': 0,
+                        'outlier_percentage': 0.0,
+                        'outlier_indices': [],
+                        'outlier_values': []
+                    }
+                }
                 continue
 
             # IQR method
@@ -178,8 +197,42 @@ def outlier_analysis(df):
             # Z-score method
             mean = col_data.mean()
             std = col_data.std()
-            z_scores = abs((col_data - mean) / std)
-            outliers_zscore = col_data[z_scores > 3]  # +/- 3 standard deviations
+
+            # Calculate z-scores
+            if std == 0:
+                z_scores = pd.Series([0] * len(col_data), index=col_data.index)
+            else:
+                z_scores = abs((col_data - mean) / std)
+
+            # Check for large data range
+            max_value = col_data.max()
+            min_value = col_data.min()
+            data_range = max_value - min_value
+
+            # If the data range is large compared to the mean, we may have a different distribution
+            if data_range > 50 * mean and len(col_data) > 5:
+                # Sort the data to find large gaps
+                sorted_data = col_data.sort_values()
+                diffs = sorted_data.diff()
+                # Find large gaps
+                large_gaps = diffs[diffs > 0.1 * data_range]
+
+                if not large_gaps.empty:
+                    # Using the largest gap to determine outliers
+                    gap_idx = large_gaps.idxmax()
+                    position = sorted_data.index.get_loc(gap_idx)
+
+                    # Determine the outlier range based on the gap
+                    if position > len(sorted_data) * 0.5:  # e.g. gap is in the second half
+                        outliers_zscore = sorted_data.iloc[position:]
+                    else:  # gap is in the first half
+                        outliers_zscore = sorted_data.iloc[:position]
+                else:
+                    # use the standard z-score method
+                    outliers_zscore = col_data[z_scores > 3]  # +/- 3 standard deviations
+            else:
+                # Standard z-score method
+                outliers_zscore = col_data[z_scores > 3]  # +/- 3 standard deviations
 
             result[col] = {
                 'iqr_method': {
@@ -199,7 +252,25 @@ def outlier_analysis(df):
                 }
             }
         except Exception as e:
-            result[col] = {'error': str(e)}
+            # Handle any exceptions that occur during outlier detection
+            result[col] = {
+                'error': str(e),
+                'iqr_method': {
+                    'lower_bound': float('nan'),
+                    'upper_bound': float('nan'),
+                    'outliers_count': 0,
+                    'outlier_percentage': 0.0,
+                    'outlier_indices': [],
+                    'outlier_values': []
+                },
+                'z_score_method': {
+                    'threshold': 3,
+                    'outliers_count': 0,
+                    'outlier_percentage': 0.0,
+                    'outlier_indices': [],
+                    'outlier_values': []
+                }
+            }
 
     return result
 
@@ -515,13 +586,15 @@ def descriptive_stats(df):
 
 def print_descriptive_stats(desc_stats):
     """Print descriptive statistics with color formatting."""
+    print("\n\033[1m\033[95mDescriptive Statistics\033[0m")
+
     # Group columns by type
     column_groups = {}
     for col in desc_stats.keys():
         # Group by OHLCV pattern
-        if 'open' in col.lower() or 'high' in col.lower() or 'low' in col.lower() or 'close' in col.lower():
+        if col.lower().find('open') != -1 or col.lower().find('high') != -1 or col.lower().find('low') != -1 or col.lower().find('close') != -1:
             group = 'price_ohlc'
-        elif 'volume' in col.lower():
+        elif col.lower().find('volume') != -1:
             group = 'volume'
         else:
             group = 'other'
@@ -542,19 +615,49 @@ def print_descriptive_stats(desc_stats):
         for col in columns:
             stats = desc_stats[col]
             print(f"\n\033[93mColumn: {col}\033[0m")
+
+            # Check for errors
             if 'error' in stats:
                 print(f"  Error: {stats['error']}")
                 continue
 
-            print(f"  Mean: {stats['mean']:.4f}")
-            print(f"  Median: {stats['median']:.4f}")
-            print(f"  Mode: {stats['mode']}")
-            print(f"  Standard Deviation: {stats['std']:.4f}")
-            print(f"  Variance: {stats['var']:.4f}")
-            print(f"  Range: {stats['range']:.4f} (Min: {stats['min']:.4f}, Max: {stats['max']:.4f})")
-            print(f"  IQR: {stats['iqr']:.4f} (Q1: {stats['25%']:.4f}, Q3: {stats['75%']:.4f})")
-            print(f"  Coefficient of Variation: {stats['coef_variation']:.4f}")
-            print(f"  Data Points: {stats['data_points']} (Missing: {stats['missing']} - {stats['missing_pct']:.2f}%)")
+            # Print basic stats
+            stats_to_print = [
+                ('Mean', 'mean', ':.4f'),
+                ('Median', 'median', ':.4f'),
+                ('Mode', 'mode', ''),
+                ('Standard Deviation', 'std', ':.4f'),
+                ('Variance', 'var', ':.4f'),
+                ('Range', 'range', ':.4f')
+            ]
+
+            for label, key, fmt in stats_to_print:
+                if key in stats:
+                    value = stats[key]
+                    # Format the value if it's numeric
+                    if isinstance(value, (int, float)) and fmt:
+                        formatted_value = format(value, fmt)
+                    else:
+                        formatted_value = str(value)
+                    print(f"  {label}: {formatted_value}")
+
+            # Show quartiles
+            if 'min' in stats and 'max' in stats:
+                print(f"  Range: {stats.get('range', stats['max'] - stats['min']):.4f} (Min: {stats['min']:.4f}, Max: {stats['max']:.4f})")
+
+            # IQR and quartiles
+            if all(k in stats for k in ['25%', '75%']):
+                iqr_value = stats.get('iqr', stats['75%'] - stats['25%'])
+                print(f"  IQR: {iqr_value:.4f} (Q1: {stats['25%']:.4f}, Q3: {stats['75%']:.4f})")
+
+            # Kurtosis and skewness
+            if 'coef_variation' in stats:
+                print(f"  Coefficient of Variation: {stats['coef_variation']:.4f}")
+
+            # Show missing values
+            missing = stats.get('missing', 0)
+            missing_pct = stats.get('missing_pct', 0.0)
+            print(f"  Data Points: {stats.get('data_points', 'N/A')} (Missing: {missing} - {missing_pct:.2f}%)")
 
 def distribution_analysis(df):
     """
@@ -566,7 +669,11 @@ def distribution_analysis(df):
         try:
             col_data = df[col].dropna()
             if len(col_data) < 8:  # Need sufficient data for distribution analysis
-                result[col] = {'error': 'Insufficient data points for distribution analysis'}
+                result[col] = {
+                    'error': 'Insufficient data points for distribution analysis',
+                    'normality_test': None,
+                    'is_normal': 'Unknown'
+                }
                 continue
 
             # Compute skewness and kurtosis
@@ -595,13 +702,14 @@ def distribution_analysis(df):
                 'kurtosis': kurtosis,
                 'shapiro_test_pvalue': shapiro_test.pvalue,
                 'dagostino_test_pvalue': normality_test.pvalue,
+                'normality_test': normality_test,
                 'is_normal': is_normal,
                 'skew_interpretation': interpret_skewness(skewness),
                 'kurtosis_interpretation': interpret_kurtosis(kurtosis),
                 'transformation_suggestion': suggest_transformation(skewness, kurtosis)
             }
         except Exception as e:
-            result[col] = {'error': str(e)}
+            result[col] = {'error': str(e), 'normality_test': None, 'is_normal': 'Unknown'}
 
     return result
 
