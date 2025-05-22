@@ -12,6 +12,7 @@ from matplotlib.figure import Figure
 from io import BytesIO
 import base64
 import webbrowser
+from src.eda.html_report_generator import HTMLReport, ensure_report_directory, create_index_page, clean_all_reports
 
 # Suppress matplotlib warnings for cleaner output
 warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
@@ -36,6 +37,13 @@ def open_last_plot_in_browser(plot_path):
         print(f"\033[93m[INFO]\033[0m Last plot opened in your default browser: {plot_path}")
     else:
         print(f"\033[91m[ERROR]\033[0m Plot file not found: {plot_path}")
+
+def save_plot_with_description(plot_path, description):
+    """Save a .txt description file for a plot."""
+    desc_path = plot_path + '.txt'
+    with open(desc_path, 'w', encoding='utf-8') as f:
+        f.write(description)
+    print(f"\033[92m[INFO]\033[0m Description saved to: {desc_path}")
 
 def compute_basic_stats(df):
     """
@@ -132,788 +140,340 @@ def print_basic_stats_summary(stats_result):
         plt.tight_layout()
         plot_path = os.path.join(plots_dir, 'basic_stats_means.png')
         plt.savefig(plot_path)
-        print(f"\033[96m[INFO]\033[0m Basic stats mean plot saved to: {plot_path}")
         plt.close()
+        description = (
+            "Plot: Mean values for numeric columns.\n"
+            "Purpose: Quickly compare the mean values of different features.\n"
+            "Interpretation: A high mean may indicate scale issues or outliers.\n"
+            "Good: Features have comparable scales, no extreme values.\n"
+            "Bad: Strongly deviating columns require checking for outliers or errors.\n"
+            "Next steps: Perform outlier analysis and normalize data if necessary."
+        )
+        save_plot_with_description(plot_path, description)
         open_last_plot_in_browser(plot_path)
         print(f"\033[93m[INFO]\033[0m All generated plots can be found in: {plots_dir}")
-
-def descriptive_stats(df):
-    """
-    Compute detailed descriptive statistics for numeric columns.
-    Returns a dictionary with extended stats for each numeric column.
-    """
-    desc_stats = {}
-    for col in df.columns:
-        if pd.api.types.is_numeric_dtype(df[col]):
-            # Filter out NaN values for calculations
-            col_data = df[col].dropna()
-            if len(col_data) > 0:
-                desc_stats[col] = {
-                    'mean': col_data.mean(),
-                    'median': col_data.median(),
-                    'std': col_data.std(),
-                    'var': col_data.var(),
-                    'mode': float(stats.mode(col_data, keepdims=False)[0]) if len(col_data) > 0 else None,
-                    'min': col_data.min(),
-                    'max': col_data.max(),
-                    '25%': col_data.quantile(0.25),
-                    '50%': col_data.quantile(0.5),
-                    '75%': col_data.quantile(0.75),
-                    'count': len(col_data),
-                    'missing': int(df[col].isnull().sum()),
-                    'missing_pct': round(df[col].isnull().sum() / len(df) * 100, 2)
-                }
-            else:
-                desc_stats[col] = {'error': 'No valid data points'}
-    return desc_stats
-
-def visualize_descriptive_stats(df, desc_stats, file_name="descriptive_stats"):
-    """Create visualizations for descriptive statistics."""
-    plots_dir = ensure_plots_directory()
-
-    # Only process numeric columns
-    numeric_cols = [col for col in df.columns if pd.api.types.is_numeric_dtype(df[col])]
-    if not numeric_cols:
-        return
-
-    # Select first few columns to visualize (up to 5)
-    cols_to_plot = numeric_cols[:min(5, len(numeric_cols))]
-
-    # 1. Create boxplot of key numeric columns
-    plt.figure(figsize=(12, 6))
-    ax = sns.boxplot(data=df[cols_to_plot])
-    plt.title("Boxplot of Key Numeric Features", fontsize=14)
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-
-    # Save plot
-    box_plot_path = os.path.join(plots_dir, f"{file_name}_boxplot.png")
-    plt.savefig(box_plot_path)
-    print(f"\n\033[96mBoxplot saved to: {box_plot_path}\033[0m")
-    plt.close()
-
-    # 2. Create a pairplot for selected numeric columns if there are at least 2
-    if len(cols_to_plot) >= 2:
-        plt.figure(figsize=(10, 8))
-        scatter_plot = sns.pairplot(
-            df[cols_to_plot],
-            diag_kind='kde',
-            plot_kws={'alpha': 0.6, 's': 30, 'edgecolor': 'k'}
-        )
-        plt.suptitle("Pairwise Relationships Between Features", y=1.02, fontsize=16)
-
-        # Save plot
-        pairplot_path = os.path.join(plots_dir, f"{file_name}_pairplot.png")
-        scatter_plot.savefig(pairplot_path)
-        print(f"\033[96mPairplot saved to: {pairplot_path}\033[0m")
-        plt.close()
-
-    # 3. Create correlation heatmap
-    if len(cols_to_plot) >= 2:
-        plt.figure(figsize=(10, 8))
-        corr = df[cols_to_plot].corr()
-        mask = np.triu(np.ones_like(corr, dtype=bool))
-        heatmap = sns.heatmap(
-            corr,
-            mask=mask,
-            annot=True,
-            fmt=".2f",
-            cmap='coolwarm',
-            square=True,
-            linewidths=.5,
-            cbar_kws={"shrink": .8}
-        )
-        plt.title("Correlation Heatmap", fontsize=14)
-        plt.tight_layout()
-
-        # Save plot
-        heatmap_path = os.path.join(plots_dir, f"{file_name}_correlation_heatmap.png")
-        plt.savefig(heatmap_path)
-        print(f"\033[96mCorrelation heatmap saved to: {heatmap_path}\033[0m")
-        plt.close()
-
-def visualize_distribution_analysis(df, dist_stats, file_name="distribution_analysis"):
-    """Create visualizations for distribution analysis."""
-    plots_dir = ensure_plots_directory()
-
-    # Only process numeric columns
-    numeric_cols = [col for col in df.columns if pd.api.types.is_numeric_dtype(df[col])]
-    if not numeric_cols:
-        return
-
-    # Select columns with different distribution characteristics for visualization (up to 4)
-    normal_cols = [col for col in numeric_cols if col in dist_stats and
-                  'is_normal' in dist_stats[col] and dist_stats[col]['is_normal'] == 'Yes']
-    highly_skewed_cols = [col for col in numeric_cols if col in dist_stats and
-                         'skewness' in dist_stats[col] and abs(dist_stats[col]['skewness']) > 1]
-
-    # Select a mix of normal and skewed columns for better visualization variety
-    cols_to_plot = []
-    if normal_cols:
-        cols_to_plot.extend(normal_cols[:2])
-    if highly_skewed_cols:
-        cols_to_plot.extend(highly_skewed_cols[:2])
-
-    # If we still don't have enough columns, add other numeric columns
-    remaining_cols = [col for col in numeric_cols if col not in cols_to_plot]
-    cols_to_plot.extend(remaining_cols[:4 - len(cols_to_plot)])
-
-    # Limit to 4 columns for better visualization
-    cols_to_plot = cols_to_plot[:4]
-
-    if not cols_to_plot:
-        return
-
-    # 1. Create histograms with density plots for selected columns
-    fig, axes = plt.subplots(len(cols_to_plot), 1, figsize=(10, 3 * len(cols_to_plot)), constrained_layout=True)
-    if len(cols_to_plot) == 1:
-        axes = [axes]
-
-    for i, col in enumerate(cols_to_plot):
-        # Get distribution statistics
-        if col in dist_stats and 'error' not in dist_stats[col]:
-            skew = dist_stats[col].get('skewness', 'N/A')
-            kurt = dist_stats[col].get('kurtosis', 'N/A')
-            is_normal = dist_stats[col].get('is_normal', 'Unknown')
-
-            # Plot histogram with KDE
-            sns.histplot(df[col].dropna(), kde=True, ax=axes[i], color='skyblue', edgecolor='black')
-
-            # Add distribution information as title
-            axes[i].set_title(f'{col} (Skew: {skew:.2f}, Kurt: {kurt:.2f}, Normal: {is_normal})')
-            axes[i].set_ylabel('Frequency')
-
-            # Add a vertical line for mean and median
-            mean_val = df[col].mean()
-            median_val = df[col].median()
-            axes[i].axvline(mean_val, color='r', linestyle='-', linewidth=1, label=f'Mean: {mean_val:.2f}')
-            axes[i].axvline(median_val, color='g', linestyle='--', linewidth=1, label=f'Median: {median_val:.2f}')
-            axes[i].legend()
-        else:
-            axes[i].text(0.5, 0.5, f"No valid data for {col}", horizontalalignment='center',
-                        verticalalignment='center', transform=axes[i].transAxes)
-
-    fig.suptitle("Distribution Analysis: Histograms with Density Curves", fontsize=16)
-
-    # Save the plot
-    hist_path = os.path.join(plots_dir, f"{file_name}_histograms.png")
-    plt.savefig(hist_path)
-    print(f"\n\033[96mDistribution histograms saved to: {hist_path}\033[0m")
-    plt.close()
-
-    # 2. Create QQ plots for normality check
-    fig, axes = plt.subplots(len(cols_to_plot), 1, figsize=(10, 3 * len(cols_to_plot)), constrained_layout=True)
-    if len(cols_to_plot) == 1:
-        axes = [axes]
-
-    for i, col in enumerate(cols_to_plot):
-        # Get distribution statistics
-        if col in dist_stats and 'error' not in dist_stats[col]:
-            # Create QQ plot
-            from scipy import stats as scipy_stats
-            col_data = df[col].dropna()
-            if len(col_data) > 0:
-                qq = scipy_stats.probplot(col_data, dist="norm", plot=axes[i])
-                is_normal = dist_stats[col].get('is_normal', 'Unknown')
-                axes[i].set_title(f'QQ Plot for {col} (Normal: {is_normal})')
-            else:
-                axes[i].text(0.5, 0.5, f"No valid data for {col}", horizontalalignment='center',
-                            verticalalignment='center', transform=axes[i].transAxes)
-        else:
-            axes[i].text(0.5, 0.5, f"No valid data for {col}", horizontalalignment='center',
-                        verticalalignment='center', transform=axes[i].transAxes)
-
-    fig.suptitle("Distribution Analysis: QQ Plots for Normality Check", fontsize=16)
-
-    # Save the plot
-    qq_path = os.path.join(plots_dir, f"{file_name}_qqplots.png")
-    plt.savefig(qq_path)
-    print(f"\033[96mQQ plots saved to: {qq_path}\033[0m")
-    plt.close()
-
-def distribution_analysis(df):
-    """
-    Analyze distributions of numeric columns by calculating skewness and kurtosis.
-    Returns a dictionary with distribution stats for each numeric column.
-    """
-    dist_stats = {}
-    for col in df.columns:
-        if pd.api.types.is_numeric_dtype(df[col]):
-            # Filter out NaN values for calculations
-            col_data = df[col].dropna()
-            if len(col_data) > 0:
-                dist_stats[col] = {
-                    'skewness': stats.skew(col_data),
-                    'kurtosis': stats.kurtosis(col_data),
-                    'normality_test': stats.normaltest(col_data) if len(col_data) >= 8 else None,
-                    'is_normal': 'Unknown' if len(col_data) < 8 else (
-                        'Yes' if stats.normaltest(col_data)[1] > 0.05 else 'No'
-                    )
-                }
-            else:
-                dist_stats[col] = {'error': 'No valid data points'}
-    return dist_stats
 
 def outlier_analysis(df):
     """
     Detect outliers in numeric columns using IQR and Z-score methods.
-    Returns a dictionary with outlier stats for each numeric column.
+    Returns a dictionary with outlier information for each column.
     """
-    outlier_stats = {}
-    for col in df.columns:
-        if pd.api.types.is_numeric_dtype(df[col]):
-            # Filter out NaN values for calculations
-            col_data = df[col].dropna()
-            if len(col_data) > 0:
-                # IQR method
-                Q1 = col_data.quantile(0.25)
-                Q3 = col_data.quantile(0.75)
-                IQR = Q3 - Q1
-
-                lower_bound = Q1 - 1.5 * IQR
-                upper_bound = Q3 + 1.5 * IQR
-
-                iqr_outliers = df[(df[col] < lower_bound) | (df[col] > upper_bound)]
-
-                # Z-score method
-                z_scores = np.abs(stats.zscore(col_data))
-                z_outliers = df.iloc[np.where(z_scores > 3)[0]]
-
-                outlier_stats[col] = {
-                    'iqr_method': {
-                        'lower_bound': lower_bound,
-                        'upper_bound': upper_bound,
-                        'outlier_count': len(iqr_outliers),
-                        'outlier_percentage': round(len(iqr_outliers) / len(df) * 100, 2),
-                        'outlier_indices': iqr_outliers.index.tolist()[:10]  # Limit to first 10
-                    },
-                    'z_score_method': {
-                        'outlier_count': len(z_outliers),
-                        'outlier_percentage': round(len(z_outliers) / len(df) * 100, 2),
-                        'outlier_indices': z_outliers.index.tolist()[:10]  # Limit to first 10
-                    }
-                }
-            else:
-                outlier_stats[col] = {'error': 'No valid data points'}
-    return outlier_stats
-
-def time_series_analysis(df):
-    """
-    Perform basic time series analysis including trend and seasonality detection.
-    Requires a DataFrame with at least one datetime column and OHLC price data.
-    """
-    ts_stats = {'features': {}, 'stationarity': {}, 'seasonality': {}}
-
-    # First try to identify pre-existing datetime columns
-    datetime_cols = [col for col in df.columns if pd.api.types.is_datetime64_any_dtype(df[col])]
-
-    # Common timestamp column names to check if we don't find datetime columns
-    common_date_cols = ['date', 'time', 'timestamp', 'datetime', 'dt', 'created_at', 'updated_at',
-                        'date_time', 'trade_date', 'effective_date', 'execution_date']
-
-    # If no datetime columns found, try to convert potential date columns based on column names
-    if not datetime_cols:
-        df_copy = df.copy()  # Create a copy to avoid modifying the original dataframe
-
-        # Try common date column names first
-        for col in df.columns:
-            col_lower = col.lower()
-            if any(date_name in col_lower for date_name in common_date_cols):
-                try:
-                    df_copy[col] = pd.to_datetime(df_copy[col], errors='coerce')
-                    if not df_copy[col].isna().all():  # If not all values became NaN
-                        datetime_cols.append(col)
-                except:
-                    continue
-
-        # If still no datetime columns, try any string/object columns
-        if not datetime_cols:
-            for col in df.columns:
-                if pd.api.types.is_string_dtype(df[col]) or pd.api.types.is_object_dtype(df[col]):
-                    try:
-                        # Check if first few non-null values look like dates
-                        sample_values = df[col].dropna().iloc[:5].tolist()
-                        if not sample_values:
-                            continue
-
-                        # Try to convert sample values to see if they look like dates
-                        converted = pd.to_datetime(sample_values, errors='coerce')
-                        if not converted.isna().all():  # If at least one converted successfully
-                            # Convert the whole column
-                            df_copy[col] = pd.to_datetime(df_copy[col], errors='coerce')
-                            if not df_copy[col].isna().all() and df_copy[col].notna().sum() > len(df) * 0.5:  # If >50% converted
-                                datetime_cols.append(col)
-                    except:
-                        continue
-
-        # If we found datetime columns, use the copy with converted dates
-        if datetime_cols:
-            df = df_copy
-
-    # Try to identify OHLCV columns
-    ohlc_patterns = [
-        col for col in df.columns
-        if pd.api.types.is_numeric_dtype(df[col]) and
-        any(pat in col.lower() for pat in ['open', 'high', 'low', 'close', 'volume'])
-    ]
-
-    # If we don't have OHLCV columns, try to identify any numeric columns for analysis
-    if not ohlc_patterns:
-        numeric_cols = [col for col in df.columns if pd.api.types.is_numeric_dtype(df[col])]
-        # For non-OHLCV data, we'll still do some analysis if we have numeric columns
-        if numeric_cols:
-            ohlc_patterns = numeric_cols[:min(5, len(numeric_cols))]  # Use up to 5 numeric columns
-            ts_stats['warning'] = 'No OHLCV columns detected, using available numeric columns for limited analysis.'
-
-    # If we don't have datetime columns, try to create a synthetic time index
-    if not datetime_cols and len(df) > 1:
-        ts_stats['warning'] = 'No datetime columns found. Creating a synthetic time index for analysis.'
-        # Create a time index spanning the length of the DataFrame
-        df = df.copy()  # Create a copy to avoid modifying the original
-        synthetic_index = pd.date_range(start='2000-01-01', periods=len(df), freq='D')
-        df['synthetic_datetime'] = synthetic_index
-        datetime_cols = ['synthetic_datetime']
-
-    # If we still don't have datetime or numeric columns, return with a message
-    if not datetime_cols:
-        ts_stats['error'] = 'No datetime columns found and unable to create synthetic index.'
-        return ts_stats
-
-    if not ohlc_patterns:
-        ts_stats['error'] = 'No numeric columns found for time series analysis.'
-        return ts_stats
-
-    # Use the first datetime column as the index
-    date_col = datetime_cols[0]
-    df_ts = df.copy()
-    df_ts.set_index(date_col, inplace=True)
-
-    # Calculate derived features if we have appropriate data
-    # If we have both high and low columns, calculate daily range
-    high_cols = [col for col in ohlc_patterns if 'high' in col.lower()]
-    low_cols = [col for col in ohlc_patterns if 'low' in col.lower()]
-    if high_cols and low_cols:
-        high_col = high_cols[0]
-        low_col = low_cols[0]
-        ts_stats['features']['price_range'] = {
-            'mean': (df_ts[high_col] - df_ts[low_col]).mean(),
-            'median': (df_ts[high_col] - df_ts[low_col]).median(),
-            'std': (df_ts[high_col] - df_ts[low_col]).std()
-        }
-
-    # If we have both open and close columns, calculate daily change
-    open_cols = [col for col in ohlc_patterns if 'open' in col.lower()]
-    close_cols = [col for col in ohlc_patterns if 'close' in col.lower()]
-    if open_cols and close_cols:
-        open_col = open_cols[0]
-        close_col = close_cols[0]
-        ts_stats['features']['price_change'] = {
-            'mean': (df_ts[close_col] - df_ts[open_col]).mean(),
-            'median': (df_ts[close_col] - df_ts[open_col]).median(),
-            'std': (df_ts[close_col] - df_ts[open_col]).std()
-        }
-
-    # For each numeric column, calculate some time series features
-    for col in ohlc_patterns:
-        if df_ts[col].count() > 10:  # Need sufficient data points
-            # Calculate rolling statistics
-            try:
-                ts_stats['features'][f'{col}_trends'] = {
-                    'rolling_mean_7': df_ts[col].rolling(7).mean().iloc[-1] if len(df_ts) >= 7 else None,
-                    'rolling_std_7': df_ts[col].rolling(7).std().iloc[-1] if len(df_ts) >= 7 else None,
-                    'pct_change_mean': df_ts[col].pct_change().mean(),
-                    'pct_change_std': df_ts[col].pct_change().std()
-                }
-            except:
-                pass
-
-            # Stationarity test (ADF)
-            try:
-                adf_result = adfuller(df_ts[col].dropna())
-                ts_stats['stationarity'][col] = {
-                    'test_statistic': adf_result[0],
-                    'p_value': adf_result[1],
-                    'is_stationary': adf_result[1] < 0.05,
-                    'critical_values': adf_result[4]
-                }
-            except:
-                ts_stats['stationarity'][col] = {'error': 'ADF test failed'}
-
-    # Basic seasonality check - day of week patterns
-    if hasattr(df_ts.index, 'dayofweek'):
+    result = {}
+    for col in df.select_dtypes(include=['number']).columns:
         try:
-            # For OHLCV data, prefer using close price for seasonality
-            if close_cols:
-                col = close_cols[0]
-            else:
-                col = ohlc_patterns[0]  # Use first numeric column
+            col_data = df[col].dropna()
+            if len(col_data) < 10:  # Need sufficient data for outlier analysis
+                result[col] = {'error': 'Insufficient data points for outlier analysis'}
+                continue
 
-            # Calculate mean value by day of week
-            day_means = df_ts.groupby(df_ts.index.dayofweek)[col].mean()
-            ts_stats['seasonality']['day_of_week'] = {day: mean for day, mean in enumerate(day_means)}
+            # IQR method
+            Q1 = col_data.quantile(0.25)
+            Q3 = col_data.quantile(0.75)
+            IQR = Q3 - Q1
+            lower_bound = Q1 - 1.5 * IQR
+            upper_bound = Q3 + 1.5 * IQR
 
-            # Check if there's any monthly seasonality
-            if hasattr(df_ts.index, 'month') and len(df_ts) >= 60:  # Need enough data for monthly patterns
-                try:
-                    month_means = df_ts.groupby(df_ts.index.month)[col].mean()
-                    ts_stats['seasonality']['month'] = {month: mean for month, mean in enumerate(month_means, 1)}
-                except:
-                    pass
-        except:
-            ts_stats['seasonality']['error'] = 'Seasonality analysis failed'
+            outliers_iqr = col_data[(col_data < lower_bound) | (col_data > upper_bound)]
 
-    return ts_stats
+            # Z-score method
+            mean = col_data.mean()
+            std = col_data.std()
+            z_scores = abs((col_data - mean) / std)
+            outliers_zscore = col_data[z_scores > 3]  # +/- 3 standard deviations
 
-def print_descriptive_stats(desc_stats):
-    """Print descriptive statistics in a readable format with columns in row for better space efficiency."""
-    print("\n\033[1m\033[94mDescriptive Statistics:\033[0m")
+            result[col] = {
+                'iqr_method': {
+                    'lower_bound': lower_bound,
+                    'upper_bound': upper_bound,
+                    'outliers_count': len(outliers_iqr),
+                    'outlier_percentage': (len(outliers_iqr) / len(col_data)) * 100,
+                    'outlier_indices': list(outliers_iqr.index),
+                    'outlier_values': list(outliers_iqr.values)
+                },
+                'z_score_method': {
+                    'threshold': 3,  # Z-score threshold
+                    'outliers_count': len(outliers_zscore),
+                    'outlier_percentage': (len(outliers_zscore) / len(col_data)) * 100,
+                    'outlier_indices': list(outliers_zscore.index),
+                    'outlier_values': list(outliers_zscore.values)
+                }
+            }
+        except Exception as e:
+            result[col] = {'error': str(e)}
 
-    # Group columns with similar patterns (OHLCV, etc.)
-    column_groups = {}
-    for col in desc_stats.keys():
-        # Try to detect column type using common patterns
-        if 'open' in col.lower():
-            group = 'price_ohlc'
-        elif 'high' in col.lower():
-            group = 'price_ohlc'
-        elif 'low' in col.lower():
-            group = 'price_ohlc'
-        elif 'close' in col.lower():
-            group = 'price_ohlc'
-        elif 'volume' in col.lower():
-            group = 'volume'
-        elif 'pressure' in col.lower():
-            group = 'pressure'
+    return result
+
+def print_outlier_analysis(outlier_results):
+    """Print outlier analysis results with color formatting."""
+    print("\n\033[1m\033[95mOutlier Analysis:\033[0m")
+
+    for col, result in outlier_results.items():
+        print(f"\n\033[93mColumn: {col}\033[0m")
+        if 'error' in result:
+            print(f"  Error: {result['error']}")
+            continue
+
+        iqr_method = result['iqr_method']
+        z_method = result['z_score_method']
+
+        print("  IQR Method:")
+        print(f"    Bounds: [{iqr_method['lower_bound']:.4f}, {iqr_method['upper_bound']:.4f}]")
+        print(f"    Outliers: {iqr_method['outliers_count']} ({iqr_method['outlier_percentage']:.2f}%)")
+
+        print("  Z-Score Method (threshold=3):")
+        print(f"    Outliers: {z_method['outliers_count']} ({z_method['outlier_percentage']:.2f}%)")
+
+        # Show sample outliers if any
+        if iqr_method['outliers_count'] > 0:
+            print("  Sample outlier values (IQR method):")
+            for value in iqr_method['outlier_values'][:5]:  # Show max 5 examples
+                print(f"    - {value}")
+            if iqr_method['outliers_count'] > 5:
+                print(f"    - ... and {iqr_method['outliers_count'] - 5} more")
+
+        # Recommendations
+        if max(iqr_method['outlier_percentage'], z_method['outlier_percentage']) > 5:
+            print("\033[91m  High percentage of outliers detected!\033[0m")
+            print("  Recommendation: Investigate these values and consider outlier treatment.")
+        elif max(iqr_method['outlier_percentage'], z_method['outlier_percentage']) > 0:
+            print("\033[93m  Some outliers detected\033[0m")
+            print("  Recommendation: Check if these are valid extreme values or data errors.")
         else:
-            group = 'other'
+            print("\033[92m  No outliers detected\033[0m")
 
-        if group not in column_groups:
-            column_groups[group] = []
-        column_groups[group].append(col)
+def generate_outlier_analysis_report(df, file_path):
+    """
+    Generate a detailed HTML report with plots for outlier analysis
 
-    # Print statistics for each group
-    for group, columns in column_groups.items():
-        if group == 'price_ohlc':
-            print(f"\n\033[96mPrice Data (OHLC):\033[0m")
-        elif group == 'volume':
-            print(f"\n\033[96mVolume Data:\033[0m")
-        elif group == 'pressure':
-            print(f"\n\033[96mPressure Indicators:\033[0m")
-        else:
-            print(f"\n\033[96mOther Data:\033[0m")
+    Parameters:
+    - df: DataFrame to analyze
+    - file_path: Path to the original data file
 
-        # Print all columns in rows for common metrics
-        for metric in ['mean', 'median', 'min', 'max', 'std', 'var', '25%', '50%', '75%']:
-            values = []
-            for col in columns:
-                stats = desc_stats[col]
-                if 'error' not in stats and metric in stats:
-                    val = stats[metric]
-                    if isinstance(val, float):
-                        values.append(f"{col}: {val:.4f}")
-                    else:
-                        values.append(f"{col}: {val}")
+    Returns:
+    - Path to the generated HTML report
+    """
+    # Create a new HTML report
+    report = HTMLReport("Outlier Analysis", file_path)
+    report.add_header()
 
-            if values:
-                print(f"  {metric.capitalize()}: {' | '.join(values)}")
+    # Add overview section
+    overview = f"""
+    <p>This report provides outlier detection analysis for numeric columns in the dataset.</p>
+    <p>Outliers are extreme values that deviate significantly from other observations, 
+    which can strongly influence statistical analyses and machine learning models.</p>
+    <p>Two detection methods are used:</p>
+    <ul>
+        <li><strong>IQR Method</strong>: Values below Q1 - 1.5*IQR or above Q3 + 1.5*IQR are considered outliers</li>
+        <li><strong>Z-score Method</strong>: Values more than 3 standard deviations from the mean are considered outliers</li>
+    </ul>
+    """
+    report.add_section("Overview", overview)
 
-        # Print remaining metrics separately for each column
-        for col in columns:
-            stats = desc_stats[col]
-            if 'error' in stats:
-                print(f"  {col} Error: {stats['error']}")
+    # Perform outlier analysis
+    outlier_results = outlier_analysis(df)
+
+    # Get numeric columns that were successfully analyzed
+    valid_columns = [col for col in outlier_results if 'error' not in outlier_results[col]]
+
+    if not valid_columns:
+        report.add_section("No Valid Data",
+                          "<p>No numeric columns could be analyzed. Please check if the dataset contains numeric data.</p>")
+
+        # Save the report
+        report_dir = ensure_report_directory(file_path)
+        report_path = os.path.join(report_dir, "outlier_analysis.html")
+        report.save(report_path)
+        return report_path
+
+    # Create outlier summary table
+    outlier_data = []
+    for col in valid_columns:
+        result = outlier_results[col]
+        iqr_method = result['iqr_method']
+        z_method = result['z_score_method']
+
+        outlier_pct = max(iqr_method['outlier_percentage'], z_method['outlier_percentage'])
+        severity = "High" if outlier_pct > 5 else "Medium" if outlier_pct > 1 else "Low"
+
+        outlier_data.append({
+            'Column': col,
+            'IQR Outliers Count': iqr_method['outliers_count'],
+            'IQR Outliers %': f"{iqr_method['outlier_percentage']:.2f}%",
+            'Z-score Outliers Count': z_method['outliers_count'],
+            'Z-score Outliers %': f"{z_method['outlier_percentage']:.2f}%",
+            'Lower Bound': f"{iqr_method['lower_bound']:.4f}",
+            'Upper Bound': f"{iqr_method['upper_bound']:.4f}",
+            'Severity': severity
+        })
+
+    outlier_df = pd.DataFrame(outlier_data)
+    report.add_table(
+        outlier_df,
+        "Outlier Analysis Summary",
+        "This table summarizes the outlier detection results for each numeric column, showing counts and percentages for both IQR and Z-score methods."
+    )
+
+    # Generate visualizations for columns with outliers
+    for col in valid_columns:
+        result = outlier_results[col]
+        iqr_method = result['iqr_method']
+        z_method = result['z_score_method']
+
+        # Only create detailed plots for columns with at least some outliers
+        if max(iqr_method['outlier_percentage'], z_method['outlier_percentage']) > 0:
+            col_data = df[col].dropna()
+
+            # Create a figure with multiple plots
+            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(14, 12))
+            fig.suptitle(f'Outlier Analysis for {col}', fontsize=16)
+
+            # 1. Box plot
+            sns.boxplot(x=col_data, ax=ax1, color='lightblue')
+            ax1.set_title('Box Plot (IQR Method)')
+
+            # 2. Scatter plot with IQR bounds
+            x = np.arange(len(col_data))
+            ax2.scatter(x, col_data, alpha=0.5, color='blue', s=10)
+            ax2.axhline(y=iqr_method['lower_bound'], color='red', linestyle='--',
+                        label=f"Lower Bound: {iqr_method['lower_bound']:.2f}")
+            ax2.axhline(y=iqr_method['upper_bound'], color='red', linestyle='--',
+                        label=f"Upper Bound: {iqr_method['upper_bound']:.2f}")
+            ax2.set_title('Value Distribution with IQR Bounds')
+            ax2.legend()
+            ax2.set_xlabel('Index')
+            ax2.set_ylabel('Value')
+
+            # 3. Z-score distribution
+            mean = col_data.mean()
+            std = col_data.std()
+            z_scores = (col_data - mean) / std
+
+            sns.histplot(z_scores, kde=True, ax=ax3, color='lightgreen')
+            ax3.axvline(x=3, color='red', linestyle='--', label='Z=3')
+            ax3.axvline(x=-3, color='red', linestyle='--', label='Z=-3')
+            ax3.set_title('Z-score Distribution')
+            ax3.set_xlabel('Z-score')
+            ax3.legend()
+
+            # 4. Outlier values plot
+            outlier_mask = col_data.isin(iqr_method['outlier_values'])
+            colors = ['red' if x else 'blue' for x in outlier_mask]
+            ax4.scatter(x, col_data, c=colors, alpha=0.5, s=10)
+            ax4.set_title('Data Points with Outliers (red)')
+            ax4.set_xlabel('Index')
+            ax4.set_ylabel('Value')
+
+            # Add summary text
+            summary_text = (
+                f"IQR Method: {iqr_method['outliers_count']} outliers ({iqr_method['outlier_percentage']:.2f}%)\n"
+                f"Z-score Method: {z_method['outliers_count']} outliers ({z_method['outlier_percentage']:.2f}%)\n\n"
+                f"IQR Bounds: [{iqr_method['lower_bound']:.4f}, {iqr_method['upper_bound']:.4f}]\n"
+                f"Data Range: [{col_data.min():.4f}, {col_data.max():.4f}]"
+            )
+
+            # Add text box to figure
+            fig.text(0.01, 0.01, summary_text, verticalalignment='bottom',
+                    horizontalalignment='left', bbox=dict(boxstyle='round',
+                                                        facecolor='wheat', alpha=0.5))
+
+            plt.tight_layout(rect=[0, 0.03, 1, 0.95])  # Adjust for main title and text box
+
+            # Create interpretations and recommendations
+            if max(iqr_method['outlier_percentage'], z_method['outlier_percentage']) > 5:
+                severity = "High proportion of outliers detected"
+                impact = "These outliers may significantly impact statistical analyses and model performance."
+            elif max(iqr_method['outlier_percentage'], z_method['outlier_percentage']) > 1:
+                severity = "Moderate proportion of outliers detected"
+                impact = "These outliers may have some impact on analyses and models."
             else:
-                other_metrics = [k for k in stats.keys() if k not in ['mean', 'median', 'min', 'max', 'std', 'var', '25%', '50%', '75%']]
-                if other_metrics:
-                    values = []
-                    for key in other_metrics:
-                        value = stats[key]
-                        if isinstance(value, float):
-                            values.append(f"{key}: {value:.4f}")
-                        else:
-                            values.append(f"{key}: {value}")
-                    if values:
-                        print(f"  {col} other metrics: {' | '.join(values)}")
+                severity = "Low proportion of outliers detected"
+                impact = "These few outliers are unlikely to significantly impact most analyses."
 
-    # Add summary and recommendations
-    print("\n\033[1m\033[95mSummary and Recommendations:\033[0m")
-    print("  • Statistical measures provide insights into data characteristics and quality")
-    print("  • High variance may indicate the need for data normalization before modeling")
-    print("  • Significant difference between mean and median suggests distribution asymmetry")
-    print("  • If IQR (Q3-Q1) is wide, the data has high spread and may contain outliers")
-    print("  • Next steps: Check distributions and detect anomalies using --distribution-analysis and --outlier-analysis")
+            interpretation = f"{severity}. {impact}"
 
-    # Visualization for descriptive stats
-    plots_dir = ensure_plots_directory()
-    numeric_cols = [col for col, s in desc_stats.items() if 'mean' in s and 'std' in s and 'error' not in s]
-    if numeric_cols:
-        plt.figure(figsize=(10, 6))
-        data = {col: [desc_stats[col]['mean'], desc_stats[col]['std'], desc_stats[col]['min'], desc_stats[col]['max']] for col in numeric_cols}
-        df_plot = pd.DataFrame(data, index=['mean', 'std', 'min', 'max']).T
-        df_plot.plot(kind='bar', figsize=(12, 6))
-        plt.title('Descriptive Stats: Mean, Std, Min, Max')
-        plt.ylabel('Value')
-        plt.xticks(rotation=45)
-        plt.tight_layout()
-        plot_path = os.path.join(plots_dir, 'descriptive_stats_summary.png')
-        plt.savefig(plot_path)
-        print(f"\033[96m[INFO]\033[0m Descriptive stats summary plot saved to: {plot_path}")
-        plt.close()
-        open_last_plot_in_browser(plot_path)
-        print(f"\033[93m[INFO]\033[0m All generated plots can be found in: {plots_dir}")
+            good = "Low percentage of outliers (<1%) or outliers that represent valid extreme values in the domain."
 
-def print_distribution_analysis(dist_stats):
-    """Print distribution analysis in a readable format."""
-    print("\n\033[1m\033[94mDistribution Analysis:\033[0m")
+            bad = "High percentage of outliers (>5%) that may be data errors or anomalies requiring special treatment."
 
-    # Group columns by normality for summary
-    normal_cols = []
-    skewed_cols = []
-    highly_skewed_cols = []
-    heavy_tailed_cols = []
-    light_tailed_cols = []
-
-    for col, stats in dist_stats.items():
-        print(f"\n\033[96m{col}:\033[0m")
-        if 'error' in stats:
-            print(f"  Error: {stats['error']}")
-        else:
-            skew = stats['skewness']
-            kurt = stats['kurtosis']
-
-            # Track for summary
-            if stats['is_normal'] == 'Yes':
-                normal_cols.append(col)
-            if abs(skew) > 1:
-                highly_skewed_cols.append((col, skew))
-            elif abs(skew) > 0.5:
-                skewed_cols.append((col, skew))
-            if kurt > 3:
-                heavy_tailed_cols.append((col, kurt))
-            elif kurt < 3:
-                light_tailed_cols.append((col, kurt))
-
-            # Print individual stats in a row
-            skew_desc = 'Positive (right-skewed)' if skew > 0 else 'Negative (left-skewed)' if skew < 0 else 'None'
-            kurt_desc = 'Heavy-tailed' if kurt > 3 else 'Light-tailed' if kurt < 3 else 'Normal'
-            print(f"  Skewness: {skew:.4f} ({skew_desc}) | Kurtosis: {kurt:.4f} ({kurt_desc})")
-
-            if stats['normality_test'] is not None:
-                print(f"  Normality test p-value: {stats['normality_test'][1]:.4f} | Distribution appears normal: {stats['is_normal']}")
+            recommendations = []
+            if max(iqr_method['outlier_percentage'], z_method['outlier_percentage']) > 5:
+                recommendations.append("Investigate the source of these outliers - are they data errors or valid extreme values?")
+                recommendations.append("Consider removing or capping outliers if they are errors or not representative of the phenomenon.")
+                recommendations.append("If using machine learning, consider robust models less affected by outliers.")
+            elif max(iqr_method['outlier_percentage'], z_method['outlier_percentage']) > 1:
+                recommendations.append("Review outliers to determine if they are valid data points or errors.")
+                recommendations.append("Consider Winsorization (capping) at specified percentiles rather than removing outliers.")
             else:
-                print("  Normality test: Not enough data points")
+                recommendations.append("These few outliers can typically be handled with standard robust statistical methods.")
 
-    # Add summary and recommendations
-    print("\n\033[1m\033[95mSummary and Recommendations:\033[0m")
-    print(f"  • Found {len(normal_cols)} columns with normal distribution: {', '.join(normal_cols) if normal_cols else 'none'}")
+            recommendation_text = " ".join(recommendations)
 
-    if highly_skewed_cols:
-        print(f"  • Detected columns with strong skewness (skewness > 1): {', '.join([f'{col} ({skew:.2f})' for col, skew in highly_skewed_cols])}")
-        print("  • Recommendation: Consider applying transformations (log, sqrt, Box-Cox) to normalize these variables")
+            report.add_plot(
+                plt.gcf(),
+                f"Outlier Analysis for {col}",
+                "These plots show outlier detection using IQR and Z-score methods, including box plot, value distribution with boundaries, Z-score distribution, and a scatter plot highlighting detected outliers.",
+                interpretation,
+                good,
+                bad,
+                recommendation_text
+            )
 
-    if skewed_cols:
-        print(f"  • Detected columns with moderate skewness (skewness 0.5-1): {', '.join([f'{col} ({skew:.2f})' for col, skew in skewed_cols])}")
-
-    if heavy_tailed_cols:
-        print(f"  • Detected columns with heavy tails (kurtosis > 3): {', '.join([f'{col} ({kurt:.2f})' for col, kurt in heavy_tailed_cols])}")
-        print("  • Recommendation: Watch for outliers and use robust statistical methods for these variables")
-
-    if light_tailed_cols:
-        print(f"  • Detected columns with light tails (kurtosis < 3): {', '.join([f'{col}' for col, _ in light_tailed_cols])}")
-
-    print("  • Non-normal distributions may require special treatment in modeling")
-    print("  • Next steps: Run outlier analysis with --outlier-analysis to identify anomalous values")
-
-    # Visualization for distribution analysis
-    plots_dir = ensure_plots_directory()
-    numeric_cols = [col for col, s in dist_stats.items() if 'skewness' in s and 'error' not in s]
-    if numeric_cols:
-        plt.figure(figsize=(10, 6))
-        skews = [dist_stats[col]['skewness'] for col in numeric_cols]
-        kurts = [dist_stats[col]['kurtosis'] for col in numeric_cols]
-        sns.barplot(x=numeric_cols, y=skews, color='orange', edgecolor='black')
-        plt.xticks(rotation=45)
-        plt.ylabel('Skewness')
-        plt.title('Skewness of Numeric Columns')
-        plt.tight_layout()
-        plot_path = os.path.join(plots_dir, 'distribution_skewness.png')
-        plt.savefig(plot_path)
-        print(f"\033[96m[INFO]\033[0m Distribution skewness plot saved to: {plot_path}")
-        plt.close()
-        open_last_plot_in_browser(plot_path)
-        print(f"\033[93m[INFO]\033[0m All generated plots can be found in: {plots_dir}")
-
-def print_outlier_analysis(outlier_stats):
-    """Print outlier analysis in a readable format."""
-    print("\n\033[1m\033[94mOutlier Analysis:\033[0m")
-
-    # Track columns with significant outliers for summary
+    # Add summary and recommendations section
     high_outlier_cols = []
     moderate_outlier_cols = []
+    low_outlier_cols = []
 
-    for col, stats in outlier_stats.items():
-        print(f"\n\033[96m{col}:\033[0m")
-        if 'error' in stats:
-            print(f"  Error: {stats['error']}")
-        else:
-            # Print IQR method results
-            iqr_pct = stats['iqr_method']['outlier_percentage']
-            # Print Z-Score method results
-            z_pct = stats['z_score_method']['outlier_percentage']
+    for col in valid_columns:
+        result = outlier_results[col]
+        outlier_pct = max(result['iqr_method']['outlier_percentage'],
+                         result['z_score_method']['outlier_percentage'])
 
-            # Print results in compact format
-            print(f"  IQR Method: Bounds [{stats['iqr_method']['lower_bound']:.4f}, {stats['iqr_method']['upper_bound']:.4f}] | {stats['iqr_method']['outlier_count']} outliers ({iqr_pct}%)")
-            print(f"  Z-Score Method (|z| > 3): {stats['z_score_method']['outlier_count']} outliers ({z_pct}%)")
+        if outlier_pct > 5:
+            high_outlier_cols.append((col, outlier_pct))
+        elif outlier_pct > 1:
+            moderate_outlier_cols.append((col, outlier_pct))
+        elif outlier_pct > 0:
+            low_outlier_cols.append((col, outlier_pct))
 
-            # Show sample outlier indices only if they exist
-            if stats['iqr_method']['outlier_indices']:
-                print(f"  Sample outlier indices (IQR): {', '.join(map(str, stats['iqr_method']['outlier_indices']))}")
-
-            # Track for summary
-            if max(iqr_pct, z_pct) > 5:  # If more than 5% are outliers
-                high_outlier_cols.append((col, max(iqr_pct, z_pct)))
-            elif max(iqr_pct, z_pct) > 1:  # If 1-5% are outliers
-                moderate_outlier_cols.append((col, max(iqr_pct, z_pct)))
-
-    # Add summary and recommendations
-    print("\n\033[1m\033[95mSummary and Recommendations:\033[0m")
+    recommendations = []
     if high_outlier_cols:
-        print(f"  • Detected {len(high_outlier_cols)} columns with significant outliers (>5%):")
-        for col, pct in high_outlier_cols:
-            print(f"    - {col}: {pct:.2f}% outliers")
-        print("  • Recommendations for handling outliers:")
-        print("    1. Investigate outlier sources: measurement errors vs. genuine extreme values")
-        print("    2. For error outliers: correct or remove them")
-        print("    3. For genuine outliers: apply winsorization, trimming, or robust statistics")
-        print("    4. For ML models: use algorithms resistant to outliers (RandomForest, Gradient Boosting)")
-    elif moderate_outlier_cols:
-        print(f"  • Detected {len(moderate_outlier_cols)} columns with moderate outliers (1-5%):")
-        for col, pct in moderate_outlier_cols:
-            print(f"    - {col}: {pct:.2f}% outliers")
-        print("  • Consider using robust methods for these variables")
-    else:
-        print("  • No significant outlier presence detected (>1%)")
+        recommendations.append("<li><strong>High Outlier Columns:</strong> The following columns have significant outliers (>5%):")
+        recommendations.append("<ul>")
+        for col, pct in sorted(high_outlier_cols, key=lambda x: x[1], reverse=True):
+            recommendations.append(f"<li>{col}: {pct:.2f}%</li>")
+        recommendations.append("</ul>")
+        recommendations.append("These columns should be carefully examined and may need special treatment.</li>")
 
-    print("  • The presence of outliers can significantly impact statistical analyses and modeling")
-    print("  • Next steps: Run time series analysis with --time-series-analysis to investigate temporal patterns")
+    if moderate_outlier_cols:
+        recommendations.append("<li><strong>Moderate Outlier Columns:</strong> The following columns have moderate outliers (1-5%):")
+        recommendations.append("<ul>")
+        for col, pct in sorted(moderate_outlier_cols, key=lambda x: x[1], reverse=True):
+            recommendations.append(f"<li>{col}: {pct:.2f}%</li>")
+        recommendations.append("</ul>")
+        recommendations.append("Consider whether these outliers are legitimate values or errors.</li>")
 
-    # Visualization for outlier analysis
-    plots_dir = ensure_plots_directory()
-    numeric_cols = [col for col, s in outlier_stats.items() if 'iqr_method' in s and 'error' not in s]
-    if numeric_cols:
-        plt.figure(figsize=(10, 6))
-        outlier_pcts = [outlier_stats[col]['iqr_method']['outlier_percentage'] for col in numeric_cols]
-        sns.barplot(x=numeric_cols, y=outlier_pcts, color='red', edgecolor='black')
-        plt.xticks(rotation=45)
-        plt.ylabel('Outlier Percentage (IQR)')
-        plt.title('Outlier Percentage by Column (IQR Method)')
-        plt.tight_layout()
-        plot_path = os.path.join(plots_dir, 'outlier_percentages.png')
-        plt.savefig(plot_path)
-        print(f"\033[96m[INFO]\033[0m Outlier percentage plot saved to: {plot_path}")
-        plt.close()
-        open_last_plot_in_browser(plot_path)
-        print(f"\033[93m[INFO]\033[0m All generated plots can be found in: {plots_dir}")
+    if high_outlier_cols or moderate_outlier_cols:
+        recommendations.append("<li><strong>Outlier Treatment Options:</strong>")
+        recommendations.append("<ul>")
+        recommendations.append("<li><strong>Remove:</strong> Delete outlier rows if they are clearly errors</li>")
+        recommendations.append("<li><strong>Cap/Winsorize:</strong> Replace outliers with the boundary values</li>")
+        recommendations.append("<li><strong>Transform:</strong> Apply log, sqrt, or Box-Cox transformations to reduce the impact of outliers</li>")
+        recommendations.append("<li><strong>Robust Methods:</strong> Use statistical methods that are less sensitive to outliers</li>")
+        recommendations.append("</ul></li>")
 
-def print_time_series_analysis(ts_stats):
-    """Print time series analysis in a readable format."""
-    print("\n\033[1m\033[94mTime Series Analysis:\033[0m")
+    summary_content = f"""
+    <p>Based on the outlier analysis of {len(valid_columns)} numeric columns, here are the key findings and recommendations:</p>
+    <ul>
+        {"".join(recommendations) if recommendations else "<li>No significant outlier issues detected in the dataset.</li>"}
+        <li><strong>Next Steps:</strong> For columns with significant outliers, determine if they represent errors or valid extreme values before deciding on an appropriate treatment strategy.</li>
+    </ul>
+    """
+    report.add_section("Summary and Recommendations", summary_content)
 
-    if 'error' in ts_stats:
-        print(f"  Error: {ts_stats['error']}")
-        return
+    # Save the report
+    report_dir = ensure_report_directory(file_path)
+    report_path = os.path.join(report_dir, "outlier_analysis.html")
+    report.save(report_path)
 
-    # Track information for summary
-    has_features = False
-    non_stationary_cols = []
-    stationary_cols = []
-    has_seasonality = False
+    return report_path
 
-    # Print derived features
-    if 'features' in ts_stats and ts_stats['features']:
-        has_features = True
-        print("\n\033[96mDerived Features:\033[0m")
-
-        # Group feature stats for more compact display
-        for feature, stats in ts_stats['features'].items():
-            feature_name = feature.replace('_', ' ').title()
-            stats_str = " | ".join([f"{stat.title()}: {value:.4f}" for stat, value in stats.items()])
-            print(f"  {feature_name}: {stats_str}")
-
-    # Print stationarity test results
-    if 'stationarity' in ts_stats and ts_stats['stationarity']:
-        print("\n\033[96mStationarity Tests (ADF):\033[0m")
-        for col, result in ts_stats['stationarity'].items():
-            if 'error' in result:
-                print(f"  {col}: Error: {result['error']}")
-            else:
-                is_stationary = result['is_stationary']
-                status = "Stationary" if is_stationary else "Non-stationary"
-                print(f"  {col}: Test statistic: {result['test_statistic']:.4f} | p-value: {result['p_value']:.4f} | Status: {status}")
-
-                # Track for summary
-                if is_stationary:
-                    stationary_cols.append(col)
-                else:
-                    non_stationary_cols.append(col)
-
-    # Print seasonality analysis
-    if 'seasonality' in ts_stats and ts_stats['seasonality']:
-        print("\n\033[96mSeasonality Analysis:\033[0m")
-        if 'day_of_week' in ts_stats['seasonality']:
-            has_seasonality = True
-            day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-            dow_stats = ts_stats['seasonality']['day_of_week']
-
-            if 'error' in dow_stats:
-                print(f"  Day of Week: {dow_stats['error']}")
-            else:
-                # Print all days in one line
-                day_values = [f"{day_names[day_num]}: {mean_value:.4f}" for day_num, mean_value in dow_stats.items()]
-                print("  Average by Day of Week: " + " | ".join(day_values))
-
-    # Add summary and recommendations
-    print("\n\033[1m\033[95mSummary and Recommendations:\033[0m")
-    if has_features:
-        print("  • Successfully derived time series features from price data")
-
-    # Stationarity advice
-    if non_stationary_cols:
-        print(f"  • Detected non-stationary time series: {', '.join(non_stationary_cols)}")
-        print("  • Recommendations for non-stationary series:")
-        print("    1. Apply differencing (diff() method) to remove trends")
-        print("    2. Consider logarithmic or other transformations for variance stabilization")
-        print("    3. For ML models: Add trend features and use relative changes")
-        print("    4. Non-stationarity often indicates predictable patterns that can be leveraged")
-
-    if stationary_cols:
-        print(f"  • Detected stationary time series: {', '.join(stationary_cols)}")
-        print("  • Stationary series are well-suited for ARIMA, GARCH and other statistical methods")
-
-    if has_seasonality:
-        print("  • Weekly seasonal patterns detected")
-        print("  • Recommendations for working with seasonality:")
-        print("    1. Add categorical features (day of week, month, etc.)")
-        print("    2. For statistical models: Use seasonal differencing or SARIMA")
-        print("    3. For deep learning: Consider architectures with attention mechanisms")
-        print("    4. Seasonal patterns can be strong predictors in financial data")
-
-    print("  • Time series properties directly impact forecasting strategy and model selection")
-    print("  • Next steps: Perform correlation analysis with --correlation-analysis to identify relationships")
-
-    # Visualization for time series analysis
-    plots_dir = ensure_plots_directory()
-    if 'features' in ts_stats and ts_stats['features']:
-        for feature, stats in ts_stats['features'].items():
-            if isinstance(stats, dict) and all(isinstance(v, (int, float)) for v in stats.values()):
-                plt.figure(figsize=(8, 4))
-                plt.bar(list(stats.keys()), list(stats.values()), color='purple', edgecolor='black')
-                plt.title(f"Time Series Feature: {feature}")
-                plt.ylabel('Value')
-                plt.tight_layout()
-                plot_path = os.path.join(plots_dir, f'ts_feature_{feature}.png')
-                plt.savefig(plot_path)
-                print(f"\033[96m[INFO]\033[0m Time series feature plot saved to: {plot_path}")
-                plt.close()
-                open_last_plot_in_browser(plot_path)
-    print(f"\033[93m[INFO]\033[0m All generated plots can be found in: {plots_dir}")
