@@ -6,6 +6,28 @@ import json
 import datetime
 import re
 from glob import glob
+import numpy as np
+
+# Custom JSON encoder for handling pandas Timestamp and other non-serializable objects
+class CustomJSONEncoder(json.JSONEncoder):
+    """Custom JSON encoder that can handle pandas Timestamp and other non-serializable types."""
+    def default(self, obj):
+        # Handle pandas Timestamp objects
+        if hasattr(obj, 'isoformat') and callable(getattr(obj, 'isoformat')):
+            return obj.isoformat()
+        # Handle numpy numeric types
+        elif isinstance(obj, (np.integer, np.int64, np.int32)):
+            return int(obj)
+        elif isinstance(obj, (np.floating, np.float64, np.float32)):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        # Handle other non-serializable types
+        elif hasattr(obj, '__dict__'):
+            return obj.__dict__
+        else:
+            return str(obj)  # Convert any other object to string
+        return super().default(obj)
 
 
 def ensure_logs_directory():
@@ -449,7 +471,7 @@ def log_all_stats_unified(
 
     # Write the unified data to a JSON file
     with open(log_path, 'w') as f:
-        json.dump(unified_data, f, indent=2)
+        json.dump(unified_data, f, indent=2, cls=CustomJSONEncoder)
 
     return log_path
 
@@ -475,33 +497,56 @@ def log_basic_stats(basic_stats_results, file_paths):
                                for path, stats in zip(file_paths, basic_stats_results)
                                for col in stats
                                if 'missing' in stats[col] and stats[col]['missing'] > 0],
-        'file_summaries': extract_file_summaries(basic_stats_results, file_paths)
+        'file_summaries': extract_file_summaries(basic_stats_results, file_paths),
+        'raw_data': {
+            file_path: result for file_path, result in zip(file_paths, basic_stats_results)
+        }
     }
 
     with open(log_path, 'w') as f:
-        json.dump(summary_data, f, indent=2)
+        json.dump(summary_data, f, indent=2, cls=CustomJSONEncoder)
 
     return log_path
 
 
 def log_descriptive_stats(desc_stats_results, file_paths):
     """Log descriptive statistics to a file"""
-    # Similar to log_basic_stats but with a focus on descriptive statistics data
-    # Keep for backward compatibility
     log_dir = ensure_logs_directory()
     filename = generate_log_filename()
     log_path = os.path.join(log_dir, filename)
 
-    # Basic summary
+    # Extract high variance columns for summary
+    high_variance_cols = []
+    for path_idx, path in enumerate(file_paths):
+        stats = desc_stats_results[path_idx]
+        for col, col_stats in stats.items():
+            if 'error' not in col_stats and 'std' in col_stats and 'mean' in col_stats and col_stats['mean'] != 0:
+                cv = abs(col_stats['std'] / col_stats['mean']) if col_stats['mean'] != 0 else 0
+                if cv > 1.0:  # High variance threshold
+                    high_variance_cols.append((path, col, cv))
+
+    # Comprehensive summary with raw data
     summary_data = {
         'timestamp': datetime.datetime.now().isoformat(),
         'analysis_type': 'descriptive_stats',
         'files_analyzed': len(file_paths),
-        'file_paths': file_paths
+        'file_paths': file_paths,
+        'high_variance_columns': [
+            {'file': os.path.basename(path), 'column': col, 'cv': cv}
+            for path, col, cv in high_variance_cols
+        ],
+        'recommendations': [
+            "Statistical measures provide insights into data characteristics and quality",
+            "Consider normalization for high variance columns",
+            "Significant difference between mean and median suggests distribution asymmetry"
+        ],
+        'raw_data': {
+            file_path: result for file_path, result in zip(file_paths, desc_stats_results)
+        }
     }
 
     with open(log_path, 'w') as f:
-        json.dump(summary_data, f, indent=2)
+        json.dump(summary_data, f, indent=2, cls=CustomJSONEncoder)
 
     return log_path
 
@@ -518,11 +563,14 @@ def log_distribution_analysis(dist_stats_results, file_paths):
         'analysis_type': 'distribution_analysis',
         'files_analyzed': len(file_paths),
         'file_paths': file_paths,
-        'file_summaries': extract_distribution_summaries(dist_stats_results, file_paths)
+        'file_summaries': extract_distribution_summaries(dist_stats_results, file_paths),
+        'raw_data': {
+            file_path: result for file_path, result in zip(file_paths, dist_stats_results)
+        }
     }
 
     with open(log_path, 'w') as f:
-        json.dump(summary_data, f, indent=2)
+        json.dump(summary_data, f, indent=2, cls=CustomJSONEncoder)
 
     return log_path
 
@@ -539,11 +587,14 @@ def log_outlier_analysis(outlier_stats_results, file_paths):
         'analysis_type': 'outlier_analysis',
         'files_analyzed': len(file_paths),
         'file_paths': file_paths,
-        'file_summaries': extract_outlier_summaries(outlier_stats_results, file_paths)
+        'file_summaries': extract_outlier_summaries(outlier_stats_results, file_paths),
+        'raw_data': {
+            file_path: result for file_path, result in zip(file_paths, outlier_stats_results)
+        }
     }
 
     with open(log_path, 'w') as f:
-        json.dump(summary_data, f, indent=2)
+        json.dump(summary_data, f, indent=2, cls=CustomJSONEncoder)
 
     return log_path
 
@@ -560,11 +611,14 @@ def log_time_series_analysis(ts_stats_results, file_paths):
         'analysis_type': 'time_series_analysis',
         'files_analyzed': len(file_paths),
         'file_paths': file_paths,
-        'file_summaries': extract_time_series_summaries(ts_stats_results, file_paths)
+        'file_summaries': extract_time_series_summaries(ts_stats_results, file_paths),
+        'raw_data': {
+            file_path: result for file_path, result in zip(file_paths, ts_stats_results)
+        }
     }
 
     with open(log_path, 'w') as f:
-        json.dump(summary_data, f, indent=2)
+        json.dump(summary_data, f, indent=2, cls=CustomJSONEncoder)
 
     return log_path
 
@@ -625,7 +679,7 @@ def log_global_stats_summary(stats_collector):
     ]
 
     with open(log_path, 'w') as f:
-        json.dump(summary_data, f, indent=2)
+        json.dump(summary_data, f, indent=2, cls=CustomJSONEncoder)
 
     return log_path
 
