@@ -24,6 +24,11 @@ Flags:
     --restore-backups          Restore original files from .bak backups
 
     --basic-stats              Show basic statistics for files
+    --descriptive-stats        Detailed descriptive statistics for numeric columns
+    --distribution-analysis    Analyze distributions of numeric columns (skewness, kurtosis)
+    --outlier-analysis         Detect outliers in numeric columns using IQR and Z-score methods
+    --time-series-analysis     Basic time series analysis (trends, seasonality, stationarity)
+    --all-stats                Run all statistical analyses
     --correlation-analysis     Correlation analysis between numeric features
     --feature-importance       Feature importance analysis
 
@@ -41,6 +46,10 @@ Examples:
 
     # Restore original files from backups
     python eda_batch_check.py --restore-backups
+
+    # Run statistical analyses
+    python eda_batch_check.py --descriptive-stats
+    python eda_batch_check.py --all-stats
 
     # Combine analysis with fixing
     python eda_batch_check.py --data-quality-checks --fix-files --fix-all
@@ -98,8 +107,13 @@ def main():
   {Fore.GREEN}--fix-files{Style.RESET_ALL}                General flag for fixing (must be used with specific fix flags)
   {Fore.GREEN}--restore-backups{Style.RESET_ALL}          Restore original files from .bak backups
 
-{Fore.YELLOW}Other Flags:{Style.RESET_ALL}
+{Fore.YELLOW}Statistical Analysis Flags:{Style.RESET_ALL}
   {Fore.GREEN}--basic-stats{Style.RESET_ALL}              Show basic statistics for files
+  {Fore.GREEN}--descriptive-stats{Style.RESET_ALL}        Detailed descriptive statistics for numeric columns
+  {Fore.GREEN}--distribution-analysis{Style.RESET_ALL}    Analyze distributions (skewness, kurtosis)
+  {Fore.GREEN}--outlier-analysis{Style.RESET_ALL}         Detect outliers using IQR and Z-score methods
+  {Fore.GREEN}--time-series-analysis{Style.RESET_ALL}     Basic time series analysis (trends, seasonality)
+  {Fore.GREEN}--all-stats{Style.RESET_ALL}                Run all statistical analyses
   {Fore.GREEN}--correlation-analysis{Style.RESET_ALL}     Correlation analysis between numeric features
   {Fore.GREEN}--feature-importance{Style.RESET_ALL}       Feature importance analysis
 
@@ -117,6 +131,10 @@ def main():
   
   # Restore original files from backups
   python eda_batch_check.py --restore-backups
+  
+  # Run statistical analyses
+  python eda_batch_check.py --descriptive-stats
+  python eda_batch_check.py --all-stats
   
   # Combine analysis with fixing
   python eda_batch_check.py --data-quality-checks --fix-files --fix-all
@@ -145,10 +163,15 @@ def main():
     parser.add_argument('--fix-all', action='store_true', help='Fix all detected problems')
     parser.add_argument('--fix-files', action='store_true', help='General flag for fixing (must be used with specific fix flags)')
     parser.add_argument('--restore-backups', action='store_true', help='Restore original files from .bak backups')
-    # Other features
-    parser.add_argument('--basic-stats', action='store_true')
-    parser.add_argument('--correlation-analysis', action='store_true')
-    parser.add_argument('--feature-importance', action='store_true')
+    # Statistical analysis flags
+    parser.add_argument('--basic-stats', action='store_true', help='Show basic statistics for files')
+    parser.add_argument('--descriptive-stats', action='store_true', help='Detailed descriptive statistics for numeric columns')
+    parser.add_argument('--distribution-analysis', action='store_true', help='Analyze distributions of numeric columns (skewness, kurtosis)')
+    parser.add_argument('--outlier-analysis', action='store_true', help='Detect outliers in numeric columns using IQR and Z-score methods')
+    parser.add_argument('--time-series-analysis', action='store_true', help='Basic time series analysis (trends, seasonality, stationarity)')
+    parser.add_argument('--all-stats', action='store_true', help='Run all statistical analyses')
+    parser.add_argument('--correlation-analysis', action='store_true', help='Correlation analysis between numeric features')
+    parser.add_argument('--feature-importance', action='store_true', help='Feature importance analysis')
     args = parser.parse_args()
 
     # Check if at least one flag is provided
@@ -167,7 +190,9 @@ def main():
             info = file_info.get_file_info(file)
             if (
                 args.data_quality_checks or args.nan_check or args.duplicate_check or args.gap_check or
-                args.zero_check or args.negative_check or args.inf_check
+                args.zero_check or args.negative_check or args.inf_check or
+                args.descriptive_stats or args.distribution_analysis or args.outlier_analysis or
+                args.time_series_analysis or args.all_stats or args.basic_stats
             ):
                 if 'error' in info:
                     print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
@@ -196,6 +221,35 @@ def main():
                         data_quality.negative_check(df, negative_summary_all, Fore, Style, file_name=info.get('file_path'))
                     if args.data_quality_checks or args.inf_check:
                         data_quality.inf_check(df, inf_summary_all, Fore, Style, file_name=info.get('file_path'))
+
+                    # Statistical analysis
+                    if args.all_stats or args.basic_stats:
+                        print(f"\n{Fore.BLUE + Style.BRIGHT}Basic Statistics for {info.get('file_path')}:{Style.RESET_ALL}")
+                        basic_stats_result = basic_stats.compute_basic_stats(df)
+                        for col, stats in basic_stats_result.items():
+                            print(f"  {Fore.CYAN}{col}:{Style.RESET_ALL}")
+                            for stat, val in stats.items():
+                                if isinstance(val, float):
+                                    print(f"    {stat}: {val:.4f}")
+                                else:
+                                    print(f"    {stat}: {val}")
+
+                    if args.all_stats or args.descriptive_stats:
+                        desc_stats_result = basic_stats.descriptive_stats(df)
+                        basic_stats.print_descriptive_stats(desc_stats_result)
+
+                    if args.all_stats or args.distribution_analysis:
+                        dist_analysis_result = basic_stats.distribution_analysis(df)
+                        basic_stats.print_distribution_analysis(dist_analysis_result)
+
+                    if args.all_stats or args.outlier_analysis:
+                        outlier_analysis_result = basic_stats.outlier_analysis(df)
+                        basic_stats.print_outlier_analysis(outlier_analysis_result)
+
+                    if args.all_stats or args.time_series_analysis:
+                        ts_analysis_result = basic_stats.time_series_analysis(df)
+                        basic_stats.print_time_series_analysis(ts_analysis_result)
+
                 pbar.update(1)
                 continue
             print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
