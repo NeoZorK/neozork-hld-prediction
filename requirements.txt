@@ -112,3 +112,4 @@ dask
 datashader
 bokeh
 seaborn
+statsmodels
