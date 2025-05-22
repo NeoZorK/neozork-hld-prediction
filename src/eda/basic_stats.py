@@ -299,18 +299,72 @@ def print_outlier_analysis(outlier_results):
             print("  Sample outlier values (IQR method):")
             for value in iqr_method['outlier_values'][:5]:  # Show max 5 examples
                 print(f"    - {value}")
-            if iqr_method['outliers_count'] > 5:
-                print(f"    - ... and {iqr_method['outliers_count'] - 5} more")
 
-        # Recommendations
-        if max(iqr_method['outlier_percentage'], z_method['outlier_percentage']) > 5:
-            print("\033[91m  High percentage of outliers detected!\033[0m")
-            print("  Recommendation: Investigate these values and consider outlier treatment.")
-        elif max(iqr_method['outlier_percentage'], z_method['outlier_percentage']) > 0:
-            print("\033[93m  Some outliers detected\033[0m")
-            print("  Recommendation: Check if these are valid extreme values or data errors.")
+def print_distribution_analysis(distribution_stats):
+    """
+    Print distribution analysis results with color formatting.
+    Displays skewness, kurtosis, and normality test results for each column.
+
+    Args:
+        distribution_stats (dict): Dictionary with distribution statistics for each column
+    """
+    print("\n\033[1m\033[95mDistribution Analysis:\033[0m")
+
+    for col, stats in distribution_stats.items():
+        print(f"\n\033[93mColumn: {col}\033[0m")
+
+        if 'error' in stats:
+            print(f"  Error: {stats['error']}")
+            continue
+
+        # Print skewness
+        skewness = stats.get('skewness', float('nan'))
+        if not np.isnan(skewness):
+            skew_desc = "Symmetrical"
+            if skewness > 1:
+                skew_desc = "Highly positive skewed"
+            elif skewness > 0.5:
+                skew_desc = "Moderately positive skewed"
+            elif skewness > 0.1:
+                skew_desc = "Slightly positive skewed"
+            elif skewness < -1:
+                skew_desc = "Highly negative skewed"
+            elif skewness < -0.5:
+                skew_desc = "Moderately negative skewed"
+            elif skewness < -0.1:
+                skew_desc = "Slightly negative skewed"
+
+            print(f"  Skewness: {skewness:.4f} - {skew_desc}")
+
+        # Print kurtosis
+        kurtosis = stats.get('kurtosis', float('nan'))
+        if not np.isnan(kurtosis):
+            kurt_desc = "Mesokurtic (normal-like)"
+            if kurtosis > 3:
+                kurt_desc = "Leptokurtic (heavy tails)"
+            elif kurtosis < -1:
+                kurt_desc = "Platykurtic (light tails)"
+
+            print(f"  Kurtosis: {kurtosis:.4f} - {kurt_desc}")
+
+        # Print normality test results
+        normality_test = stats.get('normality_test')
+        if normality_test is not None:
+            statistic, p_value = normality_test
+            is_normal = stats.get('is_normal', 'Unknown')
+            print(f"  Normality Test (Shapiro-Wilk):")
+            print(f"    Statistic: {statistic:.4f}")
+            print(f"    p-value: {p_value:.4f}")
+            print(f"    Distribution is normal: {is_normal}")
+            if p_value < 0.05:
+                print("    \033[91mRecommendation:\033[0m Consider non-parametric methods or transformations.")
+            else:
+                print("    \033[92mRecommendation:\033[0m Parametric methods are likely appropriate.")
         else:
-            print("\033[92m  No outliers detected\033[0m")
+            print("  Normality Test: Not available (insufficient data points)")
+
+        # Add visualization suggestion
+        print("  Visualization: Consider histogram, QQ-plot, or KDE for visual inspection")
 
 def generate_outlier_analysis_report(df, file_path):
     """
