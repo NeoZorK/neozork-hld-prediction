@@ -174,13 +174,23 @@ def test_outlier_analysis(sample_numeric_df):
 
 def test_outlier_analysis_with_outliers():
     """Test outlier_analysis with a dataset containing clear outliers."""
-    # Create a DataFrame with a more extreme outlier to ensure Z-score > 3
-    df = pd.DataFrame({'with_outliers': [10, 11, 12, 13, 14, 1000]})
+    # Create a DataFrame with a more extreme outlier to ensure Z-score > 3.
+    # For a standard Z-score (threshold=3), N must be at least 11 for an outlier
+    # to potentially exceed this threshold (max Z-score is sqrt(N-1)).
+    # Original data (N=6) had max Z-score of sqrt(5) ~ 2.236.
+    # New data has N=11. The outlier 1000 is at index 10.
+    data_values = [10, 11, 12, 13, 14, 10, 11, 12, 13, 14, 1000]
+    df = pd.DataFrame({'with_outliers': data_values})
     result = basic_stats.outlier_analysis(df)
 
     assert result['with_outliers']['iqr_method']['outliers_count'] >= 1
     assert result['with_outliers']['z_score_method']['outliers_count'] >= 1
-    assert 5 in result['with_outliers']['iqr_method']['outlier_indices']  # Index of the outlier
+
+    # Check that the index of the outlier (1000) is correctly identified
+    # The value 1000 is at index 10 in data_values.
+    outlier_index = 10
+    assert outlier_index in result['with_outliers']['iqr_method']['outlier_indices']
+    assert outlier_index in result['with_outliers']['z_score_method']['outlier_indices']
 
 # Tests for time_series_analysis
 def test_time_series_analysis(sample_time_series_df):
