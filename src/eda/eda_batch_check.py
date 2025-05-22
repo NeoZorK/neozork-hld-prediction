@@ -67,6 +67,7 @@ import colorama
 from colorama import Fore, Style
 import json
 import datetime
+from tqdm import tqdm  # Import tqdm for progress bars
 
 # Initialize colorama for colored output
 colorama.init(autoreset=True)
@@ -275,8 +276,8 @@ def main():
 {Fore.YELLOW}Statistical Analysis Flags:{Style.RESET_ALL}
   {Fore.GREEN}--basic-stats{Style.RESET_ALL}              Show basic statistics for files
   {Fore.GREEN}--descriptive-stats{Style.RESET_ALL}        Detailed descriptive statistics for numeric columns
-  {Fore.GREEN}--distribution-analysis{Style.RESET_ALL}    Analyze distributions (skewness, kurtosis)
-  {Fore.GREEN}--outlier-analysis{Style.RESET_ALL}         Detect outliers using IQR and Z-score methods
+  {Fore.GREEN}--distribution-analysis{Style.RESET_ALL}    Analyze distributions of numeric columns (skewness, kurtosis)
+  {Fore.GREEN}--outlier-analysis{Style.RESET_ALL}         Detect outliers in numeric columns using IQR and Z-score methods
   {Fore.GREEN}--time-series-analysis{Style.RESET_ALL}     Basic time series analysis (trends, seasonality, stationarity)
   {Fore.GREEN}--all-stats{Style.RESET_ALL}                Run all statistical analyses
   {Fore.GREEN}--correlation-analysis{Style.RESET_ALL}     Correlation analysis between numeric features
@@ -378,7 +379,7 @@ def main():
     total_files = len(parquet_files)
     print(f"{Fore.CYAN}Processing {total_files} files...{Style.RESET_ALL}")
 
-    for idx, file in enumerate(parquet_files, 1):
+    for idx, file in enumerate(tqdm(parquet_files, desc="Processing files"), 1):  # Add progress bar
         info = file_info.get_file_info(file)
 
         # Data quality or statistical analysis modes
@@ -427,7 +428,12 @@ def main():
                 # Statistical analysis
                 if args.all_stats or args.basic_stats:
                     print(f"\n{Fore.BLUE + Style.BRIGHT}Basic Statistics for {info.get('file_path')}:{Style.RESET_ALL}")
-                    basic_stats_result = basic_stats.compute_basic_stats(df)
+                    # Add progress bar for column processing
+                    columns = df.columns
+                    with tqdm(total=len(columns), desc=f"Basic stats analysis", leave=False) as pbar:
+                        basic_stats_result = basic_stats.compute_basic_stats(df)
+                        pbar.update(len(columns))  # Update progress bar after computation
+
                     basic_stats_results.append(basic_stats_result)
 
                     # Group columns by type (similar to print_descriptive_stats)
@@ -476,28 +482,47 @@ def main():
 
                 # Run more detailed statistical analyses
                 if args.all_stats or args.descriptive_stats:
-                    desc_stats_result = basic_stats.descriptive_stats(df)
+                    print(f"\n{Fore.BLUE + Style.BRIGHT}Descriptive Statistics for {info.get('file_path')}:{Style.RESET_ALL}")
+                    columns = df.select_dtypes(include=['number']).columns
+                    with tqdm(total=len(columns), desc=f"Descriptive stats analysis", leave=False) as pbar:
+                        desc_stats_result = basic_stats.descriptive_stats(df)
+                        pbar.update(len(columns))  # Update progress bar after computation
+
                     desc_stats_results.append(desc_stats_result)
                     basic_stats.print_descriptive_stats(desc_stats_result)
                     # Update global stats
                     stats_collector.update_descriptive_stats(file, desc_stats_result)
 
                 if args.all_stats or args.distribution_analysis:
-                    dist_analysis_result = basic_stats.distribution_analysis(df)
+                    print(f"\n{Fore.BLUE + Style.BRIGHT}Distribution Analysis for {info.get('file_path')}:{Style.RESET_ALL}")
+                    columns = df.select_dtypes(include=['number']).columns
+                    with tqdm(total=len(columns), desc=f"Distribution analysis", leave=False) as pbar:
+                        dist_analysis_result = basic_stats.distribution_analysis(df)
+                        pbar.update(len(columns))  # Update progress bar after computation
+
                     dist_analysis_results.append(dist_analysis_result)
                     basic_stats.print_distribution_analysis(dist_analysis_result)
                     # Update global stats
                     stats_collector.update_distribution_stats(file, dist_analysis_result)
 
                 if args.all_stats or args.outlier_analysis:
-                    outlier_analysis_result = basic_stats.outlier_analysis(df)
+                    print(f"\n{Fore.BLUE + Style.BRIGHT}Outlier Analysis for {info.get('file_path')}:{Style.RESET_ALL}")
+                    columns = df.select_dtypes(include=['number']).columns
+                    with tqdm(total=len(columns), desc=f"Outlier detection", leave=False) as pbar:
+                        outlier_analysis_result = basic_stats.outlier_analysis(df)
+                        pbar.update(len(columns))  # Update progress bar after computation
+
                     outlier_analysis_results.append(outlier_analysis_result)
                     basic_stats.print_outlier_analysis(outlier_analysis_result)
                     # Update global stats
                     stats_collector.update_outlier_stats(file, outlier_analysis_result)
 
                 if args.all_stats or args.time_series_analysis:
-                    ts_analysis_result = basic_stats.time_series_analysis(df)
+                    print(f"\n{Fore.BLUE + Style.BRIGHT}Time Series Analysis for {info.get('file_path')}:{Style.RESET_ALL}")
+                    with tqdm(total=1, desc=f"Time series analysis", leave=False) as pbar:
+                        ts_analysis_result = basic_stats.time_series_analysis(df)
+                        pbar.update(1)  # Update progress bar after computation
+
                     ts_analysis_results.append(ts_analysis_result)
                     basic_stats.print_time_series_analysis(ts_analysis_result)
                     # Update global stats
@@ -653,7 +678,7 @@ def main():
         total_count = 0
         print(f"{Fore.CYAN}Fixing files...{Style.RESET_ALL}")
 
-        for file_idx, file in enumerate(parquet_files, 1):
+        for file_idx, file in enumerate(tqdm(parquet_files, desc="Fixing files"), 1):  # Add progress bar
             try:
                 was_fixed = fix_files.fix_file(
                     file,
