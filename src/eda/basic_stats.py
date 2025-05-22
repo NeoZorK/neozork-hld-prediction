@@ -294,11 +294,16 @@ def print_outlier_analysis(outlier_results):
         print("  Z-Score Method (threshold=3):")
         print(f"    Outliers: {z_method['outliers_count']} ({z_method['outlier_percentage']:.2f}%)")
 
-        # Show sample outliers if any
-        if iqr_method['outliers_count'] > 0:
+        # Show sample outliers if any - with a check for the key's existence
+        if iqr_method['outliers_count'] > 0 and 'outlier_values' in iqr_method:
             print("  Sample outlier values (IQR method):")
             for value in iqr_method['outlier_values'][:5]:  # Show max 5 examples
                 print(f"    - {value}")
+        # If we have outlier indices but no values, we can mention that
+        elif iqr_method['outliers_count'] > 0 and 'outlier_indices' in iqr_method:
+            print("  Outlier indices (IQR method):")
+            for idx in iqr_method['outlier_indices'][:5]:  # Show max 5 examples
+                print(f"    - Index {idx}")
 
 def print_distribution_analysis(distribution_stats):
     """
@@ -677,20 +682,20 @@ def print_descriptive_stats(desc_stats):
 
             # Print basic stats
             stats_to_print = [
-                ('Mean', 'mean', ':.4f'),
-                ('Median', 'median', ':.4f'),
-                ('Mode', 'mode', ''),
-                ('Standard Deviation', 'std', ':.4f'),
-                ('Variance', 'var', ':.4f'),
-                ('Range', 'range', ':.4f')
+                ('Mean', 'mean', '{:.4f}'),
+                ('Median', 'median', '{:.4f}'),
+                ('Mode', 'mode', '{}'),
+                ('Standard Deviation', 'std', '{:.4f}'),
+                ('Variance', 'var', '{:.4f}'),
+                ('Range', 'range', '{:.4f}')
             ]
 
             for label, key, fmt in stats_to_print:
                 if key in stats:
                     value = stats[key]
                     # Format the value if it's numeric
-                    if isinstance(value, (int, float)) and fmt:
-                        formatted_value = format(value, fmt)
+                    if isinstance(value, (int, float)) and fmt != '{}':
+                        formatted_value = fmt.format(value)
                     else:
                         formatted_value = str(value)
                     print(f"  {label}: {formatted_value}")
