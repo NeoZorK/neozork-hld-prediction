@@ -55,7 +55,6 @@ Examples:
     python eda_batch_check.py --data-quality-checks --fix-files --fix-all
 """
 import argparse
-from tqdm import tqdm
 import os
 import glob
 import sys
@@ -75,6 +74,165 @@ from src.eda import file_info, folder_stats, data_quality, fix_files, basic_stat
 def print_nan_check(df, nan_summary):
     # Deprecated: moved to data_quality.py
     pass
+
+
+# Statistics collection for global summary
+class StatsCollector:
+    def __init__(self):
+        self.descriptive_summary = {
+            'files_analyzed': 0,
+            'total_columns': 0,
+            'high_variance_cols': [],
+            'skewed_cols': []
+        }
+        self.distribution_summary = {
+            'normal_cols': [],
+            'highly_skewed_cols': [],
+            'heavy_tailed_cols': []
+        }
+        self.outlier_summary = {
+            'high_outlier_cols': [],  # Columns with >5% outliers
+            'moderate_outlier_cols': []  # Columns with 1-5% outliers
+        }
+        self.time_series_summary = {
+            'stationary_cols': [],
+            'non_stationary_cols': [],
+            'has_seasonality': 0,
+            'files_with_datetime': 0
+        }
+
+    def update_descriptive_stats(self, file_path, desc_stats):
+        self.descriptive_summary['files_analyzed'] += 1
+        self.descriptive_summary['total_columns'] += len(desc_stats)
+
+        # Identify high variance columns
+        for col, stats in desc_stats.items():
+            if 'error' not in stats and 'std' in stats and 'mean' in stats and stats['mean'] != 0:
+                # Calculate coefficient of variation
+                cv = abs(stats['std'] / stats['mean']) if stats['mean'] != 0 else 0
+                if cv > 1.0:  # High variance threshold
+                    self.descriptive_summary['high_variance_cols'].append((file_path, col, cv))
+
+    def update_distribution_stats(self, file_path, dist_stats):
+        for col, stats in dist_stats.items():
+            if 'error' not in stats:
+                if stats['is_normal'] == 'Yes':
+                    self.distribution_summary['normal_cols'].append((file_path, col))
+
+                skew = stats['skewness']
+                kurt = stats['kurtosis']
+
+                if abs(skew) > 1:
+                    self.distribution_summary['highly_skewed_cols'].append((file_path, col, skew))
+
+                if kurt > 3:
+                    self.distribution_summary['heavy_tailed_cols'].append((file_path, col, kurt))
+
+    def update_outlier_stats(self, file_path, outlier_stats):
+        for col, stats in outlier_stats.items():
+            if 'error' not in stats:
+                iqr_pct = stats['iqr_method']['outlier_percentage']
+                z_pct = stats['z_score_method']['outlier_percentage']
+                max_pct = max(iqr_pct, z_pct)
+
+                if max_pct > 5:
+                    self.outlier_summary['high_outlier_cols'].append((file_path, col, max_pct))
+                elif max_pct > 1:
+                    self.outlier_summary['moderate_outlier_cols'].append((file_path, col, max_pct))
+
+    def update_time_series_stats(self, file_path, ts_stats):
+        if 'error' in ts_stats:
+            return
+
+        self.time_series_summary['files_with_datetime'] += 1
+
+        if 'stationarity' in ts_stats:
+            for col, result in ts_stats['stationarity'].items():
+                if 'error' not in result:
+                    if result['is_stationary']:
+                        self.time_series_summary['stationary_cols'].append((file_path, col))
+                    else:
+                        self.time_series_summary['non_stationary_cols'].append((file_path, col))
+
+        if 'seasonality' in ts_stats and 'day_of_week' in ts_stats['seasonality'] and 'error' not in ts_stats['seasonality']['day_of_week']:
+            self.time_series_summary['has_seasonality'] += 1
+
+    def print_global_summary(self, args):
+        print("\n" + "="*80)
+        print(f"{Fore.BLUE + Style.BRIGHT}GLOBAL STATISTICAL ANALYSIS SUMMARY{Style.RESET_ALL}")
+        print("="*80)
+
+        print(f"\n{Fore.CYAN}Overall Statistics:{Style.RESET_ALL}")
+        print(f"  • Files analyzed: {self.descriptive_summary['files_analyzed']}")
+        print(f"  • Total columns examined: {self.descriptive_summary['total_columns']}")
+
+        if args.descriptive_stats or args.all_stats:
+            print(f"\n{Fore.CYAN}Descriptive Statistics Summary:{Style.RESET_ALL}")
+            if self.descriptive_summary['high_variance_cols']:
+                print(f"  • Found {len(self.descriptive_summary['high_variance_cols'])} columns with high variance (CV > 1):")
+                for file_path, col, cv in self.descriptive_summary['high_variance_cols'][:10]:  # Show top 10
+                    print(f"    - {os.path.basename(file_path)}: {col} (CV={cv:.2f})")
+                if len(self.descriptive_summary['high_variance_cols']) > 10:
+                    print(f"    - ... and {len(self.descriptive_summary['high_variance_cols']) - 10} more columns")
+                print("  • Recommendation: Consider normalizing high-variance columns before modeling")
+            else:
+                print("  • No columns with notably high variance were detected")
+
+        if args.distribution_analysis or args.all_stats:
+            print(f"\n{Fore.CYAN}Distribution Analysis Summary:{Style.RESET_ALL}")
+            normal_pct = len(self.distribution_summary['normal_cols']) / self.descriptive_summary['total_columns'] * 100 if self.descriptive_summary['total_columns'] > 0 else 0
+            print(f"  • {len(self.distribution_summary['normal_cols'])} columns follow normal distribution ({normal_pct:.1f}% of total)")
+            print(f"  • {len(self.distribution_summary['highly_skewed_cols'])} columns have strong skewness (skewness > 1)")
+            print(f"  • {len(self.distribution_summary['heavy_tailed_cols'])} columns have heavy tails (kurtosis > 3)")
+            print("  • Recommendations:")
+            print("    - Apply log, sqrt, or Box-Cox transformations to normalize skewed data")
+            print("    - Watch for outliers in heavy-tailed distributions")
+
+        if args.outlier_analysis or args.all_stats:
+            print(f"\n{Fore.CYAN}Outlier Analysis Summary:{Style.RESET_ALL}")
+            print(f"  • {len(self.outlier_summary['high_outlier_cols'])} columns have significant outliers (>5%)")
+            print(f"  • {len(self.outlier_summary['moderate_outlier_cols'])} columns have moderate outliers (1-5%)")
+            if self.outlier_summary['high_outlier_cols']:
+                print("  • Top columns with the most outliers:")
+                sorted_outliers = sorted(self.outlier_summary['high_outlier_cols'], key=lambda x: x[2], reverse=True)
+                for file_path, col, pct in sorted_outliers[:5]:  # Show top 5
+                    print(f"    - {os.path.basename(file_path)}: {col} ({pct:.1f}% outliers)")
+
+        if args.time_series_analysis or args.all_stats:
+            print(f"\n{Fore.CYAN}Time Series Analysis Summary:{Style.RESET_ALL}")
+            print(f"  • {self.time_series_summary['files_with_datetime']} files contained datetime columns")
+            print(f"  • {len(self.time_series_summary['stationary_cols'])} stationary time series detected")
+            print(f"  • {len(self.time_series_summary['non_stationary_cols'])} non-stationary time series detected")
+            print(f"  • {self.time_series_summary['has_seasonality']} files showed clear weekly seasonality")
+            print("  • Recommendations for time series modeling:")
+            if self.time_series_summary['non_stationary_cols']:
+                print("    - Apply differencing to non-stationary series before modeling")
+            if self.time_series_summary['has_seasonality'] > 0:
+                print("    - Include day-of-week features in your models to capture seasonality")
+
+        print("\n" + "="*80)
+        print(f"{Fore.BLUE + Style.BRIGHT}KEY FINDINGS AND RECOMMENDATIONS{Style.RESET_ALL}")
+        print("="*80)
+        print("1. Data Quality:")
+        if self.outlier_summary['high_outlier_cols']:
+            print("   - Address outliers in the data, particularly in price and volume columns")
+
+        print("2. Data Preparation:")
+        if self.distribution_summary['highly_skewed_cols']:
+            print("   - Apply appropriate transformations to normalize skewed distributions")
+        if self.descriptive_summary['high_variance_cols']:
+            print("   - Consider standardizing high-variance features")
+
+        print("3. Modeling Strategy:")
+        if self.time_series_summary['non_stationary_cols']:
+            print("   - Use differencing for non-stationary time series")
+        if self.time_series_summary['has_seasonality'] > 0:
+            print("   - Incorporate seasonality features (day of week, month) in your models")
+
+        print("4. Next Steps:")
+        print("   - Run correlation analysis (--correlation-analysis) to identify relationships")
+        print("   - Perform feature importance analysis (--feature-importance) to identify key predictors")
+        print("   - Consider developing specialized features based on domain knowledge")
 
 
 # Main function to handle command line arguments and execute the appropriate functions
@@ -178,7 +336,7 @@ def main():
     data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', 'data')
     parquet_files = [y for x in os.walk(data_dir) for y in glob.glob(os.path.join(x[0], '*.parquet'))]
 
-    # Create lists to store summary data before starting the progress bar
+    # Create lists to store summary data
     nan_summary_all = []
     dupe_summary_all = []
     gap_summary_all = []
@@ -186,159 +344,189 @@ def main():
     negative_summary_all = []
     inf_summary_all = []
 
-    # Initialize progress bar that stays at the bottom
-    # Use leave=True so the pbar doesn't disappear while outputs are being printed
-    with tqdm(total=len(parquet_files), desc="Processing files", position=0, leave=True, ncols=100,
-             bar_format='{desc} [{n_fmt}/{total_fmt}] {bar} {percentage:3.0f}%') as pbar:
+    # Initialize stats collector for global summaries
+    stats_collector = StatsCollector()
 
-        # Process each file
-        for idx, file in enumerate(parquet_files, 1):
-            info = file_info.get_file_info(file)
+    # Process each file
+    total_files = len(parquet_files)
+    print(f"{Fore.CYAN}Processing {total_files} files...{Style.RESET_ALL}")
 
-            # Data quality or statistical analysis modes
-            if (
-                args.data_quality_checks or args.nan_check or args.duplicate_check or args.gap_check or
-                args.zero_check or args.negative_check or args.inf_check or
-                args.descriptive_stats or args.distribution_analysis or args.outlier_analysis or
-                args.time_series_analysis or args.all_stats or args.basic_stats
-            ):
-                if 'error' in info:
-                    print(f"\n\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
-                    print(f"  {Fore.RED}Error reading file:{Style.RESET_ALL} {info['error']}")
-                    pbar.update(1)
-                    continue
+    for idx, file in enumerate(parquet_files, 1):
+        info = file_info.get_file_info(file)
 
-                # Read the DataFrame
-                df = None
-                try:
-                    import pandas as pd
-                    df = pd.read_parquet(file)
-                except Exception as e:
-                    print(f"\n\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
-                    print(f"  {Fore.RED} Error reading file:{Style.RESET_ALL} {e}")
-                    pbar.update(1)
-                    continue
-
-                if df is not None:
-                    # Print file header with extra newlines for better separation
-                    print(f"\n\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
-
-                    # Data quality checks
-                    if args.data_quality_checks or args.nan_check:
-                        data_quality.nan_check(df, nan_summary_all, Fore, Style)
-                    if args.data_quality_checks or args.duplicate_check:
-                        data_quality.duplicate_check(df, dupe_summary_all, Fore, Style)
-                    if args.data_quality_checks or args.gap_check:
-                        data_quality.gap_check(df, gap_summary_all, Fore, Style, schema_datetime_fields=info.get('datetime_or_timestamp_fields'), file_name=info.get('file_path'))
-                    if args.data_quality_checks or args.zero_check:
-                        data_quality.zero_check(df, zero_summary_all, Fore, Style, file_name=info.get('file_path'))
-                    if args.data_quality_checks or args.negative_check:
-                        data_quality.negative_check(df, negative_summary_all, Fore, Style, file_name=info.get('file_path'))
-                    if args.data_quality_checks or args.inf_check:
-                        data_quality.inf_check(df, inf_summary_all, Fore, Style, file_name=info.get('file_path'))
-
-                    # Statistical analysis
-                    if args.all_stats or args.basic_stats:
-                        print(f"\n{Fore.BLUE + Style.BRIGHT}Basic Statistics for {info.get('file_path')}:{Style.RESET_ALL}")
-                        basic_stats_result = basic_stats.compute_basic_stats(df)
-
-                        # Group columns by type (similar to print_descriptive_stats)
-                        column_groups = {}
-                        for col in basic_stats_result.keys():
-                            # Group by OHLCV pattern
-                            if 'open' in col.lower() or 'high' in col.lower() or 'low' in col.lower() or 'close' in col.lower():
-                                group = 'price_ohlc'
-                            elif 'volume' in col.lower():
-                                group = 'volume'
-                            else:
-                                group = 'other'
-
-                            if group not in column_groups:
-                                column_groups[group] = []
-                            column_groups[group].append(col)
-
-                        # Print each group
-                        for group, columns in column_groups.items():
-                            if group == 'price_ohlc':
-                                print(f"\n\033[96mPrice Data (OHLC):\033[0m")
-                            elif group == 'volume':
-                                print(f"\n\033[96mVolume Data:\033[0m")
-                            else:
-                                print(f"\n\033[96mOther Data:\033[0m")
-
-                            # Print common metrics in rows for each column group
-                            for metric in ['mean', 'median', 'std', 'min', 'max', 'missing']:
-                                values = []
-                                for col in columns:
-                                    stats = basic_stats_result[col]
-                                    if metric in stats:
-                                        val = stats[metric]
-                                        if isinstance(val, float):
-                                            values.append(f"{col}: {val:.4f}")
-                                        else:
-                                            values.append(f"{col}: {val}")
-
-                                if values:
-                                    print(f"  {metric.capitalize()}: {' | '.join(values)}")
-                            print()  # Extra line for readability
-
-                    # Run more detailed statistical analyses
-                    if args.all_stats or args.descriptive_stats:
-                        desc_stats_result = basic_stats.descriptive_stats(df)
-                        basic_stats.print_descriptive_stats(desc_stats_result)
-
-                    if args.all_stats or args.distribution_analysis:
-                        dist_analysis_result = basic_stats.distribution_analysis(df)
-                        basic_stats.print_distribution_analysis(dist_analysis_result)
-
-                    if args.all_stats or args.outlier_analysis:
-                        outlier_analysis_result = basic_stats.outlier_analysis(df)
-                        basic_stats.print_outlier_analysis(outlier_analysis_result)
-
-                    if args.all_stats or args.time_series_analysis:
-                        ts_analysis_result = basic_stats.time_series_analysis(df)
-                        basic_stats.print_time_series_analysis(ts_analysis_result)
-
-                # Add extra space after each file and update the progress bar
-                print("\n")
-                pbar.update(1)
-                continue
-
-            # Default mode - just print file info
-            print(f"\n\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
-            print(f"  {Fore.YELLOW}Name:{Style.RESET_ALL} {info.get('file_name')}")
-            print(f"  {Fore.YELLOW}Size:{Style.RESET_ALL} {info.get('file_size_mb')} MB")
+        # Data quality or statistical analysis modes
+        if (
+            args.data_quality_checks or args.nan_check or args.duplicate_check or args.gap_check or
+            args.zero_check or args.negative_check or args.inf_check or
+            args.descriptive_stats or args.distribution_analysis or args.outlier_analysis or
+            args.time_series_analysis or args.all_stats or args.basic_stats
+        ):
             if 'error' in info:
+                print(f"\n\n{Fore.CYAN}[{idx}/{total_files}] File: {info.get('file_path')}{Style.RESET_ALL}")
                 print(f"  {Fore.RED}Error reading file:{Style.RESET_ALL} {info['error']}")
-                pbar.update(1)
                 continue
-            print(f"  {Fore.YELLOW}Rows:{Style.RESET_ALL} {info.get('n_rows')}, {Fore.YELLOW}Columns:{Style.RESET_ALL} {info.get('n_cols')}")
-            print(f"  {Fore.YELLOW}Columns:{Style.RESET_ALL} {info.get('columns')}")
 
-            # Print dtype information
-            dtypes_dict = info.get('dtypes')
-            if dtypes_dict:
-                print(f"  {Fore.YELLOW}Dtypes:{Style.RESET_ALL}")
-                max_col_len = max(len(str(col)) for col in dtypes_dict.keys()) if dtypes_dict else 0
-                for col, dtype in dtypes_dict.items():
-                    print(f"    {col.ljust(max_col_len)} : {dtype}")
-            print(f"  {Fore.MAGENTA}DateTime/Timestamp fields (schema):{Style.RESET_ALL} {info.get('datetime_or_timestamp_fields')}")
-
-            # Print sample rows
+            # Read the DataFrame
+            df = None
             try:
                 import pandas as pd
                 df = pd.read_parquet(file)
-                print(f"  {Fore.GREEN}First 5 rows:{Style.RESET_ALL}\n", df.head(5).to_string())
-                print(f"  {Fore.GREEN}Last 5 rows:{Style.RESET_ALL}\n", df.tail(5).to_string())
             except Exception as e:
-                print(f"  {Fore.RED}Error reading rows:{Style.RESET_ALL} {e}")
+                print(f"\n\n{Fore.CYAN}[{idx}/{total_files}] File: {info.get('file_path')}{Style.RESET_ALL}")
+                print(f"  {Fore.RED}Error reading file:{Style.RESET_ALL} {e}")
+                continue
 
-            # Add extra space and update the progress bar
+            if df is not None:
+                # Print file header with extra newlines for better separation
+                print(f"\n\n{Fore.CYAN}[{idx}/{total_files}] File: {info.get('file_path')}{Style.RESET_ALL}")
+
+                # Data quality checks
+                if args.data_quality_checks or args.nan_check:
+                    data_quality.nan_check(df, nan_summary_all, Fore, Style)
+                if args.data_quality_checks or args.duplicate_check:
+                    data_quality.duplicate_check(df, dupe_summary_all, Fore, Style)
+                if args.data_quality_checks or args.gap_check:
+                    data_quality.gap_check(df, gap_summary_all, Fore, Style, schema_datetime_fields=info.get('datetime_or_timestamp_fields'), file_name=info.get('file_path'))
+                if args.data_quality_checks or args.zero_check:
+                    data_quality.zero_check(df, zero_summary_all, Fore, Style, file_name=info.get('file_path'))
+                if args.data_quality_checks or args.negative_check:
+                    data_quality.negative_check(df, negative_summary_all, Fore, Style, file_name=info.get('file_path'))
+                if args.data_quality_checks or args.inf_check:
+                    data_quality.inf_check(df, inf_summary_all, Fore, Style, file_name=info.get('file_path'))
+
+                # Statistical analysis
+                if args.all_stats or args.basic_stats:
+                    print(f"\n{Fore.BLUE + Style.BRIGHT}Basic Statistics for {info.get('file_path')}:{Style.RESET_ALL}")
+                    basic_stats_result = basic_stats.compute_basic_stats(df)
+
+                    # Group columns by type (similar to print_descriptive_stats)
+                    column_groups = {}
+                    for col in basic_stats_result.keys():
+                        # Group by OHLCV pattern
+                        if 'open' in col.lower() or 'high' in col.lower() or 'low' in col.lower() or 'close' in col.lower():
+                            group = 'price_ohlc'
+                        elif 'volume' in col.lower():
+                            group = 'volume'
+                        else:
+                            group = 'other'
+
+                        if group not in column_groups:
+                            column_groups[group] = []
+                        column_groups[group].append(col)
+
+                    # Print each group
+                    for group, columns in column_groups.items():
+                        if group == 'price_ohlc':
+                            print(f"\n\033[96mPrice Data (OHLC):\033[0m")
+                        elif group == 'volume':
+                            print(f"\n\033[96mVolume Data:\033[0m")
+                        else:
+                            print(f"\n\033[96mOther Data:\033[0m")
+
+                        # Print common metrics in rows for each column group
+                        metrics_to_show = ['mean', 'median', 'std', 'min', 'max', 'missing']
+                        for metric in metrics_to_show:
+                            values = []
+                            for col in columns:
+                                stats = basic_stats_result[col]
+                                if metric in stats:
+                                    val = stats[metric]
+                                    if isinstance(val, float):
+                                        values.append(f"{col}: {val:.4f}")
+                                    else:
+                                        values.append(f"{col}: {val}")
+
+                            if values:
+                                print(f"  {metric.capitalize()}: {' | '.join(values)}")
+                        print()  # Extra line for readability
+
+                # Run more detailed statistical analyses
+                if args.all_stats or args.descriptive_stats:
+                    desc_stats_result = basic_stats.descriptive_stats(df)
+                    basic_stats.print_descriptive_stats(desc_stats_result)
+                    # Update global stats
+                    stats_collector.update_descriptive_stats(file, desc_stats_result)
+
+                if args.all_stats or args.distribution_analysis:
+                    dist_analysis_result = basic_stats.distribution_analysis(df)
+                    basic_stats.print_distribution_analysis(dist_analysis_result)
+                    # Update global stats
+                    stats_collector.update_distribution_stats(file, dist_analysis_result)
+
+                if args.all_stats or args.outlier_analysis:
+                    outlier_analysis_result = basic_stats.outlier_analysis(df)
+                    basic_stats.print_outlier_analysis(outlier_analysis_result)
+                    # Update global stats
+                    stats_collector.update_outlier_stats(file, outlier_analysis_result)
+
+                if args.all_stats or args.time_series_analysis:
+                    ts_analysis_result = basic_stats.time_series_analysis(df)
+                    basic_stats.print_time_series_analysis(ts_analysis_result)
+                    # Update global stats
+                    stats_collector.update_time_series_stats(file, ts_analysis_result)
+
+                # Add a file-specific summary at the end of each file analysis
+                if (args.all_stats or args.descriptive_stats or args.distribution_analysis or
+                    args.outlier_analysis or args.time_series_analysis):
+                    print(f"\n{Fore.YELLOW + Style.BRIGHT}File-Specific Summary for {os.path.basename(file)}:{Style.RESET_ALL}")
+                    print("  • This file contains data with the following characteristics:")
+                    # Print key metrics
+                    try:
+                        print(f"    - {df.shape[0]} rows and {df.shape[1]} columns")
+                        numeric_cols = df.select_dtypes(include=['number']).columns
+                        print(f"    - {len(numeric_cols)} numeric columns that can be used for modeling")
+                        # Check for datetime columns
+                        datetime_cols = [col for col in df.columns if pd.api.types.is_datetime64_any_dtype(df[col])]
+                        if datetime_cols:
+                            print(f"    - Contains datetime column(s): {', '.join(datetime_cols)}")
+                            # Show date range if available
+                            for dt_col in datetime_cols:
+                                try:
+                                    min_date = df[dt_col].min()
+                                    max_date = df[dt_col].max()
+                                    print(f"    - Date range: {min_date} to {max_date}")
+                                except:
+                                    pass
+                    except Exception as e:
+                        print(f"    - Error generating file summary: {e}")
+
+            # Add extra space after each file
             print("\n")
-            pbar.update(1)
+            continue
 
-    # Print summaries after the progress bar is complete
-    print("\n\n")  # Extra space after progress bar
+        # Default mode - just print file info
+        print(f"\n\n{Fore.CYAN}[{idx}/{total_files}] File: {info.get('file_path')}{Style.RESET_ALL}")
+        print(f"  {Fore.YELLOW}Name:{Style.RESET_ALL} {info.get('file_name')}")
+        print(f"  {Fore.YELLOW}Size:{Style.RESET_ALL} {info.get('file_size_mb')} MB")
+        if 'error' in info:
+            print(f"  {Fore.RED}Error reading file:{Style.RESET_ALL} {info['error']}")
+            continue
+        print(f"  {Fore.YELLOW}Rows:{Style.RESET_ALL} {info.get('n_rows')}, {Fore.YELLOW}Columns:{Style.RESET_ALL} {info.get('n_cols')}")
+        print(f"  {Fore.YELLOW}Columns:{Style.RESET_ALL} {info.get('columns')}")
+
+        # Print dtype information
+        dtypes_dict = info.get('dtypes')
+        if dtypes_dict:
+            print(f"  {Fore.YELLOW}Dtypes:{Style.RESET_ALL}")
+            max_col_len = max(len(str(col)) for col in dtypes_dict.keys()) if dtypes_dict else 0
+            for col, dtype in dtypes_dict.items():
+                print(f"    {col.ljust(max_col_len)} : {dtype}")
+        print(f"  {Fore.MAGENTA}DateTime/Timestamp fields (schema):{Style.RESET_ALL} {info.get('datetime_or_timestamp_fields')}")
+
+        # Print sample rows
+        try:
+            import pandas as pd
+            df = pd.read_parquet(file)
+            print(f"  {Fore.GREEN}First 5 rows:{Style.RESET_ALL}\n", df.head(5).to_string())
+            print(f"  {Fore.GREEN}Last 5 rows:{Style.RESET_ALL}\n", df.tail(5).to_string())
+        except Exception as e:
+            print(f"  {Fore.RED}Error reading rows:{Style.RESET_ALL} {e}")
+
+        # Add extra space
+        print("\n")
+
+    # Print summaries for quality checks
+    print("\n\n")  # Extra space
     if args.data_quality_checks or args.nan_check:
         data_quality.print_nan_summary(nan_summary_all, Fore, Style)
     if args.data_quality_checks or args.duplicate_check:
@@ -351,6 +539,11 @@ def main():
         data_quality.print_negative_summary(negative_summary_all, Fore, Style)
     if args.data_quality_checks or args.inf_check:
         data_quality.print_inf_summary(inf_summary_all, Fore, Style)
+
+    # Print global statistical summary if any statistical analysis was performed
+    if (args.all_stats or args.descriptive_stats or args.distribution_analysis or
+        args.outlier_analysis or args.time_series_analysis):
+        stats_collector.print_global_summary(args)
 
     # Print folder statistics
     print("\n" + Fore.BLUE + Style.BRIGHT + "Folder statistics:" + Style.RESET_ALL)
@@ -392,28 +585,29 @@ def main():
         fix_infs = args.fix_infs or args.fix_all
 
         # Process each parquet file
-        with tqdm(total=len(parquet_files), desc="Fixing files", position=0, leave=True, ncols=100, bar_format='{desc} [{n_fmt}/{total_fmt}] {bar} {percentage:3.0f}%') as pbar:
-            fixed_count = 0
-            total_count = 0
+        fixed_count = 0
+        total_count = 0
+        print(f"{Fore.CYAN}Fixing files...{Style.RESET_ALL}")
 
-            for file in parquet_files:
-                try:
-                    was_fixed = fix_files.fix_file(
-                        file,
-                        fix_nan_flag=fix_nan,
-                        fix_duplicates_flag=fix_duplicates,
-                        fix_gaps_flag=fix_gaps,
-                        fix_zeros_flag=fix_zeros,
-                        fix_negatives_flag=fix_negatives,
-                        fix_infs_flag=fix_infs
-                    )
-                    if was_fixed:
-                        fixed_count += 1
-                    total_count += 1
-                except Exception as e:
-                    print(f"\n{Fore.RED}Error fixing file {file}: {str(e)}{Style.RESET_ALL}")
-
-                pbar.update(1)
+        for file_idx, file in enumerate(parquet_files, 1):
+            try:
+                was_fixed = fix_files.fix_file(
+                    file,
+                    fix_nan_flag=fix_nan,
+                    fix_duplicates_flag=fix_duplicates,
+                    fix_gaps_flag=fix_gaps,
+                    fix_zeros_flag=fix_zeros,
+                    fix_negatives_flag=fix_negatives,
+                    fix_infs_flag=fix_infs
+                )
+                if was_fixed:
+                    print(f"  {Fore.GREEN}Fixed:{Style.RESET_ALL} {file} ({file_idx}/{len(parquet_files)})")
+                    fixed_count += 1
+                else:
+                    print(f"  {Fore.YELLOW}No fixes needed:{Style.RESET_ALL} {file} ({file_idx}/{len(parquet_files)})")
+                total_count += 1
+            except Exception as e:
+                print(f"  {Fore.RED}Error fixing file {file}: {str(e)}{Style.RESET_ALL}")
 
         print(f"\n{Fore.GREEN}Fixed {fixed_count} out of {total_count} files{Style.RESET_ALL}")
 
