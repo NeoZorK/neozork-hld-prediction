@@ -204,59 +204,178 @@ def time_series_analysis(df):
     return ts_stats
 
 def print_descriptive_stats(desc_stats):
-    """Print descriptive statistics in a readable format."""
+    """Print descriptive statistics in a readable format with columns in row for better space efficiency."""
     print("\n\033[1m\033[94mDescriptive Statistics:\033[0m")
 
-    for col, stats in desc_stats.items():
-        print(f"\n\033[96m{col}:\033[0m")
-        if 'error' in stats:
-            print(f"  Error: {stats['error']}")
+    # Group columns with similar patterns (OHLCV, etc.)
+    column_groups = {}
+    for col in desc_stats.keys():
+        # Try to detect column type using common patterns
+        if 'open' in col.lower():
+            group = 'price_ohlc'
+        elif 'high' in col.lower():
+            group = 'price_ohlc'
+        elif 'low' in col.lower():
+            group = 'price_ohlc'
+        elif 'close' in col.lower():
+            group = 'price_ohlc'
+        elif 'volume' in col.lower():
+            group = 'volume'
+        elif 'pressure' in col.lower():
+            group = 'pressure'
         else:
-            max_key_length = max(len(key) for key in stats.keys())
-            for key, value in stats.items():
-                if isinstance(value, float):
-                    print(f"  {key.ljust(max_key_length)}: {value:.4f}")
-                else:
-                    print(f"  {key.ljust(max_key_length)}: {value}")
+            group = 'other'
+
+        if group not in column_groups:
+            column_groups[group] = []
+        column_groups[group].append(col)
+
+    # Print statistics for each group
+    for group, columns in column_groups.items():
+        if group == 'price_ohlc':
+            print(f"\n\033[96mPrice Data (OHLC):\033[0m")
+        elif group == 'volume':
+            print(f"\n\033[96mVolume Data:\033[0m")
+        elif group == 'pressure':
+            print(f"\n\033[96mPressure Indicators:\033[0m")
+        else:
+            print(f"\n\033[96mOther Data:\033[0m")
+
+        # Print columns in row for common metrics
+        for metric in ['mean', 'median', 'min', 'max', 'std', 'var']:
+            values = []
+            for col in columns:
+                stats = desc_stats[col]
+                if 'error' not in stats and metric in stats:
+                    val = stats[metric]
+                    if isinstance(val, float):
+                        values.append(f"{col}: {val:.4f}")
+                    else:
+                        values.append(f"{col}: {val}")
+
+            if values:
+                print(f"  {metric.capitalize()}: {' | '.join(values)}")
+
+        # Print remaining metrics separately for each column
+        for col in columns:
+            stats = desc_stats[col]
+            if 'error' in stats:
+                print(f"  {col} Error: {stats['error']}")
+            else:
+                other_metrics = [k for k in stats.keys() if k not in ['mean', 'median', 'min', 'max', 'std', 'var']]
+                if other_metrics:
+                    print(f"  {col} other metrics:")
+                    for key in other_metrics:
+                        value = stats[key]
+                        if isinstance(value, float):
+                            print(f"    {key}: {value:.4f}")
+                        else:
+                            print(f"    {key}: {value}")
+
+    # Add summary and recommendations
+    print("\n\033[1m\033[95mSummary and Recommendations:\033[0m")
+    print("  • Статистические показатели позволяют оценить характеристики и качество данных")
+    print("  • Высокая дисперсия может указывать на необходимость нормализации данных перед моделированием")
+    print("  • Наличие существенной разницы между средним и медианой указывает на асимметрию распределения")
+    print("  • Следующие шаги: проверка распределений и выявление аномалий с помощью --distribution-analysis и --outlier-analysis")
 
 def print_distribution_analysis(dist_stats):
     """Print distribution analysis in a readable format."""
     print("\n\033[1m\033[94mDistribution Analysis:\033[0m")
+
+    # Group columns by normality for summary
+    normal_cols = []
+    skewed_cols = []
+    highly_skewed_cols = []
+    heavy_tailed_cols = []
 
     for col, stats in dist_stats.items():
         print(f"\n\033[96m{col}:\033[0m")
         if 'error' in stats:
             print(f"  Error: {stats['error']}")
         else:
-            print(f"  Skewness: {stats['skewness']:.4f}")
-            print(f"  Kurtosis: {stats['kurtosis']:.4f}")
+            skew = stats['skewness']
+            kurt = stats['kurtosis']
+
+            # Track for summary
+            if stats['is_normal'] == 'Yes':
+                normal_cols.append(col)
+            if abs(skew) > 1:
+                highly_skewed_cols.append((col, skew))
+            elif abs(skew) > 0.5:
+                skewed_cols.append((col, skew))
+            if kurt > 3:
+                heavy_tailed_cols.append((col, kurt))
+
+            # Print individual stats
+            print(f"  Skewness: {skew:.4f} ({'Положительная (правосторонняя)' if skew > 0 else 'Отрицательная (левосторонняя)' if skew < 0 else 'Нет'})")
+            print(f"  Kurtosis: {kurt:.4f} ({'Тяжелые хвосты' if kurt > 3 else 'Легкие хвосты' if kurt < 3 else 'Нормальное'})")
             if stats['normality_test'] is not None:
                 print(f"  Normality test p-value: {stats['normality_test'][1]:.4f}")
                 print(f"  Distribution appears normal: {stats['is_normal']}")
             else:
                 print("  Normality test: Not enough data points")
 
+    # Add summary and recommendations
+    print("\n\033[1m\033[95mSummary and Recommendations:\033[0m")
+    print(f"  • Обнаружено {len(normal_cols)} колонок с нормальным распределением: {', '.join(normal_cols) if normal_cols else 'нет'}")
+    if highly_skewed_cols:
+        print(f"  • Обнаружены колонки с сильной асимметрией (skewness > 1): {', '.join([f'{col} ({skew:.2f})' for col, skew in highly_skewed_cols])}")
+        print("  • Рекомендация: рассмотрите применение трансформации (log, sqrt, Box-Cox) для нормализации")
+    if heavy_tailed_cols:
+        print(f"  • Обнаружены колонки с тяжелыми хвостами (kurtosis > 3): {', '.join([f'{col} ({kurt:.2f})' for col, kurt in heavy_tailed_cols])}")
+        print("  • Рекомендация: обратите внимание на возможные выбросы, используйте робастные методы")
+    print("  • Следующие шаги: выполните анализ выбросов с помощью --outlier-analysis для выявления аномальных значений")
+
 def print_outlier_analysis(outlier_stats):
     """Print outlier analysis in a readable format."""
     print("\n\033[1m\033[94mOutlier Analysis:\033[0m")
+
+    # Track columns with significant outliers for summary
+    high_outlier_cols = []
 
     for col, stats in outlier_stats.items():
         print(f"\n\033[96m{col}:\033[0m")
         if 'error' in stats:
             print(f"  Error: {stats['error']}")
         else:
+            # Print IQR method results
+            iqr_pct = stats['iqr_method']['outlier_percentage']
             print("  IQR Method:")
             print(f"    Lower bound: {stats['iqr_method']['lower_bound']:.4f}")
             print(f"    Upper bound: {stats['iqr_method']['upper_bound']:.4f}")
             print(f"    Outlier count: {stats['iqr_method']['outlier_count']}")
-            print(f"    Outlier percentage: {stats['iqr_method']['outlier_percentage']}%")
+            print(f"    Outlier percentage: {iqr_pct}%")
 
+            # Print Z-Score method results
+            z_pct = stats['z_score_method']['outlier_percentage']
             print("  Z-Score Method:")
             print(f"    Outlier count: {stats['z_score_method']['outlier_count']}")
-            print(f"    Outlier percentage: {stats['z_score_method']['outlier_percentage']}%")
+            print(f"    Outlier percentage: {z_pct}%")
 
+            # Show sample outlier indices
             if stats['iqr_method']['outlier_indices']:
                 print(f"  Sample outlier indices (IQR): {', '.join(map(str, stats['iqr_method']['outlier_indices']))}")
+
+            # Track for summary
+            if max(iqr_pct, z_pct) > 5:  # If more than 5% are outliers
+                high_outlier_cols.append((col, max(iqr_pct, z_pct)))
+
+    # Add summary and recommendations
+    print("\n\033[1m\033[95mSummary and Recommendations:\033[0m")
+    if high_outlier_cols:
+        print(f"  • Обнаружено {len(high_outlier_cols)} колонок со значительным количеством выбросов (>5%):")
+        for col, pct in high_outlier_cols:
+            print(f"    - {col}: {pct:.2f}% выбросов")
+        print("  • Рекомендации для обработки выбросов:")
+        print("    1. Проверьте природу выбросов - ошибки измерений или истинные экстремальные значения")
+        print("    2. Для ошибок: исправьте или удалите")
+        print("    3. Для истинных выбросов: winsorization или робастные методы")
+        print("    4. Для ML моделей: используйте алгоритмы, устойчивые к выбросам (RandomForest, Gradient Boosting)")
+    else:
+        print("  • Значительного количества выбросов не обнаружено (>5%)")
+
+    print("  • Следующие шаги: рассмотрите вопрос об использовании --time-series-analysis для исследования временных паттернов")
 
 def print_time_series_analysis(ts_stats):
     """Print time series analysis in a readable format."""
@@ -266,13 +385,23 @@ def print_time_series_analysis(ts_stats):
         print(f"  Error: {ts_stats['error']}")
         return
 
-    if 'features' in ts_stats and ts_stats['features']:
-        print("\n\033[96mDerived Features:\033[0m")
-        for feature, stats in ts_stats['features'].items():
-            print(f"  {feature.replace('_', ' ').title()}:")
-            for stat, value in stats.items():
-                print(f"    {stat.title()}: {value:.4f}")
+    # Track information for summary
+    has_features = False
+    non_stationary_cols = []
+    stationary_cols = []
+    has_seasonality = False
 
+    # Print derived features
+    if 'features' in ts_stats and ts_stats['features']:
+        has_features = True
+        print("\n\033[96mDerived Features:\033[0m")
+
+        # Group feature stats for more compact display
+        for feature, stats in ts_stats['features'].items():
+            feature_name = feature.replace('_', ' ').title()
+            print(f"  {feature_name}: Mean: {stats['mean']:.4f} | Median: {stats['median']:.4f} | Std: {stats['std']:.4f}")
+
+    # Print stationarity test results
     if 'stationarity' in ts_stats and ts_stats['stationarity']:
         print("\n\033[96mStationarity Tests (ADF):\033[0m")
         for col, result in ts_stats['stationarity'].items():
@@ -284,15 +413,49 @@ def print_time_series_analysis(ts_stats):
                 print(f"    p-value: {result['p_value']:.4f}")
                 print(f"    Is stationary: {'Yes' if result['is_stationary'] else 'No'}")
 
+                # Track for summary
+                if result['is_stationary']:
+                    stationary_cols.append(col)
+                else:
+                    non_stationary_cols.append(col)
+
+    # Print seasonality analysis
     if 'seasonality' in ts_stats and ts_stats['seasonality']:
         print("\n\033[96mSeasonality Analysis:\033[0m")
         if 'day_of_week' in ts_stats['seasonality']:
+            has_seasonality = True
             day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
             dow_stats = ts_stats['seasonality']['day_of_week']
+
             if 'error' in dow_stats:
                 print(f"  Day of Week: {dow_stats['error']}")
             else:
-                print("  Average by Day of Week:")
-                for day_num, mean_value in dow_stats.items():
-                    print(f"    {day_names[day_num]}: {mean_value:.4f}")
+                # Print all days in one line
+                day_values = [f"{day_names[day_num]}: {mean_value:.4f}" for day_num, mean_value in dow_stats.items()]
+                print("  Average by Day of Week: " + " | ".join(day_values))
 
+    # Add summary and recommendations
+    print("\n\033[1m\033[95mSummary and Recommendations:\033[0m")
+    if has_features:
+        print("  • Успешно рассчитаны производные признаки на основе временных рядов")
+
+    # Stationarity advice
+    if non_stationary_cols:
+        print(f"  • Обнаружены нестационарные временные ряды: {', '.join(non_stationary_cols)}")
+        print("  • Рекомендации для нестационарных рядов:")
+        print("    1. Используйте дифференцирование (метод diff()) для устранения тренда")
+        print("    2. Рассмотрите логарифмирование или другие трансформации для стабилизации дисперсии")
+        print("    3. Для ML моделей: добавьте признаки тренда и используйте относительные изменения")
+
+    if stationary_cols:
+        print(f"  • Обнаружены стационарные временные ряды: {', '.join(stationary_cols)}")
+        print("  • Стационарные ряды хорошо подходят для моделирования через ARIMA, GARCH и другие статистические методы")
+
+    if has_seasonality:
+        print("  • Обнаружены недельные сезонные паттерны")
+        print("  • Рекомендации для работы с сезонностью:")
+        print("    1. Добавьте категориальные признаки (день недели, месяц и т.д.)")
+        print("    2. Для статистических моделей: используйте сезонное дифференцирование или SARIMA")
+        print("    3. Для глубокого обучения: рассмотрите архитектуры с механизмами внимания")
+
+    print("  • Следующие шаги: выполните корреляционный анализ с помощью --correlation-analysis для выявления взаимосвязей")

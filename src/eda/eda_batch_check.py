@@ -178,16 +178,24 @@ def main():
     data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', 'data')
     parquet_files = [y for x in os.walk(data_dir) for y in glob.glob(os.path.join(x[0], '*.parquet'))]
 
-    # Check if there are any parquet files in the directory
-    with tqdm(total=len(parquet_files), desc="Processing files", position=0, leave=True, ncols=100, bar_format='{desc} [{n_fmt}/{total_fmt}] {bar} {percentage:3.0f}%') as pbar:
-        nan_summary_all = []
-        dupe_summary_all = []
-        gap_summary_all = []
-        zero_summary_all = []
-        negative_summary_all = []
-        inf_summary_all = []
+    # Create lists to store summary data before starting the progress bar
+    nan_summary_all = []
+    dupe_summary_all = []
+    gap_summary_all = []
+    zero_summary_all = []
+    negative_summary_all = []
+    inf_summary_all = []
+
+    # Initialize progress bar that stays at the bottom
+    # Use leave=True so the pbar doesn't disappear while outputs are being printed
+    with tqdm(total=len(parquet_files), desc="Processing files", position=0, leave=True, ncols=100,
+             bar_format='{desc} [{n_fmt}/{total_fmt}] {bar} {percentage:3.0f}%') as pbar:
+
+        # Process each file
         for idx, file in enumerate(parquet_files, 1):
             info = file_info.get_file_info(file)
+
+            # Data quality or statistical analysis modes
             if (
                 args.data_quality_checks or args.nan_check or args.duplicate_check or args.gap_check or
                 args.zero_check or args.negative_check or args.inf_check or
@@ -195,20 +203,27 @@ def main():
                 args.time_series_analysis or args.all_stats or args.basic_stats
             ):
                 if 'error' in info:
-                    print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
+                    print(f"\n\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
                     print(f"  {Fore.RED}Error reading file:{Style.RESET_ALL} {info['error']}")
                     pbar.update(1)
                     continue
+
+                # Read the DataFrame
                 df = None
                 try:
                     import pandas as pd
                     df = pd.read_parquet(file)
                 except Exception as e:
-                    print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
-                    print(f"  {Fore.RED} Error reading file for checking NaN:{Style.RESET_ALL} {e}")
+                    print(f"\n\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
+                    print(f"  {Fore.RED} Error reading file:{Style.RESET_ALL} {e}")
+                    pbar.update(1)
+                    continue
+
                 if df is not None:
-                    print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
-                    # Individual checks
+                    # Print file header with extra newlines for better separation
+                    print(f"\n\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
+
+                    # Data quality checks
                     if args.data_quality_checks or args.nan_check:
                         data_quality.nan_check(df, nan_summary_all, Fore, Style)
                     if args.data_quality_checks or args.duplicate_check:
@@ -226,14 +241,48 @@ def main():
                     if args.all_stats or args.basic_stats:
                         print(f"\n{Fore.BLUE + Style.BRIGHT}Basic Statistics for {info.get('file_path')}:{Style.RESET_ALL}")
                         basic_stats_result = basic_stats.compute_basic_stats(df)
-                        for col, stats in basic_stats_result.items():
-                            print(f"  {Fore.CYAN}{col}:{Style.RESET_ALL}")
-                            for stat, val in stats.items():
-                                if isinstance(val, float):
-                                    print(f"    {stat}: {val:.4f}")
-                                else:
-                                    print(f"    {stat}: {val}")
 
+                        # Group columns by type (similar to print_descriptive_stats)
+                        column_groups = {}
+                        for col in basic_stats_result.keys():
+                            # Group by OHLCV pattern
+                            if 'open' in col.lower() or 'high' in col.lower() or 'low' in col.lower() or 'close' in col.lower():
+                                group = 'price_ohlc'
+                            elif 'volume' in col.lower():
+                                group = 'volume'
+                            else:
+                                group = 'other'
+
+                            if group not in column_groups:
+                                column_groups[group] = []
+                            column_groups[group].append(col)
+
+                        # Print each group
+                        for group, columns in column_groups.items():
+                            if group == 'price_ohlc':
+                                print(f"\n\033[96mPrice Data (OHLC):\033[0m")
+                            elif group == 'volume':
+                                print(f"\n\033[96mVolume Data:\033[0m")
+                            else:
+                                print(f"\n\033[96mOther Data:\033[0m")
+
+                            # Print common metrics in rows for each column group
+                            for metric in ['mean', 'median', 'std', 'min', 'max', 'missing']:
+                                values = []
+                                for col in columns:
+                                    stats = basic_stats_result[col]
+                                    if metric in stats:
+                                        val = stats[metric]
+                                        if isinstance(val, float):
+                                            values.append(f"{col}: {val:.4f}")
+                                        else:
+                                            values.append(f"{col}: {val}")
+
+                                if values:
+                                    print(f"  {metric.capitalize()}: {' | '.join(values)}")
+                            print()  # Extra line for readability
+
+                    # Run more detailed statistical analyses
                     if args.all_stats or args.descriptive_stats:
                         desc_stats_result = basic_stats.descriptive_stats(df)
                         basic_stats.print_descriptive_stats(desc_stats_result)
@@ -250,9 +299,13 @@ def main():
                         ts_analysis_result = basic_stats.time_series_analysis(df)
                         basic_stats.print_time_series_analysis(ts_analysis_result)
 
+                # Add extra space after each file and update the progress bar
+                print("\n")
                 pbar.update(1)
                 continue
-            print(f"\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
+
+            # Default mode - just print file info
+            print(f"\n\n{Fore.CYAN}[{idx}] File: {info.get('file_path')}{Style.RESET_ALL}")
             print(f"  {Fore.YELLOW}Name:{Style.RESET_ALL} {info.get('file_name')}")
             print(f"  {Fore.YELLOW}Size:{Style.RESET_ALL} {info.get('file_size_mb')} MB")
             if 'error' in info:
@@ -261,6 +314,8 @@ def main():
                 continue
             print(f"  {Fore.YELLOW}Rows:{Style.RESET_ALL} {info.get('n_rows')}, {Fore.YELLOW}Columns:{Style.RESET_ALL} {info.get('n_cols')}")
             print(f"  {Fore.YELLOW}Columns:{Style.RESET_ALL} {info.get('columns')}")
+
+            # Print dtype information
             dtypes_dict = info.get('dtypes')
             if dtypes_dict:
                 print(f"  {Fore.YELLOW}Dtypes:{Style.RESET_ALL}")
@@ -268,16 +323,22 @@ def main():
                 for col, dtype in dtypes_dict.items():
                     print(f"    {col.ljust(max_col_len)} : {dtype}")
             print(f"  {Fore.MAGENTA}DateTime/Timestamp fields (schema):{Style.RESET_ALL} {info.get('datetime_or_timestamp_fields')}")
+
+            # Print sample rows
             try:
                 import pandas as pd
                 df = pd.read_parquet(file)
                 print(f"  {Fore.GREEN}First 5 rows:{Style.RESET_ALL}\n", df.head(5).to_string())
-                print(f"  {Fore.GREEN}First 25 rows:{Style.RESET_ALL}\n", df.head(25).to_string())
                 print(f"  {Fore.GREEN}Last 5 rows:{Style.RESET_ALL}\n", df.tail(5).to_string())
             except Exception as e:
                 print(f"  {Fore.RED}Error reading rows:{Style.RESET_ALL} {e}")
+
+            # Add extra space and update the progress bar
+            print("\n")
             pbar.update(1)
-    # Print summaries
+
+    # Print summaries after the progress bar is complete
+    print("\n\n")  # Extra space after progress bar
     if args.data_quality_checks or args.nan_check:
         data_quality.print_nan_summary(nan_summary_all, Fore, Style)
     if args.data_quality_checks or args.duplicate_check:
@@ -291,6 +352,7 @@ def main():
     if args.data_quality_checks or args.inf_check:
         data_quality.print_inf_summary(inf_summary_all, Fore, Style)
 
+    # Print folder statistics
     print("\n" + Fore.BLUE + Style.BRIGHT + "Folder statistics:" + Style.RESET_ALL)
 
     # Collect folder statistics
