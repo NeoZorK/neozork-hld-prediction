@@ -506,7 +506,7 @@ def descriptive_stats(df):
                 'coef_variation': col_data.std() / col_data.mean() if col_data.mean() != 0 else float('inf'),
                 'data_points': len(col_data),
                 'missing': df[col].isna().sum(),
-                'missing_percent': df[col].isna().sum() / len(df) * 100
+                'missing_pct': df[col].isna().sum() / len(df) * 100
             }
         except Exception as e:
             result[col] = {'error': str(e)}
@@ -554,7 +554,7 @@ def print_descriptive_stats(desc_stats):
             print(f"  Range: {stats['range']:.4f} (Min: {stats['min']:.4f}, Max: {stats['max']:.4f})")
             print(f"  IQR: {stats['iqr']:.4f} (Q1: {stats['25%']:.4f}, Q3: {stats['75%']:.4f})")
             print(f"  Coefficient of Variation: {stats['coef_variation']:.4f}")
-            print(f"  Data Points: {stats['data_points']} (Missing: {stats['missing']} - {stats['missing_percent']:.2f}%)")
+            print(f"  Data Points: {stats['data_points']} (Missing: {stats['missing']} - {stats['missing_pct']:.2f}%)")
 
 def distribution_analysis(df):
     """
@@ -680,3 +680,252 @@ def suggest_transformation(skew, kurt):
 
     return recommendation
 
+def time_series_analysis(df):
+    """
+    Perform time series analysis on dataframe.
+
+    Parameters:
+    - df: DataFrame to analyze, should contain price data and ideally a datetime column
+
+    Returns:
+    - Dictionary with time series analysis results
+    """
+    result = {
+        'features': {},
+        'stationarity': {},
+        'seasonality': {},
+    }
+
+    # Check if dataframe has a datetime column or index
+    has_date = False
+    date_col = None
+
+    # Check for datetime in index
+    if pd.api.types.is_datetime64_any_dtype(df.index):
+        has_date = True
+    else:
+        # Check for datetime columns
+        for col in df.columns:
+            if pd.api.types.is_datetime64_any_dtype(df[col]):
+                has_date = True
+                date_col = col
+                break
+
+    # Create a synthetic datetime index if no datetime is found
+    if not has_date:
+        result['warning'] = "No datetime column found. Using synthetic datetime index."
+        df = df.copy()
+        df['synthetic_date'] = pd.date_range(start='2023-01-01', periods=len(df))
+        date_col = 'synthetic_date'
+
+    # Set datetime as index if it's not already
+    if date_col is not None:
+        df_ts = df.set_index(date_col)
+    else:
+        df_ts = df
+
+    # Calculate price-based features (for OHLC data)
+    ohlc_cols = {'open', 'high', 'low', 'close'}
+    available_ohlc = ohlc_cols.intersection(set(df.columns))
+
+    if len(available_ohlc) >= 2:
+        # Calculate price range (high-low or equivalent)
+        if all(col in df.columns for col in ['high', 'low']):
+            df_ts['price_range'] = df['high'] - df['low']
+            price_range = df_ts['price_range'].dropna()
+            result['features']['price_range'] = {
+                'mean': price_range.mean(),
+                'median': price_range.median(),
+                'std': price_range.std(),
+                'min': price_range.min(),
+                'max': price_range.max()
+            }
+
+        # Calculate price changes
+        if 'close' in df.columns:
+            df_ts['price_change'] = df['close'].diff()
+            price_change = df_ts['price_change'].dropna()
+            result['features']['price_change'] = {
+                'mean': price_change.mean(),
+                'median': price_change.median(),
+                'std': price_change.std(),
+                'min': price_change.min(),
+                'max': price_change.max()
+            }
+
+            # Calculate percentage changes
+            df_ts['pct_change'] = df['close'].pct_change() * 100
+            pct_change = df_ts['pct_change'].dropna()
+            result['features']['pct_change'] = {
+                'mean': pct_change.mean(),
+                'median': pct_change.median(),
+                'std': pct_change.std(),
+                'min': pct_change.min(),
+                'max': pct_change.max()
+            }
+
+    # Perform stationarity tests on numeric columns
+    for col in df.select_dtypes(include=['number']).columns:
+        # Skip columns that are calculated above
+        if col in ['price_range', 'price_change', 'pct_change']:
+            continue
+
+        # Need sufficient data for stationarity test
+        if len(df[col].dropna()) < 10:
+            continue
+
+        try:
+            # Perform Augmented Dickey-Fuller test
+            adf_result = adfuller(df[col].dropna())
+
+            result['stationarity'][col] = {
+                'test_statistic': adf_result[0],
+                'p_value': adf_result[1],
+                'is_stationary': adf_result[1] < 0.05,  # p-value < 0.05 suggests stationarity
+                'critical_values': adf_result[4]
+            }
+        except Exception as e:
+            result['stationarity'][col] = {'error': str(e)}
+
+    # Detect seasonality
+    if has_date:
+        try:
+            # Extract day of week seasonality
+            if len(df_ts.index) >= 7:  # Need at least a week of data
+                day_of_week = df_ts.index.dayofweek.unique()
+
+                # For each day, calculate mean of all numeric columns
+                day_of_week_stats = {}
+
+                # Use 'close' if available, otherwise use first numeric column
+                if 'close' in df_ts.columns:
+                    target_col = 'close'
+                else:
+                    target_col = df_ts.select_dtypes(include=['number']).columns[0]
+
+                for day in sorted(day_of_week):
+                    day_data = df_ts[df_ts.index.dayofweek == day][target_col].mean()
+                    day_of_week_stats[int(day)] = day_data
+
+                if len(day_of_week_stats) > 1:  # Only include if we have different days
+                    result['seasonality']['day_of_week'] = day_of_week_stats
+
+            # Extract month seasonality if enough data
+            if df_ts.index.max() - df_ts.index.min() > pd.Timedelta(days=60):
+                month_stats = {}
+
+                if 'close' in df_ts.columns:
+                    target_col = 'close'
+                else:
+                    target_col = df_ts.select_dtypes(include=['number']).columns[0]
+
+                for month in sorted(df_ts.index.month.unique()):
+                    month_data = df_ts[df_ts.index.month == month][target_col].mean()
+                    month_stats[int(month)] = month_data
+
+                if len(month_stats) > 1:  # Only include if we have different months
+                    result['seasonality']['month'] = month_stats
+        except Exception as e:
+            result['seasonality']['error'] = str(e)
+
+    return result
+
+def print_time_series_analysis(ts_stats):
+    """
+    Print time series analysis results with color formatting.
+
+    Parameters:
+    - ts_stats: Dictionary returned by time_series_analysis function
+    """
+    print("\n\033[1m\033[95mTime Series Analysis:\033[0m")
+
+    # Print any warnings
+    if 'warning' in ts_stats:
+        print(f"\n\033[93mWarning: {ts_stats['warning']}\033[0m")
+
+    # Print features section
+    if 'features' in ts_stats and ts_stats['features']:
+        print("\n\033[94mFeatures:\033[0m")
+
+        for feature_name, stats in ts_stats['features'].items():
+            print(f"  \033[1m{feature_name}:\033[0m")
+            for stat_name, value in stats.items():
+                print(f"    {stat_name}: {value:.4f}")
+
+    # Print stationarity results
+    if 'stationarity' in ts_stats and ts_stats['stationarity']:
+        print("\n\033[94mStationarity Tests:\033[0m")
+
+        for col, results in ts_stats['stationarity'].items():
+            if 'error' in results:
+                print(f"  \033[1m{col}:\033[0m Error - {results['error']}")
+                continue
+
+            # Format output based on stationarity
+            if results['is_stationary']:
+                status = "\033[92mStationary\033[0m"
+            else:
+                status = "\033[91mNon-stationary\033[0m"
+
+            print(f"  \033[1m{col}:\033[0m {status}")
+            print(f"    ADF Test Statistic: {results['test_statistic']:.4f}")
+            print(f"    p-value: {results['p_value']:.4f}")
+            print("    Critical Values:")
+            for significance, value in results['critical_values'].items():
+                print(f"      {significance}: {value:.4f}")
+
+    # Print seasonality information
+    if 'seasonality' in ts_stats and ts_stats['seasonality']:
+        print("\n\033[94mSeasonality:\033[0m")
+
+        if 'error' in ts_stats['seasonality']:
+            print(f"  Error: {ts_stats['seasonality']['error']}")
+
+        if 'day_of_week' in ts_stats['seasonality']:
+            print("  \033[1mWeekly seasonal patterns:\033[0m")
+            days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            for day_num, value in ts_stats['seasonality']['day_of_week'].items():
+                day_name = days[day_num] if day_num < len(days) else f"Day {day_num}"
+                print(f"    {day_name}: {value:.4f}")
+
+        if 'month' in ts_stats['seasonality']:
+            print("  \033[1mMonthly seasonal patterns:\033[0m")
+            months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+            for month_num, value in ts_stats['seasonality']['month'].items():
+                month_name = months[month_num-1] if 0 < month_num <= 12 else f"Month {month_num}"
+                print(f"    {month_name}: {value:.4f}")
+
+    # Print recommendations
+    print("\n\033[94mRecommendations:\033[0m")
+
+    # Check for non-stationarity
+    non_stationary_cols = []
+    if 'stationarity' in ts_stats:
+        for col, results in ts_stats['stationarity'].items():
+            if 'is_stationary' in results and not results['is_stationary']:
+                non_stationary_cols.append(col)
+
+    if non_stationary_cols:
+        print("  • \033[93mNon-stationary series detected:\033[0m")
+        for col in non_stationary_cols:
+            print(f"    - {col}")
+        print("    - Consider differencing or detrending these series before modeling")
+    else:
+        print("  • \033[92mNo significant non-stationarity detected\033[0m")
+
+    # Check for seasonality
+    has_seasonality = False
+    if 'seasonality' in ts_stats:
+        if 'day_of_week' in ts_stats['seasonality'] or 'month' in ts_stats['seasonality']:
+            has_seasonality = True
+
+    if has_seasonality:
+        print("  • \033[93mSeasonality patterns detected:\033[0m")
+        print("    - Consider seasonal decomposition or including seasonal features in models")
+    else:
+        print("  • \033[92mNo strong seasonal patterns detected\033[0m")
+
+    print("  • For further analysis:")
+    print("    - Create ACF/PACF plots to identify AR/MA components")
+    print("    - Consider ARIMA modeling for time series forecasting")
+    print("    - Test for cointegration if analyzing multiple series")
