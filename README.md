@@ -525,10 +525,17 @@ python src/eda/eda_batch_check.py [flags]
 - `--fix-files`: General flag for fixing (must be used with specific fix flags)
 - `--restore-backups`: Restore original files from .bak backups
 
-### Analysis and Other Flags
-- `--basic-stats`: Show basic statistics for files
-- `--correlation-analysis`: Correlation analysis between numeric features
-- `--feature-importance`: Feature importance analysis
+### Statistical Analysis Flags:
+- `--basic-stats`:              Show basic statistics for files
+- `--descriptive-stats`:        Detailed descriptive statistics for numeric columns
+- `--distribution-analysis`:     Analyze distributions of numeric columns (skewness, kurtosis)
+- `--outlier-analysis`:          Detect outliers in numeric columns using IQR and Z-score methods
+- `--time-series-analysis`:      Basic time series analysis (trends, seasonality, stationarity)
+- `--all-stats`:                 Run all statistical analyses
+- `--correlation-analysis`:      Correlation analysis between numeric features
+- `--feature-importance`:        Feature importance analysis
+- `--clean-stats-logs`:          Remove all statistics log files
+- `--clean-reports`:             Remove all HTML report directories for all analyses
 
 ## Examples
 
@@ -559,10 +566,17 @@ python src/eda/eda_batch_check.py --restore-backups
 python src/eda/eda_batch_check.py --data-quality-checks --fix-files --fix-all
 ```
 
-### Run multiple checks with basic statistics
+### Run multiple data checks 
 ```bash
 python src/eda/eda_batch_check.py --nan-check --gap-check --zero-check --basic-stats
 ```
+### Run statistical analyses
+```bash
+  python eda_batch_check.py --descriptive-stats --time-series-analysis
+```
+```bash
+  python eda_batch_check.py --all-stats
+```  
 
 ## How It Works
 
