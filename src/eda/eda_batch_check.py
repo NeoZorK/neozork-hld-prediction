@@ -33,6 +33,7 @@ Flags:
     --feature-importance       Feature importance analysis
 
     --clean-stats-logs         Remove all statistics log files
+    --clean-reports            Remove all HTML report directories for all analyses
 
 Examples:
     # Check data quality issues
@@ -53,8 +54,9 @@ Examples:
     python eda_batch_check.py --descriptive-stats
     python eda_batch_check.py --all-stats
 
-    # Clean statistics log files
+    # Clean statistics logs and reports
     python eda_batch_check.py --clean-stats-logs
+    python eda_batch_check.py --clean-reports
 
     # Combine analysis with fixing
     python eda_batch_check.py --data-quality-checks --fix-files --fix-all
@@ -283,6 +285,7 @@ def main():
   {Fore.GREEN}--correlation-analysis{Style.RESET_ALL}     Correlation analysis between numeric features
   {Fore.GREEN}--feature-importance{Style.RESET_ALL}       Feature importance analysis
   {Fore.GREEN}--clean-stats-logs{Style.RESET_ALL}         Remove all statistics log files
+  {Fore.GREEN}--clean-reports{Style.RESET_ALL}            Remove all HTML report directories for all analyses
 
 {Fore.YELLOW}Examples:{Style.RESET_ALL}
   # Check data quality issues
@@ -303,8 +306,9 @@ def main():
   python eda_batch_check.py --descriptive-stats
   python eda_batch_check.py --all-stats
   
-  # Clean statistics log files
+  # Clean statistics logs and reports
   python eda_batch_check.py --clean-stats-logs
+  python eda_batch_check.py --clean-reports
   
   # Combine analysis with fixing
   python eda_batch_check.py --data-quality-checks --fix-files --fix-all
@@ -343,14 +347,26 @@ def main():
     parser.add_argument('--correlation-analysis', action='store_true', help='Correlation analysis between numeric features')
     parser.add_argument('--feature-importance', action='store_true', help='Feature importance analysis')
     parser.add_argument('--clean-stats-logs', action='store_true', help='Remove all statistics log files')
+    parser.add_argument('--clean-reports', action='store_true', help='Remove all HTML report directories for all analyses')
     args = parser.parse_args()
 
     # Handle the clean logs request if specified
     if args.clean_stats_logs:
         count = stats_logger.clean_stats_logs()
         print(f"{Fore.GREEN}Cleaned {count} statistics log files{Style.RESET_ALL}")
-        if not any(getattr(args, arg) for arg in vars(args) if arg != 'clean_stats_logs'):
-            return  # Exit if no other flags are specified
+        if not any(getattr(args, arg) for arg in vars(args) if arg != 'clean_stats_logs' and arg != 'clean_reports'):
+            return  # Exit if no other flags are specified (except possibly clean_reports)
+
+    # Handle the clean reports request if specified
+    if args.clean_reports:
+        from src.eda.html_report_generator import clean_all_reports
+        success, message = clean_all_reports()
+        if success:
+            print(f"{Fore.GREEN}{message}{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.RED}{message}{Style.RESET_ALL}")
+        if not any(getattr(args, arg) for arg in vars(args) if arg != 'clean_reports' and arg != 'clean_stats_logs'):
+            return  # Exit if no other flags are specified (except possibly clean_stats_logs)
 
     # Check if at least one flag is provided
     data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', 'data')
