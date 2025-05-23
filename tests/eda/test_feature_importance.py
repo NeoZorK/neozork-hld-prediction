@@ -168,10 +168,47 @@ class TestFeatureImportance(unittest.TestCase):
         plt.close(figures[0])
 
     @patch('src.eda.feature_importance.ensure_report_directory')
-    @patch('src.eda.html_report_generator.HTMLReport.save')
-    def test_generate_feature_importance_report(self, mock_save, mock_ensure_dir):
+    @patch('src.eda.html_report_generator.HTMLReport')
+    @patch('src.eda.correlation_analysis.compute_feature_importance')
+    @patch('src.eda.feature_importance.generate_feature_importance_plot')
+    @patch('src.eda.feature_importance.plot_feature_relationships')
+    @patch('matplotlib.pyplot.close')  # Также добавляем патч для plt.close
+    def test_generate_feature_importance_report(self, mock_close, mock_plot_relationships, mock_gen_plot, mock_compute_importance, mock_html_report, mock_ensure_dir):
         """Test generation of HTML report."""
+        # Setup mocks
         mock_ensure_dir.return_value = self.temp_dir
+        mock_report_instance = mock_html_report.return_value
+        mock_report_instance.save.return_value = None
+
+        # Mock для функции plot_feature_relationships
+        mock_fig = plt.figure()
+        mock_plot_relationships.return_value = [mock_fig]
+
+        # Mock для функции generate_feature_importance_plot
+        mock_gen_plot.return_value = mock_fig
+
+        # Mock feature importance result
+        mock_importance_result = {
+            'target_column': 'target',
+            'is_classification': False,
+            'num_features': 5,
+            'top_features': ['feature1', 'feature2'],
+            'feature_importances': [
+                {'feature': 'feature1', 'importance': 0.5, 'normalized_importance': 100.0, 'cumulative_importance': 0.5},
+                {'feature': 'feature2', 'importance': 0.3, 'normalized_importance': 60.0, 'cumulative_importance': 0.8},
+                {'feature': 'feature3', 'importance': 0.1, 'normalized_importance': 20.0, 'cumulative_importance': 0.9}
+            ],
+            'high_importance': [
+                {'feature': 'feature1', 'importance': 0.5, 'normalized_importance': 100.0}
+            ],
+            'medium_importance': [
+                {'feature': 'feature2', 'importance': 0.3, 'normalized_importance': 60.0}
+            ],
+            'low_importance': [
+                {'feature': 'feature3', 'importance': 0.1, 'normalized_importance': 20.0}
+            ]
+        }
+        mock_compute_importance.return_value = mock_importance_result
 
         # Generate a report
         report_path = generate_feature_importance_report(
@@ -180,8 +217,17 @@ class TestFeatureImportance(unittest.TestCase):
             target_column='target'
         )
 
+        # Check if the ensure_report_directory was called
+        mock_ensure_dir.assert_called_once_with('test_file.parquet')
+
+        # Check if HTMLReport was created
+        mock_html_report.assert_called_once()
+
         # Check if the save method was called
-        mock_save.assert_called_once()
+        mock_report_instance.save.assert_called_once()
+
+        # Verify the report path
+        self.assertEqual(report_path, os.path.join(self.temp_dir, "feature_importance_analysis.html"))
 
     @patch('builtins.print')
     def test_print_feature_importance(self, mock_print):
