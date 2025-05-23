@@ -331,21 +331,16 @@ class StatsCollector:
                         features_by_file[file_name] = []
                     features_by_file[file_name].append((feature, importance))
 
-                # Show top 5 files
-                shown_files = 0
+                # Show all files
                 for file_name, features in features_by_file.items():
-                    if shown_files >= 5:  # Limit to 5 files
-                        break
-                    shown_files += 1
-
                     # Sort features by importance
                     features.sort(key=lambda x: float(x[1]) if isinstance(x[1], (float, int)) else 0, reverse=True)
 
                     print(f"\n    {Fore.BLUE}File: {file_name}{Style.RESET_ALL}")
 
-                    # Show top 5 features for each file
-                    max_feature_len = max(len(f[0]) for f in features[:5]) if features else 0
-                    for i, (feature, importance) in enumerate(features[:5], 1):  # Top 5 features
+                    # Show all features for each file
+                    max_feature_len = max(len(f[0]) for f in features) if features else 0
+                    for i, (feature, importance) in enumerate(features, 1):  # All features
                         try:
                             importance_value = float(importance)
                             # Color coding based on importance
@@ -363,14 +358,6 @@ class StatsCollector:
                             print(f"      {i}. {feature.ljust(max_feature_len)} : {color}{importance_value:.4f}{Style.RESET_ALL} {color}{bar}{Style.RESET_ALL}")
                         except (ValueError, TypeError):
                             print(f"      {i}. {feature.ljust(max_feature_len)} : {importance}")
-
-                    # Show count of remaining features if more than 5
-                    if len(features) > 5:
-                        print(f"      ... and {len(features) - 5} more features")
-
-                # Show message about hidden files if more than 5
-                if len(features_by_file) > 5:
-                    print(f"\n    ... and {len(features_by_file) - 5} more files with important features")
 
                 # General recommendations for feature analysis
                 print(f"\n    {Fore.MAGENTA}Recommendations:{Style.RESET_ALL}")

@@ -516,15 +516,16 @@ def print_colored_feature_importance_summary(importance_result, file_path=None):
     # Feature importance visualization
     print(f"\n{BOLD}{UNDERLINE}Feature Importance Ranking:{RESET}")
 
-    feature_importances = importance_result['feature_importances'][:10]  # Show top 10
+    # Show all features instead of just top 10
+    feature_importances = importance_result['feature_importances']
     max_feature_len = max(len(f['feature']) for f in feature_importances) + 2
 
     # Print table header
     print(f"\n{BOLD}{'Feature'.ljust(max_feature_len)} | {'Importance'.ljust(10)} | {'Norm %'.ljust(8)} | Visualization{RESET}")
     print(f"{'-'*(max_feature_len+1)}|{'-'*12}|{'-'*10}|{'-'*40}")
 
-    # Print each feature
-    for feature in feature_importances:
+    # Print each feature with visualization bar
+    for i, feature in enumerate(feature_importances, 1):
         feature_name = feature['feature']
         importance = feature['importance']
         normalized = feature['normalized_importance']
@@ -537,15 +538,15 @@ def print_colored_feature_importance_summary(importance_result, file_path=None):
             color = YELLOW
             category = "MED"
         else:
-            color = RESET
+            color = GREEN  # Change from RESET to GREEN for better visibility of low importance features
             category = "LOW"
 
         # Create bar visualization
         bar_length = int(normalized * 0.4)
         bar = '█' * bar_length
 
-        # Print formatted row
-        print(f"{feature_name.ljust(max_feature_len)} | {importance:.6f} | {color}{normalized:>6.1f}%{RESET} | {color}{bar}{RESET} {color}[{category}]{RESET}")
+        # Print formatted row with index number
+        print(f"{str(i).rjust(2)}. {feature_name.ljust(max_feature_len-3)} : {importance:.4f} | {color}{normalized:>6.1f}%{RESET} | {color}{bar}{RESET}")
 
     # Print group summary
     high_imp = len(importance_result['high_importance'])
@@ -555,11 +556,11 @@ def print_colored_feature_importance_summary(importance_result, file_path=None):
     print(f"\n{BOLD}Importance Categories:{RESET}")
     print(f"  {RED}High importance (≥70%):{RESET} {high_imp} features")
     print(f"  {YELLOW}Medium importance (30-70%):{RESET} {med_imp} features")
-    print(f"  {CYAN}Low importance (<30%):{RESET} {low_imp} features")
+    print(f"  {GREEN}Low importance (<30%):{RESET} {low_imp} features")
 
     # Print top features
     if importance_result['top_features']:
-        print(f"\n{BOLD}Top predictive features:{RESET} {GREEN}{', '.join(importance_result['top_features'])}{RESET}")
+        print(f"\n{BOLD}Top predictive features:{RESET} {CYAN}{', '.join(importance_result['top_features'])}{RESET}")
 
     # Print cumulative importance
     cum_threshold = 0.95
