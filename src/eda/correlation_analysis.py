@@ -318,7 +318,7 @@ def compute_feature_importance(df, target_column=None):
 
         # Determine if classification or regression
         is_classification = False
-        if pd.api.types.is_categorical_dtype(y) or y.nunique() <= 10:
+        if isinstance(y.dtype, pd.CategoricalDtype) or y.nunique() <= 10:
             is_classification = True
             # Encode categorical target
             le = LabelEncoder()

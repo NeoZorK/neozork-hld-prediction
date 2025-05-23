@@ -178,35 +178,33 @@ def generate_feature_importance_report(df, file_path, target_column=None):
         </div>
     </div>
     <style>
-        /* CSS styles for HTML report - IDE might show warnings but this is correct CSS syntax */
-        /* noinspection CssUnresolvedReference */
-        .feature-groups {
-            display: flex; /* CSS flexbox layout - not a Python reference */
+        /* CSS styles for HTML report */
+        .feature-groups {{
+            display: flex; /* CSS flexbox layout */
             flex-wrap: wrap; /* CSS flexbox property */
             gap: 20px; /* CSS grid/flex gap property */
-        }
-        /* noinspection CssUnresolvedReference */
-        .feature-group {
+        }}
+        .feature-group {{
             flex: 1; /* CSS flexbox property */
             min-width: 250px; /* CSS width property */
             padding: 15px; /* CSS padding property */
             border-radius: 5px; /* CSS border-radius property */
-        }
-        .high {
+        }}
+        .high {{
             background-color: #FFECEC; /* CSS color property */
             border-left: 5px solid #FF5733; /* CSS border property */
-        }
-        .medium {
+        }}
+        .medium {{
             background-color: #FFF9E6; /* CSS color property */
             border-left: 5px solid #FFC300; /* CSS border property */
-        }
-        .low {
+        }}
+        .low {{
             background-color: #F2F2F2; /* CSS color property */
             border-left: 5px solid #C2C2C2; /* CSS border property */
-        }
-        .feature-group h4 {
+        }}
+        .feature-group h4 {{
             margin-top: 0; /* CSS margin property */
-        }
+        }}
     </style>
     """
     report.add_section("Feature Importance Groups", feature_groups, raw_html=True)

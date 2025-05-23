@@ -168,17 +168,21 @@ class TestFeatureImportance(unittest.TestCase):
         plt.close(figures[0])
 
     @patch('src.eda.feature_importance.ensure_report_directory')
-    @patch('src.eda.html_report_generator.HTMLReport')
+    @patch('src.eda.feature_importance.HTMLReport')  # Изменена целевая точка мока
     @patch('src.eda.correlation_analysis.compute_feature_importance')
     @patch('src.eda.feature_importance.generate_feature_importance_plot')
     @patch('src.eda.feature_importance.plot_feature_relationships')
-    @patch('matplotlib.pyplot.close')  # Также добавляем патч для plt.close
+    @patch('matplotlib.pyplot.close')
     def test_generate_feature_importance_report(self, mock_close, mock_plot_relationships, mock_gen_plot, mock_compute_importance, mock_html_report, mock_ensure_dir):
         """Test generation of HTML report."""
         # Setup mocks
         mock_ensure_dir.return_value = self.temp_dir
         mock_report_instance = mock_html_report.return_value
         mock_report_instance.save.return_value = None
+        mock_report_instance.add_section.return_value = None
+        mock_report_instance.add_header.return_value = None
+        mock_report_instance.add_plot.return_value = None
+        mock_report_instance.add_table.return_value = None
 
         # Mock для функции plot_feature_relationships
         mock_fig = plt.figure()
@@ -221,7 +225,7 @@ class TestFeatureImportance(unittest.TestCase):
         mock_ensure_dir.assert_called_once_with('test_file.parquet')
 
         # Check if HTMLReport was created
-        mock_html_report.assert_called_once()
+        mock_html_report.assert_called_once_with("Feature Importance Analysis", 'test_file.parquet')
 
         # Check if the save method was called
         mock_report_instance.save.assert_called_once()

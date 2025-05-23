@@ -145,8 +145,15 @@ class HTMLReport:
         """
         self.content.append(header)
 
-    def add_section(self, title, content):
-        """Add a new section to the report"""
+    def add_section(self, title, content, raw_html=False):
+        """
+        Add a new section to the report
+
+        Parameters:
+        - title: Title of the section
+        - content: Content to display in the section
+        - raw_html: If True, content will be inserted as-is without additional formatting
+        """
         section = f"""
         <div class="container">
             <h2>{title}</h2>
@@ -343,7 +350,7 @@ def create_index_page(reports_map):
             margin-top: 30px;
         }
         .file-list {
-            margin-top: 20px;
+            margin-top: 20px.
         }
         .file-item {
             background-color: #f8f9fa;
