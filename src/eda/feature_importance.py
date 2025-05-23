@@ -166,14 +166,14 @@ def generate_feature_importance_report(df, file_path, target_column=None):
             <h4>Medium Importance ({len(med_imp)})</h4>
             <p>Features with 30-70% of the maximum importance:</p>
             <ul>
-                {"".join([f'<li>{f["feature"]} ({f["normalized_importance"]:.1f}%)</li>' for f in med_imp[:10]]) + (f"<li>...and {len(med_imp) - 10} more</li>" if len(med_imp) > 10 else "") if med_imp else "<li>None</li>"}
+                {"".join([f'<li>{f["feature"]} ({f["normalized_importance"]:.1f}%)</li>' for f in med_imp]) if med_imp else "<li>None</li>"}
             </ul>
         </div>
         <div class="feature-group low">
             <h4>Low Importance ({len(low_imp)})</h4>
             <p>Features with <30% of the maximum importance:</p>
             <ul>
-                {"".join([f'<li>{f["feature"]} ({f["normalized_importance"]:.1f}%)</li>' for f in low_imp[:5]]) + (f"<li>...and {len(low_imp) - 5} more</li>" if len(low_imp) > 5 else "") if low_imp else "<li>None</li>"}
+                {"".join([f'<li>{f["feature"]} ({f["normalized_importance"]:.1f}%)</li>' for f in low_imp]) if low_imp else "<li>None</li>"}
             </ul>
         </div>
     </div>
@@ -735,20 +735,17 @@ def generate_global_feature_importance_summary(feature_importance_results, file_
         for feature, importance, file in high_importance:
             print(f"  • \033[31m{feature}\033[0m: {importance:.1f}% (in {file})")
 
-    # Print medium importance features
+    # Print medium importance features (show all)
     if medium_importance:
         print("\n\033[1;33mMedium Importance Features (30-70%):\033[0m")
         for feature, importance, file in medium_importance:
             print(f"  • \033[33m{feature}\033[0m: {importance:.1f}% (in {file})")
 
-    # Print low importance features (limited to top 20)
+    # Print low importance features (show all)
     if low_importance:
-        print(f"\n\033[1;32mLow Importance Features (<30%) - showing top {min(20, len(low_importance))} of {len(low_importance)}:\033[0m")
-        for feature, importance, file in low_importance[:20]:
+        print(f"\n\033[1;32mLow Importance Features (<30%):\033[0m")
+        for feature, importance, file in low_importance:
             print(f"  • \033[32m{feature}\033[0m: {importance:.1f}% (in {file})")
-
-        if len(low_importance) > 20:
-            print(f"  • ... and {len(low_importance) - 20} more low importance features")
 
     print("\n" + "="*80)
 
