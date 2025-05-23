@@ -470,3 +470,433 @@ def feature_importance_cli(df, target_column=None, file_path=None):
         print(f"\n\033[93m[INFO]\033[0m Feature importance report saved to: {report_path}")
 
     return importance_result
+
+def generate_global_feature_importance_summary(feature_importance_results, file_paths, output_path=None):
+    """
+    Generate a global statistical analysis summary for feature importance across multiple files.
+
+    Parameters:
+    -----------
+    feature_importance_results : list
+        List of dictionaries containing feature importance results
+    file_paths : list
+        List of file paths corresponding to the results
+    output_path : str or None
+        Path where to save the HTML report (default: results/reports/global_feature_importance_summary.html)
+
+    Returns:
+    --------
+    str
+        Path to the generated HTML report
+    """
+    # Ensure output path exists
+    if output_path is None:
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        reports_dir = os.path.join(base_dir, 'results', 'reports')
+        if not os.path.exists(reports_dir):
+            os.makedirs(reports_dir)
+        output_path = os.path.join(reports_dir, 'global_feature_importance_summary.html')
+
+    # Collect all important features across files
+    all_important_features = []
+    total_files = len(feature_importance_results)
+    total_features_analyzed = 0
+
+    for i, result in enumerate(feature_importance_results):
+        if 'error' in result:
+            continue
+
+        file_name = os.path.basename(file_paths[i])
+
+        if 'feature_importances' in result:
+            total_features_analyzed += len(result['feature_importances'])
+
+            for feature in result['feature_importances']:
+                all_important_features.append({
+                    'file': file_name,
+                    'feature': feature['feature'],
+                    'importance': feature['importance'],
+                    'normalized_importance': feature['normalized_importance']
+                })
+
+    # Generate HTML content
+    html_content = f"""<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Глобальный анализ важности признаков</title>
+    <style>
+        body {{
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }}
+        h1, h2, h3 {{
+            color: #2c3e50;
+        }}
+        h1 {{
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }}
+        .overall-stats {{
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }}
+        .overall-stats h2 {{
+            color: white;
+            margin-top: 0;
+        }}
+        .file-card {{
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 5px solid #3498db;
+        }}
+        .file-title {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }}
+        .file-title h3 {{
+            margin: 0;
+            color: #2980b9;
+        }}
+        .feature-table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }}
+        .feature-table th, .feature-table td {{
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }}
+        .feature-table th {{
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }}
+        .importance-bar {{
+            height: 20px;
+            background-color: #f1c40f;
+            border-radius: 3px;
+        }}
+        .high-importance {{
+            background-color: #e74c3c;
+        }}
+        .medium-importance {{
+            background-color: #f39c12;
+        }}
+        .low-importance {{
+            background-color: #95a5a6;
+        }}
+        .summary-section {{
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }}
+        .summary-section h2 {{
+            color: #2c3e50;
+            margin-top: 0;
+        }}
+        .importance-category {{
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }}
+        .importance-color {{
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+            margin-right: 8px;
+            border-radius: 3px;
+        }}
+        .grid-container {{
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }}
+        .top-features-card {{
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }}
+        .top-features-card h4 {{
+            color: #3498db;
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }}
+        .feature-badge {{
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin: 3px;
+            font-size: 0.9em;
+        }}
+    </style>
+</head>
+<body>
+    <h1>Отчёт по глобальному анализу важности признаков</h1>
+    
+    <div class="overall-stats">
+        <h2>Общая статистика</h2>
+        <p><strong>Проанализированных файлов:</strong> {total_files}</p>
+        <p><strong>Всего признаков проанализировано:</strong> {total_features_analyzed}</p>
+        <p><strong>Обнаружено важных признаков:</strong> {len(all_important_features)}</p>
+    </div>"""
+
+    # Add file-specific cards for top files (limit to 5)
+    unique_files = set(item['file'] for item in all_important_features)
+    for i, file_name in enumerate(unique_files):
+        if i >= 5:  # Limit to 5 files
+            break
+
+        file_features = [f for f in all_important_features if f['file'] == file_name]
+        target_column = next((result['target_column'] for result, path in zip(feature_importance_results, file_paths)
+                            if os.path.basename(path) == file_name and 'target_column' in result), "Unknown")
+
+        # Sort by importance
+        file_features.sort(key=lambda x: x['importance'], reverse=True)
+
+        html_content += f"""
+    <div class="file-card">
+        <div class="file-title">
+            <h3>{file_name.replace('.parquet', '')}</h3>
+            <span>Целевой признак: <strong>{target_column}</strong></span>
+        </div>
+        
+        <p><strong>Количество признаков:</strong> {len(file_features)}</p>
+        
+        <h4>Распределение важности признаков</h4>
+        <table class="feature-table">
+            <thead>
+                <tr>
+                    <th>Признак</th>
+                    <th>Важность</th>
+                    <th>Нормализованная важность</th>
+                    <th>Визуализация</th>
+                </tr>
+            </thead>
+            <tbody>"""
+
+        # Add top 8 features
+        for feature in file_features[:8]:
+            importance_class = "high-importance" if feature['normalized_importance'] >= 70 else \
+                              "medium-importance" if feature['normalized_importance'] >= 30 else \
+                              "low-importance"
+
+            html_content += f"""
+                <tr>
+                    <td>{feature['feature']}</td>
+                    <td>{feature['importance']:.3f}</td>
+                    <td>{feature['normalized_importance']:.1f}%</td>
+                    <td><div class="importance-bar {importance_class}" style="width: {min(100, max(1, feature['normalized_importance']))}%"></div></td>
+                </tr>"""
+
+        html_content += """
+            </tbody>
+        </table>
+    </div>"""
+
+    # Group features by importance across files
+    high_importance_features = {}
+    medium_importance_features = {}
+    low_importance_features = {}
+
+    for feature_data in all_important_features:
+        feature_name = feature_data['feature']
+        importance = feature_data['normalized_importance']
+        file_name = feature_data['file']
+
+        if importance >= 70:
+            if feature_name not in high_importance_features:
+                high_importance_features[feature_name] = []
+            high_importance_features[feature_name].append((file_name, importance))
+        elif importance >= 30:
+            if feature_name not in medium_importance_features:
+                medium_importance_features[feature_name] = []
+            medium_importance_features[feature_name].append((file_name, importance))
+        else:
+            if feature_name not in low_importance_features:
+                low_importance_features[feature_name] = []
+            low_importance_features[feature_name].append((file_name, importance))
+
+    # Sort features by maximum importance
+    high_importance_features = {k: v for k, v in sorted(
+        high_importance_features.items(),
+        key=lambda item: max(x[1] for x in item[1]),
+        reverse=True
+    )}
+
+    medium_importance_features = {k: v for k, v in sorted(
+        medium_importance_features.items(),
+        key=lambda item: max(x[1] for x in item[1]),
+        reverse=True
+    )}
+
+    # Add top features section
+    html_content += """
+    <div class="summary-section">
+        <h2>Ключевые признаки по категориям важности</h2>
+        
+        <div class="grid-container">"""
+
+    # High importance features card
+    html_content += """
+            <div class="top-features-card">
+                <h4>Признаки высокой важности (≥70%)</h4>"""
+
+    if high_importance_features:
+        for feature_name, occurrences in high_importance_features.items():
+            max_importance = max(imp for _, imp in occurrences)
+            file_count = len(occurrences)
+            html_content += f"""
+                <div class="feature-badge" title="Максимальная важность: {max_importance:.1f}%, Встречается в {file_count} файлах">
+                    {feature_name}
+                </div>"""
+    else:
+        html_content += """
+                <p>Не обнаружено признаков высокой важности</p>"""
+
+    html_content += """
+            </div>"""
+
+    # Medium importance features card
+    html_content += """
+            <div class="top-features-card">
+                <h4>Признаки средней важности (30-70%)</h4>"""
+
+    if medium_importance_features:
+        # Limit to top 15 medium importance features
+        count = 0
+        for feature_name, occurrences in medium_importance_features.items():
+            if count >= 15:
+                break
+            max_importance = max(imp for _, imp in occurrences)
+            file_count = len(occurrences)
+            html_content += f"""
+                <div class="feature-badge" title="Максимальная важность: {max_importance:.1f}%, Встречается в {file_count} файлах">
+                    {feature_name}
+                </div>"""
+            count += 1
+
+        if len(medium_importance_features) > 15:
+            html_content += f"""
+                <p>...и еще {len(medium_importance_features) - 15} признаков средней важности</p>"""
+    else:
+        html_content += """
+                <p>Не обнаружено признаков средней важности</p>"""
+
+    html_content += """
+            </div>
+        </div>"""
+
+    # Add cross-file analysis section
+    most_common_features = {}
+    for feature_data in all_important_features:
+        feature_name = feature_data['feature']
+        if feature_name not in most_common_features:
+            most_common_features[feature_name] = 0
+        most_common_features[feature_name] += 1
+
+    # Sort by frequency
+    most_common_features = {k: v for k, v in sorted(
+        most_common_features.items(),
+        key=lambda item: item[1],
+        reverse=True
+    )}
+
+    html_content += """
+        <h3>Частота появления признаков в разных файлах</h3>
+        <table class="feature-table">
+            <thead>
+                <tr>
+                    <th>Признак</th>
+                    <th>Количество файлов</th>
+                    <th>% от общего числа файлов</th>
+                </tr>
+            </thead>
+            <tbody>"""
+
+    # Add top 10 most common features
+    for i, (feature_name, count) in enumerate(most_common_features.items()):
+        if i >= 10:  # Limit to 10 features
+            break
+        percentage = (count / total_files) * 100
+        html_content += f"""
+                <tr>
+                    <td>{feature_name}</td>
+                    <td>{count}</td>
+                    <td>{percentage:.1f}%</td>
+                </tr>"""
+
+    html_content += """
+            </tbody>
+        </table>"""
+
+    # Add recommendations section
+    html_content += """
+        <h3>Выводы и рекомендации</h3>
+        
+        <h4>Ключевые наблюдения:</h4>
+        <ul>"""
+
+    if high_importance_features:
+        top_high_feature = next(iter(high_importance_features))
+        html_content += f"""
+            <li>Признак <strong>{top_high_feature}</strong> имеет высокую важность и может быть ключевым предиктором в большинстве моделей</li>"""
+
+    if len(high_importance_features) <= 3:
+        html_content += """
+            <li>Относительно небольшое число признаков имеет высокую важность, что говорит о концентрации полезной информации в нескольких ключевых переменных</li>"""
+    else:
+        html_content += """
+            <li>Множество признаков имеют высокую важность, что говорит о сложной структуре данных и богатом информационном содержании набора признаков</li>"""
+
+    html_content += """
+        </ul>
+        
+        <h4>Рекомендации:</h4>
+        <ul>
+            <li><strong>Упрощение модели:</strong> Рассмотреть возможность построения моделей на основе только наиболее важных признаков</li>
+            <li><strong>Инженерия признаков:</strong> Создать новые признаки, которые комбинируют или трансформируют высокоинформативные переменные</li>
+            <li><strong>Анализ мультиколлинеарности:</strong> Проверить зависимости между важными признаками, чтобы избежать дублирования информации</li>
+            <li><strong>Стратегия моделирования:</strong> Использовать стекинг или ансамблевые модели, учитывающие различную важность признаков в разных наборах данных</li>
+        </ul>
+        
+        <h4>Дальнейшие шаги:</h4>
+        <ul>
+            <li>Провести кросс-валидацию моделей с различными наборами признаков для определения оптимального баланса между сложностью и производительностью</li>
+            <li>Изучить временные паттерны в важности признаков для разных периодов данных</li>
+            <li>Применить методы снижения размерности (PCA, t-SNE) для визуализации структуры данных в пространстве признаков</li>
+        </ul>
+    </div>
+</body>
+</html>"""
+
+    # Write the HTML file
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write(html_content)
+
+    return output_path
