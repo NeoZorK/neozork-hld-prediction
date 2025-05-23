@@ -29,9 +29,9 @@ Flags:
     --outlier-analysis         Detect outliers in numeric columns using IQR and Z-score methods
     --time-series-analysis     Basic time series analysis (trends, seasonality, stationarity)
     --all-stats                Run all statistical analyses
-    --correlation-analysis     Correlation analysis between numeric features
-    --feature-importance       Feature importance analysis
-    --target-column            Target column for feature importance analysis (optional)
+    --correlation-analysis     Correlation analysis between numeric features (Pearson and Spearman)
+    --feature-importance       Feature importance analysis using Random Forest models
+    --target-column            Target column for feature importance analysis (required for --feature-importance)
 
     --clean-stats-logs         Remove all statistics log files
     --clean-reports            Remove all HTML report directories for all analyses
@@ -55,9 +55,17 @@ Examples:
     python eda_batch_check.py --descriptive-stats
     python eda_batch_check.py --all-stats
 
-    # Run correlation and feature importance analyses
+    # Run correlation analysis (matrices, heatmaps, strong correlations identification)
     python eda_batch_check.py --correlation-analysis
+
+    # Run feature importance analysis (requires specifying a target column)
     python eda_batch_check.py --feature-importance --target-column "close"
+
+    # Run both correlation and feature importance analyses together
+    python eda_batch_check.py --correlation-analysis --feature-importance --target-column "price"
+
+    # Complete analysis workflow (all quality checks + statistics + correlation + feature importance)
+    python eda_batch_check.py --data-quality-checks --all-stats --correlation-analysis --feature-importance --target-column "target"
 
     # Clean statistics logs and reports
     python eda_batch_check.py --clean-stats-logs
@@ -324,9 +332,9 @@ def main():
   {Fore.GREEN}--outlier-analysis{Style.RESET_ALL}         Detect outliers in numeric columns using IQR and Z-score methods
   {Fore.GREEN}--time-series-analysis{Style.RESET_ALL}     Basic time series analysis (trends, seasonality, stationarity)
   {Fore.GREEN}--all-stats{Style.RESET_ALL}                Run all statistical analyses
-  {Fore.GREEN}--correlation-analysis{Style.RESET_ALL}     Correlation analysis between numeric features
-  {Fore.GREEN}--feature-importance{Style.RESET_ALL}       Feature importance analysis
-  {Fore.GREEN}--target-column{Style.RESET_ALL}            Target column for feature importance analysis (optional)
+  {Fore.GREEN}--correlation-analysis{Style.RESET_ALL}     Correlation analysis between numeric features (Pearson and Spearman)
+  {Fore.GREEN}--feature-importance{Style.RESET_ALL}       Feature importance analysis using Random Forest models
+  {Fore.GREEN}--target-column{Style.RESET_ALL}            Target column for feature importance analysis (required for --feature-importance)
   {Fore.GREEN}--clean-stats-logs{Style.RESET_ALL}         Remove all statistics log files
   {Fore.GREEN}--clean-reports{Style.RESET_ALL}            Remove all HTML report directories for all analyses
 
@@ -349,9 +357,17 @@ def main():
   python eda_batch_check.py --descriptive-stats
   python eda_batch_check.py --all-stats
   
-  # Run correlation and feature importance analyses
+  # Run correlation analysis (matrices, heatmaps, strong correlations identification)
   python eda_batch_check.py --correlation-analysis
+  
+  # Run feature importance analysis (requires specifying a target column)
   python eda_batch_check.py --feature-importance --target-column "close"
+  
+  # Run both correlation and feature importance analyses together
+  python eda_batch_check.py --correlation-analysis --feature-importance --target-column "price"
+  
+  # Complete analysis workflow (all quality checks + statistics + correlation + feature importance)
+  python eda_batch_check.py --data-quality-checks --all-stats --correlation-analysis --feature-importance --target-column "target"
   
   # Clean statistics logs and reports
   python eda_batch_check.py --clean-stats-logs
@@ -391,9 +407,9 @@ def main():
     parser.add_argument('--outlier-analysis', action='store_true', help='Detect outliers in numeric columns using IQR and Z-score methods')
     parser.add_argument('--time-series-analysis', action='store_true', help='Basic time series analysis (trends, seasonality, stationarity)')
     parser.add_argument('--all-stats', action='store_true', help='Run all statistical analyses')
-    parser.add_argument('--correlation-analysis', action='store_true', help='Correlation analysis between numeric features')
-    parser.add_argument('--feature-importance', action='store_true', help='Feature importance analysis')
-    parser.add_argument('--target-column', type=str, help='Target column for feature importance analysis (optional)')
+    parser.add_argument('--correlation-analysis', action='store_true', help='Correlation analysis between numeric features (Pearson and Spearman)')
+    parser.add_argument('--feature-importance', action='store_true', help='Feature importance analysis using Random Forest models')
+    parser.add_argument('--target-column', type=str, help='Target column for feature importance analysis (required for --feature-importance)')
     parser.add_argument('--clean-stats-logs', action='store_true', help='Remove all statistics log files')
     parser.add_argument('--clean-reports', action='store_true', help='Remove all HTML report directories for all analyses')
     args = parser.parse_args()
