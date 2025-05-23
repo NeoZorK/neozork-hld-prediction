@@ -99,8 +99,34 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 ├── .gitignore  
 ├── init_dirs.sh  
 ├── README.md  
-├── requirements.txt  
-└── run_analysis.py  
+
+## What's New
+
+### Enhanced Data Analysis and Feature Importance
+
+* **Advanced EDA Module:** Added comprehensive exploratory data analysis tools in `src/eda/` module with automated reporting capabilities
+* **Feature Importance Analysis:** Implemented intelligent feature importance evaluation for model inputs using Random Forest-based techniques
+* **Global Feature Importance Summary:** Added functionality to analyze important features across multiple datasets to identify universal predictive patterns
+* **Interactive HTML Reports:** Automatic generation of detailed HTML reports for feature importance and correlation analysis with visual aids
+* **Efficient Data Handling:** All statistical results are saved in optimized formats (JSON, parquet) for later reference and model improvement
+
+### Testing Enhancements
+
+* **Comprehensive Unit Tests:** Expanded test coverage for all data analysis components, ensuring code reliability
+* **Improved Test Runner:** Added user-friendly test runner script (`run_tests.py`) with flexible options for running specific tests or test modules
+* **Mocking Framework:** Implemented sophisticated test mocking to ensure tests run quickly without external dependencies
+
+### User Experience Improvements
+
+* **Full Output Display:** Removed truncation of feature lists in console output for better visibility of all important model features
+* **Improved Error Handling:** Better error messages and exception handling throughout the codebase
+* **Structured Directory Layout:** Enhanced project organization with dedicated results and logging directories
+
+### Technical Improvements
+
+* **Code Modernization:** Updated deprecated pandas functions for better compatibility with future versions
+* **Documentation:** Added comprehensive docstrings and comments to all new modules
+* **Performance Optimization:** Improved execution speed of statistical analysis components
 
 ## Directory and File Descriptions
 
@@ -270,7 +296,7 @@ Use your package manager, for example:
 * [x] 3.2. Quality Check: Missing values, duplicates, data types, gaps, NaN, corrupt Values: Zero, inf, negative.
 * [x] 3.3. Data Cleaning: Remove duplicates, fill gaps, handle NaN values.
 * [x] 3.4. Base Statistics
-* [ ] 3.5. Correlation Analysis: Correlation matrix, feature correlation with target.
+* [x] 3.5. Correlation Analysis: Correlation matrix, feature correlation with target.
 * [ ] 3.6. Analyze Distributions & Statistics.
 * [x] 3.7. Visualize Time Series.
 * [ ] 3.8. Calculate **Baseline Performance** (Python indicator vs Ground Truth).
@@ -534,6 +560,7 @@ python src/eda/eda_batch_check.py [flags]
 - `--all-stats`:                 Run all statistical analyses
 - `--correlation-analysis`:      Correlation analysis between numeric features
 - `--feature-importance`:        Feature importance analysis
+- `--target-column`:             Target column for feature importance analysis (required for --feature-importance)
 - `--clean-stats-logs`:          Remove all statistics log files
 - `--clean-reports`:             Remove all HTML report directories for all analyses
 
@@ -566,7 +593,7 @@ python src/eda/eda_batch_check.py --restore-backups
 python src/eda/eda_batch_check.py --data-quality-checks --fix-files --fix-all
 ```
 
-### Run multiple data checks 
+### Run multiple data checks
 ```bash
 python src/eda/eda_batch_check.py --nan-check --gap-check --zero-check --basic-stats
 ```
@@ -576,7 +603,13 @@ python src/eda/eda_batch_check.py --nan-check --gap-check --zero-check --basic-s
 ```
 ```bash
   python eda_batch_check.py --all-stats
-```  
+```
+```bash
+  python eda_batch_check.py --correlation-analysis
+```
+```bash
+  python eda_batch_check.py --feature-importance --target-column "open"
+```
 
 ## How It Works
 
@@ -633,4 +666,5 @@ This project uses Python's built-in `unittest` framework.
     ```
 
 *** Conclusion: ***
+
 
