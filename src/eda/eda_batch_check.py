@@ -82,6 +82,7 @@ import colorama
 from colorama import Fore, Style
 import json
 import datetime
+import pandas as pd  # Добавляем импорт pandas
 from tqdm import tqdm  # Import tqdm for progress bars
 
 # Initialize colorama for colored output
@@ -188,8 +189,30 @@ class StatsCollector:
 
     def update_correlation_stats(self, file_path, corr_stats):
         for pair, corr_value in corr_stats.items():
-            if abs(corr_value) > 0.8:  # High correlation threshold
-                self.correlation_summary['high_corr_pairs'].append((file_path, pair, corr_value))
+            # Check if corr_value is a DataFrame or Series and handle accordingly
+            if isinstance(corr_value, (pd.DataFrame, pd.Series)):
+                # For DataFrame or Series, check if any values are above threshold
+                if (abs(corr_value) > 0.8).any().any():  # .any() twice for DataFrame
+                    self.correlation_summary['high_corr_pairs'].append((file_path, pair, corr_value))
+            # Check if corr_value is a list
+            elif isinstance(corr_value, list):
+                # For list values, check if any numeric elements are above threshold
+                for val in corr_value:
+                    if isinstance(val, (int, float)) and abs(val) > 0.8:
+                        self.correlation_summary['high_corr_pairs'].append((file_path, pair, val))
+                        break
+            # Check if corr_value is a string
+            elif isinstance(corr_value, str):
+                # Skip string values, they can't be compared with threshold
+                continue
+            else:
+                # For scalar values, check directly
+                try:
+                    if abs(corr_value) > 0.8:  # High correlation threshold
+                        self.correlation_summary['high_corr_pairs'].append((file_path, pair, corr_value))
+                except TypeError:
+                    # If we get a TypeError (e.g., for complex objects), skip this correlation value
+                    continue
 
     def update_feature_importance_stats(self, file_path, importance_stats):
         for feature, importance in importance_stats.items():
