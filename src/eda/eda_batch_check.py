@@ -218,8 +218,15 @@ class StatsCollector:
         if 'error' in importance_stats:
             return
 
+        # Update file counter
+        self.descriptive_summary['files_analyzed'] += 1
+
         # Extract important features into the collector
         if 'feature_importances' in importance_stats:
+            # Update total columns counter with the number of features analyzed
+            if 'num_features' in importance_stats:
+                self.descriptive_summary['total_columns'] += importance_stats['num_features']
+
             for feature_data in importance_stats['feature_importances']:
                 self.feature_importance_summary['important_features'].append((
                     file_path,
@@ -314,9 +321,9 @@ class StatsCollector:
                 feature_count = len(self.feature_importance_summary['important_features'])
                 unique_files = len(set(file_path for file_path, _, _ in self.feature_importance_summary['important_features']))
 
-                print(f"  • {Fore.GREEN + Style.BRIGHT}Найдено {feature_count} важных признаков{Style.RESET_ALL} в {Fore.GREEN + Style.BRIGHT}{unique_files}{Style.RESET_ALL} файлах:")
+                print(f"  • {Fore.GREEN + Style.BRIGHT}Found {feature_count} important features{Style.RESET_ALL} in {Fore.GREEN + Style.BRIGHT}{unique_files}{Style.RESET_ALL} files:")
 
-                # Группировка признаков по файлам для более организованного вывода
+                # Group features by files for more organized output
                 features_by_file = {}
                 for file_path, feature, importance in self.feature_importance_summary['important_features']:
                     file_name = os.path.basename(file_path)
@@ -324,58 +331,58 @@ class StatsCollector:
                         features_by_file[file_name] = []
                     features_by_file[file_name].append((feature, importance))
 
-                # Показываем топ-5 файлов
+                # Show top 5 files
                 shown_files = 0
                 for file_name, features in features_by_file.items():
-                    if shown_files >= 5:  # Лимит на количество выводимых файлов
+                    if shown_files >= 5:  # Limit to 5 files
                         break
                     shown_files += 1
 
-                    # Сортировка признаков по важности
+                    # Sort features by importance
                     features.sort(key=lambda x: float(x[1]) if isinstance(x[1], (float, int)) else 0, reverse=True)
 
-                    print(f"\n    {Fore.BLUE}Файл: {file_name}{Style.RESET_ALL}")
+                    print(f"\n    {Fore.BLUE}File: {file_name}{Style.RESET_ALL}")
 
-                    # Показываем топ-5 признаков для каждого файла
+                    # Show top 5 features for each file
                     max_feature_len = max(len(f[0]) for f in features[:5]) if features else 0
-                    for i, (feature, importance) in enumerate(features[:5], 1):  # Топ 5 признаков
+                    for i, (feature, importance) in enumerate(features[:5], 1):  # Top 5 features
                         try:
                             importance_value = float(importance)
-                            # Цветовое кодирование на основе важности
+                            # Color coding based on importance
                             if importance_value > 0.2:
-                                color = Fore.RED  # Высокая важность
+                                color = Fore.RED  # High importance
                             elif importance_value > 0.1:
-                                color = Fore.YELLOW  # Средняя важность
+                                color = Fore.YELLOW  # Medium importance
                             else:
-                                color = Fore.GREEN  # Низкая важность
+                                color = Fore.GREEN  # Low importance
 
-                            # Создание визуальной полосы для отображения важности
-                            bar_length = int(importance_value * 50) + 1  # Масштабирование для визуализации
-                            bar = '█' * min(bar_length, 20)  # Ограничиваем длину полосы
+                            # Create visual bar to represent importance
+                            bar_length = int(importance_value * 50) + 1  # Scale for visualization
+                            bar = '█' * min(bar_length, 20)  # Limit bar length
 
                             print(f"      {i}. {feature.ljust(max_feature_len)} : {color}{importance_value:.4f}{Style.RESET_ALL} {color}{bar}{Style.RESET_ALL}")
                         except (ValueError, TypeError):
                             print(f"      {i}. {feature.ljust(max_feature_len)} : {importance}")
 
-                    # Показываем количество остальных признаков, если их больше 5
+                    # Show count of remaining features if more than 5
                     if len(features) > 5:
-                        print(f"      ... и еще {len(features) - 5} признаков")
+                        print(f"      ... and {len(features) - 5} more features")
 
-                # Показываем сообщение о скрытых файлах, если их больше 5
+                # Show message about hidden files if more than 5
                 if len(features_by_file) > 5:
-                    print(f"\n    ... и еще {len(features_by_file) - 5} файлов с важными признаками")
+                    print(f"\n    ... and {len(features_by_file) - 5} more files with important features")
 
-                # Общие рекомендации по анализу признаков
-                print(f"\n    {Fore.MAGENTA}Рекомендации:{Style.RESET_ALL}")
-                print(f"      • Используйте признаки с высокой важностью для построения моделей")
-                print(f"      • Рассмотрите удаление признаков с очень низкой важностью")
-                print(f"      • Изучите взаимосвязи между важными признаками для Feature Engineering")
+                # General recommendations for feature analysis
+                print(f"\n    {Fore.MAGENTA}Recommendations:{Style.RESET_ALL}")
+                print(f"      • Use features with high importance for model building")
+                print(f"      • Consider removing features with very low importance")
+                print(f"      • Study relationships between important features for Feature Engineering")
             else:
-                print(f"  • {Fore.RED}Важных признаков не обнаружено.{Style.RESET_ALL}")
-                print(f"    {Fore.YELLOW}Возможные причины:{Style.RESET_ALL}")
-                print(f"      • Проверьте правильность указания целевой переменной (--target-column)")
-                print(f"      • Целевая переменная может не иметь сильной зависимости от имеющихся признаков")
-                print(f"      • Попробуйте создать новые признаки (Feature Engineering)")
+                print(f"  • {Fore.RED}No important features detected.{Style.RESET_ALL}")
+                print(f"    {Fore.YELLOW}Possible reasons:{Style.RESET_ALL}")
+                print(f"      • Check that the target column is correctly specified (--target-column)")
+                print(f"      • The target variable may not have strong dependence on available features")
+                print(f"      • Try creating new features (Feature Engineering)")
 
         print("\n" + "="*80)
         print(f"{Fore.BLUE + Style.BRIGHT}KEY FINDINGS AND RECOMMENDATIONS{Style.RESET_ALL}")
