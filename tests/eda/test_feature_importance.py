@@ -11,10 +11,14 @@ from unittest.mock import patch, MagicMock
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from src.eda.feature_importance import (
+# Импортируем функции из правильных модулей
+from src.eda.correlation_analysis import (
     compute_feature_importance,
-    print_feature_importance,
     generate_feature_importance_plot,
+    print_feature_importance
+)
+
+from src.eda.feature_importance import (
     plot_feature_relationships,
     feature_importance_main,
     generate_feature_importance_report,
