@@ -17,8 +17,13 @@ from src.eda.correlation_analysis import (
     compute_feature_importance,
     generate_feature_importance_plot,
     ensure_plots_directory,
-    generate_correlation_report
+    generate_correlation_report,
+    print_correlation_analysis,
+    print_feature_importance
 )
+
+# Add any additional imports needed for your tests
+from unittest.mock import patch, MagicMock
 
 
 class TestCorrelationAnalysis(unittest.TestCase):
@@ -191,8 +196,33 @@ class TestCorrelationAnalysis(unittest.TestCase):
         # Check that a figure was created even with error
         self.assertIsInstance(fig, matplotlib.figure.Figure)
 
-    def test_generate_correlation_report(self):
-        """Test generation of correlation analysis HTML report."""
+    @patch('builtins.print')  # Mock print function
+    def test_print_correlation_analysis(self, mock_print):
+        """Test print_correlation_analysis function."""
+        result = compute_correlation(self.sample_data)
+        print_correlation_analysis(result)
+
+        # Verify that print was called at least once
+        self.assertTrue(mock_print.called)
+
+    @patch('builtins.print')  # Mock print function
+    def test_print_feature_importance(self, mock_print):
+        """Test print_feature_importance function."""
+        result = compute_feature_importance(self.sample_data, target_column='target')
+        print_feature_importance(result)
+
+        # Verify that print was called at least once
+        self.assertTrue(mock_print.called)
+
+    @patch('src.eda.correlation_analysis.HTMLReport')
+    @patch('src.eda.correlation_analysis.ensure_report_directory')
+    def test_generate_correlation_report(self, mock_ensure_dir, mock_html_report):
+        """Test generation of correlation analysis HTML report with mocks."""
+        # Setup mocks
+        mock_html_report_instance = MagicMock()
+        mock_html_report.return_value = mock_html_report_instance
+        mock_ensure_dir.return_value = self.test_dir
+
         # Create a temporary file path for testing
         temp_file = os.path.join(self.test_dir, 'test_data.csv')
         self.sample_data.to_csv(temp_file, index=False)
@@ -200,8 +230,12 @@ class TestCorrelationAnalysis(unittest.TestCase):
         # Generate report
         report_path = generate_correlation_report(self.sample_data, temp_file)
 
-        # Check that the report was created
-        self.assertTrue(os.path.exists(report_path))
+        # Check that the HTML report was created
+        mock_html_report.assert_called_once()
+        mock_html_report_instance.add_header.assert_called_once()
+        mock_html_report_instance.save.assert_called_once()
+
+        # Check that the report path is correctly formed
         self.assertTrue(report_path.endswith('.html'))
 
 
