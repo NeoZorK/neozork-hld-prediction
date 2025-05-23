@@ -279,8 +279,24 @@ def compute_feature_importance(df, target_column=None):
     if target_column is None:
         return {'error': 'No target column specified or detected'}
 
+    # Check if target column exists, accounting for case sensitivity
     if target_column not in df.columns:
-        return {'error': f'Target column "{target_column}" not found in DataFrame'}
+        # Try to find a case-insensitive match
+        column_mapping = {col.lower(): col for col in df.columns}
+        if target_column.lower() in column_mapping:
+            # Found a case-insensitive match, use the actual column name from DataFrame
+            actual_column = column_mapping[target_column.lower()]
+            print(f"\033[93m[INFO]\033[0m Using column '{actual_column}' instead of '{target_column}' (case mismatch)")
+            target_column = actual_column
+        else:
+            # No match found - suggest similar columns if available
+            similar_columns = [col for col in df.columns if target_column.lower() in col.lower()]
+            error_msg = f'Target column "{target_column}" not found in DataFrame'
+
+            if similar_columns:
+                error_msg += f". Did you mean one of these: {', '.join(similar_columns)}?"
+
+            return {'error': error_msg}
 
     try:
         # Prepare data
