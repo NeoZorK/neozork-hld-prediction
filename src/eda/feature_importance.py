@@ -521,11 +521,11 @@ def generate_global_feature_importance_summary(feature_importance_results, file_
 
     # Generate HTML content
     html_content = f"""<!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Глобальный анализ важности признаков</title>
+    <title>Global Feature Importance Analysis</title>
     <style>
         body {{
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -657,13 +657,13 @@ def generate_global_feature_importance_summary(feature_importance_results, file_
     </style>
 </head>
 <body>
-    <h1>Отчёт по глобальному анализу важности признаков</h1>
+    <h1>Global Feature Importance Analysis Report</h1>
     
     <div class="overall-stats">
-        <h2>Общая статистика</h2>
-        <p><strong>Проанализированных файлов:</strong> {total_files}</p>
-        <p><strong>Всего признаков проанализировано:</strong> {total_features_analyzed}</p>
-        <p><strong>Обнаружено важных признаков:</strong> {len(all_important_features)}</p>
+        <h2>Overall Statistics</h2>
+        <p><strong>Files analyzed:</strong> {total_files}</p>
+        <p><strong>Total features analyzed:</strong> {total_features_analyzed}</p>
+        <p><strong>Important features detected:</strong> {len(all_important_features)}</p>
     </div>"""
 
     # Add file-specific cards for top files (limit to 5)
@@ -683,19 +683,19 @@ def generate_global_feature_importance_summary(feature_importance_results, file_
     <div class="file-card">
         <div class="file-title">
             <h3>{file_name.replace('.parquet', '')}</h3>
-            <span>Целевой признак: <strong>{target_column}</strong></span>
+            <span>Target column: <strong>{target_column}</strong></span>
         </div>
         
-        <p><strong>Количество признаков:</strong> {len(file_features)}</p>
+        <p><strong>Number of features:</strong> {len(file_features)}</p>
         
-        <h4>Распределение важности признаков</h4>
+        <h4>Feature Importance Distribution</h4>
         <table class="feature-table">
             <thead>
                 <tr>
-                    <th>Признак</th>
-                    <th>Важность</th>
-                    <th>Нормализованная важность</th>
-                    <th>Визуализация</th>
+                    <th>Feature</th>
+                    <th>Importance</th>
+                    <th>Normalized Importance</th>
+                    <th>Visualization</th>
                 </tr>
             </thead>
             <tbody>"""
@@ -758,26 +758,26 @@ def generate_global_feature_importance_summary(feature_importance_results, file_
     # Add top features section
     html_content += """
     <div class="summary-section">
-        <h2>Ключевые признаки по категориям важности</h2>
+        <h2>Key Features by Importance Category</h2>
         
         <div class="grid-container">"""
 
     # High importance features card
     html_content += """
             <div class="top-features-card">
-                <h4>Признаки высокой важности (≥70%)</h4>"""
+                <h4>High Importance Features (≥70%)</h4>"""
 
     if high_importance_features:
         for feature_name, occurrences in high_importance_features.items():
             max_importance = max(imp for _, imp in occurrences)
             file_count = len(occurrences)
             html_content += f"""
-                <div class="feature-badge" title="Максимальная важность: {max_importance:.1f}%, Встречается в {file_count} файлах">
+                <div class="feature-badge" title="Maximum importance: {max_importance:.1f}%, Found in {file_count} files">
                     {feature_name}
                 </div>"""
     else:
         html_content += """
-                <p>Не обнаружено признаков высокой важности</p>"""
+                <p>No high importance features detected</p>"""
 
     html_content += """
             </div>"""
@@ -785,7 +785,7 @@ def generate_global_feature_importance_summary(feature_importance_results, file_
     # Medium importance features card
     html_content += """
             <div class="top-features-card">
-                <h4>Признаки средней важности (30-70%)</h4>"""
+                <h4>Medium Importance Features (30-70%)</h4>"""
 
     if medium_importance_features:
         # Limit to top 15 medium importance features
@@ -796,17 +796,17 @@ def generate_global_feature_importance_summary(feature_importance_results, file_
             max_importance = max(imp for _, imp in occurrences)
             file_count = len(occurrences)
             html_content += f"""
-                <div class="feature-badge" title="Максимальная важность: {max_importance:.1f}%, Встречается в {file_count} файлах">
+                <div class="feature-badge" title="Maximum importance: {max_importance:.1f}%, Found in {file_count} files">
                     {feature_name}
                 </div>"""
             count += 1
 
         if len(medium_importance_features) > 15:
             html_content += f"""
-                <p>...и еще {len(medium_importance_features) - 15} признаков средней важности</p>"""
+                <p>...and {len(medium_importance_features) - 15} more medium importance features</p>"""
     else:
         html_content += """
-                <p>Не обнаружено признаков средней важности</p>"""
+                <p>No medium importance features detected</p>"""
 
     html_content += """
             </div>
@@ -828,13 +828,13 @@ def generate_global_feature_importance_summary(feature_importance_results, file_
     )}
 
     html_content += """
-        <h3>Частота появления признаков в разных файлах</h3>
+        <h3>Feature Occurrence Frequency Across Files</h3>
         <table class="feature-table">
             <thead>
                 <tr>
-                    <th>Признак</th>
-                    <th>Количество файлов</th>
-                    <th>% от общего числа файлов</th>
+                    <th>Feature</th>
+                    <th>Number of Files</th>
+                    <th>% of Total Files</th>
                 </tr>
             </thead>
             <tbody>"""
@@ -857,39 +857,39 @@ def generate_global_feature_importance_summary(feature_importance_results, file_
 
     # Add recommendations section
     html_content += """
-        <h3>Выводы и рекомендации</h3>
+        <h3>Findings and Recommendations</h3>
         
-        <h4>Ключевые наблюдения:</h4>
+        <h4>Key Observations:</h4>
         <ul>"""
 
     if high_importance_features:
         top_high_feature = next(iter(high_importance_features))
         html_content += f"""
-            <li>Признак <strong>{top_high_feature}</strong> имеет высокую важность и может быть ключевым предиктором в большинстве моделей</li>"""
+            <li>Feature <strong>{top_high_feature}</strong> has high importance and may be a key predictor in most models</li>"""
 
     if len(high_importance_features) <= 3:
         html_content += """
-            <li>Относительно небольшое число признаков имеет высокую важность, что говорит о концентрации полезной информации в нескольких ключевых переменных</li>"""
+            <li>A relatively small number of features have high importance, indicating a concentration of useful information in a few key variables</li>"""
     else:
         html_content += """
-            <li>Множество признаков имеют высокую важность, что говорит о сложной структуре данных и богатом информационном содержании набора признаков</li>"""
+            <li>Multiple features have high importance, indicating complex data structure and rich information content in the feature set</li>"""
 
     html_content += """
         </ul>
         
-        <h4>Рекомендации:</h4>
+        <h4>Recommendations:</h4>
         <ul>
-            <li><strong>Упрощение модели:</strong> Рассмотреть возможность построения моделей на основе только наиболее важных признаков</li>
-            <li><strong>Инженерия признаков:</strong> Создать новые признаки, которые комбинируют или трансформируют высокоинформативные переменные</li>
-            <li><strong>Анализ мультиколлинеарности:</strong> Проверить зависимости между важными признаками, чтобы избежать дублирования информации</li>
-            <li><strong>Стратегия моделирования:</strong> Использовать стекинг или ансамблевые модели, учитывающие различную важность признаков в разных наборах данных</li>
+            <li><strong>Model Simplification:</strong> Consider building models based only on the most important features</li>
+            <li><strong>Feature Engineering:</strong> Create new features that combine or transform highly informative variables</li>
+            <li><strong>Multicollinearity Analysis:</strong> Check dependencies between important features to avoid duplication of information</li>
+            <li><strong>Modeling Strategy:</strong> Use stacking or ensemble models that account for varying feature importance across different datasets</li>
         </ul>
         
-        <h4>Дальнейшие шаги:</h4>
+        <h4>Next Steps:</h4>
         <ul>
-            <li>Провести кросс-валидацию моделей с различными наборами признаков для определения оптимального баланса между сложностью и производительностью</li>
-            <li>Изучить временные паттерны в важности признаков для разных периодов данных</li>
-            <li>Применить методы снижения размерности (PCA, t-SNE) для визуализации структуры данных в пространстве признаков</li>
+            <li>Perform cross-validation of models with different feature sets to determine the optimal balance between complexity and performance</li>
+            <li>Study temporal patterns in feature importance for different time periods</li>
+            <li>Apply dimensionality reduction methods (PCA, t-SNE) to visualize data structure in the feature space</li>
         </ul>
     </div>
 </body>
