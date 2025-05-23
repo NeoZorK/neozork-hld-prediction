@@ -276,7 +276,24 @@ class StatsCollector:
             if self.correlation_summary['high_corr_pairs']:
                 print(f"  • Found {len(self.correlation_summary['high_corr_pairs'])} pairs of columns with high correlation (|corr| > 0.8):")
                 for file_path, pair, corr_value in self.correlation_summary['high_corr_pairs'][:10]:  # Show top 10
-                    print(f"    - {os.path.basename(file_path)}: {pair} (corr={corr_value:.2f})")
+                    # Handle different types of corr_value
+                    if isinstance(corr_value, (pd.DataFrame, pd.Series)):
+                        # For DataFrames/Series, just show the type instead of the value
+                        print(f"    - {os.path.basename(file_path)}: {pair} (DataFrame/Series correlation)")
+                    elif isinstance(corr_value, list):
+                        # For lists, show the length
+                        print(f"    - {os.path.basename(file_path)}: {pair} (list with {len(corr_value)} elements)")
+                    elif isinstance(corr_value, str):
+                        # For strings, show as is
+                        print(f"    - {os.path.basename(file_path)}: {pair} (corr={corr_value})")
+                    else:
+                        # For scalar values, format with 2 decimal places
+                        try:
+                            print(f"    - {os.path.basename(file_path)}: {pair} (corr={corr_value:.2f})")
+                        except (TypeError, ValueError):
+                            # Fallback for any other type
+                            print(f"    - {os.path.basename(file_path)}: {pair} (corr={corr_value})")
+
                 if len(self.correlation_summary['high_corr_pairs']) > 10:
                     print(f"    - ... and {len(self.correlation_summary['high_corr_pairs']) - 10} more pairs")
             else:
