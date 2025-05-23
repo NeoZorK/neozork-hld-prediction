@@ -215,8 +215,17 @@ class StatsCollector:
                     continue
 
     def update_feature_importance_stats(self, file_path, importance_stats):
-        for feature, importance in importance_stats.items():
-            self.feature_importance_summary['important_features'].append((file_path, feature, importance))
+        if 'error' in importance_stats:
+            return
+
+        # Extract important features into the collector
+        if 'feature_importances' in importance_stats:
+            for feature_data in importance_stats['feature_importances']:
+                self.feature_importance_summary['important_features'].append((
+                    file_path,
+                    feature_data['feature'],
+                    feature_data['importance']
+                ))
 
     def print_global_summary(self, args):
         print("\n" + "="*80)
@@ -302,18 +311,71 @@ class StatsCollector:
         if args.feature_importance:
             print(f"\n{Fore.CYAN}Feature Importance Analysis Summary:{Style.RESET_ALL}")
             if self.feature_importance_summary['important_features']:
-                print(f"  • Found {len(self.feature_importance_summary['important_features'])} important features:")
-                for file_path, feature, importance in self.feature_importance_summary['important_features'][:10]:  # Show top 10
-                    # Convert importance to float if it's a string, or handle it as is if conversion fails
-                    try:
-                        importance_value = float(importance)
-                        print(f"    - {os.path.basename(file_path)}: {feature} (importance={importance_value:.2f})")
-                    except (ValueError, TypeError):
-                        print(f"    - {os.path.basename(file_path)}: {feature} (importance={importance})")
-                if len(self.feature_importance_summary['important_features']) > 10:
-                    print(f"    - ... and {len(self.feature_importance_summary['important_features']) - 10} more features")
+                feature_count = len(self.feature_importance_summary['important_features'])
+                unique_files = len(set(file_path for file_path, _, _ in self.feature_importance_summary['important_features']))
+
+                print(f"  • {Fore.GREEN + Style.BRIGHT}Найдено {feature_count} важных признаков{Style.RESET_ALL} в {Fore.GREEN + Style.BRIGHT}{unique_files}{Style.RESET_ALL} файлах:")
+
+                # Группировка признаков по файлам для более организованного вывода
+                features_by_file = {}
+                for file_path, feature, importance in self.feature_importance_summary['important_features']:
+                    file_name = os.path.basename(file_path)
+                    if file_name not in features_by_file:
+                        features_by_file[file_name] = []
+                    features_by_file[file_name].append((feature, importance))
+
+                # Показываем топ-5 файлов
+                shown_files = 0
+                for file_name, features in features_by_file.items():
+                    if shown_files >= 5:  # Лимит на количество выводимых файлов
+                        break
+                    shown_files += 1
+
+                    # Сортировка признаков по важности
+                    features.sort(key=lambda x: float(x[1]) if isinstance(x[1], (float, int)) else 0, reverse=True)
+
+                    print(f"\n    {Fore.BLUE}Файл: {file_name}{Style.RESET_ALL}")
+
+                    # Показываем топ-5 признаков для каждого файла
+                    max_feature_len = max(len(f[0]) for f in features[:5]) if features else 0
+                    for i, (feature, importance) in enumerate(features[:5], 1):  # Топ 5 признаков
+                        try:
+                            importance_value = float(importance)
+                            # Цветовое кодирование на основе важности
+                            if importance_value > 0.2:
+                                color = Fore.RED  # Высокая важность
+                            elif importance_value > 0.1:
+                                color = Fore.YELLOW  # Средняя важность
+                            else:
+                                color = Fore.GREEN  # Низкая важность
+
+                            # Создание визуальной полосы для отображения важности
+                            bar_length = int(importance_value * 50) + 1  # Масштабирование для визуализации
+                            bar = '█' * min(bar_length, 20)  # Ограничиваем длину полосы
+
+                            print(f"      {i}. {feature.ljust(max_feature_len)} : {color}{importance_value:.4f}{Style.RESET_ALL} {color}{bar}{Style.RESET_ALL}")
+                        except (ValueError, TypeError):
+                            print(f"      {i}. {feature.ljust(max_feature_len)} : {importance}")
+
+                    # Показываем количество остальных признаков, если их больше 5
+                    if len(features) > 5:
+                        print(f"      ... и еще {len(features) - 5} признаков")
+
+                # Показываем сообщение о скрытых файлах, если их больше 5
+                if len(features_by_file) > 5:
+                    print(f"\n    ... и еще {len(features_by_file) - 5} файлов с важными признаками")
+
+                # Общие рекомендации по анализу признаков
+                print(f"\n    {Fore.MAGENTA}Рекомендации:{Style.RESET_ALL}")
+                print(f"      • Используйте признаки с высокой важностью для построения моделей")
+                print(f"      • Рассмотрите удаление признаков с очень низкой важностью")
+                print(f"      • Изучите взаимосвязи между важными признаками для Feature Engineering")
             else:
-                print("  • No important features were detected")
+                print(f"  • {Fore.RED}Важных признаков не обнаружено.{Style.RESET_ALL}")
+                print(f"    {Fore.YELLOW}Возможные причины:{Style.RESET_ALL}")
+                print(f"      • Проверьте правильность указания целевой переменной (--target-column)")
+                print(f"      • Целевая переменная может не иметь сильной зависимости от имеющихся признаков")
+                print(f"      • Попробуйте создать новые признаки (Feature Engineering)")
 
         print("\n" + "="*80)
         print(f"{Fore.BLUE + Style.BRIGHT}KEY FINDINGS AND RECOMMENDATIONS{Style.RESET_ALL}")
