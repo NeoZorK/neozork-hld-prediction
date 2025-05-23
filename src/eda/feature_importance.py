@@ -179,11 +179,13 @@ def generate_feature_importance_report(df, file_path, target_column=None):
     </div>
     <style>
         /* CSS styles for HTML report - IDE might show warnings but this is correct CSS syntax */
+        /* noinspection CssUnresolvedReference */
         .feature-groups {
             display: flex; /* CSS flexbox layout - not a Python reference */
             flex-wrap: wrap; /* CSS flexbox property */
             gap: 20px; /* CSS grid/flex gap property */
         }
+        /* noinspection CssUnresolvedReference */
         .feature-group {
             flex: 1; /* CSS flexbox property */
             min-width: 250px; /* CSS width property */
