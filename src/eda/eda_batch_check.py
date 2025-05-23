@@ -31,6 +31,7 @@ Flags:
     --all-stats                Run all statistical analyses
     --correlation-analysis     Correlation analysis between numeric features
     --feature-importance       Feature importance analysis
+    --target-column            Target column for feature importance analysis (optional)
 
     --clean-stats-logs         Remove all statistics log files
     --clean-reports            Remove all HTML report directories for all analyses
@@ -53,6 +54,10 @@ Examples:
     # Run statistical analyses
     python eda_batch_check.py --descriptive-stats
     python eda_batch_check.py --all-stats
+
+    # Run correlation and feature importance analyses
+    python eda_batch_check.py --correlation-analysis
+    python eda_batch_check.py --feature-importance --target-column "close"
 
     # Clean statistics logs and reports
     python eda_batch_check.py --clean-stats-logs
@@ -109,6 +114,12 @@ class StatsCollector:
             'non_stationary_cols': [],
             'has_seasonality': 0,
             'files_with_datetime': 0
+        }
+        self.correlation_summary = {
+            'high_corr_pairs': []  # Pairs of columns with high correlation
+        }
+        self.feature_importance_summary = {
+            'important_features': []  # Features ranked by importance
         }
 
     def update_descriptive_stats(self, file_path, desc_stats):
@@ -167,6 +178,15 @@ class StatsCollector:
         if 'seasonality' in ts_stats and 'day_of_week' in ts_stats['seasonality'] and 'error' not in ts_stats['seasonality']['day_of_week']:
             self.time_series_summary['has_seasonality'] += 1
 
+    def update_correlation_stats(self, file_path, corr_stats):
+        for pair, corr_value in corr_stats.items():
+            if abs(corr_value) > 0.8:  # High correlation threshold
+                self.correlation_summary['high_corr_pairs'].append((file_path, pair, corr_value))
+
+    def update_feature_importance_stats(self, file_path, importance_stats):
+        for feature, importance in importance_stats.items():
+            self.feature_importance_summary['important_features'].append((file_path, feature, importance))
+
     def print_global_summary(self, args):
         print("\n" + "="*80)
         print(f"{Fore.BLUE + Style.BRIGHT}GLOBAL STATISTICAL ANALYSIS SUMMARY{Style.RESET_ALL}")
@@ -219,6 +239,28 @@ class StatsCollector:
                 print("    - Apply differencing to non-stationary series before modeling")
             if self.time_series_summary['has_seasonality'] > 0:
                 print("    - Include day-of-week features in your models to capture seasonality")
+
+        if args.correlation_analysis:
+            print(f"\n{Fore.CYAN}Correlation Analysis Summary:{Style.RESET_ALL}")
+            if self.correlation_summary['high_corr_pairs']:
+                print(f"  • Found {len(self.correlation_summary['high_corr_pairs'])} pairs of columns with high correlation (|corr| > 0.8):")
+                for file_path, pair, corr_value in self.correlation_summary['high_corr_pairs'][:10]:  # Show top 10
+                    print(f"    - {os.path.basename(file_path)}: {pair} (corr={corr_value:.2f})")
+                if len(self.correlation_summary['high_corr_pairs']) > 10:
+                    print(f"    - ... and {len(self.correlation_summary['high_corr_pairs']) - 10} more pairs")
+            else:
+                print("  • No highly correlated column pairs were detected")
+
+        if args.feature_importance:
+            print(f"\n{Fore.CYAN}Feature Importance Analysis Summary:{Style.RESET_ALL}")
+            if self.feature_importance_summary['important_features']:
+                print(f"  • Found {len(self.feature_importance_summary['important_features'])} important features:")
+                for file_path, feature, importance in self.feature_importance_summary['important_features'][:10]:  # Show top 10
+                    print(f"    - {os.path.basename(file_path)}: {feature} (importance={importance:.2f})")
+                if len(self.feature_importance_summary['important_features']) > 10:
+                    print(f"    - ... and {len(self.feature_importance_summary['important_features']) - 10} more features")
+            else:
+                print("  • No important features were detected")
 
         print("\n" + "="*80)
         print(f"{Fore.BLUE + Style.BRIGHT}KEY FINDINGS AND RECOMMENDATIONS{Style.RESET_ALL}")
@@ -284,6 +326,7 @@ def main():
   {Fore.GREEN}--all-stats{Style.RESET_ALL}                Run all statistical analyses
   {Fore.GREEN}--correlation-analysis{Style.RESET_ALL}     Correlation analysis between numeric features
   {Fore.GREEN}--feature-importance{Style.RESET_ALL}       Feature importance analysis
+  {Fore.GREEN}--target-column{Style.RESET_ALL}            Target column for feature importance analysis (optional)
   {Fore.GREEN}--clean-stats-logs{Style.RESET_ALL}         Remove all statistics log files
   {Fore.GREEN}--clean-reports{Style.RESET_ALL}            Remove all HTML report directories for all analyses
 
@@ -305,6 +348,10 @@ def main():
   # Run statistical analyses
   python eda_batch_check.py --descriptive-stats
   python eda_batch_check.py --all-stats
+  
+  # Run correlation and feature importance analyses
+  python eda_batch_check.py --correlation-analysis
+  python eda_batch_check.py --feature-importance --target-column "close"
   
   # Clean statistics logs and reports
   python eda_batch_check.py --clean-stats-logs
@@ -346,6 +393,7 @@ def main():
     parser.add_argument('--all-stats', action='store_true', help='Run all statistical analyses')
     parser.add_argument('--correlation-analysis', action='store_true', help='Correlation analysis between numeric features')
     parser.add_argument('--feature-importance', action='store_true', help='Feature importance analysis')
+    parser.add_argument('--target-column', type=str, help='Target column for feature importance analysis (optional)')
     parser.add_argument('--clean-stats-logs', action='store_true', help='Remove all statistics log files')
     parser.add_argument('--clean-reports', action='store_true', help='Remove all HTML report directories for all analyses')
     args = parser.parse_args()
@@ -386,6 +434,8 @@ def main():
     dist_analysis_results = []
     outlier_analysis_results = []
     ts_analysis_results = []
+    corr_analysis_results = []
+    feature_importance_results = []
     processed_file_paths = []
 
     # Initialize stats collector for global summaries
@@ -403,7 +453,8 @@ def main():
             args.data_quality_checks or args.nan_check or args.duplicate_check or args.gap_check or
             args.zero_check or args.negative_check or args.inf_check or
             args.descriptive_stats or args.distribution_analysis or args.outlier_analysis or
-            args.time_series_analysis or args.all_stats or args.basic_stats
+            args.time_series_analysis or args.all_stats or args.basic_stats or
+            args.correlation_analysis or args.feature_importance
         ):
             if 'error' in info:
                 print(f"\n\n{Fore.CYAN}[{idx}/{total_files}] File: {info.get('file_path')}{Style.RESET_ALL}")
@@ -544,9 +595,36 @@ def main():
                     # Update global stats
                     stats_collector.update_time_series_stats(file, ts_analysis_result)
 
+                if args.correlation_analysis:
+                    print(f"\n{Fore.BLUE + Style.BRIGHT}Correlation Analysis for {info.get('file_path')}:{Style.RESET_ALL}")
+                    with tqdm(total=1, desc=f"Correlation analysis", leave=False) as pbar:
+                        corr_analysis_result = correlation_analysis.compute_correlation(df)
+                        pbar.update(1)  # Update progress bar after computation
+
+                    corr_analysis_results.append(corr_analysis_result)
+                    correlation_analysis.print_correlation_analysis(corr_analysis_result)
+                    # Update global stats
+                    stats_collector.update_correlation_stats(file, corr_analysis_result)
+
+                if args.feature_importance:
+                    print(f"\n{Fore.BLUE + Style.BRIGHT}Feature Importance Analysis for {info.get('file_path')}:{Style.RESET_ALL}")
+                    target_column = args.target_column
+                    if not target_column:
+                        print(f"{Fore.RED}Error: Target column must be specified for feature importance analysis (--target-column){Style.RESET_ALL}")
+                        continue
+
+                    with tqdm(total=1, desc=f"Feature importance analysis", leave=False) as pbar:
+                        feature_importance_result = feature_importance.compute_feature_importance(df, target_column)
+                        pbar.update(1)  # Update progress bar after computation
+
+                    feature_importance_results.append(feature_importance_result)
+                    feature_importance.print_feature_importance(feature_importance_result)
+                    # Update global stats
+                    stats_collector.update_feature_importance_stats(file, feature_importance_result)
+
                 # Add a file-specific summary at the end of each file analysis
                 if (args.all_stats or args.descriptive_stats or args.distribution_analysis or
-                    args.outlier_analysis or args.time_series_analysis):
+                    args.outlier_analysis or args.time_series_analysis or args.correlation_analysis or args.feature_importance):
                     print(f"\n{Fore.YELLOW + Style.BRIGHT}File-Specific Summary for {os.path.basename(file)}:{Style.RESET_ALL}")
                     print("  • This file contains data with the following characteristics:")
                     # Print key metrics
@@ -621,7 +699,7 @@ def main():
 
     # Print global statistical summary if any statistical analysis was performed
     if (args.all_stats or args.descriptive_stats or args.distribution_analysis or
-        args.outlier_analysis or args.time_series_analysis):
+        args.outlier_analysis or args.time_series_analysis or args.correlation_analysis or args.feature_importance):
         stats_collector.print_global_summary(args)
 
         # Log global statistics summary
@@ -649,6 +727,14 @@ def main():
         if args.time_series_analysis or args.all_stats:
             log_path = stats_logger.log_time_series_analysis(ts_analysis_results, processed_file_paths)
             print(f"{Fore.GREEN}Time series analysis logged to: {log_path}{Style.RESET_ALL}")
+
+        if args.correlation_analysis:
+            log_path = stats_logger.log_correlation_analysis(corr_analysis_results, processed_file_paths)
+            print(f"{Fore.GREEN}Correlation analysis logged to: {log_path}{Style.RESET_ALL}")
+
+        if args.feature_importance:
+            log_path = stats_logger.log_feature_importance(feature_importance_results, processed_file_paths)
+            print(f"{Fore.GREEN}Feature importance analysis logged to: {log_path}{Style.RESET_ALL}")
 
     # Print folder statistics
     print("\n" + Fore.BLUE + Style.BRIGHT + "Folder statistics:" + Style.RESET_ALL)

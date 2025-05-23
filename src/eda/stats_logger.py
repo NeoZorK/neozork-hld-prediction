@@ -623,76 +623,157 @@ def log_time_series_analysis(ts_stats_results, file_paths):
     return log_path
 
 
-def log_global_stats_summary(stats_collector):
-    """Log global statistics summary to a file"""
+def log_correlation_analysis(corr_analysis_results, file_paths):
+    """
+    Log correlation analysis results to a file
+
+    Parameters:
+    -----------
+    corr_analysis_results : list
+        List of correlation analysis results for each file
+    file_paths : list
+        List of file paths corresponding to the results
+
+    Returns:
+    --------
+    str
+        Path to the log file
+    """
+    # Create a dictionary with file paths as keys and results as values
+    log_data = {}
+    for i, result in enumerate(corr_analysis_results):
+        if i < len(file_paths):
+            # Convert pandas dataframes to dict format if needed
+            if 'matrix' in result and hasattr(result['matrix'], 'to_dict'):
+                result_copy = result.copy()
+                result_copy['matrix'] = result['matrix'].to_dict()
+                log_data[file_paths[i]] = result_copy
+            else:
+                log_data[file_paths[i]] = result
+
+    # Add metadata
+    log_data['metadata'] = {
+        'timestamp': datetime.datetime.now(),
+        'analysis_type': 'correlation_analysis',
+        'files_analyzed': len(file_paths)
+    }
+
+    # Ensure logs directory and generate filename
     log_dir = ensure_logs_directory()
-    filename = generate_log_filename()
-    log_path = os.path.join(log_dir, filename)
+    log_filename = os.path.join(log_dir, f"correlation_analysis_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
 
-    # Extract summary data from stats_collector
-    summary_data = {
-        'timestamp': datetime.datetime.now().isoformat(),
-        'analysis_type': 'global_summary',
-        'files_analyzed': stats_collector.descriptive_summary['files_analyzed'],
-        'total_columns': stats_collector.descriptive_summary['total_columns'],
-        'high_variance_columns': [
-            {'file': os.path.basename(path), 'column': col, 'cv': cv}
-            for path, col, cv in stats_collector.descriptive_summary['high_variance_cols']
-        ],
-        'normal_columns_count': len(stats_collector.distribution_summary['normal_cols']),
-        'highly_skewed_columns_count': len(stats_collector.distribution_summary['highly_skewed_cols']),
-        'columns_with_outliers': len(stats_collector.outlier_summary['high_outlier_cols']),
-        'stationary_series_count': len(stats_collector.time_series_summary['stationary_cols']),
-        'non_stationary_series_count': len(stats_collector.time_series_summary['non_stationary_cols']),
-        'files_with_seasonality': stats_collector.time_series_summary['has_seasonality']
+    # Write results to file with error handling
+    try:
+        with open(log_filename, 'w') as f:
+            json.dump(log_data, f, indent=2, cls=CustomJSONEncoder)
+        return log_filename
+    except Exception as e:
+        print(f"Error writing log file: {e}")
+        return None
+
+
+def log_feature_importance(feature_importance_results, file_paths):
+    """
+    Log feature importance analysis results to a file
+
+    Parameters:
+    -----------
+    feature_importance_results : list
+        List of feature importance analysis results for each file
+    file_paths : list
+        List of file paths corresponding to the results
+
+    Returns:
+    --------
+    str
+        Path to the log file
+    """
+    # Create a dictionary with file paths as keys and results as values
+    log_data = {}
+    for i, result in enumerate(feature_importance_results):
+        if i < len(file_paths):
+            log_data[file_paths[i]] = result
+
+    # Add metadata
+    log_data['metadata'] = {
+        'timestamp': datetime.datetime.now(),
+        'analysis_type': 'feature_importance',
+        'files_analyzed': len(file_paths)
     }
 
-    # Add key recommendations
-    summary_data['key_recommendations'] = {
-        'data_quality': [],
-        'data_preparation': [],
-        'modeling_strategy': [],
-        'next_steps': []
+    # Ensure logs directory and generate filename
+    log_dir = ensure_logs_directory()
+    log_filename = os.path.join(log_dir, f"feature_importance_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
+
+    # Write results to file with error handling
+    try:
+        with open(log_filename, 'w') as f:
+            json.dump(log_data, f, indent=2, cls=CustomJSONEncoder)
+        return log_filename
+    except Exception as e:
+        print(f"Error writing log file: {e}")
+        return None
+
+
+def log_global_stats_summary(stats_collector):
+    """
+    Log global statistics summary to a file
+
+    Parameters:
+    -----------
+    stats_collector : StatsCollector
+        The stats collector object containing summarized statistics
+
+    Returns:
+    --------
+    str
+        Path to the log file
+    """
+    # Create log data structure
+    log_data = {
+        'descriptive_summary': stats_collector.descriptive_summary,
+        'distribution_summary': stats_collector.distribution_summary,
+        'outlier_summary': stats_collector.outlier_summary,
+        'time_series_summary': stats_collector.time_series_summary,
+        'correlation_summary': stats_collector.correlation_summary,
+        'feature_importance_summary': stats_collector.feature_importance_summary,
+        'metadata': {
+            'timestamp': datetime.datetime.now(),
+            'analysis_type': 'global_stats_summary',
+            'files_analyzed': stats_collector.descriptive_summary.get('files_analyzed', 0)
+        }
     }
 
-    # Data quality recommendations
-    if stats_collector.outlier_summary['high_outlier_cols']:
-        summary_data['key_recommendations']['data_quality'].append("Address outliers in the data, particularly in price and volume columns")
+    # Ensure logs directory and generate filename
+    log_dir = ensure_logs_directory()
+    log_filename = os.path.join(log_dir, f"global_stats_summary_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
 
-    # Data preparation recommendations
-    if stats_collector.distribution_summary['highly_skewed_cols']:
-        summary_data['key_recommendations']['data_preparation'].append("Apply appropriate transformations to normalize skewed distributions")
-    if stats_collector.descriptive_summary['high_variance_cols']:
-        summary_data['key_recommendations']['data_preparation'].append("Consider standardizing high-variance features")
-
-    # Modeling strategy recommendations
-    if stats_collector.time_series_summary['non_stationary_cols']:
-        summary_data['key_recommendations']['modeling_strategy'].append("Use differencing for non-stationary time series")
-    if stats_collector.time_series_summary['has_seasonality'] > 0:
-        summary_data['key_recommendations']['modeling_strategy'].append("Incorporate seasonality features (day of week, month) in your models")
-
-    # Next steps recommendations
-    summary_data['key_recommendations']['next_steps'] = [
-        "Run correlation analysis to identify relationships",
-        "Perform feature importance analysis to identify key predictors",
-        "Consider developing specialized features based on domain knowledge"
-    ]
-
-    with open(log_path, 'w') as f:
-        json.dump(summary_data, f, indent=2, cls=CustomJSONEncoder)
-
-    return log_path
+    # Write results to file with error handling
+    try:
+        with open(log_filename, 'w') as f:
+            json.dump(log_data, f, indent=2, cls=CustomJSONEncoder)
+        return log_filename
+    except Exception as e:
+        print(f"Error writing log file: {e}")
+        return None
 
 
 def clean_stats_logs():
-    """Delete all statistics log files"""
+    """
+    Clean up old statistics logs (delete all log files)
+
+    Returns:
+    --------
+    int
+        Number of files deleted
+    """
     log_dir = ensure_logs_directory()
-    log_files = glob(os.path.join(log_dir, 'stats_analysis_*.json')) + glob(os.path.join(log_dir, 'unified_stats_analysis_*.json'))
+    files = glob(os.path.join(log_dir, "*.json"))
 
     count = 0
-    for file_path in log_files:
+    for f in files:
         try:
-            os.remove(file_path)
+            os.remove(f)
             count += 1
         except:
             pass
