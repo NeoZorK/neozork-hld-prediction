@@ -304,7 +304,12 @@ class StatsCollector:
             if self.feature_importance_summary['important_features']:
                 print(f"  • Found {len(self.feature_importance_summary['important_features'])} important features:")
                 for file_path, feature, importance in self.feature_importance_summary['important_features'][:10]:  # Show top 10
-                    print(f"    - {os.path.basename(file_path)}: {feature} (importance={importance:.2f})")
+                    # Convert importance to float if it's a string, or handle it as is if conversion fails
+                    try:
+                        importance_value = float(importance)
+                        print(f"    - {os.path.basename(file_path)}: {feature} (importance={importance_value:.2f})")
+                    except (ValueError, TypeError):
+                        print(f"    - {os.path.basename(file_path)}: {feature} (importance={importance})")
                 if len(self.feature_importance_summary['important_features']) > 10:
                     print(f"    - ... and {len(self.feature_importance_summary['important_features']) - 10} more features")
             else:
