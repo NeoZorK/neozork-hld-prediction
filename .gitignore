@@ -30,6 +30,7 @@ mql5_feed/
 *.bak
 *.png
 *.txt
+*.json
 
 # Ignore log files from batch EDA and any other logs
 *.log
