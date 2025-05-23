@@ -469,7 +469,174 @@ def feature_importance_cli(df, target_column=None, file_path=None):
     if report_path:
         print(f"\n\033[93m[INFO]\033[0m Feature importance report saved to: {report_path}")
 
+    # Generate and print colored summary
+    print_colored_feature_importance_summary(importance_result, file_path)
+
     return importance_result
+
+def print_colored_feature_importance_summary(importance_result, file_path=None):
+    """
+    Print a beautifully formatted and colored Feature Importance Analysis Summary to console.
+
+    Parameters:
+    -----------
+    importance_result : dict
+        Dictionary with feature importance analysis results
+    file_path : str or None
+        Original file path for identifying the dataset
+    """
+    if 'error' in importance_result:
+        print(f"\n\033[91mError in feature importance analysis: {importance_result['error']}\033[0m")
+        return
+
+    # Define ANSI color codes
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    CYAN = '\033[96m'
+    MAGENTA = '\033[95m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    RESET = '\033[0m'
+
+    # Extract dataset name from file path
+    dataset_name = os.path.basename(file_path).replace('.parquet', '') if file_path else "Current dataset"
+
+    # Print header
+    print(f"\n{BOLD}{BLUE}{'='*80}{RESET}")
+    print(f"{BOLD}{BLUE}Feature Importance Analysis Summary: {GREEN}{dataset_name}{RESET}")
+    print(f"{BOLD}{BLUE}{'='*80}{RESET}")
+
+    # Target column and model type
+    print(f"\n{BOLD}Target variable:{RESET} {CYAN}{importance_result['target_column']}{RESET}")
+    print(f"{BOLD}Model type:{RESET} {CYAN}{'Classification' if importance_result['is_classification'] else 'Regression'}{RESET}")
+    print(f"{BOLD}Number of features:{RESET} {CYAN}{importance_result['num_features']}{RESET}")
+
+    # Feature importance visualization
+    print(f"\n{BOLD}{UNDERLINE}Feature Importance Ranking:{RESET}")
+
+    feature_importances = importance_result['feature_importances'][:10]  # Show top 10
+    max_feature_len = max(len(f['feature']) for f in feature_importances) + 2
+
+    # Print table header
+    print(f"\n{BOLD}{'Feature'.ljust(max_feature_len)} | {'Importance'.ljust(10)} | {'Norm %'.ljust(8)} | Visualization{RESET}")
+    print(f"{'-'*(max_feature_len+1)}|{'-'*12}|{'-'*10}|{'-'*40}")
+
+    # Print each feature
+    for feature in feature_importances:
+        feature_name = feature['feature']
+        importance = feature['importance']
+        normalized = feature['normalized_importance']
+
+        # Color code based on importance
+        if normalized >= 70:
+            color = RED
+            category = "HIGH"
+        elif normalized >= 30:
+            color = YELLOW
+            category = "MED"
+        else:
+            color = RESET
+            category = "LOW"
+
+        # Create bar visualization
+        bar_length = int(normalized * 0.4)
+        bar = '█' * bar_length
+
+        # Print formatted row
+        print(f"{feature_name.ljust(max_feature_len)} | {importance:.6f} | {color}{normalized:>6.1f}%{RESET} | {color}{bar}{RESET} {color}[{category}]{RESET}")
+
+    # Print group summary
+    high_imp = len(importance_result['high_importance'])
+    med_imp = len(importance_result['medium_importance'])
+    low_imp = len(importance_result['low_importance'])
+
+    print(f"\n{BOLD}Importance Categories:{RESET}")
+    print(f"  {RED}High importance (≥70%):{RESET} {high_imp} features")
+    print(f"  {YELLOW}Medium importance (30-70%):{RESET} {med_imp} features")
+    print(f"  {CYAN}Low importance (<30%):{RESET} {low_imp} features")
+
+    # Print top features
+    if importance_result['top_features']:
+        print(f"\n{BOLD}Top predictive features:{RESET} {GREEN}{', '.join(importance_result['top_features'])}{RESET}")
+
+    # Print cumulative importance
+    cum_threshold = 0.95
+    features_needed = 0
+
+    for i, feature in enumerate(feature_importances):
+        if feature['cumulative_importance'] >= cum_threshold:
+            features_needed = i + 1
+            break
+
+    if features_needed > 0:
+        pct_features = (features_needed / importance_result['num_features']) * 100
+        print(f"\n{BOLD}Cumulative Importance:{RESET} Top {CYAN}{features_needed}{RESET} features ({CYAN}{pct_features:.1f}%{RESET}) account for {CYAN}95%{RESET} of total importance")
+
+    print(f"\n{BOLD}{BLUE}{'='*80}{RESET}")
+
+    # Save results to JSON
+    save_feature_importance_to_json(importance_result, file_path)
+
+def save_feature_importance_to_json(importance_result, file_path=None):
+    """
+    Save feature importance results to a JSON file.
+
+    Parameters:
+    -----------
+    importance_result : dict
+        Dictionary with feature importance analysis results
+    file_path : str or None
+        Original file path for identifying the dataset
+
+    Returns:
+    --------
+    str
+        Path to the saved JSON file
+    """
+    import json
+    from datetime import datetime
+
+    if 'error' in importance_result:
+        return None
+
+    # Create base directory for results
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    results_dir = os.path.join(base_dir, 'results', 'feature_importance')
+    os.makedirs(results_dir, exist_ok=True)
+
+    # Create filename from original file or timestamp
+    if file_path:
+        filename = f"feature_importance_{os.path.basename(file_path).replace('.parquet', '')}.json"
+    else:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"feature_importance_{timestamp}.json"
+
+    output_path = os.path.join(results_dir, filename)
+
+    # Prepare data for JSON serialization
+    # Remove any non-serializable objects
+    json_data = {
+        'target_column': importance_result['target_column'],
+        'is_classification': importance_result['is_classification'],
+        'num_features': importance_result['num_features'],
+        'top_features': importance_result['top_features'],
+        'feature_importances': importance_result['feature_importances'],
+        'high_importance': importance_result['high_importance'],
+        'medium_importance': importance_result['medium_importance'],
+        'low_importance': importance_result['low_importance'],
+        'timestamp': datetime.now().isoformat(),
+        'source_file': file_path
+    }
+
+    # Save to JSON file
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(json_data, f, indent=2)
+
+    print(f"\033[93m[INFO]\033[0m Feature importance saved to: {output_path}")
+
+    return output_path
 
 def generate_global_feature_importance_summary(feature_importance_results, file_paths, output_path=None):
     """
