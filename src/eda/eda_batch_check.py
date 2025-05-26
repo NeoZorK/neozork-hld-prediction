@@ -255,6 +255,9 @@ def main():
 {Fore.YELLOW}Usage:{Style.RESET_ALL}
   python eda_batch_check.py [flags]
 
+{Fore.YELLOW}File Selection:{Style.RESET_ALL}
+  {Fore.GREEN}--file FILENAME{Style.RESET_ALL}            Specify a single file name for analysis (within the data directory)
+
 {Fore.YELLOW}Data Quality Flags:{Style.RESET_ALL}
   {Fore.GREEN}--nan-check{Style.RESET_ALL}                Check for missing values (NaN) in columns
   {Fore.GREEN}--duplicate-check{Style.RESET_ALL}          Find fully duplicated rows and duplicated values in string columns
@@ -312,6 +315,16 @@ def main():
   
   # Combine analysis with fixing
   python eda_batch_check.py --data-quality-checks --fix-files --fix-all
+  
+  # Analyze a single file (Data Quality)
+  python eda_batch_check.py --file mydata.parquet --nan-check
+  python eda_batch_check.py --file mydata.parquet --data-quality-checks
+  
+  # Fix a single file
+  python eda_batch_check.py --file mydata.parquet --fix-files --fix-duplicates
+  
+  # Statistical analysis on a single file
+  python eda_batch_check.py --file mydata.parquet --descriptive-stats
 """
     parser = argparse.ArgumentParser(
         description=help_header,
@@ -348,6 +361,8 @@ def main():
     parser.add_argument('--feature-importance', action='store_true', help='Feature importance analysis')
     parser.add_argument('--clean-stats-logs', action='store_true', help='Remove all statistics log files')
     parser.add_argument('--clean-reports', action='store_true', help='Remove all HTML report directories for all analyses')
+    # File selection
+    parser.add_argument('--file', type=str, help='Specify a single file name for analysis (within the data directory)')
     args = parser.parse_args()
 
     # Handle the clean logs request if specified
@@ -371,6 +386,31 @@ def main():
     # Check if at least one flag is provided
     data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', 'data')
     parquet_files = [y for x in os.walk(data_dir) for y in glob.glob(os.path.join(x[0], '*.parquet'))]
+
+    # Filter for a specific file if requested
+    if args.file:
+        target_file = args.file
+        # If the provided name doesn't include .parquet extension, add it
+        if not target_file.endswith('.parquet'):
+            target_file += '.parquet'
+        
+        # Search for the file in the data directory
+        found_files = []
+        for file_path in parquet_files:
+            if os.path.basename(file_path) == target_file or target_file in file_path:
+                found_files.append(file_path)
+        
+        if not found_files:
+            print(f"{Fore.RED}Error: File '{target_file}' not found in the data directory{Style.RESET_ALL}")
+            return
+        elif len(found_files) > 1:
+            print(f"{Fore.YELLOW}Warning: Multiple files match '{target_file}'. Using first match:{Style.RESET_ALL}")
+            for f in found_files:
+                print(f"  {f}")
+            parquet_files = [found_files[0]]
+        else:
+            parquet_files = found_files
+            print(f"{Fore.GREEN}Analyzing single file: {parquet_files[0]}{Style.RESET_ALL}")
 
     # Create lists to store summary data
     nan_summary_all = []
