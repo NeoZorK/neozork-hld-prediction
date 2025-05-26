@@ -504,6 +504,8 @@ python src/eda/eda_batch_check.py [flags]
 ```
 
 ## Flags
+###File Selection:
+- `--file` `FILENAME`            Specify a single file name for analysis (within the data directory)
 
 ### Data Quality Check Flags
 - `--nan-check`: Check for missing values (NaN) in columns
@@ -577,6 +579,16 @@ python src/eda/eda_batch_check.py --nan-check --gap-check --zero-check --basic-s
 ```bash
   python eda_batch_check.py --all-stats
 ```  
+### Statistical analysis on a single file
+```bash
+  python eda_batch_check.py --file mydata.parquet --descriptive-stats
+```  
+### Fix duplicates of a single file
+```bash
+  python eda_batch_check.py --file mydata.parquet --fix-files --fix-duplicates
+```  
+
+
 
 ## How It Works
 
