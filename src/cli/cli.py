@@ -125,14 +125,14 @@ def parse_arguments():
         '--show-rule', type=str, choices=all_rule_choices, default=None,
         help="Trading rule to apply for indicator calculation when showing a single file."
     )
-    show_group.add_argument(
-        '--raw', action='store_true', default=False,
-        help="Use raw/original data directories instead of cleaned (default: False)."
-    )
-    show_group.add_argument(
-        '--cleaned', action='store_true', default=False,
-        help="Use cleaned data directories (default: True unless --raw is set)."
-    )
+    # show_group.add_argument(
+    #     '--raw', action='store_true', default=False,
+    #     help="Use raw/original data directories instead of cleaned (default: False)."
+    # )
+    # show_group.add_argument(
+    #     '--cleaned', action='store_true', default=False,
+    #     help="Use cleaned data directories (default: True unless --raw is set)."
+    # )
 
     # --- Plotting Options Group ---
     plotting_group = parser.add_argument_group('Plotting Options')
