@@ -23,4 +23,4 @@ class TradingRule(Enum):
     Support_Resistants = 1
     Pressure_Vector = 2
     Predict_High_Low_Direction = 3
-
+    OHLCV = 4  # Raw OHLCV data without indicator calculation
