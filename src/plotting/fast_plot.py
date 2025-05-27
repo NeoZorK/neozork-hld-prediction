@@ -116,10 +116,11 @@ def plot_indicator_results_fast(
 
         # Find all numeric columns that aren't standard columns
         for col in df.columns:
-            if col not in standard_columns and pd.api.types.is_numeric_dtype(df[col]):
+            # Check if column is not in standard columns and is numeric
+            if not any(std_col.lower() == col.lower() for std_col in standard_columns) and pd.api.types.is_numeric_dtype(df[col]):
                 auto_display_columns.append(col)
 
-        print(f"AUTO mode: Found {len(auto_display_columns)} additional columns to display: {auto_display_columns}")
+        print(f"AUTO mode: Found {len(auto_display_columns)} columns to display: {auto_display_columns}")
 
     # Ensure the index column exists and is datetime type
     if 'index' not in df.columns:
@@ -235,11 +236,21 @@ def plot_indicator_results_fast(
 
         # In AUTO mode, add prediction-related columns to main chart
         if is_auto_mode:
-            prediction_columns = ['predicted_low', 'predicted_high', 'pressure_vector']
-            colors = ['darkgreen', 'darkred', 'purple']
-            dash_styles = ['dashed', 'dashed', 'dotted']
+            # Определяем приоритетные колонки для основного графика
+            prediction_columns = ['predicted_low', 'predicted_high', 'pressure_vector', 'pressure']
 
-            for i, col in enumerate([c for c in prediction_columns if c in df.columns]):
+            # Добавляем все auto_display_columns для полного покрытия
+            all_pred_columns = prediction_columns.copy()
+            all_pred_columns.extend([col for col in auto_display_columns
+                                 if col.lower() not in [p.lower() for p in prediction_columns]])
+
+            colors = ['darkgreen', 'darkred', 'purple', 'blue', 'orange', 'teal', 'brown', 'magenta']
+            dash_styles = ['dashed', 'dashed', 'dotted', 'solid', 'solid']
+
+            # Выводим информацию для отладки
+            print(f"Adding columns to main chart: {[c for c in all_pred_columns if c in df.columns]}")
+
+            for i, col in enumerate([c for c in all_pred_columns if c in df.columns]):
                 p_main.line('index', col, line_color=colors[i % len(colors)],
                           line_dash=dash_styles[i % len(dash_styles)], line_width=2,
                           legend_label=f"{col.replace('_', ' ').title()}",
