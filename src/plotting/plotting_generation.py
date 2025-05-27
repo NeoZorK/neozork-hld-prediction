@@ -73,15 +73,15 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
         data_label = Path(data_label).stem
     title_parts.append(data_label)
 
-    # Извлечение таймфрейма из имени файла для более точного отображения
+    # Extract interval from data_info or args
     if 'data_source_label' in data_info and isinstance(data_info['data_source_label'], str):
-        # Попытка извлечь таймфрейм из имени файла (например, PERIOD_MN1)
+        # Try to extract interval from data_source_label
         source_label = data_info['data_source_label']
         if 'PERIOD_' in source_label:
             try:
                 interval_str = source_label.split('PERIOD_')[1].split('_')[0].split('.')[0]
             except (IndexError, ValueError):
-                # Если не удалось извлечь из имени, используем значение из аргументов
+                # If extraction fails, fallback to args or data_info
                 interval_str = str(args.interval) if hasattr(args, 'interval') else data_info.get('interval', 'UnknownInterval')
         else:
             interval_str = str(args.interval) if hasattr(args, 'interval') else data_info.get('interval', 'UnknownInterval')
