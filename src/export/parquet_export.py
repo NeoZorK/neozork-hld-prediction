@@ -20,6 +20,8 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
     only necessary OHLCV and timestamp fields along with the calculated indicator values.
     The new file has the same name as the original but with the rule name as a postfix.
 
+    In show mode, export happens only when a single file is being processed.
+
     Args:
         result_df (pandas.DataFrame): DataFrame containing the calculated indicator data
         data_info (dict): Information about the data source
@@ -35,6 +37,14 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
         "output_file": None,
         "error_message": None
     }
+
+    # Log the mode and export flag for debugging
+    logger.print_debug(f"Export called: mode={args.mode}, export_flag={getattr(args, 'export_parquet', False)}, single_file={getattr(args, 'single_file_mode', False)}")
+
+    # Only proceed if export_parquet flag is set
+    if not getattr(args, 'export_parquet', False):
+        export_info["error_message"] = "Export flag not set"
+        return export_info
 
     # Check if result_df is valid
     if result_df is None or result_df.empty:
@@ -61,8 +71,18 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
         original_file = Path(original_file)
 
     # Create the new filename with the rule postfix
-    rule_shortname = selected_rule.replace("_", "")
+    # Handle the case when selected_rule is an Enum or an object with a name attribute
+    if hasattr(selected_rule, 'name'):
+        rule_shortname = selected_rule.name.replace("_", "")
+    else:
+        rule_shortname = str(selected_rule).replace("_", "")
+
+    # Log the original file and output path for debugging
+    logger.print_debug(f"Original file: {original_file}")
+    logger.print_debug(f"Rule shortname: {rule_shortname}")
+
     output_file = original_file.parent / f"{original_file.stem}_{rule_shortname}{original_file.suffix}"
+    logger.print_debug(f"Output file will be: {output_file}")
 
     try:
         # Prepare the data for export

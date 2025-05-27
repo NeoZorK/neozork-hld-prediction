@@ -11,8 +11,15 @@ import traceback
 # Import for indicator calculation; fallback for different relative import
 try:
     from src.calculation.indicator_calculation import calculate_indicator
+    from src.export.parquet_export import export_indicator_to_parquet
 except ImportError:
-    from src.calculation.indicator_calculation import calculate_indicator
+    try:
+        from ..calculation.indicator_calculation import calculate_indicator
+        from ..export.parquet_export import export_indicator_to_parquet
+    except ImportError:
+        # Last resort: assume running from src directory
+        calculate_indicator = None
+        export_indicator_to_parquet = None
 
 def show_help():
     """
@@ -282,6 +289,8 @@ def handle_show_mode(args):
         return
     elif len(found_files) == 1:
         print("Single CSV file found. Will automatically open chart in browser.")
+        # Flag this as a single file processing for export
+        args.single_file_mode = True
 
     found_files.sort(key=lambda x: x['name'])
     print("-" * 40)
@@ -370,6 +379,27 @@ def handle_show_mode(args):
                 datetime_column = result_df.index.name or 'datetime'
             _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
             print(f"\nIndicator '{selected_rule.name}' calculated and shown above.")
+
+            # Export indicator data to parquet if requested
+            if hasattr(args, 'export_parquet') and args.export_parquet:
+                print(f"Exporting indicator data to parquet file...")
+                data_info = {
+                    "ohlcv_df": df,
+                    "data_source_label": f"{found_files[0]['name']}",
+                    "rows_count": len(df),
+                    "columns_count": len(df.columns),
+                    "data_size_mb": found_files[0]['size_mb'],
+                    "first_date": found_files[0]['first_date'],
+                    "last_date": found_files[0]['last_date'],
+                    "parquet_cache_used": True,
+                    "parquet_cache_file": str(found_files[0]['path'])
+                }
+                export_info = export_indicator_to_parquet(result_df, data_info, selected_rule, args)
+                if export_info["success"]:
+                    print(f"Indicator data exported to: {export_info['output_file']}")
+                else:
+                    print(f"Failed to export indicator data: {export_info['error_message']}")
+
             # Draw plot after indicator calculation only if draw flag is set to supported mode
             if _should_draw_plot(args):
                 print(f"\nDrawing plot after indicator calculation with method: '{args.draw}'...")
@@ -377,7 +407,7 @@ def handle_show_mode(args):
                     generate_plot = import_generate_plot()
                     data_info = {
                         "ohlcv_df": df,
-                        "data_source_label": f"Parquet file: {found_files[0]['name']}",
+                        "data_source_label": f"{found_files[0]['name']}", # Убрал "Parquet file: "
                         "rows_count": len(df),
                         "columns_count": len(df.columns),
                         "data_size_mb": found_files[0]['size_mb'],
@@ -412,7 +442,7 @@ def handle_show_mode(args):
             df = pd.read_parquet(found_files[0]['path'])
             data_info = {
                 "ohlcv_df": df,
-                "data_source_label": f"Parquet file: {found_files[0]['name']}",
+                "data_source_label": f"{found_files[0]['name']}",  # Removed "Parquet file: " prefix
                 "rows_count": len(df),
                 "columns_count": len(df.columns),
                 "data_size_mb": found_files[0]['size_mb'],
@@ -438,10 +468,30 @@ def handle_show_mode(args):
                 else:
                     point_size = 0.01
                 print(f"Point size not found in filename, using default: {point_size}")
-            generate_plot = import_generate_plot()
-            result_df = None
-            selected_rule = args.rule if hasattr(args, 'rule') else 'Predict_High_Low_Direction'
+
+            # Add flag for single file mode
+            args.single_file_mode = True
+
+            # If rule is specified, calculate the indicator
+            if hasattr(args, 'rule') and args.rule:
+                print(f"Calculating indicator '{args.rule}' for the file...")
+                # Calculate the indicator
+                result_df, selected_rule = calculate_indicator(args, df, point_size)
+
+                # Export indicator data to parquet if requested
+                if hasattr(args, 'export_parquet') and args.export_parquet:
+                    print(f"Exporting indicator data to parquet file...")
+                    export_info = export_indicator_to_parquet(result_df, data_info, selected_rule, args)
+                    if export_info["success"]:
+                        print(f"Indicator data exported to: {export_info['output_file']}")
+                    else:
+                        print(f"Failed to export indicator data: {export_info['error_message']}")
+            else:
+                result_df = None
+                selected_rule = 'Predict_High_Low_Direction'
+
             estimated_point = True
+            generate_plot = import_generate_plot()
             generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
             print(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode")
         except Exception as e:

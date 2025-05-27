@@ -118,10 +118,18 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
             # Construct filename
             filename_parts = [
                 data_label.replace(':', '_').replace('/', '_').replace('\\\\', '_'),
-                interval_str,
-                selected_rule.name,
-                "plotly"
+                interval_str
             ]
+
+            # Add point size if available
+            if hasattr(selected_rule, 'name'):
+                rule_shortname = selected_rule.name.replace("_", "")
+            else:
+                rule_shortname = str(selected_rule).replace("_", "")
+
+            filename_parts.append(rule_shortname)
+            filename_parts.append("plotly")
+
             filename = "_".join(filter(None, filename_parts)) + ".html"
             filepath = output_dir / filename
             try:
@@ -142,3 +150,4 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     except Exception as e_gen:
         logger.print_error(f"An error occurred during plot generation: {type(e_gen).__name__}: {e_gen}")
         logger.print_debug(f"Traceback (generate plot):\n{traceback.format_exc()}")
+
