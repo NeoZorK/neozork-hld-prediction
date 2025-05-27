@@ -16,6 +16,8 @@ from ..utils.point_size_determination import get_point_size
 from ..calculation.indicator_calculation import calculate_indicator
 from ..plotting.plotting_generation import generate_plot
 from src.cli.cli_show_mode import handle_show_mode
+# Import the export function
+from ..export.parquet_export import export_indicator_to_parquet
 
 # Definition of the run_indicator_workflow function
 def run_indicator_workflow(args):
@@ -132,6 +134,16 @@ def run_indicator_workflow(args):
         t_plot_end = time.perf_counter()
         workflow_results["plot_duration"] = t_plot_end - t_plot_start
         workflow_results["steps_duration"]["plot"] = workflow_results["plot_duration"]
+
+        # --- Step 5: Export Indicator Data to Parquet (if requested) ---
+        if hasattr(args, 'export_parquet') and args.export_parquet:
+            logger.print_info("--- Step 5: Exporting Indicator Data to Parquet ---")
+            t_export_start = time.perf_counter()
+            export_info = export_indicator_to_parquet(result_df, data_info, selected_rule, args)
+            t_export_end = time.perf_counter()
+            workflow_results["export_duration"] = t_export_end - t_export_start
+            workflow_results["steps_duration"]["export"] = workflow_results["export_duration"]
+            workflow_results["export_info"] = export_info
 
         workflow_results["success"] = True
         logger.print_success("Workflow completed successfully.")
