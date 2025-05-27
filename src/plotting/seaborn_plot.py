@@ -13,6 +13,10 @@ def plot_indicator_results_seaborn(
         print("No data to plot.")
         return
 
+    # Check if we're in OHLCV mode (when display_candlestick_only flag is set or rule is 'OHLCV')
+    is_ohlcv_mode = (hasattr(selected_rule, 'name') and selected_rule.name == 'OHLCV') or \
+                    (isinstance(selected_rule, str) and selected_rule in ['Raw_OHLCV_Data', 'OHLCV'])
+
     # Try to find a column similar to 'close' if it's missing
     close_col = None
     for col in df.columns:
@@ -33,14 +37,22 @@ def plot_indicator_results_seaborn(
     # --- Prepare subplots: 1. OHLC + signals, 2. Volume, 3. PV, 4. HL, 5. Pressure ---
     nrows = 1
     indicator_panels = []
-    if 'Volume' in df.columns:
-        indicator_panels.append('Volume')
-    if 'PV' in df.columns:
-        indicator_panels.append('PV')
-    if 'HL' in df.columns:
-        indicator_panels.append('HL')
-    if 'Pressure' in df.columns:
-        indicator_panels.append('Pressure')
+
+    # In OHLCV mode, only show Volume panel if available
+    if not is_ohlcv_mode:
+        if 'Volume' in df.columns:
+            indicator_panels.append('Volume')
+        if 'PV' in df.columns:
+            indicator_panels.append('PV')
+        if 'HL' in df.columns:
+            indicator_panels.append('HL')
+        if 'Pressure' in df.columns:
+            indicator_panels.append('Pressure')
+    else:
+        # In OHLCV mode, only include Volume
+        if 'Volume' in df.columns:
+            indicator_panels.append('Volume')
+
     nrows += len(indicator_panels)
 
     sns.set(style="darkgrid", context="talk")
@@ -100,43 +112,44 @@ def plot_indicator_results_seaborn(
     else:
         ax.plot(idx, df[close_col], label='Close', color='blue', linewidth=1.5, zorder=10)
 
-    # Plot predicted high/low if present (PPrice1/PPrice2 or predicted_high/predicted_low)
-    if 'PPrice1' in df.columns:
-        ax.plot(idx, df['PPrice1'], label='Predicted Low (PPrice1)', color='lime', linestyle='--', linewidth=1.5)
-    if 'PPrice2' in df.columns:
-        ax.plot(idx, df['PPrice2'], label='Predicted High (PPrice2)', color='red', linestyle='--', linewidth=1.5)
-    if 'predicted_low' in df.columns:
-        ax.plot(idx, df['predicted_low'], label='Predicted Low', color='lime', linestyle='--', linewidth=1.5)
-    if 'predicted_high' in df.columns:
-        ax.plot(idx, df['predicted_high'], label='Predicted High', color='red', linestyle='--', linewidth=1.5)
+    # Plot predicted high/low if present (PPrice1/PPrice2 or predicted_high/predicted_low) - only if not in OHLCV mode
+    if not is_ohlcv_mode:
+        if 'PPrice1' in df.columns:
+            ax.plot(idx, df['PPrice1'], label='Predicted Low (PPrice1)', color='lime', linestyle='--', linewidth=1.5)
+        if 'PPrice2' in df.columns:
+            ax.plot(idx, df['PPrice2'], label='Predicted High (PPrice2)', color='red', linestyle='--', linewidth=1.5)
+        if 'predicted_low' in df.columns:
+            ax.plot(idx, df['predicted_low'], label='Predicted Low', color='lime', linestyle='--', linewidth=1.5)
+        if 'predicted_high' in df.columns:
+            ax.plot(idx, df['predicted_high'], label='Predicted High', color='red', linestyle='--', linewidth=1.5)
 
-    # Plot predicted_direction or Direction as markers
-    direction_col = None
-    for dcol in ['Direction', 'predicted_direction']:
-        if dcol in df.columns:
-            direction_col = dcol
-            break
-    if direction_col is not None:
-        # For compatibility with plotly/fastest: 1=BUY, 2=SELL
-        buy_mask = (df[direction_col] == 1) | (df[direction_col] > 0)
-        sell_mask = (df[direction_col] == 2) | (df[direction_col] < 0)
-        if 'Low' in df.columns:
-            buy_y = df['Low'] * 0.998
-        else:
-            buy_y = df[close_col]
-        if 'High' in df.columns:
-            sell_y = df['High'] * 1.002
-        else:
-            sell_y = df[close_col]
-        ax.scatter(df.index[buy_mask], buy_y[buy_mask], marker='^', color='lime', s=80, label='Predicted UP', zorder=20)
-        ax.scatter(df.index[sell_mask], sell_y[sell_mask], marker='v', color='red', s=80, label='Predicted DOWN', zorder=20)
+        # Plot predicted_direction or Direction as markers - only if not in OHLCV mode
+        direction_col = None
+        for dcol in ['Direction', 'predicted_direction']:
+            if dcol in df.columns:
+                direction_col = dcol
+                break
+        if direction_col is not None:
+            # For compatibility with plotly/fastest: 1=BUY, 2=SELL
+            buy_mask = (df[direction_col] == 1) | (df[direction_col] > 0)
+            sell_mask = (df[direction_col] == 2) | (df[direction_col] < 0)
+            if 'Low' in df.columns:
+                buy_y = df['Low'] * 0.998
+            else:
+                buy_y = df[close_col]
+            if 'High' in df.columns:
+                sell_y = df['High'] * 1.002
+            else:
+                sell_y = df[close_col]
+            ax.scatter(df.index[buy_mask], buy_y[buy_mask], marker='^', color='lime', s=80, label='Predicted UP', zorder=20)
+            ax.scatter(df.index[sell_mask], sell_y[sell_mask], marker='v', color='red', s=80, label='Predicted DOWN', zorder=20)
 
-    # Plot buy/sell signals if present
-    if 'signal' in df.columns:
-        buy_signals = df[df['signal'] > 0]
-        sell_signals = df[df['signal'] < 0]
-        ax.scatter(buy_signals.index, buy_signals[close_col], marker='o', color='green', s=80, label='Buy Signal', zorder=30)
-        ax.scatter(sell_signals.index, sell_signals[close_col], marker='x', color='red', s=80, label='Sell Signal', zorder=30)
+        # Plot buy/sell signals if present - only if not in OHLCV mode
+        if 'signal' in df.columns:
+            buy_signals = df[df['signal'] > 0]
+            sell_signals = df[df['signal'] < 0]
+            ax.scatter(buy_signals.index, buy_signals[close_col], marker='o', color='green', s=80, label='Buy Signal', zorder=30)
+            ax.scatter(sell_signals.index, sell_signals[close_col], marker='x', color='red', s=80, label='Sell Signal', zorder=30)
 
     ax.set_ylabel("Price")
     ax.set_title(f"{plot_title or 'Seaborn Plot'} - Rule: {getattr(selected_rule, 'name', selected_rule)}")
