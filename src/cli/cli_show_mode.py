@@ -236,10 +236,11 @@ def handle_show_mode(args):
     # Always use raw data directories
     search_dirs = get_search_dirs(args)
 
-    # Handle special case when rule is explicitly set to OHLCV - this means no indicator calculation
+    # Handle special case when rule is explicitly set to OHLCV - this means display raw candlestick chart only
     if hasattr(args, 'rule') and args.rule and args.rule.upper() == 'OHLCV':
         args.raw_plot_only = True
-        args.rule = None  # Clear the rule so we use the raw data plot path
+        args.display_candlestick_only = True  # New flag to indicate candlestick only mode
+        args.rule = None  # Clear the rule to use the raw data plot path
 
     if not args.source or args.source == 'help':
         show_help()
@@ -308,6 +309,7 @@ def handle_show_mode(args):
             args.rule = 'OHLCV'
             # Apply the same logic as explicit --rule OHLCV
             args.raw_plot_only = True
+            args.display_candlestick_only = True
             args.rule = None
 
     found_files.sort(key=lambda x: x['name'])
