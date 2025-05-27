@@ -92,7 +92,7 @@ def parse_arguments():
     indicator_group = parser.add_argument_group('Indicator Options')
     rule_aliases_map = {'PHLD': 'Predict_High_Low_Direction', 'PV': 'Pressure_Vector', 'SR': 'Support_Resistants'}
     rule_names = list(TradingRule.__members__.keys())
-    all_rule_choices = rule_names + list(rule_aliases_map.keys())
+    all_rule_choices = rule_names + list(rule_aliases_map.keys()) + ['OHLCV']  # Added 'OHLCV' as valid rule
     default_rule_name = TradingRule.Predict_High_Low_Direction.name
     indicator_group.add_argument(
         '--rule',
