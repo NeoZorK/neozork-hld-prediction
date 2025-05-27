@@ -1,0 +1,125 @@
+# src/export/parquet_export.py
+
+"""
+Module for exporting indicator data to parquet files.
+Handles the creation of parquet files with indicator data based on original OHLCV data.
+All comments are in English.
+"""
+
+import os
+import pandas as pd
+from pathlib import Path
+from ..common import logger
+
+
+def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
+    """
+    Exports the calculated indicator data to a parquet file.
+
+    Creates a new parquet file based on the original data source, adding
+    only necessary OHLCV and timestamp fields along with the calculated indicator values.
+    The new file has the same name as the original but with the rule name as a postfix.
+
+    Args:
+        result_df (pandas.DataFrame): DataFrame containing the calculated indicator data
+        data_info (dict): Information about the data source
+        selected_rule (str): The trading rule used for the calculation
+        args (argparse.Namespace): Command-line arguments
+
+    Returns:
+        dict: Dictionary with information about the export process
+    """
+    # Initialize result info
+    export_info = {
+        "success": False,
+        "output_file": None,
+        "error_message": None
+    }
+
+    # Check if result_df is valid
+    if result_df is None or result_df.empty:
+        export_info["error_message"] = "No data to export - result DataFrame is empty"
+        logger.print_error(export_info["error_message"])
+        return export_info
+
+    # Determine base filename from parquet_cache_file or create one based on ticker/interval
+    original_file = data_info.get("parquet_cache_file")
+
+    if not original_file:
+        # Create a filename based on ticker and interval if no cache file exists
+        ticker = args.ticker if hasattr(args, 'ticker') and args.ticker else "UNKNOWN"
+        interval = args.interval if hasattr(args, 'interval') and args.interval else "D1"
+
+        # Use data directory to store the file
+        output_dir = Path("data/cache")
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        # Create filename
+        filename = f"{ticker}_{interval}.parquet"
+        original_file = output_dir / filename
+    else:
+        original_file = Path(original_file)
+
+    # Create the new filename with the rule postfix
+    rule_shortname = selected_rule.replace("_", "")
+    output_file = original_file.parent / f"{original_file.stem}_{rule_shortname}{original_file.suffix}"
+
+    try:
+        # Prepare the data for export
+        # Select only OHLCV data and add the indicator columns
+        ohlcv_columns = ['open', 'high', 'low', 'close', 'volume']
+
+        # Ensure all OHLCV columns exist (case-insensitive)
+        available_columns = [col.lower() for col in result_df.columns]
+
+        # Map between possible column names and standardized names
+        column_mapping = {
+            'open': ['open', 'o'],
+            'high': ['high', 'h'],
+            'low': ['low', 'l'],
+            'close': ['close', 'c'],
+            'volume': ['volume', 'vol', 'v']
+        }
+
+        # Create a dictionary to map original column names to standardized names
+        actual_columns = {}
+        for std_name, possible_names in column_mapping.items():
+            for col in result_df.columns:
+                if col.lower() in possible_names:
+                    actual_columns[std_name] = col
+                    break
+
+        # Check if we have all required columns
+        for col in ohlcv_columns:
+            if col not in actual_columns:
+                logger.print_warning(f"Column '{col}' not found in result DataFrame")
+
+        # Select columns to export
+        export_columns = list(actual_columns.values())
+
+        # Identify indicator columns (all columns not in OHLCV and not in the index)
+        indicator_columns = [col for col in result_df.columns
+                           if col not in export_columns and col not in result_df.index.names]
+
+        export_columns.extend(indicator_columns)
+
+        # Prepare the export DataFrame
+        export_df = result_df[export_columns].copy()
+
+        # Add timestamp column if it's in the index
+        if isinstance(export_df.index, pd.DatetimeIndex):
+            export_df = export_df.reset_index()
+
+        # Export to parquet
+        export_df.to_parquet(output_file)
+
+        # Update export info
+        export_info["success"] = True
+        export_info["output_file"] = str(output_file)
+        logger.print_success(f"Indicator data exported to: {output_file}")
+
+    except Exception as e:
+        export_info["error_message"] = f"Failed to export indicator data: {str(e)}"
+        logger.print_error(export_info["error_message"])
+
+    return export_info
