@@ -151,7 +151,13 @@ def plot_indicator_results_plotly(df_results: pd.DataFrame, rule: TradingRule, t
 
 
     # --- Update Layout ---
-    chart_layout_title = f"{title} - Rule: {rule.name}"
+    # Handle case when rule is a string (like 'Raw_OHLCV_Data') vs TradingRule object
+    if hasattr(rule, 'name'):
+        rule_name = rule.name
+    else:
+        rule_name = str(rule)
+
+    chart_layout_title = f"{title} - Rule: {rule_name}"
     fig.update_layout(
         title=chart_layout_title,
         height=350 * total_rows, # Height based on dynamic number of rows
