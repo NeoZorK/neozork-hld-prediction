@@ -217,9 +217,16 @@ def _filter_dataframe_by_date(df, start, end):
 
 def _should_draw_plot(args):
     """
-    Returns True if the draw flag is set and is one of supported modes.
+    Returns True if the draw flag is set and is one of supported modes or should use default.
+    Always returns True for 'show' mode to enable automatic plotting.
     """
     plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly", "seaborn", "sb"}
+
+    # If it's show mode, always allow plotting (will use default 'fastest' if not specified)
+    if hasattr(args, 'mode') and args.mode == 'show':
+        return True
+
+    # Otherwise check for valid draw parameter
     return hasattr(args, "draw") and args.draw is not None and args.draw in plot_modes
 
 def handle_show_mode(args):
@@ -407,7 +414,7 @@ def handle_show_mode(args):
                     generate_plot = import_generate_plot()
                     data_info = {
                         "ohlcv_df": df,
-                        "data_source_label": f"{found_files[0]['name']}", # Убрал "Parquet file: "
+                        "data_source_label": f"{found_files[0]['name']}",
                         "rows_count": len(df),
                         "columns_count": len(df.columns),
                         "data_size_mb": found_files[0]['size_mb'],
@@ -433,16 +440,12 @@ def handle_show_mode(args):
         print("To display a chart, re-run the command with more specific keywords:")
         print(f"Example: python run_analysis.py show {args.source} <additional_keywords>")
     elif len(found_files) == 1:
-        # Only plot if draw flag is specified and is supported
-        if not _should_draw_plot(args):
-            return
-        print(f"Found one file. Triggering plot with method: '{args.draw}'...")
-        print(f"Loading file data and triggering plot with method: '{args.draw}'...")
+        print(f"Found one file. Loading data and preparing to display...")
         try:
             df = pd.read_parquet(found_files[0]['path'])
             data_info = {
                 "ohlcv_df": df,
-                "data_source_label": f"{found_files[0]['name']}",  # Removed "Parquet file: " prefix
+                "data_source_label": f"{found_files[0]['name']}",
                 "rows_count": len(df),
                 "columns_count": len(df.columns),
                 "data_size_mb": found_files[0]['size_mb'],
@@ -472,10 +475,21 @@ def handle_show_mode(args):
             # Add flag for single file mode
             args.single_file_mode = True
 
-            # If rule is specified, calculate the indicator
-            if hasattr(args, 'rule') and args.rule:
+            # Just plot raw OHLCV data without indicator calculation
+            if not hasattr(args, 'rule') or not args.rule:
+                # Just plot raw OHLCV data without indicator calculation
+                selected_rule = 'Raw_OHLCV_Data'  # Default name for raw data display
+                estimated_point = True
+                generate_plot = import_generate_plot()
+                draw_method = getattr(args, 'draw', 'fastest')
+                print(f"Drawing raw OHLCV data chart using method: '{draw_method}'...")
+                generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+                print(f"Successfully plotted raw OHLCV data from '{found_files[0]['name']}'")
+            else:
+                # Calculate indicator if rule is specified
                 print(f"Calculating indicator '{args.rule}' for the file...")
-                # Calculate the indicator
+                if not hasattr(args, 'mode'):
+                    args.mode = 'parquet'
                 result_df, selected_rule = calculate_indicator(args, df, point_size)
 
                 # Export indicator data to parquet if requested
@@ -486,15 +500,14 @@ def handle_show_mode(args):
                         print(f"Indicator data exported to: {export_info['output_file']}")
                     else:
                         print(f"Failed to export indicator data: {export_info['error_message']}")
-            else:
-                result_df = None
-                selected_rule = 'Predict_High_Low_Direction'
 
-            estimated_point = True
-            generate_plot = import_generate_plot()
-            generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
-            print(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode")
+                # Draw plot with indicator
+                estimated_point = True
+                generate_plot = import_generate_plot()
+                draw_method = getattr(args, 'draw', 'fastest')
+                print(f"Drawing plot with indicator using method: '{draw_method}'...")
+                generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
+                print(f"Successfully plotted data with indicator from '{found_files[0]['name']}'")
         except Exception as e:
             print(f"Error plotting file: {e}")
             traceback.print_exc()
-
