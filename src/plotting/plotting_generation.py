@@ -60,7 +60,22 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     if isinstance(data_label, str) and ('/' in data_label or '\\' in data_label):
         data_label = Path(data_label).stem
     title_parts.append(data_label)
-    interval_str = str(args.interval) if hasattr(args, 'interval') else data_info.get('interval', 'UnknownInterval')
+
+    # Извлечение таймфрейма из имени файла для более точного отображения
+    if 'data_source_label' in data_info and isinstance(data_info['data_source_label'], str):
+        # Попытка извлечь таймфрейм из имени файла (например, PERIOD_MN1)
+        source_label = data_info['data_source_label']
+        if 'PERIOD_' in source_label:
+            try:
+                interval_str = source_label.split('PERIOD_')[1].split('_')[0].split('.')[0]
+            except (IndexError, ValueError):
+                # Если не удалось извлечь из имени, используем значение из аргументов
+                interval_str = str(args.interval) if hasattr(args, 'interval') else data_info.get('interval', 'UnknownInterval')
+        else:
+            interval_str = str(args.interval) if hasattr(args, 'interval') else data_info.get('interval', 'UnknownInterval')
+    else:
+        interval_str = str(args.interval) if hasattr(args, 'interval') else data_info.get('interval', 'UnknownInterval')
+
     title_parts.append(interval_str)
     if point_size is not None:
         try:
