@@ -236,6 +236,11 @@ def handle_show_mode(args):
     # Always use raw data directories
     search_dirs = get_search_dirs(args)
 
+    # Handle special case when rule is explicitly set to OHLCV - this means no indicator calculation
+    if hasattr(args, 'rule') and args.rule and args.rule.upper() == 'OHLCV':
+        args.raw_plot_only = True
+        args.rule = None  # Clear the rule so we use the raw data plot path
+
     if not args.source or args.source == 'help':
         show_help()
         source_counts = count_files_by_source(args)
@@ -298,6 +303,12 @@ def handle_show_mode(args):
         print("Single CSV file found. Will automatically open chart in browser.")
         # Flag this as a single file processing for export
         args.single_file_mode = True
+        # Set default rule to OHLCV when only one file is found
+        if not hasattr(args, 'rule') or not args.rule:
+            args.rule = 'OHLCV'
+            # Apply the same logic as explicit --rule OHLCV
+            args.raw_plot_only = True
+            args.rule = None
 
     found_files.sort(key=lambda x: x['name'])
     print("-" * 40)
