@@ -47,20 +47,28 @@ def plot_indicator_results_fastest(
     is_auto_mode = (hasattr(rule, 'name') and rule.name == 'Auto_Display_All') or \
                   (isinstance(rule, str) and rule in ['AUTO', 'Auto_Display_All'])
 
-    # Get additional columns for AUTO mode
+    print(f"DEBUG: rule type: {type(rule)}, value: {rule}, is_auto_mode: {is_auto_mode}")
+
+    # Get additional columns for AUTO mode - read directly from the DataFrame schema
     auto_display_columns = []
     if is_auto_mode:
-        # Standard columns that we don't need to add extra plots for
+        # Standard columns that are part of basic OHLCV display
         standard_columns = ['Open', 'High', 'Low', 'Close', 'Volume',
                            'index', 'datetime', 'DateTime', 'Timestamp', 'Date', 'Time',
                            'HL', 'PV', 'Pressure', 'PPrice1', 'PPrice2', 'Direction']
 
-        # Find all numeric columns that aren't standard columns
+        # Get ALL numeric columns from the dataframe
+        numeric_columns = []
         for col in df.columns:
-            if not any(std_col.lower() == col.lower() for std_col in standard_columns) and pd.api.types.is_numeric_dtype(df[col]):
-                auto_display_columns.append(col)
+            if pd.api.types.is_numeric_dtype(df[col]):
+                # Only add non-standard columns
+                if not any(std_col.lower() == col.lower() for std_col in standard_columns):
+                    numeric_columns.append(col)
 
-        print(f"AUTO mode (fastest): Found {len(auto_display_columns)} additional columns to display: {auto_display_columns}")
+        print(f"DEBUG: Found {len(numeric_columns)} numeric columns in dataframe: {numeric_columns}")
+        auto_display_columns = numeric_columns
+
+        print(f"AUTO mode (fastest): Will display all {len(auto_display_columns)} additional columns directly from schema")
 
     # Create a directory for output if it doesn't exist
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -152,29 +160,17 @@ def plot_indicator_results_fastest(
 
     # Add AUTO mode specific columns to main chart
     if is_auto_mode:
-        # Determine which columns to display
-        prediction_columns = ['predicted_low', 'predicted_high', 'pressure_vector', 'pressure']
         colors = ['darkgreen', 'darkred', 'purple', 'blue', 'teal', 'orange', 'magenta', 'cyan', 'brown', 'gold']
         dash_styles = ['dash', 'dash', 'dot', 'solid', 'dashdot', 'longdash', 'dot', 'dash', 'solid', 'dashdot']
 
-        # Add each prediction column to the main chart
-        for i, col in enumerate([c for c in prediction_columns if c in display_df.columns]):
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df['index'],
-                    y=display_df[col],
-                    mode='lines',
-                    name=f"{col.replace('_', ' ').title()}",
-                    line=dict(color=colors[i % len(colors)], dash=dash_styles[i % len(dash_styles)], width=2)
-                ),
-                row=1, col=1
-            )
+        # Print all available columns to help with debugging
+        print(f"DEBUG: Available columns in display_df: {display_df.columns.tolist()}")
 
         # Add all discovered auto_display_columns
         for i, col in enumerate(auto_display_columns):
             if col in display_df.columns:
-                color_idx = (i + len(prediction_columns)) % len(colors)
-                dash_idx = (i + len(prediction_columns)) % len(dash_styles)
+                color_idx = i % len(colors)
+                dash_idx = i % len(dash_styles)
                 fig.add_trace(
                     go.Scatter(
                         x=display_df['index'],
