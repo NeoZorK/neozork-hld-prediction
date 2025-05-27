@@ -233,6 +233,18 @@ def plot_indicator_results_fast(
         if 'PPrice2' in df.columns:
             p_main.line('index', 'PPrice2', line_color='red', line_dash='dotted', line_width=2, legend_label="Predicted High (PPrice2)", source=source)
 
+        # In AUTO mode, add prediction-related columns to main chart
+        if is_auto_mode:
+            prediction_columns = ['predicted_low', 'predicted_high', 'pressure_vector']
+            colors = ['darkgreen', 'darkred', 'purple']
+            dash_styles = ['dashed', 'dashed', 'dotted']
+
+            for i, col in enumerate([c for c in prediction_columns if c in df.columns]):
+                p_main.line('index', col, line_color=colors[i % len(colors)],
+                          line_dash=dash_styles[i % len(dash_styles)], line_width=2,
+                          legend_label=f"{col.replace('_', ' ').title()}",
+                          source=source)
+
         # Draw predicted direction arrows
         if 'Direction' in df.columns:
             buy_idx = df['Direction'] == 1
@@ -488,13 +500,11 @@ def plot_indicator_results_fast(
         )
     elif is_auto_mode:
         # In AUTO mode, include main panel, volume, and all auto panels
-        layout = column(
-            trading_rule_div,
-            p_main,
-            p_vol,
-            *auto_panels.values(),
-            sizing_mode="stretch_width"
-        )
+        auto_panel_list = list(auto_panels.values())
+        layout_components = [trading_rule_div, p_main, p_vol if 'Volume' in df.columns else None]
+        if auto_panel_list:
+            layout_components.extend(auto_panel_list)
+        layout = column(*[comp for comp in layout_components if comp is not None], sizing_mode="stretch_width")
     else:
         # In indicator mode, include all panels
         layout = column(
