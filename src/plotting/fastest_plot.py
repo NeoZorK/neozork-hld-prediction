@@ -14,6 +14,7 @@ import colorcet as cc
 import plotly.io as pio
 import webbrowser
 from functools import partial
+import re
 
 def plot_indicator_results_fastest(
     df,
@@ -51,11 +52,30 @@ def plot_indicator_results_fastest(
 
     # Get additional columns for AUTO mode - read directly from the DataFrame schema
     auto_display_columns = []
+    prediction_columns = []
+
+    # Find all prediction-related columns
+    prediction_pattern = re.compile(r'predict(ed)?[_\s]*(high|low|price|level|support|resistance)', re.IGNORECASE)
+
+    # First pass - identify prediction columns
+    for col in df.columns:
+        # Check if it's a prediction column based on name pattern
+        if pd.api.types.is_numeric_dtype(df[col]) and (
+            col.lower() in ['pprice1', 'pprice2'] or
+            prediction_pattern.search(col) is not None
+        ):
+            prediction_columns.append(col)
+
+    print(f"DEBUG: Found prediction columns: {prediction_columns}")
+
     if is_auto_mode:
         # Standard columns that are part of basic OHLCV display
         standard_columns = ['Open', 'High', 'Low', 'Close', 'Volume',
                            'index', 'datetime', 'DateTime', 'Timestamp', 'Date', 'Time',
-                           'HL', 'PV', 'Pressure', 'PPrice1', 'PPrice2', 'Direction']
+                           'HL', 'PV', 'Pressure', 'Direction']
+
+        # Don't exclude prediction columns from auto display in AUTO mode
+        standard_columns = [col for col in standard_columns if col not in ['PPrice1', 'PPrice2']]
 
         # Get ALL numeric columns from the dataframe
         numeric_columns = []
@@ -133,30 +153,34 @@ def plot_indicator_results_fastest(
         row=1, col=1
     )
 
-    # Add predicted high/low lines if present
-    if 'PPrice1' in display_df.columns:
-        fig.add_trace(
-            go.Scatter(
-                x=display_df['index'],
-                y=display_df['PPrice1'],
-                mode='lines',
-                name="Predicted Low (PPrice1)",
-                line=dict(color='green', dash='dot', width=2)
-            ),
-            row=1, col=1
-        )
+    # Add prediction columns
+    for col in prediction_columns:
+        if col in display_df.columns:
+            # Determine if it's a high or low prediction based on name
+            is_high = any(term in col.lower() for term in ['high', 'resistance', 'pprice2'])
+            is_low = any(term in col.lower() for term in ['low', 'support', 'pprice1'])
 
-    if 'PPrice2' in display_df.columns:
-        fig.add_trace(
-            go.Scatter(
-                x=display_df['index'],
-                y=display_df['PPrice2'],
-                mode='lines',
-                name="Predicted High (PPrice2)",
-                line=dict(color='red', dash='dot', width=2)
-            ),
-            row=1, col=1
-        )
+            if is_high:
+                color = 'red'
+                name = f"Predicted High ({col})"
+            elif is_low:
+                color = 'green'
+                name = f"Predicted Low ({col})"
+            else:
+                # Generic prediction
+                color = 'purple'
+                name = f"Prediction ({col})"
+
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df['index'],
+                    y=display_df[col],
+                    mode='lines',
+                    name=name,
+                    line=dict(color=color, dash='dot', width=2)
+                ),
+                row=1, col=1
+            )
 
     # Add AUTO mode specific columns to main chart
     if is_auto_mode:
@@ -168,6 +192,10 @@ def plot_indicator_results_fastest(
 
         # Add all discovered auto_display_columns
         for i, col in enumerate(auto_display_columns):
+            # Skip columns that were already added as prediction columns
+            if col in prediction_columns:
+                continue
+
             if col in display_df.columns:
                 color_idx = i % len(colors)
                 dash_idx = i % len(dash_styles)
