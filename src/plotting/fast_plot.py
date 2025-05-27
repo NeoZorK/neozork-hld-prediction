@@ -100,6 +100,27 @@ def plot_indicator_results_fast(
     is_ohlcv_mode = (hasattr(rule, 'name') and rule.name == 'OHLCV') or \
                    (isinstance(rule, str) and rule in ['Raw_OHLCV_Data', 'OHLCV'])
 
+    # Check if we're in AUTO mode (for displaying all columns automatically)
+    is_auto_mode = (hasattr(rule, 'name') and rule.name == 'Auto_Display_All') or \
+                  (isinstance(rule, str) and rule in ['AUTO', 'Auto_Display_All'])
+
+    # Get all non-standard columns for AUTO mode
+    auto_display_columns = []
+    if is_auto_mode:
+        # Standard columns that we don't need to add extra plots for
+        standard_columns = ['Open', 'High', 'Low', 'Close', 'Volume',
+                           'index', 'datetime', 'DateTime', 'Timestamp', 'Date', 'Time',
+                           'direction', 'open_tick_color', 'close_tick_color',
+                           'open_tick_x0', 'open_tick_x1', 'open_tick_y0', 'open_tick_y1',
+                           'close_tick_x0', 'close_tick_x1', 'close_tick_y0', 'close_tick_y1']
+
+        # Find all numeric columns that aren't standard columns
+        for col in df.columns:
+            if col not in standard_columns and pd.api.types.is_numeric_dtype(df[col]):
+                auto_display_columns.append(col)
+
+        print(f"AUTO mode: Found {len(auto_display_columns)} additional columns to display: {auto_display_columns}")
+
     # Ensure the index column exists and is datetime type
     if 'index' not in df.columns:
         if isinstance(df.index, pd.DatetimeIndex):
@@ -390,13 +411,88 @@ def plot_indicator_results_fast(
             p_pressure.add_tools(hover_pressure)
 
     # === COMBINE AND SAVE ===
-    # Construct layout based on mode (OHLCV or indicator)
+    # Initialize panels dictionary for AUTO mode
+    auto_panels = {}
+
+    # In AUTO mode, create additional panels for non-standard columns
+    if is_auto_mode and auto_display_columns:
+        # Colors for different indicators
+        colors = ['purple', 'orange', 'teal', 'brown', 'magenta', 'lime', 'darkblue', 'crimson', 'gold']
+        color_index = 0
+
+        # Create individual panels for each auto-detected column
+        for col_name in auto_display_columns:
+            if col_name in df.columns:
+                # Create panel for this column
+                panel = figure(
+                    width=width, height=int(height*0.13), x_axis_type="datetime",
+                    x_range=p_main.x_range, background_fill_color="#f5f7fa",
+                    sizing_mode="stretch_width", margin=(5, 80, 5, 60)
+                )
+                panel.yaxis.axis_label = col_name
+                panel.yaxis.formatter = NumeralTickFormatter(format="0.00000")
+
+                # Get color for this column
+                color = colors[color_index % len(colors)]
+                color_index += 1
+
+                # Add line plot for this column
+                line = panel.line('index', col_name, color=color, line_width=2, legend_label=col_name, source=source)
+
+                # Add zero line if the column values span positive and negative
+                if df[col_name].min() < 0 and df[col_name].max() > 0:
+                    zero = Span(location=0, dimension='width', line_color='gray', line_dash='dashed', line_width=1)
+                    panel.add_layout(zero)
+
+                # Add legend
+                panel.legend.location = "top_left"
+                panel.legend.label_text_font_size = "10pt"
+
+                # Add tooltips
+                hover = HoverTool(
+                    renderers=[line],
+                    tooltips=[
+                        ("Date", "@index{%F}"),
+                        (col_name, f"@{col_name}{{0.5f}}")
+                    ],
+                    formatters={"@index": "datetime"},
+                    mode='vline'
+                )
+                panel.add_tools(hover)
+
+                # Add to auto panels dictionary
+                auto_panels[col_name] = panel
+
+        # Update subtitle text for AUTO mode
+        subtitle.text = f"AUTO Mode: Displaying all {len(auto_display_columns)} additional columns from file"
+
+        # Update tooltip for AUTO mode to include all columns
+        auto_tooltip_fields = [("Date", "@index{%F}")]
+        auto_tooltip_fields.extend([("Open", "@Open{0.5f}"), ("High", "@High{0.5f}"),
+                                  ("Low", "@Low{0.5f}"), ("Close", "@Close{0.5f}")])
+
+        # Add all auto columns to tooltip
+        for col_name in auto_display_columns:
+            auto_tooltip_fields.append((col_name, f"@{col_name}{{0.5f}}"))
+
+        hover_main.tooltips = auto_tooltip_fields
+
+    # Construct layout based on mode (OHLCV, indicator, or AUTO)
     if is_ohlcv_mode:
         # In OHLCV mode, only include main panel and volume
         layout = column(
             trading_rule_div,
             p_main,
             p_vol if 'Volume' in df.columns else None,
+            sizing_mode="stretch_width"
+        )
+    elif is_auto_mode:
+        # In AUTO mode, include main panel, volume, and all auto panels
+        layout = column(
+            trading_rule_div,
+            p_main,
+            p_vol,
+            *auto_panels.values(),
             sizing_mode="stretch_width"
         )
     else:
@@ -414,6 +510,8 @@ def plot_indicator_results_fast(
     # Update subtitle text based on mode
     if is_ohlcv_mode:
         subtitle.text = "Fast Mode: OHLCV bars, open/close points"
+    elif is_auto_mode:
+        subtitle.text = f"AUTO Mode: Displaying all {len(auto_display_columns)} additional columns from file"
     else:
         subtitle.text = "Fast Mode: OHLC bars, open/close points, predicted lines/arrows, indicators"
 

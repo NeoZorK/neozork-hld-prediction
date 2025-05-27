@@ -41,6 +41,10 @@ def show_help():
     print("  python run_analysis.py show polygon          # List all Polygon.io files")
     print("  python run_analysis.py show yf aapl          # List YF files containing 'aapl'")
     print("  python run_analysis.py show binance btc MN1  # List Binance files with 'btc' and timeframe 'MN1'")
+    print("\nTrading Rules:")
+    print("  --rule OHLCV   # Display basic OHLCV candlestick chart")
+    print("  --rule PHLD    # Calculate Predict High Low Direction indicator")
+    print("  --rule AUTO    # Automatically display all columns in the file")
     print("\nDate filtering:")
     print("  --start, --end or --show-start, --show-end for date range filtering.")
 
@@ -126,7 +130,7 @@ def get_parquet_metadata(file_path: Path) -> dict:
         print(f"Warning: Could not read metadata for {file_path.name}. Error: {e}", file=sys.stderr)
     return metadata
 
-def _get_relevant_columns_for_rule(rule_name: str) -> list:
+def _get_relevant_columns_for_rule(rule_name: str, all_columns=None) -> list:
     """
     Returns the relevant columns to output for the given rule,
     according to clarified user logic.
@@ -135,11 +139,21 @@ def _get_relevant_columns_for_rule(rule_name: str) -> list:
     rule_aliases_map = {
         'PHLD': 'Predict_High_Low_Direction',
         'PV': 'Pressure_Vector',
-        'SR': 'Support_Resistants'
+        'SR': 'Support_Resistants',
+        'AUTO': 'Auto_Display_All'
     }
-    rule_name_upper = rule_name.upper()
+    rule_name_upper = rule_name.upper() if rule_name else ''
     canonical_rule = rule_aliases_map.get(rule_name_upper, rule_name)
-    if canonical_rule in ['Predict_High_Low_Direction']:
+
+    if canonical_rule in ['Auto_Display_All']:
+        # For AUTO rule, return all columns available
+        if all_columns:
+            # Ensure datetime column is first, if present
+            datetime_cols = [col for col in all_columns if col.lower() in ['datetime', 'date', 'time']]
+            other_cols = [col for col in all_columns if col not in datetime_cols]
+            return datetime_cols + other_cols
+        return base_cols
+    elif canonical_rule in ['Predict_High_Low_Direction']:
         return base_cols + ['PPrice1', 'PPrice2', 'Direction']
     elif canonical_rule in ['Pressure_Vector']:
         return base_cols + ['PPrice1', 'Direction']
@@ -169,10 +183,20 @@ def _print_indicator_result(df, rule_name, datetime_column=None):
     else:
         df_to_show['DateTime'] = df_to_show.index
         datetime_column = 'DateTime'
-    columns_to_show = _get_relevant_columns_for_rule(rule_name)
+
+    # Handle AUTO rule separately - show all columns
+    if rule_name and rule_name.upper() == 'AUTO':
+        # Get all columns to show
+        columns_to_show = list(df_to_show.columns)
+        print(f"\n=== AUTO DISPLAY MODE: ALL COLUMNS === ({df_to_show.shape[0]} rows in selected range)")
+        print(f"Displaying all {len(columns_to_show)} columns from the file.")
+    else:
+        # For other rules, get specific columns based on the rule
+        columns_to_show = _get_relevant_columns_for_rule(rule_name, all_columns=df_to_show.columns)
+        print(f"\n=== CALCULATED INDICATOR DATA === ({df_to_show.shape[0]} rows in selected range)")
+
     columns_to_show_existing = [col for col in columns_to_show if col in df_to_show.columns]
     row_count = df_to_show.shape[0]
-    print(f"\n=== CALCULATED INDICATOR DATA === ({row_count} rows in selected range)")
 
     # Limit to first 100 rows
     if row_count > 100:
@@ -368,6 +392,71 @@ def handle_show_mode(args):
     # Date filtering and indicator calculation
     if len(found_files) == 1 and hasattr(args, 'rule') and args.rule:
         try:
+            # Special handling for AUTO rule
+            if args.rule.upper() == 'AUTO':
+                print(f"\n=== AUTO DISPLAY MODE ===")
+                print(f"Loading file data and preparing to display all columns...")
+                df = pd.read_parquet(found_files[0]['path'])
+                start, end = _extract_datetime_filter_args(args)
+                if start or end:
+                    df = _filter_dataframe_by_date(df, start, end)
+
+                point_size = None
+                if 'point' in found_files[0]['name'].lower():
+                    try:
+                        name_parts = found_files[0]['name'].lower().split('point_')
+                        if len(name_parts) > 1:
+                            possible_point = name_parts[1].split('_')[0]
+                            point_size = float(possible_point)
+                    except (ValueError, IndexError):
+                        pass
+                if point_size is None:
+                    if 'forex' in found_files[0]['name'].lower() or 'fx' in found_files[0]['name'].lower():
+                        point_size = 0.00001
+                    elif 'btc' in found_files[0]['name'].lower() or 'crypto' in found_files[0]['name'].lower():
+                        point_size = 0.01
+                    else:
+                        point_size = 0.01
+                    print(f"Point size not found in filename, using default: {point_size}")
+
+                # Set a special flag for AUTO mode to be used by plotting functions
+                args.auto_display_mode = True
+                # Set column detection flag
+                args.auto_detect_columns = True
+
+                # Print all columns in the data
+                datetime_column = None
+                if isinstance(df.index, pd.DatetimeIndex):
+                    datetime_column = df.index.name or 'datetime'
+                _print_indicator_result(df, 'AUTO', datetime_column=datetime_column)
+
+                # Plot with all columns
+                if _should_draw_plot(args):
+                    print(f"\nDrawing AUTO display plot with method: '{getattr(args, 'draw', 'fastest')}'...")
+                    try:
+                        generate_plot = import_generate_plot()
+                        data_info = {
+                            "ohlcv_df": df,
+                            "data_source_label": f"{found_files[0]['name']}",
+                            "rows_count": len(df),
+                            "columns_count": len(df.columns),
+                            "data_size_mb": found_files[0]['size_mb'],
+                            "first_date": found_files[0]['first_date'],
+                            "last_date": found_files[0]['last_date'],
+                            "parquet_cache_used": True,
+                            "parquet_cache_file": str(found_files[0]['path']),
+                            "all_columns": list(df.columns)  # Pass all columns to plotting function
+                        }
+                        selected_rule = "Auto_Display_All"  # Special rule name for plotting
+                        estimated_point = True
+                        generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+                        print(f"Successfully plotted all columns from '{found_files[0]['name']}' using '{getattr(args, 'draw', 'fastest')}' mode.")
+                    except Exception as e:
+                        print(f"Error plotting in AUTO mode: {e}")
+                        traceback.print_exc()
+                return
+
+            # Normal indicator calculation for other rules
             print(f"\n=== INDICATOR CALCULATION MODE ===")
             print(f"Loading file data and calculating indicator '{args.rule}' ...")
             df = pd.read_parquet(found_files[0]['path'])
