@@ -24,3 +24,4 @@ class TradingRule(Enum):
     Pressure_Vector = 2
     Predict_High_Low_Direction = 3
     OHLCV = 4  # Raw OHLCV data without indicator calculation
+    AUTO = 5  # Auto mode for automatic columns selection based on data availability
