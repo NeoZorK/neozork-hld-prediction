@@ -38,9 +38,11 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     if selected_rule is None:
         logger.print_warning("No valid rule selected, cannot generate plot accurately.")
         return
-    if not hasattr(args, 'draw'):
-        logger.print_error("Argument 'draw' missing in args. Cannot determine plotting library.")
-        return
+
+    # Use 'fastest' as default drawing method if draw is not specified
+    if not hasattr(args, 'draw') or args.draw is None:
+        logger.print_info("Drawing method not specified, using 'fastest' by default.")
+        args.draw = 'fastest'
 
     # --- DEBUG: Print DataFrame info before plotting ---
     logger.print_debug("--- DataFrame before plotting ---")
