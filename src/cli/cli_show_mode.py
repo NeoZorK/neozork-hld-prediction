@@ -149,9 +149,17 @@ def _get_relevant_columns_for_rule(rule_name: str, all_columns=None) -> list:
         # For AUTO rule, return all columns available
         if all_columns:
             # Ensure datetime column is first, if present
-            datetime_cols = [col for col in all_columns if col.lower() in ['datetime', 'date', 'time']]
-            other_cols = [col for col in all_columns if col not in datetime_cols]
-            return datetime_cols + other_cols
+            datetime_cols = [col for col in all_columns if col.lower() in ['datetime', 'date', 'time', 'timestamp']]
+            # Include all schema columns from parquet file, especially looking for prediction columns
+            prediction_cols = [col for col in all_columns if any(pred.lower() in col.lower()
+                              for pred in ['predicted', 'pressure', 'vector', 'signal', 'direction'])]
+            # Other numeric columns
+            other_cols = [col for col in all_columns if col not in datetime_cols and col not in prediction_cols]
+
+            print(f"AUTO mode columns detection: datetime={datetime_cols}, predictions={prediction_cols}, other={len(other_cols)}")
+
+            # Return all columns in the right order
+            return datetime_cols + prediction_cols + other_cols
         return base_cols
     elif canonical_rule in ['Predict_High_Low_Direction']:
         return base_cols + ['PPrice1', 'PPrice2', 'Direction']

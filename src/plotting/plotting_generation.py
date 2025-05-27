@@ -39,6 +39,18 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
         logger.print_warning("No valid rule selected, cannot generate plot accurately.")
         return
 
+    # --- Check for AUTO mode ---
+    is_auto_mode = False
+    if hasattr(args, 'auto_display_mode') and args.auto_display_mode:
+        is_auto_mode = True
+        # Ensure selected_rule is properly set for AUTO mode
+        if isinstance(selected_rule, str):
+            if selected_rule not in ['AUTO', 'Auto_Display_All']:
+                selected_rule = 'Auto_Display_All'
+        else:
+            selected_rule = 'Auto_Display_All'
+        logger.print_info("AUTO display mode detected, will display all available columns")
+
     # Use 'fastest' as default drawing method if draw is not specified
     if not hasattr(args, 'draw') or args.draw is None:
         logger.print_info("Drawing method not specified, using 'fastest' by default.")
