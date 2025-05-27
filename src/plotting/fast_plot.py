@@ -38,17 +38,55 @@ def plot_indicator_results_fast(
     """
     # Create output filename based on input data and parameters
     if output_path is None:
-        # Extract source file name from data_source or use data_source directly
-        source_name = data_source
-        if hasattr(df, 'name') and df.name:
-            source_name = df.name
-        elif 'filename' in kwargs:
+        # Extract source file name from the original filename
+        source_name = None
+        if 'filename' in kwargs and kwargs['filename']:
+            # Use the actual filename from the source file
             source_name = kwargs['filename']
+            # Remove file extension if present
+            if '.' in source_name:
+                source_name = source_name.rsplit('.', 1)[0]
+        elif hasattr(df, 'name') and df.name:
+            source_name = df.name
 
-        # Extract timeframe from data or kwargs
-        timeframe = "D1"  # default
-        if 'interval' in kwargs:
-            timeframe = kwargs['interval']
+        # Use data_source as fallback if source_name is still None
+        if not source_name:
+            # If we're using CSV data, try to extract the ticker from data_source
+            if data_source.startswith('csv_'):
+                source_name = data_source.replace('csv_', '')
+            elif data_source == "demo":
+                # Try to find file name in kwargs or from other sources
+                if 'show_args' in kwargs and kwargs['show_args']:
+                    # Get full file name from show_args
+                    arg = kwargs['show_args'][0] if isinstance(kwargs['show_args'], list) and kwargs['show_args'] else "GBPUSD"
+                    # Check if we need to add the CSVExport_ prefix
+                    if not arg.startswith("CSVExport_") and not "_PERIOD_" in arg:
+                        source_name = f"CSVExport_{arg}_PERIOD_MN1"
+                    else:
+                        source_name = arg
+                elif 'source' in kwargs and kwargs['source']:
+                    # Get full file name from source
+                    source = kwargs['source']
+                    if not source.startswith("CSVExport_") and not "_PERIOD_" in source:
+                        source_name = f"CSVExport_{source}_PERIOD_MN1"
+                    else:
+                        source_name = source
+                else:
+                    # Default to full GBPUSD file name if no other source is found
+                    source_name = "CSVExport_GBPUSD_PERIOD_MN1"
+            else:
+                source_name = data_source
+
+        # Extract timeframe from original filename
+        timeframe = "MN1"  # default to MN1 as requested
+        if 'filename' in kwargs and 'PERIOD_' in kwargs['filename']:
+            # Extract timeframe from filename like CSVExport_GBPUSD_PERIOD_MN1
+            parts = kwargs['filename'].split('PERIOD_')
+            if len(parts) > 1 and parts[1]:
+                # Get timeframe part before next underscore or dot
+                timeframe_part = parts[1].split('_')[0].split('.')[0]
+                if timeframe_part:
+                    timeframe = timeframe_part
 
         # Format rule name
         rule_name = rule
@@ -154,8 +192,7 @@ def plot_indicator_results_fast(
         size=7,
         color="green",
         source=source,
-        alpha=0.7,
-        #legend_label="Open Point"
+        alpha=0.7
     )
     p_main.scatter(
         x='index',
@@ -164,8 +201,7 @@ def plot_indicator_results_fast(
         size=7,
         color="red",
         source=source,
-        alpha=0.7,
-        #legend_label="Close Point"
+        alpha=0.7
     )
 
     # Draw predicted high/low lines and direction arrows only if not in OHLCV mode
