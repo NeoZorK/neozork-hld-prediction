@@ -30,8 +30,8 @@ def check_environment():
         return False
 
     # Проверка настроек IDE для Copilot
-    idea_dir = Path(".idea")
-    vscode_dir = Path(".vscode")
+    idea_dir = Path("../.idea")
+    vscode_dir = Path("../.vscode")
 
     if idea_dir.exists():
         print("✅ Найдена конфигурация IntelliJ/PyCharm (.idea)")
@@ -49,13 +49,13 @@ def clean_cache_files():
     print("\n🧹 Очистка файлов кэша...")
 
     # Очистка __pycache__ директорий
-    pycache_dirs = list(Path(".").rglob("__pycache__"))
+    pycache_dirs = list(Path("..").rglob("__pycache__"))
     for pycache in pycache_dirs:
         print(f"Удаление: {pycache}")
         shutil.rmtree(pycache, ignore_errors=True)
 
     # Удаление .pyc файлов
-    pyc_files = list(Path(".").rglob("*.pyc"))
+    pyc_files = list(Path("..").rglob("*.pyc"))
     for pyc in pyc_files:
         print(f"Удаление: {pyc}")
         pyc.unlink(missing_ok=True)
