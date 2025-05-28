@@ -16,6 +16,9 @@ from typing import Dict, Any, Optional, List
 import os
 import pathlib
 
+# Определение задержки ответа - чтобы избежать тайм-аутов
+MAX_RESPONSE_DELAY = 0.5  # Максимальная задержка ответа в секундах
+
 # Determine the project root directory regardless of where the script is run from
 script_path = os.path.abspath(__file__)
 script_dir = os.path.dirname(script_path)
@@ -614,6 +617,15 @@ class SimpleMCPServer:
         if not response:
             return
 
+        # Защита от слишком долгой задержки ответа
+        response_delay = 0
+        if "id" in response and isinstance(response["id"], int) and response["id"] > 0:
+            # Для основных запросов добавим задержку не более MAX_RESPONSE_DELAY
+            response_delay = min(MAX_RESPONSE_DELAY, 0.01 * response["id"])
+            if response_delay > 0:
+                self.logger.debug(f"Throttling response for ID {response['id']} by {response_delay:.3f}s to avoid buffer issues")
+                time.sleep(response_delay)
+
         response_str = json.dumps(response)
         response_bytes = response_str.encode('utf-8')
 
@@ -622,18 +634,27 @@ class SimpleMCPServer:
 
         # Send message to stdout
         try:
-            sys.stdout.buffer.write(header)
-            sys.stdout.buffer.write(response_bytes)
+            # Отправка ответа единым блоком для предотвращения фрагментации
+            message = header + response_bytes
+            sys.stdout.buffer.write(message)
             sys.stdout.buffer.flush()
 
             response_id = response.get('id', 0)
-            self.logger.info(f"Sent response for ID: {response_id}")
+            self.logger.info(f"Sent response for ID: {response_id} (size: {len(response_bytes)} bytes, delay: {response_delay:.3f}s)")
             # Добавляем более подробный вывод для отладки
             self.request_logger.info(f"RESPONSE for ID {response_id}: {self._simplify_response(response)}")
             self.logger.debug(f"Full response: {response_str}")
         except Exception as e:
             self.logger.error(f"Error sending response: {str(e)}")
             self.logger.error(traceback.format_exc())
+            # Пытаемся отправить уведомление об ошибке, если возможно
+            try:
+                self._send_notification("window/showMessage", {
+                    "type": 1,  # Error
+                    "message": f"Error sending response: {str(e)}"
+                })
+            except:
+                pass
 
     def _send_notification(self, method: str, params: Dict[str, Any]) -> None:
         """
@@ -653,11 +674,12 @@ class SimpleMCPServer:
 
         # Send message to stdout
         try:
-            sys.stdout.buffer.write(header)
-            sys.stdout.buffer.write(notification_bytes)
+            # Отправка уведомления единым блоком для предотвращения фрагментации
+            message = header + notification_bytes
+            sys.stdout.buffer.write(message)
             sys.stdout.buffer.flush()
 
-            self.logger.info(f"Sent notification: {method}")
+            self.logger.info(f"Sent notification: {method} (size: {len(notification_bytes)} bytes)")
             self.logger.debug(f"Full notification: {notification_str}")
         except Exception as e:
             self.logger.error(f"Error sending notification: {str(e)}")
