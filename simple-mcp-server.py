@@ -22,7 +22,7 @@ import threading  # Для создания ping-потока
 MAX_RESPONSE_DELAY = 0.0  # Убираем задержку полностью для максимальной отзывчивости
 # Добавляем константы для пинга
 PING_INTERVAL = 20.0  # Отправлять ping каждые 20 секунд
-PING_ENABLED = True   # Включение/отключение пинга
+PING_ENABLED = False   # Включение/отключение пинга
 
 # Determine the project root directory regardless of where the script is run from
 script_path = os.path.abspath(__file__)
