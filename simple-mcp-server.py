@@ -173,6 +173,9 @@ class SimpleMCPServer:
         self.ping_thread = None
         self.ping_stop_event = threading.Event()
         self.last_client_activity = time.time()
+        # Keep-alive механизм
+        self.keep_alive_thread = None
+        self.keep_alive_stop_event = threading.Event()
 
         # Show initial client info
         self._print_client_info()
@@ -188,6 +191,10 @@ class SimpleMCPServer:
             if PING_ENABLED:
                 self._start_ping_thread()
                 self.logger.info(f"Ping thread started (interval: {PING_INTERVAL}s)")
+            else:
+                # Если пинг отключен, запускаем облегченный механизм поддержания соединения
+                self._start_keep_alive_thread()
+                self.logger.info("Keep-alive mechanism enabled to prevent timeouts")
 
             # Main loop for reading from stdin and writing to stdout
             self._handle_stdio()
@@ -205,6 +212,10 @@ class SimpleMCPServer:
             if PING_ENABLED and self.ping_thread and self.ping_thread.is_alive():
                 self._stop_ping_thread()
                 self.logger.info("Ping thread stopped")
+            # Останавливаем keep-alive поток при завершении
+            if not PING_ENABLED and self.keep_alive_thread and self.keep_alive_thread.is_alive():
+                self._stop_keep_alive_thread()
+                self.logger.info("Keep-alive thread stopped")
 
     def _handle_stdio(self):
         """
@@ -508,6 +519,9 @@ class SimpleMCPServer:
             self.logger.info(f"Client capabilities: {json.dumps(params.get('capabilities', {}), indent=2)}")
 
             self._update_client_list(client_name, client_version, status="connected")
+
+            # Обновляем время последней активности клиента
+            self.last_client_activity = time.time()
 
             # Mark connection as successful after server processes 'initialize' and sends response.
             if self.active_clients.get(client_key) and \
@@ -1032,6 +1046,69 @@ class SimpleMCPServer:
         except Exception as e:
             self.logger.error(f"Error sending ping: {str(e)}")
             self.logger.error(traceback.format_exc())
+
+    def _start_keep_alive_thread(self):
+        """
+        Запускает поток для облегченного механизма поддержания соединения
+        """
+        if self.keep_alive_thread and self.keep_alive_thread.is_alive():
+            self.logger.info("Keep-alive thread already running")
+            return
+
+        # Сбрасываем событие остановки keep-alive
+        self.keep_alive_stop_event.clear()
+
+        # Создаем и запускаем поток keep-alive
+        self.keep_alive_thread = threading.Thread(target=self._keep_alive_loop, daemon=True)
+        self.keep_alive_thread.start()
+        self.logger.info("Started keep-alive thread")
+
+    def _stop_keep_alive_thread(self):
+        """
+        Останавливает поток облегченного механизма поддержания соединения
+        """
+        if not self.keep_alive_thread or not self.keep_alive_thread.is_alive():
+            self.logger.info("No active keep-alive thread to stop")
+            return
+
+        # Устанавливаем событие остановки и ждем завершения потока
+        self.keep_alive_stop_event.set()
+        if self.keep_alive_thread:
+            self.keep_alive_thread.join(timeout=2.0)  # Ждем 2 секунды максимум
+            if self.keep_alive_thread.is_alive():
+                self.logger.warning("Keep-alive thread did not terminate gracefully")
+            else:
+                self.logger.info("Keep-alive thread stopped successfully")
+        self.keep_alive_thread = None
+
+    def _keep_alive_loop(self):
+        """
+        Основной цикл облегченного механизма поддержания соединения
+        """
+        self.logger.info("Keep-alive loop started")
+        keep_alive_count = 0
+
+        while not self.keep_alive_stop_event.is_set():
+            # Проверяем, прошло ли достаточно времени с последней активности
+            current_time = time.time()
+            time_since_last_activity = current_time - self.last_client_activity
+
+            if time_since_last_activity >= PING_INTERVAL:
+                # Логируем keep-alive событие
+                keep_alive_count += 1
+                self.logger.info(f"Keep-alive event #{keep_alive_count} to prevent timeout")
+
+                # Обновляем время последней активности
+                self.last_client_activity = current_time
+
+            # Ждем немного, чтобы не загружать процессор
+            # и проверяем событие остановки каждые 5 секунд
+            for _ in range(5):
+                if self.keep_alive_stop_event.is_set():
+                    break
+                time.sleep(1.0)
+
+        self.logger.info(f"Keep-alive loop ended after {keep_alive_count} events")
 
 
 if __name__ == "__main__":

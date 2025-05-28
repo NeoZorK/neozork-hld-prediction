@@ -531,7 +531,7 @@ def run_test_with_server():
         # Launch server if needed
         if not args.no_server:
             try:
-                server_process, log_file = launch_mcp_server(args.server, timeout=10)
+                server_process, log_file = launch_mcp_server(args.server, timeout=1)
             except Exception as e:
                 logger.error(f"Failed to start MCP server: {str(e)}")
                 return False
