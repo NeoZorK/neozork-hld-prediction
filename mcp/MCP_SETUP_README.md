@@ -33,7 +33,7 @@ Test script to verify MCP server functionality
 
 ### Step 1: Run Installation
 ```bash
-python setup_mcp.py
+python mcp/setup_mcp.py
 ```
 ### Step 2: PyCharm Configuration
 
@@ -49,19 +49,19 @@ Tools → External Tools → Start MCP Server
 
 #### Option B: Command Line
 ```bash
-python mcp_server.py
+python mcp/mcp_server.py
 ```
 #### Option C: Script
 ```bash
-./start_mcp_server.sh
+/mcp/.start_mcp_server.sh
 ```
 ### Step 4: Verify Operation
 ```bash
-python mcp_server.py --debug
+python mcp/mcp_server.py --debug
 ```
 ### Step 5: Check Server Operation
 ```bash
-python test_mcp_server.py
+python mcp/test_mcp_server.py
 ```
 
 ## MCP Server Capabilities
@@ -109,19 +109,35 @@ With the configured MCP server, you can ask:
 ```plaintext
 neozork-hld-prediction/
 ├── src/
-│   ├── calculation/     # Calculations and prediction algorithms
-│   ├── cli/            # Command line interface components
-│   ├── common/         # Common utilities and constants
-│   ├── data/           # Data processing and features
-│   ├── eda/            # Exploratory data analysis
-│   ├── plotting/       # Visualization and charts
-│   ├── utils/          # Helper functions
-│   └── workflow/       # Pipeline management
-├── tests/              # Tests
-├── scripts/            # Scripts
+│   ├── calculation/                # Calculations and prediction algorithms
+│   ├── cli/                        # Command line interface components
+│   ├── common/                     # Common utilities and constants
+│   ├── data/                       # Data processing and features
+│   ├── eda/                        # Exploratory data analysis
+│   ├── export/                     # Exporting results
+│   ├── plotting/                   # Visualization and charts
+│   ├── utils/                      # Helper functions
+│   └── workflow/                   # Pipeline management
+├── tests/                          # Tests
+│   ├── calculation/                # Tests for calculation module
+│   ├── cli/                        # Tests for CLI module
+│   ├── common/                     # Tests for common utilities
+│   ├── data/                       # Tests for data processing
+│   ├── eda/                        # Tests for EDA module
+│   ├── plotting/                   # Tests for plotting module
+│   ├── scripts/                    # Tests for scripts
+│   ├── utils/                      # Tests for utility functions
+│   └── workflow/                   # Tests for workflow management
+├── scripts/                        # Scripts
+│   └── start_mcp_server.sh         # Script to start MCP server
+├── mcp/                            # MCP server files
+│   ├── mcp-config.json             # MCP server configuration
+│   ├── mcp_server.py               # Main MCP server script
+│   ├── setup_mcp.py                # Setup script
+│   ├── test_mcp_server.py          # Test script for MCP server
+│   └── MCP_SETUP_README.md         # MCP setup documentation
 ├── requirements.txt    # Dependencies
-├── run_analysis.py     # Main file
-└── mcp_server.py       # MCP server
+└── run_analysis.py     # Main file
 ```
 
 ### Server Logs
