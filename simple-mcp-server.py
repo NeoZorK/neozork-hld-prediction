@@ -10,6 +10,7 @@ import sys
 import traceback
 import logging
 import threading
+import time
 from typing import Dict, Any, Optional, List
 import os
 
@@ -19,10 +20,39 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler("mcp_server.log"),  # Добавляем запись логов в файл
-        logging.StreamHandler(sys.stderr)  # Вывод логов в stderr вместо stdout для stdio протокола
+        logging.StreamHandler(sys.stdout),      # Вывод логов в stdout для отображения в консоли
+        logging.StreamHandler(sys.stderr)       # Сохраняем вывод в stderr для stdio протокола
     ]
 )
 logger = logging.getLogger("simple_mcp")
+
+# Добавляем цветное логирование для лучшей читаемости в консоли
+class ColoredFormatter(logging.Formatter):
+    """Класс для цветного форматирования логов"""
+    COLORS = {
+        'DEBUG': '\033[94m',  # синий
+        'INFO': '\033[92m',   # зеленый
+        'WARNING': '\033[93m', # желтый
+        'ERROR': '\033[91m',   # красный
+        'CRITICAL': '\033[91m\033[1m', # красный жирный
+        'RESET': '\033[0m'    # сброс цвета
+    }
+
+    def format(self, record):
+        log_message = super().format(record)
+        if hasattr(record, 'levelname') and record.levelname in self.COLORS:
+            return f"{self.COLORS[record.levelname]}{log_message}{self.COLORS['RESET']}"
+        return log_message
+
+# Применяем цветной форматтер для консоли, если не Windows
+if os.name != 'nt':
+    for handler in logger.handlers:
+        if isinstance(handler, logging.StreamHandler):
+            if handler.stream == sys.stdout:
+                # Используем более заметное форматирование для вывода в консоль
+                handler.setFormatter(ColoredFormatter('📝 %(asctime)s - %(levelname)s - %(message)s'))
+            elif handler.stream == sys.stderr:
+                handler.setFormatter(ColoredFormatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 
 class SimpleMCPServer:
     """
@@ -39,6 +69,11 @@ class SimpleMCPServer:
         self.documents = {}
         # Идентификатор для сообщений
         self.next_id = 1
+        # Счетчики для статистики
+        self.connection_attempts = 0
+        self.successful_connections = 0
+        self.request_count = 0
+        self.start_time = time.time()
 
     def run(self):
         """
@@ -151,10 +186,14 @@ class SimpleMCPServer:
         if not request:
             return {}
 
+        self.request_count += 1
+        current_time = time.time()
+        uptime = current_time - self.start_time
+
         # Проверяем, является ли это уведомлением (без ID)
         if "id" not in request:
             method = request.get("method", "")
-            self.logger.info(f"Received notification: {method}")
+            self.logger.info(f"Received notification: {method} [req #{self.request_count}, uptime: {int(uptime)}s]")
             self.logger.debug(f"Full notification: {json.dumps(request)}")
 
             # Обрабатываем некоторые уведомления
@@ -164,7 +203,8 @@ class SimpleMCPServer:
                 uri = text_document.get("uri", "")
                 if uri:
                     self.documents[uri] = text_document.get("text", "")
-                    self.logger.info(f"Document opened: {uri}")
+                    language_id = text_document.get("languageId", "unknown")
+                    self.logger.info(f"Document opened: {uri} (Language: {language_id}, Size: {len(self.documents[uri])} chars)")
 
             elif method == "textDocument/didChange":
                 params = request.get("params", {})
@@ -173,16 +213,19 @@ class SimpleMCPServer:
                 changes = params.get("contentChanges", [])
                 if uri and uri in self.documents and changes:
                     # Простое обновление документа (не учитывает позиции изменений)
+                    old_size = len(self.documents[uri])
                     self.documents[uri] = changes[-1].get("text", self.documents[uri])
-                    self.logger.info(f"Document changed: {uri}")
+                    new_size = len(self.documents[uri])
+                    change_size = new_size - old_size
+                    self.logger.info(f"Document changed: {uri} (Size delta: {'+' if change_size >= 0 else ''}{change_size} chars)")
 
             elif method == "textDocument/didClose":
                 params = request.get("params", {})
                 text_document = params.get("textDocument", {})
                 uri = text_document.get("uri", "")
                 if uri and uri in self.documents:
+                    self.logger.info(f"Document closed: {uri} (Final size: {len(self.documents[uri])} chars)")
                     del self.documents[uri]
-                    self.logger.info(f"Document closed: {uri}")
 
             # Для уведомлений не отправляем ответ
             return None
@@ -190,11 +233,19 @@ class SimpleMCPServer:
         method = request.get("method", "")
         message_id = request.get("id", 0)
 
-        self.logger.info(f"Received request: {method} (ID: {message_id})")
+        self.logger.info(f"Received request: {method} (ID: {message_id}) [req #{self.request_count}, uptime: {int(uptime)}s]")
         self.logger.debug(f"Full request: {json.dumps(request)}")
 
         # Стандартный ответ на initialize
         if method == "initialize":
+            self.connection_attempts += 1
+            client_info = request.get("params", {}).get("clientInfo", {})
+            client_name = client_info.get("name", "Unknown Client")
+            client_version = client_info.get("version", "Unknown Version")
+
+            self.logger.info(f"🔌 CONNECTION ATTEMPT #{self.connection_attempts} from {client_name} v{client_version}")
+            self.logger.info(f"Client capabilities: {json.dumps(request.get('params', {}).get('capabilities', {}), indent=2)}")
+
             return {
                 "jsonrpc": "2.0",
                 "id": message_id,
@@ -233,10 +284,13 @@ class SimpleMCPServer:
 
         # Ответ на initialized
         elif method == "initialized":
+            self.successful_connections += 1
+            self.logger.info(f"✅ CONNECTION SUCCESSFUL #{self.successful_connections} (Total attempts: {self.connection_attempts})")
+
             # Отправляем уведомление о готовности
             self._send_notification("window/showMessage", {
                 "type": 3,  # Info
-                "message": "MCP Server is ready and connected"
+                "message": f"MCP Server is ready and connected (Connection #{self.successful_connections})"
             })
             return {
                 "jsonrpc": "2.0",
@@ -246,7 +300,9 @@ class SimpleMCPServer:
 
         # Ответ на shutdown
         elif method == "shutdown":
-            self.logger.info("Received shutdown request")
+            self.logger.info(f"Received shutdown request after {int(uptime)}s uptime")
+            self.logger.info(f"Connection stats: {self.successful_connections} successful connections out of {self.connection_attempts} attempts")
+            self.logger.info(f"Processed {self.request_count} requests")
             return {
                 "jsonrpc": "2.0",
                 "id": message_id,
@@ -255,7 +311,9 @@ class SimpleMCPServer:
 
         # Ответ на exit
         elif method == "exit":
-            self.logger.info("Received exit request, shutting down...")
+            self.logger.info(f"Received exit request after {int(uptime)}s uptime")
+            self.logger.info(f"Final stats: {self.successful_connections}/{self.connection_attempts} connections, {self.request_count} requests processed")
+
             # Отправляем ответ перед выходом
             response = {
                 "jsonrpc": "2.0",
@@ -266,100 +324,6 @@ class SimpleMCPServer:
             # Завершаем программу
             sys.exit(0)
             return None  # Это не выполнится, но оставляем для согласованности
-
-        # Обработка завершения кода
-        elif method == "textDocument/completion":
-            params = request.get("params", {})
-            context = params.get("context", {})
-            trigger_kind = context.get("triggerKind", 1)
-
-            # Готовим результат с пустым списком (в реальном приложении здесь было бы больше логики)
-            items = []
-
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": {
-                    "isIncomplete": False,
-                    "items": items
-                }
-            }
-
-        # Обработка наведения мыши
-        elif method == "textDocument/hover":
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": {
-                    "contents": {
-                        "kind": "markdown",
-                        "value": "NeoZorK HLD Prediction Project"
-                    }
-                }
-            }
-
-        # Обработка перехода к определению
-        elif method == "textDocument/definition":
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": []
-            }
-
-        # Обработка поиска ссылок
-        elif method == "textDocument/references":
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": []
-            }
-
-        # Обработка символов документа
-        elif method == "textDocument/documentSymbol":
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": []
-            }
-
-        # Обработка символов рабочего пространства
-        elif method == "workspace/symbol":
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": []
-            }
-
-        # Ответ на текстовые события
-        elif method.startswith("textDocument/"):
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": None
-            }
-
-        # Обработка команд
-        elif method == "workspace/executeCommand":
-            params = request.get("params", {})
-            command = params.get("command", "")
-
-            if command == "neozork.analyzeData":
-                return {
-                    "jsonrpc": "2.0",
-                    "id": message_id,
-                    "result": {
-                        "status": "success",
-                        "message": "Data analysis started"
-                    }
-                }
-
-        # Стандартный ответ для любых других запросов
-        self.logger.info(f"Получен неизвестный метод: {method}")
-        return {
-            "jsonrpc": "2.0",
-            "id": message_id,
-            "result": None
-        }
 
     def _send_response(self, response: Dict[str, Any]) -> None:
         """
