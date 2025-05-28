@@ -14,9 +14,11 @@ import time
 import signal
 from typing import Dict, Any, Optional
 import os
+import datetime
+import binascii  # Для вывода шестнадцатеричного представления двоичных данных
 
 # Define maximum response delay to prevent buffer issues
-MAX_RESPONSE_DELAY = 0.1  # Уменьшаем максимальную задержку с 0.5 до 0.1 секунд
+MAX_RESPONSE_DELAY = 0.0  # Убираем задержку полностью для максимальной отзывчивости
 
 # Determine the project root directory regardless of where the script is run from
 script_path = os.path.abspath(__file__)
@@ -27,17 +29,64 @@ if os.path.basename(script_dir) == "mcp":
 else:
     project_root = script_dir
 
-# Logging setup
+# Создаем директорию для логов, если она не существует
+logs_dir = os.path.join(project_root, "logs")
+if not os.path.exists(logs_dir):
+    try:
+        os.makedirs(logs_dir)
+        print(f"Создана директория для логов: {logs_dir}")
+    except Exception as e:
+        print(f"Ошибка при создании директории для логов: {str(e)}")
+
+# Формируем имя файла лога с текущей датой и временем
+current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+log_file_path = os.path.join(logs_dir, f"mcp_server_{current_time}.log")
+
+# Создаем отдельные файлы для разных типов логов
+raw_log_file_path = os.path.join(logs_dir, f"raw_data_{current_time}.log")
+client_log_file_path = os.path.join(logs_dir, f"client_info_{current_time}.log")
+message_log_file_path = os.path.join(logs_dir, f"messages_{current_time}.log")
+
+# Logging setup - основной лог
 logging.basicConfig(
     level=logging.DEBUG,  # Increase logging level for debugging
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler(sys.stdout)      # Output logs to stdout for console display
+        logging.StreamHandler(sys.stdout),      # Output logs to stdout for console display
+        logging.FileHandler(log_file_path, encoding='utf-8')  # Output logs to file
     ]
 )
 logger = logging.getLogger("simple_mcp")
 
-# Настройка логирования для вывода ВСЕЙ информации в консоль
+# Создаем отдельные логгеры для разных типов информации
+# Логгер для сырых данных (бинарные данные, входящие/исходящие пакеты)
+raw_logger = logging.getLogger("raw_data")
+raw_logger.setLevel(logging.DEBUG)
+raw_handler = logging.FileHandler(raw_log_file_path, encoding='utf-8')
+raw_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(message)s'))
+raw_logger.addHandler(raw_handler)
+raw_logger.propagate = False  # Не дублировать в основной лог
+
+# Логгер для клиентских подключений
+client_detail_logger = logging.getLogger("client_detail")
+client_detail_logger.setLevel(logging.DEBUG)
+client_handler = logging.FileHandler(client_log_file_path, encoding='utf-8')
+client_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(message)s'))
+client_detail_logger.addHandler(client_handler)
+client_detail_logger.propagate = False  # Не дублировать в основной лог
+
+# Логгер для содержимого сообщений
+message_logger = logging.getLogger("message_detail")
+message_logger.setLevel(logging.DEBUG)
+message_handler = logging.FileHandler(message_log_file_path, encoding='utf-8')
+message_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(message)s'))
+message_logger.addHandler(message_handler)
+message_logger.propagate = False  # Не дублировать в основной лог
+
+# Логируем информацию о старте и пути к файлу лога
+logger.info(f"Логи сохраняются в файл: {log_file_path}")
+
+# Настройка логирования для вывода ВСЕЙ информации в консоль и файл
 # Убедимся, что никакие логи не будут фильтроваться
 for handler in logging.root.handlers:
     handler.setLevel(logging.DEBUG)
@@ -169,16 +218,26 @@ class SimpleMCPServer:
             msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
             msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
 
+        self.logger.info("Waiting for GitHub Copilot connection...")
+        self.logger.info("Ready to receive input from stdin")
+
         # Main processing loop
         while True:
             # Read data from stdin
             try:
+                # Announce that we're waiting for input
+                if len(self.buffer) == 0:
+                    self.logger.debug("Waiting for input on stdin...")
+
                 data = sys.stdin.buffer.read1(4096)
                 if not data:
                     self.logger.info("End of stdin stream, exiting")
                     break
 
                 self.buffer += data
+
+                # Improved logging for connection tracking
+                self.logger.info(f"📥 Received data from client: {len(data)} bytes")
 
                 # Output information about received data in readable format
                 data_preview = str(data)
@@ -210,132 +269,121 @@ class SimpleMCPServer:
                 break
 
             # Always reset content length for new message
-            self.logger.info(f"💾 Current buffer (size: {len(self.buffer)} byte): {self.buffer[:200].hex()}...")
+            self.logger.debug(f"💾 Current buffer (size: {len(self.buffer)} byte)")
             try:
                 buffer_text = self.buffer.decode('utf-8', errors='replace')
-                self.logger.info(f"💾 Buffer as text: {buffer_text[:300]}{'...' if len(buffer_text) > 300 else ''}")
+                self.logger.debug(f"💾 Buffer as text (first 100 chars): {buffer_text[:100]}{'...' if len(buffer_text) > 100 else ''}")
             except Exception as e:
                 self.logger.debug(f"Impossible decode buffer as text: {e}")
 
-            self.logger.debug(f"Processing buffer (size: {len(self.buffer)}): {self.buffer[:100]}...")
-
-            # Check for JSON message without headers in the buffer
-            # This can happen with GitHub Copilot or PyCharm, which send messages with \n at the end
-            if self.content_length is None and self.buffer.find(b"\n") > -1:
-                newline_pos = self.buffer.find(b"\n")
-                possible_json = self.buffer[:newline_pos].strip()
-
-                try:
-                    # Try to parse the message as JSON
-                    decoded_json = possible_json.decode('utf-8')
-                    if decoded_json.startswith('{') and decoded_json.endswith('}'):
-                        self.logger.debug(f"Found possible JSON message without headers: {decoded_json}")
-
-                        request = json.loads(decoded_json)
-                        response = self._handle_request(request)
-
-                        # Send response if available
-                        if response:
-                            self._send_response(response)
-
-                        # Remove processed message from buffer
-                        self.buffer = self.buffer[newline_pos + 1:]
-                        continue
-                except (UnicodeDecodeError, json.JSONDecodeError) as e:
-                    self.logger.debug(f"Not a valid JSON message: {str(e)}, continuing with standard parsing")
-
-            # Standard message processing with headers
+            # Check for HTTP-style headers with Content-Length
             if self.content_length is None:
-                # Look for double line break separating headers from body
-                header_end = self.buffer.find(b"\r\n\r\n")
-                if header_end == -1:
-                    # Alternatively, PyCharm might use just \n\n instead of \r\n\r\n
-                    header_end = self.buffer.find(b"\n\n")
-                    if header_end == -1:
-                        # GitHub Copilot might send single Content-Length header with \r\n
-                        content_length_header = b"Content-Length: "
-                        if content_length_header in self.buffer:
-                            cl_start = self.buffer.find(content_length_header) + len(content_length_header)
-                            cl_end = self.buffer.find(b"\r\n", cl_start)
-                            if cl_end > cl_start:
+                header_end = -1
+
+                # Check for standard LSP header separator
+                if b"\r\n\r\n" in self.buffer:
+                    header_end = self.buffer.find(b"\r\n\r\n") + 4
+                # Alternatively, check for simplified header separator
+                elif b"\n\n" in self.buffer:
+                    header_end = self.buffer.find(b"\n\n") + 2
+                # Check for single Content-Length header with just \r\n
+                elif b"Content-Length: " in self.buffer and b"\r\n" in self.buffer:
+                    cl_start = self.buffer.find(b"Content-Length: ") + len(b"Content-Length: ")
+                    cl_end = self.buffer.find(b"\r\n", cl_start)
+
+                    if cl_end > cl_start:
+                        try:
+                            self.content_length = int(self.buffer[cl_start:cl_end].decode('utf-8').strip())
+                            self.logger.debug(f"Found Content-Length: {self.content_length}")
+                            # Skip headers and proceed to content
+                            self.buffer = self.buffer[cl_end + 2:]  # +2 for \r\n
+                            continue  # Continue to content processing
+                        except (ValueError, UnicodeDecodeError) as e:
+                            self.logger.debug(f"Failed to parse Content-Length: {str(e)}")
+
+                # Check for JSON content without headers
+                elif self.buffer.startswith(b"{") and b"}" in self.buffer:
+                    # Try to find a complete JSON object
+                    try:
+                        # Check for a newline-terminated JSON message
+                        if b"\n" in self.buffer:
+                            newline_pos = self.buffer.find(b"\n")
+                            json_data = self.buffer[:newline_pos].strip()
+                            if json_data.startswith(b"{") and json_data.endswith(b"}"):
                                 try:
-                                    self.content_length = int(self.buffer[cl_start:cl_end].decode('utf-8').strip())
-                                    self.logger.debug(f"Found standalone Content-Length: {self.content_length}")
-                                    # Remove header from buffer
-                                    header_end = cl_end
-                                    self.buffer = self.buffer[cl_end + 2:]  # +2 for \r\n
-                                    self.logger.debug(f"Removed Content-Length header, buffer size now: {len(self.buffer)}")
-                                    # Continue processing with the known content length
+                                    request = json.loads(json_data.decode('utf-8'))
+                                    self.logger.debug(f"Found JSON message without headers")
+
+                                    response = self._handle_request(request)
+
+                                    # Send response if available
+                                    if response:
+                                        self._send_response(response)
+
+                                    # Remove processed message from buffer
+                                    self.buffer = self.buffer[newline_pos + 1:]
                                     continue
-                                except (ValueError, UnicodeDecodeError) as e:
-                                    self.logger.debug(f"Error parsing Content-Length: {str(e)}")
+                                except (json.JSONDecodeError, UnicodeError) as e:
+                                    self.logger.debug(f"JSON parse error: {str(e)}")
+                    except Exception as e:
+                        self.logger.debug(f"Error processing potential JSON message: {str(e)}")
 
-                        # If no headers found, dump buffer contents for debugging and wait for more data
-                        if len(self.buffer) > 0:
-                            self.logger.debug(f"No complete headers found. Buffer content (hex): {self.buffer.hex()}")
-                            self.logger.debug(f"Buffer content (text, if possible): {self.buffer.decode('utf-8', errors='replace')}")
-                        break
+                # If headers found, parse them
+                if header_end > 0:
+                    headers_text = self.buffer[:header_end-4 if b"\r\n\r\n" in self.buffer else header_end-2].decode('utf-8', errors='replace')
 
-                # Extract headers
-                headers = self.buffer[:header_end].decode('utf-8', errors='replace')
-                self.logger.debug(f"Found headers: {headers}")
+                    # Extract Content-Length
+                    for line in headers_text.split("\r\n" if "\r\n" in headers_text else "\n"):
+                        if line.lower().startswith("content-length:"):
+                            try:
+                                self.content_length = int(line.split(":", 1)[1].strip())
+                                self.logger.debug(f"Found Content-Length in headers: {self.content_length}")
+                                break
+                            except ValueError as e:
+                                self.logger.warning(f"Invalid Content-Length value: {line}")
 
-                # Look for Content-Length
-                for line in headers.split("\r\n" if "\r\n" in headers else "\n"):
-                    if line.lower().startswith("content-length:"):
-                        self.content_length = int(line.split(":", 1)[1].strip())
-                        self.logger.debug(f"Found Content-Length: {self.content_length}")
-                        break
+                    # Remove headers from buffer
+                    self.buffer = self.buffer[header_end:]
+                    self.logger.debug(f"Removed headers, remaining buffer size: {len(self.buffer)}")
+                else:
+                    # No complete headers found, wait for more data
+                    self.logger.debug("No complete headers found, waiting for more data")
+                    break
 
-                # Remove headers from buffer
-                delim_len = 4 if b"\r\n\r\n" in self.buffer[:header_end+4] else 2  # 4 = len("\r\n\r\n"), 2 = len("\n\n")
-                self.buffer = self.buffer[header_end + delim_len:]
-                self.logger.debug(f"Removed headers, buffer size now: {len(self.buffer)}")
-
-            # If we have enough data for the entire message
+            # Process content if we have a content length and enough data
             if self.content_length is not None and len(self.buffer) >= self.content_length:
-                # Extract message body
-                message_body = self.buffer[:self.content_length].decode('utf-8', errors='replace')
-                self.logger.debug(f"Extracted message body: {message_body}")
+                message_data = self.buffer[:self.content_length]
                 self.buffer = self.buffer[self.content_length:]
-                self.logger.debug(f"Remaining buffer size: {len(self.buffer)}")
+                self.logger.debug(f"Extracted message of {self.content_length} bytes, {len(self.buffer)} bytes remaining")
 
-                # Process request
-                request_obj = None  # Initialize for robust error handling
                 try:
-                    request_obj = json.loads(message_body)  # Use request_obj
-                    response = self._handle_request(request_obj)
+                    message_text = message_data.decode('utf-8')
+                    message = json.loads(message_text)
 
-                    # Send response immediately for initialize or other critical requests
+                    # Process the message
+                    self.logger.debug(f"Processing message: {message_text[:100]}{'...' if len(message_text) > 100 else ''}")
+                    response = self._handle_request(message)
+
+                    # Send response if available
                     if response:
                         self._send_response(response)
 
-                    # If the request was 'initialize' and it was successful (response has a result)
-                    # Send readiness notifications immediately to potentially prevent client timeout
-                    if request_obj and request_obj.get("method") == "initialize" and response and "result" in response:
-                        self.logger.info("Sending readiness notifications immediately after 'initialize' response.")
-                        self._send_notification("$/neozork/serverReady", {
-                            "status": "ready",
-                            "features": ["completion", "hover", "definition"]
-                        })
-                        self._send_notification("window/showMessage", {
-                            "type": 3,  # Info
-                            "message": f"MCP Server is ready and connected (Connection #{self.successful_connections})"
-                        })
-
+                    # Reset content_length for next message
+                    self.content_length = None
                 except json.JSONDecodeError as e:
-                    self.logger.error(f"Failed to parse JSON: {message_body}, error: {str(e)}")
+                    self.logger.error(f"JSON parse error: {str(e)}, message: {message_data[:100]}...")
+                    self.content_length = None
+                except UnicodeError as e:
+                    self.logger.error(f"Unicode decode error: {str(e)}")
+                    self.content_length = None
                 except Exception as e:
-                    self.logger.error(f"Error handling request: {str(e)}")
+                    self.logger.error(f"Error processing message: {str(e)}")
                     self.logger.error(traceback.format_exc())
-                    # Send error if there was a request ID, using request_obj
-                    if request_obj and isinstance(request_obj, dict) and "id" in request_obj:
-                        self._send_error(request_obj["id"], -32603, f"Internal error: {str(e)}")
-
-                # Reset content_length for next message
-                self.content_length = None
+                    self.content_length = None
             else:
-                # If not enough data, wait for more
+                # Not enough data for a complete message
+                if self.content_length is not None:
+                    self.logger.debug(f"Waiting for more data. Have {len(self.buffer)}, need {self.content_length}")
                 break
 
     def _handle_request(self, request: Dict[str, Any]) -> Optional[Dict[str, Any]]:
