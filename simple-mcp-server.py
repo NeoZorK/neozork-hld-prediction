@@ -14,7 +14,7 @@ import time
 from typing import Dict, Any, Optional, List
 import os
 
-# Создаем директорию logs, если она не существует
+# Create logs directory if it doesn't exist
 logs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
 if not os.path.exists(logs_dir):
     try:
@@ -23,41 +23,41 @@ if not os.path.exists(logs_dir):
     except Exception as e:
         print(f"Error creating logs directory: {e}")
 
-# Настройка логирования
+# Logging setup
 logging.basicConfig(
-    level=logging.DEBUG,  # Повышаем уровень логирования для отладки
+    level=logging.DEBUG,  # Increase logging level for debugging
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(os.path.join(logs_dir, "mcp_server.log"), mode='a'),  # Сохраняем логи в директорию logs
-        logging.StreamHandler(sys.stdout)      # Вывод логов в stdout для отображения в консоли
+        logging.FileHandler(os.path.join(logs_dir, "mcp_server.log"), mode='a'),  # Save logs to logs directory
+        logging.StreamHandler(sys.stdout)      # Output logs to stdout for console display
     ]
 )
 logger = logging.getLogger("simple_mcp")
 
-# Настройка дополнительного вывода в консоль для лучшей отладки
+# Setup additional console output for better debugging
 console_handler = logging.StreamHandler(sys.stderr)
 console_handler.setLevel(logging.DEBUG)
 console_formatter = logging.Formatter('🔍 CONSOLE: %(message)s')
 console_handler.setFormatter(console_formatter)
 logger.addHandler(console_handler)
 
-# Добавляем запись в лог о запуске сервера
+# Add log entry about server startup
 logger.info("========================")
 logger.info("MCP Server starting up at %s", time.strftime("%Y-%m-%d %H:%M:%S"))
 logger.info("Working directory: %s", os.getcwd())
 logger.info("Script location: %s", os.path.abspath(__file__))
 logger.info("========================")
 
-# Добавляем цветное логирование для лучшей читаемости в консоли
+# Add colored logging for better console readability
 class ColoredFormatter(logging.Formatter):
-    """Класс для цветного форматирования логов"""
+    """Class for colored log formatting"""
     COLORS = {
-        'DEBUG': '\033[94m',  # синий
-        'INFO': '\033[92m',   # зеленый
-        'WARNING': '\033[93m', # желтый
-        'ERROR': '\033[91m',   # красный
-        'CRITICAL': '\033[91m\033[1m', # красный жирный
-        'RESET': '\033[0m'    # сброс цвета
+        'DEBUG': '\033[94m',  # blue
+        'INFO': '\033[92m',   # green
+        'WARNING': '\033[93m', # yellow
+        'ERROR': '\033[91m',   # red
+        'CRITICAL': '\033[91m\033[1m', # bold red
+        'RESET': '\033[0m'    # reset color
     }
 
     def format(self, record):
@@ -66,52 +66,52 @@ class ColoredFormatter(logging.Formatter):
             return f"{self.COLORS[record.levelname]}{log_message}{self.COLORS['RESET']}"
         return log_message
 
-# Применяем цветной форматтер для консоли, если не Windows
+# Apply colored formatter for console if not Windows
 if os.name != 'nt':
     for handler in logger.handlers:
         if isinstance(handler, logging.StreamHandler):
             if handler.stream == sys.stdout:
-                # Используем более заметное форматирование для вывода в консоль
+                # Use more noticeable formatting for console output
                 handler.setFormatter(ColoredFormatter('📝 %(asctime)s - %(levelname)s - %(message)s'))
 
 class SimpleMCPServer:
     """
-    Простой MCP сервер для успешного подключения GitHub Copilot через stdio
+    Simple MCP server for successful GitHub Copilot connection via stdio
     """
 
     def __init__(self):
         self.logger = logger
         self.logger.info("Simple MCP Server initialized with stdio interface")
-        # Создаем буфер для входящих данных
+        # Create buffer for incoming data
         self.buffer = b""
         self.content_length = None
-        # Словарь для хранения открытых документов
+        # Dictionary for storing open documents
         self.documents = {}
-        # Идентификатор для сообщений
+        # Message identifier
         self.next_id = 1
-        # Счетчики для статистики
+        # Counters for statistics
         self.connection_attempts = 0
         self.successful_connections = 0
         self.request_count = 0
         self.start_time = time.time()
-        # Информация о клиентах и протоколах
+        # Client and protocol information
         self.client_info = {}
         self.protocol_versions = set()
 
     def run(self):
         """
-        Запускает MCP сервер для обработки запросов от GitHub Copilot через stdio
+        Runs MCP server to process requests from GitHub Copilot via stdio
         """
         try:
             self.logger.info("MCP Server started with stdio interface")
 
-            # Основной цикл чтения из stdin и записи в stdout
+            # Main loop for reading from stdin and writing to stdout
             self._handle_stdio()
 
         except Exception as e:
-            self.logger.error(f"Ошибка в MCP сервере: {str(e)}")
+            self.logger.error(f"Error in MCP server: {str(e)}")
             self.logger.error(traceback.format_exc())
-            # Отправляем уведомление об ошибке
+            # Send error notification
             self._send_notification("window/showMessage", {
                 "type": 1,  # Error
                 "message": f"MCP Server Error: {str(e)}"
@@ -119,17 +119,17 @@ class SimpleMCPServer:
 
     def _handle_stdio(self):
         """
-        Обрабатывает ввод/вывод через стандартные потоки
+        Handles input/output through standard streams
         """
-        # Устанавливаем двоичный режим для stdin и stdout в Windows
+        # Set binary mode for stdin and stdout on Windows
         if os.name == 'nt':
             import msvcrt
             msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
             msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
 
-        # Основной цикл обработки
+        # Main processing loop
         while True:
-            # Чтение данных из stdin
+            # Read data from stdin
             try:
                 data = sys.stdin.buffer.read1(4096)
                 if not data:
@@ -138,7 +138,7 @@ class SimpleMCPServer:
 
                 self.buffer += data
 
-                # Выводим информацию о полученных данных в понятном формате
+                # Output information about received data in readable format
                 data_preview = str(data)
                 if len(data_preview) > 200:
                     data_preview = data_preview[:200] + "... (truncated)"
@@ -146,7 +146,7 @@ class SimpleMCPServer:
                 self.logger.info(f"📥 Received {len(data)} bytes, buffer size: {len(self.buffer)}")
                 self.logger.info(f"📄 Received data content: {data_preview}")
 
-                # Обрабатываем сообщения, пока они есть в буфере
+                # Process messages while they exist in the buffer
                 self._process_buffer()
 
             except Exception as e:
@@ -156,19 +156,19 @@ class SimpleMCPServer:
 
     def _process_buffer(self):
         """
-        Обрабатывает буфер и извлекает сообщения
+        Processes the buffer and extracts messages
         """
         while True:
             self.logger.debug(f"Processing buffer (size: {len(self.buffer)}): {self.buffer[:100]}...")
 
-            # Проверяем, нет ли в буфере сообщения JSON без заголовков
-            # Это может происходить с GitHub Copilot или PyCharm, которые отправляют сообщения с \n в конце
+            # Check for JSON message without headers in the buffer
+            # This can happen with GitHub Copilot or PyCharm, which send messages with \n at the end
             if self.content_length is None and self.buffer.find(b"\n") > -1:
                 newline_pos = self.buffer.find(b"\n")
                 possible_json = self.buffer[:newline_pos].strip()
 
                 try:
-                    # Пробуем разобрать сообщение как JSON
+                    # Try to parse the message as JSON
                     decoded_json = possible_json.decode('utf-8')
                     if decoded_json.startswith('{') and decoded_json.endswith('}'):
                         self.logger.debug(f"Found possible JSON message without headers: {decoded_json}")
@@ -176,57 +176,57 @@ class SimpleMCPServer:
                         request = json.loads(decoded_json)
                         response = self._handle_request(request)
 
-                        # Отправляем ответ, если он есть
+                        # Send response if available
                         if response:
                             self._send_response(response)
 
-                        # Удаляем обработанное сообщение из буфера
+                        # Remove processed message from buffer
                         self.buffer = self.buffer[newline_pos + 1:]
                         continue
                 except (UnicodeDecodeError, json.JSONDecodeError) as e:
                     self.logger.debug(f"Not a valid JSON message: {str(e)}, continuing with standard parsing")
 
-            # Стандартная обработка сообщений с заголовками
+            # Standard message processing with headers
             if self.content_length is None:
-                # Ищем двойной перенос строки, отделяющий заголовки от тела
+                # Look for double line break separating headers from body
                 header_end = self.buffer.find(b"\r\n\r\n")
                 if header_end == -1:
-                    # Альтернативно, PyCharm может использовать только \n\n вместо \r\n\r\n
+                    # Alternatively, PyCharm might use just \n\n instead of \r\n\r\n
                     header_end = self.buffer.find(b"\n\n")
                     if header_end == -1:
-                        # Если не найден, ждем больше данных
+                        # If not found, wait for more data
                         break
 
-                # Извлекаем заголовки
+                # Extract headers
                 headers = self.buffer[:header_end].decode('utf-8', errors='replace')
                 self.logger.debug(f"Found headers: {headers}")
 
-                # Ищем Content-Length
+                # Look for Content-Length
                 for line in headers.split("\r\n" if "\r\n" in headers else "\n"):
                     if line.lower().startswith("content-length:"):
                         self.content_length = int(line.split(":", 1)[1].strip())
                         self.logger.debug(f"Found Content-Length: {self.content_length}")
                         break
 
-                # Удаляем заголовки из буфера
+                # Remove headers from buffer
                 delim_len = 4 if b"\r\n\r\n" in self.buffer[:header_end+4] else 2  # 4 = len("\r\n\r\n"), 2 = len("\n\n")
                 self.buffer = self.buffer[header_end + delim_len:]
                 self.logger.debug(f"Removed headers, buffer size now: {len(self.buffer)}")
 
-            # Если у нас достаточно данных для всего сообщения
+            # If we have enough data for the entire message
             if self.content_length is not None and len(self.buffer) >= self.content_length:
-                # Извлекаем тело сообщения
+                # Extract message body
                 message_body = self.buffer[:self.content_length].decode('utf-8', errors='replace')
                 self.logger.debug(f"Extracted message body: {message_body}")
                 self.buffer = self.buffer[self.content_length:]
                 self.logger.debug(f"Remaining buffer size: {len(self.buffer)}")
 
-                # Обрабатываем запрос
+                # Process request
                 try:
                     request = json.loads(message_body)
                     response = self._handle_request(request)
 
-                    # Отправляем ответ
+                    # Send response
                     if response:
                         self._send_response(response)
                 except json.JSONDecodeError as e:
@@ -234,19 +234,19 @@ class SimpleMCPServer:
                 except Exception as e:
                     self.logger.error(f"Error handling request: {str(e)}")
                     self.logger.error(traceback.format_exc())
-                    # Отправляем ошибку, если был ID запроса
+                    # Send error if there was a request ID
                     if 'request' in locals() and isinstance(request, dict) and "id" in request:
                         self._send_error(request["id"], -32603, f"Internal error: {str(e)}")
 
-                # Сбрасываем content_length для следующего сообщения
+                # Reset content_length for next message
                 self.content_length = None
             else:
-                # Если недостаточно данных, ждем больше
+                # If not enough data, wait for more
                 break
 
     def _handle_request(self, request: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
-        Обработка запроса от GitHub Copilot
+        Processing requests from GitHub Copilot
         """
         if not request:
             return {}
@@ -255,13 +255,13 @@ class SimpleMCPServer:
         current_time = time.time()
         uptime = current_time - self.start_time
 
-        # Проверяем, является ли это уведомлением (без ID)
+        # Check if this is a notification (without ID)
         if "id" not in request:
             method = request.get("method", "")
             self.logger.info(f"Received notification: {method} [req #{self.request_count}, uptime: {int(uptime)}s]")
             self.logger.debug(f"Full notification: {json.dumps(request)}")
 
-            # Обрабатываем некоторые уведомления
+            # Process some notifications
             if method == "textDocument/didOpen":
                 params = request.get("params", {})
                 text_document = params.get("textDocument", {})
@@ -277,7 +277,7 @@ class SimpleMCPServer:
                 uri = text_document.get("uri", "")
                 changes = params.get("contentChanges", [])
                 if uri and uri in self.documents and changes:
-                    # Простое обновление документа (не учитывает позиции изменений)
+                    # Simple document update (does not account for change positions)
                     old_size = len(self.documents[uri])
                     self.documents[uri] = changes[-1].get("text", self.documents[uri])
                     new_size = len(self.documents[uri])
@@ -292,7 +292,7 @@ class SimpleMCPServer:
                     self.logger.info(f"Document closed: {uri} (Final size: {len(self.documents[uri])} chars)")
                     del self.documents[uri]
 
-            # Для уведомлений не отправляем ответ
+            # For notifications, we don't send a response
             return None
 
         method = request.get("method", "")
@@ -301,7 +301,7 @@ class SimpleMCPServer:
         self.logger.info(f"Received request: {method} (ID: {message_id}) [req #{self.request_count}, uptime: {int(uptime)}s]")
         self.logger.debug(f"Full request: {json.dumps(request)}")
 
-        # Стандартный ответ на initialize
+        # Standard response to initialize
         if method == "initialize":
             self.connection_attempts += 1
             params = request.get("params", {})
@@ -310,7 +310,7 @@ class SimpleMCPServer:
             client_version = client_info.get("version", "Unknown Version")
             protocol_version = params.get("protocolVersion", "Unknown")
 
-            # Сохраняем информацию о клиенте и протоколе
+            # Save client and protocol information
             client_key = f"{client_name}_{client_version}"
             self.client_info[client_key] = {
                 "name": client_name,
@@ -361,12 +361,12 @@ class SimpleMCPServer:
                 }
             }
 
-        # Ответ на initialized
+        # Response to initialized
         elif method == "initialized":
             self.successful_connections += 1
             self.logger.info(f"✅ CONNECTION SUCCESSFUL #{self.successful_connections} (Total attempts: {self.connection_attempts})")
 
-            # Отправляем уведомление о готовности
+            # Send ready notification
             self._send_notification("window/showMessage", {
                 "type": 3,  # Info
                 "message": f"MCP Server is ready and connected (Connection #{self.successful_connections})"
@@ -377,7 +377,7 @@ class SimpleMCPServer:
                 "result": None
             }
 
-        # Ответ на shutdown
+        # Response to shutdown
         elif method == "shutdown":
             self.logger.info(f"Received shutdown request after {int(uptime)}s uptime")
             self.logger.info(f"Connection stats: {self.successful_connections} successful connections out of {self.connection_attempts} attempts")
@@ -388,25 +388,25 @@ class SimpleMCPServer:
                 "result": None
             }
 
-        # Ответ на exit
+        # Response to exit
         elif method == "exit":
             self.logger.info(f"Received exit request after {int(uptime)}s uptime")
             self.logger.info(f"Final stats: {self.successful_connections}/{self.connection_attempts} connections, {self.request_count} requests processed")
 
-            # Отправляем ответ перед выходом
+            # Send response before exiting
             response = {
                 "jsonrpc": "2.0",
                 "id": message_id,
                 "result": None
             }
             self._send_response(response)
-            # Завершаем программу
+            # Terminate program
             sys.exit(0)
-            return None  # Это не выполнится, но оставляем для согласованности
+            return None  # This won't execute, but leave it for consistency
 
     def _send_response(self, response: Dict[str, Any]) -> None:
         """
-        Отправка ответа через stdout
+        Sending response via stdout
         """
         if not response:
             return
@@ -414,10 +414,10 @@ class SimpleMCPServer:
         response_str = json.dumps(response)
         response_bytes = response_str.encode('utf-8')
 
-        # Формируем полное сообщение с заголовками
+        # Form complete message with headers
         header = f"Content-Length: {len(response_bytes)}\r\n\r\n".encode('utf-8')
 
-        # Отправляем сообщение в stdout
+        # Send message to stdout
         try:
             sys.stdout.buffer.write(header)
             sys.stdout.buffer.write(response_bytes)
@@ -431,7 +431,7 @@ class SimpleMCPServer:
 
     def _send_notification(self, method: str, params: Dict[str, Any]) -> None:
         """
-        Отправка уведомления (сообщения без ID) серверу
+        Sending notification (message without ID) to server
         """
         notification = {
             "jsonrpc": "2.0",
@@ -442,10 +442,10 @@ class SimpleMCPServer:
         notification_str = json.dumps(notification)
         notification_bytes = notification_str.encode('utf-8')
 
-        # Формируем полное сообщение с заголовками
+        # Form complete message with headers
         header = f"Content-Length: {len(notification_bytes)}\r\n\r\n".encode('utf-8')
 
-        # Отправляем сообщение в stdout
+        # Send message to stdout
         try:
             sys.stdout.buffer.write(header)
             sys.stdout.buffer.write(notification_bytes)
@@ -459,7 +459,7 @@ class SimpleMCPServer:
 
     def _send_error(self, id: int, code: int, message: str) -> None:
         """
-        Отправка сообщения об ошибке
+        Sending error message
         """
         error_response = {
             "jsonrpc": "2.0",
