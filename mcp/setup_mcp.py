@@ -144,7 +144,7 @@ def create_project_metadata() -> None:
         }
     }
 
-    metadata_file = Path("project_metadata.json")
+    metadata_file = Path("mcp/project_metadata.json")
     with open(metadata_file, 'w', encoding='utf-8') as f:
         json.dump(metadata, f, indent=2)
 
@@ -186,7 +186,7 @@ python mcp_server.py
 echo "MCP Server stopped"
 """
 
-    script_file = Path("start_mcp_server.sh")
+    script_file = Path("mcp/start_mcp_server.sh")
     with open(script_file, 'w', encoding='utf-8') as f:
         f.write(startup_script)
 
@@ -213,10 +213,11 @@ def main():
     print("\nNext steps:")
     print("1. Open project in PyCharm")
     print("2. Go to Tools -> External Tools -> Start MCP Server")
-    print("3. Or run: python mcp_server.py")
-    print("4. Test with: python mcp_server.py --debug")
+    print("3. Or run: python mcp/mcp_server.py")
+    print("4. Test with: python mcp/mcp_server.py --debug")
     print("\nGitHub Copilot will now have full context about your project!")
 
 
 if __name__ == "__main__":
     main()
+
