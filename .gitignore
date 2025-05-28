@@ -18,6 +18,7 @@ misc.xml
 # Project specific
 data/cleaned/
 *.xml
+scripts/start_mcp_server.sh
 
 # Cache and temp files
 .cache/
