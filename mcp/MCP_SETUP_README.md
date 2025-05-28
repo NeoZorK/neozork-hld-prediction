@@ -29,6 +29,9 @@ Installation script that creates:
 ### 4. `test_mcp_server.py`
 Test script to verify MCP server functionality
 
+### 5. `test_mcp_connection.sh`
+Shell script to test connection to the MCP server
+
 ## Installation and Setup
 
 ### Step 1: Run Installation
@@ -52,6 +55,10 @@ Tools → External Tools → Start MCP Server
 python mcp/mcp_server.py
 ```
 #### Option C: Script
+ Give Execution Permissions to the Script
+```bash
+chmod +x /scripts/start_mcp_server.sh
+```
 ```bash
 scripts/.start_mcp_server.sh
 ```
@@ -63,6 +70,15 @@ python mcp/mcp_server.py --debug
 ```bash
 python mcp/test_mcp_server.py
 ```
+### Step 6: Test Connection
+```bash
+scripts/.test_mcp_connection.sh
+```
+### Step 7: Give Execution Permissions to the Script
+```bash
+chmod +x /scripts/test_mcp_connection.sh
+```
+
 
 ## MCP Server Capabilities
 

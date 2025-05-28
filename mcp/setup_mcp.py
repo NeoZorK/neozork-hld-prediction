@@ -186,17 +186,66 @@ python mcp_server.py
 echo "MCP Server stopped"
 """
 
-    script_file = Path("scripts/start_mcp_server.sh")
+    scripts_dir = Path("scripts")
+    scripts_dir.mkdir(exist_ok=True)
+
+    script_file = scripts_dir / "start_mcp_server.sh"
     with open(script_file, 'w', encoding='utf-8') as f:
         f.write(startup_script)
 
     # Make executable on Unix systems
     try:
         os.chmod(script_file, 0o755)
+        print(f"Created startup script with execution permissions: {script_file}")
     except OSError:
-        pass  # Windows doesn't support chmod
+        print(f"Created startup script (without execution permissions): {script_file}")
 
-    print(f"Created startup script: {script_file}")
+
+def create_test_connection_script() -> None:
+    """Create script to test MCP server connection"""
+
+    test_script = """#!/bin/bash
+# Test the MCP server connection for GitHub Copilot
+
+echo "=== Testing MCP Server Connection ==="
+echo "Checking if MCP server is running correctly..."
+
+# Get the project root directory
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Define the test request
+TEST_REQUEST='{"method":"initialize","params":{}}'
+
+# Run the MCP server with a test input
+echo "$TEST_REQUEST" | python3 "$PROJECT_ROOT/mcp/mcp_server.py"
+
+echo ""
+echo "=== Detailed Debug Information ==="
+echo "Running MCP server in debug mode to check project context..."
+python3 "$PROJECT_ROOT/mcp/mcp_server.py" --debug | head -n 20
+
+echo ""
+echo "If you see a valid JSON response above, the MCP server is working correctly."
+echo "For troubleshooting:"
+echo "1. Check that paths in mcp-config.json are correct"
+echo "2. Check that PYTHONPATH includes your project root"
+echo "3. Examine IntelliJ logs in Help > Show Log in Explorer"
+echo "=== End of Test ==="
+"""
+
+    scripts_dir = Path("scripts")
+    scripts_dir.mkdir(exist_ok=True)
+
+    script_file = scripts_dir / "test_mcp_connection.sh"
+    with open(script_file, 'w', encoding='utf-8') as f:
+        f.write(test_script)
+
+    # Make executable on Unix systems
+    try:
+        os.chmod(script_file, 0o755)
+        print(f"Created test connection script with execution permissions: {script_file}")
+    except OSError:
+        print(f"Created test connection script (without execution permissions): {script_file}")
 
 
 def main():
@@ -208,6 +257,7 @@ def main():
     create_copilot_workspace_config()
     create_project_metadata()
     create_startup_script()
+    create_test_connection_script()
 
     print("\nMCP Server setup completed!")
     print("\nNext steps:")
