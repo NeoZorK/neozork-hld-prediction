@@ -16,7 +16,7 @@ from typing import Dict, Any, Optional
 import os
 
 # Define maximum response delay to prevent buffer issues
-MAX_RESPONSE_DELAY = 0.5  # Maximum delay in seconds for sending responses
+MAX_RESPONSE_DELAY = 0.1  # Уменьшаем максимальную задержку с 0.5 до 0.1 секунд
 
 # Determine the project root directory regardless of where the script is run from
 script_path = os.path.abspath(__file__)
@@ -306,7 +306,7 @@ class SimpleMCPServer:
                     request_obj = json.loads(message_body)  # Use request_obj
                     response = self._handle_request(request_obj)
 
-                    # Send response
+                    # Send response immediately for initialize or other critical requests
                     if response:
                         self._send_response(response)
 
@@ -649,26 +649,8 @@ class SimpleMCPServer:
         if not response:
             return
 
-        # Generate a unique ID for the response if not present
+        # Отключаем все задержки при ответе для GitHub Copilot
         response_delay = 0
-
-        # Determine if this is an 'initialize' response to avoid delaying it.
-        # An 'initialize' response typically contains 'capabilities' and 'serverInfo' in its result.
-        is_initialize_response = (
-            response.get("result") is not None and
-            isinstance(response.get("result"), dict) and
-            "capabilities" in response.get("result", {}) and
-            "serverInfo" in response.get("result", {})
-        )
-
-        # Apply delay only if it's NOT an initialize response AND other conditions for delay are met
-        if not is_initialize_response and "id" in response and isinstance(response["id"], int) and response["id"] > 0:
-            # For GitHub Copilot, we can add a delay based on the ID to prevent buffer issues
-            # This delay is NOT applied to 'initialize' responses.
-            response_delay = min(MAX_RESPONSE_DELAY, 0.01 * response["id"])
-            if response_delay > 0:
-                self.logger.debug(f"Throttling response for ID {response['id']} by {response_delay:.3f}s (not initialize response)")
-                time.sleep(response_delay)
 
         response_str = json.dumps(response)
         response_bytes = response_str.encode('utf-8')
