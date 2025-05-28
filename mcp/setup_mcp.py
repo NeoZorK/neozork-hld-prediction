@@ -186,7 +186,7 @@ python mcp_server.py
 echo "MCP Server stopped"
 """
 
-    script_file = Path("mcp/start_mcp_server.sh")
+    script_file = Path("scripts/start_mcp_server.sh")
     with open(script_file, 'w', encoding='utf-8') as f:
         f.write(startup_script)
 
