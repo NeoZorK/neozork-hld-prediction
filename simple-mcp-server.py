@@ -11,6 +11,7 @@ import traceback
 import logging
 import threading
 import time
+import signal
 from typing import Dict, Any, Optional, List
 import os
 import pathlib
@@ -547,6 +548,7 @@ class SimpleMCPServer:
             }
             self._send_response(response)
             # Terminate program
+            self.shutdown_gracefully()
             sys.exit(0)
             return None  # This won't execute, but leave it for consistency
 
@@ -740,10 +742,14 @@ class SimpleMCPServer:
                 "connected_at": time.time(),
                 "status": "active"
             }
+            # Сразу выводим информацию о новом подключении через client_logger
+            self.client_logger.info(f"⚡ NEW CONNECTION from {client_name} v{client_version}")
         elif status == "disconnected":
             if client_key in self.active_clients:
                 self.active_clients[client_key]["status"] = "disconnected"
                 self.active_clients[client_key]["disconnected_at"] = time.time()
+                # Выводим информацию об отключении
+                self.client_logger.info(f"❌ DISCONNECTED: {client_name} v{client_version}")
 
         # Print updated client information
         self._print_client_info()
@@ -756,7 +762,46 @@ class SimpleMCPServer:
         for client_key, client_data in self.client_info.items():
             self.client_logger.info(f"Client: {client_key}, Info: {json.dumps(client_data, indent=2)}")
 
+    def shutdown_gracefully(self):
+        """
+        Gracefully shut down the server, show statistics
+        """
+        uptime = time.time() - self.start_time
+        self.logger.info("=" * 50)
+        self.logger.info(f"⚠️ Server shutting down after {int(uptime)}s uptime")
+        self.logger.info(f"📊 Connection stats: {self.successful_connections} successful connections out of {self.connection_attempts} attempts")
+        self.logger.info(f"📊 Processed {self.request_count} requests")
+
+        # Display information about active clients
+        active_count = len([c for c in self.active_clients.values() if c.get("status") == "active"])
+        self.logger.info(f"👥 Active clients at shutdown: {active_count}")
+        for client_key, client_data in self.active_clients.items():
+            if client_data.get("status") == "active":
+                self.logger.info(f"   - {client_data.get('name')} v{client_data.get('version')}")
+
+        self.logger.info("🛑 Server shutdown complete")
+        self.logger.info("=" * 50)
+
+        # Can perform any other cleanup needed here
+
+        return
+
 
 if __name__ == "__main__":
+    # Создаем экземпляр сервера
     server = SimpleMCPServer()
+
+    # Регистрируем обработчик сигналов для корректного завершения
+    def signal_handler(sig, frame):
+        logger.info(f"Received signal {sig}, shutting down gracefully...")
+        server.shutdown_gracefully()
+        sys.exit(0)
+
+    # Регистрируем обработчики сигналов SIGINT (Ctrl+C) и SIGTERM
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    logger.info("Signal handlers registered for graceful shutdown (Ctrl+C/SIGTERM)")
+
+    # Запускаем сервер
     server.run()
