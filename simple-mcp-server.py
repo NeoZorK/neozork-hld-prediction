@@ -9,12 +9,10 @@ import json
 import sys
 import traceback
 import logging
-import threading
 import time
 import signal
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional
 import os
-import pathlib
 
 # Define maximum response delay to prevent buffer issues
 MAX_RESPONSE_DELAY = 0.5  # Maximum delay in seconds for sending responses
@@ -47,20 +45,6 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger("simple_mcp")
-
-# Setup additional console output only for detailed debugging (not for regular info messages)
-console_handler = logging.StreamHandler(sys.stderr)
-# Set console handler to DEBUG level to capture all messages
-console_handler.setLevel(logging.DEBUG)
-# Filter to only show DEBUG messages in console
-class DebugOnlyFilter(logging.Filter):
-    def filter(self, record):
-        return record.levelno == logging.DEBUG
-
-console_handler.addFilter(DebugOnlyFilter())
-console_formatter = logging.Formatter('🔍 DEBUG: %(message)s')
-console_handler.setFormatter(console_formatter)
-logger.addHandler(console_handler)
 
 # Add log entry about server startup
 logger.info("========================")
@@ -105,27 +89,14 @@ if os.name != 'nt':
                 # Use more noticeable formatting for console output
                 handler.setFormatter(ColoredFormatter('📝 %(asctime)s - %(levelname)s - %(message)s'))
 
-# Create a special console handler for client and request details
-client_console_handler = logging.StreamHandler(sys.stderr)
-client_console_handler.setLevel(logging.INFO)
-client_formatter = logging.Formatter('👥 CLIENTS: %(message)s')
-client_console_handler.setFormatter(client_formatter)
-
-request_console_handler = logging.StreamHandler(sys.stderr)
-request_console_handler.setLevel(logging.INFO)
-request_formatter = logging.Formatter('📡 REQUEST/RESPONSE: %(message)s')
-request_console_handler.setFormatter(request_formatter)
-
 # Create special loggers for client and request info
 client_logger = logging.getLogger("client_info")
 client_logger.setLevel(logging.INFO)
-client_logger.addHandler(client_console_handler)
-client_logger.propagate = False
+client_logger.propagate = True
 
 request_logger = logging.getLogger("request_info")
 request_logger.setLevel(logging.INFO)
-request_logger.addHandler(request_console_handler)
-request_logger.propagate = False
+request_logger.propagate = True
 
 class SimpleMCPServer:
     """
@@ -204,7 +175,7 @@ class SimpleMCPServer:
                     data_preview = data_preview[:200] + "... (truncated)"
 
                 self.logger.info(f"📥 Received {len(data)} bytes, buffer size: {len(self.buffer)}")
-                # Подробное логирование содержимого запроса
+                # Detect if data is too large for console
                 try:
                     decoded_data = data.decode('utf-8', errors='replace')
                     self.request_logger.info(f"RAW INPUT [{len(data)} bytes]: {decoded_data[:300]}{'...' if len(decoded_data) > 300 else ''}")
@@ -311,21 +282,36 @@ class SimpleMCPServer:
                 self.logger.debug(f"Remaining buffer size: {len(self.buffer)}")
 
                 # Process request
+                request_obj = None  # Initialize for robust error handling
                 try:
-                    request = json.loads(message_body)
-                    response = self._handle_request(request)
+                    request_obj = json.loads(message_body)  # Use request_obj
+                    response = self._handle_request(request_obj)
 
                     # Send response
                     if response:
                         self._send_response(response)
+
+                    # If the request was 'initialize' and it was successful (response has a result)
+                    # Send readiness notifications immediately to potentially prevent client timeout
+                    if request_obj and request_obj.get("method") == "initialize" and response and "result" in response:
+                        self.logger.info("Sending readiness notifications immediately after 'initialize' response.")
+                        self._send_notification("$/neozork/serverReady", {
+                            "status": "ready",
+                            "features": ["completion", "hover", "definition"]
+                        })
+                        self._send_notification("window/showMessage", {
+                            "type": 3,  # Info
+                            "message": f"MCP Server is ready and connected (Connection #{self.successful_connections})"
+                        })
+
                 except json.JSONDecodeError as e:
                     self.logger.error(f"Failed to parse JSON: {message_body}, error: {str(e)}")
                 except Exception as e:
                     self.logger.error(f"Error handling request: {str(e)}")
                     self.logger.error(traceback.format_exc())
-                    # Send error if there was a request ID
-                    if 'request' in locals() and isinstance(request, dict) and "id" in request:
-                        self._send_error(request["id"], -32603, f"Internal error: {str(e)}")
+                    # Send error if there was a request ID, using request_obj
+                    if request_obj and isinstance(request_obj, dict) and "id" in request_obj:
+                        self._send_error(request_obj["id"], -32603, f"Internal error: {str(e)}")
 
                 # Reset content_length for next message
                 self.content_length = None
@@ -391,8 +377,10 @@ class SimpleMCPServer:
 
             # New case for initialized notification to fix connection problems
             elif method == "initialized":
-                self.successful_connections += 1
-                self.logger.info(f"✅ CONNECTION SUCCESSFUL #{self.successful_connections} (Total attempts: {self.connection_attempts})")
+                # Connection success is now counted upon sending the 'initialize' response.
+                # This notification from the client confirms it has also initialized.
+                self.logger.info(f"Received 'initialized' notification. Client is ready. (Current successful connections: {self.successful_connections}, Attempts: {self.connection_attempts})")
+                # Note: self.successful_connections is no longer incremented here.
 
                 # Send ready notification
                 self._send_notification("window/showMessage", {
@@ -440,6 +428,17 @@ class SimpleMCPServer:
             self.logger.info(f"Client capabilities: {json.dumps(params.get('capabilities', {}), indent=2)}")
 
             self._update_client_list(client_name, client_version, status="connected")
+
+            # Mark connection as successful after server processes 'initialize' and sends response.
+            if self.active_clients.get(client_key) and \
+               not self.active_clients[client_key].get('initialization_counted_successful', False):
+                self.successful_connections += 1
+                self.active_clients[client_key]['initialization_counted_successful'] = True
+                self.logger.info(f"✅ Connection marked SUCCESSFUL after 'initialize' response for {client_key}. Total successful: {self.successful_connections}, Attempts: {self.connection_attempts}")
+            elif self.active_clients.get(client_key) and self.active_clients[client_key].get('initialization_counted_successful', False):
+                self.logger.info(f"Connection for {client_key} already marked successful. 'initialize' received again?")
+            else:
+                self.logger.warning(f"Could not mark {client_key} as successful: client_key not found in active_clients after update.")
 
             return {
                 "jsonrpc": "2.0",
@@ -538,7 +537,7 @@ class SimpleMCPServer:
             # Store client information for Copilot
             if method == "copilot/signIn":
                 # Authorization request
-                self.logger.info("Обработка запроса авторизации Copilot")
+                self.logger.info("Query for Copilot sign-in")
                 return {
                     "jsonrpc": "2.0",
                     "id": message_id,
@@ -549,7 +548,7 @@ class SimpleMCPServer:
                 }
             elif method == "copilot/getCompletions" or method == "getCompletions":
                 # Query for completions
-                self.logger.info("Обработка запроса на автодополнения")
+                self.logger.info("Query for Copilot completions")
                 return {
                     "jsonrpc": "2.0",
                     "id": message_id,
@@ -808,15 +807,16 @@ class SimpleMCPServer:
                 "name": client_name,
                 "version": client_version,
                 "connected_at": time.time(),
-                "status": "active"
+                "status": "active",
+                "initialization_counted_successful": False # Initialize the flag
             }
-            # Сразу выводим информацию о новом подключении через client_logger
+            # Delete old entries if they exist
             self.client_logger.info(f"⚡ NEW CONNECTION from {client_name} v{client_version}")
         elif status == "disconnected":
             if client_key in self.active_clients:
                 self.active_clients[client_key]["status"] = "disconnected"
                 self.active_clients[client_key]["disconnected_at"] = time.time()
-                # Выводим информацию об отключении
+                # Display disconnection message
                 self.client_logger.info(f"❌ DISCONNECTED: {client_name} v{client_version}")
 
         # Print updated client information
