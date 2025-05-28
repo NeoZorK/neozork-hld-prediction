@@ -14,8 +14,11 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 
-# Add src to Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+# fixed path for src directory
+project_root = os.environ.get("PROJECT_ROOT", ".")
+src_path = os.path.join(os.path.abspath(project_root), 'src')
+if os.path.exists(src_path):
+    sys.path.insert(0, src_path)
 
 
 @dataclass
