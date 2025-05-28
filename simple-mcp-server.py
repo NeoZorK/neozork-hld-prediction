@@ -85,6 +85,9 @@ class SimpleMCPServer:
         self.successful_connections = 0
         self.request_count = 0
         self.start_time = time.time()
+        # Информация о клиентах и протоколах
+        self.client_info = {}
+        self.protocol_versions = set()
 
     def run(self):
         """
@@ -150,7 +153,7 @@ class SimpleMCPServer:
             self.logger.debug(f"Processing buffer (size: {len(self.buffer)}): {self.buffer[:100]}...")
 
             # Проверяем, нет ли в буфере сообщения JSON без заголовков
-            # Это может происходить с GitHub Copilot, который отправляет сообщения с \n в конце
+            # Это может происходить с GitHub Copilot или PyCharm, которые отправляют сообщения с \n в конце
             if self.content_length is None and self.buffer.find(b"\n") > -1:
                 newline_pos = self.buffer.find(b"\n")
                 possible_json = self.buffer[:newline_pos].strip()
@@ -171,36 +174,40 @@ class SimpleMCPServer:
                         # Удаляем обработанное сообщение из буфера
                         self.buffer = self.buffer[newline_pos + 1:]
                         continue
-                except (UnicodeDecodeError, json.JSONDecodeError):
-                    self.logger.debug("Not a valid JSON message, continuing with standard parsing")
+                except (UnicodeDecodeError, json.JSONDecodeError) as e:
+                    self.logger.debug(f"Not a valid JSON message: {str(e)}, continuing with standard parsing")
 
             # Стандартная обработка сообщений с заголовками
             if self.content_length is None:
                 # Ищем двойной перенос строки, отделяющий заголовки от тела
                 header_end = self.buffer.find(b"\r\n\r\n")
                 if header_end == -1:
-                    # Если не найден, ждем больше данных
-                    break
+                    # Альтернативно, PyCharm может использовать только \n\n вместо \r\n\r\n
+                    header_end = self.buffer.find(b"\n\n")
+                    if header_end == -1:
+                        # Если не найден, ждем больше данных
+                        break
 
                 # Извлекаем заголовки
-                headers = self.buffer[:header_end].decode('utf-8')
+                headers = self.buffer[:header_end].decode('utf-8', errors='replace')
                 self.logger.debug(f"Found headers: {headers}")
 
                 # Ищем Content-Length
-                for line in headers.split("\r\n"):
+                for line in headers.split("\r\n" if "\r\n" in headers else "\n"):
                     if line.lower().startswith("content-length:"):
                         self.content_length = int(line.split(":", 1)[1].strip())
                         self.logger.debug(f"Found Content-Length: {self.content_length}")
                         break
 
                 # Удаляем заголовки из буфера
-                self.buffer = self.buffer[header_end + 4:]  # 4 = len("\r\n\r\n")
+                delim_len = 4 if b"\r\n\r\n" in self.buffer[:header_end+4] else 2  # 4 = len("\r\n\r\n"), 2 = len("\n\n")
+                self.buffer = self.buffer[header_end + delim_len:]
                 self.logger.debug(f"Removed headers, buffer size now: {len(self.buffer)}")
 
             # Если у нас достаточно данных для всего сообщения
             if self.content_length is not None and len(self.buffer) >= self.content_length:
                 # Извлекаем тело сообщения
-                message_body = self.buffer[:self.content_length].decode('utf-8')
+                message_body = self.buffer[:self.content_length].decode('utf-8', errors='replace')
                 self.logger.debug(f"Extracted message body: {message_body}")
                 self.buffer = self.buffer[self.content_length:]
                 self.logger.debug(f"Remaining buffer size: {len(self.buffer)}")
@@ -213,13 +220,13 @@ class SimpleMCPServer:
                     # Отправляем ответ
                     if response:
                         self._send_response(response)
-                except json.JSONDecodeError:
-                    self.logger.error(f"Failed to parse JSON: {message_body}")
+                except json.JSONDecodeError as e:
+                    self.logger.error(f"Failed to parse JSON: {message_body}, error: {str(e)}")
                 except Exception as e:
                     self.logger.error(f"Error handling request: {str(e)}")
                     self.logger.error(traceback.format_exc())
                     # Отправляем ошибку, если был ID запроса
-                    if isinstance(request, dict) and "id" in request:
+                    if 'request' in locals() and isinstance(request, dict) and "id" in request:
                         self._send_error(request["id"], -32603, f"Internal error: {str(e)}")
 
                 # Сбрасываем content_length для следующего сообщения
@@ -288,12 +295,26 @@ class SimpleMCPServer:
         # Стандартный ответ на initialize
         if method == "initialize":
             self.connection_attempts += 1
-            client_info = request.get("params", {}).get("clientInfo", {})
+            params = request.get("params", {})
+            client_info = params.get("clientInfo", {})
             client_name = client_info.get("name", "Unknown Client")
             client_version = client_info.get("version", "Unknown Version")
+            protocol_version = params.get("protocolVersion", "Unknown")
+
+            # Сохраняем информацию о клиенте и протоколе
+            client_key = f"{client_name}_{client_version}"
+            self.client_info[client_key] = {
+                "name": client_name,
+                "version": client_version,
+                "last_connection": time.time(),
+                "protocol": protocol_version,
+                "capabilities": params.get("capabilities", {})
+            }
+            self.protocol_versions.add(protocol_version)
 
             self.logger.info(f"🔌 CONNECTION ATTEMPT #{self.connection_attempts} from {client_name} v{client_version}")
-            self.logger.info(f"Client capabilities: {json.dumps(request.get('params', {}).get('capabilities', {}), indent=2)}")
+            self.logger.info(f"Protocol version: {protocol_version}")
+            self.logger.info(f"Client capabilities: {json.dumps(params.get('capabilities', {}), indent=2)}")
 
             return {
                 "jsonrpc": "2.0",
