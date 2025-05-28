@@ -360,6 +360,12 @@ class SimpleMCPServer:
                     "message": f"MCP Server is ready and connected (Connection #{self.successful_connections})"
                 })
 
+                # Send server ready notification
+                self._send_notification("$/neozork/serverReady", {
+                    "status": "ready",
+                    "features": ["completion", "hover", "definition"]
+                })
+
             # For notifications, we don't send a response
             return None
 
@@ -486,7 +492,10 @@ class SimpleMCPServer:
             sys.stdout.buffer.write(response_bytes)
             sys.stdout.buffer.flush()
 
-            self.logger.info(f"Sent response for ID: {response.get('id', 0)}")
+            response_id = response.get('id', 0)
+            self.logger.info(f"Sent response for ID: {response_id}")
+            # Добавляем более подробный вывод для отладки
+            self.request_logger.info(f"RESPONSE for ID {response_id}: {self._simplify_response(response)}")
             self.logger.debug(f"Full response: {response_str}")
         except Exception as e:
             self.logger.error(f"Error sending response: {str(e)}")
@@ -592,6 +601,42 @@ class SimpleMCPServer:
                     result[key] = value[:47] + "..."
                 else:
                     result[key] = value
+
+        return json.dumps(result, indent=2)
+
+    def _simplify_response(self, response):
+        """
+        Simplify response for display
+        """
+        if not response:
+            return "{}"
+
+        # Create a simplified version for display
+        result = {}
+
+        # Include main response properties
+        if "id" in response:
+            result["id"] = response["id"]
+
+        if "jsonrpc" in response:
+            result["jsonrpc"] = response["jsonrpc"]
+
+        # For results, simplify based on content
+        if "result" in response:
+            if isinstance(response["result"], dict):
+                result_preview = {}
+                # Include key information from capabilities
+                if "capabilities" in response["result"]:
+                    result_preview["capabilities"] = "..." if response["result"]["capabilities"] else "{}"
+                if "serverInfo" in response["result"]:
+                    result_preview["serverInfo"] = response["result"]["serverInfo"]
+                result["result"] = result_preview
+            else:
+                result["result"] = response["result"]
+
+        # Include error information if present
+        if "error" in response:
+            result["error"] = response["error"]
 
         return json.dumps(result, indent=2)
 
