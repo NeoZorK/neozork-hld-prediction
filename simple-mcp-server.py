@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# filepath: /Users/rost/Documents/DIS/REPO/neozork-hld-prediction/simple-mcp-server.py
 # -*- coding: utf-8 -*-
 """
 Simple MCP Server for GitHub Copilot connection
@@ -26,25 +27,23 @@ if os.path.basename(script_dir) == "mcp":
 else:
     project_root = script_dir
 
-# Create logs directory in the project root
-logs_dir = os.path.join(project_root, "logs")
-if not os.path.exists(logs_dir):
-    try:
-        os.makedirs(logs_dir)
-        print(f"Created logs directory: {logs_dir}")
-    except Exception as e:
-        print(f"Error creating logs directory: {e}")
-
 # Logging setup
 logging.basicConfig(
     level=logging.DEBUG,  # Increase logging level for debugging
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(os.path.join(logs_dir, "mcp_server.log"), mode='a'),  # Save logs to logs directory
         logging.StreamHandler(sys.stdout)      # Output logs to stdout for console display
     ]
 )
 logger = logging.getLogger("simple_mcp")
+
+# Настройка логирования для вывода ВСЕЙ информации в консоль
+# Убедимся, что никакие логи не будут фильтроваться
+for handler in logging.root.handlers:
+    handler.setLevel(logging.DEBUG)
+
+# Установим DEBUG уровень для всех логгеров
+logging.getLogger().setLevel(logging.DEBUG)
 
 # Add log entry about server startup
 logger.info("========================")
@@ -83,19 +82,25 @@ class ColoredFormatter(logging.Formatter):
 
 # Apply colored formatter for console if not Windows
 if os.name != 'nt':
-    for handler in logger.handlers:
-        if isinstance(handler, logging.StreamHandler):
-            if handler.stream == sys.stdout:
-                # Use more noticeable formatting for console output
-                handler.setFormatter(ColoredFormatter('📝 %(asctime)s - %(levelname)s - %(message)s'))
+    # Get the root logger
+    root_logger_instance = logging.getLogger()
+    for handler in root_logger_instance.handlers:
+        if isinstance(handler, logging.StreamHandler) and handler.stream == sys.stdout:
+            # Use more noticeable formatting for console output, including logger name
+            handler.setFormatter(ColoredFormatter('📝 %(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+            # Ensure the handler itself also processes DEBUG messages if not already configured
+            # This might be redundant if basicConfig level is DEBUG and handler level is not explicitly set higher
+            if handler.level > logging.DEBUG:
+                handler.setLevel(logging.DEBUG)
+            break # Assuming only one stdout handler for the root logger
 
 # Create special loggers for client and request info
 client_logger = logging.getLogger("client_info")
-client_logger.setLevel(logging.INFO)
+client_logger.setLevel(logging.DEBUG) # Changed from INFO to DEBUG
 client_logger.propagate = True
 
 request_logger = logging.getLogger("request_info")
-request_logger.setLevel(logging.INFO)
+request_logger.setLevel(logging.DEBUG) # Changed from INFO to DEBUG
 request_logger.propagate = True
 
 class SimpleMCPServer:
@@ -197,6 +202,14 @@ class SimpleMCPServer:
         while True:
             if len(self.buffer) == 0:
                 break
+
+            # Always reset content length for new message
+            self.logger.info(f"💾 Current buffer (size: {len(self.buffer)} byte): {self.buffer[:200].hex()}...")
+            try:
+                buffer_text = self.buffer.decode('utf-8', errors='replace')
+                self.logger.info(f"💾 Buffer as text: {buffer_text[:300]}{'...' if len(buffer_text) > 300 else ''}")
+            except Exception as e:
+                self.logger.debug(f"Impossible decode buffer as text: {e}")
 
             self.logger.debug(f"Processing buffer (size: {len(self.buffer)}): {self.buffer[:100]}...")
 
@@ -598,7 +611,6 @@ class SimpleMCPServer:
             # Terminate program
             self.shutdown_gracefully()
             sys.exit(0)
-            return None  # This won't execute, but leave it for consistency
 
         # Add default response for unknown requests
         else:
@@ -618,11 +630,23 @@ class SimpleMCPServer:
 
         # Generate a unique ID for the response if not present
         response_delay = 0
-        if "id" in response and isinstance(response["id"], int) and response["id"] > 0:
+
+        # Determine if this is an 'initialize' response to avoid delaying it.
+        # An 'initialize' response typically contains 'capabilities' and 'serverInfo' in its result.
+        is_initialize_response = (
+            response.get("result") is not None and
+            isinstance(response.get("result"), dict) and
+            "capabilities" in response.get("result", {}) and
+            "serverInfo" in response.get("result", {})
+        )
+
+        # Apply delay only if it's NOT an initialize response AND other conditions for delay are met
+        if not is_initialize_response and "id" in response and isinstance(response["id"], int) and response["id"] > 0:
             # For GitHub Copilot, we can add a delay based on the ID to prevent buffer issues
+            # This delay is NOT applied to 'initialize' responses.
             response_delay = min(MAX_RESPONSE_DELAY, 0.01 * response["id"])
             if response_delay > 0:
-                self.logger.debug(f"Throttling response for ID {response['id']} by {response_delay:.3f}s to avoid buffer issues")
+                self.logger.debug(f"Throttling response for ID {response['id']} by {response_delay:.3f}s (not initialize response)")
                 time.sleep(response_delay)
 
         response_str = json.dumps(response)
