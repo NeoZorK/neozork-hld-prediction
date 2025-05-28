@@ -16,8 +16,8 @@ from typing import Dict, Any, Optional, List
 import os
 import pathlib
 
-# Определение задержки ответа - чтобы избежать тайм-аутов
-MAX_RESPONSE_DELAY = 0.5  # Максимальная задержка ответа в секундах
+# Define maximum response delay to prevent buffer issues
+MAX_RESPONSE_DELAY = 0.5  # Maximum delay in seconds for sending responses
 
 # Determine the project root directory regardless of where the script is run from
 script_path = os.path.abspath(__file__)
@@ -532,12 +532,12 @@ class SimpleMCPServer:
         elif method.startswith("copilot/"):
             self.logger.info(f"Received Copilot-specific request: {method}")
 
-            # Детальное логирование запроса Copilot
+            # Detect if this is a Copilot request
             self.client_logger.info(f"🤖 COPILOT REQUEST: {method} (ID: {message_id})")
 
-            # Специальная обработка запросов Copilot по их типу
+            # Store client information for Copilot
             if method == "copilot/signIn":
-                # Обработка авторизации Copilot
+                # Authorization request
                 self.logger.info("Обработка запроса авторизации Copilot")
                 return {
                     "jsonrpc": "2.0",
@@ -548,7 +548,7 @@ class SimpleMCPServer:
                     }
                 }
             elif method == "copilot/getCompletions" or method == "getCompletions":
-                # Запрос автодополнений
+                # Query for completions
                 self.logger.info("Обработка запроса на автодополнения")
                 return {
                     "jsonrpc": "2.0",
@@ -564,7 +564,7 @@ class SimpleMCPServer:
                     }
                 }
 
-            # Обработка всех остальных запросов Copilot с общим положительным ответом
+            # Query for other Copilot features
             return {
                 "jsonrpc": "2.0",
                 "id": message_id,
@@ -617,10 +617,10 @@ class SimpleMCPServer:
         if not response:
             return
 
-        # Защита от слишком долгой задержки ответа
+        # Generate a unique ID for the response if not present
         response_delay = 0
         if "id" in response and isinstance(response["id"], int) and response["id"] > 0:
-            # Для основных запросов добавим задержку не более MAX_RESPONSE_DELAY
+            # For GitHub Copilot, we can add a delay based on the ID to prevent buffer issues
             response_delay = min(MAX_RESPONSE_DELAY, 0.01 * response["id"])
             if response_delay > 0:
                 self.logger.debug(f"Throttling response for ID {response['id']} by {response_delay:.3f}s to avoid buffer issues")
@@ -634,20 +634,20 @@ class SimpleMCPServer:
 
         # Send message to stdout
         try:
-            # Отправка ответа единым блоком для предотвращения фрагментации
+            # Send response as a single block to prevent fragmentation
             message = header + response_bytes
             sys.stdout.buffer.write(message)
             sys.stdout.buffer.flush()
 
             response_id = response.get('id', 0)
             self.logger.info(f"Sent response for ID: {response_id} (size: {len(response_bytes)} bytes, delay: {response_delay:.3f}s)")
-            # Добавляем более подробный вывод для отладки
+            # Add request info to the request logger
             self.request_logger.info(f"RESPONSE for ID {response_id}: {self._simplify_response(response)}")
             self.logger.debug(f"Full response: {response_str}")
         except Exception as e:
             self.logger.error(f"Error sending response: {str(e)}")
             self.logger.error(traceback.format_exc())
-            # Пытаемся отправить уведомление об ошибке, если возможно
+            # Try to send an error notification if stdout is still available
             try:
                 self._send_notification("window/showMessage", {
                     "type": 1,  # Error
@@ -674,7 +674,7 @@ class SimpleMCPServer:
 
         # Send message to stdout
         try:
-            # Отправка уведомления единым блоком для предотвращения фрагментации
+            # Send notification as a single block to prevent fragmentation
             message = header + notification_bytes
             sys.stdout.buffer.write(message)
             sys.stdout.buffer.flush()
@@ -856,20 +856,20 @@ class SimpleMCPServer:
 
 
 if __name__ == "__main__":
-    # Создаем экземпляр сервера
+    # Create MCP server instance
     server = SimpleMCPServer()
 
-    # Регистрируем обработчик сигналов для корректного завершения
+    # Register signal handlers for graceful shutdown
     def signal_handler(sig, frame):
         logger.info(f"Received signal {sig}, shutting down gracefully...")
         server.shutdown_gracefully()
         sys.exit(0)
 
-    # Регистрируем обработчики сигналов SIGINT (Ctrl+C) и SIGTERM
+    # Register signal handlers for SIGINT and SIGTERM
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
     logger.info("Signal handlers registered for graceful shutdown (Ctrl+C/SIGTERM)")
 
-    # Запускаем сервер
+    # Run the server
     server.run()
