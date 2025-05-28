@@ -2,7 +2,7 @@
   "mcpServers": {
     "neozork-hld-prediction": {
       "command": "python",
-      "args": ["-m", "mcp_server"],
+      "args": ["-m", "mcp.mcp_server"],
       "env": {
         "PROJECT_ROOT": ".",
         "PYTHONPATH": "./src"
@@ -43,3 +43,4 @@
     ]
   }
 }
+

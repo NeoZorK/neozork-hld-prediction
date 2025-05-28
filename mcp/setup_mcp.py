@@ -177,11 +177,10 @@ fi
 if [ ! -f ".mcp_setup_complete" ]; then
     echo "Installing MCP server dependencies..."
     pip install -r requirements.txt
-    touch .mcp_setup_complete
 fi
 
 # Start MCP server
-python mcp_server.py
+python mcp/mcp_server.py
 
 echo "MCP Server stopped"
 """
