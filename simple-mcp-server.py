@@ -10,7 +10,7 @@ import sys
 import traceback
 import logging
 import threading
-from typing import Dict, Any
+from typing import Dict, Any, Optional, List
 import os
 
 # Настройка логирования
@@ -35,6 +35,10 @@ class SimpleMCPServer:
         # Создаем буфер для входящих данных
         self.buffer = b""
         self.content_length = None
+        # Словарь для хранения открытых документов
+        self.documents = {}
+        # Идентификатор для сообщений
+        self.next_id = 1
 
     def run(self):
         """
@@ -49,6 +53,11 @@ class SimpleMCPServer:
         except Exception as e:
             self.logger.error(f"Ошибка в MCP сервере: {str(e)}")
             self.logger.error(traceback.format_exc())
+            # Отправляем уведомление об ошибке
+            self._send_notification("window/showMessage", {
+                "type": 1,  # Error
+                "message": f"MCP Server Error: {str(e)}"
+            })
 
     def _handle_stdio(self):
         """
@@ -70,6 +79,7 @@ class SimpleMCPServer:
                     break
 
                 self.buffer += data
+                self.logger.debug(f"Received {len(data)} bytes, buffer size: {len(self.buffer)}")
 
                 # Обрабатываем сообщения, пока они есть в буфере
                 self._process_buffer()
@@ -121,6 +131,12 @@ class SimpleMCPServer:
                         self._send_response(response)
                 except json.JSONDecodeError:
                     self.logger.error(f"Failed to parse JSON: {message_body}")
+                except Exception as e:
+                    self.logger.error(f"Error handling request: {str(e)}")
+                    self.logger.error(traceback.format_exc())
+                    # Отправляем ошибку, если был ID запроса
+                    if isinstance(request, dict) and "id" in request:
+                        self._send_error(request["id"], -32603, f"Internal error: {str(e)}")
 
                 # Сбрасываем content_length для следующего сообщения
                 self.content_length = None
@@ -128,7 +144,7 @@ class SimpleMCPServer:
                 # Если недостаточно данных, ждем больше
                 break
 
-    def _handle_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
+    def _handle_request(self, request: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Обработка запроса от GitHub Copilot
         """
@@ -140,6 +156,34 @@ class SimpleMCPServer:
             method = request.get("method", "")
             self.logger.info(f"Received notification: {method}")
             self.logger.debug(f"Full notification: {json.dumps(request)}")
+
+            # Обрабатываем некоторые уведомления
+            if method == "textDocument/didOpen":
+                params = request.get("params", {})
+                text_document = params.get("textDocument", {})
+                uri = text_document.get("uri", "")
+                if uri:
+                    self.documents[uri] = text_document.get("text", "")
+                    self.logger.info(f"Document opened: {uri}")
+
+            elif method == "textDocument/didChange":
+                params = request.get("params", {})
+                text_document = params.get("textDocument", {})
+                uri = text_document.get("uri", "")
+                changes = params.get("contentChanges", [])
+                if uri and uri in self.documents and changes:
+                    # Простое обновление документа (не учитывает позиции изменений)
+                    self.documents[uri] = changes[-1].get("text", self.documents[uri])
+                    self.logger.info(f"Document changed: {uri}")
+
+            elif method == "textDocument/didClose":
+                params = request.get("params", {})
+                text_document = params.get("textDocument", {})
+                uri = text_document.get("uri", "")
+                if uri and uri in self.documents:
+                    del self.documents[uri]
+                    self.logger.info(f"Document closed: {uri}")
+
             # Для уведомлений не отправляем ответ
             return None
 
@@ -157,14 +201,28 @@ class SimpleMCPServer:
                 "result": {
                     "capabilities": {
                         "completionProvider": {
-                            "triggerCharacters": [".", " ", "\t", "(", "[", ","]
+                            "triggerCharacters": [".", " ", "\t", "(", "[", ",", ":"]
                         },
-                        "textDocumentSync": 1,
+                        "textDocumentSync": {
+                            "openClose": True,
+                            "change": 1,  # Full document synchronization
+                            "willSave": False,
+                            "willSaveWaitUntil": False,
+                            "save": {
+                                "includeText": False
+                            }
+                        },
                         "hoverProvider": True,
                         "definitionProvider": True,
                         "referencesProvider": True,
                         "documentSymbolProvider": True,
-                        "workspaceSymbolProvider": True
+                        "workspaceSymbolProvider": True,
+                        "codeActionProvider": {
+                            "codeActionKinds": ["quickfix", "refactor"]
+                        },
+                        "executeCommandProvider": {
+                            "commands": ["neozork.analyzeData"]
+                        }
                     },
                     "serverInfo": {
                         "name": "NeoZorK HLD Prediction MCP Server",
@@ -175,6 +233,11 @@ class SimpleMCPServer:
 
         # Ответ на initialized
         elif method == "initialized":
+            # Отправляем уведомление о готовности
+            self._send_notification("window/showMessage", {
+                "type": 3,  # Info
+                "message": "MCP Server is ready and connected"
+            })
             return {
                 "jsonrpc": "2.0",
                 "id": message_id,
@@ -183,6 +246,7 @@ class SimpleMCPServer:
 
         # Ответ на shutdown
         elif method == "shutdown":
+            self.logger.info("Received shutdown request")
             return {
                 "jsonrpc": "2.0",
                 "id": message_id,
@@ -203,15 +267,67 @@ class SimpleMCPServer:
             sys.exit(0)
             return None  # Это не выполнится, но оставляем для согласованности
 
-        # Обработка других методов для базового функционирования
+        # Обработка завершения кода
         elif method == "textDocument/completion":
+            params = request.get("params", {})
+            context = params.get("context", {})
+            trigger_kind = context.get("triggerKind", 1)
+
+            # Готовим результат с пустым списком (в реальном приложении здесь было бы больше логики)
+            items = []
+
             return {
                 "jsonrpc": "2.0",
                 "id": message_id,
                 "result": {
                     "isIncomplete": False,
-                    "items": []
+                    "items": items
                 }
+            }
+
+        # Обработка наведения мыши
+        elif method == "textDocument/hover":
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": {
+                    "contents": {
+                        "kind": "markdown",
+                        "value": "NeoZorK HLD Prediction Project"
+                    }
+                }
+            }
+
+        # Обработка перехода к определению
+        elif method == "textDocument/definition":
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": []
+            }
+
+        # Обработка поиска ссылок
+        elif method == "textDocument/references":
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": []
+            }
+
+        # Обработка символов документа
+        elif method == "textDocument/documentSymbol":
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": []
+            }
+
+        # Обработка символов рабочего пространства
+        elif method == "workspace/symbol":
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": []
             }
 
         # Ответ на текстовые события
@@ -221,6 +337,21 @@ class SimpleMCPServer:
                 "id": message_id,
                 "result": None
             }
+
+        # Обработка команд
+        elif method == "workspace/executeCommand":
+            params = request.get("params", {})
+            command = params.get("command", "")
+
+            if command == "neozork.analyzeData":
+                return {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": {
+                        "status": "success",
+                        "message": "Data analysis started"
+                    }
+                }
 
         # Стандартный ответ для любых других запросов
         self.logger.info(f"Получен неизвестный метод: {method}")
@@ -254,6 +385,49 @@ class SimpleMCPServer:
         except Exception as e:
             self.logger.error(f"Error sending response: {str(e)}")
             self.logger.error(traceback.format_exc())
+
+    def _send_notification(self, method: str, params: Dict[str, Any]) -> None:
+        """
+        Отправка уведомления (сообщения без ID) серверу
+        """
+        notification = {
+            "jsonrpc": "2.0",
+            "method": method,
+            "params": params
+        }
+
+        notification_str = json.dumps(notification)
+        notification_bytes = notification_str.encode('utf-8')
+
+        # Формируем полное сообщение с заголовками
+        header = f"Content-Length: {len(notification_bytes)}\r\n\r\n".encode('utf-8')
+
+        # Отправляем сообщение в stdout
+        try:
+            sys.stdout.buffer.write(header)
+            sys.stdout.buffer.write(notification_bytes)
+            sys.stdout.buffer.flush()
+
+            self.logger.info(f"Sent notification: {method}")
+            self.logger.debug(f"Full notification: {notification_str}")
+        except Exception as e:
+            self.logger.error(f"Error sending notification: {str(e)}")
+            self.logger.error(traceback.format_exc())
+
+    def _send_error(self, id: int, code: int, message: str) -> None:
+        """
+        Отправка сообщения об ошибке
+        """
+        error_response = {
+            "jsonrpc": "2.0",
+            "id": id,
+            "error": {
+                "code": code,
+                "message": message
+            }
+        }
+
+        self._send_response(error_response)
 
 
 if __name__ == "__main__":
