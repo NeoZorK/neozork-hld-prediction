@@ -248,7 +248,9 @@ class MCPServer:
 
 def main():
     """Main entry point for MCP server"""
-    server = MCPServer()
+    # Use environment variables or default to current directory
+    project_root = os.environ.get("PROJECT_ROOT", ".")
+    server = MCPServer(project_root)
 
     # For debugging, print project context
     if len(sys.argv) > 1 and sys.argv[1] == "--debug":
@@ -257,22 +259,26 @@ def main():
         return
 
     # Start MCP server
-    print("Starting NeoZorK HLD Prediction MCP Server...")
+    print("Starting NeoZorK HLD Prediction MCP Server...", file=sys.stderr)
     server.logger.info("MCP Server initialized successfully")
 
     # Simple STDIO-based MCP server
     try:
         while True:
-            line = input()
+            line = sys.stdin.readline()
+            if not line:
+                break
+
             if line.strip():
                 try:
                     request = json.loads(line)
                     response = asyncio.run(server.handle_request(request))
-                    print(json.dumps(response))
+                    print(json.dumps(response), flush=True)
                 except json.JSONDecodeError:
-                    print(json.dumps({"error": "Invalid JSON"}))
+                    print(json.dumps({"error": "Invalid JSON"}), flush=True)
                 except Exception as e:
-                    print(json.dumps({"error": str(e)}))
+                    server.logger.error(f"Error handling request: {e}")
+                    print(json.dumps({"error": str(e)}), flush=True)
     except KeyboardInterrupt:
         server.logger.info("MCP Server shutting down...")
     except EOFError:
@@ -281,3 +287,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
