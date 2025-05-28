@@ -437,6 +437,68 @@ class SimpleMCPServer:
                 }
             }
 
+        # Response to textDocument/completion
+        elif method == "textDocument/completion":
+            self.logger.info(f"Received completion request (ID: {message_id})")
+
+            # Create a simple completion response
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": {
+                    "isIncomplete": False,
+                    "items": [
+                        {
+                            "label": "Simple placeholder completion",
+                            "kind": 1,  # Text
+                            "detail": "NeoZork MCP Server placeholder completion",
+                            "documentation": "This is a placeholder completion from the simple MCP server",
+                            "insertText": "placeholder_completion"
+                        }
+                    ]
+                }
+            }
+
+        # Response to textDocument/hover
+        elif method == "textDocument/hover":
+            self.logger.info(f"Received hover request (ID: {message_id})")
+            params = request.get("params", {})
+            position = params.get("position", {})
+            text_document = params.get("textDocument", {})
+            uri = text_document.get("uri", "")
+
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": {
+                    "contents": {
+                        "kind": "markdown",
+                        "value": "Hover information from NeoZork MCP Server"
+                    }
+                }
+            }
+
+        # Response to textDocument/definition
+        elif method == "textDocument/definition":
+            self.logger.info(f"Received definition request (ID: {message_id})")
+
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": [] # Empty array means no definitions found
+            }
+
+        # Response to custom method that GitHub Copilot might send
+        elif method.startswith("copilot/"):
+            self.logger.info(f"Received Copilot-specific request: {method}")
+
+            # Return a generic successful response
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": {}
+            }
+
         # Response to shutdown
         elif method == "shutdown":
             self.logger.info(f"Received shutdown request after {int(uptime)}s uptime")
