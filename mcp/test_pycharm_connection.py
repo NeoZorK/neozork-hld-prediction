@@ -772,6 +772,230 @@ class MCPApiTester:
 
         return success
 
+    def test_formatting(self, uri: str) -> Dict[str, Any]:
+        """Test document formatting functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            },
+            "options": {
+                "tabSize": 4,
+                "insertSpaces": True,
+                "trimTrailingWhitespace": True,
+                "insertFinalNewline": True,
+                "trimFinalNewlines": True
+            }
+        }
+
+        return self.send_request("textDocument/formatting", params)
+
+    def test_range_formatting(self, uri: str, start_line: int, start_char: int,
+                            end_line: int, end_char: int) -> Dict[str, Any]:
+        """Test document range formatting functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            },
+            "range": {
+                "start": {"line": start_line, "character": start_char},
+                "end": {"line": end_line, "character": end_char}
+            },
+            "options": {
+                "tabSize": 4,
+                "insertSpaces": True
+            }
+        }
+
+        return self.send_request("textDocument/rangeFormatting", params)
+
+    def test_on_type_formatting(self, uri: str, line: int, character: int, ch: str) -> Dict[str, Any]:
+        """Test on-type formatting functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            },
+            "position": {
+                "line": line,
+                "character": character
+            },
+            "ch": ch,
+            "options": {
+                "tabSize": 4,
+                "insertSpaces": True
+            }
+        }
+
+        return self.send_request("textDocument/onTypeFormatting", params)
+
+    def test_rename(self, uri: str, line: int, character: int, new_name: str) -> Dict[str, Any]:
+        """Test rename functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            },
+            "position": {
+                "line": line,
+                "character": character
+            },
+            "newName": new_name
+        }
+
+        return self.send_request("textDocument/rename", params)
+
+    def test_prepare_rename(self, uri: str, line: int, character: int) -> Dict[str, Any]:
+        """Test prepare rename functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            },
+            "position": {
+                "line": line,
+                "character": character
+            }
+        }
+
+        return self.send_request("textDocument/prepareRename", params)
+
+    def test_folding_range(self, uri: str) -> Dict[str, Any]:
+        """Test folding range functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            }
+        }
+
+        return self.send_request("textDocument/foldingRange", params)
+
+    def test_selection_range(self, uri: str, positions: List[Dict[str, int]]) -> Dict[str, Any]:
+        """Test selection range functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            },
+            "positions": positions
+        }
+
+        return self.send_request("textDocument/selectionRange", params)
+
+    def test_semantic_tokens(self, uri: str) -> Dict[str, Any]:
+        """Test semantic tokens functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            }
+        }
+
+        return self.send_request("textDocument/semanticTokens/full", params)
+
+    def test_implementation(self, uri: str, line: int, character: int) -> Dict[str, Any]:
+        """Test go to implementation functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            },
+            "position": {
+                "line": line,
+                "character": character
+            }
+        }
+
+        return self.send_request("textDocument/implementation", params)
+
+    def test_type_definition(self, uri: str, line: int, character: int) -> Dict[str, Any]:
+        """Test go to type definition functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            },
+            "position": {
+                "line": line,
+                "character": character
+            }
+        }
+
+        return self.send_request("textDocument/typeDefinition", params)
+
+    def test_document_link(self, uri: str) -> Dict[str, Any]:
+        """Test document link functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            }
+        }
+
+        return self.send_request("textDocument/documentLink", params)
+
+    def test_document_color(self, uri: str) -> Dict[str, Any]:
+        """Test document color functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            }
+        }
+
+        return self.send_request("textDocument/documentColor", params)
+
+    def test_color_presentation(self, uri: str, color: Dict[str, float], range_: Dict[str, Dict[str, int]]) -> Dict[str, Any]:
+        """Test color presentation functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            },
+            "color": color,
+            "range": range_
+        }
+
+        return self.send_request("textDocument/colorPresentation", params)
+
+    def test_signature_help(self, uri: str, line: int, character: int) -> Dict[str, Any]:
+        """Test signature help functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            },
+            "position": {
+                "line": line,
+                "character": character
+            }
+        }
+
+        return self.send_request("textDocument/signatureHelp", params)
+
+    def test_will_save_wait_until(self, uri: str) -> Dict[str, Any]:
+        """Test will save wait until functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            },
+            "reason": 1  # Manual save
+        }
+
+        return self.send_request("textDocument/willSaveWaitUntil", params)
+
+    def test_moniker(self, uri: str, line: int, character: int) -> Dict[str, Any]:
+        """Test moniker functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            },
+            "position": {
+                "line": line,
+                "character": character
+            }
+        }
+
+        return self.send_request("textDocument/moniker", params)
+
+    def test_diagnostics(self, uri: str) -> Dict[str, Any]:
+        """Test document diagnostics functionality"""
+        params = {
+            "textDocument": {
+                "uri": uri
+            }
+        }
+
+        return self.send_request("textDocument/diagnostic", params)
+
 def test_api_methods(server_process):
     """Tests all available API methods supported by MCP server"""
     logger.info("Starting comprehensive API methods test")
@@ -796,6 +1020,20 @@ class ExampleClass:
     
     def set_value(self, new_value):
         self.value = new_value
+
+# Testing variables with different types
+colors = {
+    "red": "#FF0000",
+    "green": "#00FF00",
+    "blue": "#0000FF"
+}
+
+def format_text(text, formatting=None):
+    if formatting == 'bold':
+        return f"**{text}**"
+    elif formatting == 'italic':
+        return f"*{text}*"
+    return text
 """
 
     # Open test document
@@ -815,6 +1053,7 @@ class ExampleClass:
     logger.info("Testing all API methods with the test document")
 
     try:
+        # Basic functionality tests (original tests)
         # Test completion
         test_results["completion"] = api_tester.test_completion(test_uri, 5, 11)
         logger.info(f"Completion test result: {'Success' if test_results['completion'] else 'Failed'}")
@@ -851,8 +1090,84 @@ class ExampleClass:
         test_results["document_management"] = api_tester.test_document_management()
         logger.info(f"Document management test result: {'Success' if test_results['document_management'] else 'Failed'}")
 
+        # Additional functionality tests (new tests)
+        # Test formatting
+        test_results["formatting"] = api_tester.test_formatting(test_uri)
+        logger.info(f"Formatting test result: {'Success' if test_results['formatting'] else 'Failed'}")
+
+        # Test range formatting
+        test_results["range_formatting"] = api_tester.test_range_formatting(test_uri, 3, 0, 6, 0)
+        logger.info(f"Range formatting test result: {'Success' if test_results['range_formatting'] else 'Failed'}")
+
+        # Test on-type formatting
+        test_results["on_type_formatting"] = api_tester.test_on_type_formatting(test_uri, 5, 20, "}")
+        logger.info(f"On-type formatting test result: {'Success' if test_results['on_type_formatting'] else 'Failed'}")
+
+        # Test rename
+        test_results["rename"] = api_tester.test_rename(test_uri, 8, 15, "new_value_renamed")
+        logger.info(f"Rename test result: {'Success' if test_results['rename'] else 'Failed'}")
+
+        # Test prepare rename
+        test_results["prepare_rename"] = api_tester.test_prepare_rename(test_uri, 8, 15)
+        logger.info(f"Prepare rename test result: {'Success' if test_results['prepare_rename'] else 'Failed'}")
+
+        # Test folding range
+        test_results["folding_range"] = api_tester.test_folding_range(test_uri)
+        logger.info(f"Folding range test result: {'Success' if test_results['folding_range'] else 'Failed'}")
+
+        # Test selection range
+        positions = [{"line": 5, "character": 10}, {"line": 8, "character": 15}]
+        test_results["selection_range"] = api_tester.test_selection_range(test_uri, positions)
+        logger.info(f"Selection range test result: {'Success' if test_results['selection_range'] else 'Failed'}")
+
+        # Test semantic tokens
+        test_results["semantic_tokens"] = api_tester.test_semantic_tokens(test_uri)
+        logger.info(f"Semantic tokens test result: {'Success' if test_results['semantic_tokens'] else 'Failed'}")
+
+        # Test implementation
+        test_results["implementation"] = api_tester.test_implementation(test_uri, 5, 11)
+        logger.info(f"Implementation test result: {'Success' if test_results['implementation'] else 'Failed'}")
+
+        # Test type definition
+        test_results["type_definition"] = api_tester.test_type_definition(test_uri, 5, 11)
+        logger.info(f"Type definition test result: {'Success' if test_results['type_definition'] else 'Failed'}")
+
+        # Test document link
+        test_results["document_link"] = api_tester.test_document_link(test_uri)
+        logger.info(f"Document link test result: {'Success' if test_results['document_link'] else 'Failed'}")
+
+        # Test document color
+        test_results["document_color"] = api_tester.test_document_color(test_uri)
+        logger.info(f"Document color test result: {'Success' if test_results['document_color'] else 'Failed'}")
+
+        # Test color presentation (requires a color)
+        color = {"red": 1.0, "green": 0.0, "blue": 0.0, "alpha": 1.0}
+        range_ = {
+            "start": {"line": 19, "character": 17},
+            "end": {"line": 19, "character": 25}
+        }
+        test_results["color_presentation"] = api_tester.test_color_presentation(test_uri, color, range_)
+        logger.info(f"Color presentation test result: {'Success' if test_results['color_presentation'] else 'Failed'}")
+
+        # Test signature help
+        test_results["signature_help"] = api_tester.test_signature_help(test_uri, 25, 20)
+        logger.info(f"Signature help test result: {'Success' if test_results['signature_help'] else 'Failed'}")
+
+        # Test will save wait until
+        test_results["will_save_wait_until"] = api_tester.test_will_save_wait_until(test_uri)
+        logger.info(f"Will save wait until test result: {'Success' if test_results['will_save_wait_until'] else 'Failed'}")
+
+        # Test moniker
+        test_results["moniker"] = api_tester.test_moniker(test_uri, 5, 11)
+        logger.info(f"Moniker test result: {'Success' if test_results['moniker'] else 'Failed'}")
+
+        # Test diagnostics
+        test_results["diagnostics"] = api_tester.test_diagnostics(test_uri)
+        logger.info(f"Diagnostics test result: {'Success' if test_results['diagnostics'] else 'Failed'}")
+
     except Exception as e:
         logger.error(f"Error during API testing: {str(e)}")
+        logger.error(traceback.format_exc())
         return False
     finally:
         # Close test document
@@ -867,10 +1182,16 @@ class ExampleClass:
     total_count = len(test_results)
 
     logger.info(f"API testing completed. Success: {success_count}/{total_count} tests.")
+    logger.info(f"Test summary:")
 
-    # Consider test successful if at least 5 API methods work
+    # Print results for each method
+    for method, result in sorted(test_results.items()):
+        status = "✅ Success" if result is not None else "❌ Failed"
+        logger.info(f"  - {method}: {status}")
+
+    # Consider test successful if at least half of the API methods work
     # Most servers won't implement all methods fully
-    return success_count >= 5
+    return success_count >= total_count / 2
 
 def run_test_with_server():
     """Launches MCP server and runs all tests"""
