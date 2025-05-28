@@ -13,12 +13,21 @@ import time
 import logging
 from typing import Dict, Any
 
+# Создаем директорию logs, если она не существует
+logs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs")
+if not os.path.exists(logs_dir):
+    try:
+        os.makedirs(logs_dir)
+        print(f"Created logs directory: {logs_dir}")
+    except Exception as e:
+        print(f"Error creating logs directory: {e}")
+
 # Настройка логирования
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("pycharm_mcp_test.log", mode='a'),
+        logging.FileHandler(os.path.join(logs_dir, "pycharm_mcp_test.log"), mode='a'),
         logging.StreamHandler(sys.stdout)
     ]
 )
@@ -492,8 +501,16 @@ def launch_mcp_server(server_path=None, timeout=10):
     env['PYTHONPATH'] = os.path.dirname(os.path.abspath(server_path))
     env['PROJECT_ROOT'] = os.path.dirname(os.path.abspath(server_path))
 
-    # Создаем временный файл для логов, чтобы не перегружать основной вывод
-    log_file = os.path.join(os.path.dirname(__file__), "mcp_server_test.log")
+    # Создаем временный файл для логов в директории logs
+    logs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs")
+    if not os.path.exists(logs_dir):
+        try:
+            os.makedirs(logs_dir)
+            logger.info(f"Created logs directory: {logs_dir}")
+        except Exception as e:
+            logger.warning(f"Error creating logs directory: {e}")
+
+    log_file = os.path.join(logs_dir, "mcp_server_test.log")
 
     with open(log_file, 'w') as f:
         f.write(f"MCP Server Test Log - {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
