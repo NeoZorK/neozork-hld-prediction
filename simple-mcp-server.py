@@ -20,8 +20,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler(os.path.join(os.path.dirname(os.path.abspath(__file__)), "mcp_server.log"), mode='a'),  # Добавляем запись логов в файл с абсолютным путем
-        logging.StreamHandler(sys.stdout),      # Вывод логов в stdout для отображения в консоли
-        logging.StreamHandler(sys.stderr)       # Сохраняем вывод в stderr для stdio протокола
+        logging.StreamHandler(sys.stdout)      # Вывод логов в stdout для отображения в консоли
     ]
 )
 logger = logging.getLogger("simple_mcp")
@@ -58,8 +57,6 @@ if os.name != 'nt':
             if handler.stream == sys.stdout:
                 # Используем более заметное форматирование для вывода в консоль
                 handler.setFormatter(ColoredFormatter('📝 %(asctime)s - %(levelname)s - %(message)s'))
-            elif handler.stream == sys.stderr:
-                handler.setFormatter(ColoredFormatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 
 class SimpleMCPServer:
     """
@@ -121,7 +118,14 @@ class SimpleMCPServer:
                     break
 
                 self.buffer += data
-                self.logger.debug(f"Received {len(data)} bytes, buffer size: {len(self.buffer)}")
+
+                # Выводим информацию о полученных данных в понятном формате
+                data_preview = str(data)
+                if len(data_preview) > 200:
+                    data_preview = data_preview[:200] + "... (truncated)"
+
+                self.logger.info(f"📥 Received {len(data)} bytes, buffer size: {len(self.buffer)}")
+                self.logger.info(f"📄 Received data content: {data_preview}")
 
                 # Обрабатываем сообщения, пока они есть в буфере
                 self._process_buffer()
