@@ -349,6 +349,17 @@ class SimpleMCPServer:
                     self.logger.info(f"Document closed: {uri} (Final size: {len(self.documents[uri])} chars)")
                     del self.documents[uri]
 
+            # New case for initialized notification to fix connection problems
+            elif method == "initialized":
+                self.successful_connections += 1
+                self.logger.info(f"✅ CONNECTION SUCCESSFUL #{self.successful_connections} (Total attempts: {self.connection_attempts})")
+
+                # Send ready notification
+                self._send_notification("window/showMessage", {
+                    "type": 3,  # Info
+                    "message": f"MCP Server is ready and connected (Connection #{self.successful_connections})"
+                })
+
             # For notifications, we don't send a response
             return None
 
@@ -420,22 +431,6 @@ class SimpleMCPServer:
                 }
             }
 
-        # Response to initialized
-        elif method == "initialized":
-            self.successful_connections += 1
-            self.logger.info(f"✅ CONNECTION SUCCESSFUL #{self.successful_connections} (Total attempts: {self.connection_attempts})")
-
-            # Send ready notification
-            self._send_notification("window/showMessage", {
-                "type": 3,  # Info
-                "message": f"MCP Server is ready and connected (Connection #{self.successful_connections})"
-            })
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": None
-            }
-
         # Response to shutdown
         elif method == "shutdown":
             self.logger.info(f"Received shutdown request after {int(uptime)}s uptime")
@@ -462,6 +457,15 @@ class SimpleMCPServer:
             # Terminate program
             sys.exit(0)
             return None  # This won't execute, but leave it for consistency
+
+        # Add default response for unknown requests
+        else:
+            self.logger.warning(f"Received unknown request method: {method}")
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": None
+            }
 
     def _send_response(self, response: Dict[str, Any]) -> None:
         """
