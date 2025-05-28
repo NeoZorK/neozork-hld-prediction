@@ -25,6 +25,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger("simple_mcp")
 
+# Настройка дополнительного вывода в консоль для лучшей отладки
+console_handler = logging.StreamHandler(sys.stderr)
+console_handler.setLevel(logging.DEBUG)
+console_formatter = logging.Formatter('🔍 CONSOLE: %(message)s')
+console_handler.setFormatter(console_formatter)
+logger.addHandler(console_handler)
+
 # Добавляем запись в лог о запуске сервера
 logger.info("========================")
 logger.info("MCP Server starting up at %s", time.strftime("%Y-%m-%d %H:%M:%S"))
@@ -140,7 +147,34 @@ class SimpleMCPServer:
         Обрабатывает буфер и извлекает сообщения
         """
         while True:
-            # Если мы еще не знаем длину контента, попробуем ее найти
+            self.logger.debug(f"Processing buffer (size: {len(self.buffer)}): {self.buffer[:100]}...")
+
+            # Проверяем, нет ли в буфере сообщения JSON без заголовков
+            # Это может происходить с GitHub Copilot, который отправляет сообщения с \n в конце
+            if self.content_length is None and self.buffer.find(b"\n") > -1:
+                newline_pos = self.buffer.find(b"\n")
+                possible_json = self.buffer[:newline_pos].strip()
+
+                try:
+                    # Пробуем разобрать сообщение как JSON
+                    decoded_json = possible_json.decode('utf-8')
+                    if decoded_json.startswith('{') and decoded_json.endswith('}'):
+                        self.logger.debug(f"Found possible JSON message without headers: {decoded_json}")
+
+                        request = json.loads(decoded_json)
+                        response = self._handle_request(request)
+
+                        # Отправляем ответ, если он есть
+                        if response:
+                            self._send_response(response)
+
+                        # Удаляем обработанное сообщение из буфера
+                        self.buffer = self.buffer[newline_pos + 1:]
+                        continue
+                except (UnicodeDecodeError, json.JSONDecodeError):
+                    self.logger.debug("Not a valid JSON message, continuing with standard parsing")
+
+            # Стандартная обработка сообщений с заголовками
             if self.content_length is None:
                 # Ищем двойной перенос строки, отделяющий заголовки от тела
                 header_end = self.buffer.find(b"\r\n\r\n")
@@ -150,6 +184,7 @@ class SimpleMCPServer:
 
                 # Извлекаем заголовки
                 headers = self.buffer[:header_end].decode('utf-8')
+                self.logger.debug(f"Found headers: {headers}")
 
                 # Ищем Content-Length
                 for line in headers.split("\r\n"):
@@ -160,12 +195,15 @@ class SimpleMCPServer:
 
                 # Удаляем заголовки из буфера
                 self.buffer = self.buffer[header_end + 4:]  # 4 = len("\r\n\r\n")
+                self.logger.debug(f"Removed headers, buffer size now: {len(self.buffer)}")
 
             # Если у нас достаточно данных для всего сообщения
             if self.content_length is not None and len(self.buffer) >= self.content_length:
                 # Извлекаем тело сообщения
                 message_body = self.buffer[:self.content_length].decode('utf-8')
+                self.logger.debug(f"Extracted message body: {message_body}")
                 self.buffer = self.buffer[self.content_length:]
+                self.logger.debug(f"Remaining buffer size: {len(self.buffer)}")
 
                 # Обрабатываем запрос
                 try:
