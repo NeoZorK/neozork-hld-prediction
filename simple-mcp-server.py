@@ -135,6 +135,14 @@ class SimpleMCPServer:
         if not request:
             return {}
 
+        # Проверяем, является ли это уведомлением (без ID)
+        if "id" not in request:
+            method = request.get("method", "")
+            self.logger.info(f"Received notification: {method}")
+            self.logger.debug(f"Full notification: {json.dumps(request)}")
+            # Для уведомлений не отправляем ответ
+            return None
+
         method = request.get("method", "")
         message_id = request.get("id", 0)
 
@@ -184,12 +192,16 @@ class SimpleMCPServer:
         # Ответ на exit
         elif method == "exit":
             self.logger.info("Received exit request, shutting down...")
-            # Будем закрывать сервер корректно
-            return {
+            # Отправляем ответ перед выходом
+            response = {
                 "jsonrpc": "2.0",
                 "id": message_id,
                 "result": None
             }
+            self._send_response(response)
+            # Завершаем программу
+            sys.exit(0)
+            return None  # Это не выполнится, но оставляем для согласованности
 
         # Обработка других методов для базового функционирования
         elif method == "textDocument/completion":
