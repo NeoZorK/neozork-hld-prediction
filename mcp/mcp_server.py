@@ -10,6 +10,7 @@ import sys
 import json
 import asyncio
 import logging
+import traceback
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -21,7 +22,7 @@ if os.path.exists(src_path):
     sys.path.insert(0, src_path)
 
 # Set a timeout for MCP responses
-MCP_RESPONSE_TIMEOUT = 10  # секунд
+MCP_RESPONSE_TIMEOUT = 30  # секунд - увеличен таймаут с 10 до 30 секунд
 
 @dataclass
 class ProjectStructure:
@@ -233,30 +234,41 @@ class MCPServer:
             elif method == "resources/read":
                 uri = params.get("uri", "")
                 self.logger.info(f"Processing resources/read request for {uri}")
-                if "context" in uri:
-                    return {
-                        "contents": [{
-                            "uri": uri,
-                            "mimeType": "application/json",
-                            "text": json.dumps(self.get_project_context(), indent=2)
-                        }]
-                    }
-                elif "modules" in uri:
-                    modules_info = {}
-                    for module_name in self.structure.modules.keys():
-                        modules_info[module_name] = self.get_module_files(module_name)
-                    return {
-                        "contents": [{
-                            "uri": uri,
-                            "mimeType": "application/json",
-                            "text": json.dumps(modules_info, indent=2)
-                        }]
-                    }
+                try:
+                    if "context" in uri:
+                        context = self.get_project_context()
+                        self.logger.info(f"Returning project context (size: {len(json.dumps(context))} bytes)")
+                        return {
+                            "contents": [{
+                                "uri": uri,
+                                "mimeType": "application/json",
+                                "text": json.dumps(context, indent=2)
+                            }]
+                        }
+                    elif "modules" in uri:
+                        modules_info = {}
+                        for module_name in self.structure.modules.keys():
+                            self.logger.info(f"Processing module: {module_name}")
+                            modules_info[module_name] = self.get_module_files(module_name)
+
+                        self.logger.info(f"Returning modules info (size: {len(json.dumps(modules_info))} bytes)")
+                        return {
+                            "contents": [{
+                                "uri": uri,
+                                "mimeType": "application/json",
+                                "text": json.dumps(modules_info, indent=2)
+                            }]
+                        }
+                except Exception as e:
+                    self.logger.error(f"Error processing resources/read: {e}")
+                    self.logger.error(traceback.format_exc())
+                    return {"error": f"Failed to read resource: {str(e)}"}
 
             self.logger.warning(f"Unknown method: {method}")
             return {"error": f"Unknown method: {method}"}
         except Exception as e:
             self.logger.error(f"Error handling request: {str(e)}")
+            self.logger.error(traceback.format_exc())
             return {"error": str(e)}
 
 def main():
