@@ -264,11 +264,15 @@ def test_mcp_connection_direct(server_process):
 
     # 4. Ожидаем любое уведомление от сервера (опционально)
     try:
+        # Устанавливаем короткий таймаут, т.к. сервер может не отправлять уведомления
         notification = _read_message_from_server(server_process, timeout=1.0)
         if notification:
             logger.info(f"Received notification: {notification.get('method', 'unknown')}")
     except Exception as e:
         logger.warning(f"Error while waiting for notification: {str(e)}")
+
+    # Уведомление является необязательным, поэтому продолжаем тест
+    logger.info("Продолжаем тест после ожидания необязательного уведомления")
 
     # 5. Отправляем запрос shutdown
     shutdown_request = {
