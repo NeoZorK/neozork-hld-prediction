@@ -348,8 +348,23 @@ class SimpleMCPServer:
         request_id = request.get("id", "notification")
         request_params = request.get("params", {})
         simplified_params = self._simplify_params(request_params)
-        self.request_logger.info(f"REQUEST #{self.request_count}: {request_method} (ID: {request_id})")
-        self.request_logger.info(f"PARAMS: {simplified_params}")
+
+        # Создаем логи с атрибутом request_info для правильного форматирования
+        req_log_record = logging.LogRecord(
+            "request_info", logging.INFO, "", 0,
+            f"REQUEST #{self.request_count}: {request_method} (ID: {request_id})",
+            (), None
+        )
+        req_log_record.request_info = True
+        self.request_logger.handle(req_log_record)
+
+        params_log_record = logging.LogRecord(
+            "request_info", logging.INFO, "", 0,
+            f"PARAMS: {simplified_params}",
+            (), None
+        )
+        params_log_record.request_info = True
+        self.request_logger.handle(params_log_record)
 
         # Check if this is a notification (without ID)
         if "id" not in request:
@@ -835,13 +850,26 @@ class SimpleMCPServer:
                 "initialization_counted_successful": False # Initialize the flag
             }
             # Delete old entries if they exist
-            self.client_logger.info(f"⚡ NEW CONNECTION from {client_name} v{client_version}")
+            # Создаем запись лога с атрибутом client_info для правильного форматирования
+            log_record = logging.LogRecord(
+                "client_info", logging.INFO, "", 0,
+                f"⚡ NEW CONNECTION from {client_name} v{client_version}",
+                (), None
+            )
+            log_record.client_info = True
+            self.client_logger.handle(log_record)
         elif status == "disconnected":
             if client_key in self.active_clients:
                 self.active_clients[client_key]["status"] = "disconnected"
                 self.active_clients[client_key]["disconnected_at"] = time.time()
                 # Display disconnection message
-                self.client_logger.info(f"❌ DISCONNECTED: {client_name} v{client_version}")
+                log_record = logging.LogRecord(
+                    "client_info", logging.INFO, "", 0,
+                    f"❌ DISCONNECTED: {client_name} v{client_version}",
+                    (), None
+                )
+                log_record.client_info = True
+                self.client_logger.handle(log_record)
 
         # Print updated client information
         self._print_client_info()
@@ -850,9 +878,23 @@ class SimpleMCPServer:
         """
         Print information about active clients
         """
-        self.client_logger.info(f"Active clients: {len(self.active_clients)}")
+        # Создаем запись лога с атрибутом client_info для правильного форматирования
+        log_record = logging.LogRecord(
+            "client_info", logging.INFO, "", 0,
+            f"Active clients: {len(self.active_clients)}",
+            (), None
+        )
+        log_record.client_info = True
+        self.client_logger.handle(log_record)
+
         for client_key, client_data in self.client_info.items():
-            self.client_logger.info(f"Client: {client_key}, Info: {json.dumps(client_data, indent=2)}")
+            log_record = logging.LogRecord(
+                "client_info", logging.INFO, "", 0,
+                f"Client: {client_key}, Info: {json.dumps(client_data, indent=2)}",
+                (), None
+            )
+            log_record.client_info = True
+            self.client_logger.handle(log_record)
 
     def shutdown_gracefully(self):
         """
