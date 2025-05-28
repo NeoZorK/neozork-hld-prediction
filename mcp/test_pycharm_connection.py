@@ -324,6 +324,8 @@ def _read_message_from_server(server_process, timeout=5.0):
     start_time = time.time()
     buffer = b""
 
+    logger.debug("Starting to read message from server")
+
     # Неблокирующее чтение заголовков с таймаутом
     while True:
         if time.time() - start_time > timeout:
@@ -337,59 +339,86 @@ def _read_message_from_server(server_process, timeout=5.0):
             time.sleep(0.1)  # Маленькая пауза, чтобы не загружать CPU
             continue
 
-        # Читаем по одному байту, чтобы найти разделитель заголовков
-        char = server_process.stdout.read(1)
-        if not char:
+        # Читаем строку целиком для поиска заголовков
+        line = server_process.stdout.readline()
+        if not line:
             if server_process.poll() is not None:
                 logger.error(f"Server process exited with code {server_process.returncode}")
                 return None
             time.sleep(0.1)
             continue
 
-        buffer += char
+        # Добавляем в буфер
+        buffer += line
+        logger.debug(f"Read line from server: {line}")
 
-        # Ищем разделители заголовков
-        if len(buffer) >= 4 and buffer[-4:] == b"\r\n\r\n":
-            headers = buffer[:-4]
-            buffer = b""
+        # Проверяем заголовок Content-Length в текущей строке
+        try:
+            header = line.decode('utf-8', errors='ignore').strip()
+            if header.lower().startswith("content-length:"):
+                content_length = int(header.split(":", 1)[1].strip())
+                logger.debug(f"Found Content-Length: {content_length}")
+        except Exception as e:
+            logger.warning(f"Error parsing header: {e}")
+
+        # Проверяем, не конец ли это заголовков
+        if line == b"\r\n" or line == b"\n":
+            logger.debug("Found end of headers")
             break
-        elif len(buffer) >= 2 and buffer[-2:] == b"\n\n":
-            headers = buffer[:-2]
-            buffer = b""
-            break
 
-        # Проверяем заголовок Content-Length
-        if len(buffer) > 16 and b"Content-Length:" in buffer:
-            # Ищем Content-Length в буфере
-            try:
-                header_text = buffer.decode('utf-8', errors='ignore')
-                for line in header_text.split("\r\n"):
-                    if line.lower().startswith("content-length:"):
-                        content_length = int(line.split(":", 1)[1].strip())
-                        logger.debug(f"Found Content-Length: {content_length}")
-            except Exception as e:
-                logger.warning(f"Error parsing header: {e}")
-
-    # Если не нашли заголовок Content-Length в буфере, ищем его в headers
+    # Если Content-Length не найден, пробуем искать в буфере
     if content_length is None:
         try:
-            header_text = headers.decode('utf-8', errors='ignore')
+            header_text = buffer.decode('utf-8', errors='ignore')
             for line in header_text.split("\r\n"):
                 if line.lower().startswith("content-length:"):
                     content_length = int(line.split(":", 1)[1].strip())
-                    logger.debug(f"Found Content-Length in headers: {content_length}")
+                    logger.debug(f"Found Content-Length in buffer: {content_length}")
+                    break
         except Exception as e:
-            logger.warning(f"Error parsing headers: {e}")
+            logger.warning(f"Error parsing headers in buffer: {e}")
 
-    # Если Content-Length не найден, возвращаем ошибку
+    # Если Content-Length не найден, еще одна попытка - ищем прямо в буфере бинарную строку
     if content_length is None:
-        logger.error("Content-Length header not found")
+        cl_marker = b"Content-Length: "
+        if cl_marker in buffer:
+            try:
+                start_pos = buffer.find(cl_marker) + len(cl_marker)
+                end_pos = buffer.find(b"\r\n", start_pos)
+                if end_pos == -1:
+                    end_pos = buffer.find(b"\n", start_pos)
+                if end_pos > start_pos:
+                    cl_str = buffer[start_pos:end_pos].decode('utf-8', errors='ignore')
+                    content_length = int(cl_str.strip())
+                    logger.debug(f"Found Content-Length using binary search: {content_length}")
+            except Exception as e:
+                logger.warning(f"Error parsing Content-Length from binary buffer: {e}")
+
+    # Если Content-Length все еще не найден, возвращаем ошибку
+    if content_length is None:
+        logger.error("Content-Length header not found in server response")
+        logger.debug(f"Buffer content: {buffer}")
         return None
 
-    # Чтение тела сообщения
-    start_body_time = time.time()
-    while len(buffer) < content_length:
-        if time.time() - start_body_time > timeout:
+    # Ищем конец заголовков в буфере
+    header_end = buffer.find(b"\r\n\r\n")
+    if header_end == -1:
+        header_end = buffer.find(b"\n\n")
+
+    if header_end != -1:
+        # Удаляем заголовки из буфера
+        delimiter_size = 4 if b"\r\n\r\n" in buffer[:header_end+4] else 2
+        body_start = header_end + delimiter_size
+        body = buffer[body_start:]
+        logger.debug(f"Found body start at position {body_start}, body size: {len(body)}")
+    else:
+        # Если конец заголовков не найден, считаем что все прочитанное - это заголовки
+        body = b""
+        logger.debug("No body found in buffer yet")
+
+    # Дочитываем оставшуюся часть тела сообщения
+    while len(body) < content_length:
+        if time.time() - start_time > timeout:
             logger.warning(f"Timeout reached while reading message body after {timeout} seconds")
             return None
 
@@ -397,11 +426,12 @@ def _read_message_from_server(server_process, timeout=5.0):
         import select
         ready, _, _ = select.select([server_process.stdout], [], [], 0.1)
         if not ready:
-            time.sleep(0.1)  # Маленькая пауза, чтобы не загружать CPU
+            time.sleep(0.1)
             continue
 
         # Читаем данные порциями
-        chunk = server_process.stdout.read(min(1024, content_length - len(buffer)))
+        to_read = min(1024, content_length - len(body))
+        chunk = server_process.stdout.read(to_read)
         if not chunk:
             if server_process.poll() is not None:
                 logger.error(f"Server process exited with code {server_process.returncode}")
@@ -409,20 +439,22 @@ def _read_message_from_server(server_process, timeout=5.0):
             time.sleep(0.1)
             continue
 
-        buffer += chunk
-        logger.debug(f"Read {len(chunk)} bytes from server, total {len(buffer)}/{content_length}")
+        body += chunk
+        logger.debug(f"Read {len(chunk)} bytes from server, total body size: {len(body)}/{content_length}")
 
-    if len(buffer) != content_length:
-        logger.warning(f"Incomplete message from server: got {len(buffer)} bytes, expected {content_length}")
-        return None
+    if len(body) > content_length:
+        # Если мы прочитали больше данных, чем нужно, оставляем только первые content_length байт
+        logger.warning(f"Read more data than needed ({len(body)} > {content_length}), truncating")
+        body = body[:content_length]
 
+    # Пытаемся разобрать JSON
     try:
-        message = json.loads(buffer.decode('utf-8'))
-        logger.debug(f"Received message from server: {json.dumps(message)}")
+        message = json.loads(body.decode('utf-8', errors='replace'))
+        logger.debug(f"Successfully parsed JSON from server: {json.dumps(message)}")
         return message
     except json.JSONDecodeError as e:
         logger.error(f"Failed to decode JSON from server: {e}")
-        logger.debug(f"Raw content: {buffer}")
+        logger.debug(f"Raw body content: {body}")
         return None
 
 def launch_mcp_server(server_path=None, timeout=10):
