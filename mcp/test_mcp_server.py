@@ -10,7 +10,7 @@ import os
 # Add current directory to Python path
 sys.path.insert(0, os.path.dirname(__file__))
 
-from mcp_server import MCPServer
+from mcp.mcp_server import MCPServer
 
 
 def test_project_analysis():
