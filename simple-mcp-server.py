@@ -45,10 +45,17 @@ logging.basicConfig(
 )
 logger = logging.getLogger("simple_mcp")
 
-# Setup additional console output for better debugging
+# Setup additional console output only for detailed debugging (not for regular info messages)
 console_handler = logging.StreamHandler(sys.stderr)
+# Set console handler to DEBUG level to capture all messages
 console_handler.setLevel(logging.DEBUG)
-console_formatter = logging.Formatter('🔍 CONSOLE: %(message)s')
+# Filter to only show DEBUG messages in console
+class DebugOnlyFilter(logging.Filter):
+    def filter(self, record):
+        return record.levelno == logging.DEBUG
+
+console_handler.addFilter(DebugOnlyFilter())
+console_formatter = logging.Formatter('🔍 DEBUG: %(message)s')
 console_handler.setFormatter(console_formatter)
 logger.addHandler(console_handler)
 
