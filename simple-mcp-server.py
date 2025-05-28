@@ -208,6 +208,9 @@ class SimpleMCPServer:
         Processes the buffer and extracts messages
         """
         while True:
+            if len(self.buffer) == 0:
+                break
+
             self.logger.debug(f"Processing buffer (size: {len(self.buffer)}): {self.buffer[:100]}...")
 
             # Check for JSON message without headers in the buffer
@@ -243,7 +246,28 @@ class SimpleMCPServer:
                     # Alternatively, PyCharm might use just \n\n instead of \r\n\r\n
                     header_end = self.buffer.find(b"\n\n")
                     if header_end == -1:
-                        # If not found, wait for more data
+                        # GitHub Copilot might send single Content-Length header with \r\n
+                        content_length_header = b"Content-Length: "
+                        if content_length_header in self.buffer:
+                            cl_start = self.buffer.find(content_length_header) + len(content_length_header)
+                            cl_end = self.buffer.find(b"\r\n", cl_start)
+                            if cl_end > cl_start:
+                                try:
+                                    self.content_length = int(self.buffer[cl_start:cl_end].decode('utf-8').strip())
+                                    self.logger.debug(f"Found standalone Content-Length: {self.content_length}")
+                                    # Remove header from buffer
+                                    header_end = cl_end
+                                    self.buffer = self.buffer[cl_end + 2:]  # +2 for \r\n
+                                    self.logger.debug(f"Removed Content-Length header, buffer size now: {len(self.buffer)}")
+                                    # Continue processing with the known content length
+                                    continue
+                                except (ValueError, UnicodeDecodeError) as e:
+                                    self.logger.debug(f"Error parsing Content-Length: {str(e)}")
+
+                        # If no headers found, dump buffer contents for debugging and wait for more data
+                        if len(self.buffer) > 0:
+                            self.logger.debug(f"No complete headers found. Buffer content (hex): {self.buffer.hex()}")
+                            self.logger.debug(f"Buffer content (text, if possible): {self.buffer.decode('utf-8', errors='replace')}")
                         break
 
                 # Extract headers
