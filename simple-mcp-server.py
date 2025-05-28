@@ -19,12 +19,19 @@ logging.basicConfig(
     level=logging.DEBUG,  # Повышаем уровень логирования для отладки
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("mcp_server.log"),  # Добавляем запись логов в файл
+        logging.FileHandler(os.path.join(os.path.dirname(os.path.abspath(__file__)), "mcp_server.log"), mode='a'),  # Добавляем запись логов в файл с абсолютным путем
         logging.StreamHandler(sys.stdout),      # Вывод логов в stdout для отображения в консоли
         logging.StreamHandler(sys.stderr)       # Сохраняем вывод в stderr для stdio протокола
     ]
 )
 logger = logging.getLogger("simple_mcp")
+
+# Добавляем запись в лог о запуске сервера
+logger.info("========================")
+logger.info("MCP Server starting up at %s", time.strftime("%Y-%m-%d %H:%M:%S"))
+logger.info("Working directory: %s", os.getcwd())
+logger.info("Script location: %s", os.path.abspath(__file__))
+logger.info("========================")
 
 # Добавляем цветное логирование для лучшей читаемости в консоли
 class ColoredFormatter(logging.Formatter):
