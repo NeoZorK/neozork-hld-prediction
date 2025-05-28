@@ -431,7 +431,7 @@ def _read_message_from_server(server_process, timeout=5.0):
 
     return None
 
-def launch_mcp_server(server_path=None, timeout=10):
+def launch_mcp_server(server_path=None, timeout=1):
     """Launches MCP server and returns the process"""
     if server_path is None:
         # Try to find server automatically
