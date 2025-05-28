@@ -57,13 +57,22 @@ class ColoredFormatter(logging.Formatter):
         'WARNING': '\033[93m', # yellow
         'ERROR': '\033[91m',   # red
         'CRITICAL': '\033[91m\033[1m', # bold red
-        'RESET': '\033[0m'    # reset color
+        'RESET': '\033[0m',    # reset color
+        'CLIENT': '\033[96m',  # cyan for client info
+        'REQUEST': '\033[95m', # magenta for requests
+        'RESPONSE': '\033[93m' # yellow for responses
     }
 
     def format(self, record):
         log_message = super().format(record)
         if hasattr(record, 'levelname') and record.levelname in self.COLORS:
             return f"{self.COLORS[record.levelname]}{log_message}{self.COLORS['RESET']}"
+        if hasattr(record, 'client_info'):
+            return f"{self.COLORS['CLIENT']}{log_message}{self.COLORS['RESET']}"
+        if hasattr(record, 'request_info'):
+            return f"{self.COLORS['REQUEST']}{log_message}{self.COLORS['RESET']}"
+        if hasattr(record, 'response_info'):
+            return f"{self.COLORS['RESPONSE']}{log_message}{self.COLORS['RESET']}"
         return log_message
 
 # Apply colored formatter for console if not Windows
@@ -74,6 +83,28 @@ if os.name != 'nt':
                 # Use more noticeable formatting for console output
                 handler.setFormatter(ColoredFormatter('📝 %(asctime)s - %(levelname)s - %(message)s'))
 
+# Create a special console handler for client and request details
+client_console_handler = logging.StreamHandler(sys.stderr)
+client_console_handler.setLevel(logging.INFO)
+client_formatter = logging.Formatter('👥 CLIENTS: %(message)s')
+client_console_handler.setFormatter(client_formatter)
+
+request_console_handler = logging.StreamHandler(sys.stderr)
+request_console_handler.setLevel(logging.INFO)
+request_formatter = logging.Formatter('📡 REQUEST/RESPONSE: %(message)s')
+request_console_handler.setFormatter(request_formatter)
+
+# Create special loggers for client and request info
+client_logger = logging.getLogger("client_info")
+client_logger.setLevel(logging.INFO)
+client_logger.addHandler(client_console_handler)
+client_logger.propagate = False
+
+request_logger = logging.getLogger("request_info")
+request_logger.setLevel(logging.INFO)
+request_logger.addHandler(request_console_handler)
+request_logger.propagate = False
+
 class SimpleMCPServer:
     """
     Simple MCP server for successful GitHub Copilot connection via stdio
@@ -81,6 +112,8 @@ class SimpleMCPServer:
 
     def __init__(self):
         self.logger = logger
+        self.client_logger = client_logger
+        self.request_logger = request_logger
         self.logger.info("Simple MCP Server initialized with stdio interface")
         # Create buffer for incoming data
         self.buffer = b""
@@ -97,6 +130,11 @@ class SimpleMCPServer:
         # Client and protocol information
         self.client_info = {}
         self.protocol_versions = set()
+        # Active client sessions
+        self.active_clients = {}
+
+        # Show initial client info
+        self._print_client_info()
 
     def run(self):
         """
@@ -255,6 +293,14 @@ class SimpleMCPServer:
         current_time = time.time()
         uptime = current_time - self.start_time
 
+        # Display request details on screen
+        request_method = request.get("method", "unknown")
+        request_id = request.get("id", "notification")
+        request_params = request.get("params", {})
+        simplified_params = self._simplify_params(request_params)
+        self.request_logger.info(f"REQUEST #{self.request_count}: {request_method} (ID: {request_id})")
+        self.request_logger.info(f"PARAMS: {simplified_params}")
+
         # Check if this is a notification (without ID)
         if "id" not in request:
             method = request.get("method", "")
@@ -324,6 +370,8 @@ class SimpleMCPServer:
             self.logger.info(f"🔌 CONNECTION ATTEMPT #{self.connection_attempts} from {client_name} v{client_version}")
             self.logger.info(f"Protocol version: {protocol_version}")
             self.logger.info(f"Client capabilities: {json.dumps(params.get('capabilities', {}), indent=2)}")
+
+            self._update_client_list(client_name, client_version, status="connected")
 
             return {
                 "jsonrpc": "2.0",
@@ -471,6 +519,96 @@ class SimpleMCPServer:
         }
 
         self._send_response(error_response)
+
+    def _simplify_params(self, params):
+        """
+        Simplify request parameters for display
+        """
+        if not params:
+            return "{}"
+
+        # Create a simplified version of parameters for display
+        result = {}
+
+        # Handle different types of requests
+        if "textDocument" in params:
+            doc = params["textDocument"]
+            if "uri" in doc:
+                result["textDocument"] = {"uri": doc["uri"]}
+            if "languageId" in doc:
+                if "textDocument" not in result:
+                    result["textDocument"] = {}
+                result["textDocument"]["languageId"] = doc["languageId"]
+
+        if "clientInfo" in params:
+            client_info = params["clientInfo"]
+            result["clientInfo"] = {
+                "name": client_info.get("name", "Unknown"),
+                "version": client_info.get("version", "Unknown")
+            }
+
+        if "capabilities" in params:
+            # Just indicate we have capabilities without the full details
+            result["capabilities"] = "..." if params["capabilities"] else "{}"
+
+        if "processId" in params:
+            result["processId"] = params["processId"]
+
+        if "rootUri" in params:
+            result["rootUri"] = params["rootUri"]
+
+        if "protocolVersion" in params:
+            result["protocolVersion"] = params["protocolVersion"]
+
+        # For other parameters types, just include them directly if they're not too large
+        for key, value in params.items():
+            if key not in result:
+                if isinstance(value, dict):
+                    if len(json.dumps(value)) > 50:
+                        result[key] = "..."
+                    else:
+                        result[key] = value
+                elif isinstance(value, list):
+                    if len(value) > 3:
+                        result[key] = f"[...] ({len(value)} items)"
+                    else:
+                        result[key] = value
+                elif isinstance(value, str) and len(value) > 50:
+                    result[key] = value[:47] + "..."
+                else:
+                    result[key] = value
+
+        return json.dumps(result, indent=2)
+
+    def _update_client_list(self, client_name, client_version, status="connected"):
+        """
+        Update the list of active clients
+        """
+        client_key = f"{client_name}_{client_version}"
+
+        # Update active clients list
+        if status == "connected":
+            self.active_clients[client_key] = {
+                "name": client_name,
+                "version": client_version,
+                "connected_at": time.time(),
+                "status": "active"
+            }
+        elif status == "disconnected":
+            if client_key in self.active_clients:
+                self.active_clients[client_key]["status"] = "disconnected"
+                self.active_clients[client_key]["disconnected_at"] = time.time()
+
+        # Print updated client information
+        self._print_client_info()
+
+    def _print_client_info(self):
+        """
+        Print information about active clients
+        """
+        self.client_logger.info(f"Active clients: {len(self.active_clients)}")
+        for client_key, client_data in self.client_info.items():
+            self.client_logger.info(f"Client: {client_key}, Info: {json.dumps(client_data, indent=2)}")
 
 
 if __name__ == "__main__":
