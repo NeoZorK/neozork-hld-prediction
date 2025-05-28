@@ -14,12 +14,21 @@ import time
 from typing import Dict, Any, Optional, List
 import os
 
+# Создаем директорию logs, если она не существует
+logs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+if not os.path.exists(logs_dir):
+    try:
+        os.makedirs(logs_dir)
+        print(f"Created logs directory: {logs_dir}")
+    except Exception as e:
+        print(f"Error creating logs directory: {e}")
+
 # Настройка логирования
 logging.basicConfig(
     level=logging.DEBUG,  # Повышаем уровень логирования для отладки
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(os.path.join(os.path.dirname(os.path.abspath(__file__)), "mcp_server.log"), mode='a'),  # Добавляем запись логов в файл с абсолютным путем
+        logging.FileHandler(os.path.join(logs_dir, "mcp_server.log"), mode='a'),  # Сохраняем логи в директорию logs
         logging.StreamHandler(sys.stdout)      # Вывод логов в stdout для отображения в консоли
     ]
 )
