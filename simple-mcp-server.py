@@ -13,9 +13,19 @@ import threading
 import time
 from typing import Dict, Any, Optional, List
 import os
+import pathlib
 
-# Create logs directory if it doesn't exist
-logs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+# Determine the project root directory regardless of where the script is run from
+script_path = os.path.abspath(__file__)
+script_dir = os.path.dirname(script_path)
+# If script is run from the mcp directory, use parent directory as root
+if os.path.basename(script_dir) == "mcp":
+    project_root = os.path.dirname(script_dir)
+else:
+    project_root = script_dir
+
+# Create logs directory in the project root
+logs_dir = os.path.join(project_root, "logs")
 if not os.path.exists(logs_dir):
     try:
         os.makedirs(logs_dir)
@@ -45,6 +55,7 @@ logger.addHandler(console_handler)
 logger.info("========================")
 logger.info("MCP Server starting up at %s", time.strftime("%Y-%m-%d %H:%M:%S"))
 logger.info("Working directory: %s", os.getcwd())
+logger.info("Project root directory: %s", project_root)
 logger.info("Script location: %s", os.path.abspath(__file__))
 logger.info("========================")
 
