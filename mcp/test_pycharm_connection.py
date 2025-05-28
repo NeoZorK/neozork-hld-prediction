@@ -11,6 +11,7 @@ import json
 import subprocess
 import time
 import logging
+import threading
 from typing import Dict, Any
 
 # Создаем директорию logs, если она не существует
@@ -501,7 +502,8 @@ def launch_mcp_server(server_path=None, timeout=10):
     env['PYTHONPATH'] = os.path.dirname(os.path.abspath(server_path))
     env['PROJECT_ROOT'] = os.path.dirname(os.path.abspath(server_path))
 
-    # Создаем временный файл для логов в директории logs
+    # Используем лог-файл сервера из директории logs
+    # Вместо создания отдельного файла используем общий лог-файл
     logs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs")
     if not os.path.exists(logs_dir):
         try:
@@ -510,49 +512,67 @@ def launch_mcp_server(server_path=None, timeout=10):
         except Exception as e:
             logger.warning(f"Error creating logs directory: {e}")
 
-    log_file = os.path.join(logs_dir, "mcp_server_test.log")
+    # Теперь используем stderr для записи в общий файл логов
+    process = subprocess.Popen(
+        [sys.executable, server_path],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        # Не перенаправляем stderr в отдельный файл, вместо этого используем stderr напрямую
+        stderr=subprocess.PIPE,
+        env=env,
+        bufsize=0
+    )
 
-    with open(log_file, 'w') as f:
-        f.write(f"MCP Server Test Log - {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+    # Запускаем отдельный поток для чтения stderr и записи в наш лог
+    def log_stderr_thread():
+        while True:
+            if process.poll() is not None:  # Процесс завершился
+                break
+            try:
+                line = process.stderr.readline()
+                if not line:  # Конец потока
+                    break
+                # Записываем в наш основной лог
+                logger.debug(f"MCP Server: {line.decode('utf-8', 'replace').strip()}")
+            except Exception as e:
+                logger.error(f"Error reading server stderr: {e}")
+                break
 
-    # Запускаем сервер с перенаправлением stderr в лог-файл
-    with open(log_file, 'a') as stderr_file:
-        process = subprocess.Popen(
-            [sys.executable, server_path],
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=stderr_file,
-            env=env,
-            bufsize=0
-        )
+    # Запускаем поток для логирования stderr
+    stderr_thread = threading.Thread(target=log_stderr_thread, daemon=True)
+    stderr_thread.start()
 
     # Ждем некоторое время, чтобы сервер запустился
     logger.info(f"Waiting {timeout} seconds for MCP server to start...")
     start_time = time.time()
 
-    # Проверяем лог-файл на наличие признаков успешного запуска
+    # Проверяем, запустился ли сервер
+    server_started = False
     while time.time() - start_time < timeout:
         if process.poll() is not None:
             # Сервер неожиданно завершился
             logger.error(f"MCP server process exited with code {process.returncode}")
-            with open(log_file, 'r') as f:
-                log_content = f.read()
-                logger.error(f"Server log: {log_content}")
-            raise RuntimeError(f"MCP server failed to start, exit code: {process.returncode}")
+            return None, None
 
-        # Проверяем лог на признаки успешного запуска
+        # Проверяем, не пришло ли сообщение о запуске в stderr
         try:
-            with open(log_file, 'r') as f:
-                log_content = f.read()
-                if "MCP Server started" in log_content or "initialized" in log_content.lower():
+            line = process.stderr.readline()
+            if line:
+                message = line.decode('utf-8', 'replace').strip()
+                logger.debug(f"MCP Server: {message}")
+                if "MCP Server started" in message or "initialized" in message.lower():
                     logger.info("MCP server successfully started")
+                    server_started = True
                     break
         except Exception as e:
-            logger.warning(f"Error reading log file: {str(e)}")
+            logger.warning(f"Error checking server status: {e}")
 
         time.sleep(0.1)
 
-    return process, log_file
+    if not server_started:
+        logger.warning("MCP server did not report successful startup, but continuing anyway")
+
+    return process, None  # Возвращаем None вместо пути к лог-файлу
 
 def run_test_with_server():
     """Запускает тест с автоматическим запуском сервера"""
