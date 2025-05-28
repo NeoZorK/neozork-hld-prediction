@@ -20,6 +20,8 @@ src_path = os.path.join(os.path.abspath(project_root), 'src')
 if os.path.exists(src_path):
     sys.path.insert(0, src_path)
 
+# Установка более короткого таймаута для ответов
+MCP_RESPONSE_TIMEOUT = 10  # секунд
 
 @dataclass
 class ProjectStructure:
@@ -189,65 +191,73 @@ class MCPServer:
 
     async def handle_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
         """Handle MCP requests"""
-        method = request.get("method", "")
-        params = request.get("params", {})
+        try:
+            self.logger.info(f"Received request: {request.get('method', 'unknown')}")
+            method = request.get("method", "")
+            params = request.get("params", {})
 
-        if method == "initialize":
-            return {
-                "protocolVersion": "2024-11-05",
-                "capabilities": {
-                    "resources": {"subscribe": True, "listChanged": True},
-                    "tools": {"listChanged": True},
-                    "prompts": {"listChanged": True}
-                },
-                "serverInfo": {
-                    "name": "NeoZorK HLD Prediction MCP Server",
-                    "version": "1.0.0"
-                }
-            }
-
-        elif method == "resources/list":
-            return {
-                "resources": [
-                    {
-                        "uri": f"file://{self.project_root}/context",
-                        "name": "Project Context",
-                        "description": "Complete project structure and context",
-                        "mimeType": "application/json"
+            if method == "initialize":
+                self.logger.info("Processing initialize request")
+                return {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {
+                        "resources": {"subscribe": True, "listChanged": True},
+                        "tools": {"listChanged": True},
+                        "prompts": {"listChanged": True}
                     },
-                    {
-                        "uri": f"file://{self.project_root}/modules",
-                        "name": "Module Information",
-                        "description": "Detailed module structure and files",
-                        "mimeType": "application/json"
+                    "serverInfo": {
+                        "name": "NeoZorK HLD Prediction MCP Server",
+                        "version": "1.0.0"
                     }
-                ]
-            }
-
-        elif method == "resources/read":
-            uri = params.get("uri", "")
-            if "context" in uri:
-                return {
-                    "contents": [{
-                        "uri": uri,
-                        "mimeType": "application/json",
-                        "text": json.dumps(self.get_project_context(), indent=2)
-                    }]
-                }
-            elif "modules" in uri:
-                modules_info = {}
-                for module_name in self.structure.modules.keys():
-                    modules_info[module_name] = self.get_module_files(module_name)
-                return {
-                    "contents": [{
-                        "uri": uri,
-                        "mimeType": "application/json",
-                        "text": json.dumps(modules_info, indent=2)
-                    }]
                 }
 
-        return {"error": f"Unknown method: {method}"}
+            elif method == "resources/list":
+                self.logger.info("Processing resources/list request")
+                return {
+                    "resources": [
+                        {
+                            "uri": f"file://{self.project_root}/context",
+                            "name": "Project Context",
+                            "description": "Complete project structure and context",
+                            "mimeType": "application/json"
+                        },
+                        {
+                            "uri": f"file://{self.project_root}/modules",
+                            "name": "Module Information",
+                            "description": "Detailed module structure and files",
+                            "mimeType": "application/json"
+                        }
+                    ]
+                }
 
+            elif method == "resources/read":
+                uri = params.get("uri", "")
+                self.logger.info(f"Processing resources/read request for {uri}")
+                if "context" in uri:
+                    return {
+                        "contents": [{
+                            "uri": uri,
+                            "mimeType": "application/json",
+                            "text": json.dumps(self.get_project_context(), indent=2)
+                        }]
+                    }
+                elif "modules" in uri:
+                    modules_info = {}
+                    for module_name in self.structure.modules.keys():
+                        modules_info[module_name] = self.get_module_files(module_name)
+                    return {
+                        "contents": [{
+                            "uri": uri,
+                            "mimeType": "application/json",
+                            "text": json.dumps(modules_info, indent=2)
+                        }]
+                    }
+
+            self.logger.warning(f"Unknown method: {method}")
+            return {"error": f"Unknown method: {method}"}
+        except Exception as e:
+            self.logger.error(f"Error handling request: {str(e)}")
+            return {"error": str(e)}
 
 def main():
     """Main entry point for MCP server"""
@@ -264,28 +274,57 @@ def main():
     # Start MCP server
     print("Starting NeoZorK HLD Prediction MCP Server...", file=sys.stderr)
     server.logger.info("MCP Server initialized successfully")
+    server.logger.info(f"Using project root: {server.project_root}")
 
-    # Simple STDIO-based MCP server
+    # Simple STDIO-based MCP server with improved error handling
     try:
-        while True:
-            line = sys.stdin.readline()
-            if not line:
-                break
+        # Сразу отправляем информацию о готовности в stderr для контроля состояния
+        print("MCP Server ready to accept requests", file=sys.stderr)
 
-            if line.strip():
-                try:
-                    request = json.loads(line)
-                    response = asyncio.run(server.handle_request(request))
-                    print(json.dumps(response), flush=True)
-                except json.JSONDecodeError:
-                    print(json.dumps({"error": "Invalid JSON"}), flush=True)
-                except Exception as e:
-                    server.logger.error(f"Error handling request: {e}")
-                    print(json.dumps({"error": str(e)}), flush=True)
+        while True:
+            try:
+                # Используем небольшой таймаут для неблокирующего чтения stdin
+                line = sys.stdin.readline()
+                if not line:
+                    server.logger.warning("Empty input received, continuing...")
+                    continue
+
+                if line.strip():
+                    try:
+                        server.logger.info("Processing input line")
+                        request = json.loads(line)
+                        # Используем asyncio с таймаутом для предотвращения зависаний
+                        async def process_with_timeout():
+                            return await asyncio.wait_for(
+                                server.handle_request(request),
+                                timeout=MCP_RESPONSE_TIMEOUT
+                            )
+
+                        response = asyncio.run(process_with_timeout())
+                        print(json.dumps(response), flush=True)
+                        server.logger.info(f"Response sent for method: {request.get('method', 'unknown')}")
+                    except json.JSONDecodeError as e:
+                        server.logger.error(f"Invalid JSON: {e}")
+                        print(json.dumps({"error": f"Invalid JSON: {str(e)}"}), flush=True)
+                    except asyncio.TimeoutError:
+                        server.logger.error(f"Request processing timed out after {MCP_RESPONSE_TIMEOUT}s")
+                        print(json.dumps({"error": "Request timed out"}), flush=True)
+                    except Exception as e:
+                        server.logger.error(f"Error handling request: {e}")
+                        print(json.dumps({"error": str(e)}), flush=True)
+            except Exception as e:
+                server.logger.error(f"Error in main loop: {e}")
+                # Продолжаем работу несмотря на ошибку
+                continue
+
     except KeyboardInterrupt:
-        server.logger.info("MCP Server shutting down...")
+        server.logger.info("MCP Server shutting down due to keyboard interrupt...")
     except EOFError:
-        server.logger.info("MCP Server connection closed")
+        server.logger.info("MCP Server connection closed (EOF)")
+    except Exception as e:
+        server.logger.critical(f"Critical error in MCP Server: {e}")
+    finally:
+        server.logger.info("MCP Server shutdown complete")
 
 
 if __name__ == "__main__":
