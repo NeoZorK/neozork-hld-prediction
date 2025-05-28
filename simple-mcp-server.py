@@ -201,7 +201,12 @@ class SimpleMCPServer:
                     data_preview = data_preview[:200] + "... (truncated)"
 
                 self.logger.info(f"📥 Received {len(data)} bytes, buffer size: {len(self.buffer)}")
-                self.logger.info(f"📄 Received data content: {data_preview}")
+                # Подробное логирование содержимого запроса
+                try:
+                    decoded_data = data.decode('utf-8', errors='replace')
+                    self.request_logger.info(f"RAW INPUT [{len(data)} bytes]: {decoded_data[:300]}{'...' if len(decoded_data) > 300 else ''}")
+                except Exception as e:
+                    self.logger.debug(f"Unable to decode data for display: {e}")
 
                 # Process messages while they exist in the buffer
                 self._process_buffer()
@@ -524,11 +529,45 @@ class SimpleMCPServer:
         elif method.startswith("copilot/"):
             self.logger.info(f"Received Copilot-specific request: {method}")
 
-            # Return a generic successful response
+            # Детальное логирование запроса Copilot
+            self.client_logger.info(f"🤖 COPILOT REQUEST: {method} (ID: {message_id})")
+
+            # Специальная обработка запросов Copilot по их типу
+            if method == "copilot/signIn":
+                # Обработка авторизации Copilot
+                self.logger.info("Обработка запроса авторизации Copilot")
+                return {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": {
+                        "status": "Success",
+                        "user": "NeozorkMCPUser"
+                    }
+                }
+            elif method == "copilot/getCompletions" or method == "getCompletions":
+                # Запрос автодополнений
+                self.logger.info("Обработка запроса на автодополнения")
+                return {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": {
+                        "completions": [
+                            {
+                                "text": "// Placeholder completion from NeozorkMCP",
+                                "displayText": "Placeholder completion",
+                                "position": {"line": 0, "character": 0}
+                            }
+                        ]
+                    }
+                }
+
+            # Обработка всех остальных запросов Copilot с общим положительным ответом
             return {
                 "jsonrpc": "2.0",
                 "id": message_id,
-                "result": {}
+                "result": {
+                    "status": "Success"
+                }
             }
 
         # Response to shutdown
