@@ -20,7 +20,7 @@ src_path = os.path.join(os.path.abspath(project_root), 'src')
 if os.path.exists(src_path):
     sys.path.insert(0, src_path)
 
-# Установка более короткого таймаута для ответов
+# Set a timeout for MCP responses
 MCP_RESPONSE_TIMEOUT = 10  # секунд
 
 @dataclass
@@ -278,12 +278,12 @@ def main():
 
     # Simple STDIO-based MCP server with improved error handling
     try:
-        # Сразу отправляем информацию о готовности в stderr для контроля состояния
+        # Setup a basic STDIO server
         print("MCP Server ready to accept requests", file=sys.stderr)
 
         while True:
             try:
-                # Используем небольшой таймаут для неблокирующего чтения stdin
+                # Using sys.stdin to read input lines
                 line = sys.stdin.readline()
                 if not line:
                     server.logger.warning("Empty input received, continuing...")
@@ -293,7 +293,7 @@ def main():
                     try:
                         server.logger.info("Processing input line")
                         request = json.loads(line)
-                        # Используем asyncio с таймаутом для предотвращения зависаний
+                        # Use asyncio to handle requests with timeout
                         async def process_with_timeout():
                             return await asyncio.wait_for(
                                 server.handle_request(request),
@@ -314,7 +314,7 @@ def main():
                         print(json.dumps({"error": str(e)}), flush=True)
             except Exception as e:
                 server.logger.error(f"Error in main loop: {e}")
-                # Продолжаем работу несмотря на ошибку
+                # Continue to allow server to keep running
                 continue
 
     except KeyboardInterrupt:
