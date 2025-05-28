@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Testing MCP connection with PyCharm
-This script helps verify compatibility of MCP server with PyCharm
+This script helps to verify the compatibility of MCP server with PyCharm
 """
 
 import sys
@@ -11,9 +11,7 @@ import json
 import subprocess
 import time
 import logging
-import threading
-import uuid
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any
 
 # Create logs directory if it doesn't exist
 logs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs")
@@ -24,7 +22,7 @@ if not os.path.exists(logs_dir):
     except Exception as e:
         print(f"Error creating logs directory: {e}")
 
-# Setup logging configuration
+# Logging setup
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -40,7 +38,7 @@ def send_message(message: Dict[str, Any]) -> None:
     message_str = json.dumps(message)
     message_bytes = message_str.encode('utf-8')
 
-    # Form the message with headers
+    # Form message with headers
     header = f"Content-Length: {len(message_bytes)}\r\n\r\n".encode('utf-8')
 
     sys.stdout.buffer.write(header)
@@ -51,7 +49,7 @@ def send_message(message: Dict[str, Any]) -> None:
 
 def read_message(timeout=5.0):
     """Reads a message from stdin in LSP format with timeout"""
-    # Read headers
+    # Reading headers
     content_length = None
     start_time = time.time()
     buffer = b""
@@ -78,10 +76,10 @@ def read_message(timeout=5.0):
             time.sleep(0.1)
             continue
 
-        # Add to buffer and look for end-of-header marker
+        # Add to buffer and look for end of headers marker
         buffer += line
 
-        # Support both standard \r\n\r\n and PyCharm-style \n\n delimiters
+        # Support both standard delimiter \r\n\r\n and PyCharm-style \n\n
         if b'\r\n\r\n' in buffer:
             headers, buffer = buffer.split(b'\r\n\r\n', 1)
             break
@@ -89,7 +87,7 @@ def read_message(timeout=5.0):
             headers, buffer = buffer.split(b'\n\n', 1)
             break
 
-        # Check Content-Length header in the current line
+        # Check Content-Length header in current line
         try:
             header = line.decode('utf-8').strip()
             if header.lower().startswith('content-length:'):
@@ -98,20 +96,20 @@ def read_message(timeout=5.0):
         except Exception as e:
             logger.warning(f"Error parsing header: {e}")
 
-    # If data is already present after header delimiter, consider it the start of the body
+    # If after header delimiter there's already data, consider it the beginning of the body
     body = buffer
 
-    # If Content-Length is not found, return error
+    # If Content-Length not found, return error
     if content_length is None:
         logger.error("Content-Length header not found")
         return None
 
-    # Read the remaining part of the body
+    # Read remaining part of body
     remaining = content_length - len(body)
     if remaining > 0:
         logger.debug(f"Reading remaining {remaining} bytes of message body")
 
-        # Read remaining data with timeout
+        # Reading remaining data with timeout
         start_body_time = time.time()
         while len(body) < content_length:
             if time.time() - start_body_time > timeout:
@@ -192,7 +190,7 @@ def test_mcp_connection():
     logger.info("Sending initialized notification")
     send_message(initialized_notification)
 
-    # 4. Optionally wait for any server notification
+    # 4. Wait for any notification from server (optional)
     try:
         notification = read_message()
         if notification:
@@ -231,7 +229,7 @@ def test_mcp_connection():
     return True
 
 def test_mcp_connection_direct(server_process):
-    """Tests connection with MCP server via direct input/output streams"""
+    """Tests connection with MCP server through direct stream connection"""
     logger.info("Starting MCP direct connection test")
 
     # 1. Send initialize request
@@ -273,9 +271,9 @@ def test_mcp_connection_direct(server_process):
     logger.info("Sending initialized notification")
     _send_message_to_server(server_process, initialized_notification)
 
-    # 4. Optionally wait for any server notification
+    # 4. Wait for any notification from server (optional)
     try:
-        # Set short timeout as server may not send notifications
+        # Set short timeout, as server may not send notifications
         notification = _read_message_from_server(server_process, timeout=1.0)
         if notification:
             logger.info(f"Received notification: {notification.get('method', 'unknown')}")
@@ -320,7 +318,7 @@ def _send_message_to_server(server_process, message):
     message_str = json.dumps(message)
     message_bytes = message_str.encode('utf-8')
 
-    # Form the message with headers
+    # Form message with headers
     header = f"Content-Length: {len(message_bytes)}\r\n\r\n".encode('utf-8')
 
     try:
@@ -334,7 +332,7 @@ def _send_message_to_server(server_process, message):
 
 def _read_message_from_server(server_process, timeout=5.0):
     """Reads a message from MCP server via its stdout with timeout"""
-    # Read headers
+    # Reading headers
     content_length = None
     start_time = time.time()
     buffer = b""
@@ -354,7 +352,7 @@ def _read_message_from_server(server_process, timeout=5.0):
             time.sleep(0.1)  # Small pause to avoid CPU overload
             continue
 
-        # Read the whole line to look for headers
+        # Read line completely to find headers
         line = server_process.stdout.readline()
         if not line:
             if server_process.poll() is not None:
@@ -367,7 +365,7 @@ def _read_message_from_server(server_process, timeout=5.0):
         buffer += line
         logger.debug(f"Read line from server: {line}")
 
-        # Check Content-Length header in the current line
+        # Check Content-Length header in current line
         try:
             header = line.decode('utf-8', errors='ignore').strip()
             if header.lower().startswith("content-length:"):
@@ -381,7 +379,7 @@ def _read_message_from_server(server_process, timeout=5.0):
             logger.debug("Found end of headers")
             break
 
-    # If Content-Length is not found, try searching in the buffer
+    # If Content-Length not found, try searching in buffer
     if content_length is None:
         try:
             header_text = buffer.decode('utf-8', errors='ignore')
@@ -393,7 +391,7 @@ def _read_message_from_server(server_process, timeout=5.0):
         except Exception as e:
             logger.warning(f"Error parsing headers in buffer: {e}")
 
-    # If Content-Length is still not found, another attempt - search directly in binary buffer
+    # If Content-Length still not found, another attempt - search directly in binary buffer
     if content_length is None:
         cl_marker = b"Content-Length: "
         if cl_marker in buffer:
@@ -409,7 +407,7 @@ def _read_message_from_server(server_process, timeout=5.0):
             except Exception as e:
                 logger.warning(f"Error parsing Content-Length from binary buffer: {e}")
 
-    # If Content-Length is still not found, return error
+    # If Content-Length still not found, return error
     if content_length is None:
         logger.error("Content-Length header not found in server response")
         logger.debug(f"Buffer content: {buffer}")
@@ -427,11 +425,11 @@ def _read_message_from_server(server_process, timeout=5.0):
         body = buffer[body_start:]
         logger.debug(f"Found body start at position {body_start}, body size: {len(body)}")
     else:
-        # If end of headers is not found, consider all read data as headers
+        # If end of headers not found, consider all read data as headers
         body = b""
         logger.debug("No body found in buffer yet")
 
-    # Read the remaining part of the message body
+    # Read remaining part of message body
     while len(body) < content_length:
         if time.time() - start_time > timeout:
             logger.warning(f"Timeout reached while reading message body after {timeout} seconds")
@@ -475,7 +473,7 @@ def _read_message_from_server(server_process, timeout=5.0):
 def launch_mcp_server(server_path=None, timeout=10):
     """Launches MCP server and returns the process"""
     if server_path is None:
-        # Try to find the server automatically
+        # Try to find server automatically
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         default_server_path = os.path.join(project_root, "simple-mcp-server.py")
 
@@ -503,758 +501,95 @@ def launch_mcp_server(server_path=None, timeout=10):
     env['PYTHONPATH'] = os.path.dirname(os.path.abspath(server_path))
     env['PROJECT_ROOT'] = os.path.dirname(os.path.abspath(server_path))
 
-    # Use server stderr for logging to the logs directory
-    process = subprocess.Popen(
-        [sys.executable, server_path],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        env=env,
-        bufsize=0
-    )
+    # Create temporary log file in logs directory
+    logs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs")
+    if not os.path.exists(logs_dir):
+        try:
+            os.makedirs(logs_dir)
+            logger.info(f"Created logs directory: {logs_dir}")
+        except Exception as e:
+            logger.warning(f"Error creating logs directory: {e}")
 
-    # Start a separate thread to read stderr and log it
-    def log_stderr_thread():
-        while True:
-            if process.poll() is not None:  # Process has exited
-                break
-            try:
-                line = process.stderr.readline()
-                if not line:  # End of stream
-                    break
-                # Log to our main log
-                logger.debug(f"MCP Server: {line.decode('utf-8', 'replace').strip()}")
-            except Exception as e:
-                logger.error(f"Error reading server stderr: {e}")
-                break
+    log_file = os.path.join(logs_dir, "mcp_server_test.log")
 
-    # Start thread for stderr logging
-    stderr_thread = threading.Thread(target=log_stderr_thread, daemon=True)
-    stderr_thread.start()
+    with open(log_file, 'w') as f:
+        f.write(f"MCP Server Test Log - {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
 
-    # Wait for server to start
+    # Launch server with stderr redirected to log file
+    with open(log_file, 'a') as stderr_file:
+        process = subprocess.Popen(
+            [sys.executable, server_path],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=stderr_file,
+            env=env,
+            bufsize=0
+        )
+
+    # Wait some time for server to start
     logger.info(f"Waiting {timeout} seconds for MCP server to start...")
     start_time = time.time()
 
-    # Check if server has started
-    server_started = False
+    # Check log file for signs of successful start
     while time.time() - start_time < timeout:
         if process.poll() is not None:
             # Server unexpectedly exited
             logger.error(f"MCP server process exited with code {process.returncode}")
-            return None
+            with open(log_file, 'r') as f:
+                log_content = f.read()
+                logger.error(f"Server log: {log_content}")
+            raise RuntimeError(f"MCP server failed to start, exit code: {process.returncode}")
 
-        # Try sending a simple ping message to see if server responds
+        # Check log for signs of successful start
         try:
-            ping_request = {
-                "jsonrpc": "2.0",
-                "id": 0,
-                "method": "initialize",
-                "params": {
-                    "processId": os.getpid(),
-                    "clientInfo": {
-                        "name": "Test Client",
-                        "version": "1.0"
-                    },
-                    "rootUri": f"file://{os.getcwd()}",
-                    "capabilities": {}
-                }
-            }
-            _send_message_to_server(process, ping_request)
-
-            # Check if we get a response
-            response = _read_message_from_server(process, timeout=1.0)
-            if response and "result" in response:
-                logger.info("MCP server successfully started and responding")
-                server_started = True
-                break
+            with open(log_file, 'r') as f:
+                log_content = f.read()
+                if "MCP Server started" in log_content or "initialized" in log_content.lower():
+                    logger.info("MCP server successfully started")
+                    break
         except Exception as e:
-            # Failed to communicate, continue waiting
-            logger.debug(f"Still waiting for server: {str(e)}")
+            logger.warning(f"Error reading log file: {str(e)}")
 
-        time.sleep(0.5)
+        time.sleep(0.1)
 
-    if not server_started:
-        logger.warning("MCP server may not have started properly, but continuing anyway")
-
-    return process
-
-class MCPApiTester:
-    """Class for testing MCP API methods"""
-
-    def __init__(self, server_process):
-        """Initialize the API tester with a server process"""
-        self.server_process = server_process
-        self.message_id = 100  # Start from a high ID to avoid conflicts
-
-    def send_request(self, method: str, params: Dict[str, Any] = None) -> Dict[str, Any]:
-        """Send a request to the server and wait for the response"""
-        self.message_id += 1
-        request = {
-            "jsonrpc": "2.0",
-            "id": self.message_id,
-            "method": method,
-            "params": params or {}
-        }
-
-        logger.info(f"Testing API method: {method}")
-        _send_message_to_server(self.server_process, request)
-
-        response = _read_message_from_server(self.server_process)
-        if not response:
-            logger.error(f"Failed to receive response for method: {method}")
-            return None
-
-        logger.info(f"Received response for method: {method}")
-        return response
-
-    def send_notification(self, method: str, params: Dict[str, Any] = None) -> None:
-        """Send a notification to the server (no response expected)"""
-        notification = {
-            "jsonrpc": "2.0",
-            "method": method,
-            "params": params or {}
-        }
-
-        logger.info(f"Sending notification: {method}")
-        _send_message_to_server(self.server_process, notification)
-
-    def test_completion(self, uri: str, line: int, character: int, trigger_char: str = None) -> Dict[str, Any]:
-        """Test completion provider functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "position": {
-                "line": line,
-                "character": character
-            },
-            "context": {
-                "triggerKind": 1,  # Invoked
-            }
-        }
-
-        if trigger_char:
-            params["context"]["triggerCharacter"] = trigger_char
-
-        return self.send_request("textDocument/completion", params)
-
-    def test_hover(self, uri: str, line: int, character: int) -> Dict[str, Any]:
-        """Test hover provider functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "position": {
-                "line": line,
-                "character": character
-            }
-        }
-
-        return self.send_request("textDocument/hover", params)
-
-    def test_definition(self, uri: str, line: int, character: int) -> Dict[str, Any]:
-        """Test go to definition functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "position": {
-                "line": line,
-                "character": character
-            }
-        }
-
-        return self.send_request("textDocument/definition", params)
-
-    def test_references(self, uri: str, line: int, character: int) -> Dict[str, Any]:
-        """Test find references functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "position": {
-                "line": line,
-                "character": character
-            },
-            "context": {
-                "includeDeclaration": True
-            }
-        }
-
-        return self.send_request("textDocument/references", params)
-
-    def test_document_symbols(self, uri: str) -> Dict[str, Any]:
-        """Test document symbols functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            }
-        }
-
-        return self.send_request("textDocument/documentSymbol", params)
-
-    def test_workspace_symbols(self, query: str = "") -> Dict[str, Any]:
-        """Test workspace symbols functionality"""
-        params = {
-            "query": query
-        }
-
-        return self.send_request("workspace/symbol", params)
-
-    def test_code_action(self, uri: str, start_line: int, start_char: int,
-                         end_line: int, end_char: int) -> Dict[str, Any]:
-        """Test code action functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "range": {
-                "start": {"line": start_line, "character": start_char},
-                "end": {"line": end_line, "character": end_char}
-            },
-            "context": {
-                "diagnostics": [],
-                "only": ["quickfix", "refactor"]
-            }
-        }
-
-        return self.send_request("textDocument/codeAction", params)
-
-    def test_execute_command(self, command: str, arguments: List[Any] = None) -> Dict[str, Any]:
-        """Test execute command functionality"""
-        params = {
-            "command": command,
-            "arguments": arguments or []
-        }
-
-        return self.send_request("workspace/executeCommand", params)
-
-    def test_document_management(self) -> bool:
-        """Test document management (open, change, close)"""
-        success = True
-
-        # Generate a test document URI
-        test_uri = f"file:///test_document_{uuid.uuid4().hex}.txt"
-
-        # Test document open
-        logger.info(f"Testing textDocument/didOpen with URI: {test_uri}")
-        self.send_notification("textDocument/didOpen", {
-            "textDocument": {
-                "uri": test_uri,
-                "languageId": "plaintext",
-                "version": 1,
-                "text": "This is a test document for MCP API testing."
-            }
-        })
-
-        # Test document change
-        logger.info(f"Testing textDocument/didChange with URI: {test_uri}")
-        self.send_notification("textDocument/didChange", {
-            "textDocument": {
-                "uri": test_uri,
-                "version": 2
-            },
-            "contentChanges": [
-                {
-                    "text": "This is a modified test document for MCP API testing."
-                }
-            ]
-        })
-
-        # Test document close
-        logger.info(f"Testing textDocument/didClose with URI: {test_uri}")
-        self.send_notification("textDocument/didClose", {
-            "textDocument": {
-                "uri": test_uri
-            }
-        })
-
-        return success
-
-    def test_formatting(self, uri: str) -> Dict[str, Any]:
-        """Test document formatting functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "options": {
-                "tabSize": 4,
-                "insertSpaces": True,
-                "trimTrailingWhitespace": True,
-                "insertFinalNewline": True,
-                "trimFinalNewlines": True
-            }
-        }
-
-        return self.send_request("textDocument/formatting", params)
-
-    def test_range_formatting(self, uri: str, start_line: int, start_char: int,
-                            end_line: int, end_char: int) -> Dict[str, Any]:
-        """Test document range formatting functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "range": {
-                "start": {"line": start_line, "character": start_char},
-                "end": {"line": end_line, "character": end_char}
-            },
-            "options": {
-                "tabSize": 4,
-                "insertSpaces": True
-            }
-        }
-
-        return self.send_request("textDocument/rangeFormatting", params)
-
-    def test_on_type_formatting(self, uri: str, line: int, character: int, ch: str) -> Dict[str, Any]:
-        """Test on-type formatting functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "position": {
-                "line": line,
-                "character": character
-            },
-            "ch": ch,
-            "options": {
-                "tabSize": 4,
-                "insertSpaces": True
-            }
-        }
-
-        return self.send_request("textDocument/onTypeFormatting", params)
-
-    def test_rename(self, uri: str, line: int, character: int, new_name: str) -> Dict[str, Any]:
-        """Test rename functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "position": {
-                "line": line,
-                "character": character
-            },
-            "newName": new_name
-        }
-
-        return self.send_request("textDocument/rename", params)
-
-    def test_prepare_rename(self, uri: str, line: int, character: int) -> Dict[str, Any]:
-        """Test prepare rename functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "position": {
-                "line": line,
-                "character": character
-            }
-        }
-
-        return self.send_request("textDocument/prepareRename", params)
-
-    def test_folding_range(self, uri: str) -> Dict[str, Any]:
-        """Test folding range functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            }
-        }
-
-        return self.send_request("textDocument/foldingRange", params)
-
-    def test_selection_range(self, uri: str, positions: List[Dict[str, int]]) -> Dict[str, Any]:
-        """Test selection range functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "positions": positions
-        }
-
-        return self.send_request("textDocument/selectionRange", params)
-
-    def test_semantic_tokens(self, uri: str) -> Dict[str, Any]:
-        """Test semantic tokens functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            }
-        }
-
-        return self.send_request("textDocument/semanticTokens/full", params)
-
-    def test_implementation(self, uri: str, line: int, character: int) -> Dict[str, Any]:
-        """Test go to implementation functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "position": {
-                "line": line,
-                "character": character
-            }
-        }
-
-        return self.send_request("textDocument/implementation", params)
-
-    def test_type_definition(self, uri: str, line: int, character: int) -> Dict[str, Any]:
-        """Test go to type definition functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "position": {
-                "line": line,
-                "character": character
-            }
-        }
-
-        return self.send_request("textDocument/typeDefinition", params)
-
-    def test_document_link(self, uri: str) -> Dict[str, Any]:
-        """Test document link functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            }
-        }
-
-        return self.send_request("textDocument/documentLink", params)
-
-    def test_document_color(self, uri: str) -> Dict[str, Any]:
-        """Test document color functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            }
-        }
-
-        return self.send_request("textDocument/documentColor", params)
-
-    def test_color_presentation(self, uri: str, color: Dict[str, float], range_: Dict[str, Dict[str, int]]) -> Dict[str, Any]:
-        """Test color presentation functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "color": color,
-            "range": range_
-        }
-
-        return self.send_request("textDocument/colorPresentation", params)
-
-    def test_signature_help(self, uri: str, line: int, character: int) -> Dict[str, Any]:
-        """Test signature help functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "position": {
-                "line": line,
-                "character": character
-            }
-        }
-
-        return self.send_request("textDocument/signatureHelp", params)
-
-    def test_will_save_wait_until(self, uri: str) -> Dict[str, Any]:
-        """Test will save wait until functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "reason": 1  # Manual save
-        }
-
-        return self.send_request("textDocument/willSaveWaitUntil", params)
-
-    def test_moniker(self, uri: str, line: int, character: int) -> Dict[str, Any]:
-        """Test moniker functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            },
-            "position": {
-                "line": line,
-                "character": character
-            }
-        }
-
-        return self.send_request("textDocument/moniker", params)
-
-    def test_diagnostics(self, uri: str) -> Dict[str, Any]:
-        """Test document diagnostics functionality"""
-        params = {
-            "textDocument": {
-                "uri": uri
-            }
-        }
-
-        return self.send_request("textDocument/diagnostic", params)
-
-def test_api_methods(server_process):
-    """Tests all available API methods supported by MCP server"""
-    logger.info("Starting comprehensive API methods test")
-
-    # Initialize API tester
-    api_tester = MCPApiTester(server_process)
-
-    # Create a test document URI
-    test_uri = f"file:///test_document_{uuid.uuid4().hex}.py"
-    test_content = """
-def example_function(param1, param2):
-    '''This is a test function'''
-    result = param1 + param2
-    return result
-
-class ExampleClass:
-    def __init__(self):
-        self.value = 42
-    
-    def get_value(self):
-        return self.value
-    
-    def set_value(self, new_value):
-        self.value = new_value
-
-# Testing variables with different types
-colors = {
-    "red": "#FF0000",
-    "green": "#00FF00",
-    "blue": "#0000FF"
-}
-
-def format_text(text, formatting=None):
-    if formatting == 'bold':
-        return f"**{text}**"
-    elif formatting == 'italic':
-        return f"*{text}*"
-    return text
-"""
-
-    # Open test document
-    api_tester.send_notification("textDocument/didOpen", {
-        "textDocument": {
-            "uri": test_uri,
-            "languageId": "python",
-            "version": 1,
-            "text": test_content
-        }
-    })
-
-    # Track test results
-    test_results = {}
-
-    # Test all API methods
-    logger.info("Testing all API methods with the test document")
-
-    try:
-        # Basic functionality tests (original tests)
-        # Test completion
-        test_results["completion"] = api_tester.test_completion(test_uri, 5, 11)
-        logger.info(f"Completion test result: {'Success' if test_results['completion'] else 'Failed'}")
-
-        # Test hover
-        test_results["hover"] = api_tester.test_hover(test_uri, 5, 11)
-        logger.info(f"Hover test result: {'Success' if test_results['hover'] else 'Failed'}")
-
-        # Test definition
-        test_results["definition"] = api_tester.test_definition(test_uri, 5, 11)
-        logger.info(f"Definition test result: {'Success' if test_results['definition'] else 'Failed'}")
-
-        # Test references
-        test_results["references"] = api_tester.test_references(test_uri, 5, 11)
-        logger.info(f"References test result: {'Success' if test_results['references'] else 'Failed'}")
-
-        # Test document symbols
-        test_results["document_symbols"] = api_tester.test_document_symbols(test_uri)
-        logger.info(f"Document symbols test result: {'Success' if test_results['document_symbols'] else 'Failed'}")
-
-        # Test workspace symbols
-        test_results["workspace_symbols"] = api_tester.test_workspace_symbols("Example")
-        logger.info(f"Workspace symbols test result: {'Success' if test_results['workspace_symbols'] else 'Failed'}")
-
-        # Test code action
-        test_results["code_action"] = api_tester.test_code_action(test_uri, 5, 4, 5, 20)
-        logger.info(f"Code action test result: {'Success' if test_results['code_action'] else 'Failed'}")
-
-        # Test execute command
-        test_results["execute_command"] = api_tester.test_execute_command("neozork.analyzeData")
-        logger.info(f"Execute command test result: {'Success' if test_results['execute_command'] else 'Failed'}")
-
-        # Test document management
-        test_results["document_management"] = api_tester.test_document_management()
-        logger.info(f"Document management test result: {'Success' if test_results['document_management'] else 'Failed'}")
-
-        # Additional functionality tests (new tests)
-        # Test formatting
-        test_results["formatting"] = api_tester.test_formatting(test_uri)
-        logger.info(f"Formatting test result: {'Success' if test_results['formatting'] else 'Failed'}")
-
-        # Test range formatting
-        test_results["range_formatting"] = api_tester.test_range_formatting(test_uri, 3, 0, 6, 0)
-        logger.info(f"Range formatting test result: {'Success' if test_results['range_formatting'] else 'Failed'}")
-
-        # Test on-type formatting
-        test_results["on_type_formatting"] = api_tester.test_on_type_formatting(test_uri, 5, 20, "}")
-        logger.info(f"On-type formatting test result: {'Success' if test_results['on_type_formatting'] else 'Failed'}")
-
-        # Test rename
-        test_results["rename"] = api_tester.test_rename(test_uri, 8, 15, "new_value_renamed")
-        logger.info(f"Rename test result: {'Success' if test_results['rename'] else 'Failed'}")
-
-        # Test prepare rename
-        test_results["prepare_rename"] = api_tester.test_prepare_rename(test_uri, 8, 15)
-        logger.info(f"Prepare rename test result: {'Success' if test_results['prepare_rename'] else 'Failed'}")
-
-        # Test folding range
-        test_results["folding_range"] = api_tester.test_folding_range(test_uri)
-        logger.info(f"Folding range test result: {'Success' if test_results['folding_range'] else 'Failed'}")
-
-        # Test selection range
-        positions = [{"line": 5, "character": 10}, {"line": 8, "character": 15}]
-        test_results["selection_range"] = api_tester.test_selection_range(test_uri, positions)
-        logger.info(f"Selection range test result: {'Success' if test_results['selection_range'] else 'Failed'}")
-
-        # Test semantic tokens
-        test_results["semantic_tokens"] = api_tester.test_semantic_tokens(test_uri)
-        logger.info(f"Semantic tokens test result: {'Success' if test_results['semantic_tokens'] else 'Failed'}")
-
-        # Test implementation
-        test_results["implementation"] = api_tester.test_implementation(test_uri, 5, 11)
-        logger.info(f"Implementation test result: {'Success' if test_results['implementation'] else 'Failed'}")
-
-        # Test type definition
-        test_results["type_definition"] = api_tester.test_type_definition(test_uri, 5, 11)
-        logger.info(f"Type definition test result: {'Success' if test_results['type_definition'] else 'Failed'}")
-
-        # Test document link
-        test_results["document_link"] = api_tester.test_document_link(test_uri)
-        logger.info(f"Document link test result: {'Success' if test_results['document_link'] else 'Failed'}")
-
-        # Test document color
-        test_results["document_color"] = api_tester.test_document_color(test_uri)
-        logger.info(f"Document color test result: {'Success' if test_results['document_color'] else 'Failed'}")
-
-        # Test color presentation (requires a color)
-        color = {"red": 1.0, "green": 0.0, "blue": 0.0, "alpha": 1.0}
-        range_ = {
-            "start": {"line": 19, "character": 17},
-            "end": {"line": 19, "character": 25}
-        }
-        test_results["color_presentation"] = api_tester.test_color_presentation(test_uri, color, range_)
-        logger.info(f"Color presentation test result: {'Success' if test_results['color_presentation'] else 'Failed'}")
-
-        # Test signature help
-        test_results["signature_help"] = api_tester.test_signature_help(test_uri, 25, 20)
-        logger.info(f"Signature help test result: {'Success' if test_results['signature_help'] else 'Failed'}")
-
-        # Test will save wait until
-        test_results["will_save_wait_until"] = api_tester.test_will_save_wait_until(test_uri)
-        logger.info(f"Will save wait until test result: {'Success' if test_results['will_save_wait_until'] else 'Failed'}")
-
-        # Test moniker
-        test_results["moniker"] = api_tester.test_moniker(test_uri, 5, 11)
-        logger.info(f"Moniker test result: {'Success' if test_results['moniker'] else 'Failed'}")
-
-        # Test diagnostics
-        test_results["diagnostics"] = api_tester.test_diagnostics(test_uri)
-        logger.info(f"Diagnostics test result: {'Success' if test_results['diagnostics'] else 'Failed'}")
-
-    except Exception as e:
-        logger.error(f"Error during API testing: {str(e)}")
-        logger.error(traceback.format_exc())
-        return False
-    finally:
-        # Close test document
-        api_tester.send_notification("textDocument/didClose", {
-            "textDocument": {
-                "uri": test_uri
-            }
-        })
-
-    # Count successful tests
-    success_count = sum(1 for result in test_results.values() if result is not None)
-    total_count = len(test_results)
-
-    logger.info(f"API testing completed. Success: {success_count}/{total_count} tests.")
-    logger.info(f"Test summary:")
-
-    # Print results for each method
-    for method, result in sorted(test_results.items()):
-        status = "✅ Success" if result is not None else "❌ Failed"
-        logger.info(f"  - {method}: {status}")
-
-    # Consider test successful if at least half of the API methods work
-    # Most servers won't implement all methods fully
-    return success_count >= total_count / 2
+    return process, log_file
 
 def run_test_with_server():
-    """Launches MCP server and runs all tests"""
+    """Runs test with automatic server launch"""
     import argparse
 
     parser = argparse.ArgumentParser(description="Test MCP connection with PyCharm")
     parser.add_argument("--server", help="Path to MCP server script", default=None)
     parser.add_argument("--no-server", action="store_true", help="Don't start the server, assume it's already running")
     parser.add_argument("--timeout", type=float, default=5.0, help="Timeout for operations in seconds")
-    parser.add_argument("--skip-api-tests", action="store_true", help="Skip API method testing")
     args = parser.parse_args()
 
     server_process = None
-    basic_connection_ok = False
-    api_tests_ok = False
 
     try:
         # Launch server if needed
         if not args.no_server:
             try:
-                server_process = launch_mcp_server(args.server, timeout=10)
-                if not server_process:
-                    logger.error("Failed to start MCP server")
-                    return False
+                server_process, log_file = launch_mcp_server(args.server, timeout=10)
             except Exception as e:
                 logger.error(f"Failed to start MCP server: {str(e)}")
                 return False
 
-        # Run basic connection test
+        # Run test
         if server_process:
-            logger.info("Starting basic connectivity test...")
-            basic_connection_ok = test_mcp_connection_direct(server_process)
+            result = test_mcp_connection_direct(server_process)
         else:
-            logger.info("Starting basic connectivity test (no server process)...")
-            basic_connection_ok = test_mcp_connection()
+            result = test_mcp_connection()
 
-        if basic_connection_ok:
-            logger.info("✅ Basic connectivity test completed successfully!")
+        if result:
+            logger.info("✅ Test completed successfully!")
         else:
-            logger.error("❌ Basic connectivity test failed")
-            return False
+            logger.error("❌ Test failed")
 
-        # If basic connectivity works and API tests are not skipped, run API tests
-        if basic_connection_ok and not args.skip_api_tests and server_process:
-            logger.info("Starting API methods test...")
-            api_tests_ok = test_api_methods(server_process)
-
-            if api_tests_ok:
-                logger.info("✅ API methods test completed successfully!")
-            else:
-                logger.warning("⚠️ Some API methods tests failed, but basic connectivity is working")
-        elif args.skip_api_tests:
-            logger.info("API tests skipped as requested")
-            api_tests_ok = True  # Consider as success if skipped
-        else:
-            logger.info("API tests skipped as no server process is available")
-            api_tests_ok = True  # Consider as success if skipped
-
-        # Overall success depends on basic connectivity and API tests (if run)
-        return basic_connection_ok and api_tests_ok
+        return result
 
     finally:
-        # Stop server if it was started
+        # Stop server if it was launched
         if server_process is not None:
             try:
                 logger.info("Terminating MCP server process")
@@ -1268,14 +603,7 @@ def run_test_with_server():
 
 if __name__ == "__main__":
     try:
-        success = run_test_with_server()
-        if success:
-            logger.info("🎉 All tests completed successfully!")
-            sys.exit(0)
-        else:
-            logger.error("❌ Some tests failed")
-            sys.exit(1)
+        run_test_with_server()
     except Exception as e:
         logger.error(f"Test failed with error: {str(e)}")
         sys.exit(1)
-

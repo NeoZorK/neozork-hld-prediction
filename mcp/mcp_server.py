@@ -22,7 +22,7 @@ if os.path.exists(src_path):
     sys.path.insert(0, src_path)
 
 # Set a timeout for MCP responses
-MCP_RESPONSE_TIMEOUT = 30  # секунд - увеличен таймаут с 10 до 30 секунд
+MCP_RESPONSE_TIMEOUT = 30  # seconds - timeout increased from 10 to 30 seconds
 
 @dataclass
 class ProjectStructure:
