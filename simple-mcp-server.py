@@ -98,6 +98,12 @@ if os.name != 'nt':
 client_logger = logging.getLogger("client_info")
 client_logger.setLevel(logging.DEBUG) # Changed from INFO to DEBUG
 client_logger.propagate = True
+# Добавляем явный обработчик для client_logger
+client_handler = logging.StreamHandler(sys.stdout)
+client_handler.setLevel(logging.DEBUG)
+if os.name != 'nt':
+    client_handler.setFormatter(ColoredFormatter('🔌 %(asctime)s - CLIENT - %(message)s'))
+client_logger.addHandler(client_handler)
 
 request_logger = logging.getLogger("request_info")
 request_logger.setLevel(logging.DEBUG) # Changed from INFO to DEBUG
