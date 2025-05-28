@@ -53,7 +53,7 @@ python mcp/mcp_server.py
 ```
 #### Option C: Script
 ```bash
-/mcp/.start_mcp_server.sh
+scripts/.start_mcp_server.sh
 ```
 ### Step 4: Verify Operation
 ```bash

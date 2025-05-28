@@ -10,7 +10,7 @@ import os
 # Add current directory to Python path
 sys.path.insert(0, os.path.dirname(__file__))
 
-from mcp.mcp_server import MCPServer
+from mcp_server import MCPServer
 
 
 def test_project_analysis():
@@ -140,3 +140,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
