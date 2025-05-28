@@ -42,12 +42,7 @@ if not os.path.exists(logs_dir):
 current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 log_file_path = os.path.join(logs_dir, f"mcp_server_{current_time}.log")
 
-# Создаем отдельные файлы для разных типов логов
-raw_log_file_path = os.path.join(logs_dir, f"raw_data_{current_time}.log")
-client_log_file_path = os.path.join(logs_dir, f"client_info_{current_time}.log")
-message_log_file_path = os.path.join(logs_dir, f"messages_{current_time}.log")
-
-# Logging setup - основной лог
+# Logging setup - единый лог для всего
 logging.basicConfig(
     level=logging.DEBUG,  # Increase logging level for debugging
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -58,30 +53,15 @@ logging.basicConfig(
 )
 logger = logging.getLogger("simple_mcp")
 
-# Создаем отдельные логгеры для разных типов информации
-# Логгер для сырых данных (бинарные данные, входящие/исходящие пакеты)
+# Создаем отдельные логгеры для разных типов информации, но все пишем в один файл
 raw_logger = logging.getLogger("raw_data")
 raw_logger.setLevel(logging.DEBUG)
-raw_handler = logging.FileHandler(raw_log_file_path, encoding='utf-8')
-raw_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(message)s'))
-raw_logger.addHandler(raw_handler)
-raw_logger.propagate = False  # Не дублировать в основной лог
 
-# Логгер для клиентских подключений
 client_detail_logger = logging.getLogger("client_detail")
 client_detail_logger.setLevel(logging.DEBUG)
-client_handler = logging.FileHandler(client_log_file_path, encoding='utf-8')
-client_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(message)s'))
-client_detail_logger.addHandler(client_handler)
-client_detail_logger.propagate = False  # Не дублировать в основной лог
 
-# Логгер для содержимого сообщений
 message_logger = logging.getLogger("message_detail")
 message_logger.setLevel(logging.DEBUG)
-message_handler = logging.FileHandler(message_log_file_path, encoding='utf-8')
-message_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(message)s'))
-message_logger.addHandler(message_handler)
-message_logger.propagate = False  # Не дублировать в основной лог
 
 # Логируем информацию о старте и пути к файлу лога
 logger.info(f"Логи сохраняются в файл: {log_file_path}")
@@ -637,7 +617,7 @@ class SimpleMCPServer:
                     "result": {
                         "completions": [
                             {
-                                "text": "// Placeholder completion from NeozorkMCP",
+                                "text": "# Placeholder completion from NeozorkMCP",
                                 "displayText": "Placeholder completion",
                                 "position": {"line": 0, "character": 0}
                             }
