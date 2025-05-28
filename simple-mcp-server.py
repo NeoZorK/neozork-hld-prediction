@@ -16,9 +16,13 @@ from typing import Dict, Any, Optional
 import os
 import datetime
 import binascii  # Для вывода шестнадцатеричного представления двоичных данных
+import threading  # Для создания ping-потока
 
 # Define maximum response delay to prevent buffer issues
 MAX_RESPONSE_DELAY = 0.0  # Убираем задержку полностью для максимальной отзывчивости
+# Добавляем константы для пинга
+PING_INTERVAL = 20.0  # Отправлять ping каждые 20 секунд
+PING_ENABLED = True   # Включение/отключение пинга
 
 # Determine the project root directory regardless of where the script is run from
 script_path = os.path.abspath(__file__)
@@ -165,6 +169,10 @@ class SimpleMCPServer:
         self.protocol_versions = set()
         # Active client sessions
         self.active_clients = {}
+        # Ping механизм
+        self.ping_thread = None
+        self.ping_stop_event = threading.Event()
+        self.last_client_activity = time.time()
 
         # Show initial client info
         self._print_client_info()
@@ -175,6 +183,11 @@ class SimpleMCPServer:
         """
         try:
             self.logger.info("MCP Server started with stdio interface")
+
+            # Запускаем поток пинга, если эта функция включена
+            if PING_ENABLED:
+                self._start_ping_thread()
+                self.logger.info(f"Ping thread started (interval: {PING_INTERVAL}s)")
 
             # Main loop for reading from stdin and writing to stdout
             self._handle_stdio()
@@ -187,6 +200,11 @@ class SimpleMCPServer:
                 "type": 1,  # Error
                 "message": f"MCP Server Error: {str(e)}"
             })
+        finally:
+            # Останавливаем поток пинга при завершении
+            if PING_ENABLED and self.ping_thread and self.ping_thread.is_alive():
+                self._stop_ping_thread()
+                self.logger.info("Ping thread stopped")
 
     def _handle_stdio(self):
         """
@@ -935,6 +953,85 @@ class SimpleMCPServer:
         # Can perform any other cleanup needed here
 
         return
+
+    def _start_ping_thread(self):
+        """
+        Запускает поток для периодической отправки ping-сообщений клиенту
+        """
+        if self.ping_thread and self.ping_thread.is_alive():
+            self.logger.info("Ping thread already running")
+            return
+
+        # Сбрасываем событие остановки пинга
+        self.ping_stop_event.clear()
+
+        # Создаем и запускаем поток пинга
+        self.ping_thread = threading.Thread(target=self._ping_loop, daemon=True)
+        self.ping_thread.start()
+        self.logger.info(f"Started ping thread (interval: {PING_INTERVAL}s)")
+
+    def _stop_ping_thread(self):
+        """
+        Останавливает поток отправки ping-сообщений
+        """
+        if not self.ping_thread or not self.ping_thread.is_alive():
+            self.logger.info("No active ping thread to stop")
+            return
+
+        # Устанавливаем событие остановки и ждем завершения потока
+        self.ping_stop_event.set()
+        if self.ping_thread:
+            self.ping_thread.join(timeout=2.0)  # Ждем 2 секунды максимум
+            if self.ping_thread.is_alive():
+                self.logger.warning("Ping thread did not terminate gracefully")
+            else:
+                self.logger.info("Ping thread stopped successfully")
+        self.ping_thread = None
+
+    def _ping_loop(self):
+        """
+        Основной цикл отправки ping-сообщений
+        """
+        self.logger.info("Ping loop started")
+        ping_count = 0
+
+        while not self.ping_stop_event.is_set():
+            # Проверяем, прошло ли достаточно времени с последней активности
+            current_time = time.time()
+            time_since_last_activity = current_time - self.last_client_activity
+
+            if time_since_last_activity >= PING_INTERVAL:
+                # Отправляем ping, чтобы поддерживать соединение
+                ping_count += 1
+                self._send_ping(ping_count)
+
+                # Обновляем время последней активности
+                self.last_client_activity = current_time
+
+            # Ждем немного, чтобы не загружать процессор
+            # и проверяем событие остановки каждые 5 секунд
+            for _ in range(5):
+                if self.ping_stop_event.is_set():
+                    break
+                time.sleep(1.0)
+
+        self.logger.info(f"Ping loop ended after {ping_count} pings")
+
+    def _send_ping(self, count):
+        """
+        Отправляет ping-сообщение клиенту
+        """
+        try:
+            # Отправляем специальное уведомление для поддержания соединения
+            self._send_notification("$/ping", {
+                "timestamp": time.time(),
+                "count": count,
+                "message": "Keep connection alive"
+            })
+            self.logger.info(f"📡 Sent ping #{count} to keep connection alive")
+        except Exception as e:
+            self.logger.error(f"Error sending ping: {str(e)}")
+            self.logger.error(traceback.format_exc())
 
 
 if __name__ == "__main__":
