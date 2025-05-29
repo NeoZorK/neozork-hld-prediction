@@ -6,62 +6,91 @@ import os
 import asyncio
 import anyio
 import json
+import time
+import datetime
 
 # Specify the directory to allow access
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Path to config file
 CONFIG_FILE = os.path.expanduser('~/.config/github-copilot/intellij/mcp.json')
 
+# Функция для логирования с временной меткой
+def log_message(message, level="INFO"):
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[:-3]
+    print(f"{timestamp} [{level:8}] - {message}")
+
 class FileAccessServer(Server):
     def __init__(self):
         # Загружаем конфигурацию из файла
-        with open(CONFIG_FILE, 'r') as f:
-            config = json.load(f)
+        try:
+            if os.path.exists(CONFIG_FILE):
+                with open(CONFIG_FILE, 'r') as f:
+                    config = json.load(f)
+                log_message(f"Конфигурация загружена из {CONFIG_FILE}")
+            else:
+                config = {}
+                os.makedirs(os.path.dirname(CONFIG_FILE), exist_ok=True)
+                log_message(f"Файл конфигурации {CONFIG_FILE} не найден, используем пустую конфигурацию", "WARN")
+        except Exception as e:
+            log_message(f"Ошибка при чтении конфигурации: {e}", "ERROR")
+            config = {}
         # Передаем имя сервера
         super().__init__("mcp_server")
         # Сохраняем конфигурацию для дальнейшего использования
         self.config = config
 
     def on_connect(self, client):
-        print(f"Client connected: {client}")
+        log_message(f"Client connected: {client}")
 
     def on_disconnect(self, client):
-        print(f"Client disconnected: {client}")
+        log_message(f"Client disconnected: {client}")
 
     # Handler for initialization request from clients
     def handle_init(self, client, options=None):
+        log_message(f"Инициализация клиента: {client['addr']}, options: {options}")
         return {"status": "success", "message": "MCP server initialized"}
 
     # Handler for file read request
     def handle_read_file(self, client, path):
+        log_message(f"Запрос на чтение файла: {path} от клиента {client['addr']}")
+
         if path is None or not isinstance(path, str):
+            log_message(f"Ошибка: путь должен быть строкой, получено: {type(path)}", "ERROR")
             return {"error": "Path must be a string"}
 
         abs_path = os.path.abspath(os.path.join(WORKSPACE_DIR, path))
         if not abs_path.startswith(WORKSPACE_DIR):
+            log_message(f"Доступ запрещен: {abs_path}", "WARN")
             return {"error": "Access denied"}
         try:
             with open(abs_path, 'r') as f:
                 content = f.read()
+            log_message(f"Файл успешно прочитан: {abs_path}")
             return {"content": content}
         except Exception as e:
+            log_message(f"Ошибка при чтении файла {abs_path}: {e}", "ERROR")
             return {"error": str(e)}
 
     # Handler for checking if a file exists
     def handle_check_file(self, client, path):
+        log_message(f"Проверка существования файла: {path} от клиента {client['addr']}")
+
         if path is None or not isinstance(path, str):
+            log_message(f"Ошибка: путь должен быть строкой, получено: {type(path)}", "ERROR")
             return {"error": "Path must be a string"}
 
         abs_path = os.path.abspath(os.path.join(WORKSPACE_DIR, path))
         if not abs_path.startswith(WORKSPACE_DIR):
+            log_message(f"Доступ запрещен: {abs_path}", "WARN")
             return {"error": "Access denied"}
 
         exists = os.path.exists(abs_path)
+        log_message(f"Файл {path} {'существует' if exists else 'не существует'}")
         return {"exists": exists, "path": path}
 
 if __name__ == "__main__":
     server = FileAccessServer()
-    print("MCP server started...")
+    log_message("MCP server started...")
 
     async def main():
         # Создаем асинхронный сервер на localhost:8765
@@ -73,7 +102,7 @@ if __name__ == "__main__":
             host, port
         )
 
-        print(f"Сервер запущен на {host}:{port}")
+        log_message(f"Сервер запущен на {host}:{port}")
 
         # Держим сервер запущенным
         async with server_coro:
@@ -82,7 +111,7 @@ if __name__ == "__main__":
     # Функция для обработки подключений клиентов
     async def handle_client(server, reader, writer):
         addr = writer.get_extra_info('peername')
-        print(f"Новое подключение: {addr}")
+        log_message(f"Новое подключение: {addr}")
         client = {"addr": addr, "writer": writer}
 
         try:
@@ -92,18 +121,23 @@ if __name__ == "__main__":
                 # Читаем длину сообщения (4 байта)
                 length_bytes = await reader.read(4)
                 if not length_bytes:
+                    log_message(f"Соединение закрыто клиентом {addr}")
                     break
 
                 # Преобразуем байты в целое число
                 message_length = int.from_bytes(length_bytes, byteorder='big')
+                log_message(f"Получено сообщение длиной {message_length} байт от {addr}")
 
                 # Читаем сообщение указанной длины
                 message_bytes = await reader.read(message_length)
                 if not message_bytes:
+                    log_message(f"Пустое сообщение от клиента {addr}", "WARN")
                     break
 
                 # Декодируем и парсим JSON-сообщение
                 message_str = message_bytes.decode('utf-8')
+                log_message(f"Получено сообщение от {addr}: {message_str}")
+
                 try:
                     message = json.loads(message_str)
 
@@ -120,27 +154,38 @@ if __name__ == "__main__":
                         elif message["type"] == "check_file":
                             path = message.get("path")
                             response = server.handle_check_file(client, path)
+                        else:
+                            log_message(f"Неизвестный тип запроса: {message['type']}", "WARN")
+                    else:
+                        log_message(f"Отсутствует поле 'type' в сообщении", "WARN")
 
                     # Сериализуем ответ
                     response_str = json.dumps(response)
+                    log_message(f"Отправка ответа клиенту {addr}: {response_str}")
                     response_bytes = response_str.encode('utf-8')
 
                     # Отправляем длину и сам ответ
                     writer.write(len(response_bytes).to_bytes(4, byteorder='big'))
                     writer.write(response_bytes)
                     await writer.drain()
+                    log_message(f"Ответ успешно отправлен клиенту {addr}")
 
-                except json.JSONDecodeError:
-                    print(f"Ошибка декодирования JSON: {message_str}")
-                    writer.write(b'\x00\x00\x00\x1f{"error": "Invalid JSON format"}')
+                except json.JSONDecodeError as e:
+                    log_message(f"Ошибка декодирования JSON от клиента {addr}: {e}", "ERROR")
+                    log_message(f"Исходное сообщение: {message_str}", "ERROR")
+                    error_response = json.dumps({"error": "Invalid JSON format"}).encode('utf-8')
+                    writer.write(len(error_response).to_bytes(4, byteorder='big'))
+                    writer.write(error_response)
                     await writer.drain()
 
         except Exception as e:
-            print(f"Ошибка обработки клиента: {e}")
+            log_message(f"Ошибка обработки клиента {addr}: {e}", "ERROR")
+            import traceback
+            log_message(f"Трассировка: {traceback.format_exc()}", "ERROR")
         finally:
             server.on_disconnect(client)
             writer.close()
             await writer.wait_closed()
-            print(f"Соединение закрыто: {addr}")
+            log_message(f"Соединение закрыто: {addr}")
 
     anyio.run(main, backend="asyncio")
