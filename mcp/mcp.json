@@ -1,6 +1,0 @@
-{
-  "command": "python",
-  "args": ["mcp/main.py"],
-  "stdio": true
-}
-
