@@ -8,6 +8,8 @@ import anyio
 import json
 import time
 import datetime
+import sys
+import traceback
 
 # Specify the directory to allow access
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -18,6 +20,14 @@ CONFIG_FILE = os.path.expanduser('~/.config/github-copilot/intellij/mcp.json')
 def log_message(message, level="INFO"):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[:-3]
     print(f"{timestamp} [{level:8}] - {message}")
+
+# Логирование попыток соединения
+def log_connection_attempt(addr, success=True, error=None):
+    status = "успешна" if success else "неудачна"
+    log_message(f"Попытка соединения от {addr} {status}", "INFO" if success else "ERROR")
+    if error:
+        log_message(f"Причина ошибки: {error}", "ERROR")
+        log_message(f"Трассировка:\n{traceback.format_exc()}", "DEBUG")
 
 class FileAccessServer(Server):
     def __init__(self):
@@ -115,73 +125,100 @@ if __name__ == "__main__":
         client = {"addr": addr, "writer": writer}
 
         try:
+            log_connection_attempt(addr, success=True)
             server.on_connect(client)
 
             while True:
-                # Читаем длину сообщения (4 байта)
-                length_bytes = await reader.read(4)
-                if not length_bytes:
-                    log_message(f"Соединение закрыто клиентом {addr}")
-                    break
-
-                # Преобразуем байты в целое число
-                message_length = int.from_bytes(length_bytes, byteorder='big')
-                log_message(f"Получено сообщение длиной {message_length} байт от {addr}")
-
-                # Читаем сообщение указанной длины
-                message_bytes = await reader.read(message_length)
-                if not message_bytes:
-                    log_message(f"Пустое сообщение от клиента {addr}", "WARN")
-                    break
-
-                # Декодируем и парсим JSON-сообщение
-                message_str = message_bytes.decode('utf-8')
-                log_message(f"Получено сообщение от {addr}: {message_str}")
-
                 try:
-                    message = json.loads(message_str)
+                    # Читаем длину сообщения (4 байта)
+                    length_bytes = await reader.read(4)
+                    if not length_bytes:
+                        log_message(f"Соединение закрыто клиентом {addr}")
+                        break
 
-                    # Обрабатываем запрос в зависимости от типа
-                    response = {"status": "error", "message": "Unknown request type"}
+                    # Преобразуем байты в целое число
+                    message_length = int.from_bytes(length_bytes, byteorder='big')
+                    log_message(f"Получено сообщение длиной {message_length} байт от {addr}")
 
-                    if "type" in message:
-                        if message["type"] == "read_file":
-                            path = message.get("path")
-                            response = server.handle_read_file(client, path)
-                        elif message["type"] == "init":
-                            options = message.get("options")
-                            response = server.handle_init(client, options)
-                        elif message["type"] == "check_file":
-                            path = message.get("path")
-                            response = server.handle_check_file(client, path)
+                    # Читаем сообщение указанной длины
+                    message_bytes = await reader.read(message_length)
+                    if not message_bytes:
+                        log_message(f"Пустое сообщение от клиента {addr}", "WARN")
+                        break
+
+                    # Декодируем и парсим JSON-сообщение
+                    message_str = message_bytes.decode('utf-8')
+                    log_message(f"Получено сообщение от {addr}: {message_str}")
+
+                    try:
+                        message = json.loads(message_str)
+
+                        # Обрабатываем запрос в зависимости от типа
+                        response = {"status": "error", "message": "Unknown request type"}
+
+                        if "type" in message:
+                            if message["type"] == "read_file":
+                                path = message.get("path")
+                                # Подробное логирование для отладки проблемы с "file" аргументом
+                                log_message(f"Тип аргумента path: {type(path)}, значение: {path}", "DEBUG")
+                                if path is None:
+                                    log_message(f"Ошибка: аргумент path отсутствует в запросе", "ERROR")
+                                    response = {"error": "Path argument is missing"}
+                                else:
+                                    response = server.handle_read_file(client, path)
+                            elif message["type"] == "init":
+                                options = message.get("options")
+                                # Подробное логирование параметров инициализации
+                                log_message(f"Параметры инициализации: {options}", "DEBUG")
+                                response = server.handle_init(client, options)
+                            elif message["type"] == "check_file":
+                                path = message.get("path")
+                                # Подробное логирование аргумента path
+                                log_message(f"Тип аргумента path: {type(path)}, значение: {path}", "DEBUG")
+                                if path is None:
+                                    log_message(f"Ошибка: аргумент path отсутствует в запросе", "ERROR")
+                                    response = {"error": "Path argument is missing"}
+                                else:
+                                    response = server.handle_check_file(client, path)
+                            else:
+                                log_message(f"Неизвестный тип запроса: {message['type']}", "WARN")
                         else:
-                            log_message(f"Неизвестный тип запроса: {message['type']}", "WARN")
-                    else:
-                        log_message(f"Отсутствует поле 'type' в сообщении", "WARN")
+                            log_message(f"Отсутствует поле 'type' в сообщении", "WARN")
 
-                    # Сериализуем ответ
-                    response_str = json.dumps(response)
-                    log_message(f"Отправка ответа клиенту {addr}: {response_str}")
-                    response_bytes = response_str.encode('utf-8')
+                        # Сериализуем ответ
+                        response_str = json.dumps(response)
+                        log_message(f"Отправка ответа клиенту {addr}: {response_str}")
+                        response_bytes = response_str.encode('utf-8')
 
-                    # Отправляем длину и сам ответ
-                    writer.write(len(response_bytes).to_bytes(4, byteorder='big'))
-                    writer.write(response_bytes)
-                    await writer.drain()
-                    log_message(f"Ответ успешно отправлен клиенту {addr}")
+                        # Отправляем длину и сам ответ
+                        writer.write(len(response_bytes).to_bytes(4, byteorder='big'))
+                        writer.write(response_bytes)
+                        await writer.drain()
+                        log_message(f"Ответ успешно отправлен клиенту {addr}")
 
-                except json.JSONDecodeError as e:
-                    log_message(f"Ошибка декодирования JSON от клиента {addr}: {e}", "ERROR")
-                    log_message(f"Исходное сообщение: {message_str}", "ERROR")
-                    error_response = json.dumps({"error": "Invalid JSON format"}).encode('utf-8')
-                    writer.write(len(error_response).to_bytes(4, byteorder='big'))
-                    writer.write(error_response)
-                    await writer.drain()
+                    except json.JSONDecodeError as e:
+                        log_message(f"Ошибка декодирования JSON от клиента {addr}: {e}", "ERROR")
+                        log_message(f"Исходное сообщение: {message_str}", "ERROR")
+                        error_response = json.dumps({"error": "Invalid JSON format"}).encode('utf-8')
+                        writer.write(len(error_response).to_bytes(4, byteorder='big'))
+                        writer.write(error_response)
+                        await writer.drain()
+                except Exception as e:
+                    log_message(f"Ошибка при обработке сообщения от клиента {addr}: {e}", "ERROR")
+                    log_message(f"Трассировка: {traceback.format_exc()}", "ERROR")
+                    # Отправляем сообщение об ошибке клиенту
+                    try:
+                        error_response = json.dumps({"error": str(e)}).encode('utf-8')
+                        writer.write(len(error_response).to_bytes(4, byteorder='big'))
+                        writer.write(error_response)
+                        await writer.drain()
+                    except:
+                        log_message(f"Не удалось отправить сообщение об ошибке клиенту {addr}", "ERROR")
+                    # Не прерываем соединение, продолжаем обработку следующих сообщений
 
         except Exception as e:
             log_message(f"Ошибка обработки клиента {addr}: {e}", "ERROR")
-            import traceback
-            log_message(f"Трассировка: {traceback.format_exc()}", "ERROR")
+            log_connection_attempt(addr, success=False, error=e)
         finally:
             server.on_disconnect(client)
             writer.close()
