@@ -7,6 +7,7 @@ Request handler for MCP Server
 import json
 import time
 import logging
+import os
 from typing import Dict, Any, Optional
 
 class RequestHandler:
@@ -97,6 +98,24 @@ class RequestHandler:
                     "features": ["completion", "hover", "definition"]
                 })
 
+            # New notification for workspace/didChangeWatchedFiles
+            elif method == "workspace/didChangeWatchedFiles":
+                params = request.get("params", {})
+                changes = params.get("changes", [])
+                for change in changes:
+                    uri = change.get("uri", "")
+                    change_type = change.get("type", 0)
+                    change_type_str = {1: "Created", 2: "Changed", 3: "Deleted"}.get(change_type, "Unknown")
+                    self.logger.info(f"File {change_type_str}: {uri}")
+
+            # New notification for workspace/didChangeConfiguration
+            elif method == "workspace/didChangeConfiguration":
+                self.logger.info("Configuration changed, updating settings")
+                params = request.get("params", {})
+                settings = params.get("settings", {})
+                self.server.settings = settings
+                self.logger.debug(f"New settings: {json.dumps(settings)}")
+
             # For notifications, we don't send a response
             return None
 
@@ -170,6 +189,14 @@ class RequestHandler:
                         },
                         "executeCommandProvider": {
                             "commands": ["neozork.analyzeData"]
+                        },
+                        # Добавляем поддержку файловой системы
+                        "workspace": {
+                            "fileOperations": {
+                                "didCreate": {"filters": [{"scheme": "file", "pattern": "**/*"}]},
+                                "didRename": {"filters": [{"scheme": "file", "pattern": "**/*"}]},
+                                "didDelete": {"filters": [{"scheme": "file", "pattern": "**/*"}]}
+                            }
                         }
                     },
                     "serverInfo": {
@@ -182,22 +209,23 @@ class RequestHandler:
         # Response to textDocument/completion
         elif method == "textDocument/completion":
             self.logger.info(f"Received completion request (ID: {message_id})")
+            params = request.get("params", {})
+            text_document = params.get("textDocument", {})
+            position = params.get("position", {})
+            uri = text_document.get("uri", "")
 
-            # Create a simple completion response
+            # Get document content if available
+            document_content = self.server.documents.get(uri, "")
+
+            # Генерация реальных завершений на основе содержимого документа
+            completions = self._generate_completions(document_content, position)
+
             return {
                 "jsonrpc": "2.0",
                 "id": message_id,
                 "result": {
                     "isIncomplete": False,
-                    "items": [
-                        {
-                            "label": "Simple placeholder completion",
-                            "kind": 1,  # Text
-                            "detail": "NeoZork MCP Server placeholder completion",
-                            "documentation": "This is a placeholder completion from the simple MCP server",
-                            "insertText": "placeholder_completion"
-                        }
-                    ]
+                    "items": completions
                 }
             }
 
@@ -209,13 +237,16 @@ class RequestHandler:
             text_document = params.get("textDocument", {})
             uri = text_document.get("uri", "")
 
+            # Извлекаем слово под курсором
+            hover_info = self._generate_hover_info(uri, position)
+
             return {
                 "jsonrpc": "2.0",
                 "id": message_id,
                 "result": {
                     "contents": {
                         "kind": "markdown",
-                        "value": "Hover information from NeoZork MCP Server"
+                        "value": hover_info
                     }
                 }
             }
@@ -223,11 +254,112 @@ class RequestHandler:
         # Response to textDocument/definition
         elif method == "textDocument/definition":
             self.logger.info(f"Received definition request (ID: {message_id})")
+            params = request.get("params", {})
+            text_document = params.get("textDocument", {})
+            position = params.get("position", {})
+            uri = text_document.get("uri", "")
+
+            # Реализация поиска определений
+            definitions = self._find_definitions(uri, position)
 
             return {
                 "jsonrpc": "2.0",
                 "id": message_id,
-                "result": [] # Empty array means no definitions found
+                "result": definitions  # Возвращаем найденные определения
+            }
+
+        # Новый обработчик для workspace/symbol
+        elif method == "workspace/symbol":
+            self.logger.info(f"Received workspace symbol request (ID: {message_id})")
+            params = request.get("params", {})
+            query = params.get("query", "")
+
+            # Поиск символов в рабочем пространстве
+            symbols = self._find_workspace_symbols(query)
+
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": symbols
+            }
+
+        # Новый обработчик для textDocument/documentSymbol
+        elif method == "textDocument/documentSymbol":
+            self.logger.info(f"Received document symbol request (ID: {message_id})")
+            params = request.get("params", {})
+            text_document = params.get("textDocument", {})
+            uri = text_document.get("uri", "")
+
+            # Поиск символов в документе
+            symbols = self._find_document_symbols(uri)
+
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": symbols
+            }
+
+        # Новый обработчик для workspace/executeCommand
+        elif method == "workspace/executeCommand":
+            self.logger.info(f"Received execute command request (ID: {message_id})")
+            params = request.get("params", {})
+            command = params.get("command", "")
+            arguments = params.get("arguments", [])
+
+            # Выполнение команды
+            result = self._execute_command(command, arguments)
+
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": result
+            }
+
+        # Новый обработчик для textDocument/references
+        elif method == "textDocument/references":
+            self.logger.info(f"Received references request (ID: {message_id})")
+            params = request.get("params", {})
+            text_document = params.get("textDocument", {})
+            position = params.get("position", {})
+            uri = text_document.get("uri", "")
+
+            # Поиск ссылок
+            references = self._find_references(uri, position)
+
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": references
+            }
+
+        # Новый обработчик для workspace/willCreateFiles
+        elif method == "workspace/willCreateFiles":
+            self.logger.info(f"Received will create files request (ID: {message_id})")
+
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": None  # Без правок
+            }
+
+        # Новый обработчик для workspace/willRenameFiles
+        elif method == "workspace/willRenameFiles":
+            self.logger.info(f"Received will rename files request (ID: {message_id})")
+
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": None  # Без правок
+            }
+
+        # Новый обработчик для workspace/willDeleteFiles
+        elif method == "workspace/willDeleteFiles":
+            self.logger.info(f"Received will delete files request (ID: {message_id})")
+
+            return {
+                "jsonrpc": "2.0",
+                "id": message_id,
+                "result": None  # Без правок
             }
 
         # Response to custom method that GitHub Copilot might send
@@ -251,18 +383,87 @@ class RequestHandler:
                 }
             elif method == "copilot/getCompletions" or method == "getCompletions":
                 # Query for completions
-                self.logger.info("Query for Copilot completions")
+                params = request.get("params", {})
+                doc_uri = params.get("doc", {}).get("uri", "")
+                position = params.get("position", {})
+                self.logger.info(f"Query for Copilot completions in {doc_uri} at position {position}")
+
+                # Получаем содержимое документа если есть
+                document_content = ""
+                if doc_uri and doc_uri in self.server.documents:
+                    document_content = self.server.documents[doc_uri]
+
+                # Генерируем более осмысленные завершения для Copilot
                 return {
                     "jsonrpc": "2.0",
                     "id": message_id,
                     "result": {
                         "completions": [
                             {
-                                "text": "# Placeholder completion from NeozorkMCP",
-                                "displayText": "Placeholder completion",
+                                "text": "# Generated by NeozorkMCP\ndef process_data(data):\n    \"\"\"Process the input data and return results\"\"\"\n    results = []\n    for item in data:\n        if isinstance(item, dict):\n            results.append(item.get('value', 0))\n    return results",
+                                "displayText": "def process_data(data): ...",
+                                "position": position
+                            },
+                            {
+                                "text": "# Helper function\ndef analyze_results(results):\n    \"\"\"Analyze processing results\"\"\"\n    if not results:\n        return None\n    return {\n        'mean': sum(results) / len(results),\n        'max': max(results),\n        'min': min(results)\n    }",
+                                "displayText": "def analyze_results(results): ...",
+                                "position": position
+                            }
+                        ]
+                    }
+                }
+            elif method == "copilot/getCompletionsCycling":
+                self.logger.info("Query for Copilot completions cycling")
+                return {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": {
+                        "completions": [
+                            {
+                                "text": "# Option 1\ndef option_one():\n    print('This is option one')\n    return 1",
+                                "displayText": "Option 1: def option_one()",
+                                "position": {"line": 0, "character": 0}
+                            },
+                            {
+                                "text": "# Option 2\ndef option_two():\n    print('This is option two')\n    return 2",
+                                "displayText": "Option 2: def option_two()",
                                 "position": {"line": 0, "character": 0}
                             }
                         ]
+                    }
+                }
+            elif method == "copilot/updateCompletionTracker":
+                self.logger.info("Updating Copilot completion tracker")
+                return {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": {
+                        "status": "Success",
+                        "action": "Updated"
+                    }
+                }
+            elif method == "copilot/tokenize":
+                self.logger.info("Copilot tokenize request")
+                params = request.get("params", {})
+                text = params.get("text", "")
+                return {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": {
+                        "tokens": text.split()  # Простая токенизация по пробелам
+                    }
+                }
+            elif method == "copilot/getCaptionContext":
+                self.logger.info("Copilot caption context request")
+                return {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": {
+                        "context": {
+                            "repo": "neozork-hld-prediction",
+                            "file": "current_file.py",
+                            "functions": ["analyze_data", "process_results"]
+                        }
                     }
                 }
 
@@ -311,3 +512,287 @@ class RequestHandler:
                 "id": message_id,
                 "result": None
             }
+
+    def _generate_completions(self, document_content, position):
+        """
+        Generate completions based on document content and cursor position
+        """
+        line = position.get("line", 0)
+        character = position.get("character", 0)
+
+        # Разбиваем содержимое документа на строки
+        lines = document_content.split("\n") if document_content else []
+
+        # Базовые завершения
+        completions = [
+            {
+                "label": "Simple placeholder completion",
+                "kind": 1,  # Text
+                "detail": "NeoZork MCP Server placeholder completion",
+                "documentation": "This is a placeholder completion from the simple MCP server",
+                "insertText": "placeholder_completion"
+            }
+        ]
+
+        # Если документ содержит Python код
+        if any(l.startswith("def ") or l.startswith("class ") for l in lines):
+            completions.extend([
+                {
+                    "label": "def function_name(args)",
+                    "kind": 3,  # Function
+                    "detail": "Create a new function",
+                    "documentation": "Define a new Python function",
+                    "insertText": "def ${1:function_name}(${2:args}):\n\t${3:pass}"
+                },
+                {
+                    "label": "class ClassName",
+                    "kind": 7,  # Class
+                    "detail": "Create a new class",
+                    "documentation": "Define a new Python class",
+                    "insertText": "class ${1:ClassName}:\n\tdef __init__(self, ${2:args}):\n\t\t${3:pass}"
+                },
+                {
+                    "label": "if condition",
+                    "kind": 14,  # Keyword
+                    "detail": "If statement",
+                    "documentation": "Create an if statement",
+                    "insertText": "if ${1:condition}:\n\t${2:pass}"
+                }
+            ])
+
+        return completions
+
+    def _generate_hover_info(self, uri, position):
+        """
+        Generate hover information for the current position
+        """
+        document_content = self.server.documents.get(uri, "")
+        if not document_content:
+            return "No document content available"
+
+        lines = document_content.split("\n")
+        line = position.get("line", 0)
+        character = position.get("character", 0)
+
+        if line < len(lines):
+            current_line = lines[line]
+            # Простая эвристика для выделения слова под курсором
+            start = max(0, character)
+            while start > 0 and current_line[start-1].isalnum() or current_line[start-1] == '_':
+                start -= 1
+
+            end = min(len(current_line), character)
+            while end < len(current_line) and (current_line[end].isalnum() or current_line[end] == '_'):
+                end += 1
+
+            word = current_line[start:end]
+
+            if word:
+                # Генерируем информацию на основе слова
+                if word == "RequestHandler":
+                    return "**RequestHandler**\n\nHandles incoming LSP requests from clients.\n\nProperties:\n- server: Server instance\n- logger: Logging instance"
+                elif word == "SimpleMCPServer":
+                    return "**SimpleMCPServer**\n\nMCP server implementation for GitHub Copilot.\n\nMethods:\n- run(): Start the server\n- shutdown_gracefully(): Stop the server"
+                else:
+                    return f"**{word}**\n\nNo detailed information available for this symbol."
+
+        return "Hover information from NeoZork MCP Server"
+
+    def _find_definitions(self, uri, position):
+        """
+        Find definition locations for symbol at position
+        """
+        document_content = self.server.documents.get(uri, "")
+        if not document_content:
+            return []
+
+        lines = document_content.split("\n")
+        line = position.get("line", 0)
+        character = position.get("character", 0)
+
+        if line < len(lines):
+            current_line = lines[line]
+            # Выделяем слово под курсором
+            start = max(0, character)
+            while start > 0 and (current_line[start-1].isalnum() or current_line[start-1] == '_'):
+                start -= 1
+
+            end = min(len(current_line), character)
+            while end < len(current_line) and (current_line[end].isalnum() or current_line[end] == '_'):
+                end += 1
+
+            word = current_line[start:end]
+
+            if word:
+                # Поиск определений в документе
+                for i, line_text in enumerate(lines):
+                    if line_text.startswith(f"def {word}") or line_text.startswith(f"class {word}"):
+                        return [
+                            {
+                                "uri": uri,
+                                "range": {
+                                    "start": {"line": i, "character": 0},
+                                    "end": {"line": i, "character": len(line_text)}
+                                }
+                            }
+                        ]
+
+        return []  # Если не найдено
+
+    def _find_workspace_symbols(self, query):
+        """
+        Find symbols in the workspace matching the query
+        """
+        symbols = []
+
+        # Простая имитация символов в рабочем пространстве
+        if not query or "handler" in query.lower():
+            symbols.append({
+                "name": "RequestHandler",
+                "kind": 5,  # Class
+                "location": {
+                    "uri": "file:///Users/rost/Documents/DIS/REPO/neozork-hld-prediction/mcp/handler.py",
+                    "range": {
+                        "start": {"line": 12, "character": 0},
+                        "end": {"line": 12, "character": 14}
+                    }
+                }
+            })
+
+        if not query or "server" in query.lower():
+            symbols.append({
+                "name": "SimpleMCPServer",
+                "kind": 5,  # Class
+                "location": {
+                    "uri": "file:///Users/rost/Documents/DIS/REPO/neozork-hld-prediction/mcp/server.py",
+                    "range": {
+                        "start": {"line": 20, "character": 0},
+                        "end": {"line": 20, "character": 15}
+                    }
+                }
+            })
+
+        return symbols
+
+    def _find_document_symbols(self, uri):
+        """
+        Find symbols in the document
+        """
+        document_content = self.server.documents.get(uri, "")
+        if not document_content:
+            return []
+
+        symbols = []
+        lines = document_content.split("\n")
+
+        # Поиск определений функций и классов
+        for i, line in enumerate(lines):
+            line = line.strip()
+            if line.startswith("def "):
+                name = line[4:].split("(")[0].strip()
+                symbols.append({
+                    "name": name,
+                    "kind": 12,  # Function
+                    "range": {
+                        "start": {"line": i, "character": 0},
+                        "end": {"line": i, "character": len(line)}
+                    },
+                    "selectionRange": {
+                        "start": {"line": i, "character": line.find(name)},
+                        "end": {"line": i, "character": line.find(name) + len(name)}
+                    }
+                })
+            elif line.startswith("class "):
+                name = line[6:].split("(")[0].split(":")[0].strip()
+                symbols.append({
+                    "name": name,
+                    "kind": 5,  # Class
+                    "range": {
+                        "start": {"line": i, "character": 0},
+                        "end": {"line": i, "character": len(line)}
+                    },
+                    "selectionRange": {
+                        "start": {"line": i, "character": line.find(name)},
+                        "end": {"line": i, "character": line.find(name) + len(name)}
+                    }
+                })
+
+        return symbols
+
+    def _execute_command(self, command, arguments):
+        """
+        Execute the given command with arguments
+        """
+        self.logger.info(f"Executing command: {command} with arguments: {arguments}")
+
+        if command == "neozork.analyzeData":
+            # Имитация анализа данных
+            return {
+                "status": "success",
+                "message": "Data analysis complete",
+                "results": {
+                    "analyzed_files": 10,
+                    "metrics": {
+                        "accuracy": 0.95,
+                        "recall": 0.87,
+                        "precision": 0.92
+                    }
+                }
+            }
+
+        return None
+
+    def _find_references(self, uri, position):
+        """
+        Find references to the symbol at the given position
+        """
+        document_content = self.server.documents.get(uri, "")
+        if not document_content:
+            return []
+
+        lines = document_content.split("\n")
+        line = position.get("line", 0)
+        character = position.get("character", 0)
+
+        if line < len(lines):
+            current_line = lines[line]
+            # Выделяем слово под курсором
+            start = max(0, character)
+            while start > 0 and (current_line[start-1].isalnum() or current_line[start-1] == '_'):
+                start -= 1
+
+            end = min(len(current_line), character)
+            while end < len(current_line) and (current_line[end].isalnum() or current_line[end] == '_'):
+                end += 1
+
+            word = current_line[start:end]
+
+            if word:
+                references = []
+                # Поиск всех упоминаний слова в документе
+                for i, line_text in enumerate(lines):
+                    pos = 0
+                    while True:
+                        pos = line_text.find(word, pos)
+                        if pos == -1:
+                            break
+
+                        # Проверка, что это отдельное слово
+                        is_word_boundary_left = pos == 0 or not (line_text[pos-1].isalnum() or line_text[pos-1] == '_')
+                        is_word_boundary_right = pos + len(word) >= len(line_text) or not (line_text[pos + len(word)].isalnum() or line_text[pos + len(word)] == '_')
+
+                        if is_word_boundary_left and is_word_boundary_right:
+                            references.append({
+                                "uri": uri,
+                                "range": {
+                                    "start": {"line": i, "character": pos},
+                                    "end": {"line": i, "character": pos + len(word)}
+                                }
+                            })
+
+                        pos += len(word)
+
+                return references
+
+        return []
+
