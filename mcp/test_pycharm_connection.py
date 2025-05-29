@@ -332,104 +332,92 @@ def _send_message_to_server(server_process, message):
 
 def _read_message_from_server(server_process, timeout=5.0):
     """Reads a message from MCP server via its stdout with timeout"""
-    # Reading headers
-    content_length = None
-    start_time = time.time()
-    buffer = b""
-
     logger.debug("Starting to read message from server")
 
-    # MCP protocol markers
-    protocol_markers = [
-        b"Content-Length:",  # Standard Content-Length header
-        b'{"jsonrpc": "2.0"'  # Standard JSON-RPC start marker
-    ]
-
-    # Reset state variables
-    protocol_message_started = False
-    message_buffer = b""
+    # Initialize variables
+    content_length = None
+    start_time = time.time()
+    headers_complete = False
+    buffer = b""
 
     while True:
+        # Check for timeout
         if time.time() - start_time > timeout:
             logger.warning(f"Timeout reached while reading server output after {timeout} seconds")
             return None
 
-        # Check if server process is still running
+        # Check if data is available from server
         import select
         ready, _, _ = select.select([server_process.stdout], [], [], 0.1)
         if not ready:
             time.sleep(0.1)
             continue
 
-        # Read a line from server stdout
-        data = server_process.stdout.readline()
-        if not data:
+        # Read some data from server
+        chunk = server_process.stdout.read(1024)
+        if not chunk:
             if server_process.poll() is not None:
                 logger.error(f"Server process exited with code {server_process.returncode}")
                 return None
             time.sleep(0.1)
             continue
 
-        # Display debug information about the data read
-        logger.debug(f"Read data from server: {data[:100]}" + ("..." if len(data) > 100 else ""))
+        # Add chunk to buffer
+        buffer += chunk
+        logger.debug(f"Read data chunk from server: {len(chunk)} bytes, buffer size: {len(buffer)} bytes")
 
-        # Check if this is a protocol line
-        is_protocol_line = False
-        for marker in protocol_markers:
-            if marker in data:
-                is_protocol_line = True
-                protocol_message_started = True
-                break
+        if len(chunk) < 50:  # For small chunks, log content directly
+            try:
+                logger.debug(f"Chunk content: {chunk}")
+            except Exception:
+                logger.debug(f"Chunk content (hex): {chunk.hex()}")
 
-        # if not protocol_message_started:
-        if protocol_message_started:
-            # Start collecting message if we found a protocol line
-            if b"Content-Length:" in data:
-                try:
-                    cl_value = data.split(b":", 1)[1].strip()
-                    content_length = int(cl_value)
-                    logger.debug(f"Found Content-Length: {content_length}")
-                    message_buffer = data  # Start buffer with this line
-                except Exception as e:
-                    logger.warning(f"Error parsing Content-Length: {e}")
-            else:
-                # Add data to message buffer
-                message_buffer += data
+        # Process buffer
+        # 1. If we don't have content_length yet, look for it
+        if not headers_complete:
+            # Look for end of headers marker
+            headers_end = buffer.find(b"\r\n\r\n")
+            if headers_end == -1:
+                headers_end = buffer.find(b"\n\n")
 
-            # If we have a complete message, try to parse it
-            if content_length is not None:
-                # Search for end of headers
-                header_end = message_buffer.find(b"\r\n\r\n")
-                if header_end == -1:
-                    header_end = message_buffer.find(b"\n\n")
+            if headers_end != -1:
+                # Parse headers
+                headers = buffer[:headers_end]
+                logger.debug(f"Found headers: {headers}")
 
-                if header_end != -1:
-                    # Determine the delimiter size
-                    delimiter_size = 4 if b"\r\n\r\n" in message_buffer[:header_end+4] else 2
-                    body_start = header_end + delimiter_size
-
-                    # If we have enough data for the body
-                    if len(message_buffer) >= body_start + content_length:
-                        # Extract the body
-                        body = message_buffer[body_start:body_start + content_length]
-
+                for line in headers.split(b"\n"):
+                    line = line.strip()
+                    if line.lower().startswith(b"content-length:"):
                         try:
-                            # Try to parse the JSON message
-                            message = json.loads(body.decode('utf-8', errors='replace'))
-                            logger.debug(f"Successfully parsed JSON from server: {json.dumps(message)}")
-                            return message
-                        except json.JSONDecodeError as e:
-                            logger.error(f"Failed to decode JSON from server: {e}")
-                            logger.debug(f"Raw body content: {body}")
-                            # Clear the buffer and reset state
-                            message_buffer = b""
-                            content_length = None
-                            protocol_message_started = False
-        else:
-            # Line is not a protocol line, just add to buffer
-            pass
+                            content_length = int(line.split(b":", 1)[1].strip())
+                            logger.debug(f"Found Content-Length: {content_length}")
+                        except Exception as e:
+                            logger.warning(f"Error parsing Content-Length: {e}")
 
-    return None
+                # Calculate body start position
+                if b"\r\n\r\n" in buffer[:headers_end+4]:
+                    body_start = headers_end + 4  # \r\n\r\n
+                else:
+                    body_start = headers_end + 2  # \n\n
+
+                # Update buffer to contain only body
+                buffer = buffer[body_start:]
+                headers_complete = True
+                logger.debug(f"Headers complete, body buffer length: {len(buffer)}")
+
+        # 2. If we have content_length and enough data, we can process the message
+        if headers_complete and content_length is not None and len(buffer) >= content_length:
+            body = buffer[:content_length]
+            logger.debug(f"Got complete message body, length: {len(body)}")
+
+            try:
+                message = json.loads(body.decode('utf-8'))
+                logger.debug(f"Successfully parsed JSON from server: {json.dumps(message)}")
+                return message
+            except json.JSONDecodeError as e:
+                logger.error(f"Failed to decode JSON from server: {e}")
+                logger.debug(f"Raw body content: {body}")
+                return None
 
 def launch_mcp_server(server_path=None, timeout=1):
     """Launches MCP server and returns the process"""
@@ -484,7 +472,8 @@ def launch_mcp_server(server_path=None, timeout=1):
             stdout=subprocess.PIPE,
             stderr=stderr_file,
             env=env,
-            bufsize=0
+            bufsize=0,
+            universal_newlines=False  # Обязательно используем бинарный режим
         )
 
     # Wait some time for server to start
