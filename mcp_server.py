@@ -18,6 +18,8 @@ import glob
 import re
 import csv
 import pandas as pd
+import ast
+import keyword
 
 # Настройка логирования
 def setup_logging():
@@ -78,11 +80,17 @@ class MCPServer:
         self.available_timeframes = set()
         self.financial_data_summary = {}
 
+        # Инициализация системы индексации кода
+        self.code_indexer = CodeIndexer(logger)
+
         # Сканируем файлы проекта при инициализации
         self.scan_project_files()
 
         # Сканируем данные финансовых инструментов
         self.scan_mql5_feed_data()
+
+        # Индексируем код проекта
+        self.index_project_code()
 
         # Регистрация обработчиков разных типов запросов
         self.handlers = {
@@ -97,6 +105,9 @@ class MCPServer:
             "financialData/timeframes": self.handle_financial_timeframes,
             "financialData/info": self.handle_financial_data_info,
             "financialData/summary": self.handle_financial_data_summary,
+            "codeSearch/byName": self.handle_code_search_by_name,
+            "codeSearch/references": self.handle_code_search_references,
+            "codeSearch/definition": self.handle_code_search_definition,
             # Добавьте другие обработчики по мере необходимости
         }
 
@@ -206,6 +217,19 @@ class MCPServer:
 
         self.logger.info(f"Найдены символы: {', '.join(sorted(self.available_symbols))}")
         self.logger.info(f"Найдены таймфреймы: {', '.join(sorted(self.available_timeframes))}")
+
+    def index_project_code(self):
+        """Индексирует код проекта"""
+        self.logger.info("Индексирование кода проекта")
+        try:
+            for file_path, file_info in self.project_files.items():
+                if file_info['extension'] == '.py':
+                    content = self.file_content_cache.get(file_path)
+                    if content:
+                        self.code_indexer.index_python_file(file_path, content)
+        except Exception as e:
+            self.logger.error(f"Ошибка при индексировании кода проекта: {str(e)}")
+            self.logger.error(traceback.format_exc())
 
     def start(self):
         """Запуск сервера и обработка входящих сообщений"""
@@ -714,20 +738,141 @@ class MCPServer:
         result = self.financial_data_summary
         self.send_response(request_id, result)
 
-def main():
-    # Настройка логирования
-    logger = setup_logging()
+    def handle_code_search_by_name(self, request_id, params):
+        """Обработка запроса codeSearch/byName"""
+        self.logger.info("Обработка запроса codeSearch/byName")
+        try:
+            name = params.get("name")
+            if not name:
+                self.send_error_response(request_id, -32602, "Не указано имя для поиска")
+                return
 
-    try:
-        # Создание и запуск сервера
-        server = MCPServer(logger)
-        server.start()
-    except Exception as e:
-        logger.critical(f"Критическая ошибка: {str(e)}")
-        logger.critical(traceback.format_exc())
-        return 1
+            result = {
+                "functions": self.code_indexer.code_index['functions'].get(name, []),
+                "classes": self.code_indexer.code_index['classes'].get(name, []),
+                "variables": self.code_indexer.code_index['variables'].get(name, []),
+                "imports": self.code_indexer.code_index['imports'].get(name, [])
+            }
+            self.send_response(request_id, result)
+        except Exception as e:
+            self.logger.error(f"Ошибка при обработке codeSearch/byName: {str(e)}")
+            self.logger.error(traceback.format_exc())
+            self.send_error_response(request_id, -32603, "Внутренняя ошибка сервера")
 
-    return 0
+    def handle_code_search_references(self, request_id, params):
+        """Обработка запроса codeSearch/references"""
+        self.logger.info("Обработка запроса codeSearch/references")
+        try:
+            name = params.get("name")
+            if not name:
+                self.send_error_response(request_id, -32602, "Не указано имя для поиска ссылок")
+                return
 
-if __name__ == "__main__":
-    sys.exit(main())
+            result = {
+                "references": self.code_indexer.get_references(name)
+            }
+            self.send_response(request_id, result)
+        except Exception as e:
+            self.logger.error(f"Ошибка при обработке codeSearch/references: {str(e)}")
+            self.logger.error(traceback.format_exc())
+            self.send_error_response(request_id, -32603, "Внутренняя ошибка сервера")
+
+    def handle_code_search_definition(self, request_id, params):
+        """Обработка запроса codeSearch/definition"""
+        self.logger.info("Обработка запроса codeSearch/definition")
+        try:
+            name = params.get("name")
+            if not name:
+                self.send_error_response(request_id, -32602, "Не указано имя для поиска определения")
+                return
+
+            result = {
+                "definition": self.code_indexer.get_definitions(name)
+            }
+            self.send_response(request_id, result)
+        except Exception as e:
+            self.logger.error(f"Ошибка при обработке codeSearch/definition: {str(e)}")
+            self.logger.error(traceback.format_exc())
+            self.send_error_response(request_id, -32603, "Внутренняя ошибка сервера")
+
+class CodeIndexer:
+    """Класс для индексации и поиска элементов кода в проекте"""
+
+    def __init__(self, logger):
+        self.logger = logger
+
+        # Структура для хранения индексированного кода
+        self.code_index = {
+            'functions': {},  # имя_функции -> [файлы, где она определена]
+            'classes': {},    # имя_класса -> [файлы, где он определен]
+            'variables': {},  # имя_переменной -> [файлы, где она определена/используется]
+            'imports': {},    # имя_импорта -> [файлы, где он используется]
+            'docstrings': {}  # (имя, тип) -> docstring
+        }
+
+        self.logger.info("Инициализирован индексатор кода")
+
+    def index_python_file(self, file_path, content):
+        """Индексирует содержимое Python файла"""
+        try:
+            # Парсим содержимое файла в AST
+            tree = ast.parse(content)
+
+            # Извлекаем имена и типы элементов кода
+            for node in ast.walk(tree):
+                # Индексируем функции
+                if isinstance(node, ast.FunctionDef):
+                    self._index_function(node, file_path)
+
+                # Индексируем классы
+                elif isinstance(node, ast.ClassDef):
+                    self._index_class(node, file_path)
+
+                # Индексируем импорты
+                elif isinstance(node, ast.Import):
+                    self._index_import(node, file_path)
+
+                # Индексируем from-импорты
+                elif isinstance(node, ast.ImportFrom):
+                    self._index_import_from(node, file_path)
+
+                # Индексируем переменные
+                elif isinstance(node, ast.Assign):
+                    self._index_variable(node, file_path)
+
+            self.logger.debug(f"Успешно проиндексирован файл {file_path}")
+
+        except Exception as e:
+            self.logger.error(f"Ошибка при индексации файла {file_path}: {str(e)}")
+            self.logger.error(traceback.format_exc())
+
+    def _index_function(self, node, file_path):
+        """Индексирует функцию"""
+        func_name = node.name
+
+        # Пропускаем "приватные" функции (начинающиеся с _)
+        if func_name.startswith('_') and not func_name.startswith('__'):
+            return
+
+        # Добавляем информацию о функции в индекс
+        if func_name not in self.code_index['functions']:
+            self.code_index['functions'][func_name] = []
+
+        if file_path not in self.code_index['functions'][func_name]:
+            self.code_index['functions'][func_name].append(file_path)
+
+        # Извлекаем и сохраняем docstring
+        docstring = ast.get_docstring(node)
+        if docstring:
+            self.code_index['docstrings'][(func_name, 'function')] = docstring
+
+    def _index_class(self, node, file_path):
+        """Индексирует класс"""
+        class_name = node.name
+
+        # Пропускаем "приватные" классы (начинающиеся с _)
+        if class_name.startswith('_') and not class_name.startswith('__'):
+            return
+
+        # Добавляем информацию о классе в индекс
+        if class_name not in
