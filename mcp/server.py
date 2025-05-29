@@ -255,6 +255,12 @@ class SimpleMCPServer:
                     self.logger.debug(f"[BUFFER] content_length reset to None after processing message")
                 except json.JSONDecodeError as e:
                     self.logger.error(f"JSON parse error: {str(e)}, message: {message_data[:100]}...")
+                    # Попытка отправить error-ответ, если возможно
+                    try:
+                        msg_id = message.get("id", 0) if 'message' in locals() and isinstance(message, dict) else 0
+                        self._send_error(msg_id, -32700, f"Parse error: {str(e)}")
+                    except Exception:
+                        pass
                     self.content_length = None
                 except UnicodeError as e:
                     self.logger.error(f"Unicode decode error: {str(e)}")
@@ -262,6 +268,12 @@ class SimpleMCPServer:
                 except Exception as e:
                     self.logger.error(f"Error processing message: {str(e)}")
                     self.logger.error(traceback.format_exc())
+                    # Попытка отправить error-ответ, если возможно
+                    try:
+                        msg_id = message.get("id", 0) if 'message' in locals() and isinstance(message, dict) else 0
+                        self._send_error(msg_id, -32001, f"Internal server error: {str(e)}")
+                    except Exception:
+                        pass
                     self.content_length = None
             else:
                 # Not enough data for a complete message
