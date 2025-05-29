@@ -177,3 +177,15 @@ if __name__ == "__main__":
             log_message(f"Трассировка: {traceback.format_exc()}", "ERROR")
             sys.exit(1)
 
+    # Запускаем event loop и предотвращаем его завершение
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    try:
+        loop.run_until_complete(main())
+    except KeyboardInterrupt:
+        log_message("Сервер остановлен пользователем", "INFO")
+    except Exception as e:
+        log_message(f"Ошибка при запуске сервера: {e}", "ERROR")
+        log_message(f"Трассировка: {traceback.format_exc()}", "ERROR")
+        sys.exit(1)
