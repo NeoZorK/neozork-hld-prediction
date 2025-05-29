@@ -5,7 +5,7 @@
 try:
     from mcp.server import Server
 except ImportError:
-    print("ОШИБКА: Модуль mcp не найден. Установите его с помощью pip install mcp")
+    print("ОШИБКА: Модуль мcp не найден. Установите его с помощью pip install mcp")
     import sys
     sys.exit(1)
 
@@ -252,6 +252,14 @@ if __name__ == "__main__":
                                 # Подробное логирование для отладки проблемы с "file" аргументом
                                 log_message(f"Тип аргумента path: {type(path)}, значение: {path}", "DEBUG")
                                 log_message(f"Тип аргумента file: {type(file)}, значение: {file}", "DEBUG")
+
+                                # Специальная обработка для строкового значения "undefined"
+                                if isinstance(file, str) and file == "undefined":
+                                    log_message(f"Заменяем строковое значение 'undefined' на None", "DEBUG")
+                                    file = None
+                                if isinstance(path, str) and path == "undefined":
+                                    log_message(f"Заменяем строковое значение 'undefined' на None", "DEBUG")
+                                    path = None
 
                                 # Улучшенная обработка параметров
                                 if path is None and file is None:
