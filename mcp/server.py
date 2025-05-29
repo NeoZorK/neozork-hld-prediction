@@ -147,7 +147,7 @@ class SimpleMCPServer:
                 self.logger.debug(f"[BUFFER] Buffer empty. content_length={self.content_length}")
                 break
 
-            # Логируем состояние буфера и content_length
+            # Log buffer state before processing
             self.logger.debug(f"[BUFFER] Start loop: buffer size={len(self.buffer)}, content_length={self.content_length}")
             try:
                 buffer_text = self.buffer.decode('utf-8', errors='replace')
@@ -311,7 +311,7 @@ class SimpleMCPServer:
                     self.logger.debug(f"[BUFFER] Waiting for more data. Have {len(self.buffer)}, need {self.content_length}")
                 break
 
-        # После завершения обработки логируем итоговое состояние буфера
+        # After processing, reset content_length
         self.logger.debug(f"[BUFFER] End of _process_buffer: buffer size={len(self.buffer)}, content_length={self.content_length}")
 
     def _send_response(self, response: Dict[str, Any]) -> None:
