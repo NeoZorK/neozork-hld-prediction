@@ -158,7 +158,6 @@ class SimpleMCPServer:
             if len(self.buffer) == 135 and b"Content-Length: " in self.buffer:
                 self.logger.info(f"Detected GitHub Copilot special message (135 bytes)")
                 try:
-                    # Try to extract Content-Length from the buffer
                     cl_start = self.buffer.find(b"Content-Length: ") + len(b"Content-Length: ")
                     cl_end = self.buffer.find(b"\r\n", cl_start)
                     if cl_end > cl_start:
@@ -178,8 +177,20 @@ class SimpleMCPServer:
                                 response = self.handler.handle_request(message)
                                 if response:
                                     self._send_response(response)
+                                else:
+                                    # Always send a minimal valid response if handler returns None
+                                    self._send_response({
+                                        "jsonrpc": "2.0",
+                                        "id": message.get("id", 0),
+                                        "result": None
+                                    })
                             except Exception as e:
                                 self.logger.error(f"Error parsing Copilot message: {str(e)}")
+                                # Try to send error response to client
+                                try:
+                                    self._send_error(message.get("id", 0) if 'message' in locals() else 0, -32001, f"Parse error: {str(e)}")
+                                except Exception:
+                                    pass
                     # Clear the buffer after processing
                     self.buffer = b""
                     continue
