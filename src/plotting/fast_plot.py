@@ -20,7 +20,7 @@ def plot_indicator_results_fast(
     df,
     rule,
     title='',
-    output_path="results/plots/fast_plot.html",
+    output_path=None,
     width=1800,
     height=1100,
     mode="fast",
@@ -36,6 +36,91 @@ def plot_indicator_results_fast(
     - Tooltip in 'csv' (parquet) mode is concise and not duplicated.
     - Opens plot in default browser after saving.
     """
+    # Create output filename based on input data and parameters
+    if output_path is None:
+        # Extract source file name from the original filename
+        source_name = None
+        if 'filename' in kwargs and kwargs['filename']:
+            # Use the actual filename from the source file
+            source_name = kwargs['filename']
+            # Remove file extension if present
+            if '.' in source_name:
+                source_name = source_name.rsplit('.', 1)[0]
+        elif hasattr(df, 'name') and df.name:
+            source_name = df.name
+
+        # Use data_source as fallback if source_name is still None
+        if not source_name:
+            # If we're using CSV data, try to extract the ticker from data_source
+            if data_source.startswith('csv_'):
+                source_name = data_source.replace('csv_', '')
+            elif data_source == "demo":
+                # Try to find file name in kwargs or from other sources
+                if 'show_args' in kwargs and kwargs['show_args']:
+                    # Get full file name from show_args
+                    arg = kwargs['show_args'][0] if isinstance(kwargs['show_args'], list) and kwargs['show_args'] else "GBPUSD"
+                    # Check if we need to add the CSVExport_ prefix
+                    if not arg.startswith("CSVExport_") and not "_PERIOD_" in arg:
+                        source_name = f"CSVExport_{arg}_PERIOD_MN1"
+                    else:
+                        source_name = arg
+                elif 'source' in kwargs and kwargs['source']:
+                    # Get full file name from source
+                    source = kwargs['source']
+                    if not source.startswith("CSVExport_") and not "_PERIOD_" in source:
+                        source_name = f"CSVExport_{source}_PERIOD_MN1"
+                    else:
+                        source_name = source
+                else:
+                    # Default to full GBPUSD file name if no other source is found
+                    source_name = "CSVExport_GBPUSD_PERIOD_MN1"
+            else:
+                source_name = data_source
+
+        # Extract timeframe from original filename
+        timeframe = "MN1"  # default to MN1 as requested
+        if 'filename' in kwargs and 'PERIOD_' in kwargs['filename']:
+            # Extract timeframe from filename like CSVExport_GBPUSD_PERIOD_MN1
+            parts = kwargs['filename'].split('PERIOD_')
+            if len(parts) > 1 and parts[1]:
+                # Get timeframe part before next underscore or dot
+                timeframe_part = parts[1].split('_')[0].split('.')[0]
+                if timeframe_part:
+                    timeframe = timeframe_part
+
+        # Format rule name
+        rule_name = rule
+        if hasattr(rule, 'name'):
+            rule_name = rule.name
+
+        # Create filename following the pattern: source_timeframe_rule_mode.html
+        output_path = f"results/plots/{source_name}_{timeframe}_{rule_name}_fast.html"
+
+    # Check if we're in OHLCV mode (when rule is 'OHLCV' or 'Raw_OHLCV_Data')
+    is_ohlcv_mode = (hasattr(rule, 'name') and rule.name == 'OHLCV') or \
+                   (isinstance(rule, str) and rule in ['Raw_OHLCV_Data', 'OHLCV'])
+
+    # Check if we're in AUTO mode (for displaying all columns automatically)
+    is_auto_mode = (hasattr(rule, 'name') and rule.name == 'Auto_Display_All') or \
+                  (isinstance(rule, str) and rule in ['AUTO', 'Auto_Display_All'])
+
+    # Get all non-standard columns for AUTO mode
+    auto_display_columns = []
+    if is_auto_mode:
+        # Standard columns that we don't need to add extra plots for
+        standard_columns = ['Open', 'High', 'Low', 'Close', 'Volume',
+                           'index', 'datetime', 'DateTime', 'Timestamp', 'Date', 'Time',
+                           'direction', 'open_tick_color', 'close_tick_color',
+                           'open_tick_x0', 'open_tick_x1', 'open_tick_y0', 'open_tick_y1',
+                           'close_tick_x0', 'close_tick_x1', 'close_tick_y0', 'close_tick_y1']
+
+        # Find all numeric columns that aren't standard columns
+        for col in df.columns:
+            # Check if column is not in standard columns and is numeric
+            if not any(std_col.lower() == col.lower() for std_col in standard_columns) and pd.api.types.is_numeric_dtype(df[col]):
+                auto_display_columns.append(col)
+
+        print(f"AUTO mode: Found {len(auto_display_columns)} columns to display: {auto_display_columns}")
 
     # Ensure the index column exists and is datetime type
     if 'index' not in df.columns:
@@ -50,8 +135,8 @@ def plot_indicator_results_fast(
     df['direction'] = (df['Close'] >= df['Open'])
 
     # Prepare color columns for open/close ticks
-    df['open_tick_color'] = df['direction'].apply(lambda x: "green" if x else "red")
-    df['close_tick_color'] = df['direction'].apply(lambda x: "green" if x else "red")
+    df['open_tick_color'] = "green"
+    df['close_tick_color'] = "red"
 
     # Calculate tick offsets for open/close ticks
     if len(df) > 1:
@@ -129,8 +214,7 @@ def plot_indicator_results_fast(
         size=7,
         color="green",
         source=source,
-        alpha=0.7,
-        legend_label="Open Point"
+        alpha=0.7
     )
     p_main.scatter(
         x='index',
@@ -139,32 +223,55 @@ def plot_indicator_results_fast(
         size=7,
         color="red",
         source=source,
-        alpha=0.7,
-        legend_label="Close Point"
+        alpha=0.7
     )
 
-    # Draw predicted high/low lines
-    if 'PPrice1' in df.columns:
-        p_main.line('index', 'PPrice1', line_color='green', line_dash='dotted', line_width=2, legend_label="Predicted Low (PPrice1)", source=source)
-    if 'PPrice2' in df.columns:
-        p_main.line('index', 'PPrice2', line_color='red', line_dash='dotted', line_width=2, legend_label="Predicted High (PPrice2)", source=source)
+    # Draw predicted high/low lines and direction arrows only if not in OHLCV mode
+    if not is_ohlcv_mode:
+        # Draw predicted high/low lines
+        if 'PPrice1' in df.columns:
+            p_main.line('index', 'PPrice1', line_color='green', line_dash='dotted', line_width=2, legend_label="Predicted Low (PPrice1)", source=source)
+        if 'PPrice2' in df.columns:
+            p_main.line('index', 'PPrice2', line_color='red', line_dash='dotted', line_width=2, legend_label="Predicted High (PPrice2)", source=source)
 
-    # Draw predicted direction arrows
-    if 'Direction' in df.columns:
-        buy_idx = df['Direction'] == 1
-        sell_idx = df['Direction'] == 2
-        # Up arrows for predicted up
-        p_main.scatter(
-            x=df.loc[buy_idx, 'index'],
-            y=df.loc[buy_idx, 'Low'] - (df['High'] - df['Low']).mean() * 0.08,
-            size=16, color="lime", marker="triangle", legend_label="Predicted UP", alpha=0.9
-        )
-        # Down arrows for predicted down
-        p_main.scatter(
-            x=df.loc[sell_idx, 'index'],
-            y=df.loc[sell_idx, 'High'] + (df['High'] - df['Low']).mean() * 0.08,
-            size=16, color="red", marker="inverted_triangle", legend_label="Predicted DOWN", alpha=0.9
-        )
+        # In AUTO mode, add prediction-related columns to main chart
+        if is_auto_mode:
+            # Определяем приоритетные колонки для основного графика
+            prediction_columns = ['predicted_low', 'predicted_high', 'pressure_vector', 'pressure']
+
+            # Добавляем все auto_display_columns для полного покрытия
+            all_pred_columns = prediction_columns.copy()
+            all_pred_columns.extend([col for col in auto_display_columns
+                                 if col.lower() not in [p.lower() for p in prediction_columns]])
+
+            colors = ['darkgreen', 'darkred', 'purple', 'blue', 'orange', 'teal', 'brown', 'magenta']
+            dash_styles = ['dashed', 'dashed', 'dotted', 'solid', 'solid']
+
+            # Выводим информацию для отладки
+            print(f"Adding columns to main chart: {[c for c in all_pred_columns if c in df.columns]}")
+
+            for i, col in enumerate([c for c in all_pred_columns if c in df.columns]):
+                p_main.line('index', col, line_color=colors[i % len(colors)],
+                          line_dash=dash_styles[i % len(dash_styles)], line_width=2,
+                          legend_label=f"{col.replace('_', ' ').title()}",
+                          source=source)
+
+        # Draw predicted direction arrows
+        if 'Direction' in df.columns:
+            buy_idx = df['Direction'] == 1
+            sell_idx = df['Direction'] == 2
+            # Up arrows for predicted up
+            p_main.scatter(
+                x=df.loc[buy_idx, 'index'],
+                y=df.loc[buy_idx, 'Low'] - (df['High'] - df['Low']).mean() * 0.08,
+                size=16, color="lime", marker="triangle", legend_label="Predicted UP", alpha=0.9
+            )
+            # Down arrows for predicted down
+            p_main.scatter(
+                x=df.loc[sell_idx, 'index'],
+                y=df.loc[sell_idx, 'High'] + (df['High'] - df['Low']).mean() * 0.08,
+                size=16, color="red", marker="inverted_triangle", legend_label="Predicted DOWN", alpha=0.9
+            )
 
     # Overlay legend
     p_main.legend.location = "top_left"
@@ -241,95 +348,205 @@ def plot_indicator_results_fast(
         )
         p_vol.add_tools(hover_vol)
 
-    # === PV PANEL ===
-    p_pv = figure(
-        width=width, height=int(height*0.13), x_axis_type="datetime",
-        x_range=p_main.x_range, background_fill_color="#f5f7fa",
-        sizing_mode="stretch_width", margin=(5, 80, 5, 60)
-    )
-    p_pv.yaxis.axis_label = "PV"
-    p_pv.yaxis.formatter = NumeralTickFormatter(format="0.00000")
-    line_pv = None
-    if 'PV' in df.columns:
-        line_pv = p_pv.line('index', 'PV', color="orange", line_width=2, legend_label="PV", source=source)
-        zero = Span(location=0, dimension='width', line_color='gray', line_dash='dashed', line_width=1)
-        p_pv.add_layout(zero)
-        p_pv.legend.location = "top_left"
-        p_pv.legend.label_text_font_size = "10pt"
-    if line_pv:
-        hover_pv = HoverTool(
-            renderers=[line_pv],
-            tooltips=[
-                ("Date", "@index{%F}"),
-                ("PV", "@PV{0.5f}")
-            ],
-            formatters={"@index": "datetime"},
-            mode='vline'
-        )
-        p_pv.add_tools(hover_pv)
+    # Create indicator panels only if not in OHLCV mode
+    p_pv = None
+    p_hl = None
+    p_pressure = None
 
-    # === HL PANEL ===
-    p_hl = figure(
-        width=width, height=int(height*0.13), x_axis_type="datetime",
-        x_range=p_main.x_range, background_fill_color="#f5f7fa",
-        sizing_mode="stretch_width", margin=(5, 80, 5, 60)
-    )
-    p_hl.yaxis.axis_label = "HL (Points)"
-    p_hl.yaxis.formatter = NumeralTickFormatter(format="0.00000")
-    line_hl = None
-    if 'HL' in df.columns:
-        line_hl = p_hl.line('index', 'HL', color="brown", line_width=2, legend_label="HL (Points)", source=source)
-        p_hl.legend.location = "top_left"
-        p_hl.legend.label_text_font_size = "10pt"
-    if line_hl:
-        hover_hl = HoverTool(
-            renderers=[line_hl],
-            tooltips=[
-                ("Date", "@index{%F}"),
-                ("HL", "@HL{0.5f}")
-            ],
-            formatters={"@index": "datetime"},
-            mode='vline'
+    if not is_ohlcv_mode:
+        # === PV PANEL ===
+        p_pv = figure(
+            width=width, height=int(height*0.13), x_axis_type="datetime",
+            x_range=p_main.x_range, background_fill_color="#f5f7fa",
+            sizing_mode="stretch_width", margin=(5, 80, 5, 60)
         )
-        p_hl.add_tools(hover_hl)
+        p_pv.yaxis.axis_label = "PV"
+        p_pv.yaxis.formatter = NumeralTickFormatter(format="0.00000")
+        line_pv = None
+        if 'PV' in df.columns:
+            line_pv = p_pv.line('index', 'PV', color="orange", line_width=2, legend_label="PV", source=source)
+            zero = Span(location=0, dimension='width', line_color='gray', line_dash='dashed', line_width=1)
+            p_pv.add_layout(zero)
+            p_pv.legend.location = "top_left"
+            p_pv.legend.label_text_font_size = "10pt"
+        if line_pv:
+            hover_pv = HoverTool(
+                renderers=[line_pv],
+                tooltips=[
+                    ("Date", "@index{%F}"),
+                    ("PV", "@PV{0.5f}")
+                ],
+                formatters={"@index": "datetime"},
+                mode='vline'
+            )
+            p_pv.add_tools(hover_pv)
 
-    # === PRESSURE PANEL ===
-    p_pressure = figure(
-        width=width, height=int(height*0.13), x_axis_type="datetime",
-        x_range=p_main.x_range, background_fill_color="#f5f7fa",
-        sizing_mode="stretch_width", margin=(5, 80, 10, 60)
-    )
-    p_pressure.yaxis.axis_label = "Pressure"
-    p_pressure.yaxis.formatter = NumeralTickFormatter(format="0.00000")
-    line_pressure = None
-    if 'Pressure' in df.columns:
-        line_pressure = p_pressure.line('index', 'Pressure', color="blue", line_width=2, legend_label="Pressure", source=source)
-        zero2 = Span(location=0, dimension='width', line_color='gray', line_dash='dashed', line_width=1)
-        p_pressure.add_layout(zero2)
-        p_pressure.legend.location = "top_left"
-        p_pressure.legend.label_text_font_size = "10pt"
-    if line_pressure:
-        hover_pressure = HoverTool(
-            renderers=[line_pressure],
-            tooltips=[
-                ("Date", "@index{%F}"),
-                ("Pressure", "@Pressure{0.5f}")
-            ],
-            formatters={"@index": "datetime"},
-            mode='vline'
+        # === HL PANEL ===
+        p_hl = figure(
+            width=width, height=int(height*0.13), x_axis_type="datetime",
+            x_range=p_main.x_range, background_fill_color="#f5f7fa",
+            sizing_mode="stretch_width", margin=(5, 80, 5, 60)
         )
-        p_pressure.add_tools(hover_pressure)
+        p_hl.yaxis.axis_label = "HL (Points)"
+        p_hl.yaxis.formatter = NumeralTickFormatter(format="0.00000")
+        line_hl = None
+        if 'HL' in df.columns:
+            line_hl = p_hl.line('index', 'HL', color="brown", line_width=2, legend_label="HL (Points)", source=source)
+            p_hl.legend.location = "top_left"
+            p_hl.legend.label_text_font_size = "10pt"
+        if line_hl:
+            hover_hl = HoverTool(
+                renderers=[line_hl],
+                tooltips=[
+                    ("Date", "@index{%F}"),
+                    ("HL", "@HL{0.5f}")
+                ],
+                formatters={"@index": "datetime"},
+                mode='vline'
+            )
+            p_hl.add_tools(hover_hl)
+
+        # === PRESSURE PANEL ===
+        p_pressure = figure(
+            width=width, height=int(height*0.13), x_axis_type="datetime",
+            x_range=p_main.x_range, background_fill_color="#f5f7fa",
+            sizing_mode="stretch_width", margin=(5, 80, 10, 60)
+        )
+        p_pressure.yaxis.axis_label = "Pressure"
+        p_pressure.yaxis.formatter = NumeralTickFormatter(format="0.00000")
+        line_pressure = None
+        if 'Pressure' in df.columns:
+            line_pressure = p_pressure.line('index', 'Pressure', color="blue", line_width=2, legend_label="Pressure", source=source)
+            zero2 = Span(location=0, dimension='width', line_color='gray', line_dash='dashed', line_width=1)
+            p_pressure.add_layout(zero2)
+            p_pressure.legend.location = "top_left"
+            p_pressure.legend.label_text_font_size = "10pt"
+        if line_pressure:
+            hover_pressure = HoverTool(
+                renderers=[line_pressure],
+                tooltips=[
+                    ("Date", "@index{%F}"),
+                    ("Pressure", "@Pressure{0.5f}")
+                ],
+                formatters={"@index": "datetime"},
+                mode='vline'
+            )
+            p_pressure.add_tools(hover_pressure)
 
     # === COMBINE AND SAVE ===
-    layout = column(
-        trading_rule_div,
-        p_main,
-        p_vol,
-        p_pv,
-        p_hl,
-        p_pressure,
-        sizing_mode="stretch_width"
-    )
+    # Initialize panels dictionary for AUTO mode
+    auto_panels = {}
+
+    # In AUTO mode, create additional panels for non-standard columns
+    if is_auto_mode and auto_display_columns:
+        # Colors for different indicators
+        colors = ['purple', 'orange', 'teal', 'brown', 'magenta', 'lime', 'darkblue', 'crimson', 'gold']
+        color_index = 0
+
+        # Create individual panels for each auto-detected column
+        for col_name in auto_display_columns:
+            if col_name in df.columns:
+                # Create panel for this column
+                panel = figure(
+                    width=width, height=int(height*0.13), x_axis_type="datetime",
+                    x_range=p_main.x_range, background_fill_color="#f5f7fa",
+                    sizing_mode="stretch_width", margin=(5, 80, 5, 60)
+                )
+                panel.yaxis.axis_label = col_name
+                panel.yaxis.formatter = NumeralTickFormatter(format="0.00000")
+
+                # Get color for this column
+                color = colors[color_index % len(colors)]
+                color_index += 1
+
+                # Add line plot for this column
+                line = panel.line('index', col_name, color=color, line_width=2, legend_label=col_name, source=source)
+
+                # Add zero line if the column values span positive and negative
+                if df[col_name].min() < 0 and df[col_name].max() > 0:
+                    zero = Span(location=0, dimension='width', line_color='gray', line_dash='dashed', line_width=1)
+                    panel.add_layout(zero)
+
+                # Add legend
+                panel.legend.location = "top_left"
+                panel.legend.label_text_font_size = "10pt"
+
+                # Add tooltips
+                hover = HoverTool(
+                    renderers=[line],
+                    tooltips=[
+                        ("Date", "@index{%F}"),
+                        (col_name, f"@{col_name}{{0.5f}}")
+                    ],
+                    formatters={"@index": "datetime"},
+                    mode='vline'
+                )
+                panel.add_tools(hover)
+
+                # Add to auto panels dictionary
+                auto_panels[col_name] = panel
+
+        # Update subtitle text for AUTO mode
+        subtitle.text = f"AUTO Mode: Displaying all {len(auto_display_columns)} additional columns from file"
+
+        # Update tooltip for AUTO mode to include all columns
+        auto_tooltip_fields = [("Date", "@index{%F}")]
+        auto_tooltip_fields.extend([("Open", "@Open{0.5f}"), ("High", "@High{0.5f}"),
+                                  ("Low", "@Low{0.5f}"), ("Close", "@Close{0.5f}")])
+
+        # Add all auto columns to tooltip
+        for col_name in auto_display_columns:
+            auto_tooltip_fields.append((col_name, f"@{col_name}{{0.5f}}"))
+
+        hover_main.tooltips = auto_tooltip_fields
+
+    # Construct layout based on mode (OHLCV, indicator, or AUTO)
+    if is_ohlcv_mode:
+        # In OHLCV mode, only include main panel and volume
+        layout = column(
+            trading_rule_div,
+            p_main,
+            p_vol if 'Volume' in df.columns else None,
+            sizing_mode="stretch_width"
+        )
+    elif is_auto_mode:
+        # In AUTO mode, include main panel, volume, and all auto panels
+        auto_panel_list = list(auto_panels.values())
+        layout_components = [trading_rule_div, p_main, p_vol if 'Volume' in df.columns else None]
+        if auto_panel_list:
+            layout_components.extend(auto_panel_list)
+        layout = column(*[comp for comp in layout_components if comp is not None], sizing_mode="stretch_width")
+    else:
+        # In indicator mode, include all panels
+        layout = column(
+            trading_rule_div,
+            p_main,
+            p_vol,
+            p_pv,
+            p_hl,
+            p_pressure,
+            sizing_mode="stretch_width"
+        )
+
+    # Update subtitle text based on mode
+    if is_ohlcv_mode:
+        subtitle.text = "Fast Mode: OHLCV bars, open/close points"
+    elif is_auto_mode:
+        subtitle.text = f"AUTO Mode: Displaying all {len(auto_display_columns)} additional columns from file"
+    else:
+        subtitle.text = "Fast Mode: OHLC bars, open/close points, predicted lines/arrows, indicators"
+
+    # Update tooltip for OHLCV mode - show only OHLCV data
+    if is_ohlcv_mode:
+        tooltip_fields = [
+            ("Date", "@index{%F}"),
+            ("Open", "@Open{0.5f}"),
+            ("High", "@High{0.5f}"),
+            ("Low", "@Low{0.5f}"),
+            ("Close", "@Close{0.5f}"),
+            ("Volume", "@Volume{0}")
+        ]
+        hover_main.tooltips = tooltip_fields
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     output_file(output_path, title=title)

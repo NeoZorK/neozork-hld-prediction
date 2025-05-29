@@ -11,8 +11,15 @@ import traceback
 # Import for indicator calculation; fallback for different relative import
 try:
     from src.calculation.indicator_calculation import calculate_indicator
+    from src.export.parquet_export import export_indicator_to_parquet
 except ImportError:
-    from src.calculation.indicator_calculation import calculate_indicator
+    try:
+        from ..calculation.indicator_calculation import calculate_indicator
+        from ..export.parquet_export import export_indicator_to_parquet
+    except ImportError:
+        # Last resort: assume running from src directory
+        calculate_indicator = None
+        export_indicator_to_parquet = None
 
 def show_help():
     """
@@ -34,6 +41,10 @@ def show_help():
     print("  python run_analysis.py show polygon          # List all Polygon.io files")
     print("  python run_analysis.py show yf aapl          # List YF files containing 'aapl'")
     print("  python run_analysis.py show binance btc MN1  # List Binance files with 'btc' and timeframe 'MN1'")
+    print("\nTrading Rules:")
+    print("  --rule OHLCV   # Display basic OHLCV candlestick chart")
+    print("  --rule PHLD    # Calculate Predict High Low Direction indicator")
+    print("  --rule AUTO    # Automatically display all columns in the file")
     print("\nDate filtering:")
     print("  --start, --end or --show-start, --show-end for date range filtering.")
 
@@ -119,7 +130,7 @@ def get_parquet_metadata(file_path: Path) -> dict:
         print(f"Warning: Could not read metadata for {file_path.name}. Error: {e}", file=sys.stderr)
     return metadata
 
-def _get_relevant_columns_for_rule(rule_name: str) -> list:
+def _get_relevant_columns_for_rule(rule_name: str, all_columns=None) -> list:
     """
     Returns the relevant columns to output for the given rule,
     according to clarified user logic.
@@ -128,11 +139,29 @@ def _get_relevant_columns_for_rule(rule_name: str) -> list:
     rule_aliases_map = {
         'PHLD': 'Predict_High_Low_Direction',
         'PV': 'Pressure_Vector',
-        'SR': 'Support_Resistants'
+        'SR': 'Support_Resistants',
+        'AUTO': 'Auto_Display_All'
     }
-    rule_name_upper = rule_name.upper()
+    rule_name_upper = rule_name.upper() if rule_name else ''
     canonical_rule = rule_aliases_map.get(rule_name_upper, rule_name)
-    if canonical_rule in ['Predict_High_Low_Direction']:
+
+    if canonical_rule in ['Auto_Display_All']:
+        # For AUTO rule, return all columns available
+        if all_columns:
+            # Ensure datetime column is first, if present
+            datetime_cols = [col for col in all_columns if col.lower() in ['datetime', 'date', 'time', 'timestamp']]
+            # Include all schema columns from parquet file, especially looking for prediction columns
+            prediction_cols = [col for col in all_columns if any(pred.lower() in col.lower()
+                              for pred in ['predicted', 'pressure', 'vector', 'signal', 'direction'])]
+            # Other numeric columns
+            other_cols = [col for col in all_columns if col not in datetime_cols and col not in prediction_cols]
+
+            print(f"AUTO mode columns detection: datetime={datetime_cols}, predictions={prediction_cols}, other={len(other_cols)}")
+
+            # Return all columns in the right order
+            return datetime_cols + prediction_cols + other_cols
+        return base_cols
+    elif canonical_rule in ['Predict_High_Low_Direction']:
         return base_cols + ['PPrice1', 'PPrice2', 'Direction']
     elif canonical_rule in ['Pressure_Vector']:
         return base_cols + ['PPrice1', 'Direction']
@@ -162,10 +191,20 @@ def _print_indicator_result(df, rule_name, datetime_column=None):
     else:
         df_to_show['DateTime'] = df_to_show.index
         datetime_column = 'DateTime'
-    columns_to_show = _get_relevant_columns_for_rule(rule_name)
+
+    # Handle AUTO rule separately - show all columns
+    if rule_name and rule_name.upper() == 'AUTO':
+        # Get all columns to show
+        columns_to_show = list(df_to_show.columns)
+        print(f"\n=== AUTO DISPLAY MODE: ALL COLUMNS === ({df_to_show.shape[0]} rows in selected range)")
+        print(f"Displaying all {len(columns_to_show)} columns from the file.")
+    else:
+        # For other rules, get specific columns based on the rule
+        columns_to_show = _get_relevant_columns_for_rule(rule_name, all_columns=df_to_show.columns)
+        print(f"\n=== CALCULATED INDICATOR DATA === ({df_to_show.shape[0]} rows in selected range)")
+
     columns_to_show_existing = [col for col in columns_to_show if col in df_to_show.columns]
     row_count = df_to_show.shape[0]
-    print(f"\n=== CALCULATED INDICATOR DATA === ({row_count} rows in selected range)")
 
     # Limit to first 100 rows
     if row_count > 100:
@@ -210,9 +249,16 @@ def _filter_dataframe_by_date(df, start, end):
 
 def _should_draw_plot(args):
     """
-    Returns True if the draw flag is set and is one of supported modes.
+    Returns True if the draw flag is set and is one of supported modes or should use default.
+    Always returns True for 'show' mode to enable automatic plotting.
     """
     plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly", "seaborn", "sb"}
+
+    # If it's show mode, always allow plotting (will use default 'fastest' if not specified)
+    if hasattr(args, 'mode') and args.mode == 'show':
+        return True
+
+    # Otherwise check for valid draw parameter
     return hasattr(args, "draw") and args.draw is not None and args.draw in plot_modes
 
 def handle_show_mode(args):
@@ -221,6 +267,12 @@ def handle_show_mode(args):
     """
     # Always use raw data directories
     search_dirs = get_search_dirs(args)
+
+    # Handle special case when rule is explicitly set to OHLCV - this means display raw candlestick chart only
+    if hasattr(args, 'rule') and args.rule and args.rule.upper() == 'OHLCV':
+        args.raw_plot_only = True
+        args.display_candlestick_only = True  # New flag to indicate candlestick only mode
+        args.rule = None  # Clear the rule to use the raw data plot path
 
     if not args.source or args.source == 'help':
         show_help()
@@ -282,6 +334,15 @@ def handle_show_mode(args):
         return
     elif len(found_files) == 1:
         print("Single CSV file found. Will automatically open chart in browser.")
+        # Flag this as a single file processing for export
+        args.single_file_mode = True
+        # Set default rule to OHLCV when only one file is found
+        if not hasattr(args, 'rule') or not args.rule:
+            args.rule = 'OHLCV'
+            # Apply the same logic as explicit --rule OHLCV
+            args.raw_plot_only = True
+            args.display_candlestick_only = True
+            args.rule = None
 
     found_files.sort(key=lambda x: x['name'])
     print("-" * 40)
@@ -339,6 +400,71 @@ def handle_show_mode(args):
     # Date filtering and indicator calculation
     if len(found_files) == 1 and hasattr(args, 'rule') and args.rule:
         try:
+            # Special handling for AUTO rule
+            if args.rule.upper() == 'AUTO':
+                print(f"\n=== AUTO DISPLAY MODE ===")
+                print(f"Loading file data and preparing to display all columns...")
+                df = pd.read_parquet(found_files[0]['path'])
+                start, end = _extract_datetime_filter_args(args)
+                if start or end:
+                    df = _filter_dataframe_by_date(df, start, end)
+
+                point_size = None
+                if 'point' in found_files[0]['name'].lower():
+                    try:
+                        name_parts = found_files[0]['name'].lower().split('point_')
+                        if len(name_parts) > 1:
+                            possible_point = name_parts[1].split('_')[0]
+                            point_size = float(possible_point)
+                    except (ValueError, IndexError):
+                        pass
+                if point_size is None:
+                    if 'forex' in found_files[0]['name'].lower() or 'fx' in found_files[0]['name'].lower():
+                        point_size = 0.00001
+                    elif 'btc' in found_files[0]['name'].lower() or 'crypto' in found_files[0]['name'].lower():
+                        point_size = 0.01
+                    else:
+                        point_size = 0.01
+                    print(f"Point size not found in filename, using default: {point_size}")
+
+                # Set a special flag for AUTO mode to be used by plotting functions
+                args.auto_display_mode = True
+                # Set column detection flag
+                args.auto_detect_columns = True
+
+                # Print all columns in the data
+                datetime_column = None
+                if isinstance(df.index, pd.DatetimeIndex):
+                    datetime_column = df.index.name or 'datetime'
+                _print_indicator_result(df, 'AUTO', datetime_column=datetime_column)
+
+                # Plot with all columns
+                if _should_draw_plot(args):
+                    print(f"\nDrawing AUTO display plot with method: '{getattr(args, 'draw', 'fastest')}'...")
+                    try:
+                        generate_plot = import_generate_plot()
+                        data_info = {
+                            "ohlcv_df": df,
+                            "data_source_label": f"{found_files[0]['name']}",
+                            "rows_count": len(df),
+                            "columns_count": len(df.columns),
+                            "data_size_mb": found_files[0]['size_mb'],
+                            "first_date": found_files[0]['first_date'],
+                            "last_date": found_files[0]['last_date'],
+                            "parquet_cache_used": True,
+                            "parquet_cache_file": str(found_files[0]['path']),
+                            "all_columns": list(df.columns)  # Pass all columns to plotting function
+                        }
+                        selected_rule = "Auto_Display_All"  # Special rule name for plotting
+                        estimated_point = True
+                        generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+                        print(f"Successfully plotted all columns from '{found_files[0]['name']}' using '{getattr(args, 'draw', 'fastest')}' mode.")
+                    except Exception as e:
+                        print(f"Error plotting in AUTO mode: {e}")
+                        traceback.print_exc()
+                return
+
+            # Normal indicator calculation for other rules
             print(f"\n=== INDICATOR CALCULATION MODE ===")
             print(f"Loading file data and calculating indicator '{args.rule}' ...")
             df = pd.read_parquet(found_files[0]['path'])
@@ -370,6 +496,27 @@ def handle_show_mode(args):
                 datetime_column = result_df.index.name or 'datetime'
             _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
             print(f"\nIndicator '{selected_rule.name}' calculated and shown above.")
+
+            # Export indicator data to parquet if requested
+            if hasattr(args, 'export_parquet') and args.export_parquet:
+                print(f"Exporting indicator data to parquet file...")
+                data_info = {
+                    "ohlcv_df": df,
+                    "data_source_label": f"{found_files[0]['name']}",
+                    "rows_count": len(df),
+                    "columns_count": len(df.columns),
+                    "data_size_mb": found_files[0]['size_mb'],
+                    "first_date": found_files[0]['first_date'],
+                    "last_date": found_files[0]['last_date'],
+                    "parquet_cache_used": True,
+                    "parquet_cache_file": str(found_files[0]['path'])
+                }
+                export_info = export_indicator_to_parquet(result_df, data_info, selected_rule, args)
+                if export_info["success"]:
+                    print(f"Indicator data exported to: {export_info['output_file']}")
+                else:
+                    print(f"Failed to export indicator data: {export_info['error_message']}")
+
             # Draw plot after indicator calculation only if draw flag is set to supported mode
             if _should_draw_plot(args):
                 print(f"\nDrawing plot after indicator calculation with method: '{args.draw}'...")
@@ -377,7 +524,7 @@ def handle_show_mode(args):
                     generate_plot = import_generate_plot()
                     data_info = {
                         "ohlcv_df": df,
-                        "data_source_label": f"Parquet file: {found_files[0]['name']}",
+                        "data_source_label": f"{found_files[0]['name']}",
                         "rows_count": len(df),
                         "columns_count": len(df.columns),
                         "data_size_mb": found_files[0]['size_mb'],
@@ -403,16 +550,12 @@ def handle_show_mode(args):
         print("To display a chart, re-run the command with more specific keywords:")
         print(f"Example: python run_analysis.py show {args.source} <additional_keywords>")
     elif len(found_files) == 1:
-        # Only plot if draw flag is specified and is supported
-        if not _should_draw_plot(args):
-            return
-        print(f"Found one file. Triggering plot with method: '{args.draw}'...")
-        print(f"Loading file data and triggering plot with method: '{args.draw}'...")
+        print(f"Found one file. Loading data and preparing to display...")
         try:
             df = pd.read_parquet(found_files[0]['path'])
             data_info = {
                 "ohlcv_df": df,
-                "data_source_label": f"Parquet file: {found_files[0]['name']}",
+                "data_source_label": f"{found_files[0]['name']}",
                 "rows_count": len(df),
                 "columns_count": len(df.columns),
                 "data_size_mb": found_files[0]['size_mb'],
@@ -438,13 +581,43 @@ def handle_show_mode(args):
                 else:
                     point_size = 0.01
                 print(f"Point size not found in filename, using default: {point_size}")
-            generate_plot = import_generate_plot()
-            result_df = None
-            selected_rule = args.rule if hasattr(args, 'rule') else 'Predict_High_Low_Direction'
-            estimated_point = True
-            generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
-            print(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode")
+
+            # Add flag for single file mode
+            args.single_file_mode = True
+
+            # Just plot raw OHLCV data without indicator calculation
+            if not hasattr(args, 'rule') or not args.rule:
+                # Just plot raw OHLCV data without indicator calculation
+                selected_rule = 'Raw_OHLCV_Data'  # Default name for raw data display
+                estimated_point = True
+                generate_plot = import_generate_plot()
+                draw_method = getattr(args, 'draw', 'fastest')
+                print(f"Drawing raw OHLCV data chart using method: '{draw_method}'...")
+                generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+                print(f"Successfully plotted raw OHLCV data from '{found_files[0]['name']}'")
+            else:
+                # Calculate indicator if rule is specified
+                print(f"Calculating indicator '{args.rule}' for the file...")
+                if not hasattr(args, 'mode'):
+                    args.mode = 'parquet'
+                result_df, selected_rule = calculate_indicator(args, df, point_size)
+
+                # Export indicator data to parquet if requested
+                if hasattr(args, 'export_parquet') and args.export_parquet:
+                    print(f"Exporting indicator data to parquet file...")
+                    export_info = export_indicator_to_parquet(result_df, data_info, selected_rule, args)
+                    if export_info["success"]:
+                        print(f"Indicator data exported to: {export_info['output_file']}")
+                    else:
+                        print(f"Failed to export indicator data: {export_info['error_message']}")
+
+                # Draw plot with indicator
+                estimated_point = True
+                generate_plot = import_generate_plot()
+                draw_method = getattr(args, 'draw', 'fastest')
+                print(f"Drawing plot with indicator using method: '{draw_method}'...")
+                generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
+                print(f"Successfully plotted data with indicator from '{found_files[0]['name']}'")
         except Exception as e:
             print(f"Error plotting file: {e}")
             traceback.print_exc()
-
