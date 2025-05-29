@@ -14,6 +14,8 @@ import traceback
 from datetime import datetime
 import uuid
 from pathlib import Path
+import glob
+import re
 
 # Настройка логирования
 def setup_logging():
@@ -67,6 +69,12 @@ class MCPServer:
         self.logger = logger
         self.running = True
         self.request_id_to_handler = {}
+        self.project_root = Path(__file__).parent
+        self.project_files = {}
+        self.file_content_cache = {}
+
+        # Сканируем файлы проекта при инициализации
+        self.scan_project_files()
 
         # Регистрация обработчиков разных типов запросов
         self.handlers = {
@@ -75,10 +83,26 @@ class MCPServer:
             "exit": self.handle_exit,
             "textDocument/completion": self.handle_completion,
             "workspace/symbols": self.handle_workspace_symbols,
+            "workspace/files": self.handle_workspace_files,
+            "textDocument/context": self.handle_document_context,
             # Добавьте другие обработчики по мере необходимости
         }
 
         self.logger.info("MCP Server инициализирован")
+
+    def scan_project_files(self):
+        """Сканирование файлов проекта"""
+        self.logger.info("Сканирование файлов проекта")
+        try:
+            for file_path in self.project_root.rglob("*"):
+                if file_path.is_file():
+                    relative_path = file_path.relative_to(self.project_root)
+                    self.project_files[str(relative_path)] = file_path
+                    self.file_content_cache[str(relative_path)] = file_path.read_text(encoding='utf-8')
+            self.logger.info(f"Найдено файлов: {len(self.project_files)}")
+        except Exception as e:
+            self.logger.error(f"Ошибка при сканировании файлов проекта: {str(e)}")
+            self.logger.error(traceback.format_exc())
 
     def start(self):
         """Запуск сервера и обработка входящих сообщений"""
@@ -255,6 +279,36 @@ class MCPServer:
         result = []
 
         self.send_response(request_id, result)
+
+    def handle_workspace_files(self, request_id, params):
+        """Обработка запроса файлов рабочего пространства"""
+        self.logger.info("Обработка запроса workspace/files")
+        result = list(self.project_files.keys())
+        self.send_response(request_id, result)
+
+    def handle_document_context(self, request_id, params):
+        """Обработка запроса контекста документа"""
+        self.logger.info("Обработка запроса textDocument/context")
+        try:
+            file_path = params.get("textDocument", {}).get("uri")
+            if not file_path:
+                self.send_error_response(request_id, -32602, "Не указан путь к файлу")
+                return
+
+            relative_path = Path(file_path).relative_to(self.project_root)
+            content = self.file_content_cache.get(str(relative_path))
+            if content is None:
+                self.send_error_response(request_id, -32602, f"Файл {file_path} не найден")
+                return
+
+            result = {
+                "content": content
+            }
+            self.send_response(request_id, result)
+        except Exception as e:
+            self.logger.error(f"Ошибка при обработке контекста документа: {str(e)}")
+            self.logger.error(traceback.format_exc())
+            self.send_error_response(request_id, -32603, "Внутренняя ошибка сервера")
 
 def main():
     # Настройка логирования
