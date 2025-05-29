@@ -3,23 +3,34 @@
 
 from mcp.server import Server
 import os
-import sys
 import asyncio
 import anyio
 import json
 
 # Specify the directory to allow access
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Path to config file
+CONFIG_FILE = os.path.expanduser('~/.config/github-copilot/intellij/mcp.json')
 
 class FileAccessServer(Server):
     def __init__(self):
+        # Загружаем конфигурацию из файла
+        with open(CONFIG_FILE, 'r') as f:
+            config = json.load(f)
+        # Передаем имя сервера
         super().__init__("mcp_server")
+        # Сохраняем конфигурацию для дальнейшего использования
+        self.config = config
 
     def on_connect(self, client):
         print(f"Client connected: {client}")
 
     def on_disconnect(self, client):
         print(f"Client disconnected: {client}")
+
+    # Handler for initialization request from clients
+    def handle_init(self, client, options=None):
+        return {"status": "success", "message": "MCP server initialized"}
 
     # Handler for file read request
     def handle_read_file(self, client, path):
@@ -35,6 +46,18 @@ class FileAccessServer(Server):
             return {"content": content}
         except Exception as e:
             return {"error": str(e)}
+
+    # Handler for checking if a file exists
+    def handle_check_file(self, client, path):
+        if path is None or not isinstance(path, str):
+            return {"error": "Path must be a string"}
+
+        abs_path = os.path.abspath(os.path.join(WORKSPACE_DIR, path))
+        if not abs_path.startswith(WORKSPACE_DIR):
+            return {"error": "Access denied"}
+
+        exists = os.path.exists(abs_path)
+        return {"exists": exists, "path": path}
 
 if __name__ == "__main__":
     server = FileAccessServer()
@@ -91,6 +114,12 @@ if __name__ == "__main__":
                         if message["type"] == "read_file":
                             path = message.get("path")
                             response = server.handle_read_file(client, path)
+                        elif message["type"] == "init":
+                            options = message.get("options")
+                            response = server.handle_init(client, options)
+                        elif message["type"] == "check_file":
+                            path = message.get("path")
+                            response = server.handle_check_file(client, path)
 
                     # Сериализуем ответ
                     response_str = json.dumps(response)
@@ -114,4 +143,4 @@ if __name__ == "__main__":
             await writer.wait_closed()
             print(f"Соединение закрыто: {addr}")
 
-    anyio.run(main)
+    anyio.run(main, backend="asyncio")
