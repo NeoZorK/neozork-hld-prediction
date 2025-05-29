@@ -67,15 +67,28 @@ class FileAccessServer(Server):
         log_message(f"Инициализация клиента: {client['addr']}, options: {options}")
         return {"status": "success", "message": "MCP server initialized"}
 
-    # Handler for file read request
+    # Handler for file read request with explicit support for Copilot requests
     def handle_read_file(self, client, path=None, file=None):
-        # Поддержка обоих параметров: path и file (для совместимости с GitHub Copilot)
-        actual_path = path if path is not None else file
-        log_message(f"Запрос на чтение файла: {actual_path} от клиента {client['addr']}")
+        log_message(f"Запрос на чтение файла от {client['addr']}, path={path}, file={file}")
 
-        if actual_path is None or not isinstance(actual_path, str):
-            log_message(f"Ошибка: путь должен быть строкой, получено: {type(actual_path)}", "ERROR")
-            return {"error": "Path must be a string"}
+        # Специальная обработка запросов от GitHub Copilot
+        # Копилот иногда отправляет null вместо undefined для отсутствующих параметров
+        if path is None and file is None:
+            log_message(f"Оба параметра path и file отсутствуют в запросе", "ERROR")
+            return {"error": "Path or file argument is missing"}
+
+        # Определяем, какой параметр использовать
+        if path is not None and isinstance(path, str):
+            actual_path = path
+        elif file is not None and isinstance(file, str):
+            actual_path = file
+        else:
+            # Проверяем на значения null/None
+            err_msg = f"Ошибка в параметрах: path={type(path)}, file={type(file)}"
+            log_message(err_msg, "ERROR")
+            return {"error": err_msg}
+
+        log_message(f"Чтение файла: {actual_path}")
 
         abs_path = os.path.abspath(os.path.join(WORKSPACE_DIR, actual_path))
         if not abs_path.startswith(WORKSPACE_DIR):
@@ -111,21 +124,34 @@ if __name__ == "__main__":
     server = FileAccessServer()
     log_message("MCP server started...")
 
+    # Выводим информацию о конфигурации сервера
+    log_message(f"Имя сервера: {server.name}")
+    log_message(f"Рабочая директория: {WORKSPACE_DIR}")
+    log_message(f"Конфигурация: {server.config}")
+
     async def main():
         # Создаем асинхронный сервер на localhost:8765
         host, port = "127.0.0.1", 8765
 
+        log_message(f"Запуск сервера на {host}:{port}...")
+
         # Используем стандартный asyncio для создания сервера
-        server_coro = await asyncio.start_server(
-            lambda r, w: handle_client(server, r, w),
-            host, port
-        )
+        try:
+            server_coro = await asyncio.start_server(
+                lambda r, w: handle_client(server, r, w),
+                host, port
+            )
 
-        log_message(f"Сервер запущен на {host}:{port}")
+            log_message(f"Сервер успешно запущен на {host}:{port}")
+            log_message("Ожидание подключений...")
 
-        # Держим сервер запущенным
-        async with server_coro:
-            await server_coro.serve_forever()
+            # Держим сервер запущенным
+            async with server_coro:
+                await server_coro.serve_forever()
+        except Exception as e:
+            log_message(f"Ошибка при запуске сервера: {e}", "ERROR")
+            log_message(f"Трассировка: {traceback.format_exc()}", "ERROR")
+            sys.exit(1)
 
     # Функция для обработки подключений клиентов
     async def handle_client(server, reader, writer):
@@ -150,14 +176,47 @@ if __name__ == "__main__":
                     log_message(f"Получено сообщение длиной {message_length} байт от {addr}")
 
                     # Читаем сообщение указанной длины
-                    message_bytes = await reader.read(message_length)
-                    if not message_bytes:
-                        log_message(f"Пустое сообщение от клиента {addr}", "WARN")
-                        break
+                    try:
+                        # Проверяем, что длина сообщения в разумных пределах
+                        if message_length > 10485760:  # 10 МБ
+                            log_message(f"Слишком большая длина сообщения: {message_length} байт от {addr}", "WARN")
+                            error_response = json.dumps({"error": "Message too large"}).encode('utf-8')
+                            writer.write(len(error_response).to_bytes(4, byteorder='big'))
+                            writer.write(error_response)
+                            await writer.drain()
+                            continue
+
+                        message_bytes = await asyncio.wait_for(reader.read(message_length), timeout=5.0)
+                        if not message_bytes:
+                            log_message(f"Пустое сообщение от клиента {addr}", "WARN")
+                            break
+                    except asyncio.TimeoutError:
+                        log_message(f"Таймаут при чтении сообщения от клиента {addr}", "WARN")
+                        error_response = json.dumps({"error": "Read timeout"}).encode('utf-8')
+                        writer.write(len(error_response).to_bytes(4, byteorder='big'))
+                        writer.write(error_response)
+                        await writer.drain()
+                        continue
+                    except Exception as e:
+                        log_message(f"Ошибка при чтении сообщения от клиента {addr}: {e}", "ERROR")
+                        error_response = json.dumps({"error": f"Read error: {str(e)}"}).encode('utf-8')
+                        writer.write(len(error_response).to_bytes(4, byteorder='big'))
+                        writer.write(error_response)
+                        await writer.drain()
+                        continue
 
                     # Декодируем и парсим JSON-сообщение
-                    message_str = message_bytes.decode('utf-8')
-                    log_message(f"Получено сообщение от {addr}: {message_str}")
+                    try:
+                        message_str = message_bytes.decode('utf-8')
+                        log_message(f"Получено сообщение от {addr}: {message_str[:200]}..." if len(message_str) > 200 else message_str)
+                    except UnicodeDecodeError:
+                        log_message(f"Ошибка декодирования UTF-8 от клиента {addr}", "ERROR")
+                        log_message(f"Первые 100 байт сообщения: {message_bytes[:100]}", "DEBUG")
+                        error_response = json.dumps({"error": "Invalid UTF-8 encoding"}).encode('utf-8')
+                        writer.write(len(error_response).to_bytes(4, byteorder='big'))
+                        writer.write(error_response)
+                        await writer.drain()
+                        continue
 
                     try:
                         message = json.loads(message_str)
@@ -172,11 +231,23 @@ if __name__ == "__main__":
                                 # Подробное логирование для отладки проблемы с "file" аргументом
                                 log_message(f"Тип аргумента path: {type(path)}, значение: {path}", "DEBUG")
                                 log_message(f"Тип аргумента file: {type(file)}, значение: {file}", "DEBUG")
+
+                                # Улучшенная обработка параметров
                                 if path is None and file is None:
                                     log_message(f"Ошибка: аргументы path и file отсутствуют в запросе", "ERROR")
                                     response = {"error": "Path or file argument is missing"}
+                                elif path is not None and not isinstance(path, str):
+                                    log_message(f"Ошибка: аргумент path не является строкой", "ERROR")
+                                    response = {"error": "Path must be a string"}
+                                elif file is not None and not isinstance(file, str):
+                                    log_message(f"Ошибка: аргумент file не является строкой", "ERROR")
+                                    response = {"error": "File must be a string"}
                                 else:
-                                    response = server.handle_read_file(client, path=path, file=file)
+                                    # Если path отсутствует, используем file
+                                    # Если file отсутствует, используем path
+                                    # Если оба присутствуют, используем path
+                                    actual_path = path if path is not None else file
+                                    response = server.handle_read_file(client, path=actual_path, file=actual_path)
                             elif message["type"] == "init":
                                 options = message.get("options")
                                 # Подробное логирование параметров инициализации
