@@ -113,5 +113,3 @@ datashader
 bokeh
 seaborn
 statsmodels
-mcp[cli]
-aioconsole
