@@ -144,13 +144,14 @@ class SimpleMCPServer:
         """
         while True:
             if len(self.buffer) == 0:
+                self.logger.debug(f"[BUFFER] Buffer empty. content_length={self.content_length}")
                 break
 
-            # Always reset content length for new message
-            self.logger.debug(f"💾 Current buffer (size: {len(self.buffer)} byte)")
+            # Логируем состояние буфера и content_length
+            self.logger.debug(f"[BUFFER] Start loop: buffer size={len(self.buffer)}, content_length={self.content_length}")
             try:
                 buffer_text = self.buffer.decode('utf-8', errors='replace')
-                self.logger.debug(f"💾 Buffer as text (first 100 chars): {buffer_text[:100]}{'...' if len(buffer_text) > 100 else ''}")
+                self.logger.debug(f"[BUFFER] Buffer as text (first 100 chars): {buffer_text[:100]}{'...' if len(buffer_text) > 100 else ''}")
             except Exception as e:
                 self.logger.debug(f"Impossible decode buffer as text: {e}")
 
@@ -277,14 +278,14 @@ class SimpleMCPServer:
             if self.content_length is not None and len(self.buffer) >= self.content_length:
                 message_data = self.buffer[:self.content_length]
                 self.buffer = self.buffer[self.content_length:]
-                self.logger.debug(f"Extracted message of {self.content_length} bytes, {len(self.buffer)} bytes remaining")
+                self.logger.debug(f"[BUFFER] Extracted message of {self.content_length} bytes, {len(self.buffer)} bytes remaining")
 
                 try:
                     message_text = message_data.decode('utf-8')
                     message = json.loads(message_text)
 
                     # Process the message
-                    self.logger.debug(f"Processing message: {message_text[:100]}{'...' if len(message_text) > 100 else ''}")
+                    self.logger.debug(f"[BUFFER] Processing message: {message_text[:100]}{'...' if len(message_text) > 100 else ''}")
                     response = self.handler.handle_request(message)
 
                     # Send response if available
@@ -293,6 +294,7 @@ class SimpleMCPServer:
 
                     # Reset content_length for next message
                     self.content_length = None
+                    self.logger.debug(f"[BUFFER] content_length reset to None after processing message")
                 except json.JSONDecodeError as e:
                     self.logger.error(f"JSON parse error: {str(e)}, message: {message_data[:100]}...")
                     self.content_length = None
@@ -306,8 +308,11 @@ class SimpleMCPServer:
             else:
                 # Not enough data for a complete message
                 if self.content_length is not None:
-                    self.logger.debug(f"Waiting for more data. Have {len(self.buffer)}, need {self.content_length}")
+                    self.logger.debug(f"[BUFFER] Waiting for more data. Have {len(self.buffer)}, need {self.content_length}")
                 break
+
+        # После завершения обработки логируем итоговое состояние буфера
+        self.logger.debug(f"[BUFFER] End of _process_buffer: buffer size={len(self.buffer)}, content_length={self.content_length}")
 
     def _send_response(self, response: Dict[str, Any]) -> None:
         """
