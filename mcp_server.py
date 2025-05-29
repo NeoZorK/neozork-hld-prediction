@@ -72,6 +72,7 @@ class MCPServer:
         self.handlers = {
             "initialize": self.handle_initialize,
             "shutdown": self.handle_shutdown,
+            "exit": self.handle_exit,
             "textDocument/completion": self.handle_completion,
             "workspace/symbols": self.handle_workspace_symbols,
             # Добавьте другие обработчики по мере необходимости
