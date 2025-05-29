@@ -146,18 +146,18 @@ class SimpleMCPServer:
             except Exception as e:
                 self.logger.debug(f"Impossible decode buffer as text: {e}")
 
-            # Специальная обработка для сообщения размером 135 байт от GitHub Copilot
+            # Special case for GitHub Copilot messages
             if len(self.buffer) == 135 and b"Content-Length: " in self.buffer:
                 self.logger.info(f"Detected GitHub Copilot special message (135 bytes)")
                 try:
-                    # Попробуем разобрать сообщение стандартным способом
+                    # Try to parse Content-Length header
                     cl_start = self.buffer.find(b"Content-Length: ") + len(b"Content-Length: ")
                     cl_end = self.buffer.find(b"\r\n", cl_start)
                     if cl_end > cl_start:
                         content_length = int(self.buffer[cl_start:cl_end].decode('utf-8').strip())
                         self.logger.info(f"Copilot message with Content-Length: {content_length}")
 
-                        # Ищем начало JSON-содержимого
+                        # Search for the end of headers
                         header_end = self.buffer.find(b"\r\n\r\n")
                         if header_end > 0:
                             json_start = header_end + 4
@@ -166,19 +166,18 @@ class SimpleMCPServer:
                                 message = json.loads(json_data.decode('utf-8'))
                                 self.logger.info(f"Parsed Copilot message: {message.get('method', 'unknown method')}")
 
-                                # Обработка сообщения
+                                # Quickly handle the Copilot message
                                 response = self._handle_request(message)
                                 if response:
                                     self._send_response(response)
                             except Exception as e:
                                 self.logger.error(f"Error parsing Copilot message: {str(e)}")
-                    # Очищаем буфер после обработки
+                    # Clear the buffer after processing
                     self.buffer = b""
                     continue
                 except Exception as e:
                     self.logger.error(f"Error handling 135-byte Copilot message: {str(e)}")
-                    # Не очищаем буфер полностью в случае ошибки, чтобы дать возможность
-                    # стандартной обработке попробовать разобрать сообщение
+                    # Not enough data to process, wait for more
 
             # Check for HTTP-style headers with Content-Length
             if self.content_length is None:
@@ -821,11 +820,19 @@ class SimpleMCPServer:
 
 
 if __name__ == "__main__":
+    # Display startup message
+    print("\n" + "=" * 60)
+    print("🚀 MCP Server starting up...")
+    print("=" * 60 + "\n")
+
     # Create MCP server instance
     server = SimpleMCPServer()
 
     # Register signal handlers for graceful shutdown
     def signal_handler(sig, frame):
+        print("\n" + "=" * 60)
+        print("✅ Server received shutdown signal")
+        print("=" * 60 + "\n")
         logger.info(f"Received signal {sig}, shutting down gracefully...")
         server.shutdown_gracefully()
         sys.exit(0)
