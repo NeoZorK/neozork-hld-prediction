@@ -25,7 +25,7 @@ script_dir = os.path.dirname(script_path)
 project_root = script_dir
 
 # Настраиваем логирование с помощью нашей функции
-logger = setup_logger(project_root)
+logger = setup_logger(project_root, console_output=False)
 
 # Define maximum response delay to prevent buffer issues
 MAX_RESPONSE_DELAY = 0.0  # Убираем задержку полностью для максимальной отзывчивости
