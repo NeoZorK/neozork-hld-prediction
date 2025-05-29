@@ -15,14 +15,9 @@ import signal
 from typing import Dict, Any, Optional
 import os
 import datetime
-import binascii  # Для вывода шестнадцатеричного представления двоичных данных
-import threading  # Для создания ping-потока
 
 # Define maximum response delay to prevent buffer issues
 MAX_RESPONSE_DELAY = 0.0  # Убираем задержку полностью для максимальной отзывчивости
-# Добавляем константы для пинга
-PING_INTERVAL = 20.0  # Отправлять ping каждые 20 секунд
-PING_ENABLED = False   # Включение/отключение пинга
 
 # Determine the project root directory regardless of where the script is run from
 script_path = os.path.abspath(__file__)
@@ -42,13 +37,12 @@ if not os.path.exists(logs_dir):
     except Exception as e:
         print(f"Ошибка при создании директории для логов: {str(e)}")
 
-# Формируем имя файла лога с текущей датой и временем
-current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-log_file_path = os.path.join(logs_dir, f"mcp_server_{current_time}.log")
+# Используем один постоянный файл логов вместо создания нового при каждом запуске
+log_file_path = os.path.join(logs_dir, "mcp_server.log")
 
-# Logging setup - единый лог для всего
+# Единая настройка логирования для всего приложения
 logging.basicConfig(
-    level=logging.DEBUG,  # Increase logging level for debugging
+    level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),      # Output logs to stdout for console display
@@ -56,16 +50,6 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger("simple_mcp")
-
-# Создаем отдельные логгеры для разных типов информации, но все пишем в один файл
-raw_logger = logging.getLogger("raw_data")
-raw_logger.setLevel(logging.DEBUG)
-
-client_detail_logger = logging.getLogger("client_detail")
-client_detail_logger.setLevel(logging.DEBUG)
-
-message_logger = logging.getLogger("message_detail")
-message_logger.setLevel(logging.DEBUG)
 
 # Логируем информацию о старте и пути к файлу лога
 logger.info(f"Логи сохраняются в файл: {log_file_path}")
@@ -86,62 +70,6 @@ logger.info("Project root directory: %s", project_root)
 logger.info("Script location: %s", os.path.abspath(__file__))
 logger.info("========================")
 
-# Add colored logging for better console readability
-class ColoredFormatter(logging.Formatter):
-    """Class for colored log formatting"""
-    COLORS = {
-        'DEBUG': '\033[94m',  # blue
-        'INFO': '\033[92m',   # green
-        'WARNING': '\033[93m', # yellow
-        'ERROR': '\033[91m',   # red
-        'CRITICAL': '\033[91m\033[1m', # bold red
-        'RESET': '\033[0m',    # reset color
-        'CLIENT': '\033[96m',  # cyan for client info
-        'REQUEST': '\033[95m', # magenta for requests
-        'RESPONSE': '\033[93m' # yellow for responses
-    }
-
-    def format(self, record):
-        log_message = super().format(record)
-        if hasattr(record, 'levelname') and record.levelname in self.COLORS:
-            return f"{self.COLORS[record.levelname]}{log_message}{self.COLORS['RESET']}"
-        if hasattr(record, 'client_info'):
-            return f"{self.COLORS['CLIENT']}{log_message}{self.COLORS['RESET']}"
-        if hasattr(record, 'request_info'):
-            return f"{self.COLORS['REQUEST']}{log_message}{self.COLORS['RESET']}"
-        if hasattr(record, 'response_info'):
-            return f"{self.COLORS['RESPONSE']}{log_message}{self.COLORS['RESET']}"
-        return log_message
-
-# Apply colored formatter for console if not Windows
-if os.name != 'nt':
-    # Get the root logger
-    root_logger_instance = logging.getLogger()
-    for handler in root_logger_instance.handlers:
-        if isinstance(handler, logging.StreamHandler) and handler.stream == sys.stdout:
-            # Use more noticeable formatting for console output, including logger name
-            handler.setFormatter(ColoredFormatter('📝 %(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-            # Ensure the handler itself also processes DEBUG messages if not already configured
-            # This might be redundant if basicConfig level is DEBUG and handler level is not explicitly set higher
-            if handler.level > logging.DEBUG:
-                handler.setLevel(logging.DEBUG)
-            break # Assuming only one stdout handler for the root logger
-
-# Create special loggers for client and request info
-client_logger = logging.getLogger("client_info")
-client_logger.setLevel(logging.DEBUG) # Changed from INFO to DEBUG
-client_logger.propagate = True
-# Добавляем явный обработчик для client_logger
-client_handler = logging.StreamHandler(sys.stdout)
-client_handler.setLevel(logging.DEBUG)
-if os.name != 'nt':
-    client_handler.setFormatter(ColoredFormatter('🔌 %(asctime)s - CLIENT - %(message)s'))
-client_logger.addHandler(client_handler)
-
-request_logger = logging.getLogger("request_info")
-request_logger.setLevel(logging.DEBUG) # Changed from INFO to DEBUG
-request_logger.propagate = True
-
 class SimpleMCPServer:
     """
     Simple MCP server for successful GitHub Copilot connection via stdio
@@ -149,8 +77,6 @@ class SimpleMCPServer:
 
     def __init__(self):
         self.logger = logger
-        self.client_logger = client_logger
-        self.request_logger = request_logger
         self.logger.info("Simple MCP Server initialized with stdio interface")
         # Create buffer for incoming data
         self.buffer = b""
@@ -169,13 +95,6 @@ class SimpleMCPServer:
         self.protocol_versions = set()
         # Active client sessions
         self.active_clients = {}
-        # Ping механизм
-        self.ping_thread = None
-        self.ping_stop_event = threading.Event()
-        self.last_client_activity = time.time()
-        # Keep-alive механизм
-        self.keep_alive_thread = None
-        self.keep_alive_stop_event = threading.Event()
 
         # Show initial client info
         self._print_client_info()
@@ -186,15 +105,6 @@ class SimpleMCPServer:
         """
         try:
             self.logger.info("MCP Server started with stdio interface")
-
-            # Запускаем поток пинга, если эта функция включена
-            if PING_ENABLED:
-                self._start_ping_thread()
-                self.logger.info(f"Ping thread started (interval: {PING_INTERVAL}s)")
-            else:
-                # Если пинг отключен, запускаем облегченный механизм поддержания соединения
-                self._start_keep_alive_thread()
-                self.logger.info("Keep-alive mechanism enabled to prevent timeouts")
 
             # Main loop for reading from stdin and writing to stdout
             self._handle_stdio()
@@ -207,15 +117,6 @@ class SimpleMCPServer:
                 "type": 1,  # Error
                 "message": f"MCP Server Error: {str(e)}"
             })
-        finally:
-            # Останавливаем поток пинга при завершении
-            if PING_ENABLED and self.ping_thread and self.ping_thread.is_alive():
-                self._stop_ping_thread()
-                self.logger.info("Ping thread stopped")
-            # Останавливаем keep-alive поток при завершении
-            if not PING_ENABLED and self.keep_alive_thread and self.keep_alive_thread.is_alive():
-                self._stop_keep_alive_thread()
-                self.logger.info("Keep-alive thread stopped")
 
     def _handle_stdio(self):
         """
@@ -257,7 +158,7 @@ class SimpleMCPServer:
                 # Detect if data is too large for console
                 try:
                     decoded_data = data.decode('utf-8', errors='replace')
-                    self.request_logger.info(f"RAW INPUT [{len(data)} bytes]: {decoded_data[:300]}{'...' if len(decoded_data) > 300 else ''}")
+                    self.logger.info(f"RAW INPUT [{len(data)} bytes]: {decoded_data[:300]}{'...' if len(decoded_data) > 300 else ''}")
                 except Exception as e:
                     self.logger.debug(f"Unable to decode data for display: {e}")
 
@@ -412,22 +313,8 @@ class SimpleMCPServer:
         request_params = request.get("params", {})
         simplified_params = self._simplify_params(request_params)
 
-        # Создаем логи с атрибутом request_info для правильного форматирования
-        req_log_record = logging.LogRecord(
-            "request_info", logging.INFO, "", 0,
-            f"REQUEST #{self.request_count}: {request_method} (ID: {request_id})",
-            (), None
-        )
-        req_log_record.request_info = True
-        self.request_logger.handle(req_log_record)
-
-        params_log_record = logging.LogRecord(
-            "request_info", logging.INFO, "", 0,
-            f"PARAMS: {simplified_params}",
-            (), None
-        )
-        params_log_record.request_info = True
-        self.request_logger.handle(params_log_record)
+        self.logger.info(f"REQUEST #{self.request_count}: {request_method} (ID: {request_id})")
+        self.logger.info(f"PARAMS: {simplified_params}")
 
         # Check if this is a notification (without ID)
         if "id" not in request:
@@ -519,9 +406,6 @@ class SimpleMCPServer:
             self.logger.info(f"Client capabilities: {json.dumps(params.get('capabilities', {}), indent=2)}")
 
             self._update_client_list(client_name, client_version, status="connected")
-
-            # Обновляем время последней активности клиента
-            self.last_client_activity = time.time()
 
             # Mark connection as successful after server processes 'initialize' and sends response.
             if self.active_clients.get(client_key) and \
@@ -626,7 +510,7 @@ class SimpleMCPServer:
             self.logger.info(f"Received Copilot-specific request: {method}")
 
             # Detect if this is a Copilot request
-            self.client_logger.info(f"🤖 COPILOT REQUEST: {method} (ID: {message_id})")
+            self.logger.info(f"🤖 COPILOT REQUEST: {method} (ID: {message_id})")
 
             # Store client information for Copilot
             if method == "copilot/signIn":
@@ -727,8 +611,7 @@ class SimpleMCPServer:
 
             response_id = response.get('id', 0)
             self.logger.info(f"Sent response for ID: {response_id} (size: {len(response_bytes)} bytes, delay: {response_delay:.3f}s)")
-            # Add request info to the request logger
-            self.request_logger.info(f"RESPONSE for ID {response_id}: {self._simplify_response(response)}")
+            self.logger.info(f"RESPONSE for ID {response_id}: {self._simplify_response(response)}")
             self.logger.debug(f"Full response: {response_str}")
         except Exception as e:
             self.logger.error(f"Error sending response: {str(e)}")
@@ -898,26 +781,13 @@ class SimpleMCPServer:
                 "initialization_counted_successful": False # Initialize the flag
             }
             # Delete old entries if they exist
-            # Создаем запись лога с атрибутом client_info для правильного форматирования
-            log_record = logging.LogRecord(
-                "client_info", logging.INFO, "", 0,
-                f"⚡ NEW CONNECTION from {client_name} v{client_version}",
-                (), None
-            )
-            log_record.client_info = True
-            self.client_logger.handle(log_record)
+            self.logger.info(f"⚡ NEW CONNECTION from {client_name} v{client_version}")
         elif status == "disconnected":
             if client_key in self.active_clients:
                 self.active_clients[client_key]["status"] = "disconnected"
                 self.active_clients[client_key]["disconnected_at"] = time.time()
                 # Display disconnection message
-                log_record = logging.LogRecord(
-                    "client_info", logging.INFO, "", 0,
-                    f"❌ DISCONNECTED: {client_name} v{client_version}",
-                    (), None
-                )
-                log_record.client_info = True
-                self.client_logger.handle(log_record)
+                self.logger.info(f"❌ DISCONNECTED: {client_name} v{client_version}")
 
         # Print updated client information
         self._print_client_info()
@@ -926,23 +796,10 @@ class SimpleMCPServer:
         """
         Print information about active clients
         """
-        # Создаем запись лога с атрибутом client_info для правильного форматирования
-        log_record = logging.LogRecord(
-            "client_info", logging.INFO, "", 0,
-            f"Active clients: {len(self.active_clients)}",
-            (), None
-        )
-        log_record.client_info = True
-        self.client_logger.handle(log_record)
+        self.logger.info(f"Active clients: {len(self.active_clients)}")
 
         for client_key, client_data in self.client_info.items():
-            log_record = logging.LogRecord(
-                "client_info", logging.INFO, "", 0,
-                f"Client: {client_key}, Info: {json.dumps(client_data, indent=2)}",
-                (), None
-            )
-            log_record.client_info = True
-            self.client_logger.handle(log_record)
+            self.logger.info(f"Client: {client_key}, Info: {json.dumps(client_data, indent=2)}")
 
     def shutdown_gracefully(self):
         """
@@ -968,148 +825,6 @@ class SimpleMCPServer:
 
         return
 
-    def _start_ping_thread(self):
-        """
-        Запускает поток для периодической отправки ping-сообщений клиенту
-        """
-        if self.ping_thread and self.ping_thread.is_alive():
-            self.logger.info("Ping thread already running")
-            return
-
-        # Сбрасываем событие остановки пинга
-        self.ping_stop_event.clear()
-
-        # Создаем и запускаем поток пинга
-        self.ping_thread = threading.Thread(target=self._ping_loop, daemon=True)
-        self.ping_thread.start()
-        self.logger.info(f"Started ping thread (interval: {PING_INTERVAL}s)")
-
-    def _stop_ping_thread(self):
-        """
-        Останавливает поток отправки ping-сообщений
-        """
-        if not self.ping_thread or not self.ping_thread.is_alive():
-            self.logger.info("No active ping thread to stop")
-            return
-
-        # Устанавливаем событие остановки и ждем завершения потока
-        self.ping_stop_event.set()
-        if self.ping_thread:
-            self.ping_thread.join(timeout=2.0)  # Ждем 2 секунды максимум
-            if self.ping_thread.is_alive():
-                self.logger.warning("Ping thread did not terminate gracefully")
-            else:
-                self.logger.info("Ping thread stopped successfully")
-        self.ping_thread = None
-
-    def _ping_loop(self):
-        """
-        Основной цикл отправки ping-сообщений
-        """
-        self.logger.info("Ping loop started")
-        ping_count = 0
-
-        while not self.ping_stop_event.is_set():
-            # Проверяем, прошло ли достаточно времени с последней активности
-            current_time = time.time()
-            time_since_last_activity = current_time - self.last_client_activity
-
-            if time_since_last_activity >= PING_INTERVAL:
-                # Отправляем ping, чтобы поддерживать соединение
-                ping_count += 1
-                self._send_ping(ping_count)
-
-                # Обновляем время последней активности
-                self.last_client_activity = current_time
-
-            # Ждем немного, чтобы не загружать процессор
-            # и проверяем событие остановки каждые 5 секунд
-            for _ in range(5):
-                if self.ping_stop_event.is_set():
-                    break
-                time.sleep(1.0)
-
-        self.logger.info(f"Ping loop ended after {ping_count} pings")
-
-    def _send_ping(self, count):
-        """
-        Отправляет ping-сообщение клиенту
-        """
-        try:
-            # Отправляем специальное уведомление для поддержания соединения
-            self._send_notification("$/ping", {
-                "timestamp": time.time(),
-                "count": count,
-                "message": "Keep connection alive"
-            })
-            self.logger.info(f"📡 Sent ping #{count} to keep connection alive")
-        except Exception as e:
-            self.logger.error(f"Error sending ping: {str(e)}")
-            self.logger.error(traceback.format_exc())
-
-    def _start_keep_alive_thread(self):
-        """
-        Запускает поток для облегченного механизма поддержания соединения
-        """
-        if self.keep_alive_thread and self.keep_alive_thread.is_alive():
-            self.logger.info("Keep-alive thread already running")
-            return
-
-        # Сбрасываем событие остановки keep-alive
-        self.keep_alive_stop_event.clear()
-
-        # Создаем и запускаем поток keep-alive
-        self.keep_alive_thread = threading.Thread(target=self._keep_alive_loop, daemon=True)
-        self.keep_alive_thread.start()
-        self.logger.info("Started keep-alive thread")
-
-    def _stop_keep_alive_thread(self):
-        """
-        Останавливает поток облегченного механизма поддержания соединения
-        """
-        if not self.keep_alive_thread or not self.keep_alive_thread.is_alive():
-            self.logger.info("No active keep-alive thread to stop")
-            return
-
-        # Устанавливаем событие остановки и ждем завершения потока
-        self.keep_alive_stop_event.set()
-        if self.keep_alive_thread:
-            self.keep_alive_thread.join(timeout=2.0)  # Ждем 2 секунды максимум
-            if self.keep_alive_thread.is_alive():
-                self.logger.warning("Keep-alive thread did not terminate gracefully")
-            else:
-                self.logger.info("Keep-alive thread stopped successfully")
-        self.keep_alive_thread = None
-
-    def _keep_alive_loop(self):
-        """
-        Основной цикл облегченного механизма поддержания соединения
-        """
-        self.logger.info("Keep-alive loop started")
-        keep_alive_count = 0
-
-        while not self.keep_alive_stop_event.is_set():
-            # Проверяем, прошло ли достаточно времени с последней активности
-            current_time = time.time()
-            time_since_last_activity = current_time - self.last_client_activity
-
-            if time_since_last_activity >= PING_INTERVAL:
-                # Логируем keep-alive событие
-                keep_alive_count += 1
-                self.logger.info(f"Keep-alive event #{keep_alive_count} to prevent timeout")
-
-                # Обновляем время последней активности
-                self.last_client_activity = current_time
-
-            # Ждем немного, чтобы не загружать процессор
-            # и проверяем событие остановки каждые 5 секунд
-            for _ in range(5):
-                if self.keep_alive_stop_event.is_set():
-                    break
-                time.sleep(1.0)
-
-        self.logger.info(f"Keep-alive loop ended after {keep_alive_count} events")
-
 
 if __name__ == "__main__":
     # Create MCP server instance
@@ -1129,7 +844,4 @@ if __name__ == "__main__":
 
     # Run the server
     server.run()
-
-
-
 
