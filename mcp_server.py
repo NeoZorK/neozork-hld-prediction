@@ -3,6 +3,10 @@
 
 from mcp.server import Server
 import os
+import sys
+import asyncio
+import anyio
+import aioconsole
 
 # Specify the directory to allow access
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -32,4 +36,9 @@ class FileAccessServer(Server):
 if __name__ == "__main__":
     server = FileAccessServer()
     print("MCP server started...")
-    server.run()
+
+    async def main():
+        stdin, stdout = aioconsole.get_standard_streams()
+        await server.run(stdin, stdout, {})
+
+    anyio.run(main)
