@@ -38,9 +38,23 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     if selected_rule is None:
         logger.print_warning("No valid rule selected, cannot generate plot accurately.")
         return
-    if not hasattr(args, 'draw'):
-        logger.print_error("Argument 'draw' missing in args. Cannot determine plotting library.")
-        return
+
+    # --- Check for AUTO mode ---
+    is_auto_mode = False
+    if hasattr(args, 'auto_display_mode') and args.auto_display_mode:
+        is_auto_mode = True
+        # Ensure selected_rule is properly set for AUTO mode
+        if isinstance(selected_rule, str):
+            if selected_rule not in ['AUTO', 'Auto_Display_All']:
+                selected_rule = 'Auto_Display_All'
+        else:
+            selected_rule = 'Auto_Display_All'
+        logger.print_info("AUTO display mode detected, will display all available columns")
+
+    # Use 'fastest' as default drawing method if draw is not specified
+    if not hasattr(args, 'draw') or args.draw is None:
+        logger.print_info("Drawing method not specified, using 'fastest' by default.")
+        args.draw = 'fastest'
 
     # --- DEBUG: Print DataFrame info before plotting ---
     logger.print_debug("--- DataFrame before plotting ---")
@@ -58,7 +72,22 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     if isinstance(data_label, str) and ('/' in data_label or '\\' in data_label):
         data_label = Path(data_label).stem
     title_parts.append(data_label)
-    interval_str = str(args.interval) if hasattr(args, 'interval') else data_info.get('interval', 'UnknownInterval')
+
+    # Extract interval from data_info or args
+    if 'data_source_label' in data_info and isinstance(data_info['data_source_label'], str):
+        # Try to extract interval from data_source_label
+        source_label = data_info['data_source_label']
+        if 'PERIOD_' in source_label:
+            try:
+                interval_str = source_label.split('PERIOD_')[1].split('_')[0].split('.')[0]
+            except (IndexError, ValueError):
+                # If extraction fails, fallback to args or data_info
+                interval_str = str(args.interval) if hasattr(args, 'interval') else data_info.get('interval', 'UnknownInterval')
+        else:
+            interval_str = str(args.interval) if hasattr(args, 'interval') else data_info.get('interval', 'UnknownInterval')
+    else:
+        interval_str = str(args.interval) if hasattr(args, 'interval') else data_info.get('interval', 'UnknownInterval')
+
     title_parts.append(interval_str)
     if point_size is not None:
         try:
@@ -118,10 +147,18 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
             # Construct filename
             filename_parts = [
                 data_label.replace(':', '_').replace('/', '_').replace('\\\\', '_'),
-                interval_str,
-                selected_rule.name,
-                "plotly"
+                interval_str
             ]
+
+            # Add point size if available
+            if hasattr(selected_rule, 'name'):
+                rule_shortname = selected_rule.name.replace("_", "")
+            else:
+                rule_shortname = str(selected_rule).replace("_", "")
+
+            filename_parts.append(rule_shortname)
+            filename_parts.append("plotly")
+
             filename = "_".join(filter(None, filename_parts)) + ".html"
             filepath = output_dir / filename
             try:
@@ -142,3 +179,4 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     except Exception as e_gen:
         logger.print_error(f"An error occurred during plot generation: {type(e_gen).__name__}: {e_gen}")
         logger.print_debug(f"Traceback (generate plot):\n{traceback.format_exc()}")
+

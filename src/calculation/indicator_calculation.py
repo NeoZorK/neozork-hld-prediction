@@ -82,6 +82,12 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
 
     # --- Calculation Call ---
     try:
+        # Special handling for OHLCV rule - don't calculate indicators, just return raw data
+        if selected_rule == TradingRule.OHLCV:
+            logger.print_debug("OHLCV rule selected: returning raw data without indicator calculation")
+            # Return the original dataframe without calculations
+            return ohlcv_df.copy(), selected_rule
+
         result_df = calculate_pressure_vector(
             df=ohlcv_df_calc_input.copy(),
             point=point_size,
@@ -217,3 +223,4 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         logger.print_debug(f"--- END DEBUG ---")
 
     return result_df, selected_rule
+

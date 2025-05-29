@@ -92,8 +92,8 @@ def parse_arguments():
     indicator_group = parser.add_argument_group('Indicator Options')
     rule_aliases_map = {'PHLD': 'Predict_High_Low_Direction', 'PV': 'Pressure_Vector', 'SR': 'Support_Resistants'}
     rule_names = list(TradingRule.__members__.keys())
-    all_rule_choices = rule_names + list(rule_aliases_map.keys())
-    default_rule_name = TradingRule.Predict_High_Low_Direction.name
+    all_rule_choices = rule_names + list(rule_aliases_map.keys()) + ['OHLCV', 'AUTO']  # Added 'OHLCV' and 'AUTO' as valid rules
+    default_rule_name = 'OHLCV'  # Changed from TradingRule.Predict_High_Low_Direction.name
     indicator_group.add_argument(
         '--rule',
         default=default_rule_name,
@@ -134,6 +134,14 @@ def parse_arguments():
         default='fastest',
         help="Choose plotting library: 'fastest' (Plotly+Dask+Datashader for extremely large datasets, default), 'fast' (Dask+Datashader+Bokeh), 'plotly'/'plt' (interactive HTML), 'mplfinance'/'mpl' (static image), or 'seaborn'/'sb' (statistical plots)."
     )
+
+    # --- Output Options Group ---
+    output_group = parser.add_argument_group('Output Options')
+    output_group.add_argument('--export-parquet',
+                              action='store_true',
+                              help="Export indicator data to parquet file. The file will be named as the original with the rule name as a postfix (e.g., CSVExport_AAPL.NAS_PERIOD_D1_PHLD.parquet)."
+                             )
+
     # --- Other Options Group ---
     other_group = parser.add_argument_group('Other Options')
     other_group.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
