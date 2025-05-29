@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# filepath: /Users/rost/Documents/DIS/REPO/neozork-hld-prediction/simple-mcp-server.py
 # -*- coding: utf-8 -*-
 """
 Simple MCP Server runner script for GitHub Copilot connection

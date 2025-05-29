@@ -26,491 +26,570 @@ class RequestHandler:
         """
         Processing requests from GitHub Copilot
         """
-        if not request:
-            return {}
+        try:
+            # Explicit logging of all incoming requests (including notifications)
+            self.logger.debug(f"handle_request called with: {json.dumps(request)}")
+            if not request:
+                return {}
 
-        self.server.request_count += 1
-        current_time = time.time()
-        uptime = current_time - self.server.start_time
+            self.server.request_count += 1
+            current_time = time.time()
+            uptime = current_time - self.server.start_time
 
-        # Display request details on screen
-        request_method = request.get("method", "unknown")
-        request_id = request.get("id", "notification")
-        request_params = request.get("params", {})
-        simplified_params = self.server.utils.simplify_params(request_params)
+            # Display request details on screen
+            request_method = request.get("method", "unknown")
+            request_id = request.get("id", "notification")
+            request_params = request.get("params", {})
+            simplified_params = self.server.utils.simplify_params(request_params)
 
-        self.logger.info(f"REQUEST #{self.server.request_count}: {request_method} (ID: {request_id})")
-        self.logger.info(f"PARAMS: {simplified_params}")
+            self.logger.info(f"REQUEST #{self.server.request_count}: {request_method} (ID: {request_id})")
+            self.logger.info(f"PARAMS: {simplified_params}")
 
-        # Check if this is a notification (without ID)
-        if "id" not in request:
+            # Check if this is a notification (without ID)
+            if "id" not in request:
+                method = request.get("method", "")
+                self.logger.info(f"Received notification: {method} [req #{self.server.request_count}, uptime: {int(uptime)}s]")
+                self.logger.debug(f"Full notification: {json.dumps(request)}")
+
+                # Process some notifications
+                if method == "textDocument/didOpen":
+                    params = request.get("params", {})
+                    text_document = params.get("textDocument", {})
+                    uri = text_document.get("uri", "")
+                    if uri:
+                        self.server.documents[uri] = text_document.get("text", "")
+                        language_id = text_document.get("languageId", "unknown")
+                        self.logger.info(f"Document opened: {uri} (Language: {language_id}, Size: {len(self.server.documents[uri])} chars)")
+
+                elif method == "textDocument/didChange":
+                    params = request.get("params", {})
+                    text_document = params.get("textDocument", {})
+                    uri = text_document.get("uri", "")
+                    changes = params.get("contentChanges", [])
+                    if uri and uri in self.server.documents and changes:
+                        # Simple document update (does not account for change positions)
+                        old_size = len(self.server.documents[uri])
+                        self.server.documents[uri] = changes[-1].get("text", self.server.documents[uri])
+                        new_size = len(self.server.documents[uri])
+                        change_size = new_size - old_size
+                        self.logger.info(f"Document changed: {uri} (Size delta: {'+' if change_size >= 0 else ''}{change_size} chars)")
+
+                elif method == "textDocument/didClose":
+                    params = request.get("params", {})
+                    text_document = params.get("textDocument", {})
+                    uri = text_document.get("uri", "")
+                    if uri and uri in self.server.documents:
+                        self.logger.info(f"Document closed: {uri} (Final size: {len(self.server.documents[uri])} chars)")
+                        del self.server.documents[uri]
+
+                # New case for initialized notification to fix connection problems
+                elif method == "initialized":
+                    # Connection success is now counted upon sending the 'initialize' response.
+                    # This notification from the client confirms it has also initialized.
+                    self.logger.info(f"Received 'initialized' notification. Client is ready. (Current successful connections: {self.server.successful_connections}, Attempts: {self.server.connection_attempts})")
+                    # Note: self.successful_connections is no longer incremented here.
+
+                    # Send ready notification
+                    self.server._send_notification("window/showMessage", {
+                        "type": 3,  # Info
+                        "message": f"MCP Server is ready and connected (Connection #{self.server.successful_connections})"
+                    })
+
+                    # Send server ready notification
+                    self.server._send_notification("$/neozork/serverReady", {
+                        "status": "ready",
+                        "features": ["completion", "hover", "definition"]
+                    })
+
+                # New notification for workspace/didChangeWatchedFiles
+                elif method == "workspace/didChangeWatchedFiles":
+                    params = request.get("params", {})
+                    changes = params.get("changes", [])
+                    for change in changes:
+                        uri = change.get("uri", "")
+                        change_type = change.get("type", 0)
+                        change_type_str = {1: "Created", 2: "Changed", 3: "Deleted"}.get(change_type, "Unknown")
+                        self.logger.info(f"File {change_type_str}: {uri}")
+
+                # New notification for workspace/didChangeConfiguration
+                elif method == "workspace/didChangeConfiguration":
+                    self.logger.info("Configuration changed, updating settings")
+                    params = request.get("params", {})
+                    settings = params.get("settings", {})
+                    self.server.settings = settings
+                    self.logger.debug(f"New settings: {json.dumps(settings)}")
+
+                # LSP keepalive/heartbeat and $/ping/$/heartbeat support
+                if method in ["$/heartbeat", "$/ping"]:
+                    self.logger.info(f"Received keepalive notification: {method}")
+                    return None
+
+                # Logging all notifications (INFO)
+                self.logger.info(f"Notification: {request.get('method', '')} {json.dumps(request)}")
+
+                # For notifications, we don't send a response
+                return None
+
+            # Check: if workspace/didChangeConfiguration came as a request (with id), return response
+            if request.get("method") == "workspace/didChangeConfiguration" and "id" in request:
+                self.logger.info("workspace/didChangeConfiguration came as request, returning result: None")
+                return {
+                    "jsonrpc": "2.0",
+                    "id": request["id"],
+                    "result": None
+                }
+
+            # Check for repeated initialize
+            if request.get("method") == "initialize" and self.server.successful_connections > 0:
+                self.logger.warning("Repeated initialize received without shutdown/exit. Ignoring state reset.")
+
+            # Validation of incoming messages
+            if not request.get("jsonrpc") or not request.get("method"):
+                self.logger.error("Invalid LSP message: missing 'jsonrpc' or 'method'")
+                return {
+                    "jsonrpc": "2.0",
+                    "id": request.get("id", 0),
+                    "error": {
+                        "code": -32600,
+                        "message": "Invalid Request: missing 'jsonrpc' or 'method'"
+                    }
+                }
+
             method = request.get("method", "")
-            self.logger.info(f"Received notification: {method} [req #{self.server.request_count}, uptime: {int(uptime)}s]")
-            self.logger.debug(f"Full notification: {json.dumps(request)}")
+            message_id = request.get("id", 0)
 
-            # Process some notifications
-            if method == "textDocument/didOpen":
+            self.logger.info(f"Received request: {method} (ID: {message_id}) [req #{self.server.request_count}, uptime: {int(uptime)}s]")
+            self.logger.debug(f"Full request: {json.dumps(request)}")
+
+            # Logging request processing time
+            start_time = time.time()
+
+            # Standard response to initialize
+            if method == "initialize":
+                self.server.connection_attempts += 1
+                params = request.get("params", {})
+                client_info = params.get("clientInfo", {})
+                client_name = client_info.get("name", "Unknown Client")
+                client_version = client_info.get("version", "Unknown Version")
+                protocol_version = params.get("protocolVersion", "Unknown")
+
+                # Save client and protocol information
+                client_key = f"{client_name}_{client_version}"
+                self.server.client_info[client_key] = {
+                    "name": client_name,
+                    "version": client_version,
+                    "last_connection": time.time(),
+                    "protocol": protocol_version,
+                    "capabilities": params.get("capabilities", {})
+                }
+                self.server.protocol_versions.add(protocol_version)
+
+                self.logger.info(f"🔌 CONNECTION ATTEMPT #{self.server.connection_attempts} from {client_name} v{client_version}")
+                self.logger.info(f"Protocol version: {protocol_version}")
+                self.logger.info(f"Client capabilities: {json.dumps(params.get('capabilities', {}), indent=2)}")
+
+                self.server._update_client_list(client_name, client_version, status="connected")
+
+                # Mark connection as successful after server processes 'initialize' and sends response.
+                if self.server.active_clients.get(client_key) and \
+                   not self.server.active_clients[client_key].get('initialization_counted_successful', False):
+                    self.server.successful_connections += 1
+                    self.server.active_clients[client_key]['initialization_counted_successful'] = True
+                    self.logger.info(f"✅ Connection marked SUCCESSFUL after 'initialize' response for {client_key}. Total successful: {self.server.successful_connections}, Attempts: {self.server.connection_attempts}")
+                elif self.server.active_clients.get(client_key) and self.server.active_clients[client_key].get('initialization_counted_successful', False):
+                    self.logger.info(f"Connection for {client_key} already marked successful. 'initialize' received again?")
+                else:
+                    self.logger.warning(f"Could not mark {client_key} as successful: client_key not found in active_clients after update.")
+
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": {
+                        "capabilities": {
+                            "completionProvider": {
+                                "triggerCharacters": [".", " ", "\t", "(", "[", ",", ":"]
+                            },
+                            "textDocumentSync": {
+                                "openClose": True,
+                                "change": 1,  # Full document synchronization
+                                "willSave": False,
+                                "willSaveWaitUntil": False,
+                                "save": {
+                                    "includeText": False
+                                }
+                            },
+                            "hoverProvider": True,
+                            "definitionProvider": True,
+                            "referencesProvider": True,
+                            "documentSymbolProvider": True,
+                            "workspaceSymbolProvider": True,
+                            "codeActionProvider": {
+                                "codeActionKinds": ["quickfix", "refactor"]
+                            },
+                            "executeCommandProvider": {
+                                "commands": ["neozork.analyzeData"]
+                            },
+                            # Adding file system support
+                            "workspace": {
+                                "fileOperations": {
+                                    "didCreate": {"filters": [{"scheme": "file", "pattern": "**/*"}]},
+                                    "didRename": {"filters": [{"scheme": "file", "pattern": "**/*"}]},
+                                    "didDelete": {"filters": [{"scheme": "file", "pattern": "**/*"}]}
+                                }
+                            }
+                        },
+                        "serverInfo": {
+                            "name": "NeoZorK HLD Prediction MCP Server",
+                            "version": "1.0.0"
+                        }
+                    }
+                }
+
+            # Response to textDocument/completion
+            elif method == "textDocument/completion":
+                self.logger.info(f"Received completion request (ID: {message_id})")
+                params = request.get("params", {})
+                text_document = params.get("textDocument", {})
+                position = params.get("position", {})
+                uri = text_document.get("uri", "")
+
+                # Get document content if available
+                document_content = self.server.documents.get(uri, "")
+
+                # Generate real completions based on document content
+                completions = self._generate_completions(document_content, position)
+
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": {
+                        "isIncomplete": False,
+                        "items": completions
+                    }
+                }
+
+            # Response to textDocument/hover
+            elif method == "textDocument/hover":
+                self.logger.info(f"Received hover request (ID: {message_id})")
+                params = request.get("params", {})
+                position = params.get("position", {})
+                text_document = params.get("textDocument", {})
+                uri = text_document.get("uri", "")
+
+                # Extract word under cursor
+                hover_info = self._generate_hover_info(uri, position)
+
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": {
+                        "contents": {
+                            "kind": "markdown",
+                            "value": hover_info
+                        }
+                    }
+                }
+
+            # Response to textDocument/definition
+            elif method == "textDocument/definition":
+                self.logger.info(f"Received definition request (ID: {message_id})")
+                params = request.get("params", {})
+                text_document = params.get("textDocument", {})
+                position = params.get("position", {})
+                uri = text_document.get("uri", "")
+
+                # Implementation of definition search
+                definitions = self._find_definitions(uri, position)
+
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": definitions  # Return found definitions
+                }
+
+            # New handler for workspace/symbol
+            elif method == "workspace/symbol":
+                self.logger.info(f"Received workspace symbol request (ID: {message_id})")
+                params = request.get("params", {})
+                query = params.get("query", "")
+
+                # Search for symbols in the workspace
+                symbols = self._find_workspace_symbols(query)
+
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": symbols
+                }
+
+            # New handler for textDocument/documentSymbol
+            elif method == "textDocument/documentSymbol":
+                self.logger.info(f"Received document symbol request (ID: {message_id})")
                 params = request.get("params", {})
                 text_document = params.get("textDocument", {})
                 uri = text_document.get("uri", "")
-                if uri:
-                    self.server.documents[uri] = text_document.get("text", "")
-                    language_id = text_document.get("languageId", "unknown")
-                    self.logger.info(f"Document opened: {uri} (Language: {language_id}, Size: {len(self.server.documents[uri])} chars)")
 
-            elif method == "textDocument/didChange":
+                # Search for symbols in the document
+                symbols = self._find_document_symbols(uri)
+
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": symbols
+                }
+
+            # New handler for workspace/executeCommand
+            elif method == "workspace/executeCommand":
+                self.logger.info(f"Received execute command request (ID: {message_id})")
+                params = request.get("params", {})
+                command = params.get("command", "")
+                arguments = params.get("arguments", [])
+
+                # Execute command
+                result = self._execute_command(command, arguments)
+
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": result
+                }
+
+            # New handler for textDocument/references
+            elif method == "textDocument/references":
+                self.logger.info(f"Received references request (ID: {message_id})")
                 params = request.get("params", {})
                 text_document = params.get("textDocument", {})
+                position = params.get("position", {})
                 uri = text_document.get("uri", "")
-                changes = params.get("contentChanges", [])
-                if uri and uri in self.server.documents and changes:
-                    # Simple document update (does not account for change positions)
-                    old_size = len(self.server.documents[uri])
-                    self.server.documents[uri] = changes[-1].get("text", self.server.documents[uri])
-                    new_size = len(self.server.documents[uri])
-                    change_size = new_size - old_size
-                    self.logger.info(f"Document changed: {uri} (Size delta: {'+' if change_size >= 0 else ''}{change_size} chars)")
 
-            elif method == "textDocument/didClose":
-                params = request.get("params", {})
-                text_document = params.get("textDocument", {})
-                uri = text_document.get("uri", "")
-                if uri and uri in self.server.documents:
-                    self.logger.info(f"Document closed: {uri} (Final size: {len(self.server.documents[uri])} chars)")
-                    del self.server.documents[uri]
+                # Search for references
+                references = self._find_references(uri, position)
 
-            # New case for initialized notification to fix connection problems
-            elif method == "initialized":
-                # Connection success is now counted upon sending the 'initialize' response.
-                # This notification from the client confirms it has also initialized.
-                self.logger.info(f"Received 'initialized' notification. Client is ready. (Current successful connections: {self.server.successful_connections}, Attempts: {self.server.connection_attempts})")
-                # Note: self.successful_connections is no longer incremented here.
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": references
+                }
 
-                # Send ready notification
-                self.server._send_notification("window/showMessage", {
-                    "type": 3,  # Info
-                    "message": f"MCP Server is ready and connected (Connection #{self.server.successful_connections})"
-                })
+            # New handler for workspace/willCreateFiles
+            elif method == "workspace/willCreateFiles":
+                self.logger.info(f"Received will create files request (ID: {message_id})")
 
-                # Send server ready notification
-                self.server._send_notification("$/neozork/serverReady", {
-                    "status": "ready",
-                    "features": ["completion", "hover", "definition"]
-                })
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": None  # No changes
+                }
 
-            # New notification for workspace/didChangeWatchedFiles
-            elif method == "workspace/didChangeWatchedFiles":
-                params = request.get("params", {})
-                changes = params.get("changes", [])
-                for change in changes:
-                    uri = change.get("uri", "")
-                    change_type = change.get("type", 0)
-                    change_type_str = {1: "Created", 2: "Changed", 3: "Deleted"}.get(change_type, "Unknown")
-                    self.logger.info(f"File {change_type_str}: {uri}")
+            # New handler for workspace/willRenameFiles
+            elif method == "workspace/willRenameFiles":
+                self.logger.info(f"Received will rename files request (ID: {message_id})")
 
-            # New notification for workspace/didChangeConfiguration
-            elif method == "workspace/didChangeConfiguration":
-                self.logger.info("Configuration changed, updating settings")
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": None  # No changes
+                }
+
+            # New handler for workspace/willDeleteFiles
+            elif method == "workspace/willDeleteFiles":
+                self.logger.info(f"Received will delete files request (ID: {message_id})")
+
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": None  # No changes
+                }
+
+            # Response to custom method that GitHub Copilot might send
+            elif method.startswith("copilot/"):
+                self.logger.info(f"Received Copilot-specific request: {method}")
+
+                # Detect if this is a Copilot request
+                self.logger.info(f"🤖 COPILOT REQUEST: {method} (ID: {message_id})")
+
+                # Store client information for Copilot
+                if method == "copilot/signIn":
+                    # Authorization request
+                    self.logger.info("Query for Copilot sign-in")
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": message_id,
+                        "result": {
+                            "status": "Success",
+                            "user": "NeozorkMCPUser"
+                        }
+                    }
+                elif method == "copilot/getCompletions" or method == "getCompletions":
+                    # Query for completions
+                    params = request.get("params", {})
+                    doc_uri = params.get("doc", {}).get("uri", "")
+                    position = params.get("position", {})
+                    self.logger.info(f"Query for Copilot completions in {doc_uri} at position {position}")
+
+                    # Get document content if available
+                    document_content = ""
+                    if doc_uri and doc_uri in self.server.documents:
+                        document_content = self.server.documents[doc_uri]
+
+                    # Generate more meaningful completions for Copilot
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": message_id,
+                        "result": {
+                            "completions": [
+                                {
+                                    "text": "# Generated by NeozorkMCP\ndef process_data(data):\n    \"\"\"Process the input data and return results\"\"\"\n    results = []\n    for item in data:\n        if isinstance(item, dict):\n            results.append(item.get('value', 0))\n    return results",
+                                    "displayText": "def process_data(data): ...",
+                                    "position": position
+                                },
+                                {
+                                    "text": "# Helper function\ndef analyze_results(results):\n    \"\"\"Analyze processing results\"\"\"\n    if not results:\n        return None\n    return {\n        'mean': sum(results) / len(results),\n        'max': max(results),\n        'min': min(results)\n    }",
+                                    "displayText": "def analyze_results(results): ...",
+                                    "position": position
+                                }
+                            ]
+                        }
+                    }
+                elif method == "copilot/getCompletionsCycling":
+                    self.logger.info("Query for Copilot completions cycling")
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": message_id,
+                        "result": {
+                            "completions": [
+                                {
+                                    "text": "# Option 1\ndef option_one():\n    print('This is option one')\n    return 1",
+                                    "displayText": "Option 1: def option_one()",
+                                    "position": {"line": 0, "character": 0}
+                                },
+                                {
+                                    "text": "# Option 2\ndef option_two():\n    print('This is option two')\n    return 2",
+                                    "displayText": "Option 2: def option_two()",
+                                    "position": {"line": 0, "character": 0}
+                                }
+                            ]
+                        }
+                    }
+                elif method == "copilot/updateCompletionTracker":
+                    self.logger.info("Updating Copilot completion tracker")
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": message_id,
+                        "result": {
+                            "status": "Success",
+                            "action": "Updated"
+                        }
+                    }
+                elif method == "copilot/tokenize":
+                    self.logger.info("Copilot tokenize request")
+                    params = request.get("params", {})
+                    text = params.get("text", "")
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": message_id,
+                        "result": {
+                            "tokens": text.split()  # Simple tokenization by spaces
+                        }
+                    }
+                elif method == "copilot/getCaptionContext":
+                    self.logger.info("Copilot caption context request")
+                    response = {
+                        "jsonrpc": "2.0",
+                        "id": message_id,
+                        "result": {
+                            "context": {
+                                "repo": "neozork-hld-prediction",
+                                "file": "current_file.py",
+                                "functions": ["analyze_data", "process_results"]
+                            }
+                        }
+                    }
+
+                # Query for other Copilot features
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": {
+                        "status": "Success"
+                    }
+                }
+
+            # Response to shutdown
+            elif method == "shutdown":
+                self.logger.info(f"Received shutdown request after {int(uptime)}s uptime")
+                self.logger.info(f"Connection stats: {self.server.successful_connections} successful connections out of {self.server.connection_attempts} attempts")
+                self.logger.info(f"Processed {self.server.request_count} requests")
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": None
+                }
+
+            # Response to exit
+            elif method == "exit":
+                self.logger.info(f"Received exit request after {int(uptime)}s uptime")
+                self.logger.info(f"Final stats: {self.server.successful_connections}/{self.server.connection_attempts} connections, {self.server.request_count} requests processed")
+
+                # Send response before exiting
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": message_id,
+                    "result": None
+                }
+                self.server._send_response(response)
+                # Terminate program
+                self.server.shutdown_gracefully()
+                import sys
+                sys.exit(0)
+
+            # Dynamic log level change via workspace/didChangeConfiguration
+            if request.get("method") == "workspace/didChangeConfiguration":
                 params = request.get("params", {})
                 settings = params.get("settings", {})
-                self.server.settings = settings
-                self.logger.debug(f"New settings: {json.dumps(settings)}")
+                if isinstance(settings, dict) and settings.get("debug") is True:
+                    self.logger.setLevel(logging.DEBUG)
+                    self.logger.info("Log level set to DEBUG by client config")
+                elif isinstance(settings, dict) and settings.get("debug") is False:
+                    self.logger.setLevel(logging.INFO)
+                    self.logger.info("Log level set to INFO by client config")
 
-            # For notifications, we don't send a response
-            return None
+            # Logging and handling $/cancelRequest
+            if request.get("method") == "$/cancelRequest":
+                self.logger.info(f"Received $/cancelRequest: {json.dumps(request)}")
+                return None
 
-        method = request.get("method", "")
-        message_id = request.get("id", 0)
+            # Logging and handling large messages
+            if len(json.dumps(request)) > 10000:
+                self.logger.warning(f"Large message received: {len(json.dumps(request))} bytes")
 
-        self.logger.info(f"Received request: {method} (ID: {message_id}) [req #{self.server.request_count}, uptime: {int(uptime)}s]")
-        self.logger.debug(f"Full request: {json.dumps(request)}")
-
-        # Standard response to initialize
-        if method == "initialize":
-            self.server.connection_attempts += 1
-            params = request.get("params", {})
-            client_info = params.get("clientInfo", {})
-            client_name = client_info.get("name", "Unknown Client")
-            client_version = client_info.get("version", "Unknown Version")
-            protocol_version = params.get("protocolVersion", "Unknown")
-
-            # Save client and protocol information
-            client_key = f"{client_name}_{client_version}"
-            self.server.client_info[client_key] = {
-                "name": client_name,
-                "version": client_version,
-                "last_connection": time.time(),
-                "protocol": protocol_version,
-                "capabilities": params.get("capabilities", {})
-            }
-            self.server.protocol_versions.add(protocol_version)
-
-            self.logger.info(f"🔌 CONNECTION ATTEMPT #{self.server.connection_attempts} from {client_name} v{client_version}")
-            self.logger.info(f"Protocol version: {protocol_version}")
-            self.logger.info(f"Client capabilities: {json.dumps(params.get('capabilities', {}), indent=2)}")
-
-            self.server._update_client_list(client_name, client_version, status="connected")
-
-            # Mark connection as successful after server processes 'initialize' and sends response.
-            if self.server.active_clients.get(client_key) and \
-               not self.server.active_clients[client_key].get('initialization_counted_successful', False):
-                self.server.successful_connections += 1
-                self.server.active_clients[client_key]['initialization_counted_successful'] = True
-                self.logger.info(f"✅ Connection marked SUCCESSFUL after 'initialize' response for {client_key}. Total successful: {self.server.successful_connections}, Attempts: {self.server.connection_attempts}")
-            elif self.server.active_clients.get(client_key) and self.server.active_clients[client_key].get('initialization_counted_successful', False):
-                self.logger.info(f"Connection for {client_key} already marked successful. 'initialize' received again?")
-            else:
-                self.logger.warning(f"Could not mark {client_key} as successful: client_key not found in active_clients after update.")
-
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": {
-                    "capabilities": {
-                        "completionProvider": {
-                            "triggerCharacters": [".", " ", "\t", "(", "[", ",", ":"]
-                        },
-                        "textDocumentSync": {
-                            "openClose": True,
-                            "change": 1,  # Full document synchronization
-                            "willSave": False,
-                            "willSaveWaitUntil": False,
-                            "save": {
-                                "includeText": False
-                            }
-                        },
-                        "hoverProvider": True,
-                        "definitionProvider": True,
-                        "referencesProvider": True,
-                        "documentSymbolProvider": True,
-                        "workspaceSymbolProvider": True,
-                        "codeActionProvider": {
-                            "codeActionKinds": ["quickfix", "refactor"]
-                        },
-                        "executeCommandProvider": {
-                            "commands": ["neozork.analyzeData"]
-                        },
-                        # Добавляем поддержку файловой системы
-                        "workspace": {
-                            "fileOperations": {
-                                "didCreate": {"filters": [{"scheme": "file", "pattern": "**/*"}]},
-                                "didRename": {"filters": [{"scheme": "file", "pattern": "**/*"}]},
-                                "didDelete": {"filters": [{"scheme": "file", "pattern": "**/*"}]}
-                            }
-                        }
-                    },
-                    "serverInfo": {
-                        "name": "NeoZorK HLD Prediction MCP Server",
-                        "version": "1.0.0"
-                    }
-                }
-            }
-
-        # Response to textDocument/completion
-        elif method == "textDocument/completion":
-            self.logger.info(f"Received completion request (ID: {message_id})")
-            params = request.get("params", {})
-            text_document = params.get("textDocument", {})
-            position = params.get("position", {})
-            uri = text_document.get("uri", "")
-
-            # Get document content if available
-            document_content = self.server.documents.get(uri, "")
-
-            # Генерация реальных завершений на основе содержимого документа
-            completions = self._generate_completions(document_content, position)
-
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": {
-                    "isIncomplete": False,
-                    "items": completions
-                }
-            }
-
-        # Response to textDocument/hover
-        elif method == "textDocument/hover":
-            self.logger.info(f"Received hover request (ID: {message_id})")
-            params = request.get("params", {})
-            position = params.get("position", {})
-            text_document = params.get("textDocument", {})
-            uri = text_document.get("uri", "")
-
-            # Извлекаем слово под курсором
-            hover_info = self._generate_hover_info(uri, position)
-
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": {
-                    "contents": {
-                        "kind": "markdown",
-                        "value": hover_info
-                    }
-                }
-            }
-
-        # Response to textDocument/definition
-        elif method == "textDocument/definition":
-            self.logger.info(f"Received definition request (ID: {message_id})")
-            params = request.get("params", {})
-            text_document = params.get("textDocument", {})
-            position = params.get("position", {})
-            uri = text_document.get("uri", "")
-
-            # Реализация поиска определений
-            definitions = self._find_definitions(uri, position)
-
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": definitions  # Возвращаем найденные определения
-            }
-
-        # Новый обработчик для workspace/symbol
-        elif method == "workspace/symbol":
-            self.logger.info(f"Received workspace symbol request (ID: {message_id})")
-            params = request.get("params", {})
-            query = params.get("query", "")
-
-            # Поиск символов в рабочем пространстве
-            symbols = self._find_workspace_symbols(query)
-
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": symbols
-            }
-
-        # Новый обработчик для textDocument/documentSymbol
-        elif method == "textDocument/documentSymbol":
-            self.logger.info(f"Received document symbol request (ID: {message_id})")
-            params = request.get("params", {})
-            text_document = params.get("textDocument", {})
-            uri = text_document.get("uri", "")
-
-            # Поиск символов в документе
-            symbols = self._find_document_symbols(uri)
-
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": symbols
-            }
-
-        # Новый обработчик для workspace/executeCommand
-        elif method == "workspace/executeCommand":
-            self.logger.info(f"Received execute command request (ID: {message_id})")
-            params = request.get("params", {})
-            command = params.get("command", "")
-            arguments = params.get("arguments", [])
-
-            # Выполнение команды
-            result = self._execute_command(command, arguments)
-
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": result
-            }
-
-        # Новый обработчик для textDocument/references
-        elif method == "textDocument/references":
-            self.logger.info(f"Received references request (ID: {message_id})")
-            params = request.get("params", {})
-            text_document = params.get("textDocument", {})
-            position = params.get("position", {})
-            uri = text_document.get("uri", "")
-
-            # Поиск ссылок
-            references = self._find_references(uri, position)
-
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": references
-            }
-
-        # Новый обработчик для workspace/willCreateFiles
-        elif method == "workspace/willCreateFiles":
-            self.logger.info(f"Received will create files request (ID: {message_id})")
-
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": None  # Без правок
-            }
-
-        # Новый обработчик для workspace/willRenameFiles
-        elif method == "workspace/willRenameFiles":
-            self.logger.info(f"Received will rename files request (ID: {message_id})")
-
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": None  # Без правок
-            }
-
-        # Новый обработчик для workspace/willDeleteFiles
-        elif method == "workspace/willDeleteFiles":
-            self.logger.info(f"Received will delete files request (ID: {message_id})")
-
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": None  # Без правок
-            }
-
-        # Response to custom method that GitHub Copilot might send
-        elif method.startswith("copilot/"):
-            self.logger.info(f"Received Copilot-specific request: {method}")
-
-            # Detect if this is a Copilot request
-            self.logger.info(f"🤖 COPILOT REQUEST: {method} (ID: {message_id})")
-
-            # Store client information for Copilot
-            if method == "copilot/signIn":
-                # Authorization request
-                self.logger.info("Query for Copilot sign-in")
+            # Add default response for unknown requests
+            if response is None and request.get("id") is not None:
+                self.logger.warning(f"Unknown method: {request.get('method', '')}")
                 return {
                     "jsonrpc": "2.0",
-                    "id": message_id,
-                    "result": {
-                        "status": "Success",
-                        "user": "NeozorkMCPUser"
-                    }
-                }
-            elif method == "copilot/getCompletions" or method == "getCompletions":
-                # Query for completions
-                params = request.get("params", {})
-                doc_uri = params.get("doc", {}).get("uri", "")
-                position = params.get("position", {})
-                self.logger.info(f"Query for Copilot completions in {doc_uri} at position {position}")
-
-                # Получаем содержимое документа если есть
-                document_content = ""
-                if doc_uri and doc_uri in self.server.documents:
-                    document_content = self.server.documents[doc_uri]
-
-                # Генерируем более осмысленные завершения для Copilot
-                return {
-                    "jsonrpc": "2.0",
-                    "id": message_id,
-                    "result": {
-                        "completions": [
-                            {
-                                "text": "# Generated by NeozorkMCP\ndef process_data(data):\n    \"\"\"Process the input data and return results\"\"\"\n    results = []\n    for item in data:\n        if isinstance(item, dict):\n            results.append(item.get('value', 0))\n    return results",
-                                "displayText": "def process_data(data): ...",
-                                "position": position
-                            },
-                            {
-                                "text": "# Helper function\ndef analyze_results(results):\n    \"\"\"Analyze processing results\"\"\"\n    if not results:\n        return None\n    return {\n        'mean': sum(results) / len(results),\n        'max': max(results),\n        'min': min(results)\n    }",
-                                "displayText": "def analyze_results(results): ...",
-                                "position": position
-                            }
-                        ]
-                    }
-                }
-            elif method == "copilot/getCompletionsCycling":
-                self.logger.info("Query for Copilot completions cycling")
-                return {
-                    "jsonrpc": "2.0",
-                    "id": message_id,
-                    "result": {
-                        "completions": [
-                            {
-                                "text": "# Option 1\ndef option_one():\n    print('This is option one')\n    return 1",
-                                "displayText": "Option 1: def option_one()",
-                                "position": {"line": 0, "character": 0}
-                            },
-                            {
-                                "text": "# Option 2\ndef option_two():\n    print('This is option two')\n    return 2",
-                                "displayText": "Option 2: def option_two()",
-                                "position": {"line": 0, "character": 0}
-                            }
-                        ]
-                    }
-                }
-            elif method == "copilot/updateCompletionTracker":
-                self.logger.info("Updating Copilot completion tracker")
-                return {
-                    "jsonrpc": "2.0",
-                    "id": message_id,
-                    "result": {
-                        "status": "Success",
-                        "action": "Updated"
-                    }
-                }
-            elif method == "copilot/tokenize":
-                self.logger.info("Copilot tokenize request")
-                params = request.get("params", {})
-                text = params.get("text", "")
-                return {
-                    "jsonrpc": "2.0",
-                    "id": message_id,
-                    "result": {
-                        "tokens": text.split()  # Простая токенизация по пробелам
-                    }
-                }
-            elif method == "copilot/getCaptionContext":
-                self.logger.info("Copilot caption context request")
-                return {
-                    "jsonrpc": "2.0",
-                    "id": message_id,
-                    "result": {
-                        "context": {
-                            "repo": "neozork-hld-prediction",
-                            "file": "current_file.py",
-                            "functions": ["analyze_data", "process_results"]
-                        }
+                    "id": request.get("id", 0),
+                    "error": {
+                        "code": -32601,
+                        "message": f"Method not found: {request.get('method', '')}"
                     }
                 }
 
-            # Query for other Copilot features
+            # Logging request processing time
+            end_time = time.time()
+            self.logger.info(f"Request {request.get('method', '')} processed in {end_time - start_time:.4f} sec")
+            return response
+        except Exception as e:
+            import traceback
+            self.logger.error(f"Exception in handle_request: {e}")
+            self.logger.error(traceback.format_exc())
             return {
                 "jsonrpc": "2.0",
-                "id": message_id,
-                "result": {
-                    "status": "Success"
+                "id": request.get("id", 0),
+                "error": {
+                    "code": -32001,
+                    "message": f"Internal server error: {str(e)}"
                 }
-            }
-
-        # Response to shutdown
-        elif method == "shutdown":
-            self.logger.info(f"Received shutdown request after {int(uptime)}s uptime")
-            self.logger.info(f"Connection stats: {self.server.successful_connections} successful connections out of {self.server.connection_attempts} attempts")
-            self.logger.info(f"Processed {self.server.request_count} requests")
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": None
-            }
-
-        # Response to exit
-        elif method == "exit":
-            self.logger.info(f"Received exit request after {int(uptime)}s uptime")
-            self.logger.info(f"Final stats: {self.server.successful_connections}/{self.server.connection_attempts} connections, {self.server.request_count} requests processed")
-
-            # Send response before exiting
-            response = {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": None
-            }
-            self.server._send_response(response)
-            # Terminate program
-            self.server.shutdown_gracefully()
-            import sys
-            sys.exit(0)
-
-        # Add default response for unknown requests
-        else:
-            self.logger.warning(f"Received unknown request method: {method}")
-            return {
-                "jsonrpc": "2.0",
-                "id": message_id,
-                "result": None
             }
 
     def _generate_completions(self, document_content, position):
@@ -520,10 +599,10 @@ class RequestHandler:
         line = position.get("line", 0)
         character = position.get("character", 0)
 
-        # Разбиваем содержимое документа на строки
+        # Split document content into lines
         lines = document_content.split("\n") if document_content else []
 
-        # Базовые завершения
+        # Basic completions
         completions = [
             {
                 "label": "Simple placeholder completion",
@@ -534,7 +613,7 @@ class RequestHandler:
             }
         ]
 
-        # Если документ содержит Python код
+        # If the document contains Python code
         if any(l.startswith("def ") or l.startswith("class ") for l in lines):
             completions.extend([
                 {
@@ -576,7 +655,7 @@ class RequestHandler:
 
         if line < len(lines):
             current_line = lines[line]
-            # Простая эвристика для выделения слова под курсором
+            # Simple heuristic to extract the word under the cursor
             start = max(0, character)
             while start > 0 and current_line[start-1].isalnum() or current_line[start-1] == '_':
                 start -= 1
@@ -588,7 +667,7 @@ class RequestHandler:
             word = current_line[start:end]
 
             if word:
-                # Генерируем информацию на основе слова
+                # Generate information based on the word
                 if word == "RequestHandler":
                     return "**RequestHandler**\n\nHandles incoming LSP requests from clients.\n\nProperties:\n- server: Server instance\n- logger: Logging instance"
                 elif word == "SimpleMCPServer":
@@ -612,7 +691,7 @@ class RequestHandler:
 
         if line < len(lines):
             current_line = lines[line]
-            # Выделяем слово под курсором
+            # Extract the word under the cursor
             start = max(0, character)
             while start > 0 and (current_line[start-1].isalnum() or current_line[start-1] == '_'):
                 start -= 1
@@ -624,7 +703,7 @@ class RequestHandler:
             word = current_line[start:end]
 
             if word:
-                # Поиск определений в документе
+                # Search for definitions in the document
                 for i, line_text in enumerate(lines):
                     if line_text.startswith(f"def {word}") or line_text.startswith(f"class {word}"):
                         return [
@@ -637,7 +716,7 @@ class RequestHandler:
                             }
                         ]
 
-        return []  # Если не найдено
+        return []  # If not found
 
     def _find_workspace_symbols(self, query):
         """
@@ -645,7 +724,7 @@ class RequestHandler:
         """
         symbols = []
 
-        # Простая имитация символов в рабочем пространстве
+        # Simple simulation of symbols in the workspace
         if not query or "handler" in query.lower():
             symbols.append({
                 "name": "RequestHandler",
@@ -685,7 +764,7 @@ class RequestHandler:
         symbols = []
         lines = document_content.split("\n")
 
-        # Поиск определений функций и классов
+        # Search for function and class definitions
         for i, line in enumerate(lines):
             line = line.strip()
             if line.startswith("def "):
@@ -726,7 +805,7 @@ class RequestHandler:
         self.logger.info(f"Executing command: {command} with arguments: {arguments}")
 
         if command == "neozork.analyzeData":
-            # Имитация анализа данных
+            # Simulated data analysis
             return {
                 "status": "success",
                 "message": "Data analysis complete",
@@ -756,7 +835,7 @@ class RequestHandler:
 
         if line < len(lines):
             current_line = lines[line]
-            # Выделяем слово под курсором
+            # Extract the word under the cursor
             start = max(0, character)
             while start > 0 and (current_line[start-1].isalnum() or current_line[start-1] == '_'):
                 start -= 1
@@ -769,7 +848,7 @@ class RequestHandler:
 
             if word:
                 references = []
-                # Поиск всех упоминаний слова в документе
+                # Search for all mentions of the word in the document
                 for i, line_text in enumerate(lines):
                     pos = 0
                     while True:
@@ -777,7 +856,7 @@ class RequestHandler:
                         if pos == -1:
                             break
 
-                        # Проверка, что это отдельное слово
+                        # Check that this is a separate word
                         is_word_boundary_left = pos == 0 or not (line_text[pos-1].isalnum() or line_text[pos-1] == '_')
                         is_word_boundary_right = pos + len(word) >= len(line_text) or not (line_text[pos + len(word)].isalnum() or line_text[pos + len(word)] == '_')
 
