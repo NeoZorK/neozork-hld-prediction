@@ -574,6 +574,10 @@ class RequestHandler:
                         "message": f"Method not found: {request.get('method', '')}"
                     }
                 }
+            elif response is None and request.get("id") is None:
+                # Notification with unknown method: just log
+                self.logger.warning(f"Unknown notification method: {request.get('method', '')}")
+                return None
 
             # Logging request processing time
             end_time = time.time()
@@ -583,14 +587,18 @@ class RequestHandler:
             import traceback
             self.logger.error(f"Exception in handle_request: {e}")
             self.logger.error(traceback.format_exc())
-            return {
-                "jsonrpc": "2.0",
-                "id": request.get("id", 0),
-                "error": {
-                    "code": -32001,
-                    "message": f"Internal server error: {str(e)}"
+            # Возвращаем корректный JSON-RPC ответ об ошибке, если есть id
+            if isinstance(request, dict) and request.get("id") is not None:
+                return {
+                    "jsonrpc": "2.0",
+                    "id": request.get("id", 0),
+                    "error": {
+                        "code": -32001,
+                        "message": f"Internal server error: {str(e)}"
+                    }
                 }
-            }
+            # Если это notification (без id), не возвращаем ответ
+            return None
 
     def _generate_completions(self, document_content, position):
         """
@@ -875,17 +883,28 @@ class RequestHandler:
 
         return []
 
+    def _is_path_within_project(self, path: str) -> bool:
+        """
+        Проверяет, что путь находится внутри project_root
+        """
+        abs_path = os.path.abspath(path)
+        project_root = os.path.abspath(self.server.project_root)
+        return abs_path.startswith(project_root)
+
     def _uri_to_path(self, uri: str) -> str:
         """
         Convert file URI to absolute path in the local filesystem
         """
         if uri.startswith("file://"):
             path = uri[7:]
-            # On macOS and Linux, file:// URIs may start with an extra slash
             if path.startswith("/") and not os.path.exists(path):
-                # Try removing one leading slash if path is not found
                 path = path[1:]
-            return os.path.abspath(path)
+            abs_path = os.path.abspath(path)
+            # Проверка безопасности
+            if not self._is_path_within_project(abs_path):
+                self.logger.error(f"Access denied: {abs_path} is outside project root {self.server.project_root}")
+                raise PermissionError(f"Access denied: {abs_path} is outside project root")
+            return abs_path
         return uri
 
     def _read_file(self, path: str) -> str:
@@ -893,6 +912,9 @@ class RequestHandler:
         Read file content as UTF-8, return empty string on error
         """
         try:
+            if not self._is_path_within_project(path):
+                self.logger.error(f"Read denied: {path} is outside project root {self.server.project_root}")
+                return ""
             with open(path, "r", encoding="utf-8") as f:
                 return f.read()
         except Exception as e:
@@ -904,6 +926,9 @@ class RequestHandler:
         Write content to file as UTF-8, create directories if needed
         """
         try:
+            if not self._is_path_within_project(path):
+                self.logger.error(f"Write denied: {path} is outside project root {self.server.project_root}")
+                return False
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w", encoding="utf-8") as f:
                 f.write(content)
@@ -914,6 +939,9 @@ class RequestHandler:
 
     def _delete_file(self, path: str) -> bool:
         try:
+            if not self._is_path_within_project(path):
+                self.logger.error(f"Delete denied: {path} is outside project root {self.server.project_root}")
+                return False
             os.remove(path)
             return True
         except Exception as e:
@@ -922,6 +950,9 @@ class RequestHandler:
 
     def _rename_file(self, old_path: str, new_path: str) -> bool:
         try:
+            if not self._is_path_within_project(old_path) or not self._is_path_within_project(new_path):
+                self.logger.error(f"Rename denied: {old_path} or {new_path} is outside project root {self.server.project_root}")
+                return False
             os.makedirs(os.path.dirname(new_path), exist_ok=True)
             os.rename(old_path, new_path)
             return True

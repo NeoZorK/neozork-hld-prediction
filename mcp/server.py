@@ -50,6 +50,9 @@ class SimpleMCPServer:
         # Active client sessions
         self.active_clients = {}
 
+        # Display start message
+        self.project_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+
         # Create handler for requests
         self.handler = RequestHandler(self)
         # Create utils for helper methods
