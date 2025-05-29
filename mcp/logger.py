@@ -9,9 +9,13 @@ import sys
 import os
 import datetime
 
-def setup_logger(project_root=None):
+def setup_logger(project_root=None, console_output=False):
     """
     Set up and configure logger for the MCP server
+
+    Args:
+        project_root: Project root directory path
+        console_output: Whether to output logs to console (default: False)
     """
     if not project_root:
         # Determine project root if not provided
@@ -28,26 +32,17 @@ def setup_logger(project_root=None):
     if not os.path.exists(logs_dir):
         try:
             os.makedirs(logs_dir)
-            print(f"Created logs directory: {logs_dir}")
+            if console_output:
+                print(f"Created logs directory: {logs_dir}")
         except Exception as e:
-            print(f"Error creating logs directory: {str(e)}")
+            if console_output:
+                print(f"Error creating logs directory: {str(e)}")
 
     # Use a single permanent log file instead of creating a new one with each launch
     log_file_path = os.path.join(logs_dir, "mcp_server.log")
 
-    # Создаем форматтер, который будет использоваться для обоих обработчиков
+    # Создаем форматтер, который будет использоваться для обработчиков
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-    # Создаем и настраиваем обработчики отдельно
-    # Используем sys.stderr для вывода в консоль, чтобы не конфликтовать с sys.stdout,
-    # который используется для протокола MCP
-    console_handler = logging.StreamHandler(sys.stderr)
-    console_handler.setLevel(logging.INFO)  # Устанавливаем уровень INFO для консоли (меньше вывода)
-    console_handler.setFormatter(formatter)
-
-    file_handler = logging.FileHandler(log_file_path, encoding='utf-8')
-    file_handler.setLevel(logging.DEBUG)  # Сохраняем уровень DEBUG для файла (подробные логи)
-    file_handler.setFormatter(formatter)
 
     # Настраиваем корневой логгер
     root_logger = logging.getLogger()
@@ -57,9 +52,18 @@ def setup_logger(project_root=None):
     for handler in root_logger.handlers[:]:
         root_logger.removeHandler(handler)
 
-    # Добавляем наши обработчики
-    root_logger.addHandler(console_handler)
+    # Добавляем файловый обработчик всегда
+    file_handler = logging.FileHandler(log_file_path, encoding='utf-8')
+    file_handler.setLevel(logging.DEBUG)  # Сохраняем уровень DEBUG для файла (подробные логи)
+    file_handler.setFormatter(formatter)
     root_logger.addHandler(file_handler)
+
+    # Добавляем консольный обработчик только если console_output=True
+    if console_output:
+        console_handler = logging.StreamHandler(sys.stderr)
+        console_handler.setLevel(logging.INFO)  # Устанавливаем уровень INFO для консоли (меньше вывода)
+        console_handler.setFormatter(formatter)
+        root_logger.addHandler(console_handler)
 
     # Создаем логгер для приложения
     logger = logging.getLogger("simple_mcp")
