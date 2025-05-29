@@ -23,20 +23,17 @@ class RequestHandler:
         self.logger = logging.getLogger("simple_mcp")
 
     def handle_request(self, request: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """
-        Processing requests from GitHub Copilot
-        """
+        self.logger.debug(f"Entering handle_request() with request: {json.dumps(request)}")
         try:
-            # Explicit logging of all incoming requests (including notifications)
             self.logger.debug(f"handle_request called with: {json.dumps(request)}")
             if not request:
+                self.logger.debug("Request is empty or None")
                 return {}
 
             self.server.request_count += 1
             current_time = time.time()
             uptime = current_time - self.server.start_time
 
-            # Display request details on screen
             request_method = request.get("method", "unknown")
             request_id = request.get("id", "notification")
             request_params = request.get("params", {})
@@ -44,15 +41,16 @@ class RequestHandler:
 
             self.logger.info(f"REQUEST #{self.server.request_count}: {request_method} (ID: {request_id})")
             self.logger.info(f"PARAMS: {simplified_params}")
+            self.logger.debug(f"Request method: {request_method}, id: {request_id}, params: {simplified_params}")
 
-            # Check if this is a notification (without ID)
             if "id" not in request:
+                self.logger.debug(f"Processing notification: {request.get('method', '')}")
                 method = request.get("method", "")
                 self.logger.info(f"Received notification: {method} [req #{self.server.request_count}, uptime: {int(uptime)}s]")
                 self.logger.debug(f"Full notification: {json.dumps(request)}")
 
-                # Process some notifications
                 if method == "textDocument/didOpen":
+                    self.logger.debug(f"Notification textDocument/didOpen params: {request.get('params', {})}")
                     params = request.get("params", {})
                     text_document = params.get("textDocument", {})
                     uri = text_document.get("uri", "")
@@ -62,12 +60,12 @@ class RequestHandler:
                         self.logger.info(f"Document opened: {uri} (Language: {language_id}, Size: {len(self.server.documents[uri])} chars)")
 
                 elif method == "textDocument/didChange":
+                    self.logger.debug(f"Notification textDocument/didChange params: {request.get('params', {})}")
                     params = request.get("params", {})
                     text_document = params.get("textDocument", {})
                     uri = text_document.get("uri", "")
                     changes = params.get("contentChanges", [])
                     if uri and uri in self.server.documents and changes:
-                        # Simple document update (does not account for change positions)
                         old_size = len(self.server.documents[uri])
                         self.server.documents[uri] = changes[-1].get("text", self.server.documents[uri])
                         new_size = len(self.server.documents[uri])
@@ -75,6 +73,7 @@ class RequestHandler:
                         self.logger.info(f"Document changed: {uri} (Size delta: {'+' if change_size >= 0 else ''}{change_size} chars)")
 
                 elif method == "textDocument/didClose":
+                    self.logger.debug(f"Notification textDocument/didClose params: {request.get('params', {})}")
                     params = request.get("params", {})
                     text_document = params.get("textDocument", {})
                     uri = text_document.get("uri", "")
@@ -82,27 +81,20 @@ class RequestHandler:
                         self.logger.info(f"Document closed: {uri} (Final size: {len(self.server.documents[uri])} chars)")
                         del self.server.documents[uri]
 
-                # New case for initialized notification to fix connection problems
                 elif method == "initialized":
-                    # Connection success is now counted upon sending the 'initialize' response.
-                    # This notification from the client confirms it has also initialized.
+                    self.logger.debug(f"Notification initialized params: {request.get('params', {})}")
                     self.logger.info(f"Received 'initialized' notification. Client is ready. (Current successful connections: {self.server.successful_connections}, Attempts: {self.server.connection_attempts})")
-                    # Note: self.successful_connections is no longer incremented here.
-
-                    # Send ready notification
                     self.server._send_notification("window/showMessage", {
-                        "type": 3,  # Info
+                        "type": 3,
                         "message": f"MCP Server is ready and connected (Connection #{self.server.successful_connections})"
                     })
-
-                    # Send server ready notification
                     self.server._send_notification("$/neozork/serverReady", {
                         "status": "ready",
                         "features": ["completion", "hover", "definition"]
                     })
 
-                # New notification for workspace/didChangeWatchedFiles
                 elif method == "workspace/didChangeWatchedFiles":
+                    self.logger.debug(f"Notification workspace/didChangeWatchedFiles params: {request.get('params', {})}")
                     params = request.get("params", {})
                     changes = params.get("changes", [])
                     for change in changes:
@@ -111,27 +103,24 @@ class RequestHandler:
                         change_type_str = {1: "Created", 2: "Changed", 3: "Deleted"}.get(change_type, "Unknown")
                         self.logger.info(f"File {change_type_str}: {uri}")
 
-                # New notification for workspace/didChangeConfiguration
                 elif method == "workspace/didChangeConfiguration":
+                    self.logger.debug(f"Notification workspace/didChangeConfiguration params: {request.get('params', {})}")
                     self.logger.info("Configuration changed, updating settings")
                     params = request.get("params", {})
                     settings = params.get("settings", {})
                     self.server.settings = settings
                     self.logger.debug(f"New settings: {json.dumps(settings)}")
 
-                # LSP keepalive/heartbeat and $/ping/$/heartbeat support
                 if method in ["$/heartbeat", "$/ping"]:
                     self.logger.info(f"Received keepalive notification: {method}")
                     return None
 
-                # Logging all notifications (INFO)
                 self.logger.info(f"Notification: {request.get('method', '')} {json.dumps(request)}")
-
-                # For notifications, we don't send a response
+                self.logger.debug(f"Notification processing complete for: {method}")
                 return None
 
-            # Check: if workspace/didChangeConfiguration came as a request (with id), return response
             if request.get("method") == "workspace/didChangeConfiguration" and "id" in request:
+                self.logger.debug("workspace/didChangeConfiguration came as request, returning result: None")
                 self.logger.info("workspace/didChangeConfiguration came as request, returning result: None")
                 return {
                     "jsonrpc": "2.0",
@@ -139,11 +128,9 @@ class RequestHandler:
                     "result": None
                 }
 
-            # Check for repeated initialize
             if request.get("method") == "initialize" and self.server.successful_connections > 0:
                 self.logger.warning("Repeated initialize received without shutdown/exit. Ignoring state reset.")
 
-            # Validation of incoming messages
             if not request.get("jsonrpc") or not request.get("method"):
                 self.logger.error("Invalid LSP message: missing 'jsonrpc' or 'method'")
                 return {
@@ -160,12 +147,12 @@ class RequestHandler:
 
             self.logger.info(f"Received request: {method} (ID: {message_id}) [req #{self.server.request_count}, uptime: {int(uptime)}s]")
             self.logger.debug(f"Full request: {json.dumps(request)}")
+            self.logger.debug(f"Processing method: {method}, message_id: {message_id}")
 
-            # Logging request processing time
             start_time = time.time()
 
-            # Standard response to initialize
             if method == "initialize":
+                self.logger.debug(f"Processing initialize with params: {request.get('params', {})}")
                 self.server.connection_attempts += 1
                 params = request.get("params", {})
                 client_info = params.get("clientInfo", {})
@@ -173,7 +160,6 @@ class RequestHandler:
                 client_version = client_info.get("version", "Unknown Version")
                 protocol_version = params.get("protocolVersion", "Unknown")
 
-                # Save client and protocol information
                 client_key = f"{client_name}_{client_version}"
                 self.server.client_info[client_key] = {
                     "name": client_name,
@@ -190,7 +176,6 @@ class RequestHandler:
 
                 self.server._update_client_list(client_name, client_version, status="connected")
 
-                # Mark connection as successful after server processes 'initialize' and sends response.
                 if self.server.active_clients.get(client_key) and \
                    not self.server.active_clients[client_key].get('initialization_counted_successful', False):
                     self.server.successful_connections += 1
@@ -211,7 +196,7 @@ class RequestHandler:
                             },
                             "textDocumentSync": {
                                 "openClose": True,
-                                "change": 1,  # Full document synchronization
+                                "change": 1,
                                 "willSave": False,
                                 "willSaveWaitUntil": False,
                                 "save": {
@@ -229,7 +214,6 @@ class RequestHandler:
                             "executeCommandProvider": {
                                 "commands": ["neozork.analyzeData"]
                             },
-                            # Adding file system support
                             "workspace": {
                                 "fileOperations": {
                                     "didCreate": {"filters": [{"scheme": "file", "pattern": "**/*"}]},
@@ -245,18 +229,16 @@ class RequestHandler:
                     }
                 }
 
-            # Response to textDocument/completion
             elif method == "textDocument/completion":
+                self.logger.debug(f"Processing textDocument/completion with params: {request.get('params', {})}")
                 self.logger.info(f"Received completion request (ID: {message_id})")
                 params = request.get("params", {})
                 text_document = params.get("textDocument", {})
                 position = params.get("position", {})
                 uri = text_document.get("uri", "")
 
-                # Get document content if available
                 document_content = self.server.documents.get(uri, "")
 
-                # Generate real completions based on document content
                 completions = self._generate_completions(document_content, position)
 
                 response = {
@@ -268,15 +250,14 @@ class RequestHandler:
                     }
                 }
 
-            # Response to textDocument/hover
             elif method == "textDocument/hover":
+                self.logger.debug(f"Processing textDocument/hover with params: {request.get('params', {})}")
                 self.logger.info(f"Received hover request (ID: {message_id})")
                 params = request.get("params", {})
                 position = params.get("position", {})
                 text_document = params.get("textDocument", {})
                 uri = text_document.get("uri", "")
 
-                # Extract word under cursor
                 hover_info = self._generate_hover_info(uri, position)
 
                 response = {
@@ -290,30 +271,28 @@ class RequestHandler:
                     }
                 }
 
-            # Response to textDocument/definition
             elif method == "textDocument/definition":
+                self.logger.debug(f"Processing textDocument/definition with params: {request.get('params', {})}")
                 self.logger.info(f"Received definition request (ID: {message_id})")
                 params = request.get("params", {})
                 text_document = params.get("textDocument", {})
                 position = params.get("position", {})
                 uri = text_document.get("uri", "")
 
-                # Implementation of definition search
                 definitions = self._find_definitions(uri, position)
 
                 response = {
                     "jsonrpc": "2.0",
                     "id": message_id,
-                    "result": definitions  # Return found definitions
+                    "result": definitions
                 }
 
-            # New handler for workspace/symbol
             elif method == "workspace/symbol":
+                self.logger.debug(f"Processing workspace/symbol with params: {request.get('params', {})}")
                 self.logger.info(f"Received workspace symbol request (ID: {message_id})")
                 params = request.get("params", {})
                 query = params.get("query", "")
 
-                # Search for symbols in the workspace
                 symbols = self._find_workspace_symbols(query)
 
                 response = {
@@ -322,14 +301,13 @@ class RequestHandler:
                     "result": symbols
                 }
 
-            # New handler for textDocument/documentSymbol
             elif method == "textDocument/documentSymbol":
+                self.logger.debug(f"Processing textDocument/documentSymbol with params: {request.get('params', {})}")
                 self.logger.info(f"Received document symbol request (ID: {message_id})")
                 params = request.get("params", {})
                 text_document = params.get("textDocument", {})
                 uri = text_document.get("uri", "")
 
-                # Search for symbols in the document
                 symbols = self._find_document_symbols(uri)
 
                 response = {
@@ -338,14 +316,13 @@ class RequestHandler:
                     "result": symbols
                 }
 
-            # New handler for workspace/executeCommand
             elif method == "workspace/executeCommand":
+                self.logger.debug(f"Processing workspace/executeCommand with params: {request.get('params', {})}")
                 self.logger.info(f"Received execute command request (ID: {message_id})")
                 params = request.get("params", {})
                 command = params.get("command", "")
                 arguments = params.get("arguments", [])
 
-                # Execute command
                 result = self._execute_command(command, arguments)
 
                 response = {
@@ -354,15 +331,14 @@ class RequestHandler:
                     "result": result
                 }
 
-            # New handler for textDocument/references
             elif method == "textDocument/references":
+                self.logger.debug(f"Processing textDocument/references with params: {request.get('params', {})}")
                 self.logger.info(f"Received references request (ID: {message_id})")
                 params = request.get("params", {})
                 text_document = params.get("textDocument", {})
                 position = params.get("position", {})
                 uri = text_document.get("uri", "")
 
-                # Search for references
                 references = self._find_references(uri, position)
 
                 response = {
@@ -371,46 +347,42 @@ class RequestHandler:
                     "result": references
                 }
 
-            # New handler for workspace/willCreateFiles
             elif method == "workspace/willCreateFiles":
+                self.logger.debug(f"Processing workspace/willCreateFiles with params: {request.get('params', {})}")
                 self.logger.info(f"Received will create files request (ID: {message_id})")
 
                 response = {
                     "jsonrpc": "2.0",
                     "id": message_id,
-                    "result": None  # No changes
+                    "result": None
                 }
 
-            # New handler for workspace/willRenameFiles
             elif method == "workspace/willRenameFiles":
+                self.logger.debug(f"Processing workspace/willRenameFiles with params: {request.get('params', {})}")
                 self.logger.info(f"Received will rename files request (ID: {message_id})")
 
                 response = {
                     "jsonrpc": "2.0",
                     "id": message_id,
-                    "result": None  # No changes
+                    "result": None
                 }
 
-            # New handler for workspace/willDeleteFiles
             elif method == "workspace/willDeleteFiles":
+                self.logger.debug(f"Processing workspace/willDeleteFiles with params: {request.get('params', {})}")
                 self.logger.info(f"Received will delete files request (ID: {message_id})")
 
                 response = {
                     "jsonrpc": "2.0",
                     "id": message_id,
-                    "result": None  # No changes
+                    "result": None
                 }
 
-            # Response to custom method that GitHub Copilot might send
             elif method.startswith("copilot/"):
+                self.logger.debug(f"Processing copilot method: {method} with params: {request.get('params', {})}")
                 self.logger.info(f"Received Copilot-specific request: {method}")
-
-                # Detect if this is a Copilot request
                 self.logger.info(f"🤖 COPILOT REQUEST: {method} (ID: {message_id})")
 
-                # Store client information for Copilot
                 if method == "copilot/signIn":
-                    # Authorization request
                     self.logger.info("Query for Copilot sign-in")
                     response = {
                         "jsonrpc": "2.0",
@@ -421,18 +393,15 @@ class RequestHandler:
                         }
                     }
                 elif method == "copilot/getCompletions" or method == "getCompletions":
-                    # Query for completions
                     params = request.get("params", {})
                     doc_uri = params.get("doc", {}).get("uri", "")
                     position = params.get("position", {})
                     self.logger.info(f"Query for Copilot completions in {doc_uri} at position {position}")
 
-                    # Get document content if available
                     document_content = ""
                     if doc_uri and doc_uri in self.server.documents:
                         document_content = self.server.documents[doc_uri]
 
-                    # Generate more meaningful completions for Copilot
                     response = {
                         "jsonrpc": "2.0",
                         "id": message_id,
@@ -489,7 +458,7 @@ class RequestHandler:
                         "jsonrpc": "2.0",
                         "id": message_id,
                         "result": {
-                            "tokens": text.split()  # Simple tokenization by spaces
+                            "tokens": text.split()
                         }
                     }
                 elif method == "copilot/getCaptionContext":
@@ -506,7 +475,6 @@ class RequestHandler:
                         }
                     }
 
-                # Query for other Copilot features
                 response = {
                     "jsonrpc": "2.0",
                     "id": message_id,
@@ -515,8 +483,8 @@ class RequestHandler:
                     }
                 }
 
-            # Response to shutdown
             elif method == "shutdown":
+                self.logger.debug(f"Processing shutdown request")
                 self.logger.info(f"Received shutdown request after {int(uptime)}s uptime")
                 self.logger.info(f"Connection stats: {self.server.successful_connections} successful connections out of {self.server.connection_attempts} attempts")
                 self.logger.info(f"Processed {self.server.request_count} requests")
@@ -526,25 +494,23 @@ class RequestHandler:
                     "result": None
                 }
 
-            # Response to exit
             elif method == "exit":
+                self.logger.debug(f"Processing exit request")
                 self.logger.info(f"Received exit request after {int(uptime)}s uptime")
                 self.logger.info(f"Final stats: {self.server.successful_connections}/{self.server.connection_attempts} connections, {self.server.request_count} requests processed")
 
-                # Send response before exiting
                 response = {
                     "jsonrpc": "2.0",
                     "id": message_id,
                     "result": None
                 }
                 self.server._send_response(response)
-                # Terminate program
                 self.server.shutdown_gracefully()
                 import sys
                 sys.exit(0)
 
-            # Dynamic log level change via workspace/didChangeConfiguration
             if request.get("method") == "workspace/didChangeConfiguration":
+                self.logger.debug(f"Dynamic log level change requested: {request.get('params', {})}")
                 params = request.get("params", {})
                 settings = params.get("settings", {})
                 if isinstance(settings, dict) and settings.get("debug") is True:
@@ -554,16 +520,14 @@ class RequestHandler:
                     self.logger.setLevel(logging.INFO)
                     self.logger.info("Log level set to INFO by client config")
 
-            # Logging and handling $/cancelRequest
             if request.get("method") == "$/cancelRequest":
+                self.logger.debug(f"Processing $/cancelRequest: {json.dumps(request)}")
                 self.logger.info(f"Received $/cancelRequest: {json.dumps(request)}")
                 return None
 
-            # Logging and handling large messages
             if len(json.dumps(request)) > 10000:
                 self.logger.warning(f"Large message received: {len(json.dumps(request))} bytes")
 
-            # Add default response for unknown requests
             if response is None and request.get("id") is not None:
                 self.logger.warning(f"Unknown method: {request.get('method', '')}")
                 return {
@@ -575,20 +539,19 @@ class RequestHandler:
                     }
                 }
             elif response is None and request.get("id") is None:
-                # Notification with unknown method: just log
                 self.logger.warning(f"Unknown notification method: {request.get('method', '')}")
                 return None
 
-            # Logging request processing time
             end_time = time.time()
             self.logger.info(f"Request {request.get('method', '')} processed in {end_time - start_time:.4f} sec")
+            self.logger.debug(f"Exiting handle_request() with response: {response}")
             return response
         except Exception as e:
             import traceback
             self.logger.error(f"Exception in handle_request: {e}")
             self.logger.error(traceback.format_exc())
-            # Возвращаем корректный JSON-RPC ответ об ошибке, если есть id
             if isinstance(request, dict) and request.get("id") is not None:
+                self.logger.debug(f"Returning error response for exception: {e}")
                 return {
                     "jsonrpc": "2.0",
                     "id": request.get("id", 0),
@@ -597,64 +560,59 @@ class RequestHandler:
                         "message": f"Internal server error: {str(e)}"
                     }
                 }
-            # Если это notification (без id), не возвращаем ответ
+            self.logger.debug("Exiting handle_request() with notification error (no response)")
             return None
 
     def _generate_completions(self, document_content, position):
-        """
-        Generate completions based on document content and cursor position
-        """
+        self.logger.debug(f"Entering _generate_completions() with document_content length: {len(document_content)}, position: {position}")
         line = position.get("line", 0)
         character = position.get("character", 0)
 
-        # Split document content into lines
         lines = document_content.split("\n") if document_content else []
 
-        # Basic completions
         completions = [
             {
                 "label": "Simple placeholder completion",
-                "kind": 1,  # Text
+                "kind": 1,
                 "detail": "NeoZork MCP Server placeholder completion",
                 "documentation": "This is a placeholder completion from the simple MCP server",
                 "insertText": "placeholder_completion"
             }
         ]
 
-        # If the document contains Python code
         if any(l.startswith("def ") or l.startswith("class ") for l in lines):
             completions.extend([
                 {
                     "label": "def function_name(args)",
-                    "kind": 3,  # Function
+                    "kind": 3,
                     "detail": "Create a new function",
                     "documentation": "Define a new Python function",
                     "insertText": "def ${1:function_name}(${2:args}):\n\t${3:pass}"
                 },
                 {
                     "label": "class ClassName",
-                    "kind": 7,  # Class
+                    "kind": 7,
                     "detail": "Create a new class",
                     "documentation": "Define a new Python class",
                     "insertText": "class ${1:ClassName}:\n\tdef __init__(self, ${2:args}):\n\t\t${3:pass}"
                 },
                 {
                     "label": "if condition",
-                    "kind": 14,  # Keyword
+                    "kind": 14,
                     "detail": "If statement",
                     "documentation": "Create an if statement",
                     "insertText": "if ${1:condition}:\n\t${2:pass}"
                 }
             ])
 
+        self.logger.debug(f"Generated completions: {completions}")
         return completions
 
     def _generate_hover_info(self, uri, position):
-        """
-        Generate hover information for the current position
-        """
+        self.logger.debug(f"Entering _generate_hover_info() with uri: {uri}, position: {position}")
         document_content = self.server.documents.get(uri, "")
         if not document_content:
+            self.logger.debug("No document content available")
             return "No document content available"
 
         lines = document_content.split("\n")
@@ -663,7 +621,6 @@ class RequestHandler:
 
         if line < len(lines):
             current_line = lines[line]
-            # Simple heuristic to extract the word under the cursor
             start = max(0, character)
             while start > 0 and current_line[start-1].isalnum() or current_line[start-1] == '_':
                 start -= 1
@@ -675,7 +632,6 @@ class RequestHandler:
             word = current_line[start:end]
 
             if word:
-                # Generate information based on the word
                 if word == "RequestHandler":
                     return "**RequestHandler**\n\nHandles incoming LSP requests from clients.\n\nProperties:\n- server: Server instance\n- logger: Logging instance"
                 elif word == "SimpleMCPServer":
@@ -683,14 +639,14 @@ class RequestHandler:
                 else:
                     return f"**{word}**\n\nNo detailed information available for this symbol."
 
+        self.logger.debug("No hover information available")
         return "Hover information from NeoZork MCP Server"
 
     def _find_definitions(self, uri, position):
-        """
-        Find definition locations for symbol at position
-        """
+        self.logger.debug(f"Entering _find_definitions() with uri: {uri}, position: {position}")
         document_content = self.server.documents.get(uri, "")
         if not document_content:
+            self.logger.debug("No document content available")
             return []
 
         lines = document_content.split("\n")
@@ -699,7 +655,6 @@ class RequestHandler:
 
         if line < len(lines):
             current_line = lines[line]
-            # Extract the word under the cursor
             start = max(0, character)
             while start > 0 and (current_line[start-1].isalnum() or current_line[start-1] == '_'):
                 start -= 1
@@ -711,9 +666,9 @@ class RequestHandler:
             word = current_line[start:end]
 
             if word:
-                # Search for definitions in the document
                 for i, line_text in enumerate(lines):
                     if line_text.startswith(f"def {word}") or line_text.startswith(f"class {word}"):
+                        self.logger.debug(f"Definition found for word: {word} at line: {i}")
                         return [
                             {
                                 "uri": uri,
@@ -724,19 +679,17 @@ class RequestHandler:
                             }
                         ]
 
-        return []  # If not found
+        self.logger.debug("No definitions found")
+        return []
 
     def _find_workspace_symbols(self, query):
-        """
-        Find symbols in the workspace matching the query
-        """
+        self.logger.debug(f"Entering _find_workspace_symbols() with query: {query}")
         symbols = []
 
-        # Simple simulation of symbols in the workspace
         if not query or "handler" in query.lower():
             symbols.append({
                 "name": "RequestHandler",
-                "kind": 5,  # Class
+                "kind": 5,
                 "location": {
                     "uri": "file:///Users/rost/Documents/DIS/REPO/neozork-hld-prediction/mcp/handler.py",
                     "range": {
@@ -749,7 +702,7 @@ class RequestHandler:
         if not query or "server" in query.lower():
             symbols.append({
                 "name": "SimpleMCPServer",
-                "kind": 5,  # Class
+                "kind": 5,
                 "location": {
                     "uri": "file:///Users/rost/Documents/DIS/REPO/neozork-hld-prediction/mcp/server.py",
                     "range": {
@@ -759,27 +712,26 @@ class RequestHandler:
                 }
             })
 
+        self.logger.debug(f"Workspace symbols found: {symbols}")
         return symbols
 
     def _find_document_symbols(self, uri):
-        """
-        Find symbols in the document
-        """
+        self.logger.debug(f"Entering _find_document_symbols() with uri: {uri}")
         document_content = self.server.documents.get(uri, "")
         if not document_content:
+            self.logger.debug("No document content available")
             return []
 
         symbols = []
         lines = document_content.split("\n")
 
-        # Search for function and class definitions
         for i, line in enumerate(lines):
             line = line.strip()
             if line.startswith("def "):
                 name = line[4:].split("(")[0].strip()
                 symbols.append({
                     "name": name,
-                    "kind": 12,  # Function
+                    "kind": 12,
                     "range": {
                         "start": {"line": i, "character": 0},
                         "end": {"line": i, "character": len(line)}
@@ -793,7 +745,7 @@ class RequestHandler:
                 name = line[6:].split("(")[0].split(":")[0].strip()
                 symbols.append({
                     "name": name,
-                    "kind": 5,  # Class
+                    "kind": 5,
                     "range": {
                         "start": {"line": i, "character": 0},
                         "end": {"line": i, "character": len(line)}
@@ -804,16 +756,14 @@ class RequestHandler:
                     }
                 })
 
+        self.logger.debug(f"Document symbols found: {symbols}")
         return symbols
 
     def _execute_command(self, command, arguments):
-        """
-        Execute the given command with arguments
-        """
+        self.logger.debug(f"Entering _execute_command() with command: {command}, arguments: {arguments}")
         self.logger.info(f"Executing command: {command} with arguments: {arguments}")
 
         if command == "neozork.analyzeData":
-            # Simulated data analysis
             return {
                 "status": "success",
                 "message": "Data analysis complete",
@@ -827,14 +777,14 @@ class RequestHandler:
                 }
             }
 
+        self.logger.debug("No result for command execution")
         return None
 
     def _find_references(self, uri, position):
-        """
-        Find references to the symbol at the given position
-        """
+        self.logger.debug(f"Entering _find_references() with uri: {uri}, position: {position}")
         document_content = self.server.documents.get(uri, "")
         if not document_content:
+            self.logger.debug("No document content available")
             return []
 
         lines = document_content.split("\n")
@@ -843,7 +793,6 @@ class RequestHandler:
 
         if line < len(lines):
             current_line = lines[line]
-            # Extract the word under the cursor
             start = max(0, character)
             while start > 0 and (current_line[start-1].isalnum() or current_line[start-1] == '_'):
                 start -= 1
@@ -856,7 +805,6 @@ class RequestHandler:
 
             if word:
                 references = []
-                # Search for all mentions of the word in the document
                 for i, line_text in enumerate(lines):
                     pos = 0
                     while True:
@@ -864,7 +812,6 @@ class RequestHandler:
                         if pos == -1:
                             break
 
-                        # Check that this is a separate word
                         is_word_boundary_left = pos == 0 or not (line_text[pos-1].isalnum() or line_text[pos-1] == '_')
                         is_word_boundary_right = pos + len(word) >= len(line_text) or not (line_text[pos + len(word)].isalnum() or line_text[pos + len(word)] == '_')
 
@@ -879,28 +826,25 @@ class RequestHandler:
 
                         pos += len(word)
 
+                self.logger.debug(f"References found: {references}")
                 return references
 
+        self.logger.debug("No references found")
         return []
 
     def _is_path_within_project(self, path: str) -> bool:
-        """
-        Проверяет, что путь находится внутри project_root
-        """
+        self.logger.debug(f"Checking if path is within project: {path}")
         abs_path = os.path.abspath(path)
         project_root = os.path.abspath(self.server.project_root)
         return abs_path.startswith(project_root)
 
     def _uri_to_path(self, uri: str) -> str:
-        """
-        Convert file URI to absolute path in the local filesystem
-        """
+        self.logger.debug(f"Converting URI to path: {uri}")
         if uri.startswith("file://"):
             path = uri[7:]
             if path.startswith("/") and not os.path.exists(path):
                 path = path[1:]
             abs_path = os.path.abspath(path)
-            # Проверка безопасности
             if not self._is_path_within_project(abs_path):
                 self.logger.error(f"Access denied: {abs_path} is outside project root {self.server.project_root}")
                 raise PermissionError(f"Access denied: {abs_path} is outside project root")
@@ -908,9 +852,7 @@ class RequestHandler:
         return uri
 
     def _read_file(self, path: str) -> str:
-        """
-        Read file content as UTF-8, return empty string on error
-        """
+        self.logger.debug(f"Reading file: {path}")
         try:
             if not self._is_path_within_project(path):
                 self.logger.error(f"Read denied: {path} is outside project root {self.server.project_root}")
@@ -922,9 +864,7 @@ class RequestHandler:
             return ""
 
     def _write_file(self, path: str, content: str) -> bool:
-        """
-        Write content to file as UTF-8, create directories if needed
-        """
+        self.logger.debug(f"Writing file: {path}")
         try:
             if not self._is_path_within_project(path):
                 self.logger.error(f"Write denied: {path} is outside project root {self.server.project_root}")
@@ -938,6 +878,7 @@ class RequestHandler:
             return False
 
     def _delete_file(self, path: str) -> bool:
+        self.logger.debug(f"Deleting file: {path}")
         try:
             if not self._is_path_within_project(path):
                 self.logger.error(f"Delete denied: {path} is outside project root {self.server.project_root}")
@@ -949,6 +890,7 @@ class RequestHandler:
             return False
 
     def _rename_file(self, old_path: str, new_path: str) -> bool:
+        self.logger.debug(f"Renaming file from {old_path} to {new_path}")
         try:
             if not self._is_path_within_project(old_path) or not self._is_path_within_project(new_path):
                 self.logger.error(f"Rename denied: {old_path} or {new_path} is outside project root {self.server.project_root}")
