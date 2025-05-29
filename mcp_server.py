@@ -8,6 +8,9 @@ import os
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class FileAccessServer(Server):
+    def __init__(self):
+        super().__init__("mcp_server")
+
     def on_connect(self, client):
         print(f"Client connected: {client}")
 
