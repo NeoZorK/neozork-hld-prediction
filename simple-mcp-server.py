@@ -28,7 +28,7 @@ if os.path.basename(script_dir) == "mcp":
 else:
     project_root = script_dir
 
-# Создаем директорию для логов, если она не существует
+# Create logs directory if it doesn't exist
 logs_dir = os.path.join(project_root, "logs")
 if not os.path.exists(logs_dir):
     try:
@@ -37,10 +37,10 @@ if not os.path.exists(logs_dir):
     except Exception as e:
         print(f"Ошибка при создании директории для логов: {str(e)}")
 
-# Используем один постоянный файл логов вместо создания нового при каждом запуске
+# Use a single permanent log file instead of creating a new one with each launch
 log_file_path = os.path.join(logs_dir, "mcp_server.log")
 
-# Единая настройка логирования для всего приложения
+# Unified logging setup for the entire application
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -51,15 +51,15 @@ logging.basicConfig(
 )
 logger = logging.getLogger("simple_mcp")
 
-# Логируем информацию о старте и пути к файлу лога
+# Log information about startup and path to log file
 logger.info(f"Логи сохраняются в файл: {log_file_path}")
 
-# Настройка логирования для вывода ВСЕЙ информации в консоль и файл
-# Убедимся, что никакие логи не будут фильтроваться
+# Logging configuration
+# Log to console and file with DEBUG level
 for handler in logging.root.handlers:
     handler.setLevel(logging.DEBUG)
 
-# Установим DEBUG уровень для всех логгеров
+# Set DEBUG level for all loggers
 logging.getLogger().setLevel(logging.DEBUG)
 
 # Add log entry about server startup
@@ -593,7 +593,7 @@ class SimpleMCPServer:
         if not response:
             return
 
-        # Отключаем все задержки при ответе для GitHub Copilot
+        # Disable response delay for immediate feedback
         response_delay = 0
 
         response_str = json.dumps(response)
