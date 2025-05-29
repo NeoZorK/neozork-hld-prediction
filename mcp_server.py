@@ -18,36 +18,48 @@ from pathlib import Path
 # Настройка логирования
 def setup_logging():
     """Настройка системы логирования"""
-    log_dir = Path(__file__).parent / "logs"
-    # Автоматически создаем директорию logs, если она не существует
-    log_dir.mkdir(exist_ok=True)
-    log_file = log_dir / "mcp_server.log"
+    try:
+        log_dir = Path(__file__).parent / "logs"
+        print(f"Попытка создать директорию логов по пути: {log_dir.absolute()}")
+        # Автоматически создаем директорию logs, если она не существует
+        log_dir.mkdir(exist_ok=True)
+        print(f"Директория логов создана или уже существует: {log_dir.exists()}")
+        log_file = log_dir / "mcp_server.log"
 
-    # Создание форматировщика для логов
-    formatter = logging.Formatter(
-        '%(asctime)s [%(levelname)s] [%(name)s] [Session: %(session_id)s] %(message)s'
-    )
+        # Создание форматировщика для логов
+        formatter = logging.Formatter(
+            '%(asctime)s [%(levelname)s] [%(name)s] [Session: %(session_id)s] %(message)s'
+        )
 
-    # Настройка обработчика файла
-    file_handler = logging.FileHandler(log_file, encoding='utf-8')
-    file_handler.setFormatter(formatter)
+        # Настройка обработчика файла
+        file_handler = logging.FileHandler(log_file, encoding='utf-8')
+        file_handler.setFormatter(formatter)
 
-    # Настройка логгера
-    logger = logging.getLogger('mcp_server')
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(file_handler)
+        # Настройка логгера
+        logger = logging.getLogger('mcp_server')
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(file_handler)
 
-    # Добавляем session_id в контекст логгера
-    session_id = str(uuid.uuid4())
-    extra = {'session_id': session_id}
-    logger = logging.LoggerAdapter(logger, extra)
+        # Добавляем session_id в контекст логгера
+        session_id = str(uuid.uuid4())
+        extra = {'session_id': session_id}
+        logger = logging.LoggerAdapter(logger, extra)
 
-    # Добавим разделитель сессий в лог-файл
-    logger.info("="*80)
-    logger.info(f"Начало новой сессии MCP сервера: {session_id}")
-    logger.info("="*80)
+        # Добавим разделитель сессий в лог-файл
+        logger.info("="*80)
+        logger.info(f"Начало новой сессии MCP сервера: {session_id}")
+        logger.info("="*80)
 
-    return logger
+        return logger
+    except Exception as e:
+        print(f"Ошибка при настройке логирования: {str(e)}")
+        print(traceback.format_exc())
+        # Создаем базовый логгер без файлового обработчика
+        logger = logging.getLogger('mcp_server')
+        logger.setLevel(logging.DEBUG)
+        session_id = str(uuid.uuid4())
+        extra = {'session_id': session_id}
+        return logging.LoggerAdapter(logger, extra)
 
 # Класс для обработки сообщений по протоколу MCP
 class MCPServer:
