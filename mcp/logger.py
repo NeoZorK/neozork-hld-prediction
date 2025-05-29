@@ -61,7 +61,7 @@ def setup_logger(project_root=None, console_output=False):
     # Добавляем консольный обработчик только если console_output=True
     if console_output:
         console_handler = logging.StreamHandler(sys.stderr)
-        console_handler.setLevel(logging.INFO)  # Устанавливаем уровень INFO для консоли (меньше вывода)
+        console_handler.setLevel(logging.DEBUG)  # Устанавливаем уровень DEBUG для консоли
         console_handler.setFormatter(formatter)
         root_logger.addHandler(console_handler)
 
