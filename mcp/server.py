@@ -76,10 +76,10 @@ class SimpleMCPServer:
         """
         try:
             self.logger.info("MCP Server started with stdio interface")
-
+            self.logger.debug("Entering run() method")
             # Main loop for reading from stdin and writing to stdout
             self._handle_stdio()
-
+            self.logger.debug("Exiting run() method normally")
         except Exception as e:
             self.logger.error(f"Error in MCP server: {str(e)}")
             self.logger.error(traceback.format_exc())
@@ -93,6 +93,7 @@ class SimpleMCPServer:
         """
         Handles input/output through standard streams
         """
+        self.logger.debug("Entering _handle_stdio() method")
         # Set binary mode for stdin and stdout on Windows
         if os.name == 'nt':
             import msvcrt
@@ -104,53 +105,43 @@ class SimpleMCPServer:
 
         # Main processing loop
         while True:
-            # Read data from stdin
             try:
-                # Announce that we're waiting for input
                 if len(self.buffer) == 0:
                     self.logger.debug("Waiting for input on stdin...")
-
                 data = sys.stdin.buffer.read1(4096)
+                self.logger.debug(f"Read {len(data)} bytes from stdin")
                 if not data:
                     self.logger.info("End of stdin stream, exiting")
                     break
-
                 self.buffer += data
-
-                # Improved logging for connection tracking
                 self.logger.info(f"📥 Received data from client: {len(data)} bytes")
-
-                # Output information about received data in readable format
                 data_preview = str(data)
                 if len(data_preview) > 200:
                     data_preview = data_preview[:200] + "... (truncated)"
-
                 self.logger.info(f"📥 Received {len(data)} bytes, buffer size: {len(self.buffer)}")
-                # Detect if data is too large for console
                 try:
                     decoded_data = data.decode('utf-8', errors='replace')
                     self.logger.info(f"RAW INPUT [{len(data)} bytes]: {decoded_data[:300]}{'...' if len(decoded_data) > 300 else ''}")
                 except Exception as e:
                     self.logger.debug(f"Unable to decode data for display: {e}")
-
-                # Process messages while they exist in the buffer
+                self.logger.debug(f"Calling _process_buffer() with buffer size {len(self.buffer)}")
                 self._process_buffer()
-
+                self.logger.debug(f"Returned from _process_buffer(), buffer size now {len(self.buffer)}")
             except Exception as e:
                 self.logger.error(f"Error reading from stdin: {str(e)}")
                 self.logger.error(traceback.format_exc())
                 break
+        self.logger.debug("Exiting _handle_stdio() method")
 
     def _process_buffer(self):
         """
         Processes the buffer and extracts messages
         """
+        self.logger.debug(f"Entering _process_buffer() with buffer size {len(self.buffer)} and content_length {self.content_length}")
         while True:
             if len(self.buffer) == 0:
                 self.logger.debug(f"[BUFFER] Buffer empty. content_length={self.content_length}")
                 break
-
-            # Log buffer state before processing
             self.logger.debug(f"[BUFFER] Start loop: buffer size={len(self.buffer)}, content_length={self.content_length}")
             try:
                 buffer_text = self.buffer.decode('utf-8', errors='replace')
@@ -255,7 +246,6 @@ class SimpleMCPServer:
                     self.logger.debug(f"[BUFFER] content_length reset to None after processing message")
                 except json.JSONDecodeError as e:
                     self.logger.error(f"JSON parse error: {str(e)}, message: {message_data[:100]}...")
-                    # Попытка отправить error-ответ, если возможно
                     try:
                         msg_id = message.get("id", 0) if 'message' in locals() and isinstance(message, dict) else 0
                         self._send_error(msg_id, -32700, f"Parse error: {str(e)}")
@@ -268,7 +258,6 @@ class SimpleMCPServer:
                 except Exception as e:
                     self.logger.error(f"Error processing message: {str(e)}")
                     self.logger.error(traceback.format_exc())
-                    # Попытка отправить error-ответ, если возможно
                     try:
                         msg_id = message.get("id", 0) if 'message' in locals() and isinstance(message, dict) else 0
                         self._send_error(msg_id, -32001, f"Internal server error: {str(e)}")
@@ -276,33 +265,25 @@ class SimpleMCPServer:
                         pass
                     self.content_length = None
             else:
-                # Not enough data for a complete message
                 if self.content_length is not None:
                     self.logger.debug(f"[BUFFER] Waiting for more data. Have {len(self.buffer)}, need {self.content_length}")
                 break
 
-        # After processing, reset content_length
         self.logger.debug(f"[BUFFER] End of _process_buffer: buffer size={len(self.buffer)}, content_length={self.content_length}")
 
     def _send_response(self, response: Dict[str, Any]) -> None:
-        """
-        Sending response via stdout
-        """
+        self.logger.debug(f"Entering _send_response() with response: {response}")
         if not response:
             return
 
-        # Disable all delays for GitHub Copilot response
         response_delay = 0
 
         response_str = json.dumps(response)
         response_bytes = response_str.encode('utf-8')
 
-        # Form complete message with headers
         header = f"Content-Length: {len(response_bytes)}\r\n\r\n".encode('utf-8')
 
-        # Send message to stdout
         try:
-            # Send response as a single block to prevent fragmentation
             message = header + response_bytes
             sys.stdout.buffer.write(message)
             sys.stdout.buffer.flush()
@@ -314,7 +295,6 @@ class SimpleMCPServer:
         except Exception as e:
             self.logger.error(f"Error sending response: {str(e)}")
             self.logger.error(traceback.format_exc())
-            # Try to send an error notification if stdout is still available
             try:
                 self._send_notification("window/showMessage", {
                     "type": 1,  # Error
@@ -322,11 +302,10 @@ class SimpleMCPServer:
                 })
             except:
                 pass
+        self.logger.debug("Exiting _send_response()")
 
     def _send_notification(self, method: str, params: Dict[str, Any]) -> None:
-        """
-        Sending notification (message without ID) to server
-        """
+        self.logger.debug(f"Entering _send_notification() with method: {method}, params: {params}")
         notification = {
             "jsonrpc": "2.0",
             "method": method,
@@ -336,12 +315,9 @@ class SimpleMCPServer:
         notification_str = json.dumps(notification)
         notification_bytes = notification_str.encode('utf-8')
 
-        # Form complete message with headers
         header = f"Content-Length: {len(notification_bytes)}\r\n\r\n".encode('utf-8')
 
-        # Send message to stdout
         try:
-            # Send notification as a single block to prevent fragmentation
             message = header + notification_bytes
             sys.stdout.buffer.write(message)
             sys.stdout.buffer.flush()
@@ -351,11 +327,10 @@ class SimpleMCPServer:
         except Exception as e:
             self.logger.error(f"Error sending notification: {str(e)}")
             self.logger.error(traceback.format_exc())
+        self.logger.debug("Exiting _send_notification()")
 
     def _send_error(self, id: int, code: int, message: str) -> None:
-        """
-        Sending error message
-        """
+        self.logger.debug(f"Entering _send_error() with id: {id}, code: {code}, message: {message}")
         error_response = {
             "jsonrpc": "2.0",
             "id": id,
@@ -366,48 +341,40 @@ class SimpleMCPServer:
         }
 
         self._send_response(error_response)
+        self.logger.debug("Exiting _send_error()")
 
     def _update_client_list(self, client_name, client_version, status="connected"):
-        """
-        Update the list of active clients
-        """
+        self.logger.debug(f"Entering _update_client_list() with client_name: {client_name}, client_version: {client_version}, status: {status}")
         client_key = f"{client_name}_{client_version}"
 
-        # Update active clients list
         if status == "connected":
             self.active_clients[client_key] = {
                 "name": client_name,
                 "version": client_version,
                 "connected_at": time.time(),
                 "status": "active",
-                "initialization_counted_successful": False # Initialize the flag
+                "initialization_counted_successful": False
             }
-            # Delete old entries if they exist
             self.logger.info(f"⚡ NEW CONNECTION from {client_name} v{client_version}")
         elif status == "disconnected":
             if client_key in self.active_clients:
                 self.active_clients[client_key]["status"] = "disconnected"
                 self.active_clients[client_key]["disconnected_at"] = time.time()
-                # Display disconnection message
                 self.logger.info(f"❌ DISCONNECTED: {client_name} v{client_version}")
 
-        # Print updated client information
         self._print_client_info()
+        self.logger.debug("Exiting _update_client_list()")
 
     def _print_client_info(self):
-        """
-        Print information about active clients
-        """
+        self.logger.debug("Entering _print_client_info()")
         self.logger.info(f"Active clients: {len(self.active_clients)}")
 
         for client_key, client_data in self.client_info.items():
             self.logger.info(f"Client: {client_key}, Info: {json.dumps(client_data, indent=2)}")
+        self.logger.debug("Exiting _print_client_info()")
 
     def shutdown_gracefully(self):
-        """
-        Gracefully shut down the server, show statistics
-        """
-        # Display a noticeable message about server shutdown
+        self.logger.debug("Entering shutdown_gracefully()")
         print("\n" + "=" * 60)
         print("✅ MCP SERVER SUCCESSFULLY STOPPED")
         print("=" * 60 + "\n")
@@ -418,7 +385,6 @@ class SimpleMCPServer:
         self.logger.info(f"📊 Connection stats: {self.successful_connections} successful connections out of {self.connection_attempts} attempts")
         self.logger.info(f"📊 Processed {self.request_count} requests")
 
-        # Display information about active clients
         active_count = len([c for c in self.active_clients.values() if c.get("status") == "active"])
         self.logger.info(f"👥 Active clients at shutdown: {active_count}")
         for client_key, client_data in self.active_clients.items():
@@ -428,6 +394,5 @@ class SimpleMCPServer:
         self.logger.info("🛑 Server shutdown complete")
         self.logger.info("=" * 50)
 
-        # Can perform any other cleanup needed here
-
+        self.logger.debug("Exiting shutdown_gracefully()")
         return
