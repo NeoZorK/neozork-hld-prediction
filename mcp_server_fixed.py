@@ -1,13 +1,6 @@
-# mcp_server.py
-# MCP server stub for local file access
-
-# Проверяем наличие модуля mcp
-try:
-    from mcp.server import Server
-except ImportError:
-    print("ОШИБКА: Модуль mcp не найден. Установите его с помощью pip install mcp")
-    import sys
-    sys.exit(1)
+#!/usr/bin/env python3
+# mcp_server_fixed.py
+# Улучшенная версия MCP сервера с исправлениями для проблемы с "undefined" аргументами
 
 import os
 import asyncio
@@ -18,15 +11,15 @@ import datetime
 import sys
 import traceback
 
-# Specify the directory to allow access
+# Путь к рабочей директории
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
-# Path to config file
+# Путь к файлу конфигурации
 CONFIG_FILE = os.path.expanduser('~/.config/github-copilot/intellij/mcp.json')
 
 # Функция для логирования с временной меткой
 def log_message(message, level="INFO"):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[:-3]
-    print(f"{timestamp} [{level:8}] - {message}", flush=True)  # Добавлен flush=True для немедленного вывода
+    print(f"{timestamp} [{level:8}] - {message}", flush=True)
 
 # Логирование попыток соединения
 def log_connection_attempt(addr, success=True, error=None):
@@ -36,9 +29,22 @@ def log_connection_attempt(addr, success=True, error=None):
         log_message(f"Причина ошибки: {error}", "ERROR")
         log_message(f"Трассировка:\n{traceback.format_exc()}", "DEBUG")
 
+# Базовый класс сервера, заменяющий класс из модуля mcp.server
+class Server:
+    def __init__(self, name):
+        self.name = name
+        log_message(f"Создан сервер с именем: {name}")
+
+    def on_connect(self, client):
+        log_message(f"Клиент подключен: {client}")
+
+    def on_disconnect(self, client):
+        log_message(f"Клиент отключен: {client}")
+
+# Сервер для доступа к файлам
 class FileAccessServer(Server):
     def __init__(self):
-        # Загружаем конфигурацию из файла
+        # Загружаем конфигурацию
         try:
             if os.path.exists(CONFIG_FILE):
                 with open(CONFIG_FILE, 'r') as f:
@@ -47,22 +53,15 @@ class FileAccessServer(Server):
             else:
                 config = {}
                 os.makedirs(os.path.dirname(CONFIG_FILE), exist_ok=True)
-                log_message(f"Файл конфигурации {CONFIG_FILE} не найден, используем пустую конфигурацию", "WARN")
+                log_message(f"Файл конфигурации не найден, используем пустую конфигурацию", "WARN")
         except Exception as e:
             log_message(f"Ошибка при чтении конфигурации: {e}", "ERROR")
             config = {}
-        # Передаем имя сервера
+
         super().__init__("mcp_server")
-        # Сохраняем конфигурацию для дальнейшего использования
         self.config = config
 
-    def on_connect(self, client):
-        log_message(f"Client connected: {client}")
-
-    def on_disconnect(self, client):
-        log_message(f"Client disconnected: {client}")
-
-    # Handler for initialization request from clients
+    # Обработчик запросов инициализации
     def handle_init(self, client, options=None):
         log_message(f"Инициализация клиента: {client['addr']}, options: {options}")
 
@@ -88,12 +87,17 @@ class FileAccessServer(Server):
         # Стандартный ответ для других клиентов
         return {"status": "success", "message": "MCP server initialized"}
 
-    # Handler for file read request with explicit support for Copilot requests
+    # Обработчик запросов на чтение файла с явной поддержкой Copilot запросов
     def handle_read_file(self, client, path=None, file=None):
+        # Защитная проверка: преобразуем undefined в None
+        if path == "undefined":
+            path = None
+        if file == "undefined":
+            file = None
+
         log_message(f"Запрос на чтение файла от {client['addr']}, path={path}, file={file}")
 
         # Специальная обработка запросов от GitHub Copilot
-        # Копилот иногда отправляет null вместо undefined для отсутствующих параметров
         if path is None and file is None:
             log_message(f"Оба параметра path и file отсутствуют в запросе", "ERROR")
             return {"error": "Path or file argument is missing"}
@@ -124,10 +128,8 @@ class FileAccessServer(Server):
             log_message(f"Ошибка при чтении файла {abs_path}: {e}", "ERROR")
             return {"error": str(e)}
 
-    # Handler for checking if a file exists
+    # Обработчик запросов на проверку существования файла
     def handle_check_file(self, client, path):
-        log_message(f"Проверка существования файла: {path} от клиента {client['addr']}")
-
         if path is None or not isinstance(path, str):
             log_message(f"Ошибка: путь должен быть строкой, получено: {type(path)}", "ERROR")
             return {"error": "Path must be a string"}
@@ -249,6 +251,13 @@ if __name__ == "__main__":
                             if message["type"] == "read_file":
                                 path = message.get("path")
                                 file = message.get("file")
+
+                                # Обработка "undefined" значений как строк
+                                if path == "undefined":
+                                    path = None
+                                if file == "undefined":
+                                    file = None
+
                                 # Подробное логирование для отладки проблемы с "file" аргументом
                                 log_message(f"Тип аргумента path: {type(path)}, значение: {path}", "DEBUG")
                                 log_message(f"Тип аргумента file: {type(file)}, значение: {file}", "DEBUG")
