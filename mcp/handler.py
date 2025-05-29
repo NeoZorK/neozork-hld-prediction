@@ -875,3 +875,56 @@ class RequestHandler:
 
         return []
 
+    def _uri_to_path(self, uri: str) -> str:
+        """
+        Convert file URI to absolute path in the local filesystem
+        """
+        if uri.startswith("file://"):
+            path = uri[7:]
+            # On macOS and Linux, file:// URIs may start with an extra slash
+            if path.startswith("/") and not os.path.exists(path):
+                # Try removing one leading slash if path is not found
+                path = path[1:]
+            return os.path.abspath(path)
+        return uri
+
+    def _read_file(self, path: str) -> str:
+        """
+        Read file content as UTF-8, return empty string on error
+        """
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return f.read()
+        except Exception as e:
+            self.logger.error(f"Failed to read file {path}: {e}")
+            return ""
+
+    def _write_file(self, path: str, content: str) -> bool:
+        """
+        Write content to file as UTF-8, create directories if needed
+        """
+        try:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(content)
+            return True
+        except Exception as e:
+            self.logger.error(f"Failed to write file {path}: {e}")
+            return False
+
+    def _delete_file(self, path: str) -> bool:
+        try:
+            os.remove(path)
+            return True
+        except Exception as e:
+            self.logger.error(f"Failed to delete file {path}: {e}")
+            return False
+
+    def _rename_file(self, old_path: str, new_path: str) -> bool:
+        try:
+            os.makedirs(os.path.dirname(new_path), exist_ok=True)
+            os.rename(old_path, new_path)
+            return True
+        except Exception as e:
+            self.logger.error(f"Failed to rename file {old_path} to {new_path}: {e}")
+            return False
