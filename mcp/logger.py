@@ -35,27 +35,36 @@ def setup_logger(project_root=None):
     # Use a single permanent log file instead of creating a new one with each launch
     log_file_path = os.path.join(logs_dir, "mcp_server.log")
 
-    # Unified logging setup for the entire application
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.StreamHandler(sys.stdout),      # Output logs to stdout for console display
-            logging.FileHandler(log_file_path, encoding='utf-8')  # Output logs to file
-        ]
-    )
+    # Создаем форматтер, который будет использоваться для обоих обработчиков
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # Создаем и настраиваем обработчики отдельно
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.DEBUG)  # Явно устанавливаем уровень DEBUG для консоли
+    console_handler.setFormatter(formatter)
+
+    file_handler = logging.FileHandler(log_file_path, encoding='utf-8')
+    file_handler.setLevel(logging.DEBUG)  # Явно устанавливаем уровень DEBUG для файла
+    file_handler.setFormatter(formatter)
+
+    # Настраиваем корневой логгер
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.DEBUG)  # Устанавливаем базовый уровень логирования
+
+    # Удаляем все существующие обработчики
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
+
+    # Добавляем наши обработчики
+    root_logger.addHandler(console_handler)
+    root_logger.addHandler(file_handler)
+
+    # Создаем логгер для приложения
     logger = logging.getLogger("simple_mcp")
+    logger.setLevel(logging.DEBUG)  # Убедимся, что уровень логирования установлен правильно
 
     # Log information about startup and path to log file
     logger.info(f"Logs are saved to file: {log_file_path}")
-
-    # Configure logging to output ALL information to console and file
-    # Make sure no logs are filtered
-    for handler in logging.root.handlers:
-        handler.setLevel(logging.DEBUG)
-
-    # Set DEBUG level for all loggers
-    logging.getLogger().setLevel(logging.DEBUG)
 
     # Add log entry about server startup
     logger.info("========================")
