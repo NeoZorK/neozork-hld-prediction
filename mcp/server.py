@@ -158,51 +158,6 @@ class SimpleMCPServer:
             except Exception as e:
                 self.logger.debug(f"Impossible decode buffer as text: {e}")
 
-            # Special handling for GitHub Copilot messages 135 bytes long
-            if len(self.buffer) == 135 and b"Content-Length: " in self.buffer:
-                self.logger.info(f"Detected GitHub Copilot special message (135 bytes)")
-                try:
-                    cl_start = self.buffer.find(b"Content-Length: ") + len(b"Content-Length: ")
-                    cl_end = self.buffer.find(b"\r\n", cl_start)
-                    if cl_end > cl_start:
-                        content_length = int(self.buffer[cl_start:cl_end].decode('utf-8').strip())
-                        self.logger.info(f"Copilot message with Content-Length: {content_length}")
-
-                        # Search for the end of headers
-                        header_end = self.buffer.find(b"\r\n\r\n")
-                        if header_end > 0:
-                            json_start = header_end + 4
-                            json_data = self.buffer[json_start:json_start+content_length]
-                            try:
-                                message = json.loads(json_data.decode('utf-8'))
-                                self.logger.info(f"Parsed Copilot message: {message.get('method', 'unknown method')}")
-
-                                # Message handling
-                                response = self.handler.handle_request(message)
-                                if response:
-                                    self._send_response(response)
-                                else:
-                                    # Always send a minimal valid response if handler returns None
-                                    self._send_response({
-                                        "jsonrpc": "2.0",
-                                        "id": message.get("id", 0),
-                                        "result": None
-                                    })
-                            except Exception as e:
-                                self.logger.error(f"Error parsing Copilot message: {str(e)}")
-                                # Try to send error response to client
-                                try:
-                                    self._send_error(message.get("id", 0) if 'message' in locals() else 0, -32001, f"Parse error: {str(e)}")
-                                except Exception:
-                                    pass
-                    # Clear the buffer after processing
-                    self.buffer = b""
-                    continue
-                except Exception as e:
-                    self.logger.error(f"Error handling 135-byte Copilot message: {str(e)}")
-                    # Not enough data to parse, wait for more input
-                    # Reset content length and continue
-
             # Check for HTTP-style headers with Content-Length
             if self.content_length is None:
                 header_end = -1
