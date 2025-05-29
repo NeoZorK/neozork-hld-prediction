@@ -875,4 +875,81 @@ class CodeIndexer:
             return
 
         # Добавляем информацию о классе в индекс
-        if class_name not in
+        if class_name not in self.code_index['classes']:
+            self.code_index['classes'][class_name] = []
+
+        if file_path not in self.code_index['classes'][class_name]:
+            self.code_index['classes'][class_name].append(file_path)
+
+        # Извлекаем и сохраняем docstring
+        docstring = ast.get_docstring(node)
+        if docstring:
+            self.code_index['docstrings'][(class_name, 'class')] = docstring
+
+        # Индексируем методы класса
+        for item in node.body:
+            if isinstance(item, ast.FunctionDef):
+                method_name = f"{class_name}.{item.name}"
+
+                # Добавляем информацию о методе класса
+                if method_name not in self.code_index['functions']:
+                    self.code_index['functions'][method_name] = []
+
+                if file_path not in self.code_index['functions'][method_name]:
+                    self.code_index['functions'][method_name].append(file_path)
+
+                # Сохраняем docstring метода
+                method_docstring = ast.get_docstring(item)
+                if method_docstring:
+                    self.code_index['docstrings'][(method_name, 'method')] = method_docstring
+
+    def _index_import(self, node, file_path):
+        """Индексирует импорт"""
+        for alias in node.names:
+            import_name = alias.name
+
+            if import_name not in self.code_index['imports']:
+                self.code_index['imports'][import_name] = []
+
+            if file_path not in self.code_index['imports'][import_name]:
+                self.code_index['imports'][import_name].append(file_path)
+
+    def _index_import_from(self, node, file_path):
+        """Индексирует from-импорт"""
+        module_name = node.module
+        for alias in node.names:
+            import_name = f"{module_name}.{alias.name}"
+
+            if import_name not in self.code_index['imports']:
+                self.code_index['imports'][import_name] = []
+
+            if file_path not in self.code_index['imports'][import_name]:
+                self.code_index['imports'][import_name].append(file_path)
+
+    def _index_variable(self, node, file_path):
+        """Индексирует переменные"""
+        for target in node.targets:
+            if isinstance(target, ast.Name):
+                var_name = target.id
+
+                if var_name not in self.code_index['variables']:
+                    self.code_index['variables'][var_name] = []
+
+                if file_path not in self.code_index['variables'][var_name]:
+                    self.code_index['variables'][var_name].append(file_path)
+
+    def get_references(self, name):
+        """Возвращает ссылки на элемент кода"""
+        references = []
+        for category in ['functions', 'classes', 'variables', 'imports']:
+            if name in self.code_index[category]:
+                references.extend(self.code_index[category][name])
+        return references
+
+    def get_definitions(self, name):
+        """Возвращает определения элемента кода"""
+        definitions = []
+        for category in ['functions', 'classes', 'variables', 'imports']:
+            if name in self.code_index[category]:
+                definitions.extend(self.code_index[category][name])
+        return definitions
