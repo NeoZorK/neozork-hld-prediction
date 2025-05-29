@@ -39,12 +39,14 @@ def setup_logger(project_root=None):
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     # Создаем и настраиваем обработчики отдельно
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.DEBUG)  # Явно устанавливаем уровень DEBUG для консоли
+    # Используем sys.stderr для вывода в консоль, чтобы не конфликтовать с sys.stdout,
+    # который используется для протокола MCP
+    console_handler = logging.StreamHandler(sys.stderr)
+    console_handler.setLevel(logging.INFO)  # Устанавливаем уровень INFO для консоли (меньше вывода)
     console_handler.setFormatter(formatter)
 
     file_handler = logging.FileHandler(log_file_path, encoding='utf-8')
-    file_handler.setLevel(logging.DEBUG)  # Явно устанавливаем уровень DEBUG для файла
+    file_handler.setLevel(logging.DEBUG)  # Сохраняем уровень DEBUG для файла (подробные логи)
     file_handler.setFormatter(formatter)
 
     # Настраиваем корневой логгер
