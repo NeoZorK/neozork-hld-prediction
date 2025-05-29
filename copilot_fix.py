@@ -6,6 +6,7 @@ import os
 import socket
 import subprocess
 import time
+import signal
 
 def check_port_available(port):
     """Проверяет, свободен ли указанный порт"""
@@ -35,13 +36,12 @@ def start_server(port):
     env["MCP_PORT"] = str(port)
 
     try:
+        # Запускаем процесс без перенаправления вывода, чтобы он не завершался
         process = subprocess.Popen(
             [sys.executable, server_path],
             env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            bufsize=1
+            # Без перенаправления stdout и stderr
+            # Используем текущий терминал
         )
         print(f"Сервер запущен на порту {port}, PID: {process.pid}")
         return process
@@ -51,11 +51,25 @@ def start_server(port):
 
 def main():
     # Порты, на которых GitHub Copilot может искать MCP сервер
-    ports = [9999, 5000]
+    ports = [9999, 5000, 8765]
 
     processes = []
 
     print("Запуск MCP серверов для GitHub Copilot...")
+
+    # Обработчик сигнала для корректного завершения
+    def signal_handler(sig, frame):
+        print("\nПолучен сигнал завершения. Останавливаем серверы...")
+        for port, process in processes:
+            try:
+                process.terminate()
+                print(f"Сервер на порту {port} успешно остановлен.")
+            except:
+                print(f"Не удалось корректно остановить сервер на порту {port}.")
+        sys.exit(0)
+
+    # Регистрируем обработчик сигнала
+    signal.signal(signal.SIGINT, signal_handler)
 
     for port in ports:
         if check_port_available(port):
@@ -63,7 +77,12 @@ def main():
             if process:
                 processes.append((port, process))
                 # Даем серверу время на запуск
-                time.sleep(1)
+                time.sleep(2)
+                print(f"Проверка сервера на порту {port}...")
+                if process.poll() is not None:
+                    print(f"Сервер на порту {port} завершился с кодом {process.returncode}")
+                else:
+                    print(f"Сервер на порту {port} успешно запущен и работает")
         else:
             print(f"Порт {port} уже используется!")
 
@@ -74,40 +93,31 @@ def main():
     print(f"Запущено {len(processes)} серверов.")
     print("Нажмите Ctrl+C для завершения.")
 
+    # Ожидаем, пока все процессы не завершятся
     try:
-        # Обрабатываем вывод серверов в реальном времени
         while True:
-            for port, process in processes:
-                # Читаем stdout без блокировки
-                output = process.stdout.readline()
-                if output:
-                    print(f"[Server:{port}] {output.strip()}")
-
-                # Читаем stderr без блокировки
-                error = process.stderr.readline()
-                if error:
-                    print(f"[Server:{port} ERROR] {error.strip()}")
-
-                # Проверяем, не завершился ли процесс
+            # Проверяем статус процессов
+            for i, (port, process) in enumerate(processes[:]):
                 if process.poll() is not None:
                     print(f"Сервер на порту {port} завершил работу с кодом {process.returncode}")
-                    # Удаляем процесс из списка
-                    processes.remove((port, process))
+                    # Удаляем завершившийся процесс из списка
+                    processes.pop(i)
+                    # Пытаемся перезапустить сервер
+                    print(f"Попытка перезапуска сервера на порту {port}...")
+                    if check_port_available(port):
+                        new_process = start_server(port)
+                        if new_process:
+                            processes.append((port, new_process))
+                            print(f"Сервер на порту {port} успешно перезапущен")
 
             # Если все серверы завершили работу, выходим из цикла
             if not processes:
                 print("Все серверы завершили работу!")
                 break
 
-            time.sleep(0.1)
+            time.sleep(1)
     except KeyboardInterrupt:
-        print("\nПолучен сигнал завершения. Останавливаем серверы...")
-        for port, process in processes:
-            try:
-                process.terminate()
-                print(f"Сервер на порту {port} успешно остановлен.")
-            except:
-                print(f"Не удалось корректно остановить сервер на порту {port}.")
+        signal_handler(signal.SIGINT, None)
 
     print("Работа завершена.")
 
