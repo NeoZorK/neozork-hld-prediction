@@ -106,11 +106,17 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         ratios.append(0.8)
 
     try:
+        # Determine the rule name for the title
+        if hasattr(rule, 'name'):
+            rule_name = rule.name
+        else:
+            rule_name = str(rule)
+
         mpf.plot(
             df_results,
             type='candle',
             style='yahoo',
-            title=f"{title} - Rule: {rule.name}",
+            title=f"{title} - Rule: {rule_name}",
             ylabel='Price',
             volume=plot_volume,
             volume_panel=volume_panel if plot_volume else 0,
