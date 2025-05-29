@@ -1,7 +1,14 @@
 # mcp_server.py
 # MCP server stub for local file access
 
-from mcp.server import Server
+# Проверяем наличие модуля mcp
+try:
+    from mcp.server import Server
+except ImportError:
+    print("ОШИБКА: Модуль mcp не найден. Установите его с помощью pip install mcp")
+    import sys
+    sys.exit(1)
+
 import os
 import asyncio
 import anyio
@@ -19,12 +26,12 @@ CONFIG_FILE = os.path.expanduser('~/.config/github-copilot/intellij/mcp.json')
 # Функция для логирования с временной меткой
 def log_message(message, level="INFO"):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[:-3]
-    print(f"{timestamp} [{level:8}] - {message}")
+    print(f"{timestamp} [{level:8}] - {message}", flush=True)  # Добавлен flush=True для немедленного вывода
 
 # Логирование попыток соединения
 def log_connection_attempt(addr, success=True, error=None):
     status = "успешна" if success else "неудачна"
-    log_message(f"Попытка соединения от {addr} {status}", "INFO" if success else "ERROR")
+    log_message(f"### СОЕДИНЕНИЕ ### Попытка соединения от {addr} {status}", "INFO" if success else "ERROR")
     if error:
         log_message(f"Причина ошибки: {error}", "ERROR")
         log_message(f"Трассировка:\n{traceback.format_exc()}", "DEBUG")
@@ -61,14 +68,16 @@ class FileAccessServer(Server):
         return {"status": "success", "message": "MCP server initialized"}
 
     # Handler for file read request
-    def handle_read_file(self, client, path):
-        log_message(f"Запрос на чтение файла: {path} от клиента {client['addr']}")
+    def handle_read_file(self, client, path=None, file=None):
+        # Поддержка обоих параметров: path и file (для совместимости с GitHub Copilot)
+        actual_path = path if path is not None else file
+        log_message(f"Запрос на чтение файла: {actual_path} от клиента {client['addr']}")
 
-        if path is None or not isinstance(path, str):
-            log_message(f"Ошибка: путь должен быть строкой, получено: {type(path)}", "ERROR")
+        if actual_path is None or not isinstance(actual_path, str):
+            log_message(f"Ошибка: путь должен быть строкой, получено: {type(actual_path)}", "ERROR")
             return {"error": "Path must be a string"}
 
-        abs_path = os.path.abspath(os.path.join(WORKSPACE_DIR, path))
+        abs_path = os.path.abspath(os.path.join(WORKSPACE_DIR, actual_path))
         if not abs_path.startswith(WORKSPACE_DIR):
             log_message(f"Доступ запрещен: {abs_path}", "WARN")
             return {"error": "Access denied"}
@@ -159,13 +168,15 @@ if __name__ == "__main__":
                         if "type" in message:
                             if message["type"] == "read_file":
                                 path = message.get("path")
+                                file = message.get("file")
                                 # Подробное логирование для отладки проблемы с "file" аргументом
                                 log_message(f"Тип аргумента path: {type(path)}, значение: {path}", "DEBUG")
-                                if path is None:
-                                    log_message(f"Ошибка: аргумент path отсутствует в запросе", "ERROR")
-                                    response = {"error": "Path argument is missing"}
+                                log_message(f"Тип аргумента file: {type(file)}, значение: {file}", "DEBUG")
+                                if path is None and file is None:
+                                    log_message(f"Ошибка: аргументы path и file отсутствуют в запросе", "ERROR")
+                                    response = {"error": "Path or file argument is missing"}
                                 else:
-                                    response = server.handle_read_file(client, path)
+                                    response = server.handle_read_file(client, path=path, file=file)
                             elif message["type"] == "init":
                                 options = message.get("options")
                                 # Подробное логирование параметров инициализации
