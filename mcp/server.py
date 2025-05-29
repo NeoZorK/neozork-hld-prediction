@@ -60,10 +60,10 @@ class SimpleMCPServer:
 
     def display_start_message(self):
         """
-        Display a message when the MCP server starts
+        Displays a message when the server starts
         """
         print("\n" + "=" * 60)
-        print("🚀 MCP Server is running with stdio interface")
+        print("🚀 MCP SERVER STARTED")
         print("=" * 60 + "\n")
         return
 
@@ -421,9 +421,9 @@ class SimpleMCPServer:
         """
         Gracefully shut down the server, show statistics
         """
-        # Выводим заметное сообщение об остановке сервера
+        # Display a noticeable message about server shutdown
         print("\n" + "=" * 60)
-        print("✅ MCP СЕРВЕР УСПЕШНО ОСТАНОВЛЕН")
+        print("✅ MCP SERVER SUCCESSFULLY STOPPED")
         print("=" * 60 + "\n")
 
         uptime = time.time() - self.start_time
