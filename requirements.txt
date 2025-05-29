@@ -114,3 +114,4 @@ bokeh
 seaborn
 statsmodels
 mcp[cli]
+aioconsole
