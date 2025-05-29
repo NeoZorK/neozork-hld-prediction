@@ -19,6 +19,7 @@ from pathlib import Path
 def setup_logging():
     """Настройка системы логирования"""
     log_dir = Path(__file__).parent / "logs"
+    # Автоматически создаем директорию logs, если она не существует
     log_dir.mkdir(exist_ok=True)
     log_file = log_dir / "mcp_server.log"
 
