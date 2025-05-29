@@ -339,13 +339,13 @@ def _read_message_from_server(server_process, timeout=5.0):
 
     logger.debug("Starting to read message from server")
 
-    # Признаки сообщения протокола LSP/MCP
+    # MCP protocol markers
     protocol_markers = [
-        b"Content-Length:",  # Стандартный маркер заголовка LSP
-        b'{"jsonrpc": "2.0"'  # Начало JSON-RPC сообщения
+        b"Content-Length:",  # Standard Content-Length header
+        b'{"jsonrpc": "2.0"'  # Standard JSON-RPC start marker
     ]
 
-    # Чтение потока вывода сервера с фильтрацией логов
+    # Reset state variables
     protocol_message_started = False
     message_buffer = b""
 
@@ -354,14 +354,14 @@ def _read_message_from_server(server_process, timeout=5.0):
             logger.warning(f"Timeout reached while reading server output after {timeout} seconds")
             return None
 
-        # Проверяем доступность данных
+        # Check if server process is still running
         import select
         ready, _, _ = select.select([server_process.stdout], [], [], 0.1)
         if not ready:
             time.sleep(0.1)
             continue
 
-        # Читаем данные из потока
+        # Read a line from server stdout
         data = server_process.stdout.readline()
         if not data:
             if server_process.poll() is not None:
@@ -370,10 +370,10 @@ def _read_message_from_server(server_process, timeout=5.0):
             time.sleep(0.1)
             continue
 
-        # Для отладки выводим прочитанные данные
+        # Display debug information about the data read
         logger.debug(f"Read data from server: {data[:100]}" + ("..." if len(data) > 100 else ""))
 
-        # Проверяем, является ли строка частью сообщения протокола
+        # Check if this is a protocol line
         is_protocol_line = False
         for marker in protocol_markers:
             if marker in data:
@@ -381,52 +381,52 @@ def _read_message_from_server(server_process, timeout=5.0):
                 protocol_message_started = True
                 break
 
-        # Если это часть протокольного сообщения или мы уже начали собирать сообщение
+        # if not protocol_message_started:
         if protocol_message_started:
-            # Строка выглядит как заголовок Content-Length
+            # Start collecting message if we found a protocol line
             if b"Content-Length:" in data:
                 try:
                     cl_value = data.split(b":", 1)[1].strip()
                     content_length = int(cl_value)
                     logger.debug(f"Found Content-Length: {content_length}")
-                    message_buffer = data  # Начинаем собирать сообщение с заголовка
+                    message_buffer = data  # Start buffer with this line
                 except Exception as e:
                     logger.warning(f"Error parsing Content-Length: {e}")
             else:
-                # Добавляем данные к буферу сообщения
+                # Add data to message buffer
                 message_buffer += data
 
-            # Если у нас есть Content-Length и достаточно данных
+            # If we have a complete message, try to parse it
             if content_length is not None:
-                # Ищем конец заголовков и начало тела сообщения
+                # Search for end of headers
                 header_end = message_buffer.find(b"\r\n\r\n")
                 if header_end == -1:
                     header_end = message_buffer.find(b"\n\n")
 
                 if header_end != -1:
-                    # Определяем размер разделителя заголовков и тела
+                    # Determine the delimiter size
                     delimiter_size = 4 if b"\r\n\r\n" in message_buffer[:header_end+4] else 2
                     body_start = header_end + delimiter_size
 
-                    # Если у нас есть начало тела и достаточно данных
+                    # If we have enough data for the body
                     if len(message_buffer) >= body_start + content_length:
-                        # Извлекаем тело сообщения
+                        # Extract the body
                         body = message_buffer[body_start:body_start + content_length]
 
                         try:
-                            # Пытаемся распарсить JSON
+                            # Try to parse the JSON message
                             message = json.loads(body.decode('utf-8', errors='replace'))
                             logger.debug(f"Successfully parsed JSON from server: {json.dumps(message)}")
                             return message
                         except json.JSONDecodeError as e:
                             logger.error(f"Failed to decode JSON from server: {e}")
                             logger.debug(f"Raw body content: {body}")
-                            # Очищаем буферы и начинаем заново
+                            # Clear the buffer and reset state
                             message_buffer = b""
                             content_length = None
                             protocol_message_started = False
         else:
-            # Это строка лога, просто игнорируем ее
+            # Line is not a protocol line, just add to buffer
             pass
 
     return None
