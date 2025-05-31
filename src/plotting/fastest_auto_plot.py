@@ -46,9 +46,9 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         rows=n_panels,
         cols=1,
         shared_xaxes=True,
-        vertical_spacing=0.03,
-        row_heights=[1.0/n_panels]*n_panels,
-        subplot_titles=plot_cols
+        vertical_spacing=0.03,  # Small vertical space between charts
+        row_heights=[1.0/n_panels]*n_panels,  # Evenly distribute panel heights
+        subplot_titles=plot_cols  # Titles for each subplot
     )
 
     # Add traces for each column
@@ -63,7 +63,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
             ),
             row=i+1, col=1
         )
-        # Y axis formatting
+        # Y axis formatting for each subplot
         col_min = df[col].min()
         col_max = df[col].max()
         padding = (col_max - col_min) * 0.05 if col_max > col_min else 1
@@ -75,7 +75,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
             range=[col_min - padding, col_max + padding]
         )
 
-    # X axis formatting (only on last panel)
+    # X axis formatting (show only on the last panel)
     for i in range(1, n_panels):
         fig.update_xaxes(row=i, col=1, showticklabels=False)
     fig.update_xaxes(
@@ -123,7 +123,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         align="center",
     )
 
-    # Save and open
+    # Save and open HTML file in browser
     pio.write_html(fig, output_html_path, auto_open=False)
     abs_path = os.path.abspath(output_html_path)
     webbrowser.open_new_tab(f"file://{abs_path}")
