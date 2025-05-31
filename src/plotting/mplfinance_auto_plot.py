@@ -4,11 +4,11 @@ import matplotlib.gridspec as gridspec
 import mplfinance as mpf
 
 # Function to plot OHLCV and all other columns from a parquet file in a multi-panel figure
-# Main chart: candlesticks (open, high, low, close), below: volume, below: all other columns as lines
+# Main chart: candlesticks (open, high, low, close), below: volume, below: each other column as a separate subplot
 
 def auto_plot_from_parquet(parquet_path):
     """
-    Reads a parquet file, plots OHLCV as candlesticks on the main panel, volume below, and all other columns as lines on the lowest panel.
+    Reads a parquet file, plots OHLCV as candlesticks on the main panel (smaller), volume below, and each other column as a separate subplot below.
     """
     df = pd.read_parquet(parquet_path)
 
@@ -36,14 +36,15 @@ def auto_plot_from_parquet(parquet_path):
         ohlc_df.columns = [c.capitalize() for c in ohlc_df.columns]
     vol_df = df[[col_map['volume']]] if volume_col else None
 
-    # Find all other columns to plot
+    # Find all other columns to plot as separate subplots
     exclude_cols = set(ohlc_cols + ['volume', 'timestamp', 'datetime', 'date', 'time'])
     other_cols = [col for col in df.columns if col.lower() not in exclude_cols]
 
-    # Set up the figure with 3 rows (main, volume, others)
-    nrows = 3 if other_cols else 2
-    fig = plt.figure(figsize=(14, 7 if nrows == 2 else 10))
-    gs = gridspec.GridSpec(nrows, 1, height_ratios=[3, 1] + ([1] if nrows == 3 else []))
+    n_other = len(other_cols)
+    nrows = 2 + n_other  # 1 for candlestick, 1 for volume, rest for each other column
+    height_ratios = [1, 1] + [1]*n_other  # Make candlestick smaller
+    fig = plt.figure(figsize=(14, 3 + 2*nrows))
+    gs = gridspec.GridSpec(nrows, 1, height_ratios=height_ratios)
 
     # Main panel: candlesticks
     ax_main = fig.add_subplot(gs[0])
@@ -63,13 +64,13 @@ def auto_plot_from_parquet(parquet_path):
     else:
         ax_vol.set_visible(False)
 
-    # Other columns panel
-    if nrows == 3:
-        ax_other = fig.add_subplot(gs[2], sharex=ax_main)
-        for col in other_cols:
-            ax_other.plot(df.index, df[col], label=col)
-        ax_other.set_ylabel('Other')
-        ax_other.legend(loc='upper right')
+    # Other columns: each as a separate subplot
+    for i, col in enumerate(other_cols):
+        ax = fig.add_subplot(gs[2 + i], sharex=ax_main)
+        ax.plot(df.index, df[col], label=col)
+        ax.set_ylabel(col)
+        ax.legend(loc='upper right')
+
     plt.tight_layout()
     plt.show()
 
