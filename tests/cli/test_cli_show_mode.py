@@ -141,9 +141,11 @@ class TestCLIShowMode(unittest.TestCase):
             ("Triggering plot with method: 'fastest'" in out or
              "Loading file data and triggering plot with method: 'fastest'" in out or
              "INDICATOR CALCULATION MODE" in out or
-             "calculated and shown above." in out),
+             "calculated and shown above." in out or
+             "Drawing raw OHLCV data chart using method: 'fastest'" in out),
             msg=f"stdout: {out}\nstderr: {result.stderr}"
         )
 
 if __name__ == '__main__':
     unittest.main()
+

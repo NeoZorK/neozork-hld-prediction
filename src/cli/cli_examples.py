@@ -111,6 +111,17 @@ def show_cli_examples(terminal_console):
     console.print("- SHOW mode allows filtering cached files by source, keywords, date, and rule.")
     console.print("- For more details, see README.md or run with -h for full help.\n")
 
+    # --- OHLCV and AUTO rule examples ---
+    console.print("[bold]11. OHLCV & AUTO RULE EXAMPLES[/bold]")
+    console.print(
+        "[dim]# CSV file, OHLCV rule (candlestick only)[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule OHLCV[/bold green]")
+    console.print(
+        "[dim]# CSV file, AUTO rule (all columns, auto-plot, mpl backend)[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule AUTO -d mpl[/bold green]")
+    console.print(
+        "[dim]# Show mode, OHLCV rule (candlestick only)[/dim]\n[bold green]python run_analysis.py show csv EURUSD MN1 --rule OHLCV[/bold green]")
+    console.print(
+        "[dim]# Show mode, AUTO rule (all columns, auto-plot, mpl backend)[/dim]\n[bold green]python run_analysis.py show csv EURUSD MN1 --rule AUTO -d mpl[/bold green]\n")
+
 
 def print_cli_examples():
     """
@@ -182,9 +193,15 @@ def print_cli_examples():
       python run_analysis.py csv --csv-file data.csv   # (missing --point)
       python run_analysis.py yf -t EURUSD=X            # (missing --period or --start/--end)
 
+      # 11. OHLCV & AUTO RULE EXAMPLES
+      python run_analysis.py csv --csv-file data.csv --point 0.01 --rule OHLCV
+      python run_analysis.py csv --csv-file data.csv --point 0.01 --rule AUTO -d mpl
+      python run_analysis.py show csv EURUSD MN1 --rule OHLCV
+      python run_analysis.py show csv EURUSD MN1 --rule AUTO -d mpl
+
     Note:
     - For all API modes (yfinance, polygon, binance), the --point parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).
     - Use -d/--draw to select plotting backend: fastest, fast, plotly, mplfinance, seaborn, sb etc.
-    - Use --rule to select trading rule: PV_HighLow, Support_Resistants, Pressure_Vector, Predict_High_Low_Direction, PHLD, PV, SR.
+    - Use --rule to select trading rule: PV_HighLow, Support_Resistants, Pressure_Vector, Predict_High_Low_Direction, PHLD, PV, SR, OHLCV, AUTO.
     - SHOW mode allows filtering cached files by source, keywords, date, and rule.
     - For more details, see README.md or run with -h for full help.\n""")
