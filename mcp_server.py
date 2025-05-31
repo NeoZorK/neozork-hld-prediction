@@ -239,6 +239,8 @@ class MCPServer:
         self.available_symbols = set()
         self.available_timeframes = set()
         self.financial_data_summary = {}
+        # Buffer for testing send_message output
+        self.sent = []
 
         # Initializing code indexing system
         self.code_indexer = CodeIndexer(logger)
