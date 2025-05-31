@@ -27,6 +27,12 @@ try:
 except ImportError:
     plot_auto_fastest_parquet = None
 
+# Импортируем auto_plot_from_parquet для seaborn/sb
+try:
+    from src.plotting.seaborn_auto_plot import auto_plot_from_parquet
+except ImportError:
+    auto_plot_from_parquet = None
+
 def show_help():
     """
     Displays help for the 'show' mode.
@@ -458,6 +464,10 @@ def handle_show_mode(args):
                                 title=f"AUTO Fastest Plot: {found_files[0]['name']}"
                             )
                             print(f"Successfully plotted all columns from '{found_files[0]['name']}' using 'fastest' mode (fastest_auto_plot).")
+                        elif draw_method in ('sb', 'seaborn') and auto_plot_from_parquet is not None:
+                            print(f"Using seaborn_auto_plot for '{found_files[0]['name']}'...")
+                            auto_plot_from_parquet(str(found_files[0]['path']), plot_title=f"AUTO Seaborn Plot: {found_files[0]['name']}")
+                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using seaborn.")
                         else:
                             generate_plot = import_generate_plot()
                             data_info = {
