@@ -27,7 +27,7 @@ try:
 except ImportError:
     plot_auto_fastest_parquet = None
 
-# Импортируем auto_plot_from_parquet для seaborn/sb
+# Import auto_plot_from_parquet for seaborn/sb
 try:
     from src.plotting.seaborn_auto_plot import auto_plot_from_parquet
 except ImportError:
