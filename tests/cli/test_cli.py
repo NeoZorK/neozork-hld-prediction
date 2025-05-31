@@ -23,7 +23,7 @@ class TestCli(unittest.TestCase):
     def test_parse_arguments_defaults_demo(self):
         args = parse_arguments()
         self.assertEqual(args.mode, 'demo')
-        self.assertEqual(args.rule, TradingRule.Predict_High_Low_Direction.name)
+        self.assertEqual(args.rule, TradingRule.OHLCV.name)  # Updated default rule
         self.assertIsNone(args.ticker)
         self.assertEqual(args.interval, 'D1')
         # Default period is set in cli.py, let's test against that default if it exists
@@ -75,7 +75,7 @@ class TestCli(unittest.TestCase):
         self.assertEqual(args.mode, 'csv')
         self.assertEqual(args.csv_file, 'mydata.csv')
         self.assertEqual(args.point, 0.1)
-        self.assertEqual(args.rule, TradingRule.Predict_High_Low_Direction.name) # Default rule
+        self.assertEqual(args.rule, TradingRule.OHLCV.name) # Updated default rule
 
     # ***** CORRECTED: Added required --point argument *****
     @patch('sys.argv', ['run_analysis.py', 'csv', '--point', '0.1']) # Missing csv-file
