@@ -49,11 +49,10 @@ class TestFastPlot(unittest.TestCase):
         """
         Smoke-test: ensure that fast plot runs and creates an output file.
         """
-        # Uncomment to debug types:
-        # print(self.df.dtypes)
-        plot_indicator_results_fast(self.df, self.rule, title="Test Fast Plot")
         out_file = os.path.join("results", "plots", "fast_plot.html")
+        plot_indicator_results_fast(self.df, self.rule, title="Test Fast Plot", output_path=out_file)
         self.assertTrue(os.path.exists(out_file))
 
 if __name__ == '__main__':
     unittest.main()
+

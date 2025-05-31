@@ -60,6 +60,39 @@ You can verify the connection status by asking GitHub Copilot in chat mode:
 MCP_DEBUG: diagnostic
 ```
 
+This command will return a JSON response with the current connection status and server information, similar to the following:
+
+```json
+{
+  "connectionState": "active",
+  "serverInfo": {
+    "name": "Neozork MCP Server",
+    "version": "1.0.0"
+  },
+  "workspaceRoot": "/Users/rost/Documents/DIS/REPO/neozork-hld-prediction",
+  "indexedFilesCount": 142,
+  "availableSymbols": [
+    "AAPL",
+    "BTCUSD",
+    "ETHUSD",
+    "EURUSD",
+    "GBPUSD",
+    "GOOG",
+    "MSFT"
+  ],
+  "availableTimeframes": [
+    "D1",
+    "H1",
+    "H4",
+    "M1",
+    "M5",
+    "M15",
+    "W1",
+    "MN1"
+  ]
+} 
+```
+
 This should return information about the connection status, including:
 - Connection state (active/inactive)
 - Server version
@@ -98,6 +131,11 @@ To configure Ollama with the MCP server, add the MCP server endpoint to your Oll
 
 All logs are saved in the `logs/` directory in the `mcp_server.log` file. Each session is clearly separated in the log.
 
+You can view the logs in real-time using the following command:
+```bash
+tail -f logs/mcp_server.log
+```
+
 ## Troubleshooting
 
 ### Problem: MCP server doesn't start
@@ -112,8 +150,29 @@ All logs are saved in the `logs/` directory in the `mcp_server.log` file. Each s
 - Check logs for connection errors
 - Make sure the GitHub Copilot plugin is activated
 
-## Additional Information
+## Running Tests
 
-- The MCP server processes requests through STDIO, which is the recommended method for IDE plugins
-- The server remains active until it receives a termination command or the IDE is closed
-- Implementation includes handling of the main MCP protocol commands
+To ensure the MCP server works correctly, you can run the unit tests provided in the `tests/mcp` directory. Make sure you have Python's `unittest` module available.
+
+```bash
+# Install required dependencies
+pip install -r requirements.txt
+
+# Run the tests
+python -m unittest discover tests/mcp
+```
+
+## Running Tests with pytest
+
+To run the same test suite using pytest, first install pytest:
+
+```bash
+pip install pytest
+```
+
+Then execute:
+
+```bash
+# Run pytest on the tests/mcp directory
+pytest tests/mcp
+```

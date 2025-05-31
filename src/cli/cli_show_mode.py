@@ -21,6 +21,24 @@ except ImportError:
         calculate_indicator = None
         export_indicator_to_parquet = None
 
+# Import the new AUTO fastest plot function
+try:
+    from src.plotting.fastest_auto_plot import plot_auto_fastest_parquet
+except ImportError:
+    plot_auto_fastest_parquet = None
+
+# Import auto_plot_from_parquet for seaborn/sb
+try:
+    from src.plotting.seaborn_auto_plot import auto_plot_from_parquet
+except ImportError:
+    auto_plot_from_parquet = None
+
+# Import auto_plot_from_parquet for mpl/mplfinance
+try:
+    from src.plotting.mplfinance_auto_plot import auto_plot_from_parquet as mpl_auto_plot_from_parquet
+except ImportError:
+    mpl_auto_plot_from_parquet = None
+
 def show_help():
     """
     Displays help for the 'show' mode.
@@ -438,27 +456,46 @@ def handle_show_mode(args):
                     datetime_column = df.index.name or 'datetime'
                 _print_indicator_result(df, 'AUTO', datetime_column=datetime_column)
 
-                # Plot with all columns
+                # Plot with all columns using the new fastest_auto_plot if requested
                 if _should_draw_plot(args):
-                    print(f"\nDrawing AUTO display plot with method: '{getattr(args, 'draw', 'fastest')}'...")
+                    draw_method = getattr(args, 'draw', 'fastest')
+                    print(f"\nDrawing AUTO display plot with method: '{draw_method}'...")
                     try:
-                        generate_plot = import_generate_plot()
-                        data_info = {
-                            "ohlcv_df": df,
-                            "data_source_label": f"{found_files[0]['name']}",
-                            "rows_count": len(df),
-                            "columns_count": len(df.columns),
-                            "data_size_mb": found_files[0]['size_mb'],
-                            "first_date": found_files[0]['first_date'],
-                            "last_date": found_files[0]['last_date'],
-                            "parquet_cache_used": True,
-                            "parquet_cache_file": str(found_files[0]['path']),
-                            "all_columns": list(df.columns)  # Pass all columns to plotting function
-                        }
-                        selected_rule = "Auto_Display_All"  # Special rule name for plotting
-                        estimated_point = True
-                        generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
-                        print(f"Successfully plotted all columns from '{found_files[0]['name']}' using '{getattr(args, 'draw', 'fastest')}' mode.")
+                        if draw_method == 'fastest' and plot_auto_fastest_parquet is not None:
+                            output_html_path = os.path.join('results', 'plots', f"auto_fastest_{found_files[0]['name'].replace('.parquet','.html')}")
+                            plot_auto_fastest_parquet(
+                                parquet_path=str(found_files[0]['path']),
+                                output_html_path=output_html_path,
+                                trading_rule_name='AUTO',
+                                title=f"AUTO Fastest Plot: {found_files[0]['name']}"
+                            )
+                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using 'fastest' mode (fastest_auto_plot).")
+                        elif draw_method in ('sb', 'seaborn') and auto_plot_from_parquet is not None:
+                            print(f"Using seaborn_auto_plot for '{found_files[0]['name']}'...")
+                            auto_plot_from_parquet(str(found_files[0]['path']), plot_title=f"AUTO Seaborn Plot: {found_files[0]['name']}")
+                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using seaborn.")
+                        elif draw_method in ('mpl', 'mplfinance') and mpl_auto_plot_from_parquet is not None:
+                            print(f"Using mplfinance_auto_plot for '{found_files[0]['name']}'...")
+                            mpl_auto_plot_from_parquet(str(found_files[0]['path']))
+                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using mplfinance.")
+                        else:
+                            generate_plot = import_generate_plot()
+                            data_info = {
+                                "ohlcv_df": df,
+                                "data_source_label": f"{found_files[0]['name']}",
+                                "rows_count": len(df),
+                                "columns_count": len(df.columns),
+                                "data_size_mb": found_files[0]['size_mb'],
+                                "first_date": found_files[0]['first_date'],
+                                "last_date": found_files[0]['last_date'],
+                                "parquet_cache_used": True,
+                                "parquet_cache_file": str(found_files[0]['path']),
+                                "all_columns": list(df.columns)  # Pass all columns to plotting function
+                            }
+                            selected_rule = "Auto_Display_All"  # Special rule name for plotting
+                            estimated_point = True
+                            generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using '{draw_method}' mode.")
                     except Exception as e:
                         print(f"Error plotting in AUTO mode: {e}")
                         traceback.print_exc()
