@@ -50,7 +50,7 @@ def plot_indicator_results_fastest(
 
     print(f"DEBUG: rule type: {type(rule)}, value: {rule}, is_auto_mode: {is_auto_mode}")
 
-    # Определяем стандартные столбцы
+    # Define standard columns
     standard_columns = ['Open', 'High', 'Low', 'Close', 'Volume',
                        'index', 'datetime', 'DateTime', 'Timestamp', 'Date', 'Time',
                        'HL', 'PV', 'Pressure', 'Direction']
@@ -85,13 +85,13 @@ def plot_indicator_results_fastest(
     display_df.loc[:, 'decreasing'] = ~display_df['direction']
 
     if is_auto_mode:
-        # Собираем все нестандартные числовые столбцы
+        # Collect all non-standard numeric columns
         auto_display_columns = [col for col in display_df.columns
                                if pd.api.types.is_numeric_dtype(display_df[col])
                                and col.lower() not in standard_columns]
         print(f"AUTO mode (fastest): Will display all {len(auto_display_columns)} additional columns directly from schema: {auto_display_columns}")
 
-        # Формируем список панелей: OHLC + Volume (если есть) + все auto_display_columns
+        # Form the list of panels: OHLC + Volume (if exists) + all auto_display_columns
         n_panels = 1 + (1 if 'Volume' in display_df.columns else 0) + len(auto_display_columns)
         row_heights = [0.45]  # OHLC
         if 'Volume' in display_df.columns:
@@ -100,7 +100,7 @@ def plot_indicator_results_fastest(
             rest = 1.0 - sum(row_heights)
             row_heights.extend([rest / len(auto_display_columns)] * len(auto_display_columns))
         else:
-            # если нет дополнительных, просто равномерно
+            # if no additional columns, just evenly distribute
             row_heights = [1.0]
         subplot_titles = ["OHLC Chart"]
         if 'Volume' in display_df.columns:
@@ -160,7 +160,7 @@ def plot_indicator_results_fastest(
                     row=panel_idx, col=1
                 )
             panel_idx += 1
-        # Остальные поля — отдельные панели
+        # Remaining fields — separate panels
         color_palette = ['blue', 'orange', 'teal', 'brown', 'magenta', 'lime', 'darkblue', 'crimson', 'gold', 'purple', 'red', 'green']
         for i, col in enumerate(auto_display_columns):
             fig.add_trace(
@@ -174,7 +174,7 @@ def plot_indicator_results_fastest(
                 row=panel_idx, col=1
             )
             panel_idx += 1
-        # Добавляем аннотацию
+        # Add annotation
         fig.add_annotation(
             text=f"Trading Rule: {rule}",
             xref="paper", yref="paper",
@@ -191,7 +191,7 @@ def plot_indicator_results_fastest(
             font=dict(size=12),
             align="center",
         )
-        # Настройки осей
+        # Axis settings
         fig.update_layout(
             title=title,
             width=width,
@@ -211,16 +211,16 @@ def plot_indicator_results_fastest(
             ),
             margin=dict(t=100, b=10)
         )
-        # Y-ось для OHLC
+        # Y-axis for OHLC
         y_stats = display_df[['Open', 'High', 'Low', 'Close']].describe()
         min_price = y_stats.loc['min'].min() * 0.998
         max_price = y_stats.loc['max'].max() * 1.002
         fig.update_yaxes(title_text="Price", row=1, col=1, tickformat=".5f", range=[min_price, max_price])
-        # Y-ось для Volume
+        # Y-axis for Volume
         if 'Volume' in display_df.columns:
             vol_max = display_df['Volume'].max() * 1.1
             fig.update_yaxes(title_text="Volume", row=2, col=1, range=[0, vol_max])
-        # Y-оси для остальных
+        # Y-axes for remaining fields
         for i, col in enumerate(auto_display_columns):
             row_idx = 2 + (1 if 'Volume' in display_df.columns else 0) + i
             col_min = display_df[col].min()
@@ -234,11 +234,11 @@ def plot_indicator_results_fastest(
                 range=[col_min - padding, col_max + padding]
             )
 
-        # Настройка общей оси X для всех графиков с правильной временной шкалой
-        # Определяем временной диапазон для всех графиков
+        # Setting a common X axis for all charts with the correct time scale
+        # Determine the time range for all charts
         x_min = display_df['index'].min()
         x_max = display_df['index'].max()
-        # Обновляем ось X для всех графиков
+        # Update the X axis for all charts
         for i in range(1, n_panels + 1):
             fig.update_xaxes(
                 row=i,
@@ -249,17 +249,17 @@ def plot_indicator_results_fastest(
                 tickangle=45
             )
 
-        # Показываем только метки времени на последнем графике
+        # Show only time labels on the last chart
         for i in range(1, n_panels):
             fig.update_xaxes(row=i, col=1, showticklabels=False)
 
-        # Сохраняем и открываем
+        # Save and open
         pio.write_html(fig, output_path, auto_open=False)
         abs_path = os.path.abspath(output_path)
         webbrowser.open_new_tab(f"file://{abs_path}")
         return fig
     else:
-        # Логика для неавтоматического режима
+        # Logic for non-automatic mode
         # Create the main figure
         fig = make_subplots(
             rows=3,
@@ -394,7 +394,7 @@ def plot_indicator_results_fastest(
         for i in range(1, 3):
             fig.update_xaxes(row=i, col=1, showticklabels=False)
 
-        # Сохраняем и открываем
+        # Save and open
         pio.write_html(fig, output_path, auto_open=False)
         abs_path = os.path.abspath(output_path)
         webbrowser.open_new_tab(f"file://{abs_path}")
