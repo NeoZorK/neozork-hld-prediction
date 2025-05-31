@@ -43,22 +43,21 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
     if n_panels == 0:
         raise ValueError("No numeric columns to plot except standard OHLCV/time columns.")
 
-    # Prepare subplot heights: make auto columns much taller for better visibility
-    main_panel_height = 0.5
-    volume_panel_height = 0.22
-    # Define auto panel height as a fraction of the total height
-    auto_panel_height = 0.8
-    row_heights = [main_panel_height, volume_panel_height] + [auto_panel_height] * n_panels
-    total_height = int((main_panel_height + volume_panel_height + auto_panel_height * n_panels) * height_per_panel * 2.2)
+    # Prepare subplot heights: make all panels (candlestick, auto, volume) visually balanced
+    panel_height = 0.7  # Use the same height for all panels for visual consistency
+    # Include an extra gap between the candlestick and the first auto panel
+    extra_gap = 0.7 * 2  # Additional height for the gap between candlestick and first auto panel
+    row_heights = [panel_height, extra_gap] + [panel_height] * (n_panels - 1) + [panel_height]  # candlestick + big gap + auto panels + volume panel
+    total_height = int((2 + n_panels) * panel_height * height_per_panel * 1.2 + extra_gap * height_per_panel)
 
-    # Create subplots: 1 - Candlestick, 2 - Volume, 3+ - auto columns
+    # Create subplots: 1 - Candlestick, 2+ - auto columns, last - Volume
     fig = make_subplots(
         rows=2 + n_panels,
         cols=1,
         shared_xaxes=True,
-        vertical_spacing=0.04,  # Less vertical spacing for a more compact layout
+        vertical_spacing=0.04,  # Equal vertical spacing between all panels
         row_heights=row_heights,
-        subplot_titles=[None, None] + plot_cols
+        subplot_titles=[None] + plot_cols + ["Volume"]
     )
 
     # Candlestick chart (row 1)
@@ -78,7 +77,31 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
     )
     fig.add_trace(go.Candlestick(**candle_kwargs), row=1, col=1)
 
-    # Volume chart (row 2) as colored bars by direction (green/red for up/down)
+    # Add traces for each auto column (rows 2+)
+    for i, col in enumerate(plot_cols):
+        fig.add_trace(
+            go.Scatter(
+                x=df[time_col] if time_col is not None else df.index,
+                y=df[col],
+                mode='lines',
+                name=col,
+                line=dict(width=2)
+            ),
+            row=2 + i, col=1
+        )
+        col_min = df[col].min()
+        col_max = df[col].max()
+        padding = (col_max - col_min) * 0.05 if col_max > col_min else 1
+        fig.update_yaxes(
+            title_text=col,
+            row=2 + i,
+            col=1,
+            tickformat=".5f",
+            range=[col_min - padding, col_max + padding]
+        )
+
+    # Volume chart (last row)
+    volume_row = 2 + n_panels
     if 'Volume' in df.columns and 'Close' in df.columns and 'Open' in df.columns:
         colors = [
             '#26a69a' if c >= o else '#ef5350'
@@ -93,10 +116,10 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
                 opacity=0.85,
                 showlegend=False
             ),
-            row=2, col=1
+            row=volume_row, col=1
         )
         vol_max = df['Volume'].max() * 1.1
-        fig.update_yaxes(title_text="Volume", row=2, col=1, range=[0, vol_max])
+        fig.update_yaxes(title_text="Volume", row=volume_row, col=1, range=[0, vol_max])
     elif 'Volume' in df.columns:
         fig.add_trace(
             go.Bar(
@@ -107,41 +130,18 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
                 opacity=0.7,
                 showlegend=False
             ),
-            row=2, col=1
+            row=volume_row, col=1
         )
         vol_max = df['Volume'].max() * 1.1
-        fig.update_yaxes(title_text="Volume", row=2, col=1, range=[0, vol_max])
+        fig.update_yaxes(title_text="Volume", row=volume_row, col=1, range=[0, vol_max])
     else:
         fig.add_trace(
-            go.Scatter(x=[], y=[]), row=2, col=1
+            go.Scatter(x=[], y=[]), row=volume_row, col=1
         )
 
-    # Add traces for each auto column (rows 3+)
-    for i, col in enumerate(plot_cols):
-        fig.add_trace(
-            go.Scatter(
-                x=df[time_col] if time_col is not None else df.index,
-                y=df[col],
-                mode='lines',
-                name=col,
-                line=dict(width=2)
-            ),
-            row=3 + i, col=1
-        )
-        col_min = df[col].min()
-        col_max = df[col].max()
-        padding = (col_max - col_min) * 0.05 if col_max > col_min else 1
-        fig.update_yaxes(
-            title_text=col,
-            row=3 + i,
-            col=1,
-            tickformat=".5f",
-            range=[col_min - padding, col_max + padding]
-        )
-
-    # X axis formatting: range slider only for the first panel, no labels for others
-    for i in range(1, 2 + n_panels):
-        fig.update_xaxes(row=i, col=1, showticklabels=(i == 2 + n_panels - 1))
+    # X axis formatting: range slider only for the first panel, no labels for other panels
+    for i in range(1, 2 + n_panels + 1):
+        fig.update_xaxes(row=i, col=1, showticklabels=(i == 2 + n_panels))
     fig.update_xaxes(
         row=1, col=1,
         type='date',
@@ -152,7 +152,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         rangeslider_visible=True,
         rangeselector=None
     )
-    for i in range(2, 2 + n_panels):
+    for i in range(2, 2 + n_panels + 1):
         fig.update_xaxes(
             row=i, col=1,
             type='date',
