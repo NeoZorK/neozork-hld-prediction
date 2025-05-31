@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+import numpy as np
 
 def auto_plot_from_parquet(parquet_path: str, plot_title: str = "Auto Plot from Parquet"):
     if not os.path.exists(parquet_path):
