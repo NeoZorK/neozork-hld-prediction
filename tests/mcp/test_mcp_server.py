@@ -12,7 +12,7 @@ class DummyLogger(logging.LoggerAdapter):
 class TestMCPServer(unittest.TestCase):
     def setUp(self):
         self.logger = DummyLogger()
-        self.server = MCPServer(self.logger)
+        self.server = MCPServer(self.logger, do_scan=False)
         # capture sent messages
         self.server.sent = []
         def fake_send_message(message):
