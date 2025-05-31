@@ -37,12 +37,12 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
     else:
         df = df.sort_index()
 
-    # Columns to plot: все числовые колонки, кроме времени
+    # Columns to plot: all numeric columns except standard OHLCV and time-like columns
     numeric_cols = [c for c in df.columns if pd.api.types.is_numeric_dtype(df[c])]
-    # Исключаем только явные time/date/index, если они не числовые
+    # Exclude standard OHLCV and time-like columns
     plot_cols = [c for c in numeric_cols if c.lower() not in ['timestamp', 'datetime', 'index', 'date', 'time']]
     if not plot_cols:
-        # Если остались только time-like, пробуем их добавить (например, если файл только с одной числовой колонкой времени)
+        # If no numeric columns left after exclusion, use all numeric columns
         plot_cols = numeric_cols
     if not plot_cols:
         raise ValueError("No numeric columns to plot in this parquet file.")
