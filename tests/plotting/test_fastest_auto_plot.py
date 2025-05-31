@@ -14,11 +14,11 @@ def create_test_parquet(tmp_path, columns=None, nrows=100):
             'Low': 0.5,
             'Close': 1.5,
             'Volume': 100,
-            'timestamp': pd.date_range('2023-01-01', periods=nrows, freq='T'),
+            'timestamp': pd.date_range('2023-01-01', periods=nrows, freq='min'),
             'custom1': range(nrows),
             'custom2': [x * 2 for x in range(nrows)]
         }
-    df = pd.DataFrame({k: v if len(str(v)) == nrows else [v]*nrows for k, v in columns.items()})
+    df = pd.DataFrame({k: v if hasattr(v, '__len__') and not isinstance(v, str) else [v]*nrows for k, v in columns.items()})
     parquet_path = tmp_path / "test.parquet"
     df.to_parquet(parquet_path)
     return parquet_path, df
@@ -37,12 +37,7 @@ def test_plot_auto_fastest_parquet_creates_html_and_returns_figure(tmp_path):
 
 def test_plot_auto_fastest_parquet_raises_on_no_numeric(tmp_path):
     columns = {
-        'Open': 1.0,
-        'High': 2.0,
-        'Low': 0.5,
-        'Close': 1.5,
-        'Volume': 100,
-        'timestamp': pd.date_range('2023-01-01', periods=10, freq='T'),
+        'timestamp': pd.date_range('2023-01-01', periods=10, freq='min'),
         'text_col': ['a']*10
     }
     parquet_path, _ = create_test_parquet(tmp_path, columns=columns, nrows=10)
@@ -62,7 +57,7 @@ def test_plot_auto_fastest_parquet_handles_index_time(tmp_path):
         'Volume': 100,
         'custom1': range(nrows),
         'custom2': [x * 2 for x in range(nrows)]
-    }, index=pd.date_range('2023-01-01', periods=nrows, freq='T'))
+    }, index=pd.date_range('2023-01-01', periods=nrows, freq='min'))
     parquet_path = tmp_path / "test3.parquet"
     df.to_parquet(parquet_path)
     output_html = tmp_path / "output3.html"
