@@ -65,9 +65,11 @@ def auto_plot_from_parquet(parquet_path):
         ax_vol.set_visible(False)
 
     # Other columns: each as a separate subplot
+    color_cycle = plt.rcParams['axes.prop_cycle'].by_key().get('color', [])
     for i, col in enumerate(other_cols):
         ax = fig.add_subplot(gs[2 + i], sharex=ax_main)
-        ax.plot(df.index, df[col], label=col)
+        color = color_cycle[i % len(color_cycle)] if color_cycle else None
+        ax.plot(df.index, df[col], label=col, color=color, linewidth=2)
         ax.set_ylabel(col)
         ax.legend(loc='upper right')
 
