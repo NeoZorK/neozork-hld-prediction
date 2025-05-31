@@ -234,27 +234,9 @@ def plot_indicator_results_fast(
         if 'PPrice2' in df.columns:
             p_main.line('index', 'PPrice2', line_color='red', line_dash='dotted', line_width=2, legend_label="Predicted High (PPrice2)", source=source)
 
-        # In AUTO mode, add prediction-related columns to main chart
-        if is_auto_mode:
-            # Определяем приоритетные колонки для основного графика
-            prediction_columns = ['predicted_low', 'predicted_high', 'pressure_vector', 'pressure']
-
-            # Добавляем все auto_display_columns для полного покрытия
-            all_pred_columns = prediction_columns.copy()
-            all_pred_columns.extend([col for col in auto_display_columns
-                                 if col.lower() not in [p.lower() for p in prediction_columns]])
-
-            colors = ['darkgreen', 'darkred', 'purple', 'blue', 'orange', 'teal', 'brown', 'magenta']
-            dash_styles = ['dashed', 'dashed', 'dotted', 'solid', 'solid']
-
-            # Выводим информацию для отладки
-            print(f"Adding columns to main chart: {[c for c in all_pred_columns if c in df.columns]}")
-
-            for i, col in enumerate([c for c in all_pred_columns if c in df.columns]):
-                p_main.line('index', col, line_color=colors[i % len(colors)],
-                          line_dash=dash_styles[i % len(dash_styles)], line_width=2,
-                          legend_label=f"{col.replace('_', ' ').title()}",
-                          source=source)
+        # In AUTO mode, do NOT add auto_display_columns to main chart (leave only OHLC)
+        # Previously, all auto_display_columns were added here. Now, they are only in separate panels below.
+        # --- Removed block that added extra lines to p_main in AUTO mode ---
 
         # Draw predicted direction arrows
         if 'Direction' in df.columns:
