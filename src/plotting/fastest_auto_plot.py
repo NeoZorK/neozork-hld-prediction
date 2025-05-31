@@ -149,7 +149,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         tickangle=0,
         title_text='',
         showgrid=True,
-        rangeslider_visible=True,
+        rangeslider_visible=False,
         rangeselector=None
     )
     for i in range(2, 2 + n_panels + 1):
