@@ -19,85 +19,142 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
     # Standard columns to exclude from auto plotting
     exclude_cols = {c.lower() for c in ['open', 'high', 'low', 'close', 'volume', 'timestamp', 'datetime', 'index', 'date', 'time']}
 
-    # Find time column
+    # Find time column or use DatetimeIndex
     time_col = None
     for c in df.columns:
         if c.lower() in ['timestamp', 'datetime', 'index', 'date', 'time']:
             time_col = c
             break
     if time_col is None:
-        raise ValueError("No time column found in parquet file.")
+        if isinstance(df.index, pd.DatetimeIndex):
+            time_col = None  # Will use df.index for plotting
+        else:
+            raise ValueError("No time column found in parquet file.")
 
     # Sort by time
-    df = df.sort_values(time_col)
+    if time_col is not None:
+        df = df.sort_values(time_col)
+    else:
+        df = df.sort_index()
 
-    # Columns to plot (auto)
+    # Columns to plot (auto, excluding OHLCV/time columns)
     plot_cols = [c for c in df.columns if c.lower() not in exclude_cols and pd.api.types.is_numeric_dtype(df[c])]
     n_panels = len(plot_cols)
     if n_panels == 0:
         raise ValueError("No numeric columns to plot except standard OHLCV/time columns.")
 
-    # Prepare subplot heights
-    row_heights = [1.0 for _ in range(n_panels)]
-    total_height = max(600, n_panels * height_per_panel)
+    # Prepare subplot heights: candlestick, volume, then all auto columns
+    row_heights = [0.35, 0.15] + [0.5 / n_panels] * n_panels
+    total_height = max(700, (2 + n_panels) * height_per_panel // 2)
 
-    # Create subplots
+    # Create subplots: 1 - Candlestick, 2 - Volume, 3+ - auto columns
     fig = make_subplots(
-        rows=n_panels,
+        rows=2 + n_panels,
         cols=1,
         shared_xaxes=True,
-        vertical_spacing=0.03,  # Small vertical space between charts
-        row_heights=[1.0/n_panels]*n_panels,  # Evenly distribute panel heights
-        subplot_titles=plot_cols  # Titles for each subplot
+        vertical_spacing=0.03,
+        row_heights=row_heights,
+        subplot_titles=["Candlestick", "Volume"] + plot_cols
     )
 
-    # Add traces for each column
+    # Candlestick chart (row 1)
+    fig.add_trace(
+        go.Candlestick(
+            x=df[time_col] if time_col is not None else df.index,
+            open=df['Open'] if 'Open' in df.columns else None,
+            high=df['High'] if 'High' in df.columns else None,
+            low=df['Low'] if 'Low' in df.columns else None,
+            close=df['Close'] if 'Close' in df.columns else None,
+            name="Candlestick",
+            increasing_line_color='green',
+            decreasing_line_color='red',
+            showlegend=False
+        ),
+        row=1, col=1
+    )
+
+    # Volume chart (row 2)
+    if 'Volume' in df.columns:
+        fig.add_trace(
+            go.Bar(
+                x=df[time_col] if time_col is not None else df.index,
+                y=df['Volume'],
+                name="Volume",
+                marker_color='#7E7E7E',
+                opacity=0.7,
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        vol_max = df['Volume'].max() * 1.1
+        fig.update_yaxes(title_text="Volume", row=2, col=1, range=[0, vol_max])
+    else:
+        fig.add_trace(
+            go.Scatter(x=[], y=[]), row=2, col=1
+        )
+
+    # Add traces for each auto column (rows 3+)
     for i, col in enumerate(plot_cols):
         fig.add_trace(
             go.Scatter(
-                x=df[time_col],
+                x=df[time_col] if time_col is not None else df.index,
                 y=df[col],
                 mode='lines',
                 name=col,
                 line=dict(width=2)
             ),
-            row=i+1, col=1
+            row=3 + i, col=1
         )
-        # Y axis formatting for each subplot
         col_min = df[col].min()
         col_max = df[col].max()
         padding = (col_max - col_min) * 0.05 if col_max > col_min else 1
         fig.update_yaxes(
             title_text=col,
-            row=i+1,
+            row=3 + i,
             col=1,
             tickformat=".5f",
             range=[col_min - padding, col_max + padding]
         )
 
-    # X axis formatting (show only on the last panel)
-    for i in range(1, n_panels):
-        fig.update_xaxes(row=i, col=1, showticklabels=False)
+    # X axis formatting: only on the last panel, with improved ticks
+    for i in range(1, 2 + n_panels):
+        fig.update_xaxes(row=i, col=1, showticklabels=(i == 2 + n_panels - 1))
     fig.update_xaxes(
-        row=n_panels, col=1,
+        row=2 + n_panels, col=1,
         type='date',
         tickformat='%Y-%m-%d %H:%M',
-        tickangle=45,
-        title_text='Time'
+        tickangle=0,
+        title_text='Time',
+        showgrid=True,
+        rangeslider_visible=True,
+        rangeselector=dict(
+            buttons=list([
+                dict(count=1, label="1d", step="day", stepmode="backward"),
+                dict(count=7, label="1w", step="day", stepmode="backward"),
+                dict(count=1, label="1m", step="month", stepmode="backward"),
+                dict(step="all")
+            ])
+        )
     )
 
-    # Layout and annotations
+    # Layout and annotations: legend and auto mode text separated
     fig.update_layout(
-        title=title,
+        title=dict(
+            text=title,
+            x=0.5,
+            y=0.97,
+            font=dict(size=22, color="#2e5cb8")
+        ),
         width=width,
         height=total_height,
         template="plotly_white",
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=1.08,
+            y=1.04,
             xanchor="center",
-            x=0.5
+            x=0.5,
+            font=dict(size=13)
         ),
         hovermode="x unified",
         hoverlabel=dict(
@@ -106,21 +163,31 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         ),
         margin=dict(t=120, b=40, l=60, r=40)
     )
-    fig.add_annotation(
-        text=f"Trading Rule: {trading_rule_name}",
-        xref="paper", yref="paper",
-        x=0.5, y=1.13,
-        showarrow=False,
-        font=dict(size=22, color="#2e5cb8"),
-        align="center",
-    )
+    # Auto mode annotation (top left, above chart)
     fig.add_annotation(
         text="AUTO Mode: Each numeric column (except OHLCV/time) is shown as a separate chart.",
         xref="paper", yref="paper",
-        x=0.5, y=1.08,
+        x=0.01, y=1.13,
         showarrow=False,
         font=dict(size=14),
-        align="center",
+        align="left",
+        bordercolor="#2e5cb8",
+        borderpad=4,
+        bgcolor="#f5f7fa",
+        opacity=0.95
+    )
+    # Trading rule annotation (top right)
+    fig.add_annotation(
+        text=f"Trading Rule: {trading_rule_name}",
+        xref="paper", yref="paper",
+        x=0.99, y=1.13,
+        showarrow=False,
+        font=dict(size=16, color="#2e5cb8"),
+        align="right",
+        bordercolor="#2e5cb8",
+        borderpad=4,
+        bgcolor="#f5f7fa",
+        opacity=0.95
     )
 
     # Save and open HTML file in browser
