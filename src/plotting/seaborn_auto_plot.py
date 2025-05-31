@@ -6,31 +6,31 @@ import numpy as np
 
 def auto_plot_from_parquet(parquet_path: str, plot_title: str = "Auto Plot from Parquet"):
     if not os.path.exists(parquet_path):
-        print(f"Файл не найден: {parquet_path}")
+        print(f"File not found: {parquet_path}")
         return
 
     df = pd.read_parquet(parquet_path)
     if df.empty:
-        print("Пустой DataFrame.")
+        print("Empty DataFrame.")
         return
 
-    # Определяем основные поля
+    # Determining OHLC columns, volume, and time columns
     ohlc_cols = [col for col in df.columns if col.lower() in ["open", "high", "low", "close"]]
     volume_col = next((col for col in df.columns if col.lower() == "volume"), None)
     time_col = next((col for col in df.columns if col.lower() in ["timestamp", "datetime", "date", "time"]), None)
 
-    # Остальные индикаторы
+    # Other indicator columns
     exclude = set(ohlc_cols + ([volume_col] if volume_col else []) + ([time_col] if time_col else []))
     indicator_cols = [col for col in df.columns if col not in exclude]
 
-    n_panels = 2 + len(indicator_cols)  # OHLC, Volume, индикаторы
-    fig, axes = plt.subplots(n_panels, 1, sharex=True, figsize=(14, 3 * n_panels), gridspec_kw={'height_ratios': [2, 1] + [1]*len(indicator_cols)})
-    if n_panels == 3:
-        axes = [axes]  # если всего 3 панели, axes может быть не списком
-    if not isinstance(axes, (list, np.ndarray)):
-        axes = [axes]
+    n_panels = 2 + len(indicator_cols)  # OHLC, Volume, indicators
+    fig, axes = plt.subplots(
+        n_panels, 1, sharex=True, figsize=(14, 3 * n_panels),
+        gridspec_kw={'height_ratios': [2, 1] + [1]*len(indicator_cols)}
+    )
+    axes = np.atleast_1d(axes).flatten().tolist()
 
-    # OHLC график
+    # OHLC Chart
     ax_ohlc = axes[0]
     if time_col:
         x = df[time_col]
