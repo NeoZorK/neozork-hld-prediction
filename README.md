@@ -415,6 +415,29 @@ python run_analysis.py csv --csv-file data.csv   # (missing --point)
 python run_analysis.py yf -t EURUSD=X            # (missing --period or --start/--end)
 ```
 
+# 11. USING --rule OHLCV (DEFAULT) AND --rule AUTO
+
+The `--rule` flag allows you to specify the prediction or analysis rule to be used. Two special options are:
+
+- `--rule OHLCV`: This rule uses only (Open, High, Low, Close, Volume) for analysis or prediction. It is useful when you want to focus solely on the basic OHLCV data without any additional calculations or predictions. This is the default rule if `--rule` is not specified.
+
+- `--rule AUTO`: This rule shows all available fields in the Parquet file, including OHLCV and any additional calculated indicators. It is useful when you want to see all data without filtering out any specific fields.
+
+**Examples:**
+
+#### Using `--rule OHLCV` for showing only Open High Low Close Volume data:(OHLCV)
+```bash
+python run_analysis.py show yf --rule OHLCV 
+```
+
+#### Using `--rule AUTO` for automatic show all fields in a parquet file:(included OHLCV)
+```bash
+python run_analysis.py show csv --rule AUTO
+```
+
+**Note:**
+- The `--rule` flag is required for specifying the analysis logic. Use `OHLCV` for full data analysis, or `AUTO` to let the program decide the best rule automatically.
+
 **Note:**
 - For all API modes (yfinance, polygon, binance), the `--point` parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).
 - Use `-d/--draw` to select plotting backend: `fastest, fast, plotly, mplfinance, seaborn`, etc.
