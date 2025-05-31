@@ -150,8 +150,29 @@ tail -f logs/mcp_server.log
 - Check logs for connection errors
 - Make sure the GitHub Copilot plugin is activated
 
-## Additional Information
+## Running Tests
 
-- The MCP server processes requests through STDIO, which is the recommended method for IDE plugins
-- The server remains active until it receives a termination command or the IDE is closed
-- Implementation includes handling of the main MCP protocol commands
+To ensure the MCP server works correctly, you can run the unit tests provided in the `tests/mcp` directory. Make sure you have Python's `unittest` module available.
+
+```bash
+# Install required dependencies
+pip install -r requirements.txt
+
+# Run the tests
+python -m unittest discover tests/mcp
+```
+
+## Running Tests with pytest
+
+To run the same test suite using pytest, first install pytest:
+
+```bash
+pip install pytest
+```
+
+Then execute:
+
+```bash
+# Run pytest on the tests/mcp directory
+pytest tests/mcp
+```
