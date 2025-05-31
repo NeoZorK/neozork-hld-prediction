@@ -45,19 +45,18 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
 
     # Prepare subplot heights: maximize vertical space for each panel
     main_panel_height = 0.5
-    volume_panel_height = 0.25
     auto_panel_height = 0.25 if n_panels == 1 else max(0.25, 1.5 / n_panels)
-    row_heights = [main_panel_height, volume_panel_height] + [auto_panel_height] * n_panels
-    total_height = int((main_panel_height + volume_panel_height + auto_panel_height * n_panels) * height_per_panel * 2.2)
+    row_heights = [main_panel_height] + [auto_panel_height] * n_panels
+    total_height = int((main_panel_height + auto_panel_height * n_panels) * height_per_panel * 2.2)
 
-    # Create subplots: 1 - Candlestick, 2 - Volume, 3+ - auto columns
+    # Create subplots: 1 - Candlestick, 2+ - auto columns
     fig = make_subplots(
-        rows=2 + n_panels,
+        rows=1 + n_panels,
         cols=1,
         shared_xaxes=True,
         vertical_spacing=0.08,  # More vertical space between panels
         row_heights=row_heights,
-        subplot_titles=[None, None] + plot_cols  # No title for candlestick/volume
+        subplot_titles=[None] + plot_cols  # No title for candlestick
     )
 
     # Candlestick chart (row 1) - make it more like a financial chart
@@ -77,45 +76,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
     )
     fig.add_trace(go.Candlestick(**candle_kwargs), row=1, col=1)
 
-    # Volume chart (row 2) as colored bars by direction (green/red for up/down), using only Volume from parquet
-    if 'Volume' in df.columns and 'Close' in df.columns and 'Open' in df.columns:
-        colors = [
-            '#26a69a' if c >= o else '#ef5350'
-            for c, o in zip(df['Close'], df['Open'])
-        ]
-        fig.add_trace(
-            go.Bar(
-                x=df[time_col] if time_col is not None else df.index,
-                y=df['Volume'],
-                name="Volume",
-                marker_color=colors,
-                opacity=0.85,
-                showlegend=False
-            ),
-            row=2, col=1
-        )
-        vol_max = df['Volume'].max() * 1.1
-        fig.update_yaxes(title_text="Volume", row=2, col=1, range=[0, vol_max])
-    elif 'Volume' in df.columns:
-        fig.add_trace(
-            go.Bar(
-                x=df[time_col] if time_col is not None else df.index,
-                y=df['Volume'],
-                name="Volume",
-                marker_color='#bdbdbd',
-                opacity=0.7,
-                showlegend=False
-            ),
-            row=2, col=1
-        )
-        vol_max = df['Volume'].max() * 1.1
-        fig.update_yaxes(title_text="Volume", row=2, col=1, range=[0, vol_max])
-    else:
-        fig.add_trace(
-            go.Scatter(x=[], y=[]), row=2, col=1
-        )
-
-    # Add traces for each auto column (rows 3+)
+    # Add traces for each auto column (rows 2+)
     for i, col in enumerate(plot_cols):
         fig.add_trace(
             go.Scatter(
@@ -125,32 +86,45 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
                 name=col,
                 line=dict(width=2)
             ),
-            row=3 + i, col=1
+            row=2 + i, col=1
         )
         col_min = df[col].min()
         col_max = df[col].max()
         padding = (col_max - col_min) * 0.05 if col_max > col_min else 1
         fig.update_yaxes(
             title_text=col,
-            row=3 + i,
+            row=2 + i,
             col=1,
             tickformat=".5f",
             range=[col_min - padding, col_max + padding]
         )
 
-    # X axis formatting: only on the last panel, no range selector, no 1w/1d buttons, and NO time control at the bottom
-    for i in range(1, 2 + n_panels):
-        fig.update_xaxes(row=i, col=1, showticklabels=(i == 2 + n_panels - 1))
+    # X axis formatting: only on the last panel, no range selector, no 1w/1d buttons, и range slider только на candlestick (верхний график)
+    for i in range(1, 1 + n_panels):
+        fig.update_xaxes(row=i, col=1, showticklabels=(i == 1 + n_panels - 1))
+    # Upper graph (candlestick) x-axis
     fig.update_xaxes(
-        row=2 + n_panels, col=1,
+        row=1, col=1,
         type='date',
         tickformat='%Y-%m-%d %H:%M',
         tickangle=0,
-        title_text='Time',
+        title_text='',
         showgrid=True,
-        rangeslider_visible=False,  # Remove time control at the bottom
+        rangeslider_visible=True,
         rangeselector=None
     )
+    # Other graphs (auto columns) x-axis
+    for i in range(2, 1 + n_panels + 1):
+        fig.update_xaxes(
+            row=i, col=1,
+            type='date',
+            tickformat='%Y-%m-%d %H:%M',
+            tickangle=0,
+            title_text='',
+            showgrid=True,
+            rangeslider_visible=False,
+            rangeselector=None
+        )
 
     # Layout and annotations: legend and auto mode text separated, more margin at top
     fig.update_layout(
@@ -161,7 +135,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
             font=dict(size=22, color="#2e5cb8")
         ),
         width=width,
-        height=total_height,
+        height=max(1400, total_height),  # Dynamic height based on number of panels
         template="plotly_white",
         legend=dict(
             orientation="h",
