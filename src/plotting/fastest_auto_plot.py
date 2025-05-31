@@ -43,18 +43,21 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
     if n_panels == 0:
         raise ValueError("No numeric columns to plot except standard OHLCV/time columns.")
 
-    # Prepare subplot heights: candlestick, volume, then all auto columns
-    row_heights = [0.35, 0.15] + [0.5 / n_panels] * n_panels
-    total_height = max(700, (2 + n_panels) * height_per_panel // 2)
+    # Prepare subplot heights: more vertical space for each panel
+    main_panel_height = 0.32
+    volume_panel_height = 0.18
+    auto_panel_height = 0.5 / n_panels if n_panels > 0 else 0.5
+    row_heights = [main_panel_height, volume_panel_height] + [auto_panel_height] * n_panels
+    total_height = max(900, int((main_panel_height + volume_panel_height + auto_panel_height * n_panels) * height_per_panel * 1.2))
 
     # Create subplots: 1 - Candlestick, 2 - Volume, 3+ - auto columns
     fig = make_subplots(
         rows=2 + n_panels,
         cols=1,
         shared_xaxes=True,
-        vertical_spacing=0.03,
+        vertical_spacing=0.06,  # More vertical space between panels
         row_heights=row_heights,
-        subplot_titles=["Candlestick", "Volume"] + plot_cols
+        subplot_titles=[None, None] + plot_cols  # No title for candlestick/volume
     )
 
     # Candlestick chart (row 1)
@@ -73,7 +76,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         row=1, col=1
     )
 
-    # Volume chart (row 2)
+    # Volume chart (row 2) as bars, not candlestick
     if 'Volume' in df.columns:
         fig.add_trace(
             go.Bar(
@@ -116,7 +119,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
             range=[col_min - padding, col_max + padding]
         )
 
-    # X axis formatting: only on the last panel, with improved ticks
+    # X axis formatting: only on the last panel, no range selector, no 1w/1d buttons
     for i in range(1, 2 + n_panels):
         fig.update_xaxes(row=i, col=1, showticklabels=(i == 2 + n_panels - 1))
     fig.update_xaxes(
@@ -127,17 +130,10 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         title_text='Time',
         showgrid=True,
         rangeslider_visible=True,
-        rangeselector=dict(
-            buttons=list([
-                dict(count=1, label="1d", step="day", stepmode="backward"),
-                dict(count=7, label="1w", step="day", stepmode="backward"),
-                dict(count=1, label="1m", step="month", stepmode="backward"),
-                dict(step="all")
-            ])
-        )
+        rangeselector=None
     )
 
-    # Layout and annotations: legend and auto mode text separated
+    # Layout and annotations: legend and auto mode text separated, more margin at top
     fig.update_layout(
         title=dict(
             text=title,
@@ -161,13 +157,13 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
             bgcolor="white",
             font_size=12
         ),
-        margin=dict(t=120, b=40, l=60, r=40)
+        margin=dict(t=160, b=40, l=60, r=40)  # More top margin for annotation spacing
     )
-    # Auto mode annotation (top left, above chart)
+    # Auto mode annotation (top left, above chart, with more vertical offset)
     fig.add_annotation(
         text="AUTO Mode: Each numeric column (except OHLCV/time) is shown as a separate chart.",
         xref="paper", yref="paper",
-        x=0.01, y=1.13,
+        x=0.01, y=1.18,
         showarrow=False,
         font=dict(size=14),
         align="left",
@@ -176,11 +172,11 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         bgcolor="#f5f7fa",
         opacity=0.95
     )
-    # Trading rule annotation (top right)
+    # Trading rule annotation (top right, with more vertical offset)
     fig.add_annotation(
         text=f"Trading Rule: {trading_rule_name}",
         xref="paper", yref="paper",
-        x=0.99, y=1.13,
+        x=0.99, y=1.18,
         showarrow=False,
         font=dict(size=16, color="#2e5cb8"),
         align="right",
