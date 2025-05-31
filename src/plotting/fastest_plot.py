@@ -225,13 +225,180 @@ def plot_indicator_results_fastest(
             row_idx = 2 + (1 if 'Volume' in display_df.columns else 0) + i
             col_min = display_df[col].min()
             col_max = display_df[col].max()
-            fig.update_yaxes(title_text=col, row=row_idx, col=1, tickformat=".5f", range=[col_min, col_max])
+            padding = (col_max - col_min) * 0.05  # 5% padding
+            fig.update_yaxes(
+                title_text=col,
+                row=row_idx,
+                col=1,
+                tickformat=".5f",
+                range=[col_min - padding, col_max + padding]
+            )
+
+        # Настройка общей оси X для всех графиков с правильной временной шкалой
+        # Определяем временной диапазон для всех графиков
+        x_min = display_df['index'].min()
+        x_max = display_df['index'].max()
+        # Обновляем ось X для всех графиков
+        for i in range(1, n_panels + 1):
+            fig.update_xaxes(
+                row=i,
+                col=1,
+                range=[x_min, x_max],
+                type='date',
+                tickformat='%Y-%m-%d %H:%M',
+                tickangle=45
+            )
+
+        # Показываем только метки времени на последнем графике
+        for i in range(1, n_panels):
+            fig.update_xaxes(row=i, col=1, showticklabels=False)
+
         # Сохраняем и открываем
         pio.write_html(fig, output_path, auto_open=False)
         abs_path = os.path.abspath(output_path)
         webbrowser.open_new_tab(f"file://{abs_path}")
         return fig
-    # ...existing code for non-AUTO mode...
+    else:
+        # Логика для неавтоматического режима
+        # Create the main figure
+        fig = make_subplots(
+            rows=3,
+            cols=1,
+            shared_xaxes=True,
+            vertical_spacing=0.03,
+            row_heights=[0.6, 0.2, 0.2],
+            subplot_titles=["OHLC Chart", "Volume", "Indicators"]
+        )
+
+        # Add OHLC candlestick chart
+        fig.add_trace(
+            go.Candlestick(
+                x=display_df['index'],
+                open=display_df['Open'],
+                high=display_df['High'],
+                low=display_df['Low'],
+                close=display_df['Close'],
+                name="OHLC",
+                increasing_line_color='green',
+                decreasing_line_color='red'
+            ),
+            row=1, col=1
+        )
+
+        # Add predicted high/low lines if they exist
+        for col in ['predicted_high', 'predicted_low']:
+            if col in display_df.columns:
+                fig.add_trace(
+                    go.Scatter(
+                        x=display_df['index'],
+                        y=display_df[col],
+                        mode='lines',
+                        name=col.replace('_', ' ').title(),
+                        line=dict(
+                            color='blue' if col == 'predicted_high' else 'red',
+                            width=1.5
+                        )
+                    ),
+                    row=1, col=1
+                )
+
+        # Add volume
+        if 'Volume' in display_df.columns:
+            colors = ['green' if val else 'red' for val in display_df['direction']]
+            fig.add_trace(
+                go.Bar(
+                    x=display_df['index'],
+                    y=display_df['Volume'],
+                    marker_color=colors,
+                    name="Volume",
+                    opacity=0.7
+                ),
+                row=2, col=1
+            )
+
+        # Add other indicators (HL, PV, Pressure) to the third panel
+        indicator_colors = {
+            'HL': 'purple',
+            'PV': 'orange',
+            'Pressure': 'teal'
+        }
+
+        for indicator, color in indicator_colors.items():
+            if indicator in display_df.columns:
+                fig.add_trace(
+                    go.Scatter(
+                        x=display_df['index'],
+                        y=display_df[indicator],
+                        mode='lines',
+                        name=indicator,
+                        line=dict(color=color, width=1.5)
+                    ),
+                    row=3, col=1
+                )
+
+        # Add rule annotation
+        fig.add_annotation(
+            text=f"Trading Rule: {rule}",
+            xref="paper", yref="paper",
+            x=0.5, y=1.05,
+            showarrow=False,
+            font=dict(size=18, color="#2e5cb8"),
+            align="center",
+        )
+
+        # Update layout
+        fig.update_layout(
+            title=title,
+            width=width,
+            height=height,
+            template="plotly_white",
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            ),
+            hovermode="x unified",
+            hoverlabel=dict(
+                bgcolor="white",
+                font_size=12
+            ),
+            margin=dict(t=100, b=10)
+        )
+
+        # Set axis ranges
+        y_stats = display_df[['Open', 'High', 'Low', 'Close']].describe()
+        min_price = y_stats.loc['min'].min() * 0.998
+        max_price = y_stats.loc['max'].max() * 1.002
+        fig.update_yaxes(title_text="Price", row=1, col=1, tickformat=".5f", range=[min_price, max_price])
+
+        if 'Volume' in display_df.columns:
+            vol_max = display_df['Volume'].max() * 1.1
+            fig.update_yaxes(title_text="Volume", row=2, col=1, range=[0, vol_max])
+
+        # Set proper time scale for all charts
+        x_min = display_df['index'].min()
+        x_max = display_df['index'].max()
+        for i in range(1, 4):
+            fig.update_xaxes(
+                row=i,
+                col=1,
+                range=[x_min, x_max],
+                type='date',
+                tickformat='%Y-%m-%d %H:%M',
+                tickangle=45
+            )
+
+        # Show time labels only on the bottom chart
+        for i in range(1, 3):
+            fig.update_xaxes(row=i, col=1, showticklabels=False)
+
+        # Сохраняем и открываем
+        pio.write_html(fig, output_path, auto_open=False)
+        abs_path = os.path.abspath(output_path)
+        webbrowser.open_new_tab(f"file://{abs_path}")
+        return fig
 
 def render_large_dataset(ddf, canvas_width=1000, x_field='index', y_field='Close'):
     """
@@ -246,6 +413,14 @@ def render_large_dataset(ddf, canvas_width=1000, x_field='index', y_field='Close
     Returns:
         numpy.ndarray: A rendered image array that can be used with Plotly
     """
-    # Function implementation would go here
-    pass
+    # Define a canvas for rendering
+    canvas = ds.Canvas(plot_width=canvas_width)
 
+    # Compute the aggregation
+    agg = canvas.line(ddf, x_field, y_field)
+
+    # Shade the aggregation using a color map
+    img = tf.shade(agg, cmap=cc.fire)
+
+    # Convert to numpy array for Plotly
+    return np.array(img.to_pil())
