@@ -948,3 +948,9 @@ class MCPServer:
             self.logger.error(f"Error processing codeSearch/definition: {str(e)}")
             self.logger.error(traceback.format_exc())
             self.send_error_response(request_id, -32603, "Internal server error")
+
+if __name__ == "__main__":
+    logger = setup_logging()
+    server = MCPServer(logger)
+    server.start()
+
