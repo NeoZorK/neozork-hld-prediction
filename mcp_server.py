@@ -8,18 +8,14 @@ Works through standard input/output (STDIO)
 
 import json
 import logging
-import os
 import sys
 import traceback
 from datetime import datetime
 import uuid
 from pathlib import Path
-import glob
 import re
 import csv
-import pandas as pd
 import ast
-import keyword
 
 # Setting up logging
 def setup_logging():
@@ -229,7 +225,7 @@ class CodeIndexer:
 
 # Class for processing messages via MCP protocol
 class MCPServer:
-    def __init__(self, logger):
+    def __init__(self, logger, do_scan=True):
         self.logger = logger
         self.running = True
         self.request_id_to_handler = {}
@@ -244,15 +240,11 @@ class MCPServer:
 
         # Initializing code indexing system
         self.code_indexer = CodeIndexer(logger)
-
-        # Scanning project files on initialization
-        self.scan_project_files()
-
-        # Scanning financial instrument data
-        self.scan_mql5_feed_data()
-
-        # Indexing project code
-        self.index_project_code()
+        # Optionally scan and index project (skip in tests)
+        if do_scan:
+            self.scan_project_files()
+            self.scan_mql5_feed_data()
+            self.index_project_code()
 
         # Registration of handlers for different types of requests
         self.handlers = {
@@ -336,7 +328,7 @@ class MCPServer:
             return
 
         # Regular expression to extract symbol and timeframe from file name
-        pattern = re.compile(r'CSVExport_([A-Z0-9\.]+)_PERIOD_([A-Z0-9]+)\.csv')
+        pattern = re.compile(r'CSVExport_([A-Z0-9.]+)_PERIOD_([A-Z0-9]+)\.csv')
 
         csv_files = list(mql5_feed_dir.glob("*.csv"))
         self.logger.info(f"Found {len(csv_files)} CSV files in the mql5_feed directory")
