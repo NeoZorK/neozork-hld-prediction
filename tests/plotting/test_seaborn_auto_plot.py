@@ -11,7 +11,7 @@ class TestSeabornAutoPlot(unittest.TestCase):
         self.assertIsNone(result)
 
     def test_auto_plot_from_parquet_empty(self):
-        # Пустой DataFrame
+        # Empty DataFrame
         with tempfile.NamedTemporaryFile(suffix='.parquet', delete=False) as tmp:
             df = pd.DataFrame()
             df.to_parquet(tmp.name)
@@ -20,7 +20,7 @@ class TestSeabornAutoPlot(unittest.TestCase):
             os.remove(tmp.name)
 
     def test_auto_plot_from_parquet_minimal(self):
-        # Минимальный DataFrame с OHLCV
+        # Minimal DataFrame with OHLC columns
         with tempfile.NamedTemporaryFile(suffix='.parquet', delete=False) as tmp:
             df = pd.DataFrame({
                 'open': [1,2], 'high': [2,3], 'low': [0,1], 'close': [1.5,2.5],
