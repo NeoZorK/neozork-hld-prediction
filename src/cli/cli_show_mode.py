@@ -33,6 +33,12 @@ try:
 except ImportError:
     auto_plot_from_parquet = None
 
+# Import auto_plot_from_parquet for mpl/mplfinance
+try:
+    from src.plotting.mplfinance_auto_plot import auto_plot_from_parquet as mpl_auto_plot_from_parquet
+except ImportError:
+    mpl_auto_plot_from_parquet = None
+
 def show_help():
     """
     Displays help for the 'show' mode.
@@ -468,6 +474,10 @@ def handle_show_mode(args):
                             print(f"Using seaborn_auto_plot for '{found_files[0]['name']}'...")
                             auto_plot_from_parquet(str(found_files[0]['path']), plot_title=f"AUTO Seaborn Plot: {found_files[0]['name']}")
                             print(f"Successfully plotted all columns from '{found_files[0]['name']}' using seaborn.")
+                        elif draw_method in ('mpl', 'mplfinance') and mpl_auto_plot_from_parquet is not None:
+                            print(f"Using mplfinance_auto_plot for '{found_files[0]['name']}'...")
+                            mpl_auto_plot_from_parquet(str(found_files[0]['path']))
+                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using mplfinance.")
                         else:
                             generate_plot = import_generate_plot()
                             data_info = {
