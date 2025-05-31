@@ -37,11 +37,16 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
     else:
         df = df.sort_index()
 
-    # Columns to plot (auto, excluding OHLCV/time columns)
-    plot_cols = [c for c in df.columns if c.lower() not in exclude_cols and pd.api.types.is_numeric_dtype(df[c])]
+    # Columns to plot: все числовые колонки, кроме времени
+    numeric_cols = [c for c in df.columns if pd.api.types.is_numeric_dtype(df[c])]
+    # Исключаем только явные time/date/index, если они не числовые
+    plot_cols = [c for c in numeric_cols if c.lower() not in ['timestamp', 'datetime', 'index', 'date', 'time']]
+    if not plot_cols:
+        # Если остались только time-like, пробуем их добавить (например, если файл только с одной числовой колонкой времени)
+        plot_cols = numeric_cols
+    if not plot_cols:
+        raise ValueError("No numeric columns to plot in this parquet file.")
     n_panels = len(plot_cols)
-    if n_panels == 0:
-        raise ValueError("No numeric columns to plot except standard OHLCV/time columns.")
 
     # Prepare subplot heights: make all panels (candlestick, auto, volume) visually balanced
     panel_height = 0.7  # Use the same height for all panels for visual consistency
