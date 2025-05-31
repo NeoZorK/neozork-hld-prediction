@@ -43,47 +43,66 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
     if n_panels == 0:
         raise ValueError("No numeric columns to plot except standard OHLCV/time columns.")
 
-    # Prepare subplot heights: more vertical space for each panel
-    main_panel_height = 0.32
-    volume_panel_height = 0.18
-    auto_panel_height = 0.5 / n_panels if n_panels > 0 else 0.5
+    # Prepare subplot heights: maximize vertical space for each panel
+    main_panel_height = 0.5
+    volume_panel_height = 0.25
+    auto_panel_height = 0.25 if n_panels == 1 else max(0.25, 1.5 / n_panels)
     row_heights = [main_panel_height, volume_panel_height] + [auto_panel_height] * n_panels
-    total_height = max(900, int((main_panel_height + volume_panel_height + auto_panel_height * n_panels) * height_per_panel * 1.2))
+    total_height = int((main_panel_height + volume_panel_height + auto_panel_height * n_panels) * height_per_panel * 2.2)
 
     # Create subplots: 1 - Candlestick, 2 - Volume, 3+ - auto columns
     fig = make_subplots(
         rows=2 + n_panels,
         cols=1,
         shared_xaxes=True,
-        vertical_spacing=0.06,  # More vertical space between panels
+        vertical_spacing=0.08,  # More vertical space between panels
         row_heights=row_heights,
         subplot_titles=[None, None] + plot_cols  # No title for candlestick/volume
     )
 
-    # Candlestick chart (row 1)
-    fig.add_trace(
-        go.Candlestick(
-            x=df[time_col] if time_col is not None else df.index,
-            open=df['Open'] if 'Open' in df.columns else None,
-            high=df['High'] if 'High' in df.columns else None,
-            low=df['Low'] if 'Low' in df.columns else None,
-            close=df['Close'] if 'Close' in df.columns else None,
-            name="Candlestick",
-            increasing_line_color='green',
-            decreasing_line_color='red',
-            showlegend=False
-        ),
-        row=1, col=1
+    # Candlestick chart (row 1) - make it more like a financial chart
+    candle_kwargs = dict(
+        x=df[time_col] if time_col is not None else df.index,
+        open=df['Open'] if 'Open' in df.columns else None,
+        high=df['High'] if 'High' in df.columns else None,
+        low=df['Low'] if 'Low' in df.columns else None,
+        close=df['Close'] if 'Close' in df.columns else None,
+        name="Candlestick",
+        increasing_line_color='#26a69a',  # teal/green
+        decreasing_line_color='#ef5350',  # red
+        increasing_fillcolor='rgba(38,166,154,0.3)',
+        decreasing_fillcolor='rgba(239,83,80,0.3)',
+        whiskerwidth=0.5,
+        showlegend=False
     )
+    fig.add_trace(go.Candlestick(**candle_kwargs), row=1, col=1)
 
-    # Volume chart (row 2) as bars, not candlestick
-    if 'Volume' in df.columns:
+    # Volume chart (row 2) as colored bars by direction (green/red for up/down), using only Volume from parquet
+    if 'Volume' in df.columns and 'Close' in df.columns and 'Open' in df.columns:
+        colors = [
+            '#26a69a' if c >= o else '#ef5350'
+            for c, o in zip(df['Close'], df['Open'])
+        ]
         fig.add_trace(
             go.Bar(
                 x=df[time_col] if time_col is not None else df.index,
                 y=df['Volume'],
                 name="Volume",
-                marker_color='#7E7E7E',
+                marker_color=colors,
+                opacity=0.85,
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        vol_max = df['Volume'].max() * 1.1
+        fig.update_yaxes(title_text="Volume", row=2, col=1, range=[0, vol_max])
+    elif 'Volume' in df.columns:
+        fig.add_trace(
+            go.Bar(
+                x=df[time_col] if time_col is not None else df.index,
+                y=df['Volume'],
+                name="Volume",
+                marker_color='#bdbdbd',
                 opacity=0.7,
                 showlegend=False
             ),
@@ -119,7 +138,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
             range=[col_min - padding, col_max + padding]
         )
 
-    # X axis formatting: only on the last panel, no range selector, no 1w/1d buttons
+    # X axis formatting: only on the last panel, no range selector, no 1w/1d buttons, and NO time control at the bottom
     for i in range(1, 2 + n_panels):
         fig.update_xaxes(row=i, col=1, showticklabels=(i == 2 + n_panels - 1))
     fig.update_xaxes(
@@ -129,7 +148,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         tickangle=0,
         title_text='Time',
         showgrid=True,
-        rangeslider_visible=True,
+        rangeslider_visible=False,  # Remove time control at the bottom
         rangeselector=None
     )
 
