@@ -5,6 +5,7 @@ import argparse
 import sys
 from pathlib import Path
 import numpy as np # Import numpy to check for inf values later if needed
+import os
 
 # Setup argument parser to accept a file path
 # Sets up an argument parser to accept command-line arguments.
@@ -16,16 +17,16 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--file",
     type=str,
-    default="mql5_feed/CSVExport_XAUUSD_PERIOD_MN1.csv",
+    default="CSVExport_XAUUSD_PERIOD_MN1.csv",
     help="Path to the CSV file to read.",
 )
 # Parses the arguments provided when running the script.
 args = parser.parse_args()
 
-# Get the absolute path to the file
-# Constructs the full path to the CSV file based on the script's location and the provided argument.
-# resolve() makes the path absolute.
-file_path = Path(__file__).parent / args.file
+# Get project root to find the mql5_feed directory
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Look for the file in the mql5_feed directory at the project root
+file_path = Path(PROJECT_ROOT) / "mql5_feed" / args.file
 
 print(f"--- Testing CSV Reader ---")
 print(f"Attempting to read: {file_path}")
@@ -34,7 +35,25 @@ print(f"Attempting to read: {file_path}")
 # Checks if the specified file actually exists.
 if not file_path.is_file():
     print(f"\n[Error] File not found at path: {file_path}")
-    sys.exit(1) # Exit if file not found
+    # Try looking for any CSV file in the mql5_feed directory
+    mql5_dir = Path(PROJECT_ROOT) / "mql5_feed"
+    if mql5_dir.is_dir():
+        csv_files = list(mql5_dir.glob("*.csv"))
+        if csv_files:
+            print(f"\n[Info] Available CSV files in mql5_feed directory:")
+            for csv_file in csv_files[:5]:  # Show first 5 files
+                print(f"  - {csv_file.name}")
+            if len(csv_files) > 5:
+                print(f"  - ... and {len(csv_files)-5} more files")
+            # Use the first available CSV file
+            file_path = csv_files[0]
+            print(f"\n[Info] Using {file_path.name} instead")
+        else:
+            print(f"\n[Error] No CSV files found in {mql5_dir}")
+            sys.exit(1)
+    else:
+        print(f"\n[Error] mql5_feed directory not found at {mql5_dir}")
+        sys.exit(1)
 
 try:
     # Read the CSV file using pandas
@@ -126,3 +145,4 @@ except Exception as e:
     sys.exit(1)
 
 print(f"\n--- End of CSV Test ---")
+
