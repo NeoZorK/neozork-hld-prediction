@@ -684,10 +684,10 @@ This command will create a container image based on the settings in the `Dockerf
 
 ### Running the Container
 
-To run the container, execute:
+To run in interactive mode, you can use:
 
 ```bash
-docker compose up
+docker compose run --rm neozork-hld
 ```
 
 When the container starts, the following actions are automatically performed:
