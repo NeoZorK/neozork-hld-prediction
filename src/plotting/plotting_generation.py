@@ -188,142 +188,139 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                             image_path = str(absolute_filepath).replace('.html', '.png')
                             logger.print_info(f"Generating PNG image directly with Plotly...")
 
-                            # Increase DPI and size for better quality - optimized for Retina displays
+                            # Use a more moderate size with emphasis on clarity rather than size
                             fig.update_layout(
-                                font=dict(size=18, family="Arial, sans-serif"),  # Larger font for better readability
-                                width=3840,          # 4K resolution width
-                                height=2160,         # 4K resolution height
-                                template="plotly_white",  # Use a clean template for better visibility
-                                # Improve SVG quality by enhancing overall rendering
+                                font=dict(size=16, family="Arial, sans-serif"),  # Clear font
+                                width=1200,          # Moderate width that renders better in terminals
+                                height=800,          # Moderate height that renders better in terminals
+                                template="plotly_white",  # Clean template
                                 paper_bgcolor='white',
                                 plot_bgcolor='white',
                                 modebar_bgcolor='white'
                             )
 
-                            # Optimize for SVG export by cleaning up the data
-                            # Make sure all lines have explicit, clean properties
+                            # Make lines very distinct and bold
                             for trace in fig.data:
                                 if hasattr(trace, 'line') and trace.line:
                                     if hasattr(trace.line, 'width') and trace.line.width is not None:
-                                        # Use clean integer values for SVG line widths when possible
-                                        if trace.line.width < 1.5:
-                                            trace.line.width = 3  # Increased minimum line width for clarity
-                                        else:
-                                            trace.line.width = round(trace.line.width * 2)  # Double line width
+                                        # Bold lines with whole numbers
+                                        trace.line.width = max(4, round(trace.line.width * 3))  # Very bold lines
                                     else:
-                                        trace.line.width = 3
+                                        trace.line.width = 4  # Bold default
 
-                                    # Ensure line shape is clean for vector display
+                                    # Ensure line shape is clean
                                     if hasattr(trace.line, 'shape') and trace.line.shape in ['spline', 'hv', 'vh']:
-                                        trace.line.shape = 'linear'  # Linear lines render best in SVG
+                                        trace.line.shape = 'linear'  # Linear lines for clarity
 
-                            # Save as PNG with ultra-high resolution for Retina displays
-                            fig.write_image(image_path, width=3840, height=2160, scale=8)  # Scale 8x for ultra-high DPI
+                            # Save as PNG with optimal settings for terminal viewing
+                            # Scale=2 often renders better in terminals than very high scales
+                            fig.write_image(image_path, width=1200, height=800, scale=2)
                             logger.print_success(f"Static image saved to: {image_path}")
 
                             # Create high-quality SVG
                             svg_path = str(absolute_filepath).replace('.html', '.svg')
 
-                            # Fixed method for creating SVG (to_svg doesn't exist)
+                            # Export SVG with optimal settings
                             try:
-                                # Use correct method for SVG export
                                 import plotly.io as pio
-
-                                # Configure SVG renderer for highest quality
-                                pio.kaleido.scope.default_width = 3840
-                                pio.kaleido.scope.default_height = 2160
-                                pio.kaleido.scope.default_scale = 1
 
                                 # Save SVG directly with optimal settings
                                 fig.write_image(
                                     svg_path,
                                     format="svg",
-                                    width=3840,
-                                    height=2160,
-                                    scale=1,  # For vector format scale=1 is optimal
+                                    width=1200,
+                                    height=800,
+                                    scale=1,  # SVG doesn't need scaling
                                     engine="kaleido",
                                 )
 
                                 logger.print_success(f"High-quality vector SVG saved to: {svg_path}")
 
-                                # Check possibility to display SVG in terminal
+                                # Now create a terminal-optimized version
                                 import subprocess
+                                import os
 
-                                # Check for rsvg-convert utility for converting SVG to terminal-friendly format
-                                rsvg_check = subprocess.run(['which', 'rsvg-convert'], capture_output=True, text=True)
-                                if rsvg_check.returncode == 0:
-                                    logger.print_info("Converting SVG for high-DPI terminal display...")
-                                    # Create temporary ultra-high-quality PNG from SVG specifically for Retina displays
-                                    temp_png_path = svg_path + "_hires.png"
-                                    # Use very high resolution for Retina displays with high DPI
-                                    subprocess.call(['rsvg-convert', '-w', '3840', '-h', '2160', '-d', '300', '-p', '300',
-                                                    '-o', temp_png_path, svg_path])
+                                # Create a special version optimized for terminal display
+                                term_png_path = str(absolute_filepath).replace('.html', '_term.png')
 
-                                    # Now use this high-DPI PNG for terminal display
-                                    image_path_for_terminal = temp_png_path
-                                    logger.print_info(f"Using high-DPI converted SVG for terminal display")
+                                # Check for ImageMagick first (best option)
+                                convert_check = subprocess.run(['which', 'convert'], capture_output=True, text=True)
+                                if convert_check.returncode == 0:
+                                    logger.print_info("Creating terminal-optimized image with ImageMagick...")
+
+                                    # Use ImageMagick processing optimized for terminal display
+                                    # These settings increase contrast, sharpen edges, and optimize for text display
+                                    subprocess.call([
+                                        'convert', image_path,
+                                        '-adaptive-resize', '100%',
+                                        '-sharpen', '0x1.0',
+                                        '-contrast-stretch', '0%',
+                                        '-brightness-contrast', '0x20',
+                                        '-colors', '256',
+                                        term_png_path
+                                    ])
+
+                                    # Use this specially processed image
+                                    image_path_for_terminal = term_png_path
+                                    logger.print_info(f"Using ImageMagick-enhanced image for terminal display")
                                 else:
-                                    # If rsvg-convert not available, use regular PNG
+                                    # If ImageMagick not available, use regular image
                                     image_path_for_terminal = image_path
-                                    logger.print_info("SVG terminal display not available (install librsvg2-bin for better quality)")
-                            except Exception as svg_error:
-                                logger.print_warning(f"Error with direct SVG export: {svg_error}")
-                                # Fallback option
-                                try:
-                                    fig.write_image(
-                                        svg_path,
-                                        format="svg",
-                                        width=3840,
-                                        height=2160,
-                                        scale=1
-                                    )
-                                    logger.print_info(f"Vector SVG saved to: {svg_path} (fallback method)")
-                                    image_path_for_terminal = image_path  # Use PNG for terminal
-                                except Exception as e:
-                                    logger.print_error(f"All SVG export methods failed: {e}")
-                                    image_path_for_terminal = image_path  # Use PNG for terminal
 
-                            # Display the image in terminal with enhanced settings for high-DPI displays
-                            import subprocess
+                                # Display image in terminal using chafa with optimal settings
+                                chafa_check = subprocess.run(['which', 'chafa'], capture_output=True, text=True)
+                                if chafa_check.returncode == 0:
+                                    logger.print_info("Displaying image with terminal-optimized settings...")
 
-                            # Check for Docker environment
-                            in_docker = os.environ.get('DOCKER_CONTAINER', False)
+                                    # Get terminal dimensions
+                                    term_width = subprocess.run(['tput', 'cols'], capture_output=True, text=True)
+                                    term_height = subprocess.run(['tput', 'lines'], capture_output=True, text=True)
+                                    try:
+                                        width = int(term_width.stdout.strip()) - 2  # Use almost full width
+                                        height = int(term_height.stdout.strip()) - 2  # Use almost full height
+                                    except Exception:
+                                        width = 100
+                                        height = 50
 
-                            # Try chafa first with ultra-high quality settings for Retina displays
-                            chafa_check = subprocess.run(['which', 'chafa'], capture_output=True, text=True)
-                            if chafa_check.returncode == 0:
-                                logger.print_info("Displaying image in terminal (ultra-high quality for Retina displays)...")
-                                # Infer terminal size
-                                term_width = subprocess.run(['tput', 'cols'], capture_output=True, text=True)
-                                term_height = subprocess.run(['tput', 'lines'], capture_output=True, text=True)
-                                try:
-                                    # Get current terminal dimensions but make them a bit larger
-                                    width = int(term_width.stdout.strip())
-                                    height = int(term_height.stdout.strip()) - 5
-                                except:
-                                    width = 200  # Larger default width
-                                    height = 100  # Larger default height
-
-                                # Use enhanced settings for Retina/high-DPI displays
-                                if in_docker:
-                                    # For Docker with high-DPI optimization
-                                    subprocess.call(['chafa', '--size', f'{width}x{height}',
-                                                    '--colors', 'full', '--color-space', 'rgb',
-                                                    '--dither', 'diffusion', '--dither-intensity', '1.0',
-                                                    '--optimize', 'detail', '--scale', 'fit',
-                                                    '--symbols', 'all', '--work', 'auto',
-                                                    image_path_for_terminal])
+                                    # Use character-optimized settings for terminal display
+                                    subprocess.call([
+                                        'chafa',
+                                        '--size', f'{width}x{height}',
+                                        '--fill', 'space',  # Use space as fill character for smoother images
+                                        '--symbols', 'block+border+space-extra',  # Use block symbols for better resolution
+                                        '--colors', 'full',  # Full color
+                                        '--color-space', 'rgb',  # RGB color space
+                                        '--dither', 'none',  # No dithering for sharper lines
+                                        '--speed', '1',  # Highest quality
+                                        image_path_for_terminal
+                                    ])
                                 else:
-                                    # For native terminal
-                                    subprocess.call(['chafa', '--size', f'{width}x{height}',
-                                                    '--colors', 'full', '--color-space', 'rgb',
-                                                    image_path_for_terminal])
+                                    # Fallback if chafa is not available
+                                    logger.print_info("Chafa not available, can't display image in terminal")
+                            except Exception as svg_error:
+                                logger.print_warning(f"Error processing images: {svg_error}")
+
+                                # Simple fallback to display the original image
+                                try:
+                                    chafa_check = subprocess.run(['which', 'chafa'], capture_output=True, text=True)
+                                    if chafa_check.returncode == 0:
+                                        term_width = subprocess.run(['tput', 'cols'], capture_output=True, text=True)
+                                        try:
+                                            width = int(term_width.stdout.strip()) - 2
+                                        except Exception:
+                                            width = 100
+
+                                        subprocess.call(['chafa', '--size', f'{width}x50',
+                                                      '--colors', 'full', image_path])
+                                    else:
+                                        # If chafa is not available as fallback
+                                        logger.print_info("Chafa not found as fallback, can't display image in terminal")
+                                except Exception as fallback_error:
+                                    logger.print_warning(f"Fallback display also failed: {fallback_error}")
                         except Exception as e:
                             logger.print_error(f"Error generating static image: {e}")
                 except Exception as e:
-                    logger.print_error(f"Error opening plot in browser: {e}")
-            except Exception as e:
-                logger.print_error(f"Error saving Plotly plot: {e}")
+                    logger.print_error(f"Error handling Plotly plot: {e}")
     except Exception as e:
         logger.print_error(f"Error generating plot: {e}")
-        logger.print_debug(traceback.format_exc())
+        traceback.print_exc()
