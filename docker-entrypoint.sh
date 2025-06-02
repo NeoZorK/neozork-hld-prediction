@@ -182,15 +182,30 @@ echo -e "\033[1;36m4. You can also open HTML files directly from the host system
 echo -e "\n\033[1;36mPress Ctrl+C to stop the container\033[0m\n"
 
 # Keep container running and accepting input
+echo -e "\n\033[1;36mStarting interactive shell with command history support...\033[0m\n"
+
+# Создаем файл с командами, которые нужно обрабатывать специальным образом
+cat > /tmp/neozork_commands.txt << EOL
+nz
+eda
+python
+pytest
+EOL
+
+# Запускаем интерактивный режим с поддержкой истории команд через rlwrap
+rlwrap -H /tmp/bash_history/.bash_history -f /tmp/neozork_commands.txt bash -c '
 while true; do
   echo -ne "\033[1;35mneozork-hld>\033[0m "
-  read -r cmd
+  read cmd
   if [ -n "$cmd" ]; then
     # Проверка на наличие необычных символов (которые могут появиться при использовании backspace)
-    if [[ "$cmd" == *$'\e'* ]]; then
+    if [[ "$cmd" == *$'"'"'\e'"'"'* ]]; then
       echo -e "\033[1;31m[WARNING] Command contains escape sequences which may cause errors. Please try again.\033[0m"
       continue
     fi
+
+    # Добавляем команду в историю
+    history -s "$cmd"
 
     # Проверяем, начинается ли команда с nz
     if [[ "$cmd" == "nz"* ]]; then
@@ -213,7 +228,7 @@ while true; do
     # Check if the command is a Python script execution
     elif [[ "$cmd" == *"python run_analysis.py"* ]]; then
       # Extract arguments from the command
-      args=$(echo "$cmd" | sed 's/python run_analysis.py//')
+      args=$(echo "$cmd" | sed '"'"'s/python run_analysis.py//'"'"')
       # Run the analysis script with the extracted arguments
       echo "Executing: python /app/run_analysis.py$args"
       { python /app/run_analysis.py$args; } || {
@@ -230,3 +245,4 @@ while true; do
     fi
   fi
 done
+'

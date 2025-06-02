@@ -48,6 +48,7 @@ ENV MPLCONFIGDIR=/tmp/matplotlib-cache
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     lynx \
+    rlwrap \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
