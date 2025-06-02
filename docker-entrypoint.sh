@@ -152,6 +152,17 @@ python
 pytest
 EOL
 
+# Handle Ctrl+C (SIGINT) to terminate all background processes
+cleanup() {
+  echo -e "\n\033[1;36mShutting down all background processes...\033[0m"
+  # Find and terminate all background processes
+  kill $(jobs -p) 2>/dev/null
+  exit 0
+}
+
+# Set up the trap for SIGINT (Ctrl+C)
+trap cleanup SIGINT
+
 # Run the interactive shell with simple command processing
 while true; do
   echo -ne "\033[1;35mneozork-hld>\033[0m "
