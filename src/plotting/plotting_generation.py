@@ -276,24 +276,12 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                                     term_width = subprocess.run(['tput', 'cols'], capture_output=True, text=True)
                                     term_height = subprocess.run(['tput', 'lines'], capture_output=True, text=True)
                                     try:
-                                        width = int(term_width.stdout.strip()) - 2  # Use almost full width
-                                        height = int(term_height.stdout.strip()) - 2  # Use almost full height
+                                        width = int(term_width.stdout.strip()) - 2
                                     except Exception:
                                         width = 100
-                                        height = 50
 
-                                    # Use character-optimized settings for terminal display
-                                    subprocess.call([
-                                        'chafa',
-                                        '--size', f'{width}x{height}',
-                                        '--fill', 'space',  # Use space as fill character for smoother images
-                                        '--symbols', 'block+border+space-extra',  # Use block symbols for better resolution
-                                        '--colors', 'full',  # Full color
-                                        '--color-space', 'rgb',  # RGB color space
-                                        '--dither', 'none',  # No dithering for sharper lines
-                                        '--speed', '1',  # Highest quality
-                                        image_path_for_terminal
-                                    ])
+                                    subprocess.call(['chafa', '--size', f'{width}x50',
+                                                  '--colors', 'full', image_path])
                                 else:
                                     # Fallback if chafa is not available
                                     logger.print_info("Chafa not available, can't display image in terminal")
@@ -321,6 +309,8 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                             logger.print_error(f"Error generating static image: {e}")
                 except Exception as e:
                     logger.print_error(f"Error handling Plotly plot: {e}")
+            except Exception as e:
+                logger.print_error(f"Error during Plotly HTML file operations or subsequent display attempts: {e}")
     except Exception as e:
         logger.print_error(f"Error generating plot: {e}")
         traceback.print_exc()
