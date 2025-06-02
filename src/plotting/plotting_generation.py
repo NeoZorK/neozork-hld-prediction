@@ -186,16 +186,22 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                             image_path = str(absolute_filepath).replace('.html', '.png')
                             logger.print_info(f"Generating PNG image directly with Plotly...")
 
-                            # Use Plotly's write_image method to save as PNG
-                            fig.write_image(image_path, width=1200, height=800, scale=2)
+                            # Increase resolution for better quality
+                            fig.write_image(image_path, width=1600, height=1200, scale=3)
                             logger.print_success(f"Static image saved to: {image_path}")
 
-                            # Display the image in terminal if possible
+                            # Display image in terminal if possible
                             import subprocess
                             catimg_check = subprocess.run(['which', 'catimg'], capture_output=True, text=True)
                             if catimg_check.returncode == 0:
                                 logger.print_info("Displaying image in terminal (color view)...")
-                                subprocess.call(['catimg', '-w', '120', image_path])
+                                # Infer terminal width for catimg
+                                term_width = subprocess.run(['tput', 'cols'], capture_output=True, text=True)
+                                try:
+                                    width = int(term_width.stdout.strip()) - 5
+                                except:
+                                    width = 180
+                                subprocess.call(['catimg', '-w', str(width), image_path])
                             else:
                                 img_viewer_check = subprocess.run(['which', 'img2txt'], capture_output=True, text=True)
                                 if img_viewer_check.returncode == 0:
