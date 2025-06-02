@@ -1,11 +1,13 @@
-FROM python:3.11-alpine AS builder
+FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
 # Installation minimal system dependencies only needed for building
-RUN apk add --no-cache \
-    build-base \
-    gcc
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create and activate virtual environment
 RUN python -m venv /opt/venv
@@ -17,7 +19,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Final stage - copy only necessary files
-FROM python:3.11-alpine
+FROM python:3.11-slim
 
 WORKDIR /app
 
@@ -43,11 +45,13 @@ ENV PYTHONUNBUFFERED=1
 ENV MPLCONFIGDIR=/tmp/matplotlib-cache
 
 # We need bash for the entrypoint script and tools for terminal image display
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     lynx \
     imagemagick \
-    chafa
+    chafa \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Container entrypoint is defined in docker-compose.yml
 
