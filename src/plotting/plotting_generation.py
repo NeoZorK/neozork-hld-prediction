@@ -190,11 +190,20 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
 
                                 # Convert HTML to image
                                 logger.print_info(f"Converting HTML to PNG image...")
+                                # Add options for better rendering
+                                # and to ensure JavaScript is executed
                                 convert_result = subprocess.run([
                                     'wkhtmltoimage',
+                                    '--enable-javascript',
+                                    '--javascript-delay', '2000',  # 2 seconds delay for JS execution
+                                    '--no-stop-slow-scripts',
                                     '--width', '1200',
                                     '--height', '800',
-                                    '--quality', '90',
+                                    '--quality', '100',
+                                    '--zoom', '1.2',        # Increase zoom for better visibility
+                                    '--disable-smart-width',
+                                    '--load-error-handling', 'ignore',
+                                    '--custom-header', 'User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) Chrome/94.0',
                                     str(absolute_filepath),
                                     image_path
                                 ], capture_output=True, text=True)
@@ -202,13 +211,25 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                                 if convert_result.returncode == 0:
                                     logger.print_success(f"HTML converted to image: {image_path}")
 
-                                    # Check if display/img2txt is available for viewing in terminal
-                                    img_viewer_check = subprocess.run(['which', 'img2txt'], capture_output=True, text=True)
-                                    if img_viewer_check.returncode == 0:
-                                        logger.print_info("Displaying image in terminal (simplified view)...")
-                                        subprocess.call(['img2txt', '-W', '100', image_path])
+                                    # Check if catimg is available for terminal display
+                                    catimg_check = subprocess.run(['which', 'catimg'], capture_output=True, text=True)
+                                    if catimg_check.returncode == 0:
+                                        logger.print_info("Displaying image in terminal (color view)...")
+                                        subprocess.call(['catimg', '-w', '120', image_path])
                                     else:
-                                        logger.print_info("For terminal image viewing, install caca-utils: apt-get install caca-utils")
+                                        # Check if timg is available for terminal display
+                                        timg_check = subprocess.run(['which', 'timg'], capture_output=True, text=True)
+                                        if timg_check.returncode == 0:
+                                            logger.print_info("Displaying image in terminal (color view)...")
+                                            subprocess.call(['timg', '-g', '120x60', image_path])
+                                        else:
+                                            # Use img2txt as a fallback for terminal display
+                                            img_viewer_check = subprocess.run(['which', 'img2txt'], capture_output=True, text=True)
+                                            if img_viewer_check.returncode == 0:
+                                                logger.print_info("Displaying image in terminal (simplified view)...")
+                                                subprocess.call(['img2txt', '-W', '120', '-H', '60', '--colors', '16', image_path])
+                                            else:
+                                                logger.print_info("For better terminal image viewing, install one of these:\n  - apt-get install catimg\n  - apt-get install timg\n  - apt-get install caca-utils")
                                 else:
                                     logger.print_warning(f"Failed to convert HTML to image: {convert_result.stderr}")
                             else:
