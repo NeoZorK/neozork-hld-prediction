@@ -34,6 +34,7 @@ scripts/test_mcp_connection.sh
 mql5_feed/
 *.bak
 *.png
+*.svg
 *.txt
 
 # Ignore log files from batch EDA and any other logs
@@ -45,3 +46,4 @@ logs/
 .env
 qodana.yaml
 .DS_Store
+
