@@ -16,51 +16,51 @@ services:
     command: >
       bash -c "
         # Welcome message
-        echo -e '\n\033[1;36m=== NeoZork HLD Prediction Container Started ===\033[0m\n'
+        echo -e '\n\e[1;36m=== NeoZork HLD Prediction Container Started ===\e[0m\n'
         
         # First question - Run data feed tests
-        echo -e '\033[1;33mWould you like to run tests for external data feeds? (Polygon, YFinance, Binance) [y/N]:\033[0m'
+        echo -e '\e[1;33mWould you like to run tests for external data feeds? (Polygon, YFinance, Binance) [y/N]:\e[0m'
         read -r run_tests
         
-        if [[ $$run_tests =~ ^[Yy]$$ ]]; then
-          echo -e '\n\033[1;32m=== Running external data feed tests ===\033[0m\n'
+        if [[ \$run_tests =~ ^[Yy]$ ]]; then
+          echo -e '\n\e[1;32m=== Running external data feed tests ===\e[0m\n'
           for script in /app/scripts/debug_scripts/*.py; do
-            echo -e '\033[1;34m=== Running test: '$$script' ===\033[0m'
-            python $$script
+            echo -e '\e[1;34m=== Running test: '\$script' ===\e[0m'
+            python \$script
             echo -e '\n'
           done
         else
-          echo -e '\033[1;33mSkipping external data feed tests\033[0m\n'
+          echo -e '\e[1;33mSkipping external data feed tests\e[0m\n'
         fi
         
         # Second question - Run MCP server
-        echo -e '\033[1;33mWould you like to start the MCP service for enhanced LLM support? [y/N]:\033[0m'
+        echo -e '\e[1;33mWould you like to start the MCP service for enhanced LLM support? [y/N]:\e[0m'
         read -r run_mcp
         
-        if [[ $$run_mcp =~ ^[Yy]$$ ]]; then
-          echo -e '\n\033[1;32m=== Starting MCP server in background ===\033[0m\n'
+        if [[ \$run_mcp =~ ^[Yy]$ ]]; then
+          echo -e '\n\e[1;32m=== Starting MCP server in background ===\e[0m\n'
           python mcp_server.py &
-          echo -e '\033[1;32mMCP server started in background\033[0m\n'
+          echo -e '\e[1;32mMCP server started in background\e[0m\n'
           # Wait for mcp_server to initialize
           sleep 5
         else
-          echo -e '\033[1;33mSkipping MCP server startup\033[0m\n'
+          echo -e '\e[1;33mSkipping MCP server startup\e[0m\n'
         fi
         
         # Always show help
-        echo -e '\033[1;32m=== NeoZork HLD Prediction Usage Guide ===\033[0m\n'
+        echo -e '\e[1;32m=== NeoZork HLD Prediction Usage Guide ===\e[0m\n'
         python run_analysis.py -h
         
-        echo -e '\n\033[1;36m=== Container is now ready for use ===\033[0m'
-        echo -e '\033[1;36mUse the commands above to analyze data\033[0m'
-        echo -e '\033[1;36mPress Ctrl+C to stop the container\033[0m\n'
+        echo -e '\n\e[1;36m=== Container is now ready for use ===\e[0m'
+        echo -e '\e[1;36mUse the commands above to analyze data\e[0m'
+        echo -e '\e[1;36mPress Ctrl+C to stop the container\e[0m\n'
         
         # Keep container running and accepting input
         while true; do
-          echo -e '\033[1;35mneozork-hld>\033[0m '
+          echo -e '\e[1;35mneozork-hld>\e[0m '
           read -r cmd
-          if [ -n \"$$cmd\" ]; then
-            eval $$cmd
+          if [ -n \"\$cmd\" ]; then
+            eval \$cmd
           fi
         done
       "
