@@ -310,17 +310,17 @@ def handle_plotly_in_docker(fig, filepath):
 
     Args:
         fig: Plotly figure object
-        filepath (Path): Path to the HTML file
+        filepath (Path): Path to the HTML file (already resolved)
     """
     logger.print_info("Running in Docker container - generating SVG image...")
-    absolute_filepath = filepath.resolve()
+    # filepath is already resolved, don't call resolve() again
 
     try:
         # Optimize figure for image export
         fig = optimize_plotly_figure_for_image(fig)
 
         # Save SVG image only
-        svg_path = save_plotly_svg(fig, absolute_filepath)
+        svg_path = save_plotly_svg(fig, filepath)
 
         if svg_path:
             logger.print_info(f"SVG image saved for Docker environment: {svg_path}")
@@ -365,18 +365,20 @@ def handle_plotly_plot(fig, data_info, selected_rule):
         fig.write_html(str(filepath), include_plotlyjs='cdn')
         logger.print_success(f"Interactive Plotly plot saved successfully to: {filepath}")
 
+        # Always resolve path and get URI for consistency in tests
+        absolute_filepath = filepath.resolve()
+        file_uri = absolute_filepath.as_uri()
+
         # Check if running in Docker
         in_docker = os.path.exists('/.dockerenv') or os.environ.get('RUNNING_IN_DOCKER') == 'true'
 
         if not in_docker:
             # Open in browser if not in Docker
-            absolute_filepath = filepath.resolve()
-            file_uri = absolute_filepath.as_uri()
             webbrowser.open(file_uri)
             logger.print_info(f"Attempting to open {filepath} in default browser...")
         else:
-            # Handle Docker environment
-            handle_plotly_in_docker(fig, filepath)
+            # Handle Docker environment - pass the already resolved path
+            handle_plotly_in_docker(fig, absolute_filepath)
     except Exception as e:
         logger.print_error(f"Error during Plotly HTML file operations: {type(e).__name__}: {e}")
         tb_str = traceback.format_exc()
