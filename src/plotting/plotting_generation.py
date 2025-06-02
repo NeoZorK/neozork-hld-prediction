@@ -221,34 +221,53 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                             fig.write_image(image_path, width=1920, height=1080, scale=4)
                             logger.print_success(f"Static image saved to: {image_path}")
 
-                            # Optimize SVG for crisp rendering
+                            # Создаем высококачественный SVG
                             svg_path = str(absolute_filepath).replace('.html', '.svg')
 
-                            # Create a copy of the figure for SVG optimization
-                            import copy
-                            svg_fig = copy.deepcopy(fig)
+                            # Для SVG используем прямой подход без kaleido для лучшего качества
+                            try:
+                                # Пробуем использовать напрямую plotly.io для генерации SVG
+                                import plotly.io as pio
 
-                            # Special formatting for SVG export - ensure crisp rendering
-                            svg_fig.update_layout(
-                                font=dict(size=16, family="Arial, sans-serif"),
-                                width=1920,
-                                height=1080,
-                                margin=dict(l=50, r=50, t=80, b=50),  # Explicit margins
-                            )
+                                # Настройка SVG-рендерера для высочайшего качества
+                                pio.kaleido.scope.default_width = 1920
+                                pio.kaleido.scope.default_height = 1080
+                                pio.kaleido.scope.default_scale = 1
+                                pio.kaleido.scope.default_format = "svg"
 
-                            # Export with vector-optimized settings
-                            svg_fig.write_image(
-                                svg_path,
-                                format="svg",
-                                width=1920,
-                                height=1080,
-                                scale=1,  # Scale=1 for SVG (vector doesn't need scaling)
-                                engine="kaleido"
-                            )
-                            logger.print_info(f"Vector SVG image saved to: {svg_path}")
+                                # Экспорт напрямую через plotly.io для лучшего контроля качества
+                                with open(svg_path, 'w') as f:
+                                    f.write(pio.to_svg(fig, validate=True, width=1920, height=1080, scale=1))
 
-                            # If we're using the image in terminal, prefer PNG
-                            image_path_for_terminal = image_path
+                                logger.print_success(f"High-quality vector SVG saved to: {svg_path}")
+                            except Exception as svg_error:
+                                logger.print_warning(f"Error with direct SVG export: {svg_error}")
+
+                                # Запасной вариант - использование стандартного метода
+                                try:
+                                    # Настройка дополнительных параметров для чистого SVG
+                                    config = {
+                                        'toImageButtonOptions': {
+                                            'format': 'svg',
+                                            'width': 1920,
+                                            'height': 1080,
+                                            'scale': 1
+                                        }
+                                    }
+
+                                    # Прямой вызов write_image с детальными параметрами
+                                    fig.write_image(
+                                        svg_path,
+                                        format="svg",
+                                        width=1920,
+                                        height=1080,
+                                        scale=1,  # Scale=1 для векторного формата
+                                        engine="kaleido",
+                                        validate=True
+                                    )
+                                    logger.print_info(f"Vector SVG saved to: {svg_path} (fallback method)")
+                                except Exception as e:
+                                    logger.print_error(f"All SVG export methods failed: {e}")
 
                             # Display the image in terminal if possible
                         except Exception as e:
