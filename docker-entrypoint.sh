@@ -220,55 +220,57 @@ cleanup() {
 # Set up the trap for SIGINT (Ctrl+C)
 trap cleanup SIGINT
 
-# Run the interactive shell with simple command processing
+# Run the interactive shell with proper readline support
 while true; do
   echo -ne "\033[1;35mneozork-hld>\033[0m "
-  read cmd
-  if [ -n "$cmd" ]; then
-    # Check if the command is empty
-    if [[ "$cmd" == *$'\e'* ]]; then
-      echo -e "\033[1;31m[WARNING] Command contains escape sequences which may cause errors. Please try again.\033[0m"
-      continue
-    fi
+  # Use bash -c to create a properly configured interactive shell that can process arrow keys
+  history -a  # Save history after each command
 
-    # Add command to history
-    history -s "$cmd"
+  # Use read with readline support (-e flag)
+  if read -e cmd; then
+    if [ -n "$cmd" ]; then
+      # Add command to history
+      history -s "$cmd"
 
-    # Check if the command starts with nz
-    if [[ "$cmd" == "nz"* ]]; then
-      # If it starts with nz, call the nz wrapper script
-      args="${cmd#nz}"
-      echo "Executing: nz$args"
-      { /tmp/bin/nz $args; } || {
-        echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
-        echo -e "\033[1;33mYou can try another command\033[0m"
-      }
-    # check if the command starts with eda
-    elif [[ "$cmd" == "eda"* ]]; then
-      # If it starts with eda, call the eda wrapper script
-      args="${cmd#eda}"
-      echo "Executing: eda$args"
-      { /tmp/bin/eda $args; } || {
-        echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
-        echo -e "\033[1;33mYou can try another command\033[0m"
-      }
-    # Check if the command is a Python script execution
-    elif [[ "$cmd" == *"python run_analysis.py"* ]]; then
-      # Extract arguments from the command
-      args=$(echo "$cmd" | sed 's/python run_analysis.py//')
-      # Run the analysis script with the extracted arguments
-      echo "Executing: python /app/run_analysis.py$args"
-      { python /app/run_analysis.py$args; } || {
-        echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
-        echo -e "\033[1;33mYou can try another command\033[0m"
-      }
-    else
-      # Run any other command safely (without special handling)
-      # Use {} for command grouping to handle errors
-      { bash -c "$cmd"; } || {
-        echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
-        echo -e "\033[1;33mYou can try another command\033[0m"
-      }
+      # Check if the command starts with nz
+      if [[ "$cmd" == "nz"* ]]; then
+        # If it starts with nz, call the nz wrapper script
+        args="${cmd#nz}"
+        echo "Executing: nz$args"
+        { /tmp/bin/nz $args; } || {
+          echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
+          echo -e "\033[1;33mYou can try another command\033[0m"
+        }
+      # check if the command starts with eda
+      elif [[ "$cmd" == "eda"* ]]; then
+        # If it starts with eda, call the eda wrapper script
+        args="${cmd#eda}"
+        echo "Executing: eda$args"
+        { /tmp/bin/eda $args; } || {
+          echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
+          echo -e "\033[1;33mYou can try another command\033[0m"
+        }
+      # Check if the command is a Python script execution
+      elif [[ "$cmd" == *"python run_analysis.py"* ]]; then
+        # Extract arguments from the command
+        args=$(echo "$cmd" | sed 's/python run_analysis.py//')
+        # Run the analysis script with the extracted arguments
+        echo "Executing: python /app/run_analysis.py$args"
+        { python /app/run_analysis.py$args; } || {
+          echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
+          echo -e "\033[1;33mYou can try another command\033[0m"
+        }
+      else
+        # Run any other command safely (without special handling)
+        # Use {} for command grouping to handle errors
+        { bash -c "$cmd"; } || {
+          echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
+          echo -e "\033[1;33mYou can try another command\033[0m"
+        }
+      fi
     fi
+  else
+    # Handle Ctrl+D (EOF) or read error
+    echo -e "\nExit signal received. Use Ctrl+C to fully exit the container."
   fi
 done
