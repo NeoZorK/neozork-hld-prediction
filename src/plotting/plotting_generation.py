@@ -221,55 +221,96 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                             fig.write_image(image_path, width=1920, height=1080, scale=4)
                             logger.print_success(f"Static image saved to: {image_path}")
 
-                            # Создаем высококачественный SVG
+                            # Create high-quality SVG
                             svg_path = str(absolute_filepath).replace('.html', '.svg')
 
-                            # Для SVG используем прямой подход без kaleido для лучшего качества
+                            # Fixed method for creating SVG (to_svg doesn't exist)
                             try:
-                                # Пробуем использовать напрямую plotly.io для генерации SVG
+                                # Use correct method for SVG export
                                 import plotly.io as pio
 
-                                # Настройка SVG-рендерера для высочайшего качества
+                                # Configure SVG renderer for highest quality
                                 pio.kaleido.scope.default_width = 1920
                                 pio.kaleido.scope.default_height = 1080
                                 pio.kaleido.scope.default_scale = 1
-                                pio.kaleido.scope.default_format = "svg"
 
-                                # Экспорт напрямую через plotly.io для лучшего контроля качества
-                                with open(svg_path, 'w') as f:
-                                    f.write(pio.to_svg(fig, validate=True, width=1920, height=1080, scale=1))
+                                # Save SVG directly with optimal settings
+                                fig.write_image(
+                                    svg_path,
+                                    format="svg",
+                                    width=1920,
+                                    height=1080,
+                                    scale=1,  # For vector format scale=1 is optimal
+                                    engine="kaleido",
+                                )
 
                                 logger.print_success(f"High-quality vector SVG saved to: {svg_path}")
+
+                                # Check possibility to display SVG in terminal
+                                import subprocess
+
+                                # Check for rsvg-convert utility for converting SVG to terminal-friendly format
+                                rsvg_check = subprocess.run(['which', 'rsvg-convert'], capture_output=True, text=True)
+                                if rsvg_check.returncode == 0:
+                                    logger.print_info("Converting SVG for terminal display...")
+                                    # Create temporary high-quality PNG from SVG
+                                    temp_png_path = svg_path + ".png"
+                                    subprocess.call(['rsvg-convert', '-w', '1920', '-h', '1080',
+                                                    '-o', temp_png_path, svg_path])
+
+                                    # Now use this PNG for terminal display
+                                    image_path_for_terminal = temp_png_path
+                                    logger.print_info(f"Using converted SVG for terminal display")
+                                else:
+                                    # If rsvg-convert not available, use regular PNG
+                                    image_path_for_terminal = image_path
+                                    logger.print_info("SVG terminal display not available (install librsvg2-bin for better quality)")
                             except Exception as svg_error:
                                 logger.print_warning(f"Error with direct SVG export: {svg_error}")
-
-                                # Запасной вариант - использование стандартного метода
+                                # Fallback option
                                 try:
-                                    # Настройка дополнительных параметров для чистого SVG
-                                    config = {
-                                        'toImageButtonOptions': {
-                                            'format': 'svg',
-                                            'width': 1920,
-                                            'height': 1080,
-                                            'scale': 1
-                                        }
-                                    }
-
-                                    # Прямой вызов write_image с детальными параметрами
                                     fig.write_image(
                                         svg_path,
                                         format="svg",
                                         width=1920,
                                         height=1080,
-                                        scale=1,  # Scale=1 для векторного формата
-                                        engine="kaleido",
-                                        validate=True
+                                        scale=1
                                     )
                                     logger.print_info(f"Vector SVG saved to: {svg_path} (fallback method)")
+                                    image_path_for_terminal = image_path  # Use PNG for terminal
                                 except Exception as e:
                                     logger.print_error(f"All SVG export methods failed: {e}")
+                                    image_path_for_terminal = image_path  # Use PNG for terminal
 
                             # Display the image in terminal if possible
+                            import subprocess
+
+                            # Check for Docker environment
+                            in_docker = os.environ.get('DOCKER_CONTAINER', False)
+
+                            # Try chafa first (best quality for Docker)
+                            chafa_check = subprocess.run(['which', 'chafa'], capture_output=True, text=True)
+                            if chafa_check.returncode == 0:
+                                logger.print_info("Displaying image in terminal (high quality color view)...")
+                                # Infer terminal size
+                                term_width = subprocess.run(['tput', 'cols'], capture_output=True, text=True)
+                                term_height = subprocess.run(['tput', 'lines'], capture_output=True, text=True)
+                                try:
+                                    width = int(term_width.stdout.strip()) - 5
+                                    height = int(term_height.stdout.strip()) - 10
+                                except:
+                                    width = 180
+                                    height = 90
+
+                                # Use better settings for Docker
+                                if in_docker:
+                                    subprocess.call(['chafa', '--size', f'{width}x{height}',
+                                                    '--colors', 'full', '--dither', 'diffusion',
+                                                    '--dither-intensity', '0.7', '--optimize', 'quality',
+                                                    image_path_for_terminal])
+                                else:
+                                    subprocess.call(['chafa', '--size', f'{width}x{height}',
+                                                    '--colors', 'full', image_path_for_terminal])
                         except Exception as e:
                             logger.print_error(f"Error generating static image: {e}")
                 except Exception as e:
