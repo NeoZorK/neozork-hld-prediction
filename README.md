@@ -85,7 +85,6 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 * **Version Control:** `git`
 * **Package Installation Speedup (Optional):** `uv`
 
-
 # Project Structure
 ├── data/  
 │   ├── cache/  
@@ -102,28 +101,82 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 ├── requirements.txt  
 └── run_analysis.py  
 
-## Directory and File Descriptions
+## CI/CD with GitHub Actions
 
-`data/`: Central storage for all data-related files.  
-`cache/`: Holds temporary intermediate data.  
-`csv_converted/`: Stores CSV files converted from other formats.  
+This project includes GitHub Actions for continuous integration and testing of the Docker build. GitHub Actions is a CI/CD platform that allows you to automate your build, test, and deployment workflows directly in your GitHub repository.
 
-`raw_parquet/`: Stores raw data in Parquet format for efficient storage and querying.  
+### Understanding GitHub Actions
 
-`mql5_feed/`: Directory for CSV files exported from MQL5/MT5 platforms.  
-  
-`scripts/`: Contains utility scripts for data processing and analysis.
-`debug_scripts/`: Scripts for debugging and testing various components.
+- **What is GitHub Actions?** A CI/CD platform integrated with GitHub that automates software workflows
+- **Workflow file location:** `.github/workflows/docker-build.yml`
+- **Trigger events:** Push to main/master branch, pull requests, or manual trigger
 
-`src/`: Main source code directory for the project.  
+### Testing GitHub Actions Locally
 
-`tests/`: Directory for unit tests to ensure code reliability.  
-`.env`: Stores environment variables, such as API keys and configuration settings.  
-`.gitignore`: Specifies files and directories to be ignored by Git version control.  
-`init_dirs.sh`: Shell script to set up project directories and initialize the .env file.  
-`README.md:` This file, providing an overview and documentation of the project.  
-`requirements.txt`: Lists Python dependencies required for the project.  
-`run_analysis.py`: Main entry point script to execute the data analysis pipeline.  
+You can test the GitHub Actions workflow locally before pushing to GitHub using the `test-workflow.sh` script:
+
+1. **Install Act:**
+   ```bash
+   # macOS
+   brew install act
+   
+   # Linux (using Homebrew)
+   brew install act
+   
+   # Manual installation (all platforms)
+   curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
+   ```
+
+2. **Run the test script:**
+   ```bash
+   chmod +x test-workflow.sh
+   ./test-workflow.sh
+   ```
+
+3. **What happens during local testing:**
+   - Act will simulate the GitHub Actions environment locally
+   - Docker image will be built according to your workflow configuration
+   - All jobs defined in the workflow will execute on your machine
+   - You'll see the same output as you would on GitHub.com
+   - Typical execution time: 2-5 minutes depending on your hardware
+
+### What Happens After Pushing to GitHub
+
+When you push your code to the main/master branch on GitHub:
+
+1. GitHub Actions automatically detects the workflow file and schedules a run
+2. The workflow builds your Docker image, tests it, and optionally publishes it
+3. You can monitor the progress in the "Actions" tab of your repository
+4. You'll receive notifications of workflow success or failure
+5. Typical execution time on GitHub: 3-7 minutes
+
+### GitHub Actions Pricing and Limitations
+
+- **Free tier:** GitHub offers 2,000 minutes/month of Actions runtime on public repositories
+- **Free tier for private repos:** 2,000 minutes/month with GitHub Free account
+- **Hardware limits:** 2-core CPU, 8 GB RAM, 14 GB SSD
+- **Job timeout:** 6 hours maximum runtime
+- **Workflow run time:** 35 days retention for logs and artifacts
+
+For larger projects or teams, GitHub offers paid plans with:
+- More minutes (3,000-50,000 depending on plan)
+- More powerful runners (up to 64-core, 256 GB RAM)
+- Self-hosted runners option
+
+See the [GitHub Actions pricing page](https://github.com/pricing) for the most current information.
+
+### Expected Outcomes
+
+**Locally (using act):**
+- Confirmation that your Docker build process works
+- Verification that tests pass in a containerized environment
+- Early detection of issues before pushing to GitHub
+
+**On GitHub.com:**
+- Automated verification of every push and pull request
+- Build status badge/indicator on your repository
+- Build logs and test results for debugging
+- (If configured) Automatic deployment to your target environment
 
 ## Installation
 
@@ -241,6 +294,37 @@ Use your package manager, for example:
     ```bash
     pip install pytest  # Required for running unit tests
     ```
+
+## Quick Command Shortcut - The `nz` Tool
+
+The project provides a convenient command shortcut script called `nz` that simplifies working with the analysis tools:
+
+```bash
+# Instead of typing the full command:
+python run_analysis.py demo --rule PHLD
+
+# You can use the shortcut:
+nz demo --rule PHLD
+```
+
+### Features of the `nz` Command
+
+- **Smart Environment Detection**: Automatically detects whether Docker is running and routes commands appropriately:
+  - When run without Docker, executes Python commands directly
+  - When Docker is running, routes commands to the running container
+  - When Docker is available but no container is running, starts a new container
+
+- **PATH Integration**: The script automatically adds itself to your PATH for the current session and provides instructions for permanent addition to your environment
+
+- **Easy to Use**: All parameters that work with `run_analysis.py` also work with `nz`
+
+### Setup
+
+When you first run the `nz` command, it will automatically add itself to your PATH for the current terminal session. To add it permanently to your PATH, add this line to your `~/.bashrc` or `~/.zshrc`:
+
+```bash
+export PATH="/Users/rost/Documents/DIS/REPO/neozork-hld-prediction:$PATH"
+```
 
 ## Project Workflow / Detailed Plan (Status Updated 2025-04-18)
 
@@ -507,6 +591,36 @@ For more information about parameters, see the "EXAMPLES" section or run:
 python run_analysis.py show --help
 ```
 
+## MCP Server Integration
+
+The project includes an MCP (Model Completion Protocol) server that extends GitHub Copilot capabilities when working with the codebase. This allows for enhanced code completions, better context awareness, and improved productivity during development.
+
+### Using MCP Server with Docker
+
+There are multiple ways to use the MCP server with this project:
+
+1. **Docker-based MCP Server**: The Docker container includes a built-in MCP server that can be activated during container startup:
+   ```bash
+   docker compose up
+   # When prompted "Would you like to start the MCP service for enhanced LLM support? [y/N]:", enter "y"
+   ```
+
+2. **Local MCP Server**: You can run the MCP server directly on your host machine for lower latency:
+   ```bash
+   python mcp_server.py
+   ```
+
+3. **IDE Integration**: Configure your IDE (like PyCharm) to use either the local or Docker-based MCP server using the provided `mcp.json` configuration file.
+
+### Benefits of MCP Server
+
+- **Enhanced Context Awareness**: The MCP server provides GitHub Copilot with full access to the project structure and codebase, resulting in more relevant suggestions.
+- **Improved Completions**: Code completions and suggestions are tailored specifically to this project's architecture and data structures.
+- **Offline Capability**: The local MCP server allows working with Copilot even in environments with limited internet connectivity.
+- **Docker Integration**: The containerized environment ensures all dependencies are properly configured.
+
+For detailed setup instructions and advanced configuration options, see the [MCP_SERVER_README.md](MCP_SERVER_README.md) file.
+
 ## The script produces the following outputs:
 
 1.  **Console Summary:** Detailed summary printed to the console at the end of execution, including selected parameters, timing metrics for different steps, data shape, memory usage, API latency (if applicable), and overall success status.
@@ -612,7 +726,6 @@ python src/eda/eda_batch_check.py --nan-check --gap-check --zero-check --basic-s
 ```  
 
 
-
 ## How It Works
 
 The script automatically processes all Parquet files in the data directory. For each file:
@@ -667,5 +780,73 @@ This project uses Python's built-in `unittest` framework.
     pytest tests/ --maxfail=3 --disable-warnings -v
     ```
 
-*** Conclusion: ***
+## Docker Usage
 
+### Docker Configuration
+
+The project can be run in a Docker container, which provides an isolated execution environment with pre-installed dependencies.
+
+### Building the Docker Container
+
+To build the Docker container, execute the following command in the project's root directory:
+
+```bash
+docker compose build
+```
+
+This command will create a container image based on the settings in the `Dockerfile` and `docker-compose.yml` files.
+
+### Running the Container
+
+To run in interactive mode, you can use:
+
+```bash
+docker compose run --rm neozork-hld
+```
+
+When the container starts, the following actions are automatically performed:
+
+1. All debug scripts from the `scripts/debug_scripts/` directory are executed
+2. The `mcp_server.py` server is started in the background
+3. The `run_analysis.py -h` script is executed to display usage help
+4. The container remains active for further interaction
+
+To run the container in background mode, add the `-d` flag:
+
+```bash
+docker compose up -d
+```
+
+### Accessing the Running Container
+
+To enter the running container, use:
+
+```bash
+docker exec -it neozork-hld-prediction-neozork-hld-1 bash
+```
+
+Inside the container, you can run commands, for example:
+
+```bash
+python run_analysis.py --mode yfinance --ticker EURUSD --interval M15 --period 10d --output-mode plot
+```
+
+### Stopping the Container
+
+To stop the container, execute:
+
+```bash
+docker compose down
+```
+
+### Docker Usage Features
+
+1. **Data Mounting**: Local directories `data`, `logs`, and `mql5_feed` are mounted into the container, ensuring data and logs are preserved between runs.
+
+2. **Environment Variables**: Settings from the `.env` file are automatically loaded into the container.
+
+3. **Debugging**: If necessary, you can uncomment the `stdin_open: true` and `tty: true` lines in `docker-compose.yml` for interactive mode.
+
+4. **Performance**: Data processing in the container may be slightly slower compared to native execution, especially when working with large volumes of data.
+
+5. **Image Updates**: When making changes to code or dependencies, you need to rebuild the image using `docker compose build`.

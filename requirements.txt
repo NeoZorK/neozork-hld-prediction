@@ -91,7 +91,7 @@ tensorboard-data-server==0.7.2
 tensorflow==2.16.2
 termcolor==3.0.1
 threadpoolctl==3.6.0
-#torch==2.2.2   # fix security issue
+torch==2.7.0
 tqdm==4.67.1
 traitlets==5.14.3
 typing_extensions==4.13.1
@@ -108,8 +108,10 @@ xgboost==3.0.0
 yfinance==0.2.55
 python-binance>=1.0.19
 pyarrow>=10.0.0
-dask
-datashader
-bokeh
-seaborn
-statsmodels
+dask>=2025.4.1
+datashader>=0.15.0
+bokeh>=3.7.2
+seaborn>=0.13.2
+statsmodels>=0.14.0
+pytest==8.0.0
+kaleido==0.2.1  # Added for static image export in Plotly
