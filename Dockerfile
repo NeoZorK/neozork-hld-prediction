@@ -31,6 +31,10 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY run_analysis.py mcp_server.py mcp.json ./
 COPY src/ ./src/
 COPY scripts/ ./scripts/
+COPY docker-entrypoint.sh ./
+
+# Make entrypoint script executable
+RUN chmod +x /app/docker-entrypoint.sh
 
 # Create necessary directories
 RUN mkdir -p /app/data/cache /app/data/raw_parquet /app/logs
@@ -38,8 +42,11 @@ RUN mkdir -p /app/data/cache /app/data/raw_parquet /app/logs
 # Define environment variables
 ENV PYTHONUNBUFFERED=1
 
-# Set non-root user for security
-USER nobody
+# We need bash for the entrypoint script
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Container entrypoint is defined in docker-compose.yml
 
