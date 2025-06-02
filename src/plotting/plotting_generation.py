@@ -196,12 +196,15 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                                 template="plotly_white"  # Use a clean template for better visibility
                             )
 
-                            # Make lines thicker for better visibility
+                            # Increase line width for better visibility
                             for trace in fig.data:
                                 if hasattr(trace, 'line') and trace.line:
-                                    trace.line.width = trace.line.width * 1.5 if hasattr(trace.line, 'width') else 2
+                                    if hasattr(trace.line, 'width') and trace.line.width is not None:
+                                        trace.line.width = trace.line.width * 1.5
+                                    else:
+                                        trace.line.width = 2
 
-                            # Save the image with high resolution
+                            # Save as PNG with high resolution
                             fig.write_image(image_path, width=1920, height=1080, scale=4)
                             logger.print_success(f"Static image saved to: {image_path}")
 
