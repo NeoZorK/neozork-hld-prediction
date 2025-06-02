@@ -48,7 +48,7 @@ if IN_DOCKER:
         from src.utils import docker_browser
         # Patch the webbrowser module in sys.modules to use our version
         sys.modules['webbrowser'] = docker_browser
-        print("Running in Docker: Browser opening behavior modified for container environment")
+        # Docker browser patching complete
     except ImportError:
         print("Warning: Running in Docker but docker_browser module not found")
 
