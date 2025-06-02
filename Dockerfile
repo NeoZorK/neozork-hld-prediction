@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS builder
+FROM python:3.11-slim-bookworm AS builder
 
 WORKDIR /app
 
@@ -20,10 +20,13 @@ RUN pip install --no-cache-dir --upgrade pip && \
     find /opt/venv -name '*.pyc' -delete && \
     find /opt/venv -name '__pycache__' -delete
 
+# Final stage - copy only necessary files
+FROM python:3.11-slim-bookworm
+
 WORKDIR /app
 
 # Copy virtual environment from builder stage
-COPY  /opt/venv /opt/venv
+COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy only necessary application files
@@ -50,6 +53,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     imagemagick \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /usr/share
+    && rm -rf /usr/share/doc
 
 USER nobody
