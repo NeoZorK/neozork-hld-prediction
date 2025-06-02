@@ -242,6 +242,37 @@ Use your package manager, for example:
     pip install pytest  # Required for running unit tests
     ```
 
+## Quick Command Shortcut - The `nz` Tool
+
+The project provides a convenient command shortcut script called `nz` that simplifies working with the analysis tools:
+
+```bash
+# Instead of typing the full command:
+python run_analysis.py demo --rule PHLD
+
+# You can use the shortcut:
+nz demo --rule PHLD
+```
+
+### Features of the `nz` Command
+
+- **Smart Environment Detection**: Automatically detects whether Docker is running and routes commands appropriately:
+  - When run without Docker, executes Python commands directly
+  - When Docker is running, routes commands to the running container
+  - When Docker is available but no container is running, starts a new container
+
+- **PATH Integration**: The script automatically adds itself to your PATH for the current session and provides instructions for permanent addition to your environment
+
+- **Easy to Use**: All parameters that work with `run_analysis.py` also work with `nz`
+
+### Setup
+
+When you first run the `nz` command, it will automatically add itself to your PATH for the current terminal session. To add it permanently to your PATH, add this line to your `~/.bashrc` or `~/.zshrc`:
+
+```bash
+export PATH="/Users/rost/Documents/DIS/REPO/neozork-hld-prediction:$PATH"
+```
+
 ## Project Workflow / Detailed Plan (Status Updated 2025-04-18)
 
 ### Phase 0: Setup & Foundation

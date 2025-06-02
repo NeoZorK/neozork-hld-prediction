@@ -4,6 +4,16 @@
 PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$PROJECT_DIR"
 
+# Add this script's directory to PATH if not already there
+if [[ ":$PATH:" != *":$PROJECT_DIR:"* ]]; then
+    echo "Adding $PROJECT_DIR to PATH for this session"
+    export PATH="$PROJECT_DIR:$PATH"
+
+    # Suggest adding to PATH permanently
+    echo "To add this directory to PATH permanently, add the following line to your ~/.bashrc or ~/.zshrc:"
+    echo "export PATH=\"$PROJECT_DIR:\$PATH\""
+fi
+
 # Check if the script is being run from the correct directory
 if command -v docker &> /dev/null && [ -f "docker-compose.yml" ]; then
     # If Docker is available and docker-compose.yml exists, run the command in a Docker container
