@@ -224,6 +224,37 @@ def save_plotly_images(fig, base_path):
         return png_path, None
 
 
+def save_plotly_svg(fig, base_path):
+    """
+    Saves Plotly figure as SVG image only (for Docker environment)
+
+    Args:
+        fig: Plotly figure object
+        base_path (str): Base path for saving image
+
+    Returns:
+        str: Path to SVG file or None if failed
+    """
+    svg_path = str(base_path).replace('.html', '.svg')
+
+    try:
+        # Save as SVG
+        import plotly.io as pio
+        fig.write_image(
+            svg_path,
+            format="svg",
+            width=1200,
+            height=800,
+            scale=1,
+            engine="kaleido",
+        )
+        logger.print_success(f"High-quality vector SVG saved to: {svg_path}")
+        return svg_path
+    except Exception as e:
+        logger.print_warning(f"Failed to save SVG image: {e}")
+        return None
+
+
 def create_terminal_optimized_image(image_path):
     """
     Creates an image optimized for terminal display using ImageMagick
@@ -281,32 +312,22 @@ def handle_plotly_in_docker(fig, filepath):
         fig: Plotly figure object
         filepath (Path): Path to the HTML file
     """
-    logger.print_info("Running in Docker container - generating static image...")
+    logger.print_info("Running in Docker container - generating SVG image...")
     absolute_filepath = filepath.resolve()
 
     try:
         # Optimize figure for image export
         fig = optimize_plotly_figure_for_image(fig)
 
-        # Save images
-        image_path, _ = save_plotly_images(fig, absolute_filepath)
+        # Save SVG image only
+        svg_path = save_plotly_svg(fig, absolute_filepath)
 
-        if image_path:
-            # Create terminal-optimized image
-            optimized_image = create_terminal_optimized_image(image_path)
-
-            # Display in terminal
-            display_image_in_terminal(optimized_image)
+        if svg_path:
+            logger.print_info(f"SVG image saved for Docker environment: {svg_path}")
     except Exception as e:
         logger.print_error(f"Error handling Plotly in Docker: {type(e).__name__}: {e}")
         tb_str = traceback.format_exc()
         logger.print_debug(f"Traceback (handle Plotly in Docker):\n{tb_str}")
-        # Try fallback display
-        try:
-            if 'image_path' in locals():
-                display_image_in_terminal(image_path)
-        except Exception as fallback_error:
-            logger.print_warning(f"Fallback display also failed: {fallback_error}")
 
 
 def handle_plotly_plot(fig, data_info, selected_rule):
