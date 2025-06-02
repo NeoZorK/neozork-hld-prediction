@@ -10,8 +10,25 @@ services:
       - ./mql5_feed:/app/mql5_feed
     env_file:
       - .env
-    # by default, the container will run the mcp_server.py script
-    command: python mcp_server.py
+    # Run test scripts, mcp_server.py, and then run_analysis.py
+    command: >
+      bash -c "
+        # Run debug scripts
+        for script in /app/scripts/debug_scripts/*.py; do
+          echo '=== Running debug script: '$$script' ==='
+          python $$script
+        done &&
+        # Run mcp_server
+        echo '=== Running mcp_server.py ===' &&
+        python mcp_server.py &
+        # Wait for mcp_server to initialize
+        sleep 5 &&
+        # Run run_analysis.py with help flag
+        echo '=== Running run_analysis.py -h ===' &&
+        python run_analysis.py -h &&
+        # Keep container running
+        tail -f /dev/null
+      "
     # For debugging purposes, you can uncomment the following lines
     # stdin_open: true
     # tty: true
