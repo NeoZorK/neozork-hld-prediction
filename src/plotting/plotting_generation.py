@@ -263,29 +263,14 @@ def create_terminal_optimized_image(image_path):
 
 def display_image_in_terminal(image_path):
     """
-    Displays an image in the terminal using chafa
+    Placeholder function for image display compatibility
 
     Args:
         image_path (str): Path to the image to display
     """
-    try:
-        # Check if chafa is available
-        chafa_check = subprocess.run(['which', 'chafa'], capture_output=True, text=True)
-        if chafa_check.returncode == 0:
-            logger.print_info("Displaying image with terminal-optimized settings...")
-
-            # Get terminal width
-            term_width = subprocess.run(['tput', 'cols'], capture_output=True, text=True)
-            try:
-                width = int(term_width.stdout.strip()) - 2
-            except Exception:
-                width = 100
-
-            subprocess.call(['chafa', '--size', f'{width}x50', '--colors', 'full', image_path])
-        else:
-            logger.print_info("Chafa not available, can't display image in terminal")
-    except Exception as e:
-        logger.print_warning(f"Failed to display image in terminal: {e}")
+    # This function is intentionally left empty as we've removed terminal
+    # image display functionality in Docker environment
+    pass
 
 
 def handle_plotly_in_docker(fig, filepath):
