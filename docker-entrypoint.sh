@@ -8,6 +8,9 @@ echo -e "\n\033[1;36m=== NeoZork HLD Prediction Container Started ===\033[0m\n"
 echo -e "\033[1;33mWould you like to run tests for external data feeds? (Polygon, YFinance, Binance) [y/N]:\033[0m"
 read -r run_tests
 
+# Debug output to check what was read
+echo -e "\033[1;34mInput received: '$run_tests'\033[0m"
+
 # Simplified condition checking
 if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
   echo -e "\n\033[1;32m=== Running external data feed tests ===\033[0m\n"
@@ -46,6 +49,9 @@ fi
 echo -e "\033[1;33mWould you like to start the MCP service for enhanced LLM support? [y/N]:\033[0m"
 read -r run_mcp
 
+# Debug output to check what was read
+echo -e "\033[1;34mInput received: '$run_mcp'\033[0m"
+
 # Simplified condition checking
 if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
   echo -e "\n\033[1;32m=== Starting MCP server in background ===\033[0m\n"
@@ -60,6 +66,9 @@ fi
 # Third question - Start HTTP server for plots
 echo -e "\033[1;33mWould you like to start HTTP server for viewing plotly HTML plots in browser? [y/N]:\033[0m"
 read -r run_http
+
+# Debug output to check what was read
+echo -e "\033[1;34mInput received: '$run_http'\033[0m"
 
 # Start HTTP server for plots
 if [ "$run_http" = "y" ] || [ "$run_http" = "Y" ]; then
