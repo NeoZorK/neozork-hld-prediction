@@ -54,15 +54,6 @@ run_python_safely() {
       # If file was modified in the last 10 seconds, open it
       if [ $((current_time - mod_time)) -lt 10 ]; then
         echo -e "\033[1;32m=== New HTML file generated: $latest_html ===\033[0m"
-
-        # Ask if user wants to view in terminal browser
-        echo -e "\033[1;33mDo you want to view this HTML file in terminal browser? [y/N]:\033[0m"
-        read -r view_html
-
-        if [ "$view_html" = "y" ] || [ "$view_html" = "Y" ]; then
-          # Open the HTML file in lynx
-          lynx -localhost -force_html "$latest_html"
-        fi
       fi
     fi
   fi
