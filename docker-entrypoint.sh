@@ -130,14 +130,18 @@ fi
 echo -e "\033[1;32m=== NeoZork HLD Prediction Usage Guide ===\033[0m\n"
 run_python_safely python run_analysis.py -h
 
-echo -e "\n\033[1;36m=== Container is now ready for use ===\033[0m"
-echo -e "\033[1;36mUse the commands above to analyze data\033[0m"
+echo -e "\n\033[1;36m=== Container is ready for analysis ===\033[0m"
 
-# Show tips for opening plots
+# Show tips for viewing plots
 echo -e "\n\033[1;36m=== Tips for viewing plotly HTML plots ===\033[0m"
-echo -e "\033[1;36m1. Run a command like: python run_analysis.py demo --rule PHLD\033[0m"
-echo -e "\033[1;36m2. Find generated HTML at: results/plots/*.html\033[0m"
-echo -e "\033[1;36m3. You can also open HTML files directly from the host system at: ./results/plots/\033[0m"
+echo -e "\033[1;36m1. Run a command like: python run_analysis.py demo --rule PHLD (or: nz demo --rule PHLD)\033[0m"
+echo -e "\033[1;36m2. Generated plots are saved to results/plots/*.html\033[0m"
+echo -e "\033[1;36m3. To access plots from Docker Desktop:\033[0m"
+echo -e "\033[1;36m   - Open Docker Desktop\033[0m"
+echo -e "\033[1;36m   - Select your running container\033[0m"
+echo -e "\033[1;36m   - Go to 'Volumes' tab\033[0m"
+echo -e "\033[1;36m   - Find and open the volume mapped to /app/results\033[0m"
+echo -e "\033[1;36m   - Navigate to the 'plots' folder to view your HTML files\033[0m"
 
 echo -e "\n\033[1;36mPress Ctrl+C to stop the container\033[0m\n"
 
@@ -155,8 +159,11 @@ EOL
 # Handle Ctrl+C (SIGINT) to terminate all background processes
 cleanup() {
   echo -e "\n\033[1;36mShutting down all background processes...\033[0m"
-  # Find and terminate all background processes
-  kill $(jobs -p) 2>/dev/null
+  # Find and terminate python processes more reliably
+  pkill -TERM -f "python mcp_server.py" 2>/dev/null
+  sleep 1
+  # Force kill if still running
+  pkill -9 -f "python mcp_server.py" 2>/dev/null
   exit 0
 }
 
