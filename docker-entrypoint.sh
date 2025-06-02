@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+# Create nz command wrapper script
+cat > /usr/local/bin/nz << 'EOF'
+#!/bin/bash
+python /app/run_analysis.py "$@"
+EOF
+chmod +x /usr/local/bin/nz
+
 # Function to handle errors without exiting container
 run_python_safely() {
   # Run Python command and capture exit code
