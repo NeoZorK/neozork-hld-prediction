@@ -8,7 +8,8 @@ echo -e "\n\033[1;36m=== NeoZork HLD Prediction Container Started ===\033[0m\n"
 echo -e "\033[1;33mWould you like to run tests for external data feeds? (Polygon, YFinance, Binance) [y/N]:\033[0m"
 read -r run_tests
 
-if [[ "$run_tests" =~ ^[Yy]$ ]]; then
+# Simplified condition checking
+if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
   echo -e "\n\033[1;32m=== Running external data feed tests ===\033[0m\n"
   for script in /app/scripts/debug_scripts/*.py; do
     echo -e "\033[1;34m=== Running test: $script ===\033[0m"
@@ -23,7 +24,8 @@ fi
 echo -e "\033[1;33mWould you like to start the MCP service for enhanced LLM support? [y/N]:\033[0m"
 read -r run_mcp
 
-if [[ "$run_mcp" =~ ^[Yy]$ ]]; then
+# Simplified condition checking
+if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
   echo -e "\n\033[1;32m=== Starting MCP server in background ===\033[0m\n"
   python mcp_server.py &
   echo -e "\033[1;32mMCP server started in background\033[0m\n"
