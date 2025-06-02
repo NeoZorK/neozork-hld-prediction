@@ -192,23 +192,66 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
 
                             # Display image in terminal if possible
                             import subprocess
-                            catimg_check = subprocess.run(['which', 'catimg'], capture_output=True, text=True)
-                            if catimg_check.returncode == 0:
-                                logger.print_info("Displaying image in terminal (color view)...")
-                                # Infer terminal width for catimg
+                            import os
+
+                            # Check for Docker environment
+                            in_docker = os.environ.get('DOCKER_CONTAINER', False)
+
+                            # Try chafa first (best quality for Docker)
+                            chafa_check = subprocess.run(['which', 'chafa'], capture_output=True, text=True)
+                            if chafa_check.returncode == 0:
+                                logger.print_info("Displaying image in terminal (high quality color view)...")
+                                # Infer terminal size
                                 term_width = subprocess.run(['tput', 'cols'], capture_output=True, text=True)
+                                term_height = subprocess.run(['tput', 'lines'], capture_output=True, text=True)
                                 try:
                                     width = int(term_width.stdout.strip()) - 5
+                                    height = int(term_height.stdout.strip()) - 10
                                 except:
                                     width = 180
-                                subprocess.call(['catimg', '-w', str(width), image_path])
-                            else:
-                                img_viewer_check = subprocess.run(['which', 'img2txt'], capture_output=True, text=True)
-                                if img_viewer_check.returncode == 0:
-                                    logger.print_info("Displaying image in terminal (simplified view)...")
-                                    subprocess.call(['img2txt', '-W', '120', '-H', '60', '--colors', '16', image_path])
+                                    height = 90
+
+                                # Use better settings for Docker
+                                if in_docker:
+                                    subprocess.call(['chafa', '--size', f'{width}x{height}',
+                                                    '--colors', 'full', '--dither', 'diffusion',
+                                                    '--dither-intensity', '0.7', '--optimize', 'quality',
+                                                    image_path])
                                 else:
-                                    logger.print_info("For terminal image viewing, install: apt-get install caca-utils")
+                                    subprocess.call(['chafa', '--size', f'{width}x{height}',
+                                                    '--colors', 'full', image_path])
+                            # Try catimg second
+                            elif catimg_check := subprocess.run(['which', 'catimg'], capture_output=True, text=True):
+                                if catimg_check.returncode == 0:
+                                    logger.print_info("Displaying image in terminal (color view)...")
+                                    # Infer terminal width for catimg
+                                    term_width = subprocess.run(['tput', 'cols'], capture_output=True, text=True)
+                                    try:
+                                        width = int(term_width.stdout.strip()) - 5
+                                    except:
+                                        width = 180
+
+                                    # Use better settings for Docker
+                                    if in_docker:
+                                        # Higher resolution for Docker
+                                        subprocess.call(['catimg', '-w', str(width), '-r', '2', '-c', image_path])
+                                    else:
+                                        subprocess.call(['catimg', '-w', str(width), image_path])
+                                else:
+                                    img_viewer_check = subprocess.run(['which', 'img2txt'], capture_output=True, text=True)
+                                    if img_viewer_check.returncode == 0:
+                                        logger.print_info("Displaying image in terminal (simplified view)...")
+                                        # Enhanced parameters for img2txt in Docker
+                                        if in_docker:
+                                            subprocess.call(['img2txt', '-W', '180', '-H', '90', '--colors', '256',
+                                                           '--gamma', '0.8', image_path])
+                                        else:
+                                            subprocess.call(['img2txt', '-W', '120', '-H', '60', '--colors', '16', image_path])
+                                    else:
+                                        logger.print_info("For better terminal image viewing, install one of these tools:")
+                                        logger.print_info("  - apt-get install libcaca-utils (for img2txt)")
+                                        logger.print_info("  - apt-get install catimg")
+                                        logger.print_info("  - apt-get install chafa (recommended for Docker)")
                         except Exception as plotly_img_error:
                             logger.print_warning(f"Failed to generate direct image with Plotly: {plotly_img_error}")
                             logger.print_debug(f"Traceback (Plotly image):\n{traceback.format_exc()}")
