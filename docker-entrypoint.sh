@@ -57,13 +57,45 @@ else
   echo -e "\033[1;33mSkipping MCP server startup\033[0m\n"
 fi
 
+# Third question - Start HTTP server for plots
+echo -e "\033[1;33mWould you like to start HTTP server for viewing plotly HTML plots in browser? [y/N]:\033[0m"
+read -r run_http
+
+# Start HTTP server for plots
+if [ "$run_http" = "y" ] || [ "$run_http" = "Y" ]; then
+  # Check if directory exists and create it if needed
+  if [ ! -d "/app/results/plots" ]; then
+    mkdir -p /app/results/plots
+    echo -e "\033[1;32mCreated directory: /app/results/plots\033[0m"
+  fi
+
+  # Start HTTP server in background
+  echo -e "\n\033[1;32m=== Starting HTTP server for plots on port 8080 ===\033[0m"
+  echo -e "\033[1;32mYou can access plots at: http://localhost:8080\033[0m\n"
+
+  # Use Python's built-in HTTP server
+  cd /app/results && python -m http.server 8080 &
+  HTTP_SERVER_PID=$!
+  echo -e "\033[1;32mHTTP server started with PID: $HTTP_SERVER_PID\033[0m\n"
+else
+  echo -e "\033[1;33mSkipping HTTP server startup\033[0m\n"
+fi
+
 # Always show help
 echo -e "\033[1;32m=== NeoZork HLD Prediction Usage Guide ===\033[0m\n"
 python run_analysis.py -h
 
 echo -e "\n\033[1;36m=== Container is now ready for use ===\033[0m"
 echo -e "\033[1;36mUse the commands above to analyze data\033[0m"
-echo -e "\033[1;36mPress Ctrl+C to stop the container\033[0m\n"
+
+# Show tips for opening plots
+echo -e "\n\033[1;36m=== Tips for viewing plotly HTML plots ===\033[0m"
+echo -e "\033[1;36m1. Run a command like: python run_analysis.py demo --rule PHLD\033[0m"
+echo -e "\033[1;36m2. Find generated HTML at: results/plots/*.html\033[0m"
+echo -e "\033[1;36m3. If HTTP server is running, access at: http://localhost:8080/plots/\033[0m"
+echo -e "\033[1;36m4. You can also open HTML files directly from the host system at: ./results/plots/\033[0m"
+
+echo -e "\n\033[1;36mPress Ctrl+C to stop the container\033[0m\n"
 
 # Keep container running and accepting input
 while true; do
