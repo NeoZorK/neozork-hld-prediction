@@ -54,6 +54,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     catimg \
     librsvg2-bin \
     chafa \
+    imagemagick \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
