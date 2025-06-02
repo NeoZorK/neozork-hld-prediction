@@ -1,6 +1,22 @@
 #!/bin/bash
 set -e
 
+# Function to handle errors without exiting container
+run_python_safely() {
+  # Run Python command and capture exit code
+  "$@"
+  local exit_code=$?
+
+  # If the command failed, print error message but don't exit container
+  if [ $exit_code -ne 0 ]; then
+    echo -e "\033[1;31m[ERROR] Command failed with exit code $exit_code\033[0m"
+    echo -e "\033[1;33mContainer will remain running. You can try another command.\033[0m"
+    return $exit_code
+  fi
+
+  return 0
+}
+
 # Welcome message
 echo -e "\n\033[1;36m=== NeoZork HLD Prediction Container Started ===\033[0m\n"
 
@@ -30,14 +46,14 @@ if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
 
       if [ -n "$sample_parquet" ]; then
         echo -e "\033[1;35mFound sample parquet file: $sample_parquet\033[0m"
-        PYTHONPATH=/app python "$script" "$sample_parquet"
+        run_python_safely PYTHONPATH=/app python "$script" "$sample_parquet"
       else
         echo -e "\033[1;33mNo sample parquet file found. Showing usage instead:\033[0m"
-        PYTHONPATH=/app python "$script"
+        run_python_safely PYTHONPATH=/app python "$script"
       fi
     else
       # Default case for scripts without special requirements
-      PYTHONPATH=/app python "$script"
+      run_python_safely PYTHONPATH=/app python "$script"
     fi
     echo -e "\n"
   done
@@ -55,7 +71,7 @@ echo -e "\033[1;34mInput received: '$run_mcp'\033[0m"
 # Simplified condition checking
 if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
   echo -e "\n\033[1;32m=== Starting MCP server in background ===\033[0m\n"
-  python mcp_server.py &
+  run_python_safely python mcp_server.py &
   echo -e "\033[1;32mMCP server started in background\033[0m\n"
   # Wait for mcp_server to initialize
   sleep 5
@@ -83,7 +99,7 @@ if [ "$run_http" = "y" ] || [ "$run_http" = "Y" ]; then
   echo -e "\033[1;32mYou can access plots at: http://localhost:8080\033[0m\n"
 
   # Use Python's built-in HTTP server
-  cd /app/results && python -m http.server 8080 &
+  cd /app/results && run_python_safely python -m http.server 8080 &
   HTTP_SERVER_PID=$!
   echo -e "\033[1;32mHTTP server started with PID: $HTTP_SERVER_PID\033[0m\n"
 else
@@ -92,7 +108,7 @@ fi
 
 # Always show help
 echo -e "\033[1;32m=== NeoZork HLD Prediction Usage Guide ===\033[0m\n"
-python run_analysis.py -h
+run_python_safely python run_analysis.py -h
 
 echo -e "\n\033[1;36m=== Container is now ready for use ===\033[0m"
 echo -e "\033[1;36mUse the commands above to analyze data\033[0m"
