@@ -8,6 +8,11 @@ services:
       - ./data:/app/data
       - ./logs:/app/logs
       - ./mql5_feed:/app/mql5_feed
+      # Mount the results directory to access plots on the host
+      - ./results:/app/results
+    ports:
+      # Expose port for simple HTTP server
+      - "8080:8080"
     env_file:
       - .env
     # Interactive script execution with user prompts
