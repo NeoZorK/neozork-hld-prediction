@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Create history directory with proper permissions
+mkdir -p /tmp/bash_history
+chmod 777 /tmp/bash_history
+export HISTFILE=/tmp/bash_history/.bash_history
+export HISTSIZE=1000
+export HISTCONTROL=ignoreboth
+touch $HISTFILE
+chmod 666 $HISTFILE
+
 # Create nz command wrapper script in a writable directory
 mkdir -p /tmp/bin
 
