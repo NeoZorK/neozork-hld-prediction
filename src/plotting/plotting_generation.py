@@ -188,13 +188,30 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                             image_path = str(absolute_filepath).replace('.html', '.png')
                             logger.print_info(f"Generating PNG image directly with Plotly...")
 
-                            # Increase resolution for better quality
-                            fig.write_image(image_path, width=1600, height=1200, scale=3)
+                            # Increase DPI and size for better quality
+                            fig.update_layout(
+                                font=dict(size=14),  # Increase font size for better readability
+                                width=1920,          # Setting width
+                                height=1080,         # Setting height
+                                template="plotly_white"  # Use a clean template for better visibility
+                            )
+
+                            # Make lines thicker for better visibility
+                            for trace in fig.data:
+                                if hasattr(trace, 'line') and trace.line:
+                                    trace.line.width = trace.line.width * 1.5 if hasattr(trace.line, 'width') else 2
+
+                            # Save the image with high resolution
+                            fig.write_image(image_path, width=1920, height=1080, scale=4)
                             logger.print_success(f"Static image saved to: {image_path}")
 
-                            # Display image in terminal if possible
+                            # Additionally, save as SVG for vector graphics
+                            svg_path = str(absolute_filepath).replace('.html', '.svg')
+                            fig.write_image(svg_path, format="svg")
+                            logger.print_info(f"Vector SVG image saved to: {svg_path}")
+
+                            # Display the image in terminal if possible
                             import subprocess
-                            # os уже импортирован выше
 
                             # Check for Docker environment
                             in_docker = os.environ.get('DOCKER_CONTAINER', False)
