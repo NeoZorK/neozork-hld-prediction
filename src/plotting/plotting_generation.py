@@ -176,26 +176,59 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                         webbrowser.open(file_uri)
                         logger.print_info(f"Attempting to open {filepath} in default browser...")
                     else:
-                        logger.print_info(f"Running in Docker container - opening in lynx browser...")
-                        # Full path for lynx
+                        logger.print_info(f"Running in Docker container - converting to image...")
+                        # Full path for HTML file
                         absolute_filepath = filepath.resolve()
-                        # Use subprocess to open in lynx
+                        # Convert HTML to PNG image using wkhtmltoimage (if available)
                         import subprocess
                         try:
-                            # Check if lynx is installed
-                            lynx_check = subprocess.run(['which', 'lynx'], capture_output=True, text=True)
-                            if lynx_check.returncode == 0:
-                                # Output instructions for the user
-                                logger.print_info(f"Opening HTML file in lynx browser (press 'q' to exit lynx)...")
+                            # Check if wkhtmltoimage is installed
+                            wk_check = subprocess.run(['which', 'wkhtmltoimage'], capture_output=True, text=True)
+                            if wk_check.returncode == 0:
+                                # Create output image path
+                                image_path = str(absolute_filepath).replace('.html', '.png')
 
-                                # Launch lynx in interactive mode (blocking call)
-                                subprocess.call(['lynx', '-localhost', '-force_html', str(absolute_filepath)])
+                                # Convert HTML to image
+                                logger.print_info(f"Converting HTML to PNG image...")
+                                convert_result = subprocess.run([
+                                    'wkhtmltoimage',
+                                    '--width', '1200',
+                                    '--height', '800',
+                                    '--quality', '90',
+                                    str(absolute_filepath),
+                                    image_path
+                                ], capture_output=True, text=True)
 
-                                logger.print_success(f"Returned from lynx browser")
+                                if convert_result.returncode == 0:
+                                    logger.print_success(f"HTML converted to image: {image_path}")
+
+                                    # Check if display/img2txt is available for viewing in terminal
+                                    img_viewer_check = subprocess.run(['which', 'img2txt'], capture_output=True, text=True)
+                                    if img_viewer_check.returncode == 0:
+                                        logger.print_info("Displaying image in terminal (simplified view)...")
+                                        subprocess.call(['img2txt', '-W', '100', image_path])
+                                    else:
+                                        logger.print_info("For terminal image viewing, install caca-utils: apt-get install caca-utils")
+                                else:
+                                    logger.print_warning(f"Failed to convert HTML to image: {convert_result.stderr}")
                             else:
-                                logger.print_warning("Lynx browser not found. Install with: apt-get install lynx")
-                        except Exception as lynx_error:
-                            logger.print_warning(f"Failed to open in lynx: {lynx_error}")
+                                # Fallback to lynx if wkhtmltoimage is not available
+                                logger.print_warning("wkhtmltoimage not found. Install with: apt-get install wkhtmltopdf")
+                                logger.print_info("Falling back to lynx text browser...")
+
+                                lynx_check = subprocess.run(['which', 'lynx'], capture_output=True, text=True)
+                                if lynx_check.returncode == 0:
+                                    # Output instructions for the user
+                                    logger.print_info(f"Opening HTML file in lynx browser (press 'q' to exit lynx)...")
+
+                                    # Launch lynx in interactive mode (blocking call)
+                                    subprocess.call(['lynx', '-localhost', '-force_html', str(absolute_filepath)])
+
+                                    logger.print_success(f"Returned from lynx browser")
+                                else:
+                                    logger.print_warning("Lynx browser not found. Install with: apt-get install lynx")
+                        except Exception as convert_error:
+                            logger.print_warning(f"Failed to process HTML: {convert_error}")
 
                         # Also output information about HTTP access
                         logger.print_info(f"You can also access this plot at: http://localhost:8080/plots/{filename}")
