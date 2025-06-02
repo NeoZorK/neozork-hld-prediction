@@ -180,18 +180,17 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                         # Full path for HTML file
                         absolute_filepath = filepath.resolve()
 
-                        # Создаем статическое изображение напрямую через Plotly
-                        # вместо конвертации HTML
+                        # Create PNG image from Plotly figure
                         try:
-                            # Генерируем PNG напрямую через Plotly
+                            # Generate PNG image path
                             image_path = str(absolute_filepath).replace('.html', '.png')
                             logger.print_info(f"Generating PNG image directly with Plotly...")
 
-                            # Используем write_image для прямого создания PNG
+                            # Use Plotly's write_image method to save as PNG
                             fig.write_image(image_path, width=1200, height=800, scale=2)
                             logger.print_success(f"Static image saved to: {image_path}")
 
-                            # Отображаем в терминале
+                            # Display the image in terminal if possible
                             import subprocess
                             catimg_check = subprocess.run(['which', 'catimg'], capture_output=True, text=True)
                             if catimg_check.returncode == 0:
@@ -208,7 +207,7 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                             logger.print_warning(f"Failed to generate direct image with Plotly: {plotly_img_error}")
                             logger.print_debug(f"Traceback (Plotly image):\n{traceback.format_exc()}")
 
-                            # Если не удалось создать изображение напрямую, пробуем wkhtmltoimage
+                            # If Plotly image generation fails, try to open HTML in browser
                             logger.print_info("Falling back to HTML conversion...")
                             import subprocess
                 except Exception as e_open:
