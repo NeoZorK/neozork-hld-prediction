@@ -32,6 +32,35 @@ run_python_safely() {
     return $exit_code
   fi
 
+  # Check if HTML files were created in results/plots directory
+  if [ -d "/app/results/plots" ]; then
+    # Find the most recently modified HTML file
+    latest_html=$(find /app/results/plots -name "*.html" -type f -printf "%T@ %p\n" | sort -n | tail -1 | cut -f2- -d" ")
+
+    if [ -n "$latest_html" ]; then
+      # Get file modification time
+      mod_time=$(stat -c %Y "$latest_html")
+      # Get current time
+      current_time=$(date +%s)
+      # If file was modified in the last 10 seconds, open it
+      if [ $((current_time - mod_time)) -lt 10 ]; then
+        echo -e "\033[1;32m=== Opening latest HTML file in lynx: $latest_html ===\033[0m"
+        # Get the relative URL path
+        relative_path=${latest_html#/app/results/}
+        echo -e "\033[1;32m=== You can also access this file at: http://localhost:8080/$relative_path ===\033[0m"
+
+        # Ask if user wants to view in terminal browser
+        echo -e "\033[1;33mDo you want to view this HTML file in terminal browser? [y/N]:\033[0m"
+        read -r view_html
+
+        if [ "$view_html" = "y" ] || [ "$view_html" = "Y" ]; then
+          # Open the HTML file in lynx
+          lynx -localhost -force_html "$latest_html"
+        fi
+      fi
+    fi
+  fi
+
   return 0
 }
 
