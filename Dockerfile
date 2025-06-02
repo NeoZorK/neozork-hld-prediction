@@ -51,6 +51,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rlwrap \
     wkhtmltopdf \
     caca-utils \
+    catimg \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
