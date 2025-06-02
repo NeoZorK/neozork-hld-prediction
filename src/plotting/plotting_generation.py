@@ -166,18 +166,36 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                 fig.write_html(str(filepath), include_plotlyjs='cdn')
                 logger.print_success(f"Interactive Plotly plot saved successfully to: {filepath}")
                 try:
-                    # Проверяем, запущен ли код внутри Docker-контейнера
+                    # Check if we are running in a Docker container
                     in_docker = os.path.exists('/.dockerenv') or os.environ.get('RUNNING_IN_DOCKER') == 'true'
 
                     if not in_docker:
-                        # Только если код не в Docker, пытаемся открыть браузер
+                        # Only open in browser if not in Docker
                         absolute_filepath = filepath.resolve()
                         file_uri = absolute_filepath.as_uri()
                         webbrowser.open(file_uri)
                         logger.print_info(f"Attempting to open {filepath} in default browser...")
                     else:
-                        logger.print_info(f"Running in Docker container - browser opening is not supported.")
-                        logger.print_info(f"You can access this plot at: http://localhost:8080/plots/{filename}")
+                        logger.print_info(f"Running in Docker container - opening in lynx browser...")
+                        # Full path for lynx
+                        absolute_filepath = filepath.resolve()
+                        # Use subprocess to open in lynx
+                        import subprocess
+                        try:
+                            # Check if lynx is installed
+                            lynx_check = subprocess.run(['which', 'lynx'], capture_output=True, text=True)
+                            if lynx_check.returncode == 0:
+                                # Open the HTML file in lynx browser
+                                subprocess.Popen(['lynx', '-localhost', '-force_html', str(absolute_filepath)],
+                                                 stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                                logger.print_success(f"HTML file opened in lynx browser")
+                            else:
+                                logger.print_warning("Lynx browser not found. Install with: apt-get install lynx")
+                        except Exception as lynx_error:
+                            logger.print_warning(f"Failed to open in lynx: {lynx_error}")
+
+                        # Display the file path in the console
+                        logger.print_info(f"You can also access this plot at: http://localhost:8080/plots/{filename}")
                 except Exception as e_open:
                     logger.print_warning(
                         f"Could not automatically open the plot in browser: {type(e_open).__name__}: {e_open}")
