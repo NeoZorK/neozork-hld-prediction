@@ -13,7 +13,8 @@ if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
   echo -e "\n\033[1;32m=== Running external data feed tests ===\033[0m\n"
   for script in /app/scripts/debug_scripts/*.py; do
     echo -e "\033[1;34m=== Running test: $script ===\033[0m"
-    python "$script"
+    # Set PYTHONPATH to include the app root directory
+    PYTHONPATH=/app python "$script"
     echo -e "\n"
   done
 else
