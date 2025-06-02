@@ -37,8 +37,8 @@ COPY docker-entrypoint.sh ./
 RUN chmod +x /app/docker-entrypoint.sh
 
 # Create necessary directories with appropriate permissions
-RUN mkdir -p /app/data/cache /app/data/raw_parquet /app/logs /tmp/matplotlib-cache /app/results/plots \
-    && chmod -R 777 /tmp/matplotlib-cache /app/results /app/data /app/logs
+RUN mkdir -p /app/data/cache /app/data/raw_parquet /app/logs /tmp/matplotlib-cache /app/results/plots /app/.pytest_cache \
+    && chmod -R 777 /tmp/matplotlib-cache /app/results /app/data /app/logs /app/.pytest_cache
 
 # Define environment variables
 ENV PYTHONUNBUFFERED=1
