@@ -122,6 +122,31 @@ def show_cli_examples(terminal_console):
     console.print(
         "[dim]# Show mode, AUTO rule (all columns, auto-plot, mpl backend)[/dim]\n[bold green]python run_analysis.py show csv EURUSD MN1 --rule AUTO -d mpl[/bold green]\n")
 
+    # --- NZ SCRIPT USAGE EXAMPLES ---
+    console.print("[bold]12. NZ SCRIPT USAGE[/bold]")
+    console.print(
+        "[dim]# The 'nz' script is a convenient wrapper that simplifies running analysis in different environments[/dim]")
+    console.print(
+        "[dim]# Basic usage - same parameters as run_analysis.py[/dim]\n[bold green]./nz demo[/bold green]")
+    console.print(
+        "[dim]# Running analysis with YFinance through nz wrapper[/dim]\n[bold green]./nz yf -t AAPL --period 6mo --point 0.01[/bold green]")
+    console.print(
+        "[dim]# Using nz with binance data and custom rule[/dim]\n[bold green]./nz binance --ticker BTCUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule PV[/bold green]")
+    console.print(
+        "[dim]# Show cached files using nz wrapper[/dim]\n[bold green]./nz show csv EURUSD MN1[/bold green]")
+    console.print(
+        "[dim]# Getting help through nz wrapper[/dim]\n[bold green]./nz -h[/bold green]\n")
+    console.print(
+        "[yellow]- The nz script automatically detects if Docker is available and runs the analysis either in a Docker container or directly.")
+    console.print(
+        "- Use nz for consistent execution across different environments (Docker container or local Python).")
+    console.print(
+        "- All arguments passed to nz are forwarded to run_analysis.py.")
+    console.print(
+        "- The script adds itself to PATH for the current session for easier access.")
+    console.print(
+        "- Ideal for production environments where you want to abstract the execution details.\n")
+
 
 def print_cli_examples():
     """
@@ -199,9 +224,22 @@ def print_cli_examples():
       python run_analysis.py show csv EURUSD MN1 --rule OHLCV
       python run_analysis.py show csv EURUSD MN1 --rule AUTO -d mpl
 
+      # 12. NZ SCRIPT USAGE
+      # The 'nz' script is a convenient wrapper that simplifies running analysis in different environments
+      ./nz demo
+      ./nz yf -t AAPL --period 6mo --point 0.01
+      ./nz binance --ticker BTCUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule PV
+      ./nz show csv EURUSD MN1
+      ./nz -h
+
     Note:
     - For all API modes (yfinance, polygon, binance), the --point parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).
     - Use -d/--draw to select plotting backend: fastest, fast, plotly, mplfinance, seaborn, sb etc.
     - Use --rule to select trading rule: PV_HighLow, Support_Resistants, Pressure_Vector, Predict_High_Low_Direction, PHLD, PV, SR, OHLCV, AUTO.
     - SHOW mode allows filtering cached files by source, keywords, date, and rule.
+    - The nz script automatically detects if Docker is available and runs the analysis either in a Docker container or directly.
+    - Use nz for consistent execution across different environments (Docker container or local Python).
+    - All arguments passed to nz are forwarded to run_analysis.py.
+    - The script adds itself to PATH for the current session for easier access.
+    - Ideal for production environments where you want to abstract the execution details.
     - For more details, see README.md or run with -h for full help.\n""")
