@@ -37,10 +37,11 @@ COPY docker-entrypoint.sh ./
 RUN chmod +x /app/docker-entrypoint.sh
 
 # Create necessary directories
-RUN mkdir -p /app/data/cache /app/data/raw_parquet /app/logs
+RUN mkdir -p /app/data/cache /app/data/raw_parquet /app/logs /tmp/matplotlib
 
 # Define environment variables
 ENV PYTHONUNBUFFERED=1
+ENV MPLCONFIGDIR=/tmp/matplotlib
 
 # We need bash for the entrypoint script
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -52,3 +53,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 
 USER nobody
+
