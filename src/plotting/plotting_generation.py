@@ -41,7 +41,7 @@ def validate_input_data(result_df, selected_rule):
     return True
 
 
-def get_plot_title(data_info, point_size, estimated_point):
+def get_plot_title(data_info, point_size, estimated_point, args=None):
     """
     Generates plot title based on data info and point size
 
@@ -49,6 +49,7 @@ def get_plot_title(data_info, point_size, estimated_point):
         data_info (dict): Dictionary containing data source information.
         point_size (float | None): The point size used for calculations.
         estimated_point (bool): Flag indicating if point_size was estimated.
+        args (argparse.Namespace, optional): Command-line arguments.
 
     Returns:
         str: Generated plot title
@@ -59,8 +60,8 @@ def get_plot_title(data_info, point_size, estimated_point):
         data_label = Path(data_label).stem
     title_parts.append(data_label)
 
-    # Extract interval from data_info
-    interval_str = extract_interval_from_data_info(data_info)
+    # Extract interval from data_info or args
+    interval_str = extract_interval_from_data_info(data_info, args)
     title_parts.append(interval_str)
 
     if point_size is not None:
@@ -312,7 +313,9 @@ def handle_plotly_in_docker(fig, filepath):
             # Display in terminal
             display_image_in_terminal(optimized_image)
     except Exception as e:
-        logger.print_error(f"Error handling Plotly in Docker: {e}")
+        logger.print_error(f"Error handling Plotly in Docker: {type(e).__name__}: {e}")
+        tb_str = traceback.format_exc()
+        logger.print_debug(f"Traceback (handle Plotly in Docker):\n{tb_str}")
         # Try fallback display
         try:
             if 'image_path' in locals():
@@ -369,7 +372,9 @@ def handle_plotly_plot(fig, data_info, selected_rule):
             # Handle Docker environment
             handle_plotly_in_docker(fig, filepath)
     except Exception as e:
-        logger.print_error(f"Error during Plotly HTML file operations: {e}")
+        logger.print_error(f"Error during Plotly HTML file operations: {type(e).__name__}: {e}")
+        tb_str = traceback.format_exc()
+        logger.print_debug(f"Traceback (handle Plotly plot):\n{tb_str}")
 
 
 def log_dataframe_debug_info(result_df):
@@ -499,7 +504,7 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     log_dataframe_debug_info(result_df)
 
     # Generate plot title
-    plot_title = get_plot_title(data_info, point_size, estimated_point)
+    plot_title = get_plot_title(data_info, point_size, estimated_point, args)
 
     # Choose plotting function based on args.draw
     draw_mode = getattr(args, 'draw', 'fastest').lower()
@@ -514,5 +519,8 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
         else:
             generate_plotly_plot(result_df, selected_rule, plot_title, data_info)
     except Exception as e:
-        logger.print_error(f"Error generating plot: {e}")
-        traceback.print_exc()
+        # Log error with exception type and message
+        logger.print_error(f"An error occurred during plot generation: {type(e).__name__}: {e}")
+        # Log formatted traceback for debug
+        tb_str = traceback.format_exc()
+        logger.print_debug(f"Traceback (generate plot):\n{tb_str}")
