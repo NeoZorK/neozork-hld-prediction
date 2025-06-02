@@ -176,83 +176,41 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                         webbrowser.open(file_uri)
                         logger.print_info(f"Attempting to open {filepath} in default browser...")
                     else:
-                        logger.print_info(f"Running in Docker container - converting to image...")
+                        logger.print_info(f"Running in Docker container - generating static image...")
                         # Full path for HTML file
                         absolute_filepath = filepath.resolve()
-                        # Convert HTML to PNG image using wkhtmltoimage (if available)
-                        import subprocess
+
+                        # Создаем статическое изображение напрямую через Plotly
+                        # вместо конвертации HTML
                         try:
-                            # Check if wkhtmltoimage is installed
-                            wk_check = subprocess.run(['which', 'wkhtmltoimage'], capture_output=True, text=True)
-                            if wk_check.returncode == 0:
-                                # Create output image path
-                                image_path = str(absolute_filepath).replace('.html', '.png')
+                            # Генерируем PNG напрямую через Plotly
+                            image_path = str(absolute_filepath).replace('.html', '.png')
+                            logger.print_info(f"Generating PNG image directly with Plotly...")
 
-                                # Convert HTML to image
-                                logger.print_info(f"Converting HTML to PNG image...")
-                                # Add options for better rendering
-                                # and to ensure JavaScript is executed
-                                convert_result = subprocess.run([
-                                    'wkhtmltoimage',
-                                    '--enable-javascript',
-                                    '--javascript-delay', '2000',  # 2 seconds delay for JS execution
-                                    '--no-stop-slow-scripts',
-                                    '--width', '1200',
-                                    '--height', '800',
-                                    '--quality', '100',
-                                    '--zoom', '1.2',        # Increase zoom for better visibility
-                                    '--disable-smart-width',
-                                    '--load-error-handling', 'ignore',
-                                    '--custom-header', 'User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) Chrome/94.0',
-                                    str(absolute_filepath),
-                                    image_path
-                                ], capture_output=True, text=True)
+                            # Используем write_image для прямого создания PNG
+                            fig.write_image(image_path, width=1200, height=800, scale=2)
+                            logger.print_success(f"Static image saved to: {image_path}")
 
-                                if convert_result.returncode == 0:
-                                    logger.print_success(f"HTML converted to image: {image_path}")
-
-                                    # Check if catimg is available for terminal display
-                                    catimg_check = subprocess.run(['which', 'catimg'], capture_output=True, text=True)
-                                    if catimg_check.returncode == 0:
-                                        logger.print_info("Displaying image in terminal (color view)...")
-                                        subprocess.call(['catimg', '-w', '120', image_path])
-                                    else:
-                                        # Check if timg is available for terminal display
-                                        timg_check = subprocess.run(['which', 'timg'], capture_output=True, text=True)
-                                        if timg_check.returncode == 0:
-                                            logger.print_info("Displaying image in terminal (color view)...")
-                                            subprocess.call(['timg', '-g', '120x60', image_path])
-                                        else:
-                                            # Use img2txt as a fallback for terminal display
-                                            img_viewer_check = subprocess.run(['which', 'img2txt'], capture_output=True, text=True)
-                                            if img_viewer_check.returncode == 0:
-                                                logger.print_info("Displaying image in terminal (simplified view)...")
-                                                subprocess.call(['img2txt', '-W', '120', '-H', '60', '--colors', '16', image_path])
-                                            else:
-                                                logger.print_info("For better terminal image viewing, install one of these:\n  - apt-get install catimg\n  - apt-get install timg\n  - apt-get install caca-utils")
-                                else:
-                                    logger.print_warning(f"Failed to convert HTML to image: {convert_result.stderr}")
+                            # Отображаем в терминале
+                            import subprocess
+                            catimg_check = subprocess.run(['which', 'catimg'], capture_output=True, text=True)
+                            if catimg_check.returncode == 0:
+                                logger.print_info("Displaying image in terminal (color view)...")
+                                subprocess.call(['catimg', '-w', '120', image_path])
                             else:
-                                # Fallback to lynx if wkhtmltoimage is not available
-                                logger.print_warning("wkhtmltoimage not found. Install with: apt-get install wkhtmltopdf")
-                                logger.print_info("Falling back to lynx text browser...")
-
-                                lynx_check = subprocess.run(['which', 'lynx'], capture_output=True, text=True)
-                                if lynx_check.returncode == 0:
-                                    # Output instructions for the user
-                                    logger.print_info(f"Opening HTML file in lynx browser (press 'q' to exit lynx)...")
-
-                                    # Launch lynx in interactive mode (blocking call)
-                                    subprocess.call(['lynx', '-localhost', '-force_html', str(absolute_filepath)])
-
-                                    logger.print_success(f"Returned from lynx browser")
+                                img_viewer_check = subprocess.run(['which', 'img2txt'], capture_output=True, text=True)
+                                if img_viewer_check.returncode == 0:
+                                    logger.print_info("Displaying image in terminal (simplified view)...")
+                                    subprocess.call(['img2txt', '-W', '120', '-H', '60', '--colors', '16', image_path])
                                 else:
-                                    logger.print_warning("Lynx browser not found. Install with: apt-get install lynx")
-                        except Exception as convert_error:
-                            logger.print_warning(f"Failed to process HTML: {convert_error}")
+                                    logger.print_info("For terminal image viewing, install: apt-get install caca-utils")
+                        except Exception as plotly_img_error:
+                            logger.print_warning(f"Failed to generate direct image with Plotly: {plotly_img_error}")
+                            logger.print_debug(f"Traceback (Plotly image):\n{traceback.format_exc()}")
 
-                        # Also output information about HTTP access
-                        logger.print_info(f"You can also access this plot at: http://localhost:8080/plots/{filename}")
+                            # Если не удалось создать изображение напрямую, пробуем wkhtmltoimage
+                            logger.print_info("Falling back to HTML conversion...")
+                            import subprocess
                 except Exception as e_open:
                     logger.print_warning(
                         f"Could not automatically open the plot in browser: {type(e_open).__name__}: {e_open}")
