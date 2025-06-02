@@ -113,3 +113,4 @@ datashader>=0.15.0
 bokeh>=3.7.2
 seaborn>=0.13.2
 statsmodels>=0.14.0
+pytest==8.0.0
