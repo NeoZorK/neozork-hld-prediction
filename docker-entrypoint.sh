@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # Create nz command wrapper script in a writable directory
 mkdir -p /tmp/bin
@@ -136,19 +135,41 @@ echo -e "\n\033[1;36mPress Ctrl+C to stop the container\033[0m\n"
 
 # Keep container running and accepting input
 while true; do
-  echo -e "\033[1;35mneozork-hld>\033[0m "
+  echo -ne "\033[1;35mneozork-hld>\033[0m "
   read -r cmd
   if [ -n "$cmd" ]; then
+    # Проверка на наличие необычных символов (которые могут появиться при использовании backspace)
+    if [[ "$cmd" == *$'\e'* ]]; then
+      echo -e "\033[1;31m[WARNING] Command contains escape sequences which may cause errors. Please try again.\033[0m"
+      continue
+    fi
+
+    # Проверяем, начинается ли команда с nz
+    if [[ "$cmd" == "nz"* ]]; then
+      # Если это команда nz, вызываем её напрямую через wrapper-скрипт
+      args="${cmd#nz}"
+      echo "Executing: nz$args"
+      { /tmp/bin/nz $args; } || {
+        echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
+        echo -e "\033[1;33mYou can try another command\033[0m"
+      }
     # Check if the command is a Python script execution
-    if [[ "$cmd" == *"python run_analysis.py"* ]]; then
+    elif [[ "$cmd" == *"python run_analysis.py"* ]]; then
       # Extract arguments from the command
       args=$(echo "$cmd" | sed 's/python run_analysis.py//')
       # Run the analysis script with the extracted arguments
       echo "Executing: python /app/run_analysis.py$args"
-      run_python_safely python /app/run_analysis.py$args
+      { python /app/run_analysis.py$args; } || {
+        echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
+        echo -e "\033[1;33mYou can try another command\033[0m"
+      }
     else
-      # Run any other command safely
-      run_python_safely eval "$cmd"
+      # Run any other command safely (без использования eval по возможности)
+      # Используем {} для группировки и перехвата ошибок без выхода из контейнера
+      { bash -c "$cmd"; } || {
+        echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
+        echo -e "\033[1;33mYou can try another command\033[0m"
+      }
     fi
   fi
 done
