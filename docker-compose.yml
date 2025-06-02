@@ -10,6 +10,8 @@ services:
       - ./mql5_feed:/app/mql5_feed
       # Mount the results directory to access plots on the host
       - ./results:/app/results
+      # Mount tests directory for pytest
+      - ./tests:/app/tests
     ports:
       # Expose port for simple HTTP server
       - "8080:8080"
