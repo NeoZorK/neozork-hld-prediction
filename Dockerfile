@@ -50,3 +50,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Container entrypoint is defined in docker-compose.yml
 
+
+USER nobody
