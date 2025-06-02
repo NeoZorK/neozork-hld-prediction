@@ -38,6 +38,7 @@ ENV/
 /logs/
 /mql5_feed/
 *.svg
+*.webp
 
 # Test and documentation
 /tests/
