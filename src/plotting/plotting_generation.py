@@ -14,7 +14,6 @@ import pandas as pd
 import traceback
 from pathlib import Path
 import webbrowser
-import os
 
 from ..common import logger
 from ..common.constants import TradingRule
@@ -166,6 +165,9 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                 fig.write_html(str(filepath), include_plotlyjs='cdn')
                 logger.print_success(f"Interactive Plotly plot saved successfully to: {filepath}")
                 try:
+                    # Import webbrowser only if needed
+                    import os
+
                     # Check if we are running in a Docker container
                     in_docker = os.path.exists('/.dockerenv') or os.environ.get('RUNNING_IN_DOCKER') == 'true'
 
@@ -192,7 +194,7 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
 
                             # Display image in terminal if possible
                             import subprocess
-                            import os
+                            # os уже импортирован выше
 
                             # Check for Docker environment
                             in_docker = os.environ.get('DOCKER_CONTAINER', False)
