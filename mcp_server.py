@@ -16,6 +16,8 @@ from pathlib import Path
 import re
 import csv
 import ast
+import signal
+import select
 
 # Setting up logging
 def setup_logging():
@@ -385,12 +387,27 @@ class MCPServer:
             self.logger.error(f"Error while indexing project code: {str(e)}")
             self.logger.error(traceback.format_exc())
 
+    def signal_handler(self, sig, frame):
+        """Handle signals like SIGINT (Ctrl+C)"""
+        self.logger.info("Received signal to terminate. Shutting down...")
+        self.running = False
+        sys.exit(0)
+
     def start(self):
         """Start the server and process incoming messages"""
+        # Register signal handler for graceful shutdown
+        signal.signal(signal.SIGINT, self.signal_handler)
+        signal.signal(signal.SIGTERM, self.signal_handler)
+
         self.logger.info("MCP Server started and waiting for messages")
 
         while self.running:
             try:
+                # Add timeout to allow checking self.running and handle signals
+                rlist, _, _ = select.select([sys.stdin], [], [], 1.0)
+                if not rlist:
+                    continue  # Timeout expired, continue loop and check self.running
+
                 # Read headers
                 headers = {}
                 while True:

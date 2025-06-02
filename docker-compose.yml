@@ -1,0 +1,24 @@
+services:
+  neozork-hld:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # Mount local directories to the container
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./mql5_feed:/app/mql5_feed
+      # Mount the results directory to access plots on the host
+      - ./results:/app/results
+      # Mount tests directory for pytest
+      - ./tests:/app/tests
+    ports:
+      # Expose port for simple HTTP server
+      - "8080:8080"
+    env_file:
+      - .env
+    # Interactive script execution with user prompts
+    stdin_open: true
+    tty: true
+    # Use the entrypoint script instead of direct commands
+    entrypoint: ["/app/docker-entrypoint.sh"]
