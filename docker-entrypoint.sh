@@ -2,11 +2,21 @@
 
 # Create nz command wrapper script in a writable directory
 mkdir -p /tmp/bin
+
+# Создаем скрипт-обертку nz
 cat > /tmp/bin/nz << 'EOF'
 #!/bin/bash
 python /app/run_analysis.py "$@"
 EOF
 chmod +x /tmp/bin/nz
+
+# Создаем скрипт-обертку eda
+cat > /tmp/bin/eda << 'EOF'
+#!/bin/bash
+python /app/src/eda/eda_batch_check.py "$@"
+EOF
+chmod +x /tmp/bin/eda
+
 export PATH="/tmp/bin:$PATH"
 
 # Function to handle errors without exiting container
@@ -150,6 +160,15 @@ while true; do
       args="${cmd#nz}"
       echo "Executing: nz$args"
       { /tmp/bin/nz $args; } || {
+        echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
+        echo -e "\033[1;33mYou can try another command\033[0m"
+      }
+    # Проверяем, начинается ли команда с eda
+    elif [[ "$cmd" == "eda"* ]]; then
+      # Если это команда eda, вызываем её напрямую через wrapper-скрипт
+      args="${cmd#eda}"
+      echo "Executing: eda$args"
+      { /tmp/bin/eda $args; } || {
         echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
         echo -e "\033[1;33mYou can try another command\033[0m"
       }
