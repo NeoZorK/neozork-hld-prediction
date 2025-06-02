@@ -38,6 +38,19 @@ Notes:
 # Standard library imports
 import sys
 import time
+import os
+
+# Check if running in Docker environment and patch webbrowser if needed
+IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
+if IN_DOCKER:
+    try:
+        # Import our Docker-friendly browser module
+        from src.utils import docker_browser
+        # Patch the webbrowser module in sys.modules to use our version
+        sys.modules['webbrowser'] = docker_browser
+        # Docker browser patching complete
+    except ImportError:
+        print("Warning: Running in Docker but docker_browser module not found")
 
 # Imports from the src package using new paths
 from src import __version__
@@ -110,3 +123,4 @@ def main():
 # Standard Python entry point check
 if __name__ == "__main__":
     main()
+
