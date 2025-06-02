@@ -47,6 +47,7 @@ ENV MPLCONFIGDIR=/tmp/matplotlib-cache
 # We need bash for the entrypoint script
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
+    lynx \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
