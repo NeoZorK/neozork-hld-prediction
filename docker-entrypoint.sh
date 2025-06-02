@@ -139,7 +139,7 @@ echo -e "\033[1;36m2. Generated plots are saved to results/plots/*.html\033[0m"
 echo -e "\033[1;36m3. To access plots from Docker Desktop:\033[0m"
 echo -e "\033[1;36m   - Open Docker Desktop\033[0m"
 echo -e "\033[1;36m   - Select your running container\033[0m"
-echo -e "\033[1;36m   - Go to 'Volumes' tab\033[0m"
+echo -e "\033[1;36m   - Go to 'Press ... -> View Files -> Bind Mounts' tab\033[0m"
 echo -e "\033[1;36m   - Find and open the volume mapped to /app/results\033[0m"
 echo -e "\033[1;36m   - Navigate to the 'plots' folder to view your HTML files\033[0m"
 
