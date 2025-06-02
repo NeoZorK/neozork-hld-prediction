@@ -85,7 +85,6 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 * **Version Control:** `git`
 * **Package Installation Speedup (Optional):** `uv`
 
-
 # Project Structure
 ├── data/  
 │   ├── cache/  
@@ -102,28 +101,82 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 ├── requirements.txt  
 └── run_analysis.py  
 
-## Directory and File Descriptions
+## CI/CD with GitHub Actions
 
-`data/`: Central storage for all data-related files.  
-`cache/`: Holds temporary intermediate data.  
-`csv_converted/`: Stores CSV files converted from other formats.  
+This project includes GitHub Actions for continuous integration and testing of the Docker build. GitHub Actions is a CI/CD platform that allows you to automate your build, test, and deployment workflows directly in your GitHub repository.
 
-`raw_parquet/`: Stores raw data in Parquet format for efficient storage and querying.  
+### Understanding GitHub Actions
 
-`mql5_feed/`: Directory for CSV files exported from MQL5/MT5 platforms.  
-  
-`scripts/`: Contains utility scripts for data processing and analysis.
-`debug_scripts/`: Scripts for debugging and testing various components.
+- **What is GitHub Actions?** A CI/CD platform integrated with GitHub that automates software workflows
+- **Workflow file location:** `.github/workflows/docker-build.yml`
+- **Trigger events:** Push to main/master branch, pull requests, or manual trigger
 
-`src/`: Main source code directory for the project.  
+### Testing GitHub Actions Locally
 
-`tests/`: Directory for unit tests to ensure code reliability.  
-`.env`: Stores environment variables, such as API keys and configuration settings.  
-`.gitignore`: Specifies files and directories to be ignored by Git version control.  
-`init_dirs.sh`: Shell script to set up project directories and initialize the .env file.  
-`README.md:` This file, providing an overview and documentation of the project.  
-`requirements.txt`: Lists Python dependencies required for the project.  
-`run_analysis.py`: Main entry point script to execute the data analysis pipeline.  
+You can test the GitHub Actions workflow locally before pushing to GitHub using the `test-workflow.sh` script:
+
+1. **Install Act:**
+   ```bash
+   # macOS
+   brew install act
+   
+   # Linux (using Homebrew)
+   brew install act
+   
+   # Manual installation (all platforms)
+   curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
+   ```
+
+2. **Run the test script:**
+   ```bash
+   chmod +x test-workflow.sh
+   ./test-workflow.sh
+   ```
+
+3. **What happens during local testing:**
+   - Act will simulate the GitHub Actions environment locally
+   - Docker image will be built according to your workflow configuration
+   - All jobs defined in the workflow will execute on your machine
+   - You'll see the same output as you would on GitHub.com
+   - Typical execution time: 2-5 minutes depending on your hardware
+
+### What Happens After Pushing to GitHub
+
+When you push your code to the main/master branch on GitHub:
+
+1. GitHub Actions automatically detects the workflow file and schedules a run
+2. The workflow builds your Docker image, tests it, and optionally publishes it
+3. You can monitor the progress in the "Actions" tab of your repository
+4. You'll receive notifications of workflow success or failure
+5. Typical execution time on GitHub: 3-7 minutes
+
+### GitHub Actions Pricing and Limitations
+
+- **Free tier:** GitHub offers 2,000 minutes/month of Actions runtime on public repositories
+- **Free tier for private repos:** 2,000 minutes/month with GitHub Free account
+- **Hardware limits:** 2-core CPU, 8 GB RAM, 14 GB SSD
+- **Job timeout:** 6 hours maximum runtime
+- **Workflow run time:** 35 days retention for logs and artifacts
+
+For larger projects or teams, GitHub offers paid plans with:
+- More minutes (3,000-50,000 depending on plan)
+- More powerful runners (up to 64-core, 256 GB RAM)
+- Self-hosted runners option
+
+See the [GitHub Actions pricing page](https://github.com/pricing) for the most current information.
+
+### Expected Outcomes
+
+**Locally (using act):**
+- Confirmation that your Docker build process works
+- Verification that tests pass in a containerized environment
+- Early detection of issues before pushing to GitHub
+
+**On GitHub.com:**
+- Automated verification of every push and pull request
+- Build status badge/indicator on your repository
+- Build logs and test results for debugging
+- (If configured) Automatic deployment to your target environment
 
 ## Installation
 

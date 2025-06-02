@@ -179,7 +179,7 @@ This command will return a JSON response with the current connection status and 
     "W1",
     "MN1"
   ]
-} 
+}
 ```
 
 This should return information about the connection status, including:
@@ -265,3 +265,4 @@ Then execute:
 # Run pytest on the tests/mcp directory
 pytest tests/mcp
 ```
+
