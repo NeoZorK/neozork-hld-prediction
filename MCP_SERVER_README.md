@@ -49,6 +49,36 @@ You don't need to do anything special to launch the MCP server. When properly co
 
 You can run the MCP server both directly on your host machine or inside a Docker container. This allows for flexibility depending on your development environment and needs.
 
+## Using the `nz` Command with MCP Server
+
+The project includes a convenient command-line shortcut script called `nz` that also works with the MCP server setup:
+
+```bash
+# Instead of typing the full command:
+python mcp_server.py
+
+# You can use the shortcut:
+nz mcp
+```
+
+### Benefits of Using `nz` with MCP Server
+
+- **Automatic Environment Detection**: The `nz` command will detect whether you're running in a Docker environment or directly on your host
+- **Simplified Startup**: Just type `nz mcp` to start the MCP server with the correct parameters
+- **Consistent Interface**: Use the same command pattern across all project tools
+
+### Setup
+
+When you first run the `nz` command, it will automatically add itself to your PATH for the current terminal session. To add it permanently to your PATH, add this line to your `~/.bashrc` or `~/.zshrc`:
+
+```bash
+export PATH="/Users/rost/Documents/DIS/REPO/neozork-hld-prediction:$PATH"
+```
+
+This ensures that the `nz` command is available system-wide and can be used from any terminal session.
+
+## Docker Container MCP Server
+
 ### Using Local MCP Server with Docker Container
 
 To use a local MCP server in conjunction with Docker:
