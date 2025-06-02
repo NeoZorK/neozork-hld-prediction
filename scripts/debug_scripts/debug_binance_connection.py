@@ -12,8 +12,8 @@ import traceback
 from datetime import datetime, timedelta
 
 # --- Add project root to sys.path ---
-# This allows importing modules from 'src' when running this script from the project root
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+# This allows importing modules from 'src' when running this script from any directory
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
 # -----------------------------------
