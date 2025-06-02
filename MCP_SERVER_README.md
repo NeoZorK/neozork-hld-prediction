@@ -45,6 +45,65 @@ Replace `/full/path/to/mcp_server.py` with the absolute path to the mcp_server.p
 
 You don't need to do anything special to launch the MCP server. When properly configured, PyCharm CE will automatically start the MCP server when using GitHub Copilot. Everything happens automatically when you open your project.
 
+## Using MCP Server with Docker
+
+You can run the MCP server both directly on your host machine or inside a Docker container. This allows for flexibility depending on your development environment and needs.
+
+### Using Local MCP Server with Docker Container
+
+To use a local MCP server in conjunction with Docker:
+
+1. **Host Machine Setup**:
+   - Follow the standard installation steps above for your local machine
+   - Configure PyCharm CE to use the local MCP server as described earlier
+
+2. **Docker Container Integration**:
+   - The Docker container includes the MCP server, which can be started during container initialization
+   - When starting the container, you'll be prompted whether to start the MCP service:
+     ```
+     Would you like to start the MCP service for enhanced LLM support? [y/N]:
+     ```
+   - If you answer 'y', the MCP server will start in the container
+
+3. **Choosing Between Local and Docker MCP**:
+   - **Local MCP**: Better for development with direct IDE integration and lower latency
+   - **Docker MCP**: Better for isolated environments and when your project dependencies are containerized
+
+4. **Shared Configuration**:
+   - The `mcp.json` file is used by both local and Docker MCP servers
+   - You can customize the configuration to point to either local or Docker MCP
+
+### Advanced Setup: Communicating Between Local IDE and Docker MCP
+
+If you want to use PyCharm on your host machine but connect to the MCP server running in Docker:
+
+1. **Expose MCP Server Port**:
+   - Modify your `docker-compose.yml` to expose the necessary port:
+     ```yaml
+     services:
+       neozork-hld:
+         # Existing configuration...
+         ports:
+           - "5000:5000"  # For MCP Server communication
+     ```
+
+2. **Update MCP Configuration**:
+   - Modify your `mcp.json` to communicate with the Docker container:
+     ```json
+     {
+       "command": "curl",
+       "args": ["http://localhost:5000/mcp"],
+       "stdio": false
+     }
+     ```
+
+3. **Starting the Setup**:
+   - Start the Docker container with MCP server enabled
+   - Configure PyCharm to use the modified `mcp.json`
+   - Test the connection by invoking GitHub Copilot in PyCharm
+
+This dual-mode operation provides flexibility while maintaining the benefits of both local and containerized development environments.
+
 ## Successful Connection Signs
 
 When GitHub Copilot MCP client successfully connects to your local MCP server, you will notice:

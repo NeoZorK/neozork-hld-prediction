@@ -507,6 +507,36 @@ For more information about parameters, see the "EXAMPLES" section or run:
 python run_analysis.py show --help
 ```
 
+## MCP Server Integration
+
+The project includes an MCP (Model Completion Protocol) server that extends GitHub Copilot capabilities when working with the codebase. This allows for enhanced code completions, better context awareness, and improved productivity during development.
+
+### Using MCP Server with Docker
+
+There are multiple ways to use the MCP server with this project:
+
+1. **Docker-based MCP Server**: The Docker container includes a built-in MCP server that can be activated during container startup:
+   ```bash
+   docker compose up
+   # When prompted "Would you like to start the MCP service for enhanced LLM support? [y/N]:", enter "y"
+   ```
+
+2. **Local MCP Server**: You can run the MCP server directly on your host machine for lower latency:
+   ```bash
+   python mcp_server.py
+   ```
+
+3. **IDE Integration**: Configure your IDE (like PyCharm) to use either the local or Docker-based MCP server using the provided `mcp.json` configuration file.
+
+### Benefits of MCP Server
+
+- **Enhanced Context Awareness**: The MCP server provides GitHub Copilot with full access to the project structure and codebase, resulting in more relevant suggestions.
+- **Improved Completions**: Code completions and suggestions are tailored specifically to this project's architecture and data structures.
+- **Offline Capability**: The local MCP server allows working with Copilot even in environments with limited internet connectivity.
+- **Docker Integration**: The containerized environment ensures all dependencies are properly configured.
+
+For detailed setup instructions and advanced configuration options, see the [MCP_SERVER_README.md](MCP_SERVER_README.md) file.
+
 ## The script produces the following outputs:
 
 1.  **Console Summary:** Detailed summary printed to the console at the end of execution, including selected parameters, timing metrics for different steps, data shape, memory usage, API latency (if applicable), and overall success status.
