@@ -163,8 +163,9 @@ nz mql5 BTCUSD --interval H4 --rule PHLD
 ls results/plots/
 EOL
 
-# Create a custom .inputrc file for readline configuration
-cat > /root/.inputrc << EOL
+# Create a custom .inputrc file for readline configuration in a directory with write permissions
+mkdir -p /tmp/bash_config
+cat > /tmp/bash_config/.inputrc << EOL
 # Enable 8-bit input
 set meta-flag on
 set input-meta on
@@ -185,18 +186,23 @@ set completion-ignore-case on
 set show-all-if-ambiguous on
 EOL
 
+# Set the INPUTRC environment variable to use our custom file
+export INPUTRC=/tmp/bash_config/.inputrc
+
 # Setup Bash history settings
 export HISTSIZE=1000
 export HISTFILESIZE=2000
 export HISTCONTROL=ignoreboth:erasedups
 
-# Ensure history is preserved between sessions
-touch /root/.bash_history
-export HISTFILE=/root/.bash_history
+# Ensure history is preserved between sessions with proper permissions
+mkdir -p /tmp/bash_history
+touch /tmp/bash_history/.bash_history
+chmod 777 /tmp/bash_history/.bash_history
+export HISTFILE=/tmp/bash_history/.bash_history
 
 # Preload common commands into history
 if [ -f /tmp/neozork_commands.txt ]; then
-    cat /tmp/neozork_commands.txt >> /root/.bash_history
+    cat /tmp/neozork_commands.txt >> /tmp/bash_history/.bash_history
     echo -e "\033[1;36mHistory preloaded with common commands (use UP/DOWN arrows to navigate)\033[0m\n"
 fi
 
