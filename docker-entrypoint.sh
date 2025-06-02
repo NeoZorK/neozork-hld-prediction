@@ -1,12 +1,14 @@
 #!/bin/bash
 set -e
 
-# Create nz command wrapper script
-cat > /usr/local/bin/nz << 'EOF'
+# Create nz command wrapper script in a writable directory
+mkdir -p /tmp/bin
+cat > /tmp/bin/nz << 'EOF'
 #!/bin/bash
 python /app/run_analysis.py "$@"
 EOF
-chmod +x /usr/local/bin/nz
+chmod +x /tmp/bin/nz
+export PATH="/tmp/bin:$PATH"
 
 # Function to handle errors without exiting container
 run_python_safely() {
