@@ -670,70 +670,69 @@ This project uses Python's built-in `unittest` framework.
 
 ### Docker Configuration
 
-Проект можно запустить в Docker-контейнере, что обеспечивает изолированную среду выполнения с предустановленными зависимостями.
+The project can be run in a Docker container, which provides an isolated execution environment with pre-installed dependencies.
 
-### Сборка Docker контейнера
+### Building the Docker Container
 
-Для сборки Docker-контейнера выполните следующую команду в корневой директории проекта:
+To build the Docker container, execute the following command in the project's root directory:
 
 ```bash
 docker compose build
 ```
 
-Эта команда создаст образ контейнера на основе настроек в файлах `Dockerfile` и `docker-compose.yml`.
+This command will create a container image based on the settings in the `Dockerfile` and `docker-compose.yml` files.
 
-### Запуск контейнера
+### Running the Container
 
-Для запуска контейнера выполните:
+To run the container, execute:
 
 ```bash
 docker compose up
 ```
 
-При запуске контейнера автоматически выполняются следующие действия:
+When the container starts, the following actions are automatically performed:
 
-1. Запускаются все скрипты отладки из директории `scripts/debug_scripts/`
-2. Запускается сервер `mcp_server.py` в фоновом режиме
-3. Выполняется скрипт `run_analysis.py -h` для отображения справки по использованию
-4. Контейнер остается активным для дальнейшего взаимодействия
+1. All debug scripts from the `scripts/debug_scripts/` directory are executed
+2. The `mcp_server.py` server is started in the background
+3. The `run_analysis.py -h` script is executed to display usage help
+4. The container remains active for further interaction
 
-Для запуска контейнера в фоновом режиме добавьте флаг `-d`:
+To run the container in background mode, add the `-d` flag:
 
 ```bash
 docker compose up -d
 ```
 
-### Доступ к работающему контейнеру
+### Accessing the Running Container
 
-Для входа в запущенный контейнер используйте:
+To enter the running container, use:
 
 ```bash
 docker exec -it neozork-hld-prediction-neozork-hld-1 bash
 ```
 
-Внутри контейнера вы можете запускать команды, например:
+Inside the container, you can run commands, for example:
 
 ```bash
 python run_analysis.py --mode yfinance --ticker EURUSD --interval M15 --period 10d --output-mode plot
 ```
 
-### Остановка контейнера
+### Stopping the Container
 
-Для остановки контейнера выполните:
+To stop the container, execute:
 
 ```bash
 docker compose down
 ```
 
-### Особенности использования Docker
+### Docker Usage Features
 
-1. **Монтирование данных**: Локальные директории `data`, `logs` и `mql5_feed` монтируются в контейнер, что обеспечивает сохранение данных и логов между запусками.
+1. **Data Mounting**: Local directories `data`, `logs`, and `mql5_feed` are mounted into the container, ensuring data and logs are preserved between runs.
 
-2. **Переменные окружения**: Настройки из файла `.env` автоматически загружаются в контейнер.
+2. **Environment Variables**: Settings from the `.env` file are automatically loaded into the container.
 
-3. **Отладка**: В случае необходимости можно раскомментировать строки `stdin_open: true` и `tty: true` в `docker-compose.yml` для интерактивного режима.
+3. **Debugging**: If necessary, you can uncomment the `stdin_open: true` and `tty: true` lines in `docker-compose.yml` for interactive mode.
 
-4. **Производительность**: Обработка данных в контейнере может быть немного медленнее по сравнению с нативным запуском, особенно при работе с большими объемами данных.
+4. **Performance**: Data processing in the container may be slightly slower compared to native execution, especially when working with large volumes of data.
 
-5. **Обновление образа**: При внесении изменений в код или зависимости необходимо пересобрать образ с помощью `docker compose build`.
-
+5. **Image Updates**: When making changes to code or dependencies, you need to rebuild the image using `docker compose build`.
