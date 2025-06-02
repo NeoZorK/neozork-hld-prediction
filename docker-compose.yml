@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  neozork-hld:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # Mount local directories to the container
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./mql5_feed:/app/mql5_feed
+    env_file:
+      - .env
+    # by default, the container will run the mcp_server.py script
+    command: python mcp_server.py
+    # For debugging purposes, you can uncomment the following lines
+    # stdin_open: true
+    # tty: true
