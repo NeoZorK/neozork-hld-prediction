@@ -193,102 +193,70 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                                 font=dict(size=14),  # Increase font size for better readability
                                 width=1920,          # Setting width
                                 height=1080,         # Setting height
-                                template="plotly_white"  # Use a clean template for better visibility
+                                template="plotly_white",  # Use a clean template for better visibility
+                                # Improve SVG quality by enhancing overall rendering
+                                paper_bgcolor='white',
+                                plot_bgcolor='white',
+                                modebar_bgcolor='white'
                             )
 
-                            # Increase line width for better visibility
+                            # Optimize for SVG export by cleaning up the data
+                            # Make sure all lines have explicit, clean properties
                             for trace in fig.data:
                                 if hasattr(trace, 'line') and trace.line:
                                     if hasattr(trace.line, 'width') and trace.line.width is not None:
-                                        trace.line.width = trace.line.width * 1.5
+                                        # Use clean integer values for SVG line widths when possible
+                                        if trace.line.width < 1.5:
+                                            trace.line.width = 2  # Minimum line width for clarity
+                                        else:
+                                            trace.line.width = round(trace.line.width * 1.5)
                                     else:
                                         trace.line.width = 2
+
+                                    # Ensure line shape is clean for vector display
+                                    if hasattr(trace.line, 'shape') and trace.line.shape in ['spline', 'hv', 'vh']:
+                                        trace.line.shape = 'linear'  # Linear lines render best in SVG
 
                             # Save as PNG with high resolution
                             fig.write_image(image_path, width=1920, height=1080, scale=4)
                             logger.print_success(f"Static image saved to: {image_path}")
 
-                            # Additionally, save as SVG for vector graphics
+                            # Optimize SVG for crisp rendering
                             svg_path = str(absolute_filepath).replace('.html', '.svg')
-                            fig.write_image(svg_path, format="svg")
+
+                            # Create a copy of the figure for SVG optimization
+                            import copy
+                            svg_fig = copy.deepcopy(fig)
+
+                            # Special formatting for SVG export - ensure crisp rendering
+                            svg_fig.update_layout(
+                                font=dict(size=16, family="Arial, sans-serif"),
+                                width=1920,
+                                height=1080,
+                                margin=dict(l=50, r=50, t=80, b=50),  # Explicit margins
+                            )
+
+                            # Export with vector-optimized settings
+                            svg_fig.write_image(
+                                svg_path,
+                                format="svg",
+                                width=1920,
+                                height=1080,
+                                scale=1,  # Scale=1 for SVG (vector doesn't need scaling)
+                                engine="kaleido"
+                            )
                             logger.print_info(f"Vector SVG image saved to: {svg_path}")
 
+                            # If we're using the image in terminal, prefer PNG
+                            image_path_for_terminal = image_path
+
                             # Display the image in terminal if possible
-                            import subprocess
-
-                            # Check for Docker environment
-                            in_docker = os.environ.get('DOCKER_CONTAINER', False)
-
-                            # Try chafa first (best quality for Docker)
-                            chafa_check = subprocess.run(['which', 'chafa'], capture_output=True, text=True)
-                            if chafa_check.returncode == 0:
-                                logger.print_info("Displaying image in terminal (high quality color view)...")
-                                # Infer terminal size
-                                term_width = subprocess.run(['tput', 'cols'], capture_output=True, text=True)
-                                term_height = subprocess.run(['tput', 'lines'], capture_output=True, text=True)
-                                try:
-                                    width = int(term_width.stdout.strip()) - 5
-                                    height = int(term_height.stdout.strip()) - 10
-                                except:
-                                    width = 180
-                                    height = 90
-
-                                # Use better settings for Docker
-                                if in_docker:
-                                    subprocess.call(['chafa', '--size', f'{width}x{height}',
-                                                    '--colors', 'full', '--dither', 'diffusion',
-                                                    '--dither-intensity', '0.7', '--optimize', 'quality',
-                                                    image_path])
-                                else:
-                                    subprocess.call(['chafa', '--size', f'{width}x{height}',
-                                                    '--colors', 'full', image_path])
-                            # Try catimg second
-                            elif catimg_check := subprocess.run(['which', 'catimg'], capture_output=True, text=True):
-                                if catimg_check.returncode == 0:
-                                    logger.print_info("Displaying image in terminal (color view)...")
-                                    # Infer terminal width for catimg
-                                    term_width = subprocess.run(['tput', 'cols'], capture_output=True, text=True)
-                                    try:
-                                        width = int(term_width.stdout.strip()) - 5
-                                    except:
-                                        width = 180
-
-                                    # Use better settings for Docker
-                                    if in_docker:
-                                        # Higher resolution for Docker
-                                        subprocess.call(['catimg', '-w', str(width), '-r', '2', '-c', image_path])
-                                    else:
-                                        subprocess.call(['catimg', '-w', str(width), image_path])
-                                else:
-                                    img_viewer_check = subprocess.run(['which', 'img2txt'], capture_output=True, text=True)
-                                    if img_viewer_check.returncode == 0:
-                                        logger.print_info("Displaying image in terminal (simplified view)...")
-                                        # Enhanced parameters for img2txt in Docker
-                                        if in_docker:
-                                            subprocess.call(['img2txt', '-W', '180', '-H', '90', '--colors', '256',
-                                                           '--gamma', '0.8', image_path])
-                                        else:
-                                            subprocess.call(['img2txt', '-W', '120', '-H', '60', '--colors', '16', image_path])
-                                    else:
-                                        logger.print_info("For better terminal image viewing, install one of these tools:")
-                                        logger.print_info("  - apt-get install libcaca-utils (for img2txt)")
-                                        logger.print_info("  - apt-get install catimg")
-                                        logger.print_info("  - apt-get install chafa (recommended for Docker)")
-                        except Exception as plotly_img_error:
-                            logger.print_warning(f"Failed to generate direct image with Plotly: {plotly_img_error}")
-                            logger.print_debug(f"Traceback (Plotly image):\n{traceback.format_exc()}")
-
-                            # If Plotly image generation fails, try to open HTML in browser
-                            logger.print_info("Falling back to HTML conversion...")
-                            import subprocess
-                except Exception as e_open:
-                    logger.print_warning(
-                        f"Could not automatically open the plot in browser: {type(e_open).__name__}: {e_open}")
-                    logger.print_debug(f"Traceback (open plot):\n{traceback.format_exc()}")
-            except Exception as e_save:
-                logger.print_error(f"Failed to save Plotly plot to {filepath}: {type(e_save).__name__}: {e_save}")
-                logger.print_debug(f"Traceback (save plot):\n{traceback.format_exc()}")
-    except Exception as e_gen:
-        logger.print_error(f"An error occurred during plot generation: {type(e_gen).__name__}: {e_gen}")
-        logger.print_debug(f"Traceback (generate plot):\n{traceback.format_exc()}")
-
+                        except Exception as e:
+                            logger.print_error(f"Error generating static image: {e}")
+                except Exception as e:
+                    logger.print_error(f"Error opening plot in browser: {e}")
+            except Exception as e:
+                logger.print_error(f"Error saving Plotly plot: {e}")
+    except Exception as e:
+        logger.print_error(f"Error generating plot: {e}")
+        logger.print_debug(traceback.format_exc())
