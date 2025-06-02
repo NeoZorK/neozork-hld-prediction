@@ -107,28 +107,47 @@ def main():
 
     try:
         # Call the main fetch function from the fetcher module
-        df = fetch_binance_data(
+        result = fetch_binance_data(
             ticker=TEST_TICKER,
             interval=TEST_INTERVAL,
             start_date=TEST_START_STR,
             end_date=TEST_END_STR
         )
 
-        # Process results
-        if df is not None and not df.empty:
-            logger.print_success(f"Successfully fetched {len(df)} rows of data.")
-            logger.print_info("DataFrame Info:")
-            df.info()
-            logger.print_info("\nDataFrame Head:")
-            print(df.head().to_string())
-            logger.print_info("\nDataFrame Tail:")
-            print(df.tail().to_string())
-        elif df is not None and df.empty:
-            logger.print_warning("Data fetch was successful, but the returned DataFrame is empty.")
-            logger.print_warning("Check the date range and ticker validity for the selected period.")
+        # Check if result is a tuple (df, metadata)
+        if isinstance(result, tuple) and len(result) >= 1:
+            df = result[0]  # Extract the DataFrame from the tuple
+            # Process results
+            if df is not None and not df.empty:
+                logger.print_success(f"Successfully fetched {len(df)} rows of data.")
+                logger.print_info("DataFrame Info:")
+                df.info()
+                logger.print_info("\nDataFrame Head:")
+                print(df.head().to_string())
+                logger.print_info("\nDataFrame Tail:")
+                print(df.tail().to_string())
+            elif df is not None and df.empty:
+                logger.print_warning("Data fetch was successful, but the returned DataFrame is empty.")
+                logger.print_warning("Check the date range and ticker validity for the selected period.")
+            else:
+                # fetch_binance_data should have logged the error already
+                logger.print_error("Data fetch failed. See previous logs for details.")
         else:
-            # fetch_binance_data should have logged the error already
-            logger.print_error("Data fetch failed. See previous logs for details.")
+            # Handle case where result is not a tuple but a direct DataFrame
+            df = result
+            if df is not None and not df.empty:
+                logger.print_success(f"Successfully fetched {len(df)} rows of data.")
+                logger.print_info("DataFrame Info:")
+                df.info()
+                logger.print_info("\nDataFrame Head:")
+                print(df.head().to_string())
+                logger.print_info("\nDataFrame Tail:")
+                print(df.tail().to_string())
+            elif df is not None and df.empty:
+                logger.print_warning("Data fetch was successful, but the returned DataFrame is empty.")
+                logger.print_warning("Check the date range and ticker validity for the selected period.")
+            else:
+                logger.print_error("Data fetch failed. See previous logs for details.")
 
     except (BinanceAPIException, BinanceRequestException) as e:
         # Catch potential API errors not caught inside fetch_binance_data (should be rare)
@@ -148,3 +167,4 @@ def main():
 # --- Script Entry Point ---
 if __name__ == "__main__":
     main()
+
