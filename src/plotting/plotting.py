@@ -7,14 +7,26 @@ or mplfinance (static).
 """
 
 import pandas as pd
+import os
 
 from .mplfinance_plot import plot_indicator_results_mplfinance
 from .plotly_plot import plot_indicator_results_plotly
 # Use relative imports for constants and logger
 from ..common.constants import TradingRule
 from ..common import logger
-from .fastest_plot import plot_indicator_results_fastest # Import the new fastest plot function
 from .fast_plot import plot_indicator_results_fast # Import the fast plot function
+
+# Check if running in Docker
+IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
+
+# Only import datashader-dependent modules outside Docker
+if not IN_DOCKER:
+    from .fastest_plot import plot_indicator_results_fastest # Import the new fastest plot function
+else:
+    # Create empty function as placeholder when skipping
+    def plot_indicator_results_fastest(*args, **kwargs):
+        logger.print_warning("Datashader plotting not available in Docker environment")
+        return None
 
 # --- Wrapper function to call the appropriate plotting function ---
 def plot_indicator_results(df_results, rule, title="Indicator Results", mode="plotly", data_source="demo", output_path=None):
