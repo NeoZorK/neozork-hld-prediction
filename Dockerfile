@@ -16,15 +16,14 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Copy and install requirements
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
-
-# Final stage - copy only necessary files
-FROM python:3.11-slim
+    pip install --no-cache-dir -r requirements.txt && \
+    find /opt/venv -name '*.pyc' -delete && \
+    find /opt/venv -name '__pycache__' -delete
 
 WORKDIR /app
 
 # Copy virtual environment from builder stage
-COPY --from=builder /opt/venv /opt/venv
+COPY  /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy only necessary application files
@@ -43,15 +42,14 @@ RUN mkdir -p /app/data/cache /app/data/raw_parquet /app/logs /tmp/matplotlib-cac
 # Define environment variables
 ENV PYTHONUNBUFFERED=1
 ENV MPLCONFIGDIR=/tmp/matplotlib-cache
+ENV PYTHONDONTWRITEBYTECODE=1
 
-# We need bash for the entrypoint script
+# We need bash for the entrypoint script, but install only minimal dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     imagemagick \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Container entrypoint is defined in docker-compose.yml
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /usr/share
 
 USER nobody
-
