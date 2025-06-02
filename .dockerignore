@@ -37,6 +37,7 @@ ENV/
 /data/
 /logs/
 /mql5_feed/
+*.svg
 
 # Test and documentation
 /tests/
