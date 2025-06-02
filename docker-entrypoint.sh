@@ -154,7 +154,51 @@ nz
 eda
 python
 pytest
+python run_analysis.py demo --rule PHLD
+nz demo --rule PHLD
+python run_analysis.py yfinance MSFT --rule PHLD
+nz yfinance AAPL --rule PHLD
+python run_analysis.py mql5 EURUSD --interval H4 --rule PHLD
+nz mql5 BTCUSD --interval H4 --rule PHLD
+ls results/plots/
 EOL
+
+# Create a custom .inputrc file for readline configuration
+cat > /root/.inputrc << EOL
+# Enable 8-bit input
+set meta-flag on
+set input-meta on
+set convert-meta off
+set output-meta on
+
+# Bind the up and down arrow keys for history search
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+# Enable tab completion
+TAB: complete
+
+# Use case-insensitive tab completion
+set completion-ignore-case on
+
+# Show all completions after a single tab press
+set show-all-if-ambiguous on
+EOL
+
+# Setup Bash history settings
+export HISTSIZE=1000
+export HISTFILESIZE=2000
+export HISTCONTROL=ignoreboth:erasedups
+
+# Ensure history is preserved between sessions
+touch /root/.bash_history
+export HISTFILE=/root/.bash_history
+
+# Preload common commands into history
+if [ -f /tmp/neozork_commands.txt ]; then
+    cat /tmp/neozork_commands.txt >> /root/.bash_history
+    echo -e "\033[1;36mHistory preloaded with common commands (use UP/DOWN arrows to navigate)\033[0m\n"
+fi
 
 # Handle Ctrl+C (SIGINT) to terminate all background processes
 cleanup() {
