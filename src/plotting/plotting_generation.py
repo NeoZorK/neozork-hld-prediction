@@ -14,6 +14,7 @@ import pandas as pd
 import traceback
 from pathlib import Path
 import webbrowser
+import os
 
 from ..common import logger
 from ..common.constants import TradingRule
@@ -165,10 +166,18 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                 fig.write_html(str(filepath), include_plotlyjs='cdn')
                 logger.print_success(f"Interactive Plotly plot saved successfully to: {filepath}")
                 try:
-                    absolute_filepath = filepath.resolve()
-                    file_uri = absolute_filepath.as_uri()
-                    webbrowser.open(file_uri)
-                    logger.print_info(f"Attempting to open {filepath} in default browser...")
+                    # Проверяем, запущен ли код внутри Docker-контейнера
+                    in_docker = os.path.exists('/.dockerenv') or os.environ.get('RUNNING_IN_DOCKER') == 'true'
+
+                    if not in_docker:
+                        # Только если код не в Docker, пытаемся открыть браузер
+                        absolute_filepath = filepath.resolve()
+                        file_uri = absolute_filepath.as_uri()
+                        webbrowser.open(file_uri)
+                        logger.print_info(f"Attempting to open {filepath} in default browser...")
+                    else:
+                        logger.print_info(f"Running in Docker container - browser opening is not supported.")
+                        logger.print_info(f"You can access this plot at: http://localhost:8080/plots/{filename}")
                 except Exception as e_open:
                     logger.print_warning(
                         f"Could not automatically open the plot in browser: {type(e_open).__name__}: {e_open}")
