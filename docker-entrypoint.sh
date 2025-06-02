@@ -17,6 +17,9 @@ run_python_safely() {
   return 0
 }
 
+# Set PYTHONPATH globally for the entire script
+export PYTHONPATH=/app
+
 # Welcome message
 echo -e "\n\033[1;36m=== NeoZork HLD Prediction Container Started ===\033[0m\n"
 
@@ -46,14 +49,14 @@ if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
 
       if [ -n "$sample_parquet" ]; then
         echo -e "\033[1;35mFound sample parquet file: $sample_parquet\033[0m"
-        run_python_safely PYTHONPATH=/app python "$script" "$sample_parquet"
+        run_python_safely python "$script" "$sample_parquet"
       else
         echo -e "\033[1;33mNo sample parquet file found. Showing usage instead:\033[0m"
-        run_python_safely PYTHONPATH=/app python "$script"
+        run_python_safely python "$script"
       fi
     else
       # Default case for scripts without special requirements
-      run_python_safely PYTHONPATH=/app python "$script"
+      run_python_safely python "$script"
     fi
     echo -e "\n"
   done
