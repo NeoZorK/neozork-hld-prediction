@@ -44,12 +44,10 @@ RUN mkdir -p /app/data/cache /app/data/raw_parquet /app/logs /tmp/matplotlib-cac
 ENV PYTHONUNBUFFERED=1
 ENV MPLCONFIGDIR=/tmp/matplotlib-cache
 
-# We need bash for the entrypoint script and tools for terminal image display
+# We need bash for the entrypoint script
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
-    lynx \
     imagemagick \
-    chafa \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
