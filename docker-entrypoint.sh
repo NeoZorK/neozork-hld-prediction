@@ -53,10 +53,7 @@ run_python_safely() {
       current_time=$(date +%s)
       # If file was modified in the last 10 seconds, open it
       if [ $((current_time - mod_time)) -lt 10 ]; then
-        echo -e "\033[1;32m=== Opening latest HTML file in lynx: $latest_html ===\033[0m"
-        # Get the relative URL path
-        relative_path=${latest_html#/app/results/}
-        echo -e "\033[1;32m=== You can also access this file at: http://localhost:8080/$relative_path ===\033[0m"
+        echo -e "\033[1;32m=== New HTML file generated: $latest_html ===\033[0m"
 
         # Ask if user wants to view in terminal browser
         echo -e "\033[1;33mDo you want to view this HTML file in terminal browser? [y/N]:\033[0m"
@@ -138,33 +135,6 @@ else
   echo -e "\033[1;33mSkipping MCP server startup\033[0m\n"
 fi
 
-# Third question - Start HTTP server for plots
-echo -e "\033[1;33mWould you like to start HTTP server for viewing plotly HTML plots in browser? [y/N]:\033[0m"
-read -r run_http
-
-# Debug output to check what was read
-echo -e "\033[1;34mInput received: '$run_http'\033[0m"
-
-# Start HTTP server for plots
-if [ "$run_http" = "y" ] || [ "$run_http" = "Y" ]; then
-  # Check if directory exists and create it if needed
-  if [ ! -d "/app/results/plots" ]; then
-    mkdir -p /app/results/plots
-    echo -e "\033[1;32mCreated directory: /app/results/plots\033[0m"
-  fi
-
-  # Start HTTP server in background
-  echo -e "\n\033[1;32m=== Starting HTTP server for plots on port 8080 ===\033[0m"
-  echo -e "\033[1;32mYou can access plots at: http://localhost:8080\033[0m\n"
-
-  # Use Python's built-in HTTP server
-  cd /app/results && run_python_safely python -m http.server 8080 &
-  HTTP_SERVER_PID=$!
-  echo -e "\033[1;32mHTTP server started with PID: $HTTP_SERVER_PID\033[0m\n"
-else
-  echo -e "\033[1;33mSkipping HTTP server startup\033[0m\n"
-fi
-
 # Always show help
 echo -e "\033[1;32m=== NeoZork HLD Prediction Usage Guide ===\033[0m\n"
 run_python_safely python run_analysis.py -h
@@ -176,13 +146,12 @@ echo -e "\033[1;36mUse the commands above to analyze data\033[0m"
 echo -e "\n\033[1;36m=== Tips for viewing plotly HTML plots ===\033[0m"
 echo -e "\033[1;36m1. Run a command like: python run_analysis.py demo --rule PHLD\033[0m"
 echo -e "\033[1;36m2. Find generated HTML at: results/plots/*.html\033[0m"
-echo -e "\033[1;36m3. If HTTP server is running, access at: http://localhost:8080/plots/\033[0m"
-echo -e "\033[1;36m4. You can also open HTML files directly from the host system at: ./results/plots/\033[0m"
+echo -e "\033[1;36m3. You can also open HTML files directly from the host system at: ./results/plots/\033[0m"
 
 echo -e "\n\033[1;36mPress Ctrl+C to stop the container\033[0m\n"
 
 # Keep container running and accepting input
-echo -e "\n\033[1;36mStarting interactive shell with command history support...\033[0m\n"
+echo -e "\n\033[1;36mStarting interactive shell...\033[0m\n"
 
 # Create a file with common commands for the interactive shell
 cat > /tmp/neozork_commands.txt << EOL
@@ -192,14 +161,13 @@ python
 pytest
 EOL
 
-# Run the interactive shell with command history and special handling
-rlwrap -H /tmp/bash_history/.bash_history -f /tmp/neozork_commands.txt bash -c '
+# Run the interactive shell with simple command processing
 while true; do
   echo -ne "\033[1;35mneozork-hld>\033[0m "
   read cmd
   if [ -n "$cmd" ]; then
     # Check if the command is empty
-    if [[ "$cmd" == *$'"'"'\e'"'"'* ]]; then
+    if [[ "$cmd" == *$'\e'* ]]; then
       echo -e "\033[1;31m[WARNING] Command contains escape sequences which may cause errors. Please try again.\033[0m"
       continue
     fi
@@ -228,7 +196,7 @@ while true; do
     # Check if the command is a Python script execution
     elif [[ "$cmd" == *"python run_analysis.py"* ]]; then
       # Extract arguments from the command
-      args=$(echo "$cmd" | sed '"'"'s/python run_analysis.py//'"'"')
+      args=$(echo "$cmd" | sed 's/python run_analysis.py//')
       # Run the analysis script with the extracted arguments
       echo "Executing: python /app/run_analysis.py$args"
       { python /app/run_analysis.py$args; } || {
@@ -245,4 +213,3 @@ while true; do
     fi
   fi
 done
-'
