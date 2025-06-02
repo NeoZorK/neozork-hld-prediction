@@ -12,14 +12,14 @@ chmod 666 $HISTFILE
 # Create nz command wrapper script in a writable directory
 mkdir -p /tmp/bin
 
-# Создаем скрипт-обертку nz
+# Create the directory if it doesn't exist
 cat > /tmp/bin/nz << 'EOF'
 #!/bin/bash
 python /app/run_analysis.py "$@"
 EOF
 chmod +x /tmp/bin/nz
 
-# Создаем скрипт-обертку eda
+# Create eda command wrapper script in a writable directory
 cat > /tmp/bin/eda << 'EOF'
 #!/bin/bash
 python /app/src/eda/eda_batch_check.py "$@"
@@ -184,7 +184,7 @@ echo -e "\n\033[1;36mPress Ctrl+C to stop the container\033[0m\n"
 # Keep container running and accepting input
 echo -e "\n\033[1;36mStarting interactive shell with command history support...\033[0m\n"
 
-# Создаем файл с командами, которые нужно обрабатывать специальным образом
+# Create a file with common commands for the interactive shell
 cat > /tmp/neozork_commands.txt << EOL
 nz
 eda
@@ -192,33 +192,33 @@ python
 pytest
 EOL
 
-# Запускаем интерактивный режим с поддержкой истории команд через rlwrap
+# Run the interactive shell with command history and special handling
 rlwrap -H /tmp/bash_history/.bash_history -f /tmp/neozork_commands.txt bash -c '
 while true; do
   echo -ne "\033[1;35mneozork-hld>\033[0m "
   read cmd
   if [ -n "$cmd" ]; then
-    # Проверка на наличие необычных символов (которые могут появиться при использовании backspace)
+    # Check if the command is empty
     if [[ "$cmd" == *$'"'"'\e'"'"'* ]]; then
       echo -e "\033[1;31m[WARNING] Command contains escape sequences which may cause errors. Please try again.\033[0m"
       continue
     fi
 
-    # Добавляем команду в историю
+    # Add command to history
     history -s "$cmd"
 
-    # Проверяем, начинается ли команда с nz
+    # Check if the command starts with nz
     if [[ "$cmd" == "nz"* ]]; then
-      # Если это команда nz, вызываем её напрямую через wrapper-скрипт
+      # If it starts with nz, call the nz wrapper script
       args="${cmd#nz}"
       echo "Executing: nz$args"
       { /tmp/bin/nz $args; } || {
         echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
         echo -e "\033[1;33mYou can try another command\033[0m"
       }
-    # Проверяем, начинается ли команда с eda
+    # check if the command starts with eda
     elif [[ "$cmd" == "eda"* ]]; then
-      # Если это команда eda, вызываем её напрямую через wrapper-скрипт
+      # If it starts with eda, call the eda wrapper script
       args="${cmd#eda}"
       echo "Executing: eda$args"
       { /tmp/bin/eda $args; } || {
@@ -236,8 +236,8 @@ while true; do
         echo -e "\033[1;33mYou can try another command\033[0m"
       }
     else
-      # Run any other command safely (без использования eval по возможности)
-      # Используем {} для группировки и перехвата ошибок без выхода из контейнера
+      # Run any other command safely (without special handling)
+      # Use {} for command grouping to handle errors
       { bash -c "$cmd"; } || {
         echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
         echo -e "\033[1;33mYou can try another command\033[0m"
