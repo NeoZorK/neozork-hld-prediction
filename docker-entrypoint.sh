@@ -111,6 +111,16 @@ while true; do
   echo -e "\033[1;35mneozork-hld>\033[0m "
   read -r cmd
   if [ -n "$cmd" ]; then
-    eval "$cmd"
+    # Check if the command is a Python script execution
+    if [[ "$cmd" == *"python run_analysis.py"* ]]; then
+      # Extract arguments from the command
+      args=$(echo "$cmd" | sed 's/python run_analysis.py//')
+      # Run the analysis script with the extracted arguments
+      echo "Executing: python /app/run_analysis.py$args"
+      run_python_safely python /app/run_analysis.py$args
+    else
+      # Run any other command safely
+      run_python_safely eval "$cmd"
+    fi
   fi
 done
