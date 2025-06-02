@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Determine the project directory
+PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$PROJECT_DIR"
+
+# Check if the script is being run from the correct directory
+if command -v docker &> /dev/null && [ -f "docker-compose.yml" ]; then
+    # If Docker is available and docker-compose.yml exists, run the command in a Docker container
+    if docker ps --format '{{.Names}}' | grep -q 'neozork-hld-prediction-neozork-hld'; then
+        docker exec -it neozork-hld-prediction-neozork-hld python run_analysis.py "$@"
+    else
+        # Run the command using docker-compose
+        docker-compose run --rm neozork-hld python run_analysis.py "$@"
+    fi
+else
+    # Run the command directly if Docker is not available
+    python run_analysis.py "$@"
+fi
