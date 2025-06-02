@@ -11,10 +11,31 @@ read -r run_tests
 # Simplified condition checking
 if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
   echo -e "\n\033[1;32m=== Running external data feed tests ===\033[0m\n"
+
+  # Process each script individually to handle specific requirements
   for script in /app/scripts/debug_scripts/*.py; do
+    script_name=$(basename "$script")
     echo -e "\033[1;34m=== Running test: $script ===\033[0m"
-    # Set PYTHONPATH to include the app root directory
-    PYTHONPATH=/app python "$script"
+
+    # Handle special cases for scripts that need arguments
+    if [[ "$script_name" == "debug_check_parquet.py" ]]; then
+      # Look for a parquet file to use as an example
+      sample_parquet=""
+      if [ -d "/app/data/raw_parquet" ] && [ "$(ls -A /app/data/raw_parquet)" ]; then
+        sample_parquet=$(find /app/data/raw_parquet -name "*.parquet" | head -n 1)
+      fi
+
+      if [ -n "$sample_parquet" ]; then
+        echo -e "\033[1;35mFound sample parquet file: $sample_parquet\033[0m"
+        PYTHONPATH=/app python "$script" "$sample_parquet"
+      else
+        echo -e "\033[1;33mNo sample parquet file found. Showing usage instead:\033[0m"
+        PYTHONPATH=/app python "$script"
+      fi
+    else
+      # Default case for scripts without special requirements
+      PYTHONPATH=/app python "$script"
+    fi
     echo -e "\n"
   done
 else
