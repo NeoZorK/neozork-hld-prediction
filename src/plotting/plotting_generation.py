@@ -185,16 +185,19 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                             # Check if lynx is installed
                             lynx_check = subprocess.run(['which', 'lynx'], capture_output=True, text=True)
                             if lynx_check.returncode == 0:
-                                # Open the HTML file in lynx browser
-                                subprocess.Popen(['lynx', '-localhost', '-force_html', str(absolute_filepath)],
-                                                 stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                                logger.print_success(f"HTML file opened in lynx browser")
+                                # Output instructions for the user
+                                logger.print_info(f"Opening HTML file in lynx browser (press 'q' to exit lynx)...")
+
+                                # Launch lynx in interactive mode (blocking call)
+                                subprocess.call(['lynx', '-localhost', '-force_html', str(absolute_filepath)])
+
+                                logger.print_success(f"Returned from lynx browser")
                             else:
                                 logger.print_warning("Lynx browser not found. Install with: apt-get install lynx")
                         except Exception as lynx_error:
                             logger.print_warning(f"Failed to open in lynx: {lynx_error}")
 
-                        # Display the file path in the console
+                        # Also output information about HTTP access
                         logger.print_info(f"You can also access this plot at: http://localhost:8080/plots/{filename}")
                 except Exception as e_open:
                     logger.print_warning(
