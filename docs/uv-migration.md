@@ -18,8 +18,8 @@
 For local installation, you can use the provided script:
 
 ```bash
-chmod +x scripts/setup_uv.sh
-./scripts/setup_uv.sh
+chmod +x uv_setup/setup_uv.sh
+./uv_setup/setup_uv.sh
 ```
 
 Or install manually:
@@ -35,8 +35,10 @@ chmod +x /tmp/uv-installer/installer.sh
 # Clean up
 rm -rf /tmp/uv-installer
 
-# Add to PATH (add to your .bashrc or .zshrc)
-export PATH="$HOME/.cargo/bin:$PATH"
+# Add to PATH
+source $HOME/.local/bin/env
+# or add to your .bashrc/.zshrc
+echo 'source $HOME/.local/bin/env' >> ~/.zshrc  # or ~/.bashrc
 ```
 
 ### Verifying installation
@@ -87,7 +89,9 @@ For GitHub Actions, you can use caching to speed up dependency installation:
     # Clean up
     rm -rf /tmp/uv-installer
     
-    echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+    # Add uv to PATH
+    source $HOME/.local/bin/env
+    echo "$HOME/.local/bin" >> $GITHUB_PATH
 
 - name: Install dependencies
   run: |
