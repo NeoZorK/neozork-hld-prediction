@@ -15,7 +15,7 @@ if [[ $(uname -m) == "arm64" ]]; then
 
     # Create .actrc file with compatible configuration for Apple Silicon
     cat > .actrc <<EOL
--P ubuntu-latest=nektos/act-environments-ubuntu:jammy
+-P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-22.04
 --container-architecture linux/amd64
 EOL
 
@@ -34,5 +34,5 @@ EOL
 else
     # Run the workflow on other architectures with standard configuration
     echo "Running GitHub Actions workflow locally using act..."
-    act -j build -P ubuntu-latest=nektos/act-environments-ubuntu:jammy
+    act -j build -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-22.04
 fi
