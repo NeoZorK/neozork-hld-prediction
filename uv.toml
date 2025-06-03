@@ -1,24 +1,24 @@
-# uv.toml - конфигурационный файл для uv
-# Документация: https://github.com/astral-sh/uv/blob/main/crates/uv-configuration/src/config.rs
+# uv.toml - configuration file for uv
+# Documentation: https://github.com/astral-sh/uv/blob/main/crates/uv-configuration/src/config.rs
 
 [pip]
-# Установка пакетов без записи "*.pyc" файлов
+# Install packages without writing "*.pyc" files
 no-compile = true
 
-# Не использовать кеш
+# Don't use cache
 no-cache = true
 
-# Оптимизация зависимостей
+# Dependency optimization
 no-deps = false
 only-binary = true
 
 [venv]
-# Использовать существующее виртуальное окружение, если оно существует
+# Use existing virtual environment if it exists
 no-recreate = true
 
-# Имя виртуального окружения
+# Virtual environment name
 name = ".venv"
 
 [index]
-# Использовать официальный PyPI
+# Use official PyPI
 url = "https://pypi.org/simple"

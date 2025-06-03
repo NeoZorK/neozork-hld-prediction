@@ -1,76 +1,92 @@
-# Переход с pip на uv
+# Migrating from pip to uv
 
-## Что такое uv?
+## What is uv?
 
-[uv](https://github.com/astral-sh/uv) - это новый, быстрый пакетный менеджер Python, который может заменить pip. 
+[uv](https://github.com/astral-sh/uv) is a new, fast Python package manager that can replace pip.
 
-**Преимущества uv:**
-- В 10-100 раз быстрее pip при установке пакетов
-- Параллельная установка зависимостей
-- Улучшенное разрешение зависимостей
-- Меньший размер Docker-контейнеров
-- Лучшее кэширование пакетов
+**Benefits of uv:**
+- 10-100 times faster than pip when installing packages
+- Parallel dependency installation
+- Improved dependency resolution
+- Smaller Docker container sizes
+- Better package caching
 
-## Установка uv
+## Installing uv
 
-### Локальная установка
+### Local installation
 
-Для локальной установки можно использовать предоставленный скрипт:
+For local installation, you can use the provided script:
 
 ```bash
 chmod +x scripts/setup_uv.sh
 ./scripts/setup_uv.sh
 ```
 
-Или установить вручную:
+Or install manually:
 
 ```bash
-# Установка uv
-curl -sSf https://astral.sh/uv/install.sh | sh
+# Create a temporary directory for the installer
+mkdir -p /tmp/uv-installer
+# Download the installer script
+curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh -o /tmp/uv-installer/installer.sh
+# Make it executable and run it
+chmod +x /tmp/uv-installer/installer.sh
+/tmp/uv-installer/installer.sh
+# Clean up
+rm -rf /tmp/uv-installer
 
-# Добавление в PATH (добавьте в ваш .bashrc или .zshrc)
+# Add to PATH (add to your .bashrc or .zshrc)
 export PATH="$HOME/.cargo/bin:$PATH"
 ```
 
-### Проверка установки
+### Verifying installation
 
 ```bash
 uv --version
 ```
 
-## Команды uv (замена pip)
+## uv commands (pip replacements)
 
-| pip                            | uv                        | Описание                                  |
+| pip                            | uv                        | Description                               |
 |--------------------------------|---------------------------|-------------------------------------------|
-| `pip install package`          | `uv pip install package`  | Установка пакета                          |
-| `pip install -r requirements.txt` | `uv pip install -r requirements.txt` | Установка из файла требований |
-| `pip uninstall package`        | `uv pip uninstall package` | Удаление пакета                         |
-| `pip freeze > requirements.txt`| `uv pip freeze > requirements.txt` | Сохранение текущих зависимостей   |
-| `python -m venv .venv`         | `uv venv`                 | Создание виртуального окружения           |
-| -                              | `uv pip compile requirements.txt` | Компиляция requirements.txt в lock-файл |
+| `pip install package`          | `uv pip install package`  | Install a package                         |
+| `pip install -r requirements.txt` | `uv pip install -r requirements.txt` | Install from requirements file |
+| `pip uninstall package`        | `uv pip uninstall package` | Remove a package                         |
+| `pip freeze > requirements.txt`| `uv pip freeze > requirements.txt` | Save current dependencies         |
+| `python -m venv .venv`         | `uv venv`                 | Create a virtual environment              |
+| -                              | `uv pip compile requirements.txt` | Compile requirements.txt to a lock file |
 
-## Виртуальные окружения с uv
+## Virtual environments with uv
 
 ```bash
-# Создание виртуального окружения
+# Create a virtual environment
 uv venv
 
-# Активация (так же, как и с обычным venv)
+# Activate (same as with regular venv)
 source .venv/bin/activate
 ```
 
 ## Docker
 
-В Dockerfile уже настроено использование uv для установки зависимостей.
+The Dockerfile is already configured to use uv for dependency installation.
 
 ## CI/CD
 
-Для GitHub Actions вы можете использовать кэширование для ускорения установки зависимостей:
+For GitHub Actions, you can use caching to speed up dependency installation:
 
 ```yaml
 - name: Install uv
   run: |
-    curl -sSf https://astral.sh/uv/install.sh | sh
+    # Create a temporary directory for the installer
+    mkdir -p /tmp/uv-installer
+    # Download the installer script
+    curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh -o /tmp/uv-installer/installer.sh
+    # Make it executable and run it
+    chmod +x /tmp/uv-installer/installer.sh
+    /tmp/uv-installer/installer.sh
+    # Clean up
+    rm -rf /tmp/uv-installer
+    
     echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
 - name: Install dependencies
