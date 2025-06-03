@@ -9,6 +9,5 @@ compile-bytecode = false
 no-deps = false
 only-binary = ["numpy", "pandas", "tensorflow", "torch"]
 
-[index]
-# Use official PyPI
-url = "https://pypi.org/simple"
+# Index configuration
+index-url = "https://pypi.org/simple"
