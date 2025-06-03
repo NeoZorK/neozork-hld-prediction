@@ -143,7 +143,7 @@ echo -e "\033[1;36m   - Go to 'Press ... -> View Files -> Bind Mounts' tab\033[0
 echo -e "\033[1;36m   - Find and open the volume mapped to /app/results\033[0m"
 echo -e "\033[1;36m   - Navigate to the 'plots' folder to view your HTML files\033[0m"
 
-echo -e "\n\033[1;36mPress Ctrl+C to stop the container\033[0m\n"
+echo -e "\n\033[1;36mPress CTRL+C or Ctrl+D to stop the container\033[0m\n"
 
 # Keep container running and accepting input
 echo -e "\n\033[1;36mStarting interactive shell...\033[0m\n"
@@ -200,77 +200,5 @@ touch /tmp/bash_history/.bash_history
 chmod 777 /tmp/bash_history/.bash_history
 export HISTFILE=/tmp/bash_history/.bash_history
 
-# Preload common commands into history
-if [ -f /tmp/neozork_commands.txt ]; then
-    cat /tmp/neozork_commands.txt >> /tmp/bash_history/.bash_history
-    echo -e "\033[1;36mHistory preloaded with common commands (use UP/DOWN arrows to navigate)\033[0m\n"
-fi
-
-# Handle Ctrl+C (SIGINT) to terminate all background processes
-cleanup() {
-  echo -e "\n\033[1;36mShutting down all background processes...\033[0m"
-  # Find and terminate python processes more reliably
-  pkill -TERM -f "python mcp_server.py" 2>/dev/null
-  sleep 1
-  # Force kill if still running
-  pkill -9 -f "python mcp_server.py" 2>/dev/null
-  exit 0
-}
-
-# Set up the trap for SIGINT (Ctrl+C)
-trap cleanup SIGINT
-
-# Run the interactive shell with proper readline support
-while true; do
-  echo -ne "\033[1;35mneozork-hld>\033[0m "
-  # Use bash -c to create a properly configured interactive shell that can process arrow keys
-  history -a  # Save history after each command
-
-  # Use read with readline support (-e flag)
-  if read -e cmd; then
-    if [ -n "$cmd" ]; then
-      # Add command to history
-      history -s "$cmd"
-
-      # Check if the command starts with nz
-      if [[ "$cmd" == "nz"* ]]; then
-        # If it starts with nz, call the nz wrapper script
-        args="${cmd#nz}"
-        echo "Executing: nz$args"
-        { /tmp/bin/nz $args; } || {
-          echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
-          echo -e "\033[1;33mYou can try another command\033[0m"
-        }
-      # check if the command starts with eda
-      elif [[ "$cmd" == "eda"* ]]; then
-        # If it starts with eda, call the eda wrapper script
-        args="${cmd#eda}"
-        echo "Executing: eda$args"
-        { /tmp/bin/eda $args; } || {
-          echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
-          echo -e "\033[1;33mYou can try another command\033[0m"
-        }
-      # Check if the command is a Python script execution
-      elif [[ "$cmd" == *"python run_analysis.py"* ]]; then
-        # Extract arguments from the command
-        args=$(echo "$cmd" | sed 's/python run_analysis.py//')
-        # Run the analysis script with the extracted arguments
-        echo "Executing: python /app/run_analysis.py$args"
-        { python /app/run_analysis.py$args; } || {
-          echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
-          echo -e "\033[1;33mYou can try another command\033[0m"
-        }
-      else
-        # Run any other command safely (without special handling)
-        # Use {} for command grouping to handle errors
-        { bash -c "$cmd"; } || {
-          echo -e "\033[1;31m[ERROR] Command failed but container will remain running\033[0m"
-          echo -e "\033[1;33mYou can try another command\033[0m"
-        }
-      fi
-    fi
-  else
-    # Handle Ctrl+D (EOF) or read error
-    echo -e "\nExit signal received. Use Ctrl+C to fully exit the container."
-  fi
-done
+# Start a never-ending interactive shell
+exec bash -i
