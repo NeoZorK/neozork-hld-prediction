@@ -104,3 +104,25 @@ The following scripts are available for local development:
    ```bash
    pytest tests
    ```
+
+6. **Using uv with Docker**
+
+   This project supports using `uv` (a faster Python package installer) with Docker. To leverage uv in your Docker workflow:
+   
+   ```bash
+   # Build the Docker image with uv enabled
+   docker-compose build --build-arg USE_UV=true
+   
+   # Or run the container with uv enabled
+   docker-compose up -d --build-arg USE_UV=true
+   ```
+   
+ ### or modern docker-compose syntax
+   ```bash
+   docker compose build --build-arg USE_UV=true
+   ```
+   
+   Using uv significantly improves package installation speed during Docker builds. The container automatically detects and uses uv when enabled.
+   
+   For more information about uv, see the documentation in `docs/uv-migration.md`.
+
