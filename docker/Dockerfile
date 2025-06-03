@@ -58,6 +58,11 @@ COPY docker/docker-entrypoint.sh ./
 # Make entrypoint script executable
 RUN chmod +x /app/docker-entrypoint.sh /app/uv_setup/setup_uv.sh /app/uv_setup/update_deps.sh
 
+# Fix readline config for better shell experience
+RUN mkdir -p /tmp/bash_config && \
+    echo '"\e[A": history-search-backward' > /tmp/bash_config/.inputrc && \
+    echo '"\e[B": history-search-forward' >> /tmp/bash_config/.inputrc
+
 # Create necessary directories with appropriate permissions
 RUN mkdir -p /app/data/cache /app/data/raw_parquet /app/logs /tmp/matplotlib-cache /app/results/plots /app/.pytest_cache \
     && chmod -R 777 /tmp/matplotlib-cache /app/results /app/data /app/logs /app/.pytest_cache
