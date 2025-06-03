@@ -15,7 +15,7 @@ class TestDockerfile(DockerBaseTest):
 
     def test_dockerfile_exists(self):
         """Test that the Dockerfile exists."""
-        dockerfile_path = self.project_root / "docker" / "Dockerfile"
+        dockerfile_path = self.project_root / "Dockerfile"
         self.assertTrue(
             dockerfile_path.exists(),
             f"Dockerfile not found at {dockerfile_path}"
@@ -23,7 +23,7 @@ class TestDockerfile(DockerBaseTest):
 
     def test_dockerfile_syntax(self):
         """Test that the Dockerfile has valid syntax."""
-        dockerfile_path = os.path.join(self.project_root, "docker", "Dockerfile")
+        dockerfile_path = os.path.join(self.project_root, "Dockerfile")
 
         # First try a simpler check using docker build --dry-run if available
         dry_run_cmd = f"docker build --no-cache --quiet --force-rm --pull=false " \
@@ -44,7 +44,7 @@ class TestDockerfile(DockerBaseTest):
 
     def test_entrypoint_script_exists(self):
         """Test that the Docker entrypoint script exists."""
-        entrypoint_path = self.project_root / "docker" / "docker-entrypoint.sh"
+        entrypoint_path = self.project_root / "docker-entrypoint.sh"
         self.assertTrue(
             entrypoint_path.exists(),
             f"Docker entrypoint script not found at {entrypoint_path}"
@@ -52,7 +52,7 @@ class TestDockerfile(DockerBaseTest):
 
     def test_entrypoint_script_executable(self):
         """Test that the Docker entrypoint script exists and has content."""
-        entrypoint_path = os.path.join(self.project_root, "docker", "docker-entrypoint.sh")
+        entrypoint_path = os.path.join(self.project_root, "docker-entrypoint.sh")
         self.assertTrue(os.path.exists(entrypoint_path),
                         f"Docker entrypoint script not found at {entrypoint_path}")
 
@@ -86,7 +86,7 @@ class TestDockerfile(DockerBaseTest):
         image_name = f"neozork-hld-test:{os.urandom(4).hex()}"
         try:
             stdout, stderr = self.assert_command_success(
-                f"docker build -t {image_name} -f docker/Dockerfile .",
+                f"docker build -t {image_name} -f Dockerfile .",
                 cwd=self.project_root,
                 msg="Docker image build failed"
             )
