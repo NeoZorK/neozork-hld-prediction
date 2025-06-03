@@ -88,3 +88,19 @@ The following scripts are available for local development:
    ```
    
    Then follow the on-screen prompts to interact with the application.
+
+4. **Test Docker Github Actions workflow locally**
+
+   Use the `test-workflow.sh` script to test the GitHub Actions workflow locally:
+   
+   ```bash
+   ./test-workflow.sh
+   ```
+
+5. **Run PyTest tests in the container**
+
+   To run PyTest tests inside the container, use the following command:
+   
+   ```bash
+   pytest tests
+   ```
