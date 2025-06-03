@@ -15,14 +15,15 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install uv instead of pip for faster, smaller installations
-RUN curl -sSf https://astral.sh/uv/install.sh | sh
+RUN curl -sSf https://astral.sh/uv/install.sh | sh && \
+    ln -s /root/.cargo/bin/uv /usr/local/bin/uv
 
 # Copy and install requirements
 COPY requirements.txt .
 
 # Optimize requirements installation using uv
 RUN grep -v "^#" requirements.txt > requirements-prod.txt && \
-    /root/.cargo/bin/uv pip install --no-cache -r requirements-prod.txt && \
+    uv pip install --no-cache -r requirements-prod.txt && \
     find /opt/venv -name '*.pyc' -delete && \
     find /opt/venv -name '__pycache__' -delete && \
     find /opt/venv -name '*.dist-info' -print0 | xargs -0 rm -rf && \
@@ -56,7 +57,7 @@ ENV PYTHONUNBUFFERED=1
 ENV MPLCONFIGDIR=/tmp/matplotlib-cache
 ENV PYTHONDONTWRITEBYTECODE=1
 
-# Minimal system dependencies for runtime
+# Минимизация финального слоя: установка только абсолютно необходимых пакетов
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     imagemagick \
