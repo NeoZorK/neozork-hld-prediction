@@ -173,8 +173,8 @@ set convert-meta off
 set output-meta on
 
 # Bind the up and down arrow keys for history search
-"\e[A]: history-search-backward
-"\e[B]: history-search-forward
+"\e[A": history-search-backward
+"\e[B": history-search-forward
 
 # Enable tab completion
 TAB: complete
