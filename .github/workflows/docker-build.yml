@@ -11,9 +11,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     # Install Docker Buildx
-    container:
-      options: --storage-opt size=1G
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
