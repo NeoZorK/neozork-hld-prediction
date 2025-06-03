@@ -60,8 +60,8 @@ RUN chmod +x /app/docker-entrypoint.sh /app/uv_setup/setup_uv.sh /app/uv_setup/u
 
 # Fix readline config for better shell experience
 RUN mkdir -p /tmp/bash_config && \
-    echo '"\e[A": history-search-backward' > /tmp/bash_config/.inputrc && \
-    echo '"\e[B": history-search-forward' >> /tmp/bash_config/.inputrc && \
+    echo '"\\e[A": history-search-backward' > /tmp/bash_config/.inputrc && \
+    echo '"\\e[B": history-search-forward' >> /tmp/bash_config/.inputrc && \
     chmod -R 777 /tmp/bash_config
 
 # Create necessary directories with appropriate permissions
