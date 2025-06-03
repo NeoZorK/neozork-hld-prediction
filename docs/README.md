@@ -619,7 +619,7 @@ There are multiple ways to use the MCP server with this project:
 - **Offline Capability**: The local MCP server allows working with Copilot even in environments with limited internet connectivity.
 - **Docker Integration**: The containerized environment ensures all dependencies are properly configured.
 
-For detailed setup instructions and advanced configuration options, see the [MCP_SERVER_README.md](MCP_SERVER_README.md) file.
+For detailed setup instructions and advanced configuration options, see the [MCP_SERVER_README.md](../MCP_SERVER_README.md) file.
 
 ## The script produces the following outputs:
 
