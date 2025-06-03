@@ -31,11 +31,11 @@ COPY uv.toml /app/uv.toml
 COPY requirements.txt .
 
 # Optimize requirements installation using uv
+# NOTE: Do not remove the .dist-info directories to preserve metadata
 RUN grep -v "^#" requirements.txt > requirements-prod.txt && \
     uv pip install --no-cache -r requirements-prod.txt && \
     find /opt/venv -name '*.pyc' -delete && \
     find /opt/venv -name '__pycache__' -delete && \
-    find /opt/venv -name '*.dist-info' -print0 | xargs -0 rm -rf && \
     find /opt/venv -name '*.egg-info' -print0 | xargs -0 rm -rf && \
     rm -rf /root/.cache /tmp/* /var/tmp/* /root/.cargo /root/.local/share/uv
 
