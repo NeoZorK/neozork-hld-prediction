@@ -5,6 +5,12 @@
 if ! command -v uv &> /dev/null; then
     echo "uv is not installed. Running installation script..."
     ./uv_setup/setup_uv.sh
+
+    # Source the environment file to update PATH
+    if [ -f "$HOME/.local/bin/env" ]; then
+        source $HOME/.local/bin/env
+    fi
+
     if [ $? -ne 0 ]; then
         echo "Failed to install uv. Please install it manually."
         exit 1
