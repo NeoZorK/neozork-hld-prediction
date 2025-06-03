@@ -15,10 +15,16 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy and install requirements
 COPY requirements.txt .
+
+# Optimize requirements installation by removing comments and empty lines
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
+    grep -v "^#" requirements.txt > requirements-prod.txt && \
+    pip install --no-cache-dir -r requirements-prod.txt && \
     find /opt/venv -name '*.pyc' -delete && \
-    find /opt/venv -name '__pycache__' -delete
+    find /opt/venv -name '__pycache__' -delete && \
+    find /opt/venv -name '*.dist-info' -print0 | xargs -0 rm -rf && \
+    find /opt/venv -name '*.egg-info' -print0 | xargs -0 rm -rf && \
+    rm -rf /root/.cache /tmp/* /var/tmp/*
 
 # Final stage - copy only necessary files
 FROM python:3.11-slim-bookworm
@@ -47,12 +53,10 @@ ENV PYTHONUNBUFFERED=1
 ENV MPLCONFIGDIR=/tmp/matplotlib-cache
 ENV PYTHONDONTWRITEBYTECODE=1
 
-# We need bash for the entrypoint script, but install only minimal dependencies
+# Minimal system dependencies for runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     imagemagick \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /usr/share/doc
-
-USER nobody
