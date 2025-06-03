@@ -3,14 +3,11 @@
 
 [pip]
 # Install packages without writing "*.pyc" files
-no-compile = true
-
-# Don't use cache
-no-cache = true
+compile-bytecode = false
 
 # Dependency optimization
 no-deps = false
-only-binary = true
+only-binary = ["*"]
 
 [venv]
 # Use existing virtual environment if it exists
