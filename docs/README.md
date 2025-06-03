@@ -850,3 +850,76 @@ docker compose down
 4. **Performance**: Data processing in the container may be slightly slower compared to native execution, especially when working with large volumes of data.
 
 5. **Image Updates**: When making changes to code or dependencies, you need to rebuild the image using `docker compose build`.
+
+6. **Using uv with Docker**
+
+   This project supports using `uv` (a faster Python package installer) with Docker. To leverage uv in your Docker workflow:
+   
+   ```bash
+   # Build the Docker image with uv enabled
+   docker-compose build --build-arg USE_UV=true
+   
+   # Or run the container with uv enabled
+   docker-compose up -d --build-arg USE_UV=true
+   ```
+   
+ ### or modern docker-compose syntax
+   ```bash
+   docker compose build --build-arg USE_UV=true
+   ```
+   
+   Using uv significantly improves package installation speed during Docker builds. The container automatically detects and uses uv when enabled.
+   
+   For more information about uv, see the documentation in `docs/uv-migration.md`.
+
+## uv Setup Scripts
+
+The project includes a set of scripts in the `uv_setup/` directory that help you set up and use `uv` - a faster alternative to pip for Python package management.
+
+### Available Scripts
+
+1. **setup_uv.sh**
+   
+   This script automates the installation of uv and sets up a virtual environment:
+   
+   ```bash
+   # Make the script executable
+   chmod +x uv_setup/setup_uv.sh
+   
+   # Run the installation script
+   ./uv_setup/setup_uv.sh
+   ```
+   
+   What the script does:
+   - Downloads and installs uv safely
+   - Creates a Python virtual environment using uv if one doesn't exist
+   - Installs dependencies from requirements.txt using uv
+   - Configures necessary environment variables
+
+2. **update_deps.sh**
+   
+   This script helps you update project dependencies using uv:
+   
+   ```bash
+   # Make the script executable
+   chmod +x uv_setup/update_deps.sh
+   
+   # Run the update script
+   ./uv_setup/update_deps.sh
+   ```
+   
+   What the script does:
+   - Checks if uv is installed (and installs it if needed)
+   - Activates or creates the virtual environment
+   - Updates all dependencies in requirements.txt to their latest versions
+   - Provides colored output for better readability
+
+### Benefits of Using uv
+
+- **Speed**: 10-100x faster than pip for package installation
+- **Reliability**: Improved dependency resolution
+- **Docker Optimization**: Smaller container sizes and faster builds
+- **Parallelism**: Installs dependencies in parallel for better performance
+
+For more detailed information about uv and migration from pip, see the documentation in `uv_setup/uv-migration.md`.
+

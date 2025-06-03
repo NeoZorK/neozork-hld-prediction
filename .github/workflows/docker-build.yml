@@ -3,13 +3,14 @@ name: Build and Test Docker Image
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+ # pull_request:
+ #   branches: [ main, master ]
   workflow_dispatch:  # Manual trigger
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Install Docker Buildx
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,10 +27,24 @@ jobs:
           tags: neozork-hld-prediction:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          # Additional build arguments can be specified here
+          outputs: type=docker
+
+      - name: Display Docker image size
+        run: |
+          echo "Docker image details:"
+          docker images neozork-hld-prediction:latest --format "{{.Repository}}:{{.Tag}} - Size: {{.Size}}"
+          echo "Docker image layers and size breakdown:"
+          docker history neozork-hld-prediction:latest
 
       - name: Test Docker image
         run: |
           docker run --rm neozork-hld-prediction:latest python -c "import sys; print(f'Python {sys.version} is working in the container')"
+
+      - name: Check disk usage
+        run: |
+          echo "Current disk usage:"
+          df -h
 
   # Uncomment the following section to enable publishing to Docker Hub
   # publish:
