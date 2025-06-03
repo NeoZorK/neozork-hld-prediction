@@ -30,7 +30,7 @@
         echo "Detected Apple Silicon (M-series). Using appropriate container architecture..."
         # Run the workflow with explicit container architecture for Apple Silicon
         echo "Running GitHub Actions workflow locally using act..."
-        act -j build --container-architecture linux/amd64 --container-options "${CONTAINER_OPTS}" "${ENV_VARS[@]}" --bind
+        act -j build --container-architecture linux/amd64 --container-options "${CONTAINER_OPTS}" "${ENV_VARS[@]}" --bind --container-daemon-socket unix:///var/run/docker.sock
     else
         # Run the workflow on other architectures
         echo "Running GitHub Actions workflow locally using act..."
