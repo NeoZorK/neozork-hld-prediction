@@ -14,16 +14,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Install uv safely without curl bashing
+# Install uv safely
 RUN mkdir -p /tmp/uv-installer \
     && curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh -o /tmp/uv-installer/installer.sh \
     && chmod +x /tmp/uv-installer/installer.sh \
     && /tmp/uv-installer/installer.sh \
-    && ln -s /root/.cargo/bin/uv /usr/local/bin/uv \
+    && if [ -f /root/.local/bin/env ]; then source /root/.local/bin/env; fi \
+    && ln -s /root/.local/bin/uv /usr/local/bin/uv \
     && rm -rf /tmp/uv-installer
 
+# Update PATH to include uv
+ENV PATH="/root/.local/bin:$PATH"
+
 # Copy configuration and requirements
-COPY uv_setup/uv.toml /app/uv.toml
+COPY uv.toml /app/uv.toml
 COPY requirements.txt .
 
 # Optimize requirements installation using uv
@@ -33,7 +37,7 @@ RUN grep -v "^#" requirements.txt > requirements-prod.txt && \
     find /opt/venv -name '__pycache__' -delete && \
     find /opt/venv -name '*.dist-info' -print0 | xargs -0 rm -rf && \
     find /opt/venv -name '*.egg-info' -print0 | xargs -0 rm -rf && \
-    rm -rf /root/.cache /tmp/* /var/tmp/* /root/.cargo
+    rm -rf /root/.cache /tmp/* /var/tmp/* /root/.cargo /root/.local/share/uv
 
 # Final stage - copy only necessary files
 FROM python:3.11-slim-bookworm
