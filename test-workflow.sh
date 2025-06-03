@@ -30,9 +30,9 @@
         echo "Detected Apple Silicon (M-series). Using appropriate container architecture..."
         # Run the workflow with explicit container architecture for Apple Silicon
         echo "Running GitHub Actions workflow locally using act..."
-        act -j build --container-architecture linux/amd64 --container-options "${CONTAINER_OPTS}" "${ENV_VARS[@]}" --bind
+        act -j build --container-architecture linux/amd64 --container-options "${CONTAINER_OPTS}" "${ENV_VARS[@]}" --bind --no-storage-opt
     else
         # Run the workflow on other architectures
         echo "Running GitHub Actions workflow locally using act..."
-        act -j build --container-options "${CONTAINER_OPTS}" "${ENV_VARS[@]}"
+        act -j build --container-options "${CONTAINER_OPTS}" "${ENV_VARS[@]}" --no-storage-opt
     fi
