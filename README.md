@@ -872,3 +872,54 @@ docker compose down
    
    For more information about uv, see the documentation in `docs/uv-migration.md`.
 
+## uv Setup Scripts
+
+The project includes a set of scripts in the `uv_setup/` directory that help you set up and use `uv` - a faster alternative to pip for Python package management.
+
+### Available Scripts
+
+1. **setup_uv.sh**
+   
+   This script automates the installation of uv and sets up a virtual environment:
+   
+   ```bash
+   # Make the script executable
+   chmod +x uv_setup/setup_uv.sh
+   
+   # Run the installation script
+   ./uv_setup/setup_uv.sh
+   ```
+   
+   What the script does:
+   - Downloads and installs uv safely
+   - Creates a Python virtual environment using uv if one doesn't exist
+   - Installs dependencies from requirements.txt using uv
+   - Configures necessary environment variables
+
+2. **update_deps.sh**
+   
+   This script helps you update project dependencies using uv:
+   
+   ```bash
+   # Make the script executable
+   chmod +x uv_setup/update_deps.sh
+   
+   # Run the update script
+   ./uv_setup/update_deps.sh
+   ```
+   
+   What the script does:
+   - Checks if uv is installed (and installs it if needed)
+   - Activates or creates the virtual environment
+   - Updates all dependencies in requirements.txt to their latest versions
+   - Provides colored output for better readability
+
+### Benefits of Using uv
+
+- **Speed**: 10-100x faster than pip for package installation
+- **Reliability**: Improved dependency resolution
+- **Docker Optimization**: Smaller container sizes and faster builds
+- **Parallelism**: Installs dependencies in parallel for better performance
+
+For more detailed information about uv and migration from pip, see the documentation in `uv_setup/uv-migration.md`.
+
