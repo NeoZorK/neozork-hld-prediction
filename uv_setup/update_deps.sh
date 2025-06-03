@@ -34,6 +34,10 @@ error() {
     echo -e "\033[0;31m[ERROR]\033[0m $1"
 }
 
+# Get the directory of the script
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$( dirname "$SCRIPT_DIR" )"
+
 # Activate virtual environment
 if [ -d ".venv" ]; then
     info "Activating virtual environment..."
@@ -46,14 +50,14 @@ fi
 
 # Update dependencies
 info "Updating dependencies using uv..."
-uv pip install --upgrade -r requirements.txt
+uv pip install --upgrade -r "$PROJECT_ROOT/requirements.txt"
 
 if [ $? -eq 0 ]; then
     success "Dependencies successfully updated!"
 
     # Generate lock file
     info "Generating lock file to pin versions..."
-    uv pip freeze > requirements-lock.txt
+    uv pip freeze > "$PROJECT_ROOT/requirements-lock.txt"
     success "Lock file generated: requirements-lock.txt"
 
     # Display installed packages
