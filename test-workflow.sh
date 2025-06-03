@@ -13,17 +13,13 @@ if [[ $(uname -m) == "arm64" ]]; then
         echo "Backed up existing .actrc file to .actrc.bak"
     fi
 
-    # Create a custom .actrc file without storage options
+    # Create .actrc file with compatible configuration for Apple Silicon
     cat > .actrc <<EOL
--P ubuntu-latest=catthehacker/ubuntu:act-latest
+-P ubuntu-latest=nektos/act-environments-ubuntu:22.04
 --container-architecture linux/amd64
 EOL
 
-    # Set env variables to prevent Docker storage options from being used
-    export ACT_DISABLE_STORAGE_OPT=true
-    export ACT_CONTAINER_OPTIONS="--security-opt seccomp=unconfined"
-
-    # Run act with minimal arguments
+    # Run act with minimal arguments, allowing it to use .actrc configuration
     echo "Running GitHub Actions workflow locally using act..."
     act -j build
 
@@ -32,11 +28,11 @@ EOL
         mv .actrc.bak .actrc
         echo "Restored original .actrc file"
     else
+        # If there was no backup, remove the created .actrc
         rm .actrc
     fi
 else
     # Run the workflow on other architectures with standard configuration
     echo "Running GitHub Actions workflow locally using act..."
-    act -j build -P ubuntu-latest=catthehacker/ubuntu:act-latest
+    act -j build -P ubuntu-latest=nektos/act-environments-ubuntu:22.04
 fi
-
