@@ -4,12 +4,11 @@ This document provides information about the Docker setup for the NeoZork HLD Pr
 
 ## Docker Files Structure
 
-All Docker-related files are organized in the `docker/` directory:
+All Docker-related files are organized in the root directory:
 
-- `docker/Dockerfile` - The main Dockerfile for building the application image
-- `docker/docker-entrypoint.sh` - Entrypoint script that configures and runs the application inside the container
-
-The `docker-compose.yml` file remains in the root directory for easier access.
+- `Dockerfile` - The main Dockerfile for building the application image
+- `docker-entrypoint.sh` - Entrypoint script that configures and runs the application inside the container
+- `docker-compose.yml` - File for Docker Compose configuration
 
 ## Building and Running
 
