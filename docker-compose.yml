@@ -2,7 +2,7 @@ services:
   neozork-hld:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     volumes:
       # Mount local directories to the container
       - ./data:/app/data
