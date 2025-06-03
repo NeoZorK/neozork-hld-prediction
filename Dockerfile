@@ -6,6 +6,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
+    curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -13,18 +14,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
+# Install uv instead of pip for faster, smaller installations
+RUN curl -sSf https://astral.sh/uv/install.sh | sh
+
 # Copy and install requirements
 COPY requirements.txt .
 
-# Optimize requirements installation by removing comments and empty lines
-RUN pip install --no-cache-dir --upgrade pip && \
-    grep -v "^#" requirements.txt > requirements-prod.txt && \
-    pip install --no-cache-dir -r requirements-prod.txt && \
+# Optimize requirements installation using uv
+RUN grep -v "^#" requirements.txt > requirements-prod.txt && \
+    /root/.cargo/bin/uv pip install --no-cache -r requirements-prod.txt && \
     find /opt/venv -name '*.pyc' -delete && \
     find /opt/venv -name '__pycache__' -delete && \
     find /opt/venv -name '*.dist-info' -print0 | xargs -0 rm -rf && \
     find /opt/venv -name '*.egg-info' -print0 | xargs -0 rm -rf && \
-    rm -rf /root/.cache /tmp/* /var/tmp/*
+    rm -rf /root/.cache /tmp/* /var/tmp/* /root/.cargo
 
 # Final stage - copy only necessary files
 FROM python:3.11-slim-bookworm
