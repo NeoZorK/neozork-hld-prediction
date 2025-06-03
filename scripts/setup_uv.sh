@@ -1,46 +1,50 @@
 #!/bin/bash
-# Скрипт для установки uv в локальную среду разработки
+# Script for installing uv in the local development environment
 
-echo "Установка uv - быстрого пакетного менеджера Python..."
+echo "Installing uv - a fast Python package manager..."
 
-# Проверка наличия curl
+# Check if curl is available
 if ! command -v curl &> /dev/null; then
-    echo "curl не найден, пожалуйста, установите его"
+    echo "curl not found, please install it"
     exit 1
 fi
 
-# Установка uv
-curl -sSf https://astral.sh/uv/install.sh | sh
+# Install uv safely
+mkdir -p /tmp/uv-installer
+curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh -o /tmp/uv-installer/installer.sh
+chmod +x /tmp/uv-installer/installer.sh
+/tmp/uv-installer/installer.sh
+rm -rf /tmp/uv-installer
 
-# Проверка успешности установки
+# Check if installation was successful
 if command -v uv &> /dev/null; then
-    echo "uv успешно установлен!"
-    echo "Для активации добавьте следующую строку в ваш ~/.bashrc или ~/.zshrc:"
+    echo "uv successfully installed!"
+    echo "To activate, add the following line to your ~/.bashrc or ~/.zshrc:"
     echo 'export PATH="$HOME/.cargo/bin:$PATH"'
 
-    # Создание виртуального окружения с помощью uv, если его еще нет
+    # Create a virtual environment using uv if it doesn't exist yet
     if [ ! -d ".venv" ]; then
-        echo "Создание виртуального окружения с помощью uv..."
+        echo "Creating virtual environment using uv..."
         ~/.cargo/bin/uv venv
-        echo "Виртуальное окружение создано в директории .venv"
-        echo "Активируйте его командой: source .venv/bin/activate"
+        echo "Virtual environment created in .venv directory"
+        echo "Activate it with: source .venv/bin/activate"
     fi
 
-    echo "Установка зависимостей из requirements.txt..."
+    echo "Installing dependencies from requirements.txt..."
     if [ -f "requirements.txt" ]; then
         if [ -d ".venv" ]; then
             source .venv/bin/activate
             ~/.cargo/bin/uv pip install -r requirements.txt
-            echo "Зависимости успешно установлены в виртуальное окружение!"
+            echo "Dependencies successfully installed in the virtual environment!"
         else
-            echo "Ошибка: виртуальное окружение не найдено"
+            echo "Error: virtual environment not found"
         fi
     else
-        echo "Ошибка: файл requirements.txt не найден"
+        echo "Error: requirements.txt file not found"
     fi
 else
-    echo "Ошибка: uv не удалось установить"
+    echo "Error: failed to install uv"
     exit 1
 fi
 
-echo "Готово! Теперь вы можете использовать uv вместо pip."
+echo "Done! You can now use uv instead of pip."
