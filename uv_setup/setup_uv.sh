@@ -16,16 +16,20 @@ chmod +x /tmp/uv-installer/installer.sh
 /tmp/uv-installer/installer.sh
 rm -rf /tmp/uv-installer
 
+# Source the environment file to update PATH
+if [ -f "$HOME/.local/bin/env" ]; then
+    source $HOME/.local/bin/env
+fi
+
 # Check if installation was successful
 if command -v uv &> /dev/null; then
     echo "uv successfully installed!"
-    echo "To activate, add the following line to your ~/.bashrc or ~/.zshrc:"
-    echo 'export PATH="$HOME/.cargo/bin:$PATH"'
+    echo "Path to uv: $(which uv)"
 
     # Create a virtual environment using uv if it doesn't exist yet
     if [ ! -d ".venv" ]; then
         echo "Creating virtual environment using uv..."
-        ~/.cargo/bin/uv venv
+        uv venv
         echo "Virtual environment created in .venv directory"
         echo "Activate it with: source .venv/bin/activate"
     fi
@@ -34,7 +38,7 @@ if command -v uv &> /dev/null; then
     if [ -f "requirements.txt" ]; then
         if [ -d ".venv" ]; then
             source .venv/bin/activate
-            ~/.cargo/bin/uv pip install -r requirements.txt
+            uv pip install -r requirements.txt
             echo "Dependencies successfully installed in the virtual environment!"
         else
             echo "Error: virtual environment not found"
