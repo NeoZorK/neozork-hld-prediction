@@ -9,13 +9,6 @@ compile-bytecode = false
 no-deps = false
 only-binary = ["numpy", "pandas", "tensorflow", "torch"]
 
-[venv]
-# Use existing virtual environment if it exists
-no-recreate = true
-
-# Virtual environment name
-name = ".venv"
-
 [index]
 # Use official PyPI
 url = "https://pypi.org/simple"
