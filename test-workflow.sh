@@ -26,9 +26,8 @@
       CONTAINER_OPTS="--userns=host --privileged"
 
       # Define the runner image mapping for act.
-      # This attempts to solve issues with default runner images by specifying a known good one.
-      # Adjust 'ubuntu-latest' if your workflow uses a different runner alias (e.g., 'ubuntu-20.04').
-      ACT_RUNNER_IMAGE_MAPPING="ubuntu-latest=nektos/act-environments-ubuntu:22.04"
+      # This uses a known working image for GitHub Actions runners
+      ACT_RUNNER_IMAGE_MAPPING="ubuntu-latest=catthehacker/ubuntu:act-latest"
 
       # Check if running on Apple Silicon (M-series)
       if [[ $(uname -m) == "arm64" ]]; then
@@ -41,3 +40,4 @@
           echo "Running GitHub Actions workflow locally using act..."
           act -j build -P "${ACT_RUNNER_IMAGE_MAPPING}" --container-options "${CONTAINER_OPTS}" "${ENV_VARS[@]}"
       fi
+
