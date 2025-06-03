@@ -143,7 +143,7 @@ echo -e "\033[1;36m   - Go to 'Press ... -> View Files -> Bind Mounts' tab\033[0
 echo -e "\033[1;36m   - Find and open the volume mapped to /app/results\033[0m"
 echo -e "\033[1;36m   - Navigate to the 'plots' folder to view your HTML files\033[0m"
 
-echo -e "\n\033[1;36mPress Ctrl+C to stop the container\033[0m\n"
+echo -e "\n\033[1;36mPress CTRL+C or Ctrl+D to stop the container\033[0m\n"
 
 # Keep container running and accepting input
 echo -e "\n\033[1;36mStarting interactive shell...\033[0m\n"
