@@ -23,6 +23,16 @@ docker-compose build
 docker-compose up
 ```
 
+# Run with interactive shell
+```bash
+docker-compose run --rm neozork
+```
+
+# To stop the application
+```shell  
+CTRL+D
+```
+
 ## Container Configuration
 
 The Docker container is configured with the following features:
@@ -33,6 +43,7 @@ The Docker container is configured with the following features:
 - Bind mounts for data, logs, and results directories
 - Support for running tests for external data feeds
 - Optional MCP service for enhanced LLM support
+- uv for faster execution of Python scripts
 
 ## Local Development Utilities
 
@@ -41,6 +52,18 @@ The following scripts are available for local development:
 - `nz` - Wrapper script for executing run_analysis.py either locally or in a container
 - `eda` - Wrapper script for executing EDA scripts either locally or in a container
 - `test-workflow.sh` - Script for testing GitHub Actions workflow locally
+
+# Run the application with the `nz` script: (same as `python run_analysis.py demo --rule PHLD`)
+
+```bash
+./nz demo --rule PHLD
+```
+
+# Run the application with the `eda` script: (same as `python src/eda/eda_batch_check.py -h`)
+
+```bash  
+./eda -h
+```
 
 ## Development Tips
 
