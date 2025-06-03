@@ -19,7 +19,7 @@ RUN mkdir -p /tmp/uv-installer \
     && curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh -o /tmp/uv-installer/installer.sh \
     && chmod +x /tmp/uv-installer/installer.sh \
     && /tmp/uv-installer/installer.sh \
-    && if [ -f /root/.local/bin/env ]; then source /root/.local/bin/env; fi \
+    && if [ -f /root/.local/bin/env ]; then . /root/.local/bin/env; fi \
     && ln -s /root/.local/bin/uv /usr/local/bin/uv \
     && rm -rf /tmp/uv-installer
 
