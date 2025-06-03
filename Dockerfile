@@ -22,7 +22,8 @@ RUN mkdir -p /tmp/uv-installer \
     && ln -s /root/.cargo/bin/uv /usr/local/bin/uv \
     && rm -rf /tmp/uv-installer
 
-# Copy and install requirements
+# Copy configuration and requirements
+COPY uv_setup/uv.toml /app/uv.toml
 COPY requirements.txt .
 
 # Optimize requirements installation using uv
@@ -47,10 +48,11 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY run_analysis.py mcp_server.py mcp.json ./
 COPY src/ ./src/
 COPY scripts/ ./scripts/
+COPY uv_setup/ ./uv_setup/
 COPY docker-entrypoint.sh ./
 
 # Make entrypoint script executable
-RUN chmod +x /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh /app/uv_setup/setup_uv.sh /app/uv_setup/update_deps.sh
 
 # Create necessary directories with appropriate permissions
 RUN mkdir -p /app/data/cache /app/data/raw_parquet /app/logs /tmp/matplotlib-cache /app/results/plots /app/.pytest_cache \
