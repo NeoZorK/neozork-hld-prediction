@@ -49,7 +49,7 @@ COPY run_analysis.py mcp_server.py mcp.json ./
 COPY src/ ./src/
 COPY scripts/ ./scripts/
 COPY uv_setup/ ./uv_setup/
-COPY docker-entrypoint.sh ./
+COPY docker/docker-entrypoint.sh ./
 
 # Make entrypoint script executable
 RUN chmod +x /app/docker-entrypoint.sh /app/uv_setup/setup_uv.sh /app/uv_setup/update_deps.sh
