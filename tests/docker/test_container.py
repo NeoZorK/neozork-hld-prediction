@@ -43,7 +43,7 @@ class TestDockerContainer(DockerBaseTest):
             f"-v {self.project_root}/mql5_feed:/app/mql5_feed "
             f"-v {self.project_root}/logs:/app/logs "
             f"--entrypoint=/bin/bash "
-            f"neozork-hld-prediction:latest -c 'sleep 10'",
+            f"neozork-hld:latest -c 'sleep 10'",
             cwd=self.project_root,
             msg="Failed to start Docker container"
         )
@@ -62,7 +62,7 @@ class TestDockerContainer(DockerBaseTest):
         """Test that the container has the correct Python version."""
         stdout, stderr = self.assert_command_success(
             f"docker run --name {self.container_name} --rm "
-            f"neozork-hld-prediction:latest python --version",
+            f"neozork-hld:latest python --version",
             cwd=self.project_root,
             msg="Failed to check Python version in container"
         )
@@ -72,7 +72,7 @@ class TestDockerContainer(DockerBaseTest):
         """Test that the required Python dependencies are installed."""
         stdout, stderr = self.assert_command_success(
             f"docker run --name {self.container_name} --rm "
-            f"neozork-hld-prediction:latest pip freeze",
+            f"neozork-hld:latest pip freeze",
             cwd=self.project_root,
             msg="Failed to list installed packages in container"
         )
@@ -85,7 +85,7 @@ class TestDockerContainer(DockerBaseTest):
         """Test that the run_analysis.py script works in the container."""
         stdout, stderr = self.assert_command_success(
             f"docker run --name {self.container_name} --rm "
-            f"neozork-hld-prediction:latest python run_analysis.py --help",
+            f"neozork-hld:latest python run_analysis.py --help",
             cwd=self.project_root,
             msg="Failed to run the analysis script in container"
         )
@@ -97,7 +97,7 @@ class TestDockerContainer(DockerBaseTest):
         stdout, stderr = self.assert_command_success(
             f"docker run --name {self.container_name} --rm "
             f"-e UV_ENABLED=true "
-            f"neozork-hld-prediction:latest bash -c 'command -v uv || echo \"uv not found\"'",
+            f"neozork-hld:latest bash -c 'command -v uv || echo \"uv not found\"'",
             cwd=self.project_root,
             msg="Failed to check uv in container"
         )
@@ -114,7 +114,7 @@ class TestDockerContainer(DockerBaseTest):
             stdout, stderr = self.assert_command_success(
                 f"docker run --name {self.container_name} --rm "
                 f"-v {self.project_root}/data:/app/data "
-                f"neozork-hld-prediction:latest ls -la /app/data/{test_filename}",
+                f"neozork-hld:latest ls -la /app/data/{test_filename}",
                 cwd=self.project_root,
                 msg="Failed to find test file in container data volume"
             )
