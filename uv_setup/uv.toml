@@ -7,7 +7,7 @@ compile-bytecode = false
 
 # Dependency optimization
 no-deps = false
-only-binary = true
+only-binary = ["numpy", "pandas", "tensorflow", "torch"]
 
 [venv]
 # Use existing virtual environment if it exists
