@@ -12,9 +12,6 @@ services:
       - ./results:/app/results
       # Mount tests directory for pytest
       - ./tests:/app/tests
-    ports:
-      # Expose port for simple HTTP server
-      - "8080:8080"
     env_file:
       - .env
     # Interactive script execution with user prompts

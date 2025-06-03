@@ -14,9 +14,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Install uv instead of pip for faster, smaller installations
-RUN curl -sSf https://astral.sh/uv/install.sh | sh && \
-    ln -s /root/.cargo/bin/uv /usr/local/bin/uv
+# Install uv safely without curl bashing
+RUN mkdir -p /tmp/uv-installer \
+    && curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh -o /tmp/uv-installer/installer.sh \
+    && chmod +x /tmp/uv-installer/installer.sh \
+    && /tmp/uv-installer/installer.sh \
+    && ln -s /root/.cargo/bin/uv /usr/local/bin/uv \
+    && rm -rf /tmp/uv-installer
 
 # Copy and install requirements
 COPY requirements.txt .
@@ -57,10 +61,18 @@ ENV PYTHONUNBUFFERED=1
 ENV MPLCONFIGDIR=/tmp/matplotlib-cache
 ENV PYTHONDONTWRITEBYTECODE=1
 
-# Минимизация финального слоя: установка только абсолютно необходимых пакетов
+# Minimize final layer: install only absolutely necessary packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     bash \
     imagemagick \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /usr/share/doc
+
+# Create a non-root user to run the application
+RUN groupadd -r neozork && useradd -r -g neozork -s /bin/bash -d /home/neozork neozork \
+    && mkdir -p /home/neozork \
+    && chown -R neozork:neozork /home/neozork /app
+
+# Switch to non-root user
+USER neozork
