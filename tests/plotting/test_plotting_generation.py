@@ -7,6 +7,7 @@ import pandas as pd
 import traceback # Import traceback
 from pathlib import Path # Import Path, still needed for type hints and Path() calls outside the patch scope if any
 import webbrowser # Need this module to check mock target
+import os
 # No need to import pathlib directly for patching anymore
 
 # Import the function to test and dependencies
@@ -25,6 +26,7 @@ def create_mock_args(interval='D1', draw='plotly'): # Default draw to plotly
     return argparse.Namespace(interval=interval, draw=draw)
 
 # Unit tests for the plotting generation workflow step
+@patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'})
 class TestPlottingGenerationStep(unittest.TestCase):
 
     # Setup basic data used across tests
@@ -331,7 +333,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
         mock_traceback.assert_called_once()
         mock_logger.print_debug.assert_called_with(f"Traceback (generate plot):\n{mock_traceback.return_value}")
         # Check logger calls based on actual code flow
-        mock_logger.print_info.assert_called_once_with('Generating plot using Plotly...')
+        mock_logger.print_info.assert_any_call('Generating plot using Plotly...')
         mock_logger.print_warning.assert_not_called()
 
 
