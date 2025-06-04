@@ -501,7 +501,8 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None):
     logger.print_info("Generating plot using terminal mode (plotext)...")
 
     # If selected_rule is AUTO, use auto_plot_from_parquet instead
-    if hasattr(selected_rule, 'name') and selected_rule.name == 'AUTO':
+    if (hasattr(selected_rule, 'name') and selected_rule.name == 'AUTO') or \
+       (isinstance(selected_rule, str) and selected_rule.upper() == 'AUTO'):
         logger.print_info("AUTO rule detected, using auto terminal plotting...")
 
         # For AUTO rule, we should always use auto_plot_from_parquet with the DataFrame directly
@@ -511,10 +512,14 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None):
 
         # Check if 'pressure' and 'pressure_vector' are in the columns and log their presence
         if result_df is not None:
-            if 'pressure' in result_df.columns:
-                logger.print_info("'pressure' column found in DataFrame")
-            if 'pressure_vector' in result_df.columns:
-                logger.print_info("'pressure_vector' column found in DataFrame")
+            non_standard_cols = []
+            for col in ['pressure', 'pressure_vector', 'predicted_high', 'predicted_low']:
+                if col in result_df.columns:
+                    logger.print_info(f"'{col}' column found in DataFrame")
+                    non_standard_cols.append(col)
+            
+            if non_standard_cols:
+                logger.print_info(f"Found {len(non_standard_cols)} non-standard fields for AUTO display: {non_standard_cols}")
 
         # Call auto_plot directly with the DataFrame instead of the path
         from src.plotting.term_auto_plot import auto_plot_from_dataframe

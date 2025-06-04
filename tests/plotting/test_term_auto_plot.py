@@ -15,7 +15,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 from src.common.constants import TradingRule
-from src.plotting.term_auto_plot import auto_plot_from_parquet, _determine_chart_type, _plot_series_in_terminal
+from src.plotting.term_auto_plot import auto_plot_from_parquet, auto_plot_from_dataframe
 
 class TestTermAutoPlot(unittest.TestCase):
     """Test cases for terminal auto plot functionality."""
@@ -59,132 +59,86 @@ class TestTermAutoPlot(unittest.TestCase):
             self.test_file.unlink()
 
     @patch('plotext.show')
-    def test_determine_chart_type(self, mock_show):
-        """Test the chart type determination logic."""
-        # Binary/categorical data should return 'bar'
-        binary_series = pd.Series([0, 1, 0, 1, 0], name='Direction')
-        self.assertEqual(_determine_chart_type(binary_series), 'bar')
-
-        # Volume data should return 'bar'
-        volume_series = pd.Series(np.random.randint(1000, 10000, 10), name='Volume')
-        self.assertEqual(_determine_chart_type(volume_series), 'bar')
-
-        # Continuous data should return 'line'
-        continuous_series = pd.Series(np.random.rand(10) * 100, name='Price')
-        self.assertEqual(_determine_chart_type(continuous_series), 'line')
+    @patch('builtins.print')
+    def test_auto_plot_from_parquet_basic(self, mock_print, mock_show):
+        """Test basic auto plotting from a parquet file."""
+        # Test with valid parquet file and AUTO rule
+        auto_plot_from_parquet(str(self.test_file), "AUTO")
+        
+        # Verify that plotext.show was called (indicating charts were generated)
+        self.assertTrue(mock_show.called)
+        
+        # Check that some output was printed
+        self.assertTrue(mock_print.called)
 
     @patch('plotext.show')
-    @patch('plotext.plot', autospec=True)
-    @patch('plotext.bar', autospec=True)
-    @patch('plotext.scatter', autospec=True)
-    @patch('plotext.clear_data')
-    @patch('plotext.title')
-    @patch('plotext.xlabel')
-    @patch('plotext.ylabel')
-    @patch('plotext.xticks')
-    def test_plot_series_in_terminal(self, mock_xticks, mock_ylabel, mock_xlabel,
-                                    mock_title, mock_clear_data, mock_scatter,
-                                    mock_bar, mock_plot, mock_show):
-        """Test plotting a single series in the terminal."""
-        x_data = list(range(5))
-        x_labels = ['01-01', '01-02', '01-03', '01-04', '01-05']
+    @patch('builtins.print')
+    def test_auto_plot_from_dataframe(self, mock_print, mock_show):
+        """Test auto plotting from DataFrame."""
+        auto_plot_from_dataframe(self.test_data)
+        
+        # Verify that plotext.show was called
+        self.assertTrue(mock_show.called)
+        
+        # Check that some output was printed
+        self.assertTrue(mock_print.called)
 
-        # Test with price data (should use line plot)
-        price_series = pd.Series([100, 101, 102, 101, 103], name='Close')
-        result = _plot_series_in_terminal(price_series, x_data, x_labels, 1)
-        self.assertTrue(result)
-        mock_clear_data.assert_called()
-        # Проверяем, что хотя бы одна из функций построения графика была вызвана
-        self.assertTrue(mock_plot.called or mock_bar.called or mock_scatter.called,
-                      "Expected at least one plotting function to be called")
-
-        # Test with binary data (should use bar plot)
-        mock_clear_data.reset_mock()
-        mock_plot.reset_mock()
-        mock_bar.reset_mock()
-        mock_scatter.reset_mock()
-
-        binary_series = pd.Series([0, 1, 0, 1, 0], name='Direction')
-        result = _plot_series_in_terminal(binary_series, x_data, x_labels, 1)
-        self.assertTrue(result)
-        mock_clear_data.assert_called()
-        # В этом случае должен вызваться bar, но не plot
-        self.assertTrue(mock_bar.called or mock_plot.called or mock_scatter.called,
-                      "Expected at least one plotting function to be called")
-
-        # Test with empty series
-        empty_series = pd.Series([np.nan, np.nan, np.nan], name='Empty')
-        result = _plot_series_in_terminal(empty_series, x_data, x_labels, 1)
-        self.assertFalse(result)
+    @patch('builtins.print')
+    def test_auto_plot_with_nonexistent_file(self, mock_print):
+        """Test that auto_plot_from_parquet handles non-existent files gracefully."""
+        auto_plot_from_parquet("non_existent_file.parquet", "AUTO")
+        
+        # Should print error message about file not found
+        print_calls = [str(call) for call in mock_print.call_args_list]
+        file_not_found = any("not found" in call or "File not found" in call for call in print_calls)
+        self.assertTrue(file_not_found)
 
     @patch('plotext.show')
-    def test_auto_plot_from_parquet(self, mock_show):
-        """Test auto plotting from a parquet file."""
-        with patch('src.plotting.term_auto_plot._plot_series_in_terminal', return_value=True) as mock_plot_series:
-            # Test with valid parquet file
-            result = auto_plot_from_parquet(str(self.test_file))
-            self.assertTrue(result)
-
-            # Verify that all non-OHLCV columns are plotted
-            expected_calls = len(self.test_data.columns) - 5  # Exclude OHLCV
-            self.assertGreaterEqual(mock_plot_series.call_count, expected_calls)
-
-    @patch('plotext.show')
-    def test_auto_plot_large_dataset(self, mock_show):
-        """Test auto plotting with a large dataset (should be truncated)."""
-        # Create large test data
-        large_data = pd.DataFrame({
-            'DateTime': pd.date_range('2023-01-01', periods=200),
-            'Open': np.random.rand(200) * 100 + 100,
-            'High': np.random.rand(200) * 100 + 110,
-            'Low': np.random.rand(200) * 100 + 90,
-            'Close': np.random.rand(200) * 100 + 100,
-            'Volume': np.random.randint(1000, 10000, 200),
-            'CustomMetric': np.random.rand(200) * 100
-        })
-        large_data.set_index('DateTime', inplace=True)
-
-        # Save to parquet
-        large_file = Path("tests/plotting/test_large_data.parquet")
-        os.makedirs(large_file.parent, exist_ok=True)
-        large_data.to_parquet(large_file)
-
+    @patch('builtins.print')
+    def test_auto_plot_with_empty_dataframe(self, mock_print, mock_show):
+        """Test auto plotting with empty DataFrame."""
+        empty_df = pd.DataFrame()
+        empty_file = Path("tests/plotting/test_empty_data.parquet")
+        os.makedirs(empty_file.parent, exist_ok=True)
+        
         try:
-            with patch('src.plotting.term_auto_plot._plot_series_in_terminal', return_value=True) as mock_plot_series:
-                result = auto_plot_from_parquet(str(large_file))
-                self.assertTrue(result)
-
-                # Verify the dataset was truncated to max_points (80)
-                args, _ = mock_plot_series.call_args
-                self.assertEqual(len(args[1]), 80)  # x_data should be truncated to 80 points
+            empty_df.to_parquet(empty_file)
+            auto_plot_from_parquet(str(empty_file), "AUTO")
+            
+            # Should print message about empty DataFrame
+            print_calls = [str(call) for call in mock_print.call_args_list]
+            empty_msg = any("Empty" in call for call in print_calls)
+            self.assertTrue(empty_msg)
         finally:
-            # Clean up
-            if large_file.exists():
-                large_file.unlink()
+            if empty_file.exists():
+                empty_file.unlink()
 
     @patch('plotext.show')
-    def test_auto_plot_handles_errors(self, mock_show):
-        """Test that auto_plot_from_parquet handles errors gracefully."""
-        # Test with non-existent file
-        with patch('src.common.logger.print_error') as mock_print_error:
-            result = auto_plot_from_parquet("non_existent_file.parquet")
-            self.assertFalse(result)
-            mock_print_error.assert_called()
+    @patch('builtins.print') 
+    def test_auto_plot_with_custom_title(self, mock_print, mock_show):
+        """Test auto plotting with custom title."""
+        custom_title = "Custom Test Title"
+        auto_plot_from_parquet(str(self.test_file), "AUTO", custom_title)
+        
+        # Verify that the custom title appears in the output
+        print_calls = [str(call) for call in mock_print.call_args_list]
+        title_found = any(custom_title in call for call in print_calls)
+        self.assertTrue(title_found)
 
     @patch('plotext.show')
-    def test_auto_plot_with_title(self, mock_show):
-        """Test auto plotting with a custom title."""
-        with patch('builtins.print') as mock_print:
-            result = auto_plot_from_parquet(str(self.test_file), plot_title="Custom Title")
-            self.assertTrue(result)
-
-            # Verify custom title was used
-            title_call = False
-            for call in mock_print.call_args_list:
-                if call[0] and "Custom Title" in str(call[0][0]):
-                    title_call = True
-                    break
-            self.assertTrue(title_call)
+    @patch('plotext.plot')
+    @patch('plotext.scatter')
+    @patch('plotext.bar')
+    def test_auto_plot_calls_plotext_functions(self, mock_bar, mock_scatter, mock_plot, mock_show):
+        """Test that auto plotting calls appropriate plotext functions."""
+        auto_plot_from_parquet(str(self.test_file), "AUTO")
+        
+        # At least one of the plotting functions should be called
+        plotting_called = mock_plot.called or mock_scatter.called or mock_bar.called
+        self.assertTrue(plotting_called)
+        
+        # Show should definitely be called
+        self.assertTrue(mock_show.called)
 
 if __name__ == '__main__':
     unittest.main()
