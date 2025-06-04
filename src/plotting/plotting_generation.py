@@ -8,6 +8,7 @@ from .seaborn_plot import plot_indicator_results_seaborn
 from .term_plot import plot_indicator_results_term  # Add terminal plotting support
 from ..plotting.term_plot import plot_indicator_results_term
 from ..plotting.term_auto_plot import auto_plot_from_parquet
+import plotext as plt  # Add import for plotext
 
 """
 Workflow step for generating plots based on indicator results using the selected library (Plotly, mplfinance, fast, seaborn).
@@ -503,15 +504,90 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None):
     if hasattr(selected_rule, 'name') and selected_rule.name == 'AUTO':
         logger.print_info("AUTO rule detected, using auto terminal plotting...")
 
-        # Check if we have a source path in data_info
+        # Check if we have a source path in data_info or args
         parquet_path = None
-        if args and hasattr(args, 'data_path') and args.data_path:
-            parquet_path = args.data_path
+
+        # Attempt to find the parquet file path from different sources
+        if args:
+            logger.print_debug(f"Args properties: {[prop for prop in dir(args) if not prop.startswith('_')]}")
+
+            # Check various attributes where file path might be stored
+            if hasattr(args, 'data_path') and args.data_path:
+                parquet_path = args.data_path
+                logger.print_info(f"Found data_path: {parquet_path}")
+            elif hasattr(args, 'input') and args.input:
+                parquet_path = args.input
+                logger.print_info(f"Found input path: {parquet_path}")
+            elif hasattr(args, 'csv_path') and args.csv_path:
+                # If there's a CSV path, look for a corresponding parquet
+                csv_path = args.csv_path
+                logger.print_info(f"Found CSV path: {csv_path}")
+                # Try to find a corresponding parquet file in the same directory
+                potential_parquet = Path(csv_path).with_suffix('.parquet')
+                if potential_parquet.exists():
+                    parquet_path = str(potential_parquet)
+                    logger.print_info(f"Found corresponding parquet: {parquet_path}")
+
+            # If we have a DataFrame, we can use it directly instead of loading a parquet
+            if parquet_path is None and result_df is not None and not result_df.empty:
+                logger.print_info("Using provided DataFrame for AUTO mode instead of parquet file")
+                # Display all columns in the DataFrame
+                # Prepare data for display
+                x_data = list(range(len(result_df)))
+
+                # Generate x-axis labels
+                if isinstance(result_df.index, pd.DatetimeIndex):
+                    x_labels = [d.strftime('%m-%d') for d in result_df.index]
+                else:
+                    x_labels = [f"T{i}" for i in x_data]
+
+                step = max(1, len(x_labels) // 8)
+
+                # Display OHLCV first
+                from src.plotting.term_auto_plot import _plot_series_in_terminal
+
+                # First display standard OHLCV charts
+                if all(col in result_df.columns for col in ['Open', 'High', 'Low', 'Close']):
+                    plt.clear_data()
+                    plt.plot(x_data, result_df['Close'].tolist(), label="Close", color="cyan+", marker="braille")
+                    plt.plot(x_data, result_df['High'].tolist(), label="High", color="green+", marker="braille")
+                    plt.plot(x_data, result_df['Low'].tolist(), label="Low", color="red+", marker="braille")
+                    plt.title("Price Chart (OHLC)")
+                    plt.xlabel("Time")
+                    plt.ylabel("Price")
+                    plt.xticks(x_data[::step], x_labels[::step])
+                    print("\n📈 PRICE CHART")
+                    plt.show()
+
+                # Display volume if available
+                if 'Volume' in result_df.columns and result_df['Volume'].sum() > 0:
+                    plt.clear_data()
+                    vol_data = result_df['Volume'].tolist()
+                    plt.bar(x_data, vol_data, label="Volume", color="blue+")
+                    plt.title("Volume")
+                    plt.xlabel("Time")
+                    plt.ylabel("Volume")
+                    plt.xticks(x_data[::step], x_labels[::step])
+                    print("\n📊 VOLUME")
+                    plt.show()
+
+                # Display other columns (not OHLCV)
+                special_cols = ['Open', 'High', 'Low', 'Close', 'Volume', 'Date', 'Time', 'Datetime', 'Timestamp']
+                other_cols = [col for col in result_df.columns if col not in special_cols]
+
+                if other_cols:
+                    print("\n📊 ADDITIONAL INDICATORS AND METRICS")
+                    for col in other_cols:
+                        _plot_series_in_terminal(result_df[col], x_data, x_labels, step)
+
+                return
 
         if parquet_path:
+            logger.print_info(f"Using parquet file for AUTO mode: {parquet_path}")
             auto_plot_from_parquet(parquet_path, plot_title)
         else:
             logger.print_warning("Cannot find parquet file path for AUTO mode, falling back to standard terminal plot")
+            logger.print_info(f"Available columns in DataFrame: {result_df.columns.tolist() if result_df is not None else 'None'}")
             plot_indicator_results_term(result_df, selected_rule, plot_title)
     else:
         # Default to standard terminal plot
