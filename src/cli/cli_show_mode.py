@@ -68,6 +68,8 @@ def show_help():
 
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Trading Rules:{Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}--rule OHLCV{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Display basic OHLCV candlestick chart{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule PV{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Calculate Pressure Vector indicator{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule SR{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Calculate Support and Resistance levels{Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}--rule PHLD{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Calculate Predict High Low Direction indicator{Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}--rule AUTO{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Automatically display all columns in the file{Style.RESET_ALL}")
 
