@@ -73,6 +73,20 @@ def show_help():
     print(f"  {Fore.MAGENTA}--rule PHLD{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Calculate Predict High Low Direction indicator{Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}--rule AUTO{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Automatically display all columns in the file{Style.RESET_ALL}")
 
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Drawing Options (-d flag):{Style.RESET_ALL}")
+    print(f"  The {Fore.MAGENTA}-d{Style.RESET_ALL} or {Fore.MAGENTA}--draw{Style.RESET_ALL} flag allows you to specify the plotting library for visualization:")
+    print(f"  {Fore.MAGENTA}-d fastest{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Default - Plotly+Dask+Datashader (best for large datasets){Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d fast{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Dask+Datashader+Bokeh for quick visualization{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d plotly{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Interactive HTML plots with Plotly (also with 'plt'){Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d mpl{Style.RESET_ALL}       {Fore.BLACK}{Style.DIM}# Static images with mplfinance (also with 'mplfinance'){Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d seaborn{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Statistical plots with Seaborn (also with 'sb'){Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d term{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Terminal ASCII charts with plotext (great for SSH){Style.RESET_ALL}")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Drawing Examples:{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show yf aapl -d term{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Show AAPL data with terminal charts{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show csv --rule PV -d plotly{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Show CSV data with PV indicator using Plotly{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show binance btc -d seaborn{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Show BTC data with Seaborn plots{Style.RESET_ALL}")
+
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Date filtering:{Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}--start, --end{Style.RESET_ALL} or {Fore.MAGENTA}--show-start, --show-end{Style.RESET_ALL} for date range filtering.")
 
