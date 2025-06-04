@@ -88,12 +88,16 @@ def plot_indicator_results(df_results, rule, title="Indicator Results", mode="pl
         # Standardize the mode parameter
         mode = mode.lower() if isinstance(mode, str) else 'plotly'
         
-        # Docker override: always use 'term' mode for drawing
-        if IN_DOCKER and mode not in ['term']:
+        # Docker override: always use 'term' mode for drawing (unless disabled for testing)
+        disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
+        
+        if IN_DOCKER and not disable_docker_detection and mode not in ['term']:
             logger.print_info(f"Docker detected: forcing draw mode from '{mode}' to 'term' (terminal plotting)")
             mode = 'term'
-        elif IN_DOCKER and mode == 'term':
+        elif IN_DOCKER and not disable_docker_detection and mode == 'term':
             logger.print_info("Docker detected: already using 'term' mode")
+        elif disable_docker_detection:
+            logger.print_info(f"Docker detection disabled for testing, using requested mode: '{mode}'")
         else:
             logger.print_info(f"Not in Docker or already 'term' mode. IN_DOCKER={IN_DOCKER}, mode='{mode}'")
         

@@ -535,12 +535,16 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     # Choose plotting function based on args.draw
     draw_mode = getattr(args, 'draw', 'fastest').lower()
     
-    # Docker override: force 'term' mode for all draw modes in Docker
-    if IN_DOCKER and draw_mode not in ['term']:
+    # Docker override: force 'term' mode for all draw modes in Docker (unless disabled for testing)
+    disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
+    
+    if IN_DOCKER and not disable_docker_detection and draw_mode not in ['term']:
         logger.print_info(f"Docker detected: forcing draw mode from '{draw_mode}' to 'term' (terminal plotting)")
         draw_mode = 'term'
-    elif IN_DOCKER and draw_mode == 'term':
+    elif IN_DOCKER and not disable_docker_detection and draw_mode == 'term':
         logger.print_info("Docker detected: already using 'term' mode")
+    elif disable_docker_detection:
+        logger.print_info(f"Docker detection disabled for testing, using requested mode: '{draw_mode}'")
     else:
         logger.print_info(f"Not in Docker or already 'term' mode. IN_DOCKER={IN_DOCKER}, draw_mode='{draw_mode}'")
     
