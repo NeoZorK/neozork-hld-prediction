@@ -300,7 +300,7 @@ def _should_draw_plot(args):
     Returns True if the draw flag is set and is one of supported modes or should use default.
     Always returns True for 'show' mode to enable automatic plotting.
     """
-    plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly", "seaborn", "sb"}
+    plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly", "seaborn", "sb", "term"}
 
     # If it's show mode, always allow plotting (will use default 'fastest' if not specified)
     if hasattr(args, 'mode') and args.mode == 'show':
@@ -321,6 +321,15 @@ def handle_show_mode(args):
         args.raw_plot_only = True
         args.display_candlestick_only = True  # New flag to indicate candlestick only mode
         args.rule = None  # Clear the rule to use the raw data plot path
+
+    # For terminal plotting mode (-d term), always use OHLCV rule by default
+    if hasattr(args, 'draw') and args.draw == 'term' and (not hasattr(args, 'rule') or not args.rule or args.rule.upper() != 'AUTO'):
+        print("Terminal plotting mode (-d term) with default OHLCV display")
+        args.raw_plot_only = True
+        args.display_candlestick_only = True
+        # If rule is not explicitly set to AUTO, use OHLCV
+        if not (hasattr(args, 'rule') and args.rule and args.rule.upper() == 'AUTO'):
+            args.rule = 'OHLCV'
 
     if not args.source or args.source == 'help':
         show_help()
