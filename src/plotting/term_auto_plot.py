@@ -231,8 +231,8 @@ def auto_plot_from_parquet(parquet_path, plot_title=None):
                 plt.show()
                 plots_shown += 1
 
-                # Remove these from priority_cols as they've been plotted
-                priority_cols = [col for col in priority_cols if col not in ['predicted_high', 'predicted_low']]
+                # We still want to plot each prediction separately too
+                # Do not remove these from priority_cols as they need to be plotted individually as well
 
             # Now plot each priority column individually on its own chart
             for col in priority_cols:
@@ -423,8 +423,8 @@ def auto_plot_from_dataframe(df, plot_title=None):
                 plt.show()
                 plots_shown += 1
 
-                # Remove these from priority_cols as they've been plotted
-                priority_cols = [col for col in priority_cols if col not in ['predicted_high', 'predicted_low']]
+                # We still want to plot each prediction separately too
+                # Do not remove these from priority_cols as they need to be plotted individually as well
 
             # Now plot each priority column individually on its own chart
             for col in priority_cols:
