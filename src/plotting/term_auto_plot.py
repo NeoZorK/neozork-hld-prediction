@@ -26,6 +26,10 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
         print("Empty DataFrame.")
         return
 
+    # Print the custom title
+    print(f"\n📊 {plot_title}")
+    print("=" * (len(plot_title) + 5))
+
     # Determine OHLC columns, volume, and time columns
     ohlc_cols = [col for col in df.columns if col.lower() in ["open", "high", "low", "close"]]
     volume_col = next((col for col in df.columns if col.lower() == "volume"), None)
@@ -64,9 +68,28 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
     # Plot indicators based on the rule
     if rule.upper() == "AUTO":
         for col in indicator_cols:
+            # Skip columns that are all NaN or empty
+            if df[col].isna().all() or df[col].empty:
+                print(f"\n⚠️  Skipping indicator '{col}' - no valid data")
+                continue
+                
             plt.clear_data()
             print(f"\n📈 Indicator: {col}")
-            plt.plot(x_data, df[col].tolist(), label=col, marker="braille")
+            
+            # Filter out NaN values for plotting
+            valid_mask = ~df[col].isna()
+            if not valid_mask.any():
+                print(f"⚠️  No valid data points for {col}")
+                continue
+                
+            x_data_filtered = [x_data[i] for i in range(len(x_data)) if valid_mask.iloc[i]]
+            y_data_filtered = df[col].dropna().tolist()
+            
+            if len(y_data_filtered) == 0:
+                print(f"⚠️  No valid data points for {col}")
+                continue
+                
+            plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille")
             plt.title(col)
             plt.xlabel("Time")
             plt.ylabel("Value")
@@ -74,9 +97,28 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
     elif rule.upper() in ["PHLD", "PV", "SR"]:
         relevant_cols = [col for col in indicator_cols if rule.lower() in col.lower()]
         for col in relevant_cols:
+            # Skip columns that are all NaN or empty
+            if df[col].isna().all() or df[col].empty:
+                print(f"\n⚠️  Skipping indicator '{col}' - no valid data")
+                continue
+                
             plt.clear_data()
             print(f"\n📈 Rule {rule}: {col}")
-            plt.plot(x_data, df[col].tolist(), label=col, marker="braille")
+            
+            # Filter out NaN values for plotting
+            valid_mask = ~df[col].isna()
+            if not valid_mask.any():
+                print(f"⚠️  No valid data points for {col}")
+                continue
+                
+            x_data_filtered = [x_data[i] for i in range(len(x_data)) if valid_mask.iloc[i]]
+            y_data_filtered = df[col].dropna().tolist()
+            
+            if len(y_data_filtered) == 0:
+                print(f"⚠️  No valid data points for {col}")
+                continue
+                
+            plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille")
             plt.title(f"{rule} - {col}")
             plt.xlabel("Time")
             plt.ylabel("Value")
@@ -95,6 +137,10 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     if df.empty:
         print("Empty DataFrame.")
         return
+
+    # Print the custom title
+    print(f"\n📊 {plot_title}")
+    print("=" * (len(plot_title) + 5))
 
     # Determine OHLC columns, volume, and time columns
     ohlc_cols = [col for col in df.columns if col.lower() in ["open", "high", "low", "close"]]
@@ -133,9 +179,28 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
 
     # Plot indicators
     for col in indicator_cols:
+        # Skip columns that are all NaN or empty
+        if df[col].isna().all() or df[col].empty:
+            print(f"\n⚠️  Skipping indicator '{col}' - no valid data")
+            continue
+            
         plt.clear_data()
         print(f"\n📈 Indicator: {col}")
-        plt.plot(x_data, df[col].tolist(), label=col, marker="braille")
+        
+        # Filter out NaN values for plotting
+        valid_mask = ~df[col].isna()
+        if not valid_mask.any():
+            print(f"⚠️  No valid data points for {col}")
+            continue
+            
+        x_data_filtered = [x_data[i] for i in range(len(x_data)) if valid_mask.iloc[i]]
+        y_data_filtered = df[col].dropna().tolist()
+        
+        if len(y_data_filtered) == 0:
+            print(f"⚠️  No valid data points for {col}")
+            continue
+            
+        plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille")
         plt.title(col)
         plt.xlabel("Time")
         plt.ylabel("Value")
