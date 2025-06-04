@@ -224,11 +224,16 @@ def _plot_trading_signals(df: pd.DataFrame, x_data: list, x_labels: list, step: 
 
 def _calculate_simple_indicators(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Previously calculated simple indicators like SMA and RSI.
-    Now returns data unchanged as per requirements to not show these indicators by default.
+    Функция-заглушка, которая больше не вычисляет простые индикаторы.
+    По новым требованиям не нужно показывать SMA, RSI и другие индикаторы по умолчанию.
+
+    Args:
+        df: DataFrame с данными
+
+    Returns:
+        DataFrame без изменений
     """
-    # As per requirements, we no longer calculate SMA, RSI by default
-    # These should only be calculated if specifically requested by a rule
+    # Согласно требованиям, мы больше не рассчитываем индикаторы по умолчанию
     return df.copy()
 
 
