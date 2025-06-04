@@ -209,15 +209,77 @@ def auto_plot_from_parquet(parquet_path, plot_title=None):
 
         if other_cols:
             print("\n📊 ADDITIONAL INDICATORS AND METRICS")
+            logger.print_info(f"Plotting {len(other_cols)} additional columns: {other_cols}")
 
             plots_shown = 0
-            for col in other_cols:
-                if _plot_series_in_terminal(df[col], x_data, x_labels, step):
+            # Ensure important prediction columns are plotted first and separately
+            important_cols = ['predicted_high', 'predicted_low', 'pressure', 'pressure_vector']
+            priority_cols = [col for col in important_cols if col in other_cols]
+            remaining_cols = [col for col in other_cols if col not in important_cols]
+
+            # First plot Close with predicted_high and predicted_low on a separate chart
+            if 'predicted_high' in other_cols and 'predicted_low' in other_cols and 'Close' in df.columns:
+                plt.clear_data()
+                plt.plot(x_data, df['Close'].tolist(), label="Close", color="cyan+", marker="braille")
+                plt.plot(x_data, df['predicted_high'].tolist(), label="Predicted High", color="green+", marker="braille")
+                plt.plot(x_data, df['predicted_low'].tolist(), label="Predicted Low", color="red+", marker="braille")
+                plt.title("Close with Predictions")
+                plt.xlabel("Time")
+                plt.ylabel("Price")
+                plt.xticks(x_data[::step], x_labels[::step])
+                print("\n📈 CLOSE WITH PREDICTIONS")
+                plt.show()
+                plots_shown += 1
+
+                # Remove these from priority_cols as they've been plotted
+                priority_cols = [col for col in priority_cols if col not in ['predicted_high', 'predicted_low']]
+
+            # Now plot each priority column individually on its own chart
+            for col in priority_cols:
+                try:
+                    plt.clear_data()
+                    print(f"\n📈 Plotting {col.upper()}")
+                    data = df[col].tolist()
+
+                    # Determine color based on column name
+                    name_lower = col.lower()
+                    if 'high' in name_lower:
+                        color = "green+"
+                    elif 'low' in name_lower:
+                        color = "red+"
+                    elif 'pressure' in name_lower:
+                        color = "magenta+"
+                    elif 'vector' in name_lower:
+                        color = "yellow+"
+                    else:
+                        color = "white+"
+
+                    chart_type = _determine_chart_type(df[col])
+                    if chart_type == 'bar':
+                        plt.bar(x_data, data, label=col, color=color)
+                    else:
+                        plt.plot(x_data, data, label=col, color=color, marker="braille")
+
+                    plt.title(col)
+                    plt.xlabel("Time")
+                    plt.ylabel("Value")
+                    plt.xticks(x_data[::step], x_labels[::step])
+                    plt.show()
                     plots_shown += 1
+                    logger.print_debug(f"Successfully plotted priority column: {col}")
+                except Exception as e:
+                    logger.print_warning(f"Error plotting priority column '{col}': {str(e)}")
+
+            # Then plot remaining columns
+            for col in remaining_cols:
+                try:
+                    if _plot_series_in_terminal(df[col], x_data, x_labels, step):
+                        plots_shown += 1
+                        logger.print_debug(f"Successfully plotted: {col}")
+                except Exception as e:
+                    logger.print_warning(f"Error plotting column '{col}': {str(e)}")
 
             print(f"\n✅ Displayed {plots_shown} additional charts")
-        else:
-            print("\n⚠️ No additional columns found besides OHLCV")
 
         return True
 
@@ -265,12 +327,6 @@ def auto_plot_from_dataframe(df, plot_title=None):
 
         # Print column names for debugging
         logger.print_debug(f"Columns in DataFrame: {df.columns.tolist()}")
-
-        # Explicitly check for pressure and pressure_vector columns
-        if 'pressure' in df.columns:
-            logger.print_info("DataFrame contains 'pressure' column - will be displayed")
-        if 'pressure_vector' in df.columns:
-            logger.print_info("DataFrame contains 'pressure_vector' column - will be displayed")
 
         # Get default title if not provided
         if not plot_title:
@@ -343,7 +399,66 @@ def auto_plot_from_dataframe(df, plot_title=None):
             logger.print_info(f"Plotting {len(other_cols)} additional columns: {other_cols}")
 
             plots_shown = 0
-            for col in other_cols:
+            # Ensure important prediction columns are plotted first and separately
+            important_cols = ['predicted_high', 'predicted_low', 'pressure', 'pressure_vector']
+            priority_cols = [col for col in important_cols if col in other_cols]
+            remaining_cols = [col for col in other_cols if col not in important_cols]
+
+            # First plot Close with predicted_high and predicted_low on a separate chart
+            if 'predicted_high' in other_cols and 'predicted_low' in other_cols and 'Close' in df.columns:
+                plt.clear_data()
+                plt.plot(x_data, df['Close'].tolist(), label="Close", color="cyan+", marker="braille")
+                plt.plot(x_data, df['predicted_high'].tolist(), label="Predicted High", color="green+", marker="braille")
+                plt.plot(x_data, df['predicted_low'].tolist(), label="Predicted Low", color="red+", marker="braille")
+                plt.title("Close with Predictions")
+                plt.xlabel("Time")
+                plt.ylabel("Price")
+                plt.xticks(x_data[::step], x_labels[::step])
+                print("\n📈 CLOSE WITH PREDICTIONS")
+                plt.show()
+                plots_shown += 1
+
+                # Remove these from priority_cols as they've been plotted
+                priority_cols = [col for col in priority_cols if col not in ['predicted_high', 'predicted_low']]
+
+            # Now plot each priority column individually on its own chart
+            for col in priority_cols:
+                try:
+                    plt.clear_data()
+                    print(f"\n📈 Plotting {col.upper()}")
+                    data = df[col].tolist()
+
+                    # Determine color based on column name
+                    name_lower = col.lower()
+                    if 'high' in name_lower:
+                        color = "green+"
+                    elif 'low' in name_lower:
+                        color = "red+"
+                    elif 'pressure' in name_lower:
+                        color = "magenta+"
+                    elif 'vector' in name_lower:
+                        color = "yellow+"
+                    else:
+                        color = "white+"
+
+                    chart_type = _determine_chart_type(df[col])
+                    if chart_type == 'bar':
+                        plt.bar(x_data, data, label=col, color=color)
+                    else:
+                        plt.plot(x_data, data, label=col, color=color, marker="braille")
+
+                    plt.title(col)
+                    plt.xlabel("Time")
+                    plt.ylabel("Value")
+                    plt.xticks(x_data[::step], x_labels[::step])
+                    plt.show()
+                    plots_shown += 1
+                    logger.print_debug(f"Successfully plotted priority column: {col}")
+                except Exception as e:
+                    logger.print_warning(f"Error plotting priority column '{col}': {str(e)}")
+
+            # Then plot remaining columns
+            for col in remaining_cols:
                 try:
                     if _plot_series_in_terminal(df[col], x_data, x_labels, step):
                         plots_shown += 1
@@ -352,8 +467,6 @@ def auto_plot_from_dataframe(df, plot_title=None):
                     logger.print_warning(f"Error plotting column '{col}': {str(e)}")
 
             print(f"\n✅ Displayed {plots_shown} additional charts")
-        else:
-            print("\n⚠️ No additional columns found besides OHLCV")
 
         return True
 
