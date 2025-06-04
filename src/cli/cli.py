@@ -10,20 +10,15 @@ import textwrap
 import sys  # Import sys for exit
 import src.cli.cli_examples as cli_examples
 try:
-    # Try importing from rich_argparse first
+    # Try importing from rich_argparse
     from rich_argparse import RichHelpFormatter
     from rich.console import Console
 except ImportError:
-    try:
-        # Fallback to rich.argparse if rich_argparse is not installed
-        from rich.argparse import RichHelpFormatter
-        from rich.console import Console
-    except ImportError:
-        # Fallback to standard argparse formatter if rich is not available
-        print("Warning: 'rich' or 'rich-argparse' not installed. Help formatting will be basic.")
-        print("Install with: pip install rich")
-        RichHelpFormatter = argparse.ArgumentDefaultsHelpFormatter
-        Console = None
+    # Fallback to standard argparse formatter if rich is not available
+    print("Warning: 'rich' or 'rich-argparse' not installed. Help formatting will be basic.")
+    print("Install with: pip install rich rich_argparse")
+    RichHelpFormatter = argparse.ArgumentDefaultsHelpFormatter
+    Console = None
 
 # Use relative imports for constants and version within the src package
 from ..common.constants import TradingRule
