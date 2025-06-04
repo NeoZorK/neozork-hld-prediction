@@ -9,16 +9,10 @@ import argparse
 import textwrap
 import sys  # Import sys for exit
 import src.cli.cli_examples as cli_examples
-try:
-    # Try importing from rich_argparse
-    from rich_argparse import RichHelpFormatter
-    from rich.console import Console
-except ImportError:
-    # Fallback to standard argparse formatter if rich is not available
-    print("Warning: 'rich' or 'rich-argparse' not installed. Help formatting will be basic.")
-    print("Install with: pip install rich rich_argparse")
-    RichHelpFormatter = argparse.ArgumentDefaultsHelpFormatter
-    Console = None
+from colorama import init, Fore, Style
+
+# Initialize colorama for cross-platform colored output
+init(autoreset=True)
 
 # Use relative imports for constants and version within the src package
 from ..common.constants import TradingRule
@@ -40,7 +34,7 @@ def parse_arguments():
     # --- Argument Parser Setup ---
     parser = argparse.ArgumentParser(
         description=main_description,
-        formatter_class=RichHelpFormatter,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         epilog=None,  # no epilog
         add_help=False  # Disable default help to add it to a specific group
     )
@@ -153,11 +147,7 @@ def parse_arguments():
             sys.exit(0)
 
         if '--examples' in sys.argv:
-            if 'Console' in globals() and Console is not None:
-                cli_examples.show_cli_examples(Console)
-            else:
-                cli_examples.print_cli_examples()
-
+            cli_examples.show_cli_examples_colored()
             sys.exit(0)
         args = parser.parse_args()
     except SystemExit as e:
