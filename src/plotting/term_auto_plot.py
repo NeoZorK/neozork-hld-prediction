@@ -252,13 +252,17 @@ def auto_plot_from_parquet(parquet_path, plot_title=None):
                     elif 'vector' in name_lower:
                         color = "yellow+"
                     else:
-                        color = "white+"
+                        color = "white+"  # Default color
 
                     chart_type = _determine_chart_type(df[col])
                     if chart_type == 'bar':
                         plt.bar(x_data, data, label=col, color=color)
                     else:
                         plt.plot(x_data, data, label=col, color=color, marker="braille")
+
+                    # Add zero line for reference if data crosses zero
+                    if min(data) < 0 and max(data) > 0:
+                        plt.plot(x_data, [0] * len(x_data), label="Zero", color="gray")
 
                     plt.title(col)
                     plt.xlabel("Time")
@@ -269,6 +273,7 @@ def auto_plot_from_parquet(parquet_path, plot_title=None):
                     logger.print_debug(f"Successfully plotted priority column: {col}")
                 except Exception as e:
                     logger.print_warning(f"Error plotting priority column '{col}': {str(e)}")
+                    logger.print_warning(f"Data sample for '{col}': {df[col].head(3).tolist()}")
 
             # Then plot remaining columns
             for col in remaining_cols:
@@ -439,13 +444,17 @@ def auto_plot_from_dataframe(df, plot_title=None):
                     elif 'vector' in name_lower:
                         color = "yellow+"
                     else:
-                        color = "white+"
+                        color = "white+"  # Default color
 
                     chart_type = _determine_chart_type(df[col])
                     if chart_type == 'bar':
                         plt.bar(x_data, data, label=col, color=color)
                     else:
                         plt.plot(x_data, data, label=col, color=color, marker="braille")
+
+                    # Add zero line for reference if data crosses zero
+                    if min(data) < 0 and max(data) > 0:
+                        plt.plot(x_data, [0] * len(x_data), label="Zero", color="gray")
 
                     plt.title(col)
                     plt.xlabel("Time")
@@ -456,6 +465,7 @@ def auto_plot_from_dataframe(df, plot_title=None):
                     logger.print_debug(f"Successfully plotted priority column: {col}")
                 except Exception as e:
                     logger.print_warning(f"Error plotting priority column '{col}': {str(e)}")
+                    logger.print_warning(f"Data sample for '{col}': {df[col].head(3).tolist()}")
 
             # Then plot remaining columns
             for col in remaining_cols:
