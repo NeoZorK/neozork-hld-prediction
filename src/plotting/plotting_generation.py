@@ -6,6 +6,8 @@ from .plotly_plot import plot_indicator_results_plotly
 from .fast_plot import plot_indicator_results_fast
 from .seaborn_plot import plot_indicator_results_seaborn
 from .term_plot import plot_indicator_results_term  # Add terminal plotting support
+from ..plotting.term_plot import plot_indicator_results_term
+from ..plotting.term_auto_plot import auto_plot_from_parquet
 
 """
 Workflow step for generating plots based on indicator results using the selected library (Plotly, mplfinance, fast, seaborn).
@@ -17,12 +19,18 @@ from pathlib import Path
 import webbrowser
 import subprocess
 import os
+import sys
 
 from ..common import logger
 from ..common.constants import TradingRule
 
 # Check if running in Docker
 IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
+
+
+def _detect_docker_environment():
+    """Detect if running in Docker environment"""
+    return os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
 
 
 def validate_input_data(result_df, selected_rule):
@@ -531,6 +539,12 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
 
     # Generate plot title
     plot_title = get_plot_title(data_info, point_size, estimated_point, args)
+
+    # Check if running in Docker, if so, force terminal plotting
+    in_docker = _detect_docker_environment()
+    if in_docker and args.draw != 'term':
+        logger.print_info(f"Docker environment detected. Forcing terminal plotting regardless of specified '{args.draw}' method.")
+        args.draw = 'term'
 
     # Choose plotting function based on args.draw
     draw_mode = getattr(args, 'draw', 'fastest').lower()

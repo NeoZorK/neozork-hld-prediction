@@ -223,23 +223,13 @@ def _plot_trading_signals(df: pd.DataFrame, x_data: list, x_labels: list, step: 
 
 
 def _calculate_simple_indicators(df: pd.DataFrame) -> pd.DataFrame:
-    """Calculate simple moving averages and RSI if not present."""
-    
-    df_calc = df.copy()
-    
-    # Calculate Simple Moving Average (SMA) if not present
-    if 'Close' in df_calc.columns and 'SMA' not in df_calc.columns:
-        df_calc['SMA'] = df_calc['Close'].rolling(window=14, min_periods=1).mean()
-    
-    # Calculate RSI if not present
-    if 'Close' in df_calc.columns and 'RSI' not in df_calc.columns:
-        delta = df_calc['Close'].diff()
-        gain = (delta.where(delta > 0, 0)).rolling(window=14, min_periods=1).mean()
-        loss = (-delta.where(delta < 0, 0)).rolling(window=14, min_periods=1).mean()
-        rs = gain / loss
-        df_calc['RSI'] = 100 - (100 / (1 + rs))
-    
-    return df_calc
+    """
+    Previously calculated simple indicators like SMA and RSI.
+    Now returns data unchanged as per requirements to not show these indicators by default.
+    """
+    # As per requirements, we no longer calculate SMA, RSI by default
+    # These should only be calculated if specifically requested by a rule
+    return df.copy()
 
 
 def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str = "Indicator Results"):
