@@ -7,7 +7,7 @@ from .fast_plot import plot_indicator_results_fast
 from .seaborn_plot import plot_indicator_results_seaborn
 from .term_plot import plot_indicator_results_term  # Add terminal plotting support
 from ..plotting.term_plot import plot_indicator_results_term
-from ..plotting.term_auto_plot import auto_plot_from_parquet
+from ..plotting.term_auto_plot import auto_plot_from_parquet, auto_plot_from_dataframe  # Import both functions
 import plotext as plt  # Add import for plotext
 
 """
