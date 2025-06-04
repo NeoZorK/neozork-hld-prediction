@@ -1,5 +1,101 @@
 # src/cli/cli_examples.py
 
+from colorama import init, Fore, Style, Back
+
+# Initialize colorama for cross-platform colored output
+init(autoreset=True)
+
+
+def show_cli_examples_colored():
+    """
+    Show command line interface (CLI) examples for the analysis tool using colorama.
+    :return: None
+    """
+    print(f"{Fore.CYAN}{Style.BRIGHT}\nEXAMPLES (run: python run_analysis.py --examples):{Style.RESET_ALL}\n")
+    
+    print(f"{Style.BRIGHT}1. DEMO DATA MODES{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Run with demo data (default rule){Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Run with demo data using mplfinance{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo -d mpl{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Run with demo data and PV_HighLow rule{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo --rule PV_HighLow{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Run with demo data and PHLD rule, plotly backend{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo --rule PHLD -d plotly{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Run with demo data using terminal plotext backend{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo -d term{Style.RESET_ALL}\n")
+
+    print(f"{Style.BRIGHT}2. CSV FILE MODES{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Basic CSV mode{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# CSV with Support_Resistants rule{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 --rule SR{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# CSV with mplfinance backend{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 -d mplfinance{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# CSV with PV rule, fastest backend{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw fastest{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# CSV with PV rule, seaborn backend{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw seaborn{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# CSV with PV rule, terminal backend{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d term{Style.RESET_ALL}\n")
+
+    print(f"{Style.BRIGHT}3. YAHOO FINANCE (YF) MODES{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# EURUSD=X, 1mo, point size{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# AAPL, 6mo, point size{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py yfinance -t AAPL --period 6mo --point 0.01{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# BTC-USD, date range, point size{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py yf -t BTC-USD --start 2023-01-01 --end 2023-12-31 --point 0.01{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# EURUSD=X, date range, mpl backend{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py yf -t EURUSD=X --start 2024-01-01 --end 2024-04-18 --point 0.00001 -d mpl{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# AAPL, 1y, Support_Resistants rule{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py yf -t AAPL --period 1y --rule SR{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# AAPL, 1y, Support_Resistants rule, seaborn backend{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py yf -t AAPL --period 1y --rule SR -d seaborn{Style.RESET_ALL}\n")
+
+    print(f"{Style.BRIGHT}4. POLYGON.IO MODES{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# AAPL, daily, date range{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py polygon --ticker AAPL --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# EURUSD, hourly, PV rule{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2022-01-01 --end 2022-06-01 --point 0.00001 --rule PV{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# EURUSD, hourly, PV rule, seaborn backend{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2022-01-01 --end 2022-06-01 --point 0.00001 --rule PV -d sb{Style.RESET_ALL}\n")
+
+    print(f"{Style.BRIGHT}5. BINANCE MODES{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# BTCUSDT, hourly, date range{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py binance --ticker BTCUSDT --interval H1 --start 2024-01-01 --end 2024-04-18 --point 0.01{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# ETHUSDT, daily, SR rule{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# ETHUSDT, daily, SR rule, seaborn backend{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR -d seaborn{Style.RESET_ALL}\n")
+
+    print(f"{Style.BRIGHT}6. SHOW MODE (CACHE/FILES){Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Show all available cached files{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Show yfinance cached files{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show yfinance{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Show specific ticker files{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show AAPL{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Show files with specific rule{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show --rule PV{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Show files from date range{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show --start 2024-01-01 --end 2024-12-31{Style.RESET_ALL}\n")
+
+    print(f"{Style.BRIGHT}7. TERMINAL MODE EXAMPLES{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Demo with terminal plotting{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo -d term{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Yahoo Finance with terminal plotting{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py yf -t AAPL --period 1y -d term{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# CSV with terminal plotting{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 -d term{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Binance with terminal plotting{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py binance -t BTCUSDT --interval D1 --start 2024-01-01 --end 2024-02-01 --point 0.01 -d term{Style.RESET_ALL}\n")
+
+    print(f"{Fore.YELLOW}{Style.BRIGHT}NOTE:{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}Terminal mode (-d term) works great in Docker containers and provides{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}colored ASCII-based charts with candlesticks and indicators.{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}For more details, see README.md or run with -h for full help.{Style.RESET_ALL}")
+
 
 def show_cli_examples(terminal_console):
     """
