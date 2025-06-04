@@ -487,7 +487,7 @@ def generate_plotly_plot(result_df, selected_rule, plot_title, data_info):
     handle_plotly_plot(fig, data_info, selected_rule)
 
 
-def generate_term_plot(result_df, selected_rule, plot_title):
+def generate_term_plot(result_df, selected_rule, plot_title, args=None):
     """
     Generates a terminal plot using plotext.
     
@@ -495,9 +495,27 @@ def generate_term_plot(result_df, selected_rule, plot_title):
         result_df (pd.DataFrame): DataFrame with OHLCV and calculation results.
         selected_rule (TradingRule | str): The selected trading rule.
         plot_title (str): Title for the plot.
+        args (argparse.Namespace, optional): Command-line arguments.
     """
     logger.print_info("Generating plot using terminal mode (plotext)...")
-    plot_indicator_results_term(result_df, selected_rule, plot_title)
+
+    # If selected_rule is AUTO, use auto_plot_from_parquet instead
+    if hasattr(selected_rule, 'name') and selected_rule.name == 'AUTO':
+        logger.print_info("AUTO rule detected, using auto terminal plotting...")
+
+        # Check if we have a source path in data_info
+        parquet_path = None
+        if args and hasattr(args, 'data_path') and args.data_path:
+            parquet_path = args.data_path
+
+        if parquet_path:
+            auto_plot_from_parquet(parquet_path, plot_title)
+        else:
+            logger.print_warning("Cannot find parquet file path for AUTO mode, falling back to standard terminal plot")
+            plot_indicator_results_term(result_df, selected_rule, plot_title)
+    else:
+        # Default to standard terminal plot
+        plot_indicator_results_term(result_df, selected_rule, plot_title)
 
 
 def generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point):
@@ -572,7 +590,14 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
         elif draw_mode == 'fast':
             generate_fast_plot(result_df, selected_rule, plot_title)
         elif draw_mode == 'term':
-            generate_term_plot(result_df, selected_rule, plot_title)
+            # If no rule is specified, default to OHLCV rule for terminal mode
+            if selected_rule is None or (isinstance(selected_rule, str) and selected_rule.lower() == 'none'):
+                from ..common.constants import TradingRule
+                logger.print_info("No rule specified, defaulting to OHLCV for terminal plotting")
+                selected_rule = TradingRule.OHLCV
+
+            # Pass args to terminal plot function for AUTO mode support
+            generate_term_plot(result_df, selected_rule, plot_title, args)
         else:
             generate_plotly_plot(result_df, selected_rule, plot_title, data_info)
     except Exception as e:
