@@ -19,12 +19,54 @@ from ..common.constants import TradingRule
 from .. import __version__  # Make sure version is updated in src/__init__.py
 
 
+# Custom help formatter to use colors
+class ColoredHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
+    """Custom help formatter that adds color to the help output."""
+
+    def _format_action_invocation(self, action):
+        """Format the action invocation (e.g. -h, --help) with color."""
+        if action.option_strings:
+            parts = []
+            for option_string in action.option_strings:
+                parts.append(f"{Fore.GREEN}{option_string}{Style.RESET_ALL}")
+            return ', '.join(parts)
+        else:
+            return super()._format_action_invocation(action)
+
+    def _format_usage(self, usage, actions, groups, prefix):
+        """Format usage with colors."""
+        if prefix is None:
+            prefix = f"{Fore.YELLOW}usage: {Style.RESET_ALL}"
+        return super()._format_usage(usage, actions, groups, prefix)
+
+    def _format_args(self, action, default_metavar):
+        """Format args with colors."""
+        result = super()._format_args(action, default_metavar)
+        return f"{Fore.CYAN}{result}{Style.RESET_ALL}"
+
+    def _get_help_string(self, action):
+        """Format help string with colors."""
+        help_text = super()._get_help_string(action)
+        if action.default != argparse.SUPPRESS and action.default is not None:
+            defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
+            if action.option_strings or action.nargs in defaulting_nargs:
+                help_text = help_text.replace(f"(default: {action.default})",
+                                           f"({Fore.MAGENTA}default: {action.default}{Style.RESET_ALL})")
+        return help_text
+
+    def start_section(self, heading):
+        """Format section headings with colors."""
+        heading = f"{Fore.YELLOW}{Style.BRIGHT}{heading}{Style.RESET_ALL}"
+        super().start_section(heading)
+
 # Definition of the argument parsing function
 def parse_arguments():
-    """Sets up argument parser using RichHelpFormatter and returns the parsed arguments."""
+    """Sets up argument parser using ColoredHelpFormatter and returns the parsed arguments."""
 
     # --- Main description ---
-    main_description = textwrap.dedent("""
+    main_description = textwrap.dedent(f"""
+       {Fore.CYAN}{Style.BRIGHT}Shcherbyna Pressure Vector Indicator Analysis Tool{Style.RESET_ALL}
+       
        Calculate and plot Shcherbyna Pressure Vector indicator using demo data,
        fetching from Yahoo Finance, reading from a CSV file, fetching from Polygon.io,
        or fetching from Binance. Allows choosing the plotting library.
@@ -34,7 +76,7 @@ def parse_arguments():
     # --- Argument Parser Setup ---
     parser = argparse.ArgumentParser(
         description=main_description,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        formatter_class=ColoredHelpFormatter,
         epilog=None,  # no epilog
         add_help=False  # Disable default help to add it to a specific group
     )
