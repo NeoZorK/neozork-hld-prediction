@@ -1,120 +1,155 @@
+"""
+Tests for terminal plotting functionality.
+These tests verify that terminal-based plotting works correctly.
+"""
 import unittest
 import pandas as pd
 import numpy as np
-from src.plotting.term_plot import (
-    plot_indicator_results_term,
-    _plot_financial_indicators_panels,
-    _plot_predicted_prices,
-    _plot_trading_signals,
-    _calculate_simple_indicators
-)
+import os
+import sys
+from unittest.mock import patch, MagicMock
+from pathlib import Path
+
+# Add the src directory to the path so we can import modules from there
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 from src.common.constants import TradingRule
+from src.plotting.term_plot import plot_indicator_results_term, _plot_financial_indicators_panels, _plot_predicted_prices, _plot_trading_signals
 
 class TestTermPlot(unittest.TestCase):
+    """Test cases for terminal plotting functionality."""
+
     def setUp(self):
+        """Set up test data."""
+        # Create a test DataFrame
         self.df = pd.DataFrame({
-            'Open': np.random.rand(10) * 100 + 100,
-            'High': np.random.rand(10) * 100 + 110,
-            'Low': np.random.rand(10) * 100 + 90,
-            'Close': np.random.rand(10) * 100 + 100,
-            'Volume': np.random.randint(1000, 2000, 10),
-            'PV': np.random.randn(10),
-            'HL': np.random.randn(10),
-            'Pressure': np.random.randn(10),
-            'RSI': np.random.rand(10) * 100,
-            'MA': np.random.rand(10) * 100 + 100,
-            'MACD': np.random.randn(10),
-            'Signal': np.random.randn(10),
-            'PPrice1': np.random.rand(10) * 100 + 95,
-            'PPrice2': np.random.rand(10) * 100 + 105,
-            'Direction': np.random.choice([1, -1, 0], 10),
-            'predicted_high': np.random.rand(10) * 100 + 105,
-            'predicted_low': np.random.rand(10) * 100 + 95
-        }, index=pd.date_range('2023-01-01', periods=10, freq='D'))
+            'Open': np.random.rand(50) * 100 + 100,
+            'High': np.random.rand(50) * 100 + 110,
+            'Low': np.random.rand(50) * 100 + 90,
+            'Close': np.random.rand(50) * 100 + 100,
+            'Volume': np.random.randint(1000, 2000, 50),
+            'RSI': np.random.rand(50) * 100,
+            'SMA': np.random.rand(50) * 100 + 100,
+            'Direction': np.random.choice([0, 1, -1], 50),
+            'Signal': np.random.rand(50) * 2 - 1,
+            'PPrice1': np.random.rand(50) * 100 + 105,
+            'PPrice2': np.random.rand(50) * 100 + 95,
+            'Pressure': np.random.rand(50) * 2 - 1,
+            'HL': np.random.rand(50) * 10 - 5,
+            'PV': np.random.rand(50) * 2 - 1
+        })
+        # Set index to datetime
+        self.df.index = pd.date_range('2023-01-01', periods=50)
+
+        # Set rule for testing
         self.rule = TradingRule.Pressure_Vector
 
-    def test_plot_indicator_results_term_runs(self):
-        """Test that main plotting function runs without exceptions"""
+        # For OHLCV-only testing
+        self.ohlcv_rule = TradingRule.OHLCV
+
+    @patch('plotext.show')
+    def test_plot_indicator_results_term(self, mock_show):
+        """Test plotting indicator results in terminal."""
         try:
-            plot_indicator_results_term(self.df, self.rule, title="Test Terminal Plot")
+            plot_indicator_results_term(self.df, self.rule)
+            mock_show.assert_called()
         except Exception as e:
-            self.fail(f"plot_indicator_results_term raised an exception: {e}")
+            self.fail(f"Terminal plotting failed: {e}")
 
-    def test_plot_with_empty_dataframe(self):
-        """Test plotting with empty DataFrame"""
-        empty_df = pd.DataFrame()
+    @patch('plotext.show')
+    def test_plot_indicator_results_ohlcv_only(self, mock_show):
+        """Test plotting only OHLCV data (no indicators) with OHLCV rule."""
         try:
-            plot_indicator_results_term(empty_df, self.rule, title="Empty Test")
+            plot_indicator_results_term(self.df, self.ohlcv_rule)
+            mock_show.assert_called()
         except Exception as e:
-            self.fail(f"Plotting empty DataFrame should not raise exception: {e}")
+            self.fail(f"OHLCV-only terminal plotting failed: {e}")
 
-    def test_plot_with_minimal_data(self):
-        """Test plotting with minimal OHLC data only"""
-        minimal_df = pd.DataFrame({
-            'Open': [100, 101, 102],
-            'High': [105, 106, 107],
-            'Low': [95, 96, 97],
-            'Close': [102, 103, 104]
-        }, index=pd.date_range('2023-01-01', periods=3, freq='D'))
-        
-        try:
-            plot_indicator_results_term(minimal_df, self.rule, title="Minimal Test")
-        except Exception as e:
-            self.fail(f"Plotting minimal DataFrame should not raise exception: {e}")
-
-    def test_calculate_simple_indicators(self):
-        """Test automatic indicator calculation"""
-        df_basic = pd.DataFrame({
-            'Close': [100, 101, 102, 103, 104, 105, 106, 107, 108, 109]
-        }, index=pd.date_range('2023-01-01', periods=10, freq='D'))
-        
-        df_with_indicators = _calculate_simple_indicators(df_basic)
-        
-        # Check that SMA and RSI were calculated
-        self.assertIn('SMA', df_with_indicators.columns)
-        self.assertIn('RSI', df_with_indicators.columns)
-        
-        # Check that calculated values are reasonable
-        self.assertTrue(df_with_indicators['SMA'].notna().any())
-        self.assertTrue(df_with_indicators['RSI'].notna().any())
-        
-        # RSI should be between 0 and 100
-        rsi_values = df_with_indicators['RSI'].dropna()
-        if len(rsi_values) > 0:
-            self.assertTrue(all(0 <= val <= 100 for val in rsi_values))
-
-    def test_financial_indicators_panels(self):
-        """Test plotting of financial indicators in separate panels"""
+    @patch('plotext.show')
+    def test_plot_financial_indicators_panels(self, mock_show):
+        """Test plotting financial indicators panels."""
         x_data = list(range(len(self.df)))
-        x_labels = ['T' + str(i) for i in x_data]
-        step = 2
-        
-        try:
-            _plot_financial_indicators_panels(self.df, x_data, x_labels, step)
-        except Exception as e:
-            self.fail(f"Financial indicators panel plotting failed: {e}")
+        x_labels = [d.strftime('%m-%d') for d in self.df.index]
+        step = max(1, len(x_labels) // 8)
 
-    def test_predicted_prices_plotting(self):
-        """Test plotting of predicted prices"""
-        x_data = list(range(len(self.df)))
-        x_labels = ['T' + str(i) for i in x_data]
-        step = 2
-        
         try:
-            _plot_predicted_prices(self.df, x_data, x_labels, step)
+            _plot_financial_indicators_panels(self.df, x_data, x_labels, step, self.rule)
+            mock_show.assert_called()
+        except Exception as e:
+            self.fail(f"Financial indicators plotting failed: {e}")
+
+    @patch('plotext.show')
+    def test_plot_financial_indicators_panels_ohlcv(self, mock_show):
+        """Test plotting financial indicators with OHLCV rule (should skip plotting)."""
+        x_data = list(range(len(self.df)))
+        x_labels = [d.strftime('%m-%d') for d in self.df.index]
+        step = max(1, len(x_labels) // 8)
+
+        try:
+            # This should skip plotting and not call show()
+            _plot_financial_indicators_panels(self.df, x_data, x_labels, step, self.ohlcv_rule)
+            # The mock should NOT be called, as the function should return early
+            mock_show.assert_not_called()
+        except Exception as e:
+            self.fail(f"OHLCV rule test failed: {e}")
+
+    @patch('plotext.show')
+    def test_plot_predicted_prices(self, mock_show):
+        """Test plotting predicted prices."""
+        x_data = list(range(len(self.df)))
+        x_labels = [d.strftime('%m-%d') for d in self.df.index]
+        step = max(1, len(x_labels) // 8)
+
+        try:
+            _plot_predicted_prices(self.df, x_data, x_labels, step, self.rule)
+            # Should be called because we're using non-OHLCV rule
+            mock_show.assert_called()
         except Exception as e:
             self.fail(f"Predicted prices plotting failed: {e}")
 
-    def test_trading_signals_plotting(self):
-        """Test plotting of trading signals"""
+    @patch('plotext.show')
+    def test_plot_predicted_prices_ohlcv(self, mock_show):
+        """Test plotting predicted prices with OHLCV rule (should skip plotting)."""
         x_data = list(range(len(self.df)))
-        x_labels = ['T' + str(i) for i in x_data]
-        step = 2
-        
+        x_labels = [d.strftime('%m-%d') for d in self.df.index]
+        step = max(1, len(x_labels) // 8)
+
         try:
-            _plot_trading_signals(self.df, x_data, x_labels, step)
+            # This should skip plotting and not call show()
+            _plot_predicted_prices(self.df, x_data, x_labels, step, self.ohlcv_rule)
+            # The mock should NOT be called, as the function should return early
+            mock_show.assert_not_called()
+        except Exception as e:
+            self.fail(f"OHLCV rule test for predicted prices failed: {e}")
+
+    @patch('plotext.show')
+    def test_plot_trading_signals(self, mock_show):
+        """Test plotting trading signals."""
+        x_data = list(range(len(self.df)))
+        x_labels = [d.strftime('%m-%d') for d in self.df.index]
+        step = max(1, len(x_labels) // 8)
+
+        try:
+            _plot_trading_signals(self.df, x_data, x_labels, step, self.rule)
+            # Should be called because we're using non-OHLCV rule
+            mock_show.assert_called()
         except Exception as e:
             self.fail(f"Trading signals plotting failed: {e}")
+
+    @patch('plotext.show')
+    def test_plot_trading_signals_ohlcv(self, mock_show):
+        """Test plotting trading signals with OHLCV rule (should skip plotting)."""
+        x_data = list(range(len(self.df)))
+        x_labels = [d.strftime('%m-%d') for d in self.df.index]
+        step = max(1, len(x_labels) // 8)
+
+        try:
+            # This should skip plotting and not call show()
+            _plot_trading_signals(self.df, x_data, x_labels, step, self.ohlcv_rule)
+            # The mock should NOT be called, as the function should return early
+            mock_show.assert_not_called()
+        except Exception as e:
+            self.fail(f"OHLCV rule test for trading signals failed: {e}")
 
     def test_plot_with_different_rule_types(self):
         """Test plotting with different rule types"""

@@ -9,9 +9,21 @@ import numpy as np
 from src.common import logger
 from src.common.constants import TradingRule
 
-def _plot_financial_indicators_panels(df: pd.DataFrame, x_data: list, x_labels: list, step: int):
-    """Plot financial indicators in separate panels for better visualization."""
-    
+def _plot_financial_indicators_panels(df: pd.DataFrame, x_data: list, x_labels: list, step: int, rule=None):
+    """
+    Plot financial indicators in separate panels for better visualization.
+
+    Args:
+        df: DataFrame with financial data
+        x_data: list of x positions
+        x_labels: list of x-axis labels
+        step: step size for x-ticks
+        rule: Trading rule being applied, if None or OHLCV only price data is shown
+    """
+    # Skip indicator panels if rule is None or OHLCV
+    if rule is None or (hasattr(rule, 'name') and rule.name == 'OHLCV'):
+        return
+
     # Define indicator categories and their colors
     momentum_indicators = {
         'RSI': 'green+',
@@ -127,9 +139,21 @@ def _plot_financial_indicators_panels(df: pd.DataFrame, x_data: list, x_labels: 
         plt.show()
 
 
-def _plot_predicted_prices(df: pd.DataFrame, x_data: list, x_labels: list, step: int):
-    """Plot predicted price levels if available."""
-    
+def _plot_predicted_prices(df: pd.DataFrame, x_data: list, x_labels: list, step: int, rule=None):
+    """
+    Plot predicted price levels if available.
+
+    Args:
+        df: DataFrame with financial data
+        x_data: list of x positions
+        x_labels: list of x-axis labels
+        step: step size for x-ticks
+        rule: Trading rule being applied, if None or OHLCV predicted prices aren't shown
+    """
+    # Skip predicted prices if rule is None or OHLCV
+    if rule is None or (hasattr(rule, 'name') and rule.name == 'OHLCV'):
+        return
+
     predicted_cols = [col for col in df.columns if 'predicted' in col.lower() or 'pprice' in col.lower()]
     predicted_cols = [col for col in predicted_cols if not df[col].isna().all()]
     
@@ -155,9 +179,21 @@ def _plot_predicted_prices(df: pd.DataFrame, x_data: list, x_labels: list, step:
         plt.show()
 
 
-def _plot_trading_signals(df: pd.DataFrame, x_data: list, x_labels: list, step: int):
-    """Plot trading signals and direction indicators."""
-    
+def _plot_trading_signals(df: pd.DataFrame, x_data: list, x_labels: list, step: int, rule=None):
+    """
+    Plot trading signals and direction indicators.
+
+    Args:
+        df: DataFrame with financial data
+        x_data: list of x positions
+        x_labels: list of x-axis labels
+        step: step size for x-ticks
+        rule: Trading rule being applied, if None or OHLCV trading signals aren't shown
+    """
+    # Skip trading signals if rule is None or OHLCV
+    if rule is None or (hasattr(rule, 'name') and rule.name == 'OHLCV'):
+        return
+
     signal_cols = [col for col in df.columns if col.lower() in ['direction', 'signal', 'buy_signal', 'sell_signal']]
     signal_cols = [col for col in signal_cols if not df[col].isna().all()]
     
@@ -283,13 +319,13 @@ def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str 
         df = _calculate_simple_indicators(df)
         
         # Plot 3: Financial Indicators in Multiple Panels
-        _plot_financial_indicators_panels(df, x_data, x_labels, step)
-        
+        _plot_financial_indicators_panels(df, x_data, x_labels, step, rule)
+
         # Plot 4: Predicted Price Lines (if available)
-        _plot_predicted_prices(df, x_data, x_labels, step)
-        
+        _plot_predicted_prices(df, x_data, x_labels, step, rule)
+
         # Plot 5: Trading Signals (if available)
-        _plot_trading_signals(df, x_data, x_labels, step)
+        _plot_trading_signals(df, x_data, x_labels, step, rule)
 
         # Print data summary
         print("\n📋 DATA SUMMARY")
