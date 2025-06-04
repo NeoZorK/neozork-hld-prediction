@@ -5,6 +5,7 @@ from .mplfinance_plot import plot_indicator_results_mplfinance
 from .plotly_plot import plot_indicator_results_plotly
 from .fast_plot import plot_indicator_results_fast
 from .seaborn_plot import plot_indicator_results_seaborn
+from .term_plot import plot_indicator_results_term  # Add terminal plotting support
 
 """
 Workflow step for generating plots based on indicator results using the selected library (Plotly, mplfinance, fast, seaborn).
@@ -19,6 +20,9 @@ import os
 
 from ..common import logger
 from ..common.constants import TradingRule
+
+# Check if running in Docker
+IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
 
 
 def validate_input_data(result_df, selected_rule):
@@ -475,6 +479,19 @@ def generate_plotly_plot(result_df, selected_rule, plot_title, data_info):
     handle_plotly_plot(fig, data_info, selected_rule)
 
 
+def generate_term_plot(result_df, selected_rule, plot_title):
+    """
+    Generates a terminal plot using plotext.
+    
+    Args:
+        result_df (pd.DataFrame): DataFrame with OHLCV and calculation results.
+        selected_rule (TradingRule | str): The selected trading rule.
+        plot_title (str): Title for the plot.
+    """
+    logger.print_info("Generating plot using terminal mode (plotext)...")
+    plot_indicator_results_term(result_df, selected_rule, plot_title)
+
+
 def generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point):
     """
     Generates and potentially saves/displays a plot based on calculation results
@@ -504,9 +521,9 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
             selected_rule = 'Auto_Display_All'
         logger.print_info("AUTO display mode detected, will display all available columns")
 
-    # Use 'fastest' as default drawing method if draw is not specified
+    # Use 'fastest' as default drawing mode if draw is not specified
     if not hasattr(args, 'draw') or args.draw is None:
-        logger.print_info("Drawing method not specified, using 'fastest' by default.")
+        logger.print_info("Drawing mode not specified, using 'fastest' by default.")
         args.draw = 'fastest'
 
     # Debug: Print DataFrame info before plotting
@@ -517,6 +534,17 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
 
     # Choose plotting function based on args.draw
     draw_mode = getattr(args, 'draw', 'fastest').lower()
+    
+    # Docker override: force 'term' mode for all draw modes in Docker
+    if IN_DOCKER and draw_mode not in ['term']:
+        logger.print_info(f"Docker detected: forcing draw mode from '{draw_mode}' to 'term' (terminal plotting)")
+        draw_mode = 'term'
+    elif IN_DOCKER and draw_mode == 'term':
+        logger.print_info("Docker detected: already using 'term' mode")
+    else:
+        logger.print_info(f"Not in Docker or already 'term' mode. IN_DOCKER={IN_DOCKER}, draw_mode='{draw_mode}'")
+    
+    logger.print_info(f"Final plotting mode selected: '{draw_mode}'")
 
     try:
         if draw_mode in ['mplfinance', 'mpl']:
@@ -525,6 +553,8 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
             generate_seaborn_plot(result_df, selected_rule, plot_title)
         elif draw_mode == 'fast':
             generate_fast_plot(result_df, selected_rule, plot_title)
+        elif draw_mode == 'term':
+            generate_term_plot(result_df, selected_rule, plot_title)
         else:
             generate_plotly_plot(result_df, selected_rule, plot_title, data_info)
     except Exception as e:
