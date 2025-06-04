@@ -7,6 +7,10 @@ import pyarrow.parquet as pq
 import pandas as pd
 import sys
 import traceback
+from colorama import init, Fore, Style, Back
+
+# Initialize colorama for cross-platform colored output
+init(autoreset=True)
 
 # Import for indicator calculation; fallback for different relative import
 try:
@@ -41,30 +45,34 @@ except ImportError:
 
 def show_help():
     """
-    Displays help for the 'show' mode.
+    Displays help for the 'show' mode with colorful formatting.
     """
-    print("\n=== SHOW MODE HELP ===")
-    print("The 'show' mode allows you to list and inspect cached data files.")
-    print("Usage: python run_analysis.py show <source> [keywords...]")
-    print("\nAvailable sources:")
-    print("  - csv: Converted CSV data files")
-    print("  - yfinance/yf: Yahoo Finance data files")
-    print("  - polygon: Polygon.io API data files")
-    print("  - binance: Binance API data files")
-    print("\nExamples:")
-    print("  python run_analysis.py show                  # Show statistics for all sources")
-    print("  python run_analysis.py show yf               # List all Yahoo Finance files")
-    print("  python run_analysis.py show csv              # List all CSV-converted files")
-    print("  python run_analysis.py show binance          # List all Binance files")
-    print("  python run_analysis.py show polygon          # List all Polygon.io files")
-    print("  python run_analysis.py show yf aapl          # List YF files containing 'aapl'")
-    print("  python run_analysis.py show binance btc MN1  # List Binance files with 'btc' and timeframe 'MN1'")
-    print("\nTrading Rules:")
-    print("  --rule OHLCV   # Display basic OHLCV candlestick chart")
-    print("  --rule PHLD    # Calculate Predict High Low Direction indicator")
-    print("  --rule AUTO    # Automatically display all columns in the file")
-    print("\nDate filtering:")
-    print("  --start, --end or --show-start, --show-end for date range filtering.")
+    print(f"\n{Fore.CYAN}{Style.BRIGHT}=== SHOW MODE HELP ==={Style.RESET_ALL}")
+    print(f"The {Fore.GREEN}'show'{Style.RESET_ALL} mode allows you to list and inspect cached data files.")
+    print(f"{Fore.YELLOW}Usage:{Style.RESET_ALL} python run_analysis.py show <source> [keywords...]")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Available sources:{Style.RESET_ALL}")
+    print(f"  - {Fore.GREEN}csv{Style.RESET_ALL}: Converted CSV data files")
+    print(f"  - {Fore.GREEN}yfinance/yf{Style.RESET_ALL}: Yahoo Finance data files")
+    print(f"  - {Fore.GREEN}polygon{Style.RESET_ALL}: Polygon.io API data files")
+    print(f"  - {Fore.GREEN}binance{Style.RESET_ALL}: Binance API data files")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Examples:{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show{Style.RESET_ALL}                  {Fore.BLACK}{Style.DIM}# Show statistics for all sources{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show yf{Style.RESET_ALL}               {Fore.BLACK}{Style.DIM}# List all Yahoo Finance files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show csv{Style.RESET_ALL}              {Fore.BLACK}{Style.DIM}# List all CSV-converted files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show binance{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List all Binance files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show polygon{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List all Polygon.io files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show yf aapl{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List YF files containing 'aapl'{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show binance btc MN1{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# List Binance files with 'btc' and timeframe 'MN1'{Style.RESET_ALL}")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Trading Rules:{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule OHLCV{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Display basic OHLCV candlestick chart{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule PHLD{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Calculate Predict High Low Direction indicator{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule AUTO{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Automatically display all columns in the file{Style.RESET_ALL}")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Date filtering:{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--start, --end{Style.RESET_ALL} or {Fore.MAGENTA}--show-start, --show-end{Style.RESET_ALL} for date range filtering.")
 
 def import_generate_plot():
     """
