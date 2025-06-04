@@ -17,7 +17,9 @@ def show_cli_examples(terminal_console):
     console.print(
         "[dim]# Run with demo data and PV_HighLow rule[/dim]\n[bold green]python run_analysis.py demo --rule PV_HighLow[/bold green]")
     console.print(
-        "[dim]# Run with demo data and PHLD rule, plotly backend[/dim]\n[bold green]python run_analysis.py demo --rule PHLD -d plotly[/bold green]\n")
+        "[dim]# Run with demo data and PHLD rule, plotly backend[/dim]\n[bold green]python run_analysis.py demo --rule PHLD -d plotly[/bold green]")
+    console.print(
+        "[dim]# Run with demo data using terminal plotext backend[/dim]\n[bold green]python run_analysis.py demo -d term[/bold green]\n")
 
     console.print("[bold]2. CSV FILE MODES[/bold]")
     console.print(
@@ -30,6 +32,8 @@ def show_cli_examples(terminal_console):
         "[dim]# CSV with PV rule, fastest backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw fastest[/bold green]\n")
     console.print(
         "[dim]# CSV with PV rule, seaborn backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw seaborn[/bold green]\n")
+    console.print(
+        "[dim]# CSV with PV rule, terminal backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d term[/bold green]\n")
 
     console.print("[bold]3. YAHOO FINANCE (YF) MODES[/bold]")
     console.print(
@@ -105,7 +109,7 @@ def show_cli_examples(terminal_console):
     console.print(
         "[bold yellow]Note:[/bold yellow] For all API modes (yfinance, polygon, binance), the --point parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).\n")
     console.print(
-        "[yellow]- Use -d/--draw to select plotting backend: fastest, fast, plotly, mplfinance, seaborn, sb, etc.")
+        "[yellow]- Use -d/--draw to select plotting backend: fastest, fast, plotly, mplfinance, seaborn, sb, term, etc.")
     console.print(
         "- Use --rule to select trading rule: PV_HighLow, Support_Resistants, Pressure_Vector, Predict_High_Low_Direction, PHLD, PV, SR.")
     console.print("- SHOW mode allows filtering cached files by source, keywords, date, and rule.")
@@ -118,9 +122,13 @@ def show_cli_examples(terminal_console):
     console.print(
         "[dim]# CSV file, AUTO rule (all columns, auto-plot, mpl backend)[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule AUTO -d mpl[/bold green]")
     console.print(
+        "[dim]# CSV file, AUTO rule (all columns, auto-plot, terminal backend)[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule AUTO -d term[/bold green]")
+    console.print(
         "[dim]# Show mode, OHLCV rule (candlestick only)[/dim]\n[bold green]python run_analysis.py show csv EURUSD MN1 --rule OHLCV[/bold green]")
     console.print(
-        "[dim]# Show mode, AUTO rule (all columns, auto-plot, mpl backend)[/dim]\n[bold green]python run_analysis.py show csv EURUSD MN1 --rule AUTO -d mpl[/bold green]\n")
+        "[dim]# Show mode, AUTO rule (all columns, auto-plot, mpl backend)[/dim]\n[bold green]python run_analysis.py show csv EURUSD MN1 --rule AUTO -d mpl[/bold green]")
+    console.print(
+        "[dim]# Show mode, AUTO rule (all columns, auto-plot, terminal backend)[/dim]\n[bold green]python run_analysis.py show csv EURUSD MN1 --rule AUTO -d term[/bold green]\n")
 
     # --- NZ SCRIPT USAGE EXAMPLES ---
     console.print("[bold]12. NZ SCRIPT USAGE[/bold]")
@@ -162,6 +170,7 @@ def print_cli_examples():
       python run_analysis.py demo --rule PV_HighLow
       python run_analysis.py demo --rule PHLD -d plotly
       python run_analysis.py demo --rule SR -d seaborn
+      python run_analysis.py demo -d term
 
       # 2. CSV FILE MODES
       python run_analysis.py csv --csv-file data.csv --point 0.01
@@ -169,6 +178,7 @@ def print_cli_examples():
       python run_analysis.py csv --csv-file data.csv --point 0.01 -d mplfinance
       python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw fastest
       python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw sb
+      python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d term
 
       # 3. YAHOO FINANCE (YF) MODES
       python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001
@@ -221,8 +231,10 @@ def print_cli_examples():
       # 11. OHLCV & AUTO RULE EXAMPLES
       python run_analysis.py csv --csv-file data.csv --point 0.01 --rule OHLCV
       python run_analysis.py csv --csv-file data.csv --point 0.01 --rule AUTO -d mpl
+      python run_analysis.py csv --csv-file data.csv --point 0.01 --rule AUTO -d term
       python run_analysis.py show csv EURUSD MN1 --rule OHLCV
       python run_analysis.py show csv EURUSD MN1 --rule AUTO -d mpl
+      python run_analysis.py show csv EURUSD MN1 --rule AUTO -d term
 
       # 12. NZ SCRIPT USAGE
       # The 'nz' script is a convenient wrapper that simplifies running analysis in different environments
@@ -234,7 +246,7 @@ def print_cli_examples():
 
     Note:
     - For all API modes (yfinance, polygon, binance), the --point parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).
-    - Use -d/--draw to select plotting backend: fastest, fast, plotly, mplfinance, seaborn, sb etc.
+    - Use -d/--draw to select plotting backend: fastest, fast, plotly, mplfinance, seaborn, sb, term etc.
     - Use --rule to select trading rule: PV_HighLow, Support_Resistants, Pressure_Vector, Predict_High_Low_Direction, PHLD, PV, SR, OHLCV, AUTO.
     - SHOW mode allows filtering cached files by source, keywords, date, and rule.
     - The nz script automatically detects if Docker is available and runs the analysis either in a Docker container or directly.

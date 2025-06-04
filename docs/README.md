@@ -923,3 +923,34 @@ The project includes a set of scripts in the `uv_setup/` directory that help you
 
 For more detailed information about uv and migration from pip, see the documentation in `uv_setup/uv-migration.md`.
 
+## Terminal Plotting Mode (`-d term`)
+
+A new terminal-based plotting mode is available using the `plotext` library. This mode allows you to visualize candlestick charts, volume, and financial indicators (RSI, MA, PV, HL, Pressure) directly in your Linux terminal (bash/zsh), including inside Docker containers.
+
+### Installation
+
+Install the required library:
+
+```bash
+pip install plotext
+```
+
+Or, if using `uv`:
+
+```bash
+uv pip install plotext
+```
+
+### Usage
+
+Add `-d term` to your command to use terminal plotting. Example:
+
+```bash
+python run_analysis.py demo -d term
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule AUTO -d term
+```
+
+- All major plotting functions are supported in this mode.
+- In Docker, all drawing modes are automatically replaced by `-d term`.
+- Multiple indicator panels are shown as separate charts in the terminal.
+
