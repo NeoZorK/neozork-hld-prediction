@@ -90,8 +90,14 @@ def plot_indicator_results(df_results, rule, title="Indicator Results", mode="pl
         
         # Docker override: always use 'term' mode for drawing
         if IN_DOCKER and mode not in ['term']:
-            logger.print_info("Docker detected: forcing draw mode to 'term' (terminal plotting)")
+            logger.print_info(f"Docker detected: forcing draw mode from '{mode}' to 'term' (terminal plotting)")
             mode = 'term'
+        elif IN_DOCKER and mode == 'term':
+            logger.print_info("Docker detected: already using 'term' mode")
+        else:
+            logger.print_info(f"Not in Docker or already 'term' mode. IN_DOCKER={IN_DOCKER}, mode='{mode}'")
+        
+        logger.print_info(f"Final plotting mode selected: '{mode}'")
         
         # Route to the appropriate plotting function
         if mode == 'fastest':
