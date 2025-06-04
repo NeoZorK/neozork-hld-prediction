@@ -365,143 +365,44 @@ def auto_plot_from_dataframe(df, plot_title=None):
         print(f"Time range: {df.index[0]} to {df.index[-1]}" if isinstance(df.index, pd.DatetimeIndex) else f"Data points: {len(df)}")
         print("-" * 60)
 
-        # Identify column categories
-        ohlcv_cols = [col for col in df.columns if col in ['Open', 'High', 'Low', 'Close', 'Volume']]
-        time_cols = [col for col in df.columns if col.lower() in ['date', 'time', 'datetime', 'timestamp']]
+        # Exclude standard OHLCV and time-like columns
+        exclude_cols = {c.lower() for c in ['open', 'high', 'low', 'close', 'volume', 'timestamp', 'datetime', 'index', 'date', 'time']}
+        plot_cols = [col for col in df.columns if col.lower() not in exclude_cols and pd.api.types.is_numeric_dtype(df[col])]
 
-        # First plot OHLCV if available (standard price chart)
-        if all(col in df.columns for col in ['Open', 'High', 'Low', 'Close']):
-            plt.clear_data()
-            plt.plot(x_data, df['Close'].tolist(), label="Close", color="cyan+", marker="braille")
-            plt.plot(x_data, df['High'].tolist(), label="High", color="green+", marker="braille")
-            plt.plot(x_data, df['Low'].tolist(), label="Low", color="red+", marker="braille")
+        if not plot_cols:
+            logger.print_warning("No numeric columns to plot.")
+            return False
 
-            plt.title("Price Chart (OHLC)")
-            plt.xlabel("Time")
-            plt.ylabel("Price")
-            plt.xticks(x_data[::step], x_labels[::step])
-            print("\n📈 PRICE CHART")
-            plt.show()
-
-            # Plot volume separately if available
-            if 'Volume' in df.columns and df['Volume'].sum() > 0:
+        # Plot each numeric column separately
+        for col in plot_cols:
+            try:
                 plt.clear_data()
-                vol_data = df['Volume'].tolist()
-                plt.bar(x_data, vol_data, label="Volume", color="blue+")
-                plt.title("Volume")
+                print(f"\n📈 Plotting {col.upper()}")
+                data = df[col].tolist()
+
+                # Determine color based on column name
+                color = "white+"  # Default color
+                chart_type = 'line'  # Default to line chart
+
+                # Plot the data
+                plt.plot(x_data, data, label=col, color=color, marker="braille")
+
+                # Add zero line for reference if data crosses zero
+                if min(data) < 0 and max(data) > 0:
+                    plt.plot(x_data, [0] * len(x_data), label="Zero", color="gray")
+
+                plt.title(col)
                 plt.xlabel("Time")
-                plt.ylabel("Volume")
+                plt.ylabel("Value")
                 plt.xticks(x_data[::step], x_labels[::step])
-                print("\n📊 VOLUME")
                 plt.show()
-
-        # Now plot each non-OHLCV column separately
-        special_cols = set(ohlcv_cols + time_cols)
-        other_cols = [col for col in df.columns if col not in special_cols]
-
-        if other_cols:
-            print("\n📊 ADDITIONAL INDICATORS AND METRICS")
-            logger.print_info(f"Plotting {len(other_cols)} additional columns: {other_cols}")
-
-            plots_shown = 0
-            # Ensure important prediction columns are plotted first and separately
-            important_cols = ['predicted_high', 'predicted_low', 'pressure', 'pressure_vector']
-            priority_cols = [col for col in important_cols if col in other_cols]
-            remaining_cols = [col for col in other_cols if col not in important_cols]
-
-            # First plot Close with predicted_high and predicted_low on a separate chart
-            if 'predicted_high' in other_cols and 'predicted_low' in other_cols and 'Close' in df.columns:
-                plt.clear_data()
-                plt.plot(x_data, df['Close'].tolist(), label="Close", color="cyan+", marker="braille")
-                plt.plot(x_data, df['predicted_high'].tolist(), label="Predicted High", color="green+", marker="braille")
-                plt.plot(x_data, df['predicted_low'].tolist(), label="Predicted Low", color="red+", marker="braille")
-                plt.title("Close with Predictions")
-                plt.xlabel("Time")
-                plt.ylabel("Price")
-                plt.xticks(x_data[::step], x_labels[::step])
-                print("\n📈 CLOSE WITH PREDICTIONS")
-                plt.show()
-                plots_shown += 1
-
-                # We still want to plot each prediction separately too
-                # Do not remove these from priority_cols as they need to be plotted individually as well
-
-            # Now plot each priority column individually on its own chart
-            for col in priority_cols:
-                try:
-                    plt.clear_data()
-                    print(f"\n📈 Plotting {col.upper()}")
-                    data = df[col].tolist()
-
-                    # Determine color based on column name
-                    name_lower = col.lower()
-                    if 'high' in name_lower:
-                        color = "green+"
-                    elif 'low' in name_lower:
-                        color = "red+"
-                    elif 'pressure' in name_lower:
-                        color = "magenta+"
-                    elif 'vector' in name_lower:
-                        color = "yellow+"
-                    else:
-                        color = "white+"  # Default color
-
-                    chart_type = _determine_chart_type(df[col])
-                    if chart_type == 'bar':
-                        plt.bar(x_data, data, label=col, color=color)
-                    else:
-                        plt.plot(x_data, data, label=col, color=color, marker="braille")
-
-                    # Add zero line for reference if data crosses zero
-                    if min(data) < 0 and max(data) > 0:
-                        plt.plot(x_data, [0] * len(x_data), label="Zero", color="gray")
-
-                    plt.title(col)
-                    plt.xlabel("Time")
-                    plt.ylabel("Value")
-                    plt.xticks(x_data[::step], x_labels[::step])
-                    plt.show()
-                    plots_shown += 1
-                    logger.print_debug(f"Successfully plotted priority column: {col}")
-                except Exception as e:
-                    logger.print_warning(f"Error plotting priority column '{col}': {str(e)}")
-                    logger.print_warning(f"Data sample for '{col}': {df[col].head(3).tolist()}")
-
-            # Then plot remaining columns
-            for col in remaining_cols:
-                try:
-                    if _plot_series_in_terminal(df[col], x_data, x_labels, step):
-                        plots_shown += 1
-                        logger.print_debug(f"Successfully plotted: {col}")
-                except Exception as e:
-                    logger.print_warning(f"Error plotting column '{col}': {str(e)}")
-
-            print(f"\n✅ Displayed {plots_shown} additional charts")
+            except Exception as e:
+                logger.print_warning(f"Error plotting column '{col}': {str(e)}")
 
         return True
 
     except Exception as e:
         logger.print_error(f"Error in auto terminal plotting from DataFrame: {str(e)}")
         traceback.print_exc()
-
-        # Ultra-simple fallback
-        try:
-            plt.clear_data()
-            plt.theme("dark")
-            print("\n⚠️ Error occurred, showing simplified view")
-
-            if 'Close' in df.columns:
-                close_data = df['Close'].tolist()
-                plt.plot(range(len(close_data)), close_data, label="Close Price", color="cyan+")
-                plt.title(f"Simplified Price Chart")
-                plt.xlabel("Time Points")
-                plt.ylabel("Price")
-                plt.show()
-                return True
-            else:
-                logger.print_error("Cannot display simplified view - no Close column found")
-        except Exception as fallback_e:
-            logger.print_error(f"Even fallback plotting failed: {str(fallback_e)}")
-
         return False
 
