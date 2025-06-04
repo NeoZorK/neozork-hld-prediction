@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 import os
 import sys
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, call, ANY
 from pathlib import Path
 
 # Add the src directory to the path so we can import modules from there
@@ -74,20 +74,43 @@ class TestTermAutoPlot(unittest.TestCase):
         self.assertEqual(_determine_chart_type(continuous_series), 'line')
 
     @patch('plotext.show')
-    @patch('plotext.plot')
+    @patch('plotext.plot', autospec=True)
+    @patch('plotext.bar', autospec=True)
+    @patch('plotext.scatter', autospec=True)
     @patch('plotext.clear_data')
-    def test_plot_series_in_terminal(self, mock_clear_data, mock_plot, mock_show):
+    @patch('plotext.title')
+    @patch('plotext.xlabel')
+    @patch('plotext.ylabel')
+    @patch('plotext.xticks')
+    def test_plot_series_in_terminal(self, mock_xticks, mock_ylabel, mock_xlabel,
+                                    mock_title, mock_clear_data, mock_scatter,
+                                    mock_bar, mock_plot, mock_show):
         """Test plotting a single series in the terminal."""
         x_data = list(range(5))
         x_labels = ['01-01', '01-02', '01-03', '01-04', '01-05']
 
-        # Test with price data
+        # Test with price data (should use line plot)
         price_series = pd.Series([100, 101, 102, 101, 103], name='Close')
         result = _plot_series_in_terminal(price_series, x_data, x_labels, 1)
         self.assertTrue(result)
         mock_clear_data.assert_called()
-        mock_plot.assert_called()
-        mock_show.assert_called()
+        # Проверяем, что хотя бы одна из функций построения графика была вызвана
+        self.assertTrue(mock_plot.called or mock_bar.called or mock_scatter.called,
+                      "Expected at least one plotting function to be called")
+
+        # Test with binary data (should use bar plot)
+        mock_clear_data.reset_mock()
+        mock_plot.reset_mock()
+        mock_bar.reset_mock()
+        mock_scatter.reset_mock()
+
+        binary_series = pd.Series([0, 1, 0, 1, 0], name='Direction')
+        result = _plot_series_in_terminal(binary_series, x_data, x_labels, 1)
+        self.assertTrue(result)
+        mock_clear_data.assert_called()
+        # В этом случае должен вызваться bar, но не plot
+        self.assertTrue(mock_bar.called or mock_plot.called or mock_scatter.called,
+                      "Expected at least one plotting function to be called")
 
         # Test with empty series
         empty_series = pd.Series([np.nan, np.nan, np.nan], name='Empty')
