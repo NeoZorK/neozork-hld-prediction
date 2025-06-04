@@ -30,23 +30,23 @@ def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str 
 
     # Main candlestick panel
     if all(col in df.columns for col in ['Open', 'High', 'Low', 'Close']):
-        x = df.index.astype(str).tolist()
+        # plotext expects lists, not Series
         opens = df['Open'].tolist()
         highs = df['High'].tolist()
         lows = df['Low'].tolist()
         closes = df['Close'].tolist()
-        plt.candlestick(x, opens, highs, lows, closes, label="OHLC")
+        plt.candlestick(opens, highs, lows, closes, label="OHLC")
     else:
         logger.print_warning("Missing OHLC columns for candlestick plot. Skipping main panel.")
 
     # Add volume as bar chart if present
     if 'Volume' in df.columns:
-        plt.bar(x, df['Volume'].tolist(), label="Volume", color="cyan")
+        plt.bar(df.index.astype(str).tolist(), df['Volume'].tolist(), label="Volume", color="cyan")
 
     # Add additional indicator panels if present
     for col, color in zip(['PV', 'HL', 'Pressure', 'RSI', 'MA'], ['orange', 'brown', 'blue', 'magenta', 'green']):
         if col in df.columns:
-            plt.plot(x, df[col].tolist(), label=col, color=color)
+            plt.plot(df.index.astype(str).tolist(), df[col].tolist(), label=col, color=color)
 
     plt.title(title)
     plt.show()
