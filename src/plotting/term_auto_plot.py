@@ -17,8 +17,8 @@ def set_terminal_chart_style(title="Chart"):
     Args:
         title: Title of the chart
     """
-    plt.canvas_color("dark_gray")        # Dark gray background for better contrast
-    plt.axes_color("dark_gray")          # Dark gray axes background as requested
+    plt.canvas_color("black")        # Black background for better contrast
+    plt.axes_color("black")          # Black axes background as requested
     plt.ticks_color("yellow")        # Yellow tick marks for better visibility
     # Grid removed as requested
     plt.title(title)
@@ -51,25 +51,17 @@ def get_random_color():
     ]
     return random.choice(available_colors)
 
-# Helper function to generate random markers
-def get_random_marker():
+# Helper function to generate consistent beautiful marker
+def get_beautiful_marker():
     """
-    Generate a random marker for terminal plotting.
-    Focus on aesthetically pleasing markers.
+    Generate a consistent beautiful marker for terminal plotting.
+    Uses circle marker for clean and elegant appearance.
 
     Returns:
-        A random marker from selected attractive plotext markers
+        A beautiful consistent marker for all terminal charts
     """
-    # List of aesthetically pleasing plotext markers
-    attractive_markers = [
-        "dot",      # Simple dot - clean and minimalistic
-        "circle",   # Circle - classic and clear
-        "square",   # Square - distinct and precise
-        "cross",    # Cross - clear intersection
-        "plus",     # Plus - clean and distinct
-        "star"      # Star - decorative and eye-catching
-    ]
-    return random.choice(attractive_markers)
+    # Use circle as the most beautiful and universally readable marker
+    return "circle"
 
 def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto Terminal Plot"):
     """
@@ -183,8 +175,8 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 print(f"⚠️  No valid data points for {col}")
                 continue
                 
-            # Use random color for each column
-            plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_random_marker(), color=get_random_color())
+            # Use consistent beautiful marker for each column
+            plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_beautiful_marker(), color=get_random_color())
             plt.xlabel("Time")
             plt.ylabel("Value")
             plt.show()
@@ -215,7 +207,7 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 
             # Use a unique color for each column based on its index or hash
             color = rainbow_colors[idx % len(rainbow_colors)] if idx < len(rainbow_colors) else rainbow_colors[hash(col) % len(rainbow_colors)]
-            plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_random_marker(), color=color)
+            plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_beautiful_marker(), color=color)
             plt.xlabel("Time")
             plt.ylabel("Value")
             plt.show()
@@ -329,7 +321,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             continue
 
         # Use random color for each indicator
-        plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_random_marker(), color=get_random_color())
+        plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_beautiful_marker(), color=get_random_color())
         plt.xlabel("Time")
         plt.ylabel("Value")
         plt.show()
