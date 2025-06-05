@@ -154,10 +154,23 @@ def _plot_predicted_prices(df: pd.DataFrame, x_data: list, x_labels: list, step:
     if rule is None or (hasattr(rule, 'name') and rule.name == 'OHLCV'):
         return
 
+    # Enhanced detection for PHLD-specific columns
+    phld_cols = []
+    if hasattr(rule, 'name') and rule.name == 'Predict_High_Low_Direction':
+        # PHLD-specific columns to look for
+        phld_cols = [col for col in df.columns if col.lower() in [
+            'pprice1', 'pprice2', 'pcolor1', 'pcolor2', 'diff',
+            'predicted_high', 'predicted_low', 'direction'
+        ]]
+
     predicted_cols = [col for col in df.columns if 'predicted' in col.lower() or 'pprice' in col.lower()]
     predicted_cols = [col for col in predicted_cols if not df[col].isna().all()]
     
-    if predicted_cols:
+    # Combine PHLD-specific and general prediction columns
+    all_pred_cols = list(set(predicted_cols + phld_cols))
+    all_pred_cols = [col for col in all_pred_cols if col in df.columns and not df[col].isna().all()]
+
+    if all_pred_cols:
         plt.clear_data()
         print("\n🎯 PREDICTED PRICES")
         
@@ -167,7 +180,7 @@ def _plot_predicted_prices(df: pd.DataFrame, x_data: list, x_labels: list, step:
 
         # Plot predicted prices with distinct colors
         colors = ['bright_green', 'bright_red', 'bright_yellow', 'bright_magenta', 'bright_white']
-        for i, col in enumerate(predicted_cols[:5]):
+        for i, col in enumerate(all_pred_cols[:5]):
             color = colors[i % len(colors)]
             data = df[col].tolist()
             plt.plot(x_data, data, label=col, color=color)
@@ -194,6 +207,7 @@ def _plot_trading_signals(df: pd.DataFrame, x_data: list, x_labels: list, step: 
     if rule is None or (hasattr(rule, 'name') and rule.name == 'OHLCV'):
         return
 
+    # Enhanced detection for PHLD-specific direction signals
     signal_cols = [col for col in df.columns if col.lower() in ['direction', 'signal', 'buy_signal', 'sell_signal']]
     signal_cols = [col for col in signal_cols if not df[col].isna().all()]
     
@@ -221,6 +235,27 @@ def _plot_trading_signals(df: pd.DataFrame, x_data: list, x_labels: list, step: 
         plt.xticks(x_data[::step], x_labels[::step])
         plt.show()
 
+    # For PHLD specifically, plot additional fields not captured in other panels
+    if hasattr(rule, 'name') and rule.name == 'Predict_High_Low_Direction':
+        additional_cols = [col for col in df.columns if col.lower() in ['diff', 'pcolor1', 'pcolor2']]
+        additional_cols = [col for col in additional_cols if not df[col].isna().all()]
+
+        if additional_cols:
+            plt.clear_data()
+            print("\n📊 PHLD ADDITIONAL INDICATORS")
+
+            colors = ['bright_yellow', 'bright_cyan', 'bright_magenta']
+            for i, col in enumerate(additional_cols):
+                color = colors[i % len(colors)]
+                data = df[col].tolist()
+                plt.plot(x_data, data, label=col, color=color, marker="braille")
+
+            plt.title("PHLD Additional Indicators")
+            plt.xlabel("Time")
+            plt.ylabel("Value")
+            plt.xticks(x_data[::step], x_labels[::step])
+            plt.show()
+
 
 def _calculate_simple_indicators(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -237,6 +272,174 @@ def _calculate_simple_indicators(df: pd.DataFrame) -> pd.DataFrame:
     return df.copy()
 
 
+def plot_phld_indicator_term(df: pd.DataFrame, x_data: list, x_labels: list, step: int, title: str = "PHLD Indicator"):
+    """
+    Plot PHLD (Predict High Low Direction) indicator in terminal mode.
+    Creates separate panels for different components of the PHLD indicator.
+
+    Args:
+        df: DataFrame with PHLD indicator data
+        x_data: list of x positions
+        x_labels: list of x-axis labels
+        step: step size for x-ticks
+        title: Title for the overall plot
+    """
+    if df is None or df.empty:
+        print("No data to plot for PHLD indicator.")
+        return
+
+    print(f"\n{title}")
+    print("=" * 60)
+
+    # 1. Plot basic OHLC data for reference
+    plt.clear_data()
+    plt.canvas_color('black')
+    plt.axes_color('black')
+    plt.ticks_color('yellow')
+
+    if all(col in df.columns for col in ['Open', 'High', 'Low', 'Close']):
+        # Use consistent color mapping
+        plt.plot(x_data, df['Open'].tolist(), label="Open", color="bright_magenta")
+        plt.plot(x_data, df['High'].tolist(), label="High", color="bright_cyan")
+        plt.plot(x_data, df['Low'].tolist(), label="Low", color="bright_red")
+        plt.plot(x_data, df['Close'].tolist(), label="Close", color="bright_blue")
+        print("\n📈 PRICE CHART")
+    else:
+        # Fallback to Close price if available
+        if 'Close' in df.columns:
+            plt.plot(x_data, df['Close'].tolist(), label="Close", color="bright_blue")
+            print("\n📈 CLOSE PRICE")
+        else:
+            print("\n⚠️ No price data available")
+
+    plt.title("Price Movement")
+    plt.xlabel("Time")
+    plt.ylabel("Price")
+    plt.xticks(x_data[::step], x_labels[::step])
+    plt.show()
+
+    # 2. Plot Volume if available
+    if 'Volume' in df.columns and df['Volume'].sum() > 0:
+        plt.clear_data()
+        vol_data = df['Volume'].tolist()
+        plt.bar(x_data, vol_data, label="Volume", color="blue+")
+        plt.title("Volume")
+        plt.xlabel("Time")
+        plt.ylabel("Volume")
+        plt.xticks(x_data[::step], x_labels[::step])
+        print("\n📊 VOLUME CHART")
+        plt.show()
+
+    # 3. Plot PHLD-specific predicted price levels
+    price_cols = [col for col in df.columns if col.lower() in ['pprice1', 'pprice2', 'predicted_high', 'predicted_low']]
+    price_cols = [col for col in price_cols if not df[col].isna().all()]
+
+    if price_cols:
+        plt.clear_data()
+        print("\n🎯 PHLD PREDICTED PRICES")
+
+        # First plot Close price for reference
+        if 'Close' in df.columns:
+            plt.plot(x_data, df['Close'].tolist(), label="Close Price", color="bright_blue")
+
+        # Plot predicted price levels
+        colors = ['bright_green', 'bright_red', 'bright_yellow', 'bright_magenta']
+        for i, col in enumerate(price_cols):
+            color = colors[i % len(colors)]
+            data = df[col].tolist()
+            plt.plot(x_data, data, label=col, color=color)
+
+        plt.title("PHLD Predicted Prices")
+        plt.xlabel("Time")
+        plt.ylabel("Price")
+        plt.xticks(x_data[::step], x_labels[::step])
+        plt.show()
+
+    # 4. Plot Direction signals
+    if 'Direction' in df.columns and not df['Direction'].isna().all():
+        plt.clear_data()
+        print("\n🚦 PHLD TRADING SIGNALS")
+
+        direction_data = df['Direction'].tolist()
+
+        # Direction: 1=Buy, -1/2=Sell, 0=Hold
+        buy_points = [1 if val == 1 else 0 for val in direction_data]
+        sell_points = [1 if val in [-1, 2] else 0 for val in direction_data]
+
+        plt.bar(x_data, buy_points, label="Buy Signal", color="bright_green")
+        plt.bar(x_data, [-val for val in sell_points], label="Sell Signal", color="bright_red")
+
+        plt.title("PHLD Direction Signals")
+        plt.xlabel("Time")
+        plt.ylabel("Signal")
+        plt.xticks(x_data[::step], x_labels[::step])
+        plt.show()
+
+    # 5. Plot other PHLD-specific indicators (PColor1, PColor2, Diff)
+    additional_cols = [col for col in df.columns if col.lower() in ['pcolor1', 'pcolor2', 'diff']]
+    additional_cols = [col for col in additional_cols if not df[col].isna().all()]
+
+    if additional_cols:
+        plt.clear_data()
+        print("\n📊 PHLD ADDITIONAL INDICATORS")
+
+        colors = ['bright_yellow', 'bright_cyan', 'bright_magenta']
+        for i, col in enumerate(additional_cols):
+            color = colors[i % len(colors)]
+            data = df[col].tolist()
+            plt.plot(x_data, data, label=col, color=color, marker="braille")
+
+        plt.title("PHLD Additional Indicators")
+        plt.xlabel("Time")
+        plt.ylabel("Value")
+        plt.xticks(x_data[::step], x_labels[::step])
+        plt.show()
+
+    # 6. Plot core calculation components (HL, Pressure, PV)
+    core_cols = [col for col in df.columns if col.lower() in ['hl', 'pressure', 'pv']]
+    core_cols = [col for col in core_cols if not df[col].isna().all()]
+
+    if core_cols:
+        plt.clear_data()
+        print("\n🔧 PHLD CORE COMPONENTS")
+
+        colors = {'HL': 'bright_yellow', 'Pressure': 'bright_magenta', 'PV': 'bright_cyan'}
+        for col in core_cols:
+            color = colors.get(col, 'white')
+            data = df[col].tolist()
+
+            # Add zero reference line for these metrics
+            plt.plot(x_data, [0] * len(x_data), label="Zero Line", color="gray")
+            plt.plot(x_data, data, label=col, color=color)
+
+        plt.title("PHLD Core Components")
+        plt.xlabel("Time")
+        plt.ylabel("Value")
+        plt.xticks(x_data[::step], x_labels[::step])
+        plt.show()
+
+    # 7. Print summary information
+    print("\n📋 PHLD INDICATOR SUMMARY")
+    print("-" * 30)
+    print(f"Data points: {len(df)}")
+
+    if 'Close' in df.columns:
+        close_prices = df['Close']
+        print(f"Price range: ${close_prices.min():.2f} - ${close_prices.max():.2f}")
+
+    if 'Direction' in df.columns:
+        buy_signals = (df['Direction'] == 1).sum()
+        sell_signals = ((df['Direction'] == -1) | (df['Direction'] == 2)).sum()
+        print(f"Buy signals: {buy_signals}, Sell signals: {sell_signals}")
+
+    all_phld_columns = price_cols + additional_cols + core_cols
+    if 'Direction' in df.columns:
+        all_phld_columns.append('Direction')
+    if all_phld_columns:
+        print(f"PHLD components: {', '.join(all_phld_columns)}")
+
+
+# Update the main plotting function to use the specialized PHLD function when appropriate
 def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str = "Indicator Results"):
     """
     Plots OHLCV and indicators in the terminal using plotext.
@@ -264,14 +467,26 @@ def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str 
         else:
             x_labels = [f"T{i}" for i in x_data]
 
+        # Set readable x-axis labels
+        step = max(1, len(x_labels) // 8)
+
+        # Special case for PHLD indicator
+        if hasattr(rule, 'name') and rule.name == 'Predict_High_Low_Direction':
+            plot_phld_indicator_term(df, x_data, x_labels, step, title)
+            return
+        elif isinstance(rule, str) and rule.upper() == 'PHLD':
+            plot_phld_indicator_term(df, x_data, x_labels, step, title)
+            return
+
+        # Standard plotting for other rules
         print(f"\n{title}")
         print("=" * 60)
         
         # Plot 1: OHLC Price Chart
         plt.clear_data()
         plt.canvas_color('black')
-        plt.axes_color('black')  # Changed from 'white' to 'black' for better visibility
-        plt.ticks_color('yellow')  # Changed from 'white' to 'yellow' for better visibility on dark terminals
+        plt.axes_color('black')
+        plt.ticks_color('yellow')
 
         # Plot OHLC as simple line charts (avoid candlestick issues)
         if all(col in df.columns for col in ['Open', 'High', 'Low', 'Close']):
@@ -295,11 +510,7 @@ def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str 
         plt.title("Price Movement")
         plt.xlabel("Time")
         plt.ylabel("Price")
-        
-        # Set readable x-axis labels
-        step = max(1, len(x_labels) // 8)
         plt.xticks(x_data[::step], x_labels[::step])
-        
         plt.show()
         
         # Plot 2: Volume Chart (if available)
@@ -354,8 +565,8 @@ def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str 
         try:
             plt.clear_data()
             plt.canvas_color('black')
-            plt.axes_color('black')  # Changed from 'white' to 'black' for better visibility
-            plt.ticks_color('yellow')  # Changed from 'white' to 'yellow' for better visibility
+            plt.axes_color('black')
+            plt.ticks_color('yellow')
             if 'Close' in df.columns:
                 close_data = df['Close'].tolist()
                 plt.plot(range(len(close_data)), close_data, label="Close Price", color="bright_blue")
