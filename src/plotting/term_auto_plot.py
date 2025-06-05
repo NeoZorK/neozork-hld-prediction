@@ -8,6 +8,21 @@ import pandas as pd
 import plotext as plt
 import os
 
+# Helper function to set consistent chart styling
+def set_terminal_chart_style(title="Chart"):
+    """
+    Apply consistent styling to terminal charts for better visibility.
+
+    Args:
+        title: Title of the chart
+    """
+    plt.canvas_color("black")        # Black background for better contrast
+    plt.axes_color("bright_yellow")  # Bright yellow axes for better visibility
+    plt.ticks_color("bright_cyan")   # Bright cyan tick marks for better visibility
+    plt.grid(True)                   # Add grid for better orientation
+    plt.title(title)
+
+
 def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto Terminal Plot"):
     """
     Plot data from a parquet file in the terminal based on the specified rule.
@@ -48,15 +63,37 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
     else:
         x_data = list(range(len(df)))
 
+    # Define color palette for all charts
+    colors = ["bright_yellow", "bright_green", "bright_red", "bright_cyan",
+              "bright_magenta", "bright_blue", "bright_white", "yellow",
+              "green", "red", "cyan", "magenta", "blue"]
+
     # Plot OHLC data
     plt.clear_data()
     print("\n📈 OHLC Chart")
-    plt.canvas_color("black")  # Set the background color to black for better contrast
-    plt.axes_color("white")    # Set axes color to white
-    plt.ticks_color("white")   # Set tick marks color to white
+    set_terminal_chart_style("OHLC Chart")
+
+    # Use different colors for each OHLC component with maximum contrast
+    ohlc_colors = {
+        "open": "bright_green",   # Bright green for open price
+        "high": "bright_cyan",    # Bright cyan for high price
+        "low": "bright_red",      # Bright red for low price
+        "close": "bright_yellow"  # Bright yellow for close price
+    }
+
+    # Use thicker lines and different markers for better distinction
+    markers = {
+        "open": "hd",     # Horizontal dash marker for open
+        "high": "braille", # Braille marker for high
+        "low": "braille",  # Braille marker for low
+        "close": "sd"     # Small dot marker for close
+    }
+
     for col in ohlc_cols:
-        plt.plot(x_data, df[col].tolist(), label=col, marker="braille", color="cyan")
-    plt.title("OHLC")
+        col_lower = col.lower()
+        color = ohlc_colors.get(col_lower, "bright_white")  # Default to bright white if not found
+        marker = markers.get(col_lower, "braille")          # Default to braille if not found
+        plt.plot(x_data, df[col].tolist(), label=col, marker=marker, color=color)
     plt.xlabel("Time")
     plt.ylabel("Price")
     plt.show()
@@ -65,20 +102,14 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
     if volume_col:
         plt.clear_data()
         print("\n📊 Volume Chart")
-        plt.canvas_color("black")  # Set the background color to black for better contrast
-        plt.axes_color("white")    # Set axes color to white
-        plt.ticks_color("white")   # Set tick marks color to white
-        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="magenta")
-        plt.title("Volume")
+        set_terminal_chart_style("Volume Chart")
+        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="bright_magenta")
         plt.xlabel("Time")
         plt.ylabel("Volume")
         plt.show()
 
     # Plot indicators based on the rule
     if rule.upper() == "AUTO":
-        # Define unique colors for different plots
-        colors = ["yellow", "green", "red", "cyan", "magenta", "blue", "white"]
-
         for col in indicator_cols:
             # Skip columns that are all NaN or empty
             if df[col].isna().all() or df[col].empty:
@@ -87,10 +118,7 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 
             plt.clear_data()
             print(f"\n📈 Indicator: {col}")
-            plt.canvas_color("black")    # Black background for better contrast
-            plt.axes_color("yellow")     # Yellow axes for better visibility
-            plt.ticks_color("cyan")      # Cyan tick marks for better visibility
-            plt.label_color("magenta")   # Magenta labels for better visibility
+            set_terminal_chart_style(f"Indicator: {col}")
 
             # Filter out NaN values for plotting
             valid_mask = ~df[col].isna()
@@ -106,17 +134,12 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 continue
                 
             plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=colors[hash(col) % len(colors)])
-            plt.title(col)
             plt.xlabel("Time")
             plt.ylabel("Value")
             plt.show()
     elif rule.upper() in ["PHLD", "PV", "SR"]:
-        # Define unique colors for different plots if not defined earlier
-        if 'colors' not in locals():
-            colors = ["yellow", "green", "red", "cyan", "magenta", "blue", "white"]
-
         relevant_cols = [col for col in indicator_cols if rule.lower() in col.lower()]
-        for col in relevant_cols:
+        for idx, col in enumerate(relevant_cols):
             # Skip columns that are all NaN or empty
             if df[col].isna().all() or df[col].empty:
                 print(f"\n⚠️  Skipping indicator '{col}' - no valid data")
@@ -124,10 +147,7 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 
             plt.clear_data()
             print(f"\n📈 Rule {rule}: {col}")
-            plt.canvas_color("black")     # Black background for better contrast
-            plt.axes_color("yellow")      # Yellow axes for better visibility
-            plt.ticks_color("cyan")       # Cyan tick marks for better visibility
-            plt.label_color("magenta")    # Magenta labels for better visibility
+            set_terminal_chart_style(f"Rule {rule}: {col}")
 
             # Filter out NaN values for plotting
             valid_mask = ~df[col].isna()
@@ -142,8 +162,9 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 print(f"⚠️  No valid data points for {col}")
                 continue
                 
-            plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille")
-            plt.title(f"{rule} - {col}")
+            # Use a unique color for each column based on its index or hash
+            color = colors[idx % len(colors)] if idx < len(colors) else colors[hash(col) % len(colors)]
+            plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=color)
             plt.xlabel("Time")
             plt.ylabel("Value")
             plt.show()
@@ -165,8 +186,10 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     # Configure plotext theme for better contrast in terminal
     plt.theme("dark")  # Use dark theme for better visibility in terminal
 
-    # Define unique colors for different plots
-    colors = ["yellow", "green", "red", "cyan", "magenta", "blue", "white"]
+    # Define color palette for all charts - using bright colors for better visibility
+    colors = ["bright_yellow", "bright_green", "bright_red", "bright_cyan",
+              "bright_magenta", "bright_blue", "bright_white", "yellow",
+              "green", "red", "cyan", "magenta", "blue"]
 
     # Print the custom title
     print(f"\n📊 {plot_title}")
@@ -188,33 +211,48 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         x_data = list(range(len(df)))
 
     # Plot OHLC data
-    plt.clear_data()
-    print("\n📈 OHLC Chart")
-    plt.canvas_color("black")  # Set the background color to black for better contrast
-    plt.axes_color("white")    # Set axes color to white
-    plt.ticks_color("white")   # Set tick marks color to white
-    for col in ohlc_cols:
-        plt.plot(x_data, df[col].tolist(), label=col, marker="braille", color="cyan")
-    plt.title("OHLC")
-    plt.xlabel("Time")
-    plt.ylabel("Price")
-    plt.show()
+    if ohlc_cols:
+        plt.clear_data()
+        print("\n📈 OHLC Chart")
+        set_terminal_chart_style("OHLC Chart")
+
+        # Use different colors for each OHLC component with maximum contrast
+        ohlc_colors = {
+            "open": "bright_green",   # Bright green for open price
+            "high": "bright_cyan",    # Bright cyan for high price
+            "low": "bright_red",      # Bright red for low price
+            "close": "bright_yellow"  # Bright yellow for close price
+        }
+
+        # Use different markers for better distinction
+        markers = {
+            "open": "hd",      # Horizontal dash marker for open
+            "high": "braille", # Braille marker for high
+            "low": "braille",  # Braille marker for low
+            "close": "sd"      # Small dot marker for close
+        }
+
+        for col in ohlc_cols:
+            col_lower = col.lower()
+            color = ohlc_colors.get(col_lower, "bright_white")  # Default to bright white if not found
+            marker = markers.get(col_lower, "braille")          # Default to braille if not found
+            plt.plot(x_data, df[col].tolist(), label=col, marker=marker, color=color)
+        plt.xlabel("Time")
+        plt.ylabel("Price")
+        plt.show()
 
     # Plot Volume
     if volume_col:
         plt.clear_data()
         print("\n📊 Volume Chart")
-        plt.canvas_color("black")  # Set the background color to black for better contrast
-        plt.axes_color("white")    # Set axes color to white
-        plt.ticks_color("white")   # Set tick marks color to white
-        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="magenta")
-        plt.title("Volume")
+        set_terminal_chart_style("Volume Chart")
+        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="bright_magenta")
         plt.xlabel("Time")
         plt.ylabel("Volume")
         plt.show()
 
     # Plot indicators
-    for col in indicator_cols:
+    for idx, col in enumerate(indicator_cols):
         # Skip columns that are all NaN or empty
         if df[col].isna().all() or df[col].empty:
             print(f"\n⚠️  Skipping indicator '{col}' - no valid data")
@@ -222,9 +260,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             
         plt.clear_data()
         print(f"\n📈 Indicator: {col}")
-        plt.canvas_color("black")  # Set the background color to black for better contrast
-        plt.axes_color("white")    # Set axes color to white
-        plt.ticks_color("white")   # Set tick marks color to white
+        set_terminal_chart_style(f"Indicator: {col}")
 
         # Filter out NaN values for plotting
         valid_mask = ~df[col].isna()
@@ -238,9 +274,10 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         if len(y_data_filtered) == 0:
             print(f"⚠️  No valid data points for {col}")
             continue
-            
-        plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=colors[hash(col) % len(colors)])
-        plt.title(col)
+
+        # Use a unique color for each column based on its index or hash
+        color = colors[idx % len(colors)] if idx < len(colors) else colors[hash(col) % len(colors)]
+        plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=color)
         plt.xlabel("Time")
         plt.ylabel("Value")
         plt.show()
