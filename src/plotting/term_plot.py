@@ -355,7 +355,6 @@ def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str 
             plt.clear_data()
             plt.canvas_color('black')
             plt.axes_color('white')
-            plt.ticks_color('white')  # Fix legend text visibility on dark terminals
             if 'Close' in df.columns:
                 close_data = df['Close'].tolist()
                 plt.plot(range(len(close_data)), close_data, label="Close Price", color="bright_blue")
