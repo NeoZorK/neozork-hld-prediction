@@ -571,24 +571,38 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
                 # Make sure we have the required OHLCV columns
                 required_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
                 if all(col in result_df.columns for col in required_columns):
-                    # Calculate PHLD indicators
-                    calculated_df = calculate_indicator(result_df)
+                    # Create args object for calculate_indicator
+                    from types import SimpleNamespace
+                    calc_args = SimpleNamespace()
+                    calc_args.rule = 'PHLD'
+                    calc_args.mode = 'calculation'
+
+                    # Prepare input DataFrame for calculation - ensure column names match expected
+                    calc_df = result_df[required_columns].copy()
+                    # Ensure Volume column is named correctly if needed
+                    if 'Volume' in calc_df.columns and 'TickVolume' not in calc_df.columns:
+                        calc_df['TickVolume'] = calc_df['Volume']
+
+                    # Determine point size for calculation
+                    close_diff = calc_df['Close'].diff().abs()
+                    close_diff = close_diff[close_diff > 0]  # Filter out zeros
+                    point_size = close_diff.min() if not close_diff.empty else 0.0001
+                    logger.print_info(f"Using estimated point size for calculation: {point_size}")
+
+                    # Calculate PHLD indicators using existing function from indicator_calculation.py
+                    calculated_df, _ = calculate_indicator(calc_args, calc_df, point_size)
 
                     if calculated_df is not None:
                         print("\n🧮 SHOWING NEWLY CALCULATED PHLD INDICATORS")
-                        # Extract only the calculated indicators (with _calc suffix)
-                        calculated_cols = [col for col in calculated_df.columns if col.endswith('_calc')]
 
-                        # Create a clean DataFrame with OHLCV + calculated indicators
-                        clean_calc_df = result_df[required_columns].copy()
-                        for col in calculated_cols:
-                            # Remove _calc suffix for plotting
-                            clean_name = col.replace('_calc', '')
-                            clean_calc_df[clean_name] = calculated_df[col]
+                        # Add _calc suffix to calculated indicators for comparison
+                        for col in calculated_df.columns:
+                            if col not in required_columns and col not in ['TickVolume']:
+                                calculated_df[f"{col.lower()}_calc"] = calculated_df[col]
 
                         # Plot calculated indicators
                         plot_phld_indicator_terminal(
-                            clean_calc_df,
+                            calculated_df,
                             selected_rule,
                             f"{plot_title} - Calculated Indicators",
                             None
@@ -599,36 +613,48 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
                         print("\n📊 COMPARISON: PRE-CALCULATED VS NEWLY CALCULATED INDICATORS")
                         print("=" * 60)
 
+                        # Build mapping between column names from parquet and calculated DataFrames
+                        column_mapping = {
+                            'predicted_high': 'PPrice2',
+                            'predicted_low': 'PPrice1',
+                            'pressure': 'Pressure',
+                            'pressure_vector': 'PV',
+                            'direction': 'Direction',
+                            'hl': 'HL',
+                            'diff': 'Diff'
+                        }
+
                         # Find common indicator columns for comparison
                         common_indicators = []
-                        for col in phld_indicator_columns:
-                            col_lower = col.lower()
+                        for parquet_col, calc_col in column_mapping.items():
                             # Find match in result_df (original) columns
-                            original_col = next((c for c in result_df.columns if c.lower() == col_lower), None)
-                            # Find match in calculated_df columns (without _calc suffix)
-                            calc_col = next((c for c in calculated_df.columns if c.lower() == f"{col_lower}_calc"), None)
-
-                            if original_col is not None and calc_col is not None:
+                            original_col = next((c for c in result_df.columns if c.lower() == parquet_col.lower()), None)
+                            # Check if calculated column exists
+                            if original_col is not None and calc_col in calculated_df.columns:
                                 common_indicators.append((original_col, calc_col))
 
                         if common_indicators:
                             # Compare common indicators
                             for orig_col, calc_col in common_indicators:
-                                clean_calc_col = calc_col.replace('_calc', '')
                                 if pd.api.types.is_numeric_dtype(result_df[orig_col]) and pd.api.types.is_numeric_dtype(calculated_df[calc_col]):
                                     diff = result_df[orig_col] - calculated_df[calc_col]
                                     mae = abs(diff).mean()
                                     max_diff = abs(diff).max()
                                     match_pct = 100 - (abs(diff).mean() / abs(result_df[orig_col]).mean() * 100) if abs(result_df[orig_col]).mean() > 0 else 0
-                                    print(f"{orig_col} vs {clean_calc_col}:")
+                                    print(f"{orig_col} vs {calc_col}:")
                                     print(f"  MAE = {mae:.6f}, Max Diff = {max_diff:.6f}, Match = {match_pct:.2f}%")
                                 else:
                                     match_count = (result_df[orig_col] == calculated_df[calc_col]).sum()
                                     match_pct = (match_count / len(result_df)) * 100
-                                    print(f"{orig_col} vs {clean_calc_col}: {match_pct:.2f}% match ({match_count}/{len(result_df)} values)")
+                                    print(f"{orig_col} vs {calc_col}: {match_pct:.2f}% match ({match_count}/{len(result_df)} values)")
 
                             # Show the results with both original and calculated data for comparison
-                            plot_phld_indicator_terminal(result_df, selected_rule, plot_title, calculated_df)
+                            # Add a copy of the calculated data to the original DataFrame for visualization
+                            comparison_df = result_df.copy()
+                            for orig_col, calc_col in common_indicators:
+                                comparison_df[f"{calc_col}_calculated"] = calculated_df[calc_col]
+
+                            plot_phld_indicator_terminal(comparison_df, selected_rule, plot_title, None)
                         else:
                             logger.print_warning("No common indicators found for comparison")
                             # Just show the original indicators
