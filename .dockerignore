@@ -51,3 +51,6 @@ docs/
 # OS specific
 .DS_Store
 Thumbs.db
+
+# Exceptions - files that should not be ignored
+!/data/cache/csv_converted/CSVExport_GBPUSD_PERIOD_MN1.parquet
