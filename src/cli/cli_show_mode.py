@@ -270,7 +270,7 @@ def _should_draw_plot(args):
     Returns True if the draw flag is set and is one of supported modes or should use default.
     Always returns True for 'show' mode to enable automatic plotting.
     """
-    plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly", "seaborn", "sb"}
+    plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly", "seaborn", "sb", "term"}
 
     # If it's show mode, always allow plotting (will use default 'fastest' if not specified)
     if hasattr(args, 'mode') and args.mode == 'show':

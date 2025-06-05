@@ -15,6 +15,7 @@ from .plotly_plot import plot_indicator_results_plotly
 from ..common.constants import TradingRule
 from ..common import logger
 from .fast_plot import plot_indicator_results_fast # Import the fast plot function
+from .term_plot import plot_indicator_results_term # Import the terminal plot function
 
 # Check if running in Docker
 IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
@@ -109,6 +110,9 @@ def plot_indicator_results(df_results, rule, title="Indicator Results", mode="pl
                 logger.print_error(error_msg)
                 logger.print_warning("Falling back to 'plotly' mode due to error...")
                 return plot_indicator_results_plotly(df_results, rule, title)
+        elif mode == 'term':
+            logger.print_info(f"Using 'term' mode for terminal plotting...")
+            return plot_indicator_results_term(df_results, rule, title=title, data_source=data_source)
         else:
             logger.print_warning(f"Unknown plotting mode '{mode}', defaulting to 'plotly'...")
             return plot_indicator_results_plotly(df_results, rule, title)

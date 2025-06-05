@@ -5,6 +5,7 @@ from .mplfinance_plot import plot_indicator_results_mplfinance
 from .plotly_plot import plot_indicator_results_plotly
 from .fast_plot import plot_indicator_results_fast
 from .seaborn_plot import plot_indicator_results_seaborn
+from .term_plot import plot_indicator_results_term
 
 """
 Workflow step for generating plots based on indicator results using the selected library (Plotly, mplfinance, fast, seaborn).
@@ -475,6 +476,25 @@ def generate_plotly_plot(result_df, selected_rule, plot_title, data_info):
     handle_plotly_plot(fig, data_info, selected_rule)
 
 
+def generate_terminal_plot(result_df, selected_rule, plot_title, data_info):
+    """
+    Generates plot using terminal (text-based) output
+
+    Args:
+        result_df (pd.DataFrame): DataFrame with OHLCV and calculation results.
+        selected_rule (TradingRule | str): The selected trading rule.
+        plot_title (str): Title for the plot.
+        data_info (dict): Dictionary containing data source information.
+    """
+    logger.print_info("Generating plot using terminal (text-based)...")
+    plot_indicator_results_term(
+        result_df,
+        selected_rule,
+        plot_title
+    )
+    logger.print_success("Terminal plot generation finished (should display in terminal).")
+
+
 def generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point):
     """
     Generates and potentially saves/displays a plot based on calculation results
@@ -525,6 +545,8 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
             generate_seaborn_plot(result_df, selected_rule, plot_title)
         elif draw_mode == 'fast':
             generate_fast_plot(result_df, selected_rule, plot_title)
+        elif draw_mode == 'term':
+            generate_terminal_plot(result_df, selected_rule, plot_title, data_info)
         else:
             generate_plotly_plot(result_df, selected_rule, plot_title, data_info)
     except Exception as e:
