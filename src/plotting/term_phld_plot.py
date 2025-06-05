@@ -332,27 +332,33 @@ def compare_indicators(df: pd.DataFrame, calculated_df: Optional[pd.DataFrame] =
             print(f"{col}: {match_pct:.2f}% match")
 
 # Helper function to determine data source label
-def get_data_source_label(column_name: str, calculated_columns: List[str] = None) -> str:
+def get_data_source_label(column_name: str, calculated_columns: List[str] = None, force_loaded: bool = False) -> str:
     """
     Determine if a column is calculated or loaded from file.
 
     Args:
         column_name: Name of the column to check
         calculated_columns: List of columns known to be calculated
+        force_loaded: Force the label to show as loaded from file regardless of name
 
     Returns:
         String label indicating data source
     """
     calculated_columns = calculated_columns or []
 
-    # Check if column name contains any calculation indicator
-    calculation_indicators = ["predicted", "calc", "diff", "pressure", "pv", "hl", "signal",
-                             "direction", "pcolor", "pprice"]
+    # If force_loaded is True, always return "LOADED FROM FILE"
+    if force_loaded:
+        return "📁 [LOADED FROM FILE]"
 
     # Special case for OHLC columns
     if column_name.lower() in ["open", "high", "low", "close", "volume"]:
         return "📁 [LOADED FROM FILE]"
 
+    # Check if column name contains any calculation indicator
+    calculation_indicators = ["predicted", "calc", "diff", "pressure", "pv", "hl", "signal",
+                             "direction", "pcolor", "pprice"]
+
+    # Check if column is in calculated list or has a name pattern indicating calculation
     is_calculated = any(indicator in column_name.lower() for indicator in calculation_indicators)
     is_calculated = is_calculated or column_name in calculated_columns
 
@@ -476,19 +482,86 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
 
             # Display existing price prediction indicators
             if existing_groups['price_pred']:
-                # Get source label for existing predicted prices
+                # Get source label for existing predicted prices, force "LOADED FROM FILE"
                 for col in existing_groups['price_pred']:
-                    data_source = get_data_source_label(col)
+                    data_source = get_data_source_label(col, force_loaded=True)
                     print(f"\n🎯 EXISTING PREDICTED PRICES {data_source}")
-                plot_price_predictions(df, existing_groups['price_pred'], x_data, x_labels, step)
+
+                # Create temporary function to plot price predictions with correct label
+                def plot_loaded_price_predictions(df, columns, x_data, x_labels, step):
+                    if not columns:
+                        return
+
+                    setup_terminal_chart()
+                    # Force LOADED FROM FILE label
+                    data_source = "📁 [LOADED FROM FILE]"
+                    print(f"\n🎯 PREDICTED PRICES {data_source}")
+
+                    # First plot Close price for reference
+                    if 'Close' in df.columns:
+                        x_clean, y_clean, _ = clean_data_for_plotting(df, 'Close', x_data)
+                        if len(y_clean) > 0:
+                            plt.plot(x_clean, y_clean, label="Close Price", color="bright_blue")
+
+                    # Plot predicted price levels
+                    colors = ['bright_green', 'bright_red', 'bright_yellow', 'bright_magenta']
+                    for i, col in enumerate(columns):
+                        color = colors[i % len(colors)]
+                        x_clean, y_clean, num_removed = clean_data_for_plotting(df, col, x_data)
+
+                        if len(y_clean) == 0:
+                            print(f"⚠️ Skipping price column '{col}' - no valid data")
+                            continue
+
+                        plt.plot(x_clean, y_clean, label=col, color=color)
+
+                    plt.title(f"Predicted Prices {data_source}")
+                    plt.xlabel("Time")
+                    plt.ylabel("Price")
+                    plt.xticks(x_data[::step], x_labels[::step])
+                    plt.show()
+
+                # Use our modified function instead of the standard one
+                plot_loaded_price_predictions(df, existing_groups['price_pred'], x_data, x_labels, step)
 
             # Display existing direction indicators
             if existing_groups['direction']:
-                # Get source label for existing direction
+                # Get source label for existing direction, force "LOADED FROM FILE"
                 for col in existing_groups['direction']:
-                    data_source = get_data_source_label(col)
+                    data_source = get_data_source_label(col, force_loaded=True)
                     print(f"\n🚦 EXISTING DIRECTION {data_source}")
-                plot_direction_signals(df, x_data, x_labels, step)
+
+                # Create temporary function to plot direction signals with correct label
+                def plot_loaded_direction_signals(df, x_data, x_labels, step):
+                    if 'Direction' not in df.columns or df['Direction'].isna().all():
+                        return
+
+                    setup_terminal_chart()
+                    # Force LOADED FROM FILE label
+                    data_source = "📁 [LOADED FROM FILE]"
+                    print(f"\n🚦 TRADING SIGNALS {data_source}")
+
+                    x_clean, direction_data, _ = clean_data_for_plotting(df, 'Direction', x_data)
+
+                    if len(direction_data) == 0:
+                        print("⚠️ No valid direction data available")
+                        return
+
+                    # Direction: 1=Buy, -1/2=Sell, 0=Hold
+                    buy_points = [1 if val == 1 else 0 for val in direction_data]
+                    sell_points = [1 if val in [-1, 2] else 0 for val in direction_data]
+
+                    plt.bar(x_clean, buy_points, label="Buy Signal", color="bright_green")
+                    plt.bar(x_clean, [-val for val in sell_points], label="Sell Signal", color="bright_red")
+
+                    plt.title(f"Trading Signals {data_source}")
+                    plt.xlabel("Time")
+                    plt.ylabel("Signal")
+                    plt.xticks(x_data[::step], x_labels[::step])
+                    plt.show()
+
+                # Use our modified function instead of the standard one
+                plot_loaded_direction_signals(df, x_data, x_labels, step)
 
             # Display existing color indicators
             if existing_groups['colors']:
