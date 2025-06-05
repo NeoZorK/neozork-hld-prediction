@@ -220,14 +220,49 @@ def plot_direction_signals(df: pd.DataFrame, x_data: list, x_labels: list, step:
     buy_points = [1 if val == 1 else 0 for val in direction_data]
     sell_points = [1 if val in [-1, 2] else 0 for val in direction_data]
 
-    plt.bar(x_clean, buy_points, label="Buy Signal", color="bright_green")
-    plt.bar(x_clean, [-val for val in sell_points], label="Sell Signal", color="bright_red")
+    # Use more readable characters for signals instead of solid blocks
+    # Character options: ▲▼△▽◆◇●○☀☂★☆♠♥♦♣
+    plt.theme("clear")
+    plt.canvas_color("black")
+    plt.axes_color("black")
+    plt.ticks_color("yellow")
+
+    # Use line style with markers for better visibility
+    # Create x-positions for buy signals (only where buy_points is 1)
+    buy_x = [x_clean[i] for i in range(len(x_clean)) if buy_points[i] == 1]
+    buy_y = [1] * len(buy_x)
+
+    # Create x-positions for sell signals (only where sell_points is 1)
+    sell_x = [x_clean[i] for i in range(len(x_clean)) if sell_points[i] == 1]
+    sell_y = [-1] * len(sell_x)
+
+    # Plot Buy/Sell signals as points with custom markers for better visibility
+    if buy_x:
+        plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green", point_size=2)
+        plt.text(x=buy_x[0], y=1.1, s="▲ Buy Signals", color="bright_green")
+
+    if sell_x:
+        plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red", point_size=2)
+        plt.text(x=sell_x[0] if sell_x else x_clean[0], y=-1.1, s="▼ Sell Signals", color="bright_red")
+
+    # Add a zero line for reference
+    plt.plot(x_clean, [0] * len(x_clean), label="Neutral", color="gray", line_color="gray")
+
+    # Set custom y-ticks for clarity
+    plt.yticks([-1, 0, 1], ["Sell", "Hold", "Buy"])
 
     plt.title(f"Trading Signals {data_source}")
     plt.xlabel("Time")
     plt.ylabel("Signal")
     plt.xticks(x_data[::step], x_labels[::step])
     plt.show()
+
+    # Show signal summary (optional but helpful)
+    buy_count = sum(buy_points)
+    sell_count = sum(sell_points)
+    hold_count = len(direction_data) - buy_count - sell_count
+
+    print(f"Signal Summary: {buy_count} Buy signals, {sell_count} Sell signals, {hold_count} Hold signals")
 
 def plot_additional_indicators(df: pd.DataFrame, columns: List[str], x_data: list, x_labels: list, step: int, title: str) -> None:
     """
@@ -551,14 +586,48 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
                     buy_points = [1 if val == 1 else 0 for val in direction_data]
                     sell_points = [1 if val in [-1, 2] else 0 for val in direction_data]
 
-                    plt.bar(x_clean, buy_points, label="Buy Signal", color="bright_green")
-                    plt.bar(x_clean, [-val for val in sell_points], label="Sell Signal", color="bright_red")
+                    # Use more readable characters for signals instead of solid blocks
+                    plt.theme("clear")
+                    plt.canvas_color("black")
+                    plt.axes_color("black")
+                    plt.ticks_color("yellow")
+
+                    # Use line style with markers for better visibility
+                    # Create x-positions for buy signals (only where buy_points is 1)
+                    buy_x = [x_clean[i] for i in range(len(x_clean)) if buy_points[i] == 1]
+                    buy_y = [1] * len(buy_x)
+
+                    # Create x-positions for sell signals (only where sell_points is 1)
+                    sell_x = [x_clean[i] for i in range(len(x_clean)) if sell_points[i] == 1]
+                    sell_y = [-1] * len(sell_x)
+
+                    # Plot Buy/Sell signals as points with custom markers for better visibility
+                    if buy_x:
+                        plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green", point_size=2)
+                        plt.text(x=buy_x[0], y=1.1, s="▲ Buy Signals", color="bright_green")
+
+                    if sell_x:
+                        plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red", point_size=2)
+                        plt.text(x=sell_x[0] if sell_x else x_clean[0], y=-1.1, s="▼ Sell Signals", color="bright_red")
+
+                    # Add a zero line for reference
+                    plt.plot(x_clean, [0] * len(x_clean), label="Neutral", color="gray", line_color="gray")
+
+                    # Set custom y-ticks for clarity
+                    plt.yticks([-1, 0, 1], ["Sell", "Hold", "Buy"])
 
                     plt.title(f"Trading Signals {data_source}")
                     plt.xlabel("Time")
                     plt.ylabel("Signal")
                     plt.xticks(x_data[::step], x_labels[::step])
                     plt.show()
+
+                    # Show signal summary
+                    buy_count = sum(buy_points)
+                    sell_count = sum(sell_points)
+                    hold_count = len(direction_data) - buy_count - sell_count
+
+                    print(f"Signal Summary: {buy_count} Buy signals, {sell_count} Sell signals, {hold_count} Hold signals")
 
                 # Use our modified function instead of the standard one
                 plot_loaded_direction_signals(df, x_data, x_labels, step)
