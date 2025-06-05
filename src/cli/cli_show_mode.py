@@ -343,7 +343,8 @@ def handle_show_mode(args):
         # Special handling for PHLD rule to store original data for comparison
         elif args.rule.upper() == 'PHLD':
             args.compare_calculated = True  # Flag to indicate we want to compare calculated vs. original
-            print("PHLD mode with comparison of calculated vs. original indicators")
+            args.force_calculate = True  # Force calculation of indicators even if they exist in the file
+            print("PHLD mode with calculation and visualization of indicators")
 
     if not args.source or args.source == 'help':
         show_help()
@@ -596,60 +597,68 @@ def handle_show_mode(args):
                 print(f"Point size not found in filename, using default: {point_size}")
             if not hasattr(args, 'mode'):
                 args.mode = 'parquet'
-            result_df, selected_rule = calculate_indicator(args, df, point_size)
-            datetime_column = None
-            if isinstance(result_df.index, pd.DatetimeIndex):
-                datetime_column = result_df.index.name or 'datetime'
-            _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
-            print(f"\nIndicator '{selected_rule.name}' calculated and shown above.")
 
-            # Export indicator data to parquet if requested
-            if hasattr(args, 'export_parquet') and args.export_parquet:
-                print(f"Exporting indicator data to parquet file...")
-                data_info = {
-                    "ohlcv_df": df,
-                    "data_source_label": f"{found_files[0]['name']}",
-                    "rows_count": len(df),
-                    "columns_count": len(df.columns),
-                    "data_size_mb": found_files[0]['size_mb'],
-                    "first_date": found_files[0]['first_date'],
-                    "last_date": found_files[0]['last_date'],
-                    "parquet_cache_used": True,
-                    "parquet_cache_file": str(found_files[0]['path'])
-                }
-                export_info = export_indicator_to_parquet(result_df, data_info, selected_rule, args)
-                if export_info["success"]:
-                    print(f"Indicator data exported to: {export_info['output_file']}")
-                else:
-                    print(f"Failed to export indicator data: {export_info['error_message']}")
+            try:
+                # Calculate indicators
+                result_df, selected_rule = calculate_indicator(args, df, point_size)
+                datetime_column = None
+                if isinstance(result_df.index, pd.DatetimeIndex):
+                    datetime_column = result_df.index.name or 'datetime'
+                _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
+                print(f"\nIndicator '{selected_rule.name}' calculated successfully.")
 
-            # Draw plot after indicator calculation only if draw flag is set to supported mode
-            if _should_draw_plot(args):
-                print(f"\nDrawing plot after indicator calculation with method: '{args.draw}'...")
-                try:
-                    generate_plot = import_generate_plot()
-                    data_info = {
-                        "ohlcv_df": df,
-                        "data_source_label": f"{found_files[0]['name']}",
-                        "rows_count": len(df),
-                        "columns_count": len(df.columns),
-                        "data_size_mb": found_files[0]['size_mb'],
-                        "first_date": found_files[0]['first_date'],
-                        "last_date": found_files[0]['last_date'],
-                        "parquet_cache_used": True,
-                        "parquet_cache_file": str(found_files[0]['path'])
-                    }
-                    estimated_point = True
-                    generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
-                    print(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode after indicator calculation.")
-                except Exception as e:
-                    print(f"Error plotting after indicator calculation: {e}")
-                    traceback.print_exc()
-            return
-        except Exception as e:
-            print(f"Error calculating indicator: {e}")
-            traceback.print_exc()
-            return
+                # Draw plot after indicator calculation only if draw flag is set to supported mode
+                if _should_draw_plot(args):
+                    print(f"\nDrawing plot after indicator calculation with method: '{args.draw}'...")
+                    try:
+                        # For terminal mode with PHLD rule
+                        if args.draw == 'term' and args.rule.upper() == 'PHLD':
+                            if auto_plot_from_dataframe is not None:
+                                print(f"Using terminal auto plotting for '{found_files[0]['name']}' with PHLD rule...")
+                                plot_title = f"PHLD Terminal Plot: {found_files[0]['name']}"
+                                # Use the auto_plot_from_dataframe function for terminal plotting
+                                auto_plot_from_dataframe(result_df, plot_title)
+
+                                # Extract and plot specific indicators
+                                if 'PPrice1' in result_df.columns and 'PPrice2' in result_df.columns:
+                                    print("\n--- Support and Resistance Levels (PPrice1 and PPrice2) ---")
+                                    support_resistance_df = result_df[['Open', 'PPrice1', 'PPrice2']].tail(30)
+                                    auto_plot_from_dataframe(support_resistance_df, "Support and Resistance Levels")
+
+                                # Plot Direction indicator if available
+                                if 'Direction' in result_df.columns:
+                                    print("\n--- Direction Indicator ---")
+                                    direction_df = result_df[['Direction']].tail(30)
+                                    auto_plot_from_dataframe(direction_df, "Direction Indicator")
+
+                                print(f"Successfully plotted PHLD indicators from '{found_files[0]['name']}' using terminal mode.")
+                            else:
+                                print("Error: Terminal plotting functionality not available.")
+                        else:
+                            # Use the standard plotting for other modes
+                            generate_plot = import_generate_plot()
+                            data_info = {
+                                "ohlcv_df": df,
+                                "data_source_label": f"{found_files[0]['name']}",
+                                "rows_count": len(df),
+                                "columns_count": len(df.columns),
+                                "data_size_mb": found_files[0]['size_mb'],
+                                "first_date": found_files[0].get('first_date', None),
+                                "last_date": found_files[0].get('last_date', None),
+                                "parquet_cache_used": True,
+                                "parquet_cache_file": str(found_files[0]['path'])
+                            }
+                            estimated_point = True
+                            generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
+                            print(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode after indicator calculation.")
+                    except Exception as e:
+                        print(f"Error plotting after indicator calculation: {e}")
+                        traceback.print_exc()
+                return
+            except Exception as e:
+                print(f"Error calculating indicator: {e}")
+                traceback.print_exc()
+                return
 
     # Plot chart when one file found and no indicator calculation requested
     if len(found_files) > 1:
