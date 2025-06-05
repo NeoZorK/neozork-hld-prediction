@@ -536,8 +536,9 @@ def handle_show_mode(args):
                         elif draw_method == 'term' and auto_plot_from_dataframe is not None:
                             print(f"Using terminal auto plotting for '{found_files[0]['name']}'...")
                             plot_title = f"AUTO Terminal Plot: {found_files[0]['name']}"
+                            # Use the auto_plot_from_dataframe function which handles random colors
                             auto_plot_from_dataframe(df, plot_title)
-                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using terminal mode.")
+                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using terminal mode with unique colors for each indicator.")
                         else:
                             generate_plot = import_generate_plot()
                             data_info = {

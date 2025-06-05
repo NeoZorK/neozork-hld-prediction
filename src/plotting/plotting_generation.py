@@ -500,30 +500,26 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None):
     """
     logger.print_info("Generating plot using terminal mode (plotext)...")
 
-    # If selected_rule is AUTO, use auto_plot_from_parquet instead
-    if (hasattr(selected_rule, 'name') and selected_rule.name == 'AUTO') or \
-       (isinstance(selected_rule, str) and selected_rule.upper() == 'AUTO'):
-        logger.print_info("AUTO rule detected, using auto terminal plotting...")
+    # Check if selected_rule is AUTO
+    is_auto_rule = False
+    if hasattr(selected_rule, 'name') and selected_rule.name == 'AUTO':
+        is_auto_rule = True
+    elif isinstance(selected_rule, str) and selected_rule.upper() == 'AUTO':
+        is_auto_rule = True
+    elif selected_rule == 'Auto_Display_All':
+        is_auto_rule = True
 
-        # For AUTO rule, we should always use auto_plot_from_parquet with the DataFrame directly
-        # instead of trying to find a parquet file
-        logger.print_info("Using direct AUTO plotting mode with the provided DataFrame")
-        logger.print_debug(f"DataFrame columns: {result_df.columns.tolist() if result_df is not None else 'None'}")
-
-        # Check if 'pressure' and 'pressure_vector' are in the columns and log their presence
-        if result_df is not None:
-            non_standard_cols = []
-            for col in ['pressure', 'pressure_vector', 'predicted_high', 'predicted_low']:
-                if col in result_df.columns:
-                    logger.print_info(f"'{col}' column found in DataFrame")
-                    non_standard_cols.append(col)
-            
-            if non_standard_cols:
-                logger.print_info(f"Found {len(non_standard_cols)} non-standard fields for AUTO display: {non_standard_cols}")
-
-        # Call auto_plot directly with the DataFrame instead of the path
-        from src.plotting.term_auto_plot import auto_plot_from_dataframe
-        auto_plot_from_dataframe(result_df, plot_title)
+    # For AUTO rule, we should use auto_plot_from_dataframe which draws each indicator with different colors
+    if is_auto_rule:
+        logger.print_info("AUTO rule detected, using auto terminal plotting with unique colors for each indicator...")
+        try:
+            # Import here to avoid circular imports
+            from src.plotting.term_auto_plot import auto_plot_from_dataframe
+            auto_plot_from_dataframe(result_df, plot_title)
+            logger.print_success("Successfully plotted all indicators with unique colors in terminal mode.")
+        except ImportError:
+            logger.print_warning("Could not import auto_plot_from_dataframe, falling back to standard terminal plot.")
+            plot_indicator_results_term(result_df, selected_rule, plot_title)
         return
 
     # Default to standard terminal plot for non-AUTO rules
