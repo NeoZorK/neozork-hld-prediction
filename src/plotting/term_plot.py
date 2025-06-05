@@ -305,7 +305,7 @@ def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str 
         if 'Volume' in df.columns and df['Volume'].sum() > 0:
             plt.clear_data()
             vol_data = df['Volume'].tolist()
-            plt.bar(x_data, vol_data, label="Volume", color="blue")
+            plt.bar(x_data, vol_data, label="Volume", color="blue+")
             plt.title("Volume")
             plt.xlabel("Time")
             plt.ylabel("Volume")
