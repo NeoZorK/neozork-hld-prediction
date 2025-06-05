@@ -247,10 +247,12 @@ def plot_direction_signals(df: pd.DataFrame, x_data: list, x_labels: list, step:
 
     # Plot Buy/Sell signals as points with custom markers for better visibility
     if buy_x:
-        plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green", point_size=2)
+        # Use 's' parameter instead of 'point_size' for scatter points
+        plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green", s=2)
 
     if sell_x:
-        plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red", point_size=2)
+        # Use 's' parameter instead of 'point_size' for scatter points
+        plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red", s=2)
 
     # Add a zero line for reference
     plt.plot(x_clean, [0] * len(x_clean), label="Neutral", color="gray", line_color="gray")
@@ -603,10 +605,12 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
 
                     # Plot Buy/Sell signals as points with custom markers for better visibility
                     if buy_x:
-                        plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green", point_size=2)
+                        # Use 's' parameter instead of 'point_size' for scatter points
+                        plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green", s=2)
 
                     if sell_x:
-                        plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red", point_size=2)
+                        # Use 's' parameter instead of 'point_size' for scatter points
+                        plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red", s=2)
 
                     # Add a zero line for reference
                     plt.plot(x_clean, [0] * len(x_clean), label="Neutral", color="gray", line_color="gray")
