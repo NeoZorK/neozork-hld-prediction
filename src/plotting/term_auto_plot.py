@@ -393,29 +393,20 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             plt.ylabel("Volume")
             plt.show()
 
-    # Define colors and markers for separate indicator plots
-    # These colors are well-supported in terminal environments
-    basic_colors = [
-        "bright_red", "bright_green", "bright_yellow", "bright_blue",
-        "bright_magenta", "bright_cyan", "bright_white",
-        "red", "green", "yellow", "blue", "magenta", "cyan", "white"
-    ]
+    # Define colors for separate indicator plots
+    # Instead of fixed colors, use get_random_color() for each indicator
 
-    # Define diverse markers
-    # Use only braille markers for all plots for consistency
-    markers = ["braille"]
+    # Define marker - always use braille for consistency
+    marker = "braille"
 
-    # For each indicator, create a standalone plot with its own color
+    # For each indicator, create a standalone plot with its own random color
     for idx, col in enumerate(indicator_cols):
         # Force a clean slate for each new plot to avoid interference
         plt.clear_figure()
         plt.clear_data()
 
-        # Explicitly select a color for this indicator from basic_colors
-        color_idx = idx % len(basic_colors)
-        color = basic_colors[color_idx]
-        # Always use braille marker for consistency
-        marker = "braille"
+        # Generate a random color for this indicator
+        color = get_random_color()  # Use random color generation for each chart
 
         # Set up this specific plot with clean settings
         print(f"\n📈 Indicator: {col}")
@@ -437,7 +428,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         if num_removed > 0:
             print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
 
-        # Plot just this one indicator
+        # Plot just this one indicator with random color and braille marker
         plt.plot(x_clean, y_clean, label=col, marker=marker, color=color)
 
         # Add a title that includes the color name for verification
@@ -449,7 +440,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             min_val = min(y_clean) if y_clean else 0
             max_val = max(y_clean) if y_clean else 1
             mid_val = (min_val + max_val) / 2
-            # Using only supported parameters (color) without style
+            # Using only supported parameters (color) with same random color
             plt.horizontal_line(mid_val, color=color)
 
         plt.xlabel("Time")
