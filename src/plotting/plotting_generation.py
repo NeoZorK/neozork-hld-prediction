@@ -8,8 +8,8 @@ from .seaborn_plot import plot_indicator_results_seaborn
 from .term_plot import plot_indicator_results_term  # Standard terminal plotting
 from .term_phld_plot import plot_phld_indicator_terminal  # New specialized PHLD terminal plotting
 from src.calculation.core_calculations import calculate_hl, calculate_pressure, calculate_pv
-from src.calculation.phld_calculation import calculate_phld_indicators
-from ..plotting.term_auto_plot import auto_plot_from_parquet, auto_plot_from_dataframe  # Auto plotting functions
+from ..calculation.indicator_calculation import calculate_indicator
+from ..plotting.term_auto_plot import auto_plot_from_dataframe  # Auto plotting function
 import plotext as plt  # Add import for plotext
 
 """
@@ -572,7 +572,7 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
                 required_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
                 if all(col in result_df.columns for col in required_columns):
                     # Calculate PHLD indicators
-                    calculated_df = calculate_phld_indicators(result_df)
+                    calculated_df = calculate_indicator(result_df)
 
                     if calculated_df is not None:
                         print("\n🧮 SHOWING NEWLY CALCULATED PHLD INDICATORS")
@@ -745,4 +745,3 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
         # Log formatted traceback for debug
         tb_str = traceback.format_exc()
         logger.print_debug(f"Traceback (generate plot):\n{tb_str}")
-
