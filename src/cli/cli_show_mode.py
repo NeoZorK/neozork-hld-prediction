@@ -48,14 +48,6 @@ try:
     from src.plotting.term_auto_plot import auto_plot_from_dataframe
 except ImportError:
     auto_plot_from_dataframe = None
-try:
-    from src.plotting.term_auto_plot import auto_plot_from_dataframe
-except ImportError:
-    auto_plot_from_dataframe = None
-try:
-    from src.plotting.term_auto_plot import auto_plot_from_dataframe
-except ImportError:
-    auto_plot_from_dataframe = None
 
 def show_help():
     """

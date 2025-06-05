@@ -273,4 +273,8 @@ def parse_arguments():
                 else:
                     args.keywords = filtered_args
 
+    # --- Fix: Map --show-rule to args.rule for show mode compatibility ---
+    if effective_mode == 'show' and hasattr(args, 'show_rule') and args.show_rule:
+        args.rule = args.show_rule
+
     return args
