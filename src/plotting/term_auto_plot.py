@@ -8,6 +8,7 @@ import pandas as pd
 import plotext as plt
 import os
 import random
+import numpy as np
 
 # Helper function to set consistent chart styling
 def set_terminal_chart_style(title="Chart"):
@@ -108,6 +109,35 @@ def get_beautiful_marker():
     # Use braille as the same marker used for OHLC High
     return "braille"
 
+def clean_data_for_plotting(df, column_name, x_data):
+    """
+    Clean data by removing NaN and infinite values for safe terminal plotting.
+    
+    Args:
+        df: DataFrame containing the data
+        column_name: Name of the column to clean
+        x_data: X-axis data corresponding to the column
+    
+    Returns:
+        tuple: (cleaned_x_data, cleaned_y_data, num_removed)
+    """
+    series = df[column_name]
+    
+    # Create mask for finite values (not NaN, not inf, not -inf)
+    finite_mask = np.isfinite(series)
+    
+    # Count how many values were removed
+    num_removed = len(series) - finite_mask.sum()
+    
+    if not finite_mask.any():
+        return [], [], num_removed
+    
+    # Filter both x and y data using the finite mask
+    x_data_cleaned = [x_data[i] for i in range(len(x_data)) if finite_mask.iloc[i]]
+    y_data_cleaned = series[finite_mask].tolist()
+    
+    return x_data_cleaned, y_data_cleaned, num_removed
+
 def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto Terminal Plot"):
     """
     Plot data from a parquet file in the terminal based on the specified rule.
@@ -180,7 +210,18 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
         col_lower = col.lower()
         color = ohlc_colors.get(col_lower, "bright_white")  # Default to bright white if not found
         marker = markers.get(col_lower, "braille")          # Default to braille if not found
-        plt.plot(x_data, df[col].tolist(), label=col, marker=marker, color=color)
+        
+        # Clean data for plotting (remove NaN and infinite values)
+        x_clean, y_clean, num_removed = clean_data_for_plotting(df, col, x_data)
+        
+        if len(y_clean) == 0:
+            print(f"⚠️  Skipping OHLC column '{col}' - no valid finite data")
+            continue
+            
+        if num_removed > 0:
+            print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
+            
+        plt.plot(x_clean, y_clean, label=col, marker=marker, color=color)
     plt.xlabel("Time")
     plt.ylabel("Price")
     plt.show()
@@ -190,10 +231,19 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
         plt.clear_data()
         print("\n📊 Volume Chart")
         set_terminal_chart_style("Volume Chart")
-        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="bright_magenta")
-        plt.xlabel("Time")
-        plt.ylabel("Volume")
-        plt.show()
+        
+        # Clean volume data for plotting (remove NaN and infinite values)
+        x_clean, y_clean, num_removed = clean_data_for_plotting(df, volume_col, x_data)
+        
+        if len(y_clean) == 0:
+            print(f"⚠️  Skipping Volume column '{volume_col}' - no valid finite data")
+        else:
+            if num_removed > 0:
+                print(f"ℹ️  Cleaned {num_removed} non-finite values from '{volume_col}'")
+            plt.bar(x_clean, y_clean, label="Volume", color="bright_magenta")
+            plt.xlabel("Time")
+            plt.ylabel("Volume")
+            plt.show()
 
     # Plot indicators based on the rule
     if rule.upper() == "AUTO":
@@ -201,61 +251,45 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
         indicator_colors = get_random_non_repeating_colors(len(indicator_cols))
         
         for idx, col in enumerate(indicator_cols):
-            # Skip columns that are all NaN or empty
-            if df[col].isna().all() or df[col].empty:
-                print(f"\n⚠️  Skipping indicator '{col}' - no valid data")
-                continue
-                
             plt.clear_data()
             print(f"\n📈 Indicator: {col}")
             set_terminal_chart_style(f"Indicator: {col}")
 
-            # Filter out NaN values for plotting
-            valid_mask = ~df[col].isna()
-            if not valid_mask.any():
-                print(f"⚠️  No valid data points for {col}")
-                continue
-                
-            x_data_filtered = [x_data[i] for i in range(len(x_data)) if valid_mask.iloc[i]]
-            y_data_filtered = df[col].dropna().tolist()
+            # Clean data for plotting (remove NaN and infinite values)
+            x_clean, y_clean, num_removed = clean_data_for_plotting(df, col, x_data)
             
-            if len(y_data_filtered) == 0:
-                print(f"⚠️  No valid data points for {col}")
+            if len(y_clean) == 0:
+                print(f"⚠️  Skipping indicator '{col}' - no valid finite data")
                 continue
+            
+            if num_removed > 0:
+                print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
                 
             # Use consistent beautiful marker and unique non-repeating color for each column
-            plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_beautiful_marker(), color=indicator_colors[idx])
+            plt.plot(x_clean, y_clean, label=col, marker=get_beautiful_marker(), color=indicator_colors[idx])
             plt.xlabel("Time")
             plt.ylabel("Value")
             plt.show()
     elif rule.upper() in ["PHLD", "PV", "SR"]:
         relevant_cols = [col for col in indicator_cols if rule.lower() in col.lower()]
         for idx, col in enumerate(relevant_cols):
-            # Skip columns that are all NaN or empty
-            if df[col].isna().all() or df[col].empty:
-                print(f"\n⚠️  Skipping indicator '{col}' - no valid data")
-                continue
-                
             plt.clear_data()
             print(f"\n📈 Rule {rule}: {col}")
             set_terminal_chart_style(f"Rule {rule}: {col}")
 
-            # Filter out NaN values for plotting
-            valid_mask = ~df[col].isna()
-            if not valid_mask.any():
-                print(f"⚠️  No valid data points for {col}")
-                continue
-                
-            x_data_filtered = [x_data[i] for i in range(len(x_data)) if valid_mask.iloc[i]]
-            y_data_filtered = df[col].dropna().tolist()
+            # Clean data for plotting (remove NaN and infinite values)
+            x_clean, y_clean, num_removed = clean_data_for_plotting(df, col, x_data)
             
-            if len(y_data_filtered) == 0:
-                print(f"⚠️  No valid data points for {col}")
+            if len(y_clean) == 0:
+                print(f"⚠️  Skipping indicator '{col}' - no valid finite data")
                 continue
+            
+            if num_removed > 0:
+                print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
                 
             # Use a unique color for each column based on its index or hash
             color = rainbow_colors[idx % len(rainbow_colors)] if idx < len(rainbow_colors) else rainbow_colors[hash(col) % len(rainbow_colors)]
-            plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_beautiful_marker(), color=color)
+            plt.plot(x_clean, y_clean, label=col, marker=get_beautiful_marker(), color=color)
             plt.xlabel("Time")
             plt.ylabel("Value")
             plt.show()
@@ -329,7 +363,18 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             col_lower = col.lower()
             color = ohlc_colors.get(col_lower, "bright_white")  # Default to bright white if not found
             marker = markers.get(col_lower, "braille")          # Default to braille if not found
-            plt.plot(x_data, df[col].tolist(), label=col, marker=marker, color=color)
+            
+            # Clean data for plotting (remove NaN and infinite values)
+            x_clean, y_clean, num_removed = clean_data_for_plotting(df, col, x_data)
+            
+            if len(y_clean) == 0:
+                print(f"⚠️  Skipping OHLC column '{col}' - no valid finite data")
+                continue
+                
+            if num_removed > 0:
+                print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
+                
+            plt.plot(x_clean, y_clean, label=col, marker=marker, color=color)
         plt.xlabel("Time")
         plt.ylabel("Price")
         plt.show()
@@ -339,10 +384,19 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         plt.clear_data()
         print("\n📊 Volume Chart")
         set_terminal_chart_style("Volume Chart")
-        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="bright_magenta")
-        plt.xlabel("Time")
-        plt.ylabel("Volume")
-        plt.show()
+        
+        # Clean volume data for plotting (remove NaN and infinite values)
+        x_clean, y_clean, num_removed = clean_data_for_plotting(df, volume_col, x_data)
+        
+        if len(y_clean) == 0:
+            print(f"⚠️  Skipping Volume column '{volume_col}' - no valid finite data")
+        else:
+            if num_removed > 0:
+                print(f"ℹ️  Cleaned {num_removed} non-finite values from '{volume_col}'")
+            plt.bar(x_clean, y_clean, label="Volume", color="bright_magenta")
+            plt.xlabel("Time")
+            plt.ylabel("Volume")
+            plt.show()
 
     # Plot indicators
     # Get random non-repeating colors for all indicators at once
