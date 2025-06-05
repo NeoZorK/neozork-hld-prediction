@@ -178,7 +178,7 @@ def parse_arguments():
     other_group.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
                              help='Show this help message and exit.')
     other_group.add_argument('--version', action='version',
-                             version=f'{__version__}',
+                             version=f'{"Shcherbyna Pressure Vector Indicator v"+__version__}',
                              help="Show program's version number and exit.")
 
     # --- Parse Arguments ---
