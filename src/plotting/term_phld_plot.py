@@ -360,6 +360,10 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
     print(f"\n{title}")
     print("=" * 60)
 
+    # Add clear data source indicator to title
+    data_source = "📊 DATA SOURCE: LOADED FROM FILE" if calculated_df is None else "📊 SHOWING BOTH: LOADED FROM FILE AND CALCULATED NOW"
+    print(f"{data_source}")
+
     # Detect columns for different components of PHLD
     column_groups = detect_phld_columns(df)
 
@@ -383,16 +387,21 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
         # Plot all non-OHLCV columns
         for group, cols in column_groups.items():
             if group not in ['ohlc', 'volume'] and cols:
-                plot_additional_indicators(
+                # Use the new function with source indicator
+                from src.plotting.plotting_generation import plot_additional_indicators_with_source
+                plot_additional_indicators_with_source(
                     df, cols, x_data, x_labels, step,
-                    f"{group.upper()} INDICATORS"
+                    f"{group.upper()} INDICATORS",
+                    "pre-calculated"
                 )
 
         # Если у нас есть колонки, которые не попали ни в одну категорию, отобразим их тоже
         if column_groups['other']:
-            plot_additional_indicators(
+            from src.plotting.plotting_generation import plot_additional_indicators_with_source
+            plot_additional_indicators_with_source(
                 df, column_groups['other'], x_data, x_labels, step,
-                "OTHER INDICATORS"
+                "OTHER INDICATORS",
+                "pre-calculated"
             )
 
     # PHLD Rule - Show OHLCV + all PHLD components
@@ -402,22 +411,28 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
         plot_ohlc_chart(df, x_data, x_labels, step)
         plot_volume_chart(df, x_data, x_labels, step)
 
-        # Plot PHLD specific components
+        # Plot PHLD specific components with source indicator
+        print("\n📊 [LOADED FROM FILE] PREDICTED PRICES")
         plot_price_predictions(df, column_groups['price_pred'], x_data, x_labels, step)
+        print("\n📊 [LOADED FROM FILE] TRADING SIGNALS")
         plot_direction_signals(df, x_data, x_labels, step)
 
-        # Plot color indicators
+        # Plot color indicators with source indicator
         if column_groups['colors']:
-            plot_additional_indicators(
+            from src.plotting.plotting_generation import plot_additional_indicators_with_source
+            plot_additional_indicators_with_source(
                 df, column_groups['colors'], x_data, x_labels, step,
-                "PHLD COLOR INDICATORS"
+                "PHLD COLOR INDICATORS",
+                "pre-calculated"
             )
 
-        # Plot metrics
+        # Plot metrics with source indicator
         if column_groups['metrics']:
-            plot_additional_indicators(
+            from src.plotting.plotting_generation import plot_additional_indicators_with_source
+            plot_additional_indicators_with_source(
                 df, column_groups['metrics'], x_data, x_labels, step,
-                "PHLD METRICS"
+                "PHLD METRICS",
+                "pre-calculated"
             )
 
         # Compare indicators if both original and calculated are available

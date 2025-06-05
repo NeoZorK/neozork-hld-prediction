@@ -683,6 +683,51 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
     plot_indicator_results_term(result_df, selected_rule, plot_title)
 
 
+def plot_additional_indicators_with_source(df: pd.DataFrame, columns: List[str], x_data: list, x_labels: list, step: int, title: str, source: str = "pre-calculated") -> None:
+    """
+    Plot additional indicator columns with clear source labeling.
+
+    Args:
+        df: DataFrame with financial data
+        columns: List of indicator columns to plot
+        x_data: list of x positions
+        x_labels: list of x-axis labels
+        step: step size for x-ticks
+        title: Chart title
+        source: Source of data - "pre-calculated" or "calculated"
+    """
+    if not columns:
+        return
+
+    from src.plotting.term_phld_plot import setup_terminal_chart, clean_data_for_plotting
+
+    setup_terminal_chart()
+    # Add source indicator to title for clarity
+    source_indicator = "📊 [LOADED FROM FILE]" if source == "pre-calculated" else "🧮 [CALCULATED NOW]"
+    print(f"\n{source_indicator} {title}")
+
+    colors = ['bright_yellow', 'bright_cyan', 'bright_magenta', 'bright_white']
+    for i, col in enumerate(columns):
+        color = colors[i % len(colors)]
+        x_clean, y_clean, num_removed = clean_data_for_plotting(df, col, x_data)
+
+        if len(y_clean) == 0:
+            print(f"⚠️ Skipping column '{col}' - no valid data")
+            continue
+
+        # Add zero reference line for metrics that can be positive/negative
+        if col.lower() in ['hl', 'pressure', 'pv', 'pressure_vector', 'diff']:
+            plt.plot(x_clean, [0] * len(x_clean), label="Zero Line", color="gray")
+
+        plt.plot(x_clean, y_clean, label=f"{col} ({source})", color=color, marker="braille")
+
+    plt.title(f"{title} - {source_indicator}")
+    plt.xlabel("Time")
+    plt.ylabel("Value")
+    plt.xticks(x_data[::step], x_labels[::step])
+    plt.show()
+
+
 def generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point):
     """
     Generates and potentially saves/displays a plot based on calculation results
