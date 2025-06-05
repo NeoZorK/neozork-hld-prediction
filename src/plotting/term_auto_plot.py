@@ -17,9 +17,9 @@ def set_terminal_chart_style(title="Chart"):
         title: Title of the chart
     """
     plt.canvas_color("black")        # Black background for better contrast
-    plt.axes_color("bright_yellow")  # Bright yellow axes for better visibility
-    plt.ticks_color("bright_cyan")   # Bright cyan tick marks for better visibility
-    plt.grid(True)                   # Add grid for better orientation
+    plt.axes_color("bright_white")   # White axes for better visibility on black background
+    plt.ticks_color("yellow")        # Yellow tick marks for better visibility
+    # Grid removed as requested
     plt.title(title)
 
 
@@ -63,10 +63,12 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
     else:
         x_data = list(range(len(df)))
 
-    # Define color palette for all charts
-    colors = ["bright_yellow", "bright_green", "bright_red", "bright_cyan",
-              "bright_magenta", "bright_blue", "bright_white", "yellow",
-              "green", "red", "cyan", "magenta", "blue"]
+    # Define color palette for all charts - rainbow colors for better visibility
+    rainbow_colors = [
+        "bright_red", "bright_yellow", "bright_green", "bright_cyan",
+        "bright_blue", "bright_magenta", "bright_white",
+        "red", "yellow", "green", "cyan", "blue", "magenta", "white"
+    ]
 
     # Plot OHLC data
     plt.clear_data()
@@ -133,7 +135,7 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 print(f"⚠️  No valid data points for {col}")
                 continue
                 
-            plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=colors[hash(col) % len(colors)])
+            plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=rainbow_colors[hash(col) % len(rainbow_colors)])
             plt.xlabel("Time")
             plt.ylabel("Value")
             plt.show()
@@ -163,7 +165,7 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 continue
                 
             # Use a unique color for each column based on its index or hash
-            color = colors[idx % len(colors)] if idx < len(colors) else colors[hash(col) % len(colors)]
+            color = rainbow_colors[idx % len(rainbow_colors)] if idx < len(rainbow_colors) else rainbow_colors[hash(col) % len(rainbow_colors)]
             plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=color)
             plt.xlabel("Time")
             plt.ylabel("Value")
@@ -186,10 +188,12 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     # Configure plotext theme for better contrast in terminal
     plt.theme("dark")  # Use dark theme for better visibility in terminal
 
-    # Define color palette for all charts - using bright colors for better visibility
-    colors = ["bright_yellow", "bright_green", "bright_red", "bright_cyan",
-              "bright_magenta", "bright_blue", "bright_white", "yellow",
-              "green", "red", "cyan", "magenta", "blue"]
+    # Define color palette for all charts - rainbow colors for better visibility
+    rainbow_colors = [
+        "bright_red", "bright_yellow", "bright_green", "bright_cyan",
+        "bright_blue", "bright_magenta", "bright_white",
+        "red", "yellow", "green", "cyan", "blue", "magenta", "white"
+    ]
 
     # Print the custom title
     print(f"\n📊 {plot_title}")
@@ -276,7 +280,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             continue
 
         # Use a unique color for each column based on its index or hash
-        color = colors[idx % len(colors)] if idx < len(colors) else colors[hash(col) % len(colors)]
+        color = rainbow_colors[idx % len(rainbow_colors)] if idx < len(rainbow_colors) else rainbow_colors[hash(col) % len(rainbow_colors)]
         plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=color)
         plt.xlabel("Time")
         plt.ylabel("Value")
