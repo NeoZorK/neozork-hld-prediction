@@ -7,6 +7,10 @@ import pyarrow.parquet as pq
 import pandas as pd
 import sys
 import traceback
+from colorama import init, Fore, Style, Back
+
+# Initialize colorama for cross-platform colored output
+init(autoreset=True)
 
 # Import for indicator calculation; fallback for different relative import
 try:
@@ -39,32 +43,64 @@ try:
 except ImportError:
     mpl_auto_plot_from_parquet = None
 
+# Import terminal auto plot function for AUTO mode
+try:
+    from src.plotting.term_auto_plot import auto_plot_from_dataframe
+except ImportError:
+    auto_plot_from_dataframe = None
+
 def show_help():
     """
-    Displays help for the 'show' mode.
+    Displays help for the 'show' mode with colorful formatting.
     """
-    print("\n=== SHOW MODE HELP ===")
-    print("The 'show' mode allows you to list and inspect cached data files.")
-    print("Usage: python run_analysis.py show <source> [keywords...]")
-    print("\nAvailable sources:")
-    print("  - csv: Converted CSV data files")
-    print("  - yfinance/yf: Yahoo Finance data files")
-    print("  - polygon: Polygon.io API data files")
-    print("  - binance: Binance API data files")
-    print("\nExamples:")
-    print("  python run_analysis.py show                  # Show statistics for all sources")
-    print("  python run_analysis.py show yf               # List all Yahoo Finance files")
-    print("  python run_analysis.py show csv              # List all CSV-converted files")
-    print("  python run_analysis.py show binance          # List all Binance files")
-    print("  python run_analysis.py show polygon          # List all Polygon.io files")
-    print("  python run_analysis.py show yf aapl          # List YF files containing 'aapl'")
-    print("  python run_analysis.py show binance btc MN1  # List Binance files with 'btc' and timeframe 'MN1'")
-    print("\nTrading Rules:")
-    print("  --rule OHLCV   # Display basic OHLCV candlestick chart")
-    print("  --rule PHLD    # Calculate Predict High Low Direction indicator")
-    print("  --rule AUTO    # Automatically display all columns in the file")
-    print("\nDate filtering:")
-    print("  --start, --end or --show-start, --show-end for date range filtering.")
+    print(f"\n{Fore.CYAN}{Style.BRIGHT}=== SHOW MODE HELP ==={Style.RESET_ALL}")
+    print(f"The {Fore.GREEN}'show'{Style.RESET_ALL} mode allows you to list and inspect cached data files.")
+    print(f"{Fore.YELLOW}Usage:{Style.RESET_ALL} python run_analysis.py show <source> [keywords...]")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Available sources:{Style.RESET_ALL}")
+    print(f"  - {Fore.GREEN}csv{Style.RESET_ALL}: Converted CSV data files")
+    print(f"  - {Fore.GREEN}yfinance/yf{Style.RESET_ALL}: Yahoo Finance data files")
+    print(f"  - {Fore.GREEN}polygon{Style.RESET_ALL}: Polygon.io API data files")
+    print(f"  - {Fore.GREEN}binance{Style.RESET_ALL}: Binance API data files")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Examples:{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show{Style.RESET_ALL}                  {Fore.BLACK}{Style.DIM}# Show statistics for all sources{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show yf{Style.RESET_ALL}               {Fore.BLACK}{Style.DIM}# List all Yahoo Finance files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show csv{Style.RESET_ALL}              {Fore.BLACK}{Style.DIM}# List all CSV-converted files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show binance{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List all Binance files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show polygon{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List all Polygon.io files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show yf aapl{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List YF files containing 'aapl'{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show binance btc MN1{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# List Binance files with 'btc' and timeframe 'MN1'{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show yf eurusd{Style.RESET_ALL}        {Fore.BLACK}{Style.DIM}# List all Yahoo Finance EURUSD files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show csv aapl d1{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# List CSV files with 'aapl' and 'D1' timeframe{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show --start 2024-01-01{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# List files with data starting from 2024-01-01{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show yf --rule PV{Style.RESET_ALL}     {Fore.BLACK}{Style.DIM}# List YF files and apply PV indicator when viewing{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show eth{Style.RESET_ALL}              {Fore.BLACK}{Style.DIM}# Find any files containing 'eth' (e.g., Ethereum){Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show forex{Style.RESET_ALL}            {Fore.BLACK}{Style.DIM}# Find any files containing 'forex'{Style.RESET_ALL}")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Trading Rules:{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule OHLCV{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Display basic OHLCV candlestick chart{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule PV{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Calculate Pressure Vector indicator{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule SR{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Calculate Support and Resistance levels{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule PHLD{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Calculate Predict High Low Direction indicator{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule AUTO{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Automatically display all columns in the file{Style.RESET_ALL}")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Drawing Options (-d flag):{Style.RESET_ALL}")
+    print(f"  The {Fore.MAGENTA}-d{Style.RESET_ALL} or {Fore.MAGENTA}--draw{Style.RESET_ALL} flag allows you to specify the plotting library for visualization:")
+    print(f"  {Fore.MAGENTA}-d fastest{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Default - Plotly+Dask+Datashader (best for large datasets){Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d fast{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Dask+Datashader+Bokeh for quick visualization{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d plotly{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Interactive HTML plots with Plotly (also with 'plt'){Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d mpl{Style.RESET_ALL}       {Fore.BLACK}{Style.DIM}# Static images with mplfinance (also with 'mplfinance'){Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d seaborn{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Statistical plots with Seaborn (also with 'sb'){Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d term{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Terminal ASCII charts with plotext (great for SSH){Style.RESET_ALL}")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Drawing Examples:{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show yf aapl -d term{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Show AAPL data with terminal charts{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show csv --rule PV -d plotly{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Show CSV data with PV indicator using Plotly{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show binance btc -d seaborn{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Show BTC data with Seaborn plots{Style.RESET_ALL}")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Date filtering:{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--start, --end{Style.RESET_ALL} or {Fore.MAGENTA}--show-start, --show-end{Style.RESET_ALL} for date range filtering.")
 
 def import_generate_plot():
     """
@@ -270,7 +306,7 @@ def _should_draw_plot(args):
     Returns True if the draw flag is set and is one of supported modes or should use default.
     Always returns True for 'show' mode to enable automatic plotting.
     """
-    plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly", "seaborn", "sb"}
+    plot_modes = {"fastest", "fast", "plt", "mpl", "mplfinance", "plotly", "seaborn", "sb", "term"}
 
     # If it's show mode, always allow plotting (will use default 'fastest' if not specified)
     if hasattr(args, 'mode') and args.mode == 'show':
@@ -291,6 +327,15 @@ def handle_show_mode(args):
         args.raw_plot_only = True
         args.display_candlestick_only = True  # New flag to indicate candlestick only mode
         args.rule = None  # Clear the rule to use the raw data plot path
+
+    # For terminal plotting mode (-d term), always use OHLCV rule by default
+    if hasattr(args, 'draw') and args.draw == 'term' and (not hasattr(args, 'rule') or not args.rule or args.rule.upper() != 'AUTO'):
+        print("Terminal plotting mode (-d term) with default OHLCV display")
+        args.raw_plot_only = True
+        args.display_candlestick_only = True
+        # If rule is not explicitly set to AUTO, use OHLCV
+        if not (hasattr(args, 'rule') and args.rule and args.rule.upper() == 'AUTO'):
+            args.rule = 'OHLCV'
 
     if not args.source or args.source == 'help':
         show_help()
@@ -459,6 +504,16 @@ def handle_show_mode(args):
                 # Plot with all columns using the new fastest_auto_plot if requested
                 if _should_draw_plot(args):
                     draw_method = getattr(args, 'draw', 'fastest')
+                    
+                    # Check if running in Docker and force terminal mode if needed
+                    import os
+                    IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
+                    disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
+                    
+                    if IN_DOCKER and not disable_docker_detection and draw_method not in ['term']:
+                        print(f"Docker detected: forcing draw mode from '{draw_method}' to 'term' (terminal plotting)")
+                        draw_method = 'term'
+                    
                     print(f"\nDrawing AUTO display plot with method: '{draw_method}'...")
                     try:
                         if draw_method == 'fastest' and plot_auto_fastest_parquet is not None:
@@ -478,6 +533,11 @@ def handle_show_mode(args):
                             print(f"Using mplfinance_auto_plot for '{found_files[0]['name']}'...")
                             mpl_auto_plot_from_parquet(str(found_files[0]['path']))
                             print(f"Successfully plotted all columns from '{found_files[0]['name']}' using mplfinance.")
+                        elif draw_method == 'term' and auto_plot_from_dataframe is not None:
+                            print(f"Using terminal auto plotting for '{found_files[0]['name']}'...")
+                            plot_title = f"AUTO Terminal Plot: {found_files[0]['name']}"
+                            auto_plot_from_dataframe(df, plot_title)
+                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using terminal mode.")
                         else:
                             generate_plot = import_generate_plot()
                             data_info = {

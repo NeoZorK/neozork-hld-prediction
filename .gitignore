@@ -48,3 +48,6 @@ logs/
 qodana.yaml
 .DS_Store
 
+# Exceptions - files that should not be ignored
+!data/cache/csv_converted/CSVExport_GBPUSD_PERIOD_MN1.parquet
+!data/raw_parquet/binance_BTCUSDT_H1.parquet

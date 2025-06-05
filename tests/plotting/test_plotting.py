@@ -30,6 +30,7 @@ class MockLogger:
     def print_debug(self, msg): pass
 
 # Unit tests for the low-level plotting function
+@patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'})
 class TestPlottingFunction(unittest.TestCase):
 
     # Setup basic data with necessary columns
