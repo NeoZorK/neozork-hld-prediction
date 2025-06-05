@@ -85,9 +85,6 @@ def main():
         None
     """
 
-    # Print consolidated version information using the rich console
-    console.print(f"Shcherbyna Pressure Vector Indicator - Version: {__version__}", style="yellow")
-
     # Start overall timer for the entire script execution
     start_time_total = time.perf_counter()
 
