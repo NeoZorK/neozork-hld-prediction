@@ -340,6 +340,10 @@ def handle_show_mode(args):
         if args.rule.upper() == 'OHLCV':
             args.raw_plot_only = True
             args.display_candlestick_only = True
+        # Special handling for PHLD rule to store original data for comparison
+        elif args.rule.upper() == 'PHLD':
+            args.compare_calculated = True  # Flag to indicate we want to compare calculated vs. original
+            print("PHLD mode with comparison of calculated vs. original indicators")
 
     if not args.source or args.source == 'help':
         show_help()
