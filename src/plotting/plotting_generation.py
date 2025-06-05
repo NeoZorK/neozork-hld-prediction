@@ -7,6 +7,8 @@ from .fast_plot import plot_indicator_results_fast
 from .seaborn_plot import plot_indicator_results_seaborn
 from .term_plot import plot_indicator_results_term  # Standard terminal plotting
 from .term_phld_plot import plot_phld_indicator_terminal  # New specialized PHLD terminal plotting
+from src.calculation.core_calculations import calculate_hl, calculate_pressure, calculate_pv
+from src.calculation.phld_calculation import calculate_phld_indicators
 from ..plotting.term_auto_plot import auto_plot_from_parquet, auto_plot_from_dataframe  # Auto plotting functions
 import plotext as plt  # Add import for plotext
 
@@ -529,11 +531,6 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
                 logger.print_info(f"Detected parquet file from csv_converted directory: {original_parquet_path}")
                 parquet_from_cache = True
 
-                # For PHLD rule, we might have both original indicators and calculated ones
-                if is_phld_rule and hasattr(args, 'original_df'):
-                    calculated_df = result_df
-                    logger.print_info("Using both original and calculated indicators for comparison")
-
     # For AUTO rule, use auto_plot_from_dataframe which draws each indicator with different colors
     if is_auto_rule:
         logger.print_info("AUTO rule detected, using auto terminal plotting with unique colors for each indicator...")
@@ -550,12 +547,110 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
     # For PHLD rule, use the specialized PHLD plotting function
     elif is_phld_rule:
         logger.print_info("PHLD rule detected, using specialized PHLD terminal plotting...")
-        try:
-            plot_phld_indicator_terminal(result_df, selected_rule, plot_title, calculated_df)
-            logger.print_success("Successfully plotted PHLD indicators with specialized visualization.")
-        except Exception as e:
-            logger.print_warning(f"Error in specialized PHLD plotting: {e}. Falling back to standard terminal plot.")
-            plot_indicator_results_term(result_df, selected_rule, plot_title)
+
+        # Check if the DataFrame has PHLD indicators already (from parquet file)
+        phld_indicator_columns = ['predicted_high', 'predicted_low', 'pressure', 'pressure_vector', 'direction', 'hl', 'diff']
+        has_phld_indicators = any(col.lower() in [c.lower() for c in result_df.columns] for col in phld_indicator_columns)
+
+        if has_phld_indicators and parquet_from_cache:
+            logger.print_info("Found pre-calculated PHLD indicators in the parquet file")
+
+            # 1. First, show all indicators from the file (like AUTO)
+            print("\n🔍 SHOWING ALL INDICATORS FROM PARQUET FILE")
+            try:
+                from src.plotting.term_auto_plot import auto_plot_from_dataframe
+                auto_plot_from_dataframe(result_df, f"{plot_title} - Pre-calculated Indicators")
+                logger.print_success("Successfully plotted all pre-calculated indicators from parquet file")
+            except ImportError:
+                logger.print_warning("Could not import auto_plot_from_dataframe, falling back to standard PHLD plot for pre-calculated indicators")
+                plot_phld_indicator_terminal(result_df, selected_rule, f"{plot_title} - Pre-calculated", None)
+
+            # 2. Calculate PHLD indicators from OHLCV data
+            logger.print_info("Calculating PHLD indicators from OHLCV data for comparison...")
+            try:
+                # Make sure we have the required OHLCV columns
+                required_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+                if all(col in result_df.columns for col in required_columns):
+                    # Calculate PHLD indicators
+                    calculated_df = calculate_phld_indicators(result_df)
+
+                    if calculated_df is not None:
+                        print("\n🧮 SHOWING NEWLY CALCULATED PHLD INDICATORS")
+                        # Extract only the calculated indicators (with _calc suffix)
+                        calculated_cols = [col for col in calculated_df.columns if col.endswith('_calc')]
+
+                        # Create a clean DataFrame with OHLCV + calculated indicators
+                        clean_calc_df = result_df[required_columns].copy()
+                        for col in calculated_cols:
+                            # Remove _calc suffix for plotting
+                            clean_name = col.replace('_calc', '')
+                            clean_calc_df[clean_name] = calculated_df[col]
+
+                        # Plot calculated indicators
+                        plot_phld_indicator_terminal(
+                            clean_calc_df,
+                            selected_rule,
+                            f"{plot_title} - Calculated Indicators",
+                            None
+                        )
+                        logger.print_success("Successfully plotted newly calculated PHLD indicators")
+
+                        # 3. Compare pre-calculated vs newly calculated indicators
+                        print("\n📊 COMPARISON: PRE-CALCULATED VS NEWLY CALCULATED INDICATORS")
+                        print("=" * 60)
+
+                        # Find common indicator columns for comparison
+                        common_indicators = []
+                        for col in phld_indicator_columns:
+                            col_lower = col.lower()
+                            # Find match in result_df (original) columns
+                            original_col = next((c for c in result_df.columns if c.lower() == col_lower), None)
+                            # Find match in calculated_df columns (without _calc suffix)
+                            calc_col = next((c for c in calculated_df.columns if c.lower() == f"{col_lower}_calc"), None)
+
+                            if original_col is not None and calc_col is not None:
+                                common_indicators.append((original_col, calc_col))
+
+                        if common_indicators:
+                            # Compare common indicators
+                            for orig_col, calc_col in common_indicators:
+                                clean_calc_col = calc_col.replace('_calc', '')
+                                if pd.api.types.is_numeric_dtype(result_df[orig_col]) and pd.api.types.is_numeric_dtype(calculated_df[calc_col]):
+                                    diff = result_df[orig_col] - calculated_df[calc_col]
+                                    mae = abs(diff).mean()
+                                    max_diff = abs(diff).max()
+                                    match_pct = 100 - (abs(diff).mean() / abs(result_df[orig_col]).mean() * 100) if abs(result_df[orig_col]).mean() > 0 else 0
+                                    print(f"{orig_col} vs {clean_calc_col}:")
+                                    print(f"  MAE = {mae:.6f}, Max Diff = {max_diff:.6f}, Match = {match_pct:.2f}%")
+                                else:
+                                    match_count = (result_df[orig_col] == calculated_df[calc_col]).sum()
+                                    match_pct = (match_count / len(result_df)) * 100
+                                    print(f"{orig_col} vs {clean_calc_col}: {match_pct:.2f}% match ({match_count}/{len(result_df)} values)")
+
+                            # Show the results with both original and calculated data for comparison
+                            plot_phld_indicator_terminal(result_df, selected_rule, plot_title, calculated_df)
+                        else:
+                            logger.print_warning("No common indicators found for comparison")
+                            # Just show the original indicators
+                            plot_phld_indicator_terminal(result_df, selected_rule, plot_title, None)
+                    else:
+                        logger.print_warning("Failed to calculate PHLD indicators, showing only pre-calculated indicators")
+                        plot_phld_indicator_terminal(result_df, selected_rule, plot_title, None)
+                else:
+                    logger.print_warning(f"Missing required OHLCV columns for PHLD calculation. Required: {required_columns}, Available: {result_df.columns.tolist()}")
+                    plot_phld_indicator_terminal(result_df, selected_rule, plot_title, None)
+            except Exception as e:
+                logger.print_error(f"Error calculating PHLD indicators: {e}")
+                logger.print_warning("Showing only pre-calculated indicators due to calculation error")
+                plot_phld_indicator_terminal(result_df, selected_rule, plot_title, None)
+        else:
+            # Standard PHLD plotting without comparison
+            try:
+                plot_phld_indicator_terminal(result_df, selected_rule, plot_title, calculated_df)
+                logger.print_success("Successfully plotted PHLD indicators with specialized visualization.")
+            except Exception as e:
+                logger.print_warning(f"Error in specialized PHLD plotting: {e}. Falling back to standard terminal plot.")
+                plot_indicator_results_term(result_df, selected_rule, plot_title)
         return
 
     # Default to standard terminal plot for other rules
@@ -650,3 +745,4 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
         # Log formatted traceback for debug
         tb_str = traceback.format_exc()
         logger.print_debug(f"Traceback (generate plot):\n{tb_str}")
+
