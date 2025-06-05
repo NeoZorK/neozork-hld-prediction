@@ -247,12 +247,12 @@ def plot_direction_signals(df: pd.DataFrame, x_data: list, x_labels: list, step:
 
     # Plot Buy/Sell signals as points with custom markers for better visibility
     if buy_x:
-        # Use 's' parameter instead of 'point_size' for scatter points
-        plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green", s=2)
+        # Removed 's' parameter as it's not supported in plotext
+        plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green")
 
     if sell_x:
-        # Use 's' parameter instead of 'point_size' for scatter points
-        plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red", s=2)
+        # Removed 's' parameter as it's not supported in plotext
+        plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red")
 
     # Add a zero line for reference
     plt.plot(x_clean, [0] * len(x_clean), label="Neutral", color="gray", line_color="gray")
@@ -552,12 +552,6 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
 
                         plt.plot(x_clean, y_clean, label=col, color=color)
 
-                    plt.title(f"Predicted Prices {data_source}")
-                    plt.xlabel("Time")
-                    plt.ylabel("Price")
-                    plt.xticks(x_data[::step], x_labels[::step])
-                    plt.show()
-
                 # Use our modified function instead of the standard one
                 plot_loaded_price_predictions(df, existing_groups['price_pred'], x_data, x_labels, step)
 
@@ -605,12 +599,12 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
 
                     # Plot Buy/Sell signals as points with custom markers for better visibility
                     if buy_x:
-                        # Use 's' parameter instead of 'point_size' for scatter points
-                        plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green", s=2)
+                        # Removed 's' parameter as it's not supported in plotext
+                        plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green")
 
                     if sell_x:
-                        # Use 's' parameter instead of 'point_size' for scatter points
-                        plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red", s=2)
+                        # Removed 's' parameter as it's not supported in plotext
+                        plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red")
 
                     # Add a zero line for reference
                     plt.plot(x_clean, [0] * len(x_clean), label="Neutral", color="gray", line_color="gray")
