@@ -51,9 +51,11 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
     # Plot OHLC data
     plt.clear_data()
     print("\n📈 OHLC Chart")
-    plt.canvas_color("grey")  # Set the background color to grey
+    plt.canvas_color("black")  # Set the background color to black for better contrast
+    plt.axes_color("white")    # Set axes color to white
+    plt.ticks_color("white")   # Set tick marks color to white
     for col in ohlc_cols:
-        plt.plot(x_data, df[col].tolist(), label=col, marker="braille")
+        plt.plot(x_data, df[col].tolist(), label=col, marker="braille", color="cyan")
     plt.title("OHLC")
     plt.xlabel("Time")
     plt.ylabel("Price")
@@ -63,8 +65,10 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
     if volume_col:
         plt.clear_data()
         print("\n📊 Volume Chart")
-        plt.canvas_color("grey")  # Set the background color to grey
-        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="grey")
+        plt.canvas_color("black")  # Set the background color to black for better contrast
+        plt.axes_color("white")    # Set axes color to white
+        plt.ticks_color("white")   # Set tick marks color to white
+        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="magenta")
         plt.title("Volume")
         plt.xlabel("Time")
         plt.ylabel("Volume")
@@ -72,6 +76,9 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
 
     # Plot indicators based on the rule
     if rule.upper() == "AUTO":
+        # Define unique colors for different plots
+        colors = ["yellow", "green", "red", "cyan", "magenta", "blue", "white"]
+
         for col in indicator_cols:
             # Skip columns that are all NaN or empty
             if df[col].isna().all() or df[col].empty:
@@ -80,7 +87,10 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 
             plt.clear_data()
             print(f"\n📈 Indicator: {col}")
-            plt.canvas_color("grey")  # Set the background color to grey
+            plt.canvas_color("black")    # Black background for better contrast
+            plt.axes_color("yellow")     # Yellow axes for better visibility
+            plt.ticks_color("cyan")      # Cyan tick marks for better visibility
+            plt.label_color("magenta")   # Magenta labels for better visibility
 
             # Filter out NaN values for plotting
             valid_mask = ~df[col].isna()
@@ -95,12 +105,16 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 print(f"⚠️  No valid data points for {col}")
                 continue
                 
-            plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille")
+            plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=colors[hash(col) % len(colors)])
             plt.title(col)
             plt.xlabel("Time")
             plt.ylabel("Value")
             plt.show()
     elif rule.upper() in ["PHLD", "PV", "SR"]:
+        # Define unique colors for different plots if not defined earlier
+        if 'colors' not in locals():
+            colors = ["yellow", "green", "red", "cyan", "magenta", "blue", "white"]
+
         relevant_cols = [col for col in indicator_cols if rule.lower() in col.lower()]
         for col in relevant_cols:
             # Skip columns that are all NaN or empty
@@ -110,7 +124,10 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 
             plt.clear_data()
             print(f"\n📈 Rule {rule}: {col}")
-            plt.canvas_color("grey")  # Set the background color to grey
+            plt.canvas_color("black")     # Black background for better contrast
+            plt.axes_color("yellow")      # Yellow axes for better visibility
+            plt.ticks_color("cyan")       # Cyan tick marks for better visibility
+            plt.label_color("magenta")    # Magenta labels for better visibility
 
             # Filter out NaN values for plotting
             valid_mask = ~df[col].isna()
@@ -148,6 +165,9 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     # Configure plotext theme for better contrast in terminal
     plt.theme("dark")  # Use dark theme for better visibility in terminal
 
+    # Define unique colors for different plots
+    colors = ["yellow", "green", "red", "cyan", "magenta", "blue", "white"]
+
     # Print the custom title
     print(f"\n📊 {plot_title}")
     print("=" * (len(plot_title) + 5))
@@ -170,9 +190,11 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     # Plot OHLC data
     plt.clear_data()
     print("\n📈 OHLC Chart")
-    plt.canvas_color("grey")  # Set the background color to grey
+    plt.canvas_color("black")  # Set the background color to black for better contrast
+    plt.axes_color("white")    # Set axes color to white
+    plt.ticks_color("white")   # Set tick marks color to white
     for col in ohlc_cols:
-        plt.plot(x_data, df[col].tolist(), label=col, marker="braille")
+        plt.plot(x_data, df[col].tolist(), label=col, marker="braille", color="cyan")
     plt.title("OHLC")
     plt.xlabel("Time")
     plt.ylabel("Price")
@@ -182,8 +204,10 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     if volume_col:
         plt.clear_data()
         print("\n📊 Volume Chart")
-        plt.canvas_color("grey")  # Set the background color to grey
-        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="grey")
+        plt.canvas_color("black")  # Set the background color to black for better contrast
+        plt.axes_color("white")    # Set axes color to white
+        plt.ticks_color("white")   # Set tick marks color to white
+        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="magenta")
         plt.title("Volume")
         plt.xlabel("Time")
         plt.ylabel("Volume")
@@ -198,7 +222,9 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             
         plt.clear_data()
         print(f"\n📈 Indicator: {col}")
-        plt.canvas_color("grey")  # Set the background color to grey
+        plt.canvas_color("black")  # Set the background color to black for better contrast
+        plt.axes_color("white")    # Set axes color to white
+        plt.ticks_color("white")   # Set tick marks color to white
 
         # Filter out NaN values for plotting
         valid_mask = ~df[col].isna()
@@ -213,7 +239,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             print(f"⚠️  No valid data points for {col}")
             continue
             
-        plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille")
+        plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=colors[hash(col) % len(colors)])
         plt.title(col)
         plt.xlabel("Time")
         plt.ylabel("Value")
