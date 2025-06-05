@@ -501,7 +501,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
                     plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red")
 
                 # Add a zero line for reference
-                plt.plot(x_clean, [0] * len(x_clean), label="Neutral", color="gray", line_color="gray")
+                plt.plot(x_clean, [0] * len(x_clean), label="Neutral", color="gray")
 
                 # Set custom y-ticks for clarity
                 plt.yticks([-1, 0, 1], ["Sell", "Hold", "Buy"])
