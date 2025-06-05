@@ -488,7 +488,7 @@ def generate_plotly_plot(result_df, selected_rule, plot_title, data_info):
     handle_plotly_plot(fig, data_info, selected_rule)
 
 
-def generate_term_plot(result_df, selected_rule, plot_title, args=None):
+def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_info=None):
     """
     Generates a terminal plot using plotext.
     
@@ -497,6 +497,7 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None):
         selected_rule (TradingRule | str): The selected trading rule.
         plot_title (str): Title for the plot.
         args (argparse.Namespace, optional): Command-line arguments.
+        data_info (dict, optional): Dictionary with information about the data source.
     """
     logger.print_info("Generating plot using terminal mode (plotext)...")
 
@@ -515,7 +516,7 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None):
     original_parquet_path = None
     calculated_df = None
 
-    if hasattr(args, 'mode') and args.mode == 'parquet':
+    if hasattr(args, 'mode') and args.mode == 'parquet' and data_info is not None:
         # This means we're working with a parquet file
         parquet_from_cache = True
 
@@ -639,8 +640,8 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                 logger.print_info("No rule specified, defaulting to OHLCV for terminal plotting")
                 selected_rule = TradingRule.OHLCV
 
-            # Pass args to terminal plot function for AUTO mode support
-            generate_term_plot(result_df, selected_rule, plot_title, args)
+            # Pass args and data_info to terminal plot function
+            generate_term_plot(result_df, selected_rule, plot_title, args, data_info)
         else:
             generate_plotly_plot(result_df, selected_rule, plot_title, data_info)
     except Exception as e:

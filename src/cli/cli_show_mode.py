@@ -328,14 +328,18 @@ def handle_show_mode(args):
         args.display_candlestick_only = True  # New flag to indicate candlestick only mode
         args.rule = None  # Clear the rule to use the raw data plot path
 
-    # For terminal plotting mode (-d term), always use OHLCV rule by default
-    if hasattr(args, 'draw') and args.draw == 'term' and (not hasattr(args, 'rule') or not args.rule or args.rule.upper() != 'AUTO'):
+    # For terminal plotting mode (-d term), always use OHLCV rule by default if rule not specified
+    if hasattr(args, 'draw') and args.draw == 'term' and (not hasattr(args, 'rule') or not args.rule):
         print("Terminal plotting mode (-d term) with default OHLCV display")
         args.raw_plot_only = True
         args.display_candlestick_only = True
-        # If rule is not explicitly set to AUTO, use OHLCV
-        if not (hasattr(args, 'rule') and args.rule and args.rule.upper() == 'AUTO'):
-            args.rule = 'OHLCV'
+        args.rule = 'OHLCV'
+    elif hasattr(args, 'draw') and args.draw == 'term' and hasattr(args, 'rule') and args.rule:
+        print(f"Terminal plotting mode (-d term) with {args.rule} rule")
+        # Don't override user-specified rule like PHLD
+        if args.rule.upper() == 'OHLCV':
+            args.raw_plot_only = True
+            args.display_candlestick_only = True
 
     if not args.source or args.source == 'help':
         show_help()
