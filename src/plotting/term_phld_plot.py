@@ -365,15 +365,16 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
 
     # Get rule name in string format
     rule_str = rule.name if hasattr(rule, 'name') else str(rule)
+    rule_upper = rule_str.upper()
 
     # OHLCV Rule - Only show OHLC and Volume
-    if rule_str.upper() == 'OHLCV':
+    if rule_upper == 'OHLCV':
         print("Displaying only OHLCV data (no indicators)")
         plot_ohlc_chart(df, x_data, x_labels, step)
         plot_volume_chart(df, x_data, x_labels, step)
 
     # AUTO Rule - Show all available columns except OHLCV
-    elif rule_str.upper() == 'AUTO':
+    elif rule_upper == 'AUTO' or rule_upper == 'AUTO_DISPLAY_ALL':
         print("AUTO display mode - showing all available columns")
         # Plot basic charts
         plot_ohlc_chart(df, x_data, x_labels, step)
@@ -387,8 +388,15 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
                     f"{group.upper()} INDICATORS"
                 )
 
+        # Если у нас есть колонки, которые не попали ни в одну категорию, отобразим их тоже
+        if column_groups['other']:
+            plot_additional_indicators(
+                df, column_groups['other'], x_data, x_labels, step,
+                "OTHER INDICATORS"
+            )
+
     # PHLD Rule - Show OHLCV + all PHLD components
-    elif rule_str.upper() == 'PHLD' or rule_str.upper() == 'PREDICT_HIGH_LOW_DIRECTION':
+    elif rule_upper == 'PHLD' or rule_upper == 'PREDICT_HIGH_LOW_DIRECTION':
         print("PHLD indicator display mode")
         # Plot basic charts
         plot_ohlc_chart(df, x_data, x_labels, step)
