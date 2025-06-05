@@ -321,8 +321,15 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     volume_col = next((col for col in df.columns if col.lower() == "volume"), None)
     time_col = next((col for col in df.columns if col.lower() in ["timestamp", "datetime", "date", "time"]), None)
 
-    # Other indicator columns
-    exclude = set(ohlc_cols + ([volume_col] if volume_col else []) + ([time_col] if time_col else []))
+    # Group columns by categories for better organization
+    phld_price_cols = [col for col in df.columns if col.lower() in ["pprice1", "pprice2", "predicted_high", "predicted_low"]]
+    phld_signal_cols = [col for col in df.columns if col.lower() in ["direction", "pcolor1", "pcolor2"]]
+    phld_metric_cols = [col for col in df.columns if col.lower() in ["diff", "hl", "pressure", "pv"]]
+
+    # Other indicator columns - exclude all categorized columns
+    exclude = set(ohlc_cols + ([volume_col] if volume_col else []) +
+                 ([time_col] if time_col else []) +
+                 phld_price_cols + phld_signal_cols + phld_metric_cols)
     indicator_cols = [col for col in df.columns if col not in exclude]
 
     # Prepare x-axis data
@@ -393,13 +400,126 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             plt.ylabel("Volume")
             plt.show()
 
-    # Define colors for separate indicator plots
-    # Instead of fixed colors, use get_random_color() for each indicator
+    # Process PHLD predicted price columns (PPrice1, PPrice2, etc.)
+    if phld_price_cols:
+        plt.clear_figure()
+        plt.clear_data()
+        print("\n🎯 PHLD PREDICTED PRICES")
+        plt.canvas_color("black")
+        plt.axes_color("black")
+        plt.ticks_color("yellow")
+        plt.title("PHLD Predicted Prices")
+
+        # First, plot Close price for reference
+        if 'Close' in df.columns:
+            x_clean, y_clean, num_removed = clean_data_for_plotting(df, 'Close', x_data)
+            if len(y_clean) > 0:
+                plt.plot(x_clean, y_clean, label="Close", color="bright_blue", marker="braille")
+
+        # Plot predicted price levels
+        colors = ['bright_green', 'bright_red', 'bright_yellow', 'bright_magenta']
+        for i, col in enumerate(phld_price_cols):
+            color = colors[i % len(colors)]
+            x_clean, y_clean, num_removed = clean_data_for_plotting(df, col, x_data)
+
+            if len(y_clean) == 0:
+                print(f"⚠️  Skipping price column '{col}' - no valid finite data")
+                continue
+
+            if num_removed > 0:
+                print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
+
+            plt.plot(x_clean, y_clean, label=col, color=color, marker="braille")
+
+        plt.xlabel("Time")
+        plt.ylabel("Price Level")
+        plt.show()
+
+    # Process PHLD signal columns (Direction, PColor1, PColor2)
+    if phld_signal_cols:
+        plt.clear_figure()
+        plt.clear_data()
+        print("\n🚦 PHLD TRADING SIGNALS")
+        plt.canvas_color("black")
+        plt.axes_color("black")
+        plt.ticks_color("yellow")
+        plt.title("PHLD Trading Signals")
+
+        # Process Direction specially if it exists
+        if 'Direction' in df.columns:
+            x_clean, dir_data, num_removed = clean_data_for_plotting(df, 'Direction', x_data)
+
+            if len(dir_data) > 0:
+                # Direction: 1=Buy, -1/2=Sell, 0=Hold
+                buy_points = [1 if val == 1 else 0 for val in dir_data]
+                sell_points = [1 if val in [-1, 2] else 0 for val in dir_data]
+
+                plt.bar(x_clean, buy_points, label="Buy Signal", color="bright_green")
+                plt.bar(x_clean, [-val for val in sell_points], label="Sell Signal", color="bright_red")
+
+                phld_signal_cols.remove('Direction')
+
+        # Plot other signal columns
+        colors = ['bright_cyan', 'bright_yellow', 'orange']
+        for i, col in enumerate(phld_signal_cols):
+            if col not in df.columns:
+                continue
+
+            color = colors[i % len(colors)]
+            x_clean, y_clean, num_removed = clean_data_for_plotting(df, col, x_data)
+
+            if len(y_clean) == 0:
+                print(f"⚠️  Skipping signal column '{col}' - no valid finite data")
+                continue
+
+            if num_removed > 0:
+                print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
+
+            plt.plot(x_clean, y_clean, label=col, color=color, marker="braille")
+
+        plt.xlabel("Time")
+        plt.ylabel("Signal Value")
+        plt.show()
+
+    # Process PHLD metric columns (HL, Pressure, PV, Diff)
+    if phld_metric_cols:
+        plt.clear_figure()
+        plt.clear_data()
+        print("\n📊 PHLD METRICS")
+        plt.canvas_color("black")
+        plt.axes_color("black")
+        plt.ticks_color("yellow")
+        plt.title("PHLD Metrics")
+
+        colors = ['bright_yellow', 'bright_magenta', 'bright_cyan', 'bright_white']
+        for i, col in enumerate(phld_metric_cols):
+            if col not in df.columns:
+                continue
+
+            color = colors[i % len(colors)]
+            x_clean, y_clean, num_removed = clean_data_for_plotting(df, col, x_data)
+
+            if len(y_clean) == 0:
+                print(f"⚠️  Skipping metric column '{col}' - no valid finite data")
+                continue
+
+            if num_removed > 0:
+                print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
+
+            # Add zero line for metrics that can be positive/negative
+            if col.lower() in ['hl', 'pressure', 'pv']:
+                plt.plot(x_clean, [0] * len(x_clean), label="Zero Line", color="gray")
+
+            plt.plot(x_clean, y_clean, label=col, color=color, marker="braille")
+
+        plt.xlabel("Time")
+        plt.ylabel("Metric Value")
+        plt.show()
 
     # Define marker - always use braille for consistency
     marker = "braille"
 
-    # For each indicator, create a standalone plot with its own random color
+    # For each other indicator, create a standalone plot with its own random color
     for idx, col in enumerate(indicator_cols):
         # Force a clean slate for each new plot to avoid interference
         plt.clear_figure()
