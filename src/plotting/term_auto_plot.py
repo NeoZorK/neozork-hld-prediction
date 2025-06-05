@@ -20,7 +20,6 @@ def set_terminal_chart_style(title="Chart"):
     plt.canvas_color("black")        # Black background for better contrast
     plt.axes_color("black")          # Black axes background as requested
     plt.ticks_color("yellow")        # Yellow tick marks for better visibility
-    plt.figure_color("black")        # Set figure background to black
     # Grid removed as requested
     plt.title(title)
 
