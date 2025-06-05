@@ -32,6 +32,24 @@ plt.plot(x_data, df['Open'].tolist(), label="Open", color="bright_magenta")
 
 **Solution**: Updated fallback colors to use `"bright_blue"` for consistency.
 
+### 5. macOS Terminal Visibility ✅ FIXED
+**Problem**: The `axes_color('black')` setting made axis labels, legends, and plot annotations invisible on dark terminal backgrounds (common on macOS and Docker).
+
+**Solution**: Changed `axes_color('black')` to `axes_color('white')` in both main plotting function and fallback plotting function.
+
+**Files Modified**: `term_plot.py` (lines 273 and 356)
+
+**Code Changes**:
+```python
+# Before:
+plt.axes_color('black')
+
+# After:  
+plt.axes_color('white')
+```
+
+This ensures that axis labels, legends, and other plot text are visible on dark terminal backgrounds.
+
 ## Files Modified
 
 ### `/workspaces/neozork-hld-prediction/src/plotting/term_plot.py`
@@ -42,6 +60,7 @@ plt.plot(x_data, df['Open'].tolist(), label="Open", color="bright_magenta")
 3. **Lines 286**: Updated fallback price column color
 4. **Lines 357**: Updated ultra-simple fallback color
 5. **Lines 167-171**: Updated predicted prices color scheme
+6. **Lines 273, 356**: Changed axes color from black to white for macOS terminal visibility
 
 ## Color Mapping Summary
 
@@ -76,6 +95,7 @@ Created verification script `/workspaces/neozork-hld-prediction/verify_color_fix
 - ✅ Tests PPrice1/PPrice2 color differentiation  
 - ✅ Validates Docker routing to terminal mode
 - ✅ Ensures consistency with `term_auto_plot.py` color scheme
+- ✅ Confirms axis/legend text visibility on dark terminals
 
 ## Impact
 
@@ -83,6 +103,7 @@ Created verification script `/workspaces/neozork-hld-prediction/verify_color_fix
 - ❌ Open price line was missing entirely
 - ❌ Open and Close both appeared as bright cyan (indistinguishable)
 - ❌ PPrice1 and PPrice2 had poor color differentiation
+- ❌ Axis and legend text invisible on dark terminal backgrounds
 - ❌ Poor overall visual clarity in terminal plots
 
 ### After Fix:
