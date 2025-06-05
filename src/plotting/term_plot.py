@@ -270,8 +270,8 @@ def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str 
         # Plot 1: OHLC Price Chart
         plt.clear_data()
         plt.canvas_color('black')
-        plt.axes_color('white')
-        plt.ticks_color('white')  # Set legend text color for visibility on dark terminals
+        plt.axes_color('black')  # Changed from 'white' to 'black' for better visibility
+        plt.ticks_color('yellow')  # Changed from 'white' to 'yellow' for better visibility on dark terminals
 
         # Plot OHLC as simple line charts (avoid candlestick issues)
         if all(col in df.columns for col in ['Open', 'High', 'Low', 'Close']):
@@ -354,8 +354,8 @@ def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str 
         try:
             plt.clear_data()
             plt.canvas_color('black')
-            plt.axes_color('white')
-            plt.ticks_color('white')  # Ensure legend text is visible on dark terminal backgrounds
+            plt.axes_color('black')  # Changed from 'white' to 'black' for better visibility
+            plt.ticks_color('yellow')  # Changed from 'white' to 'yellow' for better visibility
             if 'Close' in df.columns:
                 close_data = df['Close'].tolist()
                 plt.plot(range(len(close_data)), close_data, label="Close Price", color="bright_blue")
