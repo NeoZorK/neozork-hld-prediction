@@ -519,6 +519,41 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
     original_parquet_path = None
     calculated_df = None
 
+    # Always calculate PHLD indicators for CSV data when using PHLD rule
+    if is_phld_rule and hasattr(args, 'mode') and args.mode == 'csv':
+        logger.print_info("CSV mode with PHLD rule - calculating indicators...")
+
+        # Make sure we have the required OHLCV columns
+        required_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        if all(col in result_df.columns for col in required_columns):
+            # Create args object for calculate_indicator
+            from types import SimpleNamespace
+            calc_args = SimpleNamespace()
+            calc_args.rule = 'PHLD'
+            calc_args.mode = 'calculation'
+
+            # Prepare input DataFrame for calculation - ensure column names match expected
+            calc_df = result_df[required_columns].copy()
+            # Ensure Volume column is named correctly if needed
+            if 'Volume' in calc_df.columns and 'TickVolume' not in calc_df.columns:
+                calc_df['TickVolume'] = calc_df['Volume']
+
+            # Determine point size for calculation
+            close_diff = calc_df['Close'].diff().abs()
+            close_diff = close_diff[close_diff > 0]  # Filter out zeros
+            point_size = close_diff.min() if not close_diff.empty else 0.0001
+            logger.print_info(f"Using estimated point size for calculation: {point_size}")
+
+            # Calculate PHLD indicators using existing function from indicator_calculation.py
+            try:
+                calculated_df, _ = calculate_indicator(calc_args, calc_df, point_size)
+                logger.print_success("Successfully calculated PHLD indicators from CSV data")
+            except Exception as e:
+                logger.print_error(f"Error calculating PHLD indicators: {e}")
+                calculated_df = None
+        else:
+            logger.print_warning(f"Missing required OHLCV columns for PHLD calculation. Required: {required_columns}, Available: {result_df.columns.tolist()}")
+
     if hasattr(args, 'mode') and args.mode == 'parquet' and data_info is not None:
         # This means we're working with a parquet file
         parquet_from_cache = True
@@ -553,7 +588,76 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
         phld_indicator_columns = ['predicted_high', 'predicted_low', 'pressure', 'pressure_vector', 'direction', 'hl', 'diff']
         has_phld_indicators = any(col.lower() in [c.lower() for c in result_df.columns] for col in phld_indicator_columns)
 
-        if has_phld_indicators and parquet_from_cache:
+        # 1. FIRST CASE: CSV data or direct calculation - show original + calculated
+        if args.mode == 'csv':
+            # First, show original data
+            print("\n🔍 SHOWING ORIGINAL DATA FROM CSV FILE")
+            try:
+                from src.plotting.term_auto_plot import auto_plot_from_dataframe
+                auto_plot_from_dataframe(result_df, f"{plot_title} - Original CSV Data")
+                logger.print_success("Successfully plotted original data from CSV file")
+            except ImportError:
+                logger.print_warning("Could not import auto_plot_from_dataframe, falling back to standard plot")
+                plot_indicator_results_term(result_df, selected_rule, f"{plot_title} - Original CSV Data")
+
+            # Now show calculated indicators if available
+            if calculated_df is not None:
+                print("\n🧮 SHOWING NEWLY CALCULATED PHLD INDICATORS")
+                plot_phld_indicator_terminal(
+                    calculated_df,
+                    selected_rule,
+                    f"{plot_title} - Calculated PHLD Indicators",
+                    None
+                )
+                logger.print_success("Successfully plotted newly calculated PHLD indicators")
+
+                # For CSV data with existing indicators, compare calculated vs. existing
+                if has_phld_indicators:
+                    print("\n📊 COMPARISON: EXISTING CSV VS. NEWLY CALCULATED INDICATORS")
+                    print("=" * 60)
+
+                    # Build mapping between column names from CSV and calculated DataFrames
+                    column_mapping = {
+                        'predicted_high': 'PPrice2',
+                        'predicted_low': 'PPrice1',
+                        'pressure': 'Pressure',
+                        'pressure_vector': 'PV',
+                        'direction': 'Direction',
+                        'hl': 'HL',
+                        'diff': 'Diff'
+                    }
+
+                    # Find common indicator columns for comparison
+                    common_indicators = []
+                    for csv_col, calc_col in column_mapping.items():
+                        # Find match in result_df (original) columns
+                        original_col = next((c for c in result_df.columns if c.lower() == csv_col.lower()), None)
+                        # Check if calculated column exists
+                        if original_col is not None and calc_col in calculated_df.columns:
+                            common_indicators.append((original_col, calc_col))
+
+                    if common_indicators:
+                        # Compare common indicators
+                        for orig_col, calc_col in common_indicators:
+                            if pd.api.types.is_numeric_dtype(result_df[orig_col]) and pd.api.types.is_numeric_dtype(calculated_df[calc_col]):
+                                diff = result_df[orig_col] - calculated_df[calc_col]
+                                mae = abs(diff).mean()
+                                max_diff = abs(diff).max()
+                                match_pct = 100 - (abs(diff).mean() / abs(result_df[orig_col]).mean() * 100) if abs(result_df[orig_col]).mean() > 0 else 0
+                                print(f"{orig_col} vs {calc_col}:")
+                                print(f"  MAE = {mae:.6f}, Max Diff = {max_diff:.6f}, Match = {match_pct:.2f}%")
+                            else:
+                                match_count = (result_df[orig_col] == calculated_df[calc_col]).sum()
+                                match_pct = (match_count / len(result_df)) * 100
+                                print(f"{orig_col} vs {calc_col}: {match_pct:.2f}% match ({match_count}/{len(result_df)} values)")
+                    else:
+                        logger.print_warning("No common indicators found for comparison")
+            else:
+                logger.print_warning("No calculated indicators available")
+            return
+
+        # 2. SECOND CASE: Parquet with pre-calculated indicators - show and compare
+        elif has_phld_indicators and parquet_from_cache:
             logger.print_info("Found pre-calculated PHLD indicators in the parquet file")
 
             # 1. First, show all indicators from the file (like AUTO)
@@ -670,13 +774,53 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
                 logger.print_error(f"Error calculating PHLD indicators: {e}")
                 logger.print_warning("Showing only pre-calculated indicators due to calculation error")
                 plot_phld_indicator_terminal(result_df, selected_rule, plot_title, None)
+
+        # 3. THIRD CASE: No pre-calculated indicators - just calculate and show
         else:
-            # Standard PHLD plotting without comparison
-            try:
-                plot_phld_indicator_terminal(result_df, selected_rule, plot_title, calculated_df)
-                logger.print_success("Successfully plotted PHLD indicators with specialized visualization.")
-            except Exception as e:
-                logger.print_warning(f"Error in specialized PHLD plotting: {e}. Falling back to standard terminal plot.")
+            # No pre-calculated indicators found, calculate and show
+            logger.print_info("No pre-calculated PHLD indicators found, calculating...")
+
+            # Calculate indicators similar to the 'csv' case
+            required_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+            if all(col in result_df.columns for col in required_columns):
+                # Create args object for calculate_indicator
+                from types import SimpleNamespace
+                calc_args = SimpleNamespace()
+                calc_args.rule = 'PHLD'
+                calc_args.mode = 'calculation'
+
+                # Prepare input DataFrame for calculation
+                calc_df = result_df[required_columns].copy()
+                if 'Volume' in calc_df.columns and 'TickVolume' not in calc_df.columns:
+                    calc_df['TickVolume'] = calc_df['Volume']
+
+                # Determine point size for calculation
+                close_diff = calc_df['Close'].diff().abs()
+                close_diff = close_diff[close_diff > 0]
+                point_size = close_diff.min() if not close_diff.empty else 0.0001
+                logger.print_info(f"Using estimated point size for calculation: {point_size}")
+
+                try:
+                    # Calculate PHLD indicators
+                    calculated_df, _ = calculate_indicator(calc_args, calc_df, point_size)
+
+                    if calculated_df is not None:
+                        print("\n🧮 SHOWING CALCULATED PHLD INDICATORS")
+                        plot_phld_indicator_terminal(
+                            calculated_df,
+                            selected_rule,
+                            f"{plot_title} - Calculated PHLD Indicators",
+                            None
+                        )
+                        logger.print_success("Successfully plotted calculated PHLD indicators")
+                    else:
+                        logger.print_warning("Failed to calculate PHLD indicators")
+                        plot_indicator_results_term(result_df, selected_rule, plot_title)
+                except Exception as e:
+                    logger.print_error(f"Error calculating PHLD indicators: {e}")
+                    plot_indicator_results_term(result_df, selected_rule, plot_title)
+            else:
+                logger.print_warning(f"Missing required OHLCV columns for PHLD calculation")
                 plot_indicator_results_term(result_df, selected_rule, plot_title)
         return
 
