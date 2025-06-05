@@ -62,8 +62,8 @@ def _plot_financial_indicators_panels(df: pd.DataFrame, x_data: list, x_labels: 
         for col in momentum_cols:
             color = momentum_indicators[col]
             data = df[col].tolist()
-            plt.plot(x_data, data, label=col, color=color, marker="braille")
-            
+            plt.plot(x_data, data, label=col, color=color)
+
             # Add reference lines for RSI
             if col == 'RSI':
                 plt.plot(x_data, [70] * len(x_data), label="Overbought (70)", color="red")
@@ -84,8 +84,8 @@ def _plot_financial_indicators_panels(df: pd.DataFrame, x_data: list, x_labels: 
         for col in trend_cols:
             color = trend_indicators[col]
             data = df[col].tolist()
-            plt.plot(x_data, data, label=col, color=color, marker="braille")
-        
+            plt.plot(x_data, data, label=col, color=color)
+
         plt.title("Trend Indicators")
         plt.xlabel("Time")
         plt.ylabel("Price")
@@ -104,11 +104,11 @@ def _plot_financial_indicators_panels(df: pd.DataFrame, x_data: list, x_labels: 
             
             if col == 'PV':
                 # PV can be positive/negative, add zero line
-                plt.plot(x_data, data, label=col, color=color, marker="braille")
+                plt.plot(x_data, data, label=col, color=color)
                 plt.plot(x_data, [0] * len(x_data), label="Zero Line", color="gray")
             else:
-                plt.plot(x_data, data, label=col, color=color, marker="braille")
-        
+                plt.plot(x_data, data, label=col, color=color)
+
         plt.title("Volume Indicators")
         plt.xlabel("Time")
         plt.ylabel("Volume")
@@ -127,11 +127,11 @@ def _plot_financial_indicators_panels(df: pd.DataFrame, x_data: list, x_labels: 
             
             if col in ['Pressure', 'HL']:
                 # These can have positive/negative values
-                plt.plot(x_data, data, label=col, color=color, marker="braille")
+                plt.plot(x_data, data, label=col, color=color)
                 plt.plot(x_data, [0] * len(x_data), label="Zero Line", color="gray")
             else:
-                plt.plot(x_data, data, label=col, color=color, marker="braille")
-        
+                plt.plot(x_data, data, label=col, color=color)
+
         plt.title("Custom Indicators")
         plt.xlabel("Time")
         plt.ylabel("Values")
@@ -163,15 +163,15 @@ def _plot_predicted_prices(df: pd.DataFrame, x_data: list, x_labels: list, step:
         
         # Plot actual close price for reference
         if 'Close' in df.columns:
-            plt.plot(x_data, df['Close'].tolist(), label="Close Price", color="cyan+", marker="braille")
-        
+            plt.plot(x_data, df['Close'].tolist(), label="Close Price", color="cyan+")
+
         # Plot predicted prices
         colors = ['lime+', 'red+', 'yellow+', 'magenta+', 'orange+']
         for i, col in enumerate(predicted_cols[:5]):
             color = colors[i % len(colors)]
             data = df[col].tolist()
-            plt.plot(x_data, data, label=col, color=color, marker="braille")
-        
+            plt.plot(x_data, data, label=col, color=color)
+
         plt.title("Price Predictions")
         plt.xlabel("Time")
         plt.ylabel("Price")
@@ -269,20 +269,21 @@ def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str 
         
         # Plot 1: OHLC Price Chart
         plt.clear_data()
-        plt.theme("dark")
-        
+        plt.canvas_color('grey')
+        plt.axes_color('grey')
+
         # Plot OHLC as simple line charts (avoid candlestick issues)
         if all(col in df.columns for col in ['Open', 'High', 'Low', 'Close']):
-            plt.plot(x_data, df['Close'].tolist(), label="Close", color="cyan+", marker="braille")
-            plt.plot(x_data, df['High'].tolist(), label="High", color="green+", marker="braille")
-            plt.plot(x_data, df['Low'].tolist(), label="Low", color="red+", marker="braille")
-            
+            plt.plot(x_data, df['Close'].tolist(), label="Close", color="cyan+")
+            plt.plot(x_data, df['High'].tolist(), label="High", color="green+")
+            plt.plot(x_data, df['Low'].tolist(), label="Low", color="red+")
+
             print("\n📈 PRICE CHART")
         else:
             # Fallback to available price columns
             price_cols = [col for col in df.columns if col.lower() in ['price', 'close', 'value', 'adj close']]
             if price_cols:
-                plt.plot(x_data, df[price_cols[0]].tolist(), label=price_cols[0], color="cyan+", marker="braille")
+                plt.plot(x_data, df[price_cols[0]].tolist(), label=price_cols[0], color="cyan+")
                 print(f"\n📈 {price_cols[0].upper()} CHART")
             else:
                 logger.print_warning("No price data found for plotting.")
@@ -349,7 +350,8 @@ def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str 
         # Ultra-simple fallback
         try:
             plt.clear_data()
-            plt.theme("dark")
+            plt.canvas_color('grey')
+            plt.axes_color('grey')
             if 'Close' in df.columns:
                 close_data = df['Close'].tolist()
                 plt.plot(range(len(close_data)), close_data, label="Close Price", color="cyan+")
