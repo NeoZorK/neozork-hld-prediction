@@ -48,6 +48,10 @@ try:
     from src.plotting.term_auto_plot import auto_plot_from_dataframe
 except ImportError:
     auto_plot_from_dataframe = None
+try:
+    from src.plotting.term_auto_plot import auto_plot_from_dataframe
+except ImportError:
+    auto_plot_from_dataframe = None
 
 def show_help():
     """
@@ -525,6 +529,10 @@ def handle_show_mode(args):
                                 title=f"AUTO Fastest Plot: {found_files[0]['name']}"
                             )
                             print(f"Successfully plotted all columns from '{found_files[0]['name']}' using 'fastest' mode (fastest_auto_plot).")
+                        elif draw_method == 'term' and auto_plot_from_dataframe is not None:
+                            print(f"Using terminal auto plotting for '{found_files[0]['name']}'...")
+                            auto_plot_from_dataframe(df, plot_title=f"AUTO Terminal Plot: {found_files[0]['name']}")
+                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using terminal mode.")
                         elif draw_method in ('sb', 'seaborn') and auto_plot_from_parquet is not None:
                             print(f"Using seaborn_auto_plot for '{found_files[0]['name']}'...")
                             auto_plot_from_parquet(str(found_files[0]['path']), plot_title=f"AUTO Seaborn Plot: {found_files[0]['name']}")
