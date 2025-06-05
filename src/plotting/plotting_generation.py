@@ -5,9 +5,9 @@ from .mplfinance_plot import plot_indicator_results_mplfinance
 from .plotly_plot import plot_indicator_results_plotly
 from .fast_plot import plot_indicator_results_fast
 from .seaborn_plot import plot_indicator_results_seaborn
-from .term_plot import plot_indicator_results_term  # Add terminal plotting support
-from ..plotting.term_plot import plot_indicator_results_term
-from ..plotting.term_auto_plot import auto_plot_from_parquet, auto_plot_from_dataframe  # Import both functions
+from .term_plot import plot_indicator_results_term  # Standard terminal plotting
+from .term_phld_plot import plot_phld_indicator_terminal  # New specialized PHLD terminal plotting
+from ..plotting.term_auto_plot import auto_plot_from_parquet, auto_plot_from_dataframe  # Auto plotting functions
 import plotext as plt  # Add import for plotext
 
 """
@@ -500,16 +500,40 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None):
     """
     logger.print_info("Generating plot using terminal mode (plotext)...")
 
-    # Check if selected_rule is AUTO
-    is_auto_rule = False
-    if hasattr(selected_rule, 'name') and selected_rule.name == 'AUTO':
-        is_auto_rule = True
-    elif isinstance(selected_rule, str) and selected_rule.upper() == 'AUTO':
-        is_auto_rule = True
-    elif selected_rule == 'Auto_Display_All':
-        is_auto_rule = True
+    # Get rule name in standardized format
+    rule_str = selected_rule.name if hasattr(selected_rule, 'name') else str(selected_rule)
+    rule_upper = rule_str.upper()
 
-    # For AUTO rule, we should use auto_plot_from_dataframe which draws each indicator with different colors
+    # Check if selected_rule is AUTO
+    is_auto_rule = rule_upper == 'AUTO' or rule_str == 'Auto_Display_All'
+
+    # Check if we're dealing with PHLD rule
+    is_phld_rule = rule_upper == 'PHLD' or rule_upper == 'PREDICT_HIGH_LOW_DIRECTION'
+
+    # Check if we're dealing with parquet file from csv_converted directory
+    parquet_from_cache = False
+    original_parquet_path = None
+    calculated_df = None
+
+    if hasattr(args, 'mode') and args.mode == 'parquet':
+        # This means we're working with a parquet file
+        parquet_from_cache = True
+
+        # Try to get the parquet file path from data_info
+        if 'parquet_cache_file' in data_info:
+            original_parquet_path = data_info['parquet_cache_file']
+
+            # Check if it's from csv_converted directory
+            if 'csv_converted' in original_parquet_path:
+                logger.print_info(f"Detected parquet file from csv_converted directory: {original_parquet_path}")
+                parquet_from_cache = True
+
+                # For PHLD rule, we might have both original indicators and calculated ones
+                if is_phld_rule and hasattr(args, 'original_df'):
+                    calculated_df = result_df
+                    logger.print_info("Using both original and calculated indicators for comparison")
+
+    # For AUTO rule, use auto_plot_from_dataframe which draws each indicator with different colors
     if is_auto_rule:
         logger.print_info("AUTO rule detected, using auto terminal plotting with unique colors for each indicator...")
         try:
@@ -522,7 +546,18 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None):
             plot_indicator_results_term(result_df, selected_rule, plot_title)
         return
 
-    # Default to standard terminal plot for non-AUTO rules
+    # For PHLD rule, use the specialized PHLD plotting function
+    elif is_phld_rule:
+        logger.print_info("PHLD rule detected, using specialized PHLD terminal plotting...")
+        try:
+            plot_phld_indicator_terminal(result_df, selected_rule, plot_title, calculated_df)
+            logger.print_success("Successfully plotted PHLD indicators with specialized visualization.")
+        except Exception as e:
+            logger.print_warning(f"Error in specialized PHLD plotting: {e}. Falling back to standard terminal plot.")
+            plot_indicator_results_term(result_df, selected_rule, plot_title)
+        return
+
+    # Default to standard terminal plot for other rules
     plot_indicator_results_term(result_df, selected_rule, plot_title)
 
 
