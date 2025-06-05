@@ -659,6 +659,10 @@ def handle_show_mode(args):
                 print(f"Error calculating indicator: {e}")
                 traceback.print_exc()
                 return
+        except Exception as e:
+            print(f"Error processing file: {e}")
+            traceback.print_exc()
+            return
 
     # Plot chart when one file found and no indicator calculation requested
     if len(found_files) > 1:
