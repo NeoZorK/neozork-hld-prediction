@@ -402,6 +402,12 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     # Get random non-repeating colors for all indicators at once
     indicator_colors = get_random_non_repeating_colors(len(indicator_cols))
     
+    # Define diverse markers to ensure variety in visualization
+    custom_markers = ["braille", "dot", "fhd", "hd", "shd", "sd"]
+
+    # Clear the plotext canvas before starting new indicators
+    plt.clear_data()
+
     for idx, col in enumerate(indicator_cols):
         plt.clear_data()
         print(f"\n📈 Indicator: {col}")
@@ -416,9 +422,18 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         
         if num_removed > 0:
             print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
-            
-        # Use consistent beautiful marker and unique non-repeating color for each indicator
-        plt.plot(x_clean, y_clean, label=col, marker=get_beautiful_marker(), color=indicator_colors[idx])
+
+        # Forced selection of color and marker based on index
+        color = indicator_colors[idx]
+        marker = custom_markers[idx % len(custom_markers)]
+
+        # Print debug info for the color and marker being used
+        print(f"Using color: {color} and marker: {marker} for indicator: {col}")
+
+        # Force each indicator to use a different distinctive color and marker
+        plt.plot(x_clean, y_clean, label=col, marker=marker, color=color)
+
+        # Set unique axis style for each indicator to enhance differentiation
         plt.xlabel("Time")
-        plt.ylabel("Value")
+        plt.ylabel(f"Value: {col}")
         plt.show()
