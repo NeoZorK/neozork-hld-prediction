@@ -27,19 +27,49 @@ def set_terminal_chart_style(title="Chart"):
 # Helper function to generate random terminal colors
 def get_random_color():
     """
-    Generate a random color for terminal plotting.
+    Generate a random color for terminal plotting with enhanced diversity.
 
     Returns:
-        A random color name from plotext available colors
+        A random color name from extended plotext available colors
     """
-    # List of available plotext colors for better visibility in terminal
+    # Extended list of available plotext colors for maximum diversity
     available_colors = [
+        # Bright colors
         "bright_red", "bright_yellow", "bright_green", "bright_cyan",
         "bright_blue", "bright_magenta", "bright_white",
+        # Regular colors
         "red", "yellow", "green", "cyan", "blue", "magenta", "white",
-        "orange", "purple", "pink", "lime", "peach", "olive", "teal"
+        # Additional colors
+        "orange", "purple", "pink", "lime", "peach", "olive", "teal",
+        # Darker shades
+        "dark_red", "dark_yellow", "dark_green", "dark_cyan",
+        "dark_blue", "dark_magenta", "grey",
+        # Custom combinations (using name patterns that plotext might support)
+        "light_blue", "light_green", "light_red", "light_yellow",
+        "deep_purple", "deep_blue", "gold", "silver", "bronze",
+        "navy", "forest", "crimson", "coral", "aqua", "violet"
     ]
     return random.choice(available_colors)
+
+# Helper function to generate random markers
+def get_random_marker():
+    """
+    Generate a random marker for terminal plotting.
+    Focus on aesthetically pleasing markers.
+
+    Returns:
+        A random marker from selected attractive plotext markers
+    """
+    # List of aesthetically pleasing plotext markers
+    attractive_markers = [
+        "dot",      # Simple dot - clean and minimalistic
+        "circle",   # Circle - classic and clear
+        "square",   # Square - distinct and precise
+        "cross",    # Cross - clear intersection
+        "plus",     # Plus - clean and distinct
+        "star"      # Star - decorative and eye-catching
+    ]
+    return random.choice(attractive_markers)
 
 def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto Terminal Plot"):
     """
@@ -154,7 +184,7 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 continue
                 
             # Use random color for each column
-            plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=get_random_color())
+            plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_random_marker(), color=get_random_color())
             plt.xlabel("Time")
             plt.ylabel("Value")
             plt.show()
@@ -185,7 +215,7 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 
             # Use a unique color for each column based on its index or hash
             color = rainbow_colors[idx % len(rainbow_colors)] if idx < len(rainbow_colors) else rainbow_colors[hash(col) % len(rainbow_colors)]
-            plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=color)
+            plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_random_marker(), color=color)
             plt.xlabel("Time")
             plt.ylabel("Value")
             plt.show()
@@ -299,7 +329,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             continue
 
         # Use random color for each indicator
-        plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=get_random_color())
+        plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_random_marker(), color=get_random_color())
         plt.xlabel("Time")
         plt.ylabel("Value")
         plt.show()
