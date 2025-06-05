@@ -403,30 +403,22 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     indicator_colors = get_random_non_repeating_colors(len(indicator_cols))
     
     for idx, col in enumerate(indicator_cols):
-        # Skip columns that are all NaN or empty
-        if df[col].isna().all() or df[col].empty:
-            print(f"\n⚠️  Skipping indicator '{col}' - no valid data")
-            continue
-            
         plt.clear_data()
         print(f"\n📈 Indicator: {col}")
         set_terminal_chart_style(f"Indicator: {col}")
 
-        # Filter out NaN values for plotting
-        valid_mask = ~df[col].isna()
-        if not valid_mask.any():
-            print(f"⚠️  No valid data points for {col}")
-            continue
-            
-        x_data_filtered = [x_data[i] for i in range(len(x_data)) if valid_mask.iloc[i]]
-        y_data_filtered = df[col].dropna().tolist()
+        # Clean data for plotting (remove NaN and infinite values)
+        x_clean, y_clean, num_removed = clean_data_for_plotting(df, col, x_data)
         
-        if len(y_data_filtered) == 0:
-            print(f"⚠️  No valid data points for {col}")
+        if len(y_clean) == 0:
+            print(f"⚠️  Skipping indicator '{col}' - no valid finite data")
             continue
-
+        
+        if num_removed > 0:
+            print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
+            
         # Use consistent beautiful marker and unique non-repeating color for each indicator
-        plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_beautiful_marker(), color=indicator_colors[idx])
+        plt.plot(x_clean, y_clean, label=col, marker=get_beautiful_marker(), color=indicator_colors[idx])
         plt.xlabel("Time")
         plt.ylabel("Value")
         plt.show()
