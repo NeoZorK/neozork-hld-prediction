@@ -493,10 +493,12 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
 
                 # Plot Buy/Sell signals as points with custom markers for better visibility
                 if buy_x:
-                    plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green", point_size=2)
+                    # Removed 's' parameter as it's not supported in plotext
+                    plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green")
 
                 if sell_x:
-                    plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red", point_size=2)
+                    # Removed 's' parameter as it's not supported in plotext
+                    plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red")
 
                 # Add a zero line for reference
                 plt.plot(x_clean, [0] * len(x_clean), label="Neutral", color="gray", line_color="gray")
