@@ -52,5 +52,5 @@ def examine_parquet(file_path):
         return [], []
 
 if __name__ == "__main__":
-    file_path = "data/cache/csv_converted/CSVExport_GBPUSD_PERIOD_MN1.parquet"
+    file_path = "../../data/cache/csv_converted/CSVExport_GBPUSD_PERIOD_MN1.parquet"
     examine_parquet(file_path)
