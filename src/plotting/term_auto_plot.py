@@ -51,17 +51,57 @@ def get_random_color():
     ]
     return random.choice(available_colors)
 
+# Helper function to generate random non-repeating colors for charts
+def get_random_non_repeating_colors(count):
+    """
+    Generate a list of random non-repeating colors for terminal plotting.
+
+    Args:
+        count: Number of unique colors needed
+
+    Returns:
+        List of unique random colors
+    """
+    # Extended list of available plotext colors for maximum diversity
+    available_colors = [
+        # Bright colors
+        "bright_red", "bright_yellow", "bright_green", "bright_cyan",
+        "bright_blue", "bright_magenta", "bright_white",
+        # Regular colors
+        "red", "yellow", "green", "cyan", "blue", "magenta", "white",
+        # Additional colors
+        "orange", "purple", "pink", "lime", "peach", "olive", "teal",
+        # Darker shades
+        "dark_red", "dark_yellow", "dark_green", "dark_cyan",
+        "dark_blue", "dark_magenta", "grey",
+        # Custom combinations (using name patterns that plotext might support)
+        "light_blue", "light_green", "light_red", "light_yellow",
+        "deep_purple", "deep_blue", "gold", "silver", "bronze",
+        "navy", "forest", "crimson", "coral", "aqua", "violet"
+    ]
+    
+    # Shuffle the colors and return the requested count
+    shuffled_colors = available_colors.copy()
+    random.shuffle(shuffled_colors)
+    
+    # If we need more colors than available, cycle through them
+    if count > len(shuffled_colors):
+        cycles = (count // len(shuffled_colors)) + 1
+        shuffled_colors = shuffled_colors * cycles
+    
+    return shuffled_colors[:count]
+
 # Helper function to generate consistent beautiful marker
 def get_beautiful_marker():
     """
     Generate a consistent beautiful marker for terminal plotting.
-    Uses circle marker for clean and elegant appearance.
+    Uses braille marker (same as OHLC High) for consistency.
 
     Returns:
         A beautiful consistent marker for all terminal charts
     """
-    # Use circle as the most beautiful and universally readable marker
-    return "circle"
+    # Use braille as the same marker used for OHLC High
+    return "braille"
 
 def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto Terminal Plot"):
     """
@@ -117,18 +157,18 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
 
     # Use different colors for each OHLC component with maximum contrast
     ohlc_colors = {
-        "open": "bright_green",   # Bright green for open price
-        "high": "bright_cyan",    # Bright cyan for high price
-        "low": "bright_red",      # Bright red for low price
-        "close": "bright_yellow"  # Bright yellow for close price
+        "open": "bright_magenta",   # Changed: Bright magenta for open price
+        "high": "bright_cyan",      # Bright cyan for high price
+        "low": "bright_red",        # Bright red for low price
+        "close": "bright_orange"    # Changed: Bright orange for close price
     }
 
-    # Use thicker lines and different markers for better distinction
+    # Use consistent braille markers for all OHLC components
     markers = {
-        "open": "hd",     # Horizontal dash marker for open
-        "high": "braille", # Braille marker for high
-        "low": "braille",  # Braille marker for low
-        "close": "sd"     # Small dot marker for close
+        "open": "braille",   # Changed: Braille marker for open (same as high/low)
+        "high": "braille",   # Braille marker for high
+        "low": "braille",    # Braille marker for low
+        "close": "braille"   # Changed: Braille marker for close (same as high/low)
     }
 
     for col in ohlc_cols:
@@ -152,7 +192,10 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
 
     # Plot indicators based on the rule
     if rule.upper() == "AUTO":
-        for col in indicator_cols:
+        # Get random non-repeating colors for all indicators at once
+        indicator_colors = get_random_non_repeating_colors(len(indicator_cols))
+        
+        for idx, col in enumerate(indicator_cols):
             # Skip columns that are all NaN or empty
             if df[col].isna().all() or df[col].empty:
                 print(f"\n⚠️  Skipping indicator '{col}' - no valid data")
@@ -175,8 +218,8 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 print(f"⚠️  No valid data points for {col}")
                 continue
                 
-            # Use consistent beautiful marker for each column
-            plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_beautiful_marker(), color=get_random_color())
+            # Use consistent beautiful marker and unique non-repeating color for each column
+            plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_beautiful_marker(), color=indicator_colors[idx])
             plt.xlabel("Time")
             plt.ylabel("Value")
             plt.show()
@@ -263,18 +306,18 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
 
         # Use different colors for each OHLC component with maximum contrast
         ohlc_colors = {
-            "open": "bright_green",   # Bright green for open price
-            "high": "bright_cyan",    # Bright cyan for high price
-            "low": "bright_red",      # Bright red for low price
-            "close": "bright_yellow"  # Bright yellow for close price
+            "open": "bright_magenta",   # Changed: Bright magenta for open price
+            "high": "bright_cyan",      # Bright cyan for high price
+            "low": "bright_red",        # Bright red for low price
+            "close": "bright_orange"    # Changed: Bright orange for close price
         }
 
-        # Use different markers for better distinction
+        # Use consistent braille markers for all OHLC components
         markers = {
-            "open": "hd",      # Horizontal dash marker for open
-            "high": "braille", # Braille marker for high
-            "low": "braille",  # Braille marker for low
-            "close": "sd"      # Small dot marker for close
+            "open": "braille",   # Changed: Braille marker for open (same as high/low)
+            "high": "braille",   # Braille marker for high
+            "low": "braille",    # Braille marker for low
+            "close": "braille"   # Changed: Braille marker for close (same as high/low)
         }
 
         for col in ohlc_cols:
@@ -297,6 +340,9 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         plt.show()
 
     # Plot indicators
+    # Get random non-repeating colors for all indicators at once
+    indicator_colors = get_random_non_repeating_colors(len(indicator_cols))
+    
     for idx, col in enumerate(indicator_cols):
         # Skip columns that are all NaN or empty
         if df[col].isna().all() or df[col].empty:
@@ -320,8 +366,8 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             print(f"⚠️  No valid data points for {col}")
             continue
 
-        # Use random color for each indicator
-        plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_beautiful_marker(), color=get_random_color())
+        # Use consistent beautiful marker and unique non-repeating color for each indicator
+        plt.plot(x_data_filtered, y_data_filtered, label=col, marker=get_beautiful_marker(), color=indicator_colors[idx])
         plt.xlabel("Time")
         plt.ylabel("Value")
         plt.show()

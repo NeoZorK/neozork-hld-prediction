@@ -213,7 +213,7 @@ def _plot_trading_signals(df: pd.DataFrame, x_data: list, x_labels: list, step: 
                 plt.bar(x_data, [-val for val in sell_points], label="Sell Signal", color="red+")
             else:
                 # Generic signal plotting
-                plt.plot(x_data, data, label=col, color="orange+", marker="circle")
+                plt.plot(x_data, data, label=col, color="orange+", marker="braille")
         
         plt.title("Trading Signals")
         plt.xlabel("Time")
