@@ -450,11 +450,20 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
         plot_ohlc_chart(df, x_data, x_labels, step)
         plot_volume_chart(df, x_data, x_labels, step)
 
+        # Determine if data is calculated or loaded from file for PHLD columns
+        phld_price_source = "calculated" if calculated_df is not None else "pre-calculated"
+
         # Plot PHLD specific components with source indicator
-        print("\n📊 [LOADED FROM FILE] PREDICTED PRICES")
-        plot_price_predictions(df, column_groups['price_pred'], x_data, x_labels, step)
-        print("\n📊 [LOADED FROM FILE] TRADING SIGNALS")
-        plot_direction_signals(df, x_data, x_labels, step)
+        # Use the new function get_data_source_label to determine data source
+        if column_groups['price_pred']:
+            price_pred_source = get_data_source_label(column_groups['price_pred'][0] if column_groups['price_pred'] else "pprice")
+            print(f"\n🎯 PREDICTED PRICES {price_pred_source}")
+            plot_price_predictions(df, column_groups['price_pred'], x_data, x_labels, step)
+
+        if 'Direction' in df.columns:
+            direction_source = get_data_source_label("Direction")
+            print(f"\n🚦 TRADING SIGNALS {direction_source}")
+            plot_direction_signals(df, x_data, x_labels, step)
 
         # Plot color indicators with source indicator
         if column_groups['colors']:
@@ -462,7 +471,7 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
             plot_additional_indicators_with_source(
                 df, column_groups['colors'], x_data, x_labels, step,
                 "PHLD COLOR INDICATORS",
-                "pre-calculated"
+                phld_price_source
             )
 
         # Plot metrics with source indicator
@@ -471,7 +480,7 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
             plot_additional_indicators_with_source(
                 df, column_groups['metrics'], x_data, x_labels, step,
                 "PHLD METRICS",
-                "pre-calculated"
+                phld_price_source
             )
 
         # Compare indicators if both original and calculated are available
