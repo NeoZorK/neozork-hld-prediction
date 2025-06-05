@@ -162,10 +162,10 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
 
     # Use different colors for each OHLC component with maximum contrast
     ohlc_colors = {
-        "open": "bright_green",     # Changed: Bright green for open price (better contrast)
+        "open": "bright_magenta",   # Changed: Bright magenta for open price (better visual distinction)
         "high": "bright_cyan",      # Bright cyan for high price
         "low": "bright_red",        # Bright red for low price
-        "close": "bright_yellow"    # Changed: Bright yellow for close price (better contrast)
+        "close": "bright_blue"      # Changed: Bright blue for close price (better contrast and readability)
     }
 
     # Use consistent braille markers for all OHLC components
@@ -311,10 +311,10 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
 
         # Use different colors for each OHLC component with maximum contrast
         ohlc_colors = {
-            "open": "bright_green",     # Changed: Bright green for open price (better contrast)
+            "open": "bright_magenta",   # Changed: Bright magenta for open price (better visual distinction)
             "high": "bright_cyan",      # Bright cyan for high price
             "low": "bright_red",        # Bright red for low price
-            "close": "bright_yellow"    # Changed: Bright yellow for close price (better contrast)
+            "close": "bright_blue"      # Changed: Bright blue for close price (better contrast and readability)
         }
 
         # Use consistent braille markers for all OHLC components
