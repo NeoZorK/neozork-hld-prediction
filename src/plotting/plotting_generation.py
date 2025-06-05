@@ -5,6 +5,10 @@ from .mplfinance_plot import plot_indicator_results_mplfinance
 from .plotly_plot import plot_indicator_results_plotly
 from .fast_plot import plot_indicator_results_fast
 from .seaborn_plot import plot_indicator_results_seaborn
+from .term_plot import plot_indicator_results_term  # Add terminal plotting support
+from ..plotting.term_plot import plot_indicator_results_term
+from ..plotting.term_auto_plot import auto_plot_from_parquet, auto_plot_from_dataframe  # Import both functions
+import plotext as plt  # Add import for plotext
 
 """
 Workflow step for generating plots based on indicator results using the selected library (Plotly, mplfinance, fast, seaborn).
@@ -16,9 +20,18 @@ from pathlib import Path
 import webbrowser
 import subprocess
 import os
+import sys
 
 from ..common import logger
 from ..common.constants import TradingRule
+
+# Check if running in Docker
+IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
+
+
+def _detect_docker_environment():
+    """Detect if running in Docker environment"""
+    return os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
 
 
 def validate_input_data(result_df, selected_rule):
@@ -475,6 +488,48 @@ def generate_plotly_plot(result_df, selected_rule, plot_title, data_info):
     handle_plotly_plot(fig, data_info, selected_rule)
 
 
+def generate_term_plot(result_df, selected_rule, plot_title, args=None):
+    """
+    Generates a terminal plot using plotext.
+    
+    Args:
+        result_df (pd.DataFrame): DataFrame with OHLCV and calculation results.
+        selected_rule (TradingRule | str): The selected trading rule.
+        plot_title (str): Title for the plot.
+        args (argparse.Namespace, optional): Command-line arguments.
+    """
+    logger.print_info("Generating plot using terminal mode (plotext)...")
+
+    # If selected_rule is AUTO, use auto_plot_from_parquet instead
+    if (hasattr(selected_rule, 'name') and selected_rule.name == 'AUTO') or \
+       (isinstance(selected_rule, str) and selected_rule.upper() == 'AUTO'):
+        logger.print_info("AUTO rule detected, using auto terminal plotting...")
+
+        # For AUTO rule, we should always use auto_plot_from_parquet with the DataFrame directly
+        # instead of trying to find a parquet file
+        logger.print_info("Using direct AUTO plotting mode with the provided DataFrame")
+        logger.print_debug(f"DataFrame columns: {result_df.columns.tolist() if result_df is not None else 'None'}")
+
+        # Check if 'pressure' and 'pressure_vector' are in the columns and log their presence
+        if result_df is not None:
+            non_standard_cols = []
+            for col in ['pressure', 'pressure_vector', 'predicted_high', 'predicted_low']:
+                if col in result_df.columns:
+                    logger.print_info(f"'{col}' column found in DataFrame")
+                    non_standard_cols.append(col)
+            
+            if non_standard_cols:
+                logger.print_info(f"Found {len(non_standard_cols)} non-standard fields for AUTO display: {non_standard_cols}")
+
+        # Call auto_plot directly with the DataFrame instead of the path
+        from src.plotting.term_auto_plot import auto_plot_from_dataframe
+        auto_plot_from_dataframe(result_df, plot_title)
+        return
+
+    # Default to standard terminal plot for non-AUTO rules
+    plot_indicator_results_term(result_df, selected_rule, plot_title)
+
+
 def generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point):
     """
     Generates and potentially saves/displays a plot based on calculation results
@@ -504,9 +559,9 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
             selected_rule = 'Auto_Display_All'
         logger.print_info("AUTO display mode detected, will display all available columns")
 
-    # Use 'fastest' as default drawing method if draw is not specified
+    # Use 'fastest' as default drawing mode if draw is not specified
     if not hasattr(args, 'draw') or args.draw is None:
-        logger.print_info("Drawing method not specified, using 'fastest' by default.")
+        logger.print_info("Drawing mode not specified, using 'fastest' by default.")
         args.draw = 'fastest'
 
     # Debug: Print DataFrame info before plotting
@@ -515,8 +570,29 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     # Generate plot title
     plot_title = get_plot_title(data_info, point_size, estimated_point, args)
 
+    # Check if running in Docker, if so, force terminal plotting
+    in_docker = _detect_docker_environment()
+    if in_docker and args.draw != 'term':
+        logger.print_info(f"Docker environment detected. Forcing terminal plotting regardless of specified '{args.draw}' method.")
+        args.draw = 'term'
+
     # Choose plotting function based on args.draw
     draw_mode = getattr(args, 'draw', 'fastest').lower()
+    
+    # Docker override: force 'term' mode for all draw modes in Docker (unless disabled for testing)
+    disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
+    
+    if IN_DOCKER and not disable_docker_detection and draw_mode not in ['term']:
+        logger.print_info(f"Docker detected: forcing draw mode from '{draw_mode}' to 'term' (terminal plotting)")
+        draw_mode = 'term'
+    elif IN_DOCKER and not disable_docker_detection and draw_mode == 'term':
+        logger.print_info("Docker detected: already using 'term' mode")
+    elif disable_docker_detection:
+        logger.print_info(f"Docker detection disabled for testing, using requested mode: '{draw_mode}'")
+    else:
+        logger.print_info(f"Not in Docker or already 'term' mode. IN_DOCKER={IN_DOCKER}, draw_mode='{draw_mode}'")
+    
+    logger.print_info(f"Final plotting mode selected: '{draw_mode}'")
 
     try:
         if draw_mode in ['mplfinance', 'mpl']:
@@ -525,6 +601,15 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
             generate_seaborn_plot(result_df, selected_rule, plot_title)
         elif draw_mode == 'fast':
             generate_fast_plot(result_df, selected_rule, plot_title)
+        elif draw_mode == 'term':
+            # If no rule is specified, default to OHLCV rule for terminal mode
+            if selected_rule is None or (isinstance(selected_rule, str) and selected_rule.lower() == 'none'):
+                from ..common.constants import TradingRule
+                logger.print_info("No rule specified, defaulting to OHLCV for terminal plotting")
+                selected_rule = TradingRule.OHLCV
+
+            # Pass args to terminal plot function for AUTO mode support
+            generate_term_plot(result_df, selected_rule, plot_title, args)
         else:
             generate_plotly_plot(result_df, selected_rule, plot_title, data_info)
     except Exception as e:
