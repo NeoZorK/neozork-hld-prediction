@@ -1,320 +1,372 @@
-# -*- coding: utf-8 -*-
 # src/plotting/term_plot.py
-
 """
-Terminal-based plotting functions for visualizing indicator results using Rich library.
-This module provides text-based charts displayed directly in the terminal.
+Terminal plotting using plotext for OHLCV and indicator panels.
+Supports line charts, bars, and multi-panel indicators in the terminal.
 """
-
+import plotext as plt
 import pandas as pd
 import numpy as np
-from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
-from rich.columns import Columns
-from rich.text import Text
-from rich.align import Align
-from rich import box
-from ..common import logger
-from ..common.constants import TradingRule, BUY, SELL, NOTRADE
+from src.common import logger
+from src.common.constants import TradingRule
 
-
-def plot_indicator_results_term(df_results, rule, title="Terminal Plot", data_source="demo", **kwargs):
+def _plot_financial_indicators_panels(df: pd.DataFrame, x_data: list, x_labels: list, step: int, rule=None):
     """
-    Creates terminal-based visualization for indicator results using Rich library.
-    
+    Plot financial indicators in separate panels for better visualization.
+
     Args:
-        df_results (pd.DataFrame): The DataFrame with OHLC data and indicators.
-        rule (TradingRule): The trading rule used in analysis.
-        title (str): Title for the plot.
-        data_source (str): Source of the data (for special formatting).
-        **kwargs: Additional keyword arguments.
-    
-    Returns:
-        None: Displays the chart directly in terminal.
+        df: DataFrame with financial data
+        x_data: list of x positions
+        x_labels: list of x-axis labels
+        step: step size for x-ticks
+        rule: Trading rule being applied, if None or OHLCV only price data is shown
     """
+    # Skip indicator panels if rule is None or OHLCV
+    if rule is None or (hasattr(rule, 'name') and rule.name == 'OHLCV'):
+        return
+
+    # Define indicator categories and their colors - enhanced for better distinction
+    momentum_indicators = {
+        'RSI': 'bright_yellow',
+        'MACD': 'bright_cyan', 
+        'Signal': 'orange',
+        'Stochastic': 'lime'
+    }
+    
+    trend_indicators = {
+        'MA': 'blue',
+        'SMA': 'blue',
+        'EMA': 'cyan',
+        'BB_Upper': 'white',
+        'BB_Lower': 'white',
+        'BB_Middle': 'grey'
+    }
+    
+    volume_indicators = {
+        'PV': 'bright_red',
+        'Volume_MA': 'bright_magenta'
+    }
+    
+    custom_indicators = {
+        'HL': 'bright_yellow',
+        'Pressure': 'bright_magenta',
+        'PPrice1': 'bright_green',  # Changed for better distinction from PPrice2
+        'PPrice2': 'bright_red'     # Changed for better distinction from PPrice1
+    }
+    
+    # Panel 1: Momentum Indicators
+    momentum_cols = [col for col in df.columns if col in momentum_indicators and not df[col].isna().all()]
+    if momentum_cols:
+        plt.clear_data()
+        print("\n📊 MOMENTUM INDICATORS")
+        
+        for col in momentum_cols:
+            color = momentum_indicators[col]
+            data = df[col].tolist()
+            plt.plot(x_data, data, label=col, color=color)
+
+            # Add reference lines for RSI
+            if col == 'RSI':
+                plt.plot(x_data, [70] * len(x_data), label="Overbought (70)", color="red")
+                plt.plot(x_data, [30] * len(x_data), label="Oversold (30)", color="green")
+        
+        plt.title("Momentum Indicators")
+        plt.xlabel("Time")
+        plt.ylabel("Values")
+        plt.xticks(x_data[::step], x_labels[::step])
+        plt.show()
+    
+    # Panel 2: Trend Indicators  
+    trend_cols = [col for col in df.columns if col in trend_indicators and not df[col].isna().all()]
+    if trend_cols:
+        plt.clear_data()
+        print("\n📈 TREND INDICATORS")
+        
+        for col in trend_cols:
+            color = trend_indicators[col]
+            data = df[col].tolist()
+            plt.plot(x_data, data, label=col, color=color)
+
+        plt.title("Trend Indicators")
+        plt.xlabel("Time")
+        plt.ylabel("Price")
+        plt.xticks(x_data[::step], x_labels[::step])
+        plt.show()
+    
+    # Panel 3: Volume Indicators
+    volume_cols = [col for col in df.columns if col in volume_indicators and not df[col].isna().all()]
+    if volume_cols:
+        plt.clear_data()
+        print("\n📊 VOLUME INDICATORS")
+        
+        for col in volume_cols:
+            color = volume_indicators[col]
+            data = df[col].tolist()
+            
+            if col == 'PV':
+                # PV can be positive/negative, add zero line
+                plt.plot(x_data, data, label=col, color=color)
+                plt.plot(x_data, [0] * len(x_data), label="Zero Line", color="gray")
+            else:
+                plt.plot(x_data, data, label=col, color=color)
+
+        plt.title("Volume Indicators")
+        plt.xlabel("Time")
+        plt.ylabel("Volume")
+        plt.xticks(x_data[::step], x_labels[::step])
+        plt.show()
+    
+    # Panel 4: Custom Indicators (HL, Pressure, etc.)
+    custom_cols = [col for col in df.columns if col in custom_indicators and not df[col].isna().all()]
+    if custom_cols:
+        plt.clear_data()
+        print("\n🔧 CUSTOM INDICATORS")
+        
+        for col in custom_cols:
+            color = custom_indicators[col]
+            data = df[col].tolist()
+            
+            if col in ['Pressure', 'HL']:
+                # These can have positive/negative values
+                plt.plot(x_data, data, label=col, color=color)
+                plt.plot(x_data, [0] * len(x_data), label="Zero Line", color="gray")
+            else:
+                plt.plot(x_data, data, label=col, color=color)
+
+        plt.title("Custom Indicators")
+        plt.xlabel("Time")
+        plt.ylabel("Values")
+        plt.xticks(x_data[::step], x_labels[::step])
+        plt.show()
+
+
+def _plot_predicted_prices(df: pd.DataFrame, x_data: list, x_labels: list, step: int, rule=None):
+    """
+    Plot predicted price levels if available.
+
+    Args:
+        df: DataFrame with financial data
+        x_data: list of x positions
+        x_labels: list of x-axis labels
+        step: step size for x-ticks
+        rule: Trading rule being applied, if None or OHLCV predicted prices aren't shown
+    """
+    # Skip predicted prices if rule is None or OHLCV
+    if rule is None or (hasattr(rule, 'name') and rule.name == 'OHLCV'):
+        return
+
+    predicted_cols = [col for col in df.columns if 'predicted' in col.lower() or 'pprice' in col.lower()]
+    predicted_cols = [col for col in predicted_cols if not df[col].isna().all()]
+    
+    if predicted_cols:
+        plt.clear_data()
+        print("\n🎯 PREDICTED PRICES")
+        
+        # Plot actual close price for reference
+        if 'Close' in df.columns:
+            plt.plot(x_data, df['Close'].tolist(), label="Close Price", color="bright_blue")
+
+        # Plot predicted prices with distinct colors
+        colors = ['bright_green', 'bright_red', 'bright_yellow', 'bright_magenta', 'bright_white']
+        for i, col in enumerate(predicted_cols[:5]):
+            color = colors[i % len(colors)]
+            data = df[col].tolist()
+            plt.plot(x_data, data, label=col, color=color)
+
+        plt.title("Price Predictions")
+        plt.xlabel("Time")
+        plt.ylabel("Price")
+        plt.xticks(x_data[::step], x_labels[::step])
+        plt.show()
+
+
+def _plot_trading_signals(df: pd.DataFrame, x_data: list, x_labels: list, step: int, rule=None):
+    """
+    Plot trading signals and direction indicators.
+
+    Args:
+        df: DataFrame with financial data
+        x_data: list of x positions
+        x_labels: list of x-axis labels
+        step: step size for x-ticks
+        rule: Trading rule being applied, if None or OHLCV trading signals aren't shown
+    """
+    # Skip trading signals if rule is None or OHLCV
+    if rule is None or (hasattr(rule, 'name') and rule.name == 'OHLCV'):
+        return
+
+    signal_cols = [col for col in df.columns if col.lower() in ['direction', 'signal', 'buy_signal', 'sell_signal']]
+    signal_cols = [col for col in signal_cols if not df[col].isna().all()]
+    
+    if signal_cols:
+        plt.clear_data()
+        print("\n🚦 TRADING SIGNALS")
+        
+        for col in signal_cols:
+            data = df[col].tolist()
+            
+            if col.lower() == 'direction':
+                # Direction: 1=Buy, -1/2=Sell, 0=Hold
+                buy_points = [1 if val == 1 else 0 for val in data]
+                sell_points = [1 if val in [-1, 2] else 0 for val in data]
+                
+                plt.bar(x_data, buy_points, label="Buy Signal", color="bright_green")
+                plt.bar(x_data, [-val for val in sell_points], label="Sell Signal", color="bright_red")
+            else:
+                # Generic signal plotting
+                plt.plot(x_data, data, label=col, color="orange", marker="braille")
+        
+        plt.title("Trading Signals")
+        plt.xlabel("Time")
+        plt.ylabel("Signal Strength")
+        plt.xticks(x_data[::step], x_labels[::step])
+        plt.show()
+
+
+def _calculate_simple_indicators(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Placeholder function that no longer calculates simple indicators.
+    According to new requirements, we don't need to show SMA, RSI and other indicators by default.
+
+    Args:
+        df: DataFrame with data
+
+    Returns:
+        DataFrame without changes
+    """
+    # According to requirements, we no longer calculate indicators by default
+    return df.copy()
+
+
+def plot_indicator_results_term(df: pd.DataFrame, rule: TradingRule, title: str = "Indicator Results"):
+    """
+    Plots OHLCV and indicators in the terminal using plotext.
+    Uses simple line charts for better compatibility.
+    """
+    if df is None or df.empty:
+        logger.print_warning("No data to plot in terminal mode.")
+        return
+
     try:
-        console = Console()
+        # Clear any previous plots
+        plt.clear_data()
         
-        # Validate DataFrame
-        if df_results is None or df_results.empty:
-            console.print("[red]Error: DataFrame is empty or None[/red]")
-            return None
-            
-        # Required OHLC columns
-        required_columns = ['Open', 'High', 'Low', 'Close']
-        if not all(col in df_results.columns for col in required_columns):
-            console.print(f"[red]Error: DataFrame must contain columns {required_columns}[/red]")
-            return None
+        # Limit data points for terminal display (last 80 points for better visibility)
+        max_points = 80
+        if len(df) > max_points:
+            df = df.tail(max_points).copy()
+
+        # Prepare x-axis data
+        x_data = list(range(len(df)))
         
-        # Display header
-        header_text = f"[bold cyan]{title}[/bold cyan]"
-        if hasattr(rule, 'name'):
-            header_text += f" - [yellow]{rule.name}[/yellow]"
-        elif isinstance(rule, str):
-            header_text += f" - [yellow]{rule}[/yellow]"
-            
-        console.print(Panel(header_text, box=box.DOUBLE))
-        
-        # Get the last 20 rows for display (terminal space is limited)
-        display_df = df_results.tail(20).copy()
-        
-        # Create main OHLC chart
-        create_ohlc_chart(console, display_df, rule)
-        
-        # Create indicator charts based on rule
-        if rule == TradingRule.Predict_High_Low_Direction or (isinstance(rule, str) and rule.upper() == 'PHLD'):
-            create_phld_charts(console, display_df)
-        elif rule == TradingRule.AUTO or (isinstance(rule, str) and rule.upper() == 'AUTO'):
-            create_auto_charts(console, display_df)
+        # Generate x-axis labels from index with enhanced datetime formatting
+        if isinstance(df.index, pd.DatetimeIndex):
+            # Use full datetime format: YYYY-MM-DD HH:MM for better temporal context
+            x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in df.index]
         else:
-            create_generic_charts(console, display_df)
+            x_labels = [f"T{i}" for i in x_data]
+
+        print(f"\n{title}")
+        print("=" * 60)
+        
+        # Plot 1: OHLC Price Chart
+        plt.clear_data()
+        plt.canvas_color('black')
+        plt.axes_color('white')
+        plt.ticks_color('white')  # Set legend text color for visibility on dark terminals
+
+        # Plot OHLC as simple line charts (avoid candlestick issues)
+        if all(col in df.columns for col in ['Open', 'High', 'Low', 'Close']):
+            # Use consistent color mapping with term_auto_plot.py for better differentiation
+            plt.plot(x_data, df['Open'].tolist(), label="Open", color="bright_magenta")
+            plt.plot(x_data, df['High'].tolist(), label="High", color="bright_cyan") 
+            plt.plot(x_data, df['Low'].tolist(), label="Low", color="bright_red")
+            plt.plot(x_data, df['Close'].tolist(), label="Close", color="bright_blue")
+
+            print("\n📈 PRICE CHART")
+        else:
+            # Fallback to available price columns
+            price_cols = [col for col in df.columns if col.lower() in ['price', 'close', 'value', 'adj close']]
+            if price_cols:
+                plt.plot(x_data, df[price_cols[0]].tolist(), label=price_cols[0], color="bright_blue")
+                print(f"\n📈 {price_cols[0].upper()} CHART")
+            else:
+                logger.print_warning("No price data found for plotting.")
+                return
+
+        plt.title("Price Movement")
+        plt.xlabel("Time")
+        plt.ylabel("Price")
+        
+        # Set readable x-axis labels
+        step = max(1, len(x_labels) // 8)
+        plt.xticks(x_data[::step], x_labels[::step])
+        
+        plt.show()
+        
+        # Plot 2: Volume Chart (if available)
+        if 'Volume' in df.columns and df['Volume'].sum() > 0:
+            plt.clear_data()
+            vol_data = df['Volume'].tolist()
+            plt.bar(x_data, vol_data, label="Volume", color="blue+")
+            plt.title("Volume")
+            plt.xlabel("Time")
+            plt.ylabel("Volume")
+            plt.xticks(x_data[::step], x_labels[::step])
+            print("\n📊 VOLUME CHART")
+            plt.show()
+
+        # Calculate additional indicators if needed
+        df = _calculate_simple_indicators(df)
+        
+        # Plot 3: Financial Indicators in Multiple Panels
+        _plot_financial_indicators_panels(df, x_data, x_labels, step, rule)
+
+        # Plot 4: Predicted Price Lines (if available)
+        _plot_predicted_prices(df, x_data, x_labels, step, rule)
+
+        # Plot 5: Trading Signals (if available)
+        _plot_trading_signals(df, x_data, x_labels, step, rule)
+
+        # Print data summary
+        print("\n📋 DATA SUMMARY")
+        print("-" * 30)
+        print(f"Data points: {len(df)}")
+        print(f"Rule applied: {rule.name if hasattr(rule, 'name') else str(rule)}")
+        
+        if 'Close' in df.columns:
+            close_prices = df['Close']
+            print(f"Price range: ${close_prices.min():.2f} - ${close_prices.max():.2f}")
             
-        # Display summary statistics
-        create_summary_table(console, df_results)
+        # Find all indicators for summary
+        all_indicators = []
+        indicator_types = ['RSI', 'MACD', 'Signal', 'MA', 'SMA', 'EMA', 'PV', 'HL', 'Pressure', 'PPrice1', 'PPrice2']
+        for col in df.columns:
+            if any(ind in col for ind in indicator_types) and not df[col].isna().all():
+                all_indicators.append(col)
         
-        return None
-        
+        if all_indicators:
+            print(f"Indicators: {', '.join(all_indicators)}")
+            
+        logger.print_info(f"Terminal plot completed successfully with {len(df)} data points")
+            
     except Exception as e:
         logger.print_error(f"Error in terminal plotting: {str(e)}")
-        console = Console()
-        console.print(f"[red]Error creating terminal plot: {str(e)}[/red]")
-        return None
-
-
-def create_ohlc_chart(console, df, rule):
-    """Create a text-based OHLC chart with buy/sell signals."""
-    
-    console.print("\n[bold blue]📈 OHLC Chart with Signals[/bold blue]")
-    
-    # Create table for OHLC data
-    table = Table(show_header=True, header_style="bold magenta", box=box.SIMPLE)
-    table.add_column("Time", style="dim", width=12)
-    table.add_column("Open", justify="right", style="cyan")
-    table.add_column("High", justify="right", style="green")
-    table.add_column("Low", justify="right", style="red")
-    table.add_column("Close", justify="right", style="white")
-    table.add_column("Direction", justify="center", width=10)
-    table.add_column("Signal", justify="center", width=8)
-    
-    for idx, row in df.iterrows():
-        # Format timestamp
-        if hasattr(idx, 'strftime'):
-            time_str = idx.strftime("%H:%M")
-        else:
-            time_str = str(idx)[-8:]  # Last 8 characters
-            
-        # Format prices
-        open_val = f"{row['Open']:.4f}"
-        high_val = f"{row['High']:.4f}"
-        low_val = f"{row['Low']:.4f}"
-        close_val = f"{row['Close']:.4f}"
-        
-        # Determine direction arrow
-        if row['Close'] > row['Open']:
-            direction = "[green]↗[/green]"
-        elif row['Close'] < row['Open']:
-            direction = "[red]↘[/red]"
-        else:
-            direction = "[yellow]→[/yellow]"
-            
-        # Determine signal based on Direction column if available
-        signal = ""
-        if 'Direction' in row and pd.notna(row['Direction']):
-            direction_val = row['Direction']
-            if direction_val == BUY:
-                signal = "[green]BUY ⬆[/green]"
-            elif direction_val == SELL:
-                signal = "[red]SELL ⬇[/red]"
-            elif direction_val == NOTRADE:
-                signal = "[yellow]HOLD ■[/yellow]"
-                
-        table.add_row(time_str, open_val, high_val, low_val, close_val, direction, signal)
-    
-    console.print(table)
-
-
-def create_phld_charts(console, df):
-    """Create charts specific to PHLD (Predict High Low Direction) rule."""
-    
-    # HL Chart
-    if 'HL' in df.columns:
-        console.print("\n[bold yellow]📊 HL (High-Low) Field[/bold yellow]")
-        create_line_chart(console, df, 'HL', "cyan")
-    
-    # Pressure Chart
-    if 'Pressure' in df.columns:
-        console.print("\n[bold magenta]⚡ Pressure Field[/bold magenta]")
-        create_line_chart(console, df, 'Pressure', "magenta")
-    
-    # Pressure Vector Chart
-    if 'PV' in df.columns:
-        console.print("\n[bold green]🎯 Pressure Vector (PV) Field[/bold green]")
-        create_line_chart(console, df, 'PV', "green")
-    
-    # PPrice levels if available
-    if 'PPrice1' in df.columns and 'PPrice2' in df.columns:
-        console.print("\n[bold blue]🎯 Predicted Price Levels[/bold blue]")
-        create_price_levels_chart(console, df)
-
-
-def create_auto_charts(console, df):
-    """Create charts for AUTO mode showing all available indicators."""
-    
-    # Find all numeric columns except OHLC
-    ohlc_cols = {'Open', 'High', 'Low', 'Close', 'Volume'}
-    numeric_cols = df.select_dtypes(include=[np.number]).columns
-    indicator_cols = [col for col in numeric_cols if col not in ohlc_cols]
-    
-    for col in indicator_cols:
-        if col in df.columns and df[col].notna().any():
-            console.print(f"\n[bold cyan]📈 {col}[/bold cyan]")
-            create_line_chart(console, df, col, "cyan")
-
-
-def create_generic_charts(console, df):
-    """Create charts for other trading rules."""
-    
-    # Show common indicators if available
-    common_indicators = ['HL', 'Pressure', 'PV', 'Volume']
-    
-    for indicator in common_indicators:
-        if indicator in df.columns and df[indicator].notna().any():
-            color = {
-                'HL': 'yellow',
-                'Pressure': 'magenta', 
-                'PV': 'green',
-                'Volume': 'blue'
-            }.get(indicator, 'white')
-            
-            console.print(f"\n[bold {color}]📊 {indicator}[/bold {color}]")
-            create_line_chart(console, df, indicator, color)
-
-
-def create_line_chart(console, df, column, color="white"):
-    """Create a simple ASCII line chart for a data column."""
-    
-    if column not in df.columns or df[column].isna().all():
-        console.print(f"[dim]No data available for {column}[/dim]")
-        return
-        
-    values = df[column].dropna()
-    if len(values) == 0:
-        console.print(f"[dim]No valid data for {column}[/dim]")
-        return
-    
-    # Create simple horizontal bar chart
-    table = Table(show_header=True, header_style=f"bold {color}", box=box.SIMPLE)
-    table.add_column("Time", style="dim", width=12)
-    table.add_column("Value", justify="right", style=color, width=12)
-    table.add_column("Chart", width=30)
-    
-    # Normalize values for visualization
-    min_val = values.min()
-    max_val = values.max()
-    val_range = max_val - min_val if max_val != min_val else 1
-    
-    for idx, value in values.items():
-        # Format timestamp
-        if hasattr(idx, 'strftime'):
-            time_str = idx.strftime("%H:%M")
-        else:
-            time_str = str(idx)[-8:]
-            
-        # Format value
-        value_str = f"{value:.4f}"
-        
-        # Create simple bar
-        if val_range > 0:
-            normalized = (value - min_val) / val_range
-            bar_length = int(normalized * 20)
-            bar = "█" * bar_length + "░" * (20 - bar_length)
-        else:
-            bar = "█" * 10 + "░" * 10
-            
-        table.add_row(time_str, value_str, f"[{color}]{bar}[/{color}]")
-    
-    console.print(table)
-
-
-def create_price_levels_chart(console, df):
-    """Create chart showing predicted price levels."""
-    
-    table = Table(show_header=True, header_style="bold blue", box=box.SIMPLE)
-    table.add_column("Time", style="dim", width=12)
-    table.add_column("PPrice1", justify="right", style="green", width=10)
-    table.add_column("PPrice2", justify="right", style="red", width=10)
-    table.add_column("Current", justify="right", style="white", width=10)
-    table.add_column("Position", justify="center", width=15)
-    
-    for idx, row in df.iterrows():
-        if hasattr(idx, 'strftime'):
-            time_str = idx.strftime("%H:%M")
-        else:
-            time_str = str(idx)[-8:]
-            
-        pp1 = f"{row['PPrice1']:.4f}" if 'PPrice1' in row and pd.notna(row['PPrice1']) else "N/A"
-        pp2 = f"{row['PPrice2']:.4f}" if 'PPrice2' in row and pd.notna(row['PPrice2']) else "N/A"
-        current = f"{row['Close']:.4f}"
-        
-        # Determine position relative to price levels
-        position = ""
-        if 'PPrice1' in row and 'PPrice2' in row and pd.notna(row['PPrice1']) and pd.notna(row['PPrice2']):
-            if row['Close'] < row['PPrice1']:
-                position = "[green]Below P1[/green]"
-            elif row['Close'] > row['PPrice2']:
-                position = "[red]Above P2[/red]"
+        # Ultra-simple fallback
+        try:
+            plt.clear_data()
+            plt.canvas_color('black')
+            plt.axes_color('white')
+            plt.ticks_color('white')  # Ensure legend text is visible on dark terminal backgrounds
+            if 'Close' in df.columns:
+                close_data = df['Close'].tolist()
+                plt.plot(range(len(close_data)), close_data, label="Close Price", color="bright_blue")
+                plt.title(f"{title} - Price Chart")
+                plt.xlabel("Time Points")
+                plt.ylabel("Price")
+                plt.show()
+                print(f"\n✅ Simple price chart displayed ({len(close_data)} points)")
             else:
-                position = "[yellow]Between[/yellow]"
-        
-        table.add_row(time_str, pp1, pp2, current, position)
-    
-    console.print(table)
-
-
-def create_summary_table(console, df):
-    """Create summary statistics table."""
-    
-    console.print("\n[bold white]📋 Summary Statistics[/bold white]")
-    
-    table = Table(show_header=True, header_style="bold white", box=box.ROUNDED)
-    table.add_column("Metric", style="cyan")
-    table.add_column("Value", style="white", justify="right")
-    
-    # Basic stats
-    table.add_row("Total Rows", str(len(df)))
-    table.add_row("Date Range", f"{df.index[0]} to {df.index[-1]}" if len(df) > 0 else "N/A")
-    
-    # Price stats
-    if 'Close' in df.columns:
-        close_prices = df['Close'].dropna()
-        if len(close_prices) > 0:
-            table.add_row("Current Price", f"{close_prices.iloc[-1]:.4f}")
-            table.add_row("Min Price", f"{close_prices.min():.4f}")
-            table.add_row("Max Price", f"{close_prices.max():.4f}")
-            table.add_row("Price Change %", f"{((close_prices.iloc[-1] / close_prices.iloc[0] - 1) * 100):.2f}%" if len(close_prices) > 1 else "N/A")
-    
-    # Signal stats
-    if 'Direction' in df.columns:
-        directions = df['Direction'].dropna()
-        if len(directions) > 0:
-            buy_signals = (directions == BUY).sum()
-            sell_signals = (directions == SELL).sum()
-            hold_signals = (directions == NOTRADE).sum()
-            
-            table.add_row("Buy Signals", str(buy_signals))
-            table.add_row("Sell Signals", str(sell_signals))
-            table.add_row("Hold Signals", str(hold_signals))
-    
-    console.print(table)
-
-
-def create_term_auto_plot(df_results, title="Auto Terminal Plot", **kwargs):
-    """
-    Terminal plotting function specifically for AUTO mode.
-    Shows all available columns in the DataFrame.
-    """
-    console = Console()
-    
-    # Use the main plotting function with AUTO rule
-    return plot_indicator_results_term(df_results, TradingRule.AUTO, title=title, **kwargs)
+                print(f"❌ Terminal plotting failed: {str(e)}")
+        except Exception as fallback_e:
+            logger.print_error(f"Even fallback plotting failed: {str(fallback_e)}")
+            print(f"❌ Terminal plotting unavailable. Error: {str(e)}")
