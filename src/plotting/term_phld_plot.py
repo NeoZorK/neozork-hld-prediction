@@ -93,7 +93,9 @@ def plot_ohlc_chart(df: pd.DataFrame, x_data: list, x_labels: list, step: int) -
         step: step size for x-ticks
     """
     setup_terminal_chart()
-    print("\n📈 PRICE CHART")
+    # Add data source label
+    data_source = get_data_source_label("OHLC")
+    print(f"\n📈 PRICE CHART {data_source}")
 
     # Use consistent color mapping
     if all(col in df.columns for col in ['Open', 'High', 'Low', 'Close']):
@@ -109,7 +111,7 @@ def plot_ohlc_chart(df: pd.DataFrame, x_data: list, x_labels: list, step: int) -
             print("⚠️ No price data available")
             return
 
-    plt.title("Price Movement")
+    plt.title(f"Price Movement {data_source}")
     plt.xlabel("Time")
     plt.ylabel("Price")
     plt.xticks(x_data[::step], x_labels[::step])
@@ -129,7 +131,9 @@ def plot_volume_chart(df: pd.DataFrame, x_data: list, x_labels: list, step: int)
         return
 
     setup_terminal_chart()
-    print("\n📊 VOLUME CHART")
+    # Add data source label
+    data_source = get_data_source_label("Volume")
+    print(f"\n📊 VOLUME CHART {data_source}")
 
     x_clean, y_clean, num_removed = clean_data_for_plotting(df, 'Volume', x_data)
 
@@ -138,7 +142,7 @@ def plot_volume_chart(df: pd.DataFrame, x_data: list, x_labels: list, step: int)
         return
 
     plt.bar(x_clean, y_clean, label="Volume", color="bright_magenta")
-    plt.title("Volume")
+    plt.title(f"Volume {data_source}")
     plt.xlabel("Time")
     plt.ylabel("Volume")
     plt.xticks(x_data[::step], x_labels[::step])
@@ -159,7 +163,10 @@ def plot_price_predictions(df: pd.DataFrame, columns: List[str], x_data: list, x
         return
 
     setup_terminal_chart()
-    print("\n🎯 PREDICTED PRICES")
+
+    # Get source label for predicted prices
+    data_source = get_data_source_label(columns[0] if columns else "pprice")
+    print(f"\n🎯 PREDICTED PRICES {data_source}")
 
     # First plot Close price for reference
     if 'Close' in df.columns:
@@ -179,7 +186,7 @@ def plot_price_predictions(df: pd.DataFrame, columns: List[str], x_data: list, x
 
         plt.plot(x_clean, y_clean, label=col, color=color)
 
-    plt.title("Predicted Prices")
+    plt.title(f"Predicted Prices {data_source}")
     plt.xlabel("Time")
     plt.ylabel("Price")
     plt.xticks(x_data[::step], x_labels[::step])
@@ -199,7 +206,9 @@ def plot_direction_signals(df: pd.DataFrame, x_data: list, x_labels: list, step:
         return
 
     setup_terminal_chart()
-    print("\n🚦 TRADING SIGNALS")
+    # Get source label for direction signals
+    data_source = get_data_source_label("Direction")
+    print(f"\n🚦 TRADING SIGNALS {data_source}")
 
     x_clean, direction_data, _ = clean_data_for_plotting(df, 'Direction', x_data)
 
@@ -214,7 +223,7 @@ def plot_direction_signals(df: pd.DataFrame, x_data: list, x_labels: list, step:
     plt.bar(x_clean, buy_points, label="Buy Signal", color="bright_green")
     plt.bar(x_clean, [-val for val in sell_points], label="Sell Signal", color="bright_red")
 
-    plt.title("Trading Signals")
+    plt.title(f"Trading Signals {data_source}")
     plt.xlabel("Time")
     plt.ylabel("Signal")
     plt.xticks(x_data[::step], x_labels[::step])
@@ -321,6 +330,36 @@ def compare_indicators(df: pd.DataFrame, calculated_df: Optional[pd.DataFrame] =
         else:
             match_pct = (df[col] == calculated_df[col]).mean() * 100
             print(f"{col}: {match_pct:.2f}% match")
+
+# Helper function to determine data source label
+def get_data_source_label(column_name: str, calculated_columns: List[str] = None) -> str:
+    """
+    Determine if a column is calculated or loaded from file.
+
+    Args:
+        column_name: Name of the column to check
+        calculated_columns: List of columns known to be calculated
+
+    Returns:
+        String label indicating data source
+    """
+    calculated_columns = calculated_columns or []
+
+    # Check if column name contains any calculation indicator
+    calculation_indicators = ["predicted", "calc", "diff", "pressure", "pv", "hl", "signal",
+                             "direction", "pcolor", "pprice"]
+
+    # Special case for OHLC columns
+    if column_name.lower() in ["open", "high", "low", "close", "volume"]:
+        return "📁 [LOADED FROM FILE]"
+
+    is_calculated = any(indicator in column_name.lower() for indicator in calculation_indicators)
+    is_calculated = is_calculated or column_name in calculated_columns
+
+    if is_calculated:
+        return "🧮 [CALCULATED NOW]"
+    else:
+        return "📁 [LOADED FROM FILE]"
 
 def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
                   calculated_df: Optional[pd.DataFrame] = None) -> None:
