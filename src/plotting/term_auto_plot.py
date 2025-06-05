@@ -309,14 +309,8 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         return
 
     # Configure plotext theme for better contrast in terminal
-    plt.theme("dark")  # Use dark theme for better visibility in terminal
-
-    # Define color palette for all charts - rainbow colors for better visibility
-    rainbow_colors = [
-        "bright_red", "bright_yellow", "bright_green", "bright_cyan",
-        "bright_blue", "bright_magenta", "bright_white",
-        "red", "yellow", "green", "cyan", "blue", "magenta", "white"
-    ]
+    plt.theme("clear")  # Clear theme first
+    plt.theme("dark")   # Then apply dark theme for better visibility
 
     # Print the custom title
     print(f"\n📊 {plot_title}")
@@ -337,33 +331,28 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     else:
         x_data = list(range(len(df)))
 
-    # Plot OHLC data
+    # Process OHLC data
     if ohlc_cols:
-        plt.clear_data()
+        plt.clear_figure()  # Completely clear the figure
+        plt.clear_data()    # Clear any plotted data
         print("\n📈 OHLC Chart")
-        set_terminal_chart_style("OHLC Chart")
+        plt.canvas_color("black")
+        plt.axes_color("black")
+        plt.ticks_color("yellow")
+        plt.title("OHLC Chart")
 
-        # Use different colors for each OHLC component with maximum contrast
+        # Use different colors for each OHLC component
         ohlc_colors = {
-            "open": "bright_magenta",   # Changed: Bright magenta for open price (better visual distinction)
-            "high": "bright_cyan",      # Bright cyan for high price
-            "low": "bright_red",        # Bright red for low price
-            "close": "bright_blue"      # Changed: Bright blue for close price (better contrast and readability)
-        }
-
-        # Use consistent braille markers for all OHLC components
-        markers = {
-            "open": "braille",   # Changed: Braille marker for open (same as high/low)
-            "high": "braille",   # Braille marker for high
-            "low": "braille",    # Braille marker for low
-            "close": "braille"   # Changed: Braille marker for close (same as high/low)
+            "open": "bright_magenta",
+            "high": "bright_cyan",
+            "low": "bright_red",
+            "close": "bright_blue"
         }
 
         for col in ohlc_cols:
             col_lower = col.lower()
-            color = ohlc_colors.get(col_lower, "bright_white")  # Default to bright white if not found
-            marker = markers.get(col_lower, "braille")          # Default to braille if not found
-            
+            color = ohlc_colors.get(col_lower, "bright_white")
+
             # Clean data for plotting (remove NaN and infinite values)
             x_clean, y_clean, num_removed = clean_data_for_plotting(df, col, x_data)
             
@@ -373,18 +362,24 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
                 
             if num_removed > 0:
                 print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
-                
-            plt.plot(x_clean, y_clean, label=col, marker=marker, color=color)
+
+            # Plot the OHLC component with its unique color
+            plt.plot(x_clean, y_clean, label=col, marker="braille", color=color)
+
         plt.xlabel("Time")
         plt.ylabel("Price")
         plt.show()
 
-    # Plot Volume
+    # Process Volume
     if volume_col:
-        plt.clear_data()
+        plt.clear_figure()  # Completely clear the figure
+        plt.clear_data()    # Clear any plotted data
         print("\n📊 Volume Chart")
-        set_terminal_chart_style("Volume Chart")
-        
+        plt.canvas_color("black")
+        plt.axes_color("black")
+        plt.ticks_color("yellow")
+        plt.title("Volume Chart")
+
         # Clean volume data for plotting (remove NaN and infinite values)
         x_clean, y_clean, num_removed = clean_data_for_plotting(df, volume_col, x_data)
         
@@ -398,42 +393,63 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             plt.ylabel("Volume")
             plt.show()
 
-    # Plot indicators
-    # Get random non-repeating colors for all indicators at once
-    indicator_colors = get_random_non_repeating_colors(len(indicator_cols))
-    
-    # Define diverse markers to ensure variety in visualization
-    custom_markers = ["braille", "dot", "fhd", "hd", "shd", "sd"]
+    # Define colors and markers for separate indicator plots
+    # These colors are well-supported in terminal environments
+    basic_colors = [
+        "bright_red", "bright_green", "bright_yellow", "bright_blue",
+        "bright_magenta", "bright_cyan", "bright_white",
+        "red", "green", "yellow", "blue", "magenta", "cyan", "white"
+    ]
 
-    # Clear the plotext canvas before starting new indicators
-    plt.clear_data()
+    # Define diverse markers
+    markers = ["braille", "dot", "fhd", "hd", "shd", "sd"]
 
+    # For each indicator, create a standalone plot with its own color
     for idx, col in enumerate(indicator_cols):
+        # Force a clean slate for each new plot to avoid interference
+        plt.clear_figure()
         plt.clear_data()
-        print(f"\n📈 Indicator: {col}")
-        set_terminal_chart_style(f"Indicator: {col}")
 
-        # Clean data for plotting (remove NaN and infinite values)
+        # Explicitly select a color for this indicator from basic_colors
+        color_idx = idx % len(basic_colors)
+        color = basic_colors[color_idx]
+        marker = markers[idx % len(markers)]
+
+        # Set up this specific plot with clean settings
+        print(f"\n📈 Indicator: {col}")
+        plt.canvas_color("black")
+        plt.axes_color("black")
+        plt.ticks_color("yellow")
+        plt.title(f"Indicator: {col}")
+
+        # Log what we're attempting to use
+        print(f"Plotting indicator with color={color}, marker={marker}")
+
+        # Clean data for plotting
         x_clean, y_clean, num_removed = clean_data_for_plotting(df, col, x_data)
         
         if len(y_clean) == 0:
             print(f"⚠️  Skipping indicator '{col}' - no valid finite data")
             continue
-        
+
         if num_removed > 0:
             print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
 
-        # Forced selection of color and marker based on index
-        color = indicator_colors[idx]
-        marker = custom_markers[idx % len(custom_markers)]
-
-        # Print debug info for the color and marker being used
-        print(f"Using color: {color} and marker: {marker} for indicator: {col}")
-
-        # Force each indicator to use a different distinctive color and marker
+        # Plot just this one indicator
         plt.plot(x_clean, y_clean, label=col, marker=marker, color=color)
 
-        # Set unique axis style for each indicator to enhance differentiation
+        # Add a title that includes the color name for verification
+        plt.title(f"Indicator: {col} (Color: {color})")
+
+        # Show special style for even/odd indicators for better visual distinction
+        if idx % 2 == 0:
+            # For even indexes, add a zero reference line
+            min_val = min(y_clean) if y_clean else 0
+            max_val = max(y_clean) if y_clean else 1
+            mid_val = (min_val + max_val) / 2
+            # Using only supported parameters (color) without style
+            plt.horizontal_line(mid_val, color=color)
+
         plt.xlabel("Time")
         plt.ylabel(f"Value: {col}")
         plt.show()
