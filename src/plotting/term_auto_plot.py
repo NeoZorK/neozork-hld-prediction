@@ -21,6 +21,9 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
         print(f"File not found: {parquet_path}")
         return
 
+    # Configure plotext theme for better contrast in terminal
+    plt.theme("dark")  # Use dark theme for better visibility in terminal
+
     df = pd.read_parquet(parquet_path)
     if df.empty:
         print("Empty DataFrame.")
@@ -48,6 +51,7 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
     # Plot OHLC data
     plt.clear_data()
     print("\n📈 OHLC Chart")
+    plt.canvas_color("grey")  # Set the background color to grey
     for col in ohlc_cols:
         plt.plot(x_data, df[col].tolist(), label=col, marker="braille")
     plt.title("OHLC")
@@ -59,7 +63,8 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
     if volume_col:
         plt.clear_data()
         print("\n📊 Volume Chart")
-        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="gray")
+        plt.canvas_color("grey")  # Set the background color to grey
+        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="grey")
         plt.title("Volume")
         plt.xlabel("Time")
         plt.ylabel("Volume")
@@ -75,7 +80,8 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 
             plt.clear_data()
             print(f"\n📈 Indicator: {col}")
-            
+            plt.canvas_color("grey")  # Set the background color to grey
+
             # Filter out NaN values for plotting
             valid_mask = ~df[col].isna()
             if not valid_mask.any():
@@ -104,7 +110,8 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 
             plt.clear_data()
             print(f"\n📈 Rule {rule}: {col}")
-            
+            plt.canvas_color("grey")  # Set the background color to grey
+
             # Filter out NaN values for plotting
             valid_mask = ~df[col].isna()
             if not valid_mask.any():
@@ -138,6 +145,9 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         print("Empty DataFrame.")
         return
 
+    # Configure plotext theme for better contrast in terminal
+    plt.theme("dark")  # Use dark theme for better visibility in terminal
+
     # Print the custom title
     print(f"\n📊 {plot_title}")
     print("=" * (len(plot_title) + 5))
@@ -160,6 +170,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     # Plot OHLC data
     plt.clear_data()
     print("\n📈 OHLC Chart")
+    plt.canvas_color("grey")  # Set the background color to grey
     for col in ohlc_cols:
         plt.plot(x_data, df[col].tolist(), label=col, marker="braille")
     plt.title("OHLC")
@@ -171,7 +182,8 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     if volume_col:
         plt.clear_data()
         print("\n📊 Volume Chart")
-        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="gray")
+        plt.canvas_color("grey")  # Set the background color to grey
+        plt.bar(x_data, df[volume_col].tolist(), label="Volume", color="grey")
         plt.title("Volume")
         plt.xlabel("Time")
         plt.ylabel("Volume")
@@ -186,7 +198,8 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             
         plt.clear_data()
         print(f"\n📈 Indicator: {col}")
-        
+        plt.canvas_color("grey")  # Set the background color to grey
+
         # Filter out NaN values for plotting
         valid_mask = ~df[col].isna()
         if not valid_mask.any():
@@ -205,4 +218,3 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         plt.xlabel("Time")
         plt.ylabel("Value")
         plt.show()
-
