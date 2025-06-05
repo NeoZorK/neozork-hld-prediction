@@ -406,6 +406,17 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
     # Detect columns for different components of PHLD
     column_groups = detect_phld_columns(df)
 
+    # Check if the DataFrame already has PHLD indicator columns
+    existing_phld_indicators = []
+    for col in df.columns:
+        col_lower = col.lower()
+        if any(ind in col_lower for ind in ['predicted_high', 'predicted_low', 'hl', 'pressure_vector', 'pressure', 'pprice', 'pcolor', 'direction']):
+            existing_phld_indicators.append(col)
+
+    has_existing_indicators = len(existing_phld_indicators) > 0
+    if has_existing_indicators:
+        print(f"Found existing PHLD indicators in file: {', '.join(existing_phld_indicators)}")
+
     # Get rule name in string format
     rule_str = rule.name if hasattr(rule, 'name') else str(rule)
     rule_upper = rule_str.upper()
@@ -450,41 +461,126 @@ def plot_phld_term(df: pd.DataFrame, rule: Union[TradingRule, str], title: str,
         plot_ohlc_chart(df, x_data, x_labels, step)
         plot_volume_chart(df, x_data, x_labels, step)
 
+        # First, display all existing indicators from the file if they exist
+        if has_existing_indicators:
+            print("\n📊 EXISTING PHLD INDICATORS FROM FILE")
+            print("-" * 50)
+
+            # Group existing indicators by type for better visualization
+            existing_groups = {
+                'price_pred': [col for col in existing_phld_indicators if any(x in col.lower() for x in ['predicted_high', 'predicted_low', 'pprice'])],
+                'direction': [col for col in existing_phld_indicators if 'direction' in col.lower()],
+                'colors': [col for col in existing_phld_indicators if 'pcolor' in col.lower()],
+                'metrics': [col for col in existing_phld_indicators if any(x in col.lower() for x in ['hl', 'pressure', 'pv', 'diff'])]
+            }
+
+            # Display existing price prediction indicators
+            if existing_groups['price_pred']:
+                # Get source label for existing predicted prices
+                for col in existing_groups['price_pred']:
+                    data_source = get_data_source_label(col)
+                    print(f"\n🎯 EXISTING PREDICTED PRICES {data_source}")
+                plot_price_predictions(df, existing_groups['price_pred'], x_data, x_labels, step)
+
+            # Display existing direction indicators
+            if existing_groups['direction']:
+                # Get source label for existing direction
+                for col in existing_groups['direction']:
+                    data_source = get_data_source_label(col)
+                    print(f"\n🚦 EXISTING DIRECTION {data_source}")
+                plot_direction_signals(df, x_data, x_labels, step)
+
+            # Display existing color indicators
+            if existing_groups['colors']:
+                from src.plotting.plotting_generation import plot_additional_indicators_with_source
+                plot_additional_indicators_with_source(
+                    df, existing_groups['colors'], x_data, x_labels, step,
+                    "EXISTING COLOR INDICATORS",
+                    "pre-calculated"
+                )
+
+            # Display existing metric indicators
+            if existing_groups['metrics']:
+                from src.plotting.plotting_generation import plot_additional_indicators_with_source
+                plot_additional_indicators_with_source(
+                    df, existing_groups['metrics'], x_data, x_labels, step,
+                    "EXISTING METRIC INDICATORS",
+                    "pre-calculated"
+                )
+
         # Determine if data is calculated or loaded from file for PHLD columns
         phld_price_source = "calculated" if calculated_df is not None else "pre-calculated"
 
-        # Plot PHLD specific components with source indicator
-        # Use the new function get_data_source_label to determine data source
-        if column_groups['price_pred']:
-            price_pred_source = get_data_source_label(column_groups['price_pred'][0] if column_groups['price_pred'] else "pprice")
-            print(f"\n🎯 PREDICTED PRICES {price_pred_source}")
-            plot_price_predictions(df, column_groups['price_pred'], x_data, x_labels, step)
+        # Now show newly calculated indicators if available
+        if calculated_df is not None:
+            print("\n🧮 NEWLY CALCULATED PHLD INDICATORS")
+            print("-" * 50)
 
-        if 'Direction' in df.columns:
-            direction_source = get_data_source_label("Direction")
-            print(f"\n🚦 TRADING SIGNALS {direction_source}")
-            plot_direction_signals(df, x_data, x_labels, step)
+            # Plot PHLD specific components with source indicator
+            # Use the new function get_data_source_label to determine data source
+            if 'PPrice1' in calculated_df.columns or 'PPrice2' in calculated_df.columns:
+                price_pred_cols = [col for col in calculated_df.columns if col in ['PPrice1', 'PPrice2']]
+                if price_pred_cols:
+                    price_pred_source = get_data_source_label(price_pred_cols[0])
+                    print(f"\n🎯 CALCULATED PREDICTED PRICES {price_pred_source}")
+                    plot_price_predictions(calculated_df, price_pred_cols, x_data, x_labels, step)
 
-        # Plot color indicators with source indicator
-        if column_groups['colors']:
-            from src.plotting.plotting_generation import plot_additional_indicators_with_source
-            plot_additional_indicators_with_source(
-                df, column_groups['colors'], x_data, x_labels, step,
-                "PHLD COLOR INDICATORS",
-                phld_price_source
-            )
+            if 'Direction' in calculated_df.columns:
+                direction_source = get_data_source_label("Direction")
+                print(f"\n🚦 CALCULATED TRADING SIGNALS {direction_source}")
+                plot_direction_signals(calculated_df, x_data, x_labels, step)
 
-        # Plot metrics with source indicator
-        if column_groups['metrics']:
-            from src.plotting.plotting_generation import plot_additional_indicators_with_source
-            plot_additional_indicators_with_source(
-                df, column_groups['metrics'], x_data, x_labels, step,
-                "PHLD METRICS",
-                phld_price_source
-            )
+            # Plot color indicators with source indicator
+            color_cols = [col for col in calculated_df.columns if 'PColor' in col]
+            if color_cols:
+                from src.plotting.plotting_generation import plot_additional_indicators_with_source
+                plot_additional_indicators_with_source(
+                    calculated_df, color_cols, x_data, x_labels, step,
+                    "CALCULATED COLOR INDICATORS",
+                    "calculated"
+                )
+
+            # Plot metrics with source indicator
+            metric_cols = [col for col in calculated_df.columns if col in ['HL', 'Pressure', 'PV', 'Diff']]
+            if metric_cols:
+                from src.plotting.plotting_generation import plot_additional_indicators_with_source
+                plot_additional_indicators_with_source(
+                    calculated_df, metric_cols, x_data, x_labels, step,
+                    "CALCULATED PHLD METRICS",
+                    "calculated"
+                )
+        else:
+            # No calculated data - just show file data grouped properly with indicators
+            if column_groups['price_pred']:
+                price_pred_source = get_data_source_label(column_groups['price_pred'][0] if column_groups['price_pred'] else "pprice")
+                print(f"\n🎯 PREDICTED PRICES {price_pred_source}")
+                plot_price_predictions(df, column_groups['price_pred'], x_data, x_labels, step)
+
+            if 'Direction' in df.columns:
+                direction_source = get_data_source_label("Direction")
+                print(f"\n🚦 TRADING SIGNALS {direction_source}")
+                plot_direction_signals(df, x_data, x_labels, step)
+
+            # Plot color indicators with source indicator
+            if column_groups['colors']:
+                from src.plotting.plotting_generation import plot_additional_indicators_with_source
+                plot_additional_indicators_with_source(
+                    df, column_groups['colors'], x_data, x_labels, step,
+                    "PHLD COLOR INDICATORS",
+                    phld_price_source
+                )
+
+            # Plot metrics with source indicator
+            if column_groups['metrics']:
+                from src.plotting.plotting_generation import plot_additional_indicators_with_source
+                plot_additional_indicators_with_source(
+                    df, column_groups['metrics'], x_data, x_labels, step,
+                    "PHLD METRICS",
+                    phld_price_source
+                )
 
         # Compare indicators if both original and calculated are available
-        if calculated_df is not None:
+        if calculated_df is not None and has_existing_indicators:
             compare_indicators(df, calculated_df)
 
     # Print summary for all modes
