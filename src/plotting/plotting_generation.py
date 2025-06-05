@@ -11,6 +11,7 @@ from src.calculation.core_calculations import calculate_hl, calculate_pressure, 
 from ..calculation.indicator_calculation import calculate_indicator
 from ..plotting.term_auto_plot import auto_plot_from_dataframe  # Auto plotting function
 import plotext as plt  # Add import for plotext
+from typing import List, Dict, Optional, Union, Tuple  # Add necessary types from typing module
 
 """
 Workflow step for generating plots based on indicator results using the selected library (Plotly, mplfinance, fast, seaborn).
