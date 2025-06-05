@@ -470,9 +470,39 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
                 buy_points = [1 if val == 1 else 0 for val in dir_data]
                 sell_points = [1 if val in [-1, 2] else 0 for val in dir_data]
 
+                # Print signal summary above the chart
+                buy_count = sum(buy_points)
+                sell_count = sum(sell_points)
+                hold_count = len(dir_data) - buy_count - sell_count
+
+                # Clear source information to avoid confusion
                 source_label = "📁 [LOADED]" if not 'Direction'.lower().endswith("_calc") else "🧮 [CALCULATED]"
-                plt.bar(x_clean, buy_points, label=f"Buy Signal {source_label}", color="bright_green")
-                plt.bar(x_clean, [-val for val in sell_points], label=f"Sell Signal {source_label}", color="bright_red")
+                print(f"▲ Buy Signals: {buy_count}")
+                print(f"▼ Sell Signals: {sell_count}")
+                print(f"○ Hold Signals: {hold_count}")
+                print(f"Signal summary: {buy_count} Buy, {sell_count} Sell, {hold_count} Hold - {source_label}")
+
+                # Use scatter plot with triangles instead of bars
+                # Create x-positions for buy signals (only where buy_points is 1)
+                buy_x = [x_clean[i] for i in range(len(x_clean)) if buy_points[i] == 1]
+                buy_y = [1] * len(buy_x)
+
+                # Create x-positions for sell signals (only where sell_points is 1)
+                sell_x = [x_clean[i] for i in range(len(x_clean)) if sell_points[i] == 1]
+                sell_y = [-1] * len(sell_x)
+
+                # Plot Buy/Sell signals as points with custom markers for better visibility
+                if buy_x:
+                    plt.scatter(buy_x, buy_y, marker="triangle", color="bright_green", point_size=2)
+
+                if sell_x:
+                    plt.scatter(sell_x, sell_y, marker="triangle", color="bright_red", point_size=2)
+
+                # Add a zero line for reference
+                plt.plot(x_clean, [0] * len(x_clean), label="Neutral", color="gray", line_color="gray")
+
+                # Set custom y-ticks for clarity
+                plt.yticks([-1, 0, 1], ["Sell", "Hold", "Buy"])
 
                 phld_signal_cols.remove('Direction')
 
