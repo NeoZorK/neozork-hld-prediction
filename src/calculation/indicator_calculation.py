@@ -87,6 +87,25 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
             logger.print_debug("OHLCV rule selected: returning raw data without indicator calculation")
             # Return the original dataframe without calculations
             return ohlcv_df.copy(), selected_rule
+        
+        # Special handling for AUTO rule - calculate indicators but return all columns for display
+        if selected_rule == TradingRule.AUTO:
+            logger.print_debug("AUTO rule selected: calculating indicators and returning all columns for auto display")
+            result_df = calculate_pressure_vector(
+                df=ohlcv_df_calc_input.copy(),
+                point=point_size,
+                tr_num=selected_rule,
+            )
+            # For AUTO mode, preserve all original columns if they exist in CSV mode
+            if args.mode == 'csv':
+                # Merge original extra columns (like predicted_high, predicted_low, etc.) back into result
+                extra_cols = [col for col in ohlcv_df.columns 
+                             if col not in ['Open', 'High', 'Low', 'Close', 'Volume', 'TickVolume']]
+                for col in extra_cols:
+                    if col not in result_df.columns:
+                        result_df[col] = ohlcv_df[col]
+                        logger.print_debug(f"Added extra column '{col}' to AUTO result")
+            return result_df, selected_rule
 
         result_df = calculate_pressure_vector(
             df=ohlcv_df_calc_input.copy(),

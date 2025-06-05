@@ -50,6 +50,7 @@ if IN_DOCKER:
         sys.modules['webbrowser'] = docker_browser
         # Docker browser patching complete
     except ImportError:
+        docker_browser = None
         print("Warning: Running in Docker but docker_browser module not found")
 
 # Imports from the src package using new paths
@@ -58,6 +59,12 @@ from src.cli.cli import parse_arguments
 from src.workflow.workflow import run_indicator_workflow
 from src.workflow.reporting import print_summary
 from src.common import logger
+# Importing rich for colored terminal output
+from rich.console import Console
+
+
+# Initialize rich console
+console = Console()
 
 
 # --- Main Execution Function ---
@@ -77,9 +84,6 @@ def main():
     Returns:
         None
     """
-
-    # Print version information using the logger
-    logger.print_info(f"Shcherbyna Pressure Vector Indicator - Version: {__version__}")
 
     # Start overall timer for the entire script execution
     start_time_total = time.perf_counter()
@@ -123,4 +127,3 @@ def main():
 # Standard Python entry point check
 if __name__ == "__main__":
     main()
-
