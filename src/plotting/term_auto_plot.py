@@ -17,8 +17,8 @@ def set_terminal_chart_style(title="Chart"):
     Args:
         title: Title of the chart
     """
-    plt.canvas_color("black")        # Black background for better contrast
-    plt.axes_color("black")          # Black axes background as requested
+    plt.canvas_color("dark_gray")        # Dark gray background for better contrast
+    plt.axes_color("dark_gray")          # Dark gray axes background as requested
     plt.ticks_color("yellow")        # Yellow tick marks for better visibility
     # Grid removed as requested
     plt.title(title)
