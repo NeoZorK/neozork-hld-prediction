@@ -43,6 +43,12 @@ try:
 except ImportError:
     mpl_auto_plot_from_parquet = None
 
+# Import terminal auto plot function for AUTO mode
+try:
+    from src.plotting.term_auto_plot import auto_plot_from_dataframe
+except ImportError:
+    auto_plot_from_dataframe = None
+
 def show_help():
     """
     Displays help for the 'show' mode with colorful formatting.
@@ -498,6 +504,16 @@ def handle_show_mode(args):
                 # Plot with all columns using the new fastest_auto_plot if requested
                 if _should_draw_plot(args):
                     draw_method = getattr(args, 'draw', 'fastest')
+                    
+                    # Check if running in Docker and force terminal mode if needed
+                    import os
+                    IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
+                    disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
+                    
+                    if IN_DOCKER and not disable_docker_detection and draw_method not in ['term']:
+                        print(f"Docker detected: forcing draw mode from '{draw_method}' to 'term' (terminal plotting)")
+                        draw_method = 'term'
+                    
                     print(f"\nDrawing AUTO display plot with method: '{draw_method}'...")
                     try:
                         if draw_method == 'fastest' and plot_auto_fastest_parquet is not None:
