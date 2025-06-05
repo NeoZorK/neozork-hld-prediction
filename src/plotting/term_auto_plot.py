@@ -7,6 +7,7 @@ Especially useful for Docker environments where only terminal visualization work
 import pandas as pd
 import plotext as plt
 import os
+import random
 
 # Helper function to set consistent chart styling
 def set_terminal_chart_style(title="Chart"):
@@ -17,11 +18,29 @@ def set_terminal_chart_style(title="Chart"):
         title: Title of the chart
     """
     plt.canvas_color("black")        # Black background for better contrast
-    plt.axes_color("bright_white")   # White axes for better visibility on black background
+    plt.axes_color("black")          # Black axes background as requested
     plt.ticks_color("yellow")        # Yellow tick marks for better visibility
+    plt.figure_color("black")        # Set figure background to black
     # Grid removed as requested
     plt.title(title)
 
+
+# Helper function to generate random terminal colors
+def get_random_color():
+    """
+    Generate a random color for terminal plotting.
+
+    Returns:
+        A random color name from plotext available colors
+    """
+    # List of available plotext colors for better visibility in terminal
+    available_colors = [
+        "bright_red", "bright_yellow", "bright_green", "bright_cyan",
+        "bright_blue", "bright_magenta", "bright_white",
+        "red", "yellow", "green", "cyan", "blue", "magenta", "white",
+        "orange", "purple", "pink", "lime", "peach", "olive", "teal"
+    ]
+    return random.choice(available_colors)
 
 def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto Terminal Plot"):
     """
@@ -135,7 +154,8 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
                 print(f"⚠️  No valid data points for {col}")
                 continue
                 
-            plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=rainbow_colors[hash(col) % len(rainbow_colors)])
+            # Use random color for each column
+            plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=get_random_color())
             plt.xlabel("Time")
             plt.ylabel("Value")
             plt.show()
@@ -279,9 +299,8 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             print(f"⚠️  No valid data points for {col}")
             continue
 
-        # Use a unique color for each column based on its index or hash
-        color = rainbow_colors[idx % len(rainbow_colors)] if idx < len(rainbow_colors) else rainbow_colors[hash(col) % len(rainbow_colors)]
-        plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=color)
+        # Use random color for each indicator
+        plt.plot(x_data_filtered, y_data_filtered, label=col, marker="braille", color=get_random_color())
         plt.xlabel("Time")
         plt.ylabel("Value")
         plt.show()
