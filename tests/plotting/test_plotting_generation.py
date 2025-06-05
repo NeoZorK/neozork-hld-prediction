@@ -27,6 +27,9 @@ def create_mock_args(interval='D1', draw='plotly'): # Default draw to plotly
 
 # Unit tests for the plotting generation workflow step
 @patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'})
+@patch('src.plotting.plotting.IN_DOCKER', False)  # Mock IN_DOCKER in plotting.py
+@patch('src.plotting.plotting_generation.IN_DOCKER', False)  # Mock IN_DOCKER in plotting_generation.py
+@patch('src.plotting.plotting_generation._detect_docker_environment', return_value=False)  # Mock Docker detection function
 class TestPlottingGenerationStep(unittest.TestCase):
 
     # Setup basic data used across tests
