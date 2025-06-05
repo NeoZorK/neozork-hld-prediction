@@ -62,6 +62,8 @@ def get_random_non_repeating_colors(count):
     Returns:
         List of unique random colors
     """
+    import time
+    
     # Extended list of available plotext colors for maximum diversity
     available_colors = [
         # Bright colors
@@ -79,6 +81,9 @@ def get_random_non_repeating_colors(count):
         "deep_purple", "deep_blue", "gold", "silver", "bronze",
         "navy", "forest", "crimson", "coral", "aqua", "violet"
     ]
+    
+    # Use time-based seed to ensure different results each call
+    random.seed(int(time.time() * 1000000) % 2**32)
     
     # Shuffle the colors and return the requested count
     shuffled_colors = available_colors.copy()
@@ -157,10 +162,10 @@ def auto_plot_from_parquet(parquet_path: str, rule: str, plot_title: str = "Auto
 
     # Use different colors for each OHLC component with maximum contrast
     ohlc_colors = {
-        "open": "bright_magenta",   # Changed: Bright magenta for open price
+        "open": "bright_green",     # Changed: Bright green for open price (better contrast)
         "high": "bright_cyan",      # Bright cyan for high price
         "low": "bright_red",        # Bright red for low price
-        "close": "bright_orange"    # Changed: Bright orange for close price
+        "close": "bright_yellow"    # Changed: Bright yellow for close price (better contrast)
     }
 
     # Use consistent braille markers for all OHLC components
@@ -306,10 +311,10 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
 
         # Use different colors for each OHLC component with maximum contrast
         ohlc_colors = {
-            "open": "bright_magenta",   # Changed: Bright magenta for open price
+            "open": "bright_green",     # Changed: Bright green for open price (better contrast)
             "high": "bright_cyan",      # Bright cyan for high price
             "low": "bright_red",        # Bright red for low price
-            "close": "bright_orange"    # Changed: Bright orange for close price
+            "close": "bright_yellow"    # Changed: Bright yellow for close price (better contrast)
         }
 
         # Use consistent braille markers for all OHLC components
