@@ -2,7 +2,8 @@
 
 ## Issues Fixed
 
-### 1. Missing Open Price Line ✅ FIXED
+### 1. Miss5. **Lines 273, 357**: Changed axes color from black to white for macOS terminal visibility
+6. **Lines 273, 357**: Added ticks_color configuration for legend text visibility on dark backgroundsng Open Price Line ✅ FIXED
 **Problem**: The main OHLC chart in `term_plot.py` was only plotting Close, High, and Low prices. The Open price line was completely missing.
 
 **Solution**: Added Open price line with distinct color:
@@ -37,18 +38,23 @@ plt.plot(x_data, df['Open'].tolist(), label="Open", color="bright_magenta")
 
 **Solution**: Changed `axes_color('black')` to `axes_color('white')` in both main plotting function and fallback plotting function.
 
-**Files Modified**: `term_plot.py` (lines 273 and 356)
+### 6. Legend Text Color Visibility ✅ FIXED
+**Problem**: Legend text was invisible on dark terminal backgrounds in macOS terminals when using `-d term` flag. The legend text color defaulted to black, making it invisible against dark terminal backgrounds.
+
+**Solution**: Added `plt.ticks_color('white')` configuration in both main plotting and fallback sections to ensure legend text, axes labels, and numerical ticks are visible on dark backgrounds.
+
+**Files Modified**: `term_plot.py` (lines 273 and 357)
 
 **Code Changes**:
 ```python
-# Before:
-plt.axes_color('black')
+# Main plotting section (line 273):
+plt.ticks_color('white')  # Controls legend text, axes labels, and numerical ticks
 
-# After:  
-plt.axes_color('white')
+# Fallback plotting section (line 357):
+plt.ticks_color('white')  # Ensure legend text is visible on dark terminal backgrounds
 ```
 
-This ensures that axis labels, legends, and other plot text are visible on dark terminal backgrounds.
+This ensures that legend text, axes labels, and numerical ticks are visible on dark terminal backgrounds across all plotting scenarios.
 
 ## Files Modified
 
@@ -104,6 +110,7 @@ Created verification script `/workspaces/neozork-hld-prediction/verify_color_fix
 - ❌ Open and Close both appeared as bright cyan (indistinguishable)
 - ❌ PPrice1 and PPrice2 had poor color differentiation
 - ❌ Axis and legend text invisible on dark terminal backgrounds
+- ❌ Legend text color invisible on macOS dark terminals
 - ❌ Poor overall visual clarity in terminal plots
 
 ### After Fix:
@@ -111,6 +118,8 @@ Created verification script `/workspaces/neozork-hld-prediction/verify_color_fix
 - ✅ Each OHLC component has a distinct bright color
 - ✅ PPrice1 (green) and PPrice2 (red) are easily distinguishable
 - ✅ Consistent color scheme across terminal plotting modules
+- ✅ Axes and legend text visible on dark terminal backgrounds  
+- ✅ Legend text clearly visible on macOS dark terminals
 - ✅ Better visual clarity and user experience in Docker/terminal environments
 
 ## Compatibility
