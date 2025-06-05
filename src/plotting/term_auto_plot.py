@@ -402,7 +402,8 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     ]
 
     # Define diverse markers
-    markers = ["braille", "dot", "fhd", "hd", "shd", "sd"]
+    # Use only braille markers for all plots for consistency
+    markers = ["braille"]
 
     # For each indicator, create a standalone plot with its own color
     for idx, col in enumerate(indicator_cols):
@@ -413,7 +414,8 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         # Explicitly select a color for this indicator from basic_colors
         color_idx = idx % len(basic_colors)
         color = basic_colors[color_idx]
-        marker = markers[idx % len(markers)]
+        # Always use braille marker for consistency
+        marker = "braille"
 
         # Set up this specific plot with clean settings
         print(f"\n📈 Indicator: {col}")
