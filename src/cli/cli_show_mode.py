@@ -614,24 +614,30 @@ def handle_show_mode(args):
                         # For terminal mode with PHLD rule
                         if args.draw == 'term' and args.rule.upper() == 'PHLD':
                             if auto_plot_from_dataframe is not None:
+                                # Check if indicators already exist in the loaded dataframe
+                                indicators_exist = all(col in df.columns for col in ['PPrice1', 'PPrice2', 'Direction'])
+                                calculation_type = "PRE-CALCULATED" if indicators_exist and not args.force_calculate else "CALCULATED NOW"
+
+                                print(f"\n=== {calculation_type} PHLD INDICATORS ===")
                                 print(f"Using terminal auto plotting for '{found_files[0]['name']}' with PHLD rule...")
-                                plot_title = f"PHLD Terminal Plot: {found_files[0]['name']}"
+                                plot_title = f"PHLD Terminal Plot: {found_files[0]['name']} ({calculation_type})"
                                 # Use the auto_plot_from_dataframe function for terminal plotting
                                 auto_plot_from_dataframe(result_df, plot_title)
 
                                 # Extract and plot specific indicators
                                 if 'PPrice1' in result_df.columns and 'PPrice2' in result_df.columns:
-                                    print("\n--- Support and Resistance Levels (PPrice1 and PPrice2) ---")
+                                    print(f"\n--- Support and Resistance Levels (PPrice1 and PPrice2) - {calculation_type} ---")
                                     support_resistance_df = result_df[['Open', 'PPrice1', 'PPrice2']].tail(30)
-                                    auto_plot_from_dataframe(support_resistance_df, "Support and Resistance Levels")
+                                    auto_plot_from_dataframe(support_resistance_df, f"Support and Resistance Levels ({calculation_type})")
 
                                 # Plot Direction indicator if available
                                 if 'Direction' in result_df.columns:
-                                    print("\n--- Direction Indicator ---")
+                                    print(f"\n--- Direction Indicator - {calculation_type} ---")
                                     direction_df = result_df[['Direction']].tail(30)
-                                    auto_plot_from_dataframe(direction_df, "Direction Indicator")
+                                    auto_plot_from_dataframe(direction_df, f"Direction Indicator ({calculation_type})")
 
                                 print(f"Successfully plotted PHLD indicators from '{found_files[0]['name']}' using terminal mode.")
+                                print(f"Indicator source: {calculation_type}")
                             else:
                                 print("Error: Terminal plotting functionality not available.")
                         else:
