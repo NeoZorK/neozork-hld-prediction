@@ -326,6 +326,20 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
     phld_signal_cols = [col for col in df.columns if col.lower() in ["direction", "pcolor1", "pcolor2"]]
     phld_metric_cols = [col for col in df.columns if col.lower() in ["diff", "hl", "pressure", "pv"]]
 
+    # Check if this dataframe has pre-calculated or calculated indicators
+    has_precalculated = any(col.lower() in ["pprice1", "pprice2", "predicted_high", "predicted_low", "direction"] for col in df.columns)
+    has_calculated = any(col.lower().endswith("_calc") for col in df.columns)
+
+    # Print data source information for clarity
+    if has_precalculated and not has_calculated:
+        print(f"\n📁 [DATA SOURCE: LOADED FROM FILE] - Using pre-calculated indicators")
+    elif has_calculated and not has_precalculated:
+        print(f"\n🧮 [DATA SOURCE: CALCULATED NOW] - Using newly calculated indicators")
+    elif has_precalculated and has_calculated:
+        print(f"\n📊 [DATA SOURCE: BOTH] - Showing both pre-calculated and newly calculated indicators")
+    else:
+        print(f"\n📄 [DATA SOURCE: RAW DATA] - No indicators detected")
+
     # Other indicator columns - exclude all categorized columns
     exclude = set(ohlc_cols + ([volume_col] if volume_col else []) +
                  ([time_col] if time_col else []) +
@@ -371,7 +385,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
                 print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
 
             # Plot the OHLC component with its unique color
-            plt.plot(x_clean, y_clean, label=col, marker="braille", color=color)
+            plt.plot(x_clean, y_clean, label=f"{col} 📁 [LOADED]", marker="braille", color=color)
 
         plt.xlabel("Time")
         plt.ylabel("Price")
@@ -395,7 +409,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         else:
             if num_removed > 0:
                 print(f"ℹ️  Cleaned {num_removed} non-finite values from '{volume_col}'")
-            plt.bar(x_clean, y_clean, label="Volume", color="bright_magenta")
+            plt.bar(x_clean, y_clean, label=f"Volume 📁 [LOADED]", color="bright_magenta")
             plt.xlabel("Time")
             plt.ylabel("Volume")
             plt.show()
@@ -414,7 +428,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         if 'Close' in df.columns:
             x_clean, y_clean, num_removed = clean_data_for_plotting(df, 'Close', x_data)
             if len(y_clean) > 0:
-                plt.plot(x_clean, y_clean, label="Close", color="bright_blue", marker="braille")
+                plt.plot(x_clean, y_clean, label="Close 📁 [LOADED]", color="bright_blue", marker="braille")
 
         # Plot predicted price levels
         colors = ['bright_green', 'bright_red', 'bright_yellow', 'bright_magenta']
@@ -429,7 +443,9 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             if num_removed > 0:
                 print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
 
-            plt.plot(x_clean, y_clean, label=col, color=color, marker="braille")
+            # Add source indicator to the label
+            source_label = "📁 [LOADED]" if not col.lower().endswith("_calc") else "🧮 [CALCULATED]"
+            plt.plot(x_clean, y_clean, label=f"{col} {source_label}", color=color, marker="braille")
 
         plt.xlabel("Time")
         plt.ylabel("Price Level")
@@ -454,8 +470,9 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
                 buy_points = [1 if val == 1 else 0 for val in dir_data]
                 sell_points = [1 if val in [-1, 2] else 0 for val in dir_data]
 
-                plt.bar(x_clean, buy_points, label="Buy Signal", color="bright_green")
-                plt.bar(x_clean, [-val for val in sell_points], label="Sell Signal", color="bright_red")
+                source_label = "📁 [LOADED]" if not 'Direction'.lower().endswith("_calc") else "🧮 [CALCULATED]"
+                plt.bar(x_clean, buy_points, label=f"Buy Signal {source_label}", color="bright_green")
+                plt.bar(x_clean, [-val for val in sell_points], label=f"Sell Signal {source_label}", color="bright_red")
 
                 phld_signal_cols.remove('Direction')
 
@@ -475,7 +492,9 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             if num_removed > 0:
                 print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
 
-            plt.plot(x_clean, y_clean, label=col, color=color, marker="braille")
+            # Add source indicator to the label
+            source_label = "📁 [LOADED]" if not col.lower().endswith("_calc") else "🧮 [CALCULATED]"
+            plt.plot(x_clean, y_clean, label=f"{col} {source_label}", color=color, marker="braille")
 
         plt.xlabel("Time")
         plt.ylabel("Signal Value")
@@ -510,7 +529,9 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
             if col.lower() in ['hl', 'pressure', 'pv']:
                 plt.plot(x_clean, [0] * len(x_clean), label="Zero Line", color="gray")
 
-            plt.plot(x_clean, y_clean, label=col, color=color, marker="braille")
+            # Add source indicator to the label
+            source_label = "📁 [LOADED]" if not col.lower().endswith("_calc") else "🧮 [CALCULATED]"
+            plt.plot(x_clean, y_clean, label=f"{col} {source_label}", color=color, marker="braille")
 
         plt.xlabel("Time")
         plt.ylabel("Metric Value")
@@ -521,6 +542,11 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
 
     # For each other indicator, create a standalone plot with its own random color
     for idx, col in enumerate(indicator_cols):
+        # Filter out columns with '_calc' suffix for special handling
+        if col.lower().endswith('_calc'):
+            # These will be shown in comparison charts
+            continue
+
         # Force a clean slate for each new plot to avoid interference
         plt.clear_figure()
         plt.clear_data()
@@ -548,11 +574,30 @@ def auto_plot_from_dataframe(df: pd.DataFrame, plot_title: str = "Auto Terminal 
         if num_removed > 0:
             print(f"ℹ️  Cleaned {num_removed} non-finite values from '{col}'")
 
+        # Check if there's a calculated version of this column
+        calc_col = f"{col.lower()}_calc"
+        has_calc_version = calc_col in df.columns
+
+        # Add source indicator to the label
+        source_label = "📁 [LOADED]" if not col.lower().endswith("_calc") else "🧮 [CALCULATED]"
+
         # Plot just this one indicator with random color and braille marker
-        plt.plot(x_clean, y_clean, label=col, marker=marker, color=color)
+        plt.plot(x_clean, y_clean, label=f"{col} {source_label}", marker=marker, color=color)
+
+        # If we have both original and calculated versions, plot them together for comparison
+        if has_calc_version:
+            x_calc, y_calc, num_removed_calc = clean_data_for_plotting(df, calc_col, x_data)
+            if len(y_calc) > 0:
+                # Use a different color for calculated version
+                calc_color = get_random_color()
+                while calc_color == color:  # Ensure different color
+                    calc_color = get_random_color()
+                plt.plot(x_calc, y_calc, label=f"{calc_col} 🧮 [CALCULATED]", marker=marker, color=calc_color)
+                plt.title(f"Comparison: {col} (Original vs Calculated)")
 
         # Add a title that includes the color name for verification
-        plt.title(f"Indicator: {col} (Color: {color})")
+        if not has_calc_version:
+            plt.title(f"Indicator: {col} (Color: {color})")
 
         # Show special style for even/odd indicators for better visual distinction
         if idx % 2 == 0:
