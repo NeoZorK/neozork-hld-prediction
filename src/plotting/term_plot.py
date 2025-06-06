@@ -81,17 +81,8 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
         
         plt.plot_size(*main_plot_size)
         
-        # Choose theme based on rule type for better visual distinction
-        theme_map = {
-            'PHLD': 'matrix',
-            'PREDICT_HIGH_LOW_DIRECTION': 'matrix',
-            'PV': 'elegant', 
-            'PRESSURE_VECTOR': 'elegant',
-            'AUTO': 'retro',
-            'AUTO_DISPLAY_ALL': 'retro'
-        }
-        selected_theme = theme_map.get(rule_str.upper(), 'dark')
-        plt.theme(selected_theme)
+        # Use unified matrix green theme for all rules
+        plt.theme('matrix')
         
         # MAIN CHART: Beautiful Candlestick Visualization
         logger.print_info("Creating beautiful candlestick chart...")
@@ -111,7 +102,7 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
         plt.candlestick(x_values, ohlc_data)
         
         # Set price chart title and labels
-        price_title = f"📈 {title} - Financial Chart ({selected_theme.title()} Theme)"
+        price_title = f"{title} - Financial Chart (Matrix Green Theme)"
         plt.title(price_title)
         
         if not has_volume:
@@ -144,10 +135,11 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
             logger.print_info("Creating volume panel...")
             plt.subplot(2, 1)  # Bottom panel for volume
             
-            volume_values = df['Volume'].fillna(0).tolist()
+            # Convert volume to integers, handling NaN values properly
+            volume_values = df['Volume'].fillna(0).astype(float).astype(int).tolist()
             plt.bar(x_values, volume_values, color="cyan+", label="Volume")
             
-            plt.title("📊 Trading Volume")
+            plt.title("Trading Volume")
             plt.xlabel("Time / Bar Index")
             plt.ylabel("Volume")
         
@@ -171,17 +163,17 @@ def _add_phld_indicators_term(df: pd.DataFrame, x_values: list) -> None:
     # Add HL (High-Low range in points) with enhanced styling
     if 'HL' in df.columns:
         hl_values = df['HL'].fillna(0).tolist()
-        plt.plot(x_values, hl_values, color="orange+", label="📏 HL Range", marker=".")
+        plt.plot(x_values, hl_values, color="orange+", label="HL Range", marker=".")
     
     # Add Pressure with gradient-like effect
     if 'Pressure' in df.columns:
         pressure_values = df['Pressure'].fillna(0).tolist()
-        plt.plot(x_values, pressure_values, color="magenta+", label="💨 Pressure", marker="x")
+        plt.plot(x_values, pressure_values, color="magenta+", label="Pressure", marker="x")
     
     # Add Pressure Vector (PV) with distinct styling
     if 'PV' in df.columns:
         pv_values = df['PV'].fillna(0).tolist()
-        plt.plot(x_values, pv_values, color="yellow+", label="🎯 PV", marker="*")
+        plt.plot(x_values, pv_values, color="yellow+", label="PV", marker="*")
 
 
 def _add_pv_indicators_term(df: pd.DataFrame, x_values: list) -> None:
@@ -189,11 +181,11 @@ def _add_pv_indicators_term(df: pd.DataFrame, x_values: list) -> None:
     
     if 'PV' in df.columns:
         pv_values = df['PV'].fillna(0).tolist()
-        plt.plot(x_values, pv_values, color="cyan+", label="🌊 Pressure Vector", marker="*")
+        plt.plot(x_values, pv_values, color="cyan+", label="Pressure Vector", marker="*")
     
     if 'Pressure' in df.columns:
         pressure_values = df['Pressure'].fillna(0).tolist()
-        plt.plot(x_values, pressure_values, color="blue+", label="💨 Pressure Force", marker="x")
+        plt.plot(x_values, pressure_values, color="blue+", label="Pressure Force", marker="x")
 
 
 def _add_auto_indicators_term(df: pd.DataFrame, x_values: list) -> None:
@@ -263,46 +255,46 @@ def _add_trading_signals_term(df: pd.DataFrame, x_values: list, ohlc_data: dict)
     if buy_indices:
         buy_x = [x_values[i] for i in buy_indices]
         buy_y = [low_values[i] * 0.995 for i in buy_indices]  # Place below Low
-        plt.scatter(buy_x, buy_y, color="green+", marker="^", label="🔼 BUY Signal")
+        plt.scatter(buy_x, buy_y, color="green+", marker="^", label="BUY Signal")
     
     if sell_indices:
         sell_x = [x_values[i] for i in sell_indices]
         sell_y = [high_values[i] * 1.005 for i in sell_indices]  # Place above High
-        plt.scatter(sell_x, sell_y, color="red+", marker="v", label="🔽 SELL Signal")
+        plt.scatter(sell_x, sell_y, color="red+", marker="v", label="SELL Signal")
 
 
 def _show_terminal_statistics(df: pd.DataFrame, rule_str: str) -> None:
     """Display beautiful summary statistics in terminal."""
     
     # Create a beautiful header
-    header_line = "═" * 80
+    header_line = "=" * 80
     print(f"\n{header_line}")
-    print(f"{'📊 BEAUTIFUL TERMINAL PLOT STATISTICS':^80}")
+    print(f"{'TERMINAL PLOT STATISTICS':^80}")
     print(f"{'Trading Rule: ' + rule_str.upper():^80}")
     print(f"{header_line}")
     
     # Basic OHLC statistics
     if all(col in df.columns for col in ['Open', 'High', 'Low', 'Close']):
-        print(f"📈 PRICE STATISTICS:")
-        print(f"   🔺 Highest Price:  {df['High'].max():.5f}")
-        print(f"   🔻 Lowest Price:   {df['Low'].min():.5f}")
-        print(f"   🎯 Close Price:    {df['Close'].iloc[-1]:.5f}")
-        print(f"   🚀 Open Price:     {df['Open'].iloc[0]:.5f}")
-        print(f"   📏 Price Range:    {df['High'].max() - df['Low'].min():.5f}")
+        print(f"PRICE STATISTICS:")
+        print(f"   Highest Price:  {df['High'].max():.5f}")
+        print(f"   Lowest Price:   {df['Low'].min():.5f}")
+        print(f"   Close Price:    {df['Close'].iloc[-1]:.5f}")
+        print(f"   Open Price:     {df['Open'].iloc[0]:.5f}")
+        print(f"   Price Range:    {df['High'].max() - df['Low'].min():.5f}")
         
         # Calculate price movement
         price_change = df['Close'].iloc[-1] - df['Open'].iloc[0]
         price_change_pct = (price_change / df['Open'].iloc[0]) * 100
-        direction_emoji = "📈" if price_change >= 0 else "📉"
-        print(f"   {direction_emoji} Total Change:   {price_change:+.5f} ({price_change_pct:+.2f}%)")
+        direction_symbol = "+" if price_change >= 0 else "-"
+        print(f"   Total Change:   {price_change:+.5f} ({price_change_pct:+.2f}%)")
     
     # Volume statistics
     if 'Volume' in df.columns and not df['Volume'].isna().all():
-        print(f"\n📊 VOLUME STATISTICS:")
-        print(f"   🏪 Total Volume:   {df['Volume'].sum():,.0f}")
-        print(f"   📊 Avg Volume:     {df['Volume'].mean():.0f}")
-        print(f"   🔥 Max Volume:     {df['Volume'].max():,.0f}")
-        print(f"   💧 Min Volume:     {df['Volume'].min():,.0f}")
+        print(f"\nVOLUME STATISTICS:")
+        print(f"   Total Volume:   {df['Volume'].sum():,.0f}")
+        print(f"   Avg Volume:     {df['Volume'].mean():.0f}")
+        print(f"   Max Volume:     {df['Volume'].max():,.0f}")
+        print(f"   Min Volume:     {df['Volume'].min():,.0f}")
     
     # Trading signals statistics
     if 'Direction' in df.columns:
@@ -310,49 +302,49 @@ def _show_terminal_statistics(df: pd.DataFrame, rule_str: str) -> None:
         sell_count = (df['Direction'] == SELL).sum()
         notrade_count = (df['Direction'] == NOTRADE).sum()
         
-        print(f"\n🎯 TRADING SIGNALS:")
-        print(f"   🟢 BUY Signals:    {buy_count}")
-        print(f"   🔴 SELL Signals:   {sell_count}")
-        print(f"   ⚪ NO TRADE:       {notrade_count}")
-        print(f"   📊 Total Bars:     {len(df)}")
+        print(f"\nTRADING SIGNALS:")
+        print(f"   BUY Signals:    {buy_count}")
+        print(f"   SELL Signals:   {sell_count}")
+        print(f"   NO TRADE:       {notrade_count}")
+        print(f"   Total Bars:     {len(df)}")
         
         # Signal efficiency
         total_signals = buy_count + sell_count
         if total_signals > 0:
             signal_rate = (total_signals / len(df)) * 100
-            print(f"   ⚡ Signal Rate:     {signal_rate:.1f}%")
+            print(f"   Signal Rate:     {signal_rate:.1f}%")
     
     # Rule-specific statistics
     if rule_str.upper() in ['PHLD', 'PREDICT_HIGH_LOW_DIRECTION']:
-        print(f"\n📏 PHLD INDICATORS:")
+        print(f"\nPHLD INDICATORS:")
         if 'HL' in df.columns:
-            print(f"   📐 Avg HL Range:   {df['HL'].mean():.3f} points")
-            print(f"   📈 Max HL Range:   {df['HL'].max():.3f} points")
-            print(f"   📉 Min HL Range:   {df['HL'].min():.3f} points")
+            print(f"   Avg HL Range:   {df['HL'].mean():.3f} points")
+            print(f"   Max HL Range:   {df['HL'].max():.3f} points")
+            print(f"   Min HL Range:   {df['HL'].min():.3f} points")
         
         if 'Pressure' in df.columns:
-            print(f"   💨 Avg Pressure:   {df['Pressure'].mean():.3f}")
-            print(f"   🌪️  Max Pressure:   {df['Pressure'].max():.3f}")
-            print(f"   🌱 Min Pressure:   {df['Pressure'].min():.3f}")
+            print(f"   Avg Pressure:   {df['Pressure'].mean():.3f}")
+            print(f"   Max Pressure:   {df['Pressure'].max():.3f}")
+            print(f"   Min Pressure:   {df['Pressure'].min():.3f}")
         
         if 'PV' in df.columns:
-            print(f"   🎯 Avg PV:         {df['PV'].mean():.3f}")
-            print(f"   ⬆️  Max PV:         {df['PV'].max():.3f}")
-            print(f"   ⬇️  Min PV:         {df['PV'].min():.3f}")
+            print(f"   Avg PV:         {df['PV'].mean():.3f}")
+            print(f"   Max PV:         {df['PV'].max():.3f}")
+            print(f"   Min PV:         {df['PV'].min():.3f}")
     
     # Prediction accuracy (if available)
     if 'PPrice1' in df.columns and 'PPrice2' in df.columns:
-        print(f"\n🔮 PREDICTION STATISTICS:")
+        print(f"\nPREDICTION STATISTICS:")
         pprice1_accuracy = _calculate_prediction_accuracy(df, 'PPrice1', 'Low')
         pprice2_accuracy = _calculate_prediction_accuracy(df, 'PPrice2', 'High')
         if pprice1_accuracy is not None:
-            print(f"   🎯 Low Prediction:  {pprice1_accuracy:.1f}% accuracy")
+            print(f"   Low Prediction:  {pprice1_accuracy:.1f}% accuracy")
         if pprice2_accuracy is not None:
-            print(f"   🎯 High Prediction: {pprice2_accuracy:.1f}% accuracy")
+            print(f"   High Prediction: {pprice2_accuracy:.1f}% accuracy")
     
     # Footer
     print(f"\n{header_line}")
-    print(f"{'🎨 Beautiful Terminal Charts with Plotext Candlesticks':^80}")
+    print(f"{'Terminal Charts with Plotext Candlesticks':^80}")
     print(f"{'Perfect for SSH/Docker/Terminal Trading Analysis':^80}")
     print(f"{header_line}\n")
 

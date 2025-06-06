@@ -56,7 +56,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
             main_plot_size = (140, 25)
         
         plt.plot_size(*main_plot_size)
-        plt.theme('retro')  # Beautiful retro theme for auto mode
+        plt.theme('matrix')  # Use unified matrix theme for all plots
         
         # Create time axis
         x_values = list(range(len(df)))
@@ -77,7 +77,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
             }
             
             plt.candlestick(x_values, ohlc_data)
-            plt.title(f"📈 {title} - Beautiful Auto Chart (OHLC + Indicators)")
+            plt.title(f"{title} - Auto Chart (OHLC + Indicators)")
             
             if not has_volume:
                 plt.xlabel("Time / Bar Index")
@@ -88,7 +88,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
             
         else:
             logger.print_info("Creating beautiful multi-indicator chart...")
-            plt.title(f"📊 {title} - Beautiful Auto Indicators Chart")
+            plt.title(f"{title} - Auto Indicators Chart")
             plt.xlabel("Time / Bar Index") 
             plt.ylabel("Values")
             
