@@ -228,25 +228,25 @@ def auto_plot_csv_fields(file_path: str, title: str = "Auto Fields Plot", style:
 
 
 def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set, style: str = "matrix") -> None:
-    """Add indicator overlays with consistent green styling and square markers."""
+    """Add indicator overlays with different colors to visually distinguish different indicators."""
 
-    # Always use green+ for all colors
-    colors = ["green+"] * 10
+    # Use a variety of colors for better visual distinction
+    colors = ["green+", "red+", "blue+", "yellow+", "magenta+", "cyan+", "white+", "green", "red", "blue"]
 
     # Always use square marker for all plots
     marker = "s"
 
-    # Define mapping for indicator labels
-    indicator_labels = {
-        'predicted_low': 'Predicted Low',
-        'predicted_high': 'Predicted High',
-        'pprice1': 'Predicted Low',
-        'pprice2': 'Predicted High',
-        'pressure': 'Pressure',
-        'pressure_vector': 'Pressure Vector',
-        'pv': 'Pressure Vector',
-        'direction': 'Direction',
-        'signal': 'Signal'
+    # Define mapping for indicator labels and their priority order (lower number = higher priority)
+    indicator_mapping = {
+        'predicted_low': {'label': 'Predicted Low', 'priority': 1},
+        'predicted_high': {'label': 'Predicted High', 'priority': 2},
+        'pressure': {'label': 'Pressure', 'priority': 3},
+        'pressure_vector': {'label': 'Pressure Vector', 'priority': 4},
+        'pprice1': {'label': 'Predicted Low', 'priority': 1},
+        'pprice2': {'label': 'Predicted High', 'priority': 2},
+        'pv': {'label': 'Pressure Vector', 'priority': 4},
+        'direction': {'label': 'Direction', 'priority': 5},
+        'signal': {'label': 'Signal', 'priority': 6}
     }
 
     # Standard columns to skip
@@ -254,29 +254,59 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set,
         'DateTime', 'Timestamp', 'Date', 'Time', 'Index', 'index'
     })
     
-    color_index = 0
+    # Collect all columns to plot first, so we can sort them by priority
+    columns_to_plot = []
 
     for col in df.columns:
         if col not in extended_skip and pd.api.types.is_numeric_dtype(df[col]):
-            try:
-                # Robustly clean all numeric columns before plotting
-                values = pd.to_numeric(df[col], errors='coerce').replace([np.inf, -np.inf], np.nan).fillna(0).to_numpy(dtype=float)
-                values = np.nan_to_num(values, nan=0)
-                values = values.tolist()
-                color = colors[color_index % len(colors)]
+            # Determine label and priority for this column
+            label = col
+            priority = 999  # Default low priority
 
-                # Simple label without emojis
-                label = col
-                for key, clean_label in indicator_labels.items():
-                    if key.upper() in col.upper():
-                        label = clean_label
-                        break
-                plt.plot(x_values, values, color=color, label=label, marker=marker)
+            # Check if this column matches any of our known indicators
+            for key, mapping in indicator_mapping.items():
+                if key.upper() in col.upper():
+                    label = mapping['label']
+                    priority = mapping['priority']
+                    break
 
-                color_index += 1
+            columns_to_plot.append({
+                'column': col,
+                'label': label,
+                'priority': priority
+            })
 
-            except Exception as e:
-                logger.print_warning(f"Could not plot column {col}: {e}")
+    # Sort columns by priority
+    columns_to_plot.sort(key=lambda x: x['priority'])
+
+    # Keep track of added labels to prevent duplicates
+    added_labels = set()
+
+    # Plot columns in priority order with different colors
+    for i, column_info in enumerate(columns_to_plot):
+        col = column_info['column']
+        label = column_info['label']
+
+        # Skip if this label is already added (prevents duplicates)
+        if label in added_labels:
+            continue
+
+        try:
+            # Robustly clean numeric column before plotting
+            values = pd.to_numeric(df[col], errors='coerce').replace([np.inf, -np.inf], np.nan).fillna(0).to_numpy(dtype=float)
+            values = np.nan_to_num(values, nan=0)
+            values = values.tolist()
+
+            # Use different color for each indicator
+            color = colors[i % len(colors)]
+
+            added_labels.add(label)
+            plt.plot(x_values, values, color=color, label=label, marker=marker)
+
+            logger.print_debug(f"Added indicator: {label} (from column {col}) with color {color}")
+
+        except Exception as e:
+            logger.print_warning(f"Could not plot column {col}: {e}")
 
 
 def _show_auto_statistics(df: pd.DataFrame, title: str) -> None:
