@@ -96,7 +96,19 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
             logger.print_info("Creating beautiful volume panel...")
             plt.subplot(2, 1)  # Bottom panel
             
-            volume_values = df['Volume'].fillna(0).tolist()
+            # Safely convert volume to integers, handling NaN, inf, and non-numeric values
+            volume_series = pd.to_numeric(df['Volume'], errors='coerce').replace([np.inf, -np.inf], np.nan).fillna(0)
+            logger.print_debug(f"volume_series (after fillna): {volume_series.values}")
+            if volume_series.isna().any():
+                logger.print_warning(f"NaN values detected in volume_series at indices: {volume_series[volume_series.isna()].index.tolist()}")
+                volume_series = volume_series.fillna(0)
+            volume_array = np.array(volume_series.values, dtype=np.float64)
+            logger.print_debug(f"volume_array (before nan_to_num): {volume_array}")
+            if np.isnan(volume_array).any():
+                logger.print_warning(f"NaN values detected in volume_array at indices: {np.where(np.isnan(volume_array))[0].tolist()}")
+                volume_array = np.nan_to_num(volume_array, nan=0)
+            logger.print_debug(f"volume_array (after nan_to_num): {volume_array}")
+            volume_values = volume_array.astype(int).tolist()
             plt.bar(x_values, volume_values, color="cyan+", label="📊 Volume")
             
             plt.title("📊 Trading Volume")
@@ -150,22 +162,21 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set,
     for col in df.columns:
         if col not in extended_skip and pd.api.types.is_numeric_dtype(df[col]):
             try:
-                values = df[col].fillna(0).tolist()
+                # Robustly clean all numeric columns before plotting
+                values = pd.to_numeric(df[col], errors='coerce').replace([np.inf, -np.inf], np.nan).fillna(0).to_numpy(dtype=float)
+                values = np.nan_to_num(values, nan=0)
+                values = values.tolist()
                 color = colors[color_index % len(colors)]
                 marker = markers[marker_index % len(markers)]
-                
                 # Add clean label if available
                 label = col
                 for key, clean_label in indicator_labels.items():
                     if key.upper() in col.upper():
                         label = clean_label
                         break
-                
                 plt.plot(x_values, values, color=color, label=label, marker=marker)
-                
                 color_index += 1
                 marker_index += 1
-                
             except Exception as e:
                 logger.print_warning(f"Could not plot column {col}: {e}")
 
