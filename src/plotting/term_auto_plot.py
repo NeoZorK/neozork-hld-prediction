@@ -19,7 +19,7 @@ except ImportError:
     from ..common import logger
 
 
-def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot") -> None:
+def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot", style: str = "matrix") -> None:
     """
     Automatically plot all numeric columns from a DataFrame in terminal with beautiful styling.
     Uses candlestick charts for OHLC data and line plots for other indicators.
@@ -27,6 +27,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
     Args:
         df (pd.DataFrame): DataFrame with data to plot
         title (str): Title for the plot
+        style (str): Plot style ('matrix', 'dots', 'git', etc.)
     """
     try:
         logger.print_info("Generating beautiful auto terminal plot for all DataFrame columns...")
@@ -58,7 +59,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
         
         plt.plot_size(*main_plot_size)
         plt.theme('matrix')  # Use unified matrix theme for all plots
-        plt.style('dots')  # Apply 'dots' style
+        # Note: Style is applied through marker choice in individual plot functions
 
         # Create time axis
         x_values = list(range(len(df)))
@@ -75,20 +76,20 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
                 'Low': df['Low'].ffill().fillna(df['Close']).tolist(),
                 'Close': df['Close'].ffill().fillna(df['Open']).tolist()
             }
-            plt.candlestick(x_values, ohlc_data, style="dots")
+            plt.candlestick(x_values, ohlc_data)
             plt.title(f"{title} - Auto Chart (OHLC + Indicators)")
             if not has_volume:
                 plt.xlabel("Time / Bar Index")
             plt.ylabel("Price")
             # Add other indicators as overlays on the price chart
-            _add_indicator_overlays(df, x_values, skip_columns={'Open', 'High', 'Low', 'Close', 'Volume'})
+            _add_indicator_overlays(df, x_values, skip_columns={'Open', 'High', 'Low', 'Close', 'Volume'}, style=style)
         else:
             logger.print_info("Creating beautiful multi-indicator chart with 'dots' style...")
             plt.title(f"{title} - Auto Indicators Chart")
             plt.xlabel("Time / Bar Index") 
             plt.ylabel("Values")
             # Plot all numeric columns as indicators
-            _add_indicator_overlays(df, x_values, skip_columns={'Volume'}, style="dots")
+            _add_indicator_overlays(df, x_values, skip_columns={'Volume'}, style=style)
         
         # VOLUME PANEL (if available)
         if has_volume:
@@ -116,7 +117,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
         logger.print_debug(f"Exception details: {type(e).__name__}: {e}")
 
 
-def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set) -> None:
+def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set, style: str = "matrix") -> None:
     """Add indicator overlays with beautiful styling and emojis."""
     
     # Enhanced color palette for better visual distinction
@@ -125,8 +126,11 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set)
         "orange", "brown", "white", "gray"
     ]
     
-    # Enhanced marker set for variety
-    markers = [".", "*", "x", "+", "o", "^", "v", "s", "d"]
+    # Enhanced marker set - use dots if dots style is requested
+    if style == "dots":
+        markers = ["dot"] * 10  # Use dot marker for all plots
+    else:
+        markers = [".", "*", "x", "+", "o", "^", "v", "s", "d"]
     
     # Clean labels for common indicators without emojis  
     indicator_labels = {
