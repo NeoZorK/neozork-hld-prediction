@@ -49,6 +49,12 @@ def calculate_pressure_vector(
     # Make a copy to avoid modifying the original DataFrame
     df_out = df.copy()
 
+    # Handle duplicate indices that can cause reindexing errors
+    if df_out.index.duplicated().any():
+        logger.print_warning(f"Warning: Found {df_out.index.duplicated().sum()} duplicate indices. Removing duplicates to prevent calculation errors.")
+        # Keep the first occurrence of each duplicate index
+        df_out = df_out[~df_out.index.duplicated(keep='first')]
+
     # Rename TickVolume for consistency and plotting
     df_out.rename(columns={'TickVolume': 'Volume'}, inplace=True, errors='ignore')
 

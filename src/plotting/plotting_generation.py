@@ -791,6 +791,12 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
 
                 # Prepare input DataFrame for calculation
                 calc_df = result_df[required_columns].copy()
+                
+                # Handle potential duplicate indices before calculation
+                if calc_df.index.duplicated().any():
+                    logger.print_warning(f"Removing {calc_df.index.duplicated().sum()} duplicate indices before PHLD calculation")
+                    calc_df = calc_df[~calc_df.index.duplicated(keep='first')]
+                
                 if 'Volume' in calc_df.columns and 'TickVolume' not in calc_df.columns:
                     calc_df['TickVolume'] = calc_df['Volume']
 
