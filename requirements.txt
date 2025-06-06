@@ -77,6 +77,7 @@ pillow==11.1.0
 platformdirs==4.3.6
 plotext==5.3.2
 plotly==6.0.1
+plotext==5.3.2
 prometheus_client==0.21.1
 prompt_toolkit==3.0.50
 psutil==7.0.0
