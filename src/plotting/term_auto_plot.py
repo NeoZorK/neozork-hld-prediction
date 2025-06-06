@@ -3,6 +3,7 @@
 
 """
 Terminal-based auto plotting using plotext for displaying all DataFrame columns.
+Beautiful candlestick charts with enhanced styling and multi-panel layouts.
 """
 
 import pandas as pd
@@ -20,15 +21,15 @@ except ImportError:
 
 def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot") -> None:
     """
-    Automatically plot all numeric columns from a DataFrame in terminal.
-    Each column gets its own color and is displayed on the same chart.
+    Automatically plot all numeric columns from a DataFrame in terminal with beautiful styling.
+    Uses candlestick charts for OHLC data and line plots for other indicators.
     
     Args:
         df (pd.DataFrame): DataFrame with data to plot
         title (str): Title for the plot
     """
     try:
-        logger.print_info("Generating auto terminal plot for all DataFrame columns...")
+        logger.print_info("Generating beautiful auto terminal plot for all DataFrame columns...")
         
         # Clear any previous plots
         plt.clear_data()
@@ -39,176 +40,186 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
             logger.print_error("DataFrame is None or empty, cannot plot")
             return
         
-        # Set terminal size and theme
-        plt.theme('dark')
-        plt.plot_size(120, 35)  # Larger height for better readability with multiple series
+        # Check if we have OHLC data for candlestick chart
+        ohlc_columns = ['Open', 'High', 'Low', 'Close']
+        has_ohlc = all(col in df.columns for col in ohlc_columns)
+        has_volume = 'Volume' in df.columns and not df['Volume'].isna().all()
+        
+        # Set up layout based on available data
+        if has_ohlc and has_volume:
+            plt.subplots(2, 1)  # Price + Volume panels
+            main_plot_size = (140, 35)
+            plt.subplots(1, 1)  # Single price panel
+            main_plot_size = (140, 25)
+        else:
+            plt.subplots(1, 1)  # Single indicator panel
+            main_plot_size = (140, 25)
+        
+        plt.plot_size(*main_plot_size)
+        plt.theme('retro')  # Beautiful retro theme for auto mode
         
         # Create time axis
         x_values = list(range(len(df)))
         
-        # Define colors for different indicators - expanded color palette
-        colors = [
-            "red", "green", "blue", "yellow", "magenta", "cyan", "white",
-            "red+", "green+", "blue+", "yellow+", "magenta+", "cyan+",
-            "brown", "orange", "gray", "black"
-        ]
-        
-        # Standard columns to skip or handle specially
-        ohlc_columns = ['Open', 'High', 'Low', 'Close']
-        special_columns = ['Volume', 'DateTime', 'Timestamp', 'Date', 'Time', 'index']
-        
-        color_index = 0
-        plotted_columns = []
-        
-        # First, plot OHLC data if available
-        if all(col in df.columns for col in ohlc_columns):
-            logger.print_info("Plotting OHLC data...")
+        # MAIN PANEL: OHLC Candlestick or Indicators
+        if has_ohlc:
+            logger.print_info("Creating beautiful OHLC candlestick chart...")
             
-            # Plot OHLC as connected lines with different markers
-            open_values = df['Open'].fillna(method='ffill').fillna(0).tolist()
-            high_values = df['High'].fillna(method='ffill').fillna(0).tolist()
-            low_values = df['Low'].fillna(method='ffill').fillna(0).tolist()
-            close_values = df['Close'].fillna(method='ffill').fillna(0).tolist()
+            if has_volume:
+                plt.subplot(1, 1)  # Top panel
             
-            plt.plot(x_values, open_values, color="green", label="Open", marker="o")
-            plt.plot(x_values, high_values, color="cyan", label="High", marker="^")
-            plt.plot(x_values, low_values, color="cyan", label="Low", marker="v")
-            plt.plot(x_values, close_values, color="red", label="Close", marker="s")
+            # Prepare OHLC data for candlestick
+            ohlc_data = {
+                'Open': df['Open'].ffill().fillna(df['Close']).tolist(),
+                'High': df['High'].ffill().fillna(df['Close']).tolist(),
+                'Low': df['Low'].ffill().fillna(df['Close']).tolist(),
+                'Close': df['Close'].ffill().fillna(df['Open']).tolist()
+            }
             
-            plotted_columns.extend(ohlc_columns)
-            color_index = 4  # Start from color index 4 after OHLC
+            plt.candlestick(x_values, ohlc_data)
+            plt.title(f"📈 {title} - Beautiful Auto Chart (OHLC + Indicators)")
+            
+            if not has_volume:
+                plt.xlabel("Time / Bar Index")
+            plt.ylabel("Price")
+            
+            # Add other indicators as overlays on the price chart
+            _add_indicator_overlays(df, x_values, skip_columns={'Open', 'High', 'Low', 'Close', 'Volume'})
+            
+        else:
+            logger.print_info("Creating beautiful multi-indicator chart...")
+            plt.title(f"📊 {title} - Beautiful Auto Indicators Chart")
+            plt.xlabel("Time / Bar Index") 
+            plt.ylabel("Values")
+            
+            # Plot all numeric columns as indicators
+            _add_indicator_overlays(df, x_values, skip_columns={'Volume'})
         
-        # Plot Volume with special handling (normalized)
-        if 'Volume' in df.columns and 'Volume' not in plotted_columns:
-            logger.print_info("Adding Volume data (normalized)...")
+        # VOLUME PANEL (if available)
+        if has_volume:
+            logger.print_info("Creating beautiful volume panel...")
+            plt.subplot(2, 1)  # Bottom panel
+            
             volume_values = df['Volume'].fillna(0).tolist()
+            plt.bar(x_values, volume_values, color="cyan+", label="📊 Volume")
             
-            if max(volume_values) > 0:
-                # Normalize volume to price scale
-                price_cols = [col for col in ohlc_columns if col in df.columns]
-                if price_cols:
-                    price_max = df[price_cols].max().max()
-                    price_min = df[price_cols].min().min()
-                    price_range = price_max - price_min
-                    
-                    volume_normalized = [(v / max(volume_values)) * price_range * 0.2 + price_min 
-                                       for v in volume_values]
-                    plt.bar(x_values, volume_normalized, color="gray", label="Volume (norm)")
-                else:
-                    # If no OHLC data, plot volume as-is
-                    plt.bar(x_values, volume_values, color="gray", label="Volume")
-            
-            plotted_columns.append('Volume')
-            color_index += 1
-        
-        # Plot all other numeric columns
-        logger.print_info("Plotting additional numeric columns...")
-        for col in df.columns:
-            if (col not in plotted_columns and 
-                col not in special_columns and 
-                pd.api.types.is_numeric_dtype(df[col])):
-                
-                try:
-                    values = df[col].fillna(method='ffill').fillna(0).tolist()
-                    
-                    # Skip columns with all zeros or very small variance
-                    if all(v == 0 for v in values):
-                        logger.print_debug(f"Skipping column {col} - all zeros")
-                        continue
-                    
-                    if np.var(values) < 1e-10:
-                        logger.print_debug(f"Skipping column {col} - no variance")
-                        continue
-                    
-                    # Choose color and marker style
-                    color = colors[color_index % len(colors)]
-                    
-                    # Use different markers for different types of indicators
-                    if 'direction' in col.lower() or 'signal' in col.lower():
-                        # Trading signals - use scatter plot
-                        plt.scatter(x_values, values, color=color, label=col, marker="*")
-                    elif 'pv' in col.lower() or 'pressure' in col.lower():
-                        # Pressure-related indicators - use thick lines
-                        plt.plot(x_values, values, color=color, label=col, marker="+")
-                    elif 'hl' in col.lower():
-                        # HL indicators - use dots
-                        plt.plot(x_values, values, color=color, label=col, marker=".")
-                    elif 'predicted' in col.lower() or 'pprice' in col.lower():
-                        # Predicted prices - use dashed lines
-                        plt.plot(x_values, values, color=color, label=col, marker=".")
-                    else:
-                        # Default - solid line
-                        plt.plot(x_values, values, color=color, label=col, marker="o")
-                    
-                    plotted_columns.append(col)
-                    color_index += 1
-                    
-                    logger.print_debug(f"Plotted column: {col}")
-                    
-                except Exception as e:
-                    logger.print_warning(f"Could not plot column {col}: {e}")
-        
-        # Configure plot appearance
-        plt.title(title)
-        plt.xlabel("Time / Bar Index")
-        plt.ylabel("Values (Mixed Scale)")
-        
-        # Show legend
-        plt.show_legend()
+            plt.title("📊 Trading Volume")
+            plt.xlabel("Time / Bar Index")
+            plt.ylabel("Volume")
         
         # Display the plot
-        logger.print_info("Displaying auto terminal plot...")
+        logger.print_info("Displaying beautiful auto terminal plot...")
         plt.show()
         
-        # Show summary of plotted data
-        _show_auto_plot_summary(df, plotted_columns)
+        # Show enhanced statistics
+        _show_auto_statistics(df, title)
         
-        logger.print_success(f"Auto terminal plot generated successfully! Plotted {len(plotted_columns)} columns.")
+        logger.print_success("Beautiful auto terminal plot generated successfully!")
         
     except Exception as e:
         logger.print_error(f"Error generating auto terminal plot: {e}")
         logger.print_debug(f"Exception details: {type(e).__name__}: {e}")
 
 
-def _show_auto_plot_summary(df: pd.DataFrame, plotted_columns: list) -> None:
-    """Display summary of the auto plot."""
+def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set) -> None:
+    """Add indicator overlays with beautiful styling and emojis."""
     
-    print("\n" + "="*70)
-    print("📊 AUTO TERMINAL PLOT SUMMARY")
-    print("="*70)
+    # Enhanced color palette for better visual distinction
+    colors = [
+        "yellow+", "magenta+", "green+", "red+", "blue+", "cyan+", 
+        "orange", "brown", "white", "gray"
+    ]
     
+    # Enhanced marker set for variety
+    markers = [".", "*", "x", "+", "o", "^", "v", "s", "d"]
+    
+    # Emoji mapping for common indicators
+    indicator_emojis = {
+        'HL': '📏', 'Pressure': '💨', 'PV': '🎯', 'RSI': '📊', 'MACD': '📈',
+        'SMA': '📉', 'EMA': '⚡', 'BB': '🎪', 'Direction': '🎯', 'Signal': '🚨',
+        'PPrice1': '🔮', 'PPrice2': '🔮', 'Momentum': '🚀', 'Trend': '📈'
+    }
+    
+    color_index = 0
+    marker_index = 0
+    
+    # Extended skip columns
+    extended_skip = skip_columns.union({
+        'DateTime', 'Timestamp', 'Date', 'Time', 'Index', 'index'
+    })
+    
+    for col in df.columns:
+        if col not in extended_skip and pd.api.types.is_numeric_dtype(df[col]):
+            try:
+                values = df[col].fillna(0).tolist()
+                color = colors[color_index % len(colors)]
+                marker = markers[marker_index % len(markers)]
+                
+                # Add emoji to label if available
+                emoji = ""
+                for key, emoji_char in indicator_emojis.items():
+                    if key.upper() in col.upper():
+                        emoji = emoji_char + " "
+                        break
+                
+                label = f"{emoji}{col}"
+                plt.plot(x_values, values, color=color, label=label, marker=marker)
+                
+                color_index += 1
+                marker_index += 1
+                
+            except Exception as e:
+                logger.print_warning(f"Could not plot column {col}: {e}")
+
+
+def _show_auto_statistics(df: pd.DataFrame, title: str) -> None:
+    """Display beautiful auto statistics."""
+    
+    header_line = "═" * 80
+    print(f"\n{header_line}")
+    print(f"{'📊 BEAUTIFUL AUTO PLOT STATISTICS':^80}")
+    print(f"{title:^80}")
+    print(f"{header_line}")
+    
+    # Data overview
     print(f"📈 DATA OVERVIEW:")
-    print(f"   Total Rows:        {len(df)}")
-    print(f"   Total Columns:     {len(df.columns)}")
-    print(f"   Plotted Columns:   {len(plotted_columns)}")
-    print(f"   Skipped Columns:   {len(df.columns) - len(plotted_columns)}")
+    print(f"   📊 Total Rows:     {len(df)}")
+    print(f"   📋 Total Columns:  {len(df.columns)}")
+    print(f"   🔢 Numeric Cols:   {df.select_dtypes(include=[np.number]).shape[1]}")
     
-    print(f"\n🎨 PLOTTED COLUMNS:")
-    for i, col in enumerate(plotted_columns, 1):
-        if col in df.columns:
-            col_data = df[col].dropna()
-            if len(col_data) > 0:
-                print(f"   {i:2d}. {col:<20} | Min: {col_data.min():>10.3f} | Max: {col_data.max():>10.3f} | Avg: {col_data.mean():>10.3f}")
-            else:
-                print(f"   {i:2d}. {col:<20} | No valid data")
+    # Column analysis
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    if len(numeric_cols) > 0:
+        print(f"\n📊 COLUMN STATISTICS:")
+        for col in numeric_cols:
+            if col in df.columns:
+                try:
+                    col_data = df[col].dropna()
+                    if len(col_data) > 0:
+                        print(f"   📋 {col}:")
+                        print(f"      📈 Max: {col_data.max():.3f}")
+                        print(f"      📉 Min: {col_data.min():.3f}")
+                        print(f"      📊 Avg: {col_data.mean():.3f}")
+                except Exception:
+                    pass
     
-    # Show non-plotted columns
-    non_plotted = [col for col in df.columns if col not in plotted_columns]
-    if non_plotted:
-        print(f"\n⏭️  SKIPPED COLUMNS:")
-        for col in non_plotted:
-            dtype = str(df[col].dtype)
-            print(f"      • {col:<20} ({dtype})")
+    # OHLC specific stats if available
+    ohlc_columns = ['Open', 'High', 'Low', 'Close']
+    if all(col in df.columns for col in ohlc_columns):
+        print(f"\n📈 OHLC STATISTICS:")
+        print(f"   🔺 Highest:    {df['High'].max():.5f}")
+        print(f"   🔻 Lowest:     {df['Low'].min():.5f}")
+        print(f"   🎯 Final:      {df['Close'].iloc[-1]:.5f}")
+        print(f"   🚀 Initial:    {df['Open'].iloc[0]:.5f}")
+        
+        price_change = df['Close'].iloc[-1] - df['Open'].iloc[0]
+        price_change_pct = (price_change / df['Open'].iloc[0]) * 100
+        direction_emoji = "📈" if price_change >= 0 else "📉"
+        print(f"   {direction_emoji} Change:     {price_change:+.5f} ({price_change_pct:+.2f}%)")
     
-    print("\n" + "="*70)
-    print("💡 Auto plotting displays all numeric columns with unique colors and markers")
-    print("   Different marker styles are used for different types of indicators:")
-    print("   • Trading signals: * (star markers)")
-    print("   • Pressure/PV: + (plus markers)")
-    print("   • HL indicators: . (dot markers)")
-    print("   • Predicted prices: dashed lines")
-    print("   • OHLC data: connected lines with specific markers")
-    print("="*70 + "\n")
+    print(f"\n{header_line}")
+    print(f"{'🎨 Beautiful Auto Terminal Charts - All Your Data Visualized':^80}")
+    print(f"{header_line}\n")
 
 
 def plot_column_comparison(df: pd.DataFrame, col1: str, col2: str, title: str = "Column Comparison") -> None:
@@ -234,36 +245,35 @@ def plot_column_comparison(df: pd.DataFrame, col1: str, col2: str, title: str = 
             return
         
         # Set terminal size and theme
-        plt.theme('dark')
+        plt.theme('retro')
         plt.plot_size(120, 25)
         
         # Create time axis
         x_values = list(range(len(df)))
         
         # Get column data
-        values1 = df[col1].fillna(method='ffill').fillna(0).tolist()
-        values2 = df[col2].fillna(method='ffill').fillna(0).tolist()
+        values1 = df[col1].ffill().fillna(0).tolist()
+        values2 = df[col2].ffill().fillna(0).tolist()
         
         # Plot both columns
-        plt.plot(x_values, values1, color="green", label=col1, marker="o")
-        plt.plot(x_values, values2, color="red", label=col2, marker="s")
+        plt.plot(x_values, values1, color="green+", label=f"📈 {col1}", marker="o")
+        plt.plot(x_values, values2, color="red+", label=f"📉 {col2}", marker="s")
         
         # Configure plot
-        plt.title(title)
+        plt.title(f"📊 {title}")
         plt.xlabel("Time / Bar Index")
         plt.ylabel("Values")
-        plt.show_legend()
         
         # Display
         plt.show()
         
         # Show comparison statistics
         print(f"\n📊 COMPARISON STATISTICS:")
-        print(f"   {col1}: Min={min(values1):.3f}, Max={max(values1):.3f}, Avg={np.mean(values1):.3f}")
-        print(f"   {col2}: Min={min(values2):.3f}, Max={max(values2):.3f}, Avg={np.mean(values2):.3f}")
+        print(f"   📈 {col1}: Min={min(values1):.3f}, Max={max(values1):.3f}, Avg={np.mean(values1):.3f}")
+        print(f"   📉 {col2}: Min={min(values2):.3f}, Max={max(values2):.3f}, Avg={np.mean(values2):.3f}")
         
         correlation = np.corrcoef(values1, values2)[0, 1] if len(values1) > 1 else 0
-        print(f"   Correlation: {correlation:.3f}")
+        print(f"   🔗 Correlation: {correlation:.3f}")
         
         logger.print_success("Column comparison plot generated successfully!")
         
@@ -293,7 +303,7 @@ def plot_histogram_terminal(df: pd.DataFrame, column: str, bins: int = 20, title
         plt.clear_figure()
         
         # Set theme and size
-        plt.theme('dark')
+        plt.theme('retro')
         plt.plot_size(100, 20)
         
         # Get data and create histogram
@@ -303,8 +313,8 @@ def plot_histogram_terminal(df: pd.DataFrame, column: str, bins: int = 20, title
             return
         
         # Use plotext's hist function
-        plt.hist(data, bins=bins, color="blue")
-        plt.title(f"{title} - {column}")
+        plt.hist(data, bins=bins, color="blue+")
+        plt.title(f"📊 {title} - {column}")
         plt.xlabel(column)
         plt.ylabel("Frequency")
         
@@ -312,13 +322,14 @@ def plot_histogram_terminal(df: pd.DataFrame, column: str, bins: int = 20, title
         
         # Show statistics
         print(f"\n📊 HISTOGRAM STATISTICS for {column}:")
-        print(f"   Count: {len(data)}")
-        print(f"   Mean:  {np.mean(data):.3f}")
-        print(f"   Std:   {np.std(data):.3f}")
-        print(f"   Min:   {min(data):.3f}")
-        print(f"   Max:   {max(data):.3f}")
+        print(f"   📋 Count: {len(data)}")
+        print(f"   📊 Mean:  {np.mean(data):.3f}")
+        print(f"   📈 Std:   {np.std(data):.3f}")
+        print(f"   📉 Min:   {min(data):.3f}")
+        print(f"   🔺 Max:   {max(data):.3f}")
         
         logger.print_success("Histogram generated successfully!")
         
     except Exception as e:
         logger.print_error(f"Error generating histogram: {e}")
+
