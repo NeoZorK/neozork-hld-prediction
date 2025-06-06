@@ -567,17 +567,24 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
                 logger.print_info(f"Detected parquet file from csv_converted directory: {original_parquet_path}")
                 parquet_from_cache = True
 
-    # For AUTO rule, use auto_plot_from_dataframe which draws each indicator with different colors
+    # For AUTO rule, use separate field plotting: main OHLC chart (if present) + separate charts for each field
     if is_auto_rule:
-        logger.print_info("AUTO rule detected, using auto terminal plotting with unique colors for each indicator...")
+        logger.print_info("AUTO rule detected, using separate field terminal plotting: main OHLC chart + separate charts for each field...")
         try:
-            # Import here to avoid circular imports
+            from src.plotting.term_separate_plots import plot_separate_fields_terminal
+            # Show main OHLC chart as candlestick if present
+            ohlc_columns = ['Open', 'High', 'Low', 'Close']
+            has_ohlc = all(col in result_df.columns for col in ohlc_columns)
+            if has_ohlc:
+                from src.plotting.term_auto_plot import auto_plot_from_dataframe
+                auto_plot_from_dataframe(result_df, f"{plot_title} - OHLC Candlestick")
+            # Plot each additional numeric field as a separate chart
+            plot_separate_fields_terminal(result_df, selected_rule, f"{plot_title} - Separate Fields")
+            logger.print_success("Successfully plotted OHLC candlestick and all other fields as separate terminal charts.")
+        except ImportError as e:
+            logger.print_warning(f"Could not import separate field plotting modules: {e}. Falling back to standard terminal plot.")
             from src.plotting.term_auto_plot import auto_plot_from_dataframe
             auto_plot_from_dataframe(result_df, plot_title)
-            logger.print_success("Successfully plotted all indicators with unique colors in terminal mode.")
-        except ImportError:
-            logger.print_warning("Could not import auto_plot_from_dataframe, falling back to standard terminal plot.")
-            plot_indicator_results_term(result_df, selected_rule, plot_title)
         return
 
     # For PHLD rule, use the specialized PHLD plotting function
