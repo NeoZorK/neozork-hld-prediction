@@ -12,10 +12,16 @@ import os
 from .mplfinance_plot import plot_indicator_results_mplfinance
 from .plotly_plot import plot_indicator_results_plotly
 from .term_plot import plot_indicator_results_term # Import the new terminal plotting function
-# Use relative imports for constants and logger
-from ..common.constants import TradingRule
-from ..common import logger
 from .fast_plot import plot_indicator_results_fast # Import the fast plot function
+
+# Use absolute imports when possible, fallback to relative
+try:
+    from common.constants import TradingRule
+    from common import logger
+except ImportError:
+    # Fallback to relative imports when run as module
+    from ..common.constants import TradingRule
+    from ..common import logger
 
 # Check if running in Docker
 IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
