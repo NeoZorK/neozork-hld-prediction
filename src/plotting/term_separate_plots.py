@@ -24,7 +24,8 @@ except ImportError:
 def plot_separate_fields_terminal(df: pd.DataFrame, 
                                  rule: Union[TradingRule, str], 
                                  title: str = "Separate Field Plots",
-                                 fields: Optional[List[str]] = None) -> None:
+                                 fields: Optional[List[str]] = None,
+                                 style: str = "matrix") -> None:
     """
     Create separate terminal plots for individual fields.
     
@@ -33,6 +34,7 @@ def plot_separate_fields_terminal(df: pd.DataFrame,
         rule (TradingRule | str): Trading rule
         title (str): Base title for plots
         fields (List[str], optional): Specific fields to plot. If None, plots all numeric fields.
+        style (str): Plot style ('matrix', 'dots', 'git', etc.)
     """
     try:
         logger.print_info("Generating separate field terminal plots...")
@@ -58,7 +60,7 @@ def plot_separate_fields_terminal(df: pd.DataFrame,
             logger.print_warning("No fields found to plot")
             return
             
-        logger.print_info(f"Plotting {len(fields)} separate fields with 'dots' style: {fields}")
+        logger.print_info(f"Plotting {len(fields)} separate fields with '{style}' style: {fields}")
         
         # Create time axis
         x_values = list(range(len(df)))
@@ -68,11 +70,11 @@ def plot_separate_fields_terminal(df: pd.DataFrame,
             if field not in df.columns:
                 logger.print_warning(f"Field '{field}' not found in DataFrame")
                 continue
-
+                
             # Create individual plot for this field
-            _plot_individual_field(df, field, x_values, f"{title} - {field}", rule_str, style="dots")
-
-        logger.print_success(f"Successfully generated {len(fields)} separate field plots with 'dots' style!")
+            _plot_individual_field(df, field, x_values, f"{title} - {field}", rule_str, style=style)
+        
+        logger.print_success(f"Successfully generated {len(fields)} separate field plots with '{style}' style!")
         
     except Exception as e:
         logger.print_error(f"Error generating separate field plots: {e}")
@@ -148,7 +150,7 @@ def plot_specific_fields_terminal(df: pd.DataFrame,
         logger.print_error(f"Error plotting specific fields: {e}")
 
 
-def _plot_individual_field(df: pd.DataFrame, field: str, x_values: list, title: str, rule_str: str, style: str = "line") -> None:
+def _plot_individual_field(df: pd.DataFrame, field: str, x_values: list, title: str, rule_str: str, style: str = "matrix") -> None:
     """Plot a single field in its own chart."""
     try:
         # Clear any previous plots
@@ -158,21 +160,22 @@ def _plot_individual_field(df: pd.DataFrame, field: str, x_values: list, title: 
         # Set up plot theme and size
         plt.plot_size(120, 30)
         plt.theme('matrix')  # Unified matrix theme
+        # Note: Style is applied through marker choice in plotting functions
         
         # Get field data
         field_data = df[field].fillna(0).tolist()
         
         # Determine plot type based on field characteristics
         if 'volume' in field.lower():
-            _plot_volume_field(x_values, field_data, title, field)
+            _plot_volume_field(x_values, field_data, title, field, style=style)
         elif any(signal in field.lower() for signal in ['signal', 'direction', 'buy', 'sell']):
-            _plot_signal_field(x_values, field_data, title, field)
+            _plot_signal_field(x_values, field_data, title, field, style=style)
         elif any(pred in field.lower() for pred in ['predicted', 'pprice', 'forecast']):
-            _plot_prediction_field(x_values, field_data, title, field)
+            _plot_prediction_field(x_values, field_data, title, field, style=style)
         elif field.lower() in ['high', 'low', 'open', 'close']:
-            _plot_price_field(x_values, field_data, title, field)
+            _plot_price_field(x_values, field_data, title, field, style=style)
         else:
-            _plot_indicator_field(x_values, field_data, title, field)
+            _plot_indicator_field(x_values, field_data, title, field, style=style)
         
         # Show the plot
         plt.show()
@@ -184,7 +187,7 @@ def _plot_individual_field(df: pd.DataFrame, field: str, x_values: list, title: 
         logger.print_error(f"Error plotting field '{field}': {e}")
 
 
-def _plot_volume_field(x_values: list, field_data: list, title: str, field: str) -> None:
+def _plot_volume_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
     """Plot volume data as bars."""
     plt.bar(x_values, field_data, color="cyan+", label=field)
     plt.title(f"{title} - Volume")
@@ -192,7 +195,7 @@ def _plot_volume_field(x_values: list, field_data: list, title: str, field: str)
     plt.ylabel("Volume")
 
 
-def _plot_signal_field(x_values: list, field_data: list, title: str, field: str) -> None:
+def _plot_signal_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
     """Plot trading signals as scatter points."""
     # Convert signals to display positions
     buy_positions = [x for x, val in zip(x_values, field_data) if val == 1 or val == BUY]
@@ -208,15 +211,16 @@ def _plot_signal_field(x_values: list, field_data: list, title: str, field: str)
     plt.ylabel("Signal")
 
 
-def _plot_prediction_field(x_values: list, field_data: list, title: str, field: str) -> None:
+def _plot_prediction_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
     """Plot prediction data as lines with special markers."""
-    plt.plot(x_values, field_data, color="yellow+", label=field, marker="D")
+    marker = "dot" if style == "dots" else "D"
+    plt.plot(x_values, field_data, color="yellow+", label=field, marker=marker)
     plt.title(f"{title} - Predictions")
     plt.xlabel("Time / Bar Index")
     plt.ylabel("Predicted Price")
 
 
-def _plot_price_field(x_values: list, field_data: list, title: str, field: str) -> None:
+def _plot_price_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
     """Plot price data as lines."""
     color_map = {
         'high': "green+",
@@ -226,16 +230,21 @@ def _plot_price_field(x_values: list, field_data: list, title: str, field: str) 
     }
     color = color_map.get(field.lower(), "white+")
     
-    plt.plot(x_values, field_data, color=color, label=field, marker="o")
+    marker = "dot" if style == "dots" else "o"
+    plt.plot(x_values, field_data, color=color, label=field, marker=marker)
     plt.title(f"{title} - Price Data")
     plt.xlabel("Time / Bar Index")
     plt.ylabel("Price")
 
 
-def _plot_indicator_field(x_values: list, field_data: list, title: str, field: str) -> None:
+def _plot_indicator_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
     """Plot general indicator data."""
     color = "magenta+" if 'pressure' in field.lower() else "cyan+"
-    marker = "+" if 'pressure' in field.lower() else "."
+    
+    if style == "dots":
+        marker = "dot"
+    else:
+        marker = "+" if 'pressure' in field.lower() else "."
     
     plt.plot(x_values, field_data, color=color, label=field, marker=marker)
     plt.title(f"{title} - Indicator")

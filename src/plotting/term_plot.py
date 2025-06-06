@@ -115,7 +115,23 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
         elif rule_str.upper() in ['PV', 'PRESSURE_VECTOR']:
             _add_pv_indicators_term(df, x_values)
         elif rule_str.upper() in ['AUTO', 'AUTO_DISPLAY_ALL']:
-            _add_auto_indicators_term(df, x_values)
+            # For AUTO rule, show the main OHLC chart first, then separate field plots
+            logger.print_info("AUTO rule detected in Python API, using 'dots' style for separate field plotting...")
+            _add_auto_indicators_term(df, x_values)  # Add overlays to main chart
+            
+            # Show the main chart first
+            plt.show()
+            
+            # Then show separate field plots with dots style
+            try:
+                from src.plotting.term_separate_plots import plot_separate_fields_terminal
+                plot_separate_fields_terminal(df, rule_str, f"{title} - Separate Fields", style="dots")
+                logger.print_success("Successfully displayed main OHLC chart and separate field plots with 'dots' style.")
+                return  # Early return to avoid showing main chart twice
+            except ImportError as e:
+                logger.print_warning(f"Could not import separate field plotting: {e}. Showing main chart with overlays only.")
+            except Exception as e:
+                logger.print_warning(f"Error in separate field plotting: {e}. Continuing with main chart.")
         
         # Add predicted price lines if available
         if 'PPrice1' in df.columns:  # Predicted Low
