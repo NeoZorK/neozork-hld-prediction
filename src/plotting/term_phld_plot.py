@@ -202,13 +202,16 @@ def _add_phld_overlays(df: pd.DataFrame, x_values: list, plot_base_indicators: b
                         # Position signals above/below price action
                         positioned_values = []
                         for i, sig in enumerate(values):
-                            if sig == 1:  # Buy signal
-                                positioned_values.append(low_values[i] * 0.995)  # Slightly below low
-                            elif sig == -1:  # Sell signal  
-                                positioned_values.append(high_values[i] * 1.005)  # Slightly above high
+                            if pd.api.types.is_number(sig):  # Проверяем, что sig - это число
+                                if float(sig) == 1.0:  # Buy signal - преобразуем в число для сравнения
+                                    positioned_values.append(low_values[i] * 0.995)  # Slightly below low
+                                elif float(sig) == -1.0:  # Sell signal
+                                    positioned_values.append(high_values[i] * 1.005)  # Slightly above high
+                                else:
+                                    positioned_values.append(None)
                             else:
-                                positioned_values.append(None)
-                        
+                                positioned_values.append(None)  # Не число - добавляем None
+
                         # Plot as scatter for signals
                         valid_indices = [i for i, v in enumerate(positioned_values) if v is not None]
                         valid_x = [x_values[i] for i in valid_indices]
@@ -260,6 +263,9 @@ def _show_phld_statistics(df: pd.DataFrame, rule_str: str) -> None:
         
         price_change = df['Close'].iloc[-1] - df['Open'].iloc[0]
         price_change_pct = (price_change / df['Open'].iloc[0]) * 100
+        # Ensure price_change is a scalar value, not a Series
+        if isinstance(price_change, pd.Series):
+            price_change = price_change.iloc[0] if not price_change.empty else 0
         direction_text = "UP" if price_change >= 0 else "DOWN"
         print(f"   Total Change:   {price_change:+.5f} ({price_change_pct:+.2f}%) {direction_text}")
     
@@ -345,10 +351,18 @@ def _calculate_prediction_accuracy(predicted: pd.Series, actual: pd.Series, tole
         # Calculate accuracy within tolerance
         differences = abs(pred_vals - actual_vals)
         tolerance_range = actual_vals * tolerance  # percentage tolerance
-        accurate_predictions = (differences <= tolerance_range).sum()
-        
-        return (accurate_predictions / len(pred_vals)) * 100
-    except Exception:
+
+        # Ensure we're dealing with scalar comparisons, not Series comparisons
+        accurate_count = 0
+        for diff, tol in zip(differences, tolerance_range):
+            if diff <= tol:
+                accurate_count += 1
+
+        # Calculate percentage
+        accuracy_pct = (accurate_count / len(pred_vals)) * 100 if len(pred_vals) > 0 else 0.0
+        return accuracy_pct
+    except Exception as e:
+        logger.print_warning(f"Error calculating prediction accuracy: {e}")
         return 0.0
 
 
