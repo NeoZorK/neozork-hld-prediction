@@ -228,35 +228,21 @@ def auto_plot_csv_fields(file_path: str, title: str = "Auto Fields Plot", style:
 
 
 def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set, style: str = "matrix") -> None:
-    """Add indicator overlays with beautiful styling and emojis."""
-    
-    # Enhanced color palette for better visual distinction
-    colors = [
-        "green+", "yellow+", "magenta+", "cyan+", "red+", "blue+",
-        "orange", "brown", "white", "gray"
-    ]
-    
-    # Enhanced marker set - use dots if dots style is requested
-    if style == "dots":
-        markers = ["dot"] * 10  # Use dot marker for all plots
-    else:
-        markers = [".", "*", "x", "+", "o", "^", "v", "s", "d"]
-    
-    # Clean labels for common indicators without emojis  
-    indicator_labels = {
-        'HL': 'HL Range', 'Pressure': 'Pressure', 'PV': 'PV', 'RSI': 'RSI', 'MACD': 'MACD',
-        'SMA': 'SMA', 'EMA': 'EMA', 'BB': 'Bollinger Bands', 'Direction': 'Direction', 'Signal': 'Signal',
-        'PPrice1': 'Predicted Low', 'PPrice2': 'Predicted High', 'Momentum': 'Momentum', 'Trend': 'Trend'
-    }
-    
-    color_index = 0
-    marker_index = 0
-    
-    # Extended skip columns
+    """Add indicator overlays with consistent green styling and square markers."""
+
+    # Always use green+ for all colors
+    colors = ["green+"] * 10
+
+    # Always use square marker for all plots
+    marker = "s"
+
+    # Standard columns to skip
     extended_skip = skip_columns.union({
         'DateTime', 'Timestamp', 'Date', 'Time', 'Index', 'index'
     })
     
+    color_index = 0
+
     for col in df.columns:
         if col not in extended_skip and pd.api.types.is_numeric_dtype(df[col]):
             try:
@@ -265,67 +251,68 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set,
                 values = np.nan_to_num(values, nan=0)
                 values = values.tolist()
                 color = colors[color_index % len(colors)]
-                marker = "dot" if style == "dots" else markers[marker_index % len(markers)]
-                # Add clean label if available
+
+                # Simple label without emojis
                 label = col
                 for key, clean_label in indicator_labels.items():
                     if key.upper() in col.upper():
                         label = clean_label
                         break
                 plt.plot(x_values, values, color=color, label=label, marker=marker)
+
                 color_index += 1
-                marker_index += 1
+
             except Exception as e:
                 logger.print_warning(f"Could not plot column {col}: {e}")
 
 
 def _show_auto_statistics(df: pd.DataFrame, title: str) -> None:
-    """Display beautiful auto statistics."""
-    
-    header_line = "═" * 80
+    """Display auto statistics with simplified output."""
+
+    header_line = "=" * 80
     print(f"\n{header_line}")
-    print(f"{'📊 BEAUTIFUL AUTO PLOT STATISTICS':^80}")
+    print(f"{'AUTO PLOT STATISTICS':^80}")
     print(f"{title:^80}")
     print(f"{header_line}")
     
     # Data overview
-    print(f"📈 DATA OVERVIEW:")
-    print(f"   📊 Total Rows:     {len(df)}")
-    print(f"   📋 Total Columns:  {len(df.columns)}")
-    print(f"   🔢 Numeric Cols:   {df.select_dtypes(include=[np.number]).shape[1]}")
-    
+    print(f"DATA OVERVIEW:")
+    print(f"   Total Rows:     {len(df)}")
+    print(f"   Total Columns:  {len(df.columns)}")
+    print(f"   Numeric Cols:   {df.select_dtypes(include=[np.number]).shape[1]}")
+
     # Column analysis
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     if len(numeric_cols) > 0:
-        print(f"\n📊 COLUMN STATISTICS:")
+        print(f"\nCOLUMN STATISTICS:")
         for col in numeric_cols:
             if col in df.columns:
                 try:
                     col_data = df[col].dropna()
                     if len(col_data) > 0:
-                        print(f"   📋 {col}:")
-                        print(f"      📈 Max: {col_data.max():.3f}")
-                        print(f"      📉 Min: {col_data.min():.3f}")
-                        print(f"      📊 Avg: {col_data.mean():.3f}")
+                        print(f"   {col}:")
+                        print(f"      Max: {col_data.max():.3f}")
+                        print(f"      Min: {col_data.min():.3f}")
+                        print(f"      Avg: {col_data.mean():.3f}")
                 except Exception:
                     pass
     
     # OHLC specific stats if available
     ohlc_columns = ['Open', 'High', 'Low', 'Close']
     if all(col in df.columns for col in ohlc_columns):
-        print(f"\n📈 OHLC STATISTICS:")
-        print(f"   🔺 Highest:    {df['High'].max():.5f}")
-        print(f"   🔻 Lowest:     {df['Low'].min():.5f}")
-        print(f"   🎯 Final:      {df['Close'].iloc[-1]:.5f}")
-        print(f"   🚀 Initial:    {df['Open'].iloc[0]:.5f}")
-        
+        print(f"\nOHLC STATISTICS:")
+        print(f"   Highest:    {df['High'].max():.5f}")
+        print(f"   Lowest:     {df['Low'].min():.5f}")
+        print(f"   Final:      {df['Close'].iloc[-1]:.5f}")
+        print(f"   Initial:    {df['Open'].iloc[0]:.5f}")
+
         price_change = df['Close'].iloc[-1] - df['Open'].iloc[0]
         price_change_pct = (price_change / df['Open'].iloc[0]) * 100
-        direction_emoji = "📈" if price_change >= 0 else "📉"
-        print(f"   {direction_emoji} Change:     {price_change:+.5f} ({price_change_pct:+.2f}%)")
-    
+        direction_symbol = "+" if price_change >= 0 else "-"
+        print(f"   Change:     {price_change:+.5f} ({price_change_pct:+.2f}%)")
+
     print(f"\n{header_line}")
-    print(f"{'🎨 Beautiful Auto Terminal Charts - All Your Data Visualized':^80}")
+    print(f"{'Auto Terminal Charts - All Data Visualized':^80}")
     print(f"{header_line}\n")
 
 

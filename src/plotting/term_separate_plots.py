@@ -235,12 +235,12 @@ def _plot_signal_field(x_values: list, field_data: list, title: str, field: str,
     sell_positions = [x for x, val in zip(x_values, field_data) if val == -1 or val == SELL]
     
     if buy_positions:
-        # Use dot marker for dots style
-        marker = "dot" if style == "dots" else "^"
+        # Use square marker for dots style
+        marker = "s" if style == "dots" else "^"
         plt.scatter(buy_positions, [1] * len(buy_positions), color="green+", label="BUY", marker=marker)
     if sell_positions:
-        marker = "dot" if style == "dots" else "v"
-        plt.scatter(sell_positions, [-1] * len(sell_positions), color="red+", label="SELL", marker=marker)
+        marker = "s" if style == "dots" else "v"
+        plt.scatter(sell_positions, [-1] * len(sell_positions), color="green+", label="SELL", marker=marker)
 
     plt.title(f"{title} - Trading Signals")
     plt.xlabel("Time / Bar Index")
@@ -249,8 +249,8 @@ def _plot_signal_field(x_values: list, field_data: list, title: str, field: str,
 
 def _plot_prediction_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
     """Plot prediction data as lines with special markers."""
-    marker = "dot" if style == "dots" else "braille"
-    plt.plot(x_values, field_data, color="yellow+", label=field, marker=marker)
+    marker = "s" if style == "dots" else "braille"
+    plt.plot(x_values, field_data, color="green+", label=field, marker=marker)
     plt.title(f"{title} - Predictions")
     plt.xlabel("Time / Bar Index")
     plt.ylabel("Predicted Price")
@@ -258,15 +258,10 @@ def _plot_prediction_field(x_values: list, field_data: list, title: str, field: 
 
 def _plot_price_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
     """Plot price data as lines."""
-    color_map = {
-        'high': "green+",
-        'low': "red+", 
-        'open': "blue+",
-        'close': "white+"
-    }
-    color = color_map.get(field.lower(), "white+")
-    
-    marker = "dot" if style == "dots" else "braille"
+    # Always use green+ color for consistency
+    color = "green+"
+
+    marker = "s" if style == "dots" else "braille"
     plt.plot(x_values, field_data, color=color, label=field, marker=marker)
     plt.title(f"{title} - Price Data")
     plt.xlabel("Time / Bar Index")
@@ -275,10 +270,11 @@ def _plot_price_field(x_values: list, field_data: list, title: str, field: str, 
 
 def _plot_indicator_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
     """Plot general indicator data."""
-    color = "magenta+" if 'pressure' in field.lower() else "cyan+"
-    
+    # Always use green+ color for all indicators
+    color = "green+"
+
     if style == "dots":
-        marker = "dot"
+        marker = "s"  # Square marker for dots style
     else:
         marker = "braille"
 
