@@ -189,6 +189,10 @@ def _plot_individual_field(df: pd.DataFrame, field: str, x_values: list, title: 
 
 def _plot_volume_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
     """Plot volume data as bars."""
+    # Safely convert volume to integers, handling NaN, inf, and non-numeric values
+    field_data = pd.to_numeric(field_data, errors='coerce')
+    field_data = np.where(np.isfinite(field_data), field_data, 0)
+    field_data = field_data.astype(float).astype(int).tolist()
     plt.bar(x_values, field_data, color="cyan+", label=field)
     plt.title(f"{title} - Volume")
     plt.xlabel("Time / Bar Index")
