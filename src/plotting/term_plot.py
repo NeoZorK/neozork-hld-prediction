@@ -45,15 +45,61 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
             logger.print_error("DataFrame is None or empty, cannot plot")
             return
         
+        # Convert rule to string for processing
+        rule_str = rule.name if hasattr(rule, 'name') else str(rule)
+        rule_upper = rule_str.upper()
+
+        # Check if rule is AUTO - use separate field plotting with dots style
+        if rule_upper in ['AUTO', 'AUTO_DISPLAY_ALL']:
+            logger.print_info("AUTO rule detected, using separate field plotting with 'dots' style...")
+
+            # Check for OHLC columns first
+            ohlc_columns = ['Open', 'High', 'Low', 'Close']
+            has_ohlc = all(col in df_results.columns for col in ohlc_columns)
+
+            if has_ohlc:
+                # First show the main OHLC chart as candlestick
+                logger.print_info("Plotting main OHLC candlestick chart first...")
+
+                # Create time axis
+                x_values = list(range(len(df_results)))
+
+                # Set up plot
+                plt.plot_size(140, 35)
+                plt.theme('matrix')  # Matrix green theme
+
+                # Prepare OHLC data for candlestick chart
+                ohlc_data = {
+                    'Open': df_results['Open'].ffill().fillna(df_results['Close']).tolist(),
+                    'High': df_results['High'].ffill().fillna(df_results['Close']).tolist(),
+                    'Low': df_results['Low'].ffill().fillna(df_results['Close']).tolist(),
+                    'Close': df_results['Close'].ffill().fillna(df_results['Open']).tolist()
+                }
+
+                # Create the candlestick chart
+                plt.candlestick(x_values, ohlc_data)
+                plt.title(f"{title} - OHLC Chart (Matrix Green Theme)")
+                plt.xlabel("Time / Bar Index")
+                plt.ylabel("Price")
+                plt.show()
+
+            # Then use separate field plotting for all numeric fields
+            try:
+                from src.plotting.term_separate_plots import plot_separate_fields_terminal
+                # Plot each additional numeric field as a separate chart with dots style
+                plot_separate_fields_terminal(df_results, rule, f"{title} - Fields", style="dots")
+                logger.print_success("Successfully plotted all fields as separate terminal charts with 'dots' style")
+            except ImportError as e:
+                logger.print_warning(f"Could not import separate field plotting: {e}")
+
+            return
+
         # Check for required OHLC columns
         required_columns = ['Open', 'High', 'Low', 'Close']
         missing_columns = [col for col in required_columns if col not in df_results.columns]
         if missing_columns:
             logger.print_error(f"Missing required columns: {missing_columns}")
             return
-        
-        # Convert rule to string for processing
-        rule_str = rule.name if hasattr(rule, 'name') else str(rule)
         
         # Prepare data for plotting
         df = df_results.copy()
@@ -136,12 +182,12 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
         # Add predicted price lines if available
         if 'PPrice1' in df.columns:  # Predicted Low
             pprice1_values = df['PPrice1'].fillna(0).tolist()
-            plt.plot(x_values, pprice1_values, color="green+", label="Predicted Low", marker=".")
-        
+            plt.plot(x_values, pprice1_values, color="green+", label="Predicted Low", marker="dot")
+
         if 'PPrice2' in df.columns:  # Predicted High
             pprice2_values = df['PPrice2'].fillna(0).tolist()
-            plt.plot(x_values, pprice2_values, color="red+", label="Predicted High", marker=".")
-        
+            plt.plot(x_values, pprice2_values, color="red+", label="Predicted High", marker="dot")
+
         # Add trading signals if available
         if 'Direction' in df.columns:
             _add_trading_signals_term(df, x_values, ohlc_data)
@@ -209,36 +255,37 @@ def _add_auto_indicators_term(df: pd.DataFrame, x_values: list) -> None:
     
     # Enhanced color palette for better visual distinction
     colors = [
-        "yellow+", "magenta+", "cyan+", "green+", "red+", "blue+", 
+        "green+", "yellow+", "magenta+", "cyan+", "red+", "blue+",
         "orange", "brown", "white", "gray"
     ]
     
-    # Enhanced marker set for variety
-    markers = [".", "*", "x", "+", "o", "^", "v", "s", "d"]
-    
-    color_index = 0
-    marker_index = 0
-    
+    # Use dot markers for AUTO mode to avoid ASCII symbols
+    marker = "dot"  # Always use dot marker for AUTO mode
+
     # Standard columns to skip
     skip_columns = {
         'Open', 'High', 'Low', 'Close', 'Volume', 'DateTime', 'Timestamp', 
         'Date', 'Time', 'Index', 'index'
     }
     
+    color_index = 0
+
     for col in df.columns:
         if col not in skip_columns and pd.api.types.is_numeric_dtype(df[col]):
             try:
+                # Clean data for plotting
                 values = df[col].fillna(0).tolist()
-                color = colors[color_index % len(colors)]
-                marker = markers[marker_index % len(markers)]
-                
-                # Simple label without emojis
-                label = col
-                plt.plot(x_values, values, color=color, label=label, marker=marker)
-                
-                color_index += 1
-                marker_index += 1
-                
+
+                # Only plot if we have valid data
+                if any(v != 0 for v in values):
+                    color = colors[color_index % len(colors)]
+
+                    # Simple label without emojis
+                    label = col
+                    plt.plot(x_values, values, color=color, label=label, marker=marker)
+
+                    color_index += 1
+
             except Exception as e:
                 logger.print_warning(f"Could not plot column {col}: {e}")
 

@@ -129,12 +129,110 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
         logger.print_debug(f"Exception details: {type(e).__name__}: {e}")
 
 
+def auto_plot_parquet_fields(file_path: str, title: str = "Auto Fields Plot", style: str = "dots") -> None:
+    """
+    Read a parquet file and display each field as a separate chart with green markers.
+
+    Args:
+        file_path (str): Path to the parquet file
+        title (str): Base title for the plots
+        style (str): Plot style ('matrix', 'dots', 'git', etc.)
+    """
+    try:
+        logger.print_info(f"Reading parquet file and generating separate field plots: {file_path}")
+
+        # Check if file exists
+        import os
+        if not os.path.exists(file_path):
+            logger.print_error(f"Parquet file not found: {file_path}")
+            return
+
+        # Read parquet file
+        import pandas as pd
+        df = pd.read_parquet(file_path)
+
+        # Validate data
+        if df is None or df.empty:
+            logger.print_error("Parquet file data is empty")
+            return
+
+        logger.print_info(f"Successfully read parquet file with {len(df)} rows and {len(df.columns)} columns")
+
+        # Use separate field plotting with dots style
+        from src.plotting.term_separate_plots import plot_separate_fields_terminal
+
+        # First show the main OHLC chart if present
+        ohlc_columns = ['Open', 'High', 'Low', 'Close']
+        has_ohlc = all(col in df.columns for col in ohlc_columns)
+
+        if has_ohlc:
+            logger.print_info("Creating main OHLC candlestick chart...")
+            auto_plot_from_dataframe(df, f"{title} - OHLC Candlestick", style)
+
+        # Then show separate charts for each numeric field
+        plot_separate_fields_terminal(df, "AUTO", f"{title} - Fields", style=style)
+
+        logger.print_success(f"Successfully plotted all fields from parquet file with '{style}' style!")
+
+    except Exception as e:
+        logger.print_error(f"Error processing parquet file: {type(e).__name__}: {e}")
+
+
+def auto_plot_csv_fields(file_path: str, title: str = "Auto Fields Plot", style: str = "dots") -> None:
+    """
+    Read a CSV file and display each field as a separate chart with green markers.
+
+    Args:
+        file_path (str): Path to the CSV file
+        title (str): Base title for the plots
+        style (str): Plot style ('matrix', 'dots', 'git', etc.)
+    """
+    try:
+        logger.print_info(f"Reading CSV file and generating separate field plots: {file_path}")
+
+        # Check if file exists
+        import os
+        if not os.path.exists(file_path):
+            logger.print_error(f"CSV file not found: {file_path}")
+            return
+
+        # Read CSV file
+        import pandas as pd
+        df = pd.read_csv(file_path)
+
+        # Validate data
+        if df is None or df.empty:
+            logger.print_error("CSV file data is empty")
+            return
+
+        logger.print_info(f"Successfully read CSV file with {len(df)} rows and {len(df.columns)} columns")
+
+        # Use separate field plotting with dots style
+        from src.plotting.term_separate_plots import plot_separate_fields_terminal
+
+        # First show the main OHLC chart if present
+        ohlc_columns = ['Open', 'High', 'Low', 'Close']
+        has_ohlc = all(col in df.columns for col in ohlc_columns)
+
+        if has_ohlc:
+            logger.print_info("Creating main OHLC candlestick chart...")
+            auto_plot_from_dataframe(df, f"{title} - OHLC Candlestick", style)
+
+        # Then show separate charts for each numeric field
+        plot_separate_fields_terminal(df, "AUTO", f"{title} - Fields", style=style)
+
+        logger.print_success(f"Successfully plotted all fields from CSV file with '{style}' style!")
+
+    except Exception as e:
+        logger.print_error(f"Error processing CSV file: {type(e).__name__}: {e}")
+
+
 def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set, style: str = "matrix") -> None:
     """Add indicator overlays with beautiful styling and emojis."""
     
     # Enhanced color palette for better visual distinction
     colors = [
-        "yellow+", "magenta+", "green+", "red+", "blue+", "cyan+", 
+        "green+", "yellow+", "magenta+", "cyan+", "red+", "blue+",
         "orange", "brown", "white", "gray"
     ]
     
@@ -167,7 +265,7 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set,
                 values = np.nan_to_num(values, nan=0)
                 values = values.tolist()
                 color = colors[color_index % len(colors)]
-                marker = markers[marker_index % len(markers)]
+                marker = "dot" if style == "dots" else markers[marker_index % len(markers)]
                 # Add clean label if available
                 label = col
                 for key, clean_label in indicator_labels.items():
@@ -341,4 +439,3 @@ def plot_histogram_terminal(df: pd.DataFrame, column: str, bins: int = 20, title
         
     except Exception as e:
         logger.print_error(f"Error generating histogram: {e}")
-
