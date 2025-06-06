@@ -286,8 +286,10 @@ def _plot_indicator_field(x_values: list, field_data: list, title: str, field: s
 def _show_field_statistics(field_series: pd.Series, field_name: str, rule_str: str) -> None:
     """Show statistics for individual field."""
     try:
-        # Clean data
+        # Clean data - drop NaN and also filter out inf values
         clean_data = field_series.dropna()
+        clean_data = clean_data.replace([np.inf, -np.inf], np.nan).dropna()
+
         if len(clean_data) == 0:
             logger.print_warning(f"No valid data for field '{field_name}'")
             return
