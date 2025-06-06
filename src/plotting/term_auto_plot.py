@@ -48,12 +48,13 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
         # Set up layout based on available data
         if has_ohlc and has_volume:
             plt.subplots(2, 1)  # Price + Volume panels
-            main_plot_size = (140, 35)
+            main_plot_size = (140*3, 35*3)  # 3x larger
+        elif has_ohlc:
             plt.subplots(1, 1)  # Single price panel
-            main_plot_size = (140, 25)
+            main_plot_size = (140*3, 25*3)  # 3x larger
         else:
             plt.subplots(1, 1)  # Single indicator panel
-            main_plot_size = (140, 25)
+            main_plot_size = (140*3, 25*3)  # 3x larger
         
         plt.plot_size(*main_plot_size)
         plt.theme('matrix')  # Use unified matrix theme for all plots
@@ -64,10 +65,8 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
         # MAIN PANEL: OHLC Candlestick or Indicators
         if has_ohlc:
             logger.print_info("Creating beautiful OHLC candlestick chart...")
-            
             if has_volume:
                 plt.subplot(1, 1)  # Top panel
-            
             # Prepare OHLC data for candlestick
             ohlc_data = {
                 'Open': df['Open'].ffill().fillna(df['Close']).tolist(),
@@ -75,23 +74,18 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
                 'Low': df['Low'].ffill().fillna(df['Close']).tolist(),
                 'Close': df['Close'].ffill().fillna(df['Open']).tolist()
             }
-            
             plt.candlestick(x_values, ohlc_data)
             plt.title(f"{title} - Auto Chart (OHLC + Indicators)")
-            
             if not has_volume:
                 plt.xlabel("Time / Bar Index")
             plt.ylabel("Price")
-            
             # Add other indicators as overlays on the price chart
             _add_indicator_overlays(df, x_values, skip_columns={'Open', 'High', 'Low', 'Close', 'Volume'})
-            
         else:
             logger.print_info("Creating beautiful multi-indicator chart...")
             plt.title(f"{title} - Auto Indicators Chart")
             plt.xlabel("Time / Bar Index") 
             plt.ylabel("Values")
-            
             # Plot all numeric columns as indicators
             _add_indicator_overlays(df, x_values, skip_columns={'Volume'})
         
