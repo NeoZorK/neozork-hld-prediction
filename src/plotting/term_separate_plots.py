@@ -235,12 +235,10 @@ def _plot_signal_field(x_values: list, field_data: list, title: str, field: str,
     sell_positions = [x for x, val in zip(x_values, field_data) if val == -1 or val == SELL]
     
     if buy_positions:
-        # Use square marker for dots style
-        marker = "s" if style == "dots" else "^"
-        plt.scatter(buy_positions, [1] * len(buy_positions), color="green+", label="BUY", marker=marker)
+        # Always use square marker for better visibility
+        plt.scatter(buy_positions, [1] * len(buy_positions), color="green+", label="BUY", marker="s")
     if sell_positions:
-        marker = "s" if style == "dots" else "v"
-        plt.scatter(sell_positions, [-1] * len(sell_positions), color="green+", label="SELL", marker=marker)
+        plt.scatter(sell_positions, [-1] * len(sell_positions), color="green+", label="SELL", marker="s")
 
     plt.title(f"{title} - Trading Signals")
     plt.xlabel("Time / Bar Index")
@@ -249,8 +247,8 @@ def _plot_signal_field(x_values: list, field_data: list, title: str, field: str,
 
 def _plot_prediction_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
     """Plot prediction data as lines with special markers."""
-    marker = "s" if style == "dots" else "braille"
-    plt.plot(x_values, field_data, color="green+", label=field, marker=marker)
+    # Always use square marker for better visibility
+    plt.plot(x_values, field_data, color="green+", label=field, marker="s")
     plt.title(f"{title} - Predictions")
     plt.xlabel("Time / Bar Index")
     plt.ylabel("Predicted Price")
@@ -261,8 +259,8 @@ def _plot_price_field(x_values: list, field_data: list, title: str, field: str, 
     # Always use green+ color for consistency
     color = "green+"
 
-    marker = "s" if style == "dots" else "braille"
-    plt.plot(x_values, field_data, color=color, label=field, marker=marker)
+    # Always use square marker for better visibility
+    plt.plot(x_values, field_data, color=color, label=field, marker="s")
     plt.title(f"{title} - Price Data")
     plt.xlabel("Time / Bar Index")
     plt.ylabel("Price")
