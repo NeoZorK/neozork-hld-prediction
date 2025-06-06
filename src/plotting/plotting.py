@@ -8,7 +8,6 @@ or mplfinance (static).
 
 import pandas as pd
 import os
-from typing import List, Optional
 
 from .mplfinance_plot import plot_indicator_results_mplfinance
 from .plotly_plot import plot_indicator_results_plotly
@@ -150,57 +149,3 @@ def plot_indicator_results(df_results, rule, title="Indicator Results", mode="pl
             except Exception as fallback_error:
                 logger.print_error(f"Fallback to 'plotly' also failed: {str(fallback_error)}")
         return None
-
-def plot_separate_fields(df_results, rule, title: str = "Separate Field Plots", 
-                        fields: Optional[List[str]] = None, mode: str = "term") -> bool:
-    """
-    Plot individual fields as separate charts instead of combined plots.
-    
-    Args:
-        df_results (pd.DataFrame): DataFrame with indicator results
-        rule (TradingRule | str): Trading rule for context
-        title (str): Title for the plots
-        fields (Optional[List[str]]): Specific fields to plot. If None, plots all available fields
-        mode (str): Plotting mode, currently only 'term' is supported
-    
-    Returns:
-        bool: True if successful, False otherwise
-    """
-    try:
-        if mode == 'term':
-            logger.print_info("Creating separate field plots in terminal mode...")
-            plot_separate_fields_terminal(df_results, rule, title, fields)
-            return True
-        else:
-            logger.print_warning(f"Separate field plotting only available in 'term' mode, got '{mode}'")
-            return False
-    except Exception as e:
-        logger.print_error(f"Error creating separate field plots: {e}")
-        return False
-
-def plot_specific_fields(df_results, rule, fields: List[str], title: str = "Specific Field Plots", 
-                        mode: str = "term") -> bool:
-    """
-    Plot specific fields as individual charts.
-    
-    Args:
-        df_results (pd.DataFrame): DataFrame with indicator results
-        rule (TradingRule | str): Trading rule for context
-        fields (List[str]): List of specific field names to plot
-        title (str): Title for the plots
-        mode (str): Plotting mode, currently only 'term' is supported
-    
-    Returns:
-        bool: True if successful, False otherwise
-    """
-    try:
-        if mode == 'term':
-            logger.print_info(f"Creating plots for specific fields: {fields}")
-            plot_specific_fields_terminal(df_results, rule, title, fields)
-            return True
-        else:
-            logger.print_warning(f"Specific field plotting only available in 'term' mode, got '{mode}'")
-            return False
-    except Exception as e:
-        logger.print_error(f"Error creating specific field plots: {e}")
-        return False

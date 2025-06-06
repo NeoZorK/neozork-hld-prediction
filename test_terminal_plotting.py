@@ -170,8 +170,8 @@ def test_individual_plotting_functions():
         
         # Test term_phld_plot directly
         print("\n3. Testing term_phld_plot.py directly...")
-        from src.plotting.term_phld_plot import plot_phld_indicators_term
-        result = plot_phld_indicators_term(df_test, "Direct PHLD Plot Test")
+        from src.plotting.term_phld_plot import plot_phld_indicator_terminal
+        result = plot_phld_indicator_terminal(df_test, TradingRule.Predict_High_Low_Direction, "Direct PHLD Plot Test")
         print(f"   Direct PHLD_plot result: {result}")
         
     except Exception as e:
