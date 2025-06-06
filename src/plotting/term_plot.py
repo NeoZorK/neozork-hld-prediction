@@ -209,12 +209,6 @@ def _add_auto_indicators_term(df: pd.DataFrame, x_values: list) -> None:
         'Date', 'Time', 'Index', 'index'
     }
     
-    # Emoji mapping for common indicators
-    indicator_emojis = {
-        'HL': '📏', 'Pressure': '💨', 'PV': '🎯', 'RSI': '📊', 'MACD': '📈',
-        'SMA': '📉', 'EMA': '⚡', 'BB': '🎪', 'Volume': '📊', 'Price': '💰'
-    }
-    
     for col in df.columns:
         if col not in skip_columns and pd.api.types.is_numeric_dtype(df[col]):
             try:
@@ -222,14 +216,8 @@ def _add_auto_indicators_term(df: pd.DataFrame, x_values: list) -> None:
                 color = colors[color_index % len(colors)]
                 marker = markers[marker_index % len(markers)]
                 
-                # Add emoji to label if available
-                emoji = ""
-                for key, emoji_char in indicator_emojis.items():
-                    if key.upper() in col.upper():
-                        emoji = emoji_char + " "
-                        break
-                
-                label = f"{emoji}{col}"
+                # Simple label without emojis
+                label = col
                 plt.plot(x_values, values, color=color, label=label, marker=marker)
                 
                 color_index += 1

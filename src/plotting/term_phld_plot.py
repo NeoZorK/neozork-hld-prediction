@@ -2,7 +2,8 @@
 # src/plotting/term_phld_plot.py
 
 """
-Specialized terminal plotting for PHLD (Predict High Low Direction) indicators using plotext.
+Specialized terminal plotti            plt.candlestick(x_values, ohlc_data)
+            plt.title(f"{title} - PHLD Candlestick Chart") for PHLD (Predict High Low Direction) indicators using plotext.
 Beautiful candlestick charts with enhanced styling and trading signals.
 """
 
@@ -64,7 +65,7 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
             main_plot_size = (140, 30)
         
         plt.plot_size(*main_plot_size)
-        plt.theme('matrix')  # Matrix theme for PHLD (high-tech trading feel)
+        plt.theme('matrix')  # Matrix theme for unified green style
         
         # Create time axis
         x_values = list(range(len(df)))
@@ -98,8 +99,8 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
             _add_phld_overlays(df, x_values)
             
         else:
-            logger.print_info("Creating beautiful PHLD indicators chart...")
-            plt.title(f"🎯 {title} - Beautiful PHLD Indicators")
+            logger.print_info("Creating PHLD indicators chart...")
+            plt.title(f"{title} - PHLD Indicators")
             plt.xlabel("Time / Bar Index")
             plt.ylabel("Values")
             
@@ -147,11 +148,11 @@ def _add_phld_overlays(df: pd.DataFrame, x_values: list, plot_base_indicators: b
         'other': "white"          # Other indicators - white
     }
     
-    # Emoji mapping for PHLD indicators
-    phld_indicator_emojis = {
-        'PPrice1': '🎯', 'PPrice2': '🎯', 'predicted_low': '🎯', 'predicted_high': '🎯',
-        'Pressure': '💨', 'pressure': '💨', 'HL': '📏', 'PV': '⚡', 'Direction': '🧭',
-        'Signal': '🚨', 'Buy': '🟢', 'Sell': '🔴', 'signal': '🚨'
+    # Clean labels without emojis for better terminal compatibility
+    phld_indicator_labels = {
+        'PPrice1': 'Predicted Low', 'PPrice2': 'Predicted High', 'predicted_low': 'Predicted Low', 'predicted_high': 'Predicted High',
+        'Pressure': 'Pressure', 'pressure': 'Pressure', 'HL': 'HL Range', 'PV': 'PV', 'Direction': 'Direction',
+        'Signal': 'Signal', 'Buy': 'BUY', 'Sell': 'SELL', 'signal': 'Signal'
     }
     
     # Skip columns already handled by main chart
@@ -166,29 +167,29 @@ def _add_phld_overlays(df: pd.DataFrame, x_values: list, plot_base_indicators: b
                 if not any(v != 0 for v in values):
                     continue
                 
-                # Determine color and emoji based on indicator type
+                # Determine color and label based on indicator type
                 color = phld_colors['other']  # default
-                emoji = ""
+                label = col  # default to column name
                 
                 col_lower = col.lower()
                 if 'pprice' in col_lower or 'predicted' in col_lower:
                     color = phld_colors['predicted']
-                    emoji = phld_indicator_emojis.get('PPrice1', '🎯') + " "
+                    label = phld_indicator_labels.get('PPrice1', col)
                 elif 'pressure' in col_lower:
                     color = phld_colors['pressure']
-                    emoji = phld_indicator_emojis.get('Pressure', '💨') + " "
+                    label = phld_indicator_labels.get('Pressure', col)
                 elif 'hl' in col_lower:
                     color = phld_colors['hl']
-                    emoji = phld_indicator_emojis.get('HL', '📏') + " "
+                    label = phld_indicator_labels.get('HL', col)
                 elif 'pv' in col_lower:
                     color = phld_colors['pv']
-                    emoji = phld_indicator_emojis.get('PV', '⚡') + " "
+                    label = phld_indicator_labels.get('PV', col)
                 elif 'direction' in col_lower:
                     color = phld_colors['direction']
-                    emoji = phld_indicator_emojis.get('Direction', '🧭') + " "
+                    label = phld_indicator_labels.get('Direction', col)
                 elif 'signal' in col_lower or 'buy' in col_lower or 'sell' in col_lower:
                     color = phld_colors['signals']
-                    emoji = phld_indicator_emojis.get('Signal', '🚨') + " "
+                    label = phld_indicator_labels.get('Signal', col)
                 
                 # Choose appropriate marker style
                 if 'signal' in col_lower or 'direction' in col_lower:
@@ -214,18 +215,18 @@ def _add_phld_overlays(df: pd.DataFrame, x_values: list, plot_base_indicators: b
                         valid_y = [positioned_values[i] for i in valid_indices]
                         
                         if valid_x and valid_y:
-                            plt.scatter(valid_x, valid_y, color=color, label=f"{emoji}{col}", marker="*")
+                            plt.scatter(valid_x, valid_y, color=color, label=label, marker="*")
                     else:
-                        plt.scatter(x_values, values, color=color, label=f"{emoji}{col}", marker="*")
+                        plt.scatter(x_values, values, color=color, label=label, marker="*")
                 
                 elif 'pprice' in col_lower or 'predicted' in col_lower:
                     # Predicted prices - thick lines with diamonds
-                    plt.plot(x_values, values, color=color, label=f"{emoji}{col}", marker="D")
+                    plt.plot(x_values, values, color=color, label=label, marker="D")
                 
                 else:
                     # Other indicators - standard lines
                     marker = "+" if 'pressure' in col_lower else "."
-                    plt.plot(x_values, values, color=color, label=f"{emoji}{col}", marker=marker)
+                    plt.plot(x_values, values, color=color, label=label, marker=marker)
                 
                 logger.print_debug(f"Plotted PHLD indicator: {col}")
                 
@@ -238,62 +239,62 @@ def _show_phld_statistics(df: pd.DataFrame, rule_str: str) -> None:
     
     header_line = "═" * 85
     print(f"\n{header_line}")
-    print(f"{'🎯 BEAUTIFUL PHLD PLOT STATISTICS':^85}")
+    print(f"{'BEAUTIFUL PHLD PLOT STATISTICS':^85}")
     print(f"{rule_str:^85}")
     print(f"{header_line}")
     
     # Data overview
-    print(f"📊 DATA OVERVIEW:")
-    print(f"   📋 Total Rows:     {len(df)}")
-    print(f"   📈 Total Columns:  {len(df.columns)}")
-    print(f"   🎯 Rule Type:      {rule_str}")
+    print(f"DATA OVERVIEW:")
+    print(f"   Total Rows:     {len(df)}")
+    print(f"   Total Columns:  {len(df.columns)}")
+    print(f"   Rule Type:      {rule_str}")
     
     # OHLC statistics if available
     ohlc_columns = ['Open', 'High', 'Low', 'Close']
     if all(col in df.columns for col in ohlc_columns):
-        print(f"\n📈 OHLC STATISTICS:")
-        print(f"   🔺 Highest:        {df['High'].max():.5f}")
-        print(f"   🔻 Lowest:         {df['Low'].min():.5f}")
-        print(f"   🎯 Final Close:    {df['Close'].iloc[-1]:.5f}")
-        print(f"   🚀 Initial Open:   {df['Open'].iloc[0]:.5f}")
+        print(f"\nOHLC STATISTICS:")
+        print(f"   Highest:        {df['High'].max():.5f}")
+        print(f"   Lowest:         {df['Low'].min():.5f}")
+        print(f"   Final Close:    {df['Close'].iloc[-1]:.5f}")
+        print(f"   Initial Open:   {df['Open'].iloc[0]:.5f}")
         
         price_change = df['Close'].iloc[-1] - df['Open'].iloc[0]
         price_change_pct = (price_change / df['Open'].iloc[0]) * 100
-        direction_emoji = "📈" if price_change >= 0 else "📉"
-        print(f"   {direction_emoji} Total Change:   {price_change:+.5f} ({price_change_pct:+.2f}%)")
+        direction_text = "UP" if price_change >= 0 else "DOWN"
+        print(f"   Total Change:   {price_change:+.5f} ({price_change_pct:+.2f}%) {direction_text}")
     
     # PHLD-specific statistics
     phld_indicators = ['PPrice1', 'PPrice2', 'Pressure', 'HL', 'PV', 'Direction']
     phld_found = [col for col in phld_indicators if col in df.columns]
     
     if phld_found:
-        print(f"\n🎯 PHLD INDICATORS:")
+        print(f"\nPHLD INDICATORS:")
         for col in phld_found:
             try:
                 col_data = df[col].dropna()
                 if len(col_data) > 0:
                     if col == 'PPrice1':
-                        print(f"   🎯 Predicted Low:   Min={col_data.min():.5f}, Max={col_data.max():.5f}, Avg={col_data.mean():.5f}")
+                        print(f"   Predicted Low:   Min={col_data.min():.5f}, Max={col_data.max():.5f}, Avg={col_data.mean():.5f}")
                     elif col == 'PPrice2':
-                        print(f"   🎯 Predicted High:  Min={col_data.min():.5f}, Max={col_data.max():.5f}, Avg={col_data.mean():.5f}")
+                        print(f"   Predicted High:  Min={col_data.min():.5f}, Max={col_data.max():.5f}, Avg={col_data.mean():.5f}")
                     elif col == 'Pressure':
-                        print(f"   💨 Pressure:        Min={col_data.min():.3f}, Max={col_data.max():.3f}, Avg={col_data.mean():.3f}")
+                        print(f"   Pressure:        Min={col_data.min():.3f}, Max={col_data.max():.3f}, Avg={col_data.mean():.3f}")
                     elif col == 'HL':
-                        print(f"   📏 HL Range:        Min={col_data.min():.3f}, Max={col_data.max():.3f}, Avg={col_data.mean():.3f}")
+                        print(f"   HL Range:        Min={col_data.min():.3f}, Max={col_data.max():.3f}, Avg={col_data.mean():.3f}")
                     elif col == 'PV':
-                        print(f"   ⚡ PV Indicator:    Min={col_data.min():.3f}, Max={col_data.max():.3f}, Avg={col_data.mean():.3f}")
+                        print(f"   PV Indicator:    Min={col_data.min():.3f}, Max={col_data.max():.3f}, Avg={col_data.mean():.3f}")
                     elif col == 'Direction':
                         buy_signals = (col_data == 1).sum()
                         sell_signals = (col_data == -1).sum()
                         no_trade = (col_data == 0).sum()
-                        print(f"   🧭 Direction:       Buy={buy_signals}, Sell={sell_signals}, NoTrade={no_trade}")
+                        print(f"   Direction:       Buy={buy_signals}, Sell={sell_signals}, NoTrade={no_trade}")
             except Exception:
                 pass
     
     # Trading signals analysis
     signal_columns = [col for col in df.columns if 'signal' in col.lower() or 'direction' in col.lower()]
     if signal_columns:
-        print(f"\n🚨 TRADING SIGNALS:")
+        print(f"\nTRADING SIGNALS:")
         for col in signal_columns:
             try:
                 col_data = df[col].dropna()
@@ -302,7 +303,7 @@ def _show_phld_statistics(df: pd.DataFrame, rule_str: str) -> None:
                     sell_count = (col_data == -1).sum()
                     total_signals = buy_count + sell_count
                     signal_rate = (total_signals / len(col_data)) * 100 if len(col_data) > 0 else 0
-                    print(f"   🚨 {col}: Buy={buy_count}, Sell={sell_count}, Rate={signal_rate:.1f}%")
+                    print(f"   {col}: Buy={buy_count}, Sell={sell_count}, Rate={signal_rate:.1f}%")
             except Exception:
                 pass
     
@@ -310,20 +311,20 @@ def _show_phld_statistics(df: pd.DataFrame, rule_str: str) -> None:
     if 'PPrice1' in df.columns and 'Low' in df.columns:
         try:
             pred_low_accuracy = _calculate_prediction_accuracy(df['PPrice1'], df['Low'])
-            print(f"\n🎯 PREDICTION ACCURACY:")
-            print(f"   📉 Low Prediction:  {pred_low_accuracy:.1f}% accuracy")
+            print(f"\nPREDICTION ACCURACY:")
+            print(f"   Low Prediction:  {pred_low_accuracy:.1f}% accuracy")
         except Exception:
             pass
     
     if 'PPrice2' in df.columns and 'High' in df.columns:
         try:
             pred_high_accuracy = _calculate_prediction_accuracy(df['PPrice2'], df['High'])
-            print(f"   📈 High Prediction: {pred_high_accuracy:.1f}% accuracy")
+            print(f"   High Prediction: {pred_high_accuracy:.1f}% accuracy")
         except Exception:
             pass
     
     print(f"\n{header_line}")
-    print(f"{'🎯 Beautiful PHLD Terminal Charts - Predict High Low Direction':^85}")
+    print(f"{'Beautiful PHLD Terminal Charts - Predict High Low Direction':^85}")
     print(f"{header_line}\n")
 
 
@@ -369,17 +370,17 @@ def plot_phld_comparison(df: pd.DataFrame, title: str = "PHLD Comparison") -> No
             actual_high = df['High'].ffill().tolist()
             predicted_high = df['PPrice2'].ffill().tolist()
             
-            plt.plot(x_values, actual_high, color="red+", label="🔺 Actual High", marker="^")
-            plt.plot(x_values, predicted_high, color="yellow+", label="🎯 Predicted High", marker="D")
+            plt.plot(x_values, actual_high, color="red+", label="Actual High", marker="^")
+            plt.plot(x_values, predicted_high, color="yellow+", label="Predicted High", marker="D")
         
         if 'Low' in df.columns and 'PPrice1' in df.columns:
             actual_low = df['Low'].ffill().tolist()
             predicted_low = df['PPrice1'].ffill().tolist()
             
-            plt.plot(x_values, actual_low, color="blue+", label="🔻 Actual Low", marker="v")
-            plt.plot(x_values, predicted_low, color="cyan+", label="🎯 Predicted Low", marker="D")
+            plt.plot(x_values, actual_low, color="blue+", label="Actual Low", marker="v")
+            plt.plot(x_values, predicted_low, color="cyan+", label="Predicted Low", marker="D")
         
-        plt.title(f"🎯 {title}")
+        plt.title(f"{title}")
         plt.xlabel("Time / Bar Index")
         plt.ylabel("Price Levels")
         plt.show()
@@ -418,14 +419,14 @@ def plot_phld_signals_only(df: pd.DataFrame, title: str = "PHLD Signals") -> Non
                 if buy_indices:
                     buy_x = [x_values[j] for j in buy_indices]
                     buy_y = [1] * len(buy_x)
-                    plt.scatter(buy_x, buy_y, color="green+", label=f"🟢 {col} Buy", marker="^")
+                    plt.scatter(buy_x, buy_y, color="green+", label=f"{col} Buy", marker="^")
                 
                 if sell_indices:
                     sell_x = [x_values[j] for j in sell_indices]
                     sell_y = [-1] * len(sell_x)
-                    plt.scatter(sell_x, sell_y, color="red+", label=f"🔴 {col} Sell", marker="v")
+                    plt.scatter(sell_x, sell_y, color="red+", label=f"{col} Sell", marker="v")
         
-        plt.title(f"🚨 {title}")
+        plt.title(f"{title}")
         plt.xlabel("Time / Bar Index")
         plt.ylabel("Signal Type (1=Buy, -1=Sell)")
         plt.show()

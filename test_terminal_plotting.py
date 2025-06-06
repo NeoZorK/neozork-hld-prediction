@@ -11,9 +11,9 @@ import pandas as pd
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-from plotting.plotting import plot_indicator_results
-from common.constants import TradingRule
-from common import logger
+from src.plotting.plotting import plot_indicator_results
+from src.common.constants import TradingRule
+from src.common import logger
 
 def test_terminal_plotting():
     """Test terminal plotting with sample data."""
@@ -33,7 +33,7 @@ def test_terminal_plotting():
         print("\n   Testing PHLD mode...")
         result = plot_indicator_results(
             df_test, 
-            TradingRule.PHLD, 
+            TradingRule.Predict_High_Low_Direction, 
             title="Test Data - PHLD Terminal Plot", 
             mode="term"
         )
@@ -43,7 +43,7 @@ def test_terminal_plotting():
         print("\n   Testing AUTO mode...")
         result = plot_indicator_results(
             df_test, 
-            TradingRule.AUTO, 
+            TradingRule.AUTO,
             title="Test Data - AUTO Terminal Plot", 
             mode="term"
         )
@@ -53,7 +53,7 @@ def test_terminal_plotting():
         print("\n   Testing PV mode...")
         result = plot_indicator_results(
             df_test, 
-            TradingRule.PV, 
+            TradingRule.Pressure_Vector, 
             title="Test Data - PV Terminal Plot", 
             mode="term"
         )
@@ -77,7 +77,7 @@ def test_terminal_plotting():
         
         result = plot_indicator_results(
             df_mn1, 
-            TradingRule.PHLD, 
+            TradingRule.Predict_High_Low_Direction, 
             title="MN1 Data - PHLD Terminal Plot", 
             mode="term"
         )
@@ -96,7 +96,7 @@ def test_terminal_plotting():
         print("   Testing auto-switch to terminal mode in Docker...")
         result = plot_indicator_results(
             df_test, 
-            TradingRule.PHLD, 
+            TradingRule.Predict_High_Low_Direction, 
             title="Docker Test - Auto Terminal Plot", 
             mode="plotly"  # Should be overridden to 'term'
         )
@@ -107,7 +107,7 @@ def test_terminal_plotting():
         print("   Testing with Docker detection disabled...")
         result = plot_indicator_results(
             df_test, 
-            TradingRule.PHLD, 
+            TradingRule.Predict_High_Low_Direction, 
             title="Docker Disabled Test", 
             mode="term"  # Should still work
         )
@@ -132,7 +132,7 @@ def test_terminal_plotting():
         
         result = plot_indicator_results(
             df_bad, 
-            TradingRule.PHLD, 
+            TradingRule.Predict_High_Low_Direction, 
             title="Error Test - Missing OHLC", 
             mode="term"
         )
@@ -158,19 +158,19 @@ def test_individual_plotting_functions():
         
         # Test term_plot directly
         print("\n1. Testing term_plot.py directly...")
-        from plotting.term_plot import plot_indicator_results_term
-        result = plot_indicator_results_term(df_test, TradingRule.PHLD, "Direct Term Plot Test")
+        from src.plotting.term_plot import plot_indicator_results_term
+        result = plot_indicator_results_term(df_test, TradingRule.Predict_High_Low_Direction, "Direct Term Plot Test")
         print(f"   Direct term_plot result: {result}")
         
         # Test term_auto_plot directly
         print("\n2. Testing term_auto_plot.py directly...")
-        from plotting.term_auto_plot import plot_auto_indicators_term
-        result = plot_auto_indicators_term(df_test, "Direct Auto Plot Test")
+        from src.plotting.term_auto_plot import auto_plot_from_dataframe
+        result = auto_plot_from_dataframe(df_test, "Direct Auto Plot Test")
         print(f"   Direct auto_plot result: {result}")
         
         # Test term_phld_plot directly
         print("\n3. Testing term_phld_plot.py directly...")
-        from plotting.term_phld_plot import plot_phld_indicators_term
+        from src.plotting.term_phld_plot import plot_phld_indicators_term
         result = plot_phld_indicators_term(df_test, "Direct PHLD Plot Test")
         print(f"   Direct PHLD_plot result: {result}")
         

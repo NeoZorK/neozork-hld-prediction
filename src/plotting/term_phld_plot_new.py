@@ -148,11 +148,11 @@ def _add_phld_overlays(df: pd.DataFrame, x_values: list, plot_base_indicators: b
         'other': "white"          # Other indicators - white
     }
     
-    # Emoji mapping for PHLD indicators
-    phld_indicator_emojis = {
-        'PPrice1': '🎯', 'PPrice2': '🎯', 'predicted_low': '🎯', 'predicted_high': '🎯',
-        'Pressure': '💨', 'pressure': '💨', 'HL': '📏', 'PV': '⚡', 'Direction': '🧭',
-        'Signal': '🚨', 'Buy': '🟢', 'Sell': '🔴', 'signal': '🚨'
+    # Clean labels without emojis for better terminal compatibility
+    phld_indicator_labels = {
+        'PPrice1': 'Predicted Low', 'PPrice2': 'Predicted High', 'predicted_low': 'Predicted Low', 'predicted_high': 'Predicted High',
+        'Pressure': 'Pressure', 'pressure': 'Pressure', 'HL': 'HL Range', 'PV': 'PV', 'Direction': 'Direction',
+        'Signal': 'Signal', 'Buy': 'BUY', 'Sell': 'SELL', 'signal': 'Signal'
     }
     
     # Skip columns already handled by main chart
@@ -167,29 +167,29 @@ def _add_phld_overlays(df: pd.DataFrame, x_values: list, plot_base_indicators: b
                 if not any(v != 0 for v in values):
                     continue
                 
-                # Determine color and emoji based on indicator type
+                # Determine color and label based on indicator type
                 color = phld_colors['other']  # default
-                emoji = ""
+                label = col  # default to column name
                 
                 col_lower = col.lower()
                 if 'pprice' in col_lower or 'predicted' in col_lower:
                     color = phld_colors['predicted']
-                    emoji = phld_indicator_emojis.get('PPrice1', '🎯') + " "
+                    label = phld_indicator_labels.get('PPrice1', col)
                 elif 'pressure' in col_lower:
                     color = phld_colors['pressure']
-                    emoji = phld_indicator_emojis.get('Pressure', '💨') + " "
+                    label = phld_indicator_labels.get('Pressure', col)
                 elif 'hl' in col_lower:
                     color = phld_colors['hl']
-                    emoji = phld_indicator_emojis.get('HL', '📏') + " "
+                    label = phld_indicator_labels.get('HL', col)
                 elif 'pv' in col_lower:
                     color = phld_colors['pv']
-                    emoji = phld_indicator_emojis.get('PV', '⚡') + " "
+                    label = phld_indicator_labels.get('PV', col)
                 elif 'direction' in col_lower:
                     color = phld_colors['direction']
-                    emoji = phld_indicator_emojis.get('Direction', '🧭') + " "
+                    label = phld_indicator_labels.get('Direction', col)
                 elif 'signal' in col_lower or 'buy' in col_lower or 'sell' in col_lower:
                     color = phld_colors['signals']
-                    emoji = phld_indicator_emojis.get('Signal', '🚨') + " "
+                    label = phld_indicator_labels.get('Signal', col)
                 
                 # Choose appropriate marker style
                 if 'signal' in col_lower or 'direction' in col_lower:
@@ -215,18 +215,18 @@ def _add_phld_overlays(df: pd.DataFrame, x_values: list, plot_base_indicators: b
                         valid_y = [positioned_values[i] for i in valid_indices]
                         
                         if valid_x and valid_y:
-                            plt.scatter(valid_x, valid_y, color=color, label=f"{emoji}{col}", marker="*")
+                            plt.scatter(valid_x, valid_y, color=color, label=label, marker="*")
                     else:
-                        plt.scatter(x_values, values, color=color, label=f"{emoji}{col}", marker="*")
+                        plt.scatter(x_values, values, color=color, label=label, marker="*")
                 
                 elif 'pprice' in col_lower or 'predicted' in col_lower:
                     # Predicted prices - thick lines with diamonds
-                    plt.plot(x_values, values, color=color, label=f"{emoji}{col}", marker="D")
+                    plt.plot(x_values, values, color=color, label=label, marker="D")
                 
                 else:
                     # Other indicators - standard lines
                     marker = "+" if 'pressure' in col_lower else "."
-                    plt.plot(x_values, values, color=color, label=f"{emoji}{col}", marker=marker)
+                    plt.plot(x_values, values, color=color, label=label, marker=marker)
                 
                 logger.print_debug(f"Plotted PHLD indicator: {col}")
                 
@@ -239,29 +239,29 @@ def _show_phld_statistics(df: pd.DataFrame, rule_str: str) -> None:
     
     header_line = "═" * 85
     print(f"\n{header_line}")
-    print(f"{'🎯 BEAUTIFUL PHLD PLOT STATISTICS':^85}")
+    print(f"{'BEAUTIFUL PHLD PLOT STATISTICS':^85}")
     print(f"{rule_str:^85}")
     print(f"{header_line}")
     
     # Data overview
-    print(f"📊 DATA OVERVIEW:")
-    print(f"   📋 Total Rows:     {len(df)}")
-    print(f"   📈 Total Columns:  {len(df.columns)}")
-    print(f"   🎯 Rule Type:      {rule_str}")
+    print(f"DATA OVERVIEW:")
+    print(f"   Total Rows:     {len(df)}")
+    print(f"   Total Columns:  {len(df.columns)}")
+    print(f"   Rule Type:      {rule_str}")
     
     # OHLC statistics if available
     ohlc_columns = ['Open', 'High', 'Low', 'Close']
     if all(col in df.columns for col in ohlc_columns):
-        print(f"\n📈 OHLC STATISTICS:")
-        print(f"   🔺 Highest:        {df['High'].max():.5f}")
-        print(f"   🔻 Lowest:         {df['Low'].min():.5f}")
-        print(f"   🎯 Final Close:    {df['Close'].iloc[-1]:.5f}")
-        print(f"   🚀 Initial Open:   {df['Open'].iloc[0]:.5f}")
+        print(f"\nOHLC STATISTICS:")
+        print(f"   Highest:        {df['High'].max():.5f}")
+        print(f"   Lowest:         {df['Low'].min():.5f}")
+        print(f"   Final Close:    {df['Close'].iloc[-1]:.5f}")
+        print(f"   Initial Open:   {df['Open'].iloc[0]:.5f}")
         
         price_change = df['Close'].iloc[-1] - df['Open'].iloc[0]
         price_change_pct = (price_change / df['Open'].iloc[0]) * 100
-        direction_emoji = "📈" if price_change >= 0 else "📉"
-        print(f"   {direction_emoji} Total Change:   {price_change:+.5f} ({price_change_pct:+.2f}%)")
+        direction_text = "UP" if price_change >= 0 else "DOWN"
+        print(f"   Total Change:   {price_change:+.5f} ({price_change_pct:+.2f}%) {direction_text}")
     
     # PHLD-specific statistics
     phld_indicators = ['PPrice1', 'PPrice2', 'Pressure', 'HL', 'PV', 'Direction']
