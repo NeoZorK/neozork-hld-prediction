@@ -301,15 +301,24 @@ def _show_auto_statistics(df: pd.DataFrame, title: str) -> None:
         for col in numeric_cols:
             if col in df.columns:
                 try:
+                    # More robust NaN handling
                     col_data = df[col].dropna()
                     if len(col_data) > 0:
                         print(f"   {col}:")
                         print(f"      Max: {col_data.max():.3f}")
                         print(f"      Min: {col_data.min():.3f}")
-                        print(f"      Avg: {col_data.mean():.3f}")
-                except Exception:
-                    pass
-    
+
+                        # Check for infinite values before calculating mean
+                        clean_data = col_data.replace([np.inf, -np.inf], np.nan).dropna()
+                        if len(clean_data) > 0:
+                            print(f"      Avg: {clean_data.mean():.3f}")
+                        else:
+                            print(f"      Avg: N/A (no valid data)")
+                    else:
+                        print(f"   {col}: No valid data")
+                except Exception as e:
+                    print(f"   {col}: Error calculating statistics - {str(e)}")
+
     # OHLC specific stats if available
     ohlc_columns = ['Open', 'High', 'Low', 'Close']
     if all(col in df.columns for col in ohlc_columns):
