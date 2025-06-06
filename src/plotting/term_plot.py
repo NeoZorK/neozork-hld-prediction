@@ -182,11 +182,11 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
         # Add predicted price lines if available
         if 'PPrice1' in df.columns:  # Predicted Low
             pprice1_values = df['PPrice1'].fillna(0).tolist()
-            plt.plot(x_values, pprice1_values, color="green+", label="Predicted Low", marker="dot")
+            plt.plot(x_values, pprice1_values, color="green+", label="Predicted Low", marker="s")
 
         if 'PPrice2' in df.columns:  # Predicted High
             pprice2_values = df['PPrice2'].fillna(0).tolist()
-            plt.plot(x_values, pprice2_values, color="red+", label="Predicted High", marker="dot")
+            plt.plot(x_values, pprice2_values, color="green+", label="Predicted High", marker="s")
 
         # Add trading signals if available
         if 'Direction' in df.columns:
@@ -220,47 +220,47 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
 
 
 def _add_phld_indicators_term(df: pd.DataFrame, x_values: list) -> None:
-    """Add PHLD-specific indicators to terminal plot with beautiful styling."""
-    
-    # Add HL (High-Low range in points) with enhanced styling
+    """Add PHLD-specific indicators to terminal plot with green square markers."""
+
+    # Add HL (High-Low range in points)
     if 'HL' in df.columns:
         hl_values = df['HL'].fillna(0).tolist()
-        plt.plot(x_values, hl_values, color="orange+", label="HL Range", marker=".")
-    
-    # Add Pressure with gradient-like effect
+        plt.plot(x_values, hl_values, color="green+", label="HL Range", marker="s")
+
+    # Add Pressure
     if 'Pressure' in df.columns:
         pressure_values = df['Pressure'].fillna(0).tolist()
-        plt.plot(x_values, pressure_values, color="magenta+", label="Pressure", marker="x")
-    
-    # Add Pressure Vector (PV) with distinct styling
+        plt.plot(x_values, pressure_values, color="green+", label="Pressure", marker="s")
+
+    # Add Pressure Vector (PV)
     if 'PV' in df.columns:
         pv_values = df['PV'].fillna(0).tolist()
-        plt.plot(x_values, pv_values, color="yellow+", label="PV", marker="*")
+        plt.plot(x_values, pv_values, color="green+", label="PV", marker="s")
 
 
 def _add_pv_indicators_term(df: pd.DataFrame, x_values: list) -> None:
-    """Add Pressure Vector specific indicators to terminal plot with beautiful styling."""
-    
+    """Add Pressure Vector specific indicators to terminal plot with green square markers."""
+
     if 'PV' in df.columns:
         pv_values = df['PV'].fillna(0).tolist()
-        plt.plot(x_values, pv_values, color="cyan+", label="Pressure Vector", marker="*")
-    
+        plt.plot(x_values, pv_values, color="green+", label="Pressure Vector", marker="s")
+
     if 'Pressure' in df.columns:
         pressure_values = df['Pressure'].fillna(0).tolist()
-        plt.plot(x_values, pressure_values, color="blue+", label="Pressure Force", marker="x")
+        plt.plot(x_values, pressure_values, color="green+", label="Pressure Force", marker="s")
 
 
 def _add_auto_indicators_term(df: pd.DataFrame, x_values: list) -> None:
     """Add all available indicators for AUTO mode with beautiful color scheme."""
     
-    # Enhanced color palette for better visual distinction
+    # Always use green+ as the primary color
     colors = [
-        "green+", "yellow+", "magenta+", "cyan+", "red+", "blue+",
-        "orange", "brown", "white", "gray"
+        "green+", "green+", "green+", "green+", "green+", "green+",
+        "green+", "green+", "green+", "green+"
     ]
     
-    # Use dot markers for AUTO mode to avoid ASCII symbols
-    marker = "dot"  # Always use dot marker for AUTO mode
+    # Use square markers for all plots
+    marker = "s"  # Always use square marker for all modes
 
     # Standard columns to skip
     skip_columns = {
@@ -306,12 +306,12 @@ def _add_trading_signals_term(df: pd.DataFrame, x_values: list, ohlc_data: dict)
     if buy_indices:
         buy_x = [x_values[i] for i in buy_indices]
         buy_y = [low_values[i] * 0.995 for i in buy_indices]  # Place below Low
-        plt.scatter(buy_x, buy_y, color="green+", marker="^", label="BUY Signal")
-    
+        plt.scatter(buy_x, buy_y, color="green+", marker="s", label="BUY Signal")
+
     if sell_indices:
         sell_x = [x_values[i] for i in sell_indices]
         sell_y = [high_values[i] * 1.005 for i in sell_indices]  # Place above High
-        plt.scatter(sell_x, sell_y, color="red+", marker="v", label="SELL Signal")
+        plt.scatter(sell_x, sell_y, color="green+", marker="s", label="SELL Signal")
 
 
 def _show_terminal_statistics(df: pd.DataFrame, rule_str: str) -> None:
