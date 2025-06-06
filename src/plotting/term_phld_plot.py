@@ -37,7 +37,7 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
         output_path (str, optional): Not used for terminal plots, kept for compatibility
     """
     try:
-        logger.print_info("Generating beautiful PHLD terminal plot with candlestick charts...")
+        logger.print_info("Generating PHLD terminal plot with candlestick charts...")
         
         # Clear any previous plots
         plt.clear_data()
@@ -161,8 +161,10 @@ def _add_phld_overlays(df: pd.DataFrame, x_values: list, plot_base_indicators: b
     for col in df.columns:
         if col not in skip_columns and pd.api.types.is_numeric_dtype(df[col]):
             try:
-                values = df[col].fillna(0).tolist()
-                
+                # First convert Series to a normal Python list to avoid any Series comparison issues
+                values_series = df[col].fillna(0)
+                values = [float(val) for val in values_series.values]
+
                 # Skip empty data
                 if not any(v != 0 for v in values):
                     continue
@@ -195,22 +197,21 @@ def _add_phld_overlays(df: pd.DataFrame, x_values: list, plot_base_indicators: b
                 if 'signal' in col_lower or 'direction' in col_lower:
                     # Trading signals - position relative to price action
                     if 'Close' in df.columns:
-                        close_values = df['Close'].ffill().tolist()
-                        high_values = df['High'].ffill().tolist() if 'High' in df.columns else close_values
-                        low_values = df['Low'].ffill().tolist() if 'Low' in df.columns else close_values
-                        
-                        # Position signals above/below price action
+                        # Convert all Series to normal Python lists
+                        close_values = df['Close'].fillna(0).values.tolist()
+                        high_values = df['High'].fillna(0).values.tolist() if 'High' in df.columns else close_values
+                        low_values = df['Low'].fillna(0).values.tolist() if 'Low' in df.columns else close_values
+
+                        # Position signals above/below price action - using normal Python list operations
                         positioned_values = []
                         for i, sig in enumerate(values):
-                            if pd.api.types.is_number(sig):  # Проверяем, что sig - это число
-                                if float(sig) == 1.0:  # Buy signal - преобразуем в число для сравнения
-                                    positioned_values.append(low_values[i] * 0.995)  # Slightly below low
-                                elif float(sig) == -1.0:  # Sell signal
-                                    positioned_values.append(high_values[i] * 1.005)  # Slightly above high
-                                else:
-                                    positioned_values.append(None)
+                            # Handle simple Python numeric comparison
+                            if abs(sig - 1.0) < 0.0001:  # Buy signal (using approximate equality)
+                                positioned_values.append(low_values[i] * 0.995)  # Slightly below low
+                            elif abs(sig - (-1.0)) < 0.0001:  # Sell signal (using approximate equality)
+                                positioned_values.append(high_values[i] * 1.005)  # Slightly above high
                             else:
-                                positioned_values.append(None)  # Не число - добавляем None
+                                positioned_values.append(None)
 
                         # Plot as scatter for signals
                         valid_indices = [i for i, v in enumerate(positioned_values) if v is not None]
@@ -235,6 +236,7 @@ def _add_phld_overlays(df: pd.DataFrame, x_values: list, plot_base_indicators: b
                 
             except Exception as e:
                 logger.print_warning(f"Could not plot PHLD indicator {col}: {e}")
+                logger.print_debug(f"Exception details for {col}: {type(e).__name__}: {e}")
 
 
 def _show_phld_statistics(df: pd.DataFrame, rule_str: str) -> None:

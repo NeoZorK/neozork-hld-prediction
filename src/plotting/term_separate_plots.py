@@ -243,7 +243,7 @@ def _plot_signal_field(x_values: list, field_data: list, title: str, field: str,
     if sell_positions:
         # Create arrays for line plot (all y values = -1 for SELL)
         sell_y = [-1] * len(sell_positions)
-        plt.plot(sell_positions, sell_y, color="green+", label="SELL")
+        plt.plot(sell_positions, sell_y, color="red+", label="SELL")  # Changed color to red+ for better distinction
 
     plt.title(f"{title} - Trading Signals")
     plt.xlabel("Time / Bar Index")
