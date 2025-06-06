@@ -229,16 +229,21 @@ def _plot_volume_field(x_values: list, field_data: list, title: str, field: str,
 
 
 def _plot_signal_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
-    """Plot trading signals as scatter points."""
+    """Plot trading signals as lines instead of scatter points."""
     # Convert signals to display positions
     buy_positions = [x for x, val in zip(x_values, field_data) if val == 1 or val == BUY]
     sell_positions = [x for x, val in zip(x_values, field_data) if val == -1 or val == SELL]
     
+    # Create continuous lines for signals
     if buy_positions:
-        # Use green cube marker for better visibility
-        plt.scatter(buy_positions, [1] * len(buy_positions), color="green+", label="BUY", marker="braille")
+        # Create arrays for line plot (all y values = 1 for BUY)
+        buy_y = [1] * len(buy_positions)
+        plt.plot(buy_positions, buy_y, color="green+", label="BUY")
+
     if sell_positions:
-        plt.scatter(sell_positions, [-1] * len(sell_positions), color="green+", label="SELL", marker="braille")
+        # Create arrays for line plot (all y values = -1 for SELL)
+        sell_y = [-1] * len(sell_positions)
+        plt.plot(sell_positions, sell_y, color="green+", label="SELL")
 
     plt.title(f"{title} - Trading Signals")
     plt.xlabel("Time / Bar Index")
@@ -246,37 +251,33 @@ def _plot_signal_field(x_values: list, field_data: list, title: str, field: str,
 
 
 def _plot_prediction_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
-    """Plot prediction data as lines with special markers."""
-    # Use green cube marker for better visibility
-    plt.plot(x_values, field_data, color="green+", label=field, marker="braille")
+    """Plot prediction data as continuous lines without markers."""
+    # Use line plot with green+ color for better visibility
+    plt.plot(x_values, field_data, color="green+", label=field)
     plt.title(f"{title} - Predictions")
     plt.xlabel("Time / Bar Index")
     plt.ylabel("Predicted Price")
 
 
 def _plot_price_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
-    """Plot price data as lines."""
+    """Plot price data as continuous lines without markers."""
     # Always use green+ color for consistency
     color = "green+"
 
-    # Use green cube marker for better visibility
-    plt.plot(x_values, field_data, color=color, label=field, marker="braille")
+    # Use continuous line without markers for better readability
+    plt.plot(x_values, field_data, color=color, label=field)
     plt.title(f"{title} - Price Data")
     plt.xlabel("Time / Bar Index")
     plt.ylabel("Price")
 
 
 def _plot_indicator_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
-    """Plot general indicator data."""
+    """Plot general indicator data as continuous lines without markers."""
     # Always use green+ color for all indicators
     color = "green+"
 
-    if style == "dots":
-        marker = "s"  # Square marker for dots style
-    else:
-        marker = "braille"
-
-    plt.plot(x_values, field_data, color=color, label=field, marker=marker)
+    # Use continuous line for better readability
+    plt.plot(x_values, field_data, color=color, label=field)
     plt.title(f"{title} - Indicator")
     plt.xlabel("Time / Bar Index")  
     plt.ylabel("Value")
