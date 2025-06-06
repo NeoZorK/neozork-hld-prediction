@@ -58,13 +58,14 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
         
         plt.plot_size(*main_plot_size)
         plt.theme('matrix')  # Use unified matrix theme for all plots
-        
+        plt.style('dots')  # Apply 'dots' style
+
         # Create time axis
         x_values = list(range(len(df)))
-        
+
         # MAIN PANEL: OHLC Candlestick or Indicators
         if has_ohlc:
-            logger.print_info("Creating beautiful OHLC candlestick chart...")
+            logger.print_info("Creating beautiful OHLC candlestick chart with 'dots' style...")
             if has_volume:
                 plt.subplot(1, 1)  # Top panel
             # Prepare OHLC data for candlestick
@@ -74,7 +75,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
                 'Low': df['Low'].ffill().fillna(df['Close']).tolist(),
                 'Close': df['Close'].ffill().fillna(df['Open']).tolist()
             }
-            plt.candlestick(x_values, ohlc_data)
+            plt.candlestick(x_values, ohlc_data, style="dots")
             plt.title(f"{title} - Auto Chart (OHLC + Indicators)")
             if not has_volume:
                 plt.xlabel("Time / Bar Index")
@@ -82,12 +83,12 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
             # Add other indicators as overlays on the price chart
             _add_indicator_overlays(df, x_values, skip_columns={'Open', 'High', 'Low', 'Close', 'Volume'})
         else:
-            logger.print_info("Creating beautiful multi-indicator chart...")
+            logger.print_info("Creating beautiful multi-indicator chart with 'dots' style...")
             plt.title(f"{title} - Auto Indicators Chart")
             plt.xlabel("Time / Bar Index") 
             plt.ylabel("Values")
             # Plot all numeric columns as indicators
-            _add_indicator_overlays(df, x_values, skip_columns={'Volume'})
+            _add_indicator_overlays(df, x_values, skip_columns={'Volume'}, style="dots")
         
         # VOLUME PANEL (if available)
         if has_volume:
