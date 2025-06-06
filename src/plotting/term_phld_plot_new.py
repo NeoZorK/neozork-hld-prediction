@@ -89,7 +89,7 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
             }
             
             plt.candlestick(x_values, ohlc_data)
-            plt.title(f"🎯 {title} - Beautiful PHLD Candlestick Chart")
+            plt.title(f"{title} - Beautiful PHLD Candlestick Chart")
             
             if not has_volume:
                 plt.xlabel("Time / Bar Index")
@@ -112,10 +112,11 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
             logger.print_info("Creating beautiful PHLD volume panel...")
             plt.subplot(2, 1)  # Bottom panel
             
-            volume_values = df['Volume'].fillna(0).tolist()
-            plt.bar(x_values, volume_values, color="cyan+", label="📊 Volume")
+            # Convert volume to integers, handling NaN values properly
+            volume_values = df['Volume'].fillna(0).astype(float).astype(int).tolist()
+            plt.bar(x_values, volume_values, color="cyan+", label="Volume")
             
-            plt.title("📊 PHLD Trading Volume")
+            plt.title("PHLD Trading Volume")
             plt.xlabel("Time / Bar Index")
             plt.ylabel("Volume")
         
