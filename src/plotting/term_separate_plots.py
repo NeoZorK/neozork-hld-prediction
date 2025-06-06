@@ -159,24 +159,26 @@ def _plot_individual_field(df: pd.DataFrame, field: str, x_values: list, title: 
         
         # Set up plot theme and size
         plt.plot_size(120, 30)
-        plt.theme('matrix')  # Unified matrix theme
-        # Note: Style is applied through marker choice in plotting functions
-        
+        plt.theme('matrix')  # Unified matrix theme for green style
+
         # Get field data
         field_data = df[field].fillna(0).tolist()
         
-        # Determine plot type based on field characteristics
+        # Clean the data for plotting (remove outliers and infinities)
+        field_data, x_clean = clean_data_for_plotting(df[field], x_values)
+
+        # Determine plot type based on field characteristics and style
         if 'volume' in field.lower():
-            _plot_volume_field(x_values, field_data, title, field, style=style)
+            _plot_volume_field(x_clean, field_data, title, field, style=style)
         elif any(signal in field.lower() for signal in ['signal', 'direction', 'buy', 'sell']):
-            _plot_signal_field(x_values, field_data, title, field, style=style)
+            _plot_signal_field(x_clean, field_data, title, field, style=style)
         elif any(pred in field.lower() for pred in ['predicted', 'pprice', 'forecast']):
-            _plot_prediction_field(x_values, field_data, title, field, style=style)
+            _plot_prediction_field(x_clean, field_data, title, field, style=style)
         elif field.lower() in ['high', 'low', 'open', 'close']:
-            _plot_price_field(x_values, field_data, title, field, style=style)
+            _plot_price_field(x_clean, field_data, title, field, style=style)
         else:
-            _plot_indicator_field(x_values, field_data, title, field, style=style)
-        
+            _plot_indicator_field(x_clean, field_data, title, field, style=style)
+
         # Show the plot
         plt.show()
         
@@ -185,6 +187,33 @@ def _plot_individual_field(df: pd.DataFrame, field: str, x_values: list, title: 
         
     except Exception as e:
         logger.print_error(f"Error plotting field '{field}': {e}")
+
+
+def clean_data_for_plotting(series: pd.Series, x_values: list):
+    """
+    Clean data for plotting by removing NaN, inf values and outliers.
+
+    Args:
+        series: pandas Series with data
+        x_values: list of x coordinates
+
+    Returns:
+        tuple: (cleaned x values, cleaned y values)
+    """
+    # Convert to numeric and handle errors
+    y_data = pd.to_numeric(series, errors='coerce')
+
+    # Create a mask for valid values (not NaN, not inf)
+    valid_mask = ~np.isnan(y_data) & ~np.isinf(y_data)
+
+    # Get valid indices and values
+    valid_indices = [i for i, is_valid in enumerate(valid_mask) if is_valid]
+    valid_values = y_data[valid_mask].tolist()
+
+    # Get corresponding x values
+    x_clean = [x_values[i] for i in valid_indices]
+
+    return valid_values, x_clean
 
 
 def _plot_volume_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
@@ -206,10 +235,13 @@ def _plot_signal_field(x_values: list, field_data: list, title: str, field: str,
     sell_positions = [x for x, val in zip(x_values, field_data) if val == -1 or val == SELL]
     
     if buy_positions:
-        plt.scatter(buy_positions, [1] * len(buy_positions), color="green+", label="BUY", marker="^")
+        # Use dot marker for dots style
+        marker = "dot" if style == "dots" else "^"
+        plt.scatter(buy_positions, [1] * len(buy_positions), color="green+", label="BUY", marker=marker)
     if sell_positions:
-        plt.scatter(sell_positions, [-1] * len(sell_positions), color="red+", label="SELL", marker="v")
-    
+        marker = "dot" if style == "dots" else "v"
+        plt.scatter(sell_positions, [-1] * len(sell_positions), color="red+", label="SELL", marker=marker)
+
     plt.title(f"{title} - Trading Signals")
     plt.xlabel("Time / Bar Index")
     plt.ylabel("Signal")
@@ -217,7 +249,7 @@ def _plot_signal_field(x_values: list, field_data: list, title: str, field: str,
 
 def _plot_prediction_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
     """Plot prediction data as lines with special markers."""
-    marker = "dot" if style == "dots" else "D"
+    marker = "dot" if style == "dots" else "braille"
     plt.plot(x_values, field_data, color="yellow+", label=field, marker=marker)
     plt.title(f"{title} - Predictions")
     plt.xlabel("Time / Bar Index")
@@ -234,7 +266,7 @@ def _plot_price_field(x_values: list, field_data: list, title: str, field: str, 
     }
     color = color_map.get(field.lower(), "white+")
     
-    marker = "dot" if style == "dots" else "o"
+    marker = "dot" if style == "dots" else "braille"
     plt.plot(x_values, field_data, color=color, label=field, marker=marker)
     plt.title(f"{title} - Price Data")
     plt.xlabel("Time / Bar Index")
@@ -248,8 +280,8 @@ def _plot_indicator_field(x_values: list, field_data: list, title: str, field: s
     if style == "dots":
         marker = "dot"
     else:
-        marker = "+" if 'pressure' in field.lower() else "."
-    
+        marker = "braille"
+
     plt.plot(x_values, field_data, color=color, label=field, marker=marker)
     plt.title(f"{title} - Indicator")
     plt.xlabel("Time / Bar Index")  
