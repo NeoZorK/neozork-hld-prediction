@@ -3,6 +3,7 @@
 
 """
 Specialized terminal plotting for PHLD (Predict High Low Direction) indicators using plotext.
+Beautiful candlestick charts with enhanced styling and trading signals.
 """
 
 import pandas as pd
@@ -25,7 +26,7 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
                                 title: str = "PHLD Terminal Plot",
                                 output_path: Optional[str] = None) -> None:
     """
-    Plot PHLD (Predict High Low Direction) indicators in terminal using plotext.
+    Plot PHLD (Predict High Low Direction) indicators in terminal using beautiful candlestick charts.
     Specialized for displaying pressure, PV, HL, predicted prices, and trading signals.
     
     Args:
@@ -35,7 +36,7 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
         output_path (str, optional): Not used for terminal plots, kept for compatibility
     """
     try:
-        logger.print_info("Generating specialized PHLD terminal plot...")
+        logger.print_info("Generating beautiful PHLD terminal plot with candlestick charts...")
         
         # Clear any previous plots
         plt.clear_data()
@@ -46,9 +47,24 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
             logger.print_error("DataFrame is None or empty, cannot plot")
             return
         
-        # Set terminal size and theme for PHLD plotting
-        plt.theme('dark')
-        plt.plot_size(130, 40)  # Larger size for detailed PHLD visualization
+        # Check available data
+        ohlc_columns = ['Open', 'High', 'Low', 'Close']
+        has_ohlc = all(col in df.columns for col in ohlc_columns)
+        has_volume = 'Volume' in df.columns and not df['Volume'].isna().all()
+        
+        # Set up layout based on available data - PHLD typically has volume
+        if has_ohlc and has_volume:
+            plt.subplots(2, 1)  # Price + Volume panels
+            main_plot_size = (140, 40)
+        elif has_ohlc:
+            plt.subplots(1, 1)  # Single price panel
+            main_plot_size = (140, 30)
+        else:
+            plt.subplots(1, 1)  # Single indicator panel
+            main_plot_size = (140, 30)
+        
+        plt.plot_size(*main_plot_size)
+        plt.theme('matrix')  # Matrix theme for PHLD (high-tech trading feel)
         
         # Create time axis
         x_values = list(range(len(df)))
@@ -56,48 +72,79 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
         # Convert rule to string
         rule_str = rule.name if hasattr(rule, 'name') else str(rule)
         
-        logger.print_info("Plotting PHLD-specific indicators...")
+        # MAIN PANEL: Beautiful Candlestick Chart with PHLD overlays
+        if has_ohlc:
+            logger.print_info("Creating beautiful PHLD candlestick chart...")
+            
+            if has_volume:
+                plt.subplot(1, 1)  # Top panel
+            
+            # Prepare OHLC data for candlestick
+            ohlc_data = {
+                'Open': df['Open'].ffill().fillna(df['Close']).tolist(),
+                'High': df['High'].ffill().fillna(df['Close']).tolist(),
+                'Low': df['Low'].ffill().fillna(df['Close']).tolist(),
+                'Close': df['Close'].ffill().fillna(df['Open']).tolist()
+            }
+            
+            plt.candlestick(x_values, ohlc_data)
+            plt.title(f"🎯 {title} - Beautiful PHLD Candlestick Chart")
+            
+            if not has_volume:
+                plt.xlabel("Time / Bar Index")
+            plt.ylabel("Price")
+            
+            # Add PHLD-specific overlays
+            _add_phld_overlays(df, x_values)
+            
+        else:
+            logger.print_info("Creating beautiful PHLD indicators chart...")
+            plt.title(f"🎯 {title} - Beautiful PHLD Indicators")
+            plt.xlabel("Time / Bar Index")
+            plt.ylabel("Values")
+            
+            # Plot PHLD indicators without OHLC base
+            _add_phld_overlays(df, x_values, plot_base_indicators=True)
         
-        # Plot base OHLC data first (if available)
-        if all(col in df.columns for col in ['Open', 'High', 'Low', 'Close']):
-            _plot_ohlc_base_phld(df, x_values)
-        
-        # Plot predicted prices (main PHLD feature)
-        _plot_predicted_prices_phld(df, x_values)
-        
-        # Plot pressure-related indicators
-        _plot_pressure_indicators_phld(df, x_values)
-        
-        # Plot HL (High-Low range in points)
-        _plot_hl_indicator_phld(df, x_values)
-        
-        # Plot trading signals
-        _plot_trading_signals_phld(df, x_values)
-        
-        # Plot volume if available
-        if 'Volume' in df.columns or 'TickVolume' in df.columns:
-            _plot_volume_phld(df, x_values)
-        
-        # Configure plot appearance
-        plt.title(title)
-        plt.xlabel("Time / Bar Index")
-        plt.ylabel("Mixed Scale (Prices, Indicators, Signals)")
-        
-        # Show legend
-        plt.show_legend()
+        # VOLUME PANEL (if available)
+        if has_volume:
+            logger.print_info("Creating beautiful PHLD volume panel...")
+            plt.subplot(2, 1)  # Bottom panel
+            
+            volume_values = df['Volume'].fillna(0).tolist()
+            plt.bar(x_values, volume_values, color="cyan+", label="📊 Volume")
+            
+            plt.title("📊 PHLD Trading Volume")
+            plt.xlabel("Time / Bar Index")
+            plt.ylabel("Volume")
         
         # Display the plot
-        logger.print_info("Displaying PHLD terminal plot...")
+        logger.print_info("Displaying beautiful PHLD terminal plot...")
         plt.show()
         
-        # Show detailed PHLD statistics
+        # Show enhanced PHLD statistics
         _show_phld_statistics(df, rule_str)
         
-        logger.print_success("PHLD terminal plot generated successfully!")
+        logger.print_success("Beautiful PHLD terminal plot generated successfully!")
         
     except Exception as e:
         logger.print_error(f"Error generating PHLD terminal plot: {e}")
         logger.print_debug(f"Exception details: {type(e).__name__}: {e}")
+
+
+def _add_phld_overlays(df: pd.DataFrame, x_values: list, plot_base_indicators: bool = False) -> None:
+    """Add PHLD-specific overlays with beautiful styling."""
+    
+    # PHLD-specific color scheme
+    phld_colors = {
+        'predicted': "yellow+",    # Predicted prices - bright yellow
+        'pressure': "magenta+",    # Pressure indicators - bright magenta  
+        'hl': "cyan+",            # HL range - bright cyan
+        'pv': "green+",           # PV indicators - bright green
+        'signals': "red+",        # Trading signals - bright red
+        'direction': "blue+",     # Direction - bright blue
+        'other': "white"          # Other indicators - white
+    }
 
 
 def _plot_ohlc_base_phld(df: pd.DataFrame, x_values: list) -> None:
