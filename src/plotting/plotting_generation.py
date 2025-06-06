@@ -569,7 +569,7 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
 
     # For AUTO rule, use separate field plotting: main OHLC chart (if present) + separate charts for each field
     if is_auto_rule:
-        logger.print_info("AUTO rule detected, using separate field terminal plotting: main OHLC chart + separate charts for each field...")
+        logger.print_info("AUTO rule detected, using 'dots' style for all terminal plots...")
         try:
             from src.plotting.term_separate_plots import plot_separate_fields_terminal
             # Show main OHLC chart as candlestick if present
@@ -577,14 +577,14 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
             has_ohlc = all(col in result_df.columns for col in ohlc_columns)
             if has_ohlc:
                 from src.plotting.term_auto_plot import auto_plot_from_dataframe
-                auto_plot_from_dataframe(result_df, f"{plot_title} - OHLC Candlestick")
+                auto_plot_from_dataframe(result_df, f"{plot_title} - OHLC Candlestick", style="dots")
             # Plot each additional numeric field as a separate chart
-            plot_separate_fields_terminal(result_df, selected_rule, f"{plot_title} - Separate Fields")
-            logger.print_success("Successfully plotted OHLC candlestick and all other fields as separate terminal charts.")
+            plot_separate_fields_terminal(result_df, selected_rule, f"{plot_title} - Separate Fields", style="dots")
+            logger.print_success("Successfully plotted OHLC candlestick and all other fields as separate terminal charts with 'dots' style.")
         except ImportError as e:
             logger.print_warning(f"Could not import separate field plotting modules: {e}. Falling back to standard terminal plot.")
             from src.plotting.term_auto_plot import auto_plot_from_dataframe
-            auto_plot_from_dataframe(result_df, plot_title)
+            auto_plot_from_dataframe(result_df, plot_title, style="dots")
         return
 
     # For PHLD rule, use the specialized PHLD plotting function

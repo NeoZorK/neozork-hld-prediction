@@ -58,7 +58,7 @@ def plot_separate_fields_terminal(df: pd.DataFrame,
             logger.print_warning("No fields found to plot")
             return
             
-        logger.print_info(f"Plotting {len(fields)} separate fields: {fields}")
+        logger.print_info(f"Plotting {len(fields)} separate fields with 'dots' style: {fields}")
         
         # Create time axis
         x_values = list(range(len(df)))
@@ -68,11 +68,11 @@ def plot_separate_fields_terminal(df: pd.DataFrame,
             if field not in df.columns:
                 logger.print_warning(f"Field '{field}' not found in DataFrame")
                 continue
-                
+
             # Create individual plot for this field
-            _plot_individual_field(df, field, x_values, f"{title} - {field}", rule_str)
-        
-        logger.print_success(f"Successfully generated {len(fields)} separate field plots!")
+            _plot_individual_field(df, field, x_values, f"{title} - {field}", rule_str, style="dots")
+
+        logger.print_success(f"Successfully generated {len(fields)} separate field plots with 'dots' style!")
         
     except Exception as e:
         logger.print_error(f"Error generating separate field plots: {e}")
@@ -148,7 +148,7 @@ def plot_specific_fields_terminal(df: pd.DataFrame,
         logger.print_error(f"Error plotting specific fields: {e}")
 
 
-def _plot_individual_field(df: pd.DataFrame, field: str, x_values: list, title: str, rule_str: str) -> None:
+def _plot_individual_field(df: pd.DataFrame, field: str, x_values: list, title: str, rule_str: str, style: str = "line") -> None:
     """Plot a single field in its own chart."""
     try:
         # Clear any previous plots
