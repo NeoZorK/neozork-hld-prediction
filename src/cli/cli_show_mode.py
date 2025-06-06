@@ -328,8 +328,13 @@ def handle_show_mode(args):
         args.display_candlestick_only = True  # New flag to indicate candlestick only mode
         args.rule = None  # Clear the rule to use the raw data plot path
 
+    # Special handling for AUTO rule with terminal plotting (-d term)
+    if hasattr(args, 'draw') and args.draw == 'term' and hasattr(args, 'rule') and args.rule and args.rule.upper() == 'AUTO':
+        print(f"Terminal plotting mode (-d term) with AUTO rule")
+        args.auto_display_mode = True  # Flag to use separate field plotting for AUTO mode
+        args.rule = 'AUTO'  # Ensure rule is set properly
     # For terminal plotting mode (-d term), always use OHLCV rule by default if rule not specified
-    if hasattr(args, 'draw') and args.draw == 'term' and (not hasattr(args, 'rule') or not args.rule):
+    elif hasattr(args, 'draw') and args.draw == 'term' and (not hasattr(args, 'rule') or not args.rule):
         print("Terminal plotting mode (-d term) with default OHLCV display")
         args.raw_plot_only = True
         args.display_candlestick_only = True
@@ -545,9 +550,33 @@ def handle_show_mode(args):
                         elif draw_method == 'term' and auto_plot_from_dataframe is not None:
                             print(f"Using terminal auto plotting for '{found_files[0]['name']}'...")
                             plot_title = f"AUTO Terminal Plot: {found_files[0]['name']}"
-                            # Use the auto_plot_from_dataframe function which handles random colors
-                            auto_plot_from_dataframe(df, plot_title)
-                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using terminal mode with unique colors for each indicator.")
+
+                            # Check if we should use separate field plotting with dots style
+                            if hasattr(args, 'auto_display_mode') and args.auto_display_mode:
+                                # Import the specific functions for parquet and CSV plotting
+                                try:
+                                    from src.plotting.term_auto_plot import auto_plot_parquet_fields, auto_plot_csv_fields
+
+                                    # Check if we're dealing with CSV or parquet file
+                                    if 'csv_converted' in str(found_files[0]['path']).lower():
+                                        # For CSV-converted parquet files, use the parquet function but mention CSV source
+                                        print(f"Using separate field plotting for CSV-converted parquet file...")
+                                        auto_plot_parquet_fields(str(found_files[0]['path']), f"AUTO: {found_files[0]['name']} (CSV Source)", style="dots")
+                                    else:
+                                        # For direct parquet files
+                                        print(f"Using separate field plotting for parquet file...")
+                                        auto_plot_parquet_fields(str(found_files[0]['path']), f"AUTO: {found_files[0]['name']}", style="dots")
+
+                                    print(f"Successfully plotted all fields from '{found_files[0]['name']}' using 'dots' style with separate charts.")
+                                except ImportError as e:
+                                    print(f"Could not import separate field plotting functions: {e}")
+                                    # Fallback to standard auto_plot_from_dataframe
+                                    auto_plot_from_dataframe(df, plot_title)
+                                    print(f"Fallback: Successfully plotted all columns from '{found_files[0]['name']}' using terminal mode with unified chart.")
+                            else:
+                                # Use the standard auto_plot_from_dataframe function
+                                auto_plot_from_dataframe(df, plot_title)
+                                print(f"Successfully plotted all columns from '{found_files[0]['name']}' using terminal mode with unified chart.")
                         else:
                             generate_plot = import_generate_plot()
                             data_info = {
@@ -746,3 +775,4 @@ def handle_show_mode(args):
         except Exception as e:
             print(f"Error plotting file: {e}")
             traceback.print_exc()
+
