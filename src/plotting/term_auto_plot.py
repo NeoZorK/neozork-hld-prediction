@@ -109,7 +109,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
                 volume_array = np.nan_to_num(volume_array, nan=0)
             logger.print_debug(f"volume_array (after nan_to_num): {volume_array}")
             volume_values = volume_array.astype(int).tolist()
-            plt.bar(x_values, volume_values, color="cyan+", label="📊 Volume")
+            plt.bar(x_values, volume_values, color="cyan+", label="Volume")
             
             plt.title("📊 Trading Volume")
             plt.xlabel("Time / Bar Index")
