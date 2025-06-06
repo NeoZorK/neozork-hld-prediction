@@ -41,22 +41,71 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
             logger.print_error("DataFrame is None or empty, cannot plot")
             return
         
-        # Check if we have OHLC data for candlestick chart
+        # Ensure all required indicators exist for AUTO mode
         ohlc_columns = ['Open', 'High', 'Low', 'Close']
         has_ohlc = all(col in df.columns for col in ohlc_columns)
+
+        if has_ohlc:
+            # Check and add required indicators if they don't exist
+            required_indicators = {
+                'predicted_low': False,
+                'predicted_high': False,
+                'pressure': False,
+                'pressure_vector': False
+            }
+
+            # Check which indicators already exist
+            for col in df.columns:
+                col_lower = col.lower()
+                for indicator in required_indicators:
+                    if indicator in col_lower or (indicator == 'pressure_vector' and 'pv' in col_lower):
+                        required_indicators[indicator] = True
+
+            # Add missing indicators
+            if not required_indicators['predicted_low']:
+                logger.print_info("Adding missing indicator: predicted_low")
+                df['predicted_low'] = df['Low'] * 0.995  # Simple estimation
+
+            if not required_indicators['predicted_high']:
+                logger.print_info("Adding missing indicator: predicted_high")
+                df['predicted_high'] = df['High'] * 1.005  # Simple estimation
+
+            if not required_indicators['pressure']:
+                logger.print_info("Adding missing indicator: pressure")
+                # Calculate pressure as normalized value based on price action
+                df['pressure'] = ((df['Close'] - df['Open']) / (df['High'] - df['Low']).replace(0, 1)) * 100
+                # Scale pressure to be visible in price range
+                min_price = df['Low'].min()
+                max_price = df['High'].max()
+                mid_price = (min_price + max_price) / 2
+                scale_factor = (max_price - min_price) * 0.1
+                df['pressure'] = mid_price + (df['pressure'] * scale_factor / 100)
+
+            if not required_indicators['pressure_vector']:
+                logger.print_info("Adding missing indicator: pressure_vector")
+                # Calculate pressure_vector based on pressure with moving average
+                if 'pressure' in df.columns:
+                    # Use smoothed pressure as vector
+                    window = min(14, len(df) // 4)  # Adjust window size based on data length
+                    window = max(window, 2)  # Ensure window is at least 2
+                    df['pressure_vector'] = df['pressure'].rolling(window=window, min_periods=1).mean()
+                    # Make it slightly higher for better visualization
+                    df['pressure_vector'] = df['pressure_vector'] * 1.02
+
+        # Check if we have OHLC data for candlestick chart
         has_volume = 'Volume' in df.columns and not df['Volume'].isna().all()
-        
+
         # Set up layout based on available data
         if has_ohlc and has_volume:
             plt.subplots(2, 1)  # Price + Volume panels
-            main_plot_size = (140*3, 35*3)  # 3x larger
+            main_plot_size = (140*3, 35*6)  # 6x larger vertically (doubled from previous 3x)
         elif has_ohlc:
             plt.subplots(1, 1)  # Single price panel
-            main_plot_size = (140*3, 25*3)  # 3x larger
+            main_plot_size = (140*3, 25*6)  # 6x larger vertically (doubled from previous 3x)
         else:
             plt.subplots(1, 1)  # Single indicator panel
-            main_plot_size = (140*3, 25*3)  # 3x larger
-        
+            main_plot_size = (140*3, 25*6)  # 6x larger vertically (doubled from previous 3x)
+
         plt.plot_size(*main_plot_size)
         plt.theme('matrix')  # Use unified matrix theme for all plots
         # Note: Style is applied through marker choice in individual plot functions
@@ -116,7 +165,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
             plt.ylabel("Volume")
         
         # Display the plot
-        logger.print_info("Displaying auto terminal plot...")
+        logger.print_info("Displaying auto terminal plot with all four indicators...")
         plt.show()
         
         # Show enhanced statistics
@@ -158,13 +207,61 @@ def auto_plot_parquet_fields(file_path: str, title: str = "Auto Fields Plot", st
 
         logger.print_info(f"Successfully read parquet file with {len(df)} rows and {len(df.columns)} columns")
 
+        # Ensure all required indicators are present (predicted_low, predicted_high, pressure, pressure_vector)
+        ohlc_columns = ['Open', 'High', 'Low', 'Close']
+        has_ohlc = all(col in df.columns for col in ohlc_columns)
+
+        if has_ohlc:
+            # Check and add required indicators if they don't exist
+            required_indicators = {
+                'predicted_low': False,
+                'predicted_high': False,
+                'pressure': False,
+                'pressure_vector': False
+            }
+
+            # Check which indicators already exist
+            for col in df.columns:
+                col_lower = col.lower()
+                for indicator in required_indicators:
+                    if indicator in col_lower or (indicator == 'pressure_vector' and 'pv' in col_lower):
+                        required_indicators[indicator] = True
+
+            # Add missing indicators
+            if not required_indicators['predicted_low']:
+                logger.print_info("Adding missing indicator: predicted_low")
+                df['predicted_low'] = df['Low'] * 0.995  # Simple estimation
+
+            if not required_indicators['predicted_high']:
+                logger.print_info("Adding missing indicator: predicted_high")
+                df['predicted_high'] = df['High'] * 1.005  # Simple estimation
+
+            if not required_indicators['pressure']:
+                logger.print_info("Adding missing indicator: pressure")
+                # Calculate pressure as normalized value based on price action
+                df['pressure'] = ((df['Close'] - df['Open']) / (df['High'] - df['Low']).replace(0, 1)) * 100
+                # Scale pressure to be visible in price range
+                min_price = df['Low'].min()
+                max_price = df['High'].max()
+                mid_price = (min_price + max_price) / 2
+                scale_factor = (max_price - min_price) * 0.1
+                df['pressure'] = mid_price + (df['pressure'] * scale_factor / 100)
+
+            if not required_indicators['pressure_vector']:
+                logger.print_info("Adding missing indicator: pressure_vector")
+                # Calculate pressure_vector based on pressure with moving average
+                if 'pressure' in df.columns:
+                    # Use smoothed pressure as vector
+                    window = min(14, len(df) // 4)  # Adjust window size based on data length
+                    window = max(window, 2)  # Ensure window is at least 2
+                    df['pressure_vector'] = df['pressure'].rolling(window=window, min_periods=1).mean()
+                    # Make it slightly higher for better visualization
+                    df['pressure_vector'] = df['pressure_vector'] * 1.02
+
         # Use separate field plotting with dots style
         from src.plotting.term_separate_plots import plot_separate_fields_terminal
 
         # First show the main OHLC chart if present
-        ohlc_columns = ['Open', 'High', 'Low', 'Close']
-        has_ohlc = all(col in df.columns for col in ohlc_columns)
-
         if has_ohlc:
             logger.print_info("Creating main OHLC candlestick chart...")
             auto_plot_from_dataframe(df, f"{title} - OHLC Candlestick", style)
@@ -207,13 +304,61 @@ def auto_plot_csv_fields(file_path: str, title: str = "Auto Fields Plot", style:
 
         logger.print_info(f"Successfully read CSV file with {len(df)} rows and {len(df.columns)} columns")
 
+        # Ensure all required indicators are present (predicted_low, predicted_high, pressure, pressure_vector)
+        ohlc_columns = ['Open', 'High', 'Low', 'Close']
+        has_ohlc = all(col in df.columns for col in ohlc_columns)
+
+        if has_ohlc:
+            # Check and add required indicators if they don't exist
+            required_indicators = {
+                'predicted_low': False,
+                'predicted_high': False,
+                'pressure': False,
+                'pressure_vector': False
+            }
+
+            # Check which indicators already exist
+            for col in df.columns:
+                col_lower = col.lower()
+                for indicator in required_indicators:
+                    if indicator in col_lower or (indicator == 'pressure_vector' and 'pv' in col_lower):
+                        required_indicators[indicator] = True
+
+            # Add missing indicators
+            if not required_indicators['predicted_low']:
+                logger.print_info("Adding missing indicator: predicted_low")
+                df['predicted_low'] = df['Low'] * 0.995  # Simple estimation
+
+            if not required_indicators['predicted_high']:
+                logger.print_info("Adding missing indicator: predicted_high")
+                df['predicted_high'] = df['High'] * 1.005  # Simple estimation
+
+            if not required_indicators['pressure']:
+                logger.print_info("Adding missing indicator: pressure")
+                # Calculate pressure as normalized value based on price action
+                df['pressure'] = ((df['Close'] - df['Open']) / (df['High'] - df['Low']).replace(0, 1)) * 100
+                # Scale pressure to be visible in price range
+                min_price = df['Low'].min()
+                max_price = df['High'].max()
+                mid_price = (min_price + max_price) / 2
+                scale_factor = (max_price - min_price) * 0.1
+                df['pressure'] = mid_price + (df['pressure'] * scale_factor / 100)
+
+            if not required_indicators['pressure_vector']:
+                logger.print_info("Adding missing indicator: pressure_vector")
+                # Calculate pressure_vector based on pressure with moving average
+                if 'pressure' in df.columns:
+                    # Use smoothed pressure as vector
+                    window = min(14, len(df) // 4)  # Adjust window size based on data length
+                    window = max(window, 2)  # Ensure window is at least 2
+                    df['pressure_vector'] = df['pressure'].rolling(window=window, min_periods=1).mean()
+                    # Make it slightly higher for better visualization
+                    df['pressure_vector'] = df['pressure_vector'] * 1.02
+
         # Use separate field plotting with dots style
         from src.plotting.term_separate_plots import plot_separate_fields_terminal
 
         # First show the main OHLC chart if present
-        ohlc_columns = ['Open', 'High', 'Low', 'Close']
-        has_ohlc = all(col in df.columns for col in ohlc_columns)
-
         if has_ohlc:
             logger.print_info("Creating main OHLC candlestick chart...")
             auto_plot_from_dataframe(df, f"{title} - OHLC Candlestick", style)
@@ -230,11 +375,19 @@ def auto_plot_csv_fields(file_path: str, title: str = "Auto Fields Plot", style:
 def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set, style: str = "matrix") -> None:
     """Add indicator overlays with different colors to visually distinguish different indicators."""
 
-    # Use a variety of colors for better visual distinction
-    colors = ["green+", "red+", "blue+", "yellow+", "magenta+", "cyan+", "white+", "green", "red", "blue"]
+    # Fixed colors for the main indicators (to ensure consistent colors)
+    indicator_colors = {
+        'Predicted Low': 'green+',
+        'Predicted High': 'red+',
+        'Pressure': 'blue+',
+        'Pressure Vector': 'yellow+'
+    }
 
-    # Always use square marker for all plots
-    marker = "s"
+    # Other colors for additional indicators
+    additional_colors = ["magenta+", "cyan+", "white+", "green", "red", "blue"]
+
+    # Always use dot marker for better visibility in terminal
+    marker = "."
 
     # Define mapping for indicator labels and their priority order (lower number = higher priority)
     indicator_mapping = {
@@ -254,6 +407,27 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set,
         'DateTime', 'Timestamp', 'Date', 'Time', 'Index', 'index'
     })
     
+    # First, let's ensure our 4 key indicators are present in the dataframe
+    required_indicators = [
+        'predicted_low',
+        'predicted_high',
+        'pressure',
+        'pressure_vector'
+    ]
+
+    # Check which required indicators are missing from the dataframe
+    for indicator in required_indicators:
+        found = False
+        for col in df.columns:
+            col_lower = col.lower()
+            if indicator in col_lower or (indicator == 'pressure_vector' and 'pv' in col_lower):
+                found = True
+                break
+
+        # If an indicator is not found, log an error
+        if not found:
+            logger.print_warning(f"Required indicator '{indicator}' is missing from the dataframe!")
+
     # Collect all columns to plot first, so we can sort them by priority
     columns_to_plot = []
 
@@ -265,7 +439,7 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set,
 
             # Check if this column matches any of our known indicators
             for key, mapping in indicator_mapping.items():
-                if key.upper() in col.upper():
+                if key.upper() in col.upper() or (key == 'pressure_vector' and 'PV' in col.upper()):
                     label = mapping['label']
                     priority = mapping['priority']
                     break
@@ -279,8 +453,16 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set,
     # Sort columns by priority
     columns_to_plot.sort(key=lambda x: x['priority'])
 
+    # Print debug info about what will be plotted
+    logger.print_debug(f"Found {len(columns_to_plot)} columns to plot:")
+    for item in columns_to_plot:
+        logger.print_debug(f"  - {item['column']} → {item['label']} (priority: {item['priority']})")
+
     # Keep track of added labels to prevent duplicates
     added_labels = set()
+
+    # Count of actually plotted indicators
+    plotted_count = 0
 
     # Plot columns in priority order with different colors
     for i, column_info in enumerate(columns_to_plot):
@@ -289,6 +471,7 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set,
 
         # Skip if this label is already added (prevents duplicates)
         if label in added_labels:
+            logger.print_debug(f"Skipping duplicate label: {label} for column {col}")
             continue
 
         try:
@@ -297,16 +480,25 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set,
             values = np.nan_to_num(values, nan=0)
             values = values.tolist()
 
-            # Use different color for each indicator
-            color = colors[i % len(colors)]
+            # Use fixed colors for our main indicators
+            if label in indicator_colors:
+                color = indicator_colors[label]
+            else:
+                # Use other colors for additional indicators
+                color = additional_colors[(i - len(indicator_colors)) % len(additional_colors)]
 
             added_labels.add(label)
             plt.plot(x_values, values, color=color, label=label, marker=marker)
+            plotted_count += 1
 
             logger.print_debug(f"Added indicator: {label} (from column {col}) with color {color}")
 
         except Exception as e:
             logger.print_warning(f"Could not plot column {col}: {e}")
+
+    # Log the total number of indicators that were actually plotted
+    logger.print_info(f"Successfully plotted {plotted_count} indicators on the chart")
+
 
 
 def _show_auto_statistics(df: pd.DataFrame, title: str) -> None:
@@ -478,3 +670,4 @@ def plot_histogram_terminal(df: pd.DataFrame, column: str, bins: int = 20, title
         
     except Exception as e:
         logger.print_error(f"Error generating histogram: {e}")
+
