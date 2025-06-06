@@ -235,10 +235,10 @@ def _plot_signal_field(x_values: list, field_data: list, title: str, field: str,
     sell_positions = [x for x, val in zip(x_values, field_data) if val == -1 or val == SELL]
     
     if buy_positions:
-        # Always use square marker for better visibility
-        plt.scatter(buy_positions, [1] * len(buy_positions), color="green+", label="BUY", marker="s")
+        # Use green cube marker for better visibility
+        plt.scatter(buy_positions, [1] * len(buy_positions), color="green+", label="BUY", marker="braille")
     if sell_positions:
-        plt.scatter(sell_positions, [-1] * len(sell_positions), color="green+", label="SELL", marker="s")
+        plt.scatter(sell_positions, [-1] * len(sell_positions), color="green+", label="SELL", marker="braille")
 
     plt.title(f"{title} - Trading Signals")
     plt.xlabel("Time / Bar Index")
@@ -247,8 +247,8 @@ def _plot_signal_field(x_values: list, field_data: list, title: str, field: str,
 
 def _plot_prediction_field(x_values: list, field_data: list, title: str, field: str, style: str = "matrix") -> None:
     """Plot prediction data as lines with special markers."""
-    # Always use square marker for better visibility
-    plt.plot(x_values, field_data, color="green+", label=field, marker="s")
+    # Use green cube marker for better visibility
+    plt.plot(x_values, field_data, color="green+", label=field, marker="braille")
     plt.title(f"{title} - Predictions")
     plt.xlabel("Time / Bar Index")
     plt.ylabel("Predicted Price")
@@ -259,8 +259,8 @@ def _plot_price_field(x_values: list, field_data: list, title: str, field: str, 
     # Always use green+ color for consistency
     color = "green+"
 
-    # Always use square marker for better visibility
-    plt.plot(x_values, field_data, color=color, label=field, marker="s")
+    # Use green cube marker for better visibility
+    plt.plot(x_values, field_data, color=color, label=field, marker="braille")
     plt.title(f"{title} - Price Data")
     plt.xlabel("Time / Bar Index")
     plt.ylabel("Price")
