@@ -21,7 +21,7 @@ except ImportError:
 
 def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot", style: str = "matrix") -> None:
     """
-    Automatically plot all numeric columns from a DataFrame in terminal with beautiful styling.
+    Automatically plot all numeric columns from a DataFrame in terminal with enhanced styling.
     Uses candlestick charts for OHLC data and line plots for other indicators.
     
     Args:
@@ -30,8 +30,8 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
         style (str): Plot style ('matrix', 'dots', 'git', etc.)
     """
     try:
-        logger.print_info("Generating beautiful auto terminal plot for all DataFrame columns...")
-        
+        logger.print_info("Generating auto terminal plot for all DataFrame columns...")
+
         # Clear any previous plots
         plt.clear_data()
         plt.clear_figure()
@@ -66,7 +66,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
 
         # MAIN PANEL: OHLC Candlestick or Indicators
         if has_ohlc:
-            logger.print_info("Creating beautiful OHLC candlestick chart with 'dots' style...")
+            logger.print_info("Creating OHLC candlestick chart with 'dots' style...")
             if has_volume:
                 plt.subplot(1, 1)  # Top panel
             # Prepare OHLC data for candlestick
@@ -84,7 +84,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
             # Add other indicators as overlays on the price chart
             _add_indicator_overlays(df, x_values, skip_columns={'Open', 'High', 'Low', 'Close', 'Volume'}, style=style)
         else:
-            logger.print_info("Creating beautiful multi-indicator chart with 'dots' style...")
+            logger.print_info("Creating multi-indicator chart with 'dots' style...")
             plt.title(f"{title} - Auto Indicators Chart")
             plt.xlabel("Time / Bar Index") 
             plt.ylabel("Values")
@@ -93,7 +93,7 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
         
         # VOLUME PANEL (if available)
         if has_volume:
-            logger.print_info("Creating beautiful volume panel...")
+            logger.print_info("Creating volume panel...")
             plt.subplot(2, 1)  # Bottom panel
             
             # Safely convert volume to integers, handling NaN, inf, and non-numeric values
@@ -116,14 +116,14 @@ def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot"
             plt.ylabel("Volume")
         
         # Display the plot
-        logger.print_info("Displaying beautiful auto terminal plot...")
+        logger.print_info("Displaying auto terminal plot...")
         plt.show()
         
         # Show enhanced statistics
         _show_auto_statistics(df, title)
         
-        logger.print_success("Beautiful auto terminal plot generated successfully!")
-        
+        logger.print_success("Auto terminal plot generated successfully!")
+
     except Exception as e:
         logger.print_error(f"Error generating auto terminal plot: {e}")
         logger.print_debug(f"Exception details: {type(e).__name__}: {e}")
@@ -235,6 +235,19 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set,
 
     # Always use square marker for all plots
     marker = "s"
+
+    # Define mapping for indicator labels
+    indicator_labels = {
+        'predicted_low': 'Predicted Low',
+        'predicted_high': 'Predicted High',
+        'pprice1': 'Predicted Low',
+        'pprice2': 'Predicted High',
+        'pressure': 'Pressure',
+        'pressure_vector': 'Pressure Vector',
+        'pv': 'Pressure Vector',
+        'direction': 'Direction',
+        'signal': 'Signal'
+    }
 
     # Standard columns to skip
     extended_skip = skip_columns.union({
