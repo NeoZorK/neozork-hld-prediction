@@ -133,11 +133,11 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set)
     # Enhanced marker set for variety
     markers = [".", "*", "x", "+", "o", "^", "v", "s", "d"]
     
-    # Emoji mapping for common indicators
-    indicator_emojis = {
-        'HL': '📏', 'Pressure': '💨', 'PV': '🎯', 'RSI': '📊', 'MACD': '📈',
-        'SMA': '📉', 'EMA': '⚡', 'BB': '🎪', 'Direction': '🎯', 'Signal': '🚨',
-        'PPrice1': '🔮', 'PPrice2': '🔮', 'Momentum': '🚀', 'Trend': '📈'
+    # Clean labels for common indicators without emojis  
+    indicator_labels = {
+        'HL': 'HL Range', 'Pressure': 'Pressure', 'PV': 'PV', 'RSI': 'RSI', 'MACD': 'MACD',
+        'SMA': 'SMA', 'EMA': 'EMA', 'BB': 'Bollinger Bands', 'Direction': 'Direction', 'Signal': 'Signal',
+        'PPrice1': 'Predicted Low', 'PPrice2': 'Predicted High', 'Momentum': 'Momentum', 'Trend': 'Trend'
     }
     
     color_index = 0
@@ -155,14 +155,13 @@ def _add_indicator_overlays(df: pd.DataFrame, x_values: list, skip_columns: set)
                 color = colors[color_index % len(colors)]
                 marker = markers[marker_index % len(markers)]
                 
-                # Add emoji to label if available
-                emoji = ""
-                for key, emoji_char in indicator_emojis.items():
+                # Add clean label if available
+                label = col
+                for key, clean_label in indicator_labels.items():
                     if key.upper() in col.upper():
-                        emoji = emoji_char + " "
+                        label = clean_label
                         break
                 
-                label = f"{emoji}{col}"
                 plt.plot(x_values, values, color=color, label=label, marker=marker)
                 
                 color_index += 1
