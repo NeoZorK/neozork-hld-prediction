@@ -27,7 +27,7 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
                                 title: str = "PHLD Terminal Plot",
                                 output_path: Optional[str] = None) -> None:
     """
-    Plot PHLD (Predict High Low Direction) indicators in terminal using beautiful candlestick charts.
+    Plot PHLD (Predict High Low Direction) indicators in terminal using candlestick charts.
     Specialized for displaying pressure, PV, HL, predicted prices, and trading signals.
     
     Args:
@@ -73,9 +73,9 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
         # Convert rule to string
         rule_str = rule.name if hasattr(rule, 'name') else str(rule)
         
-        # MAIN PANEL: Beautiful Candlestick Chart with PHLD overlays
+        # MAIN PANEL: Candlestick Chart with PHLD overlays
         if has_ohlc:
-            logger.print_info("Creating beautiful PHLD candlestick chart...")
+            logger.print_info("Creating PHLD candlestick chart...")
             
             if has_volume:
                 plt.subplot(1, 1)  # Top panel
@@ -89,7 +89,7 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
             }
             
             plt.candlestick(x_values, ohlc_data)
-            plt.title(f"{title} - Beautiful PHLD Candlestick Chart")
+            plt.title(f"{title} - PHLD Candlestick Chart")
             
             if not has_volume:
                 plt.xlabel("Time / Bar Index")
@@ -121,13 +121,13 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
             plt.ylabel("Volume")
         
         # Display the plot
-        logger.print_info("Displaying beautiful PHLD terminal plot...")
+        logger.print_info("Displaying PHLD terminal plot...")
         plt.show()
         
         # Show enhanced PHLD statistics
         _show_phld_statistics(df, rule_str)
         
-        logger.print_success("Beautiful PHLD terminal plot generated successfully!")
+        logger.print_success("PHLD terminal plot generated successfully!")
         
     except Exception as e:
         logger.print_error(f"Error generating PHLD terminal plot: {e}")
@@ -240,11 +240,11 @@ def _add_phld_overlays(df: pd.DataFrame, x_values: list, plot_base_indicators: b
 
 
 def _show_phld_statistics(df: pd.DataFrame, rule_str: str) -> None:
-    """Display beautiful PHLD-specific statistics."""
+    """Display PHLD-specific statistics."""
     
     header_line = "═" * 85
     print(f"\n{header_line}")
-    print(f"{'BEAUTIFUL PHLD PLOT STATISTICS':^85}")
+    print(f"{' PHLD PLOT STATISTICS':^85}")
     print(f"{rule_str:^85}")
     print(f"{header_line}")
     
