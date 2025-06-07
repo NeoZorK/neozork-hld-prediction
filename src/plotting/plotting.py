@@ -11,10 +11,18 @@ import os
 
 from .mplfinance_plot import plot_indicator_results_mplfinance
 from .plotly_plot import plot_indicator_results_plotly
-# Use relative imports for constants and logger
-from ..common.constants import TradingRule
-from ..common import logger
+from .term_plot import plot_indicator_results_term # Import the new terminal plotting function
 from .fast_plot import plot_indicator_results_fast # Import the fast plot function
+from .term_separate_plots import plot_separate_fields_terminal, plot_specific_fields_terminal # Import separate field plotting
+
+# Use absolute imports when possible, fallback to relative
+try:
+    from common.constants import TradingRule
+    from common import logger
+except ImportError:
+    # Fallback to relative imports when run as module
+    from ..common.constants import TradingRule
+    from ..common import logger
 
 # Check if running in Docker
 IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
@@ -67,6 +75,7 @@ def plot_indicator_results(df_results, rule, title="Indicator Results", mode="pl
                     - 'fast': Uses Dask + Datashader + Bokeh (default for large datasets)
                     - 'plotly'/'plt': Uses Plotly for interactive HTML plots
                     - 'mplfinance'/'mpl': Uses mplfinance for static image plots
+                    - 'term': Uses plotext for terminal-based plotting
         data_source (str): Source of the data (for special formatting).
         output_path (str): Path to save the output file (for 'fastest' and 'fast' modes).
     
@@ -85,6 +94,21 @@ def plot_indicator_results(df_results, rule, title="Indicator Results", mode="pl
 
         # Standardize the mode parameter
         mode = mode.lower() if isinstance(mode, str) else 'plotly'
+        
+        # Docker override: always use 'term' mode for drawing (unless disabled for testing)
+        disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
+        
+        if IN_DOCKER and not disable_docker_detection and mode not in ['term']:
+            logger.print_info(f"Docker detected: forcing draw mode from '{mode}' to 'term' (terminal plotting)")
+            mode = 'term'
+        elif IN_DOCKER and not disable_docker_detection and mode == 'term':
+            logger.print_info("Docker detected: already using 'term' mode")
+        elif disable_docker_detection:
+            logger.print_info(f"Docker detection disabled for testing, using requested mode: '{mode}'")
+        else:
+            logger.print_info(f"Not in Docker or already 'term' mode. IN_DOCKER={IN_DOCKER}, mode='{mode}'")
+        
+        logger.print_info(f"Final plotting mode selected: '{mode}'")
         
         # Route to the appropriate plotting function
         if mode == 'fastest':
@@ -109,6 +133,9 @@ def plot_indicator_results(df_results, rule, title="Indicator Results", mode="pl
                 logger.print_error(error_msg)
                 logger.print_warning("Falling back to 'plotly' mode due to error...")
                 return plot_indicator_results_plotly(df_results, rule, title)
+        elif mode == 'term':
+            logger.print_info(f"Using 'term' mode (plotext in terminal) for plotting...")
+            return plot_indicator_results_term(df_results, rule, title)
         else:
             logger.print_warning(f"Unknown plotting mode '{mode}', defaulting to 'plotly'...")
             return plot_indicator_results_plotly(df_results, rule, title)
