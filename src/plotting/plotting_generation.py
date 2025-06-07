@@ -514,8 +514,10 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
     # Check if selected_rule is AUTO
     is_auto_rule = rule_upper == 'AUTO' or rule_str == 'Auto_Display_All'
 
-    # Check if we're dealing with PHLD rule
+    # Check if we're dealing with specific rule types
     is_phld_rule = rule_upper == 'PHLD' or rule_upper == 'PREDICT_HIGH_LOW_DIRECTION'
+    is_pv_rule = rule_upper == 'PV' or rule_upper == 'PRESSURE_VECTOR'
+    is_sr_rule = rule_upper == 'SR' or rule_upper == 'SUPPORT_RESISTANTS'
 
     # Check if we're dealing with parquet file from csv_converted directory
     parquet_from_cache = False
@@ -838,6 +840,44 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
             else:
                 logger.print_warning(f"Missing required OHLCV columns for PHLD calculation")
                 plot_indicator_results_term(result_df, selected_rule, plot_title)
+        return
+
+    # For PV rule, use the specialized PV plotting function
+    elif is_pv_rule:
+        logger.print_info("PV rule detected, using specialized PV terminal plotting...")
+        from .fixed_term_pv_plot import safe_plot_pv_terminal
+
+        try:
+            safe_plot_pv_terminal(
+                result_df,
+                selected_rule,
+                f"{plot_title} - Pressure Vector",
+                None
+            )
+            logger.print_success("Successfully plotted PV indicators")
+        except Exception as e:
+            logger.print_error(f"Error plotting PV indicators: {e}")
+            # Fallback to standard terminal plot
+            plot_indicator_results_term(result_df, selected_rule, plot_title)
+        return
+
+    # For SR rule, use the specialized SR plotting function
+    elif is_sr_rule:
+        logger.print_info("SR rule detected, using specialized SR terminal plotting...")
+        from .fixed_term_sr_plot import safe_plot_sr_terminal
+
+        try:
+            safe_plot_sr_terminal(
+                result_df,
+                selected_rule,
+                f"{plot_title} - Support/Resistance",
+                None
+            )
+            logger.print_success("Successfully plotted SR indicators")
+        except Exception as e:
+            logger.print_error(f"Error plotting SR indicators: {e}")
+            # Fallback to standard terminal plot
+            plot_indicator_results_term(result_df, selected_rule, plot_title)
         return
 
     # Default to standard terminal plot for other rules
