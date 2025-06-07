@@ -1,6 +1,6 @@
 # src/cli/cli_examples.py
 
-from colorama import init, Fore, Style, Back
+from colorama import init, Fore, Style
 
 # Initialize colorama for cross-platform colored output
 init(autoreset=True)
