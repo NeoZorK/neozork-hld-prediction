@@ -17,13 +17,20 @@ import urllib3
 # Disable InsecureRequestWarning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+# Define log directory
+LOG_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "logs")
+# Ensure log directory exists
+os.makedirs(LOG_DIR, exist_ok=True)
+# Log file path
+LOG_FILE = os.path.join(LOG_DIR, "yfinance_debug.log")
+
 # Setup basic logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(),
-        logging.FileHandler("yfinance_debug.log")
+        logging.FileHandler(LOG_FILE)
     ]
 )
 logger = logging.getLogger('yfinance_debug')
