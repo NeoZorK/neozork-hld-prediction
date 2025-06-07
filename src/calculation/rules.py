@@ -92,7 +92,7 @@ def apply_rule_pressure_vector(df: pd.DataFrame):
     df['Diff'] = EMPTY_VALUE
     return df
 
-def apply_rule_auto(df: pd.DataFrame, point: float):
+def apply_rule_auto(df: pd.DataFrame):
     """
     AUTO rule - returns the data as-is with all available indicator columns.
     This rule is designed for displaying all non-standard OHLCV fields in terminal.
