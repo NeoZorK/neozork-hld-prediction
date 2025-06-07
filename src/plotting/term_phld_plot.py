@@ -51,7 +51,7 @@ def plot_phld_indicator_terminal(df: pd.DataFrame,
         # Check available data
         ohlc_columns = ['Open', 'High', 'Low', 'Close']
         has_ohlc = all(col in df.columns for col in ohlc_columns)
-        has_volume = 'Volume' in df.columns and not df['Volume'].isna().all()
+        has_volume = 'Volume' in df.columns and df['Volume'].notna().any()
         
         # Set up layout based on available data - PHLD typically has volume
         if has_ohlc and has_volume:
