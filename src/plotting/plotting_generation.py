@@ -6,7 +6,10 @@ from .plotly_plot import plot_indicator_results_plotly
 from .fast_plot import plot_indicator_results_fast
 from .seaborn_plot import plot_indicator_results_seaborn
 from .term_plot import plot_indicator_results_term  # Standard terminal plotting
-from .term_phld_plot import plot_phld_indicator_terminal  # New specialized PHLD terminal plotting
+# Deprecated: using fixed version instead
+# from .term_phld_plot import plot_phld_indicator_terminal  # New specialized PHLD terminal plotting
+# Import safe alternative implementation
+from .fixed_term_phld_plot import safe_plot_phld_terminal  # Fixed version without DataFrame ambiguity
 from src.calculation.core_calculations import calculate_hl, calculate_pressure, calculate_pv
 from ..calculation.indicator_calculation import calculate_indicator
 from ..plotting.term_auto_plot import auto_plot_from_dataframe  # Auto plotting function
@@ -610,7 +613,7 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
             # Now show calculated indicators if available
             if calculated_df is not None:
                 print("\n🧮 SHOWING NEWLY CALCULATED PHLD INDICATORS")
-                plot_phld_indicator_terminal(
+                safe_plot_phld_terminal(
                     calculated_df,
                     selected_rule,
                     f"{plot_title} - Calculated PHLD Indicators",
@@ -675,7 +678,7 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
                 logger.print_success("Successfully plotted all pre-calculated indicators from parquet file")
             except ImportError:
                 logger.print_warning("Could not import auto_plot_from_dataframe, falling back to standard PHLD plot for pre-calculated indicators")
-                plot_phld_indicator_terminal(result_df, selected_rule, f"{plot_title} - Pre-calculated", None)
+                safe_plot_phld_terminal(result_df, selected_rule, f"{plot_title} - Pre-calculated", None)
 
             # 2. Calculate PHLD indicators from OHLCV data
             logger.print_info("Calculating PHLD indicators from OHLCV data for comparison...")
@@ -713,7 +716,7 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
                                 calculated_df[f"{col.lower()}_calc"] = calculated_df[col]
 
                         # Plot calculated indicators
-                        plot_phld_indicator_terminal(
+                        safe_plot_phld_terminal(
                             calculated_df,
                             selected_rule,
                             f"{plot_title} - Calculated Indicators",
@@ -766,21 +769,21 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
                             for orig_col, calc_col in common_indicators:
                                 comparison_df[f"{calc_col}_calculated"] = calculated_df[calc_col]
 
-                            plot_phld_indicator_terminal(comparison_df, selected_rule, plot_title, None)
+                            safe_plot_phld_terminal(comparison_df, selected_rule, plot_title, None)
                         else:
                             logger.print_warning("No common indicators found for comparison")
                             # Just show the original indicators
-                            plot_phld_indicator_terminal(result_df, selected_rule, plot_title, None)
+                            safe_plot_phld_terminal(result_df, selected_rule, plot_title, None)
                     else:
                         logger.print_warning("Failed to calculate PHLD indicators, showing only pre-calculated indicators")
-                        plot_phld_indicator_terminal(result_df, selected_rule, plot_title, None)
+                        safe_plot_phld_terminal(result_df, selected_rule, plot_title, None)
                 else:
                     logger.print_warning(f"Missing required OHLCV columns for PHLD calculation. Required: {required_columns}, Available: {result_df.columns.tolist()}")
-                    plot_phld_indicator_terminal(result_df, selected_rule, plot_title, None)
+                    safe_plot_phld_terminal(result_df, selected_rule, plot_title, None)
             except Exception as e:
                 logger.print_error(f"Error calculating PHLD indicators: {e}")
                 logger.print_warning("Showing only pre-calculated indicators due to calculation error")
-                plot_phld_indicator_terminal(result_df, selected_rule, plot_title, None)
+                safe_plot_phld_terminal(result_df, selected_rule, plot_title, None)
 
         # 3. THIRD CASE: No pre-calculated indicators - just calculate and show
         else:
@@ -819,7 +822,7 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
 
                     if calculated_df is not None:
                         print("\n🧮 SHOWING CALCULATED PHLD INDICATORS")
-                        plot_phld_indicator_terminal(
+                        safe_plot_phld_terminal(
                             calculated_df,
                             selected_rule,
                             f"{plot_title} - Calculated PHLD Indicators",
