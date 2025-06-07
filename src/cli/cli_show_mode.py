@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 # src/core/cli_show_mode.py
 
-import os
 from pathlib import Path
 import pyarrow.parquet as pq
 import pandas as pd
 import sys
 import traceback
-from colorama import init, Fore, Style, Back
+from colorama import init, Fore, Style
 
 # Initialize colorama for cross-platform colored output
 init(autoreset=True)
