@@ -253,6 +253,25 @@ def prompt_for_tests_with_docker() -> List[Tuple[str, bool]]:
 
     return selected_tests
 
+def prompt_for_individual_tests() -> List[str]:
+    """Ask user about each test category individually."""
+    selected_tests = []
+
+    print_header("Individual Test Selection")
+
+    for category, info in TEST_CATEGORIES.items():
+        print(f"\nTest: {category} - {info['description']}")
+        while True:
+            response = input(f"Run {category} tests? (y/n): ").strip().lower()
+            if response in ('y', 'n'):
+                if response == 'y':
+                    selected_tests.append(category)
+                break
+            else:
+                print("Please enter 'y' or 'n'")
+
+    return selected_tests
+
 def run_selected_tests(categories: List[str]) -> Dict[str, bool]:
     """Run tests for selected categories."""
     results = {}
@@ -349,6 +368,7 @@ def main():
     parser.add_argument('--parquet', action='store_true', help='Run Parquet file tests')
     parser.add_argument('--docker', action='store_true', help='Run tests in Docker')
     parser.add_argument('--docker-only', action='store_true', help='Run tests only in Docker without local execution')
+    parser.add_argument('--individual', action='store_true', help='Ask about each test category individually')
     args = parser.parse_args()
 
     # Get project root directory
@@ -380,22 +400,26 @@ def main():
         print_summary(results_docker)
         return
 
-    # If we're already in a Docker container, just run the local tests
+    # If we're already in a Docker container, use individual selection mode
     if in_docker:
         print_colored("Running in Docker environment", 'cyan')
 
-        # If no specific categories selected, run all tests
-        if not selected_categories:
-            selected_categories = list(TEST_CATEGORIES.keys())
+        # Use individual test selection when in Docker
+        selected_categories = prompt_for_individual_tests()
 
         if selected_categories:
             print_colored(f"Running tests for: {', '.join(selected_categories)}", 'cyan')
             results = run_selected_tests(selected_categories)
             print_summary(results)
+        else:
+            print_colored("No tests selected for execution.", 'yellow')
         return
 
+    # If individual mode is explicitly requested
+    if args.individual:
+        selected_categories = prompt_for_individual_tests()
     # If no command line args specified and not in Docker, prompt interactively
-    if not selected_categories and not args.docker_only:
+    elif not selected_categories and not args.docker_only:
         selected_categories = prompt_for_tests()
 
     # Run the selected tests locally if any
