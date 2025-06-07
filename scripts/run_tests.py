@@ -146,7 +146,7 @@ def run_docker_container(docker_image: str, script_path: str, args: Optional[Lis
         bool: True if successful, False otherwise
     """
     # Construct the docker run command
-    cmd = ["docker", "run", "--rm"]
+    cmd = ["docker", "run", "--rm", "-it"]  # Add -it flag for interactive mode
 
     # Map current directory to /app in container
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -166,33 +166,51 @@ def run_docker_container(docker_image: str, script_path: str, args: Optional[Lis
     logger.info(f"Running docker: {' '.join(cmd)}")
 
     try:
-        start_time = time.time()
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-            bufsize=1
-        )
+        # For interactive scripts like examine_parquet.py, we need to use system call directly
+        # instead of subprocess.Popen to ensure proper interactive mode
+        if "examine_parquet.py" in script_path:
+            # Use os.system for truly interactive processes
+            cmd_str = " ".join(cmd)
+            start_time = time.time()
+            logger.info(f"Executing interactive command: {cmd_str}")
+            return_code = os.system(cmd_str)
+            elapsed_time = time.time() - start_time
 
-        # Print output in real-time
-        for line in process.stdout:
-            print(line, end='')
-
-        # Wait for process to complete
-        process.wait()
-        elapsed_time = time.time() - start_time
-
-        if process.returncode == 0:
-            logger.info(f"Docker run completed successfully in {elapsed_time:.2f}s: {docker_image}")
-            return True
+            if return_code == 0:
+                logger.info(f"Docker run completed successfully in {elapsed_time:.2f}s: {docker_image}")
+                return True
+            else:
+                logger.error(f"Docker run failed with return code {return_code}: {docker_image}")
+                return False
         else:
-            # Collect stderr
-            stderr_output = process.stderr.read()
-            logger.error(f"Docker run failed with return code {process.returncode}: {docker_image}")
-            if stderr_output:
-                logger.error(f"Error output: {stderr_output}")
-            return False
+            # For non-interactive scripts, use subprocess as before
+            start_time = time.time()
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True,
+                bufsize=1
+            )
+
+            # Print output in real-time
+            for line in process.stdout:
+                print(line, end='')
+
+            # Wait for process to complete
+            process.wait()
+            elapsed_time = time.time() - start_time
+
+            if process.returncode == 0:
+                logger.info(f"Docker run completed successfully in {elapsed_time:.2f}s: {docker_image}")
+                return True
+            else:
+                # Collect stderr
+                stderr_output = process.stderr.read()
+                logger.error(f"Docker run failed with return code {process.returncode}: {docker_image}")
+                if stderr_output:
+                    logger.error(f"Error output: {stderr_output}")
+                return False
 
     except Exception as e:
         logger.error(f"Error running docker container {docker_image}: {str(e)}")
