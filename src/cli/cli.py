@@ -9,33 +9,64 @@ import argparse
 import textwrap
 import sys  # Import sys for exit
 import src.cli.cli_examples as cli_examples
-try:
-    # Try importing from rich_argparse first
-    from rich_argparse import RichHelpFormatter
-    from rich.console import Console
-except ImportError:
-    try:
-        # Fallback to rich.argparse if rich_argparse is not installed
-        from rich.argparse import RichHelpFormatter
-        from rich.console import Console
-    except ImportError:
-        # Fallback to standard argparse formatter if rich is not available
-        print("Warning: 'rich' or 'rich-argparse' not installed. Help formatting will be basic.")
-        print("Install with: pip install rich")
-        RichHelpFormatter = argparse.ArgumentDefaultsHelpFormatter
-        Console = None
+from colorama import init, Fore, Style
+
+# Initialize colorama for cross-platform colored output
+init(autoreset=True)
 
 # Use relative imports for constants and version within the src package
 from ..common.constants import TradingRule
 from .. import __version__  # Make sure version is updated in src/__init__.py
 
 
+# Custom help formatter to use colors
+class ColoredHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
+    """Custom help formatter that adds color to the help output."""
+
+    def _format_action_invocation(self, action):
+        """Format the action invocation (e.g. -h, --help) with color."""
+        if action.option_strings:
+            parts = []
+            for option_string in action.option_strings:
+                parts.append(f"{Fore.GREEN}{option_string}{Style.RESET_ALL}")
+            return ', '.join(parts)
+        else:
+            return super()._format_action_invocation(action)
+
+    def _format_usage(self, usage, actions, groups, prefix):
+        """Format usage with colors."""
+        if prefix is None:
+            prefix = f"{Fore.YELLOW}usage: {Style.RESET_ALL}"
+        return super()._format_usage(usage, actions, groups, prefix)
+
+    def _format_args(self, action, default_metavar):
+        """Format args with colors."""
+        result = super()._format_args(action, default_metavar)
+        return f"{Fore.CYAN}{result}{Style.RESET_ALL}"
+
+    def _get_help_string(self, action):
+        """Format help string with colors."""
+        help_text = super()._get_help_string(action)
+        if action.default != argparse.SUPPRESS and action.default is not None:
+            defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
+            if action.option_strings or action.nargs in defaulting_nargs:
+                help_text = help_text.replace(f"(default: {action.default})",
+                                           f"({Fore.MAGENTA}default: {action.default}{Style.RESET_ALL})")
+        return help_text
+
+    def start_section(self, heading):
+        """Format section headings with colors."""
+        heading = f"{Fore.YELLOW}{Style.BRIGHT}{heading}{Style.RESET_ALL}"
+        super().start_section(heading)
+
 # Definition of the argument parsing function
 def parse_arguments():
-    """Sets up argument parser using RichHelpFormatter and returns the parsed arguments."""
+    """Sets up argument parser using ColoredHelpFormatter and returns the parsed arguments."""
 
     # --- Main description ---
-    main_description = textwrap.dedent("""
+    main_description = textwrap.dedent(f"""
+       {Fore.CYAN}{Style.BRIGHT}Shcherbyna Pressure Vector Indicator Analysis Tool{Style.RESET_ALL}
+       
        Calculate and plot Shcherbyna Pressure Vector indicator using demo data,
        fetching from Yahoo Finance, reading from a CSV file, fetching from Polygon.io,
        or fetching from Binance. Allows choosing the plotting library.
@@ -45,7 +76,7 @@ def parse_arguments():
     # --- Argument Parser Setup ---
     parser = argparse.ArgumentParser(
         description=main_description,
-        formatter_class=RichHelpFormatter,
+        formatter_class=ColoredHelpFormatter,
         epilog=None,  # no epilog
         add_help=False  # Disable default help to add it to a specific group
     )
@@ -130,9 +161,9 @@ def parse_arguments():
     plotting_group = parser.add_argument_group('Plotting Options')
     plotting_group.add_argument(
         '-d', '--draw',
-        choices=['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb'],
+        choices=['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb', 'term'],
         default='fastest',
-        help="Choose plotting library: 'fastest' (Plotly+Dask+Datashader for extremely large datasets, default), 'fast' (Dask+Datashader+Bokeh), 'plotly'/'plt' (interactive HTML), 'mplfinance'/'mpl' (static image), or 'seaborn'/'sb' (statistical plots)."
+        help="Choose plotting library: 'fastest' (Plotly+Dask+Datashader for extremely large datasets, default), 'fast' (Dask+Datashader+Bokeh), 'plotly'/'plt' (interactive HTML), 'mplfinance'/'mpl' (static image), 'seaborn'/'sb' (statistical plots), or 'term' (terminal charts with plotext)."
     )
 
     # --- Output Options Group ---
@@ -147,7 +178,7 @@ def parse_arguments():
     other_group.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
                              help='Show this help message and exit.')
     other_group.add_argument('--version', action='version',
-                             version=f'%(prog)s [yellow]{__version__}[/]',
+                             version=f'{"Shcherbyna Pressure Vector Indicator v"+__version__}',
                              help="Show program's version number and exit.")
 
     # --- Parse Arguments ---
@@ -158,11 +189,7 @@ def parse_arguments():
             sys.exit(0)
 
         if '--examples' in sys.argv:
-            if 'Console' in globals() and Console is not None:
-                cli_examples.show_cli_examples(Console)
-            else:
-                cli_examples.print_cli_examples()
-
+            cli_examples.show_cli_examples_colored()
             sys.exit(0)
         args = parser.parse_args()
     except SystemExit as e:
@@ -246,5 +273,8 @@ def parse_arguments():
                 else:
                     args.keywords = filtered_args
 
-    return args
+    # --- Fix: Map --show-rule to args.rule for show mode compatibility ---
+    if effective_mode == 'show' and hasattr(args, 'show_rule') and args.show_rule:
+        args.rule = args.show_rule
 
+    return args

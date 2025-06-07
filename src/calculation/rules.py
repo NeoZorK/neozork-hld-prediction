@@ -92,6 +92,24 @@ def apply_rule_pressure_vector(df: pd.DataFrame):
     df['Diff'] = EMPTY_VALUE
     return df
 
+def apply_rule_auto(df: pd.DataFrame, point: float):
+    """
+    AUTO rule - returns the data as-is with all available indicator columns.
+    This rule is designed for displaying all non-standard OHLCV fields in terminal.
+    """
+    # For AUTO rule, we don't modify the data, just ensure the required output columns exist
+    # Set default values for expected output columns but don't calculate specific indicators
+    df['PPrice1'] = df['Open']  # Default to Open price
+    df['PColor1'] = NOTRADE     # No trading signal
+    df['PPrice2'] = df['Open']  # Default to Open price  
+    df['PColor2'] = NOTRADE     # No trading signal
+    df['Direction'] = NOTRADE   # No direction signal
+
+    # Ensure Diff column exists
+    if 'Diff' not in df.columns:
+        df['Diff'] = pd.Series(dtype=float)
+    #df['Diff'] = EMPTY_VALUE    # No difference calculation
+    return df
 
 # --- Rule Dispatcher ---
 # Maps TradingRule enum to the corresponding function
@@ -100,6 +118,7 @@ RULE_DISPATCHER = {
     TradingRule.Support_Resistants: apply_rule_support_resistants,
     TradingRule.Pressure_Vector: apply_rule_pressure_vector,
     TradingRule.Predict_High_Low_Direction: apply_rule_predict_hld,
+    TradingRule.AUTO: apply_rule_auto,  # Add AUTO rule support
 }
 
 def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float) -> pd.DataFrame:
@@ -127,7 +146,7 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float) 
         rule_func = RULE_DISPATCHER[selected_rule]
 
     # Call the rule function with the DataFrame and point
-    if selected_rule in [TradingRule.PV_HighLow, TradingRule.Support_Resistants, TradingRule.Predict_High_Low_Direction]:
+    if selected_rule in [TradingRule.PV_HighLow, TradingRule.Support_Resistants, TradingRule.Predict_High_Low_Direction, TradingRule.AUTO]:
         return rule_func(df, point=point)
     elif selected_rule == TradingRule.Pressure_Vector:
         if rule_func:
