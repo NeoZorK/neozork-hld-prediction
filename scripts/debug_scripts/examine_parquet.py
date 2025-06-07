@@ -220,8 +220,10 @@ def main():
         for i, file_path in enumerate(parquet_files, 1):
             print(f"{i}. {file_path}")
 
+        print("Enter the number of the file to examine (or 'q' to quit):")
+
         try:
-            choice = input("\nEnter the number of the file to examine (or 'q' to quit): ")
+            choice = input("\n ")
             if choice.lower() == 'q':
                 return
 
