@@ -40,8 +40,7 @@ def print_error(message: str):
 
 def print_debug(message: str):
     """Prints a debug message."""
-    # Consider adding a global DEBUG flag to enable/disable these later
-    # Automatically adds "Debug: " prefix
+    # Output debug message with color and "Debug:" prefix
     print(f"{DEBUG_COLOR}Debug: {message}")
 
 def print_success(message: str):
