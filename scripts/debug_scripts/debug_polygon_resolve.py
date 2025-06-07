@@ -34,8 +34,8 @@ else:
 
 # --- Initialize Client ---
 try:
-    # Polygon API expects auth_key parameter
-    client = RESTClient(auth_key=api_key)
+    # Polygon API expects api_key parameter
+    client = RESTClient(api_key=api_key)
     print("Polygon client initialized.")
 except Exception as e:
     print(f"ERROR: Failed to initialize Polygon client: {type(e).__name__}: {e}")
@@ -56,8 +56,8 @@ print("\n--- Starting Ticker Detail Tests ---")
 for ticker in tickers_to_test:
     print(f"\nTesting ticker: '{ticker}'...")
     try:
-        # Attempt to get details - use reference.ticker_details method
-        details_response = client.reference_ticker_details(ticker)
+        # Attempt to get details - use ticker_details (correct method name)
+        details_response = client.get_ticker_details(ticker)
         # If successful (no exception)
         print(f"[SUCCESS] Found ticker '{ticker}'. Response type: {type(details_response)}")
         # Optionally print some details if needed:
