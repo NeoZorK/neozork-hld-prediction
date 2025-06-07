@@ -130,3 +130,5 @@ polygon-api-client===0.1.0
 python-binance==1.0.17
 pyarrow
 mplfinance
+statsmodels
+bokeh
