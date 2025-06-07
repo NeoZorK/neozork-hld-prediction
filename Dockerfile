@@ -65,7 +65,7 @@ RUN mkdir -p /tmp/bash_config && \
     chmod -R 777 /tmp/bash_config
 
 # Create necessary directories with appropriate permissions
-RUN mkdir -p /app/data/cache /app/data/raw_parquet /app/logs /tmp/matplotlib-cache /app/results/plots /app/.pytest_cache \
+RUN mkdir -p /app/data/cache/csv_converted /app/data/raw_parquet /app/logs /tmp/matplotlib-cache /app/results/plots /app/.pytest_cache \
     && chmod -R 777 /tmp/matplotlib-cache /app/results /app/data /app/logs /app/.pytest_cache
 
 # Define environment variables
