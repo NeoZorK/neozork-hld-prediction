@@ -100,7 +100,7 @@ def examine_parquet(file_path, show_rows=3, verbose=False):
 
             return None, None
 
-        # Now print the reading message after validation but before actual reading
+        # Print reading message at the beginning of actual processing
         print(f"Reading parquet file: {abs_path}")
 
         # Read the parquet file
