@@ -104,8 +104,11 @@ def apply_rule_auto(df: pd.DataFrame, point: float):
     df['PPrice2'] = df['Open']  # Default to Open price  
     df['PColor2'] = NOTRADE     # No trading signal
     df['Direction'] = NOTRADE   # No direction signal
-    df['Diff'] = EMPTY_VALUE    # No difference calculation
-    
+
+    # Ensure Diff column exists
+    if 'Diff' not in df.columns:
+        df['Diff'] = pd.Series(dtype=float)
+    #df['Diff'] = EMPTY_VALUE    # No difference calculation
     return df
 
 # --- Rule Dispatcher ---
