@@ -47,7 +47,6 @@ def examine_parquet(file_path, show_rows=3, verbose=False):
     try:
         # Convert to absolute path if relative
         abs_path = os.path.abspath(file_path)
-        print(f"Reading parquet file: {abs_path}")
 
         # Handle the case with trailing dot in filename (e.g., .parquet.)
         if abs_path.endswith('.parquet.'):
@@ -100,6 +99,9 @@ def examine_parquet(file_path, show_rows=3, verbose=False):
                 print(f"Try using one of these paths instead.")
 
             return None, None
+
+        # Now print the reading message after validation but before actual reading
+        print(f"Reading parquet file: {abs_path}")
 
         # Read the parquet file
         try:
