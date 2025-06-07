@@ -2,7 +2,7 @@
 import yfinance as yf
 import pandas as pd
 
-ticker = 'GOOG'
+ticker = 'AAPL'
 period = '1mo'
 interval = '1d'
 
