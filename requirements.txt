@@ -124,3 +124,8 @@ webencodings==0.5.1
 websocket-client==1.8.0
 python-dotenv==1.1.0
 yfinance==0.2.25
+rich==13.6.0
+tqdm==4.67.1
+polygon-api-client===0.1.0
+python-binance==1.0.17
+pyarrow
