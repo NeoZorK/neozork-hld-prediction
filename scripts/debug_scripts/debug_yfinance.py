@@ -48,7 +48,7 @@ USER_AGENTS = [
 # Format for forex pairs is typically "EURUSD=X" in yfinance
 # Crypto is usually formatted as "BTC-USD" or "ETH-USD"
 # Note: Maximum 5 tickers as per requirements
-TICKERS = [
+DEFAULT_TICKERS = [
     'AAPL',     # Apple (stock)
     'EURUSD=X', # Euro/USD (forex)
     'BTC-USD',  # Bitcoin/USD (crypto)
@@ -68,7 +68,7 @@ YF_API_URL = "https://query1.finance.yahoo.com/v8/finance/chart/"
 class YFinanceDownloader:
     """Class to handle downloading data from Yahoo Finance with proper rate limiting and error handling."""
 
-    def __init__(self, cache_dir: str = CACHE_DIR):
+    def __init__(self, cache_dir: str = CACHE_DIR, single_attempt: bool = False):
         """Initialize the downloader with cache directory and session setup."""
         self.cache_dir = cache_dir
         self.session = self._create_session()
@@ -81,7 +81,8 @@ class YFinanceDownloader:
         # Rate limiting parameters
         self.request_delay = 3.0  # Base delay between requests in seconds
         self.retry_delay_base = 5.0  # Base delay for retry
-        self.max_retries = 2      # Maximum 2 attempts per ticker as per requirements
+        # Set max_retries based on input parameter
+        self.max_retries = 1 if single_attempt else 2
         self.backoff_factor = 2.0
         self.jitter = 0.5  # Random jitter to add to delays
 
@@ -395,20 +396,84 @@ class YFinanceDownloader:
 
         print("="*50)
 
+def prompt_for_tickers() -> List[str]:
+    """Ask user which tickers to run tests for."""
+    selected_tickers = []
+
+    print("\n=== Ticker Selection for YFinance API Test ===")
+    print("Available tickers:")
+
+    for i, ticker in enumerate(DEFAULT_TICKERS, 1):
+        print(f"{i}. {ticker}")
+
+    print("\nFor each ticker, indicate if you want to run it (y/n):")
+
+    for ticker in DEFAULT_TICKERS:
+        while True:
+            try:
+                response = input(f"Run test for {ticker}? (y/n): ").strip().lower()
+                print(f"Received response '{response}' for {ticker}")  # Debug output
+                if response in ('y', 'n'):
+                    if response == 'y':
+                        selected_tickers.append(ticker)
+                        print(f"Added {ticker} to selected tickers")  # Debug output
+                    break
+                else:
+                    print("Please enter 'y' or 'n'")
+            except Exception as e:
+                print(f"Error reading input: {str(e)}")
+                return DEFAULT_TICKERS[:1]  # Return first ticker as fallback
+
+    print(f"Selected tickers so far: {selected_tickers}")  # Debug output
+
+    # Allow adding custom ticker if needed
+    try:
+        response = input("\nAdd a custom ticker? (y/n): ").strip().lower()
+        if response == 'y':
+            custom_ticker = input("Enter ticker symbol: ").strip().upper()
+            if custom_ticker:
+                selected_tickers.append(custom_ticker)
+                print(f"Added custom ticker: {custom_ticker}")  # Debug output
+    except Exception as e:
+        print(f"Error reading input for custom ticker: {str(e)}")
+
+    # If no tickers selected, use first default ticker as a fallback
+    if not selected_tickers:
+        print(f"No tickers selected, using {DEFAULT_TICKERS[0]} as default")
+        selected_tickers = [DEFAULT_TICKERS[0]]
+
+    print(f"Final selected tickers: {selected_tickers}")  # Debug output
+    return selected_tickers
 
 def main():
     """Main function to run the Yahoo Finance downloader."""
     print(f"--- YFinance Downloader Test ---")
-    print(f"Tickers: {', '.join(TICKERS)}")
+
+    # Check if we're in Docker environment
+    in_docker = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
+    single_attempt = in_docker  # Use single attempt in Docker
+
+    # Determine tickers to use
+    if in_docker:
+        print("Running in Docker environment - using single attempt mode")
+        print("Max attempts per ticker: 1")
+        tickers = prompt_for_tickers()
+        if not tickers:
+            print("No tickers selected. Exiting.")
+            return
+    else:
+        tickers = DEFAULT_TICKERS
+        print(f"Tickers: {', '.join(tickers)}")
+        print(f"Max attempts per ticker: 2")
+
     print(f"Period: {PERIOD}, Interval: {INTERVAL}")
     print(f"Cache directory: {CACHE_DIR}")
-    print(f"Max attempts per ticker: 2")
     print("-" * 40)
 
     try:
         # Create and run the downloader
-        downloader = YFinanceDownloader(cache_dir=CACHE_DIR)
-        results = downloader.download_multiple(TICKERS, PERIOD, INTERVAL)
+        downloader = YFinanceDownloader(cache_dir=CACHE_DIR, single_attempt=single_attempt)
+        results = downloader.download_multiple(tickers, PERIOD, INTERVAL)
 
         # Print summary of results
         downloader.print_summary()
