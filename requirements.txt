@@ -129,3 +129,4 @@ tqdm==4.67.1
 polygon-api-client===0.1.0
 python-binance==1.0.17
 pyarrow
+mplfinance
