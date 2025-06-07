@@ -398,51 +398,58 @@ class YFinanceDownloader:
 
 def prompt_for_tickers() -> List[str]:
     """Ask user which tickers to run tests for."""
+    # Use a simpler approach with fewer input prompts to avoid hangs
     selected_tickers = []
 
     print("\n=== Ticker Selection for YFinance API Test ===")
     print("Available tickers:")
 
+    # Display all available tickers with numbers
     for i, ticker in enumerate(DEFAULT_TICKERS, 1):
         print(f"{i}. {ticker}")
 
-    print("\nFor each ticker, indicate if you want to run it (y/n):")
+    print("\nEnter ticker numbers to test (comma-separated, e.g. '1,3,5' or 'all' for all):")
 
-    for ticker in DEFAULT_TICKERS:
-        while True:
-            try:
-                response = input(f"Run test for {ticker}? (y/n): ").strip().lower()
-                print(f"Received response '{response}' for {ticker}")  # Debug output
-                if response in ('y', 'n'):
-                    if response == 'y':
-                        selected_tickers.append(ticker)
-                        print(f"Added {ticker} to selected tickers")  # Debug output
-                    break
-                else:
-                    print("Please enter 'y' or 'n'")
-            except Exception as e:
-                print(f"Error reading input: {str(e)}")
-                return DEFAULT_TICKERS[:1]  # Return first ticker as fallback
-
-    print(f"Selected tickers so far: {selected_tickers}")  # Debug output
-
-    # Allow adding custom ticker if needed
     try:
-        response = input("\nAdd a custom ticker? (y/n): ").strip().lower()
-        if response == 'y':
-            custom_ticker = input("Enter ticker symbol: ").strip().upper()
-            if custom_ticker:
-                selected_tickers.append(custom_ticker)
-                print(f"Added custom ticker: {custom_ticker}")  # Debug output
+        # Single input for all selections to avoid multiple stdin reads
+        choices = input("Your selection: ").strip().lower()
+        print(f"Received selection: '{choices}'")
+
+        if choices == 'all':
+            selected_tickers = DEFAULT_TICKERS.copy()
+            print(f"Selected all tickers: {selected_tickers}")
+        elif choices:
+            # Parse comma-separated list of numbers
+            for choice in choices.split(','):
+                choice = choice.strip()
+                if choice.isdigit():
+                    index = int(choice) - 1
+                    if 0 <= index < len(DEFAULT_TICKERS):
+                        ticker = DEFAULT_TICKERS[index]
+                        selected_tickers.append(ticker)
+                        print(f"Added ticker: {ticker}")
+                    else:
+                        print(f"Invalid ticker number: {choice}")
+                elif choice:  # If not a number, treat as direct ticker symbol
+                    selected_tickers.append(choice.upper())
+                    print(f"Added custom ticker: {choice.upper()}")
+
     except Exception as e:
-        print(f"Error reading input for custom ticker: {str(e)}")
+        print(f"Error reading selection: {str(e)}")
+        print("Using first ticker as fallback")
+        return DEFAULT_TICKERS[:1]  # Return first ticker as fallback
 
     # If no tickers selected, use first default ticker as a fallback
     if not selected_tickers:
         print(f"No tickers selected, using {DEFAULT_TICKERS[0]} as default")
         selected_tickers = [DEFAULT_TICKERS[0]]
 
-    print(f"Final selected tickers: {selected_tickers}")  # Debug output
+    # Limit to max 5 tickers
+    if len(selected_tickers) > 5:
+        print(f"Too many tickers selected ({len(selected_tickers)}), limiting to first 5")
+        selected_tickers = selected_tickers[:5]
+
+    print(f"Final selected tickers: {selected_tickers}")
     return selected_tickers
 
 def main():
