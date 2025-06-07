@@ -9,10 +9,12 @@ try:
     # noinspection PyUnresolvedReferences,PackageRequirements
     import polygon
     from polygon.exceptions import BadResponse
+    from polygon.rest import RESTClient
     POLYGON_AVAILABLE = True
 except ImportError:
     POLYGON_AVAILABLE = False
     class BadResponse(Exception): pass
+    class RESTClient: pass
     print("ERROR: polygon-api-client library not found. Install it first.")
     exit()
 
@@ -32,8 +34,8 @@ else:
 
 # --- Initialize Client ---
 try:
-    # noinspection PyUnresolvedReferences
-    client = polygon.RESTClient(api_key=api_key)
+    # Polygon API expects auth_key parameter
+    client = RESTClient(auth_key=api_key)
     print("Polygon client initialized.")
 except Exception as e:
     print(f"ERROR: Failed to initialize Polygon client: {type(e).__name__}: {e}")
@@ -54,8 +56,8 @@ print("\n--- Starting Ticker Detail Tests ---")
 for ticker in tickers_to_test:
     print(f"\nTesting ticker: '{ticker}'...")
     try:
-        # Attempt to get details
-        details_response = client.get_ticker_details(ticker)
+        # Attempt to get details - use reference.ticker_details method
+        details_response = client.reference_ticker_details(ticker)
         # If successful (no exception)
         print(f"[SUCCESS] Found ticker '{ticker}'. Response type: {type(details_response)}")
         # Optionally print some details if needed:
@@ -73,6 +75,9 @@ for ticker in tickers_to_test:
             print(f"  Extracted status code: {status_code}")
             if status_code == 404:
                 print("  STATUS IS 404 (Not Found)")
+            elif status_code == 429:
+                print("  STATUS IS 429 (Too Many Requests) - Rate limit exceeded")
+                print("  Please wait and try again later or reduce request frequency")
             else:
                 print(f"  STATUS IS NOT 404 (or unknown)")
                 # Try logging details for non-404 BadResponse
@@ -89,7 +94,12 @@ for ticker in tickers_to_test:
             print("  Exception did NOT contain a 'response' attribute.")
 
     except Exception as e:
-        print(f"[UNEXPECTED EXCEPTION CAUGHT] for '{ticker}': {type(e).__name__}: {e}")
-        print(f"  Traceback:\n{traceback.format_exc()}")
+        # Check if it's a rate limit error by examining the exception message
+        if "429" in str(e) or "too many" in str(e).lower() or "rate limit" in str(e).lower():
+            print(f"[RATE LIMIT EXCEEDED] for '{ticker}': Too many requests (HTTP 429)")
+            print(f"  Please wait and try again later or reduce request frequency")
+        else:
+            print(f"[UNEXPECTED EXCEPTION CAUGHT] for '{ticker}': {type(e).__name__}: {e}")
+            print(f"  Traceback:\n{traceback.format_exc()}")
 
 print("\n--- End of Ticker Detail Tests ---")
