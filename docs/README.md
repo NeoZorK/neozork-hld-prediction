@@ -90,9 +90,9 @@ To speed up subsequent runs and reduce API load, the script utilizes data cachin
 │   ├── cache/  
 │   │   └── csv_converted/   
 │   └── raw_parquet/  
-├── mql5_feed/
-├── scripts/
-│   └── debug_scripts/
+├── mql5_feed/  
+├── scripts/  
+│   └── debug_scripts/  
 ├── tests/  
 ├── .env  
 ├── .gitignore  
@@ -953,4 +953,7 @@ python run_analysis.py csv --csv-file data.csv --point 0.01 --rule AUTO -d term
 - All major plotting functions are supported in this mode.
 - In Docker, all drawing modes are automatically replaced by `-d term`.
 - Multiple indicator panels are shown as separate charts in the terminal.
+
+
+
 

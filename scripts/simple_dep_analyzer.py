@@ -1,0 +1,336 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+Simple Dependency Analyzer
+
+A lightweight tool to analyze Python project dependencies without recursion issues.
+This script scans Python files for import statements and compares them with
+the dependencies listed in requirements.txt or pyproject.toml.
+
+Author: GitHub Copilot
+Date: June 9, 2025
+"""
+
+import os
+import re
+import sys
+import importlib.util
+from pathlib import Path
+from collections import defaultdict
+
+
+def get_module_from_import(import_statement):
+    """Extract module name from import statement."""
+    # Handle 'import x' or 'import x as y'
+    if import_statement.startswith('import '):
+        # Remove 'import ' prefix
+        line = import_statement[7:].strip()
+        # Handle multiple imports on one line (import x, y, z)
+        modules = []
+        for part in line.split(','):
+            # Remove 'as y' if present
+            if ' as ' in part:
+                part = part.split(' as ')[0]
+            # Get top-level module
+            modules.append(part.strip().split('.')[0])
+        return modules
+
+    # Handle 'from x import y'
+    elif import_statement.startswith('from '):
+        # Extract module name after 'from ' and before ' import'
+        match = re.match(r'from\s+([\w\.]+)\s+import', import_statement)
+        if match:
+            # Get top-level module
+            return [match.group(1).split('.')[0]]
+
+    return []
+
+
+def scan_file_for_imports(file_path):
+    """Scan a Python file for import statements without using AST."""
+    imports = set()
+    try:
+        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            for line in f:
+                line = line.strip()
+                # Skip comments and empty lines
+                if not line or line.startswith('#'):
+                    continue
+
+                # Look for import statements
+                if line.startswith('import ') or line.startswith('from '):
+                    # Handle multi-line imports
+                    if '(' in line and ')' not in line:
+                        multi_line = line
+                        for next_line in f:
+                            multi_line += next_line.strip()
+                            if ')' in next_line:
+                                break
+                        line = multi_line
+
+                    # Extract module names
+                    modules = get_module_from_import(line)
+                    imports.update(modules)
+    except Exception as e:
+        print(f"Error scanning {file_path}: {e}")
+
+    return imports
+
+
+def scan_project(project_path, max_depth=10):
+    """Scan a project directory for imports with depth limit."""
+    all_imports = set()
+    file_count = 0
+
+    for root, dirs, files in os.walk(project_path):
+        # Calculate current depth from project root
+        rel_path = os.path.relpath(root, project_path)
+        current_depth = len(rel_path.split(os.sep)) if rel_path != '.' else 0
+
+        # Skip if max depth reached
+        if current_depth > max_depth:
+            print(f"Skipping {root} (max depth reached)")
+            continue
+
+        # Skip virtual environments, __pycache__ and hidden directories
+        dirs[:] = [d for d in dirs if not d.startswith('.') and
+                  d != '__pycache__' and d != '.venv' and d != 'venv']
+
+        for file in files:
+            if file.endswith('.py'):
+                file_path = os.path.join(root, file)
+                imports = scan_file_for_imports(file_path)
+                all_imports.update(imports)
+                file_count += 1
+
+    return all_imports, file_count
+
+
+def parse_requirements_txt(file_path):
+    """Parse requirements.txt file."""
+    packages = set()
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+
+                # Handle various formats
+                if line.startswith('-e') or line.startswith('git+'):
+                    continue
+
+                # Extract package name (before version specifiers)
+                package = re.split(r'[=<>~\[\]]', line)[0].strip().lower()
+                if package:
+                    packages.add(package)
+    except Exception as e:
+        print(f"Error parsing requirements.txt: {e}")
+
+    return packages
+
+
+def parse_pyproject_toml(file_path):
+    """Parse dependencies from pyproject.toml file using regex instead of TOML parser."""
+    packages = set()
+
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # Find dependencies section using regex
+        dependencies_match = re.search(r'dependencies\s*=\s*\[(.*?)\]', content, re.DOTALL)
+        if dependencies_match:
+            deps_text = dependencies_match.group(1)
+            # Extract package names from quoted strings
+            for match in re.finditer(r'[\"\']([^\'\"]+?)[\"\']', deps_text):
+                dep_line = match.group(1)
+                # Extract package name (before version specifiers)
+                package = re.split(r'[=<>~\[\]]', dep_line)[0].strip().lower()
+                if package:
+                    packages.add(package)
+    except Exception as e:
+        print(f"Error parsing pyproject.toml: {e}")
+
+    return packages
+
+
+def get_known_aliases():
+    """Return dictionary of known package aliases."""
+    return {
+        'bs4': 'beautifulsoup4',
+        'yaml': 'pyyaml',
+        'PIL': 'pillow',
+        'sklearn': 'scikit-learn',
+        'dotenv': 'python-dotenv',
+        'cv2': 'opencv-python',
+        'matplotlib.pyplot': 'matplotlib',
+        'matplotlib': 'matplotlib',
+        'np': 'numpy',
+        'pd': 'pandas',
+    }
+
+
+def get_standard_library_modules():
+    """Get a set of standard library module names."""
+    std_lib = set()
+
+    # Add builtin module names
+    std_lib.update(sys.builtin_module_names)
+
+    # Add modules from standard library paths
+    for path in sys.path:
+        if path.endswith(('site-packages', 'dist-packages')):
+            continue  # Skip installed packages
+
+        if os.path.isdir(path):
+            for name in os.listdir(path):
+                # Skip hidden files and directories
+                if name.startswith('.'):
+                    continue
+
+                # Add modules and packages
+                if name.endswith('.py'):
+                    std_lib.add(name[:-3])
+                elif os.path.isdir(os.path.join(path, name)) and not name.startswith('_'):
+                    std_lib.add(name)
+
+    # Add common standard library modules manually
+    common_std_lib = {
+        'os', 'sys', 're', 'math', 'json', 'datetime', 'time', 'random',
+        'collections', 'functools', 'itertools', 'pathlib', 'typing',
+        'io', 'csv', 'uuid', 'copy', 'string', 'logging', 'tempfile',
+        'urllib', 'socket', 'traceback', 'argparse', 'shutil', 'pickle',
+        'inspect', 'ast', 'sqlite3', 'base64', 'hashlib', 'signal', 'select',
+    }
+    std_lib.update(common_std_lib)
+
+    return std_lib
+
+
+def analyze_dependencies(project_path, requirements_path=None, pyproject_path=None, max_depth=10):
+    """Analyze which dependencies are used and which are not."""
+    print(f"Analyzing dependencies in {project_path}")
+    print(f"Maximum directory depth: {max_depth}")
+
+    # Get standard library modules
+    std_lib = get_standard_library_modules()
+    print(f"Identified {len(std_lib)} standard library modules")
+
+    # Get known package aliases
+    aliases = get_known_aliases()
+
+    # Load declared dependencies
+    declared_packages = set()
+
+    if requirements_path and os.path.exists(requirements_path):
+        req_packages = parse_requirements_txt(requirements_path)
+        declared_packages.update(req_packages)
+        print(f"Found {len(req_packages)} packages in {requirements_path}")
+
+    if pyproject_path and os.path.exists(pyproject_path):
+        pyproject_packages = parse_pyproject_toml(pyproject_path)
+        declared_packages.update(pyproject_packages)
+        print(f"Found {len(pyproject_packages)} packages in {pyproject_path}")
+
+    if not declared_packages:
+        print("No dependencies found in the specified files.")
+        return
+
+    # Scan project for imports
+    print(f"Scanning Python files in {project_path}...")
+    imports, file_count = scan_project(project_path, max_depth)
+    print(f"Scanned {file_count} Python files and found {len(imports)} unique imports")
+
+    # Filter out standard library imports
+    non_std_imports = set()
+    for imp in imports:
+        if imp not in std_lib:
+            non_std_imports.add(imp)
+
+    print(f"After filtering standard library: {len(non_std_imports)} imports")
+
+    # Map imports to package names
+    used_packages = set()
+    unmapped_imports = set()
+
+    for imp in non_std_imports:
+        # Check if the import name matches a package directly
+        if imp.lower() in declared_packages:
+            used_packages.add(imp.lower())
+        # Check if the import has a known alias
+        elif imp in aliases and aliases[imp].lower() in declared_packages:
+            used_packages.add(aliases[imp].lower())
+        else:
+            unmapped_imports.add(imp)
+
+    unused_packages = declared_packages - used_packages
+
+    # Display results
+    print("\n=== RESULTS ===")
+
+    print("\nUsed packages:")
+    for pkg in sorted(used_packages):
+        print(f"  ✓ {pkg}")
+
+    print("\nUnused packages:")
+    for pkg in sorted(unused_packages):
+        print(f"  ✗ {pkg}")
+
+    print("\nImports not mapped to declared packages:")
+    for imp in sorted(unmapped_imports):
+        if imp in aliases:
+            print(f"  ? {imp} (alias for {aliases[imp]})")
+        else:
+            print(f"  ? {imp}")
+
+    # Summary
+    print("\n=== SUMMARY ===")
+    print(f"Total declared packages: {len(declared_packages)}")
+    print(f"Used packages: {len(used_packages)} ({len(used_packages)/len(declared_packages)*100:.1f}%)")
+    print(f"Unused packages: {len(unused_packages)} ({len(unused_packages)/len(declared_packages)*100:.1f}%)")
+    print(f"Unmapped imports: {len(unmapped_imports)}")
+
+    return {
+        'used_packages': sorted(used_packages),
+        'unused_packages': sorted(unused_packages),
+        'unmapped_imports': sorted(unmapped_imports)
+    }
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python simple_dep_analyzer.py <project_directory> [--requirements=path] [--pyproject=path] [--max-depth=10]")
+        sys.exit(1)
+
+    project_path = sys.argv[1]
+    requirements_path = None
+    pyproject_path = None
+    max_depth = 10
+
+    # Parse command line arguments
+    for arg in sys.argv[2:]:
+        if arg.startswith('--requirements='):
+            requirements_path = arg.split('=', 1)[1]
+        elif arg.startswith('--pyproject='):
+            pyproject_path = arg.split('=', 1)[1]
+        elif arg.startswith('--max-depth='):
+            try:
+                max_depth = int(arg.split('=', 1)[1])
+            except ValueError:
+                print(f"Invalid value for max-depth: {arg}")
+                sys.exit(1)
+
+    # If no specific files provided, look for them in the project directory
+    if not requirements_path and not pyproject_path:
+        default_requirements = os.path.join(project_path, 'requirements.txt')
+        default_pyproject = os.path.join(project_path, 'pyproject.toml')
+
+        if os.path.exists(default_requirements):
+            requirements_path = default_requirements
+
+        if os.path.exists(default_pyproject):
+            pyproject_path = default_pyproject
+
+    analyze_dependencies(project_path, requirements_path, pyproject_path, max_depth)
