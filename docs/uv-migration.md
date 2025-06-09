@@ -1,101 +1,59 @@
-# Migrating from pip to uv
+# Миграция с pip на uv
 
-## What is uv?
+## Что такое uv?
 
-[uv](https://github.com/astral-sh/uv) is a new, fast Python package manager that can replace pip.
+uv — это быстрый пакетный менеджер для Python, написанный на Rust. Он совместим с pip, но предлагает:
+- Значительное ускорение установки пакетов
+- Улучшенную стратегию разрешения зависимостей
+- Лучшую работу с кешем
 
-**Benefits of uv:**
-- 10-100 times faster than pip when installing packages
-- Parallel dependency installation
-- Improved dependency resolution
-- Smaller Docker container sizes
-- Better package caching
-
-## Installing uv
-
-### Local installation
-
-For local installation, you can use the provided script:
+## Установка uv
 
 ```bash
-chmod +x uv_setup/setup_uv.sh
-./uv_setup/setup_uv.sh
+# Установка с помощью официального скрипта
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Или с помощью pip
+pip install uv
 ```
 
-Or install manually:
+## Основные команды
 
+### Создание виртуального окружения
 ```bash
-# Create a temporary directory for the installer
-mkdir -p /tmp/uv-installer
-# Download the installer script
-curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh -o /tmp/uv-installer/installer.sh
-# Make it executable and run it
-chmod +x /tmp/uv-installer/installer.sh
-/tmp/uv-installer/installer.sh
-# Clean up
-rm -rf /tmp/uv-installer
-
-# Add to PATH
-source $HOME/.local/bin/env
-# or add to your .bashrc/.zshrc
-echo 'source $HOME/.local/bin/env' >> ~/.zshrc  # or ~/.bashrc
-```
-
-### Verifying installation
-
-```bash
-uv --version
-```
-
-## uv commands (pip replacements)
-
-| pip                            | uv                        | Description                               |
-|--------------------------------|---------------------------|-------------------------------------------|
-| `pip install package`          | `uv pip install package`  | Install a package                         |
-| `pip install -r requirements.txt` | `uv pip install -r requirements.txt` | Install from requirements file |
-| `pip uninstall package`        | `uv pip uninstall package` | Remove a package                         |
-| `pip freeze > requirements.txt`| `uv pip freeze > requirements.txt` | Save current dependencies         |
-| `python -m venv .venv`         | `uv venv`                 | Create a virtual environment              |
-| -                              | `uv pip compile requirements.txt` | Compile requirements.txt to a lock file |
-
-## Virtual environments with uv
-
-```bash
-# Create a virtual environment
 uv venv
-
-# Activate (same as with regular venv)
-source .venv/bin/activate
+source .venv/bin/activate  # для macOS/Linux
 ```
 
-## Docker
+### Установка зависимостей
+```bash
+# Установка основных зависимостей
+uv pip install -e .
 
-The Dockerfile is already configured to use uv for dependency installation.
-
-## CI/CD
-
-For GitHub Actions, you can use caching to speed up dependency installation:
-
-```yaml
-- name: Install uv
-  run: |
-    # Create a temporary directory for the installer
-    mkdir -p /tmp/uv-installer
-    # Download the installer script
-    curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh -o /tmp/uv-installer/installer.sh
-    # Make it executable and run it
-    chmod +x /tmp/uv-installer/installer.sh
-    /tmp/uv-installer/installer.sh
-    # Clean up
-    rm -rf /tmp/uv-installer
-    
-    # Add uv to PATH
-    source $HOME/.local/bin/env
-    echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-- name: Install dependencies
-  run: |
-    uv venv
-    source .venv/bin/activate
-    uv pip install -r requirements.txt
+# Установка с дополнительными группами зависимостей
+uv pip install -e ".[dev,jupyter]"
 ```
+
+### Управление зависимостями
+```bash
+# Добавление новой зависимости
+uv pip install package_name
+
+# Обновление lock-файла
+uv pip compile pyproject.toml -o requirements-lock.txt
+```
+
+## Сравнение с pip
+
+| Команда pip | Эквивалент в uv |
+|-------------|-----------------|
+| `pip install -r requirements.txt` | `uv pip install -r requirements.txt` |
+| `pip install package` | `uv pip install package` |
+| `pip freeze > requirements.txt` | `uv pip freeze > requirements.txt` |
+| `pip install -e .` | `uv pip install -e .` |
+
+## Примечания по миграции
+
+1. uv использует тот же формат файлов зависимостей, что и pip, поэтому существующие файлы requirements.txt будут работать.
+2. Для современных проектов рекомендуется использовать pyproject.toml.
+3. Для воспроизводимых установок используйте lock-файлы: `uv pip compile pyproject.toml -o requirements-lock.txt`
