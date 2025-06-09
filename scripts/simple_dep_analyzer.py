@@ -15,6 +15,8 @@ Date: June 9, 2025
 import os
 import re
 import sys
+import shutil
+import subprocess
 import importlib.util
 from pathlib import Path
 from collections import defaultdict
@@ -110,37 +112,42 @@ def scan_project(project_path, max_depth=10):
 def parse_requirements_txt(file_path):
     """Parse requirements.txt file."""
     packages = set()
+    raw_requirements = []
+
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             for line in f:
-                line = line.strip()
-                if not line or line.startswith('#'):
+                original_line = line.strip()
+                raw_requirements.append(original_line)
+
+                if not original_line or original_line.startswith('#'):
                     continue
 
                 # Handle various formats
-                if line.startswith('-e') or line.startswith('git+'):
+                if original_line.startswith('-e') or original_line.startswith('git+'):
                     continue
 
                 # Extract package name (before version specifiers)
-                package = re.split(r'[=<>~\[\]]', line)[0].strip().lower()
+                package = re.split(r'[=<>~\[\]]', original_line)[0].strip().lower()
                 if package:
                     packages.add(package)
     except Exception as e:
         print(f"Error parsing requirements.txt: {e}")
 
-    return packages
+    return packages, raw_requirements
 
 
 def parse_pyproject_toml(file_path):
     """Parse dependencies from pyproject.toml file using regex instead of TOML parser."""
     packages = set()
+    raw_content = ""
 
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
+            raw_content = f.read()
 
         # Find dependencies section using regex
-        dependencies_match = re.search(r'dependencies\s*=\s*\[(.*?)\]', content, re.DOTALL)
+        dependencies_match = re.search(r'dependencies\s*=\s*\[(.*?)\]', raw_content, re.DOTALL)
         if dependencies_match:
             deps_text = dependencies_match.group(1)
             # Extract package names from quoted strings
@@ -153,7 +160,7 @@ def parse_pyproject_toml(file_path):
     except Exception as e:
         print(f"Error parsing pyproject.toml: {e}")
 
-    return packages
+    return packages, raw_content
 
 
 def get_known_aliases():
@@ -209,6 +216,166 @@ def get_standard_library_modules():
     return std_lib
 
 
+def uninstall_unused_packages(unused_packages):
+    """Uninstall unused packages using pip or uv."""
+    if not unused_packages:
+        print("No unused packages to uninstall.")
+        return True
+
+    print(f"\nUninstalling {len(unused_packages)} unused packages...")
+
+    # Check if uv is available
+    use_uv = False
+    try:
+        subprocess.run(['uv', '--version'], capture_output=True, text=True)
+        use_uv = True
+        print("Using 'uv' for package management")
+    except FileNotFoundError:
+        print("Using 'pip' for package management (uv not found)")
+
+    success = True
+    for package in unused_packages:
+        try:
+            if use_uv:
+                cmd = ['uv', 'pip', 'uninstall', '-y', package]
+            else:
+                cmd = ['pip', 'uninstall', '-y', package]
+
+            print(f"Uninstalling {package}...")
+            result = subprocess.run(cmd, capture_output=True, text=True)
+
+            if result.returncode != 0:
+                print(f"  Error uninstalling {package}: {result.stderr}")
+                success = False
+            else:
+                print(f"  Successfully uninstalled {package}")
+        except Exception as e:
+            print(f"  Error uninstalling {package}: {str(e)}")
+            success = False
+
+    return success
+
+
+def update_requirements_txt(file_path, used_packages, raw_requirements):
+    """Update requirements.txt to only include used packages."""
+    if not file_path or not os.path.exists(file_path):
+        print("requirements.txt not found, skipping update.")
+        return False
+
+    # Create backup
+    backup_path = file_path + '.bak'
+    shutil.copy2(file_path, backup_path)
+    print(f"Created backup of requirements.txt at {backup_path}")
+
+    # Convert used packages to lowercase for case-insensitive comparison
+    used_packages_lower = {pkg.lower() for pkg in used_packages}
+
+    # Filter out lines for unused packages
+    new_requirements = []
+    for line in raw_requirements:
+        line = line.strip()
+        if not line or line.startswith('#'):
+            new_requirements.append(line)
+            continue
+
+        if line.startswith('-e') or line.startswith('git+'):
+            new_requirements.append(line)
+            continue
+
+        # Extract package name
+        package = re.split(r'[=<>~\[\]]', line)[0].strip().lower()
+        if not package or package in used_packages_lower:
+            new_requirements.append(line)
+
+    # Write updated requirements.txt
+    try:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            for line in new_requirements:
+                f.write(line + '\n')
+        print(f"Updated {file_path} with only used packages")
+        return True
+    except Exception as e:
+        print(f"Error updating {file_path}: {e}")
+        print(f"Restoring from backup...")
+        shutil.copy2(backup_path, file_path)
+        return False
+
+
+def update_pyproject_toml(file_path, used_packages, raw_content):
+    """Update pyproject.toml to only include used packages."""
+    if not file_path or not os.path.exists(file_path):
+        print("pyproject.toml not found, skipping update.")
+        return False
+
+    # Create backup
+    backup_path = file_path + '.bak'
+    shutil.copy2(file_path, backup_path)
+    print(f"Created backup of pyproject.toml at {backup_path}")
+
+    # Convert used packages to lowercase for case-insensitive comparison
+    used_packages_lower = {pkg.lower() for pkg in used_packages}
+
+    # Find the dependencies section
+    deps_pattern = r'(dependencies\s*=\s*\[)(.*?)(\])'
+    deps_match = re.search(deps_pattern, raw_content, re.DOTALL)
+
+    if not deps_match:
+        print("Could not find dependencies section in pyproject.toml")
+        return False
+
+    # Extract dependency lines
+    deps_start = deps_match.group(1)
+    deps_content = deps_match.group(2)
+    deps_end = deps_match.group(3)
+
+    # Process each dependency line
+    dep_lines = []
+    section_header = None
+
+    for line in deps_content.split('\n'):
+        line = line.strip()
+        if not line:
+            dep_lines.append(line)  # Keep empty lines
+            continue
+
+        # Keep comments and section headers
+        if line.startswith('#'):
+            section_header = line
+            continue
+
+        # Extract package name from the line
+        match = re.search(r'[\"\']([^\'\"]+?)[\"\']', line)
+        if not match:
+            continue  # Skip if no package name found
+
+        dep_spec = match.group(1)
+        package = re.split(r'[=<>~\[\]]', dep_spec)[0].strip().lower()
+
+        # Keep the dependency if it's used
+        if package in used_packages_lower:
+            # Add section header if it exists and wasn't added yet
+            if section_header and section_header not in dep_lines:
+                dep_lines.append(section_header)
+                section_header = None
+            dep_lines.append(line)
+
+    # Build the new dependencies section
+    new_deps_content = '\n'.join(dep_lines)
+    new_content = raw_content.replace(deps_match.group(0), f"{deps_start}{new_deps_content}{deps_end}")
+
+    # Write updated pyproject.toml
+    try:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+        print(f"Updated {file_path} with only used packages")
+        return True
+    except Exception as e:
+        print(f"Error updating {file_path}: {e}")
+        print(f"Restoring from backup...")
+        shutil.copy2(backup_path, file_path)
+        return False
+
+
 def analyze_dependencies(project_path, requirements_path=None, pyproject_path=None, max_depth=10):
     """Analyze which dependencies are used and which are not."""
     print(f"Analyzing dependencies in {project_path}")
@@ -223,20 +390,22 @@ def analyze_dependencies(project_path, requirements_path=None, pyproject_path=No
 
     # Load declared dependencies
     declared_packages = set()
+    raw_requirements = []
+    raw_pyproject = ""
 
     if requirements_path and os.path.exists(requirements_path):
-        req_packages = parse_requirements_txt(requirements_path)
+        req_packages, raw_requirements = parse_requirements_txt(requirements_path)
         declared_packages.update(req_packages)
         print(f"Found {len(req_packages)} packages in {requirements_path}")
 
     if pyproject_path and os.path.exists(pyproject_path):
-        pyproject_packages = parse_pyproject_toml(pyproject_path)
+        pyproject_packages, raw_pyproject = parse_pyproject_toml(pyproject_path)
         declared_packages.update(pyproject_packages)
         print(f"Found {len(pyproject_packages)} packages in {pyproject_path}")
 
     if not declared_packages:
         print("No dependencies found in the specified files.")
-        return
+        return None
 
     # Scan project for imports
     print(f"Scanning Python files in {project_path}...")
@@ -291,6 +460,26 @@ def analyze_dependencies(project_path, requirements_path=None, pyproject_path=No
     print(f"Used packages: {len(used_packages)} ({len(used_packages)/len(declared_packages)*100:.1f}%)")
     print(f"Unused packages: {len(unused_packages)} ({len(unused_packages)/len(declared_packages)*100:.1f}%)")
     print(f"Unmapped imports: {len(unmapped_imports)}")
+
+    # Ask user if they want to uninstall unused packages and update files
+    if unused_packages:
+        print("\nWould you like to uninstall unused packages and update dependency files? (y/n)")
+        response = input().strip().lower()
+
+        if response == 'y' or response == 'yes':
+            # Uninstall unused packages
+            success = uninstall_unused_packages(unused_packages)
+
+            if success:
+                # Update requirements.txt
+                if requirements_path and os.path.exists(requirements_path):
+                    update_requirements_txt(requirements_path, used_packages, raw_requirements)
+
+                # Update pyproject.toml
+                if pyproject_path and os.path.exists(pyproject_path):
+                    update_pyproject_toml(pyproject_path, used_packages, raw_pyproject)
+
+            print("\nDependency cleanup completed!")
 
     return {
         'used_packages': sorted(used_packages),
