@@ -237,15 +237,18 @@ def uninstall_unused_packages(unused_packages):
     for package in unused_packages:
         try:
             if use_uv:
-                cmd = ['uv', 'pip', 'uninstall', '-y', package]
+                # For uv, need to use the correct syntax (without --yes flag)
+                cmd = ['uv', 'pip', 'uninstall', package]
+                # Make the command interactive and automatically answer 'y' to the prompt
+                print(f"Uninstalling {package}...")
+                result = subprocess.run(cmd, input=b'y\n', text=True)
             else:
                 cmd = ['pip', 'uninstall', '-y', package]
-
-            print(f"Uninstalling {package}...")
-            result = subprocess.run(cmd, capture_output=True, text=True)
+                print(f"Uninstalling {package}...")
+                result = subprocess.run(cmd, capture_output=True, text=True)
 
             if result.returncode != 0:
-                print(f"  Error uninstalling {package}: {result.stderr}")
+                print(f"  Error uninstalling {package}")
                 success = False
             else:
                 print(f"  Successfully uninstalled {package}")
