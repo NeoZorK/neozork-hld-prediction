@@ -482,3 +482,7 @@ def main():
 
             print(f"Updated requirements.txt with {updated_count} packages.")
             print(f"Removed {len(unused_requirements)} unused packages.")
+
+# Add execution entry point
+if __name__ == "__main__":
+    main()
