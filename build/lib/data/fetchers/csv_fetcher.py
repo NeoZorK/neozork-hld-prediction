@@ -9,7 +9,7 @@ import traceback
 import numpy as np # Import numpy for np.nan
 
 # Use relative import for print functions from the custom logger
-from ...common.logger import print_info, print_warning, print_error, print_debug
+from ...common.logger import logger
 
 # --- Define Cache Directory ---
 try:
