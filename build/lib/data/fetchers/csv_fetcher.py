@@ -29,13 +29,13 @@ def fetch_csv_data(
     time_column: Optional[str] = None,
     datetime_column: Optional[str] = None,
     date_format: Optional[str] = None,
-    skiprows: int = 0, # Default to 0, but will use header=1 in read_csv
+    skiprows: int = 0, # Default to 0; used to skip rows in read_csv
     separator: str = ',', # Default separator
 ) -> pd.DataFrame:
     """
     Fetches data from a CSV file, handling various formats and standardizing column names.
     Includes Parquet caching logic. Reads all columns initially, then cleans and selects.
-    Uses header=1 for standard MT5 export format.
+    Uses header=1 for standard MT5 export format unless skiprows is specified.
 
     Args:
         file_path (str): The path to the CSV file.
