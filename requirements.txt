@@ -122,3 +122,5 @@ pyarrow
 mplfinance
 statsmodels
 bokeh
+dask
+datashader
