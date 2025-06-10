@@ -20,7 +20,7 @@ EMPTY_VALUE = np.nan
 # --- Define Enum for Trading Rule Switch ---
 class TradingRule(Enum):
     PV_HighLow = 0
-    Support_Resistants = 1
+    Support_Resistance = 1
     Pressure_Vector = 2
     Predict_High_Low_Direction = 3
     OHLCV = 4  # Raw OHLCV data without indicator calculation
