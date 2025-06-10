@@ -127,4 +127,6 @@ dependencies = [
     "mplfinance",
     "statsmodels",
     "bokeh",
+    "dask",
+    "datashader",
 ]
