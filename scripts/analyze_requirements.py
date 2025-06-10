@@ -423,3 +423,113 @@ def display_results(third_party_imports, import_counts, total_files, requirement
                     print(f"   pip install {pkg}")
             else:
                 print(f"   pip install {' '.join(other_pkgs[:5])} ...")
+
+
+def backup_requirements(requirements_file):
+    """
+    Create a backup of the requirements.txt file.
+
+    Args:
+        requirements_file (Path): Path to the requirements.txt file
+
+    Returns:
+        Path: Path to the backup file
+    """
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_file = requirements_file.with_suffix(f".txt.backup_{timestamp}")
+    shutil.copy2(requirements_file, backup_file)
+    return backup_file
+
+
+def update_requirements_file(requirements_file, used_requirements, requirements_dict):
+    """
+    Update the requirements.txt file with only the used packages.
+
+    Args:
+        requirements_file (Path): Path to the requirements.txt file
+        used_requirements (set): Set of package names that are used
+        requirements_dict (dict): Dictionary mapping package names to their requirement lines
+
+    Returns:
+        int: Number of packages written to the file
+    """
+    with open(requirements_file, 'w', encoding='utf-8') as f:
+        for pkg in sorted(used_requirements):
+            f.write(f"{requirements_dict[pkg]}\n")
+
+    return len(used_requirements)
+
+
+def main():
+    """Main function to analyze requirements and imports."""
+    print("\n=== Python Library Usage Analysis ===\n")
+
+    # Check if tqdm is installed, if not, try to install it
+    try:
+        import tqdm as tqdm_module
+        globals()['tqdm'] = tqdm_module.tqdm
+    except ImportError:
+        print("Installing tqdm package for progress bars...")
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "tqdm"])
+            import tqdm as tqdm_module
+            globals()['tqdm'] = tqdm_module.tqdm
+        except Exception as e:
+            print(f"Warning: Could not install tqdm ({e}). Continuing without progress bars.")
+            # Define a simple no-op function as replacement
+            globals()['tqdm'] = lambda x, **kwargs: x
+
+    # Get project imports
+    third_party_imports, import_counts, total_files = analyze_project_imports()
+
+    # Parse requirements.txt
+    if not REQUIREMENTS_FILE.exists():
+        print(f"Error: Requirements file not found at {REQUIREMENTS_FILE}")
+        return
+
+    requirements = parse_requirements_txt(REQUIREMENTS_FILE)
+    print(f"Found {len(requirements)} packages in requirements.txt")
+
+    # Find used and unused requirements
+    used_imports = set()
+    used_requirements = set()
+    unused_requirements = set()
+
+    # Get tqdm from global scope
+    progress_func = globals().get('tqdm', lambda x, **kwargs: x)
+
+    for req_pkg in progress_func(requirements.keys(), desc="Analyzing requirements", unit="packages"):
+        import_name = map_package_to_import(req_pkg)
+        if import_name in third_party_imports:
+            used_imports.add(import_name)
+            used_requirements.add(req_pkg)
+        else:
+            unused_requirements.add(req_pkg)
+
+    # Find imports not in requirements
+    missing_imports = third_party_imports - used_imports
+    missing_requirements = {map_import_to_package(imp) for imp in missing_imports}
+
+    # Display results
+    display_results(
+        third_party_imports, import_counts, total_files, requirements,
+        used_requirements, unused_requirements, missing_requirements
+    )
+
+    # Ask about cleaning up requirements
+    if unused_requirements:
+        response = input("\nWould you like to remove unused libraries and update requirements.txt? (y/n): ")
+        if response.lower() == 'y':
+            # Create backup
+            backup_file = backup_requirements(REQUIREMENTS_FILE)
+            print(f"Created backup at: {backup_file}")
+
+            # Write new requirements file
+            updated_count = update_requirements_file(REQUIREMENTS_FILE, used_requirements, requirements)
+
+            print(f"Updated requirements.txt with {updated_count} packages.")
+            print(f"Removed {len(unused_requirements)} unused packages.")
+
+
+if __name__ == "__main__":
+    main()
