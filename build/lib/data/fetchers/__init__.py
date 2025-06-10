@@ -14,7 +14,6 @@ from .polygon_fetcher import fetch_polygon_data
 from .binance_fetcher import fetch_binance_data
 
 # Import specific mapping functions needed by data_acquisition.py
-# *** FIX: Use the renamed functions ***
 from .yfinance_fetcher import map_yfinance_interval, map_yfinance_ticker
 
 # Define what symbols are exported when 'from .fetchers import *' is used
