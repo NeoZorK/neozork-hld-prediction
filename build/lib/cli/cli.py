@@ -8,7 +8,7 @@ All comments are in English.
 import argparse
 import textwrap
 import sys  # Import sys for exit
-import src.cli.cli_examples as cli_examples
+from . import cli_examples
 from colorama import init, Fore, Style
 
 # Initialize colorama for cross-platform colored output
