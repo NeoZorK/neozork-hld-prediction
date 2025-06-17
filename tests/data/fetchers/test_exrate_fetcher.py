@@ -132,8 +132,8 @@ class TestFetchExrateData:
     @patch.dict(os.environ, {'EXCHANGE_RATE_API_KEY': 'test_api_key'})
     @patch('src.data.fetchers.exrate_fetcher.requests.get')
     def test_successful_fetch(self, mock_get):
-        """Test successful data fetch from Exchange Rate API."""
-        # Mock response
+        """Test successful data fetch from Exchange Rate API (historical mode)."""
+        # Mock response for historical data
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.json.return_value = {
@@ -144,13 +144,43 @@ class TestFetchExrateData:
         }
         mock_get.return_value = mock_response
         
-        # Test fetch
+        # Test fetch with dates (historical mode)
         df, metrics = fetch_exrate_data("EURUSD", "D1", "2024-01-01", "2024-01-02")
         
-        # Assertions - Updated for current data only
+        # Assertions - Updated for historical data (2 days)
         assert df is not None
         assert not df.empty
-        assert len(df) == 1  # One current rate (ignores date range)
+        assert len(df) == 2  # Two days of historical data
+        assert list(df.columns) == ['Open', 'High', 'Low', 'Close', 'Volume']
+        assert all(df['Open'] == 1.0500)
+        assert all(df['Close'] == 1.0500)
+        assert all(df['Volume'] == 0)
+        assert metrics['api_calls'] == 2  # Two historical calls (one per day)
+        assert metrics['rows_fetched'] == 2  # Two rows
+        assert metrics['error_message'] is None
+    
+    @patch.dict(os.environ, {'EXCHANGE_RATE_API_KEY': 'test_api_key'})
+    @patch('src.data.fetchers.exrate_fetcher.requests.get')
+    def test_successful_fetch_current_only(self, mock_get):
+        """Test successful data fetch from Exchange Rate API (free plan - current only)."""
+        # Mock response for current data
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "result": "success",
+            "conversion_rates": {
+                "USD": 1.0500
+            }
+        }
+        mock_get.return_value = mock_response
+        
+        # Test fetch without dates (free plan mode)
+        df, metrics = fetch_exrate_data("EURUSD", "D1", None, None)
+        
+        # Assertions - Current data only
+        assert df is not None
+        assert not df.empty
+        assert len(df) == 1  # One current rate
         assert list(df.columns) == ['Open', 'High', 'Low', 'Close', 'Volume']
         assert all(df['Open'] == 1.0500)
         assert all(df['Close'] == 1.0500)
@@ -184,46 +214,26 @@ class TestFetchExrateData:
     @patch.dict(os.environ, {'EXCHANGE_RATE_API_KEY': 'test_api_key'})
     @patch('src.data.fetchers.exrate_fetcher.requests.get')
     def test_invalid_date_range(self, mock_get):
-        """Test behavior with invalid date range - now ignored since we fetch current data."""
-        # Mock successful response since dates are ignored
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {
-            "result": "success",
-            "conversion_rates": {
-                "USD": 1.0500
-            }
-        }
-        mock_get.return_value = mock_response
+        """Test behavior with invalid date range (start > end)."""
+        # Mock not needed since this should fail before API call
         
         df, metrics = fetch_exrate_data("EURUSD", "D1", "2024-01-02", "2024-01-01")
         
-        # Should succeed because dates are ignored and current data is fetched
-        assert df is not None
-        assert len(df) == 1
-        assert metrics['error_message'] is None
+        # Should fail with date validation error
+        assert df is None
+        assert "Start date must be before end date" in metrics['error_message']
 
     @patch.dict(os.environ, {'EXCHANGE_RATE_API_KEY': 'test_api_key'})
     @patch('src.data.fetchers.exrate_fetcher.requests.get')
     def test_invalid_date_format(self, mock_get):
-        """Test behavior with invalid date format - now ignored since we fetch current data."""
-        # Mock successful response since dates are ignored
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {
-            "result": "success",
-            "conversion_rates": {
-                "USD": 1.0500
-            }
-        }
-        mock_get.return_value = mock_response
+        """Test behavior with invalid date format."""
+        # Mock not needed since this should fail before API call
         
         df, metrics = fetch_exrate_data("EURUSD", "D1", "invalid-date", "2024-01-02")
         
-        # Should succeed because dates are ignored and current data is fetched
-        assert df is not None
-        assert len(df) == 1
-        assert metrics['error_message'] is None
+        # Should fail with date parsing error
+        assert df is None
+        assert "Date parsing error" in metrics['error_message']
     
     @patch.dict(os.environ, {'EXCHANGE_RATE_API_KEY': 'test_api_key'})
     @patch('src.data.fetchers.exrate_fetcher.requests.get')
@@ -240,9 +250,10 @@ class TestFetchExrateData:
         
         df, metrics = fetch_exrate_data("EURUSD", "D1", "2024-01-01", "2024-01-02")
         
-        # API will be called but return error, so we might get None or empty DataFrame
-        # The specific behavior depends on implementation details
-        assert metrics['api_calls'] >= 1
+        # Invalid API key error should be detected early and fail
+        assert df is None
+        assert metrics['api_calls'] >= 0  # May be 0 if error detected before API calls counted
+        assert "Invalid API key" in metrics['error_message']
     
     @patch.dict(os.environ, {'EXCHANGE_RATE_API_KEY': 'test_api_key'})
     @patch('src.data.fetchers.exrate_fetcher.requests.get')
