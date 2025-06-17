@@ -34,7 +34,7 @@ pip install -r requirements.txt
 
 ### API Keys (Optional)
 
-For data fetching, set environment variables:
+For data fetching, set environment variables: (.env file or directly in your shell)
 
 ```bash
 export POLYGON_API_KEY="your_key_here"
@@ -63,6 +63,9 @@ python run_analysis.py csv --csv-file data/your_file.csv --point 0.01
 
 # Show cached data
 python run_analysis.py show yf aapl
+
+# Faster with UV
+uv run run_analysis.py demo -d term —rule PHLD
 ```
 
 ### Using Docker
@@ -70,14 +73,24 @@ python run_analysis.py show yf aapl
 # Build and run
 docker compose up --build
 
+# Build with uv
+docker compose build --build-arg USE_UV=true 
+
 # Interactive mode
 docker compose run --rm neozork-hld bash
+
+#Run Docker with uv
+uv run ./nz demo
 ```
+
 
 ### EDA and Analysis
 ```bash
 # Run EDA
 python -m src.eda.eda_batch_check
+
+#Run EDA script in Docker with uv
+uv run ./eda -h
 
 # Generate plots
 python -m src.plotting.fastest_auto_plot data/file.parquet
