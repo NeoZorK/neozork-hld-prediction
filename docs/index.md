@@ -10,6 +10,7 @@ Complete guide to NeoZork HLD Prediction project.
 ## Core Documentation
 
 - **[Docker](docker.md)** - Containerized development
+- **[Exchange Rate API](exchange-rate-api-complete.md)** - Real-time forex data integration
 - **[MCP Server](mcp-server.md)** - Model Context Protocol server
 - **[UV Setup](uv-setup.md)** - Fast package manager
 
@@ -38,9 +39,10 @@ Complete guide to NeoZork HLD Prediction project.
 4. [Debug Scripts](debug-scripts.md)
 
 ### Data Scientists
-1. [Analysis & EDA](analysis-eda.md)
-2. [Usage Examples](usage-examples.md)
-3. [Scripts](scripts.md)
+1. [Exchange Rate API](exchange-rate-api-complete.md)
+2. [Analysis & EDA](analysis-eda.md)
+3. [Usage Examples](usage-examples.md)
+4. [Scripts](scripts.md)
 
 ### DevOps
 1. [Docker](docker.md)
@@ -53,7 +55,7 @@ Complete guide to NeoZork HLD Prediction project.
 - [Getting Started](getting-started.md) (includes installation)
 
 **Usage:**
-- [Usage Examples](usage-examples.md) → [Analysis & EDA](analysis-eda.md)
+- [Usage Examples](usage-examples.md) → [Exchange Rate API](exchange-rate-api-complete.md) → [Analysis & EDA](analysis-eda.md)
 
 **Development:**
 - [Project Structure](project-structure.md) → [Testing](testing.md) → [CI/CD](ci-cd.md)

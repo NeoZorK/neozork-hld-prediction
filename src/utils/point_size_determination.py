@@ -12,7 +12,7 @@ from .utils import determine_point_size # For yfinance estimation
 def get_point_size(args, data_info: dict):
     """
     Determines point size based on args or estimation using data_info.
-    Handles 'demo', 'csv', 'polygon', 'yfinance', and 'binance' modes.
+    Handles 'demo', 'csv', 'polygon', 'yfinance', 'binance', and 'exrate' modes.
 
     Args:
         args (argparse.Namespace): Parsed command-line arguments. Must contain 'point'.
@@ -75,6 +75,18 @@ def get_point_size(args, data_info: dict):
             point_size = args.point # Assign point size here
             estimated_point = False # Point size is provided by user
             logger.print_info(f"Using user-provided point size for Binance: {point_size}")
+
+    # Exchange Rate API Mode
+    elif effective_mode == 'exrate':
+        logger.print_info("Checking for user-provided point size (required for Exchange Rate API mode)...")
+        if args.point is None:
+            raise ValueError("Point size (--point) must be provided when using exrate mode.")
+        elif args.point <= 0:
+            raise ValueError("Provided point size (--point) must be positive.")
+        else:
+            point_size = args.point
+            estimated_point = False
+            logger.print_info(f"Using user-provided point size for Exchange Rate API: {point_size}")
 
     # YFinance Mode
     elif effective_mode == 'yfinance':
