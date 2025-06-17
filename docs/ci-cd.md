@@ -1,86 +1,248 @@
-# CI/CD Guide
+# CI/CD Pipeline
 
 Continuous Integration and Deployment workflows using GitHub Actions and local testing tools.
 
 ## Overview
 
-The project uses GitHub Actions for automated testing, building, and deployment. Local testing tools ensure code quality before pushing to remote repositories.
+The project uses GitHub Actions for automated Docker building and testing. The workflow is currently focused on containerization with optional Docker Hub publishing.
 
-## GitHub Actions Workflows
+## GitHub Actions Workflow
 
 ### Main Workflow File
 **Location:** `.github/workflows/docker-build.yml`
 
-**Triggers:**
-- Push to main/master branch
-- Pull requests to main/master
-- Manual workflow dispatch
+**Current Triggers:**
+- Push to main/master branches
+- Manual workflow dispatch (workflow_dispatch)
+- Pull requests (currently commented out but available)
 
-**Workflow Steps:**
-1. **Code Checkout:** Download repository code
-2. **Environment Setup:** Configure Python and dependencies
-3. **Docker Build:** Build container image
-4. **Testing:** Run comprehensive test suite
-5. **Validation:** Validate application functionality
-6. **Artifact Storage:** Save build artifacts and test results
+### Actual Workflow Configuration
 
-### Workflow Configuration Example
+The workflow performs the following steps:
+
 ```yaml
-name: Docker Build and Test
+name: Build and Test Docker Image
 
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-  workflow_dispatch:
+  # pull_request:  # Currently commented out
+  #   branches: [ main, master ]
+  workflow_dispatch:  # Manual trigger
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-      
-    - name: Build Docker image
-      run: docker compose build
-      
-    - name: Run tests
-      run: docker compose run --rm neozork-hld pytest tests/ -v
-      
-    - name: Upload test results
-      uses: actions/upload-artifact@v3
-      with:
-        name: test-results
-        path: test-results.xml
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: false
+          load: true
+          tags: neozork-hld-prediction:latest
+          cache-from: type=gha  # GitHub Actions cache
+          cache-to: type=gha,mode=max
+          outputs: type=docker
+
+      - name: Display Docker image size
+        run: |
+          docker images neozork-hld-prediction:latest --format "{{.Repository}}:{{.Tag}} - Size: {{.Size}}"
+          docker history neozork-hld-prediction:latest
+
+      - name: Test Docker image
+        run: |
+          docker run --rm neozork-hld-prediction:latest python -c "import sys; print(f'Python {sys.version} is working in the container')"
+
+      - name: Check disk usage
+        run: df -h
 ```
+
+### Workflow Features
+
+1. **Code Checkout:** Downloads repository code using `actions/checkout@v3`
+2. **Docker Buildx Setup:** Configures advanced Docker build features
+3. **Docker Build:** 
+   - Builds image with tag `neozork-hld-prediction:latest`
+   - Uses GitHub Actions cache for optimization
+   - Loads image locally for testing
+4. **Image Analysis:** Displays image size and layer breakdown
+5. **Container Testing:** Tests Python environment functionality
+6. **Resource Monitoring:** Checks disk usage after build
+
+### Optional Docker Hub Publishing
+
+The workflow includes a commented-out publishing job that can be enabled:
+
+```yaml
+# Uncomment to enable Docker Hub publishing
+# publish:
+#   needs: build
+#   if: github.event_name != 'pull_request'
+#   runs-on: ubuntu-latest
+#   steps:
+#     - name: Login to Docker Hub
+#       uses: docker/login-action@v2
+#       with:
+#         username: ${{ secrets.DOCKER_HUB_USERNAME }}
+#         password: ${{ secrets.DOCKER_HUB_TOKEN }}
+#
+#     - name: Build and push
+#       uses: docker/build-push-action@v4
+#       with:
+#         context: .
+#         push: true
+#         tags: your-dockerhub-username/neozork-hld-prediction:latest
+```
+
+**To enable Docker Hub publishing:**
+1. Set up GitHub secrets: `DOCKER_HUB_USERNAME` and `DOCKER_HUB_TOKEN`
+2. Uncomment the publish job
+3. Update the Docker Hub username in the tags field
 
 ## Local Testing with Act
 
-### What is Act?
-[Act](https://github.com/nektos/act) runs GitHub Actions locally using Docker, allowing you to test workflows before pushing code.
+### Testing Script
 
-### Installation
+Use `test-workflow.sh` for automated local testing:
 
-**macOS:**
 ```bash
-brew install act
+chmod +x test-workflow.sh
+./test-workflow.sh
 ```
 
-**Linux:**
+**What the script does:**
+1. Detects system architecture (handles Apple Silicon compatibility)
+2. Creates temporary `.actrc` configuration if needed
+3. Runs the GitHub Actions workflow locally using act
+4. Cleans up configuration afterwards
+
+**For Apple Silicon Macs:**
+- Uses `ghcr.io/catthehacker/ubuntu:act-22.04` image
+- Sets `--container-architecture linux/amd64` for compatibility
+- Automatically handles configuration and cleanup
+
+**For other systems:**
+- Uses standard configuration
+- Runs with `ghcr.io/catthehacker/ubuntu:act-22.04` image
+
+### Manual Act Usage
+
 ```bash
-# Using Homebrew
+# Install act (macOS)
 brew install act
 
-# Manual installation
+# Install act (Linux)
 curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
+
+# List available workflows
+act -l
+
+# Run the build job
+act -j build
+
+# Run with specific runner image
+act -j build -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-22.04
+
+# Dry run (show what would be executed)
+act -n
 ```
 
-**Windows:**
+## Caching Strategy
+
+The workflow uses GitHub Actions cache (`type=gha`) to:
+- Speed up Docker builds between runs
+- Reduce resource usage and build times
+- Cache Docker layers efficiently
+
+## Monitoring and Debugging
+
+### Build Information
+The workflow provides monitoring through:
+- Docker image size reporting
+- Layer-by-layer breakdown with `docker history`
+- Basic Python functionality testing
+- Disk usage monitoring
+
+### Build Status
+Add build status badge to README:
+```markdown
+![Build Status](https://github.com/username/neozork-hld-prediction/workflows/Build%20and%20Test%20Docker%20Image/badge.svg)
+```
+
+## Performance Metrics
+
+### Typical Execution Times
+
+**Local Testing (Act):**
+- Setup: 30-60 seconds
+- Build: 2-4 minutes
+- Tests: 30 seconds
+- **Total: 3-5 minutes**
+
+**GitHub Actions:**
+- Queue time: 0-2 minutes
+- Setup: 1-2 minutes
+- Build: 3-5 minutes
+- Tests: 30 seconds
+- **Total: 4-9 minutes**
+
+## Best Practices
+
+### Current Implementation
+1. **Efficient caching** - Uses GitHub Actions cache for Docker layers
+2. **Basic testing** - Validates Python environment in container
+3. **Resource monitoring** - Tracks disk usage and image size
+4. **Manual triggers** - Supports workflow_dispatch for manual runs
+
+### Recommended Enhancements
+1. **Enable pull request testing** - Uncomment PR triggers for better CI
+2. **Add comprehensive testing** - Include unit tests, linting, type checking
+3. **Implement Docker Hub publishing** - Enable automatic image publishing
+4. **Add notification systems** - Slack or email notifications for failures
+
+## Troubleshooting
+
+### Common Issues
+
+**Act not working on Apple Silicon:**
+```bash
+# Use the provided test script which handles this automatically
+./test-workflow.sh
+```
+
+**Docker build failures:**
+```bash
+# Test build locally first
+docker build -t neozork-hld-prediction:latest .
+
+# Check if dependencies are properly installed
+docker run --rm neozork-hld-prediction:latest pip list
+```
+
+**Workflow not triggering:**
+- Check branch names match (main/master)
+- Verify workflow file syntax
+- Ensure proper Git push to correct branch
+
+### Debug Mode
+
+```bash
+# Verbose act output
+act -v -j build
+
+# Test specific step
+act -j build --step
+```
+
+For more Docker details, see [Docker Setup](docker.md).
+For local testing setup, see [Testing Guide](testing.md).
 ```bash
 # Using Chocolatey
 choco install act-cli
