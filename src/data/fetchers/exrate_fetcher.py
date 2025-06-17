@@ -256,7 +256,8 @@ def fetch_exrate_data(ticker: str, interval: str, start_date: str, end_date: str
         if not all_data:
             error_msg = f"No data retrieved for {base_currency}/{target_currency} in the specified date range."
             logger.print_warning(error_msg)
-            return None, {"error_message": error_msg, **metrics}
+            metrics["error_message"] = error_msg
+            return None, metrics
         
         # Create DataFrame
         df = pd.DataFrame(all_data)
@@ -276,7 +277,8 @@ def fetch_exrate_data(ticker: str, interval: str, start_date: str, end_date: str
         
         if df.empty:
             error_msg = "DataFrame became empty after processing."
-            return None, {"error_message": error_msg, **metrics}
+            metrics["error_message"] = error_msg
+            return None, metrics
         
         logger.print_success(f"Successfully fetched {len(df)} rows of Exchange Rate data.")
         return df, metrics
@@ -284,9 +286,11 @@ def fetch_exrate_data(ticker: str, interval: str, start_date: str, end_date: str
     except ValueError as e:
         error_msg = f"Date parsing error: {e}"
         logger.print_error(error_msg)
-        return None, {"error_message": error_msg, **metrics}
+        metrics["error_message"] = error_msg
+        return None, metrics
     except Exception as e:
         error_msg = f"Unexpected error in Exchange Rate API fetch: {e}"
         logger.print_error(error_msg)
         traceback.print_exc()
-        return None, {"error_message": error_msg, **metrics}
+        metrics["error_message"] = error_msg
+        return None, metrics
