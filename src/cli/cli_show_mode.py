@@ -61,6 +61,7 @@ def show_help():
     print(f"  - {Fore.GREEN}yfinance/yf{Style.RESET_ALL}: Yahoo Finance data files")
     print(f"  - {Fore.GREEN}polygon{Style.RESET_ALL}: Polygon.io API data files")
     print(f"  - {Fore.GREEN}binance{Style.RESET_ALL}: Binance API data files")
+    print(f"  - {Fore.GREEN}exrate{Style.RESET_ALL}: Exchange Rate API data files")
 
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Examples:{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show{Style.RESET_ALL}                  {Fore.BLACK}{Style.DIM}# Show statistics for all sources{Style.RESET_ALL}")
@@ -68,8 +69,10 @@ def show_help():
     print(f"  {Fore.GREEN}python run_analysis.py show csv{Style.RESET_ALL}              {Fore.BLACK}{Style.DIM}# List all CSV-converted files{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show binance{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List all Binance files{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show polygon{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List all Polygon.io files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show exrate{Style.RESET_ALL}           {Fore.BLACK}{Style.DIM}# List all Exchange Rate API files{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show yf aapl{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List YF files containing 'aapl'{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show binance btc MN1{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# List Binance files with 'btc' and timeframe 'MN1'{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show exrate eurusd{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# List Exchange Rate API EURUSD files{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show yf eurusd{Style.RESET_ALL}        {Fore.BLACK}{Style.DIM}# List all Yahoo Finance EURUSD files{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show csv aapl d1{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# List CSV files with 'aapl' and 'D1' timeframe{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show --start 2024-01-01{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# List files with data starting from 2024-01-01{Style.RESET_ALL}")
@@ -131,6 +134,7 @@ def count_files_by_source(args=None):
         'csv': 0,
         'polygon': 0,
         'binance': 0,
+        'exrate': 0,
         'other': 0,
         'csv_converted_count': 0
     }
@@ -153,6 +157,8 @@ def count_files_by_source(args=None):
                     source_counts['polygon'] += 1
                 elif filename_lower.startswith('binance_'):
                     source_counts['binance'] += 1
+                elif filename_lower.startswith('exrate_'):
+                    source_counts['exrate'] += 1
                 else:
                     source_counts['other'] += 1
     return source_counts
