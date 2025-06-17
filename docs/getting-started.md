@@ -6,7 +6,8 @@ NeoZork HLD Prediction enhances a proprietary trading indicator using Machine Le
 
 - **Indicator Replication:** Python implementation of MQL5 HLD indicator
 - **ML Enhancement:** Improved predictions using OHLCV data and ML models
-- **Multiple Data Sources:** Demo data, CSV files, Yahoo Finance, Polygon.io, Binance
+- **Multiple Data Sources:** Demo data, CSV files, Yahoo Finance, Polygon.io, Binance, Exchange Rate API
+- **Real-time FX Data:** Current exchange rates from 160+ currencies
 - **Validation:** Rigorous time-series validation and performance evaluation
 
 ## Prerequisites
@@ -40,6 +41,7 @@ For data fetching, set environment variables: (.env file or directly in your she
 export POLYGON_API_KEY="your_key_here"
 export BINANCE_API_KEY="your_key_here"
 export BINANCE_API_SECRET="your_secret_here"
+export EXCHANGE_RATE_API_KEY="your_key_here"  # Get free key from exchangerate-api.com
 ```
 
 ## Basic Usage
@@ -58,11 +60,15 @@ python run_analysis.py demo --rule PHLD
 # Yahoo Finance data
 python run_analysis.py yf -t AAPL --period 1mo --point 0.01
 
+# Current exchange rates (Exchange Rate API)
+python run_analysis.py exrate -t EURUSD --start 2025-01-01 --end 2025-06-01 --point 0.00001
+
 # CSV file analysis
 python run_analysis.py csv --csv-file data/your_file.csv --point 0.01
 
 # Show cached data
 python run_analysis.py show yf aapl
+python run_analysis.py show exrate
 
 # Faster with UV
 uv run run_analysis.py demo -d term —rule PHLD
