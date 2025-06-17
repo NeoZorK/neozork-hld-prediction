@@ -374,29 +374,34 @@ def acquire_data(args) -> dict:
             # --- Return Requested Slice ---
             final_df = None
             if combined_df is not None and not is_period_request:
-                print_info(f"Filtering combined data for requested range: {args.start} to {args.end}")
-                try:
-                    slice_start = req_start_dt
-                    slice_end = req_end_dt_input
-                    # Perform slice using loc, which is inclusive for Timestamps
-                    final_df = combined_df.loc[slice_start:slice_end].copy()
-                    # Check copy validity, fallback to view if needed
-                    if final_df.empty and not combined_df.loc[slice_start:slice_end].empty:
-                        print_warning("Copying slice resulted in empty DataFrame unexpectedly. Using view.")
-                        final_df = combined_df.loc[slice_start:slice_end]
+                # Special handling for exrate mode: return current data regardless of date range
+                if effective_mode == 'exrate':
+                    print_info("Exchange Rate API provides current data only. Returning current rates regardless of date range.")
+                    final_df = combined_df.copy()
+                else:
+                    print_info(f"Filtering combined data for requested range: {args.start} to {args.end}")
+                    try:
+                        slice_start = req_start_dt
+                        slice_end = req_end_dt_input
+                        # Perform slice using loc, which is inclusive for Timestamps
+                        final_df = combined_df.loc[slice_start:slice_end].copy()
+                        # Check copy validity, fallback to view if needed
+                        if final_df.empty and not combined_df.loc[slice_start:slice_end].empty:
+                            print_warning("Copying slice resulted in empty DataFrame unexpectedly. Using view.")
+                            final_df = combined_df.loc[slice_start:slice_end]
 
-                    if final_df.empty:
-                        print_warning(f"Requested range {args.start}-{args.end} resulted in empty slice.")
-                    else:
-                        print_info(f"Final DataFrame slice has {len(final_df)} rows.")
-                except KeyError:
-                    print_warning(
-                        f"Requested date range {args.start}-{args.end} not found in index. Returning empty slice.")
-                    final_df = pd.DataFrame()
-                except Exception as e:
-                    print_error(f"Error slicing combined DataFrame: {e}");
-                    final_df = None
-                    data_info["error_message"] = f"Error slicing data: {e}"
+                        if final_df.empty:
+                            print_warning(f"Requested range {args.start}-{args.end} resulted in empty slice.")
+                        else:
+                            print_info(f"Final DataFrame slice has {len(final_df)} rows.")
+                    except KeyError:
+                        print_warning(
+                            f"Requested date range {args.start}-{args.end} not found in index. Returning empty slice.")
+                        final_df = pd.DataFrame()
+                    except Exception as e:
+                        print_error(f"Error slicing combined DataFrame: {e}");
+                        final_df = None
+                        data_info["error_message"] = f"Error slicing data: {e}"
             elif combined_df is not None and is_period_request:
                 final_df = combined_df
 
