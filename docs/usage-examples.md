@@ -99,5 +99,5 @@ docker compose run --rm neozork-hld nz demo
 docker compose run --rm neozork-hld bash
 ```
 
-For installation: [Installation Guide](installation.md)  
+For installation: [Getting Started](getting-started.md)  
 For analysis tools: [Analysis & EDA](analysis-eda.md)
