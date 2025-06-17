@@ -60,8 +60,11 @@ python run_analysis.py demo --rule PHLD
 # Yahoo Finance data
 python run_analysis.py yf -t AAPL --period 1mo --point 0.01
 
-# Current exchange rates (Exchange Rate API)
-python run_analysis.py exrate -t EURUSD --start 2025-01-01 --end 2025-06-01 --point 0.00001
+# Current exchange rates (Exchange Rate API - Free Plan)
+python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001
+
+# Historical exchange rates (Exchange Rate API - Paid Plan)
+python run_analysis.py exrate -t EURUSD --interval D1 --start 2025-01-01 --end 2025-06-01 --point 0.00001
 
 # CSV file analysis
 python run_analysis.py csv --csv-file data/your_file.csv --point 0.01

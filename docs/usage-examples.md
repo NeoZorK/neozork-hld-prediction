@@ -51,18 +51,18 @@ nz csv --csv-file data.csv --rule PHLD --point 0.01
 
 ### Exchange Rate API (Real-time FX)
 ```bash
-# Current EUR/USD rate
-nz exrate -t EURUSD --start 2025-01-01 --end 2025-06-01 --point 0.00001
+# Free Plan - Current rates only
+nz exrate -t EURUSD --interval D1 --point 0.00001
 
-# With indicators
-nz exrate -t GBPJPY --start 2025-01-01 --end 2025-06-01 --point 0.01 --rule PV
+# Paid Plan - Historical data with indicators
+nz exrate -t GBPJPY --interval D1 --start 2025-01-01 --end 2025-06-01 --point 0.01 --rule PV
 
-# Different currency formats
-nz exrate -t EUR/USD --start 2025-01-01 --end 2025-06-01 --point 0.00001
-nz exrate -t EUR_USD --start 2025-01-01 --end 2025-06-01 --point 0.00001
+# Free Plan - Different currency formats
+nz exrate -t EUR/USD --interval D1 --point 0.00001
+nz exrate -t EUR_USD --interval D1 --point 0.00001
 
-# Terminal plotting (great for SSH/Docker)
-nz exrate -t USDCAD --start 2025-01-01 --end 2025-06-01 --point 0.00001 -d term
+# Free Plan - Terminal plotting (great for SSH/Docker)
+nz exrate -t USDCAD --interval D1 --point 0.00001 -d term
 
 # Show cached exchange rate data
 nz show exrate

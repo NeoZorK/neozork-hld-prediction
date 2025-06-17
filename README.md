@@ -14,7 +14,7 @@ pip install -r requirements.txt
 python run_analysis.py demo
 
 # Get current EUR/USD rate with Pressure Vector indicator
-python run_analysis.py exrate -t EURUSD --start 2025-01-01 --end 2025-06-01 --point 0.00001 --rule PV
+python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001 --rule PV
 
 # Docker alternative
 docker compose up --build

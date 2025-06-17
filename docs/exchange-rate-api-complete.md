@@ -4,9 +4,12 @@ This document provides a comprehensive guide for the Exchange Rate API data sour
 
 ## Overview
 
-The Exchange Rate API (exchangerate-api.com) data source provides access to **current foreign exchange rates** for currency pairs. This integration allows you to fetch and analyze current exchange rate data for various currency pairs using the tool's indicator calculation and visualization capabilities.
+The Exchange Rate API (exchangerate-api.com) data source provides access to **current and historical foreign exchange rates** for currency pairs. This integration supports both:
 
-**IMPORTANT**: This integration only provides **current/real-time exchange rates**. The free plan does not support historical data. Date ranges are ignored and current rates are fetched instead.
+- **Free Plan**: Current/real-time exchange rates only (no historical data)
+- **Paid Plan**: Full historical data access with date ranges
+
+The tool automatically detects which plan type you have and adjusts functionality accordingly.
 
 ## Implementation Summary
 
@@ -123,6 +126,12 @@ These are typically included in the project's requirements.
 
 ### Basic Command Structure
 
+**Free Plan (Current rates only):**
+```bash
+python run_analysis.py exrate --ticker CURRENCY_PAIR --interval TIMEFRAME --point POINT_SIZE [options]
+```
+
+**Paid Plan (Historical data):**
 ```bash
 python run_analysis.py exrate --ticker CURRENCY_PAIR --interval TIMEFRAME --start START_DATE --end END_DATE --point POINT_SIZE [options]
 ```
@@ -130,10 +139,10 @@ python run_analysis.py exrate --ticker CURRENCY_PAIR --interval TIMEFRAME --star
 ### Required Arguments
 
 - `--ticker`: Currency pair (e.g., EURUSD, GBPJPY, EUR/USD)
-- `--interval`: Timeframe (D1, W1, MN1 - all mapped to daily)
-- `--start`: Start date in YYYY-MM-DD format
-- `--end`: End date in YYYY-MM-DD format
+- `--interval`: Timeframe (D1, W1, MN1 - determines historical range for paid plan)
 - `--point`: Point size for the currency pair
+- `--start`: Start date in YYYY-MM-DD format (paid plan only)
+- `--end`: End date in YYYY-MM-DD format (paid plan only)
 
 ### Ticker Format Options
 
@@ -158,10 +167,23 @@ The Exchange Rate API fetcher supports multiple ticker formats:
 
 ## Command Examples
 
-### Basic Usage
+### Free Plan Usage (Current Rates)
 
 ```bash
-# Basic exchange rate data fetching
+# Basic current exchange rate data
+python run_analysis.py exrate --ticker EURUSD --interval D1 --point 0.00001
+
+# With indicator calculation
+python run_analysis.py exrate --ticker GBPJPY --interval D1 --point 0.01 --rule PHLD
+
+# With different visualization
+python run_analysis.py exrate --ticker USDCAD --interval D1 --point 0.00001 --rule PV -d plotly
+```
+
+### Paid Plan Usage (Historical Data)
+
+```bash
+# Historical exchange rate data fetching
 python run_analysis.py exrate --ticker EURUSD --interval D1 --start 2024-01-01 --end 2024-04-18 --point 0.00001
 
 # With indicator calculation
@@ -174,7 +196,10 @@ python run_analysis.py exrate --ticker USDCAD --interval D1 --start 2024-01-01 -
 ### With Different Visualization Options
 
 ```bash
-# Terminal visualization (great for SSH/Docker)
+# Terminal visualization - Free plan (current only)
+python run_analysis.py exrate --ticker EURUSD --interval D1 --point 0.00001 -d term
+
+# Terminal visualization - Paid plan (historical)
 python run_analysis.py exrate --ticker EURUSD --interval D1 --start 2024-01-01 --end 2024-02-01 --point 0.00001 -d term
 
 # Static image with mplfinance
