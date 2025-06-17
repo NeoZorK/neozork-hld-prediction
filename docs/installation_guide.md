@@ -1,53 +1,21 @@
-# Project Installation Guide
+# Installation Legacy Documentation
 
-This guide will help you set up the development environment for the neozork-hld-prediction project.
+⚠️ **Note:** This file has been superseded by the new documentation structure. Please refer to [docs/installation.md](installation.md) for current installation documentation.
 
-## Installation Steps
+## Quick Reference
 
-### Initial Setup
+For current installation instructions, see:
+- [Installation Guide](installation.md) - Complete setup instructions
+- [Quick Start](quick-start.md) - Fast setup guide
+- [UV Setup](uv-setup.md) - Fast package manager setup
 
-1. Delete PyCharm (if previously installed)
-2. Save 3 hidden files (press CMD+SHIFT+. to show hidden files):
-   - `.gitignore`
-   - `.env`
-   - `.dockerignore`
-3. Delete the `/DIS/REPO/neozork-hld-prediction` folder with all hidden files
+## Migration Notice
 
-### IDE Setup
-
-4. Download PyCharm, install, and run it
-5. Install essential plugins:
-   - GitHub Copilot
-   - Junie ($)
-   - Parquet Viewer
-   - Docker
-   - Ignore
-   - Env
-   - JSON
-
-### Git Setup
-
-6. Change git to a new branch:
-   ```bash
-   git branch v0.3.7uv
-   ```
-
-### Python Environment Setup
-
-7. Setup Python Interpreter:
-   - Add local Python interpreter -> Python 3.12.7
-8. Generate New -> uv -> path to uv: `/Users/rost/.local/bin/uv`
-9. Create and activate a virtual environment:
-   ```bash
-   uv venv
-   ```
-
-### Package Installation
-
-10. Install libraries with uv:
-    ```bash
-    uv pip install -r requirements.txt
-    ```
+This file is kept for reference but may be outdated. The new documentation provides:
+- More comprehensive installation steps
+- Better organization and structure  
+- Updated commands and requirements
+- Integration with UV package manager
 11. Sync new libraries with uv:
     ```bash
     uv sync

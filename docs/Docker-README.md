@@ -1,52 +1,21 @@
-# Docker Configuration Guide
+# Docker Legacy Documentation
 
-This document provides information about the Docker setup for the NeoZork HLD Prediction project.
+⚠️ **Note:** This file has been superseded by the new documentation structure. Please refer to [docs/docker.md](docker.md) for current Docker documentation.
 
-## Docker Files Structure
+## Quick Reference
 
-All Docker-related files are organized in the root directory:
+For current Docker usage, see:
+- [Docker Guide](docker.md) - Complete Docker setup and usage
+- [Quick Start](quick-start.md) - Get started with Docker
+- [Installation](installation.md) - Initial setup including Docker
 
-- `Dockerfile` - The main Dockerfile for building the application image
-- `docker-entrypoint.sh` - Entrypoint script that configures and runs the application inside the container
-- `docker-compose.yml` - File for Docker Compose configuration
+## Migration Notice
 
-## Building and Running
-
-To build and run the application using Docker:
-
-```bash
-# Build the Docker image
-docker-compose build
-
-# Run the application
-docker-compose up
-```
-
-# Run with interactive shell
-```bash
-docker-compose run --rm neozork
-```
-
-# To stop the application
-```shell  
-CTRL+D
-```
-
-## Container Configuration
-
-The Docker container is configured with the following features:
-
-- Python 3.11 environment with optimized dependencies using uv
-- Non-root user (neozork) for improved security
-- Interactive CLI with command history and tab completion
-- Bind mounts for data, logs, and results directories
-- Support for running tests for external data feeds
-- Optional MCP service for enhanced LLM support
-- uv for faster execution of Python scripts
-
-## Local Development Utilities
-
-The following scripts are available for local development:
+This file is kept for reference but may be outdated. The new documentation provides:
+- More comprehensive Docker coverage
+- Better organization and structure
+- Updated commands and examples
+- Integration with other project tools
 
 - `nz` - Wrapper script for executing run_analysis.py either locally or in a container
 - `eda` - Wrapper script for executing EDA scripts either locally or in a container
