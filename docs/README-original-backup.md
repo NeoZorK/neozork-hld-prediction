@@ -1,3 +1,15 @@
+# ⚠️ BACKUP FILE - DOCUMENTATION REORGANIZED
+
+**This file has been reorganized into smaller, focused documentation files.**
+
+**New Documentation Structure:**
+- [📋 Main README](../README.md) - Project overview with links
+- [📚 Documentation Index](overview.md) - All documentation organized by category
+
+**This backup file is kept for reference but may be outdated.**
+
+---
+
 # NeoZorK Indicator ML Enhancement
 
 ## Overview
