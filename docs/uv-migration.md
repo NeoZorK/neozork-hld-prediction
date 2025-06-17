@@ -1,53 +1,21 @@
-# Migrating from pip to uv
+# UV Migration Legacy Documentation
 
-## What is uv?
+⚠️ **Note:** This file has been superseded by the new documentation structure. Please refer to [docs/uv-setup.md](uv-setup.md) for current UV documentation.
 
-[uv](https://github.com/astral-sh/uv) is a new, fast Python package manager that can replace pip.
+## Quick Reference
 
-**Benefits of uv:**
-- 10-100 times faster than pip when installing packages
-- Parallel dependency installation
-- Improved dependency resolution
-- Smaller Docker container sizes
-- Better package caching
+For current UV setup and usage, see:
+- [UV Setup Guide](uv-setup.md) - Complete UV package manager guide
+- [Installation](installation.md) - UV integration in setup
+- [Docker Guide](docker.md) - UV in Docker builds
 
-## Installing uv
+## Migration Notice
 
-### Local installation
-
-For local installation, you can use the provided script:
-
-```bash
-chmod +x uv_setup/setup_uv.sh
-./uv_setup/setup_uv.sh
-```
-
-Or install manually:
-
-```bash
-# Create a temporary directory for the installer
-mkdir -p /tmp/uv-installer
-# Download the installer script
-curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh -o /tmp/uv-installer/installer.sh
-# Make it executable and run it
-chmod +x /tmp/uv-installer/installer.sh
-/tmp/uv-installer/installer.sh
-# Clean up
-rm -rf /tmp/uv-installer
-
-# Add to PATH
-source $HOME/.local/bin/env
-# or add to your .bashrc/.zshrc
-echo 'source $HOME/.local/bin/env' >> ~/.zshrc  # or ~/.bashrc
-```
-
-### Verifying installation
-
-```bash
-uv --version
-```
-
-## uv commands (pip replacements)
+This file is kept for reference but may be outdated. The new documentation provides:
+- Enhanced UV setup instructions
+- Performance comparisons and benefits
+- Docker integration examples
+- Troubleshooting and best practices
 
 | pip                            | uv                        | Description                               |
 |--------------------------------|---------------------------|-------------------------------------------|
