@@ -13,6 +13,9 @@ pip install -r requirements.txt
 # Run demo
 python run_analysis.py demo
 
+# Get current EUR/USD rate with Pressure Vector indicator
+python run_analysis.py exrate -t EURUSD --start 2025-01-01 --end 2025-06-01 --point 0.00001 --rule PV
+
 # Docker alternative
 docker compose up --build
 ```
@@ -21,7 +24,8 @@ docker compose up --build
 
 - **Indicator Replication:** Python implementation of MQL5 HLD indicator
 - **ML Enhancement:** Improved predictions using OHLCV data
-- **Multiple Data Sources:** Yahoo Finance, Polygon.io, Binance, CSV files
+- **Multiple Data Sources:** Yahoo Finance, Polygon.io, Binance, Exchange Rate API, CSV files
+- **Real-time FX Data:** Current exchange rates from 160+ currencies
 - **Analysis Tools:** Comprehensive EDA and plotting capabilities
 - **Docker Support:** Containerized development environment
 
@@ -30,8 +34,10 @@ docker compose up --build
 📚 **[Complete Documentation](docs/index.md)**
 
 ### Quick Links
+
 - [Getting Started](docs/getting-started.md) - Overview and setup
 - [Usage Examples](docs/usage-examples.md) - Common commands
+- [Exchange Rate API](docs/exchange-rate-api-complete.md) - Real-time FX data
 - [Docker Setup](docs/docker.md) - Containerized development
 - [Analysis Tools](docs/analysis-eda.md) - EDA and plotting
 
