@@ -146,7 +146,27 @@ def acquire_data(args) -> dict:
             cache_end_dt = None;
             req_end_dt_input = None
 
-            if not is_period_request:
+            # Special handling for exrate mode: dates are optional
+            if effective_mode == 'exrate':
+                # For exrate, start/end dates are optional (free plan = current only, paid plan = historical)
+                has_dates = hasattr(args, 'start') and hasattr(args, 'end') and args.start and args.end
+                is_period_request = False  # Exrate doesn't use period
+                
+                if has_dates:
+                    try:
+                        req_start_dt = pd.to_datetime(args.start, errors='raise').tz_localize(None)
+                        req_end_dt_input = pd.to_datetime(args.end, errors='raise').tz_localize(None)
+                        # Calculate the end timestamp for API calls (usually needs day after)
+                        req_end_dt_api_buffer = req_end_dt_input + timedelta(days=1)
+                        # Calculate the actual last timestamp needed (inclusive) for internal checks
+                        req_end_dt_inclusive = req_end_dt_api_buffer - timedelta(milliseconds=1)
+                        if req_start_dt >= req_end_dt_api_buffer: raise ValueError("Start date must be before end date.")
+                    except Exception as date_err:
+                        raise ValueError(f"Invalid start/end date format or range: {date_err}") from date_err
+                else:
+                    # Free plan: no dates needed, will fetch current data
+                    req_start_dt, req_end_dt_inclusive = None, None
+            elif not is_period_request:
                 try:
                     req_start_dt = pd.to_datetime(args.start, errors='raise').tz_localize(None)
                     req_end_dt_input = pd.to_datetime(args.end, errors='raise').tz_localize(None)
@@ -165,32 +185,43 @@ def acquire_data(args) -> dict:
             cache_load_success = False
 
             if cache_filepath and cache_filepath.exists() and not is_period_request:
-                print_info(f"Found existing API cache file: {cache_filepath}")
-                try:
-                    cached_df = pd.read_parquet(cache_filepath)
-                    if not isinstance(cached_df.index, pd.DatetimeIndex) or cached_df.empty:
-                        print_warning("Cache file invalid. Ignoring cache.")
-                        cached_df = None
-                    else:
-                        if cached_df.index.tz is not None: cached_df.index = cached_df.index.tz_localize(None)
-                        cache_start_dt = cached_df.index.min();
-                        cache_end_dt = cached_df.index.max()
-                        print_success(f"Loaded {len(cached_df)} rows from cache ({cache_start_dt} to {cache_end_dt}).")
-                        data_info["parquet_cache_used"] = True;
-                        cache_load_success = True
-                        try:
-                            data_info["file_size_bytes"] = cache_filepath.stat().st_size
-                        except Exception:
-                            pass
-                except Exception as e:
-                    print_warning(f"Failed to load cache file {cache_filepath}: {e}")
-                    cached_df = None;
-                    cache_load_success = False;
-                    data_info["parquet_cache_used"] = False
+                # For exrate without dates (free plan), skip cache loading as we always want current data
+                if effective_mode == 'exrate' and req_start_dt is None:
+                    print_info("Exrate free plan mode: Skipping cache, fetching current data")
+                    cached_df = None
+                    cache_load_success = False
+                else:
+                    print_info(f"Found existing API cache file: {cache_filepath}")
+                    try:
+                        cached_df = pd.read_parquet(cache_filepath)
+                        if not isinstance(cached_df.index, pd.DatetimeIndex) or cached_df.empty:
+                            print_warning("Cache file invalid. Ignoring cache.")
+                            cached_df = None
+                        else:
+                            if cached_df.index.tz is not None: cached_df.index = cached_df.index.tz_localize(None)
+                            cache_start_dt = cached_df.index.min();
+                            cache_end_dt = cached_df.index.max()
+                            print_success(f"Loaded {len(cached_df)} rows from cache ({cache_start_dt} to {cache_end_dt}).")
+                            data_info["parquet_cache_used"] = True;
+                            cache_load_success = True
+                            try:
+                                data_info["file_size_bytes"] = cache_filepath.stat().st_size
+                            except Exception:
+                                pass
+                    except Exception as e:
+                        print_warning(f"Failed to load cache file {cache_filepath}: {e}")
+                        cached_df = None;
+                        cache_load_success = False;
+                        data_info["parquet_cache_used"] = False
 
             if not is_period_request:
                 interval_delta = _get_interval_delta(args.interval)
-                if not req_start_dt: raise ValueError("Start date is required for cacheable API modes.")
+                # Special handling for exrate without dates (free plan)
+                if effective_mode == 'exrate' and req_start_dt is None:
+                    # For free plan exrate, we don't need date validation or cache checking
+                    pass
+                elif not req_start_dt:
+                    raise ValueError("Start date is required for cacheable API modes.")
 
                 if cache_load_success and interval_delta and cache_start_dt and cache_end_dt:
                     if req_start_dt < cache_start_dt:
@@ -218,7 +249,38 @@ def acquire_data(args) -> dict:
             fetch_failed = False
             temp_metrics = {}
 
-            if fetch_ranges:
+            # Special case for exrate free plan: always fetch current data even without ranges
+            if effective_mode == 'exrate' and req_start_dt is None:
+                data_info["data_source_label"] = args.ticker
+                print_info("Fetching current exchange rate data...")
+                
+                fetch_func = fetch_exrate_data
+                try:
+                    call_kwargs = {
+                        'ticker': args.ticker,
+                        'interval': args.interval,
+                        'start_date': None,
+                        'end_date': None
+                    }
+                    
+                    new_df_part, metrics_part = fetch_func(**call_kwargs)
+                    
+                    if new_df_part is not None and not new_df_part.empty:
+                        if isinstance(new_df_part.index, pd.DatetimeIndex):
+                            if new_df_part.index.tz is not None:
+                                new_df_part.index = new_df_part.index.tz_localize(None)
+                        new_data_list.append(new_df_part);
+                        print_success(f"Fetched {len(new_df_part)} current exchange rate.")
+                        temp_metrics.update(metrics_part)
+                    else:
+                        print_warning("No current exchange rate data returned.")
+                        fetch_failed = True
+                        temp_metrics.update(metrics_part)
+                except Exception as e:
+                    print_error(f"Failed to fetch current exchange rate: {e}")
+                    fetch_failed = True
+                    temp_metrics["error_message"] = str(e)
+            elif fetch_ranges:
                 data_info["data_source_label"] = args.ticker
                 for fetch_range_data in fetch_ranges:
                     fetch_start, fetch_end, signal_cache_start = fetch_range_data  # fetch_end is the last timestamp to INCLUDE
@@ -260,11 +322,26 @@ def acquire_data(args) -> dict:
                             call_kwargs = {
                                 'ticker': args.ticker,
                                 'interval': args.interval,
-                                'start_date': fetch_start_str,
-                                'end_date': fetch_end_str  # Use calculated exclusive end date string
                             }
+                            
+                            # Handle date parameters based on mode
                             if effective_mode == 'yfinance':
+                                call_kwargs['start_date'] = fetch_start_str
+                                call_kwargs['end_date'] = fetch_end_str
                                 call_kwargs['period'] = None
+                            elif effective_mode == 'exrate':
+                                # For exrate, only pass dates if they were provided by user
+                                if hasattr(args, 'start') and args.start and hasattr(args, 'end') and args.end:
+                                    call_kwargs['start_date'] = fetch_start_str
+                                    call_kwargs['end_date'] = fetch_end_str
+                                else:
+                                    # Free plan mode - current data only
+                                    call_kwargs['start_date'] = None
+                                    call_kwargs['end_date'] = None
+                            else:
+                                # polygon, binance require dates
+                                call_kwargs['start_date'] = fetch_start_str
+                                call_kwargs['end_date'] = fetch_end_str
 
                             new_df_part, metrics_part = fetch_func(**call_kwargs)
                             # --- End Refactored Fetch Call ---
@@ -374,10 +451,21 @@ def acquire_data(args) -> dict:
             # --- Return Requested Slice ---
             final_df = None
             if combined_df is not None and not is_period_request:
-                # Special handling for exrate mode: return current data regardless of date range
+                # Special handling for exrate mode: check if historical data was requested
                 if effective_mode == 'exrate':
-                    print_info("Exchange Rate API provides current data only. Returning current rates regardless of date range.")
-                    final_df = combined_df.copy()
+                    if hasattr(args, 'start') and args.start and hasattr(args, 'end') and args.end:
+                        print_info("Exchange Rate API: Returning historical data for requested range")
+                        try:
+                            slice_start = req_start_dt
+                            slice_end = req_end_dt_input
+                            # Perform slice using loc, which is inclusive for Timestamps
+                            final_df = combined_df.loc[slice_start:slice_end].copy()
+                        except Exception as e:
+                            print_warning(f"Date slicing failed for exrate: {e}")
+                            final_df = combined_df.copy()
+                    else:
+                        print_info("Exchange Rate API: Returning current exchange rate data")
+                        final_df = combined_df.copy()
                 else:
                     print_info(f"Filtering combined data for requested range: {args.start} to {args.end}")
                     try:
