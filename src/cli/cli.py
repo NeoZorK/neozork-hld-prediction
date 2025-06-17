@@ -2,7 +2,10 @@
 # src/cli/cli.py
 
 """
-Command Line Interface setup using argparse and RichHelpFormatter for colored help.
+Command Line Interface setup using argparse and RichHelpFormatter for     data_source_group.add_argument('--start', help="Start date (YYYY-MM-DD). Used by yfinance, polygon, binance, exrate.")
+    # Make --end related only to --start (not period)
+    data_source_group.add_argument('--end',
+                                   help="End date (YYYY-MM-DD). Used by yfinance, polygon, binance, exrate. Required if --start is used.")red help.
 All comments are in English.
 """
 import argparse
@@ -90,8 +93,8 @@ def parse_arguments():
 
     # --- Required Arguments Group ---
     required_group = parser.add_argument_group('Required Arguments')
-    required_group.add_argument('mode', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance', 'show'],
-                                help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance', 'show'.")
+    required_group.add_argument('mode', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate', 'show'],
+                                help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance', 'exrate', 'show'.")
 
     # --- Show Mode Positional Arguments ---
     parser.add_argument('show_args', nargs='*', default=[],
@@ -104,12 +107,12 @@ def parse_arguments():
                                    help="Path to the input CSV file (required for 'csv' mode).")
     # API options (Yahoo Finance / Polygon.io / Binance)
     data_source_group.add_argument('-t', '--ticker',
-                                   help="Ticker symbol (e.g., 'EURUSD=X' for yfinance; 'EURUSD', 'AAPL' for Polygon; 'BTCUSDT' for Binance). Required for 'yfinance', 'polygon', 'binance' modes.")
+                                   help="Ticker symbol (e.g., 'EURUSD=X' for yfinance; 'EURUSD', 'AAPL' for Polygon; 'BTCUSDT' for Binance; 'EURUSD', 'GBPJPY' for Exchange Rate API). Required for 'yfinance', 'polygon', 'binance', 'exrate' modes.")
     data_source_group.add_argument('-i', '--interval', default='D1',
                                    help="Timeframe (e.g., 'M1', 'H1', 'D1', 'W1', 'MN1'). Default: D1.")
     # Point size argument
     data_source_group.add_argument('--point', type=float,
-                                   help="Instrument point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto). Overrides yfinance estimation. Required for 'csv', 'polygon', 'binance' modes.")
+                                   help="Instrument point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto). Overrides yfinance estimation. Required for 'csv', 'polygon', 'binance', 'exrate' modes.")
     # History selection (period or start/end dates)
     history_group = data_source_group.add_mutually_exclusive_group()
     history_group.add_argument('--period',
@@ -137,7 +140,7 @@ def parse_arguments():
     show_group = parser.add_argument_group('Show Mode Options')
     show_group.add_argument(
         '--source', default='yfinance',
-        choices=['yfinance', 'yf', 'csv', 'polygon', 'binance'],
+        choices=['yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate'],
         help="Filter files by data source type. Can also use first positional argument after 'show'. Default: 'yfinance'."
     )
     show_group.add_argument(
@@ -223,8 +226,8 @@ def parse_arguments():
         if args.point is None:
             parser.error("argument --point is required when mode is 'csv'")
 
-    # Check requirements for API modes (yfinance, polygon, binance)
-    api_modes = ['yfinance', 'polygon', 'binance']
+    # Check requirements for API modes (yfinance, polygon, binance, exrate)
+    api_modes = ['yfinance', 'polygon', 'binance', 'exrate']
     if effective_mode in api_modes:
         if not args.ticker:
             parser.error(f"argument --ticker is required when mode is '{effective_mode}'")
@@ -240,9 +243,9 @@ def parse_arguments():
         if args.period and (args.start or args.end):
             parser.error("cannot use --period together with --start or --end for yfinance mode")
 
-    # Check requirements for Polygon & Binance
-    polygon_binance_modes = ['polygon', 'binance']
-    if effective_mode in polygon_binance_modes:
+    # Check requirements for Polygon, Binance & Exchange Rate API
+    polygon_binance_exrate_modes = ['polygon', 'binance', 'exrate']
+    if effective_mode in polygon_binance_exrate_modes:
         if not args.start or not args.end:
             parser.error(f"arguments --start and --end are required when mode is '{effective_mode}'")
         if args.point is None:
@@ -261,7 +264,7 @@ def parse_arguments():
         # If user provided positional arguments after 'show', use them as source/keywords
         if args.show_args:
             # If the first positional arg is a valid source, treat as source
-            valid_sources = ['yfinance', 'yf', 'csv', 'polygon', 'binance']
+            valid_sources = ['yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate']
             # Remove any flags from show_args (e.g. --raw, --cleaned, --draw, etc.)
             filtered_args = [a for a in args.show_args if not a.startswith('--')]
             if filtered_args:
