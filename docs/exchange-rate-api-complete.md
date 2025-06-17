@@ -4,7 +4,9 @@ This document provides a comprehensive guide for the Exchange Rate API data sour
 
 ## Overview
 
-The Exchange Rate API (exchangerate-api.com) data source provides access to current foreign exchange rates for currency pairs. This integration allows you to fetch and analyze exchange rate data for various currency pairs using the tool's indicator calculation and visualization capabilities.
+The Exchange Rate API (exchangerate-api.com) data source provides access to **current foreign exchange rates** for currency pairs. This integration allows you to fetch and analyze current exchange rate data for various currency pairs using the tool's indicator calculation and visualization capabilities.
+
+**IMPORTANT**: This integration only provides **current/real-time exchange rates**. The free plan does not support historical data. Date ranges are ignored and current rates are fetched instead.
 
 ## Implementation Summary
 
