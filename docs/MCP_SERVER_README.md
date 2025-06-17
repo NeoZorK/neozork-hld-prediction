@@ -1,53 +1,21 @@
-# MCP Server for GitHub Copilot
+# MCP Server Legacy Documentation
 
-Local MCP (Model Completion Protocol) server to extend GitHub Copilot capabilities in PyCharm CE.
+⚠️ **Note:** This file has been superseded by the new documentation structure. Please refer to [docs/mcp-server.md](mcp-server.md) for current MCP server documentation.
 
-## Features
+## Quick Reference
 
-- Works through standard input/output (STDIO)
-- Processes requests from GitHub Copilot MCP client
-- Has access to the local project
-- Provides detailed session logging
-- Works continuously without terminating
+For current MCP server setup and usage, see:
+- [MCP Server Guide](mcp-server.md) - Complete MCP server documentation
+- [Installation](installation.md) - Initial setup
+- [Docker Guide](docker.md) - Docker integration with MCP
 
-## Installation
+## Migration Notice
 
-1. Make sure you have Python 3.8 or higher installed
-2. Clone the repository or copy the `mcp_server.py` file
-3. Create a `logs` directory in the project root (if it doesn't exist yet):
-   ```
-   mkdir -p logs
-   ```
-4. Set execution permissions:
-   ```
-   chmod +x mcp_server.py
-   ```
-
-## Setting up PyCharm CE to work with GitHub Copilot MCP
-
-1. Open PyCharm CE
-2. Install the GitHub Copilot plugin from the JetBrains marketplace
-3. Go to Settings/Preferences -> Tools -> GitHub Copilot
-4. In the "Advanced" section, find the "MCP Configuration" setting
-5. Add the path to the `mcp.json` file, which should contain the following:
-
-```json
-{
-  "command": "python",
-  "args": ["/full/path/to/mcp_server.py"],
-  "stdio": true
-}
-```
-
-Replace `/full/path/to/mcp_server.py` with the absolute path to the mcp_server.py file.
-
-## Launch
-
-You don't need to do anything special to launch the MCP server. When properly configured, PyCharm CE will automatically start the MCP server when using GitHub Copilot. Everything happens automatically when you open your project.
-
-## Using MCP Server with Docker
-
-You can run the MCP server both directly on your host machine or inside a Docker container. This allows for flexibility depending on your development environment and needs.
+This file is kept for reference but may be outdated. The new documentation provides:
+- Enhanced setup instructions
+- Better IDE integration examples
+- Improved troubleshooting guide
+- Docker integration details
 
 ## Using the `nz` Command with MCP Server
 
