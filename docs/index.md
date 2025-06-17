@@ -4,8 +4,7 @@ Complete guide to NeoZork HLD Prediction project.
 
 ## Quick Start
 
-- **[Getting Started](getting-started.md)** - Project overview and quick setup
-- **[Installation](installation.md)** - Setup instructions
+- **[Getting Started](getting-started.md)** - Project overview, installation, and quick setup
 - **[Usage Examples](usage-examples.md)** - Common commands and use cases
 
 ## Core Documentation
@@ -30,8 +29,7 @@ Complete guide to NeoZork HLD Prediction project.
 
 ### New Users
 1. [Getting Started](getting-started.md)
-2. [Installation](installation.md)
-3. [Usage Examples](usage-examples.md)
+2. [Usage Examples](usage-examples.md)
 
 ### Developers
 1. [Project Structure](project-structure.md)
@@ -52,7 +50,7 @@ Complete guide to NeoZork HLD Prediction project.
 ## By Task
 
 **Setup:**
-- [Getting Started](getting-started.md) → [Installation](installation.md)
+- [Getting Started](getting-started.md) (includes installation)
 
 **Usage:**
 - [Usage Examples](usage-examples.md) → [Analysis & EDA](analysis-eda.md)

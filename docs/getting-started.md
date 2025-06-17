@@ -9,19 +9,37 @@ NeoZork HLD Prediction enhances a proprietary trading indicator using Machine Le
 - **Multiple Data Sources:** Demo data, CSV files, Yahoo Finance, Polygon.io, Binance
 - **Validation:** Rigorous time-series validation and performance evaluation
 
-## Quick Setup
+## Prerequisites
+
+- **Python 3.12+**
+- **Git**
+- **Docker** (optional, for containerized usage)
+
+## Installation
+
+### Quick Install
 
 ```bash
 # Clone repository
 git clone https://github.com/username/neozork-hld-prediction.git
 cd neozork-hld-prediction
 
-# Install dependencies
-pip install -r requirements.txt
-# or use UV: uv sync
+# Install with UV (recommended)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv sync
 
-# Run demo
-python run_analysis.py demo
+# Or install with pip
+pip install -r requirements.txt
+```
+
+### API Keys (Optional)
+
+For data fetching, set environment variables:
+
+```bash
+export POLYGON_API_KEY="your_key_here"
+export BINANCE_API_KEY="your_key_here"
+export BINANCE_API_SECRET="your_secret_here"
 ```
 
 ## Basic Usage
@@ -56,6 +74,32 @@ docker compose up --build
 docker compose run --rm neozork-hld bash
 ```
 
+### EDA and Analysis
+```bash
+# Run EDA
+python -m src.eda.eda_batch_check
+
+# Generate plots
+python -m src.plotting.fastest_auto_plot data/file.parquet
+```
+
+## Troubleshooting
+
+**ImportError issues:**
+```bash
+pip install --upgrade -r requirements.txt
+```
+
+**Permission errors:**
+```bash
+chmod +x scripts/*.sh
+```
+
+**Docker issues:**
+```bash
+docker compose build --no-cache
+```
+
 ## Key Features
 
 - **Core Calculations:** Pressure Vector, Support/Resistance, HLD Direction
@@ -66,10 +110,10 @@ docker compose run --rm neozork-hld bash
 
 ## Next Steps
 
-1. **Installation:** [Full Installation Guide](installation.md)
-2. **Usage Examples:** [Usage Examples](usage-examples.md) 
-3. **Docker:** [Docker Setup](docker.md)
-4. **Analysis Tools:** [Analysis & EDA](analysis-eda.md)
-5. **API Setup:** Configure API keys for live data sources
+1. **Usage Examples:** [Usage Examples](usage-examples.md) 
+2. **Docker:** [Docker Setup](docker.md)
+3. **Analysis Tools:** [Analysis & EDA](analysis-eda.md)
+4. **Scripts:** [Scripts Guide](scripts.md)
+5. **Testing:** [Testing Guide](testing.md)
 
 For comprehensive documentation: [Documentation Index](index.md)
