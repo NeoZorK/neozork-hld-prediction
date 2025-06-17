@@ -1,6 +1,6 @@
 [project]
 name = "neozork-hld-prediction"
-version = "0.3.8"
+dynamic = ["version"]
 description = "Machine Learning enhancement of proprietary trading indicators using Python"
 requires-python = ">=3.11"
 dependencies = [
@@ -130,3 +130,10 @@ dependencies = [
     "dask",
     "datashader",
 ]
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "src.__version__"}
