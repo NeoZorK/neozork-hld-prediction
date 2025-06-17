@@ -107,7 +107,7 @@ def parse_arguments():
                                    help="Path to the input CSV file (required for 'csv' mode).")
     # API options (Yahoo Finance / Polygon.io / Binance)
     data_source_group.add_argument('-t', '--ticker',
-                                   help="Ticker symbol (e.g., 'EURUSD=X' for yfinance; 'EURUSD', 'AAPL' for Polygon; 'BTCUSDT' for Binance; 'EURUSD', 'GBPJPY' for Exchange Rate API). Required for 'yfinance', 'polygon', 'binance', 'exrate' modes.")
+                                   help="Ticker symbol (e.g., 'EURUSD=X' for yfinance; 'EURUSD', 'AAPL' for Polygon; 'BTCUSDT' for Binance; 'EURUSD', 'GBPJPY' for Exchange Rate API [current rates only]). Required for 'yfinance', 'polygon', 'binance', 'exrate' modes.")
     data_source_group.add_argument('-i', '--interval', default='D1',
                                    help="Timeframe (e.g., 'M1', 'H1', 'D1', 'W1', 'MN1'). Default: D1.")
     # Point size argument
@@ -117,10 +117,10 @@ def parse_arguments():
     history_group = data_source_group.add_mutually_exclusive_group()
     history_group.add_argument('--period',
                                help="History period for yfinance (e.g., '1mo', '1y'). Not used if --start/--end are provided. Not used by Polygon/Binance.")
-    history_group.add_argument('--start', help="Start date (YYYY-MM-DD). Used by yfinance, polygon, binance.")
+    history_group.add_argument('--start', help="Start date (YYYY-MM-DD). Used by yfinance, polygon, binance. Ignored by exrate (current data only).")
     # Make --end related only to --start (not period)
     data_source_group.add_argument('--end',
-                                   help="End date (YYYY-MM-DD). Used by yfinance, polygon, binance. Required if --start is used.")
+                                   help="End date (YYYY-MM-DD). Used by yfinance, polygon, binance. Required if --start is used. Ignored by exrate (current data only).")
 
     # --- Indicator Options Group ---
     indicator_group = parser.add_argument_group('Indicator Options')
