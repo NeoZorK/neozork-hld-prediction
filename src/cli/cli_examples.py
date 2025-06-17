@@ -69,7 +69,17 @@ def show_cli_examples_colored():
     print(f"{Fore.BLACK}{Style.DIM}# ETHUSDT, daily, SR rule, seaborn backend{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR -d seaborn{Style.RESET_ALL}\n")
 
-    print(f"{Style.BRIGHT}6. SHOW MODE (CACHE/FILES){Style.RESET_ALL}")
+    print(f"{Style.BRIGHT}6. EXCHANGE RATE API MODES{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# EURUSD, daily, date range{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py exrate --ticker EURUSD --interval D1 --start 2024-01-01 --end 2024-04-18 --point 0.00001{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# GBPJPY, daily, PHLD rule{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py exrate --ticker GBPJPY --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule PHLD{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# USDCAD, daily, PV rule, plotly backend{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py exrate --ticker USDCAD --interval D1 --start 2024-01-01 --end 2024-06-01 --point 0.00001 --rule PV -d plotly{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# AUDUSD, daily, terminal plotting{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py exrate --ticker AUDUSD --interval D1 --start 2024-01-01 --end 2024-03-01 --point 0.00001 -d term{Style.RESET_ALL}\n")
+
+    print(f"{Style.BRIGHT}7. SHOW MODE (CACHE/FILES){Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Show all available cached files{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Show yfinance cached files{Style.RESET_ALL}")
@@ -81,7 +91,7 @@ def show_cli_examples_colored():
     print(f"{Fore.BLACK}{Style.DIM}# Show files from date range{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show --start 2024-01-01 --end 2024-12-31{Style.RESET_ALL}\n")
 
-    print(f"{Style.BRIGHT}7. TERMINAL MODE EXAMPLES{Style.RESET_ALL}")
+    print(f"{Style.BRIGHT}8. TERMINAL MODE EXAMPLES{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Demo with terminal plotting{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo -d term{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Yahoo Finance with terminal plotting{Style.RESET_ALL}")
@@ -89,7 +99,9 @@ def show_cli_examples_colored():
     print(f"{Fore.BLACK}{Style.DIM}# CSV with terminal plotting{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 -d term{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Binance with terminal plotting{Style.RESET_ALL}")
-    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py binance -t BTCUSDT --interval D1 --start 2024-01-01 --end 2024-02-01 --point 0.01 -d term{Style.RESET_ALL}\n")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py binance -t BTCUSDT --interval D1 --start 2024-01-01 --end 2024-02-01 --point 0.01 -d term{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Exchange Rate API with terminal plotting{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py exrate -t EURUSD --interval D1 --start 2024-01-01 --end 2024-02-01 --point 0.00001 -d term{Style.RESET_ALL}\n")
 
     print(f"{Fore.YELLOW}{Style.BRIGHT}NOTE:{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}Terminal mode (-d term) works great in Docker containers and provides{Style.RESET_ALL}")
