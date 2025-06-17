@@ -16,7 +16,7 @@ from datetime import datetime, timedelta, timezone
 # Use relative imports for fetchers within the same package
 from .fetchers import (
     fetch_csv_data, fetch_yfinance_data, fetch_polygon_data,
-    fetch_binance_data, get_demo_data
+    fetch_binance_data, get_demo_data, fetch_exrate_data
 )
 # Use relative import for logger functions
 from ..common.logger import print_info, print_warning, print_error, print_debug, print_success  # Added print_success
@@ -56,7 +56,7 @@ def _get_interval_delta(interval_str: str) -> pd.Timedelta | None:
 def _generate_instrument_parquet_filename(args) -> Path | None:
     """Generates the expected instrument-specific parquet filename (no dates)."""
     effective_mode = 'yfinance' if args.mode == 'yf' else args.mode
-    if effective_mode not in ['yfinance', 'polygon', 'binance'] or not args.ticker:
+    if effective_mode not in ['yfinance', 'polygon', 'binance', 'exrate'] or not args.ticker:
         return None
     parquet_dir = Path("data/raw_parquet")
     try:
@@ -140,7 +140,7 @@ def acquire_data(args) -> dict:
             combined_metrics["api_calls"] = 0
             data_info["ohlcv_df"] = df
 
-        elif effective_mode in ['yfinance', 'polygon', 'binance']:
+        elif effective_mode in ['yfinance', 'polygon', 'binance', 'exrate']:
             is_period_request = effective_mode == 'yfinance' and args.period
             cache_start_dt = None;
             cache_end_dt = None;
@@ -251,6 +251,8 @@ def acquire_data(args) -> dict:
                         fetch_func = fetch_polygon_data
                     elif effective_mode == 'binance':
                         fetch_func = fetch_binance_data
+                    elif effective_mode == 'exrate':
+                        fetch_func = fetch_exrate_data
 
                     if fetch_func:
                         try:
