@@ -117,10 +117,10 @@ def parse_arguments():
     history_group = data_source_group.add_mutually_exclusive_group()
     history_group.add_argument('--period',
                                help="History period for yfinance (e.g., '1mo', '1y'). Not used if --start/--end are provided. Not used by Polygon/Binance.")
-    history_group.add_argument('--start', help="Start date (YYYY-MM-DD). Used by yfinance, polygon, binance. Not used by exrate.")
+    history_group.add_argument('--start', help="Start date (YYYY-MM-DD). Used by yfinance, polygon, binance. Optional for exrate (enables historical data with paid plan).")
     # Make --end related only to --start (not period)
     data_source_group.add_argument('--end',
-                                   help="End date (YYYY-MM-DD). Used by yfinance, polygon, binance. Required if --start is used. Not used by exrate.")
+                                   help="End date (YYYY-MM-DD). Used by yfinance, polygon, binance. Required if --start is used. Optional for exrate (enables historical data with paid plan).")
 
     # --- Indicator Options Group ---
     indicator_group = parser.add_argument_group('Indicator Options')
