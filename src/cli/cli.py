@@ -28,7 +28,7 @@ class ColoredHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
 
     def __init__(self, prog):
         # Set consistent width and max_help_position for better alignment
-        super().__init__(prog, width=110, max_help_position=24)
+        super().__init__(prog, width=120, max_help_position=26)
 
     def _format_action_invocation(self, action):
         """Format the action invocation (e.g. -h, --help) with color."""
@@ -75,7 +75,8 @@ class ColoredHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
             else:
                 wrapped = textwrap.fill(line, width, 
                                       break_long_words=False, 
-                                      break_on_hyphens=False)
+                                      break_on_hyphens=False,
+                                      subsequent_indent='                        ')
                 lines.extend(wrapped.splitlines())
         return lines
 
@@ -92,9 +93,7 @@ def parse_arguments():
     main_description = textwrap.dedent(f"""
        {Fore.CYAN}{Style.BRIGHT}Shcherbyna Pressure Vector Indicator Analysis Tool{Style.RESET_ALL}
        
-       Calculate and plot pressure vector indicators from multiple data sources:
-       demo data, Yahoo Finance, CSV files, Polygon.io, Binance, and Exchange Rate API.
-       Export calculated indicators in parquet, CSV, or JSON formats.
+       Calculate and plot pressure vector indicators from multiple data sources: demo data, Yahoo Finance, CSV files, Polygon.io, Binance, and Exchange Rate API. Export calculated indicators in parquet, CSV, or JSON formats.
        """).strip()
 
 
