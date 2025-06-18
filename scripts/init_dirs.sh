@@ -11,6 +11,11 @@ mkdir -p data/cache/csv_converted
 mkdir -p data/raw_parquet
 mkdir -p data/processed
 
+# Create indicator export directories
+mkdir -p data/indicators/parquet
+mkdir -p data/indicators/csv
+mkdir -p data/indicators/json
+
 # Log and results directories
 mkdir -p logs
 mkdir -p results
