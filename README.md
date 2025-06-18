@@ -25,6 +25,7 @@ docker compose up --build
 - **Indicator Replication:** Python implementation of MQL5 HLD indicator
 - **ML Enhancement:** Improved predictions using OHLCV data
 - **Multiple Data Sources:** Yahoo Finance, Polygon.io, Binance, Exchange Rate API, CSV files
+- **Indicator Export:** Export calculated indicators to Parquet, CSV, and JSON formats
 - **Real-time FX Data:** Current exchange rates from 160+ currencies
 - **Analysis Tools:** Comprehensive EDA and plotting capabilities
 - **Docker Support:** Containerized development environment
@@ -37,6 +38,7 @@ docker compose up --build
 
 - [Getting Started](docs/getting-started.md) - Overview and setup
 - [Usage Examples](docs/usage-examples.md) - Common commands
+- [Indicator Export](docs/indicator-export.md) - Export calculated indicators
 - [Exchange Rate API](docs/exchange-rate-api-complete.md) - Real-time FX data
 - [Docker Setup](docs/docker.md) - Containerized development
 - [Analysis Tools](docs/analysis-eda.md) - EDA and plotting
