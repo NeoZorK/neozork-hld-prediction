@@ -390,11 +390,17 @@ def handle_show_mode(args):
         source_counts = count_files_by_source(args)
         print("\n=== AVAILABLE DATA FILES ===")
         total_files = sum([count for source, count in source_counts.items() if source not in ['csv_converted_count']])
-        if total_files == 0:
+        
+        # Add indicator files count
+        indicator_counts = count_indicator_files()
+        total_indicator_files = sum(indicator_counts.values())
+        
+        if total_files == 0 and total_indicator_files == 0:
             print("No data files found. Use other modes to download or import data first.")
             print("\nTo convert a CSV file, use the 'csv' mode:")
             print("  python run_analysis.py csv --csv-file path/to/data.csv --point 0.01")
             return
+            
         print(f"Total cached data files: {total_files}")
         for source, count in source_counts.items():
             if source in ['csv_converted_count']:
@@ -410,6 +416,16 @@ def handle_show_mode(args):
                         print(f"  - Converted from CSV: {count} file(s)")
                     else:
                         print(f"  - {source.capitalize()}: {count} file(s)")
+                        
+        # Display indicator files
+        if total_indicator_files > 0:
+            print(f"\n=== AVAILABLE INDICATOR FILES ===")
+            print(f"Total indicator files: {total_indicator_files}")
+            for format_name, count in indicator_counts.items():
+                if count > 0:
+                    print(f"  - {format_name.upper()}: {count} file(s)")
+            print("\nTo view indicator files, use: python run_analysis.py show ind [format] [keywords...]")
+            
         print("\nTo view specific files, use: python run_analysis.py show <source> [keywords...]")
         return
 
