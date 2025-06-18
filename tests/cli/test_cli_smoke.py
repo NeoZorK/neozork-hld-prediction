@@ -15,7 +15,7 @@ class TestCLIDrawModes(unittest.TestCase):
                 text=True
             )
             self.assertEqual(result.returncode, 0)
-            self.assertIn("Choose plotting library", result.stdout)
+            self.assertIn("Plot method:", result.stdout)
 
 if __name__ == '__main__':
     unittest.main()
