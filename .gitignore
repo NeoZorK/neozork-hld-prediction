@@ -51,3 +51,8 @@ qodana.yaml
 # Exceptions - files that should not be ignored
 !data/cache/csv_converted/CSVExport_GBPUSD_PERIOD_MN1.parquet
 !data/raw_parquet/binance_BTCUSDT_H1.parquet
+
+# Include test indicator files
+!data/indicators/parquet/*UNKNOWN*.parquet
+!data/indicators/csv/*UNKNOWN*.csv
+!data/indicators/json/*UNKNOWN*.json
