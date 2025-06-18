@@ -140,8 +140,8 @@ def parse_arguments():
     show_group = parser.add_argument_group('Show Mode Options')
     show_group.add_argument(
         '--source', default='yfinance',
-        choices=['yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate'],
-        help="Filter files by data source type. Can also use first positional argument after 'show'. Default: 'yfinance'."
+        choices=['yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate', 'ind'],
+        help="Filter files by data source type. 'ind' for indicator files. Can also use first positional argument after 'show'. Default: 'yfinance'."
     )
     show_group.add_argument(
         '--keywords', nargs='+', default=[],
@@ -173,8 +173,13 @@ def parse_arguments():
     output_group = parser.add_argument_group('Output Options')
     output_group.add_argument('--export-parquet',
                               action='store_true',
-                              help="Export indicator data to parquet file. The file will be named as the original with the rule name as a postfix (e.g., CSVExport_AAPL.NAS_PERIOD_D1_PHLD.parquet)."
-                             )
+                              help="Export indicator data to parquet file in data/indicators/parquet/. File will be named with rule postfix (e.g., GBPUSD_D1_PHLD.parquet).")
+    output_group.add_argument('--export-csv',
+                              action='store_true',
+                              help="Export indicator data to CSV file in data/indicators/csv/. File will be named with rule postfix (e.g., GBPUSD_D1_PHLD.csv).")
+    output_group.add_argument('--export-json',
+                              action='store_true',
+                              help="Export indicator data to JSON file in data/indicators/json/. File will be named with rule postfix (e.g., GBPUSD_D1_PHLD.json).")
 
     # --- Other Options Group ---
     other_group = parser.add_argument_group('Other Options')
@@ -270,7 +275,7 @@ def parse_arguments():
         # If user provided positional arguments after 'show', use them as source/keywords
         if args.show_args:
             # If the first positional arg is a valid source, treat as source
-            valid_sources = ['yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate']
+            valid_sources = ['yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate', 'ind']
             # Remove any flags from show_args (e.g. --raw, --cleaned, --draw, etc.)
             filtered_args = [a for a in args.show_args if not a.startswith('--')]
             if filtered_args:

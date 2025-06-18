@@ -11,6 +11,7 @@ Complete guide to NeoZork HLD Prediction project.
 
 - **[Docker](docker.md)** - Containerized development
 - **[Exchange Rate API](exchange-rate-api-complete.md)** - Real-time forex data integration
+- **[Indicator Export](indicator-export.md)** - New export feature for calculated indicators
 - **[MCP Server](mcp-server.md)** - Model Context Protocol server
 - **[UV Setup](uv-setup.md)** - Fast package manager
 
