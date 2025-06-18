@@ -22,9 +22,13 @@ from ..common.constants import TradingRule
 from .. import __version__  # Make sure version is updated in src/__init__.py
 
 
-# Custom help formatter to use colors
+# Custom help formatter to use colors and improve alignment
 class ColoredHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
-    """Custom help formatter that adds color to the help output."""
+    """Custom help formatter that adds color to the help output and improves text alignment."""
+
+    def __init__(self, prog):
+        # Set consistent width and max_help_position for better alignment
+        super().__init__(prog, width=110, max_help_position=24)
 
     def _format_action_invocation(self, action):
         """Format the action invocation (e.g. -h, --help) with color."""
@@ -48,7 +52,7 @@ class ColoredHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
         return f"{Fore.CYAN}{result}{Style.RESET_ALL}"
 
     def _get_help_string(self, action):
-        """Format help string with colors."""
+        """Format help string with colors and better text wrapping."""
         help_text = super()._get_help_string(action)
         if action.default != argparse.SUPPRESS and action.default is not None:
             defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
@@ -56,6 +60,24 @@ class ColoredHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
                 help_text = help_text.replace(f"(default: {action.default})",
                                            f"({Fore.MAGENTA}default: {action.default}{Style.RESET_ALL})")
         return help_text
+
+    def _split_lines(self, text, width):
+        """Override to improve text wrapping."""
+        if len(text) <= width:
+            return [text]
+        
+        # Split long lines more intelligently
+        import textwrap
+        lines = []
+        for line in text.splitlines():
+            if len(line) <= width:
+                lines.append(line)
+            else:
+                wrapped = textwrap.fill(line, width, 
+                                      break_long_words=False, 
+                                      break_on_hyphens=False)
+                lines.extend(wrapped.splitlines())
+        return lines
 
     def start_section(self, heading):
         """Format section headings with colors."""
@@ -70,10 +92,10 @@ def parse_arguments():
     main_description = textwrap.dedent(f"""
        {Fore.CYAN}{Style.BRIGHT}Shcherbyna Pressure Vector Indicator Analysis Tool{Style.RESET_ALL}
        
-       Calculate and plot Shcherbyna Pressure Vector indicator using demo data,
-       fetching from Yahoo Finance, reading from a CSV file, fetching from Polygon.io,
-       or fetching from Binance. Allows choosing the plotting library.
-       """)
+       Calculate and plot pressure vector indicators from multiple data sources:
+       demo data, Yahoo Finance, CSV files, Polygon.io, Binance, and Exchange Rate API.
+       Export calculated indicators in parquet, CSV, or JSON formats.
+       """).strip()
 
 
     # --- Argument Parser Setup ---
@@ -103,24 +125,25 @@ def parse_arguments():
     # --- Data Source Specific Options Group ---
     data_source_group = parser.add_argument_group('Data Source Options')
     # CSV options
-    data_source_group.add_argument('--csv-file',
-                                   help="Path to the input CSV file (required for 'csv' mode).")
+    data_source_group.add_argument('--csv-file', metavar='PATH',
+                                   help="Path to input CSV file (required for 'csv' mode)")
     # API options (Yahoo Finance / Polygon.io / Binance)
-    data_source_group.add_argument('-t', '--ticker',
-                                   help="Ticker symbol (e.g., 'EURUSD=X' for yfinance; 'EURUSD', 'AAPL' for Polygon; 'BTCUSDT' for Binance; 'EURUSD', 'GBPJPY' for Exchange Rate API). Required for 'yfinance', 'polygon', 'binance', 'exrate' modes.")
-    data_source_group.add_argument('-i', '--interval', default='D1',
-                                   help="Timeframe (e.g., 'M1', 'H1', 'D1', 'W1', 'MN1'). Default: D1. For exrate: determines time range for historical data (paid plan) or validation (free plan - current only).")
+    data_source_group.add_argument('-t', '--ticker', metavar='SYMBOL',
+                                   help="Ticker symbol. Examples: 'EURUSD=X' (yfinance), 'AAPL' (polygon), 'BTCUSDT' (binance)")
+    data_source_group.add_argument('-i', '--interval', metavar='TIME', default='D1',
+                                   help="Timeframe: 'M1', 'H1', 'D1', 'W1', 'MN1'. Default: D1")
     # Point size argument
-    data_source_group.add_argument('--point', type=float,
-                                   help="Instrument point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto). Overrides yfinance estimation. Required for 'csv', 'polygon', 'binance', 'exrate' modes.")
+    data_source_group.add_argument('--point', metavar='SIZE', type=float,
+                                   help="Point size. Examples: 0.00001 (EURUSD), 0.01 (stocks/crypto)")
     # History selection (period or start/end dates)
     history_group = data_source_group.add_mutually_exclusive_group()
-    history_group.add_argument('--period',
-                               help="History period for yfinance (e.g., '1mo', '1y'). Not used if --start/--end are provided. Not used by Polygon/Binance.")
-    history_group.add_argument('--start', help="Start date (YYYY-MM-DD). Used by yfinance, polygon, binance. Optional for exrate (enables historical data with paid plan).")
+    history_group.add_argument('--period', metavar='TIME',
+                               help="History period for yfinance. Examples: '1mo', '1y', '5d'")
+    history_group.add_argument('--start', metavar='DATE',
+                               help="Start date for data range (yfinance, polygon, binance)")
     # Make --end related only to --start (not period)
-    data_source_group.add_argument('--end',
-                                   help="End date (YYYY-MM-DD). Used by yfinance, polygon, binance. Required if --start is used. Optional for exrate (enables historical data with paid plan).")
+    data_source_group.add_argument('--end', metavar='DATE',
+                                   help="End date for data range (required with --start)")
 
     # --- Indicator Options Group ---
     indicator_group = parser.add_argument_group('Indicator Options')
@@ -129,65 +152,64 @@ def parse_arguments():
     all_rule_choices = rule_names + list(rule_aliases_map.keys()) + ['OHLCV', 'AUTO']  # Added 'OHLCV' and 'AUTO' as valid rules
     default_rule_name = 'OHLCV'  # Changed from TradingRule.Predict_High_Low_Direction.name
     indicator_group.add_argument(
-        '--rule',
+        '--rule', metavar='RULE',
         default=default_rule_name,
         choices=all_rule_choices,
-        help=f"Trading rule to apply. Default: {default_rule_name}. "
-             f"Aliases: PHLD=Predict_High_Low_Direction, PV=Pressure_Vector, SR=Support_Resistants."
+        help="Trading rule: OHLCV, PV, SR, PHLD, AUTO. Aliases: PV=Pressure_Vector, SR=Support_Resistants"
     )
 
     # --- Show Mode Options Group ---
     show_group = parser.add_argument_group('Show Mode Options')
     show_group.add_argument(
-        '--source', default='yfinance',
+        '--source', metavar='SRC', default='yfinance',
         choices=['yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate', 'ind'],
-        help="Filter files by data source type. 'ind' for indicator files. Can also use first positional argument after 'show'. Default: 'yfinance'."
+        help="Data source filter: yfinance, csv, polygon, binance, exrate, ind (indicators)"
     )
     show_group.add_argument(
-        '--keywords', nargs='+', default=[],
-        help="Additional keywords to filter files by (e.g., ticker symbol or date). Can also use remaining positional arguments after source. Default: show all files from the source."
+        '--keywords', metavar='WORD', nargs='+', default=[],
+        help="Filter keywords (e.g., ticker symbol, date patterns)"
     )
     show_group.add_argument(
-        '--show-start', type=str, default=None,
-        help="Start date/datetime (YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) to filter data before calculation."
+        '--show-start', metavar='DATE', type=str, default=None,
+        help="Start date/datetime to filter data before calculation"
     )
     show_group.add_argument(
-        '--show-end', type=str, default=None,
-        help="End date/datetime (YYYY-MM-DD or YYYY-MM-DD HH:MM:SS) to filter data before calculation."
+        '--show-end', metavar='DATE', type=str, default=None,
+        help="End date/datetime to filter data before calculation"
     )
     show_group.add_argument(
-        '--show-rule', type=str, choices=all_rule_choices, default=None,
-        help="Trading rule to apply for indicator calculation when showing a single file."
+        '--show-rule', metavar='RULE', type=str, choices=all_rule_choices, default=None,
+        help="Trading rule for indicator calculation (single file mode)"
     )
 
     # --- Plotting Options Group ---
     plotting_group = parser.add_argument_group('Plotting Options')
     plotting_group.add_argument(
-        '-d', '--draw',
+        '-d', '--draw', metavar='METHOD',
         choices=['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb', 'term'],
         default='fastest',
-        help="Choose plotting library: 'fastest' (Plotly+Dask+Datashader for extremely large datasets, default), 'fast' (Dask+Datashader+Bokeh), 'plotly'/'plt' (interactive HTML), 'mplfinance'/'mpl' (static image), 'seaborn'/'sb' (statistical plots), or 'term' (terminal charts with plotext)."
+        help="Plot method: fastest, fast, plotly, mplfinance, seaborn, term"
     )
 
     # --- Output Options Group ---
     output_group = parser.add_argument_group('Output Options')
     output_group.add_argument('--export-parquet',
                               action='store_true',
-                              help="Export indicator data to parquet file in data/indicators/parquet/. File will be named with rule postfix (e.g., GBPUSD_D1_PHLD.parquet).")
+                              help="Export indicators to parquet format (data/indicators/parquet/)")
     output_group.add_argument('--export-csv',
                               action='store_true',
-                              help="Export indicator data to CSV file in data/indicators/csv/. File will be named with rule postfix (e.g., GBPUSD_D1_PHLD.csv).")
+                              help="Export indicators to CSV format (data/indicators/csv/)")
     output_group.add_argument('--export-json',
                               action='store_true',
-                              help="Export indicator data to JSON file in data/indicators/json/. File will be named with rule postfix (e.g., GBPUSD_D1_PHLD.json).")
+                              help="Export indicators to JSON format (data/indicators/json/)")
 
     # --- Other Options Group ---
     other_group = parser.add_argument_group('Other Options')
     other_group.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
-                             help='Show this help message and exit.')
+                             help='Show this help message and exit')
     other_group.add_argument('--version', action='version',
                              version=f'{"Shcherbyna Pressure Vector Indicator v"+__version__}',
-                             help="Show program's version number and exit.")
+                             help="Show program version and exit")
 
     # --- Parse Arguments ---
     try:
