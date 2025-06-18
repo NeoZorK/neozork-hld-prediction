@@ -27,8 +27,8 @@ class ColoredHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
     """Custom help formatter that adds color to the help output and improves text alignment."""
 
     def __init__(self, prog):
-        # Set consistent width and max_help_position for better alignment
-        super().__init__(prog, width=120, max_help_position=26)
+        # Set consistent width and max_help_position for better alignment with larger indent
+        super().__init__(prog, width=120, max_help_position=32, indent_increment=4)
 
     def _format_action_invocation(self, action):
         """Format the action invocation (e.g. -h, --help) with color."""
@@ -62,11 +62,11 @@ class ColoredHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
         return help_text
 
     def _split_lines(self, text, width):
-        """Override to improve text wrapping."""
+        """Override to improve text wrapping with consistent indentation."""
         if len(text) <= width:
             return [text]
         
-        # Split long lines more intelligently
+        # Split long lines more intelligently with larger indent
         import textwrap
         lines = []
         for line in text.splitlines():
@@ -76,9 +76,28 @@ class ColoredHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
                 wrapped = textwrap.fill(line, width, 
                                       break_long_words=False, 
                                       break_on_hyphens=False,
-                                      subsequent_indent='                        ')
+                                      subsequent_indent='                            ')
                 lines.extend(wrapped.splitlines())
         return lines
+
+    def _format_action(self, action):
+        """Override to add larger consistent indentation for all help items."""
+        # Get the original formatted action
+        help_text = super()._format_action(action)
+        
+        # Add extra indentation to all lines (4 more spaces)
+        lines = help_text.split('\n')
+        indented_lines = []
+        for i, line in enumerate(lines):
+            if line.strip():  # Only indent non-empty lines
+                if i == 0 or line.startswith('  '):  # First line or already indented
+                    indented_lines.append('    ' + line)
+                else:
+                    indented_lines.append(line)
+            else:
+                indented_lines.append(line)
+        
+        return '\n'.join(indented_lines)
 
     def start_section(self, heading):
         """Format section headings with colors."""
