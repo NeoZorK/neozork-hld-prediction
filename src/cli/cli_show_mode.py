@@ -15,14 +15,20 @@ init(autoreset=True)
 try:
     from src.calculation.indicator_calculation import calculate_indicator
     from src.export.parquet_export import export_indicator_to_parquet
+    from src.export.csv_export import export_indicator_to_csv
+    from src.export.json_export import export_indicator_to_json
 except ImportError:
     try:
         from ..calculation.indicator_calculation import calculate_indicator
         from ..export.parquet_export import export_indicator_to_parquet
+        from ..export.csv_export import export_indicator_to_csv
+        from ..export.json_export import export_indicator_to_json
     except ImportError:
         # Last resort: assume running from src directory
         calculate_indicator = None
         export_indicator_to_parquet = None
+        export_indicator_to_csv = None
+        export_indicator_to_json = None
 
 # Import the new AUTO fastest plot function
 try:
@@ -62,6 +68,7 @@ def show_help():
     print(f"  - {Fore.GREEN}polygon{Style.RESET_ALL}: Polygon.io API data files")
     print(f"  - {Fore.GREEN}binance{Style.RESET_ALL}: Binance API data files")
     print(f"  - {Fore.GREEN}exrate{Style.RESET_ALL}: Exchange Rate API data files")
+    print(f"  - {Fore.GREEN}ind{Style.RESET_ALL}: Calculated indicator files (parquet/csv/json)")
 
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Examples:{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show{Style.RESET_ALL}                  {Fore.BLACK}{Style.DIM}# Show statistics for all sources{Style.RESET_ALL}")
@@ -70,6 +77,8 @@ def show_help():
     print(f"  {Fore.GREEN}python run_analysis.py show binance{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List all Binance files{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show polygon{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List all Polygon.io files{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show exrate{Style.RESET_ALL}           {Fore.BLACK}{Style.DIM}# List all Exchange Rate API files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind{Style.RESET_ALL}              {Fore.BLACK}{Style.DIM}# List all indicator files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# List parquet indicator files{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show yf aapl{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List YF files containing 'aapl'{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show binance btc MN1{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# List Binance files with 'btc' and timeframe 'MN1'{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show exrate eurusd{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# List Exchange Rate API EURUSD files{Style.RESET_ALL}")
@@ -355,6 +364,26 @@ def handle_show_mode(args):
             args.compare_calculated = True  # Flag to indicate we want to compare calculated vs. original
             args.force_calculate = True  # Force calculation of indicators even if they exist in the file
             print("PHLD mode with calculation and visualization of indicators")
+
+    # Handle indicator files mode
+    if args.source == 'ind':
+        if not args.keywords or (len(args.keywords) == 1 and args.keywords[0] == 'help'):
+            show_indicator_help()
+            indicator_counts = count_indicator_files()
+            print("\n=== AVAILABLE INDICATOR FILES ===")
+            total_indicator_files = sum(indicator_counts.values())
+            if total_indicator_files == 0:
+                print("No indicator files found. Use export flags (--export-parquet, --export-csv, --export-json) to create indicator files first.")
+                return
+            print(f"Total indicator files: {total_indicator_files}")
+            for format_name, count in indicator_counts.items():
+                if count > 0:
+                    print(f"  - {format_name.upper()}: {count} file(s)")
+            print("\nTo view specific indicator files, use: python run_analysis.py show ind [format] [keywords...]")
+            return
+        else:
+            handle_indicator_show_mode(args)
+            return
 
     if not args.source or args.source == 'help':
         show_help()
@@ -761,10 +790,26 @@ def handle_show_mode(args):
                     args.mode = 'parquet'
                 result_df, selected_rule = calculate_indicator(args, df, point_size)
 
-                # Export indicator data to parquet if requested
+                # Export indicator data if requested
                 if hasattr(args, 'export_parquet') and args.export_parquet:
                     print(f"Exporting indicator data to parquet file...")
                     export_info = export_indicator_to_parquet(result_df, data_info, selected_rule, args)
+                    if export_info["success"]:
+                        print(f"Indicator data exported to: {export_info['output_file']}")
+                    else:
+                        print(f"Failed to export indicator data: {export_info['error_message']}")
+                
+                if hasattr(args, 'export_csv') and args.export_csv:
+                    print(f"Exporting indicator data to CSV file...")
+                    export_info = export_indicator_to_csv(result_df, data_info, selected_rule, args)
+                    if export_info["success"]:
+                        print(f"Indicator data exported to: {export_info['output_file']}")
+                    else:
+                        print(f"Failed to export indicator data: {export_info['error_message']}")
+                
+                if hasattr(args, 'export_json') and args.export_json:
+                    print(f"Exporting indicator data to JSON file...")
+                    export_info = export_indicator_to_json(result_df, data_info, selected_rule, args)
                     if export_info["success"]:
                         print(f"Indicator data exported to: {export_info['output_file']}")
                     else:
@@ -780,4 +825,232 @@ def handle_show_mode(args):
         except Exception as e:
             print(f"Error plotting file: {e}")
             traceback.print_exc()
+
+def get_indicator_search_dirs():
+    """
+    Returns the search directories for indicator files.
+    """
+    return [
+        Path("data/indicators/parquet"),
+        Path("data/indicators/csv"),
+        Path("data/indicators/json")
+    ]
+
+def count_indicator_files():
+    """
+    Counts indicator files by format (parquet, csv, json).
+    """
+    search_dirs = get_indicator_search_dirs()
+    format_counts = {
+        'parquet': 0,
+        'csv': 0,
+        'json': 0
+    }
+    
+    for search_dir in search_dirs:
+        if not search_dir.is_dir():
+            continue
+        format_name = search_dir.name  # parquet, csv, or json
+        for item in search_dir.iterdir():
+            if item.is_file():
+                if (format_name == 'parquet' and item.suffix == '.parquet') or \
+                   (format_name == 'csv' and item.suffix == '.csv') or \
+                   (format_name == 'json' and item.suffix == '.json'):
+                    format_counts[format_name] += 1
+    
+    return format_counts
+
+def show_indicator_help():
+    """
+    Displays help for the 'show ind' mode with colorful formatting.
+    """
+    print(f"\n{Fore.CYAN}{Style.BRIGHT}=== SHOW INDICATOR FILES HELP ==={Style.RESET_ALL}")
+    print(f"The {Fore.GREEN}'show ind'{Style.RESET_ALL} mode allows you to list and inspect calculated indicator files.")
+    print(f"{Fore.YELLOW}Usage:{Style.RESET_ALL} python run_analysis.py show ind [format] [keywords...]")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Available formats:{Style.RESET_ALL}")
+    print(f"  - {Fore.GREEN}parquet{Style.RESET_ALL}: Parquet indicator files (for plotting and analysis)")
+    print(f"  - {Fore.GREEN}csv{Style.RESET_ALL}: CSV indicator files (for terminal display and external use)")
+    print(f"  - {Fore.GREEN}json{Style.RESET_ALL}: JSON indicator files (for terminal display and external use)")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Examples:{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind{Style.RESET_ALL}                {Fore.BLACK}{Style.DIM}# Show all indicator files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet{Style.RESET_ALL}       {Fore.BLACK}{Style.DIM}# List all parquet indicator files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind csv{Style.RESET_ALL}           {Fore.BLACK}{Style.DIM}# List all CSV indicator files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind json{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List all JSON indicator files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet mn1{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# List parquet files containing 'mn1'{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind csv GBPUSD{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# List CSV files containing 'GBPUSD'{Style.RESET_ALL}")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Note:{Style.RESET_ALL}")
+    print(f"  - {Fore.MAGENTA}Parquet files{Style.RESET_ALL} can be displayed as charts with rules (PV, SR, PHLD)")
+    print(f"  - {Fore.MAGENTA}CSV and JSON files{Style.RESET_ALL} are displayed as terminal output only")
+    print(f"  - Single parquet file will automatically open chart with calculated indicators")
+
+def handle_indicator_show_mode(args):
+    """
+    Handles the 'show ind' mode logic for indicator files.
+    """
+    # Determine format filter from keywords
+    format_filter = None
+    remaining_keywords = []
+    
+    if args.keywords:
+        first_keyword = args.keywords[0].lower()
+        if first_keyword in ['parquet', 'csv', 'json']:
+            format_filter = first_keyword
+            remaining_keywords = args.keywords[1:]
+        else:
+            remaining_keywords = args.keywords
+    
+    # Search for files
+    search_dirs = get_indicator_search_dirs()
+    found_files = []
+    
+    # If no format filter, search all directories
+    if format_filter is None:
+        dirs_to_search = search_dirs
+    else:
+        # Search only in the specified format directory
+        dir_map = {
+            'parquet': Path("data/indicators/parquet"),
+            'csv': Path("data/indicators/csv"),
+            'json': Path("data/indicators/json")
+        }
+        dirs_to_search = [dir_map[format_filter]]
+    
+    search_keywords = [k.lower() for k in remaining_keywords]
+    
+    for search_dir in dirs_to_search:
+        if not search_dir.is_dir():
+            continue
+            
+        file_format = search_dir.name  # parquet, csv, or json
+        expected_extension = f".{file_format}"
+        
+        for item in search_dir.iterdir():
+            if item.is_file() and item.suffix == expected_extension:
+                filename_lower = item.name.lower()
+                if all(keyword in filename_lower for keyword in search_keywords):
+                    try:
+                        file_size_bytes = item.stat().st_size
+                        file_size_mb = file_size_bytes / (1024 * 1024)
+                        found_files.append({
+                            'path': item,
+                            'name': item.name,
+                            'size_mb': file_size_mb,
+                            'format': file_format
+                        })
+                    except OSError as e:
+                        print(f"Warning: Could not get stats for file {item.name}. Error: {e}", file=sys.stderr)
+    
+    if not found_files:
+        if format_filter:
+            print(f"No {format_filter} indicator files found with keywords: {remaining_keywords}")
+        else:
+            print(f"No indicator files found with keywords: {remaining_keywords}")
+        return
+    
+    print(f"Found {len(found_files)} indicator file(s).")
+    
+    # Sort files by format and name
+    found_files.sort(key=lambda x: (x['format'], x['name']))
+    
+    # Handle single parquet file - show chart
+    if len(found_files) == 1 and found_files[0]['format'] == 'parquet':
+        print("Single parquet indicator file found. Will automatically open chart.")
+        file_info = found_files[0]
+        args.single_file_mode = True
+        # Load and display the parquet file with chart
+        _show_single_indicator_file(file_info, args)
+        return
+    
+    # Display file list
+    print("-" * 60)
+    current_format = None
+    for idx, file_info in enumerate(found_files):
+        if file_info['format'] != current_format:
+            current_format = file_info['format']
+            print(f"\n{Fore.YELLOW}{Style.BRIGHT}=== {current_format.upper()} FILES ==={Style.RESET_ALL}")
+        
+        print(f"[{idx}] {file_info['name']}")
+        print(f"    Size: {file_info['size_mb']:.3f} MB")
+        print(f"    Format: {file_info['format']}")
+        
+        # For single file in each format, show more details
+        format_files = [f for f in found_files if f['format'] == file_info['format']]
+        if len(format_files) == 1:
+            if file_info['format'] == 'parquet':
+                metadata = get_parquet_metadata(file_info['path'])
+                if metadata['num_rows'] != -1:
+                    print(f"    Rows: {metadata['num_rows']:,}")
+                print(f"    Columns ({len(metadata['columns'])}): {', '.join(metadata['columns'])}")
+            elif file_info['format'] in ['csv', 'json']:
+                # Show first few lines for CSV/JSON files
+                _show_file_preview(file_info)
+
+def _show_single_indicator_file(file_info, args):
+    """
+    Shows a single indicator file with appropriate visualization.
+    """
+    file_path = file_info['path']
+    file_format = file_info['format']
+    
+    if file_format == 'parquet':
+        # Load parquet and show chart
+        try:
+            df = pd.read_parquet(file_path)
+            print(f"\nLoaded indicator file: {file_info['name']}")
+            print(f"Rows: {len(df):,}, Columns: {len(df.columns)}")
+            print(f"Columns: {', '.join(df.columns)}")
+            
+            # Set up for plotting
+            args.mode = 'show'
+            args.rule = 'AUTO'  # Show all calculated indicators
+            
+            # Import and call the plotting function
+            if plot_auto_fastest_parquet:
+                plot_auto_fastest_parquet(file_path, args)
+            else:
+                print("Plotting function not available")
+                
+        except Exception as e:
+            print(f"Error loading parquet file: {e}")
+    
+    elif file_format in ['csv', 'json']:
+        # Show file content in terminal
+        _show_file_preview(file_info)
+
+def _show_file_preview(file_info):
+    """
+    Shows a preview of CSV or JSON file content.
+    """
+    file_path = file_info['path']
+    file_format = file_info['format']
+    
+    try:
+        if file_format == 'csv':
+            df = pd.read_csv(file_path)
+            print(f"\n=== CSV FILE CONTENT === (First 10 rows)")
+            print(f"Total rows: {len(df):,}, Columns: {len(df.columns)}")
+            print(f"Columns: {', '.join(df.columns)}")
+            print(df.head(10).to_string(index=False))
+            
+        elif file_format == 'json':
+            import json
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            print(f"\n=== JSON FILE CONTENT === (First 5 records)")
+            if isinstance(data, list):
+                print(f"Total records: {len(data)}")
+                if data:
+                    print(f"Keys: {', '.join(data[0].keys()) if isinstance(data[0], dict) else 'N/A'}")
+                    for i, record in enumerate(data[:5]):
+                        print(f"Record {i+1}: {record}")
+            else:
+                print(f"Data type: {type(data)}")
+                print(json.dumps(data, indent=2)[:1000] + "..." if len(str(data)) > 1000 else json.dumps(data, indent=2))
+                
+    except Exception as e:
+        print(f"Error reading {file_format} file: {e}")
 

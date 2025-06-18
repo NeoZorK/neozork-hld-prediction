@@ -1,8 +1,8 @@
-# src/export/parquet_export.py
+# src/export/csv_export.py
 
 """
-Module for exporting indicator data to parquet files.
-Handles the creation of parquet files with indicator data based on original OHLCV data.
+Module for exporting indicator data to CSV files.
+Handles the creation of CSV files with indicator data based on original OHLCV data.
 All comments are in English.
 """
 
@@ -12,15 +12,13 @@ from pathlib import Path
 from ..common import logger
 
 
-def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
+def export_indicator_to_csv(result_df, data_info, selected_rule, args):
     """
-    Exports the calculated indicator data to a parquet file.
+    Exports the calculated indicator data to a CSV file.
 
-    Creates a new parquet file based on the original data source, adding
-    only necessary OHLCV and timestamp fields along with the calculated indicator values.
-    The new file has the same name as the original but with the rule name as a postfix.
-
-    In show mode, export happens only when a single file is being processed.
+    Creates a new CSV file in the data/indicators/csv directory based on the 
+    original data source, adding only necessary OHLCV and timestamp fields 
+    along with the calculated indicator values.
 
     Args:
         result_df (pandas.DataFrame): DataFrame containing the calculated indicator data
@@ -39,11 +37,11 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
     }
 
     # Log the mode and export flag for debugging
-    logger.print_debug(f"Export called: mode={args.mode}, export_flag={getattr(args, 'export_parquet', False)}, single_file={getattr(args, 'single_file_mode', False)}")
+    logger.print_debug(f"CSV Export called: mode={args.mode}, export_flag={getattr(args, 'export_csv', False)}")
 
-    # Only proceed if export_parquet flag is set
-    if not getattr(args, 'export_parquet', False):
-        export_info["error_message"] = "Export flag not set"
+    # Only proceed if export_csv flag is set
+    if not getattr(args, 'export_csv', False):
+        export_info["error_message"] = "Export CSV flag not set"
         return export_info
 
     # Check if result_df is valid
@@ -52,8 +50,8 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
         logger.print_error(export_info["error_message"])
         return export_info
 
-    # Determine base filename from parquet_cache_file or create one based on ticker/interval
-    original_file = data_info.get("parquet_cache_file")
+    # Determine base filename from data_info or create one based on ticker/interval
+    original_file = data_info.get("parquet_cache_file") or data_info.get("csv_file")
 
     if not original_file:
         # Create a filename based on ticker and interval if no cache file exists
@@ -64,19 +62,18 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
         original_file = Path(original_file)
         filename = original_file.stem
 
-    # Create output directory for indicators
-    output_dir = Path("data/indicators/parquet")
+    # Create output directory
+    output_dir = Path("data/indicators/csv")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Create the new filename with the rule postfix
-    # Handle the case when selected_rule is an Enum or an object with a name attribute
+    # Create the filename with the rule postfix
     if hasattr(selected_rule, 'name'):
         rule_shortname = selected_rule.name.replace("_", "")
     else:
         rule_shortname = str(selected_rule).replace("_", "")
 
-    output_file = output_dir / f"{filename}_{rule_shortname}.parquet"
-    logger.print_debug(f"Output file will be: {output_file}")
+    output_file = output_dir / f"{filename}_{rule_shortname}.csv"
+    logger.print_debug(f"CSV Output file will be: {output_file}")
 
     try:
         # Prepare the data for export
@@ -124,16 +121,16 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
         if isinstance(export_df.index, pd.DatetimeIndex):
             export_df = export_df.reset_index()
 
-        # Export to parquet
-        export_df.to_parquet(output_file)
+        # Export to CSV
+        export_df.to_csv(output_file, index=False)
 
         # Update export info
         export_info["success"] = True
         export_info["output_file"] = str(output_file)
-        logger.print_success(f"Indicator data exported to: {output_file}")
+        logger.print_success(f"Indicator data exported to CSV: {output_file}")
 
     except Exception as e:
-        export_info["error_message"] = f"Failed to export indicator data: {str(e)}"
+        export_info["error_message"] = f"Failed to export indicator data to CSV: {str(e)}"
         logger.print_error(export_info["error_message"])
 
     return export_info

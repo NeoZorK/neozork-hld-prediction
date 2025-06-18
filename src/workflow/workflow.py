@@ -16,8 +16,10 @@ from ..utils.point_size_determination import get_point_size
 from ..calculation.indicator_calculation import calculate_indicator
 from ..plotting.plotting_generation import generate_plot
 from src.cli.cli_show_mode import handle_show_mode
-# Import the export function
+# Import the export functions
 from ..export.parquet_export import export_indicator_to_parquet
+from ..export.csv_export import export_indicator_to_csv
+from ..export.json_export import export_indicator_to_json
 
 # Definition of the run_indicator_workflow function
 def run_indicator_workflow(args):
@@ -135,15 +137,46 @@ def run_indicator_workflow(args):
         workflow_results["plot_duration"] = t_plot_end - t_plot_start
         workflow_results["steps_duration"]["plot"] = workflow_results["plot_duration"]
 
-        # --- Step 5: Export Indicator Data to Parquet (if requested) ---
+        # --- Step 5: Export Indicator Data (if requested) ---
+        export_results = {}
+        
+        # Export to Parquet
         if hasattr(args, 'export_parquet') and args.export_parquet:
-            logger.print_info("--- Step 5: Exporting Indicator Data to Parquet ---")
+            logger.print_info("--- Step 5a: Exporting Indicator Data to Parquet ---")
             t_export_start = time.perf_counter()
             export_info = export_indicator_to_parquet(result_df, data_info, selected_rule, args)
             t_export_end = time.perf_counter()
-            workflow_results["export_duration"] = t_export_end - t_export_start
-            workflow_results["steps_duration"]["export"] = workflow_results["export_duration"]
-            workflow_results["export_info"] = export_info
+            export_results["parquet"] = export_info
+            workflow_results["export_parquet_duration"] = t_export_end - t_export_start
+        
+        # Export to CSV
+        if hasattr(args, 'export_csv') and args.export_csv:
+            logger.print_info("--- Step 5b: Exporting Indicator Data to CSV ---")
+            t_export_start = time.perf_counter()
+            export_info = export_indicator_to_csv(result_df, data_info, selected_rule, args)
+            t_export_end = time.perf_counter()
+            export_results["csv"] = export_info
+            workflow_results["export_csv_duration"] = t_export_end - t_export_start
+        
+        # Export to JSON
+        if hasattr(args, 'export_json') and args.export_json:
+            logger.print_info("--- Step 5c: Exporting Indicator Data to JSON ---")
+            t_export_start = time.perf_counter()
+            export_info = export_indicator_to_json(result_df, data_info, selected_rule, args)
+            t_export_end = time.perf_counter()
+            export_results["json"] = export_info
+            workflow_results["export_json_duration"] = t_export_end - t_export_start
+        
+        # Store export results if any exports were performed
+        if export_results:
+            total_export_duration = sum([
+                workflow_results.get("export_parquet_duration", 0),
+                workflow_results.get("export_csv_duration", 0),
+                workflow_results.get("export_json_duration", 0)
+            ])
+            workflow_results["export_duration"] = total_export_duration
+            workflow_results["steps_duration"]["export"] = total_export_duration
+            workflow_results["export_results"] = export_results
 
         workflow_results["success"] = True
         logger.print_success("Workflow completed successfully.")

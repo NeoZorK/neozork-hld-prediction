@@ -1,26 +1,25 @@
-# src/export/parquet_export.py
+# src/export/json_export.py
 
 """
-Module for exporting indicator data to parquet files.
-Handles the creation of parquet files with indicator data based on original OHLCV data.
+Module for exporting indicator data to JSON files.
+Handles the creation of JSON files with indicator data based on original OHLCV data.
 All comments are in English.
 """
 
 import os
 import pandas as pd
+import json
 from pathlib import Path
 from ..common import logger
 
 
-def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
+def export_indicator_to_json(result_df, data_info, selected_rule, args):
     """
-    Exports the calculated indicator data to a parquet file.
+    Exports the calculated indicator data to a JSON file.
 
-    Creates a new parquet file based on the original data source, adding
-    only necessary OHLCV and timestamp fields along with the calculated indicator values.
-    The new file has the same name as the original but with the rule name as a postfix.
-
-    In show mode, export happens only when a single file is being processed.
+    Creates a new JSON file in the data/indicators/json directory based on the 
+    original data source, adding only necessary OHLCV and timestamp fields 
+    along with the calculated indicator values.
 
     Args:
         result_df (pandas.DataFrame): DataFrame containing the calculated indicator data
@@ -39,11 +38,11 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
     }
 
     # Log the mode and export flag for debugging
-    logger.print_debug(f"Export called: mode={args.mode}, export_flag={getattr(args, 'export_parquet', False)}, single_file={getattr(args, 'single_file_mode', False)}")
+    logger.print_debug(f"JSON Export called: mode={args.mode}, export_flag={getattr(args, 'export_json', False)}")
 
-    # Only proceed if export_parquet flag is set
-    if not getattr(args, 'export_parquet', False):
-        export_info["error_message"] = "Export flag not set"
+    # Only proceed if export_json flag is set
+    if not getattr(args, 'export_json', False):
+        export_info["error_message"] = "Export JSON flag not set"
         return export_info
 
     # Check if result_df is valid
@@ -52,8 +51,8 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
         logger.print_error(export_info["error_message"])
         return export_info
 
-    # Determine base filename from parquet_cache_file or create one based on ticker/interval
-    original_file = data_info.get("parquet_cache_file")
+    # Determine base filename from data_info or create one based on ticker/interval
+    original_file = data_info.get("parquet_cache_file") or data_info.get("csv_file")
 
     if not original_file:
         # Create a filename based on ticker and interval if no cache file exists
@@ -64,19 +63,18 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
         original_file = Path(original_file)
         filename = original_file.stem
 
-    # Create output directory for indicators
-    output_dir = Path("data/indicators/parquet")
+    # Create output directory
+    output_dir = Path("data/indicators/json")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Create the new filename with the rule postfix
-    # Handle the case when selected_rule is an Enum or an object with a name attribute
+    # Create the filename with the rule postfix
     if hasattr(selected_rule, 'name'):
         rule_shortname = selected_rule.name.replace("_", "")
     else:
         rule_shortname = str(selected_rule).replace("_", "")
 
-    output_file = output_dir / f"{filename}_{rule_shortname}.parquet"
-    logger.print_debug(f"Output file will be: {output_file}")
+    output_file = output_dir / f"{filename}_{rule_shortname}.json"
+    logger.print_debug(f"JSON Output file will be: {output_file}")
 
     try:
         # Prepare the data for export
@@ -124,16 +122,25 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
         if isinstance(export_df.index, pd.DatetimeIndex):
             export_df = export_df.reset_index()
 
-        # Export to parquet
-        export_df.to_parquet(output_file)
+        # Convert DataFrame to JSON
+        # Use 'records' orientation for a list of dictionaries format
+        # Handle NaN values and datetime serialization
+        json_data = export_df.to_json(orient='records', date_format='iso', default_handler=str)
+        
+        # Parse and re-serialize with proper indentation for readability
+        parsed_data = json.loads(json_data)
+        
+        # Export to JSON with pretty formatting
+        with open(output_file, 'w', encoding='utf-8') as f:
+            json.dump(parsed_data, f, indent=2, ensure_ascii=False)
 
         # Update export info
         export_info["success"] = True
         export_info["output_file"] = str(output_file)
-        logger.print_success(f"Indicator data exported to: {output_file}")
+        logger.print_success(f"Indicator data exported to JSON: {output_file}")
 
     except Exception as e:
-        export_info["error_message"] = f"Failed to export indicator data: {str(e)}"
+        export_info["error_message"] = f"Failed to export indicator data to JSON: {str(e)}"
         logger.print_error(export_info["error_message"])
 
     return export_info
