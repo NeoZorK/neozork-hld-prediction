@@ -28,7 +28,7 @@ class ColoredHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
 
     def __init__(self, prog):
         # Set consistent width and max_help_position for better alignment with larger indent
-        super().__init__(prog, width=120, max_help_position=32, indent_increment=4)
+        super().__init__(prog, width=200, max_help_position=50, indent_increment=4)
 
     def _format_action_invocation(self, action):
         """Format the action invocation (e.g. -h, --help) with color."""
