@@ -19,6 +19,7 @@ Complete guide to NeoZork HLD Prediction project.
 
 - **[Analysis & EDA](analysis-eda.md)** - Data analysis and exploration tools
 - **[Scripts](scripts.md)** - Available scripts and automation
+- **[Utility Scripts](utility-scripts.md)** - Data conversion and test file management utilities
 - **[Debug Scripts](debug-scripts.md)** - Testing and debugging tools
 
 ## Development
