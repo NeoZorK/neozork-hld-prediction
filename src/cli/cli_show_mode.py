@@ -1025,7 +1025,17 @@ def _show_single_indicator_file(file_info, args):
             
             # Import and call the plotting function
             if plot_auto_fastest_parquet:
-                plot_auto_fastest_parquet(file_path, args)
+                import os
+                # Ensure results/plots directory exists
+                os.makedirs("results/plots", exist_ok=True)
+                output_html_path = f"results/plots/show_indicator_{file_info['name'].replace('.parquet', '.html')}"
+                plot_auto_fastest_parquet(
+                    parquet_path=str(file_path),
+                    output_html_path=output_html_path,
+                    trading_rule_name='AUTO',
+                    title=f"Indicator File: {file_info['name']}"
+                )
+                print(f"Chart saved to: {output_html_path}")
             else:
                 print("Plotting function not available")
                 
