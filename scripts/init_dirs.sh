@@ -42,6 +42,9 @@ POLYGON_API_KEY=your_polygon_api_key_here
 BINANCE_API_KEY=your_binance_api_key_here
 BINANCE_API_SECRET=your_binance_api_secret_here
 
+# Exchange Rate API Key from exchangerate-api.com
+EXCHANGE_RATE_API_KEY=your_exchange_rate_api_key_here
+
 # Add other environment variables as needed
 EOL
     echo ".env file created with default fields."
