@@ -333,13 +333,9 @@ def _should_draw_plot(args):
     # Otherwise check for valid draw parameter
     return hasattr(args, "draw") and args.draw is not None and args.draw in plot_modes
 
-def handle_show_mode(args):
-    """
-    Handles the 'show' mode logic: finds files, displays info, and potentially triggers plot or indicator calculation.
-    Returns timing and metrics data for execution summary.
-    """
-    # Initialize timing and metrics tracking
-    metrics = {
+def _initialize_metrics():
+    """Initialize metrics tracking dictionary."""
+    return {
         "data_fetch_duration": 0,
         "calc_duration": 0,
         "plot_duration": 0,
@@ -351,10 +347,9 @@ def handle_show_mode(args):
         "point_size": None,
         "estimated_point": False
     }
-    
-    # Always use raw data directories
-    search_dirs = get_search_dirs(args)
 
+def _configure_terminal_plotting_mode(args):
+    """Configure args for terminal plotting mode based on rule and draw settings."""
     # Handle special case when rule is explicitly set to OHLCV - this means display raw candlestick chart only
     if hasattr(args, 'rule') and args.rule and args.rule.upper() == 'OHLCV':
         args.raw_plot_only = True
@@ -384,75 +379,134 @@ def handle_show_mode(args):
             args.force_calculate = True  # Force calculation of indicators even if they exist in the file
             print("PHLD mode with calculation and visualization of indicators")
 
-    # Handle indicator files mode
-    if args.source == 'ind':
-        if not args.keywords or (len(args.keywords) == 1 and args.keywords[0] == 'help'):
-            show_indicator_help()
-            indicator_counts = count_indicator_files()
-            print("\n=== AVAILABLE INDICATOR FILES ===")
-            total_indicator_files = sum(indicator_counts.values())
-            if total_indicator_files == 0:
-                print("No indicator files found. Use export flags (--export-parquet, --export-csv, --export-json) to create indicator files first.")
-                return metrics
-            print(f"Total indicator files: {total_indicator_files}")
-            for format_name, count in indicator_counts.items():
-                if count > 0:
-                    print(f"  - {format_name.upper()}: {count} file(s)")
-            print("\nTo view specific indicator files, use: python run_analysis.py show ind [format] [keywords...]")
-            return metrics
-        else:
-            indicator_metrics = handle_indicator_show_mode(args)
-            return indicator_metrics
-
-    if not args.source or args.source == 'help':
-        show_help()
-        source_counts = count_files_by_source(args)
-        print("\n=== AVAILABLE DATA FILES ===")
-        total_files = sum([count for source, count in source_counts.items() if source not in ['csv_converted_count']])
-        
-        # Add indicator files count
+def _handle_indicator_mode(args):
+    """Handle indicator files mode ('show ind')."""
+    if not args.keywords or (len(args.keywords) == 1 and args.keywords[0] == 'help'):
+        show_indicator_help()
         indicator_counts = count_indicator_files()
+        print("\n=== AVAILABLE INDICATOR FILES ===")
         total_indicator_files = sum(indicator_counts.values())
-        
-        if total_files == 0 and total_indicator_files == 0:
-            print("No data files found. Use other modes to download or import data first.")
-            print("\nTo convert a CSV file, use the 'csv' mode:")
-            print("  python run_analysis.py csv --csv-file path/to/data.csv --point 0.01")
-            return metrics
-            
-        print(f"Total cached data files: {total_files}")
-        for source, count in source_counts.items():
-            if source in ['csv_converted_count']:
-                continue
+        if total_indicator_files == 0:
+            print("No indicator files found. Use export flags (--export-parquet, --export-csv, --export-json) to create indicator files first.")
+            return _initialize_metrics()
+        print(f"Total indicator files: {total_indicator_files}")
+        for format_name, count in indicator_counts.items():
             if count > 0:
-                if source == 'csv':
-                    csv_converted = source_counts.get('csv_converted_count', 0)
-                    print(f"  - {source.capitalize()}: {count} file(s) (including {csv_converted} converted from CSV)")
-                elif source == 'other':
+                print(f"  - {format_name.upper()}: {count} file(s)")
+        print("\nTo view specific indicator files, use: python run_analysis.py show ind [format] [keywords...]")
+        return _initialize_metrics()
+    else:
+        indicator_metrics = handle_indicator_show_mode(args)
+        return indicator_metrics
+
+def _handle_help_mode(args):
+    """Handle help mode when no source is specified or source is 'help'."""
+    show_help()
+    source_counts = count_files_by_source(args)
+    print("\n=== AVAILABLE DATA FILES ===")
+    total_files = sum([count for source, count in source_counts.items() if source not in ['csv_converted_count']])
+    
+    # Add indicator files count
+    indicator_counts = count_indicator_files()
+    total_indicator_files = sum(indicator_counts.values())
+    
+    if total_files == 0 and total_indicator_files == 0:
+        print("No data files found. Use other modes to download or import data first.")
+        print("\nTo convert a CSV file, use the 'csv' mode:")
+        print("  python run_analysis.py csv --csv-file path/to/data.csv --point 0.01")
+        return _initialize_metrics()
+        
+    print(f"Total cached data files: {total_files}")
+    for source, count in source_counts.items():
+        if source in ['csv_converted_count']:
+            continue
+        if count > 0:
+            if source == 'csv':
+                csv_converted = source_counts.get('csv_converted_count', 0)
+                print(f"  - {source.capitalize()}: {count} file(s) (including {csv_converted} converted from CSV)")
+            elif source == 'other':
+                print(f"  - Converted from CSV: {count} file(s)")
+            else:
+                if source == 'other':
                     print(f"  - Converted from CSV: {count} file(s)")
                 else:
-                    if source == 'other':
-                        print(f"  - Converted from CSV: {count} file(s)")
-                    else:
-                        print(f"  - {source.capitalize()}: {count} file(s)")
-                        
-        # Display indicator files
-        if total_indicator_files > 0:
-            print(f"\n=== AVAILABLE INDICATOR FILES ===")
-            print(f"Total indicator files: {total_indicator_files}")
-            for format_name, count in indicator_counts.items():
-                if count > 0:
-                    print(f"  - {format_name.upper()}: {count} file(s)")
-            print("\nTo view indicator files, use: python run_analysis.py show ind [format] [keywords...]")
-            
-        print("\nTo view specific files, use: python run_analysis.py show <source> [keywords...]")
-        return metrics
+                    print(f"  - {source.capitalize()}: {count} file(s)")
+                    
+    # Display indicator files
+    if total_indicator_files > 0:
+        print(f"\n=== AVAILABLE INDICATOR FILES ===")
+        print(f"Total indicator files: {total_indicator_files}")
+        for format_name, count in indicator_counts.items():
+            if count > 0:
+                print(f"  - {format_name.upper()}: {count} file(s)")
+        print("\nTo view indicator files, use: python run_analysis.py show ind [format] [keywords...]")
+        
+    print("\nTo view specific files, use: python run_analysis.py show <source> [keywords...]")
+    return _initialize_metrics()
 
+def handle_show_mode(args):
+    """
+    Handles the 'show' mode logic: finds files, displays info, and potentially triggers plot or indicator calculation.
+    Returns timing and metrics data for execution summary.
+    """
+    # Initialize timing and metrics tracking
+    metrics = _initialize_metrics()
+    
+    # Always use raw data directories
+    search_dirs = get_search_dirs(args)
+
+    # Configure terminal plotting mode
+    _configure_terminal_plotting_mode(args)
+
+    # Handle indicator files mode
+    if args.source == 'ind':
+        return _handle_indicator_mode(args)
+
+    if not args.source or args.source == 'help':
+        return _handle_help_mode(args)
+
+    # Search for files
+    found_files = _search_files(args, search_dirs)
+    if not found_files:
+        return metrics
+    
+    # Configure single file mode if applicable
+    _configure_single_file_mode(args, found_files)
+    
+    # Display file information
+    _display_file_info(found_files)
+
+    # Date filtering and indicator calculation
+    if len(found_files) == 1 and hasattr(args, 'rule') and args.rule:
+        try:
+            # Special handling for AUTO rule
+            if args.rule.upper() == 'AUTO':
+                return _handle_auto_display_mode(args, found_files, metrics)
+
+            # Normal indicator calculation for other rules
+            return _handle_indicator_calculation_mode(args, found_files, metrics)
+        except Exception as e:
+            print(f"Error processing file: {e}")
+            traceback.print_exc()
+            return metrics
+
+    # Plot chart when one file found and no indicator calculation requested
+    if len(found_files) > 1:
+        print("To display a chart, re-run the command with more specific keywords:")
+        print(f"Example: python run_analysis.py show {args.source} <additional_keywords>")
+    elif len(found_files) == 1:
+        return _handle_single_file_mode(args, found_files, metrics)
+    
+    return metrics
+
+def _search_files(args, search_dirs):
+    """Search for files based on source and keywords."""
     print(f"Searching for '{args.source}' files with keywords: {args.keywords}...")
 
     search_prefix = 'yfinance' if args.source == 'yf' else args.source
     search_keywords = [k.lower() for k in args.keywords]
     found_files = []
+    
     for search_dir in search_dirs:
         if not search_dir.is_dir():
             print(f"Warning: Directory not found: {search_dir}")
@@ -475,10 +529,13 @@ def handle_show_mode(args):
                         })
                     except OSError as e:
                         print(f"Warning: Could not get stats for file {item.name}. Error: {e}", file=sys.stderr)
+    
     print(f"Found {len(found_files)} file(s).")
-    if not found_files:
-        return metrics
-    elif len(found_files) == 1:
+    return found_files
+
+def _configure_single_file_mode(args, found_files):
+    """Configure args for single file mode."""
+    if len(found_files) == 1:
         print("Single CSV file found. Will automatically open chart in browser.")
         # Flag this as a single file processing for export
         args.single_file_mode = True
@@ -490,6 +547,8 @@ def handle_show_mode(args):
             args.display_candlestick_only = True
             args.rule = None
 
+def _display_file_info(found_files):
+    """Display detailed information about found files."""
     found_files.sort(key=lambda x: x['name'])
     print("-" * 40)
     for idx, file_info in enumerate(found_files):
@@ -543,410 +602,424 @@ def handle_show_mode(args):
                     print(f"{file_info['last_row']}")
     print("-" * 40)
 
-    # Date filtering and indicator calculation
-    if len(found_files) == 1 and hasattr(args, 'rule') and args.rule:
+def _extract_point_size(file_info):
+    """Extract point size from filename or use defaults."""
+    point_size = None
+    if 'point' in file_info['name'].lower():
         try:
-            # Special handling for AUTO rule
-            if args.rule.upper() == 'AUTO':
-                print(f"\n=== AUTO DISPLAY MODE ===")
-                print(f"Loading file data and preparing to display all columns...")
-                
-                # Track data loading time
-                t_load_start = time.perf_counter()
-                df = pd.read_parquet(found_files[0]['path'])
-                t_load_end = time.perf_counter()
-                metrics["data_fetch_duration"] = t_load_end - t_load_start
-                
-                # Update metrics
-                metrics["rows_count"] = len(df)
-                metrics["columns_count"] = len(df.columns)
-                metrics["data_size_bytes"] = df.memory_usage(deep=True).sum()
-                metrics["data_size_mb"] = metrics["data_size_bytes"] / (1024 * 1024)
-                metrics["file_size_bytes"] = found_files[0]['path'].stat().st_size
-                
-                start, end = _extract_datetime_filter_args(args)
-                if start or end:
-                    df = _filter_dataframe_by_date(df, start, end)
+            name_parts = file_info['name'].lower().split('point_')
+            if len(name_parts) > 1:
+                possible_point = name_parts[1].split('_')[0]
+                point_size = float(possible_point)
+        except (ValueError, IndexError):
+            pass
+    if point_size is None:
+        if 'forex' in file_info['name'].lower() or 'fx' in file_info['name'].lower():
+            point_size = 0.00001
+        elif 'btc' in file_info['name'].lower() or 'crypto' in file_info['name'].lower():
+            point_size = 0.01
+        else:
+            point_size = 0.01
+        print(f"Point size not found in filename, using default: {point_size}")
+    return point_size
 
-                point_size = None
-                if 'point' in found_files[0]['name'].lower():
-                    try:
-                        name_parts = found_files[0]['name'].lower().split('point_')
-                        if len(name_parts) > 1:
-                            possible_point = name_parts[1].split('_')[0]
-                            point_size = float(possible_point)
-                    except (ValueError, IndexError):
-                        pass
-                if point_size is None:
-                    if 'forex' in found_files[0]['name'].lower() or 'fx' in found_files[0]['name'].lower():
-                        point_size = 0.00001
-                    elif 'btc' in found_files[0]['name'].lower() or 'crypto' in found_files[0]['name'].lower():
-                        point_size = 0.01
-                    else:
-                        point_size = 0.01
-                    print(f"Point size not found in filename, using default: {point_size}")
+    # Continue with the rest of the function...
+    # Search for files
+    found_files = _search_files(args, search_dirs)
+    if not found_files:
+        return metrics
+    
+    # Configure single file mode if applicable
+    _configure_single_file_mode(args, found_files)
+    
+    # Display file information
+    _display_file_info(found_files)
 
-                # Set a special flag for AUTO mode to be used by plotting functions
-                args.auto_display_mode = True
-                # Set column detection flag
-                args.auto_detect_columns = True
+def _handle_auto_display_mode(args, found_files, metrics):
+    """Handle AUTO rule display mode."""
+    print(f"\n=== AUTO DISPLAY MODE ===")
+    print(f"Loading file data and preparing to display all columns...")
+    
+    # Track data loading time
+    t_load_start = time.perf_counter()
+    df = pd.read_parquet(found_files[0]['path'])
+    t_load_end = time.perf_counter()
+    metrics["data_fetch_duration"] = t_load_end - t_load_start
+    
+    # Update metrics
+    metrics["rows_count"] = len(df)
+    metrics["columns_count"] = len(df.columns)
+    metrics["data_size_bytes"] = df.memory_usage(deep=True).sum()
+    metrics["data_size_mb"] = metrics["data_size_bytes"] / (1024 * 1024)
+    metrics["file_size_bytes"] = found_files[0]['path'].stat().st_size
+    
+    start, end = _extract_datetime_filter_args(args)
+    if start or end:
+        df = _filter_dataframe_by_date(df, start, end)
 
-                # Print all columns in the data
-                datetime_column = None
-                if isinstance(df.index, pd.DatetimeIndex):
-                    datetime_column = df.index.name or 'datetime'
-                _print_indicator_result(df, 'AUTO', datetime_column=datetime_column)
+    point_size = _extract_point_size(found_files[0])
 
-                # Plot with all columns using the new fastest_auto_plot if requested
-                if _should_draw_plot(args):
-                    # Track plotting time
-                    t_plot_start = time.perf_counter()
-                    
-                    draw_method = getattr(args, 'draw', 'fastest')
-                    
-                    # Check if running in Docker and force terminal mode if needed
-                    import os
-                    IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
-                    disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
-                    
-                    if IN_DOCKER and not disable_docker_detection and draw_method not in ['term']:
-                        print(f"Docker detected: forcing draw mode from '{draw_method}' to 'term' (terminal plotting)")
-                        draw_method = 'term'
-                    
-                    print(f"\nDrawing AUTO display plot with method: '{draw_method}'...")
-                    try:
-                        if draw_method == 'fastest' and plot_auto_fastest_parquet is not None:
-                            output_html_path = os.path.join('results', 'plots', f"auto_fastest_{found_files[0]['name'].replace('.parquet','.html')}")
-                            plot_auto_fastest_parquet(
-                                parquet_path=str(found_files[0]['path']),
-                                output_html_path=output_html_path,
-                                trading_rule_name='AUTO',
-                                title=f"AUTO Fastest Plot: {found_files[0]['name']}"
-                            )
-                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using 'fastest' mode (fastest_auto_plot).")
-                        elif draw_method in ('sb', 'seaborn') and auto_plot_from_parquet is not None:
-                            print(f"Using seaborn_auto_plot for '{found_files[0]['name']}'...")
-                            auto_plot_from_parquet(str(found_files[0]['path']), plot_title=f"AUTO Seaborn Plot: {found_files[0]['name']}")
-                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using seaborn.")
-                        elif draw_method in ('mpl', 'mplfinance') and mpl_auto_plot_from_parquet is not None:
-                            print(f"Using mplfinance_auto_plot for '{found_files[0]['name']}'...")
-                            mpl_auto_plot_from_parquet(str(found_files[0]['path']))
-                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using mplfinance.")
-                        elif draw_method == 'term' and auto_plot_from_dataframe is not None:
-                            print(f"Using terminal auto plotting for '{found_files[0]['name']}'...")
-                            plot_title = f"AUTO Terminal Plot: {found_files[0]['name']}"
+    # Set a special flag for AUTO mode to be used by plotting functions
+    args.auto_display_mode = True
+    # Set column detection flag
+    args.auto_detect_columns = True
 
-                            # Check if we should use separate field plotting with dots style
-                            if hasattr(args, 'auto_display_mode') and args.auto_display_mode:
-                                # Import the specific functions for parquet and CSV plotting
-                                try:
-                                    from src.plotting.term_auto_plot import auto_plot_parquet_fields, auto_plot_csv_fields
+    # Print all columns in the data
+    datetime_column = None
+    if isinstance(df.index, pd.DatetimeIndex):
+        datetime_column = df.index.name or 'datetime'
+    _print_indicator_result(df, 'AUTO', datetime_column=datetime_column)
 
-                                    # Check if we're dealing with CSV or parquet file
-                                    if 'csv_converted' in str(found_files[0]['path']).lower():
-                                        # For CSV-converted parquet files, use the parquet function but mention CSV source
-                                        print(f"Using separate field plotting for CSV-converted parquet file...")
-                                        auto_plot_parquet_fields(str(found_files[0]['path']), f"AUTO: {found_files[0]['name']} (CSV Source)", style="dots")
-                                    else:
-                                        # For direct parquet files
-                                        print(f"Using separate field plotting for parquet file...")
-                                        auto_plot_parquet_fields(str(found_files[0]['path']), f"AUTO: {found_files[0]['name']}", style="dots")
+    # Plot with all columns using the new fastest_auto_plot if requested
+    if _should_draw_plot(args):
+        metrics = _plot_auto_display(args, df, found_files[0], metrics)
 
-                                    print(f"Successfully plotted all fields from '{found_files[0]['name']}' using 'dots' style with separate charts.")
-                                except ImportError as e:
-                                    print(f"Could not import separate field plotting functions: {e}")
-                                    # Fallback to standard auto_plot_from_dataframe
-                                    auto_plot_from_dataframe(df, plot_title)
-                                    print(f"Fallback: Successfully plotted all columns from '{found_files[0]['name']}' using terminal mode with unified chart.")
-                            else:
-                                # Use the standard auto_plot_from_dataframe function
-                                auto_plot_from_dataframe(df, plot_title)
-                                print(f"Successfully plotted all columns from '{found_files[0]['name']}' using terminal mode with unified chart.")
-                        else:
-                            generate_plot = import_generate_plot()
-                            data_info = {
-                                "ohlcv_df": df,
-                                "data_source_label": f"{found_files[0]['name']}",
-                                "rows_count": len(df),
-                                "columns_count": len(df.columns),
-                                "data_size_mb": found_files[0]['size_mb'],
-                                "first_date": found_files[0]['first_date'],
-                                "last_date": found_files[0]['last_date'],
-                                "parquet_cache_used": True,
-                                "parquet_cache_file": str(found_files[0]['path']),
-                                "all_columns": list(df.columns)  # Pass all columns to plotting function
-                            }
-                            selected_rule = "Auto_Display_All"  # Special rule name for plotting
-                            estimated_point = True
-                            generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
-                            print(f"Successfully plotted all columns from '{found_files[0]['name']}' using '{draw_method}' mode.")
-                    
-                        # End plotting timing
-                        t_plot_end = time.perf_counter()
-                        metrics["plot_duration"] = t_plot_end - t_plot_start
-                        
-                    except Exception as e:
-                        print(f"Error plotting in AUTO mode: {e}")
-                        traceback.print_exc()
-                        
-                # Update point size info for AUTO mode
-                metrics["point_size"] = point_size
-                metrics["estimated_point"] = True
-                
-                return metrics
+    # Update point size info for AUTO mode
+    metrics["point_size"] = point_size
+    metrics["estimated_point"] = True
+    
+    return metrics
 
-            # Normal indicator calculation for other rules
-            print(f"\n=== INDICATOR CALCULATION MODE ===")
-            print(f"Loading file data and calculating indicator '{args.rule}' ...")
-            
-            # Track data loading time
-            t_load_start = time.perf_counter()
-            df = pd.read_parquet(found_files[0]['path'])
-            t_load_end = time.perf_counter()
-            metrics["data_fetch_duration"] = t_load_end - t_load_start
-            
-            # Update metrics
-            metrics["rows_count"] = len(df)
-            metrics["columns_count"] = len(df.columns)
-            metrics["data_size_bytes"] = df.memory_usage(deep=True).sum()
-            metrics["data_size_mb"] = metrics["data_size_bytes"] / (1024 * 1024)
-            metrics["file_size_bytes"] = found_files[0]['path'].stat().st_size
-            
-            start, end = _extract_datetime_filter_args(args)
-            if start or end:
-                df = _filter_dataframe_by_date(df, start, end)
-            point_size = None
-            if 'point' in found_files[0]['name'].lower():
+def _plot_auto_display(args, df, file_info, metrics):
+    """Handle plotting for AUTO display mode."""
+    # Track plotting time
+    t_plot_start = time.perf_counter()
+    
+    draw_method = getattr(args, 'draw', 'fastest')
+    
+    # Check if running in Docker and force terminal mode if needed
+    import os
+    IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
+    disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
+    
+    if IN_DOCKER and not disable_docker_detection and draw_method not in ['term']:
+        print(f"Docker detected: forcing draw mode from '{draw_method}' to 'term' (terminal plotting)")
+        draw_method = 'term'
+    
+    print(f"\nDrawing AUTO display plot with method: '{draw_method}'...")
+    try:
+        if draw_method == 'fastest' and plot_auto_fastest_parquet is not None:
+            output_html_path = os.path.join('results', 'plots', f"auto_fastest_{file_info['name'].replace('.parquet','.html')}")
+            plot_auto_fastest_parquet(
+                parquet_path=str(file_info['path']),
+                output_html_path=output_html_path,
+                trading_rule_name='AUTO',
+                title=f"AUTO Fastest Plot: {file_info['name']}"
+            )
+            print(f"Successfully plotted all columns from '{file_info['name']}' using 'fastest' mode (fastest_auto_plot).")
+        elif draw_method in ('sb', 'seaborn') and auto_plot_from_parquet is not None:
+            print(f"Using seaborn_auto_plot for '{file_info['name']}'...")
+            auto_plot_from_parquet(str(file_info['path']), plot_title=f"AUTO Seaborn Plot: {file_info['name']}")
+            print(f"Successfully plotted all columns from '{file_info['name']}' using seaborn.")
+        elif draw_method in ('mpl', 'mplfinance') and mpl_auto_plot_from_parquet is not None:
+            print(f"Using mplfinance_auto_plot for '{file_info['name']}'...")
+            mpl_auto_plot_from_parquet(str(file_info['path']))
+            print(f"Successfully plotted all columns from '{file_info['name']}' using mplfinance.")
+        elif draw_method == 'term' and auto_plot_from_dataframe is not None:
+            print(f"Using terminal auto plotting for '{file_info['name']}'...")
+            plot_title = f"AUTO Terminal Plot: {file_info['name']}"
+
+            # Check if we should use separate field plotting with dots style
+            if hasattr(args, 'auto_display_mode') and args.auto_display_mode:
+                # Import the specific functions for parquet and CSV plotting
                 try:
-                    name_parts = found_files[0]['name'].lower().split('point_')
-                    if len(name_parts) > 1:
-                        possible_point = name_parts[1].split('_')[0]
-                        point_size = float(possible_point)
-                except (ValueError, IndexError):
-                    pass
-            if point_size is None:
-                if 'forex' in found_files[0]['name'].lower() or 'fx' in found_files[0]['name'].lower():
-                    point_size = 0.00001
-                elif 'btc' in found_files[0]['name'].lower() or 'crypto' in found_files[0]['name'].lower():
-                    point_size = 0.01
-                else:
-                    point_size = 0.01
-                print(f"Point size not found in filename, using default: {point_size}")
-            if not hasattr(args, 'mode'):
-                args.mode = 'parquet'
+                    from src.plotting.term_auto_plot import auto_plot_parquet_fields, auto_plot_csv_fields
 
-            try:
-                # Track indicator calculation time
-                t_calc_start = time.perf_counter()
-                # Calculate indicators
-                result_df, selected_rule = calculate_indicator(args, df, point_size)
-                t_calc_end = time.perf_counter()
-                metrics["calc_duration"] = t_calc_end - t_calc_start
-                
-                # Update point size info
-                metrics["point_size"] = point_size
-                metrics["estimated_point"] = True
-                
-                datetime_column = None
-                if isinstance(result_df.index, pd.DatetimeIndex):
-                    datetime_column = result_df.index.name or 'datetime'
-                _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
-                print(f"\nIndicator '{selected_rule.name}' calculated successfully.")
+                    # Check if we're dealing with CSV or parquet file
+                    if 'csv_converted' in str(file_info['path']).lower():
+                        # For CSV-converted parquet files, use the parquet function but mention CSV source
+                        print(f"Using separate field plotting for CSV-converted parquet file...")
+                        auto_plot_parquet_fields(str(file_info['path']), f"AUTO: {file_info['name']} (CSV Source)", style="dots")
+                    else:
+                        # For direct parquet files
+                        print(f"Using separate field plotting for parquet file...")
+                        auto_plot_parquet_fields(str(file_info['path']), f"AUTO: {file_info['name']}", style="dots")
 
-                # Draw plot after indicator calculation only if draw flag is set to supported mode
-                if _should_draw_plot(args):
-                    # Track plotting time
-                    t_plot_start = time.perf_counter()
-                    
-                    print(f"\nDrawing plot after indicator calculation with method: '{args.draw}'...")
-                    try:
-                        # For terminal mode with PHLD rule
-                        if args.draw == 'term' and args.rule.upper() == 'PHLD':
-                            if auto_plot_from_dataframe is not None:
-                                # Check if indicators already exist in the loaded dataframe
-                                indicators_exist = all(col in df.columns for col in ['PPrice1', 'PPrice2', 'Direction'])
-                                calculation_type = "PRE-CALCULATED" if indicators_exist and not args.force_calculate else "CALCULATED NOW"
-
-                                print(f"\n=== {calculation_type} PHLD INDICATORS ===")
-                                print(f"Using terminal auto plotting for '{found_files[0]['name']}' with PHLD rule...")
-                                plot_title = f"PHLD Terminal Plot: {found_files[0]['name']} ({calculation_type})"
-                                # Use the auto_plot_from_dataframe function for terminal plotting
-                                auto_plot_from_dataframe(result_df, plot_title)
-
-                                # Extract and plot specific indicators
-                                if 'PPrice1' in result_df.columns and 'PPrice2' in result_df.columns:
-                                    print(f"\n--- Support and Resistance Levels (PPrice1 and PPrice2) - {calculation_type} ---")
-                                    support_resistance_df = result_df[['Open', 'PPrice1', 'PPrice2']].tail(30)
-                                    auto_plot_from_dataframe(support_resistance_df, f"Support and Resistance Levels ({calculation_type})")
-
-                                # Plot Direction indicator if available
-                                if 'Direction' in result_df.columns:
-                                    print(f"\n--- Direction Indicator - {calculation_type} ---")
-                                    direction_df = result_df[['Direction']].tail(30)
-                                    auto_plot_from_dataframe(direction_df, f"Direction Indicator ({calculation_type})")
-
-                                print(f"Successfully plotted PHLD indicators from '{found_files[0]['name']}' using terminal mode.")
-                                print(f"Indicator source: {calculation_type}")
-                            else:
-                                print("Error: Terminal plotting functionality not available.")
-                        else:
-                            # Use the standard plotting for other modes
-                            generate_plot = import_generate_plot()
-                            data_info = {
-                                "ohlcv_df": df,
-                                "data_source_label": f"{found_files[0]['name']}",
-                                "rows_count": len(df),
-                                "columns_count": len(df.columns),
-                                "data_size_mb": found_files[0]['size_mb'],
-                                "first_date": found_files[0].get('first_date', None),
-                                "last_date": found_files[0].get('last_date', None),
-                                "parquet_cache_used": True,
-                                "parquet_cache_file": str(found_files[0]['path'])
-                            }
-                            estimated_point = True
-                            generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
-                            print(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode after indicator calculation.")
-                        
-                        # End plotting timing
-                        t_plot_end = time.perf_counter()
-                        metrics["plot_duration"] = t_plot_end - t_plot_start
-                        
-                    except Exception as e:
-                        print(f"Error plotting after indicator calculation: {e}")
-                        traceback.print_exc()
-                        
-                return metrics
-            except Exception as e:
-                print(f"Error calculating indicator: {e}")
-                traceback.print_exc()
-                return metrics
-        except Exception as e:
-            print(f"Error processing file: {e}")
-            traceback.print_exc()
-            return metrics
-
-    # Plot chart when one file found and no indicator calculation requested
-    if len(found_files) > 1:
-        print("To display a chart, re-run the command with more specific keywords:")
-        print(f"Example: python run_analysis.py show {args.source} <additional_keywords>")
-    elif len(found_files) == 1:
-        print(f"Found one file. Loading data and preparing to display...")
-        try:
-            # Track data loading time for single file
-            t_load_start = time.perf_counter()
-            df = pd.read_parquet(found_files[0]['path'])
-            t_load_end = time.perf_counter()
-            metrics["data_fetch_duration"] = t_load_end - t_load_start
-            
-            # Update metrics
-            metrics["rows_count"] = len(df)
-            metrics["columns_count"] = len(df.columns)
-            metrics["data_size_bytes"] = df.memory_usage(deep=True).sum()
-            metrics["data_size_mb"] = metrics["data_size_bytes"] / (1024 * 1024)
-            metrics["file_size_bytes"] = found_files[0]['path'].stat().st_size
-            
+                    print(f"Successfully plotted all fields from '{file_info['name']}' using 'dots' style with separate charts.")
+                except ImportError as e:
+                    print(f"Could not import separate field plotting functions: {e}")
+                    # Fallback to standard auto_plot_from_dataframe
+                    auto_plot_from_dataframe(df, plot_title)
+                    print(f"Fallback: Successfully plotted all columns from '{file_info['name']}' using terminal mode with unified chart.")
+            else:
+                # Use the standard auto_plot_from_dataframe function
+                auto_plot_from_dataframe(df, plot_title)
+                print(f"Successfully plotted all columns from '{file_info['name']}' using terminal mode with unified chart.")
+        else:
+            generate_plot = import_generate_plot()
             data_info = {
                 "ohlcv_df": df,
-                "data_source_label": f"{found_files[0]['name']}",
+                "data_source_label": f"{file_info['name']}",
                 "rows_count": len(df),
                 "columns_count": len(df.columns),
-                "data_size_mb": found_files[0]['size_mb'],
-                "first_date": found_files[0]['first_date'],
-                "last_date": found_files[0]['last_date'],
+                "data_size_mb": file_info['size_mb'],
+                "first_date": file_info['first_date'],
+                "last_date": file_info['last_date'],
                 "parquet_cache_used": True,
-                "parquet_cache_file": str(found_files[0]['path'])
+                "parquet_cache_file": str(file_info['path']),
+                "all_columns": list(df.columns)  # Pass all columns to plotting function
             }
-            point_size = None
-            if 'point' in found_files[0]['name'].lower():
-                try:
-                    name_parts = found_files[0]['name'].lower().split('point_')
-                    if len(name_parts) > 1:
-                        possible_point = name_parts[1].split('_')[0]
-                        point_size = float(possible_point)
-                except (ValueError, IndexError):
-                    pass
-            if point_size is None:
-                if 'forex' in found_files[0]['name'].lower() or 'fx' in found_files[0]['name'].lower():
-                    point_size = 0.00001
-                elif 'btc' in found_files[0]['name'].lower() or 'crypto' in found_files[0]['name'].lower():
-                    point_size = 0.01
-                else:
-                    point_size = 0.01
-                print(f"Point size not found in filename, using default: {point_size}")
+            selected_rule = "Auto_Display_All"  # Special rule name for plotting
+            point_size = _extract_point_size(file_info)
+            estimated_point = True
+            generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+            print(f"Successfully plotted all columns from '{file_info['name']}' using '{draw_method}' mode.")
+    
+        # End plotting timing
+        t_plot_end = time.perf_counter()
+        metrics["plot_duration"] = t_plot_end - t_plot_start
+        
+    except Exception as e:
+        print(f"Error plotting in AUTO mode: {e}")
+        traceback.print_exc()
+    
+    return metrics
 
-            # Add flag for single file mode
-            args.single_file_mode = True
+def _handle_indicator_calculation_mode(args, found_files, metrics):
+    """Handle indicator calculation for single file with rule."""
+    print(f"\n=== INDICATOR CALCULATION MODE ===")
+    print(f"Loading file data and calculating indicator '{args.rule}' ...")
+    
+    # Track data loading time
+    t_load_start = time.perf_counter()
+    df = pd.read_parquet(found_files[0]['path'])
+    t_load_end = time.perf_counter()
+    metrics["data_fetch_duration"] = t_load_end - t_load_start
+    
+    # Update metrics
+    metrics["rows_count"] = len(df)
+    metrics["columns_count"] = len(df.columns)
+    metrics["data_size_bytes"] = df.memory_usage(deep=True).sum()
+    metrics["data_size_mb"] = metrics["data_size_bytes"] / (1024 * 1024)
+    metrics["file_size_bytes"] = found_files[0]['path'].stat().st_size
+    
+    # Apply date filtering if requested
+    start, end = _extract_datetime_filter_args(args)
+    if start or end:
+        df = _filter_dataframe_by_date(df, start, end)
+    
+    # Extract point size from filename or use defaults
+    point_size = _extract_point_size(found_files[0])
+    
+    if not hasattr(args, 'mode'):
+        args.mode = 'parquet'
 
-            # Just plot raw OHLCV data without indicator calculation
-            if not hasattr(args, 'rule') or not args.rule:
-                # Just plot raw OHLCV data without indicator calculation
-                selected_rule = 'Raw_OHLCV_Data'  # Default name for raw data display
-                estimated_point = True
-                generate_plot = import_generate_plot()
-                draw_method = getattr(args, 'draw', 'fastest')
-                print(f"Drawing raw OHLCV data chart using method: '{draw_method}'...")
-                
-                # Track plotting time for raw data
-                t_plot_start = time.perf_counter()
-                
-                generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
-                print(f"Successfully plotted raw OHLCV data from '{found_files[0]['name']}'")
-                
-                # End plotting timing and update metrics
-                t_plot_end = time.perf_counter()
-                metrics["plot_duration"] = t_plot_end - t_plot_start
-                metrics["point_size"] = point_size
-                metrics["estimated_point"] = estimated_point
+    try:
+        # Track indicator calculation time
+        t_calc_start = time.perf_counter()
+        # Calculate indicators
+        result_df, selected_rule = calculate_indicator(args, df, point_size)
+        t_calc_end = time.perf_counter()
+        metrics["calc_duration"] = t_calc_end - t_calc_start
+        
+        # Update point size info
+        metrics["point_size"] = point_size
+        metrics["estimated_point"] = True
+        
+        datetime_column = None
+        if isinstance(result_df.index, pd.DatetimeIndex):
+            datetime_column = result_df.index.name or 'datetime'
+        _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
+        print(f"\nIndicator '{selected_rule.name}' calculated successfully.")
+
+        # Draw plot after indicator calculation only if draw flag is set to supported mode
+        if _should_draw_plot(args):
+            metrics = _plot_indicator_calculation_result(args, df, result_df, found_files[0], selected_rule, point_size, metrics)
+                        
+        return metrics
+    except Exception as e:
+        print(f"Error calculating indicator: {e}")
+        traceback.print_exc()
+        return metrics
+
+def _plot_indicator_calculation_result(args, original_df, result_df, file_info, selected_rule, point_size, metrics):
+    """Handle plotting after indicator calculation."""
+    # Track plotting time
+    t_plot_start = time.perf_counter()
+    
+    print(f"\nDrawing plot after indicator calculation with method: '{args.draw}'...")
+    try:
+        # For terminal mode with PHLD rule
+        if args.draw == 'term' and args.rule.upper() == 'PHLD':
+            if auto_plot_from_dataframe is not None:
+                # Check if indicators already exist in the loaded dataframe
+                indicators_exist = all(col in original_df.columns for col in ['PPrice1', 'PPrice2', 'Direction'])
+                calculation_type = "PRE-CALCULATED" if indicators_exist and not args.force_calculate else "CALCULATED NOW"
+
+                print(f"\n=== {calculation_type} PHLD INDICATORS ===")
+                print(f"Using terminal auto plotting for '{file_info['name']}' with PHLD rule...")
+                plot_title = f"PHLD Terminal Plot: {file_info['name']} ({calculation_type})"
+                # Use the auto_plot_from_dataframe function for terminal plotting
+                auto_plot_from_dataframe(result_df, plot_title)
+
+                # Extract and plot specific indicators
+                if 'PPrice1' in result_df.columns and 'PPrice2' in result_df.columns:
+                    print(f"\n--- Support and Resistance Levels (PPrice1 and PPrice2) - {calculation_type} ---")
+                    support_resistance_df = result_df[['Open', 'PPrice1', 'PPrice2']].tail(30)
+                    auto_plot_from_dataframe(support_resistance_df, f"Support and Resistance Levels ({calculation_type})")
+
+                # Plot Direction indicator if available
+                if 'Direction' in result_df.columns:
+                    print(f"\n--- Direction Indicator - {calculation_type} ---")
+                    direction_df = result_df[['Direction']].tail(30)
+                    auto_plot_from_dataframe(direction_df, f"Direction Indicator ({calculation_type})")
+
+                print(f"Successfully plotted PHLD indicators from '{file_info['name']}' using terminal mode.")
+                print(f"Indicator source: {calculation_type}")
             else:
-                # Calculate indicator if rule is specified
-                print(f"Calculating indicator '{args.rule}' for the file...")
-                if not hasattr(args, 'mode'):
-                    args.mode = 'parquet'
-                
-                # Track indicator calculation time
-                t_calc_start = time.perf_counter()
-                result_df, selected_rule = calculate_indicator(args, df, point_size)
-                t_calc_end = time.perf_counter()
-                metrics["calc_duration"] = t_calc_end - t_calc_start
+                print("Error: Terminal plotting functionality not available.")
+        else:
+            # Use the standard plotting for other modes
+            generate_plot = import_generate_plot()
+            data_info = {
+                "ohlcv_df": original_df,
+                "data_source_label": f"{file_info['name']}",
+                "rows_count": len(original_df),
+                "columns_count": len(original_df.columns),
+                "data_size_mb": file_info['size_mb'],
+                "first_date": file_info.get('first_date', None),
+                "last_date": file_info.get('last_date', None),
+                "parquet_cache_used": True,
+                "parquet_cache_file": str(file_info['path'])
+            }
+            estimated_point = True
+            generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
+            print(f"Successfully plotted data from '{file_info['name']}' using '{args.draw}' mode after indicator calculation.")
+        
+        # End plotting timing
+        t_plot_end = time.perf_counter()
+        metrics["plot_duration"] = t_plot_end - t_plot_start
+        
+    except Exception as e:
+        print(f"Error plotting after indicator calculation: {e}")
+        traceback.print_exc()
+        
+    return metrics
 
-                # Export indicator data if requested
-                if hasattr(args, 'export_parquet') and args.export_parquet:
-                    print(f"Exporting indicator data to parquet file...")
-                    export_info = export_indicator_to_parquet(result_df, data_info, selected_rule, args)
-                    if export_info["success"]:
-                        print(f"Indicator data exported to: {export_info['output_file']}")
-                    else:
-                        print(f"Failed to export indicator data: {export_info['error_message']}")
-                
-                if hasattr(args, 'export_csv') and args.export_csv:
-                    print(f"Exporting indicator data to CSV file...")
-                    export_info = export_indicator_to_csv(result_df, data_info, selected_rule, args)
-                    if export_info["success"]:
-                        print(f"Indicator data exported to: {export_info['output_file']}")
-                    else:
-                        print(f"Failed to export indicator data: {export_info['error_message']}")
-                
-                if hasattr(args, 'export_json') and args.export_json:
-                    print(f"Exporting indicator data to JSON file...")
-                    export_info = export_indicator_to_json(result_df, data_info, selected_rule, args)
-                    if export_info["success"]:
-                        print(f"Indicator data exported to: {export_info['output_file']}")
-                    else:
-                        print(f"Failed to export indicator data: {export_info['error_message']}")
+def _handle_single_file_mode(args, found_files, metrics):
+    """Handle single file mode without indicator calculation."""
+    print(f"Found one file. Loading data and preparing to display...")
+    try:
+        # Track data loading time for single file
+        t_load_start = time.perf_counter()
+        df = pd.read_parquet(found_files[0]['path'])
+        t_load_end = time.perf_counter()
+        metrics["data_fetch_duration"] = t_load_end - t_load_start
+        
+        # Update metrics
+        metrics["rows_count"] = len(df)
+        metrics["columns_count"] = len(df.columns)
+        metrics["data_size_bytes"] = df.memory_usage(deep=True).sum()
+        metrics["data_size_mb"] = metrics["data_size_bytes"] / (1024 * 1024)
+        metrics["file_size_bytes"] = found_files[0]['path'].stat().st_size
+        
+        data_info = {
+            "ohlcv_df": df,
+            "data_source_label": f"{found_files[0]['name']}",
+            "rows_count": len(df),
+            "columns_count": len(df.columns),
+            "data_size_mb": found_files[0]['size_mb'],
+            "first_date": found_files[0]['first_date'],
+            "last_date": found_files[0]['last_date'],
+            "parquet_cache_used": True,
+            "parquet_cache_file": str(found_files[0]['path'])
+        }
+        
+        point_size = _extract_point_size(found_files[0])
 
-                # Draw plot with indicator
-                estimated_point = True
-                generate_plot = import_generate_plot()
-                draw_method = getattr(args, 'draw', 'fastest')
-                print(f"Drawing plot with indicator using method: '{draw_method}'...")
-                generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
-                print(f"Successfully plotted data with indicator from '{found_files[0]['name']}'")
-        except Exception as e:
-            print(f"Error plotting file: {e}")
-            traceback.print_exc()
+        # Add flag for single file mode
+        args.single_file_mode = True
+
+        # Just plot raw OHLCV data without indicator calculation
+        if not hasattr(args, 'rule') or not args.rule:
+            metrics = _plot_raw_ohlcv_data(args, df, data_info, found_files[0], point_size, metrics)
+        else:
+            # Calculate indicator if rule is specified
+            metrics = _calculate_and_plot_indicator(args, df, data_info, found_files[0], point_size, metrics)
             
         # Return metrics for single file processing
         return metrics
+    except Exception as e:
+        print(f"Error plotting file: {e}")
+        traceback.print_exc()
+        return metrics
+
+def _plot_raw_ohlcv_data(args, df, data_info, file_info, point_size, metrics):
+    """Plot raw OHLCV data without indicator calculation."""
+    # Just plot raw OHLCV data without indicator calculation
+    selected_rule = 'Raw_OHLCV_Data'  # Default name for raw data display
+    estimated_point = True
+    generate_plot = import_generate_plot()
+    draw_method = getattr(args, 'draw', 'fastest')
+    print(f"Drawing raw OHLCV data chart using method: '{draw_method}'...")
+    
+    # Track plotting time for raw data
+    t_plot_start = time.perf_counter()
+    
+    generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+    print(f"Successfully plotted raw OHLCV data from '{file_info['name']}'")
+    
+    # End plotting timing and update metrics
+    t_plot_end = time.perf_counter()
+    metrics["plot_duration"] = t_plot_end - t_plot_start
+    metrics["point_size"] = point_size
+    metrics["estimated_point"] = estimated_point
+    
+    return metrics
+
+def _calculate_and_plot_indicator(args, df, data_info, file_info, point_size, metrics):
+    """Calculate indicator and plot for single file."""
+    # Calculate indicator if rule is specified
+    print(f"Calculating indicator '{args.rule}' for the file...")
+    if not hasattr(args, 'mode'):
+        args.mode = 'parquet'
+    
+    # Track indicator calculation time
+    t_calc_start = time.perf_counter()
+    result_df, selected_rule = calculate_indicator(args, df, point_size)
+    t_calc_end = time.perf_counter()
+    metrics["calc_duration"] = t_calc_end - t_calc_start
+
+    # Export indicator data if requested
+    _handle_indicator_exports(args, result_df, data_info, selected_rule)
+
+    # Draw plot with indicator
+    estimated_point = True
+    generate_plot = import_generate_plot()
+    draw_method = getattr(args, 'draw', 'fastest')
+    print(f"Drawing plot with indicator using method: '{draw_method}'...")
+    generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
+    print(f"Successfully plotted data with indicator from '{file_info['name']}'")
+    
+    return metrics
+
+def _handle_indicator_exports(args, result_df, data_info, selected_rule):
+    """Handle indicator data exports if requested."""
+    if hasattr(args, 'export_parquet') and args.export_parquet:
+        print(f"Exporting indicator data to parquet file...")
+        export_info = export_indicator_to_parquet(result_df, data_info, selected_rule, args)
+        if export_info["success"]:
+            print(f"Indicator data exported to: {export_info['output_file']}")
+        else:
+            print(f"Failed to export indicator data: {export_info['error_message']}")
+    
+    if hasattr(args, 'export_csv') and args.export_csv:
+        print(f"Exporting indicator data to CSV file...")
+        export_info = export_indicator_to_csv(result_df, data_info, selected_rule, args)
+        if export_info["success"]:
+            print(f"Indicator data exported to: {export_info['output_file']}")
+        else:
+            print(f"Failed to export indicator data: {export_info['error_message']}")
+    
+    if hasattr(args, 'export_json') and args.export_json:
+        print(f"Exporting indicator data to JSON file...")
+        export_info = export_indicator_to_json(result_df, data_info, selected_rule, args)
+        if export_info["success"]:
+            print(f"Indicator data exported to: {export_info['output_file']}")
+        else:
+            print(f"Failed to export indicator data: {export_info['error_message']}")
+
+
 
 def get_indicator_search_dirs():
     """
@@ -1031,26 +1104,8 @@ def show_indicator_help():
     print(f"  - Single parquet file will automatically open chart with specified backend")
     print(f"  - Multiple parquet files can be plotted individually when using -d flag")
 
-def handle_indicator_show_mode(args):
-    """
-    Handles the 'show ind' mode logic for indicator files.
-    Returns timing and metrics data for execution summary.
-    """
-    # Initialize timing and metrics tracking
-    metrics = {
-        "data_fetch_duration": 0,
-        "calc_duration": 0,
-        "plot_duration": 0,
-        "rows_count": 0,
-        "columns_count": 0,
-        "data_size_mb": 0,
-        "data_size_bytes": 0,
-        "file_size_bytes": None,
-        "point_size": None,
-        "estimated_point": False
-    }
-    
-    # Determine format filter from keywords
+def _parse_indicator_search_params(args):
+    """Parse format filter and keywords from args."""
     format_filter = None
     remaining_keywords = []
     
@@ -1062,7 +1117,10 @@ def handle_indicator_show_mode(args):
         else:
             remaining_keywords = args.keywords
     
-    # Search for files
+    return format_filter, remaining_keywords
+
+def _search_indicator_files(format_filter, remaining_keywords):
+    """Search for indicator files based on format and keywords."""
     search_dirs = get_indicator_search_dirs()
     found_files = []
     
@@ -1103,32 +1161,10 @@ def handle_indicator_show_mode(args):
                     except OSError as e:
                         print(f"Warning: Could not get stats for file {item.name}. Error: {e}", file=sys.stderr)
     
-    if not found_files:
-        if format_filter:
-            print(f"No {format_filter} indicator files found with keywords: {remaining_keywords}")
-        else:
-            print(f"No indicator files found with keywords: {remaining_keywords}")
-        return metrics
-    
-    print(f"Found {len(found_files)} indicator file(s).")
-    
-    # Sort files by format and name
-    found_files.sort(key=lambda x: (x['format'], x['name']))
-    
-    # Handle single parquet file - show chart with specified drawing backend
-    if len(found_files) == 1 and found_files[0]['format'] == 'parquet':
-        print("Single parquet indicator file found. Opening chart with specified backend.")
-        file_info = found_files[0]
-        args.single_file_mode = True
-        # Load and display the parquet file with chart
-        single_metrics = _show_single_indicator_file(file_info, args)
-        # Merge metrics
-        for key in single_metrics:
-            if key in metrics:
-                metrics[key] = single_metrics[key]
-        return metrics
-    
-    # Handle multiple parquet files with drawing backend
+    return found_files
+
+def _handle_multiple_parquet_files(args, found_files, format_filter, metrics):
+    """Handle multiple parquet files with drawing backend."""
     if format_filter == 'parquet' and hasattr(args, 'draw') and args.draw:
         parquet_files = [f for f in found_files if f['format'] == 'parquet']
         if len(parquet_files) > 1:
@@ -1156,9 +1192,12 @@ def handle_indicator_show_mode(args):
             metrics["plot_duration"] = total_plot_time
             metrics["data_fetch_duration"] = total_load_time
             
-            return metrics
+            return True, metrics
     
-    # Display file list
+    return False, metrics
+
+def _display_indicator_file_list(found_files, metrics):
+    """Display the list of indicator files with details."""
     print("-" * 60)
     current_format = None
     for idx, file_info in enumerate(found_files):
@@ -1190,24 +1229,111 @@ def handle_indicator_show_mode(args):
 
     return metrics
 
+def handle_indicator_show_mode(args):
+    """
+    Handles the 'show ind' mode logic for indicator files.
+    Returns timing and metrics data for execution summary.
+    """
+    # Initialize timing and metrics tracking
+    metrics = _initialize_metrics()
+    
+    # Parse search parameters
+    format_filter, remaining_keywords = _parse_indicator_search_params(args)
+    
+    # Search for files
+    found_files = _search_indicator_files(format_filter, remaining_keywords)
+    
+    if not found_files:
+        if format_filter:
+            print(f"No {format_filter} indicator files found with keywords: {remaining_keywords}")
+        else:
+            print(f"No indicator files found with keywords: {remaining_keywords}")
+        return metrics
+    
+    print(f"Found {len(found_files)} indicator file(s).")
+    
+    # Sort files by format and name
+    found_files.sort(key=lambda x: (x['format'], x['name']))
+    
+    # Handle single parquet file - show chart with specified drawing backend
+    if len(found_files) == 1 and found_files[0]['format'] == 'parquet':
+        print("Single parquet indicator file found. Opening chart with specified backend.")
+        file_info = found_files[0]
+        args.single_file_mode = True
+        # Load and display the parquet file with chart
+        single_metrics = _show_single_indicator_file(file_info, args)
+        # Merge metrics
+        for key in single_metrics:
+            if key in metrics:
+                metrics[key] = single_metrics[key]
+        return metrics
+    
+    # Handle multiple parquet files with drawing backend
+    handled, metrics = _handle_multiple_parquet_files(args, found_files, format_filter, metrics)
+    if handled:
+        return metrics
+    
+    # Display file list
+    return _display_indicator_file_list(found_files, metrics)
+
+def _plot_indicator_parquet_file(args, df, file_info, metrics):
+    """Handle plotting for indicator parquet files."""
+    # Set up for plotting with all available drawing backends
+    args.mode = 'show'
+    if not hasattr(args, 'rule') or args.rule is None:
+        args.rule = 'AUTO'  # Show all calculated indicators
+    
+    # Get point size (default for indicator files)
+    point_size = getattr(args, 'point', None) or 0.01
+    metrics["point_size"] = point_size
+    metrics["estimated_point"] = True
+    
+    # Use the same plotting system as other show commands
+    draw_method = getattr(args, 'draw', 'fastest')
+    
+    # Track plotting time
+    plot_start_time = time.time()
+    
+    if draw_method in ['term', 'terminal']:
+        # Terminal mode - use plotext
+        plot_title = f"Indicator File: {file_info['name']}"
+        if auto_plot_from_dataframe:
+            auto_plot_from_dataframe(df, plot_title)
+            print(f"Successfully plotted indicator file '{file_info['name']}' using terminal mode.")
+        else:
+            print("Terminal plotting function not available")
+    else:
+        # Use generate_plot for all other backends (fastest, fast, plotly, mpl, seaborn)
+        generate_plot = import_generate_plot()
+        data_info = {
+            "ohlcv_df": df,
+            "data_source_label": f"Indicator: {file_info['name']}",
+            "rows_count": len(df),
+            "columns_count": len(df.columns),
+            "data_size_mb": file_info['size_mb'],
+            "first_date": df.index[0] if isinstance(df.index, pd.DatetimeIndex) and len(df) > 0 else None,
+            "last_date": df.index[-1] if isinstance(df.index, pd.DatetimeIndex) and len(df) > 0 else None,
+            "parquet_cache_used": True,
+            "parquet_cache_file": str(file_info['path']),
+            "all_columns": list(df.columns)
+        }
+        selected_rule = args.rule if hasattr(args, 'rule') and args.rule else "AUTO"
+        estimated_point = True
+        generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+        print(f"Successfully plotted indicator file '{file_info['name']}' using '{draw_method}' mode.")
+    
+    plot_end_time = time.time()
+    metrics["plot_duration"] = plot_end_time - plot_start_time
+    
+    return metrics
+
 def _show_single_indicator_file(file_info, args):
     """
     Shows a single indicator file with appropriate visualization.
     Returns timing and metrics data.
     """
     # Initialize timing and metrics tracking
-    metrics = {
-        "data_fetch_duration": 0,
-        "calc_duration": 0,
-        "plot_duration": 0,
-        "rows_count": 0,
-        "columns_count": 0,
-        "data_size_mb": 0,
-        "data_size_bytes": 0,
-        "file_size_bytes": None,
-        "point_size": None,
-        "estimated_point": False
-    }
+    metrics = _initialize_metrics()
     
     file_path = file_info['path']
     file_format = file_info['format']
@@ -1231,52 +1357,8 @@ def _show_single_indicator_file(file_info, args):
             print(f"Rows: {len(df):,}, Columns: {len(df.columns)}")
             print(f"Columns: {', '.join(df.columns)}")
             
-            # Set up for plotting with all available drawing backends
-            args.mode = 'show'
-            if not hasattr(args, 'rule') or args.rule is None:
-                args.rule = 'AUTO'  # Show all calculated indicators
-            
-            # Get point size (default for indicator files)
-            point_size = getattr(args, 'point', None) or 0.01
-            metrics["point_size"] = point_size
-            metrics["estimated_point"] = True
-            
-            # Use the same plotting system as other show commands
-            draw_method = getattr(args, 'draw', 'fastest')
-            
-            # Track plotting time
-            plot_start_time = time.time()
-            
-            if draw_method in ['term', 'terminal']:
-                # Terminal mode - use plotext
-                plot_title = f"Indicator File: {file_info['name']}"
-                if auto_plot_from_dataframe:
-                    auto_plot_from_dataframe(df, plot_title)
-                    print(f"Successfully plotted indicator file '{file_info['name']}' using terminal mode.")
-                else:
-                    print("Terminal plotting function not available")
-            else:
-                # Use generate_plot for all other backends (fastest, fast, plotly, mpl, seaborn)
-                generate_plot = import_generate_plot()
-                data_info = {
-                    "ohlcv_df": df,
-                    "data_source_label": f"Indicator: {file_info['name']}",
-                    "rows_count": len(df),
-                    "columns_count": len(df.columns),
-                    "data_size_mb": file_info['size_mb'],
-                    "first_date": df.index[0] if isinstance(df.index, pd.DatetimeIndex) and len(df) > 0 else None,
-                    "last_date": df.index[-1] if isinstance(df.index, pd.DatetimeIndex) and len(df) > 0 else None,
-                    "parquet_cache_used": True,
-                    "parquet_cache_file": str(file_path),
-                    "all_columns": list(df.columns)
-                }
-                selected_rule = args.rule if hasattr(args, 'rule') and args.rule else "AUTO"
-                estimated_point = True
-                generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
-                print(f"Successfully plotted indicator file '{file_info['name']}' using '{draw_method}' mode.")
-            
-            plot_end_time = time.time()
-            metrics["plot_duration"] = plot_end_time - plot_start_time
+            # Handle plotting
+            metrics = _plot_indicator_parquet_file(args, df, file_info, metrics)
                 
         except Exception as e:
             print(f"Error loading parquet file: {e}")
@@ -1292,24 +1374,119 @@ def _show_single_indicator_file(file_info, args):
     
     return metrics
 
+def _show_csv_file_preview(file_path, metrics):
+    """Display CSV file preview and update metrics."""
+    df = pd.read_csv(file_path)
+    
+    # Update metrics
+    metrics["rows_count"] = len(df)
+    metrics["columns_count"] = len(df.columns)
+    
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}=== CSV FILE CONTENT ==={Style.RESET_ALL} (First 10 rows)")
+    print(f"{Fore.CYAN}Total rows:{Style.RESET_ALL} {len(df):,}")
+    print(f"{Fore.CYAN}Columns ({len(df.columns)}):{Style.RESET_ALL} {', '.join(df.columns)}")
+    print()
+    print(df.head(10).to_string(index=False))
+    
+    return metrics
+
+def _show_json_dict_preview(data, metrics):
+    """Display JSON dictionary data preview."""
+    metrics["rows_count"] = len(data)
+    metrics["columns_count"] = len(data) if data else 0
+    
+    print(f"{Fore.CYAN}Data structure:{Style.RESET_ALL} Dictionary with {len(data)} keys")
+    if data:
+        print(f"{Fore.CYAN}Keys:{Style.RESET_ALL} {', '.join(data.keys())}")
+        print()
+        
+        # Show first few values for each key
+        for key, value in list(data.items())[:5]:
+            if isinstance(value, list):
+                print(f"{Fore.GREEN}{key}:{Style.RESET_ALL} [{len(value)} items]")
+                if value:
+                    # Show first few items
+                    sample_items = value[:3]
+                    for i, item in enumerate(sample_items):
+                        print(f"  [{i}] {item}")
+                    if len(value) > 3:
+                        print(f"  ... and {len(value) - 3} more items")
+            else:
+                print(f"{Fore.GREEN}{key}:{Style.RESET_ALL} {value}")
+            print()
+    
+    return metrics
+
+def _show_json_list_preview(data, metrics):
+    """Display JSON list data preview."""
+    metrics["rows_count"] = len(data)
+    if data and isinstance(data[0], dict):
+        metrics["columns_count"] = len(data[0])
+    
+    print(f"{Fore.CYAN}Data structure:{Style.RESET_ALL} List with {len(data)} records")
+    if data:
+        first_item = data[0]
+        if isinstance(first_item, dict):
+            print(f"{Fore.CYAN}Record keys:{Style.RESET_ALL} {', '.join(first_item.keys())}")
+        print()
+        
+        # Show first few records
+        for i, record in enumerate(data[:5]):
+            print(f"{Fore.GREEN}Record {i+1}:{Style.RESET_ALL}")
+            if isinstance(record, dict):
+                for key, value in record.items():
+                    print(f"  {key}: {value}")
+            else:
+                print(f"  {record}")
+            print()
+        
+        if len(data) > 5:
+            print(f"{Fore.BLACK}{Style.DIM}... and {len(data) - 5} more records{Style.RESET_ALL}")
+    
+    return metrics
+
+def _show_json_other_preview(data, metrics):
+    """Display other JSON data types preview."""
+    import json
+    
+    # Other data types
+    metrics["rows_count"] = 1
+    metrics["columns_count"] = 1
+    
+    print(f"{Fore.CYAN}Data type:{Style.RESET_ALL} {type(data).__name__}")
+    data_str = json.dumps(data, indent=2)
+    if len(data_str) > 1000:
+        print(data_str[:1000] + f"\n{Fore.BLACK}{Style.DIM}... (truncated){Style.RESET_ALL}")
+    else:
+        print(data_str)
+    
+    return metrics
+
+def _show_json_file_preview(file_path, metrics):
+    """Display JSON file preview and update metrics."""
+    import json
+    
+    with open(file_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}=== JSON FILE CONTENT ==={Style.RESET_ALL}")
+    
+    if isinstance(data, dict):
+        metrics = _show_json_dict_preview(data, metrics)
+    elif isinstance(data, list):
+        metrics = _show_json_list_preview(data, metrics)
+    else:
+        metrics = _show_json_other_preview(data, metrics)
+    
+    return metrics
+
 def _show_file_preview(file_info):
     """
     Shows a preview of CSV or JSON file content.
     Returns timing and metrics data.
     """
     # Initialize timing and metrics tracking
-    metrics = {
-        "data_fetch_duration": 0,
-        "calc_duration": 0,
-        "plot_duration": 0,
-        "rows_count": 0,
-        "columns_count": 0,
-        "data_size_mb": 0,
-        "data_size_bytes": 0,
-        "file_size_bytes": None,
-        "point_size": None,
-        "estimated_point": False
-    }
+    metrics = _initialize_metrics()
     
     file_path = file_info['path']
     file_format = file_info['format']
@@ -1323,91 +1500,12 @@ def _show_file_preview(file_info):
         load_start_time = time.time()
         
         if file_format == 'csv':
-            df = pd.read_csv(file_path)
-            load_end_time = time.time()
-            
-            # Update metrics
-            metrics["data_fetch_duration"] = load_end_time - load_start_time
-            metrics["rows_count"] = len(df)
-            metrics["columns_count"] = len(df.columns)
-            
-            print(f"\n{Fore.YELLOW}{Style.BRIGHT}=== CSV FILE CONTENT ==={Style.RESET_ALL} (First 10 rows)")
-            print(f"{Fore.CYAN}Total rows:{Style.RESET_ALL} {len(df):,}")
-            print(f"{Fore.CYAN}Columns ({len(df.columns)}):{Style.RESET_ALL} {', '.join(df.columns)}")
-            print()
-            print(df.head(10).to_string(index=False))
-            
+            metrics = _show_csv_file_preview(file_path, metrics)
         elif file_format == 'json':
-            import json
-            with open(file_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            load_end_time = time.time()
-            
-            # Update metrics
-            metrics["data_fetch_duration"] = load_end_time - load_start_time
-            
-            print(f"\n{Fore.YELLOW}{Style.BRIGHT}=== JSON FILE CONTENT ==={Style.RESET_ALL}")
-            
-            if isinstance(data, dict):
-                # Pretty format dictionary data
-                metrics["rows_count"] = len(data)
-                metrics["columns_count"] = len(data) if data else 0
-                
-                print(f"{Fore.CYAN}Data structure:{Style.RESET_ALL} Dictionary with {len(data)} keys")
-                if data:
-                    print(f"{Fore.CYAN}Keys:{Style.RESET_ALL} {', '.join(data.keys())}")
-                    print()
-                    
-                    # Show first few values for each key
-                    for key, value in list(data.items())[:5]:
-                        if isinstance(value, list):
-                            print(f"{Fore.GREEN}{key}:{Style.RESET_ALL} [{len(value)} items]")
-                            if value:
-                                # Show first few items
-                                sample_items = value[:3]
-                                for i, item in enumerate(sample_items):
-                                    print(f"  [{i}] {item}")
-                                if len(value) > 3:
-                                    print(f"  ... and {len(value) - 3} more items")
-                        else:
-                            print(f"{Fore.GREEN}{key}:{Style.RESET_ALL} {value}")
-                        print()
-                        
-            elif isinstance(data, list):
-                metrics["rows_count"] = len(data)
-                if data and isinstance(data[0], dict):
-                    metrics["columns_count"] = len(data[0])
-                
-                print(f"{Fore.CYAN}Data structure:{Style.RESET_ALL} List with {len(data)} records")
-                if data:
-                    first_item = data[0]
-                    if isinstance(first_item, dict):
-                        print(f"{Fore.CYAN}Record keys:{Style.RESET_ALL} {', '.join(first_item.keys())}")
-                    print()
-                    
-                    # Show first few records
-                    for i, record in enumerate(data[:5]):
-                        print(f"{Fore.GREEN}Record {i+1}:{Style.RESET_ALL}")
-                        if isinstance(record, dict):
-                            for key, value in record.items():
-                                print(f"  {key}: {value}")
-                        else:
-                            print(f"  {record}")
-                        print()
-                    
-                    if len(data) > 5:
-                        print(f"{Fore.BLACK}{Style.DIM}... and {len(data) - 5} more records{Style.RESET_ALL}")
-            else:
-                # Other data types
-                metrics["rows_count"] = 1
-                metrics["columns_count"] = 1
-                
-                print(f"{Fore.CYAN}Data type:{Style.RESET_ALL} {type(data).__name__}")
-                data_str = json.dumps(data, indent=2)
-                if len(data_str) > 1000:
-                    print(data_str[:1000] + f"\n{Fore.BLACK}{Style.DIM}... (truncated){Style.RESET_ALL}")
-                else:
-                    print(data_str)
+            metrics = _show_json_file_preview(file_path, metrics)
+        
+        load_end_time = time.time()
+        metrics["data_fetch_duration"] = load_end_time - load_start_time
                 
     except Exception as e:
         print(f"Error reading {file_format} file: {e}")
