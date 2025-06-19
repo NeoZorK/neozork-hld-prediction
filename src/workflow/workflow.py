@@ -36,17 +36,40 @@ def run_indicator_workflow(args):
     # Special case: handle 'show' mode differently
     if args.mode == 'show':
         try:
-            # Call the show mode handler
-            handle_show_mode(args)
-            # Return a simplified success result
-            return {
+            # Track timing for show mode operations
+            t_show_start = time.perf_counter()
+            
+            # Call the show mode handler with timing tracking
+            show_results = handle_show_mode(args)
+            
+            t_show_end = time.perf_counter()
+            show_duration = t_show_end - t_show_start
+            
+            # Prepare results with real timing and metrics
+            results = {
                 "success": True,
                 "effective_mode": "show",
-                "data_source_label": f"Show mode (source: {args.source})",
+                "data_source_label": f"Show mode (source: {args.source if hasattr(args, 'source') else 'N/A'})",
                 "error_message": None,
                 "error_traceback": None,
-                "total_duration_sec": 0  # We're not tracking time for show mode
+                "data_fetch_duration": show_results.get("data_fetch_duration", 0) if show_results else 0,
+                "calc_duration": show_results.get("calc_duration", 0) if show_results else 0,
+                "plot_duration": show_results.get("plot_duration", 0) if show_results else 0,
+                "rows_count": show_results.get("rows_count", 0) if show_results else 0,
+                "columns_count": show_results.get("columns_count", 0) if show_results else 0,
+                "data_size_mb": show_results.get("data_size_mb", 0) if show_results else 0,
+                "data_size_bytes": show_results.get("data_size_bytes", 0) if show_results else 0,
+                "file_size_bytes": show_results.get("file_size_bytes") if show_results else None,
+                "point_size": show_results.get("point_size") if show_results else None,
+                "estimated_point": show_results.get("estimated_point", False) if show_results else False
             }
+            
+            # If no detailed results were returned, set basic timing
+            if not show_results:
+                results["data_fetch_duration"] = show_duration
+            
+            return results
+            
         except Exception as e:
             # traceback already imported at module level
             traceback_str = traceback.format_exc()
@@ -54,10 +77,16 @@ def run_indicator_workflow(args):
             return {
                 "success": False,
                 "effective_mode": "show",
-                "data_source_label": f"Show mode (source: {args.source})",
+                "data_source_label": f"Show mode (source: {args.source if hasattr(args, 'source') else 'N/A'})",
                 "error_message": str(e),
                 "error_traceback": traceback_str,
-                "total_duration_sec": 0
+                "data_fetch_duration": 0,
+                "calc_duration": 0,
+                "plot_duration": 0,
+                "rows_count": 0,
+                "columns_count": 0,
+                "data_size_mb": 0,
+                "data_size_bytes": 0
             }
     
     t_start_workflow = time.perf_counter()
