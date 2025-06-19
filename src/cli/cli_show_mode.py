@@ -7,6 +7,7 @@ import pandas as pd
 import sys
 import time  # Added for timing tracking
 import traceback
+import os  # Added for Docker detection
 from colorama import init, Fore, Style
 
 # Initialize colorama for cross-platform colored output
@@ -1019,8 +1020,6 @@ def _handle_indicator_exports(args, result_df, data_info, selected_rule):
         else:
             print(f"Failed to export indicator data: {export_info['error_message']}")
 
-
-
 def get_indicator_search_dirs():
     """
     Returns the search directories for indicator files.
@@ -1165,6 +1164,7 @@ def _search_indicator_files(format_filter, remaining_keywords):
 
 def _handle_multiple_parquet_files(args, found_files, format_filter, metrics):
     """Handle multiple parquet files with drawing backend."""
+    # Only plot multiple files if explicit draw flag is provided
     if format_filter == 'parquet' and hasattr(args, 'draw') and args.draw:
         parquet_files = [f for f in found_files if f['format'] == 'parquet']
         if len(parquet_files) > 1:
@@ -1255,13 +1255,21 @@ def handle_indicator_show_mode(args):
     # Sort files by format and name
     found_files.sort(key=lambda x: (x['format'], x['name']))
     
-    # Handle single parquet file - show chart with specified drawing backend
-    if len(found_files) == 1 and found_files[0]['format'] == 'parquet':
-        print("Single parquet indicator file found. Opening chart with specified backend.")
+    # Handle single file regardless of format
+    if len(found_files) == 1:
         file_info = found_files[0]
-        args.single_file_mode = True
-        # Load and display the parquet file with chart
-        single_metrics = _show_single_indicator_file(file_info, args)
+        file_format = file_info['format']
+        
+        if file_format == 'parquet':
+            print("Single parquet indicator file found. Opening chart with specified backend.")
+            args.single_file_mode = True
+            # Load and display the parquet file with chart
+            single_metrics = _show_single_indicator_file(file_info, args)
+        elif file_format in ['csv', 'json']:
+            print(f"Single {file_format} indicator file found. Displaying content.")
+            # For single CSV/JSON files, show content with date filtering if applicable
+            single_metrics = _show_single_text_indicator_file(file_info, args)
+        
         # Merge metrics
         for key in single_metrics:
             if key in metrics:
@@ -1273,7 +1281,7 @@ def handle_indicator_show_mode(args):
     if handled:
         return metrics
     
-    # Display file list
+    # Display file list for multiple files
     return _display_indicator_file_list(found_files, metrics)
 
 def _plot_indicator_parquet_file(args, df, file_info, metrics):
@@ -1283,10 +1291,27 @@ def _plot_indicator_parquet_file(args, df, file_info, metrics):
     if not hasattr(args, 'rule') or args.rule is None:
         args.rule = 'AUTO'  # Show all calculated indicators
     
-    # Get point size (default for indicator files)
-    point_size = getattr(args, 'point', None) or 0.01
+    # For indicator files, ignore calculation-related flags (--point, -t, -i)
+    # These flags are only for calculation mode, not for reading existing indicator files
+    point_size = 0.01  # Default point size for indicator files
     metrics["point_size"] = point_size
     metrics["estimated_point"] = True
+    
+    # Clear any calculation flags that shouldn't be used for indicator file display
+    if hasattr(args, 'point'):
+        delattr(args, 'point')  # Ignore --point flag
+    if hasattr(args, 'timeframe'):
+        delattr(args, 'timeframe')  # Ignore -t flag
+    if hasattr(args, 'instrument'):
+        delattr(args, 'instrument')  # Ignore -i flag
+    
+    # Apply date filtering if start/end flags are provided
+    start, end = _extract_datetime_filter_args(args)
+    if start or end:
+        print(f"Applying date filtering to indicator data...")
+        original_len = len(df)
+        df = _filter_dataframe_by_date(df, start, end)
+        print(f"After date filtering: {len(df)} rows remaining (from {original_len})")
     
     # Use the same plotting system as other show commands
     draw_method = getattr(args, 'draw', 'fastest')
@@ -1506,6 +1531,149 @@ def _show_file_preview(file_info):
         
         load_end_time = time.time()
         metrics["data_fetch_duration"] = load_end_time - load_start_time
+                
+    except Exception as e:
+        print(f"Error reading {file_format} file: {e}")
+        traceback.print_exc()
+    
+    return metrics
+
+def _show_single_text_indicator_file(file_info, args):
+    """
+    Shows a single CSV or JSON indicator file with date filtering support.
+    Returns timing and metrics data.
+    """
+    # Initialize timing and metrics tracking
+    metrics = _initialize_metrics()
+    
+    file_path = file_info['path']
+    file_format = file_info['format']
+    
+    # Update file size metrics
+    metrics["data_size_mb"] = file_info['size_mb']
+    metrics["data_size_bytes"] = int(file_info['size_mb'] * 1024 * 1024)
+    
+    try:
+        # Track data loading time
+        load_start_time = time.time()
+        
+        # Extract date filtering parameters
+        start, end = _extract_datetime_filter_args(args)
+        
+        if file_format == 'csv':
+            df = pd.read_csv(file_path)
+            load_end_time = time.time()
+            
+            # Apply date filtering if requested
+            if start or end:
+                print(f"Applying date filtering to CSV data...")
+                original_len = len(df)
+                df = _filter_dataframe_by_date(df, start, end)
+                print(f"After date filtering: {len(df)} rows remaining (from {original_len})")
+            
+            # Update metrics
+            metrics["data_fetch_duration"] = load_end_time - load_start_time
+            metrics["rows_count"] = len(df)
+            metrics["columns_count"] = len(df.columns)
+            
+            print(f"\n{Fore.YELLOW}{Style.BRIGHT}=== CSV INDICATOR FILE CONTENT ==={Style.RESET_ALL}")
+            if start or end:
+                print(f"Date filtered content (First 20 rows)")
+            else:
+                print(f"First 20 rows")
+            print(f"{Fore.CYAN}Total rows:{Style.RESET_ALL} {len(df):,}")
+            print(f"{Fore.CYAN}Columns ({len(df.columns)}):{Style.RESET_ALL} {', '.join(df.columns)}")
+            print()
+            print(df.head(20).to_string(index=False))
+            
+        elif file_format == 'json':
+            import json
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            load_end_time = time.time()
+            
+            # Update metrics
+            metrics["data_fetch_duration"] = load_end_time - load_start_time
+            
+            print(f"\n{Fore.YELLOW}{Style.BRIGHT}=== JSON INDICATOR FILE CONTENT ==={Style.RESET_ALL}")
+            
+            # For JSON, try to convert to DataFrame for date filtering
+            if start or end:
+                try:
+                    if isinstance(data, list) and data and isinstance(data[0], dict):
+                        df = pd.DataFrame(data)
+                        print(f"Applying date filtering to JSON data...")
+                        original_len = len(df)
+                        df = _filter_dataframe_by_date(df, start, end)
+                        print(f"After date filtering: {len(df)} rows remaining (from {original_len})")
+                        # Convert back to list of dicts
+                        data = df.to_dict('records')
+                        print(f"Showing first 10 filtered records:")
+                    else:
+                        print(f"Cannot apply date filtering to this JSON structure")
+                except Exception as e:
+                    print(f"Warning: Could not apply date filtering to JSON: {e}")
+            
+            if isinstance(data, dict):
+                # Pretty format dictionary data
+                metrics["rows_count"] = len(data)
+                metrics["columns_count"] = len(data) if data else 0
+                
+                print(f"{Fore.CYAN}Data structure:{Style.RESET_ALL} Dictionary with {len(data)} keys")
+                if data:
+                    print(f"{Fore.CYAN}Keys:{Style.RESET_ALL} {', '.join(data.keys())}")
+                    print()
+                    
+                    # Show first few values for each key
+                    for key, value in list(data.items())[:10]:
+                        if isinstance(value, list):
+                            print(f"{Fore.GREEN}{key}:{Style.RESET_ALL} [{len(value)} items]")
+                            if value:
+                                # Show first few items
+                                sample_items = value[:3]
+                                for i, item in enumerate(sample_items):
+                                    print(f"  [{i}] {item}")
+                                if len(value) > 3:
+                                    print(f"  ... and {len(value) - 3} more items")
+                        else:
+                            print(f"{Fore.GREEN}{key}:{Style.RESET_ALL} {value}")
+                        print()
+                        
+            elif isinstance(data, list):
+                metrics["rows_count"] = len(data)
+                if data and isinstance(data[0], dict):
+                    metrics["columns_count"] = len(data[0])
+                
+                print(f"{Fore.CYAN}Data structure:{Style.RESET_ALL} List with {len(data)} records")
+                if data:
+                    first_item = data[0]
+                    if isinstance(first_item, dict):
+                        print(f"{Fore.CYAN}Record keys:{Style.RESET_ALL} {', '.join(first_item.keys())}")
+                    print()
+                    
+                    # Show first few records
+                    for i, record in enumerate(data[:10]):
+                        print(f"{Fore.GREEN}Record {i+1}:{Style.RESET_ALL}")
+                        if isinstance(record, dict):
+                            for key, value in record.items():
+                                print(f"  {key}: {value}")
+                        else:
+                            print(f"  {record}")
+                        print()
+                    
+                    if len(data) > 10:
+                        print(f"{Fore.BLACK}{Style.DIM}... and {len(data) - 10} more records{Style.RESET_ALL}")
+            else:
+                # Other data types
+                metrics["rows_count"] = 1
+                metrics["columns_count"] = 1
+                
+                print(f"{Fore.CYAN}Data type:{Style.RESET_ALL} {type(data).__name__}")
+                data_str = json.dumps(data, indent=2)
+                if len(data_str) > 2000:
+                    print(data_str[:2000] + f"\n{Fore.BLACK}{Style.DIM}... (truncated){Style.RESET_ALL}")
+                else:
+                    print(data_str)
                 
     except Exception as e:
         print(f"Error reading {file_format} file: {e}")
