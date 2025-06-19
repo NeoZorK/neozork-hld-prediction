@@ -1164,8 +1164,12 @@ def _search_indicator_files(format_filter, remaining_keywords):
 
 def _handle_multiple_parquet_files(args, found_files, format_filter, metrics):
     """Handle multiple parquet files with drawing backend."""
-    # Only plot multiple files if explicit draw flag is provided
-    if format_filter == 'parquet' and hasattr(args, 'draw') and args.draw:
+    # For indicator mode, parquet files should behave like CSV/JSON files:
+    # - List files when multiple matches
+    # - Only show chart/content when a single file remains after filtering
+    # Only plot multiple files if explicit draw flag is provided AND it's not indicator mode
+    if (format_filter == 'parquet' and hasattr(args, 'draw') and args.draw and 
+        not getattr(args, 'indicator_mode', False)):
         parquet_files = [f for f in found_files if f['format'] == 'parquet']
         if len(parquet_files) > 1:
             print(f"Multiple parquet files found. Plotting all {len(parquet_files)} files with '{args.draw}' backend.")
@@ -1236,6 +1240,9 @@ def handle_indicator_show_mode(args):
     """
     # Initialize timing and metrics tracking
     metrics = _initialize_metrics()
+    
+    # Set indicator mode flag to ensure proper behavior
+    args.indicator_mode = True
     
     # Parse search parameters
     format_filter, remaining_keywords = _parse_indicator_search_params(args)
