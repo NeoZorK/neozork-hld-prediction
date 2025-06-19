@@ -5,6 +5,7 @@ from pathlib import Path
 import pyarrow.parquet as pq
 import pandas as pd
 import sys
+import time  # Added for timing tracking
 import traceback
 from colorama import init, Fore, Style
 
@@ -335,7 +336,22 @@ def _should_draw_plot(args):
 def handle_show_mode(args):
     """
     Handles the 'show' mode logic: finds files, displays info, and potentially triggers plot or indicator calculation.
+    Returns timing and metrics data for execution summary.
     """
+    # Initialize timing and metrics tracking
+    metrics = {
+        "data_fetch_duration": 0,
+        "calc_duration": 0,
+        "plot_duration": 0,
+        "rows_count": 0,
+        "columns_count": 0,
+        "data_size_mb": 0,
+        "data_size_bytes": 0,
+        "file_size_bytes": None,
+        "point_size": None,
+        "estimated_point": False
+    }
+    
     # Always use raw data directories
     search_dirs = get_search_dirs(args)
 
@@ -377,16 +393,16 @@ def handle_show_mode(args):
             total_indicator_files = sum(indicator_counts.values())
             if total_indicator_files == 0:
                 print("No indicator files found. Use export flags (--export-parquet, --export-csv, --export-json) to create indicator files first.")
-                return
+                return metrics
             print(f"Total indicator files: {total_indicator_files}")
             for format_name, count in indicator_counts.items():
                 if count > 0:
                     print(f"  - {format_name.upper()}: {count} file(s)")
             print("\nTo view specific indicator files, use: python run_analysis.py show ind [format] [keywords...]")
-            return
+            return metrics
         else:
-            handle_indicator_show_mode(args)
-            return
+            indicator_metrics = handle_indicator_show_mode(args)
+            return indicator_metrics
 
     if not args.source or args.source == 'help':
         show_help()
@@ -402,7 +418,7 @@ def handle_show_mode(args):
             print("No data files found. Use other modes to download or import data first.")
             print("\nTo convert a CSV file, use the 'csv' mode:")
             print("  python run_analysis.py csv --csv-file path/to/data.csv --point 0.01")
-            return
+            return metrics
             
         print(f"Total cached data files: {total_files}")
         for source, count in source_counts.items():
@@ -430,7 +446,7 @@ def handle_show_mode(args):
             print("\nTo view indicator files, use: python run_analysis.py show ind [format] [keywords...]")
             
         print("\nTo view specific files, use: python run_analysis.py show <source> [keywords...]")
-        return
+        return metrics
 
     print(f"Searching for '{args.source}' files with keywords: {args.keywords}...")
 
@@ -461,7 +477,7 @@ def handle_show_mode(args):
                         print(f"Warning: Could not get stats for file {item.name}. Error: {e}", file=sys.stderr)
     print(f"Found {len(found_files)} file(s).")
     if not found_files:
-        return
+        return metrics
     elif len(found_files) == 1:
         print("Single CSV file found. Will automatically open chart in browser.")
         # Flag this as a single file processing for export
@@ -534,7 +550,20 @@ def handle_show_mode(args):
             if args.rule.upper() == 'AUTO':
                 print(f"\n=== AUTO DISPLAY MODE ===")
                 print(f"Loading file data and preparing to display all columns...")
+                
+                # Track data loading time
+                t_load_start = time.perf_counter()
                 df = pd.read_parquet(found_files[0]['path'])
+                t_load_end = time.perf_counter()
+                metrics["data_fetch_duration"] = t_load_end - t_load_start
+                
+                # Update metrics
+                metrics["rows_count"] = len(df)
+                metrics["columns_count"] = len(df.columns)
+                metrics["data_size_bytes"] = df.memory_usage(deep=True).sum()
+                metrics["data_size_mb"] = metrics["data_size_bytes"] / (1024 * 1024)
+                metrics["file_size_bytes"] = found_files[0]['path'].stat().st_size
+                
                 start, end = _extract_datetime_filter_args(args)
                 if start or end:
                     df = _filter_dataframe_by_date(df, start, end)
@@ -570,6 +599,9 @@ def handle_show_mode(args):
 
                 # Plot with all columns using the new fastest_auto_plot if requested
                 if _should_draw_plot(args):
+                    # Track plotting time
+                    t_plot_start = time.perf_counter()
+                    
                     draw_method = getattr(args, 'draw', 'fastest')
                     
                     # Check if running in Docker and force terminal mode if needed
@@ -648,15 +680,38 @@ def handle_show_mode(args):
                             estimated_point = True
                             generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
                             print(f"Successfully plotted all columns from '{found_files[0]['name']}' using '{draw_method}' mode.")
+                    
+                        # End plotting timing
+                        t_plot_end = time.perf_counter()
+                        metrics["plot_duration"] = t_plot_end - t_plot_start
+                        
                     except Exception as e:
                         print(f"Error plotting in AUTO mode: {e}")
                         traceback.print_exc()
-                return
+                        
+                # Update point size info for AUTO mode
+                metrics["point_size"] = point_size
+                metrics["estimated_point"] = True
+                
+                return metrics
 
             # Normal indicator calculation for other rules
             print(f"\n=== INDICATOR CALCULATION MODE ===")
             print(f"Loading file data and calculating indicator '{args.rule}' ...")
+            
+            # Track data loading time
+            t_load_start = time.perf_counter()
             df = pd.read_parquet(found_files[0]['path'])
+            t_load_end = time.perf_counter()
+            metrics["data_fetch_duration"] = t_load_end - t_load_start
+            
+            # Update metrics
+            metrics["rows_count"] = len(df)
+            metrics["columns_count"] = len(df.columns)
+            metrics["data_size_bytes"] = df.memory_usage(deep=True).sum()
+            metrics["data_size_mb"] = metrics["data_size_bytes"] / (1024 * 1024)
+            metrics["file_size_bytes"] = found_files[0]['path'].stat().st_size
+            
             start, end = _extract_datetime_filter_args(args)
             if start or end:
                 df = _filter_dataframe_by_date(df, start, end)
@@ -681,8 +736,17 @@ def handle_show_mode(args):
                 args.mode = 'parquet'
 
             try:
+                # Track indicator calculation time
+                t_calc_start = time.perf_counter()
                 # Calculate indicators
                 result_df, selected_rule = calculate_indicator(args, df, point_size)
+                t_calc_end = time.perf_counter()
+                metrics["calc_duration"] = t_calc_end - t_calc_start
+                
+                # Update point size info
+                metrics["point_size"] = point_size
+                metrics["estimated_point"] = True
+                
                 datetime_column = None
                 if isinstance(result_df.index, pd.DatetimeIndex):
                     datetime_column = result_df.index.name or 'datetime'
@@ -691,6 +755,9 @@ def handle_show_mode(args):
 
                 # Draw plot after indicator calculation only if draw flag is set to supported mode
                 if _should_draw_plot(args):
+                    # Track plotting time
+                    t_plot_start = time.perf_counter()
+                    
                     print(f"\nDrawing plot after indicator calculation with method: '{args.draw}'...")
                     try:
                         # For terminal mode with PHLD rule
@@ -739,18 +806,24 @@ def handle_show_mode(args):
                             estimated_point = True
                             generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
                             print(f"Successfully plotted data from '{found_files[0]['name']}' using '{args.draw}' mode after indicator calculation.")
+                        
+                        # End plotting timing
+                        t_plot_end = time.perf_counter()
+                        metrics["plot_duration"] = t_plot_end - t_plot_start
+                        
                     except Exception as e:
                         print(f"Error plotting after indicator calculation: {e}")
                         traceback.print_exc()
-                return
+                        
+                return metrics
             except Exception as e:
                 print(f"Error calculating indicator: {e}")
                 traceback.print_exc()
-                return
+                return metrics
         except Exception as e:
             print(f"Error processing file: {e}")
             traceback.print_exc()
-            return
+            return metrics
 
     # Plot chart when one file found and no indicator calculation requested
     if len(found_files) > 1:
@@ -759,7 +832,19 @@ def handle_show_mode(args):
     elif len(found_files) == 1:
         print(f"Found one file. Loading data and preparing to display...")
         try:
+            # Track data loading time for single file
+            t_load_start = time.perf_counter()
             df = pd.read_parquet(found_files[0]['path'])
+            t_load_end = time.perf_counter()
+            metrics["data_fetch_duration"] = t_load_end - t_load_start
+            
+            # Update metrics
+            metrics["rows_count"] = len(df)
+            metrics["columns_count"] = len(df.columns)
+            metrics["data_size_bytes"] = df.memory_usage(deep=True).sum()
+            metrics["data_size_mb"] = metrics["data_size_bytes"] / (1024 * 1024)
+            metrics["file_size_bytes"] = found_files[0]['path'].stat().st_size
+            
             data_info = {
                 "ohlcv_df": df,
                 "data_source_label": f"{found_files[0]['name']}",
@@ -800,14 +885,29 @@ def handle_show_mode(args):
                 generate_plot = import_generate_plot()
                 draw_method = getattr(args, 'draw', 'fastest')
                 print(f"Drawing raw OHLCV data chart using method: '{draw_method}'...")
+                
+                # Track plotting time for raw data
+                t_plot_start = time.perf_counter()
+                
                 generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
                 print(f"Successfully plotted raw OHLCV data from '{found_files[0]['name']}'")
+                
+                # End plotting timing and update metrics
+                t_plot_end = time.perf_counter()
+                metrics["plot_duration"] = t_plot_end - t_plot_start
+                metrics["point_size"] = point_size
+                metrics["estimated_point"] = estimated_point
             else:
                 # Calculate indicator if rule is specified
                 print(f"Calculating indicator '{args.rule}' for the file...")
                 if not hasattr(args, 'mode'):
                     args.mode = 'parquet'
+                
+                # Track indicator calculation time
+                t_calc_start = time.perf_counter()
                 result_df, selected_rule = calculate_indicator(args, df, point_size)
+                t_calc_end = time.perf_counter()
+                metrics["calc_duration"] = t_calc_end - t_calc_start
 
                 # Export indicator data if requested
                 if hasattr(args, 'export_parquet') and args.export_parquet:
@@ -844,6 +944,9 @@ def handle_show_mode(args):
         except Exception as e:
             print(f"Error plotting file: {e}")
             traceback.print_exc()
+            
+        # Return metrics for single file processing
+        return metrics
 
 def get_indicator_search_dirs():
     """
@@ -931,7 +1034,22 @@ def show_indicator_help():
 def handle_indicator_show_mode(args):
     """
     Handles the 'show ind' mode logic for indicator files.
+    Returns timing and metrics data for execution summary.
     """
+    # Initialize timing and metrics tracking
+    metrics = {
+        "data_fetch_duration": 0,
+        "calc_duration": 0,
+        "plot_duration": 0,
+        "rows_count": 0,
+        "columns_count": 0,
+        "data_size_mb": 0,
+        "data_size_bytes": 0,
+        "file_size_bytes": None,
+        "point_size": None,
+        "estimated_point": False
+    }
+    
     # Determine format filter from keywords
     format_filter = None
     remaining_keywords = []
@@ -990,7 +1108,7 @@ def handle_indicator_show_mode(args):
             print(f"No {format_filter} indicator files found with keywords: {remaining_keywords}")
         else:
             print(f"No indicator files found with keywords: {remaining_keywords}")
-        return
+        return metrics
     
     print(f"Found {len(found_files)} indicator file(s).")
     
@@ -1003,18 +1121,42 @@ def handle_indicator_show_mode(args):
         file_info = found_files[0]
         args.single_file_mode = True
         # Load and display the parquet file with chart
-        _show_single_indicator_file(file_info, args)
-        return
+        single_metrics = _show_single_indicator_file(file_info, args)
+        # Merge metrics
+        for key in single_metrics:
+            if key in metrics:
+                metrics[key] = single_metrics[key]
+        return metrics
     
     # Handle multiple parquet files with drawing backend
     if format_filter == 'parquet' and hasattr(args, 'draw') and args.draw:
         parquet_files = [f for f in found_files if f['format'] == 'parquet']
         if len(parquet_files) > 1:
             print(f"Multiple parquet files found. Plotting all {len(parquet_files)} files with '{args.draw}' backend.")
+            total_rows = 0
+            total_cols = 0
+            total_size = 0
+            total_plot_time = 0
+            total_load_time = 0
+            
             for file_info in parquet_files:
                 print(f"\n{Fore.YELLOW}Processing: {file_info['name']}{Style.RESET_ALL}")
-                _show_single_indicator_file(file_info, args)
-            return
+                single_metrics = _show_single_indicator_file(file_info, args)
+                total_rows += single_metrics.get("rows_count", 0)
+                if single_metrics.get("columns_count", 0) > total_cols:
+                    total_cols = single_metrics.get("columns_count", 0)
+                total_size += single_metrics.get("data_size_mb", 0)
+                total_plot_time += single_metrics.get("plot_duration", 0)
+                total_load_time += single_metrics.get("data_fetch_duration", 0)
+            
+            # Aggregate metrics for multiple files
+            metrics["rows_count"] = total_rows
+            metrics["columns_count"] = total_cols
+            metrics["data_size_mb"] = total_size
+            metrics["plot_duration"] = total_plot_time
+            metrics["data_fetch_duration"] = total_load_time
+            
+            return metrics
     
     # Display file list
     print("-" * 60)
@@ -1038,19 +1180,53 @@ def handle_indicator_show_mode(args):
                 print(f"    Columns ({len(metadata['columns'])}): {', '.join(metadata['columns'])}")
             elif file_info['format'] in ['csv', 'json']:
                 # Show first few lines for CSV/JSON files
-                _show_file_preview(file_info)
+                file_metrics = _show_file_preview(file_info)
+                # Update metrics for text file display
+                metrics["data_fetch_duration"] += file_metrics.get("data_fetch_duration", 0)
+                metrics["rows_count"] += file_metrics.get("rows_count", 0)
+                if file_metrics.get("columns_count", 0) > metrics["columns_count"]:
+                    metrics["columns_count"] = file_metrics.get("columns_count", 0)
+                metrics["data_size_mb"] += file_metrics.get("data_size_mb", 0)
+
+    return metrics
 
 def _show_single_indicator_file(file_info, args):
     """
     Shows a single indicator file with appropriate visualization.
+    Returns timing and metrics data.
     """
+    # Initialize timing and metrics tracking
+    metrics = {
+        "data_fetch_duration": 0,
+        "calc_duration": 0,
+        "plot_duration": 0,
+        "rows_count": 0,
+        "columns_count": 0,
+        "data_size_mb": 0,
+        "data_size_bytes": 0,
+        "file_size_bytes": None,
+        "point_size": None,
+        "estimated_point": False
+    }
+    
     file_path = file_info['path']
     file_format = file_info['format']
     
     if file_format == 'parquet':
         # Load parquet and show chart using the same plotting system as other commands
         try:
+            # Track data loading time
+            load_start_time = time.time()
             df = pd.read_parquet(file_path)
+            load_end_time = time.time()
+            
+            # Update metrics
+            metrics["data_fetch_duration"] = load_end_time - load_start_time
+            metrics["rows_count"] = len(df)
+            metrics["columns_count"] = len(df.columns)
+            metrics["data_size_mb"] = file_info['size_mb']
+            metrics["data_size_bytes"] = int(file_info['size_mb'] * 1024 * 1024)
+            
             print(f"\nLoaded indicator file: {file_info['name']}")
             print(f"Rows: {len(df):,}, Columns: {len(df.columns)}")
             print(f"Columns: {', '.join(df.columns)}")
@@ -1062,9 +1238,14 @@ def _show_single_indicator_file(file_info, args):
             
             # Get point size (default for indicator files)
             point_size = getattr(args, 'point', None) or 0.01
+            metrics["point_size"] = point_size
+            metrics["estimated_point"] = True
             
             # Use the same plotting system as other show commands
             draw_method = getattr(args, 'draw', 'fastest')
+            
+            # Track plotting time
+            plot_start_time = time.time()
             
             if draw_method in ['term', 'terminal']:
                 # Terminal mode - use plotext
@@ -1093,6 +1274,9 @@ def _show_single_indicator_file(file_info, args):
                 estimated_point = True
                 generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
                 print(f"Successfully plotted indicator file '{file_info['name']}' using '{draw_method}' mode.")
+            
+            plot_end_time = time.time()
+            metrics["plot_duration"] = plot_end_time - plot_start_time
                 
         except Exception as e:
             print(f"Error loading parquet file: {e}")
@@ -1100,18 +1284,53 @@ def _show_single_indicator_file(file_info, args):
     
     elif file_format in ['csv', 'json']:
         # Show file content in terminal
-        _show_file_preview(file_info)
+        file_metrics = _show_file_preview(file_info)
+        # Merge metrics from file preview
+        for key in file_metrics:
+            if key in metrics:
+                metrics[key] = file_metrics[key]
+    
+    return metrics
 
 def _show_file_preview(file_info):
     """
     Shows a preview of CSV or JSON file content.
+    Returns timing and metrics data.
     """
+    # Initialize timing and metrics tracking
+    metrics = {
+        "data_fetch_duration": 0,
+        "calc_duration": 0,
+        "plot_duration": 0,
+        "rows_count": 0,
+        "columns_count": 0,
+        "data_size_mb": 0,
+        "data_size_bytes": 0,
+        "file_size_bytes": None,
+        "point_size": None,
+        "estimated_point": False
+    }
+    
     file_path = file_info['path']
     file_format = file_info['format']
     
+    # Update file size metrics
+    metrics["data_size_mb"] = file_info['size_mb']
+    metrics["data_size_bytes"] = int(file_info['size_mb'] * 1024 * 1024)
+    
     try:
+        # Track data loading time
+        load_start_time = time.time()
+        
         if file_format == 'csv':
             df = pd.read_csv(file_path)
+            load_end_time = time.time()
+            
+            # Update metrics
+            metrics["data_fetch_duration"] = load_end_time - load_start_time
+            metrics["rows_count"] = len(df)
+            metrics["columns_count"] = len(df.columns)
+            
             print(f"\n{Fore.YELLOW}{Style.BRIGHT}=== CSV FILE CONTENT ==={Style.RESET_ALL} (First 10 rows)")
             print(f"{Fore.CYAN}Total rows:{Style.RESET_ALL} {len(df):,}")
             print(f"{Fore.CYAN}Columns ({len(df.columns)}):{Style.RESET_ALL} {', '.join(df.columns)}")
@@ -1122,11 +1341,18 @@ def _show_file_preview(file_info):
             import json
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
+            load_end_time = time.time()
+            
+            # Update metrics
+            metrics["data_fetch_duration"] = load_end_time - load_start_time
             
             print(f"\n{Fore.YELLOW}{Style.BRIGHT}=== JSON FILE CONTENT ==={Style.RESET_ALL}")
             
             if isinstance(data, dict):
                 # Pretty format dictionary data
+                metrics["rows_count"] = len(data)
+                metrics["columns_count"] = len(data) if data else 0
+                
                 print(f"{Fore.CYAN}Data structure:{Style.RESET_ALL} Dictionary with {len(data)} keys")
                 if data:
                     print(f"{Fore.CYAN}Keys:{Style.RESET_ALL} {', '.join(data.keys())}")
@@ -1148,6 +1374,10 @@ def _show_file_preview(file_info):
                         print()
                         
             elif isinstance(data, list):
+                metrics["rows_count"] = len(data)
+                if data and isinstance(data[0], dict):
+                    metrics["columns_count"] = len(data[0])
+                
                 print(f"{Fore.CYAN}Data structure:{Style.RESET_ALL} List with {len(data)} records")
                 if data:
                     first_item = data[0]
@@ -1169,6 +1399,9 @@ def _show_file_preview(file_info):
                         print(f"{Fore.BLACK}{Style.DIM}... and {len(data) - 5} more records{Style.RESET_ALL}")
             else:
                 # Other data types
+                metrics["rows_count"] = 1
+                metrics["columns_count"] = 1
+                
                 print(f"{Fore.CYAN}Data type:{Style.RESET_ALL} {type(data).__name__}")
                 data_str = json.dumps(data, indent=2)
                 if len(data_str) > 1000:
@@ -1179,4 +1412,6 @@ def _show_file_preview(file_info):
     except Exception as e:
         print(f"Error reading {file_format} file: {e}")
         traceback.print_exc()
+    
+    return metrics
 
