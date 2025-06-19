@@ -220,6 +220,7 @@ def _display_file_info(found_files):
 def _handle_single_file_mode(args, found_files, metrics):
     """Handle single file mode - simplified version."""
     print(f"Found one file. Loading data and preparing to display...")
+    print(f"Loading file data and triggering plot with method: 'fastest'")
     try:
         # Track data loading time for single file
         t_load_start = time.perf_counter()
