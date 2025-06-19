@@ -79,6 +79,7 @@ def show_help():
     print(f"  {Fore.GREEN}python run_analysis.py show exrate{Style.RESET_ALL}           {Fore.BLACK}{Style.DIM}# List all Exchange Rate API files{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show ind{Style.RESET_ALL}              {Fore.BLACK}{Style.DIM}# List all indicator files{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show ind parquet{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# List parquet indicator files{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet -d plotly{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Plot indicator files with Plotly{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show yf aapl{Style.RESET_ALL}          {Fore.BLACK}{Style.DIM}# List YF files containing 'aapl'{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show binance btc MN1{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# List Binance files with 'btc' and timeframe 'MN1'{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show exrate eurusd{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# List Exchange Rate API EURUSD files{Style.RESET_ALL}")
@@ -109,6 +110,8 @@ def show_help():
     print(f"  {Fore.GREEN}python run_analysis.py show yf aapl -d term{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Show AAPL data with terminal charts{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show csv --rule PV -d plotly{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Show CSV data with PV indicator using Plotly{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show binance btc -d seaborn{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Show BTC data with Seaborn plots{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet -d fastest{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Show indicator files with fastest backend{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet -d mpl{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Show indicator files with mplfinance{Style.RESET_ALL}")
 
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Date filtering:{Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}--start, --end{Style.RESET_ALL} or {Fore.MAGENTA}--show-start, --show-end{Style.RESET_ALL} for date range filtering.")
@@ -882,7 +885,7 @@ def show_indicator_help():
     """
     print(f"\n{Fore.CYAN}{Style.BRIGHT}=== SHOW INDICATOR FILES HELP ==={Style.RESET_ALL}")
     print(f"The {Fore.GREEN}'show ind'{Style.RESET_ALL} mode allows you to list and inspect calculated indicator files.")
-    print(f"{Fore.YELLOW}Usage:{Style.RESET_ALL} python run_analysis.py show ind [format] [keywords...]")
+    print(f"{Fore.YELLOW}Usage:{Style.RESET_ALL} python run_analysis.py show ind [format] [keywords...] [-d backend] [--rule RULE]")
 
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Available formats:{Style.RESET_ALL}")
     print(f"  - {Fore.GREEN}parquet{Style.RESET_ALL}: Parquet indicator files (for plotting and analysis)")
@@ -897,10 +900,33 @@ def show_indicator_help():
     print(f"  {Fore.GREEN}python run_analysis.py show ind parquet mn1{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# List parquet files containing 'mn1'{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show ind csv GBPUSD{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# List CSV files containing 'GBPUSD'{Style.RESET_ALL}")
 
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Plotting Examples (Parquet files):{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet -d fastest{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Plot with fastest backend{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet -d plotly{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Plot with Plotly backend{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet -d mpl{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Plot with mplfinance backend{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet -d seaborn{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Plot with Seaborn backend{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet -d term{Style.RESET_ALL}     {Fore.BLACK}{Style.DIM}# Plot with terminal ASCII charts{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet PV -d plotly{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Plot PV files with Plotly{Style.RESET_ALL}")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Available Drawing Backends (-d flag):{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d fastest{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Default - Plotly+Dask+Datashader (best for large datasets){Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d fast{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Dask+Datashader+Bokeh for quick visualization{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d plotly{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Interactive HTML plots with Plotly{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d mpl{Style.RESET_ALL}       {Fore.BLACK}{Style.DIM}# Static images with mplfinance{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d seaborn{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Statistical plots with Seaborn{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}-d term{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Terminal ASCII charts with plotext{Style.RESET_ALL}")
+
+    print(f"\n{Fore.YELLOW}{Style.BRIGHT}Trading Rules (--rule flag):{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule AUTO{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Default - Display all calculated indicators{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule PV{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Focus on Pressure Vector indicators{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule SR{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Focus on Support and Resistance indicators{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule PHLD{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Focus on Predict High Low Direction indicators{Style.RESET_ALL}")
+
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Note:{Style.RESET_ALL}")
-    print(f"  - {Fore.MAGENTA}Parquet files{Style.RESET_ALL} can be displayed as charts with rules (PV, SR, PHLD)")
-    print(f"  - {Fore.MAGENTA}CSV and JSON files{Style.RESET_ALL} are displayed as terminal output only")
-    print(f"  - Single parquet file will automatically open chart with calculated indicators")
+    print(f"  - {Fore.MAGENTA}Parquet files{Style.RESET_ALL} can be displayed as charts with all drawing backends")
+    print(f"  - {Fore.MAGENTA}CSV and JSON files{Style.RESET_ALL} are displayed as formatted terminal output")
+    print(f"  - Single parquet file will automatically open chart with specified backend")
+    print(f"  - Multiple parquet files can be plotted individually when using -d flag")
 
 def handle_indicator_show_mode(args):
     """
@@ -971,14 +997,24 @@ def handle_indicator_show_mode(args):
     # Sort files by format and name
     found_files.sort(key=lambda x: (x['format'], x['name']))
     
-    # Handle single parquet file - show chart
+    # Handle single parquet file - show chart with specified drawing backend
     if len(found_files) == 1 and found_files[0]['format'] == 'parquet':
-        print("Single parquet indicator file found. Will automatically open chart.")
+        print("Single parquet indicator file found. Opening chart with specified backend.")
         file_info = found_files[0]
         args.single_file_mode = True
         # Load and display the parquet file with chart
         _show_single_indicator_file(file_info, args)
         return
+    
+    # Handle multiple parquet files with drawing backend
+    if format_filter == 'parquet' and hasattr(args, 'draw') and args.draw:
+        parquet_files = [f for f in found_files if f['format'] == 'parquet']
+        if len(parquet_files) > 1:
+            print(f"Multiple parquet files found. Plotting all {len(parquet_files)} files with '{args.draw}' backend.")
+            for file_info in parquet_files:
+                print(f"\n{Fore.YELLOW}Processing: {file_info['name']}{Style.RESET_ALL}")
+                _show_single_indicator_file(file_info, args)
+            return
     
     # Display file list
     print("-" * 60)
@@ -1012,35 +1048,55 @@ def _show_single_indicator_file(file_info, args):
     file_format = file_info['format']
     
     if file_format == 'parquet':
-        # Load parquet and show chart
+        # Load parquet and show chart using the same plotting system as other commands
         try:
             df = pd.read_parquet(file_path)
             print(f"\nLoaded indicator file: {file_info['name']}")
             print(f"Rows: {len(df):,}, Columns: {len(df.columns)}")
             print(f"Columns: {', '.join(df.columns)}")
             
-            # Set up for plotting
+            # Set up for plotting with all available drawing backends
             args.mode = 'show'
-            args.rule = 'AUTO'  # Show all calculated indicators
+            if not hasattr(args, 'rule') or args.rule is None:
+                args.rule = 'AUTO'  # Show all calculated indicators
             
-            # Import and call the plotting function
-            if plot_auto_fastest_parquet:
-                import os
-                # Ensure results/plots directory exists
-                os.makedirs("results/plots", exist_ok=True)
-                output_html_path = f"results/plots/show_indicator_{file_info['name'].replace('.parquet', '.html')}"
-                plot_auto_fastest_parquet(
-                    parquet_path=str(file_path),
-                    output_html_path=output_html_path,
-                    trading_rule_name='AUTO',
-                    title=f"Indicator File: {file_info['name']}"
-                )
-                print(f"Chart saved to: {output_html_path}")
+            # Get point size (default for indicator files)
+            point_size = getattr(args, 'point', None) or 0.01
+            
+            # Use the same plotting system as other show commands
+            draw_method = getattr(args, 'draw', 'fastest')
+            
+            if draw_method in ['term', 'terminal']:
+                # Terminal mode - use plotext
+                plot_title = f"Indicator File: {file_info['name']}"
+                if auto_plot_from_dataframe:
+                    auto_plot_from_dataframe(df, plot_title)
+                    print(f"Successfully plotted indicator file '{file_info['name']}' using terminal mode.")
+                else:
+                    print("Terminal plotting function not available")
             else:
-                print("Plotting function not available")
+                # Use generate_plot for all other backends (fastest, fast, plotly, mpl, seaborn)
+                generate_plot = import_generate_plot()
+                data_info = {
+                    "ohlcv_df": df,
+                    "data_source_label": f"Indicator: {file_info['name']}",
+                    "rows_count": len(df),
+                    "columns_count": len(df.columns),
+                    "data_size_mb": file_info['size_mb'],
+                    "first_date": df.index[0] if isinstance(df.index, pd.DatetimeIndex) and len(df) > 0 else None,
+                    "last_date": df.index[-1] if isinstance(df.index, pd.DatetimeIndex) and len(df) > 0 else None,
+                    "parquet_cache_used": True,
+                    "parquet_cache_file": str(file_path),
+                    "all_columns": list(df.columns)
+                }
+                selected_rule = args.rule if hasattr(args, 'rule') and args.rule else "AUTO"
+                estimated_point = True
+                generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+                print(f"Successfully plotted indicator file '{file_info['name']}' using '{draw_method}' mode.")
                 
         except Exception as e:
             print(f"Error loading parquet file: {e}")
+            traceback.print_exc()
     
     elif file_format in ['csv', 'json']:
         # Show file content in terminal
@@ -1056,9 +1112,10 @@ def _show_file_preview(file_info):
     try:
         if file_format == 'csv':
             df = pd.read_csv(file_path)
-            print(f"\n=== CSV FILE CONTENT === (First 10 rows)")
-            print(f"Total rows: {len(df):,}, Columns: {len(df.columns)}")
-            print(f"Columns: {', '.join(df.columns)}")
+            print(f"\n{Fore.YELLOW}{Style.BRIGHT}=== CSV FILE CONTENT ==={Style.RESET_ALL} (First 10 rows)")
+            print(f"{Fore.CYAN}Total rows:{Style.RESET_ALL} {len(df):,}")
+            print(f"{Fore.CYAN}Columns ({len(df.columns)}):{Style.RESET_ALL} {', '.join(df.columns)}")
+            print()
             print(df.head(10).to_string(index=False))
             
         elif file_format == 'json':
@@ -1066,17 +1123,60 @@ def _show_file_preview(file_info):
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
-            print(f"\n=== JSON FILE CONTENT === (First 5 records)")
-            if isinstance(data, list):
-                print(f"Total records: {len(data)}")
+            print(f"\n{Fore.YELLOW}{Style.BRIGHT}=== JSON FILE CONTENT ==={Style.RESET_ALL}")
+            
+            if isinstance(data, dict):
+                # Pretty format dictionary data
+                print(f"{Fore.CYAN}Data structure:{Style.RESET_ALL} Dictionary with {len(data)} keys")
                 if data:
-                    print(f"Keys: {', '.join(data[0].keys()) if isinstance(data[0], dict) else 'N/A'}")
+                    print(f"{Fore.CYAN}Keys:{Style.RESET_ALL} {', '.join(data.keys())}")
+                    print()
+                    
+                    # Show first few values for each key
+                    for key, value in list(data.items())[:5]:
+                        if isinstance(value, list):
+                            print(f"{Fore.GREEN}{key}:{Style.RESET_ALL} [{len(value)} items]")
+                            if value:
+                                # Show first few items
+                                sample_items = value[:3]
+                                for i, item in enumerate(sample_items):
+                                    print(f"  [{i}] {item}")
+                                if len(value) > 3:
+                                    print(f"  ... and {len(value) - 3} more items")
+                        else:
+                            print(f"{Fore.GREEN}{key}:{Style.RESET_ALL} {value}")
+                        print()
+                        
+            elif isinstance(data, list):
+                print(f"{Fore.CYAN}Data structure:{Style.RESET_ALL} List with {len(data)} records")
+                if data:
+                    first_item = data[0]
+                    if isinstance(first_item, dict):
+                        print(f"{Fore.CYAN}Record keys:{Style.RESET_ALL} {', '.join(first_item.keys())}")
+                    print()
+                    
+                    # Show first few records
                     for i, record in enumerate(data[:5]):
-                        print(f"Record {i+1}: {record}")
+                        print(f"{Fore.GREEN}Record {i+1}:{Style.RESET_ALL}")
+                        if isinstance(record, dict):
+                            for key, value in record.items():
+                                print(f"  {key}: {value}")
+                        else:
+                            print(f"  {record}")
+                        print()
+                    
+                    if len(data) > 5:
+                        print(f"{Fore.BLACK}{Style.DIM}... and {len(data) - 5} more records{Style.RESET_ALL}")
             else:
-                print(f"Data type: {type(data)}")
-                print(json.dumps(data, indent=2)[:1000] + "..." if len(str(data)) > 1000 else json.dumps(data, indent=2))
+                # Other data types
+                print(f"{Fore.CYAN}Data type:{Style.RESET_ALL} {type(data).__name__}")
+                data_str = json.dumps(data, indent=2)
+                if len(data_str) > 1000:
+                    print(data_str[:1000] + f"\n{Fore.BLACK}{Style.DIM}... (truncated){Style.RESET_ALL}")
+                else:
+                    print(data_str)
                 
     except Exception as e:
         print(f"Error reading {file_format} file: {e}")
+        traceback.print_exc()
 
