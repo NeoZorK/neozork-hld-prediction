@@ -12,10 +12,11 @@ def show_cli_examples_colored():
     :return: None
     """
     print(f"{Fore.CYAN}{Style.BRIGHT}\nEXAMPLES (run: python run_analysis.py --examples):{Style.RESET_ALL}\n")
-    
+
+    # 1. DEMO DATA MODES (with export flags)
     print(f"{Style.BRIGHT}1. DEMO DATA MODES{Style.RESET_ALL}")
-    print(f"{Fore.BLACK}{Style.DIM}# Run with demo data (default rule){Style.RESET_ALL}")
-    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Run demo and export indicators to all formats{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo --rule PHLD --export-parquet --export-csv --export-json{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Run with demo data using mplfinance{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo -d mpl{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Run with demo data and PV_HighLow rule{Style.RESET_ALL}")
@@ -25,6 +26,7 @@ def show_cli_examples_colored():
     print(f"{Fore.BLACK}{Style.DIM}# Run with demo data using terminal plotext backend{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo -d term{Style.RESET_ALL}\n")
 
+    # 2. CSV FILE MODES (including mql5_feed)
     print(f"{Style.BRIGHT}2. CSV FILE MODES{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Basic CSV mode{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01{Style.RESET_ALL}")
@@ -37,8 +39,11 @@ def show_cli_examples_colored():
     print(f"{Fore.BLACK}{Style.DIM}# CSV with PV rule, seaborn backend{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw seaborn{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# CSV with PV rule, terminal backend{Style.RESET_ALL}")
-    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d term{Style.RESET_ALL}\n")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d term{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Convert CSV from mql5_feed folder and specify point size{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file mql5_feed/mydata.csv --point 0.01{Style.RESET_ALL}\n")
 
+    # 3. YAHOO FINANCE (YF) MODES
     print(f"{Style.BRIGHT}3. YAHOO FINANCE (YF) MODES{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# EURUSD=X, 1mo, point size{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001{Style.RESET_ALL}")
@@ -49,10 +54,9 @@ def show_cli_examples_colored():
     print(f"{Fore.BLACK}{Style.DIM}# EURUSD=X, date range, mpl backend{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py yf -t EURUSD=X --start 2024-01-01 --end 2024-04-18 --point 0.00001 -d mpl{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# AAPL, 1y, Support_Resistants rule{Style.RESET_ALL}")
-    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py yf -t AAPL --period 1y --rule SR{Style.RESET_ALL}")
-    print(f"{Fore.BLACK}{Style.DIM}# AAPL, 1y, Support_Resistants rule, seaborn backend{Style.RESET_ALL}")
-    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py yf -t AAPL --period 1y --rule SR -d seaborn{Style.RESET_ALL}\n")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py yf -t AAPL --period 1y --rule SR{Style.RESET_ALL}\n")
 
+    # 4. POLYGON.IO MODES
     print(f"{Style.BRIGHT}4. POLYGON.IO MODES{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# AAPL, daily, date range{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py polygon --ticker AAPL --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01{Style.RESET_ALL}")
@@ -61,6 +65,7 @@ def show_cli_examples_colored():
     print(f"{Fore.BLACK}{Style.DIM}# EURUSD, hourly, PV rule, seaborn backend{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2022-01-01 --end 2022-06-01 --point 0.00001 --rule PV -d sb{Style.RESET_ALL}\n")
 
+    # 5. BINANCE MODES
     print(f"{Style.BRIGHT}5. BINANCE MODES{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# BTCUSDT, hourly, date range{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py binance --ticker BTCUSDT --interval H1 --start 2024-01-01 --end 2024-04-18 --point 0.01{Style.RESET_ALL}")
@@ -69,6 +74,7 @@ def show_cli_examples_colored():
     print(f"{Fore.BLACK}{Style.DIM}# ETHUSDT, daily, SR rule, seaborn backend{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR -d seaborn{Style.RESET_ALL}\n")
 
+    # 6. EXCHANGE RATE API MODES
     print(f"{Style.BRIGHT}6. EXCHANGE RATE API MODES{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Free Plan - Current rates only (no dates needed){Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py exrate --ticker EURUSD --interval D1 --point 0.00001{Style.RESET_ALL}")
@@ -79,19 +85,41 @@ def show_cli_examples_colored():
     print(f"{Fore.BLACK}{Style.DIM}# Free Plan - Current rate with terminal plotting{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py exrate --ticker AUDUSD --interval D1 --point 0.00001 -d term{Style.RESET_ALL}\n")
 
-    print(f"{Style.BRIGHT}7. SHOW MODE (CACHE/FILES){Style.RESET_ALL}")
+    # 7. EXPORT OPTIONS: ALLOWED AND DISABLED
+    print(f"{Style.BRIGHT}7. EXPORT OPTIONS: ALLOWED AND DISABLED{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Export flags (--export-parquet, --export-csv, --export-json) are only allowed in demo mode and show (with rule, but not show ind).{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Disabled: show ind, yfinance, csv, binance, polygon, exrate{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Allowed: demo, show (with rule, but not show ind){Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show yfinance EURUSD=X --rule PHLD --export-parquet --export-csv --export-json{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo --rule PHLD --export-parquet --export-csv --export-json{Style.RESET_ALL}\n")
+
+    # 8. SHOW MODE EXAMPLES (show, show ind, date filter)
+    print(f"{Style.BRIGHT}8. SHOW MODE EXAMPLES{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Show all available cached files{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Show yfinance cached files{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show yfinance{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Show specific ticker files{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show AAPL{Style.RESET_ALL}")
-    print(f"{Fore.BLACK}{Style.DIM}# Show files with specific rule{Style.RESET_ALL}")
-    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show --rule PV{Style.RESET_ALL}")
-    print(f"{Fore.BLACK}{Style.DIM}# Show files from date range{Style.RESET_ALL}")
-    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show --start 2024-01-01 --end 2024-12-31{Style.RESET_ALL}\n")
+    print(f"{Fore.BLACK}{Style.DIM}# Show files with specific rule and export indicators{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show yfinance AAPL --rule PHLD --export-parquet --export-csv --export-json{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Show indicator files (all formats){Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show ind{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Show parquet indicator files{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show ind parquet{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Show CSV indicator files with keyword{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show ind csv EURUSD{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Show JSON indicator files with keyword{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show ind json EURUSD{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Show indicator files with date filter (parquet){Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show ind parquet --start 2024-01-01 --end 2024-12-31{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Show indicator files with date filter (csv){Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show ind csv --start 2024-01-01 --end 2024-12-31{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}# Show indicator files with date filter (json){Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py show ind json --start 2024-01-01 --end 2024-12-31{Style.RESET_ALL}\n")
 
-    print(f"{Style.BRIGHT}8. TERMINAL MODE EXAMPLES{Style.RESET_ALL}")
+    # 9. TERMINAL MODE EXAMPLES
+    print(f"{Style.BRIGHT}9. TERMINAL MODE EXAMPLES{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Demo with terminal plotting{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py demo -d term{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# Yahoo Finance with terminal plotting{Style.RESET_ALL}")
@@ -104,9 +132,14 @@ def show_cli_examples_colored():
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001 -d term{Style.RESET_ALL}\n")
 
     print(f"{Fore.YELLOW}{Style.BRIGHT}NOTE:{Style.RESET_ALL}")
-    print(f"{Fore.BLACK}{Style.DIM}Terminal mode (-d term) works great in Docker containers and provides{Style.RESET_ALL}")
-    print(f"{Fore.BLACK}{Style.DIM}colored ASCII-based charts with candlesticks and indicators.{Style.RESET_ALL}")
-    print(f"{Fore.BLACK}{Style.DIM}For more details, see README.md or run with -h for full help.{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}Export flags (--export-parquet, --export-csv, --export-json) are only allowed in demo mode. They are forbidden in show ind, yfinance, csv, polygon, binance, exrate modes.{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}Recommended workflow: download or convert data, then use show with export flags, then use show ind to view exported indicators.{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}Example:")
+    print(f"  1. Download with yfinance: python run_analysis.py yfinance --ticker EURUSD=X --period 1y --point 0.00001")
+    print(f"  2. Export indicators: python run_analysis.py show yfinance EURUSD=X --rule PHLD --export-parquet --export-csv --export-json")
+    print(f"  3. View indicators: python run_analysis.py show ind parquet")
+    print(f"     (or show ind csv/json for tabular view)")
+    print(f"{Style.RESET_ALL}")
 
 
 def show_cli_examples(terminal_console):
@@ -157,19 +190,29 @@ def show_cli_examples(terminal_console):
 
     console.print("[bold]4. POLYGON.IO MODES[/bold]")
     console.print(
-        "[dim]# AAPL, D1, date range, point size[/dim]\n[bold green]python run_analysis.py polygon --ticker AAPL --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01[/bold green]")
+        "[dim]# AAPL, daily, date range[/dim]\n[bold green]python run_analysis.py polygon --ticker AAPL --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01[/bold green]")
     console.print(
-        "[dim]# EURUSD, H1, date range, PV rule[/dim]\n[bold green]python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2022-01-01 --end 2022-06-01 --point 0.00001 --rule PV[/bold green]\n")
+        "[dim]# EURUSD, hourly, PV rule[/dim]\n[bold green]python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2022-01-01 --end 2022-06-01 --point 0.00001 --rule PV[/bold green]\n")
 
     console.print("[bold]5. BINANCE MODES[/bold]")
     console.print(
-        "[dim]# BTCUSDT, H1, date range, point size[/dim]\n[bold green]python run_analysis.py binance --ticker BTCUSDT --interval H1 --start 2024-01-01 --end 2024-04-18 --point 0.01[/bold green]")
+        "[dim]# BTCUSDT, hourly, date range[/dim]\n[bold green]python run_analysis.py binance --ticker BTCUSDT --interval H1 --start 2024-01-01 --end 2024-04-18 --point 0.01[/bold green]")
     console.print(
-        "[dim]# ETHUSDT, D1, date range, Support_Resistants rule[/dim]\n[bold green]python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR[/bold green]\n")
+        "[dim]# ETHUSDT, daily, SR rule[/dim]\n[bold green]python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR[/bold green]\n")
     console.print(
-        "[dim]# ETHUSDT, D1, date range, Support_Resistants rule with SeaBorn plot[/dim]\n[bold green]python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR -d sb[/bold green]\n")
+        "[dim]# ETHUSDT, daily, SR rule, seaborn backend[/dim]\n[bold green]python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR -d seaborn[/bold green]\n")
 
-    console.print("[bold]6. SHOW MODE (CACHE/FILES)[/bold]")
+    console.print("[bold]6. EXCHANGE RATE API MODES[/bold]")
+    console.print(
+        "[dim]# Free Plan - Current rates only (no dates needed)[/dim]\n[bold green]python run_analysis.py exrate --ticker EURUSD --interval D1 --point 0.00001[/bold green]")
+    console.print(
+        "[dim]# Paid Plan - Historical data with date range[/dim]\n[bold green]python run_analysis.py exrate --ticker GBPJPY --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule PHLD[/bold green]")
+    console.print(
+        "[dim]# Paid Plan - Historical data with PV rule, plotly backend[/dim]\n[bold green]python run_analysis.py exrate --ticker USDCAD --interval D1 --start 2024-01-01 --end 2024-06-01 --point 0.00001 --rule PV -d plotly[/bold green]")
+    console.print(
+        "[dim]# Free Plan - Current rate with terminal plotting[/dim]\n[bold green]python run_analysis.py exrate --ticker AUDUSD --interval D1 --point 0.00001 -d term[/bold green]\n")
+
+    console.print("[bold]7. SHOW MODE (CACHE/FILES)[/bold]")
     console.print(
         "[dim]# Show all YFinance files[/dim]\n[bold green]python run_analysis.py show yf[/bold green]")
     console.print(
@@ -187,7 +230,7 @@ def show_cli_examples(terminal_console):
     console.print(
         "[dim]# Show YF files for date range[/dim]\n[bold green]python run_analysis.py show yf --show-start 2023-01-01 --show-end 2023-12-31[/bold green]\n")
 
-    console.print("[bold]7. ADVANCED/EDGE CASES[/bold]")
+    console.print("[bold]8. ADVANCED/EDGE CASES[/bold]")
     console.print(
         "[dim]# CSV, PHLD rule, plotly backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PHLD --draw plotly[/bold green]")
     console.print(
@@ -197,18 +240,18 @@ def show_cli_examples(terminal_console):
     console.print(
         "[dim]# Binance, M1, PHLD rule[/dim]\n[bold green]python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2023-01-01 --end 2023-01-31 --point 0.01 --rule PHLD[/bold green]\n")
 
-    console.print("[bold]8. HELP, VERSION, EXAMPLES[/bold]")
+    console.print("[bold]9. HELP, VERSION, EXAMPLES[/bold]")
     console.print("[dim]# Show help, version, or all examples[/dim]")
     console.print("[bold green]python run_analysis.py -h[/bold green]")
     console.print("[bold green]python run_analysis.py --version[/bold green]")
     console.print("[bold green]python run_analysis.py --examples[/bold green]\n")
 
-    console.print("[bold]9. CACHE/DEBUG[/bold]")
+    console.print("[bold]10. CACHE/DEBUG[/bold]")
     console.print("[dim]# Remove cache and rerun[/dim]")
     console.print("[bold green]rm data/cache/csv_converted/*.parquet[/bold green]")
     console.print("[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01[/bold green]\n")
 
-    console.print("[bold]10. ERROR CASES (will show error/help)[/bold]")
+    console.print("[bold]11. ERROR CASES (will show error/help)[/bold]")
     console.print("[dim]# Missing required arguments[/dim]")
     console.print(
         "[bold green]python run_analysis.py csv --csv-file data.csv[/bold green]   [dim]# (missing --point)[/dim]")
@@ -224,7 +267,7 @@ def show_cli_examples(terminal_console):
     console.print("- For more details, see README.md or run with -h for full help.\n")
 
     # --- OHLCV and AUTO rule examples ---
-    console.print("[bold]11. OHLCV & AUTO RULE EXAMPLES[/bold]")
+    console.print("[bold]12. OHLCV & AUTO RULE EXAMPLES[/bold]")
     console.print(
         "[dim]# CSV file, OHLCV rule (candlestick only)[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule OHLCV[/bold green]")
     console.print(
@@ -239,7 +282,7 @@ def show_cli_examples(terminal_console):
         "[dim]# Show mode, AUTO rule (all columns, auto-plot, terminal backend)[/dim]\n[bold green]python run_analysis.py show csv EURUSD MN1 --rule AUTO -d term[/bold green]\n")
 
     # --- NZ SCRIPT USAGE EXAMPLES ---
-    console.print("[bold]12. NZ SCRIPT USAGE[/bold]")
+    console.print("[bold]13. NZ SCRIPT USAGE[/bold]")
     console.print(
         "[dim]# The 'nz' script is a convenient wrapper that simplifies running analysis in different environments[/dim]")
     console.print(
@@ -306,7 +349,13 @@ def print_cli_examples():
       python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR
       python run_analysis.py binance --ticker ETHUSDT --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule SR -d seaborn
 
-      # 6. SHOW MODE (CACHE/FILES)
+      # 6. EXCHANGE RATE API MODES
+      python run_analysis.py exrate --ticker EURUSD --interval D1 --point 0.00001
+      python run_analysis.py exrate --ticker GBPJPY --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01 --rule PHLD
+      python run_analysis.py exrate --ticker USDCAD --interval D1 --start 2024-01-01 --end 2024-06-01 --point 0.00001 --rule PV -d plotly
+      python run_analysis.py exrate --ticker AUDUSD --interval D1 --point 0.00001 -d term
+
+      # 7. SHOW MODE (CACHE/FILES)
       python run_analysis.py show yf
       python run_analysis.py show yf aapl mn1
       python run_analysis.py show binance btc
@@ -316,27 +365,27 @@ def print_cli_examples():
       python run_analysis.py show yf --show-rule PV
       python run_analysis.py show yf --show-start 2023-01-01 --show-end 2023-12-31
 
-      # 7. ADVANCED/EDGE CASES
+      # 8. ADVANCED/EDGE CASES
       python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PHLD --draw plotly
       python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001 --rule PV --draw fastest
       python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2022-01-01 --end 2022-12-31 --point 0.00001 --rule SR --draw mpl
       python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2023-01-01 --end 2023-01-31 --point 0.01 --rule PHLD
 
-      # 8. HELP, VERSION, EXAMPLES
+      # 9. HELP, VERSION, EXAMPLES
       python run_analysis.py -h
       python run_analysis.py --version
       python run_analysis.py --examples
 
-      # 9. CACHE/DEBUG
+      # 10. CACHE/DEBUG
       # Remove cache and rerun
       rm data/cache/csv_converted/*.parquet
       python run_analysis.py csv --csv-file data.csv --point 0.01
 
-      # 10. ERROR CASES (will show error/help)
+      # 11. ERROR CASES (will show error/help)
       python run_analysis.py csv --csv-file data.csv   # (missing --point)
       python run_analysis.py yf -t EURUSD=X            # (missing --period or --start/--end)
 
-      # 11. OHLCV & AUTO RULE EXAMPLES
+      # 12. OHLCV & AUTO RULE EXAMPLES
       python run_analysis.py csv --csv-file data.csv --point 0.01 --rule OHLCV
       python run_analysis.py csv --csv-file data.csv --point 0.01 --rule AUTO -d mpl
       python run_analysis.py csv --csv-file data.csv --point 0.01 --rule AUTO -d term
@@ -344,7 +393,7 @@ def print_cli_examples():
       python run_analysis.py show csv EURUSD MN1 --rule AUTO -d mpl
       python run_analysis.py show csv EURUSD MN1 --rule AUTO -d term
 
-      # 12. NZ SCRIPT USAGE
+      # 13. NZ SCRIPT USAGE
       # The 'nz' script is a convenient wrapper that simplifies running analysis in different environments
       ./nz demo
       ./nz yf -t AAPL --period 6mo --point 0.01
