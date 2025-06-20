@@ -856,6 +856,20 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
         _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
         print(f"\nIndicator '{selected_rule.name}' calculated successfully.")
 
+        # === ДОБАВЛЕНО: Экспорт индикаторов, если указаны флаги ===
+        _handle_indicator_exports(args, result_df, {
+            "ohlcv_df": df,
+            "data_source_label": f"{found_files[0]['name']}",
+            "rows_count": len(df),
+            "columns_count": len(df.columns),
+            "data_size_mb": found_files[0]['size_mb'],
+            "first_date": found_files[0].get('first_date', None),
+            "last_date": found_files[0].get('last_date', None),
+            "parquet_cache_used": True,
+            "parquet_cache_file": str(found_files[0]['path'])
+        }, selected_rule)
+        # === КОНЕЦ ДОБАВЛЕНИЯ ===
+
         # Draw plot after indicator calculation only if draw flag is set to supported mode
         if _should_draw_plot(args):
             metrics = _plot_indicator_calculation_result(args, df, result_df, found_files[0], selected_rule, point_size, metrics)
