@@ -122,9 +122,14 @@ def show_cli_examples_colored():
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001 -d term{Style.RESET_ALL}\n")
 
     print(f"{Fore.YELLOW}{Style.BRIGHT}NOTE:{Style.RESET_ALL}")
-    print(f"{Fore.BLACK}{Style.DIM}Terminal mode (-d term) works great in Docker containers and provides{Style.RESET_ALL}")
-    print(f"{Fore.BLACK}{Style.DIM}colored ASCII-based charts with candlesticks and indicators.{Style.RESET_ALL}")
-    print(f"{Fore.BLACK}{Style.DIM}For more details, see README.md or run with -h for full help.{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}Export flags (--export-parquet, --export-csv, --export-json) are only allowed in demo mode. They are forbidden in show ind, yfinance, csv, polygon, binance, exrate modes.{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}Recommended workflow: download or convert data, then use show with export flags, then use show ind to view exported indicators.{Style.RESET_ALL}")
+    print(f"{Fore.BLACK}{Style.DIM}Example:")
+    print(f"  1. Download with yfinance: python run_analysis.py yfinance --ticker EURUSD=X --period 1y --point 0.00001")
+    print(f"  2. Export indicators: python run_analysis.py show yfinance EURUSD=X --rule PHLD --export-parquet --export-csv --export-json")
+    print(f"  3. View indicators: python run_analysis.py show ind parquet")
+    print(f"     (or show ind csv/json for tabular view)")
+    print(f"{Style.RESET_ALL}")
 
 
 def show_cli_examples(terminal_console):

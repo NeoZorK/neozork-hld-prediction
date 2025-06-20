@@ -331,13 +331,18 @@ def parse_arguments():
     if effective_mode == 'show' and hasattr(args, 'show_rule') and args.show_rule:
         args.rule = args.show_rule
 
-    # --- Restrict export flags for show/indicator modes ---
-    if effective_mode == 'show':
-        # Disallow export flags for any show mode
+    # --- Restrict export flags for forbidden modes ---
+    forbidden_export_modes = ['yfinance', 'csv', 'polygon', 'binance', 'exrate']
+    if effective_mode in forbidden_export_modes:
         if getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False):
-            parser.error("Export flags (--export-parquet, --export-csv, --export-json) are not allowed in 'show' mode or 'show ind' mode. These flags can only be used in calculation modes (demo, yfinance, csv, polygon, binance, exrate).")
-        # Also disallow for 'show ind ...' (indicator file viewing)
-        if hasattr(args, 'source') and args.source == 'ind' and (getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False)):
-            parser.error("Export flags (--export-parquet, --export-csv, --export-json) are not allowed in 'show ind' mode. Use calculation modes to export indicators.")
+            parser.error("Export flags (--export-parquet, --export-csv, --export-json) are only allowed in 'demo' mode. Use 'demo' mode to export indicators. For other modes, first download or convert data, then use 'show' with export flags.")
+    # Disallow export flags for 'show ind' (indicator viewing)
+    if effective_mode == 'show' and hasattr(args, 'source') and args.source == 'ind':
+        if getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False):
+            parser.error("Export flags (--export-parquet, --export-csv, --export-json) are not allowed in 'show ind' mode. Use 'demo' mode to export indicators.")
+    # Update help for export flags
+    for action in parser._actions:
+        if action.dest in ['export_parquet', 'export_csv', 'export_json']:
+            action.help += ' (Allowed only in demo mode, forbidden in show ind, yfinance, csv, polygon, binance, exrate)'
 
     return args
