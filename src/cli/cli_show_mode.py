@@ -304,9 +304,9 @@ def _filter_dataframe_by_date(df, start, end):
     if df.empty:
         return df
     date_index = None
-    # Список возможных названий колонок с датой
+    # List of possible names for the date column
     date_col_candidates = ['DateTime', 'datetime', 'date', 'timestamp', 'index']
-    # Найти первую подходящую колонку (без учёта регистра)
+    # Find the first matching column (case-insensitive)
     lower_cols = {col.lower(): col for col in df.columns}
     found_col = None
     for candidate in date_col_candidates:
@@ -316,7 +316,7 @@ def _filter_dataframe_by_date(df, start, end):
         elif candidate.lower() in lower_cols:
             found_col = lower_cols[candidate.lower()]
             break
-    # Если индекс называется 'index' и содержит даты, используем его
+    # If the index is named 'index' and contains dates, use it
     if not found_col and df.index.name and df.index.name.lower() == 'index':
         try:
             df.index = pd.to_datetime(df.index, errors='coerce')
@@ -1602,8 +1602,8 @@ def _show_single_text_indicator_file(file_info, args):
             print(f"{Fore.CYAN}Total rows:{Style.RESET_ALL} {len(df):,}")
             print(f"{Fore.CYAN}Columns ({len(df.columns)}):{Style.RESET_ALL} {', '.join(df.columns)}")
             print()
-            # Формируем колонку с датой для вывода
-            # Определяем имя колонки с датой
+            # Format the date column for display
+            # Determine the date column name
             date_col_candidates = ['DateTime', 'datetime', 'date', 'timestamp', 'index']
             lower_cols = {col.lower(): col for col in df.columns}
             found_col = None
@@ -1614,17 +1614,17 @@ def _show_single_text_indicator_file(file_info, args):
                 elif candidate.lower() in lower_cols:
                     found_col = lower_cols[candidate.lower()]
                     break
-            # Если дата в индексе, используем её
+            # If date is in index, use it
             if found_col:
                 datetime_series = pd.to_datetime(df[found_col], errors='coerce')
             elif df.index.name and df.index.name.lower() in [c.lower() for c in date_col_candidates]:
                 datetime_series = pd.to_datetime(df.index, errors='coerce')
             else:
                 datetime_series = pd.Series([None]*len(df))
-            # Добавляем колонку с датой и колонку с номером строки
+            # Add date and row number columns
             df_to_show = df.copy()
             df_to_show.insert(0, 'rownum', range(1, len(df_to_show)+1))
-            # Корректно форматируем datetime для Series и DatetimeIndex
+            # Correctly format datetime for Series and DatetimeIndex
             if hasattr(datetime_series, 'dt'):
                 dt_col = datetime_series.dt.strftime('%Y-%m-%d %H:%M:%S') if datetime_series.notnull().any() else datetime_series
             elif isinstance(datetime_series, pd.DatetimeIndex):
@@ -1660,15 +1660,15 @@ def _show_single_text_indicator_file(file_info, args):
                         print(f"Cannot apply date filtering to this JSON structure")
                 except Exception as e:
                     print(f"Warning: Could not apply date filtering to JSON: {e}")
-            # Добавляем поле datetime в каждый словарь
+            # Add datetime field to each dictionary
             if isinstance(data, list) and data and isinstance(data[0], dict):
-                # Переименовываем поле 'index' в 'date_str', чтобы не потерять исходные даты
+                # Rename 'index' field to 'date_str' to preserve original dates
                 data = [dict(rec) for rec in data]
                 for rec in data:
                     if 'index' in rec:
                         rec['date_str'] = rec.pop('index')
                 df = pd.DataFrame(data)
-                # Определяем имя колонки с датой
+                # Determine the date column name
                 date_col_candidates = ['date_str', 'DateTime', 'datetime', 'date', 'timestamp']
                 lower_cols = {col.lower(): col for col in df.columns}
                 found_col = None
@@ -1679,42 +1679,34 @@ def _show_single_text_indicator_file(file_info, args):
                     elif candidate.lower() in lower_cols:
                         found_col = lower_cols[candidate.lower()]
                         break
-                # Если после фильтрации по дате пропала колонка date_str, восстанавливаем её из исходного списка
-                if 'date_str' not in df.columns and 'date_str' in data[0]:
-                    df['date_str'] = [rec.get('date_str', None) for rec in data]
-                    found_col = 'date_str'
-                # Формируем серию дат
+                # Create date series
                 if found_col:
                     datetime_series = pd.to_datetime(df[found_col], errors='coerce')
                 else:
-                    datetime_series = pd.to_datetime(df.index, errors='coerce')
-                # Форматируем дату
+                    datetime_series = pd.Series([None]*len(df))
+                # Format the date
                 if hasattr(datetime_series, 'dt'):
                     dt_col = datetime_series.dt.strftime('%Y-%m-%d %H:%M:%S')
                 elif isinstance(datetime_series, pd.DatetimeIndex):
                     dt_col = datetime_series.strftime('%Y-%m-%d %H:%M:%S')
                 else:
                     dt_col = datetime_series
-                # Преобразуем обратно в dict
+                # Convert back to dict
                 data_dicts = df.to_dict('records')
-                # Добавляем поле datetime в каждый словарь
+                # Add datetime field to each dictionary
                 for i, rec in enumerate(data_dicts):
-                    if 'date_str' in rec and isinstance(rec['date_str'], str):
-                        try:
-                            rec['datetime'] = pd.to_datetime(rec['date_str']).strftime('%Y-%m-%d %H:%M:%S')
-                        except Exception:
-                            rec['datetime'] = None
-                        del rec['date_str']
-                    elif found_col and found_col in rec and rec[found_col] is not None:
+                    if found_col and found_col in rec and rec[found_col] is not None:
                         try:
                             rec['datetime'] = pd.to_datetime(rec[found_col]).strftime('%Y-%m-%d %H:%M:%S')
                         except Exception:
                             rec['datetime'] = None
+                        if found_col == 'date_str':
+                            del rec['date_str']
                     else:
                         rec['datetime'] = dt_col[i] if isinstance(dt_col, (list, tuple, pd.Series, pd.Index)) else dt_col
-                # Явно выводим все записи с номерами
+                # Explicitly print all records with numbers
                 for i, rec in enumerate(data_dicts, 1):
-                    print(f"Запись {i}:")
+                    print(f"Record {i}:")
                     for k, v in rec.items():
                         print(f"  {k}: {v}")
                     print()
