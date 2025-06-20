@@ -11,6 +11,11 @@ mkdir -p data/cache/csv_converted
 mkdir -p data/raw_parquet
 mkdir -p data/processed
 
+# Create indicator export directories
+mkdir -p data/indicators/parquet
+mkdir -p data/indicators/csv
+mkdir -p data/indicators/json
+
 # Log and results directories
 mkdir -p logs
 mkdir -p results
@@ -36,6 +41,9 @@ POLYGON_API_KEY=your_polygon_api_key_here
 # Binance API keys
 BINANCE_API_KEY=your_binance_api_key_here
 BINANCE_API_SECRET=your_binance_api_secret_here
+
+# Exchange Rate API Key from exchangerate-api.com
+EXCHANGE_RATE_API_KEY=your_exchange_rate_api_key_here
 
 # Add other environment variables as needed
 EOL

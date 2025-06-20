@@ -16,8 +16,10 @@ from ..utils.point_size_determination import get_point_size
 from ..calculation.indicator_calculation import calculate_indicator
 from ..plotting.plotting_generation import generate_plot
 from src.cli.cli_show_mode import handle_show_mode
-# Import the export function
+# Import the export functions
 from ..export.parquet_export import export_indicator_to_parquet
+from ..export.csv_export import export_indicator_to_csv
+from ..export.json_export import export_indicator_to_json
 
 # Definition of the run_indicator_workflow function
 def run_indicator_workflow(args):
@@ -34,17 +36,40 @@ def run_indicator_workflow(args):
     # Special case: handle 'show' mode differently
     if args.mode == 'show':
         try:
-            # Call the show mode handler
-            handle_show_mode(args)
-            # Return a simplified success result
-            return {
+            # Track timing for show mode operations
+            t_show_start = time.perf_counter()
+            
+            # Call the show mode handler with timing tracking
+            show_results = handle_show_mode(args)
+            
+            t_show_end = time.perf_counter()
+            show_duration = t_show_end - t_show_start
+            
+            # Prepare results with real timing and metrics
+            results = {
                 "success": True,
                 "effective_mode": "show",
-                "data_source_label": f"Show mode (source: {args.source})",
+                "data_source_label": f"Show mode (source: {args.source if hasattr(args, 'source') else 'N/A'})",
                 "error_message": None,
                 "error_traceback": None,
-                "total_duration_sec": 0  # We're not tracking time for show mode
+                "data_fetch_duration": show_results.get("data_fetch_duration", 0) if show_results else 0,
+                "calc_duration": show_results.get("calc_duration", 0) if show_results else 0,
+                "plot_duration": show_results.get("plot_duration", 0) if show_results else 0,
+                "rows_count": show_results.get("rows_count", 0) if show_results else 0,
+                "columns_count": show_results.get("columns_count", 0) if show_results else 0,
+                "data_size_mb": show_results.get("data_size_mb", 0) if show_results else 0,
+                "data_size_bytes": show_results.get("data_size_bytes", 0) if show_results else 0,
+                "file_size_bytes": show_results.get("file_size_bytes") if show_results else None,
+                "point_size": show_results.get("point_size") if show_results else None,
+                "estimated_point": show_results.get("estimated_point", False) if show_results else False
             }
+            
+            # If no detailed results were returned, set basic timing
+            if not show_results:
+                results["data_fetch_duration"] = show_duration
+            
+            return results
+            
         except Exception as e:
             # traceback already imported at module level
             traceback_str = traceback.format_exc()
@@ -52,10 +77,16 @@ def run_indicator_workflow(args):
             return {
                 "success": False,
                 "effective_mode": "show",
-                "data_source_label": f"Show mode (source: {args.source})",
+                "data_source_label": f"Show mode (source: {args.source if hasattr(args, 'source') else 'N/A'})",
                 "error_message": str(e),
                 "error_traceback": traceback_str,
-                "total_duration_sec": 0
+                "data_fetch_duration": 0,
+                "calc_duration": 0,
+                "plot_duration": 0,
+                "rows_count": 0,
+                "columns_count": 0,
+                "data_size_mb": 0,
+                "data_size_bytes": 0
             }
     
     t_start_workflow = time.perf_counter()
@@ -135,15 +166,46 @@ def run_indicator_workflow(args):
         workflow_results["plot_duration"] = t_plot_end - t_plot_start
         workflow_results["steps_duration"]["plot"] = workflow_results["plot_duration"]
 
-        # --- Step 5: Export Indicator Data to Parquet (if requested) ---
+        # --- Step 5: Export Indicator Data (if requested) ---
+        export_results = {}
+        
+        # Export to Parquet
         if hasattr(args, 'export_parquet') and args.export_parquet:
-            logger.print_info("--- Step 5: Exporting Indicator Data to Parquet ---")
+            logger.print_info("--- Step 5a: Exporting Indicator Data to Parquet ---")
             t_export_start = time.perf_counter()
             export_info = export_indicator_to_parquet(result_df, data_info, selected_rule, args)
             t_export_end = time.perf_counter()
-            workflow_results["export_duration"] = t_export_end - t_export_start
-            workflow_results["steps_duration"]["export"] = workflow_results["export_duration"]
-            workflow_results["export_info"] = export_info
+            export_results["parquet"] = export_info
+            workflow_results["export_parquet_duration"] = t_export_end - t_export_start
+        
+        # Export to CSV
+        if hasattr(args, 'export_csv') and args.export_csv:
+            logger.print_info("--- Step 5b: Exporting Indicator Data to CSV ---")
+            t_export_start = time.perf_counter()
+            export_info = export_indicator_to_csv(result_df, data_info, selected_rule, args)
+            t_export_end = time.perf_counter()
+            export_results["csv"] = export_info
+            workflow_results["export_csv_duration"] = t_export_end - t_export_start
+        
+        # Export to JSON
+        if hasattr(args, 'export_json') and args.export_json:
+            logger.print_info("--- Step 5c: Exporting Indicator Data to JSON ---")
+            t_export_start = time.perf_counter()
+            export_info = export_indicator_to_json(result_df, data_info, selected_rule, args)
+            t_export_end = time.perf_counter()
+            export_results["json"] = export_info
+            workflow_results["export_json_duration"] = t_export_end - t_export_start
+        
+        # Store export results if any exports were performed
+        if export_results:
+            total_export_duration = sum([
+                workflow_results.get("export_parquet_duration", 0),
+                workflow_results.get("export_csv_duration", 0),
+                workflow_results.get("export_json_duration", 0)
+            ])
+            workflow_results["export_duration"] = total_export_duration
+            workflow_results["steps_duration"]["export"] = total_export_duration
+            workflow_results["export_results"] = export_results
 
         workflow_results["success"] = True
         logger.print_success("Workflow completed successfully.")

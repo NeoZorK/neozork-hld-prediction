@@ -54,6 +54,26 @@ Run all tests:
 python scripts/run_tests.py
 ```
 
+## Utility Scripts
+
+Data conversion and test file management:
+
+### `scripts/recreate_csv.py`
+Convert JSON indicator files to CSV format:
+
+```bash
+python scripts/recreate_csv.py
+```
+
+### `scripts/create_test_parquet.py`
+Convert JSON indicator files to Parquet format:
+
+```bash
+python scripts/create_test_parquet.py
+```
+
+For detailed usage and troubleshooting: [Utility Scripts](utility-scripts.md)
+
 ## Debug Scripts
 
 Located in `scripts/debug_scripts/`:

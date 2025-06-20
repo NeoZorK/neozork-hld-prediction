@@ -8,7 +8,7 @@ All comments are in English.
 import unittest
 import pandas as pd
 import numpy as np
-from unittest.mock import patch, MagicMock, call
+from unittest.mock import patch, MagicMock, call, ANY
 from datetime import datetime, timedelta
 
 # Adjust the import path based on the project structure
@@ -130,8 +130,8 @@ class TestYfinanceFetcherChunking(unittest.TestCase):
 
         self.assertEqual(mock_yf_download.call_count, 2)
         expected_calls = [
-            call(tickers=ticker_name, interval='1d', start='2022-01-01', end='2023-01-01', progress=False, auto_adjust=False, actions=False, ignore_tz=True),
-            call(tickers=ticker_name, interval='1d', start='2023-01-01', end='2024-01-01', progress=False, auto_adjust=False, actions=False, ignore_tz=True),
+            call(tickers=ticker_name, interval='1d', start='2022-01-01', end='2023-01-01', progress=False, auto_adjust=False, actions=False, ignore_tz=True, session=ANY),
+            call(tickers=ticker_name, interval='1d', start='2023-01-01', end='2024-01-01', progress=False, auto_adjust=False, actions=False, ignore_tz=True, session=ANY),
         ]
         mock_yf_download.assert_has_calls(expected_calls)
         mock_tqdm_class.assert_called_once_with(total=730, unit='day', desc=f'Fetching yfinance {ticker_name}', leave=True, ascii=True, unit_scale=False)
@@ -163,7 +163,7 @@ class TestYfinanceFetcherChunking(unittest.TestCase):
 
         mock_yf_download.assert_called_once_with(
             tickers=ticker_name, period=test_period, interval='1d', progress=False,
-            auto_adjust=False, actions=False, ignore_tz=True
+            auto_adjust=False, actions=False, ignore_tz=True, session=ANY
         )
         call_args, call_kwargs = mock_yf_download.call_args
         self.assertNotIn('start', call_kwargs)
@@ -201,7 +201,7 @@ class TestYfinanceFetcherChunking(unittest.TestCase):
         expected_yf_end_date = '2023-04-01'
         mock_yf_download.assert_called_once_with(
             tickers=ticker_name, interval='1d', start=start_date, end=expected_yf_end_date,
-            progress=False, auto_adjust=False, actions=False, ignore_tz=True
+            progress=False, auto_adjust=False, actions=False, ignore_tz=True, session=ANY
         )
 
         total_days = 90
