@@ -56,9 +56,12 @@ def export_indicator_to_json(result_df, data_info, selected_rule, args):
 
     if not original_file:
         # Create a filename based on ticker and interval if no cache file exists
-        ticker = args.ticker if hasattr(args, 'ticker') and args.ticker else "UNKNOWN"
-        interval = args.interval if hasattr(args, 'interval') and args.interval else "D1"
-        filename = f"{ticker}_{interval}"
+        if getattr(args, 'mode', None) == 'demo':
+            filename = "DEMO"
+        else:
+            ticker = args.ticker if hasattr(args, 'ticker') and args.ticker else "UNKNOWN"
+            interval = args.interval if hasattr(args, 'interval') and args.interval else "D1"
+            filename = f"{ticker}_{interval}"
     else:
         original_file = Path(original_file)
         filename = original_file.stem
