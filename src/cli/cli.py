@@ -332,17 +332,18 @@ def parse_arguments():
         args.rule = args.show_rule
 
     # --- Restrict export flags for forbidden modes ---
+    # Разрешаем экспорт-флаги только для demo и show (кроме show ind)
     forbidden_export_modes = ['yfinance', 'csv', 'polygon', 'binance', 'exrate']
     if effective_mode in forbidden_export_modes:
         if getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False):
-            parser.error("Export flags (--export-parquet, --export-csv, --export-json) are only allowed in 'demo' mode. Use 'demo' mode to export indicators. For other modes, first download or convert data, then use 'show' with export flags.")
+            parser.error("Export flags (--export-parquet, --export-csv, --export-json) are only allowed in 'demo' and 'show' modes (except 'show ind'). Use 'show' mode to export indicators from downloaded data.")
     # Disallow export flags for 'show ind' (indicator viewing)
     if effective_mode == 'show' and hasattr(args, 'source') and args.source == 'ind':
         if getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False):
-            parser.error("Export flags (--export-parquet, --export-csv, --export-json) are not allowed in 'show ind' mode. Use 'demo' mode to export indicators.")
+            parser.error("Export flags (--export-parquet, --export-csv, --export-json) are not allowed in 'show ind' mode. Use 'demo' or other show modes to export indicators.")
     # Update help for export flags
     for action in parser._actions:
         if action.dest in ['export_parquet', 'export_csv', 'export_json']:
-            action.help += ' (Allowed only in demo mode, forbidden in show ind, yfinance, csv, polygon, binance, exrate)'
+            action.help += ' (Allowed only in demo and show (except show ind); forbidden in show ind, yfinance, csv, polygon, binance, exrate)'
 
     return args
