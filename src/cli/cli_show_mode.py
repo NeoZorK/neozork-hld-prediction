@@ -481,6 +481,8 @@ def handle_show_mode(args):
     Handles the 'show' mode logic: finds files, displays info, and potentially triggers plot or indicator calculation.
     Returns timing and metrics data for execution summary.
     """
+    # Info message about export flags
+    print("Note: Export flags (--export-parquet, --export-csv, --export-json) are only allowed in demo mode. For real data, use the recommended workflow: download/convert, show+export, then show ind.")
     # Initialize timing and metrics tracking
     metrics = _initialize_metrics()
     

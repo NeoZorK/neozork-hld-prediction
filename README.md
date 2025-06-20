@@ -58,3 +58,34 @@ docker compose up --build
 ## License
 
 [Add your license here]
+
+## Export Flags Usage
+
+Export flags (`--export-parquet`, `--export-csv`, `--export-json`) are only allowed in `demo` mode. They are forbidden in `show ind`, `yfinance`, `csv`, `polygon`, `binance`, and `exrate` modes.
+
+### Testimonial: How to Export and View Indicators
+
+1. **Download or Convert Data**
+   - Download data using yfinance:
+     ```bash
+     python run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01
+     ```
+   - Or convert your CSV:
+     ```bash
+     python run_analysis.py csv --csv-file data.csv --point 0.01
+     ```
+2. **Apply Indicator and Export**
+   - Use `show` mode with a rule and export flags:
+     ```bash
+     python run_analysis.py show yfinance AAPL --rule PHLD --export-parquet --export-csv --export-json
+     ```
+3. **View Exported Indicator Files**
+   - Use `show ind` to view the exported indicators:
+     ```bash
+     python run_analysis.py show ind parquet
+     python run_analysis.py show ind csv
+     python run_analysis.py show ind json
+     ```
+   - Parquet files will show charts, CSV/JSON will show tabular data with indicators.
+
+> Note: Export flags are not allowed in `show ind`, `yfinance`, `csv`, `polygon`, `binance`, or `exrate` modes. Use `demo` mode for direct export, or use the workflow above for real data.
