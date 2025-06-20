@@ -331,4 +331,13 @@ def parse_arguments():
     if effective_mode == 'show' and hasattr(args, 'show_rule') and args.show_rule:
         args.rule = args.show_rule
 
+    # --- Restrict export flags for show/indicator modes ---
+    if effective_mode == 'show':
+        # Disallow export flags for any show mode
+        if getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False):
+            parser.error("Export flags (--export-parquet, --export-csv, --export-json) are not allowed in 'show' mode or 'show ind' mode. These flags can only be used in calculation modes (demo, yfinance, csv, polygon, binance, exrate).")
+        # Also disallow for 'show ind ...' (indicator file viewing)
+        if hasattr(args, 'source') and args.source == 'ind' and (getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False)):
+            parser.error("Export flags (--export-parquet, --export-csv, --export-json) are not allowed in 'show ind' mode. Use calculation modes to export indicators.")
+
     return args
