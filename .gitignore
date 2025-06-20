@@ -38,6 +38,11 @@ mql5_feed/
 *.webp
 *.txt
 
+# Explicitly ignore indicators folder content
+data/indicators/parquet/*
+data/indicators/csv/*
+data/indicators/json/*
+
 # Ignore log files from batch EDA and any other logs
 *.log
 logs/

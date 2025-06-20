@@ -40,6 +40,11 @@ ENV/
 *.svg
 *.webp
 
+# Explicitly ignore indicators folder content
+/data/indicators/parquet/*
+/data/indicators/csv/*
+/data/indicators/json/*
+
 # Test and documentation
 /tests/
 *.log
