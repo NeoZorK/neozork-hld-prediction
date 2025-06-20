@@ -299,20 +299,35 @@ def _extract_datetime_filter_args(args):
 
 def _filter_dataframe_by_date(df, start, end):
     """
-    Filters dataframe by start/end date. Index must be DatetimeIndex or column 'DateTime'/'datetime' must exist.
+    Filters dataframe by start/end date. Index must be DatetimeIndex or column 'DateTime'/'datetime'/'date'/'timestamp'/'index' must exist.
     """
     if df.empty:
         return df
     date_index = None
+    # Список возможных названий колонок с датой
+    date_col_candidates = ['DateTime', 'datetime', 'date', 'timestamp', 'index']
+    # Найти первую подходящую колонку (без учёта регистра)
+    lower_cols = {col.lower(): col for col in df.columns}
+    found_col = None
+    for candidate in date_col_candidates:
+        if candidate in df.columns:
+            found_col = candidate
+            break
+        elif candidate.lower() in lower_cols:
+            found_col = lower_cols[candidate.lower()]
+            break
+    # Если индекс называется 'index' и содержит даты, используем его
+    if not found_col and df.index.name and df.index.name.lower() == 'index':
+        try:
+            df.index = pd.to_datetime(df.index, errors='coerce')
+            date_index = df.index
+        except Exception:
+            pass
     if isinstance(df.index, pd.DatetimeIndex):
         date_index = df.index
-    elif 'DateTime' in df.columns:
-        df['DateTime'] = pd.to_datetime(df['DateTime'], errors='coerce')
-        df.set_index('DateTime', inplace=True)
-        date_index = df.index
-    elif 'datetime' in df.columns:
-        df['datetime'] = pd.to_datetime(df['datetime'], errors='coerce')
-        df.set_index('datetime', inplace=True)
+    elif found_col:
+        df[found_col] = pd.to_datetime(df[found_col], errors='coerce')
+        df.set_index(found_col, inplace=True)
         date_index = df.index
     if date_index is not None:
         start_dt = pd.to_datetime(start) if start else date_index.min()
@@ -1584,15 +1599,41 @@ def _show_single_text_indicator_file(file_info, args):
             metrics["columns_count"] = len(df.columns)
             
             print(f"\n{Fore.YELLOW}{Style.BRIGHT}=== CSV INDICATOR FILE CONTENT ==={Style.RESET_ALL}")
-            if start or end:
-                print(f"Date filtered content (First 20 rows)")
-            else:
-                print(f"First 20 rows")
             print(f"{Fore.CYAN}Total rows:{Style.RESET_ALL} {len(df):,}")
             print(f"{Fore.CYAN}Columns ({len(df.columns)}):{Style.RESET_ALL} {', '.join(df.columns)}")
             print()
-            print(df.head(20).to_string(index=False))
-            
+            # Формируем колонку с датой для вывода
+            # Определяем имя колонки с датой
+            date_col_candidates = ['DateTime', 'datetime', 'date', 'timestamp', 'index']
+            lower_cols = {col.lower(): col for col in df.columns}
+            found_col = None
+            for candidate in date_col_candidates:
+                if candidate in df.columns:
+                    found_col = candidate
+                    break
+                elif candidate.lower() in lower_cols:
+                    found_col = lower_cols[candidate.lower()]
+                    break
+            # Если дата в индексе, используем её
+            if found_col:
+                datetime_series = pd.to_datetime(df[found_col], errors='coerce')
+            elif df.index.name and df.index.name.lower() in [c.lower() for c in date_col_candidates]:
+                datetime_series = pd.to_datetime(df.index, errors='coerce')
+            else:
+                datetime_series = pd.Series([None]*len(df))
+            # Добавляем колонку с датой и колонку с номером строки
+            df_to_show = df.copy()
+            df_to_show.insert(0, 'rownum', range(1, len(df_to_show)+1))
+            # Корректно форматируем datetime для Series и DatetimeIndex
+            if hasattr(datetime_series, 'dt'):
+                dt_col = datetime_series.dt.strftime('%Y-%m-%d %H:%M:%S') if datetime_series.notnull().any() else datetime_series
+            elif isinstance(datetime_series, pd.DatetimeIndex):
+                dt_col = datetime_series.strftime('%Y-%m-%d %H:%M:%S')
+            else:
+                dt_col = datetime_series
+            df_to_show.insert(1, 'datetime', dt_col)
+            print(df_to_show.to_string(index=False))
+        
         elif file_format == 'json':
             import json
             with open(file_path, 'r', encoding='utf-8') as f:
@@ -1615,73 +1656,69 @@ def _show_single_text_indicator_file(file_info, args):
                         print(f"After date filtering: {len(df)} rows remaining (from {original_len})")
                         # Convert back to list of dicts
                         data = df.to_dict('records')
-                        print(f"Showing first 10 filtered records:")
                     else:
                         print(f"Cannot apply date filtering to this JSON structure")
                 except Exception as e:
                     print(f"Warning: Could not apply date filtering to JSON: {e}")
-            
-            if isinstance(data, dict):
-                # Pretty format dictionary data
-                metrics["rows_count"] = len(data)
-                metrics["columns_count"] = len(data) if data else 0
-                
-                print(f"{Fore.CYAN}Data structure:{Style.RESET_ALL} Dictionary with {len(data)} keys")
-                if data:
-                    print(f"{Fore.CYAN}Keys:{Style.RESET_ALL} {', '.join(data.keys())}")
-                    print()
-                    
-                    # Show first few values for each key
-                    for key, value in list(data.items())[:10]:
-                        if isinstance(value, list):
-                            print(f"{Fore.GREEN}{key}:{Style.RESET_ALL} [{len(value)} items]")
-                            if value:
-                                # Show first few items
-                                sample_items = value[:3]
-                                for i, item in enumerate(sample_items):
-                                    print(f"  [{i}] {item}")
-                                if len(value) > 3:
-                                    print(f"  ... and {len(value) - 3} more items")
-                        else:
-                            print(f"{Fore.GREEN}{key}:{Style.RESET_ALL} {value}")
-                        print()
-                        
-            elif isinstance(data, list):
-                metrics["rows_count"] = len(data)
-                if data and isinstance(data[0], dict):
-                    metrics["columns_count"] = len(data[0])
-                
-                print(f"{Fore.CYAN}Data structure:{Style.RESET_ALL} List with {len(data)} records")
-                if data:
-                    first_item = data[0]
-                    if isinstance(first_item, dict):
-                        print(f"{Fore.CYAN}Record keys:{Style.RESET_ALL} {', '.join(first_item.keys())}")
-                    print()
-                    
-                    # Show first few records
-                    for i, record in enumerate(data[:10]):
-                        print(f"{Fore.GREEN}Record {i+1}:{Style.RESET_ALL}")
-                        if isinstance(record, dict):
-                            for key, value in record.items():
-                                print(f"  {key}: {value}")
-                        else:
-                            print(f"  {record}")
-                        print()
-                    
-                    if len(data) > 10:
-                        print(f"{Fore.BLACK}{Style.DIM}... and {len(data) - 10} more records{Style.RESET_ALL}")
-            else:
-                # Other data types
-                metrics["rows_count"] = 1
-                metrics["columns_count"] = 1
-                
-                print(f"{Fore.CYAN}Data type:{Style.RESET_ALL} {type(data).__name__}")
-                data_str = json.dumps(data, indent=2)
-                if len(data_str) > 2000:
-                    print(data_str[:2000] + f"\n{Fore.BLACK}{Style.DIM}... (truncated){Style.RESET_ALL}")
+            # Добавляем поле datetime в каждый словарь
+            if isinstance(data, list) and data and isinstance(data[0], dict):
+                # Переименовываем поле 'index' в 'date_str', чтобы не потерять исходные даты
+                data = [dict(rec) for rec in data]
+                for rec in data:
+                    if 'index' in rec:
+                        rec['date_str'] = rec.pop('index')
+                df = pd.DataFrame(data)
+                # Определяем имя колонки с датой
+                date_col_candidates = ['date_str', 'DateTime', 'datetime', 'date', 'timestamp']
+                lower_cols = {col.lower(): col for col in df.columns}
+                found_col = None
+                for candidate in date_col_candidates:
+                    if candidate in df.columns:
+                        found_col = candidate
+                        break
+                    elif candidate.lower() in lower_cols:
+                        found_col = lower_cols[candidate.lower()]
+                        break
+                # Если после фильтрации по дате пропала колонка date_str, восстанавливаем её из исходного списка
+                if 'date_str' not in df.columns and 'date_str' in data[0]:
+                    df['date_str'] = [rec.get('date_str', None) for rec in data]
+                    found_col = 'date_str'
+                # Формируем серию дат
+                if found_col:
+                    datetime_series = pd.to_datetime(df[found_col], errors='coerce')
                 else:
-                    print(data_str)
-                
+                    datetime_series = pd.to_datetime(df.index, errors='coerce')
+                # Форматируем дату
+                if hasattr(datetime_series, 'dt'):
+                    dt_col = datetime_series.dt.strftime('%Y-%m-%d %H:%M:%S')
+                elif isinstance(datetime_series, pd.DatetimeIndex):
+                    dt_col = datetime_series.strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    dt_col = datetime_series
+                # Преобразуем обратно в dict
+                data_dicts = df.to_dict('records')
+                # Добавляем поле datetime в каждый словарь
+                for i, rec in enumerate(data_dicts):
+                    if 'date_str' in rec and isinstance(rec['date_str'], str):
+                        try:
+                            rec['datetime'] = pd.to_datetime(rec['date_str']).strftime('%Y-%m-%d %H:%M:%S')
+                        except Exception:
+                            rec['datetime'] = None
+                        del rec['date_str']
+                    elif found_col and found_col in rec and rec[found_col] is not None:
+                        try:
+                            rec['datetime'] = pd.to_datetime(rec[found_col]).strftime('%Y-%m-%d %H:%M:%S')
+                        except Exception:
+                            rec['datetime'] = None
+                    else:
+                        rec['datetime'] = dt_col[i] if isinstance(dt_col, (list, tuple, pd.Series, pd.Index)) else dt_col
+                # Явно выводим все записи с номерами
+                for i, rec in enumerate(data_dicts, 1):
+                    print(f"Запись {i}:")
+                    for k, v in rec.items():
+                        print(f"  {k}: {v}")
+                    print()
+    
     except Exception as e:
         print(f"Error reading {file_format} file: {e}")
         traceback.print_exc()
