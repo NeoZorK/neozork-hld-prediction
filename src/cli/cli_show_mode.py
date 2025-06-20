@@ -1423,6 +1423,10 @@ def _show_single_indicator_file(file_info, args):
             # Track data loading time
             load_start_time = time.time()
             df = pd.read_parquet(file_path)
+            # === ДОБАВЛЕНО: если есть колонка DateTime, делаем её индексом ===
+            if 'DateTime' in df.columns:
+                df['DateTime'] = pd.to_datetime(df['DateTime'], errors='coerce')
+                df = df.set_index('DateTime')
             load_end_time = time.time()
             
             # Update metrics
