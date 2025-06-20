@@ -13,6 +13,9 @@ import traceback
 import time
 from datetime import datetime, timedelta
 from tqdm import tqdm # Import tqdm
+import requests
+import random
+import json
 
 # Use relative import for logger
 from ...common import logger
@@ -65,8 +68,96 @@ def map_yfinance_ticker(ticker_input: str) -> str:
     return ticker # Return original if no mapping applied
 
 
+# --- User-Agent pool для ротации ---
+USER_AGENTS = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1'
+]
+
+def _create_custom_session() -> requests.Session:
+    session = requests.Session()
+    session.headers.update({
+        'User-Agent': random.choice(USER_AGENTS),
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Cache-Control': 'max-age=0',
+        'DNT': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Pragma': 'no-cache'
+    })
+    return session
+
+
+def _direct_yf_api_request(ticker: str, period: str, interval: str, session: requests.Session) -> pd.DataFrame | None:
+    """
+    Прямой запрос к API Yahoo Finance, если yf.download не сработал.
+    """
+    YF_API_URL = "https://query1.finance.yahoo.com/v8/finance/chart/"
+    period_map = {
+        '1d': {'range': '1d', 'interval': '1m'},
+        '5d': {'range': '5d', 'interval': '15m'},
+        '1mo': {'range': '1mo', 'interval': '1d'},
+        '3mo': {'range': '3mo', 'interval': '1d'},
+        '6mo': {'range': '6mo', 'interval': '1d'},
+        '1y': {'range': '1y', 'interval': '1d'},
+        '2y': {'range': '2y', 'interval': '1d'},
+        '5y': {'range': '5y', 'interval': '1wk'},
+        'max': {'range': 'max', 'interval': '1mo'}
+    }
+    interval_map = {
+        '1m': '1m', '2m': '2m', '5m': '5m', '15m': '15m', '30m': '30m',
+        '60m': '60m', '90m': '90m', '1h': '60m', '1d': '1d',
+        '5d': '5d', '1wk': '1wk', '1mo': '1mo', '3mo': '3mo'
+    }
+    params = {
+        'range': period_map.get(period, {}).get('range', '1mo'),
+        'interval': interval_map.get(interval, '1d'),
+        'includePrePost': 'false',
+        'events': 'div,splits',
+        'lang': 'en-US',
+        'region': 'US'
+    }
+    url = f"{YF_API_URL}{ticker}"
+    try:
+        logger.print_info(f"Fallback: direct API request to {url} with params: {params}")
+        response = session.get(url, params=params, timeout=15)
+        if response.status_code == 200:
+            data = response.json()
+            if 'chart' in data and 'result' in data['chart'] and data['chart']['result']:
+                chart_data = data['chart']['result'][0]
+                timestamps = chart_data.get('timestamp', [])
+                quote = chart_data.get('indicators', {}).get('quote', [{}])[0]
+                if timestamps and quote and 'close' in quote:
+                    df = pd.DataFrame({
+                        'Open': quote.get('open', []),
+                        'High': quote.get('high', []),
+                        'Low': quote.get('low', []),
+                        'Close': quote.get('close', []),
+                        'Volume': quote.get('volume', []),
+                    }, index=pd.to_datetime([datetime.fromtimestamp(ts) for ts in timestamps]))
+                    logger.print_success(f"Fallback: received {len(df)} rows from direct API for {ticker}")
+                    return df
+                else:
+                    logger.print_error(f"Fallback: No price data in response for {ticker}")
+            else:
+                logger.print_error(f"Fallback: Invalid API response format for {ticker}")
+        else:
+            logger.print_error(f"Fallback: API request failed with status {response.status_code}: {response.text}")
+    except Exception as e:
+        logger.print_error(f"Fallback: Error in direct API request for {ticker}: {str(e)}")
+    return None
+
+
 # Definition of the fetch_yfinance_data function (Chunking Implementation)
-def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_date: str = None, end_date: str = None) -> tuple[pd.DataFrame | None, dict]:
+def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_date: str = None, end_date: str = None, session: requests.Session = None) -> tuple[pd.DataFrame | None, dict]:
     """
     Downloads OHLCV data from Yahoo Finance using yfinance library,
     implementing manual chunking and a tqdm progress bar.
@@ -95,33 +186,45 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
         metrics["error_message"] = f"Invalid yfinance interval provided: {interval}"
         return None, metrics
 
+    # --- Создаём кастомную сессию, если не передана ---
+    if session is None:
+        session = _create_custom_session()
+
     # --- Handle Period Argument (Bypass Chunking) ---
     if period:
         logger.print_info(f"Period '{period}' provided, bypassing chunking and attempting single download.")
         try:
             start_time = time.perf_counter()
-            # Use mapped ticker/interval, no dates, progress=False because we are not chunking here but want consistent output
             df_period = yf.download(
                 tickers=yf_ticker, period=period, interval=yf_interval,
-                progress=False, auto_adjust=False, actions=False, ignore_tz=True
+                progress=False, auto_adjust=False, actions=False, ignore_tz=True,
+                session=session
             )
             end_time = time.perf_counter()
             metrics["latency_sec"] = end_time - start_time
             metrics["api_calls"] = 1
 
+            # --- Fallback: direct API if yf.download не дал данных ---
             if df_period is None or df_period.empty:
-                 metrics["error_message"] = f"No data returned by yfinance for period '{period}'."
-                 return None, metrics
+                logger.print_warning(f"No data from yf.download for period '{period}', trying direct API fallback...")
+                df_period = _direct_yf_api_request(yf_ticker, period, yf_interval, session)
+                if df_period is not None and not df_period.empty:
+                    all_chunk_data.append(df_period)
+                    metrics["rows_fetched"] = len(df_period)
+                    logger.print_success(f"Fallback: direct API fetched {len(df_period)} rows.")
+                else:
+                    metrics["error_message"] = f"No data returned by yfinance for period '{period}'."
+                    return None, metrics
             else:
-                 all_chunk_data.append(df_period) # Treat as the only chunk
-                 metrics["rows_fetched"] = len(df_period)
-                 logger.print_success(f"Single download for period '{period}' fetched {len(df_period)} rows.")
+                all_chunk_data.append(df_period)
+                metrics["rows_fetched"] = len(df_period)
+                logger.print_success(f"Single download for period '{period}' fetched {len(df_period)} rows.")
 
         except Exception as e:
-             error_msg = f"yf.download failed for period '{period}': {type(e).__name__}: {e}"
-             logger.print_error(error_msg); metrics["error_message"] = error_msg
-             tb_str = traceback.format_exc(); print(f"{logger.ERROR_COLOR}Traceback:\n{tb_str}{logger.RESET_ALL}")
-             return None, metrics
+            error_msg = f"yf.download failed for period '{period}': {type(e).__name__}: {e}"
+            logger.print_error(error_msg); metrics["error_message"] = error_msg
+            tb_str = traceback.format_exc(); print(f"{logger.ERROR_COLOR}Traceback:\n{tb_str}{logger.RESET_ALL}")
+            return None, metrics
 
     # --- Handle Chunking based on Start/End Dates ---
     elif start_date and end_date:
@@ -157,12 +260,11 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
 
                 try:
                     start_chunk_time = time.perf_counter()
-                    # *** Call yf.download with progress=False for the chunk ***
                     df_chunk = yf.download(
                         tickers=yf_ticker, interval=yf_interval,
                         start=chunk_start_str, end=chunk_end_str,
-                        progress=False, # Disable yfinance progress
-                        auto_adjust=False, actions=False, ignore_tz=True
+                        progress=False, auto_adjust=False, actions=False, ignore_tz=True,
+                        session=session
                     )
                     end_chunk_time = time.perf_counter()
                     metrics["api_calls"] += 1
