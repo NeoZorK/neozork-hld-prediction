@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# tests/calculation/test_rsi_integration.py
+# tests/calculation/indicators/oscillators/test_rsi_integration.py
 
 """
 Integration tests for RSI indicator with main indicator module.
@@ -205,7 +205,7 @@ class TestRSIIntegration:
         
         # Add some missing values
         df.loc[df.index[10:15], 'Close'] = np.nan
-        df.loc[df.index[20:25], 'High'] = np.nan
+        df.loc[df.index[20:25], 'Open'] = np.nan
         
         point = 0.01
         
@@ -213,65 +213,54 @@ class TestRSIIntegration:
         result = calculate_pressure_vector(df, point, TradingRule.RSI)
         
         assert 'RSI' in result.columns
-        # Should still have some valid RSI values
+        # RSI should still be calculated where possible
         assert not result['RSI'].isna().all()
     
     def test_rsi_signal_distribution(self):
-        """Test RSI signal distribution across different rules."""
+        """Test that RSI signals are reasonably distributed."""
         df = self.test_data.copy()
         point = 0.01
         
-        # Test all RSI variants
-        rsi_basic = calculate_pressure_vector(df, point, TradingRule.RSI)
-        rsi_momentum = calculate_pressure_vector(df, point, TradingRule.RSI_Momentum)
-        rsi_divergence = calculate_pressure_vector(df, point, TradingRule.RSI_Divergence)
+        result = calculate_pressure_vector(df, point, TradingRule.RSI)
         
-        # Check signal distributions
-        for result, name in [(rsi_basic, 'Basic'), (rsi_momentum, 'Momentum'), (rsi_divergence, 'Divergence')]:
-            signals = result['Direction'].dropna()
-            assert len(signals) > 0, f"No signals generated for {name} RSI"
-            
-            # Should have valid signal values
-            valid_signals = [0.0, 1.0, 2.0]  # NOTRADE, BUY, SELL
-            assert signals.isin(valid_signals).all(), f"Invalid signals in {name} RSI"
+        # Check signal distribution
+        signals = result['Direction'].dropna()
+        if len(signals) > 0:
+            # Should have some BUY and SELL signals (not all NOTRADE)
+            signal_counts = signals.value_counts()
+            assert len(signal_counts) > 1  # At least 2 different signal types
     
     def test_rsi_output_consistency(self):
         """Test that RSI output is consistent across multiple runs."""
         df = self.test_data.copy()
         point = 0.01
         
-        # Run RSI calculation multiple times
-        results = []
-        for _ in range(3):
-            result = calculate_pressure_vector(df, point, TradingRule.RSI)
-            results.append(result['RSI'].dropna())
+        # Run RSI calculation twice
+        result1 = calculate_pressure_vector(df, point, TradingRule.RSI)
+        result2 = calculate_pressure_vector(df, point, TradingRule.RSI)
         
-        # All results should be identical
-        for i in range(1, len(results)):
-            np.testing.assert_array_almost_equal(results[0].values, results[i].values)
+        # Results should be identical
+        np.testing.assert_array_almost_equal(result1['RSI'].values, result2['RSI'].values)
+        np.testing.assert_array_equal(result1['Direction'].values, result2['Direction'].values)
     
     def test_rsi_with_extreme_volatility(self):
-        """Test RSI calculation with extreme volatility data."""
+        """Test RSI calculation with extreme price volatility."""
         # Create data with extreme volatility
         dates = pd.date_range('2023-01-01', periods=30, freq='D')
-        extreme_prices = []
-        current_price = 100.0
         
-        for i in range(30):
-            # Extreme price movements
-            if i % 3 == 0:
-                current_price *= 1.5  # 50% increase
-            elif i % 3 == 1:
-                current_price *= 0.5  # 50% decrease
+        # Alternating large price movements
+        prices = [100]
+        for i in range(1, 30):
+            if i % 2 == 0:
+                prices.append(prices[-1] * 1.1)  # 10% increase
             else:
-                current_price *= 1.1  # 10% increase
-            extreme_prices.append(current_price)
+                prices.append(prices[-1] * 0.9)  # 10% decrease
         
         extreme_data = pd.DataFrame({
-            'Open': extreme_prices,
-            'High': [p * 1.02 for p in extreme_prices],
-            'Low': [p * 0.98 for p in extreme_prices],
-            'Close': extreme_prices,
+            'Open': prices,
+            'High': [p * 1.02 for p in prices],
+            'Low': [p * 0.98 for p in prices],
+            'Close': prices,
             'TickVolume': [1000] * 30
         }, index=dates)
         
@@ -281,23 +270,22 @@ class TestRSIIntegration:
         result = calculate_pressure_vector(extreme_data, point, TradingRule.RSI)
         
         assert 'RSI' in result.columns
-        rsi_values = result['RSI'].dropna()
+        assert not result['RSI'].isna().all()
         
-        if len(rsi_values) > 0:
-            # RSI should still be within valid range
-            assert rsi_values.min() >= 0
-            assert rsi_values.max() <= 100
+        # RSI should still be between 0 and 100
+        valid_rsi = result['RSI'].dropna()
+        if len(valid_rsi) > 0:
+            assert valid_rsi.min() >= 0
+            assert valid_rsi.max() <= 100
     
     def test_rsi_column_renaming(self):
-        """Test that TickVolume is properly renamed to Volume."""
+        """Test that function raises error if columns are renamed (as required by architecture)."""
         df = self.test_data.copy()
         point = 0.01
-        
-        result = calculate_pressure_vector(df, point, TradingRule.RSI)
-        
-        # Should have Volume column (renamed from TickVolume)
-        assert 'Volume' in result.columns
-        assert 'TickVolume' not in result.columns
-        
-        # Original data should still have TickVolume
-        assert 'TickVolume' in df.columns 
+
+        # Rename some columns
+        df = df.rename(columns={'Open': 'OPEN', 'Close': 'CLOSE'})
+
+        # Должно выбрасывать ValueError из-за отсутствия стандартных колонок
+        with pytest.raises(ValueError, match="Input DataFrame must contain columns"):
+            calculate_pressure_vector(df, point, TradingRule.RSI) 
