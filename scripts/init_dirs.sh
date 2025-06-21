@@ -52,4 +52,38 @@ else
     echo ".env file already exists, not overwritten."
 fi
 
+# === Индикаторы: новая структура ===
+INDICATOR_BASE="src/calculation/indicators"
+CATEGORIES=(
+  "trend" "momentum" "volatility" "volume" "suportresist" \
+  "oscillators" "sentiment" "predictive" "probability"
+)
+# Список индикаторов по категориям
+TREND=("ema_ind.py" "adx_ind.py" "sar_ind.py" "supertrend_ind.py")
+MOMENTUM=("rsi_ind.py" "macd_ind.py" "stochoscillator_ind.py")
+VOLATILITY=("bb_ind.py" "atr_ind.py" "stdev_ind.py")
+VOLUME=("obv_ind.py" "vwap_ind.py")
+SUPORTRESIST=("pivot_ind.py" "fiboretr_ind.py" "donchain_ind.py")
+OSCILLATORS=("rsi_ind.py" "stoch_ind.py" "cci_ind.py")
+SENTIMENT=("putcallratio_ind.py" "cot_ind.py" "feargreed_ind.py")
+PREDICTIVE=("hma_ind.py" "tsforecast_ind.py")
+PROBABILITY=("montecarlo_ind.py" "kelly_ind.py")
+
+# Создание папок и файлов
+mkdir -p "$INDICATOR_BASE"
+for cat in "${CATEGORIES[@]}"; do
+  mkdir -p "$INDICATOR_BASE/$cat"
+  touch "$INDICATOR_BASE/$cat/__init__.py"
+done
+# Файлы по категориям
+for f in "${TREND[@]}"; do touch "$INDICATOR_BASE/trend/$f"; done
+for f in "${MOMENTUM[@]}"; do touch "$INDICATOR_BASE/momentum/$f"; done
+for f in "${VOLATILITY[@]}"; do touch "$INDICATOR_BASE/volatility/$f"; done
+for f in "${VOLUME[@]}"; do touch "$INDICATOR_BASE/volume/$f"; done
+for f in "${SUPORTRESIST[@]}"; do touch "$INDICATOR_BASE/suportresist/$f"; done
+for f in "${OSCILLATORS[@]}"; do touch "$INDICATOR_BASE/oscillators/$f"; done
+for f in "${SENTIMENT[@]}"; do touch "$INDICATOR_BASE/sentiment/$f"; done
+for f in "${PREDICTIVE[@]}"; do touch "$INDICATOR_BASE/predictive/$f"; done
+for f in "${PROBABILITY[@]}"; do touch "$INDICATOR_BASE/probability/$f"; done
+
 echo "All required directories have been created."
