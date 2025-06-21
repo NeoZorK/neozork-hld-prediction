@@ -53,7 +53,31 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         'BB': 'Bollinger_Bands',
         'ATR': 'ATR',
         'VWAP': 'VWAP',
-        'PIVOT': 'Pivot_Points'
+        'PIVOT': 'Pivot_Points',
+        # Momentum indicators
+        'MACD': 'MACD',
+        'STOCHOSC': 'StochOscillator',
+        # Predictive indicators
+        'HMA': 'HMA',
+        'TSF': 'TSForecast',
+        # Probability indicators
+        'MC': 'MonteCarlo',
+        'KELLY': 'Kelly',
+        # Sentiment indicators
+        'FG': 'FearGreed',
+        'COT': 'COT',
+        'PCR': 'PutCallRatio',
+        # Support/Resistance indicators
+        'DONCHAIN': 'Donchain',
+        'FIBO': 'FiboRetr',
+        # Volume indicators
+        'OBV': 'OBV',
+        # Volatility indicators
+        'STDEV': 'StDev',
+        # Trend indicators
+        'ADX': 'ADX',
+        'SAR': 'SAR',
+        'SUPERTREND': 'SuperTrend'
     }
     rule_name_str = rule_aliases_map.get(rule_input_str.upper(), rule_input_str)
     try:
