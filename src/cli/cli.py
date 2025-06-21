@@ -165,7 +165,14 @@ def parse_arguments():
 
     # --- Indicator Options Group ---
     indicator_group = parser.add_argument_group('Indicator Options')
-    rule_aliases_map = {'PHLD': 'Predict_High_Low_Direction', 'PV': 'Pressure_Vector', 'SR': 'Support_Resistants'}
+    rule_aliases_map = {
+        'PHLD': 'Predict_High_Low_Direction', 
+        'PV': 'Pressure_Vector', 
+        'SR': 'Support_Resistants',
+        'RSI': 'RSI',
+        'RSI_MOM': 'RSI_Momentum',
+        'RSI_DIV': 'RSI_Divergence'
+    }
     rule_names = list(TradingRule.__members__.keys())
     all_rule_choices = rule_names + list(rule_aliases_map.keys()) + ['OHLCV', 'AUTO']  # Added 'OHLCV' and 'AUTO' as valid rules
     default_rule_name = 'OHLCV'  # Changed from TradingRule.Predict_High_Low_Direction.name
@@ -173,7 +180,15 @@ def parse_arguments():
         '--rule', metavar='RULE',
         default=default_rule_name,
         choices=all_rule_choices,
-        help="Trading rule: OHLCV, PV, SR, PHLD, AUTO. Aliases: PV=Pressure_Vector, SR=Support_Resistants"
+        help="Trading rule: OHLCV, PV, SR, PHLD, RSI, RSI_MOM, RSI_DIV, AUTO. Aliases: PV=Pressure_Vector, SR=Support_Resistants, RSI_MOM=RSI_Momentum, RSI_DIV=RSI_Divergence"
+    )
+    
+    # Add price type selection for RSI indicators
+    indicator_group.add_argument(
+        '--price-type', metavar='TYPE',
+        choices=['open', 'close'],
+        default='close',
+        help="Price type for RSI calculation: 'open' or 'close' (default: close)"
     )
 
     # --- Show Mode Options Group ---

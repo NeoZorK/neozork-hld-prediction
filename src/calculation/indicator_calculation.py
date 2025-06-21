@@ -40,7 +40,14 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
 
     # --- Rule Name Conversion ---
     rule_input_str = args.rule
-    rule_aliases_map = {'PHLD': 'Predict_High_Low_Direction', 'PV': 'Pressure_Vector', 'SR': 'Support_Resistants'}
+    rule_aliases_map = {
+        'PHLD': 'Predict_High_Low_Direction', 
+        'PV': 'Pressure_Vector', 
+        'SR': 'Support_Resistants',
+        'RSI': 'RSI',
+        'RSI_MOM': 'RSI_Momentum',
+        'RSI_DIV': 'RSI_Divergence'
+    }
     rule_name_str = rule_aliases_map.get(rule_input_str.upper(), rule_input_str)
     try:
         selected_rule = TradingRule[rule_name_str]
@@ -95,6 +102,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
                 df=ohlcv_df_calc_input.copy(),
                 point=point_size,
                 tr_num=selected_rule,
+                price_type=getattr(args, 'price_type', 'close'),
             )
             # For AUTO mode, preserve all original columns if they exist in CSV mode
             if args.mode == 'csv':
@@ -111,6 +119,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
             df=ohlcv_df_calc_input.copy(),
             point=point_size,
             tr_num=selected_rule,
+            price_type=getattr(args, 'price_type', 'close'),
         )
     except Exception as e:
          logger.print_error(f"Exception during calculate_pressure_vector: {e}")

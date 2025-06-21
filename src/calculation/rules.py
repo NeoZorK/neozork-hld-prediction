@@ -13,6 +13,8 @@ from ..common import logger
 from ..common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
 from typing import Any
 
+# Import RSI calculation functions
+from .rsi_calculation import apply_rule_rsi, apply_rule_rsi_momentum, apply_rule_rsi_divergence, PriceType
 
 # Helper to safely get series or default
 def _get_series(df, col_name, default_val=0):
@@ -119,11 +121,20 @@ RULE_DISPATCHER = {
     TradingRule.Pressure_Vector: apply_rule_pressure_vector,
     TradingRule.Predict_High_Low_Direction: apply_rule_predict_hld,
     TradingRule.AUTO: apply_rule_auto,  # Add AUTO rule support
+    TradingRule.RSI: apply_rule_rsi,
+    TradingRule.RSI_Momentum: apply_rule_rsi_momentum,
+    TradingRule.RSI_Divergence: apply_rule_rsi_divergence,
 }
 
-def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float) -> pd.DataFrame:
+def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, price_type: str = 'close') -> pd.DataFrame:
     """
     Applies the selected trading rule logic to the DataFrame.
+    
+    Args:
+        df (pd.DataFrame): Input DataFrame
+        rule (TradingRule): Trading rule to apply
+        point (float): Instrument point size
+        price_type (str): Price type for RSI calculations ('open' or 'close')
     """
     selected_rule: TradingRule | None = None
     rule_func = None
@@ -145,9 +156,14 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float) 
         selected_rule = TradingRule.Predict_High_Low_Direction
         rule_func = RULE_DISPATCHER[selected_rule]
 
+    # Convert price_type string to PriceType enum for RSI rules
+    price_type_enum = PriceType.OPEN if price_type.lower() == 'open' else PriceType.CLOSE
+
     # Call the rule function with the DataFrame and point
     if selected_rule in [TradingRule.PV_HighLow, TradingRule.Support_Resistants, TradingRule.Predict_High_Low_Direction, TradingRule.AUTO]:
         return rule_func(df, point=point)
+    elif selected_rule in [TradingRule.RSI, TradingRule.RSI_Momentum, TradingRule.RSI_Divergence]:
+        return rule_func(df, point=point, price_type=price_type_enum)
     elif selected_rule == TradingRule.Pressure_Vector:
         if rule_func:
              return rule_func(df)

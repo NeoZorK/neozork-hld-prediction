@@ -25,3 +25,6 @@ class TradingRule(Enum):
     Predict_High_Low_Direction = 3
     OHLCV = 4  # Raw OHLCV data without indicator calculation
     AUTO = 5  # Auto mode for automatic columns selection based on data availability
+    RSI = 6  # RSI indicator with overbought/oversold signals
+    RSI_Momentum = 7  # RSI momentum-based signals
+    RSI_Divergence = 8  # RSI divergence detection
