@@ -1,16 +1,25 @@
 # -*- coding: utf-8 -*-
-# src/calculation/rsi_calculation.py
+# src/calculation/indicators/oscillators/rsi_ind_calc.py
 
 """
 RSI (Relative Strength Index) indicator calculation module.
 Implements RSI calculation with configurable period, overbought/oversold levels, and price type selection.
 All comments and texts in English.
+
+INDICATOR INFO:
+Name: RSI (Relative Strength Index)
+Category: Oscillators
+Description: Measures the speed and magnitude of price changes to identify overbought/oversold conditions
+Usage: --rule rsi(14,70,30,open) or --rule rsi(14,70,30,close)
+Parameters: period, overbought_level, oversold_level, price_type
+Pros: + Identifies overbought/oversold conditions, + Simple to interpret, + Widely used
+Cons: - Can give false signals in trending markets, - Lagging indicator
 """
 
 import pandas as pd
 import numpy as np
-from ..common import logger
-from ..common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
+from ....common import logger
+from ....common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
 from enum import Enum
 
 

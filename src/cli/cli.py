@@ -13,6 +13,7 @@ import textwrap
 import sys  # Import sys for exit
 import src.cli.cli_examples as cli_examples
 from colorama import init, Fore, Style
+from src.cli.indicators_search import IndicatorSearcher
 
 # Initialize colorama for cross-platform colored output
 init(autoreset=True)
@@ -129,6 +130,14 @@ def parse_arguments():
         '--examples',
         action='store_true',
         help='Show usage examples and exit.'
+    )
+
+    # --- Indicators Search Option ---
+    parser.add_argument(
+        '--indicators',
+        nargs='*',
+        metavar=('CATEGORY', 'NAME'),
+        help='Show available indicators by category and name. Usage: --indicators [category] [name]'
     )
 
     # --- Required Arguments Group ---
@@ -252,7 +261,35 @@ def parse_arguments():
             sys.exit(0)
 
         if '--examples' in sys.argv:
+            print(f"\n{Fore.YELLOW}{Style.BRIGHT}Indicator Usage Examples:{Style.RESET_ALL}")
+            print("  Show all indicators:   --indicators")
+            print("  Show oscillators:      --indicators oscillators")
+            print("  Show RSI info:         --indicators oscillators rsi")
+            print("  Show trend indicators: --indicators trend")
+            print("  Show MACD info:        --indicators momentum macd")
             cli_examples.show_cli_examples_colored()
+            sys.exit(0)
+        # Обработка --indicators
+        if '--indicators' in sys.argv:
+            idx = sys.argv.index('--indicators')
+            args_list = sys.argv[idx+1:]
+            searcher = IndicatorSearcher()
+            if not args_list:
+                searcher.display_categories()
+            elif len(args_list) == 1:
+                searcher.display_category(args_list[0], detailed=True)
+            elif len(args_list) >= 2:
+                # Поиск по категории и имени
+                category = args_list[0]
+                name = ' '.join(args_list[1:])
+                print(f"\n{Fore.YELLOW}Search in category '{category}' for '{name}':{Style.RESET_ALL}")
+                results = searcher.search_indicators(name)
+                filtered = [ind for ind in results if ind.category == category]
+                if filtered:
+                    for ind in filtered:
+                        print(ind.display(detailed=True))
+                else:
+                    print(f"No indicators found in category '{category}' matching '{name}'")
             sys.exit(0)
         args = parser.parse_args()
     except SystemExit as e:

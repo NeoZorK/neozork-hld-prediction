@@ -13,8 +13,8 @@ from ..common import logger
 from ..common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
 from typing import Any
 
-# Import RSI calculation functions
-from .rsi_calculation import apply_rule_rsi, apply_rule_rsi_momentum, apply_rule_rsi_divergence, PriceType
+# Import RSI calculation functions from new structure
+from .indicators.oscillators.rsi_ind_calc import apply_rule_rsi, apply_rule_rsi_momentum, apply_rule_rsi_divergence, PriceType
 
 # Helper to safely get series or default
 def _get_series(df, col_name, default_val=0):
