@@ -95,11 +95,14 @@ class IndicatorSearcher:
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
-            
+
+            # Extract docstring only
+            docstring_match = re.search(r'"""(.*?)"""', content, re.DOTALL)
+            docstring = docstring_match.group(1) if docstring_match else ''
+
             # Extract indicator info from docstring
-            info_match = re.search(r'INDICATOR INFO:(.*?)(?=\n\n|\n[A-Z]|$)', 
-                                 content, re.DOTALL | re.IGNORECASE)
-            
+            info_match = re.search(r'INDICATOR INFO:(.*?)(?=\n\n|$)', docstring, re.DOTALL | re.IGNORECASE)
+
             if not info_match:
                 # Create default info for empty files
                 name = file_path.stem.replace('_ind', '').upper()
@@ -113,17 +116,17 @@ class IndicatorSearcher:
                     cons="Not specified",
                     file_path=str(file_path)
                 )
-            
+
             info_text = info_match.group(1).strip()
-            
+
             # Parse individual fields
-            name = self._extract_field(info_text, "Name", "Unknown")
+            name = self._extract_field(info_text, "Name", file_path.stem.replace('_ind', '').upper())
             description = self._extract_field(info_text, "Description", "No description available")
             usage = self._extract_field(info_text, "Usage", f"--rule {name.lower()}")
             parameters = self._extract_field(info_text, "Parameters", "Not specified")
             pros = self._extract_field(info_text, "Pros", "Not specified")
             cons = self._extract_field(info_text, "Cons", "Not specified")
-            
+
             return IndicatorInfo(
                 name=name,
                 category=category,
@@ -134,7 +137,7 @@ class IndicatorSearcher:
                 cons=cons,
                 file_path=str(file_path)
             )
-            
+
         except Exception as e:
             print(f"Error parsing {file_path}: {e}")
             return None
