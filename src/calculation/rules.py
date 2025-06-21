@@ -25,6 +25,39 @@ from .indicators.volatility.atr_ind import apply_rule_atr
 from .indicators.volume.vwap_ind import apply_rule_vwap
 from .indicators.suportresist.pivot_ind import apply_rule_pivot
 
+# Import all new indicators
+# Momentum indicators
+from .indicators.momentum.macd_ind import apply_rule_macd
+from .indicators.momentum.stochoscillator_ind import apply_rule_stochoscillator
+
+# Predictive indicators
+from .indicators.predictive.hma_ind import apply_rule_hma
+from .indicators.predictive.tsforecast_ind import apply_rule_tsforecast
+
+# Probability indicators
+from .indicators.probability.montecarlo_ind import apply_rule_montecarlo
+from .indicators.probability.kelly_ind import apply_rule_kelly
+
+# Sentiment indicators
+from .indicators.sentiment.feargreed_ind import apply_rule_feargreed
+from .indicators.sentiment.cot_ind import apply_rule_cot
+from .indicators.sentiment.putcallratio_ind import apply_rule_putcallratio
+
+# Support/Resistance indicators
+from .indicators.suportresist.donchain_ind import apply_rule_donchain
+from .indicators.suportresist.fiboretr_ind import apply_rule_fiboretr
+
+# Volume indicators
+from .indicators.volume.obv_ind import apply_rule_obv
+
+# Volatility indicators
+from .indicators.volatility.stdev_ind import apply_rule_stdev
+
+# Trend indicators
+from .indicators.trend.adx_ind import apply_rule_adx
+from .indicators.trend.sar_ind import apply_rule_sar
+from .indicators.trend.supertrend_ind import apply_rule_supertrend
+
 # Helper to safely get series or default
 def _get_series(df, col_name, default_val=0):
     if col_name in df.columns:
@@ -141,6 +174,31 @@ RULE_DISPATCHER = {
     TradingRule.ATR: apply_rule_atr,
     TradingRule.VWAP: apply_rule_vwap,
     TradingRule.Pivot_Points: apply_rule_pivot,
+    # Add all new indicators
+    # Momentum indicators
+    TradingRule.MACD: apply_rule_macd,
+    TradingRule.StochOscillator: apply_rule_stochoscillator,
+    # Predictive indicators
+    TradingRule.HMA: apply_rule_hma,
+    TradingRule.TSForecast: apply_rule_tsforecast,
+    # Probability indicators
+    TradingRule.MonteCarlo: apply_rule_montecarlo,
+    TradingRule.Kelly: apply_rule_kelly,
+    # Sentiment indicators
+    TradingRule.FearGreed: apply_rule_feargreed,
+    TradingRule.COT: apply_rule_cot,
+    TradingRule.PutCallRatio: apply_rule_putcallratio,
+    # Support/Resistance indicators
+    TradingRule.Donchain: apply_rule_donchain,
+    TradingRule.FiboRetr: apply_rule_fiboretr,
+    # Volume indicators
+    TradingRule.OBV: apply_rule_obv,
+    # Volatility indicators
+    TradingRule.StDev: apply_rule_stdev,
+    # Trend indicators
+    TradingRule.ADX: apply_rule_adx,
+    TradingRule.SAR: apply_rule_sar,
+    TradingRule.SuperTrend: apply_rule_supertrend,
 }
 
 def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, price_type: str = 'close') -> pd.DataFrame:
@@ -182,7 +240,12 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
     elif selected_rule in [TradingRule.RSI, TradingRule.RSI_Momentum, TradingRule.RSI_Divergence, 
                           TradingRule.CCI, TradingRule.Stochastic, TradingRule.EMA, 
                           TradingRule.Bollinger_Bands, TradingRule.ATR, TradingRule.VWAP, 
-                          TradingRule.Pivot_Points]:
+                          TradingRule.Pivot_Points, TradingRule.MACD, TradingRule.StochOscillator,
+                          TradingRule.HMA, TradingRule.TSForecast, TradingRule.MonteCarlo,
+                          TradingRule.Kelly, TradingRule.FearGreed, TradingRule.COT,
+                          TradingRule.PutCallRatio, TradingRule.Donchain, TradingRule.FiboRetr,
+                          TradingRule.OBV, TradingRule.StDev, TradingRule.ADX, TradingRule.SAR,
+                          TradingRule.SuperTrend]:
         return rule_func(df, point=point, price_type=price_type_enum)
     elif selected_rule == TradingRule.Pressure_Vector:
         if rule_func:

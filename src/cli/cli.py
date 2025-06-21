@@ -196,7 +196,31 @@ def parse_arguments():
         'BB': 'Bollinger_Bands',
         'ATR': 'ATR',
         'VWAP': 'VWAP',
-        'PIVOT': 'Pivot_Points'
+        'PIVOT': 'Pivot_Points',
+        # Momentum indicators
+        'MACD': 'MACD',
+        'STOCHOSC': 'StochOscillator',
+        # Predictive indicators
+        'HMA': 'HMA',
+        'TSF': 'TSForecast',
+        # Probability indicators
+        'MC': 'MonteCarlo',
+        'KELLY': 'Kelly',
+        # Sentiment indicators
+        'FG': 'FearGreed',
+        'COT': 'COT',
+        'PCR': 'PutCallRatio',
+        # Support/Resistance indicators
+        'DONCHAIN': 'Donchain',
+        'FIBO': 'FiboRetr',
+        # Volume indicators
+        'OBV': 'OBV',
+        # Volatility indicators
+        'STDEV': 'StDev',
+        # Trend indicators
+        'ADX': 'ADX',
+        'SAR': 'SAR',
+        'SUPERTREND': 'SuperTrend'
     }
     rule_names = list(TradingRule.__members__.keys())
     all_rule_choices = rule_names + list(rule_aliases_map.keys()) + ['OHLCV', 'AUTO']  # Added 'OHLCV' and 'AUTO' as valid rules
@@ -205,7 +229,7 @@ def parse_arguments():
         '--rule', metavar='RULE',
         default=default_rule_name,
         choices=all_rule_choices,
-        help="Trading rule: OHLCV, PV, SR, PHLD, RSI, RSI_MOM, RSI_DIV, CCI, STOCH, EMA, BB, ATR, VWAP, PIVOT, AUTO. Aliases: PV=Pressure_Vector, SR=Support_Resistants, RSI_MOM=RSI_Momentum, RSI_DIV=RSI_Divergence, STOCH=Stochastic, BB=Bollinger_Bands, PIVOT=Pivot_Points"
+        help="Trading rule: OHLCV, PV, SR, PHLD, RSI, RSI_MOM, RSI_DIV, CCI, STOCH, EMA, BB, ATR, VWAP, PIVOT, MACD, STOCHOSC, HMA, TSF, MC, KELLY, FG, COT, PCR, DONCHAIN, FIBO, OBV, STDEV, ADX, SAR, SUPERTREND, AUTO. Aliases: PV=Pressure_Vector, SR=Support_Resistants, RSI_MOM=RSI_Momentum, RSI_DIV=RSI_Divergence, STOCH=Stochastic, BB=Bollinger_Bands, PIVOT=Pivot_Points, STOCHOSC=StochOscillator, TSF=TSForecast, MC=MonteCarlo, FG=FearGreed, PCR=PutCallRatio, FIBO=FiboRetr, STDEV=StDev, SUPERTREND=SuperTrend"
     )
     
     # Add price type selection for indicators that support it
@@ -213,7 +237,7 @@ def parse_arguments():
         '--price-type', metavar='TYPE',
         choices=['open', 'close'],
         default='close',
-        help="Price type for indicator calculation: 'open' or 'close' (default: close). Supported by: RSI, CCI, STOCH, EMA, BB, ATR, VWAP, PIVOT"
+        help="Price type for indicator calculation: 'open' or 'close' (default: close). Supported by all indicators with price_type parameter"
     )
 
     # --- Show Mode Options Group ---
