@@ -12,6 +12,40 @@ import ast
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+try:
+    from colorama import init, Fore, Back, Style
+    init(autoreset=True)
+    COLORS_AVAILABLE = True
+except ImportError:
+    # Fallback colors for terminals that support ANSI
+    class Fore:
+        RED = '\033[91m'
+        GREEN = '\033[92m'
+        YELLOW = '\033[93m'
+        BLUE = '\033[94m'
+        MAGENTA = '\033[95m'
+        CYAN = '\033[96m'
+        WHITE = '\033[97m'
+        RESET = '\033[0m'
+    
+    class Back:
+        RED = '\033[101m'
+        GREEN = '\033[102m'
+        YELLOW = '\033[103m'
+        BLUE = '\033[104m'
+        MAGENTA = '\033[105m'
+        CYAN = '\033[106m'
+        WHITE = '\033[107m'
+        RESET = '\033[0m'
+    
+    class Style:
+        BRIGHT = '\033[1m'
+        DIM = '\033[2m'
+        NORMAL = '\033[22m'
+        RESET_ALL = '\033[0m'
+    
+    COLORS_AVAILABLE = True
+
 
 class IndicatorInfo:
     """Container for indicator information."""
@@ -31,20 +65,52 @@ class IndicatorInfo:
         return f"{self.name} ({self.category})"
     
     def display(self, detailed: bool = False) -> str:
-        """Display indicator information."""
+        """Display indicator information with colors."""
         if not detailed:
-            return f"  {self.name:<20} - {self.description}"
+            return f"  {Fore.CYAN}{self.name:<20}{Style.RESET_ALL} - {self.description}"
         
         output = []
-        output.append(f"Indicator: {self.name}")
-        output.append(f"Category: {self.category}")
-        output.append(f"Description: {self.description}")
-        output.append(f"Usage: {self.usage}")
-        output.append(f"Parameters: {self.parameters}")
-        output.append(f"Pros: {self.pros}")
-        output.append(f"Cons: {self.cons}")
-        output.append(f"File: {self.file_path}")
-        output.append("-" * 50)
+        # Header with indicator name
+        output.append(f"{Fore.YELLOW}{Style.BRIGHT}📊 {self.name}{Style.RESET_ALL}")
+        output.append(f"{Fore.CYAN}{'=' * (len(self.name) + 4)}{Style.RESET_ALL}")
+        
+        # Category
+        output.append(f"{Fore.GREEN}🏷️  Category:{Style.RESET_ALL} {Fore.WHITE}{self.category.title()}{Style.RESET_ALL}")
+        
+        # Description
+        output.append(f"{Fore.BLUE}📝 Description:{Style.RESET_ALL} {self.description}")
+        
+        # Usage
+        output.append(f"{Fore.MAGENTA}💻 Usage:{Style.RESET_ALL} {Fore.YELLOW}{self.usage}{Style.RESET_ALL}")
+        
+        # Parameters
+        output.append(f"{Fore.CYAN}⚙️  Parameters:{Style.RESET_ALL} {self.parameters}")
+        
+        # Pros
+        pros_lines = self.pros.split(', ')
+        pros_formatted = []
+        for pro in pros_lines:
+            if pro.startswith('+'):
+                pros_formatted.append(f"{Fore.GREEN}✅ {pro[1:].strip()}{Style.RESET_ALL}")
+            else:
+                pros_formatted.append(f"{Fore.GREEN}✅ {pro.strip()}{Style.RESET_ALL}")
+        output.append(f"{Fore.GREEN}👍 Pros:{Style.RESET_ALL} {', '.join(pros_formatted)}")
+        
+        # Cons
+        cons_lines = self.cons.split(', ')
+        cons_formatted = []
+        for con in cons_lines:
+            if con.startswith('-'):
+                cons_formatted.append(f"{Fore.RED}❌ {con[1:].strip()}{Style.RESET_ALL}")
+            else:
+                cons_formatted.append(f"{Fore.RED}❌ {con.strip()}{Style.RESET_ALL}")
+        output.append(f"{Fore.RED}👎 Cons:{Style.RESET_ALL} {', '.join(cons_formatted)}")
+        
+        # File path
+        output.append(f"{Fore.WHITE}📁 File:{Style.RESET_ALL} {Style.DIM}{self.file_path}{Style.RESET_ALL}")
+        
+        # Separator
+        output.append(f"{Fore.CYAN}{'─' * 60}{Style.RESET_ALL}")
         
         return "\n".join(output)
 
@@ -60,7 +126,7 @@ class IndicatorSearcher:
     def _load_indicators(self) -> None:
         """Load all indicators from the indicators directory."""
         if not self.base_path.exists():
-            print(f"Warning: Indicators directory not found: {self.base_path}")
+            print(f"{Fore.RED}Warning: Indicators directory not found: {self.base_path}{Style.RESET_ALL}")
             return
         
         # Define categories and their subdirectories
@@ -139,7 +205,7 @@ class IndicatorSearcher:
             )
 
         except Exception as e:
-            print(f"Error parsing {file_path}: {e}")
+            print(f"{Fore.RED}Error parsing {file_path}: {e}{Style.RESET_ALL}")
             return None
     
     def _extract_field(self, text: str, field_name: str, default: str) -> str:
@@ -178,23 +244,40 @@ class IndicatorSearcher:
     
     def display_categories(self) -> None:
         """Display all categories with indicator counts."""
-        print("Available Indicator Categories:")
-        print("=" * 40)
+        print(f"{Fore.YELLOW}{Style.BRIGHT}🎯 Available Indicator Categories:{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}{'=' * 50}{Style.RESET_ALL}")
         
         for category in sorted(self.indicators.keys()):
             count = len(self.indicators[category])
-            print(f"{category:<15} - {count} indicators")
+            emoji = self._get_category_emoji(category)
+            print(f"{emoji} {Fore.GREEN}{category:<15}{Style.RESET_ALL} - {Fore.BLUE}{count} indicators{Style.RESET_ALL}")
+    
+    def _get_category_emoji(self, category: str) -> str:
+        """Get emoji for category."""
+        emoji_map = {
+            "trend": "📈",
+            "momentum": "⚡",
+            "oscillators": "🔄",
+            "volatility": "📊",
+            "volume": "📦",
+            "suportresist": "🎯",
+            "sentiment": "😊",
+            "probability": "🎲",
+            "predictive": "🔮"
+        }
+        return emoji_map.get(category, "📋")
     
     def display_category(self, category: str, detailed: bool = False) -> None:
         """Display indicators in a specific category."""
         indicators = self.indicators.get(category, [])
         
         if not indicators:
-            print(f"No indicators found in category: {category}")
+            print(f"{Fore.RED}❌ No indicators found in category: {category}{Style.RESET_ALL}")
             return
         
-        print(f"\nIndicators in category '{category}':")
-        print("=" * 50)
+        emoji = self._get_category_emoji(category)
+        print(f"\n{emoji} {Fore.YELLOW}{Style.BRIGHT}Indicators in category '{category}':{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}{'=' * 60}{Style.RESET_ALL}")
         
         for indicator in indicators:
             print(indicator.display(detailed))
@@ -204,11 +287,11 @@ class IndicatorSearcher:
         results = self.search_indicators(query)
         
         if not results:
-            print(f"No indicators found matching: {query}")
+            print(f"{Fore.RED}🔍 No indicators found matching: {query}{Style.RESET_ALL}")
             return
         
-        print(f"\nSearch results for '{query}':")
-        print("=" * 50)
+        print(f"\n{Fore.YELLOW}{Style.BRIGHT}🔍 Search results for '{query}':{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}{'=' * 60}{Style.RESET_ALL}")
         
         for indicator in results:
             print(indicator.display(detailed))
