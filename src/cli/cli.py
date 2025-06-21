@@ -164,9 +164,9 @@ def parse_arguments():
     data_source_group.add_argument('--csv-file', metavar='PATH',
                                    help="Path to input CSV file (required for 'csv' mode)")
     # API options (Yahoo Finance / Polygon.io / Binance)
-    data_source_group.add_argument('-t', '--ticker', metavar='SYMBOL',
+    data_source_group.add_argument('--ticker', metavar='SYMBOL',
                                    help="Ticker symbol. Examples: 'EURUSD=X' (yfinance), 'AAPL' (polygon), 'BTCUSDT' (binance)")
-    data_source_group.add_argument('-i', '--interval', metavar='TIME', default='D1',
+    data_source_group.add_argument('--interval', metavar='TIME', default='D1',
                                    help="Timeframe: 'M1', 'H1', 'D1', 'W1', 'MN1'. Default: D1")
     # Point size argument
     data_source_group.add_argument('--point', metavar='SIZE', type=float,
