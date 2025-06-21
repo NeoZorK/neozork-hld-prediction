@@ -128,6 +128,41 @@ def calculate_pressure_vector(
             rsi_columns.append('RSI_Momentum')
         output_columns.extend(rsi_columns)
     
+    # Add CCI-specific columns for CCI rules
+    if tr_num == TradingRule.CCI:
+        cci_columns = ['CCI', 'CCI_Signal', 'CCI_Price_Type']
+        output_columns.extend(cci_columns)
+    
+    # Add Stochastic-specific columns for Stochastic rules
+    if tr_num == TradingRule.Stochastic:
+        stoch_columns = ['Stoch_K', 'Stoch_D', 'Stoch_Signal', 'Stoch_Price_Type']
+        output_columns.extend(stoch_columns)
+    
+    # Add EMA-specific columns for EMA rules
+    if tr_num == TradingRule.EMA:
+        ema_columns = ['EMA', 'EMA_Signal', 'EMA_Price_Type']
+        output_columns.extend(ema_columns)
+    
+    # Add Bollinger Bands-specific columns for BB rules
+    if tr_num == TradingRule.Bollinger_Bands:
+        bb_columns = ['BB_Upper', 'BB_Middle', 'BB_Lower', 'BB_Signal', 'BB_Price_Type']
+        output_columns.extend(bb_columns)
+    
+    # Add ATR-specific columns for ATR rules
+    if tr_num == TradingRule.ATR:
+        atr_columns = ['ATR', 'ATR_Signal', 'ATR_Price_Type']
+        output_columns.extend(atr_columns)
+    
+    # Add VWAP-specific columns for VWAP rules
+    if tr_num == TradingRule.VWAP:
+        vwap_columns = ['VWAP', 'VWAP_Signal', 'VWAP_Price_Type']
+        output_columns.extend(vwap_columns)
+    
+    # Add Pivot Points-specific columns for Pivot rules
+    if tr_num == TradingRule.Pivot_Points:
+        pivot_columns = ['Pivot_PP', 'Pivot_R1', 'Pivot_S1', 'Pivot_Signal', 'Pivot_Price_Type']
+        output_columns.extend(pivot_columns)
+    
     # Filter to only columns that actually exist in the DataFrame
     final_columns = [col for col in output_columns if col in df_out.columns]
 

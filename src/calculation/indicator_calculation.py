@@ -46,7 +46,14 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         'SR': 'Support_Resistants',
         'RSI': 'RSI',
         'RSI_MOM': 'RSI_Momentum',
-        'RSI_DIV': 'RSI_Divergence'
+        'RSI_DIV': 'RSI_Divergence',
+        'CCI': 'CCI',
+        'STOCH': 'Stochastic',
+        'EMA': 'EMA',
+        'BB': 'Bollinger_Bands',
+        'ATR': 'ATR',
+        'VWAP': 'VWAP',
+        'PIVOT': 'Pivot_Points'
     }
     rule_name_str = rule_aliases_map.get(rule_input_str.upper(), rule_input_str)
     try:
