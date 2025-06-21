@@ -16,6 +16,15 @@ from typing import Any
 # Import RSI calculation functions from new structure
 from .indicators.oscillators.rsi_ind_calc import apply_rule_rsi, apply_rule_rsi_momentum, apply_rule_rsi_divergence, PriceType
 
+# Import new indicators with price_type support
+from .indicators.oscillators.cci_ind import apply_rule_cci
+from .indicators.oscillators.stoch_ind import apply_rule_stochastic
+from .indicators.trend.ema_ind import apply_rule_ema
+from .indicators.volatility.bb_ind import apply_rule_bollinger_bands
+from .indicators.volatility.atr_ind import apply_rule_atr
+from .indicators.volume.vwap_ind import apply_rule_vwap
+from .indicators.suportresist.pivot_ind import apply_rule_pivot
+
 # Helper to safely get series or default
 def _get_series(df, col_name, default_val=0):
     if col_name in df.columns:
@@ -124,6 +133,14 @@ RULE_DISPATCHER = {
     TradingRule.RSI: apply_rule_rsi,
     TradingRule.RSI_Momentum: apply_rule_rsi_momentum,
     TradingRule.RSI_Divergence: apply_rule_rsi_divergence,
+    # Add new indicators with price_type support
+    TradingRule.CCI: apply_rule_cci,
+    TradingRule.Stochastic: apply_rule_stochastic,
+    TradingRule.EMA: apply_rule_ema,
+    TradingRule.Bollinger_Bands: apply_rule_bollinger_bands,
+    TradingRule.ATR: apply_rule_atr,
+    TradingRule.VWAP: apply_rule_vwap,
+    TradingRule.Pivot_Points: apply_rule_pivot,
 }
 
 def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, price_type: str = 'close') -> pd.DataFrame:
@@ -134,7 +151,7 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         df (pd.DataFrame): Input DataFrame
         rule (TradingRule): Trading rule to apply
         point (float): Instrument point size
-        price_type (str): Price type for RSI calculations ('open' or 'close')
+        price_type (str): Price type for calculations ('open' or 'close')
     """
     selected_rule: TradingRule | None = None
     rule_func = None
@@ -156,13 +173,16 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         selected_rule = TradingRule.Predict_High_Low_Direction
         rule_func = RULE_DISPATCHER[selected_rule]
 
-    # Convert price_type string to PriceType enum for RSI rules
+    # Convert price_type string to PriceType enum for rules that support it
     price_type_enum = PriceType.OPEN if price_type.lower() == 'open' else PriceType.CLOSE
 
     # Call the rule function with the DataFrame and point
     if selected_rule in [TradingRule.PV_HighLow, TradingRule.Support_Resistants, TradingRule.Predict_High_Low_Direction, TradingRule.AUTO]:
         return rule_func(df, point=point)
-    elif selected_rule in [TradingRule.RSI, TradingRule.RSI_Momentum, TradingRule.RSI_Divergence]:
+    elif selected_rule in [TradingRule.RSI, TradingRule.RSI_Momentum, TradingRule.RSI_Divergence, 
+                          TradingRule.CCI, TradingRule.Stochastic, TradingRule.EMA, 
+                          TradingRule.Bollinger_Bands, TradingRule.ATR, TradingRule.VWAP, 
+                          TradingRule.Pivot_Points]:
         return rule_func(df, point=point, price_type=price_type_enum)
     elif selected_rule == TradingRule.Pressure_Vector:
         if rule_func:

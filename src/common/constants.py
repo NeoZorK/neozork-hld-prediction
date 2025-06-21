@@ -28,3 +28,11 @@ class TradingRule(Enum):
     RSI = 6  # RSI indicator with overbought/oversold signals
     RSI_Momentum = 7  # RSI momentum-based signals
     RSI_Divergence = 8  # RSI divergence detection
+    # New indicators with price_type support
+    CCI = 9  # Commodity Channel Index
+    Stochastic = 10  # Stochastic Oscillator
+    EMA = 11  # Exponential Moving Average
+    Bollinger_Bands = 12  # Bollinger Bands
+    ATR = 13  # Average True Range
+    VWAP = 14  # Volume Weighted Average Price
+    Pivot_Points = 15  # Pivot Points
