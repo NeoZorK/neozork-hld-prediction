@@ -2,10 +2,7 @@
 # src/cli/cli.py
 
 """
-Command Line Interface setup using argparse and RichHelpFormatter for     data_source_group.add_argument('--start', help="Start date (YYYY-MM-DD). Used by yfinance, polygon, binance, exrate.")
-    # Make --end related only to --start (not period)
-    data_source_group.add_argument('--end',
-                                   help="End date (YYYY-MM-DD). Used by yfinance, polygon, binance, exrate. Required if --start is used.")red help.
+Command Line Interface setup using argparse and RichHelpFormatter for colored help.
 All comments are in English.
 """
 import argparse
@@ -114,6 +111,11 @@ def parse_arguments():
        {Fore.CYAN}{Style.BRIGHT}Shcherbyna Pressure Vector Indicator Analysis Tool{Style.RESET_ALL}
        
        Calculate and plot pressure vector indicators from multiple data sources: demo data, Yahoo Finance, CSV files, Polygon.io, Binance, and Exchange Rate API. Export calculated indicators in parquet, CSV, or JSON formats.
+       
+       {Fore.YELLOW}Quick Start:{Style.RESET_ALL}
+         python run_analysis.py --indicators                    # List all available indicators
+         python run_analysis.py demo --rule RSI                 # Run with demo data and RSI indicator
+         python run_analysis.py interactive                     # Start interactive mode
        """).strip()
 
 
@@ -140,10 +142,17 @@ def parse_arguments():
         help='Show available indicators by category and name. Usage: --indicators [category] [name]'
     )
 
+    # --- Interactive Mode Option ---
+    parser.add_argument(
+        '--interactive', '-i',
+        action='store_true',
+        help='Start interactive mode for guided indicator selection and analysis.'
+    )
+
     # --- Required Arguments Group ---
     required_group = parser.add_argument_group('Required Arguments')
-    required_group.add_argument('mode', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate', 'show'],
-                                help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance', 'exrate', 'show'.")
+    required_group.add_argument('mode', choices=['demo', 'yfinance', 'yf', 'csv', 'polygon', 'binance', 'exrate', 'show', 'interactive'],
+                                help="Operating mode: 'demo', 'yfinance'/'yf', 'csv', 'polygon', 'binance', 'exrate', 'show', 'interactive'.")
 
     # --- Show Mode Positional Arguments ---
     parser.add_argument('show_args', nargs='*', default=[],
@@ -244,6 +253,9 @@ def parse_arguments():
     output_group.add_argument('--export-json',
                               action='store_true',
                               help="Export indicators to JSON format (data/indicators/json/)")
+    output_group.add_argument('--export-indicators-info',
+                              action='store_true',
+                              help="Export indicator metadata to JSON format (data/indicators/metadata/)")
 
     # --- Other Options Group ---
     other_group = parser.add_argument_group('Other Options')
@@ -267,9 +279,11 @@ def parse_arguments():
             print("  Show RSI info:         --indicators oscillators rsi")
             print("  Show trend indicators: --indicators trend")
             print("  Show MACD info:        --indicators momentum macd")
+            print("  Interactive mode:      python run_analysis.py interactive")
             cli_examples.show_cli_examples_colored()
             sys.exit(0)
-        # Обработка --indicators
+        
+        # Handle --indicators
         if '--indicators' in sys.argv:
             idx = sys.argv.index('--indicators')
             args_list = sys.argv[idx+1:]
@@ -279,7 +293,7 @@ def parse_arguments():
             elif len(args_list) == 1:
                 searcher.display_category(args_list[0], detailed=True)
             elif len(args_list) >= 2:
-                # Поиск по категории и имени
+                # Search by category and name
                 category = args_list[0]
                 name = ' '.join(args_list[1:])
                 print(f"\n{Fore.YELLOW}Search in category '{category}' for '{name}':{Style.RESET_ALL}")
@@ -291,6 +305,13 @@ def parse_arguments():
                 else:
                     print(f"No indicators found in category '{category}' matching '{name}'")
             sys.exit(0)
+        
+        # Handle --interactive flag
+        if '--interactive' in sys.argv:
+            from src.cli.interactive_mode import start_interactive_mode
+            start_interactive_mode()
+            sys.exit(0)
+            
         args = parser.parse_args()
     except SystemExit as e:
         if e.code != 0:
@@ -299,6 +320,12 @@ def parse_arguments():
 
     # --- Post-parsing validation ---
     effective_mode = 'yfinance' if args.mode == 'yf' else args.mode
+
+    # Handle interactive mode
+    if effective_mode == 'interactive':
+        from src.cli.interactive_mode import start_interactive_mode
+        start_interactive_mode()
+        sys.exit(0)
 
     # Handle positional arguments for 'show' mode
     if effective_mode == 'show':
@@ -384,18 +411,18 @@ def parse_arguments():
         args.rule = args.show_rule
 
     # --- Restrict export flags for forbidden modes ---
-    # Разрешаем экспорт-флаги только для demo и show (кроме show ind)
+    # Allow export flags only for demo and show (except show ind)
     forbidden_export_modes = ['yfinance', 'csv', 'polygon', 'binance', 'exrate']
     if effective_mode in forbidden_export_modes:
-        if getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False):
-            parser.error("Export flags (--export-parquet, --export-csv, --export-json) are only allowed in 'demo' and 'show' modes (except 'show ind'). Use 'show' mode to export indicators from downloaded data.")
+        if getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False) or getattr(args, 'export_indicators_info', False):
+            parser.error("Export flags (--export-parquet, --export-csv, --export-json, --export-indicators-info) are only allowed in 'demo' and 'show' modes (except 'show ind'). Use 'show' mode to export indicators from downloaded data.")
     # Disallow export flags for 'show ind' (indicator viewing)
     if effective_mode == 'show' and hasattr(args, 'source') and args.source == 'ind':
-        if getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False):
-            parser.error("Export flags (--export-parquet, --export-csv, --export-json) are not allowed in 'show ind' mode. Use 'demo' or other show modes to export indicators.")
+        if getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False) or getattr(args, 'export_indicators_info', False):
+            parser.error("Export flags (--export-parquet, --export-csv, --export-json, --export-indicators-info) are not allowed in 'show ind' mode. Use 'demo' or other show modes to export indicators.")
     # Update help for export flags
     for action in parser._actions:
-        if action.dest in ['export_parquet', 'export_csv', 'export_json']:
+        if action.dest in ['export_parquet', 'export_csv', 'export_json', 'export_indicators_info']:
             action.help += ' (Allowed only in demo and show (except show ind); forbidden in show ind, yfinance, csv, polygon, binance, exrate)'
 
     return args
