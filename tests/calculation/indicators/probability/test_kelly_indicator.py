@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.calculation.indicators.probability.kelly_ind import KellyIndicator
+from src.calculation.indicators.probability.kelly_ind import calculate_kelly, apply_rule_kelly
 
 class TestKellyIndicator:
     def setup_method(self):

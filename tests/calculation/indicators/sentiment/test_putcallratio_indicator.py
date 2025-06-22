@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src/calculation/indicators/sentiment/putcallratio_ind import PutCallRatioIndicator
+from src.calculation.indicators.sentiment.putcallratio_ind import calculate_putcallratio, apply_rule_putcallratio
 
 class TestPutCallRatioIndicator:
     def setup_method(self):

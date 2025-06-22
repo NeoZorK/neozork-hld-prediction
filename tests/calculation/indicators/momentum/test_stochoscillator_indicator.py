@@ -5,7 +5,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock
-from src.calculation.indicators.momentum.stochoscillator_ind import StochasticOscillatorIndicator
+from src.calculation.indicators.momentum.stochoscillator_ind import calculate_stochoscillator, apply_rule_stochoscillator
 
 
 class TestStochasticOscillatorIndicator:

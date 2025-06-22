@@ -5,7 +5,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock
-from src.calculation.indicators.oscillators.cci_ind import CCIIndicator
+from src.calculation.indicators.oscillators.cci_ind import calculate_cci, apply_rule_cci
 
 
 class TestCCIIndicator:

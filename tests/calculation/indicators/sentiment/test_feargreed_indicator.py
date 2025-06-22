@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src/calculation/indicators/sentiment/feargreed_ind import FearGreedIndicator
+from src.calculation.indicators.sentiment.feargreed_ind import calculate_feargreed, apply_rule_feargreed
 
 class TestFearGreedIndicator:
     def setup_method(self):

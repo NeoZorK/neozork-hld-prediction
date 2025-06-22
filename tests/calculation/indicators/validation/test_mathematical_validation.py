@@ -3,28 +3,28 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.calculation.indicators.volatility.atr_ind import ATRIndicator
-from src.calculation.indicators.volatility.bb_ind import BBIndicator
-from src.calculation.indicators.volume.obv_ind import OBVIndicator
-from src.calculation.indicators.volume.vwap_ind import VWAPIndicator
-from src.calculation.indicators.oscillators.rsi_ind import RsiIndicator
-from src.calculation.indicators.oscillators.stoch_ind import StochIndicator
-from src.calculation.indicators.trend.ema_ind import EMAIndicator
-from src.calculation.indicators.trend.adx_ind import ADXIndicator
+from src.calculation.indicators.volatility.atr_ind import calculate_atr
+from src.calculation.indicators.volatility.bb_ind import apply_rule_bollinger_bands
+from src.calculation.indicators.volume.obv_ind import calculate_obv
+from src.calculation.indicators.volume.vwap_ind import calculate_vwap
+from src.calculation.indicators.oscillators.rsi_ind import calculate_rsi
+from src.calculation.indicators.oscillators.stoch_ind import apply_rule_stochastic
+from src.calculation.indicators.trend.ema_ind import calculate_ema
+from src.calculation.indicators.trend.adx_ind import calculate_adx
 
 class TestMathematicalValidation:
     """Mathematical validation tests for indicators."""
     
     def setup_method(self):
         """Set up indicators for testing."""
-        self.atr = ATRIndicator()
-        self.bb = BBIndicator()
-        self.obv = OBVIndicator()
-        self.vwap = VWAPIndicator()
-        self.rsi = RsiIndicator()
-        self.stoch = StochIndicator()
-        self.ema = EMAIndicator()
-        self.adx = ADXIndicator()
+        self.atr = calculate_atr
+        self.bb = apply_rule_bollinger_bands
+        self.obv = calculate_obv
+        self.vwap = calculate_vwap
+        self.rsi = calculate_rsi
+        self.stoch = apply_rule_stochastic
+        self.ema = calculate_ema
+        self.adx = calculate_adx
 
     def test_rsi_mathematical_properties(self):
         """Test RSI mathematical properties."""
@@ -38,7 +38,7 @@ class TestMathematicalValidation:
             'volume': [1000] * 11
         })
         
-        result = self.rsi.calculate(up_data)
+        result = self.rsi(up_data)
         rsi_values = result['RSI'].dropna()
         
         if len(rsi_values) > 0:
@@ -54,7 +54,7 @@ class TestMathematicalValidation:
             'volume': [1000] * 11
         })
         
-        result = self.rsi.calculate(down_data)
+        result = self.rsi(down_data)
         rsi_values = result['RSI'].dropna()
         
         if len(rsi_values) > 0:
@@ -72,7 +72,7 @@ class TestMathematicalValidation:
             'volume': [1000] * 6
         })
         
-        result = self.stoch.calculate(high_close_data)
+        result = self.stoch(high_close_data)
         k_values = result['Stoch_K'].dropna()
         
         if len(k_values) > 0:
@@ -88,7 +88,7 @@ class TestMathematicalValidation:
             'volume': [1000] * 6
         })
         
-        result = self.stoch.calculate(low_close_data)
+        result = self.stoch(low_close_data)
         k_values = result['Stoch_K'].dropna()
         
         if len(k_values) > 0:
@@ -106,7 +106,7 @@ class TestMathematicalValidation:
             'volume': [1000] * 20
         })
         
-        result = self.bb.calculate(constant_data)
+        result = self.bb(constant_data)
         
         # For constant data, all bands should be equal
         bb_valid = result.dropna()
@@ -126,7 +126,7 @@ class TestMathematicalValidation:
             'volume': [1000] * 11
         })
         
-        result = self.ema.calculate(trend_data)
+        result = self.ema(trend_data)
         ema_values = result['EMA'].dropna()
         
         if len(ema_values) > 1:
@@ -144,7 +144,7 @@ class TestMathematicalValidation:
             'volume': [1000, 2000, 1000]  # Middle period has higher volume
         })
         
-        result = self.vwap.calculate(data)
+        result = self.vwap(data)
         vwap_values = result['VWAP'].dropna()
         
         if len(vwap_values) > 0:
@@ -164,7 +164,7 @@ class TestMathematicalValidation:
             'volume': [1000, 1100, 1200]
         })
         
-        result = self.atr.calculate(data)
+        result = self.atr(data)
         atr_values = result['ATR'].dropna()
         
         if len(atr_values) > 0:
@@ -187,7 +187,7 @@ class TestMathematicalValidation:
             'volume': [1000, 1000, 1000, 1000, 1000]
         })
         
-        result = self.obv.calculate(data)
+        result = self.obv(data)
         obv_values = result['OBV'].dropna()
         
         if len(obv_values) > 1:
@@ -211,7 +211,7 @@ class TestMathematicalValidation:
             'volume': [1000] * 11
         })
         
-        result = self.adx.calculate(trend_data)
+        result = self.adx(trend_data)
         adx_values = result['ADX'].dropna()
         
         if len(adx_values) > 0:
@@ -232,7 +232,7 @@ class TestMathematicalValidation:
             'volume': np.random.randint(1000, 5000, 100)
         })
         
-        rsi_result = self.rsi.calculate(data)
+        rsi_result = self.rsi(data)
         rsi_values = rsi_result['RSI'].dropna()
         
         if len(rsi_values) > 0:
@@ -240,7 +240,7 @@ class TestMathematicalValidation:
             assert all(rsi_values <= 100), "RSI should be <= 100"
         
         # Test Stochastic boundaries (0-100)
-        stoch_result = self.stoch.calculate(data)
+        stoch_result = self.stoch(data)
         k_values = stoch_result['Stoch_K'].dropna()
         d_values = stoch_result['Stoch_D'].dropna()
         
@@ -265,8 +265,8 @@ class TestMathematicalValidation:
         indicators = [self.atr, self.bb, self.obv, self.vwap, self.rsi, self.stoch, self.ema, self.adx]
         
         for indicator in indicators:
-            result1 = indicator.calculate(data)
-            result2 = indicator.calculate(data)
+            result1 = indicator(data)
+            result2 = indicator(data)
             
             # Results should be identical
             pd.testing.assert_frame_equal(result1, result2, 

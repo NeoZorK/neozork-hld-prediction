@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src/calculation/indicators/suportresist/pivot_ind import PivotIndicator
+from src.calculation.indicators.suportresist.pivot_ind import calculate_pivot_points, apply_rule_pivot
 
 class TestPivotIndicator:
     def setup_method(self):

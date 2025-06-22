@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.calculation.indicators.suportresist.donchain_ind import DonchainIndicator
+from src.calculation.indicators.suportresist.donchain_ind import calculate_donchain, apply_rule_donchain
 
 class TestDonchainIndicator:
     def setup_method(self):
