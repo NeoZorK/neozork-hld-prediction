@@ -25,6 +25,11 @@ class TestDockerfile(DockerBaseTest):
         """Test that the Dockerfile has valid syntax."""
         dockerfile_path = os.path.join(self.project_root, "Dockerfile")
 
+        # Check if Docker daemon is running
+        stdout, stderr, returncode = self.run_command("docker info")
+        if returncode != 0:
+            self.skipTest("Docker daemon is not running")
+
         # First try a simpler check using docker build --dry-run if available
         dry_run_cmd = f"docker build --no-cache --quiet --force-rm --pull=false " \
                      f"--dry-run -f {dockerfile_path} {self.project_root}"
@@ -71,6 +76,11 @@ class TestDockerfile(DockerBaseTest):
 
     def test_docker_compose_syntax(self):
         """Test that the docker-compose.yml file has valid syntax."""
+        # Check if Docker daemon is running
+        stdout, stderr, returncode = self.run_command("docker info")
+        if returncode != 0:
+            self.skipTest("Docker daemon is not running")
+            
         compose_path = os.path.join(self.project_root, "docker-compose.yml")
         stdout, stderr = self.assert_command_success(
             f"docker-compose -f {compose_path} config",
