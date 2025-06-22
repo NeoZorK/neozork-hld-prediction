@@ -399,9 +399,35 @@ class InteractiveMode:
         print("python run_analysis.py --indicators")
     
     def _list_indicators(self):
-        """List available indicators."""
+        """List available indicators with detailed information."""
         print(f"\n{Fore.YELLOW}{Style.BRIGHT}Available Indicators:{Style.RESET_ALL}")
-        self.searcher.display_categories()
+        print(f"{Fore.CYAN}{'=' * 60}{Style.RESET_ALL}")
+        
+        # Show categories with indicator counts
+        print(f"{Fore.YELLOW}{Style.BRIGHT}🎯 Available Indicator Categories:{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}{'=' * 50}{Style.RESET_ALL}")
+        
+        for category in sorted(self.categories):
+            indicators = self.searcher.list_indicators(category)
+            count = len(indicators)
+            emoji = self.searcher._get_category_emoji(category)
+            print(f"{emoji} {Fore.GREEN}{category:<15}{Style.RESET_ALL} - {Fore.BLUE}{count} indicators{Style.RESET_ALL}")
+        
+        print(f"\n{Fore.YELLOW}{Style.BRIGHT}📋 Detailed Indicator List:{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}{'=' * 60}{Style.RESET_ALL}")
+        
+        # Show detailed list of indicators by category
+        for category in sorted(self.categories):
+            indicators = self.searcher.list_indicators(category)
+            if indicators:
+                emoji = self.searcher._get_category_emoji(category)
+                print(f"\n{emoji} {Fore.YELLOW}{Style.BRIGHT}{category.title()} Indicators:{Style.RESET_ALL}")
+                print(f"{Fore.CYAN}{'─' * 40}{Style.RESET_ALL}")
+                
+                for i, indicator in enumerate(indicators, 1):
+                    print(f"  {i:2d}. {Fore.CYAN}{indicator.name:<20}{Style.RESET_ALL} - {indicator.description}")
+        
+        print(f"\n{Fore.GREEN}💡 Tip: Use option 2 to select a specific indicator for analysis.{Style.RESET_ALL}")
 
 
 def start_interactive_mode():

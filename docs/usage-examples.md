@@ -9,6 +9,58 @@ View all examples:
 python run_analysis.py --examples
 ```
 
+## Interactive Mode
+
+The interactive mode provides a guided interface for selecting indicators and configuring analysis:
+
+```bash
+# Start interactive mode
+python run_analysis.py --interactive
+nz --interactive
+```
+
+### Interactive Mode Features
+
+The interactive mode includes the following options:
+
+1. **Select Analysis Mode** - Choose data source (demo, CSV, Yahoo Finance, etc.)
+2. **Select Indicator** - Browse and select from available indicators
+3. **Configure Data Source** - Set up data source parameters
+4. **Configure Plotting** - Choose visualization method
+5. **Configure Export** - Select export formats
+6. **Show Current Configuration** - Review your settings
+7. **Run Analysis** - Execute the analysis
+8. **Help** - Show help information
+9. **List Available Indicators** - Browse all available indicators with detailed information
+0. **Exit** - Leave interactive mode
+
+### List Available Indicators (Option 9)
+
+The "List Available Indicators" option provides comprehensive information about all available indicators:
+
+- **Category Overview**: Shows all indicator categories with counts
+- **Detailed List**: Displays specific indicators in each category with descriptions
+- **Visual Organization**: Uses emojis and colors for better readability
+- **Quick Reference**: Shows indicator names and descriptions for easy selection
+
+Example output:
+```
+🎯 Available Indicator Categories:
+==================================================
+⚡ momentum        - 2 indicators
+🔄 oscillators     - 3 indicators
+🔮 predictive      - 2 indicators
+...
+
+📋 Detailed Indicator List:
+============================================================
+
+⚡ Momentum Indicators:
+────────────────────────────────────────
+   1. MACD                 - Moving Average Convergence Divergence
+   2. Stochastic Oscillator - Stochastic Oscillator
+```
+
 ## Demo Mode
 
 ```bash
