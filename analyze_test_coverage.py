@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Скрипт для анализа покрытия тестами модулей в src/ и в корне проекта
+Script for analyzing test coverage of modules in src/ and project root
 """
 
 import os
@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 def get_src_files():
-    """Получить все Python файлы из src/ и из корня проекта"""
+    """Get all Python files from src/ and project root"""
     src_dir = Path("src")
     root_dir = Path(".")
     src_files = []
@@ -20,12 +20,12 @@ def get_src_files():
     # root/
     for py_file in root_dir.glob("*.py"):
         if py_file.name == Path(__file__).name:
-            continue  # не включаем сам анализатор
+            continue  # don't include the analyzer itself
         src_files.append(py_file.resolve())
     return sorted(set(src_files))
 
 def get_test_files():
-    """Получить все тестовые файлы"""
+    """Get all test files"""
     tests_dir = Path("tests")
     test_files = []
     for py_file in tests_dir.rglob("test_*.py"):
@@ -33,40 +33,40 @@ def get_test_files():
     return sorted(test_files)
 
 def map_test_to_src(test_file):
-    """Сопоставить тестовый файл с исходным файлом"""
+    """Map test file to source file"""
     relative_path = test_file.relative_to(Path("tests"))
     module_name = relative_path.stem.replace("test_", "")
     
-    # Обрабатываем специальные случаи
+    # Handle special cases
     if module_name.endswith("_indicator"):
         module_name = module_name.replace("_indicator", "_ind")
     elif module_name.endswith("_fetcher"):
         module_name = module_name.replace("_fetcher", "_fetcher")
     
-    # Если тест находится в tests/src/, то исходный файл в src/
+    # If test is in tests/src/, then source file is in src/
     if relative_path.parts[0] == "src":
-        # Пропускаем 'src' в относительном пути
+        # Skip 'src' in relative path
         src_subpath = Path(*relative_path.parts[1:-1])
         src_path = Path("src") / src_subpath / f"{module_name}.py"
         return [src_path]
     
-    # Для тестов в корне tests/ (например, test_fix_imports.py)
+    # For tests in tests/ root (e.g., test_fix_imports.py)
     root_path = Path(f"{module_name}.py")
     src_path = Path("src") / relative_path.parent / f"{module_name}.py"
     return [src_path, root_path]
 
 def analyze_coverage():
-    """Анализировать покрытие тестами"""
+    """Analyze test coverage"""
     src_files = get_src_files()
     test_files = get_test_files()
     
-    # Создаем маппинг тестов к исходным файлам
+    # Create mapping of tests to source files
     test_to_src = {}
     for test_file in test_files:
         src_paths = map_test_to_src(test_file)
         test_to_src[test_file] = src_paths
     
-    # Анализируем покрытие
+    # Analyze coverage
     covered_files = set()
     missing_tests = []
     
@@ -77,31 +77,31 @@ def analyze_coverage():
                 covered_files.add(src_file.resolve())
                 found = True
         if not found:
-            print(f"⚠️  Тест {test_file} не соответствует исходному файлу")
+            print(f"⚠️  Test {test_file} doesn't match source file")
     
-    # Находим файлы без тестов
+    # Find files without tests
     for src_file in src_files:
         if src_file.resolve() not in covered_files:
             missing_tests.append(src_file)
     
-    # Выводим результаты
-    print(f"📊 АНАЛИЗ ПОКРЫТИЯ ТЕСТАМИ")
+    # Output results
+    print(f"📊 TEST COVERAGE ANALYSIS")
     print(f"=" * 50)
-    print(f"Всего файлов в src/ и root: {len(src_files)}")
-    print(f"Всего тестов: {len(test_files)}")
-    print(f"Покрыто тестами: {len(covered_files)}")
-    print(f"Не покрыто тестами: {len(missing_tests)}")
-    print(f"Покрытие: {len(covered_files)/len(src_files)*100:.1f}%")
+    print(f"Total files in src/ and root: {len(src_files)}")
+    print(f"Total tests: {len(test_files)}")
+    print(f"Covered by tests: {len(covered_files)}")
+    print(f"Not covered by tests: {len(missing_tests)}")
+    print(f"Coverage: {len(covered_files)/len(src_files)*100:.1f}%")
     print()
     
     if missing_tests:
-        print("📝 ФАЙЛЫ БЕЗ ТЕСТОВ:")
+        print("📝 FILES WITHOUT TESTS:")
         print("-" * 30)
         for file in missing_tests:
             print(f"❌ {file}")
         print()
         
-        # Группируем по модулям
+        # Group by modules
         modules = {}
         for file in missing_tests:
             module = file.parent.name
@@ -109,10 +109,10 @@ def analyze_coverage():
                 modules[module] = []
             modules[module].append(file.name)
         
-        print("📁 ГРУППИРОВКА ПО МОДУЛЯМ:")
+        print("📁 GROUPING BY MODULES:")
         print("-" * 30)
         for module, files in sorted(modules.items()):
-            print(f"\n🔸 {module}/ ({len(files)} файлов):")
+            print(f"\n🔸 {module}/ ({len(files)} files):")
             for file in files:
                 print(f"   - {file}")
     

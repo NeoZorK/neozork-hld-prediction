@@ -221,7 +221,7 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
             is_valid_rule = True
             rule_func = RULE_DISPATCHER[rule]
         else:
-            pass # is_valid_rule останется False
+            pass # is_valid_rule will remain False
 
     if not is_valid_rule:
         logger.print_warning(

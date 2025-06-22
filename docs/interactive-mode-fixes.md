@@ -1,21 +1,21 @@
-# Исправления тестов интерактивного режима
+# Interactive Mode Test Fixes
 
-## Проблема
-Тесты интерактивного режима зависали при выполнении из-за бесконечного цикла в методе `start()` класса `InteractiveMode`.
+## Problem
+Interactive mode tests were hanging during execution due to an infinite loop in the `start()` method of the `InteractiveMode` class.
 
-## Причина зависания
-1. **Бесконечный цикл**: Метод `start()` содержит цикл `while True`, который не завершался в тестах
-2. **Проблемы с моками**: Неправильное мокирование `IndicatorSearcher` и `input` функций
-3. **Сложные интеграционные тесты**: Тесты пытались симулировать полный пользовательский сценарий
+## Cause of Hanging
+1. **Infinite loop**: The `start()` method contains a `while True` loop that didn't terminate in tests
+2. **Mocking issues**: Incorrect mocking of `IndicatorSearcher` and `input` functions
+3. **Complex integration tests**: Tests were trying to simulate a complete user scenario
 
-## Решение
+## Solution
 
-### 1. Упрощение тестов
-- Создан новый файл `tests/cli/test_interactive_mode.py` с простыми unit-тестами
-- Убраны сложные интеграционные тесты, которые могли зависать
-- Фокус на тестировании отдельных методов класса
+### 1. Test Simplification
+- Created a new file `tests/cli/test_interactive_mode.py` with simple unit tests
+- Removed complex integration tests that could hang
+- Focus on testing individual class methods
 
-### 2. Правильное мокирование
+### 2. Proper Mocking
 ```python
 @patch('src.cli.interactive_mode.IndicatorSearcher')
 class TestInteractiveModeSimple:
@@ -25,25 +25,25 @@ class TestInteractiveModeSimple:
         mock_searcher_class.return_value = mock_searcher
         
         interactive = InteractiveMode()
-        # тесты...
+        # tests...
 ```
 
-### 3. Тестирование без запуска анализа
-- Тесты проверяют построение команд без реального выполнения
-- Мокирование `input` для симуляции пользовательского ввода
-- Проверка корректности формирования аргументов командной строки
+### 3. Testing Without Running Analysis
+- Tests check command building without actual execution
+- Mocking `input` to simulate user input
+- Verify correctness of command line argument formation
 
-## Новые функции
+## New Features
 
-### List Available Indicators (Опция 9)
-Добавлена новая функциональность для отображения всех доступных индикаторов:
+### List Available Indicators (Option 9)
+Added new functionality to display all available indicators:
 
-- **Обзор категорий**: Показывает все категории индикаторов с количеством
-- **Детальный список**: Отображает конкретные индикаторы в каждой категории с описаниями
-- **Визуальная организация**: Использует эмодзи и цвета для лучшей читаемости
-- **Быстрая справка**: Показывает названия и описания индикаторов для легкого выбора
+- **Category Overview**: Shows all indicator categories with counts
+- **Detailed List**: Displays specific indicators in each category with descriptions
+- **Visual Organization**: Uses emojis and colors for better readability
+- **Quick Reference**: Shows indicator names and descriptions for easy selection
 
-Пример вывода:
+Example output:
 ```
 🎯 Available Indicator Categories:
 ==================================================
@@ -61,39 +61,39 @@ class TestInteractiveModeSimple:
    2. Stochastic Oscillator - Stochastic Oscillator
 ```
 
-## Результат
+## Result
 
-### Все тесты проходят успешно
+### All Tests Pass Successfully
 ```bash
 python -m pytest tests/cli/test_interactive_mode.py -v
 # 17 passed in 0.05s
 ```
 
-### Покрытие тестами
-- ✅ Инициализация класса
-- ✅ Отображение меню и сообщений
-- ✅ Выбор режима анализа
-- ✅ Конфигурация источников данных
-- ✅ Конфигурация построения графиков
-- ✅ Конфигурация экспорта
-- ✅ Построение команд анализа
-- ✅ Обработка ошибок
-- ✅ **Новое**: Отображение списка индикаторов с детальной информацией
+### Test Coverage
+- ✅ Class initialization
+- ✅ Menu and message display
+- ✅ Analysis mode selection
+- ✅ Data source configuration
+- ✅ Plotting configuration
+- ✅ Export configuration
+- ✅ Analysis command building
+- ✅ Error handling
+- ✅ **New**: Display list of indicators with detailed information
 
-### Интерактивный режим работает
+### Interactive Mode Works
 ```bash
 python run_analysis.py --interactive
-# Запускается корректно, показывает меню
+# Starts correctly, shows menu
 ```
 
-## Рекомендации
+## Recommendations
 
-1. **Для разработки**: Используйте простые unit-тесты для проверки логики
-2. **Для интеграции**: Тестируйте интерактивный режим вручную
-3. **Для CI/CD**: Запускайте только unit-тесты, избегайте сложных интеграционных тестов
+1. **For development**: Use simple unit tests to verify logic
+2. **For integration**: Test interactive mode manually
+3. **For CI/CD**: Run only unit tests, avoid complex integration tests
 
-## Файлы изменены
-- `tests/cli/test_interactive_mode.py` - полностью переписан
-- `src/cli/interactive_mode.py` - добавлена новая функциональность List Available Indicators
-- Удалены проблемные интеграционные тесты
-- Добавлены простые и надежные unit-тесты 
+## Files Changed
+- `tests/cli/test_interactive_mode.py` - completely rewritten
+- `src/cli/interactive_mode.py` - added new List Available Indicators functionality
+- Removed problematic integration tests
+- Added simple and reliable unit tests 
