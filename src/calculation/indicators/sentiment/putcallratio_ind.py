@@ -55,6 +55,10 @@ def calculate_putcallratio(price_series: pd.Series, volume_series: pd.Series, pe
         price_window = price_changes.iloc[i-period:i]
         volume_window = volume_series.iloc[i-period:i]
         
+        # Reset indices to avoid alignment issues in boolean indexing
+        price_window = price_window.reset_index(drop=True)
+        volume_window = volume_window.reset_index(drop=True)
+        
         # Calculate bearish vs bullish volume
         bearish_volume = volume_window[price_window < 0].sum()
         bullish_volume = volume_window[price_window > 0].sum()
