@@ -239,9 +239,23 @@ class TestInteractiveModeSimple:
         assert "Select Analysis Mode" in captured.out
     
     def test_list_indicators(self, mock_searcher_class, capsys):
-        """Test indicators listing."""
+        """Test indicators listing with detailed information."""
+        # Create mock indicators
+        mock_indicator1 = MagicMock()
+        mock_indicator1.name = "RSI"
+        mock_indicator1.description = "Relative Strength Index"
+        
+        mock_indicator2 = MagicMock()
+        mock_indicator2.name = "MACD"
+        mock_indicator2.description = "Moving Average Convergence Divergence"
+        
         mock_searcher = MagicMock()
-        mock_searcher.list_categories.return_value = ['oscillators']
+        mock_searcher.list_categories.return_value = ['oscillators', 'momentum']
+        mock_searcher.list_indicators.side_effect = lambda cat: {
+            'oscillators': [mock_indicator1],
+            'momentum': [mock_indicator2]
+        }.get(cat, [])
+        mock_searcher._get_category_emoji.return_value = "📊"
         mock_searcher_class.return_value = mock_searcher
         
         interactive = InteractiveMode()
@@ -250,6 +264,15 @@ class TestInteractiveModeSimple:
         
         captured = capsys.readouterr()
         assert "Available Indicators" in captured.out
+        assert "Available Indicator Categories" in captured.out
+        assert "Detailed Indicator List" in captured.out
+        assert "oscillators" in captured.out
+        assert "momentum" in captured.out
+        assert "RSI" in captured.out
+        assert "MACD" in captured.out
+        assert "Relative Strength Index" in captured.out
+        assert "Moving Average Convergence Divergence" in captured.out
+        assert "Tip: Use option 2" in captured.out
 
 
 @patch('src.cli.interactive_mode.InteractiveMode')
