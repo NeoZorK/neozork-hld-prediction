@@ -7,7 +7,7 @@ from src.calculation.indicators.sentiment.putcallratio_ind import calculate_putc
 
 class TestPutCallRatioIndicator:
     def setup_method(self):
-        # Задаём одинаковый индекс для всех Series
+        # Set the same index for all Series
         idx = pd.RangeIndex(0, 30)
         self.sample_data = pd.DataFrame({
             'Open': [100 + i * 0.1 for i in range(30)],
