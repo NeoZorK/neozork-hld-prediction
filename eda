@@ -22,139 +22,19 @@ if [ -f /.dockerenv ] || grep -q docker /proc/1/cgroup 2>/dev/null; then
     echo "Running inside Docker container"
 fi
 
-# Get the actual container name from docker-compose.yml if available
-get_container_name() {
-    # Get the service name from docker-compose.yml
-    local service_name="neozork-hld"
-    if [ -f "docker-compose.yml" ]; then
-        service_name=$(grep -oP '(?<=services:).*?(?=:)' docker-compose.yml | tr -d ' ' | head -1)
-        if [ -z "$service_name" ]; then
-            # If not found with regex, try another approach
-            service_name=$(grep -A1 'services:' docker-compose.yml | tail -1 | tr -d ' :' | head -1)
-        fi
-    fi
-
-    # Get list of running containers
-    local containers=$(docker ps --format '{{.Names}}' 2>/dev/null)
-    if [ -z "$containers" ]; then
-        # No running containers
-        echo ""
-        return 1
-    fi
-
-    # Try to find container using service name or project name
-    for name in $containers; do
-        if [[ "$name" == *"$service_name"* ]] || [[ "$name" == *"neozork"* ]] || [[ "$name" == *"hld"* ]]; then
-            echo "$name"
-            return 0
-        fi
-    done
-
-    # If not found among running containers, check all containers
-    containers=$(docker ps -a --format '{{.Names}}' 2>/dev/null)
-    for name in $containers; do
-        if [[ "$name" == *"$service_name"* ]] || [[ "$name" == *"neozork"* ]] || [[ "$name" == *"hld"* ]]; then
-            echo "$name"
-            return 0
-        fi
-    done
-
-    # Still nothing found
-    echo ""
-    return 1
-}
-
-# Function to safely check if Docker is available
-docker_available() {
-    command -v docker &> /dev/null && docker info &> /dev/null
-    return $?
-}
-
-# Function to check if the container exists (running or stopped)
-container_exists() {
-    local container_name=$(get_container_name)
-    if [ -n "$container_name" ]; then
-        if docker ps -a --format '{{.Names}}' | grep -q "$container_name"; then
-            return 0
-        fi
-    fi
-    return 1
-}
-
-# Function to check if the container is running and accessible
-container_running() {
-    local container_name=$(get_container_name)
-    if [ -n "$container_name" ]; then
-        if docker ps --format '{{.Names}}' | grep -q "$container_name"; then
-            # Additional check to ensure the container is responsive
-            if docker exec "$container_name" echo "Container accessible" &>/dev/null; then
-                return 0
-            fi
-        fi
-    fi
-    return 1
-}
-
-# Debug function to show container status
-debug_container_status() {
-    echo "--- Docker Debug Information ---"
-    echo "Available containers:"
-    docker ps -a --format "{{.Names}} ({{.Status}})"
-    echo "------------------------"
-}
-
-# If we're already in Docker, run the command directly
+# If we're already in Docker, run the command directly with python
 if $IN_DOCKER; then
+    echo "Running in Docker environment..."
     python src/eda/eda_batch_check.py "$@"
-# If not in Docker, check if Docker is available and use it
-elif docker_available && [ -f "docker-compose.yml" ]; then
-    echo "Docker detected, checking containers..."
-
-    # For debugging
-    if [ "$1" == "--debug-docker" ]; then
-        debug_container_status
-        exit 0
-    fi
-
-    # Get container name if exists
-    CONTAINER_NAME=$(get_container_name)
-
-    # Check container status and act accordingly
-    if [ -n "$CONTAINER_NAME" ] && container_running; then
-        echo "Container $CONTAINER_NAME is running and accessible, executing command..."
-        docker exec -it "$CONTAINER_NAME" python src/eda/eda_batch_check.py "$@"
-    elif [ -n "$CONTAINER_NAME" ] && container_exists; then
-        echo "Container $CONTAINER_NAME exists but not running or not accessible, starting it..."
-        docker start "$CONTAINER_NAME"
-        # Wait a moment for the container to be fully up
-        sleep 2
-        if container_running; then
-            docker exec -it "$CONTAINER_NAME" python src/eda/eda_batch_check.py "$@"
-        else
-            echo "Container started but not accessible, falling back to docker-compose run..."
-            docker-compose run --rm neozork-hld python src/eda/eda_batch_check.py "$@"
-        fi
-    else
-        echo "No suitable container found, starting services with docker-compose..."
-        # Start the services in detached mode
-        docker-compose up -d
-        # Wait a moment for the container to be fully up
-        sleep 2
-
-        # Get the new container name
-        CONTAINER_NAME=$(get_container_name)
-
-        # Now execute command in the container
-        if [ -n "$CONTAINER_NAME" ] && container_running; then
-            echo "Container $CONTAINER_NAME is now running, executing command..."
-            docker exec -it "$CONTAINER_NAME" python src/eda/eda_batch_check.py "$@"
-        else
-            echo "Could not get access to the container, falling back to docker-compose run..."
-            docker-compose run --rm neozork-hld python src/eda/eda_batch_check.py "$@"
-        fi
-    fi
 else
-    # Run the command directly if Docker is not available
-    echo "Docker not available, running natively..."
-    python src/eda/eda_batch_check.py "$@"
+    # If not in Docker, use uv run to ensure proper environment
+    echo "Running in native environment with uv..."
+    
+    # Check if uv is available
+    if command -v uv &> /dev/null; then
+        uv run python src/eda/eda_batch_check.py "$@"
+    else
+        echo "Warning: uv not found, trying direct python execution..."
+        python src/eda/eda_batch_check.py "$@"
+    fi
 fi
