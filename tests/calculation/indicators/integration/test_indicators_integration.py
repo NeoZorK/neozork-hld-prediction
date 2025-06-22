@@ -3,14 +3,14 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.calculation.indicators.volatility.atr_ind import calculate_atr
+from src.calculation.indicators.volatility.atr_ind import apply_rule_atr
 from src.calculation.indicators.volatility.bb_ind import apply_rule_bollinger_bands
-from src.calculation.indicators.volume.obv_ind import calculate_obv
-from src.calculation.indicators.volume.vwap_ind import calculate_vwap
-from src.calculation.indicators.oscillators.rsi_ind import calculate_rsi
+from src.calculation.indicators.volume.obv_ind import apply_rule_obv
+from src.calculation.indicators.volume.vwap_ind import apply_rule_vwap
+from src.calculation.indicators.oscillators.rsi_ind import apply_rule_rsi
 from src.calculation.indicators.oscillators.stoch_ind import apply_rule_stochastic
-from src.calculation.indicators.trend.ema_ind import calculate_ema
-from src.calculation.indicators.trend.adx_ind import calculate_adx
+from src.calculation.indicators.trend.ema_ind import apply_rule_ema
+from src.calculation.indicators.trend.adx_ind import apply_rule_adx
 
 class TestIndicatorsIntegration:
     """Integration tests for multiple indicators working together."""
@@ -30,28 +30,31 @@ class TestIndicatorsIntegration:
         prices = base_price + trend + noise
         
         self.market_data = pd.DataFrame({
-            'open': prices + np.random.normal(0, 0.5, 100),
-            'high': prices + np.abs(np.random.normal(1, 0.5, 100)),
-            'low': prices - np.abs(np.random.normal(1, 0.5, 100)),
-            'close': prices,
-            'volume': np.random.randint(1000, 5000, 100)
+            'Open': prices + np.random.normal(0, 0.5, 100),
+            'High': prices + np.abs(np.random.normal(1, 0.5, 100)),
+            'Low': prices - np.abs(np.random.normal(1, 0.5, 100)),
+            'Close': prices,
+            'Volume': np.random.randint(1000, 5000, 100)
         }, index=dates)
         
-        # Initialize indicators
-        self.atr = calculate_atr
+        # Set point value for indicators
+        self.point = 0.0001
+        
+        # Initialize indicators with apply_rule functions
+        self.atr = apply_rule_atr
         self.bb = apply_rule_bollinger_bands
-        self.obv = calculate_obv
-        self.vwap = calculate_vwap
-        self.rsi = calculate_rsi
+        self.obv = apply_rule_obv
+        self.vwap = apply_rule_vwap
+        self.rsi = apply_rule_rsi
         self.stoch = apply_rule_stochastic
-        self.ema = calculate_ema
-        self.adx = calculate_adx
+        self.ema = apply_rule_ema
+        self.adx = apply_rule_adx
 
     def test_multiple_volatility_indicators(self):
         """Test that volatility indicators work together."""
         # Calculate ATR and Bollinger Bands
-        atr_result = self.atr(self.market_data)
-        bb_result = self.bb(self.market_data)
+        atr_result = self.atr(self.market_data.copy(), self.point)
+        bb_result = self.bb(self.market_data.copy(), self.point)
         
         # Both should have valid results
         assert 'ATR' in atr_result.columns
@@ -71,8 +74,8 @@ class TestIndicatorsIntegration:
     def test_volume_and_price_indicators(self):
         """Test volume indicators with price-based indicators."""
         # Calculate OBV and VWAP
-        obv_result = self.obv(self.market_data)
-        vwap_result = self.vwap(self.market_data)
+        obv_result = self.obv(self.market_data.copy(), self.point)
+        vwap_result = self.vwap(self.market_data.copy(), self.point)
         
         # Both should have valid results
         assert 'OBV' in obv_result.columns
@@ -81,14 +84,14 @@ class TestIndicatorsIntegration:
         # VWAP should be within price range
         vwap_values = vwap_result['VWAP'].dropna()
         if len(vwap_values) > 0:
-            assert all(vwap_values >= self.market_data['low'].min())
-            assert all(vwap_values <= self.market_data['high'].max())
+            assert all(vwap_values >= self.market_data['Low'].min())
+            assert all(vwap_values <= self.market_data['High'].max())
 
     def test_oscillator_combinations(self):
         """Test multiple oscillators together."""
         # Calculate RSI and Stochastic
-        rsi_result = self.rsi(self.market_data)
-        stoch_result = self.stoch(self.market_data)
+        rsi_result = self.rsi(self.market_data.copy(), self.point)
+        stoch_result = self.stoch(self.market_data.copy(), self.point)
         
         # Both should have valid results
         assert 'RSI' in rsi_result.columns
@@ -114,8 +117,8 @@ class TestIndicatorsIntegration:
     def test_trend_indicators(self):
         """Test trend indicators together."""
         # Calculate EMA and ADX
-        ema_result = self.ema(self.market_data)
-        adx_result = self.adx(self.market_data)
+        ema_result = self.ema(self.market_data.copy(), self.point)
+        adx_result = self.adx(self.market_data.copy(), self.point)
         
         # Both should have valid results
         assert 'EMA' in ema_result.columns
@@ -143,7 +146,7 @@ class TestIndicatorsIntegration:
         
         for name, indicator in indicators:
             try:
-                results[name] = indicator(self.market_data)
+                results[name] = indicator(self.market_data.copy(), self.point)
             except Exception as e:
                 pytest.fail(f"Indicator {name} failed: {e}")
         
@@ -155,16 +158,16 @@ class TestIndicatorsIntegration:
         """Test indicators with extreme market conditions."""
         # Create extreme data (very volatile)
         extreme_data = self.market_data.copy()
-        extreme_data['high'] = extreme_data['close'] * 1.5  # 50% higher
-        extreme_data['low'] = extreme_data['close'] * 0.5   # 50% lower
-        extreme_data['volume'] = extreme_data['volume'] * 10  # 10x volume
+        extreme_data['High'] = extreme_data['Close'] * 1.5  # 50% higher
+        extreme_data['Low'] = extreme_data['Close'] * 0.5   # 50% lower
+        extreme_data['Volume'] = extreme_data['Volume'] * 10  # 10x volume
         
         # Test that indicators handle extreme data gracefully
         indicators = [self.atr, self.bb, self.obv, self.vwap, self.rsi, self.stoch, self.ema, self.adx]
         
         for indicator in indicators:
             try:
-                result = indicator(extreme_data)
+                result = indicator(extreme_data.copy(), self.point)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == len(extreme_data)
             except Exception as e:
@@ -174,18 +177,18 @@ class TestIndicatorsIntegration:
         """Test indicators with constant (no movement) data."""
         # Create constant data
         constant_data = self.market_data.copy()
-        constant_data['open'] = 100
-        constant_data['high'] = 100
-        constant_data['low'] = 100
-        constant_data['close'] = 100
-        constant_data['volume'] = 1000
+        constant_data['Open'] = 100
+        constant_data['High'] = 100
+        constant_data['Low'] = 100
+        constant_data['Close'] = 100
+        constant_data['Volume'] = 1000
         
         # Test that indicators handle constant data gracefully
         indicators = [self.atr, self.bb, self.obv, self.vwap, self.rsi, self.stoch, self.ema, self.adx]
         
         for indicator in indicators:
             try:
-                result = indicator(constant_data)
+                result = indicator(constant_data.copy(), self.point)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == len(constant_data)
             except Exception as e:
@@ -195,15 +198,15 @@ class TestIndicatorsIntegration:
         """Test indicators with missing data points."""
         # Create data with some missing values
         missing_data = self.market_data.copy()
-        missing_data.loc[10:15, 'close'] = np.nan
-        missing_data.loc[20:25, 'volume'] = np.nan
+        missing_data.iloc[10:15, missing_data.columns.get_loc('Close')] = np.nan
+        missing_data.iloc[20:25, missing_data.columns.get_loc('Volume')] = np.nan
         
         # Test that indicators handle missing data gracefully
         indicators = [self.atr, self.bb, self.obv, self.vwap, self.rsi, self.stoch, self.ema, self.adx]
         
         for indicator in indicators:
             try:
-                result = indicator(missing_data)
+                result = indicator(missing_data.copy(), self.point)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == len(missing_data)
             except Exception as e:
@@ -222,10 +225,10 @@ class TestIndicatorsIntegration:
         
         for indicator in indicators:
             start_time = time.time()
-            result = indicator(large_data)
+            result = indicator(large_data.copy(), self.point)
             end_time = time.time()
             
-            # Should complete within 5 seconds
-            assert end_time - start_time < 5, f"Indicator {indicator.__name__} took too long: {end_time - start_time:.2f}s"
+            # Should complete within reasonable time (5 seconds)
+            assert end_time - start_time < 5.0, f"Indicator {indicator.__name__} took too long"
             assert isinstance(result, pd.DataFrame)
             assert len(result) == len(large_data) 
