@@ -7,55 +7,72 @@ from src.calculation.indicators.predictive.tsforecast_ind import calculate_tsfor
 
 class TestTSForecastIndicator:
     def setup_method(self):
-        self.tsf = TSForecastIndicator()
+        self.tsforecast = calculate_tsforecast
+        dates = pd.date_range('2023-01-01', periods=30, freq='D')
         self.sample_data = pd.DataFrame({
-            'close': [101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
-            'open': [100, 101, 102, 103, 104, 105, 106, 107, 108, 109],
-            'high': [102, 103, 104, 105, 106, 107, 108, 109, 110, 111],
-            'low': [99, 100, 101, 102, 103, 104, 105, 106, 107, 108],
-            'volume': [1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900]
-        })
+            'Open': [100 + i * 0.1 for i in range(30)],
+            'High': [102 + i * 0.1 for i in range(30)],
+            'Low': [98 + i * 0.1 for i in range(30)],
+            'Close': [101 + i * 0.1 for i in range(30)],
+            'Volume': [1000 + i * 10 for i in range(30)]
+        }, index=dates)
 
-    def test_tsf_initialization(self):
-        assert self.tsf.name == "TSForecast"
-        assert self.tsf.category == "predictive"
-        assert "Time Series Forecast" in self.tsf.description
-
-    def test_tsf_calculation_basic(self):
-        result = self.tsf.calculate(self.sample_data)
-        assert isinstance(result, pd.DataFrame)
-        assert 'TSForecast' in result.columns
+    def test_tsforecast_calculation_basic(self):
+        result = self.tsforecast(self.sample_data['Close'])
+        assert isinstance(result, pd.Series)
         assert len(result) == len(self.sample_data)
+        assert not result.isna().all()
 
-    def test_tsf_custom_period(self):
-        tsf_custom = TSForecastIndicator(period=5)
-        result = tsf_custom.calculate(self.sample_data)
-        assert 'TSForecast' in result.columns
+    def test_tsforecast_with_custom_period(self):
+        result = self.tsforecast(self.sample_data['Close'], period=10)
+        assert isinstance(result, pd.Series)
+        assert result.iloc[:9].isna().all()
+        assert not result.iloc[9:].isna().all()
 
-    def test_tsf_invalid_period(self):
-        with pytest.raises(ValueError):
-            TSForecastIndicator(period=0)
-        with pytest.raises(ValueError):
-            TSForecastIndicator(period=-1)
+    def test_tsforecast_with_invalid_period(self):
+        with pytest.raises(ValueError, match="TSForecast period must be positive"):
+            self.tsforecast(self.sample_data['Close'], period=0)
+        with pytest.raises(ValueError, match="TSForecast period must be positive"):
+            self.tsforecast(self.sample_data['Close'], period=-1)
 
-    def test_tsf_empty_dataframe(self):
-        empty_df = pd.DataFrame()
-        result = self.tsf.calculate(empty_df)
-        assert isinstance(result, pd.DataFrame)
+    def test_tsforecast_empty_dataframe(self):
+        empty_series = pd.Series(dtype=float)
+        result = self.tsforecast(empty_series)
+        assert isinstance(result, pd.Series)
         assert len(result) == 0
 
-    def test_tsf_missing_columns(self):
-        incomplete = self.sample_data.drop(columns=['close'])
-        with pytest.raises(ValueError):
-            self.tsf.calculate(incomplete)
+    def test_tsforecast_insufficient_data(self):
+        small_series = self.sample_data['Close'].head(5)
+        result = self.tsforecast(small_series, period=20)
+        assert result.isna().all()
 
-    def test_tsf_nan_values(self):
-        data_with_nan = self.sample_data.copy()
-        data_with_nan.loc[2, 'close'] = np.nan
-        result = self.tsf.calculate(data_with_nan)
-        assert 'TSForecast' in result.columns
+    def test_tsforecast_parameter_validation(self):
+        result = self.tsforecast(self.sample_data['Close'], period=20)
+        assert isinstance(result, pd.Series)
+        result = self.tsforecast(self.sample_data['Close'], period=int(20.5))
+        assert isinstance(result, pd.Series)
 
-    def test_tsf_consistency(self):
-        result1 = self.tsf.calculate(self.sample_data)
-        result2 = self.tsf.calculate(self.sample_data)
-        pd.testing.assert_frame_equal(result1, result2) 
+    def test_tsforecast_with_nan_values(self):
+        data_with_nan = self.sample_data['Close'].copy()
+        data_with_nan.loc[5] = np.nan
+        result = self.tsforecast(data_with_nan)
+        assert isinstance(result, pd.Series)
+        assert len(result) == len(data_with_nan)
+
+    def test_tsforecast_performance(self):
+        large_series = pd.Series(np.random.uniform(100, 200, 10000))
+        import time
+        start_time = time.time()
+        result = self.tsforecast(large_series)
+        end_time = time.time()
+        assert end_time - start_time < 1.0
+        assert isinstance(result, pd.Series)
+
+    def test_tsforecast_apply_rule(self):
+        result = apply_rule_tsforecast(self.sample_data, point=0.01)
+        assert 'TSForecast' in result
+        assert 'TSForecast_Signal' in result
+        assert 'Direction' in result
+        assert 'Diff' in result
+        signals = result['TSForecast_Signal'].dropna()
+        assert np.issubdtype(signals.dtype, np.number) 

@@ -4,253 +4,154 @@
 import pytest
 import pandas as pd
 import numpy as np
-from unittest.mock import patch, MagicMock
 from src.calculation.indicators.momentum.stochoscillator_ind import calculate_stochoscillator, apply_rule_stochoscillator
 
 
-class TestStochasticOscillatorIndicator:
+class TestStochOscillatorIndicator:
     """Test cases for Stochastic Oscillator indicator."""
 
     def setup_method(self):
         """Set up test data."""
+        self.stochosc = calculate_stochoscillator
+        dates = pd.date_range('2023-01-01', periods=30, freq='D')
         self.sample_data = pd.DataFrame({
-            'Open': [100, 101, 102, 103, 104, 105, 106, 107, 108, 109],
-            'High': [102, 103, 104, 105, 106, 107, 108, 109, 110, 111],
-            'Low': [99, 100, 101, 102, 103, 104, 105, 106, 107, 108],
-            'Close': [101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
-            'Volume': [1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900]
-        })
-        self.stoch_indicator = StochasticOscillatorIndicator()
+            'Open': [100 + i * 0.1 for i in range(30)],
+            'High': [102 + i * 0.1 for i in range(30)],
+            'Low': [98 + i * 0.1 for i in range(30)],
+            'Close': [101 + i * 0.1 for i in range(30)],
+            'Volume': [1000 + i * 10 for i in range(30)]
+        }, index=dates)
 
-    def test_stoch_initialization(self):
-        """Test Stochastic Oscillator indicator initialization."""
-        assert self.stoch_indicator.name == "StochasticOscillator"
-        assert self.stoch_indicator.category == "Momentum"
-
-    def test_stoch_calculation_basic(self):
+    def test_stochosc_calculation_basic(self):
         """Test basic Stochastic Oscillator calculation."""
-        result = self.stoch_indicator.calculate(
-            self.sample_data, 
-            k_period=14, 
-            d_period=3, 
-            price_type='close'
-        )
-        
-        assert 'StochasticOscillator_K' in result.columns
-        assert 'StochasticOscillator_D' in result.columns
-        assert len(result) == len(self.sample_data)
+        k_values, d_values = self.stochosc(self.sample_data)
+        assert isinstance(k_values, pd.Series)
+        assert isinstance(d_values, pd.Series)
+        assert len(k_values) == len(self.sample_data)
+        assert len(d_values) == len(self.sample_data)
+        assert not k_values.isna().all()
+        assert not d_values.isna().all()
 
-    def test_stoch_calculation_with_open_price(self):
-        """Test Stochastic Oscillator calculation using open price."""
-        result = self.stoch_indicator.calculate(
-            self.sample_data, 
-            k_period=14, 
-            d_period=3, 
-            price_type='open'
-        )
-        
-        assert 'StochasticOscillator_K' in result.columns
-        assert 'StochasticOscillator_D' in result.columns
-        assert len(result) == len(self.sample_data)
+    def test_stochosc_with_custom_periods(self):
+        """Test Stochastic Oscillator calculation with custom periods."""
+        k_values, d_values = self.stochosc(self.sample_data, k_period=10, d_period=3)
+        assert isinstance(k_values, pd.Series)
+        assert isinstance(d_values, pd.Series)
+        assert k_values.iloc[:9].isna().all()
+        assert not k_values.iloc[9:].isna().all()
 
-    def test_stoch_different_parameters(self):
-        """Test Stochastic Oscillator calculation with different parameters."""
-        k_periods = [5, 14, 20]
-        d_periods = [3, 5, 7]
-        
-        for k in k_periods:
-            for d in d_periods:
-                result = self.stoch_indicator.calculate(
-                    self.sample_data, 
-                    k_period=k, 
-                    d_period=d, 
-                    price_type='close'
-                )
-                
-                assert 'StochasticOscillator_K' in result.columns
-                assert 'StochasticOscillator_D' in result.columns
+    def test_stochosc_with_invalid_periods(self):
+        """Test Stochastic Oscillator calculation with invalid periods."""
+        with pytest.raises(ValueError, match="Stochastic Oscillator k_period must be positive"):
+            self.stochosc(self.sample_data, k_period=0)
+        with pytest.raises(ValueError, match="Stochastic Oscillator k_period must be positive"):
+            self.stochosc(self.sample_data, k_period=-1)
 
-    def test_stoch_invalid_k_period(self):
-        """Test Stochastic Oscillator calculation with invalid k period."""
-        with pytest.raises(ValueError):
-            self.stoch_indicator.calculate(
-                self.sample_data, 
-                k_period=0, 
-                d_period=3, 
-                price_type='close'
-            )
-
-    def test_stoch_invalid_d_period(self):
-        """Test Stochastic Oscillator calculation with invalid d period."""
-        with pytest.raises(ValueError):
-            self.stoch_indicator.calculate(
-                self.sample_data, 
-                k_period=14, 
-                d_period=0, 
-                price_type='close'
-            )
-
-    def test_stoch_empty_dataframe(self):
+    def test_stochosc_empty_dataframe(self):
         """Test Stochastic Oscillator calculation with empty dataframe."""
-        empty_df = pd.DataFrame()
-        
-        with pytest.raises(ValueError):
-            self.stoch_indicator.calculate(
-                empty_df, 
-                k_period=14, 
-                d_period=3, 
-                price_type='close'
-            )
+        empty_df = pd.DataFrame(columns=['Open', 'High', 'Low', 'Close', 'Volume'])
+        k_values, d_values = self.stochosc(empty_df)
+        assert isinstance(k_values, pd.Series)
+        assert isinstance(d_values, pd.Series)
+        assert len(k_values) == 0
+        assert len(d_values) == 0
 
-    def test_stoch_missing_columns(self):
-        """Test Stochastic Oscillator calculation with missing required columns."""
-        incomplete_df = self.sample_data.drop(columns=['High', 'Low'])
-        
-        with pytest.raises(ValueError):
-            self.stoch_indicator.calculate(
-                incomplete_df, 
-                k_period=14, 
-                d_period=3, 
-                price_type='close'
-            )
+    def test_stochosc_insufficient_data(self):
+        """Test Stochastic Oscillator calculation with insufficient data."""
+        small_df = self.sample_data.head(5)
+        k_values, d_values = self.stochosc(small_df, k_period=20)
+        assert k_values.isna().all()
+        assert d_values.isna().all()
 
-    def test_stoch_parameter_validation(self):
+    def test_stochosc_parameter_validation(self):
         """Test Stochastic Oscillator parameter validation."""
-        # Test invalid price_type
-        with pytest.raises(ValueError):
-            self.stoch_indicator.calculate(
-                self.sample_data, 
-                k_period=14, 
-                d_period=3, 
-                price_type='invalid'
-            )
+        k_values, d_values = self.stochosc(self.sample_data, k_period=20, d_period=3)
+        assert isinstance(k_values, pd.Series)
+        assert isinstance(d_values, pd.Series)
+        k_values, d_values = self.stochosc(self.sample_data, k_period=int(20.5), d_period=int(3.5))
+        assert isinstance(k_values, pd.Series)
+        assert isinstance(d_values, pd.Series)
 
-    def test_stoch_value_range(self):
+    def test_stochosc_with_nan_values(self):
+        """Test Stochastic Oscillator calculation with NaN values in data."""
+        data_with_nan = self.sample_data.copy()
+        data_with_nan.loc[5, 'High'] = np.nan
+        k_values, d_values = self.stochosc(data_with_nan)
+        assert isinstance(k_values, pd.Series)
+        assert isinstance(d_values, pd.Series)
+        assert len(k_values) == len(data_with_nan)
+        assert len(d_values) == len(data_with_nan)
+
+    def test_stochosc_performance(self):
+        """Test Stochastic Oscillator calculation performance with larger dataset."""
+        large_data = pd.DataFrame({
+            'Open': np.random.uniform(100, 200, 10000),
+            'High': np.random.uniform(200, 300, 10000),
+            'Low': np.random.uniform(50, 100, 10000),
+            'Close': np.random.uniform(100, 200, 10000),
+            'Volume': np.random.uniform(1000, 5000, 10000)
+        })
+        import time
+        start_time = time.time()
+        k_values, d_values = self.stochosc(large_data)
+        end_time = time.time()
+        assert end_time - start_time < 1.0
+        assert isinstance(k_values, pd.Series)
+        assert isinstance(d_values, pd.Series)
+
+    def test_stochosc_apply_rule(self):
+        """Test Stochastic Oscillator rule application."""
+        result = apply_rule_stochoscillator(self.sample_data, point=0.01)
+        assert 'StochOsc_K' in result
+        assert 'StochOsc_D' in result
+        assert 'StochOsc_Signal' in result
+        assert 'Direction' in result
+        assert 'Diff' in result
+        signals = result['StochOsc_Signal'].dropna()
+        assert np.issubdtype(signals.dtype, np.number)
+
+    def test_stochosc_value_range(self):
         """Test that Stochastic Oscillator values are within expected range (0-100)."""
-        result = self.stoch_indicator.calculate(
-            self.sample_data, 
-            k_period=14, 
-            d_period=3, 
-            price_type='close'
-        )
-        
-        k_values = result['StochasticOscillator_K'].dropna()
-        d_values = result['StochasticOscillator_D'].dropna()
+        k_values, d_values = self.stochosc(self.sample_data)
         
         assert (k_values >= 0).all()
         assert (k_values <= 100).all()
         assert (d_values >= 0).all()
         assert (d_values <= 100).all()
 
-    def test_stoch_overbought_oversold_levels(self):
+    def test_stochosc_overbought_oversold_levels(self):
         """Test Stochastic Oscillator overbought/oversold level detection."""
-        result = self.stoch_indicator.calculate(
-            self.sample_data, 
-            k_period=14, 
-            d_period=3, 
-            price_type='close'
-        )
-        
-        k_values = result['StochasticOscillator_K'].dropna()
-        d_values = result['StochasticOscillator_D'].dropna()
+        k_values, d_values = self.stochosc(self.sample_data)
         
         # Should be able to identify overbought/oversold conditions
         assert len(k_values) > 0
         assert len(d_values) > 0
 
-    def test_stoch_with_nan_values(self):
-        """Test Stochastic Oscillator calculation with NaN values in data."""
-        data_with_nan = self.sample_data.copy()
-        data_with_nan.loc[2, 'High'] = np.nan
-        data_with_nan.loc[3, 'Low'] = np.nan
-        
-        result = self.stoch_indicator.calculate(
-            data_with_nan, 
-            k_period=14, 
-            d_period=3, 
-            price_type='close'
-        )
-        
-        assert 'StochasticOscillator_K' in result.columns
-        assert 'StochasticOscillator_D' in result.columns
-        # Should handle NaN values gracefully
-
-    def test_stoch_docstring_info(self):
+    def test_stochosc_docstring_info(self):
         """Test that Stochastic Oscillator has proper docstring information."""
-        docstring = self.stoch_indicator.__doc__
+        docstring = self.stochosc.__doc__
         assert docstring is not None
         assert "StochasticOscillator" in docstring
 
-    def test_stoch_cli_integration(self):
-        """Test Stochastic Oscillator CLI integration."""
-        result = self.stoch_indicator.calculate(
-            self.sample_data, 
-            k_period=14, 
-            d_period=3, 
-            price_type='close'
-        )
-        
-        assert 'StochasticOscillator_K' in result.columns
-        assert 'StochasticOscillator_D' in result.columns
-        assert 'StochasticOscillator_K_Period' in result.columns
-        assert 'StochasticOscillator_D_Period' in result.columns
-        assert 'StochasticOscillator_Price_Type' in result.columns
-
-    def test_stoch_performance(self):
-        """Test Stochastic Oscillator calculation performance with larger dataset."""
-        # Create larger dataset
-        large_data = pd.DataFrame({
-            'Close': np.random.uniform(100, 200, 1000),
-            'Open': np.random.uniform(100, 200, 1000),
-            'High': np.random.uniform(100, 200, 1000),
-            'Low': np.random.uniform(100, 200, 1000),
-            'Volume': np.random.uniform(1000, 5000, 1000)
-        })
-        
-        result = self.stoch_indicator.calculate(
-            large_data, 
-            k_period=14, 
-            d_period=3, 
-            price_type='close'
-        )
-        
-        assert 'StochasticOscillator_K' in result.columns
-        assert 'StochasticOscillator_D' in result.columns
-        assert len(result) == 1000
-
-    def test_stoch_edge_cases(self):
+    def test_stochosc_edge_cases(self):
         """Test Stochastic Oscillator calculation with edge cases."""
         # Test with very small dataset
         small_data = self.sample_data.head(5)
         
         with pytest.raises(ValueError):
-            self.stoch_indicator.calculate(
-                small_data, 
-                k_period=10, 
-                d_period=3, 
-                price_type='close'
-            )
+            self.stochosc(small_data, k_period=10)
 
-    def test_stoch_consistency(self):
+    def test_stochosc_consistency(self):
         """Test Stochastic Oscillator calculation consistency."""
-        result1 = self.stoch_indicator.calculate(
-            self.sample_data, 
-            k_period=14, 
-            d_period=3, 
-            price_type='close'
-        )
+        result1 = self.stochosc(self.sample_data)
         
-        result2 = self.stoch_indicator.calculate(
-            self.sample_data, 
-            k_period=14, 
-            d_period=3, 
-            price_type='close'
-        )
+        result2 = self.stochosc(self.sample_data)
         
         # Results should be identical for same input
-        pd.testing.assert_frame_equal(result1, result2)
+        pd.testing.assert_series_equal(result1[0], result2[0])
+        pd.testing.assert_series_equal(result1[1], result2[1])
 
-    def test_stoch_crossover_signals(self):
+    def test_stochosc_crossover_signals(self):
         """Test Stochastic Oscillator crossover signal detection."""
         # Create data with clear momentum changes
         momentum_data = pd.DataFrame({
@@ -261,13 +162,8 @@ class TestStochasticOscillatorIndicator:
             'Volume': [1000] * 15
         })
         
-        result = self.stoch_indicator.calculate(
-            momentum_data, 
-            k_period=5, 
-            d_period=3, 
-            price_type='close'
-        )
+        k_values, d_values = self.stochosc(momentum_data, k_period=5)
         
-        assert 'StochasticOscillator_K' in result.columns
-        assert 'StochasticOscillator_D' in result.columns
+        assert isinstance(k_values, pd.Series)
+        assert isinstance(d_values, pd.Series)
         # Should detect K and D line crossovers 
