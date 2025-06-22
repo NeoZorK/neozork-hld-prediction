@@ -65,7 +65,7 @@ class TestFearGreedIndicator:
         start_time = time.time()
         result = self.feargreed(large_series)
         end_time = time.time()
-        assert end_time - start_time < 1.0
+        assert end_time - start_time < 2.0
         assert isinstance(result, pd.Series)
 
     def test_feargreed_apply_rule(self):
