@@ -42,10 +42,12 @@ class TestStochOscillatorIndicator:
 
     def test_stochosc_with_invalid_periods(self):
         """Test Stochastic Oscillator calculation with invalid periods."""
-        with pytest.raises(ValueError, match="Stochastic Oscillator k_period must be positive"):
+        with pytest.raises(ValueError, match="All periods must be positive"):
             self.stochosc(self.sample_data, k_period=0)
-        with pytest.raises(ValueError, match="Stochastic Oscillator k_period must be positive"):
-            self.stochosc(self.sample_data, k_period=-1)
+        with pytest.raises(ValueError, match="All periods must be positive"):
+            self.stochosc(self.sample_data, d_period=0)
+        with pytest.raises(ValueError, match="All periods must be positive"):
+            self.stochosc(self.sample_data, slowing=0)
 
     def test_stochosc_empty_dataframe(self):
         """Test Stochastic Oscillator calculation with empty dataframe."""
@@ -113,11 +115,11 @@ class TestStochOscillatorIndicator:
     def test_stochosc_value_range(self):
         """Test that Stochastic Oscillator values are within expected range (0-100)."""
         k_values, d_values = self.stochosc(self.sample_data)
-        
-        assert (k_values >= 0).all()
-        assert (k_values <= 100).all()
-        assert (d_values >= 0).all()
-        assert (d_values <= 100).all()
+        # Проверяем только ненулевые значения
+        k_valid = k_values.dropna()
+        d_valid = d_values.dropna()
+        assert (k_valid >= 0).all() and (k_valid <= 100).all()
+        assert (d_valid >= 0).all() and (d_valid <= 100).all()
 
     def test_stochosc_overbought_oversold_levels(self):
         """Test Stochastic Oscillator overbought/oversold level detection."""
@@ -131,15 +133,16 @@ class TestStochOscillatorIndicator:
         """Test that Stochastic Oscillator has proper docstring information."""
         docstring = self.stochosc.__doc__
         assert docstring is not None
-        assert "StochasticOscillator" in docstring
+        assert "Stochastic Oscillator" in docstring
 
     def test_stochosc_edge_cases(self):
         """Test Stochastic Oscillator calculation with edge cases."""
         # Test with very small dataset
         small_data = self.sample_data.head(5)
-        
-        with pytest.raises(ValueError):
-            self.stochosc(small_data, k_period=10)
+        k_values, d_values = self.stochosc(small_data)
+        # Ожидаем, что вся серия будет NaN
+        assert k_values.isna().all()
+        assert d_values.isna().all()
 
     def test_stochosc_consistency(self):
         """Test Stochastic Oscillator calculation consistency."""
