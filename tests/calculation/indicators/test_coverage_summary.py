@@ -3,9 +3,16 @@
 import pytest
 import pandas as pd
 import numpy as np
-import importlib
 import os
+import sys
+import importlib
 from pathlib import Path
+
+# Add the project root to the path for imports
+project_root = Path(__file__).parent.parent.parent.parent
+sys.path.insert(0, str(project_root))
+
+from src.calculation.indicators.base_indicator import BaseIndicator
 
 class TestCoverageSummary:
     """Test to verify that all indicators are covered by tests."""
@@ -154,7 +161,6 @@ class TestCoverageSummary:
     def test_base_indicator_class_exists(self):
         """Test that the base indicator class exists and works."""
         try:
-            from src.calculation.indicators.base_indicator import BaseIndicator
             assert BaseIndicator is not None, "BaseIndicator class should exist"
             
             # Test that it can be instantiated

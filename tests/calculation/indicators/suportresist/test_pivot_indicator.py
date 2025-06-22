@@ -3,11 +3,11 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.calculation.indicators.suportresist.pivot_ind import calculate_pivot, apply_rule_pivot
+from src.calculation.indicators.suportresist.pivot_ind import calculate_pivot_points, apply_rule_pivot
 
 class TestPivotIndicator:
     def setup_method(self):
-        self.pivot = calculate_pivot
+        self.pivot = calculate_pivot_points
         dates = pd.date_range('2023-01-01', periods=30, freq='D')
         self.sample_data = pd.DataFrame({
             'Open': [100 + i * 0.1 for i in range(30)],
@@ -18,75 +18,62 @@ class TestPivotIndicator:
         }, index=dates)
 
     def test_pivot_calculation_basic(self):
-        result = self.pivot(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'])
-        assert isinstance(result, pd.DataFrame)
-        assert len(result) == len(self.sample_data)
-        assert 'Pivot' in result.columns
-        assert 'R1' in result.columns
-        assert 'R2' in result.columns
-        assert 'R3' in result.columns
-        assert 'S1' in result.columns
-        assert 'S2' in result.columns
-        assert 'S3' in result.columns
+        result = self.pivot(self.sample_data)
+        assert isinstance(result, tuple)
+        assert len(result) == 3
+        pivot_point, resistance_1, support_1 = result
+        assert isinstance(pivot_point, pd.Series)
+        assert isinstance(resistance_1, pd.Series)
+        assert isinstance(support_1, pd.Series)
+        assert len(pivot_point) == len(self.sample_data)
 
-    def test_pivot_with_custom_period(self):
-        result = self.pivot(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=10)
-        assert isinstance(result, pd.DataFrame)
-        assert result.iloc[:9]['Pivot'].isna().all()
-        assert not result.iloc[9:]['Pivot'].isna().all()
-
-    def test_pivot_with_invalid_period(self):
-        with pytest.raises(ValueError, match="Pivot period must be positive"):
-            self.pivot(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=0)
-        with pytest.raises(ValueError, match="Pivot period must be positive"):
-            self.pivot(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=-1)
+    def test_pivot_with_custom_price_type(self):
+        from src.calculation.indicators.base_indicator import PriceType
+        result = self.pivot(self.sample_data, price_type=PriceType.OPEN)
+        assert isinstance(result, tuple)
+        assert len(result) == 3
 
     def test_pivot_empty_dataframe(self):
-        empty_series = pd.Series(dtype=float)
-        result = self.pivot(empty_series, empty_series, empty_series)
-        assert isinstance(result, pd.DataFrame)
-        assert len(result) == 0
+        empty_df = pd.DataFrame(columns=['Open', 'High', 'Low', 'Close', 'Volume'])
+        result = self.pivot(empty_df)
+        assert isinstance(result, tuple)
+        assert len(result) == 3
+        pivot_point, resistance_1, support_1 = result
+        assert len(pivot_point) == 0
 
     def test_pivot_insufficient_data(self):
-        small_high = self.sample_data['High'].head(5)
-        small_low = self.sample_data['Low'].head(5)
-        small_close = self.sample_data['Close'].head(5)
-        result = self.pivot(small_high, small_low, small_close, period=20)
-        assert result['Pivot'].isna().all()
-
-    def test_pivot_parameter_validation(self):
-        result = self.pivot(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=20)
-        assert isinstance(result, pd.DataFrame)
-        result = self.pivot(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=int(20.5))
-        assert isinstance(result, pd.DataFrame)
+        small_df = self.sample_data.head(1)
+        result = self.pivot(small_df)
+        assert isinstance(result, tuple)
+        assert len(result) == 3
 
     def test_pivot_with_nan_values(self):
-        high_with_nan = self.sample_data['High'].copy()
-        high_with_nan.loc[5] = np.nan
-        result = self.pivot(high_with_nan, self.sample_data['Low'], self.sample_data['Close'])
-        assert isinstance(result, pd.DataFrame)
-        assert len(result) == len(high_with_nan)
+        data_with_nan = self.sample_data.copy()
+        data_with_nan.loc[5, 'High'] = np.nan
+        result = self.pivot(data_with_nan)
+        assert isinstance(result, tuple)
+        assert len(result) == 3
 
     def test_pivot_performance(self):
-        large_high = pd.Series(np.random.uniform(100, 200, 10000))
-        large_low = pd.Series(np.random.uniform(50, 100, 10000))
-        large_close = pd.Series(np.random.uniform(75, 150, 10000))
+        large_df = pd.DataFrame({
+            'Open': np.random.uniform(100, 200, 10000),
+            'High': np.random.uniform(150, 250, 10000),
+            'Low': np.random.uniform(50, 150, 10000),
+            'Close': np.random.uniform(75, 175, 10000),
+            'Volume': np.random.uniform(1000, 5000, 10000)
+        })
         import time
         start_time = time.time()
-        result = self.pivot(large_high, large_low, large_close)
+        result = self.pivot(large_df)
         end_time = time.time()
         assert end_time - start_time < 1.0
-        assert isinstance(result, pd.DataFrame)
+        assert isinstance(result, tuple)
 
     def test_pivot_apply_rule(self):
         result = apply_rule_pivot(self.sample_data, point=0.01)
-        assert 'Pivot' in result
-        assert 'R1' in result
-        assert 'R2' in result
-        assert 'R3' in result
-        assert 'S1' in result
-        assert 'S2' in result
-        assert 'S3' in result
+        assert 'Pivot_PP' in result
+        assert 'Pivot_R1' in result
+        assert 'Pivot_S1' in result
         assert 'Pivot_Signal' in result
         assert 'Direction' in result
         assert 'Diff' in result
