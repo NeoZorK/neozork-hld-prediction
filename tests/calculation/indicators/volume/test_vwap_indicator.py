@@ -28,7 +28,7 @@ class TestVWAPIndicator:
         assert not result.isna().all()
 
     def test_vwap_with_invalid_period(self):
-        pass  # Нет параметра period, тест не нужен
+        pass  # No period parameter, test not needed
 
     def test_vwap_empty_dataframe(self):
         empty_df = pd.DataFrame(columns=['Open', 'High', 'Low', 'Close', 'Volume'])
@@ -39,7 +39,7 @@ class TestVWAPIndicator:
     def test_vwap_insufficient_data(self):
         small_df = self.sample_data.head(5)
         result = self.vwap(small_df)
-        # VWAP всегда возвращает значения, даже на малом количестве данных
+        # VWAP always returns values, even with a small amount of data
         assert isinstance(result, pd.Series)
         assert len(result) == len(small_df)
 
@@ -168,7 +168,7 @@ class TestVWAPIndicator:
         zero_volume_data = self.sample_data.copy()
         zero_volume_data['Volume'] = 0
         result = self.vwap(zero_volume_data)
-        # При нулевом объёме VWAP возвращает NaN
+        # When volume is zero, VWAP returns NaN
         assert isinstance(result, pd.Series)
         assert result.isna().all()
 

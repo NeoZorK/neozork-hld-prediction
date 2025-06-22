@@ -76,7 +76,7 @@ class TestOBVIndicator:
         obv_valid = calculate_obv(self.sample_data['Close'], self.sample_data['Volume'], period=20)
         assert obv_valid.shape[0] == self.sample_data.shape[0]
         
-        # Test with int period (не передаём float)
+        # Test with int period (do not pass float)
         obv_int = calculate_obv(self.sample_data['Close'], self.sample_data['Volume'], period=20)
         assert obv_int.shape[0] == self.sample_data.shape[0]
 
