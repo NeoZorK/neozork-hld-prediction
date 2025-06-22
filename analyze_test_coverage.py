@@ -50,7 +50,7 @@ def map_test_to_src(test_file):
         src_path = Path("src") / src_subpath / f"{module_name}.py"
         return [src_path]
     
-    # For tests in tests/ root (e.g., test_fix_imports.py)
+    # For tests in tests/ root (e.g., test_fix_imports.py for scripts/fix_imports.py)
     root_path = Path(f"{module_name}.py")
     src_path = Path("src") / relative_path.parent / f"{module_name}.py"
     return [src_path, root_path]
