@@ -1,0 +1,126 @@
+{
+  "mcpServers": {
+    "neozork-cursor-mcp": {
+      "command": "python",
+      "args": ["cursor_mcp_server.py"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}",
+        "LOG_LEVEL": "INFO"
+      }
+    }
+  },
+  "cursor": {
+    "ai": {
+      "mcpServers": {
+        "neozork-cursor-mcp": {
+          "enabled": true,
+          "priority": 1,
+          "description": "Neozork HLD Prediction MCP Server for enhanced financial analysis support"
+        }
+      }
+    }
+  },
+  "settings": {
+    "mcp.server.neozork-cursor-mcp": {
+      "logLevel": "INFO",
+      "timeout": 30000,
+      "maxMemory": "512MB",
+      "autoRestart": true,
+      "restartDelay": 5000
+    }
+  },
+  "features": {
+    "completion": {
+      "enabled": true,
+      "triggerCharacters": [".", ":", "@", "#"],
+      "snippets": true,
+      "contextAware": true
+    },
+    "hover": {
+      "enabled": true,
+      "markdown": true
+    },
+    "definition": {
+      "enabled": true
+    },
+    "references": {
+      "enabled": true
+    },
+    "symbols": {
+      "enabled": true,
+      "workspace": true,
+      "document": true
+    },
+    "codeActions": {
+      "enabled": true,
+      "refactor": true,
+      "quickFix": true
+    }
+  },
+  "projectSpecific": {
+    "financialData": {
+      "autoScan": true,
+      "scanInterval": 300000,
+      "supportedFormats": ["csv", "parquet"],
+      "defaultSymbols": ["BTCUSD", "GBPUSD", "EURUSD"],
+      "defaultTimeframes": ["D1", "H1", "M15"]
+    },
+    "indicators": {
+      "autoIndex": true,
+      "categories": [
+        "momentum",
+        "trend",
+        "volatility",
+        "volume",
+        "oscillators"
+      ]
+    },
+    "snippets": {
+      "enabled": true,
+      "categories": [
+        "data_loading",
+        "indicator_calculation",
+        "plotting",
+        "analysis",
+        "machine_learning"
+      ]
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/cursor_mcp.log",
+    "maxSize": "10MB",
+    "maxFiles": 5,
+    "format": "[{timestamp}] [{level}] [{component}] {message}"
+  },
+  "performance": {
+    "cache": {
+      "enabled": true,
+      "maxSize": "100MB",
+      "ttl": 3600000
+    },
+    "indexing": {
+      "parallel": true,
+      "maxWorkers": 4,
+      "batchSize": 100
+    },
+    "completion": {
+      "maxItems": 100,
+      "timeout": 5000
+    }
+  },
+  "security": {
+    "allowedPaths": [
+      "${workspaceFolder}/src",
+      "${workspaceFolder}/data",
+      "${workspaceFolder}/mql5_feed"
+    ],
+    "blockedPaths": [
+      "${workspaceFolder}/.git",
+      "${workspaceFolder}/.venv",
+      "${workspaceFolder}/__pycache__",
+      "${workspaceFolder}/logs"
+    ]
+  }
+} 
