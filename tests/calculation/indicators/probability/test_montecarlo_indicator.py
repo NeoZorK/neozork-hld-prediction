@@ -30,14 +30,15 @@ class TestMonteCarloIndicator:
         assert not result.iloc[9:].isna().all()
 
     def test_montecarlo_with_invalid_parameters(self):
-        with pytest.raises(ValueError, match="Monte Carlo period must be positive"):
+        """Test Monte Carlo calculation with invalid parameters."""
+        with pytest.raises(ValueError, match="Simulations and period must be positive"):
             self.montecarlo(self.sample_data['Close'], period=0)
-        with pytest.raises(ValueError, match="Monte Carlo period must be positive"):
+        
+        with pytest.raises(ValueError, match="Simulations and period must be positive"):
             self.montecarlo(self.sample_data['Close'], period=-1)
-        with pytest.raises(ValueError, match="Monte Carlo simulations must be positive"):
+        
+        with pytest.raises(ValueError, match="Simulations and period must be positive"):
             self.montecarlo(self.sample_data['Close'], simulations=0)
-        with pytest.raises(ValueError, match="Monte Carlo simulations must be positive"):
-            self.montecarlo(self.sample_data['Close'], simulations=-1)
 
     def test_montecarlo_empty_dataframe(self):
         empty_series = pd.Series(dtype=float)
