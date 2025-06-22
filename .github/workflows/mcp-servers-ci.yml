@@ -1,0 +1,329 @@
+name: MCP Servers CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'pycharm_github_copilot_mcp.py'
+      - 'cursor_mcp_server.py'
+      - 'scripts/run_cursor_mcp.py'
+      - 'tests/mcp/**'
+      - 'docs/mcp-servers/**'
+      - '.github/workflows/mcp-servers-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'pycharm_github_copilot_mcp.py'
+      - 'cursor_mcp_server.py'
+      - 'scripts/run_cursor_mcp.py'
+      - 'tests/mcp/**'
+      - 'docs/mcp-servers/**'
+
+env:
+  PYTHON_VERSION: '3.11'
+  PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}
+
+jobs:
+  test-mcp-servers:
+    name: Test MCP Servers
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+        mcp-server: ['pycharm_github_copilot_mcp', 'cursor_mcp_server']
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements.txt', '**/pyproject.toml') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-${{ matrix.python-version }}-
+          
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        pip install pytest pytest-cov pytest-mock pytest-asyncio
+        pip install black flake8 mypy bandit safety
+        
+    - name: Create test data
+      run: |
+        mkdir -p data/test
+        mkdir -p mql5_feed
+        echo "Date,Open,High,Low,Close,Volume" > mql5_feed/CSVExport_BTCUSD_PERIOD_D1.csv
+        echo "2023-01-01,100,110,95,105,1000" >> mql5_feed/CSVExport_BTCUSD_PERIOD_D1.csv
+        echo "2023-01-02,105,115,100,110,1200" >> mql5_feed/CSVExport_BTCUSD_PERIOD_D1.csv
+        
+    - name: Run MCP Server tests
+      run: |
+        echo "Testing ${{ matrix.mcp-server }}"
+        if [ "${{ matrix.mcp-server }}" = "pycharm_github_copilot_mcp" ]; then
+          python -m pytest tests/mcp/test_pycharm_github_copilot_mcp.py -v --cov=pycharm_github_copilot_mcp --cov-report=xml
+        else
+          python -m pytest tests/mcp/test_cursor_mcp_server.py -v --cov=cursor_mcp_server --cov-report=xml
+        fi
+        
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: mcp-servers
+        name: mcp-servers-coverage
+        
+    - name: Run MCP Server runner tests
+      run: |
+        python scripts/run_cursor_mcp.py --test --report
+        
+  lint-and-format:
+    name: Lint and Format
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install black flake8 mypy bandit safety
+        
+    - name: Check code formatting with Black
+      run: |
+        black --check --diff pycharm_github_copilot_mcp.py cursor_mcp_server.py scripts/run_cursor_mcp.py
+        
+    - name: Lint with flake8
+      run: |
+        flake8 pycharm_github_copilot_mcp.py cursor_mcp_server.py scripts/run_cursor_mcp.py --max-line-length=100 --ignore=E203,W503
+        
+    - name: Type check with mypy
+      run: |
+        mypy pycharm_github_copilot_mcp.py cursor_mcp_server.py scripts/run_cursor_mcp.py --ignore-missing-imports
+        
+    - name: Security check with bandit
+      run: |
+        bandit -r . -f json -o bandit-report.json || true
+        
+    - name: Check for security vulnerabilities
+      run: |
+        safety check --json --output safety-report.json || true
+        
+  performance-test:
+    name: Performance Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        pip install psutil memory-profiler
+        
+    - name: Create test data
+      run: |
+        mkdir -p data/test
+        mkdir -p mql5_feed
+        python -c "import pandas as pd; import numpy as np; dates = pd.date_range('2020-01-01', '2023-12-31', freq='D'); data = pd.DataFrame({'Date': dates, 'Open': np.random.uniform(100, 200, len(dates)), 'High': np.random.uniform(200, 300, len(dates)), 'Low': np.random.uniform(50, 100, len(dates)), 'Close': np.random.uniform(100, 200, len(dates)), 'Volume': np.random.randint(1000, 10000, len(dates))}); data.to_csv('mql5_feed/CSVExport_BTCUSD_PERIOD_D1.csv', index=False)"
+        
+    - name: Run performance tests
+      run: |
+        echo "Running performance tests..."
+        python scripts/run_cursor_mcp.py --test --performance --report
+        
+    - name: Memory usage test
+      run: |
+        python -c "import psutil; import time; from pycharm_github_copilot_mcp import PyCharmGitHubCopilotMCPServer; process = psutil.Process(); initial_memory = process.memory_info().rss / 1024 / 1024; server = PyCharmGitHubCopilotMCPServer(); time.sleep(2); final_memory = process.memory_info().rss / 1024 / 1024; memory_increase = final_memory - initial_memory; print(f'Initial memory: {initial_memory:.2f} MB'); print(f'Final memory: {final_memory:.2f} MB'); print(f'Memory increase: {memory_increase:.2f} MB'); assert memory_increase < 100, f'Memory increase too high: {memory_increase:.2f} MB'"
+        
+  integration-test:
+    name: Integration Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        
+    - name: Create test environment
+      run: |
+        mkdir -p logs
+        mkdir -p data/test
+        mkdir -p mql5_feed
+        
+    - name: Test MCP server startup
+      run: |
+        timeout 30s python pycharm_github_copilot_mcp.py &
+        SERVER_PID=$!
+        sleep 5
+        if ps -p $SERVER_PID > /dev/null; then
+          echo "MCP server started successfully"
+          kill $SERVER_PID
+        else
+          echo "MCP server failed to start"
+          exit 1
+        fi
+        
+    - name: Test MCP server communication
+      run: |
+        python -c "import json; import subprocess; import time; server_process = subprocess.Popen(['python', 'pycharm_github_copilot_mcp.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True); time.sleep(2); init_request = {'jsonrpc': '2.0', 'id': 1, 'method': 'initialize', 'params': {'processId': 12345, 'rootUri': 'file:///tmp/test', 'capabilities': {}}}; server_process.stdin.write(json.dumps(init_request) + '\\n'); server_process.stdin.flush(); response = server_process.stdout.readline(); response_data = json.loads(response); assert response_data.get('result') is not None, 'No result in response'; assert 'capabilities' in response_data['result'], 'No capabilities in result'; print('MCP server communication test passed'); server_process.terminate(); server_process.wait()"
+        
+  documentation-test:
+    name: Documentation Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check documentation links
+      run: |
+        test -f docs/mcp-servers/pycharm-github-copilot-mcp.md
+        test -f docs/mcp-servers/README_CURSOR_MCP.md
+        test -f docs/mcp-servers/examples.md
+        test -f docs/mcp-servers/auto-start-guide.md
+        
+    - name: Validate markdown
+      run: |
+        python -c "import markdown; import os; docs_dir = 'docs/mcp-servers'; [print(f'✓ {file} is valid markdown') if markdown.markdown(open(os.path.join(docs_dir, file), 'r').read()) else print(f'✗ {file} has markdown errors') for file in os.listdir(docs_dir) if file.endswith('.md')]"
+        
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+        
+    - name: Run Bandit security linter
+      run: |
+        pip install bandit
+        bandit -r . -f json -o bandit-report.json || true
+        
+    - name: Check for known vulnerabilities
+      run: |
+        pip install safety
+        safety check --json --output safety-report.json || true
+        
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [test-mcp-servers, lint-and-format, performance-test, integration-test, documentation-test, security-scan]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        
+    - name: Create release
+      run: |
+        echo "# MCP Servers Release" > RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        echo "## Changes" >> RELEASE_NOTES.md
+        echo "- Updated PyCharm GitHub Copilot MCP Server" >> RELEASE_NOTES.md
+        echo "- Enhanced Cursor MCP Server" >> RELEASE_NOTES.md
+        echo "- Added comprehensive testing" >> RELEASE_NOTES.md
+        echo "- Improved documentation" >> RELEASE_NOTES.md
+        
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        release_name: MCP Servers v${{ github.run_number }}
+        body_path: RELEASE_NOTES.md
+        draft: false
+        prerelease: false
+        
+    - name: Upload artifacts
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./pycharm_github_copilot_mcp.py
+        asset_name: pycharm_github_copilot_mcp.py
+        asset_content_type: text/plain
+        
+    - name: Upload configuration
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./cursor_mcp_config.json
+        asset_name: cursor_mcp_config.json
+        asset_content_type: application/json
+        
+  notify:
+    name: Notify
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: always()
+    
+    steps:
+    - name: Notify on success
+      if: needs.deploy.result == 'success'
+      run: |
+        echo "✅ MCP Servers deployment successful!"
+        echo "Release: v${{ github.run_number }}"
+        
+    - name: Notify on failure
+      if: needs.deploy.result == 'failure'
+      run: |
+        echo "❌ MCP Servers deployment failed!"
+        echo "Check the logs for details." 
