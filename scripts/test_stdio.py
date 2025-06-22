@@ -3,6 +3,7 @@
 
 """
 Test script for PyCharm GitHub Copilot MCP Server stdio mode
+Can be run from any directory
 """
 
 import json
@@ -16,14 +17,27 @@ def test_stdio_mode():
     """Test the MCP server in stdio mode"""
     print("🧪 Testing PyCharm GitHub Copilot MCP Server in stdio mode...")
     
+    # Get project root (parent of scripts directory)
+    script_dir = Path(__file__).parent
+    project_root = script_dir.parent
+    server_file = project_root / "pycharm_github_copilot_mcp.py"
+    
+    if not server_file.exists():
+        print(f"❌ Server file not found: {server_file}")
+        return False
+    
+    print(f"📁 Project root: {project_root}")
+    print(f"🐍 Server file: {server_file}")
+    
     # Start the server
     server_process = subprocess.Popen(
-        ["python", "pycharm_github_copilot_mcp.py"],
+        ["python", str(server_file)],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-        bufsize=1
+        bufsize=1,
+        cwd=str(project_root)  # Set working directory to project root
     )
     
     try:
@@ -39,7 +53,7 @@ def test_stdio_mode():
             "method": "initialize",
             "params": {
                 "processId": 12345,
-                "rootUri": f"file://{Path.cwd()}",
+                "rootUri": f"file://{project_root}",
                 "capabilities": {}
             }
         }
@@ -74,7 +88,7 @@ def test_stdio_mode():
             "method": "textDocument/completion",
             "params": {
                 "textDocument": {
-                    "uri": f"file://{Path.cwd()}/test.py"
+                    "uri": f"file://{project_root}/test.py"
                 },
                 "position": {
                     "line": 0,
@@ -146,11 +160,13 @@ def test_stdio_mode():
         server_process.stdin.flush()
         
         print("✅ All tests completed successfully!")
+        return True
         
     except Exception as e:
         print(f"❌ Error during testing: {e}")
         import traceback
         traceback.print_exc()
+        return False
         
     finally:
         # Clean up
@@ -169,5 +185,15 @@ def test_stdio_mode():
         
         print("🧹 Cleanup completed")
 
+def main():
+    """Main function"""
+    success = test_stdio_mode()
+    if success:
+        print("🎉 All tests passed!")
+        sys.exit(0)
+    else:
+        print("💥 Some tests failed!")
+        sys.exit(1)
+
 if __name__ == "__main__":
-    test_stdio_mode() 
+    main() 
