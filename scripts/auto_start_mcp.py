@@ -289,27 +289,26 @@ class MCPAutoStarter:
                     
     def monitor_project_changes(self) -> None:
         """Monitor project file changes"""
-        class ProjectChangeHandler(FileSystemEventHandler):
-            def __init__(self, auto_starter):
-                self.auto_starter = auto_starter
-                
-            def on_created(self, event):
-                if not event.is_directory:
-                    self.auto_starter.handle_file_change("created", event.src_path)
-                    
-            def on_modified(self, event):
-                if not event.is_directory:
-                    self.auto_starter.handle_file_change("modified", event.src_path)
-                    
-            def on_deleted(self, event):
-                if not event.is_directory:
-                    self.auto_starter.handle_file_change("deleted", event.src_path)
-                    
-        event_handler = ProjectChangeHandler(self)
-        self.observer = Observer()
-        self.observer.schedule(event_handler, str(self.project_root), recursive=True)
-        self.observer.start()
-        
+        try:
+            class ProjectChangeHandler(FileSystemEventHandler):
+                def __init__(self, auto_starter):
+                    self.auto_starter = auto_starter
+                def on_created(self, event):
+                    if not event.is_directory:
+                        self.auto_starter.handle_file_change("created", event.src_path)
+                def on_modified(self, event):
+                    if not event.is_directory:
+                        self.auto_starter.handle_file_change("modified", event.src_path)
+                def on_deleted(self, event):
+                    if not event.is_directory:
+                        self.auto_starter.handle_file_change("deleted", event.src_path)
+            event_handler = ProjectChangeHandler(self)
+            self.observer = Observer()
+            self.observer.schedule(event_handler, str(self.project_root), recursive=True)
+            self.observer.start()
+        except Exception as e:
+            self.logger.error(f"Error starting file monitoring: {e}")
+            
     def handle_file_change(self, change_type: str, file_path: str) -> None:
         """Handle file system changes"""
         try:
