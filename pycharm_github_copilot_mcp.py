@@ -83,6 +83,10 @@ class FinancialData:
     size: int
     modified: datetime
 
+def print_to_stderr(*args, **kwargs):
+    """Print to stderr instead of stdout to avoid interfering with MCP protocol"""
+    print(*args, **kwargs, file=sys.stderr)
+
 class PyCharmGitHubCopilotMCPServer:
     """Enhanced MCP Server optimized for PyCharm IDE with GitHub Copilot integration"""
     
@@ -91,11 +95,11 @@ class PyCharmGitHubCopilotMCPServer:
         self.logger = self._setup_logging()
         self.running = True
         
-        # Print startup message to terminal
-        print("🚀 Starting PyCharm GitHub Copilot MCP Server...")
-        print(f"📁 Project root: {self.project_root}")
-        print(f"🐍 Python version: {sys.version}")
-        print(f"📅 Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        # Print startup message to stderr
+        print_to_stderr("🚀 Starting PyCharm GitHub Copilot MCP Server...")
+        print_to_stderr(f"📁 Project root: {self.project_root}")
+        print_to_stderr(f"🐍 Python version: {sys.version}")
+        print_to_stderr(f"📅 Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         
         # Project state
         self.project_files: Dict[str, ProjectFile] = {}
@@ -137,21 +141,21 @@ class PyCharmGitHubCopilotMCPServer:
         }
         
         # Initialize project
-        print("📊 Scanning project files...")
+        print_to_stderr("📊 Scanning project files...")
         self._scan_project()
-        print("🔍 Indexing code...")
+        print_to_stderr("🔍 Indexing code...")
         self._index_code()
         
         self.logger.info("PyCharm GitHub Copilot MCP Server initialized successfully")
-        print("✅ PyCharm GitHub Copilot MCP Server initialized successfully")
-        print("📈 Server Statistics:")
-        print(f"   - Project files: {len(self.project_files)}")
-        print(f"   - Financial symbols: {len(self.available_symbols)}")
-        print(f"   - Timeframes: {len(self.available_timeframes)}")
-        print(f"   - Functions indexed: {len(self.code_index['functions'])}")
-        print(f"   - Classes indexed: {len(self.code_index['classes'])}")
-        print("🔄 Server is ready to accept connections...")
-        print("💡 Press Ctrl+C to stop the server")
+        print_to_stderr("✅ PyCharm GitHub Copilot MCP Server initialized successfully")
+        print_to_stderr("📈 Server Statistics:")
+        print_to_stderr(f"   - Project files: {len(self.project_files)}")
+        print_to_stderr(f"   - Financial symbols: {len(self.available_symbols)}")
+        print_to_stderr(f"   - Timeframes: {len(self.available_timeframes)}")
+        print_to_stderr(f"   - Functions indexed: {len(self.code_index['functions'])}")
+        print_to_stderr(f"   - Classes indexed: {len(self.code_index['classes'])}")
+        print_to_stderr("🔄 Server is ready to accept connections...")
+        print_to_stderr("💡 Press Ctrl+C to stop the server")
 
     def _setup_logging(self) -> logging.Logger:
         """Setup enhanced logging system"""
@@ -286,7 +290,7 @@ class PyCharmGitHubCopilotMCPServer:
     def start(self):
         """Start the MCP server"""
         self.logger.info("Starting PyCharm GitHub Copilot MCP Server...")
-        print("🔄 Starting MCP server communication...")
+        print_to_stderr("🔄 Starting MCP server communication...")
         
         # Set up signal handlers
         signal.signal(signal.SIGINT, self._signal_handler)
@@ -298,7 +302,7 @@ class PyCharmGitHubCopilotMCPServer:
                 if select.select([sys.stdin], [], [], 0.1)[0]:
                     line = sys.stdin.readline()
                     if not line:
-                        print("📤 Received EOF (Ctrl+D), shutting down...")
+                        print_to_stderr("📤 Received EOF (Ctrl+D), shutting down...")
                         break
                     
                     try:
@@ -306,17 +310,17 @@ class PyCharmGitHubCopilotMCPServer:
                         self._process_message(message)
                     except json.JSONDecodeError as e:
                         self.logger.error(f"Invalid JSON: {e}")
-                        print(f"❌ Invalid JSON received: {e}")
+                        print_to_stderr(f"❌ Invalid JSON received: {e}")
                     except Exception as e:
                         self.logger.error(f"Error processing message: {e}")
                         self.logger.error(traceback.format_exc())
-                        print(f"❌ Error processing message: {e}")
+                        print_to_stderr(f"❌ Error processing message: {e}")
                         
         except KeyboardInterrupt:
-            print("\n🛑 Received interrupt signal (Ctrl+C)")
+            print_to_stderr("\n🛑 Received interrupt signal (Ctrl+C)")
             self.logger.info("Received interrupt signal")
         except EOFError:
-            print("📤 Received EOF (Ctrl+D)")
+            print_to_stderr("📤 Received EOF (Ctrl+D)")
             self.logger.info("Received EOF")
         finally:
             self._cleanup()
@@ -324,20 +328,20 @@ class PyCharmGitHubCopilotMCPServer:
     def _signal_handler(self, sig, frame):
         """Handle shutdown signals"""
         signal_name = "SIGINT" if sig == signal.SIGINT else "SIGTERM"
-        print(f"\n🛑 Received signal {signal_name}")
+        print_to_stderr(f"\n🛑 Received signal {signal_name}")
         self.logger.info(f"Received signal {sig}")
         self.running = False
 
     def _cleanup(self):
         """Cleanup resources before shutdown"""
-        print("🧹 Cleaning up resources...")
+        print_to_stderr("🧹 Cleaning up resources...")
         self.logger.info("Cleaning up resources")
         
         # Save any pending data
         self._save_state()
         
-        print("✅ PyCharm GitHub Copilot MCP Server stopped")
-        print(f"📅 Stopped at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print_to_stderr("✅ PyCharm GitHub Copilot MCP Server stopped")
+        print_to_stderr(f"📅 Stopped at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         self.logger.info("Shutting down PyCharm GitHub Copilot MCP Server")
 
     def _save_state(self):
@@ -413,7 +417,7 @@ class PyCharmGitHubCopilotMCPServer:
     def _handle_initialize(self, request_id: Any, params: Dict) -> Dict:
         """Handle initialize request"""
         self.logger.info("Handling initialize request")
-        print("🔗 Client connected - handling initialize request")
+        print_to_stderr("🔗 Client connected - handling initialize request")
         return {
             "capabilities": {
                 "completionProvider": {
@@ -435,13 +439,13 @@ class PyCharmGitHubCopilotMCPServer:
     def _handle_shutdown(self, request_id: Any, params: Dict) -> None:
         """Handle shutdown request"""
         self.logger.info("Handling shutdown request")
-        print("🛑 Received shutdown request from client")
+        print_to_stderr("🛑 Received shutdown request from client")
         self.running = False
 
     def _handle_exit(self, request_id: Any, params: Dict) -> None:
         """Handle exit request"""
         self.logger.info("Handling exit request")
-        print("🚪 Received exit request from client")
+        print_to_stderr("🚪 Received exit request from client")
         sys.exit(0)
 
     def _handle_completion(self, request_id: Any, params: Dict) -> Dict:
@@ -748,9 +752,9 @@ def main():
         server = PyCharmGitHubCopilotMCPServer()
         server.start()
     except KeyboardInterrupt:
-        print("\n🛑 Server interrupted by user")
+        print_to_stderr("\n🛑 Server interrupted by user")
     except Exception as e:
-        print(f"❌ Server error: {e}")
+        print_to_stderr(f"❌ Server error: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
