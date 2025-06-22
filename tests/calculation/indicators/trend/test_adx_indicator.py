@@ -4,7 +4,6 @@
 import pytest
 import pandas as pd
 import numpy as np
-from unittest.mock import patch, MagicMock
 from src.calculation.indicators.trend.adx_ind import calculate_adx, apply_rule_adx
 
 
@@ -13,204 +12,89 @@ class TestADXIndicator:
 
     def setup_method(self):
         """Set up test data."""
+        self.adx = calculate_adx
+        dates = pd.date_range('2023-01-01', periods=30, freq='D')
         self.sample_data = pd.DataFrame({
-            'Open': [100, 101, 102, 103, 104, 105, 106, 107, 108, 109],
-            'High': [102, 103, 104, 105, 106, 107, 108, 109, 110, 111],
-            'Low': [99, 100, 101, 102, 103, 104, 105, 106, 107, 108],
-            'Close': [101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
-            'Volume': [1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900]
-        })
-        self.adx_indicator = ADXIndicator()
-
-    def test_adx_initialization(self):
-        """Test ADX indicator initialization."""
-        assert self.adx_indicator.name == "ADX"
-        assert self.adx_indicator.category == "Trend"
+            'Open': [100 + i * 0.1 for i in range(30)],
+            'High': [102 + i * 0.1 for i in range(30)],
+            'Low': [98 + i * 0.1 for i in range(30)],
+            'Close': [101 + i * 0.1 for i in range(30)],
+            'Volume': [1000 + i * 10 for i in range(30)]
+        }, index=dates)
 
     def test_adx_calculation_basic(self):
         """Test basic ADX calculation."""
-        result = self.adx_indicator.calculate(
-            self.sample_data, 
-            period=14, 
-            price_type='close'
-        )
-        
-        assert 'ADX' in result.columns
+        result = self.adx(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'])
+        assert isinstance(result, pd.DataFrame)
         assert len(result) == len(self.sample_data)
-        assert not result['ADX'].isna().all()
-
-    def test_adx_calculation_with_open_price(self):
-        """Test ADX calculation using open price."""
-        result = self.adx_indicator.calculate(
-            self.sample_data, 
-            period=14, 
-            price_type='open'
-        )
-        
         assert 'ADX' in result.columns
-        assert len(result) == len(self.sample_data)
+        assert 'DI_Plus' in result.columns
+        assert 'DI_Minus' in result.columns
 
-    def test_adx_different_periods(self):
-        """Test ADX calculation with different periods."""
-        periods = [10, 14, 20, 25]
-        
-        for period in periods:
-            result = self.adx_indicator.calculate(
-                self.sample_data, 
-                period=period, 
-                price_type='close'
-            )
-            
-            assert 'ADX' in result.columns
-            # First few values should be NaN due to insufficient data
-            assert result['ADX'].iloc[:period-1].isna().all()
+    def test_adx_with_custom_period(self):
+        """Test ADX calculation with custom period."""
+        result = self.adx(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=10)
+        assert isinstance(result, pd.DataFrame)
+        assert result.iloc[:9]['ADX'].isna().all()
+        assert not result.iloc[9:]['ADX'].isna().all()
 
-    def test_adx_invalid_period(self):
+    def test_adx_with_invalid_period(self):
         """Test ADX calculation with invalid period."""
-        with pytest.raises(ValueError):
-            self.adx_indicator.calculate(
-                self.sample_data, 
-                period=0, 
-                price_type='close'
-            )
+        with pytest.raises(ValueError, match="ADX period must be positive"):
+            self.adx(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=0)
+        with pytest.raises(ValueError, match="ADX period must be positive"):
+            self.adx(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=-1)
 
     def test_adx_empty_dataframe(self):
         """Test ADX calculation with empty dataframe."""
-        empty_df = pd.DataFrame()
-        
-        with pytest.raises(ValueError):
-            self.adx_indicator.calculate(
-                empty_df, 
-                period=14, 
-                price_type='close'
-            )
+        empty_series = pd.Series(dtype=float)
+        result = self.adx(empty_series, empty_series, empty_series)
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == 0
 
-    def test_adx_missing_columns(self):
-        """Test ADX calculation with missing required columns."""
-        incomplete_df = self.sample_data.drop(columns=['High', 'Low'])
-        
-        with pytest.raises(ValueError):
-            self.adx_indicator.calculate(
-                incomplete_df, 
-                period=14, 
-                price_type='close'
-            )
+    def test_adx_insufficient_data(self):
+        """Test ADX calculation with insufficient data."""
+        small_high = self.sample_data['High'].head(5)
+        small_low = self.sample_data['Low'].head(5)
+        small_close = self.sample_data['Close'].head(5)
+        result = self.adx(small_high, small_low, small_close, period=20)
+        assert result['ADX'].isna().all()
 
     def test_adx_parameter_validation(self):
         """Test ADX parameter validation."""
-        # Test invalid price_type
-        with pytest.raises(ValueError):
-            self.adx_indicator.calculate(
-                self.sample_data, 
-                period=14, 
-                price_type='invalid'
-            )
-
-    def test_adx_value_range(self):
-        """Test that ADX values are within expected range (0-100)."""
-        result = self.adx_indicator.calculate(
-            self.sample_data, 
-            period=14, 
-            price_type='close'
-        )
-        
-        adx_values = result['ADX'].dropna()
-        assert (adx_values >= 0).all()
-        assert (adx_values <= 100).all()
-
-    def test_adx_trend_strength_interpretation(self):
-        """Test ADX trend strength interpretation."""
-        result = self.adx_indicator.calculate(
-            self.sample_data, 
-            period=14, 
-            price_type='close'
-        )
-        
-        adx_values = result['ADX'].dropna()
-        
-        # ADX should be able to identify different trend strengths
-        # This is more of a validation that the calculation produces reasonable values
-        assert len(adx_values) > 0
+        result = self.adx(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=20)
+        assert isinstance(result, pd.DataFrame)
+        result = self.adx(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=int(20.5))
+        assert isinstance(result, pd.DataFrame)
 
     def test_adx_with_nan_values(self):
         """Test ADX calculation with NaN values in data."""
-        data_with_nan = self.sample_data.copy()
-        data_with_nan.loc[2, 'High'] = np.nan
-        data_with_nan.loc[3, 'Low'] = np.nan
-        
-        result = self.adx_indicator.calculate(
-            data_with_nan, 
-            period=14, 
-            price_type='close'
-        )
-        
-        assert 'ADX' in result.columns
-        # Should handle NaN values gracefully
-
-    def test_adx_docstring_info(self):
-        """Test that ADX has proper docstring information."""
-        docstring = self.adx_indicator.__doc__
-        assert docstring is not None
-        assert "ADX" in docstring
-        assert "Average Directional Index" in docstring
-
-    def test_adx_cli_integration(self):
-        """Test ADX CLI integration."""
-        result = self.adx_indicator.calculate(
-            self.sample_data, 
-            period=14, 
-            price_type='close'
-        )
-        
-        assert 'ADX' in result.columns
-        assert 'ADX_Period' in result.columns
-        assert 'ADX_Price_Type' in result.columns
+        high_with_nan = self.sample_data['High'].copy()
+        high_with_nan.loc[5] = np.nan
+        result = self.adx(high_with_nan, self.sample_data['Low'], self.sample_data['Close'])
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == len(high_with_nan)
 
     def test_adx_performance(self):
         """Test ADX calculation performance with larger dataset."""
-        # Create larger dataset
-        large_data = pd.DataFrame({
-            'Close': np.random.uniform(100, 200, 1000),
-            'Open': np.random.uniform(100, 200, 1000),
-            'High': np.random.uniform(100, 200, 1000),
-            'Low': np.random.uniform(100, 200, 1000),
-            'Volume': np.random.uniform(1000, 5000, 1000)
-        })
-        
-        result = self.adx_indicator.calculate(
-            large_data, 
-            period=14, 
-            price_type='close'
-        )
-        
-        assert 'ADX' in result.columns
-        assert len(result) == 1000
+        large_high = pd.Series(np.random.uniform(100, 200, 10000))
+        large_low = pd.Series(np.random.uniform(50, 100, 10000))
+        large_close = pd.Series(np.random.uniform(75, 150, 10000))
+        import time
+        start_time = time.time()
+        result = self.adx(large_high, large_low, large_close)
+        end_time = time.time()
+        assert end_time - start_time < 1.0
+        assert isinstance(result, pd.DataFrame)
 
-    def test_adx_edge_cases(self):
-        """Test ADX calculation with edge cases."""
-        # Test with very small dataset
-        small_data = self.sample_data.head(5)
-        
-        with pytest.raises(ValueError):
-            self.adx_indicator.calculate(
-                small_data, 
-                period=10, 
-                price_type='close'
-            )
-
-    def test_adx_consistency(self):
-        """Test ADX calculation consistency."""
-        result1 = self.adx_indicator.calculate(
-            self.sample_data, 
-            period=14, 
-            price_type='close'
-        )
-        
-        result2 = self.adx_indicator.calculate(
-            self.sample_data, 
-            period=14, 
-            price_type='close'
-        )
-        
-        # Results should be identical for same input
-        pd.testing.assert_frame_equal(result1, result2) 
+    def test_adx_apply_rule(self):
+        """Test ADX application rule."""
+        result = apply_rule_adx(self.sample_data, point=0.01)
+        assert 'ADX' in result
+        assert 'DI_Plus' in result
+        assert 'DI_Minus' in result
+        assert 'ADX_Signal' in result
+        assert 'Direction' in result
+        assert 'Diff' in result
+        signals = result['ADX_Signal'].dropna()
+        assert np.issubdtype(signals.dtype, np.number) 

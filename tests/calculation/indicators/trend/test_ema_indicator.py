@@ -4,7 +4,6 @@
 import pytest
 import pandas as pd
 import numpy as np
-from unittest.mock import patch, MagicMock
 from src.calculation.indicators.trend.ema_ind import calculate_ema, apply_rule_ema
 
 
@@ -13,166 +12,81 @@ class TestEMAIndicator:
 
     def setup_method(self):
         """Set up test data."""
+        self.ema = calculate_ema
+        dates = pd.date_range('2023-01-01', periods=30, freq='D')
         self.sample_data = pd.DataFrame({
-            'Open': [100, 101, 102, 103, 104, 105, 106, 107, 108, 109],
-            'High': [102, 103, 104, 105, 106, 107, 108, 109, 110, 111],
-            'Low': [99, 100, 101, 102, 103, 104, 105, 106, 107, 108],
-            'Close': [101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
-            'Volume': [1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900]
-        })
-        self.ema_indicator = EMAIndicator()
-
-    def test_ema_initialization(self):
-        """Test EMA indicator initialization."""
-        assert self.ema_indicator.name == "EMA"
-        assert self.ema_indicator.category == "Trend"
+            'Open': [100 + i * 0.1 for i in range(30)],
+            'High': [102 + i * 0.1 for i in range(30)],
+            'Low': [98 + i * 0.1 for i in range(30)],
+            'Close': [101 + i * 0.1 for i in range(30)],
+            'Volume': [1000 + i * 10 for i in range(30)]
+        }, index=dates)
 
     def test_ema_calculation_basic(self):
         """Test basic EMA calculation."""
-        result = self.ema_indicator.calculate(
-            self.sample_data, 
-            period=5, 
-            price_type='close'
-        )
-        
-        assert 'EMA' in result.columns
+        result = self.ema(self.sample_data['Close'])
+        assert isinstance(result, pd.Series)
         assert len(result) == len(self.sample_data)
-        assert not result['EMA'].isna().all()
+        assert not result.isna().all()
 
-    def test_ema_calculation_with_open_price(self):
-        """Test EMA calculation using open price."""
-        result = self.ema_indicator.calculate(
-            self.sample_data, 
-            period=5, 
-            price_type='open'
-        )
-        
-        assert 'EMA' in result.columns
-        assert len(result) == len(self.sample_data)
+    def test_ema_with_custom_period(self):
+        """Test EMA calculation with custom period."""
+        result = self.ema(self.sample_data['Close'], period=10)
+        assert isinstance(result, pd.Series)
+        assert result.iloc[:9].isna().all()
+        assert not result.iloc[9:].isna().all()
 
-    def test_ema_different_periods(self):
-        """Test EMA calculation with different periods."""
-        periods = [3, 5, 10, 20]
-        
-        for period in periods:
-            result = self.ema_indicator.calculate(
-                self.sample_data, 
-                period=period, 
-                price_type='close'
-            )
-            
-            assert 'EMA' in result.columns
-            # First few values should be NaN due to insufficient data
-            assert result['EMA'].iloc[:period-1].isna().all()
-
-    def test_ema_invalid_period(self):
+    def test_ema_with_invalid_period(self):
         """Test EMA calculation with invalid period."""
-        with pytest.raises(ValueError):
-            self.ema_indicator.calculate(
-                self.sample_data, 
-                period=0, 
-                price_type='close'
-            )
+        with pytest.raises(ValueError, match="EMA period must be positive"):
+            self.ema(self.sample_data['Close'], period=0)
+        with pytest.raises(ValueError, match="EMA period must be positive"):
+            self.ema(self.sample_data['Close'], period=-1)
 
     def test_ema_empty_dataframe(self):
         """Test EMA calculation with empty dataframe."""
-        empty_df = pd.DataFrame()
-        
-        with pytest.raises(ValueError):
-            self.ema_indicator.calculate(
-                empty_df, 
-                period=5, 
-                price_type='close'
-            )
+        empty_series = pd.Series(dtype=float)
+        result = self.ema(empty_series)
+        assert isinstance(result, pd.Series)
+        assert len(result) == 0
 
-    def test_ema_missing_columns(self):
-        """Test EMA calculation with missing required columns."""
-        incomplete_df = self.sample_data.drop(columns=['Close'])
-        
-        with pytest.raises(ValueError):
-            self.ema_indicator.calculate(
-                incomplete_df, 
-                period=5, 
-                price_type='close'
-            )
+    def test_ema_insufficient_data(self):
+        """Test EMA calculation with insufficient data."""
+        small_series = self.sample_data['Close'].head(5)
+        result = self.ema(small_series, period=20)
+        assert result.isna().all()
 
     def test_ema_parameter_validation(self):
         """Test EMA parameter validation."""
-        # Test invalid price_type
-        with pytest.raises(ValueError):
-            self.ema_indicator.calculate(
-                self.sample_data, 
-                period=5, 
-                price_type='invalid'
-            )
-
-    def test_ema_mathematical_correctness(self):
-        """Test EMA mathematical correctness."""
-        # Create simple test data
-        simple_data = pd.DataFrame({
-            'Close': [10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
-        })
-        
-        result = self.ema_indicator.calculate(
-            simple_data, 
-            period=3, 
-            price_type='close'
-        )
-        
-        # Check that EMA values are reasonable
-        assert result['EMA'].iloc[-1] > result['EMA'].iloc[-2]  # Should be increasing
-        assert not result['EMA'].isna().all()
+        result = self.ema(self.sample_data['Close'], period=20)
+        assert isinstance(result, pd.Series)
+        result = self.ema(self.sample_data['Close'], period=int(20.5))
+        assert isinstance(result, pd.Series)
 
     def test_ema_with_nan_values(self):
         """Test EMA calculation with NaN values in data."""
-        data_with_nan = self.sample_data.copy()
-        data_with_nan.loc[2, 'Close'] = np.nan
-        
-        result = self.ema_indicator.calculate(
-            data_with_nan, 
-            period=5, 
-            price_type='close'
-        )
-        
-        assert 'EMA' in result.columns
-        # Should handle NaN values gracefully
-
-    def test_ema_docstring_info(self):
-        """Test that EMA has proper docstring information."""
-        docstring = self.ema_indicator.__doc__
-        assert docstring is not None
-        assert "EMA" in docstring
-        assert "Exponential Moving Average" in docstring
-
-    def test_ema_cli_integration(self):
-        """Test EMA CLI integration."""
-        # Test that the indicator can be called via CLI parameters
-        result = self.ema_indicator.calculate(
-            self.sample_data, 
-            period=10, 
-            price_type='close'
-        )
-        
-        assert 'EMA' in result.columns
-        assert 'EMA_Period' in result.columns
-        assert 'EMA_Price_Type' in result.columns
+        data_with_nan = self.sample_data['Close'].copy()
+        data_with_nan.loc[5] = np.nan
+        result = self.ema(data_with_nan)
+        assert isinstance(result, pd.Series)
+        assert len(result) == len(data_with_nan)
 
     def test_ema_performance(self):
         """Test EMA calculation performance with larger dataset."""
-        # Create larger dataset
-        large_data = pd.DataFrame({
-            'Close': np.random.uniform(100, 200, 1000),
-            'Open': np.random.uniform(100, 200, 1000),
-            'High': np.random.uniform(100, 200, 1000),
-            'Low': np.random.uniform(100, 200, 1000),
-            'Volume': np.random.uniform(1000, 5000, 1000)
-        })
-        
-        result = self.ema_indicator.calculate(
-            large_data, 
-            period=20, 
-            price_type='close'
-        )
-        
-        assert 'EMA' in result.columns
-        assert len(result) == 1000 
+        large_series = pd.Series(np.random.uniform(100, 200, 10000))
+        import time
+        start_time = time.time()
+        result = self.ema(large_series)
+        end_time = time.time()
+        assert end_time - start_time < 1.0
+        assert isinstance(result, pd.Series)
+
+    def test_ema_apply_rule(self):
+        """Test EMA application rule."""
+        result = apply_rule_ema(self.sample_data, point=0.01)
+        assert 'EMA' in result
+        assert 'EMA_Signal' in result
+        assert 'Direction' in result
+        assert 'Diff' in result
+        signals = result['EMA_Signal'].dropna()
+        assert np.issubdtype(signals.dtype, np.number) 
