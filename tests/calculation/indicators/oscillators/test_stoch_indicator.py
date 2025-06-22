@@ -4,7 +4,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock
-from src.calculation.indicators.oscillators.stoch_ind import StochIndicator
+from src.calculation.indicators.oscillators.stoch_ind import apply_rule_stochastic, calculate_stochastic
 
 
 class TestStochIndicator:

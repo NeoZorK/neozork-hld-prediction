@@ -5,7 +5,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock
-from src.calculation.indicators.momentum.macd_ind import MACDIndicator
+from src.calculation.indicators.momentum.macd_ind import calculate_macd, apply_rule_macd
 
 
 class TestMACDIndicator:

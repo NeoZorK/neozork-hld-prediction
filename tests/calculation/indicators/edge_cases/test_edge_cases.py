@@ -3,28 +3,28 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.calculation.indicators.volatility.atr_ind import ATRIndicator
-from src.calculation.indicators.volatility.bb_ind import BBIndicator
-from src.calculation.indicators.volume.obv_ind import OBVIndicator
-from src.calculation.indicators.volume.vwap_ind import VWAPIndicator
-from src.calculation.indicators.oscillators.rsi_ind import RsiIndicator
-from src.calculation.indicators.oscillators.stoch_ind import StochIndicator
-from src.calculation.indicators.trend.ema_ind import EMAIndicator
-from src.calculation.indicators.trend.adx_ind import ADXIndicator
+from src.calculation.indicators.volatility.atr_ind import calculate_atr
+from src.calculation.indicators.volatility.bb_ind import apply_rule_bollinger_bands
+from src.calculation.indicators.volume.obv_ind import calculate_obv
+from src.calculation.indicators.volume.vwap_ind import calculate_vwap
+from src.calculation.indicators.oscillators.rsi_ind import calculate_rsi
+from src.calculation.indicators.oscillators.stoch_ind import apply_rule_stochastic
+from src.calculation.indicators.trend.ema_ind import calculate_ema
+from src.calculation.indicators.trend.adx_ind import calculate_adx
 
 class TestEdgeCases:
     """Edge case tests for indicators."""
     
     def setup_method(self):
         """Set up indicators for testing."""
-        self.atr = ATRIndicator()
-        self.bb = BBIndicator()
-        self.obv = OBVIndicator()
-        self.vwap = VWAPIndicator()
-        self.rsi = RsiIndicator()
-        self.stoch = StochIndicator()
-        self.ema = EMAIndicator()
-        self.adx = ADXIndicator()
+        self.atr = calculate_atr
+        self.bb = apply_rule_bollinger_bands
+        self.obv = calculate_obv
+        self.vwap = calculate_vwap
+        self.rsi = calculate_rsi
+        self.stoch = apply_rule_stochastic
+        self.ema = calculate_ema
+        self.adx = calculate_adx
 
     def test_single_row_data(self):
         """Test indicators with single row of data."""
@@ -40,7 +40,7 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(single_row)
+                result = indicator(single_row)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 1
             except Exception as e:
@@ -61,7 +61,7 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(two_rows)
+                result = indicator(two_rows)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 2
             except Exception as e:
@@ -82,11 +82,11 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(large_data)
+                result = indicator(large_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 3
             except Exception as e:
-                pytest.fail(f"Indicator {indicator.name} failed with large numbers: {e}")
+                pytest.fail(f"Indicator {indicator.__name__} failed with large numbers: {e}")
 
     def test_very_small_numbers(self):
         """Test indicators with very small price values."""
@@ -102,11 +102,11 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(small_data)
+                result = indicator(small_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 3
             except Exception as e:
-                pytest.fail(f"Indicator {indicator.name} failed with small numbers: {e}")
+                pytest.fail(f"Indicator {indicator.__name__} failed with small numbers: {e}")
 
     def test_negative_prices(self):
         """Test indicators with negative price values."""
@@ -122,7 +122,7 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(negative_data)
+                result = indicator(negative_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 3
             except Exception as e:
@@ -143,7 +143,7 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(zero_data)
+                result = indicator(zero_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 3
             except Exception as e:
@@ -164,11 +164,11 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(zero_volume_data)
+                result = indicator(zero_volume_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 3
             except Exception as e:
-                pytest.fail(f"Indicator {indicator.name} failed with zero volume: {e}")
+                pytest.fail(f"Indicator {indicator.__name__} failed with zero volume: {e}")
 
     def test_negative_volume(self):
         """Test indicators with negative volume."""
@@ -184,7 +184,7 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(negative_volume_data)
+                result = indicator(negative_volume_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 3
             except Exception as e:
@@ -205,7 +205,7 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(infinite_data)
+                result = indicator(infinite_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 3
             except Exception as e:
@@ -226,11 +226,11 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(nan_data)
+                result = indicator(nan_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 3
             except Exception as e:
-                pytest.fail(f"Indicator {indicator.name} failed with NaN values: {e}")
+                pytest.fail(f"Indicator {indicator.__name__} failed with NaN values: {e}")
 
     def test_all_nan_data(self):
         """Test indicators with all NaN data."""
@@ -246,7 +246,7 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(all_nan_data)
+                result = indicator(all_nan_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 3
             except Exception as e:
@@ -266,21 +266,21 @@ class TestEdgeCases:
         
         # Test with very long periods
         long_period_indicators = [
-            ATRIndicator(period=500),
-            BBIndicator(period=500),
-            RsiIndicator(period=500),
-            StochIndicator(k_period=500, d_period=100),
-            EMAIndicator(period=500),
-            ADXIndicator(period=500)
+            calculate_atr(period=500),
+            apply_rule_bollinger_bands(period=500),
+            calculate_rsi(period=500),
+            apply_rule_stochastic(k_period=500, d_period=100),
+            calculate_ema(period=500),
+            calculate_adx(period=500)
         ]
         
         for indicator in long_period_indicators:
             try:
-                result = indicator.calculate(long_data)
+                result = indicator(long_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 1000
             except Exception as e:
-                pytest.fail(f"Indicator {indicator.name} failed with long period: {e}")
+                pytest.fail(f"Indicator {indicator.__name__} failed with long period: {e}")
 
     def test_mixed_data_types(self):
         """Test indicators with mixed data types in columns."""
@@ -296,7 +296,7 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(mixed_data)
+                result = indicator(mixed_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 3
             except Exception as e:
@@ -317,8 +317,8 @@ class TestEdgeCases:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(duplicate_index_data)
+                result = indicator(duplicate_index_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == 3
             except Exception as e:
-                pytest.fail(f"Indicator {indicator.name} failed with duplicate index: {e}") 
+                pytest.fail(f"Indicator {indicator.__name__} failed with duplicate index: {e}") 

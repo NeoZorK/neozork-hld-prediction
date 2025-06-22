@@ -4,7 +4,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock
-from src.calculation.indicators.volatility.stdev_ind import StDevIndicator
+from src.calculation.indicators.volatility.stdev_ind import calculate_stdev, apply_rule_stdev
 
 
 class TestStDevIndicator:

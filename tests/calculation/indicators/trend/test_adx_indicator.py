@@ -5,7 +5,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock
-from src.calculation.indicators.trend.adx_ind import ADXIndicator
+from src.calculation.indicators.trend.adx_ind import calculate_adx, apply_rule_adx
 
 
 class TestADXIndicator:

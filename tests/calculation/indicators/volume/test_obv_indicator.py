@@ -4,7 +4,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock
-from src.calculation.indicators.volume.obv_ind import OBVIndicator
+from src.calculation.indicators.volume.obv_ind import calculate_obv, apply_rule_obv
 
 
 class TestOBVIndicator:

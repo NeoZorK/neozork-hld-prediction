@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.calculation.indicators.sentiment.cot_ind import COTIndicator
+from src.calculation.indicators.sentiment.cot_ind import calculate_cot, apply_rule_cot
 
 class TestCOTIndicator:
     def setup_method(self):
