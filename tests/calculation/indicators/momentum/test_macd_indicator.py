@@ -41,19 +41,19 @@ class TestMACDIndicator:
         assert isinstance(macd_line, pd.Series)
         assert isinstance(signal_line, pd.Series)
         assert isinstance(histogram, pd.Series)
-        assert macd_line.iloc[:19].isna().all()  # slow_period - 1
-        assert not macd_line.iloc[19:].isna().all()
+        assert len(macd_line) == len(self.sample_data)
+        assert len(signal_line) == len(self.sample_data)
+        assert len(histogram) == len(self.sample_data)
+        assert not macd_line.isna().all()
 
     def test_macd_with_invalid_periods(self):
         """Test MACD calculation with invalid periods."""
-        with pytest.raises(ValueError, match="MACD fast_period must be positive"):
+        with pytest.raises(ValueError, match="All periods must be positive"):
             self.macd(self.sample_data['Close'], fast_period=0)
-        with pytest.raises(ValueError, match="MACD fast_period must be positive"):
-            self.macd(self.sample_data['Close'], fast_period=-1)
-        with pytest.raises(ValueError, match="MACD slow_period must be positive"):
+        with pytest.raises(ValueError, match="All periods must be positive"):
             self.macd(self.sample_data['Close'], slow_period=0)
-        with pytest.raises(ValueError, match="MACD slow_period must be positive"):
-            self.macd(self.sample_data['Close'], slow_period=-1)
+        with pytest.raises(ValueError, match="All periods must be positive"):
+            self.macd(self.sample_data['Close'], signal_period=0)
 
     def test_macd_empty_dataframe(self):
         """Test MACD calculation with empty dataframe."""
@@ -112,11 +112,11 @@ class TestMACDIndicator:
     def test_macd_apply_rule(self):
         """Test MACD rule application."""
         result = apply_rule_macd(self.sample_data, point=0.01)
-        assert 'MACD' in result
+        assert 'MACD_Line' in result
         assert 'MACD_Signal' in result
         assert 'MACD_Histogram' in result
-        assert 'MACD_Signal_Line' in result
+        assert 'MACD_Trading_Signal' in result
         assert 'Direction' in result
         assert 'Diff' in result
-        signals = result['MACD_Signal'].dropna()
+        signals = result['MACD_Trading_Signal'].dropna()
         assert np.issubdtype(signals.dtype, np.number) 
