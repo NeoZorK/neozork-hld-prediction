@@ -1,165 +1,37 @@
 {
-  "mcpServers": {
-    "pycharm-github-copilot-mcp": {
-      "command": "python",
-      "args": ["pycharm_github_copilot_mcp.py"],
-      "cwd": "${workspaceFolder}",
-      "env": {
-        "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}",
-        "LOG_LEVEL": "INFO",
-        "MCP_SERVER_TYPE": "pycharm_copilot"
-      },
-      "description": "PyCharm GitHub Copilot MCP Server for Neozork HLD Prediction Project",
-      "version": "2.0.0",
-      "capabilities": {
-        "completionProvider": {
-          "resolveProvider": true,
-          "triggerCharacters": [".", ":", "(", "[", "{", "\"", "'"]
-        },
-        "hoverProvider": true,
-        "definitionProvider": true,
-        "referencesProvider": true,
-        "workspaceSymbolProvider": true,
-        "textDocumentSync": 1
-      }
-    }
+  "server": {
+    "name": "PyCharm GitHub Copilot MCP Server",
+    "command": "python",
+    "args": ["pycharm_github_copilot_mcp.py"],
+    "env": {
+      "PYTHONPATH": ".",
+      "LOG_LEVEL": "INFO",
+      "MCP_SERVER_TYPE": "pycharm_copilot",
+      "ENABLE_FINANCIAL_DATA": "true",
+      "ENABLE_INDICATORS": "true",
+      "ENABLE_GITHUB_COPILOT": "true"
+    },
+    "cwd": ".",
+    "transport": "stdio"
   },
-  "cursor": {
-    "ai": {
-      "mcpServers": {
-        "neozork-cursor-mcp": {
-          "enabled": true,
-          "priority": 1,
-          "description": "Neozork HLD Prediction MCP Server for enhanced financial analysis support"
-        }
-      }
-    }
+  "testing": {
+    "enable_tests": true,
+    "test_timeout": 30,
+    "performance_tests": true,
+    "coverage_tests": true,
+    "github_copilot_tests": true
   },
-  "settings": {
-    "mcp.server.neozork-cursor-mcp": {
-      "logLevel": "INFO",
-      "timeout": 30000,
-      "maxMemory": "512MB",
-      "autoRestart": true,
-      "restartDelay": 5000
-    }
+  "monitoring": {
+    "enable_monitoring": true,
+    "health_check_interval": 60,
+    "max_memory_mb": 512,
+    "max_cpu_percent": 80
   },
   "features": {
-    "completion": {
-      "enabled": true,
-      "triggerCharacters": [".", ":", "@", "#"],
-      "snippets": true,
-      "contextAware": true
-    },
-    "hover": {
-      "enabled": true,
-      "markdown": true
-    },
-    "definition": {
-      "enabled": true
-    },
-    "references": {
-      "enabled": true
-    },
-    "symbols": {
-      "enabled": true,
-      "workspace": true,
-      "document": true
-    },
-    "codeActions": {
-      "enabled": true,
-      "refactor": true,
-      "quickFix": true
-    },
-    "financialData": {
-      "enabled": true,
-      "autoScan": true,
-      "symbols": ["BTCUSD", "GBPUSD", "EURUSD", "USDJPY"],
-      "timeframes": ["D1", "H1", "M15", "M5"]
-    },
-    "indicators": {
-      "enabled": true,
-      "available": [
-        "SMA", "EMA", "RSI", "MACD", "Bollinger_Bands",
-        "ATR", "Stochastic", "CCI", "ADX", "VWAP"
-      ]
-    },
-    "codeSearch": {
-      "enabled": true,
-      "indexFunctions": true,
-      "indexClasses": true,
-      "indexImports": true
-    },
-    "snippets": {
-      "enabled": true,
-      "categories": [
-        "data_loading",
-        "indicator_calculation",
-        "visualization",
-        "machine_learning",
-        "backtesting"
-      ]
-    },
-    "githubCopilot": {
-      "enabled": true,
-      "contextAware": true,
-      "suggestions": true,
-      "integration": true
-    }
-  },
-  "projectSpecific": {
-    "financialData": {
-      "autoScan": true,
-      "scanInterval": 300000,
-      "supportedFormats": ["csv", "parquet"],
-      "defaultSymbols": ["BTCUSD", "GBPUSD", "EURUSD"],
-      "defaultTimeframes": ["D1", "H1", "M15"]
-    },
-    "indicators": {
-      "autoIndex": true,
-      "categories": [
-        "momentum",
-        "trend",
-        "volatility",
-        "volume",
-        "oscillators"
-      ]
-    },
-    "snippets": {
-      "enabled": true,
-      "categories": [
-        "data_loading",
-        "indicator_calculation",
-        "plotting",
-        "analysis",
-        "machine_learning"
-      ]
-    }
-  },
-  "logging": {
-    "level": "INFO",
-    "file": "logs/pycharm_copilot_mcp.log",
-    "maxSize": "10MB",
-    "maxFiles": 5,
-    "format": "%(asctime)s [%(levelname)s] [PyCharmCopilotMCP] %(message)s"
-  },
-  "performance": {
-    "maxFiles": 10000,
-    "maxFileSize": "10MB",
-    "cacheEnabled": true,
-    "cacheSize": "100MB",
-    "indexingTimeout": 30
-  },
-  "security": {
-    "allowedPaths": [
-      "${workspaceFolder}/src",
-      "${workspaceFolder}/data",
-      "${workspaceFolder}/tests"
-    ],
-    "blockedPaths": [
-      "${workspaceFolder}/.git",
-      "${workspaceFolder}/.venv",
-      "${workspaceFolder}/__pycache__"
-    ]
+    "financial_data": true,
+    "technical_indicators": true,
+    "github_copilot": true,
+    "code_completion": true,
+    "project_analysis": true
   }
 } 
