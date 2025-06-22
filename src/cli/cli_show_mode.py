@@ -856,7 +856,7 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
         _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
         print(f"\nIndicator '{selected_rule.name}' calculated successfully.")
 
-        # === ДОБАВЛЕНО: Экспорт индикаторов, если указаны флаги ===
+        # === ADDED: Export indicators if flags are specified ===
         _handle_indicator_exports(args, result_df, {
             "ohlcv_df": df,
             "data_source_label": f"{found_files[0]['name']}",
@@ -868,7 +868,7 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
             "parquet_cache_used": True,
             "parquet_cache_file": str(found_files[0]['path'])
         }, selected_rule)
-        # === КОНЕЦ ДОБАВЛЕНИЯ ===
+        # === END OF ADDITION ===
 
         # Draw plot after indicator calculation only if draw flag is set to supported mode
         if _should_draw_plot(args):
@@ -1423,7 +1423,7 @@ def _show_single_indicator_file(file_info, args):
             # Track data loading time
             load_start_time = time.time()
             df = pd.read_parquet(file_path)
-            # === ДОБАВЛЕНО: если есть колонка DateTime, делаем её индексом ===
+            # === ADDED: if there's a DateTime column, make it the index ===
             if 'DateTime' in df.columns:
                 df['DateTime'] = pd.to_datetime(df['DateTime'], errors='coerce')
                 df = df.set_index('DateTime')
