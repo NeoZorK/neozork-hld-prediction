@@ -1,12 +1,26 @@
 {
   "mcpServers": {
-    "neozork-cursor-mcp": {
+    "pycharm-github-copilot-mcp": {
       "command": "python",
-      "args": ["cursor_mcp_server.py"],
+      "args": ["pycharm_github_copilot_mcp.py"],
       "cwd": "${workspaceFolder}",
       "env": {
         "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}",
-        "LOG_LEVEL": "INFO"
+        "LOG_LEVEL": "INFO",
+        "MCP_SERVER_TYPE": "pycharm_copilot"
+      },
+      "description": "PyCharm GitHub Copilot MCP Server for Neozork HLD Prediction Project",
+      "version": "2.0.0",
+      "capabilities": {
+        "completionProvider": {
+          "resolveProvider": true,
+          "triggerCharacters": [".", ":", "(", "[", "{", "\"", "'"]
+        },
+        "hoverProvider": true,
+        "definitionProvider": true,
+        "referencesProvider": true,
+        "workspaceSymbolProvider": true,
+        "textDocumentSync": 1
       }
     }
   },
@@ -56,6 +70,41 @@
       "enabled": true,
       "refactor": true,
       "quickFix": true
+    },
+    "financialData": {
+      "enabled": true,
+      "autoScan": true,
+      "symbols": ["BTCUSD", "GBPUSD", "EURUSD", "USDJPY"],
+      "timeframes": ["D1", "H1", "M15", "M5"]
+    },
+    "indicators": {
+      "enabled": true,
+      "available": [
+        "SMA", "EMA", "RSI", "MACD", "Bollinger_Bands",
+        "ATR", "Stochastic", "CCI", "ADX", "VWAP"
+      ]
+    },
+    "codeSearch": {
+      "enabled": true,
+      "indexFunctions": true,
+      "indexClasses": true,
+      "indexImports": true
+    },
+    "snippets": {
+      "enabled": true,
+      "categories": [
+        "data_loading",
+        "indicator_calculation",
+        "visualization",
+        "machine_learning",
+        "backtesting"
+      ]
+    },
+    "githubCopilot": {
+      "enabled": true,
+      "contextAware": true,
+      "suggestions": true,
+      "integration": true
     }
   },
   "projectSpecific": {
@@ -89,38 +138,28 @@
   },
   "logging": {
     "level": "INFO",
-    "file": "logs/cursor_mcp.log",
+    "file": "logs/pycharm_copilot_mcp.log",
     "maxSize": "10MB",
     "maxFiles": 5,
-    "format": "[{timestamp}] [{level}] [{component}] {message}"
+    "format": "%(asctime)s [%(levelname)s] [PyCharmCopilotMCP] %(message)s"
   },
   "performance": {
-    "cache": {
-      "enabled": true,
-      "maxSize": "100MB",
-      "ttl": 3600000
-    },
-    "indexing": {
-      "parallel": true,
-      "maxWorkers": 4,
-      "batchSize": 100
-    },
-    "completion": {
-      "maxItems": 100,
-      "timeout": 5000
-    }
+    "maxFiles": 10000,
+    "maxFileSize": "10MB",
+    "cacheEnabled": true,
+    "cacheSize": "100MB",
+    "indexingTimeout": 30
   },
   "security": {
     "allowedPaths": [
       "${workspaceFolder}/src",
       "${workspaceFolder}/data",
-      "${workspaceFolder}/mql5_feed"
+      "${workspaceFolder}/tests"
     ],
     "blockedPaths": [
       "${workspaceFolder}/.git",
       "${workspaceFolder}/.venv",
-      "${workspaceFolder}/__pycache__",
-      "${workspaceFolder}/logs"
+      "${workspaceFolder}/__pycache__"
     ]
   }
 } 
