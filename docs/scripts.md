@@ -2,12 +2,13 @@
 
 ## Overview
 
-The NeoZork HLD project provides two main command-line scripts for analysis and data exploration:
+The NeoZork HLD project provides several command-line scripts for analysis, data exploration, and project maintenance:
 
 - **`nz`** - Main analysis script for running indicator calculations and generating plots
 - **`eda`** - Data exploration and analysis script for quality checks and statistical analysis
+- **`fix_imports.py`** - Utility script for fixing import statements in test files
 
-Both scripts are designed to work seamlessly in both Docker and native environments.
+Both main scripts are designed to work seamlessly in both Docker and native environments.
 
 ## Scripts
 
@@ -105,6 +106,51 @@ Similar to `nz`, the script automatically detects the environment:
 # Clean up logs and reports
 ./eda --clean-stats-logs --clean-reports
 ```
+
+### fix_imports.py - Import Fixing Utility
+
+The `fix_imports.py` script is a utility tool located in the `scripts/` directory that helps maintain proper import statements in test files.
+
+#### Purpose
+
+This script automatically fixes relative imports in test files by converting them to absolute imports. It's particularly useful when test files have incorrect import paths that prevent them from running properly.
+
+#### Usage
+
+```bash
+# Run from project root
+python scripts/fix_imports.py
+
+# Or with uv
+uv run python scripts/fix_imports.py
+```
+
+#### What it does
+
+The script:
+- Scans all Python files in `tests/calculation/indicators/` directory
+- Replaces relative imports like `from ...src.` with absolute imports like `from src.`
+- Handles multiple levels of relative imports (`.`, `..`, `...`, `....`)
+- Updates files in-place
+
+#### Example transformations
+
+```python
+# Before (relative imports)
+from ...src.calculation.indicators.rsi_ind_calc import RSIIndicator
+from ....src.data.fetchers.csv_fetcher import CSVFetcher
+
+# After (absolute imports)
+from src.calculation.indicators.rsi_ind_calc import RSIIndicator
+from src.data.fetchers.csv_fetcher import CSVFetcher
+```
+
+#### When to use
+
+- After restructuring project directories
+- When test imports are broken
+- As part of CI/CD pipeline maintenance
+- Before running test suites
 
 ## Environment Setup
 
@@ -282,6 +328,8 @@ neozork-hld-prediction/
 ├── nz                    # Main analysis script
 ├── eda                   # Data exploration script
 ├── run_analysis.py       # Main analysis entry point
+├── scripts/
+│   └── fix_imports.py    # Import fixing utility
 ├── src/
 │   └── eda/
 │       └── eda_batch_check.py  # EDA functionality
