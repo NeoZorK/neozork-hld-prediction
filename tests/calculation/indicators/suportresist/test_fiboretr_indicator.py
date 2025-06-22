@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src/calculation/indicators/suportresist/fiboretr_ind import FiboRetrIndicator
+from src.calculation.indicators.suportresist.fiboretr_ind import calculate_fiboretr, apply_rule_fiboretr
 
 class TestFiboRetrIndicator:
     def setup_method(self):

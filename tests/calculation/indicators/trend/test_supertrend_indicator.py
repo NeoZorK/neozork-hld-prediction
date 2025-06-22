@@ -5,7 +5,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock
-from src.calculation.indicators.trend.supertrend_ind import SuperTrendIndicator
+from src.calculation.indicators.trend.supertrend_ind import calculate_supertrend, apply_rule_supertrend
 
 
 class TestSuperTrendIndicator:

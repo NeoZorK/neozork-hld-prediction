@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.calculation.indicators.probability.montecarlo_ind import MonteCarloIndicator
+from src.calculation.indicators.probability.montecarlo_ind import calculate_montecarlo, apply_rule_montecarlo
 
 class TestMonteCarloIndicator:
     def setup_method(self):

@@ -3,7 +3,7 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.calculation.indicators.predictive.hma_ind import HMAIndicator
+from src.calculation.indicators.predictive.hma_ind import calculate_hma, apply_rule_hma
 
 class TestHMAIndicator:
     def setup_method(self):

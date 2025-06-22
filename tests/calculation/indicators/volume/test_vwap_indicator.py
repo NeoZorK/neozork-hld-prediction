@@ -4,7 +4,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock
-from src.calculation.indicators.volume.vwap_ind import VWAPIndicator
+from src.calculation.indicators.volume.vwap_ind import calculate_vwap, apply_rule_vwap
 
 
 class TestVWAPIndicator:
@@ -12,7 +12,7 @@ class TestVWAPIndicator:
 
     def setup_method(self):
         """Set up test fixtures."""
-        self.vwap = VWAPIndicator()
+        self.vwap = calculate_vwap
         
         # Create sample data
         self.sample_data = pd.DataFrame({
@@ -39,7 +39,7 @@ class TestVWAPIndicator:
 
     def test_vwap_calculation_with_custom_period(self):
         """Test VWAP calculation with custom period."""
-        vwap_custom = VWAPIndicator(period=10)
+        vwap_custom = calculate_vwap(period=10)
         result = vwap_custom.calculate(self.sample_data)
         
         assert isinstance(result, pd.DataFrame)
@@ -48,10 +48,10 @@ class TestVWAPIndicator:
     def test_vwap_invalid_period(self):
         """Test VWAP with invalid period."""
         with pytest.raises(ValueError, match="Period must be positive"):
-            VWAPIndicator(period=0)
+            calculate_vwap(period=0)
         
         with pytest.raises(ValueError, match="Period must be positive"):
-            VWAPIndicator(period=-1)
+            calculate_vwap(period=-1)
 
     def test_vwap_empty_dataframe(self):
         """Test VWAP with empty dataframe."""
@@ -86,11 +86,11 @@ class TestVWAPIndicator:
     def test_vwap_parameter_validation(self):
         """Test VWAP parameter validation."""
         # Test with valid parameters
-        vwap_valid = VWAPIndicator(period=20)
+        vwap_valid = calculate_vwap(period=20)
         assert vwap_valid.period == 20
         
         # Test with float period (should be converted to int)
-        vwap_float = VWAPIndicator(period=20.5)
+        vwap_float = calculate_vwap(period=20.5)
         assert vwap_float.period == 20
 
     def test_vwap_value_range(self):
@@ -240,8 +240,8 @@ class TestVWAPIndicator:
 
     def test_vwap_period_impact(self):
         """Test the impact of period on VWAP calculation."""
-        vwap_short = VWAPIndicator(period=5)
-        vwap_long = VWAPIndicator(period=20)
+        vwap_short = calculate_vwap(period=5)
+        vwap_long = calculate_vwap(period=20)
         
         result_short = vwap_short.calculate(self.sample_data)
         result_long = vwap_long.calculate(self.sample_data)

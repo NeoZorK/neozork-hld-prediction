@@ -3,14 +3,14 @@
 import pytest
 import pandas as pd
 import numpy as np
-from src.calculation.indicators.volatility.atr_ind import ATRIndicator
-from src.calculation.indicators.volatility.bb_ind import BBIndicator
-from src.calculation.indicators.volume.obv_ind import OBVIndicator
-from src.calculation.indicators.volume.vwap_ind import VWAPIndicator
-from src.calculation.indicators.oscillators.rsi_ind import RsiIndicator
-from src.calculation.indicators.oscillators.stoch_ind import StochIndicator
-from src.calculation.indicators.trend.ema_ind import EMAIndicator
-from src.calculation.indicators.trend.adx_ind import ADXIndicator
+from src.calculation.indicators.volatility.atr_ind import calculate_atr
+from src.calculation.indicators.volatility.bb_ind import apply_rule_bollinger_bands
+from src.calculation.indicators.volume.obv_ind import calculate_obv
+from src.calculation.indicators.volume.vwap_ind import calculate_vwap
+from src.calculation.indicators.oscillators.rsi_ind import calculate_rsi
+from src.calculation.indicators.oscillators.stoch_ind import apply_rule_stochastic
+from src.calculation.indicators.trend.ema_ind import calculate_ema
+from src.calculation.indicators.trend.adx_ind import calculate_adx
 
 class TestIndicatorsIntegration:
     """Integration tests for multiple indicators working together."""
@@ -38,20 +38,20 @@ class TestIndicatorsIntegration:
         }, index=dates)
         
         # Initialize indicators
-        self.atr = ATRIndicator()
-        self.bb = BBIndicator()
-        self.obv = OBVIndicator()
-        self.vwap = VWAPIndicator()
-        self.rsi = RsiIndicator()
-        self.stoch = StochIndicator()
-        self.ema = EMAIndicator()
-        self.adx = ADXIndicator()
+        self.atr = calculate_atr
+        self.bb = apply_rule_bollinger_bands
+        self.obv = calculate_obv
+        self.vwap = calculate_vwap
+        self.rsi = calculate_rsi
+        self.stoch = apply_rule_stochastic
+        self.ema = calculate_ema
+        self.adx = calculate_adx
 
     def test_multiple_volatility_indicators(self):
         """Test that volatility indicators work together."""
         # Calculate ATR and Bollinger Bands
-        atr_result = self.atr.calculate(self.market_data)
-        bb_result = self.bb.calculate(self.market_data)
+        atr_result = self.atr(self.market_data)
+        bb_result = self.bb(self.market_data)
         
         # Both should have valid results
         assert 'ATR' in atr_result.columns
@@ -71,8 +71,8 @@ class TestIndicatorsIntegration:
     def test_volume_and_price_indicators(self):
         """Test volume indicators with price-based indicators."""
         # Calculate OBV and VWAP
-        obv_result = self.obv.calculate(self.market_data)
-        vwap_result = self.vwap.calculate(self.market_data)
+        obv_result = self.obv(self.market_data)
+        vwap_result = self.vwap(self.market_data)
         
         # Both should have valid results
         assert 'OBV' in obv_result.columns
@@ -87,8 +87,8 @@ class TestIndicatorsIntegration:
     def test_oscillator_combinations(self):
         """Test multiple oscillators together."""
         # Calculate RSI and Stochastic
-        rsi_result = self.rsi.calculate(self.market_data)
-        stoch_result = self.stoch.calculate(self.market_data)
+        rsi_result = self.rsi(self.market_data)
+        stoch_result = self.stoch(self.market_data)
         
         # Both should have valid results
         assert 'RSI' in rsi_result.columns
@@ -114,8 +114,8 @@ class TestIndicatorsIntegration:
     def test_trend_indicators(self):
         """Test trend indicators together."""
         # Calculate EMA and ADX
-        ema_result = self.ema.calculate(self.market_data)
-        adx_result = self.adx.calculate(self.market_data)
+        ema_result = self.ema(self.market_data)
+        adx_result = self.adx(self.market_data)
         
         # Both should have valid results
         assert 'EMA' in ema_result.columns
@@ -143,7 +143,7 @@ class TestIndicatorsIntegration:
         
         for name, indicator in indicators:
             try:
-                results[name] = indicator.calculate(self.market_data)
+                results[name] = indicator(self.market_data)
             except Exception as e:
                 pytest.fail(f"Indicator {name} failed: {e}")
         
@@ -164,11 +164,11 @@ class TestIndicatorsIntegration:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(extreme_data)
+                result = indicator(extreme_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == len(extreme_data)
             except Exception as e:
-                pytest.fail(f"Indicator {indicator.name} failed with extreme data: {e}")
+                pytest.fail(f"Indicator {indicator.__name__} failed with extreme data: {e}")
 
     def test_indicators_with_constant_data(self):
         """Test indicators with constant (no movement) data."""
@@ -185,11 +185,11 @@ class TestIndicatorsIntegration:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(constant_data)
+                result = indicator(constant_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == len(constant_data)
             except Exception as e:
-                pytest.fail(f"Indicator {indicator.name} failed with constant data: {e}")
+                pytest.fail(f"Indicator {indicator.__name__} failed with constant data: {e}")
 
     def test_indicators_with_missing_data(self):
         """Test indicators with missing data points."""
@@ -203,11 +203,11 @@ class TestIndicatorsIntegration:
         
         for indicator in indicators:
             try:
-                result = indicator.calculate(missing_data)
+                result = indicator(missing_data)
                 assert isinstance(result, pd.DataFrame)
                 assert len(result) == len(missing_data)
             except Exception as e:
-                pytest.fail(f"Indicator {indicator.name} failed with missing data: {e}")
+                pytest.fail(f"Indicator {indicator.__name__} failed with missing data: {e}")
 
     def test_indicators_performance(self):
         """Test that indicators perform reasonably fast."""
@@ -222,10 +222,10 @@ class TestIndicatorsIntegration:
         
         for indicator in indicators:
             start_time = time.time()
-            result = indicator.calculate(large_data)
+            result = indicator(large_data)
             end_time = time.time()
             
             # Should complete within 5 seconds
-            assert end_time - start_time < 5, f"Indicator {indicator.name} took too long: {end_time - start_time:.2f}s"
+            assert end_time - start_time < 5, f"Indicator {indicator.__name__} took too long: {end_time - start_time:.2f}s"
             assert isinstance(result, pd.DataFrame)
             assert len(result) == len(large_data) 

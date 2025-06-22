@@ -5,7 +5,7 @@ import pytest
 import pandas as pd
 import numpy as np
 from unittest.mock import patch, MagicMock
-from src.calculation.indicators.trend.sar_ind import SARIndicator
+from src.calculation.indicators.trend.sar_ind import calculate_sar, apply_rule_sar
 
 
 class TestSARIndicator:
