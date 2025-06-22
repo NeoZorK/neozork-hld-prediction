@@ -493,7 +493,7 @@ class TestErrorHandling(TestMCPAutoStarter):
         """Test file monitoring error handling"""
         auto_starter.observer = None
         with patch('watchdog.observers.Observer', side_effect=Exception("Observer error")):
-            # Просто проверяем, что не возникает исключения
+            # Simply check that no exception is raised
             auto_starter.monitor_project_changes()
 
 class TestPerformance(TestMCPAutoStarter):
