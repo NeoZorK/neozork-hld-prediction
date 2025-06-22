@@ -9,6 +9,8 @@ Description:
 
 Usage:
     python run_analysis.py [options]
+    ./nz [options]                    # Universal script (works in Docker/local)
+    uv run ./nz [options]             # With uv dependency management
 
 Options:
     --input-file PATH       Path to the input data file
@@ -16,21 +18,77 @@ Options:
     --plot-type TYPE       Type of plot to generate (default: 'standard')
     --verbose             Enable detailed logging output
     --version            Show program's version number and exit
+    --help               Show this help message and exit
 
 Examples:
     # Basic usage with default settings
     python run_analysis.py --input-file data.csv
+    ./nz --input-file data.csv
 
     # Generate specific plot type with custom output directory
     python run_analysis.py --input-file data.csv --output-dir ./results --plot-type detailed
+    ./nz --input-file data.csv --output-dir ./results --plot-type detailed
 
     # Run with verbose logging
     python run_analysis.py --input-file data.csv --verbose
+    ./nz --input-file data.csv --verbose
+
+    # Show version information
+    ./nz --version
+
+    # Show help
+    ./nz --help
+
+    # Run demo analysis
+    ./nz demo --rule PHLD
+
+    # Analyze YFinance data
+    ./nz yfinance MSFT --rule PHLD
+    ./nz yfinance AAPL --period 1mo --rule PHLD
+
+    # Analyze MQL5 data
+    ./nz mql5 EURUSD --interval H4 --rule PHLD
+    ./nz mql5 GBPUSD --interval D1 --rule PHLD
+
+    # Analyze CSV data
+    ./nz csv --csv-file data.csv --rule PHLD
+    ./nz csv --csv-file data.csv --rule PHLD --plot-type detailed
+
+    # Analyze Binance data
+    ./nz binance BTCUSDT --interval 1h --rule PHLD
+    ./nz binance ETHUSDT --interval 4h --rule PHLD
+
+    # Analyze Polygon data
+    ./nz polygon AAPL --interval 1 --rule PHLD
+    ./nz polygon MSFT --interval 5 --rule PHLD
+
+    # Run with specific parameters
+    ./nz --input-file data.csv --output-dir ./results --plot-type detailed
+
+    # Use with uv (recommended for native environment)
+    uv run ./nz --version
+    uv run ./nz demo --rule PHLD
+
+Environment Detection:
+    The nz script automatically detects whether it's running in a Docker container
+    or native environment:
+    - Docker Environment: Uses python run_analysis.py directly
+    - Native Environment: Uses uv run python run_analysis.py (with fallback to direct Python)
+
+Related Scripts:
+    ./eda [options]                    # Data exploration and analysis script
+    ./eda --help                       # Show EDA help
+    ./eda --data-quality-checks        # Run data quality checks
+    ./eda --nan-check                  # Check for NaN values
+    ./eda --fix-files                  # Fix data quality issues
+    ./eda --descriptive-stats          # Run statistical analysis
 
 Notes:
     - Input file should be in CSV format with appropriate headers
     - Output directory will be created if it doesn't exist
     - Requires Python 3.8 or higher
+    - For Docker usage, scripts work seamlessly inside containers
+    - For native development, uv is recommended for dependency management
 """
 
 # /run_analysis.py (in NeoZorK HLD/ root folder)
