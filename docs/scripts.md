@@ -7,6 +7,7 @@ The NeoZork HLD project provides several command-line scripts for analysis, data
 - **`nz`** - Main analysis script for running indicator calculations and generating plots
 - **`eda`** - Data exploration and analysis script for quality checks and statistical analysis
 - **`fix_imports.py`** - Utility script for fixing import statements in test files
+- **`analyze_test_coverage.py`** - Utility script for analyzing test coverage across the project
 
 Both main scripts are designed to work seamlessly in both Docker and native environments.
 
@@ -151,6 +152,74 @@ from src.data.fetchers.csv_fetcher import CSVFetcher
 - When test imports are broken
 - As part of CI/CD pipeline maintenance
 - Before running test suites
+
+### analyze_test_coverage.py - Test Coverage Analysis
+
+The `analyze_test_coverage.py` script is a utility tool located in the `scripts/` directory that analyzes test coverage across the entire project.
+
+#### Purpose
+
+This script provides comprehensive analysis of which source files are covered by tests and which ones are missing test coverage. It helps developers identify gaps in testing and maintain high test coverage standards.
+
+#### Usage
+
+```bash
+# Run from project root
+python scripts/analyze_test_coverage.py
+
+# Or with uv
+uv run python scripts/analyze_test_coverage.py
+```
+
+#### What it does
+
+The script:
+- Scans all Python files in `src/` directory and project root
+- Identifies all test files in `tests/` directory
+- Maps test files to their corresponding source files
+- Calculates overall test coverage percentage
+- Lists files without test coverage
+- Groups missing tests by modules for better organization
+
+#### Output example
+
+```
+📊 TEST COVERAGE ANALYSIS
+==================================================
+Total files in src/ and root: 105
+Total tests: 124
+Covered by tests: 80
+Not covered by tests: 25
+Coverage: 76.2%
+
+📝 FILES WITHOUT TESTS:
+------------------------------
+❌ src/calculation/indicators/base_indicator.py
+❌ src/plotting/fastest_auto_plot.py
+...
+
+📁 GROUPING BY MODULES:
+------------------------------
+🔸 calculation/ (1 files):
+   - __init__.py
+🔸 plotting/ (3 files):
+   - __init__.py
+   - fastest_auto_plot.py
+   - fastest_plot.py
+```
+
+#### When to use
+
+- During development to ensure adequate test coverage
+- Before code reviews to identify testing gaps
+- In CI/CD pipelines to enforce coverage standards
+- When refactoring to ensure all code paths are tested
+- For project maintenance and quality assurance
+
+#### Exit codes
+
+- **Exit code 0**: All files have test coverage
+- **Exit code 1**: Some files are missing test coverage
 
 ## Environment Setup
 
@@ -329,7 +398,8 @@ neozork-hld-prediction/
 ├── eda                   # Data exploration script
 ├── run_analysis.py       # Main analysis entry point
 ├── scripts/
-│   └── fix_imports.py    # Import fixing utility
+│   ├── fix_imports.py    # Import fixing utility
+│   └── analyze_test_coverage.py  # Test coverage analysis
 ├── src/
 │   └── eda/
 │       └── eda_batch_check.py  # EDA functionality
