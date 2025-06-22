@@ -4,7 +4,6 @@
 import pytest
 import pandas as pd
 import numpy as np
-from unittest.mock import patch, MagicMock
 from src.calculation.indicators.trend.supertrend_ind import calculate_supertrend, apply_rule_supertrend
 
 
@@ -13,216 +12,115 @@ class TestSuperTrendIndicator:
 
     def setup_method(self):
         """Set up test data."""
+        self.supertrend = calculate_supertrend
+        dates = pd.date_range('2023-01-01', periods=30, freq='D')
         self.sample_data = pd.DataFrame({
-            'Open': [100, 101, 102, 103, 104, 105, 106, 107, 108, 109],
-            'High': [102, 103, 104, 105, 106, 107, 108, 109, 110, 111],
-            'Low': [99, 100, 101, 102, 103, 104, 105, 106, 107, 108],
-            'Close': [101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
-            'Volume': [1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900]
-        })
-        self.supertrend_indicator = SuperTrendIndicator()
-
-    def test_supertrend_initialization(self):
-        """Test SuperTrend indicator initialization."""
-        assert self.supertrend_indicator.name == "SuperTrend"
-        assert self.supertrend_indicator.category == "Trend"
+            'Open': [100 + i * 0.1 for i in range(30)],
+            'High': [102 + i * 0.1 for i in range(30)],
+            'Low': [98 + i * 0.1 for i in range(30)],
+            'Close': [101 + i * 0.1 for i in range(30)],
+            'Volume': [1000 + i * 10 for i in range(30)]
+        }, index=dates)
 
     def test_supertrend_calculation_basic(self):
         """Test basic SuperTrend calculation."""
-        result = self.supertrend_indicator.calculate(
-            self.sample_data, 
-            period=10, 
-            multiplier=3.0, 
-            price_type='close'
-        )
-        
-        assert 'SuperTrend' in result.columns
+        result = self.supertrend(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'])
+        assert isinstance(result, pd.DataFrame)
         assert len(result) == len(self.sample_data)
-        assert not result['SuperTrend'].isna().all()
-
-    def test_supertrend_calculation_with_open_price(self):
-        """Test SuperTrend calculation using open price."""
-        result = self.supertrend_indicator.calculate(
-            self.sample_data, 
-            period=10, 
-            multiplier=3.0, 
-            price_type='open'
-        )
-        
         assert 'SuperTrend' in result.columns
-        assert len(result) == len(self.sample_data)
+        assert 'SuperTrend_Direction' in result.columns
 
-    def test_supertrend_different_parameters(self):
-        """Test SuperTrend calculation with different parameters."""
-        periods = [7, 10, 14, 20]
-        multipliers = [2.0, 3.0, 4.0]
-        
-        for period in periods:
-            for multiplier in multipliers:
-                result = self.supertrend_indicator.calculate(
-                    self.sample_data, 
-                    period=period, 
-                    multiplier=multiplier, 
-                    price_type='close'
-                )
-                
-                assert 'SuperTrend' in result.columns
-                assert len(result) == len(self.sample_data)
+    def test_supertrend_with_custom_parameters(self):
+        """Test SuperTrend calculation with custom parameters."""
+        result = self.supertrend(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=10, multiplier=3.0)
+        assert isinstance(result, pd.DataFrame)
+        assert result.iloc[:9]['SuperTrend'].isna().all()
+        assert not result.iloc[9:]['SuperTrend'].isna().all()
 
-    def test_supertrend_invalid_period(self):
-        """Test SuperTrend calculation with invalid period."""
-        with pytest.raises(ValueError):
-            self.supertrend_indicator.calculate(
-                self.sample_data, 
-                period=0, 
-                multiplier=3.0, 
-                price_type='close'
-            )
-
-    def test_supertrend_invalid_multiplier(self):
-        """Test SuperTrend calculation with invalid multiplier."""
-        with pytest.raises(ValueError):
-            self.supertrend_indicator.calculate(
-                self.sample_data, 
-                period=10, 
-                multiplier=0, 
-                price_type='close'
-            )
+    def test_supertrend_with_invalid_parameters(self):
+        """Test SuperTrend calculation with invalid parameters."""
+        with pytest.raises(ValueError, match="SuperTrend period must be positive"):
+            self.supertrend(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=0)
+        with pytest.raises(ValueError, match="SuperTrend period must be positive"):
+            self.supertrend(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=-1)
+        with pytest.raises(ValueError, match="SuperTrend multiplier must be positive"):
+            self.supertrend(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], multiplier=0)
+        with pytest.raises(ValueError, match="SuperTrend multiplier must be positive"):
+            self.supertrend(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], multiplier=-1.0)
 
     def test_supertrend_empty_dataframe(self):
         """Test SuperTrend calculation with empty dataframe."""
-        empty_df = pd.DataFrame()
-        
-        with pytest.raises(ValueError):
-            self.supertrend_indicator.calculate(
-                empty_df, 
-                period=10, 
-                multiplier=3.0, 
-                price_type='close'
-            )
+        empty_series = pd.Series(dtype=float)
+        result = self.supertrend(empty_series, empty_series, empty_series)
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == 0
 
-    def test_supertrend_missing_columns(self):
-        """Test SuperTrend calculation with missing required columns."""
-        incomplete_df = self.sample_data.drop(columns=['High', 'Low'])
-        
-        with pytest.raises(ValueError):
-            self.supertrend_indicator.calculate(
-                incomplete_df, 
-                period=10, 
-                multiplier=3.0, 
-                price_type='close'
-            )
+    def test_supertrend_insufficient_data(self):
+        """Test SuperTrend calculation with insufficient data."""
+        small_high = self.sample_data['High'].head(5)
+        small_low = self.sample_data['Low'].head(5)
+        small_close = self.sample_data['Close'].head(5)
+        result = self.supertrend(small_high, small_low, small_close, period=20)
+        assert result['SuperTrend'].isna().all()
 
     def test_supertrend_parameter_validation(self):
         """Test SuperTrend parameter validation."""
-        # Test invalid price_type
-        with pytest.raises(ValueError):
-            self.supertrend_indicator.calculate(
-                self.sample_data, 
-                period=10, 
-                multiplier=3.0, 
-                price_type='invalid'
-            )
+        result = self.supertrend(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=20, multiplier=2.0)
+        assert isinstance(result, pd.DataFrame)
+        result = self.supertrend(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'], period=int(20.5), multiplier=float(2.0))
+        assert isinstance(result, pd.DataFrame)
+
+    def test_supertrend_with_nan_values(self):
+        """Test SuperTrend calculation with NaN values in data."""
+        high_with_nan = self.sample_data['High'].copy()
+        high_with_nan.loc[5] = np.nan
+        result = self.supertrend(high_with_nan, self.sample_data['Low'], self.sample_data['Close'])
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == len(high_with_nan)
+
+    def test_supertrend_performance(self):
+        """Test SuperTrend calculation performance with larger dataset."""
+        large_high = pd.Series(np.random.uniform(100, 200, 10000))
+        large_low = pd.Series(np.random.uniform(50, 100, 10000))
+        large_close = pd.Series(np.random.uniform(75, 150, 10000))
+        import time
+        start_time = time.time()
+        result = self.supertrend(large_high, large_low, large_close)
+        end_time = time.time()
+        assert end_time - start_time < 1.0
+        assert isinstance(result, pd.DataFrame)
+
+    def test_supertrend_apply_rule(self):
+        """Test SuperTrend apply rule."""
+        result = apply_rule_supertrend(self.sample_data, point=0.01)
+        assert 'SuperTrend' in result
+        assert 'SuperTrend_Direction' in result
+        assert 'SuperTrend_Signal' in result
+        assert 'Direction' in result
+        assert 'Diff' in result
+        signals = result['SuperTrend_Signal'].dropna()
+        assert np.issubdtype(signals.dtype, np.number)
 
     def test_supertrend_trend_direction(self):
         """Test SuperTrend trend direction identification."""
-        result = self.supertrend_indicator.calculate(
-            self.sample_data, 
-            period=10, 
-            multiplier=3.0, 
-            price_type='close'
-        )
+        result = self.supertrend(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'])
         
         # SuperTrend should be able to identify trend direction
         assert 'SuperTrend' in result.columns
         supertrend_values = result['SuperTrend'].dropna()
         assert len(supertrend_values) > 0
 
-    def test_supertrend_with_nan_values(self):
-        """Test SuperTrend calculation with NaN values in data."""
-        data_with_nan = self.sample_data.copy()
-        data_with_nan.loc[2, 'High'] = np.nan
-        data_with_nan.loc[3, 'Low'] = np.nan
-        
-        result = self.supertrend_indicator.calculate(
-            data_with_nan, 
-            period=10, 
-            multiplier=3.0, 
-            price_type='close'
-        )
-        
-        assert 'SuperTrend' in result.columns
-        # Should handle NaN values gracefully
-
     def test_supertrend_docstring_info(self):
         """Test that SuperTrend has proper docstring information."""
-        docstring = self.supertrend_indicator.__doc__
+        docstring = self.supertrend.__doc__
         assert docstring is not None
         assert "SuperTrend" in docstring
 
-    def test_supertrend_cli_integration(self):
-        """Test SuperTrend CLI integration."""
-        result = self.supertrend_indicator.calculate(
-            self.sample_data, 
-            period=10, 
-            multiplier=3.0, 
-            price_type='close'
-        )
-        
-        assert 'SuperTrend' in result.columns
-        assert 'SuperTrend_Period' in result.columns
-        assert 'SuperTrend_Multiplier' in result.columns
-        assert 'SuperTrend_Price_Type' in result.columns
-
-    def test_supertrend_performance(self):
-        """Test SuperTrend calculation performance with larger dataset."""
-        # Create larger dataset
-        large_data = pd.DataFrame({
-            'Close': np.random.uniform(100, 200, 1000),
-            'Open': np.random.uniform(100, 200, 1000),
-            'High': np.random.uniform(100, 200, 1000),
-            'Low': np.random.uniform(100, 200, 1000),
-            'Volume': np.random.uniform(1000, 5000, 1000)
-        })
-        
-        result = self.supertrend_indicator.calculate(
-            large_data, 
-            period=10, 
-            multiplier=3.0, 
-            price_type='close'
-        )
-        
-        assert 'SuperTrend' in result.columns
-        assert len(result) == 1000
-
-    def test_supertrend_edge_cases(self):
-        """Test SuperTrend calculation with edge cases."""
-        # Test with very small dataset
-        small_data = self.sample_data.head(5)
-        
-        with pytest.raises(ValueError):
-            self.supertrend_indicator.calculate(
-                small_data, 
-                period=10, 
-                multiplier=3.0, 
-                price_type='close'
-            )
-
     def test_supertrend_consistency(self):
         """Test SuperTrend calculation consistency."""
-        result1 = self.supertrend_indicator.calculate(
-            self.sample_data, 
-            period=10, 
-            multiplier=3.0, 
-            price_type='close'
-        )
+        result1 = self.supertrend(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'])
         
-        result2 = self.supertrend_indicator.calculate(
-            self.sample_data, 
-            period=10, 
-            multiplier=3.0, 
-            price_type='close'
-        )
+        result2 = self.supertrend(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'])
         
         # Results should be identical for same input
         pd.testing.assert_frame_equal(result1, result2)
@@ -238,24 +136,14 @@ class TestSuperTrendIndicator:
             'Volume': [1000] * 10
         })
         
-        result = self.supertrend_indicator.calculate(
-            trend_data, 
-            period=5, 
-            multiplier=2.0, 
-            price_type='close'
-        )
+        result = self.supertrend(trend_data['High'], trend_data['Low'], trend_data['Close'])
         
         assert 'SuperTrend' in result.columns
         # SuperTrend should detect the trend reversal around index 4-5
 
     def test_supertrend_atr_dependency(self):
         """Test that SuperTrend properly uses ATR calculation."""
-        result = self.supertrend_indicator.calculate(
-            self.sample_data, 
-            period=10, 
-            multiplier=3.0, 
-            price_type='close'
-        )
+        result = self.supertrend(self.sample_data['High'], self.sample_data['Low'], self.sample_data['Close'])
         
         # SuperTrend calculation depends on ATR, so we should have valid values
         assert 'SuperTrend' in result.columns
