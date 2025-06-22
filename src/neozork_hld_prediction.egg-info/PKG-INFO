@@ -128,3 +128,4 @@ Requires-Dist: bokeh
 Requires-Dist: dask
 Requires-Dist: datashader
 Requires-Dist: pandas-stubs==2.2.3.250527
+Requires-Dist: watchdog==4.0.0
