@@ -16,37 +16,37 @@ class TestRSIIndCalc:
         })
 
     def test_apply_rule_rsi(self):
-        result = apply_rule_rsi(self.df, period=5, price_type=PriceType.CLOSE)
+        result = apply_rule_rsi(self.df, point=0.01, rsi_period=5, price_type=PriceType.CLOSE)
         assert isinstance(result, pd.DataFrame)
         assert 'RSI' in result.columns
         assert len(result) == len(self.df)
 
     def test_apply_rule_rsi_open(self):
-        result = apply_rule_rsi(self.df, period=5, price_type=PriceType.OPEN)
+        result = apply_rule_rsi(self.df, point=0.01, rsi_period=5, price_type=PriceType.OPEN)
         assert 'RSI' in result.columns
 
     def test_apply_rule_rsi_invalid_period(self):
         with pytest.raises(ValueError):
-            apply_rule_rsi(self.df, period=0, price_type=PriceType.CLOSE)
+            apply_rule_rsi(self.df, point=0.01, rsi_period=0, price_type=PriceType.CLOSE)
         with pytest.raises(ValueError):
-            apply_rule_rsi(self.df, period=-1, price_type=PriceType.CLOSE)
+            apply_rule_rsi(self.df, point=0.01, rsi_period=-1, price_type=PriceType.CLOSE)
 
     def test_apply_rule_rsi_momentum(self):
-        result = apply_rule_rsi_momentum(self.df, period=5, price_type=PriceType.CLOSE)
+        result = apply_rule_rsi_momentum(self.df, point=0.01, rsi_period=5, price_type=PriceType.CLOSE)
         assert 'RSI_Momentum' in result.columns
 
     def test_apply_rule_rsi_divergence(self):
-        result = apply_rule_rsi_divergence(self.df, period=5, price_type=PriceType.CLOSE)
+        result = apply_rule_rsi_divergence(self.df, point=0.01, rsi_period=5, price_type=PriceType.CLOSE)
         assert 'RSI_Divergence' in result.columns
 
     def test_apply_rule_rsi_nan(self):
         df_nan = self.df.copy()
-        df_nan.loc[2, 'close'] = np.nan
-        result = apply_rule_rsi(df_nan, period=5, price_type=PriceType.CLOSE)
+        df_nan.iloc[2, self.df.columns.get_loc('close')] = np.nan
+        result = apply_rule_rsi(df_nan, point=0.01, rsi_period=5, price_type=PriceType.CLOSE)
         assert 'RSI' in result.columns
 
     def test_apply_rule_rsi_empty(self):
         empty_df = pd.DataFrame()
-        result = apply_rule_rsi(empty_df, period=5, price_type=PriceType.CLOSE)
+        result = apply_rule_rsi(empty_df, point=0.01, rsi_period=5, price_type=PriceType.CLOSE)
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 0 

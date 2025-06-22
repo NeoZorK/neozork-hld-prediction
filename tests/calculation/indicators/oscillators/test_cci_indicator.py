@@ -66,7 +66,7 @@ class TestCCIIndicator:
     def test_cci_with_nan_values(self):
         """Test CCI calculation with NaN values in data."""
         data_with_nan = self.sample_data['Close'].copy()
-        data_with_nan.loc[5] = np.nan
+        data_with_nan.iloc[5] = np.nan
         result = self.cci(data_with_nan)
         assert isinstance(result, pd.Series)
         assert len(result) == len(data_with_nan)
