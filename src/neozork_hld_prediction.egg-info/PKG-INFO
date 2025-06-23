@@ -119,6 +119,7 @@ Requires-Dist: yfinance==0.2.25
 Requires-Dist: rich==13.6.0
 Requires-Dist: tqdm==4.67.1
 Requires-Dist: pytest
+Requires-Dist: pytest-xdist>=3.7.0
 Requires-Dist: polygon-api-client
 Requires-Dist: python-binance==1.0.17
 Requires-Dist: pyarrow

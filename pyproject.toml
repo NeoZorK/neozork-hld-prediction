@@ -120,6 +120,7 @@ dependencies = [
     "rich==13.6.0",
     "tqdm==4.67.1",
     "pytest",
+    "pytest-xdist>=3.7.0",
     "polygon-api-client",
     "python-binance==1.0.17",
     "pyarrow",
@@ -146,4 +147,19 @@ version = {attr = "__version__"}
 [dependency-groups]
 dev = [
     "pytest-xdist>=3.7.0",
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --strict-markers"
+testpaths = [
+    "tests",
+]
+markers = [
+    "basic: marks tests as basic functionality tests",
+    "flag_combinations: marks tests as flag combination tests",
+    "error: marks tests as error case tests",
+    "performance: marks tests as performance tests",
+    "integration: marks tests as integration tests",
+    "slow: marks tests as slow running tests",
 ]

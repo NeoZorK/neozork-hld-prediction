@@ -1,12 +1,288 @@
-# Automatically add project root to Python path for tests
-import sys
-import os
-import pytest
-from pathlib import Path
+#!/usr/bin/env python3
+"""
+Global pytest configuration and shared fixtures
+"""
 
-# Add project root to Python path
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, project_root)
+import os
+import sys
+import pytest
+import tempfile
+import shutil
+from pathlib import Path
+from typing import Dict, Any, List, Tuple
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
+# Global test configuration
+TEST_TIMEOUT = 120  # seconds
+PARALLEL_WORKERS = "auto"
+TEST_DATA_SIZE = 100
+
+@pytest.fixture(scope="session")
+def test_data_dir():
+    """Create temporary test data directory"""
+    temp_dir = tempfile.mkdtemp(prefix="test_data_")
+    yield Path(temp_dir)
+    shutil.rmtree(temp_dir, ignore_errors=True)
+
+@pytest.fixture(scope="session")
+def sample_data(test_data_dir):
+    """Generate sample financial data for testing"""
+    # Create sample OHLCV data
+    dates = pd.date_range('2024-01-01', periods=TEST_DATA_SIZE, freq='D')
+    np.random.seed(42)  # For reproducible tests
+    
+    data = {
+        'Date': dates,
+        'Open': np.random.uniform(100, 200, TEST_DATA_SIZE),
+        'High': np.random.uniform(150, 250, TEST_DATA_SIZE),
+        'Low': np.random.uniform(50, 150, TEST_DATA_SIZE),
+        'Close': np.random.uniform(100, 200, TEST_DATA_SIZE),
+        'Volume': np.random.randint(1000, 10000, TEST_DATA_SIZE)
+    }
+    
+    df = pd.DataFrame(data)
+    
+    # Save as CSV
+    csv_file = test_data_dir / "sample_data.csv"
+    df.to_csv(csv_file, index=False)
+    
+    # Save as Parquet
+    parquet_file = test_data_dir / "sample_data.parquet"
+    df.to_parquet(parquet_file, index=False)
+    
+    return {
+        'csv_file': str(csv_file),
+        'parquet_file': str(parquet_file),
+        'dataframe': df,
+        'point': '0.01'
+    }
+
+@pytest.fixture(scope="session")
+def cli_script():
+    """Path to the main CLI script"""
+    script_path = Path(__file__).parent.parent / "run_analysis.py"
+    assert script_path.exists(), f"CLI script not found at {script_path}"
+    return script_path
+
+@pytest.fixture(scope="session")
+def python_executable():
+    """Python executable for running CLI commands"""
+    return sys.executable
+
+@pytest.fixture(scope="function")
+def temp_workspace():
+    """Create temporary workspace for each test"""
+    temp_dir = tempfile.mkdtemp(prefix="test_workspace_")
+    original_cwd = os.getcwd()
+    
+    try:
+        os.chdir(temp_dir)
+        yield Path(temp_dir)
+    finally:
+        os.chdir(original_cwd)
+        shutil.rmtree(temp_dir, ignore_errors=True)
+
+@pytest.fixture(scope="function")
+def mock_data_files(temp_workspace):
+    """Create mock data files for testing"""
+    # Create sample data
+    dates = pd.date_range('2024-01-01', periods=50, freq='D')
+    data = {
+        'Date': dates,
+        'Close': np.random.uniform(100, 200, 50),
+        'Volume': np.random.randint(1000, 10000, 50)
+    }
+    df = pd.DataFrame(data)
+    
+    # Save files
+    csv_file = temp_workspace / "test_data.csv"
+    parquet_file = temp_workspace / "test_data.parquet"
+    
+    df.to_csv(csv_file, index=False)
+    df.to_parquet(parquet_file, index=False)
+    
+    return {
+        'csv': str(csv_file),
+        'parquet': str(parquet_file),
+        'dataframe': df
+    }
+
+@pytest.fixture(scope="session")
+def test_config():
+    """Global test configuration"""
+    return {
+        'timeout': TEST_TIMEOUT,
+        'workers': PARALLEL_WORKERS,
+        'data_size': TEST_DATA_SIZE,
+        'verbose': True,
+        'parallel': True
+    }
+
+# Performance monitoring fixtures
+@pytest.fixture(scope="function")
+def performance_monitor():
+    """Monitor test performance"""
+    import time
+    import psutil
+    import os
+    
+    start_time = time.time()
+    process = psutil.Process(os.getpid())
+    start_memory = process.memory_info().rss / 1024 / 1024  # MB
+    
+    yield {
+        'start_time': start_time,
+        'start_memory': start_memory,
+        'process': process
+    }
+    
+    end_time = time.time()
+    end_memory = process.memory_info().rss / 1024 / 1024  # MB
+    
+    execution_time = end_time - start_time
+    memory_used = end_memory - start_memory
+    
+    # Log performance metrics
+    print(f"\n📊 Test Performance:")
+    print(f"   Execution time: {execution_time:.2f}s")
+    print(f"   Memory usage: {memory_used:.2f}MB")
+
+# CLI command runner fixture
+@pytest.fixture(scope="function")
+def run_cli():
+    """Fixture to run CLI commands with proper error handling"""
+    def _run_cli(cmd: List[str], timeout: int = TEST_TIMEOUT) -> Tuple[int, str, str, float]:
+        """Run CLI command and return results"""
+        import subprocess
+        import time
+        
+        start_time = time.time()
+        
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                cwd=Path(__file__).parent.parent
+            )
+            
+            execution_time = time.time() - start_time
+            
+            return (
+                result.returncode,
+                result.stdout,
+                result.stderr,
+                execution_time
+            )
+            
+        except subprocess.TimeoutExpired:
+            execution_time = time.time() - start_time
+            return (1, "", f"Command timed out after {timeout}s", execution_time)
+        except Exception as e:
+            execution_time = time.time() - start_time
+            return (1, "", str(e), execution_time)
+    
+    return _run_cli
+
+# Test categorization fixtures
+@pytest.fixture(scope="session")
+def test_categories():
+    """Define test categories for organization"""
+    return {
+        'unit': 'Unit tests for individual functions',
+        'integration': 'Integration tests for component interaction',
+        'performance': 'Performance and stress tests',
+        'cli': 'Command line interface tests',
+        'data': 'Data processing and validation tests',
+        'indicators': 'Technical indicator calculation tests',
+        'export': 'Data export functionality tests',
+        'plotting': 'Visualization and plotting tests'
+    }
+
+# Parallel test configuration
+def pytest_configure(config):
+    """Configure pytest for parallel testing"""
+    # Add custom markers
+    config.addinivalue_line(
+        "markers", "unit: Unit tests for individual functions"
+    )
+    config.addinivalue_line(
+        "markers", "integration: Integration tests for component interaction"
+    )
+    config.addinivalue_line(
+        "markers", "performance: Performance and stress tests"
+    )
+    config.addinivalue_line(
+        "markers", "cli: Command line interface tests"
+    )
+    config.addinivalue_line(
+        "markers", "data: Data processing and validation tests"
+    )
+    config.addinivalue_line(
+        "markers", "indicators: Technical indicator calculation tests"
+    )
+    config.addinivalue_line(
+        "markers", "export: Data export functionality tests"
+    )
+    config.addinivalue_line(
+        "markers", "plotting: Visualization and plotting tests"
+    )
+
+def pytest_collection_modifyitems(config, items):
+    """Modify test collection for better organization"""
+    for item in items:
+        # Add default markers based on test path
+        if "unit" in str(item.fspath):
+            item.add_marker(pytest.mark.unit)
+        elif "integration" in str(item.fspath):
+            item.add_marker(pytest.mark.integration)
+        elif "performance" in str(item.fspath):
+            item.add_marker(pytest.mark.performance)
+        elif "cli" in str(item.fspath):
+            item.add_marker(pytest.mark.cli)
+        elif "data" in str(item.fspath):
+            item.add_marker(pytest.mark.data)
+        elif "indicators" in str(item.fspath):
+            item.add_marker(pytest.mark.indicators)
+        elif "export" in str(item.fspath):
+            item.add_marker(pytest.mark.export)
+        elif "plotting" in str(item.fspath):
+            item.add_marker(pytest.mark.plotting)
+
+# Test result reporting
+def pytest_terminal_summary(terminalreporter, exitstatus, config):
+    """Generate custom test summary"""
+    print("\n" + "="*60)
+    print("📊 TEST EXECUTION SUMMARY")
+    print("="*60)
+    
+    # Count tests by category
+    stats = terminalreporter.stats
+    passed = len(stats.get('passed', []))
+    failed = len(stats.get('failed', []))
+    skipped = len(stats.get('skipped', []))
+    errors = len(stats.get('error', []))
+    
+    print(f"✅ Passed: {passed}")
+    print(f"❌ Failed: {failed}")
+    print(f"⏭️  Skipped: {skipped}")
+    print(f"💥 Errors: {errors}")
+    print(f"📈 Total: {passed + failed + skipped + errors}")
+    
+    if failed > 0 or errors > 0:
+        print("\n🔍 FAILURE ANALYSIS:")
+        for failure in stats.get('failed', []):
+            print(f"   ❌ {failure.nodeid}")
+        for error in stats.get('error', []):
+            print(f"   💥 {error.nodeid}")
+    
+    print("="*60)
 
 def pytest_sessionfinish(session, exitstatus):
     """Run test coverage analysis after all tests complete"""
