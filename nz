@@ -4,8 +4,6 @@
 # 
 # This script provides main functionality for the Neozork HLD Prediction project.
 
-set -e
-
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
@@ -61,29 +59,30 @@ echo "Adding $SCRIPT_DIR to PATH"
 export PATH="$SCRIPT_DIR:$PATH"
 
 # Parse arguments
-case "${1:---help}" in
-    --help|-h)
-        echo "Usage: $0 [COMMAND] [OPTIONS]"
-        echo ""
-        echo "Commands:"
-        echo "  demo                    Run demo analysis"
-        echo "  test                    Run tests"
-        echo "  analyze                 Run analysis"
-        echo "  plot                    Generate plots"
-        echo "  data                    Data operations"
-        echo "  version                 Show version information"
-        echo ""
-        echo "Options:"
-        echo "  --help, -h              Show this help message"
-        echo "  --verbose, -v           Verbose output"
-        echo ""
-        echo "Examples:"
-        echo "  $0 demo                 Run demo"
-        echo "  $0 test                 Run all tests"
-        echo "  $0 analyze --csv-file data/test.csv"
-        echo ""
-        exit 0
-        ;;
+if [ $# -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    echo "Usage: $0 [COMMAND] [OPTIONS]"
+    echo ""
+    echo "Commands:"
+    echo "  demo                    Run demo analysis"
+    echo "  test                    Run tests"
+    echo "  analyze                 Run analysis"
+    echo "  plot                    Generate plots"
+    echo "  data                    Data operations"
+    echo "  version                 Show version information"
+    echo ""
+    echo "Options:"
+    echo "  --help, -h              Show this help message"
+    echo "  --verbose, -v           Verbose output"
+    echo ""
+    echo "Examples:"
+    echo "  $0 demo                 Run demo"
+    echo "  $0 test                 Run all tests"
+    echo "  $0 analyze --csv-file data/test.csv"
+    echo ""
+    exit 0
+fi
+
+case "$1" in
     demo)
         echo "Running demo analysis..."
         run_python $env_type run_analysis.py demo
