@@ -8,6 +8,7 @@ All test files are organized in logical subfolders under `tests/`. General and s
 
 ```
 - tests/
+    - conftest.py         # Global pytest hooks and fixtures (applies to all tests)
     - summary/           # General and summary tests (moved from root)
         - test_stdio.py
         - test_file_reorganization.py
@@ -30,6 +31,8 @@ All test files are organized in logical subfolders under `tests/`. General and s
     - workflow/
     - ...
 ```
+
+> **Note:** The `conftest.py` file is intentionally placed in the root of the `tests/` directory (not in `summary/`). This is because pytest only applies hooks and fixtures from `conftest.py` to the current directory and all its subdirectories. Placing it in `tests/` ensures that all tests in all subfolders (including `summary/`, `cli/`, `data/`, etc.) have access to global hooks and fixtures. If you put `conftest.py` in `summary/`, its contents would only apply to tests in `summary/` and its subfolders.
 
 > All new and existing general-purpose test scripts should be placed in `tests/summary/`.
 
