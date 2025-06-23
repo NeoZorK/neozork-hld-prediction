@@ -22,11 +22,13 @@ Detailed tutorials and guides for using the project effectively.
 - **Core Guides** - Scripts, testing, Docker, analysis & EDA
 - **Development Guides** - Debug scripts, utility scripts, Copilot integration
 - **Feature Guides** - Indicator export, interactive mode fixes
+- **Advanced Guides** - CLI interface, plotting, export functions, analysis tools, workflow utilities
 
 ### 📋 [Reference](reference/)
 Technical reference documentation for the project.
 - **Technical Indicators** - Complete reference for all indicators (trend, oscillators, momentum, volatility, volume, support/resistance, predictive, probability, sentiment)
 - **MCP Servers** - Model Context Protocol server documentation
+- **Core Calculation** - Core calculation components and mathematical foundations
 
 ### 🔧 [Development](development/)
 Development and technical documentation for contributors and advanced users.
@@ -36,6 +38,7 @@ Development and technical documentation for contributors and advanced users.
 ### 🌐 [API](api/)
 API and integration documentation for external services and data sources.
 - **Exchange Rate API** - Complete API integration guide with authentication, endpoints, and examples
+- **Data Sources** - Comprehensive documentation for all data acquisition sources
 
 ### 📝 [Meta](meta/)
 Documentation about documentation - history, organization, and maintenance.
@@ -55,22 +58,29 @@ Documentation about documentation - history, organization, and maintenance.
 3. Explore [Script Examples](examples/script-examples.md)
 4. Review [MCP Examples](examples/mcp-examples.md)
 5. Study [Development](development/) guides
+6. Master [CLI Interface](guides/cli-interface.md)
+7. Understand [Core Calculation](reference/core-calculation.md)
 
 ### 📊 **For Analysts**
 1. Start with [Getting Started](getting-started/)
 2. Use [Indicator Examples](examples/indicator-examples.md)
 3. Explore [EDA Examples](examples/eda-examples.md)
 4. Review [Reference](reference/) for technical details
+5. Master [Analysis Tools](guides/analysis-tools.md)
+6. Learn [Plotting and Visualization](guides/plotting-visualization.md)
 
 ### 🐳 **For DevOps**
 1. Check [Docker Examples](examples/docker-examples.md)
 2. Review [Testing Examples](examples/testing-examples.md)
 3. Study [Development](development/) CI/CD guides
+4. Understand [Workflow and Utilities](guides/workflow-utilities.md)
 
 ### 🔍 **For Researchers**
 1. Focus on [EDA Examples](examples/eda-examples.md)
 2. Review [Indicator Examples](examples/indicator-examples.md)
 3. Check [Reference](reference/) for mathematical details
+4. Master [Analysis Tools](guides/analysis-tools.md)
+5. Learn [Export Functions](guides/export-functions.md)
 
 ## 🚀 Quick Start
 
@@ -117,6 +127,8 @@ python -m src.export.csv_export --data data/test_data.csv --indicators rsi,ema
 - **Parquet Files** - High-performance columnar data
 - **Binance API** - Real-time cryptocurrency data
 - **Exchange Rate API** - Currency exchange rates
+- **Yahoo Finance** - Stock and forex data
+- **Polygon.io** - Professional market data
 
 ### Export Formats
 - **CSV** - Comma-separated values
@@ -127,6 +139,9 @@ python -m src.export.csv_export --data data/test_data.csv --indicators rsi,ema
 - **Matplotlib** - Static plots
 - **Plotly** - Interactive plots
 - **Bokeh** - Web-based interactive plots
+- **Seaborn** - Statistical plots
+- **MPLFinance** - Financial charts
+- **Terminal** - ASCII/Unicode plots
 
 ## 🧪 Testing
 
@@ -160,6 +175,7 @@ neozork-hld-prediction/
 │   ├── eda/               # Exploratory data analysis
 │   ├── export/            # Data export
 │   ├── plotting/          # Visualization
+│   ├── utils/             # Utility functions
 │   └── workflow/          # Workflow management
 ├── tests/                 # Test suite
 ├── docs/                  # Documentation
@@ -174,6 +190,9 @@ neozork-hld-prediction/
 - **CLI Interface** - Command-line tools for analysis
 - **Export Modules** - Data export in multiple formats
 - **Visualization** - Plotting and charting capabilities
+- **Analysis Tools** - EDA and statistical analysis
+- **Workflow Engine** - Automated pipeline orchestration
+- **Utility Functions** - Common operations and helpers
 - **Testing Suite** - Comprehensive test coverage
 
 ## 📈 Use Cases
@@ -195,6 +214,12 @@ neozork-hld-prediction/
 - Market studies
 - Algorithm development
 - Performance analysis
+
+### Automation
+- Automated data collection
+- Scheduled analysis
+- Report generation
+- Alert systems
 
 ## 🤝 Contributing
 
