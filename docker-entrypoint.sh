@@ -93,7 +93,7 @@ echo -e "\033[1;34mInput received: '$run_mcp'\033[0m"
 # Simplified condition checking
 if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
   echo -e "\n\033[1;32m=== Starting MCP server in background ===\033[0m\n"
-  run_python_safely python mcp_server.py &
+  run_python_safely python pycharm_github_copilot_mcp.py &
   echo -e "\033[1;32mMCP server started in background\033[0m\n"
   # Wait for mcp_server to initialize
   sleep 5

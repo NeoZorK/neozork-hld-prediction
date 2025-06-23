@@ -15,10 +15,22 @@ python run_analysis.py demo
 
 # Get current EUR/USD rate with Pressure Vector indicator
 python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001 --rule PV
-
-# Docker alternative
-docker compose up --build
 ```
+
+## 🐳 Docker Quick Start
+
+```bash
+# Build and run with UV package manager (recommended)
+docker compose build --build-arg USE_UV=true && docker compose run --rm neozork-hld
+
+# Or build with pip package manager
+docker compose build --build-arg USE_UV=false && docker compose run --rm neozork-hld
+
+# View generated plots
+# Check ./results/plots/ directory on your host system
+```
+
+📚 **[Docker Setup Guide](docs/deployment/docker-setup.md)**
 
 ## ✨ Features
 
