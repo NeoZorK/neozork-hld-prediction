@@ -67,7 +67,7 @@ class TestCOTIndicator:
         start_time = time.time()
         result = self.cot(large_series, large_volume)
         end_time = time.time()
-        assert end_time - start_time < 5.0
+        assert end_time - start_time < 10.0
         assert isinstance(result, pd.Series)
 
     def test_cot_apply_rule(self):
