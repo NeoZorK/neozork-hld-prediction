@@ -130,21 +130,9 @@ def apply_rule_stochastic(df: pd.DataFrame, point: float,
     # Calculate Stochastic
     k_values, d_values = calculate_stochastic(df, k_period, d_period, slowing, price_type)
     
-    # Ограничиваем значения и заменяем NaN только для финального DataFrame
-    k_values = k_values.clip(0, 100).fillna(50.0)
-    d_values = d_values.clip(0, 100).fillna(50.0)
-    
-    # Дополнительная защита от отрицательных значений и значений больше 100
-    k_values = k_values.clip(lower=0, upper=100)
-    d_values = d_values.clip(lower=0, upper=100)
-    
-    # Финальная проверка - заменяем любые оставшиеся отрицательные значения на 0
-    k_values = k_values.where(k_values >= 0, 0)
-    d_values = d_values.where(d_values >= 0, 0)
-    
-    # Еще более радикальная защита - используем numpy операции
-    k_values = pd.Series(np.maximum(k_values.values, 0), index=k_values.index)
-    d_values = pd.Series(np.maximum(d_values.values, 0), index=d_values.index)
+    # Ограничиваем значения только для финального DataFrame
+    k_values = k_values.clip(0, 100)
+    d_values = d_values.clip(0, 100)
     
     df['Stoch_K'] = k_values
     df['Stoch_D'] = d_values
