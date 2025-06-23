@@ -75,19 +75,32 @@ def print_header(title: str) -> None:
     print_colored(f"  {title.upper()}", 'cyan')
     print(separator + "\n")
 
-def run_script(script_path: str, args: Optional[List[str]] = None) -> bool:
+def check_api_key(service: str) -> bool:
+    """Check if API key for a service is present in environment."""
+    env_vars = {
+        'binance': ['BINANCE_API_KEY', 'BINANCE_API_SECRET'],
+        'polygon': ['POLYGON_API_KEY', 'POLYGON_API_KEY_ID', 'POLYGON_API_SECRET'],
+    }
+    for var in env_vars.get(service, []):
+        if os.environ.get(var):
+            return True
+    return False
+
+def run_script(script_path: str, args: Optional[List[str]] = None, category: Optional[str] = None) -> bool:
     """
     Run a Python script with arguments.
-
     Args:
         script_path: Path to the script
         args: Optional arguments to pass to the script
-
+        category: Optional test category (for API key check)
     Returns:
         bool: True if successful, False otherwise
     """
     if not os.path.exists(script_path):
         logger.error(f"Script not found: {script_path}")
+        if category in ("binance", "polygon"):
+            if not check_api_key(category):
+                print_colored(f"[INFO] {category.capitalize()} API key not found in environment. Please set the required API key(s) in your .env or docker.env file.", 'yellow')
         return False
 
     cmd = [sys.executable, script_path]
@@ -123,10 +136,16 @@ def run_script(script_path: str, args: Optional[List[str]] = None) -> bool:
             logger.error(f"Script failed with return code {process.returncode}: {script_path}")
             if stderr_output:
                 logger.error(f"Error output: {stderr_output}")
+            if category in ("binance", "polygon"):
+                if not check_api_key(category):
+                    print_colored(f"[INFO] {category.capitalize()} API key not found in environment. Please set the required API key(s) in your .env or docker.env file.", 'yellow')
             return False
 
     except Exception as e:
         logger.error(f"Error running script {script_path}: {str(e)}")
+        if category in ("binance", "polygon"):
+            if not check_api_key(category):
+                print_colored(f"[INFO] {category.capitalize()} API key not found in environment. Please set the required API key(s) in your .env or docker.env file.", 'yellow')
         return False
 
 def run_selected_tests(categories: List[str]) -> Dict[str, bool]:
@@ -143,7 +162,7 @@ def run_selected_tests(categories: List[str]) -> Dict[str, bool]:
         
         success = True
         for script in info['scripts']:
-            if not run_script(script):
+            if not run_script(script, category=category):
                 success = False
                 
         results[category] = success
@@ -164,7 +183,7 @@ def run_all_tests() -> Dict[str, bool]:
         
         success = True
         for script in info['scripts']:
-            if not run_script(script):
+            if not run_script(script, category=category):
                 success = False
                 
         results[category] = success

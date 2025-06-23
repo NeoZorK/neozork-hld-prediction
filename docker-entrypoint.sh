@@ -195,5 +195,10 @@ touch /tmp/bash_history/.bash_history
 chmod 777 /tmp/bash_history/.bash_history
 export HISTFILE=/tmp/bash_history/.bash_history
 
+# Set custom prompt for better identification
+export PS1='\[\033[1;36m\]neozork\[\033[0m\]:\[\033[1;34m\]\w\[\033[0m\]$ '
+
 # Start a never-ending interactive shell
+# Always start bash in interactive mode for Docker containers
+# This ensures proper terminal handling and command history
 exec bash -i
