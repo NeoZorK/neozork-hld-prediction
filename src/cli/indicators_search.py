@@ -243,14 +243,21 @@ class IndicatorSearcher:
         return results
     
     def display_categories(self) -> None:
-        """Display all categories with indicator counts."""
+        """Display all categories with indicator counts and names."""
         print(f"{Fore.YELLOW}{Style.BRIGHT}🎯 Available Indicator Categories:{Style.RESET_ALL}")
         print(f"{Fore.CYAN}{'=' * 50}{Style.RESET_ALL}")
         
         for category in sorted(self.indicators.keys()):
-            count = len(self.indicators[category])
+            indicators = self.indicators[category]
+            count = len(indicators)
             emoji = self._get_category_emoji(category)
             print(f"{emoji} {Fore.GREEN}{category:<15}{Style.RESET_ALL} - {Fore.BLUE}{count} indicators{Style.RESET_ALL}")
+            
+            # Show indicator names in this category
+            if indicators:
+                indicator_names = [ind.name for ind in indicators]
+                print(f"   {Fore.CYAN}└─ {', '.join(indicator_names)}{Style.RESET_ALL}")
+            print()  # Add empty line for better readability
     
     def _get_category_emoji(self, category: str) -> str:
         """Get emoji for category."""
