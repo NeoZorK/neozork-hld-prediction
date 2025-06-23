@@ -28,741 +28,665 @@ The interactive mode includes the following options:
 3. **Configure Data Source** - Set up data source parameters
 4. **Configure Plotting** - Choose visualization method
 5. **Configure Export** - Select export formats
-6. **Show Current Configuration** - Review your settings
-7. **Run Analysis** - Execute the analysis
-8. **Help** - Show help information
-9. **List Available Indicators** - Browse all available indicators with detailed information
-0. **Exit** - Leave interactive mode
+6. **Show Current Configuration** - Display current settings
+7. **Run Analysis** - Execute the analysis with current configuration
+8. **Exit** - Exit interactive mode
 
-### List Available Indicators (Option 9)
+### Interactive Mode Example
 
-The "List Available Indicators" option provides comprehensive information about all available indicators:
+```bash
+$ python run_analysis.py --interactive
 
-- **Category Overview**: Shows all indicator categories with counts
-- **Detailed List**: Displays specific indicators in each category with descriptions
-- **Visual Organization**: Uses emojis and colors for better readability
-- **Quick Reference**: Shows indicator names and descriptions for easy selection
+Welcome to NeoZork HLD Prediction Interactive Mode!
 
-Example output:
+Available options:
+1. Select Analysis Mode
+2. Select Indicator
+3. Configure Data Source
+4. Configure Plotting
+5. Configure Export
+6. Show Current Configuration
+7. Run Analysis
+8. Exit
+
+Enter your choice (1-8): 1
+
+Available analysis modes:
+1. Demo (demo data)
+2. Yahoo Finance (yf)
+3. CSV (csv files)
+4. Binance (binance)
+5. Exchange Rate (exrate)
+
+Enter your choice (1-5): 2
+
+Selected: Yahoo Finance
+Enter symbol (e.g., AAPL): AAPL
+Enter period (e.g., 1mo): 1mo
+Enter point value (e.g., 0.01): 0.01
+
+Configuration updated!
 ```
-🎯 Available Indicator Categories:
-==================================================
-⚡ momentum        - 2 indicators
-🔄 oscillators     - 3 indicators
-🔮 predictive      - 2 indicators
-...
 
-📋 Detailed Indicator List:
-============================================================
+## Data Source Examples
 
-⚡ Momentum Indicators:
-────────────────────────────────────────
-   1. MACD                 - Moving Average Convergence Divergence
-   2. Stochastic Oscillator - Stochastic Oscillator
-```
-
-## Demo Mode
-
+### Demo Data
 ```bash
 # Basic demo
 python run_analysis.py demo
-nz demo
 
-# Specific rules
-nz demo --rule PHLD
-nz demo --rule PV_HighLow
-nz demo --rule SR
+# Demo with specific indicator
+python run_analysis.py demo --rule RSI
+python run_analysis.py demo --rule MACD
+python run_analysis.py demo --rule EMA
 
-# Different plot backends
-nz demo -d plotly
-nz demo -d seaborn
+# Demo with different backends
+python run_analysis.py demo -d plotly
+python run_analysis.py demo -d seaborn
+python run_analysis.py demo -d term
 ```
-
-## Real Data Analysis
 
 ### Yahoo Finance
 ```bash
-# Single ticker
-nz yf -t AAPL --period 1mo --point 0.01
+# Basic Yahoo Finance
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01
 
-# Multiple timeframes
-nz yf -t MSFT --period 3mo --interval 1h
+# With specific indicators
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule RSI
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule MACD
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule BB
 
-# Show cached data
-nz show yf aapl
+# Different timeframes
+python run_analysis.py yf -t AAPL --period 1d --point 0.01 --rule RSI
+python run_analysis.py yf -t AAPL --period 1w --point 0.01 --rule RSI
+python run_analysis.py yf -t AAPL --period 1y --point 0.01 --rule RSI
+
+# Multiple symbols
+python run_analysis.py yf -t AAPL,MSFT,GOOGL --period 1mo --point 0.01 --rule RSI
 ```
 
 ### CSV Files
 ```bash
-# Analyze CSV (MT5 export format)
-nz csv --csv-file data/EURUSD_M1.csv --point 0.0001
+# Basic CSV analysis
+python run_analysis.py csv --csv-file data.csv --point 0.01
 
-# With specific rule
-nz csv --csv-file data.csv --rule PHLD --point 0.01
+# With specific indicators
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule RSI
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule MACD
+
+# With date filtering
+python run_analysis.py csv --csv-file data.csv --point 0.01 --start-date 2024-01-01
+python run_analysis.py csv --csv-file data.csv --point 0.01 --end-date 2024-12-31
 ```
 
-### Exchange Rate API (Real-time FX)
+### Binance
 ```bash
-# Free Plan - Current rates only
-nz exrate -t EURUSD --interval D1 --point 0.00001
+# Basic Binance
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01
 
-# Paid Plan - Historical data with indicators
-nz exrate -t GBPJPY --interval D1 --start 2025-01-01 --end 2025-06-01 --point 0.01 --rule PV
+# With specific indicators
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule RSI
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule MACD
 
-# Free Plan - Different currency formats
-nz exrate -t EUR/USD --interval D1 --point 0.00001
-nz exrate -t EUR_USD --interval D1 --point 0.00001
-
-# Free Plan - Terminal plotting (great for SSH/Docker)
-nz exrate -t USDCAD --interval D1 --point 0.00001 -d term
-
-# Show cached exchange rate data
-nz show exrate
+# Different intervals
+python run_analysis.py binance -t BTCUSDT --interval H1 --point 0.01 --rule RSI
+python run_analysis.py binance -t BTCUSDT --interval M15 --point 0.01 --rule RSI
 ```
 
-**Note:** Exchange Rate API provides current rates only (free plan). Date ranges are ignored.
-
-### Binance Data
+### Exchange Rate API
 ```bash
-# Cryptocurrency analysis
-nz binance -t BTCUSDT --period 1d --point 0.01
+# Basic exchange rate
+python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001
+
+# With specific indicators
+python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001 --rule RSI
+python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001 --rule PV
+
+# Different currency pairs
+python run_analysis.py exrate -t GBPUSD --interval D1 --point 0.00001 --rule RSI
+python run_analysis.py exrate -t USDJPY --interval D1 --point 0.01 --rule RSI
 ```
 
-## Data Management
+## Technical Indicators
 
-### Show Data
+### Trend Indicators
 ```bash
-# List available data
-nz show
+# EMA (Exponential Moving Average)
+python run_analysis.py demo --rule EMA
 
-# Show specific source
-nz show yf
-nz show binance
-nz show exrate
+# ADX (Average Directional Index)
+python run_analysis.py demo --rule ADX
+
+# SAR (Parabolic SAR)
+python run_analysis.py demo --rule SAR
 ```
 
-### Cache Management
-```bash
-# Clear cache
-nz clear-cache
-
-# Force refresh
-nz yf -t AAPL --period 1mo --force-refresh
-```
-
-## EDA and Analysis
-
-```bash
-# Run EDA batch processing
-python -m src.eda.eda_batch_check
-
-# Generate plots
-python -m src.plotting.fastest_auto_plot data/file.parquet
-
-# Data quality checks
-python -m src.eda.data_quality
-```
-
-## Docker Usage
-
-```bash
-# Run in container
-docker compose run --rm neozork-hld nz demo
-
-# Interactive session
-docker compose run --rm neozork-hld bash
-```
-
-For installation: [Getting Started](getting-started.md)  
-For analysis tools: [Analysis & EDA](analysis-eda.md)
-
-## Exporting Indicators: Usage Examples
-
-Export flags (`--export-parquet`, `--export-csv`, `--export-json`) are only allowed in `demo` mode. They are forbidden in `show ind`, `yfinance`, `csv`, `polygon`, `binance`, and `exrate` modes.
-
-### Recommended Workflow
-
-1. **Download or Convert Data**
-   - Download with yfinance:
-     ```bash
-     python run_analysis.py yfinance --ticker BTCUSD --period 1y --point 0.01
-     ```
-   - Or convert from CSV:
-     ```bash
-     python run_analysis.py csv --csv-file mydata.csv --point 0.01
-     ```
-2. **Apply Indicator and Export**
-   - Use show mode with a rule and export flags:
-     ```bash
-     python run_analysis.py show yfinance BTCUSD --rule PHLD --export-parquet --export-csv --export-json
-     ```
-3. **View Exported Indicators**
-   - Use show ind to view the exported files:
-     ```bash
-     python run_analysis.py show ind parquet
-     python run_analysis.py show ind csv
-     python run_analysis.py show ind json
-     ```
-
-> Export flags are not available in `show ind`, `yfinance`, `csv`, `polygon`, `binance`, or `exrate` modes. Use `demo` for direct export, or the above workflow for real data.
-
-## Indicator Discovery and Help
-
-### List All Indicators
-```bash
-# Show all available indicators
-python run_analysis.py --indicators
-
-# Show indicators by category
-python run_analysis.py --indicators oscillators
-python run_analysis.py --indicators trend
-python run_analysis.py --indicators momentum
-python run_analysis.py --indicators volatility
-python run_analysis.py --indicators volume
-python run_analysis.py --indicators predictive
-python run_analysis.py --indicators probability
-python run_analysis.py --indicators sentiment
-python run_analysis.py --indicators suportresist
-
-# Get detailed info about specific indicator
-python run_analysis.py --indicators oscillators rsi
-python run_analysis.py --indicators momentum macd
-python run_analysis.py --indicators trend ema
-```
-
-### Indicator Usage Examples
-
+### Oscillators
 ```bash
 # RSI (Relative Strength Index)
 python run_analysis.py demo --rule RSI
-python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule RSI
-
-# MACD (Moving Average Convergence Divergence)
-python run_analysis.py demo --rule MACD
-python run_analysis.py csv --csv-file data.csv --point 0.01 --rule MACD
-
-# EMA (Exponential Moving Average)
-python run_analysis.py demo --rule EMA
-python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule EMA
-
-# Bollinger Bands
-python run_analysis.py demo --rule BB
-python run_analysis.py yf -t EURUSD=X --period 3mo --point 0.00001 --rule BB
-
-# ATR (Average True Range)
-python run_analysis.py demo --rule ATR
-python run_analysis.py csv --csv-file data.csv --point 0.01 --rule ATR
 
 # Stochastic Oscillator
 python run_analysis.py demo --rule STOCH
-python run_analysis.py yf -t BTC-USD --period 1y --point 0.01 --rule STOCH
+
+# CCI (Commodity Channel Index)
+python run_analysis.py demo --rule CCI
+```
+
+### Momentum Indicators
+```bash
+# MACD (Moving Average Convergence Divergence)
+python run_analysis.py demo --rule MACD
+
+# Stochastic Oscillator
+python run_analysis.py demo --rule STOCH
+```
+
+### Volatility Indicators
+```bash
+# ATR (Average True Range)
+python run_analysis.py demo --rule ATR
+
+# Bollinger Bands
+python run_analysis.py demo --rule BB
+
+# Standard Deviation
+python run_analysis.py demo --rule STD
+```
+
+### Volume Indicators
+```bash
+# OBV (On-Balance Volume)
+python run_analysis.py demo --rule OBV
 
 # VWAP (Volume Weighted Average Price)
 python run_analysis.py demo --rule VWAP
-python run_analysis.py binance -t ETHUSDT --interval H1 --point 0.001 --rule VWAP
 ```
 
-## Testing Examples
+### Support/Resistance
+```bash
+# Donchian Channels
+python run_analysis.py demo --rule DONCH
 
-### Running Tests
+# Fibonacci Retracements
+python run_analysis.py demo --rule FIB
 
+# Pivot Points
+python run_analysis.py demo --rule PIVOT
+```
+
+### Predictive Indicators
+```bash
+# HMA (Hull Moving Average)
+python run_analysis.py demo --rule HMA
+
+# Time Series Forecast
+python run_analysis.py demo --rule TSF
+```
+
+### Probability Indicators
+```bash
+# Kelly Criterion
+python run_analysis.py demo --rule KELLY
+
+# Monte Carlo Simulation
+python run_analysis.py demo --rule MONTE
+```
+
+### Sentiment Indicators
+```bash
+# Commitment of Traders
+python run_analysis.py demo --rule COT
+
+# Fear & Greed Index
+python run_analysis.py demo --rule FNG
+
+# Social Sentiment
+python run_analysis.py demo --rule SENT
+```
+
+## Export Options
+
+### Parquet Export
+```bash
+# Export to Parquet
+python run_analysis.py demo --rule RSI --export-parquet
+
+# Export with custom filename
+python run_analysis.py demo --rule RSI --export-parquet --output results.parquet
+```
+
+### CSV Export
+```bash
+# Export to CSV
+python run_analysis.py demo --rule RSI --export-csv
+
+# Export with custom filename
+python run_analysis.py demo --rule RSI --export-csv --output results.csv
+```
+
+### JSON Export
+```bash
+# Export to JSON
+python run_analysis.py demo --rule RSI --export-json
+
+# Export with custom filename
+python run_analysis.py demo --rule RSI --export-json --output results.json
+```
+
+### Multiple Formats
+```bash
+# Export to multiple formats
+python run_analysis.py demo --rule RSI --export-parquet --export-csv --export-json
+```
+
+## Visualization Backends
+
+### Plotly (Interactive)
+```bash
+# Interactive plots with Plotly
+python run_analysis.py demo --rule RSI -d plotly
+
+# Save Plotly figures
+python run_analysis.py demo --rule RSI -d plotly --save-plot
+```
+
+### Seaborn (Static)
+```bash
+# Static plots with Seaborn
+python run_analysis.py demo --rule RSI -d seaborn
+
+# Save Seaborn figures
+python run_analysis.py demo --rule RSI -d seaborn --save-plot
+```
+
+### Matplotlib (Static)
+```bash
+# Static plots with Matplotlib
+python run_analysis.py demo --rule RSI -d matplotlib
+
+# Save Matplotlib figures
+python run_analysis.py demo --rule RSI -d matplotlib --save-plot
+```
+
+### Terminal (Text-based)
+```bash
+# Text-based plots for SSH/Docker
+python run_analysis.py demo --rule RSI -d term
+
+# Fastest backend for large datasets
+python run_analysis.py demo --rule RSI -d fastest
+```
+
+## Advanced Usage
+
+### Multiple Indicators
+```bash
+# Analyze multiple indicators
+python run_analysis.py demo --rule RSI,MACD,EMA
+
+# Compare indicators
+python run_analysis.py demo --rule RSI --rule MACD --rule EMA
+```
+
+### Custom Parameters
+```bash
+# Custom RSI period
+python run_analysis.py demo --rule RSI --rsi-period 21
+
+# Custom MACD parameters
+python run_analysis.py demo --rule MACD --macd-fast 8 --macd-slow 21 --macd-signal 5
+
+# Custom Bollinger Bands
+python run_analysis.py demo --rule BB --bb-period 20 --bb-std 2
+```
+
+### Data Filtering
+```bash
+# Filter by date range
+python run_analysis.py yf -t AAPL --period 1y --point 0.01 --start-date 2024-01-01 --end-date 2024-06-30
+
+# Filter by volume
+python run_analysis.py yf -t AAPL --period 1y --point 0.01 --min-volume 1000000
+```
+
+### Performance Optimization
+```bash
+# Use fastest backend for large datasets
+python run_analysis.py yf -t AAPL --period 5y --point 0.01 -d fastest
+
+# Use terminal backend for SSH/Docker
+python run_analysis.py yf -t AAPL --period 1y --point 0.01 -d term
+```
+
+## Show Mode
+
+### View Available Data
+```bash
+# Show available data sources
+python run_analysis.py show data
+
+# Show available indicators
+python run_analysis.py show indicators
+
+# Show available symbols
+python run_analysis.py show symbols
+```
+
+### View Calculated Indicators
+```bash
+# Show calculated indicators
+python run_analysis.py show ind
+
+# Show indicators from Parquet file
+python run_analysis.py show ind parquet
+
+# Show indicators from CSV file
+python run_analysis.py show ind csv
+```
+
+### View Data Statistics
+```bash
+# Show data statistics
+python run_analysis.py show stats
+
+# Show data statistics for specific file
+python run_analysis.py show stats --file data.parquet
+```
+
+## Testing and Validation
+
+### Run Tests
 ```bash
 # Run all tests
 python -m pytest tests/
 
 # Run specific test categories
-python -m pytest tests/calculation/
-python -m pytest tests/cli/
-python -m pytest tests/data/
-python -m pytest tests/eda/
+python -m pytest tests/calculation/ -v
+python -m pytest tests/cli/ -v
+python -m pytest tests/data/ -v
 
-# Run specific test files
-python -m pytest tests/test_stdio.py
-python -m pytest tests/mcp/test_auto_start_mcp.py
-python -m pytest tests/calculation/indicators/test_coverage_summary.py
-
-# Run tests with coverage
+# Run with coverage
 python -m pytest tests/ --cov=src --cov-report=html
-python -m pytest tests/ --cov=src --cov-report=term-missing
-
-# Run tests in parallel
-python -m pytest tests/ -n auto
-
-# Run tests with verbose output
-python -m pytest tests/ -v
-
-# Run tests and stop on first failure
-python -m pytest tests/ -x
-
-# Run tests and show local variables on failure
-python -m pytest tests/ -l
 ```
 
 ### Test Coverage Analysis
-
 ```bash
-# Run coverage analysis
+# Analyze test coverage
 python tests/zzz_analyze_test_coverage.py
 
-# Run tests with coverage report
-python -m pytest tests/ --cov=src --cov-report=html --cov-report=term
-
-# Generate coverage badge
-python -m pytest tests/ --cov=src --cov-report=html --cov-branch
+# Analyze with verbose output
+python tests/zzz_analyze_test_coverage.py --verbose
 ```
 
-### Specific Test Examples
-
+### MCP Server Testing
 ```bash
-# Test MCP server stdio mode
+# Test stdio mode
 python tests/test_stdio.py
 
-# Test CLI functionality
-python -m pytest tests/cli/test_cli_examples.py -v
-
-# Test indicator calculations
-python -m pytest tests/calculation/indicators/ -v
-
-# Test data fetchers
-python -m pytest tests/data/fetchers/ -v
-
-# Test export functionality
-python -m pytest tests/export/test_export_functionality.py -v
-
-# Test interactive mode
-python -m pytest tests/cli/test_interactive_mode.py -v
+# Test MCP functionality
+python -m pytest tests/mcp/ -v
 ```
 
-### Debugging Tests
+## MCP Server Integration
 
+### Auto-start MCP Servers
 ```bash
-# Run tests with debug output
-python -m pytest tests/ -s -v
-
-# Run specific test with debugger
-python -m pytest tests/test_stdio.py::test_stdio_mode -s --pdb
-
-# Run tests and show print statements
-python -m pytest tests/ -s
-
-# Run tests with maximum verbosity
-python -m pytest tests/ -vvv
-```
-
-## MCP Server Examples
-
-### Auto-Start MCP Server
-
-```bash
-# Start MCP server automatically
+# Start MCP servers
 python scripts/auto_start_mcp.py
 
-# Start with specific configuration
+# Start with configuration
 python scripts/auto_start_mcp.py --config mcp_auto_config.json
 
 # Start in debug mode
 python scripts/auto_start_mcp.py --debug
 
-# Start with custom project path
-python scripts/auto_start_mcp.py --project-path /path/to/project
-
 # Show server status
 python scripts/auto_start_mcp.py --status
 
-# Stop all servers
+# Stop servers
 python scripts/auto_start_mcp.py --stop
 ```
 
-### Manual MCP Server Control
-
+### Manual MCP Server Management
 ```bash
 # Start PyCharm GitHub Copilot MCP server
 python pycharm_github_copilot_mcp.py
 
-# Start with specific configuration
-python pycharm_github_copilot_mcp.py --config mcp_auto_config.json
-
-# Start in stdio mode for testing
+# Start with stdio mode for testing
 python pycharm_github_copilot_mcp.py --stdio
 
 # Start with debug logging
 python pycharm_github_copilot_mcp.py --debug
 ```
 
-### MCP Server Testing
+## Utility Scripts
 
+### Fix Imports
 ```bash
-# Test stdio mode
-python tests/test_stdio.py
-
-# Test MCP auto-start functionality
-python -m pytest tests/mcp/test_auto_start_mcp.py -v
-
-# Test PyCharm MCP server
-python -m pytest tests/mcp/test_pycharm_github_copilot_mcp.py -v
-
-# Test MCP server integration
-python scripts/run_cursor_mcp.py --test
-```
-
-## Script Usage Examples
-
-### Utility Scripts
-
-```bash
-# Initialize project directories
-bash scripts/init_dirs.sh
-
-# Fix import statements
+# Fix imports automatically
 python scripts/fix_imports.py
 
-# Analyze requirements
-python scripts/analyze_requirements.py
+# Fix with verbose output
+python scripts/fix_imports.py --verbose
 
-# Create test parquet file
-python scripts/create_test_parquet.py
-
-# Recreate CSV from parquet
-python scripts/recreate_csv.py
-
-# Run EDA analysis
-bash eda
-
-# Run analysis with different backends
-python run_analysis.py demo -d fastest
-python run_analysis.py demo -d plotly
-python run_analysis.py demo -d seaborn
-python run_analysis.py demo -d term
+# Fix specific file
+python scripts/fix_imports.py --file src/calculation/indicators/rsi_ind.py
 ```
 
 ### Debug Scripts
-
 ```bash
 # Debug Binance connection
 python scripts/debug_scripts/debug_binance_connection.py
 
-# Check parquet files
+# Check Parquet files
 python scripts/debug_scripts/debug_check_parquet.py
-
-# Debug data processing
-python scripts/debug_scripts/debug_data_processing.py
-
-# Debug plotting
-python scripts/debug_scripts/debug_plotting.py
 
 # Debug indicators
 python scripts/debug_scripts/debug_indicators.py
 
 # Debug CLI
 python scripts/debug_scripts/debug_cli.py
-
-# Debug MCP servers
-python scripts/debug_scripts/debug_mcp_servers.py
 ```
 
-## Advanced Usage Examples
-
-### Custom Indicator Development
-
-```python
-# Example: Creating a custom indicator
-from src.calculation.indicators.base_indicator import BaseIndicator
-import pandas as pd
-import numpy as np
-
-class CustomIndicator(BaseIndicator):
-    """Custom technical indicator example."""
-    
-    def calculate(self, data: pd.DataFrame, point: float = 0.01) -> pd.DataFrame:
-        """Calculate custom indicator."""
-        result = data.copy()
-        
-        # Your custom calculation logic here
-        result['custom_signal'] = (
-            data['close'].rolling(window=20).mean() - 
-            data['close'].rolling(window=50).mean()
-        )
-        
-        return result
-
-# Usage in CLI
-# python run_analysis.py demo --rule CustomIndicator
-```
-
-### Batch Processing
-
+### Data Management
 ```bash
-# Process multiple symbols
-for symbol in AAPL MSFT GOOGL; do
-    python run_analysis.py yf -t $symbol --period 1mo --point 0.01 --rule RSI
-done
+# Create test Parquet file
+python scripts/create_test_parquet.py
 
-# Process multiple timeframes
-for timeframe in D1 H1 M15; do
-    python run_analysis.py binance -t BTCUSDT --interval $timeframe --point 0.01 --rule MACD
-done
+# Recreate CSV from Parquet
+python scripts/recreate_csv.py
 
-# Process multiple indicators
-for indicator in RSI MACD EMA BB; do
-    python run_analysis.py demo --rule $indicator --export-parquet
-done
+# Analyze requirements
+python scripts/analyze_requirements.py
 ```
 
-### Data Pipeline Examples
+## Docker Usage
 
+### Basic Docker Commands
 ```bash
-# Complete data pipeline: Download → Analyze → Export
-# 1. Download data
+# Build and run container
+docker compose up --build
+
+# Run demo in container
+docker compose run --rm neozork-hld python run_analysis.py demo
+
+# Interactive session in container
+docker compose run --rm neozork-hld bash
+
+# Run tests in container
+docker compose run --rm neozork-hld python -m pytest tests/
+```
+
+### Docker with Data Mounting
+```bash
+# Mount data directory
+docker compose run --rm -v $(pwd)/data:/app/data neozork-hld python run_analysis.py csv --csv-file data.csv
+
+# Mount results directory
+docker compose run --rm -v $(pwd)/results:/app/results neozork-hld python run_analysis.py demo --export-parquet
+```
+
+## EDA (Exploratory Data Analysis)
+
+### Basic EDA
+```bash
+# Run EDA script
+bash eda
+
+# EDA with UV
+uv run ./eda
+
+# EDA with verbose output
+bash eda --verbose
+
+# EDA with export
+bash eda --export-results
+```
+
+### EDA in Docker
+```bash
+# Run EDA in container
+docker compose run --rm neozork-hld bash eda
+
+# EDA with UV in container
+docker compose run --rm neozork-hld uv run ./eda
+```
+
+## Workflow Examples
+
+### Complete Analysis Pipeline
+```bash
+# 1. Load data
 python run_analysis.py yf -t AAPL --period 1y --point 0.01
 
-# 2. Analyze with multiple indicators
+# 2. Calculate indicators
 python run_analysis.py show yf AAPL --rule RSI --export-parquet
 python run_analysis.py show yf AAPL --rule MACD --export-parquet
-python run_analysis.py show yf AAPL --rule EMA --export-parquet
 
 # 3. View results
 python run_analysis.py show ind parquet
+
+# 4. Run tests
+python -m pytest tests/ --cov=src --cov-report=html
+
+# 5. Analyze coverage
+python tests/zzz_analyze_test_coverage.py
 ```
 
-### Performance Optimization
-
+### Development Workflow
 ```bash
-# Use fastest plotting backend for large datasets
-python run_analysis.py csv --csv-file large_data.csv --point 0.01 -d fastest
+# 1. Fix imports
+python scripts/fix_imports.py
 
-# Use terminal backend for SSH/Docker environments
-python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001 -d term
+# 2. Create test data
+python scripts/create_test_parquet.py
 
-# Use specific rules for faster processing
-python run_analysis.py demo --rule OHLCV  # Candlestick only
-python run_analysis.py demo --rule AUTO   # Auto-detect columns
+# 3. Run tests
+python -m pytest tests/ -v
+
+# 4. Analyze coverage
+python tests/zzz_analyze_test_coverage.py
+
+# 5. Start MCP servers
+python scripts/auto_start_mcp.py
 ```
 
-## Troubleshooting Examples
-
-### Common Issues and Solutions
-
+### Debugging Workflow
 ```bash
-# Issue: Missing dependencies
-pip install -r requirements.txt
-# or
-uv sync
+# 1. Check data
+python scripts/debug_scripts/debug_check_parquet.py
 
-# Issue: Cache problems
-rm -rf data/cache/*
-python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --force-refresh
+# 2. Check connections
+python scripts/debug_scripts/debug_binance_connection.py
 
-# Issue: Permission errors
-chmod +x scripts/*.sh
-chmod +x nz
-chmod +x eda
+# 3. Debug indicators
+python scripts/debug_scripts/debug_indicators.py
 
-# Issue: Docker problems
-docker compose down
-docker compose build --no-cache
-docker compose up -d
+# 4. Debug CLI
+python scripts/debug_scripts/debug_cli.py
 
-# Issue: Test failures
-python -m pytest tests/ --tb=short
-python -m pytest tests/ -x --pdb
-
-# Issue: MCP server not starting
-python scripts/auto_start_mcp.py --stop
-python scripts/auto_start_mcp.py --debug
+# 5. Debug MCP servers
+python scripts/debug_scripts/debug_mcp_servers.py
 ```
 
-### Debug Mode Examples
+## Performance Tips
 
+### Large Datasets
 ```bash
-# Enable debug logging
-export DEBUG=1
-python run_analysis.py demo
+# Use fastest backend
+python run_analysis.py yf -t AAPL --period 5y --point 0.01 -d fastest
 
-# Run with verbose output
-python run_analysis.py demo -v
+# Use terminal backend for SSH/Docker
+python run_analysis.py yf -t AAPL --period 1y --point 0.01 -d term
 
-# Check system information
-python -c "import sys; print(sys.version)"
-python -c "import pandas; print(pandas.__version__)"
-
-# Test specific components
-python -c "from src.calculation.indicators.oscillators.rsi_ind_calc import RSI; print('RSI OK')"
-python -c "from src.data.fetchers.binance_fetcher import BinanceFetcher; print('Binance OK')"
+# Filter data to reduce size
+python run_analysis.py yf -t AAPL --period 1y --point 0.01 --start-date 2024-01-01
 ```
 
-## Integration Examples
-
-### CI/CD Pipeline
-
-```yaml
-# Example GitHub Actions workflow
-name: Test and Deploy
-on: [push, pull_request]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: |
-          pip install uv
-          uv sync
-      - name: Run tests
-        run: |
-          python -m pytest tests/ --cov=src --cov-report=xml
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-```
-
-### Docker Integration
-
-```dockerfile
-# Example Dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-COPY . .
-
-RUN pip install uv && uv sync
-
-EXPOSE 8000
-CMD ["python", "run_analysis.py", "demo"]
-```
-
-### API Integration
-
-```python
-# Example: Using the analysis tool as a library
-from src.calculation.indicator_calculation import IndicatorCalculation
-from src.data.data_acquisition import DataAcquisition
-
-# Initialize components
-data_acq = DataAcquisition()
-indicator_calc = IndicatorCalculation()
-
-# Load data
-data = data_acq.load_yfinance_data("AAPL", "1mo", 0.01)
-
-# Calculate indicators
-indicators = indicator_calc.calculate_indicators(data, "RSI")
-
-# Export results
-indicator_calc.export_indicators(indicators, "parquet")
-```
-
-## Quick Start Workflow
-
-### For New Users
-
-1. **Install and Setup**
-   ```bash
-   git clone <repository>
-   cd neozork-hld-prediction
-   pip install uv && uv sync
-   ```
-
-2. **Discover Indicators**
-   ```bash
-   python run_analysis.py --indicators
-   ```
-
-3. **Try Interactive Mode**
-   ```bash
-   python run_analysis.py interactive
-   ```
-
-4. **Run Demo Analysis**
-   ```bash
-   python run_analysis.py demo --rule RSI
-   ```
-
-5. **Download Real Data**
-   ```bash
-   python run_analysis.py yf -t AAPL --period 1mo --point 0.01
-   ```
-
-6. **Analyze Downloaded Data**
-   ```bash
-   python run_analysis.py show yf AAPL --rule RSI
-   ```
-
-### For Advanced Users
-
-1. **Setup MCP Servers**
-   ```bash
-   python scripts/auto_start_mcp.py
-   ```
-
-2. **Run Comprehensive Tests**
-   ```bash
-   python -m pytest tests/ --cov=src --cov-report=html
-   ```
-
-3. **Analyze Test Coverage**
-   ```bash
-   python tests/zzz_analyze_test_coverage.py
-   ```
-
-4. **Custom Development**
-   ```bash
-   # Create custom indicator
-   # Test custom indicator
-   python -m pytest tests/calculation/indicators/ -v
-   ```
-
-5. **Performance Testing**
-   ```bash
-   python run_analysis.py demo --rule AUTO -d fastest
-   ```
-
-## Environment-Specific Examples
-
-### SSH/Docker Environment
-
+### Memory Optimization
 ```bash
-# Use terminal plotting backend
-python run_analysis.py demo -d term
-python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001 -d term
+# Use smaller timeframes
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01
 
-# Use Docker container
-docker compose run --rm neozork-hld python run_analysis.py demo -d term
+# Use fewer indicators
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule RSI
+
+# Export results to free memory
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule RSI --export-parquet
 ```
 
-### Local Development
+## Troubleshooting
 
+### Common Issues
 ```bash
-# Use interactive plotting backends
-python run_analysis.py demo -d plotly
-python run_analysis.py demo -d seaborn
+# Check data quality
+python scripts/debug_scripts/debug_check_parquet.py
 
-# Enable debug mode
-export DEBUG=1
-python run_analysis.py demo
+# Check connections
+python scripts/debug_scripts/debug_binance_connection.py
+
+# Check indicators
+python scripts/debug_scripts/debug_indicators.py
+
+# Check CLI
+python scripts/debug_scripts/debug_cli.py
+
+# Check MCP servers
+python scripts/debug_scripts/debug_mcp_servers.py
 ```
 
-### Production Environment
-
+### Performance Issues
 ```bash
-# Use fastest backend for performance
+# Use fastest backend
 python run_analysis.py demo -d fastest
 
-# Use specific rules for efficiency
-python run_analysis.py demo --rule OHLCV
+# Clear cache
+python scripts/clear_cache.py
 
-# Enable logging
-python run_analysis.py demo --log-level INFO
+# Check system resources
+python scripts/debug_scripts/debug_system_resources.py
+```
+
+### Docker Issues
+```bash
+# Rebuild container
+docker compose build --no-cache
+
+# Check container logs
+docker compose logs neozork-hld
+
+# Interactive debugging
+docker compose run --rm neozork-hld bash
 ```
 
 ---
 
-For more detailed information, see:
-- [Getting Started](getting-started.md)
-- [Project Structure](project-structure.md)
-- [Testing Guide](testing.md)
-- [MCP Servers Setup](mcp-servers/SETUP.md)
-- [Scripts Documentation](scripts.md)
+📚 **Additional Resources:**
+- **[Quick Examples](quick-examples.md)** - Fast start examples
+- **[Indicator Examples](indicator-examples.md)** - Technical indicator examples
+- **[MCP Examples](mcp-examples.md)** - MCP server examples
+- **[Testing Examples](testing-examples.md)** - Testing examples
+- **[Script Examples](script-examples.md)** - Utility script examples
+- **[Docker Examples](docker-examples.md)** - Docker examples
+- **[EDA Examples](eda-examples.md)** - EDA examples

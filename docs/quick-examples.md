@@ -1,284 +1,291 @@
 # Quick Examples
 
-Быстрые примеры использования для начала работы с проектом.
+Fast start examples for common use cases.
 
-## 🚀 Быстрый старт
+## Quick Start
 
-### Установка и настройка
+### 1. Demo Analysis
 ```bash
-# Клонирование и установка
-git clone <repository>
-cd neozork-hld-prediction
-pip install uv && uv sync
-
-# Проверка установки
-python run_analysis.py --version
-```
-
-### Первые шаги
-```bash
-# Демо-режим
+# Basic demo with default settings
 python run_analysis.py demo
 
-# Интерактивный режим
-python run_analysis.py interactive
-
-# Просмотр всех примеров
-python run_analysis.py --examples
-```
-
-## 📊 Анализ данных
-
-### Демо-данные
-```bash
-# Базовый демо
-python run_analysis.py demo
-
-# С конкретным индикатором
+# Demo with specific indicator
 python run_analysis.py demo --rule RSI
-python run_analysis.py demo --rule MACD
+
+# Demo with interactive plots
+python run_analysis.py demo --rule MACD -d plotly
+```
+
+### 2. Real Data Analysis
+```bash
+# Yahoo Finance data
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01
+
+# CSV file analysis
+python run_analysis.py csv --csv-file data.csv --point 0.01
+
+# Binance cryptocurrency data
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01
+```
+
+### 3. Interactive Mode
+```bash
+# Start interactive mode
+python run_analysis.py --interactive
+
+# Interactive mode with alias
+nz --interactive
+```
+
+## Common Indicators
+
+### Trend Indicators
+```bash
+# EMA (Exponential Moving Average)
 python run_analysis.py demo --rule EMA
 
-# С разными бэкендами для графиков
-python run_analysis.py demo -d plotly
-python run_analysis.py demo -d seaborn
-python run_analysis.py demo -d term
+# ADX (Average Directional Index)
+python run_analysis.py demo --rule ADX
+
+# SAR (Parabolic SAR)
+python run_analysis.py demo --rule SAR
 ```
 
-### Реальные данные
-```bash
-# Yahoo Finance
-python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule RSI
-
-# Binance (криптовалюты)
-python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule MACD
-
-# CSV файлы
-python run_analysis.py csv --csv-file data.csv --point 0.01 --rule EMA
-
-# Exchange Rate API (форекс)
-python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001 --rule BB
-```
-
-## 🔍 Исследование индикаторов
-
-### Просмотр доступных индикаторов
-```bash
-# Все индикаторы
-python run_analysis.py --indicators
-
-# По категориям
-python run_analysis.py --indicators oscillators
-python run_analysis.py --indicators trend
-python run_analysis.py --indicators momentum
-
-# Детальная информация
-python run_analysis.py --indicators oscillators rsi
-python run_analysis.py --indicators momentum macd
-```
-
-### Использование индикаторов
+### Oscillators
 ```bash
 # RSI (Relative Strength Index)
 python run_analysis.py demo --rule RSI
 
+# Stochastic Oscillator
+python run_analysis.py demo --rule STOCH
+
+# CCI (Commodity Channel Index)
+python run_analysis.py demo --rule CCI
+```
+
+### Momentum Indicators
+```bash
 # MACD (Moving Average Convergence Divergence)
 python run_analysis.py demo --rule MACD
 
-# EMA (Exponential Moving Average)
-python run_analysis.py demo --rule EMA
+# Stochastic Oscillator
+python run_analysis.py demo --rule STOCH
+```
+
+### Volatility Indicators
+```bash
+# ATR (Average True Range)
+python run_analysis.py demo --rule ATR
 
 # Bollinger Bands
 python run_analysis.py demo --rule BB
 
-# ATR (Average True Range)
-python run_analysis.py demo --rule ATR
-
-# Stochastic Oscillator
-python run_analysis.py demo --rule STOCH
-
-# VWAP (Volume Weighted Average Price)
-python run_analysis.py demo --rule VWAP
+# Standard Deviation
+python run_analysis.py demo --rule STD
 ```
 
-## 📁 Управление данными
+## Data Sources
 
-### Просмотр кэшированных данных
+### Yahoo Finance
 ```bash
-# Все данные
-python run_analysis.py show
+# Single symbol
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01
 
-# По источникам
-python run_analysis.py show yf
-python run_analysis.py show binance
-python run_analysis.py show csv
-python run_analysis.py show exrate
+# Multiple symbols
+python run_analysis.py yf -t AAPL,MSFT,GOOGL --period 1mo --point 0.01
 
-# Фильтрация по ключевым словам
-python run_analysis.py show yf aapl
-python run_analysis.py show binance btc
+# Different timeframes
+python run_analysis.py yf -t AAPL --period 1d --point 0.01
+python run_analysis.py yf -t AAPL --period 1w --point 0.01
+python run_analysis.py yf -t AAPL --period 1y --point 0.01
 ```
 
-### Экспорт результатов
+### CSV Files
 ```bash
-# Экспорт в разных форматах
-python run_analysis.py demo --rule RSI --export-parquet
-python run_analysis.py demo --rule RSI --export-csv
-python run_analysis.py demo --rule RSI --export-json
+# Basic CSV analysis
+python run_analysis.py csv --csv-file data.csv --point 0.01
 
-# Все форматы сразу
+# With date filtering
+python run_analysis.py csv --csv-file data.csv --point 0.01 --start-date 2024-01-01
+```
+
+### Binance
+```bash
+# Cryptocurrency analysis
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01
+
+# Different intervals
+python run_analysis.py binance -t BTCUSDT --interval H1 --point 0.01
+python run_analysis.py binance -t BTCUSDT --interval M15 --point 0.01
+```
+
+### Exchange Rate API
+```bash
+# Forex analysis
+python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001
+
+# Different currency pairs
+python run_analysis.py exrate -t GBPUSD --interval D1 --point 0.00001
+```
+
+## Visualization Backends
+
+### Interactive Plots
+```bash
+# Plotly (interactive)
+python run_analysis.py demo --rule RSI -d plotly
+
+# Save interactive plots
+python run_analysis.py demo --rule RSI -d plotly --save-plot
+```
+
+### Static Plots
+```bash
+# Seaborn (static)
+python run_analysis.py demo --rule RSI -d seaborn
+
+# Matplotlib (static)
+python run_analysis.py demo --rule RSI -d matplotlib
+```
+
+### Text-based Plots
+```bash
+# Terminal (for SSH/Docker)
+python run_analysis.py demo --rule RSI -d term
+
+# Fastest backend
+python run_analysis.py demo --rule RSI -d fastest
+```
+
+## Export Options
+
+### Multiple Formats
+```bash
+# Export to all formats
 python run_analysis.py demo --rule RSI --export-parquet --export-csv --export-json
+
+# Export with custom filenames
+python run_analysis.py demo --rule RSI --export-parquet --output results.parquet
 ```
 
-## 🧪 Тестирование
+## Show Mode
 
-### Запуск тестов
+### View Data
 ```bash
-# Все тесты
+# Show available data
+python run_analysis.py show data
+
+# Show available indicators
+python run_analysis.py show indicators
+
+# Show calculated indicators
+python run_analysis.py show ind
+```
+
+## Testing
+
+### Quick Tests
+```bash
+# Run all tests
 python -m pytest tests/
 
-# Конкретные категории
+# Run specific test categories
 python -m pytest tests/calculation/ -v
 python -m pytest tests/cli/ -v
-python -m pytest tests/data/ -v
 
-# С покрытием
+# Run with coverage
 python -m pytest tests/ --cov=src --cov-report=html
 ```
 
-### Анализ покрытия
-```bash
-# Анализ покрытия тестами
-python tests/zzz_analyze_test_coverage.py
-```
+## MCP Servers
 
-## 🔧 MCP серверы
-
-### Автозапуск MCP серверов
+### Auto-start
 ```bash
-# Запуск
+# Start MCP servers
 python scripts/auto_start_mcp.py
 
-# Статус
+# Check status
 python scripts/auto_start_mcp.py --status
 
-# Остановка
+# Stop servers
 python scripts/auto_start_mcp.py --stop
 ```
 
-### Тестирование MCP
+## Docker
+
+### Quick Docker Commands
 ```bash
-# Тест stdio режима
-python tests/test_stdio.py
+# Build and run
+docker compose up --build
 
-# Тест MCP функциональности
-python -m pytest tests/mcp/ -v
-```
-
-## 🐳 Docker
-
-### Использование Docker
-```bash
-# Запуск в контейнере
+# Run demo in container
 docker compose run --rm neozork-hld python run_analysis.py demo
 
-# Интерактивная сессия
+# Interactive session
 docker compose run --rm neozork-hld bash
-
-# С UV
-uv run ./nz demo
 ```
 
-## 🔍 Отладка
+## EDA (Exploratory Data Analysis)
 
-### Утилиты отладки
+### Quick EDA
 ```bash
-# Отладка Binance соединения
-python scripts/debug_scripts/debug_binance_connection.py
+# Run EDA script
+bash eda
 
-# Проверка parquet файлов
+# EDA with UV
+uv run ./eda
+```
+
+## Performance Tips
+
+### Large Datasets
+```bash
+# Use fastest backend
+python run_analysis.py yf -t AAPL --period 5y --point 0.01 -d fastest
+
+# Use terminal backend for SSH/Docker
+python run_analysis.py yf -t AAPL --period 1y --point 0.01 -d term
+```
+
+### Memory Optimization
+```bash
+# Use smaller timeframes
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01
+
+# Export results to free memory
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule RSI --export-parquet
+```
+
+## Troubleshooting
+
+### Common Issues
+```bash
+# Check data quality
 python scripts/debug_scripts/debug_check_parquet.py
 
-# Отладка индикаторов
+# Check connections
+python scripts/debug_scripts/debug_binance_connection.py
+
+# Check indicators
 python scripts/debug_scripts/debug_indicators.py
-
-# Отладка CLI
-python scripts/debug_scripts/debug_cli.py
 ```
 
-### Решение проблем
+### Performance Issues
 ```bash
-# Проблемы с зависимостями
-pip install --upgrade -r requirements.txt
-# или
-uv sync
-
-# Проблемы с кэшем
-rm -rf data/cache/*
-python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --force-refresh
-
-# Проблемы с правами
-chmod +x scripts/*.sh
-chmod +x nz
-chmod +x eda
-
-# Проблемы с Docker
-docker compose down
-docker compose build --no-cache
-```
-
-## 📈 Рабочие процессы
-
-### Полный пайплайн анализа
-```bash
-# 1. Загрузка данных
-python run_analysis.py yf -t AAPL --period 1y --point 0.01
-
-# 2. Анализ с разными индикаторами
-python run_analysis.py show yf AAPL --rule RSI --export-parquet
-python run_analysis.py show yf AAPL --rule MACD --export-parquet
-python run_analysis.py show yf AAPL --rule EMA --export-parquet
-
-# 3. Просмотр результатов
-python run_analysis.py show ind parquet
-```
-
-### Пакетная обработка
-```bash
-# Множественные символы
-for symbol in AAPL MSFT GOOGL; do
-    python run_analysis.py yf -t $symbol --period 1mo --point 0.01 --rule RSI
-done
-
-# Множественные таймфреймы
-for timeframe in D1 H1 M15; do
-    python run_analysis.py binance -t BTCUSDT --interval $timeframe --point 0.01 --rule MACD
-done
-```
-
-## 🎯 Оптимизация производительности
-
-### Быстрые бэкенды
-```bash
-# Самый быстрый бэкенд
+# Use fastest backend
 python run_analysis.py demo -d fastest
 
-# Терминальный бэкенд (для SSH/Docker)
-python run_analysis.py demo -d term
-
-# Эффективные правила
-python run_analysis.py demo --rule OHLCV  # Только свечи
-python run_analysis.py demo --rule AUTO   # Автоопределение
+# Clear cache
+python scripts/clear_cache.py
 ```
-
-## 📚 Дополнительные ресурсы
-
-- **[Полные примеры использования](usage-examples.md)** - Подробные примеры и рабочие процессы
-- **[Руководство по началу работы](getting-started.md)** - Установка и базовая настройка
-- **[Руководство по тестированию](testing.md)** - Запуск тестов и анализ покрытия
-- **[Настройка MCP серверов](mcp-servers/SETUP.md)** - Интеграция с GitHub Copilot
-- **[Документация по скриптам](scripts.md)** - Утилиты и скрипты отладки
 
 ---
 
-💡 **Совет**: Используйте `python run_analysis.py --help` для получения справки по командам и `python run_analysis.py --examples` для просмотра всех примеров. 
+📚 **Additional Resources:**
+- **[Usage Examples](usage-examples.md)** - Comprehensive usage examples
+- **[Indicator Examples](indicator-examples.md)** - Technical indicator examples
+- **[MCP Examples](mcp-examples.md)** - MCP server examples
+- **[Testing Examples](testing-examples.md)** - Testing examples
+- **[Script Examples](script-examples.md)** - Utility script examples
+- **[Docker Examples](docker-examples.md)** - Docker examples
+- **[EDA Examples](eda-examples.md)** - EDA examples 

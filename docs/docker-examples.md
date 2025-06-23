@@ -1,488 +1,482 @@
 # Docker Examples
 
-Примеры использования Docker для развертывания и разработки проекта.
+Examples for using Docker with the project.
 
-## 🐳 Быстрый старт с Docker
+## Overview
 
-### Первый запуск
+The project includes Docker support for:
+
+- **Containerized Development** - Consistent development environment
+- **Production Deployment** - Scalable deployment options
+- **Data Mounting** - Persistent data storage
+- **Multi-stage Builds** - Optimized container images
+- **Service Orchestration** - Docker Compose integration
+
+## Basic Docker Commands
+
+### Build and Run
 ```bash
-# Сборка и запуск контейнера
+# Build and run container
 docker compose up --build
 
-# Запуск в фоновом режиме
-docker compose up -d --build
-
-# Запуск только сервиса
-docker compose up --build neozork-hld
-```
-
-### Базовые команды
-```bash
-# Запуск демо анализа в контейнере
-docker compose run --rm neozork-hld python run_analysis.py demo
-
-# Интерактивная сессия
-docker compose run --rm neozork-hld bash
-
-# Запуск с конкретными параметрами
-docker compose run --rm neozork-hld python run_analysis.py demo --rule RSI -d plotly
-```
-
-## 🔧 Управление контейнерами
-
-### Сборка и пересборка
-```bash
-# Сборка без кэша
+# Build without cache
 docker compose build --no-cache
 
-# Сборка конкретного сервиса
-docker compose build neozork-hld
-
-# Принудительная пересборка
-docker compose build --force-rm --no-cache
-```
-
-### Запуск и остановка
-```bash
-# Запуск всех сервисов
-docker compose up
-
-# Запуск в фоновом режиме
+# Run in detached mode
 docker compose up -d
 
-# Остановка всех сервисов
+# Stop containers
 docker compose down
 
-# Остановка с удалением volumes
-docker compose down -v
-```
-
-### Статус и логи
-```bash
-# Просмотр статуса
-docker compose ps
-
-# Просмотр логов
-docker compose logs
-
-# Просмотр логов конкретного сервиса
+# View logs
 docker compose logs neozork-hld
-
-# Просмотр логов в реальном времени
-docker compose logs -f neozork-hld
 ```
 
-## 📊 Анализ данных в Docker
-
-### Демо анализ
+### Interactive Sessions
 ```bash
-# Базовый демо
+# Interactive session in container
+docker compose run --rm neozork-hld bash
+
+# Run with specific user
+docker compose run --rm -u $(id -u):$(id -g) neozork-hld bash
+
+# Run with environment variables
+docker compose run --rm -e DEBUG=1 neozork-hld bash
+
+# Run with working directory
+docker compose run --rm -w /app/src neozork-hld bash
+```
+
+## Data Analysis in Docker
+
+### Demo Analysis
+```bash
+# Run demo in container
 docker compose run --rm neozork-hld python run_analysis.py demo
 
-# Демо с конкретным индикатором
+# Demo with specific indicator
 docker compose run --rm neozork-hld python run_analysis.py demo --rule RSI
 
-# Демо с разными бэкендами
+# Demo with different backends
 docker compose run --rm neozork-hld python run_analysis.py demo -d plotly
 docker compose run --rm neozork-hld python run_analysis.py demo -d seaborn
 docker compose run --rm neozork-hld python run_analysis.py demo -d term
 ```
 
-### Реальные данные
+### Real Data Analysis
 ```bash
-# Yahoo Finance
-docker compose run --rm neozork-hld python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule RSI
+# Yahoo Finance analysis
+docker compose run --rm neozork-hld python run_analysis.py yf -t AAPL --period 1mo --point 0.01
 
-# Binance
-docker compose run --rm neozork-hld python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule MACD
+# CSV analysis
+docker compose run --rm neozork-hld python run_analysis.py csv --csv-file data.csv --point 0.01
 
-# CSV файлы
-docker compose run --rm -v $(pwd)/data:/app/data neozork-hld python run_analysis.py csv --csv-file data.csv --point 0.01 --rule EMA
-
-# Exchange Rate API
-docker compose run --rm neozork-hld python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001 --rule BB
+# Binance analysis
+docker compose run --rm neozork-hld python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01
 ```
 
-### Интерактивный режим
+### Interactive Mode
 ```bash
-# Запуск интерактивного режима
-docker compose run --rm neozork-hld python run_analysis.py interactive
+# Interactive mode in container
+docker compose run --rm neozork-hld python run_analysis.py --interactive
 
-# Интерактивный режим с TTY
-docker compose run --rm -it neozork-hld python run_analysis.py interactive
+# Interactive mode with alias
+docker compose run --rm neozork-hld nz --interactive
 ```
 
-## 🧪 Тестирование в Docker
+## Data Mounting
 
-### Запуск тестов
+### Mount Data Directory
 ```bash
-# Все тесты
+# Mount data directory
+docker compose run --rm -v $(pwd)/data:/app/data neozork-hld python run_analysis.py csv --csv-file data.csv
+
+# Mount with read-only
+docker compose run --rm -v $(pwd)/data:/app/data:ro neozork-hld python run_analysis.py csv --csv-file data.csv
+
+# Mount specific files
+docker compose run --rm -v $(pwd)/data/file.csv:/app/data/file.csv neozork-hld python run_analysis.py csv --csv-file data/file.csv
+```
+
+### Mount Results Directory
+```bash
+# Mount results directory
+docker compose run --rm -v $(pwd)/results:/app/results neozork-hld python run_analysis.py demo --export-parquet
+
+# Mount with custom permissions
+docker compose run --rm -v $(pwd)/results:/app/results:rw neozork-hld python run_analysis.py demo --export-parquet
+
+# Mount multiple directories
+docker compose run --rm -v $(pwd)/data:/app/data -v $(pwd)/results:/app/results neozork-hld python run_analysis.py demo --export-parquet
+```
+
+### Mount Configuration
+```bash
+# Mount configuration files
+docker compose run --rm -v $(pwd)/config:/app/config neozork-hld python run_analysis.py demo
+
+# Mount with environment variables
+docker compose run --rm -v $(pwd)/config:/app/config -e CONFIG_PATH=/app/config neozork-hld python run_analysis.py demo
+```
+
+## Testing in Docker
+
+### Run Tests
+```bash
+# Run all tests in container
 docker compose run --rm neozork-hld python -m pytest tests/
 
-# Тесты с подробным выводом
-docker compose run --rm neozork-hld python -m pytest tests/ -v
+# Run specific test categories
+docker compose run --rm neozork-hld python -m pytest tests/calculation/ -v
+docker compose run --rm neozork-hld python -m pytest tests/cli/ -v
+docker compose run --rm neozork-hld python -m pytest tests/data/ -v
 
-# Тесты с покрытием
+# Run with coverage
 docker compose run --rm neozork-hld python -m pytest tests/ --cov=src --cov-report=html
 ```
 
-### Конкретные тесты
+### Test Coverage Analysis
 ```bash
-# Тест stdio режима
-docker compose run --rm neozork-hld python tests/test_stdio.py
-
-# Тест MCP серверов
-docker compose run --rm neozork-hld python -m pytest tests/mcp/ -v
-
-# Тест индикаторов
-docker compose run --rm neozork-hld python -m pytest tests/calculation/indicators/ -v
-```
-
-### Анализ покрытия
-```bash
-# Анализ покрытия
+# Analyze test coverage in container
 docker compose run --rm neozork-hld python tests/zzz_analyze_test_coverage.py
 
-# Анализ с подробным отчетом
+# Analyze with verbose output
 docker compose run --rm neozork-hld python tests/zzz_analyze_test_coverage.py --verbose
 ```
 
-## 🔧 MCP серверы в Docker
-
-### Запуск MCP серверов
+### MCP Server Testing
 ```bash
-# Автозапуск MCP серверов
-docker compose run --rm neozork-hld python scripts/auto_start_mcp.py
-
-# Запуск с конфигурацией
-docker compose run --rm neozork-hld python scripts/auto_start_mcp.py --config mcp_auto_config.json
-
-# Запуск в режиме отладки
-docker compose run --rm neozork-hld python scripts/auto_start_mcp.py --debug
-```
-
-### Тестирование MCP
-```bash
-# Тест stdio режима
+# Test stdio mode in container
 docker compose run --rm neozork-hld python tests/test_stdio.py
 
-# Тест MCP функциональности
+# Test MCP functionality
 docker compose run --rm neozork-hld python -m pytest tests/mcp/ -v
-
-# Тест интеграции
-docker compose run --rm neozork-hld python scripts/run_cursor_mcp.py --test
 ```
 
-## 🛠️ Утилитарные скрипты в Docker
+## MCP Servers in Docker
 
-### Исправление импортов
+### Auto-start MCP Servers
 ```bash
-# Исправление импортов
+# Start MCP servers in container
+docker compose run --rm neozork-hld python scripts/auto_start_mcp.py
+
+# Start with configuration
+docker compose run --rm neozork-hld python scripts/auto_start_mcp.py --config mcp_auto_config.json
+
+# Start in debug mode
+docker compose run --rm neozork-hld python scripts/auto_start_mcp.py --debug
+
+# Show server status
+docker compose run --rm neozork-hld python scripts/auto_start_mcp.py --status
+```
+
+### Manual MCP Server Management
+```bash
+# Start PyCharm GitHub Copilot MCP server
+docker compose run --rm neozork-hld python pycharm_github_copilot_mcp.py
+
+# Start with stdio mode
+docker compose run --rm neozork-hld python pycharm_github_copilot_mcp.py --stdio
+
+# Start with debug logging
+docker compose run --rm neozork-hld python pycharm_github_copilot_mcp.py --debug
+```
+
+## Scripts in Docker
+
+### Utility Scripts
+```bash
+# Fix imports in container
 docker compose run --rm neozork-hld python scripts/fix_imports.py
 
-# Исправление с подробным выводом
-docker compose run --rm neozork-hld python scripts/fix_imports.py --verbose
-```
-
-### Отладочные скрипты
-```bash
-# Отладка Binance соединения
-docker compose run --rm neozork-hld python scripts/debug_scripts/debug_binance_connection.py
-
-# Проверка parquet файлов
-docker compose run --rm neozork-hld python scripts/debug_scripts/debug_check_parquet.py
-
-# Отладка индикаторов
-docker compose run --rm neozork-hld python scripts/debug_scripts/debug_indicators.py
-```
-
-### Создание тестовых данных
-```bash
-# Создание тестового parquet файла
+# Create test data in container
 docker compose run --rm neozork-hld python scripts/create_test_parquet.py
 
-# Создание с параметрами
-docker compose run --rm neozork-hld python scripts/create_test_parquet.py --rows 1000 --symbol TEST
+# Analyze requirements in container
+docker compose run --rm neozork-hld python scripts/analyze_requirements.py
 ```
 
-## 📁 Работа с данными
-
-### Монтирование volumes
+### Debug Scripts
 ```bash
-# Монтирование локальной папки data
-docker compose run --rm -v $(pwd)/data:/app/data neozork-hld python run_analysis.py csv --csv-file data.csv
-
-# Монтирование результатов
-docker compose run --rm -v $(pwd)/results:/app/results neozork-hld python run_analysis.py demo --export-parquet
-
-# Монтирование логов
-docker compose run --rm -v $(pwd)/logs:/app/logs neozork-hld python run_analysis.py demo
-```
-
-### Копирование файлов
-```bash
-# Копирование файла в контейнер
-docker cp data.csv $(docker compose ps -q neozork-hld):/app/data.csv
-
-# Копирование файла из контейнера
-docker cp $(docker compose ps -q neozork-hld):/app/results/ ./local_results/
-```
-
-### Работа с кэшем
-```bash
-# Очистка кэша в контейнере
-docker compose run --rm neozork-hld rm -rf data/cache/*
-
-# Принудительное обновление данных
-docker compose run --rm neozork-hld python run_analysis.py yf -t AAPL --force-refresh
-```
-
-## 🔄 Рабочие процессы
-
-### Полный пайплайн анализа
-```bash
-# 1. Загрузка данных
-docker compose run --rm neozork-hld python run_analysis.py yf -t AAPL --period 1y --point 0.01
-
-# 2. Анализ с индикаторами
-docker compose run --rm neozork-hld python run_analysis.py show yf AAPL --rule RSI --export-parquet
-docker compose run --rm neozork-hld python run_analysis.py show yf AAPL --rule MACD --export-parquet
-
-# 3. Просмотр результатов
-docker compose run --rm neozork-hld python run_analysis.py show ind parquet
-```
-
-### Разработка в контейнере
-```bash
-# 1. Запуск интерактивной сессии
-docker compose run --rm -it neozork-hld bash
-
-# 2. Исправление импортов
-python scripts/fix_imports.py
-
-# 3. Запуск тестов
-python -m pytest tests/ -v
-
-# 4. Анализ покрытия
-python tests/zzz_analyze_test_coverage.py
-
-# 5. Запуск MCP серверов
-python scripts/auto_start_mcp.py
-```
-
-### Отладка в контейнере
-```bash
-# 1. Проверка данных
-docker compose run --rm neozork-hld python scripts/debug_scripts/debug_check_parquet.py
-
-# 2. Проверка соединений
+# Debug Binance connection in container
 docker compose run --rm neozork-hld python scripts/debug_scripts/debug_binance_connection.py
 
-# 3. Проверка индикаторов
+# Check Parquet files in container
+docker compose run --rm neozork-hld python scripts/debug_scripts/debug_check_parquet.py
+
+# Debug indicators in container
 docker compose run --rm neozork-hld python scripts/debug_scripts/debug_indicators.py
 
-# 4. Проверка CLI
+# Debug CLI in container
 docker compose run --rm neozork-hld python scripts/debug_scripts/debug_cli.py
 ```
 
-## 🎯 Специализированные сценарии
+## EDA in Docker
 
-### Продакшн развертывание
+### Basic EDA
 ```bash
-# Сборка для продакшна
-docker compose -f docker-compose.prod.yml build
+# Run EDA script in container
+docker compose run --rm neozork-hld bash eda
 
-# Запуск в продакшне
-docker compose -f docker-compose.prod.yml up -d
+# EDA with UV in container
+docker compose run --rm neozork-hld uv run ./eda
 
-# Мониторинг
-docker compose -f docker-compose.prod.yml logs -f
+# EDA with verbose output
+docker compose run --rm neozork-hld bash eda --verbose
+
+# EDA with export results
+docker compose run --rm neozork-hld bash eda --export-results
 ```
 
-### Разработка с hot reload
+### EDA with Data Mounting
 ```bash
-# Запуск с монтированием исходного кода
-docker compose -f docker-compose.dev.yml up
+# EDA with mounted data
+docker compose run --rm -v $(pwd)/data:/app/data neozork-hld bash eda
 
-# Изменения в коде автоматически отражаются в контейнере
+# EDA with mounted results
+docker compose run --rm -v $(pwd)/results:/app/results neozork-hld bash eda --export-results
 ```
 
-### Масштабирование
-```bash
-# Запуск нескольких экземпляров
-docker compose up --scale neozork-hld=3
+## Performance Optimization
 
-# Балансировка нагрузки
-docker compose up --scale neozork-hld=3 -d
+### Resource Limits
+```bash
+# Run with memory limit
+docker compose run --rm --memory=2g neozork-hld python run_analysis.py demo
+
+# Run with CPU limit
+docker compose run --rm --cpus=2 neozork-hld python run_analysis.py demo
+
+# Run with both limits
+docker compose run --rm --memory=2g --cpus=2 neozork-hld python run_analysis.py demo
 ```
 
-## 🔍 Отладка Docker
-
-### Проблемы с контейнером
+### Fastest Backend
 ```bash
-# Проверка статуса контейнера
+# Use fastest backend for large datasets
+docker compose run --rm neozork-hld python run_analysis.py demo -d fastest
+
+# Use terminal backend for SSH/Docker
+docker compose run --rm neozork-hld python run_analysis.py demo -d term
+```
+
+## Multi-stage Builds
+
+### Development Build
+```bash
+# Build development image
+docker build -f Dockerfile.dev -t neozork-hld:dev .
+
+# Run development image
+docker run --rm -v $(pwd):/app neozork-hld:dev python run_analysis.py demo
+```
+
+### Production Build
+```bash
+# Build production image
+docker build -f Dockerfile.prod -t neozork-hld:prod .
+
+# Run production image
+docker run --rm neozork-hld:prod python run_analysis.py demo
+```
+
+## Docker Compose Services
+
+### Multiple Services
+```yaml
+# docker-compose.yml example
+version: '3.8'
+services:
+  neozork-hld:
+    build: .
+    volumes:
+      - ./data:/app/data
+      - ./results:/app/results
+    environment:
+      - DEBUG=0
+    ports:
+      - "8000:8000"
+  
+  mcp-server:
+    build: .
+    command: python scripts/auto_start_mcp.py
+    volumes:
+      - ./config:/app/config
+    environment:
+      - MCP_DEBUG=1
+```
+
+### Service Orchestration
+```bash
+# Start all services
+docker compose up -d
+
+# Start specific service
+docker compose up -d neozork-hld
+
+# Scale services
+docker compose up -d --scale neozork-hld=3
+
+# View service logs
+docker compose logs -f neozork-hld
+```
+
+## Environment Variables
+
+### Development Environment
+```bash
+# Run with development environment
+docker compose run --rm -e ENV=development neozork-hld python run_analysis.py demo
+
+# Run with debug mode
+docker compose run --rm -e DEBUG=1 neozork-hld python run_analysis.py demo
+
+# Run with custom configuration
+docker compose run --rm -e CONFIG_PATH=/app/config neozork-hld python run_analysis.py demo
+```
+
+### Production Environment
+```bash
+# Run with production environment
+docker compose run --rm -e ENV=production neozork-hld python run_analysis.py demo
+
+# Run with optimized settings
+docker compose run --rm -e OPTIMIZE=1 neozork-hld python run_analysis.py demo
+
+# Run with logging configuration
+docker compose run --rm -e LOG_LEVEL=INFO neozork-hld python run_analysis.py demo
+```
+
+## Networking
+
+### Port Mapping
+```bash
+# Map specific port
+docker compose run --rm -p 8000:8000 neozork-hld python run_analysis.py demo
+
+# Map multiple ports
+docker compose run --rm -p 8000:8000 -p 8080:8080 neozork-hld python run_analysis.py demo
+```
+
+### Network Configuration
+```bash
+# Use specific network
+docker compose run --rm --network=host neozork-hld python run_analysis.py demo
+
+# Create custom network
+docker network create neozork-network
+docker compose run --rm --network=neozork-network neozork-hld python run_analysis.py demo
+```
+
+## Troubleshooting
+
+### Common Issues
+```bash
+# Issue: Permission denied
+docker compose run --rm -u $(id -u):$(id -g) neozork-hld python run_analysis.py demo
+
+# Issue: Container not starting
+docker compose logs neozork-hld
+docker compose run --rm neozork-hld bash
+
+# Issue: Data not persisting
+docker compose run --rm -v $(pwd)/data:/app/data:rw neozork-hld python run_analysis.py demo
+
+# Issue: Memory problems
+docker compose run --rm --memory=4g neozork-hld python run_analysis.py demo
+```
+
+### Debug Mode
+```bash
+# Run with debug output
+docker compose run --rm -e DEBUG=1 neozork-hld python run_analysis.py demo
+
+# Run with verbose logging
+docker compose run --rm -e VERBOSE=1 neozork-hld python run_analysis.py demo
+
+# Run with shell access
+docker compose run --rm neozork-hld bash
+```
+
+### Container Inspection
+```bash
+# Inspect running container
 docker compose ps
+docker inspect $(docker compose ps -q neozork-hld)
 
-# Просмотр логов
-docker compose logs neozork-hld
+# Check container resources
+docker stats $(docker compose ps -q neozork-hld)
 
-# Вход в контейнер для отладки
-docker compose exec neozork-hld bash
-
-# Проверка ресурсов
-docker stats
+# Check container logs
+docker compose logs -f neozork-hld
 ```
 
-### Проблемы с сетью
-```bash
-# Проверка сети
-docker network ls
+## Advanced Usage
 
-# Проверка соединений
-docker compose exec neozork-hld ping google.com
+### Custom Dockerfile
+```dockerfile
+# Custom Dockerfile example
+FROM python:3.11-slim
 
-# Проверка портов
-docker compose port neozork-hld 8000
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV DEBUG=0
+
+# Expose port
+EXPOSE 8000
+
+# Default command
+CMD ["python", "run_analysis.py", "demo"]
 ```
 
-### Проблемы с volumes
-```bash
-# Проверка volumes
-docker volume ls
-
-# Проверка монтирования
-docker compose exec neozork-hld ls -la /app/data
-
-# Очистка volumes
-docker compose down -v
+### Docker Compose Override
+```yaml
+# docker-compose.override.yml
+version: '3.8'
+services:
+  neozork-hld:
+    volumes:
+      - ./data:/app/data
+      - ./results:/app/results
+    environment:
+      - DEBUG=1
+    ports:
+      - "8000:8000"
 ```
 
-## 📊 Мониторинг и метрики
-
-### Мониторинг ресурсов
-```bash
-# Статистика контейнеров
-docker stats
-
-# Использование диска
-docker system df
-
-# Использование памяти
-docker stats --no-stream
-```
-
-### Логирование
-```bash
-# Централизованное логирование
-docker compose logs -f
-
-# Логирование с фильтрацией
-docker compose logs -f neozork-hld | grep ERROR
-
-# Экспорт логов
-docker compose logs neozork-hld > logs/container.log
-```
-
-## 🔧 Настройка и конфигурация
-
-### Переменные окружения
-```bash
-# Запуск с переменными окружения
-docker compose run --rm -e DEBUG=1 -e LOG_LEVEL=DEBUG neozork-hld python run_analysis.py demo
-
-# Использование .env файла
-docker compose --env-file .env.prod up
-```
-
-### Кастомные конфигурации
-```bash
-# Использование кастомного docker-compose файла
-docker compose -f docker-compose.custom.yml up
-
-# Переопределение сервисов
-docker compose -f docker-compose.yml -f docker-compose.override.yml up
-```
-
-### Оптимизация образа
-```bash
-# Многоэтапная сборка
-docker build --target production -t neozork-hld:prod .
-
-# Оптимизация размера
-docker build --no-cache --compress -t neozork-hld:optimized .
-```
-
-## 🚨 Устранение неполадок
-
-### Общие проблемы
-```bash
-# Проблема: Контейнер не запускается
-docker compose logs neozork-hld
-docker compose down
-docker compose up --build
-
-# Проблема: Нет доступа к данным
-docker compose run --rm -v $(pwd)/data:/app/data neozork-hld ls -la /app/data
-
-# Проблема: Высокое потребление ресурсов
-docker stats
-docker compose restart neozork-hld
-```
-
-### Проблемы с зависимостями
-```bash
-# Пересборка с обновлением зависимостей
-docker compose build --no-cache --pull
-
-# Проверка зависимостей в контейнере
-docker compose run --rm neozork-hld pip list
-
-# Обновление зависимостей
-docker compose run --rm neozork-hld pip install --upgrade -r requirements.txt
-```
-
-### Проблемы с сетью
-```bash
-# Проверка сетевых настроек
-docker network inspect neozork-hld-prediction_default
-
-# Сброс сети
-docker compose down
-docker network prune
-docker compose up
-```
-
-## 💡 Советы по использованию
-
-### Лучшие практики
-```bash
-# Используйте --rm для автоматической очистки
-docker compose run --rm neozork-hld python run_analysis.py demo
-
-# Монтируйте volumes для данных
-docker compose run --rm -v $(pwd)/data:/app/data neozork-hld python run_analysis.py csv --csv-file data.csv
-
-# Используйте .dockerignore для оптимизации
-echo "data/cache/" >> .dockerignore
-echo "logs/" >> .dockerignore
-```
-
-### Оптимизация производительности
-```bash
-# Используйте кэширование слоев
-docker compose build
-
-# Оптимизируйте размер образа
-docker build --no-cache --compress .
-
-# Используйте multi-stage builds
-docker build --target production .
+### Health Checks
+```yaml
+# Health check configuration
+services:
+  neozork-hld:
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 ```
 
 ---
 
-📚 **Дополнительные ресурсы:**
-- **[Docker документация](docker.md)** - Подробная документация
-- **[Полные примеры использования](usage-examples.md)** - Комплексные примеры
-- **[Быстрые примеры](quick-examples.md)** - Быстрый старт
-- **[MCP примеры](mcp-examples.md)** - Интеграция с AI 
+📚 **Additional Resources:**
+- **[Usage Examples](usage-examples.md)** - Comprehensive usage examples
+- **[Quick Examples](quick-examples.md)** - Fast start examples
+- **[Indicator Examples](indicator-examples.md)** - Technical indicator examples
+- **[MCP Examples](mcp-examples.md)** - MCP server examples
+- **[Testing Examples](testing-examples.md)** - Testing examples
+- **[Script Examples](script-examples.md)** - Utility script examples
+- **[EDA Examples](eda-examples.md)** - EDA examples 
