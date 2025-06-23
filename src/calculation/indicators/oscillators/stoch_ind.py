@@ -61,14 +61,14 @@ def calculate_stochastic(df: pd.DataFrame, k_period: int = 14, d_period: int = 3
     raw_k = np.where(
         denominator > 1e-10,
         ((close_price - lowest_low) / denominator) * 100,
-        np.nan  # если нет диапазона, пусть будет NaN
+        np.nan  # if no range, let it be NaN
     )
-    # Ограничиваем значения до сглаживания
+    # Limit values before smoothing
     raw_k = np.clip(raw_k, 0, 100)
     
     # Smooth %K
     k_percent = pd.Series(raw_k, index=df.index).rolling(window=slowing).mean()
-    # Ограничиваем после сглаживания
+    # Limit after smoothing
     k_percent = k_percent.clip(0, 100)
     
     # Calculate %D (SMA of %K)
@@ -130,7 +130,7 @@ def apply_rule_stochastic(df: pd.DataFrame, point: float,
     # Calculate Stochastic
     k_values, d_values = calculate_stochastic(df, k_period, d_period, slowing, price_type)
     
-    # Ограничиваем значения только для финального DataFrame
+    # Limit values only for final DataFrame
     k_values = k_values.clip(0, 100)
     d_values = d_values.clip(0, 100)
     
