@@ -142,3 +142,8 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.dynamic]
 version = {attr = "__version__"}
+
+[dependency-groups]
+dev = [
+    "pytest-xdist>=3.7.0",
+]
