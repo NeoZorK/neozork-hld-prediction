@@ -2,6 +2,37 @@
 
 Testing framework and validation tools.
 
+## Test Directory Structure
+
+All test files are organized in logical subfolders under `tests/`. General and summary tests (not belonging to a specific module) are now located in `tests/summary/`.
+
+```
+- tests/
+    - summary/           # General and summary tests (moved from root)
+        - test_stdio.py
+        - test_file_reorganization.py
+        - zzz_analyze_test_coverage.py
+        - run_tests.py
+        - test_fix_imports.py
+        - test_run_analysis.py
+    - cli/
+    - calculation/
+    - common/
+    - data/
+    - docker/
+    - eda/
+    - export/
+    - mcp/
+    - plotting/
+    - scripts/
+    - src/
+    - utils/
+    - workflow/
+    - ...
+```
+
+> All new and existing general-purpose test scripts should be placed in `tests/summary/`.
+
 ## Quick Test Commands
 
 ### Run All Tests
@@ -21,7 +52,7 @@ pytest tests/data/ -v
 
 **Main test script:**
 ```bash
-python tests/run_tests.py
+python tests/summary/run_tests.py
 ```
 
 **Local workflow testing:**
@@ -68,10 +99,10 @@ The MCP server is fully compatible with both subprocess/PIPE and pytest/CI envir
 **Recommended usage:**
 ```bash
 # Standalone (for local/manual check)
-python tests/test_stdio.py
+python tests/summary/test_stdio.py
 
 # With pytest (for CI and automation)
-pytest tests/test_stdio.py -v
+pytest tests/summary/test_stdio.py -v
 ```
 
 > This test ensures the server works perfectly in all environments, including GitHub Actions and Docker.
