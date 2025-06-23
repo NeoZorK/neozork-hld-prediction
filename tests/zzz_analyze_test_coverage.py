@@ -44,47 +44,42 @@ def map_test_to_src(test_file):
     elif module_name.endswith("_fetcher"):
         module_name = module_name.replace("_fetcher", "_fetcher")
     
-    # If test is in tests/src/, then source file is in src/
+    # Если тест лежит в tests/src/..., ищем исходник в src/... по аналогичной структуре
     if relative_path.parts[0] == "src":
-        # Skip 'src' in relative path
         src_subpath = Path(*relative_path.parts[1:-1])
         src_path = Path("src") / src_subpath / f"{module_name}.py"
         return [src_path]
-    
-    # For tests in tests/ root (e.g., test_fix_imports.py for scripts/fix_imports.py)
-    root_path = Path(f"{module_name}.py")
+
+    # Если тест лежит в tests/..., ищем исходник в src/... по аналогичной структуре
     src_path = Path("src") / relative_path.parent / f"{module_name}.py"
-    return [src_path, root_path]
+    # Также ищем тесты в tests/src/... для этого исходника
+    src_test_path = Path("tests/src") / relative_path.parent / f"test_{module_name}.py"
+    if src_test_path.exists():
+        return [src_path]
+    return [src_path]
 
 def analyze_coverage():
     """Analyze test coverage"""
     src_files = get_src_files()
     test_files = get_test_files()
-    
-    # Create mapping of tests to source files
-    test_to_src = {}
-    for test_file in test_files:
-        src_paths = map_test_to_src(test_file)
-        test_to_src[test_file] = src_paths
-    
-    # Analyze coverage
+
     covered_files = set()
     missing_tests = []
-    
-    for test_file, src_paths in test_to_src.items():
-        found = False
-        for src_file in src_paths:
-            if src_file.exists():
-                covered_files.add(src_file.resolve())
-                found = True
-        if not found:
-            print(f"⚠️  Test {test_file} doesn't match source file")
-    
-    # Find files without tests
+
     for src_file in src_files:
-        if src_file.resolve() not in covered_files:
+        try:
+            rel = src_file.relative_to("src")
+            test_path1 = Path("tests") / rel.parent / f"test_{rel.stem}.py"
+            test_path2 = Path("tests/src") / rel.parent / f"test_{rel.stem}.py"
+        except ValueError:
+            # Файл не в src/, ищем тесты в корне tests/ и tests/src/
+            test_path1 = Path("tests") / f"test_{src_file.stem}.py"
+            test_path2 = Path("tests/src") / f"test_{src_file.stem}.py"
+        if test_path1.exists() or test_path2.exists():
+            covered_files.add(src_file.resolve())
+        else:
             missing_tests.append(src_file)
-    
+
     # Output results
     print(f"📊 TEST COVERAGE ANALYSIS")
     print(f"=" * 50)
@@ -94,14 +89,13 @@ def analyze_coverage():
     print(f"Not covered by tests: {len(missing_tests)}")
     print(f"Coverage: {len(covered_files)/len(src_files)*100:.1f}%")
     print()
-    
+
     if missing_tests:
         print("📝 FILES WITHOUT TESTS:")
         print("-" * 30)
         for file in missing_tests:
             print(f"❌ {file}")
         print()
-        
         # Group by modules
         modules = {}
         for file in missing_tests:
@@ -109,14 +103,13 @@ def analyze_coverage():
             if module not in modules:
                 modules[module] = []
             modules[module].append(file.name)
-        
         print("📁 GROUPING BY MODULES:")
         print("-" * 30)
         for module, files in sorted(modules.items()):
             print(f"\n🔸 {module}/ ({len(files)} files):")
             for file in files:
                 print(f"   - {file}")
-    
+
     return missing_tests
 
 if __name__ == "__main__":
