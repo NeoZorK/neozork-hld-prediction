@@ -283,6 +283,41 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
             print(f"   💥 {error.nodeid}")
     
     print("="*60)
+    
+    # Save test results to logs/test_results directory
+    try:
+        import json
+        from datetime import datetime
+        
+        # Create logs/test_results directory if it doesn't exist
+        logs_dir = Path(__file__).parent.parent / "logs" / "test_results"
+        logs_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Generate timestamp for filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        results_file = logs_dir / f"test_results_{timestamp}.json"
+        
+        # Prepare results data
+        results_data = {
+            'timestamp': timestamp,
+            'datetime': datetime.now().isoformat(),
+            'passed': passed,
+            'failed': failed,
+            'skipped': skipped,
+            'errors': errors,
+            'total': passed + failed + skipped + errors,
+            'success_rate': (passed / (passed + failed + errors)) * 100 if (passed + failed + errors) > 0 else 0,
+            'exit_status': exitstatus.name if hasattr(exitstatus, 'name') else str(exitstatus)
+        }
+        
+        # Save to file
+        with open(results_file, 'w') as f:
+            json.dump(results_data, f, indent=2)
+        
+        print(f"💾 Test results saved to: {results_file}")
+        
+    except Exception as e:
+        print(f"⚠️  Could not save test results: {e}")
 
 def pytest_sessionfinish(session, exitstatus):
     """Run test coverage analysis after all tests complete"""
