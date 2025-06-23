@@ -1,427 +1,462 @@
-# Indicator Examples
+# Technical Indicator Examples
 
-Примеры использования технических индикаторов в проекте.
+Comprehensive examples for all available technical indicators.
 
-## 🎯 Быстрый обзор индикаторов
+## Overview
 
-### Просмотр доступных индикаторов
-```bash
-# Все индикаторы
-python run_analysis.py --indicators
+The project supports multiple categories of technical indicators:
 
-# По категориям
-python run_analysis.py --indicators oscillators
-python run_analysis.py --indicators trend
-python run_analysis.py --indicators momentum
-python run_analysis.py --indicators volatility
-python run_analysis.py --indicators volume
-python run_analysis.py --indicators predictive
-python run_analysis.py --indicators probability
-python run_analysis.py --indicators sentiment
-python run_analysis.py --indicators suportresist
+- **Trend Indicators** - EMA, ADX, SAR
+- **Oscillators** - RSI, Stochastic, CCI
+- **Momentum Indicators** - MACD, Stochastic Oscillator
+- **Volatility Indicators** - ATR, Bollinger Bands, Standard Deviation
+- **Volume Indicators** - OBV, VWAP
+- **Support/Resistance** - Donchian Channels, Fibonacci, Pivot Points
+- **Predictive Indicators** - HMA, Time Series Forecast
+- **Probability Indicators** - Kelly Criterion, Monte Carlo
+- **Sentiment Indicators** - COT, Fear & Greed, Social Sentiment
 
-# Детальная информация
-python run_analysis.py --indicators oscillators rsi
-python run_analysis.py --indicators momentum macd
-python run_analysis.py --indicators trend ema
-```
-
-## 📊 Oscillators (Осцилляторы)
-
-### RSI (Relative Strength Index)
-```bash
-# Демо с RSI
-python run_analysis.py demo --rule RSI
-
-# Yahoo Finance с RSI
-python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule RSI
-
-# Binance с RSI
-python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule RSI
-
-# CSV с RSI
-python run_analysis.py csv --csv-file data.csv --point 0.01 --rule RSI
-```
-
-### Stochastic Oscillator
-```bash
-# Демо с Stochastic
-python run_analysis.py demo --rule STOCH
-
-# Реальные данные с Stochastic
-python run_analysis.py yf -t EURUSD=X --period 3mo --point 0.00001 --rule STOCH
-```
-
-### CCI (Commodity Channel Index)
-```bash
-# Демо с CCI
-python run_analysis.py demo --rule CCI
-
-# Криптовалюты с CCI
-python run_analysis.py binance -t ETHUSDT --interval H1 --point 0.001 --rule CCI
-```
-
-## 📈 Trend Indicators (Трендовые индикаторы)
+## Trend Indicators
 
 ### EMA (Exponential Moving Average)
 ```bash
-# Демо с EMA
+# Basic EMA
 python run_analysis.py demo --rule EMA
 
-# Акции с EMA
-python run_analysis.py yf -t MSFT --period 6mo --point 0.01 --rule EMA
+# EMA with custom period
+python run_analysis.py demo --rule EMA --ema-period 20
 
-# Форекс с EMA
-python run_analysis.py exrate -t GBPUSD --interval D1 --point 0.00001 --rule EMA
+# EMA with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule EMA
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule EMA
 ```
 
 ### ADX (Average Directional Index)
 ```bash
-# Демо с ADX
+# Basic ADX
 python run_analysis.py demo --rule ADX
 
-# Реальные данные с ADX
-python run_analysis.py yf -t GOOGL --period 1y --point 0.01 --rule ADX
+# ADX with custom period
+python run_analysis.py demo --rule ADX --adx-period 14
+
+# ADX with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule ADX
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule ADX
 ```
 
 ### SAR (Parabolic SAR)
 ```bash
-# Демо с SAR
+# Basic SAR
 python run_analysis.py demo --rule SAR
 
-# Криптовалюты с SAR
-python run_analysis.py binance -t ADAUSDT --interval D1 --point 0.001 --rule SAR
+# SAR with custom parameters
+python run_analysis.py demo --rule SAR --sar-acceleration 0.02 --sar-maximum 0.2
+
+# SAR with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule SAR
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule SAR
 ```
 
-## ⚡ Momentum Indicators (Моментум индикаторы)
+## Oscillators
+
+### RSI (Relative Strength Index)
+```bash
+# Basic RSI
+python run_analysis.py demo --rule RSI
+
+# RSI with custom period
+python run_analysis.py demo --rule RSI --rsi-period 21
+
+# RSI with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule RSI
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule RSI
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule RSI
+```
+
+### Stochastic Oscillator
+```bash
+# Basic Stochastic
+python run_analysis.py demo --rule STOCH
+
+# Stochastic with custom parameters
+python run_analysis.py demo --rule STOCH --stoch-k-period 14 --stoch-d-period 3
+
+# Stochastic with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule STOCH
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule STOCH
+```
+
+### CCI (Commodity Channel Index)
+```bash
+# Basic CCI
+python run_analysis.py demo --rule CCI
+
+# CCI with custom period
+python run_analysis.py demo --rule CCI --cci-period 20
+
+# CCI with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule CCI
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule CCI
+```
+
+## Momentum Indicators
 
 ### MACD (Moving Average Convergence Divergence)
 ```bash
-# Демо с MACD
+# Basic MACD
 python run_analysis.py demo --rule MACD
 
-# Акции с MACD
-python run_analysis.py yf -t TSLA --period 3mo --point 0.01 --rule MACD
+# MACD with custom parameters
+python run_analysis.py demo --rule MACD --macd-fast 8 --macd-slow 21 --macd-signal 5
 
-# Форекс с MACD
-python run_analysis.py exrate -t USDJPY --interval D1 --point 0.01 --rule MACD
+# MACD with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule MACD
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule MACD
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule MACD
 ```
 
 ### Stochastic Oscillator (Momentum)
 ```bash
-# Демо с Stochastic
+# Basic Stochastic Oscillator
 python run_analysis.py demo --rule STOCH
 
-# Реальные данные с Stochastic
-python run_analysis.py yf -t BTC-USD --period 1y --point 0.01 --rule STOCH
+# Stochastic with custom parameters
+python run_analysis.py demo --rule STOCH --stoch-k-period 14 --stoch-d-period 3
+
+# Stochastic with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule STOCH
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule STOCH
 ```
 
-## 📊 Volatility Indicators (Волатильность)
+## Volatility Indicators
 
 ### ATR (Average True Range)
 ```bash
-# Демо с ATR
+# Basic ATR
 python run_analysis.py demo --rule ATR
 
-# Акции с ATR
-python run_analysis.py yf -t NVDA --period 6mo --point 0.01 --rule ATR
+# ATR with custom period
+python run_analysis.py demo --rule ATR --atr-period 14
 
-# Криптовалюты с ATR
-python run_analysis.py binance -t SOLUSDT --interval H4 --point 0.001 --rule ATR
+# ATR with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule ATR
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule ATR
 ```
 
 ### Bollinger Bands
 ```bash
-# Демо с Bollinger Bands
+# Basic Bollinger Bands
 python run_analysis.py demo --rule BB
 
-# Форекс с Bollinger Bands
-python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001 --rule BB
+# Bollinger Bands with custom parameters
+python run_analysis.py demo --rule BB --bb-period 20 --bb-std 2
 
-# Акции с Bollinger Bands
-python run_analysis.py yf -t AMZN --period 1mo --point 0.01 --rule BB
+# Bollinger Bands with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule BB
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule BB
 ```
 
 ### Standard Deviation
 ```bash
-# Демо с Standard Deviation
-python run_analysis.py demo --rule STDEV
+# Basic Standard Deviation
+python run_analysis.py demo --rule STD
 
-# Реальные данные с Standard Deviation
-python run_analysis.py yf -t META --period 3mo --point 0.01 --rule STDEV
+# Standard Deviation with custom period
+python run_analysis.py demo --rule STD --std-period 20
+
+# Standard Deviation with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule STD
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule STD
 ```
 
-## 📊 Volume Indicators (Объемные индикаторы)
+## Volume Indicators
 
 ### OBV (On-Balance Volume)
 ```bash
-# Демо с OBV
+# Basic OBV
 python run_analysis.py demo --rule OBV
 
-# Акции с OBV
-python run_analysis.py yf -t NFLX --period 1mo --point 0.01 --rule OBV
+# OBV with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule OBV
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule OBV
 ```
 
 ### VWAP (Volume Weighted Average Price)
 ```bash
-# Демо с VWAP
+# Basic VWAP
 python run_analysis.py demo --rule VWAP
 
-# Криптовалюты с VWAP
-python run_analysis.py binance -t ETHUSDT --interval H1 --point 0.001 --rule VWAP
-
-# Акции с VWAP
+# VWAP with different data sources
 python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule VWAP
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule VWAP
 ```
 
-## 🎯 Support/Resistance (Поддержка/Сопротивление)
+## Support/Resistance Indicators
 
 ### Donchian Channels
 ```bash
-# Демо с Donchian Channels
-python run_analysis.py demo --rule DONCHIAN
+# Basic Donchian Channels
+python run_analysis.py demo --rule DONCH
 
-# Форекс с Donchian Channels
-python run_analysis.py exrate -t GBPJPY --interval D1 --point 0.01 --rule DONCHIAN
+# Donchian Channels with custom period
+python run_analysis.py demo --rule DONCH --donch-period 20
+
+# Donchian Channels with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule DONCH
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule DONCH
 ```
 
 ### Fibonacci Retracements
 ```bash
-# Демо с Fibonacci Retracements
-python run_analysis.py demo --rule FIBO
+# Basic Fibonacci Retracements
+python run_analysis.py demo --rule FIB
 
-# Криптовалюты с Fibonacci Retracements
-python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule FIBO
+# Fibonacci with custom levels
+python run_analysis.py demo --rule FIB --fib-levels 0.236,0.382,0.5,0.618,0.786
+
+# Fibonacci with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule FIB
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule FIB
 ```
 
 ### Pivot Points
 ```bash
-# Демо с Pivot Points
+# Basic Pivot Points
 python run_analysis.py demo --rule PIVOT
 
-# Форекс с Pivot Points
-python run_analysis.py exrate -t USDCAD --interval D1 --point 0.00001 --rule PIVOT
+# Pivot Points with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule PIVOT
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule PIVOT
 ```
 
-## 🔮 Predictive Indicators (Предиктивные индикаторы)
+## Predictive Indicators
 
 ### HMA (Hull Moving Average)
 ```bash
-# Демо с HMA
+# Basic HMA
 python run_analysis.py demo --rule HMA
 
-# Реальные данные с HMA
-python run_analysis.py yf -t SPY --period 3mo --point 0.01 --rule HMA
+# HMA with custom period
+python run_analysis.py demo --rule HMA --hma-period 20
+
+# HMA with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule HMA
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule HMA
 ```
 
 ### Time Series Forecast
 ```bash
-# Демо с Time Series Forecast
-python run_analysis.py demo --rule TSFORECAST
+# Basic Time Series Forecast
+python run_analysis.py demo --rule TSF
 
-# Акции с Time Series Forecast
-python run_analysis.py yf -t QQQ --period 6mo --point 0.01 --rule TSFORECAST
+# TSF with custom parameters
+python run_analysis.py demo --rule TSF --tsf-period 20 --tsf-forecast 5
+
+# TSF with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule TSF
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule TSF
 ```
 
-## 🎲 Probability Indicators (Вероятностные индикаторы)
+## Probability Indicators
 
 ### Kelly Criterion
 ```bash
-# Демо с Kelly Criterion
+# Basic Kelly Criterion
 python run_analysis.py demo --rule KELLY
 
-# Реальные данные с Kelly Criterion
-python run_analysis.py yf -t IWM --period 1y --point 0.01 --rule KELLY
+# Kelly with custom parameters
+python run_analysis.py demo --rule KELLY --kelly-period 20
+
+# Kelly with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule KELLY
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule KELLY
 ```
 
 ### Monte Carlo Simulation
 ```bash
-# Демо с Monte Carlo
-python run_analysis.py demo --rule MONTECARLO
+# Basic Monte Carlo
+python run_analysis.py demo --rule MONTE
 
-# Криптовалюты с Monte Carlo
-python run_analysis.py binance -t DOTUSDT --interval D1 --point 0.001 --rule MONTECARLO
+# Monte Carlo with custom parameters
+python run_analysis.py demo --rule MONTE --monte-simulations 1000 --monte-period 252
+
+# Monte Carlo with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule MONTE
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule MONTE
 ```
 
-## 😊 Sentiment Indicators (Сентимент индикаторы)
+## Sentiment Indicators
 
-### Commitment of Traders
+### Commitment of Traders (COT)
 ```bash
-# Демо с COT
+# Basic COT
 python run_analysis.py demo --rule COT
 
-# Форекс с COT
-python run_analysis.py exrate -t AUDUSD --interval D1 --point 0.00001 --rule COT
+# COT with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule COT
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule COT
 ```
 
 ### Fear & Greed Index
 ```bash
-# Демо с Fear & Greed
-python run_analysis.py demo --rule FEARGREED
+# Basic Fear & Greed Index
+python run_analysis.py demo --rule FNG
 
-# Криптовалюты с Fear & Greed
-python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule FEARGREED
+# FNG with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule FNG
+python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule FNG
 ```
 
 ### Social Sentiment
 ```bash
-# Демо с Social Sentiment
-python run_analysis.py demo --rule SOCIALSENTIMENT
+# Basic Social Sentiment
+python run_analysis.py demo --rule SENT
 
-# Акции с Social Sentiment
-python run_analysis.py yf -t GME --period 1mo --point 0.01 --rule SOCIALSENTIMENT
+# Social Sentiment with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule SENT
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule SENT
 ```
 
-## 🔄 Комбинирование индикаторов
+## Multiple Indicators
 
-### Множественные индикаторы в одном анализе
+### Combining Multiple Indicators
 ```bash
-# Анализ с несколькими индикаторами
-python run_analysis.py demo --rule RSI --export-parquet
-python run_analysis.py demo --rule MACD --export-parquet
-python run_analysis.py demo --rule EMA --export-parquet
+# Multiple indicators in one command
+python run_analysis.py demo --rule RSI,MACD,EMA
 
-# Просмотр результатов
-python run_analysis.py show ind parquet
+# Multiple indicators with custom parameters
+python run_analysis.py demo --rule RSI,MACD,EMA --rsi-period 21 --macd-fast 8 --ema-period 20
+
+# Multiple indicators with different data sources
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule RSI,MACD,EMA
 ```
 
-### Пакетная обработка индикаторов
+### Comparing Indicators
 ```bash
-# Обработка множественных индикаторов
-for indicator in RSI MACD EMA BB ATR; do
-    python run_analysis.py demo --rule $indicator --export-parquet
-done
+# Compare different indicators
+python run_analysis.py demo --rule RSI --rule MACD --rule EMA
+
+# Compare with custom parameters
+python run_analysis.py demo --rule RSI --rsi-period 21 --rule MACD --macd-fast 8
 ```
 
-## 📊 Экспорт результатов
+## Export and Visualization
 
-### Экспорт в разных форматах
+### Exporting Indicator Results
 ```bash
-# Parquet (рекомендуется для больших данных)
-python run_analysis.py demo --rule RSI --export-parquet
+# Export to multiple formats
+python run_analysis.py demo --rule RSI --export-parquet --export-csv --export-json
 
-# CSV (для Excel/таблиц)
-python run_analysis.py demo --rule MACD --export-csv
+# Export with custom filenames
+python run_analysis.py demo --rule RSI --export-parquet --output rsi_results.parquet
 
-# JSON (для API/веб-приложений)
-python run_analysis.py demo --rule EMA --export-json
-
-# Все форматы сразу
-python run_analysis.py demo --rule BB --export-parquet --export-csv --export-json
+# Export multiple indicators
+python run_analysis.py demo --rule RSI,MACD,EMA --export-parquet
 ```
 
-### Просмотр экспортированных данных
+### Different Visualization Backends
 ```bash
-# Просмотр parquet файлов
-python run_analysis.py show ind parquet
-
-# Просмотр CSV файлов
-python run_analysis.py show ind csv
-
-# Просмотр JSON файлов
-python run_analysis.py show ind json
-```
-
-## 🎨 Различные бэкенды для графиков
-
-### Интерактивные графики
-```bash
-# Plotly (интерактивный)
+# Interactive plots with Plotly
 python run_analysis.py demo --rule RSI -d plotly
 
-# Seaborn (красивые статические)
-python run_analysis.py demo --rule MACD -d seaborn
+# Static plots with Seaborn
+python run_analysis.py demo --rule RSI -d seaborn
+
+# Terminal plots for SSH/Docker
+python run_analysis.py demo --rule RSI -d term
+
+# Fastest backend for large datasets
+python run_analysis.py demo --rule RSI -d fastest
 ```
 
-### Быстрые бэкенды
-```bash
-# Самый быстрый
-python run_analysis.py demo --rule EMA -d fastest
+## Advanced Usage
 
-# Терминальный (для SSH/Docker)
-python run_analysis.py demo --rule BB -d term
+### Custom Indicator Parameters
+```bash
+# RSI with custom period and overbought/oversold levels
+python run_analysis.py demo --rule RSI --rsi-period 21 --rsi-overbought 70 --rsi-oversold 30
+
+# MACD with custom parameters
+python run_analysis.py demo --rule MACD --macd-fast 8 --macd-slow 21 --macd-signal 5
+
+# Bollinger Bands with custom parameters
+python run_analysis.py demo --rule BB --bb-period 20 --bb-std 2
 ```
 
-## 🔍 Специальные правила
-
-### OHLCV (только свечи)
+### Data Filtering with Indicators
 ```bash
-# Только график свечей без индикаторов
-python run_analysis.py demo --rule OHLCV
+# Filter data by date range and apply indicator
+python run_analysis.py yf -t AAPL --period 1y --point 0.01 --start-date 2024-01-01 --end-date 2024-06-30 --rule RSI
+
+# Filter by volume and apply indicator
+python run_analysis.py yf -t AAPL --period 1y --point 0.01 --min-volume 1000000 --rule MACD
 ```
 
-### AUTO (автоопределение)
+### Performance Optimization
 ```bash
-# Автоопределение колонок и индикаторов
-python run_analysis.py demo --rule AUTO -d mpl
+# Use fastest backend for large datasets
+python run_analysis.py yf -t AAPL --period 5y --point 0.01 --rule RSI -d fastest
+
+# Use terminal backend for SSH/Docker
+python run_analysis.py yf -t AAPL --period 1y --point 0.01 --rule RSI -d term
 ```
 
-## 📈 Рабочие процессы
+## Testing Indicators
 
-### Полный анализ акции
+### Testing Specific Indicators
 ```bash
-# 1. Загрузка данных
-python run_analysis.py yf -t AAPL --period 1y --point 0.01
+# Test RSI calculations
+python -m pytest tests/calculation/indicators/oscillators/test_rsi_ind_calc.py -v
 
-# 2. Анализ с трендовыми индикаторами
-python run_analysis.py show yf AAPL --rule EMA --export-parquet
-python run_analysis.py show yf AAPL --rule ADX --export-parquet
+# Test MACD calculations
+python -m pytest tests/calculation/indicators/momentum/test_macd_indicator.py -v
 
-# 3. Анализ с осцилляторами
-python run_analysis.py show yf AAPL --rule RSI --export-parquet
-python run_analysis.py show yf AAPL --rule MACD --export-parquet
-
-# 4. Анализ волатильности
-python run_analysis.py show yf AAPL --rule BB --export-parquet
-python run_analysis.py show yf AAPL --rule ATR --export-parquet
-
-# 5. Просмотр результатов
-python run_analysis.py show ind parquet
+# Test EMA calculations
+python -m pytest tests/calculation/indicators/trend/test_ema_indicator.py -v
 ```
 
-### Анализ криптовалют
+### Testing All Indicators
 ```bash
-# 1. Загрузка данных
-python run_analysis.py binance -t BTCUSDT --interval D1 --start 2024-01-01 --end 2024-12-31 --point 0.01
+# Test all indicators
+python -m pytest tests/calculation/indicators/ -v
 
-# 2. Технический анализ
-python run_analysis.py show binance BTCUSDT --rule RSI --export-parquet
-python run_analysis.py show binance BTCUSDT --rule MACD --export-parquet
-python run_analysis.py show binance BTCUSDT --rule BB --export-parquet
-
-# 3. Просмотр результатов
-python run_analysis.py show ind parquet
+# Test with coverage
+python -m pytest tests/calculation/indicators/ --cov=src.calculation.indicators --cov-report=html
 ```
 
-## 💡 Советы по использованию
+## Troubleshooting
 
-### Выбор индикаторов
-- **Трендовые рынки**: EMA, ADX, SAR
-- **Боковые рынки**: RSI, Stochastic, Bollinger Bands
-- **Волатильные рынки**: ATR, Standard Deviation
-- **Объемный анализ**: OBV, VWAP
-
-### Оптимизация производительности
+### Common Indicator Issues
 ```bash
-# Используйте fastest бэкенд для больших данных
-python run_analysis.py csv --csv-file large_data.csv --point 0.01 -d fastest
-
-# Используйте term бэкенд для SSH/Docker
-python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001 -d term
-```
-
-### Отладка индикаторов
-```bash
-# Отладка конкретного индикатора
+# Check indicator calculations
 python scripts/debug_scripts/debug_indicators.py
 
-# Проверка данных
+# Check data quality for indicators
 python scripts/debug_scripts/debug_check_parquet.py
+
+# Test specific indicator
+python -c "from src.calculation.indicators.oscillators.rsi_ind_calc import RSI; print('RSI OK')"
+```
+
+### Performance Issues
+```bash
+# Use fastest backend for large datasets
+python run_analysis.py demo --rule RSI -d fastest
+
+# Use smaller timeframes
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule RSI
+
+# Export results to free memory
+python run_analysis.py demo --rule RSI --export-parquet
 ```
 
 ---
 
-📚 **Дополнительные ресурсы:**
-- **[Полные примеры использования](usage-examples.md)** - Подробные примеры и рабочие процессы
-- **[Быстрые примеры](quick-examples.md)** - Быстрый старт
-- **[Документация индикаторов](indicators/)** - Подробная документация по каждому индикатору 
+📚 **Additional Resources:**
+- **[Usage Examples](usage-examples.md)** - Comprehensive usage examples
+- **[Quick Examples](quick-examples.md)** - Fast start examples
+- **[MCP Examples](mcp-examples.md)** - MCP server examples
+- **[Testing Examples](testing-examples.md)** - Testing examples
+- **[Script Examples](script-examples.md)** - Utility script examples
+- **[Docker Examples](docker-examples.md)** - Docker examples
+- **[EDA Examples](eda-examples.md)** - EDA examples 

@@ -1,454 +1,547 @@
 # Script Examples
 
-Примеры использования утилитарных и отладочных скриптов.
+Examples for using utility scripts and debugging tools.
 
-## 🛠️ Утилитарные скрипты
+## Overview
 
-### Инициализация проекта
+The project includes various utility scripts for:
+
+- **Import Management** - Fix import statements automatically
+- **Debug Scripts** - Troubleshoot and debug issues
+- **Data Management** - Create and manage test data
+- **System Analysis** - Analyze requirements and dependencies
+- **Development Tools** - Development workflow automation
+
+## Import Management
+
+### Fix Imports Script
 ```bash
-# Инициализация директорий проекта
-bash scripts/init_dirs.sh
-
-# Проверка структуры проекта
-ls -la data/
-ls -la logs/
-ls -la results/
-```
-
-### Исправление импортов
-```bash
-# Автоматическое исправление импортов
+# Fix imports automatically
 python scripts/fix_imports.py
 
-# Исправление с подробным выводом
+# Fix with verbose output
 python scripts/fix_imports.py --verbose
 
-# Исправление конкретного файла
+# Fix specific file
 python scripts/fix_imports.py --file src/calculation/indicators/rsi_ind.py
+
+# Fix specific directory
+python scripts/fix_imports.py --directory src/calculation/indicators/
+
+# Fix with backup
+python scripts/fix_imports.py --backup
+
+# Fix with dry run (no changes)
+python scripts/fix_imports.py --dry-run
 ```
 
-### Анализ зависимостей
+### Import Analysis
 ```bash
-# Анализ requirements.txt
-python scripts/analyze_requirements.py
+# Analyze import issues
+python scripts/fix_imports.py --analyze
 
-# Анализ с подробным отчетом
-python scripts/analyze_requirements.py --verbose
+# Show import statistics
+python scripts/fix_imports.py --stats
 
-# Анализ с экспортом в файл
-python scripts/analyze_requirements.py --output requirements_analysis.txt
+# Check import dependencies
+python scripts/fix_imports.py --check-deps
 ```
 
-### Создание тестовых данных
+## Debug Scripts
+
+### Debug Binance Connection
 ```bash
-# Создание тестового parquet файла
-python scripts/create_test_parquet.py
-
-# Создание с конкретными параметрами
-python scripts/create_test_parquet.py --rows 1000 --symbol TEST
-
-# Создание с экспортом в CSV
-python scripts/create_test_parquet.py --export-csv
-```
-
-### Воссоздание CSV из parquet
-```bash
-# Воссоздание CSV из parquet файла
-python scripts/recreate_csv.py
-
-# Воссоздание конкретного файла
-python scripts/recreate_csv.py --input data/test.parquet --output data/test.csv
-
-# Воссоздание с фильтрацией
-python scripts/recreate_csv.py --filter "2024-01-01"
-```
-
-## 🔍 Отладочные скрипты
-
-### Отладка Binance соединения
-```bash
-# Проверка соединения с Binance
+# Debug Binance connection
 python scripts/debug_scripts/debug_binance_connection.py
 
-# Проверка с конкретным символом
+# Debug with specific symbol
 python scripts/debug_scripts/debug_binance_connection.py --symbol BTCUSDT
 
-# Проверка с историческими данными
-python scripts/debug_scripts/debug_binance_connection.py --historical --start 2024-01-01
+# Debug with specific interval
+python scripts/debug_scripts/debug_binance_connection.py --interval D1
+
+# Debug with verbose output
+python scripts/debug_scripts/debug_binance_connection.py --verbose
 ```
 
-### Проверка parquet файлов
+### Debug Parquet Files
 ```bash
-# Проверка parquet файлов
+# Check Parquet files
 python scripts/debug_scripts/debug_check_parquet.py
 
-# Проверка конкретного файла
-python scripts/debug_scripts/debug_check_parquet.py --file data/test.parquet
+# Check specific file
+python scripts/debug_scripts/debug_check_parquet.py --file data/file.parquet
 
-# Проверка с детальным анализом
-python scripts/debug_scripts/debug_check_parquet.py --verbose
+# Check with data validation
+python scripts/debug_scripts/debug_check_parquet.py --validate
+
+# Check with statistics
+python scripts/debug_scripts/debug_check_parquet.py --stats
 ```
 
-### Отладка обработки данных
+### Debug Indicators
 ```bash
-# Отладка обработки данных
-python scripts/debug_scripts/debug_data_processing.py
-
-# Отладка с конкретным файлом
-python scripts/debug_scripts/debug_data_processing.py --input data/test.csv
-
-# Отладка с экспортом результатов
-python scripts/debug_scripts/debug_data_processing.py --export-results
-```
-
-### Отладка построения графиков
-```bash
-# Отладка построения графиков
-python scripts/debug_scripts/debug_plotting.py
-
-# Отладка конкретного бэкенда
-python scripts/debug_scripts/debug_plotting.py --backend plotly
-
-# Отладка с тестовыми данными
-python scripts/debug_scripts/debug_plotting.py --test-data
-```
-
-### Отладка индикаторов
-```bash
-# Отладка индикаторов
+# Debug indicators
 python scripts/debug_scripts/debug_indicators.py
 
-# Отладка конкретного индикатора
+# Debug specific indicator
 python scripts/debug_scripts/debug_indicators.py --indicator RSI
 
-# Отладка с тестовыми данными
+# Debug with test data
 python scripts/debug_scripts/debug_indicators.py --test-data
+
+# Debug with verbose output
+python scripts/debug_scripts/debug_indicators.py --verbose
 ```
 
-### Отладка CLI
+### Debug CLI
 ```bash
-# Отладка CLI
+# Debug CLI
 python scripts/debug_scripts/debug_cli.py
 
-# Отладка конкретной команды
+# Debug specific command
 python scripts/debug_scripts/debug_cli.py --command "demo --rule RSI"
 
-# Отладка с подробным выводом
+# Debug with test mode
+python scripts/debug_scripts/debug_cli.py --test-mode
+
+# Debug with verbose output
 python scripts/debug_scripts/debug_cli.py --verbose
 ```
 
-### Отладка MCP серверов
+### Debug MCP Servers
 ```bash
-# Отладка MCP серверов
+# Debug MCP servers
 python scripts/debug_scripts/debug_mcp_servers.py
 
-# Отладка конкретного сервера
-python scripts/debug_scripts/debug_mcp_servers.py --server pycharm_copilot
+# Debug server status
+python scripts/debug_scripts/debug_mcp_status.py
 
-# Отладка с проверкой соединений
-python scripts/debug_scripts/debug_mcp_servers.py --check-connections
+# Debug MCP connections
+python scripts/debug_scripts/debug_mcp_connections.py
+
+# Debug with restart
+python scripts/debug_scripts/debug_mcp_servers.py --restart
 ```
 
-## 🔧 Автоматизация
-
-### Автозапуск MCP серверов
+### Debug Data Processing
 ```bash
-# Запуск автозапуска
-python scripts/auto_start_mcp.py
+# Debug data processing
+python scripts/debug_scripts/debug_data_processing.py
 
-# Запуск с конфигурацией
-python scripts/auto_start_mcp.py --config mcp_auto_config.json
+# Debug with specific file
+python scripts/debug_scripts/debug_data_processing.py --file data.csv
 
-# Запуск в режиме отладки
-python scripts/auto_start_mcp.py --debug
+# Debug with validation
+python scripts/debug_scripts/debug_data_processing.py --validate
 
-# Показать статус
-python scripts/auto_start_mcp.py --status
-
-# Остановить серверы
-python scripts/auto_start_mcp.py --stop
+# Debug with performance metrics
+python scripts/debug_scripts/debug_data_processing.py --performance
 ```
 
-### Запуск Cursor MCP
+### Debug Plotting
 ```bash
-# Запуск Cursor MCP
-python scripts/run_cursor_mcp.py
+# Debug plotting
+python scripts/debug_scripts/debug_plotting.py
 
-# Запуск с тестированием
-python scripts/run_cursor_mcp.py --test
+# Debug specific backend
+python scripts/debug_scripts/debug_plotting.py --backend plotly
 
-# Запуск с отчетом
-python scripts/run_cursor_mcp.py --test --report
+# Debug with test data
+python scripts/debug_scripts/debug_plotting.py --test-data
 
-# Запуск с бенчмаркингом
-python scripts/run_cursor_mcp.py --test --benchmark
+# Debug with performance metrics
+python scripts/debug_scripts/debug_plotting.py --performance
 ```
 
-## 📊 EDA и анализ
-
-### EDA скрипт
+### Debug System Resources
 ```bash
-# Запуск EDA анализа
-bash eda
+# Debug system resources
+python scripts/debug_scripts/debug_system_resources.py
 
-# EDA с помощью
-bash eda -h
+# Debug memory usage
+python scripts/debug_scripts/debug_system_resources.py --memory
 
-# EDA с конкретными параметрами
-bash eda --verbose --export-results
+# Debug CPU usage
+python scripts/debug_scripts/debug_system_resources.py --cpu
+
+# Debug disk usage
+python scripts/debug_scripts/debug_system_resources.py --disk
+
+# Debug network usage
+python scripts/debug_scripts/debug_system_resources.py --network
 ```
 
-### Автоматический анализ
+## Data Management
+
+### Create Test Parquet File
 ```bash
-# Автоматический анализ с разными бэкендами
-python run_analysis.py demo -d fastest
-python run_analysis.py demo -d plotly
-python run_analysis.py demo -d seaborn
-python run_analysis.py demo -d term
-```
-
-## 🐳 Docker интеграция
-
-### Запуск скриптов в Docker
-```bash
-# Запуск утилитарных скриптов в Docker
-docker compose run --rm neozork-hld python scripts/fix_imports.py
-
-# Запуск отладочных скриптов в Docker
-docker compose run --rm neozork-hld python scripts/debug_scripts/debug_binance_connection.py
-
-# Запуск MCP серверов в Docker
-docker compose run --rm neozork-hld python scripts/auto_start_mcp.py
-```
-
-### EDA в Docker
-```bash
-# Запуск EDA в Docker
-docker compose run --rm neozork-hld bash eda
-
-# EDA с UV
-uv run ./eda
-```
-
-## 🔄 Рабочие процессы
-
-### Полная инициализация проекта
-```bash
-# 1. Инициализация директорий
-bash scripts/init_dirs.sh
-
-# 2. Исправление импортов
-python scripts/fix_imports.py
-
-# 3. Анализ зависимостей
-python scripts/analyze_requirements.py
-
-# 4. Создание тестовых данных
+# Create test Parquet file
 python scripts/create_test_parquet.py
 
-# 5. Запуск MCP серверов
-python scripts/auto_start_mcp.py
+# Create with specific size
+python scripts/create_test_parquet.py --size 1000
+
+# Create with specific columns
+python scripts/create_test_parquet.py --columns open,high,low,close,volume
+
+# Create with specific date range
+python scripts/create_test_parquet.py --start-date 2024-01-01 --end-date 2024-12-31
+
+# Create with custom filename
+python scripts/create_test_parquet.py --output test_data.parquet
 ```
 
-### Отладка проблем
+### Recreate CSV from Parquet
 ```bash
-# 1. Проверка данных
-python scripts/debug_scripts/debug_check_parquet.py
+# Recreate CSV from Parquet
+python scripts/recreate_csv.py
 
-# 2. Проверка соединений
-python scripts/debug_scripts/debug_binance_connection.py
+# Recreate specific file
+python scripts/recreate_csv.py --file data.parquet
 
-# 3. Проверка индикаторов
-python scripts/debug_scripts/debug_indicators.py
+# Recreate with custom output
+python scripts/recreate_csv.py --output recreated.csv
 
-# 4. Проверка CLI
-python scripts/debug_scripts/debug_cli.py
+# Recreate with specific columns
+python scripts/recreate_csv.py --columns open,high,low,close,volume
 
-# 5. Проверка MCP серверов
-python scripts/debug_scripts/debug_mcp_servers.py
+# Recreate with date filtering
+python scripts/recreate_csv.py --start-date 2024-01-01 --end-date 2024-06-30
 ```
 
-### Подготовка к разработке
+### Clear Cache
 ```bash
-# 1. Исправление импортов
-python scripts/fix_imports.py
-
-# 2. Создание тестовых данных
-python scripts/create_test_parquet.py
-
-# 3. Запуск тестов
-python -m pytest tests/ -v
-
-# 4. Анализ покрытия
-python tests/zzz_analyze_test_coverage.py
-
-# 5. Запуск MCP серверов
-python scripts/auto_start_mcp.py
-```
-
-## 📈 Мониторинг и логирование
-
-### Просмотр логов
-```bash
-# Просмотр логов MCP серверов
-tail -f logs/mcp_server.log
-
-# Просмотр логов приложения
-tail -f logs/app.log
-
-# Просмотр логов ошибок
-tail -f logs/error.log
-```
-
-### Анализ логов
-```bash
-# Анализ логов
-python scripts/log_analysis/analyze_logs.py
-
-# Анализ с фильтрацией
-python scripts/log_analysis/analyze_logs.py --filter "ERROR"
-
-# Анализ с экспортом
-python scripts/log_analysis/analyze_logs.py --export results/log_analysis.txt
-```
-
-## 🎯 Специализированные скрипты
-
-### Анализ производительности
-```bash
-# Анализ производительности
-python scripts/performance_analysis.py
-
-# Анализ с бенчмаркингом
-python scripts/performance_analysis.py --benchmark
-
-# Анализ с профилированием
-python scripts/performance_analysis.py --profile
-```
-
-### Валидация данных
-```bash
-# Валидация данных
-python scripts/data_validation.py
-
-# Валидация с правилами
-python scripts/data_validation.py --rules strict
-
-# Валидация с отчетом
-python scripts/data_validation.py --report
-```
-
-### Очистка кэша
-```bash
-# Очистка кэша
+# Clear cache
 python scripts/clear_cache.py
 
-# Очистка конкретного типа кэша
-python scripts/clear_cache.py --type parquet
+# Clear specific cache type
+python scripts/clear_cache.py --type data
 
-# Очистка с подтверждением
+# Clear with confirmation
 python scripts/clear_cache.py --confirm
+
+# Clear with backup
+python scripts/clear_cache.py --backup
 ```
 
-## 🔧 Настройка и конфигурация
+## System Analysis
 
-### Настройка UV
+### Analyze Requirements
 ```bash
-# Настройка UV
-bash uv_setup/setup_uv.sh
+# Analyze requirements
+python scripts/analyze_requirements.py
 
-# Обновление зависимостей
-bash uv_setup/update_deps.sh
+# Analyze with output file
+python scripts/analyze_requirements.py --output requirements_analysis.txt
 
-# Проверка конфигурации
-cat uv_setup/uv.toml
+# Analyze with verbose output
+python scripts/analyze_requirements.py --verbose
+
+# Analyze with dependency tree
+python scripts/analyze_requirements.py --tree
+
+# Analyze with security check
+python scripts/analyze_requirements.py --security
 ```
 
-### Настройка MCP
+### Auto PyProject from Requirements
 ```bash
-# Создание конфигурации MCP
-python scripts/create_mcp_config.py
+# Auto generate pyproject.toml from requirements
+python scripts/auto_pyproject_from_requirements.py
 
-# Проверка конфигурации MCP
-python scripts/validate_mcp_config.py
+# Generate with specific requirements file
+python scripts/auto_pyproject_from_requirements.py --requirements requirements.txt
 
-# Обновление конфигурации MCP
-python scripts/update_mcp_config.py
+# Generate with custom output
+python scripts/auto_pyproject_from_requirements.py --output pyproject_custom.toml
+
+# Generate with project metadata
+python scripts/auto_pyproject_from_requirements.py --name "My Project" --version "1.0.0"
 ```
 
-## 🚨 Устранение неполадок
+## Development Tools
 
-### Общие проблемы
+### Initialize Directories
 ```bash
-# Проблема с импортами
+# Initialize project directories
+bash scripts/init_dirs.sh
+
+# Initialize with specific directories
+bash scripts/init_dirs.sh --dirs data,logs,results
+
+# Initialize with permissions
+bash scripts/init_dirs.sh --permissions 755
+
+# Initialize with verbose output
+bash scripts/init_dirs.sh --verbose
+```
+
+### Run Analysis Script
+```bash
+# Run analysis script
+bash eda
+
+# Run with UV
+uv run ./eda
+
+# Run with verbose output
+bash eda --verbose
+
+# Run with export results
+bash eda --export-results
+
+# Run with specific data file
+bash eda --file data.csv
+```
+
+## Log Analysis
+
+### Analyze Logs
+```bash
+# Analyze logs
+python scripts/log_analysis/analyze_logs.py
+
+# Analyze specific log file
+python scripts/log_analysis/analyze_logs.py --file logs/app.log
+
+# Analyze with error filtering
+python scripts/log_analysis/analyze_logs.py --errors-only
+
+# Analyze with time range
+python scripts/log_analysis/analyze_logs.py --start-time "2024-01-01" --end-time "2024-12-31"
+
+# Analyze with statistics
+python scripts/log_analysis/analyze_logs.py --stats
+```
+
+### Log Statistics
+```bash
+# Generate log statistics
+python scripts/log_analysis/log_stats.py
+
+# Generate with specific log file
+python scripts/log_analysis/log_stats.py --file logs/app.log
+
+# Generate with time period
+python scripts/log_analysis/log_stats.py --period daily
+
+# Generate with output file
+python scripts/log_analysis/log_stats.py --output stats.json
+```
+
+## Performance Scripts
+
+### Performance Analysis
+```bash
+# Analyze performance
+python scripts/performance/analyze_performance.py
+
+# Analyze with specific component
+python scripts/performance/analyze_performance.py --component indicators
+
+# Analyze with benchmarking
+python scripts/performance/analyze_performance.py --benchmark
+
+# Analyze with memory profiling
+python scripts/performance/analyze_performance.py --memory-profile
+```
+
+### Memory Profiling
+```bash
+# Profile memory usage
+python scripts/performance/memory_profile.py
+
+# Profile specific function
+python scripts/performance/memory_profile.py --function calculate_rsi
+
+# Profile with output file
+python scripts/performance/memory_profile.py --output memory_profile.txt
+
+# Profile with visualization
+python scripts/performance/memory_profile.py --visualize
+```
+
+## Testing Scripts
+
+### Test Runner
+```bash
+# Run tests with script
+python scripts/test_runner.py
+
+# Run specific test category
+python scripts/test_runner.py --category calculation
+
+# Run with coverage
+python scripts/test_runner.py --coverage
+
+# Run with parallel execution
+python scripts/test_runner.py --parallel
+
+# Run with output file
+python scripts/test_runner.py --output test_results.json
+```
+
+### Test Coverage Analysis
+```bash
+# Analyze test coverage
+python tests/zzz_analyze_test_coverage.py
+
+# Analyze with verbose output
+python tests/zzz_analyze_test_coverage.py --verbose
+
+# Analyze with output file
+python tests/zzz_analyze_test_coverage.py --output coverage_report.txt
+
+# Analyze with HTML report
+python tests/zzz_analyze_test_coverage.py --html
+```
+
+## Workflow Scripts
+
+### Development Workflow
+```bash
+# Run development workflow
+bash scripts/dev_workflow.sh
+
+# Workflow with specific steps
+bash scripts/dev_workflow.sh --steps test,coverage,deploy
+
+# Workflow with verbose output
+bash scripts/dev_workflow.sh --verbose
+
+# Workflow with dry run
+bash scripts/dev_workflow.sh --dry-run
+```
+
+### CI/CD Scripts
+```bash
+# Run CI pipeline
+bash scripts/ci_pipeline.sh
+
+# Run with specific environment
+bash scripts/ci_pipeline.sh --env production
+
+# Run with parallel execution
+bash scripts/ci_pipeline.sh --parallel
+
+# Run with notification
+bash scripts/ci_pipeline.sh --notify
+```
+
+## Utility Scripts
+
+### File Operations
+```bash
+# Clean temporary files
+python scripts/utils/clean_temp.py
+
+# Clean with specific patterns
+python scripts/utils/clean_temp.py --pattern "*.tmp"
+
+# Clean with confirmation
+python scripts/utils/clean_temp.py --confirm
+
+# Clean with backup
+python scripts/utils/clean_temp.py --backup
+```
+
+### Configuration Management
+```bash
+# Validate configuration
+python scripts/utils/validate_config.py
+
+# Validate specific config file
+python scripts/utils/validate_config.py --file config.json
+
+# Validate with schema
+python scripts/utils/validate_config.py --schema schema.json
+
+# Validate with fix
+python scripts/utils/validate_config.py --fix
+```
+
+## Advanced Scripts
+
+### Custom Scripts
+```bash
+# Run custom analysis
+python scripts/custom/run_custom_analysis.py
+
+# Run with parameters
+python scripts/custom/run_custom_analysis.py --param1 value1 --param2 value2
+
+# Run with configuration
+python scripts/custom/run_custom_analysis.py --config custom_config.json
+
+# Run with output
+python scripts/custom/run_custom_analysis.py --output results.json
+```
+
+### Batch Processing
+```bash
+# Process batch of files
+python scripts/batch/process_batch.py
+
+# Process with specific directory
+python scripts/batch/process_batch.py --directory data/
+
+# Process with file pattern
+python scripts/batch/process_batch.py --pattern "*.csv"
+
+# Process with parallel execution
+python scripts/batch/process_batch.py --parallel
+```
+
+## Troubleshooting
+
+### Common Issues
+```bash
+# Issue: Import errors
 python scripts/fix_imports.py --verbose
 
-# Проблема с данными
-python scripts/debug_scripts/debug_check_parquet.py --file data/problematic.parquet
+# Issue: Data problems
+python scripts/debug_scripts/debug_check_parquet.py
 
-# Проблема с соединениями
-python scripts/debug_scripts/debug_binance_connection.py --verbose
+# Issue: Connection problems
+python scripts/debug_scripts/debug_binance_connection.py
 
-# Проблема с MCP серверами
-python scripts/debug_scripts/debug_mcp_servers.py --check-all
-```
-
-### Проблемы с производительностью
-```bash
-# Анализ производительности
-python scripts/performance_analysis.py --full
-
-# Очистка кэша
-python scripts/clear_cache.py --all
-
-# Проверка ресурсов
+# Issue: Performance problems
 python scripts/debug_scripts/debug_system_resources.py
 ```
 
-### Проблемы с Docker
+### Debug Mode
 ```bash
-# Пересборка контейнера
-docker compose build --no-cache
-
-# Проверка логов контейнера
-docker compose logs neozork-hld
-
-# Запуск в интерактивном режиме
-docker compose run --rm neozork-hld bash
-```
-
-## 💡 Советы по использованию
-
-### Лучшие практики
-```bash
-# Регулярно запускайте исправление импортов
+# Enable debug mode
+export DEBUG=1
 python scripts/fix_imports.py
 
-# Проверяйте данные перед анализом
-python scripts/debug_scripts/debug_check_parquet.py
+# Run with debug logging
+python scripts/debug_scripts/debug_indicators.py --debug
 
-# Мониторьте MCP серверы
-python scripts/auto_start_mcp.py --status
-
-# Анализируйте логи регулярно
-python scripts/log_analysis/analyze_logs.py
+# Run with verbose output
+python scripts/create_test_parquet.py --verbose
 ```
 
-### Автоматизация
+### Script Validation
 ```bash
-# Создайте alias для часто используемых команд
-alias fix-imports="python scripts/fix_imports.py"
-alias debug-data="python scripts/debug_scripts/debug_check_parquet.py"
-alias mcp-status="python scripts/auto_start_mcp.py --status"
+# Validate script syntax
+python -m py_compile scripts/fix_imports.py
 
-# Используйте в crontab для регулярных задач
-# 0 2 * * * cd /path/to/project && python scripts/clear_cache.py
+# Check script dependencies
+python scripts/analyze_requirements.py --script scripts/fix_imports.py
+
+# Test script functionality
+python scripts/fix_imports.py --dry-run
 ```
 
 ---
 
-📚 **Дополнительные ресурсы:**
-- **[Документация по скриптам](scripts.md)** - Подробная документация
-- **[Полные примеры использования](usage-examples.md)** - Комплексные примеры
-- **[Быстрые примеры](quick-examples.md)** - Быстрый старт
-- **[Отладочные скрипты](debug-scripts.md)** - Специализированные скрипты отладки 
+📚 **Additional Resources:**
+- **[Usage Examples](usage-examples.md)** - Comprehensive usage examples
+- **[Quick Examples](quick-examples.md)** - Fast start examples
+- **[Indicator Examples](indicator-examples.md)** - Technical indicator examples
+- **[MCP Examples](mcp-examples.md)** - MCP server examples
+- **[Testing Examples](testing-examples.md)** - Testing examples
+- **[Docker Examples](docker-examples.md)** - Docker examples
+- **[EDA Examples](eda-examples.md)** - EDA examples 
