@@ -344,3 +344,18 @@ eda --data-quality-checks
    ```bash
    docker exec -it <container> nz --version
    ```
+
+### MCP Server Stdio/Protocol Test
+
+The MCP server now includes a fully automated stdio protocol test (`tests/test_stdio.py`). This test works with both pytest and standalone execution, and is suitable for CI/CD pipelines and local validation.
+
+**Usage:**
+```bash
+# Standalone
+python tests/test_stdio.py
+
+# With pytest (recommended for CI)
+pytest tests/test_stdio.py -v
+```
+
+This test validates all key LSP protocol methods (initialize, completion, shutdown, exit) and ensures correct JSON serialization and protocol compliance in all environments (including subprocess/PIPE).

@@ -303,12 +303,17 @@ pytest tests/mcp/ -v --cov=pycharm_github_copilot_mcp --cov=scripts.auto_start_m
 
 ### Stdio Mode Testing
 ```bash
-# Stdio communication test
+# Fully automated stdio protocol test (works with pytest, CI, and standalone)
 python tests/test_stdio.py
 
-# Manual server test
+# Or with pytest (recommended for CI)
+pytest tests/test_stdio.py -v
+
+# Manual server test (for debugging protocol)
 echo '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}}' | python pycharm_github_copilot_mcp.py
 ```
+
+> The stdio test checks: initialize, completion, shutdown, and exit. The server is now fully compatible with subprocess, PIPE, and CI environments. All protocol responses are validated, including correct JSON serialization for enums and shutdown handling.
 
 ## 🔧 Advanced Configuration
 

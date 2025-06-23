@@ -167,3 +167,224 @@ Export flags (`--export-parquet`, `--export-csv`, `--export-json`) are only avai
 - Check all dependencies: `pip install -e .`
 - Verify API keys for live data sources
 - Check logs in `logs/` directory
+
+# Neozork HLD Prediction
+
+A comprehensive financial analysis tool for high-low direction prediction using technical indicators.
+
+## Quick Start
+
+```bash
+# Install dependencies
+pip install uv && uv sync
+
+# Run demo analysis
+python run_analysis.py demo
+
+# Try interactive mode
+python run_analysis.py interactive
+
+# View all examples
+python run_analysis.py --examples
+```
+
+## Features
+
+- **Multiple Data Sources**: Yahoo Finance, Binance, Polygon.io, CSV files, Exchange Rate API
+- **Technical Indicators**: RSI, MACD, EMA, Bollinger Bands, ATR, Stochastic, VWAP, and more
+- **Interactive Mode**: Guided interface for analysis configuration
+- **Export Options**: Parquet, CSV, JSON formats
+- **MCP Servers**: GitHub Copilot integration for enhanced development
+- **Comprehensive Testing**: Full test suite with coverage analysis
+- **Docker Support**: Containerized deployment
+- **Multiple Plotting Backends**: Plotly, Seaborn, Matplotlib, Terminal
+
+## Documentation
+
+- **[Getting Started](getting-started.md)** - Installation and basic setup
+- **[Examples Overview](examples-overview.md)** - Complete overview of all examples
+- **[Quick Examples](quick-examples.md)** - Fast start examples and common workflows
+- **[Usage Examples](usage-examples.md)** - Comprehensive examples and workflows
+- **[Indicator Examples](indicator-examples.md)** - Technical indicator usage examples
+- **[MCP Examples](mcp-examples.md)** - MCP server usage examples
+- **[Testing Examples](testing-examples.md)** - Testing and coverage examples
+- **[Script Examples](script-examples.md)** - Utility and debug script examples
+- **[Docker Examples](docker-examples.md)** - Docker deployment and development examples
+- **[EDA Examples](eda-examples.md)** - Exploratory Data Analysis examples
+- **[Project Structure](project-structure.md)** - Code organization overview
+- **[Testing Guide](testing.md)** - Running tests and coverage analysis
+- **[MCP Servers](mcp-servers/)** - GitHub Copilot integration setup
+- **[Scripts](scripts.md)** - Utility and debug scripts
+- **[Indicators](indicators/)** - Technical indicator documentation
+
+## Quick Examples
+
+### Basic Analysis
+```bash
+# Demo with RSI
+python run_analysis.py demo --rule RSI
+
+# Yahoo Finance data
+python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule RSI
+
+# CSV file analysis
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule MACD
+```
+
+### Interactive Mode
+```bash
+# Start interactive session
+python run_analysis.py interactive
+
+# Discover indicators
+python run_analysis.py --indicators
+```
+
+### Testing
+```bash
+# Run all tests
+python -m pytest tests/
+
+# Test coverage
+python tests/zzz_analyze_test_coverage.py
+```
+
+### MCP Servers
+```bash
+# Auto-start MCP servers
+python scripts/auto_start_mcp.py
+
+# Test stdio mode
+python tests/test_stdio.py
+```
+
+## Data Sources
+
+- **Yahoo Finance**: Free stock and forex data
+- **Binance**: Cryptocurrency data
+- **Polygon.io**: Professional market data (API key required)
+- **Exchange Rate API**: Real-time forex rates
+- **CSV Files**: Custom data import
+
+## Technical Indicators
+
+### Trend Indicators
+- EMA (Exponential Moving Average)
+- ADX (Average Directional Index)
+- SAR (Parabolic SAR)
+
+### Oscillators
+- RSI (Relative Strength Index)
+- Stochastic Oscillator
+- CCI (Commodity Channel Index)
+
+### Momentum Indicators
+- MACD (Moving Average Convergence Divergence)
+- Stochastic Oscillator
+
+### Volatility Indicators
+- ATR (Average True Range)
+- Bollinger Bands
+- Standard Deviation
+
+### Volume Indicators
+- OBV (On-Balance Volume)
+- VWAP (Volume Weighted Average Price)
+
+### Support/Resistance
+- Donchian Channels
+- Fibonacci Retracements
+- Pivot Points
+
+### Predictive Indicators
+- HMA (Hull Moving Average)
+- Time Series Forecast
+
+### Probability Indicators
+- Kelly Criterion
+- Monte Carlo Simulation
+
+### Sentiment Indicators
+- Commitment of Traders
+- Fear & Greed Index
+- Social Sentiment
+
+## Development
+
+### Project Structure
+```
+neozork-hld-prediction/
+├── src/                    # Main source code
+│   ├── calculation/        # Indicator calculations
+│   ├── cli/               # Command line interface
+│   ├── data/              # Data acquisition
+│   ├── eda/               # Exploratory data analysis
+│   ├── export/            # Data export
+│   ├── plotting/          # Visualization
+│   └── workflow/          # Analysis workflows
+├── tests/                 # Test suite
+├── scripts/               # Utility scripts
+├── docs/                  # Documentation
+├── data/                  # Data storage
+└── mcp_auto_config.json   # MCP server configuration
+```
+
+### Key Components
+
+- **CLI Interface**: `src/cli/cli.py` - Main command line interface
+- **Indicator Calculations**: `src/calculation/` - Technical indicator implementations
+- **Data Acquisition**: `src/data/` - Data fetching from various sources
+- **MCP Servers**: `pycharm_github_copilot_mcp.py` - GitHub Copilot integration
+- **Testing**: `tests/` - Comprehensive test suite
+
+### Testing
+
+```bash
+# Run all tests
+python -m pytest tests/
+
+# Run with coverage
+python -m pytest tests/ --cov=src --cov-report=html
+
+# Test specific components
+python -m pytest tests/calculation/indicators/ -v
+python -m pytest tests/cli/ -v
+python -m pytest tests/data/ -v
+```
+
+### MCP Server Integration
+
+The project includes MCP (Model Context Protocol) servers for enhanced development experience:
+
+- **Auto-Start Server**: `scripts/auto_start_mcp.py` - Automatic server management
+- **PyCharm Integration**: `pycharm_github_copilot_mcp.py` - GitHub Copilot support
+- **Testing**: `tests/test_stdio.py` - Server functionality testing
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Run the test suite
+6. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For questions and support:
+- Check the [documentation](docs/)
+- Review [examples overview](examples-overview.md) for complete guide
+- Review [quick examples](quick-examples.md) for fast start
+- Review [usage examples](usage-examples.md) for comprehensive workflows
+- Review [indicator examples](indicator-examples.md) for technical analysis
+- Review [MCP examples](mcp-examples.md) for AI integration
+- Review [testing examples](testing-examples.md) for test coverage
+- Review [script examples](script-examples.md) for utilities and debugging
+- Review [Docker examples](docker-examples.md) for containerized deployment
+- Review [EDA examples](eda-examples.md) for data analysis
+- Run `python run_analysis.py --help` for CLI help
+- Use `python run_analysis.py --examples` for command examples

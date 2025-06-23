@@ -60,3 +60,18 @@ The project uses GitHub Actions for automated testing. See [CI/CD Guide](ci-cd.m
 ```
 
 For more debugging tools: [Debug Scripts](debug-scripts.md)
+
+## MCP Server Stdio/Protocol Testing
+
+The MCP server is fully compatible with both subprocess/PIPE and pytest/CI environments. The stdio protocol test checks all key LSP methods (initialize, completion, shutdown, exit) and validates correct JSON serialization and protocol compliance.
+
+**Recommended usage:**
+```bash
+# Standalone (for local/manual check)
+python tests/test_stdio.py
+
+# With pytest (for CI and automation)
+pytest tests/test_stdio.py -v
+```
+
+> This test ensures the server works perfectly in all environments, including GitHub Actions and Docker.
