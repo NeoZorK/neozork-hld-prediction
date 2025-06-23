@@ -53,3 +53,7 @@ docs/                  # Documentation
 - `docs/` - Documentation
 
 For usage examples: [Getting Started](getting-started.md)
+
+## Python package initialization
+
+All folders and subfolders in `src/` and `tests/` **must contain an `__init__.py` file**. This ensures proper package/module discovery and import behavior. The presence of these files is automatically checked by the test suite (`test_file_reorganization.py`).
