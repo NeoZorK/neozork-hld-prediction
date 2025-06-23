@@ -100,7 +100,7 @@ class TestMathematicalValidation:
         k_values = result['Stoch_K'].dropna()
         
         if len(k_values) > 0:
-            # В реальной формуле K не всегда будет близко к 0, но должно быть заметно ниже, чем при close=high
+            # In real formula K won't always be close to 0, but should be noticeably lower than when close=high
             assert k_values.mean() < 60, "Stochastic K should be low when close is at low"
 
     def test_bollinger_bands_mathematical_properties(self):
