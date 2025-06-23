@@ -57,27 +57,73 @@ python scripts/auto_start_mcp.py start
 python pycharm_github_copilot_mcp.py
 ```
 
-📚 **[MCP Servers Documentation](docs/mcp-servers/README.md)**
+📚 **[MCP Servers Documentation](docs/reference/mcp-servers/README.md)**
 
 ## 📚 Documentation
 
 📚 **[Complete Documentation](docs/index.md)**
 
-### Quick Links
+### Documentation Categories
 
-- [Getting Started](docs/getting-started.md) - Overview and setup
-- [Quick Examples](docs/quick-examples.md) - Fast start examples and common workflows
-- [Usage Examples](docs/usage-examples.md) - Comprehensive examples and workflows
-- [Indicator Export](docs/indicator-export.md) - Export calculated indicators
-- [Exchange Rate API](docs/exchange-rate-api-complete.md) - Real-time FX data
-- [Docker Setup](docs/docker.md) - Containerized development
-- [Analysis Tools](docs/analysis-eda.md) - EDA and plotting
+#### 🚀 [Getting Started](docs/getting-started/)
+- [Installation & Setup](docs/getting-started/getting-started.md)
+- [Project Structure](docs/getting-started/project-structure.md)
+- [UV Setup](docs/getting-started/uv-setup.md)
 
-### Development
-- [Testing](docs/testing.md) - Test framework
-- [CI/CD](docs/ci-cd.md) - GitHub Actions
-- [Scripts](docs/scripts.md) - Automation tools
-- [Project Structure](docs/project-structure.md) - Code organization
+#### 💡 [Examples](docs/examples/)
+- [Quick Examples](docs/examples/quick-examples.md) - Fast start examples
+- [Usage Examples](docs/examples/usage-examples.md) - Comprehensive workflows
+- [Indicator Examples](docs/examples/indicator-examples.md) - Technical analysis
+- [MCP Examples](docs/examples/mcp-examples.md) - AI integration
+- [Testing Examples](docs/examples/testing-examples.md) - Test coverage
+- [Script Examples](docs/examples/script-examples.md) - Utilities and debugging
+- [Docker Examples](docs/examples/docker-examples.md) - Containerized deployment
+- [EDA Examples](docs/examples/eda-examples.md) - Data analysis
+
+#### 📖 [Guides](docs/guides/)
+- [Scripts Guide](docs/guides/scripts.md) - Automation tools
+- [Testing Guide](docs/guides/testing.md) - Test framework
+- [Docker Guide](docs/guides/docker.md) - Containerized development
+- [Analysis & EDA Guide](docs/guides/analysis-eda.md) - Data analysis tools
+- [Debug Scripts](docs/guides/debug-scripts.md) - Troubleshooting
+- [Utility Scripts](docs/guides/utility-scripts.md) - Data conversion utilities
+- [Indicator Export](docs/guides/indicator-export.md) - Export calculated indicators
+- [Copilot Instructions](docs/guides/copilot-instructions.md) - AI assistance setup
+
+#### 📋 [Reference](docs/reference/)
+- [Technical Indicators](docs/reference/indicators/) - Complete indicator reference
+- [MCP Servers](docs/reference/mcp-servers/) - Server documentation
+
+#### 🔧 [Development](docs/development/)
+- [CI/CD Guide](docs/development/ci-cd.md) - GitHub Actions and deployment
+
+#### 🌐 [API](docs/api/)
+- [Exchange Rate API](docs/api/exchange-rate-api-complete.md) - Real-time FX data
+
+### Quick Navigation by User Type
+
+#### 👶 **For Beginners**
+1. [Getting Started](docs/getting-started/)
+2. [Quick Examples](docs/examples/quick-examples.md)
+3. [Examples Overview](docs/examples/examples-overview.md)
+
+#### 👨‍💻 **For Developers**
+1. [Getting Started](docs/getting-started/)
+2. [Testing Examples](docs/examples/testing-examples.md)
+3. [Script Examples](docs/examples/script-examples.md)
+4. [MCP Examples](docs/examples/mcp-examples.md)
+5. [Development](docs/development/) guides
+
+#### 📊 **For Analysts**
+1. [Getting Started](docs/getting-started/)
+2. [Indicator Examples](docs/examples/indicator-examples.md)
+3. [EDA Examples](docs/examples/eda-examples.md)
+4. [Reference](docs/reference/) for technical details
+
+#### 🐳 **For DevOps**
+1. [Docker Examples](docs/examples/docker-examples.md)
+2. [Testing Examples](docs/examples/testing-examples.md)
+3. [Development](docs/development/) CI/CD guides
 
 ## 🧪 Testing
 
@@ -194,6 +240,7 @@ Export flags (`--export-parquet`, `--export-csv`, `--export-json`) are only allo
 
 - Create an issue on GitHub
 - Check the troubleshooting section
-- Review the [quick examples](docs/quick-examples.md) for fast start
-- Review the [usage examples](docs/usage-examples.md) for comprehensive workflows
+- Review the [Examples](docs/examples/) section for common use cases
+- Review the [Guides](docs/guides/) for detailed tutorials
+- Consult the [Reference](docs/reference/) for technical details
 - Contact the development team
