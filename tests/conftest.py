@@ -16,7 +16,7 @@ def pytest_sessionfinish(session, exitstatus):
     
     # Import and run the coverage analysis
     try:
-        from tests.zzz_analyze_test_coverage import analyze_coverage
+        from tests.summary.zzz_analyze_test_coverage import analyze_coverage
         missing_tests = analyze_coverage()
         
         # Exit with error code if there are missing tests
