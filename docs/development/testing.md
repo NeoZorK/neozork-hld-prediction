@@ -76,6 +76,61 @@ uv run pytest tests -n 4
 uv run pytest tests -n auto --tb=short --disable-warnings
 ```
 
+## Test Results Management
+
+### Results Storage
+
+Test results are automatically saved to `logs/test_results/` directory with timestamped filenames:
+
+```
+logs/
+├── test_results/
+│   ├── test_results_20250623_193622.json
+│   ├── test_results_20250623_193618.json
+│   └── ...
+├── stats/
+└── ...
+```
+
+### Managing Test Results
+
+Use the test results management script for advanced operations:
+
+```bash
+# Generate report for last 7 days
+python scripts/manage_test_results.py --action report
+
+# Generate report for last 30 days
+python scripts/manage_test_results.py --action report --days 30
+
+# Clean old results (older than 30 days)
+python scripts/manage_test_results.py --action clean --days 30
+
+# Export results to CSV
+python scripts/manage_test_results.py --action export --output test_results.csv
+
+# Show latest test results
+python scripts/manage_test_results.py --action latest
+```
+
+### Test Results Format
+
+Each test result file contains:
+
+```json
+{
+  "timestamp": "20250623_193622",
+  "datetime": "2025-06-23T19:36:22.123456",
+  "passed": 1018,
+  "failed": 0,
+  "skipped": 27,
+  "errors": 0,
+  "total": 1045,
+  "success_rate": 100.0,
+  "exit_status": "EXIT_OK"
+}
+```
+
 ## Test Categories
 
 ### Unit Tests
@@ -254,6 +309,9 @@ python tests/run_optimized_tests.py --categories cli --verbose
 
 # Check test coverage
 uv run pytest tests --cov=src --cov-report=html
+
+# Generate test results report
+python scripts/manage_test_results.py --action report --days 7
 ```
 
 ## Troubleshooting
@@ -296,9 +354,9 @@ uv run pytest tests -vvv --tb=long
 
 ### Result Files
 
-- `test_results.json`: Detailed test results
+- `logs/test_results/test_results_YYYYMMDD_HHMMSS.json`: Detailed test results with timestamps
 - `htmlcov/`: Coverage reports
-- `logs/`: Test execution logs
+- `logs/`: Test execution logs and other project logs
 
 ## Contributing
 
@@ -309,4 +367,5 @@ When adding new tests:
 3. Add proper markers
 4. Include edge cases
 5. Document complex scenarios
-6. Ensure parallel compatibility 
+6. Ensure parallel compatibility
+7. Test results will be automatically saved to `logs/test_results/` 

@@ -199,7 +199,11 @@ class OptimizedTestRunner:
     def save_results(self, output_file: str = "test_results.json"):
         """Save test results to JSON file"""
         
-        results_file = self.project_root / output_file
+        # Create logs/test_results directory if it doesn't exist
+        results_dir = self.project_root / "logs" / "test_results"
+        results_dir.mkdir(parents=True, exist_ok=True)
+        
+        results_file = results_dir / output_file
         
         # Convert to serializable format
         serializable_results = {
