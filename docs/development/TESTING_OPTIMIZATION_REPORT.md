@@ -28,8 +28,9 @@ dependencies = [
 
 #### A. MCP Server Memory Test
 - **Problem**: Memory increase test was too strict (100MB limit)
-- **Solution**: Increased limit to 150MB to account for larger project indexing
+- **Solution**: Increased limit to 250MB to account for larger project indexing and second server instance creation
 - **File**: `tests/mcp/test_pycharm_github_copilot_mcp.py`
+- **Additional Fix**: Added descriptive error message with actual memory usage for better debugging
 
 #### B. CSV Mode Validation Test
 - **Problem**: Test expected exact return code 0, but CSV mode can fail gracefully
