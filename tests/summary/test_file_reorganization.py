@@ -110,7 +110,9 @@ def test_docker_entrypoint_updated():
     if entrypoint.exists():
         with open(entrypoint, 'r') as f:
             content = f.read()
-            assert "/app/tests/run_tests.py" in content, "Docker entrypoint should reference new path"
+            # Check for run_tests_docker.py reference (used in the script)
+            assert "run_tests_docker.py" in content, "Docker entrypoint should reference run_tests_docker.py"
+            # Check that it doesn't reference the old path
             assert "/app/scripts/run_tests.py" not in content, "Docker entrypoint should not reference old path"
 
 def test_init_files_exist():
