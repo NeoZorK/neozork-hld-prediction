@@ -78,7 +78,7 @@ echo -e "\033[1;34mInput received: '$run_tests'\033[0m"
 if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
   echo -e "\n\033[1;32m=== Running external data feed tests in Docker ===\033[0m\n"
   # Run the tests using docker automatically via run_tests.py
-  run_python_safely python /app/scripts/run_tests.py --docker
+  run_python_safely python /app/tests/run_tests.py --docker
 else
   echo -e "\033[1;33mSkipping external data feed tests\033[0m\n"
 fi

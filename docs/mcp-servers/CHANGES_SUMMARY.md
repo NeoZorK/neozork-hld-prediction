@@ -20,7 +20,7 @@ This document summarizes all changes and improvements made to the MCP (Model Con
 - **Documentation Updates**: Updated CHANGES_SUMMARY.md with latest improvements
 
 ### 1. File Reorganization
-- **Moved**: `test_stdio.py` → `scripts/test_stdio.py`
+- **Moved**: `test_stdio.py` → `tests/test_stdio.py`
 - **Updated**: Script to work from any directory, not just project root
 - **Added**: Proper path resolution and error handling
 
