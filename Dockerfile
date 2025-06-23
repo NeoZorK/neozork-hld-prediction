@@ -64,6 +64,7 @@ COPY cursor_mcp_config.json ./
 COPY mcp_auto_config.json ./
 COPY src/ ./src/
 COPY scripts/ ./scripts/
+COPY tests/ ./tests/
 COPY uv_setup/ ./uv_setup/
 COPY docker-entrypoint.sh ./
 
