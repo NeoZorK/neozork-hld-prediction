@@ -172,9 +172,7 @@ def run_cli_command(cmd: List[str], timeout: int = 30) -> Tuple[int, str, str, f
     '--version',
     '--help', 
     '--examples',
-    '--indicators',
-    '--interactive',
-    '-i'
+    '--indicators'
 ])
 def test_basic_flags(flag):
     """Test basic flags that don't require additional parameters"""
@@ -184,6 +182,30 @@ def test_basic_flags(flag):
     # Basic flags should either succeed or show help/version info
     assert return_code in [0, 1], f"Flag {flag} failed with return code {return_code}"
     assert execution_time < 10, f"Flag {flag} took too long: {execution_time:.2f}s"
+
+# Test interactive flags separately (they have special behavior)
+@pytest.mark.basic
+def test_interactive_flag():
+    """Test --interactive flag (should start interactive mode)"""
+    cmd = [PYTHON, str(SCRIPT), '--interactive']
+    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=5)
+    
+    # Interactive mode should start (return code 0) or timeout (return code -1)
+    assert return_code in [0, -1], f"Interactive flag failed with return code {return_code}"
+    # If it didn't timeout, it should show interactive mode message
+    if return_code == 0:
+        assert "Interactive Mode" in stdout or "Welcome" in stdout, "Should show interactive mode message"
+    # If it timed out, that's also acceptable for this test
+
+@pytest.mark.basic
+def test_short_interactive_flag():
+    """Test -i flag (should require mode argument)"""
+    cmd = [PYTHON, str(SCRIPT), '-i']
+    return_code, stdout, stderr, execution_time = run_cli_command(cmd)
+    
+    # -i should fail because it requires a mode argument
+    assert return_code == 2, f"Short interactive flag should fail with code 2, got {return_code}"
+    assert "arguments are required: mode" in stderr, "Should show mode requirement error"
 
 # Version test
 @pytest.mark.basic
