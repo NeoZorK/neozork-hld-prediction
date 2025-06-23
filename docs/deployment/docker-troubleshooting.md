@@ -89,7 +89,54 @@ docker compose run --rm -e LOG_LEVEL=DEBUG neozork-hld
 docker logs <container_id>
 ```
 
-### 5. Memory Issues
+#### Error: "MCP server stopped" or "Received EOF"
+
+**Problem**: MCP server receives EOF and stops unexpectedly.
+
+**Solution**:
+```bash
+# Check MCP server logs
+docker compose run --rm neozork-hld cat /app/logs/mcp_server.log
+
+# Check if MCP server is running
+docker compose run --rm neozork-hld ps aux | grep python
+
+# Restart container and try again
+docker compose run --rm neozork-hld
+```
+
+### 5. External Data Feed Test Issues
+
+#### Error: "docker: not found" in test output
+
+**Problem**: Tests try to run Docker inside Docker container.
+
+**Solution**:
+```bash
+# Use the Docker-specific test runner
+docker compose run --rm neozork-hld python tests/run_tests_docker.py
+
+# Or run individual tests directly
+docker compose run --rm neozork-hld python scripts/debug_scripts/debug_yfinance.py
+```
+
+#### Error: "No such file or directory: 'docker'"
+
+**Problem**: Docker command not available inside container.
+
+**Solution**:
+```bash
+# The container now uses run_tests_docker.py instead of run_tests.py
+# This runs tests directly without Docker-in-Docker
+
+# Check test runner exists
+docker compose run --rm neozork-hld ls -la tests/run_tests_docker.py
+
+# Run tests manually if needed
+docker compose run --rm neozork-hld python tests/run_tests_docker.py --all
+```
+
+### 6. Memory Issues
 
 #### Error: "Out of memory" during build
 
@@ -104,7 +151,7 @@ docker logs <container_id>
 docker compose build --build-arg USE_UV=true --parallel 1
 ```
 
-### 6. Network Issues
+### 7. Network Issues
 
 #### Error: "Cannot connect to external APIs"
 

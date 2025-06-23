@@ -61,6 +61,23 @@ run_python_safely() {
   return 0
 }
 
+# Function to cleanup MCP server on exit
+cleanup_mcp_server() {
+  if [ -f /tmp/mcp_server.pid ]; then
+    MCP_PID=$(cat /tmp/mcp_server.pid)
+    if kill -0 $MCP_PID 2>/dev/null; then
+      echo -e "\n\033[1;33mStopping MCP server (PID: $MCP_PID)...\033[0m"
+      kill $MCP_PID
+      wait $MCP_PID 2>/dev/null
+      echo -e "\033[1;32mMCP server stopped\033[0m"
+    fi
+    rm -f /tmp/mcp_server.pid
+  fi
+}
+
+# Set trap to cleanup MCP server on script exit
+trap cleanup_mcp_server EXIT
+
 # Set PYTHONPATH globally for the entire script
 export PYTHONPATH=/app
 
@@ -77,8 +94,8 @@ echo -e "\033[1;34mInput received: '$run_tests'\033[0m"
 # Simplified condition checking
 if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
   echo -e "\n\033[1;32m=== Running external data feed tests in Docker ===\033[0m\n"
-  # Run the tests using docker automatically via run_tests.py
-  run_python_safely python /app/tests/run_tests.py --docker
+  # Run the tests using the Docker-specific test runner
+  run_python_safely python /app/tests/run_tests_docker.py
 else
   echo -e "\033[1;33mSkipping external data feed tests\033[0m\n"
 fi
@@ -93,8 +110,11 @@ echo -e "\033[1;34mInput received: '$run_mcp'\033[0m"
 # Simplified condition checking
 if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
   echo -e "\n\033[1;32m=== Starting MCP server in background ===\033[0m\n"
-  run_python_safely python pycharm_github_copilot_mcp.py &
-  echo -e "\033[1;32mMCP server started in background\033[0m\n"
+  # Start MCP server in background and redirect output to prevent EOF
+  nohup python pycharm_github_copilot_mcp.py > /app/logs/mcp_server.log 2>&1 &
+  MCP_PID=$!
+  echo $MCP_PID > /tmp/mcp_server.pid
+  echo -e "\033[1;32mMCP server started in background (PID: $MCP_PID)\033[0m\n"
   # Wait for mcp_server to initialize
   sleep 5
 else
