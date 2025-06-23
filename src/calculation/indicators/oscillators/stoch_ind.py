@@ -56,11 +56,16 @@ def calculate_stochastic(df: pd.DataFrame, k_period: int = 14, d_period: int = 3
     lowest_low = low_price.rolling(window=k_period).min()
     highest_high = high_price.rolling(window=k_period).max()
     
-    # Raw %K
-    raw_k = ((close_price - lowest_low) / (highest_high - lowest_low)) * 100
+    # Raw %K with protection against division by zero
+    denominator = highest_high - lowest_low
+    raw_k = np.where(
+        denominator > 1e-10,
+        ((close_price - lowest_low) / denominator) * 100,
+        np.nan  # если нет диапазона, пусть будет NaN
+    )
     
     # Smooth %K
-    k_percent = raw_k.rolling(window=slowing).mean()
+    k_percent = pd.Series(raw_k, index=df.index).rolling(window=slowing).mean()
     
     # Calculate %D (SMA of %K)
     d_percent = k_percent.rolling(window=d_period).mean()
@@ -119,6 +124,10 @@ def apply_rule_stochastic(df: pd.DataFrame, point: float,
     
     # Calculate Stochastic
     k_values, d_values = calculate_stochastic(df, k_period, d_period, slowing, price_type)
+    
+    # Ограничиваем значения и заменяем NaN только для финального DataFrame
+    k_values = k_values.clip(0, 100).fillna(50.0)
+    d_values = d_values.clip(0, 100).fillna(50.0)
     
     df['Stoch_K'] = k_values
     df['Stoch_D'] = d_values
