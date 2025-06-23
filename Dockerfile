@@ -1,5 +1,8 @@
 FROM python:3.11-slim-bookworm AS builder
 
+# Accept build argument for UV usage
+ARG USE_UV=true
+
 WORKDIR /app
 
 # Installation minimal system dependencies only needed for building
@@ -14,26 +17,32 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Install uv safely
-RUN mkdir -p /tmp/uv-installer \
-    && curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh -o /tmp/uv-installer/installer.sh \
-    && chmod +x /tmp/uv-installer/installer.sh \
-    && /tmp/uv-installer/installer.sh \
-    && if [ -f /root/.local/bin/env ]; then . /root/.local/bin/env; fi \
-    && ln -s /root/.local/bin/uv /usr/local/bin/uv \
-    && rm -rf /tmp/uv-installer
+# Install uv if USE_UV is true
+RUN if [ "$USE_UV" = "true" ]; then \
+        mkdir -p /tmp/uv-installer \
+        && curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh -o /tmp/uv-installer/installer.sh \
+        && chmod +x /tmp/uv-installer/installer.sh \
+        && /tmp/uv-installer/installer.sh \
+        && if [ -f /root/.local/bin/env ]; then . /root/.local/bin/env; fi \
+        && ln -s /root/.local/bin/uv /usr/local/bin/uv \
+        && rm -rf /tmp/uv-installer; \
+    fi
 
-# Update PATH to include uv
+# Update PATH to include uv if installed
 ENV PATH="/root/.local/bin:$PATH"
 
 # Copy configuration and requirements
 COPY uv.toml /app/uv.toml
 COPY requirements.txt .
 
-# Optimize requirements installation using uv
-# NOTE: Do not remove the .dist-info directories to preserve metadata
-RUN grep -v "^#" requirements.txt > requirements-prod.txt && \
-    uv pip install --no-cache -r requirements-prod.txt && \
+# Install dependencies based on USE_UV setting
+RUN if [ "$USE_UV" = "true" ]; then \
+        grep -v "^#" requirements.txt > requirements-prod.txt && \
+        uv pip install --no-cache -r requirements-prod.txt; \
+    else \
+        grep -v "^#" requirements.txt > requirements-prod.txt && \
+        pip install --no-cache-dir -r requirements-prod.txt; \
+    fi && \
     find /opt/venv -name '*.pyc' -delete && \
     find /opt/venv -name '__pycache__' -delete && \
     find /opt/venv -name '*.egg-info' -print0 | xargs -0 rm -rf && \
@@ -49,7 +58,10 @@ COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy only necessary application files
-COPY run_analysis.py mcp_server.py mcp.json ./
+COPY run_analysis.py ./
+COPY pycharm_github_copilot_mcp.py ./
+COPY cursor_mcp_config.json ./
+COPY mcp_auto_config.json ./
 COPY src/ ./src/
 COPY scripts/ ./scripts/
 COPY uv_setup/ ./uv_setup/

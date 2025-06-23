@@ -45,6 +45,11 @@ Documentation about documentation - history, organization, and maintenance.
 - **Documentation Updates** - History of documentation changes
 - **File Reorganization** - Summary of documentation structure changes
 
+### 🐳 [Deployment](deployment/)
+Docker and deployment documentation for containerized environments.
+- **Docker Setup** - Complete Docker setup and usage guide
+- **Docker Troubleshooting** - Common issues and solutions for Docker deployment
+
 ## 🎯 Quick Navigation by User Type
 
 ### 👶 **For Beginners**
@@ -152,87 +157,4 @@ The project includes comprehensive testing:
 - **Edge Case Tests** - Boundary condition testing
 
 Run tests with:
-```bash
-# Run all tests
-pytest
-
-# Run specific test category
-pytest tests/calculation/indicators/
-
-# Run with coverage
-pytest --cov=src
 ```
-
-## 🔧 Development
-
-### Project Structure
-```
-neozork-hld-prediction/
-├── src/                    # Source code
-│   ├── calculation/        # Technical indicators
-│   ├── cli/               # Command-line interface
-│   ├── data/              # Data acquisition
-│   ├── eda/               # Exploratory data analysis
-│   ├── export/            # Data export
-│   ├── plotting/          # Visualization
-│   ├── utils/             # Utility functions
-│   └── workflow/          # Workflow management
-├── tests/                 # Test suite
-├── docs/                  # Documentation
-├── data/                  # Data files
-├── logs/                  # Log files
-└── scripts/               # Utility scripts
-```
-
-### Key Components
-- **Technical Indicators** - Mathematical calculations for market analysis
-- **Data Fetchers** - Data acquisition from various sources
-- **CLI Interface** - Command-line tools for analysis
-- **Export Modules** - Data export in multiple formats
-- **Visualization** - Plotting and charting capabilities
-- **Analysis Tools** - EDA and statistical analysis
-- **Workflow Engine** - Automated pipeline orchestration
-- **Utility Functions** - Common operations and helpers
-- **Testing Suite** - Comprehensive test coverage
-
-## 📈 Use Cases
-
-### Financial Analysis
-- Technical indicator calculation
-- Market trend analysis
-- Risk assessment
-- Portfolio optimization
-
-### Data Science
-- Exploratory data analysis
-- Feature engineering
-- Model development
-- Backtesting strategies
-
-### Research
-- Academic research
-- Market studies
-- Algorithm development
-- Performance analysis
-
-### Automation
-- Automated data collection
-- Scheduled analysis
-- Report generation
-- Alert systems
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our development guides and testing documentation for details on how to contribute effectively.
-
-## 📞 Support
-
-For questions and support:
-1. Check the [Examples](examples/) section for common use cases
-2. Review the [Guides](guides/) for detailed tutorials
-3. Consult the [Reference](reference/) for technical details
-4. Check [Meta](meta/) for recent updates and changes
-
----
-
-**Last Updated**: See [Documentation Updates](meta/DOCUMENTATION_UPDATES.md) for recent changes.

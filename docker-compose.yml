@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        USE_UV: ${USE_UV:-true}
     volumes:
       # Mount local directories to the container
       - ./data:/app/data
@@ -13,7 +15,10 @@ services:
       # Mount tests directory for pytest
       - ./tests:/app/tests
     env_file:
-      - .env
+      - docker.env
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
     # Interactive script execution with user prompts
     stdin_open: true
     tty: true
