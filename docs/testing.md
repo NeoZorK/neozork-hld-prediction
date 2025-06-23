@@ -21,7 +21,7 @@ pytest tests/data/ -v
 
 **Main test script:**
 ```bash
-python scripts/run_tests.py
+python tests/run_tests.py
 ```
 
 **Local workflow testing:**

@@ -304,7 +304,7 @@ pytest tests/mcp/ -v --cov=pycharm_github_copilot_mcp --cov=scripts.auto_start_m
 ### Stdio Mode Testing
 ```bash
 # Stdio communication test
-python scripts/test_stdio.py
+python tests/test_stdio.py
 
 # Manual server test
 echo '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}}' | python pycharm_github_copilot_mcp.py
