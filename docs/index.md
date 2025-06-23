@@ -1,160 +1,194 @@
-# Neozork HLD Prediction Documentation
+# Neozork HLD Prediction - Documentation
 
-Welcome to the comprehensive documentation for the Neozork HLD Prediction project. This documentation is organized into logical categories to help you find the information you need quickly.
+## Overview
 
-## 📚 Documentation Categories
+Neozork HLD Prediction is a comprehensive machine learning system for financial market analysis and prediction using proprietary trading indicators. The system provides advanced technical analysis, data processing, and visualization capabilities.
 
-### 🚀 [Getting Started](getting-started/)
-Essential documentation for new users to get up and running with the project.
-- **Installation & Setup** - Quick installation and basic configuration
-- **Project Structure** - Understanding the codebase organization
-- **UV Setup** - Setting up UV package manager for dependency management
-
-### 💡 [Examples](examples/)
-Comprehensive examples for all project features and use cases.
-- **Quick Examples** - Fast start examples for common use cases
-- **Usage Examples** - Comprehensive usage examples and workflows
-- **Feature-Specific Examples** - Technical indicators, MCP servers, testing, scripts, Docker, EDA
-- **Examples Overview** - Complete overview of all available examples
-
-### 📖 [Guides](guides/)
-Detailed tutorials and guides for using the project effectively.
-- **Core Guides** - Scripts, testing, Docker, analysis & EDA
-- **Development Guides** - Debug scripts, utility scripts, Copilot integration
-- **Feature Guides** - Indicator export, interactive mode fixes
-- **Advanced Guides** - CLI interface, plotting, export functions, analysis tools, workflow utilities
-
-### 📋 [Reference](reference/)
-Technical reference documentation for the project.
-- **Technical Indicators** - Complete reference for all indicators (trend, oscillators, momentum, volatility, volume, support/resistance, predictive, probability, sentiment)
-- **MCP Servers** - Model Context Protocol server documentation
-- **Core Calculation** - Core calculation components and mathematical foundations
-
-### 🔧 [Development](development/)
-Development and technical documentation for contributors and advanced users.
-- **CI/CD Guide** - Continuous Integration and Deployment workflows
-- **Development Best Practices** - Code quality and testing strategies
-
-### 🌐 [API](api/)
-API and integration documentation for external services and data sources.
-- **Exchange Rate API** - Complete API integration guide with authentication, endpoints, and examples
-- **Data Sources** - Comprehensive documentation for all data acquisition sources
-
-### 📝 [Meta](meta/)
-Documentation about documentation - history, organization, and maintenance.
-- **Documentation Updates** - History of documentation changes
-- **File Reorganization** - Summary of documentation structure changes
-
-### 🐳 [Deployment](deployment/)
-Docker and deployment documentation for containerized environments.
-- **Docker Setup** - Complete Docker setup and usage guide
-- **Docker Troubleshooting** - Common issues and solutions for Docker deployment
-
-## 🎯 Quick Navigation by User Type
-
-### 👶 **For Beginners**
-1. Start with [Getting Started](getting-started/)
-2. Try [Quick Examples](examples/quick-examples.md)
-3. Review [Examples Overview](examples/examples-overview.md)
-
-### 👨‍💻 **For Developers**
-1. Read [Getting Started](getting-started/)
-2. Check [Testing Examples](examples/testing-examples.md)
-3. Explore [Script Examples](examples/script-examples.md)
-4. Review [MCP Examples](examples/mcp-examples.md)
-5. Study [Development](development/) guides
-6. Master [CLI Interface](guides/cli-interface.md)
-7. Understand [Core Calculation](reference/core-calculation.md)
-
-### 📊 **For Analysts**
-1. Start with [Getting Started](getting-started/)
-2. Use [Indicator Examples](examples/indicator-examples.md)
-3. Explore [EDA Examples](examples/eda-examples.md)
-4. Review [Reference](reference/) for technical details
-5. Master [Analysis Tools](guides/analysis-tools.md)
-6. Learn [Plotting and Visualization](guides/plotting-visualization.md)
-
-### 🐳 **For DevOps**
-1. Check [Docker Examples](examples/docker-examples.md)
-2. Review [Testing Examples](examples/testing-examples.md)
-3. Study [Development](development/) CI/CD guides
-4. Understand [Workflow and Utilities](guides/workflow-utilities.md)
-
-### 🔍 **For Researchers**
-1. Focus on [EDA Examples](examples/eda-examples.md)
-2. Review [Indicator Examples](examples/indicator-examples.md)
-3. Check [Reference](reference/) for mathematical details
-4. Master [Analysis Tools](guides/analysis-tools.md)
-5. Learn [Export Functions](guides/export-functions.md)
-
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
+
 ```bash
 # Clone the repository
 git clone <repository-url>
 cd neozork-hld-prediction
 
-# Install dependencies with UV
+# Install dependencies using uv
 uv sync
 
-# Run basic example
-python -m src.cli.cli_examples --help
+# Activate virtual environment
+source .venv/bin/activate  # Linux/Mac
+# or
+.venv\Scripts\activate     # Windows
 ```
 
 ### Basic Usage
+
 ```bash
-# Calculate RSI indicator
-python -m src.cli.cli_examples --indicator rsi --data data/test_data.csv
+# Run analysis with demo data
+python run_analysis.py demo --rule RSI
 
-# Run EDA analysis
-python -m src.eda.basic_stats --data data/test_data.csv
+# Analyze CSV data
+python run_analysis.py csv --csv-file data/sample.csv --point 0.01
 
-# Export indicators
-python -m src.export.csv_export --data data/test_data.csv --indicators rsi,ema
+# Get data from yfinance
+python run_analysis.py yfinance --ticker AAPL --period 1mo --point 0.01
 ```
 
-## 📊 Project Features
+## Documentation Sections
 
-### Technical Indicators
-- **Trend Indicators**: EMA, ADX, SAR
-- **Oscillators**: RSI, Stochastic, CCI
-- **Momentum**: MACD, Stochastic Oscillator
-- **Volatility**: ATR, Bollinger Bands, Standard Deviation
-- **Volume**: OBV, VWAP
-- **Support/Resistance**: Donchian Channels, Fibonacci, Pivot Points
-- **Predictive**: HMA, Time Series Forecast
-- **Probability**: Kelly Criterion, Monte Carlo
-- **Sentiment**: COT, Fear & Greed, Social Sentiment
+### Getting Started
+- [Getting Started Guide](getting-started/getting-started.md) - Complete setup and first steps
+- [Project Structure](getting-started/project-structure.md) - Understanding the codebase
+- [Installation Guide](getting-started/installation.md) - Detailed installation instructions
+
+### Development
+- [Development Guide](development/development.md) - Development setup and guidelines
+- [Testing Guide](development/testing.md) - **NEW: Comprehensive testing with parallel execution**
+- [CLI Interface](development/cli-interface.md) - Command-line interface documentation
+- [API Reference](development/api-reference.md) - API documentation
+
+### Analysis Tools
+- [Analysis Tools](guides/analysis-tools.md) - Available analysis tools and features
+- [EDA Guide](guides/analysis-eda.md) - Exploratory Data Analysis
+- [Technical Indicators](guides/technical-indicators.md) - Available indicators
 
 ### Data Sources
-- **CSV Files** - Local CSV data files
-- **Parquet Files** - High-performance columnar data
-- **Binance API** - Real-time cryptocurrency data
-- **Exchange Rate API** - Currency exchange rates
-- **Yahoo Finance** - Stock and forex data
-- **Polygon.io** - Professional market data
+- [Data Sources](api/data-sources.md) - Supported data sources and formats
+- [Exchange Rate API](api/exchange-rate-api-complete.md) - Exchange rate data integration
 
-### Export Formats
-- **CSV** - Comma-separated values
-- **JSON** - JavaScript Object Notation
-- **Parquet** - Columnar storage format
+### Deployment
+- [Docker Setup](deployment/docker-setup.md) - Containerized deployment
+- [CI/CD Pipeline](deployment/ci-cd.md) - Continuous integration and deployment
 
-### Visualization Backends
-- **Matplotlib** - Static plots
-- **Plotly** - Interactive plots
-- **Bokeh** - Web-based interactive plots
-- **Seaborn** - Statistical plots
-- **MPLFinance** - Financial charts
-- **Terminal** - ASCII/Unicode plots
+### Examples
+- [Examples Overview](examples/EXAMPLES_SUMMARY.md) - Complete examples collection
+- [Docker Examples](examples/docker-examples.md) - Docker usage examples
+- [EDA Examples](examples/eda-examples.md) - EDA workflow examples
 
-## 🧪 Testing
+## Key Features
 
-The project includes comprehensive testing:
-- **Unit Tests** - Individual component testing
-- **Integration Tests** - End-to-end workflow testing
-- **Performance Tests** - Speed and efficiency testing
-- **Edge Case Tests** - Boundary condition testing
+### 🚀 **NEW: Optimized Testing System**
+- **Parallel Test Execution**: Run tests with `pytest-xdist` for faster execution
+- **Comprehensive Coverage**: 100% test coverage with organized test structure
+- **Performance Monitoring**: Built-in performance tracking and memory monitoring
+- **Optimized Test Runner**: Custom test runner with detailed reporting
 
-Run tests with:
+### 📊 Technical Analysis
+- **Multiple Indicators**: RSI, EMA, MACD, Bollinger Bands, and more
+- **Custom Calculations**: Proprietary HLD prediction algorithms
+- **Real-time Data**: Integration with multiple data sources
+- **Visualization**: Advanced plotting and charting capabilities
+
+### 🔧 Development Tools
+- **CLI Interface**: Comprehensive command-line interface
+- **Data Processing**: Efficient data handling and validation
+- **Export Options**: Multiple export formats (CSV, JSON, Parquet)
+- **Logging**: Comprehensive logging and debugging
+
+### 🐳 Deployment
+- **Docker Support**: Containerized deployment
+- **CI/CD Integration**: Automated testing and deployment
+- **Environment Management**: Flexible configuration management
+
+## Testing
+
+### Quick Test Run
+
+```bash
+# Run all tests with parallel execution
+uv run pytest tests -n auto
+
+# Use optimized test runner
+python tests/run_optimized_tests.py
+
+# Run specific test categories
+python tests/run_optimized_tests.py --categories cli calculation
 ```
+
+### Test Categories
+
+- **Unit Tests**: Individual function and class testing
+- **Integration Tests**: Component interaction testing
+- **CLI Tests**: Command-line interface testing
+- **Performance Tests**: Performance and stress testing
+- **Data Tests**: Data processing and validation testing
+
+For detailed testing information, see [Testing Guide](development/testing.md).
+
+## Project Structure
+
+```
+neozork-hld-prediction/
+├── src/                          # Source code
+│   ├── calculation/              # Technical indicators
+│   ├── cli/                      # Command-line interface
+│   ├── data/                     # Data processing
+│   ├── eda/                      # Exploratory data analysis
+│   ├── export/                   # Data export functionality
+│   ├── plotting/                 # Visualization tools
+│   └── workflow/                 # Workflow management
+├── tests/                        # Test suite
+│   ├── conftest.py              # Global test configuration
+│   ├── run_optimized_tests.py   # Optimized test runner
+│   ├── calculation/             # Calculation tests
+│   ├── cli/                     # CLI tests
+│   └── ...                      # Other test categories
+├── docs/                         # Documentation
+├── data/                         # Data files
+├── scripts/                      # Utility scripts
+└── docker/                       # Docker configuration
+```
+
+## Contributing
+
+### Development Setup
+
+1. **Fork and clone** the repository
+2. **Install dependencies** using `uv sync`
+3. **Run tests** to ensure everything works
+4. **Create feature branch** for your changes
+5. **Write tests** for new functionality
+6. **Submit pull request** with comprehensive description
+
+### Testing Requirements
+
+- **100% test coverage** for all new code
+- **Parallel test compatibility** for all tests
+- **Performance monitoring** for resource-intensive operations
+- **Documentation updates** for new features
+
+### Code Quality
+
+- **Type hints** for all functions
+- **Docstrings** for all classes and methods
+- **Error handling** for all external operations
+- **Logging** for debugging and monitoring
+
+## Support
+
+### Getting Help
+
+- **Documentation**: Check the relevant documentation sections
+- **Issues**: Report bugs and feature requests on GitHub
+- **Discussions**: Use GitHub Discussions for questions
+- **Testing**: Run tests to verify your setup
+
+### Common Issues
+
+- **Import errors**: Ensure virtual environment is activated
+- **Test failures**: Check test requirements and dependencies
+- **Performance issues**: Monitor resource usage and optimize
+- **Data issues**: Verify data format and source connectivity
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- **Financial Data Providers**: yfinance, polygon.io, Binance
+- **Technical Analysis**: pandas, numpy, scikit-learn
+- **Visualization**: matplotlib, plotly, seaborn
+- **Testing**: pytest, pytest-xdist
+- **Development Tools**: uv, Docker, GitHub Actions

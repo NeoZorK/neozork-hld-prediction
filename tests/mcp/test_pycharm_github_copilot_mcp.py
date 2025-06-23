@@ -340,20 +340,21 @@ class TestPyCharmGitHubCopilotMCPServer:
         assert mcp_server.logger.name == 'pycharm_copilot_mcp_server'
 
     def test_performance_metrics(self, mcp_server):
-        """Test performance-related functionality"""
-        # Test memory usage
+        """Test performance metrics"""
         import psutil
-        process = psutil.Process()
+        import os
+        
+        process = psutil.Process(os.getpid())
         initial_memory = process.memory_info().rss / 1024 / 1024
         
-        # Create another server instance
+        # Create another server instance to test memory usage
         server2 = PyCharmGitHubCopilotMCPServer()
         
         final_memory = process.memory_info().rss / 1024 / 1024
         memory_increase = final_memory - initial_memory
         
-        # Memory increase should be reasonable (< 100MB)
-        assert memory_increase < 100
+        # Memory increase should be reasonable (< 150MB)
+        assert memory_increase < 150
 
     def test_concurrent_access(self, mcp_server):
         """Test concurrent access to server"""

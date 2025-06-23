@@ -128,7 +128,7 @@ def test_init_files_exist():
         
         # Check all subdirectories
         for subdir in directory.rglob("*/"):
-            if subdir.is_dir() and "__pycache__" not in str(subdir) and "egg-info" not in str(subdir):
+            if subdir.is_dir() and "__pycache__" not in str(subdir) and "egg-info" not in str(subdir) and ".pytest_cache" not in str(subdir):
                 if not (subdir / "__init__.py").exists():
                     missing_inits.append(str(subdir / "__init__.py"))
         

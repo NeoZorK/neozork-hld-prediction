@@ -243,18 +243,18 @@ class TestMathematicalValidation:
         rsi_values = rsi_result['RSI'].dropna()
         
         if len(rsi_values) > 0:
-            # RSI should be between 0 and 100
-            assert all(rsi_values >= 0), "RSI should be >= 0"
-            assert all(rsi_values <= 100), "RSI should be <= 100"
+            # RSI should be between 0 and 100 (allow for small floating point errors)
+            assert all(rsi_values >= -1e-10), "RSI should be >= 0"
+            assert all(rsi_values <= 100 + 1e-10), "RSI should be <= 100"
         
         # Test Stochastic boundaries (0-100)
         stoch_result = self.stoch(data.copy(), self.point)
         stoch_k_values = stoch_result['Stoch_K'].dropna()
         
         if len(stoch_k_values) > 0:
-            # Stochastic K should be between 0 and 100
-            assert all(stoch_k_values >= 0), "Stochastic K should be >= 0"
-            assert all(stoch_k_values <= 100), "Stochastic K should be <= 100"
+            # Stochastic K should be between 0 and 100 (allow for small floating point errors)
+            assert all(stoch_k_values >= -1e-10), "Stochastic K should be >= 0"
+            assert all(stoch_k_values <= 100 + 1e-10), "Stochastic K should be <= 100"
 
     def test_indicator_consistency(self):
         """Test that indicators produce consistent results for identical inputs."""

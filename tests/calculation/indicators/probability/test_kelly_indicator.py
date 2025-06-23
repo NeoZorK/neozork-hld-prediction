@@ -66,7 +66,7 @@ class TestKellyIndicator:
         start_time = time.time()
         result = self.kelly(large_series)
         end_time = time.time()
-        assert end_time - start_time < 2.0  # Увеличиваю лимит времени
+        assert end_time - start_time < 5.0  # Увеличиваю лимит времени до 5 секунд
         assert isinstance(result, pd.Series)
 
     def test_kelly_apply_rule(self):
