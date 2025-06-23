@@ -19,6 +19,7 @@ services:
     environment:
       - PYTHONPATH=/app
       - PYTHONUNBUFFERED=1
+      - DOCKER_CONTAINER=true
     # Interactive script execution with user prompts
     stdin_open: true
     tty: true
