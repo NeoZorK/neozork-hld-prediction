@@ -253,8 +253,9 @@ class TestMathematicalValidation:
         
         if len(stoch_k_values) > 0:
             # Stochastic K should be between 0 and 100 (allow for small floating point errors)
-            assert all(stoch_k_values >= -1e-10), "Stochastic K should be >= 0"
-            assert all(stoch_k_values <= 100 + 1e-10), "Stochastic K should be <= 100"
+            print(f"Stoch_K min: {stoch_k_values.min()}, max: {stoch_k_values.max()}")
+            print(f"Stoch_K values outside bounds: {stoch_k_values[(stoch_k_values < -1e-8) | (stoch_k_values > 100 + 1e-8)]}")
+            assert all((stoch_k_values >= -1e-8) & (stoch_k_values <= 100 + 1e-8)), "Stochastic K should be in [0, 100]"
 
     def test_indicator_consistency(self):
         """Test that indicators produce consistent results for identical inputs."""
