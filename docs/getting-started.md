@@ -132,10 +132,12 @@ docker compose build --no-cache
 
 ## Next Steps
 
-1. **Usage Examples:** [Usage Examples](usage-examples.md) 
-2. **Docker:** [Docker Setup](docker.md)
-3. **Analysis Tools:** [Analysis & EDA](analysis-eda.md)
-4. **Scripts:** [Scripts Guide](scripts.md)
-5. **Testing:** [Testing Guide](testing.md)
+1. **[Usage Examples](usage-examples.md)** - Comprehensive examples and workflows
+2. **[Docker Setup](docker.md)** - Containerized deployment
+3. **[Analysis Tools](analysis-eda.md)** - EDA and analysis features
+4. **[Scripts Guide](scripts.md)** - Utility and debug scripts
+5. **[Testing Guide](testing.md)** - Running tests and coverage
+6. **[MCP Servers](mcp-servers/)** - GitHub Copilot integration
+7. **[Project Structure](project-structure.md)** - Code organization
 
 For comprehensive documentation: [Documentation Index](index.md)

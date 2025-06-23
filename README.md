@@ -66,7 +66,8 @@ python pycharm_github_copilot_mcp.py
 ### Quick Links
 
 - [Getting Started](docs/getting-started.md) - Overview and setup
-- [Usage Examples](docs/usage-examples.md) - Common commands
+- [Quick Examples](docs/quick-examples.md) - Fast start examples and common workflows
+- [Usage Examples](docs/usage-examples.md) - Comprehensive examples and workflows
 - [Indicator Export](docs/indicator-export.md) - Export calculated indicators
 - [Exchange Rate API](docs/exchange-rate-api-complete.md) - Real-time FX data
 - [Docker Setup](docs/docker.md) - Containerized development
@@ -193,5 +194,6 @@ Export flags (`--export-parquet`, `--export-csv`, `--export-json`) are only allo
 
 - Create an issue on GitHub
 - Check the troubleshooting section
-- Review the documentation
+- Review the [quick examples](docs/quick-examples.md) for fast start
+- Review the [usage examples](docs/usage-examples.md) for comprehensive workflows
 - Contact the development team
