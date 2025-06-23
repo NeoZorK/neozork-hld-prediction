@@ -5,8 +5,6 @@
 # This script provides various data analysis and quality check tools
 # for the Neozork HLD Prediction project.
 
-set -e
-
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
@@ -62,24 +60,25 @@ echo "Adding $SCRIPT_DIR to PATH"
 export PATH="$SCRIPT_DIR:$PATH"
 
 # Parse arguments
-case "${1:---help}" in
-    --help|-h)
-        echo "Usage: $0 [OPTIONS]"
-        echo ""
-        echo "Options:"
-        echo "  --help                    Show this help message"
-        echo "  --data-quality-checks     Run data quality checks"
-        echo "  --nan-check              Check for NaN values in data"
-        echo "  --fix-files              Fix common file issues"
-        echo "  --folder-stats           Show folder statistics"
-        echo "  --file-info              Show file information"
-        echo "  --version                Show version information"
-        echo ""
-        echo "Environment:"
-        echo "  Automatically detects Docker, UV, or native Python environment"
-        echo ""
-        exit 0
-        ;;
+if [ $# -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    echo "Usage: $0 [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --help                    Show this help message"
+    echo "  --data-quality-checks     Run data quality checks"
+    echo "  --nan-check              Check for NaN values in data"
+    echo "  --fix-files              Fix common file issues"
+    echo "  --folder-stats           Show folder statistics"
+    echo "  --file-info              Show file information"
+    echo "  --version                Show version information"
+    echo ""
+    echo "Environment:"
+    echo "  Automatically detects Docker, UV, or native Python environment"
+    echo ""
+    exit 0
+fi
+
+case "$1" in
     --data-quality-checks)
         echo "Running data quality checks..."
         run_python $env_type -m src.eda.data_quality
