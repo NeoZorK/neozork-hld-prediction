@@ -165,10 +165,10 @@ This script provides comprehensive analysis of which source files are covered by
 
 ```bash
 # Run from project root
-python scripts/analyze_test_coverage.py
+python tests/zzz_analyze_test_coverage.py
 
 # Or with uv
-uv run python scripts/analyze_test_coverage.py
+uv run python tests/zzz_analyze_test_coverage.py
 ```
 
 #### What it does
@@ -344,70 +344,3 @@ eda --data-quality-checks
    ```bash
    docker exec -it <container> nz --version
    ```
-
-2. **Interactive development**:
-   ```bash
-   docker exec -it <container> bash
-   nz demo --rule PHLD
-   ```
-
-3. **Volume mounting for results**:
-   ```bash
-   docker run -v $(pwd)/results:/app/results <image> nz demo --rule PHLD
-   ```
-
-## Troubleshooting
-
-### Common Issues
-
-1. **uv not found**:
-   - Script falls back to direct Python
-   - Install uv: `curl -LsSf https://astral.sh/uv/install.sh | sh`
-
-2. **Permission denied**:
-   - Make scripts executable: `chmod +x nz eda`
-
-3. **Docker not running**:
-   - Scripts work in native mode automatically
-   - No Docker required for basic functionality
-
-4. **Python path issues**:
-   - Use `uv run` for proper environment isolation
-   - Check `PYTHONPATH` in Docker containers
-
-### Debug Information
-
-Enable debug output:
-
-```bash
-# Check environment detection
-./nz --version  # Shows "Running in native environment with uv" or "Running in Docker environment"
-
-# Check uv availability
-which uv
-
-# Check Python path
-python -c "import sys; print(sys.path)"
-```
-
-## File Structure
-
-```
-neozork-hld-prediction/
-├── nz                    # Main analysis script
-├── eda                   # Data exploration script
-├── run_analysis.py       # Main analysis entry point
-├── scripts/
-│   ├── fix_imports.py    # Import fixing utility
-│   └── analyze_test_coverage.py  # Test coverage analysis
-├── src/
-│   └── eda/
-│       └── eda_batch_check.py  # EDA functionality
-├── docker-entrypoint.sh  # Docker container setup
-└── docs/
-    └── scripts.md        # This documentation
-```
-
-## Main Scripts
-
-### `run_analysis.py`

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 Script for analyzing test coverage of modules in src/ and project root
+This script runs as the last test to show a summary of test coverage
 """
 
 import os
