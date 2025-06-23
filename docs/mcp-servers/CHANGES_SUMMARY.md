@@ -44,6 +44,12 @@ This document summarizes all changes and improvements made to the MCP (Model Con
 - **Improved**: Error handling with `pytest.skip()` for failed conditions
 - **Added**: Line buffering for subprocess communication
 
+### 5. Stdio/Protocol Test Improvements
+- **Automated stdio protocol test (`tests/test_stdio.py`) now works with pytest, standalone, CI/CD, subprocess/PIPE, and Docker
+- **Validates all key LSP protocol methods (initialize, completion, shutdown, exit)
+- **Ensures correct JSON serialization for enums and robust protocol compliance
+- **Recommended for all integration and CI pipelines
+
 ## 📁 File Structure
 
 ```

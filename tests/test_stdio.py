@@ -13,25 +13,44 @@ import time
 import select
 from pathlib import Path
 
+# Try to import pytest, but handle gracefully if not available
+try:
+    import pytest
+    PYTEST_AVAILABLE = True
+except ImportError:
+    PYTEST_AVAILABLE = False
+    # Create mock pytest functions for standalone execution
+    class MockPytest:
+        @staticmethod
+        def skip(reason):
+            print(f"SKIPPED: {reason}")
+            sys.exit(0)
+        
+        @staticmethod
+        def fail(reason):
+            print(f"FAILED: {reason}")
+            raise AssertionError(reason)
+    
+    pytest = MockPytest()
+
 def test_stdio_mode():
     """Test the MCP server in stdio mode"""
     print("🧪 Testing PyCharm GitHub Copilot MCP Server in stdio mode...")
     
-    # Get project root (parent of scripts directory)
+    # Get project root (parent of tests directory)
     script_dir = Path(__file__).parent
     project_root = script_dir.parent
     server_file = project_root / "pycharm_github_copilot_mcp.py"
     
     if not server_file.exists():
-        print(f"❌ Server file not found: {server_file}")
-        return False
+        pytest.skip(f"Server file not found: {server_file}")
     
     print(f"📁 Project root: {project_root}")
     print(f"🐍 Server file: {server_file}")
     
     # Start the server
     server_process = subprocess.Popen(
-        ["python", str(server_file)],
+        [sys.executable, str(server_file)],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -45,128 +64,132 @@ def test_stdio_mode():
         print("⏳ Waiting for server initialization...")
         time.sleep(3)
         
-        # Test initialize request
-        print("📤 Sending initialize request...")
-        init_request = {
-            "jsonrpc": "2.0",
-            "id": 1,
-            "method": "initialize",
-            "params": {
-                "processId": 12345,
-                "rootUri": f"file://{project_root}",
-                "capabilities": {}
-            }
-        }
-        
-        # Send request
-        request_str = json.dumps(init_request) + '\n'
-        server_process.stdin.write(request_str)
-        server_process.stdin.flush()
-        
-        # Read response with timeout
-        print("📥 Reading response...")
-        if select.select([server_process.stdout], [], [], 5.0)[0]:
-            response_line = server_process.stdout.readline()
-            if response_line.strip():
-                try:
-                    response = json.loads(response_line.strip())
-                    server_name = response.get('result', {}).get('serverInfo', {}).get('name', 'Unknown')
-                    print(f"✅ Received response: {server_name}")
-                except json.JSONDecodeError as e:
-                    print(f"❌ Invalid JSON response: {e}")
-                    print(f"Raw response: {response_line}")
-            else:
-                print("❌ Empty response received")
-        else:
-            print("❌ No response received (timeout)")
-            
-        # Test completion request
-        print("📤 Sending completion request...")
-        completion_request = {
-            "jsonrpc": "2.0",
-            "id": 2,
-            "method": "textDocument/completion",
-            "params": {
-                "textDocument": {
-                    "uri": f"file://{project_root}/test.py"
-                },
-                "position": {
-                    "line": 0,
-                    "character": 0
+        # Prepare all requests
+        requests = [
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "processId": 12345,
+                    "rootUri": f"file://{project_root}",
+                    "capabilities": {}
                 }
+            },
+            {
+                "jsonrpc": "2.0",
+                "id": 2,
+                "method": "textDocument/completion",
+                "params": {
+                    "textDocument": {
+                        "uri": f"file://{project_root}/test.py"
+                    },
+                    "position": {
+                        "line": 0,
+                        "character": 0
+                    }
+                }
+            },
+            {
+                "jsonrpc": "2.0",
+                "id": 3,
+                "method": "shutdown",
+                "params": {}
+            },
+            {
+                "jsonrpc": "2.0",
+                "id": 4,
+                "method": "exit",
+                "params": {}
             }
-        }
+        ]
         
-        # Send request
-        request_str = json.dumps(completion_request) + '\n'
-        server_process.stdin.write(request_str)
+        # Send all requests at once
+        print("📤 Sending all requests...")
+        for req in requests:
+            req_str = json.dumps(req) + '\n'
+            server_process.stdin.write(req_str)
         server_process.stdin.flush()
+        print("✅ All requests sent successfully")
         
-        # Read response with timeout
-        if select.select([server_process.stdout], [], [], 5.0)[0]:
-            response_line = server_process.stdout.readline()
-            if response_line.strip():
-                try:
-                    response = json.loads(response_line.strip())
-                    items_count = len(response.get('result', {}).get('items', []))
-                    print(f"✅ Received {items_count} completion items")
-                except json.JSONDecodeError as e:
-                    print(f"❌ Invalid JSON response: {e}")
-            else:
-                print("❌ Empty completion response")
-        else:
-            print("❌ No completion response (timeout)")
+        # Read all responses
+        print("📥 Reading responses...")
+        responses = {}
+        expected_ids = {1, 2, 3}  # We expect responses for initialize, completion, and shutdown
+        timeout = time.time() + 15  # 15 second timeout
+        
+        while expected_ids and time.time() < timeout:
+            line = server_process.stdout.readline()
+            if not line:
+                print("⚠️ No more output from server")
+                break
+                
+            line = line.strip()
+            if not line:
+                continue
+                
+            print(f"[STDOUT] {line[:100]}{'...' if len(line) > 100 else ''}")
             
-        # Test shutdown request
-        print("📤 Sending shutdown request...")
-        shutdown_request = {
-            "jsonrpc": "2.0",
-            "id": 3,
-            "method": "shutdown",
-            "params": {}
-        }
+            try:
+                resp = json.loads(line)
+                resp_id = resp.get('id')
+                if resp_id in expected_ids:
+                    responses[resp_id] = resp
+                    expected_ids.remove(resp_id)
+                    print(f"✅ Received response for id {resp_id}")
+                else:
+                    print(f"ℹ️ Received response for unexpected id {resp_id}")
+            except json.JSONDecodeError as e:
+                print(f"⚠️ Could not parse JSON response: {e}")
+                print(f"Raw line (first 200 chars): {line[:200]}")
+                # Try to read more lines to get complete JSON
+                print("🔄 Attempting to read more lines for complete JSON...")
+                continue
         
-        # Send request
-        request_str = json.dumps(shutdown_request) + '\n'
-        server_process.stdin.write(request_str)
-        server_process.stdin.flush()
+        # Check if we received all expected responses
+        if expected_ids:
+            pytest.fail(f"Did not receive responses for ids: {expected_ids}")
         
-        # Read response with timeout
-        if select.select([server_process.stdout], [], [], 5.0)[0]:
-            response_line = server_process.stdout.readline()
-            if response_line.strip():
-                try:
-                    response = json.loads(response_line.strip())
-                    print("✅ Shutdown response received")
-                except json.JSONDecodeError as e:
-                    print(f"❌ Invalid JSON response: {e}")
-            else:
-                print("❌ Empty shutdown response")
+        # Validate responses
+        print("🔍 Validating responses...")
+        
+        # Validate initialize response
+        if 1 in responses:
+            resp = responses[1]
+            assert resp.get('jsonrpc') == '2.0', "Invalid JSON-RPC version in initialize"
+            assert 'result' in resp, "No result in initialize response"
+            server_name = resp['result'].get('serverInfo', {}).get('name', 'Unknown')
+            print(f"✅ Initialize response: {server_name}")
         else:
-            print("❌ No shutdown response (timeout)")
-            
-        # Test exit request
-        print("📤 Sending exit request...")
-        exit_request = {
-            "jsonrpc": "2.0",
-            "id": 4,
-            "method": "exit",
-            "params": {}
-        }
+            pytest.fail("No initialize response received")
         
-        # Send request
-        request_str = json.dumps(exit_request) + '\n'
-        server_process.stdin.write(request_str)
-        server_process.stdin.flush()
+        # Validate completion response
+        if 2 in responses:
+            resp = responses[2]
+            assert resp.get('jsonrpc') == '2.0', "Invalid JSON-RPC version in completion"
+            assert 'result' in resp, "No result in completion response"
+            items = resp['result'].get('items', [])
+            print(f"✅ Completion response: {len(items)} items")
+            # Check that we have some completion items
+            assert len(items) > 0, "No completion items returned"
+        else:
+            pytest.fail("No completion response received")
+        
+        # Validate shutdown response
+        if 3 in responses:
+            resp = responses[3]
+            assert resp.get('jsonrpc') == '2.0', "Invalid JSON-RPC version in shutdown"
+            print("✅ Shutdown response received")
+        else:
+            pytest.fail("No shutdown response received")
         
         print("✅ All tests completed successfully!")
-        return True
         
     except Exception as e:
         print(f"❌ Error during testing: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        pytest.fail(f"Error during testing: {e}")
         
     finally:
         # Clean up
@@ -186,13 +209,13 @@ def test_stdio_mode():
         print("🧹 Cleanup completed")
 
 def main():
-    """Main function"""
-    success = test_stdio_mode()
-    if success:
+    """Main function for standalone execution"""
+    try:
+        test_stdio_mode()
         print("🎉 All tests passed!")
         sys.exit(0)
-    else:
-        print("💥 Some tests failed!")
+    except Exception as e:
+        print(f"💥 Some tests failed: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

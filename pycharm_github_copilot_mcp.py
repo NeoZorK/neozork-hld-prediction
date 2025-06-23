@@ -298,8 +298,8 @@ class PyCharmGitHubCopilotMCPServer:
         
         try:
             while self.running:
-                # Read from stdin with timeout
-                if select.select([sys.stdin], [], [], 0.1)[0]:
+                # Read from stdin - use direct readline for better PIPE compatibility
+                try:
                     line = sys.stdin.readline()
                     if not line:
                         print_to_stderr("📤 Received EOF (Ctrl+D), shutting down...")
@@ -315,6 +315,10 @@ class PyCharmGitHubCopilotMCPServer:
                         self.logger.error(f"Error processing message: {e}")
                         self.logger.error(traceback.format_exc())
                         print_to_stderr(f"❌ Error processing message: {e}")
+                        
+                except (EOFError, IOError) as e:
+                    print_to_stderr(f"📤 Received EOF/IO error: {e}")
+                    break
                         
         except KeyboardInterrupt:
             print_to_stderr("\n🛑 Received interrupt signal (Ctrl+C)")
@@ -408,11 +412,14 @@ class PyCharmGitHubCopilotMCPServer:
     def _send_message(self, message: Dict):
         """Send message to client"""
         try:
-            json.dump(message, sys.stdout)
-            sys.stdout.write('\n')
+            message_str = json.dumps(message)
+            print_to_stderr(f"📤 Sending message (id: {message.get('id', 'unknown')}, length: {len(message_str)})")
+            sys.stdout.write(message_str + '\n')
             sys.stdout.flush()
+            print_to_stderr(f"✅ Message sent successfully")
         except Exception as e:
             self.logger.error(f"Error sending message: {e}")
+            print_to_stderr(f"❌ Error sending message: {e}")
 
     def _handle_initialize(self, request_id: Any, params: Dict) -> Dict:
         """Handle initialize request"""
@@ -440,6 +447,7 @@ class PyCharmGitHubCopilotMCPServer:
         """Handle shutdown request"""
         self.logger.info("Handling shutdown request")
         print_to_stderr("🛑 Received shutdown request from client")
+        self._send_response(request_id, None)
         self.running = False
 
     def _handle_exit(self, request_id: Any, params: Dict) -> None:
@@ -451,19 +459,30 @@ class PyCharmGitHubCopilotMCPServer:
     def _handle_completion(self, request_id: Any, params: Dict) -> Dict:
         """Handle completion request"""
         self.logger.debug("Handling completion request")
+        print_to_stderr(f"🔍 Handling completion request (id: {request_id})")
         
         completions = []
         
         # Add project-specific completions
-        completions.extend(self._get_project_completions())
-        completions.extend(self._get_financial_completions())
-        completions.extend(self._get_indicator_completions())
-        completions.extend(self._get_code_snippets())
+        project_completions = self._get_project_completions()
+        financial_completions = self._get_financial_completions()
+        indicator_completions = self._get_indicator_completions()
+        snippet_completions = self._get_code_snippets()
         
-        return {
+        completions.extend(project_completions)
+        completions.extend(financial_completions)
+        completions.extend(indicator_completions)
+        completions.extend(snippet_completions)
+        
+        result = {
             "isIncomplete": False,
-            "items": [asdict(item) for item in completions]
+            "items": [
+                {**asdict(item), "kind": item.kind.value} for item in completions
+            ]
         }
+        
+        print_to_stderr(f"✅ Completion response prepared: {len(completions)} items")
+        return result
 
     def _get_project_completions(self) -> List[CompletionItem]:
         """Get project-specific completions"""
