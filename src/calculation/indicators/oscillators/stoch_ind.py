@@ -63,12 +63,17 @@ def calculate_stochastic(df: pd.DataFrame, k_period: int = 14, d_period: int = 3
         ((close_price - lowest_low) / denominator) * 100,
         np.nan  # если нет диапазона, пусть будет NaN
     )
+    # Ограничиваем значения до сглаживания
+    raw_k = np.clip(raw_k, 0, 100)
     
     # Smooth %K
     k_percent = pd.Series(raw_k, index=df.index).rolling(window=slowing).mean()
+    # Ограничиваем после сглаживания
+    k_percent = k_percent.clip(0, 100)
     
     # Calculate %D (SMA of %K)
     d_percent = k_percent.rolling(window=d_period).mean()
+    d_percent = d_percent.clip(0, 100)
     
     return k_percent, d_percent
 
@@ -128,6 +133,18 @@ def apply_rule_stochastic(df: pd.DataFrame, point: float,
     # Ограничиваем значения и заменяем NaN только для финального DataFrame
     k_values = k_values.clip(0, 100).fillna(50.0)
     d_values = d_values.clip(0, 100).fillna(50.0)
+    
+    # Дополнительная защита от отрицательных значений и значений больше 100
+    k_values = k_values.clip(lower=0, upper=100)
+    d_values = d_values.clip(lower=0, upper=100)
+    
+    # Финальная проверка - заменяем любые оставшиеся отрицательные значения на 0
+    k_values = k_values.where(k_values >= 0, 0)
+    d_values = d_values.where(d_values >= 0, 0)
+    
+    # Еще более радикальная защита - используем numpy операции
+    k_values = pd.Series(np.maximum(k_values.values, 0), index=k_values.index)
+    d_values = pd.Series(np.maximum(d_values.values, 0), index=d_values.index)
     
     df['Stoch_K'] = k_values
     df['Stoch_D'] = d_values
