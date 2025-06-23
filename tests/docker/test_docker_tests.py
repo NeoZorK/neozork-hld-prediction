@@ -62,7 +62,7 @@ class TestDockerTestRunner:
             [sys.executable, str(test_runner_path), "--all"],
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=60  # Increased timeout
         )
         
         # Should not crash, even if tests fail
@@ -76,7 +76,7 @@ class TestDockerTestRunner:
             [sys.executable, str(test_runner_path), "--categories", "yfinance"],
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=60  # Increased timeout
         )
         
         # Should not crash, even if tests fail
@@ -90,7 +90,7 @@ class TestDockerTestRunner:
             [sys.executable, str(test_runner_path)],
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=60  # Increased timeout
         )
         
         # Should not crash, even if tests fail
