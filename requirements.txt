@@ -125,3 +125,4 @@ statsmodels
 bokeh
 dask
 datashader
+watchdog
