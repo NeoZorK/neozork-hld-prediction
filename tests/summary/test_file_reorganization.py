@@ -113,6 +113,43 @@ def test_docker_entrypoint_updated():
             assert "/app/tests/run_tests.py" in content, "Docker entrypoint should reference new path"
             assert "/app/scripts/run_tests.py" not in content, "Docker entrypoint should not reference old path"
 
+def test_init_files_exist():
+    """Test that __init__.py files exist in all src/ and tests/ directories and subdirectories"""
+    
+    def check_init_files(directory: Path, context: str):
+        """Check for __init__.py files in directory and all subdirectories"""
+        missing_inits = []
+        
+        # Check the directory itself
+        if not (directory / "__init__.py").exists():
+            missing_inits.append(str(directory / "__init__.py"))
+        
+        # Check all subdirectories
+        for subdir in directory.rglob("*/"):
+            if subdir.is_dir() and "__pycache__" not in str(subdir) and "egg-info" not in str(subdir):
+                if not (subdir / "__init__.py").exists():
+                    missing_inits.append(str(subdir / "__init__.py"))
+        
+        return missing_inits
+    
+    # Check src/ directory
+    src_dir = Path("src")
+    assert src_dir.exists(), "src/ directory should exist"
+    src_missing = check_init_files(src_dir, "src/")
+    
+    # Check tests/ directory
+    tests_dir = Path("tests")
+    assert tests_dir.exists(), "tests/ directory should exist"
+    tests_missing = check_init_files(tests_dir, "tests/")
+    
+    # Report missing __init__.py files
+    all_missing = src_missing + tests_missing
+    if all_missing:
+        missing_list = "\n".join(f"  - {path}" for path in all_missing)
+        pytest.fail(f"Missing __init__.py files:\n{missing_list}")
+    
+    print(f"✅ All directories in src/ and tests/ have __init__.py files")
+
 if __name__ == "__main__":
     # Run all tests
     pytest.main([__file__, "-v"]) 

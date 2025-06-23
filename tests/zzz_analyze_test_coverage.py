@@ -9,19 +9,19 @@ import sys
 from pathlib import Path
 
 def get_src_files():
-    """Get all Python files from src/ and project root"""
+    """Get all Python files from src/ and project root, excluding __init__.py files"""
     src_dir = Path("src")
     root_dir = Path(".")
     src_files = []
     # src/
     for py_file in src_dir.rglob("*.py"):
-        if "__pycache__" in str(py_file) or "egg-info" in str(py_file):
+        if "__pycache__" in str(py_file) or "egg-info" in str(py_file) or py_file.name == "__init__.py":
             continue
         src_files.append(py_file)
     # root/
     for py_file in root_dir.glob("*.py"):
-        if py_file.name == Path(__file__).name:
-            continue  # don't include the analyzer itself
+        if py_file.name == Path(__file__).name or py_file.name == "__init__.py":
+            continue  # don't include the analyzer itself or __init__.py files
         src_files.append(py_file.resolve())
     return sorted(set(src_files))
 
