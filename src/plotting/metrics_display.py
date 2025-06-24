@@ -89,13 +89,18 @@ class MetricsDisplay:
     
     def add_metrics_to_plotly(self, fig: go.Figure, df: pd.DataFrame, 
                             metrics: Optional[Dict[str, float]] = None,
-                            position: str = 'right') -> go.Figure:
+                            position: str = 'right',
+                            lot_size: float = 1.0,
+                            risk_reward_ratio: float = 2.0,
+                            fee_per_trade: float = 0.07) -> go.Figure:
         """
         Add trading metrics to Plotly figure near the legend area.
         """
         try:
             if metrics is None:
-                metrics = calculate_trading_metrics(df)
+                metrics = calculate_trading_metrics(df, lot_size=lot_size, 
+                                                  risk_reward_ratio=risk_reward_ratio, 
+                                                  fee_per_trade=fee_per_trade)
             metrics_text = self._format_metrics_for_plotly(metrics)
             
             # Position metrics based on the position parameter
@@ -105,6 +110,12 @@ class MetricsDisplay:
                 y = 0.5
                 xanchor = "center"
                 yanchor = "middle"
+            elif position == 'outside':
+                # Position outside the chart area (bottom-right)
+                x = 0.98
+                y = 0.02
+                xanchor = "right"
+                yanchor = "bottom"
             else:
                 # Default position near the legend area (top-right of plot)
                 x = 0.98
@@ -112,6 +123,7 @@ class MetricsDisplay:
                 xanchor = "right"
                 yanchor = "top"
             
+            # Add main metrics annotation
             fig.add_annotation(
                 x=x,
                 y=y,
@@ -121,19 +133,34 @@ class MetricsDisplay:
                 yref="paper",
                 xanchor=xanchor,
                 yanchor=yanchor,
-                font=dict(
-                    family="Courier New, monospace",
-                    size=10,
-                    color=self.colors['text']
-                ),
                 bgcolor=self.colors['background'],
                 bordercolor=self.colors['border'],
                 borderwidth=1,
-                align="center" if position == 'center' else "right"
+                font=dict(size=10, color=self.colors['text'])
             )
+            
+            # Add additional ML and Monte Carlo metrics in separate window
+            if position == 'outside':
+                additional_metrics_text = self._format_additional_metrics_for_plotly(metrics)
+                fig.add_annotation(
+                    x=0.02,  # Left side
+                    y=0.98,  # Top
+                    text=additional_metrics_text,
+                    showarrow=False,
+                    xref="paper",
+                    yref="paper",
+                    xanchor="left",
+                    yanchor="top",
+                    bgcolor=self.colors['background'],
+                    bordercolor=self.colors['border'],
+                    borderwidth=1,
+                    font=dict(size=9, color=self.colors['text'])
+                )
+            
             return fig
+            
         except Exception as e:
-            logger.print_error(f"Error adding metrics to Plotly chart: {e}")
+            logger.print_error(f"Error adding metrics to Plotly: {e}")
             return fig
     
     def add_metrics_to_matplotlib(self, ax: plt.Axes, df: pd.DataFrame,
@@ -184,23 +211,75 @@ class MetricsDisplay:
                 f"🎯 Win Ratio: {color_span(f'{metrics['win_ratio']:.1f}%', self._get_metric_color('win_ratio', metrics['win_ratio']))}",
                 f"⚖️  Risk/Reward: {color_span(f'{metrics['risk_reward_ratio']:.2f}', self._get_metric_color('risk_reward_ratio', metrics['risk_reward_ratio']))}",
                 f"💰 Profit Factor: {color_span(f'{metrics['profit_factor']:.2f}', self._get_metric_color('profit_factor', metrics['profit_factor']))}",
-                f"📈 Total Return: {color_span(f'{metrics['total_return']:.1f}%', self._get_metric_color('total_return', metrics['total_return']))}",
-                f"📉 Max Drawdown: {color_span(f'{metrics['max_drawdown']:.1f}%', self._get_metric_color('max_drawdown', metrics['max_drawdown']))}",
                 f"📊 Sharpe Ratio: {color_span(f'{metrics['sharpe_ratio']:.2f}', self._get_metric_color('sharpe_ratio', metrics['sharpe_ratio']))}",
-                f"🛡️  Sortino Ratio: {color_span(f'{metrics['sortino_ratio']:.2f}', self._get_metric_color('sortino_ratio', metrics['sortino_ratio']))}",
-                f"🎲 Prob Risk Ratio: {color_span(f'{metrics['probability_risk_ratio']:.2f}', self.colors['neutral'])}",
-                f"📈 Volatility: {color_span(f'{metrics['volatility']:.1f}%', self._get_metric_color('volatility', metrics['volatility']))}",
-                f"⚡ Calmar Ratio: {color_span(f'{metrics['calmar_ratio']:.2f}', self._get_metric_color('calmar_ratio', metrics['calmar_ratio']))}"
+                f"📈 Sortino Ratio: {color_span(f'{metrics['sortino_ratio']:.2f}', self._get_metric_color('sortino_ratio', metrics['sortino_ratio']))}",
+                f"🎲 Prob Risk Ratio: {color_span(f'{metrics['probability_risk_ratio']:.2f}', self._get_metric_color('probability_risk_ratio', metrics['probability_risk_ratio']))}",
+                f"📉 Max Drawdown: {color_span(f'{metrics['max_drawdown']:.1f}%', self._get_metric_color('max_drawdown', metrics['max_drawdown']))}",
+                f"📊 Total Return: {color_span(f'{metrics['total_return']:.1f}%', self._get_metric_color('total_return', metrics['total_return']))}",
+                f"📈 Calmar Ratio: {color_span(f'{metrics['calmar_ratio']:.2f}', self._get_metric_color('calmar_ratio', metrics['calmar_ratio']))}"
             ]
-            if 'volume_weighted_return' in metrics and metrics['volume_weighted_return'] != 0:
+            
+            # Add strategy metrics if available
+            if 'position_size' in metrics:
                 lines.extend([
-                    f"📊 Vol Weighted Return: {color_span(f'{metrics['volume_weighted_return']:.2f}%', self.colors['neutral'])}",
-                    f"📊 Vol Win Ratio: {color_span(f'{metrics['volume_win_ratio']:.1f}%', self.colors['neutral'])}"
+                    "─" * 20,
+                    f"📊 Position Size: {color_span(f'{metrics['position_size']:.2f}', self.colors['neutral'])}",
+                    f"⚖️  Risk/Reward Setting: {color_span(f'{metrics['risk_reward_setting']:.1f}', self.colors['neutral'])}",
+                    f"💸 Fee per Trade: {color_span(f'{metrics['fee_per_trade']:.2f}%', self.colors['neutral'])}",
+                    f"🎯 Kelly Fraction: {color_span(f'{metrics['kelly_fraction']:.3f}', self._get_metric_color('kelly_fraction', metrics['kelly_fraction']))}",
+                    f"📊 Optimal Position: {color_span(f'{metrics['optimal_position_size']:.3f}', self.colors['neutral'])}",
+                    f"💰 Net Return: {color_span(f'{metrics['net_return']:.2f}%', self._get_metric_color('net_return', metrics['net_return']))}",
+                    f"📈 Strategy Efficiency: {color_span(f'{metrics['strategy_efficiency']:.1f}%', self._get_metric_color('strategy_efficiency', metrics['strategy_efficiency']))}",
+                    f"🛡️  Strategy Sustainability: {color_span(f'{metrics['strategy_sustainability']:.1f}%', self._get_metric_color('strategy_sustainability', metrics['strategy_sustainability']))}"
                 ])
+            
             return "<br>".join(lines)
         except Exception as e:
-            logger.print_debug(f"Error formatting metrics for Plotly: {e}")
-            return "📊 Trading Metrics<br>Error displaying metrics"
+            logger.print_error(f"Error formatting metrics for Plotly: {e}")
+            return "Error formatting metrics"
+    
+    def _format_additional_metrics_for_plotly(self, metrics: Dict[str, float]) -> str:
+        """Format additional ML and Monte Carlo metrics for Plotly display."""
+        try:
+            def color_span(val, color):
+                return f'<span style="color:{color};font-weight:bold">{val}</span>'
+            
+            # ML Metrics
+            ml_lines = [
+                "<b>🤖 ML & FEATURE METRICS</b>",
+                "─" * 25,
+                f"📊 Signal Frequency: {color_span(f'{metrics.get('signal_frequency', 0):.3f}', self.colors['neutral'])}",
+                f"🔒 Signal Stability: {color_span(f'{metrics.get('signal_stability', 0):.1f}%', self._get_metric_color('signal_stability', metrics.get('signal_stability', 0)))}",
+                f"🎯 Signal Accuracy: {color_span(f'{metrics.get('signal_accuracy', 0):.1f}%', self._get_metric_color('signal_accuracy', metrics.get('signal_accuracy', 0)))}",
+                f"⏰ Timing Score: {color_span(f'{metrics.get('signal_timing_score', 0):.2f}', self._get_metric_color('signal_timing_score', metrics.get('signal_timing_score', 0)))}",
+                f"📈 Momentum Corr: {color_span(f'{metrics.get('momentum_correlation', 0):.3f}', self.colors['neutral'])}",
+                f"📊 Volatility Corr: {color_span(f'{metrics.get('volatility_correlation', 0):.3f}', self.colors['neutral'])}",
+                f"📈 Trend Corr: {color_span(f'{metrics.get('trend_correlation', 0):.3f}', self.colors['neutral'])}",
+                f"🔄 Pattern Consistency: {color_span(f'{metrics.get('pattern_consistency', 0):.1f}%', self._get_metric_color('pattern_consistency', metrics.get('pattern_consistency', 0)))}",
+                f"🎯 Signal Clustering: {color_span(f'{metrics.get('signal_clustering', 0):.1f}%', self._get_metric_color('signal_clustering', metrics.get('signal_clustering', 0)))}"
+            ]
+            
+            # Monte Carlo Metrics
+            mc_lines = [
+                "<b>🎲 MONTE CARLO METRICS</b>",
+                "─" * 25,
+                f"📊 Expected Return: {color_span(f'{metrics.get('mc_expected_return', 0):.2f}%', self._get_metric_color('mc_expected_return', metrics.get('mc_expected_return', 0)))}",
+                f"📈 Std Deviation: {color_span(f'{metrics.get('mc_std_deviation', 0):.2f}%', self.colors['neutral'])}",
+                f"⚠️  VaR 95%: {color_span(f'{metrics.get('mc_var_95', 0):.2f}%', self._get_metric_color('mc_var_95', metrics.get('mc_var_95', 0)))}",
+                f"🚨 CVaR 95%: {color_span(f'{metrics.get('mc_cvar_95', 0):.2f}%', self._get_metric_color('mc_cvar_95', metrics.get('mc_cvar_95', 0)))}",
+                f"📈 Profit Probability: {color_span(f'{metrics.get('mc_probability_profit', 0):.1f}%', self._get_metric_color('mc_probability_profit', metrics.get('mc_probability_profit', 0)))}",
+                f"📊 Max Loss: {color_span(f'{metrics.get('mc_max_loss', 0):.2f}%', self._get_metric_color('mc_max_loss', metrics.get('mc_max_loss', 0)))}",
+                f"📈 Max Gain: {color_span(f'{metrics.get('mc_max_gain', 0):.2f}%', self._get_metric_color('mc_max_gain', metrics.get('mc_max_gain', 0)))}",
+                f"📊 MC Sharpe: {color_span(f'{metrics.get('mc_sharpe_ratio', 0):.2f}', self._get_metric_color('mc_sharpe_ratio', metrics.get('mc_sharpe_ratio', 0)))}",
+                f"🛡️  Strategy Robustness: {color_span(f'{metrics.get('strategy_robustness', 0):.1f}%', self._get_metric_color('strategy_robustness', metrics.get('strategy_robustness', 0)))}",
+                f"💀 Risk of Ruin: {color_span(f'{metrics.get('risk_of_ruin', 0):.1f}%', self._get_metric_color('risk_of_ruin', metrics.get('risk_of_ruin', 0)))}"
+            ]
+            
+            return "<br>".join(ml_lines + ["<br>"] + mc_lines)
+            
+        except Exception as e:
+            logger.print_error(f"Error formatting additional metrics for Plotly: {e}")
+            return "Error formatting additional metrics"
     
     def _add_matplotlib_metrics_text(self, ax: plt.Axes, metrics: Dict[str, float],
                                    position: str, xlim: Tuple[float, float], 
@@ -288,20 +367,29 @@ class MetricsDisplay:
 
 
 def add_metrics_to_plotly_chart(fig: go.Figure, df: pd.DataFrame, 
-                               position: str = 'right') -> go.Figure:
+                               metrics: Optional[Dict[str, float]] = None,
+                               position: str = 'right',
+                               lot_size: float = 1.0,
+                               risk_reward_ratio: float = 2.0,
+                               fee_per_trade: float = 0.07) -> go.Figure:
     """
-    Convenience function to add metrics to Plotly chart.
+    Add trading metrics to Plotly chart.
     
     Args:
         fig (go.Figure): Plotly figure
         df (pd.DataFrame): DataFrame with trading data
-        position (str): Position of metrics box
+        metrics (Dict[str, float], optional): Pre-calculated metrics
+        position (str): Position of metrics ('right', 'left', 'top', 'bottom', 'outside', 'center')
+        lot_size (float): Position size (default: 1.0)
+        risk_reward_ratio (float): Risk to reward ratio (default: 2.0)
+        fee_per_trade (float): Fee per trade in percentage (default: 0.07)
     
     Returns:
         go.Figure: Updated figure with metrics
     """
     display = MetricsDisplay()
-    return display.add_metrics_to_plotly(fig, df, position=position)
+    return display.add_metrics_to_plotly(fig, df, metrics, position, 
+                                        lot_size, risk_reward_ratio, fee_per_trade)
 
 
 def add_metrics_to_matplotlib_chart(ax: plt.Axes, df: pd.DataFrame,

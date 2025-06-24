@@ -458,7 +458,7 @@ def generate_seaborn_plot(result_df, selected_rule, plot_title):
     logger.print_success("Seaborn plot generation finished (should display).")
 
 
-def generate_fast_plot(result_df, selected_rule, plot_title):
+def generate_fast_plot(result_df, selected_rule, plot_title, args=None):
     """
     Generates plot using Dask+Datashader+Bokeh (fast)
 
@@ -466,12 +466,24 @@ def generate_fast_plot(result_df, selected_rule, plot_title):
         result_df (pd.DataFrame): DataFrame with OHLCV and calculation results.
         selected_rule (TradingRule | str): The selected trading rule.
         plot_title (str): Title for the plot.
+        args (argparse.Namespace, optional): Command-line arguments with strategy parameters.
     """
     logger.print_info("Generating plot using Dask+Datashader+Bokeh (fast)...")
+    
+    # Extract strategy parameters from args
+    strategy_kwargs = {}
+    if args:
+        strategy_kwargs = {
+            'lot_size': getattr(args, 'lot_size', 1.0),
+            'risk_reward_ratio': getattr(args, 'risk_reward_ratio', 2.0),
+            'fee_per_trade': getattr(args, 'fee_per_trade', 0.07)
+        }
+    
     plot_indicator_results_fast(
         result_df,
         selected_rule,
-        plot_title
+        plot_title,
+        **strategy_kwargs
     )
 
 
@@ -999,7 +1011,7 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
         elif draw_mode in ['seaborn', 'sb']:
             generate_seaborn_plot(result_df, selected_rule, plot_title)
         elif draw_mode == 'fast':
-            generate_fast_plot(result_df, selected_rule, plot_title)
+            generate_fast_plot(result_df, selected_rule, plot_title, args)
         elif draw_mode == 'term':
             # If no rule is specified, default to OHLCV rule for terminal mode
             if selected_rule is None or (isinstance(selected_rule, str) and selected_rule.lower() == 'none'):

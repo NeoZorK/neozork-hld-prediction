@@ -183,54 +183,27 @@ def parse_arguments():
 
     # --- Indicator Options Group ---
     indicator_group = parser.add_argument_group('Indicator Options')
-    rule_aliases_map = {
-        'PHLD': 'Predict_High_Low_Direction', 
-        'PV': 'Pressure_Vector', 
-        'SR': 'Support_Resistants',
-        'RSI': 'RSI',
-        'RSI_MOM': 'RSI_Momentum',
-        'RSI_DIV': 'RSI_Divergence',
-        'CCI': 'CCI',
-        'STOCH': 'Stochastic',
-        'EMA': 'EMA',
-        'BB': 'Bollinger_Bands',
-        'ATR': 'ATR',
-        'VWAP': 'VWAP',
-        'PIVOT': 'Pivot_Points',
-        # Momentum indicators
-        'MACD': 'MACD',
-        'STOCHOSC': 'StochOscillator',
-        # Predictive indicators
-        'HMA': 'HMA',
-        'TSF': 'TSForecast',
-        # Probability indicators
-        'MC': 'MonteCarlo',
-        'KELLY': 'Kelly',
-        # Sentiment indicators
-        'FG': 'FearGreed',
-        'COT': 'COT',
-        'PCR': 'PutCallRatio',
-        # Support/Resistance indicators
-        'DONCHAIN': 'Donchain',
-        'FIBO': 'FiboRetr',
-        # Volume indicators
-        'OBV': 'OBV',
-        # Volatility indicators
-        'STDEV': 'StDev',
-        # Trend indicators
-        'ADX': 'ADX',
-        'SAR': 'SAR',
-        'SUPERTREND': 'SuperTrend'
-    }
+    rule_aliases_map = {'PHLD': 'Predict_High_Low_Direction', 'PV': 'Pressure_Vector', 'SR': 'Support_Resistants'}
     rule_names = list(TradingRule.__members__.keys())
     all_rule_choices = rule_names + list(rule_aliases_map.keys()) + ['OHLCV', 'AUTO']  # Added 'OHLCV' and 'AUTO' as valid rules
-    default_rule_name = 'OHLCV'  # Changed from TradingRule.Predict_High_Low_Direction.name
+    default_rule_name = 'OHLCV'
     indicator_group.add_argument(
-        '--rule', metavar='RULE',
+        '--rule',
         default=default_rule_name,
-        help="Trading rule: OHLCV, PV, SR, PHLD, RSI, RSI_MOM, RSI_DIV, CCI, STOCH, EMA, BB, ATR, VWAP, PIVOT, MACD, STOCHOSC, HMA, TSF, MC, KELLY, FG, COT, PCR, DONCHAIN, FIBO, OBV, STDEV, ADX, SAR, SUPERTREND, AUTO. Aliases: PV=Pressure_Vector, SR=Support_Resistants, RSI_MOM=RSI_Momentum, RSI_DIV=RSI_Divergence, STOCH=Stochastic, BB=Bollinger_Bands, PIVOT=Pivot_Points, STOCHOSC=StochOscillator, TSF=TSForecast, MC=MonteCarlo, FG=FearGreed, PCR=PutCallRatio, FIBO=FiboRetr, STDEV=StDev, SUPERTREND=SuperTrend. Parameterized format: rsi:14,30,70,open (period,oversold,overbought,price_type)"
+        choices=all_rule_choices,
+        help=f"Trading rule to apply. Default: {default_rule_name}. "
+             f"Aliases: PHLD=Predict_High_Low_Direction, PV=Pressure_Vector, SR=Support_Resistants."
     )
     
+    # Strategy parameters
+    indicator_group.add_argument(
+        '--strategy',
+        metavar='LOT,RISK_REWARD,FEE',
+        help="Strategy parameters: lot_size,risk_reward_ratio,fee_per_trade. "
+             "Example: --strategy 1,2,0.07 means lot=1.0, risk:reward=2:1, fee=0.07%. "
+             "Default: 1.0,2.0,0.07"
+    )
+
     # Add price type selection for indicators that support it
     indicator_group.add_argument(
         '--price-type', metavar='TYPE',
@@ -453,6 +426,38 @@ def parse_arguments():
     # --- Fix: Map --show-rule to args.rule for show mode compatibility ---
     if effective_mode == 'show' and hasattr(args, 'show_rule') and args.show_rule:
         args.rule = args.show_rule
+
+    # Parse strategy parameters
+    if args.strategy:
+        try:
+            strategy_parts = args.strategy.split(',')
+            if len(strategy_parts) != 3:
+                parser.error("--strategy must have exactly 3 values: lot_size,risk_reward_ratio,fee_per_trade")
+            
+            lot_size = float(strategy_parts[0])
+            risk_reward_ratio = float(strategy_parts[1])
+            fee_per_trade = float(strategy_parts[2])
+            
+            # Validate strategy parameters
+            if lot_size <= 0:
+                parser.error("lot_size must be positive")
+            if risk_reward_ratio <= 0:
+                parser.error("risk_reward_ratio must be positive")
+            if fee_per_trade < 0:
+                parser.error("fee_per_trade must be non-negative")
+            
+            # Store parsed values
+            args.lot_size = lot_size
+            args.risk_reward_ratio = risk_reward_ratio
+            args.fee_per_trade = fee_per_trade
+            
+        except ValueError as e:
+            parser.error(f"Invalid strategy parameters: {e}. Use format: lot_size,risk_reward_ratio,fee_per_trade")
+    else:
+        # Default strategy parameters
+        args.lot_size = 1.0
+        args.risk_reward_ratio = 2.0
+        args.fee_per_trade = 0.07
 
     # --- Restrict export flags for forbidden modes ---
     # Allow export flags only for demo and show (except show ind)

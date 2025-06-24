@@ -82,12 +82,12 @@ def plot_indicator_results_fastest(
 
     # Create the main figure
     fig = make_subplots(
-        rows=4,
+        rows=3,  # Back to 3 rows for main chart
         cols=1,
         shared_xaxes=True,
         vertical_spacing=0.03,
-        row_heights=[0.5, 0.15, 0.15, 0.2],
-        subplot_titles=["OHLC Chart", "Volume", "Indicators", "Trading Metrics"]
+        row_heights=[0.6, 0.2, 0.2],  # Original heights
+        subplot_titles=["OHLC Chart", "Volume", "Indicators"]
     )
 
     # Add OHLC candlestick chart
@@ -211,14 +211,17 @@ def plot_indicator_results_fastest(
         )
 
     # Show time labels only on the bottom chart
-    for i in range(1, 4):
+    for i in range(1, 3):
         fig.update_xaxes(row=i, col=1, showticklabels=False)
 
-    # Add trading metrics to the metrics panel (row 4)
+    # Add trading metrics outside the chart area
     if 'Direction' in display_df.columns:
         try:
-            # Add metrics as text annotation in the metrics panel
-            fig = add_metrics_to_plotly_chart(fig, display_df, position='center')
+            # Add metrics as text annotation outside the chart area
+            fig = add_metrics_to_plotly_chart(fig, display_df, position='outside', 
+                                            lot_size=kwargs.get('lot_size', 1.0),
+                                            risk_reward_ratio=kwargs.get('risk_reward_ratio', 2.0),
+                                            fee_per_trade=kwargs.get('fee_per_trade', 0.07))
             logger.print_info("Added trading metrics to fastest plot")
         except Exception as e:
             logger.print_warning(f"Could not add trading metrics to fastest plot: {e}")

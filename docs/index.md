@@ -53,6 +53,12 @@ python run_analysis.py yfinance --ticker AAPL --period 1mo --point 0.01
 - [EDA Guide](guides/analysis-eda.md) - Exploratory Data Analysis
 - [Technical Indicators](guides/technical-indicators.md) - Available indicators
 
+### Reference
+- [Core Calculations](reference/core-calculation.md) - Mathematical foundations
+- [Trading Rules](reference/trading-rules.md) - Rule descriptions and parameters
+- [Advanced Metrics](reference/advanced-metrics.md) - ML and Monte Carlo metrics
+- [Indicators](reference/indicators/) - Detailed indicator documentation
+
 ### Data Sources
 - [Data Sources](api/data-sources.md) - Supported data sources and formats
 - [Exchange Rate API](api/exchange-rate-api-complete.md) - Exchange rate data integration
