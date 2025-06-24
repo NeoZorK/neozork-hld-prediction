@@ -3,181 +3,158 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+from typing import List, Optional
+
+from src.common import logger
+from src.common.constants import TradingRule, BUY, SELL
+from src.plotting.metrics_display import add_metrics_to_matplotlib_chart
 
 def plot_indicator_results_seaborn(
     df: pd.DataFrame,
     selected_rule,
     plot_title: str = ""
 ):
+    """
+    Creates a seaborn-based chart with OHLC data and selected indicator results.
+
+    Args:
+        df (pd.DataFrame): The DataFrame returned by calculate_pressure_vector.
+                           Must contain 'Open', 'High', 'Low', 'Close'.
+                           Should ideally contain 'Volume'.
+        selected_rule: The trading rule used, to customize plotting.
+        plot_title (str): The title for the chart.
+    """
+    # --- Input Validation ---
+    required_cols = ['Open', 'High', 'Low', 'Close']
     if df is None or df.empty:
-        print("No data to plot.")
+        logger.print_warning("Input DataFrame is None or empty. Cannot create plot.")
         return
-
-    # Check if we're in OHLCV mode (when display_candlestick_only flag is set or rule is 'OHLCV')
-    is_ohlcv_mode = (hasattr(selected_rule, 'name') and selected_rule.name == 'OHLCV') or \
-                    (isinstance(selected_rule, str) and selected_rule in ['Raw_OHLCV_Data', 'OHLCV'])
-
-    # Try to find a column similar to 'close' if it's missing
-    close_col = None
-    for col in df.columns:
-        if col.lower() == 'close':
-            close_col = col
-            break
-    if close_col is None:
-        for alt in ['Close', 'CLOSE', 'closing_price', 'price']:
-            if alt in df.columns:
-                close_col = alt
-                break
-    if close_col is None:
-        print("Error: 'close' column not found in DataFrame.")
-        print("Available columns:", list(df.columns))
-        print("DataFrame head:\n", df.head())
+    if not all(col in df.columns for col in required_cols):
+        logger.print_error(f"Input DataFrame must contain columns: {required_cols}. Found: {list(df.columns)}")
         return
+    if not isinstance(df.index, pd.DatetimeIndex):
+        logger.print_warning("DataFrame index is not a DatetimeIndex. Plotting might be affected.")
+        try:
+            df.index = pd.to_datetime(df.index)
+        except Exception:
+            logger.print_error("Failed to convert index to DatetimeIndex.")
 
-    # --- Prepare subplots: 1. OHLC + signals, 2. Volume, 3. PV, 4. HL, 5. Pressure ---
-    nrows = 1
-    indicator_panels = []
+    # --- Determine number of subplots needed ---
+    indicators_to_plot = {
+        'Volume': 'Volume',
+        'PV': 'PV',
+        'HL': 'HL (Points)',
+        'Pressure': 'Pressure'
+    }
+    # Check which indicator columns exist and are not entirely null
+    valid_indicator_cols = [col for col in indicators_to_plot if col in df.columns and not df[col].isnull().all()]
+    logger.print_debug(f"Seaborn: Found valid indicator columns for subplots: {valid_indicator_cols}")
+    num_indicator_subplots = len(valid_indicator_cols)
+    total_rows = 1 + num_indicator_subplots  # Dynamic total rows
+    logger.print_debug(f"Seaborn: Total rows for subplots: {total_rows}")
 
-    # In OHLCV mode, only show Volume panel if available
-    if not is_ohlcv_mode:
-        if 'Volume' in df.columns:
-            indicator_panels.append('Volume')
-        if 'PV' in df.columns:
-            indicator_panels.append('PV')
-        if 'HL' in df.columns:
-            indicator_panels.append('HL')
-        if 'Pressure' in df.columns:
-            indicator_panels.append('Pressure')
+    # --- Create Subplots ---
+    # Handle case where no indicators are valid to avoid division by zero
+    if num_indicator_subplots > 0:
+        # Distribute remaining height among indicator subplots
+        row_heights = [0.6] + [0.4 / num_indicator_subplots] * num_indicator_subplots
     else:
-        # In OHLCV mode, only include Volume
-        if 'Volume' in df.columns:
-            indicator_panels.append('Volume')
+        row_heights = [1.0]  # Only the price chart
 
-    nrows += len(indicator_panels)
+    # Dynamic subplot titles based on valid indicators
+    subplot_titles = ["Price / Signals"] + [indicators_to_plot[col] for col in valid_indicator_cols]
 
-    sns.set(style="darkgrid", context="talk")
-    fig, axes = plt.subplots(nrows=nrows, ncols=1, figsize=(18, 3.5 * nrows), sharex=True, gridspec_kw={'height_ratios': [2] + [1]*(nrows-1)})
+    fig, axes = plt.subplots(total_rows, 1, figsize=(15, 5 * total_rows), height_ratios=row_heights)
+    if total_rows == 1:
+        axes = [axes]  # Make it iterable
 
-    if nrows == 1:
-        axes = [axes]
+    # --- Add Price Candlestick Trace (Row 1) ---
+    ax_price = axes[0]
+    
+    # Create candlestick-like visualization
+    idx = range(len(df))
+    
+    # Plot candlesticks
+    for i in idx:
+        open_price = df['Open'].iloc[i]
+        close_price = df['Close'].iloc[i]
+        high_price = df['High'].iloc[i]
+        low_price = df['Low'].iloc[i]
+        
+        # Determine color based on open vs close
+        color = 'green' if close_price >= open_price else 'red'
+        
+        # Plot the body
+        body_height = abs(close_price - open_price)
+        body_bottom = min(open_price, close_price)
+        ax_price.bar(i, body_height, bottom=body_bottom, color=color, alpha=0.7, width=0.8)
+        
+        # Plot the wick
+        ax_price.plot([i, i], [low_price, high_price], color='black', linewidth=1)
 
-    # --- Hover annotations ---
-    annot = axes[0].annotate("", xy=(0,0), xytext=(20,20),textcoords="offset points",
-                             bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.5),
-                             fontsize=12)  # Increased fontsize, removed arrowprops
-    annot.set_visible(False)
+    # --- Add PPrice Lines (Row 1) ---
+    if 'PPrice1' in df.columns:
+        ax_price.plot(idx, df['PPrice1'], color='lime', linestyle='--', linewidth=1, label='PPrice1')
+    if 'PPrice2' in df.columns:
+        ax_price.plot(idx, df['PPrice2'], color='red', linestyle='--', linewidth=1, label='PPrice2')
 
-    def update_annot(event, ax, df):
-        if event.inaxes == ax:
-            try:
-                x = int(event.xdata)
-                y = event.ydata
-            except TypeError:
-                return  # Handle cases where xdata or ydata is None
+    # --- Add Direction Markers (Row 1) ---
+    if 'Direction' in df.columns:
+        buy_signals = df['Direction'] == BUY
+        sell_signals = df['Direction'] == SELL
+        
+        if buy_signals.any():
+            buy_indices = [i for i, signal in enumerate(buy_signals) if signal]
+            buy_prices = df['Low'].iloc[buy_signals] * 0.998
+            ax_price.scatter(buy_indices, buy_prices, color='lime', marker='^', s=50, label='BUY Signal')
+        
+        if sell_signals.any():
+            sell_indices = [i for i, signal in enumerate(sell_signals) if signal]
+            sell_prices = df['High'].iloc[sell_signals] * 1.002
+            ax_price.scatter(sell_indices, sell_prices, color='red', marker='v', s=50, label='SELL Signal')
 
-            annot.xy = (x,y)
-            text = f"X: {x:.2f}, Y: {y:.2f}\n"  # Uppercase X and Y
-            for col in df.columns:
-                if pd.api.types.is_numeric_dtype(df[col]):
-                    try:
-                        value = df.iloc[x][col]
-                        text += f"{col.upper()} = {value:.2f}\n"  # Uppercase column names
-                    except (IndexError, ValueError):
-                        pass
-            annot.set_text(text)
-            annot.set_visible(True)
-            fig.canvas.draw_idle()
-        else:
-            if annot.get_visible():
-                annot.set_visible(False)
-                fig.canvas.draw_idle()
+    # Set price chart title and labels
+    ax_price.set_title(f"{plot_title} - Price Chart")
+    ax_price.set_ylabel("Price")
+    ax_price.legend()
+    ax_price.grid(True, alpha=0.3)
 
-    def connect_hover(ax, df):
-        def hover(event):
-            update_annot(event, ax, df)
-        fig.canvas.mpl_connect("motion_notify_event", hover)
+    # --- Add Indicator Subplots ---
+    current_row = 1  # Start from row 1
+    for indicator_col in valid_indicator_cols:
+        ax_panel = axes[current_row]
+        indicator_name = indicators_to_plot[indicator_col]
+        indicator_data = df[indicator_col].fillna(0)
 
-    # --- Panel 1: OHLC + predicted + signals ---
-    ax = axes[0]
-    idx = df.index
-
-    connect_hover(ax, df)
-
-    # Plot OHLC as lines (not candlestick, for simplicity)
-    if 'Open' in df.columns and 'High' in df.columns and 'Low' in df.columns and 'Close' in df.columns:
-        ax.plot(idx, df['Open'], label='Open', color='orange', linewidth=1, alpha=0.7)
-        ax.plot(idx, df['High'], label='High', color='purple', linewidth=1, alpha=0.7)
-        ax.plot(idx, df['Low'], label='Low', color='brown', linewidth=1, alpha=0.7)
-        ax.plot(idx, df['Close'], label='Close', color='blue', linewidth=1.5, zorder=10)
-    else:
-        ax.plot(idx, df[close_col], label='Close', color='blue', linewidth=1.5, zorder=10)
-
-    # Plot predicted high/low if present (PPrice1/PPrice2 or predicted_high/predicted_low) - only if not in OHLCV mode
-    if not is_ohlcv_mode:
-        if 'PPrice1' in df.columns:
-            ax.plot(idx, df['PPrice1'], label='Predicted Low (PPrice1)', color='lime', linestyle='--', linewidth=1.5)
-        if 'PPrice2' in df.columns:
-            ax.plot(idx, df['PPrice2'], label='Predicted High (PPrice2)', color='red', linestyle='--', linewidth=1.5)
-        if 'predicted_low' in df.columns:
-            ax.plot(idx, df['predicted_low'], label='Predicted Low', color='lime', linestyle='--', linewidth=1.5)
-        if 'predicted_high' in df.columns:
-            ax.plot(idx, df['predicted_high'], label='Predicted High', color='red', linestyle='--', linewidth=1.5)
-
-        # Plot predicted_direction or Direction as markers - only if not in OHLCV mode
-        direction_col = None
-        for dcol in ['Direction', 'predicted_direction']:
-            if dcol in df.columns:
-                direction_col = dcol
-                break
-        if direction_col is not None:
-            # For compatibility with plotly/fastest: 1=BUY, 2=SELL
-            buy_mask = (df[direction_col] == 1) | (df[direction_col] > 0)
-            sell_mask = (df[direction_col] == 2) | (df[direction_col] < 0)
-            if 'Low' in df.columns:
-                buy_y = df['Low'] * 0.998
-            else:
-                buy_y = df[close_col]
-            if 'High' in df.columns:
-                sell_y = df['High'] * 1.002
-            else:
-                sell_y = df[close_col]
-            ax.scatter(df.index[buy_mask], buy_y[buy_mask], marker='^', color='lime', s=80, label='Predicted UP', zorder=20)
-            ax.scatter(df.index[sell_mask], sell_y[sell_mask], marker='v', color='red', s=80, label='Predicted DOWN', zorder=20)
-
-        # Plot buy/sell signals if present - only if not in OHLCV mode
-        if 'signal' in df.columns:
-            buy_signals = df[df['signal'] > 0]
-            sell_signals = df[df['signal'] < 0]
-            ax.scatter(buy_signals.index, buy_signals[close_col], marker='o', color='green', s=80, label='Buy Signal', zorder=30)
-            ax.scatter(sell_signals.index, sell_signals[close_col], marker='x', color='red', s=80, label='Sell Signal', zorder=30)
-
-    ax.set_ylabel("Price")
-    ax.set_title(f"{plot_title or 'Seaborn Plot'} - Rule: {getattr(selected_rule, 'name', selected_rule)}")
-    ax.legend(loc='upper left', fontsize=9, ncol=2)
-
-    # --- Additional panels: Volume, PV, HL, Pressure ---
-    panel_idx = 1
-    for panel in indicator_panels:
-        ax_panel = axes[panel_idx]
-        if panel == 'Volume':
-            ax_panel.bar(idx, df['Volume'], color='gray', alpha=0.3, width=1, label='Volume')
+        if indicator_col == 'Volume':
+            ax_panel.bar(idx, indicator_data, color='gray', alpha=0.3, label='Volume')
             ax_panel.set_ylabel('Volume')
-        elif panel == 'PV':
-            ax_panel.plot(idx, df['PV'], color='orange', label='PV')
-            ax_panel.axhline(0, color='gray', linestyle='--', linewidth=1)
-            ax_panel.set_ylabel('PV')
-        elif panel == 'HL':
-            ax_panel.plot(idx, df['HL'], color='brown', label='HL (Points)')
-            ax_panel.set_ylabel('HL')
-        elif panel == 'Pressure':
-            ax_panel.plot(idx, df['Pressure'], color='dodgerblue', label='Pressure')
-            ax_panel.axhline(0, color='gray', linestyle='--', linewidth=1)
-            ax_panel.set_ylabel('Pressure')
+        else:
+            line_color = 'orange' if indicator_col == 'PV' else \
+                         'brown' if indicator_col == 'HL' else \
+                         'dodgerblue' if indicator_col == 'Pressure' else 'purple'
+            ax_panel.plot(idx, indicator_data, color=line_color, label=indicator_name)
+            
+            if indicator_col in ['PV', 'Pressure']:
+                ax_panel.axhline(0, color='gray', linestyle='--', linewidth=1)
+            ax_panel.set_ylabel(indicator_name)
+        
         ax_panel.legend(loc='upper left', fontsize=9)
-        connect_hover(ax_panel, df)
-        panel_idx += 1
+        ax_panel.grid(True, alpha=0.3)
+        current_row += 1
 
+    # Set x-axis label for the last subplot
     axes[-1].set_xlabel("Time")
+
+    # --- Add Trading Metrics ---
+    # Only add metrics if we have trading signals (Direction column)
+    if 'Direction' in df.columns:
+        try:
+            # Add metrics to the main price chart
+            add_metrics_to_matplotlib_chart(ax_price, df, position='right')
+            logger.print_info("Added trading metrics to Seaborn chart")
+        except Exception as e:
+            logger.print_warning(f"Could not add trading metrics to chart: {e}")
 
     plt.tight_layout()
     plt.show()

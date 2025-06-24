@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import plotext as plt
 from typing import Optional, Union
+from datetime import datetime
 
 # Use absolute imports when possible, fallback to relative
 try:
@@ -18,6 +19,8 @@ except ImportError:
     # Fallback to relative imports when run as module
     from ..common import logger
     from ..common.constants import TradingRule, BUY, SELL, NOTRADE
+
+from src.calculation.trading_metrics import calculate_trading_metrics
 
 
 def plot_indicator_results_term(df_results: pd.DataFrame, 
@@ -398,11 +401,62 @@ def _show_terminal_statistics(df: pd.DataFrame, rule_str: str) -> None:
         if pprice2_accuracy is not None:
             print(f"   High Prediction: {pprice2_accuracy:.1f}% accuracy")
     
+    # Trading Performance Metrics
+    if 'Direction' in df.columns and total_signals > 0:
+        try:
+            print(f"\n📊 TRADING PERFORMANCE METRICS:")
+            print(f"{'─' * 50}")
+            
+            # Calculate trading metrics
+            metrics = calculate_trading_metrics(df)
+            
+            # Display key metrics with emojis and formatting
+            print(f"🎯 Win Ratio:           {metrics['win_ratio']:.1f}%")
+            print(f"⚖️  Risk/Reward Ratio:   {metrics['risk_reward_ratio']:.2f}")
+            print(f"💰 Profit Factor:        {metrics['profit_factor']:.2f}")
+            print(f"📈 Total Return:         {metrics['total_return']:.1f}%")
+            print(f"📉 Max Drawdown:         {metrics['max_drawdown']:.1f}%")
+            print(f"📊 Sharpe Ratio:         {metrics['sharpe_ratio']:.2f}")
+            print(f"🛡️  Sortino Ratio:       {metrics['sortino_ratio']:.2f}")
+            print(f"🎲 Probability Risk:     {metrics['probability_risk_ratio']:.2f}")
+            print(f"📈 Volatility:           {metrics['volatility']:.1f}%")
+            print(f"⚡ Calmar Ratio:         {metrics['calmar_ratio']:.2f}")
+            
+            # Add volume-weighted metrics if available
+            if 'volume_weighted_return' in metrics and metrics['volume_weighted_return'] != 0:
+                print(f"📊 Vol Weighted Return: {metrics['volume_weighted_return']:.2f}%")
+                print(f"📊 Vol Win Ratio:       {metrics['volume_win_ratio']:.1f}%")
+            
+            # Performance summary
+            print(f"\n📋 PERFORMANCE SUMMARY:")
+            if metrics['win_ratio'] >= 50:
+                print(f"✅ Good win rate ({metrics['win_ratio']:.1f}%)")
+            else:
+                print(f"⚠️  Low win rate ({metrics['win_ratio']:.1f}%)")
+            
+            if metrics['risk_reward_ratio'] >= 1.5:
+                print(f"✅ Good risk/reward ratio ({metrics['risk_reward_ratio']:.2f})")
+            else:
+                print(f"⚠️  Poor risk/reward ratio ({metrics['risk_reward_ratio']:.2f})")
+            
+            if metrics['sharpe_ratio'] >= 1.0:
+                print(f"✅ Good Sharpe ratio ({metrics['sharpe_ratio']:.2f})")
+            else:
+                print(f"⚠️  Low Sharpe ratio ({metrics['sharpe_ratio']:.2f})")
+            
+            if metrics['max_drawdown'] <= 20:
+                print(f"✅ Acceptable max drawdown ({metrics['max_drawdown']:.1f}%)")
+            else:
+                print(f"⚠️  High max drawdown ({metrics['max_drawdown']:.1f}%)")
+                
+        except Exception as e:
+            logger.print_warning(f"Could not calculate trading metrics: {e}")
+            print(f"⚠️  Trading metrics calculation failed: {e}")
+    
     # Footer
     print(f"\n{header_line}")
-    print(f"{'Terminal Charts with Plotext Candlesticks':^80}")
-    print(f"{'Perfect for SSH/Docker/Terminal Trading Analysis':^80}")
-    print(f"{header_line}\n")
+    print(f"{'END OF STATISTICS':^80}")
+    print(f"{header_line}")
 
 
 def _calculate_prediction_accuracy(df: pd.DataFrame, pred_col: str, actual_col: str) -> Optional[float]:
