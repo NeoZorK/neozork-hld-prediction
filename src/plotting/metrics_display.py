@@ -94,74 +94,11 @@ class MetricsDisplay:
                             risk_reward_ratio: float = 2.0,
                             fee_per_trade: float = 0.07) -> go.Figure:
         """
-        Add trading metrics to Plotly figure near the legend area.
+        (DISABLED) Add trading metrics to Plotly figure near the legend area.
+        Now does nothing: metrics are shown only as HTML below the chart.
         """
-        try:
-            if metrics is None:
-                metrics = calculate_trading_metrics(df, lot_size=lot_size, 
-                                                  risk_reward_ratio=risk_reward_ratio, 
-                                                  fee_per_trade=fee_per_trade)
-            metrics_text = self._format_metrics_for_plotly(metrics)
-            
-            # Position metrics based on the position parameter
-            if position == 'center':
-                # Center position for dedicated metrics panel
-                x = 0.5
-                y = 0.5
-                xanchor = "center"
-                yanchor = "middle"
-            elif position == 'outside':
-                # Position outside the chart area (bottom-right)
-                x = 0.98
-                y = 0.02
-                xanchor = "right"
-                yanchor = "bottom"
-            else:
-                # Default position near the legend area (top-right of plot)
-                x = 0.98
-                y = 0.95
-                xanchor = "right"
-                yanchor = "top"
-            
-            # Add main metrics annotation
-            fig.add_annotation(
-                x=x,
-                y=y,
-                text=metrics_text,
-                showarrow=False,
-                xref="paper",
-                yref="paper",
-                xanchor=xanchor,
-                yanchor=yanchor,
-                bgcolor=self.colors['background'],
-                bordercolor=self.colors['border'],
-                borderwidth=1,
-                font=dict(size=10, color=self.colors['text'])
-            )
-            
-            # Add additional ML and Monte Carlo metrics in separate window
-            if position == 'outside':
-                additional_metrics_text = self._format_additional_metrics_for_plotly(metrics)
-                fig.add_annotation(
-                    x=0.02,  # Left side
-                    y=0.98,  # Top
-                    text=additional_metrics_text,
-                    showarrow=False,
-                    xref="paper",
-                    yref="paper",
-                    xanchor="left",
-                    yanchor="top",
-                    bgcolor=self.colors['background'],
-                    bordercolor=self.colors['border'],
-                    borderwidth=1,
-                    font=dict(size=9, color=self.colors['text'])
-                )
-            
-            return fig
-            
-        except Exception as e:
-            logger.print_error(f"Error adding metrics to Plotly: {e}")
-            return fig
+        # This method is intentionally left blank to disable metrics overlay on chart
+        return fig
     
     def add_metrics_to_matplotlib(self, ax: plt.Axes, df: pd.DataFrame,
                                 metrics: Optional[Dict[str, float]] = None,
