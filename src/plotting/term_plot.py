@@ -975,8 +975,150 @@ def _print_colored_metrics(metrics: dict) -> None:
         else:
             return "📊", YELLOW, f"Unknown metric '{metric_name}'. Consider reviewing strategy documentation."
     
+    # Group metrics by quality
+    good_metrics = []
+    average_metrics = []
+    bad_metrics = []
+    
+    def format_metric_name(metric_name: str) -> str:
+        """Convert technical metric names to more readable and visually appealing names."""
+        # Special cases for better readability
+        name_mapping = {
+            'buy_count': 'Buy Signals',
+            'sell_count': 'Sell Signals', 
+            'total_trades': 'Total Trades',
+            'win_ratio': 'Win Rate',
+            'risk_reward_ratio': 'Risk/Reward Ratio',
+            'profit_factor': 'Profit Factor',
+            'sharpe_ratio': 'Sharpe Ratio',
+            'sortino_ratio': 'Sortino Ratio',
+            'probability_risk_ratio': 'Probability Ratio',
+            'max_drawdown': 'Max Drawdown',
+            'total_return': 'Total Return',
+            'volatility': 'Volatility',
+            'calmar_ratio': 'Calmar Ratio',
+            'volume_weighted_return': 'Volume-Weighted Return',
+            'volume_win_ratio': 'Volume Win Rate',
+            'kelly_fraction': 'Kelly Fraction',
+            'strategy_efficiency': 'Strategy Efficiency',
+            'mc_expected_return': 'MC Expected Return',
+            'mc_probability_profit': 'MC Profit Probability',
+            'strategy_robustness': 'Strategy Robustness',
+            'risk_of_ruin': 'Risk of Ruin',
+            'signal_accuracy': 'Signal Accuracy',
+            'signal_frequency': 'Signal Frequency',
+            'signal_stability': 'Signal Stability',
+            'pattern_consistency': 'Pattern Consistency',
+            'signal_clustering': 'Signal Clustering',
+            'fee_impact': 'Fee Impact',
+            'strategy_sustainability': 'Strategy Sustainability',
+            'break_even_win_rate': 'Break-Even Win Rate',
+            'min_win_rate_for_profit': 'Min Win Rate for Profit',
+            'risk_adjusted_return_with_fees': 'Risk-Adjusted Return (with Fees)',
+            'mc_var_95': 'MC Value at Risk (95%)',
+            'mc_cvar_95': 'MC Conditional VaR (95%)',
+            'mc_max_loss': 'MC Max Loss',
+            'mc_max_gain': 'MC Max Gain',
+            'mc_sharpe_ratio': 'MC Sharpe Ratio',
+            'mc_std_deviation': 'MC Standard Deviation',
+            'position_size': 'Position Size',
+            'optimal_position_size': 'Optimal Position Size',
+            'net_return': 'Net Return',
+            'max_risk_per_trade': 'Max Risk per Trade',
+            'expected_risk_per_trade': 'Expected Risk per Trade',
+            'expected_reward_per_trade': 'Expected Reward per Trade',
+            'signal_timing_score': 'Signal Timing Score',
+            'momentum_correlation': 'Momentum Correlation',
+            'volatility_correlation': 'Volatility Correlation',
+            'trend_correlation': 'Trend Correlation',
+            'risk_adjusted_momentum': 'Risk-Adjusted Momentum',
+            'risk_adjusted_trend': 'Risk-Adjusted Trend',
+            'risk_reward_setting': 'Risk/Reward Setting',
+            'fee_per_trade': 'Fee per Trade'
+        }
+        
+        # Check if we have a special mapping
+        if metric_name.lower() in name_mapping:
+            return name_mapping[metric_name.lower()]
+        
+        # Default formatting: convert snake_case to Title Case
+        return metric_name.replace('_', ' ').title()
+    
     for metric_name, value in metrics.items():
         icon, color, description = get_metric_icon_color_and_description(metric_name, value)
-        print(f"{icon} {BOLD}{metric_name}:{RESET} {color}{value}{RESET}")
-        print(f"   {BLUE}💡 {description}{RESET}")
-        print()  # Add empty line for better readability
+        readable_name = format_metric_name(metric_name)
+        
+        if color == GREEN:
+            good_metrics.append((readable_name, value, icon, description))
+        elif color == YELLOW:
+            average_metrics.append((readable_name, value, icon, description))
+        elif color == RED:
+            bad_metrics.append((readable_name, value, icon, description))
+    
+    # Sort each group alphabetically by metric name
+    good_metrics.sort(key=lambda x: x[0])
+    average_metrics.sort(key=lambda x: x[0])
+    bad_metrics.sort(key=lambda x: x[0])
+    
+    # Print grouped results
+    if good_metrics:
+        print(f"\n{BOLD}{GREEN}✅ EXCELLENT METRICS ({len(good_metrics)}):{RESET}")
+        print(f"{GREEN}{'='*50}{RESET}")
+        for metric_name, value, icon, description in good_metrics:
+            # Format value to 2 decimal places
+            formatted_value = f"{value:.2f}" if isinstance(value, (int, float)) else str(value)
+            print(f"{icon} {BOLD}{metric_name}:{RESET} {GREEN}{formatted_value}{RESET}")
+            print(f"   {BLUE}💡 {description}{RESET}")
+            print()
+    
+    if average_metrics:
+        print(f"\n{BOLD}{YELLOW}⚠️  AVERAGE METRICS ({len(average_metrics)}):{RESET}")
+        print(f"{YELLOW}{'='*50}{RESET}")
+        for metric_name, value, icon, description in average_metrics:
+            # Format value to 2 decimal places
+            formatted_value = f"{value:.2f}" if isinstance(value, (int, float)) else str(value)
+            print(f"{icon} {BOLD}{metric_name}:{RESET} {YELLOW}{formatted_value}{RESET}")
+            print(f"   {BLUE}💡 {description}{RESET}")
+            print()
+    
+    if bad_metrics:
+        print(f"\n{BOLD}{RED}❌ POOR METRICS ({len(bad_metrics)}):{RESET}")
+        print(f"{RED}{'='*50}{RESET}")
+        for metric_name, value, icon, description in bad_metrics:
+            # Format value to 2 decimal places
+            formatted_value = f"{value:.2f}" if isinstance(value, (int, float)) else str(value)
+            print(f"{icon} {BOLD}{metric_name}:{RESET} {RED}{formatted_value}{RESET}")
+            print(f"   {BLUE}💡 {description}{RESET}")
+            print()
+    
+    # Print summary
+    total_metrics = len(metrics)
+    good_percentage = (len(good_metrics) / total_metrics * 100) if total_metrics > 0 else 0
+    average_percentage = (len(average_metrics) / total_metrics * 100) if total_metrics > 0 else 0
+    bad_percentage = (len(bad_metrics) / total_metrics * 100) if total_metrics > 0 else 0
+    
+    print(f"\n{BOLD}📊 STRATEGY QUALITY SUMMARY:{RESET}")
+    print(f"{'='*50}")
+    print(f"{GREEN}✅ Excellent: {len(good_metrics)} metrics ({good_percentage:.1f}%){RESET}")
+    print(f"{YELLOW}⚠️  Average: {len(average_metrics)} metrics ({average_percentage:.1f}%){RESET}")
+    print(f"{RED}❌ Poor: {len(bad_metrics)} metrics ({bad_percentage:.1f}%){RESET}")
+    
+    # Overall assessment
+    if good_percentage >= 60:
+        overall_color = GREEN
+        overall_icon = "🏆"
+        overall_assessment = "EXCELLENT"
+        overall_description = "Strategy shows outstanding performance across most metrics!"
+    elif good_percentage >= 40:
+        overall_color = YELLOW
+        overall_icon = "🎯"
+        overall_assessment = "GOOD"
+        overall_description = "Strategy shows good performance with room for improvement."
+    else:
+        overall_color = RED
+        overall_icon = "💔"
+        overall_assessment = "NEEDS IMPROVEMENT"
+        overall_description = "Strategy needs significant optimization across multiple areas."
+    
+    print(f"\n{overall_color}{overall_icon} OVERALL ASSESSMENT: {overall_assessment}{RESET}")
+    print(f"{overall_color}{overall_description}{RESET}")
