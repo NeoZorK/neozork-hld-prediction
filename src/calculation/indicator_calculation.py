@@ -1,4 +1,5 @@
-# src/calculation/indicator_calculation.py # MODIFIED AGAIN
+# -*- coding: utf-8 -*-
+# src/calculation/indicator_calculation.py
 
 """
 Workflow Step 3: Calculates the indicator and optionally validates against CSV data.
@@ -9,9 +10,10 @@ import pandas as pd
 import numpy as np # Added for comparison
 # Use relative imports within the src package
 from ..common import logger
-from ..common.constants import TradingRule
+from ..common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
 # Import the main calculation function from indicator module
 from .indicator import calculate_pressure_vector
+from ..cli.cli import parse_indicator_parameters
 
 # Definition of the calculate_indicator function
 def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
@@ -30,16 +32,17 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         tuple: (result_df, selected_rule) containing calculated indicator values.
                Raises ValueError/KeyError on critical failure.
     """
-    # --- Input Validation ---
-    if ohlcv_df is None or ohlcv_df.empty:
-        raise ValueError("No data available for calculation.")
-    if point_size is None:
-         raise ValueError("Point size is None. Cannot calculate indicator.")
-
-    logger.print_info(f"\n--- Step 3: Calculating Indicator (Rule: {args.rule}) ---")
-
-    # --- Rule Name Conversion ---
+    # Parse indicator parameters if provided in format 'indicator:param1,param2,param3,param4'
     rule_input_str = args.rule
+    indicator_params = {}
+    
+    if ':' in rule_input_str:
+        indicator_name, indicator_params = parse_indicator_parameters(rule_input_str)
+        # Update the rule name to the parsed indicator name
+        rule_input_str = indicator_name.upper()
+        logger.print_debug(f"Parsed indicator parameters: {indicator_params}")
+    
+    # Map rule aliases to full names
     rule_aliases_map = {
         'PHLD': 'Predict_High_Low_Direction', 
         'PV': 'Pressure_Vector', 
@@ -146,11 +149,20 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
                         logger.print_debug(f"Added extra column '{col}' to AUTO result")
             return result_df, selected_rule
 
+        # Apply indicator parameters if provided
+        price_type = indicator_params.get('price_type', getattr(args, 'price_type', 'close'))
+        
+        # Create a modified args object with indicator parameters
+        modified_args = args
+        for param_name, param_value in indicator_params.items():
+            setattr(modified_args, param_name, param_value)
+        
         result_df = calculate_pressure_vector(
             df=ohlcv_df_calc_input.copy(),
             point=point_size,
             tr_num=selected_rule,
-            price_type=getattr(args, 'price_type', 'close'),
+            price_type=price_type,
+            **indicator_params
         )
     except Exception as e:
          logger.print_error(f"Exception during calculate_pressure_vector: {e}")
