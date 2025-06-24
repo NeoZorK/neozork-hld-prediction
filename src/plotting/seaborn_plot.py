@@ -105,12 +105,12 @@ def plot_indicator_results_seaborn(
         
         if buy_signals.any():
             buy_indices = [i for i, signal in enumerate(buy_signals) if signal]
-            buy_prices = df['Low'].iloc[buy_signals] * 0.998
+            buy_prices = df.loc[buy_signals, 'Low'] * 0.998
             ax_price.scatter(buy_indices, buy_prices, color='lime', marker='^', s=50, label='BUY Signal')
         
         if sell_signals.any():
             sell_indices = [i for i, signal in enumerate(sell_signals) if signal]
-            sell_prices = df['High'].iloc[sell_signals] * 1.002
+            sell_prices = df.loc[sell_signals, 'High'] * 1.002
             ax_price.scatter(sell_indices, sell_prices, color='red', marker='v', s=50, label='SELL Signal')
 
     # Set price chart title and labels
