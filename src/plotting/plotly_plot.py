@@ -7,6 +7,7 @@ from plotly.subplots import make_subplots
 
 from src.common import logger
 from src.common.constants import TradingRule, BUY, SELL
+from src.plotting.metrics_display import add_metrics_to_plotly_chart
 
 
 def plot_indicator_results_plotly(df_results: pd.DataFrame, rule: TradingRule, title: str = "Indicator Results") -> go.Figure | None:
@@ -180,5 +181,14 @@ def plot_indicator_results_plotly(df_results: pd.DataFrame, rule: TradingRule, t
     fig.update_yaxes(title_text="Price", row=1, col=1)
     # No need for the explicit loop to update y-axis titles here,
     # as it's done inside the main loop now.
+
+    # --- Add Trading Metrics ---
+    # Only add metrics if we have trading signals (Direction column)
+    if 'Direction' in df_results.columns:
+        try:
+            fig = add_metrics_to_plotly_chart(fig, df_results, position='right')
+            logger.print_info("Added trading metrics to Plotly chart")
+        except Exception as e:
+            logger.print_warning(f"Could not add trading metrics to chart: {e}")
 
     return fig
