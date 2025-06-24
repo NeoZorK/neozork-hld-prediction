@@ -875,9 +875,13 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
             metrics = _plot_indicator_calculation_result(args, df, result_df, found_files[0], selected_rule, point_size, metrics)
                         
         return metrics
-    except Exception as e:
+    except ValueError as e:
+        # Handle parameter parsing errors and other validation errors
         print(f"Error calculating indicator: {e}")
-        traceback.print_exc()
+        return metrics
+    except Exception as e:
+        # Handle other unexpected errors
+        print(f"Error calculating indicator: {e}")
         return metrics
 
 def _plot_indicator_calculation_result(args, original_df, result_df, file_info, selected_rule, point_size, metrics):
