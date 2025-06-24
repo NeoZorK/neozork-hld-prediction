@@ -23,6 +23,7 @@ def calculate_pressure_vector(
     point: float, # Instrument's point size (e.g., 0.00001 for EURUSD)
     tr_num: TradingRule = TradingRule.PV_HighLow,
     price_type: str = 'close',
+    **kwargs
 ) -> pd.DataFrame:
     """
     Calculates the Shcherbyna Pressure Vector indicator by orchestrating
@@ -34,6 +35,7 @@ def calculate_pressure_vector(
         point (float): Instrument point size. Cannot be zero.
         tr_num (TradingRule): Enum selecting the calculation mode/output rule.
         price_type (str): Price type for RSI calculations ('open' or 'close').
+        **kwargs: Additional parameters for specific indicators
 
     Returns:
         pd.DataFrame: DataFrame with original data and calculated indicator values/signals.
@@ -90,8 +92,8 @@ def calculate_pressure_vector(
     df_out['Direction'] = EMPTY_VALUE
     df_out['Diff'] = EMPTY_VALUE
 
-    # Apply the selected rule using the dispatcher function
-    df_out = apply_trading_rule(df_out, tr_num, point, price_type)
+    # Apply the selected rule using the dispatcher function with additional parameters
+    df_out = apply_trading_rule(df_out, tr_num, point, price_type, **kwargs)
 
 
     # --- Post-processing ---
