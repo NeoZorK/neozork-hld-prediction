@@ -573,7 +573,7 @@ def _print_colored_metrics(metrics: dict) -> None:
             elif value >= 0.1: 
                 return "💍", YELLOW, f"Moderate average trade. Look for opportunities to increase trade size or improve entry timing."
             else: 
-                return "💎", RED, f"Low average trade suggests strategy may not be worth the effort. Consider higher timeframe or different approach."
+                return "🔮", RED, f"Low average trade suggests strategy may not be worth the effort. Consider higher timeframe or different approach."
         
         # Risk/Reward Ratio: Green > 2.0, Yellow 1.5-2.0, Red < 1.5
         elif 'risk_reward' in metric_name.lower():
@@ -582,7 +582,7 @@ def _print_colored_metrics(metrics: dict) -> None:
             elif value >= 1.5: 
                 return "🎭", YELLOW, f"Acceptable risk/reward ratio. Consider adjusting stop-loss or take-profit levels."
             else: 
-                return "🎪", RED, f"Poor risk/reward ratio. Strategy risks more than it gains. Revise exit strategy."
+                return "🎨", RED, f"Poor risk/reward ratio. Strategy risks more than it gains. Revise exit strategy."
         
         # Default: Yellow for unknown metrics
         else:
