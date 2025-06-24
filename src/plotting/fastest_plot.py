@@ -169,22 +169,32 @@ def plot_indicator_results_fastest(
     )
 
     # === Метрики в отдельной колонке справа (col=2, row=1) ===
-    if 'Direction' in display_df.columns:
+    show_metrics = 'Direction' in display_df.columns
+    metrics = {}
+    warning_html = ""
+    if show_metrics:
         metrics = calculate_trading_metrics(display_df,
             lot_size=kwargs.get('lot_size', 1.0),
             risk_reward_ratio=kwargs.get('risk_reward_ratio', 2.0),
             fee_per_trade=kwargs.get('fee_per_trade', 0.07))
-        def color(val, good=0.7, warn=0.4):
-            try:
-                v = float(str(val).replace('%',''))
-                if v >= good*100: return '#00ff88'  # green
-                if v >= warn*100: return '#ffaa00'  # yellow
-                return '#ff4444'  # red
-            except: return '#888888'
-        metrics_html = f'''
+        all_notrade = (display_df['Direction'] == 0).all()
+        if all_notrade:
+            warning_html = "<div style='color:#ffaa00;font-size:1.1em;margin-bottom:8px;'>⚠️ No trading signals generated for selected parameters.</div>"
+    else:
+        warning_html = "<div style='color:#ff4444;font-size:1.1em;margin-bottom:8px;'>❌ No trading signals column found in result.</div>"
+
+    def color(val, good=0.7, warn=0.4):
+        try:
+            v = float(str(val).replace('%',''))
+            if v >= good*100: return '#00ff88'  # green
+            if v >= warn*100: return '#ffaa00'  # yellow
+            return '#ff4444'  # red
+        except: return '#888888'
+    metrics_html = f'''
 <div style="margin:40px auto 0 auto;max-width:700px;padding:22px 32px 22px 32px;
             background: #181c20; border-radius: 14px; border: 2px solid #333;
             font-family: 'Segoe UI', Arial, sans-serif; font-size: 17px; color: #fff; box-shadow: 0 4px 24px #0002;">
+  {warning_html}
   <h2 style="margin-top:0;margin-bottom:18px;font-size:1.5em;letter-spacing:0.5px;text-align:center;">
     <span style="font-size:1.2em;vertical-align:middle;">📊</span> <span style="color:#00ff88;">TRADING METRICS</span>
   </h2>
@@ -203,11 +213,11 @@ def plot_indicator_results_fastest(
   </div>
 </div>
 '''
-        with open(output_path, 'r', encoding='utf-8') as f:
-            html = f.read()
-        html = html.replace('</body>', metrics_html + '\n</body>')
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(html)
+    with open(output_path, 'r', encoding='utf-8') as f:
+        html = f.read()
+    html = html.replace('</body>', metrics_html + '\n</body>')
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write(html)
     # Отключить оси для колонки метрик
     for r in [1,2,3]:
         fig.update_xaxes(visible=False, row=r, col=2)
