@@ -220,12 +220,11 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
         # Show additional statistics
         _show_terminal_statistics(df, display_rule)
         
-        # === После plt.show() ===
-        # Вывести метрики отдельным блоком
+        # === After plt.show() ===
+        # Display metrics in a separate block with color coding
         metrics = calculate_trading_metrics(df_results)
         print("\n=== Trading Metrics ===")
-        for k, v in metrics.items():
-            print(f"{k}: {v}")
+        _print_colored_metrics(metrics)
         
         logger.print_success("Terminal plot generated successfully!")
         
@@ -491,3 +490,79 @@ def _calculate_prediction_accuracy(df: pd.DataFrame, pred_col: str, actual_col: 
         return accuracy
     except Exception:
         return None
+
+
+def _print_colored_metrics(metrics: dict) -> None:
+    """
+    Print trading metrics with color coding for strategy quality assessment.
+    Red = bad, Yellow = average, Green = good for profitable strategy.
+    """
+    # ANSI color codes
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+    
+    def get_metric_color(metric_name: str, value) -> str:
+        """Determine color based on metric name and value for profitable strategy."""
+        try:
+            value = float(str(value).replace('%', '').replace(',', ''))
+        except:
+            return YELLOW  # Default to yellow for non-numeric values
+        
+        # Win Rate: Green > 60%, Yellow 40-60%, Red < 40%
+        if 'win' in metric_name.lower() or 'win_rate' in metric_name.lower():
+            if value >= 60: return GREEN
+            elif value >= 40: return YELLOW
+            else: return RED
+        
+        # Profit Factor: Green > 1.5, Yellow 1.0-1.5, Red < 1.0
+        elif 'profit_factor' in metric_name.lower():
+            if value >= 1.5: return GREEN
+            elif value >= 1.0: return YELLOW
+            else: return RED
+        
+        # Total Return: Green > 20%, Yellow 5-20%, Red < 5%
+        elif 'total_return' in metric_name.lower() or 'return' in metric_name.lower():
+            if value >= 20: return GREEN
+            elif value >= 5: return YELLOW
+            else: return RED
+        
+        # Sharpe Ratio: Green > 1.0, Yellow 0.5-1.0, Red < 0.5
+        elif 'sharpe' in metric_name.lower():
+            if value >= 1.0: return GREEN
+            elif value >= 0.5: return YELLOW
+            else: return RED
+        
+        # Max Drawdown: Green < 10%, Yellow 10-20%, Red > 20%
+        elif 'drawdown' in metric_name.lower():
+            if value <= 10: return GREEN
+            elif value <= 20: return YELLOW
+            else: return RED
+        
+        # Number of Trades: Green 20-100, Yellow 10-20 or 100-200, Red < 10 or > 200
+        elif 'trades' in metric_name.lower() or 'total_trades' in metric_name.lower():
+            if 20 <= value <= 100: return GREEN
+            elif 10 <= value <= 200: return YELLOW
+            else: return RED
+        
+        # Average Trade: Green > 0.5%, Yellow 0.1-0.5%, Red < 0.1%
+        elif 'average_trade' in metric_name.lower():
+            if value >= 0.5: return GREEN
+            elif value >= 0.1: return YELLOW
+            else: return RED
+        
+        # Risk/Reward Ratio: Green > 2.0, Yellow 1.5-2.0, Red < 1.5
+        elif 'risk_reward' in metric_name.lower():
+            if value >= 2.0: return GREEN
+            elif value >= 1.5: return YELLOW
+            else: return RED
+        
+        # Default: Yellow for unknown metrics
+        else:
+            return YELLOW
+    
+    for metric_name, value in metrics.items():
+        color = get_metric_color(metric_name, value)
+        print(f"{color}{BOLD}{metric_name}:{RESET} {color}{value}{RESET}")
