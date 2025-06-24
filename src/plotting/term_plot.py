@@ -510,7 +510,7 @@ def _print_colored_metrics(metrics: dict) -> None:
         try:
             value = float(str(value).replace('%', '').replace(',', ''))
         except:
-            return "📊", YELLOW, "Unknown metric - needs analysis"
+            return "📊", YELLOW, "Non-numeric value - check data quality."
         
         # Win Rate: Green > 60%, Yellow 40-60%, Red < 40%
         if 'win' in metric_name.lower() or 'win_rate' in metric_name.lower():
@@ -526,67 +526,454 @@ def _print_colored_metrics(metrics: dict) -> None:
             if value >= 1.5: 
                 return "💰", GREEN, f"Strong profit factor! Strategy generates good profits vs losses. Optimize position sizing."
             elif value >= 1.0: 
-                return "💵", YELLOW, f"Break-even profit factor. Focus on reducing losses and improving risk/reward ratio."
+                return "💵", YELLOW, f"Moderate profit factor. Focus on improving win rate or average win size."
             else: 
-                return "📉", RED, f"Strategy is losing money. Revise entry/exit rules or change market conditions."
+                return "📉", RED, f"Poor profit factor. Strategy loses more than it gains. Major revision needed."
         
         # Total Return: Green > 20%, Yellow 5-20%, Red < 5%
-        elif 'total_return' in metric_name.lower() or 'return' in metric_name.lower():
+        elif 'total_return' in metric_name.lower():
             if value >= 20: 
                 return "🚀", GREEN, f"Outstanding returns! Strategy is highly effective. Consider scaling up carefully."
             elif value >= 5: 
-                return "📈", YELLOW, f"Moderate returns. Look for ways to increase win rate or position size."
+                return "📈", YELLOW, f"Good returns. Strategy is profitable but could be optimized further."
             else: 
-                return "📊", RED, f"Low returns suggest strategy needs improvement. Review market selection and timing."
+                return "📊", RED, f"Low returns. Strategy needs significant improvement or market conditions are unfavorable."
         
         # Sharpe Ratio: Green > 1.0, Yellow 0.5-1.0, Red < 0.5
-        elif 'sharpe' in metric_name.lower():
+        elif 'sharpe_ratio' in metric_name.lower():
             if value >= 1.0: 
-                return "⭐", GREEN, f"Excellent risk-adjusted returns! Strategy is well-balanced. Maintain current approach."
+                return "⭐", GREEN, f"Excellent risk-adjusted returns! Strategy is very efficient."
             elif value >= 0.5: 
-                return "✨", YELLOW, f"Acceptable risk-adjusted returns. Work on reducing volatility or increasing returns."
+                return "✨", YELLOW, f"Good risk-adjusted returns. Consider reducing volatility or increasing returns."
             else: 
-                return "💫", RED, f"Poor risk-adjusted returns. Strategy has high risk for low reward. Revise risk management."
+                return "💫", RED, f"Poor risk-adjusted returns. High volatility relative to returns."
         
         # Max Drawdown: Green < 10%, Yellow 10-20%, Red > 20%
-        elif 'drawdown' in metric_name.lower():
+        elif 'max_drawdown' in metric_name.lower():
             if value <= 10: 
-                return "🛡️", GREEN, f"Excellent risk control! Low drawdown shows good capital preservation."
+                return "🛡️", GREEN, f"Excellent risk management! Very low drawdown indicates good capital preservation."
             elif value <= 20: 
-                return "⚠️", YELLOW, f"Moderate drawdown. Consider reducing position size or improving stop-losses."
+                return "⚠️", YELLOW, f"Acceptable drawdown. Consider improving stop-loss or position sizing."
             else: 
-                return "💥", RED, f"High drawdown is dangerous! Reduce position size and improve risk management immediately."
+                return "💥", RED, f"High drawdown! Risk management needs immediate attention."
         
         # Number of Trades: Green 20-100, Yellow 10-20 or 100-200, Red < 10 or > 200
-        elif 'trades' in metric_name.lower() or 'total_trades' in metric_name.lower():
+        elif 'total_trades' in metric_name.lower() or 'buy_count' in metric_name.lower() or 'sell_count' in metric_name.lower():
             if 20 <= value <= 100: 
-                return "🎲", GREEN, f"Good sample size for analysis. Strategy has sufficient data for reliable evaluation."
-            elif 10 <= value <= 200: 
-                return "🎯", YELLOW, f"Sample size needs attention. Too few trades may not be representative, too many may indicate overtrading."
+                return "🎲", GREEN, f"Optimal number of trades. Good balance between activity and quality."
+            elif 10 <= value <= 20 or 100 <= value <= 200: 
+                return "🎪", YELLOW, f"Trade frequency needs adjustment. Too few or too many trades."
             else: 
-                return "🎪", RED, f"Sample size issues. Too few trades for reliable analysis or too many indicating poor selectivity."
+                return "🎭", RED, f"Extreme trade frequency. Strategy may be over-trading or under-trading."
         
-        # Average Trade: Green > 0.5%, Yellow 0.1-0.5%, Red < 0.1%
+        # Average Trade: Green > 2%, Yellow 0.5-2%, Red < 0.5%
         elif 'average_trade' in metric_name.lower():
-            if value >= 0.5: 
-                return "💎", GREEN, f"Excellent average trade! Each trade contributes significantly to profits."
-            elif value >= 0.1: 
-                return "💍", YELLOW, f"Moderate average trade. Look for opportunities to increase trade size or improve entry timing."
+            if value >= 2: 
+                return "💎", GREEN, f"Excellent average trade size! Strategy captures significant moves."
+            elif value >= 0.5: 
+                return "🔮", YELLOW, f"Moderate average trade size. Consider improving entry/exit timing."
             else: 
-                return "🔮", RED, f"Low average trade suggests strategy may not be worth the effort. Consider higher timeframe or different approach."
+                return "💍", RED, f"Small average trade size. Strategy may be taking profits too early."
         
         # Risk/Reward Ratio: Green > 2.0, Yellow 1.5-2.0, Red < 1.5
-        elif 'risk_reward' in metric_name.lower():
+        elif 'risk_reward_ratio' in metric_name.lower():
             if value >= 2.0: 
-                return "⚖️", GREEN, f"Excellent risk/reward ratio! Strategy has asymmetric upside potential."
+                return "⚖️", GREEN, f"Excellent risk/reward ratio! Strategy has strong asymmetric returns."
             elif value >= 1.5: 
-                return "🎭", YELLOW, f"Acceptable risk/reward ratio. Consider adjusting stop-loss or take-profit levels."
+                return "🎪", YELLOW, f"Good risk/reward ratio. Consider improving target/stop placement."
             else: 
-                return "🎨", RED, f"Poor risk/reward ratio. Strategy risks more than it gains. Revise exit strategy."
+                return "🎭", RED, f"Poor risk/reward ratio. Strategy risks more than it gains."
         
-        # Default: Yellow for unknown metrics
+        # Sortino Ratio: Green > 1.0, Yellow 0.5-1.0, Red < 0.5
+        elif 'sortino_ratio' in metric_name.lower():
+            if value >= 1.0: 
+                return "🛡️", GREEN, f"Excellent downside risk management! Strategy handles losses well."
+            elif value >= 0.5: 
+                return "⚔️", YELLOW, f"Good downside risk management. Consider improving loss control."
+            else: 
+                return "🗡️", RED, f"Poor downside risk management. Strategy has excessive losses."
+        
+        # Volatility: Green < 15%, Yellow 15-25%, Red > 25%
+        elif 'volatility' in metric_name.lower():
+            if value <= 15: 
+                return "🎯", GREEN, f"Low volatility! Strategy is very stable and predictable."
+            elif value <= 25: 
+                return "🎪", YELLOW, f"Moderate volatility. Consider risk management improvements."
+            else: 
+                return "🎭", RED, f"High volatility! Strategy is very risky and unpredictable."
+        
+        # Calmar Ratio: Green > 1.0, Yellow 0.5-1.0, Red < 0.5
+        elif 'calmar_ratio' in metric_name.lower():
+            if value >= 1.0: 
+                return "🏆", GREEN, f"Excellent return vs drawdown ratio! Strategy is very efficient."
+            elif value >= 0.5: 
+                return "🎯", YELLOW, f"Good return vs drawdown ratio. Consider improving risk management."
+            else: 
+                return "💔", RED, f"Poor return vs drawdown ratio. Strategy has high risk for low returns."
+        
+        # Kelly Fraction: Green 0.1-0.3, Yellow 0.05-0.1 or 0.3-0.5, Red < 0.05 or > 0.5
+        elif 'kelly_fraction' in metric_name.lower():
+            if 0.1 <= value <= 0.3: 
+                return "🎯", GREEN, f"Optimal position sizing! Kelly criterion suggests good risk management."
+            elif 0.05 <= value <= 0.1 or 0.3 <= value <= 0.5: 
+                return "⚖️", YELLOW, f"Position sizing needs adjustment. Consider Kelly criterion optimization."
+            else: 
+                return "🎪", RED, f"Poor position sizing! Kelly criterion suggests major risk management issues."
+        
+        # Strategy Efficiency: Green > 80%, Yellow 60-80%, Red < 60%
+        elif 'strategy_efficiency' in metric_name.lower():
+            if value >= 80: 
+                return "⚡", GREEN, f"Excellent strategy efficiency! Low fees and high net returns."
+            elif value >= 60: 
+                return "🔋", YELLOW, f"Good strategy efficiency. Consider reducing trading costs."
+            else: 
+                return "🔌", RED, f"Poor strategy efficiency. High fees eating into profits."
+        
+        # Monte Carlo Expected Return: Green > 15%, Yellow 5-15%, Red < 5%
+        elif 'mc_expected_return' in metric_name.lower():
+            if value >= 15: 
+                return "🎲", GREEN, f"Strong expected returns from Monte Carlo simulation! Strategy is robust."
+            elif value >= 5: 
+                return "🎪", YELLOW, f"Moderate expected returns. Strategy shows some promise."
+            else: 
+                return "🎭", RED, f"Low expected returns. Strategy may not be profitable long-term."
+        
+        # Monte Carlo Probability of Profit: Green > 70%, Yellow 50-70%, Red < 50%
+        elif 'mc_probability_profit' in metric_name.lower():
+            if value >= 70: 
+                return "🎯", GREEN, f"High probability of profit! Monte Carlo shows strategy is very reliable."
+            elif value >= 50: 
+                return "🎪", YELLOW, f"Moderate probability of profit. Strategy has some reliability."
+            else: 
+                return "🎭", RED, f"Low probability of profit. Strategy may not be reliable long-term."
+        
+        # Strategy Robustness: Green > 80%, Yellow 60-80%, Red < 60%
+        elif 'strategy_robustness' in metric_name.lower():
+            if value >= 80: 
+                return "🛡️", GREEN, f"Excellent strategy robustness! Very consistent across different scenarios."
+            elif value >= 60: 
+                return "⚔️", YELLOW, f"Good strategy robustness. Some consistency but room for improvement."
+            else: 
+                return "🗡️", RED, f"Poor strategy robustness. Inconsistent results across scenarios."
+        
+        # Risk of Ruin: Green < 10%, Yellow 10-30%, Red > 30%
+        elif 'risk_of_ruin' in metric_name.lower():
+            if value <= 10: 
+                return "🛡️", GREEN, f"Very low risk of ruin! Strategy is very safe for capital preservation."
+            elif value <= 30: 
+                return "⚠️", YELLOW, f"Moderate risk of ruin. Consider improving risk management."
+            else: 
+                return "💥", RED, f"High risk of ruin! Strategy is very dangerous for capital."
+        
+        # Signal Accuracy: Green > 70%, Yellow 50-70%, Red < 50%
+        elif 'signal_accuracy' in metric_name.lower():
+            if value >= 70: 
+                return "🎯", GREEN, f"Excellent signal accuracy! Trading signals are very reliable."
+            elif value >= 50: 
+                return "🎪", YELLOW, f"Moderate signal accuracy. Consider improving signal generation."
+            else: 
+                return "🎭", RED, f"Poor signal accuracy. Trading signals are unreliable."
+        
+        # Signal Frequency: Green 0.1-0.3, Yellow 0.05-0.1 or 0.3-0.5, Red < 0.05 or > 0.5
+        elif 'signal_frequency' in metric_name.lower():
+            if 0.1 <= value <= 0.3: 
+                return "⚡", GREEN, f"Optimal signal frequency! Good balance between activity and quality."
+            elif 0.05 <= value <= 0.1 or 0.3 <= value <= 0.5: 
+                return "🔋", YELLOW, f"Signal frequency needs adjustment. Too few or too many signals."
+            else: 
+                return "🔌", RED, f"Extreme signal frequency. Strategy may be over-trading or under-trading."
+        
+        # Signal Stability: Green > 80%, Yellow 60-80%, Red < 60%
+        elif 'signal_stability' in metric_name.lower():
+            if value >= 80: 
+                return "🛡️", GREEN, f"Excellent signal stability! Strategy is very consistent."
+            elif value >= 60: 
+                return "⚔️", YELLOW, f"Good signal stability. Some consistency but room for improvement."
+            else: 
+                return "🗡️", RED, f"Poor signal stability. Strategy is very inconsistent."
+        
+        # Pattern Consistency: Green > 70%, Yellow 50-70%, Red < 50%
+        elif 'pattern_consistency' in metric_name.lower():
+            if value >= 70: 
+                return "🎯", GREEN, f"Excellent pattern consistency! Strategy follows reliable patterns."
+            elif value >= 50: 
+                return "🎪", YELLOW, f"Moderate pattern consistency. Some patterns but room for improvement."
+            else: 
+                return "🎭", RED, f"Poor pattern consistency. Strategy lacks reliable patterns."
+        
+        # Signal Clustering: Green > 70%, Yellow 50-70%, Red < 50%
+        elif 'signal_clustering' in metric_name.lower():
+            if value >= 70: 
+                return "🎯", GREEN, f"Excellent signal clustering! Strategy has good market timing."
+            elif value >= 50: 
+                return "🎪", YELLOW, f"Moderate signal clustering. Some market timing but room for improvement."
+            else: 
+                return "🎭", RED, f"Poor signal clustering. Strategy lacks good market timing."
+        
+        # Volume Weighted Return: Green > 2%, Yellow 0.5-2%, Red < 0.5%
+        elif 'volume_weighted_return' in metric_name.lower():
+            if value >= 2: 
+                return "📊", GREEN, f"Excellent volume-weighted returns! Strategy performs well on high volume."
+            elif value >= 0.5: 
+                return "📈", YELLOW, f"Good volume-weighted returns. Consider volume analysis."
+            else: 
+                return "📉", RED, f"Poor volume-weighted returns. Strategy struggles on high volume."
+        
+        # Volume Win Ratio: Green > 70%, Yellow 50-70%, Red < 50%
+        elif 'volume_win_ratio' in metric_name.lower():
+            if value >= 70: 
+                return "📊", GREEN, f"Excellent volume win ratio! Strategy wins on high volume periods."
+            elif value >= 50: 
+                return "📈", YELLOW, f"Good volume win ratio. Consider volume-based filtering."
+            else: 
+                return "📉", RED, f"Poor volume win ratio. Strategy loses on high volume periods."
+        
+        # Fee Impact: Green < 10%, Yellow 10-25%, Red > 25%
+        elif 'fee_impact' in metric_name.lower():
+            if value <= 10: 
+                return "💰", GREEN, f"Low fee impact! Trading costs are well managed."
+            elif value <= 25: 
+                return "💵", YELLOW, f"Moderate fee impact. Consider reducing trading frequency."
+            else: 
+                return "📉", RED, f"High fee impact! Trading costs are eating into profits significantly."
+        
+        # Strategy Sustainability: Green > 80%, Yellow 60-80%, Red < 60%
+        elif 'strategy_sustainability' in metric_name.lower():
+            if value >= 80: 
+                return "🌱", GREEN, f"Excellent strategy sustainability! Strategy is well-designed for long-term success."
+            elif value >= 60: 
+                return "🌿", YELLOW, f"Good strategy sustainability. Some improvements needed for long-term success."
+            else: 
+                return "🍂", RED, f"Poor strategy sustainability. Strategy may not be viable long-term."
+        
+        # Break Even Win Rate: Green < 40%, Yellow 40-50%, Red > 50%
+        elif 'break_even_win_rate' in metric_name.lower():
+            if value <= 40: 
+                return "🎯", GREEN, f"Low break-even win rate! Strategy is very efficient."
+            elif value <= 50: 
+                return "🎪", YELLOW, f"Moderate break-even win rate. Strategy efficiency needs improvement."
+            else: 
+                return "🎭", RED, f"High break-even win rate! Strategy is very inefficient."
+        
+        # Minimum Win Rate for Profit: Green < 40%, Yellow 40-50%, Red > 50%
+        elif 'min_win_rate_for_profit' in metric_name.lower():
+            if value <= 40: 
+                return "🎯", GREEN, f"Low minimum win rate needed! Strategy is very forgiving."
+            elif value <= 50: 
+                return "🎪", YELLOW, f"Moderate minimum win rate needed. Strategy requires good execution."
+            else: 
+                return "🎭", RED, f"High minimum win rate needed! Strategy is very demanding."
+        
+        # Risk Adjusted Return with Fees: Green > 2.0, Yellow 1.0-2.0, Red < 1.0
+        elif 'risk_adjusted_return_with_fees' in metric_name.lower():
+            if value >= 2.0: 
+                return "⚡", GREEN, f"Excellent risk-adjusted returns with fees! Strategy is very efficient."
+            elif value >= 1.0: 
+                return "🔋", YELLOW, f"Good risk-adjusted returns with fees. Some efficiency improvements possible."
+            else: 
+                return "🔌", RED, f"Poor risk-adjusted returns with fees. Strategy efficiency needs major improvement."
+        
+        # Monte Carlo VaR 95%: Green > -10%, Yellow -10% to -20%, Red < -20%
+        elif 'mc_var_95' in metric_name.lower():
+            if value >= -10: 
+                return "🛡️", GREEN, f"Low Value at Risk! Strategy has good downside protection."
+            elif value >= -20: 
+                return "⚠️", YELLOW, f"Moderate Value at Risk. Consider improving risk management."
+            else: 
+                return "💥", RED, f"High Value at Risk! Strategy has poor downside protection."
+        
+        # Monte Carlo CVaR 95%: Green > -15%, Yellow -15% to -25%, Red < -25%
+        elif 'mc_cvar_95' in metric_name.lower():
+            if value >= -15: 
+                return "🛡️", GREEN, f"Low Conditional Value at Risk! Strategy handles extreme losses well."
+            elif value >= -25: 
+                return "⚠️", YELLOW, f"Moderate Conditional Value at Risk. Consider improving extreme loss management."
+            else: 
+                return "💥", RED, f"High Conditional Value at Risk! Strategy handles extreme losses poorly."
+        
+        # Monte Carlo Max Loss: Green > -20%, Yellow -20% to -40%, Red < -40%
+        elif 'mc_max_loss' in metric_name.lower():
+            if value >= -20: 
+                return "🛡️", GREEN, f"Low maximum loss! Strategy has excellent capital preservation."
+            elif value >= -40: 
+                return "⚠️", YELLOW, f"Moderate maximum loss. Consider improving worst-case scenario management."
+            else: 
+                return "💥", RED, f"High maximum loss! Strategy has poor capital preservation."
+        
+        # Monte Carlo Max Gain: Green > 50%, Yellow 25-50%, Red < 25%
+        elif 'mc_max_gain' in metric_name.lower():
+            if value >= 50: 
+                return "🚀", GREEN, f"High maximum gain potential! Strategy can achieve excellent returns."
+            elif value >= 25: 
+                return "📈", YELLOW, f"Moderate maximum gain potential. Some upside but room for improvement."
+            else: 
+                return "📊", RED, f"Low maximum gain potential. Strategy has limited upside."
+        
+        # Monte Carlo Sharpe Ratio: Green > 1.0, Yellow 0.5-1.0, Red < 0.5
+        elif 'mc_sharpe_ratio' in metric_name.lower():
+            if value >= 1.0: 
+                return "⭐", GREEN, f"Excellent Monte Carlo Sharpe ratio! Strategy is very efficient across scenarios."
+            elif value >= 0.5: 
+                return "✨", YELLOW, f"Good Monte Carlo Sharpe ratio. Some efficiency across scenarios."
+            else: 
+                return "💫", RED, f"Poor Monte Carlo Sharpe ratio. Strategy is inefficient across scenarios."
+        
+        # Correlation metrics: Green > 0.3, Yellow 0.1-0.3, Red < 0.1
+        elif 'correlation' in metric_name.lower():
+            if value >= 0.3: 
+                return "🔗", GREEN, f"Strong correlation! This factor is well-aligned with strategy performance."
+            elif value >= 0.1: 
+                return "🔗", YELLOW, f"Moderate correlation. This factor has some relationship with strategy."
+            else: 
+                return "🔗", RED, f"Weak correlation. This factor has little relationship with strategy."
+        
+        # Probability Risk Ratio: Green > 2.0, Yellow 1.0-2.0, Red < 1.0
+        elif 'probability_risk_ratio' in metric_name.lower():
+            if value >= 2.0: 
+                return "🎯", GREEN, f"Excellent probability ratio! Strategy has much higher profit probability than loss."
+            elif value >= 1.0: 
+                return "🎪", YELLOW, f"Good probability ratio. Strategy has balanced profit/loss probability."
+            else: 
+                return "🎭", RED, f"Poor probability ratio. Strategy has higher loss probability than profit."
+        
+        # Position Size: Green 0.5-2.0, Yellow 0.1-0.5 or 2.0-5.0, Red < 0.1 or > 5.0
+        elif 'position_size' in metric_name.lower():
+            if 0.5 <= value <= 2.0: 
+                return "⚖️", GREEN, f"Optimal position size! Good balance between risk and reward."
+            elif 0.1 <= value <= 0.5 or 2.0 <= value <= 5.0: 
+                return "🎪", YELLOW, f"Position size needs adjustment. Consider risk management optimization."
+            else: 
+                return "🎭", RED, f"Extreme position size! Very risky or too conservative approach."
+        
+        # Optimal Position Size: Green 0.1-0.5, Yellow 0.05-0.1 or 0.5-1.0, Red < 0.05 or > 1.0
+        elif 'optimal_position_size' in metric_name.lower():
+            if 0.1 <= value <= 0.5: 
+                return "🎯", GREEN, f"Optimal position sizing! Kelly criterion suggests excellent risk management."
+            elif 0.05 <= value <= 0.1 or 0.5 <= value <= 1.0: 
+                return "🎪", YELLOW, f"Position sizing needs fine-tuning. Consider Kelly criterion optimization."
+            else: 
+                return "🎭", RED, f"Poor position sizing! Kelly criterion suggests major risk management issues."
+        
+        # Net Return: Green > 10%, Yellow 2-10%, Red < 2%
+        elif 'net_return' in metric_name.lower():
+            if value >= 10: 
+                return "💰", GREEN, f"Excellent net returns! Strategy is highly profitable after fees."
+            elif value >= 2: 
+                return "💵", YELLOW, f"Good net returns. Strategy is profitable but could be optimized."
+            else: 
+                return "📉", RED, f"Poor net returns. Strategy may not be profitable after fees."
+        
+        # Max Risk Per Trade: Green < 1%, Yellow 1-3%, Red > 3%
+        elif 'max_risk_per_trade' in metric_name.lower():
+            if value <= 1: 
+                return "🛡️", GREEN, f"Excellent risk per trade! Very conservative and safe approach."
+            elif value <= 3: 
+                return "⚠️", YELLOW, f"Moderate risk per trade. Consider position sizing optimization."
+            else: 
+                return "💥", RED, f"High risk per trade! Very dangerous approach to risk management."
+        
+        # Expected Risk Per Trade: Green < 0.5%, Yellow 0.5-1.5%, Red > 1.5%
+        elif 'expected_risk_per_trade' in metric_name.lower():
+            if value <= 0.5: 
+                return "🛡️", GREEN, f"Excellent expected risk! Strategy has very low expected losses."
+            elif value <= 1.5: 
+                return "⚠️", YELLOW, f"Moderate expected risk. Consider improving risk management."
+            else: 
+                return "💥", RED, f"High expected risk! Strategy has significant expected losses."
+        
+        # Expected Reward Per Trade: Green > 2%, Yellow 0.5-2%, Red < 0.5%
+        elif 'expected_reward_per_trade' in metric_name.lower():
+            if value >= 2: 
+                return "💰", GREEN, f"Excellent expected reward! Strategy has high expected profits."
+            elif value >= 0.5: 
+                return "💵", YELLOW, f"Good expected reward. Consider improving profit potential."
+            else: 
+                return "📉", RED, f"Low expected reward. Strategy has limited profit potential."
+        
+        # Signal Timing Score: Green > 1%, Yellow 0.1-1%, Red < 0.1%
+        elif 'signal_timing_score' in metric_name.lower():
+            if value >= 1: 
+                return "🎯", GREEN, f"Excellent signal timing! Strategy has very good market timing."
+            elif value >= 0.1: 
+                return "🎪", YELLOW, f"Good signal timing. Consider improving entry/exit timing."
+            else: 
+                return "🎭", RED, f"Poor signal timing. Strategy has poor market timing."
+        
+        # Momentum Correlation: Green > 0.3, Yellow 0.1-0.3, Red < 0.1
+        elif 'momentum_correlation' in metric_name.lower():
+            if value >= 0.3: 
+                return "📈", GREEN, f"Strong momentum correlation! Strategy follows price momentum well."
+            elif value >= 0.1: 
+                return "📊", YELLOW, f"Moderate momentum correlation. Some momentum following but room for improvement."
+            else: 
+                return "📉", RED, f"Weak momentum correlation. Strategy doesn't follow price momentum well."
+        
+        # Volatility Correlation: Green > 0.3, Yellow 0.1-0.3, Red < 0.1
+        elif 'volatility_correlation' in metric_name.lower():
+            if value >= 0.3: 
+                return "📊", GREEN, f"Strong volatility correlation! Strategy adapts well to market volatility."
+            elif value >= 0.1: 
+                return "📈", YELLOW, f"Moderate volatility correlation. Some volatility adaptation but room for improvement."
+            else: 
+                return "📉", RED, f"Weak volatility correlation. Strategy doesn't adapt well to market volatility."
+        
+        # Trend Correlation: Green > 0.3, Yellow 0.1-0.3, Red < 0.1
+        elif 'trend_correlation' in metric_name.lower():
+            if value >= 0.3: 
+                return "📈", GREEN, f"Strong trend correlation! Strategy follows market trends well."
+            elif value >= 0.1: 
+                return "📊", YELLOW, f"Moderate trend correlation. Some trend following but room for improvement."
+            else: 
+                return "📉", RED, f"Weak trend correlation. Strategy doesn't follow market trends well."
+        
+        # Risk Adjusted Momentum: Green > 1.0, Yellow 0.5-1.0, Red < 0.5
+        elif 'risk_adjusted_momentum' in metric_name.lower():
+            if value >= 1.0: 
+                return "📈", GREEN, f"Excellent risk-adjusted momentum! Strategy captures momentum efficiently."
+            elif value >= 0.5: 
+                return "📊", YELLOW, f"Good risk-adjusted momentum. Some momentum capture but room for improvement."
+            else: 
+                return "📉", RED, f"Poor risk-adjusted momentum. Strategy doesn't capture momentum efficiently."
+        
+        # Risk Adjusted Trend: Green > 1.0, Yellow 0.5-1.0, Red < 0.5
+        elif 'risk_adjusted_trend' in metric_name.lower():
+            if value >= 1.0: 
+                return "📈", GREEN, f"Excellent risk-adjusted trend! Strategy follows trends efficiently."
+            elif value >= 0.5: 
+                return "📊", YELLOW, f"Good risk-adjusted trend. Some trend following but room for improvement."
+            else: 
+                return "📉", RED, f"Poor risk-adjusted trend. Strategy doesn't follow trends efficiently."
+        
+        # Monte Carlo Standard Deviation: Green < 10%, Yellow 10-20%, Red > 20%
+        elif 'mc_std_deviation' in metric_name.lower():
+            if value <= 10: 
+                return "🛡️", GREEN, f"Low Monte Carlo deviation! Strategy is very consistent across scenarios."
+            elif value <= 20: 
+                return "⚠️", YELLOW, f"Moderate Monte Carlo deviation. Some consistency but room for improvement."
+            else: 
+                return "💥", RED, f"High Monte Carlo deviation! Strategy is very inconsistent across scenarios."
+        
+        # Risk Reward Setting: Green 1.5-3.0, Yellow 1.0-1.5 or 3.0-5.0, Red < 1.0 or > 5.0
+        elif 'risk_reward_setting' in metric_name.lower():
+            if 1.5 <= value <= 3.0: 
+                return "⚖️", GREEN, f"Optimal risk/reward setting! Good balance between risk and reward."
+            elif 1.0 <= value <= 1.5 or 3.0 <= value <= 5.0: 
+                return "🎪", YELLOW, f"Risk/reward setting needs adjustment. Consider optimization."
+            else: 
+                return "🎭", RED, f"Extreme risk/reward setting! Very aggressive or too conservative."
+        
+        # Fee Per Trade: Green < 0.05%, Yellow 0.05-0.15%, Red > 0.15%
+        elif 'fee_per_trade' in metric_name.lower():
+            if value <= 0.05: 
+                return "💰", GREEN, f"Low trading fees! Excellent cost management."
+            elif value <= 0.15: 
+                return "💵", YELLOW, f"Moderate trading fees. Consider reducing costs."
+            else: 
+                return "📉", RED, f"High trading fees! Costs are eating into profits significantly."
+        
+        # Default for unknown metrics
         else:
-            return "📊", YELLOW, "Unknown metric - requires manual analysis"
+            return "📊", YELLOW, f"Unknown metric '{metric_name}'. Consider reviewing strategy documentation."
     
     for metric_name, value in metrics.items():
         icon, color, description = get_metric_icon_color_and_description(metric_name, value)
