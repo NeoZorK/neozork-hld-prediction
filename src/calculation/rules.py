@@ -123,7 +123,7 @@ def apply_rule_support_resistants(df: pd.DataFrame, point: float):
     df['Diff'] = EMPTY_VALUE
     return df
 
-def apply_rule_pressure_vector(df: pd.DataFrame):
+def apply_rule_pressure_vector(df: pd.DataFrame, point: float):
     """Applies Pressure_Vector rule logic."""
     open_curr = _get_series(df, 'Open')
     pv_val = _get_series(df, 'PV')
@@ -236,7 +236,7 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
     price_type_enum = PriceType.OPEN if price_type.lower() == 'open' else PriceType.CLOSE
 
     # Call the rule function with the DataFrame and point
-    if selected_rule in [TradingRule.PV_HighLow, TradingRule.Support_Resistants, TradingRule.Predict_High_Low_Direction, TradingRule.AUTO]:
+    if selected_rule in [TradingRule.PV_HighLow, TradingRule.Support_Resistants, TradingRule.Pressure_Vector, TradingRule.Predict_High_Low_Direction, TradingRule.AUTO]:
         return rule_func(df, point=point)
     elif selected_rule in [TradingRule.RSI, TradingRule.RSI_Momentum, TradingRule.RSI_Divergence]:
         # Extract RSI-specific parameters
