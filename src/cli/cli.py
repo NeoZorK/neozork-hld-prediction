@@ -788,6 +788,18 @@ def parse_rsi_parameters(params_str: str) -> tuple[str, dict]:
     }
 
 
+def parse_rsi_momentum_parameters(params_str: str) -> tuple[str, dict]:
+    # Точно такие же параметры, как у RSI, но имя другое
+    name, params = parse_rsi_parameters(params_str)
+    return 'rsi_mom', params
+
+
+def parse_rsi_divergence_parameters(params_str: str) -> tuple[str, dict]:
+    # Точно такие же параметры, как у RSI, но имя другое
+    name, params = parse_rsi_parameters(params_str)
+    return 'rsi_div', params
+
+
 def parse_macd_parameters(params_str: str) -> tuple[str, dict]:
     """Parse MACD parameters: fast_period,slow_period,signal_period,price_type"""
     params = params_str.split(',')
@@ -1200,9 +1212,9 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
         if indicator_name == 'rsi':
             return parse_rsi_parameters(params_str)
         elif indicator_name == 'rsi_mom':
-            return parse_rsi_parameters(params_str)  # RSI Momentum uses same parameters as RSI
+            return parse_rsi_momentum_parameters(params_str)
         elif indicator_name == 'rsi_div':
-            return parse_rsi_parameters(params_str)  # RSI Divergence uses same parameters as RSI
+            return parse_rsi_divergence_parameters(params_str)
         elif indicator_name == 'macd':
             return parse_macd_parameters(params_str)
         elif indicator_name == 'stoch':
