@@ -98,7 +98,8 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
     metrics = calculate_trading_metrics(df_results)
     metrics_text = '\n'.join([f"{k}: {v}" for k,v in metrics.items()])
     panel_count += 1
-    plots_to_add.append(mpf.make_addplot([None]*len(df_results), panel=panel_count, type='text', secondary_y=False, color='black', ylabel='Metrics', text=metrics_text))
+    # Вместо этого просто выводим метрики в консоль
+    logger.print_info(f"Trading metrics:\n{metrics_text}")
     ratios = [4]
     ratios.extend([1] * panel_count)
     if 'Volume' in df_results.columns and not df_results['Volume'].isnull().all():
