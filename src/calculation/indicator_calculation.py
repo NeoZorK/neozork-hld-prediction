@@ -161,7 +161,6 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
             df=ohlcv_df_calc_input.copy(),
             point=point_size,
             tr_num=selected_rule,
-            price_type=price_type,
             **indicator_params
         )
     except Exception as e:
