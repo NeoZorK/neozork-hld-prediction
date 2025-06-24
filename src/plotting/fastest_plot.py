@@ -177,29 +177,29 @@ def plot_indicator_results_fastest(
         def color(val, good=0.7, warn=0.4):
             try:
                 v = float(str(val).replace('%',''))
-                if v >= good*100: return '#2ecc40'
-                if v >= warn*100: return '#e67e22'
-                return '#e74c3c'
-            except: return '#222'
+                if v >= good*100: return '#00ff88'  # green
+                if v >= warn*100: return '#ffaa00'  # yellow
+                return '#ff4444'  # red
+            except: return '#888888'
         metrics_html = f'''
-<div style="margin:40px auto 0 auto;max-width:900px;padding:18px 28px 18px 28px;
-            background: #f8f9fa; border-radius: 12px; border: 1.5px solid #e0e0e0;
-            font-family: 'Segoe UI', Arial, sans-serif; font-size: 17px; color: #222;">
-  <h2 style="margin-top:0;margin-bottom:12px;font-size:1.5em;">
-    📊 <span style="color:#2e5cb8;">Trading Metrics</span>
+<div style="margin:40px auto 0 auto;max-width:700px;padding:22px 32px 22px 32px;
+            background: #181c20; border-radius: 14px; border: 2px solid #333;
+            font-family: 'Segoe UI', Arial, sans-serif; font-size: 17px; color: #fff; box-shadow: 0 4px 24px #0002;">
+  <h2 style="margin-top:0;margin-bottom:18px;font-size:1.5em;letter-spacing:0.5px;text-align:center;">
+    <span style="font-size:1.2em;vertical-align:middle;">📊</span> <span style="color:#00ff88;">TRADING METRICS</span>
   </h2>
-  <div style="display:flex;flex-wrap:wrap;gap:18px 32px;">
-    <div>🟢 <b>Buy Signals:</b> {metrics.get('buy_count',0)}</div>
-    <div>🔴 <b>Sell Signals:</b> {metrics.get('sell_count',0)}</div>
-    <div>📈 <b>Total Trades:</b> {metrics.get('total_trades',0)}</div>
-    <div>🎯 <b>Win Ratio:</b> <span style="color:{color(metrics.get('win_ratio',0)/100)};">{metrics.get('win_ratio',0):.1f}%</span></div>
-    <div>💰 <b>Profit Factor:</b> <span style="color:{color(metrics.get('profit_factor',0)/2)};">{metrics.get('profit_factor',0):.2f}</span></div>
-    <div>📊 <b>Sharpe Ratio:</b> <span style="color:{color(metrics.get('sharpe_ratio',0)/2)};">{metrics.get('sharpe_ratio',0):.2f}</span></div>
-    <div>⚖️ <b>Risk/Reward:</b> {metrics.get('risk_reward_setting',0):.2f}</div>
-    <div>💸 <b>Fee per Trade:</b> {metrics.get('fee_per_trade',0):.2f}%</div>
-    <div>🎯 <b>Kelly Fraction:</b> {metrics.get('kelly_fraction',0):.3f}</div>
-    <div>💰 <b>Net Return:</b> <span style="color:{color(metrics.get('net_return',0)/100)};">{metrics.get('net_return',0):.2f}%</span></div>
-    <div>🛡️ <b>Strategy Sustainability:</b> <span style="color:{color(metrics.get('strategy_sustainability',0)/100)};">{metrics.get('strategy_sustainability',0):.1f}%</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;align-items:center;justify-items:start;">
+    <div>🟢 <b>Buy Signals:</b> <span style="color:#00ff88;">{metrics.get('buy_count',0)}</span></div>
+    <div>🔴 <b>Sell Signals:</b> <span style="color:#ff4444;">{metrics.get('sell_count',0)}</span></div>
+    <div>🔄 <b>Total Trades:</b> <span style="color:#ffaa00;">{metrics.get('total_trades',0)}</span></div>
+    <div>🎯 <b>Win Ratio:</b> <span style="color:{color(metrics.get('win_ratio',0)/100)};font-weight:bold;">{metrics.get('win_ratio',0):.1f}%</span></div>
+    <div>💰 <b>Profit Factor:</b> <span style="color:{color(metrics.get('profit_factor',0)/2)};font-weight:bold;">{metrics.get('profit_factor',0):.2f}</span></div>
+    <div>📊 <b>Sharpe Ratio:</b> <span style="color:{color(metrics.get('sharpe_ratio',0)/2)};font-weight:bold;">{metrics.get('sharpe_ratio',0):.2f}</span></div>
+    <div>⚖️ <b>Risk/Reward:</b> <span style="color:#00ccff;">{metrics.get('risk_reward_setting',0):.2f}</span></div>
+    <div>💸 <b>Fee per Trade:</b> <span style="color:#ffaa00;">{metrics.get('fee_per_trade',0):.2f}%</span></div>
+    <div>📈 <b>Kelly Fraction:</b> <span style="color:#00ff88;">{metrics.get('kelly_fraction',0):.3f}</span></div>
+    <div>💵 <b>Net Return:</b> <span style="color:{color(metrics.get('net_return',0)/100)};font-weight:bold;">{metrics.get('net_return',0):.2f}%</span></div>
+    <div>🛡️ <b>Strategy Sustainability:</b> <span style="color:{color(metrics.get('strategy_sustainability',0)/100)};font-weight:bold;">{metrics.get('strategy_sustainability',0):.1f}%</span></div>
   </div>
 </div>
 '''
