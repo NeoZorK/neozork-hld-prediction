@@ -80,14 +80,15 @@ def plot_indicator_results_fastest(
     display_df.loc[:, 'increasing'] = display_df['direction']
     display_df.loc[:, 'decreasing'] = ~display_df['direction']
 
-    # Create the main figure
+    # Создаём 2 колонки: график (col=1), метрики (col=2)
     fig = make_subplots(
-        rows=4,  # Back to 4 rows for main chart
-        cols=1,
+        rows=3, cols=2,
+        column_widths=[0.8, 0.2],
         shared_xaxes=True,
         vertical_spacing=0.03,
-        row_heights=[0.6, 0.2, 0.2, 0.2],  # Original heights
-        subplot_titles=["OHLC Chart", "Volume", "Indicators", "Trading Metrics"]
+        horizontal_spacing=0.05,
+        row_heights=[0.6, 0.2, 0.2],
+        subplot_titles=["OHLC Chart", "", "Volume", "", "Indicators", ""]
     )
 
     # Add OHLC candlestick chart
@@ -166,6 +167,31 @@ def plot_indicator_results_fastest(
         align="center",
     )
 
+    # === Метрики в отдельной колонке справа (col=2, row=1) ===
+    if 'Direction' in display_df.columns:
+        metrics = None
+        try:
+            metrics = add_metrics_to_plotly_chart(None, display_df, position='right',
+                                                  lot_size=kwargs.get('lot_size', 1.0),
+                                                  risk_reward_ratio=kwargs.get('risk_reward_ratio', 2.0),
+                                                  fee_per_trade=kwargs.get('fee_per_trade', 0.07))
+        except Exception as e:
+            metrics = None
+        if metrics:
+            fig.add_trace(
+                go.Scatter(
+                    x=[0.5], y=[0.5], mode='text',
+                    text=[metrics],
+                    textposition='middle center',
+                    showlegend=False
+                ),
+                row=1, col=2
+            )
+    # Отключить оси для колонки метрик
+    for r in [1,2,3]:
+        fig.update_xaxes(visible=False, row=r, col=2)
+        fig.update_yaxes(visible=False, row=r, col=2)
+
     # Update layout
     fig.update_layout(
         title=title,
@@ -213,31 +239,6 @@ def plot_indicator_results_fastest(
     # Show time labels only on the bottom chart
     for i in range(1, 3):
         fig.update_xaxes(row=i, col=1, showticklabels=False)
-
-    # === Удаляем subplot для метрик, добавляем annotation справа ===
-    if 'Direction' in display_df.columns:
-        metrics = None
-        try:
-            metrics = add_metrics_to_plotly_chart(None, display_df, position='right',
-                                                  lot_size=kwargs.get('lot_size', 1.0),
-                                                  risk_reward_ratio=kwargs.get('risk_reward_ratio', 2.0),
-                                                  fee_per_trade=kwargs.get('fee_per_trade', 0.07))
-        except Exception as e:
-            metrics = None
-        if metrics:
-            fig.add_annotation(
-                text=metrics,
-                xref="paper", yref="paper",
-                x=1.15, y=0.5,
-                showarrow=False,
-                align="left",
-                font=dict(size=13, color="black"),
-                bordercolor="#ccc",
-                borderwidth=1,
-                borderpad=8,
-                bgcolor="white",
-                opacity=0.95
-            )
 
     # Save and open
     pio.write_html(fig, output_path, auto_open=False)
