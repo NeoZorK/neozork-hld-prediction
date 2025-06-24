@@ -177,8 +177,6 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         
     except Exception as e:
          logger.print_error(f"Exception during calculate_pressure_vector: {e}")
-         import traceback
-         print(traceback.format_exc())
          raise
 
     # --- Post-Calculation Checks ---
