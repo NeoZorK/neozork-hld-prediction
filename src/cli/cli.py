@@ -228,7 +228,6 @@ def parse_arguments():
     indicator_group.add_argument(
         '--rule', metavar='RULE',
         default=default_rule_name,
-        choices=all_rule_choices,
         help="Trading rule: OHLCV, PV, SR, PHLD, RSI, RSI_MOM, RSI_DIV, CCI, STOCH, EMA, BB, ATR, VWAP, PIVOT, MACD, STOCHOSC, HMA, TSF, MC, KELLY, FG, COT, PCR, DONCHAIN, FIBO, OBV, STDEV, ADX, SAR, SUPERTREND, AUTO. Aliases: PV=Pressure_Vector, SR=Support_Resistants, RSI_MOM=RSI_Momentum, RSI_DIV=RSI_Divergence, STOCH=Stochastic, BB=Bollinger_Bands, PIVOT=Pivot_Points, STOCHOSC=StochOscillator, TSF=TSForecast, MC=MonteCarlo, FG=FearGreed, PCR=PutCallRatio, FIBO=FiboRetr, STDEV=StDev, SUPERTREND=SuperTrend. Parameterized format: rsi:14,30,70,open (period,oversold,overbought,price_type)"
     )
     
@@ -351,6 +350,20 @@ def parse_arguments():
 
     # --- Post-parsing validation ---
     effective_mode = 'yfinance' if args.mode == 'yf' else args.mode
+
+    # Validate rule argument
+    if args.rule:
+        # Check if it's a parameterized rule
+        if ':' in args.rule:
+            # Parameterized rule - validate the indicator name part
+            indicator_name = args.rule.split(':', 1)[0].lower()
+            valid_indicators = ['rsi', 'macd', 'stoch', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar']
+            if indicator_name not in valid_indicators:
+                parser.error(f"Invalid indicator name '{indicator_name}' in parameterized rule '{args.rule}'. Valid indicators: {', '.join(valid_indicators)}")
+        else:
+            # Regular rule - validate against choices
+            if args.rule not in all_rule_choices:
+                parser.error(f"Invalid rule '{args.rule}'. Use one of {all_rule_choices}")
 
     # Handle interactive mode
     if effective_mode == 'interactive':
