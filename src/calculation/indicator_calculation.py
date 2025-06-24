@@ -54,6 +54,8 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         'RSI': 'RSI',
         'RSI_MOM': 'RSI_Momentum',
         'RSI_DIV': 'RSI_Divergence',
+        'RSI_MOMENTUM': 'RSI_Momentum',
+        'RSI_DIVERGENCE': 'RSI_Divergence',
         'CCI': 'CCI',
         'STOCH': 'Stochastic',
         'EMA': 'EMA',
