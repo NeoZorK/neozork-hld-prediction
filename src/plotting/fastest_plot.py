@@ -214,24 +214,29 @@ def plot_indicator_results_fastest(
     for i in range(1, 3):
         fig.update_xaxes(row=i, col=1, showticklabels=False)
 
-    # Add trading metrics outside the chart area
-    metrics_text = None
+    # === Удаляем subplot для метрик, добавляем annotation справа ===
     if 'Direction' in display_df.columns:
         metrics = None
         try:
-            metrics = add_metrics_to_plotly_chart(None, display_df, position='center',
+            metrics = add_metrics_to_plotly_chart(None, display_df, position='right',
                                                   lot_size=kwargs.get('lot_size', 1.0),
                                                   risk_reward_ratio=kwargs.get('risk_reward_ratio', 2.0),
                                                   fee_per_trade=kwargs.get('fee_per_trade', 0.07))
         except Exception as e:
             metrics = None
         if metrics:
-            fig.add_trace(
-                go.Scatter(x=[0.5], y=[0.5], mode='text',
-                            text=[metrics],
-                            textposition='middle center',
-                            showlegend=False),
-                row=4, col=1
+            fig.add_annotation(
+                text=metrics,
+                xref="paper", yref="paper",
+                x=1.15, y=0.5,
+                showarrow=False,
+                align="left",
+                font=dict(size=13, color="black"),
+                bordercolor="#ccc",
+                borderwidth=1,
+                borderpad=8,
+                bgcolor="white",
+                opacity=0.95
             )
 
     # Save and open
