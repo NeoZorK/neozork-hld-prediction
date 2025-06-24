@@ -503,66 +503,93 @@ def _print_colored_metrics(metrics: dict) -> None:
     YELLOW = '\033[93m'
     RESET = '\033[0m'
     BOLD = '\033[1m'
+    BLUE = '\033[94m'
     
-    def get_metric_color(metric_name: str, value) -> str:
-        """Determine color based on metric name and value for profitable strategy."""
+    def get_metric_icon_color_and_description(metric_name: str, value) -> tuple[str, str, str]:
+        """Determine icon, color and description based on metric name and value for profitable strategy."""
         try:
             value = float(str(value).replace('%', '').replace(',', ''))
         except:
-            return YELLOW  # Default to yellow for non-numeric values
+            return "📊", YELLOW, "Unknown metric - needs analysis"
         
         # Win Rate: Green > 60%, Yellow 40-60%, Red < 40%
         if 'win' in metric_name.lower() or 'win_rate' in metric_name.lower():
-            if value >= 60: return GREEN
-            elif value >= 40: return YELLOW
-            else: return RED
+            if value >= 60: 
+                return "🏆", GREEN, f"Excellent win rate! Strategy is highly profitable. Keep current approach."
+            elif value >= 40: 
+                return "🎯", YELLOW, f"Acceptable win rate. Consider improving entry/exit timing or risk management."
+            else: 
+                return "💔", RED, f"Low win rate indicates strategy needs major improvement. Review entry criteria and market conditions."
         
         # Profit Factor: Green > 1.5, Yellow 1.0-1.5, Red < 1.0
         elif 'profit_factor' in metric_name.lower():
-            if value >= 1.5: return GREEN
-            elif value >= 1.0: return YELLOW
-            else: return RED
+            if value >= 1.5: 
+                return "💰", GREEN, f"Strong profit factor! Strategy generates good profits vs losses. Optimize position sizing."
+            elif value >= 1.0: 
+                return "💵", YELLOW, f"Break-even profit factor. Focus on reducing losses and improving risk/reward ratio."
+            else: 
+                return "📉", RED, f"Strategy is losing money. Revise entry/exit rules or change market conditions."
         
         # Total Return: Green > 20%, Yellow 5-20%, Red < 5%
         elif 'total_return' in metric_name.lower() or 'return' in metric_name.lower():
-            if value >= 20: return GREEN
-            elif value >= 5: return YELLOW
-            else: return RED
+            if value >= 20: 
+                return "🚀", GREEN, f"Outstanding returns! Strategy is highly effective. Consider scaling up carefully."
+            elif value >= 5: 
+                return "📈", YELLOW, f"Moderate returns. Look for ways to increase win rate or position size."
+            else: 
+                return "📊", RED, f"Low returns suggest strategy needs improvement. Review market selection and timing."
         
         # Sharpe Ratio: Green > 1.0, Yellow 0.5-1.0, Red < 0.5
         elif 'sharpe' in metric_name.lower():
-            if value >= 1.0: return GREEN
-            elif value >= 0.5: return YELLOW
-            else: return RED
+            if value >= 1.0: 
+                return "⭐", GREEN, f"Excellent risk-adjusted returns! Strategy is well-balanced. Maintain current approach."
+            elif value >= 0.5: 
+                return "✨", YELLOW, f"Acceptable risk-adjusted returns. Work on reducing volatility or increasing returns."
+            else: 
+                return "💫", RED, f"Poor risk-adjusted returns. Strategy has high risk for low reward. Revise risk management."
         
         # Max Drawdown: Green < 10%, Yellow 10-20%, Red > 20%
         elif 'drawdown' in metric_name.lower():
-            if value <= 10: return GREEN
-            elif value <= 20: return YELLOW
-            else: return RED
+            if value <= 10: 
+                return "🛡️", GREEN, f"Excellent risk control! Low drawdown shows good capital preservation."
+            elif value <= 20: 
+                return "⚠️", YELLOW, f"Moderate drawdown. Consider reducing position size or improving stop-losses."
+            else: 
+                return "💥", RED, f"High drawdown is dangerous! Reduce position size and improve risk management immediately."
         
         # Number of Trades: Green 20-100, Yellow 10-20 or 100-200, Red < 10 or > 200
         elif 'trades' in metric_name.lower() or 'total_trades' in metric_name.lower():
-            if 20 <= value <= 100: return GREEN
-            elif 10 <= value <= 200: return YELLOW
-            else: return RED
+            if 20 <= value <= 100: 
+                return "🎲", GREEN, f"Good sample size for analysis. Strategy has sufficient data for reliable evaluation."
+            elif 10 <= value <= 200: 
+                return "🎯", YELLOW, f"Sample size needs attention. Too few trades may not be representative, too many may indicate overtrading."
+            else: 
+                return "🎪", RED, f"Sample size issues. Too few trades for reliable analysis or too many indicating poor selectivity."
         
         # Average Trade: Green > 0.5%, Yellow 0.1-0.5%, Red < 0.1%
         elif 'average_trade' in metric_name.lower():
-            if value >= 0.5: return GREEN
-            elif value >= 0.1: return YELLOW
-            else: return RED
+            if value >= 0.5: 
+                return "💎", GREEN, f"Excellent average trade! Each trade contributes significantly to profits."
+            elif value >= 0.1: 
+                return "💍", YELLOW, f"Moderate average trade. Look for opportunities to increase trade size or improve entry timing."
+            else: 
+                return "💎", RED, f"Low average trade suggests strategy may not be worth the effort. Consider higher timeframe or different approach."
         
         # Risk/Reward Ratio: Green > 2.0, Yellow 1.5-2.0, Red < 1.5
         elif 'risk_reward' in metric_name.lower():
-            if value >= 2.0: return GREEN
-            elif value >= 1.5: return YELLOW
-            else: return RED
+            if value >= 2.0: 
+                return "⚖️", GREEN, f"Excellent risk/reward ratio! Strategy has asymmetric upside potential."
+            elif value >= 1.5: 
+                return "🎭", YELLOW, f"Acceptable risk/reward ratio. Consider adjusting stop-loss or take-profit levels."
+            else: 
+                return "🎪", RED, f"Poor risk/reward ratio. Strategy risks more than it gains. Revise exit strategy."
         
         # Default: Yellow for unknown metrics
         else:
-            return YELLOW
+            return "📊", YELLOW, "Unknown metric - requires manual analysis"
     
     for metric_name, value in metrics.items():
-        color = get_metric_color(metric_name, value)
-        print(f"{color}{BOLD}{metric_name}:{RESET} {color}{value}{RESET}")
+        icon, color, description = get_metric_icon_color_and_description(metric_name, value)
+        print(f"{icon} {BOLD}{metric_name}:{RESET} {color}{value}{RESET}")
+        print(f"   {BLUE}💡 {description}{RESET}")
+        print()  # Add empty line for better readability
