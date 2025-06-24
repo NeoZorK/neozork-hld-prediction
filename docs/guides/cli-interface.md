@@ -377,4 +377,148 @@ python run_analysis.py csv --csv-file huge_data.csv --point 0.01 --rule RSI --st
 - **[Data Sources](../api/data-sources.md)** - Available data sources
 - **[Trading Rules](../reference/trading-rules.md)** - Rule descriptions
 - **[Export Functions](../guides/export-functions.md)** - Export capabilities
-- **[Analysis Tools](../guides/analysis-tools.md)** - Analysis features 
+- **[Analysis Tools](../guides/analysis-tools.md)** - Analysis features
+
+## Indicator Options
+
+### Basic Indicators
+```bash
+--rule RSI          # Relative Strength Index
+--rule MACD         # Moving Average Convergence Divergence
+--rule EMA          # Exponential Moving Average
+--rule BB           # Bollinger Bands
+--rule ATR          # Average True Range
+--rule VWAP         # Volume Weighted Average Price
+```
+
+### Advanced Indicators
+```bash
+--rule RSI_Momentum     # RSI with momentum analysis
+--rule RSI_Divergence   # RSI with divergence detection
+--rule MonteCarlo       # Monte Carlo simulation
+--rule Kelly            # Kelly Criterion
+--rule FearGreed        # Fear & Greed Index
+--rule COT              # Commitments of Traders
+```
+
+### Pressure Vector Indicators
+```bash
+--rule PV              # Pressure Vector (alias)
+--rule SR              # Support/Resistance (alias)
+--rule PHLD            # Predict High/Low Direction (alias)
+```
+
+## Strategy Parameters
+
+### New: --strategy Flag
+The `--strategy` flag allows you to specify trading strategy parameters for advanced metrics calculation:
+
+```bash
+--strategy LOT,RISK_REWARD,FEE
+```
+
+**Parameters:**
+- `LOT` - Position size (default: 1.0)
+- `RISK_REWARD` - Risk to reward ratio (default: 2.0)
+- `FEE` - Fee per trade in percentage (default: 0.07)
+
+**Examples:**
+```bash
+# Default strategy (1.0 lot, 2:1 risk/reward, 0.07% fee)
+python run_analysis.py demo --rule RSI --strategy 1,2,0.07
+
+# Conservative strategy (0.5 lot, 1.5:1 risk/reward, 0.05% fee)
+python run_analysis.py demo --rule RSI --strategy 0.5,1.5,0.05
+
+# Aggressive strategy (2.0 lot, 3:1 risk/reward, 0.1% fee)
+python run_analysis.py demo --rule RSI --strategy 2,3,0.1
+```
+
+## Advanced Metrics
+
+When using the `--strategy` flag, the system calculates comprehensive trading metrics including:
+
+### Basic Metrics
+- **Buy/Sell Signals**: Count of buy and sell signals
+- **Win Ratio**: Percentage of profitable trades
+- **Profit Factor**: Ratio of gross profit to gross loss
+- **Sharpe Ratio**: Risk-adjusted return measure
+- **Sortino Ratio**: Downside risk-adjusted return
+- **Maximum Drawdown**: Largest peak-to-trough decline
+
+### Strategy-Specific Metrics
+- **Position Size**: Current position size setting
+- **Risk/Reward Setting**: Configured risk-to-reward ratio
+- **Fee per Trade**: Transaction cost percentage
+- **Kelly Fraction**: Optimal position sizing ratio
+- **Net Return**: Returns after fees
+- **Strategy Efficiency**: Fee-adjusted performance
+- **Strategy Sustainability**: Overall strategy robustness score
+
+### Machine Learning Metrics
+- **Signal Frequency**: How often signals occur
+- **Signal Stability**: Consistency of signal patterns
+- **Signal Accuracy**: Percentage of correct signals
+- **Timing Score**: Quality of signal timing
+- **Pattern Consistency**: Reliability of patterns
+- **Signal Clustering**: Concentration of signals
+
+### Monte Carlo Metrics
+- **Expected Return**: Average return from simulations
+- **Value at Risk (VaR)**: Maximum expected loss
+- **Conditional VaR**: Expected loss beyond VaR
+- **Profit Probability**: Chance of positive returns
+- **Strategy Robustness**: Consistency across simulations
+- **Risk of Ruin**: Probability of account depletion
+
+## Plotting Options
+
+### Plot Types
+```bash
+-d fastest    # Plotly + Dask + Datashader (default)
+-d fast       # Dask + Datashader + Bokeh
+-d plotly     # Interactive Plotly charts
+-d mpl        # Static matplotlib charts
+-d seaborn    # Statistical seaborn plots
+-d term       # Terminal-based charts
+```
+
+### Metrics Display
+- **Main Metrics**: Displayed in bottom-right corner
+- **Additional Metrics**: Displayed in separate panel (left side)
+- **Color Coding**: Green (good), Yellow (average), Red (poor)
+- **Strategy Info**: Position size, risk/reward, fees prominently displayed
+
+## Examples
+
+### Complete Analysis with Strategy
+```bash
+# Analyze RSI with custom strategy parameters
+python run_analysis.py demo --rule RSI --strategy 1.5,2.5,0.08 -d fastest
+
+# Show existing data with strategy analysis
+python run_analysis.py show csv mn1 gbp --rule RSI_Divergence --strategy 1,2,0.07 -d fastest
+```
+
+### Export Options
+```bash
+--export-parquet    # Export to Parquet format
+--export-csv        # Export to CSV format
+--export-json       # Export to JSON format
+```
+
+## Help and Examples
+
+```bash
+# Show help
+python run_analysis.py --help
+
+# Show examples
+python run_analysis.py --examples
+
+# List available indicators
+python run_analysis.py --indicators
+
+# Interactive mode
+python run_analysis.py --interactive
+``` 
