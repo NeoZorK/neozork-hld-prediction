@@ -229,7 +229,7 @@ def parse_arguments():
         '--rule', metavar='RULE',
         default=default_rule_name,
         choices=all_rule_choices,
-        help="Trading rule: OHLCV, PV, SR, PHLD, RSI, RSI_MOM, RSI_DIV, CCI, STOCH, EMA, BB, ATR, VWAP, PIVOT, MACD, STOCHOSC, HMA, TSF, MC, KELLY, FG, COT, PCR, DONCHAIN, FIBO, OBV, STDEV, ADX, SAR, SUPERTREND, AUTO. Aliases: PV=Pressure_Vector, SR=Support_Resistants, RSI_MOM=RSI_Momentum, RSI_DIV=RSI_Divergence, STOCH=Stochastic, BB=Bollinger_Bands, PIVOT=Pivot_Points, STOCHOSC=StochOscillator, TSF=TSForecast, MC=MonteCarlo, FG=FearGreed, PCR=PutCallRatio, FIBO=FiboRetr, STDEV=StDev, SUPERTREND=SuperTrend"
+        help="Trading rule: OHLCV, PV, SR, PHLD, RSI, RSI_MOM, RSI_DIV, CCI, STOCH, EMA, BB, ATR, VWAP, PIVOT, MACD, STOCHOSC, HMA, TSF, MC, KELLY, FG, COT, PCR, DONCHAIN, FIBO, OBV, STDEV, ADX, SAR, SUPERTREND, AUTO. Aliases: PV=Pressure_Vector, SR=Support_Resistants, RSI_MOM=RSI_Momentum, RSI_DIV=RSI_Divergence, STOCH=Stochastic, BB=Bollinger_Bands, PIVOT=Pivot_Points, STOCHOSC=StochOscillator, TSF=TSForecast, MC=MonteCarlo, FG=FearGreed, PCR=PutCallRatio, FIBO=FiboRetr, STDEV=StDev, SUPERTREND=SuperTrend. Parameterized format: rsi:14,30,70,open (period,oversold,overbought,price_type)"
     )
     
     # Add price type selection for indicators that support it
@@ -457,3 +457,384 @@ def parse_arguments():
             action.help += ' (Allowed only in demo and show (except show ind); forbidden in show ind, yfinance, csv, polygon, binance, exrate)'
 
     return args
+
+def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
+    """
+    Parse indicator rule string in format 'indicator:param1,param2,param3,param4'.
+    
+    Args:
+        rule_str (str): Rule string like 'rsi:14,30,70,open' or 'rsi'
+    
+    Returns:
+        tuple: (indicator_name, parameters_dict)
+    """
+    if ':' not in rule_str:
+        # No parameters provided, return indicator name and empty dict
+        return rule_str.lower(), {}
+    
+    try:
+        # Split by ':' to separate indicator name from parameters
+        parts = rule_str.split(':', 1)
+        if len(parts) != 2:
+            raise ValueError(f"Invalid rule format: {rule_str}")
+        
+        indicator_name = parts[0].lower().strip()
+        params_str = parts[1].strip()
+        
+        # Parse parameters based on indicator type
+        if indicator_name == 'rsi':
+            return parse_rsi_parameters(params_str)
+        elif indicator_name == 'macd':
+            return parse_macd_parameters(params_str)
+        elif indicator_name == 'stoch':
+            return parse_stoch_parameters(params_str)
+        elif indicator_name == 'ema':
+            return parse_ema_parameters(params_str)
+        elif indicator_name == 'bb':
+            return parse_bb_parameters(params_str)
+        elif indicator_name == 'atr':
+            return parse_atr_parameters(params_str)
+        elif indicator_name == 'cci':
+            return parse_cci_parameters(params_str)
+        elif indicator_name == 'vwap':
+            return parse_vwap_parameters(params_str)
+        elif indicator_name == 'pivot':
+            return parse_pivot_parameters(params_str)
+        elif indicator_name == 'hma':
+            return parse_hma_parameters(params_str)
+        elif indicator_name == 'tsf':
+            return parse_tsf_parameters(params_str)
+        elif indicator_name == 'monte':
+            return parse_monte_parameters(params_str)
+        elif indicator_name == 'kelly':
+            return parse_kelly_parameters(params_str)
+        elif indicator_name == 'donchain':
+            return parse_donchain_parameters(params_str)
+        elif indicator_name == 'fibo':
+            return parse_fibo_parameters(params_str)
+        elif indicator_name == 'obv':
+            return parse_obv_parameters(params_str)
+        elif indicator_name == 'stdev':
+            return parse_stdev_parameters(params_str)
+        elif indicator_name == 'adx':
+            return parse_adx_parameters(params_str)
+        elif indicator_name == 'sar':
+            return parse_sar_parameters(params_str)
+        else:
+            # Unknown indicator, return as-is
+            return indicator_name, {}
+            
+    except Exception as e:
+        # Re-raise the exception instead of using logger
+        raise e
+
+
+def parse_rsi_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse RSI parameters: period,oversold,overbought,price_type"""
+    params = params_str.split(',')
+    if len(params) != 4:
+        raise ValueError(f"RSI requires exactly 4 parameters: period,oversold,overbought,price_type. Got: {params_str}")
+    
+    period = int(float(params[0].strip()))  # Handle float values like 14.0
+    oversold = float(params[1].strip())
+    overbought = float(params[2].strip())
+    price_type = params[3].strip().lower()
+    
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"RSI price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'rsi', {
+        'rsi_period': period,
+        'oversold': oversold,
+        'overbought': overbought,
+        'price_type': price_type
+    }
+
+
+def parse_macd_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse MACD parameters: fast_period,slow_period,signal_period,price_type"""
+    params = params_str.split(',')
+    if len(params) != 4:
+        raise ValueError(f"MACD requires exactly 4 parameters: fast_period,slow_period,signal_period,price_type. Got: {params_str}")
+    
+    fast_period = int(float(params[0].strip()))  # Handle float values
+    slow_period = int(float(params[1].strip()))
+    signal_period = int(float(params[2].strip()))
+    price_type = params[3].strip().lower()
+    
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"MACD price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'macd', {
+        'macd_fast': fast_period,
+        'macd_slow': slow_period,
+        'macd_signal': signal_period,
+        'price_type': price_type
+    }
+
+
+def parse_stoch_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse Stochastic parameters: k_period,d_period,price_type"""
+    params = params_str.split(',')
+    if len(params) != 3:
+        raise ValueError(f"Stochastic requires exactly 3 parameters: k_period,d_period,price_type. Got: {params_str}")
+    
+    k_period = int(float(params[0].strip()))  # Handle float values
+    d_period = int(float(params[1].strip()))
+    price_type = params[2].strip().lower()
+    
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"Stochastic price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'stoch', {
+        'stoch_k_period': k_period,
+        'stoch_d_period': d_period,
+        'price_type': price_type
+    }
+
+
+def parse_ema_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse EMA parameters: period,price_type"""
+    params = params_str.split(',')
+    if len(params) != 2:
+        raise ValueError(f"EMA requires exactly 2 parameters: period,price_type. Got: {params_str}")
+    
+    period = int(float(params[0].strip()))  # Handle float values
+    price_type = params[1].strip().lower()
+    
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"EMA price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'ema', {
+        'ema_period': period,
+        'price_type': price_type
+    }
+
+
+def parse_bb_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse Bollinger Bands parameters: period,std_dev,price_type"""
+    params = params_str.split(',')
+    if len(params) != 3:
+        raise ValueError(f"Bollinger Bands requires exactly 3 parameters: period,std_dev,price_type. Got: {params_str}")
+    
+    period = int(float(params[0].strip()))  # Handle float values
+    std_dev = float(params[1].strip())
+    price_type = params[2].strip().lower()
+    
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"Bollinger Bands price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'bb', {
+        'bb_period': period,
+        'bb_std_dev': std_dev,
+        'price_type': price_type
+    }
+
+
+def parse_atr_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse ATR parameters: period"""
+    params = params_str.split(',')
+    if len(params) != 1:
+        raise ValueError(f"ATR requires exactly 1 parameter: period. Got: {params_str}")
+    
+    period = int(float(params[0].strip()))  # Handle float values
+    
+    return 'atr', {
+        'atr_period': period
+    }
+
+
+def parse_cci_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse CCI parameters: period,price_type"""
+    params = params_str.split(',')
+    if len(params) != 2:
+        raise ValueError(f"CCI requires exactly 2 parameters: period,price_type. Got: {params_str}")
+    
+    period = int(float(params[0].strip()))  # Handle float values
+    price_type = params[1].strip().lower()
+    
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"CCI price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'cci', {
+        'cci_period': period,
+        'price_type': price_type
+    }
+
+
+def parse_vwap_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse VWAP parameters: price_type"""
+    params = params_str.split(',')
+    if len(params) != 1:
+        raise ValueError(f"VWAP requires exactly 1 parameter: price_type. Got: {params_str}")
+    
+    price_type = params[0].strip().lower()
+    
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"VWAP price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'vwap', {
+        'price_type': price_type
+    }
+
+
+def parse_pivot_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse Pivot Points parameters: price_type"""
+    params = params_str.split(',')
+    if len(params) != 1:
+        raise ValueError(f"Pivot Points requires exactly 1 parameter: price_type. Got: {params_str}")
+    
+    price_type = params[0].strip().lower()
+    
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"Pivot Points price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'pivot', {
+        'price_type': price_type
+    }
+
+
+def parse_hma_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse HMA parameters: period,price_type"""
+    params = params_str.split(',')
+    if len(params) != 2:
+        raise ValueError(f"HMA requires exactly 2 parameters: period,price_type. Got: {params_str}")
+    
+    period = int(float(params[0].strip()))  # Handle float values
+    price_type = params[1].strip().lower()
+    
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"HMA price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'hma', {
+        'hma_period': period,
+        'price_type': price_type
+    }
+
+
+def parse_tsf_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse TSF parameters: period,forecast_period,price_type"""
+    params = params_str.split(',')
+    if len(params) != 3:
+        raise ValueError(f"TSF requires exactly 3 parameters: period,forecast_period,price_type. Got: {params_str}")
+    
+    period = int(float(params[0].strip()))  # Handle float values
+    forecast_period = int(float(params[1].strip()))
+    price_type = params[2].strip().lower()
+    
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"TSF price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'tsf', {
+        'tsf_period': period,
+        'tsf_forecast': forecast_period,
+        'price_type': price_type
+    }
+
+
+def parse_monte_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse Monte Carlo parameters: simulations,period"""
+    params = params_str.split(',')
+    if len(params) != 2:
+        raise ValueError(f"Monte Carlo requires exactly 2 parameters: simulations,period. Got: {params_str}")
+    
+    simulations = int(float(params[0].strip()))  # Handle float values
+    period = int(float(params[1].strip()))
+    
+    return 'monte', {
+        'monte_simulations': simulations,
+        'monte_period': period
+    }
+
+
+def parse_kelly_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse Kelly Criterion parameters: period"""
+    params = params_str.split(',')
+    if len(params) != 1:
+        raise ValueError(f"Kelly Criterion requires exactly 1 parameter: period. Got: {params_str}")
+    
+    period = int(float(params[0].strip()))  # Handle float values
+    
+    return 'kelly', {
+        'kelly_period': period
+    }
+
+
+def parse_donchain_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse Donchian Channels parameters: period"""
+    params = params_str.split(',')
+    if len(params) != 1:
+        raise ValueError(f"Donchian Channels requires exactly 1 parameter: period. Got: {params_str}")
+    
+    period = int(float(params[0].strip()))  # Handle float values
+    
+    return 'donchain', {
+        'donchain_period': period
+    }
+
+
+def parse_fibo_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse Fibonacci Retracements parameters: levels"""
+    params = params_str.split(',')
+    if len(params) < 1:
+        raise ValueError(f"Fibonacci Retracements requires at least 1 parameter: levels. Got: {params_str}")
+    
+    levels = [float(p.strip()) for p in params]
+    
+    return 'fibo', {
+        'fib_levels': levels
+    }
+
+
+def parse_obv_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse OBV parameters: none required"""
+    if params_str.strip():
+        raise ValueError(f"OBV does not require parameters. Got: {params_str}")
+    
+    return 'obv', {}
+
+
+def parse_stdev_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse Standard Deviation parameters: period,price_type"""
+    params = params_str.split(',')
+    if len(params) != 2:
+        raise ValueError(f"Standard Deviation requires exactly 2 parameters: period,price_type. Got: {params_str}")
+    
+    period = int(float(params[0].strip()))  # Handle float values
+    price_type = params[1].strip().lower()
+    
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"Standard Deviation price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'stdev', {
+        'stdev_period': period,
+        'price_type': price_type
+    }
+
+
+def parse_adx_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse ADX parameters: period"""
+    params = params_str.split(',')
+    if len(params) != 1:
+        raise ValueError(f"ADX requires exactly 1 parameter: period. Got: {params_str}")
+    
+    period = int(float(params[0].strip()))  # Handle float values
+    
+    return 'adx', {
+        'adx_period': period
+    }
+
+
+def parse_sar_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse SAR parameters: acceleration,maximum"""
+    params = params_str.split(',')
+    if len(params) != 2:
+        raise ValueError(f"SAR requires exactly 2 parameters: acceleration,maximum. Got: {params_str}")
+    
+    acceleration = float(params[0].strip())
+    maximum = float(params[1].strip())
+    
+    return 'sar', {
+        'sar_acceleration': acceleration,
+        'sar_maximum': maximum
+    }
