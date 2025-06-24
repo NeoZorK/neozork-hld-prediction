@@ -157,7 +157,15 @@ def plot_indicator_results_plotly(df_results: pd.DataFrame, rule: TradingRule, t
     else:
         rule_name = str(rule)
 
-    chart_layout_title = f"{title} - Rule: {rule_name}"
+    # Check if we have original rule with parameters for display
+    if hasattr(rule, 'original_rule_with_params'):
+        display_rule = rule.original_rule_with_params
+    elif hasattr(rule, 'args') and hasattr(rule.args, 'original_rule_with_params'):
+        display_rule = rule.args.original_rule_with_params
+    else:
+        display_rule = rule_name
+
+    chart_layout_title = f"{title} - Rule: {display_rule}"
     fig.update_layout(
         title=chart_layout_title,
         height=350 * total_rows, # Height based on dynamic number of rows

@@ -160,8 +160,14 @@ def plot_indicator_results_fast(
     source = ColumnDataSource(df)
 
     # === TRADING RULE HEADER ===
+    # Check if we have original rule with parameters for display
+    if hasattr(rule, 'original_rule_with_params'):
+        display_rule = rule.original_rule_with_params
+    else:
+        display_rule = str(rule)
+    
     trading_rule_div = Div(
-        text=f"<b style='font-size:18pt;color:#2e5cb8;text-align:center;display:block;'>Trading Rule: {rule}</b>",
+        text=f"<b style='font-size:18pt;color:#2e5cb8;text-align:center;display:block;'>Trading Rule: {display_rule}</b>",
         width=width, height=40
     )
 

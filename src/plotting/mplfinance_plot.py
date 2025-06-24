@@ -112,11 +112,17 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         else:
             rule_name = str(rule)
 
+        # Check if we have original rule with parameters for display
+        if hasattr(rule, 'original_rule_with_params'):
+            display_rule = rule.original_rule_with_params
+        else:
+            display_rule = rule_name
+
         mpf.plot(
             df_results,
             type='candle',
             style='yahoo',
-            title=f"{title} - Rule: {rule_name}",
+            title=f"{title} - Rule: {display_rule}",
             ylabel='Price',
             volume=plot_volume,
             volume_panel=volume_panel if plot_volume else 0,
