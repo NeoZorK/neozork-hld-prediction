@@ -45,12 +45,17 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
             logger.print_error("DataFrame is None or empty, cannot plot")
             return
         
-        # Convert rule to string for processing
+        # Convert rule to string - safely handle different rule types
         rule_str = rule.name if hasattr(rule, 'name') else str(rule)
-        rule_upper = rule_str.upper()
-
+        
+        # Check if we have original rule with parameters for display
+        if hasattr(rule, 'original_rule_with_params'):
+            display_rule = rule.original_rule_with_params
+        else:
+            display_rule = rule_str
+        
         # Check if rule is AUTO - use separate field plotting with dots style
-        if rule_upper in ['AUTO', 'AUTO_DISPLAY_ALL']:
+        if rule_str.upper() in ['AUTO', 'AUTO_DISPLAY_ALL']:
             logger.print_info("AUTO rule detected, using separate field plotting with 'dots' style...")
 
             # Check for OHLC columns first
@@ -210,7 +215,7 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
         plt.show()
         
         # Show additional statistics
-        _show_terminal_statistics(df, rule_str)
+        _show_terminal_statistics(df, display_rule)
         
         logger.print_success("Terminal plot generated successfully!")
         

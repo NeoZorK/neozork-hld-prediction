@@ -35,12 +35,16 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     # Parse indicator parameters if provided in format 'indicator:param1,param2,param3,param4'
     rule_input_str = args.rule
     indicator_params = {}
+    original_rule_with_params = rule_input_str  # Store original rule with parameters
     
     if ':' in rule_input_str:
         indicator_name, indicator_params = parse_indicator_parameters(rule_input_str)
         # Update the rule name to the parsed indicator name
         rule_input_str = indicator_name.upper()
         logger.print_debug(f"Parsed indicator parameters: {indicator_params}")
+    
+    # Store original rule with parameters for display purposes
+    setattr(args, 'original_rule_with_params', original_rule_with_params)
     
     # Map rule aliases to full names
     rule_aliases_map = {
@@ -127,6 +131,8 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         if selected_rule == TradingRule.OHLCV:
             logger.print_debug("OHLCV rule selected: returning raw data without indicator calculation")
             # Return the original dataframe without calculations
+            # Add original rule with parameters to the rule object for display
+            setattr(selected_rule, 'original_rule_with_params', original_rule_with_params)
             return ohlcv_df.copy(), selected_rule
         
         # Special handling for AUTO rule - calculate indicators but return all columns for display
@@ -147,6 +153,8 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
                     if col not in result_df.columns:
                         result_df[col] = ohlcv_df[col]
                         logger.print_debug(f"Added extra column '{col}' to AUTO result")
+            # Add original rule with parameters to the rule object for display
+            setattr(selected_rule, 'original_rule_with_params', original_rule_with_params)
             return result_df, selected_rule
 
         # Apply indicator parameters if provided
@@ -163,6 +171,10 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
             tr_num=selected_rule,
             **indicator_params
         )
+        
+        # Add original rule with parameters to the rule object for display
+        setattr(selected_rule, 'original_rule_with_params', original_rule_with_params)
+        
     except Exception as e:
          logger.print_error(f"Exception during calculate_pressure_vector: {e}")
          import traceback
