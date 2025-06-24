@@ -541,43 +541,15 @@ def plot_indicator_results_fast(
         ]
         hover_main.tooltips = tooltip_fields
 
+    # === После layout = column(...), перед save ===
+    # Добавить Div с метриками в отдельную строку
+    from src.calculation.trading_metrics import calculate_trading_metrics
+    metrics = calculate_trading_metrics(df, lot_size=lot_size, risk_reward_ratio=risk_reward_ratio, fee_per_trade=fee_per_trade)
+    metrics_text = f"<div style='font-family:monospace;font-size:13px;'><b>Trading Metrics</b><br>" + "<br>".join([f"{k}: {v}" for k,v in metrics.items()]) + "</div>"
+    metrics_div = Div(text=metrics_text, width=width, height=120)
+    layout = column(layout, metrics_div, sizing_mode="stretch_width")
+
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    
-    # Add trading metrics if Direction column exists
-    if 'Direction' in df.columns:
-        try:
-            # Create a simple metrics display using Bokeh Div
-            from src.calculation.trading_metrics import calculate_trading_metrics
-            metrics = calculate_trading_metrics(df, lot_size=lot_size, 
-                                              risk_reward_ratio=risk_reward_ratio, 
-                                              fee_per_trade=fee_per_trade)
-            
-            # Format metrics for display
-            metrics_text = f"""
-            <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; margin: 10px; border-radius: 5px;">
-                <h4 style="margin: 0 0 10px 0; color: #495057;">📊 Trading Metrics</h4>
-                <div style="font-family: monospace; font-size: 12px;">
-                    <div>🟢 Buy Signals: {metrics.get('buy_count', 0)}</div>
-                    <div>🔴 Sell Signals: {metrics.get('sell_count', 0)}</div>
-                    <div>📈 Total Trades: {metrics.get('total_trades', 0)}</div>
-                    <div>🎯 Win Ratio: {metrics.get('win_ratio', 0):.1f}%</div>
-                    <div>💰 Profit Factor: {metrics.get('profit_factor', 0):.2f}</div>
-                    <div>📊 Sharpe Ratio: {metrics.get('sharpe_ratio', 0):.2f}</div>
-                    <div>📈 Position Size: {metrics.get('position_size', 0):.2f}</div>
-                    <div>⚖️ Risk/Reward: {metrics.get('risk_reward_setting', 0):.1f}</div>
-                    <div>💸 Fee per Trade: {metrics.get('fee_per_trade', 0):.2f}%</div>
-                </div>
-            </div>
-            """
-            
-            metrics_div = Div(text=metrics_text, width=width, height=200)
-            
-            # Add metrics to layout
-            layout = column(layout, metrics_div, sizing_mode="stretch_width")
-            
-            logger.print_info("Added trading metrics to fast plot")
-        except Exception as e:
-            logger.print_warning(f"Could not add trading metrics to fast plot: {e}")
     
     output_file(output_path, title=title)
     save(layout)

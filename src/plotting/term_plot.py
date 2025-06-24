@@ -220,6 +220,13 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
         # Show additional statistics
         _show_terminal_statistics(df, display_rule)
         
+        # === После plt.show() ===
+        # Вывести метрики отдельным блоком
+        metrics = calculate_trading_metrics(df_results)
+        print("\n=== Trading Metrics ===")
+        for k, v in metrics.items():
+            print(f"{k}: {v}")
+        
         logger.print_success("Terminal plot generated successfully!")
         
     except Exception as e:

@@ -8,6 +8,7 @@ from typing import List, Optional
 from src.common import logger
 from src.common.constants import TradingRule, BUY, SELL
 from src.plotting.metrics_display import add_metrics_to_matplotlib_chart
+from src.calculation.trading_metrics import calculate_trading_metrics
 
 def plot_indicator_results_seaborn(
     df: pd.DataFrame,
@@ -155,6 +156,12 @@ def plot_indicator_results_seaborn(
             logger.print_info("Added trading metrics to Seaborn chart")
         except Exception as e:
             logger.print_warning(f"Could not add trading metrics to chart: {e}")
+
+    # Добавить метрики в отдельный subplot
+    metrics = calculate_trading_metrics(df)
+    metrics_text = '\n'.join([f"{k}: {v}" for k,v in metrics.items()])
+    axes[-1].axis('off')
+    axes[-1].text(0.5, 0.5, metrics_text, fontsize=12, ha='center', va='center', transform=axes[-1].transAxes')
 
     plt.tight_layout()
     plt.show()
