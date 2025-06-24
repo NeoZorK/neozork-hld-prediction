@@ -97,7 +97,8 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
     # === После определения panel_count и перед mpf.plot ===
     metrics = calculate_trading_metrics(df_results)
     metrics_text = '\n'.join([f"{k}: {v}" for k,v in metrics.items()])
-    panel_count += 1
+    # Убираем увеличение panel_count, так как метрики теперь выводятся в консоль, а не на график
+    # panel_count += 1
     # Вместо этого просто выводим метрики в консоль
     logger.print_info(f"Trading metrics:\n{metrics_text}")
     ratios = [4]
