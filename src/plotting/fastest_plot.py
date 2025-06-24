@@ -82,12 +82,12 @@ def plot_indicator_results_fastest(
 
     # Create the main figure
     fig = make_subplots(
-        rows=3,  # Back to 3 rows for main chart
+        rows=4,  # Back to 4 rows for main chart
         cols=1,
         shared_xaxes=True,
         vertical_spacing=0.03,
-        row_heights=[0.6, 0.2, 0.2],  # Original heights
-        subplot_titles=["OHLC Chart", "Volume", "Indicators"]
+        row_heights=[0.6, 0.2, 0.2, 0.2],  # Original heights
+        subplot_titles=["OHLC Chart", "Volume", "Indicators", "Trading Metrics"]
     )
 
     # Add OHLC candlestick chart
@@ -215,16 +215,24 @@ def plot_indicator_results_fastest(
         fig.update_xaxes(row=i, col=1, showticklabels=False)
 
     # Add trading metrics outside the chart area
+    metrics_text = None
     if 'Direction' in display_df.columns:
+        metrics = None
         try:
-            # Add metrics as text annotation outside the chart area
-            fig = add_metrics_to_plotly_chart(fig, display_df, position='outside', 
-                                            lot_size=kwargs.get('lot_size', 1.0),
-                                            risk_reward_ratio=kwargs.get('risk_reward_ratio', 2.0),
-                                            fee_per_trade=kwargs.get('fee_per_trade', 0.07))
-            logger.print_info("Added trading metrics to fastest plot")
+            metrics = add_metrics_to_plotly_chart(None, display_df, position='center',
+                                                  lot_size=kwargs.get('lot_size', 1.0),
+                                                  risk_reward_ratio=kwargs.get('risk_reward_ratio', 2.0),
+                                                  fee_per_trade=kwargs.get('fee_per_trade', 0.07))
         except Exception as e:
-            logger.print_warning(f"Could not add trading metrics to fastest plot: {e}")
+            metrics = None
+        if metrics:
+            fig.add_trace(
+                go.Scatter(x=[0.5], y=[0.5], mode='text',
+                            text=[metrics],
+                            textposition='middle center',
+                            showlegend=False),
+                row=4, col=1
+            )
 
     # Save and open
     pio.write_html(fig, output_path, auto_open=False)

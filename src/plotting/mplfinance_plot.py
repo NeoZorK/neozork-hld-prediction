@@ -6,6 +6,7 @@ import pandas as pd
 
 from src.common import logger
 from src.common.constants import TradingRule, BUY, SELL
+from src.calculation.trading_metrics import calculate_trading_metrics
 
 
 def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRule, title: str = "Indicator Results"):
@@ -93,16 +94,14 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
             plots_to_add.append(mpf.make_addplot(sell_markers_series,
                                                  type='scatter', markersize=50, marker='v', color='red', panel=0))
 
-    # --- Create the plot ---
-    plot_volume = 'Volume' in df_results.columns and not df_results['Volume'].isnull().all()
-    volume_panel = 1
-    if panel_count > 0:
-        volume_panel = panel_count + 1
-
-    # Ensure ratios are correctly calculated
+    # === После определения panel_count и перед mpf.plot ===
+    metrics = calculate_trading_metrics(df_results)
+    metrics_text = '\n'.join([f"{k}: {v}" for k,v in metrics.items()])
+    panel_count += 1
+    plots_to_add.append(mpf.make_addplot([None]*len(df_results), panel=panel_count, type='text', secondary_y=False, color='black', ylabel='Metrics', text=metrics_text))
     ratios = [4]
     ratios.extend([1] * panel_count)
-    if plot_volume:
+    if 'Volume' in df_results.columns and not df_results['Volume'].isnull().all():
         ratios.append(0.8)
 
     try:
@@ -124,11 +123,11 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
             style='yahoo',
             title=f"{title} - Rule: {display_rule}",
             ylabel='Price',
-            volume=plot_volume,
-            volume_panel=volume_panel if plot_volume else 0,
+            volume='Volume' in df_results.columns and not df_results['Volume'].isnull().all(),
+            volume_panel=panel_count + 1 if 'Volume' in df_results.columns and not df_results['Volume'].isnull().all() else 0,
             addplot=plots_to_add,
             panel_ratios=tuple(ratios),
-            figratio=(12, 6 + panel_count * 1.5 + (1 if plot_volume else 0)),
+            figratio=(12, 6 + panel_count * 1.5 + (1 if 'Volume' in df_results.columns and not df_results['Volume'].isnull().all() else 0)),
             figscale=1.1,
             warn_too_much_data=10000
         )
