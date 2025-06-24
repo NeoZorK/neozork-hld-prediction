@@ -161,7 +161,7 @@ def plot_indicator_results_seaborn(
     metrics = calculate_trading_metrics(df)
     metrics_text = '\n'.join([f"{k}: {v}" for k,v in metrics.items()])
     axes[-1].axis('off')
-    axes[-1].text(0.5, 0.5, metrics_text, fontsize=12, ha='center', va='center', transform=axes[-1].transAxes')
+    axes[-1].text(0.5, 0.5, metrics_text, fontsize=12, ha='center', va='center', transform=axes[-1].transAxes)
 
     plt.tight_layout()
     plt.show()
