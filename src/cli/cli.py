@@ -190,7 +190,6 @@ def parse_arguments():
     indicator_group.add_argument(
         '--rule',
         default=default_rule_name,
-        choices=all_rule_choices,
         help=f"Trading rule to apply. Default: {default_rule_name}. "
              f"Aliases: PHLD=Predict_High_Low_Direction, PV=Pressure_Vector, SR=Support_Resistants."
     )
