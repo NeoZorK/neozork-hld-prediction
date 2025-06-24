@@ -357,7 +357,7 @@ def parse_arguments():
         if ':' in args.rule:
             # Parameterized rule - validate the indicator name part
             indicator_name = args.rule.split(':', 1)[0].lower()
-            valid_indicators = ['rsi', 'macd', 'stoch', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar']
+            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar']
             if indicator_name not in valid_indicators:
                 parser.error(f"Invalid indicator name '{indicator_name}' in parameterized rule '{args.rule}'. Valid indicators: {', '.join(valid_indicators)}")
         else:
@@ -492,6 +492,36 @@ def show_indicator_help(indicator_name: str):
                 'rsi:14,30,70,open',
                 'rsi:21,25,75,close',
                 'rsi:14,10,90,open'
+            ]
+        },
+        'rsi_mom': {
+            'name': 'RSI Momentum',
+            'format': 'rsi_mom:period,oversold,overbought,price_type',
+            'parameters': [
+                'period (int): RSI calculation period (default: 14)',
+                'oversold (float): Oversold threshold (default: 30)',
+                'overbought (float): Overbought threshold (default: 70)',
+                'price_type (string): Price type for calculation - open or close (default: close)'
+            ],
+            'examples': [
+                'rsi_mom:14,30,70,open',
+                'rsi_mom:21,25,75,close',
+                'rsi_mom:14,10,90,open'
+            ]
+        },
+        'rsi_div': {
+            'name': 'RSI Divergence',
+            'format': 'rsi_div:period,oversold,overbought,price_type',
+            'parameters': [
+                'period (int): RSI calculation period (default: 14)',
+                'oversold (float): Oversold threshold (default: 30)',
+                'overbought (float): Overbought threshold (default: 70)',
+                'price_type (string): Price type for calculation - open or close (default: close)'
+            ],
+            'examples': [
+                'rsi_div:14,30,70,open',
+                'rsi_div:21,25,75,close',
+                'rsi_div:14,10,90,open'
             ]
         },
         'macd': {
@@ -1165,6 +1195,10 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
         # Parse parameters based on indicator type
         if indicator_name == 'rsi':
             return parse_rsi_parameters(params_str)
+        elif indicator_name == 'rsi_mom':
+            return parse_rsi_parameters(params_str)  # RSI Momentum uses same parameters as RSI
+        elif indicator_name == 'rsi_div':
+            return parse_rsi_parameters(params_str)  # RSI Divergence uses same parameters as RSI
         elif indicator_name == 'macd':
             return parse_macd_parameters(params_str)
         elif indicator_name == 'stoch':
