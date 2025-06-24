@@ -48,6 +48,9 @@ class TradingMetricsCalculator:
             if df.empty or price_col not in df.columns or signal_col not in df.columns:
                 return self._get_empty_metrics()
             
+            # Calculate trade counts
+            buy_count, sell_count, total_trades = self._calculate_trade_counts(df, signal_col)
+            
             # Calculate basic metrics
             win_ratio = self._calculate_win_ratio(df, price_col, signal_col)
             risk_reward_ratio = self._calculate_risk_reward_ratio(df, price_col, signal_col)
@@ -73,6 +76,9 @@ class TradingMetricsCalculator:
             
             # Compile all metrics
             metrics = {
+                'buy_count': buy_count,
+                'sell_count': sell_count,
+                'total_trades': total_trades,
                 'win_ratio': win_ratio,
                 'risk_reward_ratio': risk_reward_ratio,
                 'profit_factor': profit_factor,
@@ -105,6 +111,22 @@ class TradingMetricsCalculator:
         except Exception as e:
             logger.print_debug(f"Error calculating win ratio: {e}")
             return 0.0
+    
+    def _calculate_trade_counts(self, df: pd.DataFrame, signal_col: str) -> Tuple[int, int, int]:
+        """Calculate buy, sell, and total trade counts."""
+        try:
+            if signal_col not in df.columns:
+                return 0, 0, 0
+            
+            buy_count = int((df[signal_col] == BUY).sum())
+            sell_count = int((df[signal_col] == SELL).sum())
+            total_trades = buy_count + sell_count
+            
+            return buy_count, sell_count, total_trades
+            
+        except Exception as e:
+            logger.print_debug(f"Error calculating trade counts: {e}")
+            return 0, 0, 0
     
     def _calculate_risk_reward_ratio(self, df: pd.DataFrame, price_col: str, signal_col: str) -> float:
         """Calculate risk-reward ratio (average win / average loss)."""
@@ -420,6 +442,9 @@ class TradingMetricsCalculator:
     def _get_empty_metrics(self) -> Dict[str, float]:
         """Return empty metrics dictionary with zero values."""
         return {
+            'buy_count': 0,
+            'sell_count': 0,
+            'total_trades': 0,
             'win_ratio': 0.0,
             'risk_reward_ratio': 0.0,
             'profit_factor': 0.0,

@@ -15,6 +15,8 @@ import plotly.io as pio
 import webbrowser
 from functools import partial
 import re
+from src.plotting.metrics_display import add_metrics_to_plotly_chart
+from src.common import logger
 
 def plot_indicator_results_fastest(
     df,
@@ -80,12 +82,12 @@ def plot_indicator_results_fastest(
 
     # Create the main figure
     fig = make_subplots(
-        rows=3,
+        rows=4,
         cols=1,
         shared_xaxes=True,
         vertical_spacing=0.03,
-        row_heights=[0.6, 0.2, 0.2],
-        subplot_titles=["OHLC Chart", "Volume", "Indicators"]
+        row_heights=[0.5, 0.15, 0.15, 0.2],
+        subplot_titles=["OHLC Chart", "Volume", "Indicators", "Trading Metrics"]
     )
 
     # Add OHLC candlestick chart
@@ -209,8 +211,17 @@ def plot_indicator_results_fastest(
         )
 
     # Show time labels only on the bottom chart
-    for i in range(1, 3):
+    for i in range(1, 4):
         fig.update_xaxes(row=i, col=1, showticklabels=False)
+
+    # Add trading metrics to the metrics panel (row 4)
+    if 'Direction' in display_df.columns:
+        try:
+            # Add metrics as text annotation in the metrics panel
+            fig = add_metrics_to_plotly_chart(fig, display_df, position='center')
+            logger.print_info("Added trading metrics to fastest plot")
+        except Exception as e:
+            logger.print_warning(f"Could not add trading metrics to fastest plot: {e}")
 
     # Save and open
     pio.write_html(fig, output_path, auto_open=False)

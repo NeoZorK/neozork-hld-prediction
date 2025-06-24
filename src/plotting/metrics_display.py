@@ -42,6 +42,7 @@ class MetricsDisplay:
                 'loss': '#ff4444',
                 'neutral': '#888888',
                 'good': '#00cc66',
+                'bad': '#ff4444',
                 'warning': '#ffaa00',
                 'danger': '#ff4444'
             }
@@ -54,6 +55,7 @@ class MetricsDisplay:
                 'loss': '#cc0000',
                 'neutral': '#666666',
                 'good': '#006600',
+                'bad': '#cc0000',
                 'warning': '#cc6600',
                 'danger': '#cc0000'
             }
@@ -95,16 +97,30 @@ class MetricsDisplay:
             if metrics is None:
                 metrics = calculate_trading_metrics(df)
             metrics_text = self._format_metrics_for_plotly(metrics)
-            # Place metrics near the legend area (top-right of plot)
+            
+            # Position metrics based on the position parameter
+            if position == 'center':
+                # Center position for dedicated metrics panel
+                x = 0.5
+                y = 0.5
+                xanchor = "center"
+                yanchor = "middle"
+            else:
+                # Default position near the legend area (top-right of plot)
+                x = 0.98
+                y = 0.95
+                xanchor = "right"
+                yanchor = "top"
+            
             fig.add_annotation(
-                x=0.98,  # near right edge of plot
-                y=0.95,  # near top of plot
+                x=x,
+                y=y,
                 text=metrics_text,
                 showarrow=False,
                 xref="paper",
                 yref="paper",
-                xanchor="right",
-                yanchor="top",
+                xanchor=xanchor,
+                yanchor=yanchor,
                 font=dict(
                     family="Courier New, monospace",
                     size=10,
@@ -113,7 +129,7 @@ class MetricsDisplay:
                 bgcolor=self.colors['background'],
                 bordercolor=self.colors['border'],
                 borderwidth=1,
-                align="right"
+                align="center" if position == 'center' else "right"
             )
             return fig
         except Exception as e:
@@ -160,6 +176,10 @@ class MetricsDisplay:
                 return f'<span style="color:{color};font-weight:bold">{val}</span>'
             lines = [
                 "<b>📊 TRADING METRICS</b>",
+                "─" * 20,
+                f"🟢 Buy Signals: {color_span(f'{metrics['buy_count']}', self.colors['good'])}",
+                f"🔴 Sell Signals: {color_span(f'{metrics['sell_count']}', self.colors['bad'])}",
+                f"📈 Total Trades: {color_span(f'{metrics['total_trades']}', self.colors['neutral'])}",
                 "─" * 20,
                 f"🎯 Win Ratio: {color_span(f'{metrics['win_ratio']:.1f}%', self._get_metric_color('win_ratio', metrics['win_ratio']))}",
                 f"⚖️  Risk/Reward: {color_span(f'{metrics['risk_reward_ratio']:.2f}', self._get_metric_color('risk_reward_ratio', metrics['risk_reward_ratio']))}",
@@ -211,6 +231,10 @@ class MetricsDisplay:
             # Format metrics text
             lines = [
                 "📊 TRADING METRICS",
+                "─" * 20,
+                f"🟢 Buy Signals: {colorize(f'{metrics['buy_count']}', self.colors['good'])}",
+                f"🔴 Sell Signals: {colorize(f'{metrics['sell_count']}', self.colors['bad'])}",
+                f"📈 Total Trades: {colorize(f'{metrics['total_trades']}', self.colors['neutral'])}",
                 "─" * 20,
                 f"🎯 Win Ratio: {colorize(f'{metrics['win_ratio']:.1f}%', self._get_metric_color('win_ratio', metrics['win_ratio']))}",
                 f"⚖️  Risk/Reward: {colorize(f'{metrics['risk_reward_ratio']:.2f}', self._get_metric_color('risk_reward_ratio', metrics['risk_reward_ratio']))}",
