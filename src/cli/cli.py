@@ -192,14 +192,19 @@ def parse_arguments():
 
     # --- Indicator Options Group ---
     indicator_group = parser.add_argument_group('Indicator Options')
-    rule_aliases_map = {'PHLD': 'Predict_High_Low_Direction', 'PV': 'Pressure_Vector', 'SR': 'Support_Resistants'}
+    rule_aliases_map = {
+        'PHLD': 'Predict_High_Low_Direction', 
+        'PV': 'Pressure_Vector', 
+        'SR': 'Support_Resistants',
+        'BB': 'Bollinger_Bands'
+    }
     rule_names = list(TradingRule.__members__.keys())
     all_rule_choices = rule_names + list(rule_aliases_map.keys()) + ['OHLCV', 'AUTO']  # Added 'OHLCV' and 'AUTO' as valid rules
     default_rule_name = 'OHLCV'
     indicator_group.add_argument(
         '--rule',
         default=default_rule_name,
-        help=f"Trading rule to apply. Default: {default_rule_name}. Aliases: PHLD=Predict_High_Low_Direction, PV=Pressure_Vector, SR=Support_Resistants."
+        help=f"Trading rule to apply. Default: {default_rule_name}. Aliases: PHLD=Predict_High_Low_Direction, PV=Pressure_Vector, SR=Support_Resistants, BB=Bollinger_Bands."
     )
     
     # Strategy parameters
@@ -276,8 +281,47 @@ def parse_arguments():
 
     # --- Parse Arguments ---
     try:
+        # If --indicators is present, always handle it first and exit
+        if '--indicators' in sys.argv:
+            idx = sys.argv.index('--indicators')
+            args_list = sys.argv[idx+1:]
+            searcher = IndicatorSearcher()
+            if not args_list:
+                searcher.display_categories()
+            elif len(args_list) == 1:
+                query = args_list[0]
+                if query in searcher.indicators:
+                    searcher.display_category(query, detailed=True)
+                else:
+                    results = searcher.search_indicators(query)
+                    if results:
+                        print(f"\n{Fore.YELLOW}Search results for '{query}' across all categories:{Style.RESET_ALL}")
+                        print(f"{Fore.CYAN}{'=' * 60}{Style.RESET_ALL}")
+                        for ind in results:
+                            print(ind.display(detailed=True))
+                    else:
+                        print(f"{Fore.RED}No indicators found matching: {query}{Style.RESET_ALL}")
+                        print(f"{Fore.YELLOW}Available categories: {', '.join(searcher.list_categories())}{Style.RESET_ALL}")
+            elif len(args_list) >= 2:
+                category = args_list[0]
+                name = ' '.join(args_list[1:])
+                print(f"\n{Fore.YELLOW}Search in category '{category}' for '{name}':{Style.RESET_ALL}")
+                results = searcher.search_indicators(name)
+                filtered = [ind for ind in results if ind.category == category]
+                if filtered:
+                    for ind in filtered:
+                        print(ind.display(detailed=True))
+                else:
+                    print(f"No indicators found in category '{category}' matching '{name}'")
+            sys.exit(0)
+
         # If no arguments provided, show help
         if len(sys.argv) == 1:
+            parser.print_help()
+            sys.exit(0)
+
+        # Handle --help flag before parsing to avoid mode requirement
+        if '--help' in sys.argv or '-h' in sys.argv:
             parser.print_help()
             sys.exit(0)
 
@@ -291,45 +335,6 @@ def parse_arguments():
             print("  Show MACD info:        --indicators momentum macd")
             print("  Interactive mode:      python run_analysis.py interactive")
             cli_examples.show_cli_examples_colored()
-            sys.exit(0)
-        
-        # Handle --indicators
-        if '--indicators' in sys.argv:
-            idx = sys.argv.index('--indicators')
-            args_list = sys.argv[idx+1:]
-            searcher = IndicatorSearcher()
-            if not args_list:
-                searcher.display_categories()
-            elif len(args_list) == 1:
-                # Search by category name OR by indicator name across all categories
-                query = args_list[0]
-                
-                # First, try to find as category name
-                if query in searcher.indicators:
-                    searcher.display_category(query, detailed=True)
-                else:
-                    # If not found as category, search for indicator name across all categories
-                    results = searcher.search_indicators(query)
-                    if results:
-                        print(f"\n{Fore.YELLOW}Search results for '{query}' across all categories:{Style.RESET_ALL}")
-                        print(f"{Fore.CYAN}{'=' * 60}{Style.RESET_ALL}")
-                        for ind in results:
-                            print(ind.display(detailed=True))
-                    else:
-                        print(f"{Fore.RED}No indicators found matching: {query}{Style.RESET_ALL}")
-                        print(f"{Fore.YELLOW}Available categories: {', '.join(searcher.list_categories())}{Style.RESET_ALL}")
-            elif len(args_list) >= 2:
-                # Search by category and name
-                category = args_list[0]
-                name = ' '.join(args_list[1:])
-                print(f"\n{Fore.YELLOW}Search in category '{category}' for '{name}':{Style.RESET_ALL}")
-                results = searcher.search_indicators(name)
-                filtered = [ind for ind in results if ind.category == category]
-                if filtered:
-                    for ind in filtered:
-                        print(ind.display(detailed=True))
-                else:
-                    print(f"No indicators found in category '{category}' matching '{name}'")
             sys.exit(0)
         
         # Handle --metric encyclopedia
