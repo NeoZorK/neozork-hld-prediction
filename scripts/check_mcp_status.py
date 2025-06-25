@@ -72,79 +72,41 @@ class DockerMCPServerChecker:
             return False
 
     def _check_server_with_ps(self) -> bool:
-        """Check if MCP server is running using alternative methods for Docker"""
-        try:
-            # Method 1: Try ps aux if available
-            try:
-                result = subprocess.run(
-                    ['ps', 'aux'], 
-                    capture_output=True, 
-                    text=True, 
-                    timeout=5
-                )
-                
-                if result.returncode == 0:
-                    # Look for neozork_mcp_server.py in the output
-                    lines = result.stdout.split('\n')
-                    for line in lines:
-                        if 'neozork_mcp_server.py' in line and 'grep' not in line:
-                            # Extract PID from the line
-                            parts = line.split()
-                            if len(parts) > 1:
-                                try:
-                                    pid = int(parts[1])
-                                    self.logger.info(f"Found MCP server process with PID: {pid} via ps aux")
-                                    return True
-                                except (ValueError, IndexError):
-                                    continue
-            except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
-                self.logger.info("ps command not available, trying alternative methods")
-            
-            # Method 2: Check /proc filesystem for Python processes
-            return self._check_server_via_proc()
-                
-        except Exception as e:
-            self.logger.error(f"Error checking server status: {e}")
-            return False
+        """Check if MCP server is running using Docker-safe universal method"""
+        pid = self._find_mcp_server_pid()
+        if pid:
+            self.logger.info(f"Found MCP server process with PID: {pid} via universal Docker-safe method")
+            return True
+        self.logger.info("No MCP server process found via universal Docker-safe method")
+        return False
 
-    def _check_server_via_proc(self) -> bool:
-        """Check for MCP server using /proc filesystem"""
-        try:
-            # Iterate through /proc directory to find Python processes
-            proc_dir = Path("/proc")
-            if not proc_dir.exists():
-                self.logger.warning("/proc directory not accessible")
-                return False
-            
-            for proc_path in proc_dir.iterdir():
-                if not proc_path.is_dir() or not proc_path.name.isdigit():
+    def _find_mcp_server_pid(self) -> Optional[int]:
+        """Find MCP server PID using /proc or pgrep (Docker-safe)"""
+        # 1. Try /proc
+        proc_dir = Path("/proc")
+        if proc_dir.exists():
+            for proc in proc_dir.iterdir():
+                if not proc.is_dir() or not proc.name.isdigit():
                     continue
-                
                 try:
-                    # Check if this is a Python process
-                    exe_link = proc_path / "exe"
-                    if exe_link.exists():
-                        exe_target = exe_link.resolve()
-                        if "python" in str(exe_target).lower():
-                            # Check command line arguments
-                            cmdline_file = proc_path / "cmdline"
-                            if cmdline_file.exists():
-                                with open(cmdline_file, 'r') as f:
-                                    cmdline = f.read()
-                                    if 'neozork_mcp_server.py' in cmdline:
-                                        pid = int(proc_path.name)
-                                        self.logger.info(f"Found MCP server process with PID: {pid} via /proc")
-                                        return True
-                except (OSError, ValueError, FileNotFoundError):
-                    # Skip processes we can't read
+                    cmdline_file = proc / "cmdline"
+                    if cmdline_file.exists():
+                        with open(cmdline_file, 'rb') as f:
+                            cmdline = f.read().replace(b'\x00', b' ')
+                            if b'neozork_mcp_server.py' in cmdline:
+                                return int(proc.name)
+                except Exception:
                     continue
-            
-            self.logger.info("No MCP server process found via /proc")
-            return False
-            
-        except Exception as e:
-            self.logger.error(f"Error checking /proc filesystem: {e}")
-            return False
+        # 2. Try pgrep
+        try:
+            result = subprocess.run(['pgrep', '-f', 'neozork_mcp_server.py'], capture_output=True, text=True, timeout=2)
+            if result.returncode == 0:
+                pids = [int(pid) for pid in result.stdout.strip().split('\n') if pid.strip().isdigit()]
+                if pids:
+                    return pids[0]
+        except Exception:
+            pass
+        return None
 
     def _is_process_running(self, pid: int) -> bool:
         """Check if process with given PID is running"""
@@ -231,7 +193,7 @@ class DockerMCPServerChecker:
                 # Fallback to alternative detection methods
                 if self._check_server_with_ps():
                     # Try to get PID from /proc
-                    pid = self._get_mcp_server_pid_from_proc()
+                    pid = self._find_mcp_server_pid()
                     if pid:
                         return {
                             "status": "success",
@@ -251,39 +213,6 @@ class DockerMCPServerChecker:
         except Exception as e:
             self.logger.error(f"Error pinging MCP server: {e}")
             return {"status": "failed", "error": str(e)}
-
-    def _get_mcp_server_pid_from_proc(self) -> Optional[int]:
-        """Get MCP server PID from /proc filesystem"""
-        try:
-            proc_dir = Path("/proc")
-            if not proc_dir.exists():
-                return None
-            
-            for proc_path in proc_dir.iterdir():
-                if not proc_path.is_dir() or not proc_path.name.isdigit():
-                    continue
-                
-                try:
-                    # Check if this is a Python process
-                    exe_link = proc_path / "exe"
-                    if exe_link.exists():
-                        exe_target = exe_link.resolve()
-                        if "python" in str(exe_target).lower():
-                            # Check command line arguments
-                            cmdline_file = proc_path / "cmdline"
-                            if cmdline_file.exists():
-                                with open(cmdline_file, 'r') as f:
-                                    cmdline = f.read()
-                                    if 'neozork_mcp_server.py' in cmdline:
-                                        return int(proc_path.name)
-                except (OSError, ValueError, FileNotFoundError):
-                    continue
-            
-            return None
-            
-        except Exception as e:
-            self.logger.error(f"Error getting PID from /proc: {e}")
-            return None
 
     def check_ide_configurations(self) -> Dict[str, Any]:
         """Check IDE configuration files in Docker"""
@@ -392,7 +321,7 @@ class DockerMCPServerChecker:
             # Check if server is running via alternative methods
             if self._check_server_with_ps():
                 # Try to get PID from /proc
-                pid = self._get_mcp_server_pid_from_proc()
+                pid = self._find_mcp_server_pid()
                 if pid:
                     docker_info["pid"] = pid
                     docker_info["detection_method"] = "proc_filesystem"
@@ -788,4 +717,13 @@ def main():
         return 1
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--debug-detect', action='store_true', help='Debug: print detected MCP server PID in Docker')
+    args = parser.parse_args()
+    if args.debug_detect:
+        checker = DockerMCPServerChecker()
+        pid = checker._find_mcp_server_pid()
+        print(f"[DEBUG] Detected MCP server PID: {pid}")
+        sys.exit(0 if pid else 1)
     sys.exit(main()) 
