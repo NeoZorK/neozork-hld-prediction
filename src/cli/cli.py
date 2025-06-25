@@ -280,6 +280,7 @@ def parse_arguments():
             parser.print_help()
             sys.exit(0)
 
+        # Handle special flags that don't require mode argument
         if '--examples' in sys.argv:
             print(f"\n{Fore.YELLOW}{Style.BRIGHT}Indicator Usage Examples:{Style.RESET_ALL}")
             print("  Show all indicators:   --indicators")
@@ -356,7 +357,7 @@ def parse_arguments():
             sys.exit(0)
         
         # Handle --interactive flag
-        if '--interactive' in sys.argv:
+        if '--interactive' in sys.argv or '-i' in sys.argv:
             from src.cli.interactive_mode import start_interactive_mode
             start_interactive_mode()
             sys.exit(0)

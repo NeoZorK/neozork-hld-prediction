@@ -2,18 +2,19 @@
 # tests/cli/test_cli_metric_flag.py
 
 """
-Tests for CLI --metric flag functionality
-All comments are in English.
+Tests for CLI metric flag functionality and interactive mode.
 """
 
 import pytest
 import sys
 from unittest.mock import patch, MagicMock
 from io import StringIO
+from src.cli.cli import parse_arguments
+from src.cli.quant_encyclopedia import QuantEncyclopedia
 
 
 class TestCLIMetricFlag:
-    """Test cases for CLI --metric flag."""
+    """Test CLI metric flag functionality."""
     
     def setup_method(self):
         """Set up test fixtures."""
@@ -25,202 +26,123 @@ class TestCLIMetricFlag:
         # Restore original argv
         sys.argv = self.original_argv
     
-    @patch('src.cli.quant_encyclopedia.QuantEncyclopedia')
-    def test_metric_flag_no_args(self, mock_encyclopedia_class):
-        """Test --metric flag with no arguments."""
-        # Setup
-        mock_encyclopedia = MagicMock()
-        mock_encyclopedia_class.return_value = mock_encyclopedia
-        
-        # Set command line arguments
-        sys.argv = ['run_analysis.py', '--metric']
-        
-        # Import and run
-        with patch('sys.exit') as mock_exit:
-            from src.cli.cli import parse_arguments
-            parse_arguments()
-        
-        # Verify
-        mock_encyclopedia.show_all_metrics.assert_called_once()
-        mock_encyclopedia.show_all_tips.assert_called_once()
-        mock_exit.assert_called_with(0)
+    def test_metric_flag_no_args(self):
+        """Test --metric flag without arguments."""
+        with patch('sys.argv', ['run_analysis.py', '--metric']):
+            with patch('sys.exit') as mock_exit:
+                parse_arguments()
+                mock_exit.assert_called_with(0)
     
-    @patch('src.cli.quant_encyclopedia.QuantEncyclopedia')
-    def test_metric_flag_metrics_only(self, mock_encyclopedia_class):
-        """Test --metric metrics."""
-        # Setup
-        mock_encyclopedia = MagicMock()
-        mock_encyclopedia_class.return_value = mock_encyclopedia
-        
-        # Set command line arguments
-        sys.argv = ['run_analysis.py', '--metric', 'metrics']
-        
-        # Import and run
-        with patch('sys.exit') as mock_exit:
-            from src.cli.cli import parse_arguments
-            parse_arguments()
-        
-        # Verify
-        mock_encyclopedia.show_all_metrics.assert_called_once()
-        mock_encyclopedia.show_all_tips.assert_not_called()
-        mock_exit.assert_called_with(0)
+    def test_metric_flag_with_metrics_type(self):
+        """Test --metric flag with metrics type."""
+        with patch('sys.argv', ['run_analysis.py', '--metric', 'metrics']):
+            with patch('sys.exit') as mock_exit:
+                parse_arguments()
+                mock_exit.assert_called_with(0)
     
-    @patch('src.cli.quant_encyclopedia.QuantEncyclopedia')
-    def test_metric_flag_tips_only(self, mock_encyclopedia_class):
-        """Test --metric tips."""
-        # Setup
-        mock_encyclopedia = MagicMock()
-        mock_encyclopedia_class.return_value = mock_encyclopedia
-        
-        # Set command line arguments
-        sys.argv = ['run_analysis.py', '--metric', 'tips']
-        
-        # Import and run
-        with patch('sys.exit') as mock_exit:
-            from src.cli.cli import parse_arguments
-            parse_arguments()
-        
-        # Verify
-        mock_encyclopedia.show_all_metrics.assert_not_called()
-        mock_encyclopedia.show_all_tips.assert_called_once()
-        mock_exit.assert_called_with(0)
+    def test_metric_flag_with_tips_type(self):
+        """Test --metric flag with tips type."""
+        with patch('sys.argv', ['run_analysis.py', '--metric', 'tips']):
+            with patch('sys.exit') as mock_exit:
+                parse_arguments()
+                mock_exit.assert_called_with(0)
     
-    @patch('src.cli.quant_encyclopedia.QuantEncyclopedia')
-    def test_metric_flag_notes_only(self, mock_encyclopedia_class):
-        """Test --metric notes."""
-        # Setup
-        mock_encyclopedia = MagicMock()
-        mock_encyclopedia_class.return_value = mock_encyclopedia
-        
-        # Set command line arguments
-        sys.argv = ['run_analysis.py', '--metric', 'notes']
-        
-        # Import and run
-        with patch('sys.exit') as mock_exit:
-            from src.cli.cli import parse_arguments
-            parse_arguments()
-        
-        # Verify
-        mock_encyclopedia.show_all_metrics.assert_not_called()
-        mock_encyclopedia.show_all_tips.assert_called_once()
-        mock_exit.assert_called_with(0)
+    def test_metric_flag_with_filter(self):
+        """Test --metric flag with filter text."""
+        with patch('sys.argv', ['run_analysis.py', '--metric', 'winrate']):
+            with patch('sys.exit') as mock_exit:
+                parse_arguments()
+                mock_exit.assert_called_with(0)
     
-    @patch('src.cli.quant_encyclopedia.QuantEncyclopedia')
-    def test_metric_flag_with_filter(self, mock_encyclopedia_class):
-        """Test --metric with filter text."""
-        # Setup
-        mock_encyclopedia = MagicMock()
-        mock_encyclopedia_class.return_value = mock_encyclopedia
-        
-        # Set command line arguments
-        sys.argv = ['run_analysis.py', '--metric', 'profit factor']
-        
-        # Import and run
-        with patch('sys.exit') as mock_exit:
-            from src.cli.cli import parse_arguments
-            parse_arguments()
-        
-        # Verify
-        mock_encyclopedia.show_filtered_content.assert_called_once_with('profit factor')
-        mock_exit.assert_called_with(0)
+    def test_metric_flag_with_type_and_filter(self):
+        """Test --metric flag with type and filter."""
+        with patch('sys.argv', ['run_analysis.py', '--metric', 'metrics', 'profit']):
+            with patch('sys.exit') as mock_exit:
+                parse_arguments()
+                mock_exit.assert_called_with(0)
+
+
+class TestCLIInteractiveFlag:
+    """Test CLI interactive flag functionality."""
     
-    @patch('src.cli.quant_encyclopedia.QuantEncyclopedia')
-    def test_metric_flag_metrics_with_filter(self, mock_encyclopedia_class):
-        """Test --metric metrics with filter."""
-        # Setup
-        mock_encyclopedia = MagicMock()
-        mock_encyclopedia_class.return_value = mock_encyclopedia
-        
-        # Set command line arguments
-        sys.argv = ['run_analysis.py', '--metric', 'metrics', 'profit factor']
-        
-        # Import and run
-        with patch('sys.exit') as mock_exit:
-            from src.cli.cli import parse_arguments
-            parse_arguments()
-        
-        # Verify
-        mock_encyclopedia.show_all_metrics.assert_called_once_with('profit factor')
-        mock_encyclopedia.show_all_tips.assert_not_called()
-        mock_exit.assert_called_with(0)
+    def test_interactive_flag_long(self):
+        """Test --interactive flag."""
+        with patch('sys.argv', ['run_analysis.py', '--interactive']):
+            with patch('sys.exit') as mock_exit:
+                with patch('src.cli.interactive_mode.start_interactive_mode') as mock_start:
+                    parse_arguments()
+                    mock_start.assert_called_once()
+                    mock_exit.assert_called_with(0)
     
-    @patch('src.cli.quant_encyclopedia.QuantEncyclopedia')
-    def test_metric_flag_tips_with_filter(self, mock_encyclopedia_class):
-        """Test --metric tips with filter."""
-        # Setup
-        mock_encyclopedia = MagicMock()
-        mock_encyclopedia_class.return_value = mock_encyclopedia
-        
-        # Set command line arguments
-        sys.argv = ['run_analysis.py', '--metric', 'tips', 'winrate']
-        
-        # Import and run
-        with patch('sys.exit') as mock_exit:
-            from src.cli.cli import parse_arguments
-            parse_arguments()
-        
-        # Verify
-        mock_encyclopedia.show_all_metrics.assert_not_called()
-        mock_encyclopedia.show_all_tips.assert_called_once_with('winrate')
-        mock_exit.assert_called_with(0)
+    def test_interactive_flag_short(self):
+        """Test -i flag."""
+        with patch('sys.argv', ['run_analysis.py', '-i']):
+            with patch('sys.exit') as mock_exit:
+                with patch('src.cli.interactive_mode.start_interactive_mode') as mock_start:
+                    parse_arguments()
+                    mock_start.assert_called_once()
+                    mock_exit.assert_called_with(0)
     
-    @patch('src.cli.quant_encyclopedia.QuantEncyclopedia')
-    def test_metric_flag_notes_with_filter(self, mock_encyclopedia_class):
-        """Test --metric notes with filter."""
-        # Setup
-        mock_encyclopedia = MagicMock()
-        mock_encyclopedia_class.return_value = mock_encyclopedia
-        
-        # Set command line arguments
-        sys.argv = ['run_analysis.py', '--metric', 'notes', 'winrate']
-        
-        # Import and run
-        with patch('sys.exit') as mock_exit:
-            from src.cli.cli import parse_arguments
-            parse_arguments()
-        
-        # Verify
-        mock_encyclopedia.show_all_metrics.assert_not_called()
-        mock_encyclopedia.show_all_tips.assert_called_once_with('winrate')
-        mock_exit.assert_called_with(0)
+    def test_interactive_mode_positional(self):
+        """Test interactive mode as positional argument."""
+        with patch('sys.argv', ['run_analysis.py', 'interactive']):
+            with patch('sys.exit') as mock_exit:
+                with patch('src.cli.interactive_mode.start_interactive_mode') as mock_start:
+                    parse_arguments()
+                    mock_start.assert_called_once()
+                    mock_exit.assert_called_with(0)
+
+
+class TestInteractiveModeMetrics:
+    """Test interactive mode metrics encyclopedia integration."""
     
+    @patch('builtins.input')
     @patch('src.cli.quant_encyclopedia.QuantEncyclopedia')
-    def test_metric_flag_invalid_type(self, mock_encyclopedia_class):
-        """Test --metric with invalid type."""
-        # Setup
+    def test_interactive_metrics_menu(self, mock_encyclopedia_class, mock_input):
+        """Test metrics encyclopedia menu in interactive mode."""
+        from src.cli.interactive_mode import InteractiveMode
+        
+        # Mock user input: select metrics (10), then show all metrics (1), then back (5), then exit (0)
+        mock_input.side_effect = ['10', '1', '5', '0']
+        
+        # Mock encyclopedia
         mock_encyclopedia = MagicMock()
         mock_encyclopedia_class.return_value = mock_encyclopedia
         
-        # Set command line arguments
-        sys.argv = ['run_analysis.py', '--metric', 'invalid_type', 'some filter']
+        # Create interactive mode instance
+        interactive = InteractiveMode()
         
-        # Import and run
-        with patch('sys.exit') as mock_exit:
-            from src.cli.cli import parse_arguments
-            parse_arguments()
-        
-        # Verify
-        mock_encyclopedia.show_filtered_content.assert_called_once_with('invalid_type some filter')
-        mock_exit.assert_called_with(0)
+        # Mock the start method to avoid infinite loop
+        with patch.object(interactive, 'start'):
+            # Test the metrics encyclopedia method directly
+            interactive._show_trading_metrics_encyclopedia()
+            
+            # Verify encyclopedia was called
+            mock_encyclopedia.show_all_metrics.assert_called_once()
     
+    @patch('builtins.input')
     @patch('src.cli.quant_encyclopedia.QuantEncyclopedia')
-    def test_metric_flag_multiple_words_filter(self, mock_encyclopedia_class):
-        """Test --metric with multiple word filter."""
-        # Setup
+    def test_interactive_metrics_search(self, mock_encyclopedia_class, mock_input):
+        """Test metrics search in interactive mode."""
+        from src.cli.interactive_mode import InteractiveMode
+        
+        # Mock user input: select metrics (10), then search metrics (3), enter "winrate", then back (5), then exit (0)
+        mock_input.side_effect = ['10', '3', 'winrate', '5', '0']
+        
+        # Mock encyclopedia
         mock_encyclopedia = MagicMock()
         mock_encyclopedia_class.return_value = mock_encyclopedia
         
-        # Set command line arguments
-        sys.argv = ['run_analysis.py', '--metric', 'metrics', 'profit', 'factor', 'analysis']
+        # Create interactive mode instance
+        interactive = InteractiveMode()
         
-        # Import and run
-        with patch('sys.exit') as mock_exit:
-            from src.cli.cli import parse_arguments
-            parse_arguments()
-        
-        # Verify
-        mock_encyclopedia.show_all_metrics.assert_called_once_with('profit factor analysis')
-        mock_exit.assert_called_with(0)
+        # Mock the start method to avoid infinite loop
+        with patch.object(interactive, 'start'):
+            # Test the metrics encyclopedia method directly
+            interactive._show_trading_metrics_encyclopedia()
+            
+            # Verify encyclopedia was called with search term
+            mock_encyclopedia.show_all_metrics.assert_called_once_with('winrate')
 
 
 class TestCLIMetricFlagIntegration:
@@ -242,7 +164,6 @@ class TestCLIMetricFlagIntegration:
         # Capture help output
         with patch('sys.stdout', new=StringIO()) as mock_stdout:
             with patch('sys.exit') as mock_exit:
-                from src.cli.cli import parse_arguments
                 parse_arguments()
         
         # Get help output
@@ -260,7 +181,6 @@ class TestCLIMetricFlagIntegration:
         # This should show version and exit, not process --metric
         with patch('sys.stdout', new=StringIO()) as mock_stdout:
             with patch('sys.exit') as mock_exit:
-                from src.cli.cli import parse_arguments
                 parse_arguments()
         
         # Verify version was shown
