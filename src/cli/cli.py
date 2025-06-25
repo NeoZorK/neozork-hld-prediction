@@ -300,7 +300,23 @@ def parse_arguments():
             if not args_list:
                 searcher.display_categories()
             elif len(args_list) == 1:
-                searcher.display_category(args_list[0], detailed=True)
+                # Search by category name OR by indicator name across all categories
+                query = args_list[0]
+                
+                # First, try to find as category name
+                if query in searcher.indicators:
+                    searcher.display_category(query, detailed=True)
+                else:
+                    # If not found as category, search for indicator name across all categories
+                    results = searcher.search_indicators(query)
+                    if results:
+                        print(f"\n{Fore.YELLOW}Search results for '{query}' across all categories:{Style.RESET_ALL}")
+                        print(f"{Fore.CYAN}{'=' * 60}{Style.RESET_ALL}")
+                        for ind in results:
+                            print(ind.display(detailed=True))
+                    else:
+                        print(f"{Fore.RED}No indicators found matching: {query}{Style.RESET_ALL}")
+                        print(f"{Fore.YELLOW}Available categories: {', '.join(searcher.list_categories())}{Style.RESET_ALL}")
             elif len(args_list) >= 2:
                 # Search by category and name
                 category = args_list[0]
