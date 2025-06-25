@@ -23,7 +23,7 @@ from ..export.json_export import export_indicator_to_json
 # from src.calculation.universal_trading_metrics import display_universal_trading_metrics
 
 try:
-    from .universal_trading_metrics import display_universal_trading_metrics
+    from ..calculation.universal_trading_metrics import display_universal_trading_metrics
 except ImportError as e:
     print(f'universal_trading_metrics import failed: {e}')
     print(f'traceback: {traceback.format_exc()}')
