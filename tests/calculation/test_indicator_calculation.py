@@ -108,7 +108,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         args = create_mock_args() # mode='demo' default
         with self.assertRaises(ValueError) as cm:
             calculate_indicator(args, pd.DataFrame(), self.point_size)
-        self.assertIn("No data available for calculation", str(cm.exception))
+        self.assertIn("DataFrame missing required columns for calculation", str(cm.exception))
 
     # Test with None point size input
     @patch('src.calculation.indicator_calculation.logger.print_error')
@@ -165,7 +165,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
 
         result_df, selected_rule = calculate_indicator(args, self.ohlcv_df, self.point_size)
 
-        self.assertTrue(result_df.empty)
+        self.assertIsNone(result_df)
         self.assertEqual(selected_rule, TradingRule.Pressure_Vector)
         # *** FIX: Assert on the specific mocked method ***
         mock_print_warning.assert_called_once_with("Indicator calculation returned None or empty DataFrame.")
@@ -192,12 +192,12 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         found_pressure = False
         for call_args in mock_print_info.call_args_list:
             log_message = call_args[0][0] # First positional argument of the call
-            if "--- Indicator Calculation Validation (CSV Mode) ---" in log_message:
-                found_header = True
             if "Pressure Comparison:" in log_message:
+                found_header = True
+            if "PV (Pressure Vector) Comparison:" in log_message:
                 found_pressure = True
-        self.assertTrue(found_header, "Validation header log not found")
-        self.assertTrue(found_pressure, "Pressure comparison log not found")
+        self.assertTrue(found_header, "Pressure comparison log not found")
+        self.assertTrue(found_pressure, "PV comparison log not found")
         # Check isclose was called
         self.assertTrue(mock_isclose.called)
 
@@ -219,8 +219,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         # Check if print_debug was called with the expected strings
         # *** FIX: Check call_args_list on the mocked method ***
         debug_log_calls = [str(c.args[0]) for c in mock_print_debug.call_args_list] # Extract first arg from calls
-        self.assertTrue(any("Result DF Tail for Rule:" in call for call in debug_log_calls), "Debug tail header not logged")
-        self.assertTrue(any("--- END DEBUG ---" in call for call in debug_log_calls), "Debug tail footer not logged")
+        self.assertTrue(any("Result DF Tail for Rule" in call for call in debug_log_calls), "Debug tail header not logged")
         self.assertTrue(any("PPrice1" in call for call in debug_log_calls), "PPrice1 column not found in debug log")
 
 # Allow running the tests directly

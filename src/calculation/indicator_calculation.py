@@ -275,7 +275,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
 
         # Print the complete validation summary
         for line in validation_summary:
-             pass
+            logger.print_info(line)
     # End of validation block
 
     # --- Debug Print Tail ---
@@ -283,9 +283,10 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         cols_to_debug = ['Open', 'PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']
         existing_cols_to_debug = [col for col in cols_to_debug if col in result_df.columns]
         if existing_cols_to_debug:
-            logger.print_debug(f"Existing columns to debug: {existing_cols_to_debug}")
+            logger.print_debug(f"Result DF Tail for Rule {selected_rule.name}:")
+            logger.print_debug(result_df[existing_cols_to_debug].tail().to_string())
         else:
-             pass
+            logger.print_debug(f"No debug columns found for Rule {selected_rule.name}")
 
     return result_df, selected_rule
 
