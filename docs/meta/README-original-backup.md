@@ -444,7 +444,7 @@ python run_analysis.py demo --rule PHLD -d plotly
 python run_analysis.py csv --csv-file data.csv --point 0.01
 python run_analysis.py csv --csv-file data.csv --point 0.01 --rule SR
 python run_analysis.py csv --csv-file data.csv --point 0.01 -d mplfinance
-python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw fastest
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d fastest
 ```
 
 # 3. YAHOO FINANCE (YF) MODES
@@ -460,7 +460,7 @@ python run_analysis.py yf -t AAPL --period 1y --rule SR
 ```bash
 python run_analysis.py polygon --ticker AAPL --interval D1 --start 2023-01-01 --end 2023-12-31 --point 0.01
 python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2022-01-01 --end 2022-06-01 --point 0.00001 --rule PV
-python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2023-01-01 --end 2024-02-01 --point 0.00001 --rule SR -d seaborn
+python run_analysis.py polygon --ticker EURUSD --interval H1 --start 2023-01-01 --end 2024-02-01 --point 0.00001 --rule SR -d mpl
 ```
 
 # 5. BINANCE MODES
@@ -484,9 +484,9 @@ python run_analysis.py show yf --show-start 2023-01-01 --show-end 2023-12-31
 
 # 7. ADVANCED/EDGE CASES
 ```bash
-python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PHLD --draw plotly
-python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001 --rule PV --draw fastest
-python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2022-01-01 --end 2022-12-31 --point 0.00001 --rule SR --draw mpl
+python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PHLD -d plotly
+python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001 --rule PV -d fastest
+python run_analysis.py polygon --ticker EURUSD --interval D1 --start 2022-01-01 --end 2022-12-31 --point 0.00001 --rule SR -d mpl
 python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2023-01-01 --end 2023-01-31 --point 0.01 --rule PHLD
 python run_analysis.py binance --ticker BTCUSDT --interval M1 --start 2023-01-01 --end 2023-01-31 --point 0.01 --rule PV -d sb
 ```
@@ -536,7 +536,7 @@ python run_analysis.py show csv --rule AUTO
 
 **Note:**
 - For all API modes (yfinance, polygon, binance), the `--point` parameter is required to specify the instrument's point size (e.g., 0.00001 for EURUSD, 0.01 for stocks/crypto).
-- Use `-d/--draw` to select plotting backend: `fastest, fast, plotly, mplfinance, seaborn`, etc.
+- Use `-d` to select plotting backend: `fastest, fast, plotly, mplfinance, seaborn`, etc.
 - Use `--rule` to select trading rule: `PV_HighLow`, `Support_Resistants`, `Pressure_Vector`, `Predict_High_Low_Direction`, `PHLD`, `PV`, `SR`.
 - `SHOW` mode allows filtering cached files by `source, keywords, date, and rule`.
 - For more details, see `python run_analysis.py -h` for full help.
@@ -820,149 +820,4 @@ When the container starts, the following actions are automatically performed:
 
 1. All debug scripts from the `scripts/debug_scripts/` directory are executed
 2. The `mcp_server.py` server is started in the background
-3. The `run_analysis.py -h` script is executed to display usage help
-4. The container remains active for further interaction
-
-To run the container in background mode, add the `-d` flag:
-
-```bash
-docker compose up -d
-```
-
-### Accessing the Running Container
-
-To enter the running container, use:
-
-```bash
-docker exec -it neozork-hld-prediction-neozork-hld-1 bash
-```
-
-Inside the container, you can run commands, for example:
-
-```bash
-python run_analysis.py --mode yfinance --ticker EURUSD --interval M15 --period 10d --output-mode plot
-```
-
-### Stopping the Container
-
-To stop the container, execute:
-
-```bash
-docker compose down
-```
-
-### Docker Usage Features
-
-1. **Data Mounting**: Local directories `data`, `logs`, and `mql5_feed` are mounted into the container, ensuring data and logs are preserved between runs.
-
-2. **Environment Variables**: Settings from the `.env` file are automatically loaded into the container.
-
-3. **Debugging**: If necessary, you can uncomment the `stdin_open: true` and `tty: true` lines in `docker-compose.yml` for interactive mode.
-
-4. **Performance**: Data processing in the container may be slightly slower compared to native execution, especially when working with large volumes of data.
-
-5. **Image Updates**: When making changes to code or dependencies, you need to rebuild the image using `docker compose build`.
-
-6. **Using uv with Docker**
-
-   This project supports using `uv` (a faster Python package installer) with Docker. To leverage uv in your Docker workflow:
-   
-   ```bash
-   # Build the Docker image with uv enabled
-   docker-compose build --build-arg USE_UV=true
-   
-   # Or run the container with uv enabled
-   docker-compose up -d --build-arg USE_UV=true
-   ```
-   
- ### or modern docker-compose syntax
-   ```bash
-   docker compose build --build-arg USE_UV=true
-   ```
-   
-   Using uv significantly improves package installation speed during Docker builds. The container automatically detects and uses uv when enabled.
-   
-   For more information about uv, see the documentation in `docs/uv-migration.md`.
-
-## uv Setup Scripts
-
-The project includes a set of scripts in the `uv_setup/` directory that help you set up and use `uv` - a faster alternative to pip for Python package management.
-
-### Available Scripts
-
-1. **setup_uv.sh**
-   
-   This script automates the installation of uv and sets up a virtual environment:
-   
-   ```bash
-   # Make the script executable
-   chmod +x uv_setup/setup_uv.sh
-   
-   # Run the installation script
-   ./uv_setup/setup_uv.sh
-   ```
-   
-   What the script does:
-   - Downloads and installs uv safely
-   - Creates a Python virtual environment using uv if one doesn't exist
-   - Installs dependencies from requirements.txt using uv
-   - Configures necessary environment variables
-
-2. **update_deps.sh**
-   
-   This script helps you update project dependencies using uv:
-   
-   ```bash
-   # Make the script executable
-   chmod +x uv_setup/update_deps.sh
-   
-   # Run the update script
-   ./uv_setup/update_deps.sh
-   ```
-   
-   What the script does:
-   - Checks if uv is installed (and installs it if needed)
-   - Activates or creates the virtual environment
-   - Updates all dependencies in requirements.txt to their latest versions
-   - Provides colored output for better readability
-
-### Benefits of Using uv
-
-- **Speed**: 10-100x faster than pip for package installation
-- **Reliability**: Improved dependency resolution
-- **Docker Optimization**: Smaller container sizes and faster builds
-- **Parallelism**: Installs dependencies in parallel for better performance
-
-For more detailed information about uv and migration from pip, see the documentation in `uv_setup/uv-migration.md`.
-
-## Terminal Plotting Mode (`-d term`)
-
-A new terminal-based plotting mode is available using the `plotext` library. This mode allows you to visualize candlestick charts, volume, and financial indicators (RSI, MA, PV, HL, Pressure) directly in your Linux terminal (bash/zsh), including inside Docker containers.
-
-### Installation
-
-Install the required library:
-
-```bash
-pip install plotext
-```
-
-Or, if using `uv`:
-
-```bash
-uv pip install plotext
-```
-
-### Usage
-
-Add `-d term` to your command to use terminal plotting. Example:
-
-```bash
-python run_analysis.py demo -d term
-python run_analysis.py csv --csv-file data.csv --point 0.01 --rule AUTO -d term
-```
-
-- All major plotting functions are supported in this mode.
-- In Docker, all drawing modes are automatically replaced by `-d term`.
-- Multiple indicator panels are shown as separate charts in the terminal.
-
+3. The `
