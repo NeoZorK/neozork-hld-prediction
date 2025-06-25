@@ -72,42 +72,78 @@ class DockerMCPServerChecker:
             return False
 
     def _check_server_with_ps(self) -> bool:
-        """Check if MCP server is running using ps aux | grep"""
+        """Check if MCP server is running using alternative methods for Docker"""
         try:
-            # Use ps aux | grep to find neozork_mcp_server processes
-            result = subprocess.run(
-                ['ps', 'aux'], 
-                capture_output=True, 
-                text=True, 
-                timeout=5
-            )
+            # Method 1: Try ps aux if available
+            try:
+                result = subprocess.run(
+                    ['ps', 'aux'], 
+                    capture_output=True, 
+                    text=True, 
+                    timeout=5
+                )
+                
+                if result.returncode == 0:
+                    # Look for neozork_mcp_server.py in the output
+                    lines = result.stdout.split('\n')
+                    for line in lines:
+                        if 'neozork_mcp_server.py' in line and 'grep' not in line:
+                            # Extract PID from the line
+                            parts = line.split()
+                            if len(parts) > 1:
+                                try:
+                                    pid = int(parts[1])
+                                    self.logger.info(f"Found MCP server process with PID: {pid} via ps aux")
+                                    return True
+                                except (ValueError, IndexError):
+                                    continue
+            except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
+                self.logger.info("ps command not available, trying alternative methods")
             
-            if result.returncode == 0:
-                # Look for neozork_mcp_server.py in the output
-                lines = result.stdout.split('\n')
-                for line in lines:
-                    if 'neozork_mcp_server.py' in line and 'grep' not in line:
-                        # Extract PID from the line
-                        parts = line.split()
-                        if len(parts) > 1:
-                            try:
-                                pid = int(parts[1])
-                                self.logger.info(f"Found MCP server process with PID: {pid} via ps aux")
-                                return True
-                            except (ValueError, IndexError):
-                                continue
+            # Method 2: Check /proc filesystem for Python processes
+            return self._check_server_via_proc()
                 
-                self.logger.info("No MCP server process found via ps aux")
-                return False
-            else:
-                self.logger.warning(f"ps aux command failed: {result.stderr}")
-                return False
-                
-        except subprocess.TimeoutExpired:
-            self.logger.warning("ps aux command timed out")
-            return False
         except Exception as e:
-            self.logger.error(f"Error running ps aux: {e}")
+            self.logger.error(f"Error checking server status: {e}")
+            return False
+
+    def _check_server_via_proc(self) -> bool:
+        """Check for MCP server using /proc filesystem"""
+        try:
+            # Iterate through /proc directory to find Python processes
+            proc_dir = Path("/proc")
+            if not proc_dir.exists():
+                self.logger.warning("/proc directory not accessible")
+                return False
+            
+            for proc_path in proc_dir.iterdir():
+                if not proc_path.is_dir() or not proc_path.name.isdigit():
+                    continue
+                
+                try:
+                    # Check if this is a Python process
+                    exe_link = proc_path / "exe"
+                    if exe_link.exists():
+                        exe_target = exe_link.resolve()
+                        if "python" in str(exe_target).lower():
+                            # Check command line arguments
+                            cmdline_file = proc_path / "cmdline"
+                            if cmdline_file.exists():
+                                with open(cmdline_file, 'r') as f:
+                                    cmdline = f.read()
+                                    if 'neozork_mcp_server.py' in cmdline:
+                                        pid = int(proc_path.name)
+                                        self.logger.info(f"Found MCP server process with PID: {pid} via /proc")
+                                        return True
+                except (OSError, ValueError, FileNotFoundError):
+                    # Skip processes we can't read
+                    continue
+            
+            self.logger.info("No MCP server process found via /proc")
+            return False
+            
+        except Exception as e:
+            self.logger.error(f"Error checking /proc filesystem: {e}")
             return False
 
     def _is_process_running(self, pid: int) -> bool:
@@ -186,24 +222,68 @@ class DockerMCPServerChecker:
                     return {
                         "status": "success",
                         "message": "Server process is running and responsive",
-                        "pid": pid
+                        "pid": pid,
+                        "detection_method": "pid_file"
                     }
                 else:
                     return {"status": "failed", "error": "Server process is not responsive"}
             else:
-                # Fallback to ps aux check
+                # Fallback to alternative detection methods
                 if self._check_server_with_ps():
-                    return {
-                        "status": "success",
-                        "message": "Server process is running (confirmed via ps aux)",
-                        "detection_method": "ps_aux"
-                    }
+                    # Try to get PID from /proc
+                    pid = self._get_mcp_server_pid_from_proc()
+                    if pid:
+                        return {
+                            "status": "success",
+                            "message": "Server process is running (confirmed via /proc)",
+                            "pid": pid,
+                            "detection_method": "proc_filesystem"
+                        }
+                    else:
+                        return {
+                            "status": "success",
+                            "message": "Server process is running (confirmed via alternative detection)",
+                            "detection_method": "alternative"
+                        }
                 else:
                     return {"status": "failed", "error": "No PID file found and no process detected"}
                 
         except Exception as e:
             self.logger.error(f"Error pinging MCP server: {e}")
             return {"status": "failed", "error": str(e)}
+
+    def _get_mcp_server_pid_from_proc(self) -> Optional[int]:
+        """Get MCP server PID from /proc filesystem"""
+        try:
+            proc_dir = Path("/proc")
+            if not proc_dir.exists():
+                return None
+            
+            for proc_path in proc_dir.iterdir():
+                if not proc_path.is_dir() or not proc_path.name.isdigit():
+                    continue
+                
+                try:
+                    # Check if this is a Python process
+                    exe_link = proc_path / "exe"
+                    if exe_link.exists():
+                        exe_target = exe_link.resolve()
+                        if "python" in str(exe_target).lower():
+                            # Check command line arguments
+                            cmdline_file = proc_path / "cmdline"
+                            if cmdline_file.exists():
+                                with open(cmdline_file, 'r') as f:
+                                    cmdline = f.read()
+                                    if 'neozork_mcp_server.py' in cmdline:
+                                        return int(proc_path.name)
+                except (OSError, ValueError, FileNotFoundError):
+                    continue
+            
+            return None
+            
+        except Exception as e:
+            self.logger.error(f"Error getting PID from /proc: {e}")
+            return None
 
     def check_ide_configurations(self) -> Dict[str, Any]:
         """Check IDE configuration files in Docker"""
@@ -309,10 +389,17 @@ class DockerMCPServerChecker:
             except Exception as e:
                 docker_info["pid_error"] = str(e)
         else:
-            # Check if server is running via ps aux
+            # Check if server is running via alternative methods
             if self._check_server_with_ps():
-                docker_info["detection_method"] = "ps_aux"
-                docker_info["process_running"] = True
+                # Try to get PID from /proc
+                pid = self._get_mcp_server_pid_from_proc()
+                if pid:
+                    docker_info["pid"] = pid
+                    docker_info["detection_method"] = "proc_filesystem"
+                    docker_info["process_running"] = True
+                else:
+                    docker_info["detection_method"] = "alternative"
+                    docker_info["process_running"] = True
             else:
                 docker_info["detection_method"] = "none"
                 docker_info["process_running"] = False
@@ -667,8 +754,10 @@ def main():
             detection_method = docker_info.get('detection_method', 'unknown')
             if detection_method == 'pid_file':
                 print(f"   🔍 Detection: PID file")
-            elif detection_method == 'ps_aux':
-                print(f"   🔍 Detection: ps aux | grep")
+            elif detection_method == 'proc_filesystem':
+                print(f"   🔍 Detection: /proc filesystem")
+            elif detection_method == 'alternative':
+                print(f"   🔍 Detection: Alternative methods")
             elif detection_method == 'none':
                 print(f"   🔍 Detection: Not found")
             else:
