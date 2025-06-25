@@ -56,6 +56,11 @@ try:
 except ImportError:
     auto_plot_from_dataframe = None
 
+try:
+    from src.calculation.universal_trading_metrics import display_universal_trading_metrics
+except ImportError:
+    display_universal_trading_metrics = None
+
 def show_help():
     """
     Displays help for the 'show' mode with colorful formatting.
@@ -854,6 +859,21 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
         if isinstance(result_df.index, pd.DatetimeIndex):
             datetime_column = result_df.index.name or 'datetime'
         _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
+        # === Universal Trading Metrics ===
+        if display_universal_trading_metrics is not None:
+            lot_size = getattr(args, 'lot_size', 1.0)
+            risk_reward_ratio = getattr(args, 'risk_reward_ratio', 2.0)
+            fee_per_trade = getattr(args, 'fee_per_trade', 0.07)
+            print('DEBUG: Calling display_universal_trading_metrics from cli_show_mode')
+            display_universal_trading_metrics(
+                result_df,
+                selected_rule,
+                lot_size=lot_size,
+                risk_reward_ratio=risk_reward_ratio,
+                fee_per_trade=fee_per_trade
+            )
+        else:
+            print('WARNING: universal_trading_metrics not available for import')
         print(f"\nIndicator '{selected_rule.name}' calculated successfully.")
 
         # === ADDED: Export indicators if flags are specified ===
