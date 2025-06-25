@@ -180,7 +180,6 @@ def run_indicator_workflow(args):
             logger.print_success("Universal trading metrics displayed successfully")
         except Exception as e:
             logger.print_error(f"Error displaying universal trading metrics: {e}")
-            import traceback
             logger.print_error(f"Traceback: {traceback.format_exc()}")
 
         # --- Step 4: Generate Plot ---

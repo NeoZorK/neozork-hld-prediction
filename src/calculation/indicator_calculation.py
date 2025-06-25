@@ -95,6 +95,9 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         raise ValueError(f"Invalid rule name or alias '{args.rule}'. Use one of {available_rules}")
 
     # --- Column Check & Rename for Calculation ---
+    if ohlcv_df is None:
+        raise ValueError("No data available for calculation")
+    
     required_cols_indicator = ['Open', 'High', 'Low', 'Close', 'Volume']
     if not all(col in ohlcv_df.columns for col in required_cols_indicator):
         raise ValueError(f"DataFrame missing required columns for calculation: {required_cols_indicator}. Has: {ohlcv_df.columns.tolist()}")
@@ -119,6 +122,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
 
 
     # --- Calculation Call ---
+    result_df = None  # Initialize result_df
     try:
         # Special handling for OHLCV rule - don't calculate indicators, just return raw data
         if selected_rule == TradingRule.OHLCV:
@@ -166,11 +170,13 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         setattr(selected_rule, 'original_rule_with_params', original_rule_with_params)
         
     except Exception as e:
-         pass
+        logger.print_error(f"Calculation failed: {e}")
+        result_df = None
 
     # --- Post-Calculation Checks ---
     if result_df is None or result_df.empty:
-        pass
+        logger.print_warning("Indicator calculation returned None or empty DataFrame.")
+        return None, selected_rule
 
     # --- Validation Against CSV (if applicable) --- MODIFIED BLOCK ---
     if args.mode == 'csv' and result_df is not None and not result_df.empty:
