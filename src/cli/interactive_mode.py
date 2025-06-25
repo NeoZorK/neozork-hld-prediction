@@ -63,6 +63,8 @@ class InteractiveMode:
                     self._show_help()
                 elif choice == '9':
                     self._list_indicators()
+                elif choice == '10':
+                    self._show_trading_metrics_encyclopedia()
                 elif choice == '0':
                     print(f"\n{Fore.GREEN}Goodbye!{Style.RESET_ALL}")
                     break
@@ -94,12 +96,13 @@ class InteractiveMode:
         print("7. Run Analysis")
         print("8. Help")
         print("9. List Available Indicators")
+        print("10. Trading Metrics Encyclopedia")
         print("0. Exit")
         print()
     
     def _get_user_choice(self) -> str:
         """Get user choice from input."""
-        return input(f"{Fore.GREEN}Enter your choice (0-9): {Style.RESET_ALL}").strip()
+        return input(f"{Fore.GREEN}Enter your choice (0-10): {Style.RESET_ALL}").strip()
     
     def _select_mode(self):
         """Select analysis mode."""
@@ -391,12 +394,14 @@ class InteractiveMode:
         print("7. Run Analysis - Execute the analysis")
         print("8. Help - Show this help")
         print("9. List Available Indicators - Browse available indicators")
+        print("10. Trading Metrics Encyclopedia - Explore trading metrics and strategy tips")
         print("0. Exit - Leave interactive mode")
         print()
         print("You can also use the regular CLI mode:")
         print("python run_analysis.py --help")
         print("python run_analysis.py --examples")
         print("python run_analysis.py --indicators")
+        print("python run_analysis.py --metric")
     
     def _list_indicators(self):
         """List available indicators with detailed information."""
@@ -428,6 +433,47 @@ class InteractiveMode:
                     print(f"  {i:2d}. {Fore.CYAN}{indicator.name:<20}{Style.RESET_ALL} - {indicator.description}")
         
         print(f"\n{Fore.GREEN}💡 Tip: Use option 2 to select a specific indicator for analysis.{Style.RESET_ALL}")
+
+    def _show_trading_metrics_encyclopedia(self):
+        """Show trading metrics encyclopedia."""
+        from src.cli.quant_encyclopedia import QuantEncyclopedia
+        
+        encyclopedia = QuantEncyclopedia()
+        
+        while True:
+            print(f"\n{Fore.YELLOW}{Style.BRIGHT}Trading Metrics Encyclopedia:{Style.RESET_ALL}")
+            print("1. Show All Metrics")
+            print("2. Show All Tips")
+            print("3. Search Metrics")
+            print("4. Search Tips")
+            print("5. Back to Main Menu")
+            
+            choice = input(f"\n{Fore.GREEN}Enter your choice (1-5): {Style.RESET_ALL}").strip()
+            
+            if choice == '1':
+                print(f"\n{Fore.CYAN}{'='*60}{Style.RESET_ALL}")
+                encyclopedia.show_all_metrics()
+                print(f"{Fore.CYAN}{'='*60}{Style.RESET_ALL}")
+            elif choice == '2':
+                print(f"\n{Fore.CYAN}{'='*60}{Style.RESET_ALL}")
+                encyclopedia.show_all_tips()
+                print(f"{Fore.CYAN}{'='*60}{Style.RESET_ALL}")
+            elif choice == '3':
+                search_term = input(f"{Fore.GREEN}Enter search term for metrics: {Style.RESET_ALL}").strip()
+                if search_term:
+                    print(f"\n{Fore.CYAN}{'='*60}{Style.RESET_ALL}")
+                    encyclopedia.show_all_metrics(search_term)
+                    print(f"{Fore.CYAN}{'='*60}{Style.RESET_ALL}")
+            elif choice == '4':
+                search_term = input(f"{Fore.GREEN}Enter search term for tips: {Style.RESET_ALL}").strip()
+                if search_term:
+                    print(f"\n{Fore.CYAN}{'='*60}{Style.RESET_ALL}")
+                    encyclopedia.show_all_tips(search_term)
+                    print(f"{Fore.CYAN}{'='*60}{Style.RESET_ALL}")
+            elif choice == '5':
+                break
+            else:
+                print(f"{Fore.RED}Invalid choice. Please try again.{Style.RESET_ALL}")
 
 
 def start_interactive_mode():
