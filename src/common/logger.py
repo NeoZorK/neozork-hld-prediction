@@ -41,7 +41,7 @@ def print_error(message: str):
 def print_debug(message: str):
     """Prints a debug message."""
     # Output debug message with color and "Debug:" prefix
-    pass
+    print(f"{DEBUG_COLOR}Debug: {message}")
 
 def print_success(message: str):
     """Prints a success message."""

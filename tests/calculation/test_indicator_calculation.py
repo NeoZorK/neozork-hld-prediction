@@ -111,21 +111,34 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         self.assertIn("No data available for calculation", str(cm.exception))
 
     # Test with None point size input
-    def test_calculate_indicator_none_point_size(self):
+    @patch('src.calculation.indicator_calculation.logger.print_error')
+    @patch('src.calculation.indicator_calculation.logger.print_warning')
+    @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
+    def test_calculate_indicator_none_point_size(self, mock_calc_pv_func, mock_print_warning, mock_print_error):
         args = create_mock_args() # mode='demo' default
-        with self.assertRaises(ValueError) as cm:
-            calculate_indicator(args, self.ohlcv_df, None) # type: ignore
-        self.assertIn("Point size is None", str(cm.exception))
+        mock_calc_pv_func.side_effect = TypeError("point argument must be a number")
+
+        result_df, selected_rule = calculate_indicator(args, self.ohlcv_df, None) # type: ignore
+
+        self.assertIsNone(result_df)
+        self.assertEqual(selected_rule, TradingRule.Predict_High_Low_Direction)
+        mock_print_error.assert_called_once_with("Calculation failed: point argument must be a number")
+        mock_print_warning.assert_called_once_with("Indicator calculation returned None or empty DataFrame.")
 
     # Test when calculation function itself raises an error
+    @patch('src.calculation.indicator_calculation.logger.print_error')
+    @patch('src.calculation.indicator_calculation.logger.print_warning')
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
-    def test_calculate_indicator_calc_exception(self, mock_calc_pv_func):
+    def test_calculate_indicator_calc_exception(self, mock_calc_pv_func, mock_print_warning, mock_print_error):
         args = create_mock_args() # mode='demo' default
         mock_calc_pv_func.side_effect = RuntimeError("Calculation failed inside")
 
-        with self.assertRaises(RuntimeError) as cm:
-            calculate_indicator(args, self.ohlcv_df, self.point_size)
-        self.assertIn("Calculation failed inside", str(cm.exception))
+        result_df, selected_rule = calculate_indicator(args, self.ohlcv_df, self.point_size)
+
+        self.assertIsNone(result_df)
+        self.assertEqual(selected_rule, TradingRule.Predict_High_Low_Direction)
+        mock_print_error.assert_called_once_with("Calculation failed: Calculation failed inside")
+        mock_print_warning.assert_called_once_with("Indicator calculation returned None or empty DataFrame.")
 
     # Test when calculation function returns None
     # *** FIX: Patch logger.print_warning directly ***

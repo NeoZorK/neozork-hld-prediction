@@ -110,12 +110,12 @@ def plot_indicator_results_fastest(
             )
 
     # Add volume
-    if 'Volume' in display_df.columns:
+    if 'volume' in display_df.columns:
         colors = ['green' if val else 'red' for val in display_df['direction']]
         fig.add_trace(
             go.Bar(
                 x=display_df['index'],
-                y=display_df['Volume'],
+                y=display_df['volume'],
                 marker_color=colors,
                 name="Volume",
                 opacity=0.7
@@ -175,13 +175,13 @@ def plot_indicator_results_fastest(
     )
 
     # Set axis ranges
-    y_stats = display_df[['Open', 'High', 'Low', 'Close']].describe()
+    y_stats = display_df[['open', 'high', 'low', 'close']].describe()
     min_price = y_stats.loc['min'].min() * 0.998
     max_price = y_stats.loc['max'].max() * 1.002
     fig.update_yaxes(title_text="Price", row=1, col=1, tickformat=".5f", range=[min_price, max_price])
 
-    if 'Volume' in display_df.columns:
-        vol_max = display_df['Volume'].max() * 1.1
+    if 'volume' in display_df.columns:
+        vol_max = display_df['volume'].max() * 1.1
         fig.update_yaxes(title_text="Volume", row=2, col=1, range=[0, vol_max])
 
     # Set proper time scale for all charts
