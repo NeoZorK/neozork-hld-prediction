@@ -33,7 +33,7 @@ def send_mcp_request(method: str, params: Dict = None) -> Optional[Dict]:
         
         # Try to run server briefly to check initialization
         process = subprocess.Popen(
-            ["python", str(server_file), "--version"],
+            ["python3", str(server_file), "--version"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
