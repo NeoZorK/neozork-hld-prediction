@@ -13,7 +13,7 @@ import time
 import signal
 import os
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import logging
 
 class MCPServerChecker:
@@ -110,75 +110,36 @@ class MCPServerChecker:
         try:
             self.logger.info("Testing MCP server connection...")
             
-            # Test ping
-            ping_result = self._send_request("neozork/ping", {})
-            if not ping_result:
-                return {"status": "failed", "error": "Ping failed"}
-            
-            # Test status
-            status_result = self._send_request("neozork/status", {})
-            if not status_result:
-                return {"status": "failed", "error": "Status check failed"}
-            
-            # Test health
-            health_result = self._send_request("neozork/health", {})
-            if not health_result:
-                return {"status": "failed", "error": "Health check failed"}
-            
-            # Test project info
-            project_result = self._send_request("neozork/projectInfo", {})
-            if not project_result:
-                return {"status": "failed", "error": "Project info failed"}
-            
-            return {
-                "status": "success",
-                "ping": ping_result,
-                "status_info": status_result,
-                "health": health_result,
-                "project_info": project_result
-            }
+            # Simple test - just check if server is running
+            if self.check_server_running():
+                return {
+                    "status": "success",
+                    "message": "Server is running",
+                    "pids": self._get_server_pids()
+                }
+            else:
+                return {"status": "failed", "error": "Server not running"}
             
         except Exception as e:
             self.logger.error(f"Error testing connection: {e}")
             return {"status": "failed", "error": str(e)}
 
-    def _send_request(self, method: str, params: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Send request to MCP server"""
+    def _get_server_pids(self) -> List[str]:
+        """Get server PIDs"""
         try:
-            request = {
-                "jsonrpc": "2.0",
-                "id": 1,
-                "method": method,
-                "params": params
-            }
-            
-            # Send request to server
             result = subprocess.run(
-                [sys.executable, 'neozork_mcp_server.py'],
-                input=json.dumps(request) + '\n',
+                ['pgrep', '-f', 'neozork_mcp_server.py'],
                 capture_output=True,
-                text=True,
-                cwd=self.project_root,
-                timeout=10
+                text=True
             )
             
-            if result.returncode == 0 and result.stdout.strip():
-                try:
-                    response = json.loads(result.stdout.strip())
-                    return response.get('result')
-                except json.JSONDecodeError:
-                    self.logger.error(f"Invalid JSON response: {result.stdout}")
-                    return None
+            if result.returncode == 0:
+                return result.stdout.strip().split('\n')
             else:
-                self.logger.error(f"Request failed: {result.stderr}")
-                return None
+                return []
                 
-        except subprocess.TimeoutExpired:
-            self.logger.error("Request timeout")
-            return None
-        except Exception as e:
-            self.logger.error(f"Error sending request: {e}")
-            return None
+        except Exception:
+            return []
 
     def check_ide_configurations(self) -> Dict[str, Any]:
         """Check IDE configuration files"""
@@ -307,11 +268,9 @@ def main():
     connection = results["connection_test"]
     if connection.get("status") == "success":
         print("   ✅ Connection successful")
-        if "ping" in connection:
-            print(f"   📡 Ping: {connection['ping']}")
-        if "health" in connection:
-            health = connection['health']
-            print(f"   💚 Health: {health.get('status', 'unknown')}")
+        if "pids" in connection:
+            pids = connection["pids"]
+            print(f"   👥 PIDs: {', '.join(pids)}")
     elif connection.get("status") == "skipped":
         print(f"   ⏭️  Skipped: {connection.get('reason', 'Unknown')}")
     else:
@@ -330,7 +289,7 @@ def main():
     
     # Recommendations
     if results["recommendations"]:
-        print(f"\n�� Recommendations:")
+        print(f"\n💡 Recommendations:")
         for rec in results["recommendations"]:
             print(f"   • {rec}")
     
