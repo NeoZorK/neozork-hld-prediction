@@ -231,6 +231,15 @@ python3 -m pytest tests/docker/test_ide_configs.py -v
 - Review the [Guides](guides/) for detailed tutorials
 - Consult the [Reference](reference/) for technical details
 
+## 🖥️ MCP Configuration for Cursor IDE
+
+- Global file: `~/.cursor/mcp.json` (used in all projects)
+- Local files: `mcp.json`, `cursor_mcp_config.json` (in the project root)
+
+> The script `scripts/setup_ide_configs.py` now updates both the global and local MCP configs.
+
+See more: [IDE Configuration Guide](guides/ide-configuration.md)
+
 ---
 
 **Last Updated**: June 25, 2025  
