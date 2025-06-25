@@ -842,6 +842,20 @@ def parse_rsi_parameters(params_str: str) -> tuple[str, dict]:
         show_indicator_help('rsi')
         raise ValueError(f"Invalid RSI parameters: {params_str}. Error: {e}")
     
+    # Validate period
+    if period <= 0:
+        show_indicator_help('rsi')
+        raise ValueError(f"RSI period must be a positive integer, got: {period}")
+    
+    # Validate thresholds
+    if oversold < 0 or oversold > 100:
+        show_indicator_help('rsi')
+        raise ValueError(f"RSI oversold must be between 0 and 100, got: {oversold}")
+    
+    if overbought < 0 or overbought > 100:
+        show_indicator_help('rsi')
+        raise ValueError(f"RSI overbought must be between 0 and 100, got: {overbought}")
+    
     if price_type not in ['open', 'close']:
         show_indicator_help('rsi')
         raise ValueError(f"RSI price_type must be 'open' or 'close', got: {price_type}")
