@@ -1,11 +1,14 @@
 {
   "mcpServers": {
     "neozork": {
-      "command": "python",
+      "command": "python3",
       "args": ["neozork_mcp_server.py"],
       "env": {
-        "PYTHONPATH": "/app"
-      }
+        "PYTHONPATH": "${PROJECT_ROOT}",
+        "LOG_LEVEL": "INFO",
+        "DOCKER_CONTAINER": "false"
+      },
+      "cwd": "${PROJECT_ROOT}"
     }
   },
   "serverSettings": {
@@ -17,9 +20,39 @@
       "features": {
         "financial_data": true,
         "technical_indicators": true,
+        "github_copilot": true,
         "code_completion": true,
         "project_analysis": true,
-        "ai_suggestions": true
+        "ai_suggestions": true,
+        "docker_integration": true,
+        "real_time_monitoring": true
+      },
+      "performance": {
+        "max_files": 15000,
+        "max_file_size": "10MB",
+        "cache_enabled": true,
+        "cache_size": "200MB",
+        "indexing_timeout": 60
+      },
+      "monitoring": {
+        "enable_monitoring": true,
+        "health_check_interval": 60,
+        "max_memory_mb": 512,
+        "max_cpu_percent": 80
+      }
+    }
+  },
+  "cursor": {
+    "mcp": {
+      "autoStart": true,
+      "logLevel": "info",
+      "features": {
+        "completion": true,
+        "hover": true,
+        "definition": true,
+        "references": true,
+        "workspaceSymbols": true,
+        "diagnostics": true
       }
     }
   }
