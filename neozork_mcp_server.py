@@ -102,6 +102,7 @@ class NeozorkMCPServer:
         self.logger = self._setup_logging()
         self.config = config or self._load_config()
         self.running = True
+        self.start_time = datetime.now()  # Add start time for uptime tracking
         
         # Print startup message
         print_to_stderr("🚀 Starting Neozork Unified MCP Server...")
@@ -147,6 +148,15 @@ class NeozorkMCPServer:
             "neozork/analysis": self._handle_analysis,
             "neozork/suggestions": self._handle_suggestions,
             "neozork/context": self._handle_context,
+            "neozork/status": self._handle_status,
+            "neozork/health": self._handle_health,
+            "neozork/ping": self._handle_ping,
+            "neozork/metrics": self._handle_metrics,
+            "neozork/diagnostics": self._handle_diagnostics,
+            "neozork/version": self._handle_version,
+            "neozork/capabilities": self._handle_capabilities,
+            "neozork/restart": self._handle_restart,
+            "neozork/reload": self._handle_reload,
             "github/copilot/suggestions": self._handle_copilot_suggestions,
             "github/copilot/context": self._handle_copilot_context
         }
@@ -870,6 +880,345 @@ class NeozorkMCPServer:
                 "Machine learning model training",
                 "Data visualization and plotting"
             ]
+        }
+
+    def _handle_status(self, request_id: Any, params: Dict) -> Dict:
+        """Handle status request"""
+        return {
+            "status": "running" if self.running else "stopped",
+            "uptime": (datetime.now() - self.start_time).total_seconds() if hasattr(self, 'start_time') else 0,
+            "server_mode": self.config.get("server_mode", "unified"),
+            "version": self.config.get("version", "2.0.0"),
+            "project_root": str(self.project_root),
+            "python_version": sys.version,
+            "platform": sys.platform,
+            "memory_usage": self._get_memory_usage(),
+            "cpu_usage": self._get_cpu_usage(),
+            "active_connections": self._get_active_connections(),
+            "last_activity": self._get_last_activity()
+        }
+
+    def _handle_health(self, request_id: Any, params: Dict) -> Dict:
+        """Handle health check request"""
+        health_status = "healthy"
+        issues = []
+        
+        # Check if server is running
+        if not self.running:
+            health_status = "unhealthy"
+            issues.append("Server is not running")
+        
+        # Check project files
+        if len(self.project_files) == 0:
+            health_status = "warning"
+            issues.append("No project files found")
+        
+        # Check financial data
+        if len(self.financial_data) == 0:
+            health_status = "warning"
+            issues.append("No financial data found")
+        
+        # Check code index
+        if len(self.code_index['functions']) == 0:
+            health_status = "warning"
+            issues.append("No functions indexed")
+        
+        return {
+            "status": health_status,
+            "issues": issues,
+            "checks": {
+                "server_running": self.running,
+                "project_files_count": len(self.project_files),
+                "financial_data_count": len(self.financial_data),
+                "functions_indexed": len(self.code_index['functions']),
+                "classes_indexed": len(self.code_index['classes']),
+                "available_symbols": len(self.available_symbols),
+                "available_timeframes": len(self.available_timeframes)
+            },
+            "timestamp": datetime.now().isoformat()
+        }
+
+    def _handle_ping(self, request_id: Any, params: Dict) -> Dict:
+        """Handle ping request"""
+        return {
+            "pong": True,
+            "timestamp": datetime.now().isoformat(),
+            "server_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "timezone": "UTC"
+        }
+
+    def _handle_metrics(self, request_id: Any, params: Dict) -> Dict:
+        """Handle metrics request"""
+        return {
+            "performance": {
+                "uptime_seconds": (datetime.now() - self.start_time).total_seconds() if hasattr(self, 'start_time') else 0,
+                "memory_usage_mb": self._get_memory_usage(),
+                "cpu_usage_percent": self._get_cpu_usage(),
+                "files_processed": len(self.project_files),
+                "indexing_time_ms": getattr(self, 'indexing_time', 0)
+            },
+            "project": {
+                "total_files": len(self.project_files),
+                "python_files": len([f for f in self.project_files.values() if f.extension == '.py']),
+                "data_files": len([f for f in self.project_files.values() if f.extension in ['.csv', '.parquet', '.json']]),
+                "total_size_bytes": sum(f.size for f in self.project_files.values()),
+                "largest_file": max(self.project_files.values(), key=lambda x: x.size).path if self.project_files else None
+            },
+            "code_analysis": {
+                "functions_count": len(self.code_index['functions']),
+                "classes_count": len(self.code_index['classes']),
+                "imports_count": len(self.code_index['imports']),
+                "docstrings_count": len(self.code_index['docstrings']),
+                "indicators_count": len(self.code_index['indicators']),
+                "data_fetchers_count": len(self.code_index['data_fetchers']),
+                "plotting_functions_count": len(self.code_index['plotting_functions'])
+            },
+            "financial_data": {
+                "symbols_count": len(self.available_symbols),
+                "timeframes_count": len(self.available_timeframes),
+                "data_files_count": len(self.financial_data),
+                "total_data_size_bytes": sum(d.size for d in self.financial_data.values())
+            }
+        }
+
+    def _handle_diagnostics(self, request_id: Any, params: Dict) -> Dict:
+        """Handle diagnostics request"""
+        return {
+            "system": {
+                "python_version": sys.version,
+                "platform": sys.platform,
+                "architecture": sys.maxsize > 2**32 and "64-bit" or "32-bit",
+                "executable": sys.executable,
+                "path": sys.path[:5]  # First 5 entries
+            },
+            "server": {
+                "config": self.config,
+                "project_root": str(self.project_root),
+                "running": self.running,
+                "handlers_count": len(self.handlers),
+                "logger_level": self.logger.level,
+                "logger_handlers": len(self.logger.handlers)
+            },
+            "project": {
+                "files_by_extension": self._get_files_by_extension(),
+                "largest_files": self._get_largest_files(10),
+                "recent_files": self._get_recent_files(10),
+                "missing_directories": self._get_missing_directories()
+            },
+            "issues": self._get_diagnostic_issues()
+        }
+
+    def _handle_version(self, request_id: Any, params: Dict) -> Dict:
+        """Handle version request"""
+        return {
+            "server_version": self.config.get("version", "2.0.0"),
+            "python_version": sys.version,
+            "platform": sys.platform,
+            "build_date": "2025-06-25",
+            "features": self.config.get("features", {}),
+            "capabilities": self._get_server_capabilities()
+        }
+
+    def _handle_capabilities(self, request_id: Any, params: Dict) -> Dict:
+        """Handle capabilities request"""
+        return {
+            "capabilities": self._get_server_capabilities(),
+            "supported_methods": list(self.handlers.keys()),
+            "features": self.config.get("features", {}),
+            "extensions": [
+                "neozork/financialData",
+                "neozork/indicators", 
+                "neozork/codeSearch",
+                "neozork/snippets",
+                "neozork/analysis",
+                "neozork/status",
+                "neozork/health",
+                "neozork/metrics",
+                "github/copilot/suggestions"
+            ]
+        }
+
+    def _handle_restart(self, request_id: Any, params: Dict) -> Dict:
+        """Handle restart request"""
+        try:
+            self.logger.info("Restarting server...")
+            # Save current state
+            self._save_state()
+            
+            # Reset server state
+            self.running = True
+            self.start_time = datetime.now()
+            
+            # Re-scan project
+            self._scan_project()
+            self._index_code()
+            
+            self.logger.info("Server restarted successfully")
+            return {
+                "status": "restarted",
+                "timestamp": datetime.now().isoformat(),
+                "message": "Server restarted successfully"
+            }
+        except Exception as e:
+            self.logger.error(f"Failed to restart server: {e}")
+            return {
+                "status": "error",
+                "error": str(e),
+                "timestamp": datetime.now().isoformat()
+            }
+
+    def _handle_reload(self, request_id: Any, params: Dict) -> Dict:
+        """Handle reload request"""
+        try:
+            self.logger.info("Reloading project data...")
+            
+            # Clear current data
+            self.project_files.clear()
+            self.financial_data.clear()
+            self.code_index = {
+                'functions': {},
+                'classes': {},
+                'variables': {},
+                'imports': {},
+                'docstrings': {},
+                'indicators': {},
+                'data_fetchers': {},
+                'plotting_functions': {}
+            }
+            self.available_symbols.clear()
+            self.available_timeframes.clear()
+            
+            # Re-scan everything
+            self._scan_project()
+            self._index_code()
+            
+            self.logger.info("Project data reloaded successfully")
+            return {
+                "status": "reloaded",
+                "timestamp": datetime.now().isoformat(),
+                "message": "Project data reloaded successfully",
+                "files_count": len(self.project_files),
+                "symbols_count": len(self.available_symbols)
+            }
+        except Exception as e:
+            self.logger.error(f"Failed to reload project data: {e}")
+            return {
+                "status": "error",
+                "error": str(e),
+                "timestamp": datetime.now().isoformat()
+            }
+
+    # Helper methods for diagnostics and monitoring
+    def _get_memory_usage(self) -> float:
+        """Get memory usage in MB"""
+        try:
+            import psutil
+            process = psutil.Process()
+            return process.memory_info().rss / 1024 / 1024
+        except ImportError:
+            return 0.0
+
+    def _get_cpu_usage(self) -> float:
+        """Get CPU usage percentage"""
+        try:
+            import psutil
+            return psutil.cpu_percent(interval=0.1)
+        except ImportError:
+            return 0.0
+
+    def _get_active_connections(self) -> int:
+        """Get number of active connections"""
+        # For stdio-based MCP server, this is typically 1
+        return 1 if self.running else 0
+
+    def _get_last_activity(self) -> str:
+        """Get last activity timestamp"""
+        return getattr(self, 'last_activity', datetime.now()).isoformat()
+
+    def _get_files_by_extension(self) -> Dict[str, int]:
+        """Get file count by extension"""
+        extensions = {}
+        for file_info in self.project_files.values():
+            ext = file_info.extension
+            extensions[ext] = extensions.get(ext, 0) + 1
+        return extensions
+
+    def _get_largest_files(self, count: int = 10) -> List[Dict]:
+        """Get largest files"""
+        sorted_files = sorted(self.project_files.values(), key=lambda x: x.size, reverse=True)
+        return [
+            {"path": f.path, "size": f.size, "extension": f.extension}
+            for f in sorted_files[:count]
+        ]
+
+    def _get_recent_files(self, count: int = 10) -> List[Dict]:
+        """Get most recently modified files"""
+        sorted_files = sorted(self.project_files.values(), key=lambda x: x.modified, reverse=True)
+        return [
+            {"path": f.path, "modified": f.modified.isoformat(), "size": f.size}
+            for f in sorted_files[:count]
+        ]
+
+    def _get_missing_directories(self) -> List[str]:
+        """Get missing expected directories"""
+        expected_dirs = ['src', 'tests', 'docs', 'data', 'logs']
+        missing = []
+        for dir_name in expected_dirs:
+            if not (self.project_root / dir_name).exists():
+                missing.append(dir_name)
+        return missing
+
+    def _get_diagnostic_issues(self) -> List[Dict]:
+        """Get diagnostic issues"""
+        issues = []
+        
+        if len(self.project_files) == 0:
+            issues.append({
+                "type": "warning",
+                "message": "No project files found",
+                "suggestion": "Check project root path"
+            })
+        
+        if len(self.financial_data) == 0:
+            issues.append({
+                "type": "info",
+                "message": "No financial data found",
+                "suggestion": "Add data files to data/ directory"
+            })
+        
+        if len(self.code_index['functions']) == 0:
+            issues.append({
+                "type": "warning",
+                "message": "No functions indexed",
+                "suggestion": "Check Python files in src/ directory"
+            })
+        
+        return issues
+
+    def _get_server_capabilities(self) -> Dict:
+        """Get server capabilities"""
+        return {
+            "textDocument": {
+                "completion": {"completionItem": {"snippetSupport": True}},
+                "hover": {"contentFormat": ["markdown", "plaintext"]},
+                "definition": {"definitionProvider": True},
+                "references": {"referencesProvider": True}
+            },
+            "workspace": {
+                "symbol": {"symbolProvider": True},
+                "workspaceFolders": {"supported": True}
+            },
+            "neozork": {
+                "financialData": True,
+                "indicators": True,
+                "codeSearch": True,
+                "snippets": True,
+                "analysis": True,
+                "status": True,
+                "health": True,
+                "metrics": True,
+                "diagnostics": True
+            }
         }
 
 def main():
