@@ -68,13 +68,10 @@ Intelligent development assistance with Model Context Protocol (MCP) servers:
 **Quick Setup:**
 ```bash
 # Test MCP servers
-python scripts/run_cursor_mcp.py --test --report
-
-# Start auto-start server
-python scripts/auto_start_mcp.py start
+python scripts/check_mcp_status.py
 
 # Manual server start
-python pycharm_github_copilot_mcp.py
+python neozork_mcp_server.py
 ```
 
 📚 **[MCP Servers Documentation](docs/reference/mcp-servers/README.md)**
@@ -196,11 +193,11 @@ pytest tests/ --cov=src --cov-report=html
 ### MCP Server Issues
 ```bash
 # Check server status
-python scripts/run_cursor_mcp.py --test --report
+python scripts/check_mcp_status.py
 
 # Enable debug mode
 export LOG_LEVEL=DEBUG
-python pycharm_github_copilot_mcp.py
+python neozork_mcp_server.py
 
 # Check dependencies
 pip list | grep -E "(watchdog|psutil)"
