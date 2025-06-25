@@ -3,244 +3,351 @@
 
 """
 MCP Server Status Checker
-Script to check if Neozork MCP Server is running and accessible
+Check if MCP server is running and test connection
 """
 
 import json
 import subprocess
 import sys
 import time
+import signal
 import os
 from pathlib import Path
 from typing import Dict, Any, Optional
+import logging
 
-def send_mcp_request(method: str, params: Dict = None) -> Optional[Dict]:
-    """Send MCP request to server via stdio"""
-    request = {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": method,
-        "params": params or {}
-    }
+class MCPServerChecker:
+    """Check MCP server status and test connection"""
     
-    try:
-        # Check if MCP server can start and initialize
-        # We'll test by running the server briefly and checking initialization
-        server_file = Path(__file__).parent.parent / "neozork_mcp_server.py"
-        if not server_file.exists():
-            print(f"    ⚠️ Server file not found: {server_file}")
-            return None
+    def __init__(self, project_root: Path = None):
+        self.project_root = project_root or Path(__file__).parent.parent
+        self.logger = self._setup_logging()
+        self.server_process = None
         
-        # Try to run server briefly to check initialization
-        process = subprocess.Popen(
-            ["python3", str(server_file), "--version"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
+    def _setup_logging(self) -> logging.Logger:
+        """Setup logging"""
+        log_dir = self.project_root / "logs"
+        log_dir.mkdir(exist_ok=True)
+        
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s [%(levelname)s] %(message)s',
+            handlers=[
+                logging.FileHandler(log_dir / 'mcp_status_check.log'),
+                logging.StreamHandler()
+            ]
         )
-        
-        stdout, stderr = process.communicate(timeout=5)
-        
-        if process.returncode == 0:
-            # Server can start successfully
-            if method == "neozork/ping":
-                return {"message": "pong", "timestamp": time.time(), "status": "ready"}
-            elif method == "neozork/health":
-                return {"status": "healthy", "uptime": "ready", "version": stdout.strip()}
-            elif method == "neozork/status":
-                return {"status": "ready", "server_file": str(server_file)}
-            elif method == "neozork/metrics":
-                return {"requests_processed": 0, "uptime_seconds": 0, "status": "ready"}
-            else:
-                return {"status": "unknown_method"}
-        else:
-            print(f"    ⚠️ Server failed to start: {stderr}")
-            return None
-        
-    except subprocess.TimeoutExpired:
-        print(f"    ⚠️ Server startup timeout")
-        return None
-    except Exception as e:
-        print(f"    ⚠️ Error checking server: {e}")
-        return None
+        return logging.getLogger(__name__)
 
-def check_server_status() -> Dict[str, Any]:
-    """Check server status"""
-    print("🔍 Checking Neozork MCP Server status...")
-    
-    results = {}
-    
-    # Check ping
-    print("  📡 Testing ping...")
-    ping_result = send_mcp_request("neozork/ping")
-    if ping_result:
-        results["ping"] = {"status": "✅ OK", "data": ping_result}
-        print("    ✅ Ping successful")
-    else:
-        results["ping"] = {"status": "❌ Failed", "data": None}
-        print("    ❌ Ping failed")
-    
-    # Check health
-    print("  🏥 Testing health...")
-    health_result = send_mcp_request("neozork/health")
-    if health_result:
-        results["health"] = {"status": "✅ OK", "data": health_result}
-        print(f"    ✅ Health: {health_result.get('status', 'unknown')}")
-    else:
-        results["health"] = {"status": "❌ Failed", "data": None}
-        print("    ❌ Health check failed")
-    
-    # Check status
-    print("  📊 Getting status...")
-    status_result = send_mcp_request("neozork/status")
-    if status_result:
-        results["status"] = {"status": "✅ OK", "data": status_result}
-        print(f"    ✅ Status: {status_result.get('status', 'unknown')}")
-    else:
-        results["status"] = {"status": "❌ Failed", "data": None}
-        print("    ❌ Status check failed")
-    
-    # Check metrics
-    print("  📈 Getting metrics...")
-    metrics_result = send_mcp_request("neozork/metrics")
-    if metrics_result:
-        results["metrics"] = {"status": "✅ OK", "data": metrics_result}
-        print("    ✅ Metrics retrieved")
-    else:
-        results["metrics"] = {"status": "❌ Failed", "data": None}
-        print("    ❌ Metrics check failed")
-    
-    return results
-
-def check_cursor_integration() -> Dict[str, Any]:
-    """Check Cursor IDE integration"""
-    print("🎯 Checking Cursor IDE integration...")
-    
-    results = {}
-    
-    # Check if config file exists
-    config_file = Path(__file__).parent.parent / "cursor_mcp_config.json"
-    if config_file.exists():
-        results["config_file"] = {"status": "✅ Found", "path": str(config_file)}
-        print(f"  ✅ Config file found: {config_file}")
-        
-        # Validate config
+    def check_server_running(self) -> bool:
+        """Check if MCP server is already running"""
         try:
-            with open(config_file, 'r') as f:
-                config = json.load(f)
+            # Check for Python processes running the MCP server
+            result = subprocess.run(
+                ['pgrep', '-f', 'neozork_mcp_server.py'],
+                capture_output=True,
+                text=True
+            )
             
-            if "mcpServers" in config and "neozork" in config["mcpServers"]:
-                results["config_valid"] = {"status": "✅ Valid", "data": config["mcpServers"]["neozork"]}
-                print("  ✅ Config is valid")
+            if result.returncode == 0:
+                pids = result.stdout.strip().split('\n')
+                self.logger.info(f"MCP server is running with PIDs: {pids}")
+                return True
             else:
-                results["config_valid"] = {"status": "❌ Invalid", "data": None}
-                print("  ❌ Config is invalid")
+                self.logger.info("MCP server is not running")
+                return False
+                
         except Exception as e:
-            results["config_valid"] = {"status": "❌ Error", "error": str(e)}
-            print(f"  ❌ Config error: {e}")
-    else:
-        results["config_file"] = {"status": "❌ Not found", "path": str(config_file)}
-        print(f"  ❌ Config file not found: {config_file}")
-    
-    # Check if server file exists
-    server_file = Path(__file__).parent.parent / "neozork_mcp_server.py"
-    if server_file.exists():
-        results["server_file"] = {"status": "✅ Found", "path": str(server_file)}
-        print(f"  ✅ Server file found: {server_file}")
-    else:
-        results["server_file"] = {"status": "❌ Not found", "path": str(server_file)}
-        print(f"  ❌ Server file not found: {server_file}")
-    
-    return results
+            self.logger.error(f"Error checking server status: {e}")
+            return False
 
-def check_dependencies() -> Dict[str, Any]:
-    """Check required dependencies"""
-    print("📦 Checking dependencies...")
-    
-    results = {}
-    required_packages = ["pandas", "numpy", "matplotlib", "plotly"]
-    
-    for package in required_packages:
+    def start_server(self, timeout: int = 10) -> bool:
+        """Start MCP server"""
         try:
-            __import__(package)
-            results[package] = {"status": "✅ Installed"}
-            print(f"  ✅ {package}")
-        except ImportError:
-            results[package] = {"status": "❌ Missing"}
-            print(f"  ❌ {package}")
-    
-    # Check optional psutil for monitoring
-    try:
-        import psutil
-        results["psutil"] = {"status": "✅ Installed (optional)"}
-        print("  ✅ psutil (optional)")
-    except ImportError:
-        results["psutil"] = {"status": "⚠️ Missing (optional)"}
-        print("  ⚠️ psutil (optional)")
-    
-    return results
+            self.logger.info("Starting MCP server...")
+            
+            # Start server in background
+            self.server_process = subprocess.Popen(
+                [sys.executable, 'neozork_mcp_server.py'],
+                cwd=self.project_root,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+            
+            # Wait for server to start
+            time.sleep(2)
+            
+            # Check if process is still running
+            if self.server_process.poll() is None:
+                self.logger.info(f"MCP server started with PID: {self.server_process.pid}")
+                return True
+            else:
+                stdout, stderr = self.server_process.communicate()
+                self.logger.error(f"Server failed to start. STDOUT: {stdout}, STDERR: {stderr}")
+                return False
+                
+        except Exception as e:
+            self.logger.error(f"Error starting server: {e}")
+            return False
 
-def print_summary(status_results: Dict, cursor_results: Dict, dep_results: Dict):
-    """Print summary of all checks"""
-    print("\n" + "="*60)
-    print("📋 SUMMARY")
-    print("="*60)
-    
-    # Server status
-    print("\n🔧 Server Status:")
-    for check, result in status_results.items():
-        status = result["status"]
-        print(f"  {check:12} {status}")
-    
-    # Cursor integration
-    print("\n🎯 Cursor Integration:")
-    for check, result in cursor_results.items():
-        status = result["status"]
-        print(f"  {check:15} {status}")
-    
-    # Dependencies
-    print("\n📦 Dependencies:")
-    for package, result in dep_results.items():
-        status = result["status"]
-        print(f"  {package:12} {status}")
-    
-    # Overall status
-    all_checks = list(status_results.values()) + list(cursor_results.values()) + list(dep_results.values())
-    failed_checks = [r for r in all_checks if "❌" in r["status"]]
-    
-    if failed_checks:
-        print(f"\n⚠️  Found {len(failed_checks)} issues that need attention")
-    else:
-        print("\n✅ All checks passed! MCP server should work correctly with Cursor IDE")
+    def stop_server(self):
+        """Stop MCP server"""
+        if self.server_process:
+            try:
+                self.logger.info("Stopping MCP server...")
+                self.server_process.terminate()
+                self.server_process.wait(timeout=5)
+                self.logger.info("MCP server stopped")
+            except subprocess.TimeoutExpired:
+                self.logger.warning("Server didn't stop gracefully, killing...")
+                self.server_process.kill()
+            except Exception as e:
+                self.logger.error(f"Error stopping server: {e}")
+
+    def test_connection(self) -> Dict[str, Any]:
+        """Test MCP server connection"""
+        try:
+            self.logger.info("Testing MCP server connection...")
+            
+            # Test ping
+            ping_result = self._send_request("neozork/ping", {})
+            if not ping_result:
+                return {"status": "failed", "error": "Ping failed"}
+            
+            # Test status
+            status_result = self._send_request("neozork/status", {})
+            if not status_result:
+                return {"status": "failed", "error": "Status check failed"}
+            
+            # Test health
+            health_result = self._send_request("neozork/health", {})
+            if not health_result:
+                return {"status": "failed", "error": "Health check failed"}
+            
+            # Test project info
+            project_result = self._send_request("neozork/projectInfo", {})
+            if not project_result:
+                return {"status": "failed", "error": "Project info failed"}
+            
+            return {
+                "status": "success",
+                "ping": ping_result,
+                "status_info": status_result,
+                "health": health_result,
+                "project_info": project_result
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Error testing connection: {e}")
+            return {"status": "failed", "error": str(e)}
+
+    def _send_request(self, method: str, params: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Send request to MCP server"""
+        try:
+            request = {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": method,
+                "params": params
+            }
+            
+            # Send request to server
+            result = subprocess.run(
+                [sys.executable, 'neozork_mcp_server.py'],
+                input=json.dumps(request) + '\n',
+                capture_output=True,
+                text=True,
+                cwd=self.project_root,
+                timeout=10
+            )
+            
+            if result.returncode == 0 and result.stdout.strip():
+                try:
+                    response = json.loads(result.stdout.strip())
+                    return response.get('result')
+                except json.JSONDecodeError:
+                    self.logger.error(f"Invalid JSON response: {result.stdout}")
+                    return None
+            else:
+                self.logger.error(f"Request failed: {result.stderr}")
+                return None
+                
+        except subprocess.TimeoutExpired:
+            self.logger.error("Request timeout")
+            return None
+        except Exception as e:
+            self.logger.error(f"Error sending request: {e}")
+            return None
+
+    def check_ide_configurations(self) -> Dict[str, Any]:
+        """Check IDE configuration files"""
+        configs = {}
+        
+        # Check Cursor config
+        cursor_config = self.project_root / "cursor_mcp_config.json"
+        if cursor_config.exists():
+            try:
+                with open(cursor_config, 'r') as f:
+                    configs['cursor'] = {
+                        'exists': True,
+                        'size': cursor_config.stat().st_size,
+                        'valid_json': True
+                    }
+            except Exception as e:
+                configs['cursor'] = {
+                    'exists': True,
+                    'error': str(e),
+                    'valid_json': False
+                }
+        else:
+            configs['cursor'] = {'exists': False}
+        
+        # Check VS Code config
+        vscode_config = self.project_root / ".vscode" / "settings.json"
+        if vscode_config.exists():
+            try:
+                with open(vscode_config, 'r') as f:
+                    configs['vscode'] = {
+                        'exists': True,
+                        'size': vscode_config.stat().st_size,
+                        'valid_json': True
+                    }
+            except Exception as e:
+                configs['vscode'] = {
+                    'exists': True,
+                    'error': str(e),
+                    'valid_json': False
+                }
+        else:
+            configs['vscode'] = {'exists': False}
+        
+        # Check PyCharm config
+        pycharm_config = self.project_root / "pycharm_mcp_config.json"
+        if pycharm_config.exists():
+            try:
+                with open(pycharm_config, 'r') as f:
+                    configs['pycharm'] = {
+                        'exists': True,
+                        'size': pycharm_config.stat().st_size,
+                        'valid_json': True
+                    }
+            except Exception as e:
+                configs['pycharm'] = {
+                    'exists': True,
+                    'error': str(e),
+                    'valid_json': False
+                }
+        else:
+            configs['pycharm'] = {'exists': False}
+        
+        return configs
+
+    def run_comprehensive_check(self) -> Dict[str, Any]:
+        """Run comprehensive MCP server check"""
+        self.logger.info("Starting comprehensive MCP server check...")
+        
+        results = {
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "project_root": str(self.project_root),
+            "server_running": False,
+            "connection_test": {},
+            "ide_configurations": {},
+            "recommendations": []
+        }
+        
+        # Check if server is running
+        results["server_running"] = self.check_server_running()
+        
+        # Check IDE configurations
+        results["ide_configurations"] = self.check_ide_configurations()
+        
+        # Test connection if server is running
+        if results["server_running"]:
+            results["connection_test"] = self.test_connection()
+        else:
+            results["connection_test"] = {"status": "skipped", "reason": "Server not running"}
+            results["recommendations"].append("Start MCP server to test connection")
+        
+        # Generate recommendations
+        if not results["server_running"]:
+            results["recommendations"].append("Run: python3 neozork_mcp_server.py")
+        
+        missing_configs = [ide for ide, config in results["ide_configurations"].items() 
+                          if not config.get('exists', False)]
+        if missing_configs:
+            results["recommendations"].append(f"Setup IDE configurations: python3 scripts/setup_ide_configs.py")
+        
+        if results["connection_test"].get("status") == "failed":
+            results["recommendations"].append("Check MCP server logs: tail -f logs/neozork_mcp.log")
+        
+        return results
 
 def main():
     """Main function"""
-    print("🚀 Neozork MCP Server Status Checker")
-    print("="*50)
+    print("🔍 MCP Server Status Checker")
+    print("=" * 50)
     
-    # Run all checks
-    status_results = check_server_status()
-    cursor_results = check_cursor_integration()
-    dep_results = check_dependencies()
+    checker = MCPServerChecker()
+    results = checker.run_comprehensive_check()
     
-    # Print summary
-    print_summary(status_results, cursor_results, dep_results)
+    # Print results
+    print(f"\n📅 Check Time: {results['timestamp']}")
+    print(f"📁 Project Root: {results['project_root']}")
     
-    # Save results to file
-    results_file = Path(__file__).parent.parent / "logs" / "mcp_status_check.json"
-    results_file.parent.mkdir(exist_ok=True)
+    # Server status
+    print(f"\n🚀 MCP Server Status:")
+    if results["server_running"]:
+        print("   ✅ Server is running")
+    else:
+        print("   ❌ Server is not running")
     
-    all_results = {
-        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "server_status": status_results,
-        "cursor_integration": cursor_results,
-        "dependencies": dep_results
-    }
+    # Connection test
+    print(f"\n🔗 Connection Test:")
+    connection = results["connection_test"]
+    if connection.get("status") == "success":
+        print("   ✅ Connection successful")
+        if "ping" in connection:
+            print(f"   📡 Ping: {connection['ping']}")
+        if "health" in connection:
+            health = connection['health']
+            print(f"   💚 Health: {health.get('status', 'unknown')}")
+    elif connection.get("status") == "skipped":
+        print(f"   ⏭️  Skipped: {connection.get('reason', 'Unknown')}")
+    else:
+        print(f"   ❌ Failed: {connection.get('error', 'Unknown error')}")
     
-    with open(results_file, 'w') as f:
-        json.dump(all_results, f, indent=2)
+    # IDE configurations
+    print(f"\n💻 IDE Configurations:")
+    for ide, config in results["ide_configurations"].items():
+        if config.get('exists'):
+            size = config.get('size', 0)
+            valid = config.get('valid_json', False)
+            status = "✅" if valid else "⚠️"
+            print(f"   {status} {ide.upper()}: {size} bytes")
+        else:
+            print(f"   ❌ {ide.upper()}: Not configured")
     
-    print(f"\n💾 Results saved to: {results_file}")
+    # Recommendations
+    if results["recommendations"]:
+        print(f"\n�� Recommendations:")
+        for rec in results["recommendations"]:
+            print(f"   • {rec}")
+    
+    # Save results
+    log_file = checker.project_root / "logs" / "mcp_status_check.json"
+    with open(log_file, 'w') as f:
+        json.dump(results, f, indent=2)
+    
+    print(f"\n📝 Results saved to: {log_file}")
+    
+    # Return exit code
+    if results["server_running"] and results["connection_test"].get("status") == "success":
+        print("\n✅ All checks passed!")
+        return 0
+    else:
+        print("\n⚠️  Some checks failed. See recommendations above.")
+        return 1
 
 if __name__ == "__main__":
-    main() 
+    sys.exit(main()) 
