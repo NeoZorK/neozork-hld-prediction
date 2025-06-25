@@ -149,10 +149,30 @@ class DockerMCPServerChecker:
         # Docker-specific configurations
         docker_config = self.project_root / "docker.env"
         if docker_config.exists():
-            configs['docker'] = {
-                'exists': True,
-                'size': docker_config.stat().st_size
-            }
+            try:
+                # Try to read as JSON first (some docker.env files might be JSON)
+                with open(docker_config, 'r') as f:
+                    content = f.read().strip()
+                    # Try to parse as JSON
+                    try:
+                        json.loads(content)
+                        valid_json = True
+                    except json.JSONDecodeError:
+                        # If not JSON, check if it's valid environment file format
+                        valid_json = all('=' in line or line.startswith('#') or not line.strip() 
+                                       for line in content.split('\n'))
+                    
+                    configs['docker'] = {
+                        'exists': True,
+                        'size': docker_config.stat().st_size,
+                        'valid_json': valid_json
+                    }
+            except Exception as e:
+                configs['docker'] = {
+                    'exists': True,
+                    'error': str(e),
+                    'valid_json': False
+                }
         else:
             configs['docker'] = {'exists': False}
         
@@ -439,6 +459,36 @@ class MCPServerChecker:
                 }
         else:
             configs['pycharm'] = {'exists': False}
+        
+        # Check Docker configuration (relevant for both host and Docker environments)
+        docker_config = self.project_root / "docker.env"
+        if docker_config.exists():
+            try:
+                # Try to read as JSON first (some docker.env files might be JSON)
+                with open(docker_config, 'r') as f:
+                    content = f.read().strip()
+                    # Try to parse as JSON
+                    try:
+                        json.loads(content)
+                        valid_json = True
+                    except json.JSONDecodeError:
+                        # If not JSON, check if it's valid environment file format
+                        valid_json = all('=' in line or line.startswith('#') or not line.strip() 
+                                       for line in content.split('\n'))
+                    
+                    configs['docker'] = {
+                        'exists': True,
+                        'size': docker_config.stat().st_size,
+                        'valid_json': valid_json
+                    }
+            except Exception as e:
+                configs['docker'] = {
+                    'exists': True,
+                    'error': str(e),
+                    'valid_json': False
+                }
+        else:
+            configs['docker'] = {'exists': False}
         
         return configs
 
