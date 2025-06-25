@@ -153,7 +153,7 @@ def parse_arguments():
 
     # --- Interactive Mode Option ---
     parser.add_argument(
-        '--interactive', '-i',
+        '--interactive',
         action='store_true',
         help='Start interactive mode for guided indicator selection and analysis.'
     )
@@ -244,7 +244,7 @@ def parse_arguments():
     # --- Plotting Options Group ---
     plotting_group = parser.add_argument_group('Plotting Options')
     plotting_group.add_argument(
-        '-d', '--draw', metavar='METHOD',
+        '-d', metavar='METHOD',
         choices=['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb', 'term'],
         default='fastest',
         help="Plot method: fastest, fast, plotly, mplfinance, seaborn, term"
@@ -267,7 +267,7 @@ def parse_arguments():
 
     # --- Other Options Group ---
     other_group = parser.add_argument_group('Other Options')
-    other_group.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
+    other_group.add_argument('-h', action='help', default=argparse.SUPPRESS,
                              help='Show this help message and exit')
     other_group.add_argument('--version', action='version',
                              version=f'{"Shcherbyna Pressure Vector Indicator v"+__version__}',
@@ -280,7 +280,7 @@ def parse_arguments():
             parser.print_help()
             sys.exit(0)
 
-        # Handle special flags that don't require mode argument
+        # Handle special flags that don't require mode argument BEFORE parsing
         if '--examples' in sys.argv:
             print(f"\n{Fore.YELLOW}{Style.BRIGHT}Indicator Usage Examples:{Style.RESET_ALL}")
             print("  Show all indicators:   --indicators")
@@ -357,11 +357,12 @@ def parse_arguments():
             sys.exit(0)
         
         # Handle --interactive flag
-        if '--interactive' in sys.argv or '-i' in sys.argv:
+        if '--interactive' in sys.argv:
             from src.cli.interactive_mode import start_interactive_mode
             start_interactive_mode()
             sys.exit(0)
             
+        # Now parse arguments for normal operation
         args = parser.parse_args()
     except SystemExit as e:
         if e.code != 0:

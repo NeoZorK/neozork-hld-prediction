@@ -353,7 +353,7 @@ class InteractiveMode:
         
         # Add plotting method
         if self.current_selection['draw_method']:
-            args.extend(['--draw', self.current_selection['draw_method']])
+            args.extend(['-d', self.current_selection['draw_method']])
         
         # Add export formats
         for fmt in self.current_selection['export_formats']:

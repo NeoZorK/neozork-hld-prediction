@@ -105,7 +105,7 @@ def show_help():
     print(f"  {Fore.MAGENTA}--rule AUTO{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Automatically display all columns in the file{Style.RESET_ALL}")
 
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Drawing Options (-d flag):{Style.RESET_ALL}")
-    print(f"  The {Fore.MAGENTA}-d{Style.RESET_ALL} or {Fore.MAGENTA}--draw{Style.RESET_ALL} flag allows you to specify the plotting library for visualization:")
+    print(f"  The {Fore.MAGENTA}-d{Style.RESET_ALL} flag allows you to specify the plotting library for visualization:")
     print(f"  {Fore.MAGENTA}-d fastest{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Default - Plotly+Dask+Datashader (best for large datasets){Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}-d fast{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Dask+Datashader+Bokeh for quick visualization{Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}-d plotly{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Interactive HTML plots with Plotly (also with 'plt'){Style.RESET_ALL}")

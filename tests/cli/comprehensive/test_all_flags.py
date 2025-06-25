@@ -109,35 +109,35 @@ class ComprehensiveCLITester:
         self.modes = {
             'demo': {
                 'required': [],
-                'optional': ['--rule', '--draw', '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info']
+                'optional': ['--rule', '-d', '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info']
             },
             'yfinance': {
                 'required': ['--ticker', '--point'],
-                'optional': ['--period', '--start', '--end', '--rule', '--draw', '--price-type']
+                'optional': ['--period', '--start', '--end', '--rule', '-d', '--price-type']
             },
             'yf': {
                 'required': ['--ticker', '--point'],
-                'optional': ['--period', '--start', '--end', '--rule', '--draw', '--price-type']
+                'optional': ['--period', '--start', '--end', '--rule', '-d', '--price-type']
             },
             'csv': {
                 'required': ['--csv-file', '--point'],
-                'optional': ['--rule', '--draw', '--price-type']
+                'optional': ['--rule', '-d', '--price-type']
             },
             'polygon': {
                 'required': ['--ticker', '--start', '--end', '--point'],
-                'optional': ['--interval', '--rule', '--draw', '--price-type']
+                'optional': ['--interval', '--rule', '-d', '--price-type']
             },
             'binance': {
                 'required': ['--ticker', '--start', '--end', '--point'],
-                'optional': ['--interval', '--rule', '--draw', '--price-type']
+                'optional': ['--interval', '--rule', '-d', '--price-type']
             },
             'exrate': {
                 'required': ['--ticker', '--point'],
-                'optional': ['--interval', '--rule', '--draw', '--price-type']
+                'optional': ['--interval', '--rule', '-d', '--price-type']
             },
             'show': {
                 'required': [],
-                'optional': ['--source', '--keywords', '--show-start', '--show-end', '--show-rule', '--draw', '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info']
+                'optional': ['--source', '--keywords', '--show-start', '--show-end', '--show-rule', '-d', '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info']
             },
             'interactive': {
                 'required': [],
@@ -286,7 +286,7 @@ class ComprehensiveCLITester:
         
         for rule in rules:
             for draw in draw_modes:
-                cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', rule, '--draw', draw]
+                cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', rule, '-d', draw]
                 result = self.run_command(cmd, test_category="flag_combinations", test_name=f"test_demo_{rule}_{draw}")
                 results.append(result)
         
@@ -296,6 +296,11 @@ class ComprehensiveCLITester:
             cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'RSI', export_flag]
             result = self.run_command(cmd, test_category="flag_combinations", test_name=f"test_demo_export_{export_flag}")
             results.append(result)
+        
+        # Test invalid draw mode
+        cmd = [PYTHON, str(SCRIPT), 'demo', '-d', 'invalid_draw']
+        result = self.run_command(cmd, test_category="flag_combinations", test_name="test_demo_invalid_draw")
+        results.append(result)
         
         return results
 
