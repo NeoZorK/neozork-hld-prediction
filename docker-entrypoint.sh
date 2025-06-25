@@ -111,7 +111,7 @@ echo -e "\033[1;34mInput received: '$run_mcp'\033[0m"
 if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
   echo -e "\n\033[1;32m=== Starting MCP server in background ===\033[0m\n"
   # Start MCP server in background and redirect output to prevent EOF
-  nohup python pycharm_github_copilot_mcp.py > /app/logs/mcp_server.log 2>&1 &
+  nohup python neozork_mcp_server.py > /app/logs/mcp_server.log 2>&1 &
   MCP_PID=$!
   echo $MCP_PID > /tmp/mcp_server.pid
   echo -e "\033[1;32mMCP server started in background (PID: $MCP_PID)\033[0m\n"
