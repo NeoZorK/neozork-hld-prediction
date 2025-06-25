@@ -864,7 +864,6 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
             lot_size = getattr(args, 'lot_size', 1.0)
             risk_reward_ratio = getattr(args, 'risk_reward_ratio', 2.0)
             fee_per_trade = getattr(args, 'fee_per_trade', 0.07)
-            print('DEBUG: Calling display_universal_trading_metrics from cli_show_mode')
             display_universal_trading_metrics(
                 result_df,
                 selected_rule,
@@ -1738,8 +1737,8 @@ def _show_single_text_indicator_file(file_info, args):
                         df = df.reset_index(drop=False)
                         data = df.to_dict('records')
                         # Diagnostics: print the list of columns and first rows
-                        print(f"DEBUG: DataFrame columns after filtering: {list(df.columns)}")
-                        print(f"DEBUG: First rows after filtering:\n{df.head()}\n")
+                        print(f"DataFrame columns after filtering: {list(df.columns)}")
+                        print(f"First rows after filtering:\n{df.head()}\n")
                     else:
                         print(f"Cannot apply date filtering to this JSON structure")
                 except Exception as e:
