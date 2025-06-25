@@ -1,4 +1,3 @@
-print('DEBUG: universal_trading_metrics.py imported')
 # -*- coding: utf-8 -*-
 # src/calculation/universal_trading_metrics.py
 
@@ -8,19 +7,12 @@ Calculates and displays comprehensive trading metrics for any rule type strictly
 """
 
 import pandas as pd
-print('DEBUG: pandas imported')
 import numpy as np
-print('DEBUG: numpy imported')
 from typing import Dict, Union, Optional
-print('DEBUG: typing imported')
 from datetime import datetime
-print('DEBUG: datetime imported')
 from src.common import logger
-print('DEBUG: logger imported')
 from src.common.constants import BUY, SELL, NOTRADE
-print('DEBUG: constants imported')
 from src.calculation.trading_metrics import calculate_trading_metrics
-print('DEBUG: trading_metrics imported')
 
 
 class UniversalTradingMetrics:
@@ -46,7 +38,6 @@ class UniversalTradingMetrics:
     def calculate_and_display_metrics(self, df: pd.DataFrame, rule: Union[str, object], 
                                     price_col: str = 'Close', signal_col: str = 'Direction',
                                     volume_col: Optional[str] = 'Volume') -> Dict[str, float]:
-        print('DEBUG: UniversalTradingMetrics.calculate_and_display_metrics called')
         try:
             # Validate input data
             if df is None or df.empty:
@@ -573,7 +564,6 @@ class UniversalTradingMetrics:
 def display_universal_trading_metrics(df: pd.DataFrame, rule: Union[str, object], 
                                     lot_size: float = 1.0, risk_reward_ratio: float = 2.0, 
                                     fee_per_trade: float = 0.07) -> Dict[str, float]:
-    print('DEBUG: display_universal_trading_metrics called')
     """
     Universal function to calculate and display trading metrics for any rule type.
     """
