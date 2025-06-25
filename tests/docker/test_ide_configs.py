@@ -43,11 +43,15 @@ class TestIDESetupManager:
         success = setup_manager.create_cursor_config()
         assert success
         
-        # Check file exists
+        # Check cursor_mcp_config.json exists
         config_path = project_root / "cursor_mcp_config.json"
         assert config_path.exists()
         
-        # Validate JSON structure
+        # Check mcp.json exists (for Cursor IDE compatibility)
+        mcp_json_path = project_root / "mcp.json"
+        assert mcp_json_path.exists()
+        
+        # Validate cursor_mcp_config.json structure
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
         
@@ -65,6 +69,20 @@ class TestIDESetupManager:
         server_settings = config["serverSettings"]
         assert "neozork" in server_settings
         assert server_settings["neozork"]["enabled"] is True
+        
+        # Validate mcp.json structure
+        with open(mcp_json_path, 'r', encoding='utf-8') as f:
+            mcp_config = json.load(f)
+        
+        # Check mcp.json has correct structure
+        assert "mcpServers" in mcp_config
+        mcp_servers = mcp_config["mcpServers"]
+        assert "neozork" in mcp_servers
+        assert "neozork-docker" in mcp_servers
+        
+        # Verify both configs have same server definitions
+        assert mcp_config["mcpServers"]["neozork"]["command"] == config["mcpServers"]["neozork"]["command"]
+        assert mcp_config["mcpServers"]["neozork"]["args"] == config["mcpServers"]["neozork"]["args"]
     
     def test_vscode_config_creation(self, setup_manager, project_root):
         """Test VS Code configuration creation"""
@@ -161,6 +179,48 @@ class TestIDESetupManager:
         assert "performance" in neozork_settings
         assert "monitoring" in neozork_settings
         assert "docker" in neozork_settings
+    
+    def test_mcp_json_config_structure(self, setup_manager):
+        """Test MCP JSON configuration structure"""
+        config = setup_manager._get_mcp_json_config()
+        
+        # Check top-level structure
+        assert "mcpServers" in config
+        
+        # Check MCP servers
+        mcp_servers = config["mcpServers"]
+        assert "neozork" in mcp_servers
+        assert "neozork-docker" in mcp_servers
+        
+        # Check neozork server configuration
+        neozork_server = mcp_servers["neozork"]
+        assert "command" in neozork_server
+        assert "args" in neozork_server
+        assert "env" in neozork_server
+        assert "cwd" in neozork_server
+        
+        assert neozork_server["command"] == "python3"
+        assert neozork_server["args"] == ["neozork_mcp_server.py"]
+        assert neozork_server["cwd"] == "${PROJECT_ROOT}"
+        
+        # Check environment variables
+        env = neozork_server["env"]
+        assert "PYTHONPATH" in env
+        assert "LOG_LEVEL" in env
+        assert "DOCKER_CONTAINER" in env
+        assert "USE_UV" in env
+        assert "UV_PYTHON" in env
+        
+        # Check docker server configuration
+        docker_server = mcp_servers["neozork-docker"]
+        assert "command" in docker_server
+        assert "args" in docker_server
+        assert "env" in docker_server
+        assert "cwd" in docker_server
+        
+        assert docker_server["command"] == "docker"
+        assert "compose" in docker_server["args"]
+        assert "run" in docker_server["args"]
     
     def test_vscode_config_structure(self, setup_manager):
         """Test VS Code configuration structure"""
