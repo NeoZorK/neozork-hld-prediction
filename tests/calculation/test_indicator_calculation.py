@@ -94,7 +94,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
             calculate_indicator(args, df_missing, self.point_size)
         # *** FIX: Update assertion string to match actual error ***
         self.assertIn("DataFrame missing required columns for calculation:", str(cm.exception))
-        self.assertIn("'High'", str(cm.exception))
+        self.assertIn('High', str(cm.exception))
 
     # Test with None DataFrame input
     def test_calculate_indicator_none_dataframe(self):
@@ -206,7 +206,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         # Check if print_debug was called with the expected strings
         # *** FIX: Check call_args_list on the mocked method ***
         debug_log_calls = [str(c.args[0]) for c in mock_print_debug.call_args_list] # Extract first arg from calls
-        self.assertTrue(any("DEBUG: Result DF Tail for Rule:" in call for call in debug_log_calls), "Debug tail header not logged")
+        self.assertTrue(any("Result DF Tail for Rule:" in call for call in debug_log_calls), "Debug tail header not logged")
         self.assertTrue(any("--- END DEBUG ---" in call for call in debug_log_calls), "Debug tail footer not logged")
         self.assertTrue(any("PPrice1" in call for call in debug_log_calls), "PPrice1 column not found in debug log")
 

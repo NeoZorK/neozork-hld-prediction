@@ -625,7 +625,7 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
         logger.print_info("Drawing mode not specified, using 'fastest' by default.")
         args.draw = 'fastest'
 
-    # Debug: Print DataFrame info before plotting
+    # Print DataFrame info before plotting
     log_dataframe_debug_info(result_df)
 
     # Generate plot title
