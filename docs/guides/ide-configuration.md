@@ -34,10 +34,14 @@ python3 scripts/setup_ide_configs.py
 
 #### Manual Setup
 1. **Copy Configuration**: Copy `cursor_mcp_config.json` to project root
-2. **Restart Cursor**: Restart Cursor IDE for MCP server to auto-start
-3. **Verify**: Check MCP panel for server status
+2. **Create MCP Config**: Create `mcp.json` for Cursor IDE compatibility
+3. **Restart Cursor**: Restart Cursor IDE for MCP server to auto-start
+4. **Verify**: Check MCP panel for server status
 
-#### Configuration Details
+#### Configuration Files
+Cursor IDE uses two configuration files:
+
+**`cursor_mcp_config.json`** - Extended configuration with advanced features:
 ```json
 {
   "mcpServers": {
@@ -49,9 +53,41 @@ python3 scripts/setup_ide_configs.py
         "LOG_LEVEL": "INFO"
       }
     }
+  },
+  "serverSettings": {
+    "neozork": {
+      "enabled": true,
+      "autoStart": true,
+      "features": {
+        "financial_data": true,
+        "technical_indicators": true
+      }
+    }
   }
 }
 ```
+
+**`mcp.json`** - Standard MCP configuration for Cursor IDE:
+```json
+{
+  "mcpServers": {
+    "neozork": {
+      "command": "python3",
+      "args": ["neozork_mcp_server.py"],
+      "env": {
+        "PYTHONPATH": "${PROJECT_ROOT}",
+        "LOG_LEVEL": "INFO"
+      },
+      "cwd": "${PROJECT_ROOT}"
+    }
+  }
+}
+```
+
+#### File Priority
+- Cursor IDE looks for `mcp.json` first
+- If `mcp.json` is not found, it falls back to `cursor_mcp_config.json`
+- Both files are created automatically by the setup script
 
 ### VS Code
 
@@ -261,71 +297,116 @@ docker compose ps
 
 ## 🔧 Troubleshooting
 
-### Common Issues
+### Cursor IDE Issues
 
-#### MCP Server Not Starting
+#### Problem: "Cursor IDE looking for mcp.json"
+**Solution:**
+1. **Check if mcp.json exists:**
+   ```bash
+   ls -la mcp.json
+   ```
+
+2. **If missing, create it:**
+   ```bash
+   python3 scripts/setup_ide_configs.py
+   ```
+
+3. **Verify both config files exist:**
+   ```bash
+   ls -la cursor_mcp_config.json mcp.json
+   ```
+
+#### Problem: MCP Server Not Starting
+**Solution:**
+1. **Check file permissions:**
+   ```bash
+   chmod +x neozork_mcp_server.py
+   ```
+
+2. **Verify Python path:**
+   ```bash
+   which python3
+   python3 --version
+   ```
+
+3. **Test server manually:**
+   ```bash
+   python3 neozork_mcp_server.py
+   ```
+
+4. **Check logs:**
+   ```bash
+   tail -f logs/neozork_mcp.log
+   ```
+
+#### Problem: Configuration Not Loading
+**Solution:**
+1. **Restart Cursor IDE completely**
+2. **Check JSON syntax:**
+   ```bash
+   python3 -m json.tool mcp.json
+   python3 -m json.tool cursor_mcp_config.json
+   ```
+
+3. **Verify project root:**
+   ```bash
+   pwd
+   ls -la mcp.json
+   ```
+
+#### Problem: Docker MCP Server Issues
+**Solution:**
+1. **Check Docker status:**
+   ```bash
+   docker --version
+   docker compose version
+   ```
+
+2. **Test Docker container:**
+   ```bash
+   docker compose run --rm neozork-hld python3 neozork_mcp_server.py
+   ```
+
+3. **Check Docker logs:**
+   ```bash
+   docker compose logs neozork-hld
+   ```
+
+### Common Error Messages
+
+#### "mcp.json not found"
+- Run `python3 scripts/setup_ide_configs.py`
+- Verify file exists: `ls -la mcp.json`
+
+#### "MCP server failed to start"
+- Check Python installation: `python3 --version`
+- Test server manually: `python3 neozork_mcp_server.py`
+- Check logs: `tail -f logs/neozork_mcp.log`
+
+#### "Connection refused"
+- Restart Cursor IDE
+- Check if server is running: `python3 scripts/check_mcp_status.py`
+- Verify port availability: `lsof -i :8080`
+
+### File Priority for Cursor IDE
+1. **Primary**: `mcp.json` (standard MCP format)
+2. **Fallback**: `cursor_mcp_config.json` (extended features)
+3. **Auto-creation**: Both files created by setup script
+
+### Verification Commands
 ```bash
-# Check if server file exists
-ls -la neozork_mcp_server.py
+# Check all config files
+ls -la *.json
 
-# Check Python path
-python3 -c "import sys; print(sys.path)"
+# Validate JSON syntax
+python3 -m json.tool mcp.json
+python3 -m json.tool cursor_mcp_config.json
 
-# Check dependencies
-pip list | grep -E "(pandas|numpy|matplotlib)"
+# Test MCP server
+python3 scripts/check_mcp_status.py
 
-# Check logs
-tail -f logs/neozork_mcp.log
-```
-
-#### IDE Configuration Issues
-```bash
-# Re-run setup
-python3 scripts/setup_ide_configs.py
-
-# Check configuration files
-ls -la cursor_mcp_config.json
-ls -la .vscode/settings.json
-ls -la pycharm_mcp_config.json
-
-# Validate JSON
-python3 -c "import json; json.load(open('cursor_mcp_config.json'))"
-```
-
-#### Connection Issues
-```bash
-# Test server directly
-python3 neozork_mcp_server.py
-
-# Check port conflicts
-lsof -i :8000
-
-# Check firewall
-sudo ufw status
-```
-
-### Debug Mode
-```bash
-# Enable debug logging
-export LOG_LEVEL=DEBUG
-
-# Start server with debug
-python3 neozork_mcp_server.py
-
-# Check debug logs
-tail -f logs/neozork_mcp.log | grep DEBUG
-```
-
-### Performance Issues
-```bash
-# Check memory usage
-ps aux | grep neozork_mcp_server
-
-# Check CPU usage
-top -p $(pgrep -f neozork_mcp_server)
-
-# Monitor logs
-tail -f logs/neozork_mcp.log | grep -E "(ERROR|WARNING|PERFORMANCE)"
+# Check IDE setup
+python3 -m pytest tests/docker/test_ide_configs.py -v
 ```
 
 ## 📊 Performance Metrics

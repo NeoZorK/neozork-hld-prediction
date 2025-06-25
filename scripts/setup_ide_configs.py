@@ -104,7 +104,9 @@ class IDESetupManager:
     def create_cursor_config(self) -> bool:
         """Create Cursor IDE configuration"""
         try:
+            # Create both cursor_mcp_config.json and mcp.json for Cursor IDE
             config_path = self.project_root / 'cursor_mcp_config.json'
+            mcp_json_path = self.project_root / 'mcp.json'
             
             if config_path.exists():
                 self.logger.info("Cursor config already exists, updating...")
@@ -122,101 +124,161 @@ class IDESetupManager:
             with open(config_path, 'w', encoding='utf-8') as f:
                 json.dump(config, f, indent=2, ensure_ascii=False)
             
+            # Create mcp.json for Cursor IDE compatibility
+            mcp_config = self._get_mcp_json_config()
+            with open(mcp_json_path, 'w', encoding='utf-8') as f:
+                json.dump(mcp_config, f, indent=2, ensure_ascii=False)
+            
+            # Create/update ~/.cursor/mcp.json with full Neozork capabilities
+            self._create_cursor_global_config()
+            
             self.logger.info(f"Cursor config created/updated: {config_path}")
+            self.logger.info(f"MCP config created for Cursor IDE: {mcp_json_path}")
+            self.logger.info("Global Cursor MCP config updated: ~/.cursor/mcp.json")
             return True
             
         except Exception as e:
             self.logger.error(f"Failed to create Cursor config: {e}")
             return False
 
-    def create_vscode_config(self) -> bool:
-        """Create VS Code configuration"""
+    def _create_cursor_global_config(self) -> bool:
+        """Create/update global Cursor MCP configuration in ~/.cursor/mcp.json"""
         try:
-            vscode_dir = self.project_root / '.vscode'
-            vscode_dir.mkdir(exist_ok=True)
+            cursor_config_dir = Path.home() / '.cursor'
+            cursor_config_dir.mkdir(exist_ok=True)
             
-            config_path = vscode_dir / 'settings.json'
-            
-            if config_path.exists():
-                self.logger.info("VS Code config already exists, updating...")
-                with open(config_path, 'r', encoding='utf-8') as f:
-                    existing_config = json.load(f)
-            else:
-                existing_config = {}
-            
-            # Update with latest settings
-            config = self._get_vscode_config()
-            config.update(existing_config)
-            
-            with open(config_path, 'w', encoding='utf-8') as f:
-                json.dump(config, f, indent=2, ensure_ascii=False)
-            
-            self.logger.info(f"VS Code config created/updated: {config_path}")
-            return True
-            
-        except Exception as e:
-            self.logger.error(f"Failed to create VS Code config: {e}")
-            return False
-
-    def create_pycharm_config(self) -> bool:
-        """Create PyCharm configuration"""
-        try:
-            config_path = self.project_root / 'pycharm_mcp_config.json'
-            
-            if config_path.exists():
-                self.logger.info("PyCharm config already exists, updating...")
+            cursor_mcp_path = cursor_config_dir / 'mcp.json'
             
             # Load existing config if available
-            existing_config = {}
-            if config_path.exists():
-                with open(config_path, 'r', encoding='utf-8') as f:
+            existing_servers = {}
+            if cursor_mcp_path.exists():
+                with open(cursor_mcp_path, 'r', encoding='utf-8') as f:
                     existing_config = json.load(f)
+                    existing_servers = existing_config.get('mcpServers', {})
+                    self.logger.info(f"Found existing MCP servers: {list(existing_servers.keys())}")
             
-            # Update with latest settings
-            config = self._get_pycharm_config()
-            config.update(existing_config)
+            # Get full Neozork configuration
+            neozork_config = self._get_full_neozork_mcp_config()
             
-            with open(config_path, 'w', encoding='utf-8') as f:
-                json.dump(config, f, indent=2, ensure_ascii=False)
+            # Merge with existing servers
+            all_servers = {**existing_servers, **neozork_config['mcpServers']}
             
-            self.logger.info(f"PyCharm config created/updated: {config_path}")
+            # Create final configuration
+            final_config = {
+                "mcpServers": all_servers
+            }
+            
+            # Add server settings if not present
+            if 'serverSettings' not in final_config:
+                final_config['serverSettings'] = neozork_config.get('serverSettings', {})
+            
+            with open(cursor_mcp_path, 'w', encoding='utf-8') as f:
+                json.dump(final_config, f, indent=2, ensure_ascii=False)
+            
+            self.logger.info(f"Global Cursor MCP config updated: {cursor_mcp_path}")
+            self.logger.info(f"Total MCP servers: {list(all_servers.keys())}")
             return True
             
         except Exception as e:
-            self.logger.error(f"Failed to create PyCharm config: {e}")
+            self.logger.error(f"Failed to create global Cursor config: {e}")
             return False
 
-    def _get_cursor_config(self) -> Dict[str, Any]:
-        """Get Cursor configuration"""
+    def _get_full_neozork_mcp_config(self) -> Dict[str, Any]:
+        """Get full Neozork MCP configuration with all capabilities"""
         return {
             "mcpServers": {
                 "neozork": {
                     "command": "python3",
                     "args": ["neozork_mcp_server.py"],
                     "env": {
-                        "PYTHONPATH": "${PROJECT_ROOT}",
+                        "PYTHONPATH": "${workspaceFolder}",
                         "LOG_LEVEL": "INFO",
                         "DOCKER_CONTAINER": "false",
                         "USE_UV": "true",
-                        "UV_PYTHON": "python3"
+                        "UV_PYTHON": "python3",
+                        "MCP_SERVER_TYPE": "neozork_financial",
+                        "ENABLE_FINANCIAL_DATA": "true",
+                        "ENABLE_TECHNICAL_INDICATORS": "true",
+                        "ENABLE_AI_ASSISTANCE": "true",
+                        "ENABLE_DOCKER_INTEGRATION": "true",
+                        "ENABLE_UV_INTEGRATION": "true"
                     },
-                    "cwd": "${PROJECT_ROOT}"
+                    "cwd": "${workspaceFolder}"
                 },
                 "neozork-docker": {
                     "command": "docker",
                     "args": [
-                        "compose", "run", "--rm", "-T",
-                        "-e", "PYTHONPATH=/app",
-                        "-e", "LOG_LEVEL=INFO",
-                        "-e", "DOCKER_CONTAINER=true",
-                        "-e", "USE_UV=true",
+                        "compose",
+                        "run",
+                        "--rm",
+                        "-T",
+                        "-e",
+                        "PYTHONPATH=/app",
+                        "-e",
+                        "LOG_LEVEL=INFO",
+                        "-e",
+                        "DOCKER_CONTAINER=true",
+                        "-e",
+                        "USE_UV=true",
+                        "-e",
+                        "MCP_SERVER_TYPE=neozork_financial",
+                        "-e",
+                        "ENABLE_FINANCIAL_DATA=true",
+                        "-e",
+                        "ENABLE_TECHNICAL_INDICATORS=true",
+                        "-e",
+                        "ENABLE_AI_ASSISTANCE=true",
                         "neozork-hld",
-                        "python3", "neozork_mcp_server.py"
+                        "python3",
+                        "neozork_mcp_server.py"
                     ],
                     "env": {
                         "DOCKER_HOST": "unix:///var/run/docker.sock"
                     },
-                    "cwd": "${PROJECT_ROOT}"
+                    "cwd": "${workspaceFolder}"
+                },
+                "neozork-financial": {
+                    "command": "python3",
+                    "args": ["neozork_mcp_server.py", "--mode=financial"],
+                    "env": {
+                        "PYTHONPATH": "${workspaceFolder}",
+                        "LOG_LEVEL": "INFO",
+                        "MCP_SERVER_TYPE": "neozork_financial",
+                        "ENABLE_FINANCIAL_DATA": "true",
+                        "ENABLE_TECHNICAL_INDICATORS": "true",
+                        "ENABLE_REAL_TIME_DATA": "true",
+                        "ENABLE_EXCHANGE_RATES": "true"
+                    },
+                    "cwd": "${workspaceFolder}"
+                },
+                "neozork-analysis": {
+                    "command": "python3",
+                    "args": ["neozork_mcp_server.py", "--mode=analysis"],
+                    "env": {
+                        "PYTHONPATH": "${workspaceFolder}",
+                        "LOG_LEVEL": "INFO",
+                        "MCP_SERVER_TYPE": "neozork_analysis",
+                        "ENABLE_EDA": "true",
+                        "ENABLE_PLOTTING": "true",
+                        "ENABLE_CORRELATION_ANALYSIS": "true",
+                        "ENABLE_STATISTICAL_ANALYSIS": "true"
+                    },
+                    "cwd": "${workspaceFolder}"
+                },
+                "neozork-development": {
+                    "command": "python3",
+                    "args": ["neozork_mcp_server.py", "--mode=development"],
+                    "env": {
+                        "PYTHONPATH": "${workspaceFolder}",
+                        "LOG_LEVEL": "INFO",
+                        "MCP_SERVER_TYPE": "neozork_development",
+                        "ENABLE_CODE_COMPLETION": "true",
+                        "ENABLE_AI_SUGGESTIONS": "true",
+                        "ENABLE_GITHUB_COPILOT": "true",
+                        "ENABLE_PROJECT_ANALYSIS": "true",
+                        "ENABLE_TEST_GENERATION": "true"
+                    },
+                    "cwd": "${workspaceFolder}"
                 }
             },
             "serverSettings": {
@@ -232,9 +294,13 @@ class IDESetupManager:
                         "code_completion": True,
                         "project_analysis": True,
                         "ai_suggestions": True,
-                        "docker_integration": self.docker_config['enabled'],
+                        "docker_integration": True,
                         "real_time_monitoring": True,
-                        "uv_integration": self.uv_config['enabled']
+                        "uv_integration": True,
+                        "exchange_rates": True,
+                        "eda_analysis": True,
+                        "plotting": True,
+                        "test_generation": True
                     },
                     "performance": {
                         "max_files": 15000,
@@ -249,9 +315,40 @@ class IDESetupManager:
                         "enable_monitoring": True,
                         "health_check_interval": 60,
                         "max_memory_mb": 512,
-                        "max_cpu_percent": 80
+                        "max_cpu_percent": 80,
+                        "log_rotation": {
+                            "max_size_mb": 100,
+                            "backup_count": 5
+                        },
+                        "alerts": {
+                            "memory_threshold": 80,
+                            "cpu_threshold": 90,
+                            "restart_threshold": 3
+                        }
                     },
-                    "docker": self.docker_config,
+                    "security": {
+                        "allowed_paths": [
+                            "${workspaceFolder}"
+                        ],
+                        "max_file_size": 10485760,
+                        "timeout": 30000,
+                        "validate_inputs": True,
+                        "sanitize_paths": True
+                    },
+                    "docker": {
+                        "enabled": True,
+                        "container_name": "neozork-mcp-server",
+                        "port": 8080,
+                        "volumes": [
+                            "${workspaceFolder}:/workspace",
+                            "${workspaceFolder}/logs:/workspace/logs"
+                        ],
+                        "environment": {
+                            "PYTHONPATH": "/workspace/src:/workspace",
+                            "LOG_LEVEL": "INFO",
+                            "USE_UV": "true"
+                        }
+                    },
                     "development": {
                         "auto_reload": False,
                         "hot_reload": False,
@@ -277,16 +374,16 @@ class IDESetupManager:
                     },
                     "preferences": {
                         "defaultServer": "neozork",
-                        "fallbackToDocker": self.docker_config['enabled'],
-                        "useUV": self.uv_config['enabled'],
-                        "dockerEnabled": self.docker_config['enabled']
+                        "fallbackToDocker": True,
+                        "useUV": True,
+                        "dockerEnabled": True
                     }
                 },
                 "python": {
-                    "interpreter": self.uv_config['python_path'],
-                    "packageManager": "uv" if self.uv_config['enabled'] else "pip",
-                    "uvPath": self.uv_config['uv_path'],
-                    "autoInstallDependencies": self.uv_config['auto_install']
+                    "interpreter": "python3",
+                    "packageManager": "uv",
+                    "uvPath": "uv",
+                    "autoInstallDependencies": True
                 }
             }
         }
@@ -337,9 +434,9 @@ class IDESetupManager:
                         "code_completion": True,
                         "project_analysis": True,
                         "ai_suggestions": True,
-                        "docker_integration": self.docker_config['enabled'],
+                        "docker_integration": True,
                         "real_time_monitoring": True,
-                        "uv_integration": self.uv_config['enabled']
+                        "uv_integration": True
                     },
                     "performance": {
                         "max_files": 15000,
@@ -356,11 +453,24 @@ class IDESetupManager:
                         "max_memory_mb": 512,
                         "max_cpu_percent": 80
                     },
-                    "docker": self.docker_config
+                    "docker": {
+                        "enabled": True,
+                        "container_name": "neozork-mcp-server",
+                        "port": 8080,
+                        "volumes": [
+                            "${workspaceFolder}:/workspace",
+                            "${workspaceFolder}/logs:/workspace/logs"
+                        ],
+                        "environment": {
+                            "PYTHONPATH": "/workspace/src:/workspace",
+                            "LOG_LEVEL": "INFO",
+                            "USE_UV": "true"
+                        }
+                    }
                 }
             },
-            "python.defaultInterpreterPath": self.uv_config['python_path'],
-            "python.packageManager": "uv" if self.uv_config['enabled'] else "pip",
+            "python.defaultInterpreterPath": "python3",
+            "python.packageManager": "uv",
             "python.terminal.activateEnvironment": True,
             "python.linting.enabled": True,
             "python.linting.pylintEnabled": True,
@@ -466,6 +576,232 @@ class IDESetupManager:
                         "workspaceSymbols": True,
                         "diagnostics": True
                     }
+                }
+            }
+        }
+
+    def _get_mcp_json_config(self) -> Dict[str, Any]:
+        """Get MCP JSON configuration for Cursor IDE"""
+        return {
+            "mcpServers": {
+                "neozork": {
+                    "command": "python3",
+                    "args": ["neozork_mcp_server.py"],
+                    "env": {
+                        "PYTHONPATH": "${PROJECT_ROOT}",
+                        "LOG_LEVEL": "INFO",
+                        "DOCKER_CONTAINER": "false",
+                        "USE_UV": "true",
+                        "UV_PYTHON": "python3"
+                    },
+                    "cwd": "${PROJECT_ROOT}"
+                },
+                "neozork-docker": {
+                    "command": "docker",
+                    "args": [
+                        "compose",
+                        "run",
+                        "--rm",
+                        "-T",
+                        "-e",
+                        "PYTHONPATH=/app",
+                        "-e",
+                        "LOG_LEVEL=INFO",
+                        "-e",
+                        "DOCKER_CONTAINER=true",
+                        "-e",
+                        "USE_UV=true",
+                        "neozork-hld",
+                        "python3",
+                        "neozork_mcp_server.py"
+                    ],
+                    "env": {
+                        "DOCKER_HOST": "unix:///var/run/docker.sock"
+                    },
+                    "cwd": "${PROJECT_ROOT}"
+                }
+            }
+        }
+
+    def create_vscode_config(self) -> bool:
+        """Create VS Code configuration"""
+        try:
+            vscode_dir = self.project_root / '.vscode'
+            vscode_dir.mkdir(exist_ok=True)
+            
+            config_path = vscode_dir / 'settings.json'
+            
+            if config_path.exists():
+                self.logger.info("VS Code config already exists, updating...")
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    existing_config = json.load(f)
+            else:
+                existing_config = {}
+            
+            # Update with latest settings
+            config = self._get_vscode_config()
+            config.update(existing_config)
+            
+            with open(config_path, 'w', encoding='utf-8') as f:
+                json.dump(config, f, indent=2, ensure_ascii=False)
+            
+            self.logger.info(f"VS Code config created/updated: {config_path}")
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Failed to create VS Code config: {e}")
+            return False
+
+    def create_pycharm_config(self) -> bool:
+        """Create PyCharm configuration"""
+        try:
+            config_path = self.project_root / 'pycharm_mcp_config.json'
+            
+            if config_path.exists():
+                self.logger.info("PyCharm config already exists, updating...")
+            
+            # Load existing config if available
+            existing_config = {}
+            if config_path.exists():
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    existing_config = json.load(f)
+            
+            # Update with latest settings
+            config = self._get_pycharm_config()
+            config.update(existing_config)
+            
+            with open(config_path, 'w', encoding='utf-8') as f:
+                json.dump(config, f, indent=2, ensure_ascii=False)
+            
+            self.logger.info(f"PyCharm config created/updated: {config_path}")
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Failed to create PyCharm config: {e}")
+            return False
+
+    def _get_cursor_config(self) -> Dict[str, Any]:
+        """Get Cursor IDE configuration"""
+        return {
+            "mcpServers": {
+                "neozork": {
+                    "command": "python3",
+                    "args": ["neozork_mcp_server.py"],
+                    "env": {
+                        "PYTHONPATH": "${PROJECT_ROOT}",
+                        "LOG_LEVEL": "INFO",
+                        "DOCKER_CONTAINER": "false",
+                        "USE_UV": "true",
+                        "UV_PYTHON": "python3"
+                    },
+                    "cwd": "${PROJECT_ROOT}"
+                },
+                "neozork-docker": {
+                    "command": "docker",
+                    "args": [
+                        "compose",
+                        "run",
+                        "--rm",
+                        "-T",
+                        "-e",
+                        "PYTHONPATH=/app",
+                        "-e",
+                        "LOG_LEVEL=INFO",
+                        "-e",
+                        "DOCKER_CONTAINER=true",
+                        "-e",
+                        "USE_UV=true",
+                        "neozork-hld",
+                        "python3",
+                        "neozork_mcp_server.py"
+                    ],
+                    "env": {
+                        "DOCKER_HOST": "unix:///var/run/docker.sock"
+                    },
+                    "cwd": "${PROJECT_ROOT}"
+                }
+            },
+            "serverSettings": {
+                "neozork": {
+                    "enabled": True,
+                    "autoStart": True,
+                    "debug": False,
+                    "logLevel": "info",
+                    "features": {
+                        "financial_data": True,
+                        "technical_indicators": True,
+                        "github_copilot": True,
+                        "code_completion": True,
+                        "project_analysis": True,
+                        "ai_suggestions": True,
+                        "docker_integration": True,
+                        "real_time_monitoring": True,
+                        "uv_integration": True
+                    },
+                    "performance": {
+                        "max_files": 15000,
+                        "max_file_size": "10MB",
+                        "cache_enabled": True,
+                        "cache_size": "200MB",
+                        "indexing_timeout": 60,
+                        "completion_timeout": 5,
+                        "memory_limit_mb": 512
+                    },
+                    "monitoring": {
+                        "enable_monitoring": True,
+                        "health_check_interval": 60,
+                        "max_memory_mb": 512,
+                        "max_cpu_percent": 80
+                    },
+                    "docker": {
+                        "enabled": True,
+                        "container_name": "neozork-mcp-server",
+                        "port": 8080,
+                        "volumes": [
+                            "${PROJECT_ROOT}:/workspace",
+                            "${PROJECT_ROOT}/logs:/workspace/logs"
+                        ],
+                        "environment": {
+                            "PYTHONPATH": "/workspace/src:/workspace",
+                            "LOG_LEVEL": "INFO",
+                            "USE_UV": "true"
+                        }
+                    },
+                    "development": {
+                        "auto_reload": False,
+                        "hot_reload": False,
+                        "debug_mode": False,
+                        "profiling": False,
+                        "coverage": False
+                    }
+                }
+            },
+            "cursor": {
+                "mcp": {
+                    "autoStart": True,
+                    "logLevel": "info",
+                    "features": {
+                        "completion": True,
+                        "hover": True,
+                        "definition": True,
+                        "references": True,
+                        "workspaceSymbols": True,
+                        "diagnostics": True,
+                        "codeActions": True,
+                        "formatting": True
+                    },
+                    "preferences": {
+                        "defaultServer": "neozork",
+                        "fallbackToDocker": True,
+                        "useUV": True,
+                        "dockerEnabled": True
+                    }
+                },
+                "python": {
+                    "interpreter": "python3",
+                    "packageManager": "uv",
+                    "uvPath": "uv",
+                    "autoInstallDependencies": True
                 }
             }
         }
