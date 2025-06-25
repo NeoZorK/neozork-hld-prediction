@@ -25,7 +25,7 @@ def send_mcp_request(method: str, params: Dict = None) -> Optional[Dict]:
     try:
         # Start server process
         process = subprocess.Popen(
-            ["uv", "run", "python", "neozork_mcp_server.py"],
+            ["python", "neozork_mcp_server.py"],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
