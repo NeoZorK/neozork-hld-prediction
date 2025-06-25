@@ -160,55 +160,96 @@ def plot_indicator_results_fast(
         )
         main_fig.add_tools(hover_main)
 
-        # HL subplot
-        hl_fig = figure(
-            width=width,
-            height=int(height * 0.15),
-            x_axis_type='datetime',
-            title='HL',
-            tools="pan,wheel_zoom,box_zoom,reset",
-            active_scroll='wheel_zoom'
-        )
-        if 'HL' in display_df.columns:
+        # Создаем список фигур для layout
+        figures = [main_fig]
+
+        # Volume subplot - только если есть данные
+        if 'Volume' in display_df.columns and not display_df['Volume'].isna().all():
+            volume_fig = figure(
+                width=width,
+                height=int(height * 0.15),
+                x_axis_type='datetime',
+                title='Volume',
+                tools="pan,wheel_zoom,box_zoom,reset",
+                active_scroll='wheel_zoom'
+            )
+            
+            # Color volume bars based on price direction
+            volume_colors = ['green' if close >= open else 'red' 
+                           for close, open in zip(display_df['Close'], display_df['Open'])]
+            display_df['volume_color'] = volume_colors
+            
+            volume_source = ColumnDataSource(display_df)
+            volume_fig.vbar(
+                'index', 0.5, 0, 'Volume',
+                source=volume_source,
+                fill_color='volume_color',
+                line_color='volume_color',
+                alpha=0.7
+            )
+            
+            hover_volume = HoverTool(
+                tooltips=[
+                    ("Date", "@index{%F %H:%M}"),
+                    ("Volume", "@Volume{0}")
+                ],
+                formatters={'@index': 'datetime'},
+                mode='vline'
+            )
+            volume_fig.add_tools(hover_volume)
+            volume_fig.x_range = main_fig.x_range
+            figures.append(volume_fig)
+
+        # HL subplot - только если есть данные
+        if 'HL' in display_df.columns and not display_df['HL'].isna().all():
+            hl_fig = figure(
+                width=width,
+                height=int(height * 0.15),
+                x_axis_type='datetime',
+                title='HL',
+                tools="pan,wheel_zoom,box_zoom,reset",
+                active_scroll='wheel_zoom'
+            )
             hl_fig.line('index', 'HL', source=source, line_color='purple', line_width=2, legend_label='HL')
-        hover_hl = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("HL", "@HL{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
-        hl_fig.add_tools(hover_hl)
+            hover_hl = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("HL", "@HL{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
+            hl_fig.add_tools(hover_hl)
+            hl_fig.x_range = main_fig.x_range
+            figures.append(hl_fig)
 
-        # Pressure subplot
-        pressure_fig = figure(
-            width=width,
-            height=int(height * 0.15),
-            x_axis_type='datetime',
-            title='Pressure',
-            tools="pan,wheel_zoom,box_zoom,reset",
-            active_scroll='wheel_zoom'
-        )
-        if 'Pressure' in display_df.columns:
+        # Pressure subplot - только если есть данные
+        if 'Pressure' in display_df.columns and not display_df['Pressure'].isna().all():
+            pressure_fig = figure(
+                width=width,
+                height=int(height * 0.15),
+                x_axis_type='datetime',
+                title='Pressure',
+                tools="pan,wheel_zoom,box_zoom,reset",
+                active_scroll='wheel_zoom'
+            )
             pressure_fig.line('index', 'Pressure', source=source, line_color='teal', line_width=2, legend_label='Pressure')
-        hover_pressure = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("Pressure", "@Pressure{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
-        pressure_fig.add_tools(hover_pressure)
+            hover_pressure = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("Pressure", "@Pressure{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
+            pressure_fig.add_tools(hover_pressure)
+            pressure_fig.x_range = main_fig.x_range
+            figures.append(pressure_fig)
 
-        # PV subplot
-        pv_fig = figure(
-            width=width,
-            height=int(height * 0.15),
-            x_axis_type='datetime',
-            title='Pressure Vector (PV)',
-            tools="pan,wheel_zoom,box_zoom,reset",
-            active_scroll='wheel_zoom'
-        )
-        if 'PV' in display_df.columns:
+        # PV subplot - только если есть данные
+        if 'PV' in display_df.columns and not display_df['PV'].isna().all():
+            pv_fig = figure(
+                width=width,
+                height=int(height * 0.15),
+                x_axis_type='datetime',
+                title='Pressure Vector (PV)',
+                tools="pan,wheel_zoom,box_zoom,reset",
+                active_scroll='wheel_zoom'
+            )
             pv_fig.line('index', 'PV', source=source, line_color='orange', line_width=2, legend_label='PV')
-        hover_pv = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("PV", "@PV{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
-        pv_fig.add_tools(hover_pv)
+            hover_pv = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("PV", "@PV{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
+            pv_fig.add_tools(hover_pv)
+            pv_fig.x_range = main_fig.x_range
+            figures.append(pv_fig)
 
-        # Синхронизация осей X
-        hl_fig.x_range = main_fig.x_range
-        pressure_fig.x_range = main_fig.x_range
-        pv_fig.x_range = main_fig.x_range
-
-        # Layout: основной график + 3 subplot
-        layout = column(main_fig, hl_fig, pressure_fig, pv_fig)
+        # Layout: основной график + только те subplot, для которых есть данные
+        layout = column(*figures)
 
         # Save and open
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
