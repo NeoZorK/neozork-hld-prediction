@@ -59,9 +59,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy only necessary application files
 COPY run_analysis.py ./
-COPY pycharm_github_copilot_mcp.py ./
-COPY cursor_mcp_config.json ./
-COPY mcp_auto_config.json ./
+COPY neozork_mcp_server.py ./
 COPY src/ ./src/
 COPY scripts/ ./scripts/
 COPY tests/ ./tests/
