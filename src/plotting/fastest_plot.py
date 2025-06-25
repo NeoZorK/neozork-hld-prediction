@@ -154,8 +154,9 @@ def plot_indicator_results_fastest(
     )
 
     # Update layout
+    html_title = f"{title} | Trading Rule: {rule}" if title else f"Trading Rule: {rule}"
     fig.update_layout(
-        title=title,
+        title=html_title,
         width=width,
         height=height,
         template="plotly_white",
