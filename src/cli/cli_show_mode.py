@@ -56,6 +56,11 @@ try:
 except ImportError:
     auto_plot_from_dataframe = None
 
+try:
+    from src.calculation.universal_trading_metrics import display_universal_trading_metrics
+except ImportError:
+    display_universal_trading_metrics = None
+
 def show_help():
     """
     Displays help for the 'show' mode with colorful formatting.
@@ -100,7 +105,7 @@ def show_help():
     print(f"  {Fore.MAGENTA}--rule AUTO{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Automatically display all columns in the file{Style.RESET_ALL}")
 
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Drawing Options (-d flag):{Style.RESET_ALL}")
-    print(f"  The {Fore.MAGENTA}-d{Style.RESET_ALL} or {Fore.MAGENTA}--draw{Style.RESET_ALL} flag allows you to specify the plotting library for visualization:")
+    print(f"  The {Fore.MAGENTA}-d{Style.RESET_ALL} flag allows you to specify the plotting library for visualization:")
     print(f"  {Fore.MAGENTA}-d fastest{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Default - Plotly+Dask+Datashader (best for large datasets){Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}-d fast{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Dask+Datashader+Bokeh for quick visualization{Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}-d plotly{Style.RESET_ALL}    {Fore.BLACK}{Style.DIM}# Interactive HTML plots with Plotly (also with 'plt'){Style.RESET_ALL}")
@@ -854,9 +859,23 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
         if isinstance(result_df.index, pd.DatetimeIndex):
             datetime_column = result_df.index.name or 'datetime'
         _print_indicator_result(result_df, args.rule, datetime_column=datetime_column)
+        # === Universal Trading Metrics ===
+        if display_universal_trading_metrics is not None:
+            lot_size = getattr(args, 'lot_size', 1.0)
+            risk_reward_ratio = getattr(args, 'risk_reward_ratio', 2.0)
+            fee_per_trade = getattr(args, 'fee_per_trade', 0.07)
+            display_universal_trading_metrics(
+                result_df,
+                selected_rule,
+                lot_size=lot_size,
+                risk_reward_ratio=risk_reward_ratio,
+                fee_per_trade=fee_per_trade
+            )
+        else:
+            print('WARNING: universal_trading_metrics not available for import')
         print(f"\nIndicator '{selected_rule.name}' calculated successfully.")
 
-        # === ДОБАВЛЕНО: Экспорт индикаторов, если указаны флаги ===
+        # === ADDED: Export indicators if flags are specified ===
         _handle_indicator_exports(args, result_df, {
             "ohlcv_df": df,
             "data_source_label": f"{found_files[0]['name']}",
@@ -868,16 +887,20 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
             "parquet_cache_used": True,
             "parquet_cache_file": str(found_files[0]['path'])
         }, selected_rule)
-        # === КОНЕЦ ДОБАВЛЕНИЯ ===
+        # === END OF ADDITION ===
 
         # Draw plot after indicator calculation only if draw flag is set to supported mode
         if _should_draw_plot(args):
             metrics = _plot_indicator_calculation_result(args, df, result_df, found_files[0], selected_rule, point_size, metrics)
                         
         return metrics
-    except Exception as e:
+    except ValueError as e:
+        # Handle parameter parsing errors and other validation errors
         print(f"Error calculating indicator: {e}")
-        traceback.print_exc()
+        return metrics
+    except Exception as e:
+        # Handle other unexpected errors
+        print(f"Error calculating indicator: {e}")
         return metrics
 
 def _plot_indicator_calculation_result(args, original_df, result_df, file_info, selected_rule, point_size, metrics):
@@ -1423,7 +1446,7 @@ def _show_single_indicator_file(file_info, args):
             # Track data loading time
             load_start_time = time.time()
             df = pd.read_parquet(file_path)
-            # === ДОБАВЛЕНО: если есть колонка DateTime, делаем её индексом ===
+            # === ADDED: if there's a DateTime column, make it the index ===
             if 'DateTime' in df.columns:
                 df['DateTime'] = pd.to_datetime(df['DateTime'], errors='coerce')
                 df = df.set_index('DateTime')
@@ -1714,8 +1737,8 @@ def _show_single_text_indicator_file(file_info, args):
                         df = df.reset_index(drop=False)
                         data = df.to_dict('records')
                         # Diagnostics: print the list of columns and first rows
-                        print(f"DEBUG: DataFrame columns after filtering: {list(df.columns)}")
-                        print(f"DEBUG: First rows after filtering:\n{df.head()}\n")
+                        print(f"DataFrame columns after filtering: {list(df.columns)}")
+                        print(f"First rows after filtering:\n{df.head()}\n")
                     else:
                         print(f"Cannot apply date filtering to this JSON structure")
                 except Exception as e:

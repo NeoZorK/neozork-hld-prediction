@@ -50,7 +50,7 @@ def auto_plot_from_parquet(parquet_path: str, plot_title: str = "Auto Plot from 
     else:
         ax_vol.set_visible(False)
 
-    # Индикаторы
+    # Indicators
     for i, col in enumerate(indicator_cols):
         ax = axes[2 + i]
         sns.lineplot(x=x, y=df[col], ax=ax)

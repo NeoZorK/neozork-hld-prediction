@@ -52,4 +52,9 @@ else
     echo ".env file already exists, not overwritten."
 fi
 
+# === Indicators: new structure ===
+# List of indicators by category
+# Create folders and files
+# Files by category
+
 echo "All required directories have been created."

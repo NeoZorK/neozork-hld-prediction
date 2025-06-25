@@ -46,7 +46,6 @@ ENV/
 /data/indicators/json/*
 
 # Test and documentation
-/tests/
 *.log
 .coverage
 htmlcov/

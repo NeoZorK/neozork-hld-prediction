@@ -15,6 +15,7 @@ import plotly.io as pio
 import webbrowser
 from functools import partial
 import re
+from src.common import logger
 
 def plot_indicator_results_fastest(
     df,
@@ -56,49 +57,37 @@ def plot_indicator_results_fastest(
     else:
         ddf = df  # Assume it's already a dask dataframe
 
-    # Ensure the index column exists and is datetime type
-    if 'index' not in ddf.columns:
-        if isinstance(ddf.index, pd.DatetimeIndex):
-            ddf = ddf.reset_index()
-            ddf = ddf.rename(columns={'index': 'date'})
-            ddf['index'] = ddf['date']
-        else:
-            raise ValueError("DataFrame must have datetime index or 'index' column.")
+    # Standardize column names
+    display_df = df.copy()
+    display_df.columns = [col.lower() for col in display_df.columns]
 
-    # Compute a subset of data if very large (for initial visualization)
-    if len(ddf) > 50000:
-        display_df = ddf.sample(frac=min(1.0, 50000/len(ddf)), random_state=42).compute()
-        display_df = display_df.sort_values('index')
-    else:
-        display_df = ddf.compute()
+    # Ensure we have the required columns
+    required_columns = ['open', 'high', 'low', 'close']
+    missing_columns = [col for col in required_columns if col not in display_df.columns]
+    if missing_columns:
+        logger.print_error(f"Missing required columns: {missing_columns}")
+        return None
 
-    # Compute direction for coloring
-    display_df = display_df.copy()
-    display_df.loc[:, 'direction'] = (display_df['Close'] >= display_df['Open'])
-    display_df.loc[:, 'increasing'] = display_df['direction']
-    display_df.loc[:, 'decreasing'] = ~display_df['direction']
-
-    # Create the main figure
+    # Create subplots
     fig = make_subplots(
-        rows=3,
-        cols=1,
-        shared_xaxes=True,
-        vertical_spacing=0.03,
-        row_heights=[0.6, 0.2, 0.2],
-        subplot_titles=["OHLC Chart", "Volume", "Indicators"]
+        rows=3, cols=2,
+        subplot_titles=('Price Chart', '', 'Volume', '', 'Indicators', ''),
+        vertical_spacing=0.05,
+        horizontal_spacing=0.02,
+        specs=[[{"secondary_y": False}, {"secondary_y": False}],
+               [{"secondary_y": False}, {"secondary_y": False}],
+               [{"secondary_y": False}, {"secondary_y": False}]]
     )
 
-    # Add OHLC candlestick chart
+    # Add candlestick chart
     fig.add_trace(
         go.Candlestick(
             x=display_df['index'],
-            open=display_df['Open'],
-            high=display_df['High'],
-            low=display_df['Low'],
-            close=display_df['Close'],
-            name="OHLC",
-            increasing_line_color='green',
-            decreasing_line_color='red'
+            open=display_df['open'],
+            high=display_df['high'],
+            low=display_df['low'],
+            close=display_df['close'],
+            name="OHLC"
         ),
         row=1, col=1
     )
@@ -121,12 +110,12 @@ def plot_indicator_results_fastest(
             )
 
     # Add volume
-    if 'Volume' in display_df.columns:
+    if 'volume' in display_df.columns:
         colors = ['green' if val else 'red' for val in display_df['direction']]
         fig.add_trace(
             go.Bar(
                 x=display_df['index'],
-                y=display_df['Volume'],
+                y=display_df['volume'],
                 marker_color=colors,
                 name="Volume",
                 opacity=0.7
@@ -165,8 +154,9 @@ def plot_indicator_results_fastest(
     )
 
     # Update layout
+    html_title = f"{title} | Trading Rule: {rule}" if title else f"Trading Rule: {rule}"
     fig.update_layout(
-        title=title,
+        title=html_title,
         width=width,
         height=height,
         template="plotly_white",
@@ -186,13 +176,13 @@ def plot_indicator_results_fastest(
     )
 
     # Set axis ranges
-    y_stats = display_df[['Open', 'High', 'Low', 'Close']].describe()
+    y_stats = display_df[['open', 'high', 'low', 'close']].describe()
     min_price = y_stats.loc['min'].min() * 0.998
     max_price = y_stats.loc['max'].max() * 1.002
     fig.update_yaxes(title_text="Price", row=1, col=1, tickformat=".5f", range=[min_price, max_price])
 
-    if 'Volume' in display_df.columns:
-        vol_max = display_df['Volume'].max() * 1.1
+    if 'volume' in display_df.columns:
+        vol_max = display_df['volume'].max() * 1.1
         fig.update_yaxes(title_text="Volume", row=2, col=1, range=[0, vol_max])
 
     # Set proper time scale for all charts
