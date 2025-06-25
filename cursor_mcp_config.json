@@ -6,13 +6,10 @@
         "neozork_mcp_server.py"
       ],
       "env": {
-        "PYTHONPATH": "${PROJECT_ROOT}",
-        "LOG_LEVEL": "INFO",
-        "DOCKER_CONTAINER": "false",
-        "USE_UV": "true",
-        "UV_PYTHON": "python3"
+        "PYTHONPATH": "${workspaceFolder}",
+        "LOG_LEVEL": "INFO"
       },
-      "cwd": "${PROJECT_ROOT}"
+      "cwd": "${workspaceFolder}"
     },
     "neozork-docker": {
       "command": "docker",
@@ -51,10 +48,7 @@
         "github_copilot": true,
         "code_completion": true,
         "project_analysis": true,
-        "ai_suggestions": true,
-        "docker_integration": true,
-        "real_time_monitoring": true,
-        "uv_integration": true
+        "ai_suggestions": true
       },
       "performance": {
         "max_files": 15000,
