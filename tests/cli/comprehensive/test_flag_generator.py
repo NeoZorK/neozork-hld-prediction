@@ -95,7 +95,6 @@ class FlagTestGenerator:
             
             # Plotting flags
             '-d': FlagDefinition('-d', ['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb', 'term'], category='plotting'),
-            '--draw': FlagDefinition('--draw', ['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb', 'term'], category='plotting'),
             
             # Export flags
             '--export-parquet': FlagDefinition('--export-parquet', [], category='export'),
@@ -109,49 +108,49 @@ class FlagTestGenerator:
         return {
             'demo': {
                 'required': [],
-                'optional': ['--rule', '--draw', '-d', '--price-type', '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info'],
+                'optional': ['--rule', '-d', '--price-type', '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info'],
                 'forbidden': [],
                 'expected_success': True
             },
             'yfinance': {
                 'required': ['--ticker', '--point'],
-                'optional': ['--period', '--start', '--end', '--rule', '--draw', '-d', '--price-type'],
+                'optional': ['--period', '--start', '--end', '--rule', '-d', '--price-type'],
                 'forbidden': ['--export-parquet', '--export-csv', '--export-json', '--export-indicators-info'],
                 'expected_success': True
             },
             'yf': {
                 'required': ['--ticker', '--point'],
-                'optional': ['--period', '--start', '--end', '--rule', '--draw', '-d', '--price-type'],
+                'optional': ['--period', '--start', '--end', '--rule', '-d', '--price-type'],
                 'forbidden': ['--export-parquet', '--export-csv', '--export-json', '--export-indicators-info'],
                 'expected_success': True
             },
             'csv': {
                 'required': ['--csv-file', '--point'],
-                'optional': ['--rule', '--draw', '-d', '--price-type'],
+                'optional': ['--rule', '-d', '--price-type'],
                 'forbidden': ['--export-parquet', '--export-csv', '--export-json', '--export-indicators-info'],
                 'expected_success': False  # May fail if files don't exist
             },
             'polygon': {
                 'required': ['--ticker', '--start', '--end', '--point'],
-                'optional': ['--interval', '--rule', '--draw', '-d', '--price-type'],
+                'optional': ['--interval', '--rule', '-d', '--price-type'],
                 'forbidden': ['--export-parquet', '--export-csv', '--export-json', '--export-indicators-info'],
                 'expected_success': True
             },
             'binance': {
                 'required': ['--ticker', '--start', '--end', '--point'],
-                'optional': ['--interval', '--rule', '--draw', '-d', '--price-type'],
+                'optional': ['--interval', '--rule', '-d', '--price-type'],
                 'forbidden': ['--export-parquet', '--export-csv', '--export-json', '--export-indicators-info'],
                 'expected_success': True
             },
             'exrate': {
                 'required': ['--ticker', '--point'],
-                'optional': ['--interval', '--rule', '--draw', '-d', '--price-type'],
+                'optional': ['--interval', '--rule', '-d', '--price-type'],
                 'forbidden': ['--export-parquet', '--export-csv', '--export-json', '--export-indicators-info'],
                 'expected_success': True
             },
             'show': {
                 'required': [],
-                'optional': ['--source', '--keywords', '--show-start', '--show-end', '--show-rule', '--draw', '-d', '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info'],
+                'optional': ['--source', '--keywords', '--show-start', '--show-end', '--show-rule', '-d', '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info'],
                 'forbidden': [],
                 'expected_success': False  # May fail if no data
             },
@@ -254,7 +253,7 @@ class FlagTestGenerator:
             for draw in draw_modes:
                 test_cases.append(TestCase(
                     name=f"test_demo_rule_{rule}_draw_{draw}",
-                    command=['demo', '--rule', rule, '--draw', draw],
+                    command=['demo', '--rule', rule, '-d', draw],
                     expected_success=True,
                     category='flag_combinations',
                     priority=2,
@@ -324,7 +323,7 @@ class FlagTestGenerator:
         # Invalid flag values
         invalid_value_cases = [
             (['demo', '--rule', 'INVALID_RULE'], "Invalid rule"),
-            (['demo', '--draw', 'invalid_draw'], "Invalid draw mode"),
+            (['demo', '-d', 'invalid_draw'], "Invalid draw mode"),
             (['demo', '--price-type', 'invalid_price'], "Invalid price type"),
             (['demo', '--point', '-1'], "Negative point value"),
             (['demo', '--point', '0'], "Zero point value")
@@ -372,7 +371,7 @@ class FlagTestGenerator:
             for draw in draw_modes:
                 test_cases.append(TestCase(
                     name=f"test_performance_{rule}_{draw}",
-                    command=['demo', '--rule', rule, '--draw', draw],
+                    command=['demo', '--rule', rule, '-d', draw],
                     expected_success=True,
                     category='performance',
                     priority=2,

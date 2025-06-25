@@ -13,6 +13,12 @@ pip install -e .
 # Run demo
 python run_analysis.py demo
 
+# Explore trading metrics encyclopedia
+python run_analysis.py --metric
+
+# Start interactive mode
+python run_analysis.py --interactive
+
 # Get current EUR/USD rate with Pressure Vector indicator
 python run_analysis.py exrate -t EURUSD --interval D1 --point 0.00001 --rule PV
 ```
@@ -40,6 +46,8 @@ docker compose build --build-arg USE_UV=false && docker compose run --rm neozork
 - **Indicator Export:** Export calculated indicators to Parquet, CSV, and JSON formats
 - **Real-time FX Data:** Current exchange rates from 160+ currencies
 - **Analysis Tools:** Comprehensive EDA and plotting capabilities
+- **Trading Metrics Encyclopedia:** Comprehensive guide to quantitative trading metrics and strategy tips
+- **Interactive Mode:** Guided setup and analysis with built-in metrics encyclopedia
 - **Docker Support:** Containerized development environment
 - **AI-Powered Development:** MCP servers with GitHub Copilot integration
 
