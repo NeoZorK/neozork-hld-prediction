@@ -4,6 +4,8 @@
 """
 Trading Metrics Display Module
 Provides beautiful and informative display of trading metrics on charts.
+NOTE: All HTML chart metrics have been removed as requested.
+Metrics are now displayed only in console output.
 """
 
 import pandas as pd
@@ -18,7 +20,8 @@ from src.calculation.trading_metrics import calculate_trading_metrics
 
 class MetricsDisplay:
     """
-    Beautiful trading metrics display for charts.
+    Trading metrics display for charts.
+    NOTE: HTML chart metrics have been removed - metrics are displayed only in console.
     """
     
     def __init__(self, theme: str = 'dark'):
@@ -26,13 +29,13 @@ class MetricsDisplay:
         Initialize metrics display.
         
         Args:
-            theme (str): Display theme ('dark' or 'light')
+            theme (str): Display theme ('dark' or 'light') - not used for HTML charts
         """
         self.theme = theme
         self.colors = self._get_theme_colors()
     
     def _get_theme_colors(self) -> Dict[str, str]:
-        """Get color scheme based on theme."""
+        """Get color scheme based on theme - not used for HTML charts."""
         if self.theme == 'dark':
             return {
                 'background': '#1e1e1e',
@@ -60,32 +63,45 @@ class MetricsDisplay:
                 'danger': '#cc0000'
             }
     
-    def _get_metric_color(self, metric: str, value: float) -> str:
-        """Return color hex for a metric value based on standard trading thresholds."""
-        # Standard thresholds for each metric
-        thresholds = {
-            'win_ratio':      [(60, 'green'), (40, 'yellow'), (0, 'red')],
-            'risk_reward_ratio': [(2.0, 'green'), (1.2, 'yellow'), (0, 'red')],
-            'profit_factor': [(1.5, 'green'), (1.1, 'yellow'), (0, 'red')],
-            'sharpe_ratio':  [(1.0, 'green'), (0.5, 'yellow'), (0, 'red')],
-            'sortino_ratio': [(1.5, 'green'), (0.8, 'yellow'), (0, 'red')],
-            'max_drawdown':  [(10, 'green', True), (25, 'yellow', True), (float('inf'), 'red', True)],
-            'total_return':  [(20, 'green'), (5, 'yellow'), (float('-inf'), 'red')],
-            'volatility':    [(15, 'green', True), (30, 'yellow', True), (float('inf'), 'red', True)],
-            'calmar_ratio':  [(1.0, 'green'), (0.5, 'yellow'), (0, 'red')],
-        }
-        # Color hex mapping
-        color_map = {'green': '#00ff88', 'yellow': '#ffaa00', 'red': '#ff4444'}
-        # For metrics where lower is better (drawdown, volatility), use reverse logic
-        if metric in thresholds:
-            for t in thresholds[metric]:
-                if len(t) == 3 and t[2]:  # Lower is better
-                    if value <= t[0]:
-                        return color_map[t[1]]
-                else:  # Higher is better
-                    if value >= t[0]:
-                        return color_map[t[1]]
-        return self.colors['neutral']
+    def _get_metric_color(self, metric_name: str, value: float) -> str:
+        """Get color for metric value - not used for HTML charts."""
+        try:
+            if metric_name in ['win_ratio', 'signal_accuracy', 'signal_stability', 
+                             'pattern_consistency', 'signal_clustering', 'strategy_sustainability']:
+                if value >= 70:
+                    return self.colors['good']
+                elif value >= 50:
+                    return self.colors['warning']
+                else:
+                    return self.colors['bad']
+            elif metric_name in ['risk_reward_ratio', 'profit_factor', 'sharpe_ratio', 
+                               'sortino_ratio', 'calmar_ratio', 'kelly_fraction']:
+                if value >= 2.0:
+                    return self.colors['good']
+                elif value >= 1.5:
+                    return self.colors['warning']
+                else:
+                    return self.colors['bad']
+            elif metric_name in ['max_drawdown', 'volatility', 'mc_var_95', 'mc_cvar_95', 
+                               'mc_max_loss', 'risk_of_ruin']:
+                if value <= 10:
+                    return self.colors['good']
+                elif value <= 20:
+                    return self.colors['warning']
+                else:
+                    return self.colors['bad']
+            elif metric_name in ['total_return', 'net_return', 'mc_expected_return', 
+                               'mc_probability_profit', 'mc_max_gain']:
+                if value >= 20:
+                    return self.colors['good']
+                elif value >= 10:
+                    return self.colors['warning']
+                else:
+                    return self.colors['bad']
+            else:
+                return self.colors['neutral']
+        except:
+            return self.colors['neutral']
     
     def add_metrics_to_plotly(self, fig: go.Figure, df: pd.DataFrame, 
                             metrics: Optional[Dict[str, float]] = None,
@@ -94,200 +110,66 @@ class MetricsDisplay:
                             risk_reward_ratio: float = 2.0,
                             fee_per_trade: float = 0.07) -> go.Figure:
         """
-        (DISABLED) Add trading metrics to Plotly figure near the legend area.
-        Now does nothing: metrics are shown only as HTML below the chart.
+        Add trading metrics to Plotly figure.
+        NOTE: This method has been disabled - metrics are not displayed on HTML charts.
+        Metrics are now displayed only in console output.
+        
+        Args:
+            fig (go.Figure): Plotly figure
+            df (pd.DataFrame): DataFrame with trading data
+            metrics (Dict[str, float], optional): Pre-calculated metrics
+            position (str): Position of metrics - not used
+            lot_size (float): Position size - not used
+            risk_reward_ratio (float): Risk to reward ratio - not used
+            fee_per_trade (float): Fee per trade - not used
+        
+        Returns:
+            go.Figure: Original figure unchanged (no metrics added)
         """
-        # This method is intentionally left blank to disable metrics overlay on chart
+        # Metrics have been removed from HTML charts as requested
+        # Return the original figure without any modifications
         return fig
     
     def add_metrics_to_matplotlib(self, ax: plt.Axes, df: pd.DataFrame,
                                 metrics: Optional[Dict[str, float]] = None,
                                 position: str = 'right') -> plt.Axes:
         """
-        Add trading metrics to Matplotlib axes near the legend area.
+        Add trading metrics to Matplotlib axes.
+        NOTE: This method has been disabled - metrics are not displayed on charts.
+        Metrics are now displayed only in console output.
         
         Args:
             ax (plt.Axes): Matplotlib axes
             df (pd.DataFrame): DataFrame with trading data
             metrics (Dict[str, float], optional): Pre-calculated metrics
-            position (str): Position of metrics ('right', 'left', 'top', 'bottom')
+            position (str): Position of metrics - not used
         
         Returns:
-            plt.Axes: Updated axes with metrics
+            plt.Axes: Original axes unchanged (no metrics added)
         """
-        try:
-            # Calculate metrics if not provided
-            if metrics is None:
-                metrics = calculate_trading_metrics(df)
-            
-            # Get axes limits for positioning
-            xlim = ax.get_xlim()
-            ylim = ax.get_ylim()
-            
-            # Add metrics text near legend area (top-right)
-            self._add_matplotlib_metrics_text(ax, metrics, position, xlim, ylim)
-            
-            return ax
-            
-        except Exception as e:
-            logger.print_error(f"Error adding metrics to Matplotlib chart: {e}")
-            return ax
+        # Metrics have been removed from charts as requested
+        # Return the original axes without any modifications
+        return ax
     
     def _format_metrics_for_plotly(self, metrics: Dict[str, float]) -> str:
-        """Format metrics for Plotly display with colorized values near legend."""
-        try:
-            def color_span(val, color):
-                return f'<span style="color:{color};font-weight:bold">{val}</span>'
-            lines = [
-                "<b>📊 TRADING METRICS</b>",
-                "─" * 20,
-                f"🟢 Buy Signals: {color_span(f'{metrics['buy_count']}', self.colors['good'])}",
-                f"🔴 Sell Signals: {color_span(f'{metrics['sell_count']}', self.colors['bad'])}",
-                f"📈 Total Trades: {color_span(f'{metrics['total_trades']}', self.colors['neutral'])}",
-                "─" * 20,
-                f"🎯 Win Ratio: {color_span(f'{metrics['win_ratio']:.1f}%', self._get_metric_color('win_ratio', metrics['win_ratio']))}",
-                f"⚖️  Risk/Reward: {color_span(f'{metrics['risk_reward_ratio']:.2f}', self._get_metric_color('risk_reward_ratio', metrics['risk_reward_ratio']))}",
-                f"💰 Profit Factor: {color_span(f'{metrics['profit_factor']:.2f}', self._get_metric_color('profit_factor', metrics['profit_factor']))}",
-                f"📊 Sharpe Ratio: {color_span(f'{metrics['sharpe_ratio']:.2f}', self._get_metric_color('sharpe_ratio', metrics['sharpe_ratio']))}",
-                f"📈 Sortino Ratio: {color_span(f'{metrics['sortino_ratio']:.2f}', self._get_metric_color('sortino_ratio', metrics['sortino_ratio']))}",
-                f"🎲 Prob Risk Ratio: {color_span(f'{metrics['probability_risk_ratio']:.2f}', self._get_metric_color('probability_risk_ratio', metrics['probability_risk_ratio']))}",
-                f"📉 Max Drawdown: {color_span(f'{metrics['max_drawdown']:.1f}%', self._get_metric_color('max_drawdown', metrics['max_drawdown']))}",
-                f"📊 Total Return: {color_span(f'{metrics['total_return']:.1f}%', self._get_metric_color('total_return', metrics['total_return']))}",
-                f"📈 Calmar Ratio: {color_span(f'{metrics['calmar_ratio']:.2f}', self._get_metric_color('calmar_ratio', metrics['calmar_ratio']))}"
-            ]
-            
-            # Add strategy metrics if available
-            if 'position_size' in metrics:
-                lines.extend([
-                    "─" * 20,
-                    f"📊 Position Size: {color_span(f'{metrics['position_size']:.2f}', self.colors['neutral'])}",
-                    f"⚖️  Risk/Reward Setting: {color_span(f'{metrics['risk_reward_setting']:.1f}', self.colors['neutral'])}",
-                    f"💸 Fee per Trade: {color_span(f'{metrics['fee_per_trade']:.2f}%', self.colors['neutral'])}",
-                    f"🎯 Kelly Fraction: {color_span(f'{metrics['kelly_fraction']:.3f}', self._get_metric_color('kelly_fraction', metrics['kelly_fraction']))}",
-                    f"📊 Optimal Position: {color_span(f'{metrics['optimal_position_size']:.3f}', self.colors['neutral'])}",
-                    f"💰 Net Return: {color_span(f'{metrics['net_return']:.2f}%', self._get_metric_color('net_return', metrics['net_return']))}",
-                    f"📈 Strategy Efficiency: {color_span(f'{metrics['strategy_efficiency']:.1f}%', self._get_metric_color('strategy_efficiency', metrics['strategy_efficiency']))}",
-                    f"🛡️  Strategy Sustainability: {color_span(f'{metrics['strategy_sustainability']:.1f}%', self._get_metric_color('strategy_sustainability', metrics['strategy_sustainability']))}"
-                ])
-            
-            return "<br>".join(lines)
-        except Exception as e:
-            logger.print_error(f"Error formatting metrics for Plotly: {e}")
-            return "Error formatting metrics"
+        """Format metrics for Plotly display - not used."""
+        # This method is no longer used since metrics are not displayed on HTML charts
+        return ""
     
     def _format_additional_metrics_for_plotly(self, metrics: Dict[str, float]) -> str:
-        """Format additional ML and Monte Carlo metrics for Plotly display."""
-        try:
-            def color_span(val, color):
-                return f'<span style="color:{color};font-weight:bold">{val}</span>'
-            
-            # ML Metrics
-            ml_lines = [
-                "<b>🤖 ML & FEATURE METRICS</b>",
-                "─" * 25,
-                f"📊 Signal Frequency: {color_span(f'{metrics.get('signal_frequency', 0):.3f}', self.colors['neutral'])}",
-                f"🔒 Signal Stability: {color_span(f'{metrics.get('signal_stability', 0):.1f}%', self._get_metric_color('signal_stability', metrics.get('signal_stability', 0)))}",
-                f"🎯 Signal Accuracy: {color_span(f'{metrics.get('signal_accuracy', 0):.1f}%', self._get_metric_color('signal_accuracy', metrics.get('signal_accuracy', 0)))}",
-                f"⏰ Timing Score: {color_span(f'{metrics.get('signal_timing_score', 0):.2f}', self._get_metric_color('signal_timing_score', metrics.get('signal_timing_score', 0)))}",
-                f"📈 Momentum Corr: {color_span(f'{metrics.get('momentum_correlation', 0):.3f}', self.colors['neutral'])}",
-                f"📊 Volatility Corr: {color_span(f'{metrics.get('volatility_correlation', 0):.3f}', self.colors['neutral'])}",
-                f"📈 Trend Corr: {color_span(f'{metrics.get('trend_correlation', 0):.3f}', self.colors['neutral'])}",
-                f"🔄 Pattern Consistency: {color_span(f'{metrics.get('pattern_consistency', 0):.1f}%', self._get_metric_color('pattern_consistency', metrics.get('pattern_consistency', 0)))}",
-                f"🎯 Signal Clustering: {color_span(f'{metrics.get('signal_clustering', 0):.1f}%', self._get_metric_color('signal_clustering', metrics.get('signal_clustering', 0)))}"
-            ]
-            
-            # Monte Carlo Metrics
-            mc_lines = [
-                "<b>🎲 MONTE CARLO METRICS</b>",
-                "─" * 25,
-                f"📊 Expected Return: {color_span(f'{metrics.get('mc_expected_return', 0):.2f}%', self._get_metric_color('mc_expected_return', metrics.get('mc_expected_return', 0)))}",
-                f"📈 Std Deviation: {color_span(f'{metrics.get('mc_std_deviation', 0):.2f}%', self.colors['neutral'])}",
-                f"⚠️  VaR 95%: {color_span(f'{metrics.get('mc_var_95', 0):.2f}%', self._get_metric_color('mc_var_95', metrics.get('mc_var_95', 0)))}",
-                f"🚨 CVaR 95%: {color_span(f'{metrics.get('mc_cvar_95', 0):.2f}%', self._get_metric_color('mc_cvar_95', metrics.get('mc_cvar_95', 0)))}",
-                f"📈 Profit Probability: {color_span(f'{metrics.get('mc_probability_profit', 0):.1f}%', self._get_metric_color('mc_probability_profit', metrics.get('mc_probability_profit', 0)))}",
-                f"📊 Max Loss: {color_span(f'{metrics.get('mc_max_loss', 0):.2f}%', self._get_metric_color('mc_max_loss', metrics.get('mc_max_loss', 0)))}",
-                f"📈 Max Gain: {color_span(f'{metrics.get('mc_max_gain', 0):.2f}%', self._get_metric_color('mc_max_gain', metrics.get('mc_max_gain', 0)))}",
-                f"📊 MC Sharpe: {color_span(f'{metrics.get('mc_sharpe_ratio', 0):.2f}', self._get_metric_color('mc_sharpe_ratio', metrics.get('mc_sharpe_ratio', 0)))}",
-                f"🛡️  Strategy Robustness: {color_span(f'{metrics.get('strategy_robustness', 0):.1f}%', self._get_metric_color('strategy_robustness', metrics.get('strategy_robustness', 0)))}",
-                f"💀 Risk of Ruin: {color_span(f'{metrics.get('risk_of_ruin', 0):.1f}%', self._get_metric_color('risk_of_ruin', metrics.get('risk_of_ruin', 0)))}"
-            ]
-            
-            return "<br>".join(ml_lines + ["<br>"] + mc_lines)
-            
-        except Exception as e:
-            logger.print_error(f"Error formatting additional metrics for Plotly: {e}")
-            return "Error formatting additional metrics"
+        """Format additional ML and Monte Carlo metrics for Plotly display - not used."""
+        # This method is no longer used since metrics are not displayed on HTML charts
+        return ""
     
     def _add_matplotlib_metrics_text(self, ax: plt.Axes, metrics: Dict[str, float],
                                    position: str, xlim: Tuple[float, float], 
                                    ylim: Tuple[float, float]) -> None:
-        """Add metrics text to Matplotlib axes near legend area."""
-        try:
-            def colorize(val, color):
-                return f"\\color{{{color}}}{{{val}}}"
-            
-            # Position near legend area (top-right of plot)
-            if position == 'right':
-                x = xlim[1] - (xlim[1] - xlim[0]) * 0.02
-                y = ylim[1] - (ylim[1] - ylim[0]) * 0.05
-                ha = 'right'
-            elif position == 'left':
-                x = xlim[0] + (xlim[1] - xlim[0]) * 0.02
-                y = ylim[1] - (ylim[1] - ylim[0]) * 0.05
-                ha = 'left'
-            elif position == 'top':
-                x = xlim[1] - (xlim[1] - xlim[0]) * 0.02
-                y = ylim[1] - (ylim[1] - ylim[0]) * 0.02
-                ha = 'right'
-            else:  # bottom
-                x = xlim[1] - (xlim[1] - xlim[0]) * 0.02
-                y = ylim[0] + (ylim[1] - ylim[0]) * 0.05
-                ha = 'right'
-            
-            # Format metrics text
-            lines = [
-                "📊 TRADING METRICS",
-                "─" * 20,
-                f"🟢 Buy Signals: {colorize(f'{metrics['buy_count']}', self.colors['good'])}",
-                f"🔴 Sell Signals: {colorize(f'{metrics['sell_count']}', self.colors['bad'])}",
-                f"📈 Total Trades: {colorize(f'{metrics['total_trades']}', self.colors['neutral'])}",
-                "─" * 20,
-                f"🎯 Win Ratio: {colorize(f'{metrics['win_ratio']:.1f}%', self._get_metric_color('win_ratio', metrics['win_ratio']))}",
-                f"⚖️  Risk/Reward: {colorize(f'{metrics['risk_reward_ratio']:.2f}', self._get_metric_color('risk_reward_ratio', metrics['risk_reward_ratio']))}",
-                f"💰 Profit Factor: {colorize(f'{metrics['profit_factor']:.2f}', self._get_metric_color('profit_factor', metrics['profit_factor']))}",
-                f"📈 Total Return: {colorize(f'{metrics['total_return']:.1f}%', self._get_metric_color('total_return', metrics['total_return']))}",
-                f"📉 Max Drawdown: {colorize(f'{metrics['max_drawdown']:.1f}%', self._get_metric_color('max_drawdown', metrics['max_drawdown']))}",
-                f"📊 Sharpe Ratio: {colorize(f'{metrics['sharpe_ratio']:.2f}', self._get_metric_color('sharpe_ratio', metrics['sharpe_ratio']))}",
-                f"🛡️  Sortino Ratio: {colorize(f'{metrics['sortino_ratio']:.2f}', self._get_metric_color('sortino_ratio', metrics['sortino_ratio']))}",
-                f"🎲 Prob Risk Ratio: {colorize(f'{metrics['probability_risk_ratio']:.2f}', self.colors['neutral'])}",
-                f"📈 Volatility: {colorize(f'{metrics['volatility']:.1f}%', self._get_metric_color('volatility', metrics['volatility']))}",
-                f"⚡ Calmar Ratio: {colorize(f'{metrics['calmar_ratio']:.2f}', self._get_metric_color('calmar_ratio', metrics['calmar_ratio']))}"
-            ]
-            
-            if 'volume_weighted_return' in metrics and metrics['volume_weighted_return'] != 0:
-                lines.extend([
-                    f"📊 Vol Weighted Return: {colorize(f'{metrics['volume_weighted_return']:.2f}%', self.colors['neutral'])}",
-                    f"📊 Vol Win Ratio: {colorize(f'{metrics['volume_win_ratio']:.1f}%', self.colors['neutral'])}"
-                ])
-            
-            # Add text with background box
-            text = '\n'.join(lines)
-            bbox_props = dict(
-                boxstyle="round,pad=0.5",
-                facecolor=self.colors['background'],
-                edgecolor=self.colors['border'],
-                alpha=0.9
-            )
-            
-            ax.text(x, y, text, fontsize=8, ha=ha, va='top',
-                   bbox=bbox_props, color=self.colors['text'],
-                   fontfamily='monospace')
-            
-        except Exception as e:
-            logger.print_debug(f"Error adding Matplotlib metrics text: {e}")
+        """Add metrics text to Matplotlib axes - not used."""
+        # This method is no longer used since metrics are not displayed on charts
+        pass
     
     def get_metrics_summary(self, metrics: Dict[str, float]) -> str:
-        """Get a concise summary of the most important metrics."""
+        """Get a concise summary of the most important metrics - not used for charts."""
         try:
             summary_lines = [
                 f"Win Rate: {metrics['win_ratio']:.1f}% | ",
@@ -311,36 +193,41 @@ def add_metrics_to_plotly_chart(fig: go.Figure, df: pd.DataFrame,
                                fee_per_trade: float = 0.07) -> go.Figure:
     """
     Add trading metrics to Plotly chart.
+    NOTE: This function has been disabled - metrics are not displayed on HTML charts.
+    Metrics are now displayed only in console output.
     
     Args:
         fig (go.Figure): Plotly figure
         df (pd.DataFrame): DataFrame with trading data
         metrics (Dict[str, float], optional): Pre-calculated metrics
-        position (str): Position of metrics ('right', 'left', 'top', 'bottom', 'outside', 'center')
-        lot_size (float): Position size (default: 1.0)
-        risk_reward_ratio (float): Risk to reward ratio (default: 2.0)
-        fee_per_trade (float): Fee per trade in percentage (default: 0.07)
+        position (str): Position of metrics - not used
+        lot_size (float): Position size - not used
+        risk_reward_ratio (float): Risk to reward ratio - not used
+        fee_per_trade (float): Fee per trade - not used
     
     Returns:
-        go.Figure: Updated figure with metrics
+        go.Figure: Original figure unchanged (no metrics added)
     """
-    display = MetricsDisplay()
-    return display.add_metrics_to_plotly(fig, df, metrics, position, 
-                                        lot_size, risk_reward_ratio, fee_per_trade)
+    # Metrics have been removed from HTML charts as requested
+    # Return the original figure without any modifications
+    return fig
 
 
 def add_metrics_to_matplotlib_chart(ax: plt.Axes, df: pd.DataFrame,
                                   position: str = 'right') -> plt.Axes:
     """
     Convenience function to add metrics to Matplotlib chart.
+    NOTE: This function has been disabled - metrics are not displayed on charts.
+    Metrics are now displayed only in console output.
     
     Args:
         ax (plt.Axes): Matplotlib axes
         df (pd.DataFrame): DataFrame with trading data
-        position (str): Position of metrics box
+        position (str): Position of metrics - not used
     
     Returns:
-        plt.Axes: Updated axes with metrics
+        plt.Axes: Original axes unchanged (no metrics added)
     """
-    display = MetricsDisplay()
-    return display.add_metrics_to_matplotlib(ax, df, position=position) 
+    # Metrics have been removed from charts as requested
+    # Return the original axes without any modifications
+    return ax 

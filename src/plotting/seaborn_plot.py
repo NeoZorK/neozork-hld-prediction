@@ -147,21 +147,9 @@ def plot_indicator_results_seaborn(
     # Set x-axis label for the last subplot
     axes[-1].set_xlabel("Time")
 
-    # --- Add Trading Metrics ---
-    # Only add metrics if we have trading signals (Direction column)
-    if 'Direction' in df.columns:
-        try:
-            # Add metrics to the main price chart
-            add_metrics_to_matplotlib_chart(ax_price, df, position='right')
-            logger.print_info("Added trading metrics to Seaborn chart")
-        except Exception as e:
-            logger.print_warning(f"Could not add trading metrics to chart: {e}")
-
-    # Добавить метрики в отдельный subplot
-    metrics = calculate_trading_metrics(df)
-    metrics_text = '\n'.join([f"{k}: {v}" for k,v in metrics.items()])
-    axes[-1].axis('off')
-    axes[-1].text(0.5, 0.5, metrics_text, fontsize=12, ha='center', va='center', transform=axes[-1].transAxes)
+    # --- Trading Metrics Display ---
+    # NOTE: Metrics have been removed from charts as requested
+    # Metrics are now displayed only in console output via universal_trading_metrics module
 
     plt.tight_layout()
     plt.show()
