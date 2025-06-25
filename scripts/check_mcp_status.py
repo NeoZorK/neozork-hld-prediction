@@ -127,10 +127,6 @@ class DockerMCPServerChecker:
         """Check IDE configuration files in Docker"""
         configs = {}
         
-        # DEBUG: print project root and docker.env existence
-        print(f"[DEBUG] project_root: {self.project_root}")
-        print(f"[DEBUG] docker.env exists: {(self.project_root / 'docker.env').exists()}")
-        
         # In Docker, we only check for Cursor config as it's the most relevant
         cursor_config = self.project_root / "cursor_mcp_config.json"
         if cursor_config.exists():
@@ -406,10 +402,6 @@ class MCPServerChecker:
     def check_ide_configurations(self) -> Dict[str, Any]:
         """Check IDE configuration files"""
         configs = {}
-        
-        # DEBUG: print project root and docker.env existence
-        print(f"[DEBUG] project_root: {self.project_root}")
-        print(f"[DEBUG] docker.env exists: {(self.project_root / 'docker.env').exists()}")
         
         # Check Cursor config
         cursor_config = self.project_root / "cursor_mcp_config.json"
