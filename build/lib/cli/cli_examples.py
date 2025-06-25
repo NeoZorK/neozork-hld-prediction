@@ -33,9 +33,9 @@ def show_cli_examples_colored():
     print(f"{Fore.BLACK}{Style.DIM}# CSV with mplfinance backend{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 -d mplfinance{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# CSV with PV rule, fastest backend{Style.RESET_ALL}")
-    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw fastest{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d fastest{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# CSV with PV rule, seaborn backend{Style.RESET_ALL}")
-    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw seaborn{Style.RESET_ALL}")
+    print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d seaborn{Style.RESET_ALL}")
     print(f"{Fore.BLACK}{Style.DIM}# CSV with PV rule, terminal backend{Style.RESET_ALL}")
     print(f"{Fore.GREEN}{Style.BRIGHT}python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d term{Style.RESET_ALL}\n")
 
@@ -125,9 +125,9 @@ def show_cli_examples(terminal_console):
     console.print(
         "[dim]# CSV with mplfinance backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 -d mplfinance[/bold green]")
     console.print(
-        "[dim]# CSV with PV rule, fastest backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw fastest[/bold green]\n")
+        "[dim]# CSV with PV rule, fastest backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d fastest[/bold green]\n")
     console.print(
-        "[dim]# CSV with PV rule, seaborn backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw seaborn[/bold green]\n")
+        "[dim]# CSV with PV rule, seaborn backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d seaborn[/bold green]\n")
     console.print(
         "[dim]# CSV with PV rule, terminal backend[/dim]\n[bold green]python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d term[/bold green]\n")
 
@@ -272,8 +272,8 @@ def print_cli_examples():
       python run_analysis.py csv --csv-file data.csv --point 0.01
       python run_analysis.py csv --csv-file data.csv --point 0.01 --rule SR
       python run_analysis.py csv --csv-file data.csv --point 0.01 -d mplfinance
-      python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw fastest
-      python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV --draw sb
+      python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d fastest
+      python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d seaborn
       python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d term
 
       # 3. YAHOO FINANCE (YF) MODES
