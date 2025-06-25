@@ -61,6 +61,11 @@ def plot_indicator_results_fast(
             logger.print_error(f"Missing required columns: {missing_columns}")
             return None
 
+        # Set default output path if None
+        if output_path is None:
+            output_path = "results/plots/fast_plot.html"
+            logger.print_info(f"No output path provided, using default: {output_path}")
+
         # Prepare data
         display_df = df.copy()
         
@@ -71,6 +76,9 @@ def plot_indicator_results_fast(
                 display_df.set_index('DateTime', inplace=True)
             else:
                 display_df.index = pd.to_datetime(display_df.index)
+
+        # Add 'index' column for Bokeh compatibility
+        display_df['index'] = display_df.index
 
         # Create data source for Bokeh
         source = ColumnDataSource(display_df)
@@ -119,20 +127,22 @@ def plot_indicator_results_fast(
             
             if not buy_signals.empty:
                 buy_source = ColumnDataSource(buy_signals)
-                main_fig.triangle(
+                main_fig.scatter(
                     'index', 'Low',
                     source=buy_source,
                     size=10, color='green', alpha=0.7,
-                    legend_label='Buy Signal'
+                    legend_label='Buy Signal',
+                    marker='triangle'
                 )
             
             if not sell_signals.empty:
                 sell_source = ColumnDataSource(sell_signals)
-                main_fig.inverted_triangle(
+                main_fig.scatter(
                     'index', 'High',
                     source=sell_source,
                     size=10, color='red', alpha=0.7,
-                    legend_label='Sell Signal'
+                    legend_label='Sell Signal',
+                    marker='inverted_triangle'
                 )
 
         # Add hover tooltip for main chart
