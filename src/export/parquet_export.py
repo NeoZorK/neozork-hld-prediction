@@ -123,22 +123,22 @@ def export_indicator_to_parquet(result_df, data_info, selected_rule, args):
         # Prepare the export DataFrame
         export_df = result_df[export_columns].copy()
 
-        # === Унификация имени колонки с датой ===
+        # === Date column name unification ===
         date_col_candidates = ['DateTime', 'datetime', 'Timestamp', 'timestamp', 'date', 'index']
         found_date_col = None
         for candidate in date_col_candidates:
             if candidate in export_df.columns:
                 found_date_col = candidate
                 break
-        # Если нашли, переименовываем в 'DateTime'
+        # If found, rename to 'DateTime'
         if found_date_col and found_date_col != 'DateTime':
             export_df.rename(columns={found_date_col: 'DateTime'}, inplace=True)
-        # Если индекс DatetimeIndex и нет колонки 'DateTime', добавляем её
+        # If index is DatetimeIndex and no 'DateTime' column exists, add it
         if isinstance(export_df.index, pd.DatetimeIndex):
             if 'DateTime' not in export_df.columns:
                 export_df.insert(0, 'DateTime', export_df.index)
             export_df = export_df.reset_index(drop=True)
-        # === Конец блока ===
+        # === End of block ===
 
         # Export to parquet
         export_df.to_parquet(output_file)

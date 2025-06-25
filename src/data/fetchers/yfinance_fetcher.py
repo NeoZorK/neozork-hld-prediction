@@ -68,7 +68,7 @@ def map_yfinance_ticker(ticker_input: str) -> str:
     return ticker # Return original if no mapping applied
 
 
-# --- User-Agent pool для ротации ---
+# --- User-Agent pool for rotation ---
 USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
@@ -98,7 +98,7 @@ def _create_custom_session() -> requests.Session:
 
 def _direct_yf_api_request(ticker: str, period: str, interval: str, session: requests.Session) -> pd.DataFrame | None:
     """
-    Прямой запрос к API Yahoo Finance, если yf.download не сработал.
+    Direct request to Yahoo Finance API if yf.download failed.
     """
     YF_API_URL = "https://query1.finance.yahoo.com/v8/finance/chart/"
     period_map = {
@@ -186,7 +186,7 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
         metrics["error_message"] = f"Invalid yfinance interval provided: {interval}"
         return None, metrics
 
-    # --- Создаём кастомную сессию, если не передана ---
+    # --- Create custom session if not provided ---
     if session is None:
         session = _create_custom_session()
 
@@ -204,7 +204,7 @@ def fetch_yfinance_data(ticker: str, interval: str, period: str = None, start_da
             metrics["latency_sec"] = end_time - start_time
             metrics["api_calls"] = 1
 
-            # --- Fallback: direct API if yf.download не дал данных ---
+            # --- Fallback: direct API if yf.download didn't return data ---
             if df_period is None or df_period.empty:
                 logger.print_warning(f"No data from yf.download for period '{period}', trying direct API fallback...")
                 df_period = _direct_yf_api_request(yf_ticker, period, yf_interval, session)

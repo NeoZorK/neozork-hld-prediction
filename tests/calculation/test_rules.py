@@ -59,7 +59,7 @@ class TestRules(unittest.TestCase):
         mock_phld.assert_called_once_with(df_in, point=point)
         mock_pvhl.assert_called_once_with(df_in, point=point)
         mock_sr.assert_called_once_with(df_in, point=point)
-        mock_pv.assert_called_once_with(df_in)
+        mock_pv.assert_called_once_with(df_in, point=point)
 
     # Test dispatcher with unrecognized rule (should default to Predict_High_Low_Direction)
     @patch('src.calculation.rules.logger')  # Mock logger inside rules.py

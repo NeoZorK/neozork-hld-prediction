@@ -20,8 +20,15 @@ from src.cli.cli_show_mode import handle_show_mode
 from ..export.parquet_export import export_indicator_to_parquet
 from ..export.csv_export import export_indicator_to_csv
 from ..export.json_export import export_indicator_to_json
+# from src.calculation.universal_trading_metrics import display_universal_trading_metrics
 
-# Definition of the run_indicator_workflow function
+try:
+    from ..calculation.universal_trading_metrics import display_universal_trading_metrics
+except ImportError as e:
+    print(f'universal_trading_metrics import failed: {e}')
+    print(f'traceback: {traceback.format_exc()}')
+    display_universal_trading_metrics = None
+
 def run_indicator_workflow(args):
     """
     Orchestrates the main steps by calling functions from specific step modules.
@@ -90,6 +97,7 @@ def run_indicator_workflow(args):
             }
     
     t_start_workflow = time.perf_counter()
+    
     # Initialize results dictionary with defaults
     workflow_results = {
         "success": False, "data_fetch_duration": 0,
@@ -120,7 +128,6 @@ def run_indicator_workflow(args):
 
         # --- Critical Check ---
         if ohlcv_df is None or ohlcv_df.empty:
-            # *** FIX: Improved fallback error message ***
             error_msg_from_data = data_info.get("error_message") or "Data acquisition returned None or empty DataFrame."
             raise ValueError(error_msg_from_data)
 
@@ -131,7 +138,6 @@ def run_indicator_workflow(args):
         # Log DataFrame Metrics (info now comes from data_info)
         logger.print_debug(f"DataFrame Metrics: Rows={data_info.get('rows_count', 0)}, Cols={data_info.get('columns_count', 0)}, Memory={data_info.get('data_size_mb', 0):.3f} MB")
 
-
         # --- Step 2: Get Point Size ---
         logger.print_info("--- Step 2: Determining Point Size ---")
         t_point_start = time.perf_counter()
@@ -141,7 +147,6 @@ def run_indicator_workflow(args):
         workflow_results["point_size"] = point_size
         workflow_results["estimated_point"] = estimated_point
         workflow_results["steps_duration"]["point_size"] = t_point_end - t_point_start
-
 
         # --- Step 3: Calculate Indicator ---
         logger.print_info(f"--- Step 3: Calculating Indicator (Rule: {args.rule}) ---")
@@ -156,6 +161,26 @@ def run_indicator_workflow(args):
         if result_df is None or result_df.empty:
             logger.print_warning("Indicator calculation returned empty results.")
 
+        # --- Step 3b: Display Universal Trading Metrics ---
+        # Use args.lot_size, args.risk_reward_ratio, args.fee_per_trade if present, else defaults
+        lot_size = getattr(args, 'lot_size', 1.0)
+        risk_reward_ratio = getattr(args, 'risk_reward_ratio', 2.0)
+        fee_per_trade = getattr(args, 'fee_per_trade', 0.07)
+        
+        logger.print_info("--- Step 3b: Displaying Universal Trading Metrics ---")
+        
+        try:
+            display_universal_trading_metrics(
+                result_df,
+                selected_rule,
+                lot_size=lot_size,
+                risk_reward_ratio=risk_reward_ratio,
+                fee_per_trade=fee_per_trade
+            )
+            logger.print_success("Universal trading metrics displayed successfully")
+        except Exception as e:
+            logger.print_error(f"Error displaying universal trading metrics: {e}")
+            logger.print_error(f"Traceback: {traceback.format_exc()}")
 
         # --- Step 4: Generate Plot ---
         logger.print_info("--- Step 4: Generating Plot ---")
@@ -236,6 +261,5 @@ def run_indicator_workflow(args):
 
     # Add overall duration to results
     workflow_results["total_duration_sec"] = time.perf_counter() - t_start_workflow
-
     return workflow_results
 

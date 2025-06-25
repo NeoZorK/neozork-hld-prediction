@@ -13,6 +13,50 @@ from ..common import logger
 from ..common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
 from typing import Any
 
+# Import RSI calculation functions from new structure
+from .indicators.oscillators.rsi_ind_calc import apply_rule_rsi, apply_rule_rsi_momentum, apply_rule_rsi_divergence, PriceType
+
+# Import new indicators with price_type support
+from .indicators.oscillators.cci_ind import apply_rule_cci
+from .indicators.oscillators.stoch_ind import apply_rule_stochastic
+from .indicators.trend.ema_ind import apply_rule_ema
+from .indicators.volatility.bb_ind import apply_rule_bollinger_bands
+from .indicators.volatility.atr_ind import apply_rule_atr
+from .indicators.volume.vwap_ind import apply_rule_vwap
+from .indicators.suportresist.pivot_ind import apply_rule_pivot
+
+# Import all new indicators
+# Momentum indicators
+from .indicators.momentum.macd_ind import apply_rule_macd
+from .indicators.momentum.stochoscillator_ind import apply_rule_stochoscillator
+
+# Predictive indicators
+from .indicators.predictive.hma_ind import apply_rule_hma
+from .indicators.predictive.tsforecast_ind import apply_rule_tsforecast
+
+# Probability indicators
+from .indicators.probability.montecarlo_ind import apply_rule_montecarlo
+from .indicators.probability.kelly_ind import apply_rule_kelly
+
+# Sentiment indicators
+from .indicators.sentiment.feargreed_ind import apply_rule_feargreed
+from .indicators.sentiment.cot_ind import apply_rule_cot
+from .indicators.sentiment.putcallratio_ind import apply_rule_putcallratio
+
+# Support/Resistance indicators
+from .indicators.suportresist.donchain_ind import apply_rule_donchain
+from .indicators.suportresist.fiboretr_ind import apply_rule_fiboretr
+
+# Volume indicators
+from .indicators.volume.obv_ind import apply_rule_obv
+
+# Volatility indicators
+from .indicators.volatility.stdev_ind import apply_rule_stdev
+
+# Trend indicators
+from .indicators.trend.adx_ind import apply_rule_adx
+from .indicators.trend.sar_ind import apply_rule_sar
+from .indicators.trend.supertrend_ind import apply_rule_supertrend
 
 # Helper to safely get series or default
 def _get_series(df, col_name, default_val=0):
@@ -79,7 +123,7 @@ def apply_rule_support_resistants(df: pd.DataFrame, point: float):
     df['Diff'] = EMPTY_VALUE
     return df
 
-def apply_rule_pressure_vector(df: pd.DataFrame):
+def apply_rule_pressure_vector(df: pd.DataFrame, point: float):
     """Applies Pressure_Vector rule logic."""
     open_curr = _get_series(df, 'Open')
     pv_val = _get_series(df, 'PV')
@@ -119,11 +163,54 @@ RULE_DISPATCHER = {
     TradingRule.Pressure_Vector: apply_rule_pressure_vector,
     TradingRule.Predict_High_Low_Direction: apply_rule_predict_hld,
     TradingRule.AUTO: apply_rule_auto,  # Add AUTO rule support
+    TradingRule.RSI: apply_rule_rsi,
+    TradingRule.RSI_Momentum: apply_rule_rsi_momentum,
+    TradingRule.RSI_Divergence: apply_rule_rsi_divergence,
+    # Add new indicators with price_type support
+    TradingRule.CCI: apply_rule_cci,
+    TradingRule.Stochastic: apply_rule_stochastic,
+    TradingRule.EMA: apply_rule_ema,
+    TradingRule.Bollinger_Bands: apply_rule_bollinger_bands,
+    TradingRule.ATR: apply_rule_atr,
+    TradingRule.VWAP: apply_rule_vwap,
+    TradingRule.Pivot_Points: apply_rule_pivot,
+    # Add all new indicators
+    # Momentum indicators
+    TradingRule.MACD: apply_rule_macd,
+    TradingRule.StochOscillator: apply_rule_stochoscillator,
+    # Predictive indicators
+    TradingRule.HMA: apply_rule_hma,
+    TradingRule.TSForecast: apply_rule_tsforecast,
+    # Probability indicators
+    TradingRule.MonteCarlo: apply_rule_montecarlo,
+    TradingRule.Kelly: apply_rule_kelly,
+    # Sentiment indicators
+    TradingRule.FearGreed: apply_rule_feargreed,
+    TradingRule.COT: apply_rule_cot,
+    TradingRule.PutCallRatio: apply_rule_putcallratio,
+    # Support/Resistance indicators
+    TradingRule.Donchain: apply_rule_donchain,
+    TradingRule.FiboRetr: apply_rule_fiboretr,
+    # Volume indicators
+    TradingRule.OBV: apply_rule_obv,
+    # Volatility indicators
+    TradingRule.StDev: apply_rule_stdev,
+    # Trend indicators
+    TradingRule.ADX: apply_rule_adx,
+    TradingRule.SAR: apply_rule_sar,
+    TradingRule.SuperTrend: apply_rule_supertrend,
 }
 
-def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float) -> pd.DataFrame:
+def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, price_type: str = 'close', **kwargs) -> pd.DataFrame:
     """
     Applies the selected trading rule logic to the DataFrame.
+    
+    Args:
+        df (pd.DataFrame): Input DataFrame
+        rule (TradingRule): Trading rule to apply
+        point (float): Instrument point size
+        price_type (str): Price type for calculations ('open' or 'close')
+        **kwargs: Additional parameters for specific indicators
     """
     selected_rule: TradingRule | None = None
     rule_func = None
@@ -135,7 +222,7 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float) 
             is_valid_rule = True
             rule_func = RULE_DISPATCHER[rule]
         else:
-            pass # is_valid_rule останется False
+            pass # is_valid_rule will remain False
 
     if not is_valid_rule:
         logger.print_warning(
@@ -145,33 +232,101 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float) 
         selected_rule = TradingRule.Predict_High_Low_Direction
         rule_func = RULE_DISPATCHER[selected_rule]
 
-    # Call the rule function with the DataFrame and point
-    if selected_rule in [TradingRule.PV_HighLow, TradingRule.Support_Resistants, TradingRule.Predict_High_Low_Direction, TradingRule.AUTO]:
-        return rule_func(df, point=point)
-    elif selected_rule == TradingRule.Pressure_Vector:
-        if rule_func:
-             return rule_func(df)
-        else:
-             logger.print_error("Rule function assignment failed unexpectedly.")
-             return df
-    else:
-         # Fallback logic for unsupported rules
-         # selected_rule
-         logger.print_warning(f"Rule '{selected_rule.name}' dispatcher logic needs update or rule is unsupported.")
+    # Convert price_type string to PriceType enum for rules that support it
+    price_type_enum = PriceType.OPEN if price_type.lower() == 'open' else PriceType.CLOSE
 
-         try:
-             if rule_func:
-                return rule_func(df)
-             else:
-                logger.print_error("Rule function assignment failed unexpectedly in fallback.")
-                return df
-         except TypeError:
-             try:
-                 if rule_func:
-                    return rule_func(df, point=point)
-                 else:
-                    logger.print_error("Rule function assignment failed unexpectedly in fallback TypeError.")
-                    return df
-             except Exception as e:
-                 logger.print_error(f"Failed to execute rule function for {selected_rule.name}: {e}")
-                 return df
+    # Call the rule function with the DataFrame and point
+    if selected_rule in [TradingRule.PV_HighLow, TradingRule.Support_Resistants, TradingRule.Pressure_Vector, TradingRule.Predict_High_Low_Direction, TradingRule.AUTO]:
+        return rule_func(df, point=point)
+    elif selected_rule in [TradingRule.RSI, TradingRule.RSI_Momentum, TradingRule.RSI_Divergence]:
+        # Extract RSI-specific parameters
+        rsi_period = kwargs.get('rsi_period', 14)
+        oversold = kwargs.get('oversold', 30)
+        overbought = kwargs.get('overbought', 70)
+        return rule_func(df, point=point, rsi_period=rsi_period, overbought=overbought, oversold=oversold, price_type=price_type_enum)
+    elif selected_rule == TradingRule.CCI:
+        # Extract CCI-specific parameters
+        cci_period = kwargs.get('cci_period', 20)
+        return rule_func(df, point=point, cci_period=cci_period, price_type=price_type_enum)
+    elif selected_rule == TradingRule.Stochastic:
+        # Extract Stochastic-specific parameters
+        stoch_k_period = kwargs.get('stoch_k_period', 14)
+        stoch_d_period = kwargs.get('stoch_d_period', 3)
+        return rule_func(df, point=point, stoch_k_period=stoch_k_period, stoch_d_period=stoch_d_period, price_type=price_type_enum)
+    elif selected_rule == TradingRule.EMA:
+        # Extract EMA-specific parameters
+        ema_period = kwargs.get('ema_period', 20)
+        return rule_func(df, point=point, ema_period=ema_period, price_type=price_type_enum)
+    elif selected_rule == TradingRule.Bollinger_Bands:
+        # Extract Bollinger Bands-specific parameters
+        bb_period = kwargs.get('bb_period', 20)
+        bb_std_dev = kwargs.get('bb_std_dev', 2.0)
+        return rule_func(df, point=point, bb_period=bb_period, bb_std_dev=bb_std_dev, price_type=price_type_enum)
+    elif selected_rule == TradingRule.ATR:
+        # Extract ATR-specific parameters
+        atr_period = kwargs.get('atr_period', 14)
+        return rule_func(df, point=point, atr_period=atr_period)
+    elif selected_rule == TradingRule.VWAP:
+        return rule_func(df, point=point, price_type=price_type_enum)
+    elif selected_rule == TradingRule.Pivot_Points:
+        return rule_func(df, point=point, price_type=price_type_enum)
+    elif selected_rule == TradingRule.MACD:
+        # Extract MACD-specific parameters
+        macd_fast = kwargs.get('macd_fast', 12)
+        macd_slow = kwargs.get('macd_slow', 26)
+        macd_signal = kwargs.get('macd_signal', 9)
+        return rule_func(df, point=point, macd_fast=macd_fast, macd_slow=macd_slow, macd_signal=macd_signal, price_type=price_type_enum)
+    elif selected_rule == TradingRule.StochOscillator:
+        return rule_func(df, point=point, price_type=price_type_enum)
+    elif selected_rule == TradingRule.HMA:
+        # Extract HMA-specific parameters
+        hma_period = kwargs.get('hma_period', 20)
+        return rule_func(df, point=point, hma_period=hma_period, price_type=price_type_enum)
+    elif selected_rule == TradingRule.TSForecast:
+        # Extract TSF-specific parameters
+        tsf_period = kwargs.get('tsf_period', 20)
+        tsf_forecast = kwargs.get('tsf_forecast', 5)
+        return rule_func(df, point=point, tsf_period=tsf_period, tsf_forecast=tsf_forecast, price_type=price_type_enum)
+    elif selected_rule == TradingRule.MonteCarlo:
+        # Extract Monte Carlo-specific parameters
+        monte_simulations = kwargs.get('monte_simulations', 1000)
+        monte_period = kwargs.get('monte_period', 252)
+        return rule_func(df, point=point, monte_simulations=monte_simulations, monte_period=monte_period)
+    elif selected_rule == TradingRule.Kelly:
+        # Extract Kelly-specific parameters
+        kelly_period = kwargs.get('kelly_period', 20)
+        return rule_func(df, point=point, kelly_period=kelly_period)
+    elif selected_rule == TradingRule.FearGreed:
+        return rule_func(df, point=point)
+    elif selected_rule == TradingRule.COT:
+        return rule_func(df, point=point)
+    elif selected_rule == TradingRule.PutCallRatio:
+        return rule_func(df, point=point)
+    elif selected_rule == TradingRule.Donchain:
+        # Extract Donchian-specific parameters
+        donchain_period = kwargs.get('donchain_period', 20)
+        return rule_func(df, point=point, donchain_period=donchain_period)
+    elif selected_rule == TradingRule.FiboRetr:
+        # Extract Fibonacci-specific parameters
+        fib_levels = kwargs.get('fib_levels', [0.236, 0.382, 0.5, 0.618, 0.786])
+        return rule_func(df, point=point, fib_levels=fib_levels)
+    elif selected_rule == TradingRule.OBV:
+        return rule_func(df, point=point)
+    elif selected_rule == TradingRule.StDev:
+        # Extract StDev-specific parameters
+        stdev_period = kwargs.get('stdev_period', 20)
+        return rule_func(df, point=point, stdev_period=stdev_period, price_type=price_type_enum)
+    elif selected_rule == TradingRule.ADX:
+        # Extract ADX-specific parameters
+        adx_period = kwargs.get('adx_period', 14)
+        return rule_func(df, point=point, adx_period=adx_period)
+    elif selected_rule == TradingRule.SAR:
+        # Extract SAR-specific parameters
+        sar_acceleration = kwargs.get('sar_acceleration', 0.02)
+        sar_maximum = kwargs.get('sar_maximum', 0.2)
+        return rule_func(df, point=point, sar_acceleration=sar_acceleration, sar_maximum=sar_maximum)
+    elif selected_rule == TradingRule.SuperTrend:
+        return rule_func(df, point=point)
+    else:
+        # Default case for any other rules
+        return rule_func(df, point=point, price_type=price_type_enum)

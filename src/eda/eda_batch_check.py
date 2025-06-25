@@ -3,6 +3,8 @@ Batch EDA Batch Check Script
 
 Usage:
     python eda_batch_check.py [flags]
+    ./eda [flags]                      # Universal script (works in Docker/local)
+    uv run ./eda [flags]               # With uv dependency management
 
 Flags:
     --nan-check                Check for missing values (NaN) in columns
@@ -36,30 +38,86 @@ Flags:
     --clean-reports            Remove all HTML report directories for all analyses
 
 Examples:
+    # Basic usage
+    ./eda --help
+    ./eda --version
+
     # Check data quality issues
     python eda_batch_check.py --nan-check --duplicate-check
-    python eda_batch_check.py --data-quality-checks
+    ./eda --nan-check --duplicate-check
+    ./eda --data-quality-checks
 
     # Fix specific issues
     python eda_batch_check.py --fix-files --fix-nan --fix-duplicates
-    python eda_batch_check.py --fix-files --fix-zeros --fix-negatives
+    ./eda --fix-files --fix-nan --fix-duplicates
+    ./eda --fix-files --fix-zeros --fix-negatives
 
     # Fix all detected issues
     python eda_batch_check.py --fix-files --fix-all
+    ./eda --fix-files --fix-all
 
     # Restore original files from backups
     python eda_batch_check.py --restore-backups
+    ./eda --restore-backups
 
     # Run statistical analyses
     python eda_batch_check.py --descriptive-stats
-    python eda_batch_check.py --all-stats
+    ./eda --descriptive-stats
+    ./eda --all-stats
 
     # Clean statistics logs and reports
     python eda_batch_check.py --clean-stats-logs
-    python eda_batch_check.py --clean-reports
+    ./eda --clean-stats-logs
+    ./eda --clean-reports
 
     # Combine analysis with fixing
     python eda_batch_check.py --data-quality-checks --fix-files --fix-all
+    ./eda --data-quality-checks --fix-files --fix-all
+
+    # Analyze specific file
+    ./eda --file mydata.parquet --nan-check
+    ./eda --file data.csv --descriptive-stats
+
+    # Run folder statistics
+    ./eda --folder-stats
+    ./eda --folder-stats --verbose
+
+    # Generate HTML reports
+    ./eda --html-report
+    ./eda --html-report --output-dir ./reports
+
+    # Use with uv (recommended for native environment)
+    uv run ./eda --help
+    uv run ./eda --data-quality-checks
+    uv run ./eda --descriptive-stats
+
+Environment Detection:
+    The eda script automatically detects whether it's running in a Docker container
+    or native environment:
+    - Docker Environment: Uses python src/eda/eda_batch_check.py directly
+    - Native Environment: Uses uv run python src/eda/eda_batch_check.py (with fallback to direct Python)
+
+Related Scripts:
+    ./nz [options]                    # Main analysis script for indicators
+    ./nz --help                       # Show NZ help
+    ./nz demo --rule PHLD             # Run demo analysis
+    ./nz yfinance MSFT --rule PHLD    # Analyze YFinance data
+    ./nz csv --csv-file data.csv      # Analyze CSV data
+
+Workflow Examples:
+    # Complete data analysis workflow
+    ./eda --data-quality-checks       # Check data quality
+    ./eda --fix-files --fix-all       # Fix issues
+    ./nz demo --rule PHLD             # Run analysis
+    ./eda --descriptive-stats         # Generate statistics
+    ./eda --html-report               # Create reports
+
+    # Data processing workflow
+    ./eda --file-info                 # Check file information
+    ./eda --nan-check                 # Check for NaN values
+    ./eda --fix-files --fix-nan       # Fix NaN values
+    ./nz csv --csv-file data.csv      # Analyze processed data
+    ./eda --correlation-analysis      # Analyze correlations
 """
 import argparse
 import os

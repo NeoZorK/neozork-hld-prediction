@@ -1,0 +1,37 @@
+{
+  "server": {
+    "name": "PyCharm GitHub Copilot MCP Server",
+    "command": "python",
+    "args": ["pycharm_github_copilot_mcp.py"],
+    "env": {
+      "PYTHONPATH": ".",
+      "LOG_LEVEL": "INFO",
+      "MCP_SERVER_TYPE": "pycharm_copilot",
+      "ENABLE_FINANCIAL_DATA": "true",
+      "ENABLE_INDICATORS": "true",
+      "ENABLE_GITHUB_COPILOT": "true"
+    },
+    "cwd": ".",
+    "transport": "stdio"
+  },
+  "testing": {
+    "enable_tests": true,
+    "test_timeout": 30,
+    "performance_tests": true,
+    "coverage_tests": true,
+    "github_copilot_tests": true
+  },
+  "monitoring": {
+    "enable_monitoring": true,
+    "health_check_interval": 60,
+    "max_memory_mb": 512,
+    "max_cpu_percent": 80
+  },
+  "features": {
+    "financial_data": true,
+    "technical_indicators": true,
+    "github_copilot": true,
+    "code_completion": true,
+    "project_analysis": true
+  }
+} 

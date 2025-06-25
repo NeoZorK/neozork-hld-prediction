@@ -25,3 +25,38 @@ class TradingRule(Enum):
     Predict_High_Low_Direction = 3
     OHLCV = 4  # Raw OHLCV data without indicator calculation
     AUTO = 5  # Auto mode for automatic columns selection based on data availability
+    RSI = 6  # RSI indicator with overbought/oversold signals
+    RSI_Momentum = 7  # RSI momentum-based signals
+    RSI_Divergence = 8  # RSI divergence detection
+    # New indicators with price_type support
+    CCI = 9  # Commodity Channel Index
+    Stochastic = 10  # Stochastic Oscillator
+    EMA = 11  # Exponential Moving Average
+    Bollinger_Bands = 12  # Bollinger Bands
+    ATR = 13  # Average True Range
+    VWAP = 14  # Volume Weighted Average Price
+    Pivot_Points = 15  # Pivot Points
+    # Momentum indicators
+    MACD = 16  # Moving Average Convergence Divergence
+    StochOscillator = 17  # Stochastic Oscillator (momentum)
+    # Predictive indicators
+    HMA = 18  # Hull Moving Average
+    TSForecast = 19  # Time Series Forecast
+    # Probability indicators
+    MonteCarlo = 20  # Monte Carlo Simulation
+    Kelly = 21  # Kelly Criterion
+    # Sentiment indicators
+    FearGreed = 22  # Fear & Greed Index
+    COT = 23  # Commitment of Traders
+    PutCallRatio = 24  # Put/Call Ratio
+    # Support/Resistance indicators
+    Donchain = 25  # Donchian Channel
+    FiboRetr = 26  # Fibonacci Retracement
+    # Volume indicators
+    OBV = 27  # On Balance Volume
+    # Volatility indicators
+    StDev = 28  # Standard Deviation
+    # Trend indicators
+    ADX = 29  # Average Directional Index
+    SAR = 30  # Parabolic SAR
+    SuperTrend = 31  # SuperTrend
