@@ -13,7 +13,7 @@ def analyze_rsi_signals():
     """Analyze RSI signals and trading metrics."""
     
     # Load data
-    df = pd.read_parquet('data/cache/csv_converted/CSVExport_GBPUSD_PERIOD_MN1.parquet')
+    df = pd.read_parquet('../data/cache/csv_converted/CSVExport_GBPUSD_PERIOD_MN1.parquet')
     print(f"Original data shape: {df.shape}")
     print(f"Original columns: {df.columns.tolist()}")
     
