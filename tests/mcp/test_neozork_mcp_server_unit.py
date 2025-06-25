@@ -505,7 +505,238 @@ def backtest_strategy(data, strategy_params):
         """Test copilot context handler"""
         result = server._handle_copilot_context(1, {})
         
+        # Check for actual keys that exist in the response
         assert "common_patterns" in result or "project_structure" in result
+    
+    def test_handle_status(self, server):
+        """Test status handler"""
+        result = server._handle_status(1, {})
+        
+        assert "status" in result
+        assert "uptime" in result
+        assert "server_mode" in result
+        assert "version" in result
+        assert "project_root" in result
+        assert "python_version" in result
+        assert "platform" in result
+        assert "memory_usage" in result
+        assert "cpu_usage" in result
+        assert "active_connections" in result
+        assert "last_activity" in result
+    
+    def test_handle_health(self, server):
+        """Test health handler"""
+        result = server._handle_health(1, {})
+        
+        assert "status" in result
+        assert "issues" in result
+        assert "checks" in result
+        assert "timestamp" in result
+        assert isinstance(result["issues"], list)
+        assert isinstance(result["checks"], dict)
+    
+    def test_handle_ping(self, server):
+        """Test ping handler"""
+        result = server._handle_ping(1, {})
+        
+        assert "pong" in result
+        assert result["pong"] is True
+        assert "timestamp" in result
+        assert "server_time" in result
+        assert "timezone" in result
+    
+    def test_handle_metrics(self, server):
+        """Test metrics handler"""
+        result = server._handle_metrics(1, {})
+        
+        assert "performance" in result
+        assert "project" in result
+        assert "code_analysis" in result
+        assert "financial_data" in result
+        
+        # Check performance metrics
+        perf = result["performance"]
+        assert "uptime_seconds" in perf
+        assert "memory_usage_mb" in perf
+        assert "cpu_usage_percent" in perf
+        assert "files_processed" in perf
+        
+        # Check project metrics
+        proj = result["project"]
+        assert "total_files" in proj
+        assert "python_files" in proj
+        assert "data_files" in proj
+        assert "total_size_bytes" in proj
+    
+    def test_handle_diagnostics(self, server):
+        """Test diagnostics handler"""
+        result = server._handle_diagnostics(1, {})
+        
+        assert "system" in result
+        assert "server" in result
+        assert "project" in result
+        assert "issues" in result
+        
+        # Check system info
+        system = result["system"]
+        assert "python_version" in system
+        assert "platform" in system
+        assert "architecture" in system
+        assert "executable" in system
+        
+        # Check server info
+        server_info = result["server"]
+        assert "config" in server_info
+        assert "project_root" in server_info
+        assert "running" in server_info
+        assert "handlers_count" in server_info
+    
+    def test_handle_version(self, server):
+        """Test version handler"""
+        result = server._handle_version(1, {})
+        
+        assert "server_version" in result
+        assert "python_version" in result
+        assert "platform" in result
+        assert "build_date" in result
+        assert "features" in result
+        assert "capabilities" in result
+    
+    def test_handle_capabilities(self, server):
+        """Test capabilities handler"""
+        result = server._handle_capabilities(1, {})
+        
+        assert "capabilities" in result
+        assert "supported_methods" in result
+        assert "features" in result
+        assert "extensions" in result
+        
+        # Check that all our methods are listed
+        methods = result["supported_methods"]
+        assert "neozork/status" in methods
+        assert "neozork/health" in methods
+        assert "neozork/ping" in methods
+        assert "neozork/metrics" in methods
+        assert "neozork/diagnostics" in methods
+    
+    def test_handle_restart(self, server):
+        """Test restart handler"""
+        result = server._handle_restart(1, {})
+        
+        assert "status" in result
+        assert "timestamp" in result
+        assert result["status"] in ["restarted", "error"]
+        
+        if result["status"] == "restarted":
+            assert "message" in result
+        elif result["status"] == "error":
+            assert "error" in result
+    
+    def test_handle_reload(self, server):
+        """Test reload handler"""
+        result = server._handle_reload(1, {})
+        
+        assert "status" in result
+        assert "timestamp" in result
+        assert result["status"] in ["reloaded", "error"]
+        
+        if result["status"] == "reloaded":
+            assert "message" in result
+            assert "files_count" in result
+            assert "symbols_count" in result
+        elif result["status"] == "error":
+            assert "error" in result
+    
+    def test_get_memory_usage(self, server):
+        """Test memory usage helper"""
+        memory = server._get_memory_usage()
+        assert isinstance(memory, float)
+        assert memory >= 0
+    
+    def test_get_cpu_usage(self, server):
+        """Test CPU usage helper"""
+        cpu = server._get_cpu_usage()
+        assert isinstance(cpu, float)
+        assert cpu >= 0
+    
+    def test_get_active_connections(self, server):
+        """Test active connections helper"""
+        connections = server._get_active_connections()
+        assert isinstance(connections, int)
+        assert connections >= 0
+    
+    def test_get_last_activity(self, server):
+        """Test last activity helper"""
+        activity = server._get_last_activity()
+        assert isinstance(activity, str)
+        assert len(activity) > 0
+    
+    def test_get_files_by_extension(self, server):
+        """Test files by extension helper"""
+        extensions = server._get_files_by_extension()
+        assert isinstance(extensions, dict)
+        # Should have at least .py files
+        assert '.py' in extensions
+    
+    def test_get_largest_files(self, server):
+        """Test largest files helper"""
+        largest = server._get_largest_files(5)
+        assert isinstance(largest, list)
+        assert len(largest) <= 5
+        
+        if largest:
+            assert "path" in largest[0]
+            assert "size" in largest[0]
+            assert "extension" in largest[0]
+    
+    def test_get_recent_files(self, server):
+        """Test recent files helper"""
+        recent = server._get_recent_files(5)
+        assert isinstance(recent, list)
+        assert len(recent) <= 5
+        
+        if recent:
+            assert "path" in recent[0]
+            assert "modified" in recent[0]
+            assert "size" in recent[0]
+    
+    def test_get_missing_directories(self, server):
+        """Test missing directories helper"""
+        missing = server._get_missing_directories()
+        assert isinstance(missing, list)
+        # Should not have src, tests, docs, data, logs missing in our test project
+        assert len(missing) == 0
+    
+    def test_get_diagnostic_issues(self, server):
+        """Test diagnostic issues helper"""
+        issues = server._get_diagnostic_issues()
+        assert isinstance(issues, list)
+        
+        for issue in issues:
+            assert "type" in issue
+            assert "message" in issue
+            assert "suggestion" in issue
+    
+    def test_get_server_capabilities(self, server):
+        """Test server capabilities helper"""
+        capabilities = server._get_server_capabilities()
+        assert isinstance(capabilities, dict)
+        
+        assert "textDocument" in capabilities
+        assert "workspace" in capabilities
+        assert "neozork" in capabilities
+        
+        # Check neozork capabilities
+        neozork_caps = capabilities["neozork"]
+        assert "financialData" in neozork_caps
+        assert "indicators" in neozork_caps
+        assert "codeSearch" in neozork_caps
+        assert "snippets" in neozork_caps
+        assert "analysis" in neozork_caps
+        assert "status" in neozork_caps
+        assert "health" in neozork_caps
+        assert "metrics" in neozork_caps
+        assert "diagnostics" in neozork_caps
     
     def test_save_state(self, server):
         """Test state saving"""
