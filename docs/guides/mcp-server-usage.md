@@ -2,38 +2,38 @@
 
 ## Overview
 
-Neozork MCP Server - это универсальный сервер Model Context Protocol для финансового анализа с интеграцией в IDE.
+Neozork MCP Server is a unified Model Context Protocol server for financial analysis with IDE integration.
 
 ## 🚀 Quick Start
 
-### 1. Автоматический запуск (Рекомендуется)
+### 1. Automatic Start (Recommended)
 
-MCP сервер запускается автоматически при открытии проекта в поддерживаемых IDE:
+MCP server starts automatically when opening the project in supported IDEs:
 
-- **Cursor IDE** - автоматически
-- **PyCharm** - автоматически  
-- **VS Code** - автоматически
+- **Cursor IDE** - automatically
+- **PyCharm** - automatically  
+- **VS Code** - automatically
 
-### 2. Ручной запуск
+### 2. Manual Start
 
 ```bash
-# Простой запуск
+# Simple start
 python3 start_mcp_server.py
 
-# Прямой запуск сервера
+# Direct server start
 python3 neozork_mcp_server.py
 
-# Запуск с отладкой
+# Start with debug
 python3 neozork_mcp_server.py --debug
 ```
 
-### 3. Проверка статуса
+### 3. Status Check
 
 ```bash
-# Проверить статус сервера
+# Check server status
 python3 scripts/check_mcp_status.py
 
-# Показать запущенные процессы
+# Show running processes
 ps aux | grep neozork_mcp_server
 ```
 
@@ -41,22 +41,22 @@ ps aux | grep neozork_mcp_server
 
 ```
 📁 MCP Server Files:
-├── neozork_mcp_server.py          # Основной сервер
-├── neozork_mcp_config.json        # Конфигурация сервера
-├── start_mcp_server.py            # Скрипт запуска
-├── cursor_mcp_config.json         # Конфигурация Cursor
-├── pycharm_mcp_config.json        # Конфигурация PyCharm
-├── mcp.json                       # Универсальная конфигурация
+├── neozork_mcp_server.py          # Main server
+├── neozork_mcp_config.json        # Server configuration
+├── start_mcp_server.py            # Start script
+├── cursor_mcp_config.json         # Cursor configuration
+├── pycharm_mcp_config.json        # PyCharm configuration
+├── mcp.json                       # Universal configuration
 ├── scripts/
-│   ├── setup_ide_configs.py       # Настройка IDE
-│   ├── neozork_mcp_manager.py     # Менеджер сервера
-│   └── check_mcp_status.py        # Проверка статуса
-└── logs/                          # Логи сервера
+│   ├── setup_ide_configs.py       # IDE setup
+│   ├── neozork_mcp_manager.py     # Server manager
+│   └── check_mcp_status.py        # Status check
+└── logs/                          # Server logs
 ```
 
 ## ⚙️ Configuration
 
-### Основная конфигурация (`neozork_mcp_config.json`)
+### Main Configuration (`neozork_mcp_config.json`)
 
 ```json
 {
@@ -74,7 +74,7 @@ ps aux | grep neozork_mcp_server
 }
 ```
 
-### IDE Конфигурации
+### IDE Configurations
 
 #### Cursor IDE (`cursor_mcp_config.json`)
 ```json
@@ -112,118 +112,118 @@ ps aux | grep neozork_mcp_server
 
 ## 🔧 Setup Commands
 
-### Настройка IDE конфигураций
+### IDE Configuration Setup
 
 ```bash
-# Настроить все IDE
+# Setup all IDEs
 python3 scripts/setup_ide_configs.py
 
-# Настроить конкретную IDE
+# Setup specific IDE
 python3 scripts/neozork_mcp_manager.py create-config cursor
 python3 scripts/neozork_mcp_manager.py create-config pycharm
 python3 scripts/neozork_mcp_manager.py create-config vscode
 ```
 
-### Управление сервером
+### Server Management
 
 ```bash
-# Запустить менеджер
+# Start manager
 python3 scripts/neozork_mcp_manager.py start
 
-# Показать статус
+# Show status
 python3 scripts/neozork_mcp_manager.py status
 
-# Остановить сервер
+# Stop server
 python3 scripts/neozork_mcp_manager.py stop
 
-# Перезапустить сервер
+# Restart server
 python3 scripts/neozork_mcp_manager.py restart
 ```
 
 ## 🐛 Troubleshooting
 
-### Проблемы с подключением
+### Connection Issues
 
-1. **Сервер не запускается**
+1. **Server won't start**
 ```bash
-# Проверить Python
+# Check Python
 python3 --version
 
-# Проверить зависимости
+# Check dependencies
 uv pip list
 
-# Проверить права доступа
+# Check permissions
 ls -la neozork_mcp_server.py
 ```
 
-2. **IDE не подключается**
+2. **IDE not connecting**
 ```bash
-# Перезапустить IDE
-# Проверить конфигурацию
+# Restart IDE
+# Check configuration
 cat cursor_mcp_config.json
 
-# Проверить логи
+# Check logs
 tail -f logs/neozork_mcp_*.log
 ```
 
-3. **Множественные процессы**
+3. **Multiple processes**
 ```bash
-# Остановить все процессы
+# Stop all processes
 pkill -f neozork_mcp_server.py
 
-# Проверить процессы
+# Check processes
 ps aux | grep neozork_mcp_server
 ```
 
-### Логи
+### Logs
 
-- `logs/neozork_mcp_YYYYMMDD.log` - основные логи сервера
-- `logs/mcp_status_check.log` - логи проверки статуса
-- `logs/ide_setup.log` - логи настройки IDE
+- `logs/neozork_mcp_YYYYMMDD.log` - main server logs
+- `logs/mcp_status_check.log` - status check logs
+- `logs/ide_setup.log` - IDE setup logs
 
 ## 📊 Features
 
-### Доступные возможности
+### Available Features
 
-- **Financial Data Integration** - интеграция финансовых данных
-- **Technical Indicators** - технические индикаторы
-- **Code Completion** - автодополнение кода
-- **Project Analysis** - анализ проекта
-- **AI Suggestions** - AI предложения
-- **GitHub Copilot** - интеграция с Copilot
+- **Financial Data Integration** - financial data integration
+- **Technical Indicators** - technical indicators
+- **Code Completion** - code completion
+- **Project Analysis** - project analysis
+- **AI Suggestions** - AI suggestions
+- **GitHub Copilot** - Copilot integration
 
-### Команды MCP
+### MCP Commands
 
-- `neozork/status` - статус сервера
-- `neozork/health` - проверка здоровья
-- `neozork/ping` - ping/pong тест
-- `neozork/metrics` - метрики производительности
-- `neozork/projectInfo` - информация о проекте
-- `neozork/financialData` - финансовые данные
-- `neozork/indicators` - технические индикаторы
+- `neozork/status` - server status
+- `neozork/health` - health check
+- `neozork/ping` - ping/pong test
+- `neozork/metrics` - performance metrics
+- `neozork/projectInfo` - project information
+- `neozork/financialData` - financial data
+- `neozork/indicators` - technical indicators
 
 ## 🔄 Development
 
-### Добавление новых функций
+### Adding New Features
 
-1. Добавить обработчик в `neozork_mcp_server.py`
-2. Обновить конфигурацию
-3. Добавить тесты
-4. Обновить документацию
+1. Add handler in `neozork_mcp_server.py`
+2. Update configuration
+3. Add tests
+4. Update documentation
 
-### Тестирование
+### Testing
 
 ```bash
-# Запустить тесты
+# Run tests
 python -m pytest tests/mcp/ -v
 
-# Тестировать сервер
+# Test server
 python3 scripts/check_mcp_status.py
 ```
 
 ## 📝 Notes
 
-- Сервер работает в stdio режиме для IDE интеграции
-- Конфигурации автоматически обновляются при запуске `setup_ide_configs.py`
-- Логи сохраняются в папку `logs/`
-- Сервер поддерживает hot reload при изменении файлов 
+- Server works in stdio mode for IDE integration
+- Configurations are automatically updated when running `setup_ide_configs.py`
+- Logs are saved in `logs/` folder
+- Server supports hot reload when files change 
