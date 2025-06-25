@@ -244,7 +244,8 @@ def parse_arguments():
     # --- Plotting Options Group ---
     plotting_group = parser.add_argument_group('Plotting Options')
     plotting_group.add_argument(
-        '-d',
+        '-d', '--draw',
+        dest='draw',
         choices=['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb', 'term'],
         default='fastest',
         help="Plot method: fastest, fast, plotly, mplfinance, seaborn, term"
