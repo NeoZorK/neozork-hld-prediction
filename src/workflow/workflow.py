@@ -20,10 +20,21 @@ from src.cli.cli_show_mode import handle_show_mode
 from ..export.parquet_export import export_indicator_to_parquet
 from ..export.csv_export import export_indicator_to_csv
 from ..export.json_export import export_indicator_to_json
-from src.calculation.universal_trading_metrics import display_universal_trading_metrics
+# from src.calculation.universal_trading_metrics import display_universal_trading_metrics
 
-# Definition of the run_indicator_workflow function
+try:
+    from src.calculation.universal_trading_metrics import display_universal_trading_metrics
+    print('DEBUG: universal_trading_metrics import successful')
+except Exception as e:
+    print(f'DEBUG: universal_trading_metrics import failed: {e}')
+    import traceback
+    print(f'DEBUG: traceback: {traceback.format_exc()}')
+    display_universal_trading_metrics = None
+
+print('DEBUG: before run_indicator_workflow def')
 def run_indicator_workflow(args):
+    print('DEBUG: inside run_indicator_workflow function')
+    print('DEBUG: run_indicator_workflow called')
     """
     Orchestrates the main steps by calling functions from specific step modules.
     Data saving is now handled within acquire_data.
@@ -91,6 +102,7 @@ def run_indicator_workflow(args):
             }
     
     t_start_workflow = time.perf_counter()
+    print('DEBUG: after t_start_workflow')
     # Initialize results dictionary with defaults
     workflow_results = {
         "success": False, "data_fetch_duration": 0,
@@ -102,35 +114,42 @@ def run_indicator_workflow(args):
         "data_metrics": {},
         "steps_duration": {}
     }
-    
+    print('DEBUG: after workflow_results init')
     # For show mode, set success=True by default to avoid errors
     if hasattr(args, 'mode') and args.mode == 'show':
         workflow_results["success"] = True
     result_df = None # Initialize result_df
+    print('DEBUG: after result_df init')
 
     try:
+        print('DEBUG: before acquire_data')
         # --- Step 1: Acquire Data (Handles Caching Internally) ---
         t_acq_start = time.perf_counter()
         data_info = acquire_data(args)
         t_acq_end = time.perf_counter()
+        print('DEBUG: after acquire_data')
         workflow_results.update(data_info) # Merge all info from acquire_data
         workflow_results["data_fetch_duration"] = t_acq_end - t_acq_start
         workflow_results["steps_duration"]["acquire"] = workflow_results["data_fetch_duration"]
 
         ohlcv_df = data_info.get("ohlcv_df") # Get DataFrame
+        print('DEBUG: after ohlcv_df assignment')
 
         # --- Critical Check ---
         if ohlcv_df is None or ohlcv_df.empty:
-            # *** FIX: Improved fallback error message ***
+            print('DEBUG: ohlcv_df is None or empty, raising ValueError')
             error_msg_from_data = data_info.get("error_message") or "Data acquisition returned None or empty DataFrame."
             raise ValueError(error_msg_from_data)
 
         # Validate that ohlcv_df has a DatetimeIndex
         if not isinstance(ohlcv_df.index, pd.DatetimeIndex):
+            print('DEBUG: ohlcv_df index is not DatetimeIndex, raising ValueError')
             raise ValueError("The DataFrame does not have a valid DatetimeIndex. Ensure the datetime column is correctly parsed.")
+        print('DEBUG: after DatetimeIndex check')
 
         # Log DataFrame Metrics (info now comes from data_info)
         logger.print_debug(f"DataFrame Metrics: Rows={data_info.get('rows_count', 0)}, Cols={data_info.get('columns_count', 0)}, Memory={data_info.get('data_size_mb', 0):.3f} MB")
+        print('DEBUG: after logger.print_debug')
 
 
         # --- Step 2: Get Point Size ---
@@ -142,6 +161,7 @@ def run_indicator_workflow(args):
         workflow_results["point_size"] = point_size
         workflow_results["estimated_point"] = estimated_point
         workflow_results["steps_duration"]["point_size"] = t_point_end - t_point_start
+        print('DEBUG: after get_point_size')
 
 
         # --- Step 3: Calculate Indicator ---
@@ -153,9 +173,15 @@ def run_indicator_workflow(args):
         workflow_results["selected_rule"] = selected_rule
         workflow_results["calc_duration"] = t_calc_end - t_calc_start
         workflow_results["steps_duration"]["calculate"] = workflow_results["calc_duration"]
+        print('DEBUG: after calculate_indicator')
 
         if result_df is None or result_df.empty:
             logger.print_warning("Indicator calculation returned empty results.")
+
+        print('DEBUG: after empty result_df check')
+        print(f"DEBUG: result_df is None: {result_df is None}")
+        print(f"DEBUG: result_df is empty: {result_df.empty if result_df is not None else 'N/A'}")
+        print(f"DEBUG: About to enter universal trading metrics block")
 
         # --- Step 3b: Display Universal Trading Metrics ---
         # Use args.lot_size, args.risk_reward_ratio, args.fee_per_trade if present, else defaults
@@ -164,7 +190,14 @@ def run_indicator_workflow(args):
         fee_per_trade = getattr(args, 'fee_per_trade', 0.07)
         
         logger.print_info("--- Step 3b: Displaying Universal Trading Metrics ---")
+        print("DEBUG: About to call universal trading metrics")
+        print(f"DEBUG: result_df shape: {result_df.shape if result_df is not None else 'None'}")
+        print(f"DEBUG: selected_rule: {selected_rule}")
+        print(f"DEBUG: lot_size: {lot_size}, risk_reward_ratio: {risk_reward_ratio}, fee_per_trade: {fee_per_trade}")
+        
         try:
+            print('DEBUG: before display_universal_trading_metrics call')
+            print("DEBUG: Calling display_universal_trading_metrics...")
             display_universal_trading_metrics(
                 result_df,
                 selected_rule,
@@ -172,11 +205,14 @@ def run_indicator_workflow(args):
                 risk_reward_ratio=risk_reward_ratio,
                 fee_per_trade=fee_per_trade
             )
+            print("DEBUG: display_universal_trading_metrics completed successfully")
             logger.print_success("Universal trading metrics displayed successfully")
         except Exception as e:
+            print(f"DEBUG: Exception in universal trading metrics: {e}")
             logger.print_error(f"Error displaying universal trading metrics: {e}")
             import traceback
             logger.print_error(f"Traceback: {traceback.format_exc()}")
+        print('DEBUG: after universal trading metrics block')
 
         # --- Step 4: Generate Plot ---
         logger.print_info("--- Step 4: Generating Plot ---")
@@ -186,6 +222,7 @@ def run_indicator_workflow(args):
         t_plot_end = time.perf_counter()
         workflow_results["plot_duration"] = t_plot_end - t_plot_start
         workflow_results["steps_duration"]["plot"] = workflow_results["plot_duration"]
+        print('DEBUG: after generate_plot')
 
         # --- Step 5: Export Indicator Data (if requested) ---
         export_results = {}
@@ -230,8 +267,10 @@ def run_indicator_workflow(args):
 
         workflow_results["success"] = True
         logger.print_success("Workflow completed successfully.")
+        print('DEBUG: end of try block')
 
     except Exception as e:
+        print(f'DEBUG: Exception in main try: {e}')
         t_except = time.perf_counter() # Time of exception
         # Try to capture duration of step that failed
         if 't_plot_start' in locals() and 'plot' not in workflow_results['steps_duration']:
@@ -257,6 +296,6 @@ def run_indicator_workflow(args):
 
     # Add overall duration to results
     workflow_results["total_duration_sec"] = time.perf_counter() - t_start_workflow
-
+    print('DEBUG: before return workflow_results')
     return workflow_results
 
