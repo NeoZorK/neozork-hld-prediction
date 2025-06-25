@@ -42,100 +42,63 @@ class DockerMCPServerChecker:
     def check_server_running(self) -> bool:
         """Check if MCP server is running inside Docker container"""
         try:
-            # Method 1: Check PID file (primary method)
-            pid_file = Path("/tmp/mcp_server.pid")
-            if pid_file.exists():
-                try:
-                    with open(pid_file, 'r') as f:
-                        pid = int(f.read().strip())
-                    
-                    # Check if process is still running
-                    if self._is_process_running(pid):
-                        self.logger.info(f"MCP server is running with PID: {pid}")
-                        return True
-                    else:
-                        self.logger.warning(f"PID file exists but process {pid} is not running")
-                        # Clean up stale PID file
-                        pid_file.unlink(missing_ok=True)
-                        return False
-                except (ValueError, FileNotFoundError) as e:
-                    self.logger.error(f"Error reading PID file: {e}")
-                    return False
-            else:
-                self.logger.info("MCP server PID file not found")
-            
-            # Method 2: Check with ps aux | grep (fallback method)
-            return self._check_server_with_ps()
+            # Docker-specific method: send ping request to MCP server
+            # MCP server runs on-demand and shuts down after requests
+            return self._test_mcp_ping_request()
                 
         except Exception as e:
             self.logger.error(f"Error checking server status in Docker: {e}")
             return False
 
-    def _check_server_with_ps(self) -> bool:
-        """Check if MCP server is running using Docker-safe universal method"""
-        pid = self._find_mcp_server_pid()
-        if pid:
-            self.logger.info(f"Found MCP server process with PID: {pid} via universal Docker-safe method")
-            return True
-        self.logger.info("No MCP server process found via universal Docker-safe method")
-        return False
-
-    def _find_mcp_server_pid(self) -> Optional[int]:
-        """Find MCP server PID using /proc, pgrep, or pidof (Docker-safe)"""
-        # 1. Try /proc
-        proc_dir = Path("/proc")
-        if proc_dir.exists():
-            for proc in proc_dir.iterdir():
-                if not proc.is_dir() or not proc.name.isdigit():
-                    continue
+    def _test_mcp_ping_request(self) -> bool:
+        """Test MCP server by sending ping request via echo command"""
+        try:
+            self.logger.info("Testing MCP server with ping request...")
+            
+            # Create ping request JSON
+            ping_request = '{"method": "neozork/ping", "id": 1, "params": {}}'
+            
+            # Send request to MCP server via echo command
+            cmd = f'echo \'{ping_request}\' | python3 neozork_mcp_server.py'
+            
+            # Run command with timeout
+            result = subprocess.run(
+                cmd,
+                shell=True,
+                capture_output=True,
+                text=True,
+                timeout=10,
+                cwd=self.project_root
+            )
+            
+            # Check if we got a valid JSON response
+            if result.returncode == 0 and result.stdout.strip():
                 try:
-                    cmdline_file = proc / "cmdline"
-                    if cmdline_file.exists():
-                        with open(cmdline_file, 'rb') as f:
-                            cmdline = f.read().replace(b'\x00', b' ')
-                            if b'neozork_mcp_server.py' in cmdline:
-                                return int(proc.name)
-                except Exception:
-                    continue
-        
-        # 2. Try pgrep
-        try:
-            result = subprocess.run(['pgrep', '-f', 'neozork_mcp_server.py'], capture_output=True, text=True, timeout=2)
-            if result.returncode == 0:
-                pids = [int(pid) for pid in result.stdout.strip().split('\n') if pid.strip().isdigit()]
-                if pids:
-                    return pids[0]
-        except Exception:
-            pass
-        
-        # 3. Try pidof (available in your Docker container)
-        try:
-            result = subprocess.run(['pidof', 'python3'], capture_output=True, text=True, timeout=2)
-            if result.returncode == 0:
-                pids = [int(pid) for pid in result.stdout.strip().split() if pid.strip().isdigit()]
-                # Check each python3 process for neozork_mcp_server.py
-                for pid in pids:
-                    try:
-                        cmdline_file = proc_dir / str(pid) / "cmdline"
-                        if cmdline_file.exists():
-                            with open(cmdline_file, 'rb') as f:
-                                cmdline = f.read().replace(b'\x00', b' ')
-                                if b'neozork_mcp_server.py' in cmdline:
-                                    return pid
-                    except Exception:
-                        continue
-        except Exception:
-            pass
-        
-        return None
-
-    def _is_process_running(self, pid: int) -> bool:
-        """Check if process with given PID is running"""
-        try:
-            # Use kill -0 to check if process exists
-            os.kill(pid, 0)
-            return True
-        except OSError:
+                    response = json.loads(result.stdout.strip())
+                    # Check if response contains expected ping response structure
+                    if (response.get("jsonrpc") == "2.0" and 
+                        response.get("id") == 1 and 
+                        response.get("result", {}).get("pong") is True):
+                        self.logger.info("MCP server responded to ping request successfully")
+                        return True
+                    else:
+                        self.logger.warning(f"Unexpected ping response format: {response}")
+                        return False
+                except json.JSONDecodeError as e:
+                    self.logger.warning(f"Invalid JSON response from MCP server: {e}")
+                    self.logger.debug(f"Raw response: {result.stdout}")
+                    return False
+            else:
+                self.logger.info("MCP server did not respond to ping request")
+                if result.stderr:
+                    self.logger.debug(f"Stderr: {result.stderr}")
+                return False
+                
+        except subprocess.TimeoutExpired:
+            self.logger.warning("MCP server ping request timed out")
+            return False
+        except Exception as e:
+            self.logger.error(f"Error testing MCP ping request: {e}")
             return False
 
     def test_connection(self) -> Dict[str, Any]:
@@ -143,96 +106,21 @@ class DockerMCPServerChecker:
         try:
             self.logger.info("Testing MCP server connection in Docker...")
             
-            # Check if server is running using both methods
-            server_running = self.check_server_running()
+            # Test MCP server by sending ping request
+            server_responding = self._test_mcp_ping_request()
             
-            if server_running:
-                # Try to connect to the server via HTTP/JSON-RPC
-                # MCP server typically runs on localhost with a specific port
-                return self._test_mcp_protocol_connection()
+            if server_responding:
+                return {
+                    "status": "success",
+                    "message": "MCP server is responding to ping requests",
+                    "test_method": "ping_request",
+                    "response_time": "immediate"
+                }
             else:
-                return {"status": "failed", "error": "Server not running"}
+                return {"status": "failed", "error": "Server not responding to ping requests"}
             
         except Exception as e:
             self.logger.error(f"Error testing connection in Docker: {e}")
-            return {"status": "failed", "error": str(e)}
-
-    def _test_mcp_protocol_connection(self) -> Dict[str, Any]:
-        """Test MCP protocol connection"""
-        try:
-            # Check if MCP server log file exists and has recent activity
-            log_file = self.project_root / "logs" / "mcp_server.log"
-            if log_file.exists():
-                # Check if log file was modified recently (within last 30 seconds)
-                mtime = log_file.stat().st_mtime
-                if time.time() - mtime < 30:
-                    # Read last few lines to check for errors
-                    with open(log_file, 'r') as f:
-                        lines = f.readlines()
-                        if lines:
-                            last_line = lines[-1].strip()
-                            if "error" in last_line.lower() or "exception" in last_line.lower():
-                                return {"status": "failed", "error": f"Server error in logs: {last_line}"}
-                            else:
-                                return {
-                                    "status": "success",
-                                    "message": "Server is running (confirmed via logs)",
-                                    "log_file": str(log_file),
-                                    "last_activity": time.ctime(mtime)
-                                }
-            
-            # If no log file or no recent activity, try to ping the server
-            return self._ping_mcp_server()
-            
-        except Exception as e:
-            self.logger.error(f"Error testing MCP protocol: {e}")
-            return {"status": "failed", "error": str(e)}
-
-    def _ping_mcp_server(self) -> Dict[str, Any]:
-        """Ping MCP server to check if it's responsive"""
-        try:
-            # Try to send a simple ping request to the MCP server
-            # This is a basic test - in a real implementation, you might want to
-            # send actual MCP protocol messages
-            
-            # For now, we'll just check if the process is responsive
-            pid_file = Path("/tmp/mcp_server.pid")
-            if pid_file.exists():
-                with open(pid_file, 'r') as f:
-                    pid = int(f.read().strip())
-                
-                if self._is_process_running(pid):
-                    return {
-                        "status": "success",
-                        "message": "Server process is running and responsive",
-                        "pid": pid,
-                        "detection_method": "pid_file"
-                    }
-                else:
-                    return {"status": "failed", "error": "Server process is not responsive"}
-            else:
-                # Fallback to alternative detection methods
-                if self._check_server_with_ps():
-                    # Try to get PID from /proc
-                    pid = self._find_mcp_server_pid()
-                    if pid:
-                        return {
-                            "status": "success",
-                            "message": "Server process is running (confirmed via /proc)",
-                            "pid": pid,
-                            "detection_method": "proc_filesystem"
-                        }
-                    else:
-                        return {
-                            "status": "success",
-                            "message": "Server process is running (confirmed via alternative detection)",
-                            "detection_method": "alternative"
-                        }
-                else:
-                    return {"status": "failed", "error": "No PID file found and no process detected"}
-                
-        except Exception as e:
-            self.logger.error(f"Error pinging MCP server: {e}")
             return {"status": "failed", "error": str(e)}
 
     def check_ide_configurations(self) -> Dict[str, Any]:
@@ -325,34 +213,16 @@ class DockerMCPServerChecker:
             "PYTHONUNBUFFERED": os.environ.get("PYTHONUNBUFFERED", "not_set")
         }
         
-        # Check if PID file exists
-        pid_file = Path("/tmp/mcp_server.pid")
-        docker_info["pid_file_exists"] = pid_file.exists()
+        # Test MCP server with ping request
+        docker_info["mcp_server_responding"] = self._test_mcp_ping_request()
+        docker_info["test_method"] = "ping_request"
         
-        if pid_file.exists():
-            try:
-                with open(pid_file, 'r') as f:
-                    pid = int(f.read().strip())
-                docker_info["pid"] = pid
-                docker_info["process_running"] = self._is_process_running(pid)
-                docker_info["detection_method"] = "pid_file"
-            except Exception as e:
-                docker_info["pid_error"] = str(e)
-        else:
-            # Check if server is running via alternative methods
-            if self._check_server_with_ps():
-                # Try to get PID from /proc
-                pid = self._find_mcp_server_pid()
-                if pid:
-                    docker_info["pid"] = pid
-                    docker_info["detection_method"] = "proc_filesystem"
-                    docker_info["process_running"] = True
-                else:
-                    docker_info["detection_method"] = "alternative"
-                    docker_info["process_running"] = True
-            else:
-                docker_info["detection_method"] = "none"
-                docker_info["process_running"] = False
+        # Check if MCP server file exists
+        mcp_server_file = self.project_root / "neozork_mcp_server.py"
+        docker_info["mcp_server_file_exists"] = mcp_server_file.exists()
+        if mcp_server_file.exists():
+            docker_info["mcp_server_file_size"] = mcp_server_file.stat().st_size
+            docker_info["mcp_server_file_modified"] = time.ctime(mcp_server_file.stat().st_mtime)
         
         # Check log file
         log_file = self.project_root / "logs" / "mcp_server.log"
@@ -668,6 +538,10 @@ def main():
     connection = results["connection_test"]
     if connection.get("status") == "success":
         print("   ✅ Connection successful")
+        if "test_method" in connection:
+            print(f"   🔍 Test method: {connection['test_method']}")
+        if "response_time" in connection:
+            print(f"   ⏱️  Response time: {connection['response_time']}")
         if "pids" in connection:
             pids = connection["pids"]
             print(f"   👥 PIDs: {', '.join(pids)}")
@@ -696,25 +570,22 @@ def main():
         print(f"\n🐳 Docker Information:")
         docker_info = results["docker_specific"]
         print(f"   📦 In Docker: {docker_info.get('in_docker', 'Unknown')}")
-        print(f"   📄 PID file: {docker_info.get('pid_file_exists', False)}")
-        if docker_info.get('pid'):
-            print(f"   🔢 PID: {docker_info['pid']}")
-            print(f"   🟢 Process running: {docker_info.get('process_running', False)}")
-        if docker_info.get('detection_method'):
-            detection_method = docker_info.get('detection_method', 'unknown')
-            if detection_method == 'pid_file':
-                print(f"   🔍 Detection: PID file")
-            elif detection_method == 'proc_filesystem':
-                print(f"   🔍 Detection: /proc filesystem")
-            elif detection_method == 'alternative':
-                print(f"   🔍 Detection: Alternative methods")
-            elif detection_method == 'none':
-                print(f"   🔍 Detection: Not found")
-            else:
-                print(f"   🔍 Detection: {detection_method}")
+        print(f"   🔄 MCP Server responding: {docker_info.get('mcp_server_responding', False)}")
+        print(f"   🔍 Test method: {docker_info.get('test_method', 'unknown')}")
+        
+        # MCP server file info
+        if docker_info.get('mcp_server_file_exists'):
+            print(f"   📄 MCP server file: {docker_info.get('mcp_server_file_size', 0)} bytes")
+            print(f"   🕒 File modified: {docker_info.get('mcp_server_file_modified', 'Unknown')}")
+        else:
+            print(f"   ❌ MCP server file: Not found")
+        
+        # Log file info
         if docker_info.get('log_file_exists'):
             print(f"   📝 Log file: {docker_info.get('log_file_size', 0)} bytes")
-            print(f"   🕒 Last modified: {docker_info.get('log_file_modified', 'Unknown')}")
+            print(f"   🕒 Log modified: {docker_info.get('log_file_modified', 'Unknown')}")
+        else:
+            print(f"   ❌ Log file: Not found")
     
     # Recommendations
     if results["recommendations"]:
@@ -738,13 +609,4 @@ def main():
         return 1
 
 if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--debug-detect', action='store_true', help='Debug: print detected MCP server PID in Docker')
-    args = parser.parse_args()
-    if args.debug_detect:
-        checker = DockerMCPServerChecker()
-        pid = checker._find_mcp_server_pid()
-        print(f"[DEBUG] Detected MCP server PID: {pid}")
-        sys.exit(0 if pid else 1)
     sys.exit(main()) 
