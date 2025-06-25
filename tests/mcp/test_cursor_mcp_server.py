@@ -20,10 +20,10 @@ import logging
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from cursor_mcp_server import CursorMCPServer, CompletionItem, CompletionItemKind, ProjectFile, FinancialData
+from neozork_mcp_server import NeozorkMCPServer, CompletionItem, CompletionItemKind, ProjectFile, FinancialData
 
-class TestCursorMCPServer:
-    """Test Cursor MCP Server functionality"""
+class TestNeozorkMCPServer:
+    """Test Neozork Unified MCP Server functionality"""
     
     @pytest.fixture
     def temp_project(self):
@@ -48,10 +48,29 @@ class FinancialAnalyzer:
     \"\"\"Financial data analyzer\"\"\"
     def __init__(self):
         pass
+
+def backtest_strategy(data, strategy_params):
+    \"\"\"Backtest trading strategy\"\"\"
+    return {"returns": 0.15, "sharpe": 1.2}
 """)
         
         # Create sample financial data
         (project_path / "data" / "GBPUSD_MN1.csv").write_text("time,open,close\n2023-01-01,100,101")
+        (project_path / "data" / "EURUSD_H1.csv").write_text("time,open,close\n2023-01-01,1.1000,1.1001")
+        
+        # Create sample config
+        config = {
+            "server_mode": "unified",
+            "server_name": "Test Neozork MCP Server",
+            "version": "2.0.0",
+            "features": {
+                "financial_data": True,
+                "technical_indicators": True,
+                "github_copilot": True
+            }
+        }
+        
+        (project_path / "neozork_mcp_config.json").write_text(json.dumps(config, indent=2))
         
         yield project_path
         
@@ -61,8 +80,7 @@ class FinancialAnalyzer:
     @pytest.fixture
     def server(self, temp_project):
         """Create server instance"""
-        # Create server with custom project root
-        server = CursorMCPServer(project_root=temp_project)
+        server = NeozorkMCPServer(project_root=temp_project)
         yield server
     
     def test_initialization(self, server):
@@ -99,7 +117,8 @@ class FinancialAnalyzer:
         assert "protocolVersion" in result
         assert "capabilities" in result
         assert "serverInfo" in result
-        assert result["serverInfo"]["name"] == "Cursor MCP Server"
+        assert result["serverInfo"]["name"] == "Test Neozork MCP Server"
+        assert result["serverInfo"]["version"] == "2.0.0"
     
     def test_handle_completion(self, server):
         """Test completion handler"""
@@ -345,16 +364,34 @@ class TestErrorHandling:
         os.chmod(project_path / "inaccessible", 0o755)
         shutil.rmtree(temp_dir)
     
+    @pytest.fixture
+    def temp_project(self):
+        """Create temporary project directory"""
+        temp_dir = tempfile.mkdtemp()
+        project_path = Path(temp_dir)
+        
+        # Create project structure
+        (project_path / "src").mkdir()
+        (project_path / "data").mkdir()
+        
+        # Create sample Python file
+        (project_path / "src" / "main.py").write_text("print('Hello, World!')")
+        
+        yield project_path
+        
+        # Cleanup
+        shutil.rmtree(temp_dir)
+    
     def test_handles_invalid_python_files(self, temp_project_with_errors):
         """Test handling of invalid Python files"""
         # Should not crash and should log warnings
-        server = CursorMCPServer(project_root=temp_project_with_errors)
+        server = NeozorkMCPServer(project_root=temp_project_with_errors)
         assert server.project_root is not None
         assert server.logger is not None
     
     def test_handles_missing_files(self, temp_project):
         """Test handling of missing files"""
-        server = CursorMCPServer(project_root=temp_project)
+        server = NeozorkMCPServer(project_root=temp_project)
         
         # Test with non-existent file
         result = server._handle_definition(1, {"textDocument": {"uri": "file://nonexistent.py"}})
@@ -363,6 +400,26 @@ class TestErrorHandling:
 class TestPerformance:
     """Test performance aspects"""
     
+    @pytest.fixture
+    def temp_project(self):
+        """Create temporary project directory"""
+        temp_dir = tempfile.mkdtemp()
+        project_path = Path(temp_dir)
+        
+        # Create project structure
+        (project_path / "src").mkdir()
+        
+        yield project_path
+        
+        # Cleanup
+        shutil.rmtree(temp_dir)
+    
+    @pytest.fixture
+    def server(self, temp_project):
+        """Create server instance"""
+        server = NeozorkMCPServer(project_root=temp_project)
+        yield server
+    
     def test_large_project_scanning(self, temp_project):
         """Test scanning large project"""
         # Create many files
@@ -370,7 +427,7 @@ class TestPerformance:
             (temp_project / "src" / f"file_{i}.py").write_text(f"def func_{i}(): pass")
         
         start_time = time.time()
-        server = CursorMCPServer(project_root=temp_project)
+        server = NeozorkMCPServer(project_root=temp_project)
         end_time = time.time()
         
         # Should complete within reasonable time
@@ -386,6 +443,57 @@ class TestPerformance:
         # Should respond quickly
         assert end_time - start_time < 1  # 1 second max
         assert "items" in result
+
+class TestConfiguration:
+    """Test configuration handling"""
+    
+    @pytest.fixture
+    def temp_project(self):
+        """Create temporary project directory"""
+        temp_dir = tempfile.mkdtemp()
+        project_path = Path(temp_dir)
+        
+        # Create project structure
+        (project_path / "src").mkdir()
+        
+        yield project_path
+        
+        # Cleanup
+        shutil.rmtree(temp_dir)
+    
+    def test_default_config(self):
+        """Test default configuration when no config file exists"""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            server = NeozorkMCPServer(project_root=temp_path)
+            
+            # Should have default config
+            assert server.config is not None
+            assert "server_mode" in server.config
+            assert "features" in server.config
+    
+    def test_custom_config(self, temp_project):
+        """Test custom configuration loading"""
+        # Modify config
+        config = {
+            "server_mode": "custom",
+            "server_name": "Custom Test Server",
+            "version": "1.0.0",
+            "features": {
+                "financial_data": False,
+                "technical_indicators": True
+            }
+        }
+        
+        config_file = temp_project / "custom_config.json"
+        with open(config_file, 'w', encoding='utf-8') as f:
+            json.dump(config, f, indent=2)
+        
+        server = NeozorkMCPServer(project_root=temp_project, config=config)
+        
+        assert server.config["server_mode"] == "custom"
+        assert server.config["server_name"] == "Custom Test Server"
+        assert server.config["features"]["financial_data"] is False
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"]) 
