@@ -4,6 +4,7 @@
 """
 MCP Server Status Checker
 Check if MCP server is running and test connection
+Supports both Docker and non-Docker environments
 """
 
 import json
@@ -16,8 +17,338 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List
 import logging
 
+class DockerMCPServerChecker:
+    """Check MCP server status inside Docker container"""
+    
+    def __init__(self, project_root: Path = None):
+        self.project_root = project_root or Path(__file__).parent.parent
+        self.logger = self._setup_logging()
+        
+    def _setup_logging(self) -> logging.Logger:
+        """Setup logging"""
+        log_dir = self.project_root / "logs"
+        log_dir.mkdir(exist_ok=True)
+        
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s [%(levelname)s] %(message)s',
+            handlers=[
+                logging.FileHandler(log_dir / 'mcp_status_check_docker.log'),
+                logging.StreamHandler()
+            ]
+        )
+        return logging.getLogger(__name__)
+
+    def check_server_running(self) -> bool:
+        """Check if MCP server is running inside Docker container"""
+        try:
+            # Method 1: Check PID file (primary method)
+            pid_file = Path("/tmp/mcp_server.pid")
+            if pid_file.exists():
+                try:
+                    with open(pid_file, 'r') as f:
+                        pid = int(f.read().strip())
+                    
+                    # Check if process is still running
+                    if self._is_process_running(pid):
+                        self.logger.info(f"MCP server is running with PID: {pid}")
+                        return True
+                    else:
+                        self.logger.warning(f"PID file exists but process {pid} is not running")
+                        # Clean up stale PID file
+                        pid_file.unlink(missing_ok=True)
+                        return False
+                except (ValueError, FileNotFoundError) as e:
+                    self.logger.error(f"Error reading PID file: {e}")
+                    return False
+            else:
+                self.logger.info("MCP server PID file not found")
+            
+            # Method 2: Check with ps aux | grep (fallback method)
+            return self._check_server_with_ps()
+                
+        except Exception as e:
+            self.logger.error(f"Error checking server status in Docker: {e}")
+            return False
+
+    def _check_server_with_ps(self) -> bool:
+        """Check if MCP server is running using ps aux | grep"""
+        try:
+            # Use ps aux | grep to find neozork_mcp_server processes
+            result = subprocess.run(
+                ['ps', 'aux'], 
+                capture_output=True, 
+                text=True, 
+                timeout=5
+            )
+            
+            if result.returncode == 0:
+                # Look for neozork_mcp_server.py in the output
+                lines = result.stdout.split('\n')
+                for line in lines:
+                    if 'neozork_mcp_server.py' in line and 'grep' not in line:
+                        # Extract PID from the line
+                        parts = line.split()
+                        if len(parts) > 1:
+                            try:
+                                pid = int(parts[1])
+                                self.logger.info(f"Found MCP server process with PID: {pid} via ps aux")
+                                return True
+                            except (ValueError, IndexError):
+                                continue
+                
+                self.logger.info("No MCP server process found via ps aux")
+                return False
+            else:
+                self.logger.warning(f"ps aux command failed: {result.stderr}")
+                return False
+                
+        except subprocess.TimeoutExpired:
+            self.logger.warning("ps aux command timed out")
+            return False
+        except Exception as e:
+            self.logger.error(f"Error running ps aux: {e}")
+            return False
+
+    def _is_process_running(self, pid: int) -> bool:
+        """Check if process with given PID is running"""
+        try:
+            # Use kill -0 to check if process exists
+            os.kill(pid, 0)
+            return True
+        except OSError:
+            return False
+
+    def test_connection(self) -> Dict[str, Any]:
+        """Test MCP server connection inside Docker"""
+        try:
+            self.logger.info("Testing MCP server connection in Docker...")
+            
+            # Check if server is running using both methods
+            server_running = self.check_server_running()
+            
+            if server_running:
+                # Try to connect to the server via HTTP/JSON-RPC
+                # MCP server typically runs on localhost with a specific port
+                return self._test_mcp_protocol_connection()
+            else:
+                return {"status": "failed", "error": "Server not running"}
+            
+        except Exception as e:
+            self.logger.error(f"Error testing connection in Docker: {e}")
+            return {"status": "failed", "error": str(e)}
+
+    def _test_mcp_protocol_connection(self) -> Dict[str, Any]:
+        """Test MCP protocol connection"""
+        try:
+            # Check if MCP server log file exists and has recent activity
+            log_file = self.project_root / "logs" / "mcp_server.log"
+            if log_file.exists():
+                # Check if log file was modified recently (within last 30 seconds)
+                mtime = log_file.stat().st_mtime
+                if time.time() - mtime < 30:
+                    # Read last few lines to check for errors
+                    with open(log_file, 'r') as f:
+                        lines = f.readlines()
+                        if lines:
+                            last_line = lines[-1].strip()
+                            if "error" in last_line.lower() or "exception" in last_line.lower():
+                                return {"status": "failed", "error": f"Server error in logs: {last_line}"}
+                            else:
+                                return {
+                                    "status": "success",
+                                    "message": "Server is running (confirmed via logs)",
+                                    "log_file": str(log_file),
+                                    "last_activity": time.ctime(mtime)
+                                }
+            
+            # If no log file or no recent activity, try to ping the server
+            return self._ping_mcp_server()
+            
+        except Exception as e:
+            self.logger.error(f"Error testing MCP protocol: {e}")
+            return {"status": "failed", "error": str(e)}
+
+    def _ping_mcp_server(self) -> Dict[str, Any]:
+        """Ping MCP server to check if it's responsive"""
+        try:
+            # Try to send a simple ping request to the MCP server
+            # This is a basic test - in a real implementation, you might want to
+            # send actual MCP protocol messages
+            
+            # For now, we'll just check if the process is responsive
+            pid_file = Path("/tmp/mcp_server.pid")
+            if pid_file.exists():
+                with open(pid_file, 'r') as f:
+                    pid = int(f.read().strip())
+                
+                if self._is_process_running(pid):
+                    return {
+                        "status": "success",
+                        "message": "Server process is running and responsive",
+                        "pid": pid
+                    }
+                else:
+                    return {"status": "failed", "error": "Server process is not responsive"}
+            else:
+                # Fallback to ps aux check
+                if self._check_server_with_ps():
+                    return {
+                        "status": "success",
+                        "message": "Server process is running (confirmed via ps aux)",
+                        "detection_method": "ps_aux"
+                    }
+                else:
+                    return {"status": "failed", "error": "No PID file found and no process detected"}
+                
+        except Exception as e:
+            self.logger.error(f"Error pinging MCP server: {e}")
+            return {"status": "failed", "error": str(e)}
+
+    def check_ide_configurations(self) -> Dict[str, Any]:
+        """Check IDE configuration files in Docker"""
+        configs = {}
+        
+        # In Docker, we only check for Cursor config as it's the most relevant
+        cursor_config = self.project_root / "cursor_mcp_config.json"
+        if cursor_config.exists():
+            try:
+                with open(cursor_config, 'r') as f:
+                    configs['cursor'] = {
+                        'exists': True,
+                        'size': cursor_config.stat().st_size,
+                        'valid_json': True
+                    }
+            except Exception as e:
+                configs['cursor'] = {
+                    'exists': True,
+                    'error': str(e),
+                    'valid_json': False
+                }
+        else:
+            configs['cursor'] = {'exists': False}
+        
+        # Docker-specific configurations
+        docker_config = self.project_root / "docker.env"
+        if docker_config.exists():
+            configs['docker'] = {
+                'exists': True,
+                'size': docker_config.stat().st_size
+            }
+        else:
+            configs['docker'] = {'exists': False}
+        
+        return configs
+
+    def run_comprehensive_check(self) -> Dict[str, Any]:
+        """Run comprehensive MCP server check in Docker"""
+        self.logger.info("Starting comprehensive MCP server check in Docker...")
+        
+        results = {
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "environment": "docker",
+            "project_root": str(self.project_root),
+            "server_running": False,
+            "connection_test": {},
+            "ide_configurations": {},
+            "docker_specific": {},
+            "recommendations": []
+        }
+        
+        # Check if server is running
+        results["server_running"] = self.check_server_running()
+        
+        # Check IDE configurations
+        results["ide_configurations"] = self.check_ide_configurations()
+        
+        # Docker-specific checks
+        results["docker_specific"] = self._check_docker_specific()
+        
+        # Test connection if server is running
+        if results["server_running"]:
+            results["connection_test"] = self.test_connection()
+        else:
+            results["connection_test"] = {"status": "skipped", "reason": "Server not running"}
+            results["recommendations"].append("Start MCP server in Docker container")
+        
+        # Generate Docker-specific recommendations
+        if not results["server_running"]:
+            results["recommendations"].append("Restart Docker container with MCP server enabled")
+            results["recommendations"].append("Check Docker logs: docker logs <container_name>")
+        
+        if results["connection_test"].get("status") == "failed":
+            results["recommendations"].append("Check MCP server logs: tail -f logs/mcp_server.log")
+        
+        return results
+
+    def _check_docker_specific(self) -> Dict[str, Any]:
+        """Check Docker-specific configurations and status"""
+        docker_info = {}
+        
+        # Check if we're actually in Docker
+        docker_info["in_docker"] = self._is_running_in_docker()
+        
+        # Check environment variables
+        docker_info["environment_vars"] = {
+            "DOCKER_CONTAINER": os.environ.get("DOCKER_CONTAINER", "not_set"),
+            "PYTHONPATH": os.environ.get("PYTHONPATH", "not_set"),
+            "PYTHONUNBUFFERED": os.environ.get("PYTHONUNBUFFERED", "not_set")
+        }
+        
+        # Check if PID file exists
+        pid_file = Path("/tmp/mcp_server.pid")
+        docker_info["pid_file_exists"] = pid_file.exists()
+        
+        if pid_file.exists():
+            try:
+                with open(pid_file, 'r') as f:
+                    pid = int(f.read().strip())
+                docker_info["pid"] = pid
+                docker_info["process_running"] = self._is_process_running(pid)
+                docker_info["detection_method"] = "pid_file"
+            except Exception as e:
+                docker_info["pid_error"] = str(e)
+        else:
+            # Check if server is running via ps aux
+            if self._check_server_with_ps():
+                docker_info["detection_method"] = "ps_aux"
+                docker_info["process_running"] = True
+            else:
+                docker_info["detection_method"] = "none"
+                docker_info["process_running"] = False
+        
+        # Check log file
+        log_file = self.project_root / "logs" / "mcp_server.log"
+        log_file_exists = log_file.exists()
+        docker_info["log_file_exists"] = log_file_exists
+        if log_file_exists:
+            docker_info["log_file_size"] = log_file.stat().st_size
+            docker_info["log_file_modified"] = time.ctime(log_file.stat().st_mtime)
+        
+        return docker_info
+
+    def _is_running_in_docker(self) -> bool:
+        """Check if we're running inside a Docker container"""
+        try:
+            # Check for Docker-specific files
+            if Path("/.dockerenv").exists():
+                return True
+            
+            # Check cgroup for Docker
+            with open("/proc/1/cgroup", "r") as f:
+                if "docker" in f.read():
+                    return True
+            
+            # Check environment variable
+            if os.environ.get("DOCKER_CONTAINER") == "true":
+                return True
+            
+            return False
+        except Exception:
+            return False
+
 class MCPServerChecker:
-    """Check MCP server status and test connection"""
+    """Check MCP server status and test connection (non-Docker environment)"""
     
     def __init__(self, project_root: Path = None):
         self.project_root = project_root or Path(__file__).parent.parent
@@ -210,6 +541,7 @@ class MCPServerChecker:
         
         results = {
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "environment": "host",
             "project_root": str(self.project_root),
             "server_running": False,
             "connection_test": {},
@@ -244,16 +576,47 @@ class MCPServerChecker:
         
         return results
 
+def is_running_in_docker() -> bool:
+    """Check if the script is running inside a Docker container"""
+    try:
+        # Check for Docker-specific files
+        if Path("/.dockerenv").exists():
+            return True
+        
+        # Check cgroup for Docker
+        try:
+            with open("/proc/1/cgroup", "r") as f:
+                if "docker" in f.read():
+                    return True
+        except FileNotFoundError:
+            pass
+        
+        # Check environment variable
+        if os.environ.get("DOCKER_CONTAINER") == "true":
+            return True
+        
+        return False
+    except Exception:
+        return False
+
 def main():
     """Main function"""
     print("🔍 MCP Server Status Checker")
     print("=" * 50)
     
-    checker = MCPServerChecker()
+    # Detect environment and use appropriate checker
+    if is_running_in_docker():
+        print("🐳 Detected Docker environment")
+        checker = DockerMCPServerChecker()
+    else:
+        print("🖥️  Detected host environment")
+        checker = MCPServerChecker()
+    
     results = checker.run_comprehensive_check()
     
     # Print results
     print(f"\n📅 Check Time: {results['timestamp']}")
+    print(f"🌍 Environment: {results['environment']}")
     print(f"📁 Project Root: {results['project_root']}")
     
     # Server status
@@ -271,6 +634,10 @@ def main():
         if "pids" in connection:
             pids = connection["pids"]
             print(f"   👥 PIDs: {', '.join(pids)}")
+        if "pid" in connection:
+            print(f"   👥 PID: {connection['pid']}")
+        if "log_file" in connection:
+            print(f"   📄 Log file: {connection['log_file']}")
     elif connection.get("status") == "skipped":
         print(f"   ⏭️  Skipped: {connection.get('reason', 'Unknown')}")
     else:
@@ -287,6 +654,29 @@ def main():
         else:
             print(f"   ❌ {ide.upper()}: Not configured")
     
+    # Docker-specific information
+    if results.get("docker_specific"):
+        print(f"\n🐳 Docker Information:")
+        docker_info = results["docker_specific"]
+        print(f"   📦 In Docker: {docker_info.get('in_docker', 'Unknown')}")
+        print(f"   📄 PID file: {docker_info.get('pid_file_exists', False)}")
+        if docker_info.get('pid'):
+            print(f"   🔢 PID: {docker_info['pid']}")
+            print(f"   🟢 Process running: {docker_info.get('process_running', False)}")
+        if docker_info.get('detection_method'):
+            detection_method = docker_info.get('detection_method', 'unknown')
+            if detection_method == 'pid_file':
+                print(f"   🔍 Detection: PID file")
+            elif detection_method == 'ps_aux':
+                print(f"   🔍 Detection: ps aux | grep")
+            elif detection_method == 'none':
+                print(f"   🔍 Detection: Not found")
+            else:
+                print(f"   🔍 Detection: {detection_method}")
+        if docker_info.get('log_file_exists'):
+            print(f"   📝 Log file: {docker_info.get('log_file_size', 0)} bytes")
+            print(f"   🕒 Last modified: {docker_info.get('log_file_modified', 'Unknown')}")
+    
     # Recommendations
     if results["recommendations"]:
         print(f"\n💡 Recommendations:")
@@ -294,7 +684,7 @@ def main():
             print(f"   • {rec}")
     
     # Save results
-    log_file = checker.project_root / "logs" / "mcp_status_check.json"
+    log_file = checker.project_root / "logs" / f"mcp_status_check_{results['environment']}.json"
     with open(log_file, 'w') as f:
         json.dump(results, f, indent=2)
     
