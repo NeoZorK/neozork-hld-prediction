@@ -180,9 +180,9 @@ class TestCLIIndicatorsEdgeCases:
                     parse_arguments()
                 
                 assert exc_info.value.code == 0
-                # Should handle empty category gracefully
+                # Empty string should find all indicators (empty string is contained in any name)
                 calls = mock_print.call_args_list
-                assert any("No indicators found in category" in str(call) for call in calls)
+                assert any("Search results for '' across all categories:" in str(call) for call in calls)
     
     def test_indicators_flag_special_characters(self):
         """Test --indicators flag with special characters in search."""
@@ -284,4 +284,30 @@ class TestCLIIndicatorsRealFunctionality:
                 output = '\n'.join([str(call) for call in calls])
                 assert "Search in category 'oscillators' for 'rsi':" in output
                 # Should find RSI indicator
-                assert "RSI" in output 
+                assert "RSI" in output
+
+
+def test_indicators_flag_single_indicator_name():
+    """Test --indicators flag with single indicator name (should search across all categories)."""
+    with patch('sys.argv', ['cli', '--indicators', 'cci']):
+        with patch('builtins.print') as mock_print:
+            with pytest.raises(SystemExit) as exc_info:
+                parse_arguments()
+                
+                # Verify that search was performed across all categories
+                calls = mock_print.call_args_list
+                assert any("Search results for 'cci' across all categories:" in str(call) for call in calls)
+                assert exc_info.value.code == 0
+
+
+def test_indicators_flag_single_indicator_name_not_found():
+    """Test --indicators flag with single indicator name that doesn't exist."""
+    with patch('sys.argv', ['cli', '--indicators', 'nonexistent']):
+        with patch('builtins.print') as mock_print:
+            with pytest.raises(SystemExit) as exc_info:
+                parse_arguments()
+                
+                # Verify that appropriate error message was shown
+                calls = mock_print.call_args_list
+                assert any("No indicators found matching: nonexistent" in str(call) for call in calls)
+                assert exc_info.value.code == 0 
