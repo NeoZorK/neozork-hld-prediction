@@ -162,13 +162,21 @@ def run_indicator_workflow(args):
         lot_size = getattr(args, 'lot_size', 1.0)
         risk_reward_ratio = getattr(args, 'risk_reward_ratio', 2.0)
         fee_per_trade = getattr(args, 'fee_per_trade', 0.07)
-        display_universal_trading_metrics(
-            result_df,
-            selected_rule,
-            lot_size=lot_size,
-            risk_reward_ratio=risk_reward_ratio,
-            fee_per_trade=fee_per_trade
-        )
+        
+        logger.print_info("--- Step 3b: Displaying Universal Trading Metrics ---")
+        try:
+            display_universal_trading_metrics(
+                result_df,
+                selected_rule,
+                lot_size=lot_size,
+                risk_reward_ratio=risk_reward_ratio,
+                fee_per_trade=fee_per_trade
+            )
+            logger.print_success("Universal trading metrics displayed successfully")
+        except Exception as e:
+            logger.print_error(f"Error displaying universal trading metrics: {e}")
+            import traceback
+            logger.print_error(f"Traceback: {traceback.format_exc()}")
 
         # --- Step 4: Generate Plot ---
         logger.print_info("--- Step 4: Generating Plot ---")
