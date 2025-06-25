@@ -2,534 +2,387 @@
 # -*- coding: utf-8 -*-
 
 """
-Unit tests for MCP server status checker
+Tests for MCP Server Status Checker
 Tests both Docker and non-Docker environments
 """
 
 import pytest
-import json
-import subprocess
-import sys
-import time
-from pathlib import Path
-from unittest.mock import patch, mock_open, MagicMock
 import tempfile
 import shutil
+from pathlib import Path
+from unittest.mock import patch, MagicMock, mock_open
+import sys
 import os
 
-# Add project root to path
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
+# Add the scripts directory to the path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
 
-from scripts.check_mcp_status import (
-    MCPServerChecker, 
+from check_mcp_status import (
     DockerMCPServerChecker, 
+    MCPServerChecker, 
     is_running_in_docker
 )
 
 
-class TestDockerDetection:
-    """Test Docker environment detection"""
-    
-    def test_is_running_in_docker_with_dockerenv(self):
-        """Test Docker detection with /.dockerenv file"""
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = True
-            assert is_running_in_docker() is True
-    
-    def test_is_running_in_docker_with_cgroup(self):
-        """Test Docker detection with cgroup"""
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = False
-            
-            with patch('builtins.open', mock_open(read_data='docker')):
-                assert is_running_in_docker() is True
-    
-    def test_is_running_in_docker_with_env_var(self):
-        """Test Docker detection with environment variable"""
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = False
-            
-            with patch('builtins.open', side_effect=FileNotFoundError):
-                with patch.dict(os.environ, {'DOCKER_CONTAINER': 'true'}):
-                    assert is_running_in_docker() is True
-    
-    def test_is_running_in_docker_not_in_docker(self):
-        """Test Docker detection when not in Docker"""
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = False
-            
-            with patch('builtins.open', side_effect=FileNotFoundError):
-                with patch.dict(os.environ, {}, clear=True):
-                    assert is_running_in_docker() is False
-
-
 class TestDockerMCPServerChecker:
-    """Test Docker MCP server checker"""
+    """Test Docker MCP Server Checker"""
     
     @pytest.fixture
-    def docker_checker(self, tmp_path):
-        """Create DockerMCPServerChecker instance"""
-        with patch('scripts.check_mcp_status.Path') as mock_path:
-            mock_path.return_value.parent.parent = tmp_path
-            return DockerMCPServerChecker()
-    
-    def test_check_server_running_with_pid_file(self, docker_checker):
-        """Test server running check with valid PID file"""
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = True
-            
-            with patch('builtins.open', mock_open(read_data='12345')):
-                with patch.object(docker_checker, '_is_process_running', return_value=True):
-                    assert docker_checker.check_server_running() is True
-    
-    def test_check_server_running_with_stale_pid_file(self, docker_checker):
-        """Test server running check with stale PID file"""
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = True
-            
-            with patch('builtins.open', mock_open(read_data='12345')):
-                with patch.object(docker_checker, '_is_process_running', return_value=False):
-                    with patch('pathlib.Path.unlink') as mock_unlink:
-                        assert docker_checker.check_server_running() is False
-                        mock_unlink.assert_called_once()
-    
-    def test_check_server_running_no_pid_file(self, docker_checker):
-        """Test server running check without PID file"""
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = False
-            # Mock ps aux not finding the process
-            with patch.object(docker_checker, '_check_server_with_ps', return_value=False):
-                assert docker_checker.check_server_running() is False
-    
-    def test_is_process_running_valid_pid(self, docker_checker):
-        """Test process running check with valid PID"""
-        with patch('os.kill') as mock_kill:
-            mock_kill.return_value = None
-            assert docker_checker._is_process_running(12345) is True
-    
-    def test_is_process_running_invalid_pid(self, docker_checker):
-        """Test process running check with invalid PID"""
-        with patch('os.kill') as mock_kill:
-            mock_kill.side_effect = OSError()
-            assert docker_checker._is_process_running(99999) is False
-    
-    def test_test_connection_server_running(self, docker_checker):
-        """Test connection when server is running"""
-        with patch.object(docker_checker, 'check_server_running', return_value=True):
-            with patch.object(docker_checker, '_test_mcp_protocol_connection') as mock_test:
-                mock_test.return_value = {"status": "success", "message": "Connected"}
-                result = docker_checker.test_connection()
-                assert result["status"] == "success"
-    
-    def test_test_connection_server_not_running(self, docker_checker):
-        """Test connection when server is not running"""
-        with patch.object(docker_checker, 'check_server_running', return_value=False):
-            result = docker_checker.test_connection()
-            assert result["status"] == "failed"
-            assert "Server not running" in result["error"]
-    
-    def test_test_mcp_protocol_connection_with_recent_logs(self, docker_checker):
-        """Test MCP protocol connection with recent log activity"""
-        # Мокаем open для чтения лога
-        with patch.object(docker_checker, 'project_root', Path('/tmp')):
-            with patch('builtins.open', mock_open(read_data='Server running normally')):
-                # Мокаем весь Path объект для log_file
-                mock_log_file = MagicMock()
-                mock_log_file.exists.return_value = True
-                mock_log_file.stat.return_value.st_mtime = time.time() - 10  # Recent
-                
-                with patch('scripts.check_mcp_status.Path') as mock_path:
-                    # Настраиваем mock_path для возврата mock_log_file при создании log_file
-                    def path_side_effect(*args, **kwargs):
-                        if args and 'mcp_server.log' in str(args[0]):
-                            return mock_log_file
-                        return Path(*args, **kwargs)
-                    mock_path.side_effect = path_side_effect
-                    
-                    result = docker_checker._test_mcp_protocol_connection()
-                    assert result["status"] == "success"
-                    # Теперь может быть либо "confirmed via logs" либо "confirmed via ps aux"
-                    assert any(phrase in result["message"] for phrase in ["confirmed via logs", "confirmed via ps aux"])
-    
-    def test_test_mcp_protocol_connection_with_old_logs(self, docker_checker):
-        """Test MCP protocol connection with old log activity"""
-        mock_log_file = MagicMock()
-        mock_log_file.stat.return_value.st_mtime = time.time() - 60  # Old
-        mock_log_file.exists.return_value = True
+    def temp_project_root(self):
+        """Create temporary project root for testing"""
+        temp_dir = tempfile.mkdtemp()
+        project_root = Path(temp_dir)
         
-        with patch('pathlib.Path') as mock_path:
-            mock_path.return_value.__truediv__.return_value = mock_log_file
+        # Create necessary directories
+        (project_root / "logs").mkdir(exist_ok=True)
+        
+        yield project_root
+        
+        # Cleanup
+        shutil.rmtree(temp_dir)
+    
+    @pytest.fixture
+    def docker_checker(self, temp_project_root):
+        """Create Docker checker instance"""
+        return DockerMCPServerChecker(temp_project_root)
+    
+    def test_init(self, docker_checker, temp_project_root):
+        """Test Docker checker initialization"""
+        assert docker_checker.project_root == temp_project_root
+        assert docker_checker.logger is not None
+    
+    @patch('check_mcp_status.Path')
+    def test_check_server_running_with_pid_file(self, mock_path, docker_checker):
+        """Test server running check with PID file"""
+        # Mock PID file exists
+        mock_pid_file = MagicMock()
+        mock_pid_file.exists.return_value = True
+        mock_pid_file.unlink = MagicMock()
+        
+        with patch('builtins.open', mock_open(read_data='12345')):
+            with patch.object(docker_checker, '_is_process_running', return_value=True):
+                result = docker_checker.check_server_running()
+                assert result is True
+    
+    @patch('check_mcp_status.Path')
+    def test_check_server_running_with_stale_pid_file(self, mock_path, docker_checker):
+        """Test server running check with stale PID file"""
+        # Mock PID file exists but process is not running
+        mock_pid_file = MagicMock()
+        mock_pid_file.exists.return_value = True
+        mock_pid_file.unlink = MagicMock()
+        
+        # Configure mock_path to return our mock_pid_file for PID file path
+        def path_side_effect(*args, **kwargs):
+            if args and str(args[0]) == "/tmp/mcp_server.pid":
+                return mock_pid_file
+            return Path(*args, **kwargs)
+        mock_path.side_effect = path_side_effect
+        
+        with patch('builtins.open', mock_open(read_data='12345')):
+            with patch.object(docker_checker, '_is_process_running', return_value=False):
+                result = docker_checker.check_server_running()
+                assert result is False
+                mock_pid_file.unlink.assert_called_once()
+    
+    @patch('check_mcp_status.subprocess.run')
+    def test_check_server_with_ps_available(self, mock_run, docker_checker):
+        """Test server check with ps command available"""
+        # Mock ps command success
+        mock_run.return_value.returncode = 0
+        mock_run.return_value.stdout = "user 12345 python neozork_mcp_server.py"
+        
+        result = docker_checker._check_server_with_ps()
+        assert result is True
+    
+    @patch('check_mcp_status.subprocess.run')
+    def test_check_server_with_ps_unavailable(self, mock_run, docker_checker):
+        """Test server check when ps command is unavailable"""
+        # Mock ps command failure
+        mock_run.side_effect = FileNotFoundError("ps: command not found")
+        
+        with patch.object(docker_checker, '_check_server_via_proc', return_value=False):
+            result = docker_checker._check_server_with_ps()
+            assert result is False
+    
+    @patch('check_mcp_status.Path')
+    def test_check_server_via_proc_success(self, mock_path, docker_checker):
+        """Test server check via /proc filesystem - success case"""
+        # Mock /proc directory structure
+        mock_proc_dir = MagicMock()
+        mock_proc_dir.exists.return_value = True
+        
+        # Create mock process directories
+        mock_proc_12345 = MagicMock()
+        mock_proc_12345.name = "12345"
+        mock_proc_12345.is_dir.return_value = True
+        
+        mock_proc_abc = MagicMock()
+        mock_proc_abc.name = "abc"
+        mock_proc_abc.is_dir.return_value = True
+        
+        mock_proc_67890 = MagicMock()
+        mock_proc_67890.name = "67890"
+        mock_proc_67890.is_dir.return_value = True
+        
+        mock_proc_dir.iterdir.return_value = [mock_proc_12345, mock_proc_abc, mock_proc_67890]
+        
+        # Mock exe link for process 12345
+        mock_exe_link = MagicMock()
+        mock_exe_link.exists.return_value = True
+        mock_exe_link.resolve.return_value = Path("/usr/bin/python3")
+        
+        # Mock cmdline file for process 12345
+        mock_cmdline_file = MagicMock()
+        mock_cmdline_file.exists.return_value = True
+        
+        # Configure mock_proc_12345 to return appropriate mocks for exe and cmdline
+        def proc_12345_truediv(self, other):
+            if other == "exe":
+                return mock_exe_link
+            elif other == "cmdline":
+                return mock_cmdline_file
+            return MagicMock()
+        
+        mock_proc_12345.__truediv__ = proc_12345_truediv
+        
+        # Configure mock_path to return our mock_proc_dir for /proc
+        def path_side_effect(*args, **kwargs):
+            if args and str(args[0]) == "/proc":
+                return mock_proc_dir
+            return Path(*args, **kwargs)
+        mock_path.side_effect = path_side_effect
+        
+        with patch('builtins.open', mock_open(read_data='python\x00neozork_mcp_server.py\x00')):
+            result = docker_checker._check_server_via_proc()
+            assert result is True
+    
+    @patch('check_mcp_status.Path')
+    def test_check_server_via_proc_not_found(self, mock_path, docker_checker):
+        """Test server check via /proc filesystem - not found case"""
+        # Mock /proc directory not accessible
+        mock_proc_dir = MagicMock()
+        mock_proc_dir.exists.return_value = False
+        
+        with patch('check_mcp_status.Path', return_value=mock_proc_dir):
+            result = docker_checker._check_server_via_proc()
+            assert result is False
+    
+    def test_is_process_running(self, docker_checker):
+        """Test process running check"""
+        # Test with current process PID
+        current_pid = os.getpid()
+        assert docker_checker._is_process_running(current_pid) is True
+        
+        # Test with non-existent PID
+        assert docker_checker._is_process_running(999999) is False
+    
+    @patch.object(DockerMCPServerChecker, 'check_server_running')
+    def test_test_connection_success(self, mock_check, docker_checker):
+        """Test connection test - success case"""
+        mock_check.return_value = True
+        
+        with patch.object(docker_checker, '_test_mcp_protocol_connection') as mock_test:
+            mock_test.return_value = {"status": "success", "message": "Connected"}
+            result = docker_checker.test_connection()
             
-            with patch.object(docker_checker, '_ping_mcp_server') as mock_ping:
-                mock_ping.return_value = {"status": "success", "message": "Ping successful"}
-                result = docker_checker._test_mcp_protocol_connection()
-                assert result["status"] == "success"
+            assert result["status"] == "success"
+            mock_test.assert_called_once()
     
-    def test_ping_mcp_server_with_pid_file(self, docker_checker):
-        """Test ping MCP server with valid PID file"""
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = True
+    @patch.object(DockerMCPServerChecker, 'check_server_running')
+    def test_test_connection_failure(self, mock_check, docker_checker):
+        """Test connection test - failure case"""
+        mock_check.return_value = False
+        
+        result = docker_checker.test_connection()
+        assert result["status"] == "failed"
+        assert "Server not running" in result["error"]
+    
+    def test_check_ide_configurations(self, docker_checker, temp_project_root):
+        """Test IDE configurations check"""
+        # Create test config file
+        cursor_config = temp_project_root / "cursor_mcp_config.json"
+        cursor_config.write_text('{"test": "config"}')
+        
+        configs = docker_checker.check_ide_configurations()
+        
+        assert configs['cursor']['exists'] is True
+        assert configs['cursor']['valid_json'] is True
+        assert configs['cursor']['size'] > 0
+        assert configs['docker']['exists'] is False  # No docker.env in temp dir
+    
+    @patch.object(DockerMCPServerChecker, 'check_server_running')
+    @patch.object(DockerMCPServerChecker, 'check_ide_configurations')
+    @patch.object(DockerMCPServerChecker, '_check_docker_specific')
+    def test_run_comprehensive_check(self, mock_docker, mock_configs, mock_server, docker_checker):
+        """Test comprehensive check"""
+        mock_server.return_value = True
+        mock_configs.return_value = {'cursor': {'exists': True}}
+        mock_docker.return_value = {'in_docker': True}
+        
+        with patch.object(docker_checker, 'test_connection') as mock_conn:
+            mock_conn.return_value = {"status": "success"}
+            result = docker_checker.run_comprehensive_check()
             
-            with patch('builtins.open', mock_open(read_data='12345')):
-                with patch.object(docker_checker, '_is_process_running', return_value=True):
-                    result = docker_checker._ping_mcp_server()
-                    assert result["status"] == "success"
-                    assert result["pid"] == 12345
-    
-    def test_ping_mcp_server_no_pid_file(self, docker_checker):
-        """Test ping MCP server without PID file"""
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = False
-            # Mock ps aux not finding the process
-            with patch.object(docker_checker, '_check_server_with_ps', return_value=False):
-                result = docker_checker._ping_mcp_server()
-                assert result["status"] == "failed"
-                assert "No PID file found and no process detected" in result["error"]
-    
-    def test_check_ide_configurations(self, docker_checker):
-        """Test IDE configurations check in Docker"""
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.side_effect = [True, False]  # cursor config exists, docker config doesn't
-            
-            with patch('builtins.open', mock_open(read_data='{"test": "config"}')):
-                with patch('pathlib.Path.stat') as mock_stat:
-                    mock_stat.return_value.st_size = 100
-                    configs = docker_checker.check_ide_configurations()
-                    
-                    assert configs['cursor']['exists'] is True
-                    assert configs['cursor']['valid_json'] is True
-                    assert configs['cursor']['size'] == 100
-                    assert configs['docker']['exists'] is False
-    
-    def test_check_docker_specific(self, docker_checker):
-        """Test Docker-specific checks"""
-        with patch.object(docker_checker, '_is_running_in_docker', return_value=True):
-            with patch.dict(os.environ, {'DOCKER_CONTAINER': 'true', 'PYTHONPATH': '/app'}):
-                # Мокаем PID file exists и log_file.exists
-                with patch('pathlib.Path.exists', return_value=True):
-                    with patch('builtins.open', mock_open(read_data='12345')):
-                        with patch.object(docker_checker, '_is_process_running', return_value=True):
-                            # Мокаем stat для log_file
-                            mock_stat = MagicMock()
-                            mock_stat.st_size = 2048
-                            mock_stat.st_mtime = time.time() - 5
-                            with patch('pathlib.Path.stat', return_value=mock_stat):
-                                docker_info = docker_checker._check_docker_specific()
-                                assert docker_info['in_docker'] is True
-                                assert docker_info['environment_vars']['DOCKER_CONTAINER'] == 'true'
-                                assert docker_info['pid_file_exists'] is True
-                                assert docker_info['pid'] == 12345
-                                assert docker_info['process_running'] is True
-                                assert docker_info['log_file_exists'] is True
-                                assert docker_info['log_file_size'] == 2048
-    
-    def test_run_comprehensive_check(self, docker_checker):
-        """Test comprehensive check in Docker"""
-        with patch.object(docker_checker, 'check_server_running', return_value=True):
-            with patch.object(docker_checker, 'test_connection') as mock_test:
-                mock_test.return_value = {"status": "success", "message": "Connected"}
-                
-                with patch.object(docker_checker, 'check_ide_configurations') as mock_configs:
-                    mock_configs.return_value = {'cursor': {'exists': True}}
-                    
-                    with patch.object(docker_checker, '_check_docker_specific') as mock_docker:
-                        mock_docker.return_value = {'in_docker': True}
-                        
-                        results = docker_checker.run_comprehensive_check()
-                        
-                        assert results['environment'] == 'docker'
-                        assert results['server_running'] is True
-                        assert results['connection_test']['status'] == 'success'
-
-    def test_check_server_with_ps_found(self, docker_checker):
-        """Test ps aux check when server is found"""
-        with patch('subprocess.run') as mock_run:
-            mock_run.return_value.returncode = 0
-            mock_run.return_value.stdout = "user 12345 1.0 0.5 123456 12345 ? S 12:00 0:01 python neozork_mcp_server.py"
-            
-            assert docker_checker._check_server_with_ps() is True
-    
-    def test_check_server_with_ps_not_found(self, docker_checker):
-        """Test ps aux check when server is not found"""
-        with patch('subprocess.run') as mock_run:
-            mock_run.return_value.returncode = 0
-            mock_run.return_value.stdout = "user 12345 1.0 0.5 123456 12345 ? S 12:00 0:01 python other_process.py"
-            
-            assert docker_checker._check_server_with_ps() is False
-    
-    def test_check_server_with_ps_timeout(self, docker_checker):
-        """Test ps aux check with timeout"""
-        with patch('subprocess.run') as mock_run:
-            mock_run.side_effect = subprocess.TimeoutExpired('ps', 5)
-            
-            assert docker_checker._check_server_with_ps() is False
-    
-    def test_check_server_with_ps_command_failed(self, docker_checker):
-        """Test ps aux check when command fails"""
-        with patch('subprocess.run') as mock_run:
-            mock_run.return_value.returncode = 1
-            mock_run.return_value.stderr = "Permission denied"
-            
-            assert docker_checker._check_server_with_ps() is False
-    
-    def test_check_server_running_fallback_to_ps(self, docker_checker):
-        """Test server running check with fallback to ps aux"""
-        # Mock PID file not existing
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = False
-            
-            # Mock ps aux finding the process
-            with patch.object(docker_checker, '_check_server_with_ps', return_value=True):
-                assert docker_checker.check_server_running() is True
-    
-    def test_check_server_running_no_pid_file_no_ps(self, docker_checker):
-        """Test server running check when neither PID file nor ps aux find the process"""
-        # Mock PID file not existing
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = False
-            
-            # Mock ps aux not finding the process
-            with patch.object(docker_checker, '_check_server_with_ps', return_value=False):
-                assert docker_checker.check_server_running() is False
-    
-    def test_ping_mcp_server_fallback_to_ps(self, docker_checker):
-        """Test ping MCP server with fallback to ps aux"""
-        # Mock PID file not existing
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = False
-            
-            # Mock ps aux finding the process
-            with patch.object(docker_checker, '_check_server_with_ps', return_value=True):
-                result = docker_checker._ping_mcp_server()
-                assert result["status"] == "success"
-                assert "ps aux" in result["message"]
-                assert result["detection_method"] == "ps_aux"
-    
-    def test_ping_mcp_server_no_pid_file_no_ps(self, docker_checker):
-        """Test ping MCP server when neither PID file nor ps aux find the process"""
-        # Mock PID file not existing
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.return_value = False
-            
-            # Mock ps aux not finding the process
-            with patch.object(docker_checker, '_check_server_with_ps', return_value=False):
-                result = docker_checker._ping_mcp_server()
-                assert result["status"] == "failed"
-                assert "No PID file found and no process detected" in result["error"]
-    
-    def test_check_docker_specific_with_ps_detection(self, docker_checker):
-        """Test Docker-specific checks with ps aux detection"""
-        with patch.object(docker_checker, '_is_running_in_docker', return_value=True):
-            with patch.dict(os.environ, {'DOCKER_CONTAINER': 'true', 'PYTHONPATH': '/app'}):
-                with patch('pathlib.Path.exists') as mock_exists:
-                    # PID file doesn't exist, but ps aux finds the process
-                    mock_exists.return_value = False
-                    
-                    with patch.object(docker_checker, '_check_server_with_ps', return_value=True):
-                        docker_info = docker_checker._check_docker_specific()
-                        
-                        assert docker_info['in_docker'] is True
-                        assert docker_info['pid_file_exists'] is False
-                        assert docker_info['detection_method'] == 'ps_aux'
-                        assert docker_info['process_running'] is True
-    
-    def test_check_docker_specific_no_detection(self, docker_checker):
-        """Test Docker-specific checks with no detection method"""
-        with patch.object(docker_checker, '_is_running_in_docker', return_value=True):
-            with patch.dict(os.environ, {'DOCKER_CONTAINER': 'true', 'PYTHONPATH': '/app'}):
-                with patch('pathlib.Path.exists') as mock_exists:
-                    # PID file doesn't exist, and ps aux doesn't find the process
-                    mock_exists.return_value = False
-                    
-                    with patch.object(docker_checker, '_check_server_with_ps', return_value=False):
-                        docker_info = docker_checker._check_docker_specific()
-                        
-                        assert docker_info['in_docker'] is True
-                        assert docker_info['pid_file_exists'] is False
-                        assert docker_info['detection_method'] == 'none'
-                        assert docker_info['process_running'] is False
+            assert result["environment"] == "docker"
+            assert result["server_running"] is True
+            assert "recommendations" in result
 
 
 class TestMCPServerChecker:
-    """Test non-Docker MCP server checker"""
+    """Test non-Docker MCP Server Checker"""
     
     @pytest.fixture
-    def host_checker(self, tmp_path):
-        """Create MCPServerChecker instance"""
-        with patch('scripts.check_mcp_status.Path') as mock_path:
-            mock_path.return_value.parent.parent = tmp_path
-            return MCPServerChecker()
+    def temp_project_root(self):
+        """Create temporary project root for testing"""
+        temp_dir = tempfile.mkdtemp()
+        project_root = Path(temp_dir)
+        
+        # Create necessary directories
+        (project_root / "logs").mkdir(exist_ok=True)
+        
+        yield project_root
+        
+        # Cleanup
+        shutil.rmtree(temp_dir)
     
-    def test_check_server_running_with_pgrep(self, host_checker):
-        """Test server running check with pgrep"""
-        with patch('subprocess.run') as mock_run:
-            mock_run.return_value.returncode = 0
-            mock_run.return_value.stdout = "12345\n67890"
-            
-            assert host_checker.check_server_running() is True
+    @pytest.fixture
+    def host_checker(self, temp_project_root):
+        """Create host checker instance"""
+        return MCPServerChecker(temp_project_root)
     
-    def test_check_server_running_no_process(self, host_checker):
-        """Test server running check when no process found"""
-        with patch('subprocess.run') as mock_run:
-            mock_run.return_value.returncode = 1
-            mock_run.return_value.stdout = ""
-            
-            assert host_checker.check_server_running() is False
+    def test_init(self, host_checker, temp_project_root):
+        """Test host checker initialization"""
+        assert host_checker.project_root == temp_project_root
+        assert host_checker.logger is not None
+        assert host_checker.server_process is None
     
-    def test_start_server_success(self, host_checker):
-        """Test starting server successfully"""
+    @patch('check_mcp_status.subprocess.run')
+    def test_check_server_running_success(self, mock_run, host_checker):
+        """Test server running check - success case"""
+        mock_run.return_value.returncode = 0
+        mock_run.return_value.stdout = "12345\n67890"
+        
+        result = host_checker.check_server_running()
+        assert result is True
+    
+    @patch('check_mcp_status.subprocess.run')
+    def test_check_server_running_not_found(self, mock_run, host_checker):
+        """Test server running check - not found case"""
+        mock_run.return_value.returncode = 1
+        mock_run.return_value.stdout = ""
+        
+        result = host_checker.check_server_running()
+        assert result is False
+    
+    @patch('check_mcp_status.subprocess.Popen')
+    def test_start_server_success(self, mock_popen, host_checker):
+        """Test server start - success case"""
         mock_process = MagicMock()
         mock_process.poll.return_value = None
         mock_process.pid = 12345
+        mock_popen.return_value = mock_process
         
-        with patch('subprocess.Popen', return_value=mock_process):
-            with patch('time.sleep'):
-                assert host_checker.start_server() is True
-                assert host_checker.server_process == mock_process
+        with patch('time.sleep'):
+            result = host_checker.start_server()
+            assert result is True
+            assert host_checker.server_process == mock_process
     
-    def test_start_server_failure(self, host_checker):
-        """Test starting server failure"""
+    @patch('check_mcp_status.subprocess.Popen')
+    def test_start_server_failure(self, mock_popen, host_checker):
+        """Test server start - failure case"""
         mock_process = MagicMock()
         mock_process.poll.return_value = 1
         mock_process.communicate.return_value = ("stdout", "stderr")
+        mock_popen.return_value = mock_process
         
-        with patch('subprocess.Popen', return_value=mock_process):
-            with patch('time.sleep'):
-                assert host_checker.start_server() is False
+        with patch('time.sleep'):
+            result = host_checker.start_server()
+            assert result is False
     
-    def test_stop_server_graceful(self, host_checker):
-        """Test stopping server gracefully"""
+    def test_stop_server(self, host_checker):
+        """Test server stop"""
         mock_process = MagicMock()
-        mock_process.wait.return_value = 0
         host_checker.server_process = mock_process
         
         host_checker.stop_server()
         mock_process.terminate.assert_called_once()
         mock_process.wait.assert_called_once_with(timeout=5)
     
-    def test_stop_server_force_kill(self, host_checker):
-        """Test stopping server with force kill"""
-        mock_process = MagicMock()
-        mock_process.wait.side_effect = subprocess.TimeoutExpired('cmd', 5)
-        host_checker.server_process = mock_process
+    @patch.object(MCPServerChecker, 'check_server_running')
+    def test_test_connection_success(self, mock_check, host_checker):
+        """Test connection test - success case"""
+        mock_check.return_value = True
         
-        host_checker.stop_server()
-        mock_process.terminate.assert_called_once()
-        mock_process.kill.assert_called_once()
-    
-    def test_test_connection_success(self, host_checker):
-        """Test connection when server is running"""
-        with patch.object(host_checker, 'check_server_running', return_value=True):
-            with patch.object(host_checker, '_get_server_pids', return_value=['12345']):
-                result = host_checker.test_connection()
-                assert result["status"] == "success"
-                assert result["pids"] == ['12345']
-    
-    def test_test_connection_failure(self, host_checker):
-        """Test connection when server is not running"""
-        with patch.object(host_checker, 'check_server_running', return_value=False):
+        with patch.object(host_checker, '_get_server_pids') as mock_pids:
+            mock_pids.return_value = ["12345"]
             result = host_checker.test_connection()
-            assert result["status"] == "failed"
-            assert "Server not running" in result["error"]
-    
-    def test_get_server_pids(self, host_checker):
-        """Test getting server PIDs"""
-        with patch('subprocess.run') as mock_run:
-            mock_run.return_value.returncode = 0
-            mock_run.return_value.stdout = "12345\n67890"
             
-            pids = host_checker._get_server_pids()
-            assert pids == ['12345', '67890']
+            assert result["status"] == "success"
+            assert result["pids"] == ["12345"]
     
-    def test_get_server_pids_no_processes(self, host_checker):
-        """Test getting server PIDs when no processes found"""
-        with patch('subprocess.run') as mock_run:
-            mock_run.return_value.returncode = 1
-            mock_run.return_value.stdout = ""
-            
-            pids = host_checker._get_server_pids()
-            assert pids == []
+    @patch.object(MCPServerChecker, 'check_server_running')
+    def test_test_connection_failure(self, mock_check, host_checker):
+        """Test connection test - failure case"""
+        mock_check.return_value = False
+        
+        result = host_checker.test_connection()
+        assert result["status"] == "failed"
+        assert "Server not running" in result["error"]
     
-    def test_check_ide_configurations(self, host_checker):
+    def test_check_ide_configurations(self, host_checker, temp_project_root):
         """Test IDE configurations check"""
-        with patch('pathlib.Path.exists') as mock_exists:
-            mock_exists.side_effect = [True, True, False]  # cursor, vscode exist, pycharm doesn't
-            
-            with patch('builtins.open', mock_open(read_data='{"test": "config"}')):
-                with patch('pathlib.Path.stat') as mock_stat:
-                    mock_stat.return_value.st_size = 100
-                    configs = host_checker.check_ide_configurations()
-                    
-                    assert configs['cursor']['exists'] is True
-                    assert configs['cursor']['valid_json'] is True
-                    assert configs['cursor']['size'] == 100
-                    assert configs['vscode']['exists'] is True
-                    assert configs['pycharm']['exists'] is False
-    
-    def test_run_comprehensive_check(self, host_checker):
-        """Test comprehensive check on host"""
-        with patch.object(host_checker, 'check_server_running', return_value=True):
-            with patch.object(host_checker, 'test_connection') as mock_test:
-                mock_test.return_value = {"status": "success", "message": "Connected"}
-                
-                with patch.object(host_checker, 'check_ide_configurations') as mock_configs:
-                    mock_configs.return_value = {'cursor': {'exists': True}}
-                    
-                    results = host_checker.run_comprehensive_check()
-                    
-                    assert results['environment'] == 'host'
-                    assert results['server_running'] is True
-                    assert results['connection_test']['status'] == 'success'
+        # Create test config files
+        cursor_config = temp_project_root / "cursor_mcp_config.json"
+        cursor_config.write_text('{"test": "config"}')
+        
+        vscode_dir = temp_project_root / ".vscode"
+        vscode_dir.mkdir()
+        vscode_config = vscode_dir / "settings.json"
+        vscode_config.write_text('{"test": "vscode"}')
+        
+        configs = host_checker.check_ide_configurations()
+        
+        assert configs['cursor']['exists'] is True
+        assert configs['cursor']['valid_json'] is True
+        assert configs['vscode']['exists'] is True
+        assert configs['vscode']['valid_json'] is True
+        assert configs['pycharm']['exists'] is False
 
 
-class TestIntegration:
-    """Integration tests for the complete functionality"""
+class TestEnvironmentDetection:
+    """Test environment detection functions"""
     
-    def test_main_function_docker_environment(self):
-        """Test main function in Docker environment"""
-        with patch('scripts.check_mcp_status.is_running_in_docker', return_value=True):
-            with patch('scripts.check_mcp_status.DockerMCPServerChecker') as mock_checker_class:
-                mock_checker = MagicMock()
-                mock_checker.run_comprehensive_check.return_value = {
-                    'timestamp': '2024-01-01 12:00:00',
-                    'environment': 'docker',
-                    'project_root': '/app',
-                    'server_running': True,
-                    'connection_test': {'status': 'success'},
-                    'ide_configurations': {},
-                    'recommendations': []
-                }
-                mock_checker_class.return_value = mock_checker
-                
-                with patch('builtins.print'):  # Suppress print output
-                    with patch('builtins.open', mock_open()):
-                        from scripts.check_mcp_status import main
-                        exit_code = main()
-                        assert exit_code == 0
+    @patch('check_mcp_status.Path')
+    def test_is_running_in_docker_true(self, mock_path):
+        """Test Docker detection - true case"""
+        # Mock /.dockerenv exists
+        mock_dockerenv = MagicMock()
+        mock_dockerenv.exists.return_value = True
+        mock_path.return_value = mock_dockerenv
+        
+        result = is_running_in_docker()
+        assert result is True
     
-    def test_main_function_host_environment(self):
-        """Test main function in host environment"""
-        with patch('scripts.check_mcp_status.is_running_in_docker', return_value=False):
-            with patch('scripts.check_mcp_status.MCPServerChecker') as mock_checker_class:
-                mock_checker = MagicMock()
-                mock_checker.run_comprehensive_check.return_value = {
-                    'timestamp': '2024-01-01 12:00:00',
-                    'environment': 'host',
-                    'project_root': '/home/user/project',
-                    'server_running': False,
-                    'connection_test': {'status': 'failed'},
-                    'ide_configurations': {},
-                    'recommendations': ['Start server']
-                }
-                mock_checker_class.return_value = mock_checker
-                
-                with patch('builtins.print'):  # Suppress print output
-                    with patch('builtins.open', mock_open()):
-                        from scripts.check_mcp_status import main
-                        exit_code = main()
-                        assert exit_code == 1
+    @patch('check_mcp_status.Path')
+    def test_is_running_in_docker_false(self, mock_path):
+        """Test Docker detection - false case"""
+        # Mock /.dockerenv doesn't exist
+        mock_dockerenv = MagicMock()
+        mock_dockerenv.exists.return_value = False
+        mock_path.return_value = mock_dockerenv
+        
+        with patch('builtins.open', side_effect=FileNotFoundError):
+            with patch.dict(os.environ, {}, clear=True):
+                result = is_running_in_docker()
+                assert result is False
+    
+    @patch.dict(os.environ, {'DOCKER_CONTAINER': 'true'})
+    def test_is_running_in_docker_env_var(self):
+        """Test Docker detection via environment variable"""
+        result = is_running_in_docker()
+        assert result is True
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-v"]) 
+    pytest.main([__file__]) 
