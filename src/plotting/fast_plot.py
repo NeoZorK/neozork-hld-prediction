@@ -86,7 +86,7 @@ def plot_indicator_results_fast(
         # Create main figure for OHLC chart
         main_fig = figure(
             width=width,
-            height=int(height * 0.6),
+            height=int(height * 0.4),
             title=f"{title} - {rule}",
             x_axis_type='datetime',
             tools="pan,wheel_zoom,box_zoom,reset,save",
@@ -160,84 +160,55 @@ def plot_indicator_results_fast(
         )
         main_fig.add_tools(hover_main)
 
-        # Create volume figure
-        volume_fig = figure(
+        # HL subplot
+        hl_fig = figure(
             width=width,
-            height=int(height * 0.2),
+            height=int(height * 0.15),
             x_axis_type='datetime',
+            title='HL',
             tools="pan,wheel_zoom,box_zoom,reset",
             active_scroll='wheel_zoom'
         )
+        if 'HL' in display_df.columns:
+            hl_fig.line('index', 'HL', source=source, line_color='purple', line_width=2, legend_label='HL')
+        hover_hl = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("HL", "@HL{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
+        hl_fig.add_tools(hover_hl)
 
-        # Add volume bars
-        if 'Volume' in display_df.columns:
-            # Color volume bars based on price direction
-            volume_colors = ['green' if close >= open else 'red' 
-                           for close, open in zip(display_df['Close'], display_df['Open'])]
-            display_df['volume_color'] = volume_colors
-            
-            volume_source = ColumnDataSource(display_df)
-            volume_fig.vbar(
-                'index', 0.5, 0, 'Volume',
-                source=volume_source,
-                fill_color='volume_color',
-                line_color='volume_color',
-                alpha=0.7
-            )
-
-        # Add hover tooltip for volume
-        hover_volume = HoverTool(
-            tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("Volume", "@Volume{0}")
-            ],
-            formatters={'@index': 'datetime'},
-            mode='vline'
-        )
-        volume_fig.add_tools(hover_volume)
-
-        # Create indicators figure
-        indicators_fig = figure(
+        # Pressure subplot
+        pressure_fig = figure(
             width=width,
-            height=int(height * 0.2),
+            height=int(height * 0.15),
             x_axis_type='datetime',
+            title='Pressure',
             tools="pan,wheel_zoom,box_zoom,reset",
             active_scroll='wheel_zoom'
         )
+        if 'Pressure' in display_df.columns:
+            pressure_fig.line('index', 'Pressure', source=source, line_color='teal', line_width=2, legend_label='Pressure')
+        hover_pressure = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("Pressure", "@Pressure{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
+        pressure_fig.add_tools(hover_pressure)
 
-        # Add indicators if available
-        indicator_columns = ['HL', 'PV', 'Pressure']
-        colors = ['purple', 'orange', 'teal']
-        
-        for col, color in zip(indicator_columns, colors):
-            if col in display_df.columns:
-                indicators_fig.line(
-                    'index', col,
-                    source=source,
-                    line_color=color,
-                    line_width=2,
-                    legend_label=col
-                )
-
-        # Add hover tooltip for indicators
-        hover_indicators = HoverTool(
-            tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("HL", "@HL{0.3f}"),
-                ("PV", "@PV{0.3f}"),
-                ("Pressure", "@Pressure{0.3f}")
-            ],
-            formatters={'@index': 'datetime'},
-            mode='vline'
+        # PV subplot
+        pv_fig = figure(
+            width=width,
+            height=int(height * 0.15),
+            x_axis_type='datetime',
+            title='Pressure Vector (PV)',
+            tools="pan,wheel_zoom,box_zoom,reset",
+            active_scroll='wheel_zoom'
         )
-        indicators_fig.add_tools(hover_indicators)
+        if 'PV' in display_df.columns:
+            pv_fig.line('index', 'PV', source=source, line_color='orange', line_width=2, legend_label='PV')
+        hover_pv = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("PV", "@PV{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
+        pv_fig.add_tools(hover_pv)
 
-        # Link x-axes for synchronized scrolling
-        volume_fig.x_range = main_fig.x_range
-        indicators_fig.x_range = main_fig.x_range
+        # Синхронизация осей X
+        hl_fig.x_range = main_fig.x_range
+        pressure_fig.x_range = main_fig.x_range
+        pv_fig.x_range = main_fig.x_range
 
-        # Create layout
-        layout = column(main_fig, volume_fig, indicators_fig)
+        # Layout: основной график + 3 subplot
+        layout = column(main_fig, hl_fig, pressure_fig, pv_fig)
 
         # Save and open
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
