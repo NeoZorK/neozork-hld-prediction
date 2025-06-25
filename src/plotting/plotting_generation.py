@@ -479,10 +479,14 @@ def generate_fast_plot(result_df, selected_rule, plot_title, args=None):
             'fee_per_trade': getattr(args, 'fee_per_trade', 0.07)
         }
     
+    # Set default output path for fast plotting
+    output_path = "results/plots/fast_plot.html"
+    
     plot_indicator_results_fast(
         result_df,
         selected_rule,
         plot_title,
+        output_path=output_path,
         **strategy_kwargs
     )
 
