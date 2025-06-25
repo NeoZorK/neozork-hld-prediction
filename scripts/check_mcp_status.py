@@ -81,7 +81,7 @@ class DockerMCPServerChecker:
         return False
 
     def _find_mcp_server_pid(self) -> Optional[int]:
-        """Find MCP server PID using /proc or pgrep (Docker-safe)"""
+        """Find MCP server PID using /proc, pgrep, or pidof (Docker-safe)"""
         # 1. Try /proc
         proc_dir = Path("/proc")
         if proc_dir.exists():
@@ -97,6 +97,7 @@ class DockerMCPServerChecker:
                                 return int(proc.name)
                 except Exception:
                     continue
+        
         # 2. Try pgrep
         try:
             result = subprocess.run(['pgrep', '-f', 'neozork_mcp_server.py'], capture_output=True, text=True, timeout=2)
@@ -106,6 +107,26 @@ class DockerMCPServerChecker:
                     return pids[0]
         except Exception:
             pass
+        
+        # 3. Try pidof (available in your Docker container)
+        try:
+            result = subprocess.run(['pidof', 'python3'], capture_output=True, text=True, timeout=2)
+            if result.returncode == 0:
+                pids = [int(pid) for pid in result.stdout.strip().split() if pid.strip().isdigit()]
+                # Check each python3 process for neozork_mcp_server.py
+                for pid in pids:
+                    try:
+                        cmdline_file = proc_dir / str(pid) / "cmdline"
+                        if cmdline_file.exists():
+                            with open(cmdline_file, 'rb') as f:
+                                cmdline = f.read().replace(b'\x00', b' ')
+                                if b'neozork_mcp_server.py' in cmdline:
+                                    return pid
+                    except Exception:
+                        continue
+        except Exception:
+            pass
+        
         return None
 
     def _is_process_running(self, pid: int) -> bool:
