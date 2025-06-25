@@ -190,17 +190,14 @@ def parse_arguments():
     indicator_group.add_argument(
         '--rule',
         default=default_rule_name,
-        help=f"Trading rule to apply. Default: {default_rule_name}. "
-             f"Aliases: PHLD=Predict_High_Low_Direction, PV=Pressure_Vector, SR=Support_Resistants."
+        help=f"Trading rule to apply. Default: {default_rule_name}. Aliases: PHLD=Predict_High_Low_Direction, PV=Pressure_Vector, SR=Support_Resistants."
     )
     
     # Strategy parameters
     indicator_group.add_argument(
         '--strategy',
         metavar='LOT,RISK_REWARD,FEE',
-        help="Strategy parameters: lot_size,risk_reward_ratio,fee_per_trade. "
-             "Example: --strategy 1,2,0.07 means lot=1.0, risk:reward=2:1, fee=0.07%. "
-             "Default: 1.0,2.0,0.07"
+        help="Strategy parameters: lot_size,risk_reward_ratio,fee_per_trade. Example: --strategy 1,2,0.07 means lot=1.0, risk:reward=2:1, fee=0.07%. Default: 1.0,2.0,0.07"
     )
 
     # Add price type selection for indicators that support it
