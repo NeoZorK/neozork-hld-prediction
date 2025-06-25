@@ -114,6 +114,7 @@ def parse_arguments():
        
        {Fore.YELLOW}Quick Start:{Style.RESET_ALL}
          python run_analysis.py --indicators                    # List all available indicators
+         python run_analysis.py --metric                        # Show trading metrics encyclopedia
          python run_analysis.py demo --rule RSI                 # Run with demo data and RSI indicator
          python run_analysis.py interactive                     # Start interactive mode
        """).strip()
@@ -140,6 +141,14 @@ def parse_arguments():
         nargs='*',
         metavar=('CATEGORY', 'NAME'),
         help='Show available indicators by category and name. Usage: --indicators [category] [name]'
+    )
+
+    # --- Metrics Encyclopedia Option ---
+    parser.add_argument(
+        '--metric',
+        nargs='*',
+        metavar=('TYPE', 'FILTER'),
+        help='Show trading metrics encyclopedia and strategy tips. Usage: --metric [metrics|tips|notes] [filter_text]'
     )
 
     # --- Interactive Mode Option ---
@@ -303,6 +312,47 @@ def parse_arguments():
                         print(ind.display(detailed=True))
                 else:
                     print(f"No indicators found in category '{category}' matching '{name}'")
+            sys.exit(0)
+        
+        # Handle --metric encyclopedia
+        if '--metric' in sys.argv:
+            idx = sys.argv.index('--metric')
+            args_list = sys.argv[idx+1:]
+            from src.cli.quant_encyclopedia import QuantEncyclopedia
+            encyclopedia = QuantEncyclopedia()
+            
+            if not args_list:
+                # Show all metrics and tips
+                encyclopedia.show_all_metrics()
+                encyclopedia.show_all_tips()
+            elif len(args_list) == 1:
+                # Single argument - could be type or filter
+                arg = args_list[0].lower()
+                if arg in ['metrics', 'tips', 'notes']:
+                    if arg == 'metrics':
+                        encyclopedia.show_all_metrics()
+                    elif arg == 'tips':
+                        encyclopedia.show_all_tips()
+                    elif arg == 'notes':
+                        encyclopedia.show_all_tips()  # Notes are part of tips
+                else:
+                    # Treat as filter text
+                    encyclopedia.show_filtered_content(arg)
+            elif len(args_list) >= 2:
+                # Two or more arguments: type and filter
+                metric_type = args_list[0].lower()
+                filter_text = ' '.join(args_list[1:])
+                
+                if metric_type == 'metrics':
+                    encyclopedia.show_all_metrics(filter_text)
+                elif metric_type == 'tips':
+                    encyclopedia.show_all_tips(filter_text)
+                elif metric_type == 'notes':
+                    encyclopedia.show_all_tips(filter_text)  # Notes are part of tips
+                else:
+                    # Invalid type, treat first as filter
+                    encyclopedia.show_filtered_content(' '.join(args_list))
+            
             sys.exit(0)
         
         # Handle --interactive flag
