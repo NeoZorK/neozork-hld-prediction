@@ -36,6 +36,9 @@ class NeozorkMCPManager:
         self.running_servers = {}
         self.observer = None
         self.running = True
+        self._pgrep_cache = {}
+        self._pgrep_cache_time = 0
+        self._pgrep_cache_ttl = 5  # Cache for 5 seconds
         
     def _setup_logging(self) -> logging.Logger:
         """Setup logging for MCP manager"""
@@ -467,6 +470,36 @@ class NeozorkMCPManager:
         self.logger.info("Manager shutdown complete")
         print("✅ Manager shutdown complete")
         
+    def _get_mcp_server_processes(self) -> List[str]:
+        """Get MCP server processes with caching"""
+        current_time = time.time()
+        
+        # Check cache
+        if (current_time - self._pgrep_cache_time) < self._pgrep_cache_ttl:
+            return self._pgrep_cache.get('pids', [])
+        
+        try:
+            result = subprocess.run(
+                ['pgrep', '-f', 'neozork_mcp_server.py'],
+                capture_output=True,
+                text=True
+            )
+            
+            if result.returncode == 0:
+                pids = [pid.strip() for pid in result.stdout.strip().split('\n') if pid.strip()]
+            else:
+                pids = []
+            
+            # Update cache
+            self._pgrep_cache = {'pids': pids}
+            self._pgrep_cache_time = current_time
+            
+            return pids
+                
+        except Exception as e:
+            self.logger.error(f"Error checking server processes: {e}")
+            return []
+
     def get_status(self) -> Dict[str, Any]:
         """Get status of all servers"""
         status = {
@@ -476,39 +509,25 @@ class NeozorkMCPManager:
         }
         
         # Check for all MCP server processes, not just managed ones
-        try:
-            result = subprocess.run(
-                ['pgrep', '-f', 'neozork_mcp_server.py'],
-                capture_output=True,
-                text=True
-            )
-            
-            if result.returncode == 0:
-                pids = result.stdout.strip().split('\n')
-                for i, pid in enumerate(pids):
-                    if pid.strip():
-                        server_name = f"neozork_mcp_{i+1}"
-                        try:
-                            # Get process info
-                            process = psutil.Process(int(pid))
-                            create_time = process.create_time()
-                            
-                            status["servers"][server_name] = {
-                                "running": process.is_running(),
-                                "pid": int(pid),
-                                "start_time": create_time,
-                                "mode": "independent",
-                                "uptime": time.time() - create_time if process.is_running() else 0,
-                                "cmdline": " ".join(process.cmdline()) if process.is_running() else ""
-                            }
-                        except (psutil.NoSuchProcess, psutil.AccessDenied):
-                            continue
-            else:
-                # No processes found
-                pass
+        pids = self._get_mcp_server_processes()
+        
+        for i, pid in enumerate(pids):
+            server_name = f"neozork_mcp_{i+1}"
+            try:
+                # Get process info
+                process = psutil.Process(int(pid))
+                create_time = process.create_time()
                 
-        except Exception as e:
-            self.logger.error(f"Error checking server processes: {e}")
+                status["servers"][server_name] = {
+                    "running": process.is_running(),
+                    "pid": int(pid),
+                    "start_time": create_time,
+                    "mode": "independent",
+                    "uptime": time.time() - create_time if process.is_running() else 0,
+                    "cmdline": " ".join(process.cmdline()) if process.is_running() else ""
+                }
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
         
         # Also check managed servers
         for server_name, server_info in self.running_servers.items():

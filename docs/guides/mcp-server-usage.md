@@ -227,3 +227,145 @@ python3 scripts/check_mcp_status.py
 - Configurations are automatically updated when running `setup_ide_configs.py`
 - Logs are saved in `logs/` folder
 - Server supports hot reload when files change 
+
+## 🛠️ MCP Server Methods & Manual Usage
+
+Below is a list of all available MCP server methods, their purpose, and example requests you can use from the command line.
+
+### How to send a manual request
+
+You can send a request to the MCP server using:
+```bash
+echo '{"jsonrpc": "2.0", "id": 1, "method": "METHOD_NAME", "params": {}}' | python3 neozork_mcp_server.py
+```
+Replace `METHOD_NAME` and `params` as needed.
+
+---
+
+### List of Methods
+
+#### 1. `neozork/ping`
+- **Description:** Simple ping/pong test to check server is alive.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/ping", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 2. `neozork/status`
+- **Description:** Get server status, uptime, version, memory, etc.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/status", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 3. `neozork/health`
+- **Description:** Health check, issues, and diagnostics.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/health", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 4. `neozork/projectInfo`
+- **Description:** Project info: files, symbols, timeframes, functions, classes.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/projectInfo", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 5. `neozork/financialData`
+- **Description:** List of financial data files, available symbols, and timeframes.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/financialData", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+  - **To get timeframes:** Look for the `timeframes` field in the response.
+
+#### 6. `neozork/indicators`
+- **Description:** List of available technical indicators.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/indicators", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 7. `neozork/codeSearch`
+- **Description:** Search for code by query string.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/codeSearch", "params": {"query": "def "}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 8. `neozork/metrics`
+- **Description:** Get server and project performance metrics.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/metrics", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 9. `neozork/analysis`
+- **Description:** Project analysis (size, file types, most recent file).
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/analysis", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 10. `neozork/suggestions`
+- **Description:** Get AI-powered suggestions for project improvement.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/suggestions", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 11. `neozork/context`
+- **Description:** Get project context (type, languages, frameworks, features).
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/context", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 12. `neozork/restart`
+- **Description:** Restart the MCP server (if supported in your environment).
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/restart", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 13. `neozork/reload`
+- **Description:** Reload project data and re-index code.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/reload", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 14. `neozork/version`
+- **Description:** Get server version and capabilities.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/version", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 15. `neozork/capabilities`
+- **Description:** Get server capabilities and supported methods.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/capabilities", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 16. `github/copilot/suggestions`
+- **Description:** Get Copilot suggestions for a given context.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "github/copilot/suggestions", "params": {"context": "financial"}}' | python3 neozork_mcp_server.py
+  ```
+
+#### 17. `github/copilot/context`
+- **Description:** Get Copilot project context.
+- **Example:**
+  ```bash
+  echo '{"jsonrpc": "2.0", "id": 1, "method": "github/copilot/context", "params": {}}' | python3 neozork_mcp_server.py
+  ```
+
+---
+
+**Tip:** You can use any of these methods by changing the `method` and `params` fields in the JSON request.
+
+--- 
