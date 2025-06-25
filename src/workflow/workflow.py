@@ -20,6 +20,7 @@ from src.cli.cli_show_mode import handle_show_mode
 from ..export.parquet_export import export_indicator_to_parquet
 from ..export.csv_export import export_indicator_to_csv
 from ..export.json_export import export_indicator_to_json
+from src.calculation.universal_trading_metrics import display_universal_trading_metrics
 
 # Definition of the run_indicator_workflow function
 def run_indicator_workflow(args):
@@ -156,6 +157,18 @@ def run_indicator_workflow(args):
         if result_df is None or result_df.empty:
             logger.print_warning("Indicator calculation returned empty results.")
 
+        # --- Step 3b: Display Universal Trading Metrics ---
+        # Use args.lot_size, args.risk_reward_ratio, args.fee_per_trade if present, else defaults
+        lot_size = getattr(args, 'lot_size', 1.0)
+        risk_reward_ratio = getattr(args, 'risk_reward_ratio', 2.0)
+        fee_per_trade = getattr(args, 'fee_per_trade', 0.07)
+        display_universal_trading_metrics(
+            result_df,
+            selected_rule,
+            lot_size=lot_size,
+            risk_reward_ratio=risk_reward_ratio,
+            fee_per_trade=fee_per_trade
+        )
 
         # --- Step 4: Generate Plot ---
         logger.print_info("--- Step 4: Generating Plot ---")
