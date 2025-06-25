@@ -463,4 +463,35 @@ python3 -m pytest tests/docker/test_ide_configs.py -v
 **Last Updated**: June 25, 2025  
 **IDE Configurations**: Cursor, VS Code, PyCharm  
 **MCP Server**: Production Ready  
-**Test Coverage**: 100% (15/15 tests passed) 
+**Test Coverage**: 100% (15/15 tests passed)
+
+## 🌍 Global MCP Config for Cursor IDE
+
+Cursor IDE uses a global MCP configuration file:
+
+- **~/.cursor/mcp.json** — global for all projects
+- **./mcp.json** — local for the current project
+- **./cursor_mcp_config.json** — extended local
+
+### Loading Priority:
+1. `~/.cursor/mcp.json`
+2. `./mcp.json`
+3. `./cursor_mcp_config.json`
+
+> The script `python3 scripts/setup_ide_configs.py` automatically updates all these files.
+
+**All Neozork MCP server capabilities are now available from any project in Cursor IDE.**
+
+---
+
+### Quick Start (updated)
+```bash
+python3 scripts/setup_ide_configs.py
+# updates ~/.cursor/mcp.json, ./mcp.json, ./cursor_mcp_config.json
+```
+
+---
+
+### Troubleshooting (updated)
+- If Cursor IDE does not see the server — check the existence and content of `~/.cursor/mcp.json`.
+- To update both global and local configs always use `python3 scripts/setup_ide_configs.py`. 
