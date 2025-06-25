@@ -36,11 +36,10 @@ def send_mcp_request(method: str, params: Dict = None) -> Optional[Dict]:
             ["python", str(server_file), "--version"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            text=True,
-            timeout=5
+            text=True
         )
         
-        stdout, stderr = process.communicate()
+        stdout, stderr = process.communicate(timeout=5)
         
         if process.returncode == 0:
             # Server can start successfully
