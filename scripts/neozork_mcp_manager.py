@@ -475,6 +475,42 @@ class NeozorkMCPManager:
             "servers": {}
         }
         
+        # Check for all MCP server processes, not just managed ones
+        try:
+            result = subprocess.run(
+                ['pgrep', '-f', 'neozork_mcp_server.py'],
+                capture_output=True,
+                text=True
+            )
+            
+            if result.returncode == 0:
+                pids = result.stdout.strip().split('\n')
+                for i, pid in enumerate(pids):
+                    if pid.strip():
+                        server_name = f"neozork_mcp_{i+1}"
+                        try:
+                            # Get process info
+                            process = psutil.Process(int(pid))
+                            create_time = process.create_time()
+                            
+                            status["servers"][server_name] = {
+                                "running": process.is_running(),
+                                "pid": int(pid),
+                                "start_time": create_time,
+                                "mode": "independent",
+                                "uptime": time.time() - create_time if process.is_running() else 0,
+                                "cmdline": " ".join(process.cmdline()) if process.is_running() else ""
+                            }
+                        except (psutil.NoSuchProcess, psutil.AccessDenied):
+                            continue
+            else:
+                # No processes found
+                pass
+                
+        except Exception as e:
+            self.logger.error(f"Error checking server processes: {e}")
+        
+        # Also check managed servers
         for server_name, server_info in self.running_servers.items():
             process = server_info["process"]
             status["servers"][server_name] = {
@@ -638,7 +674,16 @@ class NeozorkMCPManagerCLI:
                     uptime = server_info['uptime']
                     hours = int(uptime // 3600)
                     minutes = int((uptime % 3600) // 60)
-                    print(f"  • {server_name} (PID: {server_info['pid']}, Mode: {server_info['mode']}, Uptime: {hours}h {minutes}m)")
+                    mode = server_info.get('mode', 'unknown')
+                    pid = server_info['pid']
+                    print(f"  • {server_name} (PID: {pid}, Mode: {mode}, Uptime: {hours}h {minutes}m)")
+                    
+                    # Show command line for independent processes
+                    if mode == 'independent' and 'cmdline' in server_info:
+                        cmdline = server_info['cmdline']
+                        if len(cmdline) > 80:
+                            cmdline = cmdline[:77] + "..."
+                        print(f"    Command: {cmdline}")
                 else:
                     print(f"  • {server_name} (stopped)")
         else:
@@ -658,6 +703,16 @@ class NeozorkMCPManagerCLI:
             print(f"🖥️  Detected IDE: {ide}")
         else:
             print("🖥️  No IDE detected")
+            
+        # Show recommendations
+        print()
+        print("💡 Recommendations:")
+        if not status['servers']:
+            print("  • Start server: python3 start_mcp_server.py")
+            print("  • Or use manager: python3 scripts/neozork_mcp_manager.py start-server")
+        else:
+            print("  • Server is running - you can use it in your IDE")
+            print("  • To stop: pkill -f neozork_mcp_server.py")
             
     def stop(self) -> None:
         """Stop all MCP servers"""
