@@ -297,7 +297,7 @@ def test_demo_mode_rules(rule):
 ])
 def test_demo_mode_draw_modes(draw_mode):
     """Test demo mode with different draw modes"""
-    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'RSI', '--draw', draw_mode]
+    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'RSI', '-d', draw_mode]
     return_code, stdout, stderr, execution_time = run_cli_command(cmd)
     
     assert return_code == 0, f"Demo mode with draw {draw_mode} failed with return code {return_code}"
@@ -352,7 +352,7 @@ def test_invalid_modes(invalid_mode):
     
     # Invalid flag values
     (['demo', '--rule', 'INVALID_RULE'], "Invalid rule"),
-    (['demo', '--draw', 'invalid_draw'], "Invalid draw mode"),
+    (['demo', '-d', 'invalid_draw'], "Invalid draw mode"),
     (['demo', '--point', '-1'], "Negative point value"),
     (['demo', '--point', '0'], "Zero point value"),
 ])
@@ -412,7 +412,7 @@ def test_demo_mode_performance():
 @pytest.mark.integration
 def test_full_workflow_demo():
     """Test full workflow with demo mode"""
-    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'RSI', '--draw', 'fastest', '--export-parquet']
+    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'RSI', '-d', 'fastest', '--export-parquet']
     return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=120)
     
     assert return_code == 0, f"Full workflow demo failed with return code {return_code}"
@@ -424,7 +424,7 @@ def test_full_workflow_demo():
 @pytest.mark.parametrize("draw", ['fastest', 'fast'])
 def test_multiple_combinations(rule, draw):
     """Test multiple rule and draw combinations"""
-    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', rule, '--draw', draw]
+    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', rule, '-d', draw]
     return_code, stdout, stderr, execution_time = run_cli_command(cmd)
     
     assert return_code == 0, f"Combination {rule}+{draw} failed with return code {return_code}"
@@ -435,7 +435,7 @@ def test_multiple_combinations(rule, draw):
 @pytest.mark.performance
 def test_slow_operations():
     """Test slower operations that might take more time"""
-    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'AUTO', '--draw', 'plotly']
+    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'AUTO', '-d', 'plotly']
     return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=180)
     
     assert return_code == 0, f"Slow operation failed with return code {return_code}"

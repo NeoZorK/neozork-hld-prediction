@@ -1,39 +1,35 @@
-# Neozork HLD Prediction - Documentation
+# NeoZork HLD Prediction Documentation
+
+Welcome to the comprehensive documentation for the NeoZork HLD Prediction project - a machine learning enhanced trading indicator system with intelligent AI assistance.
+
+## 🚀 Quick Start
+
+```bash
+# Basic demo
+python run_analysis.py demo
+
+# Explore trading metrics encyclopedia
+python run_analysis.py --metric
+
+# Interactive mode with built-in encyclopedia
+python run_analysis.py --interactive
+
+# List available indicators
+python run_analysis.py --indicators
+```
+
+## 📚 Core Features
+
+- **Technical Indicators:** 50+ indicators across 10 categories
+- **Trading Metrics Encyclopedia:** Comprehensive guide to quantitative trading metrics
+- **Interactive Mode:** Guided setup with built-in metrics encyclopedia
+- **Multiple Data Sources:** Yahoo Finance, Polygon.io, Binance, Exchange Rate API
+- **Export Capabilities:** Parquet, CSV, JSON formats
+- **AI-Powered Development:** MCP servers with GitHub Copilot integration
 
 ## Overview
 
 Neozork HLD Prediction is a comprehensive machine learning system for financial market analysis and prediction using proprietary trading indicators. The system provides advanced technical analysis, data processing, and visualization capabilities.
-
-## Quick Start
-
-### Installation
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd neozork-hld-prediction
-
-# Install dependencies using uv
-uv sync
-
-# Activate virtual environment
-source .venv/bin/activate  # Linux/Mac
-# or
-.venv\Scripts\activate     # Windows
-```
-
-### Basic Usage
-
-```bash
-# Run analysis with demo data
-python run_analysis.py demo --rule RSI
-
-# Analyze CSV data
-python run_analysis.py csv --csv-file data/sample.csv --point 0.01
-
-# Get data from yfinance
-python run_analysis.py yfinance --ticker AAPL --period 1mo --point 0.01
-```
 
 ## Documentation Sections
 
@@ -198,3 +194,14 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - **Visualization**: matplotlib, plotly, seaborn
 - **Testing**: pytest, pytest-xdist
 - **Development Tools**: uv, Docker, GitHub Actions
+
+#### 📖 [Guides](docs/guides/)
+- [Scripts Guide](docs/guides/scripts.md) - Automation tools
+- [Testing Guide](docs/guides/testing.md) - Test framework
+- [Docker Guide](docs/guides/docker.md) - Containerized development
+- [Analysis & EDA Guide](docs/guides/analysis-eda.md) - Data analysis tools
+- [Trading Metrics Encyclopedia](docs/guides/trading-metrics-encyclopedia.md) - Quantitative trading metrics guide
+- [Debug Scripts](docs/guides/debug-scripts.md) - Troubleshooting
+- [Utility Scripts](docs/guides/utility-scripts.md) - Data conversion utilities
+- [Indicator Export](docs/guides/indicator-export.md) - Export calculated indicators
+- [Copilot Instructions](docs/guides/copilot-instructions.md) - AI assistance setup

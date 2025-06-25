@@ -129,7 +129,7 @@ class AutoCommandRunner:
         # Rule + draw mode combinations
         for rule in rules[:3]:  # Limit to first 3 rules
             for draw in draw_modes:
-                commands.append(['demo', '--rule', rule, '--draw', draw])
+                commands.append(['demo', '--rule', rule, '-d', draw])
         
         # Export combinations
         for export_flag in export_flags:
@@ -142,6 +142,9 @@ class AutoCommandRunner:
         # Price type combinations
         commands.append(['demo', '--rule', 'RSI', '--price-type', 'open'])
         commands.append(['demo', '--rule', 'RSI', '--price-type', 'close'])
+        
+        # Test invalid draw mode
+        commands.append(['demo', '-d', 'invalid_draw'])
         
         return commands
     
@@ -253,7 +256,7 @@ class AutoCommandRunner:
         
         for rule in rules:
             for draw in draw_modes:
-                commands.append(['demo', '--rule', rule, '--draw', draw])
+                commands.append(['demo', '--rule', rule, '-d', draw])
         
         # Multiple export combinations
         commands.append(['demo', '--rule', 'RSI', '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info'])
@@ -266,10 +269,10 @@ class AutoCommandRunner:
         
         # Full workflow tests
         commands.extend([
-            ['demo', '--rule', 'RSI', '--draw', 'fastest', '--export-parquet'],
-            ['demo', '--rule', 'EMA', '--draw', 'fast', '--export-csv'],
-            ['demo', '--rule', 'BB', '--draw', 'plotly', '--export-json'],
-            ['demo', '--rule', 'AUTO', '--draw', 'fastest', '--export-parquet', '--export-csv']
+            ['demo', '--rule', 'RSI', '-d', 'fastest', '--export-parquet'],
+            ['demo', '--rule', 'EMA', '-d', 'fast', '--export-csv'],
+            ['demo', '--rule', 'BB', '-d', 'plotly', '--export-json'],
+            ['demo', '--rule', 'AUTO', '-d', 'fastest', '--export-parquet', '--export-csv']
         ])
         
         return commands
