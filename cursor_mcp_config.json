@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "neozork": {
+      "command": "uv",
+      "args": ["run", "python", "neozork_mcp_server.py"],
+      "env": {
+        "PYTHONPATH": ".",
+        "LOG_LEVEL": "INFO"
+      },
+      "cwd": "${workspaceFolder}",
+      "transport": "stdio"
+    }
+  },
+  "serverSettings": {
+    "neozork": {
+      "enabled": true,
+      "autoStart": true,
+      "debug": false,
+      "logLevel": "info",
+      "features": {
+        "financial_data": true,
+        "technical_indicators": true,
+        "code_completion": true,
+        "project_analysis": true,
+        "ai_suggestions": true
+      }
+    }
+  }
+} 
