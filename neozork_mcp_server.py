@@ -24,6 +24,7 @@ from dataclasses import dataclass, asdict
 from enum import Enum
 import argparse
 import os
+import time
 
 class CompletionItemKind(Enum):
     """LSP completion item kinds"""
@@ -1280,6 +1281,14 @@ Examples:
         
         server = NeozorkMCPServer(config=config)
         server.start()
+        
+        print_to_stderr("🟢 MCP Server is running and waiting for IDE connections...")
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print_to_stderr("🛑 MCP Server stopped by user.")
+            sys.exit(0)
         
     except Exception as e:
         print_to_stderr(f"❌ Failed to start server: {e}")

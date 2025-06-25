@@ -64,6 +64,12 @@ class NeozorkMCPManager:
                 with open(self.config_path, 'r', encoding='utf-8') as f:
                     config = json.load(f)
                 self.logger.info(f"Loaded config from {self.config_path}")
+                
+                # Replace ${PROJECT_ROOT} with actual project root path
+                config_str = json.dumps(config)
+                config_str = config_str.replace("${PROJECT_ROOT}", str(self.project_root))
+                config = json.loads(config_str)
+                
                 return config
             except Exception as e:
                 self.logger.error(f"Error loading config: {e}")
