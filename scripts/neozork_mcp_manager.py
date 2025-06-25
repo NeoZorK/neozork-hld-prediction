@@ -272,17 +272,26 @@ class NeozorkMCPManager:
                 return True
             else:
                 # Check for errors
-                stdout, stderr = process.communicate()
+                try:
+                    stdout, stderr = process.communicate(timeout=2)
+                except Exception:
+                    stdout, stderr = '', ''
                 self.logger.error(f"Failed to start Neozork MCP Server")
                 self.logger.error(f"STDOUT: {stdout}")
                 self.logger.error(f"STDERR: {stderr}")
                 print("❌ Failed to start Neozork MCP Server")
                 print(f"Error output: {stderr}")
+                # Ensure server is not in running_servers
+                if "neozork_mcp" in self.running_servers:
+                    del self.running_servers["neozork_mcp"]
                 return False
-                
+        
         except Exception as e:
             self.logger.error(f"Error starting server: {e}")
             print(f"❌ Error starting server: {e}")
+            # Ensure server is not in running_servers
+            if "neozork_mcp" in self.running_servers:
+                del self.running_servers["neozork_mcp"]
             return False
             
     def stop_server(self) -> bool:
