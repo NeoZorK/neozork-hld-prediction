@@ -17,8 +17,17 @@ class TestEdaBatchCheck(unittest.TestCase):
     def tearDown(self):
         # Delete the test data directory after tests
         import shutil
+        import time
         if os.path.exists(self.test_data_dir):
-            shutil.rmtree(self.test_data_dir)
+            try:
+                shutil.rmtree(self.test_data_dir)
+            except (OSError, FileNotFoundError):
+                # If directory is already deleted or locked, wait a bit and try again
+                time.sleep(0.1)
+                try:
+                    shutil.rmtree(self.test_data_dir, ignore_errors=True)
+                except:
+                    pass  # Ignore any remaining errors
 
     @patch('src.eda.eda_batch_check.file_info')
     @patch('src.eda.eda_batch_check.folder_stats')

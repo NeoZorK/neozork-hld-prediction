@@ -1,160 +1,198 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# -*- coding: utf-8 -*-
+# EDA (Exploratory Data Analysis) Script
+# 
+# This script provides various data analysis and quality check tools
+# for the Neozork HLD Prediction project.
 
-# Determine the project directory
-PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$PROJECT_DIR"
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
-# Add this script's directory to PATH if not already there
-if [[ ":$PATH:" != *":$PROJECT_DIR:"* ]]; then
-    echo "Adding $PROJECT_DIR to PATH for this session"
-    export PATH="$PROJECT_DIR:$PATH"
+# Add project root to Python path
+export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}"
 
-    # Suggest adding to PATH permanently
-    echo "To add this directory to PATH permanently, add the following line to your ~/.bashrc or ~/.zshrc:"
-    echo "export PATH=\"$PROJECT_DIR:\$PATH\""
-fi
-
-# Check if running inside a Docker container
-# The /.dockerenv file exists in all Docker containers
-IN_DOCKER=false
-if [ -f /.dockerenv ] || grep -q docker /proc/1/cgroup 2>/dev/null; then
-    IN_DOCKER=true
-    echo "Running inside Docker container"
-fi
-
-# Get the actual container name from docker-compose.yml if available
-get_container_name() {
-    # Get the service name from docker-compose.yml
-    local service_name="neozork-hld"
-    if [ -f "docker-compose.yml" ]; then
-        service_name=$(grep -oP '(?<=services:).*?(?=:)' docker-compose.yml | tr -d ' ' | head -1)
-        if [ -z "$service_name" ]; then
-            # If not found with regex, try another approach
-            service_name=$(grep -A1 'services:' docker-compose.yml | tail -1 | tr -d ' :' | head -1)
-        fi
-    fi
-
-    # Get list of running containers
-    local containers=$(docker ps --format '{{.Names}}' 2>/dev/null)
-    if [ -z "$containers" ]; then
-        # No running containers
-        echo ""
+# Function to detect environment
+detect_environment() {
+    if [ -f "/.dockerenv" ] || [ -f "/app/.dockerenv" ]; then
+        echo "Docker environment detected"
+        return 0
+    elif command -v uv >/dev/null 2>&1; then
+        echo "UV environment detected"
         return 1
-    fi
-
-    # Try to find container using service name or project name
-    for name in $containers; do
-        if [[ "$name" == *"$service_name"* ]] || [[ "$name" == *"neozork"* ]] || [[ "$name" == *"hld"* ]]; then
-            echo "$name"
-            return 0
-        fi
-    done
-
-    # If not found among running containers, check all containers
-    containers=$(docker ps -a --format '{{.Names}}' 2>/dev/null)
-    for name in $containers; do
-        if [[ "$name" == *"$service_name"* ]] || [[ "$name" == *"neozork"* ]] || [[ "$name" == *"hld"* ]]; then
-            echo "$name"
-            return 0
-        fi
-    done
-
-    # Still nothing found
-    echo ""
-    return 1
-}
-
-# Function to safely check if Docker is available
-docker_available() {
-    command -v docker &> /dev/null && docker info &> /dev/null
-    return $?
-}
-
-# Function to check if the container exists (running or stopped)
-container_exists() {
-    local container_name=$(get_container_name)
-    if [ -n "$container_name" ]; then
-        if docker ps -a --format '{{.Names}}' | grep -q "$container_name"; then
-            return 0
-        fi
-    fi
-    return 1
-}
-
-# Function to check if the container is running and accessible
-container_running() {
-    local container_name=$(get_container_name)
-    if [ -n "$container_name" ]; then
-        if docker ps --format '{{.Names}}' | grep -q "$container_name"; then
-            # Additional check to ensure the container is responsive
-            if docker exec "$container_name" echo "Container accessible" &>/dev/null; then
-                return 0
-            fi
-        fi
-    fi
-    return 1
-}
-
-# Debug function to show container status
-debug_container_status() {
-    echo "--- Docker Debug Information ---"
-    echo "Available containers:"
-    docker ps -a --format "{{.Names}} ({{.Status}})"
-    echo "------------------------"
-}
-
-# If we're already in Docker, run the command directly
-if $IN_DOCKER; then
-    python src/eda/eda_batch_check.py "$@"
-# If not in Docker, check if Docker is available and use it
-elif docker_available && [ -f "docker-compose.yml" ]; then
-    echo "Docker detected, checking containers..."
-
-    # For debugging
-    if [ "$1" == "--debug-docker" ]; then
-        debug_container_status
-        exit 0
-    fi
-
-    # Get container name if exists
-    CONTAINER_NAME=$(get_container_name)
-
-    # Check container status and act accordingly
-    if [ -n "$CONTAINER_NAME" ] && container_running; then
-        echo "Container $CONTAINER_NAME is running and accessible, executing command..."
-        docker exec -it "$CONTAINER_NAME" python src/eda/eda_batch_check.py "$@"
-    elif [ -n "$CONTAINER_NAME" ] && container_exists; then
-        echo "Container $CONTAINER_NAME exists but not running or not accessible, starting it..."
-        docker start "$CONTAINER_NAME"
-        # Wait a moment for the container to be fully up
-        sleep 2
-        if container_running; then
-            docker exec -it "$CONTAINER_NAME" python src/eda/eda_batch_check.py "$@"
-        else
-            echo "Container started but not accessible, falling back to docker-compose run..."
-            docker-compose run --rm neozork-hld python src/eda/eda_batch_check.py "$@"
-        fi
     else
-        echo "No suitable container found, starting services with docker-compose..."
-        # Start the services in detached mode
-        docker-compose up -d
-        # Wait a moment for the container to be fully up
-        sleep 2
-
-        # Get the new container name
-        CONTAINER_NAME=$(get_container_name)
-
-        # Now execute command in the container
-        if [ -n "$CONTAINER_NAME" ] && container_running; then
-            echo "Container $CONTAINER_NAME is now running, executing command..."
-            docker exec -it "$CONTAINER_NAME" python src/eda/eda_batch_check.py "$@"
-        else
-            echo "Could not get access to the container, falling back to docker-compose run..."
-            docker-compose run --rm neozork-hld python src/eda/eda_batch_check.py "$@"
-        fi
+        echo "Native Python environment detected"
+        return 2
     fi
-else
-    # Run the command directly if Docker is not available
-    echo "Docker not available, running natively..."
-    python src/eda/eda_batch_check.py "$@"
+}
+
+# Function to run Python command
+run_python() {
+    local env_type=$1
+    shift
+    
+    case $env_type in
+        0)  # Docker
+            python "$@"
+            ;;
+        1)  # UV
+            uv run python "$@"
+            ;;
+        2)  # Native
+            python "$@"
+            ;;
+    esac
+}
+
+# Main script logic
+echo "EDA Batch Check Tool"
+echo "===================="
+
+# Detect environment
+detect_environment
+env_type=$?
+
+# Change to project root
+cd "$PROJECT_ROOT"
+
+# Add script directory to PATH
+echo "Adding $SCRIPT_DIR to PATH"
+export PATH="$SCRIPT_DIR:$PATH"
+
+# Parse arguments
+if [ $# -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    echo "Usage: $0 [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --help                    Show this help message"
+    echo "  --data-quality-checks     Run data quality checks"
+    echo "  --nan-check              Check for NaN values in data"
+    echo "  --fix-files              Fix common file issues"
+    echo "  --folder-stats           Show folder statistics"
+    echo "  --file-info              Show file information"
+    echo "  --version                Show version information"
+    echo ""
+    echo "Environment:"
+    echo "  Automatically detects Docker, UV, or native Python environment"
+    echo ""
+    exit 0
 fi
+
+case "$1" in
+    --data-quality-checks)
+        echo "Running data quality checks..."
+        run_python $env_type -m src.eda.data_quality
+        ;;
+    --nan-check)
+        echo "Checking for NaN values..."
+        run_python $env_type -c "
+import pandas as pd
+import os
+from pathlib import Path
+
+def check_nan_values():
+    data_dir = Path('data')
+    if not data_dir.exists():
+        print('Data directory not found')
+        return
+    
+    for file_path in data_dir.rglob('*.csv'):
+        try:
+            df = pd.read_csv(file_path)
+            nan_count = df.isna().sum().sum()
+            if nan_count > 0:
+                print(f'{file_path}: {nan_count} NaN values found')
+            else:
+                print(f'{file_path}: No NaN values')
+        except Exception as e:
+            print(f'Error reading {file_path}: {e}')
+
+check_nan_values()
+"
+        ;;
+    --fix-files)
+        echo "Fixing common file issues..."
+        run_python $env_type -c "
+import os
+from pathlib import Path
+
+def fix_files():
+    # Fix permissions
+    for script in ['eda', 'nz']:
+        script_path = Path(script)
+        if script_path.exists():
+            script_path.chmod(0o755)
+            print(f'Fixed permissions for {script}')
+    
+    # Create missing directories
+    dirs = ['logs', 'data', 'results']
+    for dir_name in dirs:
+        dir_path = Path(dir_name)
+        if not dir_path.exists():
+            dir_path.mkdir(parents=True)
+            print(f'Created directory: {dir_name}')
+
+fix_files()
+"
+        ;;
+    --folder-stats)
+        echo "Folder statistics:"
+        run_python $env_type -c "
+from pathlib import Path
+import os
+
+def get_folder_stats():
+    folders = ['data', 'logs', 'results', 'src', 'tests']
+    for folder in folders:
+        folder_path = Path(folder)
+        if folder_path.exists():
+            file_count = len(list(folder_path.rglob('*')))
+            size = sum(f.stat().st_size for f in folder_path.rglob('*') if f.is_file())
+            print(f'{folder}: {file_count} files, {size/1024:.1f} KB')
+        else:
+            print(f'{folder}: Not found')
+
+get_folder_stats()
+"
+        ;;
+    --file-info)
+        echo "File information:"
+        run_python $env_type -c "
+from pathlib import Path
+import os
+from datetime import datetime
+
+def get_file_info():
+    important_files = [
+        'run_analysis.py',
+        'requirements.txt',
+        'pyproject.toml',
+        'Dockerfile',
+        'docker-compose.yml'
+    ]
+    
+    for file_name in important_files:
+        file_path = Path(file_name)
+        if file_path.exists():
+            stat = file_path.stat()
+            size = stat.st_size
+            modified = datetime.fromtimestamp(stat.st_mtime)
+            print(f'{file_name}: {size} bytes, modified {modified}')
+        else:
+            print(f'{file_name}: Not found')
+
+get_file_info()
+"
+        ;;
+    --version)
+        echo "EDA Script Version 1.0.0"
+        echo "Neozork HLD Prediction Project"
+        ;;
+    *)
+        echo "Unknown option: $1"
+        echo "Use --help for usage information"
+        exit 1
+        ;;
+esac
+
+exit 0

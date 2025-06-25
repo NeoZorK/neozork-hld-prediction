@@ -1,96 +1,207 @@
-# Documentation Index
+# NeoZork HLD Prediction Documentation
 
-Complete guide to NeoZork HLD Prediction project.
+Welcome to the comprehensive documentation for the NeoZork HLD Prediction project - a machine learning enhanced trading indicator system with intelligent AI assistance.
 
-## Quick Start
+## 🚀 Quick Start
 
-- **[Getting Started](getting-started.md)** - Project overview, installation, and quick setup
-- **[Usage Examples](usage-examples.md)** - Common commands and use cases
+```bash
+# Basic demo
+python run_analysis.py demo
 
-## Core Documentation
+# Explore trading metrics encyclopedia
+python run_analysis.py --metric
 
-- **[Docker](docker.md)** - Containerized development
-- **[Exchange Rate API](exchange-rate-api-complete.md)** - Real-time forex data integration
-- **[Indicator Export](indicator-export.md)** - New export feature for calculated indicators
-- **[MCP Server](mcp-server.md)** - Model Context Protocol server
-- **[UV Setup](uv-setup.md)** - Fast package manager
+# Interactive mode with built-in encyclopedia
+python run_analysis.py --interactive
 
-## Tools & Analysis
+# List available indicators
+python run_analysis.py --indicators
+```
 
-- **[Analysis & EDA](analysis-eda.md)** - Data analysis and exploration tools
-- **[Scripts](scripts.md)** - Available scripts and automation
-- **[Utility Scripts](utility-scripts.md)** - Data conversion and test file management utilities
-- **[Debug Scripts](debug-scripts.md)** - Testing and debugging tools
+## 📚 Core Features
 
-## Development
+- **Technical Indicators:** 50+ indicators across 10 categories
+- **Trading Metrics Encyclopedia:** Comprehensive guide to quantitative trading metrics
+- **Interactive Mode:** Guided setup with built-in metrics encyclopedia
+- **Multiple Data Sources:** Yahoo Finance, Polygon.io, Binance, Exchange Rate API
+- **Export Capabilities:** Parquet, CSV, JSON formats
+- **AI-Powered Development:** MCP servers with GitHub Copilot integration
 
-- **[Testing](testing.md)** - Testing framework and validation
-- **[CI/CD](ci-cd.md)** - GitHub Actions and local testing
-- **[Project Structure](project-structure.md)** - Directory organization
+## Overview
 
-## Export Flags: Allowed Modes
+Neozork HLD Prediction is a comprehensive machine learning system for financial market analysis and prediction using proprietary trading indicators. The system provides advanced technical analysis, data processing, and visualization capabilities.
 
-Export flags (`--export-parquet`, `--export-csv`, `--export-json`) are only available in `demo` mode. They are not allowed in `show ind`, `yfinance`, `csv`, `polygon`, `binance`, or `exrate` modes.
+## Documentation Sections
 
-### Example Workflow
+### Getting Started
+- [Getting Started Guide](getting-started/getting-started.md) - Complete setup and first steps
+- [Project Structure](getting-started/project-structure.md) - Understanding the codebase
+- [Installation Guide](getting-started/installation.md) - Detailed installation instructions
 
-1. **Download or Convert Data**
-   - Download with yfinance:
-     ```bash
-     python run_analysis.py yfinance --ticker EURUSD=X --period 1y --point 0.00001
-     ```
-   - Or convert from CSV:
-     ```bash
-     python run_analysis.py csv --csv-file mydata.csv --point 0.01
-     ```
-2. **Apply Indicator and Export**
-   - Use show mode with a rule and export flags:
-     ```bash
-     python run_analysis.py show yfinance EURUSD=X --rule PHLD --export-parquet --export-csv --export-json
-     ```
-3. **View Exported Indicators**
-   - Use show ind to view the exported files:
-     ```bash
-     python run_analysis.py show ind parquet
-     python run_analysis.py show ind csv
-     python run_analysis.py show ind json
-     ```
+### Development
+- [Development Guide](development/development.md) - Development setup and guidelines
+- [Testing Guide](development/testing.md) - **NEW: Comprehensive testing with parallel execution**
+- [CLI Interface](development/cli-interface.md) - Command-line interface documentation
+- [API Reference](development/api-reference.md) - API documentation
 
-> Export flags are not available in `show ind`, `yfinance`, `csv`, `polygon`, `binance`, or `exrate` modes. Use `demo` for direct export, or the above workflow for real data.
+### Analysis Tools
+- [Analysis Tools](guides/analysis-tools.md) - Available analysis tools and features
+- [EDA Guide](guides/analysis-eda.md) - Exploratory Data Analysis
+- [Technical Indicators](guides/technical-indicators.md) - Available indicators
 
-## Navigation by Role
+### Reference
+- [Core Calculations](reference/core-calculation.md) - Mathematical foundations
+- [Trading Rules](reference/trading-rules.md) - Rule descriptions and parameters
+- [Advanced Metrics](reference/advanced-metrics.md) - ML and Monte Carlo metrics
+- [Indicators](reference/indicators/) - Detailed indicator documentation
 
-### New Users
-1. [Getting Started](getting-started.md)
-2. [Usage Examples](usage-examples.md)
+### Data Sources
+- [Data Sources](api/data-sources.md) - Supported data sources and formats
+- [Exchange Rate API](api/exchange-rate-api-complete.md) - Exchange rate data integration
 
-### Developers
-1. [Project Structure](project-structure.md)
-2. [Testing](testing.md)
-3. [CI/CD](ci-cd.md)
-4. [Debug Scripts](debug-scripts.md)
+### Deployment
+- [Docker Setup](deployment/docker-setup.md) - Containerized deployment
+- [CI/CD Pipeline](deployment/ci-cd.md) - Continuous integration and deployment
 
-### Data Scientists
-1. [Exchange Rate API](exchange-rate-api-complete.md)
-2. [Analysis & EDA](analysis-eda.md)
-3. [Usage Examples](usage-examples.md)
-4. [Scripts](scripts.md)
+### Examples
+- [Examples Overview](examples/EXAMPLES_SUMMARY.md) - Complete examples collection
+- [Docker Examples](examples/docker-examples.md) - Docker usage examples
+- [EDA Examples](examples/eda-examples.md) - EDA workflow examples
 
-### DevOps
-1. [Docker](docker.md)
-2. [CI/CD](ci-cd.md)
-3. [UV Setup](uv-setup.md)
+## Key Features
 
-## By Task
+### 🚀 **NEW: Optimized Testing System**
+- **Parallel Test Execution**: Run tests with `pytest-xdist` for faster execution
+- **Comprehensive Coverage**: 100% test coverage with organized test structure
+- **Performance Monitoring**: Built-in performance tracking and memory monitoring
+- **Optimized Test Runner**: Custom test runner with detailed reporting
 
-**Setup:**
-- [Getting Started](getting-started.md) (includes installation)
+### 📊 Technical Analysis
+- **Multiple Indicators**: RSI, EMA, MACD, Bollinger Bands, and more
+- **Custom Calculations**: Proprietary HLD prediction algorithms
+- **Real-time Data**: Integration with multiple data sources
+- **Visualization**: Advanced plotting and charting capabilities
 
-**Usage:**
-- [Usage Examples](usage-examples.md) → [Exchange Rate API](exchange-rate-api-complete.md) → [Analysis & EDA](analysis-eda.md)
+### 🔧 Development Tools
+- **CLI Interface**: Comprehensive command-line interface
+- **Data Processing**: Efficient data handling and validation
+- **Export Options**: Multiple export formats (CSV, JSON, Parquet)
+- **Logging**: Comprehensive logging and debugging
 
-**Development:**
-- [Project Structure](project-structure.md) → [Testing](testing.md) → [CI/CD](ci-cd.md)
+### 🐳 Deployment
+- **Docker Support**: Containerized deployment
+- **CI/CD Integration**: Automated testing and deployment
+- **Environment Management**: Flexible configuration management
 
-**Deployment:**
-- [Docker](docker.md) → [CI/CD](ci-cd.md) → [MCP Server](mcp-server.md)
+## Testing
+
+### Quick Test Run
+
+```bash
+# Run all tests with parallel execution
+uv run pytest tests -n auto
+
+# Use optimized test runner
+python tests/run_optimized_tests.py
+
+# Run specific test categories
+python tests/run_optimized_tests.py --categories cli calculation
+```
+
+### Test Categories
+
+- **Unit Tests**: Individual function and class testing
+- **Integration Tests**: Component interaction testing
+- **CLI Tests**: Command-line interface testing
+- **Performance Tests**: Performance and stress testing
+- **Data Tests**: Data processing and validation testing
+
+For detailed testing information, see [Testing Guide](development/testing.md).
+
+## Project Structure
+
+```
+neozork-hld-prediction/
+├── src/                          # Source code
+│   ├── calculation/              # Technical indicators
+│   ├── cli/                      # Command-line interface
+│   ├── data/                     # Data processing
+│   ├── eda/                      # Exploratory data analysis
+│   ├── export/                   # Data export functionality
+│   ├── plotting/                 # Visualization tools
+│   └── workflow/                 # Workflow management
+├── tests/                        # Test suite
+│   ├── conftest.py              # Global test configuration
+│   ├── run_optimized_tests.py   # Optimized test runner
+│   ├── calculation/             # Calculation tests
+│   ├── cli/                     # CLI tests
+│   └── ...                      # Other test categories
+├── docs/                         # Documentation
+├── data/                         # Data files
+├── scripts/                      # Utility scripts
+└── docker/                       # Docker configuration
+```
+
+## Contributing
+
+### Development Setup
+
+1. **Fork and clone** the repository
+2. **Install dependencies** using `uv sync`
+3. **Run tests** to ensure everything works
+4. **Create feature branch** for your changes
+5. **Write tests** for new functionality
+6. **Submit pull request** with comprehensive description
+
+### Testing Requirements
+
+- **100% test coverage** for all new code
+- **Parallel test compatibility** for all tests
+- **Performance monitoring** for resource-intensive operations
+- **Documentation updates** for new features
+
+### Code Quality
+
+- **Type hints** for all functions
+- **Docstrings** for all classes and methods
+- **Error handling** for all external operations
+- **Logging** for debugging and monitoring
+
+## Support
+
+### Getting Help
+
+- **Documentation**: Check the relevant documentation sections
+- **Issues**: Report bugs and feature requests on GitHub
+- **Discussions**: Use GitHub Discussions for questions
+- **Testing**: Run tests to verify your setup
+
+### Common Issues
+
+- **Import errors**: Ensure virtual environment is activated
+- **Test failures**: Check test requirements and dependencies
+- **Performance issues**: Monitor resource usage and optimize
+- **Data issues**: Verify data format and source connectivity
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- **Financial Data Providers**: yfinance, polygon.io, Binance
+- **Technical Analysis**: pandas, numpy, scikit-learn
+- **Visualization**: matplotlib, plotly, seaborn
+- **Testing**: pytest, pytest-xdist
+- **Development Tools**: uv, Docker, GitHub Actions
+
+#### 📖 [Guides](docs/guides/)
+- [Scripts Guide](docs/guides/scripts.md) - Automation tools
+- [Testing Guide](docs/guides/testing.md) - Test framework
+- [Docker Guide](docs/guides/docker.md) - Containerized development
+- [Analysis & EDA Guide](docs/guides/analysis-eda.md) - Data analysis tools
+- [Trading Metrics Encyclopedia](docs/guides/trading-metrics-encyclopedia.md) - Quantitative trading metrics guide
+- [Debug Scripts](docs/guides/debug-scripts.md) - Troubleshooting
+- [Utility Scripts](docs/guides/utility-scripts.md) - Data conversion utilities
+- [Indicator Export](docs/guides/indicator-export.md) - Export calculated indicators
+- [Copilot Instructions](docs/guides/copilot-instructions.md) - AI assistance setup
