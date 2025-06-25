@@ -28,9 +28,9 @@ sys.path.insert(0, str(project_root))
 class NeozorkMCPManager:
     """Unified MCP server manager with autostart and monitoring capabilities"""
     
-    def __init__(self, config_path: Optional[Path] = None):
-        self.project_root = project_root
-        self.config_path = config_path or project_root / "neozork_mcp_config.json"
+    def __init__(self, config_path: Optional[Path] = None, project_root: Optional[Path] = None):
+        self.project_root = project_root or Path(__file__).parent.parent
+        self.config_path = config_path or self.project_root / "neozork_mcp_config.json"
         self.logger = self._setup_logging()
         self.config = self._load_config()
         self.running_servers = {}

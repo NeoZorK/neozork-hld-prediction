@@ -4,6 +4,46 @@
   "version": "2.0.0",
   "description": "Modern, unified MCP server for financial analysis projects with AI integration",
   
+  "auto_start": {
+    "enabled": true,
+    "check_interval": 30,
+    "ide_detection": true,
+    "project_detection": true
+  },
+  
+  "server": {
+    "command": "python",
+    "args": ["neozork_mcp_server.py"],
+    "env": {
+      "PYTHONPATH": "${PROJECT_ROOT}",
+      "LOG_LEVEL": "INFO"
+    },
+    "cwd": "${PROJECT_ROOT}"
+  },
+  
+  "conditions": {
+    "cursor_ide": {
+      "processes": ["Cursor", "cursor", "Cursor.exe"],
+      "files": [".cursor", "cursor_mcp_config.json"]
+    },
+    "pycharm_ide": {
+      "processes": ["pycharm", "PyCharm", "idea", "pycharm64.exe"],
+      "files": [".idea", "pycharm_mcp_config.json"]
+    },
+    "vscode_ide": {
+      "processes": ["code", "Code", "code.exe"],
+      "files": [".vscode", ".vscode/settings.json"]
+    },
+    "python_files": {
+      "extensions": [".py"],
+      "min_files": 1
+    },
+    "financial_data": {
+      "directories": ["mql5_feed", "data"],
+      "files": ["*.csv", "*.parquet"]
+    }
+  },
+  
   "features": {
     "financial_data": true,
     "technical_indicators": true,
