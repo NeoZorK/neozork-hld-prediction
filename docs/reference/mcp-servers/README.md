@@ -762,4 +762,13 @@ The MCP server system has comprehensive test coverage:
 **Last Updated**: June 25, 2025  
 **IDE Configurations**: Cursor, VS Code, PyCharm  
 **MCP Server**: Production Ready  
-**Test Coverage**: 100% (15/15 tests passed) 
+**Test Coverage**: 100% (15/15 tests passed)
+
+## Global MCP Config for Cursor IDE
+
+- Global file: `~/.cursor/mcp.json` (used in all projects)
+- Local files: `mcp.json`, `cursor_mcp_config.json` (in the project root)
+
+> The script `scripts/setup_ide_configs.py` automatically updates all these files.
+
+**All Neozork MCP server capabilities are now available from any project in Cursor IDE.** 

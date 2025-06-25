@@ -303,20 +303,20 @@ docker compose run --rm neozork-hld python3 neozork_mcp_server.py
 **MCP Server**: Production Ready  
 **Test Coverage**: 100% (15/15 tests passed)
 
-## 🖥️ MCP конфигурация для Cursor IDE
+## 🖥️ MCP Configuration for Cursor IDE
 
-Cursor IDE теперь использует глобальный файл конфигурации MCP:
+Cursor IDE now uses a global MCP configuration file:
 
-- **~/.cursor/mcp.json** — глобальный конфиг для всех проектов
-- **mcp.json** и **cursor_mcp_config.json** в корне проекта — локальные конфиги
+- **~/.cursor/mcp.json** — global config for all projects
+- **mcp.json** and **cursor_mcp_config.json** in the project root — local configs
 
-### Приоритет загрузки MCP-конфигурации в Cursor IDE:
-1. **~/.cursor/mcp.json** (глобальный)
-2. **./mcp.json** (локальный)
-3. **./cursor_mcp_config.json** (расширенный локальный)
+### MCP Configuration Loading Priority in Cursor IDE:
+1. **~/.cursor/mcp.json** (global)
+2. **./mcp.json** (local)
+3. **./cursor_mcp_config.json** (extended local)
 
-> Скрипт `python3 scripts/setup_ide_configs.py` теперь автоматически обновляет все эти файлы, включая глобальный `~/.cursor/mcp.json`.
+> The script `python3 scripts/setup_ide_configs.py` now automatically updates all these files, including the global `~/.cursor/mcp.json`.
 
-**Все возможности Neozork MCP сервера (финансовые, аналитические, AI, Docker, UV и др.) теперь доступны из любого проекта в Cursor IDE.**
+**All Neozork MCP server capabilities (financial, analytical, AI, Docker, UV, etc.) are now available from any project in Cursor IDE.**
 
-Подробнее — см. [IDE Configuration Guide](docs/guides/ide-configuration.md) и [MCP Servers Documentation](docs/reference/mcp-servers/README.md).
+For details, see [IDE Configuration Guide](docs/guides/ide-configuration.md) and [MCP Servers Documentation](docs/reference/mcp-servers/README.md).
