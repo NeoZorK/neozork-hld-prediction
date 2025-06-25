@@ -42,6 +42,13 @@ class TestNeozorkMCPManager:
         # Create sample Python files
         (project_path / "src" / "main.py").write_text("print('Hello, World!')")
         
+        # Create the MCP server file
+        (project_path / "neozork_mcp_server.py").write_text("""
+#!/usr/bin/env python3
+# Test MCP server file
+print("Test MCP server")
+""")
+        
         # Create sample financial data
         (project_path / "data" / "GBPUSD_MN1.csv").write_text("time,open,close\n2023-01-01,100,101")
         
@@ -194,21 +201,25 @@ class TestNeozorkMCPManager:
             mock_process.poll.return_value = None
             mock_process.pid = 12345
             mock_popen.return_value = mock_process
-            
+    
             success = manager.start_server("background")
             assert success is True
             assert "neozork_mcp" in manager.running_servers
-            
+    
             server_info = manager.running_servers["neozork_mcp"]
             assert server_info["pid"] == 12345
             assert "start_time" in server_info
+        
+        # Clean up for next test
+        manager.running_servers.clear()
         
         with patch('subprocess.Popen') as mock_popen:
             # Mock failed startup
             mock_process = Mock()
             mock_process.poll.return_value = 1  # Process exited
+            mock_process.communicate.return_value = ("", "Error message")
             mock_popen.return_value = mock_process
-            
+    
             success = manager.start_server("background")
             assert success is False
             assert "neozork_mcp" not in manager.running_servers
@@ -442,6 +453,76 @@ class TestIDEConfigCreation:
 class TestErrorHandling:
     """Test error handling"""
     
+    @pytest.fixture
+    def temp_project(self):
+        """Create temporary project directory"""
+        temp_dir = tempfile.mkdtemp()
+        project_path = Path(temp_dir)
+        
+        # Create project structure
+        (project_path / "src").mkdir()
+        (project_path / "data").mkdir()
+        
+        # Create sample Python file
+        (project_path / "src" / "main.py").write_text("print('Hello, World!')")
+        
+        # Create the MCP server file
+        (project_path / "neozork_mcp_server.py").write_text("""
+#!/usr/bin/env python3
+# Test MCP server file
+print("Test MCP server")
+""")
+        
+        # Create sample config
+        config = {
+            "auto_start": {
+                "enabled": True,
+                "check_interval": 30,
+                "ide_detection": True,
+                "project_detection": True
+            },
+            "server": {
+                "command": "python",
+                "args": ["neozork_mcp_server.py"],
+                "env": {
+                    "PYTHONPATH": str(project_path),
+                    "LOG_LEVEL": "INFO"
+                },
+                "cwd": str(project_path)
+            },
+            "conditions": {
+                "cursor_ide": {
+                    "processes": ["Cursor", "cursor"],
+                    "files": [".cursor", "cursor_mcp_config.json"]
+                },
+                "pycharm_ide": {
+                    "processes": ["pycharm", "PyCharm"],
+                    "files": [".idea", "pycharm_mcp_config.json"]
+                },
+                "python_files": {
+                    "extensions": [".py"],
+                    "min_files": 1
+                },
+                "financial_data": {
+                    "directories": ["mql5_feed", "data"],
+                    "files": ["*.csv", "*.parquet"]
+                }
+            }
+        }
+        
+        (project_path / "neozork_mcp_config.json").write_text(json.dumps(config, indent=2))
+        
+        yield project_path
+        
+        # Cleanup
+        shutil.rmtree(temp_dir)
+    
+    @pytest.fixture
+    def manager(self, temp_project):
+        """Create manager instance"""
+        manager = NeozorkMCPManager(project_root=temp_project)
+        yield manager
+    
     def test_config_load_error(self, temp_project):
         """Test configuration load error handling"""
         # Remove config file
@@ -481,6 +562,76 @@ class TestErrorHandling:
 
 class TestPerformance:
     """Test performance aspects"""
+    
+    @pytest.fixture
+    def temp_project(self):
+        """Create temporary project directory"""
+        temp_dir = tempfile.mkdtemp()
+        project_path = Path(temp_dir)
+        
+        # Create project structure
+        (project_path / "src").mkdir()
+        (project_path / "data").mkdir()
+        
+        # Create sample Python file
+        (project_path / "src" / "main.py").write_text("print('Hello, World!')")
+        
+        # Create the MCP server file
+        (project_path / "neozork_mcp_server.py").write_text("""
+#!/usr/bin/env python3
+# Test MCP server file
+print("Test MCP server")
+""")
+        
+        # Create sample config
+        config = {
+            "auto_start": {
+                "enabled": True,
+                "check_interval": 30,
+                "ide_detection": True,
+                "project_detection": True
+            },
+            "server": {
+                "command": "python",
+                "args": ["neozork_mcp_server.py"],
+                "env": {
+                    "PYTHONPATH": str(project_path),
+                    "LOG_LEVEL": "INFO"
+                },
+                "cwd": str(project_path)
+            },
+            "conditions": {
+                "cursor_ide": {
+                    "processes": ["Cursor", "cursor"],
+                    "files": [".cursor", "cursor_mcp_config.json"]
+                },
+                "pycharm_ide": {
+                    "processes": ["pycharm", "PyCharm"],
+                    "files": [".idea", "pycharm_mcp_config.json"]
+                },
+                "python_files": {
+                    "extensions": [".py"],
+                    "min_files": 1
+                },
+                "financial_data": {
+                    "directories": ["mql5_feed", "data"],
+                    "files": ["*.csv", "*.parquet"]
+                }
+            }
+        }
+        
+        (project_path / "neozork_mcp_config.json").write_text(json.dumps(config, indent=2))
+        
+        yield project_path
+        
+        # Cleanup
+        shutil.rmtree(temp_dir)
+    
+    @pytest.fixture
+    def manager(self, temp_project):
+        """Create manager instance"""
+        manager = NeozorkMCPManager(project_root=temp_project)
+        yield manager
     
     def test_condition_check_performance(self, manager):
         """Test condition check performance"""
