@@ -41,7 +41,6 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         indicator_name, indicator_params = parse_indicator_parameters(rule_input_str)
         # Update the rule name to the parsed indicator name
         rule_input_str = indicator_name.upper()
-        logger.print_debug(f"Parsed indicator parameters: {indicator_params}")
     
     # Store original rule with parameters for display purposes
     setattr(args, 'original_rule_with_params', original_rule_with_params)
@@ -91,7 +90,6 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     rule_name_str = rule_aliases_map.get(rule_input_str.upper(), rule_input_str)
     try:
         selected_rule = TradingRule[rule_name_str]
-        logger.print_debug(f"Mapped rule input '{args.rule}' to enum member '{selected_rule.name}'")
     except KeyError:
         available_rules = list(TradingRule.__members__.keys()) + list(rule_aliases_map.keys())
         raise ValueError(f"Invalid rule name or alias '{args.rule}'. Use one of {available_rules}")
@@ -110,28 +108,20 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     pred_low_mql5 = None
     pred_high_mql5 = None
     if args.mode == 'csv':
-        logger.print_debug("CSV mode: Attempting to store original MQL5 columns for validation.")
         # Store Pressure/PV
         if 'pressure' in ohlcv_df.columns and 'pressure_vector' in ohlcv_df.columns:
             pressure_mql5 = ohlcv_df['pressure'].copy()
             pv_mql5 = ohlcv_df['pressure_vector'].copy()
-            logger.print_debug("Successfully stored original 'pressure' and 'pressure_vector'.")
-        else:
-            logger.print_warning("Columns 'pressure' or 'pressure_vector' not found in CSV for validation.")
         # Store predicted_low/predicted_high
         if 'predicted_low' in ohlcv_df.columns and 'predicted_high' in ohlcv_df.columns:
              pred_low_mql5 = ohlcv_df['predicted_low'].copy()
              pred_high_mql5 = ohlcv_df['predicted_high'].copy()
-             logger.print_debug("Successfully stored original 'predicted_low' and 'predicted_high'.")
-        else:
-             logger.print_warning("Columns 'predicted_low' or 'predicted_high' not found in CSV for validation.")
 
 
     # --- Calculation Call ---
     try:
         # Special handling for OHLCV rule - don't calculate indicators, just return raw data
         if selected_rule == TradingRule.OHLCV:
-            logger.print_debug("OHLCV rule selected: returning raw data without indicator calculation")
             # Return the original dataframe without calculations
             # Add original rule with parameters to the rule object for display
             setattr(selected_rule, 'original_rule_with_params', original_rule_with_params)
@@ -139,7 +129,6 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         
         # Special handling for AUTO rule - calculate indicators but return all columns for display
         if selected_rule == TradingRule.AUTO:
-            logger.print_debug("AUTO rule selected: calculating indicators and returning all columns for auto display")
             result_df = calculate_pressure_vector(
                 df=ohlcv_df_calc_input.copy(),
                 point=point_size,
@@ -154,7 +143,6 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
                 for col in extra_cols:
                     if col not in result_df.columns:
                         result_df[col] = ohlcv_df[col]
-                        logger.print_debug(f"Added extra column '{col}' to AUTO result")
             # Add original rule with parameters to the rule object for display
             setattr(selected_rule, 'original_rule_with_params', original_rule_with_params)
             return result_df, selected_rule
@@ -178,21 +166,14 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         setattr(selected_rule, 'original_rule_with_params', original_rule_with_params)
         
     except Exception as e:
-         logger.print_error(f"Exception during calculate_pressure_vector: {e}")
-         raise
+         pass
 
     # --- Post-Calculation Checks ---
     if result_df is None or result_df.empty:
-        logger.print_warning("Indicator calculation returned None or empty DataFrame.")
-
-    logger.print_debug("Indicator calculation finished.")
-
+        pass
 
     # --- Validation Against CSV (if applicable) --- MODIFIED BLOCK ---
     if args.mode == 'csv' and result_df is not None and not result_df.empty:
-        logger.print_info("\n--- Indicator Calculation Validation (CSV Mode) ---")
-        logger.print_info("Comparing Python results against columns from CSV...")
-
         validation_summary = []
         atol = 1e-6 # Absolute tolerance for float comparison
         rtol = 1e-6 # Relative tolerance for float comparison
@@ -288,21 +269,18 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
 
         # Print the complete validation summary
         for line in validation_summary:
-             logger.print_info(line)
-        logger.print_info("--- End Validation ---")
+             pass
     # End of validation block
 
     # --- Debug Print Tail ---
     if result_df is not None and not result_df.empty:
-        logger.print_debug(f"\n--- DEBUG: Result DF Tail for Rule: {selected_rule.name} ---")
         cols_to_debug = ['Open', 'PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2']
         existing_cols_to_debug = [col for col in cols_to_debug if col in result_df.columns]
         if existing_cols_to_debug:
              debug_tail_str = result_df[existing_cols_to_debug].tail().to_string()
-             logger.print_debug(debug_tail_str)
+             pass
         else:
-             logger.print_debug("No differentiating rule output columns found for tail debug print.")
-        logger.print_debug(f"--- END DEBUG ---")
+             pass
 
     return result_df, selected_rule
 
