@@ -94,13 +94,10 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
             plots_to_add.append(mpf.make_addplot(sell_markers_series,
                                                  type='scatter', markersize=50, marker='v', color='red', panel=0))
 
-    # === После определения panel_count и перед mpf.plot ===
-    metrics = calculate_trading_metrics(df_results)
-    metrics_text = '\n'.join([f"{k}: {v}" for k,v in metrics.items()])
-    # Убираем увеличение panel_count, так как метрики теперь выводятся в консоль, а не на график
-    # panel_count += 1
-    # Вместо этого просто выводим метрики в консоль
-    logger.print_info(f"Trading metrics:\n{metrics_text}")
+    # --- Trading Metrics Display ---
+    # NOTE: Metrics have been removed from charts as requested
+    # Metrics are now displayed only in console output via universal_trading_metrics module
+
     ratios = [4]
     ratios.extend([1] * panel_count)
     if 'Volume' in df_results.columns and not df_results['Volume'].isnull().all():

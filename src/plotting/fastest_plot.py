@@ -15,9 +15,7 @@ import plotly.io as pio
 import webbrowser
 from functools import partial
 import re
-from src.plotting.metrics_display import add_metrics_to_plotly_chart
 from src.common import logger
-from src.calculation.trading_metrics import calculate_trading_metrics
 
 def plot_indicator_results_fastest(
     df,
@@ -59,50 +57,37 @@ def plot_indicator_results_fastest(
     else:
         ddf = df  # Assume it's already a dask dataframe
 
-    # Ensure the index column exists and is datetime type
-    if 'index' not in ddf.columns:
-        if isinstance(ddf.index, pd.DatetimeIndex):
-            ddf = ddf.reset_index()
-            ddf = ddf.rename(columns={'index': 'date'})
-            ddf['index'] = ddf['date']
-        else:
-            raise ValueError("DataFrame must have datetime index or 'index' column.")
+    # Standardize column names
+    display_df = df.copy()
+    display_df.columns = [col.lower() for col in display_df.columns]
 
-    # Compute a subset of data if very large (for initial visualization)
-    if len(ddf) > 50000:
-        display_df = ddf.sample(frac=min(1.0, 50000/len(ddf)), random_state=42).compute()
-        display_df = display_df.sort_values('index')
-    else:
-        display_df = ddf.compute()
+    # Ensure we have the required columns
+    required_columns = ['open', 'high', 'low', 'close']
+    missing_columns = [col for col in required_columns if col not in display_df.columns]
+    if missing_columns:
+        logger.print_error(f"Missing required columns: {missing_columns}")
+        return None
 
-    # Compute direction for coloring
-    display_df = display_df.copy()
-    display_df.loc[:, 'direction'] = (display_df['Close'] >= display_df['Open'])
-    display_df.loc[:, 'increasing'] = display_df['direction']
-    display_df.loc[:, 'decreasing'] = ~display_df['direction']
-
-    # Создаём 2 колонки: график (col=1), метрики (col=2)
+    # Create subplots
     fig = make_subplots(
         rows=3, cols=2,
-        column_widths=[0.8, 0.2],
-        shared_xaxes=True,
-        vertical_spacing=0.03,
-        horizontal_spacing=0.05,
-        row_heights=[0.6, 0.2, 0.2],
-        subplot_titles=["OHLC Chart", "", "Volume", "", "Indicators", ""]
+        subplot_titles=('Price Chart', '', 'Volume', '', 'Indicators', ''),
+        vertical_spacing=0.05,
+        horizontal_spacing=0.02,
+        specs=[[{"secondary_y": False}, {"secondary_y": False}],
+               [{"secondary_y": False}, {"secondary_y": False}],
+               [{"secondary_y": False}, {"secondary_y": False}]]
     )
 
-    # Add OHLC candlestick chart
+    # Add candlestick chart
     fig.add_trace(
         go.Candlestick(
             x=display_df['index'],
-            open=display_df['Open'],
-            high=display_df['High'],
-            low=display_df['Low'],
-            close=display_df['Close'],
-            name="OHLC",
-            increasing_line_color='green',
-            decreasing_line_color='red'
+            open=display_df['open'],
+            high=display_df['high'],
+            low=display_df['low'],
+            close=display_df['close'],
+            name="OHLC"
         ),
         row=1, col=1
     )
@@ -167,61 +152,6 @@ def plot_indicator_results_fastest(
         font=dict(size=18, color="#2e5cb8"),
         align="center",
     )
-
-    # === Метрики в отдельной колонке справа (col=2, row=1) ===
-    show_metrics = 'Direction' in display_df.columns
-    metrics = {}
-    warning_html = ""
-    if show_metrics:
-        metrics = calculate_trading_metrics(display_df,
-            lot_size=kwargs.get('lot_size', 1.0),
-            risk_reward_ratio=kwargs.get('risk_reward_ratio', 2.0),
-            fee_per_trade=kwargs.get('fee_per_trade', 0.07))
-        all_notrade = (display_df['Direction'] == 0).all()
-        if all_notrade:
-            warning_html = "<div style='color:#ffaa00;font-size:1.1em;margin-bottom:8px;'>⚠️ No trading signals generated for selected parameters.</div>"
-    else:
-        warning_html = "<div style='color:#ff4444;font-size:1.1em;margin-bottom:8px;'>❌ No trading signals column found in result.</div>"
-
-    def color(val, good=0.7, warn=0.4):
-        try:
-            v = float(str(val).replace('%',''))
-            if v >= good*100: return '#00ff88'  # green
-            if v >= warn*100: return '#ffaa00'  # yellow
-            return '#ff4444'  # red
-        except: return '#888888'
-    metrics_html = f'''
-<div style="margin:40px auto 0 auto;max-width:700px;padding:22px 32px 22px 32px;
-            background: #181c20; border-radius: 14px; border: 2px solid #333;
-            font-family: 'Segoe UI', Arial, sans-serif; font-size: 17px; color: #fff; box-shadow: 0 4px 24px #0002;">
-  {warning_html}
-  <h2 style="margin-top:0;margin-bottom:18px;font-size:1.5em;letter-spacing:0.5px;text-align:center;">
-    <span style="font-size:1.2em;vertical-align:middle;">📊</span> <span style="color:#00ff88;">TRADING METRICS</span>
-  </h2>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;align-items:center;justify-items:start;">
-    <div>🟢 <b>Buy Signals:</b> <span style="color:#00ff88;">{metrics.get('buy_count',0)}</span></div>
-    <div>🔴 <b>Sell Signals:</b> <span style="color:#ff4444;">{metrics.get('sell_count',0)}</span></div>
-    <div>🔄 <b>Total Trades:</b> <span style="color:#ffaa00;">{metrics.get('total_trades',0)}</span></div>
-    <div>🎯 <b>Win Ratio:</b> <span style="color:{color(metrics.get('win_ratio',0)/100)};font-weight:bold;">{metrics.get('win_ratio',0):.1f}%</span></div>
-    <div>💰 <b>Profit Factor:</b> <span style="color:{color(metrics.get('profit_factor',0)/2)};font-weight:bold;">{metrics.get('profit_factor',0):.2f}</span></div>
-    <div>📊 <b>Sharpe Ratio:</b> <span style="color:{color(metrics.get('sharpe_ratio',0)/2)};font-weight:bold;">{metrics.get('sharpe_ratio',0):.2f}</span></div>
-    <div>⚖️ <b>Risk/Reward:</b> <span style="color:#00ccff;">{metrics.get('risk_reward_setting',0):.2f}</span></div>
-    <div>💸 <b>Fee per Trade:</b> <span style="color:#ffaa00;">{metrics.get('fee_per_trade',0):.2f}%</span></div>
-    <div>📈 <b>Kelly Fraction:</b> <span style="color:#00ff88;">{metrics.get('kelly_fraction',0):.3f}</span></div>
-    <div>💵 <b>Net Return:</b> <span style="color:{color(metrics.get('net_return',0)/100)};font-weight:bold;">{metrics.get('net_return',0):.2f}%</span></div>
-    <div>🛡️ <b>Strategy Sustainability:</b> <span style="color:{color(metrics.get('strategy_sustainability',0)/100)};font-weight:bold;">{metrics.get('strategy_sustainability',0):.1f}%</span></div>
-  </div>
-</div>
-'''
-    with open(output_path, 'r', encoding='utf-8') as f:
-        html = f.read()
-    html = html.replace('</body>', metrics_html + '\n</body>')
-    with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(html)
-    # Отключить оси для колонки метрик
-    for r in [1,2,3]:
-        fig.update_xaxes(visible=False, row=r, col=2)
-        fig.update_yaxes(visible=False, row=r, col=2)
 
     # Update layout
     fig.update_layout(
