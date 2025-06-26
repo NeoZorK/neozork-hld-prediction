@@ -1,547 +1,711 @@
 # Script Examples
 
-Examples for using utility scripts and debugging tools.
-
 ## Overview
 
-The project includes various utility scripts for:
+Examples demonstrating utility scripts and automation tools in the NeoZork HLD Prediction project, including MCP server detection scripts.
 
-- **Import Management** - Fix import statements automatically
-- **Debug Scripts** - Troubleshoot and debug issues
-- **Data Management** - Create and manage test data
-- **System Analysis** - Analyze requirements and dependencies
-- **Development Tools** - Development workflow automation
+## 🚀 Quick Start Examples
 
-## Import Management
-
-### Fix Imports Script
+### MCP Server Status Check
 ```bash
-# Fix imports automatically
-python scripts/fix_imports.py
+# Check MCP server status (works in both Docker and host environments)
+python scripts/check_mcp_status.py
 
-# Fix with verbose output
-python scripts/fix_imports.py --verbose
+# Expected output in Docker:
+# 🔍 MCP Server Status Checker
+# ==================================================
+# 🐳 Detected Docker environment
+# 
+# 🚀 MCP Server Status:
+#    ✅ Server is running
+# 
+# 🔗 Connection Test:
+#    ✅ Connection successful
+#    🔍 Test method: ping_request
+#    ⏱️  Response time: immediate
+# 
+# 💻 IDE Configurations:
+#    ✅ CURSOR: 7418 bytes
+#    ✅ DOCKER: 367 bytes
+# 
+# 🐳 Docker Information:
+#    📦 In Docker: True
+#    🔄 MCP Server responding: True
+#    🔍 Test method: ping_request
 
-# Fix specific file
-python scripts/fix_imports.py --file src/calculation/indicators/rsi_ind.py
-
-# Fix specific directory
-python scripts/fix_imports.py --directory src/calculation/indicators/
-
-# Fix with backup
-python scripts/fix_imports.py --backup
-
-# Fix with dry run (no changes)
-python scripts/fix_imports.py --dry-run
+# Expected output on host:
+# 🔍 MCP Server Status Checker
+# ==================================================
+# 🖥️  Detected host environment
+# 
+# 🚀 MCP Server Status:
+#    ✅ Server is running
+# 
+# 🔗 Connection Test:
+#    ✅ Connection successful
+#    👥 PIDs: 12345, 67890
+# 
+# 💻 IDE Configurations:
+#    ✅ CURSOR: 7418 bytes
+#    ✅ VSCODE: 2613 bytes
+#    ✅ PYCHARM: 4174 bytes
+#    ✅ DOCKER: 367 bytes
 ```
 
-### Import Analysis
+### IDE Configuration Setup
 ```bash
-# Analyze import issues
-python scripts/fix_imports.py --analyze
+# Setup all IDE configurations automatically
+python3 scripts/setup_ide_configs.py
 
-# Show import statistics
-python scripts/fix_imports.py --stats
+# Verify the setup
+python3 -m pytest tests/docker/test_ide_configs.py -v
 
-# Check import dependencies
-python scripts/fix_imports.py --check-deps
+# Check configuration files
+ls -la cursor_mcp_config.json .vscode/settings.json pycharm_mcp_config.json docker.env
 ```
 
-## Debug Scripts
+## 🔧 MCP Server Script Examples
 
-### Debug Binance Connection
+### Manual MCP Server Test
 ```bash
-# Debug Binance connection
-python scripts/debug_scripts/debug_binance_connection.py
+# Test MCP server with ping request
+echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
 
-# Debug with specific symbol
-python scripts/debug_scripts/debug_binance_connection.py --symbol BTCUSDT
-
-# Debug with specific interval
-python scripts/debug_scripts/debug_binance_connection.py --interval D1
-
-# Debug with verbose output
-python scripts/debug_scripts/debug_binance_connection.py --verbose
+# Expected response:
+# {"jsonrpc": "2.0", "id": 1, "result": {"pong": true, "timestamp": "2025-01-27T10:30:00Z", "server_time": "2025-01-27T10:30:00Z", "timezone": "UTC"}}
 ```
 
-### Debug Parquet Files
-```bash
-# Check Parquet files
-python scripts/debug_scripts/debug_check_parquet.py
+### MCP Server Detection Script
+```python
+# Example: MCP server detection script
+#!/usr/bin/env python3
+"""
+MCP Server Detection Script
+Detect and test MCP server in different environments
+"""
 
-# Check specific file
-python scripts/debug_scripts/debug_check_parquet.py --file data/file.parquet
+import sys
+from pathlib import Path
+from scripts.check_mcp_status import is_running_in_docker, DockerMCPServerChecker, MCPServerChecker
 
-# Check with data validation
-python scripts/debug_scripts/debug_check_parquet.py --validate
+def main():
+    """Main detection function"""
+    print("🔍 MCP Server Detection Script")
+    print("=" * 40)
+    
+    # Detect environment
+    if is_running_in_docker():
+        print("🐳 Docker environment detected")
+        checker = DockerMCPServerChecker()
+    else:
+        print("🖥️  Host environment detected")
+        checker = MCPServerChecker()
+    
+    # Check server status
+    server_running = checker.check_server_running()
+    print(f"🚀 Server Status: {'✅ Running' if server_running else '❌ Not Running'}")
+    
+    # Test connection
+    connection = checker.test_connection()
+    if connection.get("status") == "success":
+        print("🔗 Connection: ✅ Successful")
+        if "test_method" in connection:
+            print(f"   🔍 Method: {connection['test_method']}")
+    else:
+        print(f"🔗 Connection: ❌ Failed - {connection.get('error', 'Unknown')}")
+    
+    # Check configurations
+    configs = checker.check_ide_configurations()
+    print("\n💻 IDE Configurations:")
+    for ide, config in configs.items():
+        if config.get('exists'):
+            size = config.get('size', 0)
+            valid = config.get('valid_json', False)
+            status = "✅" if valid else "⚠️"
+            print(f"   {status} {ide.upper()}: {size} bytes")
+        else:
+            print(f"   ❌ {ide.upper()}: Not configured")
+    
+    return 0 if server_running else 1
 
-# Check with statistics
-python scripts/debug_scripts/debug_check_parquet.py --stats
+if __name__ == "__main__":
+    sys.exit(main())
 ```
 
-### Debug Indicators
-```bash
-# Debug indicators
-python scripts/debug_scripts/debug_indicators.py
+## 🐳 Docker Script Examples
 
-# Debug specific indicator
-python scripts/debug_scripts/debug_indicators.py --indicator RSI
+### Docker Environment Detection Script
+```python
+# Example: Docker environment detection script
+#!/usr/bin/env python3
+"""
+Docker Environment Detection Script
+Detect and configure Docker environment for MCP server
+"""
 
-# Debug with test data
-python scripts/debug_scripts/debug_indicators.py --test-data
+import os
+import subprocess
+import json
+from pathlib import Path
 
-# Debug with verbose output
-python scripts/debug_scripts/debug_indicators.py --verbose
+def detect_docker_environment():
+    """Detect if running in Docker environment"""
+    methods = []
+    
+    # Method 1: Check /.dockerenv file
+    if Path("/.dockerenv").exists():
+        methods.append("/.dockerenv file")
+    
+    # Method 2: Check cgroup
+    try:
+        with open("/proc/1/cgroup", "r") as f:
+            if "docker" in f.read():
+                methods.append("cgroup contains docker")
+    except FileNotFoundError:
+        pass
+    
+    # Method 3: Check environment variable
+    if os.environ.get("DOCKER_CONTAINER") == "true":
+        methods.append("DOCKER_CONTAINER environment variable")
+    
+    return len(methods) > 0, methods
+
+def test_docker_mcp_ping():
+    """Test MCP server ping in Docker"""
+    try:
+        ping_request = '{"method": "neozork/ping", "id": 1, "params": {}}'
+        cmd = f'echo \'{ping_request}\' | python3 neozork_mcp_server.py'
+        
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        
+        if result.returncode == 0 and result.stdout.strip():
+            response = json.loads(result.stdout.strip())
+            if (response.get("jsonrpc") == "2.0" and 
+                response.get("id") == 1 and 
+                response.get("result", {}).get("pong") is True):
+                return True, "Ping successful"
+            else:
+                return False, "Invalid response format"
+        else:
+            return False, "No response received"
+            
+    except subprocess.TimeoutExpired:
+        return False, "Request timed out"
+    except Exception as e:
+        return False, f"Error: {e}"
+
+def main():
+    """Main Docker detection function"""
+    print("🐳 Docker Environment Detection")
+    print("=" * 40)
+    
+    # Detect Docker environment
+    in_docker, methods = detect_docker_environment()
+    
+    if in_docker:
+        print("✅ Running in Docker environment")
+        print(f"   Detection methods: {', '.join(methods)}")
+        
+        # Test MCP server
+        ping_success, ping_message = test_docker_mcp_ping()
+        if ping_success:
+            print("✅ MCP server ping successful")
+        else:
+            print(f"❌ MCP server ping failed: {ping_message}")
+    else:
+        print("❌ Not running in Docker environment")
+    
+    return 0 if in_docker else 1
+
+if __name__ == "__main__":
+    main()
 ```
 
-### Debug CLI
-```bash
-# Debug CLI
-python scripts/debug_scripts/debug_cli.py
+### Docker Container Management Script
+```python
+# Example: Docker container management script
+#!/usr/bin/env python3
+"""
+Docker Container Management Script
+Manage Docker containers for MCP server development
+"""
 
-# Debug specific command
-python scripts/debug_scripts/debug_cli.py --command "demo --rule RSI"
+import subprocess
+import sys
+import json
+from pathlib import Path
 
-# Debug with test mode
-python scripts/debug_scripts/debug_cli.py --test-mode
+def run_docker_command(cmd, capture_output=True):
+    """Run Docker command and return result"""
+    try:
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            capture_output=capture_output,
+            text=True
+        )
+        return result.returncode == 0, result.stdout, result.stderr
+    except Exception as e:
+        return False, "", str(e)
 
-# Debug with verbose output
-python scripts/debug_scripts/debug_cli.py --verbose
+def build_docker_image():
+    """Build Docker image"""
+    print("🔨 Building Docker image...")
+    success, stdout, stderr = run_docker_command("docker-compose build")
+    
+    if success:
+        print("✅ Docker image built successfully")
+    else:
+        print(f"❌ Docker build failed: {stderr}")
+    
+    return success
+
+def run_docker_container():
+    """Run Docker container"""
+    print("🚀 Running Docker container...")
+    success, stdout, stderr = run_docker_command("docker-compose run --rm app python scripts/check_mcp_status.py")
+    
+    if success:
+        print("✅ Docker container ran successfully")
+        print(stdout)
+    else:
+        print(f"❌ Docker container failed: {stderr}")
+    
+    return success
+
+def check_docker_status():
+    """Check Docker container status"""
+    print("📊 Checking Docker container status...")
+    success, stdout, stderr = run_docker_command("docker ps -a")
+    
+    if success:
+        print("✅ Docker containers:")
+        print(stdout)
+    else:
+        print(f"❌ Failed to check Docker status: {stderr}")
+    
+    return success
+
+def main():
+    """Main Docker management function"""
+    print("🐳 Docker Container Management")
+    print("=" * 40)
+    
+    if len(sys.argv) < 2:
+        print("Usage: python docker_manage.py [build|run|status]")
+        return 1
+    
+    command = sys.argv[1]
+    
+    if command == "build":
+        return 0 if build_docker_image() else 1
+    elif command == "run":
+        return 0 if run_docker_container() else 1
+    elif command == "status":
+        return 0 if check_docker_status() else 1
+    else:
+        print(f"❌ Unknown command: {command}")
+        return 1
+
+if __name__ == "__main__":
+    sys.exit(main())
 ```
 
-### Debug MCP Servers
-```bash
-# Debug MCP servers
-python scripts/debug_scripts/debug_mcp_servers.py
+## 🔧 Configuration Script Examples
 
-# Debug server status
-python scripts/debug_scripts/debug_mcp_status.py
+### IDE Configuration Validation Script
+```python
+# Example: IDE configuration validation script
+#!/usr/bin/env python3
+"""
+IDE Configuration Validation Script
+Validate IDE configuration files for MCP server
+"""
 
-# Debug MCP connections
-python scripts/debug_scripts/debug_mcp_connections.py
+import json
+import sys
+from pathlib import Path
 
-# Debug with restart
-python scripts/debug_scripts/debug_mcp_servers.py --restart
+def validate_json_config(config_path):
+    """Validate JSON configuration file"""
+    try:
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+        
+        # Check for required MCP server configuration
+        if "mcpServers" in config:
+            if "neozork" in config["mcpServers"]:
+                server_config = config["mcpServers"]["neozork"]
+                if "command" in server_config and "args" in server_config:
+                    return True, "Valid MCP server configuration"
+                else:
+                    return False, "Missing command or args in MCP server configuration"
+            else:
+                return False, "Missing neozork MCP server configuration"
+        else:
+            return False, "Missing mcpServers section"
+            
+    except json.JSONDecodeError as e:
+        return False, f"Invalid JSON: {e}"
+    except Exception as e:
+        return False, f"Error reading file: {e}"
+
+def validate_env_config(config_path):
+    """Validate environment configuration file"""
+    try:
+        with open(config_path, 'r') as f:
+            content = f.read()
+        
+        lines = content.split('\n')
+        for line_num, line in enumerate(lines, 1):
+            line = line.strip()
+            if line and not line.startswith('#'):
+                if '=' not in line:
+                    return False, f"Invalid format at line {line_num}: {line}"
+        
+        return True, "Valid environment file format"
+        
+    except Exception as e:
+        return False, f"Error reading file: {e}"
+
+def main():
+    """Main validation function"""
+    print("🔧 IDE Configuration Validation")
+    print("=" * 40)
+    
+    configs = {
+        'cursor': ('cursor_mcp_config.json', validate_json_config),
+        'vscode': ('.vscode/settings.json', validate_json_config),
+        'pycharm': ('pycharm_mcp_config.json', validate_json_config),
+        'docker': ('docker.env', validate_env_config)
+    }
+    
+    all_valid = True
+    
+    for ide, (config_path, validator) in configs.items():
+        config_file = Path(config_path)
+        
+        if config_file.exists():
+            valid, message = validator(config_file)
+            status = "✅" if valid else "❌"
+            print(f"{status} {ide.upper()}: {message}")
+            
+            if not valid:
+                all_valid = False
+        else:
+            print(f"⚠️  {ide.upper()}: File not found")
+    
+    return 0 if all_valid else 1
+
+if __name__ == "__main__":
+    sys.exit(main())
 ```
 
-### Debug Data Processing
-```bash
-# Debug data processing
-python scripts/debug_scripts/debug_data_processing.py
+## 📊 Monitoring Script Examples
 
-# Debug with specific file
-python scripts/debug_scripts/debug_data_processing.py --file data.csv
+### Real-time MCP Monitoring Script
+```python
+# Example: Real-time MCP monitoring script
+#!/usr/bin/env python3
+"""
+Real-time MCP Server Monitoring Script
+Monitor MCP server status in real-time
+"""
 
-# Debug with validation
-python scripts/debug_scripts/debug_data_processing.py --validate
+import time
+import sys
+from scripts.check_mcp_status import is_running_in_docker, DockerMCPServerChecker, MCPServerChecker
 
-# Debug with performance metrics
-python scripts/debug_scripts/debug_data_processing.py --performance
+def monitor_mcp_server(interval=30, max_checks=None):
+    """Monitor MCP server status in real-time"""
+    print(f"🔍 Starting real-time MCP monitoring (check every {interval}s)")
+    print("Press Ctrl+C to stop")
+    
+    if is_running_in_docker():
+        checker = DockerMCPServerChecker()
+        env_name = "Docker"
+    else:
+        checker = MCPServerChecker()
+        env_name = "Host"
+    
+    check_count = 0
+    
+    try:
+        while True:
+            if max_checks and check_count >= max_checks:
+                print(f"\n🛑 Reached maximum checks ({max_checks})")
+                break
+            
+            # Check server status
+            server_running = checker.check_server_running()
+            status = "✅ Running" if server_running else "❌ Not Running"
+            
+            timestamp = time.strftime("%H:%M:%S")
+            check_count += 1
+            
+            print(f"[{timestamp}] {env_name} MCP Server: {status} (check #{check_count})")
+            
+            time.sleep(interval)
+            
+    except KeyboardInterrupt:
+        print(f"\n🛑 Monitoring stopped after {check_count} checks")
+    
+    return check_count
+
+def main():
+    """Main monitoring function"""
+    print("📊 Real-time MCP Server Monitoring")
+    print("=" * 40)
+    
+    # Parse command line arguments
+    interval = 30
+    max_checks = None
+    
+    if len(sys.argv) > 1:
+        try:
+            interval = int(sys.argv[1])
+        except ValueError:
+            print(f"❌ Invalid interval: {sys.argv[1]}")
+            return 1
+    
+    if len(sys.argv) > 2:
+        try:
+            max_checks = int(sys.argv[2])
+        except ValueError:
+            print(f"❌ Invalid max checks: {sys.argv[2]}")
+            return 1
+    
+    # Start monitoring
+    check_count = monitor_mcp_server(interval, max_checks)
+    
+    print(f"📈 Monitoring completed: {check_count} checks performed")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
 ```
 
-### Debug Plotting
-```bash
-# Debug plotting
-python scripts/debug_scripts/debug_plotting.py
+### Performance Monitoring Script
+```python
+# Example: Performance monitoring script
+#!/usr/bin/env python3
+"""
+Performance Monitoring Script
+Monitor MCP server performance metrics
+"""
 
-# Debug specific backend
-python scripts/debug_scripts/debug_plotting.py --backend plotly
+import time
+import statistics
+from scripts.check_mcp_status import is_running_in_docker, DockerMCPServerChecker, MCPServerChecker
 
-# Debug with test data
-python scripts/debug_scripts/debug_plotting.py --test-data
+def measure_detection_performance(checker, iterations=10):
+    """Measure detection performance"""
+    times = []
+    
+    for i in range(iterations):
+        start_time = time.time()
+        checker.check_server_running()
+        end_time = time.time()
+        
+        detection_time = (end_time - start_time) * 1000  # Convert to milliseconds
+        times.append(detection_time)
+        
+        print(f"  Check {i+1}: {detection_time:.2f}ms")
+    
+    return times
 
-# Debug with performance metrics
-python scripts/debug_scripts/debug_plotting.py --performance
+def analyze_performance(times):
+    """Analyze performance metrics"""
+    if not times:
+        return {}
+    
+    return {
+        'count': len(times),
+        'min': min(times),
+        'max': max(times),
+        'mean': statistics.mean(times),
+        'median': statistics.median(times),
+        'std': statistics.stdev(times) if len(times) > 1 else 0
+    }
+
+def main():
+    """Main performance monitoring function"""
+    print("⚡ MCP Server Performance Monitoring")
+    print("=" * 40)
+    
+    if is_running_in_docker():
+        checker = DockerMCPServerChecker()
+        env_name = "Docker"
+    else:
+        checker = MCPServerChecker()
+        env_name = "Host"
+    
+    print(f"🌍 Environment: {env_name}")
+    print(f"🔍 Running performance tests...")
+    
+    # Measure detection performance
+    times = measure_detection_performance(checker, iterations=10)
+    
+    # Analyze results
+    metrics = analyze_performance(times)
+    
+    print(f"\n📊 Performance Metrics:")
+    print(f"   Count: {metrics['count']}")
+    print(f"   Min: {metrics['min']:.2f}ms")
+    print(f"   Max: {metrics['max']:.2f}ms")
+    print(f"   Mean: {metrics['mean']:.2f}ms")
+    print(f"   Median: {metrics['median']:.2f}ms")
+    print(f"   Std Dev: {metrics['std']:.2f}ms")
+    
+    # Performance assessment
+    mean_time = metrics['mean']
+    if mean_time < 100:
+        assessment = "✅ Excellent"
+    elif mean_time < 500:
+        assessment = "✅ Good"
+    elif mean_time < 1000:
+        assessment = "⚠️  Acceptable"
+    else:
+        assessment = "❌ Poor"
+    
+    print(f"\n📈 Performance Assessment: {assessment}")
+    
+    return 0
+
+if __name__ == "__main__":
+    main()
 ```
 
-### Debug System Resources
-```bash
-# Debug system resources
-python scripts/debug_scripts/debug_system_resources.py
+## 🔄 Migration Script Examples
 
-# Debug memory usage
-python scripts/debug_scripts/debug_system_resources.py --memory
+### Migration Helper Script
+```python
+# Example: Migration helper script
+#!/usr/bin/env python3
+"""
+Migration Helper Script
+Help migrate from old to new MCP server detection
+"""
 
-# Debug CPU usage
-python scripts/debug_scripts/debug_system_resources.py --cpu
+import subprocess
+import sys
+from scripts.check_mcp_status import is_running_in_docker, DockerMCPServerChecker, MCPServerChecker
 
-# Debug disk usage
-python scripts/debug_scripts/debug_system_resources.py --disk
+def test_old_detection_method():
+    """Test old detection method"""
+    try:
+        result = subprocess.run(
+            ['pgrep', '-f', 'neozork_mcp_server.py'],
+            capture_output=True,
+            text=True
+        )
+        return result.returncode == 0, "Process found" if result.returncode == 0 else "Process not found"
+    except Exception as e:
+        return False, f"Error: {e}"
 
-# Debug network usage
-python scripts/debug_scripts/debug_system_resources.py --network
+def test_new_detection_method():
+    """Test new detection method"""
+    try:
+        if is_running_in_docker():
+            checker = DockerMCPServerChecker()
+        else:
+            checker = MCPServerChecker()
+        
+        result = checker.check_server_running()
+        return result, "Server responding" if result else "Server not responding"
+    except Exception as e:
+        return False, f"Error: {e}"
+
+def main():
+    """Main migration function"""
+    print("🔄 MCP Server Detection Migration Helper")
+    print("=" * 40)
+    
+    # Test old method
+    print("🔍 Testing old detection method...")
+    old_success, old_message = test_old_detection_method()
+    old_status = "✅" if old_success else "❌"
+    print(f"{old_status} Old method: {old_message}")
+    
+    # Test new method
+    print("🔍 Testing new detection method...")
+    new_success, new_message = test_new_detection_method()
+    new_status = "✅" if new_success else "❌"
+    print(f"{new_status} New method: {new_message}")
+    
+    # Compare results
+    print(f"\n📊 Comparison:")
+    if old_success == new_success:
+        print("✅ Both methods agree")
+    else:
+        print("⚠️  Methods disagree - new method is more reliable")
+    
+    # Recommendations
+    print(f"\n💡 Recommendations:")
+    if is_running_in_docker():
+        print("   • Use new ping-based detection in Docker")
+        print("   • Old process-based detection is unreliable in Docker")
+    else:
+        print("   • Both methods work in host environment")
+        print("   • New method provides better error handling")
+    
+    print("   • New method automatically detects environment")
+    print("   • New method tests actual functionality")
+    
+    return 0
+
+if __name__ == "__main__":
+    main()
 ```
 
-## Data Management
+## 📚 Related Examples
 
-### Create Test Parquet File
-```bash
-# Create test Parquet file
-python scripts/create_test_parquet.py
-
-# Create with specific size
-python scripts/create_test_parquet.py --size 1000
-
-# Create with specific columns
-python scripts/create_test_parquet.py --columns open,high,low,close,volume
-
-# Create with specific date range
-python scripts/create_test_parquet.py --start-date 2024-01-01 --end-date 2024-12-31
-
-# Create with custom filename
-python scripts/create_test_parquet.py --output test_data.parquet
-```
-
-### Recreate CSV from Parquet
-```bash
-# Recreate CSV from Parquet
-python scripts/recreate_csv.py
-
-# Recreate specific file
-python scripts/recreate_csv.py --file data.parquet
-
-# Recreate with custom output
-python scripts/recreate_csv.py --output recreated.csv
-
-# Recreate with specific columns
-python scripts/recreate_csv.py --columns open,high,low,close,volume
-
-# Recreate with date filtering
-python scripts/recreate_csv.py --start-date 2024-01-01 --end-date 2024-06-30
-```
-
-### Clear Cache
-```bash
-# Clear cache
-python scripts/clear_cache.py
-
-# Clear specific cache type
-python scripts/clear_cache.py --type data
-
-# Clear with confirmation
-python scripts/clear_cache.py --confirm
-
-# Clear with backup
-python scripts/clear_cache.py --backup
-```
-
-## System Analysis
-
-### Analyze Requirements
-```bash
-# Analyze requirements
-python scripts/analyze_requirements.py
-
-# Analyze with output file
-python scripts/analyze_requirements.py --output requirements_analysis.txt
-
-# Analyze with verbose output
-python scripts/analyze_requirements.py --verbose
-
-# Analyze with dependency tree
-python scripts/analyze_requirements.py --tree
-
-# Analyze with security check
-python scripts/analyze_requirements.py --security
-```
-
-### Auto PyProject from Requirements
-```bash
-# Auto generate pyproject.toml from requirements
-python scripts/auto_pyproject_from_requirements.py
-
-# Generate with specific requirements file
-python scripts/auto_pyproject_from_requirements.py --requirements requirements.txt
-
-# Generate with custom output
-python scripts/auto_pyproject_from_requirements.py --output pyproject_custom.toml
-
-# Generate with project metadata
-python scripts/auto_pyproject_from_requirements.py --name "My Project" --version "1.0.0"
-```
-
-## Development Tools
-
-### Initialize Directories
-```bash
-# Initialize project directories
-bash scripts/init_dirs.sh
-
-# Initialize with specific directories
-bash scripts/init_dirs.sh --dirs data,logs,results
-
-# Initialize with permissions
-bash scripts/init_dirs.sh --permissions 755
-
-# Initialize with verbose output
-bash scripts/init_dirs.sh --verbose
-```
-
-### Run Analysis Script
-```bash
-# Run analysis script
-bash eda
-
-# Run with UV
-uv run ./eda
-
-# Run with verbose output
-bash eda --verbose
-
-# Run with export results
-bash eda --export-results
-
-# Run with specific data file
-bash eda --file data.csv
-```
-
-## Log Analysis
-
-### Analyze Logs
-```bash
-# Analyze logs
-python scripts/log_analysis/analyze_logs.py
-
-# Analyze specific log file
-python scripts/log_analysis/analyze_logs.py --file logs/app.log
-
-# Analyze with error filtering
-python scripts/log_analysis/analyze_logs.py --errors-only
-
-# Analyze with time range
-python scripts/log_analysis/analyze_logs.py --start-time "2024-01-01" --end-time "2024-12-31"
-
-# Analyze with statistics
-python scripts/log_analysis/analyze_logs.py --stats
-```
-
-### Log Statistics
-```bash
-# Generate log statistics
-python scripts/log_analysis/log_stats.py
-
-# Generate with specific log file
-python scripts/log_analysis/log_stats.py --file logs/app.log
-
-# Generate with time period
-python scripts/log_analysis/log_stats.py --period daily
-
-# Generate with output file
-python scripts/log_analysis/log_stats.py --output stats.json
-```
-
-## Performance Scripts
-
-### Performance Analysis
-```bash
-# Analyze performance
-python scripts/performance/analyze_performance.py
-
-# Analyze with specific component
-python scripts/performance/analyze_performance.py --component indicators
-
-# Analyze with benchmarking
-python scripts/performance/analyze_performance.py --benchmark
-
-# Analyze with memory profiling
-python scripts/performance/analyze_performance.py --memory-profile
-```
-
-### Memory Profiling
-```bash
-# Profile memory usage
-python scripts/performance/memory_profile.py
-
-# Profile specific function
-python scripts/performance/memory_profile.py --function calculate_rsi
-
-# Profile with output file
-python scripts/performance/memory_profile.py --output memory_profile.txt
-
-# Profile with visualization
-python scripts/performance/memory_profile.py --visualize
-```
-
-## Testing Scripts
-
-### Test Runner
-```bash
-# Run tests with script
-python scripts/test_runner.py
-
-# Run specific test category
-python scripts/test_runner.py --category calculation
-
-# Run with coverage
-python scripts/test_runner.py --coverage
-
-# Run with parallel execution
-python scripts/test_runner.py --parallel
-
-# Run with output file
-python scripts/test_runner.py --output test_results.json
-```
-
-### Test Coverage Analysis
-```bash
-# Analyze test coverage
-python tests/zzz_analyze_test_coverage.py
-
-# Analyze with verbose output
-python tests/zzz_analyze_test_coverage.py --verbose
-
-# Analyze with output file
-python tests/zzz_analyze_test_coverage.py --output coverage_report.txt
-
-# Analyze with HTML report
-python tests/zzz_analyze_test_coverage.py --html
-```
-
-## Workflow Scripts
-
-### Development Workflow
-```bash
-# Run development workflow
-bash scripts/dev_workflow.sh
-
-# Workflow with specific steps
-bash scripts/dev_workflow.sh --steps test,coverage,deploy
-
-# Workflow with verbose output
-bash scripts/dev_workflow.sh --verbose
-
-# Workflow with dry run
-bash scripts/dev_workflow.sh --dry-run
-```
-
-### CI/CD Scripts
-```bash
-# Run CI pipeline
-bash scripts/ci_pipeline.sh
-
-# Run with specific environment
-bash scripts/ci_pipeline.sh --env production
-
-# Run with parallel execution
-bash scripts/ci_pipeline.sh --parallel
-
-# Run with notification
-bash scripts/ci_pipeline.sh --notify
-```
-
-## Utility Scripts
-
-### File Operations
-```bash
-# Clean temporary files
-python scripts/utils/clean_temp.py
-
-# Clean with specific patterns
-python scripts/utils/clean_temp.py --pattern "*.tmp"
-
-# Clean with confirmation
-python scripts/utils/clean_temp.py --confirm
-
-# Clean with backup
-python scripts/utils/clean_temp.py --backup
-```
-
-### Configuration Management
-```bash
-# Validate configuration
-python scripts/utils/validate_config.py
-
-# Validate specific config file
-python scripts/utils/validate_config.py --file config.json
-
-# Validate with schema
-python scripts/utils/validate_config.py --schema schema.json
-
-# Validate with fix
-python scripts/utils/validate_config.py --fix
-```
-
-## Advanced Scripts
-
-### Custom Scripts
-```bash
-# Run custom analysis
-python scripts/custom/run_custom_analysis.py
-
-# Run with parameters
-python scripts/custom/run_custom_analysis.py --param1 value1 --param2 value2
-
-# Run with configuration
-python scripts/custom/run_custom_analysis.py --config custom_config.json
-
-# Run with output
-python scripts/custom/run_custom_analysis.py --output results.json
-```
-
-### Batch Processing
-```bash
-# Process batch of files
-python scripts/batch/process_batch.py
-
-# Process with specific directory
-python scripts/batch/process_batch.py --directory data/
-
-# Process with file pattern
-python scripts/batch/process_batch.py --pattern "*.csv"
-
-# Process with parallel execution
-python scripts/batch/process_batch.py --parallel
-```
-
-## Troubleshooting
-
-### Common Issues
-```bash
-# Issue: Import errors
-python scripts/fix_imports.py --verbose
-
-# Issue: Data problems
-python scripts/debug_scripts/debug_check_parquet.py
-
-# Issue: Connection problems
-python scripts/debug_scripts/debug_binance_connection.py
-
-# Issue: Performance problems
-python scripts/debug_scripts/debug_system_resources.py
-```
-
-### Debug Mode
-```bash
-# Enable debug mode
-export DEBUG=1
-python scripts/fix_imports.py
-
-# Run with debug logging
-python scripts/debug_scripts/debug_indicators.py --debug
-
-# Run with verbose output
-python scripts/create_test_parquet.py --verbose
-```
-
-### Script Validation
-```bash
-# Validate script syntax
-python -m py_compile scripts/fix_imports.py
-
-# Check script dependencies
-python scripts/analyze_requirements.py --script scripts/fix_imports.py
-
-# Test script functionality
-python scripts/fix_imports.py --dry-run
-```
-
----
-
-📚 **Additional Resources:**
-- **[Usage Examples](usage-examples.md)** - Comprehensive usage examples
-- **[Quick Examples](quick-examples.md)** - Fast start examples
-- **[Indicator Examples](indicator-examples.md)** - Technical indicator examples
 - **[MCP Examples](mcp-examples.md)** - MCP server examples
-- **[Testing Examples](testing-examples.md)** - Testing examples
-- **[Docker Examples](docker-examples.md)** - Docker examples
-- **[EDA Examples](eda-examples.md)** - EDA examples 
+- **[Docker Examples](docker-examples.md)** - Docker script examples
+- **[Testing Examples](testing-examples.md)** - Script testing examples
+
+## 🔄 Script Migration Examples
+
+### From Old to New Script Framework
+```python
+# Example: Migration from old to new script framework
+def migrate_script_framework():
+    """Example of migrating from old to new script framework"""
+    
+    # Old script (unreliable in Docker)
+    def old_script():
+        try:
+            result = subprocess.run(['pgrep', '-f', 'neozork_mcp_server.py'])
+            return result.returncode == 0
+        except:
+            return False
+    
+    # New script (reliable in all environments)
+    def new_script():
+        from scripts.check_mcp_status import is_running_in_docker
+        
+        if is_running_in_docker():
+            checker = DockerMCPServerChecker()
+        else:
+            checker = MCPServerChecker()
+        
+        return checker.check_server_running()
+    
+    # Both should work, but new one is more reliable
+    old_result = old_script()
+    new_result = new_script()
+    
+    # New method should always return a boolean
+    assert isinstance(new_result, bool)
+    
+    print("🔄 Script migration completed")
+    print("✅ New script framework is more reliable")
+    print("✅ Works in all environments")
+    print("✅ Better error handling")
+``` 

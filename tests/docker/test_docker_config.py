@@ -54,11 +54,14 @@ class TestDockerConfiguration:
         """Test that all required files for Docker build exist."""
         required_files = [
             "run_analysis.py",
-            "pycharm_github_copilot_mcp.py",
-            "cursor_mcp_config.json",
-            "mcp_auto_config.json",
+            "neozork_mcp_server.py",
+            "src/",
+            "scripts/",
+            "tests/",
+            "uv_setup/",
+            "docker-entrypoint.sh",
         ]
-        
+
         # Add optional files that may not exist in container
         optional_files = [
             "requirements.txt",
@@ -69,7 +72,12 @@ class TestDockerConfiguration:
         for file_name in required_files:
             file_path = Path(file_name)
             assert file_path.exists(), f"Required file {file_name} should exist in project root"
-            assert file_path.is_file(), f"Required file {file_name} should be a file"
+            
+            # Check if it's a directory (ends with /) or a file
+            if file_name.endswith('/'):
+                assert file_path.is_dir(), f"Required directory {file_name} should be a directory"
+            else:
+                assert file_path.is_file(), f"Required file {file_name} should be a file"
 
         # Check optional files (skip if in container and file doesn't exist)
         for file_name in optional_files:
@@ -141,7 +149,7 @@ class TestDockerConfiguration:
             "USE_UV=true",
             "PYTHONPATH=/app",
             "PYTHONUNBUFFERED=1",
-            "MCP_SERVER_TYPE=pycharm_copilot",
+            "MCP_SERVER_TYPE=neozork_unified",
         ]
 
         for var in required_vars:
@@ -165,9 +173,7 @@ class TestDockerConfiguration:
         required_elements = [
             "ARG USE_UV=true",
             "COPY run_analysis.py ./",
-            "COPY pycharm_github_copilot_mcp.py ./",
-            "COPY cursor_mcp_config.json ./",
-            "COPY mcp_auto_config.json ./",
+            "COPY neozork_mcp_server.py ./",
             "USER neozork",
         ]
 
@@ -190,7 +196,7 @@ class TestDockerConfiguration:
 
         # Check for required entrypoint elements
         required_elements = [
-            "python pycharm_github_copilot_mcp.py",
+            "python neozork_mcp_server.py",
             "python run_analysis.py -h",
             "exec bash -i",
         ]

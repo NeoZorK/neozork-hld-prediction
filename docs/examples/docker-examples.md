@@ -1,6 +1,6 @@
 # Docker Examples
 
-Examples for using Docker with the project.
+Examples demonstrating Docker containerization and MCP server integration in the NeoZork HLD Prediction project.
 
 ## Overview
 
@@ -11,6 +11,473 @@ The project includes Docker support for:
 - **Data Mounting** - Persistent data storage
 - **Multi-stage Builds** - Optimized container images
 - **Service Orchestration** - Docker Compose integration
+
+## 🚀 Quick Start Examples
+
+### Basic Docker Setup
+```bash
+# Build Docker image with UV package manager (recommended)
+docker-compose build --build-arg USE_UV=true
+
+# Build with pip package manager
+docker-compose build --build-arg USE_UV=false
+
+# Run container interactively
+docker-compose run --rm app bash
+
+# Run container with specific command
+docker-compose run --rm app python scripts/check_mcp_status.py
+```
+
+### MCP Server in Docker
+```bash
+# Check MCP server status in Docker container
+docker-compose run --rm app python scripts/check_mcp_status.py
+
+# Expected output:
+# 🔍 MCP Server Status Checker
+# ==================================================
+# 🐳 Detected Docker environment
+# 
+# 🚀 MCP Server Status:
+#    ✅ Server is running
+# 
+# 🔗 Connection Test:
+#    ✅ Connection successful
+#    🔍 Test method: ping_request
+#    ⏱️  Response time: immediate
+# 
+# 💻 IDE Configurations:
+#    ✅ CURSOR: 7418 bytes
+#    ✅ DOCKER: 367 bytes
+# 
+# 🐳 Docker Information:
+#    📦 In Docker: True
+#    🔄 MCP Server responding: True
+#    🔍 Test method: ping_request
+```
+
+## 🐳 Docker Environment Examples
+
+### Docker Container MCP Check
+```bash
+# Build and run Docker container
+docker-compose build
+docker-compose run --rm app bash
+
+# Inside container, check MCP server
+python scripts/check_mcp_status.py
+
+# Test ping request in container
+echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
+```
+
+### Docker Environment Detection
+```python
+# Example: Docker environment detection
+from scripts.check_mcp_status import is_running_in_docker
+
+# Check if running in Docker
+if is_running_in_docker():
+    print("🐳 Running in Docker environment")
+    # Use ping-based detection
+    checker = DockerMCPServerChecker()
+else:
+    print("🖥️  Running in host environment")
+    # Use process-based detection
+    checker = MCPServerChecker()
+
+# Run comprehensive check
+results = checker.run_comprehensive_check()
+print(f"Server running: {results['server_running']}")
+```
+
+### Docker Ping Detection Example
+```python
+# Example: Ping-based detection in Docker
+def test_docker_mcp_ping():
+    """Test MCP server ping in Docker environment"""
+    import subprocess
+    import json
+    
+    # Create ping request
+    ping_request = '{"method": "neozork/ping", "id": 1, "params": {}}'
+    cmd = f'echo \'{ping_request}\' | python3 neozork_mcp_server.py'
+    
+    # Execute ping request
+    result = subprocess.run(
+        cmd,
+        shell=True,
+        capture_output=True,
+        text=True,
+        timeout=10
+    )
+    
+    if result.returncode == 0 and result.stdout.strip():
+        response = json.loads(result.stdout.strip())
+        if (response.get("jsonrpc") == "2.0" and 
+            response.get("id") == 1 and 
+            response.get("result", {}).get("pong") is True):
+            print("✅ MCP server responded successfully")
+            return True
+        else:
+            print("❌ Invalid response format")
+            return False
+    else:
+        print("❌ MCP server not responding")
+        return False
+```
+
+## 🔧 Docker Configuration Examples
+
+### Dockerfile Configuration
+```dockerfile
+# Example: Dockerfile with MCP server support
+FROM python:3.12-slim
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+ENV DOCKER_CONTAINER=true
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Copy docker.env file for environment configuration
+COPY docker.env .
+
+# Make scripts executable
+RUN chmod +x scripts/*.py
+
+# Expose port (if needed)
+EXPOSE 8000
+
+# Default command
+CMD ["python", "neozork_mcp_server.py"]
+```
+
+### Docker Compose Configuration
+```yaml
+# Example: docker-compose.yml with MCP server support
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USE_UV: "true"  # Use UV package manager
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - DOCKER_CONTAINER=true
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./results:/app/results
+    working_dir: /app
+    command: python scripts/check_mcp_status.py
+```
+
+### Environment Configuration
+```bash
+# Example: docker.env file
+PYTHONPATH=/app
+PYTHONUNBUFFERED=1
+DOCKER_CONTAINER=true
+MCP_SERVER_ENABLED=true
+LOG_LEVEL=INFO
+```
+
+## 📊 Docker Status Monitoring
+
+### Comprehensive Docker Status Check
+```python
+# Example: Comprehensive Docker status monitoring
+def monitor_docker_mcp_status():
+    """Monitor MCP server status in Docker environment"""
+    from scripts.check_mcp_status import DockerMCPServerChecker
+    
+    checker = DockerMCPServerChecker()
+    results = checker.run_comprehensive_check()
+    
+    # Print Docker-specific information
+    print(f"🐳 Docker Environment Status")
+    print(f"📅 Check Time: {results['timestamp']}")
+    print(f"🌍 Environment: {results['environment']}")
+    print(f"🚀 Server Status: {'✅ Running' if results['server_running'] else '❌ Not Running'}")
+    
+    # Print Docker-specific details
+    if results.get("docker_specific"):
+        docker_info = results["docker_specific"]
+        print(f"\n🐳 Docker Information:")
+        print(f"   📦 In Docker: {docker_info.get('in_docker', 'Unknown')}")
+        print(f"   🔄 MCP Server responding: {docker_info.get('mcp_server_responding', False)}")
+        print(f"   🔍 Test method: {docker_info.get('test_method', 'unknown')}")
+        
+        # MCP server file info
+        if docker_info.get('mcp_server_file_exists'):
+            print(f"   📄 MCP server file: {docker_info.get('mcp_server_file_size', 0)} bytes")
+            print(f"   🕒 File modified: {docker_info.get('mcp_server_file_modified', 'Unknown')}")
+        else:
+            print(f"   ❌ MCP server file: Not found")
+        
+        # Log file info
+        if docker_info.get('log_file_exists'):
+            print(f"   📝 Log file: {docker_info.get('log_file_size', 0)} bytes")
+            print(f"   🕒 Log modified: {docker_info.get('log_file_modified', 'Unknown')}")
+        else:
+            print(f"   ❌ Log file: Not found")
+    
+    return results
+```
+
+### Real-time Docker Monitoring
+```python
+# Example: Real-time Docker monitoring
+import time
+from scripts.check_mcp_status import DockerMCPServerChecker
+
+def monitor_docker_realtime(interval=30):
+    """Monitor MCP server in Docker in real-time"""
+    print(f"🐳 Starting real-time Docker MCP monitoring (check every {interval}s)")
+    print("Press Ctrl+C to stop")
+    
+    checker = DockerMCPServerChecker()
+    
+    try:
+        while True:
+            # Quick status check
+            server_running = checker.check_server_running()
+            status = "✅ Running" if server_running else "❌ Not Running"
+            
+            timestamp = time.strftime("%H:%M:%S")
+            print(f"[{timestamp}] Docker MCP Server: {status}")
+            
+            time.sleep(interval)
+            
+    except KeyboardInterrupt:
+        print("\n🛑 Docker monitoring stopped")
+```
+
+## 🧪 Docker Testing Examples
+
+### Docker Unit Tests
+```python
+# Example: Docker unit tests
+import pytest
+from scripts.check_mcp_status import DockerMCPServerChecker
+
+def test_docker_environment_detection():
+    """Test Docker environment detection"""
+    checker = DockerMCPServerChecker()
+    assert checker._is_running_in_docker() == True
+
+def test_docker_ping_detection():
+    """Test ping-based detection in Docker"""
+    checker = DockerMCPServerChecker()
+    result = checker._test_mcp_ping_request()
+    assert isinstance(result, bool)
+
+def test_docker_comprehensive_check():
+    """Test comprehensive Docker check"""
+    checker = DockerMCPServerChecker()
+    results = checker.run_comprehensive_check()
+    
+    # Validate results structure
+    assert "timestamp" in results
+    assert results["environment"] == "docker"
+    assert "server_running" in results
+    assert "docker_specific" in results
+    
+    # Validate Docker-specific information
+    docker_info = results["docker_specific"]
+    assert "in_docker" in docker_info
+    assert "mcp_server_responding" in docker_info
+    assert "test_method" in docker_info
+```
+
+### Docker Integration Tests
+```python
+# Example: Docker integration tests
+def test_docker_mcp_integration():
+    """Test complete Docker MCP integration"""
+    from scripts.check_mcp_status import DockerMCPServerChecker
+    
+    checker = DockerMCPServerChecker()
+    
+    # Test environment detection
+    assert checker._is_running_in_docker() == True
+    
+    # Test server detection
+    server_running = checker.check_server_running()
+    assert isinstance(server_running, bool)
+    
+    # Test connection
+    connection = checker.test_connection()
+    assert "status" in connection
+    assert connection["status"] in ["success", "failed"]
+    
+    # Test comprehensive check
+    results = checker.run_comprehensive_check()
+    assert results["environment"] == "docker"
+    assert "docker_specific" in results
+```
+
+## 🔍 Docker Debug Examples
+
+### Debug Docker MCP Issues
+```python
+# Example: Debug Docker MCP issues
+def debug_docker_mcp():
+    """Debug MCP server issues in Docker"""
+    import subprocess
+    import json
+    from pathlib import Path
+    
+    print("🔍 Debugging Docker MCP server...")
+    
+    # Check if we're in Docker
+    if not Path("/.dockerenv").exists():
+        print("❌ Not running in Docker environment")
+        return
+    
+    print("✅ Running in Docker environment")
+    
+    # Check if MCP server file exists
+    mcp_file = Path("/app/neozork_mcp_server.py")
+    if mcp_file.exists():
+        print(f"✅ MCP server file exists: {mcp_file.stat().st_size} bytes")
+    else:
+        print("❌ MCP server file not found")
+        return
+    
+    # Test ping request with detailed output
+    ping_request = '{"method": "neozork/ping", "id": 1, "params": {}}'
+    cmd = f'echo \'{ping_request}\' | python3 /app/neozork_mcp_server.py'
+    
+    print(f"🔍 Executing: {cmd}")
+    
+    try:
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        
+        print(f"📊 Return code: {result.returncode}")
+        print(f"📤 STDOUT: {result.stdout.strip()}")
+        print(f"📥 STDERR: {result.stderr.strip()}")
+        
+        if result.returncode == 0 and result.stdout.strip():
+            try:
+                response = json.loads(result.stdout.strip())
+                print("✅ Valid JSON response received")
+                print(f"📋 Response: {json.dumps(response, indent=2)}")
+            except json.JSONDecodeError as e:
+                print(f"❌ Invalid JSON response: {e}")
+        else:
+            print("❌ No valid response received")
+            
+    except subprocess.TimeoutExpired:
+        print("⏰ Request timed out")
+    except Exception as e:
+        print(f"❌ Error: {e}")
+```
+
+### Docker Container Inspection
+```bash
+# Example: Inspect Docker container
+# Check container status
+docker ps -a
+
+# Check container logs
+docker logs <container_name>
+
+# Execute command in running container
+docker exec -it <container_name> bash
+
+# Check environment variables
+docker exec <container_name> env | grep -E "(PYTHON|DOCKER|MCP)"
+
+# Check file system
+docker exec <container_name> ls -la /app/
+
+# Check MCP server file
+docker exec <container_name> ls -la /app/neozork_mcp_server.py
+
+# Test MCP server directly
+docker exec <container_name> echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 /app/neozork_mcp_server.py
+```
+
+## 📚 Related Examples
+
+- **[MCP Examples](mcp-examples.md)** - MCP server examples
+- **[Testing Examples](testing-examples.md)** - Test framework examples
+- **[Script Examples](script-examples.md)** - Utility script examples
+
+## 🔄 Migration Examples
+
+### From Old to New Docker Detection
+```python
+# Example: Migration from old Docker detection logic
+def migrate_docker_detection():
+    """Example of migrating from old to new Docker detection logic"""
+    
+    # Old logic (unreliable in Docker)
+    def old_docker_detection():
+        try:
+            # Check PID file
+            pid_file = Path("/tmp/mcp_server.pid")
+            if pid_file.exists():
+                return True
+            
+            # Check processes
+            result = subprocess.run(['pgrep', '-f', 'neozork_mcp_server.py'])
+            return result.returncode == 0
+        except:
+            return False
+    
+    # New logic (reliable in Docker)
+    def new_docker_detection():
+        try:
+            ping_request = '{"method": "neozork/ping", "id": 1, "params": {}}'
+            cmd = f'echo \'{ping_request}\' | python3 neozork_mcp_server.py'
+            
+            result = subprocess.run(
+                cmd, shell=True, capture_output=True, 
+                text=True, timeout=10
+            )
+            
+            if result.returncode == 0 and result.stdout.strip():
+                response = json.loads(result.stdout.strip())
+                return (response.get("jsonrpc") == "2.0" and 
+                        response.get("id") == 1 and 
+                        response.get("result", {}).get("pong") is True)
+            return False
+        except:
+            return False
+    
+    print("🔄 Docker detection migration completed")
+    print("✅ New detection logic is more reliable")
+    print("✅ Works with on-demand servers")
+    print("✅ Tests actual functionality")
+```
 
 ## Basic Docker Commands
 

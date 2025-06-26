@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "neozork-mcp": {
+      "command": "python",
+      "args": [
+        "neozork_mcp_server.py"
+      ],
+      "cwd": "/Users/rost/Documents/DIS/REPO/neozork-hld-prediction",
+      "env": {
+        "PYTHONPATH": "/Users/rost/Documents/DIS/REPO/neozork-hld-prediction/src:/Users/rost/Documents/DIS/REPO/neozork-hld-prediction",
+        "LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}
