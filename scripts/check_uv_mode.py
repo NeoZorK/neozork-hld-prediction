@@ -86,31 +86,55 @@ def check_python_packages() -> Dict[str, Any]:
         "error": None
     }
     
-    try:
-        # Check if pip is available
-        subprocess.run(["pip", "--version"], 
-                      stdout=subprocess.PIPE, 
-                      stderr=subprocess.PIPE, 
-                      check=True)
-        result["pip_available"] = True
-        
-        # Check if uv pip is available
-        subprocess.run(["uv", "pip", "--version"], 
-                      stdout=subprocess.PIPE, 
-                      stderr=subprocess.PIPE, 
-                      check=True)
-        result["uv_pip_available"] = True
-        
-        # Get installed packages
-        packages_output = subprocess.check_output(["uv", "pip", "list"], 
-                                                stderr=subprocess.PIPE, 
-                                                text=True)
-        result["installed_packages"] = packages_output.strip().split('\n')
-        
-    except subprocess.CalledProcessError as e:
-        result["error"] = f"Error checking packages: {e}"
-    except Exception as e:
-        result["error"] = f"Error: {e}"
+    # Try multiple approaches to check packages
+    package_check_methods = [
+        ["uv", "pip", "list"],
+        ["pip", "list"],
+        ["python", "-m", "pip", "list"]
+    ]
+    
+    for cmd in package_check_methods:
+        try:
+            if cmd[0] == "pip" or (len(cmd) > 1 and cmd[1] == "pip"):
+                # Check if pip is available
+                subprocess.run(cmd, 
+                             stdout=subprocess.PIPE, 
+                             stderr=subprocess.PIPE, 
+                             check=True)
+                result["pip_available"] = True
+                
+                # Get installed packages
+                packages_output = subprocess.check_output(cmd, 
+                                                        stderr=subprocess.PIPE, 
+                                                        text=True)
+                result["installed_packages"] = packages_output.strip().split('\n')
+                break
+                
+        except subprocess.CalledProcessError:
+            continue
+        except Exception as e:
+            result["error"] = f"Error checking packages with {cmd}: {e}"
+            continue
+    
+    # Try UV pip specifically
+    uv_pip_commands = [
+        ["uv", "pip", "--version"],
+        ["uv", "pip", "list"],
+        ["uv", "pip", "--help"]
+    ]
+    
+    for cmd in uv_pip_commands:
+        try:
+            subprocess.run(cmd, 
+                         stdout=subprocess.PIPE, 
+                         stderr=subprocess.PIPE, 
+                         check=True)
+            result["uv_pip_available"] = True
+            break
+        except subprocess.CalledProcessError:
+            continue
+        except Exception:
+            continue
     
     return result
 
@@ -182,13 +206,18 @@ def generate_report() -> Dict[str, Any]:
     if not report["mcp_config"]["uv_only_enabled"]:
         issues.append("UV-only mode not enabled in MCP config")
     
+    # Check package management
+    if not report["packages"]["pip_available"] and not report["packages"]["uv_pip_available"]:
+        issues.append("No package manager (pip or uv pip) is available")
+    
     # Determine if UV-only mode is properly configured
     uv_only_mode = (
         report["uv_installation"]["uv_available"] and
         report["environment"]["use_uv"] and
         report["environment"]["uv_only"] and
         report["mcp_config"]["uv_enabled"] and
-        report["mcp_config"]["uv_only_enabled"]
+        report["mcp_config"]["uv_only_enabled"] and
+        (report["packages"]["pip_available"] or report["packages"]["uv_pip_available"])
     )
     
     report["summary"]["uv_only_mode"] = uv_only_mode
@@ -247,8 +276,18 @@ def print_report(report: Dict[str, Any], verbose: bool = False):
         print(f"   Cache Directory: {'✅' if dirs['cache_dir_exists'] else '❌'} {dirs['cache_dir_path']}")
         print(f"   Venv Directory: {'✅' if dirs['venv_dir_exists'] else '❌'} {dirs['venv_dir_path']}")
         
+        # Package Management
+        print("\n4. Package Management:")
+        packages = report["packages"]
+        print(f"   Pip Available: {'✅' if packages['pip_available'] else '❌'}")
+        print(f"   UV Pip Available: {'✅' if packages['uv_pip_available'] else '❌'}")
+        if packages["installed_packages"]:
+            print(f"   Packages Found: {len(packages['installed_packages'])}")
+        if packages["error"]:
+            print(f"   Error: {packages['error']}")
+        
         # MCP Configuration
-        print("\n4. MCP Server Configuration:")
+        print("\n5. MCP Server Configuration:")
         mcp = report["mcp_config"]
         if mcp["config_file_exists"]:
             print(f"   Config File: ✅ {mcp['config_path']}")
