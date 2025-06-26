@@ -4,6 +4,7 @@
 """
 UV Mode Checker
 Validates that the container is running in UV-only mode
+Works in both Docker and local environments
 """
 
 import os
@@ -12,6 +13,14 @@ import subprocess
 import json
 from pathlib import Path
 from typing import Dict, List, Any, Optional
+
+def is_docker_environment():
+    """Check if running in Docker environment"""
+    return (
+        os.getenv("DOCKER_CONTAINER", "false").lower() == "true" or
+        os.path.exists("/.dockerenv") or
+        os.path.exists("/app")
+    )
 
 def check_uv_installation() -> Dict[str, Any]:
     """Check if UV is properly installed and accessible"""
@@ -45,33 +54,44 @@ def check_uv_installation() -> Dict[str, Any]:
 
 def check_environment_variables() -> Dict[str, Any]:
     """Check UV-related environment variables"""
+    in_docker = is_docker_environment()
+    
     result = {
         "use_uv": os.getenv("USE_UV", "false").lower() == "true",
         "uv_only": os.getenv("UV_ONLY", "false").lower() == "true",
         "uv_cache_dir": os.getenv("UV_CACHE_DIR"),
         "uv_venv_dir": os.getenv("UV_VENV_DIR"),
         "python_path": os.getenv("PYTHONPATH"),
-        "docker_container": os.getenv("DOCKER_CONTAINER", "false").lower() == "true"
+        "docker_container": os.getenv("DOCKER_CONTAINER", "false").lower() == "true",
+        "in_docker": in_docker
     }
     
     return result
 
 def check_uv_directories() -> Dict[str, Any]:
     """Check UV cache and virtual environment directories"""
+    in_docker = is_docker_environment()
+    
     result = {
         "cache_dir_exists": False,
         "venv_dir_exists": False,
         "cache_dir_path": None,
-        "venv_dir_path": None
+        "venv_dir_path": None,
+        "in_docker": in_docker
     }
     
-    # Check cache directory
-    cache_dir = os.getenv("UV_CACHE_DIR", "/app/.uv_cache")
+    if in_docker:
+        # Docker-specific paths
+        cache_dir = os.getenv("UV_CACHE_DIR", "/app/.uv_cache")
+        venv_dir = os.getenv("UV_VENV_DIR", "/app/.venv")
+    else:
+        # Local paths
+        cache_dir = os.getenv("UV_CACHE_DIR", ".uv_cache")
+        venv_dir = os.getenv("UV_VENV_DIR", ".venv")
+    
     result["cache_dir_path"] = cache_dir
     result["cache_dir_exists"] = Path(cache_dir).exists()
     
-    # Check virtual environment directory
-    venv_dir = os.getenv("UV_VENV_DIR", "/app/.venv")
     result["venv_dir_path"] = venv_dir
     result["venv_dir_exists"] = Path(venv_dir).exists()
     
@@ -140,15 +160,22 @@ def check_python_packages() -> Dict[str, Any]:
 
 def check_mcp_server_config() -> Dict[str, Any]:
     """Check MCP server configuration for UV settings"""
+    in_docker = is_docker_environment()
+    
     result = {
         "config_file_exists": False,
         "uv_enabled": False,
         "uv_only_enabled": False,
         "config_path": None,
-        "error": None
+        "error": None,
+        "in_docker": in_docker
     }
     
-    config_path = Path("/app/cursor_mcp_config.json")
+    if in_docker:
+        config_path = Path("/app/cursor_mcp_config.json")
+    else:
+        config_path = Path("cursor_mcp_config.json")
+    
     result["config_path"] = str(config_path)
     result["config_file_exists"] = config_path.exists()
     
@@ -181,9 +208,14 @@ def generate_report() -> Dict[str, Any]:
         "summary": {
             "uv_only_mode": False,
             "all_checks_passed": False,
-            "issues": []
+            "issues": [],
+            "environment": "local"
         }
     }
+    
+    # Determine environment
+    in_docker = report["environment"]["in_docker"]
+    report["summary"]["environment"] = "docker" if in_docker else "local"
     
     # Analyze results
     issues = []
@@ -192,33 +224,45 @@ def generate_report() -> Dict[str, Any]:
     if not report["uv_installation"]["uv_available"]:
         issues.append("UV is not available")
     
-    # Check environment variables
-    if not report["environment"]["use_uv"]:
-        issues.append("USE_UV environment variable is not set to true")
-    
-    if not report["environment"]["uv_only"]:
-        issues.append("UV_ONLY environment variable is not set to true")
-    
-    # Check MCP configuration
-    if not report["mcp_config"]["uv_enabled"]:
-        issues.append("UV integration not enabled in MCP config")
-    
-    if not report["mcp_config"]["uv_only_enabled"]:
-        issues.append("UV-only mode not enabled in MCP config")
+    # Check environment variables based on environment
+    if in_docker:
+        if not report["environment"]["use_uv"]:
+            issues.append("USE_UV environment variable is not set to true in Docker")
+        
+        if not report["environment"]["uv_only"]:
+            issues.append("UV_ONLY environment variable is not set to true in Docker")
+        
+        # Check MCP configuration in Docker
+        if not report["mcp_config"]["uv_enabled"]:
+            issues.append("UV integration not enabled in MCP config in Docker")
+        
+        if not report["mcp_config"]["uv_only_enabled"]:
+            issues.append("UV-only mode not enabled in MCP config in Docker")
+    else:
+        # Outside Docker, just check if UV is available
+        if not report["uv_installation"]["uv_available"]:
+            issues.append("UV is not available in local environment")
     
     # Check package management
     if not report["packages"]["pip_available"] and not report["packages"]["uv_pip_available"]:
         issues.append("No package manager (pip or uv pip) is available")
     
     # Determine if UV-only mode is properly configured
-    uv_only_mode = (
-        report["uv_installation"]["uv_available"] and
-        report["environment"]["use_uv"] and
-        report["environment"]["uv_only"] and
-        report["mcp_config"]["uv_enabled"] and
-        report["mcp_config"]["uv_only_enabled"] and
-        (report["packages"]["pip_available"] or report["packages"]["uv_pip_available"])
-    )
+    if in_docker:
+        uv_only_mode = (
+            report["uv_installation"]["uv_available"] and
+            report["environment"]["use_uv"] and
+            report["environment"]["uv_only"] and
+            report["mcp_config"]["uv_enabled"] and
+            report["mcp_config"]["uv_only_enabled"] and
+            (report["packages"]["pip_available"] or report["packages"]["uv_pip_available"])
+        )
+    else:
+        # Outside Docker, just check if UV is available
+        uv_only_mode = (
+            report["uv_installation"]["uv_available"] and
+            (report["packages"]["pip_available"] or report["packages"]["uv_pip_available"])
+        )
     
     report["summary"]["uv_only_mode"] = uv_only_mode
     report["summary"]["all_checks_passed"] = len(issues) == 0
@@ -228,16 +272,18 @@ def generate_report() -> Dict[str, Any]:
 
 def print_report(report: Dict[str, Any], verbose: bool = False):
     """Print formatted report"""
+    environment = report["summary"]["environment"]
+    
     print("=" * 60)
-    print("UV-Only Mode Validation Report")
+    print(f"UV Mode Validation Report ({environment.upper()})")
     print("=" * 60)
     
     # Summary
     summary = report["summary"]
     if summary["uv_only_mode"]:
-        print("✅ UV-Only Mode: ENABLED")
+        print("✅ UV Mode: ENABLED")
     else:
-        print("❌ UV-Only Mode: DISABLED")
+        print("❌ UV Mode: DISABLED")
     
     if summary["all_checks_passed"]:
         print("✅ All Checks: PASSED")
@@ -264,6 +310,7 @@ def print_report(report: Dict[str, Any], verbose: bool = False):
         # Environment Variables
         print("\n2. Environment Variables:")
         env = report["environment"]
+        print(f"   Environment: {env['in_docker']}")
         print(f"   USE_UV: {'✅' if env['use_uv'] else '❌'} {env['use_uv']}")
         print(f"   UV_ONLY: {'✅' if env['uv_only'] else '❌'} {env['uv_only']}")
         print(f"   UV_CACHE_DIR: {env['uv_cache_dir']}")
@@ -273,6 +320,7 @@ def print_report(report: Dict[str, Any], verbose: bool = False):
         # Directories
         print("\n3. UV Directories:")
         dirs = report["directories"]
+        print(f"   Environment: {dirs['in_docker']}")
         print(f"   Cache Directory: {'✅' if dirs['cache_dir_exists'] else '❌'} {dirs['cache_dir_path']}")
         print(f"   Venv Directory: {'✅' if dirs['venv_dir_exists'] else '❌'} {dirs['venv_dir_path']}")
         
@@ -289,6 +337,7 @@ def print_report(report: Dict[str, Any], verbose: bool = False):
         # MCP Configuration
         print("\n5. MCP Server Configuration:")
         mcp = report["mcp_config"]
+        print(f"   Environment: {mcp['in_docker']}")
         if mcp["config_file_exists"]:
             print(f"   Config File: ✅ {mcp['config_path']}")
             print(f"   UV Integration: {'✅' if mcp['uv_enabled'] else '❌'}")
