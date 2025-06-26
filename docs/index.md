@@ -1,207 +1,201 @@
-# NeoZork HLD Prediction Documentation
+# NeoZork HLD Prediction - Documentation
 
-Welcome to the comprehensive documentation for the NeoZork HLD Prediction project - a machine learning enhanced trading indicator system with intelligent AI assistance.
+Welcome to the comprehensive documentation for the NeoZork HLD Prediction project. This project provides advanced financial analysis tools with support for multiple data sources and technical indicators.
 
 ## 🚀 Quick Start
 
+### Docker Environment (Recommended)
 ```bash
-# Basic demo
-python run_analysis.py demo
+# Build and start the container
+docker-compose up
 
-# Explore trading metrics encyclopedia
-python run_analysis.py --metric
+# Run analysis
+nz demo --rule PHLD
 
-# Interactive mode with built-in encyclopedia
-python run_analysis.py --interactive
-
-# List available indicators
-python run_analysis.py --indicators
+# Run EDA
+eda
 ```
 
-## 📚 Core Features
+### Local Environment
+```bash
+# Install UV package manager
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-- **Technical Indicators:** 50+ indicators across 10 categories
-- **Trading Metrics Encyclopedia:** Comprehensive guide to quantitative trading metrics
-- **Interactive Mode:** Guided setup with built-in metrics encyclopedia
-- **Multiple Data Sources:** Yahoo Finance, Polygon.io, Binance, Exchange Rate API
-- **Export Capabilities:** Parquet, CSV, JSON formats
-- **AI-Powered Development:** MCP servers with GitHub Copilot integration
+# Install dependencies
+uv pip install -r requirements.txt
 
-## Overview
+# Run analysis
+python run_analysis.py demo --rule PHLD
+```
 
-Neozork HLD Prediction is a comprehensive machine learning system for financial market analysis and prediction using proprietary trading indicators. The system provides advanced technical analysis, data processing, and visualization capabilities.
-
-## Documentation Sections
+## 📚 Documentation Sections
 
 ### Getting Started
-- [Getting Started Guide](getting-started/getting-started.md) - Complete setup and first steps
+- [Getting Started Guide](getting-started/getting-started.md) - Complete setup instructions
 - [Project Structure](getting-started/project-structure.md) - Understanding the codebase
-- [Installation Guide](getting-started/installation.md) - Detailed installation instructions
+- [Installation Guide](getting-started/installation.md) - Step-by-step installation
 
 ### Development
-- [Development Guide](development/development.md) - Development setup and guidelines
-- [Testing Guide](development/testing.md) - **NEW: Comprehensive testing with parallel execution**
-- [CLI Interface](development/cli-interface.md) - Command-line interface documentation
-- [API Reference](development/api-reference.md) - API documentation
-
-### Analysis Tools
-- [Analysis Tools](guides/analysis-tools.md) - Available analysis tools and features
-- [EDA Guide](guides/analysis-eda.md) - Exploratory Data Analysis
-- [Technical Indicators](guides/technical-indicators.md) - Available indicators
-
-### Reference
-- [Core Calculations](reference/core-calculation.md) - Mathematical foundations
-- [Trading Rules](reference/trading-rules.md) - Rule descriptions and parameters
-- [Advanced Metrics](reference/advanced-metrics.md) - ML and Monte Carlo metrics
-- [Indicators](reference/indicators/) - Detailed indicator documentation
-
-### Data Sources
-- [Data Sources](api/data-sources.md) - Supported data sources and formats
-- [Exchange Rate API](api/exchange-rate-api-complete.md) - Exchange rate data integration
+- [Development Setup](development/setup.md) - Setting up development environment
+- [Testing Guide](development/testing.md) - Running tests and validation
+- [Code Style](development/code-style.md) - Coding standards and conventions
+- [Debugging](development/debugging.md) - Debugging tools and techniques
 
 ### Deployment
 - [Docker Setup](deployment/docker-setup.md) - Containerized deployment
-- [CI/CD Pipeline](deployment/ci-cd.md) - Continuous integration and deployment
+- [UV-Only Mode](deployment/uv-only-mode.md) - **NEW**: UV package manager configuration
+- [Production Deployment](deployment/production.md) - Production environment setup
+- [Monitoring](deployment/monitoring.md) - System monitoring and logging
 
-### Examples
-- [Examples Overview](examples/EXAMPLES_SUMMARY.md) - Complete examples collection
-- [Docker Examples](examples/docker-examples.md) - Docker usage examples
-- [EDA Examples](examples/eda-examples.md) - EDA workflow examples
+### Features
+- [Data Sources](guides/data-sources.md) - Supported financial data sources
+- [Technical Indicators](guides/indicators.md) - Available technical indicators
+- [Analysis Tools](guides/analysis-tools.md) - Analysis and visualization tools
+- [CLI Interface](guides/cli-interface.md) - Command-line interface usage
 
-## Key Features
+### Reference
+- [API Reference](reference/index.md) - Complete API documentation
+- [Configuration](reference/configuration.md) - Configuration options
+- [MCP Server](reference/mcp-servers/README.md) - Model Context Protocol server
+- [Advanced Metrics](reference/advanced-metrics.md) - Advanced analysis metrics
 
-### 🚀 **NEW: Optimized Testing System**
-- **Parallel Test Execution**: Run tests with `pytest-xdist` for faster execution
-- **Comprehensive Coverage**: 100% test coverage with organized test structure
-- **Performance Monitoring**: Built-in performance tracking and memory monitoring
-- **Optimized Test Runner**: Custom test runner with detailed reporting
+## 🔧 Key Features
 
-### 📊 Technical Analysis
-- **Multiple Indicators**: RSI, EMA, MACD, Bollinger Bands, and more
-- **Custom Calculations**: Proprietary HLD prediction algorithms
-- **Real-time Data**: Integration with multiple data sources
-- **Visualization**: Advanced plotting and charting capabilities
+### UV Package Management
+- **UV-Only Mode**: Exclusive use of UV package manager for faster, more reliable dependency management
+- **Docker Integration**: Seamless UV integration in Docker containers
+- **Local Development**: UV support for local development environments
+- **Adaptive Testing**: Tests that work in both Docker and local environments
 
-### 🔧 Development Tools
-- **CLI Interface**: Comprehensive command-line interface
-- **Data Processing**: Efficient data handling and validation
-- **Export Options**: Multiple export formats (CSV, JSON, Parquet)
-- **Logging**: Comprehensive logging and debugging
+### Financial Analysis
+- **Multiple Data Sources**: Polygon, YFinance, Binance, MQL5
+- **Technical Indicators**: 50+ indicators including RSI, MACD, Bollinger Bands
+- **Real-time Analysis**: Live data processing and analysis
+- **Visualization**: Interactive charts and plots
 
-### 🐳 Deployment
-- **Docker Support**: Containerized deployment
-- **CI/CD Integration**: Automated testing and deployment
-- **Environment Management**: Flexible configuration management
+### Development Tools
+- **MCP Server**: Enhanced IDE integration with intelligent autocompletion
+- **Comprehensive Testing**: 100% test coverage with pytest
+- **Docker Support**: Containerized development and deployment
+- **CLI Tools**: Command-line interface for analysis and EDA
 
-## Testing
+## 🧪 Testing
 
-### Quick Test Run
-
+### Docker Environment
 ```bash
-# Run all tests with parallel execution
-uv run pytest tests -n auto
+# Run all tests
+pytest tests/ -v
 
-# Use optimized test runner
-python tests/run_optimized_tests.py
+# Run UV-specific tests
+pytest tests/docker/test_uv_only_mode.py -v
 
-# Run specific test categories
-python tests/run_optimized_tests.py --categories cli calculation
+# Run simple tests
+pytest tests/docker/test_uv_simple.py -v
 ```
 
-### Test Categories
+### Local Environment
+```bash
+# Run adaptive tests (work in both environments)
+pytest tests/docker/test_uv_simple.py -v
 
-- **Unit Tests**: Individual function and class testing
-- **Integration Tests**: Component interaction testing
-- **CLI Tests**: Command-line interface testing
-- **Performance Tests**: Performance and stress testing
-- **Data Tests**: Data processing and validation testing
+# Run comprehensive tests
+pytest tests/docker/test_uv_only_mode.py -v
 
-For detailed testing information, see [Testing Guide](development/testing.md).
+# Check UV mode
+python scripts/check_uv_mode.py --verbose
+```
 
-## Project Structure
+## 📊 Project Structure
 
 ```
 neozork-hld-prediction/
-├── src/                          # Source code
-│   ├── calculation/              # Technical indicators
-│   ├── cli/                      # Command-line interface
-│   ├── data/                     # Data processing
-│   ├── eda/                      # Exploratory data analysis
-│   ├── export/                   # Data export functionality
-│   ├── plotting/                 # Visualization tools
-│   └── workflow/                 # Workflow management
-├── tests/                        # Test suite
-│   ├── conftest.py              # Global test configuration
-│   ├── run_optimized_tests.py   # Optimized test runner
-│   ├── calculation/             # Calculation tests
-│   ├── cli/                     # CLI tests
-│   └── ...                      # Other test categories
-├── docs/                         # Documentation
-├── data/                         # Data files
-├── scripts/                      # Utility scripts
-└── docker/                       # Docker configuration
+├── src/                    # Source code
+│   ├── calculation/        # Technical indicators
+│   ├── data/              # Data acquisition
+│   ├── eda/               # Exploratory data analysis
+│   ├── plotting/          # Visualization tools
+│   └── cli/               # Command-line interface
+├── tests/                 # Test suite
+│   ├── docker/            # Docker-specific tests
+│   └── ...                # Other test categories
+├── docs/                  # Documentation
+├── scripts/               # Utility scripts
+├── data/                  # Data storage
+└── results/               # Analysis results
 ```
 
-## Contributing
+## 🚀 Quick Examples
 
-### Development Setup
+### Basic Analysis
+```bash
+# Run demo analysis
+nz demo --rule PHLD
 
-1. **Fork and clone** the repository
-2. **Install dependencies** using `uv sync`
-3. **Run tests** to ensure everything works
-4. **Create feature branch** for your changes
-5. **Write tests** for new functionality
-6. **Submit pull request** with comprehensive description
+# Analyze specific symbol
+nz yfinance AAPL --rule PHLD
 
-### Testing Requirements
+# Custom timeframe
+nz mql5 EURUSD --interval H4 --rule PHLD
+```
 
-- **100% test coverage** for all new code
-- **Parallel test compatibility** for all tests
-- **Performance monitoring** for resource-intensive operations
-- **Documentation updates** for new features
+### UV Package Management
+```bash
+# Install dependencies (Docker)
+uv-install
 
-### Code Quality
+# Update dependencies (Docker)
+uv-update
 
-- **Type hints** for all functions
-- **Docstrings** for all classes and methods
-- **Error handling** for all external operations
-- **Logging** for debugging and monitoring
+# Check UV status
+uv-test
 
-## Support
+# Local UV usage
+uv pip install pandas
+uv pip list
+```
 
-### Getting Help
+### Development
+```bash
+# Run tests
+pytest tests/ -v
 
-- **Documentation**: Check the relevant documentation sections
-- **Issues**: Report bugs and feature requests on GitHub
-- **Discussions**: Use GitHub Discussions for questions
-- **Testing**: Run tests to verify your setup
+# Check code quality
+python scripts/check_uv_mode.py
 
-### Common Issues
+# Start MCP server
+python neozork_mcp_server.py
+```
 
-- **Import errors**: Ensure virtual environment is activated
-- **Test failures**: Check test requirements and dependencies
-- **Performance issues**: Monitor resource usage and optimize
-- **Data issues**: Verify data format and source connectivity
+## 📈 Performance
 
-## License
+- **UV Package Manager**: 10-100x faster than pip
+- **Docker Optimization**: Optimized container builds
+- **Caching**: Intelligent caching for data and packages
+- **Parallel Processing**: Multi-threaded analysis capabilities
+
+## 🔒 Security
+
+- **Non-root Containers**: Secure Docker execution
+- **Package Verification**: UV's built-in security checks
+- **Environment Isolation**: Proper environment separation
+- **Input Validation**: Comprehensive input sanitization
+
+## 🤝 Contributing
+
+See [Development Guide](development/contributing.md) for contribution guidelines.
+
+## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Acknowledgments
+## 🆘 Support
 
-- **Financial Data Providers**: yfinance, polygon.io, Binance
-- **Technical Analysis**: pandas, numpy, scikit-learn
-- **Visualization**: matplotlib, plotly, seaborn
-- **Testing**: pytest, pytest-xdist
-- **Development Tools**: uv, Docker, GitHub Actions
+- **Documentation**: Check the relevant documentation sections
+- **Issues**: Report bugs and feature requests via GitHub Issues
+- **Discussions**: Join project discussions on GitHub
+- **Testing**: Use the comprehensive test suite for validation
 
-#### 📖 [Guides](docs/guides/)
-- [Scripts Guide](docs/guides/scripts.md) - Automation tools
-- [Testing Guide](docs/guides/testing.md) - Test framework
-- [Docker Guide](docs/guides/docker.md) - Containerized development
-- [Analysis & EDA Guide](docs/guides/analysis-eda.md) - Data analysis tools
-- [Trading Metrics Encyclopedia](docs/guides/trading-metrics-encyclopedia.md) - Quantitative trading metrics guide
-- [Debug Scripts](docs/guides/debug-scripts.md) - Troubleshooting
-- [Utility Scripts](docs/guides/utility-scripts.md) - Data conversion utilities
-- [Indicator Export](docs/guides/indicator-export.md) - Export calculated indicators
-- [Copilot Instructions](docs/guides/copilot-instructions.md) - AI assistance setup
+---
+
+**Last Updated**: 2024
+**Version**: 2.0.0 (UV-Only Mode)

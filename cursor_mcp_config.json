@@ -1,37 +1,334 @@
 {
-  "server": {
-    "name": "PyCharm GitHub Copilot MCP Server",
-    "command": "python",
-    "args": ["pycharm_github_copilot_mcp.py"],
-    "env": {
-      "PYTHONPATH": ".",
-      "LOG_LEVEL": "INFO",
-      "MCP_SERVER_TYPE": "pycharm_copilot",
-      "ENABLE_FINANCIAL_DATA": "true",
-      "ENABLE_INDICATORS": "true",
-      "ENABLE_GITHUB_COPILOT": "true"
+  "mcpServers": {
+    "neozork": {
+      "command": "python3",
+      "args": [
+        "neozork_mcp_server.py"
+      ],
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "LOG_LEVEL": "INFO",
+        "USE_UV": "true",
+        "UV_ONLY": "true"
+      },
+      "cwd": "${workspaceFolder}"
     },
-    "cwd": ".",
-    "transport": "stdio"
+    "neozork-docker": {
+      "command": "docker",
+      "args": [
+        "compose",
+        "run",
+        "--rm",
+        "-T",
+        "-e",
+        "PYTHONPATH=/app",
+        "-e",
+        "LOG_LEVEL=INFO",
+        "-e",
+        "DOCKER_CONTAINER=true",
+        "-e",
+        "USE_UV=true",
+        "-e",
+        "UV_ONLY=true",
+        "neozork-hld",
+        "python3",
+        "neozork_mcp_server.py"
+      ],
+      "env": {
+        "DOCKER_HOST": "unix:///var/run/docker.sock"
+      },
+      "cwd": "${PROJECT_ROOT}"
+    }
   },
-  "testing": {
-    "enable_tests": true,
-    "test_timeout": 30,
-    "performance_tests": true,
-    "coverage_tests": true,
-    "github_copilot_tests": true
+  "serverSettings": {
+    "neozork": {
+      "enabled": true,
+      "autoStart": true,
+      "debug": false,
+      "logLevel": "info",
+      "features": {
+        "financial_data": true,
+        "technical_indicators": true,
+        "github_copilot": true,
+        "code_completion": true,
+        "project_analysis": true,
+        "ai_suggestions": true,
+        "uv_integration": true,
+        "uv_only_mode": true
+      },
+      "performance": {
+        "max_files": 15000,
+        "max_file_size": "10MB",
+        "cache_enabled": true,
+        "cache_size": "200MB",
+        "indexing_timeout": 60,
+        "completion_timeout": 5,
+        "memory_limit_mb": 512
+      },
+      "monitoring": {
+        "enable_monitoring": true,
+        "health_check_interval": 60,
+        "max_memory_mb": 512,
+        "max_cpu_percent": 80,
+        "log_rotation": {
+          "max_size_mb": 100,
+          "backup_count": 5
+        },
+        "alerts": {
+          "memory_threshold": 80,
+          "cpu_threshold": 90,
+          "restart_threshold": 3
+        }
+      },
+      "security": {
+        "allowed_paths": [
+          "${PROJECT_ROOT}"
+        ],
+        "max_file_size": 10485760,
+        "timeout": 30000,
+        "validate_inputs": true,
+        "sanitize_paths": true
+      },
+      "docker": {
+        "enabled": true,
+        "container_name": "neozork-mcp-server",
+        "port": 8080,
+        "volumes": [
+          "${PROJECT_ROOT}:/workspace",
+          "${PROJECT_ROOT}/logs:/workspace/logs"
+        ],
+        "environment": {
+          "PYTHONPATH": "/workspace/src:/workspace",
+          "LOG_LEVEL": "INFO",
+          "USE_UV": "true",
+          "UV_ONLY": "true"
+        }
+      },
+      "development": {
+        "auto_reload": false,
+        "hot_reload": false,
+        "debug_mode": false,
+        "profiling": false,
+        "coverage": false
+      }
+    },
+    "neozork-docker": {
+      "enabled": false,
+      "autoStart": false,
+      "debug": false,
+      "logLevel": "info",
+      "features": {
+        "financial_data": true,
+        "technical_indicators": true,
+        "github_copilot": true,
+        "code_completion": true,
+        "project_analysis": true,
+        "ai_suggestions": true,
+        "docker_integration": true,
+        "real_time_monitoring": true,
+        "uv_integration": true,
+        "uv_only_mode": true
+      }
+    }
   },
-  "monitoring": {
-    "enable_monitoring": true,
-    "health_check_interval": 60,
-    "max_memory_mb": 512,
-    "max_cpu_percent": 80
+  "cursor": {
+    "mcp": {
+      "autoStart": true,
+      "logLevel": "info",
+      "features": {
+        "completion": true,
+        "hover": true,
+        "definition": true,
+        "references": true,
+        "workspaceSymbols": true,
+        "diagnostics": true,
+        "codeActions": true,
+        "formatting": true
+      },
+      "preferences": {
+        "defaultServer": "neozork",
+        "fallbackToDocker": true,
+        "useUV": true,
+        "uvOnly": true,
+        "dockerEnabled": true
+      }
+    },
+    "python": {
+      "interpreter": "python3",
+      "packageManager": "uv",
+      "uvPath": "uv",
+      "autoInstallDependencies": true,
+      "uvOnly": true
+    }
   },
-  "features": {
-    "financial_data": true,
-    "technical_indicators": true,
-    "github_copilot": true,
-    "code_completion": true,
-    "project_analysis": true
+  "financial_data": {
+    "auto_scan": true,
+    "scan_interval": 300,
+    "supported_formats": [
+      "csv",
+      "parquet",
+      "json"
+    ],
+    "data_directories": [
+      "data",
+      "mql5_feed",
+      "financial_data"
+    ],
+    "symbol_patterns": [
+      "*_*",
+      "*USD*",
+      "*EUR*",
+      "*GBP*"
+    ],
+    "timeframe_patterns": [
+      "*D1*",
+      "*H1*",
+      "*M15*",
+      "*M5*",
+      "*M1*"
+    ]
+  },
+  "technical_indicators": {
+    "trend": [
+      "SMA",
+      "EMA",
+      "ADX",
+      "SAR",
+      "HMA"
+    ],
+    "oscillators": [
+      "RSI",
+      "Stochastic",
+      "CCI"
+    ],
+    "momentum": [
+      "MACD",
+      "Stochastic_Oscillator"
+    ],
+    "volatility": [
+      "ATR",
+      "Bollinger_Bands",
+      "Standard_Deviation"
+    ],
+    "volume": [
+      "OBV",
+      "VWAP"
+    ],
+    "support_resistance": [
+      "Donchian_Channels",
+      "Fibonacci_Retracements",
+      "Pivot_Points"
+    ],
+    "predictive": [
+      "Time_Series_Forecast"
+    ],
+    "probability": [
+      "Kelly_Criterion",
+      "Monte_Carlo"
+    ],
+    "sentiment": [
+      "COT",
+      "Fear_Greed",
+      "Social_Sentiment"
+    ]
+  },
+  "code_snippets": {
+    "imports": [
+      {
+        "name": "import_pandas",
+        "description": "Import pandas library",
+        "code": "import pandas as pd"
+      },
+      {
+        "name": "import_numpy",
+        "description": "Import numpy library",
+        "code": "import numpy as np"
+      },
+      {
+        "name": "import_matplotlib",
+        "description": "Import matplotlib for plotting",
+        "code": "import matplotlib.pyplot as plt"
+      }
+    ],
+    "data_loading": [
+      {
+        "name": "read_csv",
+        "description": "Read CSV file",
+        "code": "df = pd.read_csv('data.csv')"
+      },
+      {
+        "name": "read_parquet",
+        "description": "Read Parquet file",
+        "code": "df = pd.read_parquet('data.parquet')"
+      }
+    ],
+    "analysis": [
+      {
+        "name": "calculate_rsi",
+        "description": "Calculate RSI indicator",
+        "code": "rsi = calculate_rsi(df['close'], period=14)"
+      },
+      {
+        "name": "calculate_macd",
+        "description": "Calculate MACD indicator",
+        "code": "macd = calculate_macd(df['close'])"
+      },
+      {
+        "name": "backtest_strategy",
+        "description": "Backtest trading strategy",
+        "code": "results = backtest_strategy(data, strategy_params)"
+      }
+    ],
+    "visualization": [
+      {
+        "name": "plot_data",
+        "description": "Plot financial data",
+        "code": "plt.plot(df['close'])\nplt.show()"
+      }
+    ],
+    "docker": [
+      {
+        "name": "docker_setup",
+        "description": "Start Docker services",
+        "code": "docker compose up -d"
+      },
+      {
+        "name": "docker_mcp",
+        "description": "Run MCP server in Docker",
+        "code": "docker compose run --rm neozork-hld python3 neozork_mcp_server.py"
+      }
+    ],
+    "uv": [
+      {
+        "name": "uv_install",
+        "description": "Install dependencies with uv",
+        "code": "uv pip install -r requirements.txt"
+      },
+      {
+        "name": "uv_sync",
+        "description": "Sync dependencies with uv",
+        "code": "uv sync"
+      },
+      {
+        "name": "uv_run",
+        "description": "Run script with uv",
+        "code": "uv run python3 script.py"
+      }
+    ],
+    "testing": [
+      {
+        "name": "run_tests",
+        "description": "Run tests",
+        "code": "uv run python -m pytest tests/ -v"
+      }
+    ]
+  },
+  "ai_suggestions": {
+    "enabled": true,
+    "context_aware": true,
+    "financial_patterns": true,
+    "code_quality": true,
+    "performance_optimization": true,
+    "best_practices": true
   }
-} 
+}

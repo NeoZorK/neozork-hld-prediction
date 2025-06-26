@@ -1,0 +1,198 @@
+{
+  "mcpServers": {
+    "neozork": {
+      "command": "python3",
+      "args": [
+        "neozork_mcp_server.py"
+      ],
+      "env": {
+        "PYTHONPATH": "${PROJECT_ROOT}",
+        "LOG_LEVEL": "INFO",
+        "DOCKER_CONTAINER": "false",
+        "USE_UV": "true",
+        "UV_PYTHON": "python3"
+      },
+      "cwd": "${PROJECT_ROOT}"
+    },
+    "neozork-docker": {
+      "command": "docker",
+      "args": [
+        "compose",
+        "run",
+        "--rm",
+        "-T",
+        "-e",
+        "PYTHONPATH=/app",
+        "-e",
+        "LOG_LEVEL=INFO",
+        "-e",
+        "DOCKER_CONTAINER=true",
+        "-e",
+        "USE_UV=true",
+        "neozork-hld",
+        "python3",
+        "neozork_mcp_server.py"
+      ],
+      "env": {
+        "DOCKER_HOST": "unix:///var/run/docker.sock"
+      },
+      "cwd": "${PROJECT_ROOT}"
+    }
+  },
+  "serverSettings": {
+    "neozork": {
+      "enabled": true,
+      "autoStart": true,
+      "debug": false,
+      "logLevel": "info",
+      "features": {
+        "financial_data": true,
+        "technical_indicators": true,
+        "github_copilot": true,
+        "code_completion": true,
+        "project_analysis": true,
+        "ai_suggestions": true,
+        "docker_integration": true,
+        "real_time_monitoring": true,
+        "uv_integration": true
+      },
+      "performance": {
+        "max_files": 15000,
+        "max_file_size": "10MB",
+        "cache_enabled": true,
+        "cache_size": "200MB",
+        "indexing_timeout": 60,
+        "completion_timeout": 5,
+        "memory_limit_mb": 512
+      },
+      "monitoring": {
+        "enable_monitoring": true,
+        "health_check_interval": 60,
+        "max_memory_mb": 512,
+        "max_cpu_percent": 80
+      },
+      "docker": {
+        "enabled": true,
+        "container_name": "neozork-mcp-server",
+        "port": 8080
+      }
+    }
+  },
+  "pycharm": {
+    "python": {
+      "interpreter": "python3",
+      "packageManager": "uv",
+      "uvPath": "uv",
+      "autoInstallDependencies": true
+    },
+    "mcp": {
+      "autoStart": true,
+      "logLevel": "info",
+      "features": {
+        "completion": true,
+        "hover": true,
+        "definition": true,
+        "references": true,
+        "workspaceSymbols": true,
+        "diagnostics": true
+      }
+    }
+  },
+  "financial_data": {
+    "auto_scan": true,
+    "scan_interval": 300,
+    "supported_formats": [
+      "csv",
+      "parquet",
+      "json"
+    ],
+    "data_directories": [
+      "data",
+      "mql5_feed",
+      "financial_data"
+    ]
+  },
+  "technical_indicators": {
+    "trend": [
+      "SMA",
+      "EMA",
+      "ADX",
+      "SAR",
+      "HMA"
+    ],
+    "oscillators": [
+      "RSI",
+      "Stochastic",
+      "CCI"
+    ],
+    "momentum": [
+      "MACD",
+      "Stochastic_Oscillator"
+    ],
+    "volatility": [
+      "ATR",
+      "Bollinger_Bands",
+      "Standard_Deviation"
+    ],
+    "volume": [
+      "OBV",
+      "VWAP"
+    ],
+    "support_resistance": [
+      "Donchian_Channels",
+      "Fibonacci_Retracements",
+      "Pivot_Points"
+    ],
+    "predictive": [
+      "Time_Series_Forecast"
+    ],
+    "probability": [
+      "Kelly_Criterion",
+      "Monte_Carlo"
+    ],
+    "sentiment": [
+      "COT",
+      "Fear_Greed",
+      "Social_Sentiment"
+    ]
+  },
+  "code_snippets": {
+    "imports": [
+      {
+        "name": "import_pandas",
+        "description": "Import pandas library",
+        "code": "import pandas as pd"
+      },
+      {
+        "name": "import_numpy",
+        "description": "Import numpy library",
+        "code": "import numpy as np"
+      }
+    ],
+    "docker": [
+      {
+        "name": "docker_setup",
+        "description": "Start Docker services",
+        "code": "docker compose up -d"
+      }
+    ],
+    "uv": [
+      {
+        "name": "uv_install",
+        "description": "Install dependencies with uv",
+        "code": "uv pip install -r requirements.txt"
+      },
+      {
+        "name": "uv_run",
+        "description": "Run script with uv",
+        "code": "uv run python3 script.py"
+      }
+    ]
+  },
+  "ai_suggestions": {
+    "enabled": true,
+    "context_aware": true,
+    "financial_patterns": true,
+    "code_quality": true
+  }
+}
