@@ -2,13 +2,21 @@
 # -*- coding: utf-8 -*-
 
 """
-Simple UV Test for Docker
-Very basic test that should work in any Docker environment with UV
+Simple UV Test
+Very basic test that should work in both Docker and local environments
 """
 
 import pytest
 import subprocess
 import os
+
+def is_docker_environment():
+    """Check if running in Docker environment"""
+    return (
+        os.getenv("DOCKER_CONTAINER", "false").lower() == "true" or
+        os.path.exists("/.dockerenv") or
+        os.path.exists("/app")
+    )
 
 def test_uv_exists():
     """Test that UV exists and can be called"""
@@ -45,11 +53,28 @@ def test_uv_help():
         pytest.fail(f"Error testing UV help: {e}")
 
 def test_environment_variables():
-    """Test that UV environment variables are set"""
-    assert os.getenv("USE_UV", "false").lower() == "true", "USE_UV should be true"
-    assert os.getenv("UV_ONLY", "false").lower() == "true", "UV_ONLY should be true"
-    assert os.getenv("DOCKER_CONTAINER", "false").lower() == "true", "DOCKER_CONTAINER should be true"
-    print("✅ UV environment variables are set correctly")
+    """Test that UV environment variables are set appropriately"""
+    in_docker = is_docker_environment()
+    
+    if in_docker:
+        # In Docker, check required environment variables
+        assert os.getenv("USE_UV", "false").lower() == "true", "USE_UV should be true in Docker"
+        assert os.getenv("UV_ONLY", "false").lower() == "true", "UV_ONLY should be true in Docker"
+        assert os.getenv("DOCKER_CONTAINER", "false").lower() == "true", "DOCKER_CONTAINER should be true in Docker"
+        print("✅ UV environment variables are set correctly in Docker")
+    else:
+        # Outside Docker, just check if UV is available
+        print("ℹ️  Running outside Docker - UV environment variables not required")
+        # Check if UV is available at least
+        try:
+            result = subprocess.run(["uv", "--version"], 
+                                  capture_output=True, 
+                                  text=True, 
+                                  timeout=10)
+            assert result.returncode == 0, "UV should be available in local environment"
+            print("✅ UV is available in local environment")
+        except Exception as e:
+            pytest.fail(f"UV not available in local environment: {e}")
 
 def test_package_listing():
     """Test that we can list packages somehow"""
