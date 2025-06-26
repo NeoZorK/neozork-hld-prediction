@@ -1,20 +1,282 @@
 # IDE Configuration Guide
 
-Complete guide for setting up MCP (Model Context Protocol) server integration with Cursor IDE, VS Code, and PyCharm for the NeoZork HLD Prediction project.
+## Overview
 
-## 🚀 Quick Start
+This guide covers the setup and configuration of Model Context Protocol (MCP) servers for multiple IDEs in the NeoZork HLD Prediction project.
 
-### Automated Setup (Recommended)
+## 🚀 Quick Setup
+
+### Automated Configuration
 ```bash
 # Setup all IDE configurations automatically
 python3 scripts/setup_ide_configs.py
 
-# Verify setup
+# Verify the setup
+python3 -m pytest tests/docker/test_ide_configs.py -v
+```
+
+### Manual Verification
+```bash
+# Check MCP server status
+python scripts/check_mcp_status.py
+
+# Test MCP server connection
+echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
+```
+
+## 🎯 Supported IDEs
+
+### Cursor IDE
+- **Primary IDE** with advanced AI integration
+- **Auto-start**: MCP server starts automatically
+- **Configuration**: `cursor_mcp_config.json`
+
+### VS Code
+- **Popular open-source editor**
+- **Extension**: MCP extension required
+- **Configuration**: `.vscode/settings.json`
+
+### PyCharm
+- **Professional Python IDE**
+- **Plugin**: MCP plugin required
+- **Configuration**: `pycharm_mcp_config.json`
+
+## 🔧 Configuration Files
+
+### Cursor Configuration
+```json
+{
+  "mcpServers": {
+    "neozork": {
+      "command": "python3",
+      "args": ["neozork_mcp_server.py"],
+      "env": {
+        "PYTHONPATH": "."
+      }
+    }
+  }
+}
+```
+
+### VS Code Configuration
+```json
+{
+  "mcp.servers": {
+    "neozork": {
+      "command": "python3",
+      "args": ["neozork_mcp_server.py"],
+      "env": {
+        "PYTHONPATH": "."
+      }
+    }
+  }
+}
+```
+
+### PyCharm Configuration
+```json
+{
+  "mcpServers": {
+    "neozork": {
+      "command": "python3",
+      "args": ["neozork_mcp_server.py"],
+      "env": {
+        "PYTHONPATH": "."
+      }
+    }
+  }
+}
+```
+
+## 🐳 Docker Environment
+
+### Containerized Development
+The MCP server works seamlessly in Docker environments with automatic detection:
+
+```bash
+# Build Docker image
+docker-compose build
+
+# Run in container
+docker-compose run --rm app bash
+
+# Check MCP server status in Docker
+python scripts/check_mcp_status.py
+```
+
+### Docker-Specific Features
+- **Ping-based Detection**: Reliable server detection without persistent processes
+- **On-demand Operation**: Server starts per request and shuts down after
+- **Automatic Environment Detection**: No manual configuration required
+- **Timeout Protection**: 10-second timeout prevents hanging requests
+
+### Docker Configuration
+The `docker.env` file contains environment-specific settings:
+```bash
+# Example docker.env contents
+PYTHONPATH=/app
+PYTHONUNBUFFERED=1
+DOCKER_CONTAINER=true
+```
+
+## 📊 Status Monitoring
+
+### Status Checker
+The `scripts/check_mcp_status.py` script provides comprehensive monitoring:
+
+#### Docker Environment Output
+```
+🔍 MCP Server Status Checker
+==================================================
+🐳 Detected Docker environment
+
+🚀 MCP Server Status:
+   ✅ Server is running
+
+🔗 Connection Test:
+   ✅ Connection successful
+   🔍 Test method: ping_request
+   ⏱️  Response time: immediate
+
+💻 IDE Configurations:
+   ✅ CURSOR: 7418 bytes
+   ✅ DOCKER: 367 bytes
+
+🐳 Docker Information:
+   📦 In Docker: True
+   🔄 MCP Server responding: True
+   🔍 Test method: ping_request
+```
+
+#### Host Environment Output
+```
+🔍 MCP Server Status Checker
+==================================================
+🖥️  Detected host environment
+
+🚀 MCP Server Status:
+   ✅ Server is running
+
+🔗 Connection Test:
+   ✅ Connection successful
+   👥 PIDs: 12345, 67890
+
+💻 IDE Configurations:
+   ✅ CURSOR: 7418 bytes
+   ✅ VSCODE: 2613 bytes
+   ✅ PYCHARM: 4174 bytes
+   ✅ DOCKER: 367 bytes
+```
+
+## 🔍 Detection Methods
+
+### Environment Detection
+The system automatically detects the environment using multiple methods:
+
+1. **Docker-specific files**: Presence of `/.dockerenv`
+2. **Cgroup information**: Docker references in `/proc/1/cgroup`
+3. **Environment variables**: `DOCKER_CONTAINER=true`
+
+### Detection Logic
+
+#### Docker Environment
+- **Method**: Ping-based detection via JSON-RPC requests
+- **Command**: `echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py`
+- **Timeout**: 10 seconds
+- **Validation**: JSON-RPC 2.0 response with `pong: true`
+
+#### Host Environment
+- **Method**: Process-based detection using `pgrep`
+- **Command**: `pgrep -f neozork_mcp_server.py`
+- **Features**: PID tracking, start/stop control
+- **Monitoring**: Traditional process management
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+#### MCP Server Not Detected
+```bash
+# Check if server is running
+python scripts/check_mcp_status.py
+
+# Manual server start (host environment)
+python3 neozork_mcp_server.py
+
+# Test ping request
+echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
+```
+
+#### Configuration Issues
+```bash
+# Verify configuration files exist
+ls -la cursor_mcp_config.json .vscode/settings.json pycharm_mcp_config.json docker.env
+
+# Re-run setup script
+python3 scripts/setup_ide_configs.py
+```
+
+#### Docker Issues
+```bash
+# Check if docker.env is in container
+docker-compose exec app ls -la /app/docker.env
+
+# Rebuild container if needed
+docker-compose build --no-cache
+```
+
+### Debug Information
+The status checker provides detailed debug information:
+- Environment detection results
+- File existence checks
+- Configuration validation
+- Connection test results
+
+## 🧪 Testing
+
+### Test Coverage
+```bash
+# Test MCP server detection
+python3 -m pytest tests/scripts/test_check_mcp_status.py -v
+
+# Test IDE configurations
 python3 -m pytest tests/docker/test_ide_configs.py -v
 
-# Check MCP server status
-python3 scripts/check_mcp_status.py
+# Test MCP server functionality
+python3 -m pytest tests/mcp/ -v
 ```
+
+### Manual Testing
+```bash
+# Test ping request
+echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
+
+# Expected response:
+# {"jsonrpc": "2.0", "id": 1, "result": {"pong": true, "timestamp": "...", "server_time": "...", "timezone": "UTC"}}
+```
+
+## 📚 Related Documentation
+
+- **[MCP Servers Reference](docs/reference/mcp-servers/README.md)** - Complete server documentation
+- **[Detection Logic](docs/development/mcp-server-detection.md)** - Detailed detection implementation
+- **[Docker Setup](docs/deployment/docker-setup.md)** - Containerized deployment guide
+- **[Development Guide](docs/development/)** - Development and contribution guidelines
+
+## 🔄 Migration Notes
+
+### From Old Detection Logic
+The old Docker detection logic used unreliable methods:
+- PID file checking
+- Process scanning via `/proc`
+- `pgrep` and `pidof` commands
+
+### To New Detection Logic
+The new logic provides:
+- ✅ Always accurate detection
+- ✅ Works with on-demand servers
+- ✅ Tests actual functionality
+- ✅ No false positives/negatives
+- ✅ Automatic environment detection
 
 ## 📋 Prerequisites
 
