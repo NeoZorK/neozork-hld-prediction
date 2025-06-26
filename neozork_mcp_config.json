@@ -1,0 +1,239 @@
+{
+  "server_mode": "unified",
+  "server_name": "Neozork Unified MCP Server",
+  "version": "2.0.0",
+  "description": "Modern, unified MCP server for financial analysis projects with AI integration",
+  
+  "auto_start": {
+    "enabled": true,
+    "check_interval": 30,
+    "ide_detection": true,
+    "project_detection": true
+  },
+  
+  "server": {
+    "command": "python",
+    "args": ["neozork_mcp_server.py"],
+    "env": {
+      "PYTHONPATH": "${PROJECT_ROOT}",
+      "LOG_LEVEL": "INFO"
+    },
+    "cwd": "${PROJECT_ROOT}"
+  },
+  
+  "conditions": {
+    "cursor_ide": {
+      "processes": ["Cursor", "cursor", "Cursor.exe"],
+      "files": [".cursor", "cursor_mcp_config.json"]
+    },
+    "pycharm_ide": {
+      "processes": ["pycharm", "PyCharm", "idea", "pycharm64.exe"],
+      "files": [".idea", "pycharm_mcp_config.json"]
+    },
+    "vscode_ide": {
+      "processes": ["code", "Code", "code.exe"],
+      "files": [".vscode", ".vscode/settings.json"]
+    },
+    "python_files": {
+      "extensions": [".py"],
+      "min_files": 1
+    },
+    "financial_data": {
+      "directories": ["mql5_feed", "data"],
+      "files": ["*.csv", "*.parquet"]
+    }
+  },
+  
+  "features": {
+    "financial_data": true,
+    "technical_indicators": true,
+    "github_copilot": true,
+    "code_completion": true,
+    "project_analysis": true,
+    "ai_suggestions": true,
+    "docker_integration": true,
+    "real_time_monitoring": true
+  },
+  
+  "performance": {
+    "max_files": 15000,
+    "max_file_size": "10MB",
+    "cache_enabled": true,
+    "cache_size": "200MB",
+    "indexing_timeout": 60,
+    "completion_timeout": 5,
+    "memory_limit_mb": 512
+  },
+  
+  "logging": {
+    "level": "INFO",
+    "file": "logs/neozork_mcp.log",
+    "max_size": "10MB",
+    "backup_count": 5,
+    "format": "%(asctime)s [%(levelname)s] [%(name)s] %(message)s"
+  },
+  
+  "ide_integration": {
+    "cursor": {
+      "enabled": true,
+      "config_file": ".cursor/settings.json",
+      "auto_config": true
+    },
+    "pycharm": {
+      "enabled": true,
+      "config_file": ".idea/mcp_servers.xml",
+      "auto_config": true
+    },
+    "vscode": {
+      "enabled": true,
+      "config_file": ".vscode/settings.json",
+      "auto_config": true
+    }
+  },
+  
+  "financial_data": {
+    "auto_scan": true,
+    "scan_interval": 300,
+    "supported_formats": ["csv", "parquet", "json"],
+    "data_directories": ["data", "mql5_feed", "financial_data"],
+    "symbol_patterns": ["*_*", "*USD*", "*EUR*", "*GBP*"],
+    "timeframe_patterns": ["*D1*", "*H1*", "*M15*", "*M5*", "*M1*"]
+  },
+  
+  "technical_indicators": {
+    "trend": ["SMA", "EMA", "ADX", "SAR", "HMA"],
+    "oscillators": ["RSI", "Stochastic", "CCI"],
+    "momentum": ["MACD", "Stochastic_Oscillator"],
+    "volatility": ["ATR", "Bollinger_Bands", "Standard_Deviation"],
+    "volume": ["OBV", "VWAP"],
+    "support_resistance": ["Donchian_Channels", "Fibonacci_Retracements", "Pivot_Points"],
+    "predictive": ["Time_Series_Forecast"],
+    "probability": ["Kelly_Criterion", "Monte_Carlo"],
+    "sentiment": ["COT", "Fear_Greed", "Social_Sentiment"]
+  },
+  
+  "code_snippets": {
+    "imports": [
+      {
+        "name": "import_pandas",
+        "description": "Import pandas library",
+        "code": "import pandas as pd"
+      },
+      {
+        "name": "import_numpy",
+        "description": "Import numpy library",
+        "code": "import numpy as np"
+      },
+      {
+        "name": "import_matplotlib",
+        "description": "Import matplotlib for plotting",
+        "code": "import matplotlib.pyplot as plt"
+      }
+    ],
+    "data_loading": [
+      {
+        "name": "read_csv",
+        "description": "Read CSV file",
+        "code": "df = pd.read_csv('data.csv')"
+      },
+      {
+        "name": "read_parquet",
+        "description": "Read Parquet file",
+        "code": "df = pd.read_parquet('data.parquet')"
+      }
+    ],
+    "analysis": [
+      {
+        "name": "calculate_rsi",
+        "description": "Calculate RSI indicator",
+        "code": "rsi = calculate_rsi(df['close'], period=14)"
+      },
+      {
+        "name": "calculate_macd",
+        "description": "Calculate MACD indicator",
+        "code": "macd = calculate_macd(df['close'])"
+      },
+      {
+        "name": "backtest_strategy",
+        "description": "Backtest trading strategy",
+        "code": "results = backtest_strategy(data, strategy_params)"
+      }
+    ],
+    "visualization": [
+      {
+        "name": "plot_data",
+        "description": "Plot financial data",
+        "code": "plt.plot(df['close'])\nplt.show()"
+      }
+    ],
+    "docker": [
+      {
+        "name": "docker_setup",
+        "description": "Start Docker services",
+        "code": "docker compose up -d"
+      }
+    ],
+    "testing": [
+      {
+        "name": "run_tests",
+        "description": "Run tests",
+        "code": "python -m pytest tests/ -v"
+      }
+    ]
+  },
+  
+  "ai_suggestions": {
+    "enabled": true,
+    "context_aware": true,
+    "financial_patterns": true,
+    "code_quality": true,
+    "performance_optimization": true,
+    "best_practices": true
+  },
+  
+  "monitoring": {
+    "enable_monitoring": true,
+    "health_check_interval": 60,
+    "max_memory_mb": 512,
+    "max_cpu_percent": 80,
+    "log_rotation": {
+      "max_size_mb": 100,
+      "backup_count": 5
+    },
+    "alerts": {
+      "memory_threshold": 80,
+      "cpu_threshold": 90,
+      "restart_threshold": 3
+    }
+  },
+  
+  "security": {
+    "allowed_paths": ["${PROJECT_ROOT}"],
+    "max_file_size": 10485760,
+    "timeout": 30000,
+    "validate_inputs": true,
+    "sanitize_paths": true
+  },
+  
+  "docker": {
+    "enabled": true,
+    "container_name": "neozork-mcp-server",
+    "port": 8080,
+    "volumes": [
+      "${PROJECT_ROOT}:/workspace",
+      "${PROJECT_ROOT}/logs:/workspace/logs"
+    ],
+    "environment": {
+      "PYTHONPATH": "/workspace/src:/workspace",
+      "LOG_LEVEL": "INFO"
+    }
+  },
+  
+  "development": {
+    "auto_reload": false,
+    "hot_reload": false,
+    "debug_mode": false,
+    "profiling": false,
+    "coverage": false
+  }
+} 

@@ -56,28 +56,6 @@ def test_test_stdio_moved():
         assert "test_stdio_mode" in content, "File should contain test_stdio_mode function"
         assert "PyCharm GitHub Copilot MCP Server" in content, "File should contain server reference"
 
-def test_auto_start_mcp_still_exists():
-    """Test that auto_start_mcp.py still exists in scripts/"""
-    # Check that the file still exists in the original location
-    path = Path("scripts/auto_start_mcp.py")
-    assert path.exists(), f"File should still exist at {path}"
-    
-    # Check that the file has the correct content (basic check)
-    with open(path, 'r') as f:
-        content = f.read()
-        assert "MCPAutoStarter" in content, "File should contain MCPAutoStarter class"
-
-def test_run_cursor_mcp_still_exists():
-    """Test that run_cursor_mcp.py still exists in scripts/"""
-    # Check that the file still exists in the original location
-    path = Path("scripts/run_cursor_mcp.py")
-    assert path.exists(), f"File should still exist at {path}"
-    
-    # Check that the file has the correct content (basic check)
-    with open(path, 'r') as f:
-        content = f.read()
-        assert "PyCharmGitHubCopilotMCPServerRunner" in content, "File should contain PyCharmGitHubCopilotMCPServerRunner class"
-
 def test_documentation_updated():
     """Test that documentation files were updated with new paths"""
     # Check docs/scripts.md
@@ -151,6 +129,28 @@ def test_init_files_exist():
         pytest.fail(f"Missing __init__.py files:\n{missing_list}")
     
     print(f"✅ All directories in src/ and tests/ have __init__.py files")
+
+def test_neozork_mcp_server_exists():
+    """Test that neozork_mcp_server.py exists in root directory"""
+    # Check that the file exists in the root location
+    path = Path("neozork_mcp_server.py")
+    assert path.exists(), f"File should exist at {path}"
+    
+    # Check that the file has the correct content (basic check)
+    with open(path, 'r') as f:
+        content = f.read()
+        assert "NeozorkMCPServer" in content, "File should contain NeozorkMCPServer class"
+
+def test_neozork_mcp_manager_exists():
+    """Test that neozork_mcp_manager.py exists in scripts/"""
+    # Check that the file exists in the scripts location
+    path = Path("scripts/neozork_mcp_manager.py")
+    assert path.exists(), f"File should exist at {path}"
+    
+    # Check that the file has the correct content (basic check)
+    with open(path, 'r') as f:
+        content = f.read()
+        assert "NeozorkMCPManager" in content, "File should contain NeozorkMCPManager class"
 
 if __name__ == "__main__":
     # Run all tests
