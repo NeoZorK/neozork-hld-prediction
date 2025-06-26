@@ -55,7 +55,7 @@ docker compose build --build-arg USE_UV=false && docker compose run --rm neozork
 
 ## 🤖 MCP Servers & IDE Integration
 
-Intelligent development assistance with Model Context Protocol (MCP) servers:
+Intelligent development assistance with Model Context Protocol (MCP) servers featuring advanced detection and Docker integration:
 
 ### 🎯 Multi-IDE MCP Support
 - **Cursor IDE**: Primary IDE with advanced AI integration
@@ -75,23 +75,46 @@ python3 -m pytest tests/docker/test_ide_configs.py -v
 - **Smart Autocompletion:** Financial symbols, timeframes, technical indicators
 - **Context-Aware Suggestions:** AI-powered code completion based on project context
 - **GitHub Copilot Integration:** Enhanced AI assistance for financial analysis
-- **Docker Integration:** Containerized MCP server support
+- **Docker Integration:** Containerized MCP server with ping-based detection
 - **UV Package Manager:** Modern Python dependency management
 - **Real-time Monitoring:** Health checks and performance monitoring
+- **Environment Detection:** Automatic detection of Docker vs host environments
 
-### 📊 MCP Server Status
+### 📊 MCP Server Status & Detection
 ```bash
-# Check MCP server status
+# Check MCP server status (works in both Docker and host environments)
 python scripts/check_mcp_status.py
 
-# Manual server start
+# Manual server start (host environment)
 python3 neozork_mcp_server.py
 
-# Test MCP connection
-python3 -c "import json; print(json.dumps({'method': 'neozork/status', 'id': 1, 'params': {}}))" | python3 neozork_mcp_server.py
+# Test MCP connection with ping
+echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
 ```
 
-📚 **[IDE Configuration Guide](docs/guides/ide-configuration.md)** | **[MCP Servers Documentation](docs/reference/mcp-servers/README.md)**
+### 🐳 Docker Environment Support
+The MCP server detection system automatically adapts to different environments:
+
+- **Docker Environment**: Uses ping-based detection for on-demand servers
+- **Host Environment**: Uses process-based detection for persistent servers
+- **Automatic Detection**: No manual configuration required
+- **Reliable Status**: Accurate server status in all environments
+
+### 🔍 Detection Methods
+
+#### Docker Environment
+- **Ping-based Detection**: Sends JSON-RPC ping requests to test server functionality
+- **On-demand Servers**: Works with servers that start/stop per request
+- **Timeout Protection**: 10-second timeout for reliable detection
+- **JSON Validation**: Validates proper JSON-RPC 2.0 responses
+
+#### Host Environment  
+- **Process Detection**: Uses `pgrep` to find running MCP server processes
+- **PID Tracking**: Monitors multiple server instances
+- **Start/Stop Control**: Can start and stop server processes
+- **Traditional Monitoring**: Standard process management
+
+📚 **[IDE Configuration Guide](docs/guides/ide-configuration.md)** | **[MCP Servers Documentation](docs/reference/mcp-servers/README.md)** | **[Detection Logic](docs/development/mcp-server-detection.md)**
 
 ## 📚 Documentation
 

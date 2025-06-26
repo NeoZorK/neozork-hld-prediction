@@ -2,95 +2,176 @@
 
 ## Overview
 
-The MCP (Model Context Protocol) server detection logic has been updated to handle different environments appropriately. The system now uses different detection methods for Docker and host environments.
+The NeoZork HLD Prediction project implements intelligent MCP server detection that automatically adapts to different environments (Docker vs host) and provides reliable status monitoring.
 
-## Environment Detection
+## 🔍 Detection Architecture
 
-The system automatically detects the environment using the `is_running_in_docker()` function, which checks:
+### Environment Detection
+The system automatically detects the environment using multiple methods:
 
-1. **Docker-specific files**: Presence of `/.dockerenv`
-2. **Cgroup information**: Docker references in `/proc/1/cgroup`
-3. **Environment variables**: `DOCKER_CONTAINER=true`
+```python
+def is_running_in_docker() -> bool:
+    """Check if the script is running inside a Docker container"""
+    try:
+        # Check for Docker-specific files
+        if Path("/.dockerenv").exists():
+            return True
+        
+        # Check cgroup for Docker
+        try:
+            with open("/proc/1/cgroup", "r") as f:
+                if "docker" in f.read():
+                    return True
+        except FileNotFoundError:
+            pass
+        
+        # Check environment variable
+        if os.environ.get("DOCKER_CONTAINER") == "true":
+            return True
+        
+        return False
+    except Exception:
+        return False
+```
 
-## Detection Methods
+### Detection Methods
 
-### Docker Environment
-
-In Docker containers, the MCP server operates on a **request-response basis** and shuts down after processing requests. Therefore, traditional process-based detection methods are ineffective.
-
-#### New Ping-Based Detection
-
-The Docker environment uses a **ping-based detection method**:
+#### Docker Environment Detection
+Uses ping-based detection for on-demand servers:
 
 ```python
 def _test_mcp_ping_request(self) -> bool:
     """Test MCP server by sending ping request via echo command"""
-    # Create ping request JSON
-    ping_request = '{"method": "neozork/ping", "id": 1, "params": {}}'
-    
-    # Send request to MCP server via echo command
-    cmd = f'echo \'{ping_request}\' | python3 neozork_mcp_server.py'
-    
-    # Run command with timeout
-    result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
-    
-    # Validate JSON response
-    if result.returncode == 0 and result.stdout.strip():
-        response = json.loads(result.stdout.strip())
-        return (response.get("jsonrpc") == "2.0" and 
-                response.get("id") == 1 and 
-                response.get("result", {}).get("pong") is True)
-    return False
+    try:
+        # Create ping request JSON
+        ping_request = '{"method": "neozork/ping", "id": 1, "params": {}}'
+        
+        # Send request to MCP server via echo command
+        cmd = f'echo \'{ping_request}\' | python3 neozork_mcp_server.py'
+        
+        # Run command with timeout
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            cwd=self.project_root
+        )
+        
+        # Check if we got a valid JSON response
+        if result.returncode == 0 and result.stdout.strip():
+            response = json.loads(result.stdout.strip())
+            # Check if response contains expected ping response structure
+            return (response.get("jsonrpc") == "2.0" and 
+                    response.get("id") == 1 and 
+                    response.get("result", {}).get("pong") is True)
+        return False
+        
+    except subprocess.TimeoutExpired:
+        return False
+    except Exception as e:
+        return False
 ```
 
-#### Advantages of Ping-Based Detection
-
-1. **Accurate**: Tests actual server functionality
-2. **Reliable**: Works regardless of process state
-3. **Fast**: Quick response time
-4. **Docker-compatible**: Works with on-demand server model
-
-### Host Environment
-
-In host environments, the MCP server typically runs as a persistent process. The system uses traditional process-based detection:
+#### Host Environment Detection
+Uses process-based detection for persistent servers:
 
 ```python
 def check_server_running(self) -> bool:
     """Check if MCP server is already running"""
-    result = subprocess.run(
-        ['pgrep', '-f', 'neozork_mcp_server.py'],
-        capture_output=True,
-        text=True
-    )
-    return result.returncode == 0
+    try:
+        # Check for Python processes running the MCP server
+        result = subprocess.run(
+            ['pgrep', '-f', 'neozork_mcp_server.py'],
+            capture_output=True,
+            text=True
+        )
+        
+        return result.returncode == 0
+        
+    except Exception as e:
+        return False
 ```
 
-## Implementation Details
+## 🐳 Docker Environment Features
 
-### DockerMCPServerChecker Class
+### On-Demand Server Operation
+- **Start**: Server starts when request is received
+- **Process**: Handles the request
+- **Shutdown**: Server terminates after response
+- **Detection**: Ping-based testing required
 
-- **Primary method**: `_test_mcp_ping_request()`
-- **Fallback**: None (ping is the only reliable method)
-- **Timeout**: 10 seconds
+### Ping-Based Detection
+- **Method**: Send JSON-RPC ping request
+- **Command**: `echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py`
+- **Timeout**: 10 seconds maximum
 - **Validation**: JSON-RPC 2.0 response with `pong: true`
 
-### MCPServerChecker Class
-
-- **Primary method**: `pgrep` command
-- **Fallback**: Process management methods
-- **Features**: Start/stop server capabilities
-- **Validation**: Process existence check
-
-## Usage Examples
-
-### Docker Environment
-
-```bash
-# Inside Docker container
-python3 scripts/check_mcp_status.py
+### Expected Response Format
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "pong": true,
+    "timestamp": "2025-01-27T10:30:00Z",
+    "server_time": "2025-01-27T10:30:00Z",
+    "timezone": "UTC"
+  }
+}
 ```
 
-Output:
+## 🖥️ Host Environment Features
+
+### Persistent Server Operation
+- **Start**: Server runs continuously
+- **Process**: Handles multiple requests
+- **Monitoring**: Process-based detection
+- **Control**: Start/stop capabilities
+
+### Process-Based Detection
+- **Method**: Use `pgrep` to find running processes
+- **Command**: `pgrep -f neozork_mcp_server.py`
+- **Features**: PID tracking, multiple instances
+- **Control**: Can start and stop server processes
+
+### Server Management
+```python
+def start_server(self, timeout: int = 10) -> bool:
+    """Start MCP server"""
+    self.server_process = subprocess.Popen(
+        [sys.executable, 'neozork_mcp_server.py'],
+        cwd=self.project_root,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+    time.sleep(2)
+    return self.server_process.poll() is None
+
+def stop_server(self):
+    """Stop MCP server"""
+    if self.server_process:
+        self.server_process.terminate()
+        self.server_process.wait(timeout=5)
+```
+
+## 📊 Status Monitoring
+
+### Comprehensive Status Check
+The `scripts/check_mcp_status.py` script provides:
+
+- **Environment Detection**: Automatic Docker vs host detection
+- **Server Status**: Running/not running status
+- **Connection Test**: Functional connectivity verification
+- **IDE Configurations**: Configuration file validation
+- **Docker Information**: Container-specific details
+- **Recommendations**: Actionable suggestions
+
+### Status Output Examples
+
+#### Docker Environment
 ```
 🔍 MCP Server Status Checker
 ==================================================
@@ -104,22 +185,17 @@ Output:
    🔍 Test method: ping_request
    ⏱️  Response time: immediate
 
+💻 IDE Configurations:
+   ✅ CURSOR: 7418 bytes
+   ✅ DOCKER: 367 bytes
+
 🐳 Docker Information:
    📦 In Docker: True
    🔄 MCP Server responding: True
    🔍 Test method: ping_request
-   📄 MCP server file: 123456 bytes
-   📝 Log file: 789 bytes
 ```
 
-### Host Environment
-
-```bash
-# On host system
-python3 scripts/check_mcp_status.py
-```
-
-Output:
+#### Host Environment
 ```
 🔍 MCP Server Status Checker
 ==================================================
@@ -131,85 +207,119 @@ Output:
 🔗 Connection Test:
    ✅ Connection successful
    👥 PIDs: 12345, 67890
+
+💻 IDE Configurations:
+   ✅ CURSOR: 7418 bytes
+   ✅ VSCODE: 2613 bytes
+   ✅ PYCHARM: 4174 bytes
+   ✅ DOCKER: 367 bytes
 ```
 
-## Configuration
+## 🔧 Configuration Management
 
-### Docker-Specific Settings
+### IDE Configuration Files
+- **Cursor**: `cursor_mcp_config.json`
+- **VS Code**: `.vscode/settings.json`
+- **PyCharm**: `pycharm_mcp_config.json`
+- **Docker**: `docker.env`
 
-- **Timeout**: 10 seconds for ping requests
-- **Command**: `echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py`
-- **Working directory**: Project root
-- **Validation**: JSON-RPC 2.0 response format
-
-### Host-Specific Settings
-
-- **Process detection**: `pgrep -f neozork_mcp_server.py`
-- **Server management**: Start/stop capabilities
-- **PID tracking**: Multiple process support
-
-## Troubleshooting
-
-### Docker Issues
-
-1. **Ping timeout**: Check if MCP server file exists and is executable
-2. **Invalid JSON response**: Verify server implementation
-3. **Command not found**: Ensure Python3 is available in container
-
-### Host Issues
-
-1. **Process not found**: Check if server is running
-2. **Permission denied**: Verify pgrep access
-3. **Multiple processes**: Check for zombie processes
-
-## Testing
-
-The detection logic is thoroughly tested with unit tests covering:
-
-- ✅ Successful ping requests
-- ✅ Failed ping requests
-- ✅ Invalid JSON responses
-- ✅ Timeout scenarios
-- ✅ Environment detection
-- ✅ Host process detection
-
-Run tests with:
-```bash
-python3 -m pytest tests/scripts/test_check_mcp_status.py -v
+### Configuration Validation
+```python
+def check_ide_configurations(self) -> Dict[str, Any]:
+    """Check IDE configuration files"""
+    configs = {}
+    
+    for ide, config_path in [
+        ('cursor', 'cursor_mcp_config.json'),
+        ('vscode', '.vscode/settings.json'),
+        ('pycharm', 'pycharm_mcp_config.json'),
+        ('docker', 'docker.env')
+    ]:
+        config_file = self.project_root / config_path
+        if config_file.exists():
+            try:
+                with open(config_file, 'r') as f:
+                    content = f.read().strip()
+                    # Validate JSON format
+                    try:
+                        json.loads(content)
+                        valid_json = True
+                    except json.JSONDecodeError:
+                        # Check environment file format
+                        valid_json = all('=' in line or line.startswith('#') or not line.strip() 
+                                       for line in content.split('\n'))
+                    
+                    configs[ide] = {
+                        'exists': True,
+                        'size': config_file.stat().st_size,
+                        'valid_json': valid_json
+                    }
+            except Exception as e:
+                configs[ide] = {
+                    'exists': True,
+                    'error': str(e),
+                    'valid_json': False
+                }
+        else:
+            configs[ide] = {'exists': False}
+    
+    return configs
 ```
 
-## Migration Notes
+## 🧪 Testing
 
-### From Old Logic
+### Test Coverage
+- **Unit Tests**: Individual detection method testing
+- **Integration Tests**: End-to-end detection workflow
+- **Environment Tests**: Docker vs host environment detection
+- **Ping Tests**: JSON-RPC communication validation
 
-The old Docker detection logic used:
+### Test Examples
+```python
+def test_docker_environment_detection():
+    """Test Docker environment detection"""
+    checker = DockerMCPServerChecker()
+    assert checker._is_running_in_docker() == True
+
+def test_ping_request_detection():
+    """Test ping-based detection"""
+    checker = DockerMCPServerChecker()
+    result = checker._test_mcp_ping_request()
+    assert isinstance(result, bool)
+
+def test_host_environment_detection():
+    """Test host environment detection"""
+    checker = MCPServerChecker()
+    result = checker.check_server_running()
+    assert isinstance(result, bool)
+```
+
+## 🔄 Migration from Old Logic
+
+### Previous Detection Methods
+The old Docker detection logic used unreliable methods:
 - PID file checking
 - Process scanning via `/proc`
 - `pgrep` and `pidof` commands
 
-These methods were unreliable because:
+### Problems with Old Logic
 - MCP server shuts down after requests
 - No persistent processes to detect
 - PID files may be stale
+- False positives/negatives
 
-### To New Logic
-
-The new logic uses:
-- Direct ping requests
-- JSON-RPC validation
-- Timeout-based reliability
-
-Benefits:
-- ✅ Always accurate
+### New Detection Benefits
+- ✅ Always accurate detection
 - ✅ Works with on-demand servers
 - ✅ Tests actual functionality
 - ✅ No false positives/negatives
+- ✅ Automatic environment detection
+- ✅ Timeout protection
+- ✅ JSON validation
 
-## Future Enhancements
+## 📚 Related Documentation
 
-Potential improvements:
-1. **Caching**: Cache ping results for short periods
-2. **Health checks**: More comprehensive server health validation
-3. **Metrics**: Response time tracking
-4. **Retry logic**: Automatic retry on failure
-5. **Load balancing**: Support for multiple server instances 
+- **[MCP Servers Reference](docs/reference/mcp-servers/README.md)** - Complete server documentation
+- **[IDE Configuration](docs/guides/ide-configuration.md)** - Multi-IDE setup guide
+- **[Detection Changes](docs/development/MCP_DETECTION_CHANGES.md)** - Migration notes
+- **[Docker Setup](docs/deployment/docker-setup.md)** - Containerized deployment 

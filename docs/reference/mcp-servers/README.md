@@ -771,4 +771,201 @@ The MCP server system has comprehensive test coverage:
 
 > The script `scripts/setup_ide_configs.py` automatically updates all these files.
 
-**All Neozork MCP server capabilities are now available from any project in Cursor IDE.** 
+**All Neozork MCP server capabilities are now available from any project in Cursor IDE.**
+
+# MCP Servers Reference
+
+## Overview
+
+The NeoZork HLD Prediction project includes comprehensive Model Context Protocol (MCP) server support with intelligent environment detection and Docker integration.
+
+## 🚀 Server Architecture
+
+### Unified MCP Server
+- **File**: `neozork_mcp_server.py`
+- **Protocol**: JSON-RPC 2.0 over stdio
+- **Features**: Financial analysis, code completion, AI assistance
+- **Environment**: Works in both Docker and host environments
+
+### Detection System
+The project includes an intelligent detection system that automatically adapts to different environments:
+
+#### Docker Environment Detection
+- **Method**: Ping-based detection via JSON-RPC requests
+- **Command**: `echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py`
+- **Timeout**: 10 seconds
+- **Validation**: JSON-RPC 2.0 response with `pong: true`
+
+#### Host Environment Detection
+- **Method**: Process-based detection using `pgrep`
+- **Command**: `pgrep -f neozork_mcp_server.py`
+- **Features**: PID tracking, start/stop control
+- **Monitoring**: Traditional process management
+
+## 🔧 Server Features
+
+### Core Capabilities
+- **Financial Data Integration**: Access to symbols, timeframes, indicators
+- **Code Completion**: Context-aware suggestions for financial analysis
+- **GitHub Copilot Integration**: Enhanced AI assistance
+- **Multi-IDE Support**: Cursor, VS Code, PyCharm
+- **Real-time Monitoring**: Health checks and performance metrics
+
+### Available Methods
+- `neozork/ping` - Server health check
+- `neozork/status` - Server status information
+- `neozork/health` - Detailed health metrics
+- `neozork/metrics` - Performance metrics
+- `neozork/financialData` - Financial data access
+- `neozork/indicators` - Technical indicators
+- `textDocument/completion` - Code completion
+- `textDocument/hover` - Hover information
+- `workspace/symbols` - Symbol search
+
+## 🐳 Docker Integration
+
+### Containerized Deployment
+- **Dockerfile**: Includes MCP server and all dependencies
+- **Environment**: Optimized for containerized development
+- **Detection**: Automatic ping-based detection
+- **Configuration**: `docker.env` file for environment variables
+
+### Docker-Specific Features
+- **On-demand Operation**: Server starts per request and shuts down after
+- **Ping Detection**: Reliable detection without persistent processes
+- **Timeout Protection**: Prevents hanging requests
+- **JSON Validation**: Ensures proper server responses
+
+## 📊 Status Monitoring
+
+### Status Checker
+- **File**: `scripts/check_mcp_status.py`
+- **Purpose**: Monitor MCP server status in any environment
+- **Features**: Automatic environment detection, comprehensive reporting
+
+### Usage Examples
+```bash
+# Check server status
+python scripts/check_mcp_status.py
+
+# Expected output in Docker:
+# 🐳 Detected Docker environment
+# 🚀 MCP Server Status: ✅ Server is running
+# 🔗 Connection Test: ✅ Connection successful
+# 🔍 Test method: ping_request
+
+# Expected output on host:
+# 🖥️ Detected host environment  
+# 🚀 MCP Server Status: ✅ Server is running
+# 🔗 Connection Test: ✅ Connection successful
+# 👥 PIDs: 12345, 67890
+```
+
+## 🔍 Detection Logic
+
+### Environment Detection
+The system automatically detects the environment using multiple methods:
+
+1. **Docker-specific files**: Presence of `/.dockerenv`
+2. **Cgroup information**: Docker references in `/proc/1/cgroup`
+3. **Environment variables**: `DOCKER_CONTAINER=true`
+
+### Detection Methods
+
+#### Docker Environment
+```python
+def _test_mcp_ping_request(self) -> bool:
+    """Test MCP server by sending ping request via echo command"""
+    ping_request = '{"method": "neozork/ping", "id": 1, "params": {}}'
+    cmd = f'echo \'{ping_request}\' | python3 neozork_mcp_server.py'
+    
+    result = subprocess.run(cmd, shell=True, capture_output=True, 
+                           text=True, timeout=10, cwd=self.project_root)
+    
+    if result.returncode == 0 and result.stdout.strip():
+        response = json.loads(result.stdout.strip())
+        return (response.get("jsonrpc") == "2.0" and 
+                response.get("id") == 1 and 
+                response.get("result", {}).get("pong") is True)
+    return False
+```
+
+#### Host Environment
+```python
+def check_server_running(self) -> bool:
+    """Check if MCP server is already running"""
+    result = subprocess.run(
+        ['pgrep', '-f', 'neozork_mcp_server.py'],
+        capture_output=True, text=True
+    )
+    return result.returncode == 0
+```
+
+## 🛠️ Configuration
+
+### IDE Configuration Files
+- **Cursor**: `cursor_mcp_config.json`
+- **VS Code**: `.vscode/settings.json`
+- **PyCharm**: `pycharm_mcp_config.json`
+- **Docker**: `docker.env`
+
+### Automated Setup
+```bash
+# Setup all IDE configurations
+python3 scripts/setup_ide_configs.py
+
+# Verify configurations
+python3 -m pytest tests/docker/test_ide_configs.py -v
+```
+
+## 🧪 Testing
+
+### Test Coverage
+- **Unit Tests**: Individual component testing
+- **Integration Tests**: End-to-end functionality
+- **Environment Tests**: Docker vs host detection
+- **Ping Tests**: JSON-RPC communication validation
+
+### Running Tests
+```bash
+# Test MCP server detection
+python3 -m pytest tests/scripts/test_check_mcp_status.py -v
+
+# Test MCP server functionality
+python3 -m pytest tests/mcp/ -v
+
+# Test IDE configurations
+python3 -m pytest tests/docker/test_ide_configs.py -v
+```
+
+## 📚 Related Documentation
+
+- **[Detection Logic](docs/development/mcp-server-detection.md)** - Detailed detection implementation
+- **[IDE Configuration](docs/guides/ide-configuration.md)** - Multi-IDE setup guide
+- **[Docker Setup](docs/deployment/docker-setup.md)** - Containerized deployment
+- **[Development Guide](docs/development/)** - Development and contribution guidelines
+
+## 🔄 Migration Notes
+
+### From Old Detection Logic
+The old Docker detection logic used:
+- PID file checking
+- Process scanning via `/proc`
+- `pgrep` and `pidof` commands
+
+These methods were unreliable because:
+- MCP server shuts down after requests
+- No persistent processes to detect
+- PID files may be stale
+
+### To New Detection Logic
+The new logic uses:
+- Direct ping requests
+- JSON-RPC validation
+- Timeout-based reliability
+
+Benefits:
+- ✅ Always accurate
+- ✅ Works with on-demand servers
+- ✅ Tests actual functionality
+- ✅ No false positives/negatives 

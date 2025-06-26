@@ -1,32 +1,45 @@
-# NeoZork HLD Prediction Documentation
-
-Welcome to the comprehensive documentation for the NeoZork HLD Prediction project - a machine learning-enhanced trading indicator system with intelligent AI assistance.
+# NeoZork HLD Prediction - Complete Documentation
 
 ## 🚀 Quick Start
 
-### 1. Setup IDE Configuration (Recommended)
+### Installation & Setup
+- **[Getting Started](getting-started/getting-started.md)** - Installation and initial setup
+- **[Project Structure](getting-started/project-structure.md)** - Understanding the codebase
+- **[UV Setup](getting-started/uv-setup.md)** - Modern Python dependency management
+
+### MCP Server Setup
+- **[IDE Configuration](guides/ide-configuration.md)** - Multi-IDE MCP server setup
+- **[MCP Servers Reference](reference/mcp-servers/README.md)** - Complete server documentation
+- **[Detection Logic](development/mcp-server-detection.md)** - Environment detection implementation
+
+## 📚 Documentation Categories
+
+### 🎯 [Getting Started](getting-started/)
+Essential guides for new users and developers.
+
+- **[Installation & Setup](getting-started/getting-started.md)** - Complete installation guide
+- **[Project Structure](getting-started/project-structure.md)** - Codebase organization
+- **[UV Setup](getting-started/uv-setup.md)** - Modern Python package management
+
+### 🤖 [MCP Servers & AI Integration](reference/mcp-servers/)
+Model Context Protocol servers for intelligent development assistance.
+
+- **[MCP Servers Reference](reference/mcp-servers/README.md)** - Complete server documentation
+- **[IDE Configuration](guides/ide-configuration.md)** - Multi-IDE setup guide
+- **[Detection Logic](development/mcp-server-detection.md)** - Environment detection implementation
+
+#### Key Features
+- **Multi-IDE Support**: Cursor, VS Code, PyCharm
+- **Docker Integration**: Containerized development with ping-based detection
+- **Environment Detection**: Automatic Docker vs host environment detection
+- **GitHub Copilot**: Enhanced AI assistance for financial analysis
+- **Real-time Monitoring**: Health checks and performance metrics
+
+#### Quick Commands
 ```bash
-# Automated setup for all IDEs (Cursor, VS Code, PyCharm)
+# Setup all IDE configurations
 python3 scripts/setup_ide_configs.py
 
-# Verify setup
-python3 -m pytest tests/docker/test_ide_configs.py -v
-```
-
-### 2. Start Development
-```bash
-# Install dependencies
-pip install -e .
-
-# Run demo
-python run_analysis.py demo
-
-# Start interactive mode
-python run_analysis.py --interactive
-```
-
-### 3. Test MCP Server
-```bash
 # Check MCP server status
 python scripts/check_mcp_status.py
 
@@ -34,26 +47,8 @@ python scripts/check_mcp_status.py
 echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
 ```
 
-## 📚 Documentation Structure
-
-### 🎯 [Getting Started](getting-started/)
-Essential guides to get you up and running quickly.
-
-- **[Installation & Setup](getting-started/getting-started.md)** - Complete installation guide
-- **[Project Structure](getting-started/project-structure.md)** - Understanding the codebase
-- **[UV Setup](getting-started/uv-setup.md)** - Modern Python package management
-
-### 🤖 [IDE Configuration](guides/ide-configuration.md)
-**NEW!** Multi-IDE MCP server setup and configuration.
-
-- **Cursor IDE**: Advanced AI integration with GitHub Copilot
-- **VS Code**: Popular editor with MCP extension  
-- **PyCharm**: Professional Python IDE with MCP plugin
-- **Docker Integration**: Containerized development environments
-- **UV Package Manager**: Modern Python dependency management
-
 ### 💡 [Examples](examples/)
-Practical examples and use cases for all project features.
+Practical examples and use cases.
 
 - **[Quick Examples](examples/quick-examples.md)** - Fast start examples
 - **[Usage Examples](examples/usage-examples.md)** - Comprehensive workflows
@@ -65,9 +60,9 @@ Practical examples and use cases for all project features.
 - **[EDA Examples](examples/eda-examples.md)** - Data analysis examples
 
 ### 📖 [Guides](guides/)
-Step-by-step guides for specific tasks and workflows.
+Step-by-step guides for specific tasks.
 
-- **[IDE Configuration](guides/ide-configuration.md)** - Multi-IDE MCP setup ⭐ **NEW**
+- **[IDE Configuration](guides/ide-configuration.md)** - Multi-IDE MCP setup
 - **[Scripts Guide](guides/scripts.md)** - Automation tools
 - **[Testing Guide](guides/testing.md)** - Test framework
 - **[Docker Guide](guides/docker.md)** - Containerized development
@@ -80,89 +75,56 @@ Step-by-step guides for specific tasks and workflows.
 ### 📋 [Reference](reference/)
 Technical reference documentation.
 
-- **[Technical Indicators](reference/indicators/)** - Complete indicator reference
-  - [Trend Indicators](reference/indicators/trend/) - SMA, EMA, ADX, SAR, HMA
-  - [Oscillators](reference/indicators/oscillators/) - RSI, Stochastic, CCI
-  - [Momentum](reference/indicators/momentum/) - MACD, Stochastic Oscillator
-  - [Volatility](reference/indicators/volatility/) - ATR, Bollinger Bands, Standard Deviation
-  - [Volume](reference/indicators/volume/) - OBV, VWAP
-  - [Support/Resistance](reference/indicators/support-resistance/) - Donchian, Fibonacci, Pivot Points
-  - [Predictive](reference/indicators/predictive/) - Time Series Forecast
-  - [Probability](reference/indicators/probability/) - Kelly Criterion, Monte Carlo
-  - [Sentiment](reference/indicators/sentiment/) - COT, Fear & Greed, Social Sentiment
-- **[MCP Servers](reference/mcp-servers/)** - Server documentation
+#### [Technical Indicators](reference/indicators/)
+Complete reference for all technical indicators.
+
+- **[Momentum Indicators](reference/indicators/momentum/)** - MACD, Stochastic Oscillator
+- **[Oscillators](reference/indicators/oscillators/)** - RSI, CCI, Stochastic
+- **[Trend Indicators](reference/indicators/trend/)** - EMA, ADX, SAR
+- **[Volatility Indicators](reference/indicators/volatility/)** - ATR, Bollinger Bands
+- **[Volume Indicators](reference/indicators/volume/)** - OBV, VWAP
+- **[Support & Resistance](reference/indicators/support-resistance/)** - Pivot Points, Fibonacci
+- **[Predictive Indicators](reference/indicators/predictive/)** - HMA, Time Series Forecast
+- **[Probability Indicators](reference/indicators/probability/)** - Monte Carlo, Kelly Criterion
+- **[Sentiment Indicators](reference/indicators/sentiment/)** - Fear & Greed, COT
+
+#### [MCP Servers](reference/mcp-servers/)
+Server documentation and configuration.
+
+- **[MCP Servers Reference](reference/mcp-servers/README.md)** - Complete server documentation
+- **[Server Architecture](reference/mcp-servers/README.md#server-architecture)** - Technical details
+- **[Detection Methods](reference/mcp-servers/README.md#detection-methods)** - Environment detection
+- **[Configuration](reference/mcp-servers/README.md#configuration)** - Setup and configuration
 
 ### 🔧 [Development](development/)
-Development and deployment guides.
+Development and contribution guidelines.
 
 - **[CI/CD Guide](development/ci-cd.md)** - GitHub Actions and deployment
-- **[Testing Framework](development/testing.md)** - Test architecture and best practices
+- **[MCP Server Detection](development/mcp-server-detection.md)** - Detection logic implementation
+- **[Detection Changes](development/MCP_DETECTION_CHANGES.md)** - Migration notes
 
 ### 🌐 [API](api/)
-API documentation and integration guides.
+External API documentation.
 
 - **[Exchange Rate API](api/exchange-rate-api-complete.md)** - Real-time FX data
 - **[Data Sources](api/data-sources.md)** - Available data providers
 
-### 🐳 [Deployment](deployment/)
-Deployment and infrastructure guides.
+## 🐳 Docker & Deployment
 
-- **[Docker Setup](deployment/docker-setup.md)** - Containerized deployment
-- **[Environment Configuration](deployment/environment.md)** - Production setup
+### Containerized Development
+- **[Docker Setup](deployment/docker-setup.md)** - Containerized development environment
+- **[Docker Examples](examples/docker-examples.md)** - Docker usage examples
+- **[Docker Guide](guides/docker.md)** - Docker development guide
 
-## 🎯 Quick Navigation by User Type
-
-### 👶 **For Beginners**
-1. [Getting Started](getting-started/) - Start here
-2. [Quick Examples](examples/quick-examples.md) - See it in action
-3. [IDE Configuration](guides/ide-configuration.md) - Setup your development environment
-
-### 👨‍💻 **For Developers**
-1. [Getting Started](getting-started/) - Project setup
-2. **[IDE Configuration](guides/ide-configuration.md)** - Multi-IDE MCP setup ⭐
-3. [Testing Examples](examples/testing-examples.md) - Test coverage
-4. [Script Examples](examples/script-examples.md) - Utilities and debugging
-5. [MCP Examples](examples/mcp-examples.md) - AI integration
-6. [Development](development/) guides - CI/CD and deployment
-
-### 📊 **For Analysts**
-1. [Getting Started](getting-started/) - Installation
-2. [Indicator Examples](examples/indicator-examples.md) - Technical analysis
-3. [EDA Examples](examples/eda-examples.md) - Data analysis
-4. [Reference](reference/) - Technical indicator details
-
-### 🐳 **For DevOps**
-1. [Docker Examples](examples/docker-examples.md) - Containerized deployment
-2. [Testing Examples](examples/testing-examples.md) - Test automation
-3. [Development](development/) - CI/CD guides
-4. [Deployment](deployment/) - Production setup
-
-## 🔥 Key Features
-
-### ✅ Multi-IDE Support
-- **Cursor IDE**: Advanced AI integration with GitHub Copilot
-- **VS Code**: Popular editor with MCP extension
-- **PyCharm**: Professional Python IDE with MCP plugin
-
-### ✅ Docker Integration
-- **Containerized Development**: Isolated development environments
-- **UV Package Manager**: Modern Python dependency management
-- **Cross-Platform**: macOS, Linux, Windows support
-
-### ✅ Financial Analysis Ready
-- **Real-time Data**: Live financial data analysis
-- **Technical Indicators**: 20+ indicators with full integration
-- **Data Formats**: CSV, Parquet, JSON support
-- **Pattern Recognition**: Symbol and timeframe patterns
-
-### ✅ Production Quality
-- **100% Test Coverage**: Comprehensive testing
-- **Error Handling**: Graceful error management
-- **Documentation**: Complete setup and usage guides
-- **Logging**: Detailed logging and monitoring
+### Key Docker Features
+- **MCP Server Integration**: Ping-based detection for on-demand servers
+- **Environment Detection**: Automatic Docker vs host environment detection
+- **Configuration Management**: `docker.env` file for environment variables
+- **Multi-stage Builds**: Optimized container images
 
 ## 🧪 Testing
 
+### Test Framework
 ```bash
 # Run all tests
 pytest tests/ -v
@@ -173,76 +135,64 @@ pytest tests/mcp/ -v
 # Test IDE configurations
 pytest tests/docker/test_ide_configs.py -v
 
+# Test MCP server detection
+pytest tests/scripts/test_check_mcp_status.py -v
+
 # Run with coverage
 pytest tests/ --cov=src --cov-report=html
 ```
 
-## 🐛 Troubleshooting
+### Test Categories
+- **Unit Tests**: Individual component testing
+- **Integration Tests**: End-to-end functionality
+- **Environment Tests**: Docker vs host detection
+- **MCP Tests**: Server functionality and detection
+- **IDE Tests**: Configuration validation
 
-### MCP Server Issues
-```bash
-# Check server status
-python scripts/check_mcp_status.py
+## 📊 Quick Navigation by User Type
 
-# Test MCP connection
-echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
+### 👶 **For Beginners**
+1. [Getting Started](getting-started/getting-started.md)
+2. [Quick Examples](examples/quick-examples.md)
+3. [Project Structure](getting-started/project-structure.md)
 
-# Check logs
-tail -f logs/neozork_mcp.log
-```
+### 👨‍💻 **For Developers**
+1. [Getting Started](getting-started/getting-started.md)
+2. [IDE Configuration](guides/ide-configuration.md) - Setup MCP for your IDE
+3. [MCP Servers Reference](reference/mcp-servers/README.md) - Server documentation
+4. [Testing Examples](examples/testing-examples.md)
+5. [Script Examples](examples/script-examples.md)
+6. [Development](development/) guides
 
-### IDE Configuration Issues
-```bash
-# Re-run IDE setup
-python3 scripts/setup_ide_configs.py
+### 📊 **For Analysts**
+1. [Getting Started](getting-started/getting-started.md)
+2. [Indicator Examples](examples/indicator-examples.md)
+3. [EDA Examples](examples/eda-examples.md)
+4. [Technical Indicators](reference/indicators/) reference
 
-# Check setup summary
-cat logs/ide_setup_summary.json
+### 🐳 **For DevOps**
+1. [Docker Examples](examples/docker-examples.md)
+2. [Docker Setup](deployment/docker-setup.md)
+3. [Testing Examples](examples/testing-examples.md)
+4. [Development](development/) CI/CD guides
 
-# Verify configurations
-python3 -m pytest tests/docker/test_ide_configs.py -v
-```
+## 🔄 Recent Updates
 
-## 📊 Performance Metrics
+### MCP Server Detection (Latest)
+- **Ping-based Detection**: Reliable server detection in Docker environments
+- **Environment Detection**: Automatic Docker vs host environment detection
+- **Docker Integration**: Containerized development with on-demand servers
+- **Status Monitoring**: Comprehensive server status checking
 
-| Feature | Performance |
-|---------|-------------|
-| MCP Server Startup | < 3s |
-| Autocompletion Response | 5-15ms |
-| File Indexing | 50ms/file |
-| Memory Usage | 25-50MB |
-| IDE Setup Time | < 30s |
-| Test Execution | 0.12s (15 tests) |
+### Key Improvements
+- ✅ Always accurate detection
+- ✅ Works with on-demand servers
+- ✅ Tests actual functionality
+- ✅ No false positives/negatives
+- ✅ Automatic environment detection
 
-## 🤝 Contributing
+## 📚 Additional Resources
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Run the test suite: `pytest tests/ -v`
-6. Submit a pull request
-
-## 📞 Support
-
-- Create an issue on GitHub
-- Check the troubleshooting section
-- Review the [Examples](examples/) section for common use cases
-- Review the [Guides](guides/) for detailed tutorials
-- Consult the [Reference](reference/) for technical details
-
-## 🖥️ MCP Configuration for Cursor IDE
-
-- Global file: `~/.cursor/mcp.json` (used in all projects)
-- Local files: `mcp.json`, `cursor_mcp_config.json` (in the project root)
-
-> The script `scripts/setup_ide_configs.py` now updates both the global and local MCP configs.
-
-See more: [IDE Configuration Guide](guides/ide-configuration.md)
-
----
-
-**Last Updated**: June 25, 2025  
-**IDE Configurations**: Cursor, VS Code, PyCharm  
-**MCP Server**: Production Ready  
-**Test Coverage**: 100% (15/15 tests passed)
+- **[GitHub Repository](https://github.com/username/neozork-hld-prediction)** - Source code
+- **[Issues](https://github.com/username/neozork-hld-prediction/issues)** - Bug reports and feature requests
+- **[Discussions](https://github.com/username/neozork-hld-prediction/discussions)** - Community discussions
