@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# UV-only mode enforcement
+export USE_UV=true
+export UV_ONLY=true
+export UV_CACHE_DIR=/app/.uv_cache
+export UV_VENV_DIR=/app/.venv
+
+# Verify UV is available and working
+echo -e "\033[1;36m=== UV Package Manager Status ===\033[0m"
+if command -v uv &> /dev/null; then
+    echo -e "\033[1;32m✅ UV is available: $(uv --version)\033[0m"
+else
+    echo -e "\033[1;31m❌ UV is not available - this is required for UV-only mode\033[0m"
+    exit 1
+fi
+
 # Create history directory with proper permissions
 mkdir -p /tmp/bash_history
 chmod 777 /tmp/bash_history
@@ -25,6 +40,21 @@ cat > /tmp/bin/eda << 'EOF'
 python /app/src/eda/eda_batch_check.py "$@"
 EOF
 chmod +x /tmp/bin/eda
+
+# Create uv command wrapper for better UX
+cat > /tmp/bin/uv-install << 'EOF'
+#!/bin/bash
+echo "Installing dependencies using UV..."
+uv pip install -r /app/requirements.txt
+EOF
+chmod +x /tmp/bin/uv-install
+
+cat > /tmp/bin/uv-update << 'EOF'
+#!/bin/bash
+echo "Updating dependencies using UV..."
+uv pip install --upgrade -r /app/requirements.txt
+EOF
+chmod +x /tmp/bin/uv-update
 
 export PATH="/tmp/bin:$PATH"
 
@@ -82,7 +112,15 @@ trap cleanup_mcp_server EXIT
 export PYTHONPATH=/app
 
 # Welcome message
-echo -e "\n\033[1;36m=== NeoZork HLD Prediction Container Started ===\033[0m\n"
+echo -e "\n\033[1;36m=== NeoZork HLD Prediction Container Started (UV-Only Mode) ===\033[0m\n"
+
+# Check UV cache and dependencies
+echo -e "\033[1;33m=== Checking UV dependencies ===\033[0m"
+if [ -d "/app/.uv_cache" ]; then
+    echo -e "\033[1;32m✅ UV cache directory exists\033[0m"
+else
+    echo -e "\033[1;33m⚠️  UV cache directory not found, will be created on first use\033[0m"
+fi
 
 # First question - Run data feed tests
 echo -e "\033[1;33mWould you like to run tests for external data feeds? (Polygon, YFinance, Binance) [y/N]:\033[0m"
@@ -93,7 +131,7 @@ echo -e "\033[1;34mInput received: '$run_tests'\033[0m"
 
 # Simplified condition checking
 if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
-  echo -e "\n\033[1;32m=== Running external data feed tests in Docker ===\033[0m\n"
+  echo -e "\n\033[1;32m=== Running external data feed tests in Docker (UV Mode) ===\033[0m\n"
   # Run the tests using the Docker-specific test runner
   run_python_safely python /app/tests/run_tests_docker.py
 else
@@ -109,7 +147,7 @@ echo -e "\033[1;34mInput received: '$run_mcp'\033[0m"
 
 # Simplified condition checking
 if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
-  echo -e "\n\033[1;32m=== Starting MCP server in background ===\033[0m\n"
+  echo -e "\n\033[1;32m=== Starting MCP server in background (UV Mode) ===\033[0m\n"
   # Start MCP server in background and redirect output to prevent EOF
   nohup python neozork_mcp_server.py > /app/logs/mcp_server.log 2>&1 &
   MCP_PID=$!
@@ -130,10 +168,17 @@ else
 fi
 
 # Always show help
-echo -e "\033[1;32m=== NeoZork HLD Prediction Usage Guide ===\033[0m\n"
+echo -e "\033[1;32m=== NeoZork HLD Prediction Usage Guide (UV Mode) ===\033[0m\n"
 run_python_safely python run_analysis.py -h
 
-echo -e "\n\033[1;36m=== Container is ready for analysis ===\033[0m"
+echo -e "\n\033[1;36m=== Container is ready for analysis (UV-Only Mode) ===\033[0m"
+
+# Show UV-specific tips
+echo -e "\n\033[1;36m=== UV Package Manager Commands ===\033[0m"
+echo -e "\033[1;36m- uv-install: Install dependencies using UV\033[0m"
+echo -e "\033[1;36m- uv-update: Update dependencies using UV\033[0m"
+echo -e "\033[1;36m- uv pip install <package>: Install specific package\033[0m"
+echo -e "\033[1;36m- uv pip list: List installed packages\033[0m"
 
 # Show tips for viewing plots
 echo -e "\n\033[1;36m=== Tips for viewing plotly HTML plots ===\033[0m"
@@ -149,10 +194,17 @@ echo -e "\033[1;36m   - Navigate to the 'plots' folder to view your HTML files\0
 echo -e "\n\033[1;36mPress CTRL+C or Ctrl+D to stop the container\033[0m\n"
 
 # Keep container running and accepting input
-echo -e "\n\033[1;36mStarting interactive shell...\033[0m\n"
+echo -e "\n\033[1;36mStarting interactive shell (UV-Only Mode)...\033[0m\n"
 
 # Create a file with common commands for the interactive shell
 cat > /tmp/neozork_commands.txt << EOL
+# UV Package Manager Commands
+uv-install
+uv-update
+uv pip list
+uv pip install <package>
+
+# Analysis Commands
 nz
 eda
 python
