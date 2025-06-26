@@ -2,7 +2,7 @@
 
 ## Overview
 
-The MCP (Model Context Protocol) server status checker has been enhanced to support both Docker and non-Docker environments. This allows for seamless MCP server monitoring regardless of the deployment environment.
+The MCP (Model Context Protocol) server status checker has been enhanced to support both Docker and non-Docker environments with intelligent detection methods. The system automatically adapts to different environments and provides reliable status monitoring.
 
 ## Features
 
@@ -19,15 +19,17 @@ The script automatically detects whether it's running inside a Docker container 
 
 #### Docker Environment (`DockerMCPServerChecker`)
 
-- **PID File Monitoring:** Uses `/tmp/mcp_server.pid` created by `docker-entrypoint.sh`
-- **Process Validation:** Verifies process is actually running using `os.kill(pid, 0)`
-- **Log File Analysis:** Checks `logs/mcp_server.log` for recent activity
+- **Ping-Based Detection:** Sends JSON-RPC ping requests to test server functionality
+- **On-Demand Servers:** Works with servers that start/stop per request
+- **Timeout Protection:** 10-second timeout for reliable detection
+- **JSON Validation:** Validates proper JSON-RPC 2.0 responses
 - **Docker-Specific Configs:** Monitors Docker environment variables and configurations
 
 #### Host Environment (`MCPServerChecker`)
 
 - **Process Discovery:** Uses `pgrep` to find MCP server processes
 - **Process Management:** Can start/stop MCP server processes
+- **PID Tracking:** Monitors multiple server instances
 - **IDE Configurations:** Checks all IDE configuration files (Cursor, VS Code, PyCharm)
 
 ## Usage
@@ -81,29 +83,60 @@ print(f"Environment: {results['environment']}")
 
 ## Docker Integration Details
 
-### PID File Management
+### Ping-Based Detection
 
-The Docker environment uses a PID file approach for process tracking:
+The Docker environment uses ping-based detection for on-demand servers:
 
-```bash
-# PID file location
-/tmp/mcp_server.pid
-
-# Content: single line with process ID
-12345
+```python
+def _test_mcp_ping_request(self) -> bool:
+    """Test MCP server by sending ping request via echo command"""
+    try:
+        # Create ping request JSON
+        ping_request = '{"method": "neozork/ping", "id": 1, "params": {}}'
+        
+        # Send request to MCP server via echo command
+        cmd = f'echo \'{ping_request}\' | python3 neozork_mcp_server.py'
+        
+        # Run command with timeout
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            cwd=self.project_root
+        )
+        
+        # Check if we got a valid JSON response
+        if result.returncode == 0 and result.stdout.strip():
+            response = json.loads(result.stdout.strip())
+            # Check if response contains expected ping response structure
+            return (response.get("jsonrpc") == "2.0" and 
+                    response.get("id") == 1 and 
+                    response.get("result", {}).get("pong") is True)
+        return False
+        
+    except subprocess.TimeoutExpired:
+        return False
+    except Exception as e:
+        return False
 ```
 
-### Log File Monitoring
+### Expected Response Format
 
-The Docker checker monitors the MCP server log file for activity:
+The MCP server should respond with a valid JSON-RPC 2.0 response:
 
-```bash
-# Log file location
-/app/logs/mcp_server.log
-
-# Recent activity check (within 30 seconds)
-if (current_time - log_mtime) < 30:
-    # Consider server active
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "pong": true,
+    "timestamp": "2025-01-27T10:30:00Z",
+    "server_time": "2025-01-27T10:30:00Z",
+    "timezone": "UTC"
+  }
+}
 ```
 
 ### Environment Variables
@@ -124,25 +157,26 @@ The script saves results in JSON format:
 
 ```json
 {
-  "timestamp": "2024-01-01 12:00:00",
+  "timestamp": "2025-01-27 10:30:00",
   "environment": "docker",
   "project_root": "/app",
   "server_running": true,
   "connection_test": {
     "status": "success",
-    "message": "Server is running (confirmed via logs)",
-    "log_file": "/app/logs/mcp_server.log",
-    "last_activity": "Mon Jan 1 12:00:00 2024"
+    "message": "MCP server is responding to ping requests",
+    "test_method": "ping_request",
+    "response_time": "immediate"
   },
   "ide_configurations": {
     "cursor": {
       "exists": true,
-      "size": 1024,
+      "size": 7418,
       "valid_json": true
     },
     "docker": {
       "exists": true,
-      "size": 512
+      "size": 367,
+      "valid_json": true
     }
   },
   "docker_specific": {
@@ -152,12 +186,14 @@ The script saves results in JSON format:
       "PYTHONPATH": "/app",
       "PYTHONUNBUFFERED": "1"
     },
-    "pid_file_exists": true,
-    "pid": 12345,
-    "process_running": true,
+    "mcp_server_responding": true,
+    "test_method": "ping_request",
+    "mcp_server_file_exists": true,
+    "mcp_server_file_size": 123456,
+    "mcp_server_file_modified": "Mon Jan 27 10:30:00 2025",
     "log_file_exists": true,
     "log_file_size": 2048,
-    "log_file_modified": "Mon Jan 1 12:00:00 2024"
+    "log_file_modified": "Mon Jan 27 10:30:00 2025"
   },
   "recommendations": [
     "Server is running correctly"
@@ -173,7 +209,7 @@ The script saves results in JSON format:
 
 🐳 Detected Docker environment
 
-📅 Check Time: 2024-01-01 12:00:00
+📅 Check Time: 2025-01-27 10:30:00
 🌍 Environment: docker
 📁 Project Root: /app
 
@@ -182,27 +218,116 @@ The script saves results in JSON format:
 
 🔗 Connection Test:
    ✅ Connection successful
-   📄 Log file: /app/logs/mcp_server.log
+   🔍 Test method: ping_request
+   ⏱️  Response time: immediate
 
 💻 IDE Configurations:
-   ✅ CURSOR: 1024 bytes
-   ✅ DOCKER: 512 bytes
+   ✅ CURSOR: 7418 bytes
+   ✅ DOCKER: 367 bytes
 
 🐳 Docker Information:
    📦 In Docker: True
-   📄 PID file: True
-   🔢 PID: 12345
-   🟢 Process running: True
+   🔄 MCP Server responding: True
+   🔍 Test method: ping_request
+   📄 MCP server file: 123456 bytes
+   🕒 File modified: Mon Jan 27 10:30:00 2025
    📝 Log file: 2048 bytes
-   🕒 Last modified: Mon Jan 1 12:00:00 2024
+   🕒 Log modified: Mon Jan 27 10:30:00 2025
 
 💡 Recommendations:
    • Server is running correctly
-
-📝 Results saved to: /app/logs/mcp_status_check_docker.json
-
-✅ All checks passed!
 ```
+
+## Testing
+
+### Manual Testing
+
+```bash
+# Test ping request manually
+echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
+
+# Expected response:
+# {"jsonrpc": "2.0", "id": 1, "result": {"pong": true, "timestamp": "...", "server_time": "...", "timezone": "UTC"}}
+```
+
+### Automated Testing
+
+```bash
+# Test Docker detection
+pytest tests/scripts/test_check_mcp_status.py::TestDockerDetection -v
+
+# Test ping functionality
+pytest tests/scripts/test_check_mcp_status.py::TestDockerPing -v
+
+# Test comprehensive Docker check
+pytest tests/scripts/test_check_mcp_status.py::TestDockerComprehensive -v
+```
+
+## Migration from Old Logic
+
+### Previous Detection Methods
+
+The old Docker detection logic used unreliable methods:
+- PID file checking
+- Process scanning via `/proc`
+- `pgrep` and `pidof` commands
+
+### Problems with Old Logic
+
+- MCP server shuts down after requests
+- No persistent processes to detect
+- PID files may be stale
+- False positives/negatives
+
+### New Detection Benefits
+
+- ✅ Always accurate detection
+- ✅ Works with on-demand servers
+- ✅ Tests actual functionality
+- ✅ No false positives/negatives
+- ✅ Automatic environment detection
+- ✅ Timeout protection
+- ✅ JSON validation
+
+## Troubleshooting
+
+### Common Issues
+
+#### Ping Timeout
+```bash
+# Check if MCP server file exists and is executable
+ls -la neozork_mcp_server.py
+
+# Check Python3 availability
+python3 --version
+
+# Test with verbose output
+echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py 2>&1
+```
+
+#### Invalid JSON Response
+```bash
+# Check MCP server implementation
+grep -n "neozork/ping" neozork_mcp_server.py
+
+# Test with different request
+echo '{"method": "neozork/status", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
+```
+
+#### Environment Detection Issues
+```bash
+# Check Docker environment
+ls -la /.dockerenv
+cat /proc/1/cgroup | grep docker
+echo $DOCKER_CONTAINER
+```
+
+## Related Documentation
+
+- **[MCP Server Detection Logic](docs/development/mcp-server-detection.md)** - Detailed detection implementation
+- **[IDE Configuration](docs/guides/ide-configuration.md)** - Multi-IDE setup guide
+- **[MCP Servers Reference](docs/reference/mcp-servers/README.md)** - Complete server documentation
+- **[Detection Changes](docs/development/MCP_DETECTION_CHANGES.md)** - Migration notes
 
 ## Error Handling
 
@@ -239,94 +364,6 @@ The script saves results in JSON format:
    Error checking server status
    ```
    - **Solution:** Check file permissions and user access
-
-## Testing
-
-### Running Tests
-
-```bash
-# Run all MCP status checker tests
-pytest tests/scripts/test_check_mcp_status.py -v
-
-# Run specific test categories
-pytest tests/scripts/test_check_mcp_status.py::TestDockerDetection -v
-pytest tests/scripts/test_check_mcp_status.py::TestDockerMCPServerChecker -v
-pytest tests/scripts/test_check_mcp_status.py::TestMCPServerChecker -v
-```
-
-### Test Coverage
-
-The test suite covers:
-
-- **Docker Detection:** All detection methods
-- **Docker Checker:** PID file handling, process validation, log monitoring
-- **Host Checker:** Process discovery, management, IDE configurations
-- **Integration:** End-to-end functionality testing
-
-## Configuration
-
-### Docker Environment
-
-The Docker environment is configured through:
-
-1. **docker-entrypoint.sh:** Creates PID file and manages MCP server
-2. **docker-compose.yml:** Sets environment variables
-3. **Dockerfile:** Installs dependencies and sets up environment
-
-### Host Environment
-
-The host environment uses:
-
-1. **System process management:** `pgrep`, `subprocess`
-2. **IDE configuration files:** Various IDE-specific configs
-3. **Standard logging:** File-based logging system
-
-## Troubleshooting
-
-### Docker Issues
-
-1. **MCP Server Not Starting:**
-   ```bash
-   # Check Docker logs
-   docker logs <container_name>
-   
-   # Check MCP server logs
-   tail -f logs/mcp_server.log
-   ```
-
-2. **PID File Issues:**
-   ```bash
-   # Check PID file
-   cat /tmp/mcp_server.pid
-   
-   # Verify process
-   ps aux | grep neozork_mcp_server
-   ```
-
-3. **Permission Issues:**
-   ```bash
-   # Check file permissions
-   ls -la /tmp/mcp_server.pid
-   ls -la logs/mcp_server.log
-   ```
-
-### Host Issues
-
-1. **Process Not Found:**
-   ```bash
-   # Check for MCP server processes
-   pgrep -f neozork_mcp_server.py
-   
-   # Start server manually
-   python neozork_mcp_server.py &
-   ```
-
-2. **Configuration Issues:**
-   ```bash
-   # Check IDE configurations
-   ls -la cursor_mcp_config.json
-   ls -la .vscode/settings.json
-   ```
 
 ## Best Practices
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Neozork MCP Server is a unified Model Context Protocol server for financial analysis with IDE integration.
+Neozork MCP Server is a unified Model Context Protocol server for financial analysis with IDE integration and intelligent environment detection.
 
 ## 🚀 Quick Start
 
@@ -30,11 +30,14 @@ python3 neozork_mcp_server.py --debug
 ### 3. Status Check
 
 ```bash
-# Check server status
+# Check server status (works in both Docker and host environments)
 python3 scripts/check_mcp_status.py
 
-# Show running processes
+# Show running processes (host environment)
 ps aux | grep neozork_mcp_server
+
+# Test MCP server with ping (Docker environment)
+echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
 ```
 
 ## 📁 File Structure
@@ -46,11 +49,12 @@ ps aux | grep neozork_mcp_server
 ├── start_mcp_server.py            # Start script
 ├── cursor_mcp_config.json         # Cursor configuration
 ├── pycharm_mcp_config.json        # PyCharm configuration
+├── docker.env                     # Docker environment configuration
 ├── mcp.json                       # Universal configuration
 ├── scripts/
 │   ├── setup_ide_configs.py       # IDE setup
 │   ├── neozork_mcp_manager.py     # Server manager
-│   └── check_mcp_status.py        # Status check
+│   └── check_mcp_status.py        # Status check with environment detection
 └── logs/                          # Server logs
 ```
 
@@ -69,7 +73,8 @@ ps aux | grep neozork_mcp_server
     "github_copilot": true,
     "code_completion": true,
     "project_analysis": true,
-    "ai_suggestions": true
+    "ai_suggestions": true,
+    "environment_detection": true
   }
 }
 ```
@@ -110,6 +115,15 @@ ps aux | grep neozork_mcp_server
 }
 ```
 
+#### Docker Environment (`docker.env`)
+```bash
+PYTHONPATH=/app
+PYTHONUNBUFFERED=1
+DOCKER_CONTAINER=true
+MCP_SERVER_ENABLED=true
+LOG_LEVEL=INFO
+```
+
 ## 🔧 Setup Commands
 
 ### IDE Configuration Setup
@@ -140,6 +154,31 @@ python3 scripts/neozork_mcp_manager.py stop
 python3 scripts/neozork_mcp_manager.py restart
 ```
 
+## 🐳 Docker Environment
+
+### Docker Usage
+
+```bash
+# Build and run Docker container
+docker-compose build
+docker-compose run --rm app bash
+
+# Check MCP server status in Docker
+python scripts/check_mcp_status.py
+
+# Test MCP server with ping
+echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
+```
+
+### Docker Detection
+
+The MCP server automatically detects Docker environments and uses ping-based detection:
+
+- **Environment Detection**: Automatic Docker vs host detection
+- **Ping-Based Detection**: Sends JSON-RPC ping requests for on-demand servers
+- **Timeout Protection**: 10-second timeout for reliable detection
+- **JSON Validation**: Validates proper JSON-RPC 2.0 responses
+
 ## 🐛 Troubleshooting
 
 ### Connection Issues
@@ -166,7 +205,7 @@ cat cursor_mcp_config.json
 tail -f logs/neozork_mcp_*.log
 ```
 
-3. **Multiple processes**
+3. **Multiple processes (host environment)**
 ```bash
 # Stop all processes
 pkill -f neozork_mcp_server.py
@@ -175,10 +214,42 @@ pkill -f neozork_mcp_server.py
 ps aux | grep neozork_mcp_server
 ```
 
+4. **Docker environment issues**
+```bash
+# Check if docker.env exists in container
+docker-compose exec app ls -la /app/docker.env
+
+# Test ping request
+docker-compose exec app echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
+
+# Check Docker logs
+docker logs <container_name>
+```
+
+### Status Check Issues
+
+1. **Environment detection problems**
+```bash
+# Check Docker environment
+ls -la /.dockerenv
+cat /proc/1/cgroup | grep docker
+echo $DOCKER_CONTAINER
+```
+
+2. **Ping request failures**
+```bash
+# Test ping manually
+echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
+
+# Check for timeout
+timeout 10 echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
+```
+
 ### Logs
 
 - `logs/neozork_mcp_YYYYMMDD.log` - main server logs
-- `logs/mcp_status_check.log` - status check logs
+- `logs/mcp_status_check.log` - status check logs (host environment)
+- `logs/mcp_status_check_docker.log` - status check logs (Docker environment)
 - `logs/ide_setup.log` - IDE setup logs
 
 ## 📊 Features
@@ -191,181 +262,51 @@ ps aux | grep neozork_mcp_server
 - **Project Analysis** - project analysis
 - **AI Suggestions** - AI suggestions
 - **GitHub Copilot** - Copilot integration
+- **Environment Detection** - Automatic Docker vs host detection
+- **Ping-Based Detection** - Reliable server detection in Docker
 
 ### MCP Commands
 
 - `neozork/status` - server status
 - `neozork/health` - health check
-- `neozork/ping` - ping/pong test
+- `neozork/ping` - ping/pong test (used for detection)
 - `neozork/metrics` - performance metrics
-- `neozork/projectInfo` - project information
-- `neozork/financialData` - financial data
-- `neozork/indicators` - technical indicators
 
-## 🔄 Development
+### Detection Methods
 
-### Adding New Features
+#### Docker Environment
+- **Method**: Ping-based detection via JSON-RPC requests
+- **Command**: `echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py`
+- **Timeout**: 10 seconds
+- **Validation**: JSON-RPC 2.0 response with `pong: true`
 
-1. Add handler in `neozork_mcp_server.py`
-2. Update configuration
-3. Add tests
-4. Update documentation
+#### Host Environment
+- **Method**: Process-based detection using `pgrep`
+- **Command**: `pgrep -f neozork_mcp_server.py`
+- **Features**: PID tracking, start/stop control
+- **Monitoring**: Traditional process management
 
-### Testing
+## 🔄 Migration Notes
 
-```bash
-# Run tests
-python -m pytest tests/mcp/ -v
+### From Old Detection Logic
 
-# Test server
-python3 scripts/check_mcp_status.py
-```
+The old Docker detection logic used unreliable methods:
+- PID file checking
+- Process scanning via `/proc`
+- `pgrep` and `pidof` commands
 
-## 📝 Notes
+### To New Detection Logic
 
-- Server works in stdio mode for IDE integration
-- Configurations are automatically updated when running `setup_ide_configs.py`
-- Logs are saved in `logs/` folder
-- Server supports hot reload when files change 
+The new logic provides:
+- ✅ Always accurate detection
+- ✅ Works with on-demand servers
+- ✅ Tests actual functionality
+- ✅ No false positives/negatives
+- ✅ Automatic environment detection
 
-## 🛠️ MCP Server Methods & Manual Usage
+## 📚 Related Documentation
 
-Below is a list of all available MCP server methods, their purpose, and example requests you can use from the command line.
-
-### How to send a manual request
-
-You can send a request to the MCP server using:
-```bash
-echo '{"jsonrpc": "2.0", "id": 1, "method": "METHOD_NAME", "params": {}}' | python3 neozork_mcp_server.py
-```
-Replace `METHOD_NAME` and `params` as needed.
-
----
-
-### List of Methods
-
-#### 1. `neozork/ping`
-- **Description:** Simple ping/pong test to check server is alive.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/ping", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 2. `neozork/status`
-- **Description:** Get server status, uptime, version, memory, etc.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/status", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 3. `neozork/health`
-- **Description:** Health check, issues, and diagnostics.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/health", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 4. `neozork/projectInfo`
-- **Description:** Project info: files, symbols, timeframes, functions, classes.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/projectInfo", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 5. `neozork/financialData`
-- **Description:** List of financial data files, available symbols, and timeframes.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/financialData", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-  - **To get timeframes:** Look for the `timeframes` field in the response.
-
-#### 6. `neozork/indicators`
-- **Description:** List of available technical indicators.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/indicators", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 7. `neozork/codeSearch`
-- **Description:** Search for code by query string.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/codeSearch", "params": {"query": "def "}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 8. `neozork/metrics`
-- **Description:** Get server and project performance metrics.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/metrics", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 9. `neozork/analysis`
-- **Description:** Project analysis (size, file types, most recent file).
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/analysis", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 10. `neozork/suggestions`
-- **Description:** Get AI-powered suggestions for project improvement.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/suggestions", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 11. `neozork/context`
-- **Description:** Get project context (type, languages, frameworks, features).
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/context", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 12. `neozork/restart`
-- **Description:** Restart the MCP server (if supported in your environment).
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/restart", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 13. `neozork/reload`
-- **Description:** Reload project data and re-index code.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/reload", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 14. `neozork/version`
-- **Description:** Get server version and capabilities.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/version", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 15. `neozork/capabilities`
-- **Description:** Get server capabilities and supported methods.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "neozork/capabilities", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 16. `github/copilot/suggestions`
-- **Description:** Get Copilot suggestions for a given context.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "github/copilot/suggestions", "params": {"context": "financial"}}' | python3 neozork_mcp_server.py
-  ```
-
-#### 17. `github/copilot/context`
-- **Description:** Get Copilot project context.
-- **Example:**
-  ```bash
-  echo '{"jsonrpc": "2.0", "id": 1, "method": "github/copilot/context", "params": {}}' | python3 neozork_mcp_server.py
-  ```
-
----
-
-**Tip:** You can use any of these methods by changing the `method` and `params` fields in the JSON request.
-
---- 
+- **[MCP Server Detection Logic](docs/development/mcp-server-detection.md)** - Detailed detection implementation
+- **[IDE Configuration](docs/guides/ide-configuration.md)** - Multi-IDE setup guide
+- **[Docker Integration](docs/guides/mcp-server-docker-integration.md)** - Docker-specific guide
+- **[MCP Servers Reference](docs/reference/mcp-servers/README.md)** - Complete server documentation 
