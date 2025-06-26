@@ -24,7 +24,12 @@ from src.common.constants import TradingRule
 
 # Helper function to create a dummy args namespace
 def create_mock_args(interval='D1', draw='plotly'): # Default draw to plotly
-    return argparse.Namespace(interval=interval, draw=draw)
+    args = argparse.Namespace(interval=interval, draw=draw)
+    # Add default strategy parameters
+    args.lot_size = 1.0
+    args.risk_reward_ratio = 2.0
+    args.fee_per_trade = 0.07
+    return args
 
 # Unit tests for the plotting generation workflow step
 class TestPlottingGenerationStep(unittest.TestCase):
@@ -106,7 +111,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
             # 4. Check the constructed title
             expected_precision = 8 if abs(self.point_size) < 0.001 else 5 if abs(self.point_size) < 0.1 else 2
             expected_point_str = f"{self.point_size:.{expected_precision}f}"
-            expected_title = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Pt:{expected_point_str}{'~' if self.estimated_point else ''}"
+            expected_title = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Strategy:{self.args.lot_size},{self.args.risk_reward_ratio},{self.args.fee_per_trade} | Pt:{expected_point_str}{'~' if self.estimated_point else ''}"
             self.assertEqual(call_args[2], expected_title)
 
             # 5. Check mkdir call on the instance
@@ -168,7 +173,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
             # Assertions for small point size
             mock_plotly_plot.assert_called_once() # Called once so far
             call_args_small, _ = mock_plotly_plot.call_args
-            expected_title_small = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Pt:{point_size_small:.8f}~"
+            expected_title_small = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Strategy:{self.args.lot_size},{self.args.risk_reward_ratio},{self.args.fee_per_trade} | Pt:{point_size_small:.8f}~"
             self.assertEqual(call_args_small[2], expected_title_small)
             # Check calls for this iteration
             self.assertEqual(mock_path_instance.mkdir.call_count, 1)
@@ -202,7 +207,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
             # Assertions for medium point size
             mock_plotly_plot.assert_called_once() # Called once since last reset
             call_args_medium, _ = mock_plotly_plot.call_args
-            expected_title_medium = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Pt:{point_size_medium:.5f}~"
+            expected_title_medium = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Strategy:{self.args.lot_size},{self.args.risk_reward_ratio},{self.args.fee_per_trade} | Pt:{point_size_medium:.5f}~"
             self.assertEqual(call_args_medium[2], expected_title_medium)
             # Check cumulative call counts for path instance
             self.assertEqual(mock_path_instance.mkdir.call_count, 2)
@@ -235,7 +240,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
             # Assertions for large point size
             mock_plotly_plot.assert_called_once() # Called once since last reset
             call_args_large, _ = mock_plotly_plot.call_args
-            expected_title_large = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Pt:{point_size_large:.2f}~"
+            expected_title_large = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Strategy:{self.args.lot_size},{self.args.risk_reward_ratio},{self.args.fee_per_trade} | Pt:{point_size_large:.2f}~"
             self.assertEqual(call_args_large[2], expected_title_large)
             # Check cumulative call counts for path instance
             self.assertEqual(mock_path_instance.mkdir.call_count, 3)
@@ -431,3 +436,70 @@ class TestPlotTitleGeneration(unittest.TestCase):
         selected_rule.name = 'PREDICT_HIGH_LOW_DIRECTION'
         title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
         assert 'Rule:PREDICT_HIGH_LOW_DIRECTION' in title
+    
+    def test_get_plot_title_with_strategy_parameters(self):
+        """Test that plot title includes strategy parameters when provided."""
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(
+            interval='D1',
+            lot_size=1.0,
+            risk_reward_ratio=2.0,
+            fee_per_trade=0.07
+        )
+        selected_rule = Mock()
+        selected_rule.name = 'RSI_DIV'
+        
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        
+        assert 'Rule:RSI_DIV' in title
+        assert 'Strategy:1.0,2.0,0.07' in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+    
+    def test_get_plot_title_with_custom_strategy_parameters(self):
+        """Test that plot title includes custom strategy parameters."""
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(
+            interval='D1',
+            lot_size=2.5,
+            risk_reward_ratio=3.0,
+            fee_per_trade=0.1
+        )
+        selected_rule = Mock()
+        selected_rule.name = 'MACD'
+        
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        
+        assert 'Rule:MACD' in title
+        assert 'Strategy:2.5,3.0,0.1' in title
+    
+    def test_get_plot_title_without_strategy_parameters(self):
+        """Test that plot title works without strategy parameters."""
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')  # No strategy parameters
+        selected_rule = Mock()
+        selected_rule.name = 'RSI'
+        
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        
+        assert 'Rule:RSI' in title
+        assert 'Strategy:' not in title  # Should not include strategy if not provided
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title

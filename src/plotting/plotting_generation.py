@@ -92,6 +92,14 @@ def get_plot_title(data_info, point_size, estimated_point, args=None, selected_r
             rule_name = str(selected_rule)
         title_parts.append(f"Rule:{rule_name}")
 
+    # Add strategy parameters to title if available
+    if args and hasattr(args, 'lot_size') and hasattr(args, 'risk_reward_ratio') and hasattr(args, 'fee_per_trade'):
+        lot_size = getattr(args, 'lot_size', 1.0)
+        risk_reward_ratio = getattr(args, 'risk_reward_ratio', 2.0)
+        fee_per_trade = getattr(args, 'fee_per_trade', 0.07)
+        strategy_str = f"Strategy:{lot_size},{risk_reward_ratio},{fee_per_trade}"
+        title_parts.append(strategy_str)
+
     if point_size is not None:
         try:
             precision = 8 if abs(point_size) < 0.001 else 5 if abs(point_size) < 0.1 else 2
