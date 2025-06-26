@@ -1,17 +1,18 @@
 # tests/plotting/test_plotting_generation.py
 
 import unittest
-from unittest.mock import patch, MagicMock, ANY, call # Import MagicMock, ANY, and call
+from unittest.mock import patch, MagicMock, ANY, call, Mock # Import MagicMock, ANY, call, and Mock
 import argparse
 import pandas as pd
 import traceback # Import traceback
 from pathlib import Path # Import Path, still needed for type hints and Path() calls outside the patch scope if any
 import webbrowser # Need this module to check mock target
 import os
+import types
 # No need to import pathlib directly for patching anymore
 
 # Import the function to test and dependencies
-from src.plotting.plotting_generation import generate_plot
+from src.plotting.plotting_generation import generate_plot, get_plot_title
 from src.common.constants import TradingRule
 
 # Dummy logger class for simple mocking - REMOVED as we use MagicMock now
@@ -105,7 +106,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
             # 4. Check the constructed title
             expected_precision = 8 if abs(self.point_size) < 0.001 else 5 if abs(self.point_size) < 0.1 else 2
             expected_point_str = f"{self.point_size:.{expected_precision}f}"
-            expected_title = f"{self.expected_stem} | {self.args.interval} | Pt:{expected_point_str}{'~' if self.estimated_point else ''}"
+            expected_title = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Pt:{expected_point_str}{'~' if self.estimated_point else ''}"
             self.assertEqual(call_args[2], expected_title)
 
             # 5. Check mkdir call on the instance
@@ -167,7 +168,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
             # Assertions for small point size
             mock_plotly_plot.assert_called_once() # Called once so far
             call_args_small, _ = mock_plotly_plot.call_args
-            expected_title_small = f"{self.expected_stem} | {self.args.interval} | Pt:{point_size_small:.8f}~"
+            expected_title_small = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Pt:{point_size_small:.8f}~"
             self.assertEqual(call_args_small[2], expected_title_small)
             # Check calls for this iteration
             self.assertEqual(mock_path_instance.mkdir.call_count, 1)
@@ -201,7 +202,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
             # Assertions for medium point size
             mock_plotly_plot.assert_called_once() # Called once since last reset
             call_args_medium, _ = mock_plotly_plot.call_args
-            expected_title_medium = f"{self.expected_stem} | {self.args.interval} | Pt:{point_size_medium:.5f}~"
+            expected_title_medium = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Pt:{point_size_medium:.5f}~"
             self.assertEqual(call_args_medium[2], expected_title_medium)
             # Check cumulative call counts for path instance
             self.assertEqual(mock_path_instance.mkdir.call_count, 2)
@@ -234,7 +235,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
             # Assertions for large point size
             mock_plotly_plot.assert_called_once() # Called once since last reset
             call_args_large, _ = mock_plotly_plot.call_args
-            expected_title_large = f"{self.expected_stem} | {self.args.interval} | Pt:{point_size_large:.2f}~"
+            expected_title_large = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Pt:{point_size_large:.2f}~"
             self.assertEqual(call_args_large[2], expected_title_large)
             # Check cumulative call counts for path instance
             self.assertEqual(mock_path_instance.mkdir.call_count, 3)
@@ -356,3 +357,77 @@ class TestPlottingGenerationStep(unittest.TestCase):
 # Allow running the tests directly from the command line
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestPlotTitleGeneration(unittest.TestCase):
+    """Test cases for plot title generation functionality."""
+    
+    def test_get_plot_title_with_rule(self):
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')
+        selected_rule = Mock()
+        selected_rule.name = 'RSI_DIV'
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:RSI_DIV' in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+    
+    def test_get_plot_title_with_string_rule(self):
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')
+        selected_rule = 'RSI_DIV'
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:RSI_DIV' in title
+    
+    def test_get_plot_title_without_rule(self):
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')
+        title = get_plot_title(data_info, point_size, estimated_point, args)
+        assert 'Rule:' not in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+    
+    def test_get_plot_title_with_none_rule(self):
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')
+        selected_rule = None
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:' not in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+    
+    def test_get_plot_title_with_complex_rule_name(self):
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')
+        selected_rule = Mock()
+        selected_rule.name = 'PREDICT_HIGH_LOW_DIRECTION'
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:PREDICT_HIGH_LOW_DIRECTION' in title
