@@ -15,6 +15,19 @@ else
     exit 1
 fi
 
+# Run UV test script to validate environment
+echo -e "\033[1;36m=== Running UV Environment Test ===\033[0m"
+if [ -f "/app/scripts/test_uv_docker.py" ]; then
+    python /app/scripts/test_uv_docker.py
+    if [ $? -eq 0 ]; then
+        echo -e "\033[1;32m✅ UV environment test passed\033[0m"
+    else
+        echo -e "\033[1;33m⚠️  UV environment test had issues - continuing anyway\033[0m"
+    fi
+else
+    echo -e "\033[1;33m⚠️  UV test script not found - skipping test\033[0m"
+fi
+
 # Create history directory with proper permissions
 mkdir -p /tmp/bash_history
 chmod 777 /tmp/bash_history
@@ -55,6 +68,13 @@ echo "Updating dependencies using UV..."
 uv pip install --upgrade -r /app/requirements.txt
 EOF
 chmod +x /tmp/bin/uv-update
+
+cat > /tmp/bin/uv-test << 'EOF'
+#!/bin/bash
+echo "Running UV environment test..."
+python /app/scripts/test_uv_docker.py
+EOF
+chmod +x /tmp/bin/uv-test
 
 export PATH="/tmp/bin:$PATH"
 
@@ -177,6 +197,7 @@ echo -e "\n\033[1;36m=== Container is ready for analysis (UV-Only Mode) ===\033[
 echo -e "\n\033[1;36m=== UV Package Manager Commands ===\033[0m"
 echo -e "\033[1;36m- uv-install: Install dependencies using UV\033[0m"
 echo -e "\033[1;36m- uv-update: Update dependencies using UV\033[0m"
+echo -e "\033[1;36m- uv-test: Run UV environment test\033[0m"
 echo -e "\033[1;36m- uv pip install <package>: Install specific package\033[0m"
 echo -e "\033[1;36m- uv pip list: List installed packages\033[0m"
 
@@ -201,6 +222,7 @@ cat > /tmp/neozork_commands.txt << EOL
 # UV Package Manager Commands
 uv-install
 uv-update
+uv-test
 uv pip list
 uv pip install <package>
 
