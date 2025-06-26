@@ -7,7 +7,9 @@
       ],
       "env": {
         "PYTHONPATH": "${workspaceFolder}",
-        "LOG_LEVEL": "INFO"
+        "LOG_LEVEL": "INFO",
+        "USE_UV": "true",
+        "UV_ONLY": "true"
       },
       "cwd": "${workspaceFolder}"
     },
@@ -26,6 +28,8 @@
         "DOCKER_CONTAINER=true",
         "-e",
         "USE_UV=true",
+        "-e",
+        "UV_ONLY=true",
         "neozork-hld",
         "python3",
         "neozork_mcp_server.py"
@@ -48,7 +52,9 @@
         "github_copilot": true,
         "code_completion": true,
         "project_analysis": true,
-        "ai_suggestions": true
+        "ai_suggestions": true,
+        "uv_integration": true,
+        "uv_only_mode": true
       },
       "performance": {
         "max_files": 15000,
@@ -94,7 +100,8 @@
         "environment": {
           "PYTHONPATH": "/workspace/src:/workspace",
           "LOG_LEVEL": "INFO",
-          "USE_UV": "true"
+          "USE_UV": "true",
+          "UV_ONLY": "true"
         }
       },
       "development": {
@@ -119,7 +126,8 @@
         "ai_suggestions": true,
         "docker_integration": true,
         "real_time_monitoring": true,
-        "uv_integration": true
+        "uv_integration": true,
+        "uv_only_mode": true
       }
     }
   },
@@ -141,6 +149,7 @@
         "defaultServer": "neozork",
         "fallbackToDocker": true,
         "useUV": true,
+        "uvOnly": true,
         "dockerEnabled": true
       }
     },
@@ -148,7 +157,8 @@
       "interpreter": "python3",
       "packageManager": "uv",
       "uvPath": "uv",
-      "autoInstallDependencies": true
+      "autoInstallDependencies": true,
+      "uvOnly": true
     }
   },
   "financial_data": {

@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         USE_UV: ${USE_UV:-true}
+        UV_ONLY: ${UV_ONLY:-true}
     volumes:
       # Mount local directories to the container
       - ./data:/app/data
@@ -14,14 +15,24 @@ services:
       - ./results:/app/results
       # Mount tests directory for pytest
       - ./tests:/app/tests
+      # Mount UV cache for better performance
+      - uv_cache:/app/.uv_cache
     env_file:
       - docker.env
     environment:
       - PYTHONPATH=/app
       - PYTHONUNBUFFERED=1
       - DOCKER_CONTAINER=true
+      - USE_UV=true
+      - UV_ONLY=true
+      - UV_CACHE_DIR=/app/.uv_cache
+      - UV_VENV_DIR=/app/.venv
     # Interactive script execution with user prompts
     stdin_open: true
     tty: true
     # Use the entrypoint script instead of direct commands
     entrypoint: ["/app/docker-entrypoint.sh"]
+
+volumes:
+  uv_cache:
+    driver: local
