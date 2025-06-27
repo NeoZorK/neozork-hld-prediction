@@ -3,6 +3,12 @@
 # Before running this script, ensure you have Docker and act installed.
 # act: https://github.com/nektos/act
 
+# Get the project root directory (two levels up from scripts/docker/)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+# Change to project root directory
+cd "$PROJECT_ROOT"
+
 # Check if running on Apple Silicon (M-series)
 if [[ $(uname -m) == "arm64" ]]; then
     echo "Detected Apple Silicon (M-series). Using compatible configuration..."
