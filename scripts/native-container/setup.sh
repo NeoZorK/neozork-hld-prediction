@@ -191,11 +191,11 @@ create_container() {
         --volume "$(pwd)/tests:/app/tests" \
         --volume "$(pwd)/mql5_feed:/app/mql5_feed" \
         --volume "$(pwd)/data/cache/uv_cache:/app/.uv_cache" \
+        --volume "$(pwd)/container-entrypoint.sh:/app/container-entrypoint.sh" \
         --cpus 2 \
         --memory 4G \
         --arch arm64 \
         --os linux \
-        --user 1000:1000 \
         --entrypoint /app/container-entrypoint.sh \
         python:3.11-slim; then
         print_success "Container created successfully"
@@ -210,14 +210,10 @@ create_container() {
 build_container() {
     print_status "Building container image..."
     
-    # Build container image
-    if container build neozork-hld-prediction; then
-        print_success "Container image built successfully"
-        return 0
-    else
-        print_error "Failed to build container image"
-        return 1
-    fi
+    # For native container, we don't need to build separately
+    # The container is created and ready to use
+    print_success "Container is ready to use (no separate build step needed)"
+    return 0
 }
 
 # Function to show next steps
