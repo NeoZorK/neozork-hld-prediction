@@ -27,7 +27,7 @@ USEFUL_COMMANDS=(
     "nz --interactive"
     "eda -dqc"
     "nz --indicators"
-    "nz --metrics"
+    "nz --metric"
 )
 
 for cmd in "${USEFUL_COMMANDS[@]}"; do
