@@ -172,8 +172,32 @@ validate_container_config() {
 create_container() {
     print_status "Creating native container..."
     
-    # Create container using native container application
-    if container create --config container.yaml; then
+    # Create container using native container application with proper syntax
+    if container create \
+        --name neozork-hld-prediction \
+        --cwd /app \
+        --env PYTHONPATH=/app \
+        --env USE_UV=true \
+        --env UV_ONLY=true \
+        --env UV_CACHE_DIR=/app/.uv_cache \
+        --env UV_VENV_DIR=/app/.venv \
+        --env NATIVE_CONTAINER=true \
+        --env DOCKER_CONTAINER=false \
+        --env LOG_LEVEL=INFO \
+        --env MCP_SERVER_TYPE=pycharm_copilot \
+        --volume "$(pwd)/data:/app/data" \
+        --volume "$(pwd)/logs:/app/logs" \
+        --volume "$(pwd)/results:/app/results" \
+        --volume "$(pwd)/tests:/app/tests" \
+        --volume "$(pwd)/mql5_feed:/app/mql5_feed" \
+        --volume "$(pwd)/data/cache/uv_cache:/app/.uv_cache" \
+        --cpus 2 \
+        --memory 4G \
+        --arch arm64 \
+        --os linux \
+        --user 1000:1000 \
+        --entrypoint /app/container-entrypoint.sh \
+        python:3.11-slim; then
         print_success "Container created successfully"
         return 0
     else
