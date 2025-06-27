@@ -366,6 +366,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **[Native Container Setup](docs/deployment/native-container-setup.md)** - Complete setup guide
 - **[Native vs Docker Comparison](docs/deployment/native-vs-docker-comparison.md)** - Performance comparison
 - **[Interactive Script Guide](scripts/native-container/README.md)** - Interactive script documentation
+- **[Quick Start Guide](docs/getting-started/QUICK_START_NATIVE_CONTAINER.md)** - Quick start instructions
+- **[Implementation Summary](docs/deployment/NATIVE_CONTAINER_IMPLEMENTATION_SUMMARY.md)** - Complete implementation overview
 
 ### Testing Native Container
 

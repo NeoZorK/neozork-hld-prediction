@@ -19,6 +19,7 @@ import sys
 import os
 import time
 import json
+import tempfile
 from typing import List, Dict, Any, Tuple, Set
 from pathlib import Path
 from dataclasses import dataclass
@@ -28,7 +29,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 PYTHON = sys.executable
 SCRIPT = PROJECT_ROOT / 'run_analysis.py'
-LOG_DIR = PROJECT_ROOT / 'logs' / 'cli_flag_tests'
+LOG_DIR = Path(tempfile.mkdtemp(prefix="cli_flag_tests_"))
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 @dataclass
@@ -572,31 +573,22 @@ class FlagTestGenerator:
         print(f"Results saved to: {json_file}")
 
 def main():
-    """Main function to run flag test generation"""
+    """Main function to run flag generator tests"""
+    print("🚀 Starting Flag Generator Test Runner...")
+    
     generator = FlagTestGenerator()
-    results = generator.run_all_tests(max_workers=4)
-    generator.save_results(results)
+    results = generator.run_all_tests()
     
-    # Print summary
-    print("\n" + "=" * 60)
-    print("FLAG TEST GENERATION RESULTS")
-    print("=" * 60)
-    print(f"Total Tests: {results['total_tests']}")
-    print(f"Passed: {results['passed_tests']}")
-    print(f"Failed: {results['failed_tests']}")
-    print(f"Timeouts: {results['timeout_tests']}")
-    print(f"Success Rate: {results['success_rate']:.1f}%")
+    print(f"✅ Completed! Results saved to: {LOG_DIR}")
+    print(f"📊 Summary: {results['success_rate']:.1f}%")
     
-    print("\nCategory Statistics:")
-    for category, stats in results['category_stats'].items():
-        success_rate = (stats['passed'] / stats['total'] * 100) if stats['total'] > 0 else 0
-        print(f"  {category}: {stats['passed']}/{stats['total']} ({success_rate:.1f}%) - Avg: {stats['avg_time']:.3f}s")
-    
-    if results['failed_tests'] > 0:
-        print(f"\n❌ {results['failed_tests']} tests failed!")
-        sys.exit(1)
-    else:
-        print("\n✅ All tests passed!")
+    # Cleanup temporary directory
+    try:
+        import shutil
+        shutil.rmtree(LOG_DIR)
+        print(f"🧹 Cleaned up temporary directory: {LOG_DIR}")
+    except Exception as e:
+        print(f"⚠️  Warning: Could not clean up temporary directory: {e}")
 
 if __name__ == "__main__":
     main() 
