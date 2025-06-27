@@ -137,7 +137,7 @@ class TestDockerContainer(DockerBaseTest):
             "nz --interactive", 
             "eda -dqc",
             "nz --indicators",
-            "nz --metrics"
+            "nz --metric"
         ]
         
         for cmd in useful_commands:

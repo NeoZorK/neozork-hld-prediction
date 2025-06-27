@@ -290,7 +290,7 @@ init_bash_history() {
         "nz --interactive"
         "eda -dqc"
         "nz --indicators"
-        "nz --metrics"
+        "nz --metric"
         "nz show csv mn1 eur --rule rsi_div:14,30,70,open"
         "nz show csv mn1 eur --rule rsi_mom:14,30,70,close --strategy 2,5,0.07"
         "python"
