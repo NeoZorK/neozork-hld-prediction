@@ -1,15 +1,38 @@
-"""Test native container setup and configuration."""
+#!/usr/bin/env python3
+"""
+Tests for native Apple Silicon container setup and configuration.
+These tests are designed to run on macOS 26+ with native container support.
+"""
 
-import pytest
-import subprocess
 import os
-import yaml
 import sys
+import subprocess
+import yaml
+import pytest
 from pathlib import Path
 
+def is_native_container_environment():
+    """Check if we're in an environment where native container tests should run."""
+    # Skip if running inside Docker
+    if os.path.exists('/.dockerenv') or os.environ.get('DOCKER_CONTAINER') == 'true':
+        return False
+    
+    # Skip if not on macOS
+    if sys.platform != "darwin":
+        return False
+    
+    # Skip if native container application is not available
+    try:
+        result = subprocess.run(['container', '--version'], 
+                              capture_output=True, text=True, timeout=5)
+        return result.returncode == 0
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        return False
 
+@pytest.mark.skipif(not is_native_container_environment(), 
+                    reason="Native container tests require macOS 26+ with native container application")
 class TestNativeContainerSetup:
-    """Test native container setup functionality."""
+    """Test native container setup and configuration."""
     
     def test_container_application_available(self):
         """Test that native container application is available."""
@@ -54,74 +77,6 @@ class TestNativeContainerSetup:
         # Should not fail even if no containers exist
         assert result.returncode == 0
     
-    def test_setup_script_exists(self):
-        """Test that setup script exists and is executable."""
-        setup_script = Path('scripts/native-container/setup.sh')
-        assert setup_script.exists(), "setup.sh should exist"
-        assert os.access(setup_script, os.X_OK), "setup.sh should be executable"
-    
-    def test_run_script_exists(self):
-        """Test that run script exists and is executable."""
-        run_script = Path('scripts/native-container/run.sh')
-        assert run_script.exists(), "run.sh should exist"
-        assert os.access(run_script, os.X_OK), "run.sh should be executable"
-    
-    def test_stop_script_exists(self):
-        """Test that stop script exists and is executable."""
-        stop_script = Path('scripts/native-container/stop.sh')
-        assert stop_script.exists(), "stop.sh should exist"
-        assert os.access(stop_script, os.X_OK), "stop.sh should be executable"
-    
-    def test_logs_script_exists(self):
-        """Test that logs script exists and is executable."""
-        logs_script = Path('scripts/native-container/logs.sh')
-        assert logs_script.exists(), "logs.sh should exist"
-        assert os.access(logs_script, os.X_OK), "logs.sh should be executable"
-    
-    def test_exec_script_exists(self):
-        """Test that exec script exists and is executable."""
-        exec_script = Path('scripts/native-container/exec.sh')
-        assert exec_script.exists(), "exec.sh should exist"
-        assert os.access(exec_script, os.X_OK), "exec.sh should be executable"
-    
-    def test_cleanup_script_exists(self):
-        """Test that cleanup script exists and is executable."""
-        cleanup_script = Path('scripts/native-container/cleanup.sh')
-        assert cleanup_script.exists(), "cleanup.sh should exist"
-        assert os.access(cleanup_script, os.X_OK), "cleanup.sh should be executable"
-    
-    def test_entrypoint_script_exists(self):
-        """Test that entrypoint script exists and is executable."""
-        entrypoint_script = Path('container-entrypoint.sh')
-        assert entrypoint_script.exists(), "container-entrypoint.sh should exist"
-        assert os.access(entrypoint_script, os.X_OK), "container-entrypoint.sh should be executable"
-    
-    def test_required_directories_exist(self):
-        """Test that required directories exist."""
-        required_dirs = [
-            'data',
-            'logs', 
-            'results',
-            'tests',
-            'src',
-            'scripts/native-container'
-        ]
-        
-        for dir_path in required_dirs:
-            assert Path(dir_path).exists(), f"Directory {dir_path} should exist"
-    
-    def test_required_files_exist(self):
-        """Test that required files exist."""
-        required_files = [
-            'requirements.txt',
-            'run_analysis.py',
-            'container.yaml',
-            'container-entrypoint.sh'
-        ]
-        
-        for file_path in required_files:
-            assert Path(file_path).exists(), f"File {file_path} should exist"
-    
     def test_python_version_compatible(self):
         """Test that Python version is compatible."""
         major, minor = sys.version_info.major, sys.version_info.minor
@@ -141,6 +96,8 @@ class TestNativeContainerSetup:
             assert len(version) > 0, "macOS version should be retrievable"
 
 
+@pytest.mark.skipif(not is_native_container_environment(), 
+                    reason="Native container tests require macOS 26+ with native container application")
 class TestNativeContainerConfiguration:
     """Test native container configuration details."""
     
@@ -213,6 +170,8 @@ class TestNativeContainerConfiguration:
         assert security_context['readOnlyRootFilesystem'] is False, "Root filesystem should be writable"
 
 
+@pytest.mark.skipif(not is_native_container_environment(), 
+                    reason="Native container tests require macOS 26+ with native container application")
 class TestNativeContainerScripts:
     """Test native container script functionality."""
     
@@ -276,6 +235,8 @@ class TestNativeContainerScripts:
             assert result.returncode == 0, f"Script {script} should have valid syntax"
 
 
+@pytest.mark.skipif(not is_native_container_environment(), 
+                    reason="Native container tests require macOS 26+ with native container application")
 class TestNativeContainerIntegration:
     """Test native container integration scenarios."""
     
@@ -312,6 +273,108 @@ class TestNativeContainerIntegration:
                                "import yaml; yaml.safe_load(open('container.yaml'))"], 
                               capture_output=True, text=True)
         assert result.returncode == 0, "container.yaml should be valid YAML"
+
+
+class TestNativeContainerFiles:
+    """Test that native container files and scripts exist and are valid.
+    These tests can run in any environment (including Docker)."""
+    
+    def test_setup_script_exists(self):
+        """Test that setup script exists and is executable."""
+        setup_script = Path('scripts/native-container/setup.sh')
+        assert setup_script.exists(), "setup.sh should exist"
+        assert os.access(setup_script, os.X_OK), "setup.sh should be executable"
+    
+    def test_run_script_exists(self):
+        """Test that run script exists and is executable."""
+        run_script = Path('scripts/native-container/run.sh')
+        assert run_script.exists(), "run.sh should exist"
+        assert os.access(run_script, os.X_OK), "run.sh should be executable"
+    
+    def test_stop_script_exists(self):
+        """Test that stop script exists and is executable."""
+        stop_script = Path('scripts/native-container/stop.sh')
+        assert stop_script.exists(), "stop.sh should exist"
+        assert os.access(stop_script, os.X_OK), "stop.sh should be executable"
+    
+    def test_logs_script_exists(self):
+        """Test that logs script exists and is executable."""
+        logs_script = Path('scripts/native-container/logs.sh')
+        assert logs_script.exists(), "logs.sh should exist"
+        assert os.access(logs_script, os.X_OK), "logs.sh should be executable"
+    
+    def test_exec_script_exists(self):
+        """Test that exec script exists and is executable."""
+        exec_script = Path('scripts/native-container/exec.sh')
+        assert exec_script.exists(), "exec.sh should exist"
+        assert os.access(exec_script, os.X_OK), "exec.sh should be executable"
+    
+    def test_cleanup_script_exists(self):
+        """Test that cleanup script exists and is executable."""
+        cleanup_script = Path('scripts/native-container/cleanup.sh')
+        assert cleanup_script.exists(), "cleanup.sh should exist"
+        assert os.access(cleanup_script, os.X_OK), "cleanup.sh should be executable"
+    
+    def test_entrypoint_script_exists(self):
+        """Test that entrypoint script exists and is executable."""
+        entrypoint_script = Path('container-entrypoint.sh')
+        assert entrypoint_script.exists(), "container-entrypoint.sh should exist"
+        assert os.access(entrypoint_script, os.X_OK), "container-entrypoint.sh should be executable"
+    
+    def test_required_directories_exist(self):
+        """Test that required directories exist."""
+        required_dirs = [
+            'data',
+            'logs', 
+            'results',
+            'tests',
+            'src',
+            'scripts/native-container'
+        ]
+        
+        for dir_path in required_dirs:
+            assert Path(dir_path).exists(), f"Directory {dir_path} should exist"
+    
+    def test_required_files_exist(self):
+        """Test that required files exist."""
+        required_files = [
+            'requirements.txt',
+            'run_analysis.py',
+            'container.yaml',
+            'container-entrypoint.sh'
+        ]
+        
+        for file_path in required_files:
+            assert Path(file_path).exists(), f"File {file_path} should exist"
+    
+    def test_script_syntax_valid(self):
+        """Test that all scripts have valid bash syntax."""
+        scripts = [
+            'scripts/native-container/setup.sh',
+            'scripts/native-container/run.sh',
+            'scripts/native-container/stop.sh',
+            'scripts/native-container/logs.sh',
+            'scripts/native-container/exec.sh',
+            'scripts/native-container/cleanup.sh',
+            'container-entrypoint.sh'
+        ]
+        
+        for script in scripts:
+            result = subprocess.run(['bash', '-n', script], 
+                                  capture_output=True, text=True)
+            assert result.returncode == 0, f"Script {script} should have valid syntax"
+    
+    def test_container_yaml_valid(self):
+        """Test that container.yaml is valid YAML."""
+        config_file = Path('container.yaml')
+        assert config_file.exists(), "container.yaml should exist"
+        
+        # Validate YAML syntax
+        with open(config_file, 'r') as f:
+            config = yaml.safe_load(f)
+        
+        # Basic structure check
+        assert isinstance(config, dict), "container.yaml should be a valid YAML object"
 
 
 if __name__ == "__main__":
