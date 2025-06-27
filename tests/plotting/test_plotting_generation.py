@@ -377,6 +377,8 @@ class TestPlotTitleGeneration(unittest.TestCase):
         args = types.SimpleNamespace(interval='D1')
         selected_rule = Mock()
         selected_rule.name = 'RSI_DIV'
+        if hasattr(selected_rule, 'original_rule_with_params'):
+            del selected_rule.original_rule_with_params
         title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
         assert 'Rule:RSI_DIV' in title
         assert 'test_data' in title
@@ -394,6 +396,9 @@ class TestPlotTitleGeneration(unittest.TestCase):
         selected_rule = 'RSI_DIV'
         title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
         assert 'Rule:RSI_DIV' in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
     
     def test_get_plot_title_without_rule(self):
         data_info = {
@@ -403,7 +408,8 @@ class TestPlotTitleGeneration(unittest.TestCase):
         point_size = 0.01
         estimated_point = False
         args = types.SimpleNamespace(interval='D1')
-        title = get_plot_title(data_info, point_size, estimated_point, args)
+        selected_rule = None
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
         assert 'Rule:' not in title
         assert 'test_data' in title
         assert 'D1' in title
@@ -434,8 +440,13 @@ class TestPlotTitleGeneration(unittest.TestCase):
         args = types.SimpleNamespace(interval='D1')
         selected_rule = Mock()
         selected_rule.name = 'PREDICT_HIGH_LOW_DIRECTION'
+        if hasattr(selected_rule, 'original_rule_with_params'):
+            del selected_rule.original_rule_with_params
         title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
         assert 'Rule:PREDICT_HIGH_LOW_DIRECTION' in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
     
     def test_get_plot_title_with_strategy_parameters(self):
         """Test that plot title includes strategy parameters when provided."""
@@ -453,9 +464,9 @@ class TestPlotTitleGeneration(unittest.TestCase):
         )
         selected_rule = Mock()
         selected_rule.name = 'RSI_DIV'
-        
+        if hasattr(selected_rule, 'original_rule_with_params'):
+            del selected_rule.original_rule_with_params
         title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
-        
         assert 'Rule:RSI_DIV' in title
         assert 'Strategy:1.0,2.0,0.07' in title
         assert 'test_data' in title
@@ -478,11 +489,14 @@ class TestPlotTitleGeneration(unittest.TestCase):
         )
         selected_rule = Mock()
         selected_rule.name = 'MACD'
-        
+        if hasattr(selected_rule, 'original_rule_with_params'):
+            del selected_rule.original_rule_with_params
         title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
-        
         assert 'Rule:MACD' in title
         assert 'Strategy:2.5,3.0,0.1' in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
     
     def test_get_plot_title_without_strategy_parameters(self):
         """Test that plot title works without strategy parameters."""
@@ -495,11 +509,29 @@ class TestPlotTitleGeneration(unittest.TestCase):
         args = types.SimpleNamespace(interval='D1')  # No strategy parameters
         selected_rule = Mock()
         selected_rule.name = 'RSI'
-        
+        if hasattr(selected_rule, 'original_rule_with_params'):
+            del selected_rule.original_rule_with_params
         title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
-        
         assert 'Rule:RSI' in title
         assert 'Strategy:' not in title  # Should not include strategy if not provided
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+
+    def test_get_plot_title_with_original_rule_with_params(self):
+        """Test that plot title uses original_rule_with_params when available."""
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')
+        selected_rule = Mock()
+        selected_rule.name = 'RSI'
+        selected_rule.original_rule_with_params = 'rsi:14,30,70,open'
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:rsi:14,30,70,open' in title
         assert 'test_data' in title
         assert 'D1' in title
         assert 'Pt:0.01' in title
