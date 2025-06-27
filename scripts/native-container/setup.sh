@@ -168,6 +168,40 @@ validate_container_config() {
     return 0
 }
 
+# Function to check and remove existing container
+check_and_remove_existing_container() {
+    print_status "Checking for existing container..."
+    
+    # Check if container exists in container list
+    if container list | grep -q "neozork-hld-prediction"; then
+        print_warning "Container 'neozork-hld-prediction' already exists"
+        print_status "Removing existing container..."
+        
+        container_id=$(container list | grep "neozork-hld-prediction" | awk '{print $1}')
+        if container rm "$container_id"; then
+            print_success "Existing container removed"
+        else
+            print_error "Failed to remove existing container"
+            return 1
+        fi
+    fi
+    
+    # Check if container directory exists in filesystem
+    if [ -d "$HOME/Library/Application Support/com.apple.container/containers/neozork-hld-prediction" ]; then
+        print_warning "Container directory exists in filesystem"
+        print_status "Removing container directory..."
+        
+        if rm -rf "$HOME/Library/Application Support/com.apple.container/containers/neozork-hld-prediction"; then
+            print_success "Container directory removed"
+        else
+            print_error "Failed to remove container directory"
+            return 1
+        fi
+    fi
+    
+    return 0
+}
+
 # Function to create container
 create_container() {
     print_status "Creating native container..."
@@ -323,6 +357,12 @@ main() {
     # Validate container configuration
     if ! validate_container_config; then
         print_error "Container configuration validation failed"
+        exit 1
+    fi
+    
+    # Check and remove existing container
+    if ! check_and_remove_existing_container; then
+        print_error "Failed to remove existing container"
         exit 1
     fi
     
