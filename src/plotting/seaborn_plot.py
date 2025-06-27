@@ -115,7 +115,7 @@ def plot_indicator_results_seaborn(
             ax_price.scatter(sell_indices, sell_prices, color='red', marker='v', s=50, label='SELL Signal')
 
     # Set price chart title and labels
-    ax_price.set_title(f"{plot_title} - Price Chart")
+    ax_price.set_title(plot_title)
     ax_price.set_ylabel("Price")
     ax_price.legend()
     ax_price.grid(True, alpha=0.3)

@@ -120,7 +120,7 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
             df_results,
             type='candle',
             style='yahoo',
-            title=f"{title} - Rule: {display_rule}",
+            title=title,
             ylabel='Price',
             volume='Volume' in df_results.columns and not df_results['Volume'].isnull().all(),
             volume_panel=panel_count + 1 if 'Volume' in df_results.columns and not df_results['Volume'].isnull().all() else 0,
