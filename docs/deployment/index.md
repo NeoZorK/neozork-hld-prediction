@@ -386,4 +386,38 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 ---
 
 **Last Updated**: 2024
-**Version**: 2.0.0 (UV-Only Mode) 
+**Version**: 2.0.0 (UV-Only Mode)
+
+# Deployment
+
+This section covers deployment options and configurations for the NeoZork HLD Prediction project.
+
+## Container Options
+
+### Docker Deployment
+- **[Docker Setup](docker-setup.md)** - Standard Docker container setup
+- **[Docker Examples](docker-examples.md)** - Docker usage examples
+- **[Docker Testing](docker-testing.md)** - Testing in Docker environment
+
+### Native Apple Silicon Container (macOS 26+)
+- **[Native Container Setup](native-container-setup.md)** - Complete setup guide for Apple Silicon
+- **[Native vs Docker Comparison](native-vs-docker-comparison.md)** - Performance comparison
+- **[Implementation Summary](NATIVE_CONTAINER_IMPLEMENTATION_SUMMARY.md)** - Complete implementation overview
+
+## Configuration
+
+- **[Environment Configuration](environment-config.md)** - Environment variables and settings
+- **[UV Package Management](uv-only-mode.md)** - UV package manager configuration
+- **[MCP Server Setup](mcp-server-setup.md)** - Model Context Protocol server configuration
+
+## Testing
+
+- **[Test Environment Setup](test-environment.md)** - Setting up test environments
+- **[CI/CD Integration](ci-cd.md)** - Continuous integration and deployment
+- **[Performance Testing](performance-testing.md)** - Performance benchmarks and testing
+
+## Monitoring and Logging
+
+- **[Logging Configuration](logging-config.md)** - Log management and configuration
+- **[Monitoring Setup](monitoring-setup.md)** - System monitoring and alerts
+- **[Debugging Tools](debugging-tools.md)** - Debugging and troubleshooting tools 

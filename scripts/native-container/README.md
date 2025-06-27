@@ -706,4 +706,61 @@ For issues and questions:
 | Resource Overhead | Minimal | Higher |
 | Apple Silicon | Optimized | Generic |
 
-For detailed comparison, see: `docs/deployment/native-vs-docker-comparison.md` 
+For detailed comparison, see: `docs/deployment/native-vs-docker-comparison.md`
+
+## CI/CD Integration
+
+### GitHub Actions Example
+
+Для автоматизации тестирования и проверки скриптов нативного контейнера используйте следующий workflow:
+
+```yaml
+name: Native Container CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  native-container-tests:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install UV
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - name: Install dependencies
+        run: |
+          uv pip install -r requirements.txt
+          uv pip install -r requirements-dev.txt
+      - name: Run native container tests (non-interactive)
+        run: |
+          pytest tests/native-container/ --tb=short -m "not skip_if_docker"
+      - name: Run coverage
+        run: |
+          pytest tests/native-container/ --cov=scripts/native-container --cov-report=xml
+```
+
+### CI/CD Recommendations
+- Используйте теги `not skip_if_docker` для пропуска интерактивных тестов.
+- Для ускорения CI используйте `--tb=short` и `--cov` для покрытия.
+- В пайплайне не запускайте интерактивные сценарии (tty).
+- Для production-веток добавьте шаги деплоя или публикации артефактов, если требуется.
+- Для других CI-систем (GitLab CI, Jenkins) используйте аналогичные шаги: установка Python, UV, зависимостей и запуск тестов.
+
+### Пример для локального CI
+
+```bash
+export CI=true
+export GITHUB_ACTIONS=true
+pytest tests/native-container/ --tb=short -m "not skip_if_docker"
+```
+
+--- 
