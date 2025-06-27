@@ -1,0 +1,78 @@
+# Native Apple Silicon Container Configuration
+apiVersion: v1
+kind: Container
+metadata:
+  name: neozork-hld-prediction
+  labels:
+    app: neozork-hld
+    platform: apple-silicon
+    version: "1.0.0"
+spec:
+  image: python:3.11-slim
+  architecture: arm64
+  resources:
+    memory: "4Gi"
+    cpu: "2"
+    storage: "10Gi"
+  volumes:
+    - name: data-volume
+      mountPath: /app/data
+      hostPath: ./data
+      readWrite: true
+    - name: logs-volume
+      mountPath: /app/logs
+      hostPath: ./logs
+      readWrite: true
+    - name: results-volume
+      mountPath: /app/results
+      hostPath: ./results
+      readWrite: true
+    - name: tests-volume
+      mountPath: /app/tests
+      hostPath: ./tests
+      readWrite: true
+    - name: mql5-feed-volume
+      mountPath: /app/mql5_feed
+      hostPath: ./mql5_feed
+      readWrite: true
+    - name: uv-cache-volume
+      mountPath: /app/.uv_cache
+      hostPath: ./data/cache/uv_cache
+      readWrite: true
+  environment:
+    - PYTHONPATH=/app
+    - PYTHONUNBUFFERED=1
+    - PYTHONDONTWRITEBYTECODE=1
+    - USE_UV=true
+    - UV_ONLY=true
+    - UV_CACHE_DIR=/app/.uv_cache
+    - UV_VENV_DIR=/app/.venv
+    - DOCKER_CONTAINER=false
+    - NATIVE_CONTAINER=true
+    - LOG_LEVEL=INFO
+    - MCP_SERVER_TYPE=pycharm_copilot
+  ports:
+    - containerPort: 8000
+      hostPort: 8000
+      protocol: TCP
+  workingDir: /app
+  user: "1000:1000"
+  securityContext:
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+  lifecycle:
+    preStart:
+      exec:
+        command: ["/app/container-entrypoint.sh", "init"]
+    postStart:
+      exec:
+        command: ["/app/container-entrypoint.sh", "post-start"]
+  healthCheck:
+    httpGet:
+      path: /health
+      port: 8000
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3 
