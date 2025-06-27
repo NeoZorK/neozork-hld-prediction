@@ -360,10 +360,126 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **UV Validation**: Package manager testing
 - **Environment Testing**: Docker and local validation
 
+## 🍎 Native Container Documentation
+
+### Detailed Guides
+- **[Native Container Setup](docs/deployment/native-container-setup.md)** - Complete setup guide
+- **[Native vs Docker Comparison](docs/deployment/native-vs-docker-comparison.md)** - Performance comparison
+- **[Interactive Script Guide](scripts/native-container/README.md)** - Interactive script documentation
+
+### Testing Native Container
+
+#### Automated Testing
+```bash
+# Run all native container tests
+pytest tests/native-container/ -v
+
+# Run specific test categories
+pytest tests/native-container/test_native_container_script.py -v
+pytest tests/native-container/test_setup_script.py -v
+pytest tests/native-container/test_run_script.py -v
+
+# Run with coverage
+pytest tests/native-container/ --cov=scripts/native-container --cov-report=html
+```
+
+#### Manual Testing
+```bash
+# Test interactive script
+./scripts/native-container/native-container.sh
+
+# Test individual scripts
+./scripts/native-container/setup.sh
+./scripts/native-container/run.sh
+./scripts/native-container/exec.sh --shell
+./scripts/native-container/logs.sh --follow
+./scripts/native-container/stop.sh
+./scripts/native-container/cleanup.sh --all --force
+```
+
+#### CI/CD Integration
+```bash
+# In CI pipeline (non-interactive tests only)
+pytest tests/native-container/ --tb=short -m "not skip_if_docker"
+
+# Run only unit tests
+pytest tests/native-container/ -k "not interactive"
+```
+
+### Adding New Native Container Features
+
+#### Script Development
+1. **Create new script**: `scripts/native-container/new_feature.sh`
+2. **Add tests**: `tests/native-container/test_new_feature.py`
+3. **Update interactive script**: Add menu option to `native-container.sh`
+4. **Update documentation**: Update README and setup guide
+
+#### Test Development
+```python
+# Example test structure
+import pytest
+from tests.conftest import skip_if_docker
+
+class TestNewFeature:
+    @skip_if_docker
+    def test_feature_functionality(self):
+        # Test implementation
+        pass
+    
+    @pytest.mark.skip(reason="Requires interactive terminal (tty)")
+    def test_interactive_feature(self):
+        # Interactive test implementation
+        pass
+```
+
+### Native Container Maintenance
+
+#### Script Updates
+```bash
+# Update scripts
+git pull origin main
+chmod +x scripts/native-container/*.sh
+
+# Test changes
+pytest tests/native-container/ -v
+
+# Update documentation
+# Edit scripts/native-container/README.md
+# Edit docs/deployment/native-container-setup.md
+```
+
+#### Version Compatibility
+- **macOS**: 26+ (Tahoe) required
+- **Python**: 3.11+ required
+- **Native Container**: Latest from Apple Developer Beta
+- **UV**: Automatically managed in container
+
+### Performance Monitoring
+
+#### Resource Usage
+```bash
+# Monitor container resources
+./scripts/native-container/logs.sh system
+
+# Check performance
+./scripts/native-container/exec.sh --command 'df -h'
+./scripts/native-container/exec.sh --command 'ps aux | grep python'
+```
+
+#### Benchmarking
+```bash
+# Compare with Docker
+time ./scripts/native-container/run.sh
+time docker-compose up -d
+
+# Test analysis performance
+./scripts/native-container/exec.sh --analysis 'nz demo --rule PHLD'
+```
+
 ---
 
 **Last Updated**: 2024
-**Version**: 2.0.0 (UV-Only Mode)
+**Version**: 2.0.0 (UV-Only Mode + Native Container)
 
 ## 📊 Project Statistics
 
