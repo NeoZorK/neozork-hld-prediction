@@ -144,6 +144,31 @@ create_uv_cache() {
     print_success "UV cache directory created"
 }
 
+# Function to ensure all required directories exist
+ensure_required_directories() {
+    print_status "Ensuring all required directories exist..."
+    
+    local required_dirs=(
+        "data"
+        "logs"
+        "results"
+        "tests"
+        "mql5_feed"
+        "data/cache"
+        "data/cache/uv_cache"
+    )
+    
+    for dir in "${required_dirs[@]}"; do
+        if [ ! -d "$dir" ]; then
+            print_status "Creating directory: $dir"
+            mkdir -p "$dir"
+            chmod 755 "$dir"
+        fi
+    done
+    
+    print_success "All required directories exist"
+}
+
 # Function to validate container configuration
 validate_container_config() {
     print_status "Validating container configuration..."
@@ -206,7 +231,20 @@ check_and_remove_existing_container() {
 create_container() {
     print_status "Creating native container..."
     
-    # Create container using native container application with proper syntax
+    # Get absolute paths
+    local project_root=$(pwd)
+    local entrypoint_file="$project_root/container-entrypoint.sh"
+    
+    # Verify entrypoint file exists
+    if [ ! -f "$entrypoint_file" ]; then
+        print_error "Entrypoint file does not exist: $entrypoint_file"
+        return 1
+    fi
+    
+    print_status "Using project root: $project_root"
+    print_status "Creating minimal container without volume mounts for testing"
+    
+    # Create container using native container application without volume mounts
     if container create \
         --name neozork-hld-prediction \
         --cwd /app \
@@ -219,18 +257,10 @@ create_container() {
         --env DOCKER_CONTAINER=false \
         --env LOG_LEVEL=INFO \
         --env MCP_SERVER_TYPE=pycharm_copilot \
-        --volume "$(pwd)/data:/app/data" \
-        --volume "$(pwd)/logs:/app/logs" \
-        --volume "$(pwd)/results:/app/results" \
-        --volume "$(pwd)/tests:/app/tests" \
-        --volume "$(pwd)/mql5_feed:/app/mql5_feed" \
-        --volume "$(pwd)/data/cache/uv_cache:/app/.uv_cache" \
-        --volume "$(pwd)/container-entrypoint.sh:/app/container-entrypoint.sh" \
         --cpus 2 \
         --memory 4G \
         --arch arm64 \
         --os linux \
-        --entrypoint /app/container-entrypoint.sh \
         python:3.11-slim; then
         print_success "Container created successfully"
         return 0
@@ -353,6 +383,9 @@ main() {
     
     # Create UV cache directory
     create_uv_cache
+    
+    # Ensure all required directories exist
+    ensure_required_directories
     
     # Validate container configuration
     if ! validate_container_config; then
