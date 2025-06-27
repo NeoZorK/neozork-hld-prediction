@@ -150,11 +150,11 @@ EOF
     export PATH="/tmp/bin:$PATH"
 }
 
-# Setup bash environment
+# Setup bash and python environment
 setup_bash_environment() {
     log_message "Setting up bash environment..."
     
-    # Create history file
+    # Create history file for bash
     export HISTFILE=/tmp/bash_history/.bash_history
     export HISTSIZE=1000
     export HISTCONTROL=ignoreboth
@@ -163,6 +163,12 @@ setup_bash_environment() {
 
     # Initialize bash history with useful commands
     init_bash_history
+
+    # Setup python history
+    export PYTHONHISTFILE=/tmp/bash_history/.python_history
+    touch $PYTHONHISTFILE
+    chmod 666 $PYTHONHISTFILE
+    init_python_history
 
     # Create inputrc for better shell experience
     mkdir -p /tmp/bash_config
@@ -193,6 +199,23 @@ init_bash_history() {
     done
     
     log_message "Added ${#useful_commands[@]} useful commands to bash history"
+}
+
+# Initialize python history with useful commands
+init_python_history() {
+    log_message "Initializing python history with useful commands..."
+    local python_commands=(
+        "import sys"
+        "print('Hello from python history!')"
+        "import os"
+        "from datetime import datetime"
+        "print(datetime.now())"
+        "exit()"
+    )
+    for cmd in "${python_commands[@]}"; do
+        echo "$cmd" >> "$PYTHONHISTFILE"
+    done
+    log_message "Added ${#python_commands[@]} useful python commands to python history"
 }
 
 # Initialize container
@@ -302,6 +325,12 @@ interactive_mode() {
     export HISTSIZE=1000
     export HISTCONTROL=ignoreboth
     history -r
+
+    # Python history support
+    export PYTHONHISTFILE=/tmp/bash_history/.python_history
+    touch $PYTHONHISTFILE
+    chmod 666 $PYTHONHISTFILE
+
     exec bash
 }
 
