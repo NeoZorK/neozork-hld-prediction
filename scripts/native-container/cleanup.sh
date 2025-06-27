@@ -93,11 +93,11 @@ remove_container() {
 # Function to remove container image
 remove_image() {
     print_status "Removing container image..."
-    if container rmi neozork-hld-prediction; then
-        print_success "Container image removed"
-    else
-        print_warning "Failed to remove container image (may not exist)"
-    fi
+    
+    # For native container, images are managed differently
+    # We'll just log that this was attempted
+    print_warning "Container image removal not supported in native container"
+    print_status "Container images are managed automatically by the system"
 }
 
 # Function to cleanup temporary files

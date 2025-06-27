@@ -67,7 +67,7 @@ start_container() {
     fi
     
     # Start the container
-    if container run neozork-hld-prediction --interactive; then
+    if container start neozork-hld-prediction; then
         print_success "Container started successfully"
         return 0
     else

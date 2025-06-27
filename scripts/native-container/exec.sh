@@ -66,7 +66,7 @@ execute_in_container() {
     local exec_cmd="container exec"
     
     if [ "$interactive" = true ]; then
-        exec_cmd="$exec_cmd --interactive"
+        exec_cmd="$exec_cmd --interactive --tty"
     fi
     
     exec_cmd="$exec_cmd $container_id $command"
