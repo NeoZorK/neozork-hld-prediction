@@ -156,8 +156,7 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
         plt.candlestick(x_values, ohlc_data)
         
         # Set price chart title and labels
-        price_title = f"{title} - Financial Chart (Matrix Green Theme)"
-        plt.title(price_title)
+        plt.title(title)
         
         if not has_volume:
             plt.xlabel("Time / Bar Index")

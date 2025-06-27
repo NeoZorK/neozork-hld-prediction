@@ -166,9 +166,8 @@ def plot_indicator_results_plotly(df_results: pd.DataFrame, rule: TradingRule, t
     else:
         display_rule = rule_name
 
-    chart_layout_title = f"{title} - Rule: {display_rule}"
     fig.update_layout(
-        title=chart_layout_title,
+        title=title,
         height=350 * total_rows, # Height based on dynamic number of rows
         xaxis_rangeslider_visible=False,
         showlegend=True,
