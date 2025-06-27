@@ -297,7 +297,11 @@ interactive_mode() {
     echo -e "\033[1;36m- echo '{\"method\": \"neozork/ping\", \"id\": 1, \"params\": {}}' | python3 neozork_mcp_server.py\033[0m"
     echo -e "\033[1;33m💡 Use Ctrl+R to search history or ↑/↓ arrows to navigate\033[0m"
 
-    # Start interactive shell
+    # Start interactive shell with loaded history
+    export HISTFILE=/tmp/bash_history/.bash_history
+    export HISTSIZE=1000
+    export HISTCONTROL=ignoreboth
+    history -r
     exec bash
 }
 
