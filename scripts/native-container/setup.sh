@@ -240,6 +240,44 @@ show_next_steps() {
     echo
 }
 
+# Function to show usage
+show_usage() {
+    echo "Usage: $0 [OPTIONS]"
+    echo
+    echo "Options:"
+    echo "  -h, --help     Show this help message"
+    echo
+    echo "Description:"
+    echo "  This script sets up the native Apple Silicon container environment"
+    echo "  for the NeoZork HLD Prediction project."
+    echo
+    echo "Prerequisites:"
+    echo "  - macOS 26+ (Tahoe) or higher"
+    echo "  - Native container application installed"
+    echo "  - Python 3.11+ installed"
+    echo "  - At least 4GB of available RAM"
+    echo "  - 10GB of available disk space"
+    echo
+    echo "Examples:"
+    echo "  $0              # Run setup"
+    echo "  $0 --help       # Show this help message"
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            show_usage
+            exit 0
+            ;;
+        *)
+            print_error "Unknown option: $1"
+            show_usage
+            exit 1
+            ;;
+    esac
+done
+
 # Main setup function
 main() {
     echo -e "${BLUE}=== NeoZork HLD Prediction Native Container Setup ===${NC}"

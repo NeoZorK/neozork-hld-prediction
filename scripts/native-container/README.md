@@ -2,6 +2,21 @@
 
 This directory contains scripts for managing the NeoZork HLD Prediction project using the native Apple Silicon container application in macOS 26 Tahoe (Developer Beta).
 
+## Directory Structure
+
+```
+scripts/native-container/
+├── native-container.sh    # Interactive container manager (main script)
+├── setup.sh              # Initial setup and configuration
+├── run.sh                # Start the container
+├── stop.sh               # Stop the container
+├── logs.sh               # View container logs
+├── exec.sh               # Execute commands in container
+├── cleanup.sh            # Clean up resources
+├── README.md             # This documentation
+└── __init__.py           # Python package marker
+```
+
 ## Overview
 
 The native container provides **30-50% performance improvement** over Docker with **lower resource usage** and **faster startup times**. It's optimized specifically for Apple Silicon Macs running macOS 26+.
@@ -395,6 +410,144 @@ The native container scripts are fully tested with:
 - Performance tests
 - Syntax validation tests
 
+**Note:** Some tests require an interactive terminal (tty) and will be skipped in CI environments. This is expected behavior.
+
+### CI/CD Integration
+
+For continuous integration, use the non-interactive tests:
+
+```bash
+# In CI pipeline
+pytest tests/native-container/ --tb=short
+
+# Run only non-interactive tests
+pytest tests/native-container/ -m "not skip_if_docker"
+```
+
+**CI Best Practices:**
+- Interactive tests are automatically skipped in non-tty environments
+- Focus on unit tests and integration tests that don't require interactive input
+- Use `--tb=short` for cleaner CI output
+- Set `LOG_LEVEL=WARNING` to reduce log verbosity in CI
+
+### How to Add New Tests
+
+To add new tests for native container scripts:
+
+1. **Create test file**: `tests/native-container/test_new_feature.py`
+2. **Import required modules**:
+   ```python
+   import pytest
+   from tests.conftest import skip_if_docker
+   ```
+3. **Use decorators appropriately**:
+   ```python
+   @skip_if_docker  # Skip in Docker environment
+   @pytest.mark.skip(reason="Requires interactive terminal (tty)")  # Skip non-interactive tests
+   ```
+4. **Follow naming conventions**:
+   - Test classes: `TestFeatureName`
+   - Test methods: `test_feature_description`
+5. **Add to test suite**: Tests are automatically discovered by pytest
+
+## Script Updates and Maintenance
+
+### Updating Scripts
+
+To update the native container scripts:
+
+```bash
+# Pull latest changes
+git pull origin main
+
+# Make scripts executable
+chmod +x scripts/native-container/*.sh
+
+# Test the changes
+pytest tests/native-container/ -v
+
+# Update documentation if needed
+# Edit this README.md and docs/deployment/native-container-setup.md
+```
+
+### Script Structure Changes
+
+When modifying script structure:
+
+1. **Update tests**: Modify corresponding test files
+2. **Update documentation**: Update this README and setup guide
+3. **Update interactive script**: Ensure menu options match individual scripts
+4. **Test thoroughly**: Run both unit tests and manual testing
+
+### Version Compatibility
+
+- **Scripts**: Compatible with macOS 26+ (Tahoe)
+- **Container**: Requires native container application
+- **Python**: Requires Python 3.11+
+- **UV**: Automatically installed in container
+
+## Manual Testing
+
+### Testing Interactive Features
+
+To manually test interactive features:
+
+```bash
+# Start interactive script
+./scripts/native-container/native-container.sh
+
+# Test each menu option:
+# 1. Setup container
+# 2. Start container  
+# 3. Stop container
+# 4. Remove container
+# 5. Show container status
+# 6. Show container logs
+# 7. Execute command in container
+# 8. Start interactive shell
+# 9. Run analysis
+# 10. Run tests
+# 11. Show available commands
+# 12. Cleanup resources
+# 13. System check
+# 14. Exit
+```
+
+### Testing Individual Scripts
+
+```bash
+# Test setup
+./scripts/native-container/setup.sh
+
+# Test run
+./scripts/native-container/run.sh
+
+# Test exec
+./scripts/native-container/exec.sh --shell
+
+# Test logs
+./scripts/native-container/logs.sh --follow
+
+# Test stop
+./scripts/native-container/stop.sh
+
+# Test cleanup
+./scripts/native-container/cleanup.sh --all --force
+```
+
+### Testing Error Conditions
+
+```bash
+# Test with missing container
+./scripts/native-container/run.sh
+
+# Test with missing dependencies
+./scripts/native-container/setup.sh
+
+# Test with invalid commands
+./scripts/native-container/exec.sh --command 'invalid_command'
+```
+
 ## Troubleshooting
 
 ### Common Issues
@@ -528,6 +681,8 @@ View detailed logs for troubleshooting:
 3. **Leverage native logging** for debugging
 4. **Use volume mounts** for data persistence
 5. **Keep container updated** with latest macOS
+6. **Run tests regularly** to ensure functionality
+7. **Update documentation** when making changes
 
 ## Support
 

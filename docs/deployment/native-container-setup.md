@@ -373,73 +373,435 @@ View detailed logs for troubleshooting:
 ./logs.sh --grep 'ERROR'
 ```
 
-## Performance Benefits
+## CI/CD Integration
 
-### Native Apple Silicon Optimization
+### GitHub Actions Workflow
 
-- **30-50% performance improvement** compared to Docker
-- **Lower memory usage** due to native virtualization
-- **Faster startup times** with optimized container initialization
-- **Better integration** with macOS system resources
+Create `.github/workflows/native-container.yml`:
 
-### Resource Efficiency
+```yaml
+name: Native Container Tests
 
-- **Reduced CPU overhead** from native containerization
-- **Optimized memory management** for Apple Silicon
-- **Efficient file system access** with native volume mounts
-- **Lower power consumption** during idle periods
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
 
-## Migration from Docker
+jobs:
+  test-native-container:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install UV
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+    
+    - name: Install dependencies
+      run: |
+        uv pip install -r requirements.txt
+        uv pip install -r requirements-dev.txt
+    
+    - name: Run native container tests
+      run: |
+        pytest tests/native-container/ --tb=short -m "not skip_if_docker"
+    
+    - name: Run non-interactive tests
+      run: |
+        pytest tests/native-container/ -k "not interactive" --tb=short
+```
 
-### Benefits of Migration
+### CI Best Practices
 
-- **30-50% performance improvement**
-- **Lower resource usage**
-- **Better macOS integration**
-- **Native Apple Silicon optimizations**
+1. **Skip Interactive Tests**: Use `-m "not skip_if_docker"` to skip tests requiring tty
+2. **Short Tracebacks**: Use `--tb=short` for cleaner CI output
+3. **Environment Detection**: Tests automatically detect CI environment
+4. **Resource Limits**: Set appropriate resource limits for CI runners
 
-### Migration Steps
+### Local CI Testing
 
-1. **Install native container application**
-2. **Run interactive script**: `./native-container.sh`
-3. **Follow setup wizard**
-4. **Test functionality**
-5. **Update CI/CD pipelines** if needed
+Test CI workflow locally:
 
-### Rollback Plan
+```bash
+# Simulate CI environment
+export CI=true
+export GITHUB_ACTIONS=true
 
-- **Keep Docker setup as backup**
-- **Both can run simultaneously**
-- **Easy rollback to Docker if needed**
+# Run CI-style tests
+pytest tests/native-container/ --tb=short -m "not skip_if_docker"
+```
 
-## Best Practices
+## Script Development and Maintenance
 
-1. **Use interactive script** for easiest experience
-2. **Monitor resource usage** with native tools
-3. **Leverage native logging** for debugging
-4. **Use volume mounts** for data persistence
-5. **Keep container updated** with latest macOS
+### Adding New Scripts
 
-## Support
+1. **Create Script**: `scripts/native-container/new_script.sh`
+2. **Add Tests**: `tests/native-container/test_new_script.py`
+3. **Update Interactive Script**: Add menu option to `native-container.sh`
+4. **Update Documentation**: Update README and this guide
 
-For issues and questions:
+### Script Template
 
-1. **Use interactive script**: `./native-container.sh`
-2. **Check the logs**: `./logs.sh`
-3. **Review the documentation**: `docs/deployment/native-container-setup.md`
-4. **Check the main project README**
-5. **Open an issue on GitHub**
+```bash
+#!/bin/bash
 
-## Comparison with Docker
+# Script Description
+# This script provides [functionality] for the native Apple Silicon container
 
-| Feature | Native Container | Docker |
-|---------|------------------|--------|
-| Performance | 30-50% faster | Baseline |
-| Memory Usage | Lower | Higher |
-| Startup Time | Faster | Slower |
-| macOS Integration | Native | Virtualized |
-| Cross-platform | No (macOS 26+) | Yes |
-| Resource Overhead | Minimal | Higher |
-| Apple Silicon | Optimized | Generic |
+set -e
 
-For detailed comparison, see: `docs/deployment/native-vs-docker-comparison.md` 
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Function to show usage
+show_usage() {
+    echo "Usage: $0 [OPTIONS]"
+    echo
+    echo "Options:"
+    echo "  -h, --help     Show this help message"
+    # Add other options
+    echo
+    echo "Examples:"
+    echo "  $0              # Basic usage"
+    echo "  $0 --help       # Show help"
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            show_usage
+            exit 0
+            ;;
+        *)
+            print_error "Unknown option: $1"
+            show_usage
+            exit 1
+            ;;
+    esac
+done
+
+# Main execution
+main() {
+    echo -e "${BLUE}=== Script Name ===${NC}"
+    echo
+    
+    # Main logic here
+    
+    print_success "Script completed successfully"
+}
+
+# Run main function
+main "$@"
+```
+
+### Test Template
+
+```python
+import pytest
+import subprocess
+from pathlib import Path
+from tests.conftest import skip_if_docker
+
+class TestNewScript:
+    """Test cases for new_script.sh"""
+    
+    @skip_if_docker
+    def test_script_exists(self):
+        """Test that the script file exists"""
+        script_path = Path("scripts/native-container/new_script.sh")
+        assert script_path.exists()
+        assert script_path.is_file()
+    
+    @skip_if_docker
+    def test_script_executable(self):
+        """Test that the script is executable"""
+        script_path = Path("scripts/native-container/new_script.sh")
+        assert script_path.stat().st_mode & 0o111 != 0
+    
+    @skip_if_docker
+    def test_script_help(self):
+        """Test that the script shows help"""
+        result = subprocess.run(
+            ["./scripts/native-container/new_script.sh", "--help"],
+            capture_output=True,
+            text=True,
+            cwd=Path.cwd()
+        )
+        assert result.returncode == 0
+        assert "Usage:" in result.stdout
+    
+    @skip_if_docker
+    def test_script_basic_functionality(self):
+        """Test basic script functionality"""
+        result = subprocess.run(
+            ["./scripts/native-container/new_script.sh"],
+            capture_output=True,
+            text=True,
+            cwd=Path.cwd()
+        )
+        # Add assertions based on expected behavior
+        assert result.returncode == 0
+    
+    @pytest.mark.skip(reason="Requires interactive terminal (tty)")
+    def test_script_interactive_mode(self):
+        """Test interactive mode (requires tty)"""
+        # This test will be skipped in CI environments
+        pass
+```
+
+## Documentation Updates
+
+### When to Update Documentation
+
+Update documentation when:
+- Adding new scripts or features
+- Changing script behavior or options
+- Updating prerequisites or requirements
+- Fixing bugs or issues
+- Adding new test cases
+
+### Documentation Files to Update
+
+1. **`scripts/native-container/README.md`** - Script-specific documentation
+2. **`docs/deployment/native-container-setup.md`** - This setup guide
+3. **`README.md`** - Main project README
+4. **`docs/deployment/native-vs-docker-comparison.md`** - Performance comparison
+
+### Documentation Standards
+
+- Use clear, concise language
+- Include code examples
+- Provide troubleshooting sections
+- Keep examples up-to-date
+- Use consistent formatting
+
+## Manual Testing Guide
+
+### Interactive Script Testing
+
+```bash
+# Start interactive script
+./scripts/native-container/native-container.sh
+
+# Test each menu option systematically:
+# 1. Setup container - Should create container successfully
+# 2. Start container - Should start without errors
+# 3. Stop container - Should stop gracefully
+# 4. Remove container - Should remove completely
+# 5. Show container status - Should display current status
+# 6. Show container logs - Should show log output
+# 7. Execute command - Should run commands in container
+# 8. Start interactive shell - Should open bash shell
+# 9. Run analysis - Should execute analysis commands
+# 10. Run tests - Should run test suites
+# 11. Show available commands - Should list commands
+# 12. Cleanup resources - Should clean specified resources
+# 13. System check - Should verify requirements
+# 14. Exit - Should exit cleanly
+```
+
+### Individual Script Testing
+
+```bash
+# Test setup script
+./scripts/native-container/setup.sh
+./scripts/native-container/setup.sh --help
+
+# Test run script
+./scripts/native-container/run.sh
+./scripts/native-container/run.sh --status
+./scripts/native-container/run.sh --help
+
+# Test exec script
+./scripts/native-container/exec.sh --shell
+./scripts/native-container/exec.sh --command 'ls -la'
+./scripts/native-container/exec.sh --help
+
+# Test logs script
+./scripts/native-container/logs.sh
+./scripts/native-container/logs.sh --follow
+./scripts/native-container/logs.sh --list
+./scripts/native-container/logs.sh --help
+
+# Test stop script
+./scripts/native-container/stop.sh
+./scripts/native-container/stop.sh --force
+./scripts/native-container/stop.sh --help
+
+# Test cleanup script
+./scripts/native-container/cleanup.sh --all --force
+./scripts/native-container/cleanup.sh --help
+```
+
+### Error Condition Testing
+
+```bash
+# Test with missing container
+./scripts/native-container/run.sh
+
+# Test with missing dependencies
+./scripts/native-container/setup.sh
+
+# Test with invalid commands
+./scripts/native-container/exec.sh --command 'invalid_command'
+
+# Test with missing files
+rm container.yaml
+./scripts/native-container/setup.sh
+
+# Test with insufficient permissions
+chmod -x scripts/native-container/setup.sh
+./scripts/native-container/setup.sh
+```
+
+### Performance Testing
+
+```bash
+# Measure startup time
+time ./scripts/native-container/run.sh
+
+# Compare with Docker
+time docker-compose up -d
+
+# Test analysis performance
+time ./scripts/native-container/exec.sh --analysis 'nz demo --rule PHLD'
+
+# Monitor resource usage
+./scripts/native-container/logs.sh system
+```
+
+## Folder Structure
+
+### Complete Directory Structure
+
+```
+neozork-hld-prediction/
+├── scripts/
+│   └── native-container/
+│       ├── native-container.sh    # Interactive container manager
+│       ├── setup.sh               # Initial setup and configuration
+│       ├── run.sh                 # Start the container
+│       ├── stop.sh                # Stop the container
+│       ├── logs.sh                # View container logs
+│       ├── exec.sh                # Execute commands in container
+│       ├── cleanup.sh             # Clean up resources
+│       ├── README.md              # Script documentation
+│       └── __init__.py            # Python package marker
+├── tests/
+│   └── native-container/
+│       ├── test_native_container_script.py  # Interactive script tests
+│       ├── test_setup_script.py             # Setup script tests
+│       ├── test_run_script.py               # Run script tests
+│       ├── test_stop_script.py              # Stop script tests
+│       ├── test_logs_script.py              # Logs script tests
+│       ├── test_exec_script.py              # Exec script tests
+│       ├── test_cleanup_script.py           # Cleanup script tests
+│       └── __init__.py                      # Test package marker
+├── docs/
+│   └── deployment/
+│       ├── native-container-setup.md        # This setup guide
+│       ├── native-vs-docker-comparison.md   # Performance comparison
+│       └── docker-setup.md                  # Docker setup guide
+├── container.yaml                           # Container configuration
+├── container-entrypoint.sh                  # Container entrypoint
+├── requirements.txt                         # Python dependencies
+├── run_analysis.py                          # Main analysis script
+└── README.md                                # Main project README
+```
+
+### File Descriptions
+
+- **`native-container.sh`**: Main interactive script with menu system
+- **`setup.sh`**: Initial setup, validation, and container creation
+- **`run.sh`**: Container startup and status management
+- **`stop.sh`**: Graceful container shutdown and cleanup
+- **`logs.sh`**: Log viewing and filtering capabilities
+- **`exec.sh`**: Command execution and interactive shell access
+- **`cleanup.sh`**: Resource cleanup and maintenance
+- **`container.yaml`**: Native container configuration
+- **`container-entrypoint.sh`**: Container initialization script
+
+## Version History
+
+### v2.0.0 (Current)
+- Added native Apple Silicon container support
+- Interactive script with menu system
+- Comprehensive test suite
+- Performance improvements (30-50% over Docker)
+- Complete documentation
+
+### v1.0.0 (Previous)
+- Docker-only support
+- Basic UV integration
+- Initial test framework
+
+## Support and Maintenance
+
+### Getting Help
+
+1. **Check Documentation**: Review this guide and README files
+2. **Run Tests**: Execute test suite to identify issues
+3. **Check Logs**: Use `./logs.sh` to view detailed logs
+4. **Interactive Script**: Use `./native-container.sh` for guided troubleshooting
+5. **GitHub Issues**: Report bugs and request features
+
+### Maintenance Schedule
+
+- **Weekly**: Run test suite to ensure functionality
+- **Monthly**: Update dependencies and check for updates
+- **Quarterly**: Review and update documentation
+- **As Needed**: Update scripts based on user feedback
+
+### Contributing
+
+To contribute to native container support:
+
+1. **Fork the repository**
+2. **Create feature branch**: `git checkout -b feature/native-container-improvement`
+3. **Make changes**: Update scripts, tests, or documentation
+4. **Test thoroughly**: Run all tests and manual testing
+5. **Update documentation**: Ensure all changes are documented
+6. **Submit pull request**: Include detailed description of changes
+
+## Conclusion
+
+The native Apple Silicon container provides significant performance improvements and better integration with macOS. The interactive script makes it easy to manage containers, while the comprehensive test suite ensures reliability.
+
+For the best experience:
+- Use the interactive script for daily operations
+- Run tests regularly to ensure functionality
+- Keep documentation updated
+- Monitor performance and resource usage
+- Report issues and contribute improvements
+
+The native container represents the future of containerization on Apple Silicon, providing native performance with the convenience of containerized applications. 
