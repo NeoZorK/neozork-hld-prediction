@@ -375,6 +375,34 @@ class TestNativeContainerFiles:
         
         # Basic structure check
         assert isinstance(config, dict), "container.yaml should be a valid YAML object"
+    
+    def test_entrypoint_bash_history_function(self):
+        """Test that container entrypoint includes bash history initialization."""
+        entrypoint_script = Path('container-entrypoint.sh')
+        assert entrypoint_script.exists(), "container-entrypoint.sh should exist"
+        
+        with open(entrypoint_script, 'r') as f:
+            content = f.read()
+        
+        # Check for bash history initialization function
+        assert 'init_bash_history' in content, "Entrypoint should include init_bash_history function"
+        assert 'useful_commands' in content, "Entrypoint should define useful commands"
+        
+        # Check for specific commands in the function
+        expected_commands = [
+            'uv run pytest tests -n auto',
+            'nz --interactive',
+            'eda -dqc',
+            'nz --indicators',
+            'nz --metrics'
+        ]
+        
+        for cmd in expected_commands:
+            assert cmd in content, f"Entrypoint should include command: {cmd}"
+        
+        # Check for MCP command with proper escaping
+        assert 'neozork/ping' in content, "Entrypoint should include neozork/ping command"
+        assert 'python3 neozork_mcp_server.py' in content, "Entrypoint should include MCP server command"
 
 
 if __name__ == "__main__":

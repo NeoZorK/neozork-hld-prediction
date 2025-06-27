@@ -161,11 +161,38 @@ setup_bash_environment() {
     touch $HISTFILE
     chmod 666 $HISTFILE
 
+    # Initialize bash history with useful commands
+    init_bash_history
+
     # Create inputrc for better shell experience
     mkdir -p /tmp/bash_config
     printf '%s\n' '"\\e[A": history-search-backward' > /tmp/bash_config/.inputrc
     printf '%s\n' '"\\e[B": history-search-forward' >> /tmp/bash_config/.inputrc
     chmod -R 777 /tmp/bash_config
+}
+
+# Initialize bash history with useful commands
+init_bash_history() {
+    log_message "Initializing bash history with useful commands..."
+    
+    # Define useful commands for the container
+    local useful_commands=(
+        "uv run pytest tests -n auto"
+        "nz --interactive"
+        "eda -dqc"
+        "nz --indicators"
+        "nz --metrics"
+        "nz show csv mn1 eur --rule rsi_div:14,30,70,open"
+        "nz show csv mn1 eur --rule rsi_mom:14,30,70,close --strategy 2,5,0.07"
+        "echo '{\"method\": \"neozork/ping\", \"id\": 1, \"params\": {}}' | python3 neozork_mcp_server.py"
+    )
+    
+    # Add commands to history file
+    for cmd in "${useful_commands[@]}"; do
+        echo "$cmd" >> "$HISTFILE"
+    done
+    
+    log_message "Added ${#useful_commands[@]} useful commands to bash history"
 }
 
 # Initialize container
@@ -257,6 +284,18 @@ interactive_mode() {
     echo -e "\033[1;36m- uv-test: Run UV environment test\033[0m"
     echo -e "\033[1;36m- nz: Main analysis command\033[0m"
     echo -e "\033[1;36m- eda: EDA analysis command\033[0m"
+
+    # Show useful commands in history
+    echo -e "\n\033[1;36m=== Useful Commands Available in History ===\033[0m"
+    echo -e "\033[1;36m- uv run pytest tests -n auto\033[0m"
+    echo -e "\033[1;36m- nz --interactive\033[0m"
+    echo -e "\033[1;36m- eda -dqc\033[0m"
+    echo -e "\033[1;36m- nz --indicators\033[0m"
+    echo -e "\033[1;36m- nz --metrics\033[0m"
+    echo -e "\033[1;36m- nz show csv mn1 eur --rule rsi_div:14,30,70,open\033[0m"
+    echo -e "\033[1;36m- nz show csv mn1 eur --rule rsi_mom:14,30,70,close --strategy 2,5,0.07\033[0m"
+    echo -e "\033[1;36m- echo '{\"method\": \"neozork/ping\", \"id\": 1, \"params\": {}}' | python3 neozork_mcp_server.py\033[0m"
+    echo -e "\033[1;33m💡 Use Ctrl+R to search history or ↑/↓ arrows to navigate\033[0m"
 
     # Start interactive shell
     exec bash
