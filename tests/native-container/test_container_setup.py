@@ -289,10 +289,10 @@ class TestNativeContainerIntegration:
                               capture_output=True, text=True)
         assert result.returncode == 0, "Container list command should work"
         
-        # Test container ps command
-        result = subprocess.run(['container', 'ps'], 
+        # Test container ls command (alias for list)
+        result = subprocess.run(['container', 'ls'], 
                               capture_output=True, text=True)
-        assert result.returncode == 0, "Container ps command should work"
+        assert result.returncode == 0, "Container ls command should work"
     
     def test_script_integration(self):
         """Test script integration without actual container operations."""
