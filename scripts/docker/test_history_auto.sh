@@ -1,12 +1,15 @@
 #!/bin/bash
 
+# Get the project root directory (two levels up from scripts/docker/)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
 echo "=== Automatic Docker History Test ==="
 
 # Test history initialization in Docker
 docker run --rm \
-  -v "$(pwd)/data:/app/data" \
-  -v "$(pwd)/logs:/app/logs" \
-  -v "$(pwd)/results:/app/results" \
+  -v "$PROJECT_ROOT/data:/app/data" \
+  -v "$PROJECT_ROOT/logs:/app/logs" \
+  -v "$PROJECT_ROOT/results:/app/results" \
   --user root \
   neozork-hld-prediction bash -c "
 echo '=== Running container initialization ==='
