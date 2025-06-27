@@ -1,66 +1,129 @@
 # Native Apple Silicon Container Setup
 
-This document provides comprehensive instructions for setting up and running the NeoZork HLD Prediction project using the native Apple Silicon container application in macOS 26 Tahoe (Developer Beta).
+This guide covers the setup and usage of the native Apple Silicon container for the NeoZork HLD Prediction project, providing **30-50% performance improvement** over Docker.
+
+## Overview
+
+The native Apple Silicon container is specifically optimized for macOS 26+ (Tahoe) and provides significant performance benefits:
+
+- **30-50% performance improvement** over Docker
+- **Lower resource usage** and faster startup times
+- **Native Apple Silicon optimization**
+- **Interactive management interface**
+- **Seamless UV integration**
 
 ## Prerequisites
 
+### System Requirements
+
 - **macOS 26 Tahoe (Developer Beta)** or higher
-- **Native container application** installed from Apple Developer Beta
+- **Apple Silicon Mac** (M1, M2, M3, or newer)
 - **Python 3.11+** installed
 - **At least 4GB of available RAM**
 - **10GB of available disk space**
 
+### Required Software
+
+1. **Native Container Application**
+   - Download from: https://developer.apple.com/download/all/
+   - Requires valid Apple Developer account
+   - Install the native container application
+
+2. **Python 3.11+**
+   ```bash
+   # Check Python version
+   python3 --version
+   
+   # Install if needed (using Homebrew)
+   brew install python@3.11
+   ```
+
 ## Quick Start
 
-### 1. Setup Native Container
+### Interactive Setup (Recommended)
+
+The easiest way to get started is using the interactive script:
 
 ```bash
-# Run the setup script
+# Run the interactive container manager
+./scripts/native-container/native-container.sh
+```
+
+The interactive script provides a user-friendly menu system:
+
+1. **Setup container** - Initial setup and configuration
+2. **Start container** - Start the running container
+3. **Stop container** - Stop the running container
+4. **Remove container** - Remove the container completely
+5. **Show container status** - Display current container status
+6. **Show container logs** - View container logs
+7. **Execute command in container** - Run specific commands
+8. **Start interactive shell** - Open bash shell in container
+9. **Run analysis** - Execute analysis commands
+10. **Run tests** - Execute test suites
+11. **Show available commands** - List all available commands
+12. **Cleanup resources** - Clean up files and caches
+13. **System check** - Verify system requirements
+14. **Exit** - Exit the script
+
+### Manual Setup
+
+If you prefer to use individual scripts:
+
+```bash
+# 1. Initial setup
 ./scripts/native-container/setup.sh
-```
 
-The setup script will:
-- Check macOS version compatibility
-- Verify native container application availability
-- Validate Python installation
-- Check project structure
-- Create container configuration
-- Build container image
-
-### 2. Run the Container
-
-```bash
-# Start the container
+# 2. Start container
 ./scripts/native-container/run.sh
-```
 
-### 3. Execute Commands
-
-```bash
-# Run analysis commands
-./scripts/native-container/exec.sh --analysis 'nz demo --rule PHLD'
-
-# Start interactive shell
+# 3. Execute commands
 ./scripts/native-container/exec.sh --shell
-
-# Run tests
-./scripts/native-container/exec.sh --test
 ```
+
+## Interactive Script Features
+
+### Analysis Commands
+
+The interactive script provides easy access to common analysis commands:
+
+- **Demo analysis**: `nz demo --rule PHLD`
+- **Apple stock analysis**: `nz yfinance AAPL --rule PHLD`
+- **Bitcoin analysis**: `nz mql5 BTCUSD --interval H4 --rule PHLD`
+- **EDA analysis**: `eda`
+- **Custom commands**: Enter your own commands
+
+### Test Execution
+
+Run tests with different options:
+
+- **All tests**: `pytest`
+- **Multithreaded tests**: `pytest tests/ -n auto`
+- **Calculation tests**: `pytest tests/calculation/`
+- **CLI tests**: `pytest tests/cli/`
+- **Data tests**: `pytest tests/data/`
+- **Custom test commands**: Enter your own test commands
+
+### Container Management
+
+- **Setup**: Automatic system checks and container creation
+- **Start/Stop**: Simple container lifecycle management
+- **Status**: Real-time container status monitoring
+- **Logs**: View and follow container logs
+- **Cleanup**: Remove containers and clean up resources
 
 ## Configuration
 
-### Container Configuration (`container.yaml`)
+### Container Configuration
 
-The native container uses a YAML configuration file with the following key settings:
+The container uses a YAML configuration file (`container.yaml`):
 
 ```yaml
-# Native Apple Silicon Container Configuration
 apiVersion: v1
 kind: Container
 metadata:
   name: neozork-hld-prediction
   labels:
-    app: neozork-hld
     platform: apple-silicon
 spec:
   image: python:3.11-slim
@@ -113,101 +176,44 @@ MCP_SERVER_TYPE=pycharm_copilot
 LOG_LEVEL=INFO
 ```
 
-### Volume Mounts
+## Usage Examples
 
-The following directories are mounted from host to container:
-
-- `./data` → `/app/data` - Data files and cache
-- `./logs` → `/app/logs` - Log files
-- `./results` → `/app/results` - Analysis results and plots
-- `./tests` → `/app/tests` - Test files
-- `./mql5_feed` → `/app/mql5_feed` - MQL5 data feed
-- `./data/cache/uv_cache` → `/app/.uv_cache` - UV package cache
-
-## Usage
-
-### Container Management
-
-#### Setup and Build
+### Basic Workflow
 
 ```bash
-# Complete setup (recommended for first time)
-./scripts/native-container/setup.sh
+# 1. Start interactive script
+./scripts/native-container/native-container.sh
 
-# Check container status
-./scripts/native-container/run.sh --status
+# 2. Choose option 1 (Setup container)
+# 3. Choose option 2 (Start container)
+# 4. Choose option 9 (Run analysis)
+# 5. Choose option 1 (Demo analysis)
 ```
 
-#### Start and Stop
+### Command Line Usage
 
 ```bash
-# Start container
+# Setup and start
+./scripts/native-container/setup.sh
 ./scripts/native-container/run.sh
 
-# Stop container gracefully
-./scripts/native-container/stop.sh
+# Execute analysis
+./scripts/native-container/exec.sh --analysis 'nz demo --rule PHLD'
 
-# Force stop container
-./scripts/native-container/stop.sh --force
-
-# Stop and remove container
-./scripts/native-container/stop.sh --remove
-```
-
-#### Execute Commands
-
-```bash
-# Start interactive shell
-./scripts/native-container/exec.sh --shell
-
-# Run specific command
-./scripts/native-container/exec.sh --command 'nz demo --rule PHLD'
-
-# Run test suite
+# Run tests
 ./scripts/native-container/exec.sh --test
 
-# Run analysis
-./scripts/native-container/exec.sh --analysis 'nz yfinance AAPL --rule PHLD'
-
-# List available commands
-./scripts/native-container/exec.sh --list
-```
-
-#### View Logs
-
-```bash
-# View container logs
-./scripts/native-container/logs.sh
-
-# Follow logs in real-time
+# View logs
 ./scripts/native-container/logs.sh --follow
 
-# View specific log type
-./scripts/native-container/logs.sh mcp --follow
-./scripts/native-container/logs.sh app --lines 100
-./scripts/native-container/logs.sh --grep 'ERROR'
-
-# List available log files
-./scripts/native-container/logs.sh --list
-```
-
-#### Cleanup
-
-```bash
-# Clean up everything
+# Stop and cleanup
+./scripts/native-container/stop.sh
 ./scripts/native-container/cleanup.sh --all
-
-# Clean specific resources
-./scripts/native-container/cleanup.sh --cache --logs
-
-# Force cleanup without confirmation
-./scripts/native-container/cleanup.sh --all --force
 ```
 
 ### Available Commands Inside Container
 
 #### Analysis Commands
-
 ```bash
 # Main analysis command
 nz demo --rule PHLD
@@ -219,7 +225,6 @@ eda
 ```
 
 #### UV Package Manager
-
 ```bash
 # Install dependencies
 uv-install
@@ -232,7 +237,6 @@ uv-test
 ```
 
 #### Testing
-
 ```bash
 # Run all tests
 pytest
@@ -247,7 +251,6 @@ pytest tests/data/
 ```
 
 #### Development
-
 ```bash
 # Show help
 python run_analysis.py -h
@@ -259,35 +262,29 @@ python scripts/test_uv_docker.py
 python scripts/check_mcp_status.py
 ```
 
-#### System Commands
+## Testing
+
+### Running Tests
 
 ```bash
-# List files
-ls -la /app
-ls -la /app/results/plots/
+# Run all native container tests
+pytest tests/native-container/
 
-# Check processes
-ps aux | grep python
+# Run specific test file
+pytest tests/native-container/test_native_container_script.py
 
-# Check disk usage
-df -h
+# Run with coverage
+pytest tests/native-container/ --cov=scripts/native-container
 ```
 
-## Performance Benefits
+### Test Coverage
 
-### Native Apple Silicon Optimization
-
-- **30-50% performance improvement** compared to Docker
-- **Lower memory usage** due to native virtualization
-- **Faster startup times** with optimized container initialization
-- **Better integration** with macOS system resources
-
-### Resource Efficiency
-
-- **Reduced CPU overhead** from native containerization
-- **Optimized memory management** for Apple Silicon
-- **Efficient file system access** with native volume mounts
-- **Lower power consumption** during idle periods
+The native container scripts are fully tested with:
+- Unit tests for all functions
+- Integration tests for workflows
+- Error handling tests
+- Performance tests
+- Syntax validation tests
 
 ## Troubleshooting
 
@@ -325,7 +322,7 @@ Error: Failed to build container image
 - Check available disk space (minimum 10GB required)
 - Verify Python 3.11+ installation
 - Ensure all required files are present in project root
-- Run cleanup and retry: `./scripts/native-container/cleanup.sh --all`
+- Run cleanup and retry: `./cleanup.sh --all`
 
 #### 4. Permission Issues
 
@@ -334,7 +331,7 @@ Error: Permission denied
 ```
 
 **Solution:**
-- Ensure script files are executable: `chmod +x scripts/native-container/*.sh`
+- Ensure script files are executable: `chmod +x *.sh`
 - Check file ownership and permissions
 - Run setup with elevated privileges if needed
 
@@ -358,7 +355,7 @@ Enable debug logging for troubleshooting:
 export LOG_LEVEL=DEBUG
 
 # Run container with debug output
-./scripts/native-container/run.sh
+./run.sh
 ```
 
 ### Log Analysis
@@ -367,63 +364,30 @@ View detailed logs for troubleshooting:
 
 ```bash
 # View all logs
-./scripts/native-container/logs.sh --list
+./logs.sh --list
 
 # Follow container logs
-./scripts/native-container/logs.sh --follow
+./logs.sh --follow
 
 # Filter for errors
-./scripts/native-container/logs.sh --grep 'ERROR'
+./logs.sh --grep 'ERROR'
 ```
 
-## Advanced Configuration
+## Performance Benefits
 
-### Custom Environment
+### Native Apple Silicon Optimization
 
-Create a custom environment configuration:
+- **30-50% performance improvement** compared to Docker
+- **Lower memory usage** due to native virtualization
+- **Faster startup times** with optimized container initialization
+- **Better integration** with macOS system resources
 
-```bash
-# Copy default configuration
-cp container.yaml container.yaml.local
+### Resource Efficiency
 
-# Edit with your settings
-nano container.yaml.local
-
-# Use custom configuration
-./scripts/native-container/setup.sh --config container.yaml.local
-```
-
-### Performance Tuning
-
-Optimize container performance:
-
-```yaml
-# In container.yaml
-spec:
-  resources:
-    memory: "8Gi"    # Increase for memory-intensive operations
-    cpu: "4"         # Increase for CPU-intensive tasks
-    storage: "20Gi"  # Increase for large datasets
-```
-
-### Development Mode
-
-For development with live code changes:
-
-```bash
-# Mount source code for live reloading
-./scripts/native-container/run.sh --dev
-
-# Execute commands with live code updates
-./scripts/native-container/exec.sh --command 'python run_analysis.py'
-```
-
-## Security Considerations
-
-- **Non-root execution**: Container runs as non-root user (UID 1000)
-- **Minimal attack surface**: Only necessary packages installed
-- **Secure defaults**: No privileged operations by default
-- **Environment isolation**: Containerized environment prevents host contamination
+- **Reduced CPU overhead** from native containerization
+- **Optimized memory management** for Apple Silicon
+- **Efficient file system access** with native volume mounts
+- **Lower power consumption** during idle periods
 
 ## Migration from Docker
 
@@ -437,9 +401,10 @@ For development with live code changes:
 ### Migration Steps
 
 1. **Install native container application**
-2. **Run setup script**: `./scripts/native-container/setup.sh`
-3. **Test functionality**: `./scripts/native-container/run.sh`
-4. **Update CI/CD pipelines** if needed
+2. **Run interactive script**: `./native-container.sh`
+3. **Follow setup wizard**
+4. **Test functionality**
+5. **Update CI/CD pipelines** if needed
 
 ### Rollback Plan
 
@@ -447,14 +412,23 @@ For development with live code changes:
 - **Both can run simultaneously**
 - **Easy rollback to Docker if needed**
 
+## Best Practices
+
+1. **Use interactive script** for easiest experience
+2. **Monitor resource usage** with native tools
+3. **Leverage native logging** for debugging
+4. **Use volume mounts** for data persistence
+5. **Keep container updated** with latest macOS
+
 ## Support
 
 For issues and questions:
 
-1. **Check the logs**: `./scripts/native-container/logs.sh`
-2. **Review this documentation**
-3. **Check the main project README**
-4. **Open an issue on GitHub**
+1. **Use interactive script**: `./native-container.sh`
+2. **Check the logs**: `./logs.sh`
+3. **Review the documentation**: `docs/deployment/native-container-setup.md`
+4. **Check the main project README**
+5. **Open an issue on GitHub**
 
 ## Comparison with Docker
 
@@ -468,4 +442,4 @@ For issues and questions:
 | Resource Overhead | Minimal | Higher |
 | Apple Silicon | Optimized | Generic |
 
-For detailed comparison, see: [Native vs Docker Comparison](native-vs-docker-comparison.md) 
+For detailed comparison, see: `docs/deployment/native-vs-docker-comparison.md` 

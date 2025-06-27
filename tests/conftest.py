@@ -22,6 +22,14 @@ TEST_TIMEOUT = 120  # seconds
 PARALLEL_WORKERS = "auto"
 TEST_DATA_SIZE = 100
 
+def skip_if_docker(func):
+    """Decorator to skip tests when running in Docker environment"""
+    def wrapper(*args, **kwargs):
+        if os.environ.get('DOCKER_CONTAINER') == 'true':
+            pytest.skip("Test skipped in Docker environment")
+        return func(*args, **kwargs)
+    return wrapper
+
 @pytest.fixture(scope="session")
 def test_data_dir():
     """Create temporary test data directory"""
