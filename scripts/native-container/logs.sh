@@ -296,7 +296,7 @@ main() {
             echo "Container status:"
             if check_container_running; then
                 print_success "Running"
-                container ps | grep "neozork-hld-prediction"
+                container list | grep "neozork-hld-prediction"
             else
                 print_warning "Not running"
             fi
