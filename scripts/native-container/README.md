@@ -6,6 +6,23 @@ This directory contains scripts for managing the NeoZork HLD Prediction project 
 
 The native container provides **30-50% performance improvement** over Docker with **lower resource usage** and **faster startup times**. It's optimized specifically for Apple Silicon Macs running macOS 26+.
 
+## Quick Start - Interactive Script
+
+**NEW: Use the interactive script for the easiest experience!**
+
+```bash
+# Run the interactive container manager
+./scripts/native-container/native-container.sh
+```
+
+The interactive script provides a user-friendly menu system for all container operations:
+- Setup and configuration
+- Start/stop/remove containers
+- Execute commands and run analysis
+- View logs and status
+- Run tests
+- Cleanup resources
+
 ## Prerequisites
 
 - **macOS 26 Tahoe (Developer Beta)** or higher
@@ -18,6 +35,7 @@ The native container provides **30-50% performance improvement** over Docker wit
 
 | Script | Purpose | Usage |
 |--------|---------|-------|
+| `native-container.sh` | **Interactive container manager** | `./native-container.sh` |
 | `setup.sh` | Initial setup and configuration | `./setup.sh` |
 | `run.sh` | Start the container | `./run.sh` |
 | `stop.sh` | Stop the container | `./stop.sh` |
@@ -25,44 +43,47 @@ The native container provides **30-50% performance improvement** over Docker wit
 | `exec.sh` | Execute commands in container | `./exec.sh` |
 | `cleanup.sh` | Clean up resources | `./cleanup.sh` |
 
-## Quick Start
+## Interactive Script Features
 
-### 1. Initial Setup
+### Main Menu Options
 
-```bash
-# Run the setup script (checks prerequisites and builds container)
-./scripts/native-container/setup.sh
-```
+1. **Setup container** - Initial setup and configuration
+2. **Start container** - Start the running container
+3. **Stop container** - Stop the running container
+4. **Remove container** - Remove the container completely
+5. **Show container status** - Display current container status
+6. **Show container logs** - View container logs
+7. **Execute command in container** - Run specific commands
+8. **Start interactive shell** - Open bash shell in container
+9. **Run analysis** - Execute analysis commands
+10. **Run tests** - Execute test suites
+11. **Show available commands** - List all available commands
+12. **Cleanup resources** - Clean up files and caches
+13. **System check** - Verify system requirements
+14. **Exit** - Exit the script
 
-The setup script will:
-- Check macOS version compatibility
-- Verify native container application availability
-- Validate Python installation
-- Check project structure
-- Create container configuration
-- Build container image
+### Analysis Commands
 
-### 2. Start Container
+The interactive script provides easy access to common analysis commands:
 
-```bash
-# Start the container
-./scripts/native-container/run.sh
-```
+- **Demo analysis**: `nz demo --rule PHLD`
+- **Apple stock analysis**: `nz yfinance AAPL --rule PHLD`
+- **Bitcoin analysis**: `nz mql5 BTCUSD --interval H4 --rule PHLD`
+- **EDA analysis**: `eda`
+- **Custom commands**: Enter your own commands
 
-### 3. Execute Commands
+### Test Execution
 
-```bash
-# Run analysis
-./scripts/native-container/exec.sh --analysis 'nz demo --rule PHLD'
+Run tests with different options:
 
-# Start interactive shell
-./scripts/native-container/exec.sh --shell
+- **All tests**: `pytest`
+- **Multithreaded tests**: `pytest tests/ -n auto`
+- **Calculation tests**: `pytest tests/calculation/`
+- **CLI tests**: `pytest tests/cli/`
+- **Data tests**: `pytest tests/data/`
+- **Custom test commands**: Enter your own test commands
 
-# Run tests
-./scripts/native-container/exec.sh --test
-```
-
-## Detailed Usage
+## Individual Scripts Usage
 
 ### Setup Script (`setup.sh`)
 
@@ -350,6 +371,30 @@ MCP_SERVER_TYPE=pycharm_copilot
 LOG_LEVEL=INFO
 ```
 
+## Testing
+
+### Running Tests
+
+```bash
+# Run all native container tests
+pytest tests/native-container/
+
+# Run specific test file
+pytest tests/native-container/test_native_container_script.py
+
+# Run with coverage
+pytest tests/native-container/ --cov=scripts/native-container
+```
+
+### Test Coverage
+
+The native container scripts are fully tested with:
+- Unit tests for all functions
+- Integration tests for workflows
+- Error handling tests
+- Performance tests
+- Syntax validation tests
+
 ## Troubleshooting
 
 ### Common Issues
@@ -465,9 +510,10 @@ View detailed logs for troubleshooting:
 ### Migration Steps
 
 1. **Install native container application**
-2. **Run setup script**: `./setup.sh`
-3. **Test functionality**: `./run.sh`
-4. **Update CI/CD pipelines** if needed
+2. **Run interactive script**: `./native-container.sh`
+3. **Follow setup wizard**
+4. **Test functionality**
+5. **Update CI/CD pipelines** if needed
 
 ### Rollback Plan
 
@@ -477,7 +523,7 @@ View detailed logs for troubleshooting:
 
 ## Best Practices
 
-1. **Use setup script** for initial configuration
+1. **Use interactive script** for easiest experience
 2. **Monitor resource usage** with native tools
 3. **Leverage native logging** for debugging
 4. **Use volume mounts** for data persistence
@@ -487,10 +533,11 @@ View detailed logs for troubleshooting:
 
 For issues and questions:
 
-1. **Check the logs**: `./logs.sh`
-2. **Review the documentation**: `docs/deployment/native-container-setup.md`
-3. **Check the main project README**
-4. **Open an issue on GitHub**
+1. **Use interactive script**: `./native-container.sh`
+2. **Check the logs**: `./logs.sh`
+3. **Review the documentation**: `docs/deployment/native-container-setup.md`
+4. **Check the main project README**
+5. **Open an issue on GitHub**
 
 ## Comparison with Docker
 

@@ -1,7 +1,8 @@
 """
-Native Container Tests Package
+Native Container Tests Module.
 
-This package contains tests for the native Apple Silicon container infrastructure.
+This module contains tests for the native Apple Silicon container functionality
+including the interactive script, container management, and system integration.
 """
 
 __version__ = "1.0.0"
