@@ -86,11 +86,14 @@ def get_plot_title(data_info, point_size, estimated_point, args=None, selected_r
 
     # Add rule name to title
     if selected_rule is not None:
-        if hasattr(selected_rule, 'name'):
-            rule_name = selected_rule.name
+        # Check if we have original rule with parameters for display
+        if hasattr(selected_rule, 'original_rule_with_params'):
+            display_rule = selected_rule.original_rule_with_params
+        elif hasattr(selected_rule, 'name'):
+            display_rule = selected_rule.name
         else:
-            rule_name = str(selected_rule)
-        title_parts.append(f"Rule:{rule_name}")
+            display_rule = str(selected_rule)
+        title_parts.append(f"Rule:{display_rule}")
 
     # Add strategy parameters to title if available
     if args and hasattr(args, 'lot_size') and hasattr(args, 'risk_reward_ratio') and hasattr(args, 'fee_per_trade'):
