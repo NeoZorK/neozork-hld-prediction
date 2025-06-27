@@ -120,6 +120,34 @@ class TestDockerContainer(DockerBaseTest):
             )
             self.assertIn(test_filename, stdout, "Test file not found in container data volume")
 
+    def test_bash_history_initialization(self):
+        """Test that the init_bash_history function is present in docker-entrypoint.sh."""
+        entrypoint_path = os.path.join(self.project_root, "docker-entrypoint.sh")
+        
+        with open(entrypoint_path, 'r') as f:
+            content = f.read()
+        
+        # Check for init_bash_history function
+        self.assertIn("init_bash_history()", content, 
+                     "init_bash_history function not found in docker-entrypoint.sh")
+        
+        # Check for useful commands in the function
+        useful_commands = [
+            "uv run pytest tests -n auto",
+            "nz --interactive", 
+            "eda -dqc",
+            "nz --indicators",
+            "nz --metrics"
+        ]
+        
+        for cmd in useful_commands:
+            self.assertIn(cmd, content, 
+                         f"Useful command '{cmd}' not found in init_bash_history function")
+        
+        # Check for history loading
+        self.assertIn("history -r", content, 
+                     "history -r command not found in init_bash_history function")
+
 
 if __name__ == '__main__':
     unittest.main()

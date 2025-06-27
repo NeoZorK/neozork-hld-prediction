@@ -101,3 +101,7 @@ RUN groupadd -r neozork && useradd -r -g neozork -s /bin/bash -d /home/neozork n
 
 # Switch to non-root user
 USER neozork
+
+# Set entrypoint to our script
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
+CMD ["interactive"]
