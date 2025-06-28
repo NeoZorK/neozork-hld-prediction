@@ -42,43 +42,38 @@ The native Apple Silicon container is specifically optimized for macOS 26+ (Taho
 
 ### Interactive Setup (Recommended)
 
-The easiest way to get started is using the interactive script:
+The easiest way to get started is using the simplified interactive script:
 
 ```bash
 # Run the interactive container manager
 ./scripts/native-container/native-container.sh
 ```
 
-The interactive script provides a user-friendly menu system:
+The interactive script provides a simplified menu system with two main commands:
 
-1. **Setup container** - Initial setup and configuration
-2. **Start container** - Start the running container
-3. **Stop container** - Stop the running container
-4. **Remove container** - Remove the container completely
-5. **Show container status** - Display current container status
-6. **Show container logs** - View container logs
-7. **Execute command in container** - Run specific commands
-8. **Start interactive shell** - Open bash shell in container
-9. **Run analysis** - Execute analysis commands
-10. **Run tests** - Execute test suites
-11. **Show available commands** - List all available commands
-12. **Cleanup resources** - Clean up files and caches
-13. **System check** - Verify system requirements
-14. **Exit** - Exit the script
+#### 1. Start Container (Full Sequence)
+Executes the complete startup sequence:
+- Setup container (`./scripts/native-container/setup.sh`)
+- Start container (`./scripts/native-container/run.sh`)
+- Check status (`./scripts/native-container/run.sh --status`)
+- Open interactive shell (`./scripts/native-container/exec.sh --shell`)
 
-### Manual Setup
+#### 2. Stop Container (Full Sequence)
+Executes the complete shutdown sequence:
+- Stop container (`./scripts/native-container/stop.sh`)
+- Check status (`./scripts/native-container/run.sh --status`)
+- Cleanup resources (`./scripts/native-container/cleanup.sh --all --force`)
 
-If you prefer to use individual scripts:
+### Quick Commands (Non-interactive)
+
+For non-interactive use, you can run the sequences directly:
 
 ```bash
-# 1. Initial setup
-./scripts/native-container/setup.sh
+# Start container (full sequence)
+./scripts/native-container/setup.sh && ./scripts/native-container/run.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/exec.sh --shell
 
-# 2. Start container
-./scripts/native-container/run.sh
-
-# 3. Execute commands
-./scripts/native-container/exec.sh --shell
+# Stop container (full sequence)
+./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force
 ```
 
 ## Interactive Script Features

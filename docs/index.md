@@ -4,7 +4,17 @@ Welcome to the comprehensive documentation for the NeoZork HLD Prediction projec
 
 ## 🚀 Quick Start
 
-### Docker Environment (Recommended)
+### Native Apple Silicon Container (macOS 26+)
+```bash
+# Run interactive container manager
+./scripts/native-container/native-container.sh
+
+# Quick commands (non-interactive)
+# Start: ./scripts/native-container/setup.sh && ./scripts/native-container/run.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/exec.sh --shell
+# Stop:  ./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force
+```
+
+### Docker Environment (Recommended for other platforms)
 ```bash
 # Build and start the container
 docker-compose up
@@ -42,8 +52,9 @@ python run_analysis.py demo --rule PHLD
 - [Debugging](development/debugging.md) - Debugging tools and techniques
 
 ### Deployment
+- [Native Container Setup](deployment/native-container-setup.md) - **NEW**: Native Apple Silicon container
 - [Docker Setup](deployment/docker-setup.md) - Containerized deployment
-- [UV-Only Mode](deployment/uv-only-mode.md) - **NEW**: UV package manager configuration
+- [UV-Only Mode](deployment/uv-only-mode.md) - UV package manager configuration
 - [Production Deployment](deployment/production.md) - Production environment setup
 - [Monitoring](deployment/monitoring.md) - System monitoring and logging
 
@@ -64,6 +75,7 @@ python run_analysis.py demo --rule PHLD
 ### UV Package Management
 - **UV-Only Mode**: Exclusive use of UV package manager for faster, more reliable dependency management
 - **Docker Integration**: Seamless UV integration in Docker containers
+- **Native Container Support**: **NEW**: Native Apple Silicon container with 30-50% performance improvement
 - **Local Development**: UV support for local development environments
 - **Adaptive Testing**: Tests that work in both Docker and local environments
 
