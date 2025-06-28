@@ -1,346 +1,177 @@
-# Native Apple Silicon Container Scripts
-
-This directory contains scripts for managing the NeoZork HLD Prediction project using the native Apple Silicon container application in macOS 26 Tahoe (Developer Beta).
-
-## Directory Structure
-
-```
-scripts/native-container/
-├── native-container.sh    # Interactive container manager (main script)
-├── setup.sh              # Initial setup and configuration
-├── run.sh                # Start the container
-├── stop.sh               # Stop the container
-├── logs.sh               # View container logs
-├── exec.sh               # Execute commands in container
-├── cleanup.sh            # Clean up resources
-├── README.md             # This documentation
-└── __init__.py           # Python package marker
-```
+# Native Container for NeoZork HLD Prediction
 
 ## Overview
 
-The native container provides **30-50% performance improvement** over Docker with **lower resource usage** and **faster startup times**. It's optimized specifically for Apple Silicon Macs running macOS 26+.
+The Native Container provides a complete Apple Silicon-optimized environment for the NeoZork HLD Prediction project with **full feature parity** to the Docker container. This container leverages macOS 26+ (Tahoe) native container technology for improved performance and better integration with Apple Silicon.
 
-## Quick Start - Interactive Script
+## 🚀 Full Docker Parity Features
 
-**NEW: Use the simplified interactive script for the easiest experience!**
+The Native Container now provides **complete feature parity** with the Docker container, including:
 
+### ✅ UV Package Manager Support
+- **UV-only mode** enforced for consistent dependency management
+- Automatic UV installation and configuration
+- Command wrappers: `uv-install`, `uv-update`, `uv-test`, `uv-pytest`
+- UV cache management and optimization
+
+### ✅ MCP Server Integration
+- **MCP server startup** with interactive prompts
+- **MCP server status checking** and monitoring
+- Command wrappers: `mcp-start`, `mcp-check`
+- Automatic cleanup on container exit
+- Enhanced LLM support integration
+
+### ✅ Command Wrappers & Scripts
+- **`nz`** - Main analysis command wrapper
+- **`eda`** - EDA analysis command wrapper
+- **`uv-*`** - UV package manager wrappers
+- **`mcp-*`** - MCP server management wrappers
+- All wrappers available in PATH for easy access
+
+### ✅ Bash Environment & History
+- **Interactive bash shell** with custom prompt
+- **Command history** with useful pre-loaded commands
+- **Readline configuration** for better navigation
+- **History persistence** between sessions
+- **Tab completion** and arrow key navigation
+
+### ✅ External Data Feed Tests
+- **Interactive prompts** for running data feed tests
+- **Polygon.io API** testing
+- **YFinance API** testing  
+- **Binance API** testing
+- **Parquet file operations** testing
+
+### ✅ Usage Guide & Help
+- **Comprehensive usage guide** on startup
+- **Command reference** with examples
+- **Tips for viewing plots** and results
+- **Available commands list** in `/tmp/neozork_commands.txt`
+
+### ✅ Directory Structure & Permissions
+- **Complete directory structure** matching Docker
+- **Proper permissions** for all directories
+- **Volume mounts** for data persistence
+- **Cache directories** for UV and other tools
+
+## 🏗️ Architecture
+
+### Container Structure
+```
+neozork-hld-prediction/
+├── container.yaml              # Native container configuration
+├── container-entrypoint.sh     # Full-featured entrypoint script
+├── scripts/native-container/   # Management scripts
+│   ├── setup.sh               # Setup with full Docker parity
+│   ├── run.sh                 # Container execution
+│   ├── stop.sh                # Container stopping
+│   ├── exec.sh                # Interactive shell access
+│   ├── logs.sh                # Log viewing
+│   └── cleanup.sh             # Resource cleanup
+└── tests/native-container/    # Native container tests
+    └── test_native_container_full_functionality.py
+```
+
+### Environment Variables
 ```bash
-# Run the interactive container manager
+# UV Configuration
+USE_UV=true
+UV_ONLY=true
+UV_CACHE_DIR=/app/.uv_cache
+UV_VENV_DIR=/app/.venv
+
+# Container Type
+NATIVE_CONTAINER=true
+DOCKER_CONTAINER=false
+
+# Python Configuration
+PYTHONPATH=/app
+PYTHONUNBUFFERED=1
+PYTHONDONTWRITEBYTECODE=1
+MPLCONFIGDIR=/tmp/matplotlib-cache
+
+# MCP Server
+MCP_SERVER_TYPE=pycharm_copilot
+LOG_LEVEL=INFO
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+- macOS 26+ (Tahoe) or higher
+- Native container application installed
+- Python 3.11+ installed
+- At least 4GB of available RAM
+- 10GB of available disk space
+
+### Setup and Run
+```bash
+# 1. Setup container (full Docker parity)
+./scripts/native-container/setup.sh
+
+# 2. Run container with interactive shell
+./scripts/native-container/run.sh
+
+# 3. Access interactive shell
+./scripts/native-container/exec.sh --shell
+
+# 4. Stop container
+./scripts/native-container/stop.sh
+
+# 5. Cleanup resources
+./scripts/native-container/cleanup.sh --all --force
+```
+
+### Interactive Menu
+```bash
+# Use the simplified interactive menu
 ./scripts/native-container/native-container.sh
 ```
 
-The interactive script provides a simplified menu system with two main commands:
-
-### 1. Start Container (Full Sequence)
-Executes the complete startup sequence:
-- Setup container (`./scripts/native-container/setup.sh`)
-- Start container (`./scripts/native-container/run.sh`)
-- Check status (`./scripts/native-container/run.sh --status`)
-- Open interactive shell (`./scripts/native-container/exec.sh --shell`)
-
-### 2. Stop Container (Full Sequence)
-Executes the complete shutdown sequence:
-- Stop container (`./scripts/native-container/stop.sh`)
-- Check status (`./scripts/native-container/run.sh --status`)
-- Cleanup resources (`./scripts/native-container/cleanup.sh --all --force`)
-
-## Prerequisites
-
-- **macOS 26 Tahoe (Developer Beta)** or higher
-- **Native container application** installed from Apple Developer Beta
-- **Python 3.11+** installed
-- **At least 4GB of available RAM**
-- **10GB of available disk space**
-
-## Quick Commands
-
-For non-interactive use, you can run the sequences directly:
-
-```bash
-# Start container (full sequence)
-./scripts/native-container/setup.sh && ./scripts/native-container/run.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/exec.sh --shell
-
-# Stop container (full sequence)
-./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force
-```
-
-## Scripts Overview
-
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| `native-container.sh` | **Interactive container manager** | `./native-container.sh` |
-| `setup.sh` | Initial setup and configuration | `./setup.sh` |
-| `run.sh` | Start the container | `./run.sh` |
-| `stop.sh` | Stop the container | `./stop.sh` |
-| `logs.sh` | View container logs | `./logs.sh` |
-| `exec.sh` | Execute commands in container | `./exec.sh` |
-| `cleanup.sh` | Clean up resources | `./cleanup.sh` |
-
-## Interactive Script Features
-
-### Main Menu Options
-
-1. **Start Container (Full Sequence)** - Complete startup with shell access
-2. **Stop Container (Full Sequence)** - Complete shutdown with cleanup
-3. **Show Container Status** - Display current container status
-4. **Help** - Show help information
-0. **Exit** - Exit the script
-
-### What Each Sequence Does
-
-#### Start Container Sequence
-1. **Smart Check**: Checks if container already exists and is running
-   - If running: Skips setup and start, opens shell directly
-   - If stopped: Starts existing container, then opens shell
-   - If not exists: Runs full setup sequence
-2. **Setup** (if needed): Validates prerequisites, creates container configuration
-3. **Start** (if needed): Launches the container and ensures it's running
-4. **Status Check** (if needed): Verifies container is properly started
-5. **Interactive Shell**: Opens bash shell inside the container
-
-#### Stop Container Sequence
-1. **Stop**: Gracefully stops the running container
-2. **Status Check**: Verifies container has stopped
-3. **Cleanup**: Removes temporary files, caches, and logs
-
-## Individual Scripts Usage
-
-### Setup Script (`setup.sh`)
-
-```bash
-# Basic setup
-./scripts/native-container/setup.sh
-
-# Check what will be done
-./scripts/native-container/setup.sh --help
-```
-
-**What it does:**
-- Validates system requirements
-- Creates container configuration
-- Builds container image
-- Sets up UV package manager
-- Creates necessary directories
-
-### Run Script (`run.sh`)
-
-```bash
-# Start container
-./scripts/native-container/run.sh
-
-# Check status
-./scripts/native-container/run.sh --status
-
-# Start in detached mode
-./scripts/native-container/run.sh --detached
-
-# Show help
-./scripts/native-container/run.sh --help
-```
-
-**Options:**
-- `--status`: Show container status
-- `--foreground`: Run in foreground mode
-- `--detached`: Run in background mode
-
-### Stop Script (`stop.sh`)
-
-```bash
-# Stop gracefully
-./scripts/native-container/stop.sh
-
-# Force stop
-./scripts/native-container/stop.sh --force
-
-# Stop and remove container
-./scripts/native-container/stop.sh --remove
-
-# Show help
-./scripts/native-container/stop.sh --help
-```
-
-**Options:**
-- `--force`: Force stop (SIGKILL)
-- `--remove`: Remove container after stopping
-- `--timeout`: Timeout for graceful stop (default: 30s)
-
-### Logs Script (`logs.sh`)
-
-```bash
-# View container logs
-./scripts/native-container/logs.sh
-
-# Follow logs in real-time
-./scripts/native-container/logs.sh --follow
-
-# View specific log type
-./scripts/native-container/logs.sh mcp --follow
-./scripts/native-container/logs.sh app --lines 100
-
-# Filter logs
-./scripts/native-container/logs.sh --grep 'ERROR'
-
-# List available logs
-./scripts/native-container/logs.sh --list
-
-# Show help
-./scripts/native-container/logs.sh --help
-```
-
-**Log Types:**
-- `container`: Container logs (default)
-- `app`: Application logs
-- `mcp`: MCP server logs
-- `test`: Test result logs
-- `uv`: UV package manager logs
-- `system`: System information
-
-**Options:**
-- `--follow`: Follow log output in real-time
-- `--lines N`: Show last N lines (default: 50)
-- `--grep PATTERN`: Filter logs by pattern
-- `--list`: List available log files
-
-### Exec Script (`exec.sh`)
-
-```bash
-# Start interactive shell
-./scripts/native-container/exec.sh --shell
-
-# Run specific command
-./scripts/native-container/exec.sh --command 'nz demo --rule PHLD'
-
-# Run test suite
-./scripts/native-container/exec.sh --test
-
-# Run analysis
-./scripts/native-container/exec.sh --analysis 'nz yfinance AAPL --rule PHLD'
-
-# List available commands
-./scripts/native-container/exec.sh --list
-
-# Show help
-./scripts/native-container/exec.sh --help
-```
-
-**Options:**
-- `--shell`: Start interactive shell
-- `--command CMD`: Execute specific command
-- `--test`: Run test suite
-- `--analysis CMD`: Run analysis command
-- `--list`: List available commands
-- `--interactive`: Run command in interactive mode
-
-### Cleanup Script (`cleanup.sh`)
-
-```bash
-# Clean up everything
-./scripts/native-container/cleanup.sh --all
-
-# Clean specific resources
-./scripts/native-container/cleanup.sh --cache --logs
-
-# Force cleanup without confirmation
-./scripts/native-container/cleanup.sh --all --force
-
-# Show help
-./scripts/native-container/cleanup.sh --help
-```
-
-**Options:**
-- `--all`: Clean up everything
-- `--stop`: Stop running container
-- `--remove`: Remove container
-- `--image`: Remove container image
-- `--temp`: Clean temporary files
-- `--cache`: Clean cache directories
-- `--logs`: Clean log files
-- `--results`: Clean result files
-- `--force`: Force cleanup without confirmation
-
-## Available Commands Inside Container
+## 📋 Available Commands
 
 ### Analysis Commands
-
 ```bash
-# Main analysis command
-nz demo --rule PHLD
-nz yfinance AAPL --rule PHLD
-nz mql5 BTCUSD --interval H4 --rule PHLD
-
-# EDA analysis
-eda
+nz --interactive                    # Interactive analysis
+nz demo --rule PHLD                # Demo analysis
+nz yfinance AAPL --rule PHLD       # YFinance analysis
+nz mql5 BTCUSD --interval H4 --rule PHLD  # MQL5 analysis
+eda -dqc                           # Data quality checks
+eda --descriptive-stats            # Descriptive statistics
 ```
 
-### UV Package Manager
-
+### UV Package Manager Commands
 ```bash
-# Install dependencies
-uv-install
-
-# Update dependencies
-uv-update
-
-# Test UV environment
-uv-test
+uv-install                         # Install dependencies
+uv-update                          # Update dependencies
+uv-test                            # Run UV environment test
+uv-pytest                          # Run pytest with UV
+uv pip list                        # List installed packages
+uv pip install <package>           # Install specific package
 ```
 
-### Testing
-
+### MCP Server Commands
 ```bash
-# Run all tests
-pytest
-
-# Run tests with multithreading
-pytest tests/ -n auto
-
-# Run specific test categories
-pytest tests/calculation/
-pytest tests/cli/
-pytest tests/data/
+mcp-start                          # Start MCP server
+mcp-check                          # Check MCP server status
+python scripts/check_mcp_status.py # Detailed MCP status
+python neozork_mcp_server.py       # Direct MCP server
 ```
 
-### Development
-
+### Testing Commands
 ```bash
-# Show help
-python run_analysis.py -h
-
-# Test UV environment
-python scripts/test_uv_docker.py
-
-# Check MCP server
-python scripts/check_mcp_status.py
+uv run pytest tests -n auto        # Run all tests with UV
+python tests/run_tests_docker.py   # Run external data feed tests
 ```
 
-### System Commands
+## 🔧 Configuration
 
-```bash
-# List files
-ls -la /app
-ls -la /app/results/plots/
-
-# Check processes
-ps aux | grep python
-
-# Check disk usage
-df -h
-```
-
-## Configuration
-
-### Container Configuration (`container.yaml`)
-
-The container uses a YAML configuration file with the following key settings:
-
+### Container Configuration (container.yaml)
 ```yaml
 apiVersion: v1
 kind: Container
 metadata:
   name: neozork-hld-prediction
-  labels:
-    platform: apple-silicon
 spec:
   image: python:3.11-slim
   architecture: arm64
@@ -348,433 +179,180 @@ spec:
     memory: "4Gi"
     cpu: "2"
     storage: "10Gi"
+  environment:
+    - USE_UV=true
+    - UV_ONLY=true
+    - NATIVE_CONTAINER=true
+    - MCP_SERVER_TYPE=pycharm_copilot
   volumes:
     - name: data-volume
       mountPath: /app/data
       hostPath: ./data
-    - name: logs-volume
-      mountPath: /app/logs
-      hostPath: ./logs
-    - name: results-volume
-      mountPath: /app/results
-      hostPath: ./results
-  environment:
-    - PYTHONPATH=/app
-    - USE_UV=true
-    - UV_ONLY=true
-    - NATIVE_CONTAINER=true
+    - name: uv-cache-volume
+      mountPath: /app/.uv_cache
+      hostPath: ./data/cache/uv_cache
 ```
 
-### Environment Variables
+### Entrypoint Features
+The `container-entrypoint.sh` provides:
 
-Key environment variables for the native container:
+1. **UV Verification** - Ensures UV is available and working
+2. **Bash Environment Setup** - Configures history, readline, and prompt
+3. **Command Wrapper Creation** - Creates all utility commands
+4. **Data Feed Tests** - Interactive external API testing
+5. **MCP Server Management** - Startup, monitoring, and cleanup
+6. **Usage Guide Display** - Comprehensive help and examples
+7. **History Initialization** - Pre-loads useful commands
+8. **Commands File Creation** - Creates reference file
 
+## 🧪 Testing
+
+### Run Native Container Tests
 ```bash
-# Package manager configuration
-USE_UV=true
-UV_ONLY=true
-UV_CACHE_DIR=/app/.uv_cache
-UV_VENV_DIR=/app/.venv
+# Test full functionality
+uv run pytest tests/native-container/test_native_container_full_functionality.py -v
 
-# Container identification
-NATIVE_CONTAINER=true
-DOCKER_CONTAINER=false
-
-# Python configuration
-PYTHONPATH=/app
-PYTHONUNBUFFERED=1
-PYTHONDONTWRITEBYTECODE=1
-
-# MCP Server configuration
-MCP_SERVER_TYPE=pycharm_copilot
-
-# Logging
-LOG_LEVEL=INFO
-```
-
-## Testing
-
-### Running Tests
-
-```bash
-# Run all native container tests
-pytest tests/native-container/
-
-# Run specific test file
-pytest tests/native-container/test_native_container_script.py
-
-# Run with coverage
-pytest tests/native-container/ --cov=scripts/native-container
+# Test specific features
+uv run pytest tests/native-container/ -k "uv" -v
+uv run pytest tests/native-container/ -k "mcp" -v
 ```
 
 ### Test Coverage
+The native container tests cover:
+- ✅ Container setup and configuration
+- ✅ Entrypoint script functionality
+- ✅ UV package manager integration
+- ✅ MCP server integration
+- ✅ Command wrapper creation
+- ✅ Bash environment setup
+- ✅ Directory structure validation
+- ✅ File permissions and existence
+- ✅ Environment variable configuration
 
-The native container scripts are fully tested with:
-- Unit tests for all functions
-- Integration tests for workflows
-- Error handling tests
-- Performance tests
-- Syntax validation tests
+## 📊 Performance Benefits
 
-**Note:** Some tests require an interactive terminal (tty) and will be skipped in CI environments. This is expected behavior.
+### vs Docker Container
+- **Faster startup** - Native container technology
+- **Better Apple Silicon integration** - Optimized for ARM64
+- **Lower resource usage** - More efficient memory management
+- **Improved file system performance** - Native volume mounts
+- **Better terminal integration** - Native macOS terminal support
 
-### CI/CD Integration
+### Resource Usage
+- **Memory**: 4GB allocated (configurable)
+- **CPU**: 2 cores allocated (configurable)
+- **Storage**: 10GB allocated (configurable)
+- **Network**: Native macOS networking
 
-For continuous integration, use the non-interactive tests:
-
-```bash
-# In CI pipeline
-pytest tests/native-container/ --tb=short
-
-# Run only non-interactive tests
-pytest tests/native-container/ -m "not skip_if_docker"
-```
-
-**CI Best Practices:**
-- Interactive tests are automatically skipped in non-tty environments
-- Focus on unit tests and integration tests that don't require interactive input
-- Use `--tb=short` for cleaner CI output
-- Set `LOG_LEVEL=WARNING` to reduce log verbosity in CI
-
-### How to Add New Tests
-
-To add new tests for native container scripts:
-
-1. **Create test file**: `tests/native-container/test_new_feature.py`
-2. **Import required modules**:
-   ```python
-   import pytest
-   from tests.conftest import skip_if_docker
-   ```
-3. **Use decorators appropriately**:
-   ```python
-   @skip_if_docker  # Skip in Docker environment
-   @pytest.mark.skip(reason="Requires interactive terminal (tty)")  # Skip non-interactive tests
-   ```
-4. **Follow naming conventions**:
-   - Test classes: `TestFeatureName`
-   - Test methods: `test_feature_description`
-5. **Add to test suite**: Tests are automatically discovered by pytest
-
-## Script Updates and Maintenance
-
-### Updating Scripts
-
-To update the native container scripts:
-
-```bash
-# Pull latest changes
-git pull origin main
-
-# Make scripts executable
-chmod +x scripts/native-container/*.sh
-
-# Test the changes
-pytest tests/native-container/ -v
-
-# Update documentation if needed
-# Edit this README.md and docs/deployment/native-container-setup.md
-```
-
-### Script Structure Changes
-
-When modifying script structure:
-
-1. **Update tests**: Modify corresponding test files
-2. **Update documentation**: Update this README and setup guide
-3. **Update interactive script**: Ensure menu options match individual scripts
-4. **Test thoroughly**: Run both unit tests and manual testing
-
-### Version Compatibility
-
-- **Scripts**: Compatible with macOS 26+ (Tahoe)
-- **Container**: Requires native container application
-- **Python**: Requires Python 3.11+
-- **UV**: Automatically installed in container
-
-## Manual Testing
-
-### Testing Interactive Features
-
-To manually test interactive features:
-
-```bash
-# Start interactive script
-./scripts/native-container/native-container.sh
-
-# Test each menu option:
-# 1. Start Container (Full Sequence)
-# 2. Stop Container (Full Sequence)
-# 3. Show Container Status
-# 4. Help
-# 0. Exit
-```
-
-### Testing Individual Scripts
-
-```bash
-# Test setup
-./scripts/native-container/setup.sh
-
-# Test run
-./scripts/native-container/run.sh
-
-# Test exec
-./scripts/native-container/exec.sh --shell
-
-# Test logs
-./scripts/native-container/logs.sh --follow
-
-# Test stop
-./scripts/native-container/stop.sh
-
-# Test cleanup
-./scripts/native-container/cleanup.sh --all --force
-```
-
-### Testing Error Conditions
-
-```bash
-# Test with missing container
-./scripts/native-container/run.sh
-
-# Test with missing dependencies
-./scripts/native-container/setup.sh
-
-# Test with invalid commands
-./scripts/native-container/exec.sh --command 'invalid_command'
-```
-
-## Troubleshooting
+## 🔍 Troubleshooting
 
 ### Common Issues
 
-#### 1. Native Container Application Not Found
-
+#### Container Won't Start
 ```bash
-Error: Native container application not found
+# Check native container service
+container system status
+
+# Start service if needed
+container system start
+
+# Check container logs
+./scripts/native-container/logs.sh
 ```
 
-**Solution:**
-- Install the native container application from macOS Developer Beta
-- Download from: https://developer.apple.com/download/all/
-- Ensure you have a valid Apple Developer account
-
-#### 2. macOS Version Incompatibility
-
+#### UV Issues
 ```bash
-Warning: macOS version X.X detected
-Warning: Native container is designed for macOS 26+ (Tahoe)
+# Check UV installation
+uv --version
+
+# Reinstall UV in container
+uv-install
+
+# Test UV environment
+uv-test
 ```
 
-**Solution:**
-- Update to macOS 26 Tahoe (Developer Beta) or higher
-- Some features may work on earlier versions but with reduced performance
-
-#### 3. Container Build Failures
-
+#### MCP Server Issues
 ```bash
-Error: Failed to build container image
+# Check MCP server status
+mcp-check
+
+# Restart MCP server
+mcp-start
+
+# Check MCP logs
+tail -f logs/mcp_server.log
 ```
 
-**Solution:**
-- Check available disk space (minimum 10GB required)
-- Verify Python 3.11+ installation
-- Ensure all required files are present in project root
-- Run cleanup and retry: `./cleanup.sh --all`
-
-#### 4. Permission Issues
-
+#### Permission Issues
 ```bash
-Error: Permission denied
+# Fix script permissions
+chmod +x scripts/native-container/*.sh
+chmod +x container-entrypoint.sh
+
+# Fix directory permissions
+chmod -R 755 data/ logs/ results/
 ```
-
-**Solution:**
-- Ensure script files are executable: `chmod +x *.sh`
-- Check file ownership and permissions
-- Run setup with elevated privileges if needed
-
-#### 5. UV Package Manager Issues
-
-```bash
-Error: UV is not available
-```
-
-**Solution:**
-- Container will automatically install UV if not available
-- Check UV installation: `uv --version`
-- Reinstall UV manually if needed: `curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh | bash`
-
-#### 6. Container Already Running
-
-```bash
-[WARNING] Container 'neozork-hld-prediction' already exists
-[INFO] Removing existing container...
-Error: internalError: "delete failed for one or more containers: ["neozork-hld-prediction"]"
-```
-
-**Solution:**
-- The interactive script now handles this automatically
-- If container is running: Opens shell directly (skips setup)
-- If container is stopped: Starts existing container, then opens shell
-- If container doesn't exist: Runs full setup sequence
-- No manual intervention needed
-
-#### 7. Smart Container Logic
 
 ### Debug Mode
-
-Enable debug logging for troubleshooting:
-
 ```bash
-# Set debug log level
-export LOG_LEVEL=DEBUG
+# Run with debug output
+DEBUG=true ./scripts/native-container/run.sh
 
-# Run container with debug output
-./run.sh
+# Check container status
+./scripts/native-container/run.sh --status
+
+# Analyze all logs
+./scripts/native-container/analyze_all_logs.sh
 ```
 
-### Log Analysis
+## 📚 Documentation
 
-View detailed logs for troubleshooting:
+### Related Documentation
+- [Native Container Setup](../docs/deployment/native-container-setup.md)
+- [Docker vs Native Comparison](../docs/deployment/native-vs-docker-comparison.md)
+- [UV Package Manager Guide](../docs/development/uv-package-manager.md)
+- [MCP Server Integration](../docs/reference/mcp-servers/README.md)
 
-```bash
-# View all logs
-./logs.sh --list
+### API Documentation
+- [Data Sources](../docs/api/data-sources.md)
+- [Exchange Rate API](../docs/api/exchange-rate-api-complete.md)
+- [Indicators Reference](../docs/reference/indicators/)
 
-# Follow container logs
-./logs.sh --follow
+## 🤝 Contributing
 
-# Filter for errors
-./logs.sh --grep 'ERROR'
-```
+### Adding New Features
+1. **Update entrypoint script** - Add functionality to `container-entrypoint.sh`
+2. **Update setup script** - Add configuration to `setup.sh`
+3. **Add tests** - Create tests in `tests/native-container/`
+4. **Update documentation** - Update this README and related docs
+5. **Test thoroughly** - Ensure Docker parity is maintained
 
-## Performance Benefits
+### Testing Guidelines
+- All new features must have corresponding tests
+- Tests should verify Docker parity
+- Performance tests should be included
+- Documentation should be updated
 
-### Native Apple Silicon Optimization
+## 📈 Roadmap
 
-- **30-50% performance improvement** compared to Docker
-- **Lower memory usage** due to native virtualization
-- **Faster startup times** with optimized container initialization
-- **Better integration** with macOS system resources
+### Planned Features
+- [ ] **Multi-container support** - Run multiple analysis containers
+- [ ] **GPU acceleration** - Metal Performance Shaders integration
+- [ ] **Advanced monitoring** - Real-time resource monitoring
+- [ ] **Automated testing** - CI/CD integration for native containers
+- [ ] **Plugin system** - Extensible command wrapper system
 
-### Resource Efficiency
+### Performance Optimizations
+- [ ] **Memory optimization** - Dynamic memory allocation
+- [ ] **Cache optimization** - Intelligent UV cache management
+- [ ] **Network optimization** - Native macOS networking features
+- [ ] **Storage optimization** - Efficient volume mount strategies
 
-- **Reduced CPU overhead** from native containerization
-- **Optimized memory management** for Apple Silicon
-- **Efficient file system access** with native volume mounts
-- **Lower power consumption** during idle periods
+## 📄 License
 
-## Migration from Docker
+This native container implementation is part of the NeoZork HLD Prediction project and follows the same licensing terms.
 
-### Benefits of Migration
+---
 
-- **30-50% performance improvement**
-- **Lower resource usage**
-- **Better macOS integration**
-- **Native Apple Silicon optimizations**
-
-### Migration Steps
-
-1. **Install native container application**
-2. **Run interactive script**: `./native-container.sh`
-3. **Follow setup wizard**
-4. **Test functionality**
-5. **Update CI/CD pipelines** if needed
-
-### Rollback Plan
-
-- **Keep Docker setup as backup**
-- **Both can run simultaneously**
-- **Easy rollback to Docker if needed**
-
-## Best Practices
-
-1. **Use interactive script** for easiest experience
-2. **Monitor resource usage** with native tools
-3. **Leverage native logging** for debugging
-4. **Use volume mounts** for data persistence
-5. **Keep container updated** with latest macOS
-6. **Run tests regularly** to ensure functionality
-7. **Update documentation** when making changes
-
-## Support
-
-For issues and questions:
-
-1. **Use interactive script**: `./native-container.sh`
-2. **Check the logs**: `./logs.sh`
-3. **Review the documentation**: `docs/deployment/native-container-setup.md`
-4. **Check the main project README**
-5. **Open an issue on GitHub**
-
-## Comparison with Docker
-
-| Feature | Native Container | Docker |
-|---------|------------------|--------|
-| Performance | 30-50% faster | Baseline |
-| Memory Usage | Lower | Higher |
-| Startup Time | Faster | Slower |
-| macOS Integration | Native | Virtualized |
-| Cross-platform | No (macOS 26+) | Yes |
-| Resource Overhead | Minimal | Higher |
-| Apple Silicon | Optimized | Generic |
-
-For detailed comparison, see: `docs/deployment/native-vs-docker-comparison.md`
-
-## CI/CD Integration
-
-### GitHub Actions Example
-
-Для автоматизации тестирования и проверки скриптов нативного контейнера используйте следующий workflow:
-
-```yaml
-name: Native Container CI
-
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  native-container-tests:
-    runs-on: macos-14
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - name: Install UV
-        run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-      - name: Install dependencies
-        run: |
-          uv pip install -r requirements.txt
-          uv pip install -r requirements-dev.txt
-      - name: Run native container tests (non-interactive)
-        run: |
-          pytest tests/native-container/ --tb=short -m "not skip_if_docker"
-      - name: Run coverage
-        run: |
-          pytest tests/native-container/ --cov=scripts/native-container --cov-report=xml
-```
-
-### CI/CD Recommendations
-- Используйте теги `not skip_if_docker` для пропуска интерактивных тестов.
-- Для ускорения CI используйте `--tb=short` и `--cov` для покрытия.
-- В пайплайне не запускайте интерактивные сценарии (tty).
-- Для production-веток добавьте шаги деплоя или публикации артефактов, если требуется.
-- Для других CI-систем (GitLab CI, Jenkins) используйте аналогичные шаги: установка Python, UV, зависимостей и запуск тестов.
-
-### Пример для локального CI
-
-```bash
-export CI=true
-export GITHUB_ACTIONS=true
-pytest tests/native-container/ --tb=short -m "not skip_if_docker"
-```
-
---- 
+**Note**: This native container provides full feature parity with the Docker container while offering improved performance and better integration with Apple Silicon. All Docker container features are available, including UV package management, MCP server integration, command wrappers, bash history, and external data feed testing. 
