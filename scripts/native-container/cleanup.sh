@@ -41,7 +41,7 @@ check_container_exists() {
 
 # Function to check if container is running
 check_container_running() {
-    if container list --all | grep -q "neozork-hld-prediction.*running"; then
+    if container list | grep -q "neozork-hld-prediction"; then
         return 0
     else
         return 1

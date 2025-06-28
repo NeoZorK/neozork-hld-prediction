@@ -29,7 +29,7 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Function to check if container exists
+# Function to check if container exists (including stopped containers)
 check_container_exists() {
     if container list --all | grep -q "neozork-hld-prediction"; then
         return 0
@@ -40,10 +40,40 @@ check_container_exists() {
 
 # Function to check if container is running
 check_container_running() {
-    if container list --all | grep -q "neozork-hld-prediction.*running"; then
+    if container list | grep -q "neozork-hld-prediction"; then
         return 0
     else
         return 1
+    fi
+}
+
+# Function to get container ID from running containers
+get_running_container_id() {
+    container list | grep "neozork-hld-prediction" | awk '{print $1}'
+}
+
+# Function to get container ID from all containers (including stopped)
+get_all_container_id() {
+    container list --all | grep "neozork-hld-prediction" | awk '{print $1}'
+}
+
+# Function to show running containers
+show_running_containers() {
+    print_status "Running containers (container ls):"
+    if container list | grep -q .; then
+        container list
+    else
+        print_warning "No running containers found"
+    fi
+}
+
+# Function to show all containers (including stopped)
+show_all_containers() {
+    print_status "All containers (container ls -a):"
+    if container list --all | grep -q .; then
+        container list --all
+    else
+        print_warning "No containers found"
     fi
 }
 
@@ -51,7 +81,7 @@ check_container_running() {
 start_container() {
     print_status "Starting NeoZork HLD Prediction container..."
     
-    # Check if container exists
+    # Check if container exists (including stopped containers)
     if ! check_container_exists; then
         print_error "Container 'neozork-hld-prediction' not found"
         print_error "Please run setup first: ./scripts/native-container/setup.sh"
@@ -61,15 +91,32 @@ start_container() {
     # Check if container is already running
     if check_container_running; then
         print_warning "Container is already running"
-        print_status "Container status:"
-        container list | grep "neozork-hld-prediction"
+        show_running_containers
         return 0
     fi
     
+    # Show container status before starting
+    print_status "Container status before starting:"
+    show_all_containers
+    
     # Start the container
+    print_status "Starting container..."
     if container start neozork-hld-prediction; then
-        print_success "Container started successfully"
-        return 0
+        print_success "Container start command completed"
+        
+        # Wait a moment for container to fully start
+        sleep 2
+        
+        # Check if container is now running
+        if check_container_running; then
+            print_success "Container started successfully and is running"
+            return 0
+        else
+            print_warning "Container start command succeeded but container is not running"
+            print_status "Checking all containers:"
+            show_all_containers
+            return 1
+        fi
     else
         print_error "Failed to start container"
         return 1
@@ -79,15 +126,29 @@ start_container() {
 # Function to show container status
 show_container_status() {
     print_status "Container status:"
-    if check_container_running; then
-        print_success "Container is running"
-        container list --all | grep "neozork-hld-prediction"
-    else
-        print_warning "Container is not running"
-        if check_container_exists; then
-            print_status "Container exists but is stopped:"
-            container list --all | grep "neozork-hld-prediction"
+    echo
+    
+    # Show running containers
+    show_running_containers
+    echo
+    
+    # Show all containers
+    show_all_containers
+    echo
+    
+    # Check specific container status
+    if check_container_exists; then
+        if check_container_running; then
+            print_success "Container 'neozork-hld-prediction' is running"
+            container_id=$(get_running_container_id)
+            print_status "Container ID: $container_id"
+        else
+            print_warning "Container 'neozork-hld-prediction' exists but is stopped"
+            container_id=$(get_all_container_id)
+            print_status "Container ID: $container_id"
         fi
+    else
+        print_warning "Container 'neozork-hld-prediction' does not exist"
     fi
 }
 
@@ -164,6 +225,8 @@ main() {
         print_status "To view logs: ./scripts/native-container/logs.sh"
     else
         print_error "Failed to start container"
+        print_status "Container may have started but stopped immediately"
+        print_status "Check logs for more information: ./scripts/native-container/logs.sh"
         exit 1
     fi
 }
