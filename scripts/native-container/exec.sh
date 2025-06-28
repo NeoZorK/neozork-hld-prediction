@@ -195,13 +195,13 @@ fi
 # Change to app directory
 cd /app
 
-# Create virtual environment using uv venv with explicit path
-echo "Creating virtual environment..."
-uv venv /app/.venv --python 3.11
+# Create virtual environment and install dependencies using uv sync
+echo "Creating virtual environment and installing dependencies..."
+uv sync
 
 # Activate virtual environment
 echo "Activating virtual environment..."
-source /app/.venv/bin/activate
+source .venv/bin/activate
 
 # Verify virtual environment is activated
 if [ -z "$VIRTUAL_ENV" ]; then
@@ -211,10 +211,6 @@ fi
 
 echo "Virtual environment activated: $VIRTUAL_ENV"
 
-# Install dependencies using uv pip with explicit venv
-echo "Installing dependencies with UV..."
-uv pip install -r /app/requirements.txt --python /app/.venv/bin/python
-
 # Set up environment variables
 export PYTHONPATH="/app:$PYTHONPATH"
 export PYTHONUNBUFFERED=1
@@ -222,12 +218,12 @@ export PYTHONDONTWRITEBYTECODE=1
 export MPLCONFIGDIR="/tmp/matplotlib-cache"
 
 # Create useful aliases
-alias nz="python /app/run_analysis.py"
-alias eda="python /app/scripts/eda_script.py"
-alias uv-install="uv pip install -r /app/requirements.txt --python /app/.venv/bin/python"
-alias uv-update="uv pip install -r /app/requirements.txt --upgrade --python /app/.venv/bin/python"
-alias uv-test="uv run --python /app/.venv/bin/python -c \"import sys; print(f\\\"Python {sys.version}\\\"); import pandas, numpy, matplotlib; print(\\\"Core packages imported successfully\\\")\""
-alias uv-pytest="uv run --python /app/.venv/bin/python pytest tests/ -n auto"
+alias nz="uv run python /app/run_analysis.py"
+alias eda="uv run python /app/scripts/eda_script.py"
+alias uv-install="uv sync"
+alias uv-update="uv sync --upgrade"
+alias uv-test="uv run python -c \"import sys; print(f\\\"Python {sys.version}\\\"); import pandas, numpy, matplotlib; print(\\\"Core packages imported successfully\\\")\""
+alias uv-pytest="uv run pytest tests/ -n auto"
 
 echo "Environment setup complete!"
 echo "Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
