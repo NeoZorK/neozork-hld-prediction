@@ -195,11 +195,9 @@ fi
 # Change to app directory
 cd /app
 
-# Check if virtual environment exists in container
-if [ ! -d "/app/.venv" ]; then
-    echo "Creating virtual environment..."
-    uv venv /app/.venv
-fi
+# Create virtual environment using uv venv with explicit path
+echo "Creating virtual environment..."
+uv venv /app/.venv --python 3.11
 
 # Activate virtual environment
 echo "Activating virtual environment..."
@@ -213,14 +211,9 @@ fi
 
 echo "Virtual environment activated: $VIRTUAL_ENV"
 
-# Check if dependencies are installed
-if [ ! -f "/app/.venv/pyvenv.cfg" ] || [ ! -d "/app/.venv/lib/python3.11/site-packages" ]; then
-    echo "Installing dependencies with UV..."
-    uv pip install -r /app/requirements.txt
-else
-    echo "Checking for dependency updates..."
-    uv pip install -r /app/requirements.txt --upgrade
-fi
+# Install dependencies using uv pip with explicit venv
+echo "Installing dependencies with UV..."
+uv pip install -r /app/requirements.txt --python /app/.venv/bin/python
 
 # Set up environment variables
 export PYTHONPATH="/app:$PYTHONPATH"
@@ -231,10 +224,10 @@ export MPLCONFIGDIR="/tmp/matplotlib-cache"
 # Create useful aliases
 alias nz="python /app/run_analysis.py"
 alias eda="python /app/scripts/eda_script.py"
-alias uv-install="uv pip install -r /app/requirements.txt"
-alias uv-update="uv pip install -r /app/requirements.txt --upgrade"
-alias uv-test="uv run python -c \"import sys; print(f\\\"Python {sys.version}\\\"); import pandas, numpy, matplotlib; print(\\\"Core packages imported successfully\\\")\""
-alias uv-pytest="uv run pytest tests/ -n auto"
+alias uv-install="uv pip install -r /app/requirements.txt --python /app/.venv/bin/python"
+alias uv-update="uv pip install -r /app/requirements.txt --upgrade --python /app/.venv/bin/python"
+alias uv-test="uv run --python /app/.venv/bin/python -c \"import sys; print(f\\\"Python {sys.version}\\\"); import pandas, numpy, matplotlib; print(\\\"Core packages imported successfully\\\")\""
+alias uv-pytest="uv run --python /app/.venv/bin/python pytest tests/ -n auto"
 
 echo "Environment setup complete!"
 echo "Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
