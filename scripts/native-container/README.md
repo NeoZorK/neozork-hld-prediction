@@ -23,20 +23,27 @@ The native container provides **30-50% performance improvement** over Docker wit
 
 ## Quick Start - Interactive Script
 
-**NEW: Use the interactive script for the easiest experience!**
+**NEW: Use the simplified interactive script for the easiest experience!**
 
 ```bash
 # Run the interactive container manager
 ./scripts/native-container/native-container.sh
 ```
 
-The interactive script provides a user-friendly menu system for all container operations:
-- Setup and configuration
-- Start/stop/remove containers
-- Execute commands and run analysis
-- View logs and status
-- Run tests
-- Cleanup resources
+The interactive script provides a simplified menu system with two main commands:
+
+### 1. Start Container (Full Sequence)
+Executes the complete startup sequence:
+- Setup container (`./scripts/native-container/setup.sh`)
+- Start container (`./scripts/native-container/run.sh`)
+- Check status (`./scripts/native-container/run.sh --status`)
+- Open interactive shell (`./scripts/native-container/exec.sh --shell`)
+
+### 2. Stop Container (Full Sequence)
+Executes the complete shutdown sequence:
+- Stop container (`./scripts/native-container/stop.sh`)
+- Check status (`./scripts/native-container/run.sh --status`)
+- Cleanup resources (`./scripts/native-container/cleanup.sh --all --force`)
 
 ## Prerequisites
 
@@ -45,6 +52,18 @@ The interactive script provides a user-friendly menu system for all container op
 - **Python 3.11+** installed
 - **At least 4GB of available RAM**
 - **10GB of available disk space**
+
+## Quick Commands
+
+For non-interactive use, you can run the sequences directly:
+
+```bash
+# Start container (full sequence)
+./scripts/native-container/setup.sh && ./scripts/native-container/run.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/exec.sh --shell
+
+# Stop container (full sequence)
+./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force
+```
 
 ## Scripts Overview
 
@@ -62,41 +81,24 @@ The interactive script provides a user-friendly menu system for all container op
 
 ### Main Menu Options
 
-1. **Setup container** - Initial setup and configuration
-2. **Start container** - Start the running container
-3. **Stop container** - Stop the running container
-4. **Remove container** - Remove the container completely
-5. **Show container status** - Display current container status
-6. **Show container logs** - View container logs
-7. **Execute command in container** - Run specific commands
-8. **Start interactive shell** - Open bash shell in container
-9. **Run analysis** - Execute analysis commands
-10. **Run tests** - Execute test suites
-11. **Show available commands** - List all available commands
-12. **Cleanup resources** - Clean up files and caches
-13. **System check** - Verify system requirements
-14. **Exit** - Exit the script
+1. **Start Container (Full Sequence)** - Complete startup with shell access
+2. **Stop Container (Full Sequence)** - Complete shutdown with cleanup
+3. **Show Container Status** - Display current container status
+4. **Help** - Show help information
+5. **Exit** - Exit the script
 
-### Analysis Commands
+### What Each Sequence Does
 
-The interactive script provides easy access to common analysis commands:
+#### Start Container Sequence
+1. **Setup**: Validates prerequisites, creates container configuration
+2. **Start**: Launches the container and ensures it's running
+3. **Status Check**: Verifies container is properly started
+4. **Interactive Shell**: Opens bash shell inside the container
 
-- **Demo analysis**: `nz demo --rule PHLD`
-- **Apple stock analysis**: `nz yfinance AAPL --rule PHLD`
-- **Bitcoin analysis**: `nz mql5 BTCUSD --interval H4 --rule PHLD`
-- **EDA analysis**: `eda`
-- **Custom commands**: Enter your own commands
-
-### Test Execution
-
-Run tests with different options:
-
-- **All tests**: `pytest`
-- **Multithreaded tests**: `pytest tests/ -n auto`
-- **Calculation tests**: `pytest tests/calculation/`
-- **CLI tests**: `pytest tests/cli/`
-- **Data tests**: `pytest tests/data/`
-- **Custom test commands**: Enter your own test commands
+#### Stop Container Sequence
+1. **Stop**: Gracefully stops the running container
+2. **Status Check**: Verifies container has stopped
+3. **Cleanup**: Removes temporary files, caches, and logs
 
 ## Individual Scripts Usage
 
@@ -497,20 +499,11 @@ To manually test interactive features:
 ./scripts/native-container/native-container.sh
 
 # Test each menu option:
-# 1. Setup container
-# 2. Start container  
-# 3. Stop container
-# 4. Remove container
-# 5. Show container status
-# 6. Show container logs
-# 7. Execute command in container
-# 8. Start interactive shell
-# 9. Run analysis
-# 10. Run tests
-# 11. Show available commands
-# 12. Cleanup resources
-# 13. System check
-# 14. Exit
+# 1. Start Container (Full Sequence)
+# 2. Stop Container (Full Sequence)
+# 3. Show Container Status
+# 4. Help
+# 5. Exit
 ```
 
 ### Testing Individual Scripts
