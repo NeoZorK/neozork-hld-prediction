@@ -197,12 +197,12 @@ validate_container_config() {
 check_and_remove_existing_container() {
     print_status "Checking for existing container..."
     
-    # Check if container exists in container list
-    if container list | grep -q "neozork-hld-prediction"; then
+    # Check if container exists in container list (including stopped containers)
+    if container list --all | grep -q "neozork-hld-prediction"; then
         print_warning "Container 'neozork-hld-prediction' already exists"
         print_status "Removing existing container..."
         
-        container_id=$(container list | grep "neozork-hld-prediction" | awk '{print $1}')
+        container_id=$(container list --all | grep "neozork-hld-prediction" | awk '{print $1}')
         if container rm "$container_id"; then
             print_success "Existing container removed"
         else
