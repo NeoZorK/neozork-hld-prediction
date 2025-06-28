@@ -205,7 +205,6 @@ create_container() {
         --volume "$(pwd)/tests:/app/tests" \
         --volume "$(pwd)/mql5_feed:/app/mql5_feed" \
         --volume "$(pwd)/data/cache/uv_cache:/app/.uv_cache" \
-        --volume "$(pwd)/container-entrypoint.sh:/app/container-entrypoint.sh" \
         --cpus 2 \
         --memory 4G \
         --arch arm64 \
