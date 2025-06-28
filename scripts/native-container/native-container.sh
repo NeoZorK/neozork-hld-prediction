@@ -79,7 +79,9 @@ start_container_sequence() {
     # Check if Docker is running
     if ! check_docker_running; then
         print_error "Cannot start container - container service not available"
-        read -p "Press Enter to continue..."
+        if [ -t 0 ]; then
+            read -p "Press Enter to continue..."
+        fi
         return 1
     fi
     
@@ -89,7 +91,9 @@ start_container_sequence() {
         print_status "Skipping setup and start steps..."
         print_status "Opening interactive shell directly..."
         echo
-        read -p "Press Enter to continue to shell..."
+        if [ -t 0 ]; then
+            read -p "Press Enter to continue to shell..."
+        fi
         
         if ./scripts/native-container/exec.sh --shell; then
             print_success "Shell session completed"
@@ -99,7 +103,9 @@ start_container_sequence() {
         
         echo
         print_success "Container access completed!"
-        read -p "Press Enter to continue..."
+        if [ -t 0 ]; then
+            read -p "Press Enter to continue..."
+        fi
         return 0
     fi
     
@@ -112,7 +118,9 @@ start_container_sequence() {
             print_success "Container started"
         else
             print_error "Failed to start existing container"
-            read -p "Press Enter to continue..."
+            if [ -t 0 ]; then
+                read -p "Press Enter to continue..."
+            fi
             return 1
         fi
         
@@ -121,7 +129,9 @@ start_container_sequence() {
         print_status "You will be taken to the container shell."
         print_status "To exit the shell, type 'exit' or press Ctrl+D"
         echo
-        read -p "Press Enter to continue to shell..."
+        if [ -t 0 ]; then
+            read -p "Press Enter to continue to shell..."
+        fi
         
         if ./scripts/native-container/exec.sh --shell; then
             print_success "Shell session completed"
@@ -131,27 +141,35 @@ start_container_sequence() {
         
         echo
         print_success "Container access completed!"
-        read -p "Press Enter to continue..."
+        if [ -t 0 ]; then
+            read -p "Press Enter to continue..."
+        fi
         return 0
     fi
     
     # Container doesn't exist, run full setup
     print_status "Step 1: Running setup..."
+    print_status "This will create container and configure UV environment"
     if ./scripts/native-container/setup.sh; then
         print_success "Setup completed"
     else
         print_error "Setup failed"
-        read -p "Press Enter to continue..."
+        if [ -t 0 ]; then
+            read -p "Press Enter to continue..."
+        fi
         return 1
     fi
     
     echo
     print_status "Step 2: Starting container..."
+    print_status "This will automatically install all dependencies using UV"
     if ./scripts/native-container/run.sh; then
         print_success "Container started"
     else
         print_error "Failed to start container"
-        read -p "Press Enter to continue..."
+        if [ -t 0 ]; then
+            read -p "Press Enter to continue..."
+        fi
         return 1
     fi
     
@@ -165,10 +183,14 @@ start_container_sequence() {
     
     echo
     print_status "Step 4: Starting interactive shell..."
+    print_status "Virtual environment will be automatically activated"
+    print_status "All dependencies will be available immediately"
     print_status "You will be taken to the container shell."
     print_status "To exit the shell, type 'exit' or press Ctrl+D"
     echo
-    read -p "Press Enter to continue to shell..."
+    if [ -t 0 ]; then
+        read -p "Press Enter to continue to shell..."
+    fi
     
     if ./scripts/native-container/exec.sh --shell; then
         print_success "Shell session completed"
@@ -178,7 +200,9 @@ start_container_sequence() {
     
     echo
     print_success "Start container sequence completed!"
-    read -p "Press Enter to continue..."
+    if [ -t 0 ]; then
+        read -p "Press Enter to continue..."
+    fi
 }
 
 # Function to stop container (full sequence)
@@ -189,7 +213,9 @@ stop_container_sequence() {
     # Check if Docker is running
     if ! check_docker_running; then
         print_error "Cannot stop container - container service not available"
-        read -p "Press Enter to continue..."
+        if [ -t 0 ]; then
+            read -p "Press Enter to continue..."
+        fi
         return 1
     fi
     
@@ -218,7 +244,9 @@ stop_container_sequence() {
     
     echo
     print_success "Stop container sequence completed!"
-    read -p "Press Enter to continue..."
+    if [ -t 0 ]; then
+        read -p "Press Enter to continue..."
+    fi
 }
 
 # Function to show container status
@@ -228,7 +256,9 @@ show_container_status() {
     # Check if Docker is running
     if ! check_docker_running; then
         print_error "Cannot check container status - container service not available"
-        read -p "Press Enter to continue..."
+        if [ -t 0 ]; then
+            read -p "Press Enter to continue..."
+        fi
         return 1
     fi
     
@@ -244,7 +274,9 @@ show_container_status() {
         print_warning "Container does not exist"
     fi
     
-    read -p "Press Enter to continue..."
+    if [ -t 0 ]; then
+        read -p "Press Enter to continue..."
+    fi
 }
 
 # Function to show help
@@ -259,6 +291,8 @@ show_help() {
     echo "   - Start container (./scripts/native-container/run.sh)"
     echo "   - Check status (./scripts/native-container/run.sh --status)"
     echo "   - Open interactive shell (./scripts/native-container/exec.sh --shell)"
+    echo "   - 🆕 Automatically installs all dependencies using UV"
+    echo "   - 🆕 Creates and activates virtual environment"
     echo
     echo -e "${RED}2. Stop Container${NC}"
     echo "   Executes the full sequence:"
@@ -275,7 +309,15 @@ show_help() {
     echo -e "${MAGENTA}0. Exit${NC}"
     echo "   Exits the script"
     echo
-    read -p "Press Enter to continue..."
+    echo -e "${CYAN}🆕 New Features:${NC}"
+    echo "   - Automatic dependency installation with UV"
+    echo "   - Virtual environment creation and activation"
+    echo "   - All Python commands use the activated venv"
+    echo "   - No manual 'uv-install' required"
+    echo
+    if [ -t 0 ]; then
+        read -p "Press Enter to continue..."
+    fi
 }
 
 # Function to show main menu
@@ -297,7 +339,13 @@ main() {
     while true; do
         show_main_menu
         
-        read -p "Enter your choice (0-4): " choice
+        if [ -t 0 ]; then
+            read -p "Enter your choice (0-4): " choice
+        else
+            # Non-interactive mode - exit gracefully
+            print_error "Script requires interactive terminal"
+            exit 1
+        fi
         
         case $choice in
             1) 
@@ -318,7 +366,9 @@ main() {
                 ;;
             *) 
                 print_error "Invalid choice"
-                read -p "Press Enter to continue..."
+                if [ -t 0 ]; then
+                    read -p "Press Enter to continue..."
+                fi
                 ;;
         esac
     done

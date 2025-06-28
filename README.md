@@ -434,6 +434,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **[Native Container Setup](docs/deployment/native-container-setup.md)** - Complete setup guide
 - **[Native vs Docker Comparison](docs/deployment/native-vs-docker-comparison.md)** - Performance comparison
 - **[Interactive Script Guide](scripts/native-container/README.md)** - Interactive script documentation
+- **[Automatic Dependencies](docs/deployment/automatic-dependencies.md)** - Automatic dependency installation
 
 ### Testing Native Container
 
@@ -446,6 +447,7 @@ pytest tests/native-container/ -v
 pytest tests/native-container/test_native_container_script.py -v
 pytest tests/native-container/test_setup_script.py -v
 pytest tests/native-container/test_run_script.py -v
+pytest tests/native-container/test_automatic_dependencies.py -v
 
 # Run with coverage
 pytest tests/native-container/ --cov=scripts/native-container --cov-report=html
@@ -460,10 +462,24 @@ pytest tests/native-container/ --cov=scripts/native-container --cov-report=html
 ./scripts/native-container/setup.sh
 ./scripts/native-container/run.sh
 ./scripts/native-container/exec.sh --shell
-./scripts/native-container/logs.sh --follow
-./scripts/native-container/stop.sh
-./scripts/native-container/cleanup.sh --all --force
+
+# Verify automatic dependency installation
+python -c "import pandas, numpy, matplotlib, plotly, yfinance; print('All dependencies available')"
 ```
+
+### 🆕 New Features
+
+#### Automatic Dependency Installation
+- **No manual setup** - Dependencies installed automatically on container start
+- **UV package manager** - Fast and reliable dependency management
+- **Virtual environment** - Isolated Python environment created automatically
+- **Dependency verification** - Key packages verified after installation
+
+#### Enhanced User Experience
+- **Seamless startup** - Container ready to use immediately
+- **Consistent environment** - Same dependencies every time
+- **Error handling** - Graceful fallbacks for installation issues
+- **Backward compatibility** - Existing workflows unchanged
 
 ---
 
