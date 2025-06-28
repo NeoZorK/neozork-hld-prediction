@@ -290,9 +290,10 @@ show_help() {
     echo "   - Setup container (./scripts/native-container/setup.sh)"
     echo "   - Start container (./scripts/native-container/run.sh)"
     echo "   - Check status (./scripts/native-container/run.sh --status)"
-    echo "   - Open interactive shell (./scripts/native-container/exec.sh --shell)"
+    echo "   - Open enhanced interactive shell (./scripts/native-container/exec.sh --shell)"
     echo "   - 🆕 Automatically installs all dependencies using UV"
     echo "   - 🆕 Creates and activates virtual environment"
+    echo "   - 🆕 Sets up pre-configured aliases and environment variables"
     echo
     echo -e "${RED}2. Stop Container${NC}"
     echo "   Executes the full sequence:"
@@ -309,11 +310,13 @@ show_help() {
     echo -e "${MAGENTA}0. Exit${NC}"
     echo "   Exits the script"
     echo
-    echo -e "${CYAN}🆕 New Features:${NC}"
-    echo "   - Automatic dependency installation with UV"
-    echo "   - Virtual environment creation and activation"
-    echo "   - All Python commands use the activated venv"
-    echo "   - No manual 'uv-install' required"
+    echo -e "${CYAN}🆕 Enhanced Shell Features:${NC}"
+    echo "   - Automatic virtual environment activation (source .venv/bin/activate)"
+    echo "   - Automatic UV dependency installation and updates"
+    echo "   - Pre-configured aliases: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
+    echo "   - Environment variables setup (PYTHONPATH, PYTHONUNBUFFERED, etc.)"
+    echo "   - Dependency health checking and automatic updates"
+    echo "   - No manual 'uv-install' required - everything is automatic"
     echo
     if [ -t 0 ]; then
         read -p "Press Enter to continue..."

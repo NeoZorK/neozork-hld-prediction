@@ -53,6 +53,73 @@ get_container_id() {
     container list | grep "neozork-hld-prediction" | awk '{print $1}'
 }
 
+# Function to create enhanced shell command with venv activation and UV setup
+create_enhanced_shell_command() {
+    cat << 'EOF'
+#!/bin/bash
+
+# Enhanced shell startup for NeoZork HLD Prediction container
+# Automatically activates virtual environment and installs dependencies
+
+echo "=== NeoZork HLD Prediction Container Shell ==="
+echo "Setting up environment..."
+
+# Check if we're in the right directory
+if [ ! -f "/app/requirements.txt" ]; then
+    echo "Error: requirements.txt not found. Are you in the correct directory?"
+    exit 1
+fi
+
+# Check if UV is available
+if ! command -v uv >/dev/null 2>&1; then
+    echo "Installing UV package manager..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.cargo/bin:$PATH"
+fi
+
+# Check if virtual environment exists
+if [ ! -d "/app/.venv" ]; then
+    echo "Creating virtual environment..."
+    uv venv /app/.venv
+fi
+
+# Activate virtual environment
+echo "Activating virtual environment..."
+source /app/.venv/bin/activate
+
+# Check if dependencies are installed
+if [ ! -f "/app/.venv/pyvenv.cfg" ] || [ ! -d "/app/.venv/lib/python3.11/site-packages" ]; then
+    echo "Installing dependencies with UV..."
+    uv pip install -r /app/requirements.txt
+else
+    echo "Checking for dependency updates..."
+    uv pip install -r /app/requirements.txt --upgrade
+fi
+
+# Set up environment variables
+export PYTHONPATH="/app:$PYTHONPATH"
+export PYTHONUNBUFFERED=1
+export PYTHONDONTWRITEBYTECODE=1
+export MPLCONFIGDIR="/tmp/matplotlib-cache"
+
+# Create useful aliases
+alias nz="python /app/run_analysis.py"
+alias eda="python /app/scripts/eda_script.py"
+alias uv-install="uv pip install -r /app/requirements.txt"
+alias uv-update="uv pip install -r /app/requirements.txt --upgrade"
+alias uv-test="uv run python -c 'import sys; print(f\"Python {sys.version}\"); import pandas, numpy, matplotlib; print(\"Core packages imported successfully\")'"
+alias uv-pytest="uv run pytest tests/ -n auto"
+
+echo "Environment setup complete!"
+echo "Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
+echo "Type 'exit' to leave the container shell"
+echo ""
+
+# Start interactive bash shell
+exec bash
+EOF
+}
+
 # Function to execute command in container
 execute_in_container() {
     local container_id=$1
@@ -75,6 +142,16 @@ execute_in_container() {
     eval "$exec_cmd"
 }
 
+# Function to execute enhanced shell in container
+execute_enhanced_shell() {
+    local container_id=$1
+    
+    print_status "Starting enhanced shell with automatic venv activation and UV setup..."
+    
+    # Pass the enhanced shell script via stdin to bash inside the container
+    create_enhanced_shell_command | container exec --interactive --tty "$container_id" bash -s
+}
+
 # Function to show available commands
 show_available_commands() {
     echo -e "${CYAN}Available Commands:${NC}"
@@ -89,6 +166,7 @@ show_available_commands() {
     echo "  uv-install                            # Install dependencies"
     echo "  uv-update                             # Update dependencies"
     echo "  uv-test                               # Run UV environment test"
+    echo "  uv-pytest                             # Run pytest with UV"
     echo
     echo -e "${BLUE}Testing:${NC}"
     echo "  pytest                                # Run all tests"
@@ -107,8 +185,15 @@ show_available_commands() {
     echo "  df -h                                 # Check disk usage"
     echo
     echo -e "${BLUE}Interactive Shell:${NC}"
-    echo "  bash                                  # Start bash shell"
+    echo "  bash                                  # Start enhanced bash shell"
     echo "  python                                # Start Python interpreter"
+    echo
+    echo -e "${GREEN}🆕 Enhanced Shell Features:${NC}"
+    echo "  - Automatic virtual environment activation"
+    echo "  - Automatic UV dependency installation"
+    echo "  - Pre-configured aliases (nz, eda, uv-*)"
+    echo "  - Environment variables setup"
+    echo "  - Dependency update checking"
 }
 
 # Function to show usage
@@ -119,7 +204,7 @@ show_usage() {
     echo "  -h, --help     Show this help message"
     echo "  -i, --interactive Run command in interactive mode"
     echo "  -c, --command  Execute specific command"
-    echo "  -s, --shell    Start interactive shell"
+    echo "  -s, --shell    Start enhanced interactive shell (with venv + UV setup)"
     echo "  -l, --list     List available commands"
     echo "  -t, --test     Run test suite"
     echo "  -a, --analysis Run analysis command"
@@ -128,16 +213,22 @@ show_usage() {
     echo "  nz              Main analysis command"
     echo "  eda             EDA analysis"
     echo "  pytest          Run tests"
-    echo "  bash            Interactive shell"
+    echo "  bash            Enhanced interactive shell"
     echo "  python          Python interpreter"
     echo
     echo "Examples:"
-    echo "  $0 --shell                    # Start interactive shell"
+    echo "  $0 --shell                    # Start enhanced shell with venv + UV setup"
     echo "  $0 --command 'nz demo'        # Run demo analysis"
     echo "  $0 --test                     # Run test suite"
     echo "  $0 --analysis 'nz yfinance AAPL'  # Analyze Apple stock"
     echo "  $0 'ls -la /app'              # List files in container"
     echo "  $0 'pytest tests/ -n auto'    # Run tests with multithreading"
+    echo
+    echo "🆕 Enhanced Shell Features:"
+    echo "  - Automatic virtual environment activation"
+    echo "  - Automatic UV dependency installation and updates"
+    echo "  - Pre-configured aliases and environment variables"
+    echo "  - Dependency health checking"
 }
 
 # Parse command line arguments
@@ -232,8 +323,9 @@ main() {
     local exec_command=""
     
     if [ "$SHELL_MODE" = true ]; then
-        exec_command="bash"
-        INTERACTIVE=true
+        # Use enhanced shell with automatic venv activation and UV setup
+        execute_enhanced_shell "$container_id"
+        return 0
     elif [ "$TEST_MODE" = true ]; then
         exec_command="pytest tests/ -n auto"
     elif [ "$ANALYSIS_MODE" = true ]; then
@@ -250,12 +342,14 @@ main() {
         exit 1
     fi
     
-    # Execute command
-    if execute_in_container "$container_id" "$exec_command" "$INTERACTIVE"; then
-        print_success "Command executed successfully"
-    else
-        print_error "Command execution failed"
-        exit 1
+    # Execute command (only for non-shell commands)
+    if [ -n "$exec_command" ]; then
+        if execute_in_container "$container_id" "$exec_command" "$INTERACTIVE"; then
+            print_success "Command executed successfully"
+        else
+            print_error "Command execution failed"
+            exit 1
+        fi
     fi
 }
 
