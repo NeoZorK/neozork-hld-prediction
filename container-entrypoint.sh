@@ -416,7 +416,7 @@ EOL
 
 # Main execution
 main() {
-    log_message "Starting NeoZork HLD Prediction Native Container..."
+    log_message "Starting NeoZork HLD Prediction container..."
     
     # Create directories
     create_directories
@@ -471,8 +471,8 @@ main() {
     echo -e "\033[1;33mType 'cat /tmp/neozork_commands.txt' to see all available commands\033[0m"
     echo
     
-    # Start interactive bash shell
-    exec bash -i
+    # Keep container running (idle)
+    tail -f /dev/null
 }
 
 # Run main function
