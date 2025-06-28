@@ -53,8 +53,18 @@ verify_uv() {
     if command -v uv &> /dev/null; then
         echo -e "\033[1;32m✅ UV is available: $(uv --version)\033[0m"
     else
-        echo -e "\033[1;31m❌ UV is not available - this is required for UV-only mode\033[0m"
-        exit 1
+        echo -e "\033[1;33m⚠️  UV is not available - installing UV...\033[0m"
+        
+        # Install UV using pip
+        pip install uv
+        
+        if command -v uv &> /dev/null; then
+            echo -e "\033[1;32m✅ UV installed successfully: $(uv --version)\033[0m"
+        else
+            echo -e "\033[1;31m❌ Failed to install UV - this is required for UV-only mode\033[0m"
+            echo -e "\033[1;33m⚠️  Container will continue without UV-only mode\033[0m"
+            export UV_ONLY=false
+        fi
     fi
 
     # Run UV test script to validate environment
@@ -283,50 +293,60 @@ init_bash_history() {
 
 # Run external data feed tests
 run_data_feed_tests() {
-    echo -e "\033[1;33mWould you like to run tests for external data feeds? (Polygon, YFinance, Binance) [y/N]:\033[0m"
-    read -r run_tests
+    # Check if running in interactive mode
+    if [ -t 0 ]; then
+        echo -e "\033[1;33mWould you like to run tests for external data feeds? (Polygon, YFinance, Binance) [y/N]:\033[0m"
+        read -r run_tests
 
-    # Debug output to check what was read
-    echo -e "\033[1;34mInput received: '$run_tests'\033[0m"
+        # Debug output to check what was read
+        echo -e "\033[1;34mInput received: '$run_tests'\033[0m"
 
-    # Simplified condition checking
-    if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
-        echo -e "\n\033[1;32m=== Running external data feed tests in Native Container (UV Mode) ===\033[0m\n"
-        # Run the tests using the Docker-specific test runner
-        run_python_safely python /app/tests/run_tests_docker.py
+        # Simplified condition checking
+        if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
+            echo -e "\n\033[1;32m=== Running external data feed tests in Native Container (UV Mode) ===\033[0m\n"
+            # Run the tests using the Docker-specific test runner
+            run_python_safely python /app/tests/run_tests_docker.py
+        else
+            echo -e "\033[1;33mSkipping external data feed tests\033[0m\n"
+        fi
     else
-        echo -e "\033[1;33mSkipping external data feed tests\033[0m\n"
+        echo -e "\033[1;33mNon-interactive mode - skipping external data feed tests\033[0m\n"
     fi
 }
 
 # Start MCP server
 start_mcp_server() {
-    echo -e "\033[1;33mWould you like to start the MCP service for enhanced LLM support? [y/N]:\033[0m"
-    read -r run_mcp
+    # Check if running in interactive mode
+    if [ -t 0 ]; then
+        echo -e "\033[1;33mWould you like to start the MCP service for enhanced LLM support? [y/N]:\033[0m"
+        read -r run_mcp
 
-    # Debug output to check what was read
-    echo -e "\033[1;34mInput received: '$run_mcp'\033[0m"
+        # Debug output to check what was read
+        echo -e "\033[1;34mInput received: '$run_mcp'\033[0m"
 
-    # Simplified condition checking
-    if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
-        echo -e "\n\033[1;32m=== Starting MCP server in background (UV Mode) ===\033[0m\n"
-        # Start MCP server in background and redirect output to prevent EOF
-        nohup python neozork_mcp_server.py > /app/logs/mcp_server.log 2>&1 &
-        MCP_PID=$!
-        echo $MCP_PID > /tmp/mcp_server.pid
-        echo -e "\033[1;32mMCP server started in background (PID: $MCP_PID)\033[0m\n"
-        # Wait for mcp_server to initialize
-        sleep 5
-        
-        # Check MCP server status
-        echo -e "\033[1;33m=== Checking MCP server status ===\033[0m\n"
-        if python scripts/check_mcp_status.py; then
-            echo -e "\033[1;32m✅ MCP server is running correctly\033[0m\n"
+        # Simplified condition checking
+        if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
+            echo -e "\n\033[1;32m=== Starting MCP server in background (UV Mode) ===\033[0m\n"
+            # Start MCP server in background and redirect output to prevent EOF
+            nohup python neozork_mcp_server.py > /app/logs/mcp_server.log 2>&1 &
+            MCP_PID=$!
+            echo $MCP_PID > /tmp/mcp_server.pid
+            echo -e "\033[1;32mMCP server started in background (PID: $MCP_PID)\033[0m\n"
+            # Wait for mcp_server to initialize
+            sleep 5
+            
+            # Check MCP server status
+            echo -e "\033[1;33m=== Checking MCP server status ===\033[0m\n"
+            if python scripts/check_mcp_status.py; then
+                echo -e "\033[1;32m✅ MCP server is running correctly\033[0m\n"
+            else
+                echo -e "\033[1;31m❌ MCP server check failed\033[0m\n"
+            fi
         else
-            echo -e "\033[1;31m❌ MCP server check failed\033[0m\n"
+            echo -e "\033[1;33mSkipping MCP server startup\033[0m\n"
         fi
     else
-        echo -e "\033[1;33mSkipping MCP server startup\033[0m\n"
+        echo -e "\033[1;33mNon-interactive mode - skipping MCP server startup\033[0m\n"
     fi
 }
 
@@ -400,6 +420,15 @@ main() {
     
     # Create directories
     create_directories
+    
+    # Install basic dependencies if needed
+    log_message "Installing basic dependencies..."
+    if [ -f "/app/requirements.txt" ]; then
+        echo -e "\033[1;33mInstalling Python dependencies...\033[0m"
+        pip install -r /app/requirements.txt || echo -e "\033[1;33m⚠️  Some dependencies may not have installed correctly\033[0m"
+    else
+        echo -e "\033[1;33m⚠️  requirements.txt not found - skipping dependency installation\033[0m"
+    fi
     
     # Verify UV
     verify_uv
