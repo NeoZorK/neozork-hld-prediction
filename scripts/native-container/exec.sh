@@ -64,10 +64,13 @@ create_enhanced_shell_command() {
 echo "=== NeoZork HLD Prediction Container Shell ==="
 echo "Setting up environment..."
 
+# Set non-interactive mode for apt
+export DEBIAN_FRONTEND=noninteractive
+
 # Update package list and install essential tools
 echo "Installing essential tools..."
-apt-get update -qq
-apt-get install -y curl wget git
+apt-get update -qq -y
+apt-get install -y -qq curl wget git
 
 # Check if we're in the right directory
 if [ ! -f "/app/requirements.txt" ]; then
