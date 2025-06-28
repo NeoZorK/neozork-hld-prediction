@@ -37,7 +37,7 @@ cd neozork-hld-prediction
 ```
 
 **Interactive Menu Options:**
-1. Start Container (Full Sequence)
+1. Start Container (Full Sequence) - Smart startup (handles already running containers)
 2. Stop Container (Full Sequence)
 3. Show Container Status
 4. Help
