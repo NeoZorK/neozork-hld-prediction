@@ -192,7 +192,10 @@ if ! command -v uv >/dev/null 2>&1; then
     export PATH="/root/.cargo/bin:$PATH"
 fi
 
-# Check if virtual environment exists
+# Change to app directory
+cd /app
+
+# Check if virtual environment exists in container
 if [ ! -d "/app/.venv" ]; then
     echo "Creating virtual environment..."
     uv venv /app/.venv
@@ -201,6 +204,14 @@ fi
 # Activate virtual environment
 echo "Activating virtual environment..."
 source /app/.venv/bin/activate
+
+# Verify virtual environment is activated
+if [ -z "$VIRTUAL_ENV" ]; then
+    echo "Error: Virtual environment activation failed"
+    exit 1
+fi
+
+echo "Virtual environment activated: $VIRTUAL_ENV"
 
 # Check if dependencies are installed
 if [ ! -f "/app/.venv/pyvenv.cfg" ] || [ ! -d "/app/.venv/lib/python3.11/site-packages" ]; then
