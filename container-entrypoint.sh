@@ -414,65 +414,39 @@ python neozork_mcp_server.py
 EOL
 }
 
+# Initialize container (called by preStart hook)
+init_container() {
+    log_message "Initializing container..."
+    create_directories
+    log_message "Container initialization completed"
+}
+
+# Post-start actions (called by postStart hook)
+post_start() {
+    log_message "Post-start actions completed"
+}
+
 # Main execution
 main() {
     log_message "Starting NeoZork HLD Prediction container..."
     
-    # Create directories
-    create_directories
-    
-    # Install basic dependencies if needed
-    log_message "Installing basic dependencies..."
-    if [ -f "/app/requirements.txt" ]; then
-        echo -e "\033[1;33mInstalling Python dependencies...\033[0m"
-        pip install -r /app/requirements.txt || echo -e "\033[1;33m⚠️  Some dependencies may not have installed correctly\033[0m"
-    else
-        echo -e "\033[1;33m⚠️  requirements.txt not found - skipping dependency installation\033[0m"
-    fi
-    
-    # Verify UV
-    verify_uv
-    
-    # Setup bash environment
-    setup_bash_environment
-    
-    # Create command wrappers
-    create_command_wrappers
-    
-    # Welcome message
-    echo -e "\n\033[1;36m=== NeoZork HLD Prediction Native Container Started (UV-Only Mode) ===\033[0m\n"
-
-    # Check UV cache and dependencies
-    echo -e "\033[1;33m=== Checking UV dependencies ===\033[0m"
-    if [ -d "/app/.uv_cache" ]; then
-        echo -e "\033[1;32m✅ UV cache directory exists\033[0m"
-    else
-        echo -e "\033[1;33m⚠️  UV cache directory not found, will be created on first use\033[0m"
-    fi
-
-    # Run data feed tests
-    run_data_feed_tests
-    
-    # Start MCP server
-    start_mcp_server
-    
-    # Show usage guide
-    show_usage_guide
-    
-    # Create commands file
-    create_commands_file
-    
-    # Initialize bash history
-    init_bash_history
-    
-    echo -e "\033[1;32m=== Container initialization completed ===\033[0m"
-    echo -e "\033[1;33mAvailable commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest, mcp-start, mcp-check\033[0m"
-    echo -e "\033[1;33mUse 'history' to see available commands, or press ↑/↓ to navigate\033[0m"
-    echo -e "\033[1;33mType 'cat /tmp/neozork_commands.txt' to see all available commands\033[0m"
-    echo
-    
-    # Keep container running (idle)
-    tail -f /dev/null
+    # Handle command line arguments
+    case "${1:-}" in
+        "init")
+            init_container
+            ;;
+        "post-start")
+            post_start
+            ;;
+        *)
+            # Default behavior - create directories and keep container running
+            create_directories
+            log_message "Container ready. Entering idle mode..."
+            
+            # Keep container running (idle)
+            tail -f /dev/null
+            ;;
+    esac
 }
 
 # Run main function
