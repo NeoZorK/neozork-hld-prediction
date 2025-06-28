@@ -67,17 +67,111 @@ verify_uv() {
         fi
     fi
 
-    # Run UV test script to validate environment
+    # Run UV test script to validate environment (don't fail on error)
     log_message "=== Running UV Environment Test ==="
     if [ -f "/app/scripts/test_uv_docker.py" ]; then
-        python /app/scripts/test_uv_docker.py
-        if [ $? -eq 0 ]; then
+        if python /app/scripts/test_uv_docker.py; then
             echo -e "\033[1;32m✅ UV environment test passed\033[0m"
         else
             echo -e "\033[1;33m⚠️  UV environment test had issues - continuing anyway\033[0m"
         fi
     else
         echo -e "\033[1;33m⚠️  UV test script not found - skipping test\033[0m"
+    fi
+}
+
+# Setup UV environment and install dependencies
+setup_uv_environment() {
+    log_message "=== Setting up UV Environment and Dependencies ==="
+    
+    # Check if virtual environment exists
+    if [ ! -d "/app/.venv" ]; then
+        echo -e "\033[1;33m📦 Virtual environment not found - creating new venv...\033[0m"
+        
+        # Create virtual environment
+        if uv venv /app/.venv; then
+            echo -e "\033[1;32m✅ Virtual environment created successfully\033[0m"
+        else
+            echo -e "\033[1;31m❌ Failed to create virtual environment\033[0m"
+            echo -e "\033[1;33m⚠️  Continuing without virtual environment\033[0m"
+            return 0
+        fi
+    else
+        echo -e "\033[1;32m✅ Virtual environment already exists\033[0m"
+    fi
+    
+    # Activate virtual environment
+    echo -e "\033[1;33m🔄 Activating virtual environment...\033[0m"
+    source /app/.venv/bin/activate
+    
+    # Check if dependencies are already installed
+    if [ -f "/app/.venv/pyvenv.cfg" ] && [ -d "/app/.venv/lib" ]; then
+        echo -e "\033[1;32m✅ Virtual environment is properly configured\033[0m"
+        
+        # Check if key packages are installed
+        if uv pip list | grep -q "pandas"; then
+            echo -e "\033[1;32m✅ Dependencies appear to be installed\033[0m"
+            echo -e "\033[1;33m🔄 Checking for dependency updates...\033[0m"
+            
+            # Update dependencies if needed (don't fail on error)
+            if uv pip install --upgrade -r /app/requirements.txt; then
+                echo -e "\033[1;32m✅ Dependencies updated successfully\033[0m"
+            else
+                echo -e "\033[1;33m⚠️  Dependency update had issues - continuing anyway\033[0m"
+            fi
+        else
+            echo -e "\033[1;33m📦 Installing dependencies...\033[0m"
+            install_dependencies
+        fi
+    else
+        echo -e "\033[1;33m📦 Installing dependencies...\033[0m"
+        install_dependencies
+    fi
+    
+    # Verify installation (don't fail on error)
+    verify_dependencies || true
+}
+
+# Install dependencies using UV
+install_dependencies() {
+    echo -e "\033[1;33m📦 Installing dependencies from requirements.txt...\033[0m"
+    
+    # Install dependencies (don't fail on error)
+    if uv pip install -r /app/requirements.txt; then
+        echo -e "\033[1;32m✅ Dependencies installed successfully\033[0m"
+        return 0
+    else
+        echo -e "\033[1;31m❌ Failed to install dependencies\033[0m"
+        echo -e "\033[1;33m⚠️  You can try manual installation with: uv-install\033[0m"
+        echo -e "\033[1;33m⚠️  Continuing without dependencies - they can be installed later\033[0m"
+        return 0
+    fi
+}
+
+# Verify that key dependencies are installed
+verify_dependencies() {
+    echo -e "\033[1;33m🔍 Verifying key dependencies...\033[0m"
+    
+    # List of key packages to verify
+    key_packages=("pandas" "numpy" "matplotlib" "plotly" "yfinance" "pytest")
+    missing_packages=()
+    
+    for package in "${key_packages[@]}"; do
+        if uv pip list | grep -q "$package"; then
+            echo -e "\033[1;32m✅ $package is installed\033[0m"
+        else
+            echo -e "\033[1;31m❌ $package is missing\033[0m"
+            missing_packages+=("$package")
+        fi
+    done
+    
+    if [ ${#missing_packages[@]} -eq 0 ]; then
+        echo -e "\033[1;32m✅ All key dependencies are installed\033[0m"
+        return 0
+    else
+        echo -e "\033[1;33m⚠️  Some packages are missing: ${missing_packages[*]}\033[0m"
+        echo -e "\033[1;33m⚠️  You can try manual installation with: uv-install\033[0m"
+        return 1
     fi
 }
 
@@ -127,6 +221,26 @@ EOL
 
     # Set custom prompt for better identification
     export PS1='\[\033[1;36m\]neozork\[\033[0m\]:\[\033[1;34m\]\w\[\033[0m\]$ '
+    
+    # Create .bashrc for automatic venv activation
+    cat > /tmp/bash_config/.bashrc << EOL
+# Auto-activate virtual environment
+if [ -f "/app/.venv/bin/activate" ]; then
+    source /app/.venv/bin/activate
+    echo -e "\033[1;32m✅ Virtual environment activated\033[0m"
+fi
+
+# Add /tmp/bin to PATH for command wrappers
+export PATH="/tmp/bin:\$PATH"
+
+# Show available commands
+if [ -f "/tmp/neozork_commands.txt" ]; then
+    echo -e "\033[1;36m💡 Available commands: cat /tmp/neozork_commands.txt\033[0m"
+fi
+EOL
+    
+    # Set BASH_ENV to load our configuration
+    export BASH_ENV=/tmp/bash_config/.bashrc
 }
 
 # Create command wrapper scripts
@@ -135,16 +249,18 @@ create_command_wrappers() {
     
     mkdir -p /tmp/bin
 
-    # Create nz command wrapper script
+    # Create nz command wrapper script with venv activation
     cat > /tmp/bin/nz << 'EOF'
 #!/bin/bash
+source /app/.venv/bin/activate
 python /app/run_analysis.py "$@"
 EOF
     chmod +x /tmp/bin/nz
 
-    # Create eda command wrapper script
+    # Create eda command wrapper script with venv activation
     cat > /tmp/bin/eda << 'EOF'
 #!/bin/bash
+source /app/.venv/bin/activate
 python /app/src/eda/eda_batch_check.py "$@"
 EOF
     chmod +x /tmp/bin/eda
@@ -153,6 +269,7 @@ EOF
     cat > /tmp/bin/uv-install << 'EOF'
 #!/bin/bash
 echo "Installing dependencies using UV..."
+source /app/.venv/bin/activate
 uv pip install -r /app/requirements.txt
 EOF
     chmod +x /tmp/bin/uv-install
@@ -160,6 +277,7 @@ EOF
     cat > /tmp/bin/uv-update << 'EOF'
 #!/bin/bash
 echo "Updating dependencies using UV..."
+source /app/.venv/bin/activate
 uv pip install --upgrade -r /app/requirements.txt
 EOF
     chmod +x /tmp/bin/uv-update
@@ -167,6 +285,7 @@ EOF
     cat > /tmp/bin/uv-test << 'EOF'
 #!/bin/bash
 echo "Running UV environment test..."
+source /app/.venv/bin/activate
 python /app/scripts/test_uv_docker.py
 EOF
     chmod +x /tmp/bin/uv-test
@@ -175,14 +294,16 @@ EOF
     cat > /tmp/bin/uv-pytest << 'EOF'
 #!/bin/bash
 echo "Running pytest with UV..."
+source /app/.venv/bin/activate
 uv run pytest tests -n auto
 EOF
     chmod +x /tmp/bin/uv-pytest
 
-    # Create MCP server wrapper
+    # Create MCP server wrapper with venv activation
     cat > /tmp/bin/mcp-start << 'EOF'
 #!/bin/bash
 echo "Starting MCP server..."
+source /app/.venv/bin/activate
 nohup python /app/neozork_mcp_server.py > /app/logs/mcp_server.log 2>&1 &
 MCP_PID=$!
 echo $MCP_PID > /tmp/mcp_server.pid
@@ -193,6 +314,7 @@ EOF
     cat > /tmp/bin/mcp-check << 'EOF'
 #!/bin/bash
 echo "Checking MCP server status..."
+source /app/.venv/bin/activate
 python /app/scripts/check_mcp_status.py
 EOF
     chmod +x /tmp/bin/mcp-check
@@ -202,6 +324,9 @@ EOF
 
 # Function to handle errors without exiting container
 run_python_safely() {
+    # Activate virtual environment
+    source /app/.venv/bin/activate
+    
     # Run Python command and capture exit code
     "$@"
     local exit_code=$?
@@ -305,6 +430,7 @@ run_data_feed_tests() {
         if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
             echo -e "\n\033[1;32m=== Running external data feed tests in Native Container (UV Mode) ===\033[0m\n"
             # Run the tests using the Docker-specific test runner
+            source /app/.venv/bin/activate
             run_python_safely python /app/tests/run_tests_docker.py
         else
             echo -e "\033[1;33mSkipping external data feed tests\033[0m\n"
@@ -328,6 +454,7 @@ start_mcp_server() {
         if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
             echo -e "\n\033[1;32m=== Starting MCP server in background (UV Mode) ===\033[0m\n"
             # Start MCP server in background and redirect output to prevent EOF
+            source /app/.venv/bin/activate
             nohup python neozork_mcp_server.py > /app/logs/mcp_server.log 2>&1 &
             MCP_PID=$!
             echo $MCP_PID > /tmp/mcp_server.pid
@@ -353,7 +480,19 @@ start_mcp_server() {
 # Show usage guide
 show_usage_guide() {
     echo -e "\033[1;32m=== NeoZork HLD Prediction Usage Guide (UV Mode) ===\033[0m\n"
-    run_python_safely python run_analysis.py -h
+    
+    # Try to show help, but don't fail if dependencies are missing
+    if source /app/.venv/bin/activate 2>/dev/null; then
+        if python run_analysis.py -h 2>/dev/null; then
+            echo -e "\033[1;32m✅ Help command executed successfully\033[0m"
+        else
+            echo -e "\033[1;33m⚠️  Help command failed - dependencies may not be installed\033[0m"
+            echo -e "\033[1;33m💡 Run 'uv-install' to install dependencies\033[0m"
+        fi
+    else
+        echo -e "\033[1;33m⚠️  Virtual environment not available\033[0m"
+        echo -e "\033[1;33m💡 Run 'uv-install' to setup environment\033[0m"
+    fi
 
     echo -e "\n\033[1;36m=== Container is ready for analysis (UV-Only Mode) ===\033[0m"
 
@@ -439,12 +578,51 @@ main() {
             post_start
             ;;
         *)
-            # Default behavior - create directories and keep container running
-            create_directories
-            log_message "Container ready. Entering idle mode..."
+            # Default behavior - full container initialization
+            log_message "=== Full Container Initialization ==="
             
-            # Keep container running (idle)
-            tail -f /dev/null
+            # Step 1: Create directories
+            create_directories
+            
+            # Step 2: Verify UV
+            verify_uv
+            
+            # Step 3: Setup UV environment and install dependencies
+            setup_uv_environment
+            
+            # Step 4: Setup bash environment
+            setup_bash_environment
+            
+            # Step 5: Create command wrappers
+            create_command_wrappers
+            
+            # Step 6: Initialize bash history
+            init_bash_history
+            
+            # Step 7: Create commands file
+            create_commands_file
+            
+            # Step 8: Show usage guide
+            show_usage_guide
+            
+            # Step 9: Run data feed tests (interactive)
+            run_data_feed_tests
+            
+            # Step 10: Start MCP server (interactive)
+            start_mcp_server
+            
+            log_message "=== Container initialization completed ==="
+            
+            # Check if running in interactive mode
+            if [ -t 0 ]; then
+                log_message "Container is ready for use. Entering interactive mode..."
+                # Start interactive bash shell
+                exec bash
+            else
+                log_message "Container is ready for use. Running in non-interactive mode..."
+                # Keep container running in background
+                tail -f /dev/null
+            fi
             ;;
     esac
 }
