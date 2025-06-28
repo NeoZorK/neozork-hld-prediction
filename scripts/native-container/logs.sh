@@ -70,7 +70,7 @@ show_container_logs() {
     fi
     
     if [ -n "$tail_lines" ] && [ "$tail_lines" -gt 0 ]; then
-        log_cmd="$log_cmd --tail $tail_lines"
+        log_cmd="$log_cmd -n $tail_lines"
     fi
     
     log_cmd="$log_cmd $container_id"

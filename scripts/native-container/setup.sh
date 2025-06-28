@@ -242,9 +242,9 @@ create_container() {
     fi
     
     print_status "Using project root: $project_root"
-    print_status "Creating minimal container without volume mounts for testing"
+    print_status "Creating container with volume mounts"
     
-    # Create container using native container application without volume mounts
+    # Create container using native container application with volume mounts
     if container create \
         --name neozork-hld-prediction \
         --cwd /app \
@@ -257,10 +257,18 @@ create_container() {
         --env DOCKER_CONTAINER=false \
         --env LOG_LEVEL=INFO \
         --env MCP_SERVER_TYPE=pycharm_copilot \
+        --volume "$project_root:/app" \
+        --volume "$project_root/data:/app/data" \
+        --volume "$project_root/logs:/app/logs" \
+        --volume "$project_root/results:/app/results" \
+        --volume "$project_root/tests:/app/tests" \
+        --volume "$project_root/mql5_feed:/app/mql5_feed" \
+        --volume "$project_root/data/cache/uv_cache:/app/.uv_cache" \
         --cpus 2 \
         --memory 4G \
         --arch arm64 \
         --os linux \
+        --entrypoint /app/container-entrypoint.sh \
         python:3.11-slim; then
         print_success "Container created successfully"
         return 0
