@@ -64,17 +64,24 @@ create_enhanced_shell_command() {
 echo "=== NeoZork HLD Prediction Container Shell ==="
 echo "Setting up environment..."
 
+# Update package list and install essential tools
+echo "Installing essential tools..."
+apt-get update -qq
+apt-get install -y curl wget git
+
 # Check if we're in the right directory
 if [ ! -f "/app/requirements.txt" ]; then
     echo "Error: requirements.txt not found. Are you in the correct directory?"
     exit 1
 fi
 
-# Check if UV is available
+# Check if UV is available, install if not
 if ! command -v uv >/dev/null 2>&1; then
     echo "Installing UV package manager..."
     curl -LsSf https://astral.sh/uv/install.sh | sh
     export PATH="$HOME/.cargo/bin:$PATH"
+    # Also add to system PATH for this session
+    export PATH="/root/.cargo/bin:$PATH"
 fi
 
 # Check if virtual environment exists
