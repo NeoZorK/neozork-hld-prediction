@@ -42,6 +42,17 @@ print_menu() {
     echo -e "${MAGENTA}$1${NC}"
 }
 
+# Function to check if Docker is running
+check_docker_running() {
+    if ! container list --all >/dev/null 2>&1; then
+        print_error "Docker/native container service is not running"
+        print_status "Please start the container service first:"
+        print_status "  container system start"
+        return 1
+    fi
+    return 0
+}
+
 # Function to check if command exists
 command_exists() {
     command -v "$1" >/dev/null 2>&1
@@ -213,6 +224,12 @@ create_container() {
 start_container() {
     print_status "Starting container..."
     
+    # Check if Docker is running
+    if ! check_docker_running; then
+        print_error "Cannot start container - container service not available"
+        return 1
+    fi
+    
     if ! check_container_exists; then
         print_error "Container '$CONTAINER_NAME' not found"
         print_error "Please run setup first"
@@ -236,6 +253,12 @@ start_container() {
 # Function to stop container
 stop_container() {
     print_status "Stopping container..."
+    
+    # Check if Docker is running
+    if ! check_docker_running; then
+        print_error "Cannot stop container - container service not available"
+        return 1
+    fi
     
     if ! check_container_exists; then
         print_error "Container '$CONTAINER_NAME' not found"
@@ -261,6 +284,12 @@ stop_container() {
 remove_container() {
     print_status "Removing container..."
     
+    # Check if Docker is running
+    if ! check_docker_running; then
+        print_error "Cannot remove container - container service not available"
+        return 1
+    fi
+    
     if ! check_container_exists; then
         print_warning "Container does not exist"
         return 0
@@ -285,6 +314,12 @@ remove_container() {
 show_container_status() {
     print_header "Container Status"
     
+    # Check if Docker is running
+    if ! check_docker_running; then
+        print_error "Cannot check container status - container service not available"
+        return 1
+    fi
+    
     if check_container_exists; then
         print_success "Container exists: $CONTAINER_NAME"
         if check_container_running; then
@@ -301,6 +336,12 @@ show_container_status() {
 # Function to show container logs
 show_container_logs() {
     print_header "Container Logs"
+    
+    # Check if Docker is running
+    if ! check_docker_running; then
+        print_error "Cannot show container logs - container service not available"
+        return 1
+    fi
     
     if ! check_container_exists; then
         print_error "Container not found"
@@ -321,6 +362,12 @@ show_container_logs() {
 execute_in_container() {
     local command="$1"
     local interactive="$2"
+    
+    # Check if Docker is running
+    if ! check_docker_running; then
+        print_error "Cannot execute command in container - container service not available"
+        return 1
+    fi
     
     if ! check_container_exists; then
         print_error "Container not found"
@@ -459,6 +506,13 @@ show_main_menu() {
 # Function to handle setup
 handle_setup() {
     print_header "Container Setup"
+    
+    # Check if Docker is running
+    if ! check_docker_running; then
+        print_error "Cannot proceed with setup - container service not available"
+        read -p "Press Enter to continue..."
+        return 1
+    fi
     
     local errors=0
     
@@ -630,31 +684,45 @@ main() {
         read -p "Enter your choice (1-14): " choice
         
         case $choice in
-            1) handle_setup ;;
+            1) 
+                if ! handle_setup; then
+                    print_warning "Setup operation failed or was cancelled"
+                fi
+                ;;
             2) 
                 if start_container; then
                     print_success "Container started"
+                else
+                    print_error "Failed to start container"
                 fi
                 read -p "Press Enter to continue..."
                 ;;
             3) 
                 if stop_container; then
                     print_success "Container stopped"
+                else
+                    print_error "Failed to stop container"
                 fi
                 read -p "Press Enter to continue..."
                 ;;
             4) 
                 if remove_container; then
                     print_success "Container removed"
+                else
+                    print_error "Failed to remove container"
                 fi
                 read -p "Press Enter to continue..."
                 ;;
             5) 
-                show_container_status
+                if ! show_container_status; then
+                    print_warning "Could not show container status"
+                fi
                 read -p "Press Enter to continue..."
                 ;;
             6) 
-                show_container_logs
+                if ! show_container_logs; then
+                    print_warning "Could not show container logs"
+                fi
                 read -p "Press Enter to continue..."
                 ;;
             7) handle_execute_command ;;
