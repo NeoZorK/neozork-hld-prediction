@@ -2,6 +2,7 @@
 
 # Native Container Setup Script for NeoZork HLD Prediction
 # This script sets up the native Apple Silicon container environment
+# Full feature parity with Docker container
 
 set -e
 
@@ -98,6 +99,21 @@ check_python() {
     fi
 }
 
+# Function to check UV installation
+check_uv() {
+    print_status "Checking UV installation..."
+    
+    if command_exists uv; then
+        uv_version=$(uv --version 2>/dev/null || echo "unknown")
+        print_success "UV found: $uv_version"
+        return 0
+    else
+        print_warning "UV not found - will be installed in container"
+        print_status "UV will be installed automatically during container setup"
+        return 1
+    fi
+}
+
 # Function to check project structure
 check_project_structure() {
     print_status "Checking project structure..."
@@ -107,11 +123,14 @@ check_project_structure() {
         "container-entrypoint.sh"
         "requirements.txt"
         "run_analysis.py"
+        "neozork_mcp_server.py"
+        "cursor_mcp_config.json"
         "src/"
         "tests/"
         "data/"
         "logs/"
         "results/"
+        "scripts/"
     )
     
     missing_files=()
@@ -156,6 +175,9 @@ ensure_required_directories() {
         "mql5_feed"
         "data/cache"
         "data/cache/uv_cache"
+        "data/cache/csv_converted"
+        "data/raw_parquet"
+        "results/plots"
     )
     
     for dir in "${required_dirs[@]}"; do
@@ -257,6 +279,9 @@ create_container() {
         --env DOCKER_CONTAINER=false \
         --env LOG_LEVEL=INFO \
         --env MCP_SERVER_TYPE=pycharm_copilot \
+        --env PYTHONUNBUFFERED=1 \
+        --env PYTHONDONTWRITEBYTECODE=1 \
+        --env MPLCONFIGDIR=/tmp/matplotlib-cache \
         --volume "$project_root:/app" \
         --volume "$project_root/data:/app/data" \
         --volume "$project_root/logs:/app/logs" \
@@ -305,6 +330,9 @@ show_next_steps() {
     echo "  - uv-install: Install dependencies"
     echo "  - uv-update: Update dependencies"
     echo "  - uv-test: Run UV environment test"
+    echo "  - uv-pytest: Run pytest with UV"
+    echo "  - mcp-start: Start MCP server"
+    echo "  - mcp-check: Check MCP server status"
     echo
     print_status "Documentation:"
     echo "  - Native container setup: docs/deployment/native-container-setup.md"
@@ -321,7 +349,7 @@ show_usage() {
     echo
     echo "Description:"
     echo "  This script sets up the native Apple Silicon container environment"
-    echo "  for the NeoZork HLD Prediction project."
+    echo "  for the NeoZork HLD Prediction project with full Docker parity."
     echo
     echo "Prerequisites:"
     echo "  - macOS 26+ (Tahoe) or higher"
@@ -329,6 +357,14 @@ show_usage() {
     echo "  - Python 3.11+ installed"
     echo "  - At least 4GB of available RAM"
     echo "  - 10GB of available disk space"
+    echo
+    echo "Features:"
+    echo "  - UV package manager support"
+    echo "  - MCP server integration"
+    echo "  - Command wrappers (nz, eda, uv-*)"
+    echo "  - Bash history and configuration"
+    echo "  - External data feed tests"
+    echo "  - Full Docker container parity"
     echo
     echo "Examples:"
     echo "  $0              # Run setup"
@@ -352,7 +388,7 @@ done
 
 # Main setup function
 main() {
-    echo -e "${BLUE}=== NeoZork HLD Prediction Native Container Setup ===${NC}"
+    echo -e "${BLUE}=== NeoZork HLD Prediction Native Container Setup (Full Docker Parity) ===${NC}"
     echo
     
     # Check prerequisites
@@ -374,6 +410,9 @@ main() {
     if ! check_python; then
         ((errors++))
     fi
+    
+    # Check UV installation (optional)
+    check_uv
     
     # Check project structure
     if ! check_project_structure; then
