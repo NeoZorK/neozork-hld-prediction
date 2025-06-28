@@ -72,7 +72,9 @@ class TestNativeContainerFullFunctionality:
             pytest.fail(f"container.yaml should be valid YAML: {e}")
             
     def test_required_files_exist(self):
-        """Test that all required files for full functionality exist"""
+        """Test that all required files exist."""
+        if is_running_in_docker():
+            pytest.skip("Skipping in Docker environment - native container files not available")
         required_files = [
             "container-entrypoint.sh",
             "container.yaml",
@@ -376,21 +378,25 @@ class TestNativeContainerFullFunctionality:
             assert full_path.exists(), f"Required directory should exist: {dir_path}"
             
     def test_script_permissions(self):
-        """Test that all scripts have proper permissions"""
+        """Test that scripts have correct permissions."""
+        if is_running_in_docker():
+            pytest.skip("Skipping in Docker environment - native container files not available")
+        assert os.access(self.entrypoint_script, os.X_OK), "Script should be executable: container-entrypoint.sh"
+        
+        # Check native container scripts
         scripts = [
-            "container-entrypoint.sh",
-            "scripts/native-container/setup.sh",
-            "scripts/native-container/run.sh",
-            "scripts/native-container/stop.sh",
-            "scripts/native-container/exec.sh",
-            "scripts/native-container/logs.sh",
-            "scripts/native-container/cleanup.sh"
+            "setup.sh",
+            "run.sh",
+            "stop.sh",
+            "exec.sh",
+            "logs.sh",
+            "cleanup.sh"
         ]
         
-        for script_path in scripts:
-            full_path = self.project_root / script_path
-            assert os.access(full_path, os.X_OK), f"Script should be executable: {script_path}"
-            
+        for script in scripts:
+            script_path = self.native_container_dir / script
+            assert os.access(script_path, os.X_OK), f"Script should be executable: {script}"
+
     def test_python_files_exist(self):
         """Test that all required Python files exist"""
         python_files = [
@@ -405,11 +411,13 @@ class TestNativeContainerFullFunctionality:
             assert full_path.exists(), f"Python file should exist: {file_path}"
             
     def test_configuration_files_exist(self):
-        """Test that all configuration files exist"""
+        """Test that configuration files exist."""
+        if is_running_in_docker():
+            pytest.skip("Skipping in Docker environment - native container files not available")
         config_files = [
-            "cursor_mcp_config.json",
             "requirements.txt",
-            "uv_setup/uv.toml"
+            "neozork_mcp_server.py",
+            "cursor_mcp_config.json"
         ]
         
         for file_path in config_files:
@@ -515,6 +523,8 @@ class TestNativeContainerFullFunctionality:
 
     def test_file_paths_consistency(self):
         """Test that file paths are consistent across environments."""
+        if is_running_in_docker():
+            pytest.skip("Skipping in Docker environment - native container files not available")
         project_root = get_project_root()
         
         # Test that key files exist in the detected project root
