@@ -85,7 +85,7 @@ For non-interactive use, you can run the sequences directly:
 2. **Stop Container (Full Sequence)** - Complete shutdown with cleanup
 3. **Show Container Status** - Display current container status
 4. **Help** - Show help information
-5. **Exit** - Exit the script
+0. **Exit** - Exit the script
 
 ### What Each Sequence Does
 
@@ -503,7 +503,7 @@ To manually test interactive features:
 # 2. Stop Container (Full Sequence)
 # 3. Show Container Status
 # 4. Help
-# 5. Exit
+# 0. Exit
 ```
 
 ### Testing Individual Scripts
