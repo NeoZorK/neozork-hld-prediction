@@ -158,13 +158,84 @@ execute_enhanced_shell() {
     
     print_status "Starting enhanced shell with automatic venv activation and UV setup..."
     
-    # Create the enhanced shell script content
-    local script_content
-    script_content=$(create_enhanced_shell_command)
-    
-    # Create temporary script file in container
+    # Create temporary script file in container using heredoc
     print_status "Creating enhanced shell script in container..."
-    echo "$script_content" | container exec "$container_id" bash -c 'cat > /tmp/enhanced_shell.sh && chmod +x /tmp/enhanced_shell.sh'
+    container exec "$container_id" bash -c 'cat > /tmp/enhanced_shell.sh << "EOF"
+#!/bin/bash
+
+# Enhanced shell startup for NeoZork HLD Prediction container
+# Automatically activates virtual environment and installs dependencies
+
+echo "=== NeoZork HLD Prediction Container Shell ==="
+echo "Setting up environment..."
+
+# Set non-interactive mode for apt
+export DEBIAN_FRONTEND=noninteractive
+
+# Update package list and install essential tools
+echo "Installing essential tools..."
+apt-get update -qq -y
+apt-get install -y -qq curl wget git
+
+# Check if we are in the right directory
+if [ ! -f "/app/requirements.txt" ]; then
+    echo "Error: requirements.txt not found. Are you in the correct directory?"
+    exit 1
+fi
+
+# Check if UV is available, install if not
+if ! command -v uv >/dev/null 2>&1; then
+    echo "Installing UV package manager..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.cargo/bin:$PATH"
+    # Also add to system PATH for this session
+    export PATH="/root/.cargo/bin:$PATH"
+fi
+
+# Check if virtual environment exists
+if [ ! -d "/app/.venv" ]; then
+    echo "Creating virtual environment..."
+    uv venv /app/.venv
+fi
+
+# Activate virtual environment
+echo "Activating virtual environment..."
+source /app/.venv/bin/activate
+
+# Check if dependencies are installed
+if [ ! -f "/app/.venv/pyvenv.cfg" ] || [ ! -d "/app/.venv/lib/python3.11/site-packages" ]; then
+    echo "Installing dependencies with UV..."
+    uv pip install -r /app/requirements.txt
+else
+    echo "Checking for dependency updates..."
+    uv pip install -r /app/requirements.txt --upgrade
+fi
+
+# Set up environment variables
+export PYTHONPATH="/app:$PYTHONPATH"
+export PYTHONUNBUFFERED=1
+export PYTHONDONTWRITEBYTECODE=1
+export MPLCONFIGDIR="/tmp/matplotlib-cache"
+
+# Create useful aliases
+alias nz="python /app/run_analysis.py"
+alias eda="python /app/scripts/eda_script.py"
+alias uv-install="uv pip install -r /app/requirements.txt"
+alias uv-update="uv pip install -r /app/requirements.txt --upgrade"
+alias uv-test="uv run python -c \"import sys; print(f\\\"Python {sys.version}\\\"); import pandas, numpy, matplotlib; print(\\\"Core packages imported successfully\\\")\""
+alias uv-pytest="uv run pytest tests/ -n auto"
+
+echo "Environment setup complete!"
+echo "Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
+echo "Type \"exit\" to leave the container shell"
+echo ""
+
+# Start interactive bash shell
+exec bash
+EOF'
+
+    # Make the script executable
+    container exec "$container_id" chmod +x /tmp/enhanced_shell.sh
     
     # Execute the enhanced shell script
     print_status "Executing enhanced shell script..."
