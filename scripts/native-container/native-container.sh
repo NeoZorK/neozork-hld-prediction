@@ -83,6 +83,59 @@ start_container_sequence() {
         return 1
     fi
     
+    # Check if container already exists and is running
+    if check_container_exists && check_container_running; then
+        print_warning "Container is already running!"
+        print_status "Skipping setup and start steps..."
+        print_status "Opening interactive shell directly..."
+        echo
+        read -p "Press Enter to continue to shell..."
+        
+        if ./scripts/native-container/exec.sh --shell; then
+            print_success "Shell session completed"
+        else
+            print_warning "Shell session failed or was interrupted"
+        fi
+        
+        echo
+        print_success "Container access completed!"
+        read -p "Press Enter to continue..."
+        return 0
+    fi
+    
+    # Check if container exists but is stopped
+    if check_container_exists && ! check_container_running; then
+        print_warning "Container exists but is stopped"
+        print_status "Starting existing container..."
+        
+        if ./scripts/native-container/run.sh; then
+            print_success "Container started"
+        else
+            print_error "Failed to start existing container"
+            read -p "Press Enter to continue..."
+            return 1
+        fi
+        
+        echo
+        print_status "Opening interactive shell..."
+        print_status "You will be taken to the container shell."
+        print_status "To exit the shell, type 'exit' or press Ctrl+D"
+        echo
+        read -p "Press Enter to continue to shell..."
+        
+        if ./scripts/native-container/exec.sh --shell; then
+            print_success "Shell session completed"
+        else
+            print_warning "Shell session failed or was interrupted"
+        fi
+        
+        echo
+        print_success "Container access completed!"
+        read -p "Press Enter to continue..."
+        return 0
+    fi
+    
+    # Container doesn't exist, run full setup
     print_status "Step 1: Running setup..."
     if ./scripts/native-container/setup.sh; then
         print_success "Setup completed"

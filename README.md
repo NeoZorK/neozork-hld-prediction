@@ -176,7 +176,7 @@ docs/
 ```
 
 #### Interactive Script Features
-- **Start Container (Full Sequence)**: Setup, start, status check, and interactive shell
+- **Start Container (Full Sequence)**: Smart startup with shell access (handles already running containers)
 - **Stop Container (Full Sequence)**: Stop, status check, and cleanup
 - **Show Container Status**: Display current container status
 - **Help**: Show help information
