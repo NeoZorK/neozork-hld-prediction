@@ -31,7 +31,7 @@ print_error() {
 
 # Function to check if container exists
 check_container_exists() {
-    if container list | grep -q "neozork-hld-prediction"; then
+    if container list --all | grep -q "neozork-hld-prediction"; then
         return 0
     else
         return 1
@@ -40,7 +40,7 @@ check_container_exists() {
 
 # Function to check if container is running
 check_container_running() {
-    if container list | grep -q "neozork-hld-prediction.*running"; then
+    if container list --all | grep -q "neozork-hld-prediction.*running"; then
         return 0
     else
         return 1
@@ -81,9 +81,13 @@ show_container_status() {
     print_status "Container status:"
     if check_container_running; then
         print_success "Container is running"
-        container list | grep "neozork-hld-prediction"
+        container list --all | grep "neozork-hld-prediction"
     else
         print_warning "Container is not running"
+        if check_container_exists; then
+            print_status "Container exists but is stopped:"
+            container list --all | grep "neozork-hld-prediction"
+        fi
     fi
 }
 

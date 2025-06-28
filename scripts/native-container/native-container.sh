@@ -49,7 +49,7 @@ command_exists() {
 
 # Function to check if container exists
 check_container_exists() {
-    if container list | grep -q "$CONTAINER_NAME"; then
+    if container list --all | grep -q "$CONTAINER_NAME"; then
         return 0
     else
         return 1
@@ -58,7 +58,7 @@ check_container_exists() {
 
 # Function to check if container is running
 check_container_running() {
-    if container list | grep -q "$CONTAINER_NAME.*running"; then
+    if container list --all | grep -q "$CONTAINER_NAME.*running"; then
         return 0
     else
         return 1
@@ -67,7 +67,7 @@ check_container_running() {
 
 # Function to get container ID
 get_container_id() {
-    container list | grep "$CONTAINER_NAME" | awk '{print $1}'
+    container list --all | grep "$CONTAINER_NAME" | awk '{print $1}'
 }
 
 # Function to check macOS version
