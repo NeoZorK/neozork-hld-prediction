@@ -24,16 +24,20 @@ export PYTHONPATH=/app
 # Create necessary directories
 create_directories() {
     log_message "Creating necessary directories..."
-    mkdir -p /app/data/cache/csv_converted \
-             /app/data/raw_parquet \
-             /app/logs \
-             /tmp/matplotlib-cache \
-             /app/results/plots \
-             /app/.pytest_cache \
-             /app/.uv_cache \
-             /app/.venv \
-             /tmp/bash_history \
-             /tmp/bin
+    
+    # Create directories with error handling
+    mkdir -p /app/data/cache/csv_converted 2>/dev/null || true
+    mkdir -p /app/data/raw_parquet 2>/dev/null || true
+    mkdir -p /app/logs 2>/dev/null || true
+    mkdir -p /tmp/matplotlib-cache 2>/dev/null || true
+    mkdir -p /app/results/plots 2>/dev/null || true
+    mkdir -p /app/.pytest_cache 2>/dev/null || true
+    mkdir -p /app/.uv_cache 2>/dev/null || true
+    mkdir -p /app/.venv 2>/dev/null || true
+    mkdir -p /tmp/bash_history 2>/dev/null || true
+    mkdir -p /tmp/bin 2>/dev/null || true
+    
+    log_message "Directories created successfully"
 }
 
 # Main execution
@@ -43,12 +47,10 @@ main() {
     # Create directories
     create_directories
     
-    log_message "Container ready. Waiting for commands..."
+    log_message "Container ready. Entering idle mode..."
     
-    # Keep container running by waiting
-    while true; do
-        sleep 3600  # Sleep for 1 hour
-    done
+    # Keep container running (idle)
+    tail -f /dev/null
 }
 
 # Run main function

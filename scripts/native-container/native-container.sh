@@ -69,7 +69,7 @@ check_container_exists() {
 
 # Function to check if container is running
 check_container_running() {
-    if container list --all | grep -q "$CONTAINER_NAME.*running"; then
+    if container list | grep -q "$CONTAINER_NAME"; then
         return 0
     else
         return 1
