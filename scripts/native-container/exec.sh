@@ -158,8 +158,20 @@ execute_enhanced_shell() {
     
     print_status "Starting enhanced shell with automatic venv activation and UV setup..."
     
-    # Pass the enhanced shell script via stdin to bash inside the container
-    create_enhanced_shell_command | container exec --interactive --tty "$container_id" bash -s
+    # Create the enhanced shell script content
+    local script_content
+    script_content=$(create_enhanced_shell_command)
+    
+    # Create temporary script file in container
+    print_status "Creating enhanced shell script in container..."
+    echo "$script_content" | container exec "$container_id" bash -c 'cat > /tmp/enhanced_shell.sh && chmod +x /tmp/enhanced_shell.sh'
+    
+    # Execute the enhanced shell script
+    print_status "Executing enhanced shell script..."
+    container exec --interactive --tty "$container_id" /tmp/enhanced_shell.sh
+    
+    # Cleanup temporary script
+    container exec "$container_id" rm -f /tmp/enhanced_shell.sh
 }
 
 # Function to show available commands
