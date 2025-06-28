@@ -6,13 +6,27 @@ Welcome to the comprehensive documentation for the NeoZork HLD Prediction projec
 
 ### Native Apple Silicon Container (macOS 26+)
 ```bash
-# Run interactive container manager
+# Clone and run interactive container manager
+git clone https://github.com/username/neozork-hld-prediction.git
+cd neozork-hld-prediction
 ./scripts/native-container/native-container.sh
-
-# Quick commands (non-interactive)
-# Start: ./scripts/native-container/setup.sh && ./scripts/native-container/run.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/exec.sh --shell
-# Stop:  ./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force
 ```
+
+**Quick Commands (Non-interactive):**
+```bash
+# Start container (full sequence)
+./scripts/native-container/setup.sh && ./scripts/native-container/run.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/exec.sh --shell
+
+# Stop container (full sequence)
+./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force
+```
+
+**Interactive Menu Options:**
+1. Start Container (Full Sequence)
+2. Stop Container (Full Sequence)  
+3. Show Container Status
+4. Help
+0. Exit
 
 ### Docker Environment (Recommended for other platforms)
 ```bash

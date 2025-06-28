@@ -36,6 +36,13 @@ cd neozork-hld-prediction
 # Stop:  ./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force
 ```
 
+**Interactive Menu Options:**
+1. Start Container (Full Sequence)
+2. Stop Container (Full Sequence)
+3. Show Container Status
+4. Help
+0. Exit
+
 **Prerequisites for Native Container:**
 - macOS 26 Tahoe (Developer Beta) or higher
 - Native container application from Apple Developer Beta

@@ -180,6 +180,7 @@ docs/
 - **Stop Container (Full Sequence)**: Stop, status check, and cleanup
 - **Show Container Status**: Display current container status
 - **Help**: Show help information
+- **Exit**: Exit the script (option 0)
 
 #### Prerequisites
 - macOS 26 Tahoe (Developer Beta) or higher

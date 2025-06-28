@@ -71,7 +71,7 @@ class TestNativeContainerScript(unittest.TestCase):
         # Test the function (we'll need to extract it or test via subprocess)
         result = subprocess.run(
             ["bash", str(self.script_path)],
-            input="14\n",  # Exit option
+            input="0\n",  # Exit option
             capture_output=True,
             text=True
         )
@@ -90,7 +90,7 @@ class TestNativeContainerScript(unittest.TestCase):
         
         result = subprocess.run(
             ["bash", str(self.script_path)],
-            input="13\n14\n",  # System check then exit
+            input="4\n0\n",  # Help then exit
             capture_output=True,
             text=True
         )
@@ -108,7 +108,7 @@ class TestNativeContainerScript(unittest.TestCase):
         
         result = subprocess.run(
             ["bash", str(self.script_path)],
-            input="13\n14\n",  # System check then exit
+            input="4\n0\n",  # Help then exit
             capture_output=True,
             text=True
         )
@@ -130,7 +130,7 @@ class TestNativeContainerScript(unittest.TestCase):
         
         result = subprocess.run(
             ["bash", str(self.script_path)],
-            input="13\n14\n",  # System check then exit
+            input="4\n0\n",  # Help then exit
             capture_output=True,
             text=True
         )
@@ -149,7 +149,7 @@ class TestNativeContainerScript(unittest.TestCase):
         
         result = subprocess.run(
             ["bash", str(self.script_path)],
-            input="2\n3\n14\n",  # Start, stop, exit
+            input="1\n2\n0\n",  # Start, stop, exit
             capture_output=True,
             text=True
         )
@@ -172,101 +172,68 @@ class TestNativeContainerScript(unittest.TestCase):
         self.assertIn("interactive", result.stdout)
 
     @pytest.mark.skip(reason="Requires interactive terminal (tty)")
-    def test_script_menu_structure(self):
+    def test_script_structure(self):
         """Test that the script shows the correct menu structure."""
         result = subprocess.run(
             ["bash", str(self.script_path)],
-            input="14\n",  # Exit immediately
+            input="5\n",  # Exit immediately
             capture_output=True,
             text=True,
             timeout=10
         )
         
-        # Check for menu items
+        # Check for menu items in simplified menu
         menu_items = [
-            "Setup container",
-            "Start container", 
-            "Stop container",
-            "Remove container",
-            "Show container status",
-            "Show container logs",
-            "Execute command in container",
-            "Start interactive shell",
-            "Run analysis",
-            "Run tests",
-            "Show available commands",
-            "Cleanup resources",
-            "System check",
+            "Start Container (Full Sequence)",
+            "Stop Container (Full Sequence)",
+            "Show Container Status",
+            "Help",
             "Exit"
         ]
         
         for item in menu_items:
-            self.assertIn(item, result.stdout, f"Menu item '{item}' not found")
+            self.assertIn(item, result.stdout, f"Menu should contain: {item}")
 
     @pytest.mark.skip(reason="Requires interactive terminal (tty)")
     def test_script_colors_and_formatting(self):
-        """Test that the script uses proper colors and formatting."""
+        """Test script colors and formatting."""
         result = subprocess.run(
             ["bash", str(self.script_path)],
-            input="14\n",  # Exit immediately
+            input="4\n5\n",  # Help then exit
             capture_output=True,
             text=True,
             timeout=10
         )
         
-        # Check for color codes
-        self.assertIn("\033[", result.stdout, "Script should use color codes")
-        
-        # Check for header formatting
-        self.assertIn("===", result.stdout, "Script should use header formatting")
-
-    @patch('subprocess.run')
-    def test_analysis_commands(self, mock_run):
-        """Test analysis command execution."""
-        # Mock container exec command
-        mock_run.return_value = MagicMock(returncode=0, stdout="Analysis completed\n")
-        
-        result = subprocess.run(
-            ["bash", str(self.script_path)],
-            input="9\n1\n6\n14\n",  # Analysis, demo, cancel, exit
-            capture_output=True,
-            text=True,
-            timeout=15
-        )
-        
+        # Should not have syntax errors
         self.assertNotIn("syntax error", result.stderr.lower())
-
-    @patch('subprocess.run')
-    def test_test_execution(self, mock_run):
-        """Test test execution functionality."""
-        # Mock container exec command
-        mock_run.return_value = MagicMock(returncode=0, stdout="Tests passed\n")
-        
-        result = subprocess.run(
-            ["bash", str(self.script_path)],
-            input="10\n1\n7\n14\n",  # Tests, all tests, cancel, exit
-            capture_output=True,
-            text=True,
-            timeout=15
-        )
-        
-        self.assertNotIn("syntax error", result.stderr.lower())
+        # Should show colored output (ANSI escape codes)
+        self.assertIn("\033[", result.stdout, "Script should use color formatting")
 
     def test_cleanup_functionality(self):
         """Test cleanup functionality."""
-        # Create some test files to clean up
-        test_dirs = ["__pycache__", ".pytest_cache"]
-        for dir_name in test_dirs:
-            os.makedirs(dir_name, exist_ok=True)
+        # Create minimal project structure
+        os.makedirs("src", exist_ok=True)
+        os.makedirs("tests", exist_ok=True)
+        os.makedirs("data", exist_ok=True)
+        os.makedirs("logs", exist_ok=True)
+        os.makedirs("results", exist_ok=True)
         
-        test_files = ["test.log", "temp.txt"]
-        for file_name in test_files:
-            with open(file_name, 'w') as f:
-                f.write("test content\n")
+        with open("container.yaml", 'w') as f:
+            f.write("apiVersion: v1\nkind: Container\n")
+        
+        with open("container-entrypoint.sh", 'w') as f:
+            f.write("#!/bin/bash\necho 'Container started'\n")
+        
+        with open("requirements.txt", 'w') as f:
+            f.write("pytest\n")
+        
+        with open("run_analysis.py", 'w') as f:
+            f.write("#!/usr/bin/env python3\nprint('Analysis script')\n")
         
         result = subprocess.run(
             ["bash", str(self.script_path)],
-            input="12\n2\n6\n14\n",  # Cleanup, cache, cancel, exit
+            input="2\n5\n",  # Stop container (cleanup), exit
             capture_output=True,
             text=True,
             timeout=15
@@ -280,7 +247,7 @@ class TestNativeContainerScript(unittest.TestCase):
         # Test with invalid menu choice
         result = subprocess.run(
             ["bash", str(self.script_path)],
-            input="99\n14\n",  # Invalid choice, exit
+            input="99\n5\n",  # Invalid choice, exit
             capture_output=True,
             text=True,
             timeout=10
@@ -318,15 +285,15 @@ class TestNativeContainerScript(unittest.TestCase):
         with open(self.script_path, 'r') as f:
             content = f.read()
         
-        # Check for important functions
+        # Check for important functions in simplified script
         required_functions = [
             "print_status",
             "print_success", 
             "print_error",
             "check_container_exists",
             "check_container_running",
-            "start_container",
-            "stop_container",
+            "start_container_sequence",
+            "stop_container_sequence",
             "show_main_menu"
         ]
         
@@ -348,7 +315,7 @@ class TestNativeContainerScript(unittest.TestCase):
         # Test normal exit
         result = subprocess.run(
             ["bash", str(self.script_path)],
-            input="14\n",  # Exit
+            input="0\n",  # Exit
             capture_output=True,
             text=True,
             timeout=10
@@ -407,8 +374,8 @@ class TestNativeContainerScriptIntegration(unittest.TestCase):
         
         # Test script execution (simulate user interaction)
         commands = [
-            "13\n",  # System check
-            "14\n",  # Exit
+            "4\n",  # Help
+            "0\n",  # Exit
         ]
         
         result = subprocess.run(
@@ -429,7 +396,7 @@ class TestNativeContainerScriptIntegration(unittest.TestCase):
         with patch.dict(os.environ, {'PATH': '/usr/bin:/bin'}):
             result = subprocess.run(
                 ["bash", str(self.script_path)],
-                input="13\n14\n",  # System check, exit
+                input="4\n0\n",  # Help, exit
                 capture_output=True,
                 text=True,
                 timeout=15
@@ -447,7 +414,7 @@ class TestNativeContainerScriptIntegration(unittest.TestCase):
         
         result = subprocess.run(
             ["bash", str(self.script_path)],
-            input="14\n",  # Exit immediately
+            input="0\n",  # Exit immediately
             capture_output=True,
             text=True,
             timeout=10

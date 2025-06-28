@@ -219,7 +219,7 @@ show_help() {
     echo -e "${YELLOW}4. Help${NC}"
     echo "   Shows this help message"
     echo
-    echo -e "${MAGENTA}5. Exit${NC}"
+    echo -e "${MAGENTA}0. Exit${NC}"
     echo "   Exits the script"
     echo
     read -p "Press Enter to continue..."
@@ -235,7 +235,7 @@ show_main_menu() {
     echo "2) Stop Container (Full Sequence)"
     echo "3) Show Container Status"
     echo "4) Help"
-    echo "5) Exit"
+    echo "0) Exit"
     echo
 }
 
@@ -244,7 +244,7 @@ main() {
     while true; do
         show_main_menu
         
-        read -p "Enter your choice (1-5): " choice
+        read -p "Enter your choice (0-4): " choice
         
         case $choice in
             1) 
@@ -259,7 +259,7 @@ main() {
             4) 
                 show_help
                 ;;
-            5) 
+            0) 
                 print_success "Goodbye!"
                 exit 0
                 ;;
@@ -285,5 +285,4 @@ else
     echo "  Start: ./scripts/native-container/setup.sh && ./scripts/native-container/run.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/exec.sh --shell"
     echo "  Stop:  ./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force"
     exit 1
-fi 
 fi 
