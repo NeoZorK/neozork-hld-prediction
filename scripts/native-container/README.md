@@ -90,10 +90,14 @@ For non-interactive use, you can run the sequences directly:
 ### What Each Sequence Does
 
 #### Start Container Sequence
-1. **Setup**: Validates prerequisites, creates container configuration
-2. **Start**: Launches the container and ensures it's running
-3. **Status Check**: Verifies container is properly started
-4. **Interactive Shell**: Opens bash shell inside the container
+1. **Smart Check**: Checks if container already exists and is running
+   - If running: Skips setup and start, opens shell directly
+   - If stopped: Starts existing container, then opens shell
+   - If not exists: Runs full setup sequence
+2. **Setup** (if needed): Validates prerequisites, creates container configuration
+3. **Start** (if needed): Launches the container and ensures it's running
+4. **Status Check** (if needed): Verifies container is properly started
+5. **Interactive Shell**: Opens bash shell inside the container
 
 #### Stop Container Sequence
 1. **Stop**: Gracefully stops the running container
@@ -600,6 +604,23 @@ Error: UV is not available
 - Container will automatically install UV if not available
 - Check UV installation: `uv --version`
 - Reinstall UV manually if needed: `curl -sSL https://github.com/astral-sh/uv/releases/latest/download/uv-installer.sh | bash`
+
+#### 6. Container Already Running
+
+```bash
+[WARNING] Container 'neozork-hld-prediction' already exists
+[INFO] Removing existing container...
+Error: internalError: "delete failed for one or more containers: ["neozork-hld-prediction"]"
+```
+
+**Solution:**
+- The interactive script now handles this automatically
+- If container is running: Opens shell directly (skips setup)
+- If container is stopped: Starts existing container, then opens shell
+- If container doesn't exist: Runs full setup sequence
+- No manual intervention needed
+
+#### 7. Smart Container Logic
 
 ### Debug Mode
 

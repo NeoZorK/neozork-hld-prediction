@@ -64,9 +64,9 @@ Executes the complete shutdown sequence:
 - Check status (`./scripts/native-container/run.sh --status`)
 - Cleanup resources (`./scripts/native-container/cleanup.sh --all --force`)
 
-**Menu Options:**
-1. Start Container (Full Sequence)
-2. Stop Container (Full Sequence)
+**Interactive Menu Options:**
+1. Start Container (Full Sequence) - Smart startup (handles already running containers)
+2. Stop Container (Full Sequence)  
 3. Show Container Status
 4. Help
 0. Exit
