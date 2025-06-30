@@ -108,7 +108,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
             pd.testing.assert_frame_equal(call_args[0], self.result_df)
             self.assertEqual(call_args[1], self.selected_rule)
 
-            # 4. Check the constructed title
+            # 4. Check the constructed title - use full rule name
             expected_precision = 8 if abs(self.point_size) < 0.001 else 5 if abs(self.point_size) < 0.1 else 2
             expected_point_str = f"{self.point_size:.{expected_precision}f}"
             expected_title = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Strategy:{self.args.lot_size},{self.args.risk_reward_ratio},{self.args.fee_per_trade} | Pt:{expected_point_str}{'~' if self.estimated_point else ''}"
