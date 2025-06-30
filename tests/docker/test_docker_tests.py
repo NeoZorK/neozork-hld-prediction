@@ -14,9 +14,14 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
+def is_running_in_docker():
+    """Check if running inside Docker container"""
+    return os.path.exists('/.dockerenv') or os.environ.get('DOCKER_CONTAINER') == 'true'
+
 class TestDockerEnvironment:
     """Test Docker environment setup and functionality"""
     
+    @pytest.mark.skipif(is_running_in_docker(), reason="Docker files not available inside container")
     def test_docker_compose_file_exists(self):
         """Test that docker-compose.yml exists"""
         docker_compose_path = project_root / "docker-compose.yml"
@@ -26,6 +31,7 @@ class TestDockerEnvironment:
         print(f"Files in project root: {list(project_root.glob('*.yml'))}")
         assert docker_compose_path.exists(), f"docker-compose.yml not found at {docker_compose_path}"
     
+    @pytest.mark.skipif(is_running_in_docker(), reason="Docker files not available inside container")
     def test_dockerfile_exists(self):
         """Test that Dockerfile exists"""
         dockerfile_path = project_root / "Dockerfile"
@@ -38,6 +44,7 @@ class TestDockerEnvironment:
         print(f"Looking for docker.env at: {docker_env_path}")
         assert docker_env_path.exists(), f"docker.env not found at {docker_env_path}"
     
+    @pytest.mark.skipif(is_running_in_docker(), reason="Docker files not available inside container")
     def test_container_entrypoint_exists(self):
         """Test that container-entrypoint.sh exists"""
         entrypoint_path = project_root / "container-entrypoint.sh"
