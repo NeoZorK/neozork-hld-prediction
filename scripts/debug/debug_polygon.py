@@ -11,9 +11,13 @@ import asyncio
 from pathlib import Path
 
 # Add the src directory to the Python path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from data.fetchers.polygon_fetcher import PolygonFetcher
+try:
+    from src.data.fetchers.polygon_fetcher import fetch_polygon_data
+except ImportError as e:
+    print(f"❌ ImportError: {e}\nMake sure you have the correct project structure and src/ in your path.")
+    exit(2)
 
 
 def test_polygon_connection():
@@ -29,15 +33,9 @@ def test_polygon_connection():
         return False
     
     try:
-        # Create Polygon fetcher instance
-        fetcher = PolygonFetcher()
-        
-        # Test connection
-        print("✅ Polygon fetcher created successfully")
-        
         # Test fetching recent data
         print("Fetching recent AAPL data...")
-        data = fetcher.fetch_recent_data("AAPL", "1", "day", limit=10)
+        data, metadata = fetch_polygon_data("AAPL", "1", "2024-01-01", "2024-01-02")
         
         if data is not None and len(data) > 0:
             print(f"✅ Successfully fetched {len(data)} records from Polygon")

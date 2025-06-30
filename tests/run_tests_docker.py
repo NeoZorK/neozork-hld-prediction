@@ -1,239 +1,142 @@
 #!/usr/bin/env python3
+"""
+Run tests for Docker environment
+"""
 
 import os
 import sys
-import argparse
 import subprocess
-from typing import List, Dict, Optional, Tuple
-import logging
 import time
+from pathlib import Path
 
-# Setup logging
-LOG_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs")
-os.makedirs(LOG_DIR, exist_ok=True)
-LOG_FILE = os.path.join(LOG_DIR, "test_runner_docker.log")
+# Add project root to path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(LOG_FILE)
+def run_docker_tests():
+    """Run all Docker-specific tests"""
+    
+    # Test files to run
+    test_files = [
+        "tests/docker/test_uv_only_mode.py",
+        "tests/docker/test_docker_tests.py", 
+        "tests/docker/test_docker_config.py",
+        "tests/native-container/test_native_container_full_functionality.py",
+        "tests/native-container/test_container_setup.py",
+        "tests/native-container/test_native_container_features.py",
+        "tests/native-container/test_enhanced_shell.py"
     ]
-)
-logger = logging.getLogger('test_runner_docker')
-
-# Define test categories and their scripts (for Docker environment)
-TEST_CATEGORIES = {
-    "yfinance": {
-        "description": "Yahoo Finance API tests",
-        "scripts": [
-            "scripts/debug_scripts/debug_yfinance.py"
-        ]
-    },
-    "binance": {
-        "description": "Binance API tests",
-        "scripts": [
-            "scripts/debug_scripts/debug_binance.py"
-        ]
-    },
-    "polygon": {
-        "description": "Polygon.io API tests",
-        "scripts": [
-            "scripts/debug_scripts/debug_polygon.py"
-        ]
-    },
-    "parquet": {
-        "description": "Parquet file operations tests",
-        "scripts": [
-            "scripts/debug_scripts/examine_parquet.py"
-        ]
-    }
-}
-
-def print_colored(text: str, color_code: int = 0) -> None:
-    """Print colored text to terminal."""
-    colors = {
-        'red': 31,
-        'green': 32,
-        'yellow': 33,
-        'blue': 34,
-        'magenta': 35,
-        'cyan': 36,
-        'white': 37,
-    }
-
-    if isinstance(color_code, str) and color_code in colors:
-        color_code = colors[color_code]
-
-    print(f"\033[{color_code}m{text}\033[0m")
-
-def print_header(title: str) -> None:
-    """Print a formatted header."""
-    separator = "=" * 60
-    print("\n" + separator)
-    print_colored(f"  {title.upper()}", 'cyan')
-    print(separator + "\n")
-
-def check_api_key(service: str) -> bool:
-    """Check if API key for a service is present in environment."""
-    env_vars = {
-        'binance': ['BINANCE_API_KEY', 'BINANCE_API_SECRET'],
-        'polygon': ['POLYGON_API_KEY', 'POLYGON_API_KEY_ID', 'POLYGON_API_SECRET'],
-    }
-    for var in env_vars.get(service, []):
-        if os.environ.get(var):
-            return True
-    return False
-
-def run_script(script_path: str, args: Optional[List[str]] = None, category: Optional[str] = None) -> bool:
-    """
-    Run a Python script with arguments.
-    Args:
-        script_path: Path to the script
-        args: Optional arguments to pass to the script
-        category: Optional test category (for API key check)
-    Returns:
-        bool: True if successful, False otherwise
-    """
-    if not os.path.exists(script_path):
-        logger.error(f"Script not found: {script_path}")
-        if category in ("binance", "polygon"):
-            if not check_api_key(category):
-                print_colored(f"[INFO] {category.capitalize()} API key not found in environment. Please set the required API key(s) in your .env or docker.env file.", 'yellow')
-        return False
-
-    cmd = [sys.executable, script_path]
-    if args:
-        cmd.extend(args)
-
-    logger.info(f"Running: {' '.join(cmd)}")
-
-    try:
-        start_time = time.time()
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-            bufsize=1
-        )
-
-        # Print output in real-time
-        for line in process.stdout:
-            print(line, end='')
-
-        # Wait for process to complete
-        process.wait()
-        elapsed_time = time.time() - start_time
-
-        if process.returncode == 0:
-            logger.info(f"Script completed successfully in {elapsed_time:.2f}s: {script_path}")
-            return True
-        else:
-            # Collect stderr
-            stderr_output = process.stderr.read()
-            logger.error(f"Script failed with return code {process.returncode}: {script_path}")
-            if stderr_output:
-                logger.error(f"Error output: {stderr_output}")
-            if category in ("binance", "polygon"):
-                if not check_api_key(category):
-                    print_colored(f"[INFO] {category.capitalize()} API key not found in environment. Please set the required API key(s) in your .env or docker.env file.", 'yellow')
-            return False
-
-    except Exception as e:
-        logger.error(f"Error running script {script_path}: {str(e)}")
-        if category in ("binance", "polygon"):
-            if not check_api_key(category):
-                print_colored(f"[INFO] {category.capitalize()} API key not found in environment. Please set the required API key(s) in your .env or docker.env file.", 'yellow')
-        return False
-
-def run_selected_tests(categories: List[str]) -> Dict[str, bool]:
-    """Run selected test categories."""
-    results = {}
     
-    for category in categories:
-        if category not in TEST_CATEGORIES:
-            print(f"Warning: Unknown category '{category}'")
-            continue
+    # Debug scripts to test
+    debug_scripts = [
+        "scripts/debug/debug_yfinance.py",
+        "scripts/debug/debug_binance.py", 
+        "scripts/debug/debug_polygon.py",
+        "scripts/debug/examine_parquet.py"
+    ]
+    
+    print("=== Running Docker Tests ===")
+    
+    # Run test files with compact output
+    passed_tests = 0
+    failed_tests = 0
+    skipped_tests = 0
+    
+    for test_file in test_files:
+        if Path(test_file).exists():
+            print(f"Running {test_file}...", end=" ")
+            result = subprocess.run([
+                sys.executable, "-m", "pytest", test_file, 
+                "--tb=no", "-q", "--disable-warnings"
+            ], capture_output=True, text=True)
             
-        info = TEST_CATEGORIES[category]
-        print_header(f"Running {category} Tests")
-        
-        success = True
-        for script in info['scripts']:
-            if not run_script(script, category=category):
-                success = False
-                
-        results[category] = success
-        
-        if success:
-            print_colored(f"✅ {category} tests completed successfully", 'green')
+            # Analyze error reason
+            error_reason = None
+            if result.returncode != 0:
+                if "not found" in result.stdout or "not found" in result.stderr:
+                    error_reason = "❗ Important file not found"
+                elif "API_KEY" in result.stdout or "API_KEY" in result.stderr:
+                    error_reason = "❗ No API keys in environment"
+                elif "Permission denied" in result.stdout or "Permission denied" in result.stderr:
+                    error_reason = "❗ No file permissions"
+                elif "No such file or directory" in result.stdout or "No such file or directory" in result.stderr:
+                    error_reason = "❗ Required file not found"
+                elif "ModuleNotFoundError" in result.stdout or "ModuleNotFoundError" in result.stderr:
+                    error_reason = "❗ Module import error"
+                elif "AssertionError" in result.stdout or "AssertionError" in result.stderr:
+                    error_reason = "❗ AssertionError (see logs)"
+                elif result.stderr.strip():
+                    error_reason = result.stderr.strip().split('\n')[-1]
+            
+            # Parsing results
+            output_lines = result.stdout.split('\n')
+            for line in output_lines:
+                if 'passed' in line:
+                    parts = line.split()
+                    for i, part in enumerate(parts):
+                        if part.isdigit() and i < len(parts) - 1 and parts[i+1] == 'passed':
+                            passed_tests += int(part)
+                        elif part.isdigit() and i < len(parts) - 1 and parts[i+1] == 'failed':
+                            failed_tests += int(part)
+                        elif part.isdigit() and i < len(parts) - 1 and parts[i+1] == 'skipped':
+                            skipped_tests += int(part)
+                    break
+            
+            if result.returncode == 0:
+                print("✅")
+            else:
+                print(f"❌{f' ({error_reason})' if error_reason else ''}")
         else:
-            print_colored(f"❌ {category} tests failed", 'red')
+            print(f"❌ {test_file} - Not found")
     
-    return results
-
-def run_all_tests() -> Dict[str, bool]:
-    """Run all tests."""
-    results = {}
+    # Test debug scripts with detailed output like v0.4.3
+    print("\n=== Testing Debug Scripts ===")
     
-    for category, info in TEST_CATEGORIES.items():
-        print_header(f"Running {category} Tests")
-        
-        success = True
-        for script in info['scripts']:
-            if not run_script(script, category=category):
-                success = False
+    # Test debug scripts
+    for script in debug_scripts:
+        start_time = time.time()
+        try:
+            result = subprocess.run(
+                [sys.executable, script],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=project_root
+            )
+            elapsed = time.time() - start_time
+            
+            if result.returncode == 0:
+                print(f"Testing {script}... ✅ ({elapsed:.2f}s)")
+            else:
+                # Analyze error reason
+                error_reason = "❗ Unknown error"
                 
-        results[category] = success
-        
-        if success:
-            print_colored(f"✅ {category} tests completed successfully", 'green')
-        else:
-            print_colored(f"❌ {category} tests failed", 'red')
-    
-    return results
-
-def print_summary(results: Dict[str, bool]) -> None:
-    """Print test results summary."""
-    print_header("Test Results Summary")
-    
-    total_tests = len(results)
-    passed_tests = sum(1 for success in results.values() if success)
-    failed_tests = total_tests - passed_tests
-    
-    print(f"Total test categories: {total_tests}")
-    print_colored(f"Passed: {passed_tests}", 'green')
-    print_colored(f"Failed: {failed_tests}", 'red')
-    
-    if failed_tests > 0:
-        print("\nFailed test categories:")
-        for category, success in results.items():
-            if not success:
-                print_colored(f"  - {category}", 'red')
-    
-    print(f"\nSuccess rate: {passed_tests/total_tests*100:.1f}%")
-
-def main():
-    """Main function for Docker environment."""
-    parser = argparse.ArgumentParser(description="Run various test categories in Docker environment")
-    parser.add_argument("--categories", nargs="+", help="Test categories to run")
-    parser.add_argument("--all", action="store_true", help="Run all tests")
-    
-    args = parser.parse_args()
-    
-    if args.all:
-        results = run_all_tests()
-        print_summary(results)
-    elif args.categories:
-        results = run_selected_tests(args.categories)
-        print_summary(results)
-    else:
-        # Default: run all tests
-        print_colored("Running all external data feed tests in Docker environment...", 'cyan')
-        results = run_all_tests()
-        print_summary(results)
+                # Special handling for interactive scripts
+                if "debug_yfinance.py" in script:
+                    error_reason = "⏰ (Interactive script - requires user input)"
+                elif "BINANCE_API_KEY" in result.stdout or "BINANCE_API_SECRET" in result.stdout:
+                    error_reason = "❗ no API_KEY found on env file in path: /app/docker.env"
+                elif "POLYGON_API_KEY" in result.stdout:
+                    error_reason = "❗ no API_KEY found on env file in path: /app/docker.env"
+                elif "No API keys" in result.stderr or "No API keys" in result.stdout:
+                    error_reason = "❗ no API_KEY found on env file in path: /app/docker.env"
+                elif "Permission denied" in result.stderr:
+                    error_reason = "❗ No file permissions"
+                elif "No such file" in result.stderr:
+                    error_reason = "❗ Required file not found"
+                elif "ImportError" in result.stderr:
+                    error_reason = "❗ Module import error"
+                elif "timeout" in result.stderr.lower():
+                    error_reason = "⏰ (Rate Limit)"
+                
+                print(f"Testing {script}... ❌ ({error_reason})")
+                
+        except subprocess.TimeoutExpired:
+            elapsed = time.time() - start_time
+            print(f"Testing {script}... ⏰ (Rate Limit)")
+        except Exception as e:
+            elapsed = time.time() - start_time
+            print(f"Testing {script}... ❌ (Error: {str(e)})")
 
 if __name__ == "__main__":
-    main() 
+    run_docker_tests() 

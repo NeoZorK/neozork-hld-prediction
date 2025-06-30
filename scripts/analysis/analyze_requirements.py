@@ -23,7 +23,7 @@ except ImportError:
     pass
 
 # Project root directory
-PROJECT_ROOT = Path(__file__).parent.parent
+PROJECT_ROOT = Path(__file__).parent.parent.parent
 REQUIREMENTS_FILE = PROJECT_ROOT / "requirements.txt"
 
 # Standard library modules

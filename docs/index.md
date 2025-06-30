@@ -155,10 +155,63 @@ neozork-hld-prediction/
 │   │   ├── native-container/  # Native container docs
 │   │   └── index.md       # Container overview
 │   └── ...                # Other documentation
-├── scripts/               # Utility scripts
+├── scripts/               # **REORGANIZED**: Utility scripts
+│   ├── mcp/               # MCP server management scripts
+│   ├── analysis/          # Analysis and testing scripts
+│   ├── utilities/         # Utility and setup scripts
+│   ├── demos/             # Demonstration scripts
+│   ├── debug/             # Debugging scripts
+│   ├── docker/            # Docker-specific scripts
+│   └── native-container/  # Native container scripts
 ├── data/                  # Data storage
 └── results/               # Analysis results
 ```
+
+### Scripts Organization
+
+The `scripts/` directory has been reorganized for better maintainability:
+
+#### **MCP Scripts** (`scripts/mcp/`)
+- **neozork_mcp_manager.py** - Unified MCP server manager with autostart and monitoring
+- **start_mcp_server_daemon.py** - MCP server daemon startup script
+- **check_mcp_status.py** - MCP server status checking and diagnostics
+- **test_mcp_server_detection.py** - MCP server detection testing
+- **debug_mcp_detection.py** - MCP server detection debugging
+
+#### **Analysis Scripts** (`scripts/analysis/`)
+- **analyze_requirements.py** - Python imports analysis and requirements optimization
+- **auto_pyproject_from_requirements.py** - Generate pyproject.toml from requirements.txt
+- **generate_test_coverage.py** - Test coverage analysis and reporting
+- **fix_test_coverage.py** - Test coverage fixes and improvements
+- **manage_test_results.py** - Test results management and analysis
+
+#### **Utility Scripts** (`scripts/utilities/`)
+- **fix_imports.py** - Fix relative imports in test files
+- **setup_ide_configs.py** - IDE configuration setup
+- **init_dirs.sh** - Directory structure initialization
+- **recreate_csv.py** - CSV file recreation utilities
+- **create_test_parquet.py** - Test Parquet file creation
+- **check_uv_mode.py** - UV mode verification
+- **test_uv_docker.py** - UV Docker integration testing
+
+#### **Demo Scripts** (`scripts/demos/`)
+- **demo_universal_metrics.py** - Universal metrics demonstration
+
+#### **Debug Scripts** (`scripts/debug/`)
+- **debug_binance.py** - Binance API debugging
+- **debug_binance_connection.py** - Binance connection debugging
+- **debug_polygon.py** - Polygon API debugging
+- **debug_polygon_connection.py** - Polygon connection debugging
+- **debug_polygon_resolve.py** - Polygon resolution debugging
+- **debug_yfinance.py** - YFinance API debugging
+- **examine_parquet.py** - Parquet file examination
+- **examine_binance_parquet.py** - Binance Parquet file examination
+- **debug_check_parquet.py** - Parquet file checking
+- **debug_csv_reader.py** - CSV reader debugging
+
+#### **Container Scripts**
+- **Docker Scripts** (`scripts/docker/`) - Docker container testing and workflows
+- **Native Container Scripts** (`scripts/native-container/`) - Apple Silicon container management
 
 ## 🚀 Quick Examples
 

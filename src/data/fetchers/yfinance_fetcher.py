@@ -18,7 +18,7 @@ import random
 import json
 
 # Use relative import for logger
-from ...common import logger
+from src.common import logger
 
 
 # Definition of the map_yfinance_interval function (using yfinance name convention)

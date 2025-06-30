@@ -25,7 +25,7 @@ class TestBBIndicator:
         }, index=dates)
 
     def test_bb_initialization(self):
-        pass  # Неактуально для функционального стиля
+        pass  # Not relevant for functional style
 
     def test_bb_calculation_basic(self):
         """Test basic Bollinger Bands calculation."""
@@ -87,7 +87,7 @@ class TestBBIndicator:
         # Test with valid parameters
         result = self.bb(self.sample_data['Close'], period=20, std_dev=2.0)
         assert len(result) == 3
-        # Test с float period (приводим к int)
+        # Test with float period (convert to int)
         result = self.bb(self.sample_data['Close'], period=int(20.5), std_dev=2.0)
         assert len(result) == 3
 
@@ -114,10 +114,10 @@ class TestBBIndicator:
         assert len(lower) == len(data_with_nan)
 
     def test_bb_docstring_info(self):
-        pass  # Неактуально для функционального стиля
+        pass  # Not relevant for functional style
 
     def test_bb_cli_integration(self):
-        pass  # Неактуально для функционального стиля
+        pass  # Not relevant for functional style
 
     def test_bb_performance(self):
         """Test Bollinger Bands calculation performance."""

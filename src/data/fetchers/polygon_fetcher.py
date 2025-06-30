@@ -10,7 +10,7 @@ import os
 import time # Import time
 import traceback
 from datetime import datetime, timedelta
-from ...common import logger # Relative import
+from src.common import logger # Absolute import
 from tqdm import tqdm # Import tqdm
 # Need to import MaxRetryError
 from urllib3.exceptions import MaxRetryError
