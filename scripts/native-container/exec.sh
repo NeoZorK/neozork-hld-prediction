@@ -316,8 +316,8 @@ show_available_commands() {
     echo
     echo -e "${BLUE}Development:${NC}"
     echo "  python run_analysis.py -h             # Show help"
-    echo "  python scripts/test_uv_docker.py      # Test UV environment"
-    echo "  python scripts/check_mcp_status.py    # Check MCP server"
+    echo "  python scripts/utilities/test_uv_docker.py      # Test UV environment"
+    echo "  python scripts/mcp/check_mcp_status.py    # Check MCP server"
     echo
     echo -e "${BLUE}System:${NC}"
     echo "  ls -la /app                           # List application files"

@@ -7,6 +7,7 @@ import os
 import sys
 import subprocess
 import pytest
+import importlib.util
 from pathlib import Path
 
 # Add project root to path
@@ -19,22 +20,29 @@ class TestDockerEnvironment:
     def test_docker_compose_file_exists(self):
         """Test that docker-compose.yml exists"""
         docker_compose_path = project_root / "docker-compose.yml"
-        assert docker_compose_path.exists(), "docker-compose.yml not found"
+        print(f"Looking for docker-compose.yml at: {docker_compose_path}")
+        print(f"Current working directory: {os.getcwd()}")
+        print(f"Project root: {project_root}")
+        print(f"Files in project root: {list(project_root.glob('*.yml'))}")
+        assert docker_compose_path.exists(), f"docker-compose.yml not found at {docker_compose_path}"
     
     def test_dockerfile_exists(self):
         """Test that Dockerfile exists"""
         dockerfile_path = project_root / "Dockerfile"
-        assert dockerfile_path.exists(), "Dockerfile not found"
+        print(f"Looking for Dockerfile at: {dockerfile_path}")
+        assert dockerfile_path.exists(), f"Dockerfile not found at {dockerfile_path}"
     
     def test_docker_env_file_exists(self):
         """Test that docker.env exists"""
         docker_env_path = project_root / "docker.env"
-        assert docker_env_path.exists(), "docker.env not found"
+        print(f"Looking for docker.env at: {docker_env_path}")
+        assert docker_env_path.exists(), f"docker.env not found at {docker_env_path}"
     
     def test_container_entrypoint_exists(self):
         """Test that container-entrypoint.sh exists"""
         entrypoint_path = project_root / "container-entrypoint.sh"
-        assert entrypoint_path.exists(), "container-entrypoint.sh not found"
+        print(f"Looking for container-entrypoint.sh at: {entrypoint_path}")
+        assert entrypoint_path.exists(), f"container-entrypoint.sh not found at {entrypoint_path}"
     
     def test_required_directories_exist(self):
         """Test that required directories exist"""
