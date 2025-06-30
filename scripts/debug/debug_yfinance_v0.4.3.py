@@ -198,71 +198,103 @@ class YFinanceDownloader:
 
                 # Check if we have valid chart data
                 if 'chart' in data and 'result' in data['chart'] and data['chart']['result']:
-                    result = data['chart']['result'][0]
-                    
-                    # Extract timestamp and OHLCV data
-                    timestamps = result.get('timestamp', [])
-                    quote = result.get('indicators', {}).get('quote', [{}])[0]
-                    
-                    # Create DataFrame
-                    df_data = {
-                        'Open': quote.get('open', []),
-                        'High': quote.get('high', []),
-                        'Low': quote.get('low', []),
-                        'Close': quote.get('close', []),
-                        'Volume': quote.get('volume', [])
-                    }
-                    
-                    # Create DataFrame with timestamps as index
-                    df = pd.DataFrame(df_data, index=pd.to_datetime(timestamps, unit='s'))
-                    df.index.name = 'Date'
-                    
-                    logger.info(f"Successfully parsed {len(df)} rows from direct API response")
-                    return df
-                else:
-                    logger.error(f"No valid chart data in API response for {ticker}")
-                    return None
+                    chart_data = data['chart']['result'][0]
 
+                    # Extract timestamps
+                    timestamps = chart_data.get('timestamp', [])
+
+                    # Extract quote data
+                    quote = chart_data.get('indicators', {}).get('quote', [{}])[0]
+
+                    if timestamps and quote and 'close' in quote:
+                        # Create DataFrame
+                        df = pd.DataFrame({
+                            'Open': quote.get('open', []),
+                            'High': quote.get('high', []),
+                            'Low': quote.get('low', []),
+                            'Close': quote.get('close', []),
+                            'Volume': quote.get('volume', []),
+                        }, index=pd.to_datetime([datetime.fromtimestamp(ts) for ts in timestamps]))
+
+                        return df
+                    else:
+                        logger.error(f"No price data in response for {ticker}")
+                else:
+                    logger.error(f"Invalid API response format for {ticker}")
             else:
                 logger.error(f"API request failed with status {response.status_code}: {response.text}")
-                return None
 
         except Exception as e:
             logger.error(f"Error in direct API request for {ticker}: {str(e)}")
-            return None
+
+        return None
 
     def download_ticker(self, ticker: str, period: str, interval: str) -> Optional[pd.DataFrame]:
         """
-        Download data for a single ticker with retry logic and rate limiting.
+        Download data for a single ticker with retry logic.
 
         Args:
             ticker: Stock symbol
-            period: Time period
-            interval: Time interval
+            period: Time period (e.g., '1mo', '1y')
+            interval: Time interval (e.g., '1d', '1h')
 
         Returns:
-            DataFrame with OHLCV data or None if failed
+            DataFrame with price data or None if all attempts fail
         """
-        logger.info(f"Starting download for {ticker} ({period}, {interval})")
+        logger.info(f"Starting download for ticker: {ticker}, period: {period}, interval: {interval}")
+
+        # First try to load from existing CSV file if available
+        csv_path = f"{self.cache_dir}/{ticker}_{period}_{interval}.csv"
+        if os.path.exists(csv_path):
+            try:
+                logger.info(f"Found existing data in {csv_path}, loading...")
+                data = pd.read_csv(csv_path, index_col=0, parse_dates=True)
+                if not data.empty:
+                    logger.info(f"Successfully loaded {len(data)} rows from cache for {ticker}")
+                    self.successful_downloads.append(ticker)
+                    return data
+            except Exception as e:
+                logger.warning(f"Failed to load cached data for {ticker}: {str(e)}")
 
         for attempt in range(self.max_retries):
             try:
-                # Calculate delay for this attempt
+                # Calculate and apply delay with backoff
                 delay = self._calculate_delay(attempt)
                 if attempt > 0:
-                    logger.info(f"Attempt {attempt+1}/{self.max_retries}, waiting {delay:.2f}s...")
+                    logger.info(f"Retry attempt {attempt+1}/{self.max_retries} after {delay:.2f}s delay...")
                     time.sleep(delay)
 
-                # Rotate user agent
+                # Rotate User-Agent between attempts
                 self._rotate_user_agent()
 
-                # Try direct API first, then fallback to yfinance
-                logger.info(f"Attempting direct API request for {ticker}")
+                # First, try direct API request as a new approach
                 data = self.direct_api_request(ticker, period, interval)
+                if data is not None and not data.empty:
+                    logger.info(f"Successfully downloaded {len(data)} rows for {ticker} via direct API")
+                    return data
 
+                # If direct API failed, try using yfinance library
+                logger.info(f"Direct API approach failed for {ticker}, trying yfinance library...")
+                time.sleep(1.0)  # Small pause before next attempt
+
+                # Create a new ticker object for each attempt
+                ticker_obj = yf.Ticker(ticker, session=self.session)
+
+                # Try the history method first
+                data = ticker_obj.history(
+                    period=period,
+                    interval=interval,
+                    auto_adjust=True,
+                    prepost=False,
+                    actions=True,
+                    back_adjust=False
+                )
+
+                # If no data, try the download method as a fallback
                 if data is None or data.empty:
-                    logger.info(f"Direct API failed, trying yfinance library for {ticker}")
-                    
+                    logger.info(f"Ticker.history failed for {ticker}, trying yf.download()...")
+                    time.sleep(1.0)  # Small pause before the second attempt
+
                     data = yf.download(
                         tickers=ticker,
                         period=period,
@@ -366,15 +398,6 @@ class YFinanceDownloader:
 
 def prompt_for_tickers() -> List[str]:
     """Ask user which tickers to run tests for."""
-    # Check if running in Docker
-    in_docker = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
-    
-    if in_docker:
-        # In Docker, automatically select first ticker without interactive input
-        selected_tickers = [DEFAULT_TICKERS[0]]
-        print(f"Running in Docker - automatically selected: {selected_tickers[0]}")
-        return selected_tickers
-    
     # Use a simpler approach with fewer input prompts to avoid hangs
     selected_tickers = []
 
