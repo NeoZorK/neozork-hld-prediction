@@ -452,6 +452,13 @@ def prompt_for_tickers() -> List[str]:
     print(f"Final selected tickers: {selected_tickers}")
     return selected_tickers
 
+def check_internet():
+    try:
+        requests.get('https://www.google.com', timeout=5)
+        return True
+    except Exception:
+        return False
+
 def main():
     """Main function to run the Yahoo Finance downloader."""
     print(f"--- YFinance Downloader Test ---")
@@ -492,4 +499,16 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if not check_internet():
+        print("[INFO] No internet connection detected. Skipping yfinance debug.")
+        exit(0)
+    try:
+        main()
+    except requests.exceptions.Timeout:
+        print("[INFO] Timeout occurred. Possible rate limit or network issue.")
+        exit(0)
+    except Exception as e:
+        if 'rate limit' in str(e).lower():
+            print("[INFO] Rate limit reached. Try again later.")
+            exit(0)
+        raise
