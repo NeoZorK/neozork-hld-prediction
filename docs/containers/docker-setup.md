@@ -179,6 +179,29 @@ docker compose run --rm --memory=8g neozork-hld
 docker compose run --rm --network=host neozork-hld
 ```
 
+## Docker Scripts
+
+The project includes several utility scripts in `scripts/docker/` for testing and managing Docker containers:
+
+| Script                    | Purpose                                                                 |
+|---------------------------|-------------------------------------------------------------------------|
+| test_docker_history.sh    | Test command history functionality in interactive Docker container     |
+| test_history_auto.sh      | Automatic verification of history initialization and operation in Docker |
+| docker-test-workflows.sh  | Local testing of GitHub Actions workflows using act tool               |
+
+### Using Docker Scripts
+
+```bash
+# Test command history in Docker container
+./scripts/docker/test_docker_history.sh
+
+# Run automatic history tests
+./scripts/docker/test_history_auto.sh
+
+# Test GitHub Actions workflows locally
+./scripts/docker/docker-test-workflows.sh
+```
+
 ## Security Considerations
 
 - Container runs as non-root user

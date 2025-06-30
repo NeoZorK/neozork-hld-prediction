@@ -402,7 +402,7 @@ class TestNativeContainerFullFunctionality:
         python_files = [
             "run_analysis.py",
             "neozork_mcp_server.py",
-            "scripts/check_mcp_status.py",
+            "scripts/mcp/check_mcp_status.py",
             "tests/run_tests_docker.py"
         ]
         
@@ -465,7 +465,7 @@ class TestNativeContainerFullFunctionality:
         mcp_files = [
             "neozork_mcp_server.py",
             "cursor_mcp_config.json",
-            "scripts/check_mcp_status.py"
+            "scripts/mcp/check_mcp_status.py"
         ]
         
         for file_path in mcp_files:
@@ -537,6 +537,37 @@ class TestNativeContainerFullFunctionality:
         for file_path in key_files:
             full_path = project_root / file_path
             assert full_path.exists(), f"Key file should exist in project root: {file_path}"
+
+    def test_required_scripts(self):
+        """Test that required scripts exist."""
+        if is_running_in_docker():
+            pytest.skip("Skipping in Docker environment - native container files not available")
+        
+        # Check for required scripts
+        required_scripts = [
+            "scripts/mcp/check_mcp_status.py",
+            "scripts/native-container/setup.sh",
+            "scripts/native-container/run.sh",
+            "scripts/native-container/stop.sh",
+            "scripts/native-container/exec.sh",
+            "scripts/native-container/logs.sh",
+            "scripts/native-container/cleanup.sh"
+        ]
+        
+        for file_path in required_scripts:
+            full_path = self.project_root / file_path
+            assert full_path.exists(), f"Required script should exist: {file_path}"
+
+    def test_command_wrapper_scripts(self):
+        """Test that command wrapper scripts exist."""
+        # Check for command wrapper scripts
+        command_wrapper_scripts = [
+            "scripts/mcp/check_mcp_status.py"
+        ]
+        
+        for file_path in command_wrapper_scripts:
+            full_path = self.project_root / file_path
+            assert full_path.exists(), f"Command wrapper script should exist: {file_path}"
 
 
 if __name__ == "__main__":

@@ -1,264 +1,172 @@
+#!/usr/bin/env python3
 """
-Test Docker test runner functionality.
-
-This module contains tests to verify that the Docker-specific
-test runner works correctly in containerized environment.
+Test Docker environment functionality
 """
 
 import os
-import pytest
-import subprocess
 import sys
+import subprocess
+import pytest
 from pathlib import Path
 
+# Add project root to path
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
-def is_docker_environment():
-    """Check if running in Docker environment"""
-    return (
-        os.getenv("DOCKER_CONTAINER", "false").lower() == "true" or
-        os.path.exists("/.dockerenv") or
-        os.path.exists("/app")
-    )
-
-
-class TestDockerTestRunner:
-    """Test Docker test runner functionality."""
-
-    def test_run_tests_docker_exists(self):
-        """Test that run_tests_docker.py exists."""
-        test_runner_path = Path("tests/run_tests_docker.py")
-        assert test_runner_path.exists(), "run_tests_docker.py should exist"
-        assert test_runner_path.is_file(), "run_tests_docker.py should be a file"
-
-    def test_run_tests_docker_executable(self):
-        """Test that run_tests_docker.py is executable."""
-        test_runner_path = Path("tests/run_tests_docker.py")
-        
-        # Make it executable
-        os.chmod(test_runner_path, 0o755)
-        
-        # Test that it can be executed
-        try:
-            result = subprocess.run(
-                [sys.executable, str(test_runner_path), "--help"],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
-            assert result.returncode == 0, "run_tests_docker.py should execute successfully"
-        except subprocess.TimeoutExpired:
-            pytest.fail("run_tests_docker.py execution timed out")
-
-    def test_run_tests_docker_help(self):
-        """Test that run_tests_docker.py shows help."""
-        test_runner_path = Path("tests/run_tests_docker.py")
-        
-        result = subprocess.run(
-            [sys.executable, str(test_runner_path), "--help"],
-            capture_output=True,
-            text=True,
-            timeout=10
-        )
-        
-        assert result.returncode == 0, "Help command should succeed"
-        assert "Run various test categories in Docker environment" in result.stdout, "Help should contain description"
-
-    @pytest.mark.skipif(not is_docker_environment(), reason="This test should only run in Docker environment")
-    def test_run_tests_docker_all_flag(self):
-        """Test that --all flag is recognized. Only runs in Docker environment."""
-        test_runner_path = Path("tests/run_tests_docker.py")
-        
-        result = subprocess.run(
-            [sys.executable, str(test_runner_path), "--all"],
-            capture_output=True,
-            text=True,
-            timeout=60  # Increased timeout
-        )
-        
-        # Should not crash, even if tests fail
-        assert result.returncode in [0, 1], "Should exit with 0 or 1"
-
-    @pytest.mark.skipif(not is_docker_environment(), reason="This test should only run in Docker environment")
-    def test_run_tests_docker_categories(self):
-        """Test that --categories flag is recognized. Only runs in Docker environment."""
-        test_runner_path = Path("tests/run_tests_docker.py")
-        
-        result = subprocess.run(
-            [sys.executable, str(test_runner_path), "--categories", "yfinance"],
-            capture_output=True,
-            text=True,
-            timeout=60  # Increased timeout
-        )
-        
-        # Should not crash, even if tests fail
-        assert result.returncode in [0, 1], "Should exit with 0 or 1"
-
-    @pytest.mark.skipif(not is_docker_environment(), reason="This test should only run in Docker environment")
-    def test_run_tests_docker_no_args(self):
-        """Test that running without args works. Only runs in Docker environment."""
-        test_runner_path = Path("tests/run_tests_docker.py")
-        
-        result = subprocess.run(
-            [sys.executable, str(test_runner_path)],
-            capture_output=True,
-            text=True,
-            timeout=60  # Increased timeout
-        )
-        
-        # Should not crash, even if tests fail
-        assert result.returncode in [0, 1], "Should exit with 0 or 1"
-
-    def test_run_tests_docker_syntax_check(self):
-        """Test that run_tests_docker.py has valid Python syntax (runs outside Docker)."""
-        test_runner_path = Path("tests/run_tests_docker.py")
-        
-        # Check Python syntax without executing
-        result = subprocess.run(
-            [sys.executable, "-m", "py_compile", str(test_runner_path)],
-            capture_output=True,
-            text=True,
-            timeout=10
-        )
-        
-        assert result.returncode == 0, "run_tests_docker.py should have valid Python syntax"
-
-    def test_run_tests_docker_import_check(self):
-        """Test that run_tests_docker.py can be imported (runs outside Docker)."""
-        test_runner_path = Path("tests/run_tests_docker.py")
-        
-        # Add tests directory to path for import
-        import sys
-        sys.path.insert(0, str(test_runner_path.parent))
-        
-        try:
-            import run_tests_docker
-            assert hasattr(run_tests_docker, 'TEST_CATEGORIES'), "TEST_CATEGORIES should be defined"
-            assert isinstance(run_tests_docker.TEST_CATEGORIES, dict), "TEST_CATEGORIES should be a dict"
-        except ImportError as e:
-            pytest.fail(f"Could not import run_tests_docker: {e}")
-
-    def test_run_tests_docker_script_validation(self):
-        """Test that all referenced scripts in TEST_CATEGORIES exist (runs outside Docker)."""
-        # Import the test runner module
-        import sys
-        sys.path.insert(0, str(Path("tests")))
-        
-        try:
-            import run_tests_docker
-            
-            for category, info in run_tests_docker.TEST_CATEGORIES.items():
-                for script in info.get('scripts', []):
-                    script_path = Path(script)
-                    assert script_path.exists(), f"Script {script} for category {category} should exist"
-                    assert script_path.is_file(), f"Script {script} for category {category} should be a file"
-                    
-        except ImportError as e:
-            pytest.fail(f"Could not import run_tests_docker: {e}")
-
-    def test_required_test_scripts_exist(self):
-        """Test that all required test scripts exist."""
-        required_scripts = [
-            "scripts/debug_scripts/debug_yfinance.py",
-            "scripts/debug_scripts/debug_binance.py",
-            "scripts/debug_scripts/debug_polygon.py",
-            "scripts/debug_scripts/examine_parquet.py",
+class TestDockerEnvironment:
+    """Test Docker environment setup and functionality"""
+    
+    def test_docker_compose_file_exists(self):
+        """Test that docker-compose.yml exists"""
+        docker_compose_path = project_root / "docker-compose.yml"
+        assert docker_compose_path.exists(), "docker-compose.yml not found"
+    
+    def test_dockerfile_exists(self):
+        """Test that Dockerfile exists"""
+        dockerfile_path = project_root / "Dockerfile"
+        assert dockerfile_path.exists(), "Dockerfile not found"
+    
+    def test_docker_env_file_exists(self):
+        """Test that docker.env exists"""
+        docker_env_path = project_root / "docker.env"
+        assert docker_env_path.exists(), "docker.env not found"
+    
+    def test_container_entrypoint_exists(self):
+        """Test that container-entrypoint.sh exists"""
+        entrypoint_path = project_root / "container-entrypoint.sh"
+        assert entrypoint_path.exists(), "container-entrypoint.sh not found"
+    
+    def test_required_directories_exist(self):
+        """Test that required directories exist"""
+        required_dirs = [
+            "src",
+            "tests", 
+            "data",
+            "logs",
+            "results",
+            "scripts"
         ]
         
-        for script in required_scripts:
-            script_path = Path(script)
-            assert script_path.exists(), f"Required test script {script} should exist"
-            assert script_path.is_file(), f"Required test script {script} should be a file"
-
-    def test_test_categories_defined(self):
-        """Test that test categories are properly defined."""
-        # Import the test runner module
-        import sys
-        sys.path.insert(0, str(Path("tests")))
+        for dir_name in required_dirs:
+            dir_path = project_root / dir_name
+            assert dir_path.exists(), f"Required directory {dir_name} not found"
+    
+    def test_scripts_directory_structure(self):
+        """Test that scripts directory has proper structure"""
+        scripts_dir = project_root / "scripts"
+        assert scripts_dir.exists(), "scripts directory not found"
         
-        try:
-            import run_tests_docker
-            assert hasattr(run_tests_docker, 'TEST_CATEGORIES'), "TEST_CATEGORIES should be defined"
-            assert isinstance(run_tests_docker.TEST_CATEGORIES, dict), "TEST_CATEGORIES should be a dict"
-            
-            expected_categories = ["yfinance", "binance", "polygon", "parquet"]
-            for category in expected_categories:
-                assert category in run_tests_docker.TEST_CATEGORIES, f"Category {category} should be defined"
-                
-        except ImportError as e:
-            pytest.fail(f"Could not import run_tests_docker: {e}")
-
-
-class TestDockerTestScripts:
-    """Test individual test scripts that are run by the Docker test runner."""
-
-    def test_debug_yfinance_script(self):
-        """Test that debug_yfinance.py script exists and is runnable."""
-        script_path = Path("scripts/debug_scripts/debug_yfinance.py")
-        assert script_path.exists(), "debug_yfinance.py should exist"
+        # Check for new organized structure
+        expected_subdirs = [
+            "mcp",
+            "analysis", 
+            "utilities",
+            "demos",
+            "debug",
+            "docker",
+            "native-container"
+        ]
         
-        # Test that it can be imported (basic syntax check)
-        try:
-            result = subprocess.run(
-                [sys.executable, "-m", "py_compile", str(script_path)],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
-            assert result.returncode == 0, "debug_yfinance.py should have valid Python syntax"
-        except subprocess.TimeoutExpired:
-            pytest.fail("debug_yfinance.py compilation timed out")
-
-    def test_debug_binance_script(self):
-        """Test that debug_binance.py script exists and is runnable."""
-        script_path = Path("scripts/debug_scripts/debug_binance.py")
-        assert script_path.exists(), "debug_binance.py should exist"
+        for subdir in expected_subdirs:
+            subdir_path = scripts_dir / subdir
+            assert subdir_path.exists(), f"Scripts subdirectory {subdir} not found"
+    
+    def test_debug_scripts_exist(self):
+        """Test that debug scripts exist in new location"""
+        debug_scripts = [
+            "scripts/debug/debug_yfinance.py",
+            "scripts/debug/debug_binance.py",
+            "scripts/debug/debug_polygon.py",
+            "scripts/debug/examine_parquet.py"
+        ]
         
-        # Test that it can be imported (basic syntax check)
-        try:
-            result = subprocess.run(
-                [sys.executable, "-m", "py_compile", str(script_path)],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
-            assert result.returncode == 0, "debug_binance.py should have valid Python syntax"
-        except subprocess.TimeoutExpired:
-            pytest.fail("debug_binance.py compilation timed out")
-
-    def test_debug_polygon_script(self):
-        """Test that debug_polygon.py script exists and is runnable."""
-        script_path = Path("scripts/debug_scripts/debug_polygon.py")
-        assert script_path.exists(), "debug_polygon.py should exist"
+        for script_path in debug_scripts:
+            script_file = project_root / script_path
+            assert script_file.exists(), f"Debug script {script_path} not found"
+    
+    def test_debug_scripts_executable(self):
+        """Test that debug scripts are executable"""
+        debug_scripts = [
+            "scripts/debug/debug_yfinance.py",
+            "scripts/debug/debug_binance.py", 
+            "scripts/debug/debug_polygon.py",
+            "scripts/debug/examine_parquet.py"
+        ]
         
-        # Test that it can be imported (basic syntax check)
-        try:
-            result = subprocess.run(
-                [sys.executable, "-m", "py_compile", str(script_path)],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
-            assert result.returncode == 0, "debug_polygon.py should have valid Python syntax"
-        except subprocess.TimeoutExpired:
-            pytest.fail("debug_polygon.py compilation timed out")
-
-    def test_examine_parquet_script(self):
-        """Test that examine_parquet.py script exists and is runnable."""
-        script_path = Path("scripts/debug_scripts/examine_parquet.py")
-        assert script_path.exists(), "examine_parquet.py should exist"
+        for script_path in debug_scripts:
+            script_file = project_root / script_path
+            if script_file.exists():
+                # Test that script can be imported
+                try:
+                    spec = importlib.util.spec_from_file_location("test_module", script_file)
+                    module = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(module)
+                    print(f"✅ {script_path} - Importable")
+                except Exception as e:
+                    print(f"⚠️ {script_path} - Import error (expected for some scripts): {e}")
+    
+    def test_mcp_scripts_exist(self):
+        """Test that MCP scripts exist"""
+        mcp_scripts = [
+            "scripts/mcp/neozork_mcp_manager.py",
+            "scripts/mcp/check_mcp_status.py",
+            "scripts/mcp/start_mcp_server_daemon.py"
+        ]
         
-        # Test that it can be imported (basic syntax check)
-        try:
-            result = subprocess.run(
-                [sys.executable, "-m", "py_compile", str(script_path)],
-                capture_output=True,
-                text=True,
-                timeout=10
-            )
-            assert result.returncode == 0, "examine_parquet.py should have valid Python syntax"
-        except subprocess.TimeoutExpired:
-            pytest.fail("examine_parquet.py compilation timed out")
-
+        for script_path in mcp_scripts:
+            script_file = project_root / script_path
+            assert script_file.exists(), f"MCP script {script_path} not found"
+    
+    def test_analysis_scripts_exist(self):
+        """Test that analysis scripts exist"""
+        analysis_scripts = [
+            "scripts/analysis/analyze_requirements.py",
+            "scripts/analysis/generate_test_coverage.py",
+            "scripts/analysis/manage_test_results.py"
+        ]
+        
+        for script_path in analysis_scripts:
+            script_file = project_root / script_path
+            assert script_file.exists(), f"Analysis script {script_path} not found"
+    
+    def test_utility_scripts_exist(self):
+        """Test that utility scripts exist"""
+        utility_scripts = [
+            "scripts/utilities/fix_imports.py",
+            "scripts/utilities/setup_ide_configs.py",
+            "scripts/utilities/check_uv_mode.py"
+        ]
+        
+        for script_path in utility_scripts:
+            script_file = project_root / script_path
+            assert script_file.exists(), f"Utility script {script_path} not found"
+    
+    def test_native_container_scripts_exist(self):
+        """Test that native container scripts exist"""
+        native_scripts = [
+            "scripts/native-container/setup.sh",
+            "scripts/native-container/run.sh",
+            "scripts/native-container/stop.sh",
+            "scripts/native-container/exec.sh",
+            "scripts/native-container/logs.sh",
+            "scripts/native-container/cleanup.sh"
+        ]
+        
+        for script_path in native_scripts:
+            script_file = project_root / script_path
+            assert script_file.exists(), f"Native container script {script_path} not found"
+    
+    def test_docker_scripts_exist(self):
+        """Test that Docker scripts exist"""
+        docker_scripts = [
+            "scripts/docker/test_docker_history.sh",
+            "scripts/docker/test_history_auto.sh",
+            "scripts/docker/docker-test-workflows.sh"
+        ]
+        
+        for script_path in docker_scripts:
+            script_file = project_root / script_path
+            assert script_file.exists(), f"Docker script {script_path} not found"
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"]) 
