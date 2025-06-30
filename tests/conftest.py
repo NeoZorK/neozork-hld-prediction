@@ -22,6 +22,27 @@ TEST_TIMEOUT = 120  # seconds
 PARALLEL_WORKERS = "auto"
 TEST_DATA_SIZE = 100
 
+def get_environment_type():
+    """Determine the current environment type"""
+    if os.environ.get('NATIVE_CONTAINER') == 'true':
+        return 'native_container'
+    elif os.environ.get('DOCKER_CONTAINER') == 'true':
+        return 'docker'
+    elif os.path.exists('/.dockerenv'):
+        return 'docker'
+    else:
+        return 'local'
+
+def should_skip_docker_tests():
+    """Check if Docker tests should be skipped"""
+    env_type = get_environment_type()
+    return env_type == 'native_container'
+
+def should_skip_native_container_tests():
+    """Check if native container tests should be skipped"""
+    env_type = get_environment_type()
+    return env_type == 'docker'
+
 def skip_if_docker(func):
     """Decorator to skip tests when running in Docker environment"""
     def wrapper(*args, **kwargs):
@@ -241,9 +262,26 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "plotting: Visualization and plotting tests"
     )
+    config.addinivalue_line(
+        "markers", "docker: Docker-specific tests"
+    )
+    config.addinivalue_line(
+        "markers", "native_container: Native container-specific tests"
+    )
 
 def pytest_collection_modifyitems(config, items):
     """Modify test collection for better organization"""
+    # Check environment type
+    env_type = get_environment_type()
+    skip_docker = should_skip_docker_tests()
+    skip_native = should_skip_native_container_tests()
+    
+    print(f"\n🔍 Environment detected: {env_type}")
+    if skip_docker:
+        print("⏭️  Docker tests will be skipped")
+    if skip_native:
+        print("⏭️  Native container tests will be skipped")
+    
     for item in items:
         # Add default markers based on test path
         if "unit" in str(item.fspath):
@@ -262,6 +300,20 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(pytest.mark.export)
         elif "plotting" in str(item.fspath):
             item.add_marker(pytest.mark.plotting)
+        elif "docker" in str(item.fspath):
+            item.add_marker(pytest.mark.docker)
+        elif "native-container" in str(item.fspath):
+            item.add_marker(pytest.mark.native_container)
+        
+        # Skip Docker tests in native container environment
+        if skip_docker and "docker" in str(item.fspath):
+            item.add_marker(pytest.mark.skip(reason="Docker tests skipped in native container environment"))
+            print(f"⏭️  Skipping Docker test: {item.nodeid}")
+        
+        # Skip native container tests in Docker environment
+        if skip_native and "native-container" in str(item.fspath):
+            item.add_marker(pytest.mark.skip(reason="Native container tests skipped in Docker environment"))
+            print(f"⏭️  Skipping native container test: {item.nodeid}")
 
 # Test result reporting
 def pytest_terminal_summary(terminalreporter, exitstatus, config):
