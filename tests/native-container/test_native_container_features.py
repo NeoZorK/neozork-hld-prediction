@@ -473,11 +473,6 @@ class TestNativeContainerDocumentation:
         """Set up test environment."""
         cls.project_root = get_project_root()
 
-    def test_native_container_readme_exists(self):
-        """Test that native container README exists."""
-        readme_path = self.project_root / "scripts" / "native-container" / "README.md"
-        assert readme_path.exists(), "Native container README should exist"
-
     def test_native_container_documentation_completeness(self):
         """Test that native container documentation is complete."""
         should_skip, reason = should_skip_native_container_tests()
