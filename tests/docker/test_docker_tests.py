@@ -12,6 +12,15 @@ import sys
 from pathlib import Path
 
 
+def is_docker_environment():
+    """Check if running in Docker environment"""
+    return (
+        os.getenv("DOCKER_CONTAINER", "false").lower() == "true" or
+        os.path.exists("/.dockerenv") or
+        os.path.exists("/app")
+    )
+
+
 class TestDockerTestRunner:
     """Test Docker test runner functionality."""
 
@@ -54,8 +63,9 @@ class TestDockerTestRunner:
         assert result.returncode == 0, "Help command should succeed"
         assert "Run various test categories in Docker environment" in result.stdout, "Help should contain description"
 
+    @pytest.mark.skipif(not is_docker_environment(), reason="This test should only run in Docker environment")
     def test_run_tests_docker_all_flag(self):
-        """Test that --all flag is recognized."""
+        """Test that --all flag is recognized. Only runs in Docker environment."""
         test_runner_path = Path("tests/run_tests_docker.py")
         
         result = subprocess.run(
@@ -68,8 +78,9 @@ class TestDockerTestRunner:
         # Should not crash, even if tests fail
         assert result.returncode in [0, 1], "Should exit with 0 or 1"
 
+    @pytest.mark.skipif(not is_docker_environment(), reason="This test should only run in Docker environment")
     def test_run_tests_docker_categories(self):
-        """Test that --categories flag is recognized."""
+        """Test that --categories flag is recognized. Only runs in Docker environment."""
         test_runner_path = Path("tests/run_tests_docker.py")
         
         result = subprocess.run(
@@ -82,8 +93,9 @@ class TestDockerTestRunner:
         # Should not crash, even if tests fail
         assert result.returncode in [0, 1], "Should exit with 0 or 1"
 
+    @pytest.mark.skipif(not is_docker_environment(), reason="This test should only run in Docker environment")
     def test_run_tests_docker_no_args(self):
-        """Test that running without args works."""
+        """Test that running without args works. Only runs in Docker environment."""
         test_runner_path = Path("tests/run_tests_docker.py")
         
         result = subprocess.run(
@@ -95,6 +107,53 @@ class TestDockerTestRunner:
         
         # Should not crash, even if tests fail
         assert result.returncode in [0, 1], "Should exit with 0 or 1"
+
+    def test_run_tests_docker_syntax_check(self):
+        """Test that run_tests_docker.py has valid Python syntax (runs outside Docker)."""
+        test_runner_path = Path("tests/run_tests_docker.py")
+        
+        # Check Python syntax without executing
+        result = subprocess.run(
+            [sys.executable, "-m", "py_compile", str(test_runner_path)],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        
+        assert result.returncode == 0, "run_tests_docker.py should have valid Python syntax"
+
+    def test_run_tests_docker_import_check(self):
+        """Test that run_tests_docker.py can be imported (runs outside Docker)."""
+        test_runner_path = Path("tests/run_tests_docker.py")
+        
+        # Add tests directory to path for import
+        import sys
+        sys.path.insert(0, str(test_runner_path.parent))
+        
+        try:
+            import run_tests_docker
+            assert hasattr(run_tests_docker, 'TEST_CATEGORIES'), "TEST_CATEGORIES should be defined"
+            assert isinstance(run_tests_docker.TEST_CATEGORIES, dict), "TEST_CATEGORIES should be a dict"
+        except ImportError as e:
+            pytest.fail(f"Could not import run_tests_docker: {e}")
+
+    def test_run_tests_docker_script_validation(self):
+        """Test that all referenced scripts in TEST_CATEGORIES exist (runs outside Docker)."""
+        # Import the test runner module
+        import sys
+        sys.path.insert(0, str(Path("tests")))
+        
+        try:
+            import run_tests_docker
+            
+            for category, info in run_tests_docker.TEST_CATEGORIES.items():
+                for script in info.get('scripts', []):
+                    script_path = Path(script)
+                    assert script_path.exists(), f"Script {script} for category {category} should exist"
+                    assert script_path.is_file(), f"Script {script} for category {category} should be a file"
+                    
+        except ImportError as e:
+            pytest.fail(f"Could not import run_tests_docker: {e}")
 
     def test_required_test_scripts_exist(self):
         """Test that all required test scripts exist."""
