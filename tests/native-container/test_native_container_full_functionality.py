@@ -80,7 +80,7 @@ class TestNativeContainerFullFunctionality:
             "container.yaml",
             "neozork_mcp_server.py",
             "cursor_mcp_config.json",
-            "scripts/check_mcp_status.py",
+            "scripts/mcp/check_mcp_status.py",
             "scripts/native-container/setup.sh",
             "scripts/native-container/run.sh",
             "scripts/native-container/stop.sh",
@@ -110,7 +110,7 @@ class TestNativeContainerFullFunctionality:
         mcp_files = [
             "neozork_mcp_server.py",
             "cursor_mcp_config.json",
-            "scripts/check_mcp_status.py"
+            "scripts/mcp/check_mcp_status.py"
         ]
         
         for file_path in mcp_files:
