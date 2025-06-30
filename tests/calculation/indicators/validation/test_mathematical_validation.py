@@ -31,7 +31,7 @@ class TestMathematicalValidation:
         self.stoch = apply_rule_stochastic
         self.ema = apply_rule_ema
         self.adx = apply_rule_adx
-        self.point = 0.0001  # фиктивный point для тестов
+        self.point = 0.0001  # dummy point for tests
 
     def test_rsi_mathematical_properties(self):
         """Test RSI mathematical properties."""
