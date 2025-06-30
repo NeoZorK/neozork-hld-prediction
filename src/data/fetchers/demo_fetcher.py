@@ -7,7 +7,7 @@ Contains the function to generate demonstration OHLCV data.
 import pandas as pd
 import time
 from datetime import date, timedelta
-from ...common import logger # Relative import
+from src.common import logger # Absolute import
 
 
 # Definition of the get_demo_data function
