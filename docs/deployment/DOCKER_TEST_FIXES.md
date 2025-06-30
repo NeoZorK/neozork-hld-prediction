@@ -38,6 +38,38 @@ Both scripts include proper error handling and API key validation.
 - Added proper environment variable checks
 - Fixed file permission handling for `docker-entrypoint.sh`
 
+### 5. Missing `data/cache/uv_cache` Directory
+
+**Issue**: Test `test_required_directories_structure` was failing with:
+```
+AssertionError: Required directory should exist: data/cache/uv_cache
+```
+
+**Root Cause**: The `container-entrypoint.sh` script was creating `/app/.uv_cache` but not `/app/data/cache/uv_cache` which was expected by the test.
+
+**Solution**: Added the missing directory creation in the `create_directories()` function in `container-entrypoint.sh`:
+
+```bash
+# Before
+mkdir -p /app/data/cache/csv_converted 2>/dev/null || true
+mkdir -p /app/data/raw_parquet 2>/dev/null || true
+
+# After
+mkdir -p /app/data/cache/csv_converted 2>/dev/null || true
+mkdir -p /app/data/cache/uv_cache 2>/dev/null || true  # Added this line
+mkdir -p /app/data/raw_parquet 2>/dev/null || true
+```
+
+**Files Modified**:
+- `container-entrypoint.sh` - Added `data/cache/uv_cache` directory creation
+- Created `data/cache/uv_cache` directory locally for native testing
+
+**Verification**:
+- ✅ Test passes locally: `uv run pytest tests/native-container/test_native_container_full_functionality.py::TestNativeContainerFullFunctionality::test_required_directories_structure -v`
+- ✅ Test passes in Docker: `docker exec neozork-hld-prediction-neozork-hld-1 uv run pytest tests/native-container/test_native_container_full_functionality.py::TestNativeContainerFullFunctionality::test_required_directories_structure -v`
+
+**Date Fixed**: 2025-06-30
+
 ## Files Modified
 
 ### Created Files
