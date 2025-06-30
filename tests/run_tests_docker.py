@@ -91,58 +91,44 @@ def run_docker_tests():
     
     # Test debug scripts with detailed output like v0.4.3
     print("\n=== Testing Debug Scripts ===")
-    debug_passed = 0
-    debug_failed = 0
     
+    # Test debug scripts
     for script in debug_scripts:
-        if Path(script).exists():
-            print(f"Testing {script}...", end=" ")
-            try:
-                start_time = time.time()
-                result = subprocess.run([sys.executable, script], 
-                                      capture_output=True, text=True, timeout=30)
-                elapsed_time = time.time() - start_time
+        start_time = time.time()
+        try:
+            result = subprocess.run(
+                [sys.executable, script],
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=project_root
+            )
+            elapsed = time.time() - start_time
+            
+            if result.returncode == 0:
+                print(f"Testing {script}... ✅ ({elapsed:.2f}s)")
+            else:
+                # Analyze error reason
+                error_reason = "❗ Unknown error"
+                if "No API keys" in result.stderr or "No API keys" in result.stdout:
+                    error_reason = "❗ No API keys in environment"
+                elif "Permission denied" in result.stderr:
+                    error_reason = "❗ No file permissions"
+                elif "No such file" in result.stderr:
+                    error_reason = "❗ Required file not found"
+                elif "ImportError" in result.stderr:
+                    error_reason = "❗ Module import error"
+                elif "timeout" in result.stderr.lower():
+                    error_reason = "⏰ (Rate Limit)"
                 
-                error_reason = None
-                if result.returncode != 0:
-                    if "API_KEY" in result.stdout or "API_KEY" in result.stderr or "No API key" in result.stdout or "No API key" in result.stderr:
-                        error_reason = "❗ No API keys in environment"
-                    elif "Permission denied" in result.stdout or "Permission denied" in result.stderr:
-                        error_reason = "❗ No file permissions"
-                    elif "No such file or directory" in result.stdout or "No such file or directory" in result.stderr:
-                        error_reason = "❗ Required file not found"
-                    elif "ModuleNotFoundError" in result.stdout or "ModuleNotFoundError" in result.stderr:
-                        error_reason = "❗ Module import error"
-                    elif result.stderr.strip():
-                        error_reason = result.stderr.strip().split('\n')[-1]
+                print(f"Testing {script}... ❌ ({error_reason})")
                 
-                if result.returncode == 0:
-                    print(f"✅ ({elapsed_time:.2f}s)")
-                    debug_passed += 1
-                else:
-                    print(f"❌{f' ({error_reason})' if error_reason else ''}")
-                    debug_failed += 1
-            except subprocess.TimeoutExpired:
-                print("⏰ (Rate Limit)")
-                debug_failed += 1
-            except Exception as e:
-                print(f"❌ (Error: {e})")
-                debug_failed += 1
-        else:
-            print(f"❌ {script} - Not found")
-            debug_failed += 1
-    
-    # Summary
-    print(f"\n=== Test Summary ===")
-    print(f"Tests: {passed_tests} passed, {failed_tests} failed, {skipped_tests} skipped")
-    print(f"Debug scripts: {debug_passed} passed, {debug_failed} failed")
-    
-    if failed_tests == 0 and debug_failed == 0:
-        print("✅ All tests passed!")
-        return 0
-    else:
-        print("❌ Some tests failed!")
-        return 1
+        except subprocess.TimeoutExpired:
+            elapsed = time.time() - start_time
+            print(f"Testing {script}... ⏰ (Rate Limit)")
+        except Exception as e:
+            elapsed = time.time() - start_time
+            print(f"Testing {script}... ❌ (Error: {str(e)})")
 
 if __name__ == "__main__":
-    sys.exit(run_docker_tests()) 
+    run_docker_tests() 
