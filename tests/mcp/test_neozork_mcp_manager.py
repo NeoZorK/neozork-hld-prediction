@@ -21,7 +21,7 @@ import logging
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from scripts.neozork_mcp_manager import NeozorkMCPManager, NeozorkMCPManagerCLI
+from scripts.mcp.neozork_mcp_manager import NeozorkMCPManager, NeozorkMCPManagerCLI
 
 class TestNeozorkMCPManager:
     """Test Neozork MCP Manager functionality"""
@@ -99,7 +99,7 @@ print("Test MCP server")
     @pytest.fixture
     def manager(self, temp_project):
         """Create manager instance with mocked file monitoring and run method"""
-        with patch('scripts.neozork_mcp_manager.Observer') as mock_observer:
+        with patch('scripts.mcp.neozork_mcp_manager.Observer') as mock_observer:
             # Mock the observer to prevent file monitoring
             mock_observer_instance = Mock()
             mock_observer.return_value = mock_observer_instance
