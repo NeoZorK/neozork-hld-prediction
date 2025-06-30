@@ -15,10 +15,41 @@ NeoZork HLD Prediction enhances a proprietary trading indicator using Machine Le
 - **Python 3.12+**
 - **Git**
 - **Docker** (optional, for containerized usage)
+- **Native Container Application** (macOS 26+, for Apple Silicon optimization)
 
 ## Installation
 
-### Quick Install
+### Native Apple Silicon Container (macOS 26+)
+
+**Recommended for Apple Silicon Macs with 30-50% performance improvement:**
+
+```bash
+# Clone repository
+git clone https://github.com/username/neozork-hld-prediction.git
+cd neozork-hld-prediction
+
+# Run interactive container manager
+./scripts/native-container/native-container.sh
+
+# Quick commands (non-interactive)
+# Start: ./scripts/native-container/setup.sh && ./scripts/native-container/run.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/exec.sh --shell
+# Stop:  ./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force
+```
+
+**Interactive Menu Options:**
+1. Start Container (Full Sequence) - Smart startup (handles already running containers)
+2. Stop Container (Full Sequence)
+3. Show Container Status
+4. Help
+0. Exit
+
+**Prerequisites for Native Container:**
+- macOS 26 Tahoe (Developer Beta) or higher
+- Native container application from Apple Developer Beta
+- Python 3.11+ installed
+- At least 4GB of available RAM
+
+### Quick Install (Traditional)
 
 ```bash
 # Clone repository

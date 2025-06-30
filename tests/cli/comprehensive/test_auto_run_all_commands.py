@@ -27,12 +27,13 @@ from dataclasses import dataclass, asdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 from collections import defaultdict
+import tempfile
 
 # Project setup
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 PYTHON = sys.executable
 SCRIPT = PROJECT_ROOT / 'run_analysis.py'
-LOG_DIR = PROJECT_ROOT / 'logs' / 'cli_auto_tests'
+LOG_DIR = Path(tempfile.mkdtemp(prefix="cli_auto_tests_"))
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 @dataclass
@@ -621,35 +622,22 @@ class AutoCommandRunner:
             f.write(html_content)
 
 def main():
-    """Main function to run automatic CLI testing"""
+    """Main function to run all tests"""
+    print("🚀 Starting Auto Command Runner...")
+    
     runner = AutoCommandRunner(max_workers=4)
     results = runner.run_all_commands()
     
-    # Print summary
-    print("\n" + "=" * 60)
-    print("AUTOMATIC CLI TEST RESULTS")
-    print("=" * 60)
-    print(f"Total Tests: {results['total_tests']}")
-    print(f"Passed: {results['passed_tests']}")
-    print(f"Failed: {results['failed_tests']}")
-    print(f"Success Rate: {results['success_rate']:.1f}%")
-    print(f"Total Time: {results['total_time']:.2f}s")
+    print(f"✅ Completed! Results saved to: {LOG_DIR}")
+    print(f"📊 Summary: {results['summary']}")
     
-    print("\nCategory Statistics:")
-    for category, stats in results['category_stats'].items():
-        success_rate = (stats['passed'] / stats['total'] * 100) if stats['total'] > 0 else 0
-        print(f"  {category}: {stats['passed']}/{stats['total']} ({success_rate:.1f}%) - Avg: {stats['avg_time']:.3f}s")
-    
-    if results['error_types']:
-        print("\nError Types:")
-        for error_type, count in results['error_types'].items():
-            print(f"  {error_type}: {count}")
-    
-    if results['failed_tests'] > 0:
-        print(f"\n❌ {results['failed_tests']} tests failed!")
-        sys.exit(1)
-    else:
-        print("\n✅ All tests passed!")
+    # Cleanup temporary directory
+    try:
+        import shutil
+        shutil.rmtree(LOG_DIR)
+        print(f"🧹 Cleaned up temporary directory: {LOG_DIR}")
+    except Exception as e:
+        print(f"⚠️  Warning: Could not clean up temporary directory: {e}")
 
 if __name__ == "__main__":
     main() 

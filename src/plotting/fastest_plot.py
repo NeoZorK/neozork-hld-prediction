@@ -144,19 +144,16 @@ def plot_indicator_results_fastest(
             )
 
     # Add rule annotation
-    fig.add_annotation(
-        text=f"Trading Rule: {rule}",
-        xref="paper", yref="paper",
-        x=0.5, y=1.05,
-        showarrow=False,
-        font=dict(size=18, color="#2e5cb8"),
-        align="center",
-    )
+    # Check if we have original rule with parameters for display
+    if hasattr(rule, 'original_rule_with_params'):
+        display_rule = rule.original_rule_with_params
+    elif hasattr(rule, 'name'):
+        display_rule = rule.name
+    else:
+        display_rule = str(rule)
 
-    # Update layout
-    html_title = f"{title} | Trading Rule: {rule}" if title else f"Trading Rule: {rule}"
     fig.update_layout(
-        title=html_title,
+        title=title,
         width=width,
         height=height,
         template="plotly_white",
