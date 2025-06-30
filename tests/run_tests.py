@@ -425,36 +425,80 @@ def run_local_tests():
     
     print("=== Running Local Tests ===")
     
-    # Run test files
+    # Run test files with compact output
+    passed_tests = 0
+    failed_tests = 0
+    skipped_tests = 0
+    
     for test_file in test_files:
         if Path(test_file).exists():
-            print(f"\nRunning {test_file}...")
-            result = subprocess.run([sys.executable, "-m", "pytest", test_file, "-v"], 
-                                  capture_output=True, text=True)
-            print(result.stdout)
-            if result.stderr:
-                print(f"Errors: {result.stderr}")
+            print(f"Running {test_file}...", end=" ")
+            result = subprocess.run([
+                sys.executable, "-m", "pytest", test_file, 
+                "--tb=no", "-q", "--disable-warnings"
+            ], capture_output=True, text=True)
+            
+            # Parse output to count results
+            output_lines = result.stdout.split('\n')
+            for line in output_lines:
+                if 'passed' in line and 'failed' in line:
+                    # Extract numbers from line like "3 passed, 1 failed in 2.34s"
+                    parts = line.split()
+                    for i, part in enumerate(parts):
+                        if part.isdigit() and i > 0 and parts[i-1].isdigit():
+                            if 'passed' in line:
+                                passed_tests += int(part)
+                            elif 'failed' in line:
+                                failed_tests += int(part)
+                            elif 'skipped' in line:
+                                skipped_tests += int(part)
+                    break
+            
+            if result.returncode == 0:
+                print("✅")
+            else:
+                print("❌")
+                if result.stderr:
+                    print(f"  Error: {result.stderr.strip()}")
         else:
-            print(f"Test file not found: {test_file}")
+            print(f"❌ {test_file} - Not found")
     
     # Test debug scripts
     print("\n=== Testing Debug Scripts ===")
+    debug_passed = 0
+    debug_failed = 0
+    
     for script in debug_scripts:
         if Path(script).exists():
-            print(f"\nTesting {script}...")
+            print(f"Testing {script}...", end=" ")
             try:
                 result = subprocess.run([sys.executable, script, "--help"], 
                                       capture_output=True, text=True, timeout=30)
                 if result.returncode == 0:
-                    print(f"✅ {script} - OK")
+                    print("✅")
+                    debug_passed += 1
                 else:
-                    print(f"❌ {script} - Failed: {result.stderr}")
+                    print("❌")
+                    debug_failed += 1
             except subprocess.TimeoutExpired:
-                print(f"⏰ {script} - Timeout")
+                print("⏰")
+                debug_failed += 1
             except Exception as e:
-                print(f"❌ {script} - Error: {e}")
+                print("❌")
+                debug_failed += 1
         else:
             print(f"❌ {script} - Not found")
+            debug_failed += 1
+    
+    # Summary
+    print(f"\n=== Test Summary ===")
+    print(f"Tests: {passed_tests} passed, {failed_tests} failed, {skipped_tests} skipped")
+    print(f"Debug scripts: {debug_passed} passed, {debug_failed} failed")
+    
+    if failed_tests == 0 and debug_failed == 0:
+        print("✅ All tests passed!")
+    else:
+        print("❌ Some tests failed!")
 
 def main():
     """Main function."""
