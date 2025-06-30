@@ -68,13 +68,12 @@ verify_uv() {
         fi
     fi
 
-    # Run UV test script to validate environment (don't fail on error)
-    log_message "=== Running UV Environment Test ==="
-    if [ -f "/app/scripts/test_uv_docker.py" ]; then
-        if python /app/scripts/test_uv_docker.py; then
+    # Test UV environment
+    if [ -f "/app/scripts/utilities/test_uv_docker.py" ]; then
+        if python /app/scripts/utilities/test_uv_docker.py; then
             echo -e "\033[1;32m✅ UV environment test passed\033[0m"
         else
-            echo -e "\033[1;33m⚠️  UV environment test had issues - continuing anyway\033[0m"
+            echo -e "\033[1;31m❌ UV environment test failed\033[0m"
         fi
     else
         echo -e "\033[1;33m⚠️  UV test script not found - skipping test\033[0m"
@@ -316,7 +315,7 @@ EOF
 #!/bin/bash
 echo "Checking MCP server status..."
 source /app/.venv/bin/activate
-python /app/scripts/check_mcp_status.py
+python /app/scripts/mcp/check_mcp_status.py
 EOF
     chmod +x /tmp/bin/mcp-check
 
@@ -399,7 +398,7 @@ init_bash_history() {
         "nz mql5 BTCUSD --interval H4 --rule PHLD"
         "eda --data-quality-checks"
         "eda --descriptive-stats"
-        "python scripts/check_mcp_status.py"
+        "python scripts/mcp/check_mcp_status.py"
         "python neozork_mcp_server.py"
         "mcp-start"
         "mcp-check"
@@ -465,7 +464,7 @@ start_mcp_server() {
             
             # Check MCP server status
             echo -e "\033[1;33m=== Checking MCP server status ===\033[0m\n"
-            if python scripts/check_mcp_status.py; then
+            if python scripts/mcp/check_mcp_status.py; then
                 echo -e "\033[1;32m✅ MCP server is running correctly\033[0m\n"
             else
                 echo -e "\033[1;31m❌ MCP server check failed\033[0m\n"
@@ -549,7 +548,7 @@ ls results/plots/
 # MCP Server Commands
 mcp-start
 mcp-check
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 python neozork_mcp_server.py
 EOL
 }
