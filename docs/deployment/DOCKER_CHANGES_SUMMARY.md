@@ -182,4 +182,29 @@ For issues and questions:
 1. Check [Docker Troubleshooting Guide](docker-troubleshooting.md)
 2. Run Docker configuration tests
 3. Review logs in `logs/` directory
-4. Open an issue on GitHub with detailed error information 
+4. Open an issue on GitHub with detailed error information
+
+## Recent Changes
+
+### 2025-06-30: Fixed Missing Directory Test Failure
+
+**Issue**: Test `test_required_directories_structure` was failing because the required directory `data/cache/uv_cache` was not being created in the Docker container.
+
+**Fix Applied**:
+- Added `mkdir -p /app/data/cache/uv_cache` to the `create_directories()` function in `container-entrypoint.sh`
+- Created the directory locally for native testing compatibility
+
+**Impact**: 
+- ✅ Test now passes both locally and in Docker container
+- ✅ Maintains existing UV cache functionality
+- ✅ No breaking changes to existing code
+
+**Files Modified**:
+- `container-entrypoint.sh` - Added missing directory creation
+- `data/cache/uv_cache/` - Created locally for testing
+
+## Testing
+
+All changes are verified with:
+- Local testing: `uv run pytest tests/native-container/test_native_container_full_functionality.py::TestNativeContainerFullFunctionality::test_required_directories_structure -v`
+- Docker testing: `docker exec neozork-hld-prediction-neozork-hld-1 uv run pytest tests/native-container/test_native_container_full_functionality.py::TestNativeContainerFullFunctionality::test_required_directories_structure -v` 

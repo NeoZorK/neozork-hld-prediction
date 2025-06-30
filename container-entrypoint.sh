@@ -33,6 +33,7 @@ create_directories() {
     
     # Create directories with error handling
     mkdir -p /app/data/cache/csv_converted 2>/dev/null || true
+    mkdir -p /app/data/cache/uv_cache 2>/dev/null || true
     mkdir -p /app/data/raw_parquet 2>/dev/null || true
     mkdir -p /app/logs 2>/dev/null || true
     mkdir -p /tmp/matplotlib-cache 2>/dev/null || true
