@@ -11,9 +11,13 @@ import asyncio
 from pathlib import Path
 
 # Add the src directory to the Python path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from data.fetchers.polygon_fetcher import PolygonFetcher
+try:
+    from src.data.fetchers.polygon_fetcher import PolygonFetcher
+except ImportError as e:
+    print(f"\u274c ImportError: {e}\nMake sure you have the correct project structure and src/ in your path.")
+    exit(2)
 
 
 def test_polygon_connection():
