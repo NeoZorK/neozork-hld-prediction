@@ -249,8 +249,47 @@ stop_container_sequence() {
     fi
 }
 
-# Function to stop container with force restart option
-stop_container_with_force_restart() {
+# Function to restart container service
+restart_container_service() {
+    print_header "Restarting Container Service"
+    echo
+    
+    print_status "Step 1: Stopping container system..."
+    if container system stop; then
+        print_success "Container system stopped"
+    else
+        print_warning "Container system stop may have failed or was already stopped"
+    fi
+    
+    echo
+    print_status "Step 2: Starting container system..."
+    if container system start; then
+        print_success "Container system started"
+    else
+        print_error "Failed to start container system"
+        if [ -t 0 ]; then
+            read -p "Press Enter to continue..."
+        fi
+        return 1
+    fi
+    
+    echo
+    print_status "Step 3: Checking container system status..."
+    if container system status; then
+        print_success "Container system is running"
+    else
+        print_warning "Container system status check failed"
+    fi
+    
+    echo
+    print_success "Container service restart completed!"
+    if [ -t 0 ]; then
+        read -p "Press Enter to continue..."
+    fi
+}
+
+# Function to stop container with emergency restart option
+stop_container_with_emergency_restart() {
     print_header "Stopping Container - Full Sequence"
     echo
     
@@ -324,10 +363,61 @@ stop_container_with_force_restart() {
     
     echo
     print_status "Step 3: Cleaning up resources..."
-    if ./scripts/native-container/cleanup.sh --all --force; then
+    cleanup_output=$(./scripts/native-container/cleanup.sh --all --force 2>&1)
+    cleanup_exit_code=$?
+    
+    if [ $cleanup_exit_code -eq 0 ]; then
         print_success "Cleanup completed"
     else
         print_warning "Cleanup completed (some resources may remain)"
+        
+        # Check if the error is about container deletion failure
+        if echo "$cleanup_output" | grep -q "delete failed for one or more containers"; then
+            echo
+            print_error "Error: Container deletion failed"
+            print_warning "This usually indicates a stuck container or service issue"
+            echo
+            print_status "Recommended emergency restart service, choose p4 \"Restart service\""
+            echo
+            
+            if [ -t 0 ]; then
+                read -p "Do you want to restart container service now? (y/N): " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    print_status "Proceeding with emergency service restart..."
+                    echo
+                    
+                    # Restart container service
+                    if restart_container_service; then
+                        print_success "Service restart completed"
+                        
+                        echo
+                        print_status "Step 4: Retrying container stop after service restart..."
+                        if ./scripts/native-container/stop.sh; then
+                            print_success "Container stopped after service restart"
+                        else
+                            print_warning "Container stop retry failed"
+                        fi
+                        
+                        echo
+                        print_status "Step 5: Final cleanup after service restart..."
+                        if ./scripts/native-container/cleanup.sh --all --force; then
+                            print_success "Final cleanup completed"
+                        else
+                            print_warning "Final cleanup completed (some resources may remain)"
+                        fi
+                    else
+                        print_error "Service restart failed"
+                        if [ -t 0 ]; then
+                            read -p "Press Enter to continue..."
+                        fi
+                        return 1
+                    fi
+                else
+                    print_status "Skipping emergency service restart"
+                fi
+            fi
+        fi
     fi
     
     echo
@@ -371,7 +461,7 @@ show_container_status() {
 show_help() {
     print_header "NeoZork HLD Prediction Native Container Manager"
     echo
-    echo "This simplified interface provides two main commands:"
+    echo "This simplified interface provides main commands:"
     echo
     echo -e "${GREEN}1. Start Container${NC}"
     echo "   Executes the full sequence:"
@@ -391,11 +481,20 @@ show_help() {
     echo "   - Cleanup resources (./scripts/native-container/cleanup.sh --all --force)"
     echo "   - 🆕 Automatic force restart if normal stop fails"
     echo "   - 🆕 Interactive prompt for force restart when needed"
+    echo "   - 🆕 Emergency service restart on container deletion failure"
     echo
     echo -e "${BLUE}3. Show Status${NC}"
     echo "   Shows current container status"
     echo
-    echo -e "${YELLOW}4. Help${NC}"
+    echo -e "${CYAN}4. Restart Service${NC}"
+    echo "   Emergency container service restart:"
+    echo "   - Stop container system (container system stop)"
+    echo "   - Start container system (container system start)"
+    echo "   - Check system status (container system status)"
+    echo "   - 🆕 Recommended when container deletion fails"
+    echo "   - 🆕 Helps resolve stuck container issues"
+    echo
+    echo -e "${YELLOW}5. Help${NC}"
     echo "   Shows this help message"
     echo
     echo -e "${MAGENTA}0. Exit${NC}"
@@ -415,6 +514,7 @@ show_help() {
     echo "   - Automatic detection of stuck containers"
     echo "   - Interactive prompt for force restart when needed"
     echo "   - Automatic container service restart and retry"
+    echo "   - Emergency service restart on deletion failure"
     echo "   - Graceful error handling and recovery"
     echo
     if [ -t 0 ]; then
@@ -431,7 +531,8 @@ show_main_menu() {
     echo "1) Start Container (Full Sequence)"
     echo "2) Stop Container (Full Sequence)"
     echo "3) Show Container Status"
-    echo "4) Help"
+    echo "4) Restart Service"
+    echo "5) Help"
     echo "0) Exit"
     echo
 }
@@ -442,7 +543,7 @@ main() {
         show_main_menu
         
         if [ -t 0 ]; then
-            read -p "Enter your choice (0-4): " choice
+            read -p "Enter your choice (0-5): " choice
         else
             # Non-interactive mode - exit gracefully
             print_error "Script requires interactive terminal"
@@ -454,12 +555,15 @@ main() {
                 start_container_sequence
                 ;;
             2) 
-                stop_container_with_force_restart
+                stop_container_with_emergency_restart
                 ;;
             3) 
                 show_container_status
                 ;;
             4) 
+                restart_container_service
+                ;;
+            5) 
                 show_help
                 ;;
             0) 
