@@ -165,6 +165,21 @@ execute_enhanced_shell() {
 
 # Enhanced shell startup for NeoZork HLD Prediction container
 # Automatically activates virtual environment and installs dependencies
+# Includes proper Ctrl+D handling and graceful exit
+
+# Set up signal handlers for graceful exit
+trap "echo \"Exiting container shell...\"; exit 0" EXIT
+trap "echo \"Received interrupt signal, exiting...\"; exit 0" INT TERM
+
+# Function to handle Ctrl+D gracefully
+handle_eof() {
+    echo ""
+    echo "Received EOF (Ctrl+D), exiting gracefully..."
+    exit 0
+}
+
+# Set up EOF handler
+trap handle_eof EOF
 
 echo "=== NeoZork HLD Prediction Container Shell ==="
 echo "Setting up environment..."
@@ -227,22 +242,55 @@ alias uv-pytest="uv run pytest tests/ -n auto"
 
 echo "Environment setup complete!"
 echo "Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
-echo "Type \"exit\" to leave the container shell"
+echo "Type \"exit\" or press Ctrl+D to leave the container shell"
 echo ""
 
-# Start interactive bash shell
-exec bash
+# Start interactive bash shell with proper signal handling
+exec bash --rcfile <(cat << "BASHRC"
+# Custom bashrc for container shell
+set -o ignoreeof  # Prevent accidental Ctrl+D exit
+bind "set bind-tty-special-chars on"  # Enable special character handling
+
+# Function to handle Ctrl+D gracefully
+handle_ctrld() {
+    echo ""
+    echo "Use 'exit' command to leave the container shell, or press Ctrl+D again to force exit"
+    return 0
+}
+
+# Set up Ctrl+D handler
+trap handle_ctrld EOF
+
+# Show prompt with container indicator
+export PS1="(neozork-container) \w $ "
+
+# Welcome message
+echo "Container shell ready. Type 'exit' to leave or use Ctrl+D."
+BASHRC
+)
 EOF'
 
     # Make the script executable
     container exec "$container_id" chmod +x /tmp/enhanced_shell.sh
     
-    # Execute the enhanced shell script
+    # Execute the enhanced shell script with proper signal handling
     print_status "Executing enhanced shell script..."
-    container exec --interactive --tty "$container_id" /tmp/enhanced_shell.sh
     
-    # Cleanup temporary script
-    container exec "$container_id" rm -f /tmp/enhanced_shell.sh
+    # Use a wrapper to handle Ctrl+D properly
+    container exec --interactive --tty "$container_id" bash -c '
+        # Set up signal handlers for the wrapper
+        trap "echo \"Container shell wrapper exiting...\"; exit 0" EXIT
+        trap "echo \"Received interrupt in wrapper, exiting...\"; exit 0" INT TERM
+        
+        # Execute the enhanced shell
+        /tmp/enhanced_shell.sh
+        
+        # Cleanup after shell exits
+        rm -f /tmp/enhanced_shell.sh
+    '
+    
+    # Additional cleanup
+    container exec "$container_id" rm -f /tmp/enhanced_shell.sh 2>/dev/null || true
 }
 
 # Function to show available commands
