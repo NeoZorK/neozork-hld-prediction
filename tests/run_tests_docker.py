@@ -6,6 +6,7 @@ Run tests for Docker environment
 import os
 import sys
 import subprocess
+import time
 from pathlib import Path
 
 # Add project root to path
@@ -88,7 +89,7 @@ def run_docker_tests():
         else:
             print(f"❌ {test_file} - Not found")
     
-    # Test debug scripts
+    # Test debug scripts with detailed output like v0.4.3
     print("\n=== Testing Debug Scripts ===")
     debug_passed = 0
     debug_failed = 0
@@ -97,8 +98,11 @@ def run_docker_tests():
         if Path(script).exists():
             print(f"Testing {script}...", end=" ")
             try:
-                result = subprocess.run([sys.executable, script, "--help"], 
+                start_time = time.time()
+                result = subprocess.run([sys.executable, script], 
                                       capture_output=True, text=True, timeout=30)
+                elapsed_time = time.time() - start_time
+                
                 error_reason = None
                 if result.returncode != 0:
                     if "API_KEY" in result.stdout or "API_KEY" in result.stderr or "No API key" in result.stdout or "No API key" in result.stderr:
@@ -111,14 +115,15 @@ def run_docker_tests():
                         error_reason = "❗ Module import error"
                     elif result.stderr.strip():
                         error_reason = result.stderr.strip().split('\n')[-1]
+                
                 if result.returncode == 0:
-                    print("✅")
+                    print(f"✅ ({elapsed_time:.2f}s)")
                     debug_passed += 1
                 else:
                     print(f"❌{f' ({error_reason})' if error_reason else ''}")
                     debug_failed += 1
             except subprocess.TimeoutExpired:
-                print("⏰ (Possible rate limit or no internet)")
+                print("⏰ (Rate Limit)")
                 debug_failed += 1
             except Exception as e:
                 print(f"❌ (Error: {e})")
