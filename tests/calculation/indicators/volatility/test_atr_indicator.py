@@ -143,7 +143,7 @@ class TestATRIndicator:
         assert 'Diff' in result
         
         signals = result['ATR_Signal'].dropna()
-        # Проверяем, что сигналы — числа из [0, 1, 2]
+        # Check that signals are numbers from [0, 1, 2]
         assert signals.isin([0, 1, 2]).all()
         
     def test_atr_performance(self):
