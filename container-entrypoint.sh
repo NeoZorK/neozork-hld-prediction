@@ -403,6 +403,12 @@ init_bash_history() {
         "mcp-start"
         "mcp-check"
         "uv-pytest"
+        "python scripts/debug/debug_yfinance.py"
+        "python scripts/debug/debug_binance.py"
+        "python scripts/debug/debug_polygon.py"
+        "python scripts/debug/examine_parquet.py"
+        "python scripts/mcp/start_mcp_server_daemon.py"
+        "python scripts/mcp/neozork_mcp_manager.py"
     )
     
     # Add commands to history file
@@ -545,10 +551,19 @@ python run_analysis.py mql5 EURUSD --interval H4 --rule PHLD
 nz mql5 BTCUSD --interval H4 --rule PHLD
 ls results/plots/
 
+# Debug Commands
+python scripts/debug/debug_yfinance.py
+python scripts/debug/debug_binance.py
+python scripts/debug/debug_polygon.py
+python scripts/debug/examine_parquet.py
+python scripts/debug/debug_check_parquet.py
+
 # MCP Server Commands
 mcp-start
 mcp-check
 python scripts/mcp/check_mcp_status.py
+python scripts/mcp/start_mcp_server_daemon.py
+python scripts/mcp/neozork_mcp_manager.py
 python neozork_mcp_server.py
 EOL
 }

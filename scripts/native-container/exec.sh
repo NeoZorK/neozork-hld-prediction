@@ -318,6 +318,10 @@ show_available_commands() {
     echo "  python run_analysis.py -h             # Show help"
     echo "  python scripts/utilities/test_uv_docker.py      # Test UV environment"
     echo "  python scripts/mcp/check_mcp_status.py    # Check MCP server"
+    echo "  python scripts/debug/debug_yfinance.py    # Debug YFinance"
+    echo "  python scripts/debug/debug_binance.py     # Debug Binance"
+    echo "  python scripts/debug/debug_polygon.py     # Debug Polygon"
+    echo "  python scripts/debug/examine_parquet.py   # Examine Parquet files"
     echo
     echo -e "${BLUE}System:${NC}"
     echo "  ls -la /app                           # List application files"
