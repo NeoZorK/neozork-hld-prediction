@@ -495,6 +495,10 @@ class TestNativeContainerDocumentation:
         if should_skip:
             pytest.skip(reason)
         
+        # Read the entrypoint script content
+        with open(self.project_root / "container-entrypoint.sh", 'r') as f:
+            content = f.read()
+        
         # Test MCP server commands
         mcp_commands = [
             "mcp-start",
