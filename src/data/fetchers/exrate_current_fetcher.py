@@ -14,8 +14,8 @@ import traceback
 import requests
 from datetime import datetime, timedelta
 
-# Use relative import for logger
-from ...common import logger
+# Use absolute import for logger
+from src.common import logger
 
 
 def fetch_exrate_current_data(ticker: str, interval: str = "D1") -> tuple[pd.DataFrame | None, dict]:
