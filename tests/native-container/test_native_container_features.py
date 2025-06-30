@@ -503,7 +503,7 @@ class TestNativeContainerDocumentation:
         mcp_commands = [
             "mcp-start",
             "mcp-check",
-            "python scripts/mcp/check_mcp_status.py"
+            "python scripts/check_mcp_status.py"
         ]
         
         for cmd in mcp_commands:
