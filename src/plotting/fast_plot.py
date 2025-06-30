@@ -168,10 +168,10 @@ def plot_indicator_results_fast(
         )
         main_fig.add_tools(hover_main)
 
-        # Создаем список фигур для layout
+        # Create list of figures for layout
         figures = [main_fig]
 
-        # Volume subplot - только если есть данные
+        # Volume subplot - only if data exists
         if 'Volume' in display_df.columns and not display_df['Volume'].isna().all():
             volume_fig = figure(
                 width=width,
@@ -208,7 +208,7 @@ def plot_indicator_results_fast(
             volume_fig.x_range = main_fig.x_range
             figures.append(volume_fig)
 
-        # HL subplot - только если есть данные
+        # HL subplot - only if data exists
         if 'HL' in display_df.columns and not display_df['HL'].isna().all():
             hl_fig = figure(
                 width=width,
@@ -224,7 +224,7 @@ def plot_indicator_results_fast(
             hl_fig.x_range = main_fig.x_range
             figures.append(hl_fig)
 
-        # Pressure subplot - только если есть данные
+        # Pressure subplot - only if data exists
         if 'Pressure' in display_df.columns and not display_df['Pressure'].isna().all():
             pressure_fig = figure(
                 width=width,
@@ -240,7 +240,7 @@ def plot_indicator_results_fast(
             pressure_fig.x_range = main_fig.x_range
             figures.append(pressure_fig)
 
-        # PV subplot - только если есть данные
+        # PV subplot - only if data exists
         if 'PV' in display_df.columns and not display_df['PV'].isna().all():
             pv_fig = figure(
                 width=width,
@@ -256,7 +256,7 @@ def plot_indicator_results_fast(
             pv_fig.x_range = main_fig.x_range
             figures.append(pv_fig)
 
-        # Layout: основной график + только те subplot, для которых есть данные
+        # Layout: main chart + only those subplots for which data exists
         layout = column(*figures)
 
         # Save and open

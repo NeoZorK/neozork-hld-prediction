@@ -559,8 +559,8 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
     original_parquet_path = None
     calculated_df = None
 
-    # --- Удаляем все вызовы старых терминальных метрик и оставляем только график ---
-    # Просто рисуем график, universal metrics уже напечатаны в workflow.py
+    # --- Remove all calls to old terminal metrics and leave only the chart ---
+    # Just draw the chart, universal metrics are already printed in workflow.py
     from src.plotting.term_auto_plot import auto_plot_from_dataframe
     auto_plot_from_dataframe(result_df, plot_title, style="dots")
     logger.print_success("Terminal plot generated successfully!")

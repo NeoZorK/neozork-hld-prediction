@@ -183,7 +183,7 @@ class TestVWAPIndicator:
         assert not result.isna().all()
 
     def test_vwap_period_impact(self):
-        # Убираю этот тест, так как VWAP не принимает параметр period
+        # Removing this test as VWAP doesn't accept period parameter
         pass
 
     def test_vwap_mathematical_properties(self):
