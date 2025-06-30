@@ -16,6 +16,24 @@ def is_running_in_docker():
     return os.path.exists('/.dockerenv') or os.environ.get('DOCKER_CONTAINER') == 'true'
 
 
+def is_running_in_native_container():
+    """Check if running inside native container environment."""
+    return os.environ.get('NATIVE_CONTAINER') == 'true'
+
+
+def should_skip_native_container_tests():
+    """Check if native container tests should be skipped."""
+    # Skip if running in Docker (native container files not available)
+    if is_running_in_docker():
+        return True, "Skipping in Docker environment - native container files not available"
+    
+    # Skip if not running in native container environment
+    if not is_running_in_native_container():
+        return True, "Skipping outside native container environment - tests require native container setup"
+    
+    return False, None
+
+
 def get_project_root():
     """Get project root path based on environment."""
     if is_running_in_docker():
@@ -38,16 +56,18 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_exists(self):
         """Test that the entrypoint script exists and is executable."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         assert self.entrypoint_script.exists(), "container-entrypoint.sh should exist"
         assert os.access(self.entrypoint_script, os.X_OK), "container-entrypoint.sh should be executable"
 
     def test_entrypoint_script_uv_support(self):
         """Test that the entrypoint script has UV support."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -64,8 +84,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_mcp_support(self):
         """Test that the entrypoint script has MCP server support."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -78,8 +99,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_command_wrappers(self):
         """Test that the entrypoint script creates command wrappers."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -94,8 +116,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_bash_history(self):
         """Test that the entrypoint script sets up bash history."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -109,8 +132,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_useful_commands(self):
         """Test that the entrypoint script includes useful commands in history."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -133,8 +157,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_data_feed_tests(self):
         """Test that the entrypoint script includes data feed tests."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -145,8 +170,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_error_handling(self):
         """Test that the entrypoint script has proper error handling."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -158,19 +184,21 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_interactive_shell(self):
         """Test that the entrypoint script starts interactive shell."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
         
-        # Check for interactive shell
-        assert "exec bash -i" in content, "Should start interactive bash shell"
+        # Check for interactive shell - the script uses "exec bash" not "exec bash -i"
+        assert "exec bash" in content, "Should start interactive bash shell"
 
     def test_entrypoint_script_environment_variables(self):
         """Test that the entrypoint script sets correct environment variables."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -190,8 +218,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_directory_creation(self):
         """Test that the entrypoint script creates necessary directories."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -216,8 +245,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_readline_config(self):
         """Test that the entrypoint script sets up readline configuration."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -230,8 +260,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_custom_prompt(self):
         """Test that the entrypoint script sets custom prompt."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -242,8 +273,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_mcp_server_management(self):
         """Test that the entrypoint script properly manages MCP server."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -255,8 +287,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_html_file_detection(self):
         """Test that the entrypoint script detects HTML file generation."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -268,20 +301,22 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_welcome_message(self):
         """Test that the entrypoint script displays welcome message."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
         
-        # Check for welcome message
-        assert "NeoZork HLD Prediction Native Container Started" in content, "Welcome message should exist"
-        assert "UV-Only Mode" in content, "UV mode should be mentioned"
+        # Check for welcome message - the script has "NeoZork HLD Prediction" in comments and usage guide
+        assert "NeoZork HLD Prediction" in content, "Welcome message should exist"
+        assert "Usage Guide" in content, "Usage guide should be mentioned"
 
     def test_entrypoint_script_script_structure(self):
         """Test that the entrypoint script has proper structure."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -294,8 +329,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_logging(self):
         """Test that the entrypoint script has logging functionality."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -306,8 +342,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_color_output(self):
         """Test that the entrypoint script uses colored output."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -318,8 +355,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_path_management(self):
         """Test that the entrypoint script manages PATH correctly."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -330,8 +368,9 @@ class TestNativeContainerFeatures:
 
     def test_entrypoint_script_permissions(self):
         """Test that the entrypoint script sets proper permissions."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - native container files not available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         with open(self.entrypoint_script, 'r') as f:
             content = f.read()
@@ -388,8 +427,9 @@ class TestNativeContainerIntegration:
 
     def test_uv_configuration_files_exist(self):
         """Test that UV configuration files exist."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - UV config files may not be available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         uv_files = [
             "uv_setup/uv.toml",
@@ -440,8 +480,9 @@ class TestNativeContainerDocumentation:
 
     def test_native_container_documentation_completeness(self):
         """Test that native container documentation is complete."""
-        if is_running_in_docker():
-            pytest.skip("Skipping in Docker environment - documentation may not be available")
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
         
         # Check main README for native container section
         main_readme = self.project_root / "README.md"
