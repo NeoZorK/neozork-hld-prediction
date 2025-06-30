@@ -54,11 +54,12 @@ def test_detection():
     
     # Test our detection script
     try:
+        # Test with debug detection
         result = subprocess.run(
-            ["python3", "scripts/check_mcp_status.py", "--debug-detect"],
+            ["python3", "scripts/mcp/check_mcp_status.py", "--debug-detect"],
             capture_output=True,
             text=True,
-            timeout=10
+            cwd=project_root
         )
         
         print(f"Detection result: {result.stdout.strip()}")
