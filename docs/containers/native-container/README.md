@@ -198,161 +198,160 @@ The `container-entrypoint.sh` provides:
 
 1. **UV Verification** - Ensures UV is available and working
 2. **Bash Environment Setup** - Configures history, readline, and prompt
-3. **Command Wrapper Creation** - Creates all utility commands
-4. **Data Feed Tests** - Interactive external API testing
-5. **MCP Server Management** - Startup, monitoring, and cleanup
-6. **Usage Guide Display** - Comprehensive help and examples
-7. **History Initialization** - Pre-loads useful commands
-8. **Commands File Creation** - Creates reference file
+3. **Interactive Menu** - Guides users through setup and testing
+4. **MCP Server Management** - Handles MCP server startup and monitoring
+5. **Command Wrappers** - Provides convenient aliases for common tasks
 
-## 🧪 Testing
+## 📁 Native Container Scripts
 
-### Run Native Container Tests
+The project includes comprehensive management scripts in `scripts/native-container/` for complete container lifecycle management:
+
+| Script                | Purpose                                                                                   |
+|-----------------------|------------------------------------------------------------------------------------------|
+| setup.sh              | Setup native container environment, verify dependencies, create directory structure      |
+| run.sh                | Start container, check status, manage launch modes (interactive/detached)                |
+| stop.sh               | Stop container gracefully or forcefully, remove container, cleanup resources            |
+| exec.sh               | Execute commands and launch interactive shell with automatic venv activation            |
+| logs.sh               | View container, application, and system logs with filtering and real-time following     |
+| cleanup.sh            | Clean containers, temporary files, caches, logs, and results with selective options     |
+| native-container.sh   | Interactive menu for start, stop, shell access, and container status management        |
+| force_restart.sh      | Force restart container and services with emergency recovery procedures                 |
+| analyze_all_logs.sh   | Analyze all container and application logs for troubleshooting                         |
+| test_smart_logic.sh   | Test smart container management logic and automated decision making                     |
+| test_interactive.sh   | Test interactive scenarios and user experience workflows                                |
+
+### Using Native Container Scripts
+
 ```bash
-# Test full functionality
-uv run pytest tests/native-container/test_native_container_full_functionality.py -v
+# Interactive container management
+./scripts/native-container/native-container.sh
 
-# Test specific features
-uv run pytest tests/native-container/ -k "uv" -v
-uv run pytest tests/native-container/ -k "mcp" -v
+# Manual setup and run sequence
+./scripts/native-container/setup.sh
+./scripts/native-container/run.sh
+./scripts/native-container/exec.sh --shell
+
+# Container monitoring and maintenance
+./scripts/native-container/logs.sh --follow
+./scripts/native-container/cleanup.sh --all
+
+# Emergency procedures
+./scripts/native-container/force_restart.sh
+./scripts/native-container/analyze_all_logs.sh
 ```
-
-### Test Coverage
-The native container tests cover:
-- ✅ Container setup and configuration
-- ✅ Entrypoint script functionality
-- ✅ UV package manager integration
-- ✅ MCP server integration
-- ✅ Command wrapper creation
-- ✅ Bash environment setup
-- ✅ Directory structure validation
-- ✅ File permissions and existence
-- ✅ Environment variable configuration
-
-## 📊 Performance Benefits
-
-### vs Docker Container
-- **Faster startup** - Native container technology
-- **Better Apple Silicon integration** - Optimized for ARM64
-- **Lower resource usage** - More efficient memory management
-- **Improved file system performance** - Native volume mounts
-- **Better terminal integration** - Native macOS terminal support
-
-### Resource Usage
-- **Memory**: 4GB allocated (configurable)
-- **CPU**: 2 cores allocated (configurable)
-- **Storage**: 10GB allocated (configurable)
-- **Network**: Native macOS networking
 
 ## 🔍 Troubleshooting
 
 ### Common Issues
 
-#### Container Won't Start
-```bash
-# Check native container service
-container system status
+1. **Container not starting**
+   - Check macOS version (requires 26+)
+   - Verify native container application is installed
+   - Ensure sufficient disk space and memory
 
-# Start service if needed
-container system start
+2. **UV installation issues**
+   - Container automatically installs UV if missing
+   - Check UV cache directory permissions
+   - Verify Python 3.11+ is available
 
-# Check container logs
-./scripts/native-container/logs.sh
-```
-
-#### UV Issues
-```bash
-# Check UV installation
-uv --version
-
-# Reinstall UV in container
-uv-install
-
-# Test UV environment
-uv-test
-```
-
-#### MCP Server Issues
-```bash
-# Check MCP server status
-mcp-check
-
-# Restart MCP server
-mcp-start
-
-# Check MCP logs
-tail -f logs/mcp_server.log
-```
-
-#### Permission Issues
-```bash
-# Fix script permissions
-chmod +x scripts/native-container/*.sh
-chmod +x container-entrypoint.sh
-
-# Fix directory permissions
-chmod -R 755 data/ logs/ results/
-```
+3. **MCP server problems**
+   - Check MCP server logs: `./scripts/native-container/logs.sh mcp`
+   - Verify MCP_SERVER_TYPE configuration
+   - Ensure proper network connectivity
 
 ### Debug Mode
+
 ```bash
-# Run with debug output
-DEBUG=true ./scripts/native-container/run.sh
+# Run with verbose logging
+./scripts/native-container/run.sh --debug
 
-# Check container status
-./scripts/native-container/run.sh --status
+# Analyze all logs for issues
+./scripts/native-container/analyze_all_logs.sh
 
-# Analyze all logs
+# Test container logic
+./scripts/native-container/test_smart_logic.sh
+```
+
+## 🚀 Performance Benefits
+
+### Apple Silicon Optimization
+- **Native ARM64 execution** - No emulation overhead
+- **Optimized memory usage** - Better cache utilization
+- **Faster startup times** - Reduced initialization overhead
+- **Better thermal management** - Efficient power consumption
+
+### UV Package Manager
+- **Faster dependency resolution** - Rust-based performance
+- **Optimized caching** - Intelligent package caching
+- **Parallel installation** - Concurrent package downloads
+- **Reduced disk usage** - Efficient storage management
+
+## 🔒 Security Features
+
+- **Isolated environment** - Complete process isolation
+- **Non-root execution** - Secure user permissions
+- **Minimal attack surface** - Only essential packages
+- **Environment variable isolation** - Secure configuration
+
+## 📊 Monitoring and Logging
+
+### Log Management
+```bash
+# View real-time logs
+./scripts/native-container/logs.sh --follow
+
+# Filter logs by type
+./scripts/native-container/logs.sh mcp --follow
+./scripts/native-container/logs.sh app --grep "ERROR"
+
+# Analyze log patterns
 ./scripts/native-container/analyze_all_logs.sh
 ```
 
-## 📚 Documentation
+### Performance Monitoring
+- **Resource usage tracking** - Memory, CPU, disk I/O
+- **Startup time measurement** - Container initialization metrics
+- **Command execution timing** - Performance profiling
+- **Cache hit rates** - UV and system cache efficiency
 
-### Related Documentation
-- [Native Container Setup](../docs/deployment/native-container-setup.md)
-- [Docker vs Native Comparison](../docs/deployment/native-vs-docker-comparison.md)
-- [UV Package Manager Guide](../docs/development/uv-package-manager.md)
-- [MCP Server Integration](../docs/reference/mcp-servers/README.md)
+## 🔄 Migration from Docker
 
-### API Documentation
-- [Data Sources](../docs/api/data-sources.md)
-- [Exchange Rate API](../docs/api/exchange-rate-api-complete.md)
-- [Indicators Reference](../docs/reference/indicators/)
+### Feature Parity Checklist
+- ✅ **UV package manager** - Full compatibility
+- ✅ **MCP server integration** - Identical functionality
+- ✅ **Command wrappers** - Same interface
+- ✅ **Interactive shell** - Enhanced experience
+- ✅ **Volume mounts** - Identical data persistence
+- ✅ **Environment variables** - Same configuration
+- ✅ **Logging system** - Compatible log formats
+- ✅ **Testing framework** - Same test execution
 
-## 🤝 Contributing
+### Migration Steps
+1. **Stop Docker container** - `docker compose down`
+2. **Setup native container** - `./scripts/native-container/setup.sh`
+3. **Start native container** - `./scripts/native-container/run.sh`
+4. **Verify functionality** - Run tests and analysis
+5. **Update workflows** - Use native container scripts
 
-### Adding New Features
-1. **Update entrypoint script** - Add functionality to `container-entrypoint.sh`
-2. **Update setup script** - Add configuration to `setup.sh`
-3. **Add tests** - Create tests in `tests/native-container/`
-4. **Update documentation** - Update this README and related docs
-5. **Test thoroughly** - Ensure Docker parity is maintained
+## 📚 Additional Resources
 
-### Testing Guidelines
-- All new features must have corresponding tests
-- Tests should verify Docker parity
-- Performance tests should be included
-- Documentation should be updated
+### Documentation
+- [Native Container Setup Guide](../native-container-setup.md)
+- [Native vs Docker Comparison](../native-vs-docker-comparison.md)
+- [UV-Only Mode Guide](../uv-only-mode.md)
+- [Emergency Restart Service](../emergency-restart-service.md)
 
-## 📈 Roadmap
+### Testing
+- [Native Container Tests](../../tests/native-container/)
+- [Full Functionality Tests](../../tests/native-container/test_native_container_full_functionality.py)
+- [Smart Logic Tests](../../tests/native-container/test_smart_logic.sh)
 
-### Planned Features
-- [ ] **Multi-container support** - Run multiple analysis containers
-- [ ] **GPU acceleration** - Metal Performance Shaders integration
-- [ ] **Advanced monitoring** - Real-time resource monitoring
-- [ ] **Automated testing** - CI/CD integration for native containers
-- [ ] **Plugin system** - Extensible command wrapper system
+## 🤝 Support
 
-### Performance Optimizations
-- [ ] **Memory optimization** - Dynamic memory allocation
-- [ ] **Cache optimization** - Intelligent UV cache management
-- [ ] **Network optimization** - Native macOS networking features
-- [ ] **Storage optimization** - Efficient volume mount strategies
+For issues and questions:
 
-## 📄 License
-
-This native container implementation is part of the NeoZork HLD Prediction project and follows the same licensing terms.
-
----
-
-**Note**: This native container provides full feature parity with the Docker container while offering improved performance and better integration with Apple Silicon. All Docker container features are available, including UV package management, MCP server integration, command wrappers, bash history, and external data feed testing. 
+1. **Check logs** - `./scripts/native-container/logs.sh`
+2. **Review documentation** - See Additional Resources above
+3. **Run diagnostics** - `./scripts/native-container/analyze_all_logs.sh`
+4. **Test functionality** - `./scripts/native-container/test_smart_logic.sh`
+5. **Open GitHub issue** - Include logs and system information 

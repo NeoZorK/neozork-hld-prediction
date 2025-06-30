@@ -357,7 +357,7 @@ def main():
     print("(y/n): ", end="")
     
     response = input().lower().strip()
-    if response in ['y', 'yes', 'да', 'д']:
+    if response in ['y', 'yes']:
         demo_full_analysis()
     else:
         print("Skipping full console output demo.")

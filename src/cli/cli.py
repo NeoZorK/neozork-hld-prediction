@@ -874,13 +874,13 @@ def parse_rsi_parameters(params_str: str) -> tuple[str, dict]:
 
 
 def parse_rsi_momentum_parameters(params_str: str) -> tuple[str, dict]:
-    # Точно такие же параметры, как у RSI, но имя другое
+    # Exactly the same parameters as RSI, but different name
     name, params = parse_rsi_parameters(params_str)
     return 'rsi_mom', params
 
 
 def parse_rsi_divergence_parameters(params_str: str) -> tuple[str, dict]:
-    # Точно такие же параметры, как у RSI, но имя другое
+    # Exactly the same parameters as RSI, but different name
     name, params = parse_rsi_parameters(params_str)
     return 'rsi_div', params
 

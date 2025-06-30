@@ -17,7 +17,7 @@ import os
 # Add scripts directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
 
-from check_mcp_status import DockerMCPServerChecker, MCPServerChecker, is_running_in_docker
+from mcp.check_mcp_status import DockerMCPServerChecker, MCPServerChecker, is_running_in_docker
 
 
 class TestDockerMCPServerChecker:
