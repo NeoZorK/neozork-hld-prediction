@@ -64,6 +64,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
     # Test successful plot generation using the default Plotly path
     def test_generate_plot_success(self):
+        if hasattr(self.selected_rule, "original_rule_with_params"):
+            delattr(self.selected_rule, "original_rule_with_params")
         with patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'}), \
              patch('src.plotting.plotting.IN_DOCKER', False), \
              patch('src.plotting.plotting_generation.IN_DOCKER', False), \
@@ -137,6 +139,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
     # Test plot generation title reflects estimated point size correctly
     def test_generate_plot_estimated_point(self):
+        if hasattr(self.selected_rule, "original_rule_with_params"):
+            delattr(self.selected_rule, "original_rule_with_params")
         with patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'}), \
              patch('src.plotting.plotting.IN_DOCKER', False), \
              patch('src.plotting.plotting_generation.IN_DOCKER', False), \
@@ -258,6 +262,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
     # Test skipping plot when result_df is None
     def test_generate_plot_skip_none_df(self):
+        if hasattr(self.selected_rule, "original_rule_with_params"):
+            delattr(self.selected_rule, "original_rule_with_params")
         with patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'}), \
              patch('src.plotting.plotting_generation._detect_docker_environment', return_value=False), \
              patch('src.plotting.plotting_generation.logger') as mock_logger, \
@@ -276,6 +282,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
     # Test skipping plot when result_df is empty
     def test_generate_plot_skip_empty_df(self):
+        if hasattr(self.selected_rule, "original_rule_with_params"):
+            delattr(self.selected_rule, "original_rule_with_params")
         with patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'}), \
              patch('src.plotting.plotting_generation._detect_docker_environment', return_value=False), \
              patch('src.plotting.plotting_generation.logger') as mock_logger, \
@@ -295,6 +303,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
     # Test when selected_rule is None
     def test_generate_plot_none_rule(self):
+        if hasattr(self.selected_rule, "original_rule_with_params"):
+            delattr(self.selected_rule, "original_rule_with_params")
         with patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'}), \
              patch('src.plotting.plotting_generation._detect_docker_environment', return_value=False), \
              patch('src.plotting.plotting_generation.logger') as mock_logger, \
@@ -313,6 +323,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
     # Test when the core plotting function raises an exception during generation
     def test_generate_plot_exception_handling(self):
+        if hasattr(self.selected_rule, "original_rule_with_params"):
+            delattr(self.selected_rule, "original_rule_with_params")
         with patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'}), \
              patch('src.plotting.plotting.IN_DOCKER', False), \
              patch('src.plotting.plotting_generation.IN_DOCKER', False), \
