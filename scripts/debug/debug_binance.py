@@ -11,9 +11,13 @@ import asyncio
 from pathlib import Path
 
 # Add the src directory to the Python path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from data.fetchers.binance_fetcher import BinanceFetcher
+try:
+    from src.data.fetchers.binance_fetcher import fetch_binance_data
+except ImportError as e:
+    print(f"❌ ImportError: {e}\nMake sure you have the correct project structure and src/ in your path.")
+    exit(2)
 
 
 def test_binance_connection():
@@ -30,15 +34,9 @@ def test_binance_connection():
         return False
     
     try:
-        # Create Binance fetcher instance
-        fetcher = BinanceFetcher()
-        
-        # Test connection
-        print("✅ Binance fetcher created successfully")
-        
         # Test fetching recent data
         print("Fetching recent BTCUSDT data...")
-        data = fetcher.fetch_recent_data("BTCUSDT", "1h", limit=10)
+        data, metadata = fetch_binance_data("BTCUSDT", "1h", "2024-01-01", "2024-01-02")
         
         if data is not None and len(data) > 0:
             print(f"✅ Successfully fetched {len(data)} records from Binance")

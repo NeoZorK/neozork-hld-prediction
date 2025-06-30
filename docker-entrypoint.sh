@@ -17,8 +17,8 @@ fi
 
 # Run UV test script to validate environment
 echo -e "\033[1;36m=== Running UV Environment Test ===\033[0m"
-if [ -f "/app/scripts/test_uv_docker.py" ]; then
-    python /app/scripts/test_uv_docker.py
+if [ -f "/app/scripts/utilities/test_uv_docker.py" ]; then
+    python /app/scripts/utilities/test_uv_docker.py
     if [ $? -eq 0 ]; then
         echo -e "\033[1;32m✅ UV environment test passed\033[0m"
     else
@@ -72,7 +72,7 @@ chmod +x /tmp/bin/uv-update
 cat > /tmp/bin/uv-test << 'EOF'
 #!/bin/bash
 echo "Running UV environment test..."
-python /app/scripts/test_uv_docker.py
+python /app/scripts/utilities/test_uv_docker.py
 EOF
 chmod +x /tmp/bin/uv-test
 
@@ -178,7 +178,7 @@ if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
   
   # Check MCP server status
   echo -e "\033[1;33m=== Checking MCP server status ===\033[0m\n"
-  if python scripts/check_mcp_status.py; then
+  if python /app/scripts/mcp/check_mcp_status.py; then
     echo -e "\033[1;32m✅ MCP server is running correctly\033[0m\n"
   else
     echo -e "\033[1;31m❌ MCP server check failed\033[0m\n"
@@ -226,11 +226,17 @@ uv-test
 uv pip list
 uv pip install <package>
 
+# Testing Commands
+pytest
+uv run pytest tests -n auto
+uv run pytest tests -n auto -v --tb=short
+uv run pytest tests -n auto -v --tb=short -x
+uv run pytest tests -n auto --tb=no -q
+
 # Analysis Commands
 nz
 eda
 python
-pytest
 python run_analysis.py demo --rule PHLD
 nz demo --rule PHLD
 python run_analysis.py yfinance MSFT --rule PHLD
@@ -238,6 +244,19 @@ nz yfinance AAPL --rule PHLD
 python run_analysis.py mql5 EURUSD --interval H4 --rule PHLD
 nz mql5 BTCUSD --interval H4 --rule PHLD
 ls results/plots/
+
+# Debug Commands
+python scripts/debug/debug_yfinance.py
+python scripts/debug/debug_binance.py
+python scripts/debug/debug_polygon.py
+python scripts/debug/examine_parquet.py
+python scripts/debug/debug_check_parquet.py
+
+# MCP Server Commands
+python scripts/mcp/check_mcp_status.py
+python scripts/mcp/start_mcp_server_daemon.py
+python scripts/mcp/neozork_mcp_manager.py
+python neozork_mcp_server.py
 EOL
 
 # Create a custom .inputrc file for readline configuration in a directory with write permissions
@@ -287,6 +306,8 @@ init_bash_history() {
     # Define useful commands for the container
     local useful_commands=(
         "uv run pytest tests -n auto"
+        "uv run pytest tests -n auto -v --tb=short"
+        "uv run pytest tests -n auto -v --tb=short -x"
         "nz --interactive"
         "eda -dqc"
         "nz --indicators"
@@ -298,6 +319,12 @@ init_bash_history() {
         "uv pip list"
         "ls -la"
         "pwd"
+        "python scripts/debug/debug_yfinance.py"
+        "python scripts/debug/debug_binance.py"
+        "python scripts/debug/debug_polygon.py"
+        "python scripts/debug/examine_parquet.py"
+        "python scripts/mcp/start_mcp_server_daemon.py"
+        "python scripts/mcp/neozork_mcp_manager.py"
     )
     
     # Add commands to history file

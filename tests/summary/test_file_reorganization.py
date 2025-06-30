@@ -142,9 +142,9 @@ def test_neozork_mcp_server_exists():
         assert "NeozorkMCPServer" in content, "File should contain NeozorkMCPServer class"
 
 def test_neozork_mcp_manager_exists():
-    """Test that neozork_mcp_manager.py exists in scripts/"""
-    # Check that the file exists in the scripts location
-    path = Path("scripts/neozork_mcp_manager.py")
+    """Test that neozork_mcp_manager.py exists in scripts/mcp/"""
+    # Check that the file exists in the scripts/mcp location
+    path = Path("scripts/mcp/neozork_mcp_manager.py")
     assert path.exists(), f"File should exist at {path}"
     
     # Check that the file has the correct content (basic check)

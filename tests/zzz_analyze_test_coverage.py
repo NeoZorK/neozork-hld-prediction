@@ -44,15 +44,15 @@ def map_test_to_src(test_file):
     elif module_name.endswith("_fetcher"):
         module_name = module_name.replace("_fetcher", "_fetcher")
     
-    # Если тест лежит в tests/src/..., ищем исходник в src/... по аналогичной структуре
+    # If test is in tests/src/..., look for source in src/... with similar structure
     if relative_path.parts[0] == "src":
         src_subpath = Path(*relative_path.parts[1:-1])
         src_path = Path("src") / src_subpath / f"{module_name}.py"
         return [src_path]
 
-    # Если тест лежит в tests/..., ищем исходник в src/... по аналогичной структуре
+    # If test is in tests/..., look for source in src/... with similar structure
     src_path = Path("src") / relative_path.parent / f"{module_name}.py"
-    # Также ищем тесты в tests/src/... для этого исходника
+    # Also look for tests in tests/src/... for this source file
     src_test_path = Path("tests/src") / relative_path.parent / f"test_{module_name}.py"
     if src_test_path.exists():
         return [src_path]
@@ -72,7 +72,7 @@ def analyze_coverage():
             test_path1 = Path("tests") / rel.parent / f"test_{rel.stem}.py"
             test_path2 = Path("tests/src") / rel.parent / f"test_{rel.stem}.py"
         except ValueError:
-            # Файл не в src/, ищем тесты в корне tests/ и tests/src/
+            # File not in src/, look for tests in tests/ root and tests/src/
             test_path1 = Path("tests") / f"test_{src_file.stem}.py"
             test_path2 = Path("tests/src") / f"test_{src_file.stem}.py"
         if test_path1.exists() or test_path2.exists():

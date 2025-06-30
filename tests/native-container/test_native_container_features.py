@@ -446,7 +446,7 @@ class TestNativeContainerIntegration:
         mcp_files = [
             "neozork_mcp_server.py",
             "cursor_mcp_config.json",
-            "scripts/check_mcp_status.py"
+            "scripts/mcp/check_mcp_status.py"
         ]
         
         for file_path in mcp_files:
@@ -487,4 +487,24 @@ class TestNativeContainerDocumentation:
             
             # Check for native container section
             assert "Native Apple Silicon Container" in content, "Native container section should exist in main README"
-            assert "FULL DOCKER PARITY" in content, "Docker parity should be mentioned" 
+            assert "FULL DOCKER PARITY" in content, "Docker parity should be mentioned"
+
+    def test_mcp_server_commands(self):
+        """Test that MCP server commands are available."""
+        should_skip, reason = should_skip_native_container_tests()
+        if should_skip:
+            pytest.skip(reason)
+        
+        # Read the entrypoint script content
+        with open(self.project_root / "container-entrypoint.sh", 'r') as f:
+            content = f.read()
+        
+        # Test MCP server commands
+        mcp_commands = [
+            "mcp-start",
+            "mcp-check",
+            "python scripts/check_mcp_status.py"
+        ]
+        
+        for cmd in mcp_commands:
+            assert cmd in content, f"MCP server command '{cmd}' should be available" 

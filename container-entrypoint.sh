@@ -68,13 +68,12 @@ verify_uv() {
         fi
     fi
 
-    # Run UV test script to validate environment (don't fail on error)
-    log_message "=== Running UV Environment Test ==="
-    if [ -f "/app/scripts/test_uv_docker.py" ]; then
-        if python /app/scripts/test_uv_docker.py; then
+    # Test UV environment
+    if [ -f "/app/scripts/utilities/test_uv_docker.py" ]; then
+        if python /app/scripts/utilities/test_uv_docker.py; then
             echo -e "\033[1;32m✅ UV environment test passed\033[0m"
         else
-            echo -e "\033[1;33m⚠️  UV environment test had issues - continuing anyway\033[0m"
+            echo -e "\033[1;31m❌ UV environment test failed\033[0m"
         fi
     else
         echo -e "\033[1;33m⚠️  UV test script not found - skipping test\033[0m"
@@ -383,6 +382,8 @@ init_bash_history() {
     # Define useful commands for the container
     local useful_commands=(
         "uv run pytest tests -n auto"
+        "uv run pytest tests -n auto -v --tb=short"
+        "uv run pytest tests -n auto -v --tb=short -x"
         "nz --interactive"
         "eda -dqc"
         "nz --indicators"
@@ -404,6 +405,12 @@ init_bash_history() {
         "mcp-start"
         "mcp-check"
         "uv-pytest"
+        "python scripts/debug/debug_yfinance.py"
+        "python scripts/debug/debug_binance.py"
+        "python scripts/debug/debug_polygon.py"
+        "python scripts/debug/examine_parquet.py"
+        "python scripts/mcp/start_mcp_server_daemon.py"
+        "python scripts/mcp/neozork_mcp_manager.py"
     )
     
     # Add commands to history file
@@ -533,11 +540,17 @@ uv-pytest
 uv pip list
 uv pip install <package>
 
+# Testing Commands
+pytest
+uv run pytest tests -n auto
+uv run pytest tests -n auto -v --tb=short
+uv run pytest tests -n auto -v --tb=short -x
+uv run pytest tests -n auto --tb=no -q
+
 # Analysis Commands
 nz
 eda
 python
-pytest
 python run_analysis.py demo --rule PHLD
 nz demo --rule PHLD
 python run_analysis.py yfinance MSFT --rule PHLD
@@ -546,10 +559,19 @@ python run_analysis.py mql5 EURUSD --interval H4 --rule PHLD
 nz mql5 BTCUSD --interval H4 --rule PHLD
 ls results/plots/
 
+# Debug Commands
+python scripts/debug/debug_yfinance.py
+python scripts/debug/debug_binance.py
+python scripts/debug/debug_polygon.py
+python scripts/debug/examine_parquet.py
+python scripts/debug/debug_check_parquet.py
+
 # MCP Server Commands
 mcp-start
 mcp-check
 python scripts/check_mcp_status.py
+python scripts/mcp/start_mcp_server_daemon.py
+python scripts/mcp/neozork_mcp_manager.py
 python neozork_mcp_server.py
 EOL
 }
