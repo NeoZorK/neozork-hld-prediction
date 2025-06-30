@@ -29,7 +29,7 @@ class TestNeozorkMCPManager:
     @pytest.fixture
     def temp_project(self):
         """Create temporary project directory"""
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = tempfile.mkdtemp(prefix="test_neozork_mcp_manager_")
         project_path = Path(temp_dir)
         
         # Create project structure
@@ -406,7 +406,7 @@ class TestIDEConfigCreation:
     @pytest.fixture
     def temp_project(self):
         """Create temporary project directory"""
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = tempfile.mkdtemp(prefix="test_neozork_mcp_manager_")
         project_path = Path(temp_dir)
         yield project_path
         shutil.rmtree(temp_dir)
@@ -474,7 +474,7 @@ class TestErrorHandling:
     @pytest.fixture
     def temp_project(self):
         """Create temporary project directory"""
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = tempfile.mkdtemp(prefix="test_neozork_mcp_manager_")
         project_path = Path(temp_dir)
         
         # Create project structure
@@ -599,7 +599,7 @@ class TestPerformance:
     @pytest.fixture
     def temp_project(self):
         """Create temporary project directory"""
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = tempfile.mkdtemp(prefix="test_neozork_mcp_manager_")
         project_path = Path(temp_dir)
         
         # Create project structure

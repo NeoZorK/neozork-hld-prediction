@@ -60,7 +60,7 @@ def validate_input_data(result_df, selected_rule):
     return True
 
 
-def get_plot_title(data_info, point_size, estimated_point, args=None):
+def get_plot_title(data_info, point_size, estimated_point, args=None, selected_rule=None):
     """
     Generates plot title based on data info and point size
 
@@ -69,6 +69,7 @@ def get_plot_title(data_info, point_size, estimated_point, args=None):
         point_size (float | None): The point size used for calculations.
         estimated_point (bool): Flag indicating if point_size was estimated.
         args (argparse.Namespace, optional): Command-line arguments.
+        selected_rule (TradingRule | str, optional): The selected trading rule.
 
     Returns:
         str: Generated plot title
@@ -82,6 +83,25 @@ def get_plot_title(data_info, point_size, estimated_point, args=None):
     # Extract interval from data_info or args
     interval_str = extract_interval_from_data_info(data_info, args)
     title_parts.append(interval_str)
+
+    # Add rule name to title
+    if selected_rule is not None:
+        # Check if we have original rule with parameters for display
+        if hasattr(selected_rule, 'original_rule_with_params'):
+            display_rule = selected_rule.original_rule_with_params
+        elif hasattr(selected_rule, 'name'):
+            display_rule = selected_rule.name
+        else:
+            display_rule = str(selected_rule)
+        title_parts.append(f"Rule:{display_rule}")
+
+    # Add strategy parameters to title if available
+    if args and hasattr(args, 'lot_size') and hasattr(args, 'risk_reward_ratio') and hasattr(args, 'fee_per_trade'):
+        lot_size = getattr(args, 'lot_size', 1.0)
+        risk_reward_ratio = getattr(args, 'risk_reward_ratio', 2.0)
+        fee_per_trade = getattr(args, 'fee_per_trade', 0.07)
+        strategy_str = f"Strategy:{lot_size},{risk_reward_ratio},{fee_per_trade}"
+        title_parts.append(strategy_str)
 
     if point_size is not None:
         try:
@@ -629,7 +649,7 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     log_dataframe_debug_info(result_df)
 
     # Generate plot title
-    plot_title = get_plot_title(data_info, point_size, estimated_point, args)
+    plot_title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
 
     # Check if running in Docker, if so, force terminal plotting
     in_docker = _detect_docker_environment()

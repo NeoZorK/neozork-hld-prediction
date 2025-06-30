@@ -141,7 +141,7 @@ class TestPlottingFunction(unittest.TestCase):
         # Check keyword arguments
         self.assertEqual(call_kwargs['type'], 'candle')
         self.assertEqual(call_kwargs['style'], 'yahoo')
-        self.assertEqual(call_kwargs['title'], f"{self.title} - Rule: {self.rule.name}")
+        self.assertEqual(call_kwargs['title'], self.title)
         self.assertEqual(call_kwargs['ylabel'], 'Price')
         self.assertTrue(call_kwargs['volume']) # Volume column exists
         self.assertEqual(len(call_kwargs['addplot']), mock_mpf.make_addplot.call_count) # Check all generated plots passed

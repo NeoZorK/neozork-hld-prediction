@@ -83,11 +83,19 @@ def plot_indicator_results_fast(
         # Create data source for Bokeh
         source = ColumnDataSource(display_df)
 
+        # Check if we have original rule with parameters for display
+        if hasattr(rule, 'original_rule_with_params'):
+            display_rule = rule.original_rule_with_params
+        elif hasattr(rule, 'name'):
+            display_rule = rule.name
+        else:
+            display_rule = str(rule)
+
         # Create main figure for OHLC chart
         main_fig = figure(
             width=width,
             height=int(height * 0.4),
-            title=f"{title} - {rule}",
+            title=title,
             x_axis_type='datetime',
             tools="pan,wheel_zoom,box_zoom,reset,save",
             active_scroll='wheel_zoom'

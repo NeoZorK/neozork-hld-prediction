@@ -280,6 +280,40 @@ export HISTFILE=/tmp/bash_history/.bash_history
 # Set custom prompt for better identification
 export PS1='\[\033[1;36m\]neozork\[\033[0m\]:\[\033[1;34m\]\w\[\033[0m\]$ '
 
+# Initialize bash history with useful commands
+init_bash_history() {
+    echo -e "\033[1;33mInitializing bash history with useful commands...\033[0m"
+    
+    # Define useful commands for the container
+    local useful_commands=(
+        "uv run pytest tests -n auto"
+        "nz --interactive"
+        "eda -dqc"
+        "nz --indicators"
+        "nz --metric"
+        "nz show csv mn1 eur --rule rsi_div:14,30,70,open"
+        "nz show csv mn1 eur --rule rsi_mom:14,30,70,close --strategy 2,5,0.07"
+        "python"
+        "python -c \"import sys; print('Python version:', sys.version)\""
+        "uv pip list"
+        "ls -la"
+        "pwd"
+    )
+    
+    # Add commands to history file
+    for cmd in "${useful_commands[@]}"; do
+        echo "$cmd" >> "$HISTFILE"
+    done
+    
+    # Load history into current session
+    history -r
+    
+    echo -e "\033[1;32mAdded ${#useful_commands[@]} useful commands to bash history\033[0m"
+}
+
+# Initialize history before starting bash
+init_bash_history
+
 # Start a never-ending interactive shell
 # Always start bash in interactive mode for Docker containers
 # This ensures proper terminal handling and command history
