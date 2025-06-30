@@ -198,118 +198,111 @@ The Native Container now provides **complete feature parity** with the Docker co
 
 #### Quick Start
 ```bash
-# Run interactive container manager
+# Interactive container management
 ./scripts/native-container/native-container.sh
 
-# Or use individual scripts
-./scripts/native-container/setup.sh    # Initial setup with full Docker parity
-./scripts/native-container/run.sh      # Start container
-./scripts/native-container/exec.sh     # Execute commands
+# Manual setup and run
+./scripts/native-container/setup.sh
+./scripts/native-container/run.sh
+./scripts/native-container/exec.sh --shell
 ```
 
-#### Interactive Script Features
-- **Start Container (Full Sequence)**: Smart startup with shell access (handles already running containers)
-- **Stop Container (Full Sequence)**: Stop, status check, and cleanup
-- **Show Container Status**: Display current container status
-- **Help**: Show help information
-- **Exit**: Exit the script (option 0)
+### Docker Container
+- **Cross-platform support**
+- **UV package manager integration**
+- **MCP server support**
+- **Complete feature set**
 
-#### Available Commands Inside Container
-```bash
-# Analysis Commands
-nz --interactive                    # Interactive analysis
-nz demo --rule PHLD                # Demo analysis
-nz yfinance AAPL --rule PHLD       # YFinance analysis
-nz mql5 BTCUSD --interval H4 --rule PHLD  # MQL5 analysis
-eda -dqc                           # Data quality checks
-eda --descriptive-stats            # Descriptive statistics
+## 📁 Project Structure
 
-# UV Package Manager Commands
-uv-install                         # Install dependencies
-uv-update                          # Update dependencies
-uv-test                            # Run UV environment test
-uv-pytest                          # Run pytest with UV
-uv pip list                        # List installed packages
-
-# MCP Server Commands
-mcp-start                          # Start MCP server
-mcp-check                          # Check MCP server status
-python scripts/check_mcp_status.py # Detailed MCP status
-
-# Testing Commands
-uv run pytest tests -n auto        # Run all tests with UV
-python tests/run_tests_docker.py   # Run external data feed tests
+```
+neozork-hld-prediction/
+├── src/                    # Source code
+│   ├── calculation/        # Technical indicators
+│   ├── data/              # Data acquisition
+│   ├── eda/               # Exploratory data analysis
+│   ├── plotting/          # Visualization tools
+│   └── cli/               # Command-line interface
+├── tests/                 # Test suite
+│   ├── docker/            # Docker-specific tests
+│   ├── native-container/  # Native container tests
+│   └── ...                # Other test categories
+├── docs/                  # Documentation
+│   ├── containers/        # Container documentation
+│   ├── guides/            # User guides
+│   └── reference/         # Technical reference
+├── scripts/               # **REORGANIZED**: Utility scripts
+│   ├── mcp/               # MCP server management
+│   ├── analysis/          # Analysis and testing
+│   ├── utilities/         # Utility and setup
+│   ├── demos/             # Demonstrations
+│   ├── debug/             # Debugging tools
+│   ├── docker/            # Docker-specific scripts
+│   └── native-container/  # Native container scripts
+├── data/                  # Data storage
+└── results/               # Analysis results
 ```
 
-#### Prerequisites
-- macOS 26 Tahoe (Developer Beta) or higher
-- Native container application from Apple Developer Beta
-- Python 3.11+ installed
-- At least 4GB of available RAM
+### Scripts Organization
 
-#### Performance Benefits
-- **30-50% faster** than Docker
-- **Lower memory usage**
-- **Faster startup times**
-- **Better macOS integration**
-- **Native Apple Silicon optimizations**
-- **Complete Docker feature parity**
+The `scripts/` directory has been reorganized for better maintainability:
 
-### Docker Support
+#### **MCP Scripts** (`scripts/mcp/`)
+- **neozork_mcp_manager.py** - Unified MCP server manager with autostart and monitoring
+- **check_mcp_status.py** - MCP server status checking and diagnostics
+- **start_mcp_server_daemon.py** - MCP server daemon startup script
 
-#### Docker Features
-- **UV Integration**: Pre-configured UV environment
-- **Multi-stage Builds**: Optimized container images
-- **Volume Mounting**: Persistent data storage
-- **Health Checks**: Automatic service monitoring
-- **Cross-platform**: Works on all platforms
+#### **Analysis Scripts** (`scripts/analysis/`)
+- **analyze_requirements.py** - Python imports analysis and requirements optimization
+- **generate_test_coverage.py** - Test coverage analysis and reporting
+- **manage_test_results.py** - Test results management and analysis
 
-#### Docker Commands
-```bash
-# Start services
-docker-compose up -d
+#### **Utility Scripts** (`scripts/utilities/`)
+- **fix_imports.py** - Fix relative imports in test files
+- **setup_ide_configs.py** - IDE configuration setup
+- **check_uv_mode.py** - UV mode verification
 
-# Access container
-docker-compose exec neozork bash
+#### **Container Scripts**
+- **Docker Scripts** (`scripts/docker/`) - Docker container testing and workflows
+- **Native Container Scripts** (`scripts/native-container/`) - Apple Silicon container management
 
-# Install dependencies
-docker-compose exec neozork uv-install
-
-# Run tests
-docker-compose exec neozork pytest tests/docker/ -v
-```
-
-## 🔍 Usage Examples
+## 🚀 Quick Examples
 
 ### Basic Analysis
 ```bash
-# Demo analysis
+# Run demo analysis
 nz demo --rule PHLD
 
 # Analyze specific symbol
 nz yfinance AAPL --rule PHLD
 
-# Cryptocurrency analysis
-nz binance BTCUSDT --interval H1 --rule PHLD
-
-# Forex analysis
+# Custom timeframe
 nz mql5 EURUSD --interval H4 --rule PHLD
 ```
 
 ### UV Package Management
 ```bash
 # Install dependencies (Docker)
-docker-compose exec neozork uv-install
+uv-install
 
 # Update dependencies (Docker)
-docker-compose exec neozork uv-update
+uv-update
 
 # Check UV status
-python scripts/check_uv_mode.py --verbose
+uv-test
 
 # Local UV usage
 uv pip install pandas
 uv pip list
+```
+
+### Development
+```bash
+# Run tests
+pytest tests/ -v
+
+# Check code quality
+python scripts/check_uv_mode.py
 ```
 
 ## 📈 Performance
