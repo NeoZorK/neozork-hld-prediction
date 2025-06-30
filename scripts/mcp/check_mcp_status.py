@@ -17,11 +17,41 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List
 import logging
 
+def is_running_in_docker() -> bool:
+    """Check if the script is running inside a Docker container"""
+    try:
+        # Check for Docker-specific files
+        if Path("/.dockerenv").exists():
+            return True
+        
+        # Check cgroup for Docker
+        try:
+            with open("/proc/1/cgroup", "r") as f:
+                if "docker" in f.read():
+                    return True
+        except FileNotFoundError:
+            pass
+        
+        # Check environment variable
+        if os.environ.get("DOCKER_CONTAINER") == "true":
+            return True
+        
+        return False
+    except Exception:
+        return False
+
 class DockerMCPServerChecker:
     """Check MCP server status inside Docker container"""
     
     def __init__(self, project_root: Path = None):
-        self.project_root = project_root or Path(__file__).parent.parent
+        if project_root:
+            self.project_root = project_root
+        elif is_running_in_docker():
+            # In Docker, project root is /app
+            self.project_root = Path("/app")
+        else:
+            # Outside Docker, use relative path
+            self.project_root = Path(__file__).parent.parent.parent
         self.logger = self._setup_logging()
         
     def _setup_logging(self) -> logging.Logger:
@@ -532,29 +562,6 @@ class MCPServerChecker:
             results["recommendations"].append("Check MCP server logs: tail -f logs/neozork_mcp.log")
         
         return results
-
-def is_running_in_docker() -> bool:
-    """Check if the script is running inside a Docker container"""
-    try:
-        # Check for Docker-specific files
-        if Path("/.dockerenv").exists():
-            return True
-        
-        # Check cgroup for Docker
-        try:
-            with open("/proc/1/cgroup", "r") as f:
-                if "docker" in f.read():
-                    return True
-        except FileNotFoundError:
-            pass
-        
-        # Check environment variable
-        if os.environ.get("DOCKER_CONTAINER") == "true":
-            return True
-        
-        return False
-    except Exception:
-        return False
 
 def main():
     """Main function"""

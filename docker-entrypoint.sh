@@ -226,11 +226,17 @@ uv-test
 uv pip list
 uv pip install <package>
 
+# Testing Commands
+pytest
+uv run pytest tests -n auto
+uv run pytest tests -n auto -v --tb=short
+uv run pytest tests -n auto -v --tb=short -x
+uv run pytest tests -n auto --tb=no -q
+
 # Analysis Commands
 nz
 eda
 python
-pytest
 python run_analysis.py demo --rule PHLD
 nz demo --rule PHLD
 python run_analysis.py yfinance MSFT --rule PHLD
@@ -300,6 +306,8 @@ init_bash_history() {
     # Define useful commands for the container
     local useful_commands=(
         "uv run pytest tests -n auto"
+        "uv run pytest tests -n auto -v --tb=short"
+        "uv run pytest tests -n auto -v --tb=short -x"
         "nz --interactive"
         "eda -dqc"
         "nz --indicators"
