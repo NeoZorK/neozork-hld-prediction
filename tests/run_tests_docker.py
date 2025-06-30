@@ -115,11 +115,11 @@ def run_docker_tests():
                 if "debug_yfinance.py" in script:
                     error_reason = "⏰ (Interactive script - requires user input)"
                 elif "BINANCE_API_KEY" in result.stdout or "BINANCE_API_SECRET" in result.stdout:
-                    error_reason = "❗ no API_KEY found on env file in path:"
+                    error_reason = "❗ no API_KEY found on env file in path: /app/docker.env"
                 elif "POLYGON_API_KEY" in result.stdout:
-                    error_reason = "❗ no API_KEY found on env file in path:"
+                    error_reason = "❗ no API_KEY found on env file in path: /app/docker.env"
                 elif "No API keys" in result.stderr or "No API keys" in result.stdout:
-                    error_reason = "❗ no API_KEY found on env file in path:"
+                    error_reason = "❗ no API_KEY found on env file in path: /app/docker.env"
                 elif "Permission denied" in result.stderr:
                     error_reason = "❗ No file permissions"
                 elif "No such file" in result.stderr:
