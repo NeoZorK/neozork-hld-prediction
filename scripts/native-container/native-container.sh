@@ -249,6 +249,94 @@ stop_container_sequence() {
     fi
 }
 
+# Function to stop container with force restart option
+stop_container_with_force_restart() {
+    print_header "Stopping Container - Full Sequence"
+    echo
+    
+    # Check if Docker is running
+    if ! check_docker_running; then
+        print_error "Cannot stop container - container service not available"
+        if [ -t 0 ]; then
+            read -p "Press Enter to continue..."
+        fi
+        return 1
+    fi
+    
+    print_status "Step 1: Stopping container..."
+    if ./scripts/native-container/stop.sh; then
+        print_success "Container stopped"
+    else
+        print_warning "Container stop may have failed or container was already stopped"
+        
+        # Check if container is still running
+        if check_container_running; then
+            print_error "Container is still running after stop attempt"
+            echo
+            print_warning "The container could not be stopped normally."
+            print_warning "This might be due to a stuck container or service issue."
+            echo
+            
+            if [ -t 0 ]; then
+                read -p "Do you want to force restart container service then try delete container again? (y/N): " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    print_status "Proceeding with force restart sequence..."
+                    echo
+                    
+                    # Step 0: Force restart container service
+                    print_status "Step 0: Force restarting container service..."
+                    if ./scripts/native-container/force_restart.sh --force; then
+                        print_success "Container service force restart completed"
+                    else
+                        print_error "Container service force restart failed"
+                        if [ -t 0 ]; then
+                            read -p "Press Enter to continue..."
+                        fi
+                        return 1
+                    fi
+                    
+                    echo
+                    print_status "Step 1 (retry): Stopping container after service restart..."
+                    if ./scripts/native-container/stop.sh; then
+                        print_success "Container stopped after service restart"
+                    else
+                        print_error "Container still cannot be stopped after service restart"
+                        if [ -t 0 ]; then
+                            read -p "Press Enter to continue..."
+                        fi
+                        return 1
+                    fi
+                else
+                    print_status "Skipping force restart, continuing with cleanup..."
+                fi
+            fi
+        fi
+    fi
+    
+    echo
+    print_status "Step 2: Checking final status..."
+    if ./scripts/native-container/run.sh --status; then
+        print_success "Status check completed"
+    else
+        print_warning "Status check failed"
+    fi
+    
+    echo
+    print_status "Step 3: Cleaning up resources..."
+    if ./scripts/native-container/cleanup.sh --all --force; then
+        print_success "Cleanup completed"
+    else
+        print_warning "Cleanup completed (some resources may remain)"
+    fi
+    
+    echo
+    print_success "Stop container sequence completed!"
+    if [ -t 0 ]; then
+        read -p "Press Enter to continue..."
+    fi
+}
+
 # Function to show container status
 show_container_status() {
     print_header "Container Status"
@@ -294,12 +382,15 @@ show_help() {
     echo "   - 🆕 Automatically installs all dependencies using UV"
     echo "   - 🆕 Creates and activates virtual environment"
     echo "   - 🆕 Sets up pre-configured aliases and environment variables"
+    echo "   - 🆕 Proper Ctrl+D handling for graceful shell exit"
     echo
     echo -e "${RED}2. Stop Container${NC}"
     echo "   Executes the full sequence:"
     echo "   - Stop container (./scripts/native-container/stop.sh)"
     echo "   - Check status (./scripts/native-container/run.sh --status)"
     echo "   - Cleanup resources (./scripts/native-container/cleanup.sh --all --force)"
+    echo "   - 🆕 Automatic force restart if normal stop fails"
+    echo "   - 🆕 Interactive prompt for force restart when needed"
     echo
     echo -e "${BLUE}3. Show Status${NC}"
     echo "   Shows current container status"
@@ -317,6 +408,14 @@ show_help() {
     echo "   - Environment variables setup (PYTHONPATH, PYTHONUNBUFFERED, etc.)"
     echo "   - Dependency health checking and automatic updates"
     echo "   - No manual 'uv-install' required - everything is automatic"
+    echo "   - Proper Ctrl+D handling for graceful shell exit"
+    echo "   - Custom bash prompt with container indicator"
+    echo
+    echo -e "${CYAN}🆕 Enhanced Stop Features:${NC}"
+    echo "   - Automatic detection of stuck containers"
+    echo "   - Interactive prompt for force restart when needed"
+    echo "   - Automatic container service restart and retry"
+    echo "   - Graceful error handling and recovery"
     echo
     if [ -t 0 ]; then
         read -p "Press Enter to continue..."
@@ -355,7 +454,7 @@ main() {
                 start_container_sequence
                 ;;
             2) 
-                stop_container_sequence
+                stop_container_with_force_restart
                 ;;
             3) 
                 show_container_status
