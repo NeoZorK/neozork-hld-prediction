@@ -15,8 +15,8 @@ import requests
 from datetime import datetime, timedelta
 from tqdm import tqdm  # Import tqdm
 
-# Use relative import for logger
-from ...common import logger
+# Use absolute import for logger
+from src.common import logger
 
 
 def map_exrate_interval(tf_input: str) -> str | None:
