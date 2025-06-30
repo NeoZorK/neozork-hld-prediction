@@ -210,32 +210,16 @@ def main():
             return
 
     if not args.file_path:
-        # If no file path provided, list available files and prompt for input
+        # If no file path provided, automatically select the first available file
         if not parquet_files:
             print("No parquet files found in the project.")
-            print("Usage: examine_parquet.py <parquet_file_path>")
             return
 
-        print("Available parquet files:")
-        for i, file_path in enumerate(parquet_files, 1):
-            print(f"{i}. {file_path}")
-
-        print("Enter the number of the file to examine (or 'q' to quit):")
-
-        try:
-            choice = input("\n ")
-            if choice.lower() == 'q':
-                return
-
-            file_index = int(choice) - 1
-            if 0 <= file_index < len(parquet_files):
-                examine_parquet(parquet_files[file_index], args.rows, args.verbose)
-            else:
-                print(f"Invalid selection. Please choose a number between 1 and {len(parquet_files)}.")
-        except ValueError:
-            print("Invalid input. Please enter a number.")
-        except KeyboardInterrupt:
-            print("\nOperation cancelled by user.")
+        # Automatically select the first file for non-interactive execution
+        selected_file = parquet_files[0]
+        print(f"Automatically selected: {selected_file}")
+        examine_parquet(selected_file, args.rows, args.verbose)
+        return
     else:
         examine_parquet(args.file_path, args.rows, args.verbose)
 
