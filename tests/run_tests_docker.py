@@ -49,11 +49,28 @@ def run_docker_tests():
                 "--tb=no", "-q", "--disable-warnings"
             ], capture_output=True, text=True)
             
-            # Parse output to count results
+            # Анализируем причину ошибки
+            error_reason = None
+            if result.returncode != 0:
+                if "not found" in result.stdout or "not found" in result.stderr:
+                    error_reason = "❗ Важный файл не найден"
+                elif "API_KEY" in result.stdout or "API_KEY" in result.stderr:
+                    error_reason = "❗ Нет API ключей в окружении"
+                elif "Permission denied" in result.stdout or "Permission denied" in result.stderr:
+                    error_reason = "❗ Нет прав на файл"
+                elif "No such file or directory" in result.stdout or "No such file or directory" in result.stderr:
+                    error_reason = "❗ Нет нужного файла"
+                elif "ModuleNotFoundError" in result.stdout or "ModuleNotFoundError" in result.stderr:
+                    error_reason = "❗ Ошибка импорта модуля"
+                elif "AssertionError" in result.stdout or "AssertionError" in result.stderr:
+                    error_reason = "❗ AssertionError (см. логи)"
+                elif result.stderr.strip():
+                    error_reason = result.stderr.strip().split('\n')[-1]
+            
+            # Парсинг результатов
             output_lines = result.stdout.split('\n')
             for line in output_lines:
                 if 'passed' in line:
-                    # Simple parsing: look for "X passed" pattern
                     parts = line.split()
                     for i, part in enumerate(parts):
                         if part.isdigit() and i < len(parts) - 1 and parts[i+1] == 'passed':
@@ -67,9 +84,7 @@ def run_docker_tests():
             if result.returncode == 0:
                 print("✅")
             else:
-                print("❌")
-                if result.stderr:
-                    print(f"  Error: {result.stderr.strip()}")
+                print(f"❌{f' ({error_reason})' if error_reason else ''}")
         else:
             print(f"❌ {test_file} - Not found")
     
@@ -84,17 +99,29 @@ def run_docker_tests():
             try:
                 result = subprocess.run([sys.executable, script, "--help"], 
                                       capture_output=True, text=True, timeout=30)
+                error_reason = None
+                if result.returncode != 0:
+                    if "API_KEY" in result.stdout or "API_KEY" in result.stderr or "No API key" in result.stdout or "No API key" in result.stderr:
+                        error_reason = "❗ Нет API ключей в окружении"
+                    elif "Permission denied" in result.stdout or "Permission denied" in result.stderr:
+                        error_reason = "❗ Нет прав на файл"
+                    elif "No such file or directory" in result.stdout or "No such file or directory" in result.stderr:
+                        error_reason = "❗ Нет нужного файла"
+                    elif "ModuleNotFoundError" in result.stdout or "ModuleNotFoundError" in result.stderr:
+                        error_reason = "❗ Ошибка импорта модуля"
+                    elif result.stderr.strip():
+                        error_reason = result.stderr.strip().split('\n')[-1]
                 if result.returncode == 0:
                     print("✅")
                     debug_passed += 1
                 else:
-                    print("❌")
+                    print(f"❌{f' ({error_reason})' if error_reason else ''}")
                     debug_failed += 1
             except subprocess.TimeoutExpired:
-                print("⏰")
+                print("⏰ (Возможен rate limit или нет интернета)")
                 debug_failed += 1
             except Exception as e:
-                print("❌")
+                print(f"❌ (Ошибка: {e})")
                 debug_failed += 1
         else:
             print(f"❌ {script} - Not found")
