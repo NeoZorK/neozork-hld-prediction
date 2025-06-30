@@ -1,41 +1,58 @@
 # Getting Started
 
-Welcome to the NeoZork HLD Prediction project! This section will help you get up and running quickly with the project.
+Welcome to the NeoZork HLD Prediction project! This section will help you get up and running quickly.
 
-## 🚀 Quick Start Options
+## Quick Start Guides
 
-### Option 1: Docker (Recommended)
-Fastest way to get started with a pre-configured environment.
+- **[Basic Setup](getting-started.md)** - Standard setup instructions
+- **[Native Container Quick Start](QUICK_START_NATIVE_CONTAINER.md)** - Quick start for Apple Silicon native containers
+- **[Project Structure](project-structure.md)** - Understanding the project layout
 
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- Python 3.11+ installed
+- UV package manager (recommended)
+- Docker (for containerized setup)
+- Native container application (for Apple Silicon, macOS 26+)
+
+## Setup Options
+
+### 1. Local Setup with UV
 ```bash
-# Clone repository
-git clone https://github.com/username/neozork-hld-prediction.git
-cd neozork-hld-prediction
-
-# Start with Docker
-docker-compose up -d
-
-# Run demo analysis
-docker-compose exec neozork nz demo --rule PHLD
-```
-
-### Option 2: Local Setup with UV
-Set up a local development environment using UV package manager.
-
-```bash
-# Clone repository
-git clone https://github.com/username/neozork-hld-prediction.git
-cd neozork-hld-prediction
-
-# Install UV package manager
+# Install UV
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Install dependencies
 uv pip install -r requirements.txt
 
-# Run demo analysis
+# Run analysis
 python run_analysis.py demo --rule PHLD
 ```
+
+### 2. Docker Setup
+```bash
+# Start container
+docker-compose up -d
+
+# Run analysis
+docker-compose exec neozork nz demo --rule PHLD
+```
+
+### 3. Native Apple Silicon Container (macOS 26+)
+```bash
+# Run interactive container manager
+./scripts/native-container/native-container.sh
+```
+
+## Next Steps
+
+After setup, explore:
+
+- **[Examples](../examples/)** - Practical usage examples
+- **[Guides](../guides/)** - Step-by-step tutorials
+- **[Reference](../reference/)** - Technical documentation
 
 ## 📚 Getting Started Guides
 

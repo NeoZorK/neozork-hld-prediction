@@ -24,12 +24,13 @@ from typing import List, Dict, Any, Tuple
 from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+import tempfile
 
 # Project setup
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 PYTHON = sys.executable
 SCRIPT = PROJECT_ROOT / 'run_analysis.py'
-LOG_DIR = PROJECT_ROOT / 'logs' / 'cli_tests'
+LOG_DIR = Path(tempfile.mkdtemp(prefix="cli_tests_"))
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 @dataclass
@@ -462,30 +463,22 @@ class ComprehensiveCLITester:
         print(f"Summary saved to: {summary_file}")
 
 def main():
-    """Main function to run comprehensive CLI tests"""
-    tester = ComprehensiveCLITester()
-    results = tester.run_all_tests()
+    """Main function to run all flag tests"""
+    print("🚀 Starting Flag Test Runner...")
     
-    # Print summary
-    print("\n" + "=" * 60)
-    print("COMPREHENSIVE CLI TEST RESULTS")
-    print("=" * 60)
-    print(f"Total Tests: {results['total_tests']}")
-    print(f"Passed: {results['passed_tests']}")
-    print(f"Failed: {results['failed_tests']}")
-    print(f"Errors: {results['error_tests']}")
-    print(f"Timeouts: {results['timeout_tests']}")
-    print(f"Total Time: {results['total_time']:.2f}s")
+    runner = ComprehensiveCLITester()
+    results = runner.run_all_tests()
     
-    print("\nCategory Statistics:")
-    for category, stats in results['category_stats'].items():
-        print(f"  {category}: {stats['passed']}/{stats['total']} passed")
+    print(f"✅ Completed! Results saved to: {LOG_DIR}")
+    print(f"📊 Summary: {results['summary']}")
     
-    if results['failed_tests'] > 0:
-        print(f"\n❌ {results['failed_tests']} tests failed!")
-        sys.exit(1)
-    else:
-        print("\n✅ All tests passed!")
+    # Cleanup temporary directory
+    try:
+        import shutil
+        shutil.rmtree(LOG_DIR)
+        print(f"🧹 Cleaned up temporary directory: {LOG_DIR}")
+    except Exception as e:
+        print(f"⚠️  Warning: Could not clean up temporary directory: {e}")
 
 if __name__ == "__main__":
     main() 

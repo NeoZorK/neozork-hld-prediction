@@ -28,7 +28,7 @@ class TestNeozorkMCPServer:
     @pytest.fixture
     def temp_project(self):
         """Create temporary project directory"""
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = tempfile.mkdtemp(prefix="test_cursor_mcp_")
         project_path = Path(temp_dir)
         
         # Create project structure
@@ -367,7 +367,7 @@ class TestErrorHandling:
     @pytest.fixture
     def temp_project(self):
         """Create temporary project directory"""
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = tempfile.mkdtemp(prefix="test_cursor_mcp_")
         project_path = Path(temp_dir)
         
         # Create project structure
@@ -403,7 +403,7 @@ class TestPerformance:
     @pytest.fixture
     def temp_project(self):
         """Create temporary project directory"""
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = tempfile.mkdtemp(prefix="test_cursor_mcp_")
         project_path = Path(temp_dir)
         
         # Create project structure
@@ -450,7 +450,7 @@ class TestConfiguration:
     @pytest.fixture
     def temp_project(self):
         """Create temporary project directory"""
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = tempfile.mkdtemp(prefix="test_cursor_mcp_")
         project_path = Path(temp_dir)
         
         # Create project structure

@@ -4,7 +4,31 @@ Welcome to the comprehensive documentation for the NeoZork HLD Prediction projec
 
 ## 🚀 Quick Start
 
-### Docker Environment (Recommended)
+### Native Apple Silicon Container (macOS 26+)
+```bash
+# Clone and run interactive container manager
+git clone https://github.com/username/neozork-hld-prediction.git
+cd neozork-hld-prediction
+./scripts/native-container/native-container.sh
+```
+
+**Quick Commands (Non-interactive):**
+```bash
+# Start container (full sequence)
+./scripts/native-container/setup.sh && ./scripts/native-container/run.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/exec.sh --shell
+
+# Stop container (full sequence)
+./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force
+```
+
+**Interactive Menu Options:**
+1. Start Container (Full Sequence) - Smart startup (handles already running containers)
+2. Stop Container (Full Sequence)  
+3. Show Container Status
+4. Help
+0. Exit
+
+### Docker Environment (Recommended for other platforms)
 ```bash
 # Build and start the container
 docker-compose up
@@ -35,6 +59,12 @@ python run_analysis.py demo --rule PHLD
 - [Project Structure](getting-started/project-structure.md) - Understanding the codebase
 - [Installation Guide](getting-started/installation.md) - Step-by-step installation
 
+### Containers
+- [Container Documentation](containers/index.md) - **NEW**: Comprehensive container documentation
+- [Native Container](containers/native-container/index.md) - Apple Silicon optimized container
+- [Docker Container](containers/docker-setup.md) - Cross-platform container solution
+- [Container Comparison](containers/native-vs-docker-comparison.md) - Performance and feature comparison
+
 ### Development
 - [Development Setup](development/setup.md) - Setting up development environment
 - [Testing Guide](development/testing.md) - Running tests and validation
@@ -42,8 +72,9 @@ python run_analysis.py demo --rule PHLD
 - [Debugging](development/debugging.md) - Debugging tools and techniques
 
 ### Deployment
-- [Docker Setup](deployment/docker-setup.md) - Containerized deployment
-- [UV-Only Mode](deployment/uv-only-mode.md) - **NEW**: UV package manager configuration
+- [Native Container Setup](containers/native-container-setup.md) - Native Apple Silicon container setup
+- [Docker Setup](containers/docker-setup.md) - Containerized deployment
+- [UV-Only Mode](containers/uv-only-mode.md) - UV package manager configuration
 - [Production Deployment](deployment/production.md) - Production environment setup
 - [Monitoring](deployment/monitoring.md) - System monitoring and logging
 
@@ -64,6 +95,7 @@ python run_analysis.py demo --rule PHLD
 ### UV Package Management
 - **UV-Only Mode**: Exclusive use of UV package manager for faster, more reliable dependency management
 - **Docker Integration**: Seamless UV integration in Docker containers
+- **Native Container Support**: **NEW**: Native Apple Silicon container with 30-50% performance improvement
 - **Local Development**: UV support for local development environments
 - **Adaptive Testing**: Tests that work in both Docker and local environments
 
@@ -119,6 +151,10 @@ neozork-hld-prediction/
 │   ├── docker/            # Docker-specific tests
 │   └── ...                # Other test categories
 ├── docs/                  # Documentation
+│   ├── containers/        # **NEW**: Container documentation
+│   │   ├── native-container/  # Native container docs
+│   │   └── index.md       # Container overview
+│   └── ...                # Other documentation
 ├── scripts/               # Utility scripts
 ├── data/                  # Data storage
 └── results/               # Analysis results
@@ -170,6 +206,7 @@ python neozork_mcp_server.py
 
 - **UV Package Manager**: 10-100x faster than pip
 - **Docker Optimization**: Optimized container builds
+- **Native Container**: 30-50% performance improvement on Apple Silicon
 - **Caching**: Intelligent caching for data and packages
 - **Parallel Processing**: Multi-threaded analysis capabilities
 

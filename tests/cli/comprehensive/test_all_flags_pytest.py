@@ -21,12 +21,13 @@ import json
 from typing import List, Dict, Any, Tuple
 from pathlib import Path
 from dataclasses import dataclass
+import tempfile
 
 # Project setup
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 PYTHON = sys.executable
 SCRIPT = PROJECT_ROOT / 'run_analysis.py'
-LOG_DIR = PROJECT_ROOT / 'logs' / 'cli_tests'
+LOG_DIR = Path(tempfile.mkdtemp(prefix="cli_tests_pytest_"))
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 @dataclass
@@ -469,6 +470,23 @@ def test_csv_mode_with_validation(validate_test_data):
     # CSV mode might fail due to data format issues, but should not crash
     assert return_code in [0, 1], f"CSV mode with validation failed with return code {return_code}"
 
+def main():
+    """Main function to run all flag tests with pytest"""
+    print("🚀 Starting Flag Test Runner (Pytest)...")
+    
+    runner = FlagTestRunner(max_workers=4)
+    results = runner.run_all_tests()
+    
+    print(f"✅ Completed! Results saved to: {LOG_DIR}")
+    print(f"📊 Summary: {results['summary']}")
+    
+    # Cleanup temporary directory
+    try:
+        import shutil
+        shutil.rmtree(LOG_DIR)
+        print(f"🧹 Cleaned up temporary directory: {LOG_DIR}")
+    except Exception as e:
+        print(f"⚠️  Warning: Could not clean up temporary directory: {e}")
+
 if __name__ == "__main__":
-    # Run tests with pytest
-    pytest.main([__file__, "-v", "--tb=short"]) 
+    main() 

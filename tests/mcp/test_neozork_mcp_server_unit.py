@@ -175,7 +175,7 @@ class TestNeozorkMCPServerUnit:
     @pytest.fixture
     def temp_project(self):
         """Create temporary project directory"""
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = tempfile.mkdtemp(prefix="test_neozork_mcp_unit_")
         project_path = Path(temp_dir)
         
         # Create project structure

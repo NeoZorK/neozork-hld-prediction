@@ -109,7 +109,13 @@ def safe_plot_sr_terminal(df: pd.DataFrame,
         x_values = list(range(len(df)))
 
         # Get rule name safely
-        rule_str = rule.name if hasattr(rule, 'name') else str(rule)
+        # Check if we have original rule with parameters for display
+        if hasattr(rule, 'original_rule_with_params'):
+            rule_str = rule.original_rule_with_params
+        elif hasattr(rule, 'name'):
+            rule_str = rule.name
+        else:
+            rule_str = str(rule)
 
         # Main price panel with SR zones
         if has_ohlc:
@@ -117,7 +123,7 @@ def safe_plot_sr_terminal(df: pd.DataFrame,
 
             # Plot candlesticks with plain data
             plt.candlestick(x_values, ohlc_data)
-            plt.title(f"{title} - SR Price Chart")
+            plt.title(title)
             plt.ylabel("Price")
 
             # Plot SR levels as horizontal lines

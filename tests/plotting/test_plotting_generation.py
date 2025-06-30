@@ -1,17 +1,18 @@
 # tests/plotting/test_plotting_generation.py
 
 import unittest
-from unittest.mock import patch, MagicMock, ANY, call # Import MagicMock, ANY, and call
+from unittest.mock import patch, MagicMock, ANY, call, Mock # Import MagicMock, ANY, call, and Mock
 import argparse
 import pandas as pd
 import traceback # Import traceback
 from pathlib import Path # Import Path, still needed for type hints and Path() calls outside the patch scope if any
 import webbrowser # Need this module to check mock target
 import os
+import types
 # No need to import pathlib directly for patching anymore
 
 # Import the function to test and dependencies
-from src.plotting.plotting_generation import generate_plot
+from src.plotting.plotting_generation import generate_plot, get_plot_title
 from src.common.constants import TradingRule
 
 # Dummy logger class for simple mocking - REMOVED as we use MagicMock now
@@ -23,7 +24,12 @@ from src.common.constants import TradingRule
 
 # Helper function to create a dummy args namespace
 def create_mock_args(interval='D1', draw='plotly'): # Default draw to plotly
-    return argparse.Namespace(interval=interval, draw=draw)
+    args = argparse.Namespace(interval=interval, draw=draw)
+    # Add default strategy parameters
+    args.lot_size = 1.0
+    args.risk_reward_ratio = 2.0
+    args.fee_per_trade = 0.07
+    return args
 
 # Unit tests for the plotting generation workflow step
 class TestPlottingGenerationStep(unittest.TestCase):
@@ -58,6 +64,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
     # Test successful plot generation using the default Plotly path
     def test_generate_plot_success(self):
+        if hasattr(self.selected_rule, "original_rule_with_params"):
+            delattr(self.selected_rule, "original_rule_with_params")
         with patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'}), \
              patch('src.plotting.plotting.IN_DOCKER', False), \
              patch('src.plotting.plotting_generation.IN_DOCKER', False), \
@@ -102,10 +110,10 @@ class TestPlottingGenerationStep(unittest.TestCase):
             pd.testing.assert_frame_equal(call_args[0], self.result_df)
             self.assertEqual(call_args[1], self.selected_rule)
 
-            # 4. Check the constructed title
+            # 4. Check the constructed title - use full rule name
             expected_precision = 8 if abs(self.point_size) < 0.001 else 5 if abs(self.point_size) < 0.1 else 2
             expected_point_str = f"{self.point_size:.{expected_precision}f}"
-            expected_title = f"{self.expected_stem} | {self.args.interval} | Pt:{expected_point_str}{'~' if self.estimated_point else ''}"
+            expected_title = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Strategy:{self.args.lot_size},{self.args.risk_reward_ratio},{self.args.fee_per_trade} | Pt:{expected_point_str}{'~' if self.estimated_point else ''}"
             self.assertEqual(call_args[2], expected_title)
 
             # 5. Check mkdir call on the instance
@@ -131,6 +139,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
     # Test plot generation title reflects estimated point size correctly
     def test_generate_plot_estimated_point(self):
+        if hasattr(self.selected_rule, "original_rule_with_params"):
+            delattr(self.selected_rule, "original_rule_with_params")
         with patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'}), \
              patch('src.plotting.plotting.IN_DOCKER', False), \
              patch('src.plotting.plotting_generation.IN_DOCKER', False), \
@@ -167,7 +177,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
             # Assertions for small point size
             mock_plotly_plot.assert_called_once() # Called once so far
             call_args_small, _ = mock_plotly_plot.call_args
-            expected_title_small = f"{self.expected_stem} | {self.args.interval} | Pt:{point_size_small:.8f}~"
+            expected_title_small = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Strategy:{self.args.lot_size},{self.args.risk_reward_ratio},{self.args.fee_per_trade} | Pt:{point_size_small:.8f}~"
             self.assertEqual(call_args_small[2], expected_title_small)
             # Check calls for this iteration
             self.assertEqual(mock_path_instance.mkdir.call_count, 1)
@@ -201,7 +211,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
             # Assertions for medium point size
             mock_plotly_plot.assert_called_once() # Called once since last reset
             call_args_medium, _ = mock_plotly_plot.call_args
-            expected_title_medium = f"{self.expected_stem} | {self.args.interval} | Pt:{point_size_medium:.5f}~"
+            expected_title_medium = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Strategy:{self.args.lot_size},{self.args.risk_reward_ratio},{self.args.fee_per_trade} | Pt:{point_size_medium:.5f}~"
             self.assertEqual(call_args_medium[2], expected_title_medium)
             # Check cumulative call counts for path instance
             self.assertEqual(mock_path_instance.mkdir.call_count, 2)
@@ -234,7 +244,7 @@ class TestPlottingGenerationStep(unittest.TestCase):
             # Assertions for large point size
             mock_plotly_plot.assert_called_once() # Called once since last reset
             call_args_large, _ = mock_plotly_plot.call_args
-            expected_title_large = f"{self.expected_stem} | {self.args.interval} | Pt:{point_size_large:.2f}~"
+            expected_title_large = f"{self.expected_stem} | {self.args.interval} | Rule:{self.selected_rule.name} | Strategy:{self.args.lot_size},{self.args.risk_reward_ratio},{self.args.fee_per_trade} | Pt:{point_size_large:.2f}~"
             self.assertEqual(call_args_large[2], expected_title_large)
             # Check cumulative call counts for path instance
             self.assertEqual(mock_path_instance.mkdir.call_count, 3)
@@ -252,6 +262,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
     # Test skipping plot when result_df is None
     def test_generate_plot_skip_none_df(self):
+        if hasattr(self.selected_rule, "original_rule_with_params"):
+            delattr(self.selected_rule, "original_rule_with_params")
         with patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'}), \
              patch('src.plotting.plotting_generation._detect_docker_environment', return_value=False), \
              patch('src.plotting.plotting_generation.logger') as mock_logger, \
@@ -270,6 +282,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
     # Test skipping plot when result_df is empty
     def test_generate_plot_skip_empty_df(self):
+        if hasattr(self.selected_rule, "original_rule_with_params"):
+            delattr(self.selected_rule, "original_rule_with_params")
         with patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'}), \
              patch('src.plotting.plotting_generation._detect_docker_environment', return_value=False), \
              patch('src.plotting.plotting_generation.logger') as mock_logger, \
@@ -289,6 +303,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
     # Test when selected_rule is None
     def test_generate_plot_none_rule(self):
+        if hasattr(self.selected_rule, "original_rule_with_params"):
+            delattr(self.selected_rule, "original_rule_with_params")
         with patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'}), \
              patch('src.plotting.plotting_generation._detect_docker_environment', return_value=False), \
              patch('src.plotting.plotting_generation.logger') as mock_logger, \
@@ -307,6 +323,8 @@ class TestPlottingGenerationStep(unittest.TestCase):
 
     # Test when the core plotting function raises an exception during generation
     def test_generate_plot_exception_handling(self):
+        if hasattr(self.selected_rule, "original_rule_with_params"):
+            delattr(self.selected_rule, "original_rule_with_params")
         with patch.dict(os.environ, {'DISABLE_DOCKER_DETECTION': 'true'}), \
              patch('src.plotting.plotting.IN_DOCKER', False), \
              patch('src.plotting.plotting_generation.IN_DOCKER', False), \
@@ -356,3 +374,176 @@ class TestPlottingGenerationStep(unittest.TestCase):
 # Allow running the tests directly from the command line
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestPlotTitleGeneration(unittest.TestCase):
+    """Test cases for plot title generation functionality."""
+    
+    def test_get_plot_title_with_rule(self):
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')
+        selected_rule = Mock()
+        selected_rule.name = 'RSI_DIV'
+        if hasattr(selected_rule, 'original_rule_with_params'):
+            del selected_rule.original_rule_with_params
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:RSI_DIV' in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+    
+    def test_get_plot_title_with_string_rule(self):
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')
+        selected_rule = 'RSI_DIV'
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:RSI_DIV' in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+    
+    def test_get_plot_title_without_rule(self):
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')
+        selected_rule = None
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:' not in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+    
+    def test_get_plot_title_with_none_rule(self):
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')
+        selected_rule = None
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:' not in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+    
+    def test_get_plot_title_with_complex_rule_name(self):
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')
+        selected_rule = Mock()
+        selected_rule.name = 'PREDICT_HIGH_LOW_DIRECTION'
+        if hasattr(selected_rule, 'original_rule_with_params'):
+            del selected_rule.original_rule_with_params
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:PREDICT_HIGH_LOW_DIRECTION' in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+    
+    def test_get_plot_title_with_strategy_parameters(self):
+        """Test that plot title includes strategy parameters when provided."""
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(
+            interval='D1',
+            lot_size=1.0,
+            risk_reward_ratio=2.0,
+            fee_per_trade=0.07
+        )
+        selected_rule = Mock()
+        selected_rule.name = 'RSI_DIV'
+        if hasattr(selected_rule, 'original_rule_with_params'):
+            del selected_rule.original_rule_with_params
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:RSI_DIV' in title
+        assert 'Strategy:1.0,2.0,0.07' in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+    
+    def test_get_plot_title_with_custom_strategy_parameters(self):
+        """Test that plot title includes custom strategy parameters."""
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(
+            interval='D1',
+            lot_size=2.5,
+            risk_reward_ratio=3.0,
+            fee_per_trade=0.1
+        )
+        selected_rule = Mock()
+        selected_rule.name = 'MACD'
+        if hasattr(selected_rule, 'original_rule_with_params'):
+            del selected_rule.original_rule_with_params
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:MACD' in title
+        assert 'Strategy:2.5,3.0,0.1' in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+    
+    def test_get_plot_title_without_strategy_parameters(self):
+        """Test that plot title works without strategy parameters."""
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')  # No strategy parameters
+        selected_rule = Mock()
+        selected_rule.name = 'RSI'
+        if hasattr(selected_rule, 'original_rule_with_params'):
+            del selected_rule.original_rule_with_params
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:RSI' in title
+        assert 'Strategy:' not in title  # Should not include strategy if not provided
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
+
+    def test_get_plot_title_with_original_rule_with_params(self):
+        """Test that plot title uses original_rule_with_params when available."""
+        data_info = {
+            'data_source_label': 'test_data',
+            'interval': 'D1'
+        }
+        point_size = 0.01
+        estimated_point = False
+        args = types.SimpleNamespace(interval='D1')
+        selected_rule = Mock()
+        selected_rule.name = 'RSI'
+        selected_rule.original_rule_with_params = 'rsi:14,30,70,open'
+        title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
+        assert 'Rule:rsi:14,30,70,open' in title
+        assert 'test_data' in title
+        assert 'D1' in title
+        assert 'Pt:0.01' in title
