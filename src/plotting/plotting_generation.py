@@ -532,7 +532,7 @@ def generate_plotly_plot(result_df, selected_rule, plot_title, data_info):
 
 def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_info=None):
     """
-    Generates a terminal plot using plotext.
+    Generates a terminal plot using plotext with chunked display for better readability.
     Args:
         result_df (pd.DataFrame): DataFrame with OHLCV and calculation results.
         selected_rule (TradingRule | str): The selected trading rule.
@@ -540,7 +540,7 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
         args (argparse.Namespace, optional): Command-line arguments.
         data_info (dict, optional): Dictionary with information about the data source.
     """
-    logger.print_info("Generating plot using terminal mode (plotext)...")
+    logger.print_info("Generating chunked terminal plot using plotext...")
 
     # Get rule name in standardized format
     rule_str = selected_rule.name if hasattr(selected_rule, 'name') else str(selected_rule)
@@ -559,11 +559,43 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
     original_parquet_path = None
     calculated_df = None
 
-    # --- Remove all calls to old terminal metrics and leave only the chart ---
-    # Just draw the chart, universal metrics are already printed in workflow.py
-    from src.plotting.term_auto_plot import auto_plot_from_dataframe
-    auto_plot_from_dataframe(result_df, plot_title, style="dots")
-    logger.print_success("Terminal plot generated successfully!")
+    # Use new chunked plotting functionality
+    try:
+        from src.plotting.term_chunked_plot import plot_chunked_terminal
+        
+        # Determine the rule to use for chunked plotting
+        if rule_upper == 'OHLCV':
+            plot_rule = 'OHLCV'
+        elif rule_upper == 'AUTO' or rule_str == 'Auto_Display_All':
+            plot_rule = 'AUTO'
+        elif rule_upper in ['PHLD', 'PREDICT_HIGH_LOW_DIRECTION']:
+            plot_rule = 'PHLD'
+        elif rule_upper in ['PV', 'PRESSURE_VECTOR']:
+            plot_rule = 'PV'
+        elif rule_upper in ['SR', 'SUPPORT_RESISTANTS']:
+            plot_rule = 'SR'
+        elif rule_upper in ['RSI', 'RSI_MOM', 'RSI_DIV']:
+            plot_rule = rule_upper
+        else:
+            # Default to OHLCV for unknown rules
+            plot_rule = 'OHLCV'
+        
+        # Use chunked plotting
+        plot_chunked_terminal(result_df, plot_rule, plot_title, style="matrix")
+        logger.print_success("Chunked terminal plot generated successfully!")
+        
+    except ImportError as e:
+        logger.print_warning(f"Could not import chunked plotting: {e}. Falling back to standard plotting.")
+        # Fallback to standard plotting
+        from src.plotting.term_auto_plot import auto_plot_from_dataframe
+        auto_plot_from_dataframe(result_df, plot_title, style="dots")
+        logger.print_success("Standard terminal plot generated successfully!")
+    except Exception as e:
+        logger.print_error(f"Error in chunked terminal plotting: {e}. Falling back to standard plotting.")
+        # Fallback to standard plotting
+        from src.plotting.term_auto_plot import auto_plot_from_dataframe
+        auto_plot_from_dataframe(result_df, plot_title, style="dots")
+        logger.print_success("Standard terminal plot generated successfully!")
 
 
 def plot_additional_indicators_with_source(df: pd.DataFrame, columns: List[str], x_data: list, x_labels: list, step: int, title: str, source: str = "pre-calculated") -> None:
