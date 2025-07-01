@@ -627,10 +627,15 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
         
         # Get field data
         if field in chunk.columns:
-            values = chunk[field].fillna(0).tolist()
+            # Handle NaN values properly
+            field_data = chunk[field].copy()
+            # Replace NaN with None for plotext compatibility
+            field_data = field_data.replace([np.inf, -np.inf], np.nan)
+            values = field_data.where(pd.notna(field_data), None).tolist()
             
-            # Plot field
-            plt.plot(x_values, values, color="green+", label=field, marker="s")
+            # Only plot if we have valid data
+            if any(v is not None for v in values):
+                plt.plot(x_values, values, color="green+", label=field, marker="s")
             
             plt.title(f"{title} - {start_date} to {end_date}")
             plt.xlabel("Date/Time")
