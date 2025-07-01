@@ -29,12 +29,14 @@ Fixed issues in terminal display mode (`-d term`) for the command `uv run run_an
   plt.ylabel("Price/Value")
   ```
 
-### 4. Full Screen Chart Size
-- **Problem**: Charts were too small
-- **Solution**: Increased chart size from `(140, 35)` to `(200, 50)`
+### 4. Full Screen Chart Size (No Volume Charts)
+- **Problem**: Charts were too small and volume charts cluttered the display
+- **Solution**: Increased chart size to `(200, 50)` for all charts, removed volume charts entirely
 - **Implementation**:
   ```python
-  plt.plot_size(200, 50)  # Much larger plot size
+  # Single chart layout only - no volume charts
+  plt.subplots(1, 1)  # Single price panel only
+  plot_size = (200, 50)  # Full size for all charts
   ```
 
 ### 5. Matrix Style (Green/Black Background)
@@ -42,7 +44,17 @@ Fixed issues in terminal display mode (`-d term`) for the command `uv run run_an
 - **Solution**: Reverted back to "matrix" style for classic green/black terminal look
 - **Implementation**:
   ```python
-  def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLCV Chunks", style: str = "matrix") -> None:
+  def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str = "matrix") -> None:
+  ```
+
+### 6. Removed Volume Charts
+- **Problem**: Volume charts cluttered the terminal display and reduced focus on main data
+- **Solution**: Completely removed volume charts from all terminal modes (AUTO, OHLCV, PV, SR, PHLD, RSI variants)
+- **Implementation**:
+  ```python
+  # Set up layout with full screen size - NO VOLUME CHARTS
+  plt.subplots(1, 1)  # Single price panel only
+  plot_size = (200, 50)
   ```
 
 ## Additional Improvements
@@ -64,7 +76,8 @@ Fixed issues in terminal display mode (`-d term`) for the command `uv run run_an
 1. **src/plotting/term_chunked_plot.py**
    - Updated all chunk display functions
    - Added X-axis date support
-   - Increased chart sizes
+   - Increased chart sizes to 200x50 for all charts
+   - Removed volume charts entirely
    - Changed default style to "matrix"
 
 2. **src/cli/cli_show_mode.py**
@@ -94,15 +107,17 @@ uv run run_analysis.py show csv mn1 -d term --rule rsi:14,30,70,open
 **Result**: 
 - 8 chunks with ~50 candles each
 - Each chunk shows date range in the title
-- Charts occupy almost the full screen
+- Charts occupy almost the full screen (200x50 for all charts)
 - Axes labeled as "Date/Time" and "Price/Value"
 - "matrix" style for classic green/black terminal look
 - No statistics under charts
+- No volume charts - clean, focused display
 
 ## Benefits
 
 1. **Better Readability**: Large charts with clear dates
-2. **Cleaner Output**: Removed unnecessary statistics
+2. **Cleaner Output**: Removed unnecessary statistics and volume charts
 3. **Classic Terminal Look**: Matrix style with green/black background
 4. **User-Friendly**: Clear axis labels and dates
-5. **Consistent Experience**: Uniform style for all rules 
+5. **Consistent Experience**: Uniform style for all rules
+6. **Focused Display**: No volume charts cluttering the view 
