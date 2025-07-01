@@ -635,7 +635,7 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
             
             # Only plot if we have valid data
             if any(v is not None for v in values):
-                plt.plot(x_values, values, color="green+", label=field, marker="s")
+                plt.plot(x_values, values, color="green+", label=field, marker="o")
             
             plt.title(f"{title} - {start_date} to {end_date}")
             plt.xlabel("Date/Time")
@@ -664,11 +664,11 @@ def _add_pv_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
         # Add support and resistance lines
         if 'PPrice1' in chunk.columns:  # Support level
             pprice1_values = chunk['PPrice1'].fillna(0).tolist()
-            plt.plot(x_values, pprice1_values, color="green+", label="Support", marker="s")
+            plt.plot(x_values, pprice1_values, color="green+", label="Support", marker="D")
         
         if 'PPrice2' in chunk.columns:  # Resistance level
             pprice2_values = chunk['PPrice2'].fillna(0).tolist()
-            plt.plot(x_values, pprice2_values, color="red+", label="Resistance", marker="s")
+            plt.plot(x_values, pprice2_values, color="red+", label="Resistance", marker="D")
         
         # Add trading signals
         if 'Direction' in chunk.columns:
@@ -695,11 +695,11 @@ def _add_sr_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
         # Add support and resistance lines (no signals)
         if 'PPrice1' in chunk.columns:  # Support level
             pprice1_values = chunk['PPrice1'].fillna(0).tolist()
-            plt.plot(x_values, pprice1_values, color="green+", label="Support", marker="s")
+            plt.plot(x_values, pprice1_values, color="green+", label="Support", marker="D")
         
         if 'PPrice2' in chunk.columns:  # Resistance level
             pprice2_values = chunk['PPrice2'].fillna(0).tolist()
-            plt.plot(x_values, pprice2_values, color="red+", label="Resistance", marker="s")
+            plt.plot(x_values, pprice2_values, color="red+", label="Resistance", marker="D")
         
     except Exception as e:
         logger.print_error(f"Error adding SR overlays: {e}")
@@ -717,11 +717,11 @@ def _add_phld_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
         # Add support and resistance lines (channels)
         if 'PPrice1' in chunk.columns:  # Support level
             pprice1_values = chunk['PPrice1'].fillna(0).tolist()
-            plt.plot(x_values, pprice1_values, color="green+", label="Support Channel", marker="s")
+            plt.plot(x_values, pprice1_values, color="green+", label="Support Channel", marker="D")
         
         if 'PPrice2' in chunk.columns:  # Resistance level
             pprice2_values = chunk['PPrice2'].fillna(0).tolist()
-            plt.plot(x_values, pprice2_values, color="red+", label="Resistance Channel", marker="s")
+            plt.plot(x_values, pprice2_values, color="red+", label="Resistance Channel", marker="D")
         
         # Add trading signals
         if 'Direction' in chunk.columns:
@@ -739,11 +739,11 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
         # Add support and resistance lines with yellow and blue colors
         if 'PPrice1' in chunk.columns:  # Support level
             pprice1_values = chunk['PPrice1'].fillna(0).tolist()
-            plt.plot(x_values, pprice1_values, color="yellow+", label="Support", marker="s")
+            plt.plot(x_values, pprice1_values, color="yellow+", label="Support", marker="D")
         
         if 'PPrice2' in chunk.columns:  # Resistance level
             pprice2_values = chunk['PPrice2'].fillna(0).tolist()
-            plt.plot(x_values, pprice2_values, color="blue+", label="Resistance", marker="s")
+            plt.plot(x_values, pprice2_values, color="blue+", label="Resistance", marker="D")
         
         # Add RSI as line plot (без маркеров, только линия)
         if 'RSI' in chunk.columns:
