@@ -5,7 +5,44 @@ This document tracks the improvements and fixes made to the terminal display mod
 
 ## Recent Changes
 
-### RSI Display Enhancements (Latest)
+### NaN Handling Fix for AUTO Rule (Latest)
+**Date**: 2025-01-01
+
+**Issue Fixed**:
+- Error: "cannot convert float NaN to integer" in AUTO rule terminal mode
+- Affected fields: predicted_low, predicted_high, pressure, pressure_vector
+
+**Root Cause**:
+- plotext library cannot handle NaN values directly
+- `fillna(0)` was converting NaN to 0, but plotext still had issues
+
+**Solution Implemented**:
+- Replace infinite values with NaN first
+- Convert NaN to None for plotext compatibility
+- Only plot fields that have valid data (not all None values)
+
+**Technical Implementation**:
+```python
+# Handle NaN values properly
+field_data = chunk[field].copy()
+# Replace NaN with None for plotext compatibility
+field_data = field_data.replace([np.inf, -np.inf], np.nan)
+values = field_data.where(pd.notna(field_data), None).tolist()
+
+# Only plot if we have valid data
+if any(v is not None for v in values):
+    plt.plot(x_values, values, color="green+", label=field, marker="s")
+```
+
+**Files Modified**:
+- `src/plotting/term_chunked_plot.py` - Updated `_plot_single_field_chunk()` function
+
+**Command Example**:
+```bash
+uv run run_analysis.py show csv mn1 -d term --rule AUTO
+```
+
+### RSI Display Enhancements
 **Date**: 2025-01-01
 
 **Changes Made**:
@@ -82,6 +119,9 @@ uv run pytest tests/plotting/test_term_chunked_plot.py -v
 
 # Test specific RSI functionality
 uv run pytest tests/plotting/test_term_chunked_plot.py::TestTermChunkedPlot::test_plot_rsi_chunks_structure -v
+
+# Test AUTO rule functionality
+uv run pytest tests/plotting/test_term_chunked_plot.py::TestTermChunkedPlot::test_plot_auto_chunks_structure -v
 ```
 
 ## Supported Rules
@@ -95,6 +135,7 @@ uv run pytest tests/plotting/test_term_chunked_plot.py::TestTermChunkedPlot::tes
 - Automatic rule detection
 - Multiple indicator support
 - Clean display
+- **Fixed NaN handling** for all fields
 
 ### PV (Pressure Vector)
 - Pressure vector visualization
@@ -135,6 +176,14 @@ def parse_rsi_rule(rule_str: str) -> Tuple[str, Dict[str, Any]]:
     """
 ```
 
+### NaN Handling
+```python
+def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style: str) -> None:
+    """
+    Plot a single field with proper NaN handling for plotext compatibility.
+    """
+```
+
 ### Overlay Functions
 - `_add_rsi_overlays_to_chunk()` - RSI-specific overlays
 - `_add_trading_signals_to_chunk()` - Buy/sell signals
@@ -162,6 +211,7 @@ def parse_rsi_rule(rule_str: str) -> Tuple[str, Dict[str, Any]]:
 1. **Display Issues**: Ensure terminal supports UTF-8 and has sufficient width/height
 2. **Performance**: Large datasets may require chunk size adjustment
 3. **Color Display**: Some terminals may not support all color codes
+4. **NaN Errors**: Fixed in AUTO rule - fields with all NaN values are skipped
 
 ### Debug Commands
 ```bash
@@ -170,6 +220,9 @@ uv run python -c "import plotext as plt; print(plt.terminal_size())"
 
 # Test with minimal data
 uv run run_analysis.py show csv test_data.csv -d term --rule ohlcv
+
+# Test AUTO rule (should work without NaN errors)
+uv run run_analysis.py show csv mn1 -d term --rule AUTO
 ```
 
 ## Documentation References
