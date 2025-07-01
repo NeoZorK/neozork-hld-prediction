@@ -660,31 +660,15 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
 
 def _add_pv_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
     """
-    Add PV-specific overlays to the chunk plot (like PHLD with channels and signals).
-    
+    Add PV-specific overlays to the chunk plot: ONLY buy/sell signals (no support/resistance, no PV line).
     Args:
         chunk (pd.DataFrame): DataFrame chunk
         x_values (list): X-axis values
     """
     try:
-        # Add support and resistance lines (channels like PHLD)
-        if 'PPrice1' in chunk.columns:  # Support level
-            pprice1_values = chunk['PPrice1'].fillna(0).tolist()
-            plt.plot(x_values, pprice1_values, color="green+", label="Support Channel")
-        
-        if 'PPrice2' in chunk.columns:  # Resistance level
-            pprice2_values = chunk['PPrice2'].fillna(0).tolist()
-            plt.plot(x_values, pprice2_values, color="red+", label="Resistance Channel")
-        
-        # Add trading signals
+        # Только сигналы BUY/SELL
         if 'Direction' in chunk.columns:
             _add_trading_signals_to_chunk(chunk, x_values)
-        
-        # Add PV indicator as additional overlay
-        if 'PV' in chunk.columns:
-            pv_values = chunk['PV'].fillna(0).tolist()
-            plt.plot(x_values, pv_values, color="yellow+", label="Pressure Vector")
-        
     except Exception as e:
         logger.print_error(f"Error adding PV overlays: {e}")
 
