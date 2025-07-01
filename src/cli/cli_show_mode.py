@@ -755,35 +755,27 @@ def _plot_auto_display(args, df, file_info, metrics):
             mpl_auto_plot_from_parquet(str(file_info['path']))
             print(f"Successfully plotted all columns from '{file_info['name']}' using mplfinance.")
         elif draw_method == 'term' and auto_plot_from_dataframe is not None:
-            print(f"Using terminal auto plotting for '{file_info['name']}'...")
+            print(f"Using chunked terminal plotting for '{file_info['name']}'...")
             plot_title = f"AUTO Terminal Plot: {file_info['name']}"
 
-            # Check if we should use separate field plotting with dots style
-            if hasattr(args, 'auto_display_mode') and args.auto_display_mode:
-                # Import the specific functions for parquet and CSV plotting
-                try:
-                    from src.plotting.term_auto_plot import auto_plot_parquet_fields, auto_plot_csv_fields
-
-                    # Check if we're dealing with CSV or parquet file
-                    if 'csv_converted' in str(file_info['path']).lower():
-                        # For CSV-converted parquet files, use the parquet function but mention CSV source
-                        print(f"Using separate field plotting for CSV-converted parquet file...")
-                        auto_plot_parquet_fields(str(file_info['path']), f"AUTO: {file_info['name']} (CSV Source)", style="dots")
-                    else:
-                        # For direct parquet files
-                        print(f"Using separate field plotting for parquet file...")
-                        auto_plot_parquet_fields(str(file_info['path']), f"AUTO: {file_info['name']}", style="dots")
-
-                    print(f"Successfully plotted all fields from '{file_info['name']}' using 'dots' style with separate charts.")
-                except ImportError as e:
-                    print(f"Could not import separate field plotting functions: {e}")
-                    # Fallback to standard auto_plot_from_dataframe
-                    auto_plot_from_dataframe(df, plot_title)
-                    print(f"Fallback: Successfully plotted all columns from '{file_info['name']}' using terminal mode with unified chart.")
-            else:
-                # Use the standard auto_plot_from_dataframe function
+            # Use new chunked plotting functionality
+            try:
+                from src.plotting.term_chunked_plot import plot_chunked_terminal
+                
+                # Use chunked plotting for AUTO mode
+                plot_chunked_terminal(df, 'AUTO', plot_title, style="dots")
+                print(f"Successfully plotted all fields from '{file_info['name']}' using chunked terminal mode.")
+                
+            except ImportError as e:
+                print(f"Could not import chunked plotting functions: {e}. Falling back to standard plotting.")
+                # Fallback to standard auto_plot_from_dataframe
                 auto_plot_from_dataframe(df, plot_title)
-                print(f"Successfully plotted all columns from '{file_info['name']}' using terminal mode with unified chart.")
+                print(f"Fallback: Successfully plotted all columns from '{file_info['name']}' using standard terminal mode.")
+            except Exception as e:
+                print(f"Error in chunked plotting: {e}. Falling back to standard plotting.")
+                # Fallback to standard auto_plot_from_dataframe
+                auto_plot_from_dataframe(df, plot_title)
+                print(f"Fallback: Successfully plotted all columns from '{file_info['name']}' using standard terminal mode.")
         else:
             generate_plot = import_generate_plot()
             data_info = {
@@ -910,33 +902,36 @@ def _plot_indicator_calculation_result(args, original_df, result_df, file_info, 
     
     print(f"\nDrawing plot after indicator calculation with method: '{args.draw}'...")
     try:
-        # For terminal mode with PHLD rule
-        if args.draw == 'term' and args.rule.upper() == 'PHLD':
+        # For terminal mode with any rule
+        if args.draw == 'term':
             if auto_plot_from_dataframe is not None:
                 # Check if indicators already exist in the loaded dataframe
                 indicators_exist = all(col in original_df.columns for col in ['PPrice1', 'PPrice2', 'Direction'])
                 calculation_type = "PRE-CALCULATED" if indicators_exist and not args.force_calculate else "CALCULATED NOW"
 
-                print(f"\n=== {calculation_type} PHLD INDICATORS ===")
-                print(f"Using terminal auto plotting for '{file_info['name']}' with PHLD rule...")
-                plot_title = f"PHLD Terminal Plot: {file_info['name']} ({calculation_type})"
-                # Use the auto_plot_from_dataframe function for terminal plotting
-                auto_plot_from_dataframe(result_df, plot_title)
-
-                # Extract and plot specific indicators
-                if 'PPrice1' in result_df.columns and 'PPrice2' in result_df.columns:
-                    print(f"\n--- Support and Resistance Levels (PPrice1 and PPrice2) - {calculation_type} ---")
-                    support_resistance_df = result_df[['Open', 'PPrice1', 'PPrice2']].tail(30)
-                    auto_plot_from_dataframe(support_resistance_df, f"Support and Resistance Levels ({calculation_type})")
-
-                # Plot Direction indicator if available
-                if 'Direction' in result_df.columns:
-                    print(f"\n--- Direction Indicator - {calculation_type} ---")
-                    direction_df = result_df[['Direction']].tail(30)
-                    auto_plot_from_dataframe(direction_df, f"Direction Indicator ({calculation_type})")
-
-                print(f"Successfully plotted PHLD indicators from '{file_info['name']}' using terminal mode.")
-                print(f"Indicator source: {calculation_type}")
+                print(f"\n=== {calculation_type} {args.rule.upper()} INDICATORS ===")
+                print(f"Using chunked terminal plotting for '{file_info['name']}' with {args.rule} rule...")
+                plot_title = f"{args.rule.upper()} Terminal Plot: {file_info['name']} ({calculation_type})"
+                
+                # Use new chunked plotting functionality
+                try:
+                    from src.plotting.term_chunked_plot import plot_chunked_terminal
+                    
+                    # Use chunked plotting for the specific rule
+                    plot_chunked_terminal(result_df, args.rule.upper(), plot_title, style="matrix")
+                    print(f"Successfully plotted {args.rule} indicators from '{file_info['name']}' using chunked terminal mode.")
+                    print(f"Indicator source: {calculation_type}")
+                    
+                except ImportError as e:
+                    print(f"Could not import chunked plotting functions: {e}. Falling back to standard plotting.")
+                    # Fallback to standard auto_plot_from_dataframe
+                    auto_plot_from_dataframe(result_df, plot_title)
+                    print(f"Fallback: Successfully plotted {args.rule} indicators from '{file_info['name']}' using standard terminal mode.")
+                except Exception as e:
+                    print(f"Error in chunked plotting: {e}. Falling back to standard plotting.")
+                    # Fallback to standard auto_plot_from_dataframe
+                    auto_plot_from_dataframe(result_df, plot_title)
+                    print(f"Fallback: Successfully plotted {args.rule} indicators from '{file_info['name']}' using standard terminal mode.")
             else:
                 print("Error: Terminal plotting functionality not available.")
         else:
@@ -1397,11 +1392,37 @@ def _plot_indicator_parquet_file(args, df, file_info, metrics):
     plot_start_time = time.time()
     
     if draw_method in ['term', 'terminal']:
-        # Terminal mode - use plotext
+        # Terminal mode - use chunked plotext
         plot_title = f"Indicator File: {file_info['name']}"
         if auto_plot_from_dataframe:
-            auto_plot_from_dataframe(df, plot_title)
-            print(f"Successfully plotted indicator file '{file_info['name']}' using terminal mode.")
+            try:
+                from src.plotting.term_chunked_plot import plot_chunked_terminal
+                
+                # Determine rule from file name or use AUTO
+                rule = "AUTO"  # Default rule
+                if hasattr(args, 'rule') and args.rule:
+                    rule = args.rule.upper()
+                elif 'PV' in file_info['name'].upper():
+                    rule = 'PV'
+                elif 'SR' in file_info['name'].upper():
+                    rule = 'SR'
+                elif 'PHLD' in file_info['name'].upper():
+                    rule = 'PHLD'
+                elif 'RSI' in file_info['name'].upper():
+                    rule = 'RSI'
+                
+                # Use chunked plotting
+                plot_chunked_terminal(df, rule, plot_title, style="matrix")
+                print(f"Successfully plotted indicator file '{file_info['name']}' using chunked terminal mode.")
+                
+            except ImportError as e:
+                print(f"Could not import chunked plotting functions: {e}. Falling back to standard plotting.")
+                auto_plot_from_dataframe(df, plot_title)
+                print(f"Fallback: Successfully plotted indicator file '{file_info['name']}' using standard terminal mode.")
+            except Exception as e:
+                print(f"Error in chunked plotting: {e}. Falling back to standard plotting.")
+                auto_plot_from_dataframe(df, plot_title)
+                print(f"Fallback: Successfully plotted indicator file '{file_info['name']}' using standard terminal mode.")
         else:
             print("Terminal plotting function not available")
     else:
