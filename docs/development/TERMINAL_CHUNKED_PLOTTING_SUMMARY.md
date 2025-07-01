@@ -35,34 +35,38 @@ Successfully implemented enhanced terminal display mode with automatic chunking 
   - Dots style for better visibility
   - All numeric fields displayed
 
-#### PV Mode (Pressure Vector)
-- **Display**: Pressure Vector with buy/sell signals
+#### PV Mode (Pressure Vector) - **UPDATED**
+- **Display**: OHLC candles + buy/sell signals only (simplified display)
 - **Features**:
-  - Support/resistance lines
-  - Trading signals (BUY/SELL markers)
-  - PV indicator overlay
-  - Signal statistics
+  - OHLC candlestick charts as base layer
+  - Trading signals (BUY/SELL markers) only
+  - No support/resistance lines
+  - No PV indicator line
+  - Clean, focused visualization
 
 #### SR Mode (Support/Resistance)
-- **Display**: Two lines without signals
+- **Display**: OHLC candles + two support/resistance lines
 - **Features**:
+  - OHLC candlestick charts as base layer
   - Clean support/resistance visualization
   - No trading signals for focused analysis
   - Price level tracking
 
 #### PHLD Mode (Predict High Low Direction)
-- **Display**: Two channels and signals
+- **Display**: OHLC candles + two channels and signals
 - **Features**:
+  - OHLC candlestick charts as base layer
   - Support/resistance channels
   - Trading signals
   - Channel-based analysis
   - Signal statistics
 
 #### RSI Modes
-- **Basic RSI**: Standard RSI with overbought/oversold levels
-- **RSI Momentum**: RSI with momentum-based signals
-- **RSI Divergence**: RSI with divergence detection
+- **Basic RSI**: OHLC candles + standard RSI with overbought/oversold levels
+- **RSI Momentum**: OHLC candles + RSI with momentum-based signals
+- **RSI Divergence**: OHLC candles + RSI with divergence detection
 - **Features**:
+  - OHLC candlestick charts as base layer
   - Parameterized rules: `rsi(period,overbought,oversold,price_type)`
   - Support for all price types (open/close)
   - RSI-specific overlays
@@ -87,6 +91,12 @@ Successfully implemented enhanced terminal display mode with automatic chunking 
 - **Data Validation**: Handles missing columns and invalid data
 - **Memory Efficiency**: Optimized for large datasets
 
+### 4. **NEW: OHLC Candles as Base Layer**
+- **Consistent Display**: All rules now display OHLC candlestick charts as the base layer
+- **Enhanced Signals**: Large, colorful buy/sell signals positioned outside candle ranges
+- **Unified Experience**: Consistent visualization across all trading rules
+- **Better Visibility**: OHLC candles provide price context for all indicators
+
 ## Technical Implementation
 
 ### Core Modules
@@ -97,6 +107,7 @@ Successfully implemented enhanced terminal display mode with automatic chunking 
   - `split_dataframe_into_chunks()`: DataFrame splitting
   - `plot_chunked_terminal()`: Main entry point
   - Rule-specific plotting functions for each mode
+  - `draw_ohlc_candles()`: Unified OHLC candle display for all rules
 
 #### `src/cli/cli_show_mode.py`
 - **Integration**: Updated to use new chunked plotting
@@ -127,10 +138,11 @@ rsi_div(20,80,20,close)  # RSI Divergence
 ## Testing
 
 ### Comprehensive Test Suite
-- **23 Test Cases**: Covering all functionality
+- **25 Test Cases**: Covering all functionality including new OHLC consistency tests
 - **100% Coverage**: All new functions tested
 - **Edge Cases**: Invalid data, large datasets, memory efficiency
 - **Performance Tests**: Large dataset handling
+- **Consistency Tests**: PV/RSI OHLC display consistency
 
 ### Test Categories
 1. **Core Functionality**: Chunking, parsing, plotting
@@ -139,35 +151,37 @@ rsi_div(20,80,20,close)  # RSI Divergence
 4. **Error Handling**: Invalid data and edge cases
 5. **Performance**: Large dataset efficiency
 6. **Memory**: Memory usage optimization
+7. **OHLC Consistency**: PV/RSI display consistency tests
+8. **Signals Display**: PV signals-only display tests
 
 ## Usage Examples
 
 ### Command Line Interface
 ```bash
 # OHLCV mode
-python run_analysis.py show csv data.csv -d term --rule OHLCV
+python run_analysis.py show csv mn1 -d term --rule OHLCV
 
 # AUTO mode
-python run_analysis.py show csv data.csv -d term --rule AUTO
+python run_analysis.py show csv mn1 -d term --rule AUTO
 
-# PV mode
-python run_analysis.py show csv data.csv -d term --rule PV
+# PV mode (simplified: candles + signals only)
+python run_analysis.py show csv mn1 -d term --rule PV
 
 # SR mode
-python run_analysis.py show csv data.csv -d term --rule SR
+python run_analysis.py show csv mn1 -d term --rule SR
 
 # PHLD mode
-python run_analysis.py show csv data.csv -d term --rule PHLD
+python run_analysis.py show csv mn1 -d term --rule PHLD
 
 # RSI modes
-python run_analysis.py show csv data.csv -d term --rule rsi:14,70,30,close
-python run_analysis.py show csv data.csv -d term --rule rsi_mom:14,70,30,open
-python run_analysis.py show csv data.csv -d term --rule rsi_div:20,80,20,close
+python run_analysis.py show csv mn1 -d term --rule rsi:14,70,30,close
+python run_analysis.py show csv mn1 -d term --rule rsi_mom:14,70,30,open
+python run_analysis.py show csv mn1 -d term --rule rsi_div:20,80,20,close
 ```
 
 ### Demo Script
 ```bash
-# Run the demo script
+# Run the demo script (PHLD only)
 python scripts/demo_terminal_chunked.py
 ```
 
@@ -178,11 +192,32 @@ python scripts/demo_terminal_chunked.py
 - **Rule Examples**: Added examples for all rule types
 - **Chunking Details**: Explained automatic chunking algorithm
 - **Usage Instructions**: Clear usage examples
+- **OHLC Display**: Documented unified OHLC candle display
 
 ### API Documentation
 - **Function Documentation**: All new functions documented
-- **Parameter Descriptions**: Detailed parameter explanations
-- **Example Code**: Usage examples for each function
+- **OHLC Consistency**: Documented unified OHLC display across rules
+- **PV Simplification**: Documented PV rule simplification
+- **Signal Enhancement**: Documented enhanced signal display
+
+## Recent Updates
+
+### PV Rule Simplification
+- **Removed**: Support/resistance lines and PV indicator line
+- **Kept**: OHLC candles and buy/sell signals only
+- **Result**: Cleaner, more focused visualization
+
+### OHLC Candles as Base Layer
+- **Unified Display**: All rules now show OHLC candles as base layer
+- **Enhanced Signals**: Larger, more colorful buy/sell signals
+- **Better Positioning**: Signals positioned outside candle ranges
+- **Consistent Experience**: Same base visualization across all rules
+
+### Enhanced Signal Display
+- **Larger Markers**: More visible buy/sell signals
+- **Color Coding**: Yellow triangles for BUY, magenta triangles for SELL
+- **Smart Positioning**: BUY below Low, SELL above High
+- **Unicode Support**: Fallback to ASCII if Unicode not supported
 
 ## Benefits
 
