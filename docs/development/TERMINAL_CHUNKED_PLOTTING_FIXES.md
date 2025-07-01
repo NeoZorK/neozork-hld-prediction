@@ -37,12 +37,12 @@ Fixed issues in terminal display mode (`-d term`) for the command `uv run run_an
   plt.plot_size(200, 50)  # Much larger plot size
   ```
 
-### 5. Candles Style
-- **Problem**: "matrix" style was used by default
-- **Solution**: Changed to "candles" style for all rules
+### 5. Matrix Style (Green/Black Background)
+- **Problem**: Style was changed to "candles" 
+- **Solution**: Reverted back to "matrix" style for classic green/black terminal look
 - **Implementation**:
   ```python
-  def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLCV Chunks", style: str = "candles") -> None:
+  def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLCV Chunks", style: str = "matrix") -> None:
   ```
 
 ## Additional Improvements
@@ -65,16 +65,16 @@ Fixed issues in terminal display mode (`-d term`) for the command `uv run run_an
    - Updated all chunk display functions
    - Added X-axis date support
    - Increased chart sizes
-   - Changed default style to "candles"
+   - Changed default style to "matrix"
 
 2. **src/cli/cli_show_mode.py**
-   - Updated calls to use "candles" style
+   - Updated calls to use "matrix" style
 
 3. **src/plotting/plotting_generation.py**
-   - Updated `plot_chunked_terminal` call to use "candles" style
+   - Updated `plot_chunked_terminal` call to use "matrix" style
 
 4. **tests/plotting/test_term_chunked_plot.py**
-   - Updated tests to verify new "candles" style
+   - Updated tests to verify new "matrix" style
 
 ## Testing
 
@@ -96,13 +96,13 @@ uv run run_analysis.py show csv mn1 -d term --rule rsi:14,30,70,open
 - Each chunk shows date range in the title
 - Charts occupy almost the full screen
 - Axes labeled as "Date/Time" and "Price/Value"
-- "candles" style for better visualization
+- "matrix" style for classic green/black terminal look
 - No statistics under charts
 
 ## Benefits
 
 1. **Better Readability**: Large charts with clear dates
 2. **Cleaner Output**: Removed unnecessary statistics
-3. **Professional Look**: Candlestick style for financial data
+3. **Classic Terminal Look**: Matrix style with green/black background
 4. **User-Friendly**: Clear axis labels and dates
 5. **Consistent Experience**: Uniform style for all rules 
