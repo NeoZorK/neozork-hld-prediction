@@ -581,7 +581,7 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
             plot_rule = 'OHLCV'
         
         # Use chunked plotting
-        plot_chunked_terminal(result_df, plot_rule, plot_title, style="matrix")
+        plot_chunked_terminal(result_df, plot_rule, plot_title, style="candles")
         logger.print_success("Chunked terminal plot generated successfully!")
         
     except ImportError as e:
