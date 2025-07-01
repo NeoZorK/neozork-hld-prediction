@@ -29,12 +29,13 @@ python run_analysis.py demo
 # Demo with specific rule
 python run_analysis.py demo --rule RSI
 
-# Demo with export
-python run_analysis.py demo --rule PHLD --export-parquet --export-csv --export-json
+# Demo with custom plotting backend
+python run_analysis.py demo --rule PV -d plotly
 ```
 
 #### Demo Mode Options
 - **`--rule`** - Trading rule to apply (RSI, MACD, PHLD, PV, SR)
+- **`-d`** - Drawing backend (fastest, plotly, mpl, seaborn, term)
 - **`--export-parquet`** - Export results to Parquet format
 - **`--export-csv`** - Export results to CSV format
 - **`--export-json`** - Export results to JSON format
@@ -140,8 +141,9 @@ python run_analysis.py show yfinance AAPL --rule PHLD --export-parquet
 - **`ind`** - Show indicator data
 - **`yfinance`** - Show Yahoo Finance data with analysis
 - **`csv`** - Show CSV data with analysis
-- **`--rule`** - Trading rule(s) to apply
-- **`--export-*`** - Export options (only in demo mode)
+- **`polygon`** - Show Polygon data with analysis
+- **`binance`** - Show Binance data with analysis
+- **`exrate`** - Show Exchange Rate data with analysis
 
 ### 7. Interactive Mode
 
@@ -521,4 +523,94 @@ python run_analysis.py --indicators
 
 # Interactive mode
 python run_analysis.py --interactive
-``` 
+```
+
+## Drawing Backends (-d flag)
+
+The `-d` flag allows you to specify the plotting library for visualization:
+
+### Available Backends
+
+- **`fastest`** (default) - Plotly+Dask+Datashader (best for large datasets)
+- **`fast`** - Dask+Datashader+Bokeh for quick visualization
+- **`plotly`** / **`plt`** - Interactive HTML plots with Plotly
+- **`mplfinance`** / **`mpl`** - Static images with mplfinance
+- **`seaborn`** / **`sb`** - Statistical plots with Seaborn
+- **`term`** - Terminal ASCII charts with automatic chunking (great for SSH)
+
+### Terminal Mode (-d term) - Enhanced with Chunked Display
+
+The terminal mode has been enhanced with automatic data chunking for better readability:
+
+#### Features:
+- **Automatic Chunking**: Data is automatically split into optimal intervals (typically 50-200 candles per chart)
+- **Clear Navigation**: Each chunk shows the exact candle range (e.g., "Candles 1-100")
+- **Interactive**: Press Enter to navigate between chunks
+- **Rule-Specific Display**: Different visualization for each trading rule
+
+#### Supported Rules in Terminal Mode:
+
+1. **OHLCV** - Shows OHLC candlestick charts + separate volume charts
+   ```bash
+   python run_analysis.py show csv mn1 -d term --rule OHLCV
+   ```
+
+2. **AUTO** - Shows each field on separate charts
+   ```bash
+   python run_analysis.py show csv mn1 -d term --rule AUTO
+   ```
+
+3. **PV** - Shows Pressure Vector with buy/sell signals
+   ```bash
+   python run_analysis.py show csv mn1 -d term --rule PV
+   ```
+
+4. **SR** - Shows Support/Resistance lines
+   ```bash
+   python run_analysis.py show csv mn1 -d term --rule SR
+   ```
+
+5. **PHLD** - Shows channels and buy/sell signals
+   ```bash
+   python run_analysis.py show csv mn1 -d term --rule PHLD
+   ```
+
+6. **RSI Rules** - Shows RSI calculations with signals
+   ```bash
+   python run_analysis.py show csv mn1 -d term --rule rsi:14,30,70,close
+   python run_analysis.py show csv mn1 -d term --rule rsi_mom:14,30,70,close
+   python run_analysis.py show csv mn1 -d term --rule rsi_div:14,30,70,close
+   ```
+
+#### Chunking Algorithm:
+- **Small datasets** (< 500 rows): 50 candles per chunk
+- **Medium datasets** (500-2000 rows): 100 candles per chunk  
+- **Large datasets** (> 2000 rows): 200 candles per chunk
+- **Automatic calculation** based on total data length for optimal viewing
+
+#### Example Output:
+```
+=== OHLCV CHUNK 1/10 ===
+Candles 1-100 (100 bars)
+==========================================
+OHLC STATISTICS:
+   Open:  1.23450 - 1.24500
+   High:  1.23500 - 1.24600
+   Low:   1.23300 - 1.24400
+   Close: 1.23400 - 1.24550
+VOLUME STATISTICS:
+   Total: 1500000
+   Avg:   15000
+   Max:   25000
+==========================================
+
+Press Enter to view next chunk (2/10)...
+```
+
+## Notes
+
+- **Point Size**: Always required for API modes (yfinance, polygon, binance, exrate)
+- **Date Formats**: Use YYYY-MM-DD format for date ranges
+- **Terminal Mode**: Best for SSH sessions and large datasets
+- **Chunked Display**: Automatically optimizes chart size for readability
+- **Fallback**: If chunked plotting fails, falls back to standard terminal plotting 
