@@ -119,6 +119,24 @@ def parse_rsi_rule(rule_str: str) -> Tuple[str, Dict[str, Any]]:
         }
 
 
+def draw_ohlc_candles(chunk, x_values):
+    """
+    Draw OHLC candles for the given chunk and x_values if possible.
+    """
+    ohlc_columns = ['Open', 'High', 'Low', 'Close']
+    has_ohlc = all(col in chunk.columns for col in ohlc_columns)
+    if has_ohlc:
+        ohlc_data = {
+            'Open': chunk['Open'].ffill().fillna(chunk['Close']).tolist(),
+            'High': chunk['High'].ffill().fillna(chunk['Close']).tolist(),
+            'Low': chunk['Low'].ffill().fillna(chunk['Close']).tolist(),
+            'Close': chunk['Close'].ffill().fillna(chunk['Open']).tolist()
+        }
+        plt.candlestick(x_values, ohlc_data)
+    else:
+        logger.print_error("DataFrame must contain OHLC columns (Open, High, Low, Close) for candlestick plot!")
+
+
 def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str = "matrix") -> None:
     """
     Plot OHLC data in chunks (no volume charts).
@@ -173,14 +191,7 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
                 x_labels = [str(i) for i in x_values]
             
             # OHLC Candlestick Chart
-            ohlc_data = {
-                'Open': chunk['Open'].ffill().fillna(chunk['Close']).tolist(),
-                'High': chunk['High'].ffill().fillna(chunk['Close']).tolist(),
-                'Low': chunk['Low'].ffill().fillna(chunk['Close']).tolist(),
-                'Close': chunk['Close'].ffill().fillna(chunk['Open']).tolist()
-            }
-            
-            plt.candlestick(x_values, ohlc_data)
+            draw_ohlc_candles(chunk, x_values)
             
             # Get start and end dates for this chunk
             start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
@@ -245,12 +256,27 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
             
             logger.print_info(f"Displaying chunk {i+1}/{len(chunks)} ({start_date} to {end_date})")
             
-            # First show OHLC chart if available
-            ohlc_columns = ['Open', 'High', 'Low', 'Close']
-            has_ohlc = all(col in chunk.columns for col in ohlc_columns)
-            
-            if has_ohlc:
-                plot_ohlcv_chunks(chunk, f"{title} - OHLC (Chunk {i+1})", style)
+            # Always show OHLC candles if possible
+            if len(chunk) > 0:
+                if hasattr(chunk.index, 'strftime'):
+                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    x_values = list(range(len(chunk)))
+                else:
+                    x_values = list(range(len(chunk)))
+                    x_labels = [str(i) for i in x_values]
+                plt.clear_data()
+                plt.clear_figure()
+                plt.subplots(1, 1)
+                plt.plot_size(200, 50)
+                plt.theme(style)
+                draw_ohlc_candles(chunk, x_values)
+                plt.title(f"{title} - OHLC (Chunk {i+1}) - {start_date} to {end_date}")
+                plt.xlabel("Date/Time")
+                if len(x_values) > 0:
+                    step = max(1, len(x_values) // 10)
+                    plt.xticks(x_values[::step], x_labels[::step])
+                plt.ylabel("Price")
+                plt.show()
             
             # Then show each field separately
             for field in field_columns:
@@ -315,18 +341,7 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
                 x_labels = [str(i) for i in x_values]
             
             # OHLC Candlestick Chart
-            ohlc_columns = ['Open', 'High', 'Low', 'Close']
-            has_ohlc = all(col in chunk.columns for col in ohlc_columns)
-            
-            if has_ohlc:
-                ohlc_data = {
-                    'Open': chunk['Open'].ffill().fillna(chunk['Close']).tolist(),
-                    'High': chunk['High'].ffill().fillna(chunk['Close']).tolist(),
-                    'Low': chunk['Low'].ffill().fillna(chunk['Close']).tolist(),
-                    'Close': chunk['Close'].ffill().fillna(chunk['Open']).tolist()
-                }
-                
-                plt.candlestick(x_values, ohlc_data)
+            draw_ohlc_candles(chunk, x_values)
             
             # Add PV-specific overlays
             _add_pv_overlays_to_chunk(chunk, x_values)
@@ -400,18 +415,7 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
                 x_labels = [str(i) for i in x_values]
             
             # OHLC Candlestick Chart
-            ohlc_columns = ['Open', 'High', 'Low', 'Close']
-            has_ohlc = all(col in chunk.columns for col in ohlc_columns)
-            
-            if has_ohlc:
-                ohlc_data = {
-                    'Open': chunk['Open'].ffill().fillna(chunk['Close']).tolist(),
-                    'High': chunk['High'].ffill().fillna(chunk['Close']).tolist(),
-                    'Low': chunk['Low'].ffill().fillna(chunk['Close']).tolist(),
-                    'Close': chunk['Close'].ffill().fillna(chunk['Open']).tolist()
-                }
-                
-                plt.candlestick(x_values, ohlc_data)
+            draw_ohlc_candles(chunk, x_values)
             
             # Add SR-specific overlays (two lines without signals)
             _add_sr_overlays_to_chunk(chunk, x_values)
@@ -485,18 +489,7 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
                 x_labels = [str(i) for i in x_values]
             
             # OHLC Candlestick Chart
-            ohlc_columns = ['Open', 'High', 'Low', 'Close']
-            has_ohlc = all(col in chunk.columns for col in ohlc_columns)
-            
-            if has_ohlc:
-                ohlc_data = {
-                    'Open': chunk['Open'].ffill().fillna(chunk['Close']).tolist(),
-                    'High': chunk['High'].ffill().fillna(chunk['Close']).tolist(),
-                    'Low': chunk['Low'].ffill().fillna(chunk['Close']).tolist(),
-                    'Close': chunk['Close'].ffill().fillna(chunk['Open']).tolist()
-                }
-                
-                plt.candlestick(x_values, ohlc_data)
+            draw_ohlc_candles(chunk, x_values)
             
             # Add PHLD-specific overlays (two channels and signals)
             _add_phld_overlays_to_chunk(chunk, x_values)
@@ -572,18 +565,7 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
                 x_labels = [str(i) for i in x_values]
             
             # OHLC Candlestick Chart
-            ohlc_columns = ['Open', 'High', 'Low', 'Close']
-            has_ohlc = all(col in chunk.columns for col in ohlc_columns)
-            
-            if has_ohlc:
-                ohlc_data = {
-                    'Open': chunk['Open'].ffill().fillna(chunk['Close']).tolist(),
-                    'High': chunk['High'].ffill().fillna(chunk['Close']).tolist(),
-                    'Low': chunk['Low'].ffill().fillna(chunk['Close']).tolist(),
-                    'Close': chunk['Close'].ffill().fillna(chunk['Open']).tolist()
-                }
-                
-                plt.candlestick(x_values, ohlc_data)
+            draw_ohlc_candles(chunk, x_values)
             
             # Add RSI-specific overlays based on rule type
             _add_rsi_overlays_to_chunk(chunk, x_values, rule_type, params)
@@ -747,12 +729,6 @@ def _add_phld_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
 def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: str, params: Dict[str, Any]) -> None:
     """
     Add RSI-specific overlays to the chunk plot based on rule type.
-    
-    Args:
-        chunk (pd.DataFrame): DataFrame chunk
-        x_values (list): X-axis values
-        rule_type (str): RSI rule type (rsi, rsi_mom, rsi_div)
-        params (Dict): RSI parameters
     """
     try:
         # Add support and resistance lines with yellow and blue colors
@@ -764,17 +740,10 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
             pprice2_values = chunk['PPrice2'].fillna(0).tolist()
             plt.plot(x_values, pprice2_values, color="blue+", label="Resistance", marker="s")
         
-        # Add RSI as candles
+        # Add RSI as line plot (без маркеров, только линия)
         if 'RSI' in chunk.columns:
             rsi_values = chunk['RSI'].fillna(50).tolist()
-            # Create OHLC data for RSI candles (using RSI value for all OHLC)
-            rsi_ohlc = {
-                'Open': rsi_values,
-                'High': rsi_values,
-                'Low': rsi_values,
-                'Close': rsi_values
-            }
-            plt.candlestick(x_values, rsi_ohlc)
+            plt.plot(x_values, rsi_values, color="cyan+", label=f"RSI ({rule_type})")
         
         # Add RSI momentum for momentum variant
         if rule_type == 'rsi_mom' and 'RSI_Momentum' in chunk.columns:
