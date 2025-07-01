@@ -139,11 +139,10 @@ class TestIndicatorParameterParsing:
     
     def test_parse_tsf_parameters_valid(self):
         """Test valid TSF parameter parsing."""
-        indicator_name, params = parse_tsf_parameters("20,5,close")
+        indicator_name, params = parse_tsf_parameters("20,close")
         assert indicator_name == "tsf"
         assert params == {
-            'tsf_period': 20,
-            'tsf_forecast': 5,
+            'tsforecast_period': 20,
             'price_type': 'close'
         }
     
@@ -332,7 +331,7 @@ class TestErrorHandling:
 
     def test_tsf_invalid_parameter_count(self):
         """Test TSF error handling with wrong parameter count."""
-        with pytest.raises(ValueError, match="TSF requires exactly 3 parameters"):
+        with pytest.raises(ValueError, match="TSF requires exactly 2 parameters"):
             parse_tsf_parameters("20")
 
     def test_monte_invalid_parameter_count(self):
@@ -374,6 +373,11 @@ class TestErrorHandling:
         """Test SAR error handling with wrong parameter count."""
         with pytest.raises(ValueError, match="SAR requires exactly 2 parameters"):
             parse_sar_parameters("0.02")
+
+    def test_tsf_invalid_price_type(self):
+        """Test TSF price type validation."""
+        with pytest.raises(ValueError, match="TSF price_type must be 'open' or 'close'"):
+            parse_tsf_parameters("20,invalid")
 
 
 class TestParameterValidation:
@@ -427,7 +431,7 @@ class TestParameterValidation:
     def test_tsf_invalid_price_type(self):
         """Test TSF price type validation."""
         with pytest.raises(ValueError, match="TSF price_type must be 'open' or 'close'"):
-            parse_tsf_parameters("20,5,invalid")
+            parse_tsf_parameters("20,invalid")
 
     def test_stdev_invalid_price_type(self):
         """Test Standard Deviation price type validation."""
