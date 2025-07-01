@@ -36,7 +36,6 @@ ENV/
 # Data files (will be mounted as volumes)
 /data/
 /logs/
-/mql5_feed/
 *.svg
 *.webp
 
