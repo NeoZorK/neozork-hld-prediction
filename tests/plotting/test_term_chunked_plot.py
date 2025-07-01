@@ -386,7 +386,7 @@ class TestTermChunkedPlot:
         test_df = self.sample_data.head(100)
         
         # Test different styles
-        styles = ['candles', 'dots', 'default']
+        styles = ['matrix', 'dots', 'default']
         
         for style in styles:
             try:

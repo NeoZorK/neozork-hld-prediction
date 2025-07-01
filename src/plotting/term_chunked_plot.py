@@ -119,7 +119,7 @@ def parse_rsi_rule(rule_str: str) -> Tuple[str, Dict[str, Any]]:
         }
 
 
-def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLCV Chunks", style: str = "candles") -> None:
+def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLCV Chunks", style: str = "matrix") -> None:
     """
     Plot OHLCV data in chunks with separate volume charts.
     
@@ -230,7 +230,7 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLCV Chunks", style: str 
         logger.print_error(f"Error generating OHLCV chunked plots: {e}")
 
 
-def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = "candles") -> None:
+def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = "matrix") -> None:
     """
     Plot all fields in chunks with separate charts for each field.
     
@@ -291,7 +291,7 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
         logger.print_error(f"Error generating AUTO chunked plots: {e}")
 
 
-def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "candles") -> None:
+def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "matrix") -> None:
     """
     Plot PV (Pressure Vector) data in chunks with buy/sell signals.
     
@@ -376,7 +376,7 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "can
         logger.print_error(f"Error generating PV chunked plots: {e}")
 
 
-def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "candles") -> None:
+def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "matrix") -> None:
     """
     Plot SR (Support/Resistance) data in chunks with two lines.
     
@@ -461,7 +461,7 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "can
         logger.print_error(f"Error generating SR chunked plots: {e}")
 
 
-def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = "candles") -> None:
+def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = "matrix") -> None:
     """
     Plot PHLD (Predict High Low Direction) data in chunks with two channels and signals.
     
@@ -546,7 +546,7 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
         logger.print_error(f"Error generating PHLD chunked plots: {e}")
 
 
-def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", style: str = "candles") -> None:
+def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", style: str = "matrix") -> None:
     """
     Plot RSI data in chunks with different calculations based on rule type.
     
@@ -932,7 +932,7 @@ def _show_field_statistics(field_series: pd.Series, field_name: str) -> None:
         logger.print_error(f"Error showing field statistics: {e}")
 
 
-def plot_chunked_terminal(df: pd.DataFrame, rule: str, title: str = "Chunked Terminal Plot", style: str = "candles") -> None:
+def plot_chunked_terminal(df: pd.DataFrame, rule: str, title: str = "Chunked Terminal Plot", style: str = "matrix") -> None:
     """
     Main function to plot data in chunks based on the rule.
     
