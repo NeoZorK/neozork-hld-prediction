@@ -624,7 +624,7 @@ def plot_column_comparison(df: pd.DataFrame, col1: str, col2: str, title: str = 
         
         # Plot both columns
         plt.plot(x_values, values1, color="green+", label=f"📈 {col1}", marker="o")
-        plt.plot(x_values, values2, color="red+", label=f"📉 {col2}", marker="o")
+        plt.plot(x_values, values2, color="red+", label=f"📉 {col2}", marker="s")
         
         # Configure plot
         plt.title(f"📊 {title}")
