@@ -31,7 +31,6 @@ scripts/test_mcp_connection.sh
 # Data files
 *.parquet
 *.html
-mql5_feed/
 *.bak
 *.png
 *.svg
