@@ -710,15 +710,14 @@ def show_indicator_help(indicator_name: str):
         },
         'tsf': {
             'name': 'TSF (Time Series Forecast)',
-            'format': 'tsf:period,forecast_period,price_type',
+            'format': 'tsf:period,price_type',
             'parameters': [
-                'period (int): TSF period (default: 20)',
-                'forecast_period (int): Forecast period (default: 5)',
+                'period (int): TSF period (default: 14)',
                 'price_type (string): Price type for calculation - open or close (default: close)'
             ],
             'examples': [
-                'tsf:20,5,close',
-                'tsf:14,3,open'
+                'tsf:14,close',
+                'tsf:20,open'
             ]
         },
         'monte': {
@@ -1100,16 +1099,15 @@ def parse_hma_parameters(params_str: str) -> tuple[str, dict]:
 
 
 def parse_tsf_parameters(params_str: str) -> tuple[str, dict]:
-    """Parse TSF parameters: period,forecast_period,price_type"""
+    """Parse TSF parameters: period,price_type"""
     params = params_str.split(',')
-    if len(params) != 3:
+    if len(params) != 2:
         show_indicator_help('tsf')
-        raise ValueError(f"TSF requires exactly 3 parameters: period,forecast_period,price_type. Got: {params_str}")
+        raise ValueError(f"TSF requires exactly 2 parameters: period,price_type. Got: {params_str}")
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
-        forecast_period = int(float(params[1].strip()))
-        price_type = params[2].strip().lower()
+        price_type = params[1].strip().lower()
     except (ValueError, IndexError) as e:
         show_indicator_help('tsf')
         raise ValueError(f"Invalid TSF parameters: {params_str}. Error: {e}")
@@ -1119,8 +1117,7 @@ def parse_tsf_parameters(params_str: str) -> tuple[str, dict]:
         raise ValueError(f"TSF price_type must be 'open' or 'close', got: {price_type}")
     
     return 'tsf', {
-        'tsf_period': period,
-        'tsf_forecast': forecast_period,
+        'tsforecast_period': period,
         'price_type': price_type
     }
 
