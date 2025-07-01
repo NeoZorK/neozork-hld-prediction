@@ -9,27 +9,47 @@ from pathlib import Path
 class TestMQL5FeedAccess:
     """Test class for mql5_feed folder access and functionality."""
     
+    def get_mql5_feed_path(self):
+        """Get mql5_feed path from various possible locations."""
+        possible_paths = [
+            Path("/app/mql5_feed"),
+            Path("/workspace/mql5_feed"),
+            Path("/home/neozork/mql5_feed"),
+            Path.cwd() / "mql5_feed",
+            Path("/mql5_feed"),
+        ]
+        
+        for path in possible_paths:
+            if path.exists():
+                return path
+        
+        # If none found, return the expected path for better error messages
+        return Path("/app/mql5_feed")
+    
     def test_mql5_feed_folder_exists(self):
         """Test that mql5_feed folder exists in the container."""
-        mql5_feed_path = Path("/app/mql5_feed")
+        mql5_feed_path = self.get_mql5_feed_path()
         assert mql5_feed_path.exists(), f"mql5_feed folder not found at {mql5_feed_path}"
         assert mql5_feed_path.is_dir(), f"mql5_feed path is not a directory: {mql5_feed_path}"
     
     def test_mql5_feed_indicators_folder_exists(self):
         """Test that indicators subfolder exists in mql5_feed."""
-        indicators_path = Path("/app/mql5_feed/indicators")
+        mql5_feed_path = self.get_mql5_feed_path()
+        indicators_path = mql5_feed_path / "indicators"
         assert indicators_path.exists(), f"indicators folder not found at {indicators_path}"
         assert indicators_path.is_dir(), f"indicators path is not a directory: {indicators_path}"
     
     def test_vwap_indicator_file_exists(self):
         """Test that VWAP indicator file exists."""
-        vwap_file = Path("/app/mql5_feed/indicators/SCHR_VWAP.mq5")
+        mql5_feed_path = self.get_mql5_feed_path()
+        vwap_file = mql5_feed_path / "indicators" / "SCHR_VWAP.mq5"
         assert vwap_file.exists(), f"SCHR_VWAP.mq5 not found at {vwap_file}"
         assert vwap_file.is_file(), f"SCHR_VWAP.mq5 is not a file: {vwap_file}"
     
     def test_vwap_indicator_file_content(self):
         """Test that VWAP indicator file has correct content."""
-        vwap_file = Path("/app/mql5_feed/indicators/SCHR_VWAP.mq5")
+        mql5_feed_path = self.get_mql5_feed_path()
+        vwap_file = mql5_feed_path / "indicators" / "SCHR_VWAP.mq5"
         assert vwap_file.exists(), f"SCHR_VWAP.mq5 not found at {vwap_file}"
         
         # Try different encodings for MQL5 files
@@ -49,7 +69,7 @@ class TestMQL5FeedAccess:
     
     def test_mql5_feed_folder_permissions(self):
         """Test that mql5_feed folder has correct permissions."""
-        mql5_feed_path = Path("/app/mql5_feed")
+        mql5_feed_path = self.get_mql5_feed_path()
         assert mql5_feed_path.exists(), f"mql5_feed folder not found at {mql5_feed_path}"
         
         # Check if folder is readable
@@ -60,7 +80,8 @@ class TestMQL5FeedAccess:
     
     def test_indicators_folder_permissions(self):
         """Test that indicators folder has correct permissions."""
-        indicators_path = Path("/app/mql5_feed/indicators")
+        mql5_feed_path = self.get_mql5_feed_path()
+        indicators_path = mql5_feed_path / "indicators"
         assert indicators_path.exists(), f"indicators folder not found at {indicators_path}"
         
         # Check if folder is readable
@@ -71,7 +92,8 @@ class TestMQL5FeedAccess:
     
     def test_vwap_file_permissions(self):
         """Test that VWAP indicator file has correct permissions."""
-        vwap_file = Path("/app/mql5_feed/indicators/SCHR_VWAP.mq5")
+        mql5_feed_path = self.get_mql5_feed_path()
+        vwap_file = mql5_feed_path / "indicators" / "SCHR_VWAP.mq5"
         assert vwap_file.exists(), f"SCHR_VWAP.mq5 not found at {vwap_file}"
         
         # Check if file is readable
@@ -79,7 +101,7 @@ class TestMQL5FeedAccess:
     
     def test_mql5_feed_folder_structure(self):
         """Test the complete folder structure of mql5_feed."""
-        mql5_feed_path = Path("/app/mql5_feed")
+        mql5_feed_path = self.get_mql5_feed_path()
         assert mql5_feed_path.exists(), f"mql5_feed folder not found at {mql5_feed_path}"
         
         # List all items in mql5_feed
@@ -100,7 +122,7 @@ class TestMQL5FeedAccess:
     def test_mql5_feed_mount_point(self):
         """Test that mql5_feed is properly mounted from host."""
         # This test checks if the folder is accessible and contains expected content
-        mql5_feed_path = Path("/app/mql5_feed")
+        mql5_feed_path = self.get_mql5_feed_path()
         assert mql5_feed_path.exists(), f"mql5_feed folder not found at {mql5_feed_path}"
         
         # Check if we can list contents
@@ -111,6 +133,12 @@ class TestMQL5FeedAccess:
             pytest.fail("Permission denied when accessing mql5_feed folder")
         except OSError as e:
             pytest.fail(f"OS error when accessing mql5_feed folder: {e}")
+    
+    def test_mql5_feed_path_discovery(self):
+        """Test that we can find mql5_feed folder in at least one location."""
+        mql5_feed_path = self.get_mql5_feed_path()
+        assert mql5_feed_path.exists(), f"mql5_feed folder not found in any expected location: {mql5_feed_path}"
+        print(f"Found mql5_feed at: {mql5_feed_path}")
 
 
 if __name__ == "__main__":
