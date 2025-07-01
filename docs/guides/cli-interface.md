@@ -547,6 +547,8 @@ The terminal mode has been enhanced with automatic data chunking for better read
 - **Clear Navigation**: Each chunk shows the exact candle range (e.g., "Candles 1-100")
 - **Interactive**: Press Enter to navigate between chunks
 - **Rule-Specific Display**: Different visualization for each trading rule
+- **OHLC Candles**: All rules display OHLC candlestick charts as the base layer
+- **Enhanced Signals**: Large, colorful buy/sell signals positioned outside candle ranges
 
 #### Supported Rules in Terminal Mode:
 
@@ -560,22 +562,22 @@ The terminal mode has been enhanced with automatic data chunking for better read
    python run_analysis.py show csv mn1 -d term --rule AUTO
    ```
 
-3. **PV** - Shows Pressure Vector with buy/sell signals
+3. **PV** - Shows OHLC candles + buy/sell signals only (simplified display)
    ```bash
    python run_analysis.py show csv mn1 -d term --rule PV
    ```
 
-4. **SR** - Shows Support/Resistance lines
+4. **SR** - Shows OHLC candles + Support/Resistance lines
    ```bash
    python run_analysis.py show csv mn1 -d term --rule SR
    ```
 
-5. **PHLD** - Shows channels and buy/sell signals
+5. **PHLD** - Shows OHLC candles + channels and signals
    ```bash
    python run_analysis.py show csv mn1 -d term --rule PHLD
    ```
 
-6. **RSI Rules** - Shows RSI calculations with signals
+6. **RSI Rules** - Shows OHLC candles + RSI indicators with overbought/oversold levels
    ```bash
    python run_analysis.py show csv mn1 -d term --rule rsi:14,30,70,close
    python run_analysis.py show csv mn1 -d term --rule rsi_mom:14,30,70,close
