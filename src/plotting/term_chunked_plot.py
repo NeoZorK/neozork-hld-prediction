@@ -132,7 +132,12 @@ def draw_ohlc_candles(chunk, x_values):
             'Low': chunk['Low'].ffill().fillna(chunk['Close']).tolist(),
             'Close': chunk['Close'].ffill().fillna(chunk['Open']).tolist()
         }
-        plt.candlestick(x_values, ohlc_data)
+        # Добавляем явную подпись для свечей (если поддерживается)
+        try:
+            plt.candlestick(x_values, ohlc_data, label="OHLC Candles")
+        except TypeError:
+            # Если label не поддерживается, используем без него
+            plt.candlestick(x_values, ohlc_data)
     else:
         logger.print_error("DataFrame must contain OHLC columns (Open, High, Low, Close) for candlestick plot!")
 
@@ -295,7 +300,8 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
 
 def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "matrix") -> None:
     """
-    Plot PV (Pressure Vector) data in chunks with buy/sell signals.
+    Plot PV (Pressure Vector) data in chunks with channels and signals (like PHLD).
+    OHLC candles are always shown as the base layer (like in PHLD).
     
     Args:
         df (pd.DataFrame): DataFrame with PV data
@@ -303,7 +309,7 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
         style (str): Plot style
     """
     try:
-        logger.print_info("Generating PV chunked plots with buy/sell signals...")
+        logger.print_info("Generating PV chunked plots with channels and signals (like PHLD)...")
         
         # Calculate optimal chunk size
         total_rows = len(df)
@@ -340,13 +346,13 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
                 x_values = list(range(len(chunk)))
                 x_labels = [str(i) for i in x_values]
             
-            # OHLC Candlestick Chart
+            # OHLC Candlestick Chart (всегда первым слоем)
             draw_ohlc_candles(chunk, x_values)
             
             # Add PV-specific overlays
             _add_pv_overlays_to_chunk(chunk, x_values)
             
-            plt.title(f"{title} - PV with Signals (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
+            plt.title(f"{title} - PV Channels with Signals (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
             plt.xlabel("Date/Time")
             plt.ylabel("Price/Value")
             
@@ -361,7 +367,7 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
             if i < len(chunks) - 1:
                 input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
         
-        logger.print_success(f"Successfully displayed {len(chunks)} PV chunks!")
+        logger.print_success(f"Successfully displayed {len(chunks)} PV chunks with channels and signals!")
         
     except Exception as e:
         logger.print_error(f"Error generating PV chunked plots: {e}")
@@ -654,30 +660,30 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
 
 def _add_pv_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
     """
-    Add PV-specific overlays to the chunk plot.
+    Add PV-specific overlays to the chunk plot (like PHLD with channels and signals).
     
     Args:
         chunk (pd.DataFrame): DataFrame chunk
         x_values (list): X-axis values
     """
     try:
-        # Add support and resistance lines
+        # Add support and resistance lines (channels like PHLD)
         if 'PPrice1' in chunk.columns:  # Support level
             pprice1_values = chunk['PPrice1'].fillna(0).tolist()
-            plt.plot(x_values, pprice1_values, color="green+", label="Support")
+            plt.plot(x_values, pprice1_values, color="green+", label="Support Channel")
         
         if 'PPrice2' in chunk.columns:  # Resistance level
             pprice2_values = chunk['PPrice2'].fillna(0).tolist()
-            plt.plot(x_values, pprice2_values, color="red+", label="Resistance")
+            plt.plot(x_values, pprice2_values, color="red+", label="Resistance Channel")
         
         # Add trading signals
         if 'Direction' in chunk.columns:
             _add_trading_signals_to_chunk(chunk, x_values)
         
-        # Add PV indicator
+        # Add PV indicator as additional overlay
         if 'PV' in chunk.columns:
             pv_values = chunk['PV'].fillna(0).tolist()
-            plt.plot(x_values, pv_values, color="blue+", label="Pressure Vector", marker="o")
+            plt.plot(x_values, pv_values, color="yellow+", label="Pressure Vector")
         
     except Exception as e:
         logger.print_error(f"Error adding PV overlays: {e}")
