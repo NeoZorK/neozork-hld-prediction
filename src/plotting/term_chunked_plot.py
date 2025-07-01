@@ -755,23 +755,26 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
         params (Dict): RSI parameters
     """
     try:
-        # Add support and resistance lines
+        # Add support and resistance lines with yellow and blue colors
         if 'PPrice1' in chunk.columns:  # Support level
             pprice1_values = chunk['PPrice1'].fillna(0).tolist()
-            plt.plot(x_values, pprice1_values, color="green+", label="Support", marker="s")
+            plt.plot(x_values, pprice1_values, color="yellow+", label="Support", marker="s")
         
         if 'PPrice2' in chunk.columns:  # Resistance level
             pprice2_values = chunk['PPrice2'].fillna(0).tolist()
-            plt.plot(x_values, pprice2_values, color="red+", label="Resistance", marker="s")
+            plt.plot(x_values, pprice2_values, color="blue+", label="Resistance", marker="s")
         
-        # Add trading signals
-        if 'Direction' in chunk.columns:
-            _add_trading_signals_to_chunk(chunk, x_values)
-        
-        # Add RSI indicator based on rule type
+        # Add RSI as candles
         if 'RSI' in chunk.columns:
             rsi_values = chunk['RSI'].fillna(50).tolist()
-            plt.plot(x_values, rsi_values, color="yellow+", label=f"RSI ({rule_type})", marker="o")
+            # Create OHLC data for RSI candles (using RSI value for all OHLC)
+            rsi_ohlc = {
+                'Open': rsi_values,
+                'High': rsi_values,
+                'Low': rsi_values,
+                'Close': rsi_values
+            }
+            plt.candlestick(x_values, rsi_ohlc)
         
         # Add RSI momentum for momentum variant
         if rule_type == 'rsi_mom' and 'RSI_Momentum' in chunk.columns:
@@ -782,6 +785,10 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
         if rule_type == 'rsi_div' and 'Diff' in chunk.columns:
             diff_values = chunk['Diff'].fillna(0).tolist()
             plt.plot(x_values, diff_values, color="cyan+", label="Divergence Strength", marker="d")
+        
+        # Add trading signals with red/aqua colors
+        if 'Direction' in chunk.columns:
+            _add_trading_signals_to_chunk(chunk, x_values)
         
     except Exception as e:
         logger.print_error(f"Error adding RSI overlays: {e}")
@@ -812,7 +819,7 @@ def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
         # Plot buy signals
         if buy_signals:
             buy_x, buy_y = zip(*buy_signals)
-            plt.scatter(buy_x, buy_y, color="green+", label="BUY", marker="^")
+            plt.scatter(buy_x, buy_y, color="aqua+", label="BUY", marker="^")
         
         # Plot sell signals
         if sell_signals:
