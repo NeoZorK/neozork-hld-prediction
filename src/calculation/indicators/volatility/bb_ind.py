@@ -80,7 +80,7 @@ def calculate_bb_signals(price_series: pd.Series, upper_band: pd.Series, lower_b
 
 
 def apply_rule_bollinger_bands(df: pd.DataFrame, point: float, 
-                               period: int = 20, std_dev: float = 2.0,
+                               bb_period: int = 20, bb_std_dev: float = 2.0,
                                price_type: PriceType = PriceType.CLOSE):
     """
     Applies Bollinger Bands rule logic to calculate trading signals and price levels.
@@ -88,8 +88,8 @@ def apply_rule_bollinger_bands(df: pd.DataFrame, point: float,
     Args:
         df (pd.DataFrame): Input DataFrame with OHLCV data
         point (float): Instrument point size
-        period (int): Calculation period
-        std_dev (float): Standard deviation multiplier
+        bb_period (int): Calculation period
+        bb_std_dev (float): Standard deviation multiplier
         price_type (PriceType): Price type to use for calculation (OPEN or CLOSE)
     
     Returns:
@@ -106,7 +106,7 @@ def apply_rule_bollinger_bands(df: pd.DataFrame, point: float,
         price_name = "Close"
     
     # Calculate Bollinger Bands
-    upper_band, middle_band, lower_band = calculate_bollinger_bands(price_series, period, std_dev)
+    upper_band, middle_band, lower_band = calculate_bollinger_bands(price_series, bb_period, bb_std_dev)
     
     df['BB_Upper'] = upper_band
     df['BB_Middle'] = middle_band
