@@ -159,7 +159,8 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLCV Chunks", style: str 
             # Set up layout with full screen size
             if has_volume:
                 plt.subplots(2, 1)  # Price + Volume panels
-                plot_size = (200, 50)
+                # Volume chart should be 30% smaller in height
+                plot_size = (200, 35)  # Reduced from 50 to 35 (30% reduction)
             else:
                 plt.subplots(1, 1)  # Single price panel
                 plot_size = (200, 50)
