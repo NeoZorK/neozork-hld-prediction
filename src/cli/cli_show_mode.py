@@ -763,7 +763,7 @@ def _plot_auto_display(args, df, file_info, metrics):
                 from src.plotting.term_chunked_plot import plot_chunked_terminal
                 
                 # Use chunked plotting for AUTO mode
-                plot_chunked_terminal(df, 'AUTO', plot_title, style="candles")
+                plot_chunked_terminal(df, 'AUTO', plot_title, style="matrix")
                 print(f"Successfully plotted all fields from '{file_info['name']}' using chunked terminal mode.")
                 
             except ImportError as e:
@@ -918,7 +918,7 @@ def _plot_indicator_calculation_result(args, original_df, result_df, file_info, 
                     from src.plotting.term_chunked_plot import plot_chunked_terminal
                     
                     # Use chunked plotting for the specific rule
-                    plot_chunked_terminal(result_df, args.rule.upper(), plot_title, style="candles")
+                    plot_chunked_terminal(result_df, args.rule.upper(), plot_title, style="matrix")
                     print(f"Successfully plotted {args.rule} indicators from '{file_info['name']}' using chunked terminal mode.")
                     print(f"Indicator source: {calculation_type}")
                     
@@ -1412,7 +1412,7 @@ def _plot_indicator_parquet_file(args, df, file_info, metrics):
                     rule = 'RSI'
                 
                 # Use chunked plotting
-                plot_chunked_terminal(df, rule, plot_title, style="candles")
+                plot_chunked_terminal(df, rule, plot_title, style="matrix")
                 print(f"Successfully plotted indicator file '{file_info['name']}' using chunked terminal mode.")
                 
             except ImportError as e:
