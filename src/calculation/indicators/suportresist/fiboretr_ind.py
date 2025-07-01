@@ -22,13 +22,14 @@ from ....common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
 from ..base_indicator import BaseIndicator, PriceType
 
 
-def calculate_fiboretr(df: pd.DataFrame, period: int = 20) -> tuple[pd.Series, pd.Series, pd.Series]:
+def calculate_fiboretr(df: pd.DataFrame, period: int = 20, fib_levels: list = None) -> tuple[pd.Series, pd.Series, pd.Series]:
     """
     Calculates Fibonacci Retracement levels.
     
     Args:
         df (pd.DataFrame): DataFrame with OHLCV data
         period (int): Calculation period (default: 20)
+        fib_levels (list): Fibonacci levels (default: [0.236, 0.382, 0.618])
     
     Returns:
         tuple: (fib_236, fib_382, fib_618)
@@ -43,10 +44,18 @@ def calculate_fiboretr(df: pd.DataFrame, period: int = 20) -> tuple[pd.Series, p
     high_prices = df['High']
     low_prices = df['Low']
     
+    # Use default Fibonacci ratios if none provided
+    if fib_levels is None:
+        fib_levels = [0.236, 0.382, 0.618]
+    
+    # Ensure we have at least 3 levels
+    while len(fib_levels) < 3:
+        fib_levels.append(0.618)
+    
     # Fibonacci ratios
-    fib_236 = 0.236
-    fib_382 = 0.382
-    fib_618 = 0.618
+    fib_236 = fib_levels[0]
+    fib_382 = fib_levels[1] if len(fib_levels) > 1 else 0.382
+    fib_618 = fib_levels[2] if len(fib_levels) > 2 else 0.618
     
     # Calculate swing high and low over the period
     swing_high = high_prices.rolling(window=period).max()
@@ -96,14 +105,14 @@ def calculate_fiboretr_signals(price_series: pd.Series, fib_236: pd.Series, fib_
 
 
 def apply_rule_fiboretr(df: pd.DataFrame, point: float, 
-                        fiboretr_period: int = 20, price_type: PriceType = PriceType.CLOSE):
+                        fib_levels: list = None, price_type: PriceType = PriceType.CLOSE):
     """
     Applies Fibonacci Retracement rule logic to calculate trading signals and price levels.
     
     Args:
         df (pd.DataFrame): Input DataFrame with OHLCV data
         point (float): Instrument point size
-        fiboretr_period (int): Fibonacci Retracement period
+        fib_levels (list): Fibonacci levels (default: [0.236, 0.382, 0.618])
         price_type (PriceType): Price type to use for calculation (OPEN or CLOSE)
     
     Returns:
@@ -119,8 +128,12 @@ def apply_rule_fiboretr(df: pd.DataFrame, point: float,
         price_series = df['Close']
         price_name = "Close"
     
+    # Use default Fibonacci levels if none provided
+    if fib_levels is None:
+        fib_levels = [0.236, 0.382, 0.618]
+    
     # Calculate Fibonacci Retracement levels
-    fib_236, fib_382, fib_618 = calculate_fiboretr(df, fiboretr_period)
+    fib_236, fib_382, fib_618 = calculate_fiboretr(df, 20, fib_levels)  # Use fixed period for now
     
     df['FibRetr_236'] = fib_236
     df['FibRetr_382'] = fib_382
