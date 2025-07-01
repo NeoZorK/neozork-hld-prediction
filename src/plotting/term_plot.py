@@ -238,17 +238,17 @@ def _add_phld_indicators_term(df: pd.DataFrame, x_values: list) -> None:
     # Add HL (High-Low range in points)
     if 'HL' in df.columns:
         hl_values = df['HL'].fillna(0).tolist()
-        plt.plot(x_values, hl_values, color="green+", label="HL Range", marker="o")
+        plt.plot(x_values, hl_values, color="green+", label="HL Range", marker="s")
 
     # Add Pressure
     if 'Pressure' in df.columns:
         pressure_values = df['Pressure'].fillna(0).tolist()
-        plt.plot(x_values, pressure_values, color="blue+", label="Pressure", marker="o")
+        plt.plot(x_values, pressure_values, color="blue+", label="Pressure", marker="s")
 
     # Add Pressure Vector (PV)
     if 'PV' in df.columns:
         pv_values = df['PV'].fillna(0).tolist()
-        plt.plot(x_values, pv_values, color="yellow+", label="PV", marker="o")
+        plt.plot(x_values, pv_values, color="yellow+", label="PV", marker="s")
 
 
 def _add_pv_indicators_term(df: pd.DataFrame, x_values: list) -> None:
@@ -256,11 +256,11 @@ def _add_pv_indicators_term(df: pd.DataFrame, x_values: list) -> None:
 
     if 'PV' in df.columns:
         pv_values = df['PV'].fillna(0).tolist()
-        plt.plot(x_values, pv_values, color="yellow+", label="Pressure Vector", marker="o")
+        plt.plot(x_values, pv_values, color="yellow+", label="Pressure Vector", marker="s")
 
     if 'Pressure' in df.columns:
         pressure_values = df['Pressure'].fillna(0).tolist()
-        plt.plot(x_values, pressure_values, color="blue+", label="Pressure Force", marker="o")
+        plt.plot(x_values, pressure_values, color="blue+", label="Pressure Force", marker="s")
 
 
 def _add_auto_indicators_term(df: pd.DataFrame, x_values: list) -> None:
@@ -272,8 +272,8 @@ def _add_auto_indicators_term(df: pd.DataFrame, x_values: list) -> None:
         "green+", "green+", "green+", "green+"
     ]
     
-    # Use circle markers for all plots (more beautiful than squares)
-    marker = "o"  # Use circle marker for better visual appeal
+    # Use bold lines with random colors for all plots (cool visual style)
+    marker = ""  # No markers, use bold lines instead
 
     # Standard columns to skip
     skip_columns = {
