@@ -736,35 +736,41 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
 def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
     """
     Add trading signals to the chunk plot.
-    
-    Args:
-        chunk (pd.DataFrame): DataFrame chunk
-        x_values (list): X-axis values
+    BUY: большой желтый треугольник ниже Low
+    SELL: большой малиновый треугольник выше High
     """
     try:
         if 'Direction' not in chunk.columns:
             return
-        
-        # Get buy and sell signals
-        buy_signals = []
-        sell_signals = []
-        
+        # Получаем buy/sell сигналы
+        buy_x, buy_y, sell_x, sell_y = [], [], [], []
         for i, direction in enumerate(chunk['Direction']):
+            # BUY: ниже Low
             if direction == BUY:
-                buy_signals.append((x_values[i], chunk['Close'].iloc[i] if 'Close' in chunk.columns else 0))
+                buy_x.append(x_values[i])
+                if 'Low' in chunk.columns:
+                    buy_y.append(chunk['Low'].iloc[i] * 0.99)
+                else:
+                    buy_y.append(chunk['Close'].iloc[i] * 0.99 if 'Close' in chunk.columns else 0)
+            # SELL: выше High
             elif direction == SELL:
-                sell_signals.append((x_values[i], chunk['Close'].iloc[i] if 'Close' in chunk.columns else 0))
-        
-        # Plot buy signals
-        if buy_signals:
-            buy_x, buy_y = zip(*buy_signals)
-            plt.scatter(buy_x, buy_y, color="aqua+", label="BUY", marker="^")
-        
-        # Plot sell signals
-        if sell_signals:
-            sell_x, sell_y = zip(*sell_signals)
-            plt.scatter(sell_x, sell_y, color="red+", label="SELL", marker="v")
-        
+                sell_x.append(x_values[i])
+                if 'High' in chunk.columns:
+                    sell_y.append(chunk['High'].iloc[i] * 1.01)
+                else:
+                    sell_y.append(chunk['Close'].iloc[i] * 1.01 if 'Close' in chunk.columns else 0)
+        # Рисуем крупные маркеры (если поддерживается Unicode)
+        try:
+            if buy_x:
+                plt.scatter(buy_x, buy_y, color="yellow+", label="BUY", marker="▲")
+            if sell_x:
+                plt.scatter(sell_x, sell_y, color="magenta+", label="SELL", marker="▼")
+        except Exception:
+            # Fallback: дублируем обычные маркеры
+            if buy_x:
+                plt.scatter(buy_x, buy_y, color="yellow+", label="BUY", marker="^^")
+            if sell_x:
+                plt.scatter(sell_x, sell_y, color="magenta+", label="SELL", marker="vv")
     except Exception as e:
         logger.print_error(f"Error adding trading signals: {e}")
 
