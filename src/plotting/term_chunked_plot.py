@@ -635,7 +635,7 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
             
             # Only plot if we have valid data
             if any(v is not None for v in values):
-                plt.plot(x_values, values, color="green+", label=field, marker="o")
+                plt.plot(x_values, values, color="green+", label=field, marker="s")
             
             plt.title(f"{title} - {start_date} to {end_date}")
             plt.xlabel("Date/Time")
