@@ -119,22 +119,21 @@ def parse_rsi_rule(rule_str: str) -> Tuple[str, Dict[str, Any]]:
         }
 
 
-def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLCV Chunks", style: str = "matrix") -> None:
+def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str = "matrix") -> None:
     """
-    Plot OHLCV data in chunks with separate volume charts.
+    Plot OHLC data in chunks (no volume charts).
     
     Args:
-        df (pd.DataFrame): DataFrame with OHLCV data
+        df (pd.DataFrame): DataFrame with OHLC data
         title (str): Base title for plots
         style (str): Plot style
     """
     try:
-        logger.print_info("Generating OHLCV chunked plots...")
+        logger.print_info("Generating OHLC chunked plots...")
         
-        # Validate OHLCV data
+        # Validate OHLC data
         ohlc_columns = ['Open', 'High', 'Low', 'Close']
         has_ohlc = all(col in df.columns for col in ohlc_columns)
-        has_volume = 'Volume' in df.columns and not df['Volume'].isna().all()
         
         if not has_ohlc:
             logger.print_error("DataFrame must contain OHLC columns")
@@ -156,14 +155,9 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLCV Chunks", style: str 
             plt.clear_data()
             plt.clear_figure()
             
-            # Set up layout with full screen size
-            if has_volume:
-                plt.subplots(2, 1)  # Price + Volume panels
-                # Volume chart should be 30% smaller in height
-                plot_size = (200, 35)  # Reduced from 50 to 35 (30% reduction)
-            else:
-                plt.subplots(1, 1)  # Single price panel
-                plot_size = (200, 50)
+            # Set up layout with full screen size - NO VOLUME CHARTS
+            plt.subplots(1, 1)  # Single price panel only
+            plot_size = (200, 50)
             
             plt.plot_size(*plot_size)
             plt.theme(style)
@@ -179,9 +173,6 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLCV Chunks", style: str 
                 x_labels = [str(i) for i in x_values]
             
             # OHLC Candlestick Chart
-            if has_volume:
-                plt.subplot(1, 1)  # Top panel
-            
             ohlc_data = {
                 'Open': chunk['Open'].ffill().fillna(chunk['Close']).tolist(),
                 'High': chunk['High'].ffill().fillna(chunk['Close']).tolist(),
@@ -190,34 +181,18 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLCV Chunks", style: str 
             }
             
             plt.candlestick(x_values, ohlc_data)
+            
             # Get start and end dates for this chunk
             start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
             end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
             
             plt.title(f"{title} - OHLC Chart (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
-            if not has_volume:
-                plt.xlabel("Date/Time")
-                # Set x-axis ticks to show dates
-                if len(x_values) > 0:
-                    step = max(1, len(x_values) // 10)  # Show ~10 date labels
-                    plt.xticks(x_values[::step], x_labels[::step])
+            plt.xlabel("Date/Time")
+            # Set x-axis ticks to show dates
+            if len(x_values) > 0:
+                step = max(1, len(x_values) // 10)  # Show ~10 date labels
+                plt.xticks(x_values[::step], x_labels[::step])
             plt.ylabel("Price")
-            
-            # Volume Chart
-            if has_volume:
-                plt.subplot(2, 1)  # Bottom panel
-                
-                volume_series = pd.to_numeric(chunk['Volume'], errors='coerce').replace([np.inf, -np.inf], np.nan).fillna(0)
-                volume_values = volume_series.astype(int).tolist()
-                
-                plt.bar(x_values, volume_values, color="cyan+", label="Volume")
-                plt.title(f"Volume Chart (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
-                plt.xlabel("Date/Time")
-                # Set x-axis ticks to show dates
-                if len(x_values) > 0:
-                    step = max(1, len(x_values) // 10)  # Show ~10 date labels
-                    plt.xticks(x_values[::step], x_labels[::step])
-                plt.ylabel("Volume")
             
             plt.show()
             
@@ -225,7 +200,7 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLCV Chunks", style: str 
             if i < len(chunks) - 1:
                 input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
         
-        logger.print_success(f"Successfully displayed {len(chunks)} OHLCV chunks!")
+        logger.print_success(f"Successfully displayed {len(chunks)} OHLC chunks!")
         
     except Exception as e:
         logger.print_error(f"Error generating OHLCV chunked plots: {e}")
