@@ -62,6 +62,7 @@ COPY src/ ./src/
 COPY scripts/ ./scripts/
 COPY tests/ ./tests/
 COPY uv_setup/ ./uv_setup/
+COPY mql5_feed/ ./mql5_feed/
 COPY docker-entrypoint.sh ./
 
 # Make entrypoint script executable
