@@ -134,7 +134,7 @@ def calculate_sar_signals(price_series: pd.Series, sar_values: pd.Series) -> pd.
 
 
 def apply_rule_sar(df: pd.DataFrame, point: float, 
-                   acceleration: float = 0.02, maximum: float = 0.2,
+                   sar_acceleration: float = 0.02, sar_maximum: float = 0.2,
                    price_type: PriceType = PriceType.CLOSE):
     """
     Applies SAR rule logic to calculate trading signals and price levels.
@@ -142,8 +142,8 @@ def apply_rule_sar(df: pd.DataFrame, point: float,
     Args:
         df (pd.DataFrame): Input DataFrame with OHLCV data
         point (float): Instrument point size
-        acceleration (float): Acceleration factor
-        maximum (float): Maximum acceleration
+        sar_acceleration (float): Acceleration factor
+        sar_maximum (float): Maximum acceleration
         price_type (PriceType): Price type to use for calculation (OPEN or CLOSE)
     
     Returns:
@@ -160,7 +160,7 @@ def apply_rule_sar(df: pd.DataFrame, point: float,
         price_name = "Close"
     
     # Calculate SAR
-    df['SAR'] = calculate_sar(df, acceleration, maximum)
+    df['SAR'] = calculate_sar(df, sar_acceleration, sar_maximum)
     
     # Add price type info to column name
     df['SAR_Price_Type'] = price_name
