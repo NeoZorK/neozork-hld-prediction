@@ -41,7 +41,14 @@ class TestMQL5FeedNativeAccess:
         
         assert vwap_file.exists(), f"SCHR_VWAP.mq5 not found at {vwap_file}"
         
-        content = vwap_file.read_text(encoding='utf-8')
+        # Try different encodings for MQL5 files
+        try:
+            content = vwap_file.read_text(encoding='utf-8')
+        except UnicodeDecodeError:
+            try:
+                content = vwap_file.read_text(encoding='utf-16')
+            except UnicodeDecodeError:
+                content = vwap_file.read_text(encoding='cp1251')
         
         # Check for essential MQL5 elements
         assert "#property indicator_chart_window" in content, "Missing chart window property"
