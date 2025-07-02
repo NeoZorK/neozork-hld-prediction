@@ -157,6 +157,8 @@ python scripts/check_uv_mode.py --verbose
 - [Testing Documentation](testing/index.md) - Comprehensive testing guide
 - [UV-Only Mode Tests](testing/docker/uv-only-mode-tests.md) - Docker UV testing details
 - [CLI Testing](testing/cli/comprehensive-testing.md) - CLI testing suite documentation
+- [CI/CD Testing](development/ci-cd.md#testing-github-actions-integration-with-act) - GitHub Actions workflow testing with Act
+- [MCP Server Testing](reference/mcp-servers/README.md#cicd-testing-with-act) - MCP server integration testing
 
 ## 📊 Project Structure
 

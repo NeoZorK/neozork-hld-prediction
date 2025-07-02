@@ -51,6 +51,26 @@ python tests/cli/comprehensive/run_all_cli_tests.py
 uv run pytest tests -n auto
 ```
 
+### CI/CD Testing with Act
+```bash
+# Install act tool
+brew install act  # macOS
+# or
+curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash  # Linux
+
+# Test GitHub Actions workflows (dry run - no Docker downloads)
+act -n
+
+# Test specific workflow
+act -n -W .github/workflows/docker-build.yml
+
+# Test MCP server integration
+act -n -W .github/workflows/mcp-integration.yml
+
+# List all available workflows
+act -l
+```
+
 ### Test Categories
 - **UV-Specific Tests**: Package manager validation
 - **Environment Tests**: Docker vs local detection
@@ -58,6 +78,8 @@ uv run pytest tests -n auto
 - **Performance Tests**: UV vs pip comparison
 - **CLI Tests**: Command-line interface validation
 - **Native Container Tests**: Full functionality validation
+- **CI/CD Tests**: GitHub Actions workflow validation
+- **MCP Server Tests**: Model Context Protocol integration testing
 
 ## Test Coverage
 
