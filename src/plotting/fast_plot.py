@@ -172,13 +172,15 @@ def plot_indicator_results_fast(
         figures = [main_fig]
 
         # Determine if we should show separate charts based on rule
-        # Rules that should show separate charts: OHLCV, AUTO, PHLD, PV, SR
-        # All other rules (like RSI, MACD, etc.) should not show separate charts
+        # Rules that should show separate charts: AUTO, PHLD, PV, SR (but NOT OHLCV)
+        # All other rules (like RSI, MACD, OHLCV, etc.) should not show separate charts
         rule_str = display_rule.upper() if isinstance(display_rule, str) else str(display_rule).upper()
-        show_separate_charts = rule_str in ['OHLCV', 'AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS']
+        show_separate_charts = any(key in rule_str for key in ['AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS'])
+        logger.print_debug(f"Fast plot: Rule string: '{rule_str}', show_separate_charts: {show_separate_charts}")
 
         if show_separate_charts:
             # Volume subplot - only if data exists
+            logger.print_debug(f"Fast plot: Checking Volume column - exists: {'Volume' in display_df.columns}, not all null: {not display_df['Volume'].isna().all() if 'Volume' in display_df.columns else False}")
             if 'Volume' in display_df.columns and not display_df['Volume'].isna().all():
                 volume_fig = figure(
                     width=width,
@@ -232,11 +234,14 @@ def plot_indicator_results_fast(
                 figures.append(hl_fig)
 
             # Pressure subplot - only if data exists (check both 'Pressure' and 'pressure')
+            logger.print_debug(f"Fast plot: Checking pressure columns - Pressure exists: {'Pressure' in display_df.columns}, pressure exists: {'pressure' in display_df.columns}")
             pressure_col = None
             if 'Pressure' in display_df.columns and not display_df['Pressure'].isna().all():
                 pressure_col = 'Pressure'
+                logger.print_debug("Fast plot: Using 'Pressure' column for pressure subplot")
             elif 'pressure' in display_df.columns and not display_df['pressure'].isna().all():
                 pressure_col = 'pressure'
+                logger.print_debug("Fast plot: Using 'pressure' column for pressure subplot")
             
             if pressure_col:
                 pressure_fig = figure(
@@ -254,11 +259,14 @@ def plot_indicator_results_fast(
                 figures.append(pressure_fig)
 
             # PV subplot - only if data exists (check both 'PV' and 'pressure_vector')
+            logger.print_debug(f"Fast plot: Checking PV columns - PV exists: {'PV' in display_df.columns}, pressure_vector exists: {'pressure_vector' in display_df.columns}")
             pv_col = None
             if 'PV' in display_df.columns and not display_df['PV'].isna().all():
                 pv_col = 'PV'
+                logger.print_debug("Fast plot: Using 'PV' column for PV subplot")
             elif 'pressure_vector' in display_df.columns and not display_df['pressure_vector'].isna().all():
                 pv_col = 'pressure_vector'
+                logger.print_debug("Fast plot: Using 'pressure_vector' column for PV subplot")
             
             if pv_col:
                 pv_fig = figure(
@@ -276,8 +284,10 @@ def plot_indicator_results_fast(
                 figures.append(pv_fig)
 
             # Predicted High/Low subplots for AUTO mode
-            if rule_str == 'AUTO':
+            if 'AUTO' in rule_str:
+                logger.print_debug(f"Fast plot: AUTO mode detected, checking predicted columns")
                 # Predicted Low subplot
+                logger.print_debug(f"Fast plot: Checking predicted_low - exists: {'predicted_low' in display_df.columns}, not all null: {not display_df['predicted_low'].isna().all() if 'predicted_low' in display_df.columns else False}")
                 if 'predicted_low' in display_df.columns and not display_df['predicted_low'].isna().all():
                     pred_low_fig = figure(
                         width=width,
@@ -294,6 +304,7 @@ def plot_indicator_results_fast(
                     figures.append(pred_low_fig)
 
                 # Predicted High subplot
+                logger.print_debug(f"Fast plot: Checking predicted_high - exists: {'predicted_high' in display_df.columns}, not all null: {not display_df['predicted_high'].isna().all() if 'predicted_high' in display_df.columns else False}")
                 if 'predicted_high' in display_df.columns and not display_df['predicted_high'].isna().all():
                     pred_high_fig = figure(
                         width=width,
@@ -310,6 +321,10 @@ def plot_indicator_results_fast(
                     figures.append(pred_high_fig)
 
         # Layout: main chart + only those subplots for which data exists
+        logger.print_debug(f"Fast plot: Creating layout with {len(figures)} figures")
+        for i, fig in enumerate(figures):
+            logger.print_debug(f"Fast plot: Figure {i}: {fig.title.text if hasattr(fig.title, 'text') else 'Main chart'}")
+        
         layout = column(*figures)
 
         # Save and open
