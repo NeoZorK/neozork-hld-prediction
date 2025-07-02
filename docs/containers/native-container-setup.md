@@ -594,7 +594,7 @@ Update documentation when:
 
 ### Documentation Files to Update
 
-1. **`scripts/native-container/README.md`** - Script-specific documentation
+1. **`docs/containers/native-container/README.md`** - Script-specific documentation
 2. **`docs/deployment/native-container-setup.md`** - This setup guide
 3. **`README.md`** - Main project README
 4. **`docs/deployment/native-vs-docker-comparison.md`** - Performance comparison

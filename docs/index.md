@@ -71,6 +71,11 @@ python run_analysis.py demo --rule PHLD
 - [Code Style](development/code-style.md) - Coding standards and conventions
 - [Debugging](development/debugging.md) - Debugging tools and techniques
 
+### Testing
+- [Testing Documentation](testing/index.md) - Comprehensive testing documentation
+- [UV-Only Mode Tests](testing/docker/uv-only-mode-tests.md) - Docker UV testing
+- [CLI Testing](testing/cli/comprehensive-testing.md) - Command-line interface testing
+
 ### Deployment
 - [Native Container Setup](containers/native-container-setup.md) - Native Apple Silicon container setup
 - [Docker Setup](containers/docker-setup.md) - Containerized deployment
@@ -133,9 +138,25 @@ pytest tests/docker/test_uv_simple.py -v
 # Run comprehensive tests
 pytest tests/docker/test_uv_only_mode.py -v
 
+# Run CLI tests
+python tests/cli/comprehensive/run_all_cli_tests.py
+
 # Check UV mode
 python scripts/check_uv_mode.py --verbose
 ```
+
+### Test Categories
+- **UV-Specific Tests**: Package manager validation
+- **Environment Tests**: Docker vs local detection
+- **Integration Tests**: End-to-end functionality
+- **Performance Tests**: UV vs pip comparison
+- **CLI Tests**: Command-line interface validation
+- **Native Container Tests**: Full functionality validation
+
+### Testing Documentation
+- [Testing Documentation](testing/index.md) - Comprehensive testing guide
+- [UV-Only Mode Tests](testing/docker/uv-only-mode-tests.md) - Docker UV testing details
+- [CLI Testing](testing/cli/comprehensive-testing.md) - CLI testing suite documentation
 
 ## 📊 Project Structure
 
@@ -151,9 +172,12 @@ neozork-hld-prediction/
 │   ├── docker/            # Docker-specific tests
 │   └── ...                # Other test categories
 ├── docs/                  # Documentation
-│   ├── containers/        # **NEW**: Container documentation
+│   ├── containers/        # Container documentation
 │   │   ├── native-container/  # Native container docs
 │   │   └── index.md       # Container overview
+│   ├── testing/           # Testing documentation
+│   │   ├── docker/        # Docker testing docs
+│   │   └── cli/           # CLI testing docs
 │   └── ...                # Other documentation
 ├── scripts/               # **REORGANIZED**: Utility scripts
 │   ├── mcp/               # MCP server management scripts
