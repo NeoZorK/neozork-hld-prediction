@@ -68,16 +68,36 @@ def plot_indicator_results_fastest(
         logger.print_error(f"Missing required columns: {missing_columns}")
         return None
 
-    # Create subplots
-    fig = make_subplots(
-        rows=3, cols=2,
-        subplot_titles=('Price Chart', '', 'Volume', '', 'Indicators', ''),
-        vertical_spacing=0.05,
-        horizontal_spacing=0.02,
-        specs=[[{"secondary_y": False}, {"secondary_y": False}],
-               [{"secondary_y": False}, {"secondary_y": False}],
-               [{"secondary_y": False}, {"secondary_y": False}]]
-    )
+    # Determine if we should show separate charts based on rule
+    # Rules that should show separate charts: OHLCV, AUTO, PHLD, PV, SR
+    # All other rules (like RSI, MACD, etc.) should not show separate charts
+    rule_str = rule.name.upper() if hasattr(rule, 'name') else str(rule).upper()
+    show_separate_charts = rule_str in ['OHLCV', 'AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS']
+
+    if show_separate_charts:
+        # Create subplots with separate charts
+        if rule_str == 'AUTO':
+            subplot_titles = ('Price Chart', '', 'Volume', '', 'Indicators', 'Predicted High/Low')
+        else:
+            subplot_titles = ('Price Chart', '', 'Volume', '', 'Indicators', '')
+        
+        fig = make_subplots(
+            rows=3, cols=2,
+            subplot_titles=subplot_titles,
+            vertical_spacing=0.05,
+            horizontal_spacing=0.02,
+            specs=[[{"secondary_y": False}, {"secondary_y": False}],
+                   [{"secondary_y": False}, {"secondary_y": False}],
+                   [{"secondary_y": False}, {"secondary_y": False}]]
+        )
+    else:
+        # Create subplots with only main chart
+        fig = make_subplots(
+            rows=1, cols=1,
+            subplot_titles=('Price Chart',),
+            vertical_spacing=0.05,
+            horizontal_spacing=0.02
+        )
 
     # Add candlestick chart
     fig.add_trace(
@@ -92,25 +112,26 @@ def plot_indicator_results_fastest(
         row=1, col=1
     )
 
-    # Add predicted high/low lines if they exist
-    for col in ['predicted_high', 'predicted_low']:
-        if col in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df['index'],
-                    y=display_df[col],
-                    mode='lines',
-                    name=col.replace('_', ' ').title(),
-                    line=dict(
-                        color='blue' if col == 'predicted_high' else 'red',
-                        width=1.5
-                    )
-                ),
-                row=1, col=1
-            )
+    # Add predicted high/low lines if they exist (only for non-AUTO rules)
+    if rule_str != 'AUTO':
+        for col in ['predicted_high', 'predicted_low']:
+            if col in display_df.columns:
+                fig.add_trace(
+                    go.Scatter(
+                        x=display_df['index'],
+                        y=display_df[col],
+                        mode='lines',
+                        name=col.replace('_', ' ').title(),
+                        line=dict(
+                            color='blue' if col == 'predicted_high' else 'red',
+                            width=1.5
+                        )
+                    ),
+                    row=1, col=1
+                )
 
-    # Add volume
-    if 'volume' in display_df.columns:
+    # Add volume (only if separate charts are enabled)
+    if show_separate_charts and 'volume' in display_df.columns:
         colors = ['green' if val else 'red' for val in display_df['direction']]
         fig.add_trace(
             go.Bar(
@@ -123,25 +144,56 @@ def plot_indicator_results_fastest(
             row=2, col=1
         )
 
-    # Add other indicators (HL, PV, Pressure) to the third panel
-    indicator_colors = {
-        'HL': 'purple',
-        'PV': 'orange',
-        'Pressure': 'teal'
-    }
+    # Add other indicators (HL, PV, Pressure) to the third panel (only if separate charts are enabled)
+    if show_separate_charts:
+        indicator_colors = {
+            'HL': 'purple',
+            'PV': 'orange',
+            'Pressure': 'teal',
+            'pressure': 'teal',
+            'pressure_vector': 'orange'
+        }
 
-    for indicator, color in indicator_colors.items():
-        if indicator in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df['index'],
-                    y=display_df[indicator],
-                    mode='lines',
-                    name=indicator,
-                    line=dict(color=color, width=1.5)
-                ),
-                row=3, col=1
-            )
+        for indicator, color in indicator_colors.items():
+            if indicator in display_df.columns:
+                fig.add_trace(
+                    go.Scatter(
+                        x=display_df['index'],
+                        y=display_df[indicator],
+                        mode='lines',
+                        name=indicator,
+                        line=dict(color=color, width=1.5)
+                    ),
+                    row=3, col=1
+                )
+
+        # Add predicted high/low as separate panels for AUTO mode
+        if rule_str == 'AUTO':
+            # Predicted Low subplot
+            if 'predicted_low' in display_df.columns:
+                fig.add_trace(
+                    go.Scatter(
+                        x=display_df['index'],
+                        y=display_df['predicted_low'],
+                        mode='lines',
+                        name='Predicted Low',
+                        line=dict(color='green', width=2)
+                    ),
+                    row=3, col=2
+                )
+
+            # Predicted High subplot
+            if 'predicted_high' in display_df.columns:
+                fig.add_trace(
+                    go.Scatter(
+                        x=display_df['index'],
+                        y=display_df['predicted_high'],
+                        mode='lines',
+                        name='Predicted High',
+                        line=dict(color='red', width=2)
+                    ),
+                    row=3, col=2
+                )
 
     # Add rule annotation
     # Check if we have original rule with parameters for display
@@ -178,26 +230,39 @@ def plot_indicator_results_fastest(
     max_price = y_stats.loc['max'].max() * 1.002
     fig.update_yaxes(title_text="Price", row=1, col=1, tickformat=".5f", range=[min_price, max_price])
 
-    if 'volume' in display_df.columns:
-        vol_max = display_df['volume'].max() * 1.1
-        fig.update_yaxes(title_text="Volume", row=2, col=1, range=[0, vol_max])
+    if show_separate_charts:
+        if 'volume' in display_df.columns:
+            vol_max = display_df['volume'].max() * 1.1
+            fig.update_yaxes(title_text="Volume", row=2, col=1, range=[0, vol_max])
 
-    # Set proper time scale for all charts
-    x_min = display_df['index'].min()
-    x_max = display_df['index'].max()
-    for i in range(1, 4):
+        # Set proper time scale for all charts
+        x_min = display_df['index'].min()
+        x_max = display_df['index'].max()
+        for i in range(1, 4):
+            fig.update_xaxes(
+                row=i,
+                col=1,
+                range=[x_min, x_max],
+                type='date',
+                tickformat='%Y-%m-%d %H:%M',
+                tickangle=45
+            )
+
+        # Show time labels only on the bottom chart
+        for i in range(1, 3):
+            fig.update_xaxes(row=i, col=1, showticklabels=False)
+    else:
+        # Set proper time scale for single chart
+        x_min = display_df['index'].min()
+        x_max = display_df['index'].max()
         fig.update_xaxes(
-            row=i,
+            row=1,
             col=1,
             range=[x_min, x_max],
             type='date',
             tickformat='%Y-%m-%d %H:%M',
             tickangle=45
         )
-
-    # Show time labels only on the bottom chart
-    for i in range(1, 3):
-        fig.update_xaxes(row=i, col=1, showticklabels=False)
 
     # Save and open
     pio.write_html(fig, output_path, auto_open=False)
