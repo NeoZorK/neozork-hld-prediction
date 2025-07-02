@@ -171,90 +171,143 @@ def plot_indicator_results_fast(
         # Create list of figures for layout
         figures = [main_fig]
 
-        # Volume subplot - only if data exists
-        if 'Volume' in display_df.columns and not display_df['Volume'].isna().all():
-            volume_fig = figure(
-                width=width,
-                height=int(height * 0.15),
-                x_axis_type='datetime',
-                title='Volume',
-                tools="pan,wheel_zoom,box_zoom,reset",
-                active_scroll='wheel_zoom'
-            )
-            
-            # Color volume bars based on price direction
-            volume_colors = ['green' if close >= open else 'red' 
-                           for close, open in zip(display_df['Close'], display_df['Open'])]
-            display_df['volume_color'] = volume_colors
-            
-            volume_source = ColumnDataSource(display_df)
-            volume_fig.vbar(
-                'index', 0.5, 0, 'Volume',
-                source=volume_source,
-                fill_color='volume_color',
-                line_color='volume_color',
-                alpha=0.7
-            )
-            
-            hover_volume = HoverTool(
-                tooltips=[
-                    ("Date", "@index{%F %H:%M}"),
-                    ("Volume", "@Volume{0}")
-                ],
-                formatters={'@index': 'datetime'},
-                mode='vline'
-            )
-            volume_fig.add_tools(hover_volume)
-            volume_fig.x_range = main_fig.x_range
-            figures.append(volume_fig)
+        # Determine if we should show separate charts based on rule
+        # Rules that should show separate charts: OHLCV, AUTO, PHLD, PV, SR
+        # All other rules (like RSI, MACD, etc.) should not show separate charts
+        rule_str = display_rule.upper() if isinstance(display_rule, str) else str(display_rule).upper()
+        show_separate_charts = rule_str in ['OHLCV', 'AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS']
 
-        # HL subplot - only if data exists
-        if 'HL' in display_df.columns and not display_df['HL'].isna().all():
-            hl_fig = figure(
-                width=width,
-                height=int(height * 0.15),
-                x_axis_type='datetime',
-                title='HL',
-                tools="pan,wheel_zoom,box_zoom,reset",
-                active_scroll='wheel_zoom'
-            )
-            hl_fig.line('index', 'HL', source=source, line_color='purple', line_width=2, legend_label='HL')
-            hover_hl = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("HL", "@HL{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
-            hl_fig.add_tools(hover_hl)
-            hl_fig.x_range = main_fig.x_range
-            figures.append(hl_fig)
+        if show_separate_charts:
+            # Volume subplot - only if data exists
+            if 'Volume' in display_df.columns and not display_df['Volume'].isna().all():
+                volume_fig = figure(
+                    width=width,
+                    height=int(height * 0.15),
+                    x_axis_type='datetime',
+                    title='Volume',
+                    tools="pan,wheel_zoom,box_zoom,reset",
+                    active_scroll='wheel_zoom'
+                )
+                
+                # Color volume bars based on price direction
+                volume_colors = ['green' if close >= open else 'red' 
+                               for close, open in zip(display_df['Close'], display_df['Open'])]
+                display_df['volume_color'] = volume_colors
+                
+                volume_source = ColumnDataSource(display_df)
+                volume_fig.vbar(
+                    'index', 0.5, 0, 'Volume',
+                    source=volume_source,
+                    fill_color='volume_color',
+                    line_color='volume_color',
+                    alpha=0.7
+                )
+                
+                hover_volume = HoverTool(
+                    tooltips=[
+                        ("Date", "@index{%F %H:%M}"),
+                        ("Volume", "@Volume{0}")
+                    ],
+                    formatters={'@index': 'datetime'},
+                    mode='vline'
+                )
+                volume_fig.add_tools(hover_volume)
+                volume_fig.x_range = main_fig.x_range
+                figures.append(volume_fig)
 
-        # Pressure subplot - only if data exists
-        if 'Pressure' in display_df.columns and not display_df['Pressure'].isna().all():
-            pressure_fig = figure(
-                width=width,
-                height=int(height * 0.15),
-                x_axis_type='datetime',
-                title='Pressure',
-                tools="pan,wheel_zoom,box_zoom,reset",
-                active_scroll='wheel_zoom'
-            )
-            pressure_fig.line('index', 'Pressure', source=source, line_color='teal', line_width=2, legend_label='Pressure')
-            hover_pressure = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("Pressure", "@Pressure{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
-            pressure_fig.add_tools(hover_pressure)
-            pressure_fig.x_range = main_fig.x_range
-            figures.append(pressure_fig)
+            # HL subplot - only if data exists
+            if 'HL' in display_df.columns and not display_df['HL'].isna().all():
+                hl_fig = figure(
+                    width=width,
+                    height=int(height * 0.15),
+                    x_axis_type='datetime',
+                    title='HL',
+                    tools="pan,wheel_zoom,box_zoom,reset",
+                    active_scroll='wheel_zoom'
+                )
+                hl_fig.line('index', 'HL', source=source, line_color='purple', line_width=2, legend_label='HL')
+                hover_hl = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("HL", "@HL{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
+                hl_fig.add_tools(hover_hl)
+                hl_fig.x_range = main_fig.x_range
+                figures.append(hl_fig)
 
-        # PV subplot - only if data exists
-        if 'PV' in display_df.columns and not display_df['PV'].isna().all():
-            pv_fig = figure(
-                width=width,
-                height=int(height * 0.15),
-                x_axis_type='datetime',
-                title='Pressure Vector (PV)',
-                tools="pan,wheel_zoom,box_zoom,reset",
-                active_scroll='wheel_zoom'
-            )
-            pv_fig.line('index', 'PV', source=source, line_color='orange', line_width=2, legend_label='PV')
-            hover_pv = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("PV", "@PV{0.3f}")], formatters={'@index': 'datetime'}, mode='vline')
-            pv_fig.add_tools(hover_pv)
-            pv_fig.x_range = main_fig.x_range
-            figures.append(pv_fig)
+            # Pressure subplot - only if data exists (check both 'Pressure' and 'pressure')
+            pressure_col = None
+            if 'Pressure' in display_df.columns and not display_df['Pressure'].isna().all():
+                pressure_col = 'Pressure'
+            elif 'pressure' in display_df.columns and not display_df['pressure'].isna().all():
+                pressure_col = 'pressure'
+            
+            if pressure_col:
+                pressure_fig = figure(
+                    width=width,
+                    height=int(height * 0.15),
+                    x_axis_type='datetime',
+                    title='Pressure',
+                    tools="pan,wheel_zoom,box_zoom,reset",
+                    active_scroll='wheel_zoom'
+                )
+                pressure_fig.line('index', pressure_col, source=source, line_color='teal', line_width=2, legend_label='Pressure')
+                hover_pressure = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("Pressure", f"@{pressure_col}{{0.3f}}")], formatters={'@index': 'datetime'}, mode='vline')
+                pressure_fig.add_tools(hover_pressure)
+                pressure_fig.x_range = main_fig.x_range
+                figures.append(pressure_fig)
+
+            # PV subplot - only if data exists (check both 'PV' and 'pressure_vector')
+            pv_col = None
+            if 'PV' in display_df.columns and not display_df['PV'].isna().all():
+                pv_col = 'PV'
+            elif 'pressure_vector' in display_df.columns and not display_df['pressure_vector'].isna().all():
+                pv_col = 'pressure_vector'
+            
+            if pv_col:
+                pv_fig = figure(
+                    width=width,
+                    height=int(height * 0.15),
+                    x_axis_type='datetime',
+                    title='Pressure Vector (PV)',
+                    tools="pan,wheel_zoom,box_zoom,reset",
+                    active_scroll='wheel_zoom'
+                )
+                pv_fig.line('index', pv_col, source=source, line_color='orange', line_width=2, legend_label='PV')
+                hover_pv = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("PV", f"@{pv_col}{{0.3f}}")], formatters={'@index': 'datetime'}, mode='vline')
+                pv_fig.add_tools(hover_pv)
+                pv_fig.x_range = main_fig.x_range
+                figures.append(pv_fig)
+
+            # Predicted High/Low subplots for AUTO mode
+            if rule_str == 'AUTO':
+                # Predicted Low subplot
+                if 'predicted_low' in display_df.columns and not display_df['predicted_low'].isna().all():
+                    pred_low_fig = figure(
+                        width=width,
+                        height=int(height * 0.15),
+                        x_axis_type='datetime',
+                        title='Predicted Low',
+                        tools="pan,wheel_zoom,box_zoom,reset",
+                        active_scroll='wheel_zoom'
+                    )
+                    pred_low_fig.line('index', 'predicted_low', source=source, line_color='green', line_width=2, legend_label='Predicted Low')
+                    hover_pred_low = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("Predicted Low", "@predicted_low{0.5f}")], formatters={'@index': 'datetime'}, mode='vline')
+                    pred_low_fig.add_tools(hover_pred_low)
+                    pred_low_fig.x_range = main_fig.x_range
+                    figures.append(pred_low_fig)
+
+                # Predicted High subplot
+                if 'predicted_high' in display_df.columns and not display_df['predicted_high'].isna().all():
+                    pred_high_fig = figure(
+                        width=width,
+                        height=int(height * 0.15),
+                        x_axis_type='datetime',
+                        title='Predicted High',
+                        tools="pan,wheel_zoom,box_zoom,reset",
+                        active_scroll='wheel_zoom'
+                    )
+                    pred_high_fig.line('index', 'predicted_high', source=source, line_color='red', line_width=2, legend_label='Predicted High')
+                    hover_pred_high = HoverTool(tooltips=[("Date", "@index{%F %H:%M}"), ("Predicted High", "@predicted_high{0.5f}")], formatters={'@index': 'datetime'}, mode='vline')
+                    pred_high_fig.add_tools(hover_pred_high)
+                    pred_high_fig.x_range = main_fig.x_range
+                    figures.append(pred_high_fig)
 
         # Layout: main chart + only those subplots for which data exists
         layout = column(*figures)
