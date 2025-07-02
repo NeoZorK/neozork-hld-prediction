@@ -143,6 +143,32 @@ python scripts/check_uv_mode.py --verbose
 uv run pytest tests/native-container/test_native_container_full_functionality.py -v
 ```
 
+### CI/CD Testing with Act
+Test GitHub Actions workflows and MCP server integration locally without downloading Docker images:
+
+```bash
+# Install act tool
+brew install act  # macOS
+# or
+curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash  # Linux
+
+# Test all workflows (dry run - no Docker downloads)
+act -n
+
+# Test specific workflows
+act -n -W .github/workflows/docker-build.yml
+act -n -W .github/workflows/mcp-integration.yml
+
+# List available workflows
+act -l
+```
+
+**Benefits:**
+- **No Docker Downloads**: Prevents downloading large Docker images
+- **Fast Validation**: Quickly validates workflow syntax and structure
+- **MCP Server Testing**: Verify MCP server communication protocols
+- **Resource Efficient**: Uses minimal system resources
+
 ### Test Categories
 - **UV-Specific Tests**: Package manager validation
 - **Environment Tests**: Docker vs local detection
