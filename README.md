@@ -155,7 +155,7 @@ uv run pytest tests/native-container/test_native_container_full_functionality.py
 ### Quick Links
 - **[Getting Started](docs/getting-started/)** - Setup and installation
 - **[UV-Only Mode](docs/deployment/uv-only-mode.md)** - UV package management
-- **[Native Container](scripts/native-container/README.md)** - Apple Silicon container guide
+- **[Native Container](docs/containers/native-container/README.md)** - Apple Silicon container guide
 - **[Examples](docs/examples/)** - Practical usage examples
 - **[Guides](docs/guides/)** - Step-by-step tutorials
 - **[Reference](docs/reference/)** - Technical documentation
@@ -426,7 +426,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Detailed Guides
 - **[Native Container Setup](docs/deployment/native-container-setup.md)** - Complete setup guide
 - **[Native vs Docker Comparison](docs/deployment/native-vs-docker-comparison.md)** - Performance comparison
-- **[Interactive Script Guide](scripts/native-container/README.md)** - Interactive script documentation
+- **[Interactive Script Guide](docs/containers/native-container/README.md)** - Interactive script documentation
 - **[Automatic Dependencies](docs/deployment/automatic-dependencies.md)** - Automatic dependency installation
 
 ### Testing Native Container
@@ -542,7 +542,7 @@ uv run pytest tests -n auto
 
 - **Features Guide**: [Native Container Features](docs/deployment/native-container-features.md)
 - **Setup Guide**: [Native Container Setup](docs/deployment/native-container-setup.md)
-- **README**: [Native Container README](scripts/native-container/README.md)
+- **README**: [Native Container README](docs/containers/native-container/README.md)
 
 ### 🔧 Requirements
 
