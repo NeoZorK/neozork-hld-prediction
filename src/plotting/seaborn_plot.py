@@ -40,15 +40,34 @@ def plot_indicator_results_seaborn(
         except Exception:
             logger.print_error("Failed to convert index to DatetimeIndex.")
 
-    # --- Determine number of subplots needed ---
-    indicators_to_plot = {
-        'Volume': 'Volume',
-        'PV': 'PV',
-        'HL': 'HL (Points)',
-        'Pressure': 'Pressure'
-    }
-    # Check which indicator columns exist and are not entirely null
-    valid_indicator_cols = [col for col in indicators_to_plot if col in df.columns and not df[col].isnull().all()]
+    # Determine if we should show separate charts based on rule
+    # Rules that should show separate charts: OHLCV, AUTO, PHLD, PV, SR
+    # All other rules (like RSI, MACD, etc.) should not show separate charts
+    rule_str = selected_rule.name.upper() if hasattr(selected_rule, 'name') else str(selected_rule).upper()
+    show_separate_charts = rule_str in ['OHLCV', 'AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS']
+
+    if show_separate_charts:
+        # --- Determine number of subplots needed ---
+        indicators_to_plot = {
+            'Volume': 'Volume',
+            'PV': 'PV',
+            'HL': 'HL (Points)',
+            'Pressure': 'Pressure',
+            'pressure': 'Pressure',
+            'pressure_vector': 'Pressure Vector'
+        }
+        
+        # Add predicted high/low for AUTO mode
+        if rule_str == 'AUTO':
+            indicators_to_plot.update({
+                'predicted_high': 'Predicted High',
+                'predicted_low': 'Predicted Low'
+            })
+        # Check which indicator columns exist and are not entirely null
+        valid_indicator_cols = [col for col in indicators_to_plot if col in df.columns and not df[col].isnull().all()]
+    else:
+        # For other rules, only show the main price chart
+        valid_indicator_cols = []
     logger.print_debug(f"Seaborn: Found valid indicator columns for subplots: {valid_indicator_cols}")
     num_indicator_subplots = len(valid_indicator_cols)
     total_rows = 1 + num_indicator_subplots  # Dynamic total rows
@@ -133,7 +152,11 @@ def plot_indicator_results_seaborn(
         else:
             line_color = 'orange' if indicator_col == 'PV' else \
                          'brown' if indicator_col == 'HL' else \
-                         'dodgerblue' if indicator_col == 'Pressure' else 'purple'
+                         'dodgerblue' if indicator_col == 'Pressure' else \
+                         'dodgerblue' if indicator_col == 'pressure' else \
+                         'orange' if indicator_col == 'pressure_vector' else \
+                         'red' if indicator_col == 'predicted_high' else \
+                         'green' if indicator_col == 'predicted_low' else 'purple'
             ax_panel.plot(idx, indicator_data, color=line_color, label=indicator_name)
             
             if indicator_col in ['PV', 'Pressure']:
