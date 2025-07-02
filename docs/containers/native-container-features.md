@@ -353,7 +353,7 @@ LOG_LEVEL=INFO
 ### Related Documentation
 
 - **Setup Guide**: `docs/deployment/native-container-setup.md`
-- **README**: `scripts/native-container/README.md`
+- **README**: `docs/containers/native-container/README.md`
 - **Comparison**: `docs/deployment/native-vs-docker-comparison.md`
 - **Troubleshooting**: `docs/deployment/native-container-troubleshooting.md`
 
