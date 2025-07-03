@@ -122,6 +122,14 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
             price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             rsi_values = calculate_rsi(price_series, period)
+            
+            # Check if RSI column already exists and remove it
+            if 'RSI' in result_df.columns:
+                result_df = result_df.drop(columns=['RSI'])
+            if 'rsi' in result_df.columns:
+                result_df = result_df.drop(columns=['rsi'])
+            
+            # Add RSI column with consistent naming
             result_df['rsi'] = rsi_values
             result_df['rsi_oversold'] = oversold
             result_df['rsi_overbought'] = overbought
