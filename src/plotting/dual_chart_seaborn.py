@@ -225,9 +225,34 @@ def plot_dual_chart_seaborn(
                         ax=ax2, color='cyan', linewidth=3, label='TSF')
     
     elif indicator_name == 'monte':
-        if 'monte_expected_return' in display_df.columns:
-            sns.lineplot(data=display_df, x=display_df.index, y='monte_expected_return', 
-                        ax=ax2, color='blue', linewidth=3, label='Expected Return')
+        # Add Monte Carlo forecast line (main line)
+        if 'montecarlo' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='montecarlo', 
+                        ax=ax2, color='blue', linewidth=3, label='Monte Carlo Forecast')
+        
+        # Add Monte Carlo signal line
+        if 'montecarlo_signal' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='montecarlo_signal', 
+                        ax=ax2, color='red', linewidth=2, label='Signal Line')
+        
+        # Add Monte Carlo histogram
+        if 'montecarlo_histogram' in display_df.columns:
+            # Color histogram bars based on values
+            colors = ['green' if val >= 0 else 'red' for val in display_df['montecarlo_histogram']]
+            ax2.bar(display_df.index, display_df['montecarlo_histogram'], 
+                   color=colors, alpha=0.7, label='Histogram', width=0.8)
+        
+        # Add confidence bands
+        if 'montecarlo_upper' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='montecarlo_upper', 
+                        ax=ax2, color='lightblue', linewidth=1, linestyle='--', label='Upper Confidence')
+        
+        if 'montecarlo_lower' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='montecarlo_lower', 
+                        ax=ax2, color='lightblue', linewidth=1, linestyle='--', label='Lower Confidence')
+        
+        # Add zero line for histogram
+        ax2.axhline(y=0, color='gray', linestyle='--', linewidth=1, label='Zero Line')
     
     elif indicator_name == 'kelly':
         if 'kelly' in display_df.columns:

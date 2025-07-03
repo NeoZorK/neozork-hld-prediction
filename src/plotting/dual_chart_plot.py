@@ -289,8 +289,23 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             # Select price series (use Close for Monte Carlo)
             price_series = df['Close']
             
+            # Calculate Monte Carlo components
             monte_values = calculate_montecarlo(price_series, simulations, period)
-            result_df['monte_forecast'] = monte_values
+            result_df['montecarlo'] = monte_values
+            
+            # Calculate signal line (EMA of forecast)
+            signal_line = monte_values.ewm(span=9, adjust=False).mean()
+            result_df['montecarlo_signal'] = signal_line
+            
+            # Calculate histogram
+            histogram = monte_values - signal_line
+            result_df['montecarlo_histogram'] = histogram
+            
+            # Calculate confidence bands
+            forecast_changes = monte_values.pct_change().rolling(window=20, min_periods=5).std()
+            confidence_interval = 1.96 * forecast_changes * monte_values
+            result_df['montecarlo_upper'] = monte_values + confidence_interval
+            result_df['montecarlo_lower'] = monte_values - confidence_interval
             
         elif indicator_name == 'kelly':
             period = int(params[0]) if len(params) > 0 else 20

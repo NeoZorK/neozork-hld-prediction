@@ -384,14 +384,70 @@ def plot_dual_chart_fast(
             )
     
     elif indicator_name == 'monte':
-        if 'monte_expected_return' in display_df.columns:
+        # Add Monte Carlo forecast line (main line)
+        if 'montecarlo' in display_df.columns:
             indicator_fig.line(
-                'index', 'monte_expected_return',
+                'index', 'montecarlo',
                 source=source,
                 line_color='blue',
                 line_width=3,
-                legend_label='Expected Return'
+                legend_label='Monte Carlo Forecast'
             )
+        
+        # Add Monte Carlo signal line
+        if 'montecarlo_signal' in display_df.columns:
+            indicator_fig.line(
+                'index', 'montecarlo_signal',
+                source=source,
+                line_color='red',
+                line_width=2,
+                legend_label='Signal Line'
+            )
+        
+        # Add Monte Carlo histogram
+        if 'montecarlo_histogram' in display_df.columns:
+            # Color histogram bars based on values
+            colors = ['green' if val >= 0 else 'red' for val in display_df['montecarlo_histogram']]
+            display_df['histogram_color'] = colors
+            hist_source = ColumnDataSource(display_df)
+            
+            indicator_fig.vbar(
+                'index', 0.5, 'montecarlo_histogram',
+                source=hist_source,
+                color='histogram_color',
+                alpha=0.7,
+                legend_label='Histogram'
+            )
+        
+        # Add confidence bands
+        if 'montecarlo_upper' in display_df.columns:
+            indicator_fig.line(
+                'index', 'montecarlo_upper',
+                source=source,
+                line_color='lightblue',
+                line_width=1,
+                line_dash='dashed',
+                legend_label='Upper Confidence'
+            )
+        
+        if 'montecarlo_lower' in display_df.columns:
+            indicator_fig.line(
+                'index', 'montecarlo_lower',
+                source=source,
+                line_color='lightblue',
+                line_width=1,
+                line_dash='dashed',
+                legend_label='Lower Confidence'
+            )
+        
+        # Add zero line for histogram
+        indicator_fig.line(
+            'index', [0] * len(display_df),
+            line_color='gray',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Zero Line'
+        )
     
     elif indicator_name == 'kelly':
         if 'kelly' in display_df.columns:
