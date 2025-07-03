@@ -41,6 +41,7 @@ from ..calculation.indicators.volume.obv_ind import calculate_obv
 from ..calculation.indicators.volatility.stdev_ind import calculate_stdev
 from ..calculation.indicators.trend.adx_ind import calculate_adx
 from ..calculation.indicators.trend.sar_ind import calculate_sar
+from ..calculation.indicators.sentiment.putcallratio_ind import calculate_putcallratio
 
 
 def is_dual_chart_rule(rule: str) -> bool:
@@ -83,7 +84,7 @@ def get_supported_indicators() -> set:
     """
     return {
         'rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'ema', 'bb', 'atr',
-        'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'donchain',
+        'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'donchain',
         'fibo', 'obv', 'stdev', 'adx', 'sar'
     }
 
@@ -328,6 +329,33 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['kelly_threshold_10'] = 0.1  # 10% threshold
             result_df['kelly_threshold_25'] = 0.25  # 25% threshold (max Kelly)
             
+        elif indicator_name == 'putcallratio':
+            # Фильтруем пустые параметры
+            params = [p.strip() for p in params if p.strip()]
+            period = int(params[0]) if len(params) > 0 else 20
+            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            volume_series = df['Volume']
+            
+            # Calculate Put/Call Ratio sentiment
+            putcall_values = calculate_putcallratio(price_series, volume_series, period)
+            result_df['putcallratio'] = putcall_values
+            
+            # Calculate signal line (EMA of Put/Call Ratio)
+            signal_line = putcall_values.ewm(span=9, adjust=False).mean()
+            result_df['putcallratio_signal'] = signal_line
+            
+            # Calculate histogram
+            histogram = putcall_values - signal_line
+            result_df['putcallratio_histogram'] = histogram
+            
+            # Add threshold levels (sentiment scale 0-100, 50 is neutral)
+            result_df['putcallratio_bullish'] = 60  # Bullish threshold
+            result_df['putcallratio_bearish'] = 40  # Bearish threshold
+            result_df['putcallratio_neutral'] = 50  # Neutral level
+            
         elif indicator_name == 'donchain':
             period = int(params[0]) if len(params) > 0 else 20
             
@@ -469,6 +497,7 @@ def create_dual_chart_layout(mode: str, rule: str) -> Dict[str, Any]:
         'tsf': 'Time Series Forecast',
         'monte': 'Monte Carlo',
         'kelly': 'Kelly Criterion',
+        'putcallratio': 'Put/Call Ratio',
         'donchain': 'Donchian Channels',
         'fibo': 'Fibonacci Retracements',
         'obv': 'OBV',
