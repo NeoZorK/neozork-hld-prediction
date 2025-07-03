@@ -1138,8 +1138,8 @@ def parse_monte_parameters(params_str: str) -> tuple[str, dict]:
         raise ValueError(f"Invalid Monte Carlo parameters: {params_str}. Error: {e}")
     
     return 'monte', {
-        'monte_simulations': simulations,
-        'monte_period': period
+        'simulations': simulations,
+        'period': period
     }
 
 
@@ -1318,7 +1318,7 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_hma_parameters(params_str)
         elif indicator_name == 'tsf':
             return parse_tsf_parameters(params_str)
-        elif indicator_name == 'monte':
+        elif indicator_name in ['monte', 'montecarlo', 'mc']:
             return parse_monte_parameters(params_str)
         elif indicator_name == 'kelly':
             return parse_kelly_parameters(params_str)
