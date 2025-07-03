@@ -39,7 +39,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     
     if ':' in rule_input_str:
         indicator_name, indicator_params = parse_indicator_parameters(rule_input_str)
-        # Update the rule name to the parsed indicator name
+        # Update the rule name to the parsed indicator name (всегда в верхнем регистре)
         rule_input_str = indicator_name.upper()
     
     # Store original rule with parameters for display purposes
@@ -76,7 +76,9 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         # Sentiment indicators
         'FG': 'FearGreed',
         'COT': 'COT',
-        'PCR': 'PutCallRatio',
+            'PCR': 'PutCallRatio',
+    'PUTCALLRATIO': 'PutCallRatio',
+    'putcallratio': 'PutCallRatio',
         # Support/Resistance indicators
         'DONCHAIN': 'Donchain',
         'FIBO': 'FiboRetr',
@@ -93,7 +95,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     try:
         selected_rule = TradingRule[rule_name_str]
     except KeyError:
-        available_rules = list(TradingRule.__members__.keys()) + list(rule_aliases_map.keys())
+        available_rules = list(TradingRule.__members__.keys()) + list(rule_aliases_map.keys()) + ['putcallratio']
         raise ValueError(f"Invalid rule name or alias '{args.rule}'. Use one of {available_rules}")
 
     # --- Column Check & Rename for Calculation ---

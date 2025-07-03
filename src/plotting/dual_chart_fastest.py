@@ -980,6 +980,91 @@ def plot_dual_chart_fastest(
                 row=2, col=1
             )
     
+    elif indicator_name == 'putcallratio':
+        # Add Put/Call Ratio main line
+        if 'putcallratio' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['putcallratio'],
+                    mode='lines',
+                    name='Put/Call Ratio',
+                    line=dict(color='purple', width=3),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add Put/Call Ratio signal line
+        if 'putcallratio_signal' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['putcallratio_signal'],
+                    mode='lines',
+                    name='Signal Line',
+                    line=dict(color='orange', width=2),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add Put/Call Ratio histogram
+        if 'putcallratio_histogram' in display_df.columns:
+            # Color histogram bars based on values
+            colors = ['green' if val >= 0 else 'red' for val in display_df['putcallratio_histogram']]
+            fig.add_trace(
+                go.Bar(
+                    x=display_df.index,
+                    y=display_df['putcallratio_histogram'],
+                    name='Histogram',
+                    marker_color=colors,
+                    opacity=0.7,
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add threshold levels
+        if 'putcallratio_bullish' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['putcallratio_bullish'],
+                    mode='lines',
+                    name='Bullish Threshold',
+                    line=dict(color='green', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        if 'putcallratio_bearish' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['putcallratio_bearish'],
+                    mode='lines',
+                    name='Bearish Threshold',
+                    line=dict(color='red', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        if 'putcallratio_neutral' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['putcallratio_neutral'],
+                    mode='lines',
+                    name='Neutral Level',
+                    line=dict(color='gray', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+    
     # Update layout
     fig.update_layout(
         title=dict(

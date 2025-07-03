@@ -400,7 +400,7 @@ def parse_arguments():
         if ':' in args.rule:
             # Parameterized rule - validate the indicator name part
             indicator_name = args.rule.split(':', 1)[0].lower()
-            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar']
+            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar']
             if indicator_name not in valid_indicators:
                 parser.error(f"Invalid indicator name '{indicator_name}' in parameterized rule '{args.rule}'. Valid indicators: {', '.join(valid_indicators)}")
         else:
@@ -809,6 +809,18 @@ def show_indicator_help(indicator_name: str):
             'examples': [
                 'sar:0.02,0.2',
                 'sar:0.01,0.1'
+            ]
+        },
+        'putcallratio': {
+            'name': 'Put/Call Ratio',
+            'format': 'putcallratio:period,price_type',
+            'parameters': [
+                'period (int): Put/Call Ratio period (default: 20)',
+                'price_type (string): Price type for calculation - open or close (default: close)'
+            ],
+            'examples': [
+                'putcallratio:20,close',
+                'putcallratio:14,open'
             ]
         }
     }
@@ -1268,6 +1280,30 @@ def parse_sar_parameters(params_str: str) -> tuple[str, dict]:
     }
 
 
+def parse_putcallratio_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse Put/Call Ratio parameters: period,price_type"""
+    params = params_str.split(',')
+    if len(params) != 2:
+        show_indicator_help('putcallratio')
+        raise ValueError(f"Put/Call Ratio requires exactly 2 parameters: period,price_type. Got: {params_str}")
+    
+    try:
+        period = int(float(params[0].strip()))  # Handle float values
+        price_type = params[1].strip().lower()
+    except (ValueError, IndexError) as e:
+        show_indicator_help('putcallratio')
+        raise ValueError(f"Invalid Put/Call Ratio parameters: {params_str}. Error: {e}")
+    
+    if price_type not in ['open', 'close']:
+        show_indicator_help('putcallratio')
+        raise ValueError(f"Put/Call Ratio price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'putcallratio', {
+        'putcallratio_period': period,
+        'price_type': price_type
+    }
+
+
 def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
     """
     Parse indicator rule string in format 'indicator:param1,param2,param3,param4'.
@@ -1336,6 +1372,8 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_sar_parameters(params_str)
         elif indicator_name == 'stochoscillator':
             return parse_stoch_parameters(params_str)
+        elif indicator_name == 'putcallratio':
+            return parse_putcallratio_parameters(params_str)
         else:
             # Unknown indicator, show help and raise error
             show_indicator_help(indicator_name)
