@@ -420,15 +420,26 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['donchain_lower'] = lower
             
         elif indicator_name == 'fibo':
-            period = int(params[0]) if len(params) > 0 else 20
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            # Handle fibo parameters - they are float levels, not int period
+            if len(params) > 0 and params[0].lower() == 'all':
+                # Use all standard Fibonacci levels
+                fib_levels = [0.236, 0.382, 0.5, 0.618, 0.786]
+            else:
+                # Parse custom Fibonacci levels
+                try:
+                    fib_levels = [float(p.strip()) for p in params]
+                except (ValueError, IndexError):
+                    # Use default levels if parsing fails
+                    fib_levels = [0.236, 0.382, 0.618]
             
-            # Calculate Fibonacci Retracement (returns tuple: fib_236, fib_382, fib_618)
-            fib_236, fib_382, fib_618 = calculate_fiboretr(df, period)
-            result_df['fibo_236'] = fib_236
-            result_df['fibo_382'] = fib_382
-            result_df['fibo_618'] = fib_618
-                
+            # Calculate Fibonacci Retracement with custom levels
+            period = 20  # Default period for swing calculation
+            fib_levels_dict = calculate_fiboretr(df, period, fib_levels)
+            
+            # Add all Fibonacci levels to result DataFrame
+            for level_name, level_series in fib_levels_dict.items():
+                result_df[f'fibo_{level_name[4:]}'] = level_series  # Remove 'fib_' prefix
+            
         elif indicator_name == 'obv':
             obv_values = calculate_obv(df)
             result_df['obv'] = obv_values
