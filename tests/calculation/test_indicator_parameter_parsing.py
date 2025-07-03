@@ -178,6 +178,14 @@ class TestIndicatorParameterParsing:
             'fib_levels': [0.236, 0.382, 0.5, 0.618, 0.786]
         }
     
+    def test_parse_fibo_parameters_all(self):
+        """Test Fibonacci Retracements parameter parsing with 'all'."""
+        indicator_name, params = parse_fibo_parameters("all")
+        assert indicator_name == "fibo"
+        assert params == {
+            'fib_levels': [0.236, 0.382, 0.5, 0.618, 0.786]
+        }
+    
     def test_parse_obv_parameters_valid(self):
         """Test valid OBV parameter parsing."""
         indicator_name, params = parse_obv_parameters("")
