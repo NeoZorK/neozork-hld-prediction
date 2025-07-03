@@ -71,6 +71,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         'TSF': 'TSForecast',
         # Probability indicators
         'MC': 'MonteCarlo',
+        'MONTE': 'MonteCarlo',
         'KELLY': 'Kelly',
         # Sentiment indicators
         'FG': 'FearGreed',

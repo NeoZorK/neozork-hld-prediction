@@ -288,9 +288,9 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         return rule_func(df, point=point, tsforecast_period=tsforecast_period, price_type=price_type_enum)
     elif selected_rule == TradingRule.MonteCarlo:
         # Extract Monte Carlo-specific parameters
-        monte_simulations = kwargs.get('monte_simulations', 1000)
-        monte_period = kwargs.get('monte_period', 252)
-        return rule_func(df, point=point, monte_simulations=monte_simulations, monte_period=monte_period)
+        simulations = kwargs.get('simulations', 1000)
+        period = kwargs.get('period', 252)
+        return rule_func(df, point=point, simulations=simulations, period=period)
     elif selected_rule == TradingRule.Kelly:
         # Extract Kelly-specific parameters
         kelly_period = kwargs.get('kelly_period', 20)
