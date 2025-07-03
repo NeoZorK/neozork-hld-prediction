@@ -1230,17 +1230,23 @@ def parse_donchain_parameters(params_str: str) -> tuple[str, dict]:
 
 
 def parse_fibo_parameters(params_str: str) -> tuple[str, dict]:
-    """Parse Fibonacci Retracements parameters: levels"""
+    """Parse Fibonacci Retracements parameters: levels or 'all'"""
     params = params_str.split(',')
     if len(params) < 1:
         show_indicator_help('fibo')
-        raise ValueError(f"Fibonacci Retracements requires at least 1 parameter: levels. Got: {params_str}")
+        raise ValueError(f"Fibonacci Retracements requires at least 1 parameter: levels or 'all'. Got: {params_str}")
     
-    try:
-        levels = [float(p.strip()) for p in params]
-    except (ValueError, IndexError) as e:
-        show_indicator_help('fibo')
-        raise ValueError(f"Invalid Fibonacci Retracements parameters: {params_str}. Error: {e}")
+    # Check if first parameter is 'all'
+    if params[0].strip().lower() == 'all':
+        # Use all standard Fibonacci levels
+        levels = [0.236, 0.382, 0.5, 0.618, 0.786]
+    else:
+        # Parse custom Fibonacci levels
+        try:
+            levels = [float(p.strip()) for p in params]
+        except (ValueError, IndexError) as e:
+            show_indicator_help('fibo')
+            raise ValueError(f"Invalid Fibonacci Retracements parameters: {params_str}. Error: {e}")
     
     return 'fibo', {
         'fib_levels': levels

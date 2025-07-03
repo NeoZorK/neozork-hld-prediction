@@ -19,19 +19,20 @@ class TestFiboretrIndicator:
 
     def test_fiboretr_calculation_basic(self):
         result = self.fiboretr(self.sample_data)
-        assert isinstance(result, tuple)
-        assert len(result) == 3
-        for level in result:
-            assert isinstance(level, pd.Series)
-            assert len(level) == len(self.sample_data)
+        assert isinstance(result, dict)
+        assert len(result) >= 3  # At least 3 default levels
+        for level_name, level_series in result.items():
+            assert isinstance(level_series, pd.Series)
+            assert len(level_series) == len(self.sample_data)
+            assert level_name.startswith('fib_')
 
     def test_fiboretr_with_custom_period(self):
         result = self.fiboretr(self.sample_data, period=10)
-        assert isinstance(result, tuple)
-        assert len(result) == 3
-        for level in result:
-            assert level.iloc[:9].isna().all()
-            assert not level.iloc[9:].isna().all()
+        assert isinstance(result, dict)
+        assert len(result) >= 3
+        for level_name, level_series in result.items():
+            assert level_series.iloc[:9].isna().all()
+            assert not level_series.iloc[9:].isna().all()
 
     def test_fiboretr_with_invalid_period(self):
         with pytest.raises(ValueError, match="Fibonacci Retracement period must be positive"):
@@ -42,31 +43,31 @@ class TestFiboretrIndicator:
     def test_fiboretr_empty_dataframe(self):
         empty_df = pd.DataFrame({'High': [], 'Low': [], 'Close': []})
         result = self.fiboretr(empty_df)
-        assert isinstance(result, tuple)
-        assert len(result) == 3
-        for level in result:
-            assert isinstance(level, pd.Series)
-            assert len(level) == 0
+        assert isinstance(result, dict)
+        assert len(result) >= 3
+        for level_name, level_series in result.items():
+            assert isinstance(level_series, pd.Series)
+            assert len(level_series) == 0
 
     def test_fiboretr_insufficient_data(self):
         small_df = self.sample_data.head(5)
         result = self.fiboretr(small_df, period=20)
-        for level in result:
-            assert level.isna().all()
+        for level_name, level_series in result.items():
+            assert level_series.isna().all()
 
     def test_fiboretr_parameter_validation(self):
         result = self.fiboretr(self.sample_data, period=20)
-        assert isinstance(result, tuple)
+        assert isinstance(result, dict)
         result = self.fiboretr(self.sample_data, period=int(20.5))
-        assert isinstance(result, tuple)
+        assert isinstance(result, dict)
 
     def test_fiboretr_with_nan_values(self):
         df_with_nan = self.sample_data.copy()
         df_with_nan.loc[5, 'High'] = np.nan
         result = self.fiboretr(df_with_nan)
-        for level in result:
-            assert isinstance(level, pd.Series)
-            assert len(level) == len(df_with_nan)
+        for level_name, level_series in result.items():
+            assert isinstance(level_series, pd.Series)
+            assert len(level_series) == len(df_with_nan)
 
     def test_fiboretr_performance(self):
         large_df = pd.DataFrame({
@@ -79,8 +80,17 @@ class TestFiboretrIndicator:
         result = self.fiboretr(large_df)
         end_time = time.time()
         assert end_time - start_time < 5.0
-        for level in result:
-            assert isinstance(level, pd.Series)
+        for level_name, level_series in result.items():
+            assert isinstance(level_series, pd.Series)
+
+    def test_fiboretr_with_custom_levels(self):
+        custom_levels = [0.236, 0.382, 0.5, 0.618, 0.786]
+        result = self.fiboretr(self.sample_data, fib_levels=custom_levels)
+        assert isinstance(result, dict)
+        assert len(result) == 5
+        expected_keys = ['fib_236', 'fib_382', 'fib_500', 'fib_618', 'fib_786']
+        for key in expected_keys:
+            assert key in result
 
     def test_fiboretr_apply_rule(self):
         result = apply_rule_fiboretr(self.sample_data, point=0.01)
