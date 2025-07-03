@@ -707,6 +707,29 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     
     logger.print_info(f"Final plotting mode selected: '{draw_mode}'")
 
+    # Check for dual chart mode (parameterized indicators)
+    original_rule_with_params = getattr(args, 'original_rule_with_params', None)
+    if original_rule_with_params and ':' in original_rule_with_params:
+        try:
+            from ..plotting.dual_chart_plot import is_dual_chart_rule, plot_dual_chart_results
+            if is_dual_chart_rule(original_rule_with_params):
+                logger.print_info(f"Dual chart mode detected for rule: {original_rule_with_params}")
+                # Use dual chart plotting
+                plot_dual_chart_results(
+                    result_df,
+                    original_rule_with_params,
+                    plot_title,
+                    mode=draw_mode,
+                    output_path=f"results/plots/dual_chart_{draw_mode}.html" if draw_mode in ['fastest', 'fast'] else None,
+                    width=1800,
+                    height=1100
+                )
+                return
+        except ImportError as e:
+            logger.print_warning(f"Could not import dual chart plotting: {e}. Falling back to standard plotting.")
+        except Exception as e:
+            logger.print_error(f"Error in dual chart plotting: {e}. Falling back to standard plotting.")
+
     try:
         if draw_mode in ['mplfinance', 'mpl']:
             generate_mplfinance_plot(result_df, selected_rule, plot_title)

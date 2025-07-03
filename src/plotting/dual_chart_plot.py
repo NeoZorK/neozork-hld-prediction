@@ -33,9 +33,9 @@ from ..calculation.indicators.volume.vwap_ind import calculate_vwap
 from ..calculation.indicators.suportresist.pivot_ind import calculate_pivot_points
 from ..calculation.indicators.predictive.hma_ind import calculate_hma
 from ..calculation.indicators.predictive.tsforecast_ind import calculate_tsforecast
-from ..calculation.indicators.probability.montecarlo_ind import calculate_monte_carlo
+from ..calculation.indicators.probability.montecarlo_ind import calculate_montecarlo
 from ..calculation.indicators.probability.kelly_ind import calculate_kelly
-from ..calculation.indicators.suportresist.donchain_ind import calculate_donchian_channels
+from ..calculation.indicators.suportresist.donchain_ind import calculate_donchain
 from ..calculation.indicators.suportresist.fiboretr_ind import calculate_fibonacci_retracements
 from ..calculation.indicators.volume.obv_ind import calculate_obv
 from ..calculation.indicators.volatility.stdev_ind import calculate_standard_deviation
@@ -132,16 +132,23 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             signal_period = int(params[2]) if len(params) > 2 else 9
             price_type = 'open' if len(params) > 3 and params[3].lower() == 'open' else 'close'
             
-            macd_result = calculate_macd(df, fast_period, slow_period, signal_period, price_type)
-            result_df['macd'] = macd_result['macd']
-            result_df['macd_signal'] = macd_result['signal']
-            result_df['macd_histogram'] = macd_result['histogram']
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            
+            # Calculate MACD (returns tuple: macd_line, signal_line, histogram)
+            macd_line, signal_line, histogram = calculate_macd(price_series, fast_period, slow_period, signal_period)
+            result_df['macd'] = macd_line
+            result_df['macd_signal'] = signal_line
+            result_df['macd_histogram'] = histogram
             
         elif indicator_name == 'ema':
             period = int(params[0]) if len(params) > 0 else 20
             price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
             
-            ema_values = calculate_ema(df, period, price_type)
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            
+            ema_values = calculate_ema(price_series, period)
             result_df['ema'] = ema_values
             
         elif indicator_name == 'bb':
@@ -149,10 +156,14 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             std_dev = float(params[1]) if len(params) > 1 else 2.0
             price_type = 'open' if len(params) > 2 and params[2].lower() == 'open' else 'close'
             
-            bb_result = calculate_bollinger_bands(df, period, std_dev, price_type)
-            result_df['bb_upper'] = bb_result['upper']
-            result_df['bb_middle'] = bb_result['middle']
-            result_df['bb_lower'] = bb_result['lower']
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            
+            # Calculate Bollinger Bands (returns tuple: upper, middle, lower)
+            upper, middle, lower = calculate_bollinger_bands(price_series, period, std_dev)
+            result_df['bb_upper'] = upper
+            result_df['bb_middle'] = middle
+            result_df['bb_lower'] = lower
             
         elif indicator_name == 'atr':
             period = int(params[0]) if len(params) > 0 else 14
@@ -164,7 +175,10 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             period = int(params[0]) if len(params) > 0 else 20
             price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
             
-            cci_values = calculate_cci(df, period, price_type)
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            
+            cci_values = calculate_cci(price_series, period)
             result_df['cci'] = cci_values
             
         elif indicator_name == 'vwap':
@@ -187,7 +201,10 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             period = int(params[0]) if len(params) > 0 else 20
             price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
             
-            hma_values = calculate_hma(df, period, price_type)
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            
+            hma_values = calculate_hma(price_series, period)
             result_df['hma'] = hma_values
             
         elif indicator_name == 'tsf':
@@ -195,17 +212,21 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             forecast_period = int(params[1]) if len(params) > 1 else 5
             price_type = 'open' if len(params) > 2 and params[2].lower() == 'open' else 'close'
             
-            tsf_values = calculate_tsforecast(df, period, forecast_period, price_type)
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            
+            tsf_values = calculate_tsforecast(price_series, period, forecast_period)
             result_df['tsf'] = tsf_values
             
         elif indicator_name == 'monte':
             simulations = int(params[0]) if len(params) > 0 else 1000
             period = int(params[1]) if len(params) > 1 else 252
             
-            monte_result = calculate_monte_carlo(df, simulations, period)
-            result_df['monte_expected_return'] = monte_result['expected_return']
-            result_df['monte_var'] = monte_result['var']
-            result_df['monte_cvar'] = monte_result['cvar']
+            # Select price series (use Close for Monte Carlo)
+            price_series = df['Close']
+            
+            monte_values = calculate_montecarlo(price_series, simulations, period)
+            result_df['monte_forecast'] = monte_values
             
         elif indicator_name == 'kelly':
             period = int(params[0]) if len(params) > 0 else 20
@@ -216,10 +237,11 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
         elif indicator_name == 'donchain':
             period = int(params[0]) if len(params) > 0 else 20
             
-            donchain_result = calculate_donchian_channels(df, period)
-            result_df['donchain_upper'] = donchain_result['upper']
-            result_df['donchain_middle'] = donchain_result['middle']
-            result_df['donchain_lower'] = donchain_result['lower']
+            # Calculate Donchian Channels (returns tuple: upper, middle, lower)
+            upper, middle, lower = calculate_donchain(df, period)
+            result_df['donchain_upper'] = upper
+            result_df['donchain_middle'] = middle
+            result_df['donchain_lower'] = lower
             
         elif indicator_name == 'fibo':
             levels = [float(p) for p in params] if params else [0.236, 0.382, 0.5, 0.618, 0.786]
@@ -236,16 +258,20 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             period = int(params[0]) if len(params) > 0 else 20
             price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
             
-            stdev_values = calculate_standard_deviation(df, period, price_type)
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            
+            stdev_values = calculate_standard_deviation(price_series, period)
             result_df['stdev'] = stdev_values
             
         elif indicator_name == 'adx':
             period = int(params[0]) if len(params) > 0 else 14
             
-            adx_result = calculate_adx(df, period)
-            result_df['adx'] = adx_result['adx']
-            result_df['di_plus'] = adx_result['di_plus']
-            result_df['di_minus'] = adx_result['di_minus']
+            # Calculate ADX (returns tuple: adx, plus_di, minus_di)
+            adx, plus_di, minus_di = calculate_adx(df, period)
+            result_df['adx'] = adx
+            result_df['di_plus'] = plus_di
+            result_df['di_minus'] = minus_di
             
         elif indicator_name == 'sar':
             acceleration = float(params[0]) if len(params) > 0 else 0.02
