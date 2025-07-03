@@ -1246,6 +1246,76 @@ def plot_dual_chart_fastest(
             row=2, col=1
         )
     
+    elif indicator_name == 'supertrend':
+        if 'supertrend' in display_df.columns and 'supertrend_direction' in display_df.columns:
+            st = display_df['supertrend']
+            trend = display_df['supertrend_direction']
+            idx = display_df.index
+            # Цветовая линия по тренду
+            color_arr = np.where(trend == 1, 'rgba(46, 204, 113, 0.95)', 'rgba(231, 76, 60, 0.95)')
+            # Для Plotly: разбиваем на сегменты по смене тренда
+            segments = []
+            last_color = color_arr[0]
+            seg_x, seg_y = [idx[0]], [st.iloc[0]]
+            for i in range(1, len(idx)):
+                if color_arr[i] != last_color:
+                    segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                    seg_x, seg_y = [idx[i-1]], [st.iloc[i-1]]
+                    last_color = color_arr[i]
+                seg_x.append(idx[i])
+                seg_y.append(st.iloc[i])
+            segments.append((seg_x, seg_y, last_color))
+            for seg_x, seg_y, seg_color in segments:
+                fig.add_trace(
+                    go.Scatter(
+                        x=seg_x,
+                        y=seg_y,
+                        mode='lines',
+                        name='SuperTrend',
+                        line=dict(color=seg_color, width=4),
+                        showlegend=False
+                    ),
+                    row=2, col=1
+                )
+            # Маркеры BUY/SELL на смене тренда
+            buy_idx = idx[(trend == 1) & (trend.shift(1) == -1)]
+            sell_idx = idx[(trend == -1) & (trend.shift(1) == 1)]
+            fig.add_trace(
+                go.Scatter(
+                    x=buy_idx,
+                    y=st.loc[buy_idx],
+                    mode='markers',
+                    name='BUY',
+                    marker=dict(symbol='triangle-up', size=14, color='rgba(46,204,113,0.95)', line=dict(color='black', width=1)),
+                    showlegend=True
+                ),
+                row=2, col=1
+            )
+            fig.add_trace(
+                go.Scatter(
+                    x=sell_idx,
+                    y=st.loc[sell_idx],
+                    mode='markers',
+                    name='SELL',
+                    marker=dict(symbol='triangle-down', size=14, color='rgba(231,76,60,0.95)', line=dict(color='black', width=1)),
+                    showlegend=True
+                ),
+                row=2, col=1
+            )
+        elif 'supertrend' in display_df.columns:
+            # fallback: просто линия
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['supertrend'],
+                    mode='lines',
+                    name='SuperTrend',
+                    line=dict(color='blue', width=3),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+    
     # Update layout
     fig.update_layout(
         title=dict(

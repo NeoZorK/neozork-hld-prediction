@@ -400,7 +400,7 @@ def parse_arguments():
         if ':' in args.rule:
             # Parameterized rule - validate the indicator name part
             indicator_name = args.rule.split(':', 1)[0].lower()
-            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar']
+            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend']
             if indicator_name not in valid_indicators:
                 parser.error(f"Invalid indicator name '{indicator_name}' in parameterized rule '{args.rule}'. Valid indicators: {', '.join(valid_indicators)}")
         else:
@@ -809,6 +809,20 @@ def show_indicator_help(indicator_name: str):
             'examples': [
                 'sar:0.02,0.2',
                 'sar:0.01,0.1'
+            ]
+        },
+        'supertrend': {
+            'name': 'SuperTrend',
+            'format': 'supertrend:period[,multiplier][,price_type]',
+            'parameters': [
+                'period (int): ATR period for SuperTrend calculation (default: 10)',
+                'multiplier (float): ATR multiplier (default: 3.0)',
+                'price_type (string): Price type for calculation - open or close (default: close)'
+            ],
+            'examples': [
+                'supertrend:10',
+                'supertrend:14,2.5',
+                'supertrend:10,3.0,open'
             ]
         },
         'putcallratio': {
@@ -1324,6 +1338,37 @@ def parse_sar_parameters(params_str: str) -> tuple[str, dict]:
     }
 
 
+def parse_supertrend_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse SuperTrend parameters: period,multiplier,price_type"""
+    # Handle empty string case
+    if not params_str.strip():
+        show_indicator_help('supertrend')
+        raise ValueError(f"SuperTrend requires 1-3 parameters: period[,multiplier][,price_type]. Got: {params_str}")
+    
+    params = params_str.split(',')
+    if len(params) < 1 or len(params) > 3:
+        show_indicator_help('supertrend')
+        raise ValueError(f"SuperTrend requires 1-3 parameters: period[,multiplier][,price_type]. Got: {params_str}")
+    
+    try:
+        period = int(float(params[0].strip()))  # Handle float values
+        multiplier = float(params[1].strip()) if len(params) > 1 else 3.0
+        price_type = params[2].strip().lower() if len(params) > 2 else 'close'
+    except (ValueError, IndexError) as e:
+        show_indicator_help('supertrend')
+        raise ValueError(f"Invalid SuperTrend parameters: {params_str}. Error: {e}")
+    
+    if price_type not in ['open', 'close']:
+        show_indicator_help('supertrend')
+        raise ValueError(f"SuperTrend price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'supertrend', {
+        'supertrend_period': period,
+        'multiplier': multiplier,
+        'price_type': price_type
+    }
+
+
 def parse_putcallratio_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Put/Call Ratio parameters: period,price_type"""
     params = params_str.split(',')
@@ -1462,6 +1507,8 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_adx_parameters(params_str)
         elif indicator_name == 'sar':
             return parse_sar_parameters(params_str)
+        elif indicator_name == 'supertrend':
+            return parse_supertrend_parameters(params_str)
         elif indicator_name == 'stochoscillator':
             return parse_stoch_parameters(params_str)
         elif indicator_name == 'putcallratio':

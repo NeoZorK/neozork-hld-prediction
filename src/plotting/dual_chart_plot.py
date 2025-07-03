@@ -88,7 +88,7 @@ def get_supported_indicators() -> set:
     return {
         'rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'ema', 'bb', 'atr',
         'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain',
-        'fibo', 'obv', 'stdev', 'adx', 'sar'
+        'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend'
     }
 
 
@@ -542,6 +542,33 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['stochosc_overbought'] = 80
             result_df['stochosc_oversold'] = 20
             
+        elif indicator_name == 'supertrend':
+            period = int(float(params[0])) if len(params) > 0 else 10
+            multiplier = float(params[1]) if len(params) > 1 else 3.0
+            price_type = params[2].lower() if len(params) > 2 else 'close'
+            
+            # Удаляем возможные дубликаты
+            for col in ['supertrend', 'Supertrend', 'SUPERTREND']:
+                if col in result_df.columns:
+                    result_df = result_df.drop(columns=[col])
+            
+            # Импортируем функцию расчета SuperTrend
+            from ..calculation.indicators.trend.supertrend_ind import calculate_supertrend
+            
+            # Выбираем ценовую серию
+            if price_type == 'open':
+                price_series = df['Open']
+            else:
+                price_series = df['Close']
+            
+            # Рассчитываем SuperTrend
+            supertrend_values, trend_direction = calculate_supertrend(df, period, multiplier)
+            
+            result_df['supertrend'] = supertrend_values
+            result_df['supertrend_period'] = period
+            result_df['supertrend_multiplier'] = multiplier
+            result_df['supertrend_price_type'] = price_type
+            
         else:
             raise ValueError(f"Unsupported indicator: {indicator_name}")
             
@@ -587,7 +614,8 @@ def create_dual_chart_layout(mode: str, rule: str) -> Dict[str, Any]:
         'obv': 'OBV',
         'stdev': 'Standard Deviation',
         'adx': 'ADX',
-        'sar': 'SAR'
+        'sar': 'SAR',
+        'supertrend': 'SuperTrend'
     }
     
     display_name = indicator_display_names.get(indicator_name, indicator_name.upper())
