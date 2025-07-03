@@ -14,6 +14,7 @@ This page provides a categorized list of all technical indicators available in t
 - [EMA Indicator](trend/ema-indicator.md)
 - [ADX Indicator](trend/adx-indicator.md)
 - [SAR Indicator](trend/sar-indicator.md)
+- [SuperTrend Indicator](trend/supertrend-indicator.md)
 
 ## Volatility Indicators
 - [ATR Indicator](volatility/atr-indicator.md)
