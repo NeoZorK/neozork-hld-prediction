@@ -310,8 +310,23 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
         elif indicator_name == 'kelly':
             period = int(params[0]) if len(params) > 0 else 20
             
-            kelly_values = calculate_kelly(df, period)
+            # Select price series (use Close for Kelly)
+            price_series = df['Close']
+            
+            kelly_values = calculate_kelly(price_series, period)
             result_df['kelly'] = kelly_values
+            
+            # Calculate signal line (EMA of Kelly values)
+            signal_line = kelly_values.ewm(span=9, adjust=False).mean()
+            result_df['kelly_signal'] = signal_line
+            
+            # Calculate histogram
+            histogram = kelly_values - signal_line
+            result_df['kelly_histogram'] = histogram
+            
+            # Add threshold levels
+            result_df['kelly_threshold_10'] = 0.1  # 10% threshold
+            result_df['kelly_threshold_25'] = 0.25  # 25% threshold (max Kelly)
             
         elif indicator_name == 'donchain':
             period = int(params[0]) if len(params) > 0 else 20

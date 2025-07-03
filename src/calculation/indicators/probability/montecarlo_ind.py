@@ -42,7 +42,7 @@ def calculate_montecarlo(price_series: pd.Series, simulations: int = 1000, perio
         return pd.Series(index=price_series.index, dtype=float)
     
     # Calculate returns
-    returns = price_series.pct_change().dropna()
+    returns = price_series.pct_change(fill_method=None).dropna()
     
     if len(returns) < 5:
         logger.print_warning("Not enough return data for Monte Carlo simulation")
