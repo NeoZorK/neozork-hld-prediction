@@ -90,14 +90,14 @@ def calculate_feargreed(price_series: pd.Series, period: int = 14) -> pd.Series:
 
 
 def calculate_feargreed_signals(feargreed_values: pd.Series, 
-                               fear_threshold: float = 25, greed_threshold: float = 75) -> pd.Series:
+                               fear_threshold: float = 40, greed_threshold: float = 60) -> pd.Series:
     """
     Calculate trading signals based on Fear & Greed Index.
     
     Args:
         feargreed_values (pd.Series): Fear & Greed Index values
-        fear_threshold (float): Fear threshold for buy signal (default: 25)
-        greed_threshold (float): Greed threshold for sell signal (default: 75)
+        fear_threshold (float): Fear threshold for buy signal (default: 40)
+        greed_threshold (float): Greed threshold for sell signal (default: 60)
     
     Returns:
         pd.Series: Trading signals (BUY, SELL, NOTRADE)
@@ -116,7 +116,7 @@ def calculate_feargreed_signals(feargreed_values: pd.Series,
 
 
 def apply_rule_feargreed(df: pd.DataFrame, point: float, 
-                         feargreed_period: int = 14, fear_threshold: float = 25, greed_threshold: float = 75,
+                         feargreed_period: int = 14, fear_threshold: float = 40, greed_threshold: float = 60,
                          price_type: PriceType = PriceType.CLOSE):
     """
     Applies Fear & Greed rule logic to calculate trading signals and price levels.
