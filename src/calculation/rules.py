@@ -327,7 +327,10 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         sar_maximum = kwargs.get('sar_maximum', 0.2)
         return rule_func(df, point=point, sar_acceleration=sar_acceleration, sar_maximum=sar_maximum)
     elif selected_rule == TradingRule.SuperTrend:
-        return rule_func(df, point=point)
+        # Extract SuperTrend-specific parameters
+        supertrend_period = kwargs.get('supertrend_period', 10)
+        multiplier = kwargs.get('multiplier', 3.0)
+        return rule_func(df, point=point, supertrend_period=supertrend_period, multiplier=multiplier, price_type=price_type_enum)
     else:
         # Default case for any other rules
         return rule_func(df, point=point, price_type=price_type_enum)
