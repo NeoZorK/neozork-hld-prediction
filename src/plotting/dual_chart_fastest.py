@@ -511,18 +511,89 @@ def plot_dual_chart_fastest(
             )
     
     elif indicator_name == 'monte':
-        if 'monte_expected_return' in display_df.columns:
+        # Add Monte Carlo forecast line (main line)
+        if 'montecarlo' in display_df.columns:
             fig.add_trace(
                 go.Scatter(
                     x=display_df.index,
-                    y=display_df['monte_expected_return'],
+                    y=display_df['montecarlo'],
                     mode='lines',
-                    name='Expected Return',
+                    name='Monte Carlo Forecast',
                     line=dict(color='blue', width=3),
                     showlegend=False
                 ),
                 row=2, col=1
             )
+        
+        # Add Monte Carlo signal line
+        if 'montecarlo_signal' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['montecarlo_signal'],
+                    mode='lines',
+                    name='Signal Line',
+                    line=dict(color='red', width=2),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add Monte Carlo histogram
+        if 'montecarlo_histogram' in display_df.columns:
+            # Color histogram bars based on values
+            colors = ['green' if val >= 0 else 'red' for val in display_df['montecarlo_histogram']]
+            fig.add_trace(
+                go.Bar(
+                    x=display_df.index,
+                    y=display_df['montecarlo_histogram'],
+                    name='Histogram',
+                    marker_color=colors,
+                    opacity=0.7,
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add confidence bands
+        if 'montecarlo_upper' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['montecarlo_upper'],
+                    mode='lines',
+                    name='Upper Confidence',
+                    line=dict(color='lightblue', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        if 'montecarlo_lower' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['montecarlo_lower'],
+                    mode='lines',
+                    name='Lower Confidence',
+                    line=dict(color='lightblue', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add zero line for histogram
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[0] * len(display_df),
+                mode='lines',
+                name='Zero Line',
+                line=dict(color='gray', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
     
     elif indicator_name == 'kelly':
         if 'kelly' in display_df.columns:
