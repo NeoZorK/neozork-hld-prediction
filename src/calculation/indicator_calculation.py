@@ -65,6 +65,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         # Momentum indicators
         'MACD': 'MACD',
         'STOCHOSC': 'StochOscillator',
+        'STOCHOSCILLATOR': 'StochOscillator',
         # Predictive indicators
         'HMA': 'HMA',
         'TSF': 'TSForecast',

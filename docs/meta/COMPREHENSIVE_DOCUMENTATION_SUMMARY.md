@@ -73,7 +73,7 @@ The **NeoZork HLD Prediction** project is a comprehensive financial analysis and
 ## Project Features
 
 ### Technical Indicators
-- **Momentum**: MACD, Stochastic Oscillator
+- **Momentum**: MACD
 - **Oscillators**: RSI, CCI, Stochastic
 - **Trend**: EMA, ADX, SAR, SuperTrend
 - **Volatility**: ATR, Bollinger Bands, Standard Deviation
