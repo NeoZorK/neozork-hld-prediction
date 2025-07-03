@@ -683,6 +683,70 @@ def plot_dual_chart_fastest(
                 row=2, col=1
             )
     
+    elif indicator_name == 'rsi_div':
+        if 'rsi' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['rsi'],
+                    mode='lines',
+                    name='RSI',
+                    line=dict(color='purple', width=2),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        if 'rsi_divergence' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['rsi_divergence'],
+                    mode='lines',
+                    name='RSI Divergence',
+                    line=dict(color='orange', width=2),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+            # Add zero line
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=[0] * len(display_df),
+                    mode='lines',
+                    name='Zero Line',
+                    line=dict(color='gray', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        if 'rsi_overbought' in display_df.columns:
+            overbought = display_df['rsi_overbought'].iloc[0]
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=[overbought] * len(display_df),
+                    mode='lines',
+                    name=f'Overbought ({overbought})',
+                    line=dict(color='red', width=2, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        if 'rsi_oversold' in display_df.columns:
+            oversold = display_df['rsi_oversold'].iloc[0]
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=[oversold] * len(display_df),
+                    mode='lines',
+                    name=f'Oversold ({oversold})',
+                    line=dict(color='green', width=2, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+    
     # Update layout
     fig.update_layout(
         title=dict(
