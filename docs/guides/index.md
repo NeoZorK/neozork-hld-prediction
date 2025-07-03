@@ -124,6 +124,16 @@ Using analysis and visualization tools.
 - Pattern recognition
 - Result interpretation
 
+### [Vertical Scrollbar for AUTO Mode](vertical-scrollbar-auto-mode.md) ⭐ **NEW**
+Enhanced AUTO mode with vertical scrollbar functionality.
+
+**Highlights:**
+- **Vertical Scrolling**: Navigate through all charts without overlapping
+- **Custom CSS**: Beautiful scrollbar with hover effects
+- **Information Panel**: Built-in statistics and chart details
+- **Responsive Design**: Works on different screen sizes
+- **Browser Compatibility**: Cross-browser support
+
 ## 🔧 Development and Automation
 
 ### [CLI Interface Guide](cli-interface.md)
