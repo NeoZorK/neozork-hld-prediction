@@ -279,20 +279,35 @@ uv run run_analysis.py show csv mn1 gbp --rule donchain:20 -d fastest
 
 ### Fibonacci Retracements
 ```bash
---rule fibo:level1,level2,level3,...
+--rule fibo:level1,level2,level3,... or --rule fibo:all
 ```
 
 **Parameters:**
-- `level1,level2,level3,...` (float): Fibonacci retracement levels (default: 0.236,0.382,0.5,0.618,0.786)
+- `level1,level2,level3,...` (float): Custom Fibonacci retracement levels (default: 0.236,0.382,0.618)
+- `all`: Use all standard Fibonacci levels (0.236,0.382,0.5,0.618,0.786)
 
 **Examples:**
 ```bash
-# Default Fibonacci settings
+# Default Fibonacci settings (0.236, 0.382, 0.618)
 uv run run_analysis.py show csv mn1 gbp --rule fibo -d fastest
+
+# Use all standard Fibonacci levels
+uv run run_analysis.py show csv mn1 gbp --rule fibo:all -d fastest
 
 # Custom Fibonacci levels
 uv run run_analysis.py show csv mn1 gbp --rule fibo:0.236,0.382,0.5,0.618,0.786 -d fastest
+
+# Minimal levels for aggressive trading
+uv run run_analysis.py show csv mn1 gbp --rule fibo:0.236,0.618 -d fastest
+
+# Extended levels for conservative trading
+uv run run_analysis.py show csv mn1 gbp --rule fibo:0.236,0.382,0.5,0.618,0.786,0.886 -d fastest
 ```
+
+**Signal Generation:**
+- **Buy Signals**: Price crosses above support levels or near support with upward momentum
+- **Sell Signals**: Price crosses below resistance levels or near resistance with downward momentum
+- **Balanced**: Improved algorithm provides equal buy/sell signal opportunities
 
 ### OBV (On-Balance Volume)
 ```bash
@@ -418,13 +433,4 @@ uv run run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule ema:
 If you were using the old format with separate arguments, you can now use the parameterized format:
 
 **Old format:**
-```bash
-uv run run_analysis.py show csv mn1 gbp --rule RSI --rsi-period 14 --price-type open -d fastest
 ```
-
-**New format:**
-```bash
-uv run run_analysis.py show csv mn1 gbp --rule rsi:14,30,70,open -d fastest
-```
-
-The new format is more concise and provides better parameter validation. 
