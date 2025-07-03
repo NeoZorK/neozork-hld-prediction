@@ -234,6 +234,12 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             # Select price series based on price_type
             price_series = df['Open'] if price_type == 'open' else df['Close']
             
+            # Check if CCI column already exists and remove it
+            if 'CCI' in result_df.columns:
+                result_df = result_df.drop(columns=['CCI'])
+            if 'cci' in result_df.columns:
+                result_df = result_df.drop(columns=['cci'])
+            
             cci_values = calculate_cci(price_series, period)
             result_df['cci'] = cci_values
             
