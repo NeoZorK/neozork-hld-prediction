@@ -36,9 +36,9 @@ from ..calculation.indicators.predictive.tsforecast_ind import calculate_tsforec
 from ..calculation.indicators.probability.montecarlo_ind import calculate_montecarlo
 from ..calculation.indicators.probability.kelly_ind import calculate_kelly
 from ..calculation.indicators.suportresist.donchain_ind import calculate_donchain
-from ..calculation.indicators.suportresist.fiboretr_ind import calculate_fibonacci_retracements
+from ..calculation.indicators.suportresist.fiboretr_ind import calculate_fiboretr
 from ..calculation.indicators.volume.obv_ind import calculate_obv
-from ..calculation.indicators.volatility.stdev_ind import calculate_standard_deviation
+from ..calculation.indicators.volatility.stdev_ind import calculate_stdev
 from ..calculation.indicators.trend.adx_ind import calculate_adx
 from ..calculation.indicators.trend.sar_ind import calculate_sar
 
@@ -244,11 +244,14 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['donchain_lower'] = lower
             
         elif indicator_name == 'fibo':
-            levels = [float(p) for p in params] if params else [0.236, 0.382, 0.5, 0.618, 0.786]
+            period = int(params[0]) if len(params) > 0 else 20
+            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
             
-            fibo_result = calculate_fibonacci_retracements(df, levels)
-            for i, level in enumerate(levels):
-                result_df[f'fibo_{level}'] = fibo_result[f'level_{level}']
+            # Calculate Fibonacci Retracement (returns tuple: fib_236, fib_382, fib_618)
+            fib_236, fib_382, fib_618 = calculate_fiboretr(df, period)
+            result_df['fibo_236'] = fib_236
+            result_df['fibo_382'] = fib_382
+            result_df['fibo_618'] = fib_618
                 
         elif indicator_name == 'obv':
             obv_values = calculate_obv(df)
@@ -261,7 +264,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             # Select price series based on price_type
             price_series = df['Open'] if price_type == 'open' else df['Close']
             
-            stdev_values = calculate_standard_deviation(price_series, period)
+            stdev_values = calculate_stdev(price_series, period)
             result_df['stdev'] = stdev_values
             
         elif indicator_name == 'adx':
@@ -365,6 +368,7 @@ def plot_dual_chart_results(
     Raises:
         ValueError: If data is invalid or mode is unsupported
     """
+    print(f"DEBUG: plot_dual_chart_results called with rule={rule}, mode={mode}")
     # Validate input data
     if df is None or df.empty:
         raise ValueError("DataFrame is empty")
@@ -380,6 +384,7 @@ def plot_dual_chart_results(
     
     # Calculate additional indicator
     df_with_indicator = calculate_additional_indicator(df, rule)
+    print(f"DEBUG: after calculate_additional_indicator, columns: {list(df_with_indicator.columns)}")
     
     # Create layout configuration
     layout = create_dual_chart_layout(mode, rule)
