@@ -1250,166 +1250,378 @@ def plot_dual_chart_fastest(
         if 'supertrend' in display_df.columns and 'supertrend_direction' in display_df.columns:
             st = display_df['supertrend']
             trend = display_df['supertrend_direction']
+        elif 'supertrend' in display_df.columns and 'direction' in display_df.columns:
+            # Fallback: use direction column but we need to convert signal values to trend direction
+            st = display_df['supertrend']
+            # Convert signal values to trend direction: 0=no trend, 1=uptrend, 2=downtrend
+            direction_signals = display_df['direction']
+            trend = pd.Series(index=direction_signals.index, dtype=int)
+            trend.fillna(0, inplace=True)
+            
+            # Convert signal values to trend direction
+            # We need to infer trend direction from SuperTrend values
+            # If price > SuperTrend, trend is up (1), else down (-1)
+            price_series = display_df['close']
+            trend = np.where(price_series > st, 1, -1)
+            trend = pd.Series(trend, index=direction_signals.index)
             idx = display_df.index
-            # Цветовая линия по тренду
-            color_arr = np.where(trend == 1, 'rgba(46, 204, 113, 0.95)', 'rgba(231, 76, 60, 0.95)')
-            # Для Plotly: разбиваем на сегменты по смене тренда
+            
+            # Three-color scheme for signal changes
+            uptrend_color = 'rgba(0, 200, 81, 0.95)'  # Modern green for uptrend
+            downtrend_color = 'rgba(255, 68, 68, 0.95)'  # Modern red for downtrend
+            signal_change_color = 'rgba(255, 193, 7, 0.95)'  # Golden yellow for signal changes
+            
+            # Detect signal change points
+            buy_signals = (trend == 1) & (trend.shift(1) == -1)
+            sell_signals = (trend == -1) & (trend.shift(1) == 1)
+            signal_changes = buy_signals | sell_signals
+            
+            # Create color array with signal change highlighting
+            color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
+            
+            # Enhanced segmentation with signal change detection
             segments = []
             last_color = color_arr[0]
             seg_x, seg_y = [idx[0]], [st.iloc[0]]
+            
             for i in range(1, len(idx)):
-                if color_arr[i] != last_color:
+                current_color = color_arr[i]
+                
+                # Check if this is a signal change point
+                if signal_changes.iloc[i]:
+                    # Add previous segment
+                    if len(seg_x) > 1:
+                        segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                    
+                    # Add signal change point with golden color
+                    segments.append(([idx[i-1], idx[i]], [st.iloc[i-1], st.iloc[i]], signal_change_color))
+                    
+                    # Start new segment
+                    seg_x, seg_y = [idx[i]], [st.iloc[i]]
+                    last_color = current_color
+                elif current_color != last_color:
+                    # Regular trend change (not a signal)
                     segments.append((seg_x.copy(), seg_y.copy(), last_color))
                     seg_x, seg_y = [idx[i-1]], [st.iloc[i-1]]
-                    last_color = color_arr[i]
+                    last_color = current_color
+                
                 seg_x.append(idx[i])
                 seg_y.append(st.iloc[i])
-            segments.append((seg_x, seg_y, last_color))
+            
+            # Add final segment
+            if len(seg_x) > 0:
+                segments.append((seg_x, seg_y, last_color))
+            
+            # Add SuperTrend line segments with enhanced styling
+            legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
             for seg_x, seg_y, seg_color in segments:
+                # Main SuperTrend line with smooth curve
+                # Determine legend name based on color
+                if seg_color == uptrend_color:
+                    legend_name = 'SuperTrend (Uptrend)'
+                elif seg_color == downtrend_color:
+                    legend_name = 'SuperTrend (Downtrend)'
+                elif seg_color == signal_change_color:
+                    legend_name = 'SuperTrend (Signal Change)'
+                else:
+                    legend_name = 'SuperTrend'
+                
+                show_legend = not legend_shown.get(seg_color, False)
+                legend_shown[seg_color] = True
+                
                 fig.add_trace(
                     go.Scatter(
                         x=seg_x,
                         y=seg_y,
                         mode='lines',
-                        name='SuperTrend',
-                        line=dict(color=seg_color, width=4),
-                        showlegend=False
+                        name=legend_name,
+                        line=dict(
+                            color=seg_color,
+                            width=5,
+                            shape='spline'  # Smooth curve for modern look
+                        ),
+                        showlegend=show_legend,
+                        hoverinfo='y+name',
+                        hoverlabel=dict(
+                            bgcolor=seg_color,
+                            font_size=12,
+                            font_color='white',
+                            font_family='Arial, sans-serif'
+                        )
                     ),
                     row=2, col=1
                 )
-            # Маркеры BUY/SELL на смене тренда
+                
+                # Add subtle glow effect for enhanced visual appeal
+                fig.add_trace(
+                    go.Scatter(
+                        x=seg_x,
+                        y=seg_y,
+                        mode='lines',
+                        name='SuperTrend Glow',
+                        line=dict(
+                            color=seg_color.replace('0.95', '0.3'),
+                            width=10
+                        ),
+                        showlegend=False,
+                        hoverinfo='skip'
+                    ),
+                    row=2, col=1
+                )
+            
+            # Enhanced trend change markers with modern styling
             buy_idx = idx[(trend == 1) & (trend.shift(1) == -1)]
             sell_idx = idx[(trend == -1) & (trend.shift(1) == 1)]
-            fig.add_trace(
-                go.Scatter(
-                    x=buy_idx,
-                    y=st.loc[buy_idx],
-                    mode='markers',
-                    name='BUY',
-                    marker=dict(symbol='triangle-up', size=14, color='rgba(46,204,113,0.95)', line=dict(color='black', width=1)),
-                    showlegend=True
-                ),
-                row=2, col=1
-            )
-            fig.add_trace(
-                go.Scatter(
-                    x=sell_idx,
-                    y=st.loc[sell_idx],
-                    mode='markers',
-                    name='SELL',
-                    marker=dict(symbol='triangle-down', size=14, color='rgba(231,76,60,0.95)', line=dict(color='black', width=1)),
-                    showlegend=True
-                ),
-                row=2, col=1
-            )
+            
+            # BUY signals with enhanced styling
+            if len(buy_idx) > 0:
+                fig.add_trace(
+                    go.Scatter(
+                        x=buy_idx,
+                        y=st.loc[buy_idx],
+                        mode='markers',
+                        name='BUY Signal',
+                        marker=dict(
+                            symbol='triangle-up',
+                            size=18,
+                            color='#00C851',
+                            line=dict(
+                                color='white',
+                                width=2.5
+                            ),
+                            opacity=0.95
+                        ),
+                        showlegend=True,
+                        hoverinfo='x+y+name',
+                        hoverlabel=dict(
+                            bgcolor='#00C851',
+                            font_size=12,
+                            font_color='white',
+                            font_family='Arial, sans-serif'
+                        )
+                    ),
+                    row=2, col=1
+                )
+                
+                # Add pulse effect for buy signals
+                fig.add_trace(
+                    go.Scatter(
+                        x=buy_idx,
+                        y=st.loc[buy_idx],
+                        mode='markers',
+                        name='BUY Pulse',
+                        marker=dict(
+                            symbol='circle',
+                            size=28,
+                            color='rgba(0, 200, 81, 0.4)',
+                            line=dict(width=0)
+                        ),
+                        showlegend=False,
+                        hoverinfo='skip'
+                    ),
+                    row=2, col=1
+                )
+            
+            # SELL signals with enhanced styling
+            if len(sell_idx) > 0:
+                fig.add_trace(
+                    go.Scatter(
+                        x=sell_idx,
+                        y=st.loc[sell_idx],
+                        mode='markers',
+                        name='SELL Signal',
+                        marker=dict(
+                            symbol='triangle-down',
+                            size=18,
+                            color='#FF4444',
+                            line=dict(
+                                color='white',
+                                width=2.5
+                            ),
+                            opacity=0.95
+                        ),
+                        showlegend=True,
+                        hoverinfo='x+y+name',
+                        hoverlabel=dict(
+                            bgcolor='#FF4444',
+                            font_size=12,
+                            font_color='white',
+                            font_family='Arial, sans-serif'
+                        )
+                    ),
+                    row=2, col=1
+                )
+                
+                # Add pulse effect for sell signals
+                fig.add_trace(
+                    go.Scatter(
+                        x=sell_idx,
+                        y=st.loc[sell_idx],
+                        mode='markers',
+                        name='SELL Pulse',
+                        marker=dict(
+                            symbol='circle',
+                            size=28,
+                            color='rgba(255, 68, 68, 0.4)',
+                            line=dict(width=0)
+                        ),
+                        showlegend=False,
+                        hoverinfo='skip'
+                    ),
+                    row=2, col=1
+                )
+            
+            # Add trend background zones for better visual context
+            trend_changes = idx[trend != trend.shift(1)]
+            if len(trend_changes) > 0:
+                for i in range(len(trend_changes)):
+                    start_idx = trend_changes[i]
+                    end_idx = trend_changes[i + 1] if i + 1 < len(trend_changes) else idx[-1]
+                    
+                    zone_color = 'rgba(0, 200, 81, 0.08)' if trend.loc[start_idx] == 1 else 'rgba(255, 68, 68, 0.08)'
+                    
+                    fig.add_shape(
+                        type="rect",
+                        x0=start_idx,
+                        x1=end_idx,
+                        y0=st.min() * 0.995,
+                        y1=st.max() * 1.005,
+                        fillcolor=zone_color,
+                        line=dict(width=0),
+                        row=2, col=1
+                    )
+                    
         elif 'supertrend' in display_df.columns:
-            # fallback: просто линия
+            # Enhanced fallback: modern single line
             fig.add_trace(
                 go.Scatter(
                     x=display_df.index,
                     y=display_df['supertrend'],
                     mode='lines',
                     name='SuperTrend',
-                    line=dict(color='blue', width=3),
-                    showlegend=False
+                    line=dict(
+                        color='#3498db',
+                        width=4,
+                        shape='spline'
+                    ),
+                    showlegend=False,
+                    hoverinfo='y+name',
+                    hoverlabel=dict(
+                        bgcolor='#3498db',
+                        font_size=12,
+                        font_color='white'
+                    )
                 ),
                 row=2, col=1
             )
     
-    # Update layout
+    # Update layout with modern styling
     fig.update_layout(
         title=dict(
-            text=title,
+            text=title or f"SuperTrend Analysis - {indicator_name.upper()}",
             x=0.5,
             xanchor='center',
-            font=dict(size=15, color='#2c3e50'),
-            pad=dict(t=2, b=2)
+            font=dict(
+                size=18,
+                color='#2c3e50',
+                family='Arial, sans-serif'
+            ),
+            pad=dict(t=10, b=10)
         ),
         autosize=True,
         template="plotly_white",
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=1.01,
+            y=1.02,
             xanchor="center",
             x=0.5,
-            bgcolor='rgba(255,255,255,0.8)',
-            bordercolor='#bdc3c7',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='#e1e8ed',
             borderwidth=1,
-            font=dict(size=11)
+            font=dict(size=12, color='#2c3e50'),
+            itemsizing='constant'
         ),
         hovermode="x unified",
         hoverlabel=dict(
             bgcolor="white",
-            font_size=10,
-            bordercolor='#bdc3c7'
+            font_size=11,
+            bordercolor='#e1e8ed',
+            font_family='Arial, sans-serif'
         ),
-        margin=dict(t=24, b=14, l=28, r=4),
-        plot_bgcolor='white',
-        paper_bgcolor='white'
+        margin=dict(t=40, b=20, l=40, r=20),
+        plot_bgcolor='rgba(248, 249, 250, 0.8)',
+        paper_bgcolor='white',
+        font=dict(family='Arial, sans-serif')
     )
     
-    # Update axes
+    # Update axes with modern styling
     # Main chart (price)
     fig.update_yaxes(
         title_text="Price", 
         row=1, 
         col=1, 
         tickformat=".4f",
-        title_font=dict(size=12, color='#2c3e50'),
-        tickfont=dict(size=10, color='#34495e'),
-        gridcolor='#ecf0f1',
-        zeroline=False
+        title_font=dict(size=14, color='#2c3e50'),
+        tickfont=dict(size=11, color='#34495e'),
+        gridcolor='rgba(0,0,0,0.1)',
+        zeroline=False,
+        showline=True,
+        linecolor='#e1e8ed',
+        linewidth=1
     )
     fig.update_xaxes(
         row=1, col=1,
-        tickformat="%b %d, %Y",  # Jan 15, 1993
+        tickformat="%b %d, %Y",
         tickangle=0,
         ticklabelmode="period",
         showgrid=True,
-        gridcolor="#f0f0f0",
+        gridcolor="rgba(0,0,0,0.05)",
         ticks="outside",
-        ticklen=6,
+        ticklen=8,
         tickcolor="#b0b0b0",
-        tickwidth=1.2,
+        tickwidth=1.5,
         showline=True,
-        linecolor="#b0b0b0",
+        linecolor="#e1e8ed",
         mirror=True,
         automargin=True,
-        nticks=30,  # Максимум делений
-        rangeslider=dict(visible=False),  # Полностью убираем
+        nticks=20,
+        rangeslider=dict(visible=False)
     )
     
     # Indicator chart
-    indicator_title = layout['indicator_name'] if layout else 'Indicator'
+    indicator_title = layout['indicator_name'] if layout else 'SuperTrend'
     fig.update_yaxes(
         title_text=indicator_title, 
         row=2, 
         col=1,
-        title_font=dict(size=12, color='#2c3e50'),
-        tickfont=dict(size=10, color='#34495e'),
-        gridcolor='#ecf0f1',
-        zeroline=False
+        title_font=dict(size=14, color='#2c3e50'),
+        tickfont=dict(size=11, color='#34495e'),
+        gridcolor='rgba(0,0,0,0.1)',
+        zeroline=False,
+        showline=True,
+        linecolor='#e1e8ed',
+        linewidth=1
     )
     
-    # Детализированная временная шкала для нижней диаграммы
+    # Enhanced time scale for indicator chart
     fig.update_xaxes(
         row=2, col=1,
-        tickformat="%b %d, %Y",  # Jan 15, 1993
+        tickformat="%b %d, %Y",
         tickangle=0,
         ticklabelmode="period",
         showgrid=True,
-        gridcolor="#f0f0f0",
+        gridcolor="rgba(0,0,0,0.05)",
         ticks="outside",
-        ticklen=6,
+        ticklen=8,
         tickcolor="#b0b0b0",
-        tickwidth=1.2,
+        tickwidth=1.5,
         showline=True,
-        linecolor="#b0b0b0",
+        linecolor="#e1e8ed",
         mirror=True,
         automargin=True,
-        nticks=30,  # Максимум делений
-        rangeslider=dict(visible=False),  # Полностью убираем
+        nticks=20,
+        rangeslider=dict(visible=False)
     )
     
 
