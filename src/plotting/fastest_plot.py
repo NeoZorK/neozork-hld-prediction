@@ -206,22 +206,28 @@ def plot_indicator_results_fastest(
 
     fig.update_layout(
         title=title,
-        width=width,
-        height=height,
+        autosize=True,
         template="plotly_white",
         legend=dict(
             orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1
+            yanchor="top",
+            y=1.01,
+            xanchor="center",
+            x=0.5,
+            bgcolor='rgba(255,255,255,0.8)',
+            bordercolor='#bdc3c7',
+            borderwidth=1,
+            font=dict(size=11)
         ),
         hovermode="x unified",
         hoverlabel=dict(
             bgcolor="white",
-            font_size=12
+            font_size=10,
+            bordercolor='#bdc3c7'
         ),
-        margin=dict(t=100, b=10)
+        margin=dict(t=24, b=14, l=28, r=4),
+        plot_bgcolor='white',
+        paper_bgcolor='white'
     )
 
     # Set axis ranges
@@ -244,8 +250,21 @@ def plot_indicator_results_fastest(
                 col=1,
                 range=[x_min, x_max],
                 type='date',
-                tickformat='%Y-%m-%d %H:%M',
-                tickangle=45
+                tickformat="%b %d, %Y",  # Jan 15, 1993
+                tickangle=0,
+                ticklabelmode="period",
+                showgrid=True,
+                gridcolor="#f0f0f0",
+                ticks="outside",
+                ticklen=6,
+                tickcolor="#b0b0b0",
+                tickwidth=1.2,
+                showline=True,
+                linecolor="#b0b0b0",
+                mirror=True,
+                automargin=True,
+                nticks=30,  # Максимум делений
+                rangeslider=dict(visible=False),  # Полностью убираем
             )
 
         # Show time labels only on the bottom chart
@@ -260,8 +279,21 @@ def plot_indicator_results_fastest(
             col=1,
             range=[x_min, x_max],
             type='date',
-            tickformat='%Y-%m-%d %H:%M',
-            tickangle=45
+            tickformat="%b %d, %Y",  # Jan 15, 1993
+            tickangle=0,
+            ticklabelmode="period",
+            showgrid=True,
+            gridcolor="#f0f0f0",
+            ticks="outside",
+            ticklen=6,
+            tickcolor="#b0b0b0",
+            tickwidth=1.2,
+            showline=True,
+            linecolor="#b0b0b0",
+            mirror=True,
+            automargin=True,
+            nticks=30,  # Максимум делений
+            rangeslider=dict(visible=False),  # Полностью убираем
         )
 
     # Save and open
