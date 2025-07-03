@@ -66,27 +66,15 @@ def get_screen_height():
 def calculate_dynamic_height(screen_height=None, rule_str=None):
     """
     Calculate dynamic height for the chart based on screen height and rule.
-    
-    Args:
-        screen_height (int): Screen height in pixels
-        rule_str (str): Rule string (e.g., 'OHLCV', 'AUTO')
-        
-    Returns:
-        int: Calculated chart height
+    For OHLCV rule, use 85% of screen height, min 400, max 2000.
     """
     if screen_height is None:
         screen_height = get_screen_height()
-    
-    # For OHLCV rule, use most of the screen height
-    if rule_str and rule_str.upper() == 'OHLCV':
-        # Use 90% of screen height for OHLCV rule
-        dynamic_height = int(screen_height * 0.9)
-        # Ensure minimum and maximum bounds
-        dynamic_height = max(800, min(dynamic_height, 2000))
-        logger.print_info(f"OHLCV rule detected: using dynamic height {dynamic_height}px (screen height: {screen_height}px)")
+    if rule_str and (rule_str.upper() == 'OHLCV' or 'OHLCV' in rule_str.upper()):
+        dynamic_height = int(screen_height * 0.85)
+        dynamic_height = max(400, min(dynamic_height, 2000))
+        logger.print_info(f"OHLCV rule detected: using fullscreen height {dynamic_height}px (screen height: {screen_height}px)")
         return dynamic_height
-    
-    # For other rules, use standard calculation
     return 1100
 
 
@@ -183,9 +171,7 @@ def plot_indicator_results_fastest_fullscreen(
         )
 
     # Add candlestick chart
-    # Use index if available, otherwise use DataFrame index
     x_data = display_df['index'] if 'index' in display_df.columns else display_df.index
-    
     fig.add_trace(
         go.Candlestick(
             x=x_data,
@@ -198,32 +184,12 @@ def plot_indicator_results_fastest_fullscreen(
         row=1, col=1
     )
 
-    # Add predicted high/low lines if they exist (only for non-AUTO rules)
-    if rule_str != 'AUTO':
-        for col in ['predicted_high', 'predicted_low']:
-            if col in display_df.columns:
-                fig.add_trace(
-                    go.Scatter(
-                        x=x_data,
-                        y=display_df[col],
-                        mode='lines',
-                        name=col.replace('_', ' ').title(),
-                        line=dict(
-                            color='blue' if col == 'predicted_high' else 'red',
-                            width=1.5
-                        )
-                    ),
-                    row=1, col=1
-                )
-
     # Add volume (only if separate charts are enabled)
     if show_separate_charts and 'volume' in display_df.columns:
-        # Use direction-based colors if direction column exists, otherwise use default color
         if 'direction' in display_df.columns:
             colors = ['green' if val else 'red' for val in display_df['direction']]
         else:
-            colors = 'rgba(100, 100, 100, 0.5)'  # Default gray color
-        
+            colors = 'rgba(100, 100, 100, 0.5)'
         fig.add_trace(
             go.Bar(
                 x=x_data,
@@ -244,7 +210,6 @@ def plot_indicator_results_fastest_fullscreen(
             'pressure': 'teal',
             'pressure_vector': 'orange'
         }
-
         for indicator, color in indicator_colors.items():
             if indicator in display_df.columns:
                 fig.add_trace(
@@ -256,34 +221,6 @@ def plot_indicator_results_fastest_fullscreen(
                         line=dict(color=color, width=1.5)
                     ),
                     row=3, col=1
-                )
-
-        # Add predicted high/low as separate panels for AUTO mode
-        if rule_str == 'AUTO':
-            # Predicted Low subplot
-            if 'predicted_low' in display_df.columns:
-                fig.add_trace(
-                    go.Scatter(
-                        x=x_data,
-                        y=display_df['predicted_low'],
-                        mode='lines',
-                        name='Predicted Low',
-                        line=dict(color='green', width=2)
-                    ),
-                    row=3, col=2
-                )
-
-            # Predicted High subplot
-            if 'predicted_high' in display_df.columns:
-                fig.add_trace(
-                    go.Scatter(
-                        x=x_data,
-                        y=display_df['predicted_high'],
-                        mode='lines',
-                        name='Predicted High',
-                        line=dict(color='red', width=2)
-                    ),
-                    row=3, col=2
                 )
 
     # Add rule annotation
@@ -301,6 +238,7 @@ def plot_indicator_results_fastest_fullscreen(
         height=height,  # Use dynamic height
         autosize=True,
         template="plotly_white",
+        margin=dict(t=40, b=40, l=20, r=20),
         legend=dict(
             orientation="h",
             yanchor="top",
@@ -318,7 +256,6 @@ def plot_indicator_results_fastest_fullscreen(
             font_size=10,
             bordercolor='#bdc3c7'
         ),
-        margin=dict(t=24, b=14, l=28, r=4),
         plot_bgcolor='white',
         paper_bgcolor='white'
     )
