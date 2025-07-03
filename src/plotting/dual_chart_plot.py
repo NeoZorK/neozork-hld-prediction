@@ -457,7 +457,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
                 result_df[f'fibo_{level_name[4:]}'] = level_series  # Remove 'fib_' prefix
             
         elif indicator_name == 'obv':
-            obv_values = calculate_obv(df)
+            obv_values = calculate_obv(df['Close'], df['Volume'])
             result_df['obv'] = obv_values
             
         elif indicator_name == 'stdev':
