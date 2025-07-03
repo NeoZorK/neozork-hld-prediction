@@ -85,14 +85,30 @@ def calculate_fiboretr_signals(price_series: pd.Series, fib_236: pd.Series, fib_
     """
     signals = pd.Series(NOTRADE, index=price_series.index)
     
-    # BUY signal: Price bounces from Fibonacci support levels
-    buy_condition = ((price_series > fib_618) & (price_series.shift(1) <= fib_618.shift(1))) | \
-                   ((price_series > fib_382) & (price_series.shift(1) <= fib_382.shift(1)))
+    # BUY signals: Price bounces from Fibonacci support levels
+    # Buy when price crosses above support levels
+    buy_condition_618 = (price_series > fib_618) & (price_series.shift(1) <= fib_618.shift(1))
+    buy_condition_382 = (price_series > fib_382) & (price_series.shift(1) <= fib_382.shift(1))
+    buy_condition_236 = (price_series > fib_236) & (price_series.shift(1) <= fib_236.shift(1))
+    
+    # Additional buy conditions: price near support levels with momentum
+    buy_near_618 = (price_series >= fib_618 * 0.995) & (price_series <= fib_618 * 1.005) & (price_series > price_series.shift(1))
+    buy_near_382 = (price_series >= fib_382 * 0.995) & (price_series <= fib_382 * 1.005) & (price_series > price_series.shift(1))
+    
+    buy_condition = buy_condition_618 | buy_condition_382 | buy_condition_236 | buy_near_618 | buy_near_382
     signals[buy_condition] = BUY
     
-    # SELL signal: Price rejects from Fibonacci resistance levels
-    sell_condition = ((price_series < fib_236) & (price_series.shift(1) >= fib_236.shift(1))) | \
-                    ((price_series < fib_382) & (price_series.shift(1) >= fib_382.shift(1)))
+    # SELL signals: Price rejects from Fibonacci resistance levels
+    # Sell when price crosses below resistance levels
+    sell_condition_236 = (price_series < fib_236) & (price_series.shift(1) >= fib_236.shift(1))
+    sell_condition_382 = (price_series < fib_382) & (price_series.shift(1) >= fib_382.shift(1))
+    sell_condition_618 = (price_series < fib_618) & (price_series.shift(1) >= fib_618.shift(1))
+    
+    # Additional sell conditions: price near resistance levels with downward momentum
+    sell_near_236 = (price_series >= fib_236 * 0.995) & (price_series <= fib_236 * 1.005) & (price_series < price_series.shift(1))
+    sell_near_382 = (price_series >= fib_382 * 0.995) & (price_series <= fib_382 * 1.005) & (price_series < price_series.shift(1))
+    
+    sell_condition = sell_condition_236 | sell_condition_382 | sell_condition_618 | sell_near_236 | sell_near_382
     signals[sell_condition] = SELL
     
     return signals
