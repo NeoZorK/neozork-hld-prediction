@@ -258,12 +258,11 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
         elif indicator_name == 'pivot':
             price_type = 'open' if len(params) > 0 and params[0].lower() == 'open' else 'close'
             
-            pivot_result = calculate_pivot_points(df, price_type)
-            result_df['pivot'] = pivot_result['pivot']
-            result_df['r1'] = pivot_result['r1']
-            result_df['r2'] = pivot_result['r2']
-            result_df['s1'] = pivot_result['s1']
-            result_df['s2'] = pivot_result['s2']
+            # calculate_pivot_points returns tuple: (pivot_point, resistance_1, support_1)
+            pivot_point, resistance_1, support_1 = calculate_pivot_points(df, price_type)
+            result_df['pivot'] = pivot_point
+            result_df['r1'] = resistance_1
+            result_df['s1'] = support_1
             
         elif indicator_name == 'hma':
             period = int(params[0]) if len(params) > 0 else 20
