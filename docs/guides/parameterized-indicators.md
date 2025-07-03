@@ -376,6 +376,33 @@ uv run run_analysis.py show csv mn1 gbp --rule sar -d fastest
 uv run run_analysis.py show csv mn1 gbp --rule sar:0.02,0.2 -d fastest
 ```
 
+### SuperTrend
+```bash
+--rule supertrend:period,multiplier[,price_type]
+```
+
+**Parameters:**
+- `period` (int): ATR period for SuperTrend calculation (required)
+- `multiplier` (float): ATR multiplier for sensitivity adjustment (required)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# SuperTrend with required parameters (using close price)
+uv run run_analysis.py show csv mn1 gbp --rule supertrend:10,3.0 -d fastest
+
+# SuperTrend with open price
+uv run run_analysis.py show csv mn1 gbp --rule supertrend:10,3.0,open -d fastest
+
+# Short period, low multiplier (more sensitive)
+uv run run_analysis.py show csv mn1 gbp --rule supertrend:5,2.0 -d fastest
+
+# Long period, high multiplier (less sensitive)
+uv run run_analysis.py show csv mn1 gbp --rule supertrend:50,4.0 -d fastest
+```
+
+**Note:** SuperTrend requires exactly 2-3 parameters. The first two parameters (period and multiplier) are mandatory.
+
 ## Error Handling
 
 The system provides clear error messages for invalid parameter formats:
@@ -392,6 +419,14 @@ uv run run_analysis.py show csv mn1 gbp --rule rsi:14,30,70,high -d fastest
 # Invalid format
 uv run run_analysis.py show csv mn1 gbp --rule rsi:14,30,70:open -d fastest
 # Error: Invalid rule format: rsi:14,30,70:open
+
+# SuperTrend missing required parameters
+uv run run_analysis.py show csv mn1 gbp --rule supertrend:10 -d fastest
+# Error: SuperTrend requires exactly 2-3 parameters: period,multiplier[,price_type]. Got: 10
+
+# SuperTrend invalid price type
+uv run run_analysis.py show csv mn1 gbp --rule supertrend:10,3.0,high -d fastest
+# Error: SuperTrend price_type must be 'open' or 'close', got: high
 ```
 
 ## Best Practices
@@ -426,6 +461,12 @@ uv run run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule macd:8,21,5,c
 
 # Binance with parameterized EMA
 uv run run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule ema:20,open -d fastest
+
+# CSV file with SuperTrend
+uv run run_analysis.py csv --csv-file data.csv --point 0.01 --rule supertrend:10,3.0 -d fastest
+
+# Yahoo Finance with SuperTrend
+uv run run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule supertrend:14,2.5,open -d fastest
 ```
 
 ## Migration from Old Format

@@ -85,7 +85,7 @@ python run_analysis.py demo --rule PHLD
 
 ### Features
 - [Data Sources](guides/data-sources.md) - Supported financial data sources
-- [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md))
+- [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md))
 - [Analysis Tools](guides/analysis-tools.md) - Analysis and visualization tools
 - [CLI Interface](guides/cli-interface.md) - Command-line interface usage
 
@@ -96,6 +96,7 @@ python run_analysis.py demo --rule PHLD
 - [Advanced Metrics](reference/advanced-metrics.md) - Advanced analysis metrics
 - [COT Indicator](reference/indicators/sentiment/cot-indicator.md) - **NEW**: Sentiment indicator documentation
 - [Put/Call Ratio Indicator](reference/indicators/sentiment/putcallratio-indicator.md) - **NEW**: Sentiment indicator documentation
+- [SuperTrend Indicator](reference/indicators/trend/supertrend-indicator.md) - **NEW**: Trend indicator documentation
 
 ## 🔧 Key Features
 

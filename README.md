@@ -110,7 +110,7 @@ uv run pytest tests -n auto
 ### Technical Indicators (50+)
 - **Momentum**: MACD
 - **Oscillators**: RSI, CCI, Stochastic
-- **Trend**: EMA, ADX, SAR
+- **Trend**: EMA, ADX, SAR, **SuperTrend**
 - **Volatility**: ATR, Bollinger Bands
 - **Volume**: OBV, VWAP
 - **Support & Resistance**: Pivot Points, Fibonacci
@@ -135,6 +135,17 @@ uv run pytest tests -n auto
   uv run run_analysis.py show csv mn1 -d fastest --rule putcallratio:20,close
   ```
 - **Documentation:** [Put/Call Ratio Indicator](docs/reference/indicators/sentiment/putcallratio-indicator.md)
+
+#### New: SuperTrend Indicator
+- **Category:** Trend
+- **Description:** Advanced trend-following indicator that combines ATR (Average True Range) with price action to identify trend direction and potential reversal points. Provides dynamic support/resistance levels and generates buy/sell signals.
+- **CLI Example:**
+  ```bash
+  uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0
+  uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0,open
+  ```
+- **Parameters:** period (required), multiplier (required), price_type (optional: open/close)
+- **Documentation:** [SuperTrend Indicator](docs/reference/indicators/trend/supertrend-indicator.md)
 
 ### Analysis Tools
 - **Exploratory Data Analysis**: Comprehensive data exploration
