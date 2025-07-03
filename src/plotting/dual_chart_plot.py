@@ -43,6 +43,7 @@ from ..calculation.indicators.trend.adx_ind import calculate_adx
 from ..calculation.indicators.trend.sar_ind import calculate_sar
 from ..calculation.indicators.sentiment.putcallratio_ind import calculate_putcallratio
 from ..calculation.indicators.sentiment.cot_ind import calculate_cot
+from ..calculation.indicators.sentiment.feargreed_ind import calculate_feargreed
 
 
 def is_dual_chart_rule(rule: str) -> bool:
@@ -85,7 +86,7 @@ def get_supported_indicators() -> set:
     """
     return {
         'rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'ema', 'bb', 'atr',
-        'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'donchain',
+        'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain',
         'fibo', 'obv', 'stdev', 'adx', 'sar'
     }
 
@@ -384,6 +385,32 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['cot_bearish'] = 30  # Bearish threshold
             result_df['cot_neutral'] = 50  # Neutral level
             
+        elif indicator_name in ['feargreed', 'fg']:
+            # Фильтруем пустые параметры
+            params = [p.strip() for p in params if p.strip()]
+            period = int(params[0]) if len(params) > 0 else 14
+            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            
+            # Calculate Fear & Greed Index
+            feargreed_values = calculate_feargreed(price_series, period)
+            result_df['feargreed'] = feargreed_values
+            
+            # Calculate signal line (EMA of Fear & Greed)
+            signal_line = feargreed_values.ewm(span=9, adjust=False).mean()
+            result_df['feargreed_signal'] = signal_line
+            
+            # Calculate histogram
+            histogram = feargreed_values - signal_line
+            result_df['feargreed_histogram'] = histogram
+            
+            # Add threshold levels (Fear & Greed scale 0-100, 50 is neutral)
+            result_df['feargreed_fear'] = 25  # Fear threshold (buy signal)
+            result_df['feargreed_greed'] = 75  # Greed threshold (sell signal)
+            result_df['feargreed_neutral'] = 50  # Neutral level
+            
         elif indicator_name == 'donchain':
             period = int(params[0]) if len(params) > 0 else 20
             
@@ -527,6 +554,8 @@ def create_dual_chart_layout(mode: str, rule: str) -> Dict[str, Any]:
         'kelly': 'Kelly Criterion',
         'putcallratio': 'Put/Call Ratio',
         'cot': 'COT (Commitment of Traders)',
+        'feargreed': 'Fear & Greed Index',
+        'fg': 'Fear & Greed Index',
         'donchain': 'Donchian Channels',
         'fibo': 'Fibonacci Retracements',
         'obv': 'OBV',
