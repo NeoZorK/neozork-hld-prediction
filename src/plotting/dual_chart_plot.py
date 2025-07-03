@@ -368,7 +368,6 @@ def plot_dual_chart_results(
     Raises:
         ValueError: If data is invalid or mode is unsupported
     """
-    print(f"DEBUG: plot_dual_chart_results called with rule={rule}, mode={mode}")
     # Validate input data
     if df is None or df.empty:
         raise ValueError("DataFrame is empty")
@@ -384,7 +383,6 @@ def plot_dual_chart_results(
     
     # Calculate additional indicator
     df_with_indicator = calculate_additional_indicator(df, rule)
-    print(f"DEBUG: after calculate_additional_indicator, columns: {list(df_with_indicator.columns)}")
     
     # Create layout configuration
     layout = create_dual_chart_layout(mode, rule)

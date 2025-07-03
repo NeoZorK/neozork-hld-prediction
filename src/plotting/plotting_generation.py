@@ -707,18 +707,13 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     
     logger.print_info(f"Final plotting mode selected: '{draw_mode}'")
 
-    # DEBUG: выводим параметры для диагностики двойной диаграммы
-    print(f"DEBUG: original_rule_with_params = {getattr(args, 'original_rule_with_params', None)}, draw_mode = {draw_mode}")
-
     # Check for dual chart mode (parameterized indicators)
     original_rule_with_params = getattr(args, 'original_rule_with_params', None)
     if original_rule_with_params and ':' in original_rule_with_params:
         try:
             from ..plotting.dual_chart_plot import is_dual_chart_rule, plot_dual_chart_results
-            print(f"DEBUG: is_dual_chart_rule({original_rule_with_params}) = {is_dual_chart_rule(original_rule_with_params)}")
             if is_dual_chart_rule(original_rule_with_params):
                 logger.print_info(f"Dual chart mode detected for rule: {original_rule_with_params}")
-                print(f"DEBUG: Calling plot_dual_chart_results with rule={original_rule_with_params}, mode={draw_mode}")
                 # Use dual chart plotting
                 plot_dual_chart_results(
                     result_df,
@@ -729,7 +724,6 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                     width=1800,
                     height=1100
                 )
-                print(f"DEBUG: plot_dual_chart_results finished")
                 return
         except ImportError as e:
             logger.print_warning(f"Could not import dual chart plotting: {e}. Falling back to standard plotting.")
