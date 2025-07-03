@@ -55,6 +55,16 @@ def plot_dual_chart_fastest(
     # Standardize column names
     display_df = df.copy()
     display_df.columns = [col.lower() for col in display_df.columns]
+    # Remove duplicate columns by name (case-insensitive, keep first occurrence)
+    cols_lower = pd.Series(display_df.columns)
+    _, idx = np.unique(cols_lower.str.lower(), return_index=True)
+    display_df = display_df.iloc[:, idx]
+    # Ensure index is DatetimeIndex (align with original df)
+    if not isinstance(display_df.index, pd.DatetimeIndex):
+        display_df.index = df.index
+    # Debug: print all column names and index type
+    logger.print_info(f"[dual_chart_fastest] Columns: {list(display_df.columns)}")
+    logger.print_info(f"[dual_chart_fastest] Index type: {type(display_df.index)}")
     
     # Ensure we have required columns
     required_columns = ['open', 'high', 'low', 'close']
@@ -120,9 +130,13 @@ def plot_dual_chart_fastest(
     
     # Add buy/sell signals if available
     if 'direction' in display_df.columns:
-        buy_signals = display_df[display_df['direction'] == 1]
-        sell_signals = display_df[display_df['direction'] == 2]
-        
+        # Ensure boolean masks are aligned with DataFrame index
+        buy_mask = (display_df['direction'] == 1)
+        buy_mask = buy_mask.reindex(display_df.index, fill_value=False)
+        buy_signals = display_df[buy_mask]
+        sell_mask = (display_df['direction'] == 2)
+        sell_mask = sell_mask.reindex(display_df.index, fill_value=False)
+        sell_signals = display_df[sell_mask]
         if not buy_signals.empty:
             fig.add_trace(
                 go.Scatter(
@@ -140,7 +154,6 @@ def plot_dual_chart_fastest(
                 ),
                 row=1, col=1
             )
-        
         if not sell_signals.empty:
             fig.add_trace(
                 go.Scatter(
@@ -1152,11 +1165,11 @@ def plot_dual_chart_fastest(
     
     elif indicator_name in ['feargreed', 'fg']:
         # Add Fear & Greed main line
-        if 'FearGreed' in display_df.columns:
+        if 'feargreed' in display_df.columns:
             fig.add_trace(
                 go.Scatter(
                     x=display_df.index,
-                    y=display_df['FearGreed'],
+                    y=display_df['feargreed'],
                     mode='lines',
                     name='Fear & Greed',
                     line=dict(color='purple', width=3),
@@ -1164,13 +1177,12 @@ def plot_dual_chart_fastest(
                 ),
                 row=2, col=1
             )
-        
         # Add Fear & Greed signal line
-        if 'FearGreed_Signal' in display_df.columns:
+        if 'feargreed_signal' in display_df.columns:
             fig.add_trace(
                 go.Scatter(
                     x=display_df.index,
-                    y=display_df['FearGreed_Signal'],
+                    y=display_df['feargreed_signal'],
                     mode='lines',
                     name='Signal Line',
                     line=dict(color='orange', width=2),
@@ -1178,10 +1190,9 @@ def plot_dual_chart_fastest(
                 ),
                 row=2, col=1
             )
-        
         # Add Fear & Greed histogram (difference between main and signal)
-        if 'FearGreed' in display_df.columns and 'FearGreed_Signal' in display_df.columns:
-            histogram = display_df['FearGreed'] - display_df['FearGreed_Signal']
+        if 'feargreed' in display_df.columns and 'feargreed_signal' in display_df.columns:
+            histogram = display_df['feargreed'] - display_df['feargreed_signal']
             colors = ['green' if val >= 0 else 'red' for val in histogram]
             fig.add_trace(
                 go.Bar(
@@ -1194,12 +1205,10 @@ def plot_dual_chart_fastest(
                 ),
                 row=2, col=1
             )
-        
         # Add threshold levels (constant lines)
         fear_threshold = 25
         greed_threshold = 75
         neutral_level = 50
-        
         # Fear threshold line
         fig.add_trace(
             go.Scatter(
@@ -1212,7 +1221,6 @@ def plot_dual_chart_fastest(
             ),
             row=2, col=1
         )
-        
         # Greed threshold line
         fig.add_trace(
             go.Scatter(
@@ -1225,7 +1233,6 @@ def plot_dual_chart_fastest(
             ),
             row=2, col=1
         )
-        
         # Neutral level line
         fig.add_trace(
             go.Scatter(
