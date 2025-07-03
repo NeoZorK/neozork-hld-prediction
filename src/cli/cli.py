@@ -553,6 +553,12 @@ def show_indicator_help(indicator_name: str):
     Args:
         indicator_name (str): Name of the indicator
     """
+    # Use the new enhanced error handling system
+    from .error_handling import show_enhanced_indicator_help
+    show_enhanced_indicator_help(f"Help requested for indicator: {indicator_name}", indicator_name)
+    return
+    
+    # Legacy help info (kept for reference)
     help_info = {
         'rsi': {
             'name': 'RSI (Relative Strength Index)',
