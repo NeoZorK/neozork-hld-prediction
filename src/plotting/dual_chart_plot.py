@@ -106,6 +106,9 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
         raise ValueError(f"Invalid rule format: {rule}")
     
     indicator_name = rule.split(':', 1)[0].lower().strip()
+    # Алиасы для MonteCarlo
+    if indicator_name in ['monte', 'montecarlo', 'mc']:
+        indicator_name = 'monte'
     params_str = rule.split(':', 1)[1].strip()
     
     # Parse parameters
@@ -548,6 +551,9 @@ def get_indicator_parameters(rule: str) -> Tuple[str, Dict[str, Any]]:
         return rule.lower(), {}
     
     indicator_name = rule.split(':', 1)[0].lower().strip()
+    # Алиасы для MonteCarlo
+    if indicator_name in ['monte', 'montecarlo', 'mc']:
+        indicator_name = 'monte'
     params_str = rule.split(':', 1)[1].strip()
     
     params = [p.strip() for p in params_str.split(',')]
