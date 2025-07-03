@@ -302,7 +302,11 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
     elif selected_rule == TradingRule.COT:
         return rule_func(df, point=point)
     elif selected_rule == TradingRule.PutCallRatio:
-        return rule_func(df, point=point)
+        # Extract PutCallRatio-specific parameters
+        putcall_period = kwargs.get('putcall_period', 20)
+        bullish_threshold = kwargs.get('bullish_threshold', 60.0)
+        bearish_threshold = kwargs.get('bearish_threshold', 40.0)
+        return rule_func(df, point=point, putcall_period=putcall_period, bullish_threshold=bullish_threshold, bearish_threshold=bearish_threshold, price_type=price_type_enum)
     elif selected_rule == TradingRule.Donchain:
         # Extract Donchian-specific parameters
         donchain_period = kwargs.get('donchain_period', 20)

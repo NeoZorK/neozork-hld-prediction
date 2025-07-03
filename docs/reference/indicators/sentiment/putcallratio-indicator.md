@@ -6,19 +6,22 @@
 
 - **Category:** Sentiment
 - **File:** `src/calculation/indicators/sentiment/putcallratio_ind.py`
-- **CLI Rule:** `putcallratio:period,price_type`
+- **CLI Rule:** `putcallratio:period,price_type,bullish_threshold,bearish_threshold`
 
 ## Parameters
 
-| Parameter   | Type   | Description                                      | Default |
-|-------------|--------|--------------------------------------------------|---------|
-| period      | int    | Calculation period (number of bars)              | 20      |
-| price_type  | str    | Price type for calculation: `open` or `close`    | close   |
+- `period` (int): Put/Call Ratio period (default: 20)
+- `price_type` (string): Price type for calculation - open or close (default: close)
+- `bullish_threshold` (float, optional): Bullish threshold for buy signal (default: 60.0)
+- `bearish_threshold` (float, optional): Bearish threshold for sell signal (default: 40.0)
 
-**Example:**
+### Example usage
+
 ```
---rule putcallratio:20,close
+--rule putcallratio:10,close,52,48
 ```
+
+This will use period=10, price_type=close, bullish_threshold=52, bearish_threshold=48.
 
 ## Calculation Logic
 

@@ -165,6 +165,11 @@ def calculate_pressure_vector(
         pivot_columns = ['Pivot_PP', 'Pivot_R1', 'Pivot_S1', 'Pivot_Signal', 'Pivot_Price_Type']
         output_columns.extend(pivot_columns)
     
+    # Add PutCallRatio-specific columns for PutCallRatio rules
+    if tr_num == TradingRule.PutCallRatio:
+        putcall_columns = ['PutCallRatio', 'PutCallRatio_Signal', 'PutCallRatio_Price_Type']
+        output_columns.extend(putcall_columns)
+    
     # Filter to only columns that actually exist in the DataFrame
     final_columns = [col for col in output_columns if col in df_out.columns]
 
