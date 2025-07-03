@@ -210,7 +210,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=1.01,
+            y=0.93,
             xanchor="center",
             x=0.5,
             bgcolor='rgba(255,255,255,0.8)',
@@ -224,7 +224,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
             font_size=10,
             bordercolor='#bdc3c7'
         ),
-        margin=dict(t=24, b=14, l=28, r=4),
+        margin=dict(t=64, b=14, l=28, r=4),
         plot_bgcolor='white',
         paper_bgcolor='white'
     )
@@ -232,7 +232,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
     fig.add_annotation(
         text="AUTO Mode: Each numeric column (except OHLCV/time) is shown as a separate chart.",
         xref="paper", yref="paper",
-        x=0.01, y=1.18,
+        x=0.01, y=1.10,
         showarrow=False,
         font=dict(size=14),
         align="left",
@@ -245,7 +245,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
     fig.add_annotation(
         text=f"Trading Rule: {trading_rule_name}",
         xref="paper", yref="paper",
-        x=0.99, y=1.18,
+        x=0.99, y=1.10,
         showarrow=False,
         font=dict(size=16, color="#2e5cb8"),
         align="right",
