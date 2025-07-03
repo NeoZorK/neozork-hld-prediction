@@ -58,7 +58,7 @@ Example output:
 ⚡ Momentum Indicators:
 ────────────────────────────────────────
    1. MACD                 - Moving Average Convergence Divergence
-   2. Stochastic Oscillator - Stochastic Oscillator
+   2. Stochastic           - Stochastic oscillator
 ```
 
 ## Result

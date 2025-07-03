@@ -132,7 +132,7 @@ class IndicatorSearcher:
         # Define categories and their subdirectories
         categories = {
             "trend": ["ema_ind.py", "adx_ind.py", "sar_ind.py", "supertrend_ind.py"],
-            "momentum": ["rsi_ind.py", "macd_ind.py", "stochoscillator_ind.py"],
+            "momentum": ["rsi_ind.py", "macd_ind.py"],
             "volatility": ["bb_ind.py", "atr_ind.py", "stdev_ind.py"],
             "volume": ["obv_ind.py", "vwap_ind.py"],
             "suportresist": ["pivot_ind.py", "fiboretr_ind.py", "donchain_ind.py"],

@@ -367,6 +367,34 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['stoch_overbought'] = 80
             result_df['stoch_oversold'] = 20
             
+        elif indicator_name == 'stochoscillator':
+            k_period = int(params[0]) if len(params) > 0 else 14
+            d_period = int(params[1]) if len(params) > 1 else 3
+            price_type = PriceType.OPEN if len(params) > 2 and params[2].lower() == 'open' else PriceType.CLOSE
+            
+            # Удаляем возможные дубликаты
+            for col in ['stochosc_k', 'stochosc_d', 'StochOsc_K', 'StochOsc_D']:
+                if col in result_df.columns:
+                    result_df = result_df.drop(columns=[col])
+            
+            # Рассчитываем Stochastic Oscillator
+            high_series = df['High']
+            low_series = df['Low']
+            close_series = df['Close']
+            
+            # %K = ((Close - Lowest Low) / (Highest High - Lowest Low)) * 100
+            lowest_low = low_series.rolling(window=k_period).min()
+            highest_high = high_series.rolling(window=k_period).max()
+            stochosc_k = ((close_series - lowest_low) / (highest_high - lowest_low)) * 100
+            
+            # %D = SMA of %K
+            stochosc_d = stochosc_k.rolling(window=d_period).mean()
+            
+            result_df['stochosc_k'] = stochosc_k
+            result_df['stochosc_d'] = stochosc_d
+            result_df['stochosc_overbought'] = 80
+            result_df['stochosc_oversold'] = 20
+            
         else:
             raise ValueError(f"Unsupported indicator: {indicator_name}")
             

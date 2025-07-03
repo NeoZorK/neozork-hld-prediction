@@ -63,7 +63,7 @@ uv run run_analysis.py show csv mn1 gbp --rule macd -d fastest
 uv run run_analysis.py show csv mn1 gbp --rule macd:8,21,5,open -d fastest
 ```
 
-### Stochastic Oscillator
+### Stochastic
 ```bash
 --rule stoch:k_period,d_period,price_type
 ```

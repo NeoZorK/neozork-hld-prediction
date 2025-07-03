@@ -400,7 +400,7 @@ def parse_arguments():
         if ':' in args.rule:
             # Parameterized rule - validate the indicator name part
             indicator_name = args.rule.split(':', 1)[0].lower()
-            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar']
+            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar']
             if indicator_name not in valid_indicators:
                 parser.error(f"Invalid indicator name '{indicator_name}' in parameterized rule '{args.rule}'. Valid indicators: {', '.join(valid_indicators)}")
         else:
@@ -614,7 +614,7 @@ def show_indicator_help(indicator_name: str):
             ]
         },
         'stoch': {
-            'name': 'Stochastic Oscillator',
+            'name': 'Stochastic',
             'format': 'stoch:k_period,d_period,price_type',
             'parameters': [
                 'k_period (int): %K period (default: 14)',
@@ -626,6 +626,7 @@ def show_indicator_help(indicator_name: str):
                 'stoch:21,5,open'
             ]
         },
+        'stochoscillator': 'stoch',  # Алиас, чтобы не было отдельного help
         'ema': {
             'name': 'EMA (Exponential Moving Average)',
             'format': 'ema:period,price_type',
@@ -1333,6 +1334,8 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_adx_parameters(params_str)
         elif indicator_name == 'sar':
             return parse_sar_parameters(params_str)
+        elif indicator_name == 'stochoscillator':
+            return parse_stoch_parameters(params_str)
         else:
             # Unknown indicator, show help and raise error
             show_indicator_help(indicator_name)

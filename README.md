@@ -108,7 +108,7 @@ uv run pytest tests -n auto
 - **MQL5**: MetaTrader 5 data
 
 ### Technical Indicators (50+)
-- **Momentum**: MACD, Stochastic Oscillator
+- **Momentum**: MACD
 - **Oscillators**: RSI, CCI, Stochastic
 - **Trend**: EMA, ADX, SAR
 - **Volatility**: ATR, Bollinger Bands
