@@ -210,7 +210,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=0.93,
+            y=1.15,
             xanchor="center",
             x=0.5,
             bgcolor='rgba(255,255,255,0.8)',
@@ -224,7 +224,7 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
             font_size=10,
             bordercolor='#bdc3c7'
         ),
-        margin=dict(t=64, b=14, l=28, r=4),
+        margin=dict(t=96, b=14, l=28, r=4),
         plot_bgcolor='white',
         paper_bgcolor='white'
     )
