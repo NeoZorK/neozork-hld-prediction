@@ -111,7 +111,14 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     if not all(col in ohlcv_df.columns for col in required_cols_indicator):
         raise ValueError(f"DataFrame missing required columns for calculation: {required_cols_indicator}. Has: {ohlcv_df.columns.tolist()}")
 
-    ohlcv_df_calc_input = ohlcv_df.rename(columns={'Volume': 'TickVolume'}, errors='ignore')
+    # Create a copy for calculation that preserves the Volume column for volume-based indicators
+    ohlcv_df_calc_input = ohlcv_df.copy()
+    
+    # Only rename Volume to TickVolume for non-volume-based indicators
+    # Volume-based indicators (OBV, VWAP, etc.) need the Volume column
+    volume_based_indicators = ['OBV', 'VWAP', 'COT', 'PutCallRatio']
+    if rule_input_str.upper() not in volume_based_indicators:
+        ohlcv_df_calc_input = ohlcv_df.rename(columns={'Volume': 'TickVolume'}, errors='ignore')
 
     # Store original MQL5 results before calculation if mode is csv
     pressure_mql5 = None
