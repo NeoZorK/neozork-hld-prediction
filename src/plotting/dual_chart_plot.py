@@ -271,13 +271,12 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
         elif indicator_name == 'tsf':
             period = int(params[0]) if len(params) > 0 else 20
-            forecast_period = int(params[1]) if len(params) > 1 else 5
-            price_type = 'open' if len(params) > 2 and params[2].lower() == 'open' else 'close'
+            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
             
             # Select price series based on price_type
             price_series = df['Open'] if price_type == 'open' else df['Close']
             
-            tsf_values = calculate_tsforecast(price_series, period, forecast_period)
+            tsf_values = calculate_tsforecast(price_series, period)
             result_df['tsf'] = tsf_values
             
         elif indicator_name == 'monte':
