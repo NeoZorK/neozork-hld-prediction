@@ -1065,6 +1065,91 @@ def plot_dual_chart_fastest(
                 row=2, col=1
             )
     
+    elif indicator_name == 'cot':
+        # Add COT main line
+        if 'cot' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['cot'],
+                    mode='lines',
+                    name='COT',
+                    line=dict(color='darkblue', width=3),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add COT signal line
+        if 'cot_signal' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['cot_signal'],
+                    mode='lines',
+                    name='Signal Line',
+                    line=dict(color='darkorange', width=2),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add COT histogram
+        if 'cot_histogram' in display_df.columns:
+            # Color histogram bars based on values
+            colors = ['green' if val >= 0 else 'red' for val in display_df['cot_histogram']]
+            fig.add_trace(
+                go.Bar(
+                    x=display_df.index,
+                    y=display_df['cot_histogram'],
+                    name='Histogram',
+                    marker_color=colors,
+                    opacity=0.7,
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add threshold levels
+        if 'cot_bullish' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['cot_bullish'],
+                    mode='lines',
+                    name='Bullish Threshold',
+                    line=dict(color='green', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        if 'cot_bearish' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['cot_bearish'],
+                    mode='lines',
+                    name='Bearish Threshold',
+                    line=dict(color='red', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        if 'cot_neutral' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['cot_neutral'],
+                    mode='lines',
+                    name='Neutral Level',
+                    line=dict(color='gray', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+    
     # Update layout
     fig.update_layout(
         title=dict(
