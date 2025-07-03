@@ -828,14 +828,16 @@ def show_indicator_help(indicator_name: str):
         },
         'putcallratio': {
             'name': 'Put/Call Ratio',
-            'format': 'putcallratio:period,price_type',
+            'format': 'putcallratio:period,price_type[,bullish_threshold,bearish_threshold]',
             'parameters': [
                 'period (int): Put/Call Ratio period (default: 20)',
-                'price_type (string): Price type for calculation - open or close (default: close)'
+                'price_type (string): Price type for calculation - open or close (default: close)',
+                'bullish_threshold (float): Bullish threshold (default: 60.0)',
+                'bearish_threshold (float): Bearish threshold (default: 40.0)'
             ],
             'examples': [
-                'putcallratio:20,close',
-                'putcallratio:14,open'
+                'putcallratio:20,close,60.0,40.0',
+                'putcallratio:14,open,60.0,40.0'
             ]
         },
         'cot': {
@@ -1373,26 +1375,27 @@ def parse_supertrend_parameters(params_str: str) -> tuple[str, dict]:
 
 
 def parse_putcallratio_parameters(params_str: str) -> tuple[str, dict]:
-    """Parse Put/Call Ratio parameters: period,price_type"""
+    """Parse Put/Call Ratio parameters: period,price_type[,bullish_threshold,bearish_threshold]"""
     params = params_str.split(',')
-    if len(params) != 2:
+    if len(params) < 2 or len(params) > 4:
         show_indicator_help('putcallratio')
-        raise ValueError(f"Put/Call Ratio requires exactly 2 parameters: period,price_type. Got: {params_str}")
-    
+        raise ValueError(f"Put/Call Ratio requires 2-4 parameters: period,price_type[,bullish_threshold,bearish_threshold]. Got: {params_str}")
     try:
         period = int(float(params[0].strip()))  # Handle float values
         price_type = params[1].strip().lower()
+        bullish_threshold = float(params[2].strip()) if len(params) > 2 else 60.0
+        bearish_threshold = float(params[3].strip()) if len(params) > 3 else 40.0
     except (ValueError, IndexError) as e:
         show_indicator_help('putcallratio')
         raise ValueError(f"Invalid Put/Call Ratio parameters: {params_str}. Error: {e}")
-    
     if price_type not in ['open', 'close']:
         show_indicator_help('putcallratio')
         raise ValueError(f"Put/Call Ratio price_type must be 'open' or 'close', got: {price_type}")
-    
     return 'putcallratio', {
-        'putcallratio_period': period,
-        'price_type': price_type
+        'putcall_period': period,
+        'price_type': price_type,
+        'bullish_threshold': bullish_threshold,
+        'bearish_threshold': bearish_threshold
     }
 
 
