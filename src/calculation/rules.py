@@ -300,7 +300,11 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         price_type = kwargs.get('price_type', price_type_enum)
         return rule_func(df, point=point, feargreed_period=feargreed_period, price_type=price_type)
     elif selected_rule == TradingRule.COT:
-        return rule_func(df, point=point)
+        # Extract COT-specific parameters
+        cot_period = kwargs.get('cot_period', 20)
+        bullish_threshold = kwargs.get('bullish_threshold', 70)
+        bearish_threshold = kwargs.get('bearish_threshold', 30)
+        return rule_func(df, point=point, cot_period=cot_period, bullish_threshold=bullish_threshold, bearish_threshold=bearish_threshold, price_type=price_type_enum)
     elif selected_rule == TradingRule.PutCallRatio:
         # Extract PutCallRatio-specific parameters
         putcall_period = kwargs.get('putcall_period', 20)

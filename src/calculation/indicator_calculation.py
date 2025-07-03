@@ -115,8 +115,8 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     ohlcv_df_calc_input = ohlcv_df.copy()
     
     # Only rename Volume to TickVolume for non-volume-based indicators
-    # Volume-based indicators (OBV, VWAP, etc.) need the Volume column
-    volume_based_indicators = ['OBV', 'VWAP', 'COT', 'PutCallRatio']
+    # Volume-based indicators (OBV, VWAP, COT, PutCallRatio, etc.) need the Volume column
+    volume_based_indicators = ['OBV', 'VWAP', 'COT', 'PUTCALLRATIO', 'PCR']
     if rule_input_str.upper() not in volume_based_indicators:
         ohlcv_df_calc_input = ohlcv_df.rename(columns={'Volume': 'TickVolume'}, errors='ignore')
 
