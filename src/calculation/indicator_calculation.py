@@ -167,13 +167,21 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
             setattr(selected_rule, 'original_rule_with_params', original_rule_with_params)
             return result_df, selected_rule
 
-        # Для всех остальных правил используем apply_trading_rule
-        result_df = apply_trading_rule(
-            ohlcv_df_calc_input.copy(),
-            selected_rule,
-            point_size,
+        # Apply indicator parameters if provided
+        price_type = indicator_params.get('price_type', getattr(args, 'price_type', 'close'))
+
+        # Create a modified args object with indicator parameters
+        modified_args = args
+        for param_name, param_value in indicator_params.items():
+            setattr(modified_args, param_name, param_value)
+
+        result_df = calculate_pressure_vector(
+            df=ohlcv_df_calc_input.copy(),
+            point=point_size,
+            tr_num=selected_rule,
             **indicator_params
         )
+
         # Add original rule with parameters to the rule object for display
         setattr(selected_rule, 'original_rule_with_params', original_rule_with_params)
         
