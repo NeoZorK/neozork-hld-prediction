@@ -116,7 +116,16 @@ uv run pytest tests -n auto
 - **Support & Resistance**: Pivot Points, Fibonacci
 - **Predictive**: HMA, Time Series Forecast
 - **Probability**: Monte Carlo, Kelly Criterion
-- **Sentiment**: Fear & Greed, COT, **Put/Call Ratio**
+- **Sentiment**: Fear & Greed, **COT**, Put/Call Ratio
+
+#### New: COT (Commitments of Traders) Indicator
+- **Category:** Sentiment
+- **Description:** Analyzes futures market positioning to gauge institutional sentiment. Useful for trend confirmation and reversal spotting.
+- **CLI Example:**
+  ```bash
+  uv run run_analysis.py show csv mn1 -d fastest --rule cot:14,close
+  ```
+- **Documentation:** [COT Indicator](docs/reference/indicators/sentiment/cot-indicator.md)
 
 #### New: Put/Call Ratio Indicator
 - **Category:** Sentiment
