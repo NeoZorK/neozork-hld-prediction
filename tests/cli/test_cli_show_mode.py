@@ -146,6 +146,41 @@ class TestCLIShowMode(unittest.TestCase):
             msg=f"stdout: {out}\nstderr: {result.stderr}"
         )
 
+    def test_show_csv_cot_rule(self):
+        """Test CLI: run_analysis.py show csv mn1 -d fastest --rule cot:10,close"""
+        import subprocess
+        import sys
+        import pandas as pd
+        import tempfile
+        from pathlib import Path
+        # Путь к run_analysis.py
+        script_path = os.path.join(self._project_root, "run_analysis.py")
+        assert os.path.exists(script_path)
+        # Создаём временный parquet-файл с нужными колонками и именем mn1 в текущей рабочей директории
+        data_dir = Path("data") / "cache" / "csv_converted"
+        data_dir.mkdir(parents=True, exist_ok=True)
+        temp_file = data_dir / "CSVExport_GBPUSD_PERIOD_MN1.parquet"
+        df = pd.DataFrame({
+            'Open': [1.0, 2.0, 3.0],
+            'High': [1.1, 2.1, 3.1],
+            'Low': [0.9, 1.9, 2.9],
+            'Close': [1.05, 2.05, 3.05],
+            'Volume': [100, 200, 300]
+        }, index=pd.date_range('2020-01-01', periods=3, freq='D'))
+        df.to_parquet(temp_file)
+        try:
+            # Запускаем команду
+            result = subprocess.run([
+                sys.executable, script_path, "show", "csv", "mn1", "-d", "fastest", "--rule", "cot:10,close"
+            ], capture_output=True, text=True)
+            assert result.returncode == 0, f"CLI error: {result.stderr}"
+            assert "Indicator 'COT' calculated successfully." in result.stdout
+            assert "COT" in result.stdout
+            assert "COT_Signal" in result.stdout
+        finally:
+            if temp_file.exists():
+                temp_file.unlink()
+
 if __name__ == '__main__':
     unittest.main()
 
