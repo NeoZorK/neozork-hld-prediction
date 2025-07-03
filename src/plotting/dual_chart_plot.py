@@ -159,6 +159,29 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['rsi_oversold'] = oversold
             result_df['rsi_overbought'] = overbought
             
+        elif indicator_name == 'rsi_div':
+            period = int(params[0]) if len(params) > 0 else 14
+            oversold = float(params[1]) if len(params) > 1 else 30
+            overbought = float(params[2]) if len(params) > 2 else 70
+            price_type = PriceType.OPEN if len(params) > 3 and params[3].lower() == 'open' else PriceType.CLOSE
+            
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
+            rsi_values = calculate_rsi(price_series, period)
+            
+            # Удаляем возможные дубликаты
+            for col in ['RSI', 'rsi', 'rsi_divergence', 'RSI_Divergence']:
+                if col in result_df.columns:
+                    result_df = result_df.drop(columns=[col])
+            
+            # Добавляем RSI
+            result_df['rsi'] = rsi_values
+            # Вычисляем дивергенцию: разница между изменением цены и изменением RSI
+            price_diff = price_series.diff()
+            rsi_diff = rsi_values.diff()
+            result_df['rsi_divergence'] = price_diff - rsi_diff
+            result_df['rsi_oversold'] = oversold
+            result_df['rsi_overbought'] = overbought
+            
         elif indicator_name == 'macd':
             fast_period = int(params[0]) if len(params) > 0 else 12
             slow_period = int(params[1]) if len(params) > 1 else 26
