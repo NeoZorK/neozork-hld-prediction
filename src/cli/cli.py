@@ -908,7 +908,6 @@ def parse_rsi_parameters(params_str: str) -> tuple[str, dict]:
     """Parse RSI parameters: period,oversold,overbought,price_type"""
     params = params_str.split(',')
     if len(params) != 4:
-        show_indicator_help('rsi')
         raise ValueError(f"RSI requires exactly 4 parameters: period,oversold,overbought,price_type. Got: {params_str}")
     
     try:
@@ -917,25 +916,20 @@ def parse_rsi_parameters(params_str: str) -> tuple[str, dict]:
         overbought = float(params[2].strip())
         price_type = params[3].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('rsi')
         raise ValueError(f"Invalid RSI parameters: {params_str}. Error: {e}")
     
     # Validate period
     if period <= 0:
-        show_indicator_help('rsi')
         raise ValueError(f"RSI period must be a positive integer, got: {period}")
     
     # Validate thresholds
     if oversold < 0 or oversold > 100:
-        show_indicator_help('rsi')
         raise ValueError(f"RSI oversold must be between 0 and 100, got: {oversold}")
     
     if overbought < 0 or overbought > 100:
-        show_indicator_help('rsi')
         raise ValueError(f"RSI overbought must be between 0 and 100, got: {overbought}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('rsi')
         raise ValueError(f"RSI price_type must be 'open' or 'close', got: {price_type}")
     
     return 'rsi', {
@@ -962,7 +956,6 @@ def parse_macd_parameters(params_str: str) -> tuple[str, dict]:
     """Parse MACD parameters: fast_period,slow_period,signal_period,price_type"""
     params = params_str.split(',')
     if len(params) != 4:
-        show_indicator_help('macd')
         raise ValueError(f"MACD requires exactly 4 parameters: fast_period,slow_period,signal_period,price_type. Got: {params_str}")
     
     try:
@@ -971,11 +964,9 @@ def parse_macd_parameters(params_str: str) -> tuple[str, dict]:
         signal_period = int(float(params[2].strip()))
         price_type = params[3].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('macd')
         raise ValueError(f"Invalid MACD parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('macd')
         raise ValueError(f"MACD price_type must be 'open' or 'close', got: {price_type}")
     
     return 'macd', {
@@ -990,7 +981,6 @@ def parse_stoch_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Stochastic parameters: k_period,d_period,price_type"""
     params = params_str.split(',')
     if len(params) != 3:
-        show_indicator_help('stoch')
         raise ValueError(f"Stochastic requires exactly 3 parameters: k_period,d_period,price_type. Got: {params_str}")
     
     try:
@@ -998,11 +988,9 @@ def parse_stoch_parameters(params_str: str) -> tuple[str, dict]:
         d_period = int(float(params[1].strip()))
         price_type = params[2].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('stoch')
         raise ValueError(f"Invalid Stochastic parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('stoch')
         raise ValueError(f"Stochastic price_type must be 'open' or 'close', got: {price_type}")
     
     return 'stoch', {
@@ -1016,18 +1004,15 @@ def parse_ema_parameters(params_str: str) -> tuple[str, dict]:
     """Parse EMA parameters: period,price_type"""
     params = params_str.split(',')
     if len(params) != 2:
-        show_indicator_help('ema')
         raise ValueError(f"EMA requires exactly 2 parameters: period,price_type. Got: {params_str}")
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
         price_type = params[1].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('ema')
         raise ValueError(f"Invalid EMA parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('ema')
         raise ValueError(f"EMA price_type must be 'open' or 'close', got: {price_type}")
     
     return 'ema', {
@@ -1040,7 +1025,6 @@ def parse_bb_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Bollinger Bands parameters: period,std_dev,price_type"""
     params = params_str.split(',')
     if len(params) != 3:
-        show_indicator_help('bb')
         raise ValueError(f"Bollinger Bands requires exactly 3 parameters: period,std_dev,price_type. Got: {params_str}")
     
     try:
@@ -1048,11 +1032,9 @@ def parse_bb_parameters(params_str: str) -> tuple[str, dict]:
         std_dev = float(params[1].strip())
         price_type = params[2].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('bb')
         raise ValueError(f"Invalid Bollinger Bands parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('bb')
         raise ValueError(f"Bollinger Bands price_type must be 'open' or 'close', got: {price_type}")
     
     return 'bb', {
@@ -1066,13 +1048,11 @@ def parse_atr_parameters(params_str: str) -> tuple[str, dict]:
     """Parse ATR parameters: period"""
     params = params_str.split(',')
     if len(params) != 1:
-        show_indicator_help('atr')
         raise ValueError(f"ATR requires exactly 1 parameter: period. Got: {params_str}")
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
     except (ValueError, IndexError) as e:
-        show_indicator_help('atr')
         raise ValueError(f"Invalid ATR parameters: {params_str}. Error: {e}")
     
     return 'atr', {
@@ -1084,18 +1064,15 @@ def parse_cci_parameters(params_str: str) -> tuple[str, dict]:
     """Parse CCI parameters: period,price_type"""
     params = params_str.split(',')
     if len(params) != 2:
-        show_indicator_help('cci')
         raise ValueError(f"CCI requires exactly 2 parameters: period,price_type. Got: {params_str}")
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
         price_type = params[1].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('cci')
         raise ValueError(f"Invalid CCI parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('cci')
         raise ValueError(f"CCI price_type must be 'open' or 'close', got: {price_type}")
     
     return 'cci', {
@@ -1108,17 +1085,14 @@ def parse_vwap_parameters(params_str: str) -> tuple[str, dict]:
     """Parse VWAP parameters: price_type"""
     params = params_str.split(',')
     if len(params) != 1:
-        show_indicator_help('vwap')
         raise ValueError(f"VWAP requires exactly 1 parameter: price_type. Got: {params_str}")
     
     try:
         price_type = params[0].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('vwap')
         raise ValueError(f"Invalid VWAP parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('vwap')
         raise ValueError(f"VWAP price_type must be 'open' or 'close', got: {price_type}")
     
     return 'vwap', {
@@ -1130,17 +1104,14 @@ def parse_pivot_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Pivot Points parameters: price_type"""
     params = params_str.split(',')
     if len(params) != 1:
-        show_indicator_help('pivot')
         raise ValueError(f"Pivot Points requires exactly 1 parameter: price_type. Got: {params_str}")
     
     try:
         price_type = params[0].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('pivot')
         raise ValueError(f"Invalid Pivot Points parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('pivot')
         raise ValueError(f"Pivot Points price_type must be 'open' or 'close', got: {price_type}")
     
     return 'pivot', {
@@ -1152,18 +1123,15 @@ def parse_hma_parameters(params_str: str) -> tuple[str, dict]:
     """Parse HMA parameters: period,price_type"""
     params = params_str.split(',')
     if len(params) != 2:
-        show_indicator_help('hma')
         raise ValueError(f"HMA requires exactly 2 parameters: period,price_type. Got: {params_str}")
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
         price_type = params[1].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('hma')
         raise ValueError(f"Invalid HMA parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('hma')
         raise ValueError(f"HMA price_type must be 'open' or 'close', got: {price_type}")
     
     return 'hma', {
@@ -1176,18 +1144,15 @@ def parse_tsf_parameters(params_str: str) -> tuple[str, dict]:
     """Parse TSF parameters: period,price_type"""
     params = params_str.split(',')
     if len(params) != 2:
-        show_indicator_help('tsf')
         raise ValueError(f"TSF requires exactly 2 parameters: period,price_type. Got: {params_str}")
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
         price_type = params[1].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('tsf')
         raise ValueError(f"Invalid TSF parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('tsf')
         raise ValueError(f"TSF price_type must be 'open' or 'close', got: {price_type}")
     
     return 'tsf', {
@@ -1200,14 +1165,12 @@ def parse_monte_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Monte Carlo parameters: simulations,period"""
     params = params_str.split(',')
     if len(params) != 2:
-        show_indicator_help('monte')
         raise ValueError(f"Monte Carlo requires exactly 2 parameters: simulations,period. Got: {params_str}")
     
     try:
         simulations = int(float(params[0].strip()))  # Handle float values
         period = int(float(params[1].strip()))
     except (ValueError, IndexError) as e:
-        show_indicator_help('monte')
         raise ValueError(f"Invalid Monte Carlo parameters: {params_str}. Error: {e}")
     
     return 'monte', {
@@ -1220,13 +1183,11 @@ def parse_kelly_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Kelly Criterion parameters: period"""
     params = params_str.split(',')
     if len(params) != 1:
-        show_indicator_help('kelly')
         raise ValueError(f"Kelly Criterion requires exactly 1 parameter: period. Got: {params_str}")
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
     except (ValueError, IndexError) as e:
-        show_indicator_help('kelly')
         raise ValueError(f"Invalid Kelly Criterion parameters: {params_str}. Error: {e}")
     
     return 'kelly', {
@@ -1238,13 +1199,11 @@ def parse_donchain_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Donchian Channels parameters: period"""
     params = params_str.split(',')
     if len(params) != 1:
-        show_indicator_help('donchain')
         raise ValueError(f"Donchian Channels requires exactly 1 parameter: period. Got: {params_str}")
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
     except (ValueError, IndexError) as e:
-        show_indicator_help('donchain')
         raise ValueError(f"Invalid Donchian Channels parameters: {params_str}. Error: {e}")
     
     return 'donchain', {
@@ -1256,7 +1215,6 @@ def parse_fibo_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Fibonacci Retracements parameters: levels or 'all'"""
     params = params_str.split(',')
     if len(params) < 1:
-        show_indicator_help('fibo')
         raise ValueError(f"Fibonacci Retracements requires at least 1 parameter: levels or 'all'. Got: {params_str}")
     
     # Check if first parameter is 'all'
@@ -1268,7 +1226,6 @@ def parse_fibo_parameters(params_str: str) -> tuple[str, dict]:
         try:
             levels = [float(p.strip()) for p in params]
         except (ValueError, IndexError) as e:
-            show_indicator_help('fibo')
             raise ValueError(f"Invalid Fibonacci Retracements parameters: {params_str}. Error: {e}")
     
     return 'fibo', {
@@ -1281,7 +1238,6 @@ def parse_obv_parameters(params_str: str) -> tuple[str, dict]:
     # Allow empty parameters after colon (e.g., "obv:")
     if params_str.strip():
         # If there are actual parameters, show help
-        show_indicator_help('obv')
         raise ValueError(f"OBV does not require parameters. Got: {params_str}")
     
     return 'obv', {}
@@ -1291,18 +1247,15 @@ def parse_stdev_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Standard Deviation parameters: period,price_type"""
     params = params_str.split(',')
     if len(params) != 2:
-        show_indicator_help('stdev')
         raise ValueError(f"Standard Deviation requires exactly 2 parameters: period,price_type. Got: {params_str}")
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
         price_type = params[1].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('stdev')
         raise ValueError(f"Invalid Standard Deviation parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('stdev')
         raise ValueError(f"Standard Deviation price_type must be 'open' or 'close', got: {price_type}")
     
     return 'stdev', {
@@ -1315,13 +1268,11 @@ def parse_adx_parameters(params_str: str) -> tuple[str, dict]:
     """Parse ADX parameters: period"""
     params = params_str.split(',')
     if len(params) != 1:
-        show_indicator_help('adx')
         raise ValueError(f"ADX requires exactly 1 parameter: period. Got: {params_str}")
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
     except (ValueError, IndexError) as e:
-        show_indicator_help('adx')
         raise ValueError(f"Invalid ADX parameters: {params_str}. Error: {e}")
     
     return 'adx', {
@@ -1333,14 +1284,12 @@ def parse_sar_parameters(params_str: str) -> tuple[str, dict]:
     """Parse SAR parameters: acceleration,maximum"""
     params = params_str.split(',')
     if len(params) != 2:
-        show_indicator_help('sar')
         raise ValueError(f"SAR requires exactly 2 parameters: acceleration,maximum. Got: {params_str}")
     
     try:
         acceleration = float(params[0].strip())
         maximum = float(params[1].strip())
     except (ValueError, IndexError) as e:
-        show_indicator_help('sar')
         raise ValueError(f"Invalid SAR parameters: {params_str}. Error: {e}")
     
     return 'sar', {
@@ -1353,12 +1302,10 @@ def parse_supertrend_parameters(params_str: str) -> tuple[str, dict]:
     """Parse SuperTrend parameters: period,multiplier[,price_type]"""
     # Handle empty string case
     if not params_str.strip():
-        show_indicator_help('supertrend')
         raise ValueError(f"SuperTrend requires exactly 2-3 parameters: period,multiplier[,price_type]. Got: {params_str}")
     
     params = params_str.split(',')
     if len(params) < 2 or len(params) > 3:
-        show_indicator_help('supertrend')
         raise ValueError(f"SuperTrend requires exactly 2-3 parameters: period,multiplier[,price_type]. Got: {params_str}")
     
     try:
@@ -1366,11 +1313,9 @@ def parse_supertrend_parameters(params_str: str) -> tuple[str, dict]:
         multiplier = float(params[1].strip())
         price_type = params[2].strip().lower() if len(params) > 2 else 'close'
     except (ValueError, IndexError) as e:
-        show_indicator_help('supertrend')
         raise ValueError(f"Invalid SuperTrend parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('supertrend')
         raise ValueError(f"SuperTrend price_type must be 'open' or 'close', got: {price_type}")
     
     return 'supertrend', {
@@ -1384,7 +1329,6 @@ def parse_putcallratio_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Put/Call Ratio parameters: period,price_type[,bullish_threshold,bearish_threshold]"""
     params = params_str.split(',')
     if len(params) < 2 or len(params) > 4:
-        show_indicator_help('putcallratio')
         raise ValueError(f"Put/Call Ratio requires 2-4 parameters: period,price_type[,bullish_threshold,bearish_threshold]. Got: {params_str}")
     try:
         period = int(float(params[0].strip()))  # Handle float values
@@ -1392,10 +1336,8 @@ def parse_putcallratio_parameters(params_str: str) -> tuple[str, dict]:
         bullish_threshold = float(params[2].strip()) if len(params) > 2 else 60.0
         bearish_threshold = float(params[3].strip()) if len(params) > 3 else 40.0
     except (ValueError, IndexError) as e:
-        show_indicator_help('putcallratio')
         raise ValueError(f"Invalid Put/Call Ratio parameters: {params_str}. Error: {e}")
     if price_type not in ['open', 'close']:
-        show_indicator_help('putcallratio')
         raise ValueError(f"Put/Call Ratio price_type must be 'open' or 'close', got: {price_type}")
     return 'putcallratio', {
         'putcall_period': period,
@@ -1409,18 +1351,15 @@ def parse_cot_parameters(params_str: str) -> tuple[str, dict]:
     """Parse COT parameters: period,price_type"""
     params = params_str.split(',')
     if len(params) != 2:
-        show_indicator_help('cot')
         raise ValueError(f"COT requires exactly 2 parameters: period,price_type. Got: {params_str}")
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
         price_type = params[1].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('cot')
         raise ValueError(f"Invalid COT parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('cot')
         raise ValueError(f"COT price_type must be 'open' or 'close', got: {price_type}")
     
     return 'cot', {
@@ -1433,18 +1372,15 @@ def parse_feargreed_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Fear & Greed parameters: period,price_type"""
     params = params_str.split(',')
     if len(params) != 2:
-        show_indicator_help('feargreed')
         raise ValueError(f"Fear & Greed requires exactly 2 parameters: period,price_type. Got: {params_str}")
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
         price_type = params[1].strip().lower()
     except (ValueError, IndexError) as e:
-        show_indicator_help('feargreed')
         raise ValueError(f"Invalid Fear & Greed parameters: {params_str}. Error: {e}")
     
     if price_type not in ['open', 'close']:
-        show_indicator_help('feargreed')
         raise ValueError(f"Fear & Greed price_type must be 'open' or 'close', got: {price_type}")
     
     return 'feargreed', {
@@ -1531,7 +1467,6 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_feargreed_parameters(params_str)
         else:
             # Unknown indicator, show help and raise error
-            show_indicator_help(indicator_name)
             raise ValueError(f"Unknown indicator: {indicator_name}")
             
     except Exception as e:
