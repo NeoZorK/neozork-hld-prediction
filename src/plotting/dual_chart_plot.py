@@ -35,7 +35,7 @@ from ..calculation.indicators.predictive.hma_ind import calculate_hma
 from ..calculation.indicators.predictive.tsforecast_ind import calculate_tsforecast
 from ..calculation.indicators.probability.montecarlo_ind import calculate_montecarlo
 from ..calculation.indicators.probability.kelly_ind import calculate_kelly
-from ..calculation.indicators.suportresist.donchain_ind import calculate_donchain
+from ..calculation.indicators.suportresist.donchain_ind import calculate_donchain, calculate_donchain_signals
 from ..calculation.indicators.suportresist.fiboretr_ind import calculate_fiboretr
 from ..calculation.indicators.volume.obv_ind import calculate_obv
 from ..calculation.indicators.volatility.stdev_ind import calculate_stdev
@@ -44,6 +44,7 @@ from ..calculation.indicators.trend.sar_ind import calculate_sar
 from ..calculation.indicators.sentiment.putcallratio_ind import calculate_putcallratio
 from ..calculation.indicators.sentiment.cot_ind import calculate_cot
 from ..calculation.indicators.sentiment.feargreed_ind import calculate_feargreed
+from ..common.constants import BUY, SELL, NOTRADE
 
 
 def is_dual_chart_rule(rule: str) -> bool:
@@ -412,12 +413,27 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
         elif indicator_name == 'donchain':
             period = int(params[0]) if len(params) > 0 else 20
+            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
             
             # Calculate Donchian Channels (returns tuple: upper, middle, lower)
             upper, middle, lower = calculate_donchain(df, period)
             result_df['donchain_upper'] = upper
             result_df['donchain_middle'] = middle
             result_df['donchain_lower'] = lower
+            
+            # Calculate Donchian Channel signals for buy/sell indicators
+            donchain_signals = calculate_donchain_signals(price_series, upper, lower)
+            result_df['Direction'] = donchain_signals
+            
+            # Add support and resistance levels for visualization
+            result_df['PPrice1'] = lower  # Support level (lower band)
+            result_df['PColor1'] = BUY
+            result_df['PPrice2'] = upper  # Resistance level (upper band)
+            result_df['PColor2'] = SELL
+            result_df['Diff'] = price_series - middle  # Price deviation from middle band
             
         elif indicator_name == 'fibo':
             # Handle fibo parameters - they are float levels, not int period
