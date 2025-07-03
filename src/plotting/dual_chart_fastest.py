@@ -658,12 +658,22 @@ def plot_dual_chart_fastest(
         zeroline=False
     )
     fig.update_xaxes(
-        title_text="", 
-        row=1, 
-        col=1, 
-        showticklabels=False,
-        rangeslider=dict(visible=False),
-        gridcolor='#ecf0f1'
+        row=1, col=1,
+        tickformat="%b %d, %Y",  # Jan 15, 1993
+        tickangle=0,
+        ticklabelmode="period",
+        showgrid=True,
+        gridcolor="#f0f0f0",
+        ticks="outside",
+        ticklen=6,
+        tickcolor="#b0b0b0",
+        tickwidth=1.2,
+        showline=True,
+        linecolor="#b0b0b0",
+        mirror=True,
+        automargin=True,
+        nticks=30,  # Максимум делений
+        rangeslider=dict(visible=False),  # Полностью убираем
     )
     
     # Indicator chart
@@ -678,19 +688,27 @@ def plot_dual_chart_fastest(
         zeroline=False
     )
     
-    # Красивая временная шкала для нижней диаграммы
+    # Детализированная временная шкала для нижней диаграммы
     fig.update_xaxes(
-        title_text="Date", 
-        row=2, 
-        col=1, 
-        tickformat='%b %Y',  # Краткий формат: Янв 2023
-        tickangle=0,  # Убрали угол
-        rangeslider=dict(visible=False),
-        title_font=dict(size=12, color='#2c3e50'),
-        tickfont=dict(size=10, color='#34495e'),
-        gridcolor='#ecf0f1',
-        nticks=8  # Ограничиваем количество меток
+        row=2, col=1,
+        tickformat="%b %d, %Y",  # Jan 15, 1993
+        tickangle=0,
+        ticklabelmode="period",
+        showgrid=True,
+        gridcolor="#f0f0f0",
+        ticks="outside",
+        ticklen=6,
+        tickcolor="#b0b0b0",
+        tickwidth=1.2,
+        showline=True,
+        linecolor="#b0b0b0",
+        mirror=True,
+        automargin=True,
+        nticks=30,  # Максимум делений
+        rangeslider=dict(visible=False),  # Полностью убираем
     )
+    
+
     
     # Set proper time scale for both charts
     x_min = display_df.index.min()
