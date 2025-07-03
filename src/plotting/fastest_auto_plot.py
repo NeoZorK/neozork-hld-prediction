@@ -48,6 +48,9 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         raise ValueError("No numeric columns to plot in this parquet file.")
     n_panels = len(plot_cols)
 
+    # Dynamic chart container height: 350px per panel, max 1600px
+    chart_height = min(350 * (n_panels + 2), 1600)
+
     # Prepare subplot heights: make all panels (candlestick, auto, volume) visually balanced
     panel_height = 0.7  # Use the same height for all panels for visual consistency
     # Include an extra gap between the candlestick and the first auto panel
@@ -64,6 +67,9 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         row_heights=row_heights,
         subplot_titles=[None] + plot_cols + ["Volume"]
     )
+
+    # Set plotly figure height to match container (after fig is created)
+    fig.update_layout(height=chart_height)
 
     # Candlestick chart (row 1)
     candle_kwargs = dict(
@@ -249,8 +255,86 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         opacity=0.95
     )
 
-    # Save and open HTML file in browser
-    pio.write_html(fig, output_html_path, auto_open=False)
+    # Create HTML with vertical scrollbar
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{title}</title>
+        <style>
+            body {{
+                margin: 0;
+                padding: 20px;
+                font-family: Arial, sans-serif;
+                background-color: #f5f5f5;
+            }}
+            .container {{
+                max-width: {width}px;
+                margin: 0 auto;
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                overflow: hidden;
+            }}
+            .header {{
+                background-color: #2e5cb8;
+                color: white;
+                padding: 15px 20px;
+                text-align: center;
+            }}
+            .chart-container {{
+                height: {chart_height}px;
+                overflow-y: auto;
+                padding: 8px;
+            }}
+            .chart-container::-webkit-scrollbar {{
+                width: 12px;
+            }}
+            .chart-container::-webkit-scrollbar-track {{
+                background: #f1f1f1;
+                border-radius: 6px;
+            }}
+            .chart-container::-webkit-scrollbar-thumb {{
+                background: #888;
+                border-radius: 6px;
+            }}
+            .chart-container::-webkit-scrollbar-thumb:hover {{
+                background: #555;
+            }}
+            .info-panel {{
+                background-color: #f8f9fa;
+                padding: 15px 20px;
+                border-top: 1px solid #dee2e6;
+                font-size: 14px;
+                color: #495057;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>{title}</h1>
+                <p>Trading Rule: {trading_rule_name} | AUTO Mode with Vertical Scrollbar</p>
+            </div>
+            <div class="chart-container">
+                {fig.to_html(full_html=False, include_plotlyjs=True)}
+            </div>
+            <div class="info-panel">
+                <strong>Chart Information:</strong><br>
+                • Total panels: {n_panels + 2} (Candlestick + {n_panels} indicators + Volume)<br>
+                • Data points: {len(df)}<br>
+                • Columns displayed: {', '.join(plot_cols)}<br>
+                • Use the vertical scrollbar to navigate through all charts
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+    # Save HTML file
+    with open(output_html_path, 'w', encoding='utf-8') as f:
+        f.write(html_content)
+    
     abs_path = os.path.abspath(output_html_path)
     webbrowser.open_new_tab(f"file://{abs_path}")
     return fig
