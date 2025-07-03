@@ -66,9 +66,9 @@ def plot_dual_chart_fastest(
     # Create subplots: main chart (60%) and indicator chart (40%)
     fig = make_subplots(
         rows=2, cols=1,
-        subplot_titles=('Price Chart', layout['indicator_name'] if layout else 'Indicator'),
-        vertical_spacing=0.1,
-        row_heights=[0.6, 0.4] if layout else [0.6, 0.4],
+        subplot_titles=(None, None),  # Без заголовков внутри графика
+        vertical_spacing=0.04,
+        row_heights=[0.62, 0.38],
         specs=[[{"secondary_y": False}],
                [{"secondary_y": False}]]
     )
@@ -82,9 +82,11 @@ def plot_dual_chart_fastest(
             low=display_df['low'],
             close=display_df['close'],
             name="OHLC",
-            increasing_line_color='green',
-            decreasing_line_color='red',
-            line=dict(width=1.5)
+            increasing_line_color='#2ecc71',
+            decreasing_line_color='#e74c3c',
+            increasing_fillcolor='#2ecc71',
+            decreasing_fillcolor='#e74c3c',
+            line=dict(width=1.2)
         ),
         row=1, col=1
     )
@@ -97,8 +99,8 @@ def plot_dual_chart_fastest(
                 y=display_df['support'],
                 mode='lines',
                 name='Support',
-                line=dict(color='blue', width=2, dash='dash'),
-                opacity=0.8
+                line=dict(color='#3498db', width=2, dash='dash'),
+                opacity=0.7
             ),
             row=1, col=1
         )
@@ -110,8 +112,8 @@ def plot_dual_chart_fastest(
                 y=display_df['resistance'],
                 mode='lines',
                 name='Resistance',
-                line=dict(color='red', width=2, dash='dash'),
-                opacity=0.8
+                line=dict(color='#e67e22', width=2, dash='dash'),
+                opacity=0.7
             ),
             row=1, col=1
         )
@@ -130,9 +132,9 @@ def plot_dual_chart_fastest(
                     name='Buy Signal',
                     marker=dict(
                         symbol='triangle-up',
-                        size=12,
-                        color='green',
-                        line=dict(color='darkgreen', width=2)
+                        size=10,
+                        color='#27ae60',
+                        line=dict(color='#229954', width=1.5)
                     ),
                     showlegend=True
                 ),
@@ -148,9 +150,9 @@ def plot_dual_chart_fastest(
                     name='Sell Signal',
                     marker=dict(
                         symbol='triangle-down',
-                        size=12,
-                        color='red',
-                        line=dict(color='darkred', width=2)
+                        size=10,
+                        color='#c0392b',
+                        line=dict(color='#a93226', width=1.5)
                     ),
                     showlegend=True
                 ),
@@ -612,46 +614,82 @@ def plot_dual_chart_fastest(
     
     # Update layout
     fig.update_layout(
-        title=title,
-        width=width,
-        height=height,
+        title=dict(
+            text=title,
+            x=0.5,
+            xanchor='center',
+            font=dict(size=15, color='#2c3e50'),
+            pad=dict(t=2, b=2)
+        ),
+        autosize=True,
         template="plotly_white",
         legend=dict(
             orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1
+            yanchor="top",
+            y=1.01,
+            xanchor="center",
+            x=0.5,
+            bgcolor='rgba(255,255,255,0.8)',
+            bordercolor='#bdc3c7',
+            borderwidth=1,
+            font=dict(size=11)
         ),
         hovermode="x unified",
         hoverlabel=dict(
             bgcolor="white",
-            font_size=12
+            font_size=10,
+            bordercolor='#bdc3c7'
         ),
-        margin=dict(t=100, b=10, l=10, r=10)
+        margin=dict(t=24, b=14, l=28, r=4),
+        plot_bgcolor='white',
+        paper_bgcolor='white'
     )
     
     # Update axes
     # Main chart (price)
-    fig.update_yaxes(title_text="Price", row=1, col=1, tickformat=".5f")
+    fig.update_yaxes(
+        title_text="Price", 
+        row=1, 
+        col=1, 
+        tickformat=".4f",
+        title_font=dict(size=12, color='#2c3e50'),
+        tickfont=dict(size=10, color='#34495e'),
+        gridcolor='#ecf0f1',
+        zeroline=False
+    )
     fig.update_xaxes(
         title_text="", 
         row=1, 
         col=1, 
         showticklabels=False,
-        rangeslider=dict(visible=False)
+        rangeslider=dict(visible=False),
+        gridcolor='#ecf0f1'
     )
     
     # Indicator chart
     indicator_title = layout['indicator_name'] if layout else 'Indicator'
-    fig.update_yaxes(title_text=indicator_title, row=2, col=1)
+    fig.update_yaxes(
+        title_text=indicator_title, 
+        row=2, 
+        col=1,
+        title_font=dict(size=12, color='#2c3e50'),
+        tickfont=dict(size=10, color='#34495e'),
+        gridcolor='#ecf0f1',
+        zeroline=False
+    )
+    
+    # Красивая временная шкала для нижней диаграммы
     fig.update_xaxes(
         title_text="Date", 
         row=2, 
         col=1, 
-        tickformat='%Y-%m-%d %H:%M', 
-        tickangle=45,
-        rangeslider=dict(visible=False)
+        tickformat='%b %Y',  # Краткий формат: Янв 2023
+        tickangle=0,  # Убрали угол
+        rangeslider=dict(visible=False),
+        title_font=dict(size=12, color='#2c3e50'),
+        tickfont=dict(size=10, color='#34495e'),
+        gridcolor='#ecf0f1',
+        nticks=8  # Ограничиваем количество меток
     )
     
     # Set proper time scale for both charts
