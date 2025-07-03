@@ -217,7 +217,7 @@ nz mql5 EURUSD --interval H4 --rule PHLD
 - **MQL5**: MetaTrader 5 data
 
 ### Technical Indicators
-- **Momentum**: MACD, Stochastic Oscillator
+- **Momentum**: MACD
 - **Oscillators**: RSI, CCI, Stochastic
 - **Trend**: EMA, ADX, SAR
 - **Volatility**: ATR, Bollinger Bands

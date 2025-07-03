@@ -38,7 +38,6 @@ Complete reference for all technical indicators.
 
 ### Momentum Indicators
 - **[MACD Indicator](indicators/momentum/macd-indicator.md)** - Moving Average Convergence Divergence
-- **[Stochastic Oscillator](indicators/momentum/stochastic-oscillator-indicator.md)** - Stochastic momentum oscillator
 
 ### Oscillators
 - **[RSI Indicator](indicators/oscillators/rsi-indicator.md)** - Relative Strength Index

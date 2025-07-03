@@ -799,6 +799,58 @@ def plot_dual_chart_fastest(
                 row=2, col=1
             )
     
+    elif indicator_name == 'stochoscillator':
+        if 'stochosc_k' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['stochosc_k'],
+                    mode='lines',
+                    name='%K',
+                    line=dict(color='blue', width=2),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        if 'stochosc_d' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['stochosc_d'],
+                    mode='lines',
+                    name='%D',
+                    line=dict(color='red', width=2),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        if 'stochosc_overbought' in display_df.columns:
+            overbought = display_df['stochosc_overbought'].iloc[0]
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=[overbought] * len(display_df),
+                    mode='lines',
+                    name=f'Overbought ({overbought})',
+                    line=dict(color='red', width=2, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        if 'stochosc_oversold' in display_df.columns:
+            oversold = display_df['stochosc_oversold'].iloc[0]
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=[oversold] * len(display_df),
+                    mode='lines',
+                    name=f'Oversold ({oversold})',
+                    line=dict(color='green', width=2, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+    
     # Update layout
     fig.update_layout(
         title=dict(

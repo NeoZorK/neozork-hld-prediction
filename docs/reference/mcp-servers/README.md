@@ -178,7 +178,7 @@ The server uses `neozork_mcp_config.json` for configuration:
 
 - **Trend Indicators**: SMA, EMA, ADX, SAR, HMA
 - **Oscillators**: RSI, Stochastic, CCI
-- **Momentum**: MACD, Stochastic Oscillator
+- **Momentum**: MACD
 - **Volatility**: ATR, Bollinger Bands, Standard Deviation
 - **Volume**: OBV, VWAP
 - **Support/Resistance**: Donchian Channels, Fibonacci, Pivot Points
@@ -630,7 +630,7 @@ docker compose ps
 ### Technical Indicators Available
 - **Trend**: SMA, EMA, ADX, SAR, HMA
 - **Oscillators**: RSI, Stochastic, CCI
-- **Momentum**: MACD, Stochastic Oscillator
+- **Momentum**: MACD
 - **Volatility**: ATR, Bollinger Bands, Standard Deviation
 - **Volume**: OBV, VWAP
 - **Support/Resistance**: Donchian Channels, Fibonacci Retracements, Pivot Points
