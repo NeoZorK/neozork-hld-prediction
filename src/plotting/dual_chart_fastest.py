@@ -596,14 +596,72 @@ def plot_dual_chart_fastest(
         )
     
     elif indicator_name == 'kelly':
+        # Add Kelly main line
         if 'kelly' in display_df.columns:
             fig.add_trace(
                 go.Scatter(
                     x=display_df.index,
                     y=display_df['kelly'],
                     mode='lines',
-                    name='Kelly',
-                    line=dict(color='green', width=3),
+                    name='Kelly Criterion',
+                    line=dict(color='blue', width=3),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add Kelly signal line (EMA of Kelly values)
+        if 'kelly_signal' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['kelly_signal'],
+                    mode='lines',
+                    name='Signal Line',
+                    line=dict(color='red', width=2),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add Kelly histogram
+        if 'kelly_histogram' in display_df.columns:
+            # Color histogram bars based on values
+            colors = ['green' if val >= 0 else 'red' for val in display_df['kelly_histogram']]
+            fig.add_trace(
+                go.Bar(
+                    x=display_df.index,
+                    y=display_df['kelly_histogram'],
+                    name='Histogram',
+                    marker_color=colors,
+                    opacity=0.7,
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add threshold levels
+        if 'kelly_threshold_10' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['kelly_threshold_10'],
+                    mode='lines',
+                    name='10% Threshold',
+                    line=dict(color='orange', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        if 'kelly_threshold_25' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['kelly_threshold_25'],
+                    mode='lines',
+                    name='25% Threshold',
+                    line=dict(color='red', width=1, dash='dash'),
                     showlegend=False
                 ),
                 row=2, col=1
