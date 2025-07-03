@@ -85,7 +85,7 @@ python run_analysis.py demo --rule PHLD
 
 ### Features
 - [Data Sources](guides/data-sources.md) - Supported financial data sources
-- [Technical Indicators](guides/indicators.md) - Available technical indicators
+- [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md))
 - [Analysis Tools](guides/analysis-tools.md) - Analysis and visualization tools
 - [CLI Interface](guides/cli-interface.md) - Command-line interface usage
 
@@ -94,6 +94,7 @@ python run_analysis.py demo --rule PHLD
 - [Configuration](reference/configuration.md) - Configuration options
 - [MCP Server](reference/mcp-servers/README.md) - Model Context Protocol server
 - [Advanced Metrics](reference/advanced-metrics.md) - Advanced analysis metrics
+- [Put/Call Ratio Indicator](reference/indicators/sentiment/putcallratio-indicator.md) - **NEW**: Sentiment indicator documentation
 
 ## 🔧 Key Features
 

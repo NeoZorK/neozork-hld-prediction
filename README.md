@@ -116,7 +116,16 @@ uv run pytest tests -n auto
 - **Support & Resistance**: Pivot Points, Fibonacci
 - **Predictive**: HMA, Time Series Forecast
 - **Probability**: Monte Carlo, Kelly Criterion
-- **Sentiment**: Fear & Greed, COT
+- **Sentiment**: Fear & Greed, COT, **Put/Call Ratio**
+
+#### New: Put/Call Ratio Indicator
+- **Category:** Sentiment
+- **Description:** Measures the ratio of put options to call options to gauge market sentiment. Useful as a contrarian indicator for potential market reversals.
+- **CLI Example:**
+  ```bash
+  uv run run_analysis.py show csv mn1 -d fastest --rule putcallratio:20,close
+  ```
+- **Documentation:** [Put/Call Ratio Indicator](docs/reference/indicators/sentiment/putcallratio-indicator.md)
 
 ### Analysis Tools
 - **Exploratory Data Analysis**: Comprehensive data exploration
