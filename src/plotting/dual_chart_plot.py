@@ -42,6 +42,7 @@ from ..calculation.indicators.volatility.stdev_ind import calculate_stdev
 from ..calculation.indicators.trend.adx_ind import calculate_adx
 from ..calculation.indicators.trend.sar_ind import calculate_sar
 from ..calculation.indicators.sentiment.putcallratio_ind import calculate_putcallratio
+from ..calculation.indicators.sentiment.cot_ind import calculate_cot
 
 
 def is_dual_chart_rule(rule: str) -> bool:
@@ -84,7 +85,7 @@ def get_supported_indicators() -> set:
     """
     return {
         'rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'ema', 'bb', 'atr',
-        'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'donchain',
+        'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'donchain',
         'fibo', 'obv', 'stdev', 'adx', 'sar'
     }
 
@@ -356,6 +357,33 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['putcallratio_bearish'] = 40  # Bearish threshold
             result_df['putcallratio_neutral'] = 50  # Neutral level
             
+        elif indicator_name == 'cot':
+            # Фильтруем пустые параметры
+            params = [p.strip() for p in params if p.strip()]
+            period = int(params[0]) if len(params) > 0 else 20
+            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            volume_series = df['Volume']
+            
+            # Calculate COT sentiment
+            cot_values = calculate_cot(price_series, volume_series, period)
+            result_df['cot'] = cot_values
+            
+            # Calculate signal line (EMA of COT)
+            signal_line = cot_values.ewm(span=9, adjust=False).mean()
+            result_df['cot_signal'] = signal_line
+            
+            # Calculate histogram
+            histogram = cot_values - signal_line
+            result_df['cot_histogram'] = histogram
+            
+            # Add threshold levels (sentiment scale 0-100, 50 is neutral)
+            result_df['cot_bullish'] = 70  # Bullish threshold
+            result_df['cot_bearish'] = 30  # Bearish threshold
+            result_df['cot_neutral'] = 50  # Neutral level
+            
         elif indicator_name == 'donchain':
             period = int(params[0]) if len(params) > 0 else 20
             
@@ -498,6 +526,7 @@ def create_dual_chart_layout(mode: str, rule: str) -> Dict[str, Any]:
         'monte': 'Monte Carlo',
         'kelly': 'Kelly Criterion',
         'putcallratio': 'Put/Call Ratio',
+        'cot': 'COT (Commitment of Traders)',
         'donchain': 'Donchian Channels',
         'fibo': 'Fibonacci Retracements',
         'obv': 'OBV',

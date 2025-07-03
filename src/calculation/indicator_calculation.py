@@ -79,6 +79,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
             'PCR': 'PutCallRatio',
     'PUTCALLRATIO': 'PutCallRatio',
     'putcallratio': 'PutCallRatio',
+    'cot': 'COT',
         # Support/Resistance indicators
         'DONCHAIN': 'Donchain',
         'FIBO': 'FiboRetr',

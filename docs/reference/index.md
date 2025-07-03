@@ -73,7 +73,7 @@ Complete reference for all technical indicators.
 
 ### Sentiment Indicators
 - **[Fear & Greed](indicators/sentiment/fear-greed-indicator.md)** - Market sentiment
-- **[COT Indicator](indicators/sentiment/cot-indicator.md)** - Commitments of Traders
+- **[COT Indicator](indicators/sentiment/cot-indicator.md)** - Institutional futures sentiment, trend confirmation
 - **[Put/Call Ratio](indicators/sentiment/putcallratio-indicator.md)** - Options sentiment, contrarian signals
 
 ## 🧪 Testing Reference
