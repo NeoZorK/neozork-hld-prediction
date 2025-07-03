@@ -616,3 +616,33 @@ Press Enter to view next chunk (2/10)...
 - **Terminal Mode**: Best for SSH sessions and large datasets
 - **Chunked Display**: Automatically optimizes chart size for readability
 - **Fallback**: If chunked plotting fails, falls back to standard terminal plotting 
+
+### Fibonacci Retracements
+
+Analyze support and resistance levels using Fibonacci ratios.
+
+```bash
+# Basic Fibonacci analysis
+python run_analysis.py demo --rule fibo
+
+# Use all standard Fibonacci levels
+python run_analysis.py demo --rule fibo:all
+
+# Custom Fibonacci levels
+python run_analysis.py demo --rule fibo:0.236,0.5,0.786
+
+# Multiple data sources
+python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001 --rule fibo:all
+python run_analysis.py binance --symbol BTCUSDT --interval 1h --point 0.01 --rule fibo:0.236,0.618
+```
+
+#### Fibonacci Options
+- **`--rule fibo`** - Use default levels (0.236, 0.382, 0.618)
+- **`--rule fibo:all`** - Use all standard levels (0.236, 0.382, 0.5, 0.618, 0.786)
+- **`--rule fibo:levels`** - Custom levels (e.g., 0.236,0.5,0.786)
+
+#### Signal Features
+- **Balanced Signals**: Improved algorithm generates equal buy/sell opportunities
+- **Support Levels**: Buy signals when price crosses above Fibonacci levels
+- **Resistance Levels**: Sell signals when price crosses below Fibonacci levels
+- **Momentum Detection**: Additional signals based on price momentum near levels 
