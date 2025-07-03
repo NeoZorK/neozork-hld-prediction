@@ -150,22 +150,44 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
     fig.update_xaxes(
         row=1, col=1,
         type='date',
-        tickformat='%Y-%m-%d %H:%M',
+        tickformat="%b %d, %Y",  # Jan 15, 1993
         tickangle=0,
+        ticklabelmode="period",
         title_text='',
         showgrid=True,
-        rangeslider_visible=False,
+        gridcolor="#f0f0f0",
+        ticks="outside",
+        ticklen=6,
+        tickcolor="#b0b0b0",
+        tickwidth=1.2,
+        showline=True,
+        linecolor="#b0b0b0",
+        mirror=True,
+        automargin=True,
+        nticks=30,  # Максимум делений
+        rangeslider=dict(visible=False),  # Полностью убираем
         rangeselector=None
     )
     for i in range(2, 2 + n_panels + 1):
         fig.update_xaxes(
             row=i, col=1,
             type='date',
-            tickformat='%Y-%m-%d %H:%M',
+            tickformat="%b %d, %Y",  # Jan 15, 1993
             tickangle=0,
+            ticklabelmode="period",
             title_text='',
             showgrid=True,
-            rangeslider_visible=False,
+            gridcolor="#f0f0f0",
+            ticks="outside",
+            ticklen=6,
+            tickcolor="#b0b0b0",
+            tickwidth=1.2,
+            showline=True,
+            linecolor="#b0b0b0",
+            mirror=True,
+            automargin=True,
+            nticks=30,  # Максимум делений
+            rangeslider=dict(visible=False),  # Полностью убираем
             rangeselector=None
         )
 
@@ -177,23 +199,28 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
             y=0.97,
             font=dict(size=22, color="#2e5cb8")
         ),
-        width=width,
-        height=max(1400, total_height),  # Dynamic height based on number of panels
+        autosize=True,
         template="plotly_white",
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=1.04,
+            y=1.01,
             xanchor="center",
             x=0.5,
-            font=dict(size=13)
+            bgcolor='rgba(255,255,255,0.8)',
+            bordercolor='#bdc3c7',
+            borderwidth=1,
+            font=dict(size=11)
         ),
         hovermode="x unified",
         hoverlabel=dict(
             bgcolor="white",
-            font_size=12
+            font_size=10,
+            bordercolor='#bdc3c7'
         ),
-        margin=dict(t=160, b=40, l=60, r=40)  # More top margin for annotation spacing
+        margin=dict(t=24, b=14, l=28, r=4),
+        plot_bgcolor='white',
+        paper_bgcolor='white'
     )
     # Auto mode annotation (top left, above chart, with more vertical offset)
     fig.add_annotation(
