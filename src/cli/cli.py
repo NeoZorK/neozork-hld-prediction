@@ -400,7 +400,7 @@ def parse_arguments():
         if ':' in args.rule:
             # Parameterized rule - validate the indicator name part
             indicator_name = args.rule.split(':', 1)[0].lower()
-            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar']
+            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar']
             if indicator_name not in valid_indicators:
                 parser.error(f"Invalid indicator name '{indicator_name}' in parameterized rule '{args.rule}'. Valid indicators: {', '.join(valid_indicators)}")
         else:
@@ -833,6 +833,32 @@ def show_indicator_help(indicator_name: str):
             'examples': [
                 'cot:20,close',
                 'cot:14,open'
+            ]
+        },
+        'feargreed': {
+            'name': 'Fear & Greed Index',
+            'format': 'feargreed:period,price_type',
+            'parameters': [
+                'period (int): Fear & Greed calculation period (default: 14)',
+                'price_type (string): Price type for calculation - open or close (default: close)'
+            ],
+            'examples': [
+                'feargreed:14,close',
+                'feargreed:21,open',
+                'feargreed:10,close'
+            ]
+        },
+        'fg': {
+            'name': 'Fear & Greed Index (alias)',
+            'format': 'fg:period,price_type',
+            'parameters': [
+                'period (int): Fear & Greed calculation period (default: 14)',
+                'price_type (string): Price type for calculation - open or close (default: close)'
+            ],
+            'examples': [
+                'fg:14,close',
+                'fg:21,open',
+                'fg:10,close'
             ]
         }
     }
@@ -1340,6 +1366,30 @@ def parse_cot_parameters(params_str: str) -> tuple[str, dict]:
     }
 
 
+def parse_feargreed_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse Fear & Greed parameters: period,price_type"""
+    params = params_str.split(',')
+    if len(params) != 2:
+        show_indicator_help('feargreed')
+        raise ValueError(f"Fear & Greed requires exactly 2 parameters: period,price_type. Got: {params_str}")
+    
+    try:
+        period = int(float(params[0].strip()))  # Handle float values
+        price_type = params[1].strip().lower()
+    except (ValueError, IndexError) as e:
+        show_indicator_help('feargreed')
+        raise ValueError(f"Invalid Fear & Greed parameters: {params_str}. Error: {e}")
+    
+    if price_type not in ['open', 'close']:
+        show_indicator_help('feargreed')
+        raise ValueError(f"Fear & Greed price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'feargreed', {
+        'feargreed_period': period,
+        'price_type': price_type
+    }
+
+
 def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
     """
     Parse indicator rule string in format 'indicator:param1,param2,param3,param4'.
@@ -1412,6 +1462,8 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_putcallratio_parameters(params_str)
         elif indicator_name == 'cot':
             return parse_cot_parameters(params_str)
+        elif indicator_name in ['feargreed', 'fg']:
+            return parse_feargreed_parameters(params_str)
         else:
             # Unknown indicator, show help and raise error
             show_indicator_help(indicator_name)
