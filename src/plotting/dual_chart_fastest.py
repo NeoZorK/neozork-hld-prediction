@@ -634,12 +634,25 @@ def plot_dual_chart_fastest(
     # Update axes
     # Main chart (price)
     fig.update_yaxes(title_text="Price", row=1, col=1, tickformat=".5f")
-    fig.update_xaxes(title_text="", row=1, col=1, showticklabels=False)
+    fig.update_xaxes(
+        title_text="", 
+        row=1, 
+        col=1, 
+        showticklabels=False,
+        rangeslider=dict(visible=False)
+    )
     
     # Indicator chart
     indicator_title = layout['indicator_name'] if layout else 'Indicator'
     fig.update_yaxes(title_text=indicator_title, row=2, col=1)
-    fig.update_xaxes(title_text="Date", row=2, col=1, tickformat='%Y-%m-%d %H:%M', tickangle=45)
+    fig.update_xaxes(
+        title_text="Date", 
+        row=2, 
+        col=1, 
+        tickformat='%Y-%m-%d %H:%M', 
+        tickangle=45,
+        rangeslider=dict(visible=False)
+    )
     
     # Set proper time scale for both charts
     x_min = display_df.index.min()
