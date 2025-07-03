@@ -296,7 +296,9 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         kelly_period = kwargs.get('kelly_period', 20)
         return rule_func(df, point=point, kelly_period=kelly_period)
     elif selected_rule == TradingRule.FearGreed:
-        return rule_func(df, point=point)
+        feargreed_period = kwargs.get('feargreed_period', 14)
+        price_type = kwargs.get('price_type', price_type_enum)
+        return rule_func(df, point=point, feargreed_period=feargreed_period, price_type=price_type)
     elif selected_rule == TradingRule.COT:
         return rule_func(df, point=point)
     elif selected_rule == TradingRule.PutCallRatio:

@@ -1150,6 +1150,95 @@ def plot_dual_chart_fastest(
                 row=2, col=1
             )
     
+    elif indicator_name in ['feargreed', 'fg']:
+        # Add Fear & Greed main line
+        if 'FearGreed' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['FearGreed'],
+                    mode='lines',
+                    name='Fear & Greed',
+                    line=dict(color='purple', width=3),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add Fear & Greed signal line
+        if 'FearGreed_Signal' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['FearGreed_Signal'],
+                    mode='lines',
+                    name='Signal Line',
+                    line=dict(color='orange', width=2),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add Fear & Greed histogram (difference between main and signal)
+        if 'FearGreed' in display_df.columns and 'FearGreed_Signal' in display_df.columns:
+            histogram = display_df['FearGreed'] - display_df['FearGreed_Signal']
+            colors = ['green' if val >= 0 else 'red' for val in histogram]
+            fig.add_trace(
+                go.Bar(
+                    x=display_df.index,
+                    y=histogram,
+                    name='Histogram',
+                    marker_color=colors,
+                    opacity=0.7,
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        # Add threshold levels (constant lines)
+        fear_threshold = 25
+        greed_threshold = 75
+        neutral_level = 50
+        
+        # Fear threshold line
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[fear_threshold] * len(display_df),
+                mode='lines',
+                name='Fear Threshold',
+                line=dict(color='red', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+        # Greed threshold line
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[greed_threshold] * len(display_df),
+                mode='lines',
+                name='Greed Threshold',
+                line=dict(color='green', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+        # Neutral level line
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[neutral_level] * len(display_df),
+                mode='lines',
+                name='Neutral Level',
+                line=dict(color='gray', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
     # Update layout
     fig.update_layout(
         title=dict(
