@@ -312,7 +312,9 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         fib_levels = kwargs.get('fib_levels', [0.236, 0.382, 0.5, 0.618, 0.786])
         return rule_func(df, point=point, fib_levels=fib_levels)
     elif selected_rule == TradingRule.OBV:
-        return rule_func(df, point=point)
+        # Extract OBV-specific parameters
+        obv_period = kwargs.get('obv_period', 20)
+        return rule_func(df, point=point, obv_period=obv_period, price_type=price_type_enum)
     elif selected_rule == TradingRule.StDev:
         # Extract StDev-specific parameters
         stdev_period = kwargs.get('stdev_period', 20)

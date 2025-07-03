@@ -4,7 +4,7 @@ Complete guide to the command-line interface for the Neozork HLD Prediction proj
 
 ## Overview
 
-The CLI interface provides a powerful command-line tool for data analysis, indicator calculations, and automated workflows.
+The CLI interface provides a powerful command-line tool for data analysis, indicator calculations, and automated workflows with UV package management support.
 
 ## Main CLI Entry Point
 
@@ -13,7 +13,11 @@ The CLI interface provides a powerful command-line tool for data analysis, indic
 The main entry point for all CLI operations.
 
 ```bash
+# Traditional Python
 python run_analysis.py [mode] [options]
+
+# With UV (recommended)
+uv run run_analysis.py [mode] [options]
 ```
 
 ## Available Modes
@@ -24,17 +28,17 @@ Run analysis with demo data for testing and demonstration.
 
 ```bash
 # Basic demo
-python run_analysis.py demo
+uv run run_analysis.py demo
 
 # Demo with specific rule
-python run_analysis.py demo --rule RSI
+uv run run_analysis.py demo --rule RSI
 
 # Demo with custom plotting backend
-python run_analysis.py demo --rule PV -d plotly
+uv run run_analysis.py demo --rule PV -d plotly
 ```
 
 #### Demo Mode Options
-- **`--rule`** - Trading rule to apply (RSI, MACD, PHLD, PV, SR)
+- **`--rule`** - Trading rule to apply (RSI, MACD, PHLD, PV, SR, OBV, VWAP, SuperTrend, COT, Put/Call Ratio)
 - **`-d`** - Drawing backend (fastest, plotly, mpl, seaborn, term)
 - **`--export-parquet`** - Export results to Parquet format
 - **`--export-csv`** - Export results to CSV format
@@ -46,13 +50,13 @@ Fetch and analyze data from Yahoo Finance.
 
 ```bash
 # Stock analysis
-python run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule RSI
+uv run run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule RSI
 
 # Forex analysis
-python run_analysis.py yfinance --ticker EURUSD=X --period 6mo --point 0.00001 --rule MACD
+uv run run_analysis.py yfinance --ticker EURUSD=X --period 6mo --point 0.00001 --rule MACD
 
 # Multiple indicators
-python run_analysis.py yfinance --ticker GOOGL --period 1y --point 0.01 --rule PHLD,PV,SR
+uv run run_analysis.py yfinance --ticker GOOGL --period 1y --point 0.01 --rule PHLD,PV,SR
 ```
 
 #### Yahoo Finance Options
@@ -68,10 +72,10 @@ Analyze cryptocurrency data from Binance.
 
 ```bash
 # BTC/USDT analysis
-python run_analysis.py binance --symbol BTCUSDT --interval 1h --point 0.01 --rule RSI
+uv run run_analysis.py binance --symbol BTCUSDT --interval 1h --point 0.01 --rule RSI
 
 # Multiple timeframes
-python run_analysis.py binance --symbol ETHUSDT --interval 4h --point 0.01 --rule MACD,PHLD
+uv run run_analysis.py binance --symbol ETHUSDT --interval 4h --point 0.01 --rule MACD,PHLD
 ```
 
 #### Binance Options
@@ -87,10 +91,10 @@ Analyze local CSV files.
 
 ```bash
 # Basic CSV analysis
-python run_analysis.py csv --csv-file data/my_data.csv --point 0.01 --rule RSI
+uv run run_analysis.py csv --csv-file data/my_data.csv --point 0.01 --rule RSI
 
 # Custom column mapping
-python run_analysis.py csv --csv-file data/custom.csv --point 0.01 --rule MACD \
+uv run run_analysis.py csv --csv-file data/custom.csv --point 0.01 --rule MACD \
     --date-col timestamp --price-cols open,high,low,close --volume-col volume
 ```
 
@@ -108,10 +112,10 @@ Analyze forex data from Exchange Rate API.
 
 ```bash
 # EUR/USD analysis
-python run_analysis.py exrate --ticker EURUSD --interval D1 --point 0.00001 --rule PV
+uv run run_analysis.py exrate --ticker EURUSD --interval D1 --point 0.00001 --rule PV
 
 # Multiple currency pairs
-python run_analysis.py exrate --ticker GBPUSD,USDJPY --interval D1 --point 0.00001 --rule SR
+uv run run_analysis.py exrate --ticker GBPUSD,USDJPY --interval D1 --point 0.00001 --rule SR
 ```
 
 #### Exchange Rate Options
@@ -120,21 +124,33 @@ python run_analysis.py exrate --ticker GBPUSD,USDJPY --interval D1 --point 0.000
 - **`--point`** - Price precision (required)
 - **`--rule`** - Trading rule(s) to apply
 
-### 6. Show Mode
+### 6. Show Mode ⭐ **ENHANCED**
 
-Display and analyze existing data.
+Display and analyze existing data with enhanced volume indicator support.
 
 ```bash
 # Show available indicators
-python run_analysis.py show ind
+uv run run_analysis.py show ind
 
 # Show specific indicator data
-python run_analysis.py show ind parquet
-python run_analysis.py show ind csv
-python run_analysis.py show ind json
+uv run run_analysis.py show ind parquet
+uv run run_analysis.py show ind csv
+uv run run_analysis.py show ind json
 
 # Show with analysis
-python run_analysis.py show yfinance AAPL --rule PHLD --export-parquet
+uv run run_analysis.py show yfinance AAPL --rule PHLD --export-parquet
+
+# Volume indicators (FIXED)
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+uv run run_analysis.py show csv mn1 -d fastest --rule vwap:20
+
+# New sentiment indicators
+uv run run_analysis.py show csv mn1 -d fastest --rule cot:14,close
+uv run run_analysis.py show csv mn1 -d fastest --rule putcallratio:20,close
+
+# New trend indicators
+uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0
+uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0,open
 ```
 
 #### Show Mode Options
@@ -151,10 +167,10 @@ Guided interactive analysis session.
 
 ```bash
 # Start interactive session
-python run_analysis.py interactive
+uv run run_analysis.py interactive
 
 # Interactive with preset options
-python run_analysis.py interactive --preset stock_analysis
+uv run run_analysis.py interactive --preset stock_analysis
 ```
 
 #### Interactive Mode Features
@@ -168,23 +184,38 @@ python run_analysis.py interactive --preset stock_analysis
 
 ### Available Rules
 
+#### Core Indicators
 1. **RSI** - Relative Strength Index
 2. **MACD** - Moving Average Convergence Divergence
 3. **PHLD** - Price High Low Direction
 4. **PV** - Pressure Vector
 5. **SR** - Support Resistance
 
+#### Volume Indicators ⭐ **FIXED**
+6. **OBV** - On-Balance Volume (fixed dual chart plotting)
+7. **VWAP** - Volume Weighted Average Price
+
+#### New Trend Indicators ⭐ **NEW**
+8. **SuperTrend** - Advanced trend-following indicator
+
+#### New Sentiment Indicators ⭐ **NEW**
+9. **COT** - Commitments of Traders
+10. **Put/Call Ratio** - Options sentiment indicator
+
 ### Rule Combinations
 
 ```bash
 # Single rule
-python run_analysis.py demo --rule RSI
+uv run run_analysis.py demo --rule RSI
 
 # Multiple rules
-python run_analysis.py demo --rule RSI,MACD,PHLD
+uv run run_analysis.py demo --rule RSI,MACD,PHLD
+
+# Volume indicators (now working)
+uv run run_analysis.py demo --rule OBV,VWAP
 
 # All rules
-python run_analysis.py demo --rule ALL
+uv run run_analysis.py demo --rule ALL
 ```
 
 ## Export Options
@@ -198,451 +229,175 @@ python run_analysis.py demo --rule ALL
 ### Export Usage
 
 ```bash
-# Export to all formats
-python run_analysis.py demo --rule PHLD --export-parquet --export-csv --export-json
+# Export to multiple formats
+uv run run_analysis.py demo --rule PHLD --export-parquet --export-csv --export-json
 
-# Export to specific format
-python run_analysis.py demo --rule RSI --export-parquet
+# Export with custom filename
+uv run run_analysis.py yfinance AAPL --rule RSI --export-csv --output-file my_analysis.csv
 ```
 
-### Export Locations
+## 🐛 Recent Fixes & Improvements
 
-- **Parquet**: `data/indicators/parquet/`
-- **CSV**: `data/indicators/csv/`
-- **JSON**: `data/indicators/json/`
+### Volume Indicators Fix ⭐ **FIXED**
+**Issue:** OBV indicator had dual chart plotting errors and parameter parsing issues.
 
-## Advanced Options
+**Fix:** 
+- Fixed parameter parsing for `--rule obv:` (empty parameters after colon)
+- Fixed volume column handling for volume-based indicators
+- Fixed dual chart plotting for OBV with proper argument passing
 
-### Data Processing
-
+**Before:**
 ```bash
-# Custom point size
-python run_analysis.py yfinance --ticker AAPL --point 0.001 --rule RSI
-
-# Specific time period
-python run_analysis.py yfinance --ticker AAPL --period 6mo --rule MACD
-
-# High-frequency data
-python run_analysis.py yfinance --ticker AAPL --interval 1h --rule PHLD
+# This would fail with parameter parsing error
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
 ```
 
-### Analysis Configuration
-
+**After:**
 ```bash
-# Verbose output
-python run_analysis.py demo --rule RSI --verbose
-
-# Quiet mode
-python run_analysis.py demo --rule RSI --quiet
-
-# Debug mode
-python run_analysis.py demo --rule RSI --debug
+# This now works perfectly
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
 ```
 
-## Examples
+### UV Integration
+- **Exclusive UV Usage**: All commands now use UV for consistency
+- **Multithreaded Testing**: `uv run pytest tests -n auto`
+- **Docker Integration**: Seamless UV in containers
+- **Native Container Support**: Full UV support in Apple Silicon containers
 
-### Stock Analysis
+## Performance Optimization
 
+### UV Package Management
 ```bash
-# Apple stock with RSI
-python run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule RSI
+# Fast dependency installation
+uv pip install -r requirements.txt
 
-# Google stock with multiple indicators
-python run_analysis.py yfinance --ticker GOOGL --period 6mo --point 0.01 --rule RSI,MACD,PHLD
+# Fast test execution (multithreaded)
+uv run pytest tests -n auto
 
-# Export results
-python run_analysis.py yfinance --ticker MSFT --period 1y --point 0.01 --rule PHLD --export-parquet
+# Fast analysis execution
+uv run run_analysis.py demo --rule PHLD
 ```
 
-### Forex Analysis
-
+### Docker Environment
 ```bash
-# EUR/USD with Pressure Vector
-python run_analysis.py exrate --ticker EURUSD --interval D1 --point 0.00001 --rule PV
-
-# Multiple pairs
-python run_analysis.py exrate --ticker EURUSD,GBPUSD,USDJPY --interval D1 --point 0.00001 --rule SR
+# UV commands in Docker
+docker-compose exec neozork uv-install
+docker-compose exec neozork uv run run_analysis.py demo --rule PHLD
+docker-compose exec neozork uv run pytest tests -n auto
 ```
 
-### Cryptocurrency Analysis
+## Environment-Specific Usage
 
+### Local Development
 ```bash
-# Bitcoin analysis
-python run_analysis.py binance --symbol BTCUSDT --interval 1h --point 0.01 --rule RSI
+# Install UV
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Ethereum with multiple timeframes
-python run_analysis.py binance --symbol ETHUSDT --interval 4h --point 0.01 --rule MACD,PHLD
+# Setup environment
+uv pip install -r requirements.txt
+
+# Run analysis
+uv run run_analysis.py demo --rule PHLD
+
+# Run tests
+uv run pytest tests -n auto
 ```
 
-### Custom Data Analysis
-
+### Docker Environment
 ```bash
-# CSV file analysis
-python run_analysis.py csv --csv-file data/my_data.csv --point 0.01 --rule RSI
+# Start container
+docker-compose up -d
 
-# Custom column mapping
-python run_analysis.py csv --csv-file data/custom.csv --point 0.01 --rule MACD \
-    --date-col date --price-cols o,h,l,c --volume-col vol
+# Run analysis
+docker-compose exec neozork uv run run_analysis.py demo --rule PHLD
+
+# Run tests
+docker-compose exec neozork uv run pytest tests -n auto
 ```
 
-## Error Handling
-
-### Common Errors
-
+### Native Container (Apple Silicon)
 ```bash
-# Invalid symbol
-python run_analysis.py yfinance --ticker INVALID --period 1y --point 0.01 --rule RSI
-# Error: Symbol not found
+# Setup and run
+./scripts/native-container/setup.sh
+./scripts/native-container/run.sh
 
-# Invalid period
-python run_analysis.py yfinance --ticker AAPL --period invalid --point 0.01 --rule RSI
-# Error: Invalid period
+# Access shell
+./scripts/native-container/exec.sh --shell
 
-# Missing required parameter
-python run_analysis.py yfinance --ticker AAPL --period 1y --rule RSI
-# Error: Point size is required
+# Run analysis
+nz demo --rule PHLD
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
 ```
 
-### Troubleshooting
+## Troubleshooting
 
+### Common Issues
+
+#### UV Not Found
 ```bash
-# Enable debug mode
-python run_analysis.py demo --rule RSI --debug
+# Install UV
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Check available options
-python run_analysis.py --help
-
-# Check specific mode help
-python run_analysis.py yfinance --help
+# Verify installation
+uv --version
 ```
 
-## Configuration
-
-### Environment Variables
-
+#### Volume Indicator Errors
 ```bash
-# API Keys
-export POLYGON_API_KEY="your_polygon_api_key"
-export BINANCE_API_KEY="your_binance_api_key"
-export BINANCE_SECRET_KEY="your_binance_secret"
+# Ensure data has Volume column
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
 
-# Logging
-export LOG_LEVEL="INFO"
-export LOG_FILE="logs/cli.log"
-
-# Cache settings
-export CACHE_ENABLED="true"
-export CACHE_TTL="3600"
+# Check data structure
+python -c "import pandas as pd; df = pd.read_parquet('data/cache/csv_converted/CSVExport_GBPUSD_PERIOD_MN1.parquet'); print(df.columns.tolist())"
 ```
 
-### Configuration Files
-
+#### Docker UV Issues
 ```bash
-# Create config file
-cat > config.yaml << EOF
-api_keys:
-  polygon: "your_polygon_api_key"
-  binance: "your_binance_api_key"
+# Check UV status in container
+docker-compose exec neozork python scripts/check_uv_mode.py --verbose
 
-defaults:
-  point_size: 0.01
-  period: "1y"
-  interval: "1d"
-
-export:
-  enabled: true
-  formats: ["parquet", "csv"]
-EOF
+# Reinstall UV in container
+docker-compose exec neozork uv-install
 ```
 
-## Performance Tips
+## Advanced Usage
 
-### Optimization
-
-1. **Use appropriate point sizes** - Match your data precision
-2. **Select relevant time periods** - Don't fetch unnecessary data
-3. **Batch processing** - Process multiple symbols together
-4. **Enable caching** - Reuse fetched data
-
-### Memory Management
-
+### Custom Indicator Parameters
 ```bash
-# Process large datasets in chunks
-python run_analysis.py csv --csv-file large_data.csv --point 0.01 --rule RSI --chunk-size 10000
+# OBV with custom parameters
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:20,close
 
-# Use streaming for very large files
-python run_analysis.py csv --csv-file huge_data.csv --point 0.01 --rule RSI --stream
+# SuperTrend with custom parameters
+uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0,open
+
+# COT with custom parameters
+uv run run_analysis.py show csv mn1 -d fastest --rule cot:14,close
 ```
 
-## Related Documentation
-
-- **[Data Sources](../api/data-sources.md)** - Available data sources
-- **[Trading Rules](../reference/trading-rules.md)** - Rule descriptions
-- **[Export Functions](../guides/export-functions.md)** - Export capabilities
-- **[Analysis Tools](../guides/analysis-tools.md)** - Analysis features
-
-## Indicator Options
-
-### Basic Indicators
+### Batch Processing
 ```bash
---rule RSI          # Relative Strength Index
---rule MACD         # Moving Average Convergence Divergence
---rule EMA          # Exponential Moving Average
---rule BB           # Bollinger Bands
---rule ATR          # Average True Range
---rule VWAP         # Volume Weighted Average Price
+# Process multiple symbols
+for symbol in AAPL GOOGL MSFT; do
+    uv run run_analysis.py yfinance --ticker $symbol --rule PHLD --export-csv
+done
+
+# Process multiple timeframes
+for interval in 1h 4h 1d; do
+    uv run run_analysis.py binance --symbol BTCUSDT --interval $interval --rule RSI
+done
 ```
 
-### Advanced Indicators
+### Integration with Scripts
 ```bash
---rule RSI_Momentum     # RSI with momentum analysis
---rule RSI_Divergence   # RSI with divergence detection
---rule MonteCarlo       # Monte Carlo simulation
---rule Kelly            # Kelly Criterion
---rule FearGreed        # Fear & Greed Index
---rule COT              # Commitments of Traders
+#!/bin/bash
+# analysis_script.sh
+
+# Run analysis with UV
+uv run run_analysis.py demo --rule PHLD --export-csv
+
+# Process results
+python scripts/process_results.py
+
+# Generate report
+uv run python scripts/generate_report.py
 ```
-
-### Pressure Vector Indicators
-```bash
---rule PV              # Pressure Vector (alias)
---rule SR              # Support/Resistance (alias)
---rule PHLD            # Predict High/Low Direction (alias)
-```
-
-## Strategy Parameters
-
-### New: --strategy Flag
-The `--strategy` flag allows you to specify trading strategy parameters for advanced metrics calculation:
-
-```bash
---strategy LOT,RISK_REWARD,FEE
-```
-
-**Parameters:**
-- `LOT` - Position size (default: 1.0)
-- `RISK_REWARD` - Risk to reward ratio (default: 2.0)
-- `FEE` - Fee per trade in percentage (default: 0.07)
-
-**Examples:**
-```bash
-# Default strategy (1.0 lot, 2:1 risk/reward, 0.07% fee)
-python run_analysis.py demo --rule RSI --strategy 1,2,0.07
-
-# Conservative strategy (0.5 lot, 1.5:1 risk/reward, 0.05% fee)
-python run_analysis.py demo --rule RSI --strategy 0.5,1.5,0.05
-
-# Aggressive strategy (2.0 lot, 3:1 risk/reward, 0.1% fee)
-python run_analysis.py demo --rule RSI --strategy 2,3,0.1
-```
-
-## Advanced Metrics
-
-When using the `--strategy` flag, the system calculates comprehensive trading metrics including:
-
-### Basic Metrics
-- **Buy/Sell Signals**: Count of buy and sell signals
-- **Win Ratio**: Percentage of profitable trades
-- **Profit Factor**: Ratio of gross profit to gross loss
-- **Sharpe Ratio**: Risk-adjusted return measure
-- **Sortino Ratio**: Downside risk-adjusted return
-- **Maximum Drawdown**: Largest peak-to-trough decline
-
-### Strategy-Specific Metrics
-- **Position Size**: Current position size setting
-- **Risk/Reward Setting**: Configured risk-to-reward ratio
-- **Fee per Trade**: Transaction cost percentage
-- **Kelly Fraction**: Optimal position sizing ratio
-- **Net Return**: Returns after fees
-- **Strategy Efficiency**: Fee-adjusted performance
-- **Strategy Sustainability**: Overall strategy robustness score
-
-### Machine Learning Metrics
-- **Signal Frequency**: How often signals occur
-- **Signal Stability**: Consistency of signal patterns
-- **Signal Accuracy**: Percentage of correct signals
-- **Timing Score**: Quality of signal timing
-- **Pattern Consistency**: Reliability of patterns
-- **Signal Clustering**: Concentration of signals
-
-### Monte Carlo Metrics
-- **Expected Return**: Average return from simulations
-- **Value at Risk (VaR)**: Maximum expected loss
-- **Conditional VaR**: Expected loss beyond VaR
-- **Profit Probability**: Chance of positive returns
-- **Strategy Robustness**: Consistency across simulations
-- **Risk of Ruin**: Probability of account depletion
-
-## Plotting Options
-
-### Plot Types
-```bash
--d fastest    # Plotly + Dask + Datashader (default)
--d fast       # Dask + Datashader + Bokeh
--d plotly     # Interactive Plotly charts
--d mpl        # Static matplotlib charts
--d seaborn    # Statistical seaborn plots
--d term       # Terminal-based charts
-```
-
-### Metrics Display
-- **Main Metrics**: Displayed in bottom-right corner
-- **Additional Metrics**: Displayed in separate panel (left side)
-- **Color Coding**: Green (good), Yellow (average), Red (poor)
-- **Strategy Info**: Position size, risk/reward, fees prominently displayed
-
-## Examples
-
-### Complete Analysis with Strategy
-```bash
-# Analyze RSI with custom strategy parameters
-python run_analysis.py demo --rule RSI --strategy 1.5,2.5,0.08 -d fastest
-
-# Show existing data with strategy analysis
-python run_analysis.py show csv mn1 gbp --rule RSI_Divergence --strategy 1,2,0.07 -d fastest
-```
-
-### Export Options
-```bash
---export-parquet    # Export to Parquet format
---export-csv        # Export to CSV format
---export-json       # Export to JSON format
-```
-
-## Help and Examples
-
-```bash
-# Show help
-python run_analysis.py --help
-
-# Show examples
-python run_analysis.py --examples
-
-# List available indicators
-python run_analysis.py --indicators
-
-# Interactive mode
-python run_analysis.py --interactive
-```
-
-## Drawing Backends (-d flag)
-
-The `-d` flag allows you to specify the plotting library for visualization:
-
-### Available Backends
-
-- **`fastest`** (default) - Plotly+Dask+Datashader (best for large datasets)
-- **`fast`** - Dask+Datashader+Bokeh for quick visualization
-- **`plotly`** / **`plt`** - Interactive HTML plots with Plotly
-- **`mplfinance`** / **`mpl`** - Static images with mplfinance
-- **`seaborn`** / **`sb`** - Statistical plots with Seaborn
-- **`term`** - Terminal ASCII charts with automatic chunking (great for SSH)
-
-### Terminal Mode (-d term) - Enhanced with Chunked Display
-
-The terminal mode has been enhanced with automatic data chunking for better readability:
-
-#### Features:
-- **Automatic Chunking**: Data is automatically split into optimal intervals (typically 50-200 candles per chart)
-- **Clear Navigation**: Each chunk shows the exact candle range (e.g., "Candles 1-100")
-- **Interactive**: Press Enter to navigate between chunks
-- **Rule-Specific Display**: Different visualization for each trading rule
-- **OHLC Candles**: All rules display OHLC candlestick charts as the base layer
-- **Enhanced Signals**: Large, colorful buy/sell signals positioned outside candle ranges
-
-#### Supported Rules in Terminal Mode:
-
-1. **OHLCV** - Shows OHLC candlestick charts + separate volume charts
-   ```bash
-   python run_analysis.py show csv mn1 -d term --rule OHLCV
-   ```
-
-2. **AUTO** - Shows each field on separate charts
-   ```bash
-   python run_analysis.py show csv mn1 -d term --rule AUTO
-   ```
-
-3. **PV** - Shows OHLC candles + buy/sell signals only (simplified display)
-   ```bash
-   python run_analysis.py show csv mn1 -d term --rule PV
-   ```
-
-4. **SR** - Shows OHLC candles + Support/Resistance lines
-   ```bash
-   python run_analysis.py show csv mn1 -d term --rule SR
-   ```
-
-5. **PHLD** - Shows OHLC candles + channels and signals
-   ```bash
-   python run_analysis.py show csv mn1 -d term --rule PHLD
-   ```
-
-6. **RSI Rules** - Shows OHLC candles + RSI indicators with overbought/oversold levels
-   ```bash
-   python run_analysis.py show csv mn1 -d term --rule rsi:14,30,70,close
-   python run_analysis.py show csv mn1 -d term --rule rsi_mom:14,30,70,close
-   python run_analysis.py show csv mn1 -d term --rule rsi_div:14,30,70,close
-   ```
-
-#### Chunking Algorithm:
-- **Small datasets** (< 500 rows): 50 candles per chunk
-- **Medium datasets** (500-2000 rows): 100 candles per chunk  
-- **Large datasets** (> 2000 rows): 200 candles per chunk
-- **Automatic calculation** based on total data length for optimal viewing
-
-#### Example Output:
-```
-=== OHLCV CHUNK 1/10 ===
-Candles 1-100 (100 bars)
-==========================================
-OHLC STATISTICS:
-   Open:  1.23450 - 1.24500
-   High:  1.23500 - 1.24600
-   Low:   1.23300 - 1.24400
-   Close: 1.23400 - 1.24550
-VOLUME STATISTICS:
-   Total: 1500000
-   Avg:   15000
-   Max:   25000
-==========================================
-
-Press Enter to view next chunk (2/10)...
-```
-
-## Notes
-
-- **Point Size**: Always required for API modes (yfinance, polygon, binance, exrate)
-- **Date Formats**: Use YYYY-MM-DD format for date ranges
-- **Terminal Mode**: Best for SSH sessions and large datasets
-- **Chunked Display**: Automatically optimizes chart size for readability
-- **Fallback**: If chunked plotting fails, falls back to standard terminal plotting 
-
-### Fibonacci Retracements
-
-Analyze support and resistance levels using Fibonacci ratios.
-
-```bash
-# Basic Fibonacci analysis
-python run_analysis.py demo --rule fibo
-
-# Use all standard Fibonacci levels
-python run_analysis.py demo --rule fibo:all
-
-# Custom Fibonacci levels
-python run_analysis.py demo --rule fibo:0.236,0.5,0.786
-
-# Multiple data sources
-python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001 --rule fibo:all
-python run_analysis.py binance --symbol BTCUSDT --interval 1h --point 0.01 --rule fibo:0.236,0.618
-```
-
-#### Fibonacci Options
-- **`--rule fibo`** - Use default levels (0.236, 0.382, 0.618)
-- **`--rule fibo:all`** - Use all standard levels (0.236, 0.382, 0.5, 0.618, 0.786)
-- **`--rule fibo:levels`** - Custom levels (e.g., 0.236,0.5,0.786)
-
-#### Signal Features
-- **Balanced Signals**: Improved algorithm generates equal buy/sell opportunities
-- **Support Levels**: Buy signals when price crosses above Fibonacci levels
-- **Resistance Levels**: Sell signals when price crosses below Fibonacci levels
-- **Momentum Detection**: Additional signals based on price momentum near levels 
