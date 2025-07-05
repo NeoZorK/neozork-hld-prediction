@@ -70,6 +70,7 @@ python run_analysis.py demo --rule PHLD
 - [Testing Guide](development/testing.md) - Running tests and validation
 - [Code Style](development/code-style.md) - Coding standards and conventions
 - [Debugging](development/debugging.md) - Debugging tools and techniques
+- [Refactoring Guide](development/REFACTORING_SUMMARY.md) - **NEW**: Code refactoring guidelines and recent improvements
 
 ### Testing
 - [Testing Documentation](testing/index.md) - Comprehensive testing documentation
@@ -94,6 +95,7 @@ python run_analysis.py demo --rule PHLD
 - [Configuration](reference/configuration.md) - Configuration options
 - [MCP Server](reference/mcp-servers/README.md) - Model Context Protocol server
 - [Advanced Metrics](reference/advanced-metrics.md) - Advanced analysis metrics
+- [Plotting Reference](reference/plotting/) - **UPDATED**: Enhanced plotting documentation with refactored dual chart fast
 - [COT Indicator](reference/indicators/sentiment/cot-indicator.md) - **NEW**: Sentiment indicator documentation
 - [Put/Call Ratio Indicator](reference/indicators/sentiment/putcallratio-indicator.md) - **NEW**: Sentiment indicator documentation
 - [SuperTrend Indicator](reference/indicators/trend/supertrend-indicator.md) - **NEW**: Trend indicator documentation
