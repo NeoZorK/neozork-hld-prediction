@@ -624,6 +624,93 @@ def plot_dual_chart_fast(
                 legend_label='SAR'
             )
     
+    elif indicator_name == 'rsi_mom':
+        # Ensure overbought/oversold lines are columns for Bokeh
+        if 'rsi_overbought' in display_df.columns:
+            display_df['rsi_overbought_line'] = display_df['rsi_overbought'].iloc[0]
+        if 'rsi_oversold' in display_df.columns:
+            display_df['rsi_oversold_line'] = display_df['rsi_oversold'].iloc[0]
+        # Draw RSI line
+        if 'rsi' in display_df.columns:
+            indicator_fig.line(
+                'index', 'rsi',
+                source=source,
+                line_color='blue',
+                line_width=2,
+                legend_label='RSI'
+            )
+        # Draw RSI Momentum line
+        if 'rsi_momentum' in display_df.columns:
+            indicator_fig.line(
+                'index', 'rsi_momentum',
+                source=source,
+                line_color='orange',
+                line_width=2,
+                legend_label='RSI Momentum'
+            )
+        # Draw overbought/oversold levels
+        if 'rsi_overbought_line' in display_df.columns:
+            indicator_fig.line(
+                'index', 'rsi_overbought_line',
+                source=source,
+                line_color='red',
+                line_width=1,
+                line_dash='dashed',
+                legend_label='Overbought'
+            )
+        if 'rsi_oversold_line' in display_df.columns:
+            indicator_fig.line(
+                'index', 'rsi_oversold_line',
+                source=source,
+                line_color='green',
+                line_width=1,
+                line_dash='dashed',
+                legend_label='Oversold'
+            )
+    elif indicator_name == 'rsi_div':
+        # Ensure overbought/oversold lines are columns for Bokeh
+        if 'rsi_overbought' in display_df.columns:
+            display_df['rsi_overbought_line'] = display_df['rsi_overbought'].iloc[0]
+        if 'rsi_oversold' in display_df.columns:
+            display_df['rsi_oversold_line'] = display_df['rsi_oversold'].iloc[0]
+        # Draw RSI line
+        if 'rsi' in display_df.columns:
+            indicator_fig.line(
+                'index', 'rsi',
+                source=source,
+                line_color='blue',
+                line_width=2,
+                legend_label='RSI'
+            )
+        # Draw RSI Divergence line
+        if 'rsi_divergence' in display_df.columns:
+            indicator_fig.line(
+                'index', 'rsi_divergence',
+                source=source,
+                line_color='orange',
+                line_width=2,
+                legend_label='RSI Divergence'
+            )
+        # Draw overbought/oversold levels
+        if 'rsi_overbought_line' in display_df.columns:
+            indicator_fig.line(
+                'index', 'rsi_overbought_line',
+                source=source,
+                line_color='red',
+                line_width=1,
+                line_dash='dashed',
+                legend_label='Overbought'
+            )
+        if 'rsi_oversold_line' in display_df.columns:
+            indicator_fig.line(
+                'index', 'rsi_oversold_line',
+                source=source,
+                line_color='green',
+                line_width=1,
+                line_dash='dashed',
+                legend_label='Oversold'
+            )
+    
     # Add hover tooltip for indicator chart
     if indicator_name == 'macd':
         # Special hover for MACD with all three components
@@ -643,6 +730,26 @@ def plot_dual_chart_fast(
             tooltips=[
                 ("Date", "@index{%F %H:%M}"),
                 ("RSI", "@rsi{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'rsi_mom':
+        hover_indicator = HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("RSI", "@rsi{0.2f}"),
+                ("RSI Momentum", "@rsi_momentum{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'rsi_div':
+        hover_indicator = HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("RSI", "@rsi{0.2f}"),
+                ("RSI Divergence", "@rsi_divergence{0.2f}")
             ],
             formatters={'@index': 'datetime'},
             mode='vline'
