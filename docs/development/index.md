@@ -49,6 +49,9 @@ Debugging tools and techniques.
 ### [Contributing](contributing.md)
 Contribution guidelines and workflow.
 
+### [Refactoring](REFACTORING_SUMMARY.md)
+Code refactoring guidelines and recent improvements.
+
 ## 🔧 UV Package Management
 
 ### UV-Only Mode
@@ -367,5 +370,5 @@ uv pip install -e .
 
 ---
 
-**Last Updated**: 2024
-**Version**: 2.0.0 (UV-Only Mode) 
+**Last Updated**: 2025-07-05
+**Version**: 2.1.0 (UV-Only Mode + Refactored Plotting) 
