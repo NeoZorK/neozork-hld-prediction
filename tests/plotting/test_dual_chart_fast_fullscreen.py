@@ -122,9 +122,9 @@ class TestDualChartFastFullscreen:
         assert os.path.exists(output_path)
         assert os.path.getsize(output_path) > 0
     
-    def test_plot_dual_chart_fast_size_reduction(self, sample_data, temp_output_dir):
-        """Test that plot_dual_chart_fast reduces sizes by 10%."""
-        output_path = os.path.join(temp_output_dir, "test_size_reduction.html")
+    def test_plot_dual_chart_fast_size_adjustment(self, sample_data, temp_output_dir):
+        """Test that plot_dual_chart_fast reduces width by 5% and reduces height by 10%."""
+        output_path = os.path.join(temp_output_dir, "test_size_adjustment.html")
         
         original_width = 1800
         original_height = 1100
@@ -132,7 +132,7 @@ class TestDualChartFastFullscreen:
         result = plot_dual_chart_fast(
             df=sample_data,
             rule="macd:8,21,5,open",
-            title="Test Size Reduction",
+            title="Test Size Adjustment",
             output_path=output_path,
             width=original_width,
             height=original_height
@@ -171,6 +171,11 @@ class TestDualChartFastFullscreen:
         assert 'MACD' in html_content
         assert 'Signal' in html_content
         assert 'Histogram' in html_content
+        
+        # Check for hover tooltip content
+        assert 'MACD' in html_content or 'macd' in html_content.lower()
+        assert 'Signal' in html_content or 'macd_signal' in html_content.lower()
+        assert 'Histogram' in html_content or 'macd_histogram' in html_content.lower()
     
     def test_plot_dual_chart_fast_rsi_indicator(self, sample_data, temp_output_dir):
         """Test that RSI indicator is properly rendered."""
