@@ -370,9 +370,14 @@ def plot_dual_chart_fast(
                 legend_label='CCI'
             )
             
+            # Add CCI reference lines as columns for proper source handling
+            display_df['cci_plus_100'] = 100
+            display_df['cci_minus_100'] = -100
+            
             # Add CCI reference lines
             indicator_fig.line(
-                'index', [100] * len(display_df),
+                'index', 'cci_plus_100',
+                source=source,
                 line_color='red',
                 line_width=1,
                 line_dash='dashed',
@@ -380,7 +385,8 @@ def plot_dual_chart_fast(
             )
             
             indicator_fig.line(
-                'index', [-100] * len(display_df),
+                'index', 'cci_minus_100',
+                source=source,
                 line_color='green',
                 line_width=1,
                 line_dash='dashed',
@@ -740,6 +746,16 @@ def plot_dual_chart_fast(
                 ("Date", "@index{%F %H:%M}"),
                 ("RSI", "@rsi{0.2f}"),
                 ("RSI Divergence", "@rsi_divergence{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'cci':
+        # Special hover for CCI
+        hover_indicator = HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("CCI", "@cci{0.2f}")
             ],
             formatters={'@index': 'datetime'},
             mode='vline'
