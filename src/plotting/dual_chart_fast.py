@@ -21,6 +21,58 @@ from typing import Dict, Any, Optional
 from ..common import logger
 
 
+def get_screen_height():
+    """
+    Get the screen height in pixels.
+    Returns a default value if screen height cannot be determined.
+    """
+    try:
+        # Try to get screen height using tkinter
+        import tkinter as tk
+        root = tk.Tk()
+        screen_height = root.winfo_screenheight()
+        root.destroy()
+        return screen_height
+    except:
+        try:
+            # Try using platform-specific methods
+            import subprocess
+            if os.name == 'nt':  # Windows
+                result = subprocess.run(['wmic', 'desktopmonitor', 'get', 'screenheight'], 
+                                      capture_output=True, text=True)
+                if result.returncode == 0:
+                    lines = result.stdout.strip().split('\n')
+                    if len(lines) > 1:
+                        return int(lines[1])
+            else:  # Unix-like systems
+                result = subprocess.run(['xrandr', '--query'], capture_output=True, text=True)
+                if result.returncode == 0:
+                    import re
+                    match = re.search(r'(\d+)x(\d+)', result.stdout)
+                    if match:
+                        return int(match.group(2))
+        except:
+            pass
+    
+    # Default fallback values
+    return 1080  # Default to 1080p height
+
+
+def calculate_dynamic_height(screen_height=None, rule_str=None):
+    """
+    Calculate dynamic height for the chart based on screen height and rule.
+    For dual chart mode, use 85% of screen height, min 400, max 2000.
+    """
+    if screen_height is None:
+        screen_height = get_screen_height()
+    if rule_str:
+        dynamic_height = int(screen_height * 0.85)
+        dynamic_height = max(400, min(dynamic_height, 2000))
+        logger.print_info(f"Dual chart mode: using fullscreen height {dynamic_height}px (screen height: {screen_height}px)")
+        return dynamic_height
+    return 1100
+
+
 def plot_dual_chart_fast(
     df: pd.DataFrame,
     rule: str,
@@ -53,6 +105,17 @@ def plot_dual_chart_fast(
     
     # Ensure output directory exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    
+    # Calculate dynamic height and reduce sizes by 10%
+    rule_str = rule.split(':', 1)[0].lower().strip()
+    if height is None:
+        height = calculate_dynamic_height(rule_str=rule_str)
+    
+    # Reduce sizes by 10% to ensure legend and buttons are fully visible
+    width = int(width * 0.9)
+    height = int(height * 0.9)
+    
+    logger.print_info(f"Using reduced sizes: width={width}px, height={height}px for rule: {rule_str}")
     
     # Prepare data
     display_df = df.copy()
@@ -235,15 +298,16 @@ def plot_dual_chart_fast(
             )
         
         if 'macd_histogram' in display_df.columns:
-            # Color histogram bars
+            # Color histogram bars - same as fastest mode
             colors = ['green' if val >= 0 else 'red' for val in display_df['macd_histogram']]
             display_df['histogram_color'] = colors
             hist_source = ColumnDataSource(display_df)
             
             indicator_fig.vbar(
-                'index', 0.5, 'macd_histogram',
+                'index', 0.8, 0, 'macd_histogram',
                 source=hist_source,
-                color='histogram_color',
+                fill_color='histogram_color',
+                line_color='histogram_color',
                 alpha=0.7,
                 legend_label='Histogram'
             )
