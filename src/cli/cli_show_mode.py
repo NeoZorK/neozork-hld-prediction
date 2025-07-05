@@ -1023,47 +1023,89 @@ def _plot_raw_ohlcv_data(args, df, data_info, file_info, point_size, metrics):
     # Track plotting time for raw data
     t_plot_start = time.perf_counter()
     
-    # Special handling for fastest mode with OHLCV rule for fullscreen display
-    if draw_method == 'fastest' and hasattr(args, 'display_candlestick_only') and args.display_candlestick_only:
-        print("Using fullscreen fastest plot for OHLCV rule...")
-        try:
-            from src.plotting.fastest_plot_fullscreen import plot_indicator_results_fastest_fullscreen
-            
-            # Create plot title
-            plot_title = f"Raw OHLCV Data - {file_info['name']}"
-            if point_size:
-                plot_title += f" (Point Size: {point_size})"
-            
-            # Use the fullscreen plotting function
-            fig = plot_indicator_results_fastest_fullscreen(
-                df=df,
-                rule=selected_rule,
-                title=plot_title,
-                output_path="results/plots/fastest_plot_fullscreen.html",
-                width=1800,
-                height=None,  # Will be calculated dynamically
-                mode="fastest",
-                data_source=data_info.get('source', 'csv')
-            )
-            
-            if fig:
-                print(f"Successfully plotted raw OHLCV data with fullscreen height from '{file_info['name']}'")
-            else:
-                print(f"Failed to create fullscreen plot, falling back to standard plotting...")
+    # Special handling for fastest and fast modes with OHLCV rule for fullscreen display
+    if draw_method in ['fastest', 'fast'] and hasattr(args, 'display_candlestick_only') and args.display_candlestick_only:
+        if draw_method == 'fastest':
+            print("Using fullscreen fastest plot for OHLCV rule...")
+            try:
+                from src.plotting.fastest_plot_fullscreen import plot_indicator_results_fastest_fullscreen
+                
+                # Create plot title
+                plot_title = f"Raw OHLCV Data - {file_info['name']}"
+                if point_size:
+                    plot_title += f" (Point Size: {point_size})"
+                
+                # Use the fullscreen plotting function
+                fig = plot_indicator_results_fastest_fullscreen(
+                    df=df,
+                    rule=selected_rule,
+                    title=plot_title,
+                    output_path="results/plots/fastest_plot_fullscreen.html",
+                    width=1800,
+                    height=None,  # Will be calculated dynamically
+                    mode="fastest",
+                    data_source=data_info.get('source', 'csv')
+                )
+                
+                if fig:
+                    print(f"Successfully plotted raw OHLCV data with fullscreen height from '{file_info['name']}'")
+                else:
+                    print(f"Failed to create fullscreen plot, falling back to standard plotting...")
+                    # Fallback to standard plotting
+                    generate_plot = import_generate_plot()
+                    generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+                    
+            except ImportError as e:
+                print(f"Fullscreen plotting not available: {e}. Falling back to standard plotting...")
                 # Fallback to standard plotting
                 generate_plot = import_generate_plot()
                 generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+            except Exception as e:
+                print(f"Error in fullscreen plotting: {e}. Falling back to standard plotting...")
+                # Fallback to standard plotting
+                generate_plot = import_generate_plot()
+                generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+        
+        elif draw_method == 'fast':
+            print("Using fullscreen fast plot for OHLCV rule...")
+            try:
+                from src.plotting.fast_plot_fullscreen import plot_indicator_results_fast_fullscreen
                 
-        except ImportError as e:
-            print(f"Fullscreen plotting not available: {e}. Falling back to standard plotting...")
-            # Fallback to standard plotting
-            generate_plot = import_generate_plot()
-            generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
-        except Exception as e:
-            print(f"Error in fullscreen plotting: {e}. Falling back to standard plotting...")
-            # Fallback to standard plotting
-            generate_plot = import_generate_plot()
-            generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+                # Create plot title
+                plot_title = f"Raw OHLCV Data - {file_info['name']}"
+                if point_size:
+                    plot_title += f" (Point Size: {point_size})"
+                
+                # Use the fullscreen plotting function
+                layout = plot_indicator_results_fast_fullscreen(
+                    df=df,
+                    rule=selected_rule,
+                    title=plot_title,
+                    output_path="results/plots/fast_plot_fullscreen.html",
+                    width=1800,
+                    height=None,  # Will be calculated dynamically
+                    mode="fast",
+                    data_source=data_info.get('source', 'csv')
+                )
+                
+                if layout:
+                    print(f"Successfully plotted raw OHLCV data with fullscreen height from '{file_info['name']}'")
+                else:
+                    print(f"Failed to create fullscreen plot, falling back to standard plotting...")
+                    # Fallback to standard plotting
+                    generate_plot = import_generate_plot()
+                    generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+                    
+            except ImportError as e:
+                print(f"Fullscreen plotting not available: {e}. Falling back to standard plotting...")
+                # Fallback to standard plotting
+                generate_plot = import_generate_plot()
+                generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+            except Exception as e:
+                print(f"Error in fullscreen plotting: {e}. Falling back to standard plotting...")
+                # Fallback to standard plotting
+                generate_plot = import_generate_plot()
+                generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
     else:
         # Use standard plotting for other modes
         generate_plot = import_generate_plot()
