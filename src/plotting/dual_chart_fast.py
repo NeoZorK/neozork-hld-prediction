@@ -625,11 +625,6 @@ def plot_dual_chart_fast(
             )
     
     elif indicator_name == 'rsi_mom':
-        # Ensure overbought/oversold lines are columns for Bokeh
-        if 'rsi_overbought' in display_df.columns:
-            display_df['rsi_overbought_line'] = display_df['rsi_overbought'].iloc[0]
-        if 'rsi_oversold' in display_df.columns:
-            display_df['rsi_oversold_line'] = display_df['rsi_oversold'].iloc[0]
         # Draw RSI line
         if 'rsi' in display_df.columns:
             indicator_fig.line(
@@ -649,18 +644,18 @@ def plot_dual_chart_fast(
                 legend_label='RSI Momentum'
             )
         # Draw overbought/oversold levels
-        if 'rsi_overbought_line' in display_df.columns:
+        if 'rsi_overbought' in display_df.columns:
             indicator_fig.line(
-                'index', 'rsi_overbought_line',
+                'index', 'rsi_overbought',
                 source=source,
                 line_color='red',
                 line_width=1,
                 line_dash='dashed',
                 legend_label='Overbought'
             )
-        if 'rsi_oversold_line' in display_df.columns:
+        if 'rsi_oversold' in display_df.columns:
             indicator_fig.line(
-                'index', 'rsi_oversold_line',
+                'index', 'rsi_oversold',
                 source=source,
                 line_color='green',
                 line_width=1,
@@ -668,11 +663,6 @@ def plot_dual_chart_fast(
                 legend_label='Oversold'
             )
     elif indicator_name == 'rsi_div':
-        # Ensure overbought/oversold lines are columns for Bokeh
-        if 'rsi_overbought' in display_df.columns:
-            display_df['rsi_overbought_line'] = display_df['rsi_overbought'].iloc[0]
-        if 'rsi_oversold' in display_df.columns:
-            display_df['rsi_oversold_line'] = display_df['rsi_oversold'].iloc[0]
         # Draw RSI line
         if 'rsi' in display_df.columns:
             indicator_fig.line(
@@ -692,18 +682,18 @@ def plot_dual_chart_fast(
                 legend_label='RSI Divergence'
             )
         # Draw overbought/oversold levels
-        if 'rsi_overbought_line' in display_df.columns:
+        if 'rsi_overbought' in display_df.columns:
             indicator_fig.line(
-                'index', 'rsi_overbought_line',
+                'index', 'rsi_overbought',
                 source=source,
                 line_color='red',
                 line_width=1,
                 line_dash='dashed',
                 legend_label='Overbought'
             )
-        if 'rsi_oversold_line' in display_df.columns:
+        if 'rsi_oversold' in display_df.columns:
             indicator_fig.line(
-                'index', 'rsi_oversold_line',
+                'index', 'rsi_oversold',
                 source=source,
                 line_color='green',
                 line_width=1,
