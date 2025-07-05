@@ -143,8 +143,8 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
         elif indicator_name == 'rsi_mom':
             period = int(params[0]) if len(params) > 0 else 14
-            oversold = float(params[1]) if len(params) > 1 else 30
-            overbought = float(params[2]) if len(params) > 2 else 70
+            overbought = float(params[1]) if len(params) > 1 else 70
+            oversold = float(params[2]) if len(params) > 2 else 30
             price_type = PriceType.OPEN if len(params) > 3 and params[3].lower() == 'open' else PriceType.CLOSE
             
             price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
@@ -168,8 +168,8 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
         elif indicator_name == 'rsi_div':
             period = int(params[0]) if len(params) > 0 else 14
-            oversold = float(params[1]) if len(params) > 1 else 30
-            overbought = float(params[2]) if len(params) > 2 else 70
+            overbought = float(params[1]) if len(params) > 1 else 70
+            oversold = float(params[2]) if len(params) > 2 else 30
             price_type = PriceType.OPEN if len(params) > 3 and params[3].lower() == 'open' else PriceType.CLOSE
             
             price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
