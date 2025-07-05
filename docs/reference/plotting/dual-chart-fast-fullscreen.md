@@ -14,12 +14,13 @@ The module now automatically calculates the optimal chart height based on the sc
 - **Dynamic Calculation**: Calculates height as 85% of screen height with bounds (400px - 2000px)
 - **Fallback**: Defaults to 1080px if screen detection fails
 
-### 2. Size Reduction for Better Visibility
+### 2. Size Adjustment for Better Visibility
 
 To ensure legends and control buttons are fully visible:
 
-- **10% Reduction**: Both width and height are reduced by 10% from the calculated values
-- **Better UX**: Prevents scrolling issues and ensures all UI elements are accessible
+- **Width Reduction**: Width is reduced by 5% for better horizontal space utilization
+- **Height Reduction**: Height is reduced by 10% to prevent scrolling issues
+- **Better UX**: Ensures all UI elements are accessible and properly spaced
 - **Automatic**: Applied automatically without user intervention
 
 ### 3. MACD Indicator Consistency
@@ -30,6 +31,7 @@ The MACD indicator implementation is now identical to the `-d fastest` mode:
 - **Same Widths**: 3px for MACD, 2px for signal
 - **Same Histogram**: Green/red bars with 0.8 width and proper positioning
 - **Same Legend Labels**: Consistent naming across modes
+- **Enhanced Hover**: Special hover tooltips showing MACD, Signal, and Histogram values
 
 ## Usage
 
@@ -98,17 +100,17 @@ def calculate_dynamic_height(screen_height=None, rule_str=None):
     # Logs the calculated height for debugging
 ```
 
-### Size Reduction Logic
+### Size Adjustment Logic
 
 ```python
-# Calculate dynamic height and reduce sizes by 10%
+# Calculate dynamic height and adjust sizes
 rule_str = rule.split(':', 1)[0].lower().strip()
 if height is None:
     height = calculate_dynamic_height(rule_str=rule_str)
 
-# Reduce sizes by 10% to ensure legend and buttons are fully visible
-width = int(width * 0.9)
-height = int(height * 0.9)
+# Reduce width by 5% and reduce height by 10% for better UX
+width = int(width * 0.95)  # Reduce width by 5%
+height = int(height * 0.9)  # Reduce height by 10%
 ```
 
 ## Comparison with Other Modes
@@ -117,10 +119,11 @@ height = int(height * 0.9)
 |---------|-----------|--------------|-------|
 | **Engine** | Bokeh | Plotly + Dask + Datashader | Fast uses Bokeh for better performance |
 | **Height** | Dynamic (85% screen) | Dynamic (85% screen) | Both use same calculation |
-| **Size Reduction** | 10% | None | Fast reduces for better UX |
+| **Size Adjustment** | -5% width, -10% height | None | Fast adjusts for better UX |
 | **MACD Colors** | Blue/Red | Blue/Red | Identical implementation |
 | **MACD Widths** | 3px/2px | 3px/2px | Identical implementation |
 | **Histogram** | Green/Red bars | Green/Red bars | Identical implementation |
+| **Hover Tooltips** | Enhanced MACD tooltips | Standard tooltips | Fast shows MACD/Signal/Histogram |
 
 ## Supported Indicators
 
@@ -145,6 +148,24 @@ The module includes robust error handling:
 - **Invalid Data**: Proper exception handling for empty DataFrames
 - **Missing Columns**: Validation of required OHLC columns
 - **File Operations**: Safe file creation and directory handling
+
+## Enhanced Hover Functionality
+
+The module provides enhanced hover tooltips for different indicators:
+
+### MACD Hover
+- **Date**: Shows formatted date and time
+- **MACD**: Current MACD line value
+- **Signal**: Current signal line value  
+- **Histogram**: Current histogram value
+
+### RSI Hover
+- **Date**: Shows formatted date and time
+- **RSI**: Current RSI value with 2 decimal places
+
+### Generic Hover
+- **Date**: Shows formatted date and time
+- **Value**: Current indicator value
 
 ## Performance Benefits
 
@@ -199,7 +220,7 @@ No migration required. The changes are backward compatible:
 The module logs important information:
 
 ```
-Using reduced sizes: width=1620px, height=990px for rule: macd
+Using reduced sizes: width=1890px, height=990px for rule: macd
 Dual chart mode: using fullscreen height 1100px (screen height: 1080px)
 ```
 
