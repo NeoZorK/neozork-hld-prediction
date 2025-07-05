@@ -707,6 +707,45 @@ def plot_dual_chart_fast(
                 legend_label='Oversold'
             )
     
+    elif indicator_name == 'stoch':
+        # Draw %K line
+        if 'stoch_k' in display_df.columns:
+            indicator_fig.line(
+                'index', 'stoch_k',
+                source=source,
+                line_color='blue',
+                line_width=2,
+                legend_label='%K'
+            )
+        # Draw %D line
+        if 'stoch_d' in display_df.columns:
+            indicator_fig.line(
+                'index', 'stoch_d',
+                source=source,
+                line_color='orange',
+                line_width=2,
+                legend_label='%D'
+            )
+        # Draw overbought/oversold levels
+        if 'stoch_overbought' in display_df.columns:
+            indicator_fig.line(
+                'index', 'stoch_overbought',
+                source=source,
+                line_color='red',
+                line_width=1,
+                line_dash='dashed',
+                legend_label='Overbought'
+            )
+        if 'stoch_oversold' in display_df.columns:
+            indicator_fig.line(
+                'index', 'stoch_oversold',
+                source=source,
+                line_color='green',
+                line_width=1,
+                line_dash='dashed',
+                legend_label='Oversold'
+            )
+    
     # Add hover tooltip for indicator chart
     if indicator_name == 'macd':
         # Special hover for MACD with all three components
@@ -756,6 +795,16 @@ def plot_dual_chart_fast(
             tooltips=[
                 ("Date", "@index{%F %H:%M}"),
                 ("CCI", "@cci{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'stoch':
+        hover_indicator = HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("%K", "@stoch_k{0.2f}"),
+                ("%D", "@stoch_d{0.2f}")
             ],
             formatters={'@index': 'datetime'},
             mode='vline'
