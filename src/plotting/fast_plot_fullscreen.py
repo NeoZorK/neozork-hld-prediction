@@ -78,7 +78,7 @@ def plot_indicator_results_fast_fullscreen(
     rule,
     title='',
     output_path="results/plots/fast_plot_fullscreen.html",
-    width=1800,
+    width=1000,  # Reduced to fit screen with toolbar buttons
     height=None,
     mode="fast",
     data_source="demo",
@@ -153,10 +153,22 @@ def plot_indicator_results_fast_fullscreen(
         
         logger.print_info(f"Using dynamic height: {height}px for rule: {rule_str}")
 
+        # Determine if we should show separate charts based on rule
+        # Rules that should show separate charts: AUTO, PHLD, PV, SR (but NOT OHLCV)
+        # All other rules (like RSI, MACD, OHLCV, etc.) should not show separate charts
+        show_separate_charts = any(key in rule_str for key in ['AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS'])
+        logger.print_debug(f"Fast fullscreen plot: Rule string: '{rule_str}', show_separate_charts: {show_separate_charts}")
+
+        # Calculate main figure height based on whether we show separate charts
+        if show_separate_charts:
+            main_fig_height = int(height * 0.4)  # 40% for main chart when showing subplots
+        else:
+            main_fig_height = int(height * 1.0)  # 100% for main chart when no subplots (like OHLCV)
+
         # Create main figure for OHLC chart
         main_fig = figure(
             width=width,
-            height=int(height * 0.4),
+            height=main_fig_height,
             title=title,
             x_axis_type='datetime',
             tools="pan,wheel_zoom,box_zoom,reset,save",
@@ -232,12 +244,6 @@ def plot_indicator_results_fast_fullscreen(
 
         # Create list of figures for layout
         figures = [main_fig]
-
-        # Determine if we should show separate charts based on rule
-        # Rules that should show separate charts: AUTO, PHLD, PV, SR (but NOT OHLCV)
-        # All other rules (like RSI, MACD, OHLCV, etc.) should not show separate charts
-        show_separate_charts = any(key in rule_str for key in ['AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS'])
-        logger.print_debug(f"Fast fullscreen plot: Rule string: '{rule_str}', show_separate_charts: {show_separate_charts}")
 
         if show_separate_charts:
             # Volume subplot - only if data exists
