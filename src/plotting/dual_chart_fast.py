@@ -111,9 +111,9 @@ def plot_dual_chart_fast(
     if height is None:
         height = calculate_dynamic_height(rule_str=rule_str)
     
-    # Reduce sizes by 10% to ensure legend and buttons are fully visible
-    width = int(width * 0.9)
-    height = int(height * 0.9)
+    # Reduce height by 10% and width by 5% to ensure legend and buttons are fully visible
+    width = int(width * 0.95)  # Reduce width by 5%
+    height = int(height * 0.9)  # Reduce height by 10%
     
     logger.print_info(f"Using reduced sizes: width={width}px, height={height}px for rule: {rule_str}")
     
@@ -625,14 +625,38 @@ def plot_dual_chart_fast(
             )
     
     # Add hover tooltip for indicator chart
-    hover_indicator = HoverTool(
-        tooltips=[
-            ("Date", "@index{%F %H:%M}"),
-            ("Value", "@$name{0.5f}")
-        ],
-        formatters={'@index': 'datetime'},
-        mode='vline'
-    )
+    if indicator_name == 'macd':
+        # Special hover for MACD with all three components
+        hover_indicator = HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("MACD", "@macd{0.5f}"),
+                ("Signal", "@macd_signal{0.5f}"),
+                ("Histogram", "@macd_histogram{0.5f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'rsi':
+        # Special hover for RSI
+        hover_indicator = HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("RSI", "@rsi{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    else:
+        # Generic hover for other indicators
+        hover_indicator = HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Value", "@$name{0.5f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     indicator_fig.add_tools(hover_indicator)
     
     # Create layout
