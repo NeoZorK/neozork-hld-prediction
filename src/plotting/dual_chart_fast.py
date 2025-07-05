@@ -73,6 +73,655 @@ def calculate_dynamic_height(screen_height=None, rule_str=None):
     return 1100
 
 
+def _plot_rsi_indicator(indicator_fig, source, display_df):
+    """Plot RSI indicator on the given figure."""
+    if 'rsi' in display_df.columns:
+        indicator_fig.line(
+            'index', 'rsi',
+            source=source,
+            line_color='purple',
+            line_width=3,
+            legend_label='RSI'
+        )
+        
+        # Add overbought/oversold lines
+        if 'rsi_overbought' in display_df.columns:
+            overbought = display_df['rsi_overbought'].iloc[0]
+            indicator_fig.line(
+                'index', [overbought] * len(display_df),
+                line_color='red',
+                line_width=2,
+                line_dash='dashed',
+                legend_label=f'Overbought ({overbought})'
+            )
+        
+        if 'rsi_oversold' in display_df.columns:
+            oversold = display_df['rsi_oversold'].iloc[0]
+            indicator_fig.line(
+                'index', [oversold] * len(display_df),
+                line_color='green',
+                line_width=2,
+                line_dash='dashed',
+                legend_label=f'Oversold ({oversold})'
+            )
+
+
+def _plot_macd_indicator(indicator_fig, source, display_df):
+    """Plot MACD indicator on the given figure."""
+    if 'macd' in display_df.columns:
+        indicator_fig.line(
+            'index', 'macd',
+            source=source,
+            line_color='blue',
+            line_width=3,
+            legend_label='MACD'
+        )
+    
+    if 'macd_signal' in display_df.columns:
+        indicator_fig.line(
+            'index', 'macd_signal',
+            source=source,
+            line_color='red',
+            line_width=2,
+            legend_label='Signal'
+        )
+    
+    if 'macd_histogram' in display_df.columns:
+        # Color histogram bars - same as fastest mode
+        colors = ['green' if val >= 0 else 'red' for val in display_df['macd_histogram']]
+        display_df['histogram_color'] = colors
+        hist_source = ColumnDataSource(display_df)
+        
+        indicator_fig.vbar(
+            'index', 0.8, 0, 'macd_histogram',
+            source=hist_source,
+            fill_color='histogram_color',
+            line_color='histogram_color',
+            alpha=0.7,
+            legend_label='Histogram'
+        )
+
+
+def _plot_ema_indicator(indicator_fig, source, display_df):
+    """Plot EMA indicator on the given figure."""
+    if 'ema' in display_df.columns:
+        indicator_fig.line(
+            'index', 'ema',
+            source=source,
+            line_color='orange',
+            line_width=3,
+            legend_label='EMA'
+        )
+
+
+def _plot_bb_indicator(indicator_fig, source, display_df):
+    """Plot Bollinger Bands indicator on the given figure."""
+    if 'bb_upper' in display_df.columns:
+        indicator_fig.line(
+            'index', 'bb_upper',
+            source=source,
+            line_color='blue',
+            line_width=2,
+            legend_label='Upper Band'
+        )
+    
+    if 'bb_middle' in display_df.columns:
+        indicator_fig.line(
+            'index', 'bb_middle',
+            source=source,
+            line_color='gray',
+            line_width=2,
+            legend_label='Middle Band'
+        )
+    
+    if 'bb_lower' in display_df.columns:
+        indicator_fig.line(
+            'index', 'bb_lower',
+            source=source,
+            line_color='blue',
+            line_width=2,
+            legend_label='Lower Band'
+        )
+
+
+def _plot_atr_indicator(indicator_fig, source, display_df):
+    """Plot ATR indicator on the given figure."""
+    if 'atr' in display_df.columns:
+        indicator_fig.line(
+            'index', 'atr',
+            source=source,
+            line_color='brown',
+            line_width=3,
+            legend_label='ATR'
+        )
+
+
+def _plot_cci_indicator(indicator_fig, source, display_df):
+    """Plot CCI indicator on the given figure."""
+    if 'cci' in display_df.columns:
+        indicator_fig.line(
+            'index', 'cci',
+            source=source,
+            line_color='purple',
+            line_width=3,
+            legend_label='CCI'
+        )
+        
+        # Add CCI reference lines as columns for proper source handling
+        display_df['cci_plus_100'] = 100
+        display_df['cci_minus_100'] = -100
+        
+        # Add CCI reference lines
+        indicator_fig.line(
+            'index', 'cci_plus_100',
+            source=source,
+            line_color='red',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='CCI +100'
+        )
+        
+        indicator_fig.line(
+            'index', 'cci_minus_100',
+            source=source,
+            line_color='green',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='CCI -100'
+        )
+
+
+def _plot_vwap_indicator(indicator_fig, source, display_df):
+    """Plot VWAP indicator on the given figure."""
+    if 'vwap' in display_df.columns:
+        indicator_fig.line(
+            'index', 'vwap',
+            source=source,
+            line_color='orange',
+            line_width=3,
+            legend_label='VWAP'
+        )
+
+
+def _plot_pivot_indicator(indicator_fig, source, display_df):
+    """Plot Pivot indicator on the given figure."""
+    if 'pivot' in display_df.columns:
+        indicator_fig.line(
+            'index', 'pivot',
+            source=source,
+            line_color='blue',
+            line_width=2,
+            legend_label='Pivot'
+        )
+    
+    if 'r1' in display_df.columns:
+        indicator_fig.line(
+            'index', 'r1',
+            source=source,
+            line_color='red',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='R1'
+        )
+    
+    if 's1' in display_df.columns:
+        indicator_fig.line(
+            'index', 's1',
+            source=source,
+            line_color='green',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='S1'
+        )
+
+
+def _plot_hma_indicator(indicator_fig, source, display_df):
+    """Plot HMA indicator on the given figure."""
+    if 'hma' in display_df.columns:
+        indicator_fig.line(
+            'index', 'hma',
+            source=source,
+            line_color='purple',
+            line_width=3,
+            legend_label='HMA'
+        )
+
+
+def _plot_tsf_indicator(indicator_fig, source, display_df):
+    """Plot TSF indicator on the given figure."""
+    if 'tsf' in display_df.columns:
+        indicator_fig.line(
+            'index', 'tsf',
+            source=source,
+            line_color='cyan',
+            line_width=3,
+            legend_label='TSF'
+        )
+
+
+def _plot_monte_indicator(indicator_fig, source, display_df):
+    """Plot Monte Carlo indicator on the given figure."""
+    # Add Monte Carlo forecast line (main line)
+    if 'montecarlo' in display_df.columns:
+        indicator_fig.line(
+            'index', 'montecarlo',
+            source=source,
+            line_color='blue',
+            line_width=3,
+            legend_label='Monte Carlo Forecast'
+        )
+    
+    # Add Monte Carlo signal line
+    if 'montecarlo_signal' in display_df.columns:
+        indicator_fig.line(
+            'index', 'montecarlo_signal',
+            source=source,
+            line_color='red',
+            line_width=2,
+            legend_label='Signal Line'
+        )
+    
+    # Add Monte Carlo histogram
+    if 'montecarlo_histogram' in display_df.columns:
+        # Color histogram bars based on values
+        colors = ['green' if val >= 0 else 'red' for val in display_df['montecarlo_histogram']]
+        display_df['histogram_color'] = colors
+        hist_source = ColumnDataSource(display_df)
+        
+        indicator_fig.vbar(
+            'index', 0.5, 'montecarlo_histogram',
+            source=hist_source,
+            color='histogram_color',
+            alpha=0.7,
+            legend_label='Histogram'
+        )
+    
+    # Add confidence bands
+    if 'montecarlo_upper' in display_df.columns:
+        indicator_fig.line(
+            'index', 'montecarlo_upper',
+            source=source,
+            line_color='lightblue',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Upper Confidence'
+        )
+    
+    if 'montecarlo_lower' in display_df.columns:
+        indicator_fig.line(
+            'index', 'montecarlo_lower',
+            source=source,
+            line_color='lightblue',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Lower Confidence'
+        )
+    
+    # Add zero line for histogram
+    indicator_fig.line(
+        'index', [0] * len(display_df),
+        line_color='gray',
+        line_width=1,
+        line_dash='dashed',
+        legend_label='Zero Line'
+    )
+
+
+def _plot_kelly_indicator(indicator_fig, source, display_df):
+    """Plot Kelly indicator on the given figure."""
+    if 'kelly' in display_df.columns:
+        indicator_fig.line(
+            'index', 'kelly',
+            source=source,
+            line_color='green',
+            line_width=3,
+            legend_label='Kelly'
+        )
+
+
+def _plot_donchain_indicator(indicator_fig, source, display_df):
+    """Plot Donchian Channel indicator on the given figure."""
+    if 'donchain_upper' in display_df.columns:
+        indicator_fig.line(
+            'index', 'donchain_upper',
+            source=source,
+            line_color='blue',
+            line_width=2,
+            legend_label='Upper Channel'
+        )
+    
+    if 'donchain_middle' in display_df.columns:
+        indicator_fig.line(
+            'index', 'donchain_middle',
+            source=source,
+            line_color='gray',
+            line_width=2,
+            legend_label='Middle Channel'
+        )
+    
+    if 'donchain_lower' in display_df.columns:
+        indicator_fig.line(
+            'index', 'donchain_lower',
+            source=source,
+            line_color='blue',
+            line_width=2,
+            legend_label='Lower Channel'
+        )
+
+
+def _plot_fibo_indicator(indicator_fig, source, display_df):
+    """Plot Fibonacci indicator on the given figure."""
+    # Add Fibonacci levels
+    fibo_cols = [col for col in display_df.columns if col.startswith('fibo_')]
+    colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']
+    
+    for i, col in enumerate(fibo_cols):
+        color = colors[i % len(colors)]
+        indicator_fig.line(
+            'index', col,
+            source=source,
+            line_color=color,
+            line_width=2,
+            legend_label=col.replace('fibo_', 'Fib ')
+        )
+
+
+def _plot_obv_indicator(indicator_fig, source, display_df):
+    """Plot OBV indicator on the given figure."""
+    if 'obv' in display_df.columns:
+        indicator_fig.line(
+            'index', 'obv',
+            source=source,
+            line_color='brown',
+            line_width=3,
+            legend_label='OBV'
+        )
+
+
+def _plot_stdev_indicator(indicator_fig, source, display_df):
+    """Plot Standard Deviation indicator on the given figure."""
+    if 'stdev' in display_df.columns:
+        indicator_fig.line(
+            'index', 'stdev',
+            source=source,
+            line_color='gray',
+            line_width=3,
+            legend_label='StdDev'
+        )
+
+
+def _plot_adx_indicator(indicator_fig, source, display_df):
+    """Plot ADX indicator on the given figure."""
+    if 'adx' in display_df.columns:
+        indicator_fig.line(
+            'index', 'adx',
+            source=source,
+            line_color='purple',
+            line_width=3,
+            legend_label='ADX'
+        )
+    
+    if 'di_plus' in display_df.columns:
+        indicator_fig.line(
+            'index', 'di_plus',
+            source=source,
+            line_color='green',
+            line_width=2,
+            legend_label='DI+'
+        )
+    
+    if 'di_minus' in display_df.columns:
+        indicator_fig.line(
+            'index', 'di_minus',
+            source=source,
+            line_color='red',
+            line_width=2,
+            legend_label='DI-'
+        )
+
+
+def _plot_sar_indicator(indicator_fig, source, display_df):
+    """Plot SAR indicator on the given figure."""
+    if 'sar' in display_df.columns:
+        indicator_fig.scatter(
+            'index', 'sar',
+            source=source,
+            size=4,
+            color='red',
+            legend_label='SAR'
+        )
+
+
+def _plot_rsi_mom_indicator(indicator_fig, source, display_df):
+    """Plot RSI Momentum indicator on the given figure."""
+    # Draw RSI line
+    if 'rsi' in display_df.columns:
+        indicator_fig.line(
+            'index', 'rsi',
+            source=source,
+            line_color='blue',
+            line_width=2,
+            legend_label='RSI'
+        )
+    # Draw RSI Momentum line
+    if 'rsi_momentum' in display_df.columns:
+        indicator_fig.line(
+            'index', 'rsi_momentum',
+            source=source,
+            line_color='orange',
+            line_width=2,
+            legend_label='RSI Momentum'
+        )
+    # Draw overbought/oversold levels
+    if 'rsi_overbought' in display_df.columns:
+        indicator_fig.line(
+            'index', 'rsi_overbought',
+            source=source,
+            line_color='red',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Overbought'
+        )
+    if 'rsi_oversold' in display_df.columns:
+        indicator_fig.line(
+            'index', 'rsi_oversold',
+            source=source,
+            line_color='green',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Oversold'
+        )
+
+
+def _plot_rsi_div_indicator(indicator_fig, source, display_df):
+    """Plot RSI Divergence indicator on the given figure."""
+    # Draw RSI line
+    if 'rsi' in display_df.columns:
+        indicator_fig.line(
+            'index', 'rsi',
+            source=source,
+            line_color='blue',
+            line_width=2,
+            legend_label='RSI'
+        )
+    # Draw RSI Divergence line
+    if 'rsi_divergence' in display_df.columns:
+        indicator_fig.line(
+            'index', 'rsi_divergence',
+            source=source,
+            line_color='orange',
+            line_width=2,
+            legend_label='RSI Divergence'
+        )
+    # Draw overbought/oversold levels
+    if 'rsi_overbought' in display_df.columns:
+        indicator_fig.line(
+            'index', 'rsi_overbought',
+            source=source,
+            line_color='red',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Overbought'
+        )
+    if 'rsi_oversold' in display_df.columns:
+        indicator_fig.line(
+            'index', 'rsi_oversold',
+            source=source,
+            line_color='green',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Oversold'
+        )
+
+
+def _plot_stoch_indicator(indicator_fig, source, display_df):
+    """Plot Stochastic indicator on the given figure."""
+    # Draw %K line
+    if 'stoch_k' in display_df.columns:
+        indicator_fig.line(
+            'index', 'stoch_k',
+            source=source,
+            line_color='blue',
+            line_width=2,
+            legend_label='%K'
+        )
+    # Draw %D line
+    if 'stoch_d' in display_df.columns:
+        indicator_fig.line(
+            'index', 'stoch_d',
+            source=source,
+            line_color='orange',
+            line_width=2,
+            legend_label='%D'
+        )
+    # Draw overbought/oversold levels
+    if 'stoch_overbought' in display_df.columns:
+        indicator_fig.line(
+            'index', 'stoch_overbought',
+            source=source,
+            line_color='red',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Overbought'
+        )
+    if 'stoch_oversold' in display_df.columns:
+        indicator_fig.line(
+            'index', 'stoch_oversold',
+            source=source,
+            line_color='green',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Oversold'
+        )
+
+
+def _get_indicator_hover_tool(indicator_name):
+    """Get appropriate hover tool for the given indicator."""
+    if indicator_name == 'macd':
+        # Special hover for MACD with all three components
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("MACD", "@macd{0.5f}"),
+                ("Signal", "@macd_signal{0.5f}"),
+                ("Histogram", "@macd_histogram{0.5f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'rsi':
+        # Special hover for RSI
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("RSI", "@rsi{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'rsi_mom':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("RSI", "@rsi{0.2f}"),
+                ("RSI Momentum", "@rsi_momentum{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'rsi_div':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("RSI", "@rsi{0.2f}"),
+                ("RSI Divergence", "@rsi_divergence{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'cci':
+        # Special hover for CCI
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("CCI", "@cci{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'stoch':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("%K", "@stoch_k{0.2f}"),
+                ("%D", "@stoch_d{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    else:
+        # Generic hover for other indicators
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Value", "@$name{0.5f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+
+
+def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
+    """Plot indicator based on type using the appropriate function."""
+    indicator_plot_functions = {
+        'rsi': _plot_rsi_indicator,
+        'macd': _plot_macd_indicator,
+        'ema': _plot_ema_indicator,
+        'bb': _plot_bb_indicator,
+        'atr': _plot_atr_indicator,
+        'cci': _plot_cci_indicator,
+        'vwap': _plot_vwap_indicator,
+        'pivot': _plot_pivot_indicator,
+        'hma': _plot_hma_indicator,
+        'tsf': _plot_tsf_indicator,
+        'monte': _plot_monte_indicator,
+        'kelly': _plot_kelly_indicator,
+        'donchain': _plot_donchain_indicator,
+        'fibo': _plot_fibo_indicator,
+        'obv': _plot_obv_indicator,
+        'stdev': _plot_stdev_indicator,
+        'adx': _plot_adx_indicator,
+        'sar': _plot_sar_indicator,
+        'rsi_mom': _plot_rsi_mom_indicator,
+        'rsi_div': _plot_rsi_div_indicator,
+        'stoch': _plot_stoch_indicator,
+    }
+    
+    plot_function = indicator_plot_functions.get(indicator_name)
+    if plot_function:
+        plot_function(indicator_fig, source, display_df)
+
+
 def plot_dual_chart_fast(
     df: pd.DataFrame,
     rule: str,
@@ -246,579 +895,11 @@ def plot_dual_chart_fast(
         active_scroll='wheel_zoom'
     )
     
-    # Add indicator based on type
-    if indicator_name == 'rsi':
-        if 'rsi' in display_df.columns:
-            indicator_fig.line(
-                'index', 'rsi',
-                source=source,
-                line_color='purple',
-                line_width=3,
-                legend_label='RSI'
-            )
-            
-            # Add overbought/oversold lines
-            if 'rsi_overbought' in display_df.columns:
-                overbought = display_df['rsi_overbought'].iloc[0]
-                indicator_fig.line(
-                    'index', [overbought] * len(display_df),
-                    line_color='red',
-                    line_width=2,
-                    line_dash='dashed',
-                    legend_label=f'Overbought ({overbought})'
-                )
-            
-            if 'rsi_oversold' in display_df.columns:
-                oversold = display_df['rsi_oversold'].iloc[0]
-                indicator_fig.line(
-                    'index', [oversold] * len(display_df),
-                    line_color='green',
-                    line_width=2,
-                    line_dash='dashed',
-                    legend_label=f'Oversold ({oversold})'
-                )
-    
-    elif indicator_name == 'macd':
-        if 'macd' in display_df.columns:
-            indicator_fig.line(
-                'index', 'macd',
-                source=source,
-                line_color='blue',
-                line_width=3,
-                legend_label='MACD'
-            )
-        
-        if 'macd_signal' in display_df.columns:
-            indicator_fig.line(
-                'index', 'macd_signal',
-                source=source,
-                line_color='red',
-                line_width=2,
-                legend_label='Signal'
-            )
-        
-        if 'macd_histogram' in display_df.columns:
-            # Color histogram bars - same as fastest mode
-            colors = ['green' if val >= 0 else 'red' for val in display_df['macd_histogram']]
-            display_df['histogram_color'] = colors
-            hist_source = ColumnDataSource(display_df)
-            
-            indicator_fig.vbar(
-                'index', 0.8, 0, 'macd_histogram',
-                source=hist_source,
-                fill_color='histogram_color',
-                line_color='histogram_color',
-                alpha=0.7,
-                legend_label='Histogram'
-            )
-    
-    elif indicator_name == 'ema':
-        if 'ema' in display_df.columns:
-            indicator_fig.line(
-                'index', 'ema',
-                source=source,
-                line_color='orange',
-                line_width=3,
-                legend_label='EMA'
-            )
-    
-    elif indicator_name == 'bb':
-        if 'bb_upper' in display_df.columns:
-            indicator_fig.line(
-                'index', 'bb_upper',
-                source=source,
-                line_color='blue',
-                line_width=2,
-                legend_label='Upper Band'
-            )
-        
-        if 'bb_middle' in display_df.columns:
-            indicator_fig.line(
-                'index', 'bb_middle',
-                source=source,
-                line_color='gray',
-                line_width=2,
-                legend_label='Middle Band'
-            )
-        
-        if 'bb_lower' in display_df.columns:
-            indicator_fig.line(
-                'index', 'bb_lower',
-                source=source,
-                line_color='blue',
-                line_width=2,
-                legend_label='Lower Band'
-            )
-    
-    elif indicator_name == 'atr':
-        if 'atr' in display_df.columns:
-            indicator_fig.line(
-                'index', 'atr',
-                source=source,
-                line_color='brown',
-                line_width=3,
-                legend_label='ATR'
-            )
-    
-    elif indicator_name == 'cci':
-        if 'cci' in display_df.columns:
-            indicator_fig.line(
-                'index', 'cci',
-                source=source,
-                line_color='purple',
-                line_width=3,
-                legend_label='CCI'
-            )
-            
-            # Add CCI reference lines as columns for proper source handling
-            display_df['cci_plus_100'] = 100
-            display_df['cci_minus_100'] = -100
-            
-            # Add CCI reference lines
-            indicator_fig.line(
-                'index', 'cci_plus_100',
-                source=source,
-                line_color='red',
-                line_width=1,
-                line_dash='dashed',
-                legend_label='CCI +100'
-            )
-            
-            indicator_fig.line(
-                'index', 'cci_minus_100',
-                source=source,
-                line_color='green',
-                line_width=1,
-                line_dash='dashed',
-                legend_label='CCI -100'
-            )
-    
-    elif indicator_name == 'vwap':
-        if 'vwap' in display_df.columns:
-            indicator_fig.line(
-                'index', 'vwap',
-                source=source,
-                line_color='orange',
-                line_width=3,
-                legend_label='VWAP'
-            )
-    
-    elif indicator_name == 'pivot':
-        if 'pivot' in display_df.columns:
-            indicator_fig.line(
-                'index', 'pivot',
-                source=source,
-                line_color='blue',
-                line_width=2,
-                legend_label='Pivot'
-            )
-        
-        if 'r1' in display_df.columns:
-            indicator_fig.line(
-                'index', 'r1',
-                source=source,
-                line_color='red',
-                line_width=1,
-                line_dash='dashed',
-                legend_label='R1'
-            )
-        
-        if 's1' in display_df.columns:
-            indicator_fig.line(
-                'index', 's1',
-                source=source,
-                line_color='green',
-                line_width=1,
-                line_dash='dashed',
-                legend_label='S1'
-            )
-    
-    elif indicator_name == 'hma':
-        if 'hma' in display_df.columns:
-            indicator_fig.line(
-                'index', 'hma',
-                source=source,
-                line_color='purple',
-                line_width=3,
-                legend_label='HMA'
-            )
-    
-    elif indicator_name == 'tsf':
-        if 'tsf' in display_df.columns:
-            indicator_fig.line(
-                'index', 'tsf',
-                source=source,
-                line_color='cyan',
-                line_width=3,
-                legend_label='TSF'
-            )
-    
-    elif indicator_name == 'monte':
-        # Add Monte Carlo forecast line (main line)
-        if 'montecarlo' in display_df.columns:
-            indicator_fig.line(
-                'index', 'montecarlo',
-                source=source,
-                line_color='blue',
-                line_width=3,
-                legend_label='Monte Carlo Forecast'
-            )
-        
-        # Add Monte Carlo signal line
-        if 'montecarlo_signal' in display_df.columns:
-            indicator_fig.line(
-                'index', 'montecarlo_signal',
-                source=source,
-                line_color='red',
-                line_width=2,
-                legend_label='Signal Line'
-            )
-        
-        # Add Monte Carlo histogram
-        if 'montecarlo_histogram' in display_df.columns:
-            # Color histogram bars based on values
-            colors = ['green' if val >= 0 else 'red' for val in display_df['montecarlo_histogram']]
-            display_df['histogram_color'] = colors
-            hist_source = ColumnDataSource(display_df)
-            
-            indicator_fig.vbar(
-                'index', 0.5, 'montecarlo_histogram',
-                source=hist_source,
-                color='histogram_color',
-                alpha=0.7,
-                legend_label='Histogram'
-            )
-        
-        # Add confidence bands
-        if 'montecarlo_upper' in display_df.columns:
-            indicator_fig.line(
-                'index', 'montecarlo_upper',
-                source=source,
-                line_color='lightblue',
-                line_width=1,
-                line_dash='dashed',
-                legend_label='Upper Confidence'
-            )
-        
-        if 'montecarlo_lower' in display_df.columns:
-            indicator_fig.line(
-                'index', 'montecarlo_lower',
-                source=source,
-                line_color='lightblue',
-                line_width=1,
-                line_dash='dashed',
-                legend_label='Lower Confidence'
-            )
-        
-        # Add zero line for histogram
-        indicator_fig.line(
-            'index', [0] * len(display_df),
-            line_color='gray',
-            line_width=1,
-            line_dash='dashed',
-            legend_label='Zero Line'
-        )
-    
-    elif indicator_name == 'kelly':
-        if 'kelly' in display_df.columns:
-            indicator_fig.line(
-                'index', 'kelly',
-                source=source,
-                line_color='green',
-                line_width=3,
-                legend_label='Kelly'
-            )
-    
-    elif indicator_name == 'donchain':
-        if 'donchain_upper' in display_df.columns:
-            indicator_fig.line(
-                'index', 'donchain_upper',
-                source=source,
-                line_color='blue',
-                line_width=2,
-                legend_label='Upper Channel'
-            )
-        
-        if 'donchain_middle' in display_df.columns:
-            indicator_fig.line(
-                'index', 'donchain_middle',
-                source=source,
-                line_color='gray',
-                line_width=2,
-                legend_label='Middle Channel'
-            )
-        
-        if 'donchain_lower' in display_df.columns:
-            indicator_fig.line(
-                'index', 'donchain_lower',
-                source=source,
-                line_color='blue',
-                line_width=2,
-                legend_label='Lower Channel'
-            )
-    
-    elif indicator_name == 'fibo':
-        # Add Fibonacci levels
-        fibo_cols = [col for col in display_df.columns if col.startswith('fibo_')]
-        colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']
-        
-        for i, col in enumerate(fibo_cols):
-            color = colors[i % len(colors)]
-            indicator_fig.line(
-                'index', col,
-                source=source,
-                line_color=color,
-                line_width=2,
-                legend_label=col.replace('fibo_', 'Fib ')
-            )
-    
-    elif indicator_name == 'obv':
-        if 'obv' in display_df.columns:
-            indicator_fig.line(
-                'index', 'obv',
-                source=source,
-                line_color='brown',
-                line_width=3,
-                legend_label='OBV'
-            )
-    
-    elif indicator_name == 'stdev':
-        if 'stdev' in display_df.columns:
-            indicator_fig.line(
-                'index', 'stdev',
-                source=source,
-                line_color='gray',
-                line_width=3,
-                legend_label='StdDev'
-            )
-    
-    elif indicator_name == 'adx':
-        if 'adx' in display_df.columns:
-            indicator_fig.line(
-                'index', 'adx',
-                source=source,
-                line_color='purple',
-                line_width=3,
-                legend_label='ADX'
-            )
-        
-        if 'di_plus' in display_df.columns:
-            indicator_fig.line(
-                'index', 'di_plus',
-                source=source,
-                line_color='green',
-                line_width=2,
-                legend_label='DI+'
-            )
-        
-        if 'di_minus' in display_df.columns:
-            indicator_fig.line(
-                'index', 'di_minus',
-                source=source,
-                line_color='red',
-                line_width=2,
-                legend_label='DI-'
-            )
-    
-    elif indicator_name == 'sar':
-        if 'sar' in display_df.columns:
-            indicator_fig.scatter(
-                'index', 'sar',
-                source=source,
-                size=4,
-                color='red',
-                legend_label='SAR'
-            )
-    
-    elif indicator_name == 'rsi_mom':
-        # Draw RSI line
-        if 'rsi' in display_df.columns:
-            indicator_fig.line(
-                'index', 'rsi',
-                source=source,
-                line_color='blue',
-                line_width=2,
-                legend_label='RSI'
-            )
-        # Draw RSI Momentum line
-        if 'rsi_momentum' in display_df.columns:
-            indicator_fig.line(
-                'index', 'rsi_momentum',
-                source=source,
-                line_color='orange',
-                line_width=2,
-                legend_label='RSI Momentum'
-            )
-        # Draw overbought/oversold levels
-        if 'rsi_overbought' in display_df.columns:
-            indicator_fig.line(
-                'index', 'rsi_overbought',
-                source=source,
-                line_color='red',
-                line_width=1,
-                line_dash='dashed',
-                legend_label='Overbought'
-            )
-        if 'rsi_oversold' in display_df.columns:
-            indicator_fig.line(
-                'index', 'rsi_oversold',
-                source=source,
-                line_color='green',
-                line_width=1,
-                line_dash='dashed',
-                legend_label='Oversold'
-            )
-    elif indicator_name == 'rsi_div':
-        # Draw RSI line
-        if 'rsi' in display_df.columns:
-            indicator_fig.line(
-                'index', 'rsi',
-                source=source,
-                line_color='blue',
-                line_width=2,
-                legend_label='RSI'
-            )
-        # Draw RSI Divergence line
-        if 'rsi_divergence' in display_df.columns:
-            indicator_fig.line(
-                'index', 'rsi_divergence',
-                source=source,
-                line_color='orange',
-                line_width=2,
-                legend_label='RSI Divergence'
-            )
-        # Draw overbought/oversold levels
-        if 'rsi_overbought' in display_df.columns:
-            indicator_fig.line(
-                'index', 'rsi_overbought',
-                source=source,
-                line_color='red',
-                line_width=1,
-                line_dash='dashed',
-                legend_label='Overbought'
-            )
-        if 'rsi_oversold' in display_df.columns:
-            indicator_fig.line(
-                'index', 'rsi_oversold',
-                source=source,
-                line_color='green',
-                line_width=1,
-                line_dash='dashed',
-                legend_label='Oversold'
-            )
-    
-    elif indicator_name == 'stoch':
-        # Draw %K line
-        if 'stoch_k' in display_df.columns:
-            indicator_fig.line(
-                'index', 'stoch_k',
-                source=source,
-                line_color='blue',
-                line_width=2,
-                legend_label='%K'
-            )
-        # Draw %D line
-        if 'stoch_d' in display_df.columns:
-            indicator_fig.line(
-                'index', 'stoch_d',
-                source=source,
-                line_color='orange',
-                line_width=2,
-                legend_label='%D'
-            )
-        # Draw overbought/oversold levels
-        if 'stoch_overbought' in display_df.columns:
-            indicator_fig.line(
-                'index', 'stoch_overbought',
-                source=source,
-                line_color='red',
-                line_width=1,
-                line_dash='dashed',
-                legend_label='Overbought'
-            )
-        if 'stoch_oversold' in display_df.columns:
-            indicator_fig.line(
-                'index', 'stoch_oversold',
-                source=source,
-                line_color='green',
-                line_width=1,
-                line_dash='dashed',
-                legend_label='Oversold'
-            )
+    # Plot indicator using the refactored function
+    _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name)
     
     # Add hover tooltip for indicator chart
-    if indicator_name == 'macd':
-        # Special hover for MACD with all three components
-        hover_indicator = HoverTool(
-            tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("MACD", "@macd{0.5f}"),
-                ("Signal", "@macd_signal{0.5f}"),
-                ("Histogram", "@macd_histogram{0.5f}")
-            ],
-            formatters={'@index': 'datetime'},
-            mode='vline'
-        )
-    elif indicator_name == 'rsi':
-        # Special hover for RSI
-        hover_indicator = HoverTool(
-            tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("RSI", "@rsi{0.2f}")
-            ],
-            formatters={'@index': 'datetime'},
-            mode='vline'
-        )
-    elif indicator_name == 'rsi_mom':
-        hover_indicator = HoverTool(
-            tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("RSI", "@rsi{0.2f}"),
-                ("RSI Momentum", "@rsi_momentum{0.2f}")
-            ],
-            formatters={'@index': 'datetime'},
-            mode='vline'
-        )
-    elif indicator_name == 'rsi_div':
-        hover_indicator = HoverTool(
-            tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("RSI", "@rsi{0.2f}"),
-                ("RSI Divergence", "@rsi_divergence{0.2f}")
-            ],
-            formatters={'@index': 'datetime'},
-            mode='vline'
-        )
-    elif indicator_name == 'cci':
-        # Special hover for CCI
-        hover_indicator = HoverTool(
-            tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("CCI", "@cci{0.2f}")
-            ],
-            formatters={'@index': 'datetime'},
-            mode='vline'
-        )
-    elif indicator_name == 'stoch':
-        hover_indicator = HoverTool(
-            tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("%K", "@stoch_k{0.2f}"),
-                ("%D", "@stoch_d{0.2f}")
-            ],
-            formatters={'@index': 'datetime'},
-            mode='vline'
-        )
-    else:
-        # Generic hover for other indicators
-        hover_indicator = HoverTool(
-            tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("Value", "@$name{0.5f}")
-            ],
-            formatters={'@index': 'datetime'},
-            mode='vline'
-        )
+    hover_indicator = _get_indicator_hover_tool(indicator_name)
     indicator_fig.add_tools(hover_indicator)
     
     # Create layout
