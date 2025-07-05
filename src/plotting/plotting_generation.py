@@ -499,16 +499,61 @@ def generate_fast_plot(result_df, selected_rule, plot_title, args=None):
             'fee_per_trade': getattr(args, 'fee_per_trade', 0.07)
         }
     
-    # Set default output path for fast plotting
-    output_path = "results/plots/fast_plot.html"
+    # Check if we should use fullscreen mode for OHLCV rule
+    rule_str = selected_rule.name if hasattr(selected_rule, 'name') else str(selected_rule)
+    use_fullscreen = rule_str.upper() == 'OHLCV' or 'OHLCV' in rule_str.upper()
     
-    plot_indicator_results_fast(
-        result_df,
-        selected_rule,
-        plot_title,
-        output_path=output_path,
-        **strategy_kwargs
-    )
+    if use_fullscreen:
+        logger.print_info("OHLCV rule detected, using fullscreen fast plot...")
+        try:
+            from src.plotting.fast_plot_fullscreen import plot_indicator_results_fast_fullscreen
+            
+            # Set output path for fullscreen fast plotting
+            output_path = "results/plots/fast_plot_fullscreen.html"
+            
+            plot_indicator_results_fast_fullscreen(
+                result_df,
+                selected_rule,
+                plot_title,
+                output_path=output_path,
+                height=None,  # Will be calculated dynamically
+                **strategy_kwargs
+            )
+        except ImportError as e:
+            logger.print_warning(f"Fullscreen fast plotting not available: {e}. Falling back to standard fast plotting.")
+            # Fallback to standard fast plotting
+            output_path = "results/plots/fast_plot.html"
+            from src.plotting.fast_plot import plot_indicator_results_fast
+            plot_indicator_results_fast(
+                result_df,
+                selected_rule,
+                plot_title,
+                output_path=output_path,
+                **strategy_kwargs
+            )
+        except Exception as e:
+            logger.print_error(f"Error in fullscreen fast plotting: {e}. Falling back to standard fast plotting.")
+            # Fallback to standard fast plotting
+            output_path = "results/plots/fast_plot.html"
+            from src.plotting.fast_plot import plot_indicator_results_fast
+            plot_indicator_results_fast(
+                result_df,
+                selected_rule,
+                plot_title,
+                output_path=output_path,
+                **strategy_kwargs
+            )
+    else:
+        # Use standard fast plotting for non-OHLCV rules
+        output_path = "results/plots/fast_plot.html"
+        from src.plotting.fast_plot import plot_indicator_results_fast
+        plot_indicator_results_fast(
+            result_df,
+            selected_rule,
+            plot_title,
+            output_path=output_path,
+            **strategy_kwargs
+        )
 
 
 def generate_plotly_plot(result_df, selected_rule, plot_title, data_info):
