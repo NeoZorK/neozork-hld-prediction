@@ -13,7 +13,7 @@ import numpy as np
 from bokeh.plotting import figure, output_file, save
 from bokeh.layouts import column
 from bokeh.models import (
-    HoverTool, Span, Title, ColumnDataSource, NumeralTickFormatter, Div
+    HoverTool, Span, Title, ColumnDataSource, NumeralTickFormatter, Div, BoxAnnotation
 )
 import webbrowser
 from typing import Dict, Any, Optional
@@ -778,37 +778,64 @@ def _plot_feargreed_indicator(indicator_fig, source, display_df):
 
 
 def _plot_supertrend_indicator(indicator_fig, source, display_df):
-    """Plot SuperTrend indicator as a single segmented line (like fastest style)."""
+    """Plot SuperTrend indicator with modern cool style - smooth lines, glow effects, and enhanced visuals."""
     import numpy as np
-    from bokeh.models import Span
+    from bokeh.models import BoxAnnotation
 
-    if 'PPrice1' not in display_df.columns or 'PPrice2' not in display_df.columns or 'Direction' not in display_df.columns:
+    # Check for required columns - support both old and new column names
+    has_pprice = 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns
+    has_supertrend = 'supertrend' in display_df.columns
+    has_direction = 'Direction' in display_df.columns
+    
+    if not (has_pprice or has_supertrend) or not has_direction:
         return
 
-    # Сбор данных
+    # Get data with fallback support
     idx = display_df['index'] if 'index' in display_df.columns else display_df.index
-    p1 = display_df['PPrice1']
-    p2 = display_df['PPrice2']
-    direction = display_df['Direction']
-
-    # Формируем основную линию SuperTrend: если uptrend (direction > 0), используем PPrice1, иначе PPrice2
-    supertrend_values = np.where(direction > 0, p1, p2)
     
-    # Создаем сегменты для цветовой сегментации
+    if has_pprice:
+        # Use PPrice1/PPrice2 method
+        p1 = display_df['PPrice1']
+        p2 = display_df['PPrice2']
+        direction = display_df['Direction']
+        # Form SuperTrend line: if uptrend (direction > 0), use PPrice1, else PPrice2
+        supertrend_values = np.where(direction > 0, p1, p2)
+    else:
+        # Use direct supertrend column
+        supertrend_values = display_df['supertrend']
+        direction = display_df['Direction']
+    
+    # Modern color scheme
+    uptrend_color = '#00C851'      # Modern green
+    downtrend_color = '#ff4444'    # Modern red
+    neutral_color = '#FFC107'      # Golden yellow for neutral
+    
+    # Create segments for color segmentation
     segments = []
     
-    # Безопасное получение первого элемента
+    # Safe first element access
     if hasattr(idx, 'iloc'):
         first_idx = idx.iloc[0]
         first_value = supertrend_values.iloc[0] if hasattr(supertrend_values, 'iloc') else supertrend_values[0]
+        first_dir = direction.iloc[0] if hasattr(direction, 'iloc') else direction[0]
     else:
         first_idx = idx[0]
         first_value = supertrend_values[0]
+        first_dir = direction[0]
     
-    current_segment = {'x': [first_idx], 'y': [first_value], 'color': 'gray'}
+    # Determine initial color
+    if first_dir > 0:
+        current_color = uptrend_color
+    elif first_dir < 0:
+        current_color = downtrend_color
+    else:
+        current_color = neutral_color
     
+    current_segment = {'x': [first_idx], 'y': [first_value], 'color': current_color}
+    
+    # Build segments
     for i in range(1, len(idx)):
-        # Безопасное получение элементов
+        # Safe element access
         if hasattr(direction, 'iloc'):
             current_dir = direction.iloc[i]
             prev_dir = direction.iloc[i-1]
@@ -830,15 +857,15 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
             current_value = supertrend_values[i]
             prev_value = supertrend_values[i-1]
         
-        # Определяем цвет сегмента
+        # Determine segment color
         if current_dir > 0:
-            color = 'green'  # Uptrend
+            color = uptrend_color
         elif current_dir < 0:
-            color = 'red'    # Downtrend
+            color = downtrend_color
         else:
-            color = 'yellow' # Neutral/change
+            color = neutral_color
             
-        # Если направление изменилось, начинаем новый сегмент
+        # Start new segment if direction changed
         if current_dir != prev_dir:
             if len(current_segment['x']) > 0:
                 segments.append(current_segment)
@@ -847,26 +874,36 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         current_segment['x'].append(current_idx)
         current_segment['y'].append(current_value)
     
-    # Добавляем последний сегмент
+    # Add last segment
     if len(current_segment['x']) > 0:
         segments.append(current_segment)
     
-    # Рисуем сегменты
+    # Draw segments with modern styling
     for segment in segments:
         if len(segment['x']) > 1:
+            # Glow effect (wide transparent line)
             indicator_fig.line(
                 segment['x'], segment['y'],
                 line_color=segment['color'],
-                line_width=3,
+                line_width=12,
+                line_alpha=0.15
+            )
+            
+            # Main line with enhanced styling
+            indicator_fig.line(
+                segment['x'], segment['y'],
+                line_color=segment['color'],
+                line_width=4,
+                line_alpha=0.9,
                 legend_label='SuperTrend'
             )
     
-    # Добавляем маркеры сигналов (BUY/SELL)
+    # Enhanced BUY/SELL signals with modern styling
     buy_signals = []
     sell_signals = []
     
     for i in range(1, len(direction)):
-        # Безопасное получение элементов
+        # Safe element access
         if hasattr(direction, 'iloc'):
             current_dir = direction.iloc[i]
             prev_dir = direction.iloc[i-1]
@@ -890,60 +927,77 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
             else:  # SELL signal
                 sell_signals.append((current_idx, current_value))
     
-    # Рисуем BUY сигналы (зеленые треугольники)
+    # Draw BUY signals with enhanced styling
     if buy_signals:
         buy_x, buy_y = zip(*buy_signals)
+        # Glow effect for buy signals
         indicator_fig.scatter(
             buy_x, buy_y,
-            size=10,
-            color='green',
+            size=16,
+            color=uptrend_color,
             marker='triangle',
+            alpha=0.3
+        )
+        # Main buy signal markers
+        indicator_fig.scatter(
+            buy_x, buy_y,
+            size=12,
+            color=uptrend_color,
+            marker='triangle',
+            alpha=0.9,
             legend_label='BUY Signal'
         )
     
-    # Рисуем SELL сигналы (красные треугольники)
+    # Draw SELL signals with enhanced styling
     if sell_signals:
         sell_x, sell_y = zip(*sell_signals)
+        # Glow effect for sell signals
         indicator_fig.scatter(
             sell_x, sell_y,
-            size=10,
-            color='red',
+            size=16,
+            color=downtrend_color,
             marker='inverted_triangle',
+            alpha=0.3
+        )
+        # Main sell signal markers
+        indicator_fig.scatter(
+            sell_x, sell_y,
+            size=12,
+            color=downtrend_color,
+            marker='inverted_triangle',
+            alpha=0.9,
             legend_label='SELL Signal'
         )
     
-    # Добавляем фоновые зоны тренда
+    # Add transparent trend zones for enhanced visual appeal
     if len(idx) > 0:
-        # Uptrend zone (зеленый фон)
-        uptrend_mask = direction > 0
-        if uptrend_mask.any():
-            uptrend_x = idx[uptrend_mask]
-            uptrend_y = supertrend_values[uptrend_mask]
-            if len(uptrend_x) > 1:
-                indicator_fig.line(
-                    uptrend_x, uptrend_y,
-                    line_color='green',
-                    line_width=1,
-                    line_alpha=0.3,
-                    legend_label='Uptrend Zone'
-                )
+        current_trend = direction.iloc[0] if hasattr(direction, 'iloc') else direction[0]
+        zone_start = idx.iloc[0] if hasattr(idx, 'iloc') else idx[0]
         
-        # Downtrend zone (красный фон)
-        downtrend_mask = direction < 0
-        if downtrend_mask.any():
-            downtrend_x = idx[downtrend_mask]
-            downtrend_y = supertrend_values[downtrend_mask]
-            if len(downtrend_x) > 1:
-                indicator_fig.line(
-                    downtrend_x, downtrend_y,
-                    line_color='red',
-                    line_width=1,
-                    line_alpha=0.3,
-                    legend_label='Downtrend Zone'
-                )
+        for i in range(1, len(direction)):
+            if hasattr(direction, 'iloc'):
+                current_dir = direction.iloc[i]
+                current_idx = idx.iloc[i]
+            else:
+                current_dir = direction[i]
+                current_idx = idx[i]
+                
+            if current_dir != current_trend or i == len(direction)-1:
+                zone_end = current_idx
+                zone_color = uptrend_color if current_trend > 0 else downtrend_color
+                
+                # Add transparent background zone
+                indicator_fig.add_layout(BoxAnnotation(
+                    left=zone_start, right=zone_end,
+                    fill_color=zone_color, fill_alpha=0.08,
+                    line_color=zone_color, line_alpha=0.2, line_width=1
+                ))
+                
+                zone_start = current_idx
+                current_trend = current_dir
 
 
-def _get_indicator_hover_tool(indicator_name, fibo_columns=None):
+def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
     """Get appropriate hover tool for the given indicator."""
     if indicator_name == 'macd':
         # Special hover for MACD with all three components
@@ -1216,13 +1270,21 @@ def _get_indicator_hover_tool(indicator_name, fibo_columns=None):
             mode='vline'
         )
     elif indicator_name == 'supertrend':
+        # Enhanced hover tool for SuperTrend with fallback support
+        tooltips = [("Date", "@index{%F %H:%M}")]
+        
+        # Check which columns are available and add appropriate tooltips
+        if 'supertrend' in display_df.columns:
+            tooltips.append(("SuperTrend", "@supertrend{0.5f}"))
+        elif 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns:
+            tooltips.append(("Support (PPrice1)", "@PPrice1{0.5f}"))
+            tooltips.append(("Resistance (PPrice2)", "@PPrice2{0.5f}"))
+        
+        if 'Direction' in display_df.columns:
+            tooltips.append(("Direction", "@Direction{0}"))
+        
         return HoverTool(
-            tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("Support (PPrice1)", "@PPrice1{0.5f}"),
-                ("Resistance (PPrice2)", "@PPrice2{0.5f}"),
-                ("Direction", "@Direction{0}")
-            ],
+            tooltips=tooltips,
             formatters={'@index': 'datetime'},
             mode='vline'
         )
@@ -1456,7 +1518,7 @@ def plot_dual_chart_fast(
     _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name)
     
     # Add hover tooltip for indicator chart
-    hover_indicator = _get_indicator_hover_tool(indicator_name, fibo_columns=fibo_columns)
+    hover_indicator = _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=fibo_columns)
     indicator_fig.add_tools(hover_indicator)
     
     # Create layout
