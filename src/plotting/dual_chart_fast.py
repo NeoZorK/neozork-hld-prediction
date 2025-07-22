@@ -778,88 +778,168 @@ def _plot_feargreed_indicator(indicator_fig, source, display_df):
 
 
 def _plot_supertrend_indicator(indicator_fig, source, display_df):
-    """Plot SuperTrend indicator on the given figure."""
-    # В режиме fast SuperTrend отображается через PPrice1 (поддержка) и PPrice2 (сопротивление)
-    if 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns:
-        # Plot SuperTrend support level (PPrice1)
-        indicator_fig.line(
-            'index', 'PPrice1',
-            source=source,
-            line_color='green',
-            line_width=3,
-            legend_label='SuperTrend Support'
-        )
-        
-        # Plot SuperTrend resistance level (PPrice2)
-        indicator_fig.line(
-            'index', 'PPrice2',
-            source=source,
-            line_color='red',
-            line_width=3,
-            legend_label='SuperTrend Resistance'
-        )
-        
-        # Add buy/sell signals if available
-        if 'Direction' in display_df.columns:
-            buy_signals = display_df[display_df['Direction'] == 1]
-            sell_signals = display_df[display_df['Direction'] == 2]
-            
-            if not buy_signals.empty:
-                buy_source = ColumnDataSource(buy_signals)
-                indicator_fig.scatter(
-                    'index', 'PPrice1',
-                    source=buy_source,
-                    size=12, color='green', alpha=0.8,
-                    legend_label='Buy Signal',
-                    marker='triangle'
-                )
-            
-            if not sell_signals.empty:
-                sell_source = ColumnDataSource(sell_signals)
-                indicator_fig.scatter(
-                    'index', 'PPrice2',
-                    source=sell_source,
-                    size=12, color='red', alpha=0.8,
-                    legend_label='Sell Signal',
-                    marker='inverted_triangle'
-                )
+    """Plot SuperTrend indicator as a single segmented line (like fastest style)."""
+    import numpy as np
+    from bokeh.models import Span
+
+    if 'PPrice1' not in display_df.columns or 'PPrice2' not in display_df.columns or 'Direction' not in display_df.columns:
+        return
+
+    # Сбор данных
+    idx = display_df['index'] if 'index' in display_df.columns else display_df.index
+    p1 = display_df['PPrice1']
+    p2 = display_df['PPrice2']
+    direction = display_df['Direction']
+
+    # Формируем основную линию SuperTrend: если uptrend (direction > 0), используем PPrice1, иначе PPrice2
+    supertrend_values = np.where(direction > 0, p1, p2)
     
-    # Fallback: если есть колонка SuperTrend (для совместимости)
-    elif 'SuperTrend' in display_df.columns:
-        indicator_fig.line(
-            'index', 'SuperTrend',
-            source=source,
-            line_color='blue',
-            line_width=3,
-            legend_label='SuperTrend'
-        )
+    # Создаем сегменты для цветовой сегментации
+    segments = []
+    
+    # Безопасное получение первого элемента
+    if hasattr(idx, 'iloc'):
+        first_idx = idx.iloc[0]
+        first_value = supertrend_values.iloc[0] if hasattr(supertrend_values, 'iloc') else supertrend_values[0]
+    else:
+        first_idx = idx[0]
+        first_value = supertrend_values[0]
+    
+    current_segment = {'x': [first_idx], 'y': [first_value], 'color': 'gray'}
+    
+    for i in range(1, len(idx)):
+        # Безопасное получение элементов
+        if hasattr(direction, 'iloc'):
+            current_dir = direction.iloc[i]
+            prev_dir = direction.iloc[i-1]
+        else:
+            current_dir = direction[i]
+            prev_dir = direction[i-1]
+            
+        if hasattr(idx, 'iloc'):
+            current_idx = idx.iloc[i]
+            prev_idx = idx.iloc[i-1]
+        else:
+            current_idx = idx[i]
+            prev_idx = idx[i-1]
+            
+        if hasattr(supertrend_values, 'iloc'):
+            current_value = supertrend_values.iloc[i]
+            prev_value = supertrend_values.iloc[i-1]
+        else:
+            current_value = supertrend_values[i]
+            prev_value = supertrend_values[i-1]
         
-        # Add trend direction visualization if available
-        if 'SuperTrend_Direction' in display_df.columns:
-            # Color the line based on trend direction
-            uptrend_mask = display_df['SuperTrend_Direction'] == 1
-            downtrend_mask = display_df['SuperTrend_Direction'] == -1
+        # Определяем цвет сегмента
+        if current_dir > 0:
+            color = 'green'  # Uptrend
+        elif current_dir < 0:
+            color = 'red'    # Downtrend
+        else:
+            color = 'yellow' # Neutral/change
             
-            if uptrend_mask.any():
-                uptrend_data = display_df[uptrend_mask]
-                uptrend_source = ColumnDataSource(uptrend_data)
+        # Если направление изменилось, начинаем новый сегмент
+        if current_dir != prev_dir:
+            if len(current_segment['x']) > 0:
+                segments.append(current_segment)
+            current_segment = {'x': [prev_idx], 'y': [prev_value], 'color': color}
+        
+        current_segment['x'].append(current_idx)
+        current_segment['y'].append(current_value)
+    
+    # Добавляем последний сегмент
+    if len(current_segment['x']) > 0:
+        segments.append(current_segment)
+    
+    # Рисуем сегменты
+    for segment in segments:
+        if len(segment['x']) > 1:
+            indicator_fig.line(
+                segment['x'], segment['y'],
+                line_color=segment['color'],
+                line_width=3,
+                legend_label='SuperTrend'
+            )
+    
+    # Добавляем маркеры сигналов (BUY/SELL)
+    buy_signals = []
+    sell_signals = []
+    
+    for i in range(1, len(direction)):
+        # Безопасное получение элементов
+        if hasattr(direction, 'iloc'):
+            current_dir = direction.iloc[i]
+            prev_dir = direction.iloc[i-1]
+        else:
+            current_dir = direction[i]
+            prev_dir = direction[i-1]
+            
+        if hasattr(idx, 'iloc'):
+            current_idx = idx.iloc[i]
+        else:
+            current_idx = idx[i]
+            
+        if hasattr(supertrend_values, 'iloc'):
+            current_value = supertrend_values.iloc[i]
+        else:
+            current_value = supertrend_values[i]
+        
+        if current_dir != prev_dir:
+            if current_dir > 0:  # BUY signal
+                buy_signals.append((current_idx, current_value))
+            else:  # SELL signal
+                sell_signals.append((current_idx, current_value))
+    
+    # Рисуем BUY сигналы (зеленые треугольники)
+    if buy_signals:
+        buy_x, buy_y = zip(*buy_signals)
+        indicator_fig.scatter(
+            buy_x, buy_y,
+            size=10,
+            color='green',
+            marker='triangle',
+            legend_label='BUY Signal'
+        )
+    
+    # Рисуем SELL сигналы (красные треугольники)
+    if sell_signals:
+        sell_x, sell_y = zip(*sell_signals)
+        indicator_fig.scatter(
+            sell_x, sell_y,
+            size=10,
+            color='red',
+            marker='inverted_triangle',
+            legend_label='SELL Signal'
+        )
+    
+    # Добавляем фоновые зоны тренда
+    if len(idx) > 0:
+        # Uptrend zone (зеленый фон)
+        uptrend_mask = direction > 0
+        if uptrend_mask.any():
+            uptrend_x = idx[uptrend_mask]
+            uptrend_y = supertrend_values[uptrend_mask]
+            if len(uptrend_x) > 1:
                 indicator_fig.line(
-                    'index', 'SuperTrend',
-                    source=uptrend_source,
+                    uptrend_x, uptrend_y,
                     line_color='green',
-                    line_width=4,
-                    legend_label='SuperTrend (Uptrend)'
+                    line_width=1,
+                    line_alpha=0.3,
+                    legend_label='Uptrend Zone'
                 )
-            
-            if downtrend_mask.any():
-                downtrend_data = display_df[downtrend_mask]
-                downtrend_source = ColumnDataSource(downtrend_data)
+        
+        # Downtrend zone (красный фон)
+        downtrend_mask = direction < 0
+        if downtrend_mask.any():
+            downtrend_x = idx[downtrend_mask]
+            downtrend_y = supertrend_values[downtrend_mask]
+            if len(downtrend_x) > 1:
                 indicator_fig.line(
-                    'index', 'SuperTrend',
-                    source=downtrend_source,
+                    downtrend_x, downtrend_y,
                     line_color='red',
-                    line_width=4,
-                    legend_label='SuperTrend (Downtrend)'
+                    line_width=1,
+                    line_alpha=0.3,
+                    legend_label='Downtrend Zone'
                 )
 
 
