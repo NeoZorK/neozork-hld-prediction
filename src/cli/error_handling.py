@@ -588,6 +588,37 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Invalid price_type: Use only "open" or "close"',
                 'Omitting parameters: Use format supertrend:10,3.0[,price_type]'
             ]
+        },
+        'stdev': {
+            'name': 'Standard Deviation (Volatility)',
+            'description': 'Volatility indicator that measures price volatility using statistical standard deviation. Generates trading signals based on volatility levels - low volatility suggests breakout potential, high volatility indicates panic conditions.',
+            'format': 'stdev:period,high_volatility_threshold,low_volatility_threshold,price_type',
+            'parameters': [
+                ('period', 'int', 'Standard deviation calculation period (window size)', '20'),
+                ('high_volatility_threshold', 'float', 'High volatility threshold for sell signals (typical: 0.02)', '0.02'),
+                ('low_volatility_threshold', 'float', 'Low volatility threshold for buy signals (typical: 0.005)', '0.005'),
+                ('price_type', 'string', 'Price type for calculation - open or close (default: close)', 'close')
+            ],
+            'examples': [
+                ('stdev:20,0.02,0.005,close', 'Standard volatility analysis with close prices'),
+                ('stdev:14,0.025,0.003,open', 'Short-term volatility with open prices'),
+                ('stdev:30,0.015,0.007,close', 'Long-term volatility with conservative thresholds')
+            ],
+            'tips': [
+                'Lower period = more responsive to recent volatility changes',
+                'Higher period = smoother, less sensitive to short-term spikes',
+                'Low volatility often precedes significant price movements',
+                'High volatility may indicate market panic or major news events',
+                'Use for position sizing and risk management',
+                'Combine with momentum indicators for better timing'
+            ],
+            'common_errors': [
+                'Invalid period: Must be a positive integer',
+                'Invalid thresholds: Must be positive floats',
+                'High threshold should be greater than low threshold',
+                'Invalid price_type: Use only "open" or "close"',
+                'Period too large for available data'
+            ]
         }
     }
     

@@ -821,8 +821,8 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         source.data['supertrend'] = supertrend_values
         
         # Also ensure PPrice1 and PPrice2 are in source for fallback hover
-        source.data['PPrice1'] = p1.fillna('N/A') if pd.api.types.is_numeric_dtype(p1) else p1
-        source.data['PPrice2'] = p2.fillna('N/A') if pd.api.types.is_numeric_dtype(p2) else p2
+        source.data['PPrice1'] = p1.fillna(0.0) if pd.api.types.is_numeric_dtype(p1) else p1
+        source.data['PPrice2'] = p2.fillna(0.0) if pd.api.types.is_numeric_dtype(p2) else p2
         
         # Ensure Direction is also in the main source for hover tool
         if 'Direction' not in source.data:
@@ -835,120 +835,104 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
             source.data['Direction'] = direction
     
     # Цвета и стиль как в fastest
-    uptrend_color = 'rgba(0, 200, 81, 0.95)'
-    downtrend_color = 'rgba(255, 68, 68, 0.95)'
-    signal_change_color = 'rgba(255, 193, 7, 0.95)'
+    uptrend_color = 'green'
+    downtrend_color = 'red'
+    signal_change_color = 'orange'
     
     # Определяем тренд (аналог fastest)
     price_series = display_df['Close'] if 'Close' in display_df.columns else display_df['close']
     trend = np.where(price_series > supertrend_values, 1, -1)
     trend = pd.Series(trend, index=display_df.index)
     
-    # Add trend colors to the main source for proper hover functionality
-    trend_colors = np.where(trend == 1, uptrend_color, downtrend_color)
-    source.data['supertrend_color'] = trend_colors
+    # Add trend information to source data for hover
+    trend_names = np.where(trend == 1, 'Uptrend', 'Downtrend')
+    source.data['trend_name'] = trend_names
     
-    # First, draw the main SuperTrend line using the main source for hover functionality
-    # This invisible line ensures hover tooltips work correctly
-    indicator_fig.line(
-        'index', 'supertrend',
-        source=source,
-        line_color='white',  # Make it barely visible
-        line_width=1,
-        alpha=0.01  # Nearly invisible but valid
-    )
+    # Проверяем, что у нас есть данные для работы
+    if len(trend) == 0:
+        logger.print_warning("SuperTrend: No data available to plot")
+        return
     
-    # Now draw the visual segments for styling
-    # Сегментация с учетом смены сигнала
-    segments = []
-    color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
+    # Создаем массивы цветов для основного источника данных
+    line_colors = np.where(trend == 1, uptrend_color, downtrend_color)
+    source.data['line_colors'] = line_colors
+    
+    # Рисуем основную линию SuperTrend с правильными цветами через один источник данных
+    # Разделяем на сегменты по тренду для корректного отображения цветов
+    valid_indices = ~np.isnan(supertrend_values)
+    if np.any(valid_indices):
+        # Создаем сегменты для разных цветов
+        # Добавляем проверку на случай пустого или одноэлементного массива
+        if len(trend) == 1:
+            trend_changes = np.array([0])  # Один элемент - нет изменений
+        else:
+            trend_changes = np.diff(trend.values, prepend=trend.iloc[0])
+        change_points = np.where(trend_changes != 0)[0]
+        
+        # Добавляем начальную и конечную точки
+        segments_starts = np.concatenate([[0], change_points])
+        segments_ends = np.concatenate([change_points, [len(trend)]])
+        
+        for start_idx, end_idx in zip(segments_starts, segments_ends):
+            if end_idx > start_idx:
+                segment_indices = np.arange(start_idx, min(end_idx + 1, len(trend)))
+                segment_trend = trend.iloc[start_idx]
+                segment_color = uptrend_color if segment_trend == 1 else downtrend_color
+                
+                # Создаем отдельный источник для каждого сегмента, но с полными данными hover
+                segment_data = display_df.iloc[segment_indices].copy()
+                segment_data['index'] = segment_data.index
+                segment_source = ColumnDataSource(segment_data)
+                
+                # Добавляем supertrend данные в сегментный источник для корректного hover
+                segment_source.data['supertrend'] = supertrend_values[segment_indices]
+                if has_pprice:
+                    segment_source.data['PPrice1'] = p1.iloc[segment_indices].fillna(0.0)
+                    segment_source.data['PPrice2'] = p2.iloc[segment_indices].fillna(0.0)
+                segment_source.data['Direction'] = direction.iloc[segment_indices]
+                segment_source.data['trend_name'] = np.where(segment_trend == 1, 'Uptrend', 'Downtrend')
+                
+                # Рисуем сегмент
+                line_params = {
+                    'x': 'index',
+                    'y': 'supertrend',
+                    'source': segment_source,
+                    'line_color': segment_color,
+                    'line_width': 3
+                }
+                
+                # Добавляем legend_label только для первого сегмента
+                if start_idx == 0:
+                    line_params['legend_label'] = f'SuperTrend ({"Uptrend" if segment_trend == 1 else "Downtrend"})'
+                
+                indicator_fig.line(**line_params)
+    
+    # Добавляем BUY/SELL сигналы, если данные позволяют
     idx_arr = np.array(idx)
     st_arr = np.array(supertrend_values)
-    last_color = color_arr[0]
-    seg_x, seg_y = [idx_arr[0]], [st_arr[0]]
-    for i in range(1, len(idx_arr)):
-        current_color = color_arr[i]
-        # Смена сигнала
-        if (trend.iloc[i] == 1 and trend.iloc[i-1] == -1) or (trend.iloc[i] == -1 and trend.iloc[i-1] == 1):
-            if len(seg_x) > 1:
-                segments.append((seg_x.copy(), seg_y.copy(), last_color))
-            # Вставляем желтый сегмент
-            segments.append(([idx_arr[i-1], idx_arr[i]], [st_arr[i-1], st_arr[i]], signal_change_color))
-            seg_x, seg_y = [idx_arr[i]], [st_arr[i]]
-            last_color = current_color
-        elif current_color != last_color:
-            segments.append((seg_x.copy(), seg_y.copy(), last_color))
-            seg_x, seg_y = [idx_arr[i-1]], [st_arr[i-1]]
-            last_color = current_color
-        seg_x.append(idx_arr[i])
-        seg_y.append(st_arr[i])
-    if len(seg_x) > 0:
-        segments.append((seg_x, seg_y, last_color))
     
-    # Рисуем линии и glow с разными подписями в легенде
-    legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
-    for seg_x, seg_y, seg_color in segments:
-        if len(seg_x) > 1:
-            # Glow
-            indicator_fig.line(
-                x=seg_x, y=seg_y,
-                line_color=seg_color.replace('0.95', '0.3'), line_width=10, line_alpha=1.0
-            )
-            # Легенда
-            if seg_color == uptrend_color:
-                legend_label = 'SuperTrend (Uptrend)'
-            elif seg_color == downtrend_color:
-                legend_label = 'SuperTrend (Downtrend)'
-            elif seg_color == signal_change_color:
-                legend_label = 'SuperTrend (Signal Change)'
-            else:
-                legend_label = 'SuperTrend'
-            show_legend = not legend_shown.get(seg_color, False)
-            legend_shown[seg_color] = True
-            line_kwargs = dict(x=seg_x, y=seg_y, line_color=seg_color, line_width=5, line_alpha=1.0)
-            if show_legend:
-                line_kwargs['legend_label'] = legend_label
-            indicator_fig.line(**line_kwargs)
+    # Найдем точки смены тренда
+    trend_diff = trend.diff().fillna(0)
+    buy_points = (trend_diff > 0)  # Смена с downtrend на uptrend
+    sell_points = (trend_diff < 0)  # Смена с uptrend на downtrend
     
-    # BUY/SELL сигналы с белым контуром и pulse
-    buy_idx = idx_arr[(trend == 1) & (trend.shift(1) == -1)]
-    sell_idx = idx_arr[(trend == -1) & (trend.shift(1) == 1)]
-    buy_y = st_arr[(trend == 1) & (trend.shift(1) == -1)]
-    sell_y = st_arr[(trend == -1) & (trend.shift(1) == 1)]
-    # BUY
-    if len(buy_idx) > 0:
+    if buy_points.any():
+        buy_indices = trend.index[buy_points]
+        buy_values = supertrend_values[buy_points]
         indicator_fig.scatter(
-            x=buy_idx, y=buy_y,
-            size=18, color='#00C851', marker='triangle', alpha=0.95, legend_label='BUY Signal',
-            line_color='white', line_width=2.5
+            x=buy_indices, y=buy_values,
+            size=15, color='green', marker='triangle', alpha=0.9, 
+            legend_label='BUY Signal'
         )
+    
+    if sell_points.any():
+        sell_indices = trend.index[sell_points]
+        sell_values = supertrend_values[sell_points]
         indicator_fig.scatter(
-            x=buy_idx, y=buy_y,
-            size=28, color='rgba(0, 200, 81, 0.4)', marker='circle', alpha=0.4
+            x=sell_indices, y=sell_values,
+            size=15, color='red', marker='inverted_triangle', alpha=0.9,
+            legend_label='SELL Signal'
         )
-    # SELL
-    if len(sell_idx) > 0:
-        indicator_fig.scatter(
-            x=sell_idx, y=sell_y,
-            size=18, color='#FF4444', marker='inverted_triangle', alpha=0.95, legend_label='SELL Signal',
-            line_color='white', line_width=2.5
-        )
-        indicator_fig.scatter(
-            x=sell_idx, y=sell_y,
-            size=28, color='rgba(255, 68, 68, 0.4)', marker='circle', alpha=0.4
-        )
-    # Прозрачные зоны тренда
-    trend_changes = idx_arr[trend != trend.shift(1)]
-    if len(trend_changes) > 0:
-        for i in range(len(trend_changes)):
-            start_idx = trend_changes[i]
-            end_idx = trend_changes[i + 1] if i + 1 < len(trend_changes) else idx_arr[-1]
-            zone_color = 'rgba(0, 200, 81, 0.08)' if trend.loc[start_idx] == 1 else 'rgba(255, 68, 68, 0.08)'
-            indicator_fig.add_layout(BoxAnnotation(
-                left=start_idx, right=end_idx,
-                fill_color=zone_color, fill_alpha=1.0,
-                line_color=zone_color, line_alpha=0.2, line_width=1
-            ))
 
 
 def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
@@ -1347,6 +1331,18 @@ def plot_dual_chart_fast(
     
     # Prepare data
     display_df = df.copy()
+    
+    # Validate that we have data to plot
+    if display_df.empty:
+        logger.print_error("Cannot plot dual chart: DataFrame is empty")
+        return None
+    
+    # Validate we have minimum required columns
+    required_columns = ['Open', 'High', 'Low', 'Close']
+    missing_columns = [col for col in required_columns if col not in display_df.columns]
+    if missing_columns:
+        logger.print_error(f"Cannot plot dual chart: Missing required columns: {missing_columns}")
+        return None
     
     # Ensure index is datetime
     if not isinstance(display_df.index, pd.DatetimeIndex):
