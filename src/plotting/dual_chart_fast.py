@@ -777,6 +777,92 @@ def _plot_feargreed_indicator(indicator_fig, source, display_df):
         )
 
 
+def _plot_supertrend_indicator(indicator_fig, source, display_df):
+    """Plot SuperTrend indicator on the given figure."""
+    # В режиме fast SuperTrend отображается через PPrice1 (поддержка) и PPrice2 (сопротивление)
+    if 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns:
+        # Plot SuperTrend support level (PPrice1)
+        indicator_fig.line(
+            'index', 'PPrice1',
+            source=source,
+            line_color='green',
+            line_width=3,
+            legend_label='SuperTrend Support'
+        )
+        
+        # Plot SuperTrend resistance level (PPrice2)
+        indicator_fig.line(
+            'index', 'PPrice2',
+            source=source,
+            line_color='red',
+            line_width=3,
+            legend_label='SuperTrend Resistance'
+        )
+        
+        # Add buy/sell signals if available
+        if 'Direction' in display_df.columns:
+            buy_signals = display_df[display_df['Direction'] == 1]
+            sell_signals = display_df[display_df['Direction'] == 2]
+            
+            if not buy_signals.empty:
+                buy_source = ColumnDataSource(buy_signals)
+                indicator_fig.scatter(
+                    'index', 'PPrice1',
+                    source=buy_source,
+                    size=12, color='green', alpha=0.8,
+                    legend_label='Buy Signal',
+                    marker='triangle'
+                )
+            
+            if not sell_signals.empty:
+                sell_source = ColumnDataSource(sell_signals)
+                indicator_fig.scatter(
+                    'index', 'PPrice2',
+                    source=sell_source,
+                    size=12, color='red', alpha=0.8,
+                    legend_label='Sell Signal',
+                    marker='inverted_triangle'
+                )
+    
+    # Fallback: если есть колонка SuperTrend (для совместимости)
+    elif 'SuperTrend' in display_df.columns:
+        indicator_fig.line(
+            'index', 'SuperTrend',
+            source=source,
+            line_color='blue',
+            line_width=3,
+            legend_label='SuperTrend'
+        )
+        
+        # Add trend direction visualization if available
+        if 'SuperTrend_Direction' in display_df.columns:
+            # Color the line based on trend direction
+            uptrend_mask = display_df['SuperTrend_Direction'] == 1
+            downtrend_mask = display_df['SuperTrend_Direction'] == -1
+            
+            if uptrend_mask.any():
+                uptrend_data = display_df[uptrend_mask]
+                uptrend_source = ColumnDataSource(uptrend_data)
+                indicator_fig.line(
+                    'index', 'SuperTrend',
+                    source=uptrend_source,
+                    line_color='green',
+                    line_width=4,
+                    legend_label='SuperTrend (Uptrend)'
+                )
+            
+            if downtrend_mask.any():
+                downtrend_data = display_df[downtrend_mask]
+                downtrend_source = ColumnDataSource(downtrend_data)
+                indicator_fig.line(
+                    'index', 'SuperTrend',
+                    source=downtrend_source,
+                    line_color='red',
+                    line_width=4,
+                    legend_label='SuperTrend (Downtrend)'
+                )
+
+
 def _get_indicator_hover_tool(indicator_name, fibo_columns=None):
     """Get appropriate hover tool for the given indicator."""
     if indicator_name == 'macd':
@@ -1049,6 +1135,17 @@ def _get_indicator_hover_tool(indicator_name, fibo_columns=None):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name == 'supertrend':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Support (PPrice1)", "@PPrice1{0.5f}"),
+                ("Resistance (PPrice2)", "@PPrice2{0.5f}"),
+                ("Direction", "@Direction{0}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     else:
         # Generic hover for other indicators
         return HoverTool(
@@ -1089,6 +1186,7 @@ def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
         'cot': _plot_cot_indicator,  # Добавлено для поддержки COT
         'feargreed': _plot_feargreed_indicator,  # Добавлено для поддержки Fear & Greed
         'fg': _plot_feargreed_indicator,         # Алиас
+        'supertrend': _plot_supertrend_indicator,  # Добавлено для поддержки SuperTrend
     }
     fibo_columns = None
     if indicator_name == 'fibo':
