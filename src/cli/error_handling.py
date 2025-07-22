@@ -178,56 +178,8 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Fast period must be less than slow period'
             ]
         },
-        'stoch': {
-            'name': 'Stochastic Oscillator',
-            'description': 'Measures momentum by comparing closing price to price range over time.',
-            'format': 'stoch:k_period,d_period,price_type',
-            'parameters': [
-                ('k_period', 'int', '%K period', '14'),
-                ('d_period', 'int', '%D period', '3'),
-                ('price_type', 'string', 'Price type for calculation', 'close')
-            ],
-            'examples': [
-                ('stoch:14,3,close', 'Standard Stochastic with close prices'),
-                ('stoch:21,5,open', 'Slow Stochastic with open prices'),
-                ('stoch:9,3,close', 'Fast Stochastic with close prices')
-            ],
-            'tips': [
-                'Standard settings: 14, 3',
-                'Fast Stochastic: 9, 3 for more signals',
-                'Slow Stochastic: 21, 5 for fewer signals'
-            ],
-            'common_errors': [
-                'Invalid price_type: Use "open" or "close" only',
-                'Invalid periods: Must be positive integers',
-                'D period should be less than K period'
-            ]
-        },
-        'stochastic': {
-            'name': 'Stochastic Oscillator',
-            'description': 'Measures momentum by comparing closing price to price range over time.',
-            'format': 'stochastic:k_period,d_period,price_type',
-            'parameters': [
-                ('k_period', 'int', '%K period', '14'),
-                ('d_period', 'int', '%D period', '3'),
-                ('price_type', 'string', 'Price type for calculation', 'close')
-            ],
-            'examples': [
-                ('stochastic:14,3,close', 'Standard Stochastic with close prices'),
-                ('stochastic:21,5,open', 'Slow Stochastic with open prices'),
-                ('stochastic:9,3,close', 'Fast Stochastic with close prices')
-            ],
-            'tips': [
-                'Standard settings: 14, 3',
-                'Fast Stochastic: 9, 3 for more signals',
-                'Slow Stochastic: 21, 5 for fewer signals'
-            ],
-            'common_errors': [
-                'Invalid price_type: Use "open" or "close" only',
-                'Invalid periods: Must be positive integers',
-                'D period should be less than K period'
-            ]
-        },
+        'stochoscillator': 'stoch',  # Алиас, чтобы не было отдельного help
+        'stochastic': 'stoch',      # Алиас, чтобы не было отдельного help
         'ema': {
             'name': 'EMA (Exponential Moving Average)',
             'description': 'Weighted moving average that gives more importance to recent prices.',
