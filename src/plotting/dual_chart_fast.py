@@ -954,6 +954,17 @@ def _get_indicator_hover_tool(indicator_name, fibo_columns=None):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name == 'donchain':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Upper Channel", "@donchain_upper{0.5f}"),
+                ("Middle Channel", "@donchain_middle{0.5f}"),
+                ("Lower Channel", "@donchain_lower{0.5f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     else:
         # Generic hover for other indicators
         return HoverTool(
