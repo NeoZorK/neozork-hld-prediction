@@ -347,15 +347,13 @@ def plot_indicator_results_fast(
                 supertrend_val = display_df['supertrend']
                 direction = display_df['Direction']
                 st_col = 'supertrend'
-            # Ensure correct column for hover
-            st_df = display_df.copy()
-            st_df[st_col] = supertrend_val  # <-- add this line
             # Цвета
             uptrend_color = '#00C851'      # Зеленый
             downtrend_color = '#ff4444'    # Красный
             neutral_color = '#888888'      # Серый
             # Формируем DataFrame для source
             st_df = display_df.copy()
+            st_df[st_col] = supertrend_val  # Ensure correct column for hover
             st_df['supertrend_val'] = supertrend_val
             st_df['trend_color'] = np.where(direction > 0, uptrend_color, np.where(direction < 0, downtrend_color, neutral_color))
             st_df['trend_group'] = np.where(direction > 0, 1, np.where(direction < 0, -1, 0))
@@ -424,7 +422,11 @@ def plot_indicator_results_fast(
                     ("SuperTrend", f"@{st_col}{{0.5f}}"),
                     ("Direction", "@Direction{0}")
                 ],
-                formatters={"@index": "datetime"},
+                formatters={
+                    "@index": "datetime",
+                    f"@{st_col}": "numeral",
+                    "@Direction": "numeral"
+                },
                 mode='vline'
             )
             supertrend_fig.add_tools(hover_st)
