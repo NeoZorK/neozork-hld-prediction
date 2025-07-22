@@ -66,6 +66,7 @@ uv run run_analysis.py show csv mn1 gbp --rule macd:8,21,5,open -d fastest
 ### Stochastic
 ```bash
 --rule stoch:k_period,d_period,price_type
+--rule stochastic:k_period,d_period,price_type
 ```
 
 **Parameters:**
@@ -80,6 +81,12 @@ uv run run_analysis.py show csv mn1 gbp --rule stoch -d fastest
 
 # Custom Stochastic with open prices
 uv run run_analysis.py show csv mn1 gbp --rule stoch:14,3,open -d fastest
+
+# Using full name 'stochastic'
+uv run run_analysis.py show csv mn1 gbp --rule stochastic:14,3,close -d fastest
+
+# Custom Stochastic with full name
+uv run run_analysis.py show csv mn1 gbp --rule stochastic:21,5,open -d fastest
 ```
 
 ### EMA (Exponential Moving Average)

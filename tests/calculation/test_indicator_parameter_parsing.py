@@ -82,6 +82,40 @@ class TestIndicatorParameterParsing:
             'price_type': 'close'
         }
     
+    def test_parse_stochastic_parameters_valid(self):
+        """Test valid Stochastic (full name) parameter parsing."""
+        from src.cli.cli import parse_indicator_parameters
+        indicator_name, params = parse_indicator_parameters("stochastic:14,3,close")
+        assert indicator_name == "stoch"
+        assert params == {
+            'stoch_k_period': 14,
+            'stoch_d_period': 3,
+            'price_type': 'close'
+        }
+    
+    def test_stochastic_in_valid_indicators_list(self):
+        """Test that 'stochastic' is in the valid_indicators list."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        # Temporarily redirect stderr to capture the error message
+        old_stderr = sys.stderr
+        sys.stderr = StringIO()
+        
+        try:
+            # This should not raise an error for stochastic
+            sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '--rule', 'stochastic:14,3,close']
+            args = parse_arguments()
+            # If we get here, stochastic is valid
+            assert True
+        except SystemExit:
+            # Check if the error message mentions stochastic as invalid
+            error_output = sys.stderr.getvalue()
+            assert 'stochastic' not in error_output.lower(), f"stochastic should be valid, but got error: {error_output}"
+        finally:
+            sys.stderr = old_stderr
+    
     def test_parse_ema_parameters_valid(self):
         """Test parsing valid EMA parameters."""
         indicator_name, params = parse_ema_parameters("20,close")
