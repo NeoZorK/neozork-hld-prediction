@@ -129,8 +129,9 @@ def _plot_macd_indicator(indicator_fig, source, display_df):
     if 'macd_histogram' in display_df.columns:
         # Color histogram bars - same as fastest mode
         colors = ['green' if val >= 0 else 'red' for val in display_df['macd_histogram']]
-        display_df['histogram_color'] = colors
-        hist_source = ColumnDataSource(display_df)
+        display_df_copy = display_df.copy()
+        display_df_copy['histogram_color'] = colors
+        hist_source = ColumnDataSource(display_df_copy)
         
         indicator_fig.vbar(
             'index', 0.8, 0, 'macd_histogram',
@@ -325,8 +326,9 @@ def _plot_monte_indicator(indicator_fig, source, display_df):
     if 'montecarlo_histogram' in display_df.columns:
         # Color histogram bars based on values
         colors = ['green' if val >= 0 else 'red' for val in display_df['montecarlo_histogram']]
-        display_df['histogram_color'] = colors
-        hist_source = ColumnDataSource(display_df)
+        display_df_copy = display_df.copy()
+        display_df_copy['histogram_color'] = colors
+        hist_source = ColumnDataSource(display_df_copy)
         
         indicator_fig.vbar(
             'index', 0.5, 'montecarlo_histogram',
@@ -668,8 +670,9 @@ def _plot_putcallratio_indicator(indicator_fig, source, display_df):
     # Histogram (difference between PutCallRatio and Signal)
     if 'putcallratio_histogram' in display_df.columns:
         colors = ['green' if val >= 0 else 'red' for val in display_df['putcallratio_histogram']]
-        display_df['histogram_color'] = colors
-        hist_source = ColumnDataSource(display_df)
+        display_df_copy = display_df.copy()
+        display_df_copy['histogram_color'] = colors
+        hist_source = ColumnDataSource(display_df_copy)
         indicator_fig.vbar(
             'index', 0.5, 'putcallratio_histogram',
             source=hist_source,
@@ -702,8 +705,9 @@ def _plot_cot_indicator(indicator_fig, source, display_df):
     # Histogram
     if 'cot_histogram' in display_df.columns:
         colors = ['green' if val >= 0 else 'red' for val in display_df['cot_histogram']]
-        display_df['histogram_color'] = colors
-        hist_source = ColumnDataSource(display_df)
+        display_df_copy = display_df.copy()
+        display_df_copy['histogram_color'] = colors
+        hist_source = ColumnDataSource(display_df_copy)
         indicator_fig.vbar(
             'index', 0.5, 'cot_histogram',
             source=hist_source,
@@ -736,8 +740,9 @@ def _plot_feargreed_indicator(indicator_fig, source, display_df):
     # Histogram
     if 'feargreed_histogram' in display_df.columns:
         colors = ['green' if val >= 0 else 'red' for val in display_df['feargreed_histogram']]
-        display_df['histogram_color'] = colors
-        hist_source = ColumnDataSource(display_df)
+        display_df_copy = display_df.copy()
+        display_df_copy['histogram_color'] = colors
+        hist_source = ColumnDataSource(display_df_copy)
         indicator_fig.vbar(
             'index', 0.5, 'feargreed_histogram',
             source=hist_source,
@@ -780,6 +785,7 @@ def _plot_feargreed_indicator(indicator_fig, source, display_df):
 def _plot_supertrend_indicator(indicator_fig, source, display_df):
     """Plot SuperTrend indicator with modern style/colors like fastest mode."""
     import numpy as np
+    import pandas as pd
     from bokeh.models import BoxAnnotation, ColumnDataSource
 
     # Check for required columns - support both old and new column names
@@ -794,10 +800,20 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         p1 = display_df['PPrice1']
         p2 = display_df['PPrice2']
         direction = display_df['Direction']
-        supertrend_values = np.where(direction > 0, p1, p2)
+        
+        # Handle NaN values properly - only compute supertrend where both p1 and p2 are not NaN
+        valid_mask = ~(pd.isna(p1) | pd.isna(p2))
+        supertrend_values = np.full(len(direction), np.nan)
+        supertrend_values[valid_mask] = np.where(direction[valid_mask] > 0, p1[valid_mask], p2[valid_mask])
+        
         # Add supertrend values to both display_df and source for hover tool
         display_df['supertrend'] = supertrend_values
         source.data['supertrend'] = supertrend_values
+        
+        # Also ensure PPrice1 and PPrice2 are in source for fallback hover
+        source.data['PPrice1'] = p1.fillna('N/A') if pd.api.types.is_numeric_dtype(p1) else p1
+        source.data['PPrice2'] = p2.fillna('N/A') if pd.api.types.is_numeric_dtype(p2) else p2
+        
         # Ensure Direction is also in the main source for hover tool
         if 'Direction' not in source.data:
             source.data['Direction'] = direction
@@ -808,20 +824,31 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         if 'Direction' not in source.data:
             source.data['Direction'] = direction
     
-    # Create a separate source for plotting
-    st_source = ColumnDataSource(data={
-        'index': idx,
-        'supertrend': supertrend_values,
-        'Direction': direction
-    })
     # Цвета и стиль как в fastest
     uptrend_color = 'rgba(0, 200, 81, 0.95)'
     downtrend_color = 'rgba(255, 68, 68, 0.95)'
     signal_change_color = 'rgba(255, 193, 7, 0.95)'
+    
     # Определяем тренд (аналог fastest)
     price_series = display_df['Close'] if 'Close' in display_df.columns else display_df['close']
     trend = np.where(price_series > supertrend_values, 1, -1)
     trend = pd.Series(trend, index=display_df.index)
+    
+    # Add trend colors to the main source for proper hover functionality
+    trend_colors = np.where(trend == 1, uptrend_color, downtrend_color)
+    source.data['supertrend_color'] = trend_colors
+    
+    # First, draw the main SuperTrend line using the main source for hover functionality
+    # This invisible line ensures hover tooltips work correctly
+    indicator_fig.line(
+        'index', 'supertrend',
+        source=source,
+        line_color='white',  # Make it barely visible
+        line_width=1,
+        alpha=0.01  # Nearly invisible but valid
+    )
+    
+    # Now draw the visual segments for styling
     # Сегментация с учетом смены сигнала
     segments = []
     color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
@@ -847,6 +874,7 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         seg_y.append(st_arr[i])
     if len(seg_x) > 0:
         segments.append((seg_x, seg_y, last_color))
+    
     # Рисуем линии и glow с разными подписями в легенде
     legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
     for seg_x, seg_y, seg_color in segments:
@@ -871,6 +899,7 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
             if show_legend:
                 line_kwargs['legend_label'] = legend_label
             indicator_fig.line(**line_kwargs)
+    
     # BUY/SELL сигналы с белым контуром и pulse
     buy_idx = idx_arr[(trend == 1) & (trend.shift(1) == -1)]
     sell_idx = idx_arr[(trend == -1) & (trend.shift(1) == 1)]
@@ -1209,7 +1238,7 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
         return HoverTool(
             tooltips=tooltips,
             formatters=formatters,
-            mode='vline'
+            mode='mouse'  # Changed from vline to mouse to avoid overlap
         )
     else:
         # Generic hover for other indicators
@@ -1408,7 +1437,7 @@ def plot_dual_chart_fast(
                 marker='inverted_triangle'
             )
     
-    # Add hover tooltip for main chart
+    # Add hover tooltip for main chart - use mouse mode to avoid overlap
     hover_main = HoverTool(
         tooltips=[
             ("Date", "@index{%F %H:%M}"),
@@ -1418,7 +1447,7 @@ def plot_dual_chart_fast(
             ("Close", "@Close{0.5f}")
         ],
         formatters={'@index': 'datetime'},
-        mode='vline'
+        mode='mouse'  # Changed from vline to mouse to avoid overlap
     )
     main_fig.add_tools(hover_main)
     
@@ -1432,13 +1461,12 @@ def plot_dual_chart_fast(
         title=indicator_title,
         x_axis_type='datetime',
         tools="pan,wheel_zoom,box_zoom,reset",
-        active_scroll='wheel_zoom'
+        active_scroll='wheel_zoom',
+        x_range=main_fig.x_range  # Link x-axis to main chart
     )
     
-    # Получаем fibo_columns если нужно
+    # Plot indicator using the refactored function and get fibo_columns if needed
     fibo_columns = _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name)
-    # Plot indicator using the refactored function
-    _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name)
     
     # Add hover tooltip for indicator chart
     hover_indicator = _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=fibo_columns)
