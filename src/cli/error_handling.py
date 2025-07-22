@@ -317,6 +317,29 @@ def get_indicator_help_data(indicator_name: str) -> dict:
             'common_errors': [
                 'Invalid price_type: Use "open" or "close" only'
             ]
+        },
+        'hma': {
+            'name': 'HMA (Hull Moving Average)',
+            'description': 'Smooths price data to reduce lag and improve trend detection compared to classic moving averages.',
+            'format': 'hma:period,price_type',
+            'parameters': [
+                ('period', 'int', 'HMA period (window size)', '20'),
+                ('price_type', 'string', 'Price type for calculation ("open" or "close")', 'close')
+            ],
+            'examples': [
+                ('hma:20,close', 'Standard HMA with close prices'),
+                ('hma:14,open', 'HMA with period 14 and open prices'),
+                ('hma:50,close', 'Long-term HMA')
+            ],
+            'tips': [
+                'Lower period = more sensitive, more signals',
+                'Higher period = smoother, fewer signals',
+                'Use with price_type=open for aggressive entries'
+            ],
+            'common_errors': [
+                'Invalid price_type: Use only "open" or "close"',
+                'Invalid period: Must be a positive integer'
+            ]
         }
     }
     
