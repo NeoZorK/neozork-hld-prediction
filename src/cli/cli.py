@@ -394,6 +394,13 @@ def parse_arguments():
     # --- Post-parsing validation ---
     effective_mode = 'yfinance' if args.mode == 'yf' else args.mode
 
+    # Normalize stoch aliases to 'stoch:'
+    if args.rule:
+        if args.rule.lower().startswith('stochastic:'):
+            args.rule = 'stoch:' + args.rule.split(':', 1)[1]
+        elif args.rule.lower().startswith('stochoscillator:'):
+            args.rule = 'stoch:' + args.rule.split(':', 1)[1]
+
     # Validate rule argument
     if args.rule:
         # Check if it's a parameterized rule
@@ -1413,7 +1420,11 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
         params_str = parts[1].strip()
         
         # Parse parameters based on indicator type
-        if indicator_name == 'rsi':
+        if indicator_name in ['stoch', 'stochastic', 'stochoscillator']:
+            # Always parse as stoch and return 'stoch' as indicator name
+            _, params = parse_stoch_parameters(params_str)
+            return 'stoch', params
+        elif indicator_name == 'rsi':
             return parse_rsi_parameters(params_str)
         elif indicator_name == 'rsi_mom':
             return parse_rsi_momentum_parameters(params_str)
@@ -1421,10 +1432,6 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_rsi_divergence_parameters(params_str)
         elif indicator_name == 'macd':
             return parse_macd_parameters(params_str)
-        elif indicator_name == 'stoch':
-            return parse_stoch_parameters(params_str)
-        elif indicator_name == 'stochastic':
-            return parse_stoch_parameters(params_str)
         elif indicator_name == 'ema':
             return parse_ema_parameters(params_str)
         elif indicator_name == 'bb':
