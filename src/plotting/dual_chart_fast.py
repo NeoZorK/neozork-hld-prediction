@@ -697,6 +697,37 @@ def _get_indicator_hover_tool(indicator_name):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name == 'monte':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Monte Carlo", "@montecarlo{0.2f}"),
+                ("Signal", "@montecarlo_signal{0.2f}"),
+                ("Histogram", "@montecarlo_histogram{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'montecarlo':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Monte Carlo", "@montecarlo{0.2f}"),
+                ("Signal", "@montecarlo_signal{0.2f}"),
+                ("Histogram", "@montecarlo_histogram{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'kelly':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Kelly Criterion", "@kelly{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     else:
         # Generic hover for other indicators
         return HoverTool(
@@ -723,6 +754,7 @@ def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
         'hma': _plot_hma_indicator,
         'tsf': _plot_tsf_indicator,
         'monte': _plot_monte_indicator,
+        'montecarlo': _plot_monte_indicator,  # Алиас для Monte Carlo
         'kelly': _plot_kelly_indicator,
         'donchain': _plot_donchain_indicator,
         'fibo': _plot_fibo_indicator,

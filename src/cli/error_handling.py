@@ -180,6 +180,30 @@ def get_indicator_help_data(indicator_name: str) -> dict:
         },
         'stochoscillator': 'stoch',  # Алиас, чтобы не было отдельного help
         'stochastic': 'stoch',      # Алиас, чтобы не было отдельного help
+        'monte': {
+            'name': 'Monte Carlo Simulation',
+            'description': 'Uses statistical simulation to forecast potential price movements and identify trading opportunities.',
+            'format': 'monte:simulations,period',
+            'parameters': [
+                ('simulations', 'int', 'Number of Monte Carlo simulations to run', '1000'),
+                ('period', 'int', 'Forecast period (number of days to predict)', '252')
+            ],
+            'examples': [
+                ('monte:1000,252', 'Standard Monte Carlo with 1000 simulations for 1 year'),
+                ('monte:500,126', 'Monte Carlo with 500 simulations for 6 months'),
+                ('monte:2000,30', 'High-precision Monte Carlo for 1 month')
+            ],
+            'tips': [
+                'More simulations = more accurate results but slower calculation',
+                'Longer period = more uncertainty in predictions',
+                'Use 252 for annual forecasts, 126 for semi-annual'
+            ],
+            'common_errors': [
+                'Invalid simulations: Must be a positive integer',
+                'Invalid period: Must be a positive integer',
+                'Too many simulations may cause memory issues'
+            ]
+        },
         'montecarlo': 'monte',      # Алиас для Monte Carlo
         'mc': 'monte',              # Алиас для Monte Carlo
         'fg': 'feargreed',          # Алиас для Fear & Greed
@@ -362,6 +386,28 @@ def get_indicator_help_data(indicator_name: str) -> dict:
             'common_errors': [
                 'Invalid price_type: Use only "open" or "close"',
                 'Invalid period: Must be a positive integer'
+            ]
+        },
+        'kelly': {
+            'name': 'Kelly Criterion',
+            'description': 'Mathematical formula to determine optimal position size based on win probability and risk/reward ratio.',
+            'format': 'kelly:period',
+            'parameters': [
+                ('period', 'int', 'Calculation period for win/loss analysis', '20')
+            ],
+            'examples': [
+                ('kelly:20', 'Standard Kelly Criterion with 20-period analysis'),
+                ('kelly:50', 'Long-term Kelly Criterion with 50-period analysis'),
+                ('kelly:10', 'Short-term Kelly Criterion with 10-period analysis')
+            ],
+            'tips': [
+                'Longer period = more stable but less responsive to recent changes',
+                'Shorter period = more responsive but potentially more volatile',
+                'Use as a guide for position sizing, not absolute rule'
+            ],
+            'common_errors': [
+                'Invalid period: Must be a positive integer',
+                'Period too short may give unreliable results'
             ]
         }
     }
