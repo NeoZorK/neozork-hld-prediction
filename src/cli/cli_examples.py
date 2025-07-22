@@ -92,6 +92,7 @@ def show_cli_examples_colored():
     print(f"  {Fore.GREEN}Show YF files for date range:{Style.RESET_ALL}          python run_analysis.py show yf --show-start 2023-01-01 --show-end 2023-12-31")
     print(f"  {Fore.GREEN}Show CSV with Fibo standard levels:{Style.RESET_ALL}    python run_analysis.py show csv mn1 -d fast --rule fibo:all")
     print(f"  {Fore.GREEN}Show CSV with Fibo custom levels:{Style.RESET_ALL}      python run_analysis.py show csv mn1 -d fast --rule fibo:0.382,0.618,0.786")
+    print(f"  {Fore.GREEN}Show CSV with Donchian Channel:{Style.RESET_ALL}        python run_analysis.py show csv mn1 -d fast --rule donchain:20")
     print()
 
     print(f"{Fore.YELLOW}{Style.BRIGHT}10. EXPORT EXAMPLES{Style.RESET_ALL}")

@@ -458,6 +458,30 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Invalid level: Levels must be floats between 0 and 1.',
                 'At least one level must be specified if not using "all".'
             ]
+        },
+        'donchain': {
+            'name': 'Donchian Channel',
+            'description': 'Volatility indicator that shows the highest high and lowest low over a specified period, with a middle line representing the average.',
+            'format': 'donchain:period',
+            'parameters': [
+                ('period', 'int', 'Donchian Channel period (window size)', '20')
+            ],
+            'examples': [
+                ('donchain:20', 'Standard Donchian Channel with 20-period window'),
+                ('donchain:14', 'Short-term Donchian Channel with 14-period window'),
+                ('donchain:50', 'Long-term Donchian Channel with 50-period window')
+            ],
+            'tips': [
+                'Standard period: 20 for balanced analysis',
+                'Shorter period = more responsive, more signals',
+                'Longer period = smoother, fewer signals',
+                'Upper channel = resistance, lower channel = support',
+                'Middle line can act as dynamic support/resistance'
+            ],
+            'common_errors': [
+                'Invalid period: Must be a positive integer',
+                'Period too short may give unreliable results'
+            ]
         }
     }
     
