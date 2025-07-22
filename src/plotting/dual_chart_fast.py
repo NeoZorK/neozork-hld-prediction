@@ -778,7 +778,7 @@ def _plot_feargreed_indicator(indicator_fig, source, display_df):
 
 
 def _plot_supertrend_indicator(indicator_fig, source, display_df):
-    """Plot SuperTrend indicator with modern cool style - smooth lines, glow effects, and enhanced visuals."""
+    """Plot SuperTrend indicator with modern style/colors like fastest mode."""
     import numpy as np
     from bokeh.models import BoxAnnotation, ColumnDataSource
 
@@ -786,11 +786,9 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
     has_pprice = 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns
     has_supertrend = 'supertrend' in display_df.columns
     has_direction = 'Direction' in display_df.columns
-    
     if not (has_pprice or has_supertrend) or not has_direction:
         return
 
-    # Get data with fallback support
     idx = display_df['index'] if 'index' in display_df.columns else display_df.index
     if has_pprice:
         p1 = display_df['PPrice1']
@@ -802,131 +800,94 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
     else:
         supertrend_values = display_df['supertrend']
         direction = display_df['Direction']
-    # Создаем ColumnDataSource с нужными полями
     st_source = ColumnDataSource(data={
         'index': idx,
         'supertrend': supertrend_values,
         'Direction': direction
     })
-    # Цвета
-    uptrend_color = '#00C851'
-    downtrend_color = '#ff4444'
-    neutral_color = '#FFC107'
-    # Сегменты для линий
+    # Цвета и стиль как в fastest
+    uptrend_color = 'rgba(0, 200, 81, 0.95)'
+    downtrend_color = 'rgba(255, 68, 68, 0.95)'
+    signal_change_color = 'rgba(255, 193, 7, 0.95)'
+    # Определяем тренд (аналог fastest)
+    price_series = display_df['Close'] if 'Close' in display_df.columns else display_df['close']
+    trend = np.where(price_series > supertrend_values, 1, -1)
+    trend = pd.Series(trend, index=display_df.index)
+    # Сегментация с учетом смены сигнала
     segments = []
-    if hasattr(idx, 'iloc'):
-        first_idx = idx.iloc[0]
-        first_value = supertrend_values.iloc[0] if hasattr(supertrend_values, 'iloc') else supertrend_values[0]
-        first_dir = direction.iloc[0] if hasattr(direction, 'iloc') else direction[0]
-    else:
-        first_idx = idx[0]
-        first_value = supertrend_values[0]
-        first_dir = direction[0]
-    if first_dir > 0:
-        current_color = uptrend_color
-    elif first_dir < 0:
-        current_color = downtrend_color
-    else:
-        current_color = neutral_color
-    current_segment = {'x': [first_idx], 'y': [first_value], 'color': current_color}
-    for i in range(1, len(idx)):
-        if hasattr(direction, 'iloc'):
-            current_dir = direction.iloc[i]
-            prev_dir = direction.iloc[i-1]
-        else:
-            current_dir = direction[i]
-            prev_dir = direction[i-1]
-        if hasattr(idx, 'iloc'):
-            current_idx = idx.iloc[i]
-            prev_idx = idx.iloc[i-1]
-        else:
-            current_idx = idx[i]
-            prev_idx = idx[i-1]
-        if hasattr(supertrend_values, 'iloc'):
-            current_value = supertrend_values.iloc[i]
-            prev_value = supertrend_values.iloc[i-1]
-        else:
-            current_value = supertrend_values[i]
-            prev_value = supertrend_values[i-1]
-        if current_dir > 0:
-            color = uptrend_color
-        elif current_dir < 0:
-            color = downtrend_color
-        else:
-            color = neutral_color
-        if current_dir != prev_dir:
-            if len(current_segment['x']) > 0:
-                segments.append(current_segment)
-            current_segment = {'x': [prev_idx], 'y': [prev_value], 'color': color}
-        current_segment['x'].append(current_idx)
-        current_segment['y'].append(current_value)
-    if len(current_segment['x']) > 0:
-        segments.append(current_segment)
-    # Рисуем линии через st_source
-    for segment in segments:
-        if len(segment['x']) > 1:
+    color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
+    idx_arr = np.array(idx)
+    st_arr = np.array(supertrend_values)
+    last_color = color_arr[0]
+    seg_x, seg_y = [idx_arr[0]], [st_arr[0]]
+    for i in range(1, len(idx_arr)):
+        current_color = color_arr[i]
+        # Смена сигнала
+        if (trend.iloc[i] == 1 and trend.iloc[i-1] == -1) or (trend.iloc[i] == -1 and trend.iloc[i-1] == 1):
+            if len(seg_x) > 1:
+                segments.append((seg_x.copy(), seg_y.copy(), last_color))
+            # Вставляем желтый сегмент
+            segments.append(([idx_arr[i-1], idx_arr[i]], [st_arr[i-1], st_arr[i]], signal_change_color))
+            seg_x, seg_y = [idx_arr[i]], [st_arr[i]]
+            last_color = current_color
+        elif current_color != last_color:
+            segments.append((seg_x.copy(), seg_y.copy(), last_color))
+            seg_x, seg_y = [idx_arr[i-1]], [st_arr[i-1]]
+            last_color = current_color
+        seg_x.append(idx_arr[i])
+        seg_y.append(st_arr[i])
+    if len(seg_x) > 0:
+        segments.append((seg_x, seg_y, last_color))
+    # Рисуем линии и glow
+    for seg_x, seg_y, seg_color in segments:
+        if len(seg_x) > 1:
             indicator_fig.line(
-                x='index', y='supertrend', source=st_source,
-                line_color=segment['color'], line_width=12, line_alpha=0.15
+                x=seg_x, y=seg_y,
+                line_color=seg_color.replace('0.95', '0.3'), line_width=10, line_alpha=1.0
             )
             indicator_fig.line(
-                x='index', y='supertrend', source=st_source,
-                line_color=segment['color'], line_width=4, line_alpha=0.9, legend_label='SuperTrend'
+                x=seg_x, y=seg_y,
+                line_color=seg_color, line_width=5, line_alpha=1.0, legend_label='SuperTrend'
             )
-    # BUY/SELL сигналы через st_source
-    buy_signals = []
-    sell_signals = []
-    for i in range(1, len(direction)):
-        if hasattr(direction, 'iloc'):
-            current_dir = direction.iloc[i]
-            prev_dir = direction.iloc[i-1]
-        else:
-            current_dir = direction[i]
-            prev_dir = direction[i-1]
-        if hasattr(idx, 'iloc'):
-            current_idx = idx.iloc[i]
-        else:
-            current_idx = idx[i]
-        if hasattr(supertrend_values, 'iloc'):
-            current_value = supertrend_values.iloc[i]
-        else:
-            current_value = supertrend_values[i]
-        if current_dir != prev_dir:
-            if current_dir > 0:
-                buy_signals.append(i)
-            else:
-                sell_signals.append(i)
-    if buy_signals:
+    # BUY/SELL сигналы с белым контуром и pulse
+    buy_idx = idx_arr[(trend == 1) & (trend.shift(1) == -1)]
+    sell_idx = idx_arr[(trend == -1) & (trend.shift(1) == 1)]
+    buy_y = st_arr[(trend == 1) & (trend.shift(1) == -1)]
+    sell_y = st_arr[(trend == -1) & (trend.shift(1) == 1)]
+    # BUY
+    if len(buy_idx) > 0:
         indicator_fig.scatter(
-            x='index', y='supertrend', source=st_source,
-            size=12, color=uptrend_color, marker='triangle', alpha=0.9, legend_label='BUY Signal'
+            x=buy_idx, y=buy_y,
+            size=18, color='#00C851', marker='triangle', alpha=0.95, legend_label='BUY Signal',
+            line_color='white', line_width=2.5
         )
-    if sell_signals:
         indicator_fig.scatter(
-            x='index', y='supertrend', source=st_source,
-            size=12, color=downtrend_color, marker='inverted_triangle', alpha=0.9, legend_label='SELL Signal'
+            x=buy_idx, y=buy_y,
+            size=28, color='rgba(0, 200, 81, 0.4)', marker='circle', alpha=0.4
         )
-    # Прозрачные зоны тренда (оставляем как есть)
-    if len(idx) > 0:
-        current_trend = direction.iloc[0] if hasattr(direction, 'iloc') else direction[0]
-        zone_start = idx.iloc[0] if hasattr(idx, 'iloc') else idx[0]
-        for i in range(1, len(direction)):
-            if hasattr(direction, 'iloc'):
-                current_dir = direction.iloc[i]
-                current_idx = idx.iloc[i]
-            else:
-                current_dir = direction[i]
-                current_idx = idx[i]
-            if current_dir != current_trend or i == len(direction)-1:
-                zone_end = current_idx
-                zone_color = uptrend_color if current_trend > 0 else (downtrend_color if current_trend < 0 else neutral_color)
-                indicator_fig.add_layout(BoxAnnotation(
-                    left=zone_start, right=zone_end,
-                    fill_color=zone_color, fill_alpha=0.08,
-                    line_color=zone_color, line_alpha=0.2, line_width=1
-                ))
-                zone_start = current_idx
-                current_trend = current_dir
+    # SELL
+    if len(sell_idx) > 0:
+        indicator_fig.scatter(
+            x=sell_idx, y=sell_y,
+            size=18, color='#FF4444', marker='inverted_triangle', alpha=0.95, legend_label='SELL Signal',
+            line_color='white', line_width=2.5
+        )
+        indicator_fig.scatter(
+            x=sell_idx, y=sell_y,
+            size=28, color='rgba(255, 68, 68, 0.4)', marker='circle', alpha=0.4
+        )
+    # Прозрачные зоны тренда
+    trend_changes = idx_arr[trend != trend.shift(1)]
+    if len(trend_changes) > 0:
+        for i in range(len(trend_changes)):
+            start_idx = trend_changes[i]
+            end_idx = trend_changes[i + 1] if i + 1 < len(trend_changes) else idx_arr[-1]
+            zone_color = 'rgba(0, 200, 81, 0.08)' if trend.loc[start_idx] == 1 else 'rgba(255, 68, 68, 0.08)'
+            indicator_fig.add_layout(BoxAnnotation(
+                left=start_idx, right=end_idx,
+                fill_color=zone_color, fill_alpha=1.0,
+                line_color=zone_color, line_alpha=0.2, line_width=1
+            ))
 
 
 def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
