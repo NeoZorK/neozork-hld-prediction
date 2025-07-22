@@ -818,21 +818,22 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         
         # Add supertrend values to both display_df and source for hover tool
         display_df['supertrend'] = supertrend_values
-        source.data['supertrend'] = supertrend_values
-        
-        # Also ensure PPrice1 and PPrice2 are in source for fallback hover
-        # Keep NaN values as NaN for proper numeric formatting in hover tool
-        source.data['PPrice1'] = p1
-        source.data['PPrice2'] = p2
-        
-        # Ensure Direction is also in the main source for hover tool
-        if 'Direction' not in source.data:
-            source.data['Direction'] = direction
+        if source is not None:
+            source.data['supertrend'] = supertrend_values
+            
+            # Also ensure PPrice1 and PPrice2 are in source for fallback hover
+            # Keep NaN values as NaN for proper numeric formatting in hover tool
+            source.data['PPrice1'] = p1
+            source.data['PPrice2'] = p2
+            
+            # Ensure Direction is also in the main source for hover tool
+            if 'Direction' not in source.data:
+                source.data['Direction'] = direction
     else:
         supertrend_values = display_df['supertrend']
         direction = display_df['Direction']
         # Ensure Direction is in the main source for hover tool
-        if 'Direction' not in source.data:
+        if source is not None and 'Direction' not in source.data:
             source.data['Direction'] = direction
     
     # Цвета и стиль как в fastest
@@ -847,17 +848,12 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
     
     # Add trend colors to the main source for proper hover functionality
     trend_colors = np.where(trend == 1, uptrend_color, downtrend_color)
-    source.data['supertrend_color'] = trend_colors
-    
-    # First, draw the main SuperTrend line using the main source for hover functionality
-    # This invisible line ensures hover tooltips work correctly
-    indicator_fig.line(
-        'index', 'supertrend',
-        source=source,
-        line_color='white',  # Make it barely visible
-        line_width=1,
-        alpha=0.01  # Nearly invisible but valid
-    )
+    if source is not None:
+        source.data['supertrend_color'] = trend_colors
+        
+        # Removed invisible line that was causing multiple hover tooltips
+        # The indicator chart already has its own hover tool, so this invisible line
+        # was redundant and causing the "3 dates" issue
     
     # Now draw the visual segments for styling
     # Сегментация с учетом смены сигнала
@@ -1227,12 +1223,10 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
     elif indicator_name == 'supertrend':
         return HoverTool(
             tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("SuperTrend", "@supertrend{0.5f}"),
-                ("Direction", "@Direction{0.0f}")  # 1 for uptrend, -1 for downtrend
+                ("Date", "@index{%F %H:%M}")  # Only show date, remove SuperTrend and Direction to avoid "???" text
             ],
             formatters={'@index': 'datetime'},
-            mode='vline'
+            mode='mouse'  # Changed from 'vline' to 'mouse' to match main chart and avoid conflicts
         )
     else:
         # Generic hover for other indicators
