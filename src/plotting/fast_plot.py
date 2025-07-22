@@ -326,7 +326,7 @@ def plot_indicator_results_fast(
         
         if has_supertrend_direct or has_pprice_columns:
             import numpy as np
-            from bokeh.models import ColumnDataSource, HoverTool, BoxAnnotation
+            # Note: ColumnDataSource is already imported at the top of the file
             supertrend_fig = figure(
                 width=width,
                 height=int(height * 0.18),
