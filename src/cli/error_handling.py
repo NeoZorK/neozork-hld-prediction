@@ -178,6 +178,33 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Fast period must be less than slow period'
             ]
         },
+        'stoch': {
+            'name': 'Stochastic Oscillator',
+            'description': 'Momentum oscillator that compares a closing price to its price range over a specific period to identify overbought/oversold conditions.',
+            'format': 'stoch:k_period,d_period,price_type',
+            'parameters': [
+                ('k_period', 'int', '%K period for stochastic calculation', '14'),
+                ('d_period', 'int', '%D period for smoothing', '3'),
+                ('price_type', 'string', 'Price type for calculation', 'close')
+            ],
+            'examples': [
+                ('stoch:14,3,close', 'Standard stochastic with close prices'),
+                ('stoch:21,5,open', 'Custom stochastic with open prices'),
+                ('stoch:10,2,close', 'Fast stochastic with close prices')
+            ],
+            'tips': [
+                'Standard settings: 14,3 for balanced analysis',
+                'Lower k_period = more responsive, more signals',
+                'Higher d_period = smoother %D line',
+                'Values above 80 indicate overbought conditions',
+                'Values below 20 indicate oversold conditions'
+            ],
+            'common_errors': [
+                'Invalid price_type: Use "open" or "close" only',
+                'Invalid periods: Must be positive integers',
+                'k_period too large for dataset size'
+            ]
+        },
         'stochoscillator': 'stoch',  # Алиас, чтобы не было отдельного help
         'stochastic': 'stoch',      # Алиас, чтобы не было отдельного help
         'monte': {
@@ -508,6 +535,31 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Omitting parameters: Use format sar:0.02,0.2'
             ]
         },
+        'atr': {
+            'name': 'ATR (Average True Range)',
+            'description': 'Volatility indicator that measures market volatility by calculating the average of true ranges over a specified period. Higher values indicate higher volatility.',
+            'format': 'atr:period',
+            'parameters': [
+                ('period', 'int', 'ATR calculation period (window size)', '14')
+            ],
+            'examples': [
+                ('atr:14', 'Standard ATR with 14-period window'),
+                ('atr:21', 'ATR with 21-period window'),
+                ('atr:10', 'Short-term ATR with 10-period window')
+            ],
+            'tips': [
+                'Standard period: 14 for balanced analysis',
+                'Shorter period = more responsive to recent volatility',
+                'Longer period = smoother, less sensitive to short-term spikes',
+                'Use ATR for position sizing and stop-loss placement',
+                'Higher ATR values suggest avoiding tight stops'
+            ],
+            'common_errors': [
+                'Invalid period: Must be a positive integer',
+                'Period too short may give unreliable results',
+                'ATR requires only one parameter: period'
+            ]
+        },
         'supertrend': {
             'name': 'SuperTrend',
             'description': 'Trend-following indicator that uses ATR to determine trend direction and generate buy/sell signals. Highlights trend reversals and dynamic support/resistance.',
@@ -539,7 +591,14 @@ def get_indicator_help_data(indicator_name: str) -> dict:
         }
     }
     
-    return help_data.get(indicator_name.lower(), None)
+    # Get help data
+    data = help_data.get(indicator_name.lower(), None)
+    
+    # Handle aliases: if data is a string, it's an alias to another indicator
+    if isinstance(data, str):
+        data = help_data.get(data, None)
+    
+    return data
 
 
 def show_enhanced_indicator_help(error_message: str, indicator_name: str = None):
