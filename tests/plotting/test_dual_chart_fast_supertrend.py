@@ -191,6 +191,8 @@ class TestModernSupertrendStyling:
         assert any('Date' in str(tooltip) for tooltip in tooltips), "Date tooltip missing"
         assert any('PPrice1' in str(tooltip) or 'SuperTrend' in str(tooltip) 
                   for tooltip in tooltips), "SuperTrend value tooltip missing"
+        # Should always contain Direction
+        assert any('Direction' in str(tooltip) for tooltip in tooltips), "Direction tooltip missing"
     
     def test_data_fallback_support(self):
         """Test that the function supports both old and new column formats."""
