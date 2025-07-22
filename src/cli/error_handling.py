@@ -482,6 +482,31 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Invalid period: Must be a positive integer',
                 'Period too short may give unreliable results'
             ]
+        },
+        'sar': {
+            'name': 'SAR (Parabolic Stop and Reverse)',
+            'description': 'Trend-following indicator that highlights potential reversal points by placing dots above or below price. Useful for trailing stops and trend detection.',
+            'format': 'sar:acceleration,maximum',
+            'parameters': [
+                ('acceleration', 'float', 'Acceleration factor (step), controls sensitivity. Typical: 0.02', '0.02'),
+                ('maximum', 'float', 'Maximum acceleration factor. Typical: 0.2', '0.2')
+            ],
+            'examples': [
+                ('sar:0.02,0.2', 'Standard Parabolic SAR (default settings)'),
+                ('sar:0.01,0.1', 'Less sensitive SAR (fewer signals)'),
+                ('sar:0.03,0.25', 'More sensitive SAR (more signals)')
+            ],
+            'tips': [
+                'Lower acceleration = fewer signals, smoother trend',
+                'Higher acceleration = more signals, more whipsaws',
+                'Use for trailing stop-loss or trend confirmation',
+                'Combine with other indicators for better entries/exits'
+            ],
+            'common_errors': [
+                'Invalid acceleration/maximum: Must be positive floats',
+                'Acceleration should be less than or equal to maximum',
+                'Omitting parameters: Use format sar:0.02,0.2'
+            ]
         }
     }
     
