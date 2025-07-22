@@ -127,6 +127,10 @@ def apply_rule_putcallratio(df: pd.DataFrame, point: float,
     # Use volume data
     volume_series = df['Volume']
     
+    # --- NEW: Warn if period is too large for data ---
+    if putcall_period > len(df) // 2:
+        logger.print_warning(f"Put/Call Ratio period ({putcall_period}) is large relative to data size ({len(df)} rows). Consider using a smaller period for meaningful results.")
+    
     # Calculate Put/Call Ratio sentiment
     df['PutCallRatio'] = calculate_putcallratio(price_series, volume_series, putcall_period)
     
@@ -135,6 +139,11 @@ def apply_rule_putcallratio(df: pd.DataFrame, point: float,
     
     # Calculate Put/Call Ratio signals
     df['PutCallRatio_Signal'] = calculate_putcallratio_signals(df['PutCallRatio'], bullish_threshold, bearish_threshold)
+    
+    # --- NEW: Warn if almost all values are NaN ---
+    nan_ratio = df['PutCallRatio'].isna().mean()
+    if nan_ratio > 0.8:
+        logger.print_warning(f"More than 80% of Put/Call Ratio values are NaN. Try reducing the period or check your data.")
     
     # Calculate support and resistance levels based on Put/Call Ratio sentiment
     putcall_values = df['PutCallRatio']
