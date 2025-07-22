@@ -219,27 +219,33 @@ uv run run_analysis.py show csv mn1 gbp --rule hma:20,open -d fastest
 ```
 
 ### TSF (Time Series Forecast)
+
+> **Note:** `tsf` and `tsforecast` are exact synonyms. No matter which name you use, the CLI will always process and display the rule as `tsf:...`.
+
 ```bash
---rule tsf:period,forecast_period,price_type
+--rule tsf:period,price_type
+--rule tsforecast:period,price_type
 ```
 
 **Parameters:**
 - `period` (int): TSF period (default: 20)
-- `forecast_period` (int): Forecast period (default: 5)
 - `price_type` (string): Price type for calculation - `open` or `close` (default: close)
 
 **Examples:**
 ```bash
-# Default TSF settings
-uv run run_analysis.py show csv mn1 gbp --rule tsf -d fastest
-
-# Custom TSF with open prices
-uv run run_analysis.py show csv mn1 gbp --rule tsf:20,5,open -d fastest
+# All these commands are equivalent and will be processed as tsf:20,close
+uv run run_analysis.py show csv mn1 gbp --rule tsf:20,close -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule tsforecast:20,close -d fastest
 ```
 
 ### Monte Carlo Simulation
+
+> **Note:** `monte`, `montecarlo`, and `mc` are exact synonyms. No matter which name you use, the CLI will always process and display the rule as `monte:...`.
+
 ```bash
 --rule monte:simulations,period
+--rule montecarlo:simulations,period
+--rule mc:simulations,period
 ```
 
 **Parameters:**
@@ -248,11 +254,10 @@ uv run run_analysis.py show csv mn1 gbp --rule tsf:20,5,open -d fastest
 
 **Examples:**
 ```bash
-# Default Monte Carlo settings
-uv run run_analysis.py show csv mn1 gbp --rule monte -d fastest
-
-# Custom Monte Carlo
+# All these commands are equivalent and will be processed as monte:1000,252
 uv run run_analysis.py show csv mn1 gbp --rule monte:1000,252 -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule montecarlo:1000,252 -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule mc:1000,252 -d fastest
 ```
 
 ### Kelly Criterion
@@ -272,21 +277,60 @@ uv run run_analysis.py show csv mn1 gbp --rule kelly -d fastest
 uv run run_analysis.py show csv mn1 gbp --rule kelly:20 -d fastest
 ```
 
-### Donchian Channels
+### Put/Call Ratio
 ```bash
---rule donchain:period
+--rule putcallratio:period,price_type
 ```
 
 **Parameters:**
-- `period` (int): Donchian period (default: 20)
+- `period` (int): Put/Call ratio period (default: 20)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
 
 **Examples:**
 ```bash
-# Default Donchian settings
-uv run run_analysis.py show csv mn1 gbp --rule donchain -d fastest
+# Default Put/Call Ratio settings
+uv run run_analysis.py show csv mn1 gbp --rule putcallratio -d fastest
 
-# Custom Donchian period
-uv run run_analysis.py show csv mn1 gbp --rule donchain:20 -d fastest
+# Custom Put/Call Ratio with open prices
+uv run run_analysis.py show csv mn1 gbp --rule putcallratio:20,open -d fastest
+```
+
+### COT (Commitment of Traders)
+```bash
+--rule cot:period,price_type
+```
+
+**Parameters:**
+- `period` (int): COT calculation period (default: 20)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# Default COT settings
+uv run run_analysis.py show csv mn1 gbp --rule cot -d fastest
+
+# Custom COT with open prices
+uv run run_analysis.py show csv mn1 gbp --rule cot:20,open -d fastest
+```
+
+### Fear & Greed
+
+> **Note:** `feargreed` and `fg` are exact synonyms. No matter which name you use, the CLI will always process and display the rule as `feargreed:...`.
+
+```bash
+--rule feargreed:period,price_type
+--rule fg:period,price_type
+```
+
+**Parameters:**
+- `period` (int): Fear & Greed period (default: 20)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# All these commands are equivalent and will be processed as feargreed:20,close
+uv run run_analysis.py show csv mn1 gbp --rule feargreed:20,close -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule fg:20,close -d fastest
 ```
 
 ### Fibonacci Retracements
@@ -395,25 +439,140 @@ uv run run_analysis.py show csv mn1 gbp --rule sar:0.02,0.2 -d fastest
 
 **Parameters:**
 - `period` (int): ATR period for SuperTrend calculation (required)
-- `multiplier` (float): ATR multiplier for sensitivity adjustment (required)
+- `multiplier` (float): ATR multiplier (required)
+- `price_type` (string): Price type for calculation - `open` or `close` (optional, default: close)
+
+**Examples:**
+```bash
+# SuperTrend with required parameters
+uv run run_analysis.py show csv mn1 gbp --rule supertrend:10,3.0 -d fastest
+
+# SuperTrend with optional price type
+uv run run_analysis.py show csv mn1 gbp --rule supertrend:10,3.0,open -d fastest
+```
+
+### Bollinger Bands
+```bash
+--rule bb:period,std_dev,price_type
+```
+
+**Parameters:**
+- `period` (int): Moving average period (default: 20)
+- `std_dev` (float): Standard deviation multiplier (default: 2.0)
 - `price_type` (string): Price type for calculation - `open` or `close` (default: close)
 
 **Examples:**
 ```bash
-# SuperTrend with required parameters (using close price)
-uv run run_analysis.py show csv mn1 gbp --rule supertrend:10,3.0 -d fastest
+# Default Bollinger Bands settings
+uv run run_analysis.py show csv mn1 gbp --rule bb -d fastest
 
-# SuperTrend with open price
-uv run run_analysis.py show csv mn1 gbp --rule supertrend:10,3.0,open -d fastest
-
-# Short period, low multiplier (more sensitive)
-uv run run_analysis.py show csv mn1 gbp --rule supertrend:5,2.0 -d fastest
-
-# Long period, high multiplier (less sensitive)
-uv run run_analysis.py show csv mn1 gbp --rule supertrend:50,4.0 -d fastest
+# Custom Bollinger Bands with open prices
+uv run run_analysis.py show csv mn1 gbp --rule bb:20,2.5,open -d fastest
 ```
 
-**Note:** SuperTrend requires exactly 2-3 parameters. The first two parameters (period and multiplier) are mandatory.
+### ATR (Average True Range)
+```bash
+--rule atr:period
+```
+
+**Parameters:**
+- `period` (int): ATR period (default: 14)
+
+**Examples:**
+```bash
+# Default ATR settings
+uv run run_analysis.py show csv mn1 gbp --rule atr -d fastest
+
+# Custom ATR period
+uv run run_analysis.py show csv mn1 gbp --rule atr:21 -d fastest
+```
+
+### Standard Deviation
+```bash
+--rule stdev:period,price_type
+```
+
+**Parameters:**
+- `period` (int): Standard deviation period (default: 20)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# Default Standard Deviation settings
+uv run run_analysis.py show csv mn1 gbp --rule stdev -d fastest
+
+# Custom Standard Deviation with open prices
+uv run run_analysis.py show csv mn1 gbp --rule stdev:20,open -d fastest
+```
+
+### OBV (On-Balance Volume)
+```bash
+--rule obv
+```
+
+**Parameters:**
+- None required
+
+**Examples:**
+```bash
+# OBV (no parameters needed)
+uv run run_analysis.py show csv mn1 gbp --rule obv -d fastest
+```
+
+### VWAP (Volume Weighted Average Price)
+```bash
+--rule vwap:price_type
+```
+
+**Parameters:**
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# Default VWAP settings
+uv run run_analysis.py show csv mn1 gbp --rule vwap -d fastest
+
+# VWAP with open prices
+uv run run_analysis.py show csv mn1 gbp --rule vwap:open -d fastest
+```
+
+### HMA (Hull Moving Average)
+```bash
+--rule hma:period,price_type
+```
+
+**Parameters:**
+- `period` (int): HMA period (default: 20)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# Default HMA settings
+uv run run_analysis.py show csv mn1 gbp --rule hma -d fastest
+
+# Custom HMA with open prices
+uv run run_analysis.py show csv mn1 gbp --rule hma:20,open -d fastest
+```
+
+### TSF (Time Series Forecast)
+
+> **Note:** `tsf` and `tsforecast` are exact synonyms. No matter which name you use, the CLI will always process and display the rule as `tsf:...`.
+
+```bash
+--rule tsf:period,price_type
+--rule tsforecast:period,price_type
+```
+
+**Parameters:**
+- `period` (int): TSF period (default: 20)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# All these commands are equivalent and will be processed as tsf:20,close
+uv run run_analysis.py show csv mn1 gbp --rule tsf:20,close -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule tsforecast:20,close -d fastest
+```
 
 ## Error Handling
 

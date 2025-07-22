@@ -180,6 +180,10 @@ def get_indicator_help_data(indicator_name: str) -> dict:
         },
         'stochoscillator': 'stoch',  # Алиас, чтобы не было отдельного help
         'stochastic': 'stoch',      # Алиас, чтобы не было отдельного help
+        'montecarlo': 'monte',      # Алиас для Monte Carlo
+        'mc': 'monte',              # Алиас для Monte Carlo
+        'fg': 'feargreed',          # Алиас для Fear & Greed
+        'tsforecast': 'tsf',        # Алиас для Time Series Forecast
         'ema': {
             'name': 'EMA (Exponential Moving Average)',
             'description': 'Weighted moving average that gives more importance to recent prices.',

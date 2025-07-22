@@ -400,6 +400,17 @@ def parse_arguments():
             args.rule = 'stoch:' + args.rule.split(':', 1)[1]
         elif args.rule.lower().startswith('stochoscillator:'):
             args.rule = 'stoch:' + args.rule.split(':', 1)[1]
+        # Monte Carlo aliases
+        elif args.rule.lower().startswith('montecarlo:'):
+            args.rule = 'monte:' + args.rule.split(':', 1)[1]
+        elif args.rule.lower().startswith('mc:'):
+            args.rule = 'monte:' + args.rule.split(':', 1)[1]
+        # Fear & Greed aliases
+        elif args.rule.lower().startswith('fg:'):
+            args.rule = 'feargreed:' + args.rule.split(':', 1)[1]
+        # Time Series Forecast aliases
+        elif args.rule.lower().startswith('tsforecast:'):
+            args.rule = 'tsf:' + args.rule.split(':', 1)[1]
 
     # Validate rule argument
     if args.rule:
@@ -409,11 +420,45 @@ def parse_arguments():
             indicator_name = args.rule.split(':', 1)[0].lower()
             valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend']
             if indicator_name not in valid_indicators:
-                parser.error(f"Invalid indicator name '{indicator_name}' in parameterized rule '{args.rule}'. Valid indicators: {', '.join(valid_indicators)}")
+                # Provide detailed help for parameterized indicators
+                help_info = {
+                    'hma': 'HMA (Hull Moving Average): hma:period,price_type (e.g., hma:20,close)',
+                    'tsf': 'TSF (Time Series Forecast): tsf:period,price_type (e.g., tsf:20,close)',
+                    'monte': 'Monte Carlo: monte:simulations,period (e.g., monte:1000,252)',
+                    'kelly': 'Kelly Criterion: kelly:period (e.g., kelly:20)',
+                    'putcallratio': 'Put/Call Ratio: putcallratio:period,price_type (e.g., putcallratio:20,close)',
+                    'cot': 'COT: cot:period,price_type (e.g., cot:20,close)',
+                    'feargreed': 'Fear & Greed: feargreed:period,price_type (e.g., feargreed:20,close)',
+                    'donchain': 'Donchian Channel: donchain:period (e.g., donchain:20)',
+                    'fibo': 'Fibonacci: fibo:levels or fibo:all (e.g., fibo:0.236,0.382,0.618)',
+                    'obv': 'OBV: obv (no parameters needed)',
+                    'stdev': 'Standard Deviation: stdev:period,price_type (e.g., stdev:20,close)',
+                    'adx': 'ADX: adx:period (e.g., adx:14)',
+                    'sar': 'SAR: sar:acceleration,maximum (e.g., sar:0.02,0.2)',
+                    'supertrend': 'SuperTrend: supertrend:period,multiplier[,price_type] (e.g., supertrend:10,3.0)',
+                    'rsi': 'RSI: rsi:period,price_type (e.g., rsi:14,close)',
+                    'macd': 'MACD: macd:fast,slow,signal,price_type (e.g., macd:12,26,9,close)',
+                    'stoch': 'Stochastic: stoch:k_period,d_period,price_type (e.g., stoch:14,3,close)',
+                    'ema': 'EMA: ema:period,price_type (e.g., ema:20,close)',
+                    'bb': 'Bollinger Bands: bb:period,std_dev,price_type (e.g., bb:20,2.0,close)',
+                    'atr': 'ATR: atr:period (e.g., atr:14)',
+                    'cci': 'CCI: cci:period,price_type (e.g., cci:20,close)',
+                    'vwap': 'VWAP: vwap:price_type (e.g., vwap:close)',
+                    'pivot': 'Pivot Points: pivot:price_type (e.g., pivot:close)'
+                }
+                
+                if indicator_name in help_info:
+                    parser.error(f"Invalid indicator name '{indicator_name}' in parameterized rule '{args.rule}'.\n\n{help_info[indicator_name]}\n\nValid indicators: {', '.join(valid_indicators)}")
+                else:
+                    parser.error(f"Invalid indicator name '{indicator_name}' in parameterized rule '{args.rule}'. Valid indicators: {', '.join(valid_indicators)}")
         else:
             # Regular rule - validate against choices
             if args.rule not in all_rule_choices:
-                parser.error(f"Invalid rule '{args.rule}'. Use one of {all_rule_choices}")
+                # Check if it might be a parameterized indicator
+                if args.rule.lower() in ['hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'rsi', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot']:
+                    parser.error(f"Invalid rule '{args.rule}'. This is a parameterized indicator. Use format: {args.rule}:parameters\n\nExamples:\n  {args.rule}:20,close\n  {args.rule}:14,3,close (for stochastic)\n  {args.rule}:1000,252 (for monte carlo)\n\nUse --help for more information about parameterized indicators.")
+                else:
+                    parser.error(f"Invalid rule '{args.rule}'. Use one of {all_rule_choices}")
 
     # Handle interactive mode
     if effective_mode == 'interactive':
@@ -1424,6 +1469,18 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             # Always parse as stoch and return 'stoch' as indicator name
             _, params = parse_stoch_parameters(params_str)
             return 'stoch', params
+        elif indicator_name in ['monte', 'montecarlo', 'mc']:
+            # Always parse as monte and return 'monte' as indicator name
+            _, params = parse_monte_parameters(params_str)
+            return 'monte', params
+        elif indicator_name in ['feargreed', 'fg']:
+            # Always parse as feargreed and return 'feargreed' as indicator name
+            _, params = parse_feargreed_parameters(params_str)
+            return 'feargreed', params
+        elif indicator_name in ['tsf', 'tsforecast']:
+            # Always parse as tsf and return 'tsf' as indicator name
+            _, params = parse_tsf_parameters(params_str)
+            return 'tsf', params
         elif indicator_name == 'rsi':
             return parse_rsi_parameters(params_str)
         elif indicator_name == 'rsi_mom':
@@ -1446,10 +1503,6 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_pivot_parameters(params_str)
         elif indicator_name == 'hma':
             return parse_hma_parameters(params_str)
-        elif indicator_name == 'tsf':
-            return parse_tsf_parameters(params_str)
-        elif indicator_name in ['monte', 'montecarlo', 'mc']:
-            return parse_monte_parameters(params_str)
         elif indicator_name == 'kelly':
             return parse_kelly_parameters(params_str)
         elif indicator_name == 'donchain':
@@ -1466,14 +1519,10 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_sar_parameters(params_str)
         elif indicator_name == 'supertrend':
             return parse_supertrend_parameters(params_str)
-        elif indicator_name == 'stochoscillator':
-            return parse_stoch_parameters(params_str)
         elif indicator_name == 'putcallratio':
             return parse_putcallratio_parameters(params_str)
         elif indicator_name == 'cot':
             return parse_cot_parameters(params_str)
-        elif indicator_name in ['feargreed', 'fg']:
-            return parse_feargreed_parameters(params_str)
         else:
             # Unknown indicator, show help and raise error
             raise ValueError(f"Unknown indicator: {indicator_name}")
