@@ -713,6 +713,70 @@ def _plot_cot_indicator(indicator_fig, source, display_df):
         )
 
 
+def _plot_feargreed_indicator(indicator_fig, source, display_df):
+    """Plot Fear & Greed indicator on the given figure."""
+    # Main Fear & Greed line
+    if 'feargreed' in display_df.columns:
+        indicator_fig.line(
+            'index', 'feargreed',
+            source=source,
+            line_color='purple',
+            line_width=3,
+            legend_label='Fear & Greed'
+        )
+    # Signal line
+    if 'feargreed_signal' in display_df.columns:
+        indicator_fig.line(
+            'index', 'feargreed_signal',
+            source=source,
+            line_color='orange',
+            line_width=2,
+            legend_label='Signal Line'
+        )
+    # Histogram
+    if 'feargreed_histogram' in display_df.columns:
+        colors = ['green' if val >= 0 else 'red' for val in display_df['feargreed_histogram']]
+        display_df['histogram_color'] = colors
+        hist_source = ColumnDataSource(display_df)
+        indicator_fig.vbar(
+            'index', 0.5, 'feargreed_histogram',
+            source=hist_source,
+            color='histogram_color',
+            alpha=0.7,
+            legend_label='Histogram'
+        )
+    # Bullish threshold
+    if 'feargreed_bullish' in display_df.columns:
+        indicator_fig.line(
+            'index', 'feargreed_bullish',
+            source=source,
+            line_color='green',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Bullish Threshold'
+        )
+    # Bearish threshold
+    if 'feargreed_bearish' in display_df.columns:
+        indicator_fig.line(
+            'index', 'feargreed_bearish',
+            source=source,
+            line_color='red',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Bearish Threshold'
+        )
+    # Neutral level
+    if 'feargreed_neutral' in display_df.columns:
+        indicator_fig.line(
+            'index', 'feargreed_neutral',
+            source=source,
+            line_color='gray',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Neutral Level'
+        )
+
+
 def _get_indicator_hover_tool(indicator_name):
     """Get appropriate hover tool for the given indicator."""
     if indicator_name == 'macd':
@@ -848,6 +912,17 @@ def _get_indicator_hover_tool(indicator_name):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name in ('feargreed', 'fg'):
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Fear & Greed", "@feargreed{0.2f}"),
+                ("Signal Line", "@feargreed_signal{0.2f}"),
+                ("Histogram", "@feargreed_histogram{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     else:
         # Generic hover for other indicators
         return HoverTool(
@@ -887,6 +962,8 @@ def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
         'stoch': _plot_stoch_indicator,
         'putcallratio': _plot_putcallratio_indicator,  # Добавлено для поддержки Put/Call Ratio
         'cot': _plot_cot_indicator,  # Добавлено для поддержки COT
+        'feargreed': _plot_feargreed_indicator,  # Добавлено для поддержки Fear & Greed
+        'fg': _plot_feargreed_indicator,         # Алиас
     }
     
     plot_function = indicator_plot_functions.get(indicator_name)
