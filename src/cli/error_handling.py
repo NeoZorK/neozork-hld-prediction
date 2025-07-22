@@ -507,6 +507,35 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Acceleration should be less than or equal to maximum',
                 'Omitting parameters: Use format sar:0.02,0.2'
             ]
+        },
+        'supertrend': {
+            'name': 'SuperTrend',
+            'description': 'Trend-following indicator that uses ATR to determine trend direction and generate buy/sell signals. Highlights trend reversals and dynamic support/resistance.',
+            'format': 'supertrend:period,multiplier[,price_type]',
+            'parameters': [
+                ('period', 'int', 'ATR period for SuperTrend calculation (required)', '10'),
+                ('multiplier', 'float', 'ATR multiplier (required)', '3.0'),
+                ('price_type', 'string', 'Price type for calculation - open or close (default: close)', 'close')
+            ],
+            'examples': [
+                ('supertrend:10,3.0', 'Standard SuperTrend with period 10 and multiplier 3.0'),
+                ('supertrend:14,2.5,close', 'SuperTrend with period 14, multiplier 2.5, close prices'),
+                ('supertrend:10,3.0,open', 'SuperTrend with open prices'),
+                ('supertrend:50,2.5,close', 'Long-term SuperTrend with period 50, multiplier 2.5, close prices')
+            ],
+            'tips': [
+                'Lower period = more sensitive, more signals',
+                'Higher multiplier = fewer signals, smoother trend',
+                'Use price_type=open for more aggressive entries',
+                'Combine with other indicators for confirmation',
+                'SuperTrend is best used in trending markets'
+            ],
+            'common_errors': [
+                'Invalid period: Must be a positive integer',
+                'Invalid multiplier: Must be a positive float',
+                'Invalid price_type: Use only "open" or "close"',
+                'Omitting parameters: Use format supertrend:10,3.0[,price_type]'
+            ]
         }
     }
     
