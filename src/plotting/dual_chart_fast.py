@@ -838,17 +838,30 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         seg_y.append(st_arr[i])
     if len(seg_x) > 0:
         segments.append((seg_x, seg_y, last_color))
-    # Рисуем линии и glow
+    # Рисуем линии и glow с разными подписями в легенде
+    legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
     for seg_x, seg_y, seg_color in segments:
         if len(seg_x) > 1:
+            # Glow
             indicator_fig.line(
                 x=seg_x, y=seg_y,
                 line_color=seg_color.replace('0.95', '0.3'), line_width=10, line_alpha=1.0
             )
-            indicator_fig.line(
-                x=seg_x, y=seg_y,
-                line_color=seg_color, line_width=5, line_alpha=1.0, legend_label='SuperTrend'
-            )
+            # Легенда
+            if seg_color == uptrend_color:
+                legend_label = 'SuperTrend (Uptrend)'
+            elif seg_color == downtrend_color:
+                legend_label = 'SuperTrend (Downtrend)'
+            elif seg_color == signal_change_color:
+                legend_label = 'SuperTrend (Signal Change)'
+            else:
+                legend_label = 'SuperTrend'
+            show_legend = not legend_shown.get(seg_color, False)
+            legend_shown[seg_color] = True
+            line_kwargs = dict(x=seg_x, y=seg_y, line_color=seg_color, line_width=5, line_alpha=1.0)
+            if show_legend:
+                line_kwargs['legend_label'] = legend_label
+            indicator_fig.line(**line_kwargs)
     # BUY/SELL сигналы с белым контуром и pulse
     buy_idx = idx_arr[(trend == 1) & (trend.shift(1) == -1)]
     sell_idx = idx_arr[(trend == -1) & (trend.shift(1) == 1)]
