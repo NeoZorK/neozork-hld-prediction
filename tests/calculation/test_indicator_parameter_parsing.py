@@ -312,6 +312,25 @@ class TestIndicatorParameterParsing:
         # This should not raise an exception and should show generic help
         show_indicator_help("unknown")
 
+    def test_stoch_aliases_are_normalized(self):
+        """Test that 'stochastic:' and 'stochoscillator:' are normalized to 'stoch:' in CLI arguments."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        for alias in ['stochastic', 'stochoscillator']:
+            sys_argv_backup = sys.argv[:]
+            sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '--rule', f'{alias}:14,3,close']
+            # suppress stderr
+            old_stderr = sys.stderr
+            sys.stderr = StringIO()
+            try:
+                args = parse_arguments()
+                assert args.rule == 'stoch:14,3,close', f"Alias {alias} not normalized: {args.rule}"
+            finally:
+                sys.stderr = old_stderr
+                sys.argv = sys_argv_backup
+
 
 class TestErrorHandling:
     """Test cases for error handling and help display."""
