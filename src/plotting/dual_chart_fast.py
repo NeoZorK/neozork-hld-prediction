@@ -615,6 +615,70 @@ def _plot_stoch_indicator(indicator_fig, source, display_df):
         )
 
 
+def _plot_putcallratio_indicator(indicator_fig, source, display_df):
+    """Plot Put/Call Ratio indicator on the given figure."""
+    # Main Put/Call Ratio line
+    if 'PutCallRatio' in display_df.columns:
+        indicator_fig.line(
+            'index', 'PutCallRatio',
+            source=source,
+            line_color='purple',
+            line_width=3,
+            legend_label='Put/Call Ratio'
+        )
+    # Signal line (EMA)
+    if 'PutCallRatio_Signal' in display_df.columns:
+        indicator_fig.line(
+            'index', 'PutCallRatio_Signal',
+            source=source,
+            line_color='orange',
+            line_width=2,
+            legend_label='Signal Line'
+        )
+    # Bullish threshold
+    if 'putcallratio_bullish' in display_df.columns:
+        indicator_fig.line(
+            'index', 'putcallratio_bullish',
+            source=source,
+            line_color='green',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Bullish Threshold'
+        )
+    # Bearish threshold
+    if 'putcallratio_bearish' in display_df.columns:
+        indicator_fig.line(
+            'index', 'putcallratio_bearish',
+            source=source,
+            line_color='red',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Bearish Threshold'
+        )
+    # Neutral level
+    if 'putcallratio_neutral' in display_df.columns:
+        indicator_fig.line(
+            'index', 'putcallratio_neutral',
+            source=source,
+            line_color='gray',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='Neutral Level'
+        )
+    # Histogram (difference between PutCallRatio and Signal)
+    if 'putcallratio_histogram' in display_df.columns:
+        colors = ['green' if val >= 0 else 'red' for val in display_df['putcallratio_histogram']]
+        display_df['histogram_color'] = colors
+        hist_source = ColumnDataSource(display_df)
+        indicator_fig.vbar(
+            'index', 0.5, 'putcallratio_histogram',
+            source=hist_source,
+            color='histogram_color',
+            alpha=0.7,
+            legend_label='Histogram'
+        )
+
+
 def _get_indicator_hover_tool(indicator_name):
     """Get appropriate hover tool for the given indicator."""
     if indicator_name == 'macd':
@@ -728,6 +792,17 @@ def _get_indicator_hover_tool(indicator_name):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name == 'putcallratio':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Put/Call Ratio", "@PutCallRatio{0.2f}"),
+                ("Signal Line", "@PutCallRatio_Signal{0.2f}"),
+                ("Histogram", "@putcallratio_histogram{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     else:
         # Generic hover for other indicators
         return HoverTool(
@@ -765,6 +840,7 @@ def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
         'rsi_mom': _plot_rsi_mom_indicator,
         'rsi_div': _plot_rsi_div_indicator,
         'stoch': _plot_stoch_indicator,
+        'putcallratio': _plot_putcallratio_indicator,  # Добавлено для поддержки Put/Call Ratio
     }
     
     plot_function = indicator_plot_functions.get(indicator_name)
