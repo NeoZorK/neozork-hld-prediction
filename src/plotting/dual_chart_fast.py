@@ -795,11 +795,20 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         p2 = display_df['PPrice2']
         direction = display_df['Direction']
         supertrend_values = np.where(direction > 0, p1, p2)
-        display_df = display_df.copy()
+        # Add supertrend values to both display_df and source for hover tool
         display_df['supertrend'] = supertrend_values
+        source.data['supertrend'] = supertrend_values
+        # Ensure Direction is also in the main source for hover tool
+        if 'Direction' not in source.data:
+            source.data['Direction'] = direction
     else:
         supertrend_values = display_df['supertrend']
         direction = display_df['Direction']
+        # Ensure Direction is in the main source for hover tool
+        if 'Direction' not in source.data:
+            source.data['Direction'] = direction
+    
+    # Create a separate source for plotting
     st_source = ColumnDataSource(data={
         'index': idx,
         'supertrend': supertrend_values,
@@ -1181,20 +1190,25 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
             ("Date", "@index{%F %H:%M}"),
         ]
         # Always show SuperTrend value if possible
+        formatters = {'@index': 'datetime'}
         if 'supertrend' in display_df.columns:
             tooltips.append(("SuperTrend", "@supertrend{0.5f}"))
+            formatters['@supertrend'] = 'numeral'
         elif 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns:
             tooltips.append(("Support (PPrice1)", "@PPrice1{0.5f}"))
             tooltips.append(("Resistance (PPrice2)", "@PPrice2{0.5f}"))
+            formatters['@PPrice1'] = 'numeral'
+            formatters['@PPrice2'] = 'numeral'
         # Always show Direction if present
         if 'Direction' in display_df.columns:
             tooltips.append(("Direction", "@Direction{0}"))
+            formatters['@Direction'] = 'numeral'
         else:
             # Fallback: show Direction as N/A if not present
             tooltips.append(("Direction", "N/A"))
         return HoverTool(
             tooltips=tooltips,
-            formatters={'@index': 'datetime'},
+            formatters=formatters,
             mode='vline'
         )
     else:
