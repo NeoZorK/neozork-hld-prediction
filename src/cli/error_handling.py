@@ -340,6 +340,29 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Invalid price_type: Use only "open" or "close"',
                 'Invalid period: Must be a positive integer'
             ]
+        },
+        'tsf': {
+            'name': 'TSF (Time Series Forecast)',
+            'description': 'Linear regression-based indicator that projects future price levels based on historical data.',
+            'format': 'tsf:period,price_type',
+            'parameters': [
+                ('period', 'int', 'TSF calculation period (window size)', '14'),
+                ('price_type', 'string', 'Price type for calculation ("open" or "close")', 'close')
+            ],
+            'examples': [
+                ('tsf:14,close', 'Standard TSF with close prices'),
+                ('tsf:20,open', 'TSF with period 20 and open prices'),
+                ('tsf:10,close', 'Short-term TSF')
+            ],
+            'tips': [
+                'Shorter period = more responsive to recent trends',
+                'Longer period = more stable but less responsive',
+                'Use with price_type=open for early trend detection'
+            ],
+            'common_errors': [
+                'Invalid price_type: Use only "open" or "close"',
+                'Invalid period: Must be a positive integer'
+            ]
         }
     }
     
