@@ -777,7 +777,7 @@ def _plot_feargreed_indicator(indicator_fig, source, display_df):
         )
 
 
-def _get_indicator_hover_tool(indicator_name):
+def _get_indicator_hover_tool(indicator_name, fibo_columns=None):
     """Get appropriate hover tool for the given indicator."""
     if indicator_name == 'macd':
         # Special hover for MACD with all three components
@@ -938,12 +938,27 @@ def _get_indicator_hover_tool(indicator_name):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name == 'fibo':
+        # Динамический тултип по реальным fibo колонкам
+        tooltips = [("Date", "@index{%F %H:%M}")]
+        if fibo_columns:
+            for col in fibo_columns:
+                try:
+                    lvl = float(col.replace('fibo_', ''))
+                    label = f"Fib {lvl}"
+                except Exception:
+                    label = col
+                tooltips.append((label, f"@{col}{{0.5f}}"))
+        return HoverTool(
+            tooltips=tooltips,
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     else:
         # Generic hover for other indicators
         return HoverTool(
             tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("Value", "@$name{0.5f}")
+                ("Date", "@index{%F %H:%M}")
             ],
             formatters={'@index': 'datetime'},
             mode='vline'
@@ -980,10 +995,13 @@ def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
         'feargreed': _plot_feargreed_indicator,  # Добавлено для поддержки Fear & Greed
         'fg': _plot_feargreed_indicator,         # Алиас
     }
-    
+    fibo_columns = None
+    if indicator_name == 'fibo':
+        fibo_columns = [col for col in display_df.columns if col.startswith('fibo_')]
     plot_function = indicator_plot_functions.get(indicator_name)
     if plot_function:
         plot_function(indicator_fig, source, display_df)
+    return fibo_columns
 
 
 def plot_dual_chart_fast(
@@ -1159,11 +1177,13 @@ def plot_dual_chart_fast(
         active_scroll='wheel_zoom'
     )
     
+    # Получаем fibo_columns если нужно
+    fibo_columns = _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name)
     # Plot indicator using the refactored function
     _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name)
     
     # Add hover tooltip for indicator chart
-    hover_indicator = _get_indicator_hover_tool(indicator_name)
+    hover_indicator = _get_indicator_hover_tool(indicator_name, fibo_columns=fibo_columns)
     indicator_fig.add_tools(hover_indicator)
     
     # Create layout
