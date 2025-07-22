@@ -157,6 +157,12 @@ def _plot_ema_indicator(indicator_fig, source, display_df):
 
 def _plot_bb_indicator(indicator_fig, source, display_df):
     """Plot Bollinger Bands indicator on the given figure."""
+    # Ensure BB data is available in the source for hover
+    bb_columns = ['bb_upper', 'bb_middle', 'bb_lower']
+    for col in bb_columns:
+        if col in display_df.columns and col not in source.data:
+            source.data[col] = display_df[col]
+    
     if 'bb_upper' in display_df.columns:
         indicator_fig.line(
             'index', 'bb_upper',
@@ -188,6 +194,10 @@ def _plot_bb_indicator(indicator_fig, source, display_df):
 def _plot_atr_indicator(indicator_fig, source, display_df):
     """Plot ATR indicator on the given figure."""
     if 'atr' in display_df.columns:
+        # Ensure ATR data is available in the source for hover
+        if 'atr' not in source.data:
+            source.data['atr'] = display_df['atr']
+        
         indicator_fig.line(
             'index', 'atr',
             source=source,
@@ -1468,9 +1478,9 @@ def plot_dual_chart_fast(
     # Plot indicator using the refactored function and get fibo_columns if needed
     fibo_columns = _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name)
     
-    # Remove hover from indicator chart to avoid multiple tooltips
-    # hover_indicator = _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=fibo_columns)
-    # indicator_fig.add_tools(hover_indicator)
+    # Add hover tool for indicator chart
+    hover_indicator = _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=fibo_columns)
+    indicator_fig.add_tools(hover_indicator)
     
     # Create layout
     layout_figures = column(main_fig, indicator_fig)

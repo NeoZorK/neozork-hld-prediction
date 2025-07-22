@@ -203,7 +203,7 @@ class TestIndicatorHelpData:
 
     def test_all_indicators_have_required_fields(self):
         """Test that all indicators have required fields."""
-        indicators = ['rsi', 'macd', 'stoch', 'ema', 'bb', 'cot', 'cci', 'vwap', 'pivot']
+        indicators = ['rsi', 'macd', 'stoch', 'ema', 'bb', 'cot', 'cci', 'vwap', 'pivot', 'atr']
         required_fields = ['name', 'description', 'format', 'parameters', 'examples', 'tips', 'common_errors']
         
         for indicator in indicators:
@@ -291,6 +291,46 @@ class TestEnhancedHelpDisplay:
         # Check that only error header was printed
         error_calls = [call for call in calls if "ERROR:" in str(call)]
         assert len(error_calls) > 0
+
+
+    def test_get_atr_help_data(self):
+        """Test getting ATR help data."""
+        data = get_indicator_help_data('atr')
+        assert data is not None
+        assert data['name'] == 'ATR (Average True Range)'
+        assert len(data['parameters']) == 1
+        assert data['parameters'][0][0] == 'period'
+        assert data['format'] == 'atr:period'
+        
+        # Test that ATR has examples
+        assert len(data['examples']) >= 3
+        assert 'atr:14' in [example[0] for example in data['examples']]
+        
+        # Test that ATR has tips
+        assert len(data['tips']) > 0
+        
+        # Test that ATR has common errors
+        assert len(data['common_errors']) > 0
+
+    @patch('builtins.print')
+    def test_show_enhanced_indicator_help_atr(self, mock_print):
+        """Test showing enhanced help for ATR."""
+        show_enhanced_indicator_help("ATR requires exactly 1 parameter: period. Got: 14,20", "atr")
+        
+        calls = mock_print.call_args_list
+        assert len(calls) > 0
+        
+        # Check that ATR help was displayed
+        atr_calls = [call for call in calls if "ATR" in str(call)]
+        assert len(atr_calls) > 0
+        
+        # Check that parameters section was displayed
+        param_calls = [call for call in calls if "period" in str(call)]
+        assert len(param_calls) > 0
+        
+        # Check that examples were displayed
+        example_calls = [call for call in calls if "atr:14" in str(call)]
+        assert len(example_calls) > 0
 
 
 class TestIntegration:
