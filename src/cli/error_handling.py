@@ -409,6 +409,32 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Invalid period: Must be a positive integer',
                 'Period too short may give unreliable results'
             ]
+        },
+        'putcallratio': {
+            'name': 'Put/Call Ratio',
+            'description': 'Measures the ratio of put option volume to call option volume to gauge market sentiment (fear/greed). High values may indicate fear, low values may indicate greed.',
+            'format': 'putcallratio:period,price_type[,bullish_threshold,bearish_threshold]',
+            'parameters': [
+                ('period', 'int', 'Put/Call Ratio period', '20'),
+                ('price_type', 'string', 'Price type for calculation - open or close', 'close'),
+                ('bullish_threshold', 'float', 'Bullish threshold', '60.0'),
+                ('bearish_threshold', 'float', 'Bearish threshold', '40.0')
+            ],
+            'examples': [
+                ('putcallratio:20,close,60.0,40.0', 'Standard Put/Call Ratio with close prices'),
+                ('putcallratio:14,open,65.0,35.0', 'Custom thresholds with open prices')
+            ],
+            'tips': [
+                'Use higher bullish_threshold for more conservative buy signals.',
+                'Put/Call Ratio above bullish_threshold may indicate excessive fear (potential buy).',
+                'Put/Call Ratio below bearish_threshold may indicate excessive greed (potential sell).',
+                'Typical values: bullish_threshold=60.0, bearish_threshold=40.0.'
+            ],
+            'common_errors': [
+                'Invalid price_type: Use "open" or "close" only.',
+                'Invalid period: Must be a positive integer.',
+                'Thresholds must be floats.'
+            ]
         }
     }
     
