@@ -688,6 +688,15 @@ def _get_indicator_hover_tool(indicator_name):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name == 'tsf':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("TSF", "@tsf{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     else:
         # Generic hover for other indicators
         return HoverTool(
