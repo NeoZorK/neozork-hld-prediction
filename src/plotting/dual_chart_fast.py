@@ -679,6 +679,40 @@ def _plot_putcallratio_indicator(indicator_fig, source, display_df):
         )
 
 
+def _plot_cot_indicator(indicator_fig, source, display_df):
+    """Plot COT indicator on the given figure."""
+    # Main COT line
+    if 'cot' in display_df.columns:
+        indicator_fig.line(
+            'index', 'cot',
+            source=source,
+            line_color='darkblue',
+            line_width=3,
+            legend_label='COT'
+        )
+    # Signal line
+    if 'cot_signal' in display_df.columns:
+        indicator_fig.line(
+            'index', 'cot_signal',
+            source=source,
+            line_color='darkorange',
+            line_width=2,
+            legend_label='Signal Line'
+        )
+    # Histogram
+    if 'cot_histogram' in display_df.columns:
+        colors = ['green' if val >= 0 else 'red' for val in display_df['cot_histogram']]
+        display_df['histogram_color'] = colors
+        hist_source = ColumnDataSource(display_df)
+        indicator_fig.vbar(
+            'index', 0.5, 'cot_histogram',
+            source=hist_source,
+            color='histogram_color',
+            alpha=0.7,
+            legend_label='Histogram'
+        )
+
+
 def _get_indicator_hover_tool(indicator_name):
     """Get appropriate hover tool for the given indicator."""
     if indicator_name == 'macd':
@@ -803,6 +837,17 @@ def _get_indicator_hover_tool(indicator_name):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name == 'cot':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("COT", "@cot{0.2f}"),
+                ("Signal Line", "@cot_signal{0.2f}"),
+                ("Histogram", "@cot_histogram{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     else:
         # Generic hover for other indicators
         return HoverTool(
@@ -841,6 +886,7 @@ def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
         'rsi_div': _plot_rsi_div_indicator,
         'stoch': _plot_stoch_indicator,
         'putcallratio': _plot_putcallratio_indicator,  # Добавлено для поддержки Put/Call Ratio
+        'cot': _plot_cot_indicator,  # Добавлено для поддержки COT
     }
     
     plot_function = indicator_plot_functions.get(indicator_name)
