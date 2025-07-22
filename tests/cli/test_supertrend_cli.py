@@ -62,34 +62,40 @@ class TestSuperTrendCLI:
         assert params['price_type'] == 'close'
 
     def test_parse_supertrend_parameters_single_param_error(self):
-        """Test that single parameter raises error."""
-        with pytest.raises(ValueError, match="SuperTrend requires exactly 2-3 parameters"):
+        """Test that single parameter triggers help and exits."""
+        with pytest.raises(SystemExit) as excinfo:
             parse_supertrend_parameters("10")
+        assert excinfo.value.code == 1
 
     def test_parse_supertrend_parameters_empty_string_error(self):
-        """Test that empty string raises error."""
-        with pytest.raises(ValueError, match="SuperTrend requires exactly 2-3 parameters"):
+        """Test that empty string triggers help and exits."""
+        with pytest.raises(SystemExit) as excinfo:
             parse_supertrend_parameters("")
+        assert excinfo.value.code == 1
 
     def test_parse_supertrend_parameters_four_params_error(self):
-        """Test that four parameters raises error."""
-        with pytest.raises(ValueError, match="SuperTrend requires exactly 2-3 parameters"):
+        """Test that four parameters triggers help and exits."""
+        with pytest.raises(SystemExit) as excinfo:
             parse_supertrend_parameters("10,3.0,close,extra")
+        assert excinfo.value.code == 1
 
     def test_parse_supertrend_parameters_invalid_price_type_error(self):
-        """Test that invalid price type raises error."""
-        with pytest.raises(ValueError, match="SuperTrend price_type must be 'open' or 'close'"):
+        """Test that invalid price type triggers help and exits."""
+        with pytest.raises(SystemExit) as excinfo:
             parse_supertrend_parameters("10,3.0,invalid")
+        assert excinfo.value.code == 1
 
     def test_parse_supertrend_parameters_invalid_period_error(self):
-        """Test that invalid period raises error."""
-        with pytest.raises(ValueError, match="Invalid SuperTrend parameters"):
+        """Test that invalid period triggers help and exits."""
+        with pytest.raises(SystemExit) as excinfo:
             parse_supertrend_parameters("abc,3.0,close")
+        assert excinfo.value.code == 1
 
     def test_parse_supertrend_parameters_invalid_multiplier_error(self):
-        """Test that invalid multiplier raises error."""
-        with pytest.raises(ValueError, match="Invalid SuperTrend parameters"):
+        """Test that invalid multiplier triggers help and exits."""
+        with pytest.raises(SystemExit) as excinfo:
             parse_supertrend_parameters("10,xyz,close")
+        assert excinfo.value.code == 1
 
     def test_parse_supertrend_parameters_case_insensitive_price_type(self):
         """Test that price type is case insensitive."""
@@ -171,6 +177,21 @@ class TestSuperTrendCLI:
         # The fact that we can parse this without error means 'supertrend' is valid
         indicator_name, params = parse_supertrend_parameters("10,3.0")
         assert indicator_name == "supertrend"
+
+    def test_parse_supertrend_parameters_empty_string_help_and_exit(self):
+        """Test that empty string for supertrend: triggers help and exits."""
+        from src.cli.cli import show_indicator_help
+        from unittest.mock import patch
+        import builtins
+        with patch("builtins.print") as mock_print, \
+             patch("src.cli.cli.show_indicator_help") as mock_help, \
+             pytest.raises(SystemExit) as excinfo:
+            parse_supertrend_parameters("")
+        assert excinfo.value.code == 1
+        mock_help.assert_called_with('supertrend')
+        # Проверяем, что был выведен текст ошибки
+        printed = "".join(str(call) for call in mock_print.call_args_list)
+        assert "SuperTrend requires exactly 2-3 parameters" in printed
 
 
 if __name__ == "__main__":
