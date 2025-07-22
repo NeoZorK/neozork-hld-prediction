@@ -606,9 +606,25 @@ def show_indicator_help(indicator_name: str):
         indicator_name (str): Name of the indicator
     """
     # Use the new enhanced error handling system
-    from .error_handling import show_enhanced_indicator_help
-    show_enhanced_indicator_help(f"Help requested for indicator: {indicator_name}", indicator_name)
-    return
+    try:
+        from .error_handling import show_enhanced_indicator_help
+        show_enhanced_indicator_help(f"Help requested for indicator: {indicator_name}", indicator_name)
+    except Exception:
+        pass
+    # Fallback for supertrend
+    if indicator_name.lower() == 'supertrend':
+        print("\n\033[1;36mSuperTrend Help\033[0m")
+        print("Format: \033[1;33msupertrend:period,multiplier[,price_type]\033[0m")
+        print("\nParameters:")
+        print("  period (int): ATR period for SuperTrend calculation (required)")
+        print("  multiplier (float): ATR multiplier (required)")
+        print("  price_type (string): Price type for calculation - open or close (default: close)")
+        print("\nExamples:")
+        print("  supertrend:10,3.0")
+        print("  supertrend:14,2.5,close")
+        print("  supertrend:10,3.0,open")
+        print("  supertrend:50,2.5,close\n")
+        return
     
     # Legacy help info (kept for reference)
     help_info = {
@@ -1352,24 +1368,33 @@ def parse_sar_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_supertrend_parameters(params_str: str) -> tuple[str, dict]:
     """Parse SuperTrend parameters: period,multiplier[,price_type]"""
+    from .cli import show_indicator_help
     # Handle empty string case
     if not params_str.strip():
-        raise ValueError(f"SuperTrend requires exactly 2-3 parameters: period,multiplier[,price_type]. Got: {params_str}")
-    
+        print("\n[ERROR] SuperTrend requires exactly 2-3 parameters: period,multiplier[,price_type].\n")
+        show_indicator_help('supertrend')
+        import sys
+        sys.exit(1)
     params = params_str.split(',')
     if len(params) < 2 or len(params) > 3:
-        raise ValueError(f"SuperTrend requires exactly 2-3 parameters: period,multiplier[,price_type]. Got: {params_str}")
-    
+        print(f"\n[ERROR] SuperTrend requires exactly 2-3 parameters: period,multiplier[,price_type]. Got: {params_str}\n")
+        show_indicator_help('supertrend')
+        import sys
+        sys.exit(1)
     try:
         period = int(float(params[0].strip()))  # Handle float values
         multiplier = float(params[1].strip())
         price_type = params[2].strip().lower() if len(params) > 2 else 'close'
     except (ValueError, IndexError) as e:
-        raise ValueError(f"Invalid SuperTrend parameters: {params_str}. Error: {e}")
-    
+        print(f"\n[ERROR] Invalid SuperTrend parameters: {params_str}. Error: {e}\n")
+        show_indicator_help('supertrend')
+        import sys
+        sys.exit(1)
     if price_type not in ['open', 'close']:
-        raise ValueError(f"SuperTrend price_type must be 'open' or 'close', got: {price_type}")
-    
+        print(f"\n[ERROR] SuperTrend price_type must be 'open' or 'close', got: {price_type}\n")
+        show_indicator_help('supertrend')
+        import sys
+        sys.exit(1)
     return 'supertrend', {
         'supertrend_period': period,
         'multiplier': multiplier,

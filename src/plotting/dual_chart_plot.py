@@ -45,6 +45,7 @@ from ..calculation.indicators.sentiment.putcallratio_ind import calculate_putcal
 from ..calculation.indicators.sentiment.cot_ind import calculate_cot
 from ..calculation.indicators.sentiment.feargreed_ind import calculate_feargreed
 from ..common.constants import BUY, SELL, NOTRADE
+from ..cli.cli import parse_supertrend_parameters
 
 
 def is_dual_chart_rule(rule: str) -> bool:
@@ -543,27 +544,24 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['stochosc_oversold'] = 20
             
         elif indicator_name == 'supertrend':
-            period = int(float(params[0])) if len(params) > 0 else 10
-            multiplier = float(params[1]) if len(params) > 1 else 3.0
-            price_type = params[2].lower() if len(params) > 2 else 'close'
-            
+            # Используем централизованный парсер параметров supertrend
+            try:
+                _, st_params = parse_supertrend_parameters(','.join(params))
+            except Exception as e:
+                raise ValueError(f"Error parsing supertrend parameters: {e}")
+            period = st_params['supertrend_period']
+            multiplier = st_params['multiplier']
+            price_type = st_params['price_type']
             # Удаляем возможные дубликаты
             for col in ['supertrend', 'Supertrend', 'SUPERTREND']:
                 if col in result_df.columns:
                     result_df = result_df.drop(columns=[col])
-            
-            # Импортируем функцию расчета SuperTrend
             from ..calculation.indicators.trend.supertrend_ind import calculate_supertrend
-            
-            # Выбираем ценовую серию
             if price_type == 'open':
                 price_series = df['Open']
             else:
                 price_series = df['Close']
-            
-            # Рассчитываем SuperTrend
             supertrend_values, trend_direction = calculate_supertrend(df, period, multiplier)
-            
             result_df['supertrend'] = supertrend_values
             result_df['supertrend_period'] = period
             result_df['supertrend_multiplier'] = multiplier
