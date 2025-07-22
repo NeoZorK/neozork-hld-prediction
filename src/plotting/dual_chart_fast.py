@@ -831,6 +831,90 @@ def _get_indicator_hover_tool(indicator_name, fibo_columns=None):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name == 'ema':
+        # Special hover for EMA
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("EMA", "@ema{0.5f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'bb':
+        # Special hover for Bollinger Bands
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Upper Band", "@bb_upper{0.5f}"),
+                ("Middle Band", "@bb_middle{0.5f}"),
+                ("Lower Band", "@bb_lower{0.5f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'atr':
+        # Special hover for ATR
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("ATR", "@atr{0.5f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'vwap':
+        # Special hover for VWAP
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("VWAP", "@vwap{0.5f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'obv':
+        # Special hover for OBV
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("OBV", "@obv{0.0f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'stdev':
+        # Special hover for Standard Deviation
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("StdDev", "@stdev{0.5f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'adx':
+        # Special hover for ADX
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("ADX", "@adx{0.2f}"),
+                ("DI+", "@di_plus{0.2f}"),
+                ("DI-", "@di_minus{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
+    elif indicator_name == 'sar':
+        # Special hover for SAR
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("SAR", "@sar{0.5f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     elif indicator_name == 'stoch':
         return HoverTool(
             tooltips=[
