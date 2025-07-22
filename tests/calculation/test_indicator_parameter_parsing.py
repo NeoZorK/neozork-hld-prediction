@@ -331,6 +331,106 @@ class TestIndicatorParameterParsing:
                 sys.stderr = old_stderr
                 sys.argv = sys_argv_backup
 
+    def test_monte_aliases_are_normalized(self):
+        """Test that 'montecarlo:' and 'mc:' are normalized to 'monte:' in CLI arguments."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        for alias in ['montecarlo', 'mc']:
+            sys_argv_backup = sys.argv[:]
+            sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '--rule', f'{alias}:1000,252']
+            # suppress stderr
+            old_stderr = sys.stderr
+            sys.stderr = StringIO()
+            try:
+                args = parse_arguments()
+                assert args.rule == 'monte:1000,252', f"Alias {alias} not normalized: {args.rule}"
+            finally:
+                sys.stderr = old_stderr
+                sys.argv = sys_argv_backup
+
+    def test_feargreed_aliases_are_normalized(self):
+        """Test that 'fg:' is normalized to 'feargreed:' in CLI arguments."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        sys_argv_backup = sys.argv[:]
+        sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '--rule', 'fg:20,close']
+        # suppress stderr
+        old_stderr = sys.stderr
+        sys.stderr = StringIO()
+        try:
+            args = parse_arguments()
+            assert args.rule == 'feargreed:20,close', f"Alias fg not normalized: {args.rule}"
+        finally:
+            sys.stderr = old_stderr
+            sys.argv = sys_argv_backup
+
+    def test_tsf_aliases_are_normalized(self):
+        """Test that 'tsforecast:' is normalized to 'tsf:' in CLI arguments."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        sys_argv_backup = sys.argv[:]
+        sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '--rule', 'tsforecast:20,close']
+        # suppress stderr
+        old_stderr = sys.stderr
+        sys.stderr = StringIO()
+        try:
+            args = parse_arguments()
+            assert args.rule == 'tsf:20,close', f"Alias tsforecast not normalized: {args.rule}"
+        finally:
+            sys.stderr = old_stderr
+            sys.argv = sys_argv_backup
+
+    def test_improved_help_for_parameterized_indicators(self):
+        """Test that improved help is shown for parameterized indicators in fast mode."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        # Test HMA without parameters
+        sys_argv_backup = sys.argv[:]
+        sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '-d', 'fast', '--rule', 'hma']
+        # capture stderr
+        old_stderr = sys.stderr
+        sys.stderr = StringIO()
+        try:
+            with pytest.raises(SystemExit):
+                parse_arguments()
+            stderr_output = sys.stderr.getvalue()
+            assert "This is a parameterized indicator" in stderr_output
+            assert "hma:parameters" in stderr_output
+            assert "hma:20,close" in stderr_output
+        finally:
+            sys.stderr = old_stderr
+            sys.argv = sys_argv_backup
+
+    def test_improved_help_for_unknown_indicators(self):
+        """Test that regular help is shown for unknown indicators."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        # Test unknown indicator
+        sys_argv_backup = sys.argv[:]
+        sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '-d', 'fast', '--rule', 'unknown']
+        # capture stderr
+        old_stderr = sys.stderr
+        sys.stderr = StringIO()
+        try:
+            with pytest.raises(SystemExit):
+                parse_arguments()
+            stderr_output = sys.stderr.getvalue()
+            assert "Use one of" in stderr_output
+            assert "This is a parameterized indicator" not in stderr_output
+        finally:
+            sys.stderr = old_stderr
+            sys.argv = sys_argv_backup
+
 
 class TestErrorHandling:
     """Test cases for error handling and help display."""
