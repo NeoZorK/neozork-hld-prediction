@@ -611,21 +611,7 @@ def show_indicator_help(indicator_name: str):
         show_enhanced_indicator_help(f"Help requested for indicator: {indicator_name}", indicator_name)
     except Exception:
         pass
-    # Fallback for supertrend
-    if indicator_name.lower() == 'supertrend':
-        print("\n\033[1;36mSuperTrend Help\033[0m")
-        print("Format: \033[1;33msupertrend:period,multiplier[,price_type]\033[0m")
-        print("\nParameters:")
-        print("  period (int): ATR period for SuperTrend calculation (required)")
-        print("  multiplier (float): ATR multiplier (required)")
-        print("  price_type (string): Price type for calculation - open or close (default: close)")
-        print("\nExamples:")
-        print("  supertrend:10,3.0")
-        print("  supertrend:14,2.5,close")
-        print("  supertrend:10,3.0,open")
-        print("  supertrend:50,2.5,close\n")
-        return
-    
+    # Fallback for supertrend (удалено, теперь всегда через расширенную справку)
     # Legacy help info (kept for reference)
     help_info = {
         'rsi': {
