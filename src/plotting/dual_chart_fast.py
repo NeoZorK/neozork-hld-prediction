@@ -912,6 +912,21 @@ def _get_indicator_hover_tool(indicator_name):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name == 'pivot':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Pivot", "@pivot{0.2f}"),
+                ("R1", "@r1{0.2f}"),
+                ("S1", "@s1{0.2f}"),
+                ("R2", "@r2{0.2f}"),
+                ("S2", "@s2{0.2f}"),
+                ("R3", "@r3{0.2f}"),
+                ("S3", "@s3{0.2f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     elif indicator_name in ('feargreed', 'fg'):
         return HoverTool(
             tooltips=[
