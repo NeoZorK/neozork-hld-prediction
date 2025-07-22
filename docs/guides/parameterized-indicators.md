@@ -64,9 +64,13 @@ uv run run_analysis.py show csv mn1 gbp --rule macd:8,21,5,open -d fastest
 ```
 
 ### Stochastic
+
+> **Note:** `stoch`, `stochastic`, and `stochoscillator` are exact synonyms. No matter which name you use, the CLI will always process and display the rule as `stoch:...`.
+
 ```bash
 --rule stoch:k_period,d_period,price_type
 --rule stochastic:k_period,d_period,price_type
+--rule stochoscillator:k_period,d_period,price_type
 ```
 
 **Parameters:**
@@ -76,18 +80,19 @@ uv run run_analysis.py show csv mn1 gbp --rule macd:8,21,5,open -d fastest
 
 **Examples:**
 ```bash
-# Default Stochastic settings
-uv run run_analysis.py show csv mn1 gbp --rule stoch -d fastest
-
-# Custom Stochastic with open prices
-uv run run_analysis.py show csv mn1 gbp --rule stoch:14,3,open -d fastest
-
-# Using full name 'stochastic'
+# All these commands are equivalent and will be processed as stoch:14,3,close
+uv run run_analysis.py show csv mn1 gbp --rule stoch:14,3,close -d fastest
 uv run run_analysis.py show csv mn1 gbp --rule stochastic:14,3,close -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule stochoscillator:14,3,close -d fastest
 
-# Custom Stochastic with full name
-uv run run_analysis.py show csv mn1 gbp --rule stochastic:21,5,open -d fastest
+# Custom Stochastic with open prices (all aliases work identically)
+uv run run_analysis.py show csv mn1 gbp --rule stoch:14,3,open -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule stochastic:14,3,open -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule stochoscillator:14,3,open -d fastest
 ```
+
+> **Result:**
+> Regardless of which alias you use, the CLI will always show and process the rule as `stoch:...` in all logs, help, and reports.
 
 ### EMA (Exponential Moving Average)
 ```bash
