@@ -780,7 +780,7 @@ def _plot_feargreed_indicator(indicator_fig, source, display_df):
 def _plot_supertrend_indicator(indicator_fig, source, display_df):
     """Plot SuperTrend indicator with modern cool style - smooth lines, glow effects, and enhanced visuals."""
     import numpy as np
-    from bokeh.models import BoxAnnotation
+    from bokeh.models import BoxAnnotation, ColumnDataSource
 
     # Check for required columns - support both old and new column names
     has_pprice = 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns
@@ -792,28 +792,28 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
 
     # Get data with fallback support
     idx = display_df['index'] if 'index' in display_df.columns else display_df.index
-    
     if has_pprice:
-        # Use PPrice1/PPrice2 method
         p1 = display_df['PPrice1']
         p2 = display_df['PPrice2']
         direction = display_df['Direction']
-        # Form SuperTrend line: if uptrend (direction > 0), use PPrice1, else PPrice2
         supertrend_values = np.where(direction > 0, p1, p2)
+        display_df = display_df.copy()
+        display_df['supertrend'] = supertrend_values
     else:
-        # Use direct supertrend column
         supertrend_values = display_df['supertrend']
         direction = display_df['Direction']
-    
-    # Modern color scheme
-    uptrend_color = '#00C851'      # Modern green
-    downtrend_color = '#ff4444'    # Modern red
-    neutral_color = '#FFC107'      # Golden yellow for neutral
-    
-    # Create segments for color segmentation
+    # Создаем ColumnDataSource с нужными полями
+    st_source = ColumnDataSource(data={
+        'index': idx,
+        'supertrend': supertrend_values,
+        'Direction': direction
+    })
+    # Цвета
+    uptrend_color = '#00C851'
+    downtrend_color = '#ff4444'
+    neutral_color = '#FFC107'
+    # Сегменты для линий
     segments = []
-    
-    # Safe first element access
     if hasattr(idx, 'iloc'):
         first_idx = idx.iloc[0]
         first_value = supertrend_values.iloc[0] if hasattr(supertrend_values, 'iloc') else supertrend_values[0]
@@ -822,158 +822,94 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         first_idx = idx[0]
         first_value = supertrend_values[0]
         first_dir = direction[0]
-    
-    # Determine initial color
     if first_dir > 0:
         current_color = uptrend_color
     elif first_dir < 0:
         current_color = downtrend_color
     else:
         current_color = neutral_color
-    
     current_segment = {'x': [first_idx], 'y': [first_value], 'color': current_color}
-    
-    # Build segments
     for i in range(1, len(idx)):
-        # Safe element access
         if hasattr(direction, 'iloc'):
             current_dir = direction.iloc[i]
             prev_dir = direction.iloc[i-1]
         else:
             current_dir = direction[i]
             prev_dir = direction[i-1]
-            
         if hasattr(idx, 'iloc'):
             current_idx = idx.iloc[i]
             prev_idx = idx.iloc[i-1]
         else:
             current_idx = idx[i]
             prev_idx = idx[i-1]
-            
         if hasattr(supertrend_values, 'iloc'):
             current_value = supertrend_values.iloc[i]
             prev_value = supertrend_values.iloc[i-1]
         else:
             current_value = supertrend_values[i]
             prev_value = supertrend_values[i-1]
-        
-        # Determine segment color
         if current_dir > 0:
             color = uptrend_color
         elif current_dir < 0:
             color = downtrend_color
         else:
             color = neutral_color
-            
-        # Start new segment if direction changed
         if current_dir != prev_dir:
             if len(current_segment['x']) > 0:
                 segments.append(current_segment)
             current_segment = {'x': [prev_idx], 'y': [prev_value], 'color': color}
-        
         current_segment['x'].append(current_idx)
         current_segment['y'].append(current_value)
-    
-    # Add last segment
     if len(current_segment['x']) > 0:
         segments.append(current_segment)
-    
-    # Draw segments with modern styling
+    # Рисуем линии через st_source
     for segment in segments:
         if len(segment['x']) > 1:
-            # Glow effect (wide transparent line)
             indicator_fig.line(
-                segment['x'], segment['y'],
-                line_color=segment['color'],
-                line_width=12,
-                line_alpha=0.15
+                x='index', y='supertrend', source=st_source,
+                line_color=segment['color'], line_width=12, line_alpha=0.15
             )
-            
-            # Main line with enhanced styling
             indicator_fig.line(
-                segment['x'], segment['y'],
-                line_color=segment['color'],
-                line_width=4,
-                line_alpha=0.9,
-                legend_label='SuperTrend'
+                x='index', y='supertrend', source=st_source,
+                line_color=segment['color'], line_width=4, line_alpha=0.9, legend_label='SuperTrend'
             )
-    
-    # Enhanced BUY/SELL signals with modern styling
+    # BUY/SELL сигналы через st_source
     buy_signals = []
     sell_signals = []
-    
     for i in range(1, len(direction)):
-        # Safe element access
         if hasattr(direction, 'iloc'):
             current_dir = direction.iloc[i]
             prev_dir = direction.iloc[i-1]
         else:
             current_dir = direction[i]
             prev_dir = direction[i-1]
-            
         if hasattr(idx, 'iloc'):
             current_idx = idx.iloc[i]
         else:
             current_idx = idx[i]
-            
         if hasattr(supertrend_values, 'iloc'):
             current_value = supertrend_values.iloc[i]
         else:
             current_value = supertrend_values[i]
-        
         if current_dir != prev_dir:
-            if current_dir > 0:  # BUY signal
-                buy_signals.append((current_idx, current_value))
-            else:  # SELL signal
-                sell_signals.append((current_idx, current_value))
-    
-    # Draw BUY signals with enhanced styling
+            if current_dir > 0:
+                buy_signals.append(i)
+            else:
+                sell_signals.append(i)
     if buy_signals:
-        buy_x, buy_y = zip(*buy_signals)
-        # Glow effect for buy signals
         indicator_fig.scatter(
-            buy_x, buy_y,
-            size=16,
-            color=uptrend_color,
-            marker='triangle',
-            alpha=0.3
+            x='index', y='supertrend', source=st_source,
+            size=12, color=uptrend_color, marker='triangle', alpha=0.9, legend_label='BUY Signal'
         )
-        # Main buy signal markers
-        indicator_fig.scatter(
-            buy_x, buy_y,
-            size=12,
-            color=uptrend_color,
-            marker='triangle',
-            alpha=0.9,
-            legend_label='BUY Signal'
-        )
-    
-    # Draw SELL signals with enhanced styling
     if sell_signals:
-        sell_x, sell_y = zip(*sell_signals)
-        # Glow effect for sell signals
         indicator_fig.scatter(
-            sell_x, sell_y,
-            size=16,
-            color=downtrend_color,
-            marker='inverted_triangle',
-            alpha=0.3
+            x='index', y='supertrend', source=st_source,
+            size=12, color=downtrend_color, marker='inverted_triangle', alpha=0.9, legend_label='SELL Signal'
         )
-        # Main sell signal markers
-        indicator_fig.scatter(
-            sell_x, sell_y,
-            size=12,
-            color=downtrend_color,
-            marker='inverted_triangle',
-            alpha=0.9,
-            legend_label='SELL Signal'
-        )
-    
-    # Add transparent trend zones for enhanced visual appeal
+    # Прозрачные зоны тренда (оставляем как есть)
     if len(idx) > 0:
         current_trend = direction.iloc[0] if hasattr(direction, 'iloc') else direction[0]
         zone_start = idx.iloc[0] if hasattr(idx, 'iloc') else idx[0]
-        
         for i in range(1, len(direction)):
             if hasattr(direction, 'iloc'):
                 current_dir = direction.iloc[i]
@@ -981,18 +917,14 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
             else:
                 current_dir = direction[i]
                 current_idx = idx[i]
-                
             if current_dir != current_trend or i == len(direction)-1:
                 zone_end = current_idx
-                zone_color = uptrend_color if current_trend > 0 else downtrend_color
-                
-                # Add transparent background zone
+                zone_color = uptrend_color if current_trend > 0 else (downtrend_color if current_trend < 0 else neutral_color)
                 indicator_fig.add_layout(BoxAnnotation(
                     left=zone_start, right=zone_end,
                     fill_color=zone_color, fill_alpha=0.08,
                     line_color=zone_color, line_alpha=0.2, line_width=1
                 ))
-                
                 zone_start = current_idx
                 current_trend = current_dir
 
@@ -1271,18 +1203,21 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
         )
     elif indicator_name == 'supertrend':
         # Enhanced hover tool for SuperTrend with fallback support
-        tooltips = [("Date", "@index{%F %H:%M}")]
-        
-        # Check which columns are available and add appropriate tooltips
+        tooltips = [
+            ("Date", "@index{%F %H:%M}"),
+        ]
+        # Always show SuperTrend value if possible
         if 'supertrend' in display_df.columns:
             tooltips.append(("SuperTrend", "@supertrend{0.5f}"))
         elif 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns:
             tooltips.append(("Support (PPrice1)", "@PPrice1{0.5f}"))
             tooltips.append(("Resistance (PPrice2)", "@PPrice2{0.5f}"))
-        
+        # Always show Direction if present
         if 'Direction' in display_df.columns:
             tooltips.append(("Direction", "@Direction{0}"))
-        
+        else:
+            # Fallback: show Direction as N/A if not present
+            tooltips.append(("Direction", "N/A"))
         return HoverTool(
             tooltips=tooltips,
             formatters={'@index': 'datetime'},
