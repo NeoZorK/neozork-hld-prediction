@@ -1468,9 +1468,9 @@ def plot_dual_chart_fast(
     # Plot indicator using the refactored function and get fibo_columns if needed
     fibo_columns = _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name)
     
-    # Add hover tooltip for indicator chart
-    hover_indicator = _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=fibo_columns)
-    indicator_fig.add_tools(hover_indicator)
+    # Remove hover from indicator chart to avoid multiple tooltips
+    # hover_indicator = _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=fibo_columns)
+    # indicator_fig.add_tools(hover_indicator)
     
     # Create layout
     layout_figures = column(main_fig, indicator_fig)
