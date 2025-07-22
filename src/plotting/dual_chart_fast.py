@@ -1223,12 +1223,12 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
     elif indicator_name == 'supertrend':
         return HoverTool(
             tooltips=[
-                ("Date", "@index{%F %H:%M}"),  # Only show date, remove SuperTrend and Direction to avoid "???" text
+                ("Date", "@index{%F %H:%M}"),
                 ("SuperTrend", "@supertrend{0.5f}"),
-                ("Direction", "@Direction{0.0f}")  # Show Direction as numeric value
+                ("Direction", "@Direction{0.0f}")
             ],
             formatters={'@index': 'datetime'},
-            mode='mouse'  # Changed from 'vline' to 'mouse' to match main chart and avoid conflicts
+            mode='vline'
         )
     else:
         # Generic hover for other indicators
