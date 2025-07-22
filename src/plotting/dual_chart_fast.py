@@ -821,8 +821,9 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         source.data['supertrend'] = supertrend_values
         
         # Also ensure PPrice1 and PPrice2 are in source for fallback hover
-        source.data['PPrice1'] = p1.fillna('N/A') if pd.api.types.is_numeric_dtype(p1) else p1
-        source.data['PPrice2'] = p2.fillna('N/A') if pd.api.types.is_numeric_dtype(p2) else p2
+        # Keep NaN values as NaN for proper numeric formatting in hover tool
+        source.data['PPrice1'] = p1
+        source.data['PPrice2'] = p2
         
         # Ensure Direction is also in the main source for hover tool
         if 'Direction' not in source.data:
@@ -1224,31 +1225,14 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
             mode='vline'
         )
     elif indicator_name == 'supertrend':
-        # Enhanced hover tool for SuperTrend with fallback support
-        tooltips = [
-            ("Date", "@index{%F %H:%M}"),
-        ]
-        # Always show SuperTrend value if possible
-        formatters = {'@index': 'datetime'}
-        if 'supertrend' in display_df.columns:
-            tooltips.append(("SuperTrend", "@supertrend{0.5f}"))
-            formatters['@supertrend'] = 'numeral'
-        elif 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns:
-            tooltips.append(("Support (PPrice1)", "@PPrice1{0.5f}"))
-            tooltips.append(("Resistance (PPrice2)", "@PPrice2{0.5f}"))
-            formatters['@PPrice1'] = 'numeral'
-            formatters['@PPrice2'] = 'numeral'
-        # Always show Direction if present
-        if 'Direction' in display_df.columns:
-            tooltips.append(("Direction", "@Direction{0}"))
-            formatters['@Direction'] = 'numeral'
-        else:
-            # Fallback: show Direction as N/A if not present
-            tooltips.append(("Direction", "N/A"))
         return HoverTool(
-            tooltips=tooltips,
-            formatters=formatters,
-            mode='mouse'  # Changed from vline to mouse to avoid overlap
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("SuperTrend", "@supertrend{0.5f}"),
+                ("Direction", "@Direction{0.0f}")  # 1 for uptrend, -1 for downtrend
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
         )
     else:
         # Generic hover for other indicators
