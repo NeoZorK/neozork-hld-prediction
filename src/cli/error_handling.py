@@ -435,6 +435,29 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Invalid period: Must be a positive integer.',
                 'Thresholds must be floats.'
             ]
+        },
+        'fibo': {
+            'name': 'Fibonacci Retracements',
+            'description': 'Plots Fibonacci retracement levels for trend analysis and support/resistance identification.',
+            'format': 'fibo:level1,level2,... OR fibo:all',
+            'parameters': [
+                ('levels', 'float list', 'Comma-separated list of retracement levels (e.g., 0.236,0.382,0.5,0.618,0.786) or "all" for standard levels', 'all'),
+            ],
+            'examples': [
+                ('fibo:all', 'Standard Fibonacci levels: 0.236, 0.382, 0.5, 0.618, 0.786'),
+                ('fibo:0.236,0.382,0.5,0.618,0.786', 'Custom Fibonacci levels'),
+                ('fibo:0.382,0.618', 'Minimal set of levels'),
+            ],
+            'tips': [
+                'Use "fibo:all" for standard analysis.',
+                'You can specify any subset of levels, e.g., "fibo:0.382,0.618".',
+                'Fibonacci retracements are best used in trending markets.',
+                'Combine with other indicators for confirmation.'
+            ],
+            'common_errors': [
+                'Invalid level: Levels must be floats between 0 and 1.',
+                'At least one level must be specified if not using "all".'
+            ]
         }
     }
     
