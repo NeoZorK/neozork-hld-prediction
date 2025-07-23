@@ -1299,18 +1299,35 @@ def parse_obv_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_stdev_parameters(params_str: str) -> tuple[str, dict]:
     """Parse Standard Deviation parameters: period,price_type"""
+    from .cli import show_indicator_help
+    # Handle empty string case
+    if not params_str.strip():
+        print("\n[ERROR] Standard Deviation requires exactly 2 parameters: period,price_type.\n")
+        show_indicator_help('stdev')
+        import sys
+        sys.exit(1)
+    
     params = params_str.split(',')
     if len(params) != 2:
-        raise ValueError(f"Standard Deviation requires exactly 2 parameters: period,price_type. Got: {params_str}")
+        print(f"\n[ERROR] Standard Deviation requires exactly 2 parameters: period,price_type. Got: {params_str}\n")
+        show_indicator_help('stdev')
+        import sys
+        sys.exit(1)
     
     try:
         period = int(float(params[0].strip()))  # Handle float values
         price_type = params[1].strip().lower()
     except (ValueError, IndexError) as e:
-        raise ValueError(f"Invalid Standard Deviation parameters: {params_str}. Error: {e}")
+        print(f"\n[ERROR] Invalid Standard Deviation parameters: {params_str}. Error: {e}\n")
+        show_indicator_help('stdev')
+        import sys
+        sys.exit(1)
     
     if price_type not in ['open', 'close']:
-        raise ValueError(f"Standard Deviation price_type must be 'open' or 'close', got: {price_type}")
+        print(f"\n[ERROR] Standard Deviation price_type must be 'open' or 'close', got: {price_type}\n")
+        show_indicator_help('stdev')
+        import sys
+        sys.exit(1)
     
     return 'stdev', {
         'stdev_period': period,

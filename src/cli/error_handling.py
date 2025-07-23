@@ -560,6 +560,33 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'ATR requires only one parameter: period'
             ]
         },
+        'stdev': {
+            'name': 'Standard Deviation',
+            'description': 'Volatility indicator that measures the degree of variation or dispersion of price data from its average. Higher values indicate higher price volatility.',
+            'format': 'stdev:period,price_type',
+            'parameters': [
+                ('period', 'int', 'Standard deviation calculation period (window size)', '20'),
+                ('price_type', 'string', 'Price type for calculation - open or close', 'close')
+            ],
+            'examples': [
+                ('stdev:20,close', 'Standard deviation with 20-period window using close prices'),
+                ('stdev:14,close', 'Standard deviation with 14-period window using close prices'),
+                ('stdev:10,open', 'Short-term standard deviation with 10-period window using open prices')
+            ],
+            'tips': [
+                'Standard period: 20 for balanced analysis',
+                'Shorter period = more responsive to recent volatility',
+                'Longer period = smoother, less sensitive to short-term spikes',
+                'Use for volatility analysis and risk assessment',
+                'Higher values suggest increased market uncertainty'
+            ],
+            'common_errors': [
+                'Invalid period: Must be a positive integer',
+                'Invalid price_type: Use only "open" or "close"',
+                'Missing parameters: Use format stdev:period,price_type',
+                'Period too short may give unreliable results'
+            ]
+        },
         'supertrend': {
             'name': 'SuperTrend',
             'description': 'Trend-following indicator that uses ATR to determine trend direction and generate buy/sell signals. Highlights trend reversals and dynamic support/resistance.',
