@@ -1289,10 +1289,14 @@ def parse_fibo_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_obv_parameters(params_str: str) -> tuple[str, dict]:
     """Parse OBV parameters: none required"""
+    from .cli import show_indicator_help
     # Allow empty parameters after colon (e.g., "obv:")
     if params_str.strip():
-        # If there are actual parameters, show help
-        raise ValueError(f"OBV does not require parameters. Got: {params_str}")
+        # If there are actual parameters, show enhanced help
+        print(f"\n[ERROR] OBV does not require parameters. Got: {params_str}\n")
+        show_indicator_help('obv')
+        import sys
+        sys.exit(1)
     
     return 'obv', {}
 

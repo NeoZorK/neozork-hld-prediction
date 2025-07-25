@@ -587,6 +587,30 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Period too short may give unreliable results'
             ]
         },
+        'obv': {
+            'name': 'OBV (On-Balance Volume)',
+            'description': 'Volume-based momentum indicator that uses volume flow to predict changes in stock price. Rising OBV suggests accumulation, falling OBV suggests distribution.',
+            'format': 'obv',
+            'parameters': [
+                ('None', 'N/A', 'OBV does not require any parameters', 'N/A')
+            ],
+            'examples': [
+                ('obv', 'Standard OBV calculation using volume and price data'),
+                ('obv:', 'Alternative format with colon (same as obv)')
+            ],
+            'tips': [
+                'OBV is a cumulative indicator that adds/subtracts volume based on price direction',
+                'Rising OBV with rising prices confirms uptrend strength',
+                'Falling OBV with falling prices confirms downtrend strength',
+                'Divergence between OBV and price can signal potential reversals',
+                'Use OBV to confirm price movements and identify accumulation/distribution'
+            ],
+            'common_errors': [
+                'Adding parameters: OBV does not accept any parameters',
+                'Use simple format: obv or obv:',
+                'OBV requires volume data in the dataset'
+            ]
+        },
         'supertrend': {
             'name': 'SuperTrend',
             'description': 'Trend-following indicator that uses ATR to determine trend direction and generate buy/sell signals. Highlights trend reversals and dynamic support/resistance.',
