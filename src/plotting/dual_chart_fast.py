@@ -1228,7 +1228,7 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
                 ("Direction", "@Direction{0.0f}")
             ],
             formatters={'@index': 'datetime'},
-            mode='vline'
+            mode='mouse'
         )
     else:
         # Generic hover for other indicators
