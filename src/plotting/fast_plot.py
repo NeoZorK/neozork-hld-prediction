@@ -172,10 +172,10 @@ def plot_indicator_results_fast(
         figures = [main_fig]
 
         # Determine if we should show separate charts based on rule
-        # Rules that should show separate charts: AUTO, PHLD, PV, SR (but NOT OHLCV)
+        # Rules that should show separate charts: SUPERTREND, AUTO, PHLD, PV, SR (but NOT OHLCV)
         # All other rules (like RSI, MACD, OHLCV, etc.) should not show separate charts
         rule_str = display_rule.upper() if isinstance(display_rule, str) else str(display_rule).upper()
-        show_separate_charts = any(key in rule_str for key in ['AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS'])
+        show_separate_charts = any(key in rule_str for key in ['SUPERTREND', 'AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS'])
         logger.print_debug(f"Fast plot: Rule string: '{rule_str}', show_separate_charts: {show_separate_charts}")
 
         if show_separate_charts:
@@ -323,9 +323,11 @@ def plot_indicator_results_fast(
         # --- Modern Supertrend subplot (if present) ---
         has_supertrend_direct = 'supertrend' in display_df.columns
         has_pprice_columns = 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns and 'Direction' in display_df.columns
+        is_supertrend_rule = 'SUPERTREND' in rule_str
         
-        if has_supertrend_direct or has_pprice_columns:
+        if has_supertrend_direct or has_pprice_columns or is_supertrend_rule:
             import numpy as np
+            logger.print_debug(f"Fast plot: Setting up SuperTrend subplot. Direct:{has_supertrend_direct}, PPrice:{has_pprice_columns}, Rule:{is_supertrend_rule}")
             # Note: ColumnDataSource is already imported at the top of the file
             supertrend_fig = figure(
                 width=width,
@@ -379,7 +381,7 @@ def plot_indicator_results_fast(
                         line_color=color,
                         line_width=4,
                         line_alpha=0.9,
-                        legend_label='SuperTrend' if trend_val == 1 else None
+                        legend_label='SuperTrend (Up)' if trend_val == 1 else ('SuperTrend (Down)' if trend_val == -1 else 'SuperTrend (Neutral)')
                     )
             # --- BUY/SELL сигналы ---
             buy_mask = (direction.shift(1, fill_value=0) <= 0) & (direction > 0)
