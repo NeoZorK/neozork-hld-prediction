@@ -805,18 +805,23 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
     if not (has_pprice or has_supertrend) or not has_direction:
         return
 
+    # Convert index to datetime if needed
+    if not isinstance(display_df.index, pd.DatetimeIndex):
+        display_df.index = pd.to_datetime(display_df.index)
+
     idx = display_df['index'] if 'index' in display_df.columns else display_df.index
+    
     if has_pprice:
         p1 = display_df['PPrice1']
         p2 = display_df['PPrice2']
         direction = display_df['Direction']
         
-        # Handle NaN values properly - only compute supertrend where both p1 and p2 are not NaN
-        valid_mask = ~(pd.isna(p1) | pd.isna(p2))
+        # Handle NaN values properly
+        valid_mask = ~(pd.isna(p1) | pd.isna(p2) | pd.isna(direction))
         supertrend_values = np.full(len(direction), np.nan)
-        supertrend_values[valid_mask] = np.where(direction[valid_mask] > 0, p1[valid_mask], p2[valid_mask])
+        supertrend_values[valid_mask] = np.where(direction[valid_mask] == 1, p1[valid_mask], p2[valid_mask])
         
-        # Add supertrend values to both display_df and source for hover tool
+        # Add values to both display_df and source for hover tool
         display_df['supertrend'] = supertrend_values
         source.data['supertrend'] = supertrend_values
         
@@ -834,27 +839,30 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         if 'Direction' not in source.data:
             source.data['Direction'] = direction
     
-    # Цвета и стиль как в fastest
-    uptrend_color = 'green'
-    downtrend_color = 'red'
-    signal_change_color = 'orange'
+    # Modern color scheme from fastest mode
+    uptrend_color = '#00C851'      # Bright Green
+    downtrend_color = '#ff4444'    # Bright Red
+    neutral_color = '#888888'      # Gray
+    glow_alpha = 0.15              # Transparency for glow effect
     
-    # Определяем тренд (аналог fastest)
-    price_series = display_df['Close'] if 'Close' in display_df.columns else display_df['close']
-    trend = np.where(price_series > supertrend_values, 1, -1)
-    trend = pd.Series(trend, index=display_df.index)
+    # Get trend from Direction column (1=uptrend, 2=downtrend, 0=neutral)
+    trend = display_df['Direction'].fillna(0)
+    
+    # Convert trend values for consistent color mapping (1=uptrend, -1=downtrend, 0=neutral)
+    trend_for_colors = np.where(trend == 1, 1, np.where(trend == 2, -1, 0))
     
     # Add trend information to source data for hover
-    trend_names = np.where(trend == 1, 'Uptrend', 'Downtrend')
+    trend_names = np.where(trend == 1, 'Uptrend', np.where(trend == 2, 'Downtrend', 'Neutral'))
     source.data['trend_name'] = trend_names
     
-    # Проверяем, что у нас есть данные для работы
+    # Verify data availability
     if len(trend) == 0:
         logger.print_warning("SuperTrend: No data available to plot")
         return
     
-    # Создаем массивы цветов для основного источника данных
-    line_colors = np.where(trend == 1, uptrend_color, downtrend_color)
+    # Create color arrays for visualization
+    line_colors = np.where(trend_for_colors == 1, uptrend_color, 
+                          np.where(trend_for_colors == -1, downtrend_color, neutral_color))
     source.data['line_colors'] = line_colors
     
     # Рисуем основную линию SuperTrend с правильными цветами через один источник данных
@@ -879,12 +887,12 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
                 segment_trend = trend.iloc[start_idx]
                 segment_color = uptrend_color if segment_trend == 1 else downtrend_color
                 
-                # Создаем отдельный источник для каждого сегмента, но с полными данными hover
+                # Create separate source for each segment with complete hover data
                 segment_data = display_df.iloc[segment_indices].copy()
                 segment_data['index'] = segment_data.index
                 segment_source = ColumnDataSource(segment_data)
                 
-                # Добавляем supertrend данные в сегментный источник для корректного hover
+                # Add SuperTrend data to segment source for proper hover functionality
                 segment_source.data['supertrend'] = supertrend_values[segment_indices]
                 if has_pprice:
                     segment_source.data['PPrice1'] = p1.iloc[segment_indices].fillna(0.0)
@@ -892,46 +900,92 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
                 segment_source.data['Direction'] = direction.iloc[segment_indices]
                 segment_source.data['trend_name'] = np.where(segment_trend == 1, 'Uptrend', 'Downtrend')
                 
-                # Рисуем сегмент
+                # Draw glow effect first (wider, more transparent line)
+                indicator_fig.line(
+                    x='index',
+                    y='supertrend',
+                    source=segment_source,
+                    line_color=segment_color,
+                    line_width=12,
+                    line_alpha=glow_alpha,
+                    legend_label=None
+                )
+                
+                # Draw main line segment
                 line_params = {
                     'x': 'index',
                     'y': 'supertrend',
                     'source': segment_source,
                     'line_color': segment_color,
-                    'line_width': 3
+                    'line_width': 3,
+                    'line_alpha': 0.9
                 }
                 
-                # Добавляем legend_label только для первого сегмента
+                # Add legend label only for first segment of each type
                 if start_idx == 0:
                     line_params['legend_label'] = f'SuperTrend ({"Uptrend" if segment_trend == 1 else "Downtrend"})'
                 
                 indicator_fig.line(**line_params)
     
-    # Добавляем BUY/SELL сигналы, если данные позволяют
+    # Add BUY/SELL signals and transparent trend zones
     idx_arr = np.array(idx)
     st_arr = np.array(supertrend_values)
     
-    # Найдем точки смены тренда
+    # Detect trend changes
     trend_diff = trend.diff().fillna(0)
-    buy_points = (trend_diff > 0)  # Смена с downtrend на uptrend
-    sell_points = (trend_diff < 0)  # Смена с uptrend на downtrend
+    buy_points = (trend_diff > 0)  # Change from downtrend to uptrend
+    sell_points = (trend_diff < 0)  # Change from uptrend to downtrend
     
+    # Add trend zones using BoxAnnotation
+    trend_changes = np.where(trend_diff != 0)[0]
+    if len(trend_changes) > 0:
+        zone_starts = np.append([0], trend_changes)
+        zone_ends = np.append(trend_changes, len(trend))
+        
+        for start_idx, end_idx in zip(zone_starts, zone_ends):
+            zone_trend = trend.iloc[start_idx]
+            zone_color = uptrend_color if zone_trend == 1 else downtrend_color if zone_trend == 2 else neutral_color
+            
+            indicator_fig.add_layout(BoxAnnotation(
+                left=idx[start_idx],
+                right=idx[min(end_idx, len(idx)-1)],
+                fill_color=zone_color,
+                fill_alpha=0.08,
+                line_color=None
+            ))
+    
+    # Add BUY signals with enhanced visibility
     if buy_points.any():
         buy_indices = trend.index[buy_points]
         buy_values = supertrend_values[buy_points]
+        # Add glow effect for buy signals
         indicator_fig.scatter(
             x=buy_indices, y=buy_values,
-            size=15, color='green', marker='triangle', alpha=0.9, 
-            legend_label='BUY Signal'
+            size=20, color=uptrend_color, marker='triangle',
+            alpha=glow_alpha, legend_label=None
+        )
+        # Main buy signal markers
+        indicator_fig.scatter(
+            x=buy_indices, y=buy_values,
+            size=12, color=uptrend_color, marker='triangle',
+            alpha=0.9, legend_label='BUY Signal'
         )
     
+    # Add SELL signals with enhanced visibility
     if sell_points.any():
         sell_indices = trend.index[sell_points]
         sell_values = supertrend_values[sell_points]
+        # Add glow effect for sell signals
         indicator_fig.scatter(
             x=sell_indices, y=sell_values,
-            size=15, color='red', marker='inverted_triangle', alpha=0.9,
-            legend_label='SELL Signal'
+            size=20, color=downtrend_color, marker='inverted_triangle',
+            alpha=glow_alpha, legend_label=None
+        )
+        # Main sell signal markers
+        indicator_fig.scatter(
+            x=sell_indices, y=sell_values,
+            size=12, color=downtrend_color, marker='inverted_triangle',
+            alpha=0.9, legend_label='SELL Signal'
         )
 
 
