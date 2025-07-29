@@ -907,23 +907,22 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
                     source=segment_source,
                     line_color=segment_color,
                     line_width=12,
-                    line_alpha=glow_alpha,
-                    legend_label=None
+                    line_alpha=glow_alpha
                 )
                 
                 # Draw main line segment
+                legend_text = 'SuperTrend ' + ('Uptrend' if segment_trend == 1 else 'Downtrend')
+                
+                # Always use a string for legend_label
                 line_params = {
                     'x': 'index',
                     'y': 'supertrend',
                     'source': segment_source,
                     'line_color': segment_color,
                     'line_width': 3,
-                    'line_alpha': 0.9
+                    'line_alpha': 0.9,
+                    'legend_label': str(legend_text if start_idx == 0 else 'SuperTrend')
                 }
-                
-                # Add legend label only for first segment of each type
-                if start_idx == 0:
-                    line_params['legend_label'] = f'SuperTrend ({"Uptrend" if segment_trend == 1 else "Downtrend"})'
                 
                 indicator_fig.line(**line_params)
     
@@ -962,13 +961,13 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         indicator_fig.scatter(
             x=buy_indices, y=buy_values,
             size=20, color=uptrend_color, marker='triangle',
-            alpha=glow_alpha, legend_label=None
+            alpha=glow_alpha
         )
         # Main buy signal markers
         indicator_fig.scatter(
             x=buy_indices, y=buy_values,
             size=12, color=uptrend_color, marker='triangle',
-            alpha=0.9, legend_label='BUY Signal'
+            alpha=0.9, legend_label='Buy'
         )
     
     # Add SELL signals with enhanced visibility
@@ -979,13 +978,13 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         indicator_fig.scatter(
             x=sell_indices, y=sell_values,
             size=20, color=downtrend_color, marker='inverted_triangle',
-            alpha=glow_alpha, legend_label=None
+            alpha=glow_alpha
         )
         # Main sell signal markers
         indicator_fig.scatter(
             x=sell_indices, y=sell_values,
             size=12, color=downtrend_color, marker='inverted_triangle',
-            alpha=0.9, legend_label='SELL Signal'
+            alpha=0.9, legend_label='Sell'
         )
 
 
