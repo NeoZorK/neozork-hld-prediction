@@ -728,32 +728,25 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     # Generate plot title
     plot_title = get_plot_title(data_info, point_size, estimated_point, args, selected_rule)
 
-    # Check if running in Docker, if so, force terminal plotting (unless forced mode)
+    # Check if running in Docker, if so, force terminal plotting
     in_docker = _detect_docker_environment()
-    force_display_mode = os.environ.get('FORCE_DISPLAY_MODE', 'false').lower() == 'true'
-    
-    if in_docker and not force_display_mode and args.draw != 'term':
+    if in_docker and args.draw != 'term':
         logger.print_info(f"Docker environment detected. Forcing terminal plotting regardless of specified '{args.draw}' method.")
         args.draw = 'term'
-    elif force_display_mode and args.draw != 'term':
-        logger.print_info(f"Using forced display mode: '{args.draw}'.")
 
     # Choose plotting function based on args.draw
     draw_mode = getattr(args, 'draw', 'fastest').lower()
     
-    # Docker override: force 'term' mode for all draw modes in Docker (unless disabled for testing or force mode)
+    # Docker override: force 'term' mode for all draw modes in Docker (unless disabled for testing)
     disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
-    force_display_mode = os.environ.get('FORCE_DISPLAY_MODE', 'false').lower() == 'true'
     
-    if IN_DOCKER and not (disable_docker_detection or force_display_mode) and draw_mode not in ['term']:
+    if IN_DOCKER and not disable_docker_detection and draw_mode not in ['term']:
         logger.print_info(f"Docker detected: forcing draw mode from '{draw_mode}' to 'term' (terminal plotting)")
         draw_mode = 'term'
-    elif IN_DOCKER and not (disable_docker_detection or force_display_mode) and draw_mode == 'term':
+    elif IN_DOCKER and not disable_docker_detection and draw_mode == 'term':
         logger.print_info("Docker detected: already using 'term' mode")
     elif disable_docker_detection:
         logger.print_info(f"Docker detection disabled for testing, using requested mode: '{draw_mode}'")
-    elif force_display_mode:
-        logger.print_info(f"Display mode forced to user selection: '{draw_mode}'")
     else:
         logger.print_info(f"Not in Docker or already 'term' mode. IN_DOCKER={IN_DOCKER}, draw_mode='{draw_mode}'")
     
