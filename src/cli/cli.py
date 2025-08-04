@@ -611,7 +611,7 @@ def show_indicator_help(indicator_name: str):
         show_enhanced_indicator_help(f"Help requested for indicator: {indicator_name}", indicator_name)
     except Exception:
         pass
-    # Fallback for supertrend (удалено, теперь всегда через расширенную справку)
+    # Fallback for supertrend (removed, now always through extended help)
     # Legacy help info (kept for reference)
     help_info = {
         'rsi': {
@@ -686,7 +686,7 @@ def show_indicator_help(indicator_name: str):
                 'stoch:21,5,open'
             ]
         },
-        'stochoscillator': 'stoch',  # Алиас, чтобы не было отдельного help
+        'stochoscillator': 'stoch',  # Alias to avoid separate help
         'ema': {
             'name': 'EMA (Exponential Moving Average)',
             'format': 'ema:period,price_type',
@@ -1560,10 +1560,10 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             raise ValueError(f"Unknown indicator: {indicator_name}")
             
     except Exception as e:
-        # Показываем cool help для параметризованных индикаторов при любой ошибке разбора
+        # Show cool help for parameterized indicators on any parsing error
         from .cli import show_indicator_help
         indicator_name = rule_str.split(':', 1)[0].lower().strip()
         show_indicator_help(indicator_name)
-        # После показа help завершаем выполнение с ошибкой
+        # After showing help, exit with error
         import sys
         sys.exit(1)

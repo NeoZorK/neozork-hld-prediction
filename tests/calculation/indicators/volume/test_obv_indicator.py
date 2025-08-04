@@ -131,7 +131,7 @@ class TestOBVIndicator:
         up_result = self.obv(up_data['Close'], up_data['Volume'])
         down_result = self.obv(down_data['Close'], down_data['Volume'])
         
-        # Проверяем, что результаты не пустые
+        # Check that results are not empty
         assert len(up_result) > 0
         assert len(down_result) > 0
 
@@ -188,6 +188,6 @@ class TestOBVIndicator:
         result1 = self.obv(price_up_vol_down['Close'], price_up_vol_down['Volume'])
         result2 = self.obv(price_down_vol_up['Close'], price_down_vol_up['Volume'])
         
-        # Проверяем, что результаты не пустые
+        # Check that results are not empty
         assert len(result1) > 0
         assert len(result2) > 0 

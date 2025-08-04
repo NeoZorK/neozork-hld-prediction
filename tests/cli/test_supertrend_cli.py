@@ -189,7 +189,7 @@ class TestSuperTrendCLI:
             parse_supertrend_parameters("")
         assert excinfo.value.code == 1
         mock_help.assert_called_with('supertrend')
-        # Проверяем, что был выведен текст ошибки
+        # Check that error text was output
         printed = "".join(str(call) for call in mock_print.call_args_list)
         assert "SuperTrend requires exactly 2-3 parameters" in printed
 

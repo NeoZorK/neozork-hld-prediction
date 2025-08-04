@@ -153,10 +153,10 @@ class TestCLIShowMode(unittest.TestCase):
         import pandas as pd
         import tempfile
         from pathlib import Path
-        # Путь к run_analysis.py
+        # Path to run_analysis.py
         script_path = os.path.join(self._project_root, "run_analysis.py")
         assert os.path.exists(script_path)
-        # Создаём временный parquet-файл с нужными колонками и именем mn1 в текущей рабочей директории
+        # Create temporary parquet file with required columns and name mn1 in current working directory
         data_dir = Path("data") / "cache" / "csv_converted"
         data_dir.mkdir(parents=True, exist_ok=True)
         temp_file = data_dir / "CSVExport_GBPUSD_PERIOD_MN1.parquet"
@@ -169,7 +169,7 @@ class TestCLIShowMode(unittest.TestCase):
         }, index=pd.date_range('2020-01-01', periods=3, freq='D'))
         df.to_parquet(temp_file)
         try:
-            # Запускаем команду
+            # Run command
             result = subprocess.run([
                 sys.executable, script_path, "show", "csv", "mn1", "-d", "fastest", "--rule", "cot:10,close"
             ], capture_output=True, text=True)

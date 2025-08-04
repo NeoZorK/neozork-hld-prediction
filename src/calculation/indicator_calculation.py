@@ -40,7 +40,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     
     if ':' in rule_input_str:
         indicator_name, indicator_params = parse_indicator_parameters(rule_input_str)
-        # Update the rule name to the parsed indicator name (всегда в верхнем регистре)
+        # Update the rule name to the parsed indicator name (always in uppercase)
         rule_input_str = indicator_name.upper()
     
     # Store original rule with parameters for display purposes

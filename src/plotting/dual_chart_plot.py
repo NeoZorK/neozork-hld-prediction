@@ -111,7 +111,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
         raise ValueError(f"Invalid rule format: {rule}")
     
     indicator_name = rule.split(':', 1)[0].lower().strip()
-    # Алиасы для MonteCarlo
+    # Aliases for MonteCarlo
     if indicator_name in ['monte', 'montecarlo', 'mc']:
         indicator_name = 'monte'
     params_str = rule.split(':', 1)[1].strip()
@@ -176,14 +176,14 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             rsi_values = calculate_rsi(price_series, period)
             
-            # Удаляем возможные дубликаты
+            # Remove possible duplicates
             for col in ['RSI', 'rsi', 'rsi_divergence', 'RSI_Divergence']:
                 if col in result_df.columns:
                     result_df = result_df.drop(columns=[col])
             
-            # Добавляем RSI
+            # Add RSI
             result_df['rsi'] = rsi_values
-            # Вычисляем дивергенцию: разница между изменением цены и изменением RSI
+            # Calculate divergence: difference between price change and RSI change
             price_diff = price_series.diff()
             rsi_diff = rsi_values.diff()
             result_df['rsi_divergence'] = price_diff - rsi_diff
@@ -333,7 +333,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['kelly_threshold_25'] = 0.25  # 25% threshold (max Kelly)
             
         elif indicator_name == 'putcallratio':
-            # Фильтруем пустые параметры
+            # Filter empty parameters
             params = [p.strip() for p in params if p.strip()]
             period = int(params[0]) if len(params) > 0 else 20
             price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
@@ -360,7 +360,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['putcallratio_neutral'] = 50  # Neutral level
             
         elif indicator_name == 'cot':
-            # Фильтруем пустые параметры
+            # Filter empty parameters
             params = [p.strip() for p in params if p.strip()]
             period = int(params[0]) if len(params) > 0 else 20
             price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
@@ -387,7 +387,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['cot_neutral'] = 50  # Neutral level
             
         elif indicator_name in ['feargreed', 'fg']:
-            # Фильтруем пустые параметры
+            # Filter empty parameters
             params = [p.strip() for p in params if p.strip()]
             period = int(params[0]) if len(params) > 0 else 14
             price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
@@ -492,12 +492,12 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             d_period = int(params[1]) if len(params) > 1 else 3
             price_type = PriceType.OPEN if len(params) > 2 and params[2].lower() == 'open' else PriceType.CLOSE
             
-            # Удаляем возможные дубликаты
+            # Remove possible duplicates
             for col in ['stoch_k', 'stoch_d', 'Stoch_K', 'Stoch_D']:
                 if col in result_df.columns:
                     result_df = result_df.drop(columns=[col])
             
-            # Рассчитываем Stochastic Oscillator
+            # Calculate Stochastic Oscillator
             high_series = df['High']
             low_series = df['Low']
             close_series = df['Close']
@@ -520,12 +520,12 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             d_period = int(params[1]) if len(params) > 1 else 3
             price_type = PriceType.OPEN if len(params) > 2 and params[2].lower() == 'open' else PriceType.CLOSE
             
-            # Удаляем возможные дубликаты
+            # Remove possible duplicates
             for col in ['stochosc_k', 'stochosc_d', 'StochOsc_K', 'StochOsc_D']:
                 if col in result_df.columns:
                     result_df = result_df.drop(columns=[col])
             
-            # Рассчитываем Stochastic Oscillator
+            # Calculate Stochastic Oscillator
             high_series = df['High']
             low_series = df['Low']
             close_series = df['Close']
@@ -544,7 +544,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['stochosc_oversold'] = 20
             
         elif indicator_name == 'supertrend':
-            # Используем централизованный парсер параметров supertrend
+            # Use centralized supertrend parameter parser
             try:
                 _, st_params = parse_supertrend_parameters(','.join(params))
             except Exception as e:
@@ -552,7 +552,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             period = st_params['supertrend_period']
             multiplier = st_params['multiplier']
             price_type = st_params['price_type']
-            # Удаляем возможные дубликаты
+            # Remove possible duplicates
             for col in ['supertrend', 'Supertrend', 'SUPERTREND']:
                 if col in result_df.columns:
                     result_df = result_df.drop(columns=[col])
@@ -720,7 +720,7 @@ def get_indicator_parameters(rule: str) -> Tuple[str, Dict[str, Any]]:
         return rule.lower(), {}
     
     indicator_name = rule.split(':', 1)[0].lower().strip()
-    # Алиасы для MonteCarlo
+    # Aliases for MonteCarlo
     if indicator_name in ['monte', 'montecarlo', 'mc']:
         indicator_name = 'monte'
     params_str = rule.split(':', 1)[1].strip()
