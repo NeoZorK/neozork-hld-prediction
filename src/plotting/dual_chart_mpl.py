@@ -120,7 +120,13 @@ def plot_dual_chart_mpl(
     
     # Format x-axis for main chart
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    ax1.xaxis.set_major_locator(mdates.DayLocator(interval=7))
+    # Calculate appropriate interval based on data length to avoid too many ticks
+    data_length = len(display_df)
+    if data_length > 1000:
+        interval = max(1, data_length // 50)  # Show max 50 ticks
+    else:
+        interval = max(1, data_length // 20)  # Show max 20 ticks for smaller datasets
+    ax1.xaxis.set_major_locator(mdates.DayLocator(interval=interval))
     plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45)
     
     # Indicator chart
@@ -313,7 +319,8 @@ def plot_dual_chart_mpl(
     
     # Format x-axis for indicator chart
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    ax2.xaxis.set_major_locator(mdates.DayLocator(interval=7))
+    # Use the same interval as main chart for consistency
+    ax2.xaxis.set_major_locator(mdates.DayLocator(interval=interval))
     plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45)
     
     # Adjust layout
