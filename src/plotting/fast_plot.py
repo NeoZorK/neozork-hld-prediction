@@ -128,6 +128,29 @@ def plot_indicator_results_fast(
                 source=down_source, fill_color='red', line_color='red'
             )
 
+        # Add support and resistance lines if available (for SR rule)
+        if 'PPrice1' in display_df.columns:
+            main_fig.line(
+                'index', 'PPrice1',
+                source=source,
+                line_color='blue',
+                line_width=2,
+                line_dash='dashed',
+                legend_label='Support',
+                alpha=0.8
+            )
+        
+        if 'PPrice2' in display_df.columns:
+            main_fig.line(
+                'index', 'PPrice2',
+                source=source,
+                line_color='red',
+                line_width=2,
+                line_dash='dashed',
+                legend_label='Resistance',
+                alpha=0.8
+            )
+
         # Add trading signals if available
         if 'Direction' in display_df.columns:
             buy_signals = display_df[display_df['Direction'] == 1]
