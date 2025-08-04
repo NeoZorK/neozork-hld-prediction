@@ -162,6 +162,50 @@ def plot_dual_chart_mpl(
                 ax2.axhline(y=oversold, color='green', linestyle='--', 
                            linewidth=2, label=f'Oversold ({oversold})')
     
+    elif indicator_name == 'stoch':
+        # Plot %K line
+        if 'stoch_k' in display_df.columns:
+            ax2.plot(display_df.index, display_df['stoch_k'], 
+                    color='blue', linewidth=3, label='%K')
+        
+        # Plot %D line
+        if 'stoch_d' in display_df.columns:
+            ax2.plot(display_df.index, display_df['stoch_d'], 
+                    color='orange', linewidth=3, label='%D')
+        
+        # Add overbought/oversold lines
+        if 'stoch_overbought' in display_df.columns:
+            overbought = display_df['stoch_overbought'].iloc[0]
+            ax2.axhline(y=overbought, color='red', linestyle='--', 
+                       linewidth=2, label=f'Overbought ({overbought})')
+        
+        if 'stoch_oversold' in display_df.columns:
+            oversold = display_df['stoch_oversold'].iloc[0]
+            ax2.axhline(y=oversold, color='green', linestyle='--', 
+                       linewidth=2, label=f'Oversold ({oversold})')
+    
+    elif indicator_name == 'stochoscillator':
+        # Plot %K line
+        if 'stochosc_k' in display_df.columns:
+            ax2.plot(display_df.index, display_df['stochosc_k'], 
+                    color='blue', linewidth=3, label='%K')
+        
+        # Plot %D line
+        if 'stochosc_d' in display_df.columns:
+            ax2.plot(display_df.index, display_df['stochosc_d'], 
+                    color='orange', linewidth=3, label='%D')
+        
+        # Add overbought/oversold lines
+        if 'stochosc_overbought' in display_df.columns:
+            overbought = display_df['stochosc_overbought'].iloc[0]
+            ax2.axhline(y=overbought, color='red', linestyle='--', 
+                       linewidth=2, label=f'Overbought ({overbought})')
+        
+        if 'stochosc_oversold' in display_df.columns:
+            oversold = display_df['stochosc_oversold'].iloc[0]
+            ax2.axhline(y=oversold, color='green', linestyle='--', 
+                       linewidth=2, label=f'Oversold ({oversold})')
+    
     elif indicator_name == 'macd':
         if 'macd' in display_df.columns:
             ax2.plot(display_df.index, display_df['macd'], 
