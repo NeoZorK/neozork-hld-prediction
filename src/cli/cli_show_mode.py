@@ -61,6 +61,26 @@ try:
 except ImportError:
     display_universal_trading_metrics = None
 
+def _force_terminal_mode_in_docker(args):
+    """
+    Force terminal mode in Docker environment for show commands.
+    This ensures that show csv gbp commands always use -d term in Docker/container.
+    """
+    # Check if running in Docker
+    IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
+    disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
+    
+    if IN_DOCKER and not disable_docker_detection:
+        draw_method = getattr(args, 'draw', 'fastest')
+        if draw_method not in ['term']:
+            print(f"Docker detected: forcing draw mode from '{draw_method}' to 'term' (terminal plotting)")
+            args.draw = 'term'
+            return True
+        else:
+            print("Docker detected: already using 'term' mode")
+            return True
+    return False
+
 def show_help():
     """
     Displays help for the 'show' mode with colorful formatting.
@@ -490,6 +510,9 @@ def handle_show_mode(args):
     Handles the 'show' mode logic: finds files, displays info, and potentially triggers plot or indicator calculation.
     Returns timing and metrics data for execution summary.
     """
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
+    
     # Info message about export flags
     print("Note: Export flags (--export-parquet, --export-csv, --export-json) are only allowed in demo mode. For real data, use the recommended workflow: download/convert, show+export, then show ind.")
     # Initialize timing and metrics tracking
@@ -730,14 +753,9 @@ def _plot_auto_display(args, df, file_info, metrics):
     
     draw_method = getattr(args, 'draw', 'fastest')
     
-    # Check if running in Docker and force terminal mode if needed
-    import os
-    IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
-    disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
-    
-    if IN_DOCKER and not disable_docker_detection and draw_method not in ['term']:
-        print(f"Docker detected: forcing draw mode from '{draw_method}' to 'term' (terminal plotting)")
-        draw_method = 'term'
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
+    draw_method = getattr(args, 'draw', 'fastest')
     
     print(f"\nDrawing AUTO display plot with method: '{draw_method}'...")
     try:
@@ -906,6 +924,9 @@ def _plot_indicator_calculation_result(args, original_df, result_df, file_info, 
     # Track plotting time
     t_plot_start = time.perf_counter()
     
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
+    
     print(f"\nDrawing plot after indicator calculation with method: '{args.draw}'...")
     try:
         # For terminal mode with any rule
@@ -1021,6 +1042,10 @@ def _plot_raw_ohlcv_data(args, df, data_info, file_info, point_size, metrics):
     # Just plot raw OHLCV data without indicator calculation
     selected_rule = 'Raw_OHLCV_Data'  # Default name for raw data display
     estimated_point = True
+    
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
+    
     draw_method = getattr(args, 'draw', 'fastest')
     print(f"Drawing raw OHLCV data chart using method: '{draw_method}'...")
     
@@ -1321,6 +1346,9 @@ def _search_indicator_files(format_filter, remaining_keywords):
 
 def _handle_multiple_parquet_files(args, found_files, format_filter, metrics):
     """Handle multiple parquet files with drawing backend."""
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
+    
     # For indicator mode, parquet files should behave like CSV/JSON files:
     # - List files when multiple matches
     # - Only show chart/content when a single file remains after filtering
@@ -1395,6 +1423,9 @@ def handle_indicator_show_mode(args):
     Handles the 'show ind' mode logic for indicator files.
     Returns timing and metrics data for execution summary.
     """
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
+    
     # Initialize timing and metrics tracking
     metrics = _initialize_metrics()
     
@@ -1454,6 +1485,9 @@ def _plot_indicator_parquet_file(args, df, file_info, metrics):
     args.mode = 'show'
     if not hasattr(args, 'rule') or args.rule is None:
         args.rule = 'AUTO'  # Show all calculated indicators
+    
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
     
     # For indicator files, ignore calculation-related flags (--point, -t, -i)
     # These flags are only for calculation mode, not for reading existing indicator files
