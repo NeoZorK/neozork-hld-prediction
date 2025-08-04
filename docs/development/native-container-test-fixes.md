@@ -1,25 +1,25 @@
 # Native Container Test Fixes
 
-## Проблема
+## Problem
 
-При запуске команды `uv run pytest tests/native-container/ -n auto` вне контейнера падали 2 теста:
+When running the command `uv run pytest tests/native-container/ -n auto` outside the container, 2 tests failed:
 
 1. `test_entrypoint_script_interactive_shell` - AssertionError: Should start interactive bash shell
 2. `test_entrypoint_script_welcome_message` - AssertionError: Welcome message should exist
 
-## Причина
+## Cause
 
-Тесты проверяли наличие определенных строк в файле `container-entrypoint.sh`, но:
+The tests were checking for specific strings in the `container-entrypoint.sh` file, but:
 
-1. Тест искал `exec bash -i`, а в файле было только `exec bash`
-2. Тест искал `NeoZork HLD Prediction Native Container Started`, но такого сообщения не было
-3. Логика определения окружения была неправильной - тесты выполнялись вне контейнера, хотя должны были пропускаться
+1. The test was looking for `exec bash -i`, but the file only had `exec bash`
+2. The test was looking for `NeoZork HLD Prediction Native Container Started`, but such message didn't exist
+3. The environment detection logic was incorrect - tests were running outside the container, although they should have been skipped
 
-## Решение
+## Solution
 
-### 1. Исправлена логика определения окружения
+### 1. Fixed environment detection logic
 
-Добавлены новые функции для правильного определения окружения:
+Added new functions for proper environment detection:
 
 ```python
 def is_running_in_native_container():
@@ -40,14 +40,14 @@ def should_skip_native_container_tests():
     return False, None
 ```
 
-### 2. Исправлены проверки в тестах
+### 2. Fixed checks in tests
 
-- `test_entrypoint_script_interactive_shell` теперь проверяет `exec bash` вместо `exec bash -i`
-- `test_entrypoint_script_welcome_message` теперь проверяет `NeoZork HLD Prediction` и `Usage Guide` вместо несуществующих строк
+- `test_entrypoint_script_interactive_shell` now checks for `exec bash` instead of `exec bash -i`
+- `test_entrypoint_script_welcome_message` now checks for `NeoZork HLD Prediction` and `Usage Guide` instead of non-existent strings
 
-### 3. Обновлены все тесты
+### 3. Updated all tests
 
-Все тесты в `TestNativeContainerFeatures` теперь используют новую логику пропуска:
+All tests in `TestNativeContainerFeatures` now use the new skip logic:
 
 ```python
 should_skip, reason = should_skip_native_container_tests()
@@ -55,25 +55,25 @@ if should_skip:
     pytest.skip(reason)
 ```
 
-## Результат
+## Result
 
-После исправлений:
+After fixes:
 
-- ✅ Все тесты проходят успешно
-- ✅ Тесты правильно пропускаются вне контейнера с понятным сообщением
-- ✅ Сохранена существующая логика и код
-- ✅ Тесты будут работать внутри native container окружения
+- ✅ All tests pass successfully
+- ✅ Tests are properly skipped outside the container with clear message
+- ✅ Existing logic and code preserved
+- ✅ Tests will work inside native container environment
 
-## Запуск тестов
+## Running Tests
 
 ```bash
-# Вне контейнера - тесты пропускаются
+# Outside container - tests are skipped
 uv run pytest tests/native-container/ -n auto
 
-# Внутри native container - тесты выполняются
+# Inside native container - tests are executed
 NATIVE_CONTAINER=true uv run pytest tests/native-container/ -n auto
 ```
 
-## Файлы изменены
+## Files Changed
 
-- `tests/native-container/test_native_container_features.py` - исправлена логика определения окружения и проверки в тестах 
+- `tests/native-container/test_native_container_features.py` - fixed environment detection logic and test checks 

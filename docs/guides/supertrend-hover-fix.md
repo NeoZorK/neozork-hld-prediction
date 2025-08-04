@@ -1,44 +1,44 @@
 # SuperTrend Hover Tool Fix (Fast Mode Only)
 
-## Проблема
+## Problem
 
-При использовании команды с режимом `-d fast`:
+When using the command with `-d fast` mode:
 ```bash
 uv run run_analysis.py show csv gbp -d fast --rule supertrend:10,3,open
 ```
 
-В hover tool отображались значения "???" для полей:
+The hover tool displayed "???" values for fields:
 - Date
 - SuperTrend  
 - Direction
 
-**Примечание**: Это исправление применяется только для режима `-d fast`. Другие режимы (fastest, plotly, mpl и т.д.) не затронуты.
+**Note**: This fix applies only to `-d fast` mode. Other modes (fastest, plotly, mpl, etc.) are not affected.
 
-## Причина проблемы
+## Problem Cause
 
-Проблема была в том, что hover tool для SuperTrend индикатора использовал неправильные колонки данных:
+The problem was that the hover tool for the SuperTrend indicator used incorrect data columns:
 
-1. **Неправильный режим hover**: Использовался `mode='mouse'` вместо `mode='vline'`
-2. **Неправильные колонки данных**: Hover tool всегда использовал `@supertrend`, но данные могли быть в колонках `PPrice1`/`PPrice2`
-3. **Отсутствие данных в ColumnDataSource**: Не все необходимые колонки передавались в источник данных
+1. **Incorrect hover mode**: Used `mode='mouse'` instead of `mode='vline'`
+2. **Incorrect data columns**: Hover tool always used `@supertrend`, but data could be in `PPrice1`/`PPrice2` columns
+3. **Missing data in ColumnDataSource**: Not all necessary columns were passed to the data source
 
-## Решение
+## Solution
 
-### 1. Исправление режима hover
+### 1. Fix hover mode
 
-Изменен режим hover с `mouse` на `vline` для лучшей совместимости:
+Changed hover mode from `mouse` to `vline` for better compatibility:
 
 ```python
-# Было:
+# Before:
 mode='mouse'
 
-# Стало:
+# After:
 mode='vline'
 ```
 
-### 2. Динамический выбор колонок
+### 2. Dynamic column selection
 
-Добавлена логика для динамического выбора правильных колонок:
+Added logic for dynamic selection of correct columns:
 
 ```python
 elif indicator_name == 'supertrend':
@@ -68,9 +68,9 @@ elif indicator_name == 'supertrend':
         )
 ```
 
-### 3. Улучшение передачи данных в ColumnDataSource
+### 3. Improve data passing to ColumnDataSource
 
-Добавлено обеспечение того, что все необходимые колонки передаются в источник данных:
+Added ensuring that all necessary columns are passed to the data source:
 
 ```python
 # Add supertrend values to both display_df and source for hover tool
@@ -90,41 +90,41 @@ if source is not None:
     source.data['index'] = display_df['index'] if 'index' in display_df.columns else display_df.index
 ```
 
-## Тестирование
+## Testing
 
-Создан комплексный тест `tests/plotting/test_fast_supertrend_hover_fix.py` который проверяет:
+Created comprehensive test `tests/plotting/test_fast_supertrend_hover_fix.py` which checks:
 
-1. **Hover с колонками PPrice1/PPrice2**: Проверяет, что используется `@PPrice1`
-2. **Hover с прямой колонкой supertrend**: Проверяет, что используется `@supertrend`
-3. **Форматтеры**: Проверяет правильность форматтеров даты
-4. **Отсутствие колонок**: Проверяет работу при отсутствии некоторых колонок
-5. **Отсутствие Direction**: Проверяет работу без колонки Direction
+1. **Hover with PPrice1/PPrice2 columns**: Verifies that `@PPrice1` is used
+2. **Hover with direct supertrend column**: Verifies that `@supertrend` is used
+3. **Formatters**: Verifies correctness of date formatters
+4. **Missing columns**: Verifies work when some columns are missing
+5. **Missing Direction**: Verifies work without Direction column
 
-## Затронутые файлы
+## Affected Files
 
-- `src/plotting/fast_plot.py` - Основное исправление для режима fast
-- `tests/plotting/test_fast_supertrend_hover_fix.py` - Новый тест для режима fast
+- `src/plotting/fast_plot.py` - Main fix for fast mode
+- `tests/plotting/test_fast_supertrend_hover_fix.py` - New test for fast mode
 
-## Результат
+## Result
 
-После исправления hover tool для SuperTrend индикатора корректно отображает:
+After the fix, the hover tool for SuperTrend indicator correctly displays:
 
-- **Date**: Правильная дата в формате YYYY-MM-DD HH:MM
-- **SuperTrend**: Числовое значение SuperTrend с точностью 0.5f
-- **Direction**: Числовое значение направления тренда с точностью 0.0f
+- **Date**: Correct date in YYYY-MM-DD HH:MM format
+- **SuperTrend**: Numeric SuperTrend value with 0.5f precision
+- **Direction**: Numeric trend direction value with 0.0f precision
 
-## Проверка исправления
+## Verification
 
-Для проверки исправления выполните:
+To verify the fix, run:
 
 ```bash
-# Тест hover tool для режима fast
+# Test hover tool for fast mode
 uv run pytest tests/plotting/test_fast_supertrend_hover_fix.py -v
 
-# Проверка в браузере (только режим fast)
+# Check in browser (fast mode only)
 uv run run_analysis.py show csv gbp -d fast --rule supertrend:10,3,open
 ```
 
-График откроется в браузере, и при наведении на SuperTrend индикатор будут отображаться корректные значения вместо "???".
+The chart will open in the browser, and when hovering over the SuperTrend indicator, correct values will be displayed instead of "???".
 
-**Важно**: Это исправление работает только для режима `-d fast`. Для других режимов (fastest, plotly, mpl) используйте соответствующие команды. 
+**Important**: This fix works only for `-d fast` mode. For other modes (fastest, plotly, mpl), use the corresponding commands. 
