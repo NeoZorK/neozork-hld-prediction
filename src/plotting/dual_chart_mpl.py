@@ -44,12 +44,13 @@ def plot_dual_chart_mpl(
     Returns:
         matplotlib.figure.Figure: Figure object
     """
-    # Set default output path
+    # Set default output path only if not None
     if output_path is None:
-        output_path = "results/plots/dual_chart_mpl.png"
-    
-    # Ensure output directory exists
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        # This will be handled in the display logic at the end
+        pass
+    else:
+        # Ensure output directory exists
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
     # Prepare data
     display_df = df.copy()
@@ -326,9 +327,39 @@ def plot_dual_chart_mpl(
     # Adjust layout
     plt.tight_layout()
     
-    # Save plot
-    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    # Display plot if output_path is None, otherwise save
+    if output_path is None:
+        plt.show()
+        logger.print_info("Dual chart displayed.")
+    else:
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        logger.print_info(f"Dual chart saved to: {output_path}")
     
-    logger.print_info(f"Dual chart saved to: {output_path}")
+    return fig
+
+
+def plot_dual_chart_mpl_display(
+    df: pd.DataFrame,
+    rule: str,
+    title: str = '',
+    width: int = 1800,
+    height: int = 1100,
+    layout: Optional[Dict[str, Any]] = None,
+    **kwargs
+) -> Any:
+    """
+    Create and display dual chart for mpl mode without saving to file.
     
-    return fig 
+    Args:
+        df (pd.DataFrame): OHLCV data with indicators
+        rule (str): Rule string (e.g., 'macd:12,26,9,close')
+        title (str): Plot title
+        width (int): Plot width
+        height (int): Plot height
+        layout (dict, optional): Layout configuration
+        **kwargs: Additional arguments
+        
+    Returns:
+        Any: Plot object
+    """
+    return plot_dual_chart_mpl(df, rule, title, None, width, height, layout, **kwargs) 
