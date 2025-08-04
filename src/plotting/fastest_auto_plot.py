@@ -170,8 +170,8 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
         linecolor="#b0b0b0",
         mirror=True,
         automargin=True,
-        nticks=30,  # Максимум делений
-        rangeslider=dict(visible=False),  # Полностью убираем
+                    nticks=30,  # Maximum divisions
+            rangeslider=dict(visible=False),  # Completely remove
         rangeselector=None
     )
     for i in range(2, 2 + n_panels + 1):
@@ -192,8 +192,8 @@ def plot_auto_fastest_parquet(parquet_path, output_html_path, trading_rule_name=
             linecolor="#b0b0b0",
             mirror=True,
             automargin=True,
-            nticks=30,  # Максимум делений
-            rangeslider=dict(visible=False),  # Полностью убираем
+            nticks=30,  # Maximum divisions
+            rangeslider=dict(visible=False),  # Completely remove
             rangeselector=None
         )
 

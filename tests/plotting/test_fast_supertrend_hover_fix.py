@@ -88,7 +88,7 @@ class TestFastSupertrendHoverFix(unittest.TestCase):
             p2 = display_df['PPrice2']
             direction = display_df['Direction']
             supertrend_val = np.where(direction > 0, p1, p2)
-            st_col = 'PPrice1'  # для hover
+            st_col = 'PPrice1'  # for hover
             
             # Create DataFrame for source
             st_df = display_df.copy()

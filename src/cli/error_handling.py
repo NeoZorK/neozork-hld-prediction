@@ -205,8 +205,8 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'k_period too large for dataset size'
             ]
         },
-        'stochoscillator': 'stoch',  # Алиас, чтобы не было отдельного help
-        'stochastic': 'stoch',      # Алиас, чтобы не было отдельного help
+        'stochoscillator': 'stoch',  # Alias to avoid separate help
+        'stochastic': 'stoch',      # Alias to avoid separate help
         'monte': {
             'name': 'Monte Carlo Simulation',
             'description': 'Uses statistical simulation to forecast potential price movements and identify trading opportunities.',
@@ -231,10 +231,10 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Too many simulations may cause memory issues'
             ]
         },
-        'montecarlo': 'monte',      # Алиас для Monte Carlo
-        'mc': 'monte',              # Алиас для Monte Carlo
-        'fg': 'feargreed',          # Алиас для Fear & Greed
-        'tsforecast': 'tsf',        # Алиас для Time Series Forecast
+        'montecarlo': 'monte',      # Alias for Monte Carlo
+        'mc': 'monte',              # Alias for Monte Carlo
+        'fg': 'feargreed',          # Alias for Fear & Greed
+        'tsforecast': 'tsf',        # Alias for Time Series Forecast
         'ema': {
             'name': 'EMA (Exponential Moving Average)',
             'description': 'Weighted moving average that gives more importance to recent prices.',

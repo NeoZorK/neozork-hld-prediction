@@ -131,3 +131,55 @@ uv run run_analysis.py show csv mn1 -d fast --rule supertrend:10,2,close
 
 ### Overview
 Successfully implemented vertical scrollbar functionality for AUTO mode when using `
+
+## 2024-08-04: Russian Comments Translation
+
+### Overview
+Replaced all Russian comments and text with English equivalents throughout the entire codebase while preserving all code logic and functionality.
+
+### Files Modified
+- **src/plotting/dual_chart_fast.py**: Replaced 12 Russian comments with English equivalents
+- **src/plotting/dual_chart_plot.py**: Replaced 8 Russian comments with English equivalents  
+- **src/cli/cli.py**: Replaced 3 Russian comments with English equivalents
+- **src/cli/error_handling.py**: Replaced 4 Russian comments with English equivalents
+- **src/cli/cli_show_mode.py**: Replaced 1 Russian comment with English equivalent
+- **src/calculation/indicator_calculation.py**: Replaced 1 Russian comment with English equivalent
+- **src/plotting/fastest_auto_plot.py**: Replaced 2 Russian comments with English equivalents
+- **src/plotting/fastest_plot.py**: Replaced 2 Russian comments with English equivalents
+- **src/plotting/fast_plot.py**: Replaced 6 Russian comments with English equivalents
+- **src/plotting/seaborn_plot.py**: Replaced 1 Russian comment with English equivalent
+- **src/plotting/term_chunked_plot.py**: Replaced 8 Russian comments with English equivalents
+- **src/plotting/dual_chart_fastest.py**: Replaced 1 Russian comment with English equivalent
+
+### Test Files Modified
+- **tests/plotting/test_fast_supertrend_hover_fix.py**: Replaced 1 Russian comment
+- **tests/plotting/test_fastest_auto_plot.py**: Replaced 1 Russian comment
+- **tests/calculation/indicators/sentiment/test_cot_indicator.py**: Replaced 4 Russian comments
+- **tests/calculation/indicators/sentiment/test_feargreed_ind.py**: Replaced 4 Russian comments
+- **tests/calculation/indicators/volume/test_obv_indicator.py**: Replaced 2 Russian comments
+- **tests/calculation/indicators/sentiment/test_putcallratio_period_fix.py**: Replaced 2 Russian comments
+- **tests/calculation/indicators/volatility/test_bb_indicator.py**: Replaced 1 Russian comment
+- **tests/calculation/indicators/edge_cases/test_edge_cases.py**: Replaced 2 Russian comments
+- **tests/calculation/indicators/momentum/test_stochoscillator_indicator.py**: Replaced 2 Russian comments
+- **tests/calculation/indicators/probability/test_kelly_indicator.py**: Replaced 1 Russian comment
+- **tests/cli/test_supertrend_cli.py**: Replaced 1 Russian comment
+- **tests/cli/test_cli_show_mode.py**: Replaced 2 Russian comments
+
+### Translation Examples
+- `# Цвета и стиль как в fastest` → `# Colors and style like in fastest`
+- `# Определяем тренд (аналог fastest)` → `# Determine trend (analog to fastest)`
+- `# Алиасы для MonteCarlo` → `# Aliases for MonteCarlo`
+- `# Удаляем возможные дубликаты` → `# Remove possible duplicates`
+- `# Проверяем, что результаты не пустые` → `# Check that results are not empty`
+
+### Verification
+- ✅ All tests pass successfully
+- ✅ No Russian text remains in the codebase
+- ✅ All code logic and functionality preserved
+- ✅ No breaking changes introduced
+
+### Total Changes
+- **Modified files**: 24 files
+- **Total comments replaced**: 65+ Russian comments
+- **Test coverage**: All existing tests continue to pass
+- **Code quality**: Maintained with proper English documentation

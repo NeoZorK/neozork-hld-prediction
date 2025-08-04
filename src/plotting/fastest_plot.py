@@ -263,8 +263,8 @@ def plot_indicator_results_fastest(
                 linecolor="#b0b0b0",
                 mirror=True,
                 automargin=True,
-                nticks=30,  # Максимум делений
-                rangeslider=dict(visible=False),  # Полностью убираем
+                            nticks=30,  # Maximum divisions
+            rangeslider=dict(visible=False),  # Completely remove
             )
 
         # Show time labels only on the bottom chart
@@ -292,8 +292,8 @@ def plot_indicator_results_fastest(
             linecolor="#b0b0b0",
             mirror=True,
             automargin=True,
-            nticks=30,  # Максимум делений
-            rangeslider=dict(visible=False),  # Полностью убираем
+            nticks=30,  # Maximum divisions
+            rangeslider=dict(visible=False),  # Completely remove
         )
 
     # Save and open

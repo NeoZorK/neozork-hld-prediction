@@ -335,23 +335,23 @@ def plot_indicator_results_fast(
                 tools="pan,wheel_zoom,box_zoom,reset",
                 active_scroll='wheel_zoom'
             )
-            # --- Подготовка данных ---
+            # --- Data preparation ---
             idx = display_df['index']
             if has_pprice_columns:
                 p1 = display_df['PPrice1']
                 p2 = display_df['PPrice2']
                 direction = display_df['Direction']
                 supertrend_val = np.where(direction > 0, p1, p2)
-                st_col = 'PPrice1'  # для hover
+                st_col = 'PPrice1'  # for hover
             else:
                 supertrend_val = display_df['supertrend']
                 direction = display_df['Direction']
                 st_col = 'supertrend'
-            # Цвета
-            uptrend_color = '#00C851'      # Зеленый
-            downtrend_color = '#ff4444'    # Красный
-            neutral_color = '#888888'      # Серый
-            # Формируем DataFrame для source
+            # Colors
+            uptrend_color = '#00C851'      # Green
+            downtrend_color = '#ff4444'    # Red
+            neutral_color = '#888888'      # Gray
+            # Form DataFrame for source
             st_df = display_df.copy()
             st_df[st_col] = supertrend_val  # Ensure correct column for hover
             st_df['supertrend_val'] = supertrend_val
@@ -365,13 +365,13 @@ def plot_indicator_results_fast(
                 st_df['Direction'] = direction
                 
             st_source = ColumnDataSource(st_df)
-            # --- Рисуем линии по группам (BUY/SELL/NO SIGNAL) ---
+            # --- Draw lines by groups (BUY/SELL/NO SIGNAL) ---
             for trend_val, color in [(1, uptrend_color), (-1, downtrend_color), (0, neutral_color)]:
                 mask = (st_df['trend_group'] == trend_val)
                 if mask.sum() > 1:
                     group_df = st_df[mask]
                     group_source = ColumnDataSource(group_df)
-                    # Glow-эффект
+                    # Glow effect
                     supertrend_fig.line(
                         x='index', y='supertrend_val',
                         source=group_source,
@@ -379,7 +379,7 @@ def plot_indicator_results_fast(
                         line_width=12,
                         line_alpha=0.15
                     )
-                    # Основная линия
+                    # Main line
                     supertrend_fig.line(
                         x='index', y='supertrend_val',
                         source=group_source,
@@ -388,7 +388,7 @@ def plot_indicator_results_fast(
                         line_alpha=0.9,
                         legend_label='SuperTrend' if trend_val == 1 else None
                     )
-            # --- BUY/SELL сигналы ---
+            # --- BUY/SELL signals ---
             buy_mask = (direction.shift(1, fill_value=0) <= 0) & (direction > 0)
             sell_mask = (direction.shift(1, fill_value=0) >= 0) & (direction < 0)
             if buy_mask.any():
@@ -401,7 +401,7 @@ def plot_indicator_results_fast(
                     x=idx[sell_mask], y=st_df['supertrend_val'][sell_mask],
                     size=12, color=downtrend_color, marker='inverted_triangle', alpha=0.9, legend_label='SELL Signal'
                 )
-            # --- Прозрачные зоны тренда ---
+            # --- Transparent trend zones ---
             if len(idx) > 0:
                 current_trend = direction.iloc[0] if hasattr(direction, 'iloc') else direction[0]
                 zone_start = idx.iloc[0] if hasattr(idx, 'iloc') else idx[0]

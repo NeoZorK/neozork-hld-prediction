@@ -248,8 +248,8 @@ def _get_relevant_columns_for_rule(rule_name: str, all_columns=None) -> list:
     elif canonical_rule == 'PV_HighLow':
         return base_cols + ['PPrice1', 'PPrice2']
     elif canonical_rule.lower() == 'putcallratio':
-        # Показываем все стандартные и специфичные для индикатора колонки
-        # (названия могут отличаться, но обычно это PutCallRatio, PutCallSignal, PutCallLabel)
+        # Show all standard and indicator-specific columns
+        # (names may differ, but usually these are PutCallRatio, PutCallSignal, PutCallLabel)
         return base_cols + ['PutCallRatio', 'PutCallSignal', 'PutCallLabel']
     else:
         return base_cols + ['PPrice1', 'PPrice2', 'Direction']

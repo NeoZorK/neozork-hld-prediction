@@ -203,11 +203,11 @@ class TestPutCallRatioPeriodFix:
         putcall_2 = result_2['PutCallRatio'].dropna()
         putcall_50 = result_50['PutCallRatio'].dropna()
         
-        # Проверяем, что длина валидных значений равна n-period
+        # Check that the length of valid values equals n-period
         assert len(putcall_2) == n - 2, f"For period 2: expected {n-2}, got {len(putcall_2)}"
         assert len(putcall_50) == n - 50, f"For period 50: expected {n-50}, got {len(putcall_50)}"
         
-        # Они должны быть разными
+        # They should be different
         common_index = putcall_2.index.intersection(putcall_50.index)
         if len(common_index) > 5:
             correlation = putcall_2.loc[common_index].corr(putcall_50.loc[common_index])

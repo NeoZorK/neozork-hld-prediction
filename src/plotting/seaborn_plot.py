@@ -167,7 +167,7 @@ def plot_indicator_results_seaborn(
             ax_panel.set_ylabel('Volume')
         else:
             line_color = color_map.get(indicator_col, 'purple')
-            ax_panel.set_prop_cycle(None)  # Сброс цветового цикла
+            ax_panel.set_prop_cycle(None)  # Reset color cycle
             logger.print_debug(f"Seaborn: Plotting {indicator_col} with color {line_color}")
             ax_panel.plot(idx, indicator_data, color=line_color, linestyle='-', label=indicator_name)
             if indicator_col in ['PV', 'Pressure', 'pressure_vector', 'pressure']:

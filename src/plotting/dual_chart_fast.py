@@ -843,12 +843,12 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         if source is not None and 'supertrend' not in source.data:
             source.data['supertrend'] = supertrend_values
     
-    # Цвета и стиль как в fastest
+    # Colors and style like in fastest
     uptrend_color = 'rgba(0, 200, 81, 0.95)'
     downtrend_color = 'rgba(255, 68, 68, 0.95)'
     signal_change_color = 'rgba(255, 193, 7, 0.95)'
     
-    # Определяем тренд (аналог fastest)
+    # Determine trend (analog to fastest)
     price_series = display_df['Close'] if 'Close' in display_df.columns else display_df['close']
     trend = np.where(price_series > supertrend_values, 1, -1)
     trend = pd.Series(trend, index=display_df.index)
@@ -863,7 +863,7 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         # was redundant and causing the "3 dates" issue
     
     # Now draw the visual segments for styling
-    # Сегментация с учетом смены сигнала
+    # Segmentation with signal change consideration
     segments = []
     color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
     idx_arr = np.array(idx)
@@ -872,11 +872,11 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
     seg_x, seg_y = [idx_arr[0]], [st_arr[0]]
     for i in range(1, len(idx_arr)):
         current_color = color_arr[i]
-        # Смена сигнала
+        # Signal change
         if (trend.iloc[i] == 1 and trend.iloc[i-1] == -1) or (trend.iloc[i] == -1 and trend.iloc[i-1] == 1):
             if len(seg_x) > 1:
                 segments.append((seg_x.copy(), seg_y.copy(), last_color))
-            # Вставляем желтый сегмент
+            # Insert yellow segment
             segments.append(([idx_arr[i-1], idx_arr[i]], [st_arr[i-1], st_arr[i]], signal_change_color))
             seg_x, seg_y = [idx_arr[i]], [st_arr[i]]
             last_color = current_color
@@ -889,7 +889,7 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
     if len(seg_x) > 0:
         segments.append((seg_x, seg_y, last_color))
     
-    # Рисуем линии и glow с разными подписями в легенде
+    # Draw lines and glow with different labels in legend
     legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
     for seg_x, seg_y, seg_color in segments:
         if len(seg_x) > 1:
@@ -898,7 +898,7 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
                 x=seg_x, y=seg_y,
                 line_color=seg_color.replace('0.95', '0.3'), line_width=10, line_alpha=1.0
             )
-            # Легенда
+            # Legend
             if seg_color == uptrend_color:
                 legend_label = 'SuperTrend (Uptrend)'
             elif seg_color == downtrend_color:
@@ -933,7 +933,7 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
             
             indicator_fig.line(**line_kwargs)
     
-    # BUY/SELL сигналы с белым контуром и pulse
+    # BUY/SELL signals with white outline and pulse
     buy_idx = idx_arr[(trend == 1) & (trend.shift(1) == -1)]
     sell_idx = idx_arr[(trend == -1) & (trend.shift(1) == 1)]
     buy_y = st_arr[(trend == 1) & (trend.shift(1) == -1)]
@@ -960,7 +960,7 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
             x=sell_idx, y=sell_y,
             size=28, color='rgba(255, 68, 68, 0.4)', marker='circle', alpha=0.4
         )
-    # Прозрачные зоны тренда
+    # Transparent trend zones
     trend_changes = idx_arr[trend != trend.shift(1)]
     if len(trend_changes) > 0:
         for i in range(len(trend_changes)):
@@ -1230,7 +1230,7 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
             mode='vline'
         )
     elif indicator_name == 'fibo':
-        # Динамический тултип по реальным fibo колонкам
+        # Dynamic tooltip based on real fibo columns
         tooltips = [("Date", "@index{%F %H:%M}")]
         if fibo_columns:
             for col in fibo_columns:
@@ -1290,7 +1290,7 @@ def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
         'hma': _plot_hma_indicator,
         'tsf': _plot_tsf_indicator,
         'monte': _plot_monte_indicator,
-        'montecarlo': _plot_monte_indicator,  # Алиас для Monte Carlo
+        'montecarlo': _plot_monte_indicator,  # Alias for Monte Carlo
         'kelly': _plot_kelly_indicator,
         'donchain': _plot_donchain_indicator,
         'fibo': _plot_fibo_indicator,
@@ -1301,11 +1301,11 @@ def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
         'rsi_mom': _plot_rsi_mom_indicator,
         'rsi_div': _plot_rsi_div_indicator,
         'stoch': _plot_stoch_indicator,
-        'putcallratio': _plot_putcallratio_indicator,  # Добавлено для поддержки Put/Call Ratio
-        'cot': _plot_cot_indicator,  # Добавлено для поддержки COT
-        'feargreed': _plot_feargreed_indicator,  # Добавлено для поддержки Fear & Greed
-        'fg': _plot_feargreed_indicator,         # Алиас
-        'supertrend': _plot_supertrend_indicator,  # Добавлено для поддержки SuperTrend
+        'putcallratio': _plot_putcallratio_indicator,  # Added for Put/Call Ratio support
+        'cot': _plot_cot_indicator,  # Added for COT support
+        'feargreed': _plot_feargreed_indicator,  # Added for Fear & Greed support
+        'fg': _plot_feargreed_indicator,         # Alias
+        'supertrend': _plot_supertrend_indicator,  # Added for SuperTrend support
     }
     fibo_columns = None
     if indicator_name == 'fibo':

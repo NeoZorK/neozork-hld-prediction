@@ -76,7 +76,7 @@ def plot_dual_chart_fastest(
     # Create subplots: main chart (60%) and indicator chart (40%)
     fig = make_subplots(
         rows=2, cols=1,
-        subplot_titles=(None, None),  # Без заголовков внутри графика
+        subplot_titles=(None, None),  # Without titles inside the chart
         vertical_spacing=0.04,
         row_heights=[0.62, 0.38],
         specs=[[{"secondary_y": False}],
