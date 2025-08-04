@@ -829,12 +829,19 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
             # Ensure Direction is also in the main source for hover tool
             if 'Direction' not in source.data:
                 source.data['Direction'] = direction
+                
+            # Ensure all required columns are in source for proper hover functionality
+            source.data['index'] = display_df['index'] if 'index' in display_df.columns else display_df.index
     else:
         supertrend_values = display_df['supertrend']
         direction = display_df['Direction']
         # Ensure Direction is in the main source for hover tool
         if source is not None and 'Direction' not in source.data:
             source.data['Direction'] = direction
+            
+        # Ensure supertrend values are in source for hover tool
+        if source is not None and 'supertrend' not in source.data:
+            source.data['supertrend'] = supertrend_values
     
     # Цвета и стиль как в fastest
     uptrend_color = 'rgba(0, 200, 81, 0.95)'
@@ -905,6 +912,25 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
             line_kwargs = dict(x=seg_x, y=seg_y, line_color=seg_color, line_width=5, line_alpha=1.0)
             if show_legend:
                 line_kwargs['legend_label'] = legend_label
+            
+            # Create line with proper source for hover
+            segment_source = ColumnDataSource({
+                'x': seg_x,
+                'y': seg_y,
+                'supertrend': seg_y  # Add supertrend column for hover
+            })
+            
+            # Update line_kwargs to use source properly
+            line_kwargs = dict(
+                x='x', y='y',  # Use column names when using source
+                source=segment_source,
+                line_color=seg_color, 
+                line_width=5, 
+                line_alpha=1.0
+            )
+            if show_legend:
+                line_kwargs['legend_label'] = legend_label
+            
             indicator_fig.line(**line_kwargs)
     
     # BUY/SELL сигналы с белым контуром и pulse
@@ -946,6 +972,16 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
                 fill_color=zone_color, fill_alpha=1.0,
                 line_color=zone_color, line_alpha=0.2, line_width=1
             ))
+    
+    # Add hover tool for SuperTrend indicator
+    hover_supertrend = HoverTool(
+        tooltips=[
+            ("Value", "@supertrend{0.5f}")
+        ],
+        formatters={},
+        mode='vline'
+    )
+    indicator_fig.add_tools(hover_supertrend)
 
 
 def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
@@ -1221,14 +1257,13 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
             mode='vline'
         )
     elif indicator_name == 'supertrend':
+        # Always use supertrend column (created in _plot_supertrend_indicator)
         return HoverTool(
             tooltips=[
-                ("Date", "@index{%F %H:%M}"),
-                ("SuperTrend", "@supertrend{0.5f}"),
-                ("Direction", "@Direction{0.0f}")
+                ("Value", "@supertrend{0.5f}")
             ],
-            formatters={'@index': 'datetime'},
-            mode='mouse'
+            formatters={},
+            mode='vline'
         )
     else:
         # Generic hover for other indicators
@@ -1458,9 +1493,10 @@ def plot_dual_chart_fast(
     # Plot indicator using the refactored function and get fibo_columns if needed
     fibo_columns = _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name)
     
-    # Add hover tool for indicator chart
-    hover_indicator = _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=fibo_columns)
-    indicator_fig.add_tools(hover_indicator)
+    # Add hover tool for indicator chart (only for non-supertrend indicators)
+    if indicator_name != 'supertrend':
+        hover_indicator = _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=fibo_columns)
+        indicator_fig.add_tools(hover_indicator)
     
     # Create layout
     layout_figures = column(main_fig, indicator_fig)

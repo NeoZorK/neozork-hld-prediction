@@ -357,6 +357,13 @@ def plot_indicator_results_fast(
             st_df['supertrend_val'] = supertrend_val
             st_df['trend_color'] = np.where(direction > 0, uptrend_color, np.where(direction < 0, downtrend_color, neutral_color))
             st_df['trend_group'] = np.where(direction > 0, 1, np.where(direction < 0, -1, 0))
+            
+            # Ensure all required columns are in the source for proper hover functionality
+            if 'index' not in st_df.columns:
+                st_df['index'] = st_df.index
+            if 'Direction' not in st_df.columns:
+                st_df['Direction'] = direction
+                
             st_source = ColumnDataSource(st_df)
             # --- Рисуем линии по группам (BUY/SELL/NO SIGNAL) ---
             for trend_val, color in [(1, uptrend_color), (-1, downtrend_color), (0, neutral_color)]:
@@ -416,16 +423,13 @@ def plot_indicator_results_fast(
                         zone_start = current_idx
                         current_trend = current_dir
             # --- Hover tool ---
+            # Simple hover tool like in fastest mode - only show value
             hover_st = HoverTool(
                 tooltips=[
-                    ("Date", "@index{%F %H:%M}"),
-                    ("SuperTrend", f"@{st_col}{{0.5f}}"),
-                    ("Direction", "@Direction{0}")
+                    ("Value", f"@{st_col}{{0.5f}}")
                 ],
                 formatters={
-                    "@index": "datetime",
-                    f"@{st_col}": "numeral",
-                    "@Direction": "numeral"
+                    f"@{st_col}": "numeral"
                 },
                 mode='vline'
             )

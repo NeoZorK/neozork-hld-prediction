@@ -1514,6 +1514,107 @@ def plot_dual_chart_fastest(
                 ),
                 row=2, col=1
             )
+        elif 'pprice1' in display_df.columns and 'pprice2' in display_df.columns:
+            # Fallback for PPrice1/PPrice2 columns (like in dual_chart_fast.py)
+            p1 = display_df['pprice1']
+            p2 = display_df['pprice2']
+            direction = display_df['direction'] if 'direction' in display_df.columns else pd.Series(0, index=display_df.index)
+            
+            # Create supertrend column for consistency
+            supertrend_values = np.where(direction > 0, p1, p2)
+            display_df['supertrend'] = supertrend_values
+            
+            # Use the same logic as when supertrend column exists
+            price_series = display_df['close']
+            trend = np.where(price_series > supertrend_values, 1, -1)
+            trend = pd.Series(trend, index=display_df.index)
+            idx = display_df.index
+            
+            # Three-color scheme for signal changes
+            uptrend_color = 'rgba(0, 200, 81, 0.95)'  # Modern green for uptrend
+            downtrend_color = 'rgba(255, 68, 68, 0.95)'  # Modern red for downtrend
+            signal_change_color = 'rgba(255, 193, 7, 0.95)'  # Golden yellow for signal changes
+            
+            # Detect signal change points
+            buy_signals = (trend == 1) & (trend.shift(1) == -1)
+            sell_signals = (trend == -1) & (trend.shift(1) == 1)
+            signal_changes = buy_signals | sell_signals
+            
+            # Create color array with signal change highlighting
+            color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
+            
+            # Enhanced segmentation with signal change detection
+            segments = []
+            last_color = color_arr[0]
+            seg_x, seg_y = [idx[0]], [supertrend_values[0]]
+            
+            for i in range(1, len(idx)):
+                current_color = color_arr[i]
+                
+                # Check if this is a signal change point
+                if signal_changes.iloc[i]:
+                    # Add previous segment
+                    if len(seg_x) > 1:
+                        segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                    
+                    # Add signal change point with golden color
+                    segments.append(([idx[i-1], idx[i]], [supertrend_values[i-1], supertrend_values[i]], signal_change_color))
+                    
+                    # Start new segment
+                    seg_x, seg_y = [idx[i]], [supertrend_values[i]]
+                    last_color = current_color
+                elif current_color != last_color:
+                    # Regular trend change (not a signal)
+                    segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                    seg_x, seg_y = [idx[i-1]], [supertrend_values[i-1]]
+                    last_color = current_color
+                
+                seg_x.append(idx[i])
+                seg_y.append(supertrend_values[i])
+            
+            # Add final segment
+            if len(seg_x) > 0:
+                segments.append((seg_x, seg_y, last_color))
+            
+            # Add SuperTrend line segments with enhanced styling
+            legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
+            for seg_x, seg_y, seg_color in segments:
+                # Main SuperTrend line with smooth curve
+                # Determine legend name based on color
+                if seg_color == uptrend_color:
+                    legend_name = 'SuperTrend (Uptrend)'
+                elif seg_color == downtrend_color:
+                    legend_name = 'SuperTrend (Downtrend)'
+                elif seg_color == signal_change_color:
+                    legend_name = 'SuperTrend (Signal Change)'
+                else:
+                    legend_name = 'SuperTrend'
+                
+                show_legend = not legend_shown.get(seg_color, False)
+                legend_shown[seg_color] = True
+                
+                fig.add_trace(
+                    go.Scatter(
+                        x=seg_x,
+                        y=seg_y,
+                        mode='lines',
+                        name=legend_name,
+                        line=dict(
+                            color=seg_color,
+                            width=5,
+                            shape='spline'  # Smooth curve for modern look
+                        ),
+                        showlegend=show_legend,
+                        hoverinfo='y+name',
+                        hoverlabel=dict(
+                            bgcolor=seg_color,
+                            font_size=12,
+                            font_color='white',
+                            font_family='Arial, sans-serif'
+                        )
+                    ),
+                    row=2, col=1
+                )
     
     # Update layout with modern styling
     fig.update_layout(
