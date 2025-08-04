@@ -662,16 +662,30 @@ def create_dual_chart_layout(mode: str, rule: str) -> Dict[str, Any]:
         'stdev': 'Standard Deviation',
         'adx': 'ADX',
         'sar': 'SAR',
-        'supertrend': 'SuperTrend'
+        'supertrend': 'SuperTrend',
+        'stoch': 'Stochastic',
+        'stochoscillator': 'Stochastic Oscillator'
     }
     
     display_name = indicator_display_names.get(indicator_name, indicator_name.upper())
+    
+    # Create title with parameters for all indicators except PV, PHLD, SR, AUTO, OHLCV
+    excluded_indicators = {'pv', 'phld', 'sr', 'auto', 'ohlcv', 'pressure_vector', 'support_resistants', 'predict_high_low_direction'}
+    
+    if indicator_name not in excluded_indicators and ':' in rule:
+        # Extract parameters from rule
+        params_part = rule.split(':', 1)[1]
+        # Create title with indicator name and parameters
+        indicator_title = f"{display_name} with params: {params_part}"
+    else:
+        # For excluded indicators or rules without parameters, use just the display name
+        indicator_title = display_name
     
     return {
         'mode': mode,
         'main_chart_height': 0.6,
         'indicator_chart_height': 0.4,
-        'indicator_name': display_name,
+        'indicator_name': indicator_title,
         'show_volume': False,  # No volume on any chart as per requirements
         'indicator_rule': rule
     }
