@@ -166,11 +166,11 @@ Replaced all Russian comments and text with English equivalents throughout the e
 - **tests/cli/test_cli_show_mode.py**: Replaced 2 Russian comments
 
 ### Translation Examples
-- `# Цвета и стиль как в fastest` → `# Colors and style like in fastest`
-- `# Определяем тренд (аналог fastest)` → `# Determine trend (analog to fastest)`
-- `# Алиасы для MonteCarlo` → `# Aliases for MonteCarlo`
-- `# Удаляем возможные дубликаты` → `# Remove possible duplicates`
-- `# Проверяем, что результаты не пустые` → `# Check that results are not empty`
+- `# Colors and style like in fastest` (from Russian)
+- `# Determine trend (analog to fastest)` (from Russian)
+- `# Aliases for MonteCarlo` (from Russian)
+- `# Remove possible duplicates` (from Russian)
+- `# Check that results are not empty` (from Russian)
 
 ### Verification
 - ✅ All tests pass successfully
