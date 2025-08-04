@@ -145,8 +145,12 @@ def plot_dual_chart_mpl(
     indicator_title = layout['indicator_name'] if layout else 'Indicator'
     ax2.set_title(indicator_title, fontsize=12, fontweight='bold')
     
+    # Set y-axis label based on indicator type
+    y_axis_label = 'Value'  # Default label
+    
     # Add indicator based on type
     if indicator_name == 'rsi':
+        y_axis_label = 'RSI Value'
         if 'rsi' in display_df.columns:
             ax2.plot(display_df.index, display_df['rsi'], 
                     color='purple', linewidth=3, label='RSI')
@@ -163,6 +167,7 @@ def plot_dual_chart_mpl(
                            linewidth=2, label=f'Oversold ({oversold})')
     
     elif indicator_name == 'stoch':
+        y_axis_label = 'Stochastic %'
         # Plot %K line
         if 'stoch_k' in display_df.columns:
             ax2.plot(display_df.index, display_df['stoch_k'], 
@@ -185,6 +190,7 @@ def plot_dual_chart_mpl(
                        linewidth=2, label=f'Oversold ({oversold})')
     
     elif indicator_name == 'stochoscillator':
+        y_axis_label = 'Stochastic Oscillator %'
         # Plot %K line
         if 'stochosc_k' in display_df.columns:
             ax2.plot(display_df.index, display_df['stochosc_k'], 
@@ -207,6 +213,7 @@ def plot_dual_chart_mpl(
                        linewidth=2, label=f'Oversold ({oversold})')
     
     elif indicator_name == 'macd':
+        y_axis_label = 'MACD Value'
         if 'macd' in display_df.columns:
             ax2.plot(display_df.index, display_df['macd'], 
                     color='blue', linewidth=3, label='MACD')
@@ -225,11 +232,13 @@ def plot_dual_chart_mpl(
         ax2.axhline(y=0, color='gray', linestyle='--', linewidth=1, alpha=0.5)
     
     elif indicator_name == 'ema':
+        y_axis_label = 'Price'
         if 'ema' in display_df.columns:
             ax2.plot(display_df.index, display_df['ema'], 
                     color='orange', linewidth=3, label='EMA')
     
     elif indicator_name == 'bb':
+        y_axis_label = 'Price'
         if 'bb_upper' in display_df.columns:
             ax2.plot(display_df.index, display_df['bb_upper'], 
                     color='blue', linewidth=2, label='Upper Band')
@@ -240,89 +249,102 @@ def plot_dual_chart_mpl(
         
         if 'bb_lower' in display_df.columns:
             ax2.plot(display_df.index, display_df['bb_lower'], 
-                    color='blue', linewidth=2, label='Lower Band')
+                    color='red', linewidth=2, label='Lower Band')
     
     elif indicator_name == 'atr':
+        y_axis_label = 'ATR Value'
         if 'atr' in display_df.columns:
             ax2.plot(display_df.index, display_df['atr'], 
-                    color='brown', linewidth=3, label='ATR')
+                    color='orange', linewidth=3, label='ATR')
     
     elif indicator_name == 'cci':
+        y_axis_label = 'CCI Value'
         if 'cci' in display_df.columns:
             ax2.plot(display_df.index, display_df['cci'], 
                     color='purple', linewidth=3, label='CCI')
-            
-            # Add CCI reference lines
-            ax2.axhline(y=100, color='red', linestyle='--', linewidth=1, label='CCI +100')
-            ax2.axhline(y=-100, color='green', linestyle='--', linewidth=1, label='CCI -100')
+        
+        # Add overbought/oversold lines
+        if 'cci_overbought' in display_df.columns:
+            overbought = display_df['cci_overbought'].iloc[0]
+            ax2.axhline(y=overbought, color='red', linestyle='--', 
+                       linewidth=2, label=f'Overbought ({overbought})')
+        
+        if 'cci_oversold' in display_df.columns:
+            oversold = display_df['cci_oversold'].iloc[0]
+            ax2.axhline(y=oversold, color='green', linestyle='--', 
+                       linewidth=2, label=f'Oversold ({oversold})')
     
     elif indicator_name == 'vwap':
+        y_axis_label = 'Price'
         if 'vwap' in display_df.columns:
             ax2.plot(display_df.index, display_df['vwap'], 
-                    color='orange', linewidth=3, label='VWAP')
+                    color='blue', linewidth=3, label='VWAP')
     
     elif indicator_name == 'pivot':
+        y_axis_label = 'Price'
         if 'pivot' in display_df.columns:
             ax2.plot(display_df.index, display_df['pivot'], 
-                    color='blue', linewidth=2, label='Pivot')
+                    color='gray', linewidth=2, label='Pivot')
         
-        if 'r1' in display_df.columns:
-            ax2.plot(display_df.index, display_df['r1'], 
-                    color='red', linestyle='--', linewidth=1, label='R1')
+        if 'support' in display_df.columns:
+            ax2.plot(display_df.index, display_df['support'], 
+                    color='green', linewidth=2, label='Support')
         
-        if 's1' in display_df.columns:
-            ax2.plot(display_df.index, display_df['s1'], 
-                    color='green', linestyle='--', linewidth=1, label='S1')
+        if 'resistance' in display_df.columns:
+            ax2.plot(display_df.index, display_df['resistance'], 
+                    color='red', linewidth=2, label='Resistance')
     
     elif indicator_name == 'hma':
+        y_axis_label = 'Price'
         if 'hma' in display_df.columns:
             ax2.plot(display_df.index, display_df['hma'], 
-                    color='purple', linewidth=3, label='HMA')
+                    color='orange', linewidth=3, label='HMA')
     
     elif indicator_name == 'tsf':
+        y_axis_label = 'Price'
         if 'tsf' in display_df.columns:
             ax2.plot(display_df.index, display_df['tsf'], 
-                    color='cyan', linewidth=3, label='TSF')
+                    color='blue', linewidth=3, label='TSF')
     
     elif indicator_name == 'monte':
-        # Add Monte Carlo forecast line (main line)
-        if 'montecarlo' in display_df.columns:
-            ax2.plot(display_df.index, display_df['montecarlo'], 
-                    color='blue', linewidth=3, label='Monte Carlo Forecast')
+        y_axis_label = 'Price'
+        if 'monte_upper' in display_df.columns:
+            ax2.plot(display_df.index, display_df['monte_upper'], 
+                    color='green', linewidth=2, label='Upper Band')
         
-        # Add Monte Carlo signal line
-        if 'montecarlo_signal' in display_df.columns:
-            ax2.plot(display_df.index, display_df['montecarlo_signal'], 
-                    color='red', linewidth=2, label='Signal Line')
-        
-        # Add Monte Carlo histogram
-        if 'montecarlo_histogram' in display_df.columns:
-            # Color histogram bars based on values
-            colors = ['green' if val >= 0 else 'red' for val in display_df['montecarlo_histogram']]
-            ax2.bar(display_df.index, display_df['montecarlo_histogram'], 
-                   color=colors, alpha=0.7, label='Histogram', width=0.8)
-        
-        # Add confidence bands
-        if 'montecarlo_upper' in display_df.columns:
-            ax2.plot(display_df.index, display_df['montecarlo_upper'], 
-                    color='lightblue', linewidth=1, linestyle='--', label='Upper Confidence')
-        
-        if 'montecarlo_lower' in display_df.columns:
-            ax2.plot(display_df.index, display_df['montecarlo_lower'], 
-                    color='lightblue', linewidth=1, linestyle='--', label='Lower Confidence')
-        
-        # Add zero line for histogram
-        ax2.axhline(y=0, color='gray', linestyle='--', linewidth=1, label='Zero Line')
+        if 'monte_lower' in display_df.columns:
+            ax2.plot(display_df.index, display_df['monte_lower'], 
+                    color='red', linewidth=2, label='Lower Band')
     
     elif indicator_name == 'kelly':
+        y_axis_label = 'Kelly %'
         if 'kelly' in display_df.columns:
             ax2.plot(display_df.index, display_df['kelly'], 
-                    color='green', linewidth=3, label='Kelly')
+                    color='purple', linewidth=3, label='Kelly')
+    
+    elif indicator_name == 'putcallratio':
+        y_axis_label = 'Put/Call Ratio'
+        if 'putcallratio' in display_df.columns:
+            ax2.plot(display_df.index, display_df['putcallratio'], 
+                    color='brown', linewidth=3, label='Put/Call Ratio')
+    
+    elif indicator_name == 'cot':
+        y_axis_label = 'COT Value'
+        if 'cot' in display_df.columns:
+            ax2.plot(display_df.index, display_df['cot'], 
+                    color='blue', linewidth=3, label='COT')
+    
+    elif indicator_name in ['feargreed', 'fg']:
+        y_axis_label = 'Fear & Greed Index'
+        if 'feargreed' in display_df.columns:
+            ax2.plot(display_df.index, display_df['feargreed'], 
+                    color='purple', linewidth=3, label='Fear & Greed')
     
     elif indicator_name == 'donchain':
+        y_axis_label = 'Price'
         if 'donchain_upper' in display_df.columns:
             ax2.plot(display_df.index, display_df['donchain_upper'], 
-                    color='blue', linewidth=2, label='Upper Channel')
+                    color='green', linewidth=2, label='Upper Channel')
         
         if 'donchain_middle' in display_df.columns:
             ax2.plot(display_df.index, display_df['donchain_middle'], 
@@ -333,6 +355,7 @@ def plot_dual_chart_mpl(
                     color='blue', linewidth=2, label='Lower Channel')
     
     elif indicator_name == 'fibo':
+        y_axis_label = 'Price'
         # Add Fibonacci levels
         fibo_cols = [col for col in display_df.columns if col.startswith('fibo_')]
         colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']
@@ -343,16 +366,19 @@ def plot_dual_chart_mpl(
                     color=color, linewidth=2, label=col.replace('fibo_', 'Fib '))
     
     elif indicator_name == 'obv':
+        y_axis_label = 'OBV Value'
         if 'obv' in display_df.columns:
             ax2.plot(display_df.index, display_df['obv'], 
                     color='brown', linewidth=3, label='OBV')
     
     elif indicator_name == 'stdev':
+        y_axis_label = 'Standard Deviation'
         if 'stdev' in display_df.columns:
             ax2.plot(display_df.index, display_df['stdev'], 
                     color='gray', linewidth=3, label='StdDev')
     
     elif indicator_name == 'adx':
+        y_axis_label = 'ADX Value'
         if 'adx' in display_df.columns:
             ax2.plot(display_df.index, display_df['adx'], 
                     color='purple', linewidth=3, label='ADX')
@@ -366,11 +392,13 @@ def plot_dual_chart_mpl(
                     color='red', linewidth=2, label='DI-')
     
     elif indicator_name == 'sar':
+        y_axis_label = 'Price'
         if 'sar' in display_df.columns:
             ax2.scatter(display_df.index, display_df['sar'], 
                        color='red', s=20, label='SAR')
     
-    ax2.set_ylabel(indicator_title, fontsize=12)
+    # Set y-axis label
+    ax2.set_ylabel(y_axis_label, fontsize=12)
     ax2.set_xlabel('Date', fontsize=12)
     ax2.grid(True, alpha=0.3)
     ax2.legend()

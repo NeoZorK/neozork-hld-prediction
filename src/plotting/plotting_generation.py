@@ -764,12 +764,18 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
                     logger.print_info(f"Using dual chart plotting for mpl mode with parameterized indicator")
                     # Use dual chart with display instead of PNG
                     from ..plotting.dual_chart_mpl import plot_dual_chart_mpl_display
+                    from ..plotting.dual_chart_plot import create_dual_chart_layout
+                    
+                    # Create layout configuration for proper indicator title
+                    layout = create_dual_chart_layout(draw_mode, original_rule_with_params)
+                    
                     plot_dual_chart_mpl_display(
                         result_df,
                         original_rule_with_params,
                         plot_title,
                         width=1800,
-                        height=1100
+                        height=1100,
+                        layout=layout
                     )
                     return
                 # Use dual chart plotting for other modes
