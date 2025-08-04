@@ -695,6 +695,34 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Invalid price_type: Use only "open" or "close"',
                 'Omitting parameters: Use format supertrend:10,3.0[,price_type]'
             ]
+        },
+        'feargreed': {
+            'name': 'Fear & Greed Index',
+            'description': 'Sentiment indicator that measures market fear and greed levels based on price volatility and momentum. Values below 25 indicate extreme fear (potential buy), values above 75 indicate extreme greed (potential sell).',
+            'format': 'feargreed:period,price_type',
+            'parameters': [
+                ('period', 'int', 'Fear & Greed calculation period', '14'),
+                ('price_type', 'string', 'Price type for calculation', 'close')
+            ],
+            'examples': [
+                ('feargreed:14,close', 'Standard Fear & Greed with close prices'),
+                ('feargreed:21,open', 'Long-term Fear & Greed with open prices'),
+                ('feargreed:10,close', 'Short-term Fear & Greed with close prices')
+            ],
+            'tips': [
+                'Values 0-25: Extreme Fear (potential buy signal)',
+                'Values 25-45: Fear (cautious buying)',
+                'Values 45-55: Neutral (no clear signal)',
+                'Values 55-75: Greed (cautious selling)',
+                'Values 75-100: Extreme Greed (potential sell signal)',
+                'Use with other indicators for confirmation',
+                'Longer periods provide more stable signals'
+            ],
+            'common_errors': [
+                'Invalid price_type: Use "open" or "close" only',
+                'Invalid period: Must be a positive integer',
+                'Period too short may give unreliable results'
+            ]
         }
     }
     
