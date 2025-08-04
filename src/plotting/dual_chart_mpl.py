@@ -124,11 +124,15 @@ def plot_dual_chart_mpl(
     # Calculate appropriate interval based on data length to avoid too many ticks
     data_length = len(display_df)
     if data_length > 1000:
-        interval = max(1, data_length // 50)  # Show max 50 ticks
+        interval = max(1, data_length // 30)  # Show max 30 ticks
+    elif data_length > 500:
+        interval = max(1, data_length // 20)  # Show max 20 ticks
+    elif data_length > 100:
+        interval = max(1, data_length // 15)  # Show max 15 ticks
     else:
-        interval = max(1, data_length // 20)  # Show max 20 ticks for smaller datasets
+        interval = max(1, data_length // 10)  # Show max 10 ticks for smaller datasets
     ax1.xaxis.set_major_locator(mdates.DayLocator(interval=interval))
-    plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45)
+    plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45, ha='right')
     
     # Indicator chart
     indicator_name = rule.split(':', 1)[0].lower().strip()
@@ -166,6 +170,9 @@ def plot_dual_chart_mpl(
             colors = ['green' if val >= 0 else 'red' for val in display_df['macd_histogram']]
             ax2.bar(display_df.index, display_df['macd_histogram'], 
                    color=colors, alpha=0.7, label='Histogram', width=0.8)
+        
+        # Add zero line for MACD
+        ax2.axhline(y=0, color='gray', linestyle='--', linewidth=1, alpha=0.5)
     
     elif indicator_name == 'ema':
         if 'ema' in display_df.columns:
@@ -322,7 +329,7 @@ def plot_dual_chart_mpl(
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     # Use the same interval as main chart for consistency
     ax2.xaxis.set_major_locator(mdates.DayLocator(interval=interval))
-    plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45)
+    plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45, ha='right')
     
     # Adjust layout
     plt.tight_layout()
@@ -362,4 +369,8 @@ def plot_dual_chart_mpl_display(
     Returns:
         Any: Plot object
     """
-    return plot_dual_chart_mpl(df, rule, title, None, width, height, layout, **kwargs) 
+    # Calculate additional indicator first
+    from ..plotting.dual_chart_plot import calculate_additional_indicator
+    df_with_indicator = calculate_additional_indicator(df, rule)
+    
+    return plot_dual_chart_mpl(df_with_indicator, rule, title, None, width, height, layout, **kwargs) 
