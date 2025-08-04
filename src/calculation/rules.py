@@ -284,24 +284,33 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         return rule_func(df, point=point, hma_period=hma_period, price_type=price_type_enum)
     elif selected_rule == TradingRule.TSForecast:
         # Extract TSF-specific parameters
-        tsf_period = kwargs.get('tsf_period', 20)
-        tsf_forecast = kwargs.get('tsf_forecast', 5)
-        return rule_func(df, point=point, tsf_period=tsf_period, tsf_forecast=tsf_forecast, price_type=price_type_enum)
+        tsforecast_period = kwargs.get('tsforecast_period', 14)
+        return rule_func(df, point=point, tsforecast_period=tsforecast_period, price_type=price_type_enum)
     elif selected_rule == TradingRule.MonteCarlo:
         # Extract Monte Carlo-specific parameters
-        monte_simulations = kwargs.get('monte_simulations', 1000)
-        monte_period = kwargs.get('monte_period', 252)
-        return rule_func(df, point=point, monte_simulations=monte_simulations, monte_period=monte_period)
+        simulations = kwargs.get('simulations', 1000)
+        period = kwargs.get('period', 252)
+        return rule_func(df, point=point, simulations=simulations, period=period)
     elif selected_rule == TradingRule.Kelly:
         # Extract Kelly-specific parameters
         kelly_period = kwargs.get('kelly_period', 20)
         return rule_func(df, point=point, kelly_period=kelly_period)
     elif selected_rule == TradingRule.FearGreed:
-        return rule_func(df, point=point)
+        feargreed_period = kwargs.get('feargreed_period', 14)
+        price_type = kwargs.get('price_type', price_type_enum)
+        return rule_func(df, point=point, feargreed_period=feargreed_period, price_type=price_type)
     elif selected_rule == TradingRule.COT:
-        return rule_func(df, point=point)
+        # Extract COT-specific parameters
+        cot_period = kwargs.get('cot_period', 20)
+        bullish_threshold = kwargs.get('bullish_threshold', 70)
+        bearish_threshold = kwargs.get('bearish_threshold', 30)
+        return rule_func(df, point=point, cot_period=cot_period, bullish_threshold=bullish_threshold, bearish_threshold=bearish_threshold, price_type=price_type_enum)
     elif selected_rule == TradingRule.PutCallRatio:
-        return rule_func(df, point=point)
+        # Extract PutCallRatio-specific parameters
+        putcall_period = kwargs.get('putcall_period', 20)
+        bullish_threshold = kwargs.get('bullish_threshold', 60.0)
+        bearish_threshold = kwargs.get('bearish_threshold', 40.0)
+        return rule_func(df, point=point, putcall_period=putcall_period, bullish_threshold=bullish_threshold, bearish_threshold=bearish_threshold, price_type=price_type_enum)
     elif selected_rule == TradingRule.Donchain:
         # Extract Donchian-specific parameters
         donchain_period = kwargs.get('donchain_period', 20)
@@ -311,7 +320,9 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         fib_levels = kwargs.get('fib_levels', [0.236, 0.382, 0.5, 0.618, 0.786])
         return rule_func(df, point=point, fib_levels=fib_levels)
     elif selected_rule == TradingRule.OBV:
-        return rule_func(df, point=point)
+        # Extract OBV-specific parameters
+        obv_period = kwargs.get('obv_period', 20)
+        return rule_func(df, point=point, obv_period=obv_period, price_type=price_type_enum)
     elif selected_rule == TradingRule.StDev:
         # Extract StDev-specific parameters
         stdev_period = kwargs.get('stdev_period', 20)
@@ -326,7 +337,10 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         sar_maximum = kwargs.get('sar_maximum', 0.2)
         return rule_func(df, point=point, sar_acceleration=sar_acceleration, sar_maximum=sar_maximum)
     elif selected_rule == TradingRule.SuperTrend:
-        return rule_func(df, point=point)
+        # Extract SuperTrend-specific parameters
+        supertrend_period = kwargs.get('supertrend_period', 10)
+        multiplier = kwargs.get('multiplier', 3.0)
+        return rule_func(df, point=point, supertrend_period=supertrend_period, multiplier=multiplier, price_type=price_type_enum)
     else:
         # Default case for any other rules
         return rule_func(df, point=point, price_type=price_type_enum)

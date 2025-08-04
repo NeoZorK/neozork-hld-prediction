@@ -1,67 +1,251 @@
+#!/usr/bin/env python3
+"""
+Test module for fastest_auto_plot.py
+Tests the vertical scrollbar functionality for AUTO mode charts.
+"""
+
+import pytest
+import pandas as pd
+import numpy as np
 import os
 import tempfile
-import pandas as pd
-import pytest
-from plotly.graph_objs._figure import Figure
+from pathlib import Path
+import sys
+import re
 
-from src.plotting import fastest_auto_plot
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-def create_test_parquet(tmp_path, columns=None, nrows=100):
-    if columns is None:
-        columns = {
-            'Open': 1.0,
-            'High': 2.0,
-            'Low': 0.5,
-            'Close': 1.5,
-            'Volume': 100,
-            'timestamp': pd.date_range('2023-01-01', periods=nrows, freq='min'),
-            'custom1': range(nrows),
-            'custom2': [x * 2 for x in range(nrows)]
-        }
-    df = pd.DataFrame({k: v if hasattr(v, '__len__') and not isinstance(v, str) else [v]*nrows for k, v in columns.items()})
-    parquet_path = tmp_path / "test.parquet"
-    df.to_parquet(parquet_path)
-    return parquet_path, df
-
-def test_plot_auto_fastest_parquet_creates_html_and_returns_figure(tmp_path):
-    parquet_path, df = create_test_parquet(tmp_path)
-    output_html = tmp_path / "output.html"
-    fig = fastest_auto_plot.plot_auto_fastest_parquet(
-        str(parquet_path), str(output_html), trading_rule_name="AUTO_TEST", title="Test Title", width=800, height_per_panel=200
-    )
-    assert isinstance(fig, Figure)
-    assert os.path.exists(output_html)
-    # Check that the figure contains at least as many traces as custom columns
-    custom_cols = [c for c in df.columns if c.lower() not in ['open','high','low','close','volume','timestamp','datetime','index','date','time'] and pd.api.types.is_numeric_dtype(df[c])]
-    assert len(fig.data) >= len(custom_cols)
-
-def test_plot_auto_fastest_parquet_raises_on_no_numeric(tmp_path):
-    columns = {
-        'timestamp': pd.date_range('2023-01-01', periods=10, freq='min'),
-        'text_col': ['a']*10
-    }
-    parquet_path, _ = create_test_parquet(tmp_path, columns=columns, nrows=10)
-    output_html = tmp_path / "output2.html"
-    with pytest.raises(ValueError):
-        fastest_auto_plot.plot_auto_fastest_parquet(str(parquet_path), str(output_html))
+from src.plotting.fastest_auto_plot import plot_auto_fastest_parquet
 
 
-def test_plot_auto_fastest_parquet_handles_index_time(tmp_path):
-    # No explicit time column, but DatetimeIndex
-    nrows = 20
-    df = pd.DataFrame({
-        'Open': 1.0,
-        'High': 2.0,
-        'Low': 0.5,
-        'Close': 1.5,
-        'Volume': 100,
-        'custom1': range(nrows),
-        'custom2': [x * 2 for x in range(nrows)]
-    }, index=pd.date_range('2023-01-01', periods=nrows, freq='min'))
-    parquet_path = tmp_path / "test3.parquet"
-    df.to_parquet(parquet_path)
-    output_html = tmp_path / "output3.html"
-    fig = fastest_auto_plot.plot_auto_fastest_parquet(str(parquet_path), str(output_html))
-    assert isinstance(fig, Figure)
-    assert os.path.exists(output_html)
+class TestFastestAutoPlot:
+    """Test class for fastest_auto_plot.py functionality."""
+
+    def setup_method(self):
+        """Set up test data and temporary files."""
+        # Create test data with multiple numeric columns
+        dates = pd.date_range('2024-01-01', periods=100, freq='h')
+        self.test_data = pd.DataFrame({
+            'DateTime': dates,
+            'Open': np.random.rand(100) * 100 + 100,
+            'High': np.random.rand(100) * 100 + 150,
+            'Low': np.random.rand(100) * 100 + 50,
+            'Close': np.random.rand(100) * 100 + 100,
+            'Volume': np.random.randint(1000, 10000, size=100),
+            'RSI': np.random.rand(100) * 100,
+            'MACD': np.random.randn(100) * 2,
+            'EMA': np.random.rand(100) * 100 + 100,
+            'BB_Upper': np.random.rand(100) * 100 + 120,
+            'BB_Lower': np.random.rand(100) * 100 + 80,
+            'ATR': np.random.rand(100) * 5,
+            'Stochastic': np.random.rand(100) * 100,
+            'CCI': np.random.randn(100) * 100,
+            'ADX': np.random.rand(100) * 100,
+            'OBV': np.random.randint(1000000, 10000000, size=100),
+            'VWAP': np.random.rand(100) * 100 + 100,
+            'Pressure': np.random.randn(100) * 1.5,
+            'PV': np.random.randn(100) * 2,
+            'HL': np.random.rand(100) * 10,
+            'Direction': np.random.choice([1, 2], size=100, p=[0.5, 0.5]),
+            'PPrice1': np.random.rand(100) * 100 + 80,
+            'PPrice2': np.random.rand(100) * 100 + 120,
+        })
+        
+        # Create temporary directory for test files
+        self.temp_dir = tempfile.mkdtemp()
+        self.test_parquet_path = os.path.join(self.temp_dir, "test_data.parquet")
+        self.test_data.to_parquet(self.test_parquet_path)
+        
+        # Output path for test plot
+        self.output_html_path = os.path.join(self.temp_dir, "test_auto_plot.html")
+
+    def teardown_method(self):
+        """Clean up test files."""
+        import shutil
+        if os.path.exists(self.temp_dir):
+            shutil.rmtree(self.temp_dir)
+
+    def test_plot_auto_fastest_parquet_basic_functionality(self):
+        """Test basic functionality of plot_auto_fastest_parquet."""
+        # Test that the function runs without errors
+        fig = plot_auto_fastest_parquet(
+            parquet_path=self.test_parquet_path,
+            output_html_path=self.output_html_path,
+            trading_rule_name="AUTO",
+            title="Test AUTO Plot"
+        )
+        
+        # Check that the figure was created
+        assert fig is not None
+        
+        # Check that HTML file was created
+        assert os.path.exists(self.output_html_path)
+        
+        # Check HTML file content
+        with open(self.output_html_path, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        
+        # Verify vertical scrollbar CSS is present
+        assert 'overflow-y: auto' in html_content
+        assert '.chart-container' in html_content
+        assert '::-webkit-scrollbar' in html_content
+        
+        # Verify AUTO mode specific content
+        assert 'AUTO Mode with Vertical Scrollbar' in html_content
+        assert 'Trading Rule: AUTO' in html_content
+
+    def test_plot_auto_fastest_parquet_with_different_columns(self):
+        """Test plotting with different column combinations."""
+        # Create data with only some columns
+        limited_data = self.test_data[['DateTime', 'Open', 'High', 'Low', 'Close', 'Volume', 'RSI', 'MACD']]
+        limited_parquet_path = os.path.join(self.temp_dir, "limited_data.parquet")
+        limited_data.to_parquet(limited_parquet_path)
+        
+        output_path = os.path.join(self.temp_dir, "limited_auto_plot.html")
+        
+        fig = plot_auto_fastest_parquet(
+            parquet_path=limited_parquet_path,
+            output_html_path=output_path,
+            trading_rule_name="AUTO",
+            title="Limited Columns Test"
+        )
+        
+        assert fig is not None
+        assert os.path.exists(output_path)
+        
+        # Check HTML content
+        with open(output_path, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        
+        # Should still have scrollbar functionality
+        assert 'overflow-y: auto' in html_content
+        assert 'RSI, MACD' in html_content
+
+    def test_plot_auto_fastest_parquet_with_datetime_index(self):
+        """Test plotting with DatetimeIndex instead of DateTime column."""
+        # Create data with DatetimeIndex
+        indexed_data = self.test_data.set_index('DateTime')
+        indexed_parquet_path = os.path.join(self.temp_dir, "indexed_data.parquet")
+        indexed_data.to_parquet(indexed_parquet_path)
+        
+        output_path = os.path.join(self.temp_dir, "indexed_auto_plot.html")
+        
+        fig = plot_auto_fastest_parquet(
+            parquet_path=indexed_parquet_path,
+            output_html_path=output_path,
+            trading_rule_name="AUTO",
+            title="DatetimeIndex Test"
+        )
+        
+        assert fig is not None
+        assert os.path.exists(output_path)
+
+    def test_plot_auto_fastest_parquet_scrollbar_css(self):
+        """Test that scrollbar CSS properties are correctly applied."""
+        fig = plot_auto_fastest_parquet(
+            parquet_path=self.test_parquet_path,
+            output_html_path=self.output_html_path,
+            trading_rule_name="AUTO",
+            title="Scrollbar CSS Test"
+        )
+        
+        with open(self.output_html_path, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        
+        # Check for all required scrollbar CSS properties
+        scrollbar_properties = [
+            'overflow-y: auto',
+            '::-webkit-scrollbar',
+            '::-webkit-scrollbar-track',
+            '::-webkit-scrollbar-thumb',
+            '::-webkit-scrollbar-thumb:hover',
+        ]
+        
+        for prop in scrollbar_properties:
+            assert prop in html_content, f"Missing scrollbar property: {prop}"
+        
+        # Check that html_content contains the string height: <number>px;
+        assert re.search(r'height: ?\d+px;', html_content), 'Missing dynamic height property in .chart-container'
+
+    def test_plot_auto_fastest_parquet_info_panel(self):
+        """Test that the info panel shows correct information."""
+        fig = plot_auto_fastest_parquet(
+            parquet_path=self.test_parquet_path,
+            output_html_path=self.output_html_path,
+            trading_rule_name="AUTO",
+            title="Info Panel Test"
+        )
+        
+        with open(self.output_html_path, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        
+        # Check for info panel content
+        assert 'Chart Information:' in html_content
+        assert 'Total panels:' in html_content
+        assert 'Data points:' in html_content
+        assert 'Columns displayed:' in html_content
+        assert 'Use the vertical scrollbar' in html_content
+
+    def test_plot_auto_fastest_parquet_error_handling(self):
+        """Test error handling for invalid parquet files."""
+        # Test with non-existent file
+        with pytest.raises(FileNotFoundError):
+            plot_auto_fastest_parquet(
+                parquet_path="non_existent_file.parquet",
+                output_html_path=self.output_html_path,
+                trading_rule_name="AUTO"
+            )
+
+    def test_plot_auto_fastest_parquet_no_numeric_columns(self):
+        """Test handling of parquet files with no numeric columns."""
+        # Create data with only string columns
+        string_data = pd.DataFrame({
+            'DateTime': pd.date_range('2024-01-01', periods=10, freq='h'),
+            'Symbol': ['AAPL'] * 10,
+            'Exchange': ['NASDAQ'] * 10,
+            'Description': ['Apple Inc'] * 10
+        })
+        
+        string_parquet_path = os.path.join(self.temp_dir, "string_data.parquet")
+        string_data.to_parquet(string_parquet_path)
+        
+        output_path = os.path.join(self.temp_dir, "string_auto_plot.html")
+        
+        # Should raise ValueError for no numeric columns
+        with pytest.raises(ValueError, match="No numeric columns to plot"):
+            plot_auto_fastest_parquet(
+                parquet_path=string_parquet_path,
+                output_html_path=output_path,
+                trading_rule_name="AUTO"
+            )
+
+    def test_plot_auto_fastest_parquet_no_time_column(self):
+        """Test handling of parquet files with no time column."""
+        # Create data without time column and without DatetimeIndex
+        no_time_data = pd.DataFrame({
+            'Open': np.random.rand(10) * 100,
+            'High': np.random.rand(10) * 100,
+            'Low': np.random.rand(10) * 100,
+            'Close': np.random.rand(10) * 100,
+            'Volume': np.random.randint(1000, 10000, size=10),
+            'RSI': np.random.rand(10) * 100
+        })
+        
+        no_time_parquet_path = os.path.join(self.temp_dir, "no_time_data.parquet")
+        no_time_data.to_parquet(no_time_parquet_path)
+        
+        output_path = os.path.join(self.temp_dir, "no_time_auto_plot.html")
+        
+        # Should raise ValueError for no time column
+        with pytest.raises(ValueError, match="No time column found"):
+            plot_auto_fastest_parquet(
+                parquet_path=no_time_parquet_path,
+                output_html_path=output_path,
+                trading_rule_name="AUTO"
+            )
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])
 

@@ -27,7 +27,7 @@ Successfully implemented a comprehensive native Apple Silicon container solution
 - **Error handling tests** for edge cases
 
 ### 4. Complete Documentation
-- **Interactive script guide**: `scripts/native-container/README.md`
+- **Interactive script guide**: `docs/containers/native-container/README.md`
 - **Setup guide**: `docs/deployment/native-container-setup.md`
 - **Quick start guide**: `QUICK_START_NATIVE_CONTAINER.md`
 - **Main README updates**: Added native container sections

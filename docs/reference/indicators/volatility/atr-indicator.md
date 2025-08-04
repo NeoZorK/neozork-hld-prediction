@@ -129,3 +129,40 @@ ATR is always positive and measured in the same units as price.
 - **Keltner Channels** - use ATR for channel width
 - **Standard Deviation** - alternative volatility measure
 - **Volatility Ratio** - compares current to historical volatility 
+
+## Enhanced ATR Indicator (Period-Sensitive)
+
+### Description
+The enhanced ATR indicator (`atr_ind_enhanced.py`) provides period-sensitive signal generation. It adapts its buy/sell logic based on the ATR period, making the indicator more responsive to the chosen period. This allows for more visible differences in signals when using different ATR periods.
+
+### Key Features
+- Signal logic adapts to ATR period (short = more sensitive, long = more conservative)
+- Support/resistance levels are also period-sensitive
+- Useful for advanced volatility-based strategies
+
+### Usage
+
+#### CLI Example
+```bash
+uv run run_analysis.py show csv mn1 -d fastest --rule atr:10  # Standard ATR
+uv run run_analysis.py show csv mn1 -d fastest --rule atr_enhanced:10  # Enhanced ATR (if integrated)
+```
+
+#### Programmatic Example
+```python
+from src.calculation.indicators.volatility.atr_ind_enhanced import apply_rule_atr_enhanced
+result_df = apply_rule_atr_enhanced(df, point=0.01, atr_period=10)
+```
+
+### Signal Generation
+- **Buy**: ATR is rising above short-term average, change rate is positive, and more (see code for details)
+- **Sell**: ATR is falling below short-term average, change rate is negative, and more
+- The number of conditions required for a signal depends on the ATR period
+
+### When to Use
+- When you want ATR signals to be more/less sensitive to volatility changes
+- For research on how ATR period affects trading signals
+
+---
+
+For more details, see `src/calculation/indicators/volatility/atr_ind_enhanced.py` and its unit tests. 

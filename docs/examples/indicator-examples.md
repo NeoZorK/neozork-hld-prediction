@@ -115,19 +115,6 @@ python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule MACD
 python run_analysis.py csv --csv-file data.csv --point 0.01 --rule MACD
 ```
 
-### Stochastic Oscillator (Momentum)
-```bash
-# Basic Stochastic Oscillator
-python run_analysis.py demo --rule STOCH
-
-# Stochastic with custom parameters
-python run_analysis.py demo --rule STOCH --stoch-k-period 14 --stoch-d-period 3
-
-# Stochastic with different data sources
-python run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule STOCH
-python run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule STOCH
-```
-
 ## Volatility Indicators
 
 ### ATR (Average True Range)

@@ -77,4 +77,21 @@ class TestCOTIndicator:
         assert 'Direction' in result
         assert 'Diff' in result
         signals = result['COT_Signal'].dropna()
-        assert np.issubdtype(signals.dtype, np.number) 
+        assert np.issubdtype(signals.dtype, np.number)
+
+    def test_cot_with_only_volume_column(self):
+        """Test that apply_rule_cot works with only 'Volume' column (no 'TickVolume')."""
+        df = self.sample_data.copy()
+        # Remove TickVolume if it exists
+        if 'TickVolume' in df.columns:
+            df = df.drop(columns=['TickVolume'])
+        # Check that there is no TickVolume
+        assert 'TickVolume' not in df.columns
+        # Should work without errors
+        result = apply_rule_cot(df, point=0.01, cot_period=10, price_type='close')
+        assert 'COT' in result
+        assert 'COT_Signal' in result
+        assert 'Direction' in result
+        assert 'Diff' in result
+        # Check that there are no errors and there are values
+        assert not result['COT'].isna().all() 

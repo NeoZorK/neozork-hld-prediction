@@ -115,7 +115,7 @@ class TestStochOscillatorIndicator:
     def test_stochosc_value_range(self):
         """Test that Stochastic Oscillator values are within expected range (0-100)."""
         k_values, d_values = self.stochosc(self.sample_data)
-        # Проверяем только ненулевые значения
+        # Check only non-zero values
         k_valid = k_values.dropna()
         d_valid = d_values.dropna()
         assert (k_valid >= 0).all() and (k_valid <= 100).all()
@@ -140,7 +140,7 @@ class TestStochOscillatorIndicator:
         # Test with very small dataset
         small_data = self.sample_data.head(5)
         k_values, d_values = self.stochosc(small_data)
-        # Ожидаем, что вся серия будет NaN
+        # Expect that the entire series will be NaN
         assert k_values.isna().all()
         assert d_values.isna().all()
 

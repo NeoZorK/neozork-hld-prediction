@@ -177,9 +177,6 @@ python run_analysis.py demo --rule CCI
 ```bash
 # MACD (Moving Average Convergence Divergence)
 python run_analysis.py demo --rule MACD
-
-# Stochastic Oscillator
-python run_analysis.py demo --rule STOCH
 ```
 
 ### Volatility Indicators

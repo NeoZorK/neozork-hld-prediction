@@ -255,6 +255,38 @@ python run_all_cli_tests.py --verbose
     python tests/cli/comprehensive/run_all_cli_tests.py --auto-generator
 ```
 
+### Testing GitHub Actions with Act
+
+To test GitHub Actions workflows and CI/CD integration without downloading Docker images or installing dependencies:
+
+```bash
+# Install act tool
+brew install act  # macOS
+# or
+curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash  # Linux
+
+# Test all workflows (dry run - no Docker downloads)
+act -n
+
+# Test specific workflow
+act -n -W .github/workflows/docker-build.yml
+
+# Test MCP server integration workflows
+act -n -W .github/workflows/mcp-integration.yml
+act -n -W .github/workflows/mcp-servers-ci.yml
+
+# List available workflows
+act -l
+```
+
+**Benefits of Dry Run Testing:**
+- **No Docker Downloads**: Prevents downloading large Docker images
+- **Fast Validation**: Quickly validates workflow syntax and structure
+- **Resource Efficient**: Uses minimal system resources
+- **Safe Testing**: No risk of affecting your local environment
+- **Protocol Validation**: Verify MCP server communication protocols
+- **Integration Testing**: Test MCP server with various IDEs
+
 ### Automated Testing
 - Automatic test generation
 - Regression detection

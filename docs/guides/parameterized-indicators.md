@@ -63,9 +63,14 @@ uv run run_analysis.py show csv mn1 gbp --rule macd -d fastest
 uv run run_analysis.py show csv mn1 gbp --rule macd:8,21,5,open -d fastest
 ```
 
-### Stochastic Oscillator
+### Stochastic
+
+> **Note:** `stoch`, `stochastic`, and `stochoscillator` are exact synonyms. No matter which name you use, the CLI will always process and display the rule as `stoch:...`.
+
 ```bash
 --rule stoch:k_period,d_period,price_type
+--rule stochastic:k_period,d_period,price_type
+--rule stochoscillator:k_period,d_period,price_type
 ```
 
 **Parameters:**
@@ -75,12 +80,19 @@ uv run run_analysis.py show csv mn1 gbp --rule macd:8,21,5,open -d fastest
 
 **Examples:**
 ```bash
-# Default Stochastic settings
-uv run run_analysis.py show csv mn1 gbp --rule stoch -d fastest
+# All these commands are equivalent and will be processed as stoch:14,3,close
+uv run run_analysis.py show csv mn1 gbp --rule stoch:14,3,close -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule stochastic:14,3,close -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule stochoscillator:14,3,close -d fastest
 
-# Custom Stochastic with open prices
+# Custom Stochastic with open prices (all aliases work identically)
 uv run run_analysis.py show csv mn1 gbp --rule stoch:14,3,open -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule stochastic:14,3,open -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule stochoscillator:14,3,open -d fastest
 ```
+
+> **Result:**
+> Regardless of which alias you use, the CLI will always show and process the rule as `stoch:...` in all logs, help, and reports.
 
 ### EMA (Exponential Moving Average)
 ```bash
@@ -207,27 +219,33 @@ uv run run_analysis.py show csv mn1 gbp --rule hma:20,open -d fastest
 ```
 
 ### TSF (Time Series Forecast)
+
+> **Note:** `tsf` and `tsforecast` are exact synonyms. No matter which name you use, the CLI will always process and display the rule as `tsf:...`.
+
 ```bash
---rule tsf:period,forecast_period,price_type
+--rule tsf:period,price_type
+--rule tsforecast:period,price_type
 ```
 
 **Parameters:**
 - `period` (int): TSF period (default: 20)
-- `forecast_period` (int): Forecast period (default: 5)
 - `price_type` (string): Price type for calculation - `open` or `close` (default: close)
 
 **Examples:**
 ```bash
-# Default TSF settings
-uv run run_analysis.py show csv mn1 gbp --rule tsf -d fastest
-
-# Custom TSF with open prices
-uv run run_analysis.py show csv mn1 gbp --rule tsf:20,5,open -d fastest
+# All these commands are equivalent and will be processed as tsf:20,close
+uv run run_analysis.py show csv mn1 gbp --rule tsf:20,close -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule tsforecast:20,close -d fastest
 ```
 
 ### Monte Carlo Simulation
+
+> **Note:** `monte`, `montecarlo`, and `mc` are exact synonyms. No matter which name you use, the CLI will always process and display the rule as `monte:...`.
+
 ```bash
 --rule monte:simulations,period
+--rule montecarlo:simulations,period
+--rule mc:simulations,period
 ```
 
 **Parameters:**
@@ -236,11 +254,10 @@ uv run run_analysis.py show csv mn1 gbp --rule tsf:20,5,open -d fastest
 
 **Examples:**
 ```bash
-# Default Monte Carlo settings
-uv run run_analysis.py show csv mn1 gbp --rule monte -d fastest
-
-# Custom Monte Carlo
+# All these commands are equivalent and will be processed as monte:1000,252
 uv run run_analysis.py show csv mn1 gbp --rule monte:1000,252 -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule montecarlo:1000,252 -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule mc:1000,252 -d fastest
 ```
 
 ### Kelly Criterion
@@ -260,39 +277,93 @@ uv run run_analysis.py show csv mn1 gbp --rule kelly -d fastest
 uv run run_analysis.py show csv mn1 gbp --rule kelly:20 -d fastest
 ```
 
-### Donchian Channels
+### Put/Call Ratio
 ```bash
---rule donchain:period
+--rule putcallratio:period,price_type
 ```
 
 **Parameters:**
-- `period` (int): Donchian period (default: 20)
+- `period` (int): Put/Call ratio period (default: 20)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
 
 **Examples:**
 ```bash
-# Default Donchian settings
-uv run run_analysis.py show csv mn1 gbp --rule donchain -d fastest
+# Default Put/Call Ratio settings
+uv run run_analysis.py show csv mn1 gbp --rule putcallratio -d fastest
 
-# Custom Donchian period
-uv run run_analysis.py show csv mn1 gbp --rule donchain:20 -d fastest
+# Custom Put/Call Ratio with open prices
+uv run run_analysis.py show csv mn1 gbp --rule putcallratio:20,open -d fastest
+```
+
+### COT (Commitment of Traders)
+```bash
+--rule cot:period,price_type
+```
+
+**Parameters:**
+- `period` (int): COT calculation period (default: 20)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# Default COT settings
+uv run run_analysis.py show csv mn1 gbp --rule cot -d fastest
+
+# Custom COT with open prices
+uv run run_analysis.py show csv mn1 gbp --rule cot:20,open -d fastest
+```
+
+### Fear & Greed
+
+> **Note:** `feargreed` and `fg` are exact synonyms. No matter which name you use, the CLI will always process and display the rule as `feargreed:...`.
+
+```bash
+--rule feargreed:period,price_type
+--rule fg:period,price_type
+```
+
+**Parameters:**
+- `period` (int): Fear & Greed period (default: 20)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# All these commands are equivalent and will be processed as feargreed:20,close
+uv run run_analysis.py show csv mn1 gbp --rule feargreed:20,close -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule fg:20,close -d fastest
 ```
 
 ### Fibonacci Retracements
 ```bash
---rule fibo:level1,level2,level3,...
+--rule fibo:level1,level2,level3,... or --rule fibo:all
 ```
 
 **Parameters:**
-- `level1,level2,level3,...` (float): Fibonacci retracement levels (default: 0.236,0.382,0.5,0.618,0.786)
+- `level1,level2,level3,...` (float): Custom Fibonacci retracement levels (default: 0.236,0.382,0.618)
+- `all`: Use all standard Fibonacci levels (0.236,0.382,0.5,0.618,0.786)
 
 **Examples:**
 ```bash
-# Default Fibonacci settings
+# Default Fibonacci settings (0.236, 0.382, 0.618)
 uv run run_analysis.py show csv mn1 gbp --rule fibo -d fastest
+
+# Use all standard Fibonacci levels
+uv run run_analysis.py show csv mn1 gbp --rule fibo:all -d fastest
 
 # Custom Fibonacci levels
 uv run run_analysis.py show csv mn1 gbp --rule fibo:0.236,0.382,0.5,0.618,0.786 -d fastest
+
+# Minimal levels for aggressive trading
+uv run run_analysis.py show csv mn1 gbp --rule fibo:0.236,0.618 -d fastest
+
+# Extended levels for conservative trading
+uv run run_analysis.py show csv mn1 gbp --rule fibo:0.236,0.382,0.5,0.618,0.786,0.886 -d fastest
 ```
+
+**Signal Generation:**
+- **Buy Signals**: Price crosses above support levels or near support with upward momentum
+- **Sell Signals**: Price crosses below resistance levels or near resistance with downward momentum
+- **Balanced**: Improved algorithm provides equal buy/sell signal opportunities
 
 ### OBV (On-Balance Volume)
 ```bash
@@ -361,6 +432,148 @@ uv run run_analysis.py show csv mn1 gbp --rule sar -d fastest
 uv run run_analysis.py show csv mn1 gbp --rule sar:0.02,0.2 -d fastest
 ```
 
+### SuperTrend
+```bash
+--rule supertrend:period,multiplier[,price_type]
+```
+
+**Parameters:**
+- `period` (int): ATR period for SuperTrend calculation (required)
+- `multiplier` (float): ATR multiplier (required)
+- `price_type` (string): Price type for calculation - `open` or `close` (optional, default: close)
+
+**Examples:**
+```bash
+# SuperTrend with required parameters
+uv run run_analysis.py show csv mn1 gbp --rule supertrend:10,3.0 -d fastest
+
+# SuperTrend with optional price type
+uv run run_analysis.py show csv mn1 gbp --rule supertrend:10,3.0,open -d fastest
+```
+
+### Bollinger Bands
+```bash
+--rule bb:period,std_dev,price_type
+```
+
+**Parameters:**
+- `period` (int): Moving average period (default: 20)
+- `std_dev` (float): Standard deviation multiplier (default: 2.0)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# Default Bollinger Bands settings
+uv run run_analysis.py show csv mn1 gbp --rule bb -d fastest
+
+# Custom Bollinger Bands with open prices
+uv run run_analysis.py show csv mn1 gbp --rule bb:20,2.5,open -d fastest
+```
+
+### ATR (Average True Range)
+```bash
+--rule atr:period
+```
+
+**Parameters:**
+- `period` (int): ATR period (default: 14)
+
+**Examples:**
+```bash
+# Default ATR settings
+uv run run_analysis.py show csv mn1 gbp --rule atr -d fastest
+
+# Custom ATR period
+uv run run_analysis.py show csv mn1 gbp --rule atr:21 -d fastest
+```
+
+### Standard Deviation
+```bash
+--rule stdev:period,price_type
+```
+
+**Parameters:**
+- `period` (int): Standard deviation period (default: 20)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# Default Standard Deviation settings
+uv run run_analysis.py show csv mn1 gbp --rule stdev -d fastest
+
+# Custom Standard Deviation with open prices
+uv run run_analysis.py show csv mn1 gbp --rule stdev:20,open -d fastest
+```
+
+### OBV (On-Balance Volume)
+```bash
+--rule obv
+```
+
+**Parameters:**
+- None required
+
+**Examples:**
+```bash
+# OBV (no parameters needed)
+uv run run_analysis.py show csv mn1 gbp --rule obv -d fastest
+```
+
+### VWAP (Volume Weighted Average Price)
+```bash
+--rule vwap:price_type
+```
+
+**Parameters:**
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# Default VWAP settings
+uv run run_analysis.py show csv mn1 gbp --rule vwap -d fastest
+
+# VWAP with open prices
+uv run run_analysis.py show csv mn1 gbp --rule vwap:open -d fastest
+```
+
+### HMA (Hull Moving Average)
+```bash
+--rule hma:period,price_type
+```
+
+**Parameters:**
+- `period` (int): HMA period (default: 20)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# Default HMA settings
+uv run run_analysis.py show csv mn1 gbp --rule hma -d fastest
+
+# Custom HMA with open prices
+uv run run_analysis.py show csv mn1 gbp --rule hma:20,open -d fastest
+```
+
+### TSF (Time Series Forecast)
+
+> **Note:** `tsf` and `tsforecast` are exact synonyms. No matter which name you use, the CLI will always process and display the rule as `tsf:...`.
+
+```bash
+--rule tsf:period,price_type
+--rule tsforecast:period,price_type
+```
+
+**Parameters:**
+- `period` (int): TSF period (default: 20)
+- `price_type` (string): Price type for calculation - `open` or `close` (default: close)
+
+**Examples:**
+```bash
+# All these commands are equivalent and will be processed as tsf:20,close
+uv run run_analysis.py show csv mn1 gbp --rule tsf:20,close -d fastest
+uv run run_analysis.py show csv mn1 gbp --rule tsforecast:20,close -d fastest
+```
+
 ## Error Handling
 
 The system provides clear error messages for invalid parameter formats:
@@ -377,6 +590,14 @@ uv run run_analysis.py show csv mn1 gbp --rule rsi:14,30,70,high -d fastest
 # Invalid format
 uv run run_analysis.py show csv mn1 gbp --rule rsi:14,30,70:open -d fastest
 # Error: Invalid rule format: rsi:14,30,70:open
+
+# SuperTrend missing required parameters
+uv run run_analysis.py show csv mn1 gbp --rule supertrend:10 -d fastest
+# Error: SuperTrend requires exactly 2-3 parameters: period,multiplier[,price_type]. Got: 10
+
+# SuperTrend invalid price type
+uv run run_analysis.py show csv mn1 gbp --rule supertrend:10,3.0,high -d fastest
+# Error: SuperTrend price_type must be 'open' or 'close', got: high
 ```
 
 ## Best Practices
@@ -411,6 +632,12 @@ uv run run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule macd:8,21,5,c
 
 # Binance with parameterized EMA
 uv run run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule ema:20,open -d fastest
+
+# CSV file with SuperTrend
+uv run run_analysis.py csv --csv-file data.csv --point 0.01 --rule supertrend:10,3.0 -d fastest
+
+# Yahoo Finance with SuperTrend
+uv run run_analysis.py yf -t AAPL --period 1mo --point 0.01 --rule supertrend:14,2.5,open -d fastest
 ```
 
 ## Migration from Old Format
@@ -418,13 +645,4 @@ uv run run_analysis.py binance -t BTCUSDT --interval D1 --point 0.01 --rule ema:
 If you were using the old format with separate arguments, you can now use the parameterized format:
 
 **Old format:**
-```bash
-uv run run_analysis.py show csv mn1 gbp --rule RSI --rsi-period 14 --price-type open -d fastest
 ```
-
-**New format:**
-```bash
-uv run run_analysis.py show csv mn1 gbp --rule rsi:14,30,70,open -d fastest
-```
-
-The new format is more concise and provides better parameter validation. 

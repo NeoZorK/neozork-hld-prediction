@@ -499,16 +499,61 @@ def generate_fast_plot(result_df, selected_rule, plot_title, args=None):
             'fee_per_trade': getattr(args, 'fee_per_trade', 0.07)
         }
     
-    # Set default output path for fast plotting
-    output_path = "results/plots/fast_plot.html"
+    # Check if we should use fullscreen mode for OHLCV rule
+    rule_str = selected_rule.name if hasattr(selected_rule, 'name') else str(selected_rule)
+    use_fullscreen = rule_str.upper() == 'OHLCV' or 'OHLCV' in rule_str.upper()
     
-    plot_indicator_results_fast(
-        result_df,
-        selected_rule,
-        plot_title,
-        output_path=output_path,
-        **strategy_kwargs
-    )
+    if use_fullscreen:
+        logger.print_info("OHLCV rule detected, using fullscreen fast plot...")
+        try:
+            from src.plotting.fast_plot_fullscreen import plot_indicator_results_fast_fullscreen
+            
+            # Set output path for fullscreen fast plotting
+            output_path = "results/plots/fast_plot_fullscreen.html"
+            
+            plot_indicator_results_fast_fullscreen(
+                result_df,
+                selected_rule,
+                plot_title,
+                output_path=output_path,
+                height=None,  # Will be calculated dynamically
+                **strategy_kwargs
+            )
+        except ImportError as e:
+            logger.print_warning(f"Fullscreen fast plotting not available: {e}. Falling back to standard fast plotting.")
+            # Fallback to standard fast plotting
+            output_path = "results/plots/fast_plot.html"
+            from src.plotting.fast_plot import plot_indicator_results_fast
+            plot_indicator_results_fast(
+                result_df,
+                selected_rule,
+                plot_title,
+                output_path=output_path,
+                **strategy_kwargs
+            )
+        except Exception as e:
+            logger.print_error(f"Error in fullscreen fast plotting: {e}. Falling back to standard fast plotting.")
+            # Fallback to standard fast plotting
+            output_path = "results/plots/fast_plot.html"
+            from src.plotting.fast_plot import plot_indicator_results_fast
+            plot_indicator_results_fast(
+                result_df,
+                selected_rule,
+                plot_title,
+                output_path=output_path,
+                **strategy_kwargs
+            )
+    else:
+        # Use standard fast plotting for non-OHLCV rules
+        output_path = "results/plots/fast_plot.html"
+        from src.plotting.fast_plot import plot_indicator_results_fast
+        plot_indicator_results_fast(
+            result_df,
+            selected_rule,
+            plot_title,
+            output_path=output_path,
+            **strategy_kwargs
+        )
 
 
 def generate_plotly_plot(result_df, selected_rule, plot_title, data_info):
@@ -706,6 +751,29 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
         logger.print_info(f"Not in Docker or already 'term' mode. IN_DOCKER={IN_DOCKER}, draw_mode='{draw_mode}'")
     
     logger.print_info(f"Final plotting mode selected: '{draw_mode}'")
+
+    # Check for dual chart mode (parameterized indicators)
+    original_rule_with_params = getattr(args, 'original_rule_with_params', None)
+    if original_rule_with_params and ':' in original_rule_with_params:
+        try:
+            from ..plotting.dual_chart_plot import is_dual_chart_rule, plot_dual_chart_results
+            if is_dual_chart_rule(original_rule_with_params):
+                logger.print_info(f"Dual chart mode detected for rule: {original_rule_with_params}")
+                # Use dual chart plotting
+                plot_dual_chart_results(
+                    result_df,
+                    original_rule_with_params,
+                    plot_title,
+                    mode=draw_mode,
+                    output_path=f"results/plots/dual_chart_{draw_mode}.html" if draw_mode in ['fastest', 'fast'] else None,
+                    width=1800,
+                    height=1100
+                )
+                return
+        except ImportError as e:
+            logger.print_warning(f"Could not import dual chart plotting: {e}. Falling back to standard plotting.")
+        except Exception as e:
+            logger.print_error(f"Error in dual chart plotting: {e}. Falling back to standard plotting.")
 
     try:
         if draw_mode in ['mplfinance', 'mpl']:

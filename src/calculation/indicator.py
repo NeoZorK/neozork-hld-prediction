@@ -44,9 +44,18 @@ def calculate_pressure_vector(
     # --- Input Validation ---
     if not isinstance(df.index, pd.DatetimeIndex):
         logger.print_warning("Warning: DataFrame index is not a DatetimeIndex. Plotting might be affected.")
-    required_cols = ['Open', 'High', 'Low', 'Close', 'TickVolume']
-    if not all(col in df.columns for col in required_cols):
-        raise ValueError(f"Input DataFrame must contain columns: {required_cols}")
+    
+    # Check for required columns - handle both Volume and TickVolume
+    base_cols = ['Open', 'High', 'Low', 'Close']
+    volume_cols = ['Volume', 'TickVolume']
+    
+    if not all(col in df.columns for col in base_cols):
+        raise ValueError(f"Input DataFrame must contain columns: {base_cols}")
+    
+    # Check if at least one volume column exists
+    if not any(col in df.columns for col in volume_cols):
+        raise ValueError(f"Input DataFrame must contain either 'Volume' or 'TickVolume' column")
+    
     if point == 0:
         raise ValueError("Point size cannot be zero.")
 
@@ -59,8 +68,16 @@ def calculate_pressure_vector(
         # Keep the first occurrence of each duplicate index
         df_out = df_out[~df_out.index.duplicated(keep='first')]
 
-    # Rename TickVolume for consistency and plotting
-    df_out.rename(columns={'TickVolume': 'Volume'}, inplace=True, errors='ignore')
+    # Ensure Volume column exists for consistency
+    if 'Volume' not in df_out.columns and 'TickVolume' in df_out.columns:
+        df_out.rename(columns={'TickVolume': 'Volume'}, inplace=True)
+    elif 'TickVolume' not in df_out.columns and 'Volume' in df_out.columns:
+        # Volume already exists, no need to rename
+        pass
+    else:
+        # Both exist, prefer Volume
+        if 'TickVolume' in df_out.columns:
+            df_out.drop(columns=['TickVolume'], inplace=True)
 
 
     # --- Core Calculations ---
@@ -164,6 +181,16 @@ def calculate_pressure_vector(
     if tr_num == TradingRule.Pivot_Points:
         pivot_columns = ['Pivot_PP', 'Pivot_R1', 'Pivot_S1', 'Pivot_Signal', 'Pivot_Price_Type']
         output_columns.extend(pivot_columns)
+    
+    # Add PutCallRatio-specific columns for PutCallRatio rules
+    if tr_num == TradingRule.PutCallRatio:
+        putcall_columns = ['PutCallRatio', 'PutCallRatio_Signal', 'PutCallRatio_Price_Type']
+        output_columns.extend(putcall_columns)
+    
+    # Add COT-specific columns for COT rules
+    if tr_num == TradingRule.COT:
+        cot_columns = ['COT', 'COT_Signal', 'COT_Price_Type']
+        output_columns.extend(cot_columns)
     
     # Filter to only columns that actually exist in the DataFrame
     final_columns = [col for col in output_columns if col in df_out.columns]
