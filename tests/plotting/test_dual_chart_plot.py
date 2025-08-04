@@ -141,8 +141,8 @@ class TestDualChartPlot:
         result = calculate_additional_indicator(self.sample_data, 'macd:12,26,9,close')
         
         assert 'macd' in result.columns
-        assert 'signal' in result.columns
-        assert 'histogram' in result.columns
+        assert 'macd_signal' in result.columns
+        assert 'macd_histogram' in result.columns
         assert len(result) == len(self.sample_data)
 
     @patch('src.plotting.dual_chart_plot.calculate_ema')
@@ -378,8 +378,9 @@ class TestDualChartPlot:
             assert result is not None
             # Check that output_path is passed to plotting function
             call_args = mock_plot.call_args
-            assert 'output_path' in call_args[1]
-            assert call_args[1]['output_path'] == 'custom/path/plot.html'
+            # output_path is passed as positional argument at index 3
+            assert len(call_args[0]) >= 4
+            assert call_args[0][3] == 'custom/path/plot.html'
 
 
 class TestDualChartPlotIntegration:
