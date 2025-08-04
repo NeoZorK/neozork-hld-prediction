@@ -166,6 +166,54 @@ def plot_dual_chart_mpl(
                 ax2.axhline(y=oversold, color='green', linestyle='--', 
                            linewidth=2, label=f'Oversold ({oversold})')
     
+    elif indicator_name == 'rsi_mom':
+        y_axis_label = 'RSI Momentum'
+        if 'rsi' in display_df.columns:
+            ax2.plot(display_df.index, display_df['rsi'], 
+                    color='purple', linewidth=2, label='RSI')
+        
+        if 'rsi_momentum' in display_df.columns:
+            ax2.plot(display_df.index, display_df['rsi_momentum'], 
+                    color='orange', linewidth=2, label='RSI Momentum')
+            
+            # Add zero line for momentum
+            ax2.axhline(y=0, color='gray', linestyle='--', linewidth=1, alpha=0.5)
+        
+        # Add overbought/oversold lines
+        if 'rsi_overbought' in display_df.columns:
+            overbought = display_df['rsi_overbought'].iloc[0]
+            ax2.axhline(y=overbought, color='red', linestyle='--', 
+                       linewidth=2, label=f'Overbought ({overbought})')
+        
+        if 'rsi_oversold' in display_df.columns:
+            oversold = display_df['rsi_oversold'].iloc[0]
+            ax2.axhline(y=oversold, color='green', linestyle='--', 
+                       linewidth=2, label=f'Oversold ({oversold})')
+    
+    elif indicator_name == 'rsi_div':
+        y_axis_label = 'RSI Divergence'
+        if 'rsi' in display_df.columns:
+            ax2.plot(display_df.index, display_df['rsi'], 
+                    color='purple', linewidth=2, label='RSI')
+        
+        if 'rsi_divergence' in display_df.columns:
+            ax2.plot(display_df.index, display_df['rsi_divergence'], 
+                    color='orange', linewidth=2, label='RSI Divergence')
+            
+            # Add zero line for divergence
+            ax2.axhline(y=0, color='gray', linestyle='--', linewidth=1, alpha=0.5)
+        
+        # Add overbought/oversold lines
+        if 'rsi_overbought' in display_df.columns:
+            overbought = display_df['rsi_overbought'].iloc[0]
+            ax2.axhline(y=overbought, color='red', linestyle='--', 
+                       linewidth=2, label=f'Overbought ({overbought})')
+        
+        if 'rsi_oversold' in display_df.columns:
+            oversold = display_df['rsi_oversold'].iloc[0]
+            ax2.axhline(y=oversold, color='green', linestyle='--', 
+                       linewidth=2, label=f'Oversold ({oversold})')
+    
     elif indicator_name == 'stoch':
         y_axis_label = 'Stochastic %'
         # Plot %K line
