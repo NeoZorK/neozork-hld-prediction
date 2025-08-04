@@ -152,6 +152,62 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Invalid thresholds: Must be between 0 and 100'
             ]
         },
+        'rsi_mom': {
+            'name': 'RSI Momentum',
+            'description': 'Advanced RSI variant that calculates the momentum (rate of change) of RSI values to identify trend strength and potential reversal points.',
+            'format': 'rsi_mom:period,oversold,overbought,price_type',
+            'parameters': [
+                ('period', 'int', 'RSI calculation period', '14'),
+                ('oversold', 'float', 'Oversold threshold (0-100)', '30'),
+                ('overbought', 'float', 'Overbought threshold (0-100)', '70'),
+                ('price_type', 'string', 'Price type for calculation', 'close')
+            ],
+            'examples': [
+                ('rsi_mom:14,30,70,open', 'Standard RSI Momentum with open prices'),
+                ('rsi_mom:21,25,75,close', 'Custom RSI Momentum with close prices'),
+                ('rsi_mom:14,10,90,open', 'Wide range RSI Momentum with open prices')
+            ],
+            'tips': [
+                'RSI Momentum measures the rate of change of RSI values',
+                'Positive momentum indicates strengthening trend',
+                'Negative momentum indicates weakening trend',
+                'Use with standard RSI for confirmation signals',
+                'Momentum signals can precede price reversals'
+            ],
+            'common_errors': [
+                'Invalid price_type: Use "open" or "close" only',
+                'Invalid period: Must be a positive integer',
+                'Invalid thresholds: Must be between 0 and 100'
+            ]
+        },
+        'rsi_div': {
+            'name': 'RSI Divergence',
+            'description': 'Advanced RSI variant that detects divergence between price movement and RSI movement to identify potential trend reversals.',
+            'format': 'rsi_div:period,oversold,overbought,price_type',
+            'parameters': [
+                ('period', 'int', 'RSI calculation period', '14'),
+                ('oversold', 'float', 'Oversold threshold (0-100)', '30'),
+                ('overbought', 'float', 'Overbought threshold (0-100)', '70'),
+                ('price_type', 'string', 'Price type for calculation', 'close')
+            ],
+            'examples': [
+                ('rsi_div:14,30,70,open', 'Standard RSI Divergence with open prices'),
+                ('rsi_div:21,25,75,close', 'Custom RSI Divergence with close prices'),
+                ('rsi_div:14,10,90,open', 'Wide range RSI Divergence with open prices')
+            ],
+            'tips': [
+                'RSI Divergence compares price movement with RSI movement',
+                'Bullish divergence: Price makes lower lows, RSI makes higher lows',
+                'Bearish divergence: Price makes higher highs, RSI makes lower highs',
+                'Divergence signals can be powerful reversal indicators',
+                'Use with other indicators for confirmation'
+            ],
+            'common_errors': [
+                'Invalid price_type: Use "open" or "close" only',
+                'Invalid period: Must be a positive integer',
+                'Invalid thresholds: Must be between 0 and 100'
+            ]
+        },
         'macd': {
             'name': 'MACD (Moving Average Convergence Divergence)',
             'description': 'Shows the relationship between two moving averages to identify momentum changes.',
