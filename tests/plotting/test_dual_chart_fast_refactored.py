@@ -151,7 +151,9 @@ class TestDualChartFastRefactored:
     @pytest.fixture
     def mock_source(self):
         """Create a mock ColumnDataSource for testing."""
-        return Mock()
+        mock = Mock()
+        mock.data = {}
+        return mock
     
     def test_get_screen_height(self):
         """Test get_screen_height function returns reasonable value."""
@@ -448,20 +450,20 @@ class TestDualChartFastRefactored:
         assert 'Overbought' in labels
         assert 'Oversold' in labels
     
-    def test_get_indicator_hover_tool(self):
+    def test_get_indicator_hover_tool(self, sample_data):
         """Test hover tool generation for different indicators."""
         from bokeh.models import HoverTool
         
         # Test MACD hover tool
-        macd_hover = _get_indicator_hover_tool('macd')
+        macd_hover = _get_indicator_hover_tool('macd', sample_data)
         assert isinstance(macd_hover, HoverTool)
         
         # Test RSI hover tool
-        rsi_hover = _get_indicator_hover_tool('rsi')
+        rsi_hover = _get_indicator_hover_tool('rsi', sample_data)
         assert isinstance(rsi_hover, HoverTool)
         
         # Test generic hover tool
-        generic_hover = _get_indicator_hover_tool('unknown')
+        generic_hover = _get_indicator_hover_tool('unknown', sample_data)
         assert isinstance(generic_hover, HoverTool)
     
     def test_plot_indicator_by_type(self, mock_figure, mock_source, sample_data):

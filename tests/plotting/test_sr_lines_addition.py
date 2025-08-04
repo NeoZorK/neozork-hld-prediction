@@ -77,7 +77,7 @@ class TestSRLinesAddition:
             # Track calls to main_fig.line
             line_calls = []
             def track_line_calls(*args, **kwargs):
-                line_calls.append(kwargs)
+                line_calls.append((args, kwargs))
                 return Mock()
             
             mock_main_fig.line.side_effect = track_line_calls
@@ -89,21 +89,21 @@ class TestSRLinesAddition:
             assert len(line_calls) >= 2, "Should have at least 2 line calls for support and resistance"
             
             # Check for support line (PPrice1)
-            support_calls = [call for call in line_calls if 'PPrice1' in str(call)]
+            support_calls = [call for call in line_calls if 'PPrice1' in str(call[0])]
             assert len(support_calls) > 0, "Support line (PPrice1) should be added"
             
             # Check for resistance line (PPrice2)
-            resistance_calls = [call for call in line_calls if 'PPrice2' in str(call)]
+            resistance_calls = [call for call in line_calls if 'PPrice2' in str(call[0])]
             assert len(resistance_calls) > 0, "Resistance line (PPrice2) should be added"
             
             # Verify line properties
-            for call in line_calls:
-                if 'PPrice1' in str(call):
-                    assert call.get('line_color') == 'blue', "Support line should be blue"
-                    assert call.get('legend_label') == 'Support', "Support line should have correct legend"
-                elif 'PPrice2' in str(call):
-                    assert call.get('line_color') == 'red', "Resistance line should be red"
-                    assert call.get('legend_label') == 'Resistance', "Resistance line should have correct legend"
+            for args, kwargs in line_calls:
+                if 'PPrice1' in str(args):
+                    assert kwargs.get('line_color') == 'blue', "Support line should be blue"
+                    assert kwargs.get('legend_label') == 'Support', "Support line should have correct legend"
+                elif 'PPrice2' in str(args):
+                    assert kwargs.get('line_color') == 'red', "Resistance line should be red"
+                    assert kwargs.get('legend_label') == 'Resistance', "Resistance line should have correct legend"
     
     def test_sr_lines_without_columns(self, sample_data, mock_rule):
         """Test that no errors occur when PPrice1/PPrice2 columns are missing."""

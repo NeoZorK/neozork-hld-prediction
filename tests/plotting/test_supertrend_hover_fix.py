@@ -48,9 +48,9 @@ class TestSuperTrendHoverFix(unittest.TestCase):
         tooltips = hover_tool.tooltips
         tooltip_text = [str(tooltip) for tooltip in tooltips]
         
-        # Should contain Date, SuperTrend (using PPrice1), and Direction
+        # Should contain Date, SuperTrend, and Direction
         self.assertTrue(any('Date' in str(tooltip) for tooltip in tooltips), "Date tooltip missing")
-        self.assertTrue(any('PPrice1' in str(tooltip) for tooltip in tooltips), "PPrice1 tooltip missing")
+        self.assertTrue(any('SuperTrend' in str(tooltip) for tooltip in tooltips), "SuperTrend tooltip missing")
         self.assertTrue(any('Direction' in str(tooltip) for tooltip in tooltips), "Direction tooltip missing")
         
         # Verify mode is vline (not mouse)
@@ -117,10 +117,10 @@ class TestSuperTrendHoverFix(unittest.TestCase):
         # Verify hover tool exists (should still work without Direction)
         self.assertIsNotNone(hover_tool, "Hover tool should be created even without Direction column")
         
-        # Verify tooltips contain Date and SuperTrend (PPrice1)
+        # Verify tooltips contain Date and SuperTrend
         tooltips = hover_tool.tooltips
         self.assertTrue(any('Date' in str(tooltip) for tooltip in tooltips), "Date tooltip should be present")
-        self.assertTrue(any('PPrice1' in str(tooltip) for tooltip in tooltips), "PPrice1 tooltip should be present")
+        self.assertTrue(any('SuperTrend' in str(tooltip) for tooltip in tooltips), "SuperTrend tooltip should be present")
 
 
 if __name__ == '__main__':
