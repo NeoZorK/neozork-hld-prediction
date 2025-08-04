@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Kelly Criterion Oscillator is a probability-based indicator that calculates the optimal position size for trading based on the historical win probability and risk/reward ratio. It is visualized в стиле MACD: основная линия, сигнальная линия (EMA), гистограмма и пороговые уровни.
+The Kelly Criterion Oscillator is a probability-based indicator that calculates the optimal position size for trading based on the historical win probability and risk/reward ratio. It is visualized in MACD style: main line, signal line (EMA), histogram and threshold levels.
 
 ## How It Works
 
@@ -20,41 +20,41 @@ The Kelly Criterion Oscillator is a probability-based indicator that calculates 
 
 4. **Signal Line**: Exponential moving average (EMA, span=9) of the Kelly line.
 5. **Histogram**: Difference between Kelly and signal line.
-6. **Thresholds**: 0.1 (10%) — минимальный уровень для сигнала, 0.25 (25%) — максимальный допустимый Kelly.
+6. **Thresholds**: 0.1 (10%) — minimum level for signal, 0.25 (25%) — maximum allowed Kelly.
 
 ## Output Fields
 
-- **kelly**: Основная линия Kelly (оптимальная доля капитала для сделки)
-- **kelly_signal**: EMA(9) от Kelly (сигнальная линия)
-- **kelly_histogram**: Разница между Kelly и сигнальной линией
-- **kelly_threshold_10**: Линия порога 0.1 (10%)
-- **kelly_threshold_25**: Линия порога 0.25 (25%)
+- **kelly**: Main Kelly line (optimal capital fraction for trade)
+- **kelly_signal**: EMA(9) of Kelly (signal line)
+- **kelly_histogram**: Difference between Kelly and signal line
+- **kelly_threshold_10**: Threshold line 0.1 (10%)
+- **kelly_threshold_25**: Threshold line 0.25 (25%)
 
 ## Visualization (MACD-style)
 
 - **Blue line**: Kelly fraction (main line)
 - **Red line**: Signal line (EMA)
-- **Green/Red bars**: Histogram (green — Kelly выше сигнальной, red — ниже)
+- **Green/Red bars**: Histogram (green — Kelly above signal line, red — below)
 - **Orange dashed**: 10% threshold
 - **Red dashed**: 25% threshold
 - **Gray dashed**: Zero line
 
 ## Interpretation
 
-- **Kelly > 0.1**: Сигнал к увеличению позиции (BUY), если линия растет
-- **Kelly < 0.1**: Сигнал к снижению позиции (SELL), если линия падает
-- **Histogram > 0**: Усиление сигнала, Kelly выше сигнальной
-- **Histogram < 0**: Ослабление сигнала, Kelly ниже сигнальной
-- **Kelly > 0.25**: Не рекомендуется, слишком агрессивно
+- **Kelly > 0.1**: Signal to increase position (BUY), if line is rising
+- **Kelly < 0.1**: Signal to decrease position (SELL), if line is falling
+- **Histogram > 0**: Signal strengthening, Kelly above signal line
+- **Histogram < 0**: Signal weakening, Kelly below signal line
+- **Kelly > 0.25**: Not recommended, too aggressive
 
 ## Best Practices
 
-- Используйте Kelly только с надежными историческими данными
-- Не превышайте 25% Kelly (слишком высокий риск)
-- Комбинируйте с фильтрами тренда (например, EMA, MACD)
-- Для волатильных рынков уменьшайте период (например, 10-15)
-- Для стабильных рынков увеличивайте период (20-30)
-- Используйте сигнальную линию для подтверждения
+- Use Kelly only with reliable historical data
+- Do not exceed 25% Kelly (too high risk)
+- Combine with trend filters (e.g., EMA, MACD)
+- For volatile markets, reduce period (e.g., 10-15)
+- For stable markets, increase period (20-30)
+- Use signal line for confirmation
 
 ## Example Chart
 
@@ -70,10 +70,10 @@ graph LR
 
 ## Integration with Other Indicators
 
-- **MACD**: Используйте Kelly для фильтрации MACD-сигналов (например, только если Kelly > 0.1)
-- **RSI**: Не открывайте сделки по Kelly, если RSI в зоне перекупленности/перепроданности
-- **ATR**: Используйте ATR для динамического управления размером позиции
-- **Bollinger Bands**: Kelly может усиливать сигналы выхода за границы полос
+- **MACD**: Use Kelly to filter MACD signals (e.g., only if Kelly > 0.1)
+- **RSI**: Do not open trades on Kelly if RSI is in overbought/oversold zone
+- **ATR**: Use ATR for dynamic position size management
+- **Bollinger Bands**: Kelly can strengthen signals for breaking band boundaries
 
 ## References
 - Kelly, J. L. (1956). "A New Interpretation of Information Rate". Bell System Technical Journal.
@@ -81,4 +81,4 @@ graph LR
 
 ---
 
-_Документация подготовлена для режима dual chart fastest. Все примеры и рекомендации актуальны только для этого режима._ 
+_Documentation prepared for dual chart fastest mode. All examples and recommendations are relevant only for this mode._ 
