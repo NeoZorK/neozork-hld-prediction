@@ -117,6 +117,7 @@ def show_help():
     print(f"  {Fore.GREEN}python run_analysis.py show csv gbp --rule rsi:14,30,70,open{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Show CSV data with RSI indicator{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show csv gbp --rule rsi_mom:14,30,70,close{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Show CSV data with RSI Momentum{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show csv gbp --rule rsi_div:14,30,70,open{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Show CSV data with RSI Divergence{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show csv gbp --rule feargreed:14,close{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Show CSV data with Fear & Greed Index{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show eth{Style.RESET_ALL}              {Fore.BLACK}{Style.DIM}# Find any files containing 'eth' (e.g., Ethereum){Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show forex{Style.RESET_ALL}            {Fore.BLACK}{Style.DIM}# Find any files containing 'forex'{Style.RESET_ALL}")
 
@@ -129,6 +130,7 @@ def show_help():
     print(f"  {Fore.MAGENTA}--rule RSI{Style.RESET_ALL}     {Fore.BLACK}{Style.DIM}# Calculate Relative Strength Index{Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}--rule RSI_MOM{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Calculate RSI Momentum (rate of change){Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}--rule RSI_DIV{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Calculate RSI Divergence (price vs RSI){Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule FEARGREED{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Calculate Fear & Greed Index (sentiment){Style.RESET_ALL}")
 
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Drawing Options (-d flag):{Style.RESET_ALL}")
     print(f"  The {Fore.MAGENTA}-d{Style.RESET_ALL} flag allows you to specify the plotting library for visualization:")
@@ -145,6 +147,7 @@ def show_help():
     print(f"  {Fore.GREEN}python run_analysis.py show csv gbp --rule rsi:14,30,70,open -d mpl{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Show CSV data with RSI using mplfinance{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show csv gbp --rule rsi_mom:14,30,70,close -d plotly{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Show CSV data with RSI Momentum using Plotly{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show csv gbp --rule rsi_div:14,30,70,open -d fastest{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Show CSV data with RSI Divergence using fastest backend{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show csv gbp --rule feargreed:14,close -d mpl{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Show CSV data with Fear & Greed using mplfinance{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show binance btc -d seaborn{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Show BTC data with Seaborn plots{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show ind parquet -d fastest{Style.RESET_ALL}  {Fore.BLACK}{Style.DIM}# Show indicator files with fastest backend{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show ind parquet -d mpl{Style.RESET_ALL}      {Fore.BLACK}{Style.DIM}# Show indicator files with mplfinance{Style.RESET_ALL}")
@@ -1276,6 +1279,7 @@ def show_indicator_help():
     print(f"  {Fore.GREEN}python run_analysis.py show ind parquet RSI -d plotly{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Plot RSI files with Plotly{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show ind parquet RSI_MOM -d mpl{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Plot RSI Momentum files with mplfinance{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}python run_analysis.py show ind parquet RSI_DIV -d fastest{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Plot RSI Divergence files with fastest backend{Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}python run_analysis.py show ind parquet FEARGREED -d plotly{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Plot Fear & Greed files with Plotly{Style.RESET_ALL}")
 
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Available Drawing Backends (-d flag):{Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}-d fastest{Style.RESET_ALL}   {Fore.BLACK}{Style.DIM}# Default - Plotly+Dask+Datashader (best for large datasets){Style.RESET_ALL}")
@@ -1293,6 +1297,7 @@ def show_indicator_help():
     print(f"  {Fore.MAGENTA}--rule RSI{Style.RESET_ALL}     {Fore.BLACK}{Style.DIM}# Focus on RSI (Relative Strength Index) indicators{Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}--rule RSI_MOM{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Focus on RSI Momentum indicators{Style.RESET_ALL}")
     print(f"  {Fore.MAGENTA}--rule RSI_DIV{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Focus on RSI Divergence indicators{Style.RESET_ALL}")
+    print(f"  {Fore.MAGENTA}--rule FEARGREED{Style.RESET_ALL} {Fore.BLACK}{Style.DIM}# Focus on Fear & Greed Index indicators{Style.RESET_ALL}")
 
     print(f"\n{Fore.YELLOW}{Style.BRIGHT}Note:{Style.RESET_ALL}")
     print(f"  - {Fore.MAGENTA}Parquet files{Style.RESET_ALL} can be displayed as charts with all drawing backends")
