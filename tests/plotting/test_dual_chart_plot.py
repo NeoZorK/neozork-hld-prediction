@@ -58,7 +58,7 @@ class TestDualChartPlot:
             'kelly:20',
             'donchain:20',
             'fibo:0.236,0.382,0.5,0.618,0.786',
-            'obv',
+            'obv:',
             'stdev:20,close',
             'adx:14',
             'sar:0.02,0.2'

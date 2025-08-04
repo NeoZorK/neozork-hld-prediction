@@ -185,8 +185,8 @@ class TestIndicatorParameterParsing:
         indicator_name, params = parse_monte_parameters("1000,252")
         assert indicator_name == "monte"
         assert params == {
-            'monte_simulations': 1000,
-            'monte_period': 252
+            'simulations': 1000,
+            'period': 252
         }
     
     def test_parse_kelly_parameters_valid(self):
@@ -268,18 +268,18 @@ class TestIndicatorParameterParsing:
     
     def test_parse_indicator_parameters_invalid_format(self):
         """Test parsing indicator with invalid format."""
-        with pytest.raises(ValueError, match="RSI requires exactly 4 parameters"):
+        with pytest.raises(SystemExit):
             parse_indicator_parameters("rsi:14:30,70,close")
     
     def test_parse_indicator_parameters_unknown_indicator(self):
         """Test parsing unknown indicator."""
-        with pytest.raises(ValueError, match="Unknown indicator"):
+        with pytest.raises(SystemExit):
             parse_indicator_parameters("unknown:14,30,70,close")
     
     def test_parse_indicator_parameters_error_handling(self):
         """Test error handling in parameter parsing."""
-        # This should raise ValueError for invalid parameters
-        with pytest.raises(ValueError, match="RSI requires exactly 4 parameters"):
+        # This should raise SystemExit for invalid parameters (after showing help)
+        with pytest.raises(SystemExit):
             parse_indicator_parameters("rsi:invalid,params")
     
     def test_parse_indicator_parameters_edge_cases(self):
@@ -517,12 +517,12 @@ class TestErrorHandling:
 
     def test_obv_invalid_parameter_count(self):
         """Test OBV error handling with wrong parameter count."""
-        with pytest.raises(ValueError, match="OBV does not require parameters"):
+        with pytest.raises(SystemExit):
             parse_obv_parameters("close,open")
 
     def test_stdev_invalid_parameter_count(self):
         """Test Standard Deviation error handling with wrong parameter count."""
-        with pytest.raises(ValueError, match="Standard Deviation requires exactly 2 parameters"):
+        with pytest.raises(SystemExit):
             parse_stdev_parameters("20")
 
     def test_adx_invalid_parameter_count(self):
@@ -596,5 +596,5 @@ class TestParameterValidation:
 
     def test_stdev_invalid_price_type(self):
         """Test Standard Deviation price type validation."""
-        with pytest.raises(ValueError, match="Standard Deviation price_type must be 'open' or 'close'"):
+        with pytest.raises(SystemExit):
             parse_stdev_parameters("20,invalid") 

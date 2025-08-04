@@ -150,10 +150,13 @@ class TestDualChartFastSupertrendHoverFix(unittest.TestCase):
         self.assertIsInstance(hover_tool_pprice, HoverTool, "Should be HoverTool instance")
         self.assertEqual(hover_tool_pprice.mode, 'vline', "Hover tool mode should be 'vline'")
         
-        # Verify that tooltips contain only Value field (simplified)
+        # Verify that tooltips contain Date, SuperTrend, and Direction fields
         tooltips = hover_tool_pprice.tooltips
-        self.assertEqual(len(tooltips), 1, "Should have only one tooltip")
-        self.assertEqual(tooltips[0][0], "Value", "First tooltip should be 'Value'")
+        self.assertEqual(len(tooltips), 3, "Should have three tooltips: Date, SuperTrend, Direction")
+        tooltip_labels = [tooltip[0] for tooltip in tooltips]
+        self.assertIn("Date", tooltip_labels, "Date tooltip should be present")
+        self.assertIn("SuperTrend", tooltip_labels, "SuperTrend tooltip should be present")
+        self.assertIn("Direction", tooltip_labels, "Direction tooltip should be present")
         
         # Test with direct supertrend column
         hover_tool_direct = _get_indicator_hover_tool('supertrend', self.sample_data_direct)
@@ -163,10 +166,13 @@ class TestDualChartFastSupertrendHoverFix(unittest.TestCase):
         self.assertIsInstance(hover_tool_direct, HoverTool, "Should be HoverTool instance")
         self.assertEqual(hover_tool_direct.mode, 'vline', "Hover tool mode should be 'vline'")
         
-        # Verify that tooltips contain only Value field (simplified)
+        # Verify that tooltips contain Date, SuperTrend, and Direction fields
         tooltips = hover_tool_direct.tooltips
-        self.assertEqual(len(tooltips), 1, "Should have only one tooltip")
-        self.assertEqual(tooltips[0][0], "Value", "First tooltip should be 'Value'")
+        self.assertEqual(len(tooltips), 3, "Should have three tooltips: Date, SuperTrend, Direction")
+        tooltip_labels = [tooltip[0] for tooltip in tooltips]
+        self.assertIn("Date", tooltip_labels, "Date tooltip should be present")
+        self.assertIn("SuperTrend", tooltip_labels, "SuperTrend tooltip should be present")
+        self.assertIn("Direction", tooltip_labels, "Direction tooltip should be present")
 
 
 if __name__ == '__main__':
