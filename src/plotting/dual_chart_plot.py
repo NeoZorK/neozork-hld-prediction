@@ -336,8 +336,21 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['tsf'] = tsf_values
             
         elif indicator_name == 'monte':
-            simulations = int(params[0]) if len(params) > 0 else 1000
-            period = int(params[1]) if len(params) > 1 else 252
+            # Handle empty parameters gracefully
+            simulations = 1000
+            period = 252
+            
+            if len(params) > 0 and params[0].strip():
+                try:
+                    simulations = int(params[0])
+                except ValueError:
+                    pass  # Use default value
+            
+            if len(params) > 1 and params[1].strip():
+                try:
+                    period = int(params[1])
+                except ValueError:
+                    pass  # Use default value
             
             # Select price series (use Close for Monte Carlo)
             price_series = df['Close']
