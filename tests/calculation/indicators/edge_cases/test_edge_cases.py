@@ -286,13 +286,13 @@ class TestEdgeCases:
             'Volume': [1000, 1100, 1200]
         })
         
-        # Только apply_rule_rsi и apply_rule_stochastic должны выбрасывать TypeError
+        # Only apply_rule_rsi and apply_rule_stochastic should throw TypeError
         with pytest.raises(TypeError):
             apply_rule_rsi(mixed_data.copy(), self.point)
         with pytest.raises(TypeError):
             apply_rule_stochastic(mixed_data.copy(), self.point)
         
-        # Остальные индикаторы должны возвращать DataFrame
+        # Other indicators should return DataFrame
         result_atr = apply_rule_atr(mixed_data.copy(), self.point)
         assert isinstance(result_atr, pd.DataFrame)
         

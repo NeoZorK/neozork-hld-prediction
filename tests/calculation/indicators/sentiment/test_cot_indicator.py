@@ -82,16 +82,16 @@ class TestCOTIndicator:
     def test_cot_with_only_volume_column(self):
         """Test that apply_rule_cot works with only 'Volume' column (no 'TickVolume')."""
         df = self.sample_data.copy()
-        # Удаляем TickVolume, если вдруг есть
+        # Remove TickVolume if it exists
         if 'TickVolume' in df.columns:
             df = df.drop(columns=['TickVolume'])
-        # Проверяем, что нет TickVolume
+        # Check that there is no TickVolume
         assert 'TickVolume' not in df.columns
-        # Должен работать без ошибок
+        # Should work without errors
         result = apply_rule_cot(df, point=0.01, cot_period=10, price_type='close')
         assert 'COT' in result
         assert 'COT_Signal' in result
         assert 'Direction' in result
         assert 'Diff' in result
-        # Проверяем, что нет ошибок и есть значения
+        # Check that there are no errors and there are values
         assert not result['COT'].isna().all() 

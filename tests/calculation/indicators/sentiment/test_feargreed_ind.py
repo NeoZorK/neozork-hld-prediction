@@ -48,16 +48,16 @@ def test_feargreed_ind_module_structure():
         pytest.fail(f"Module structure test failed: {e}")
 
 def test_feargreed_enough_data():
-    # 30 точек, период 14
+    # 30 points, period 14
     data = pd.Series(np.linspace(1, 2, 30))
     result = calculate_feargreed(data, period=14)
-    # После периода должны быть не только NaN
+    # After period should not be only NaN
     assert result.iloc[14:].notna().any(), "Fear & Greed must return non-NaN values if enough data"
-    # До периода должны быть NaN
+    # Before period should be NaN
     assert result.iloc[:14].isna().all(), "First period values must be NaN"
 
 def test_feargreed_not_enough_data():
-    # 10 точек, период 14
+    # 10 points, period 14
     data = pd.Series(np.linspace(1, 2, 10))
     result = calculate_feargreed(data, period=14)
     assert result.isna().all(), "If not enough data, all values must be NaN"

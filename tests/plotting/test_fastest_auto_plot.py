@@ -165,7 +165,7 @@ class TestFastestAutoPlot:
         for prop in scrollbar_properties:
             assert prop in html_content, f"Missing scrollbar property: {prop}"
         
-        # Проверяем, что в html_content есть строка height: <число>px;
+        # Check that html_content contains the string height: <number>px;
         assert re.search(r'height: ?\d+px;', html_content), 'Missing dynamic height property in .chart-container'
 
     def test_plot_auto_fastest_parquet_info_panel(self):
