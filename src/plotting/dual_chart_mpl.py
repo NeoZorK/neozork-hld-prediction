@@ -121,17 +121,23 @@ def plot_dual_chart_mpl(
     
     # Format x-axis for main chart
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    # Calculate appropriate interval based on data length to avoid too many ticks
+    # Calculate appropriate interval based on data length and time range
     data_length = len(display_df)
-    if data_length > 1000:
-        interval = max(1, data_length // 30)  # Show max 30 ticks
-    elif data_length > 500:
-        interval = max(1, data_length // 20)  # Show max 20 ticks
-    elif data_length > 100:
-        interval = max(1, data_length // 15)  # Show max 15 ticks
-    else:
-        interval = max(1, data_length // 10)  # Show max 10 ticks for smaller datasets
-    ax1.xaxis.set_major_locator(mdates.DayLocator(interval=interval))
+    date_range = display_df.index.max() - display_df.index.min()
+    days_range = date_range.days
+    
+    # Choose appropriate locator based on time range
+    if days_range > 365 * 5:  # More than 5 years
+        ax1.xaxis.set_major_locator(mdates.YearLocator(2))  # Every 2 years
+    elif days_range > 365 * 2:  # More than 2 years
+        ax1.xaxis.set_major_locator(mdates.YearLocator(1))  # Every year
+    elif days_range > 365:  # More than 1 year
+        ax1.xaxis.set_major_locator(mdates.MonthLocator(interval=3))  # Every 3 months
+    elif days_range > 90:  # More than 3 months
+        ax1.xaxis.set_major_locator(mdates.MonthLocator(interval=1))  # Every month
+    else:  # Less than 3 months
+        ax1.xaxis.set_major_locator(mdates.DayLocator(interval=max(1, days_range // 10)))
+    
     plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45, ha='right')
     
     # Indicator chart
@@ -327,8 +333,8 @@ def plot_dual_chart_mpl(
     
     # Format x-axis for indicator chart
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    # Use the same interval as main chart for consistency
-    ax2.xaxis.set_major_locator(mdates.DayLocator(interval=interval))
+    # Use the same locator as main chart for consistency
+    ax2.xaxis.set_major_locator(ax1.xaxis.get_major_locator())
     plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45, ha='right')
     
     # Adjust layout
