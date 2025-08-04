@@ -47,6 +47,13 @@ from ..calculation.indicators.sentiment.feargreed_ind import calculate_feargreed
 from ..common.constants import BUY, SELL, NOTRADE
 from ..cli.cli import parse_supertrend_parameters
 
+# Import dual chart plotting functions
+from .dual_chart_fastest import plot_dual_chart_fastest
+from .dual_chart_fast import plot_dual_chart_fast
+from .dual_chart_mpl import plot_dual_chart_mpl
+from .dual_chart_seaborn import plot_dual_chart_seaborn
+from .dual_chart_terminal import plot_dual_chart_terminal
+
 
 def is_dual_chart_rule(rule: str) -> bool:
     """
@@ -76,7 +83,49 @@ def is_dual_chart_rule(rule: str) -> bool:
     # Check if indicator is supported
     supported_indicators = get_supported_indicators()
     
-    return indicator_name in supported_indicators
+    if indicator_name not in supported_indicators:
+        return False
+    
+    # Basic parameter validation for common indicators
+    try:
+        params_str = rule.split(':', 1)[1].strip()
+        params = [p.strip() for p in params_str.split(',')]
+        
+        if indicator_name == 'rsi':
+            if len(params) < 4:
+                return False
+            # Check if first 3 parameters are numeric
+            int(params[0])  # period
+            float(params[1])  # oversold
+            float(params[2])  # overbought
+            if params[3].lower() not in ['open', 'close']:
+                return False
+        elif indicator_name == 'macd':
+            if len(params) < 4:
+                return False
+            # Check if first 3 parameters are numeric
+            int(params[0])  # fast_period
+            int(params[1])  # slow_period
+            int(params[2])  # signal_period
+            if params[3].lower() not in ['open', 'close']:
+                return False
+        elif indicator_name == 'ema':
+            if len(params) < 2:
+                return False
+            int(params[0])  # period
+            if params[1].lower() not in ['open', 'close']:
+                return False
+        elif indicator_name == 'bb':
+            if len(params) < 3:
+                return False
+            int(params[0])  # period
+            float(params[1])  # std_dev
+            if params[2].lower() not in ['open', 'close']:
+                return False
+    except (ValueError, IndexError):
+        return False
+    
+    return True
 
 
 def get_supported_indicators() -> set:
@@ -678,27 +727,22 @@ def plot_dual_chart_results(
     
     # Call appropriate plotting function based on mode
     if mode == 'fastest':
-        from .dual_chart_fastest import plot_dual_chart_fastest
         return plot_dual_chart_fastest(
             df_with_indicator, rule, title, output_path, width, height, layout, **kwargs
         )
     elif mode == 'fast':
-        from .dual_chart_fast import plot_dual_chart_fast
         return plot_dual_chart_fast(
             df_with_indicator, rule, title, output_path, width, height, layout, **kwargs
         )
     elif mode in ['mpl', 'mplfinance']:
-        from .dual_chart_mpl import plot_dual_chart_mpl
         return plot_dual_chart_mpl(
             df_with_indicator, rule, title, output_path, width, height, layout, **kwargs
         )
     elif mode in ['sb', 'seaborn']:
-        from .dual_chart_seaborn import plot_dual_chart_seaborn
         return plot_dual_chart_seaborn(
             df_with_indicator, rule, title, output_path, width, height, layout, **kwargs
         )
     elif mode == 'term':
-        from .dual_chart_terminal import plot_dual_chart_terminal
         return plot_dual_chart_terminal(
             df_with_indicator, rule, title, output_path, width, height, layout, **kwargs
         )
