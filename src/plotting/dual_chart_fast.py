@@ -844,12 +844,19 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
             source.data['supertrend'] = supertrend_values
     
     # Colors and style like in fastest
-    uptrend_color = 'rgba(0, 200, 81, 0.95)'
-    downtrend_color = 'rgba(255, 68, 68, 0.95)'
-    signal_change_color = 'rgba(255, 193, 7, 0.95)'
+    uptrend_color = '#00C851'  # Green
+    downtrend_color = '#FF4444'  # Red
+    signal_change_color = '#FFC107'  # Golden
     
     # Determine trend (analog to fastest)
-    price_series = display_df['Close'] if 'Close' in display_df.columns else display_df['close']
+    if 'Close' in display_df.columns:
+        price_series = display_df['Close']
+    elif 'close' in display_df.columns:
+        price_series = display_df['close']
+    else:
+        # If no price column available, use supertrend values as reference
+        price_series = supertrend_values
+    
     trend = np.where(price_series > supertrend_values, 1, -1)
     trend = pd.Series(trend, index=display_df.index)
     
@@ -894,9 +901,10 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
     for seg_x, seg_y, seg_color in segments:
         if len(seg_x) > 1:
             # Glow
+            glow_color = seg_color + '4D'  # Add 30% opacity (4D in hex)
             indicator_fig.line(
                 x=seg_x, y=seg_y,
-                line_color=seg_color.replace('0.95', '0.3'), line_width=10, line_alpha=1.0
+                line_color=glow_color, line_width=10, line_alpha=1.0
             )
             # Legend
             if seg_color == uptrend_color:
@@ -966,11 +974,13 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
         for i in range(len(trend_changes)):
             start_idx = trend_changes[i]
             end_idx = trend_changes[i + 1] if i + 1 < len(trend_changes) else idx_arr[-1]
-            zone_color = 'rgba(0, 200, 81, 0.08)' if trend.loc[start_idx] == 1 else 'rgba(255, 68, 68, 0.08)'
+            # Find the index of start_idx in idx_arr
+            start_idx_pos = np.where(idx_arr == start_idx)[0][0]
+            zone_color = '#00C851' if trend.iloc[start_idx_pos] == 1 else '#FF4444'
             indicator_fig.add_layout(BoxAnnotation(
                 left=start_idx, right=end_idx,
-                fill_color=zone_color, fill_alpha=1.0,
-                line_color=zone_color, line_alpha=0.2, line_width=1
+                fill_color=zone_color + '14', fill_alpha=0.08,  # 14 in hex = 8% opacity
+                line_color=zone_color + '33', line_alpha=0.2, line_width=1  # 33 in hex = 20% opacity
             ))
     
     # Add hover tool for SuperTrend indicator
@@ -1260,9 +1270,11 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
         # Always use supertrend column (created in _plot_supertrend_indicator)
         return HoverTool(
             tooltips=[
-                ("Value", "@supertrend{0.5f}")
+                ("Date", "@index{%F %H:%M}"),
+                ("SuperTrend", "@supertrend{0.5f}"),
+                ("Direction", "@Direction")
             ],
-            formatters={},
+            formatters={'@index': 'datetime'},
             mode='vline'
         )
     else:

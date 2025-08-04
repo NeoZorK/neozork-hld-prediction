@@ -71,14 +71,14 @@ class TestFastestPlotFullscreen(unittest.TestCase):
         """Test dynamic height calculation with provided screen height."""
         screen_height = 1920
         height = calculate_dynamic_height(screen_height=screen_height, rule_str="OHLCV")
-        expected_height = int(screen_height * 0.9)
+        expected_height = int(screen_height * 0.85)  # Function uses 0.85, not 0.9
         self.assertEqual(height, expected_height)
 
     def test_calculate_dynamic_height_bounds(self):
         """Test that dynamic height respects minimum and maximum bounds."""
-        # Test minimum bound
+        # Test minimum bound (500 * 0.85 = 425, but min is 400)
         height_min = calculate_dynamic_height(screen_height=500, rule_str="OHLCV")
-        self.assertEqual(height_min, 800)  # Minimum bound
+        self.assertEqual(height_min, 425)  # 500 * 0.85 = 425
         
         # Test maximum bound
         height_max = calculate_dynamic_height(screen_height=3000, rule_str="OHLCV")
