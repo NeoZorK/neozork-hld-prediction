@@ -55,24 +55,24 @@ coverage.xml
 .env
 .venv
 env/
-venv/ # Ваше виртуальное окружение
+venv/ # Your virtual environment
 ENV/
 env.bak/
 venv.bak/
 
 # PyCharm specific
-.idea/ # Настройки PyCharm для проекта
+.idea/ # PyCharm project settings
 
 # VS Code specific
 .vscode/
 
-# Data files (ВАЖНО: Раскомментируйте, если не хотите добавлять данные в Git)
+# Data files (IMPORTANT: Uncomment if you do not want to add data to Git)
 data/
 *.csv
 *.parquet
 *.feather
 
-# Model files (ВАЖНО: Раскомментируйте, если не хотите добавлять модели в Git)
+# Model files (IMPORTANT: Uncomment if you do not want to add models to Git)
 models/
 *.pkl
 *.joblib

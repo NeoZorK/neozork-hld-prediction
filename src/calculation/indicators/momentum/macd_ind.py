@@ -85,7 +85,7 @@ def calculate_macd_signals(macd_line: pd.Series, signal_line: pd.Series, histogr
 
 
 def apply_rule_macd(df: pd.DataFrame, point: float, 
-                    fast_period: int = 12, slow_period: int = 26, signal_period: int = 9,
+                    macd_fast: int = 12, macd_slow: int = 26, macd_signal: int = 9,
                     price_type: PriceType = PriceType.CLOSE):
     """
     Applies MACD rule logic to calculate trading signals and price levels.
@@ -93,9 +93,9 @@ def apply_rule_macd(df: pd.DataFrame, point: float,
     Args:
         df (pd.DataFrame): Input DataFrame with OHLCV data
         point (float): Instrument point size
-        fast_period (int): Fast EMA period
-        slow_period (int): Slow EMA period
-        signal_period (int): Signal line period
+        macd_fast (int): Fast EMA period
+        macd_slow (int): Slow EMA period
+        macd_signal (int): Signal line period
         price_type (PriceType): Price type to use for calculation (OPEN or CLOSE)
     
     Returns:
@@ -112,7 +112,7 @@ def apply_rule_macd(df: pd.DataFrame, point: float,
         price_name = "Close"
     
     # Calculate MACD
-    macd_line, signal_line, histogram = calculate_macd(price_series, fast_period, slow_period, signal_period)
+    macd_line, signal_line, histogram = calculate_macd(price_series, macd_fast, macd_slow, macd_signal)
     
     df['MACD_Line'] = macd_line
     df['MACD_Signal'] = signal_line

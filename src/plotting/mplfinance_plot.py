@@ -42,6 +42,12 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         if not isinstance(df_results.index, pd.DatetimeIndex):
             logger.print_warning("DataFrame index is not a DatetimeIndex after attempted conversion. Plotting might fail.")
 
+    # Determine if we should show separate charts based on rule
+    # Rules that should show separate charts: OHLCV, AUTO, PHLD, PV, SR
+    # All other rules (like RSI, MACD, etc.) should not show separate charts
+    rule_str = rule.name.upper() if hasattr(rule, 'name') else str(rule).upper()
+    show_separate_charts = rule_str in ['OHLCV', 'AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS']
+
     plots_to_add = []
     panel_count = 0
 
@@ -53,27 +59,57 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         plots_to_add.append(mpf.make_addplot(df_results['PPrice2'], panel=0, color='red', width=0.9, linestyle='dotted',
                                              title="PPrice2", secondary_y=True))
 
-    # --- Add indicator panels ---
-    panel_map = {}
-    if 'PV' in df_results.columns and not df_results['PV'].isnull().all():
-        panel_count += 1
-        panel_map['PV'] = panel_count
-        pv_panel = panel_map['PV']
-        plots_to_add.append(mpf.make_addplot(df_results['PV'].fillna(0), panel=pv_panel, color='orange', width=0.8, ylabel='PV'))
-        plots_to_add.append(mpf.make_addplot(pd.Series(0, index=df_results.index), panel=pv_panel, color='gray', linestyle=':', width=0.5))
+    # --- Add indicator panels (only if separate charts are enabled) ---
+    if show_separate_charts:
+        panel_map = {}
+        
+        # Check for PV (both 'PV' and 'pressure_vector')
+        pv_col = None
+        if 'PV' in df_results.columns and not df_results['PV'].isnull().all():
+            pv_col = 'PV'
+        elif 'pressure_vector' in df_results.columns and not df_results['pressure_vector'].isnull().all():
+            pv_col = 'pressure_vector'
+        
+        if pv_col:
+            panel_count += 1
+            panel_map['PV'] = panel_count
+            pv_panel = panel_map['PV']
+            plots_to_add.append(mpf.make_addplot(df_results[pv_col].fillna(0), panel=pv_panel, color='orange', width=0.8, ylabel='PV'))
+            plots_to_add.append(mpf.make_addplot(pd.Series(0, index=df_results.index), panel=pv_panel, color='gray', linestyle=':', width=0.5))
 
-    if 'HL' in df_results.columns and not df_results['HL'].isnull().all():
-        panel_count += 1
-        panel_map['HL'] = panel_count
-        hl_panel = panel_map['HL']
-        plots_to_add.append(mpf.make_addplot(df_results['HL'].fillna(0), panel=hl_panel, color='brown', width=0.8, ylabel='HL (Points)'))
+        if 'HL' in df_results.columns and not df_results['HL'].isnull().all():
+            panel_count += 1
+            panel_map['HL'] = panel_count
+            hl_panel = panel_map['HL']
+            plots_to_add.append(mpf.make_addplot(df_results['HL'].fillna(0), panel=hl_panel, color='brown', width=0.8, ylabel='HL (Points)'))
 
-    if 'Pressure' in df_results.columns and not df_results['Pressure'].isnull().all():
-        panel_count += 1
-        panel_map['Pressure'] = panel_count
-        pressure_panel = panel_map['Pressure']
-        plots_to_add.append(mpf.make_addplot(df_results['Pressure'].fillna(0), panel=pressure_panel, color='dodgerblue', width=0.8, ylabel='Pressure'))
-        plots_to_add.append(mpf.make_addplot(pd.Series(0, index=df_results.index), panel=pressure_panel, color='gray', linestyle=':', width=0.5))
+        # Check for Pressure (both 'Pressure' and 'pressure')
+        pressure_col = None
+        if 'Pressure' in df_results.columns and not df_results['Pressure'].isnull().all():
+            pressure_col = 'Pressure'
+        elif 'pressure' in df_results.columns and not df_results['pressure'].isnull().all():
+            pressure_col = 'pressure'
+        
+        if pressure_col:
+            panel_count += 1
+            panel_map['Pressure'] = panel_count
+            pressure_panel = panel_map['Pressure']
+            plots_to_add.append(mpf.make_addplot(df_results[pressure_col].fillna(0), panel=pressure_panel, color='dodgerblue', width=0.8, ylabel='Pressure'))
+            plots_to_add.append(mpf.make_addplot(pd.Series(0, index=df_results.index), panel=pressure_panel, color='gray', linestyle=':', width=0.5))
+
+        # Add predicted high/low for AUTO mode
+        if rule_str == 'AUTO':
+            if 'predicted_low' in df_results.columns and not df_results['predicted_low'].isnull().all():
+                panel_count += 1
+                panel_map['predicted_low'] = panel_count
+                pred_low_panel = panel_map['predicted_low']
+                plots_to_add.append(mpf.make_addplot(df_results['predicted_low'].fillna(0), panel=pred_low_panel, color='green', width=0.8, ylabel='Predicted Low'))
+
+            if 'predicted_high' in df_results.columns and not df_results['predicted_high'].isnull().all():
+                panel_count += 1
+                panel_map['predicted_high'] = panel_count
+                pred_high_panel = panel_map['predicted_high']
+                plots_to_add.append(mpf.make_addplot(df_results['predicted_high'].fillna(0), panel=pred_high_panel, color='red', width=0.8, ylabel='Predicted High'))
 
     # --- Add Direction markers (Panel 0) ---
     if 'Direction' in df_results.columns and 'Low' in df_results.columns and 'High' in df_results.columns:

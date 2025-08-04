@@ -41,7 +41,7 @@ def calculate_kelly(price_series: pd.Series, period: int = 20) -> pd.Series:
         return pd.Series(index=price_series.index, dtype=float)
     
     # Calculate price changes
-    price_changes = price_series.pct_change().dropna()
+    price_changes = price_series.pct_change(fill_method=None).dropna()
     
     if len(price_changes) < period:
         logger.print_warning("Not enough price change data for Kelly calculation")

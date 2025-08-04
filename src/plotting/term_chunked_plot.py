@@ -132,11 +132,11 @@ def draw_ohlc_candles(chunk, x_values):
             'Low': chunk['Low'].ffill().fillna(chunk['Close']).tolist(),
             'Close': chunk['Close'].ffill().fillna(chunk['Open']).tolist()
         }
-        # Добавляем явную подпись для свечей (если поддерживается)
+        # Add explicit label for candles (if supported)
         try:
             plt.candlestick(x_values, ohlc_data, label="OHLC Candles")
         except TypeError:
-            # Если label не поддерживается, используем без него
+            # If label is not supported, use without it
             plt.candlestick(x_values, ohlc_data)
     else:
         logger.print_error("DataFrame must contain OHLC columns (Open, High, Low, Close) for candlestick plot!")
@@ -346,7 +346,7 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
                 x_values = list(range(len(chunk)))
                 x_labels = [str(i) for i in x_values]
             
-            # OHLC Candlestick Chart (всегда первым слоем, как в других правилах)
+            # OHLC Candlestick Chart (always as first layer, like in other rules)
             draw_ohlc_candles(chunk, x_values)
             
             # Add PV-specific overlays
@@ -570,7 +570,7 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
                 x_values = list(range(len(chunk)))
                 x_labels = [str(i) for i in x_values]
             
-            # OHLC Candlestick Chart (всегда первым слоем, как в других правилах)
+            # OHLC Candlestick Chart (always as first layer, like in other rules)
             draw_ohlc_candles(chunk, x_values)
             
             # Add RSI-specific overlays based on rule type
@@ -666,7 +666,7 @@ def _add_pv_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
         x_values (list): X-axis values
     """
     try:
-        # Только сигналы BUY/SELL
+        # Only BUY/SELL signals
         if 'Direction' in chunk.columns:
             _add_trading_signals_to_chunk(chunk, x_values)
     except Exception as e:
@@ -726,7 +726,7 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
     Add RSI-specific overlays to the chunk plot: ONLY buy/sell signals (no RSI lines, no support/resistance, no momentum, no divergence).
     """
     try:
-        # Только сигналы BUY/SELL
+        # Only BUY/SELL signals
         if 'Direction' in chunk.columns:
             _add_trading_signals_to_chunk(chunk, x_values)
     except Exception as e:
@@ -736,37 +736,37 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
 def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
     """
     Add trading signals to the chunk plot.
-    BUY: большой желтый треугольник ниже Low
-    SELL: большой малиновый треугольник выше High
+    BUY: large yellow triangle below Low
+    SELL: large magenta triangle above High
     """
     try:
         if 'Direction' not in chunk.columns:
             return
-        # Получаем buy/sell сигналы
+        # Get buy/sell signals
         buy_x, buy_y, sell_x, sell_y = [], [], [], []
         for i, direction in enumerate(chunk['Direction']):
-            # BUY: ниже Low
+            # BUY: below Low
             if direction == BUY:
                 buy_x.append(x_values[i])
                 if 'Low' in chunk.columns:
                     buy_y.append(chunk['Low'].iloc[i] * 0.99)
                 else:
                     buy_y.append(chunk['Close'].iloc[i] * 0.99 if 'Close' in chunk.columns else 0)
-            # SELL: выше High
+            # SELL: above High
             elif direction == SELL:
                 sell_x.append(x_values[i])
                 if 'High' in chunk.columns:
                     sell_y.append(chunk['High'].iloc[i] * 1.01)
                 else:
                     sell_y.append(chunk['Close'].iloc[i] * 1.01 if 'Close' in chunk.columns else 0)
-        # Рисуем крупные маркеры (если поддерживается Unicode)
+        # Draw large markers (if Unicode is supported)
         try:
             if buy_x:
                 plt.scatter(buy_x, buy_y, color="yellow+", label="BUY", marker="▲")
             if sell_x:
                 plt.scatter(sell_x, sell_y, color="magenta+", label="SELL", marker="▼")
         except Exception:
-            # Fallback: дублируем обычные маркеры
+            # Fallback: duplicate regular markers
             if buy_x:
                 plt.scatter(buy_x, buy_y, color="yellow+", label="BUY", marker="^^")
             if sell_x:

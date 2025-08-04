@@ -80,6 +80,8 @@ class TestCLIShowMode(unittest.TestCase):
         pythonpath = os.path.join(self._project_root, "src")
         env = os.environ.copy()
         env["PYTHONPATH"] = pythonpath + (os.pathsep + env.get("PYTHONPATH", ""))
+        # Disable Docker detection to ensure consistent behavior in tests
+        env["DISABLE_DOCKER_DETECTION"] = "true"
 
         # Run from self.test_dir so relative paths for data work
         command = [sys.executable, cli_path, "show"] + list(args)
@@ -133,6 +135,9 @@ class TestCLIShowMode(unittest.TestCase):
         """
         if not self.test_file_path:
             self.skipTest("Required pyarrow/pandas not installed or Parquet file not created.")
+        # Disable Docker detection to ensure consistent behavior in tests
+        env = os.environ.copy()
+        env["DISABLE_DOCKER_DETECTION"] = "true"
         result = self._run_cli_show("yf")
         self.assertEqual(result.returncode, 0, msg=f"stdout: {result.stdout}\nstderr: {result.stderr}")
         out = result.stdout
@@ -142,9 +147,47 @@ class TestCLIShowMode(unittest.TestCase):
              "Loading file data and triggering plot with method: 'fastest'" in out or
              "INDICATOR CALCULATION MODE" in out or
              "calculated and shown above." in out or
-             "Drawing raw OHLCV data chart using method: 'fastest'" in out),
+             "Drawing raw OHLCV data chart using method: 'fastest'" in out or
+             "Drawing raw OHLCV data chart using method: 'term'" in out),
             msg=f"stdout: {out}\nstderr: {result.stderr}"
         )
+
+    def test_show_csv_cot_rule(self):
+        """Test CLI: run_analysis.py show csv mn1 -d fastest --rule cot:10,close"""
+        import subprocess
+        import sys
+        import pandas as pd
+        import tempfile
+        from pathlib import Path
+        # Path to run_analysis.py
+        script_path = os.path.join(self._project_root, "run_analysis.py")
+        assert os.path.exists(script_path)
+        # Create temporary parquet file with required columns and name mn1 in current working directory
+        data_dir = Path("data") / "cache" / "csv_converted"
+        data_dir.mkdir(parents=True, exist_ok=True)
+        temp_file = data_dir / "CSVExport_GBPUSD_PERIOD_MN1.parquet"
+        df = pd.DataFrame({
+            'Open': [1.0, 2.0, 3.0],
+            'High': [1.1, 2.1, 3.1],
+            'Low': [0.9, 1.9, 2.9],
+            'Close': [1.05, 2.05, 3.05],
+            'Volume': [100, 200, 300]
+        }, index=pd.date_range('2020-01-01', periods=3, freq='D'))
+        df.to_parquet(temp_file)
+        try:
+            # Run command with Docker detection disabled to ensure fastest mode is used
+            env = os.environ.copy()
+            env["DISABLE_DOCKER_DETECTION"] = "true"
+            result = subprocess.run([
+                sys.executable, script_path, "show", "csv", "mn1", "-d", "fastest", "--rule", "cot:10,close"
+            ], capture_output=True, text=True, env=env)
+            assert result.returncode == 0, f"CLI error: {result.stderr}"
+            assert "Indicator 'COT' calculated successfully." in result.stdout
+            assert "COT" in result.stdout
+            assert "COT_Signal" in result.stdout
+        finally:
+            if temp_file.exists():
+                temp_file.unlink()
 
 if __name__ == '__main__':
     unittest.main()

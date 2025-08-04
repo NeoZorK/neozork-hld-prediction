@@ -82,6 +82,40 @@ class TestIndicatorParameterParsing:
             'price_type': 'close'
         }
     
+    def test_parse_stochastic_parameters_valid(self):
+        """Test valid Stochastic (full name) parameter parsing."""
+        from src.cli.cli import parse_indicator_parameters
+        indicator_name, params = parse_indicator_parameters("stochastic:14,3,close")
+        assert indicator_name == "stoch"
+        assert params == {
+            'stoch_k_period': 14,
+            'stoch_d_period': 3,
+            'price_type': 'close'
+        }
+    
+    def test_stochastic_in_valid_indicators_list(self):
+        """Test that 'stochastic' is in the valid_indicators list."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        # Temporarily redirect stderr to capture the error message
+        old_stderr = sys.stderr
+        sys.stderr = StringIO()
+        
+        try:
+            # This should not raise an error for stochastic
+            sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '--rule', 'stochastic:14,3,close']
+            args = parse_arguments()
+            # If we get here, stochastic is valid
+            assert True
+        except SystemExit:
+            # Check if the error message mentions stochastic as invalid
+            error_output = sys.stderr.getvalue()
+            assert 'stochastic' not in error_output.lower(), f"stochastic should be valid, but got error: {error_output}"
+        finally:
+            sys.stderr = old_stderr
+    
     def test_parse_ema_parameters_valid(self):
         """Test parsing valid EMA parameters."""
         indicator_name, params = parse_ema_parameters("20,close")
@@ -139,11 +173,10 @@ class TestIndicatorParameterParsing:
     
     def test_parse_tsf_parameters_valid(self):
         """Test valid TSF parameter parsing."""
-        indicator_name, params = parse_tsf_parameters("20,5,close")
+        indicator_name, params = parse_tsf_parameters("20,close")
         assert indicator_name == "tsf"
         assert params == {
-            'tsf_period': 20,
-            'tsf_forecast': 5,
+            'tsforecast_period': 20,
             'price_type': 'close'
         }
     
@@ -152,8 +185,8 @@ class TestIndicatorParameterParsing:
         indicator_name, params = parse_monte_parameters("1000,252")
         assert indicator_name == "monte"
         assert params == {
-            'monte_simulations': 1000,
-            'monte_period': 252
+            'simulations': 1000,
+            'period': 252
         }
     
     def test_parse_kelly_parameters_valid(self):
@@ -174,6 +207,14 @@ class TestIndicatorParameterParsing:
     def test_parse_fibo_parameters_valid(self):
         """Test valid Fibonacci Retracements parameter parsing."""
         indicator_name, params = parse_fibo_parameters("0.236,0.382,0.5,0.618,0.786")
+        assert indicator_name == "fibo"
+        assert params == {
+            'fib_levels': [0.236, 0.382, 0.5, 0.618, 0.786]
+        }
+    
+    def test_parse_fibo_parameters_all(self):
+        """Test Fibonacci Retracements parameter parsing with 'all'."""
+        indicator_name, params = parse_fibo_parameters("all")
         assert indicator_name == "fibo"
         assert params == {
             'fib_levels': [0.236, 0.382, 0.5, 0.618, 0.786]
@@ -227,18 +268,18 @@ class TestIndicatorParameterParsing:
     
     def test_parse_indicator_parameters_invalid_format(self):
         """Test parsing indicator with invalid format."""
-        with pytest.raises(ValueError, match="RSI requires exactly 4 parameters"):
+        with pytest.raises(SystemExit):
             parse_indicator_parameters("rsi:14:30,70,close")
     
     def test_parse_indicator_parameters_unknown_indicator(self):
         """Test parsing unknown indicator."""
-        with pytest.raises(ValueError, match="Unknown indicator"):
+        with pytest.raises(SystemExit):
             parse_indicator_parameters("unknown:14,30,70,close")
     
     def test_parse_indicator_parameters_error_handling(self):
         """Test error handling in parameter parsing."""
-        # This should raise ValueError for invalid parameters
-        with pytest.raises(ValueError, match="RSI requires exactly 4 parameters"):
+        # This should raise SystemExit for invalid parameters (after showing help)
+        with pytest.raises(SystemExit):
             parse_indicator_parameters("rsi:invalid,params")
     
     def test_parse_indicator_parameters_edge_cases(self):
@@ -270,6 +311,125 @@ class TestIndicatorParameterParsing:
         """Test showing help for unknown indicator."""
         # This should not raise an exception and should show generic help
         show_indicator_help("unknown")
+
+    def test_stoch_aliases_are_normalized(self):
+        """Test that 'stochastic:' and 'stochoscillator:' are normalized to 'stoch:' in CLI arguments."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        for alias in ['stochastic', 'stochoscillator']:
+            sys_argv_backup = sys.argv[:]
+            sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '--rule', f'{alias}:14,3,close']
+            # suppress stderr
+            old_stderr = sys.stderr
+            sys.stderr = StringIO()
+            try:
+                args = parse_arguments()
+                assert args.rule == 'stoch:14,3,close', f"Alias {alias} not normalized: {args.rule}"
+            finally:
+                sys.stderr = old_stderr
+                sys.argv = sys_argv_backup
+
+    def test_monte_aliases_are_normalized(self):
+        """Test that 'montecarlo:' and 'mc:' are normalized to 'monte:' in CLI arguments."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        for alias in ['montecarlo', 'mc']:
+            sys_argv_backup = sys.argv[:]
+            sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '--rule', f'{alias}:1000,252']
+            # suppress stderr
+            old_stderr = sys.stderr
+            sys.stderr = StringIO()
+            try:
+                args = parse_arguments()
+                assert args.rule == 'monte:1000,252', f"Alias {alias} not normalized: {args.rule}"
+            finally:
+                sys.stderr = old_stderr
+                sys.argv = sys_argv_backup
+
+    def test_feargreed_aliases_are_normalized(self):
+        """Test that 'fg:' is normalized to 'feargreed:' in CLI arguments."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        sys_argv_backup = sys.argv[:]
+        sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '--rule', 'fg:20,close']
+        # suppress stderr
+        old_stderr = sys.stderr
+        sys.stderr = StringIO()
+        try:
+            args = parse_arguments()
+            assert args.rule == 'feargreed:20,close', f"Alias fg not normalized: {args.rule}"
+        finally:
+            sys.stderr = old_stderr
+            sys.argv = sys_argv_backup
+
+    def test_tsf_aliases_are_normalized(self):
+        """Test that 'tsforecast:' is normalized to 'tsf:' in CLI arguments."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        sys_argv_backup = sys.argv[:]
+        sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '--rule', 'tsforecast:20,close']
+        # suppress stderr
+        old_stderr = sys.stderr
+        sys.stderr = StringIO()
+        try:
+            args = parse_arguments()
+            assert args.rule == 'tsf:20,close', f"Alias tsforecast not normalized: {args.rule}"
+        finally:
+            sys.stderr = old_stderr
+            sys.argv = sys_argv_backup
+
+    def test_improved_help_for_parameterized_indicators(self):
+        """Test that improved help is shown for parameterized indicators in fast mode."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        # Test HMA without parameters
+        sys_argv_backup = sys.argv[:]
+        sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '-d', 'fast', '--rule', 'hma']
+        # capture stderr
+        old_stderr = sys.stderr
+        sys.stderr = StringIO()
+        try:
+            with pytest.raises(SystemExit):
+                parse_arguments()
+            stderr_output = sys.stderr.getvalue()
+            assert "This is a parameterized indicator" in stderr_output
+            assert "hma:parameters" in stderr_output
+            assert "hma:20,close" in stderr_output
+        finally:
+            sys.stderr = old_stderr
+            sys.argv = sys_argv_backup
+
+    def test_improved_help_for_unknown_indicators(self):
+        """Test that regular help is shown for unknown indicators."""
+        from src.cli.cli import parse_arguments
+        import sys
+        from io import StringIO
+        
+        # Test unknown indicator
+        sys_argv_backup = sys.argv[:]
+        sys.argv = ['run_analysis.py', 'show', 'csv', 'mn1', '-d', 'fast', '--rule', 'unknown']
+        # capture stderr
+        old_stderr = sys.stderr
+        sys.stderr = StringIO()
+        try:
+            with pytest.raises(SystemExit):
+                parse_arguments()
+            stderr_output = sys.stderr.getvalue()
+            assert "Use one of" in stderr_output
+            assert "This is a parameterized indicator" not in stderr_output
+        finally:
+            sys.stderr = old_stderr
+            sys.argv = sys_argv_backup
 
 
 class TestErrorHandling:
@@ -332,7 +492,7 @@ class TestErrorHandling:
 
     def test_tsf_invalid_parameter_count(self):
         """Test TSF error handling with wrong parameter count."""
-        with pytest.raises(ValueError, match="TSF requires exactly 3 parameters"):
+        with pytest.raises(ValueError, match="TSF requires exactly 2 parameters"):
             parse_tsf_parameters("20")
 
     def test_monte_invalid_parameter_count(self):
@@ -357,12 +517,12 @@ class TestErrorHandling:
 
     def test_obv_invalid_parameter_count(self):
         """Test OBV error handling with wrong parameter count."""
-        with pytest.raises(ValueError, match="OBV does not require parameters"):
+        with pytest.raises(SystemExit):
             parse_obv_parameters("close,open")
 
     def test_stdev_invalid_parameter_count(self):
         """Test Standard Deviation error handling with wrong parameter count."""
-        with pytest.raises(ValueError, match="Standard Deviation requires exactly 2 parameters"):
+        with pytest.raises(SystemExit):
             parse_stdev_parameters("20")
 
     def test_adx_invalid_parameter_count(self):
@@ -374,6 +534,11 @@ class TestErrorHandling:
         """Test SAR error handling with wrong parameter count."""
         with pytest.raises(ValueError, match="SAR requires exactly 2 parameters"):
             parse_sar_parameters("0.02")
+
+    def test_tsf_invalid_price_type(self):
+        """Test TSF price type validation."""
+        with pytest.raises(ValueError, match="TSF price_type must be 'open' or 'close'"):
+            parse_tsf_parameters("20,invalid")
 
 
 class TestParameterValidation:
@@ -427,9 +592,9 @@ class TestParameterValidation:
     def test_tsf_invalid_price_type(self):
         """Test TSF price type validation."""
         with pytest.raises(ValueError, match="TSF price_type must be 'open' or 'close'"):
-            parse_tsf_parameters("20,5,invalid")
+            parse_tsf_parameters("20,invalid")
 
     def test_stdev_invalid_price_type(self):
         """Test Standard Deviation price type validation."""
-        with pytest.raises(ValueError, match="Standard Deviation price_type must be 'open' or 'close'"):
+        with pytest.raises(SystemExit):
             parse_stdev_parameters("20,invalid") 

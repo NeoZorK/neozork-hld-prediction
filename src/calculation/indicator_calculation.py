@@ -13,6 +13,7 @@ from ..common import logger
 from ..common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
 # Import the main calculation function from indicator module
 from .indicator import calculate_pressure_vector
+from .rules import apply_trading_rule
 from ..cli.cli import parse_indicator_parameters
 
 # Definition of the calculate_indicator function
@@ -39,7 +40,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     
     if ':' in rule_input_str:
         indicator_name, indicator_params = parse_indicator_parameters(rule_input_str)
-        # Update the rule name to the parsed indicator name
+        # Update the rule name to the parsed indicator name (always in uppercase)
         rule_input_str = indicator_name.upper()
     
     # Store original rule with parameters for display purposes
@@ -65,16 +66,24 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         # Momentum indicators
         'MACD': 'MACD',
         'STOCHOSC': 'StochOscillator',
+        'STOCHOSCILLATOR': 'StochOscillator',
         # Predictive indicators
         'HMA': 'HMA',
         'TSF': 'TSForecast',
         # Probability indicators
         'MC': 'MonteCarlo',
+        'MONTE': 'MonteCarlo',
         'KELLY': 'Kelly',
         # Sentiment indicators
         'FG': 'FearGreed',
+        'feargreed': 'FearGreed',
+        'fg': 'FearGreed',
+        'FEARGREED': 'FearGreed',
         'COT': 'COT',
-        'PCR': 'PutCallRatio',
+            'PCR': 'PutCallRatio',
+    'PUTCALLRATIO': 'PutCallRatio',
+    'putcallratio': 'PutCallRatio',
+    'cot': 'COT',
         # Support/Resistance indicators
         'DONCHAIN': 'Donchain',
         'FIBO': 'FiboRetr',
@@ -91,7 +100,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     try:
         selected_rule = TradingRule[rule_name_str]
     except KeyError:
-        available_rules = list(TradingRule.__members__.keys()) + list(rule_aliases_map.keys())
+        available_rules = list(TradingRule.__members__.keys()) + list(rule_aliases_map.keys()) + ['putcallratio']
         raise ValueError(f"Invalid rule name or alias '{args.rule}'. Use one of {available_rules}")
 
     # --- Column Check & Rename for Calculation ---
@@ -102,7 +111,14 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     if not all(col in ohlcv_df.columns for col in required_cols_indicator):
         raise ValueError(f"DataFrame missing required columns for calculation: {required_cols_indicator}. Has: {ohlcv_df.columns.tolist()}")
 
-    ohlcv_df_calc_input = ohlcv_df.rename(columns={'Volume': 'TickVolume'}, errors='ignore')
+    # Create a copy for calculation that preserves the Volume column for volume-based indicators
+    ohlcv_df_calc_input = ohlcv_df.copy()
+    
+    # Only rename Volume to TickVolume for non-volume-based indicators
+    # Volume-based indicators (OBV, VWAP, COT, PutCallRatio, etc.) need the Volume column
+    volume_based_indicators = ['OBV', 'VWAP', 'COT', 'PUTCALLRATIO', 'PCR']
+    if rule_input_str.upper() not in volume_based_indicators:
+        ohlcv_df_calc_input = ohlcv_df.rename(columns={'Volume': 'TickVolume'}, errors='ignore')
 
     # Store original MQL5 results before calculation if mode is csv
     pressure_mql5 = None
@@ -153,19 +169,19 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
 
         # Apply indicator parameters if provided
         price_type = indicator_params.get('price_type', getattr(args, 'price_type', 'close'))
-        
+
         # Create a modified args object with indicator parameters
         modified_args = args
         for param_name, param_value in indicator_params.items():
             setattr(modified_args, param_name, param_value)
-        
+
         result_df = calculate_pressure_vector(
             df=ohlcv_df_calc_input.copy(),
             point=point_size,
             tr_num=selected_rule,
             **indicator_params
         )
-        
+
         # Add original rule with parameters to the rule object for display
         setattr(selected_rule, 'original_rule_with_params', original_rule_with_params)
         

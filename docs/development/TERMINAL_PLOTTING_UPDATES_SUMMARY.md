@@ -52,7 +52,7 @@ def _add_pv_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
     Add PV-specific overlays to the chunk plot: ONLY buy/sell signals (no support/resistance, no PV line).
     """
     try:
-        # Только сигналы BUY/SELL
+        # Only BUY/SELL signals
         if 'Direction' in chunk.columns:
             _add_trading_signals_to_chunk(chunk, x_values)
     except Exception as e:
@@ -66,7 +66,7 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
     Add RSI-specific overlays to the chunk plot: ONLY buy/sell signals (no RSI lines, no support/resistance, no momentum, no divergence).
     """
     try:
-        # Только сигналы BUY/SELL
+        # Only BUY/SELL signals
         if 'Direction' in chunk.columns:
             _add_trading_signals_to_chunk(chunk, x_values)
     except Exception as e:
@@ -78,8 +78,8 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
 def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
     """
     Add trading signals to the chunk plot.
-    BUY: большой желтый треугольник ниже Low
-    SELL: большой малиновый треугольник выше High
+    BUY: large yellow triangle below Low
+    SELL: large magenta triangle above High
     """
     # Enhanced signal display with larger markers and smart positioning
 ```

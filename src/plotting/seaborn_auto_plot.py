@@ -23,6 +23,18 @@ def auto_plot_from_parquet(parquet_path: str, plot_title: str = "Auto Plot from 
     exclude = set(ohlc_cols + ([volume_col] if volume_col else []) + ([time_col] if time_col else []))
     indicator_cols = [col for col in df.columns if col not in exclude]
 
+    # --- COLOR MAP ---
+    color_map = {
+        'PV': 'orange',
+        'pressure_vector': 'orange',
+        'HL': 'brown',
+        'Pressure': 'dodgerblue',
+        'pressure': 'dodgerblue',
+        'predicted_high': 'red',
+        'predicted_low': 'green',
+        'Volume': 'gray'
+    }
+
     n_panels = 2 + len(indicator_cols)  # OHLC, Volume, indicators
     fig, axes = plt.subplots(
         n_panels, 1, sharex=True, figsize=(14, 3 * n_panels),
@@ -53,7 +65,9 @@ def auto_plot_from_parquet(parquet_path: str, plot_title: str = "Auto Plot from 
     # Indicators
     for i, col in enumerate(indicator_cols):
         ax = axes[2 + i]
-        sns.lineplot(x=x, y=df[col], ax=ax)
+        line_color = color_map.get(col, 'purple')
+        print(f"Seaborn auto plot: Plotting {col} with color {line_color}")
+        sns.lineplot(x=x, y=df[col], ax=ax, color=line_color)
         ax.set_ylabel(col)
         ax.set_title(col)
 

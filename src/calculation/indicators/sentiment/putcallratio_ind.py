@@ -42,44 +42,33 @@ def calculate_putcallratio(price_series: pd.Series, volume_series: pd.Series, pe
         return pd.Series(index=price_series.index, dtype=float)
     
     # Calculate price changes
-    price_changes = price_series.pct_change().dropna()
+    price_changes = price_series.pct_change().values
+    volume_values = volume_series.values
+    n = len(price_series)
+    putcall_values = np.full(n, np.nan, dtype=float)
     
-    if len(price_changes) < period:
+    if n < period + 1:
         logger.print_warning("Not enough price change data for Put/Call Ratio calculation")
-        return pd.Series(index=price_series.index, dtype=float)
+        return pd.Series(putcall_values, index=price_series.index)
     
-    putcall_values = pd.Series(index=price_series.index, dtype=float)
-    
-    for i in range(period, len(price_changes)):
-        # Get window of data
-        price_window = price_changes.iloc[i-period:i]
-        volume_window = volume_series.iloc[i-period:i]
+    for i in range(period, n):
+        price_window = price_changes[i - period + 1:i + 1]
+        volume_window = volume_values[i - period + 1:i + 1]
         
-        # Reset indices to avoid alignment issues in boolean indexing
-        price_window = price_window.reset_index(drop=True)
-        volume_window = volume_window.reset_index(drop=True)
-        
-        # Calculate bearish vs bullish volume
         bearish_volume = volume_window[price_window < 0].sum()
         bullish_volume = volume_window[price_window > 0].sum()
         
-        # Calculate put/call ratio (bearish/bullish)
         if bullish_volume > 0:
             putcall_ratio = bearish_volume / bullish_volume
         else:
-            putcall_ratio = 1.0  # Neutral if no bullish volume
+            putcall_ratio = 1.0
         
-        # Normalize ratio to sentiment scale
-        # Higher ratio = more bearish sentiment
-        # Lower ratio = more bullish sentiment
-        
-        # Convert to 0-100 scale where 50 is neutral
-        sentiment = 50 + (1 - putcall_ratio) * 25  # Scale the ratio
+        sentiment = 50 + (1 - putcall_ratio) * 25
         sentiment = max(0, min(100, sentiment))
         
-        putcall_values.iloc[i] = sentiment
+        putcall_values[i] = sentiment
     
-    return putcall_values
+    return pd.Series(putcall_values, index=price_series.index)
 
 
 def calculate_putcallratio_signals(putcall_values: pd.Series, 
@@ -138,6 +127,10 @@ def apply_rule_putcallratio(df: pd.DataFrame, point: float,
     # Use volume data
     volume_series = df['Volume']
     
+    # --- NEW: Warn if period is too large for data ---
+    if putcall_period > len(df) // 2:
+        logger.print_warning(f"Put/Call Ratio period ({putcall_period}) is large relative to data size ({len(df)} rows). Consider using a smaller period for meaningful results.")
+    
     # Calculate Put/Call Ratio sentiment
     df['PutCallRatio'] = calculate_putcallratio(price_series, volume_series, putcall_period)
     
@@ -146,6 +139,11 @@ def apply_rule_putcallratio(df: pd.DataFrame, point: float,
     
     # Calculate Put/Call Ratio signals
     df['PutCallRatio_Signal'] = calculate_putcallratio_signals(df['PutCallRatio'], bullish_threshold, bearish_threshold)
+    
+    # --- NEW: Warn if almost all values are NaN ---
+    nan_ratio = df['PutCallRatio'].isna().mean()
+    if nan_ratio > 0.8:
+        logger.print_warning(f"More than 80% of Put/Call Ratio values are NaN. Try reducing the period or check your data.")
     
     # Calculate support and resistance levels based on Put/Call Ratio sentiment
     putcall_values = df['PutCallRatio']

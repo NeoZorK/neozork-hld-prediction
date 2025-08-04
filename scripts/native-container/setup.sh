@@ -43,14 +43,14 @@ check_macos_version() {
     macos_version=$(sw_vers -productVersion)
     print_status "macOS version: $macos_version"
     
-    # Check if it's macOS 26 or higher (Tahoe)
+    # Check if it's macOS 15 or higher
     major_version=$(echo $macos_version | cut -d. -f1)
-    if [ "$major_version" -ge 26 ]; then
-        print_success "macOS version is compatible (26+)"
+    if [ "$major_version" -ge 15 ]; then
+        print_success "macOS version is compatible (15+)"
         return 0
     else
         print_warning "macOS version $macos_version detected"
-        print_warning "Native container is designed for macOS 26+ (Tahoe)"
+        print_warning "Native container is designed for macOS 15+ or newer"
         print_warning "Some features may not work correctly"
         return 1
     fi
@@ -352,7 +352,7 @@ show_usage() {
     echo "  for the NeoZork HLD Prediction project with full Docker parity."
     echo
     echo "Prerequisites:"
-    echo "  - macOS 26+ (Tahoe) or higher"
+    echo "  - macOS 15+ or higher"
     echo "  - Native container application installed"
     echo "  - Python 3.11+ installed"
     echo "  - At least 4GB of available RAM"

@@ -188,6 +188,6 @@ class TestBBIndicator:
         assert 'BB_Signal' in result
         assert 'Direction' in result
         assert 'Diff' in result
-        # Проверяем, что сигналы — числа (например, 1, -1, 0)
+        # Check that signals are numbers (e.g., 1, -1, 0)
         signals = result['BB_Signal'].dropna()
         assert np.issubdtype(signals.dtype, np.number) 

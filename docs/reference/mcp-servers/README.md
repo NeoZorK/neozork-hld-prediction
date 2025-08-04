@@ -178,7 +178,7 @@ The server uses `neozork_mcp_config.json` for configuration:
 
 - **Trend Indicators**: SMA, EMA, ADX, SAR, HMA
 - **Oscillators**: RSI, Stochastic, CCI
-- **Momentum**: MACD, Stochastic Oscillator
+- **Momentum**: MACD
 - **Volatility**: ATR, Bollinger Bands, Standard Deviation
 - **Volume**: OBV, VWAP
 - **Support/Resistance**: Donchian Channels, Fibonacci, Pivot Points
@@ -270,6 +270,38 @@ python -m pytest tests/mcp/test_neozork_mcp_manager.py -v
 # Run with coverage
 python -m pytest tests/mcp/ --cov=neozork_mcp_server --cov-report=html
 ```
+
+### CI/CD Testing with Act
+
+To test MCP server integration and CI/CD workflows without downloading Docker images or installing dependencies:
+
+```bash
+# Install act tool
+brew install act  # macOS
+# or
+curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash  # Linux
+
+# Test MCP integration workflows (dry run - no Docker downloads)
+act -n -W .github/workflows/mcp-integration.yml
+
+# Test MCP servers CI workflow
+act -n -W .github/workflows/mcp-servers-ci.yml
+
+# List MCP-related workflows
+act -l | grep mcp
+
+# Dry run specific MCP job
+act -n -j test-mcp-integration
+```
+
+**MCP Server Testing Benefits:**
+- **Protocol Validation**: Verify MCP server communication protocols
+- **Integration Testing**: Test MCP server with various IDEs
+- **Performance Monitoring**: Validate server performance benchmarks
+- **Security Scanning**: Check for vulnerabilities in MCP implementations
+- **Documentation Validation**: Ensure MCP documentation is up-to-date
+- **No Docker Downloads**: Prevents downloading large Docker images
+- **Fast Validation**: Quickly validates workflow syntax and structure
 
 ### Troubleshooting
 
@@ -598,7 +630,7 @@ docker compose ps
 ### Technical Indicators Available
 - **Trend**: SMA, EMA, ADX, SAR, HMA
 - **Oscillators**: RSI, Stochastic, CCI
-- **Momentum**: MACD, Stochastic Oscillator
+- **Momentum**: MACD
 - **Volatility**: ATR, Bollinger Bands, Standard Deviation
 - **Volume**: OBV, VWAP
 - **Support/Resistance**: Donchian Channels, Fibonacci Retracements, Pivot Points

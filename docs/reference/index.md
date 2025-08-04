@@ -38,7 +38,6 @@ Complete reference for all technical indicators.
 
 ### Momentum Indicators
 - **[MACD Indicator](indicators/momentum/macd-indicator.md)** - Moving Average Convergence Divergence
-- **[Stochastic Oscillator](indicators/momentum/stochastic-oscillator-indicator.md)** - Stochastic momentum oscillator
 
 ### Oscillators
 - **[RSI Indicator](indicators/oscillators/rsi-indicator.md)** - Relative Strength Index
@@ -49,6 +48,7 @@ Complete reference for all technical indicators.
 - **[EMA Indicator](indicators/trend/ema-indicator.md)** - Exponential Moving Average
 - **[ADX Indicator](indicators/trend/adx-indicator.md)** - Average Directional Index
 - **[SAR Indicator](indicators/trend/sar-indicator.md)** - Parabolic SAR
+- **[SuperTrend Indicator](indicators/trend/supertrend-indicator.md)** - Advanced trend-following indicator
 
 ### Volatility Indicators
 - **[ATR Indicator](indicators/volatility/atr-indicator.md)** - Average True Range
@@ -74,7 +74,11 @@ Complete reference for all technical indicators.
 
 ### Sentiment Indicators
 - **[Fear & Greed](indicators/sentiment/fear-greed-indicator.md)** - Market sentiment
-- **[COT Indicator](indicators/sentiment/cot-indicator.md)** - Commitments of Traders
+- **[COT Indicator](indicators/sentiment/cot-indicator.md)** - Institutional futures sentiment, trend confirmation
+- **[Put/Call Ratio](indicators/sentiment/putcallratio-indicator.md)** - Options sentiment, contrarian signals
+
+### New Indicators (v2.0.0+)
+- **[SuperTrend Indicator](indicators/trend/supertrend-indicator.md)** - Advanced trend-following with ATR integration
 
 ## 🧪 Testing Reference
 
