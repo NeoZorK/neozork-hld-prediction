@@ -380,14 +380,23 @@ def plot_indicator_results_fast(
                         line_alpha=0.15
                     )
                     # Main line
-                    supertrend_fig.line(
-                        x='index', y='supertrend_val',
-                        source=group_source,
-                        line_color=color,
-                        line_width=4,
-                        line_alpha=0.9,
-                        legend_label='SuperTrend' if trend_val == 1 else None
-                    )
+                    if trend_val == 1:
+                        supertrend_fig.line(
+                            x='index', y='supertrend_val',
+                            source=group_source,
+                            line_color=color,
+                            line_width=4,
+                            line_alpha=0.9,
+                            legend_label='SuperTrend'
+                        )
+                    else:
+                        supertrend_fig.line(
+                            x='index', y='supertrend_val',
+                            source=group_source,
+                            line_color=color,
+                            line_width=4,
+                            line_alpha=0.9
+                        )
             # --- BUY/SELL signals ---
             buy_mask = (direction.shift(1, fill_value=0) <= 0) & (direction > 0)
             sell_mask = (direction.shift(1, fill_value=0) >= 0) & (direction < 0)
