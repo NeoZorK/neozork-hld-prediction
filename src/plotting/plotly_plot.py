@@ -42,31 +42,53 @@ def plot_indicator_results_plotly(df_results: pd.DataFrame, rule: TradingRule, t
             logger.print_error("Failed to convert index to DatetimeIndex.")
             # return None
 
-    # --- Determine number of subplots needed (Dynamic approach restored) ---
-    indicators_to_plot = {
-        'Volume': 'Volume',
-        'PV': 'PV',
-        'HL': 'HL (Points)',
-        'Pressure': 'Pressure'
-    }
-    # Check which indicator columns exist and are not entirely null
-    valid_indicator_cols = [col for col in indicators_to_plot if col in df_results.columns and not df_results[col].isnull().all()]
-    logger.print_debug(f"Plotly: Found valid indicator columns for subplots: {valid_indicator_cols}")
-    num_indicator_subplots = len(valid_indicator_cols)
-    total_rows = 1 + num_indicator_subplots # Dynamic total rows
-    logger.print_debug(f"Plotly: Total rows for subplots: {total_rows}")
+    # Determine if we should show separate charts based on rule
+    # Rules that should show separate charts: OHLCV, AUTO, PHLD, PV, SR
+    # All other rules (like RSI, MACD, etc.) should not show separate charts
+    rule_str = rule.name.upper() if hasattr(rule, 'name') else str(rule).upper()
+    show_separate_charts = rule_str in ['OHLCV', 'AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS']
 
+    if show_separate_charts:
+        # --- Determine number of subplots needed (Dynamic approach restored) ---
+        indicators_to_plot = {
+            'Volume': 'Volume',
+            'PV': 'PV',
+            'HL': 'HL (Points)',
+            'Pressure': 'Pressure',
+            'pressure': 'Pressure',
+            'pressure_vector': 'Pressure Vector'
+        }
+        
+        # Add predicted high/low for AUTO mode
+        if rule_str == 'AUTO':
+            indicators_to_plot.update({
+                'predicted_high': 'Predicted High',
+                'predicted_low': 'Predicted Low'
+            })
+        # Check which indicator columns exist and are not entirely null
+        valid_indicator_cols = [col for col in indicators_to_plot if col in df_results.columns and not df_results[col].isnull().all()]
+        logger.print_debug(f"Plotly: Found valid indicator columns for subplots: {valid_indicator_cols}")
+        num_indicator_subplots = len(valid_indicator_cols)
+        total_rows = 1 + num_indicator_subplots # Dynamic total rows
+        logger.print_debug(f"Plotly: Total rows for subplots: {total_rows}")
 
-    # --- Create Subplots (Dynamic approach restored) ---
-    # Handle case where no indicators are valid to avoid division by zero
-    if num_indicator_subplots > 0:
-        # Distribute remaining height among indicator subplots
-        row_heights = [0.6] + [0.4 / num_indicator_subplots] * num_indicator_subplots
+        # --- Create Subplots (Dynamic approach restored) ---
+        # Handle case where no indicators are valid to avoid division by zero
+        if num_indicator_subplots > 0:
+            # Distribute remaining height among indicator subplots
+            row_heights = [0.6] + [0.4 / num_indicator_subplots] * num_indicator_subplots
+        else:
+            row_heights = [1.0] # Only the price chart
+
+        # Dynamic subplot titles based on valid indicators
+        subplot_titles = ["Price / Signals"] + [indicators_to_plot[col] for col in valid_indicator_cols]
     else:
-        row_heights = [1.0] # Only the price chart
-
-    # Dynamic subplot titles based on valid indicators
-    subplot_titles = ["Price / Signals"] + [indicators_to_plot[col] for col in valid_indicator_cols]
+        # For other rules, only show the main price chart
+        valid_indicator_cols = []
+        num_indicator_subplots = 0
+        total_rows = 1
+        row_heights = [1.0]
+        subplot_titles = ["Price / Signals"]
 
     fig = make_subplots(
         rows=total_rows,
@@ -117,38 +139,43 @@ def plot_indicator_results_plotly(df_results: pd.DataFrame, rule: TradingRule, t
 
 
     # --- Add Indicator Subplots (Dynamic row assignment restored) ---
-    current_row = 2 # Start from row 2
-    logger.print_debug(f"Plotly: Starting loop to add indicator traces. Valid columns: {valid_indicator_cols}")
-    for indicator_col in valid_indicator_cols: # Loop through only valid indicators
-        logger.print_debug(f"Plotly: Processing indicator column '{indicator_col}' for dynamic row {current_row}")
-        indicator_name = indicators_to_plot[indicator_col]
-        # Keep the fillna(0) as it seems necessary
-        indicator_data = df_results[indicator_col].fillna(0)
+    if show_separate_charts:
+        current_row = 2 # Start from row 2
+        logger.print_debug(f"Plotly: Starting loop to add indicator traces. Valid columns: {valid_indicator_cols}")
+        for indicator_col in valid_indicator_cols: # Loop through only valid indicators
+            logger.print_debug(f"Plotly: Processing indicator column '{indicator_col}' for dynamic row {current_row}")
+            indicator_name = indicators_to_plot[indicator_col]
+            # Keep the fillna(0) as it seems necessary
+            indicator_data = df_results[indicator_col].fillna(0)
 
-        if indicator_col == 'Volume':
-            logger.print_debug(f"Plotly: Adding Bar trace for '{indicator_col}' to row {current_row}")
-            fig.add_trace(go.Bar(
-                x=df_results.index, y=indicator_data, name=indicator_name,
-                marker_color='rgba(100, 100, 100, 0.5)'
-            ), row=current_row, col=1) # Use current_row
-        else:
-            line_color = 'orange' if indicator_col == 'PV' else \
-                         'brown' if indicator_col == 'HL' else \
-                         'dodgerblue' if indicator_col == 'Pressure' else 'purple'
-            logger.print_debug(f"Plotly: Adding Scatter trace for '{indicator_col}' to row {current_row}")
-            fig.add_trace(go.Scatter(
-                x=df_results.index, y=indicator_data, mode='lines',
-                line=dict(color=line_color, width=1), name=indicator_name
-            ), row=current_row, col=1) # Use current_row
+            if indicator_col == 'Volume':
+                logger.print_debug(f"Plotly: Adding Bar trace for '{indicator_col}' to row {current_row}")
+                fig.add_trace(go.Bar(
+                    x=df_results.index, y=indicator_data, name=indicator_name,
+                    marker_color='rgba(100, 100, 100, 0.5)'
+                ), row=current_row, col=1) # Use current_row
+            else:
+                line_color = 'orange' if indicator_col == 'PV' else \
+                             'brown' if indicator_col == 'HL' else \
+                             'dodgerblue' if indicator_col == 'Pressure' else \
+                             'dodgerblue' if indicator_col == 'pressure' else \
+                             'orange' if indicator_col == 'pressure_vector' else \
+                             'red' if indicator_col == 'predicted_high' else \
+                             'green' if indicator_col == 'predicted_low' else 'purple'
+                logger.print_debug(f"Plotly: Adding Scatter trace for '{indicator_col}' to row {current_row}")
+                fig.add_trace(go.Scatter(
+                    x=df_results.index, y=indicator_data, mode='lines',
+                    line=dict(color=line_color, width=1), name=indicator_name
+                ), row=current_row, col=1) # Use current_row
 
-            if indicator_col in ['PV', 'Pressure']:
-                 logger.print_debug(f"Plotly: Adding hline for '{indicator_col}' to row {current_row}")
-                 fig.add_hline(y=0, line_width=1, line_dash="dash", line_color="grey", row=current_row, col=1) # Use current_row
+                if indicator_col in ['PV', 'Pressure']:
+                     logger.print_debug(f"Plotly: Adding hline for '{indicator_col}' to row {current_row}")
+                     fig.add_hline(y=0, line_width=1, line_dash="dash", line_color="grey", row=current_row, col=1) # Use current_row
 
-        # Update the y-axis title for the current subplot row
-        fig.update_yaxes(title_text=indicator_name, row=current_row, col=1)
-        current_row += 1 # Increment row for the next valid indicator
-    logger.print_debug(f"Plotly: Finished loop adding indicator traces. Next row would be: {current_row}")
+            # Update the y-axis title for the current subplot row
+            fig.update_yaxes(title_text=indicator_name, row=current_row, col=1)
+            current_row += 1 # Increment row for the next valid indicator
+        logger.print_debug(f"Plotly: Finished loop adding indicator traces. Next row would be: {current_row}")
 
 
     # --- Update Layout ---

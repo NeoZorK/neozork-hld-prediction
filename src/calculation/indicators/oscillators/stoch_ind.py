@@ -106,7 +106,7 @@ def calculate_stochastic_signals(k_values: pd.Series, d_values: pd.Series,
 
 
 def apply_rule_stochastic(df: pd.DataFrame, point: float, 
-                          k_period: int = 14, d_period: int = 3, slowing: int = 3,
+                          stoch_k_period: int = 14, stoch_d_period: int = 3, slowing: int = 3,
                           overbought: float = 80, oversold: float = 20,
                           price_type: PriceType = PriceType.CLOSE):
     """
@@ -115,8 +115,8 @@ def apply_rule_stochastic(df: pd.DataFrame, point: float,
     Args:
         df (pd.DataFrame): Input DataFrame with OHLCV data
         point (float): Instrument point size
-        k_period (int): %K period
-        d_period (int): %D period
+        stoch_k_period (int): %K period
+        stoch_d_period (int): %D period
         slowing (int): Smoothing period
         overbought (float): Overbought threshold
         oversold (float): Oversold threshold
@@ -128,7 +128,7 @@ def apply_rule_stochastic(df: pd.DataFrame, point: float,
     open_prices = df['Open']
     
     # Calculate Stochastic
-    k_values, d_values = calculate_stochastic(df, k_period, d_period, slowing, price_type)
+    k_values, d_values = calculate_stochastic(df, stoch_k_period, stoch_d_period, slowing, price_type)
     
     # Limit values only for final DataFrame
     k_values = k_values.clip(0, 100)

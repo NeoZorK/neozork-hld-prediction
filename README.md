@@ -46,8 +46,8 @@ git clone https://github.com/username/neozork-hld-prediction.git
 cd neozork-hld-prediction
 docker-compose up -d
 
-# Run analysis
-docker-compose exec neozork nz demo --rule PHLD
+# Run analysis with UV
+docker-compose exec neozork uv run run_analysis.py demo --rule PHLD
 ```
 
 ### Local Setup with UV
@@ -63,7 +63,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv pip install -r requirements.txt
 
 # Run analysis
-python run_analysis.py demo --rule PHLD
+uv run run_analysis.py demo --rule PHLD
 ```
 
 ## 🔧 UV Package Management
@@ -95,7 +95,10 @@ uv pip list
 # Create virtual environment
 uv venv
 
-# Run tests with UV
+# Run analysis with UV
+uv run run_analysis.py demo --rule PHLD
+
+# Run tests with UV (multithreaded)
 uv run pytest tests -n auto
 ```
 
@@ -108,15 +111,56 @@ uv run pytest tests -n auto
 - **MQL5**: MetaTrader 5 data
 
 ### Technical Indicators (50+)
-- **Momentum**: MACD, Stochastic Oscillator
+- **Momentum**: MACD
 - **Oscillators**: RSI, CCI, Stochastic
-- **Trend**: EMA, ADX, SAR
+- **Trend**: EMA, ADX, SAR, **SuperTrend**
 - **Volatility**: ATR, Bollinger Bands
 - **Volume**: OBV, VWAP
 - **Support & Resistance**: Pivot Points, Fibonacci
 - **Predictive**: HMA, Time Series Forecast
 - **Probability**: Monte Carlo, Kelly Criterion
-- **Sentiment**: Fear & Greed, COT
+- **Sentiment**: Fear & Greed, **COT**, Put/Call Ratio
+
+#### New: COT (Commitments of Traders) Indicator
+- **Category:** Sentiment
+- **Description:** Analyzes futures market positioning to gauge institutional sentiment. Useful for trend confirmation and reversal spotting.
+- **CLI Example:**
+  ```bash
+  uv run run_analysis.py show csv mn1 -d fastest --rule cot:14,close
+  ```
+- **Documentation:** [COT Indicator](docs/reference/indicators/sentiment/cot-indicator.md)
+
+#### New: Put/Call Ratio Indicator
+- **Category:** Sentiment
+- **Description:** Measures the ratio of put options to call options to gauge market sentiment. Useful as a contrarian indicator for potential market reversals.
+- **CLI Example:**
+  ```bash
+  uv run run_analysis.py show csv mn1 -d fastest --rule putcallratio:20,close
+  ```
+- **Documentation:** [Put/Call Ratio Indicator](docs/reference/indicators/sentiment/putcallratio-indicator.md)
+
+#### New: SuperTrend Indicator
+- **Category:** Trend
+- **Description:** Advanced trend-following indicator that combines ATR (Average True Range) with price action to identify trend direction and potential reversal points. Provides dynamic support/resistance levels and generates buy/sell signals.
+- **CLI Example:**
+  ```bash
+  uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0
+  uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0,open
+  ```
+- **Parameters:** period (required), multiplier (required), price_type (optional: open/close)
+- **Documentation:** [SuperTrend Indicator](docs/reference/indicators/trend/supertrend-indicator.md)
+
+#### Fixed: Volume Indicators
+- **OBV (On-Balance Volume):** Fixed dual chart plotting and parameter parsing
+- **VWAP (Volume Weighted Average Price):** Enhanced volume column handling
+- **CLI Examples:**
+  ```bash
+  # OBV - now works perfectly
+  uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+  
+  # VWAP with custom parameters
+  uv run run_analysis.py show csv mn1 -d fastest --rule vwap:20
+  ```
 
 ### Analysis Tools
 - **Exploratory Data Analysis**: Comprehensive data exploration
@@ -141,263 +185,145 @@ python scripts/check_uv_mode.py --verbose
 
 # Native container tests
 uv run pytest tests/native-container/test_native_container_full_functionality.py -v
+
+# Run all tests with UV (multithreaded)
+uv run pytest tests -n auto
 ```
 
-### Test Categories
-- **UV-Specific Tests**: Package manager validation
-- **Environment Tests**: Docker vs local detection
-- **Integration Tests**: End-to-end functionality
-- **Performance Tests**: UV vs pip comparison
-- **Native Container Tests**: Full functionality validation
+### CI/CD Testing with Act
+Test GitHub Actions workflows and MCP server integration locally without downloading Docker images:
 
-## 📚 Documentation
-
-### Quick Links
-- **[Getting Started](docs/getting-started/)** - Setup and installation
-- **[UV-Only Mode](docs/deployment/uv-only-mode.md)** - UV package management
-- **[Native Container](scripts/native-container/README.md)** - Apple Silicon container guide
-- **[Examples](docs/examples/)** - Practical usage examples
-- **[Guides](docs/guides/)** - Step-by-step tutorials
-- **[Reference](docs/reference/)** - Technical documentation
-
-### Documentation Structure
-```
-docs/
-├── getting-started/     # Setup and installation
-├── deployment/          # Deployment guides
-├── development/         # Development setup
-├── examples/           # Usage examples
-├── guides/             # Tutorials and guides
-└── reference/          # Technical reference
-```
-
-## 🐳 Container Support
-
-### Native Apple Silicon Container (macOS 26+) - **FULL DOCKER PARITY**
-
-**NEW: Native container support for Apple Silicon Macs with 30-50% performance improvement and complete Docker feature parity!**
-
-#### 🚀 Full Feature Parity with Docker
-The Native Container now provides **complete feature parity** with the Docker container:
-
-- ✅ **UV Package Manager Support** - UV-only mode with command wrappers
-- ✅ **MCP Server Integration** - Startup, monitoring, and cleanup
-- ✅ **Command Wrappers** - `nz`, `eda`, `uv-*`, `mcp-*` commands
-- ✅ **Bash Environment & History** - Interactive shell with command history
-- ✅ **External Data Feed Tests** - Polygon, YFinance, Binance testing
-- ✅ **Usage Guide & Help** - Comprehensive help and examples
-- ✅ **Directory Structure & Permissions** - Complete Docker parity
-
-#### Features
-- **30-50% performance improvement** over Docker
-- **Lower resource usage** and faster startup times
-- **Native Apple Silicon optimization**
-- **Interactive management script**
-- **Seamless UV integration**
-- **Complete Docker feature parity**
-
-#### Quick Start
 ```bash
-# Interactive container management
-./scripts/native-container/native-container.sh
+# Install act tool
+brew install act  # macOS
+# or
+curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash  # Linux
 
-# Manual setup and run
-./scripts/native-container/setup.sh
-./scripts/native-container/run.sh
-./scripts/native-container/exec.sh --shell
+# Test all workflows (dry run - no Docker downloads)
+act -n
+
+# Test specific workflows
+act -n -W .github/workflows/docker-build.yml
+act -n -W .github/workflows/mcp-integration.yml
+
+# List available workflows
+act -l
 ```
 
-### Docker Container
-- **Cross-platform support**
-- **UV package manager integration**
-- **MCP server support**
-- **Complete feature set**
+**Benefits:**
+- **No Docker Downloads**: Prevents downloading large Docker images
+- **Fast Validation**: Quickly validates workflow syntax and structure
+- **MCP Server Testing**: Verify MCP server communication protocols
+- **Resource Efficient**: Uses minimal system resources
 
-## 📁 Project Structure
+## 🐛 Recent Fixes & Improvements
 
-```
-neozork-hld-prediction/
-├── src/                    # Source code
-│   ├── calculation/        # Technical indicators
-│   ├── data/              # Data acquisition
-│   ├── eda/               # Exploratory data analysis
-│   ├── plotting/          # Visualization tools
-│   └── cli/               # Command-line interface
-├── tests/                 # Test suite
-│   ├── docker/            # Docker-specific tests
-│   ├── native-container/  # Native container tests
-│   └── ...                # Other test categories
-├── docs/                  # Documentation
-│   ├── containers/        # Container documentation
-│   ├── guides/            # User guides
-│   └── reference/         # Technical reference
-├── scripts/               # **REORGANIZED**: Utility scripts
-│   ├── mcp/               # MCP server management
-│   ├── analysis/          # Analysis and testing
-│   ├── utilities/         # Utility and setup
-│   ├── demos/             # Demonstrations
-│   ├── debug/             # Debugging tools
-│   ├── docker/            # Docker-specific scripts
-│   └── native-container/  # Native container scripts
-├── data/                  # Data storage
-└── results/               # Analysis results
+### Volume Indicators Fix
+**Issue:** OBV indicator had dual chart plotting errors and parameter parsing issues.
+
+**Fix:** 
+- Fixed parameter parsing for `--rule obv:` (empty parameters after colon)
+- Fixed volume column handling for volume-based indicators
+- Fixed dual chart plotting for OBV with proper argument passing
+
+**Before:**
+```bash
+# This would fail with parameter parsing error
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
 ```
 
-### Scripts Organization
+**After:**
+```bash
+# This now works perfectly
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+```
 
-The `scripts/` directory has been reorganized for better maintainability:
+### UV Integration Improvements
+- **Exclusive UV Usage**: All commands now use UV for consistency
+- **Multithreaded Testing**: `uv run pytest tests -n auto`
+- **Docker Integration**: Seamless UV in containers
+- **Native Container Support**: Full UV support in Apple Silicon containers
 
-#### **MCP Scripts** (`scripts/mcp/`)
-- **neozork_mcp_manager.py** - Unified MCP server manager with autostart and monitoring
-- **check_mcp_status.py** - MCP server status checking and diagnostics
-- **start_mcp_server_daemon.py** - MCP server daemon startup script
-
-#### **Analysis Scripts** (`scripts/analysis/`)
-- **analyze_requirements.py** - Python imports analysis and requirements optimization
-- **generate_test_coverage.py** - Test coverage analysis and reporting
-- **manage_test_results.py** - Test results management and analysis
-
-#### **Utility Scripts** (`scripts/utilities/`)
-- **fix_imports.py** - Fix relative imports in test files
-- **setup_ide_configs.py** - IDE configuration setup
-- **check_uv_mode.py** - UV mode verification
-
-#### **Container Scripts**
-- **Docker Scripts** (`scripts/docker/`) - Docker container testing and workflows
-- **Native Container Scripts** (`scripts/native-container/`) - Apple Silicon container management
-
-## 🚀 Quick Examples
+## 📋 Quick Examples
 
 ### Basic Analysis
 ```bash
-# Run demo analysis
-nz demo --rule PHLD
+# Demo analysis
+uv run run_analysis.py demo --rule PHLD
 
-# Analyze specific symbol
-nz yfinance AAPL --rule PHLD
+# Yahoo Finance analysis
+uv run run_analysis.py yfinance AAPL --rule RSI
 
-# Custom timeframe
-nz mql5 EURUSD --interval H4 --rule PHLD
+# CSV analysis (fixed volume indicators)
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+
+# Interactive analysis
+uv run run_analysis.py interactive
 ```
 
-### UV Package Management
+### Advanced Analysis
 ```bash
-# Install dependencies (Docker)
-uv-install
+# Multiple indicators
+uv run run_analysis.py demo --rule RSI,MACD,PHLD
 
-# Update dependencies (Docker)
-uv-update
+# Custom plotting backend
+uv run run_analysis.py demo --rule PHLD -d plotly
 
-# Check UV status
-uv-test
-
-# Local UV usage
-uv pip install pandas
-uv pip list
+# Export results
+uv run run_analysis.py demo --rule PHLD --export-parquet --export-csv
 ```
 
-### Development
+### Testing
 ```bash
-# Run tests
-pytest tests/ -v
+# Run all tests (multithreaded)
+uv run pytest tests -n auto
 
-# Check code quality
-python scripts/check_uv_mode.py
+# Run specific test categories
+uv run pytest tests/calculation/ -n auto
+uv run pytest tests/cli/ -n auto
+
+# Run with coverage
+uv run pytest tests/ --cov=src -n auto
 ```
 
-## 📈 Performance
+## 🚀 Performance Examples
 
-### UV vs Traditional Pip
-- **Installation Speed**: 10-100x faster
-- **Dependency Resolution**: Intelligent conflict resolution
-- **Virtual Environments**: Fast environment creation
-- **Caching**: Persistent package cache
-
-### Docker Optimization
-- **Multi-stage Builds**: Reduced image size
-- **Layer Caching**: Faster rebuilds
-- **Volume Mounting**: Persistent data storage
-- **Health Checks**: Automatic service monitoring
-
-## 🔒 Security
-
-### Container Security
-- **Non-root Execution**: Secure container operation
-- **Package Verification**: UV's built-in security checks
-- **Environment Isolation**: Proper environment separation
-- **Input Validation**: Comprehensive input sanitization
-
-### Network Security
-- **Internal Communication**: Secure inter-service communication
-- **External APIs**: Secure API key management
-- **Data Encryption**: Encrypted data transmission
-
-## 🚨 Troubleshooting
-
-### Common Issues
-
-#### UV Installation Problems
+### UV vs Traditional pip
 ```bash
-# Check UV installation
-uv --version
+# Traditional pip (slower)
+pip install -r requirements.txt  # ~30-60 seconds
 
-# Reinstall UV
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# UV (much faster)
+uv pip install -r requirements.txt  # ~3-10 seconds
 
-# Clear cache
-rm -rf ~/.cache/uv
+# UV with caching (fastest)
+uv pip install -r requirements.txt  # ~1-3 seconds (subsequent runs)
 ```
 
-#### Docker Issues
+### Multithreaded Testing
 ```bash
-# Clean build
-docker-compose build --no-cache
+# Single-threaded testing
+pytest tests/  # ~2-5 minutes
 
-# Check logs
-docker-compose logs neozork
-
-# Verify environment
-docker-compose exec neozork env | grep UV
+# UV multithreaded testing
+uv run pytest tests -n auto  # ~30-60 seconds
 ```
 
-#### Test Failures
-```bash
-# Run with verbose output
-pytest tests/docker/ -v -s
+## 📚 Documentation
 
-# Check environment detection
-python scripts/check_uv_mode.py --debug
-
-# Test specific environment
-python scripts/check_uv_mode.py --docker-only
-```
+- **[Getting Started](docs/getting-started/)** - Setup and first steps
+- **[Examples](docs/examples/)** - Practical usage examples
+- **[Guides](docs/guides/)** - Step-by-step tutorials
+- **[Reference](docs/reference/)** - Technical documentation
+- **[Testing](docs/testing/)** - Testing strategies and examples
 
 ## 🤝 Contributing
 
-### Development Setup
-```bash
-# Clone repository
-git clone https://github.com/username/neozork-hld-prediction.git
-cd neozork-hld-prediction
-
-# Install UV and dependencies
-curl -LsSf https://astral.sh/uv/install.sh | sh
-uv pip install -r requirements.txt
-uv pip install -r requirements-dev.txt
-
-# Run tests
-pytest tests/ -v
-
-# Check code quality
-python scripts/check_uv_mode.py --verbose
-```
-
-### Contribution Guidelines
-- Follow the existing code style
-- Write tests for new features
-- Update documentation
-- Use UV for package management
-- Test in both Docker and local environments
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests: `uv run pytest tests -n auto`
+5. Submit a pull request
 
 ## 📄 License
 
@@ -405,149 +331,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-### Documentation
-- **Getting Started**: Basic setup and installation
-- **Examples**: Practical usage examples
-- **Guides**: Step-by-step tutorials
-- **Reference**: Technical documentation
-
-### Community
-- **GitHub Issues**: Bug reports and feature requests
-- **GitHub Discussions**: Community discussions
-- **Documentation**: Comprehensive guides and references
-
-### Testing
-- **Test Suite**: Comprehensive test coverage
-- **UV Validation**: Package manager testing
-- **Environment Testing**: Docker and local validation
-
-## 🍎 Native Container Documentation
-
-### Detailed Guides
-- **[Native Container Setup](docs/deployment/native-container-setup.md)** - Complete setup guide
-- **[Native vs Docker Comparison](docs/deployment/native-vs-docker-comparison.md)** - Performance comparison
-- **[Interactive Script Guide](scripts/native-container/README.md)** - Interactive script documentation
-- **[Automatic Dependencies](docs/deployment/automatic-dependencies.md)** - Automatic dependency installation
-
-### Testing Native Container
-
-#### Automated Testing
-```bash
-# Run all native container tests
-pytest tests/native-container/ -v
-
-# Run specific test categories
-pytest tests/native-container/test_native_container_script.py -v
-pytest tests/native-container/test_setup_script.py -v
-pytest tests/native-container/test_run_script.py -v
-pytest tests/native-container/test_automatic_dependencies.py -v
-
-# Run with coverage
-pytest tests/native-container/ --cov=scripts/native-container --cov-report=html
-```
-
-#### Manual Testing
-```bash
-# Test interactive script
-./scripts/native-container/native-container.sh
-
-# Test individual scripts
-./scripts/native-container/setup.sh
-./scripts/native-container/run.sh
-./scripts/native-container/exec.sh --shell
-
-# Verify automatic dependency installation
-python -c "import pandas, numpy, matplotlib, plotly, yfinance; print('All dependencies available')"
-```
-
-### 🆕 New Features
-
-#### Automatic Dependency Installation
-- **No manual setup** - Dependencies installed automatically on container start
-- **UV package manager** - Fast and reliable dependency management
-- **Virtual environment** - Isolated Python environment created automatically
-- **Dependency verification** - Key packages verified after installation
-
-#### Enhanced User Experience
-- **Seamless startup** - Container ready to use immediately
-- **Consistent environment** - Same dependencies every time
-- **Error handling** - Graceful fallbacks for installation issues
-- **Backward compatibility** - Existing workflows unchanged
+- **Issues**: [GitHub Issues](https://github.com/username/neozork-hld-prediction/issues)
+- **Documentation**: [docs/](docs/)
+- **Examples**: [docs/examples/](docs/examples/)
 
 ---
 
-**Last Updated**: 2024
-**Version**: 2.0.0 (UV-Only Mode + Native Container)
-
-## 📊 Project Statistics
-
-- **Lines of Code**: 50,000+
-- **Technical Indicators**: 50+
-- **Data Sources**: 4
-- **Test Coverage**: 100%
-- **Documentation**: Comprehensive
-- **Package Manager**: UV (10-100x faster than pip)
-
-## 🍎 Native Apple Silicon Container (NEW!)
-
-**Full Docker Feature Parity with 30-50% Performance Improvement**
-
-The project now includes a complete native Apple Silicon container solution that provides **full feature parity** with Docker while offering significant performance improvements.
-
-### 🚀 Quick Start
-
-```bash
-# Interactive container manager (recommended)
-./scripts/native-container/native-container.sh
-
-# Or use individual scripts
-./scripts/native-container/setup.sh
-./scripts/native-container/run.sh
-./scripts/native-container/exec.sh --shell
-```
-
-### ✅ Complete Feature Parity
-
-**All Docker Features Now Available in Native Container:**
-
-- ✅ **UV Package Manager Support** - Complete UV integration with environment validation
-- ✅ **MCP Server Support** - Automatic MCP server startup and management
-- ✅ **nz/eda Scripts** - Full support for analysis and EDA commands
-- ✅ **Command History** - Predefined useful commands with bash history
-- ✅ **Automatic Checks** - UV, Binance, YFinance, Polygon feed validation
-- ✅ **Interactive Shell** - Enhanced bash environment with custom prompt
-- ✅ **Error Handling** - Robust error handling without container exit
-- ✅ **HTML File Detection** - Automatic detection of generated HTML files
-
-### 🎯 Usage Examples
-
-```bash
-# Inside native container - all commands work exactly like Docker
-nz demo --rule PHLD
-nz yfinance AAPL --rule PHLD
-nz mql5 BTCUSD --interval H4 --rule PHLD
-eda --data-quality-checks
-eda --descriptive-stats
-uv run pytest tests -n auto
-```
-
-### 📊 Performance Benefits
-
-- **30-50% performance improvement** over Docker
-- **Lower memory usage** due to native virtualization
-- **Faster startup times** with optimized initialization
-- **Better integration** with macOS system resources
-
-### 📚 Documentation
-
-- **Features Guide**: [Native Container Features](docs/deployment/native-container-features.md)
-- **Setup Guide**: [Native Container Setup](docs/deployment/native-container-setup.md)
-- **README**: [Native Container README](scripts/native-container/README.md)
-
-### 🔧 Requirements
-
-- **macOS 26 Tahoe (Developer Beta)** or higher
-- **Native container application** installed from Apple Developer Beta
-- **Python 3.11+** installed
-- **At least 4GB of available RAM**
-- **10GB of available disk space**
+**Built with ❤️ using UV package manager for lightning-fast performance**

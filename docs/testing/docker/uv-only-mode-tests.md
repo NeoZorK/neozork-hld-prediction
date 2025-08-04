@@ -270,6 +270,38 @@ These tests can be integrated into CI/CD pipelines for both environments:
     pytest tests/docker/test_uv_simple.py -v
 ```
 
+### Testing CI/CD Workflows Locally
+
+To test GitHub Actions workflows and CI/CD integration without downloading Docker images or installing dependencies:
+
+```bash
+# Install act tool
+brew install act  # macOS
+# or
+curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash  # Linux
+
+# Dry run - shows what would be executed without actually running
+act -n
+
+# Test specific workflow
+act -n -W .github/workflows/docker-build.yml
+
+# Test MCP server integration workflows
+act -n -W .github/workflows/mcp-integration.yml
+act -n -W .github/workflows/mcp-servers-ci.yml
+
+# List available workflows
+act -l
+```
+
+**Benefits of Dry Run Testing:**
+- **No Docker Downloads**: Prevents downloading large Docker images
+- **Fast Validation**: Quickly validates workflow syntax and structure
+- **Resource Efficient**: Uses minimal system resources
+- **Safe Testing**: No risk of affecting your local environment
+- **Protocol Validation**: Verify MCP server communication protocols
+- **Integration Testing**: Test MCP server with various IDEs
+
 ## Notes
 
 - Tests are designed to be robust and handle different UV versions

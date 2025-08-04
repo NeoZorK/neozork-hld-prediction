@@ -281,6 +281,13 @@ def apply_rule_rsi_divergence(df: pd.DataFrame, point: float,
     bullish_divergence = (price_lows < price_lows.shift(5)) & (rsi_lows > rsi_lows.shift(5))
     signals[bullish_divergence] = BUY
     
+    # Add signals based on overbought/oversold levels (like regular RSI)
+    # SELL signal when RSI is overbought
+    signals[df['RSI'] >= overbought] = SELL
+    
+    # BUY signal when RSI is oversold
+    signals[df['RSI'] <= oversold] = BUY
+    
     df['RSI_Signal'] = signals
     
     # Calculate levels based on divergence strength

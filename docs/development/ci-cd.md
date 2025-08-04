@@ -33,6 +33,58 @@ curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash 
 
 The test script handles Apple Silicon compatibility automatically.
 
+### Testing GitHub Actions Integration with Act
+
+To test GitHub Actions workflows and CI/CD integration locally without downloading Docker images or installing dependencies, use the `act` tool with the dry-run flag:
+
+```bash
+# Install act (if not already installed)
+brew install act  # macOS
+# or
+curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash  # Linux
+
+# Dry run - shows what would be executed without actually running
+act -n
+
+# List available workflows
+act -l
+
+# Dry run specific workflow
+act -n -W .github/workflows/docker-build.yml
+
+# Dry run specific job
+act -n -j build
+```
+
+**Key Benefits of Dry Run Mode:**
+- **No Docker Downloads**: Prevents downloading large Docker images
+- **No Dependencies**: Skips actual installation of packages
+- **Fast Validation**: Quickly validates workflow syntax and structure
+- **Resource Efficient**: Uses minimal system resources
+- **Safe Testing**: No risk of affecting your local environment
+
+**What Dry Run Shows:**
+- Workflow file syntax validation
+- Job dependencies and execution order
+- Environment variable usage
+- Step execution sequence
+- Conditional logic evaluation
+- Artifact and cache configurations
+
+**Example Output:**
+```bash
+$ act -n
+[Build and Test Docker Image/Build] 🚀  Start image=ghcr.io/catthehacker/ubuntu:act-22.04
+[Build and Test Docker Image/Build]   🐳  docker run image=ghcr.io/catthehacker/ubuntu:act-22.04
+[Build and Test Docker Image/Build]   ⭐  Run Checkout code
+[Build and Test Docker Image/Build]   ⭐  Run Set up Docker Buildx
+[Build and Test Docker Image/Build]   ⭐  Run Build Docker image
+[Build and Test Docker Image/Build]   ⭐  Run Display Docker image size
+[Build and Test Docker Image/Build]   ⭐  Run Test Docker image
+[Build and Test Docker Image/Build]   ⭐  Run Check disk usage
+[Build and Test Docker Image/Build] ✅  Job succeeded
+```
+
 ## Docker Hub Publishing (Optional)
 
 To enable automatic Docker Hub publishing:
@@ -96,6 +148,31 @@ act -n
 # Verbose output
 act -v
 ```
+
+### Testing MCP Server Integration
+
+To test MCP server integration and CI/CD workflows without downloading Docker images:
+
+```bash
+# Test MCP server workflows with dry run
+act -n -W .github/workflows/mcp-integration.yml
+
+# Test MCP servers CI workflow
+act -n -W .github/workflows/mcp-servers-ci.yml
+
+# List MCP-related workflows
+act -l | grep mcp
+
+# Dry run specific MCP job
+act -n -j test-mcp-integration
+```
+
+**MCP Server Testing Benefits:**
+- **Protocol Validation**: Verify MCP server communication protocols
+- **Integration Testing**: Test MCP server with various IDEs
+- **Performance Monitoring**: Validate server performance benchmarks
+- **Security Scanning**: Check for vulnerabilities in MCP implementations
+- **Documentation Validation**: Ensure MCP documentation is up-to-date
 
 ## CI/CD Pipeline Components
 

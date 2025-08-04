@@ -1,6 +1,6 @@
 # Examples
 
-This section provides practical examples and use cases for the NeoZork HLD Prediction project, including UV package management and adaptive testing.
+This section provides practical examples and use cases for the NeoZork HLD Prediction project, including UV package management, adaptive testing, and recent fixes.
 
 ## 🚀 Quick Examples
 
@@ -52,6 +52,12 @@ uv venv
 
 # Activate virtual environment
 source .venv/bin/activate
+
+# Run analysis with UV
+uv run run_analysis.py demo --rule PHLD
+
+# Run tests with UV (multithreaded)
+uv run pytest tests -n auto
 ```
 
 ### Docker UV Examples
@@ -67,7 +73,76 @@ docker-compose exec neozork uv-test
 
 # Check UV status
 docker-compose exec neozork python scripts/check_uv_mode.py
+
+# Run analysis with UV in container
+docker-compose exec neozork uv run run_analysis.py demo --rule PHLD
 ```
+
+## 📊 Analysis Examples
+
+### [Indicator Examples](indicator-examples.md)
+Technical indicator calculation and usage examples.
+
+**Covers:**
+- Momentum indicators (MACD, Stochastic)
+- Oscillators (RSI, CCI)
+- Trend indicators (EMA, ADX, SuperTrend)
+- Volatility indicators (ATR, Bollinger Bands)
+- Volume indicators (OBV, VWAP)
+- Support & Resistance (Pivot Points, Fibonacci)
+- Predictive indicators (HMA, Time Series)
+- Probability indicators (Monte Carlo, Kelly)
+- Sentiment indicators (Fear & Greed, COT, Put/Call Ratio)
+
+### Volume Indicators Examples ⭐ **FIXED**
+```bash
+# OBV (On-Balance Volume) - Fixed dual chart plotting
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+
+# VWAP (Volume Weighted Average Price)
+uv run run_analysis.py show csv mn1 -d fastest --rule vwap:20
+
+# OBV with custom parameters
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:20,close
+```
+
+### Sentiment Indicators Examples ⭐ **NEW**
+```bash
+# COT (Commitments of Traders)
+uv run run_analysis.py show csv mn1 -d fastest --rule cot:14,close
+
+# Put/Call Ratio
+uv run run_analysis.py show csv mn1 -d fastest --rule putcallratio:20,close
+```
+
+### Trend Indicators Examples ⭐ **NEW**
+```bash
+# SuperTrend with default parameters
+uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0
+
+# SuperTrend with custom price type
+uv run run_analysis.py show csv mn1 -d fastest --rule supertrend:10,3.0,open
+```
+
+### [EDA Examples](eda-examples.md)
+Exploratory Data Analysis examples and workflows.
+
+**Includes:**
+- Data quality assessment
+- Statistical analysis
+- Correlation analysis
+- Data visualization
+- Pattern recognition
+
+### [Docker Examples](docker-examples.md)
+Containerized deployment and usage examples.
+
+**Features:**
+- Docker setup examples
+- Container management
+- UV integration in Docker
+- Environment configuration
+- Service orchestration
 
 ## 🧪 Testing Examples
 
@@ -93,6 +168,9 @@ pytest tests/docker/test_uv_commands.py -v
 
 # Check UV mode (both environments)
 python scripts/check_uv_mode.py --verbose
+
+# Run all tests with UV (multithreaded)
+uv run pytest tests -n auto
 ```
 
 ### Adaptive Testing Examples
@@ -110,42 +188,6 @@ def test_uv_availability():
         assert check_uv_installation()
         assert check_local_directories()
 ```
-
-## 📊 Analysis Examples
-
-### [Indicator Examples](indicator-examples.md)
-Technical indicator calculation and usage examples.
-
-**Covers:**
-- Momentum indicators (MACD, Stochastic)
-- Oscillators (RSI, CCI)
-- Trend indicators (EMA, ADX)
-- Volatility indicators (ATR, Bollinger Bands)
-- Volume indicators (OBV, VWAP)
-- Support & Resistance (Pivot Points, Fibonacci)
-- Predictive indicators (HMA, Time Series)
-- Probability indicators (Monte Carlo, Kelly)
-- Sentiment indicators (Fear & Greed, COT)
-
-### [EDA Examples](eda-examples.md)
-Exploratory Data Analysis examples and workflows.
-
-**Includes:**
-- Data quality assessment
-- Statistical analysis
-- Correlation analysis
-- Data visualization
-- Pattern recognition
-
-### [Docker Examples](docker-examples.md)
-Containerized deployment and usage examples.
-
-**Features:**
-- Docker setup examples
-- Container management
-- UV integration in Docker
-- Environment configuration
-- Service orchestration
 
 ## 🔧 Development Examples
 
@@ -179,50 +221,145 @@ docker-compose up -d
 # 2. Install dependencies
 docker-compose exec neozork uv-install
 
-# 3. Run analysis
-docker-compose exec neozork nz yfinance AAPL --rule PHLD
+# 3. Run analysis with UV
+docker-compose exec neozork uv run run_analysis.py yfinance AAPL --rule PHLD
 
 # 4. Generate visualizations
-docker-compose exec neozork python -m src.plotting.fast_plot
+docker-compose exec neozork uv run python -m src.plotting.fast_plot
 
 # 5. Export results
-docker-compose exec neozork python -m src.export.csv_export
+docker-compose exec neozork uv run python -m src.export.csv_export
 ```
 
 ### Development Workflow
 ```bash
-# 1. Local development
+# 1. Local development with UV
 uv pip install -r requirements.txt
 uv pip install -r requirements-dev.txt
 
-# 2. Run tests
-pytest tests/ -v
+# 2. Run tests with UV (multithreaded)
+uv run pytest tests -n auto
 
-# 3. Check code quality
+# 3. Run specific test categories
+uv run pytest tests/calculation/ -n auto
+uv run pytest tests/cli/ -n auto
+
+# 4. Check UV status
 python scripts/check_uv_mode.py --verbose
-
-# 4. Docker testing
-docker-compose up -d
-docker-compose exec neozork pytest tests/docker/ -v
 ```
 
-### UV Package Management Workflow
+### Native Container Workflow
 ```bash
-# 1. Install UV
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# 1. Setup native container
+./scripts/native-container/setup.sh
 
-# 2. Configure environment
-export UV_ONLY_MODE=true
-export UV_CACHE_DIR=./.uv_cache
+# 2. Run container
+./scripts/native-container/run.sh
 
-# 3. Install dependencies
-uv pip install -r requirements.txt
+# 3. Access shell
+./scripts/native-container/exec.sh --shell
 
-# 4. Verify installation
-python scripts/check_uv_mode.py
+# 4. Run analysis with UV
+nz demo --rule PHLD
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+```
 
-# 5. Run tests
-pytest tests/docker/test_uv_simple.py -v
+## 🐛 Recent Fixes & Improvements
+
+### Volume Indicators Fix ⭐ **FIXED**
+**Issue:** OBV indicator had dual chart plotting errors and parameter parsing issues.
+
+**Fix:** 
+- Fixed parameter parsing for `--rule obv:` (empty parameters after colon)
+- Fixed volume column handling for volume-based indicators
+- Fixed dual chart plotting for OBV with proper argument passing
+
+**Before:**
+```bash
+# This would fail
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+```
+
+**After:**
+```bash
+# This now works perfectly
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+```
+
+### UV Integration Improvements
+- **Exclusive UV Usage**: No fallback to pip
+- **Multithreaded Testing**: `uv run pytest tests -n auto`
+- **Docker Integration**: Seamless UV in containers
+- **Native Container Support**: Full UV support in Apple Silicon containers
+
+### New Indicators Added
+- **SuperTrend**: Advanced trend-following indicator
+- **COT**: Commitments of Traders sentiment indicator  
+- **Put/Call Ratio**: Options sentiment indicator
+
+## 🚀 Performance Examples
+
+### UV vs Traditional pip
+```bash
+# Traditional pip (slower)
+pip install -r requirements.txt  # ~30-60 seconds
+
+# UV (much faster)
+uv pip install -r requirements.txt  # ~3-10 seconds
+
+# UV with caching (fastest)
+uv pip install -r requirements.txt  # ~1-3 seconds (subsequent runs)
+```
+
+### Multithreaded Testing
+```bash
+# Single-threaded testing
+pytest tests/  # ~2-5 minutes
+
+# UV multithreaded testing
+uv run pytest tests -n auto  # ~30-60 seconds
+```
+
+## 📋 Command Reference
+
+### Basic Commands
+```bash
+# Demo analysis
+uv run run_analysis.py demo --rule PHLD
+
+# Yahoo Finance analysis
+uv run run_analysis.py yfinance AAPL --rule RSI
+
+# CSV analysis
+uv run run_analysis.py show csv mn1 -d fastest --rule obv:
+
+# Interactive analysis
+uv run run_analysis.py interactive
+```
+
+### Advanced Commands
+```bash
+# Multiple indicators
+uv run run_analysis.py demo --rule RSI,MACD,PHLD
+
+# Custom plotting backend
+uv run run_analysis.py demo --rule PHLD -d plotly
+
+# Export results
+uv run run_analysis.py demo --rule PHLD --export-parquet --export-csv
+```
+
+### Testing Commands
+```bash
+# Run all tests
+uv run pytest tests -n auto
+
+# Run specific test categories
+uv run pytest tests/calculation/ -n auto
+uv run pytest tests/cli/ -n auto
+
+# Run with coverage
+uv run pytest tests/ --cov=src -n auto
 ```
 
 ## 🎯 Example Categories

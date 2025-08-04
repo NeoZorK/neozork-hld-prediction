@@ -61,6 +61,26 @@ try:
 except ImportError:
     display_universal_trading_metrics = None
 
+def _force_terminal_mode_in_docker(args):
+    """
+    Force terminal mode in Docker environment for show commands.
+    This ensures that show csv gbp commands always use -d term in Docker/container.
+    """
+    # Check if running in Docker
+    IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
+    disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
+    
+    if IN_DOCKER and not disable_docker_detection:
+        draw_method = getattr(args, 'draw', 'fastest')
+        if draw_method not in ['term']:
+            print(f"Docker detected: forcing draw mode from '{draw_method}' to 'term' (terminal plotting)")
+            args.draw = 'term'
+            return True
+        else:
+            print("Docker detected: already using 'term' mode")
+            return True
+    return False
+
 def show_help():
     """
     Displays help for the 'show' mode with colorful formatting.
@@ -247,6 +267,10 @@ def _get_relevant_columns_for_rule(rule_name: str, all_columns=None) -> list:
         return base_cols + ['PPrice1', 'PPrice2']
     elif canonical_rule == 'PV_HighLow':
         return base_cols + ['PPrice1', 'PPrice2']
+    elif canonical_rule.lower() == 'putcallratio':
+        # Show all standard and indicator-specific columns
+        # (names may differ, but usually these are PutCallRatio, PutCallSignal, PutCallLabel)
+        return base_cols + ['PutCallRatio', 'PutCallSignal', 'PutCallLabel']
     else:
         return base_cols + ['PPrice1', 'PPrice2', 'Direction']
 
@@ -486,6 +510,9 @@ def handle_show_mode(args):
     Handles the 'show' mode logic: finds files, displays info, and potentially triggers plot or indicator calculation.
     Returns timing and metrics data for execution summary.
     """
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
+    
     # Info message about export flags
     print("Note: Export flags (--export-parquet, --export-csv, --export-json) are only allowed in demo mode. For real data, use the recommended workflow: download/convert, show+export, then show ind.")
     # Initialize timing and metrics tracking
@@ -726,14 +753,9 @@ def _plot_auto_display(args, df, file_info, metrics):
     
     draw_method = getattr(args, 'draw', 'fastest')
     
-    # Check if running in Docker and force terminal mode if needed
-    import os
-    IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
-    disable_docker_detection = os.environ.get('DISABLE_DOCKER_DETECTION', 'false').lower() == 'true'
-    
-    if IN_DOCKER and not disable_docker_detection and draw_method not in ['term']:
-        print(f"Docker detected: forcing draw mode from '{draw_method}' to 'term' (terminal plotting)")
-        draw_method = 'term'
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
+    draw_method = getattr(args, 'draw', 'fastest')
     
     print(f"\nDrawing AUTO display plot with method: '{draw_method}'...")
     try:
@@ -888,17 +910,22 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
         return metrics
     except ValueError as e:
         # Handle parameter parsing errors and other validation errors
-        print(f"Error calculating indicator: {e}")
+        from .error_handling import handle_indicator_error
+        handle_indicator_error(str(e))
         return metrics
     except Exception as e:
         # Handle other unexpected errors
-        print(f"Error calculating indicator: {e}")
+        from .error_handling import handle_indicator_error
+        handle_indicator_error(str(e))
         return metrics
 
 def _plot_indicator_calculation_result(args, original_df, result_df, file_info, selected_rule, point_size, metrics):
     """Handle plotting after indicator calculation."""
     # Track plotting time
     t_plot_start = time.perf_counter()
+    
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
     
     print(f"\nDrawing plot after indicator calculation with method: '{args.draw}'...")
     try:
@@ -1015,14 +1042,104 @@ def _plot_raw_ohlcv_data(args, df, data_info, file_info, point_size, metrics):
     # Just plot raw OHLCV data without indicator calculation
     selected_rule = 'Raw_OHLCV_Data'  # Default name for raw data display
     estimated_point = True
-    generate_plot = import_generate_plot()
+    
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
+    
     draw_method = getattr(args, 'draw', 'fastest')
     print(f"Drawing raw OHLCV data chart using method: '{draw_method}'...")
     
     # Track plotting time for raw data
     t_plot_start = time.perf_counter()
     
-    generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+    # Special handling for fastest and fast modes with OHLCV rule for fullscreen display
+    if draw_method in ['fastest', 'fast'] and hasattr(args, 'display_candlestick_only') and args.display_candlestick_only:
+        if draw_method == 'fastest':
+            print("Using fullscreen fastest plot for OHLCV rule...")
+            try:
+                from src.plotting.fastest_plot_fullscreen import plot_indicator_results_fastest_fullscreen
+                
+                # Create plot title
+                plot_title = f"Raw OHLCV Data - {file_info['name']}"
+                if point_size:
+                    plot_title += f" (Point Size: {point_size})"
+                
+                # Use the fullscreen plotting function
+                fig = plot_indicator_results_fastest_fullscreen(
+                    df=df,
+                    rule=selected_rule,
+                    title=plot_title,
+                    output_path="results/plots/fastest_plot_fullscreen.html",
+                    width=1800,
+                    height=None,  # Will be calculated dynamically
+                    mode="fastest",
+                    data_source=data_info.get('source', 'csv')
+                )
+                
+                if fig:
+                    print(f"Successfully plotted raw OHLCV data with fullscreen height from '{file_info['name']}'")
+                else:
+                    print(f"Failed to create fullscreen plot, falling back to standard plotting...")
+                    # Fallback to standard plotting
+                    generate_plot = import_generate_plot()
+                    generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+                    
+            except ImportError as e:
+                print(f"Fullscreen plotting not available: {e}. Falling back to standard plotting...")
+                # Fallback to standard plotting
+                generate_plot = import_generate_plot()
+                generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+            except Exception as e:
+                print(f"Error in fullscreen plotting: {e}. Falling back to standard plotting...")
+                # Fallback to standard plotting
+                generate_plot = import_generate_plot()
+                generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+        
+        elif draw_method == 'fast':
+            print("Using fullscreen fast plot for OHLCV rule...")
+            try:
+                from src.plotting.fast_plot_fullscreen import plot_indicator_results_fast_fullscreen
+                
+                # Create plot title
+                plot_title = f"Raw OHLCV Data - {file_info['name']}"
+                if point_size:
+                    plot_title += f" (Point Size: {point_size})"
+                
+                # Use the fullscreen plotting function
+                layout = plot_indicator_results_fast_fullscreen(
+                    df=df,
+                    rule=selected_rule,
+                    title=plot_title,
+                    output_path="results/plots/fast_plot_fullscreen.html",
+                    width=1800,
+                    height=None,  # Will be calculated dynamically
+                    mode="fast",
+                    data_source=data_info.get('source', 'csv')
+                )
+                
+                if layout:
+                    print(f"Successfully plotted raw OHLCV data with fullscreen height from '{file_info['name']}'")
+                else:
+                    print(f"Failed to create fullscreen plot, falling back to standard plotting...")
+                    # Fallback to standard plotting
+                    generate_plot = import_generate_plot()
+                    generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+                    
+            except ImportError as e:
+                print(f"Fullscreen plotting not available: {e}. Falling back to standard plotting...")
+                # Fallback to standard plotting
+                generate_plot = import_generate_plot()
+                generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+            except Exception as e:
+                print(f"Error in fullscreen plotting: {e}. Falling back to standard plotting...")
+                # Fallback to standard plotting
+                generate_plot = import_generate_plot()
+                generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+    else:
+        # Use standard plotting for other modes
+        generate_plot = import_generate_plot()
+        generate_plot(args, data_info, df, selected_rule, point_size, estimated_point)
+    
     print(f"Successfully plotted raw OHLCV data from '{file_info['name']}'")
     
     # End plotting timing and update metrics
@@ -1229,6 +1346,9 @@ def _search_indicator_files(format_filter, remaining_keywords):
 
 def _handle_multiple_parquet_files(args, found_files, format_filter, metrics):
     """Handle multiple parquet files with drawing backend."""
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
+    
     # For indicator mode, parquet files should behave like CSV/JSON files:
     # - List files when multiple matches
     # - Only show chart/content when a single file remains after filtering
@@ -1303,6 +1423,9 @@ def handle_indicator_show_mode(args):
     Handles the 'show ind' mode logic for indicator files.
     Returns timing and metrics data for execution summary.
     """
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
+    
     # Initialize timing and metrics tracking
     metrics = _initialize_metrics()
     
@@ -1362,6 +1485,9 @@ def _plot_indicator_parquet_file(args, df, file_info, metrics):
     args.mode = 'show'
     if not hasattr(args, 'rule') or args.rule is None:
         args.rule = 'AUTO'  # Show all calculated indicators
+    
+    # Force terminal mode in Docker for show commands
+    _force_terminal_mode_in_docker(args)
     
     # For indicator files, ignore calculation-related flags (--point, -t, -i)
     # These flags are only for calculation mode, not for reading existing indicator files

@@ -115,7 +115,7 @@ pytest tests/native-container/ --cov=scripts/native-container
 ## 📚 Documentation
 
 - **[Complete Setup Guide](docs/deployment/native-container-setup.md)** - Detailed setup instructions
-- **[Interactive Script Guide](scripts/native-container/README.md)** - Interactive script documentation
+- **[Interactive Script Guide](docs/containers/native-container/README.md)** - Interactive script documentation
 - **[Performance Comparison](docs/deployment/native-vs-docker-comparison.md)** - Native vs Docker comparison
 
 ## 🔧 Troubleshooting
