@@ -409,13 +409,13 @@ class TestUVOnlyMode:
                     if uv_result.returncode == 0:
                         uv_works = True
                         break
-                except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
+                except (subprocess.CalledProcessError, subprocess.TimeoutExpired, FileNotFoundError):
                     continue
             
-            # Get pip environment info
+            # Get pip environment info - try multiple approaches
             pip_commands = [
-                ["pip", "list"],
-                ["python", "-m", "pip", "list"]
+                ["python", "-m", "pip", "list"],
+                ["uv", "pip", "list"]  # Use UV's pip as fallback
             ]
             
             pip_works = False
@@ -428,7 +428,7 @@ class TestUVOnlyMode:
                     if pip_result.returncode == 0:
                         pip_works = True
                         break
-                except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
+                except (subprocess.CalledProcessError, subprocess.TimeoutExpired, FileNotFoundError):
                     continue
             
             # At least one should work
