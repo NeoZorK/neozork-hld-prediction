@@ -321,130 +321,131 @@ def plot_indicator_results_fast(
                     figures.append(pred_high_fig)
 
         # --- Modern Supertrend subplot (if present) ---
-        has_supertrend_direct = 'supertrend' in display_df.columns
-        has_pprice_columns = 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns and 'Direction' in display_df.columns
+        # SuperTrend indicator removed as requested
+        # has_supertrend_direct = 'supertrend' in display_df.columns
+        # has_pprice_columns = 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns and 'Direction' in display_df.columns
         
-        if has_supertrend_direct or has_pprice_columns:
-            import numpy as np
-            # Note: ColumnDataSource is already imported at the top of the file
-            supertrend_fig = figure(
-                width=width,
-                height=int(height * 0.18),
-                x_axis_type='datetime',
-                title='SuperTrend',
-                tools="pan,wheel_zoom,box_zoom,reset",
-                active_scroll='wheel_zoom'
-            )
-            # --- Data preparation ---
-            idx = display_df['index']
-            if has_pprice_columns:
-                p1 = display_df['PPrice1']
-                p2 = display_df['PPrice2']
-                direction = display_df['Direction']
-                supertrend_val = np.where(direction > 0, p1, p2)
-                st_col = 'PPrice1'  # for hover
-            else:
-                supertrend_val = display_df['supertrend']
-                direction = display_df['Direction']
-                st_col = 'supertrend'
-            # Colors
-            uptrend_color = '#00C851'      # Green
-            downtrend_color = '#ff4444'    # Red
-            neutral_color = '#888888'      # Gray
-            # Form DataFrame for source
-            st_df = display_df.copy()
-            st_df[st_col] = supertrend_val  # Ensure correct column for hover
-            st_df['supertrend_val'] = supertrend_val
-            st_df['trend_color'] = np.where(direction > 0, uptrend_color, np.where(direction < 0, downtrend_color, neutral_color))
-            st_df['trend_group'] = np.where(direction > 0, 1, np.where(direction < 0, -1, 0))
-            
-            # Ensure all required columns are in the source for proper hover functionality
-            if 'index' not in st_df.columns:
-                st_df['index'] = st_df.index
-            if 'Direction' not in st_df.columns:
-                st_df['Direction'] = direction
-                
-            st_source = ColumnDataSource(st_df)
-            # --- Draw lines by groups (BUY/SELL/NO SIGNAL) ---
-            for trend_val, color in [(1, uptrend_color), (-1, downtrend_color), (0, neutral_color)]:
-                mask = (st_df['trend_group'] == trend_val)
-                if mask.sum() > 1:
-                    group_df = st_df[mask]
-                    group_source = ColumnDataSource(group_df)
-                    # Glow effect
-                    supertrend_fig.line(
-                        x='index', y='supertrend_val',
-                        source=group_source,
-                        line_color=color,
-                        line_width=12,
-                        line_alpha=0.15
-                    )
-                    # Main line
-                    if trend_val == 1:
-                        supertrend_fig.line(
-                            x='index', y='supertrend_val',
-                            source=group_source,
-                            line_color=color,
-                            line_width=4,
-                            line_alpha=0.9,
-                            legend_label='SuperTrend'
-                        )
-                    else:
-                        supertrend_fig.line(
-                            x='index', y='supertrend_val',
-                            source=group_source,
-                            line_color=color,
-                            line_width=4,
-                            line_alpha=0.9
-                        )
-            # --- BUY/SELL signals ---
-            buy_mask = (direction.shift(1, fill_value=0) <= 0) & (direction > 0)
-            sell_mask = (direction.shift(1, fill_value=0) >= 0) & (direction < 0)
-            if buy_mask.any():
-                supertrend_fig.scatter(
-                    x=idx[buy_mask], y=st_df['supertrend_val'][buy_mask],
-                    size=12, color=uptrend_color, marker='triangle', alpha=0.9, legend_label='BUY Signal'
-                )
-            if sell_mask.any():
-                supertrend_fig.scatter(
-                    x=idx[sell_mask], y=st_df['supertrend_val'][sell_mask],
-                    size=12, color=downtrend_color, marker='inverted_triangle', alpha=0.9, legend_label='SELL Signal'
-                )
-            # --- Transparent trend zones ---
-            if len(idx) > 0:
-                current_trend = direction.iloc[0] if hasattr(direction, 'iloc') else direction[0]
-                zone_start = idx.iloc[0] if hasattr(idx, 'iloc') else idx[0]
-                for i in range(1, len(direction)):
-                    if hasattr(direction, 'iloc'):
-                        current_dir = direction.iloc[i]
-                        current_idx = idx.iloc[i]
-                    else:
-                        current_dir = direction[i]
-                        current_idx = idx[i]
-                    if current_dir != current_trend or i == len(direction)-1:
-                        zone_end = current_idx
-                        zone_color = uptrend_color if current_trend > 0 else (downtrend_color if current_trend < 0 else neutral_color)
-                        supertrend_fig.add_layout(BoxAnnotation(
-                            left=zone_start, right=zone_end,
-                            fill_color=zone_color, fill_alpha=0.08,
-                            line_color=zone_color, line_alpha=0.2, line_width=1
-                        ))
-                        zone_start = current_idx
-                        current_trend = current_dir
-            # --- Hover tool ---
-            # Simple hover tool like in fastest mode - only show value
-            hover_st = HoverTool(
-                tooltips=[
-                    ("Value", f"@{st_col}{{0.5f}}")
-                ],
-                formatters={
-                    f"@{st_col}": "numeral"
-                },
-                mode='vline'
-            )
-            supertrend_fig.add_tools(hover_st)
-            supertrend_fig.x_range = main_fig.x_range
-            figures.append(supertrend_fig)
+        # if has_supertrend_direct or has_pprice_columns:
+        #     import numpy as np
+        #     # Note: ColumnDataSource is already imported at the top of the file
+        #     supertrend_fig = figure(
+        #         width=width,
+        #         height=int(height * 0.18),
+        #         x_axis_type='datetime',
+        #         title='SuperTrend',
+        #         tools="pan,wheel_zoom,box_zoom,reset",
+        #         active_scroll='wheel_zoom'
+        #     )
+        #     # --- Data preparation ---
+        #     idx = display_df['index']
+        #     if has_pprice_columns:
+        #         p1 = display_df['PPrice1']
+        #         p2 = display_df['PPrice2']
+        #         direction = display_df['Direction']
+        #         supertrend_val = np.where(direction > 0, p1, p2)
+        #         st_col = 'PPrice1'  # for hover
+        #     else:
+        #         supertrend_val = display_df['supertrend']
+        #         direction = display_df['Direction']
+        #         st_col = 'supertrend'
+        #     # Colors
+        #     uptrend_color = '#00C851'      # Green
+        #     downtrend_color = '#ff4444'    # Red
+        #     neutral_color = '#888888'      # Gray
+        #     # Form DataFrame for source
+        #     st_df = display_df.copy()
+        #     st_df[st_col] = supertrend_val  # Ensure correct column for hover
+        #     st_df['supertrend_val'] = supertrend_val
+        #     st_df['trend_color'] = np.where(direction > 0, uptrend_color, np.where(direction < 0, downtrend_color, neutral_color))
+        #     st_df['trend_group'] = np.where(direction > 0, 1, np.where(direction < 0, -1, 0))
+        #     
+        #     # Ensure all required columns are in the source for proper hover functionality
+        #     if 'index' not in st_df.columns:
+        #         st_df['index'] = st_df.index
+        #     if 'Direction' not in st_df.columns:
+        #         st_df['Direction'] = direction
+        #         
+        #     st_source = ColumnDataSource(st_df)
+        #     # --- Draw lines by groups (BUY/SELL/NO SIGNAL) ---
+        #     for trend_val, color in [(1, uptrend_color), (-1, downtrend_color), (0, neutral_color)]:
+        #         mask = (st_df['trend_group'] == trend_val)
+        #         if mask.sum() > 1:
+        #             group_df = st_df[mask]
+        #             group_source = ColumnDataSource(group_df)
+        #             # Glow effect
+        #             supertrend_fig.line(
+        #                 x='index', y='supertrend_val',
+        #                 source=group_source,
+        #                 line_color=color,
+        #                 line_width=12,
+        #                 line_alpha=0.15
+        #             )
+        #             # Main line
+        #             if trend_val == 1:
+        #                 supertrend_fig.line(
+        #                     x='index', y='supertrend_val',
+        #                     source=group_source,
+        #                     line_color=color,
+        #                     line_width=4,
+        #                     line_alpha=0.9,
+        #                     legend_label='SuperTrend'
+        #                 )
+        #             else:
+        #                 supertrend_fig.line(
+        #                     x='index', y='supertrend_val',
+        #                     source=group_source,
+        #                     line_color=color,
+        #                     line_width=4,
+        #                     line_alpha=0.9
+        #                 )
+        #     # --- BUY/SELL signals ---
+        #     buy_mask = (direction.shift(1, fill_value=0) <= 0) & (direction > 0)
+        #     sell_mask = (direction.shift(1, fill_value=0) >= 0) & (direction < 0)
+        #     if buy_mask.any():
+        #         supertrend_fig.scatter(
+        #             x=idx[buy_mask], y=st_df['supertrend_val'][buy_mask],
+        #             size=12, color=uptrend_color, marker='triangle', alpha=0.9, legend_label='BUY Signal'
+        #         )
+        #     if sell_mask.any():
+        #         supertrend_fig.scatter(
+        #             x=idx[sell_mask], y=st_df['supertrend_val'][sell_mask],
+        #             size=12, color=downtrend_color, marker='inverted_triangle', alpha=0.9, legend_label='SELL Signal'
+        #         )
+        #     # --- Transparent trend zones ---
+        #     if len(idx) > 0:
+        #         current_trend = direction.iloc[0] if hasattr(direction, 'iloc') else direction[0]
+        #         zone_start = idx.iloc[0] if hasattr(idx, 'iloc') else idx[0]
+        #         for i in range(1, len(direction)):
+        #             if hasattr(direction, 'iloc'):
+        #                 current_dir = direction.iloc[i]
+        #                 current_idx = idx.iloc[i]
+        #             else:
+        #                 current_dir = direction[i]
+        #                 current_idx = idx[i]
+        #             if current_dir != current_trend or i == len(direction)-1:
+        #                 zone_end = current_idx
+        #                 zone_color = uptrend_color if current_trend > 0 else (downtrend_color if current_trend < 0 else neutral_color)
+        #                 supertrend_fig.add_layout(BoxAnnotation(
+        #                     left=zone_start, right=zone_end,
+        #                     fill_color=zone_color, fill_alpha=0.08,
+        #                     line_color=zone_color, line_alpha=0.2, line_width=1
+        #                         ))
+        #                         zone_start = current_idx
+        #                         current_trend = current_dir
+        #     # --- Hover tool ---
+        #     # Simple hover tool like in fastest mode - only show value
+        #     hover_st = HoverTool(
+        #         tooltips=[
+        #             ("Value", f"@{st_col}{{0.5f}}")
+        #         ],
+        #         formatters={
+        #             f"@{st_col}": "numeral"
+        #         },
+        #         mode='vline'
+        #     )
+        #     supertrend_fig.add_tools(hover_st)
+        #     supertrend_fig.x_range = main_fig.x_range
+        #     figures.append(supertrend_fig)
 
         # Layout: main chart + only those subplots for which data exists
         logger.print_debug(f"Fast plot: Creating layout with {len(figures)} figures")
