@@ -19,6 +19,1654 @@ from typing import Dict, Any, Optional
 from ..common import logger
 
 
+def add_rsi_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add RSI indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with RSI data
+    """
+    if 'rsi' in display_df.columns:
+        # Add RSI line
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['rsi'],
+                mode='lines',
+                name='RSI',
+                line=dict(color='purple', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+        # Add overbought/oversold lines
+        if 'rsi_overbought' in display_df.columns:
+            overbought = display_df['rsi_overbought'].iloc[0]
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=[overbought] * len(display_df),
+                    mode='lines',
+                    name=f'Overbought ({overbought})',
+                    line=dict(color='red', width=2, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        if 'rsi_oversold' in display_df.columns:
+            oversold = display_df['rsi_oversold'].iloc[0]
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=[oversold] * len(display_df),
+                    mode='lines',
+                    name=f'Oversold ({oversold})',
+                    line=dict(color='green', width=2, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+
+
+def add_rsi_momentum_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add RSI Momentum indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with RSI and RSI Momentum data
+    """
+    if 'rsi' in display_df.columns:
+        # Add RSI line
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['rsi'],
+                mode='lines',
+                name='RSI',
+                line=dict(color='purple', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    if 'rsi_momentum' in display_df.columns:
+        # Add RSI Momentum line
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['rsi_momentum'],
+                mode='lines',
+                name='RSI Momentum',
+                line=dict(color='orange', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+        # Add zero line for momentum
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[0] * len(display_df),
+                mode='lines',
+                name='Zero Line',
+                line=dict(color='gray', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+        # Add overbought/oversold lines
+        if 'rsi_overbought' in display_df.columns:
+            overbought = display_df['rsi_overbought'].iloc[0]
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=[overbought] * len(display_df),
+                    mode='lines',
+                    name=f'Overbought ({overbought})',
+                    line=dict(color='red', width=2, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        if 'rsi_oversold' in display_df.columns:
+            oversold = display_df['rsi_oversold'].iloc[0]
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=[oversold] * len(display_df),
+                    mode='lines',
+                    name=f'Oversold ({oversold})',
+                    line=dict(color='green', width=2, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+
+
+def add_macd_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add MACD indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with MACD data
+    """
+    if 'macd' in display_df.columns:
+        # Add MACD line
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['macd'],
+                mode='lines',
+                name='MACD',
+                line=dict(color='blue', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    if 'macd_signal' in display_df.columns:
+        # Add Signal line
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['macd_signal'],
+                mode='lines',
+                name='Signal',
+                line=dict(color='red', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    if 'macd_histogram' in display_df.columns:
+        # Add Histogram
+        colors = ['green' if val >= 0 else 'red' for val in display_df['macd_histogram']]
+        fig.add_trace(
+            go.Bar(
+                x=display_df.index,
+                y=display_df['macd_histogram'],
+                name='Histogram',
+                marker_color=colors,
+                opacity=0.7,
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_ema_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add EMA indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with EMA data
+    """
+    if 'ema' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['ema'],
+                mode='lines',
+                name='EMA',
+                line=dict(color='orange', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_bollinger_bands_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add Bollinger Bands indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with Bollinger Bands data
+    """
+    if 'bb_upper' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['bb_upper'],
+                mode='lines',
+                name='Upper Band',
+                line=dict(color='blue', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    if 'bb_middle' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['bb_middle'],
+                mode='lines',
+                name='Middle Band',
+                line=dict(color='gray', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    if 'bb_lower' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['bb_lower'],
+                mode='lines',
+                name='Lower Band',
+                line=dict(color='blue', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_atr_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add ATR indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with ATR data
+    """
+    if 'atr' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['atr'],
+                mode='lines',
+                name='ATR',
+                line=dict(color='brown', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_cci_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add CCI indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with CCI data
+    """
+    if 'cci' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['cci'],
+                mode='lines',
+                name='CCI',
+                line=dict(color='purple', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+            
+        # Add CCI reference lines
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[100] * len(display_df),
+                mode='lines',
+                name='CCI +100',
+                line=dict(color='red', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+            
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[-100] * len(display_df),
+                mode='lines',
+                name='CCI -100',
+                line=dict(color='green', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_vwap_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add VWAP indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with VWAP data
+    """
+    if 'vwap' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['vwap'],
+                mode='lines',
+                name='VWAP',
+                line=dict(color='orange', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_pivot_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add Pivot Points indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with Pivot Points data
+    """
+    if 'pivot' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['pivot'],
+                mode='lines',
+                name='Pivot',
+                line=dict(color='blue', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+        if 'r1' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['r1'],
+                    mode='lines',
+                    name='R1',
+                    line=dict(color='red', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+        
+        if 's1' in display_df.columns:
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=display_df['s1'],
+                    mode='lines',
+                    name='S1',
+                    line=dict(color='green', width=1, dash='dash'),
+                    showlegend=False
+                ),
+                row=2, col=1
+            )
+
+
+def add_hma_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add HMA indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with HMA data
+    """
+    if 'hma' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['hma'],
+                mode='lines',
+                name='HMA',
+                line=dict(color='purple', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_tsf_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add TSF indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with TSF data
+    """
+    if 'tsf' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['tsf'],
+                mode='lines',
+                name='TSF',
+                line=dict(color='cyan', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_monte_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add Monte Carlo forecast line to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with Monte Carlo data
+    """
+    # Add Monte Carlo forecast line (main line)
+    if 'montecarlo' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['montecarlo'],
+                mode='lines',
+                name='Monte Carlo Forecast',
+                line=dict(color='blue', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add Monte Carlo signal line
+    if 'montecarlo_signal' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['montecarlo_signal'],
+                mode='lines',
+                name='Signal Line',
+                line=dict(color='red', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add Monte Carlo histogram
+    if 'montecarlo_histogram' in display_df.columns:
+        # Color histogram bars based on values
+        colors = ['green' if val >= 0 else 'red' for val in display_df['montecarlo_histogram']]
+        fig.add_trace(
+            go.Bar(
+                x=display_df.index,
+                y=display_df['montecarlo_histogram'],
+                name='Histogram',
+                marker_color=colors,
+                opacity=0.7,
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add confidence bands
+    if 'montecarlo_upper' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['montecarlo_upper'],
+                mode='lines',
+                name='Upper Confidence',
+                line=dict(color='lightblue', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    if 'montecarlo_lower' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['montecarlo_lower'],
+                mode='lines',
+                name='Lower Confidence',
+                line=dict(color='lightblue', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add zero line for histogram
+    fig.add_trace(
+        go.Scatter(
+            x=display_df.index,
+            y=[0] * len(display_df),
+            mode='lines',
+            name='Zero Line',
+            line=dict(color='gray', width=1, dash='dash'),
+            showlegend=False
+        ),
+        row=2, col=1
+    )
+
+
+def add_kelly_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add Kelly main line and signal line to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with Kelly data
+    """
+    # Add Kelly main line
+    if 'kelly' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['kelly'],
+                mode='lines',
+                name='Kelly Criterion',
+                line=dict(color='blue', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add Kelly signal line (EMA of Kelly values)
+    if 'kelly_signal' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['kelly_signal'],
+                mode='lines',
+                name='Signal Line',
+                line=dict(color='red', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add Kelly histogram
+    if 'kelly_histogram' in display_df.columns:
+        # Color histogram bars based on values
+        colors = ['green' if val >= 0 else 'red' for val in display_df['kelly_histogram']]
+        fig.add_trace(
+            go.Bar(
+                x=display_df.index,
+                y=display_df['kelly_histogram'],
+                name='Histogram',
+                marker_color=colors,
+                opacity=0.7,
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add threshold levels
+    if 'kelly_threshold_10' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['kelly_threshold_10'],
+                mode='lines',
+                name='10% Threshold',
+                line=dict(color='orange', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    if 'kelly_threshold_25' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['kelly_threshold_25'],
+                mode='lines',
+                name='25% Threshold',
+                line=dict(color='red', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_donchain_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add Donchian Channels indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with Donchian Channels data
+    """
+    if 'donchain_upper' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['donchain_upper'],
+                mode='lines',
+                name='Upper Channel',
+                line=dict(color='blue', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+    if 'donchain_middle' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['donchain_middle'],
+                mode='lines',
+                name='Middle Channel',
+                line=dict(color='gray', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+    if 'donchain_lower' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['donchain_lower'],
+                mode='lines',
+                name='Lower Channel',
+                line=dict(color='blue', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_fibo_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add Fibonacci levels to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with Fibonacci data
+    """
+    fibo_cols = [col for col in display_df.columns if col.startswith('fibo_')]
+    colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']
+    
+    for i, col in enumerate(fibo_cols):
+        color = colors[i % len(colors)]
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df[col],
+                mode='lines',
+                name=col.replace('fibo_', 'Fib '),
+                line=dict(color=color, width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_obv_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add OBV indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with OBV data
+    """
+    if 'obv' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['obv'],
+                mode='lines',
+                name='OBV',
+                line=dict(color='brown', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_stdev_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add StdDev indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with StdDev data
+    """
+    if 'stdev' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['stdev'],
+                mode='lines',
+                name='StdDev',
+                line=dict(color='gray', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_adx_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add ADX indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with ADX data
+    """
+    if 'adx' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['adx'],
+                mode='lines',
+                name='ADX',
+                line=dict(color='purple', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+    if 'di_plus' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['di_plus'],
+                mode='lines',
+                name='DI+',
+                line=dict(color='green', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+    if 'di_minus' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['di_minus'],
+                mode='lines',
+                name='DI-',
+                line=dict(color='red', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_sar_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add SAR indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with SAR data
+    """
+    if 'sar' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['sar'],
+                mode='markers',
+                name='SAR',
+                marker=dict(
+                    symbol='circle',
+                    size=4,
+                    color='red'
+                ),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_rsi_div_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add RSI Divergence indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with RSI Divergence data
+    """
+    if 'rsi' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['rsi'],
+                mode='lines',
+                name='RSI',
+                line=dict(color='purple', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    if 'rsi_divergence' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['rsi_divergence'],
+                mode='lines',
+                name='RSI Divergence',
+                line=dict(color='orange', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        # Add zero line
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[0] * len(display_df),
+                mode='lines',
+                name='Zero Line',
+                line=dict(color='gray', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    if 'rsi_overbought' in display_df.columns:
+        overbought = display_df['rsi_overbought'].iloc[0]
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[overbought] * len(display_df),
+                mode='lines',
+                name=f'Overbought ({overbought})',
+                line=dict(color='red', width=2, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    if 'rsi_oversold' in display_df.columns:
+        oversold = display_df['rsi_oversold'].iloc[0]
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[oversold] * len(display_df),
+                mode='lines',
+                name=f'Oversold ({oversold})',
+                line=dict(color='green', width=2, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_stoch_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add Stochastic Oscillator indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with Stochastic Oscillator data
+    """
+    if 'stoch_k' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['stoch_k'],
+                mode='lines',
+                name='%K',
+                line=dict(color='blue', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    if 'stoch_d' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['stoch_d'],
+                mode='lines',
+                name='%D',
+                line=dict(color='red', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    if 'stoch_overbought' in display_df.columns:
+        overbought = display_df['stoch_overbought'].iloc[0]
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[overbought] * len(display_df),
+                mode='lines',
+                name=f'Overbought ({overbought})',
+                line=dict(color='red', width=2, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    if 'stoch_oversold' in display_df.columns:
+        oversold = display_df['stoch_oversold'].iloc[0]
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[oversold] * len(display_df),
+                mode='lines',
+                name=f'Oversold ({oversold})',
+                line=dict(color='green', width=2, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_stochoscillator_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add Stochastic Oscillator indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with Stochastic Oscillator data
+    """
+    if 'stochosc_k' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['stochosc_k'],
+                mode='lines',
+                name='%K',
+                line=dict(color='blue', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    if 'stochosc_d' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['stochosc_d'],
+                mode='lines',
+                name='%D',
+                line=dict(color='red', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    if 'stochosc_overbought' in display_df.columns:
+        overbought = display_df['stochosc_overbought'].iloc[0]
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[overbought] * len(display_df),
+                mode='lines',
+                name=f'Overbought ({overbought})',
+                line=dict(color='red', width=2, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    if 'stochosc_oversold' in display_df.columns:
+        oversold = display_df['stochosc_oversold'].iloc[0]
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[oversold] * len(display_df),
+                mode='lines',
+                name=f'Oversold ({oversold})',
+                line=dict(color='green', width=2, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_putcallratio_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add Put/Call Ratio indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with Put/Call Ratio data
+    """
+    # Add Put/Call Ratio main line
+    if 'putcallratio' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['putcallratio'],
+                mode='lines',
+                name='Put/Call Ratio',
+                line=dict(color='purple', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add Put/Call Ratio signal line
+    if 'putcallratio_signal' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['putcallratio_signal'],
+                mode='lines',
+                name='Signal Line',
+                line=dict(color='orange', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add Put/Call Ratio histogram
+    if 'putcallratio_histogram' in display_df.columns:
+        # Color histogram bars based on values
+        colors = ['green' if val >= 0 else 'red' for val in display_df['putcallratio_histogram']]
+        fig.add_trace(
+            go.Bar(
+                x=display_df.index,
+                y=display_df['putcallratio_histogram'],
+                name='Histogram',
+                marker_color=colors,
+                opacity=0.7,
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add threshold levels
+    if 'putcallratio_bullish' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['putcallratio_bullish'],
+                mode='lines',
+                name='Bullish Threshold',
+                line=dict(color='green', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    if 'putcallratio_bearish' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['putcallratio_bearish'],
+                mode='lines',
+                name='Bearish Threshold',
+                line=dict(color='red', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    if 'putcallratio_neutral' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['putcallratio_neutral'],
+                mode='lines',
+                name='Neutral Level',
+                line=dict(color='gray', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_cot_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add COT indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with COT data
+    """
+    # Add COT main line
+    if 'cot' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['cot'],
+                mode='lines',
+                name='COT',
+                line=dict(color='darkblue', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add COT signal line
+    if 'cot_signal' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['cot_signal'],
+                mode='lines',
+                name='Signal Line',
+                line=dict(color='darkorange', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add COT histogram
+    if 'cot_histogram' in display_df.columns:
+        # Color histogram bars based on values
+        colors = ['green' if val >= 0 else 'red' for val in display_df['cot_histogram']]
+        fig.add_trace(
+            go.Bar(
+                x=display_df.index,
+                y=display_df['cot_histogram'],
+                name='Histogram',
+                marker_color=colors,
+                opacity=0.7,
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add threshold levels
+    if 'cot_bullish' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['cot_bullish'],
+                mode='lines',
+                name='Bullish Threshold',
+                line=dict(color='green', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    if 'cot_bearish' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['cot_bearish'],
+                mode='lines',
+                name='Bearish Threshold',
+                line=dict(color='red', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    if 'cot_neutral' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['cot_neutral'],
+                mode='lines',
+                name='Neutral Level',
+                line=dict(color='gray', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
+def add_feargreed_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add Fear & Greed indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with Fear & Greed data
+    """
+    # Add Fear & Greed main line
+    if 'feargreed' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['feargreed'],
+                mode='lines',
+                name='Fear & Greed',
+                line=dict(color='purple', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    # Add Fear & Greed signal line
+    if 'feargreed_signal' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['feargreed_signal'],
+                mode='lines',
+                name='Signal Line',
+                line=dict(color='orange', width=2),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    # Add Fear & Greed histogram (difference between main and signal)
+    if 'feargreed' in display_df.columns and 'feargreed_signal' in display_df.columns:
+        histogram = display_df['feargreed'] - display_df['feargreed_signal']
+        colors = ['green' if val >= 0 else 'red' for val in histogram]
+        fig.add_trace(
+            go.Bar(
+                x=display_df.index,
+                y=histogram,
+                name='Histogram',
+                marker_color=colors,
+                opacity=0.7,
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    # Add threshold levels (constant lines)
+    fear_threshold = 25
+    greed_threshold = 75
+    neutral_level = 50
+    # Fear threshold line
+    fig.add_trace(
+        go.Scatter(
+            x=display_df.index,
+            y=[fear_threshold] * len(display_df),
+            mode='lines',
+            name='Fear Threshold',
+            line=dict(color='red', width=1, dash='dash'),
+            showlegend=False
+        ),
+        row=2, col=1
+    )
+    # Greed threshold line
+    fig.add_trace(
+        go.Scatter(
+            x=display_df.index,
+            y=[greed_threshold] * len(display_df),
+            mode='lines',
+            name='Greed Threshold',
+            line=dict(color='green', width=1, dash='dash'),
+            showlegend=False
+        ),
+        row=2, col=1
+    )
+    # Neutral level line
+    fig.add_trace(
+        go.Scatter(
+            x=display_df.index,
+            y=[neutral_level] * len(display_df),
+            mode='lines',
+            name='Neutral Level',
+            line=dict(color='gray', width=1, dash='dash'),
+            showlegend=False
+        ),
+        row=2, col=1
+    )
+
+
+def add_supertrend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add SuperTrend indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with SuperTrend data
+    """
+    if 'supertrend' in display_df.columns and 'supertrend_direction' in display_df.columns:
+        st = display_df['supertrend']
+        trend = display_df['supertrend_direction']
+    elif 'supertrend' in display_df.columns and 'direction' in display_df.columns:
+        # Fallback: use direction column but we need to convert signal values to trend direction
+        st = display_df['supertrend']
+        # Convert signal values to trend direction: 0=no trend, 1=uptrend, 2=downtrend
+        direction_signals = display_df['direction']
+        trend = pd.Series(index=direction_signals.index, dtype=int)
+        trend.fillna(0, inplace=True)
+        
+        # Convert signal values to trend direction
+        # We need to infer trend direction from SuperTrend values
+        # If price > SuperTrend, trend is up (1), else down (-1)
+        price_series = display_df['close']
+        trend = np.where(price_series > st, 1, -1)
+        trend = pd.Series(trend, index=direction_signals.index)
+        idx = display_df.index
+        
+        # Three-color scheme for signal changes
+        uptrend_color = 'rgba(0, 200, 81, 0.95)'  # Modern green for uptrend
+        downtrend_color = 'rgba(255, 68, 68, 0.95)'  # Modern red for downtrend
+        signal_change_color = 'rgba(255, 193, 7, 0.95)'  # Golden yellow for signal changes
+        
+        # Detect signal change points
+        buy_signals = (trend == 1) & (trend.shift(1) == -1)
+        sell_signals = (trend == -1) & (trend.shift(1) == 1)
+        signal_changes = buy_signals | sell_signals
+        
+        # Create color array with signal change highlighting
+        color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
+        
+        # Enhanced segmentation with signal change detection
+        segments = []
+        last_color = color_arr[0]
+        seg_x, seg_y = [idx[0]], [st.iloc[0]]
+        
+        for i in range(1, len(idx)):
+            current_color = color_arr[i]
+            
+            # Check if this is a signal change point
+            if signal_changes.iloc[i]:
+                # Add previous segment
+                if len(seg_x) > 1:
+                    segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                
+                # Add signal change point with golden color
+                segments.append(([idx[i-1], idx[i]], [st.iloc[i-1], st.iloc[i]], signal_change_color))
+                
+                # Start new segment
+                seg_x, seg_y = [idx[i]], [st.iloc[i]]
+                last_color = current_color
+            elif current_color != last_color:
+                # Regular trend change (not a signal)
+                segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                seg_x, seg_y = [idx[i-1]], [st.iloc[i-1]]
+                last_color = current_color
+            
+            seg_x.append(idx[i])
+            seg_y.append(st.iloc[i])
+        
+        # Add final segment
+        if len(seg_x) > 0:
+            segments.append((seg_x, seg_y, last_color))
+        
+        # Add SuperTrend line segments with enhanced styling
+        legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
+        for seg_x, seg_y, seg_color in segments:
+            # Main SuperTrend line with smooth curve
+            # Determine legend name based on color
+            if seg_color == uptrend_color:
+                legend_name = 'SuperTrend (Uptrend)'
+            elif seg_color == downtrend_color:
+                legend_name = 'SuperTrend (Downtrend)'
+            elif seg_color == signal_change_color:
+                legend_name = 'SuperTrend (Signal Change)'
+            else:
+                legend_name = 'SuperTrend'
+            
+            show_legend = not legend_shown.get(seg_color, False)
+            legend_shown[seg_color] = True
+            
+            fig.add_trace(
+                go.Scatter(
+                    x=seg_x,
+                    y=seg_y,
+                    mode='lines',
+                    name=legend_name,
+                    line=dict(
+                        color=seg_color,
+                        width=5,
+                        shape='spline'  # Smooth curve for modern look
+                    ),
+                    showlegend=show_legend,
+                    hoverinfo='y+name',
+                    hoverlabel=dict(
+                        bgcolor=seg_color,
+                        font_size=12,
+                        font_color='white',
+                        font_family='Arial, sans-serif'
+                    )
+                ),
+                row=2, col=1
+            )
+            
+            # Add subtle glow effect for enhanced visual appeal
+            fig.add_trace(
+                go.Scatter(
+                    x=seg_x,
+                    y=seg_y,
+                    mode='lines',
+                    name='SuperTrend Glow',
+                    line=dict(
+                        color=seg_color.replace('0.95', '0.3'),
+                        width=10
+                    ),
+                    showlegend=False,
+                    hoverinfo='skip'
+                ),
+                row=2, col=1
+            )
+        
+        # Enhanced trend change markers with modern styling
+        buy_idx = idx[(trend == 1) & (trend.shift(1) == -1)]
+        sell_idx = idx[(trend == -1) & (trend.shift(1) == 1)]
+        
+        # BUY signals with enhanced styling
+        if len(buy_idx) > 0:
+            fig.add_trace(
+                go.Scatter(
+                    x=buy_idx,
+                    y=st.loc[buy_idx],
+                    mode='markers',
+                    name='BUY Signal',
+                    marker=dict(
+                        symbol='triangle-up',
+                        size=18,
+                        color='#00C851',
+                        line=dict(
+                            color='white',
+                            width=2.5
+                        ),
+                        opacity=0.95
+                    ),
+                    showlegend=True,
+                    hoverinfo='x+y+name',
+                    hoverlabel=dict(
+                        bgcolor='#00C851',
+                        font_size=12,
+                        font_color='white',
+                        font_family='Arial, sans-serif'
+                    )
+                ),
+                row=2, col=1
+            )
+            
+            # Add pulse effect for buy signals
+            fig.add_trace(
+                go.Scatter(
+                    x=buy_idx,
+                    y=st.loc[buy_idx],
+                    mode='markers',
+                    name='BUY Pulse',
+                    marker=dict(
+                        symbol='circle',
+                        size=28,
+                        color='rgba(0, 200, 81, 0.4)',
+                        line=dict(width=0)
+                    ),
+                    showlegend=False,
+                    hoverinfo='skip'
+                ),
+                row=2, col=1
+            )
+        
+        # SELL signals with enhanced styling
+        if len(sell_idx) > 0:
+            fig.add_trace(
+                go.Scatter(
+                    x=sell_idx,
+                    y=st.loc[sell_idx],
+                    mode='markers',
+                    name='SELL Signal',
+                    marker=dict(
+                        symbol='triangle-down',
+                        size=18,
+                        color='#FF4444',
+                        line=dict(
+                            color='white',
+                            width=2.5
+                        ),
+                        opacity=0.95
+                    ),
+                    showlegend=True,
+                    hoverinfo='x+y+name',
+                    hoverlabel=dict(
+                        bgcolor='#FF4444',
+                        font_size=12,
+                        font_color='white',
+                        font_family='Arial, sans-serif'
+                    )
+                ),
+                row=2, col=1
+            )
+            
+            # Add pulse effect for sell signals
+            fig.add_trace(
+                go.Scatter(
+                    x=sell_idx,
+                    y=st.loc[sell_idx],
+                    mode='markers',
+                    name='SELL Pulse',
+                    marker=dict(
+                        symbol='circle',
+                        size=28,
+                        color='rgba(255, 68, 68, 0.4)',
+                        line=dict(width=0)
+                    ),
+                    showlegend=False,
+                    hoverinfo='skip'
+                ),
+                row=2, col=1
+            )
+        
+        # Add trend background zones for better visual context
+        trend_changes = idx[trend != trend.shift(1)]
+        if len(trend_changes) > 0:
+            for i in range(len(trend_changes)):
+                start_idx = trend_changes[i]
+                end_idx = trend_changes[i + 1] if i + 1 < len(trend_changes) else idx[-1]
+                
+                zone_color = 'rgba(0, 200, 81, 0.08)' if trend.loc[start_idx] == 1 else 'rgba(255, 68, 68, 0.08)'
+                
+                fig.add_shape(
+                    type="rect",
+                    x0=start_idx,
+                    x1=end_idx,
+                    y0=st.min() * 0.995,
+                    y1=st.max() * 1.005,
+                    fillcolor=zone_color,
+                    line=dict(width=0),
+                    row=2, col=1
+                )
+                
+    elif 'supertrend' in display_df.columns:
+        # Enhanced fallback: modern single line
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['supertrend'],
+                mode='lines',
+                name='SuperTrend',
+                line=dict(
+                    color='#3498db',
+                    width=4,
+                    shape='spline'
+                ),
+                showlegend=False,
+                hoverinfo='y+name',
+                hoverlabel=dict(
+                    bgcolor='#3498db',
+                    font_size=12,
+                    font_color='white'
+                )
+            ),
+            row=2, col=1
+        )
+    elif 'pprice1' in display_df.columns and 'pprice2' in display_df.columns:
+        # Fallback for PPrice1/PPrice2 columns (like in dual_chart_fast.py)
+        p1 = display_df['pprice1']
+        p2 = display_df['pprice2']
+        direction = display_df['direction'] if 'direction' in display_df.columns else pd.Series(0, index=display_df.index)
+        
+        # Create supertrend column for consistency
+        supertrend_values = np.where(direction > 0, p1, p2)
+        display_df['supertrend'] = supertrend_values
+        
+        # Use the same logic as when supertrend column exists
+        price_series = display_df['close']
+        trend = np.where(price_series > supertrend_values, 1, -1)
+        trend = pd.Series(trend, index=display_df.index)
+        idx = display_df.index
+        
+        # Three-color scheme for signal changes
+        uptrend_color = 'rgba(0, 200, 81, 0.95)'  # Modern green for uptrend
+        downtrend_color = 'rgba(255, 68, 68, 0.95)'  # Modern red for downtrend
+        signal_change_color = 'rgba(255, 193, 7, 0.95)'  # Golden yellow for signal changes
+        
+        # Detect signal change points
+        buy_signals = (trend == 1) & (trend.shift(1) == -1)
+        sell_signals = (trend == -1) & (trend.shift(1) == 1)
+        signal_changes = buy_signals | sell_signals
+        
+        # Create color array with signal change highlighting
+        color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
+        
+        # Enhanced segmentation with signal change detection
+        segments = []
+        last_color = color_arr[0]
+        seg_x, seg_y = [idx[0]], [supertrend_values[0]]
+        
+        for i in range(1, len(idx)):
+            current_color = color_arr[i]
+            
+            # Check if this is a signal change point
+            if signal_changes.iloc[i]:
+                # Add previous segment
+                if len(seg_x) > 1:
+                    segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                
+                # Add signal change point with golden color
+                segments.append(([idx[i-1], idx[i]], [supertrend_values[i-1], supertrend_values[i]], signal_change_color))
+                
+                # Start new segment
+                seg_x, seg_y = [idx[i]], [supertrend_values[i]]
+                last_color = current_color
+            elif current_color != last_color:
+                # Regular trend change (not a signal)
+                segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                seg_x, seg_y = [idx[i-1]], [supertrend_values[i-1]]
+                last_color = current_color
+            
+            seg_x.append(idx[i])
+            seg_y.append(supertrend_values[i])
+        
+        # Add final segment
+        if len(seg_x) > 0:
+            segments.append((seg_x, seg_y, last_color))
+        
+        # Add SuperTrend line segments with enhanced styling
+        legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
+        for seg_x, seg_y, seg_color in segments:
+            # Main SuperTrend line with smooth curve
+            # Determine legend name based on color
+            if seg_color == uptrend_color:
+                legend_name = 'SuperTrend (Uptrend)'
+            elif seg_color == downtrend_color:
+                legend_name = 'SuperTrend (Downtrend)'
+            elif seg_color == signal_change_color:
+                legend_name = 'SuperTrend (Signal Change)'
+            else:
+                legend_name = 'SuperTrend'
+            
+            show_legend = not legend_shown.get(seg_color, False)
+            legend_shown[seg_color] = True
+            
+            fig.add_trace(
+                go.Scatter(
+                    x=seg_x,
+                    y=seg_y,
+                    mode='lines',
+                    name=legend_name,
+                    line=dict(
+                        color=seg_color,
+                        width=5,
+                        shape='spline'  # Smooth curve for modern look
+                    ),
+                    showlegend=show_legend,
+                    hoverinfo='y+name',
+                    hoverlabel=dict(
+                        bgcolor=seg_color,
+                        font_size=12,
+                        font_color='white',
+                        font_family='Arial, sans-serif'
+                    )
+                ),
+                row=2, col=1
+            )
+
+
 def plot_dual_chart_fastest(
     df: pd.DataFrame,
     rule: str,
@@ -176,1445 +1824,82 @@ def plot_dual_chart_fastest(
     indicator_name = rule.split(':', 1)[0].lower().strip()
     
     if indicator_name == 'rsi':
-        if 'rsi' in display_df.columns:
-            # Add RSI line
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['rsi'],
-                    mode='lines',
-                    name='RSI',
-                    line=dict(color='purple', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-            
-            # Add overbought/oversold lines
-            if 'rsi_overbought' in display_df.columns:
-                overbought = display_df['rsi_overbought'].iloc[0]
-                fig.add_trace(
-                    go.Scatter(
-                        x=display_df.index,
-                        y=[overbought] * len(display_df),
-                        mode='lines',
-                        name=f'Overbought ({overbought})',
-                        line=dict(color='red', width=2, dash='dash'),
-                        showlegend=False
-                    ),
-                    row=2, col=1
-                )
-            
-            if 'rsi_oversold' in display_df.columns:
-                oversold = display_df['rsi_oversold'].iloc[0]
-                fig.add_trace(
-                    go.Scatter(
-                        x=display_df.index,
-                        y=[oversold] * len(display_df),
-                        mode='lines',
-                        name=f'Oversold ({oversold})',
-                        line=dict(color='green', width=2, dash='dash'),
-                        showlegend=False
-                    ),
-                    row=2, col=1
-                )
+        add_rsi_indicator(fig, display_df)
     
     elif indicator_name == 'rsi_mom':
-        if 'rsi' in display_df.columns:
-            # Add RSI line
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['rsi'],
-                    mode='lines',
-                    name='RSI',
-                    line=dict(color='purple', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'rsi_momentum' in display_df.columns:
-            # Add RSI Momentum line
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['rsi_momentum'],
-                    mode='lines',
-                    name='RSI Momentum',
-                    line=dict(color='orange', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-            
-            # Add zero line for momentum
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=[0] * len(display_df),
-                    mode='lines',
-                    name='Zero Line',
-                    line=dict(color='gray', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-            
-            # Add overbought/oversold lines
-            if 'rsi_overbought' in display_df.columns:
-                overbought = display_df['rsi_overbought'].iloc[0]
-                fig.add_trace(
-                    go.Scatter(
-                        x=display_df.index,
-                        y=[overbought] * len(display_df),
-                        mode='lines',
-                        name=f'Overbought ({overbought})',
-                        line=dict(color='red', width=2, dash='dash'),
-                        showlegend=False
-                    ),
-                    row=2, col=1
-                )
-            
-            if 'rsi_oversold' in display_df.columns:
-                oversold = display_df['rsi_oversold'].iloc[0]
-                fig.add_trace(
-                    go.Scatter(
-                        x=display_df.index,
-                        y=[oversold] * len(display_df),
-                        mode='lines',
-                        name=f'Oversold ({oversold})',
-                        line=dict(color='green', width=2, dash='dash'),
-                        showlegend=False
-                    ),
-                    row=2, col=1
-                )
+        add_rsi_momentum_indicator(fig, display_df)
     
     elif indicator_name == 'macd':
-        if 'macd' in display_df.columns:
-            # Add MACD line
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['macd'],
-                    mode='lines',
-                    name='MACD',
-                    line=dict(color='blue', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'macd_signal' in display_df.columns:
-            # Add Signal line
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['macd_signal'],
-                    mode='lines',
-                    name='Signal',
-                    line=dict(color='red', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'macd_histogram' in display_df.columns:
-            # Add Histogram
-            colors = ['green' if val >= 0 else 'red' for val in display_df['macd_histogram']]
-            fig.add_trace(
-                go.Bar(
-                    x=display_df.index,
-                    y=display_df['macd_histogram'],
-                    name='Histogram',
-                    marker_color=colors,
-                    opacity=0.7,
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_macd_indicator(fig, display_df)
     
     elif indicator_name == 'ema':
-        if 'ema' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['ema'],
-                    mode='lines',
-                    name='EMA',
-                    line=dict(color='orange', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_ema_indicator(fig, display_df)
     
     elif indicator_name == 'bb':
-        if 'bb_upper' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['bb_upper'],
-                    mode='lines',
-                    name='Upper Band',
-                    line=dict(color='blue', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'bb_middle' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['bb_middle'],
-                    mode='lines',
-                    name='Middle Band',
-                    line=dict(color='gray', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'bb_lower' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['bb_lower'],
-                    mode='lines',
-                    name='Lower Band',
-                    line=dict(color='blue', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_bollinger_bands_indicator(fig, display_df)
     
     elif indicator_name == 'atr':
-        if 'atr' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['atr'],
-                    mode='lines',
-                    name='ATR',
-                    line=dict(color='brown', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_atr_indicator(fig, display_df)
     
     elif indicator_name == 'cci':
-        if 'cci' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['cci'],
-                    mode='lines',
-                    name='CCI',
-                    line=dict(color='purple', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_cci_indicator(fig, display_df)
             
-            # Add CCI reference lines
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=[100] * len(display_df),
-                    mode='lines',
-                    name='CCI +100',
-                    line=dict(color='red', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-            
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=[-100] * len(display_df),
-                    mode='lines',
-                    name='CCI -100',
-                    line=dict(color='green', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-    
     elif indicator_name == 'vwap':
-        if 'vwap' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['vwap'],
-                    mode='lines',
-                    name='VWAP',
-                    line=dict(color='orange', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_vwap_indicator(fig, display_df)
     
     elif indicator_name == 'pivot':
-        if 'pivot' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['pivot'],
-                    mode='lines',
-                    name='Pivot',
-                    line=dict(color='blue', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'r1' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['r1'],
-                    mode='lines',
-                    name='R1',
-                    line=dict(color='red', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 's1' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['s1'],
-                    mode='lines',
-                    name='S1',
-                    line=dict(color='green', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_pivot_indicator(fig, display_df)
     
     elif indicator_name == 'hma':
-        if 'hma' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['hma'],
-                    mode='lines',
-                    name='HMA',
-                    line=dict(color='purple', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_hma_indicator(fig, display_df)
     
     elif indicator_name == 'tsf':
-        if 'tsf' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['tsf'],
-                    mode='lines',
-                    name='TSF',
-                    line=dict(color='cyan', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_tsf_indicator(fig, display_df)
     
     elif indicator_name == 'monte':
-        # Add Monte Carlo forecast line (main line)
-        if 'montecarlo' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['montecarlo'],
-                    mode='lines',
-                    name='Monte Carlo Forecast',
-                    line=dict(color='blue', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add Monte Carlo signal line
-        if 'montecarlo_signal' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['montecarlo_signal'],
-                    mode='lines',
-                    name='Signal Line',
-                    line=dict(color='red', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add Monte Carlo histogram
-        if 'montecarlo_histogram' in display_df.columns:
-            # Color histogram bars based on values
-            colors = ['green' if val >= 0 else 'red' for val in display_df['montecarlo_histogram']]
-            fig.add_trace(
-                go.Bar(
-                    x=display_df.index,
-                    y=display_df['montecarlo_histogram'],
-                    name='Histogram',
-                    marker_color=colors,
-                    opacity=0.7,
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add confidence bands
-        if 'montecarlo_upper' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['montecarlo_upper'],
-                    mode='lines',
-                    name='Upper Confidence',
-                    line=dict(color='lightblue', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'montecarlo_lower' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['montecarlo_lower'],
-                    mode='lines',
-                    name='Lower Confidence',
-                    line=dict(color='lightblue', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add zero line for histogram
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=[0] * len(display_df),
-                mode='lines',
-                name='Zero Line',
-                line=dict(color='gray', width=1, dash='dash'),
-                showlegend=False
-            ),
-            row=2, col=1
-        )
+        add_monte_indicator(fig, display_df)
     
     elif indicator_name == 'kelly':
-        # Add Kelly main line
-        if 'kelly' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['kelly'],
-                    mode='lines',
-                    name='Kelly Criterion',
-                    line=dict(color='blue', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add Kelly signal line (EMA of Kelly values)
-        if 'kelly_signal' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['kelly_signal'],
-                    mode='lines',
-                    name='Signal Line',
-                    line=dict(color='red', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add Kelly histogram
-        if 'kelly_histogram' in display_df.columns:
-            # Color histogram bars based on values
-            colors = ['green' if val >= 0 else 'red' for val in display_df['kelly_histogram']]
-            fig.add_trace(
-                go.Bar(
-                    x=display_df.index,
-                    y=display_df['kelly_histogram'],
-                    name='Histogram',
-                    marker_color=colors,
-                    opacity=0.7,
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add threshold levels
-        if 'kelly_threshold_10' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['kelly_threshold_10'],
-                    mode='lines',
-                    name='10% Threshold',
-                    line=dict(color='orange', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'kelly_threshold_25' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['kelly_threshold_25'],
-                    mode='lines',
-                    name='25% Threshold',
-                    line=dict(color='red', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_kelly_indicator(fig, display_df)
     
     elif indicator_name == 'donchain':
-        if 'donchain_upper' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['donchain_upper'],
-                    mode='lines',
-                    name='Upper Channel',
-                    line=dict(color='blue', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'donchain_middle' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['donchain_middle'],
-                    mode='lines',
-                    name='Middle Channel',
-                    line=dict(color='gray', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'donchain_lower' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['donchain_lower'],
-                    mode='lines',
-                    name='Lower Channel',
-                    line=dict(color='blue', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_donchain_indicator(fig, display_df)
     
     elif indicator_name == 'fibo':
-        # Add Fibonacci levels
-        fibo_cols = [col for col in display_df.columns if col.startswith('fibo_')]
-        colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']
-        
-        for i, col in enumerate(fibo_cols):
-            color = colors[i % len(colors)]
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df[col],
-                    mode='lines',
-                    name=col.replace('fibo_', 'Fib '),
-                    line=dict(color=color, width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_fibo_indicator(fig, display_df)
     
     elif indicator_name == 'obv':
-        if 'obv' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['obv'],
-                    mode='lines',
-                    name='OBV',
-                    line=dict(color='brown', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_obv_indicator(fig, display_df)
     
     elif indicator_name == 'stdev':
-        if 'stdev' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['stdev'],
-                    mode='lines',
-                    name='StdDev',
-                    line=dict(color='gray', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_stdev_indicator(fig, display_df)
     
     elif indicator_name == 'adx':
-        if 'adx' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['adx'],
-                    mode='lines',
-                    name='ADX',
-                    line=dict(color='purple', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'di_plus' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['di_plus'],
-                    mode='lines',
-                    name='DI+',
-                    line=dict(color='green', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'di_minus' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['di_minus'],
-                    mode='lines',
-                    name='DI-',
-                    line=dict(color='red', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_adx_indicator(fig, display_df)
     
     elif indicator_name == 'sar':
-        if 'sar' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['sar'],
-                    mode='markers',
-                    name='SAR',
-                    marker=dict(
-                        symbol='circle',
-                        size=4,
-                        color='red'
-                    ),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_sar_indicator(fig, display_df)
     
     elif indicator_name == 'rsi_div':
-        if 'rsi' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['rsi'],
-                    mode='lines',
-                    name='RSI',
-                    line=dict(color='purple', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        if 'rsi_divergence' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['rsi_divergence'],
-                    mode='lines',
-                    name='RSI Divergence',
-                    line=dict(color='orange', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-            # Add zero line
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=[0] * len(display_df),
-                    mode='lines',
-                    name='Zero Line',
-                    line=dict(color='gray', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        if 'rsi_overbought' in display_df.columns:
-            overbought = display_df['rsi_overbought'].iloc[0]
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=[overbought] * len(display_df),
-                    mode='lines',
-                    name=f'Overbought ({overbought})',
-                    line=dict(color='red', width=2, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        if 'rsi_oversold' in display_df.columns:
-            oversold = display_df['rsi_oversold'].iloc[0]
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=[oversold] * len(display_df),
-                    mode='lines',
-                    name=f'Oversold ({oversold})',
-                    line=dict(color='green', width=2, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_rsi_div_indicator(fig, display_df)
     
     elif indicator_name == 'stoch':
-        if 'stoch_k' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['stoch_k'],
-                    mode='lines',
-                    name='%K',
-                    line=dict(color='blue', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        if 'stoch_d' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['stoch_d'],
-                    mode='lines',
-                    name='%D',
-                    line=dict(color='red', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        if 'stoch_overbought' in display_df.columns:
-            overbought = display_df['stoch_overbought'].iloc[0]
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=[overbought] * len(display_df),
-                    mode='lines',
-                    name=f'Overbought ({overbought})',
-                    line=dict(color='red', width=2, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        if 'stoch_oversold' in display_df.columns:
-            oversold = display_df['stoch_oversold'].iloc[0]
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=[oversold] * len(display_df),
-                    mode='lines',
-                    name=f'Oversold ({oversold})',
-                    line=dict(color='green', width=2, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_stoch_indicator(fig, display_df)
     
     elif indicator_name == 'stochoscillator':
-        if 'stochosc_k' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['stochosc_k'],
-                    mode='lines',
-                    name='%K',
-                    line=dict(color='blue', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        if 'stochosc_d' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['stochosc_d'],
-                    mode='lines',
-                    name='%D',
-                    line=dict(color='red', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        if 'stochosc_overbought' in display_df.columns:
-            overbought = display_df['stochosc_overbought'].iloc[0]
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=[overbought] * len(display_df),
-                    mode='lines',
-                    name=f'Overbought ({overbought})',
-                    line=dict(color='red', width=2, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        if 'stochosc_oversold' in display_df.columns:
-            oversold = display_df['stochosc_oversold'].iloc[0]
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=[oversold] * len(display_df),
-                    mode='lines',
-                    name=f'Oversold ({oversold})',
-                    line=dict(color='green', width=2, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_stochoscillator_indicator(fig, display_df)
     
     elif indicator_name == 'putcallratio':
-        # Add Put/Call Ratio main line
-        if 'putcallratio' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['putcallratio'],
-                    mode='lines',
-                    name='Put/Call Ratio',
-                    line=dict(color='purple', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add Put/Call Ratio signal line
-        if 'putcallratio_signal' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['putcallratio_signal'],
-                    mode='lines',
-                    name='Signal Line',
-                    line=dict(color='orange', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add Put/Call Ratio histogram
-        if 'putcallratio_histogram' in display_df.columns:
-            # Color histogram bars based on values
-            colors = ['green' if val >= 0 else 'red' for val in display_df['putcallratio_histogram']]
-            fig.add_trace(
-                go.Bar(
-                    x=display_df.index,
-                    y=display_df['putcallratio_histogram'],
-                    name='Histogram',
-                    marker_color=colors,
-                    opacity=0.7,
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add threshold levels
-        if 'putcallratio_bullish' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['putcallratio_bullish'],
-                    mode='lines',
-                    name='Bullish Threshold',
-                    line=dict(color='green', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'putcallratio_bearish' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['putcallratio_bearish'],
-                    mode='lines',
-                    name='Bearish Threshold',
-                    line=dict(color='red', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'putcallratio_neutral' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['putcallratio_neutral'],
-                    mode='lines',
-                    name='Neutral Level',
-                    line=dict(color='gray', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_putcallratio_indicator(fig, display_df)
     
     elif indicator_name == 'cot':
-        # Add COT main line
-        if 'cot' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['cot'],
-                    mode='lines',
-                    name='COT',
-                    line=dict(color='darkblue', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add COT signal line
-        if 'cot_signal' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['cot_signal'],
-                    mode='lines',
-                    name='Signal Line',
-                    line=dict(color='darkorange', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add COT histogram
-        if 'cot_histogram' in display_df.columns:
-            # Color histogram bars based on values
-            colors = ['green' if val >= 0 else 'red' for val in display_df['cot_histogram']]
-            fig.add_trace(
-                go.Bar(
-                    x=display_df.index,
-                    y=display_df['cot_histogram'],
-                    name='Histogram',
-                    marker_color=colors,
-                    opacity=0.7,
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        # Add threshold levels
-        if 'cot_bullish' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['cot_bullish'],
-                    mode='lines',
-                    name='Bullish Threshold',
-                    line=dict(color='green', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'cot_bearish' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['cot_bearish'],
-                    mode='lines',
-                    name='Bearish Threshold',
-                    line=dict(color='red', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        
-        if 'cot_neutral' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['cot_neutral'],
-                    mode='lines',
-                    name='Neutral Level',
-                    line=dict(color='gray', width=1, dash='dash'),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
+        add_cot_indicator(fig, display_df)
     
     elif indicator_name in ['feargreed', 'fg']:
-        # Add Fear & Greed main line
-        if 'feargreed' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['feargreed'],
-                    mode='lines',
-                    name='Fear & Greed',
-                    line=dict(color='purple', width=3),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        # Add Fear & Greed signal line
-        if 'feargreed_signal' in display_df.columns:
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['feargreed_signal'],
-                    mode='lines',
-                    name='Signal Line',
-                    line=dict(color='orange', width=2),
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        # Add Fear & Greed histogram (difference between main and signal)
-        if 'feargreed' in display_df.columns and 'feargreed_signal' in display_df.columns:
-            histogram = display_df['feargreed'] - display_df['feargreed_signal']
-            colors = ['green' if val >= 0 else 'red' for val in histogram]
-            fig.add_trace(
-                go.Bar(
-                    x=display_df.index,
-                    y=histogram,
-                    name='Histogram',
-                    marker_color=colors,
-                    opacity=0.7,
-                    showlegend=False
-                ),
-                row=2, col=1
-            )
-        # Add threshold levels (constant lines)
-        fear_threshold = 25
-        greed_threshold = 75
-        neutral_level = 50
-        # Fear threshold line
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=[fear_threshold] * len(display_df),
-                mode='lines',
-                name='Fear Threshold',
-                line=dict(color='red', width=1, dash='dash'),
-                showlegend=False
-            ),
-            row=2, col=1
-        )
-        # Greed threshold line
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=[greed_threshold] * len(display_df),
-                mode='lines',
-                name='Greed Threshold',
-                line=dict(color='green', width=1, dash='dash'),
-                showlegend=False
-            ),
-            row=2, col=1
-        )
-        # Neutral level line
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=[neutral_level] * len(display_df),
-                mode='lines',
-                name='Neutral Level',
-                line=dict(color='gray', width=1, dash='dash'),
-                showlegend=False
-            ),
-            row=2, col=1
-        )
+        add_feargreed_indicator(fig, display_df)
     
     elif indicator_name == 'supertrend':
-        if 'supertrend' in display_df.columns and 'supertrend_direction' in display_df.columns:
-            st = display_df['supertrend']
-            trend = display_df['supertrend_direction']
-        elif 'supertrend' in display_df.columns and 'direction' in display_df.columns:
-            # Fallback: use direction column but we need to convert signal values to trend direction
-            st = display_df['supertrend']
-            # Convert signal values to trend direction: 0=no trend, 1=uptrend, 2=downtrend
-            direction_signals = display_df['direction']
-            trend = pd.Series(index=direction_signals.index, dtype=int)
-            trend.fillna(0, inplace=True)
-            
-            # Convert signal values to trend direction
-            # We need to infer trend direction from SuperTrend values
-            # If price > SuperTrend, trend is up (1), else down (-1)
-            price_series = display_df['close']
-            trend = np.where(price_series > st, 1, -1)
-            trend = pd.Series(trend, index=direction_signals.index)
-            idx = display_df.index
-            
-            # Three-color scheme for signal changes
-            uptrend_color = 'rgba(0, 200, 81, 0.95)'  # Modern green for uptrend
-            downtrend_color = 'rgba(255, 68, 68, 0.95)'  # Modern red for downtrend
-            signal_change_color = 'rgba(255, 193, 7, 0.95)'  # Golden yellow for signal changes
-            
-            # Detect signal change points
-            buy_signals = (trend == 1) & (trend.shift(1) == -1)
-            sell_signals = (trend == -1) & (trend.shift(1) == 1)
-            signal_changes = buy_signals | sell_signals
-            
-            # Create color array with signal change highlighting
-            color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
-            
-            # Enhanced segmentation with signal change detection
-            segments = []
-            last_color = color_arr[0]
-            seg_x, seg_y = [idx[0]], [st.iloc[0]]
-            
-            for i in range(1, len(idx)):
-                current_color = color_arr[i]
-                
-                # Check if this is a signal change point
-                if signal_changes.iloc[i]:
-                    # Add previous segment
-                    if len(seg_x) > 1:
-                        segments.append((seg_x.copy(), seg_y.copy(), last_color))
-                    
-                    # Add signal change point with golden color
-                    segments.append(([idx[i-1], idx[i]], [st.iloc[i-1], st.iloc[i]], signal_change_color))
-                    
-                    # Start new segment
-                    seg_x, seg_y = [idx[i]], [st.iloc[i]]
-                    last_color = current_color
-                elif current_color != last_color:
-                    # Regular trend change (not a signal)
-                    segments.append((seg_x.copy(), seg_y.copy(), last_color))
-                    seg_x, seg_y = [idx[i-1]], [st.iloc[i-1]]
-                    last_color = current_color
-                
-                seg_x.append(idx[i])
-                seg_y.append(st.iloc[i])
-            
-            # Add final segment
-            if len(seg_x) > 0:
-                segments.append((seg_x, seg_y, last_color))
-            
-            # Add SuperTrend line segments with enhanced styling
-            legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
-            for seg_x, seg_y, seg_color in segments:
-                # Main SuperTrend line with smooth curve
-                # Determine legend name based on color
-                if seg_color == uptrend_color:
-                    legend_name = 'SuperTrend (Uptrend)'
-                elif seg_color == downtrend_color:
-                    legend_name = 'SuperTrend (Downtrend)'
-                elif seg_color == signal_change_color:
-                    legend_name = 'SuperTrend (Signal Change)'
-                else:
-                    legend_name = 'SuperTrend'
-                
-                show_legend = not legend_shown.get(seg_color, False)
-                legend_shown[seg_color] = True
-                
-                fig.add_trace(
-                    go.Scatter(
-                        x=seg_x,
-                        y=seg_y,
-                        mode='lines',
-                        name=legend_name,
-                        line=dict(
-                            color=seg_color,
-                            width=5,
-                            shape='spline'  # Smooth curve for modern look
-                        ),
-                        showlegend=show_legend,
-                        hoverinfo='y+name',
-                        hoverlabel=dict(
-                            bgcolor=seg_color,
-                            font_size=12,
-                            font_color='white',
-                            font_family='Arial, sans-serif'
-                        )
-                    ),
-                    row=2, col=1
-                )
-                
-                # Add subtle glow effect for enhanced visual appeal
-                fig.add_trace(
-                    go.Scatter(
-                        x=seg_x,
-                        y=seg_y,
-                        mode='lines',
-                        name='SuperTrend Glow',
-                        line=dict(
-                            color=seg_color.replace('0.95', '0.3'),
-                            width=10
-                        ),
-                        showlegend=False,
-                        hoverinfo='skip'
-                    ),
-                    row=2, col=1
-                )
-            
-            # Enhanced trend change markers with modern styling
-            buy_idx = idx[(trend == 1) & (trend.shift(1) == -1)]
-            sell_idx = idx[(trend == -1) & (trend.shift(1) == 1)]
-            
-            # BUY signals with enhanced styling
-            if len(buy_idx) > 0:
-                fig.add_trace(
-                    go.Scatter(
-                        x=buy_idx,
-                        y=st.loc[buy_idx],
-                        mode='markers',
-                        name='BUY Signal',
-                        marker=dict(
-                            symbol='triangle-up',
-                            size=18,
-                            color='#00C851',
-                            line=dict(
-                                color='white',
-                                width=2.5
-                            ),
-                            opacity=0.95
-                        ),
-                        showlegend=True,
-                        hoverinfo='x+y+name',
-                        hoverlabel=dict(
-                            bgcolor='#00C851',
-                            font_size=12,
-                            font_color='white',
-                            font_family='Arial, sans-serif'
-                        )
-                    ),
-                    row=2, col=1
-                )
-                
-                # Add pulse effect for buy signals
-                fig.add_trace(
-                    go.Scatter(
-                        x=buy_idx,
-                        y=st.loc[buy_idx],
-                        mode='markers',
-                        name='BUY Pulse',
-                        marker=dict(
-                            symbol='circle',
-                            size=28,
-                            color='rgba(0, 200, 81, 0.4)',
-                            line=dict(width=0)
-                        ),
-                        showlegend=False,
-                        hoverinfo='skip'
-                    ),
-                    row=2, col=1
-                )
-            
-            # SELL signals with enhanced styling
-            if len(sell_idx) > 0:
-                fig.add_trace(
-                    go.Scatter(
-                        x=sell_idx,
-                        y=st.loc[sell_idx],
-                        mode='markers',
-                        name='SELL Signal',
-                        marker=dict(
-                            symbol='triangle-down',
-                            size=18,
-                            color='#FF4444',
-                            line=dict(
-                                color='white',
-                                width=2.5
-                            ),
-                            opacity=0.95
-                        ),
-                        showlegend=True,
-                        hoverinfo='x+y+name',
-                        hoverlabel=dict(
-                            bgcolor='#FF4444',
-                            font_size=12,
-                            font_color='white',
-                            font_family='Arial, sans-serif'
-                        )
-                    ),
-                    row=2, col=1
-                )
-                
-                # Add pulse effect for sell signals
-                fig.add_trace(
-                    go.Scatter(
-                        x=sell_idx,
-                        y=st.loc[sell_idx],
-                        mode='markers',
-                        name='SELL Pulse',
-                        marker=dict(
-                            symbol='circle',
-                            size=28,
-                            color='rgba(255, 68, 68, 0.4)',
-                            line=dict(width=0)
-                        ),
-                        showlegend=False,
-                        hoverinfo='skip'
-                    ),
-                    row=2, col=1
-                )
-            
-            # Add trend background zones for better visual context
-            trend_changes = idx[trend != trend.shift(1)]
-            if len(trend_changes) > 0:
-                for i in range(len(trend_changes)):
-                    start_idx = trend_changes[i]
-                    end_idx = trend_changes[i + 1] if i + 1 < len(trend_changes) else idx[-1]
-                    
-                    zone_color = 'rgba(0, 200, 81, 0.08)' if trend.loc[start_idx] == 1 else 'rgba(255, 68, 68, 0.08)'
-                    
-                    fig.add_shape(
-                        type="rect",
-                        x0=start_idx,
-                        x1=end_idx,
-                        y0=st.min() * 0.995,
-                        y1=st.max() * 1.005,
-                        fillcolor=zone_color,
-                        line=dict(width=0),
-                        row=2, col=1
-                    )
-                    
-        elif 'supertrend' in display_df.columns:
-            # Enhanced fallback: modern single line
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index,
-                    y=display_df['supertrend'],
-                    mode='lines',
-                    name='SuperTrend',
-                    line=dict(
-                        color='#3498db',
-                        width=4,
-                        shape='spline'
-                    ),
-                    showlegend=False,
-                    hoverinfo='y+name',
-                    hoverlabel=dict(
-                        bgcolor='#3498db',
-                        font_size=12,
-                        font_color='white'
-                    )
-                ),
-                row=2, col=1
-            )
-        elif 'pprice1' in display_df.columns and 'pprice2' in display_df.columns:
-            # Fallback for PPrice1/PPrice2 columns (like in dual_chart_fast.py)
-            p1 = display_df['pprice1']
-            p2 = display_df['pprice2']
-            direction = display_df['direction'] if 'direction' in display_df.columns else pd.Series(0, index=display_df.index)
-            
-            # Create supertrend column for consistency
-            supertrend_values = np.where(direction > 0, p1, p2)
-            display_df['supertrend'] = supertrend_values
-            
-            # Use the same logic as when supertrend column exists
-            price_series = display_df['close']
-            trend = np.where(price_series > supertrend_values, 1, -1)
-            trend = pd.Series(trend, index=display_df.index)
-            idx = display_df.index
-            
-            # Three-color scheme for signal changes
-            uptrend_color = 'rgba(0, 200, 81, 0.95)'  # Modern green for uptrend
-            downtrend_color = 'rgba(255, 68, 68, 0.95)'  # Modern red for downtrend
-            signal_change_color = 'rgba(255, 193, 7, 0.95)'  # Golden yellow for signal changes
-            
-            # Detect signal change points
-            buy_signals = (trend == 1) & (trend.shift(1) == -1)
-            sell_signals = (trend == -1) & (trend.shift(1) == 1)
-            signal_changes = buy_signals | sell_signals
-            
-            # Create color array with signal change highlighting
-            color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
-            
-            # Enhanced segmentation with signal change detection
-            segments = []
-            last_color = color_arr[0]
-            seg_x, seg_y = [idx[0]], [supertrend_values[0]]
-            
-            for i in range(1, len(idx)):
-                current_color = color_arr[i]
-                
-                # Check if this is a signal change point
-                if signal_changes.iloc[i]:
-                    # Add previous segment
-                    if len(seg_x) > 1:
-                        segments.append((seg_x.copy(), seg_y.copy(), last_color))
-                    
-                    # Add signal change point with golden color
-                    segments.append(([idx[i-1], idx[i]], [supertrend_values[i-1], supertrend_values[i]], signal_change_color))
-                    
-                    # Start new segment
-                    seg_x, seg_y = [idx[i]], [supertrend_values[i]]
-                    last_color = current_color
-                elif current_color != last_color:
-                    # Regular trend change (not a signal)
-                    segments.append((seg_x.copy(), seg_y.copy(), last_color))
-                    seg_x, seg_y = [idx[i-1]], [supertrend_values[i-1]]
-                    last_color = current_color
-                
-                seg_x.append(idx[i])
-                seg_y.append(supertrend_values[i])
-            
-            # Add final segment
-            if len(seg_x) > 0:
-                segments.append((seg_x, seg_y, last_color))
-            
-            # Add SuperTrend line segments with enhanced styling
-            legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
-            for seg_x, seg_y, seg_color in segments:
-                # Main SuperTrend line with smooth curve
-                # Determine legend name based on color
-                if seg_color == uptrend_color:
-                    legend_name = 'SuperTrend (Uptrend)'
-                elif seg_color == downtrend_color:
-                    legend_name = 'SuperTrend (Downtrend)'
-                elif seg_color == signal_change_color:
-                    legend_name = 'SuperTrend (Signal Change)'
-                else:
-                    legend_name = 'SuperTrend'
-                
-                show_legend = not legend_shown.get(seg_color, False)
-                legend_shown[seg_color] = True
-                
-                fig.add_trace(
-                    go.Scatter(
-                        x=seg_x,
-                        y=seg_y,
-                        mode='lines',
-                        name=legend_name,
-                        line=dict(
-                            color=seg_color,
-                            width=5,
-                            shape='spline'  # Smooth curve for modern look
-                        ),
-                        showlegend=show_legend,
-                        hoverinfo='y+name',
-                        hoverlabel=dict(
-                            bgcolor=seg_color,
-                            font_size=12,
-                            font_color='white',
-                            font_family='Arial, sans-serif'
-                        )
-                    ),
-                    row=2, col=1
-                )
+        add_supertrend_indicator(fig, display_df)
     
     # Update layout with modern styling
     fig.update_layout(
