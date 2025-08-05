@@ -354,6 +354,46 @@ def plot_dual_chart_seaborn(
             sns.lineplot(data=display_df, x=display_df.index, y='stdev', 
                         ax=ax2, color='gray', linewidth=3, label='StdDev')
     
+    elif indicator_name == 'stoch':
+        if 'stoch_k' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='stoch_k', 
+                        ax=ax2, color='blue', linewidth=3, label='%K')
+        
+        if 'stoch_d' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='stoch_d', 
+                        ax=ax2, color='orange', linewidth=3, label='%D')
+        
+        # Add overbought/oversold lines
+        if 'stoch_overbought' in display_df.columns:
+            overbought = display_df['stoch_overbought'].iloc[0]
+            ax2.axhline(y=overbought, color='red', linestyle='--', 
+                       linewidth=2, label=f'Overbought ({overbought})')
+        
+        if 'stoch_oversold' in display_df.columns:
+            oversold = display_df['stoch_oversold'].iloc[0]
+            ax2.axhline(y=oversold, color='green', linestyle='--', 
+                       linewidth=2, label=f'Oversold ({oversold})')
+    
+    elif indicator_name == 'stochoscillator':
+        if 'stochosc_k' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='stochosc_k', 
+                        ax=ax2, color='blue', linewidth=3, label='%K')
+        
+        if 'stochosc_d' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='stochosc_d', 
+                        ax=ax2, color='orange', linewidth=3, label='%D')
+        
+        # Add overbought/oversold lines
+        if 'stochosc_overbought' in display_df.columns:
+            overbought = display_df['stochosc_overbought'].iloc[0]
+            ax2.axhline(y=overbought, color='red', linestyle='--', 
+                       linewidth=2, label=f'Overbought ({overbought})')
+        
+        if 'stochosc_oversold' in display_df.columns:
+            oversold = display_df['stochosc_oversold'].iloc[0]
+            ax2.axhline(y=oversold, color='green', linestyle='--', 
+                       linewidth=2, label=f'Oversold ({oversold})')
+    
     elif indicator_name == 'adx':
         if 'adx' in display_df.columns:
             sns.lineplot(data=display_df, x=display_df.index, y='adx', 
