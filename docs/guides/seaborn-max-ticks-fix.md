@@ -10,6 +10,8 @@ Locator attempting to generate 1827 ticks ([7977.0, ..., 20759.0]), which exceed
 
 Эта проблема возникала из-за того, что matplotlib пытался создать слишком много тиков для больших датасетов, превышая лимит в 1000 тиков.
 
+**Дополнительная проблема:** График не отображался на экране, хотя сохранялся в файл.
+
 ## Причина
 
 В файле `src/plotting/dual_chart_seaborn.py` использовался фиксированный интервал для тиков:
@@ -21,11 +23,15 @@ ax2.xaxis.set_major_locator(mdates.DayLocator(interval=7))
 
 Это приводило к попытке создания слишком большого количества тиков для больших датасетов.
 
+**Дополнительная причина:** Отсутствовал вызов `plt.show()` для отображения графика на экране.
+
 ## Решение
 
 Исправление было применено в файле `src/plotting/dual_chart_seaborn.py`:
 
-### До исправления:
+### 1. Исправление MAXTICKS
+
+#### До исправления:
 ```python
 # Format x-axis for main chart
 ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
@@ -33,7 +39,7 @@ ax1.xaxis.set_major_locator(mdates.DayLocator(interval=7))
 plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45)
 ```
 
-### После исправления:
+#### После исправления:
 ```python
 # Format x-axis for main chart
 ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
@@ -57,6 +63,31 @@ else:  # Less than 3 months
 plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45, ha='right')
 ```
 
+### 2. Исправление отображения графика
+
+#### До исправления:
+```python
+# Save plot
+plt.savefig(output_path, dpi=300, bbox_inches='tight')
+
+logger.print_info(f"Dual chart saved to: {output_path}")
+
+return fig
+```
+
+#### После исправления:
+```python
+# Save plot
+plt.savefig(output_path, dpi=300, bbox_inches='tight')
+
+logger.print_info(f"Dual chart saved to: {output_path}")
+
+# Show plot
+plt.show()
+
+return fig
+```
+
 ## Логика выбора интервала
 
 Исправление использует адаптивную логику выбора интервала тиков на основе временного диапазона данных:
@@ -69,13 +100,21 @@ plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45, ha='right')
 
 ## Тестирование
 
-Создан тест `tests/plotting/test_dual_chart_seaborn_fix.py` для проверки исправления:
+Созданы тесты для проверки исправления:
 
+### `tests/plotting/test_dual_chart_seaborn_fix.py` - тесты MAXTICKS:
 - `test_large_dataset_ticks_calculation()` - тест больших датасетов
 - `test_medium_dataset_ticks_calculation()` - тест средних датасетов  
 - `test_small_dataset_ticks_calculation()` - тест маленьких датасетов
 - `test_no_max_ticks_error()` - тест отсутствия ошибки MAXTICKS
 - `test_ticks_interval_calculation()` - тест правильного расчета интервалов
+
+### `tests/plotting/test_seaborn_plot_display.py` - тесты отображения:
+- `test_plot_display_with_show()` - тест отображения с plt.show()
+- `test_plot_display_without_show_fails()` - тест старого поведения
+- `test_plot_display_with_different_indicators()` - тест разных индикаторов
+- `test_plot_display_with_rsi_indicator()` - тест RSI индикатора
+- `test_plot_display_with_bb_indicator()` - тест Bollinger Bands
 
 ## Проверка исправления
 
@@ -85,6 +124,12 @@ plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45, ha='right')
 uv run run_analysis.py show csv gbp -d sb --rule macd:12,26,9,close
 ```
 
+**Результат:**
+- ✅ Нет ошибки MAXTICKS
+- ✅ График отображается на экране
+- ✅ График сохраняется в файл
+- ✅ Адаптивные тики для разных размеров данных
+
 ## Совместимость
 
 Исправление полностью совместимо с существующим кодом и не влияет на другие режимы отображения (`mpl`, `fastest`, `fast`, `term`).
@@ -92,5 +137,6 @@ uv run run_analysis.py show csv gbp -d sb --rule macd:12,26,9,close
 ## Файлы изменений
 
 - `src/plotting/dual_chart_seaborn.py` - основное исправление
-- `tests/plotting/test_dual_chart_seaborn_fix.py` - тесты для проверки исправления
+- `tests/plotting/test_dual_chart_seaborn_fix.py` - тесты для проверки MAXTICKS
+- `tests/plotting/test_seaborn_plot_display.py` - тесты для проверки отображения
 - `docs/guides/seaborn-max-ticks-fix.md` - данная документация 
