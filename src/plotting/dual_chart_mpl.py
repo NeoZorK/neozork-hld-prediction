@@ -714,9 +714,7 @@ def plot_dual_chart_mpl(
                 ax2.scatter(sell_idx, sell_values, color=downtrend_color, s=150, 
                            marker='o', alpha=0.4, label="", zorder=4)
             
-            # Also plot resistance level with modern styling
-            ax2.plot(display_df.index, p2, color='#FF9800', linewidth=2, 
-                    linestyle='--', alpha=0.8, label='Resistance')
+
     
     # Set y-axis label
     ax2.set_ylabel(y_axis_label, fontsize=12)
