@@ -115,6 +115,18 @@ Using technical indicators for analysis.
 - Sentiment indicators
 
 ### [Analysis Tools Guide](analysis-tools.md)
+
+### [Plotting Modes Comparison](plotting-modes-comparison.md) ⭐ **NEW**
+Complete guide to understanding the differences between plotting modes.
+
+**Highlights:**
+- **Matplotlib Mode (-d mpl)**: Technical analysis optimized
+- **Seaborn Mode (-d sb)**: Scientific presentation style
+- **Performance Comparison**: Speed and memory usage
+- **Use Case Recommendations**: When to use each mode
+- **Visual Differences**: Style and aesthetics comparison
+- **Command Examples**: Practical usage examples
+
 Using analysis and visualization tools.
 
 **Features:**
