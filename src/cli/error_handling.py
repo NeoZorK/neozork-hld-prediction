@@ -723,6 +723,33 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Invalid period: Must be a positive integer',
                 'Period too short may give unreliable results'
             ]
+        },
+        'adx': {
+            'name': 'ADX (Average Directional Index)',
+            'description': 'Trend strength indicator that measures the strength of a trend regardless of its direction. Values above 25 indicate a strong trend, values below 20 indicate a weak trend.',
+            'format': 'adx:period',
+            'parameters': [
+                ('period', 'int', 'ADX calculation period', '14')
+            ],
+            'examples': [
+                ('adx:14', 'Standard ADX with 14-period window'),
+                ('adx:21', 'Long-term ADX with 21-period window'),
+                ('adx:10', 'Short-term ADX with 10-period window')
+            ],
+            'tips': [
+                'Values 0-20: Weak trend (sideways market)',
+                'Values 20-25: Developing trend',
+                'Values 25-50: Strong trend',
+                'Values 50+: Very strong trend',
+                'Use with +DI and -DI for trend direction',
+                'ADX alone does not indicate trend direction',
+                'Higher ADX values suggest trend-following strategies'
+            ],
+            'common_errors': [
+                'Invalid period: Must be a positive integer',
+                'Period too short may give unreliable results',
+                'ADX requires only one parameter: period'
+            ]
         }
     }
     
