@@ -543,7 +543,7 @@ main() {
         show_main_menu
         
         if [ -t 0 ]; then
-            read -p "Enter your choice (0-5): " choice
+            read -p "Enter your choice (0-5): " choice 2>/dev/null || true
         else
             # Non-interactive mode - exit gracefully
             print_error "Script requires interactive terminal"
