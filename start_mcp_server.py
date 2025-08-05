@@ -3,57 +3,54 @@
 
 """
 Simple MCP Server Starter
-Quick start script for Neozork MCP Server
+Starts the MCP server with proper error handling
 """
 
-import sys
 import subprocess
+import sys
+import time
 import os
 from pathlib import Path
 
-def main():
-    """Start MCP server"""
+def start_mcp_server():
+    """Start the MCP server"""
+    print("🚀 Starting MCP server...")
+    
+    # Get the project root
     project_root = Path(__file__).parent
     
-    print("🚀 Starting Neozork MCP Server...")
-    print(f"📁 Project root: {project_root}")
-    
-    # Check if server file exists
-    server_file = project_root / "neozork_mcp_server.py"
-    if not server_file.exists():
-        print(f"❌ Server file not found: {server_file}")
-        return 1
-    
-    # Set environment
-    env = os.environ.copy()
-    env["PYTHONPATH"] = str(project_root)
-    env["LOG_LEVEL"] = "INFO"
-    
+    # Start the MCP server
     try:
-        # Start server in stdio mode
-        print("🔄 Starting server in stdio mode...")
+        cmd = [sys.executable, str(project_root / "neozork_mcp_server.py")]
+        print(f"Running command: {' '.join(cmd)}")
+        
+        # Start the process
         process = subprocess.Popen(
-            [sys.executable, "neozork_mcp_server.py"],
-            cwd=project_root,
-            env=env,
-            stdin=sys.stdin,
-            stdout=sys.stdout,
-            stderr=sys.stderr
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
         )
         
-        print("✅ MCP Server started successfully")
-        print("💡 Press Ctrl+C to stop the server")
+        print(f"MCP server started with PID: {process.pid}")
         
-        # Wait for process to complete
-        process.wait()
-        return 0
+        # Wait a bit for initialization
+        time.sleep(5)
         
-    except KeyboardInterrupt:
-        print("\n🛑 Server stopped by user")
-        return 0
+        # Check if process is still running
+        if process.poll() is None:
+            print("✅ MCP server is running successfully")
+            return process
+        else:
+            stdout, stderr = process.communicate()
+            print(f"❌ MCP server failed to start")
+            print(f"STDOUT: {stdout}")
+            print(f"STDERR: {stderr}")
+            return None
+            
     except Exception as e:
-        print(f"❌ Failed to start server: {e}")
-        return 1
+        print(f"❌ Error starting MCP server: {e}")
+        return None
 
 if __name__ == "__main__":
-    sys.exit(main()) 
+    start_mcp_server() 

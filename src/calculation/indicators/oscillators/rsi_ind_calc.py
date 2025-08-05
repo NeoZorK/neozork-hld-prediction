@@ -14,6 +14,24 @@ Usage: --rule rsi(14,70,30,open) or --rule rsi(14,70,30,close)
 Parameters: period, overbought_level, oversold_level, price_type
 Pros: + Identifies overbought/oversold conditions, + Simple to interpret, + Widely used
 Cons: - Can give false signals in trending markets, - Lagging indicator
+
+INDICATOR INFO:
+Name: RSI_MOM
+Category: Oscillators
+Description: RSI Momentum indicator. Focuses on RSI direction changes and momentum to identify trend reversals.
+Usage: --rule rsi_mom:14,30,70,close
+Parameters: period, oversold_level, overbought_level, price_type
+Pros: + Identifies momentum shifts, + Early reversal signals, + Reduces false signals
+Cons: - More complex than basic RSI, - Can be noisy in sideways markets
+
+INDICATOR INFO:
+Name: RSI_DIV
+Category: Oscillators
+Description: RSI Divergence indicator. Detects price/RSI divergences to identify potential trend reversals.
+Usage: --rule rsi_div:14,30,70,close
+Parameters: period, oversold_level, overbought_level, price_type
+Pros: + Identifies potential reversals, + Advanced signal quality, + Divergence detection
+Cons: - Complex interpretation, - Can miss signals, - Requires experience
 """
 
 import pandas as pd
