@@ -15,6 +15,7 @@ uv run run_analysis.py show csv gbp -d sb --rule macd:12,26,9,close
 3. Индикатор `putcallratio` не поддерживался в режиме seaborn
 4. Индикатор `cot` не поддерживался в режиме seaborn
 5. Индикатор `feargreed` не поддерживался в режиме seaborn
+6. Индикатор `supertrend` не поддерживался в режиме seaborn
 
 ## 🔧 Исправления
 
@@ -43,12 +44,14 @@ uv run run_analysis.py show csv gbp -d sb --rule macd:12,26,9,close
 - `putcallratio` - индикатор соотношения пут/колл опционов
 - `cot` - индикатор Commitments of Traders
 - `feargreed` - индикатор страха и жадности
+- `supertrend` - индикатор SuperTrend
 
 **Функциональность для каждого индикатора:**
 - Основная линия индикатора
 - Сигнальная линия (если применимо)
 - Гистограмма (если применимо)
 - Пороговые уровни (Fear/Greed, Bullish/Bearish, Neutral)
+- Цветовая схема для трендов (SuperTrend)
 
 ## ✅ Результат
 
@@ -65,14 +68,18 @@ uv run run_analysis.py show csv gbp -d sb --rule cot:20,close
 
 # Fear & Greed индикатор
 uv run run_analysis.py show csv gbp -d sb --rule feargreed:14,close
+
+# SuperTrend индикатор
+uv run run_analysis.py show csv gbp -d sb --rule supertrend:10,3
 ```
 
-**Тесты:** 20 тестов прошли успешно
+**Тесты:** 25 тестов прошли успешно
 - `test_dual_chart_seaborn_fix.py` - 5 тестов
 - `test_seaborn_plot_display.py` - 5 тестов  
 - `test_seaborn_putcallratio.py` - 5 тестов
 - `test_seaborn_cot.py` - 5 тестов
 - `test_seaborn_feargreed.py` - 5 тестов
+- `test_seaborn_supertrend.py` - 5 тестов
 
 ## 📁 Созданные файлы
 
@@ -82,6 +89,7 @@ uv run run_analysis.py show csv gbp -d sb --rule feargreed:14,close
 - `tests/plotting/test_seaborn_putcallratio.py`
 - `tests/plotting/test_seaborn_cot.py`
 - `tests/plotting/test_seaborn_feargreed.py`
+- `tests/plotting/test_seaborn_supertrend.py`
 
 **Документация:**
 - `docs/guides/seaborn-max-ticks-fix.md`
