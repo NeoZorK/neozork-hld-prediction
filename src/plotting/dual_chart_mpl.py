@@ -332,15 +332,15 @@ def plot_dual_chart_mpl(
         y_axis_label = 'Price'
         if 'pivot' in display_df.columns:
             ax2.plot(display_df.index, display_df['pivot'], 
-                    color='gray', linewidth=2, label='Pivot')
+                    color='blue', linewidth=2, label='Pivot')
         
-        if 'support' in display_df.columns:
-            ax2.plot(display_df.index, display_df['support'], 
-                    color='green', linewidth=2, label='Support')
+        if 'r1' in display_df.columns:
+            ax2.plot(display_df.index, display_df['r1'], 
+                    color='red', linewidth=2, linestyle='--', label='R1')
         
-        if 'resistance' in display_df.columns:
-            ax2.plot(display_df.index, display_df['resistance'], 
-                    color='red', linewidth=2, label='Resistance')
+        if 's1' in display_df.columns:
+            ax2.plot(display_df.index, display_df['s1'], 
+                    color='green', linewidth=2, linestyle='--', label='S1')
     
     elif indicator_name == 'hma':
         y_axis_label = 'Price'
