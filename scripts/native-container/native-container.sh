@@ -201,7 +201,7 @@ start_container_sequence() {
     echo
     print_success "Start container sequence completed!"
     if [ -t 0 ]; then
-        read -p "Press Enter to continue..."
+        read -p "Press Enter to continue..." 2>/dev/null || true
     fi
 }
 
