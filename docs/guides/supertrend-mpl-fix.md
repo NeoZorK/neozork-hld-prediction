@@ -1,21 +1,21 @@
 # SuperTrend MPL Display Fix
 
-## Проблема
+## Problem
 
-Индикатор SuperTrend не отображался в режиме `mpl` при использовании команды:
+The SuperTrend indicator was not displaying in `mpl` mode when using the command:
 ```bash
 uv run run_analysis.py show csv gbp -d mpl --rule supertrend:10,3,open
 ```
 
-## Причина
+## Cause
 
-В файле `src/plotting/dual_chart_mpl.py` отсутствовала обработка индикатора SuperTrend. В то время как другие режимы отображения (fastest, fast) имели полную поддержку SuperTrend, mpl режим не содержал соответствующего кода.
+The file `src/plotting/dual_chart_mpl.py` lacked SuperTrend indicator processing. While other display modes (fastest, fast) had full SuperTrend support, the mpl mode did not contain the corresponding code.
 
-## Решение
+## Solution
 
-Добавлена обработка SuperTrend индикатора в файл `src/plotting/dual_chart_mpl.py`:
+Added SuperTrend indicator processing to the file `src/plotting/dual_chart_mpl.py`:
 
-### Добавленный код
+### Added code
 
 ```python
 elif indicator_name == 'supertrend':
@@ -96,62 +96,62 @@ elif indicator_name == 'supertrend':
                           color='red', s=50, marker='v', label='Sell Signal')
 ```
 
-## Функциональность
+## Functionality
 
-### Основные возможности
+### Main capabilities
 
-1. **Отображение линии SuperTrend**: Основная линия индикатора отображается синим цветом
-2. **Визуализация направления тренда**: 
-   - Зеленый цвет для восходящего тренда
-   - Красный цвет для нисходящего тренда
-3. **Сигнальные точки**:
-   - Зеленые треугольники вверх для сигналов покупки
-   - Красные треугольники вниз для сигналов продажи
-4. **Резервный режим**: Если колонки SuperTrend недоступны, используется PPrice1/PPrice2
+1. **SuperTrend line display**: The main indicator line is displayed in blue
+2. **Trend direction visualization**: 
+   - Green color for uptrend
+   - Red color for downtrend
+3. **Signal points**:
+   - Green upward triangles for buy signals
+   - Red downward triangles for sell signals
+4. **Fallback mode**: If SuperTrend columns are not available, PPrice1/PPrice2 is used
 
-### Поддерживаемые параметры
+### Supported parameters
 
-- `period`: Период ATR (по умолчанию: 10)
-- `multiplier`: Множитель ATR (по умолчанию: 3.0)
-- `price_type`: Тип цены (`open` или `close`)
+- `period`: ATR period (default: 10)
+- `multiplier`: ATR multiplier (default: 3.0)
+- `price_type`: Price type (`open` or `close`)
 
-### Примеры использования
+### Usage examples
 
 ```bash
-# Базовое использование
+# Basic usage
 uv run run_analysis.py show csv gbp -d mpl --rule supertrend:10,3,open
 
-# С другими параметрами
+# With other parameters
 uv run run_analysis.py show csv gbp -d mpl --rule supertrend:14,2.5,close
 
-# Короткий период, низкий множитель (более чувствительный)
+# Short period, low multiplier (more sensitive)
 uv run run_analysis.py show csv gbp -d mpl --rule supertrend:5,2.0,open
 ```
 
-## Тестирование
+## Testing
 
-Создан комплексный набор тестов в `tests/plotting/test_dual_chart_mpl_supertrend.py`:
+A comprehensive test suite has been created in `tests/plotting/test_dual_chart_mpl_supertrend.py`:
 
-- ✅ Тест с колонками SuperTrend
-- ✅ Тест с резервными колонками PPrice1/PPrice2
-- ✅ Тест сигнальных точек
-- ✅ Тест направления тренда
-- ✅ Тест парсинга параметров
-- ✅ Тест обработки ошибок
+- ✅ Test with SuperTrend columns
+- ✅ Test with fallback PPrice1/PPrice2 columns
+- ✅ Test signal points
+- ✅ Test trend direction
+- ✅ Test parameter parsing
+- ✅ Test error handling
 
-Все тесты проходят успешно.
+All tests pass successfully.
 
-## Результат
+## Result
 
-Теперь SuperTrend индикатор корректно отображается в режиме `mpl` со всеми функциями:
+Now the SuperTrend indicator displays correctly in `mpl` mode with all functions:
 
-- ✅ Основная линия SuperTrend
-- ✅ Цветовое кодирование тренда
-- ✅ Сигнальные точки
-- ✅ Поддержка различных параметров
-- ✅ Резервный режим работы
-- ✅ Полное покрытие тестами
+- ✅ Main SuperTrend line
+- ✅ Trend color coding
+- ✅ Signal points
+- ✅ Support for various parameters
+- ✅ Fallback operation mode
+- ✅ Complete test coverage
 
-## Совместимость
+## Compatibility
 
-Исправление полностью совместимо с существующим кодом и не влияет на другие индикаторы или режимы отображения. 
+The fix is fully compatible with existing code and does not affect other indicators or display modes. 
