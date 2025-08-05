@@ -51,13 +51,145 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
     plots_to_add = []
     panel_count = 0
 
-    # --- Add PPrice Lines (Panel 0, Secondary Y) ---
-    if 'PPrice1' in df_results.columns:
-        plots_to_add.append(mpf.make_addplot(df_results['PPrice1'], panel=0, color='lime', width=0.9, linestyle='dotted',
-                                             title="PPrice1", secondary_y=True))
-    if 'PPrice2' in df_results.columns:
-        plots_to_add.append(mpf.make_addplot(df_results['PPrice2'], panel=0, color='red', width=0.9, linestyle='dotted',
-                                             title="PPrice2", secondary_y=True))
+    # --- Enhanced SuperTrend plotting (like fastest mode) ---
+    has_pprice = 'PPrice1' in df_results.columns and 'PPrice2' in df_results.columns
+    has_supertrend = 'supertrend' in df_results.columns or 'SuperTrend' in df_results.columns
+    has_direction = 'Direction' in df_results.columns
+    
+    if has_pprice or has_supertrend:
+        # Get supertrend values and direction
+        if has_pprice:
+            p1 = df_results['PPrice1']
+            p2 = df_results['PPrice2']
+            direction = df_results['Direction']
+            
+            # Handle NaN values properly - only compute supertrend where both p1 and p2 are not NaN
+            valid_mask = ~(pd.isna(p1) | pd.isna(p2))
+            supertrend_values = np.full(len(direction), np.nan)
+            supertrend_values[valid_mask] = np.where(direction[valid_mask] > 0, p1[valid_mask], p2[valid_mask])
+        else:
+            supertrend_col = 'supertrend' if 'supertrend' in df_results.columns else 'SuperTrend'
+            supertrend_values = df_results[supertrend_col]
+            direction = df_results['Direction']
+        
+        # Determine trend direction (like in fastest mode)
+        if 'Close' in df_results.columns:
+            price_series = df_results['Close']
+        elif 'close' in df_results.columns:
+            price_series = df_results['close']
+        else:
+            price_series = supertrend_values
+        
+        trend = np.where(price_series > supertrend_values, 1, -1)
+        trend = pd.Series(trend, index=df_results.index)
+        
+        # Colors like in fastest mode
+        uptrend_color = '#00C851'  # Green
+        downtrend_color = '#FF4444'  # Red
+        signal_change_color = '#FFC107'  # Golden
+        
+        # Detect signal change points
+        buy_signals = (trend == 1) & (trend.shift(1) == -1)
+        sell_signals = (trend == -1) & (trend.shift(1) == 1)
+        signal_changes = buy_signals | sell_signals
+        
+        # Create color array with signal change highlighting
+        color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
+        
+        # Enhanced segmentation with signal change detection (like fastest mode)
+        segments = []
+        last_color = color_arr[0]
+        seg_x, seg_y = [df_results.index[0]], [supertrend_values[0]]
+        
+        for i in range(1, len(df_results.index)):
+            current_color = color_arr[i]
+            
+            # Check if this is a signal change point
+            if signal_changes.iloc[i]:
+                # Add previous segment
+                if len(seg_x) > 1:
+                    segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                
+                # Add signal change point with golden color
+                segments.append(([df_results.index[i-1], df_results.index[i]], 
+                              [supertrend_values[i-1], supertrend_values[i]], 
+                              signal_change_color))
+                
+                # Start new segment
+                seg_x, seg_y = [df_results.index[i]], [supertrend_values[i]]
+                last_color = current_color
+            elif current_color != last_color:
+                # Regular trend change (not a signal)
+                segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                seg_x, seg_y = [df_results.index[i-1]], [supertrend_values[i-1]]
+                last_color = current_color
+            
+            seg_x.append(df_results.index[i])
+            seg_y.append(supertrend_values[i])
+        
+        # Add final segment
+        if len(seg_x) > 0:
+            segments.append((seg_x, seg_y, last_color))
+        
+        # Add SuperTrend line segments with enhanced styling (like fastest mode)
+        legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
+        for seg_x, seg_y, seg_color in segments:
+            if len(seg_x) > 1:
+                # Determine legend name based on color
+                if seg_color == uptrend_color:
+                    legend_name = 'SuperTrend (Uptrend)'
+                elif seg_color == downtrend_color:
+                    legend_name = 'SuperTrend (Downtrend)'
+                elif seg_color == signal_change_color:
+                    legend_name = 'SuperTrend (Signal Change)'
+                else:
+                    legend_name = 'SuperTrend'
+                
+                show_legend = not legend_shown.get(seg_color, False)
+                legend_shown[seg_color] = True
+                
+                # Create series for this segment
+                seg_series = pd.Series(seg_y, index=seg_x)
+                
+                # Add main line
+                plots_to_add.append(mpf.make_addplot(
+                    seg_series, 
+                    panel=0, 
+                    color=seg_color, 
+                    width=2.5, 
+                    secondary_y=True,
+                    title=legend_name if show_legend else ""
+                ))
+        
+        # Add BUY/SELL signal markers
+        buy_idx = df_results.index[(trend == 1) & (trend.shift(1) == -1)]
+        sell_idx = df_results.index[(trend == -1) & (trend.shift(1) == 1)]
+        
+        if len(buy_idx) > 0:
+            buy_y = supertrend_values[df_results.index.isin(buy_idx)]
+            buy_series = pd.Series(buy_y, index=buy_idx)
+            plots_to_add.append(mpf.make_addplot(
+                buy_series,
+                type='scatter', 
+                markersize=100, 
+                marker='^', 
+                color=uptrend_color, 
+                panel=0,
+                secondary_y=True
+            ))
+        
+        if len(sell_idx) > 0:
+            sell_y = supertrend_values[df_results.index.isin(sell_idx)]
+            sell_series = pd.Series(sell_y, index=sell_idx)
+            plots_to_add.append(mpf.make_addplot(
+                sell_series,
+                type='scatter', 
+                markersize=100, 
+                marker='v', 
+                color=downtrend_color, 
+                panel=0,
+                secondary_y=True
+            ))
 
     # --- Add parameterized indicator panels ---
     # Check for Stochastic indicators
@@ -193,10 +325,6 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
     # Check for SAR indicators
     if 'sar' in df_results.columns and not df_results['sar'].isnull().all():
         plots_to_add.append(mpf.make_addplot(df_results['sar'].fillna(0), panel=0, color='red', width=0.8, type='scatter', markersize=20, secondary_y=True))
-
-    # Check for SuperTrend indicators
-    if 'supertrend' in df_results.columns and not df_results['supertrend'].isnull().all():
-        plots_to_add.append(mpf.make_addplot(df_results['supertrend'].fillna(0), panel=0, color='purple', width=0.8, secondary_y=True))
 
     # Check for Put/Call Ratio indicators
     if 'putcallratio' in df_results.columns and not df_results['putcallratio'].isnull().all():
