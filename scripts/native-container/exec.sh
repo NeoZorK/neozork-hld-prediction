@@ -178,8 +178,8 @@ handle_eof() {
     exit 0
 }
 
-# Set up EOF handler
-trap handle_eof EOF
+# Set up EOF handler (using EXIT instead of EOF)
+trap handle_eof EXIT
 
 echo "=== NeoZork HLD Prediction Container Shell ==="
 echo "Setting up environment..."
@@ -258,8 +258,8 @@ handle_ctrld() {
     return 0
 }
 
-# Set up Ctrl+D handler
-trap handle_ctrld EOF
+# Set up Ctrl+D handler (using EXIT instead of EOF)
+trap handle_ctrld EXIT
 
 # Show prompt with container indicator
 export PS1="(neozork-container) \w $ "
