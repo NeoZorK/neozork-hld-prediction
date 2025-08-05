@@ -394,6 +394,102 @@ def plot_dual_chart_seaborn(
             ax2.axhline(y=oversold, color='green', linestyle='--', 
                        linewidth=2, label=f'Oversold ({oversold})')
     
+    elif indicator_name == 'putcallratio':
+        if 'putcallratio' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='putcallratio', 
+                        ax=ax2, color='brown', linewidth=3, label='Put/Call Ratio')
+        
+        if 'putcallratio_signal' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='putcallratio_signal', 
+                        ax=ax2, color='orange', linewidth=2, label='Signal Line')
+        
+        # Add threshold levels
+        if 'putcallratio_bullish' in display_df.columns:
+            bullish = display_df['putcallratio_bullish'].iloc[0]
+            ax2.axhline(y=bullish, color='green', linestyle='--', 
+                       linewidth=2, label=f'Bullish Threshold ({bullish})')
+        
+        if 'putcallratio_bearish' in display_df.columns:
+            bearish = display_df['putcallratio_bearish'].iloc[0]
+            ax2.axhline(y=bearish, color='red', linestyle='--', 
+                       linewidth=2, label=f'Bearish Threshold ({bearish})')
+        
+        if 'putcallratio_neutral' in display_df.columns:
+            neutral = display_df['putcallratio_neutral'].iloc[0]
+            ax2.axhline(y=neutral, color='gray', linestyle='--', 
+                       linewidth=1, label=f'Neutral Level ({neutral})')
+        
+        # Add histogram
+        if 'putcallratio_histogram' in display_df.columns:
+            # Color histogram bars based on values
+            colors = ['green' if val >= 0 else 'red' for val in display_df['putcallratio_histogram']]
+            ax2.bar(display_df.index, display_df['putcallratio_histogram'], 
+                   color=colors, alpha=0.7, label='Histogram', width=0.8)
+    
+    elif indicator_name == 'cot':
+        if 'cot' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='cot', 
+                        ax=ax2, color='darkblue', linewidth=3, label='COT')
+        
+        if 'cot_signal' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='cot_signal', 
+                        ax=ax2, color='darkorange', linewidth=2, label='Signal Line')
+        
+        # Add threshold levels
+        if 'cot_bullish' in display_df.columns:
+            bullish = display_df['cot_bullish'].iloc[0]
+            ax2.axhline(y=bullish, color='green', linestyle='--', 
+                       linewidth=2, label=f'Bullish Threshold ({bullish})')
+        
+        if 'cot_bearish' in display_df.columns:
+            bearish = display_df['cot_bearish'].iloc[0]
+            ax2.axhline(y=bearish, color='red', linestyle='--', 
+                       linewidth=2, label=f'Bearish Threshold ({bearish})')
+        
+        if 'cot_neutral' in display_df.columns:
+            neutral = display_df['cot_neutral'].iloc[0]
+            ax2.axhline(y=neutral, color='gray', linestyle='--', 
+                       linewidth=1, label=f'Neutral Level ({neutral})')
+        
+        # Add histogram
+        if 'cot_histogram' in display_df.columns:
+            # Color histogram bars based on values
+            colors = ['green' if val >= 0 else 'red' for val in display_df['cot_histogram']]
+            ax2.bar(display_df.index, display_df['cot_histogram'], 
+                   color=colors, alpha=0.7, label='Histogram', width=0.8)
+    
+    elif indicator_name in ['feargreed', 'fg']:
+        if 'feargreed' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='feargreed', 
+                        ax=ax2, color='purple', linewidth=3, label='Fear & Greed')
+        
+        if 'feargreed_signal' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='feargreed_signal', 
+                        ax=ax2, color='orange', linewidth=2, label='Signal Line')
+        
+        # Add threshold levels
+        if 'feargreed_fear' in display_df.columns:
+            fear = display_df['feargreed_fear'].iloc[0]
+            ax2.axhline(y=fear, color='red', linestyle='--', 
+                       linewidth=2, label=f'Fear Threshold ({fear})')
+        
+        if 'feargreed_greed' in display_df.columns:
+            greed = display_df['feargreed_greed'].iloc[0]
+            ax2.axhline(y=greed, color='green', linestyle='--', 
+                       linewidth=2, label=f'Greed Threshold ({greed})')
+        
+        if 'feargreed_neutral' in display_df.columns:
+            neutral = display_df['feargreed_neutral'].iloc[0]
+            ax2.axhline(y=neutral, color='gray', linestyle='--', 
+                       linewidth=1, label=f'Neutral Level ({neutral})')
+        
+        # Add histogram
+        if 'feargreed_histogram' in display_df.columns:
+            # Color histogram bars based on values
+            colors = ['green' if val >= 0 else 'red' for val in display_df['feargreed_histogram']]
+            ax2.bar(display_df.index, display_df['feargreed_histogram'], 
+                   color=colors, alpha=0.7, label='Histogram', width=0.8)
+    
     elif indicator_name == 'adx':
         if 'adx' in display_df.columns:
             sns.lineplot(data=display_df, x=display_df.index, y='adx', 
