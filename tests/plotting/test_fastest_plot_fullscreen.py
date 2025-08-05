@@ -38,8 +38,10 @@ class TestFastestPlotFullscreen(unittest.TestCase):
         })
         self.test_df.set_index("index", inplace=True)
         
-        # Output path for testing
-        self.output_path = "results/plots/test_fastest_plot_fullscreen.html"
+        # Output path for testing with unique identifier
+        import uuid
+        unique_id = str(uuid.uuid4())[:8]
+        self.output_path = f"results/plots/test_fastest_plot_fullscreen_{unique_id}.html"
 
     def tearDown(self):
         """Clean up test files."""
