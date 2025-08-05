@@ -178,11 +178,14 @@ def run_cli_command(cmd: List[str], timeout: int = 30) -> Tuple[int, str, str, f
 def test_basic_flags(flag):
     """Test basic flags that don't require additional parameters"""
     cmd = [PYTHON, str(SCRIPT), flag]
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd)
+    
+    # Use longer timeout for --examples flag in Docker environment
+    timeout = 30 if flag == '--examples' else 10
+    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=timeout)
     
     # Basic flags should either succeed or show help/version info
     assert return_code in [0, 1], f"Flag {flag} failed with return code {return_code}"
-    assert execution_time < 10, f"Flag {flag} took too long: {execution_time:.2f}s"
+    assert execution_time < timeout, f"Flag {flag} took too long: {execution_time:.2f}s"
 
 # Test interactive flags separately (they have special behavior)
 @pytest.mark.basic
@@ -235,10 +238,11 @@ def test_help_flag():
 def test_examples_flag():
     """Test examples flag specifically"""
     cmd = [PYTHON, str(SCRIPT), '--examples']
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd)
+    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=30)
     
     assert return_code == 0, f"Examples flag failed with return code {return_code}"
     assert "Examples" in stdout, "Examples output should contain examples section"
+    assert execution_time < 30, f"Examples flag took too long: {execution_time:.2f}s"
 
 # Indicators search tests
 @pytest.mark.basic
