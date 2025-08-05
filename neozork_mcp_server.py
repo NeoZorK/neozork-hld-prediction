@@ -244,12 +244,24 @@ class NeozorkMCPServer:
         """Scan and index project files"""
         self.logger.info("Scanning project files...")
         
-        # Scan Python files
+        # Scan Python files - only essential directories
+        essential_dirs = ['src', 'scripts', 'tests']
+        scanned_files = 0
+        indexed_files = 0
+        
         for py_file in self.project_root.rglob("*.py"):
-            if any(ignore in str(py_file) for ignore in ['__pycache__', '.git', '.venv', 'build']):
+            scanned_files += 1
+            if scanned_files % 50 == 0:
+                self.logger.info(f"Scanned {scanned_files} Python files so far...")
+                
+            if any(ignore in str(py_file) for ignore in ['__pycache__', '.git', '.venv', 'build', '.uv_cache']):
+                continue
+            
+            # Only scan files in essential directories or root level Python files
+            relative_path = py_file.relative_to(self.project_root)
+            if not any(essential_dir in str(relative_path) for essential_dir in essential_dirs) and len(relative_path.parts) > 1:
                 continue
                 
-            relative_path = py_file.relative_to(self.project_root)
             try:
                 content = py_file.read_text(encoding='utf-8')
                 self.project_files[str(relative_path)] = ProjectFile(
@@ -259,25 +271,39 @@ class NeozorkMCPServer:
                     modified=datetime.fromtimestamp(py_file.stat().st_mtime),
                     content=content
                 )
+                indexed_files += 1
             except Exception as e:
                 self.logger.warning(f"Failed to read {py_file}: {e}")
         
-        # Scan financial data
+        self.logger.info(f"Project scanning completed: {scanned_files} files scanned, {indexed_files} files indexed")
+        
+        # Scan financial data (limited to metadata only)
         self._scan_financial_data()
 
     def _scan_financial_data(self):
         """Scan financial data files"""
         self.logger.info("Scanning financial data...")
         
-        # Scan data directories
+        # Scan data directories - limit to avoid hanging
         data_dirs = ['data', 'mql5_feed']
+        max_files_per_dir = 50  # Limit to prevent hanging
+        
         for data_dir in data_dirs:
             data_path = self.project_root / data_dir
             if not data_path.exists():
                 continue
                 
+            file_count = 0
             for file_path in data_path.rglob("*"):
+                if file_count >= max_files_per_dir:
+                    self.logger.info(f"Reached limit of {max_files_per_dir} files for {data_dir}, skipping remaining files")
+                    break
+                    
                 if file_path.is_file() and file_path.suffix in ['.csv', '.parquet', '.json']:
+                    # Skip very large files that might cause hanging
+                    if file_path.stat().st_size > 10 * 1024 * 1024:  # Skip files larger than 10MB
+                        continue
+                        
                     try:
                         # Extract symbol and timeframe from filename
                         filename = file_path.stem
@@ -291,12 +317,15 @@ class NeozorkMCPServer:
                                 symbol = parts[0]
                                 timeframe = parts[-1]
                         
-                        # Read sample data
+                        # Read sample data (limited for performance)
                         sample_data = []
-                        if file_path.suffix == '.csv':
-                            with open(file_path, 'r', encoding='utf-8') as f:
-                                reader = csv.reader(f)
-                                sample_data = [row for row in reader][:5]  # First 5 rows
+                        if file_path.suffix == '.csv' and file_path.stat().st_size < 1024 * 1024:  # Only read small CSV files
+                            try:
+                                with open(file_path, 'r', encoding='utf-8') as f:
+                                    reader = csv.reader(f)
+                                    sample_data = [row for row in reader][:3]  # First 3 rows only
+                            except Exception:
+                                sample_data = []
                         
                         self.financial_data[str(file_path)] = FinancialData(
                             symbol=symbol,
@@ -310,6 +339,7 @@ class NeozorkMCPServer:
                         
                         self.available_symbols.add(symbol)
                         self.available_timeframes.add(timeframe)
+                        file_count += 1
                         
                     except Exception as e:
                         self.logger.warning(f"Failed to read financial data {file_path}: {e}")
@@ -318,13 +348,44 @@ class NeozorkMCPServer:
         """Index code for better completion"""
         self.logger.info("Indexing code...")
         
-        for file_path, file_info in self.project_files.items():
-            if file_info.content:
-                try:
-                    tree = ast.parse(file_info.content)
-                    self._index_ast_node(tree, file_path)
-                except Exception as e:
-                    self.logger.warning(f"Failed to parse AST for {file_path}: {e}")
+        # Add timeout to prevent hanging
+        import signal
+        import time
+        
+        def timeout_handler(signum, frame):
+            raise TimeoutError("Indexing timed out")
+        
+        # Set timeout for indexing (30 seconds)
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(30)
+        
+        try:
+            file_count = 0
+            total_files = len(self.project_files)
+            self.logger.info(f"Starting to index {total_files} files...")
+            
+            for file_path, file_info in self.project_files.items():
+                if file_count % 10 == 0:  # Log progress every 10 files
+                    self.logger.info(f"Indexing progress: {file_count}/{total_files} files")
+                
+                if file_info.content:
+                    try:
+                        tree = ast.parse(file_info.content)
+                        self._index_ast_node(tree, file_path)
+                        file_count += 1
+                    except Exception as e:
+                        self.logger.warning(f"Failed to parse AST for {file_path}: {e}")
+                        file_count += 1
+                        
+                # Check for timeout every 100 files
+                if file_count % 100 == 0:
+                    signal.alarm(30)  # Reset alarm
+                    
+        except TimeoutError:
+            self.logger.warning("Indexing timed out, continuing with partial index")
+        finally:
+            signal.alarm(0)  # Cancel the alarm
+            self.logger.info(f"Indexing completed: {file_count} files processed")
 
     def _index_ast_node(self, node: ast.AST, file_path: str):
         """Index AST node"""
@@ -379,21 +440,33 @@ class NeozorkMCPServer:
         
         try:
             while self.running:
-                # Read message from stdin
-                if select.select([sys.stdin], [], [], 0.1)[0]:
-                    line = sys.stdin.readline()
-                    if not line:
-                        break
-                    
-                    try:
-                        message = json.loads(line)
-                        self._process_message(message)
-                    except json.JSONDecodeError as e:
-                        self.logger.error(f"Invalid JSON: {e}")
+                # Read message from stdin with timeout
+                try:
+                    # Use select with timeout to prevent blocking indefinitely
+                    ready, _, _ = select.select([sys.stdin], [], [], 1.0)
+                    if ready:
+                        line = sys.stdin.readline()
+                        if not line:
+                            break
+                        
+                        try:
+                            message = json.loads(line)
+                            self._process_message(message)
+                        except json.JSONDecodeError as e:
+                            self.logger.error(f"Invalid JSON: {e}")
+                            continue
+                        except Exception as e:
+                            self.logger.error(f"Error processing message: {e}")
+                            continue
+                    else:
+                        # No input available, continue loop
                         continue
-                    except Exception as e:
-                        self.logger.error(f"Error processing message: {e}")
-                        continue
+                        
+                except Exception as e:
+                    self.logger.error(f"Error reading from stdin: {e}")
+                    # If stdin is not available (background mode), keep running
+                    time.sleep(1)
+                    continue
                         
         except KeyboardInterrupt:
             print_to_stderr("🛑 Received interrupt signal")

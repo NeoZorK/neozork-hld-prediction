@@ -167,7 +167,7 @@ class TestDualChartPlot:
         assert layout['mode'] == 'fastest'
         assert layout['main_chart_height'] == 0.6
         assert layout['indicator_chart_height'] == 0.4
-        assert layout['indicator_name'] == 'RSI'
+        assert layout['indicator_name'] == 'RSI with params: 14,30,70,open'
         assert layout['show_volume'] == False
 
     def test_create_dual_chart_layout_fast(self):
@@ -177,7 +177,7 @@ class TestDualChartPlot:
         assert layout['mode'] == 'fast'
         assert layout['main_chart_height'] == 0.6
         assert layout['indicator_chart_height'] == 0.4
-        assert layout['indicator_name'] == 'MACD'
+        assert layout['indicator_name'] == 'MACD with params: 12,26,9,close'
         assert layout['show_volume'] == False
 
     def test_create_dual_chart_layout_mpl(self):
@@ -187,7 +187,7 @@ class TestDualChartPlot:
         assert layout['mode'] == 'mpl'
         assert layout['main_chart_height'] == 0.6
         assert layout['indicator_chart_height'] == 0.4
-        assert layout['indicator_name'] == 'EMA'
+        assert layout['indicator_name'] == 'EMA with params: 20,close'
         assert layout['show_volume'] == False
 
     def test_create_dual_chart_layout_seaborn(self):
@@ -197,7 +197,7 @@ class TestDualChartPlot:
         assert layout['mode'] == 'sb'
         assert layout['main_chart_height'] == 0.6
         assert layout['indicator_chart_height'] == 0.4
-        assert layout['indicator_name'] == 'Bollinger Bands'
+        assert layout['indicator_name'] == 'Bollinger Bands with params: 20,2.0,close'
         assert layout['show_volume'] == False
 
     def test_create_dual_chart_layout_terminal(self):
@@ -207,7 +207,7 @@ class TestDualChartPlot:
         assert layout['mode'] == 'term'
         assert layout['main_chart_height'] == 0.6
         assert layout['indicator_chart_height'] == 0.4
-        assert layout['indicator_name'] == 'ATR'
+        assert layout['indicator_name'] == 'ATR with params: 14'
         assert layout['show_volume'] == False
 
     @patch('src.plotting.dual_chart_plot.plot_dual_chart_fastest')

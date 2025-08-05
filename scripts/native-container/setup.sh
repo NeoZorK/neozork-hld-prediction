@@ -200,8 +200,24 @@ validate_container_config() {
         return 1
     fi
     
-    # Basic YAML validation
+    # Basic YAML validation with automatic pyyaml installation
     if command_exists python3; then
+        # Check if pyyaml is available, install if not
+        if ! python3 -c "import yaml" 2>/dev/null; then
+            print_status "Installing PyYAML for YAML validation..."
+            if command_exists pip3; then
+                if pip3 install pyyaml --quiet; then
+                    print_success "PyYAML installed successfully"
+                else
+                    print_warning "Failed to install PyYAML, skipping YAML validation"
+                    return 0
+                fi
+            else
+                print_warning "pip3 not available, skipping YAML validation"
+                return 0
+            fi
+        fi
+        
         if python3 -c "import yaml; yaml.safe_load(open('container.yaml'))" 2>/dev/null; then
             print_success "Container configuration is valid YAML"
         else
