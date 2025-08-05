@@ -1,54 +1,54 @@
 # Seaborn SuperTrend Enhancement
 
-## Обзор
+## Overview
 
-Режим `-d sb` (seaborn) для индикатора SuperTrend был значительно улучшен, чтобы соответствовать современному и красивому стилю режима `-d mpl` (matplotlib). Теперь оба режима предоставляют одинаково высокое качество визуализации с современными цветовыми схемами и интерактивными элементами.
+The `-d sb` (seaborn) mode for the SuperTrend indicator has been significantly improved to match the modern and beautiful style of the `-d mpl` (matplotlib) mode. Now both modes provide equally high visualization quality with modern color schemes and interactive elements.
 
-## Улучшения
+## Improvements
 
-### 1. **Современная цветовая схема**
+### 1. **Modern Color Scheme**
 
-Реализована единая цветовая палитра для всех режимов отображения:
+A unified color palette has been implemented for all display modes:
 
-- **Зеленый (Uptrend)**: `#00C851` - современный зеленый для восходящих трендов
-- **Красный (Downtrend)**: `#FF4444` - современный красный для нисходящих трендов  
-- **Золотой (Signal Change)**: `#FFC107` - золотистый для точек смены сигналов
-- **Синий (Support)**: `#007BFF` - современный синий для линий поддержки
-- **Красный (Resistance)**: `#DC3545` - современный красный для линий сопротивления
+- **Green (Uptrend)**: `#00C851` - modern green for uptrends
+- **Red (Downtrend)**: `#FF4444` - modern red for downtrends
+- **Gold (Signal Change)**: `#FFC107` - golden for signal change points
+- **Blue (Support)**: `#007BFF` - modern blue for support lines
+- **Red (Resistance)**: `#DC3545` - modern red for resistance lines
 
-### 2. **Улучшенная сегментация линий**
+### 2. **Improved Line Segmentation**
 
-Добавлена интеллектуальная сегментация SuperTrend линии:
+Intelligent segmentation of the SuperTrend line has been added:
 
-- **Автоматическое определение точек смены сигналов**
-- **Цветовое кодирование сегментов** в зависимости от направления тренда
-- **Выделение точек смены сигналов** золотистым цветом
-- **Плавные переходы** между сегментами
+- **Automatic detection of signal change points**
+- **Color coding of segments** depending on trend direction
+- **Highlighting signal change points** with golden color
+- **Smooth transitions** between segments
 
-### 3. **Современные визуальные эффекты**
+### 3. **Modern Visual Effects**
 
-- **Эффект свечения** для основных линий
-- **Pulse эффект** для сигналов покупки/продажи
-- **Фоновые зоны трендов** для лучшего визуального контекста
-- **Улучшенная прозрачность** и альфа-каналы
+- **Glow effect** for main lines
+- **Pulse effect** for buy/sell signals
+- **Background trend zones** for better visual context
+- **Improved transparency** and alpha channels
 
-### 4. **Улучшенные сигналы**
+### 4. **Improved Signals**
 
-- **Увеличенный размер маркеров** (120px вместо 100px)
-- **Белые границы** для лучшей видимости
-- **Двойные маркеры** с эффектом пульсации
-- **Улучшенное позиционирование** относительно цены
+- **Increased marker size** (120px instead of 100px)
+- **White borders** for better visibility
+- **Double markers** with pulse effect
+- **Improved positioning** relative to price
 
-### 5. **Современный стиль свечей**
+### 5. **Modern Candle Style**
 
-- **Обновленные цвета** свечей с современной палитрой
-- **Улучшенная прозрачность** и толщина линий
-- **Более четкие границы** между телами свечей
+- **Updated candle colors** with modern palette
+- **Improved transparency** and line thickness
+- **Clearer boundaries** between candle bodies
 
-### 6. **Улучшенные настройки стиля**
+### 6. **Improved Style Settings**
 
 ```python
-# Современный seaborn стиль
+# Modern seaborn style
 sns.set_style("whitegrid", {
     'grid.linestyle': '--',
     'grid.alpha': 0.3,
@@ -58,90 +58,90 @@ sns.set_style("whitegrid", {
     'axes.spines.right': False
 })
 
-# Современные шрифты
+# Modern fonts
 plt.rcParams['font.family'] = 'sans-serif'
 plt.rcParams['font.sans-serif'] = ['Arial', 'DejaVu Sans', 'Liberation Sans']
 ```
 
-## Использование
+## Usage
 
-### Команда для тестирования
+### Test Command
 
 ```bash
-# Тест улучшенного режима seaborn
+# Test improved seaborn mode
 uv run run_analysis.py show csv gbp -d sb --rule supertrend:10,3
 
-# Сравнение с режимом mpl
+# Compare with mpl mode
 uv run run_analysis.py show csv gbp -d mpl --rule supertrend:10,3
 ```
 
-### Другие индикаторы
+### Other Indicators
 
-Улучшения также применены к другим индикаторам в режиме seaborn:
+Improvements also apply to other indicators in seaborn mode:
 
 ```bash
-# RSI с современным стилем
+# RSI with modern style
 uv run run_analysis.py show csv gbp -d sb --rule rsi:14,30,70,close
 
-# MACD с улучшенной цветовой схемой
+# MACD with improved color scheme
 uv run run_analysis.py show csv gbp -d sb --rule macd:12,26,9,close
 
-# Bollinger Bands с современными цветами
+# Bollinger Bands with modern colors
 uv run run_analysis.py show csv gbp -d sb --rule bb:20,2,close
 ```
 
-## Технические детали
+## Technical Details
 
-### Обработка данных SuperTrend
+### SuperTrend Data Processing
 
 ```python
-# Определение направления тренда
+# Trend direction determination
 trend = np.where(price_series > supertrend_values, 1, -1)
 
-# Обнаружение точек смены сигналов
+# Signal change point detection
 buy_signals = (trend == 1) & (trend.shift(1) == -1)
 sell_signals = (trend == -1) & (trend.shift(1) == 1)
 signal_changes = buy_signals | sell_signals
 
-# Создание цветового массива
+# Color array creation
 color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
 ```
 
-### Сегментация линий
+### Line Segmentation
 
 ```python
-# Интеллектуальная сегментация
+# Intelligent segmentation
 segments = []
 for i in range(1, len(display_df.index)):
     current_color = color_arr[i]
     
     if signal_changes.iloc[i]:
-        # Добавление точки смены сигнала
+        # Adding signal change point
         segments.append(([display_df.index[i-1], display_df.index[i]], 
                        [supertrend_values.iloc[i-1], supertrend_values.iloc[i]], 
                        signal_change_color))
     elif current_color != last_color:
-        # Обычная смена тренда
+        # Regular trend change
         segments.append((seg_x.copy(), seg_y.copy(), last_color))
 ```
 
-## Сравнение режимов
+## Mode Comparison
 
-| Аспект | `-d sb` (Seaborn) | `-d mpl` (Matplotlib) |
+| Aspect | `-d sb` (Seaborn) | `-d mpl` (Matplotlib) |
 |--------|-------------------|----------------------|
-| **Цветовая схема** | ✅ Современная | ✅ Современная |
-| **Сегментация** | ✅ Интеллектуальная | ✅ Интеллектуальная |
-| **Сигналы** | ✅ Улучшенные | ✅ Улучшенные |
-| **Эффекты** | ✅ Pulse + Glow | ✅ Pulse + Glow |
-| **Фоновые зоны** | ✅ Трендовые зоны | ✅ Трендовые зоны |
-| **Производительность** | ⚡ Быстрая | ⚡ Быстрая |
+| **Color Scheme** | ✅ Modern | ✅ Modern |
+| **Segmentation** | ✅ Intelligent | ✅ Intelligent |
+| **Signals** | ✅ Improved | ✅ Improved |
+| **Effects** | ✅ Pulse + Glow | ✅ Pulse + Glow |
+| **Background Zones** | ✅ Trend zones | ✅ Trend zones |
+| **Performance** | ⚡ Fast | ⚡ Fast |
 
-## Заключение
+## Conclusion
 
-Режим `-d sb` теперь предоставляет такой же высокий уровень визуализации, как и режим `-d mpl`, с современными цветовыми схемами, интерактивными эффектами и улучшенной читаемостью. Оба режима теперь являются равнозначными по качеству и могут использоваться в зависимости от предпочтений пользователя.
+The `-d sb` mode now provides the same high level of visualization as the `-d mpl` mode, with modern color schemes, interactive effects, and improved readability. Both modes are now equivalent in quality and can be used depending on user preferences.
 
-### Рекомендации
+### Recommendations
 
-- **Для презентаций**: Используйте `-d sb` для более научного стиля
-- **Для технического анализа**: Используйте `-d mpl` для классического стиля
-- **Для отчетов**: Оба режима подходят одинаково хорошо 
+- **For presentations**: Use `-d sb` for a more scientific style
+- **For technical analysis**: Use `-d mpl` for a classic style
+- **For reports**: Both modes are equally suitable 

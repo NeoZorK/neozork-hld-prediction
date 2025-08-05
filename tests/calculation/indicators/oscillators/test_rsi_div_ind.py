@@ -166,7 +166,7 @@ class TestRSIDivergenceIndicator:
                                     price_type='open')
         
         # Results should be different due to different parameters
-        # For small datasets, RSI values might be одинаковыми, поэтому просто проверяем наличие данных
+        # For small datasets, RSI values might be identical, so we just check for data presence
         assert len(result1) == len(result2)
         assert 'RSI' in result1.columns
         assert 'RSI' in result2.columns
