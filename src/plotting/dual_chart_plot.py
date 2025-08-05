@@ -91,7 +91,7 @@ def is_dual_chart_rule(rule: str) -> bool:
         params_str = rule.split(':', 1)[1].strip()
         params = [p.strip() for p in params_str.split(',')]
         
-        if indicator_name == 'rsi':
+        if indicator_name in ['rsi', 'rsi_mom', 'rsi_div']:
             if len(params) < 4:
                 return False
             # Check if first 3 parameters are numeric
@@ -193,8 +193,8 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
         elif indicator_name == 'rsi_mom':
             period = int(params[0]) if len(params) > 0 else 14
-            overbought = float(params[1]) if len(params) > 1 else 70
-            oversold = float(params[2]) if len(params) > 2 else 30
+            oversold = float(params[1]) if len(params) > 1 else 30
+            overbought = float(params[2]) if len(params) > 2 else 70
             price_type = PriceType.OPEN if len(params) > 3 and params[3].lower() == 'open' else PriceType.CLOSE
             
             price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
@@ -218,8 +218,8 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
         elif indicator_name == 'rsi_div':
             period = int(params[0]) if len(params) > 0 else 14
-            overbought = float(params[1]) if len(params) > 1 else 70
-            oversold = float(params[2]) if len(params) > 2 else 30
+            oversold = float(params[1]) if len(params) > 1 else 30
+            overbought = float(params[2]) if len(params) > 2 else 70
             price_type = PriceType.OPEN if len(params) > 3 and params[3].lower() == 'open' else PriceType.CLOSE
             
             price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
@@ -336,8 +336,21 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['tsf'] = tsf_values
             
         elif indicator_name == 'monte':
-            simulations = int(params[0]) if len(params) > 0 else 1000
-            period = int(params[1]) if len(params) > 1 else 252
+            # Handle empty parameters gracefully
+            simulations = 1000
+            period = 252
+            
+            if len(params) > 0 and params[0].strip():
+                try:
+                    simulations = int(params[0])
+                except ValueError:
+                    pass  # Use default value
+            
+            if len(params) > 1 and params[1].strip():
+                try:
+                    period = int(params[1])
+                except ValueError:
+                    pass  # Use default value
             
             # Select price series (use Close for Monte Carlo)
             price_series = df['Close']
@@ -641,6 +654,8 @@ def create_dual_chart_layout(mode: str, rule: str) -> Dict[str, Any]:
     # Map indicator names to display names
     indicator_display_names = {
         'rsi': 'RSI',
+        'rsi_mom': 'RSI Momentum',
+        'rsi_div': 'RSI Divergence',
         'macd': 'MACD',
         'ema': 'EMA',
         'bb': 'Bollinger Bands',
@@ -662,16 +677,30 @@ def create_dual_chart_layout(mode: str, rule: str) -> Dict[str, Any]:
         'stdev': 'Standard Deviation',
         'adx': 'ADX',
         'sar': 'SAR',
-        'supertrend': 'SuperTrend'
+        'supertrend': 'SuperTrend',
+        'stoch': 'Stochastic',
+        'stochoscillator': 'Stochastic Oscillator'
     }
     
     display_name = indicator_display_names.get(indicator_name, indicator_name.upper())
+    
+    # Create title with parameters for all indicators except PV, PHLD, SR, AUTO, OHLCV
+    excluded_indicators = {'pv', 'phld', 'sr', 'auto', 'ohlcv', 'pressure_vector', 'support_resistants', 'predict_high_low_direction'}
+    
+    if indicator_name not in excluded_indicators and ':' in rule:
+        # Extract parameters from rule
+        params_part = rule.split(':', 1)[1]
+        # Create title with indicator name and parameters
+        indicator_title = f"{display_name} with params: {params_part}"
+    else:
+        # For excluded indicators or rules without parameters, use just the display name
+        indicator_title = display_name
     
     return {
         'mode': mode,
         'main_chart_height': 0.6,
         'indicator_chart_height': 0.4,
-        'indicator_name': display_name,
+        'indicator_name': indicator_title,
         'show_volume': False,  # No volume on any chart as per requirements
         'indicator_rule': rule
     }

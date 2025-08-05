@@ -152,6 +152,62 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Invalid thresholds: Must be between 0 and 100'
             ]
         },
+        'rsi_mom': {
+            'name': 'RSI Momentum',
+            'description': 'Advanced RSI variant that calculates the momentum (rate of change) of RSI values to identify trend strength and potential reversal points.',
+            'format': 'rsi_mom:period,oversold,overbought,price_type',
+            'parameters': [
+                ('period', 'int', 'RSI calculation period', '14'),
+                ('oversold', 'float', 'Oversold threshold (0-100)', '30'),
+                ('overbought', 'float', 'Overbought threshold (0-100)', '70'),
+                ('price_type', 'string', 'Price type for calculation', 'close')
+            ],
+            'examples': [
+                ('rsi_mom:14,30,70,open', 'Standard RSI Momentum with open prices'),
+                ('rsi_mom:21,25,75,close', 'Custom RSI Momentum with close prices'),
+                ('rsi_mom:14,10,90,open', 'Wide range RSI Momentum with open prices')
+            ],
+            'tips': [
+                'RSI Momentum measures the rate of change of RSI values',
+                'Positive momentum indicates strengthening trend',
+                'Negative momentum indicates weakening trend',
+                'Use with standard RSI for confirmation signals',
+                'Momentum signals can precede price reversals'
+            ],
+            'common_errors': [
+                'Invalid price_type: Use "open" or "close" only',
+                'Invalid period: Must be a positive integer',
+                'Invalid thresholds: Must be between 0 and 100'
+            ]
+        },
+        'rsi_div': {
+            'name': 'RSI Divergence',
+            'description': 'Advanced RSI variant that detects divergence between price movement and RSI movement to identify potential trend reversals.',
+            'format': 'rsi_div:period,oversold,overbought,price_type',
+            'parameters': [
+                ('period', 'int', 'RSI calculation period', '14'),
+                ('oversold', 'float', 'Oversold threshold (0-100)', '30'),
+                ('overbought', 'float', 'Overbought threshold (0-100)', '70'),
+                ('price_type', 'string', 'Price type for calculation', 'close')
+            ],
+            'examples': [
+                ('rsi_div:14,30,70,open', 'Standard RSI Divergence with open prices'),
+                ('rsi_div:21,25,75,close', 'Custom RSI Divergence with close prices'),
+                ('rsi_div:14,10,90,open', 'Wide range RSI Divergence with open prices')
+            ],
+            'tips': [
+                'RSI Divergence compares price movement with RSI movement',
+                'Bullish divergence: Price makes lower lows, RSI makes higher lows',
+                'Bearish divergence: Price makes higher highs, RSI makes lower highs',
+                'Divergence signals can be powerful reversal indicators',
+                'Use with other indicators for confirmation'
+            ],
+            'common_errors': [
+                'Invalid price_type: Use "open" or "close" only',
+                'Invalid period: Must be a positive integer',
+                'Invalid thresholds: Must be between 0 and 100'
+            ]
+        },
         'macd': {
             'name': 'MACD (Moving Average Convergence Divergence)',
             'description': 'Shows the relationship between two moving averages to identify momentum changes.',
@@ -638,6 +694,61 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Invalid multiplier: Must be a positive float',
                 'Invalid price_type: Use only "open" or "close"',
                 'Omitting parameters: Use format supertrend:10,3.0[,price_type]'
+            ]
+        },
+        'feargreed': {
+            'name': 'Fear & Greed Index',
+            'description': 'Sentiment indicator that measures market fear and greed levels based on price volatility and momentum. Values below 25 indicate extreme fear (potential buy), values above 75 indicate extreme greed (potential sell).',
+            'format': 'feargreed:period,price_type',
+            'parameters': [
+                ('period', 'int', 'Fear & Greed calculation period', '14'),
+                ('price_type', 'string', 'Price type for calculation', 'close')
+            ],
+            'examples': [
+                ('feargreed:14,close', 'Standard Fear & Greed with close prices'),
+                ('feargreed:21,open', 'Long-term Fear & Greed with open prices'),
+                ('feargreed:10,close', 'Short-term Fear & Greed with close prices')
+            ],
+            'tips': [
+                'Values 0-25: Extreme Fear (potential buy signal)',
+                'Values 25-45: Fear (cautious buying)',
+                'Values 45-55: Neutral (no clear signal)',
+                'Values 55-75: Greed (cautious selling)',
+                'Values 75-100: Extreme Greed (potential sell signal)',
+                'Use with other indicators for confirmation',
+                'Longer periods provide more stable signals'
+            ],
+            'common_errors': [
+                'Invalid price_type: Use "open" or "close" only',
+                'Invalid period: Must be a positive integer',
+                'Period too short may give unreliable results'
+            ]
+        },
+        'adx': {
+            'name': 'ADX (Average Directional Index)',
+            'description': 'Trend strength indicator that measures the strength of a trend regardless of its direction. Values above 25 indicate a strong trend, values below 20 indicate a weak trend.',
+            'format': 'adx:period',
+            'parameters': [
+                ('period', 'int', 'ADX calculation period', '14')
+            ],
+            'examples': [
+                ('adx:14', 'Standard ADX with 14-period window'),
+                ('adx:21', 'Long-term ADX with 21-period window'),
+                ('adx:10', 'Short-term ADX with 10-period window')
+            ],
+            'tips': [
+                'Values 0-20: Weak trend (sideways market)',
+                'Values 20-25: Developing trend',
+                'Values 25-50: Strong trend',
+                'Values 50+: Very strong trend',
+                'Use with +DI and -DI for trend direction',
+                'ADX alone does not indicate trend direction',
+                'Higher ADX values suggest trend-following strategies'
+            ],
+            'common_errors': [
+                'Invalid period: Must be a positive integer',
+                'Period too short may give unreliable results',
+                'ADX requires only one parameter: period'
             ]
         }
     }

@@ -92,21 +92,14 @@ start_container_sequence() {
         print_status "Opening interactive shell directly..."
         echo
         if [ -t 0 ]; then
-            read -p "Press Enter to continue to shell..."
+            read -p "Press Enter to continue to shell..." 2>/dev/null || true
         fi
         
-        if ./scripts/native-container/exec.sh --shell; then
-            print_success "Shell session completed"
-        else
-            print_warning "Shell session failed or was interrupted"
-        fi
-        
-        echo
-        print_success "Container access completed!"
-        if [ -t 0 ]; then
-            read -p "Press Enter to continue..."
-        fi
-        return 0
+        # Execute shell and exit immediately to prevent restart
+        ./scripts/native-container/exec.sh --shell
+        # If we reach here, it means exec.sh exited, so we should also exit
+        print_success "Container session completed"
+        exit 0
     fi
     
     # Check if container exists but is stopped
@@ -133,18 +126,11 @@ start_container_sequence() {
             read -p "Press Enter to continue to shell..."
         fi
         
-        if ./scripts/native-container/exec.sh --shell; then
-            print_success "Shell session completed"
-        else
-            print_warning "Shell session failed or was interrupted"
-        fi
-        
-        echo
-        print_success "Container access completed!"
-        if [ -t 0 ]; then
-            read -p "Press Enter to continue..."
-        fi
-        return 0
+        # Execute shell and exit immediately to prevent restart
+        ./scripts/native-container/exec.sh --shell
+        # If we reach here, it means exec.sh exited, so we should also exit
+        print_success "Container session completed"
+        exit 0
     fi
     
     # Container doesn't exist, run full setup
@@ -192,17 +178,11 @@ start_container_sequence() {
         read -p "Press Enter to continue to shell..."
     fi
     
-    if ./scripts/native-container/exec.sh --shell; then
-        print_success "Shell session completed"
-    else
-        print_warning "Shell session failed or was interrupted"
-    fi
-    
-    echo
-    print_success "Start container sequence completed!"
-    if [ -t 0 ]; then
-        read -p "Press Enter to continue..."
-    fi
+    # Execute shell and exit immediately to prevent restart
+    ./scripts/native-container/exec.sh --shell
+    # If we reach here, it means exec.sh exited, so we should also exit
+    print_success "Container session completed"
+    exit 0
 }
 
 # Function to stop container (full sequence)
@@ -543,7 +523,7 @@ main() {
         show_main_menu
         
         if [ -t 0 ]; then
-            read -p "Enter your choice (0-5): " choice
+            read -p "Enter your choice (0-5): " choice 2>/dev/null || true
         else
             # Non-interactive mode - exit gracefully
             print_error "Script requires interactive terminal"

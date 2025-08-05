@@ -178,8 +178,8 @@ handle_eof() {
     exit 0
 }
 
-# Set up EOF handler
-trap handle_eof EOF
+# Set up EOF handler (using EXIT instead of EOF)
+trap handle_eof EXIT
 
 echo "=== NeoZork HLD Prediction Container Shell ==="
 echo "Setting up environment..."
@@ -245,29 +245,8 @@ echo "Available commands: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
 echo "Type \"exit\" or press Ctrl+D to leave the container shell"
 echo ""
 
-# Start interactive bash shell with proper signal handling
-exec bash --rcfile <(cat << "BASHRC"
-# Custom bashrc for container shell
-set -o ignoreeof  # Prevent accidental Ctrl+D exit
-bind "set bind-tty-special-chars on"  # Enable special character handling
-
-# Function to handle Ctrl+D gracefully
-handle_ctrld() {
-    echo ""
-    echo "Use 'exit' command to leave the container shell, or press Ctrl+D again to force exit"
-    return 0
-}
-
-# Set up Ctrl+D handler
-trap handle_ctrld EOF
-
-# Show prompt with container indicator
-export PS1="(neozork-container) \w $ "
-
-# Welcome message
-echo "Container shell ready. Type 'exit' to leave or use Ctrl+D."
-BASHRC
-)
+# Start interactive bash shell with simple configuration
+exec bash
 EOF'
 
     # Make the script executable
@@ -277,20 +256,41 @@ EOF'
     print_status "Executing enhanced shell script..."
     
     # Use a wrapper to handle Ctrl+D properly
-    container exec --interactive --tty "$container_id" bash -c '
-        # Set up signal handlers for the wrapper
-        trap "echo \"Container shell wrapper exiting...\"; exit 0" EXIT
-        trap "echo \"Received interrupt in wrapper, exiting...\"; exit 0" INT TERM
-        
-        # Execute the enhanced shell
-        /tmp/enhanced_shell.sh
-        
-        # Cleanup after shell exits
-        rm -f /tmp/enhanced_shell.sh
-    '
+    if [ -t 0 ]; then
+        # Interactive mode
+        container exec --interactive --tty "$container_id" bash -c '
+            # Set up signal handlers for the wrapper
+            trap "echo \"Container shell wrapper exiting...\"; exit 0" EXIT
+            trap "echo \"Received interrupt in wrapper, exiting...\"; exit 0" INT TERM
+            
+            # Execute the enhanced shell
+            /tmp/enhanced_shell.sh
+            
+            # Cleanup after shell exits
+            rm -f /tmp/enhanced_shell.sh
+        '
+    else
+        # Non-interactive mode
+        container exec "$container_id" bash -c '
+            # Execute the enhanced shell
+            /tmp/enhanced_shell.sh
+            
+            # Cleanup after shell exits
+            rm -f /tmp/enhanced_shell.sh
+        '
+    fi
     
     # Additional cleanup
     container exec "$container_id" rm -f /tmp/enhanced_shell.sh 2>/dev/null || true
+    
+    # Show exit option if shell was used
+    if [ "$SHELL_MODE" = true ]; then
+        echo
+        print_success "Shell session completed"
+        # Simple exit without additional prompts to prevent restart loops
+        print_success "Exiting to prevent automatic restart..."
+        exit 0
+    fi
 }
 
 # Function to show available commands

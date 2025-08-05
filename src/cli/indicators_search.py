@@ -136,7 +136,7 @@ class IndicatorSearcher:
             "volatility": ["bb_ind.py", "atr_ind.py", "stdev_ind.py"],
             "volume": ["obv_ind.py", "vwap_ind.py"],
             "suportresist": ["pivot_ind.py", "fiboretr_ind.py", "donchain_ind.py"],
-            "oscillators": ["rsi_ind.py", "stoch_ind.py", "cci_ind.py"],
+            "oscillators": ["rsi_ind.py", "rsi_mom_ind.py", "rsi_div_ind.py", "stoch_ind.py", "cci_ind.py"],
             "sentiment": ["putcallratio_ind.py", "cot_ind.py", "feargreed_ind.py"],
             "predictive": ["hma_ind.py", "tsforecast_ind.py"],
             "probability": ["montecarlo_ind.py", "kelly_ind.py"]
