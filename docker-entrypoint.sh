@@ -168,13 +168,14 @@ echo -e "\033[1;34mInput received: '$run_mcp'\033[0m"
 # Simplified condition checking
 if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
   echo -e "\n\033[1;32m=== Starting MCP server in background (UV Mode) ===\033[0m\n"
-  # Start MCP server in background and redirect output to prevent EOF
+  # Start MCP server in background with proper logging
   nohup python neozork_mcp_server.py > /app/logs/mcp_server.log 2>&1 &
   MCP_PID=$!
   echo $MCP_PID > /tmp/mcp_server.pid
   echo -e "\033[1;32mMCP server started in background (PID: $MCP_PID)\033[0m\n"
+  
   # Wait for mcp_server to initialize
-  sleep 5
+  sleep 10
   
   # Check MCP server status
   echo -e "\033[1;33m=== Checking MCP server status ===\033[0m\n"
