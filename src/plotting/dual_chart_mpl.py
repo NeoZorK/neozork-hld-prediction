@@ -466,6 +466,83 @@ def plot_dual_chart_mpl(
             ax2.scatter(display_df.index, display_df['sar'], 
                        color='red', s=20, label='SAR')
     
+    elif indicator_name == 'supertrend':
+        y_axis_label = 'Price'
+        
+        # Check for SuperTrend columns
+        has_supertrend = 'SuperTrend' in display_df.columns
+        has_direction = 'SuperTrend_Direction' in display_df.columns
+        has_signal = 'SuperTrend_Signal' in display_df.columns
+        
+        if has_supertrend:
+            # Plot SuperTrend line
+            supertrend_values = display_df['SuperTrend']
+            ax2.plot(display_df.index, supertrend_values, 
+                    color='blue', linewidth=3, label='SuperTrend')
+            
+            # Plot price series for reference
+            if 'Open' in display_df.columns:
+                ax2.plot(display_df.index, display_df['Open'], 
+                        color='gray', linewidth=1, alpha=0.7, label='Price')
+            
+            # Add trend direction visualization
+            if has_direction:
+                trend_direction = display_df['SuperTrend_Direction']
+                
+                # Color segments based on trend direction
+                uptrend_mask = trend_direction == 1
+                downtrend_mask = trend_direction == -1
+                
+                if uptrend_mask.any():
+                    ax2.plot(display_df.index[uptrend_mask], supertrend_values[uptrend_mask], 
+                            color='green', linewidth=4, alpha=0.8, label='Uptrend')
+                
+                if downtrend_mask.any():
+                    ax2.plot(display_df.index[downtrend_mask], supertrend_values[downtrend_mask], 
+                            color='red', linewidth=4, alpha=0.8, label='Downtrend')
+            
+            # Add signal points
+            if has_signal:
+                buy_signals = display_df['SuperTrend_Signal'] == 1  # BUY
+                sell_signals = display_df['SuperTrend_Signal'] == 2  # SELL
+                
+                if buy_signals.any():
+                    ax2.scatter(display_df.index[buy_signals], supertrend_values[buy_signals], 
+                              color='green', s=50, marker='^', label='Buy Signal')
+                
+                if sell_signals.any():
+                    ax2.scatter(display_df.index[sell_signals], supertrend_values[sell_signals], 
+                              color='red', s=50, marker='v', label='Sell Signal')
+        
+        # Fallback: use PPrice1/PPrice2 if SuperTrend column not available
+        elif 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns:
+            # Create SuperTrend values from PPrice1/PPrice2
+            p1 = display_df['PPrice1']
+            p2 = display_df['PPrice2']
+            direction = display_df.get('Direction', pd.Series(0, index=display_df.index))
+            
+            # Use PPrice1 as SuperTrend (support level)
+            supertrend_values = p1
+            ax2.plot(display_df.index, supertrend_values, 
+                    color='blue', linewidth=3, label='SuperTrend (Support)')
+            
+            # Also plot resistance level
+            ax2.plot(display_df.index, p2, 
+                    color='orange', linewidth=2, linestyle='--', label='Resistance')
+            
+            # Add signal points if available
+            if 'Direction' in display_df.columns:
+                buy_signals = direction == 1  # BUY
+                sell_signals = direction == 2  # SELL
+                
+                if buy_signals.any():
+                    ax2.scatter(display_df.index[buy_signals], supertrend_values[buy_signals], 
+                              color='green', s=50, marker='^', label='Buy Signal')
+                
+                if sell_signals.any():
+                    ax2.scatter(display_df.index[sell_signals], supertrend_values[sell_signals], 
+                              color='red', s=50, marker='v', label='Sell Signal')
+    
     # Set y-axis label
     ax2.set_ylabel(y_axis_label, fontsize=12)
     ax2.set_xlabel('Date', fontsize=12)
