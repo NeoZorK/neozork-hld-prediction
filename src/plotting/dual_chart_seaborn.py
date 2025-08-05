@@ -124,8 +124,24 @@ def plot_dual_chart_seaborn(
     
     # Format x-axis for main chart
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    ax1.xaxis.set_major_locator(mdates.DayLocator(interval=7))
-    plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45)
+    # Calculate appropriate interval based on data length and time range
+    data_length = len(display_df)
+    date_range = display_df.index.max() - display_df.index.min()
+    days_range = date_range.days
+    
+    # Choose appropriate locator based on time range
+    if days_range > 365 * 5:  # More than 5 years
+        ax1.xaxis.set_major_locator(mdates.YearLocator(2))  # Every 2 years
+    elif days_range > 365 * 2:  # More than 2 years
+        ax1.xaxis.set_major_locator(mdates.YearLocator(1))  # Every year
+    elif days_range > 365:  # More than 1 year
+        ax1.xaxis.set_major_locator(mdates.MonthLocator(interval=3))  # Every 3 months
+    elif days_range > 90:  # More than 3 months
+        ax1.xaxis.set_major_locator(mdates.MonthLocator(interval=1))  # Every month
+    else:  # Less than 3 months
+        ax1.xaxis.set_major_locator(mdates.DayLocator(interval=max(1, days_range // 10)))
+    
+    plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45, ha='right')
     
     # Indicator chart
     indicator_name = rule.split(':', 1)[0].lower().strip()
@@ -362,8 +378,19 @@ def plot_dual_chart_seaborn(
     
     # Format x-axis for indicator chart
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-    ax2.xaxis.set_major_locator(mdates.DayLocator(interval=7))
-    plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45)
+    # Use the same locator logic as main chart for consistency
+    if days_range > 365 * 5:  # More than 5 years
+        ax2.xaxis.set_major_locator(mdates.YearLocator(2))  # Every 2 years
+    elif days_range > 365 * 2:  # More than 2 years
+        ax2.xaxis.set_major_locator(mdates.YearLocator(1))  # Every year
+    elif days_range > 365:  # More than 1 year
+        ax2.xaxis.set_major_locator(mdates.MonthLocator(interval=3))  # Every 3 months
+    elif days_range > 90:  # More than 3 months
+        ax2.xaxis.set_major_locator(mdates.MonthLocator(interval=1))  # Every month
+    else:  # Less than 3 months
+        ax2.xaxis.set_major_locator(mdates.DayLocator(interval=max(1, days_range // 10)))
+    
+    plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45, ha='right')
     
     # Adjust layout
     plt.tight_layout()
@@ -372,5 +399,8 @@ def plot_dual_chart_seaborn(
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     
     logger.print_info(f"Dual chart saved to: {output_path}")
+    
+    # Show plot
+    plt.show()
     
     return fig 
