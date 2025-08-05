@@ -599,7 +599,7 @@ def plot_dual_chart_mpl(
                     start_idx = trend_changes[i]
                     end_idx = trend_changes[i + 1] if i + 1 < len(trend_changes) else display_df.index[-1]
                     
-                    zone_color = 'rgba(0, 200, 81, 0.08)' if trend.loc[start_idx] == 1 else 'rgba(255, 68, 68, 0.08)'
+                    zone_color = (0, 200/255, 81/255, 0.08) if trend.loc[start_idx] == 1 else (255/255, 68/255, 68/255, 0.08)
                     
                     # Create background rectangle
                     rect = Rectangle((start_idx, supertrend_values.min() * 0.995), 
