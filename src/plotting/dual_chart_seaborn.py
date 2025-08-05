@@ -52,9 +52,27 @@ def plot_dual_chart_seaborn(
     # Ensure output directory exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
-    # Set seaborn style
-    sns.set_style("whitegrid")
+    # Set modern seaborn style with enhanced aesthetics
+    sns.set_style("whitegrid", {
+        'grid.linestyle': '--',
+        'grid.alpha': 0.3,
+        'axes.facecolor': '#f8f9fa',
+        'figure.facecolor': 'white',
+        'axes.spines.top': False,
+        'axes.spines.right': False
+    })
     sns.set_palette("husl")
+    
+    # Set modern font settings
+    plt.rcParams['font.family'] = 'sans-serif'
+    plt.rcParams['font.sans-serif'] = ['Arial', 'DejaVu Sans', 'Liberation Sans', 'Bitstream Vera Sans', 'sans-serif']
+    plt.rcParams['font.size'] = 10
+    plt.rcParams['axes.titlesize'] = 14
+    plt.rcParams['axes.labelsize'] = 12
+    plt.rcParams['xtick.labelsize'] = 10
+    plt.rcParams['ytick.labelsize'] = 10
+    plt.rcParams['legend.fontsize'] = 10
+    plt.rcParams['figure.titlesize'] = 16
     
     # Prepare data
     display_df = df.copy()
@@ -75,49 +93,57 @@ def plot_dual_chart_seaborn(
     # Main chart (OHLC)
     ax1.set_title(title, fontsize=14, fontweight='bold')
     
-    # Plot candlesticks
+    # Plot candlesticks with modern styling
     for i, (date, row) in enumerate(display_df.iterrows()):
-        # Determine color based on open/close
+        # Determine color based on open/close with modern colors
         if row['Close'] >= row['Open']:
-            color = 'green'
-            body_color = 'lightgreen'
+            color = '#00C851'  # Modern green
+            body_color = '#E8F5E8'  # Light green background
         else:
-            color = 'red'
-            body_color = 'lightcoral'
+            color = '#FF4444'  # Modern red
+            body_color = '#FFE8E8'  # Light red background
         
-        # Plot high-low line
-        ax1.plot([date, date], [row['Low'], row['High']], color=color, linewidth=1)
+        # Plot high-low line with enhanced styling
+        ax1.plot([date, date], [row['Low'], row['High']], color=color, linewidth=1.5, alpha=0.8)
         
-        # Plot open-close body
+        # Plot open-close body with modern styling
         body_height = abs(row['Close'] - row['Open'])
         body_bottom = min(row['Open'], row['Close'])
         
         rect = Rectangle((date - pd.Timedelta(hours=6), body_bottom), 
                         pd.Timedelta(hours=12), body_height,
-                        facecolor=body_color, edgecolor=color, linewidth=1)
+                        facecolor=body_color, edgecolor=color, linewidth=1.5, alpha=0.9)
         ax1.add_patch(rect)
     
-    # Add support and resistance lines if available
+    # Add support and resistance lines if available with modern styling
     if 'Support' in display_df.columns:
         sns.lineplot(data=display_df, x=display_df.index, y='Support', 
-                    ax=ax1, color='blue', linestyle='--', linewidth=2, alpha=0.8, label='Support')
+                    ax=ax1, color='#007BFF', linestyle='--', linewidth=2.5, alpha=0.9, label='Support')
     
     if 'Resistance' in display_df.columns:
         sns.lineplot(data=display_df, x=display_df.index, y='Resistance', 
-                    ax=ax1, color='red', linestyle='--', linewidth=2, alpha=0.8, label='Resistance')
+                    ax=ax1, color='#DC3545', linestyle='--', linewidth=2.5, alpha=0.9, label='Resistance')
     
-    # Add buy/sell signals if available
+    # Add buy/sell signals if available with modern styling
     if 'Direction' in display_df.columns:
         buy_signals = display_df[display_df['Direction'] == 1]
         sell_signals = display_df[display_df['Direction'] == 2]
         
         if not buy_signals.empty:
             ax1.scatter(buy_signals.index, buy_signals['Low'] * 0.995, 
-                       color='green', marker='^', s=100, label='Buy Signal', zorder=5)
+                       color='#00C851', marker='^', s=120, edgecolors='white', linewidth=2,
+                       alpha=0.95, label='Buy Signal', zorder=5)
+            # Add pulse effect for buy signals
+            ax1.scatter(buy_signals.index, buy_signals['Low'] * 0.995, 
+                       color='#00C851', marker='o', s=180, alpha=0.3, label="", zorder=4)
         
         if not sell_signals.empty:
             ax1.scatter(sell_signals.index, sell_signals['High'] * 1.005, 
-                       color='red', marker='v', s=100, label='Sell Signal', zorder=5)
+                       color='#FF4444', marker='v', s=120, edgecolors='white', linewidth=2,
+                       alpha=0.95, label='Sell Signal', zorder=5)
+            # Add pulse effect for sell signals
+            ax1.scatter(sell_signals.index, sell_signals['High'] * 1.005, 
+                       color='#FF4444', marker='o', s=180, alpha=0.3, label="", zorder=4)
     
     ax1.set_ylabel('Price', fontsize=12)
     ax1.legend()
@@ -148,22 +174,22 @@ def plot_dual_chart_seaborn(
     indicator_title = layout['indicator_name'] if layout else 'Indicator'
     ax2.set_title(indicator_title, fontsize=12, fontweight='bold')
     
-    # Add indicator based on type
+    # Add indicator based on type with modern styling
     if indicator_name == 'rsi':
         if 'rsi' in display_df.columns:
             sns.lineplot(data=display_df, x=display_df.index, y='rsi', 
-                        ax=ax2, color='purple', linewidth=3, label='RSI')
+                        ax=ax2, color='#9C27B0', linewidth=3, alpha=0.9, label='RSI')
             
-            # Add overbought/oversold lines
+            # Add overbought/oversold lines with modern styling
             if 'rsi_overbought' in display_df.columns:
                 overbought = display_df['rsi_overbought'].iloc[0]
-                ax2.axhline(y=overbought, color='red', linestyle='--', 
-                           linewidth=2, label=f'Overbought ({overbought})')
+                ax2.axhline(y=overbought, color='#FF4444', linestyle='--', 
+                           linewidth=2.5, alpha=0.8, label=f'Overbought ({overbought})')
             
             if 'rsi_oversold' in display_df.columns:
                 oversold = display_df['rsi_oversold'].iloc[0]
-                ax2.axhline(y=oversold, color='green', linestyle='--', 
-                           linewidth=2, label=f'Oversold ({oversold})')
+                ax2.axhline(y=oversold, color='#00C851', linestyle='--', 
+                           linewidth=2.5, alpha=0.8, label=f'Oversold ({oversold})')
     
     elif indicator_name == 'rsi_mom':
         if 'rsi' in display_df.columns:
@@ -214,17 +240,17 @@ def plot_dual_chart_seaborn(
     elif indicator_name == 'macd':
         if 'macd' in display_df.columns:
             sns.lineplot(data=display_df, x=display_df.index, y='macd', 
-                        ax=ax2, color='blue', linewidth=3, label='MACD')
+                        ax=ax2, color='#2196F3', linewidth=3, alpha=0.9, label='MACD')
         
         if 'macd_signal' in display_df.columns:
             sns.lineplot(data=display_df, x=display_df.index, y='macd_signal', 
-                        ax=ax2, color='red', linewidth=2, label='Signal')
+                        ax=ax2, color='#FF4444', linewidth=2.5, alpha=0.9, label='Signal')
         
         if 'macd_histogram' in display_df.columns:
-            # Color histogram bars
-            colors = ['green' if val >= 0 else 'red' for val in display_df['macd_histogram']]
+            # Color histogram bars with modern colors
+            colors = ['#00C851' if val >= 0 else '#FF4444' for val in display_df['macd_histogram']]
             ax2.bar(display_df.index, display_df['macd_histogram'], 
-                   color=colors, alpha=0.7, label='Histogram', width=0.8)
+                   color=colors, alpha=0.8, label='Histogram', width=0.8)
     
     elif indicator_name == 'ema':
         if 'ema' in display_df.columns:
@@ -489,6 +515,292 @@ def plot_dual_chart_seaborn(
             colors = ['green' if val >= 0 else 'red' for val in display_df['feargreed_histogram']]
             ax2.bar(display_df.index, display_df['feargreed_histogram'], 
                    color=colors, alpha=0.7, label='Histogram', width=0.8)
+    
+    elif indicator_name == 'supertrend':
+        # Check for SuperTrend columns
+        has_supertrend = 'SuperTrend' in display_df.columns
+        has_direction = 'SuperTrend_Direction' in display_df.columns
+        has_signal = 'SuperTrend_Signal' in display_df.columns
+        
+        if has_supertrend:
+            # Get SuperTrend values and determine trend direction
+            supertrend_values = display_df['SuperTrend']
+            
+            # Determine trend direction based on price vs SuperTrend
+            if 'Close' in display_df.columns:
+                price_series = display_df['Close']
+            elif 'close' in display_df.columns:
+                price_series = display_df['close']
+            else:
+                price_series = supertrend_values
+            
+            # Calculate trend direction: 1 for uptrend, -1 for downtrend
+            trend = np.where(price_series > supertrend_values, 1, -1)
+            trend = pd.Series(trend, index=display_df.index)
+            
+            # Modern color scheme matching fastest style
+            uptrend_color = '#00C851'  # Modern green for uptrend
+            downtrend_color = '#FF4444'  # Modern red for downtrend
+            signal_change_color = '#FFC107'  # Golden yellow for signal changes
+            
+            # Detect signal change points
+            buy_signals = (trend == 1) & (trend.shift(1) == -1)
+            sell_signals = (trend == -1) & (trend.shift(1) == 1)
+            signal_changes = buy_signals | sell_signals
+            
+            # Create color array with signal change highlighting
+            color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
+            
+            # Enhanced segmentation with signal change detection
+            segments = []
+            last_color = color_arr[0]
+            seg_x, seg_y = [display_df.index[0]], [supertrend_values.iloc[0]]
+            
+            for i in range(1, len(display_df.index)):
+                current_color = color_arr[i]
+                
+                # Check if this is a signal change point
+                if signal_changes.iloc[i]:
+                    # Add previous segment
+                    if len(seg_x) > 1:
+                        segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                    
+                    # Add signal change point with golden color
+                    segments.append(([display_df.index[i-1], display_df.index[i]], 
+                                  [supertrend_values.iloc[i-1], supertrend_values.iloc[i]], 
+                                  signal_change_color))
+                    
+                    # Start new segment
+                    seg_x, seg_y = [display_df.index[i]], [supertrend_values.iloc[i]]
+                    last_color = current_color
+                elif current_color != last_color:
+                    # Regular trend change (not a signal)
+                    segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                    seg_x, seg_y = [display_df.index[i-1]], [supertrend_values.iloc[i-1]]
+                    last_color = current_color
+                
+                seg_x.append(display_df.index[i])
+                seg_y.append(supertrend_values.iloc[i])
+            
+            # Add final segment
+            if len(seg_x) > 0:
+                segments.append((seg_x, seg_y, last_color))
+            
+            # Plot SuperTrend line segments with enhanced styling
+            legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
+            for seg_x, seg_y, seg_color in segments:
+                # Determine legend name based on color
+                if seg_color == uptrend_color:
+                    legend_name = 'SuperTrend (Uptrend)'
+                elif seg_color == downtrend_color:
+                    legend_name = 'SuperTrend (Downtrend)'
+                elif seg_color == signal_change_color:
+                    legend_name = 'SuperTrend (Signal Change)'
+                else:
+                    legend_name = 'SuperTrend'
+                
+                show_legend = not legend_shown.get(seg_color, False)
+                legend_shown[seg_color] = True
+                
+                # Plot segment with enhanced styling
+                linewidth = 4 if seg_color == signal_change_color else 3
+                alpha = 0.95 if seg_color == signal_change_color else 0.9
+                
+                ax2.plot(seg_x, seg_y, color=seg_color, linewidth=linewidth, 
+                        alpha=alpha, label=legend_name if show_legend else "")
+                
+                # Add subtle glow effect for enhanced visual appeal
+                if seg_color != signal_change_color:
+                    ax2.plot(seg_x, seg_y, color=seg_color, linewidth=linewidth+2, 
+                            alpha=0.3, label="")
+            
+            # Enhanced trend change markers with modern styling
+            buy_idx = display_df.index[(trend == 1) & (trend.shift(1) == -1)]
+            sell_idx = display_df.index[(trend == -1) & (trend.shift(1) == 1)]
+            
+            # BUY signals with enhanced styling
+            if len(buy_idx) > 0:
+                buy_values = supertrend_values.loc[buy_idx]
+                ax2.scatter(buy_idx, buy_values, color=uptrend_color, s=100, 
+                           marker='^', edgecolors='white', linewidth=2, 
+                           alpha=0.95, label='BUY Signal', zorder=5)
+                
+                # Add pulse effect for buy signals
+                ax2.scatter(buy_idx, buy_values, color=uptrend_color, s=150, 
+                           marker='o', alpha=0.4, label="", zorder=4)
+            
+            # SELL signals with enhanced styling
+            if len(sell_idx) > 0:
+                sell_values = supertrend_values.loc[sell_idx]
+                ax2.scatter(sell_idx, sell_values, color=downtrend_color, s=100, 
+                           marker='v', edgecolors='white', linewidth=2, 
+                           alpha=0.95, label='SELL Signal', zorder=5)
+                
+                # Add pulse effect for sell signals
+                ax2.scatter(sell_idx, sell_values, color=downtrend_color, s=150, 
+                           marker='o', alpha=0.4, label="", zorder=4)
+            
+            # Add trend background zones for better visual context
+            trend_changes = display_df.index[trend != trend.shift(1)]
+            if len(trend_changes) > 0:
+                for i in range(len(trend_changes)):
+                    start_idx = trend_changes[i]
+                    end_idx = trend_changes[i + 1] if i + 1 < len(trend_changes) else display_df.index[-1]
+                    
+                    zone_color = (0, 200/255, 81/255, 0.08) if trend.loc[start_idx] == 1 else (255/255, 68/255, 68/255, 0.08)
+                    
+                    # Create background rectangle
+                    rect = Rectangle((start_idx, supertrend_values.min() * 0.995), 
+                                   end_idx - start_idx, 
+                                   supertrend_values.max() * 1.005 - supertrend_values.min() * 0.995,
+                                   facecolor=zone_color, edgecolor='none', alpha=0.3, zorder=1)
+                    ax2.add_patch(rect)
+        
+        # Fallback: use PPrice1/PPrice2 if SuperTrend column not available
+        elif 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns:
+            # Create SuperTrend values from PPrice1/PPrice2
+            p1 = display_df['PPrice1']
+            p2 = display_df['PPrice2']
+            direction = display_df.get('Direction', pd.Series(0, index=display_df.index))
+            
+            # Use PPrice1 as SuperTrend (support level)
+            supertrend_values = p1
+            
+            # Determine trend direction
+            if 'Close' in display_df.columns:
+                price_series = display_df['Close']
+            elif 'close' in display_df.columns:
+                price_series = display_df['close']
+            else:
+                price_series = supertrend_values
+            
+            trend = np.where(price_series > supertrend_values, 1, -1)
+            trend = pd.Series(trend, index=display_df.index)
+            
+            # Modern color scheme
+            uptrend_color = '#00C851'
+            downtrend_color = '#FF4444'
+            signal_change_color = '#FFC107'
+            
+            # Detect signal change points
+            buy_signals = (trend == 1) & (trend.shift(1) == -1)
+            sell_signals = (trend == -1) & (trend.shift(1) == 1)
+            signal_changes = buy_signals | sell_signals
+            
+            # Create color array
+            color_arr = np.where(trend == 1, uptrend_color, downtrend_color)
+            
+            # Enhanced segmentation
+            segments = []
+            last_color = color_arr[0]
+            seg_x, seg_y = [display_df.index[0]], [supertrend_values.iloc[0]]
+            
+            for i in range(1, len(display_df.index)):
+                current_color = color_arr[i]
+                
+                if signal_changes.iloc[i]:
+                    if len(seg_x) > 1:
+                        segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                    segments.append(([display_df.index[i-1], display_df.index[i]], 
+                                  [supertrend_values.iloc[i-1], supertrend_values.iloc[i]], 
+                                  signal_change_color))
+                    seg_x, seg_y = [display_df.index[i]], [supertrend_values.iloc[i]]
+                    last_color = current_color
+                elif current_color != last_color:
+                    segments.append((seg_x.copy(), seg_y.copy(), last_color))
+                    seg_x, seg_y = [display_df.index[i-1]], [supertrend_values.iloc[i-1]]
+                    last_color = current_color
+                
+                seg_x.append(display_df.index[i])
+                seg_y.append(supertrend_values.iloc[i])
+            
+            if len(seg_x) > 0:
+                segments.append((seg_x, seg_y, last_color))
+            
+            # Plot segments with modern styling
+            legend_shown = {uptrend_color: False, downtrend_color: False, signal_change_color: False}
+            for seg_x, seg_y, seg_color in segments:
+                if seg_color == uptrend_color:
+                    legend_name = 'SuperTrend (Uptrend)'
+                elif seg_color == downtrend_color:
+                    legend_name = 'SuperTrend (Downtrend)'
+                elif seg_color == signal_change_color:
+                    legend_name = 'SuperTrend (Signal Change)'
+                else:
+                    legend_name = 'SuperTrend'
+                
+                show_legend = not legend_shown.get(seg_color, False)
+                legend_shown[seg_color] = True
+                
+                linewidth = 4 if seg_color == signal_change_color else 3
+                alpha = 0.95 if seg_color == signal_change_color else 0.9
+                
+                ax2.plot(seg_x, seg_y, color=seg_color, linewidth=linewidth, 
+                        alpha=alpha, label=legend_name if show_legend else "")
+                
+                if seg_color != signal_change_color:
+                    ax2.plot(seg_x, seg_y, color=seg_color, linewidth=linewidth+2, 
+                            alpha=0.3, label="")
+            
+            # Enhanced signal markers
+            buy_idx = display_df.index[(trend == 1) & (trend.shift(1) == -1)]
+            sell_idx = display_df.index[(trend == -1) & (trend.shift(1) == 1)]
+            
+            if len(buy_idx) > 0:
+                buy_values = supertrend_values.loc[buy_idx]
+                ax2.scatter(buy_idx, buy_values, color=uptrend_color, s=100, 
+                           marker='^', edgecolors='white', linewidth=2, 
+                           alpha=0.95, label='BUY Signal', zorder=5)
+                ax2.scatter(buy_idx, buy_values, color=uptrend_color, s=150, 
+                           marker='o', alpha=0.4, label="", zorder=4)
+            
+            if len(sell_idx) > 0:
+                sell_values = supertrend_values.loc[sell_idx]
+                ax2.scatter(sell_idx, sell_values, color=downtrend_color, s=100, 
+                           marker='v', edgecolors='white', linewidth=2, 
+                           alpha=0.95, label='SELL Signal', zorder=5)
+                ax2.scatter(sell_idx, sell_values, color=downtrend_color, s=150, 
+                           marker='o', alpha=0.4, label="", zorder=4)
+        
+        # Simple fallback for basic SuperTrend display
+        else:
+            # Check if we have PPrice1/PPrice2 or direct supertrend column
+            has_pprice = 'PPrice1' in display_df.columns and 'PPrice2' in display_df.columns
+            if has_pprice:
+                # Use PPrice1 for hover (support level)
+                p1 = display_df['PPrice1']
+                p2 = display_df['PPrice2']
+                direction = display_df.get('Direction', pd.Series(0, index=display_df.index))
+                
+                # Handle NaN values properly
+                valid_mask = ~(pd.isna(p1) | pd.isna(p2))
+                supertrend_values = np.full(len(direction), np.nan)
+                supertrend_values[valid_mask] = np.where(direction[valid_mask] > 0, p1[valid_mask], p2[valid_mask])
+                
+                # Determine trend direction
+                if 'Close' in display_df.columns:
+                    price_series = display_df['Close']
+                else:
+                    price_series = supertrend_values
+                
+                trend = np.where(price_series > supertrend_values, 1, -1)
+                trend = pd.Series(trend, index=display_df.index)
+                
+                # Colors for trend
+                uptrend_color = '#00C851'  # Green for uptrend
+                downtrend_color = '#FF4444'  # Red for downtrend
+                
+                # Plot SuperTrend line with color based on trend
+                for i in range(1, len(display_df.index)):
+                    if not pd.isna(supertrend_values[i]) and not pd.isna(supertrend_values[i-1]):
+                        color = uptrend_color if trend[i] == 1 else downtrend_color
+                        ax2.plot([display_df.index[i-1], display_df.index[i]], 
+                                [supertrend_values[i-1], supertrend_values[i]], 
+                                color=color, linewidth=3, alpha=0.8)
+                
+                # Add legend entries
+                ax2.plot([], [], color=uptrend_color, linewidth=3, label='SuperTrend (Uptrend)')
+                ax2.plot([], [], color=downtrend_color, linewidth=3, label='SuperTrend (Downtrend)')
     
     elif indicator_name == 'adx':
         if 'adx' in display_df.columns:
