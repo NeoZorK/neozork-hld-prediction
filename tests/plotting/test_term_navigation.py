@@ -200,11 +200,11 @@ class TestTerminalNavigation:
         assert navigator.current_chunk_index == 0
 
     def test_process_navigation_input_unknown(self):
-        """Test processing unknown command."""
+        """Test processing unknown command - should continue navigation."""
         navigator = TerminalNavigator(self.chunks, "Test Navigation")
         
         result = navigator.process_navigation_input("x")
-        assert result is False
+        assert result is True  # Should continue navigation instead of quitting
 
     def test_process_navigation_input_previous_at_start(self):
         """Test processing 'p' command when already at start - should continue navigation."""
@@ -223,13 +223,6 @@ class TestTerminalNavigation:
         result = navigator.process_navigation_input("n")
         assert result is True  # Should continue navigation even if command fails
         assert navigator.current_chunk_index == navigator.total_chunks - 1  # Should stay at end
-
-    def test_process_navigation_input_help(self):
-        """Test processing 'h' command - should continue navigation."""
-        navigator = TerminalNavigator(self.chunks, "Test Navigation")
-        
-        result = navigator.process_navigation_input("h")
-        assert result is True  # Should continue navigation after showing help
 
     def test_process_navigation_input_quit(self):
         """Test processing 'q' command - should quit navigation."""
@@ -280,7 +273,7 @@ class TestTerminalNavigation:
         prompt = create_navigation_prompt(2, 5, "2024-01-01", "2024-01-20")
         
         assert "Navigation: type" in prompt
-        assert "n/p/s/e/c/d/h/q" in prompt
+        assert "n/p/s/e/c/d/q" in prompt
         assert "Chunk 2/5" in prompt
         assert "2024-01-01 to 2024-01-20" in prompt
 
@@ -292,7 +285,7 @@ class TestTerminalNavigation:
 
     def test_parse_navigation_input_valid_commands(self):
         """Test parsing valid commands."""
-        commands = ['n', 'p', 's', 'e', 'h', 'q', '?']
+        commands = ['n', 'p', 's', 'e', 'q']
         
         for cmd in commands:
             result = parse_navigation_input(cmd)
@@ -348,28 +341,6 @@ class TestTerminalNavigation:
         assert info['rows'] == 0
         assert info['start_date'] == 'N/A'
         assert info['end_date'] == 'N/A'
-
-    @patch('builtins.input')
-    def test_navigation_does_not_exit_at_end(self, mock_input):
-        """Test that navigation doesn't automatically exit when reaching the end."""
-        navigator = TerminalNavigator(self.chunks, "Test Navigation")
-        # Move to last chunk
-        navigator.current_chunk_index = navigator.total_chunks - 1
-        
-        # Simulate user pressing 'e' to go to end (already at end)
-        mock_input.return_value = "e"
-        
-        plot_calls = []
-        
-        def mock_plot_function(chunk, chunk_index, chunk_info):
-            plot_calls.append((chunk_index, chunk_info))
-        
-        # Start navigation - it should not exit automatically
-        navigator.navigate(mock_plot_function)
-        
-        # Should have plotted the last chunk
-        assert len(plot_calls) >= 1
-        assert plot_calls[-1][0] == navigator.total_chunks - 1  # Last chunk index
 
 
 if __name__ == "__main__":

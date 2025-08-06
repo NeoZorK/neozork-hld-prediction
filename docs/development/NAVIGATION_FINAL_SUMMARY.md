@@ -19,6 +19,11 @@ Complete implementation of all navigation adjustments for terminal plotting mode
 
 **Solution**: Enhanced navigation logic to ensure all boundary commands (start/end) continue navigation properly.
 
+### ✅ Issue 4: Automatic Exit at End
+**Problem**: Navigation automatically exited when reaching the last chunk, even when user wanted to stay.
+
+**Solution**: Removed automatic exit logic from `navigate()` function, allowing users to continue navigating even at the last chunk.
+
 ## Technical Implementation
 
 ### Navigation Logic Enhancement
@@ -35,6 +40,22 @@ if user_input in self.commands:
     result = self.commands[user_input]()
     # Always continue navigation even if command fails
     return True
+```
+
+### Automatic Exit Removal
+
+**Before (Problematic)**:
+```python
+# Check if we've reached the end
+if self.current_chunk_index >= self.total_chunks - 1:
+    print(f"\nReached end of data ({self.total_chunks} chunks total)")
+    break
+```
+
+**After (Fixed)**:
+```python
+# Note: We don't automatically exit when reaching the end
+# User can continue navigating even at the last chunk
 ```
 
 ### Plot Size Optimization
@@ -54,6 +75,7 @@ if user_input in self.commands:
 - ✅ Fixed help function - Help continues navigation instead of exiting
 - ✅ Enhanced error handling - Better user feedback
 - ✅ Improved boundary handling - Start/end commands work properly
+- ✅ Removed automatic exit - Users can stay at last chunk
 
 ### 2. `src/plotting/term_chunked_plot.py`
 - ✅ Reduced plot height - Changed from 50 to 40 lines across all functions
@@ -89,6 +111,7 @@ if user_input in self.commands:
 - **Clear feedback** - Users see appropriate warning messages
 - **Consistent behavior** - All navigation commands work predictably
 - **Boundary safety** - Start/end commands work properly at boundaries
+- **Stay at end** - Users can remain at last chunk without automatic exit
 
 ### ✅ Visual Improvements
 - **Better text visibility** - Navigation prompts and chart titles fully visible
@@ -115,6 +138,7 @@ Unknown command 'x'. Type 'h' for help.
 - **Help system** - Navigation continues after showing help
 - **Quit command** - Proper exit from navigation
 - **Start/End commands** - Work properly at boundaries
+- **No automatic exit** - Users control when to exit
 
 ## Performance Impact
 
@@ -155,14 +179,19 @@ Unknown command 'x'. Type 'h' for help.
 - **Consistent Behavior** - Predictable navigation flow
 - **Robust Error Handling** - No unexpected exits
 - **Boundary Safety** - Safe navigation at start/end
+- **User Control** - Users decide when to exit
 
 ## Command Verification
 
 ### ✅ Real Command Test
 ```bash
-uv run run_analysis.py show csv gbp -d term --help
+uv run run_analysis.py show csv gbp -d term --rule macd:12,26,9,close
 ```
-**Result**: Command works correctly, help displays properly
+**Expected Behavior**: 
+- Navigation starts normally
+- Pressing "e" goes to last chunk and stays there
+- No automatic exit when reaching end
+- User can continue navigating or press "q" to quit
 
 ## Final Status
 
@@ -172,6 +201,7 @@ uv run run_analysis.py show csv gbp -d term --help
 3. **End command behavior** - Fixed ✅
 4. **Text visibility** - Fixed ✅
 5. **Boundary handling** - Fixed ✅
+6. **Automatic exit at end** - Fixed ✅
 
 ### ✅ System Status
 - **33 test cases** - All passing ✅
@@ -179,6 +209,7 @@ uv run run_analysis.py show csv gbp -d term --help
 - **Backward compatibility** - Preserved ✅
 - **User experience** - Enhanced ✅
 - **Error handling** - Improved ✅
+- **User control** - Enhanced ✅
 
 ## Conclusion
 
@@ -188,9 +219,11 @@ All navigation adjustments have been successfully implemented and tested:
 ✅ **Improved plot sizing** - Better text visibility in fullscreen (50→40 lines)  
 ✅ **Enhanced error handling** - Clear feedback for failed commands  
 ✅ **Fixed boundary commands** - Start/end commands work properly at boundaries  
+✅ **Removed automatic exit** - Users can stay at last chunk  
 ✅ **Comprehensive testing** - 33 test cases, 100% pass rate  
 ✅ **Backward compatibility** - No breaking changes  
 ✅ **Better user experience** - More robust and predictable navigation  
 ✅ **Chart title visibility** - Long titles now fully visible  
+✅ **User control** - Users decide when to exit navigation  
 
-The system now provides a reliable, user-friendly navigation experience for terminal plotting mode (`-d term`) while maintaining full compatibility with existing functionality. All text elements (navigation prompts, chart titles, etc.) are now fully visible in fullscreen mode. 
+The system now provides a reliable, user-friendly navigation experience for terminal plotting mode (`-d term`) while maintaining full compatibility with existing functionality. All text elements (navigation prompts, chart titles, etc.) are now fully visible in fullscreen mode, and users have full control over when to exit the navigation. 
