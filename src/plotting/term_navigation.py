@@ -279,10 +279,8 @@ class TerminalNavigator:
             # Plot current chunk
             plot_function(current_chunk, self.current_chunk_index, chunk_info)
             
-            # Check if we've reached the end
-            if self.current_chunk_index >= self.total_chunks - 1:
-                print(f"\nReached end of data ({self.total_chunks} chunks total)")
-                break
+            # Note: We don't automatically exit when reaching the end
+            # User can continue navigating even at the last chunk
             
             # Show navigation prompt
             user_input = self.show_navigation_prompt()
