@@ -1,0 +1,365 @@
+# -*- coding: utf-8 -*-
+# src/plotting/term_navigation.py
+
+"""
+Terminal navigation system for chunked plotting.
+Provides interactive navigation controls for viewing data chunks.
+"""
+
+import pandas as pd
+import plotext as plt
+from typing import Optional, List, Dict, Any, Callable
+import re
+from datetime import datetime, date
+import sys
+import os
+
+# Use absolute imports when possible, fallback to relative
+try:
+    from common import logger
+    from common.constants import TradingRule, BUY, SELL, NOTRADE
+except ImportError:
+    # Fallback to relative imports when run as module
+    from ..common import logger
+    from ..common.constants import TradingRule, BUY, SELL, NOTRADE
+
+
+class TerminalNavigator:
+    """
+    Interactive terminal navigator for chunked data viewing.
+    Supports navigation commands: n/p/s/e/c for next/previous/start/end/choose.
+    """
+    
+    def __init__(self, chunks: List[pd.DataFrame], title: str = "Terminal Navigation"):
+        """
+        Initialize the terminal navigator.
+        
+        Args:
+            chunks (List[pd.DataFrame]): List of data chunks
+            title (str): Navigation title
+        """
+        self.chunks = chunks
+        self.title = title
+        self.current_chunk_index = 0
+        self.total_chunks = len(chunks)
+        self.navigation_active = True
+        
+        # Navigation commands mapping
+        self.commands = {
+            'n': self._next_chunk,
+            'p': self._previous_chunk,
+            's': self._start_chunk,
+            'e': self._end_chunk,
+            'c': self._choose_chunk,
+            'q': self._quit_navigation,
+            'h': self._show_help,
+            '?': self._show_help
+        }
+    
+    def _next_chunk(self) -> bool:
+        """Navigate to next chunk."""
+        if self.current_chunk_index < self.total_chunks - 1:
+            self.current_chunk_index += 1
+            return True
+        else:
+            logger.print_warning("Already at the last chunk")
+            return False
+    
+    def _previous_chunk(self) -> bool:
+        """Navigate to previous chunk."""
+        if self.current_chunk_index > 0:
+            self.current_chunk_index -= 1
+            return True
+        else:
+            logger.print_warning("Already at the first chunk")
+            return False
+    
+    def _start_chunk(self) -> bool:
+        """Navigate to first chunk."""
+        if self.current_chunk_index != 0:
+            self.current_chunk_index = 0
+            return True
+        else:
+            logger.print_warning("Already at the first chunk")
+            return False
+    
+    def _end_chunk(self) -> bool:
+        """Navigate to last chunk."""
+        if self.current_chunk_index != self.total_chunks - 1:
+            self.current_chunk_index = self.total_chunks - 1
+            return True
+        else:
+            logger.print_warning("Already at the last chunk")
+            return False
+    
+    def _choose_chunk(self) -> bool:
+        """Choose specific chunk by number."""
+        try:
+            choice = input(f"Enter chunk number (1-{self.total_chunks}): ").strip()
+            chunk_num = int(choice)
+            if 1 <= chunk_num <= self.total_chunks:
+                self.current_chunk_index = chunk_num - 1
+                return True
+            else:
+                logger.print_error(f"Invalid chunk number. Must be between 1 and {self.total_chunks}")
+                return False
+        except ValueError:
+            logger.print_error("Invalid input. Please enter a number.")
+            return False
+        except KeyboardInterrupt:
+            print("\nCancelled chunk selection.")
+            return False
+    
+    def _choose_date(self) -> bool:
+        """Choose chunk by date."""
+        try:
+            date_input = input("Enter date (YYYY-MM-DD or YYYY-MM-DD HH:MM): ").strip()
+            
+            # Try different date formats
+            date_formats = [
+                '%Y-%m-%d',
+                '%Y-%m-%d %H:%M',
+                '%Y-%m-%d %H:%M:%S'
+            ]
+            
+            target_date = None
+            for fmt in date_formats:
+                try:
+                    target_date = datetime.strptime(date_input, fmt)
+                    break
+                except ValueError:
+                    continue
+            
+            if target_date is None:
+                logger.print_error("Invalid date format. Use YYYY-MM-DD or YYYY-MM-DD HH:MM")
+                return False
+            
+            # Find chunk containing the target date
+            for i, chunk in enumerate(self.chunks):
+                if len(chunk) > 0:
+                    chunk_start = chunk.index[0]
+                    chunk_end = chunk.index[-1]
+                    
+                    # Convert to datetime if needed
+                    if isinstance(chunk_start, str):
+                        try:
+                            chunk_start = datetime.strptime(chunk_start, '%Y-%m-%d %H:%M:%S')
+                        except ValueError:
+                            try:
+                                chunk_start = datetime.strptime(chunk_start, '%Y-%m-%d')
+                            except ValueError:
+                                continue
+                    
+                    if isinstance(chunk_end, str):
+                        try:
+                            chunk_end = datetime.strptime(chunk_end, '%Y-%m-%d %H:%M:%S')
+                        except ValueError:
+                            try:
+                                chunk_end = datetime.strptime(chunk_end, '%Y-%m-%d')
+                            except ValueError:
+                                continue
+                    
+                    if chunk_start <= target_date <= chunk_end:
+                        self.current_chunk_index = i
+                        logger.print_success(f"Found date in chunk {i+1}")
+                        return True
+            
+            logger.print_warning(f"Date {date_input} not found in any chunk")
+            return False
+            
+        except KeyboardInterrupt:
+            print("\nCancelled date selection.")
+            return False
+    
+    def _quit_navigation(self) -> bool:
+        """Quit navigation."""
+        self.navigation_active = False
+        return True
+    
+    def _show_help(self) -> bool:
+        """Show navigation help."""
+        print("\n" + "="*60)
+        print("TERMINAL NAVIGATION HELP")
+        print("="*60)
+        print("Navigation Commands:")
+        print("  n - Next chunk")
+        print("  p - Previous chunk")
+        print("  s - Start (first chunk)")
+        print("  e - End (last chunk)")
+        print("  c - Choose chunk by number")
+        print("  d - Choose chunk by date (YYYY-MM-DD)")
+        print("  h/? - Show this help")
+        print("  q - Quit navigation")
+        print("  Enter - Continue to next chunk (original behavior)")
+        print("="*60)
+        return False
+    
+    def get_current_chunk(self) -> pd.DataFrame:
+        """Get current chunk."""
+        return self.chunks[self.current_chunk_index]
+    
+    def get_current_chunk_info(self) -> Dict[str, Any]:
+        """Get information about current chunk."""
+        chunk = self.get_current_chunk()
+        if len(chunk) == 0:
+            return {
+                'index': self.current_chunk_index + 1,
+                'total': self.total_chunks,
+                'start_date': 'N/A',
+                'end_date': 'N/A',
+                'rows': 0
+            }
+        
+        start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
+        end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
+        
+        return {
+            'index': self.current_chunk_index + 1,
+            'total': self.total_chunks,
+            'start_date': start_date,
+            'end_date': end_date,
+            'rows': len(chunk)
+        }
+    
+    def show_navigation_prompt(self) -> str:
+        """Show navigation prompt and get user input."""
+        info = self.get_current_chunk_info()
+        
+        print(f"\n[Navigation: type 'n/p/s/e/c/d/h/q' -> next/previous/start/end/choose chunk/choose date/help/quit]")
+        print(f"Current: Chunk {info['index']}/{info['total']} ({info['start_date']} to {info['end_date']})")
+        
+        user_input = input("Press Enter to continue or type navigation command: ").strip().lower()
+        return user_input
+    
+    def process_navigation_input(self, user_input: str) -> bool:
+        """
+        Process navigation input and return True if should continue navigation.
+        
+        Args:
+            user_input (str): User input command
+            
+        Returns:
+            bool: True if should continue navigation, False if should quit
+        """
+        if not user_input:
+            # Empty input - continue to next chunk (original behavior)
+            return self._next_chunk()
+        
+        # Check for date selection command
+        if user_input.startswith('d'):
+            return self._choose_date()
+        
+        # Check for chunk selection with number
+        if user_input.startswith('c'):
+            return self._choose_chunk()
+        
+        # Check for other navigation commands
+        if user_input in self.commands:
+            return self.commands[user_input]()
+        
+        # Unknown command
+        logger.print_warning(f"Unknown command '{user_input}'. Type 'h' for help.")
+        return False
+    
+    def navigate(self, plot_function: Callable[[pd.DataFrame, int, Dict[str, Any]], None]) -> None:
+        """
+        Main navigation loop.
+        
+        Args:
+            plot_function: Function to call for plotting each chunk
+        """
+        while self.navigation_active and self.current_chunk_index < self.total_chunks:
+            # Get current chunk info
+            chunk_info = self.get_current_chunk_info()
+            current_chunk = self.get_current_chunk()
+            
+            # Plot current chunk
+            plot_function(current_chunk, self.current_chunk_index, chunk_info)
+            
+            # Check if we've reached the end
+            if self.current_chunk_index >= self.total_chunks - 1:
+                print(f"\nReached end of data ({self.total_chunks} chunks total)")
+                break
+            
+            # Show navigation prompt
+            user_input = self.show_navigation_prompt()
+            
+            # Process navigation input
+            if not self.process_navigation_input(user_input):
+                # If process_navigation_input returns False, it means we should quit
+                break
+        
+        if self.navigation_active:
+            logger.print_success("Navigation completed successfully!")
+
+
+def create_navigation_prompt(chunk_index: int, total_chunks: int, start_date: str, end_date: str) -> str:
+    """
+    Create navigation prompt string.
+    
+    Args:
+        chunk_index (int): Current chunk index (1-based)
+        total_chunks (int): Total number of chunks
+        start_date (str): Start date of current chunk
+        end_date (str): End date of current chunk
+        
+    Returns:
+        str: Navigation prompt string
+    """
+    return f"\n[Navigation: type 'n/p/s/e/c/d/h/q' -> next/previous/start/end/choose chunk/choose date/help/quit]\nCurrent: Chunk {chunk_index}/{total_chunks} ({start_date} to {end_date})\nPress Enter to continue or type navigation command: "
+
+
+def parse_navigation_input(user_input: str) -> Dict[str, Any]:
+    """
+    Parse navigation input and return command details.
+    
+    Args:
+        user_input (str): User input
+        
+    Returns:
+        Dict[str, Any]: Parsed command details
+    """
+    user_input = user_input.strip().lower()
+    
+    if not user_input:
+        return {'command': 'next', 'valid': True}
+    
+    # Check for date selection
+    if user_input.startswith('d'):
+        return {'command': 'date', 'valid': True}
+    
+    # Check for chunk selection
+    if user_input.startswith('c'):
+        return {'command': 'choose', 'valid': True}
+    
+    # Check for other commands
+    commands = ['n', 'p', 's', 'e', 'h', 'q', '?']
+    if user_input in commands:
+        return {'command': user_input, 'valid': True}
+    
+    return {'command': user_input, 'valid': False, 'error': f"Unknown command '{user_input}'"}
+
+
+def validate_date_input(date_str: str) -> Optional[datetime]:
+    """
+    Validate and parse date input.
+    
+    Args:
+        date_str (str): Date string to validate
+        
+    Returns:
+        Optional[datetime]: Parsed datetime or None if invalid
+    """
+    date_formats = [
+        '%Y-%m-%d',
+        '%Y-%m-%d %H:%M',
+        '%Y-%m-%d %H:%M:%S'
+    ]
+    
+    for fmt in date_formats:
+        try:
+            return datetime.strptime(date_str, fmt)
+        except ValueError:
+            continue
+    
+    return None 
