@@ -13,6 +13,7 @@ import plotext as plt
 from typing import Optional, List, Tuple, Dict, Any
 import math
 import re
+import sys
 
 # Use absolute imports when possible, fallback to relative
 try:
@@ -29,6 +30,30 @@ try:
 except ImportError:
     # Fallback to relative imports when run as module
     from ..plotting.term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
+
+
+def get_terminal_plot_size() -> Tuple[int, int]:
+    """
+    Determine the plot size for terminal mode based on whether -d term is used.
+    
+    Returns:
+        Tuple[int, int]: (width, height) for the plot
+    """
+    # Check if -d term is explicitly used in command line arguments
+    is_term_mode = False
+    if len(sys.argv) > 1:
+        for i, arg in enumerate(sys.argv):
+            if arg in ['-d', '--draw'] and i + 1 < len(sys.argv):
+                if sys.argv[i + 1] == 'term':
+                    is_term_mode = True
+                    break
+    
+    if is_term_mode:
+        # Reduced height for -d term mode
+        return (200, 25)  # Reduced from 50 to 25 (50% reduction)
+    else:
+        # Default size for other terminal modes
+        return (200, 50)
 
 
 def calculate_optimal_chunk_size(total_rows: int, target_chunks: int = 10, min_chunk_size: int = 50, max_chunk_size: int = 200) -> int:
@@ -193,7 +218,7 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
                 
                 # Set up layout with full screen size - NO VOLUME CHARTS
                 plt.subplots(1, 1)  # Single price panel only
-                plot_size = (200, 50)
+                plot_size = get_terminal_plot_size()
                 
                 plt.plot_size(*plot_size)
                 plt.theme(style)
@@ -233,7 +258,7 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
                 
                 # Set up layout with full screen size - NO VOLUME CHARTS
                 plt.subplots(1, 1)  # Single price panel only
-                plot_size = (200, 50)
+                plot_size = get_terminal_plot_size()
                 
                 plt.plot_size(*plot_size)
                 plt.theme(style)
@@ -329,7 +354,8 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
                     plt.clear_data()
                     plt.clear_figure()
                     plt.subplots(1, 1)
-                    plt.plot_size(200, 40)  # Further reduced height for better text visibility  # Reduced height to make room for navigation text
+                    plot_size = get_terminal_plot_size()
+                    plt.plot_size(*plot_size)
                     plt.theme(style)
                     draw_ohlc_candles(chunk, x_values)
                     plt.title(f"{title} - OHLC (Chunk {chunk_info['index']}) - {start_date} to {end_date}")
@@ -373,7 +399,8 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
                     plt.clear_data()
                     plt.clear_figure()
                     plt.subplots(1, 1)
-                    plt.plot_size(200, 40)  # Further reduced height for better text visibility  # Reduced height to make room for navigation text
+                    plot_size = get_terminal_plot_size()
+                    plt.plot_size(*plot_size)
                     plt.theme(style)
                     draw_ohlc_candles(chunk, x_values)
                     plt.title(f"{title} - OHLC (Chunk {i+1}) - {start_date} to {end_date}")
@@ -440,7 +467,8 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
                 
                 # Set up plot with full screen size
                 plt.subplots(1, 1)
-                plt.plot_size(200, 40)  # Further reduced height for better text visibility  # Reduced height to make room for navigation text  # Much larger plot size
+                plot_size = get_terminal_plot_size()
+                plt.plot_size(*plot_size)
                 plt.theme(style)
                 
                 # Create time axis with dates for this chunk
@@ -487,7 +515,8 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
                 
                 # Set up plot with full screen size
                 plt.subplots(1, 1)
-                plt.plot_size(200, 40)  # Further reduced height for better text visibility  # Reduced height to make room for navigation text  # Much larger plot size
+                plot_size = get_terminal_plot_size()
+                plt.plot_size(*plot_size)
                 plt.theme(style)
                 
                 # Create time axis with dates for this chunk
@@ -561,7 +590,8 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
             
             # Set up plot with full screen size
             plt.subplots(1, 1)
-            plt.plot_size(200, 40)  # Further reduced height for better text visibility  # Reduced height to make room for navigation text  # Much larger plot size
+            plot_size = get_terminal_plot_size()
+            plt.plot_size(*plot_size)
             plt.theme(style)
             
             # Create time axis with dates for this chunk
@@ -635,7 +665,8 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
             
             # Set up plot with full screen size
             plt.subplots(1, 1)
-            plt.plot_size(200, 40)  # Further reduced height for better text visibility  # Reduced height to make room for navigation text  # Much larger plot size
+            plot_size = get_terminal_plot_size()
+            plt.plot_size(*plot_size)
             plt.theme(style)
             
             # Create time axis with dates for this chunk
@@ -711,7 +742,8 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
             
             # Set up plot with full screen size
             plt.subplots(1, 1)
-            plt.plot_size(200, 40)  # Further reduced height for better text visibility  # Reduced height to make room for navigation text  # Much larger plot size
+            plot_size = get_terminal_plot_size()
+            plt.plot_size(*plot_size)
             plt.theme(style)
             
             # Create time axis with dates for this chunk
@@ -772,7 +804,8 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
         
         # Set up plot with full screen size
         plt.subplots(1, 1)
-        plt.plot_size(200, 40)  # Further reduced height for better text visibility  # Reduced height to make room for navigation text  # Much larger plot size
+        plot_size = get_terminal_plot_size()
+        plt.plot_size(*plot_size)
         plt.theme(style)
         
         # Create time axis with dates
