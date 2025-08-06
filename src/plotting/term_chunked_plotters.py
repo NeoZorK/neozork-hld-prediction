@@ -386,6 +386,7 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
         df (pd.DataFrame): DataFrame with SR data
         title (str): Base title for plots
         style (str): Plot style
+        use_navigation (bool): Whether to use interactive navigation
     """
     try:
         logger.print_info("Generating SR chunked plots with support/resistance lines...")
@@ -397,44 +398,88 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
         
         logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
         
-        # Plot each chunk
-        for i, chunk in enumerate(chunks):
-            chunk_start_idx = i * chunk_size
-            chunk_end_idx = min((i + 1) * chunk_size, total_rows)
+        if use_navigation:
+            # Use navigation system
+            navigator = TerminalNavigator(chunks, title)
             
-            # Clear previous plots
-            clear_plot()
+            def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
+                """Plot a single chunk with navigation info."""
+                if len(chunk) == 0:
+                    logger.print_warning("Empty chunk, skipping...")
+                    return
+                
+                # Clear previous plots
+                clear_plot()
+                
+                # Get start and end dates for this chunk
+                start_date = chunk_info['start_date']
+                end_date = chunk_info['end_date']
+                
+                # Set up plot with full screen size
+                setup_plot_layout(style)
+                
+                # Create time axis with dates for this chunk
+                x_values, x_labels = create_time_axis(chunk)
+                
+                # OHLC Candlestick Chart (always as first layer, like in other rules)
+                draw_ohlc_candles(chunk, x_values)
+                
+                # Add SR-specific overlays (two lines without signals)
+                _add_sr_overlays_to_chunk(chunk, x_values)
+                
+                plt.title(f"{title} - Support/Resistance (Chunk {chunk_info['index']}/{chunk_info['total']}) - {start_date} to {end_date}")
+                plt.xlabel("Date/Time")
+                plt.ylabel("Price/Value")
+                
+                # Set x-axis ticks to show dates
+                if len(x_values) > 0:
+                    step = max(1, len(x_values) // 10)  # Show ~10 date labels
+                    plt.xticks(x_values[::step], x_labels[::step])
+                
+                plt.show()
             
-            # Get start and end dates for this chunk
-            start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
-            end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
+            # Start navigation
+            navigator.navigate(plot_chunk_with_navigation)
             
-            # Set up plot with full screen size
-            setup_plot_layout(style)
-            
-            # Create time axis with dates for this chunk
-            x_values, x_labels = create_time_axis(chunk)
-            
-            # OHLC Candlestick Chart
-            draw_ohlc_candles(chunk, x_values)
-            
-            # Add SR-specific overlays (two lines without signals)
-            _add_sr_overlays_to_chunk(chunk, x_values)
-            
-            plt.title(f"{title} - Support/Resistance (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
-            plt.xlabel("Date/Time")
-            plt.ylabel("Price/Value")
-            
-            # Set x-axis ticks to show dates
-            if len(x_values) > 0:
-                step = max(1, len(x_values) // 10)  # Show ~10 date labels
-                plt.xticks(x_values[::step], x_labels[::step])
-            
-            plt.show()
-            
-            # Add pause between chunks
-            if i < len(chunks) - 1:
-                input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
+        else:
+            # Original non-navigation behavior
+            for i, chunk in enumerate(chunks):
+                chunk_start_idx = i * chunk_size
+                chunk_end_idx = min((i + 1) * chunk_size, total_rows)
+                
+                # Clear previous plots
+                clear_plot()
+                
+                # Get start and end dates for this chunk
+                start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
+                end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
+                
+                # Set up plot with full screen size
+                setup_plot_layout(style)
+                
+                # Create time axis with dates for this chunk
+                x_values, x_labels = create_time_axis(chunk)
+                
+                # OHLC Candlestick Chart
+                draw_ohlc_candles(chunk, x_values)
+                
+                # Add SR-specific overlays (two lines without signals)
+                _add_sr_overlays_to_chunk(chunk, x_values)
+                
+                plt.title(f"{title} - Support/Resistance (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
+                plt.xlabel("Date/Time")
+                plt.ylabel("Price/Value")
+                
+                # Set x-axis ticks to show dates
+                if len(x_values) > 0:
+                    step = max(1, len(x_values) // 10)  # Show ~10 date labels
+                    plt.xticks(x_values[::step], x_labels[::step])
+                
+                plt.show()
+                
+                # Add pause between chunks
+                if i < len(chunks) - 1:
+                    input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
         
         logger.print_success(f"Successfully displayed {len(chunks)} SR chunks!")
         
@@ -710,4 +755,138 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
             plt.show()
         
     except Exception as e:
-        logger.print_error(f"Error plotting field {field}: {e}") 
+        logger.print_error(f"Error plotting field {field}: {e}")
+
+
+def create_navigation_template(rule_name: str, plot_function: callable, overlay_function: callable = None) -> callable:
+    """
+    Create a navigation-enabled plotting function for new rules.
+    
+    Args:
+        rule_name (str): Name of the rule (e.g., "MACD", "Bollinger")
+        plot_function (callable): Function to create the plot
+        overlay_function (callable, optional): Function to add overlays
+        
+    Returns:
+        callable: Navigation-enabled plotting function
+    """
+    def plot_rule_chunks(df: pd.DataFrame, title: str = f"{rule_name} Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
+        """
+        Plot {rule_name} data in chunks with navigation support.
+        
+        Args:
+            df (pd.DataFrame): DataFrame with {rule_name} data
+            title (str): Base title for plots
+            style (str): Plot style
+            use_navigation (bool): Whether to use interactive navigation
+        """
+        try:
+            logger.print_info(f"Generating {rule_name} chunked plots...")
+            
+            # Calculate optimal chunk size
+            total_rows = len(df)
+            chunk_size = calculate_optimal_chunk_size(total_rows)
+            chunks = split_dataframe_into_chunks(df, chunk_size)
+            
+            logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
+            
+            if use_navigation:
+                # Use navigation system
+                navigator = TerminalNavigator(chunks, title)
+                
+                def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
+                    """Plot a single chunk with navigation info."""
+                    if len(chunk) == 0:
+                        logger.print_warning("Empty chunk, skipping...")
+                        return
+                    
+                    # Clear previous plots
+                    clear_plot()
+                    
+                    # Get start and end dates for this chunk
+                    start_date = chunk_info['start_date']
+                    end_date = chunk_info['end_date']
+                    
+                    # Set up plot with full screen size
+                    setup_plot_layout(style)
+                    
+                    # Create time axis with dates for this chunk
+                    x_values, x_labels = create_time_axis(chunk)
+                    
+                    # OHLC Candlestick Chart (always as first layer, like in other rules)
+                    draw_ohlc_candles(chunk, x_values)
+                    
+                    # Add rule-specific overlays if provided
+                    if overlay_function:
+                        overlay_function(chunk, x_values)
+                    
+                    plt.title(f"{title} - {rule_name} (Chunk {chunk_info['index']}/{chunk_info['total']}) - {start_date} to {end_date}")
+                    plt.xlabel("Date/Time")
+                    plt.ylabel("Price/Value")
+                    
+                    # Set x-axis ticks to show dates
+                    if len(x_values) > 0:
+                        step = max(1, len(x_values) // 10)  # Show ~10 date labels
+                        plt.xticks(x_values[::step], x_labels[::step])
+                    
+                    plt.show()
+                
+                # Start navigation
+                navigator.navigate(plot_chunk_with_navigation)
+                
+            else:
+                # Original non-navigation behavior
+                for i, chunk in enumerate(chunks):
+                    chunk_start_idx = i * chunk_size
+                    chunk_end_idx = min((i + 1) * chunk_size, total_rows)
+                    
+                    # Clear previous plots
+                    clear_plot()
+                    
+                    # Get start and end dates for this chunk
+                    start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
+                    end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
+                    
+                    # Set up plot with full screen size
+                    setup_plot_layout(style)
+                    
+                    # Create time axis with dates for this chunk
+                    x_values, x_labels = create_time_axis(chunk)
+                    
+                    # OHLC Candlestick Chart
+                    draw_ohlc_candles(chunk, x_values)
+                    
+                    # Add rule-specific overlays if provided
+                    if overlay_function:
+                        overlay_function(chunk, x_values)
+                    
+                    plt.title(f"{title} - {rule_name} (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
+                    plt.xlabel("Date/Time")
+                    plt.ylabel("Price/Value")
+                    
+                    # Set x-axis ticks to show dates
+                    if len(x_values) > 0:
+                        step = max(1, len(x_values) // 10)  # Show ~10 date labels
+                        plt.xticks(x_values[::step], x_labels[::step])
+                    
+                    plt.show()
+                    
+                    # Add pause between chunks
+                    if i < len(chunks) - 1:
+                        input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
+            
+            logger.print_success(f"Successfully displayed {len(chunks)} {rule_name} chunks!")
+            
+        except Exception as e:
+            logger.print_error(f"Error generating {rule_name} chunked plots: {e}")
+    
+    return plot_rule_chunks
+
+
+# Example usage for future rules:
+# def _add_macd_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
+#     """Add MACD-specific overlays to chunk."""
+#     # MACD overlay implementation
+#     pass
+# 
+# plot_macd_chunks = create_navigation_template("MACD", None, _add_macd_overlays_to_chunk) 
