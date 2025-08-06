@@ -219,12 +219,12 @@ class TestTermChunkedStatistics:
 class TestTermChunkedPlotters:
     """Test plotter functions for terminal chunked plotting."""
     
-    @patch('src.plotting.term_chunked_utils.calculate_optimal_chunk_size')
-    @patch('src.plotting.term_chunked_utils.split_dataframe_into_chunks')
-    @patch('src.plotting.term_chunked_utils.clear_plot')
-    @patch('src.plotting.term_chunked_utils.setup_plot_layout')
-    @patch('src.plotting.term_chunked_utils.create_time_axis')
-    @patch('src.plotting.term_chunked_utils.draw_ohlc_candles')
+    @patch('src.plotting.term_chunked_plotters.calculate_optimal_chunk_size')
+    @patch('src.plotting.term_chunked_plotters.split_dataframe_into_chunks')
+    @patch('src.plotting.term_chunked_plotters.clear_plot')
+    @patch('src.plotting.term_chunked_plotters.setup_plot_layout')
+    @patch('src.plotting.term_chunked_plotters.create_time_axis')
+    @patch('src.plotting.term_chunked_plotters.draw_ohlc_candles')
     @patch('plotext.show')
     @patch('plotext.title')
     @patch('plotext.xlabel')
@@ -259,9 +259,9 @@ class TestTermChunkedPlotters:
         mock_draw_candles.assert_called()
         mock_show.assert_called()
     
-    @patch('src.plotting.term_chunked_utils.clear_plot')
-    @patch('src.plotting.term_chunked_utils.setup_plot_layout')
-    @patch('src.plotting.term_chunked_utils.create_time_axis')
+    @patch('src.plotting.term_chunked_plotters.clear_plot')
+    @patch('src.plotting.term_chunked_plotters.setup_plot_layout')
+    @patch('src.plotting.term_chunked_plotters.create_time_axis')
     @patch('plotext.plot')
     @patch('plotext.show')
     @patch('plotext.title')
@@ -298,7 +298,7 @@ class TestTermChunkedPlot:
         df = pd.DataFrame({'Open': [1], 'High': [1], 'Low': [1], 'Close': [1]})
         
         # Mock the actual function calls to avoid real execution
-        with patch('src.plotting.term_chunked_plotters.plot_ohlcv_chunks') as mock_plot:
+        with patch('src.plotting.term_chunked_plot.plot_ohlcv_chunks') as mock_plot:
             plot_chunked_terminal(df, 'OHLCV', 'Test', 'matrix', False)
             mock_plot.assert_called_once_with(df, 'Test', 'matrix', False)
     
@@ -306,7 +306,7 @@ class TestTermChunkedPlot:
         """Test main function with AUTO rule."""
         df = pd.DataFrame({'Open': [1], 'High': [1], 'Low': [1], 'Close': [1]})
         
-        with patch('src.plotting.term_chunked_plotters.plot_auto_chunks') as mock_plot:
+        with patch('src.plotting.term_chunked_plot.plot_auto_chunks') as mock_plot:
             plot_chunked_terminal(df, 'AUTO', 'Test', 'matrix', False)
             mock_plot.assert_called_once_with(df, 'Test', 'matrix', False)
     
@@ -314,7 +314,7 @@ class TestTermChunkedPlot:
         """Test main function with PV rule."""
         df = pd.DataFrame({'Open': [1], 'High': [1], 'Low': [1], 'Close': [1]})
         
-        with patch('src.plotting.term_chunked_plotters.plot_pv_chunks') as mock_plot:
+        with patch('src.plotting.term_chunked_plot.plot_pv_chunks') as mock_plot:
             plot_chunked_terminal(df, 'PV', 'Test', 'matrix', False)
             mock_plot.assert_called_once_with(df, 'Test', 'matrix', False)
     
@@ -322,7 +322,7 @@ class TestTermChunkedPlot:
         """Test main function with SR rule."""
         df = pd.DataFrame({'Open': [1], 'High': [1], 'Low': [1], 'Close': [1]})
         
-        with patch('src.plotting.term_chunked_plotters.plot_sr_chunks') as mock_plot:
+        with patch('src.plotting.term_chunked_plot.plot_sr_chunks') as mock_plot:
             plot_chunked_terminal(df, 'SR', 'Test', 'matrix', False)
             mock_plot.assert_called_once_with(df, 'Test', 'matrix', False)
     
@@ -330,7 +330,7 @@ class TestTermChunkedPlot:
         """Test main function with PHLD rule."""
         df = pd.DataFrame({'Open': [1], 'High': [1], 'Low': [1], 'Close': [1]})
         
-        with patch('src.plotting.term_chunked_plotters.plot_phld_chunks') as mock_plot:
+        with patch('src.plotting.term_chunked_plot.plot_phld_chunks') as mock_plot:
             plot_chunked_terminal(df, 'PHLD', 'Test', 'matrix', False)
             mock_plot.assert_called_once_with(df, 'Test', 'matrix', False)
     
@@ -338,15 +338,15 @@ class TestTermChunkedPlot:
         """Test main function with RSI rule."""
         df = pd.DataFrame({'Open': [1], 'High': [1], 'Low': [1], 'Close': [1]})
         
-        with patch('src.plotting.term_chunked_plotters.plot_rsi_chunks') as mock_plot:
+        with patch('src.plotting.term_chunked_plot.plot_rsi_chunks') as mock_plot:
             plot_chunked_terminal(df, 'RSI', 'Test', 'matrix', False)
-            mock_plot.assert_called_once_with(df, 'RSI', 'Test', 'matrix', False)
+            mock_plot.assert_called_once_with(df, 'rsi(14,70,30,close)', 'Test', 'matrix', False)
     
     def test_plot_chunked_terminal_rsi_parameterized(self):
         """Test main function with parameterized RSI rule."""
         df = pd.DataFrame({'Open': [1], 'High': [1], 'Low': [1], 'Close': [1]})
         
-        with patch('src.plotting.term_chunked_plotters.plot_rsi_chunks') as mock_plot:
+        with patch('src.plotting.term_chunked_plot.plot_rsi_chunks') as mock_plot:
             plot_chunked_terminal(df, 'rsi(14,70,30,close)', 'Test', 'matrix', False)
             mock_plot.assert_called_once_with(df, 'rsi(14,70,30,close)', 'Test', 'matrix', False)
     
@@ -354,6 +354,6 @@ class TestTermChunkedPlot:
         """Test main function with unknown rule."""
         df = pd.DataFrame({'Open': [1], 'High': [1], 'Low': [1], 'Close': [1]})
         
-        with patch('src.plotting.term_chunked_plotters.plot_ohlcv_chunks') as mock_plot:
+        with patch('src.plotting.term_chunked_plot.plot_ohlcv_chunks') as mock_plot:
             plot_chunked_terminal(df, 'UNKNOWN_RULE', 'Test', 'matrix', False)
             mock_plot.assert_called_once_with(df, 'Test', 'matrix', False) 

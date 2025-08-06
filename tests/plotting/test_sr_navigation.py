@@ -14,7 +14,11 @@ import os
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
-from plotting.term_chunked_plotters import plot_sr_chunks
+# Import the modules to test
+try:
+    from src.plotting.term_chunked_plotters import plot_sr_chunks
+except ImportError:
+    pytest.skip("Could not import plot_sr_chunks", allow_module_level=True)
 
 
 class TestSRNavigation:

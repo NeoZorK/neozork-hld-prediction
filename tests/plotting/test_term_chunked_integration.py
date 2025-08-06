@@ -60,7 +60,7 @@ class TestTermChunkedIntegration:
         reconstructed_df = pd.concat(chunks)
         pd.testing.assert_frame_equal(df, reconstructed_df)
     
-    @patch('src.plotting.term_chunked_plotters.plot_ohlcv_chunks')
+    @patch('src.plotting.term_chunked_plot.plot_ohlcv_chunks')
     def test_plot_chunked_terminal_ohlcv_integration(self, mock_plot):
         """Test main function with OHLCV rule."""
         # Create test DataFrame
@@ -77,7 +77,7 @@ class TestTermChunkedIntegration:
         # Verify that the correct function was called
         mock_plot.assert_called_once_with(df, 'Test OHLC', 'matrix', False)
     
-    @patch('src.plotting.term_chunked_plotters.plot_auto_chunks')
+    @patch('src.plotting.term_chunked_plot.plot_auto_chunks')
     def test_plot_chunked_terminal_auto_integration(self, mock_plot):
         """Test main function with AUTO rule."""
         # Create test DataFrame
@@ -95,7 +95,7 @@ class TestTermChunkedIntegration:
         # Verify that the correct function was called
         mock_plot.assert_called_once_with(df, 'Test AUTO', 'matrix', False)
     
-    @patch('src.plotting.term_chunked_plotters.plot_pv_chunks')
+    @patch('src.plotting.term_chunked_plot.plot_pv_chunks')
     def test_plot_chunked_terminal_pv_integration(self, mock_plot):
         """Test main function with PV rule."""
         # Create test DataFrame
@@ -113,7 +113,7 @@ class TestTermChunkedIntegration:
         # Verify that the correct function was called
         mock_plot.assert_called_once_with(df, 'Test PV', 'matrix', False)
     
-    @patch('src.plotting.term_chunked_plotters.plot_sr_chunks')
+    @patch('src.plotting.term_chunked_plot.plot_sr_chunks')
     def test_plot_chunked_terminal_sr_integration(self, mock_plot):
         """Test main function with SR rule."""
         # Create test DataFrame
@@ -132,7 +132,7 @@ class TestTermChunkedIntegration:
         # Verify that the correct function was called
         mock_plot.assert_called_once_with(df, 'Test SR', 'matrix', False)
     
-    @patch('src.plotting.term_chunked_plotters.plot_phld_chunks')
+    @patch('src.plotting.term_chunked_plot.plot_phld_chunks')
     def test_plot_chunked_terminal_phld_integration(self, mock_plot):
         """Test main function with PHLD rule."""
         # Create test DataFrame
@@ -152,7 +152,7 @@ class TestTermChunkedIntegration:
         # Verify that the correct function was called
         mock_plot.assert_called_once_with(df, 'Test PHLD', 'matrix', False)
     
-    @patch('src.plotting.term_chunked_plotters.plot_rsi_chunks')
+    @patch('src.plotting.term_chunked_plot.plot_rsi_chunks')
     def test_plot_chunked_terminal_rsi_integration(self, mock_plot):
         """Test main function with RSI rule."""
         # Create test DataFrame
@@ -167,10 +167,10 @@ class TestTermChunkedIntegration:
         # Test the main function
         plot_chunked_terminal(df, 'RSI', 'Test RSI', 'matrix', False)
         
-        # Verify that the correct function was called
-        mock_plot.assert_called_once_with(df, 'RSI', 'Test RSI', 'matrix', False)
+        # Verify that the correct function was called with default RSI parameters
+        mock_plot.assert_called_once_with(df, 'rsi(14,70,30,close)', 'Test RSI', 'matrix', False)
     
-    @patch('src.plotting.term_chunked_plotters.plot_rsi_chunks')
+    @patch('src.plotting.term_chunked_plot.plot_rsi_chunks')
     def test_plot_chunked_terminal_rsi_parameterized_integration(self, mock_plot):
         """Test main function with parameterized RSI rule."""
         # Create test DataFrame
@@ -189,7 +189,7 @@ class TestTermChunkedIntegration:
         # Verify that the correct function was called
         mock_plot.assert_called_once_with(df, rule, 'Test RSI Param', 'matrix', False)
     
-    @patch('src.plotting.term_chunked_plotters.plot_ohlcv_chunks')
+    @patch('src.plotting.term_chunked_plot.plot_ohlcv_chunks')
     def test_plot_chunked_terminal_unknown_rule_integration(self, mock_plot):
         """Test main function with unknown rule."""
         # Create test DataFrame
