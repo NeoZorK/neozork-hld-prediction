@@ -141,21 +141,21 @@ class TestTerminalNavigation:
 
     @patch('builtins.input')
     def test_choose_chunk_invalid(self, mock_input):
-        """Test choosing chunk with invalid input."""
+        """Test choosing chunk with invalid input - should continue navigation."""
         navigator = TerminalNavigator(self.chunks, "Test Navigation")
         mock_input.return_value = "invalid"
         
         result = navigator._choose_chunk()
-        assert result is False
+        assert result is True  # Should continue navigation instead of exiting
 
     @patch('builtins.input')
     def test_choose_chunk_out_of_range(self, mock_input):
-        """Test choosing chunk with out of range input."""
+        """Test choosing chunk with out of range input - should continue navigation."""
         navigator = TerminalNavigator(self.chunks, "Test Navigation")
         mock_input.return_value = "999"
         
         result = navigator._choose_chunk()
-        assert result is False
+        assert result is True  # Should continue navigation instead of exiting
 
     @patch('builtins.input')
     def test_choose_date_valid(self, mock_input):
@@ -168,12 +168,12 @@ class TestTerminalNavigation:
 
     @patch('builtins.input')
     def test_choose_date_invalid(self, mock_input):
-        """Test choosing chunk by date with invalid input."""
+        """Test choosing chunk by date with invalid input - should continue navigation."""
         navigator = TerminalNavigator(self.chunks, "Test Navigation")
         mock_input.return_value = "invalid-date"
         
         result = navigator._choose_date()
-        assert result is False
+        assert result is True  # Should continue navigation instead of exiting
 
     def test_process_navigation_input_empty(self):
         """Test processing empty navigation input."""
