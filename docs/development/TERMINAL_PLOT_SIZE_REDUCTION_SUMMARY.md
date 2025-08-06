@@ -2,11 +2,11 @@
 
 ## Summary
 
-Implemented dynamic plot size adjustment for terminal plotting mode (`-d term`) to reduce vertical chart height by 50% when the `-d term` parameter is explicitly used.
+Implemented dynamic plot size adjustment for terminal plotting mode (`-d term`) to reduce vertical chart height by 10% when the `-d term` parameter is explicitly used.
 
 ## Problem
 
-The command `uv run run_analysis.py show csv gbp -d term` was displaying charts with full height (50 lines), which was too large for terminal viewing. Users needed a more compact display specifically for the `-d term` mode.
+The command `uv run run_analysis.py show csv gbp -d term` was displaying charts with full height (50 lines), which was too large for terminal viewing. Users needed a more compact display specifically for the `-d term` mode with 45 lines height.
 
 ## Solution
 
@@ -33,7 +33,7 @@ def get_terminal_plot_size() -> Tuple[int, int]:
     
     if is_term_mode:
         # Reduced height for -d term mode
-        return (200, 25)  # Reduced from 50 to 25 (50% reduction)
+        return (200, 45)  # Reduced from 50 to 45 (10% reduction)
     else:
         # Default size for other terminal modes
         return (200, 50)
@@ -71,7 +71,7 @@ plt.plot_size(*plot_size)
 ## Behavior Changes
 
 ### For `-d term` mode:
-- **Height**: 25 lines (50% reduction from 50 lines)
+- **Height**: 45 lines (10% reduction from 50 lines)
 - **Width**: 200 characters (unchanged)
 - **Result**: More compact, easier to view in terminal
 
