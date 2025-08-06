@@ -434,6 +434,116 @@ class NeozorkMCPServer:
         """Start the MCP server"""
         print_to_stderr("🔄 Starting MCP server loop...")
         
+        # Check if running in Docker
+        is_docker = os.environ.get("DOCKER_CONTAINER", "false").lower() == "true"
+        print_to_stderr(f"🔍 Environment check: DOCKER_CONTAINER={os.environ.get('DOCKER_CONTAINER', 'not_set')}")
+        print_to_stderr(f"🔍 Is Docker mode: {is_docker}")
+        
+        if is_docker:
+            print_to_stderr("🐳 Running in Docker mode - using socket communication")
+            self._start_docker_mode()
+        else:
+            print_to_stderr("🖥️  Running in host mode - using stdio communication")
+            self._start_stdio_mode()
+    
+    def _start_docker_mode(self):
+        """Start MCP server in Docker mode with socket communication"""
+        import socket
+        import threading
+        
+        # Create socket server
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server_socket.bind(('0.0.0.0', 8080))  # Bind to all interfaces
+        server_socket.listen(5)
+        server_socket.settimeout(1.0)  # 1 second timeout
+        
+        print_to_stderr("🔌 MCP Socket Server listening on 0.0.0.0:8080")
+        
+        try:
+            while self.running:
+                try:
+                    client_socket, address = server_socket.accept()
+                    print_to_stderr(f"📡 New connection from {address}")
+                    
+                    # Handle client in separate thread
+                    client_thread = threading.Thread(
+                        target=self._handle_socket_client,
+                        args=(client_socket, address)
+                    )
+                    client_thread.daemon = True
+                    client_thread.start()
+                    
+                except socket.timeout:
+                    continue
+                except Exception as e:
+                    if self.running:
+                        self.logger.error(f"Error accepting connection: {e}")
+                    break
+                    
+        except Exception as e:
+            self.logger.error(f"Error starting socket server: {e}")
+        finally:
+            server_socket.close()
+    
+    def _handle_socket_client(self, client_socket, address):
+        """Handle socket client communication"""
+        try:
+            while self.running:
+                # Receive data
+                data = client_socket.recv(4096)
+                if not data:
+                    break
+                
+                try:
+                    message = json.loads(data.decode('utf-8'))
+                    self.logger.info(f"Received message from {address}: {message.get('method', 'unknown')}")
+                    
+                    # Process message using MCP server
+                    method = message.get("method")
+                    request_id = message.get("id")
+                    params = message.get("params", {})
+                    
+                    # Check if method exists in handlers
+                    if method in self.handlers:
+                        result = self.handlers[method](request_id, params)
+                        response = {
+                            "jsonrpc": "2.0",
+                            "id": request_id,
+                            "result": result
+                        }
+                    else:
+                        response = {
+                            "jsonrpc": "2.0",
+                            "id": request_id,
+                            "error": {
+                                "code": -32601,
+                                "message": f"Method not found: {method}"
+                            }
+                        }
+                    
+                    # Send response
+                    client_socket.send(json.dumps(response).encode('utf-8'))
+                    
+                except json.JSONDecodeError as e:
+                    error_response = {
+                        "jsonrpc": "2.0",
+                        "id": None,
+                        "error": {
+                            "code": -32700,
+                            "message": f"Parse error: {e}"
+                        }
+                    }
+                    client_socket.send(json.dumps(error_response).encode('utf-8'))
+                    
+        except Exception as e:
+            self.logger.error(f"Error handling client {address}: {e}")
+        finally:
+            client_socket.close()
+            print_to_stderr(f"📡 Connection from {address} closed")
+    
+    def _start_stdio_mode(self):
+        """Start MCP server in stdio mode (original implementation)"""
         # Set up signal handlers
         signal.signal(signal.SIGINT, self._signal_handler)
         signal.signal(signal.SIGTERM, self._signal_handler)
