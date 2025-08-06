@@ -47,7 +47,7 @@ Neozork MCP Server is now fully functional and ready for use! This is a unified 
 ### Quick Start (Recommended)
 ```bash
 # 1. Check status
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 
 # 2. Setup IDEs (if needed)
 python3 scripts/setup_ide_configs.py
@@ -99,7 +99,7 @@ tail -f logs/neozork_mcp_*.log
 ### Essential Commands
 ```bash
 # Check if everything works
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 
 # Setup IDE configurations
 python3 scripts/setup_ide_configs.py
@@ -171,7 +171,7 @@ Your MCP server is now fully functional and ready for production use!
 ## 🔄 Support
 
 - **Logs**: `logs/neozork_mcp_*.log`
-- **Status**: `python3 scripts/check_mcp_status.py`
+- **Status**: `python3 scripts/mcp/check_mcp_status.py`
 - **Setup**: `python3 scripts/setup_ide_configs.py`
 - **Documentation**: `docs/guides/mcp-server-usage.md`
 

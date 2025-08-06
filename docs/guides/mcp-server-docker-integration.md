@@ -38,7 +38,7 @@ The script automatically detects whether it's running inside a Docker container 
 
 ```bash
 # Run the status checker (automatically detects environment)
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 ```
 
 ### Environment Detection

@@ -17,7 +17,7 @@ import json
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
 
-from scripts.check_mcp_status import DockerMCPServerChecker, is_running_in_docker
+from scripts.mcp.check_mcp_status import DockerMCPServerChecker, is_running_in_docker
 
 
 class TestMCPInitializationWait:
@@ -35,7 +35,7 @@ class TestMCPInitializationWait:
         import shutil
         shutil.rmtree(self.temp_dir, ignore_errors=True)
     
-    @patch('scripts.check_mcp_status.is_running_in_docker')
+    @patch('scripts.mcp.check_mcp_status.is_running_in_docker')
     def test_wait_for_initialization_success(self, mock_docker):
         """Test successful initialization wait"""
         mock_docker.return_value = True
@@ -47,7 +47,7 @@ class TestMCPInitializationWait:
             result = checker._wait_for_mcp_initialization(max_wait_time=5)
             assert result is True
     
-    @patch('scripts.check_mcp_status.is_running_in_docker')
+    @patch('scripts.mcp.check_mcp_status.is_running_in_docker')
     def test_wait_for_initialization_log_detection(self, mock_docker):
         """Test initialization detection via log file"""
         mock_docker.return_value = True
@@ -66,7 +66,7 @@ class TestMCPInitializationWait:
             result = checker._wait_for_mcp_initialization(max_wait_time=5)
             assert result is True
     
-    @patch('scripts.check_mcp_status.is_running_in_docker')
+    @patch('scripts.mcp.check_mcp_status.is_running_in_docker')
     def test_wait_for_initialization_timeout(self, mock_docker):
         """Test initialization timeout"""
         mock_docker.return_value = True
@@ -78,7 +78,7 @@ class TestMCPInitializationWait:
             result = checker._wait_for_mcp_initialization(max_wait_time=2)
             assert result is False
     
-    @patch('scripts.check_mcp_status.is_running_in_docker')
+    @patch('scripts.mcp.check_mcp_status.is_running_in_docker')
     def test_check_server_running_with_initialization_wait(self, mock_docker):
         """Test check_server_running with initialization wait"""
         mock_docker.return_value = True
@@ -91,7 +91,7 @@ class TestMCPInitializationWait:
             result = checker.check_server_running()
             assert result is True
     
-    @patch('scripts.check_mcp_status.is_running_in_docker')
+    @patch('scripts.mcp.check_mcp_status.is_running_in_docker')
     def test_check_server_running_initialization_timeout(self, mock_docker):
         """Test check_server_running with initialization timeout"""
         mock_docker.return_value = True
@@ -103,7 +103,7 @@ class TestMCPInitializationWait:
             result = checker.check_server_running()
             assert result is False
     
-    @patch('scripts.check_mcp_status.is_running_in_docker')
+    @patch('scripts.mcp.check_mcp_status.is_running_in_docker')
     def test_test_connection_with_initialization_wait(self, mock_docker):
         """Test test_connection with initialization wait"""
         mock_docker.return_value = True
@@ -117,7 +117,7 @@ class TestMCPInitializationWait:
             assert result["status"] == "success"
             assert "MCP server is responding to ping requests" in result["message"]
     
-    @patch('scripts.check_mcp_status.is_running_in_docker')
+    @patch('scripts.mcp.check_mcp_status.is_running_in_docker')
     def test_test_connection_initialization_timeout(self, mock_docker):
         """Test test_connection with initialization timeout"""
         mock_docker.return_value = True
@@ -136,7 +136,7 @@ class TestMCPInitializationWait:
         result = is_running_in_docker()
         assert isinstance(result, bool)
     
-    @patch('scripts.check_mcp_status.is_running_in_docker')
+    @patch('scripts.mcp.check_mcp_status.is_running_in_docker')
     def test_docker_checker_initialization(self, mock_docker):
         """Test DockerMCPServerChecker initialization"""
         mock_docker.return_value = True

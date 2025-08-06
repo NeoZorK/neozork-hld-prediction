@@ -40,8 +40,8 @@
 ## Files Modified
 
 ### Core Logic
-- ✅ `scripts/check_mcp_status.py` - Добавлена логика ожидания
-- ✅ `scripts/check_mcp_status.py` - Добавлена логика ожидания
+- ✅ `scripts/mcp/check_mcp_status.py` - Добавлена логика ожидания
+- ✅ `scripts/mcp/check_mcp_status.py` - Добавлена логика ожидания
 
 ### Docker Integration  
 - ✅ `container-entrypoint.sh` - Обновлена логика запуска

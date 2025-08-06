@@ -121,7 +121,7 @@ uv run python neozork_mcp_server.py --config custom_config.json
 Use the status checker script:
 
 ```bash
-uv run python scripts/check_mcp_status.py
+uv run python scripts/mcp/check_mcp_status.py
 ```
 
 This will show:
@@ -241,7 +241,7 @@ cat ~/Library/Application\ Support/Cursor/User/globalStorage/cursor_mcp_config.j
 #### 3. No Code Completion
 ```bash
 # Check server status
-uv run python scripts/check_mcp_status.py
+uv run python scripts/mcp/check_mcp_status.py
 
 # Verify project structure
 ls -la src/ data/ tests/

@@ -62,12 +62,12 @@ def _wait_for_mcp_initialization(self, max_wait_time: int = 60) -> bool:
 
 ### Modified Files
 
-1. **`scripts/check_mcp_status.py`**
+1. **`scripts/mcp/check_mcp_status.py`**
    - Added `_wait_for_mcp_initialization()` method
    - Updated `check_server_running()` for Docker
    - Updated `test_connection()` for Docker
 
-2. **`scripts/check_mcp_status.py`**
+2. **`scripts/mcp/check_mcp_status.py`**
    - Added `_wait_for_mcp_initialization()` method  
    - Updated `check_server_running()` for Docker
    - Updated `test_connection()` for Docker

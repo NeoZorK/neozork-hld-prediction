@@ -92,7 +92,7 @@ python3 scripts/setup_ide_configs.py
 python3 -m pytest tests/docker/test_ide_configs.py -v
 
 # Check MCP server status
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 ```
 
 ### Manual Verification
@@ -105,7 +105,7 @@ python3 -m json.tool mcp.json
 python3 -m json.tool cursor_mcp_config.json
 
 # Test MCP server
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 ```
 
 ## 🧪 Testing
@@ -141,7 +141,7 @@ python3 -m pytest tests/docker/test_ide_configs.py -v
 ### Current Status
 ```bash
 # MCP Server Status Check
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 
 # Expected Output:
 # ✅ Server is running

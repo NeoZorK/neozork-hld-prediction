@@ -51,7 +51,7 @@
 
 ### 1. Status Check
 ```bash
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 # ✅ All checks pass successfully
 ```
 
@@ -75,7 +75,7 @@ python3 start_mcp_server.py
 ## 🔧 How to Use
 
 ### Quick Start
-1. **Check status**: `python3 scripts/check_mcp_status.py`
+1. **Check status**: `python3 scripts/mcp/check_mcp_status.py`
 2. **Setup IDEs**: `python3 scripts/setup_ide_configs.py`
 3. **Open project in IDE** - server starts automatically
 
@@ -123,7 +123,7 @@ tail -f logs/neozork_mcp_*.log
 2. **cursor_mcp_config.json**: Simplified configuration
 3. **mcp.json**: Simplified universal configuration
 4. **scripts/setup_ide_configs.py**: Simplified IDE configurations
-5. **scripts/check_mcp_status.py**: Fixed status check
+5. **scripts/mcp/check_mcp_status.py**: Fixed status check
 6. **start_mcp_server.py**: Created simple start script
 
 ## �� Recommendations
@@ -137,6 +137,6 @@ tail -f logs/neozork_mcp_*.log
 ## 🔄 Support
 
 - Logs: `logs/neozork_mcp_*.log`
-- Status: `python3 scripts/check_mcp_status.py`
+- Status: `python3 scripts/mcp/check_mcp_status.py`
 - Setup: `python3 scripts/setup_ide_configs.py`
 - Documentation: `docs/guides/mcp-server-usage.md` 

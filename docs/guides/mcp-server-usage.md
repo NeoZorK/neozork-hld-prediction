@@ -31,7 +31,7 @@ python3 neozork_mcp_server.py --debug
 
 ```bash
 # Check server status (works in both Docker and host environments)
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 
 # Show running processes (host environment)
 ps aux | grep neozork_mcp_server
@@ -164,7 +164,7 @@ docker-compose build
 docker-compose run --rm app bash
 
 # Check MCP server status in Docker
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 
 # Test MCP server with ping
 echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py

@@ -120,7 +120,7 @@ uv run pytest tests/ --cov=src --cov-report=html
 python start_mcp_server.py
 
 # 2. Test MCP
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 
 # 3. Development with AI help
 # Use GitHub Copilot in IDE

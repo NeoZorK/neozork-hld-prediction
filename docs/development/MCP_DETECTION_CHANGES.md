@@ -2,7 +2,7 @@
 
 ## Summary
 
-Updated the MCP server detection logic in `scripts/check_mcp_status.py` to properly handle Docker environments where the MCP server operates on a request-response basis and shuts down after processing requests.
+Updated the MCP server detection logic in `scripts/mcp/check_mcp_status.py` to properly handle Docker environments where the MCP server operates on a request-response basis and shuts down after processing requests.
 
 ## Problem
 
@@ -68,7 +68,7 @@ Implemented **ping-based detection** for Docker environments:
 
 ## Files Modified
 
-1. `scripts/check_mcp_status.py` - Main logic changes
+1. `scripts/mcp/check_mcp_status.py` - Main logic changes
 2. `tests/scripts/test_check_mcp_status.py` - Updated tests
 3. `docs/development/mcp-server-detection.md` - New documentation
 4. `docs/development/MCP_DETECTION_CHANGES.md` - This file
@@ -78,13 +78,13 @@ Implemented **ping-based detection** for Docker environments:
 ### Docker Environment
 ```bash
 # Inside Docker container
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 ```
 
 ### Host Environment
 ```bash
 # On host system (unchanged)
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 ```
 
 ## Future Considerations

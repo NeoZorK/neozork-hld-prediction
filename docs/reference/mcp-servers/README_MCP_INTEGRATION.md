@@ -4,7 +4,7 @@
 
 ### 1. Check Server Status
 ```bash
-uv run python scripts/check_mcp_status.py
+uv run python scripts/mcp/check_mcp_status.py
 ```
 
 ### 2. Manual Server Start
@@ -83,7 +83,7 @@ cat ~/Library/Application\ Support/Cursor/User/globalStorage/cursor_mcp_config.j
 ### No Code Completion
 ```bash
 # Check server status
-uv run python scripts/check_mcp_status.py
+uv run python scripts/mcp/check_mcp_status.py
 
 # Verify project structure
 ls -la src/ data/ tests/
@@ -93,14 +93,14 @@ ls -la src/ data/ tests/
 
 - `neozork_mcp_server.py` - Main MCP server
 - `cursor_mcp_config.json` - Cursor IDE configuration
-- `scripts/check_mcp_status.py` - Status checker script
+- `scripts/mcp/check_mcp_status.py` - Status checker script
 - `docs/guides/cursor-mcp-integration.md` - Detailed documentation
 
 ## 🔍 Monitoring
 
 ### Check Server Health
 ```bash
-uv run python scripts/check_mcp_status.py
+uv run python scripts/mcp/check_mcp_status.py
 ```
 
 ### View Logs

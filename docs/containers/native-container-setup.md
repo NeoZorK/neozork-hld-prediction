@@ -261,7 +261,7 @@ python run_analysis.py -h
 python scripts/test_uv_docker.py
 
 # Check MCP server
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 ```
 
 ## Testing

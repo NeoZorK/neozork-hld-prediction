@@ -180,7 +180,7 @@ if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
   
   # Check MCP server status with initialization wait
   echo -e "\033[1;33m=== Checking MCP server status ===\033[0m\n"
-  if python /app/scripts/check_mcp_status.py; then
+  if python /app/scripts/mcp/check_mcp_status.py; then
     echo -e "\033[1;32m✅ MCP server is running correctly\033[0m\n"
   else
     echo -e "\033[1;31m❌ MCP server check failed\033[0m\n"
@@ -256,7 +256,7 @@ python scripts/debug/examine_parquet.py
 python scripts/debug/debug_check_parquet.py
 
 # MCP Server Commands
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 python scripts/mcp/start_mcp_server_daemon.py
 python scripts/mcp/neozork_mcp_manager.py
 python neozork_mcp_server.py

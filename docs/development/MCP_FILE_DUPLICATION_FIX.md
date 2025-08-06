@@ -3,7 +3,7 @@
 ## Problem Identified
 
 **Issue**: В проекте существовало дублирование файла `check_mcp_status.py`:
-- `scripts/check_mcp_status.py` (основной файл)
+- `scripts/mcp/check_mcp_status.py` (основной файл)
 - `scripts/mcp/check_mcp_status.py` (дубликат)
 
 **Root Cause**: Файлы были идентичны, но использовались в разных местах проекта, что создавало путаницу и потенциальные проблемы с поддержкой.
@@ -11,12 +11,12 @@
 ## Analysis
 
 ### Usage Statistics
-- **`scripts/check_mcp_status.py`**: Использовался в **63** местах (основной)
+- **`scripts/mcp/check_mcp_status.py`**: Использовался в **63** местах (основной)
 - **`scripts/mcp/check_mcp_status.py`**: Использовался в **20** местах (дубликат)
 
 ### Files Comparison
 ```bash
-$ diff scripts/check_mcp_status.py scripts/mcp/check_mcp_status.py
+$ diff scripts/mcp/check_mcp_status.py scripts/mcp/check_mcp_status.py
 # No differences - files were identical
 ```
 
@@ -24,7 +24,7 @@ $ diff scripts/check_mcp_status.py scripts/mcp/check_mcp_status.py
 
 ### 1. File Removal
 - ✅ **Удален**: `scripts/mcp/check_mcp_status.py` (дубликат)
-- ✅ **Сохранен**: `scripts/check_mcp_status.py` (основной)
+- ✅ **Сохранен**: `scripts/mcp/check_mcp_status.py` (основной)
 
 ### 2. Reference Updates
 Обновлены все ссылки на удаленный файл:
@@ -132,7 +132,7 @@ $ grep -r "scripts/mcp/check_mcp_status.py" . --exclude-dir=.git --exclude-dir=.
 
 ## Conclusion
 
-Дублирование файлов успешно устранено! Теперь в проекте есть только один файл `scripts/check_mcp_status.py`, который используется во всех местах. Это улучшает поддерживаемость кода и устраняет потенциальные проблемы с синхронизацией.
+Дублирование файлов успешно устранено! Теперь в проекте есть только один файл `scripts/mcp/check_mcp_status.py`, который используется во всех местах. Это улучшает поддерживаемость кода и устраняет потенциальные проблемы с синхронизацией.
 
 **Key Metrics**:
 - ✅ 10 тестов прошли успешно
