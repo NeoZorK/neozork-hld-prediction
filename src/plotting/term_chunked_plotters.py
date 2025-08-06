@@ -51,6 +51,156 @@ except ImportError:
     from ..plotting.term_chunked_statistics import _show_chunk_statistics, _show_field_statistics
 
 
+def _get_field_color(field: str, field_index: int = None) -> str:
+    """
+    Get unique color for a field based on field name or index.
+    
+    Args:
+        field (str): Field name
+        field_index (int, optional): Field index for fallback
+        
+    Returns:
+        str: Color string for plotext
+    """
+    # Define a comprehensive color palette for different field types
+    color_palette = [
+        "green+", "red+", "blue+", "yellow+", "magenta+", "cyan+", "white+",
+        "green", "red", "blue", "yellow", "magenta", "cyan", "white",
+        "bright green", "bright red", "bright blue", "bright yellow", 
+        "bright magenta", "bright cyan", "bright white"
+    ]
+    
+    # Field-specific color mapping for common indicators
+    field_colors = {
+        # Pressure indicators
+        'pressure_high': 'red+',
+        'pressure_low': 'blue+', 
+        'pressure_vector': 'magenta+',
+        'pressure': 'cyan+',
+        
+        # Predicted values
+        'predicted_high': 'bright red',
+        'predicted_low': 'bright blue',
+        'predicted_close': 'bright green',
+        'predicted': 'yellow+',
+        
+        # Support/Resistance
+        'support': 'green+',
+        'resistance': 'red+',
+        'support_level': 'green',
+        'resistance_level': 'red',
+        
+        # RSI variants
+        'rsi': 'cyan+',
+        'rsi_signal': 'yellow+',
+        'rsi_momentum': 'magenta+',
+        'rsi_divergence': 'bright cyan',
+        
+        # Volume indicators
+        'volume': 'white+',
+        'obv': 'bright white',
+        'vwap': 'bright yellow',
+        
+        # MACD
+        'macd': 'blue+',
+        'macd_signal': 'red+',
+        'macd_histogram': 'yellow+',
+        
+        # Moving averages
+        'sma': 'green+',
+        'ema': 'blue+',
+        'ma': 'cyan+',
+        
+        # Bollinger Bands
+        'bb_upper': 'red+',
+        'bb_lower': 'blue+',
+        'bb_middle': 'yellow+',
+        
+        # Stochastic
+        'stoch_k': 'blue+',
+        'stoch_d': 'red+',
+        
+        # ATR
+        'atr': 'magenta+',
+        
+        # ADX
+        'adx': 'cyan+',
+        'di_plus': 'green+',
+        'di_minus': 'red+',
+        
+        # Williams %R
+        'williams_r': 'yellow+',
+        
+        # CCI
+        'cci': 'magenta+',
+        
+        # Momentum
+        'momentum': 'bright green',
+        'roc': 'bright blue',
+        
+        # Volatility
+        'volatility': 'bright red',
+        'volatility_ratio': 'bright magenta',
+        
+        # Sentiment
+        'sentiment': 'bright cyan',
+        'fear_greed': 'bright yellow',
+        
+        # Custom indicators
+        'custom': 'white+',
+        'signal': 'bright white',
+        'trend': 'bright green',
+        'strength': 'bright blue'
+    }
+    
+    # Try to get color by exact field name match first
+    field_lower = field.lower()
+    if field_lower in field_colors:
+        return field_colors[field_lower]
+    
+    # Try to get color by partial field name match (more specific matches first)
+    # Sort keys by length (longer keys first) to prioritize more specific matches
+    sorted_keys = sorted(field_colors.keys(), key=len, reverse=True)
+    for key in sorted_keys:
+        if key in field_lower:
+            return field_colors[key]
+    
+    # Fallback to index-based color if provided
+    if field_index is not None and field_index < len(color_palette):
+        return color_palette[field_index]
+    
+    # Final fallback to first color
+    return color_palette[0]
+
+
+def _get_field_color_by_index(field: str, field_index: int) -> str:
+    """
+    Get color for field based on its index in the field list.
+    
+    Args:
+        field (str): Field name
+        field_index (int): Index of field in the field list
+        
+    Returns:
+        str: Color string for plotext
+    """
+    # First try to get color by field name
+    color = _get_field_color(field)
+    
+    # If the color is the default (first color), use index-based color instead
+    if color == "green+":
+        color_palette = [
+            "green+", "red+", "blue+", "yellow+", "magenta+", "cyan+", "white+",
+            "green", "red", "blue", "yellow", "magenta", "cyan", "white",
+            "bright green", "bright red", "bright blue", "bright yellow", 
+            "bright magenta", "bright cyan", "bright white"
+        ]
+        if field_index < len(color_palette):
+            return color_palette[field_index]
+    
+    return color
+
+
 def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
     """
     Plot OHLC data in chunks (no volume charts).
@@ -220,7 +370,9 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
                 
                 # Show specific field if selected and it's not OHLC
                 if current_field and current_field in chunk.columns and group_info['name'] != 'OHLC':
-                    _plot_single_field_chunk(chunk, current_field, f"{title} - {current_field} (Chunk {chunk_info['index']})", style)
+                    # Get field index from the field_columns list for proper color assignment
+                    field_index = field_columns.index(current_field) if current_field in field_columns else None
+                    _plot_single_field_chunk(chunk, current_field, f"{title} - {current_field} (Chunk {chunk_info['index']})", style, field_index)
             
             # Start navigation
             navigator.navigate(plot_chunk_with_navigation)
@@ -254,9 +406,9 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
                     plt.show()
                 
                 # Then show each field separately
-                for field in field_columns:
+                for field_idx, field in enumerate(field_columns):
                     if field in chunk.columns:
-                        _plot_single_field_chunk(chunk, field, f"{title} - {field} (Chunk {i+1})", style)
+                        _plot_single_field_chunk(chunk, field, f"{title} - {field} (Chunk {i+1})", style, field_idx)
                 
                 # Add pause between chunks
                 if i < len(chunks) - 1:
@@ -707,7 +859,7 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
         logger.print_error(f"Error generating {rule_type.upper()} chunked plots: {e}")
 
 
-def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style: str) -> None:
+def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style: str, field_index: int = None) -> None:
     """
     Plot a single field in a chunk.
     
@@ -716,6 +868,7 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
         field (str): Field name to plot
         title (str): Plot title
         style (str): Plot style
+        field_index (int, optional): Index of field in the field list for color assignment
     """
     try:
         # Get start and end dates for this chunk
@@ -741,7 +894,9 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
             
             # Only plot if we have valid data
             if any(v is not None for v in values):
-                plt.plot(x_values, values, color="green+", label=field)
+                # Use provided field_index or fallback to column position
+                color_index = field_index if field_index is not None else chunk.columns.get_loc(field)
+                plt.plot(x_values, values, color=_get_field_color_by_index(field, color_index), label=field)
             
             plt.title(f"{title} - {start_date} to {end_date}")
             plt.xlabel("Date/Time")
