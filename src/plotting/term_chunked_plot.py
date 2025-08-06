@@ -329,7 +329,7 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
                     plt.clear_data()
                     plt.clear_figure()
                     plt.subplots(1, 1)
-                    plt.plot_size(200, 50)
+                    plt.plot_size(200, 45)  # Reduced height to make room for navigation text
                     plt.theme(style)
                     draw_ohlc_candles(chunk, x_values)
                     plt.title(f"{title} - OHLC (Chunk {chunk_info['index']}) - {start_date} to {end_date}")
@@ -373,7 +373,7 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
                     plt.clear_data()
                     plt.clear_figure()
                     plt.subplots(1, 1)
-                    plt.plot_size(200, 50)
+                    plt.plot_size(200, 45)  # Reduced height to make room for navigation text
                     plt.theme(style)
                     draw_ohlc_candles(chunk, x_values)
                     plt.title(f"{title} - OHLC (Chunk {i+1}) - {start_date} to {end_date}")
@@ -440,7 +440,7 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
                 
                 # Set up plot with full screen size
                 plt.subplots(1, 1)
-                plt.plot_size(200, 50)  # Much larger plot size
+                plt.plot_size(200, 45)  # Reduced height to make room for navigation text  # Much larger plot size
                 plt.theme(style)
                 
                 # Create time axis with dates for this chunk
@@ -487,7 +487,7 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
                 
                 # Set up plot with full screen size
                 plt.subplots(1, 1)
-                plt.plot_size(200, 50)  # Much larger plot size
+                plt.plot_size(200, 45)  # Reduced height to make room for navigation text  # Much larger plot size
                 plt.theme(style)
                 
                 # Create time axis with dates for this chunk
@@ -561,7 +561,7 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
             
             # Set up plot with full screen size
             plt.subplots(1, 1)
-            plt.plot_size(200, 50)  # Much larger plot size
+            plt.plot_size(200, 45)  # Reduced height to make room for navigation text  # Much larger plot size
             plt.theme(style)
             
             # Create time axis with dates for this chunk
@@ -635,7 +635,7 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
             
             # Set up plot with full screen size
             plt.subplots(1, 1)
-            plt.plot_size(200, 50)  # Much larger plot size
+            plt.plot_size(200, 45)  # Reduced height to make room for navigation text  # Much larger plot size
             plt.theme(style)
             
             # Create time axis with dates for this chunk
@@ -711,7 +711,7 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
             
             # Set up plot with full screen size
             plt.subplots(1, 1)
-            plt.plot_size(200, 50)  # Much larger plot size
+            plt.plot_size(200, 45)  # Reduced height to make room for navigation text  # Much larger plot size
             plt.theme(style)
             
             # Create time axis with dates for this chunk
@@ -772,7 +772,7 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
         
         # Set up plot with full screen size
         plt.subplots(1, 1)
-        plt.plot_size(200, 50)  # Much larger plot size
+        plt.plot_size(200, 45)  # Reduced height to make room for navigation text  # Much larger plot size
         plt.theme(style)
         
         # Create time axis with dates
