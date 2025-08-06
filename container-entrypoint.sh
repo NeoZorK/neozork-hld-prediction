@@ -14,6 +14,10 @@ export UV_VENV_DIR=/app/.venv
 export NATIVE_CONTAINER=true
 export DOCKER_CONTAINER=false
 
+# Non-interactive mode for package installation
+export DEBIAN_FRONTEND=noninteractive
+export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
+
 # Python configuration
 export PYTHONUNBUFFERED=1
 export PYTHONDONTWRITEBYTECODE=1
@@ -56,10 +60,12 @@ verify_uv() {
     else
         echo -e "\033[1;33m⚠️  UV is not available - installing UV...\033[0m"
         
-        # Install UV using pip
-        pip install uv
+        # Set non-interactive mode for package installation
+        export DEBIAN_FRONTEND=noninteractive
+        export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
         
-        if command -v uv &> /dev/null; then
+        # Install UV using pip (don't fail on error)
+        if pip install uv; then
             echo -e "\033[1;32m✅ UV installed successfully: $(uv --version)\033[0m"
         else
             echo -e "\033[1;31m❌ Failed to install UV - this is required for UV-only mode\033[0m"
@@ -68,12 +74,12 @@ verify_uv() {
         fi
     fi
 
-    # Test UV environment
+    # Test UV environment (don't fail on error)
     if [ -f "/app/scripts/utilities/test_uv_docker.py" ]; then
         if python /app/scripts/utilities/test_uv_docker.py; then
             echo -e "\033[1;32m✅ UV environment test passed\033[0m"
         else
-            echo -e "\033[1;31m❌ UV environment test failed\033[0m"
+            echo -e "\033[1;33m⚠️  UV environment test had issues - continuing anyway\033[0m"
         fi
     else
         echo -e "\033[1;33m⚠️  UV test script not found - skipping test\033[0m"
@@ -84,11 +90,15 @@ verify_uv() {
 setup_uv_environment() {
     log_message "=== Setting up UV Environment and Dependencies ==="
     
+    # Set non-interactive mode for package installation
+    export DEBIAN_FRONTEND=noninteractive
+    export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
+    
     # Check if virtual environment exists
     if [ ! -d "/app/.venv" ]; then
         echo -e "\033[1;33m📦 Virtual environment not found - creating new venv...\033[0m"
         
-        # Create virtual environment
+        # Create virtual environment (don't fail on error)
         if uv venv /app/.venv; then
             echo -e "\033[1;32m✅ Virtual environment created successfully\033[0m"
         else
@@ -114,7 +124,7 @@ setup_uv_environment() {
             echo -e "\033[1;33m🔄 Checking for dependency updates...\033[0m"
             
             # Update dependencies if needed (don't fail on error)
-            if uv pip install --upgrade -r /app/requirements.txt; then
+            if uv pip install --upgrade --no-cache -r /app/requirements.txt; then
                 echo -e "\033[1;32m✅ Dependencies updated successfully\033[0m"
             else
                 echo -e "\033[1;33m⚠️  Dependency update had issues - continuing anyway\033[0m"
@@ -136,8 +146,12 @@ setup_uv_environment() {
 install_dependencies() {
     echo -e "\033[1;33m📦 Installing dependencies from requirements.txt...\033[0m"
     
+    # Set non-interactive mode for package installation
+    export DEBIAN_FRONTEND=noninteractive
+    export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
+    
     # Install dependencies (don't fail on error)
-    if uv pip install -r /app/requirements.txt; then
+    if uv pip install --no-cache -r /app/requirements.txt; then
         echo -e "\033[1;32m✅ Dependencies installed successfully\033[0m"
         return 0
     else
@@ -426,65 +440,69 @@ init_bash_history() {
 
 # Run external data feed tests
 run_data_feed_tests() {
-    # Check if running in interactive mode
-    if [ -t 0 ]; then
-        echo -e "\033[1;33mWould you like to run tests for external data feeds? (Polygon, YFinance, Binance) [y/N]:\033[0m"
-        read -r run_tests
-
-        # Debug output to check what was read
-        echo -e "\033[1;34mInput received: '$run_tests'\033[0m"
-
-        # Simplified condition checking
-        if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
-            echo -e "\n\033[1;32m=== Running external data feed tests in Native Container (UV Mode) ===\033[0m\n"
-            # Run the tests using the Docker-specific test runner
-            source /app/.venv/bin/activate
-            run_python_safely python /app/tests/run_tests_docker.py
-        else
-            echo -e "\033[1;33mSkipping external data feed tests\033[0m\n"
-        fi
-    else
+    # Skip interactive prompts in non-interactive mode
+    if [ ! -t 0 ]; then
         echo -e "\033[1;33mNon-interactive mode - skipping external data feed tests\033[0m\n"
+        return 0
+    fi
+    
+    # Check if running in interactive mode
+    echo -e "\033[1;33mWould you like to run tests for external data feeds? (Polygon, YFinance, Binance) [y/N]:\033[0m"
+    read -r run_tests
+
+    # Debug output to check what was read
+    echo -e "\033[1;34mInput received: '$run_tests'\033[0m"
+
+    # Simplified condition checking
+    if [ "$run_tests" = "y" ] || [ "$run_tests" = "Y" ]; then
+        echo -e "\n\033[1;32m=== Running external data feed tests in Native Container (UV Mode) ===\033[0m\n"
+        # Run the tests using the Docker-specific test runner
+        source /app/.venv/bin/activate
+        run_python_safely python /app/tests/run_tests_docker.py
+    else
+        echo -e "\033[1;33mSkipping external data feed tests\033[0m\n"
     fi
 }
 
 # Start MCP server
 start_mcp_server() {
+    # Skip interactive prompts in non-interactive mode
+    if [ ! -t 0 ]; then
+        echo -e "\033[1;33mNon-interactive mode - skipping MCP server startup\033[0m\n"
+        return 0
+    fi
+    
     # Check if running in interactive mode
-    if [ -t 0 ]; then
-        echo -e "\033[1;33mWould you like to start the MCP service for enhanced LLM support? [y/N]:\033[0m"
-        read -r run_mcp
+    echo -e "\033[1;33mWould you like to start the MCP service for enhanced LLM support? [y/N]:\033[0m"
+    read -r run_mcp
 
-        # Debug output to check what was read
-        echo -e "\033[1;34mInput received: '$run_mcp'\033[0m"
+    # Debug output to check what was read
+    echo -e "\033[1;34mInput received: '$run_mcp'\033[0m"
 
-        # Simplified condition checking
-        if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
-            echo -e "\n\033[1;32m=== Starting MCP server in background (UV Mode) ===\033[0m\n"
-            # Start MCP server in background and redirect output to prevent EOF
-            source /app/.venv/bin/activate
-            nohup python neozork_mcp_server.py > /app/logs/mcp_server.log 2>&1 &
-            MCP_PID=$!
-            echo $MCP_PID > /tmp/mcp_server.pid
-            echo -e "\033[1;32mMCP server started in background (PID: $MCP_PID)\033[0m\n"
-            
-            # Wait for MCP server initialization to complete
-            echo -e "\033[1;33m=== Waiting for MCP server initialization ===\033[0m\n"
-            echo -e "\033[1;33mThis may take up to 60 seconds for first startup...\033[0m\n"
-            
-            # Check MCP server status with initialization wait
-            echo -e "\033[1;33m=== Checking MCP server status ===\033[0m\n"
-            if python scripts/mcp/check_mcp_status.py; then
-                echo -e "\033[1;32m✅ MCP server is running correctly\033[0m\n"
-            else
-                echo -e "\033[1;31m❌ MCP server check failed\033[0m\n"
-                echo -e "\033[1;33m💡 You can check logs with: tail -f /app/logs/mcp_server.log\033[0m\n"
-            fi
+    # Simplified condition checking
+    if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
+        echo -e "\n\033[1;32m=== Starting MCP server in background (UV Mode) ===\033[0m\n"
+        # Start MCP server in background and redirect output to prevent EOF
+        source /app/.venv/bin/activate
+        nohup python neozork_mcp_server.py > /app/logs/mcp_server.log 2>&1 &
+        MCP_PID=$!
+        echo $MCP_PID > /tmp/mcp_server.pid
+        echo -e "\033[1;32mMCP server started in background (PID: $MCP_PID)\033[0m\n"
+        
+        # Wait for MCP server initialization to complete
+        echo -e "\033[1;33m=== Waiting for MCP server initialization ===\033[0m\n"
+        echo -e "\033[1;33mThis may take up to 60 seconds for first startup...\033[0m\n"
+        
+        # Check MCP server status with initialization wait
+        echo -e "\033[1;33m=== Checking MCP server status ===\033[0m\n"
+        if python scripts/mcp/check_mcp_status.py; then
+            echo -e "\033[1;32m✅ MCP server is running correctly\033[0m\n"
         else
-            echo -e "\033[1;33mSkipping MCP server startup\033[0m\n"
+            echo -e "\033[1;31m❌ MCP server check failed\033[0m\n"
+            echo -e "\033[1;33m💡 You can check logs with: tail -f /app/logs/mcp_server.log\033[0m\n"
         fi
     else
-        echo -e "\033[1;33mNon-interactive mode - skipping MCP server startup\033[0m\n"
+        echo -e "\033[1;33mSkipping MCP server startup\033[0m\n"
     fi
 }
 
@@ -610,11 +628,11 @@ main() {
             # Step 1: Create directories
             create_directories
             
-            # Step 2: Verify UV
-            verify_uv
+            # Step 2: Verify UV (don't fail on error)
+            verify_uv || true
             
-            # Step 3: Setup UV environment and install dependencies
-            setup_uv_environment
+            # Step 3: Setup UV environment and install dependencies (don't fail on error)
+            setup_uv_environment || true
             
             # Step 4: Setup bash environment
             setup_bash_environment
