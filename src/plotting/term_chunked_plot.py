@@ -50,7 +50,7 @@ def get_terminal_plot_size() -> Tuple[int, int]:
     
     if is_term_mode:
         # Reduced height for -d term mode
-        return (200, 25)  # Reduced from 50 to 25 (50% reduction)
+        return (200, 48)  # Reduced from 50 to 45 (10% reduction)
     else:
         # Default size for other terminal modes
         return (200, 50)
