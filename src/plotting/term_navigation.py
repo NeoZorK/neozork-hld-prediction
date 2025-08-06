@@ -101,13 +101,13 @@ class TerminalNavigator:
                 return True
             else:
                 logger.print_error(f"Invalid chunk number. Must be between 1 and {self.total_chunks}")
-                return False
+                return True  # Continue navigation instead of exiting
         except ValueError:
             logger.print_error("Invalid input. Please enter a number.")
-            return False
+            return True  # Continue navigation instead of exiting
         except KeyboardInterrupt:
             print("\nCancelled chunk selection.")
-            return False
+            return True  # Continue navigation instead of exiting
     
     def _choose_date(self) -> bool:
         """Choose chunk by date."""
@@ -131,7 +131,7 @@ class TerminalNavigator:
             
             if target_date is None:
                 logger.print_error("Invalid date format. Use YYYY-MM-DD or YYYY-MM-DD HH:MM")
-                return False
+                return True  # Continue navigation instead of exiting
             
             # Find chunk containing the target date
             for i, chunk in enumerate(self.chunks):
@@ -164,11 +164,11 @@ class TerminalNavigator:
                         return True
             
             logger.print_warning(f"Date {date_input} not found in any chunk")
-            return False
+            return True  # Continue navigation instead of exiting
             
         except KeyboardInterrupt:
             print("\nCancelled date selection.")
-            return False
+            return True  # Continue navigation instead of exiting
     
     def _quit_navigation(self) -> bool:
         """Quit navigation."""
