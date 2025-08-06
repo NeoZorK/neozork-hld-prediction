@@ -126,7 +126,7 @@ class TestTerminalNavigation:
         navigator = TerminalNavigator(self.chunks, "Test Navigation")
         
         result = navigator._quit_navigation()
-        assert result is True
+        assert result is False  # Should return False to quit navigation
         assert navigator.navigation_active is False
 
     @patch('builtins.input')

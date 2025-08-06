@@ -113,73 +113,74 @@ class TerminalNavigator:
         """Choose chunk by date."""
         try:
             date_input = input("Enter date (YYYY-MM-DD or YYYY-MM-DD HH:MM): ").strip()
+            if not date_input:
+                logger.print_warning("No date entered. Cancelling date selection.")
+                return True
             
-            # Try different date formats
-            date_formats = [
-                '%Y-%m-%d',
-                '%Y-%m-%d %H:%M',
-                '%Y-%m-%d %H:%M:%S'
-            ]
-            
-            target_date = None
-            for fmt in date_formats:
-                try:
-                    target_date = datetime.strptime(date_input, fmt)
-                    break
-                except ValueError:
-                    continue
-            
+            # Parse the date input
+            target_date = validate_date_input(date_input)
             if target_date is None:
                 logger.print_error("Invalid date format. Use YYYY-MM-DD or YYYY-MM-DD HH:MM")
-                return True  # Continue navigation instead of exiting
+                return True
             
-            # Find chunk containing the target date
+            # Find the chunk containing this date
+            found_chunk = None
             for i, chunk in enumerate(self.chunks):
-                if len(chunk) > 0:
-                    chunk_start = chunk.index[0]
-                    chunk_end = chunk.index[-1]
-                    
-                    # Convert to datetime if needed
-                    if isinstance(chunk_start, str):
-                        try:
-                            chunk_start = datetime.strptime(chunk_start, '%Y-%m-%d %H:%M:%S')
-                        except ValueError:
-                            try:
-                                chunk_start = datetime.strptime(chunk_start, '%Y-%m-%d')
-                            except ValueError:
-                                continue
-                    
-                    if isinstance(chunk_end, str):
-                        try:
-                            chunk_end = datetime.strptime(chunk_end, '%Y-%m-%d %H:%M:%S')
-                        except ValueError:
-                            try:
-                                chunk_end = datetime.strptime(chunk_end, '%Y-%m-%d')
-                            except ValueError:
-                                continue
-                    
-                    if chunk_start <= target_date <= chunk_end:
-                        self.current_chunk_index = i
-                        logger.print_success(f"Found date in chunk {i+1}")
-                        return True
+                if len(chunk) == 0:
+                    continue
+                
+                # Get chunk date range
+                chunk_start = chunk.index[0] if len(chunk) > 0 else None
+                chunk_end = chunk.index[-1] if len(chunk) > 0 else None
+                
+                if chunk_start is not None and chunk_end is not None:
+                    # Convert chunk dates to datetime for comparison
+                    try:
+                        if isinstance(chunk_start, str):
+                            chunk_start_dt = datetime.fromisoformat(chunk_start.replace('Z', '+00:00'))
+                        else:
+                            chunk_start_dt = chunk_start.to_pydatetime() if hasattr(chunk_start, 'to_pydatetime') else chunk_start
+                        
+                        if isinstance(chunk_end, str):
+                            chunk_end_dt = datetime.fromisoformat(chunk_end.replace('Z', '+00:00'))
+                        else:
+                            chunk_end_dt = chunk_end.to_pydatetime() if hasattr(chunk_end, 'to_pydatetime') else chunk_end
+                        
+                        # Check if target date is within this chunk
+                        if chunk_start_dt <= target_date <= chunk_end_dt:
+                            found_chunk = i
+                            break
+                    except (ValueError, AttributeError):
+                        # If date parsing fails, try string comparison
+                        if str(chunk_start) <= str(target_date) <= str(chunk_end):
+                            found_chunk = i
+                            break
             
-            logger.print_warning(f"Date {date_input} not found in any chunk")
-            return True  # Continue navigation instead of exiting
-            
+            if found_chunk is not None:
+                self.current_chunk_index = found_chunk
+                logger.print_success(f"Found date in chunk {found_chunk + 1}")
+                return True
+            else:
+                logger.print_error(f"Date {date_input} not found in any chunk")
+                return True
+                
         except KeyboardInterrupt:
             print("\nCancelled date selection.")
-            return True  # Continue navigation instead of exiting
+            return True
+        except Exception as e:
+            logger.print_error(f"Error in date selection: {e}")
+            return True
     
     def _quit_navigation(self) -> bool:
         """Quit navigation."""
         self.navigation_active = False
-        return True
+        return False
     
     def _show_help(self) -> bool:
         """Show navigation help."""
-        print("\n" + "="*60)
+        print("=" * 60)
         print("TERMINAL NAVIGATION HELP")
-        print("="*60)
+        print("=" * 60)
         print("Navigation Commands:")
         print("  n - Next chunk")
         print("  p - Previous chunk")
@@ -187,36 +188,27 @@ class TerminalNavigator:
         print("  e - End (last chunk)")
         print("  c - Choose chunk by number")
         print("  d - Choose chunk by date (YYYY-MM-DD)")
-        print("  h/? - Show this help")
+        print("  ? - Show this help")
         print("  q - Quit navigation")
         print("  Enter - Continue to next chunk (original behavior)")
-        print("="*60)
-        return True  # Continue navigation after showing help
+        print("=" * 60)
+        return True
     
     def get_current_chunk(self) -> pd.DataFrame:
-        """Get current chunk."""
+        """Get the current chunk."""
         return self.chunks[self.current_chunk_index]
     
     def get_current_chunk_info(self) -> Dict[str, Any]:
-        """Get information about current chunk."""
-        chunk = self.get_current_chunk()
-        if len(chunk) == 0:
-            return {
-                'index': self.current_chunk_index + 1,
-                'total': self.total_chunks,
-                'start_date': 'N/A',
-                'end_date': 'N/A',
-                'rows': 0
-            }
-        
+        """Get information about the current chunk."""
+        chunk = self.chunks[self.current_chunk_index]
         start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
         end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
         
         return {
             'index': self.current_chunk_index + 1,
             'total': self.total_chunks,
-            'start_date': start_date,
-            'end_date': end_date,
+            'start_date': str(start_date),
+            'end_date': str(end_date),
             'rows': len(chunk)
         }
     
@@ -224,7 +216,7 @@ class TerminalNavigator:
         """Show navigation prompt and get user input."""
         info = self.get_current_chunk_info()
         
-        print(f"\n[Navigation: type 'n/p/s/e/c/d/q' -> next/previous/start/end/choose chunk/choose date/quit]")
+        print(f"\n[Navigation: n/p/s/e/c/d for chunks, ? for help, q to quit]")
         print(f"Current: Chunk {info['index']}/{info['total']} ({info['start_date']} to {info['end_date']})")
         
         user_input = input("Press Enter to continue or type navigation command: ").strip().lower()
@@ -265,32 +257,220 @@ class TerminalNavigator:
     
     def navigate(self, plot_function: Callable[[pd.DataFrame, int, Dict[str, Any]], None]) -> None:
         """
-        Main navigation loop.
+        Start interactive navigation.
         
         Args:
             plot_function: Function to call for plotting each chunk
         """
         while self.navigation_active and self.current_chunk_index < self.total_chunks:
-            # Get current chunk info
+            chunk = self.get_current_chunk()
             chunk_info = self.get_current_chunk_info()
-            current_chunk = self.get_current_chunk()
             
-            # Plot current chunk
-            plot_function(current_chunk, self.current_chunk_index, chunk_info)
+            # Plot the current chunk
+            plot_function(chunk, self.current_chunk_index, chunk_info)
             
-            # Note: We don't automatically exit when reaching the end
-            # User can continue navigating even at the last chunk
-            
-            # Show navigation prompt
+            # Show navigation prompt and process input
             user_input = self.show_navigation_prompt()
+            should_continue = self.process_navigation_input(user_input)
             
-            # Process navigation input
-            if not self.process_navigation_input(user_input):
-                # If process_navigation_input returns False, it means we should quit
+            if not should_continue:
                 break
+
+
+class AutoTerminalNavigator(TerminalNavigator):
+    """
+    Extended terminal navigator for AUTO mode with field array switching.
+    Supports switching between different field arrays (OHLC, pressure_high, pressure_low, etc.).
+    """
+    
+    def __init__(self, chunks: List[pd.DataFrame], title: str = "AUTO Terminal Navigation", field_columns: List[str] = None):
+        """
+        Initialize the AUTO terminal navigator.
         
-        if self.navigation_active:
-            logger.print_success("Navigation completed successfully!")
+        Args:
+            chunks (List[pd.DataFrame]): List of data chunks
+            title (str): Navigation title
+            field_columns (List[str]): List of field columns to navigate through
+        """
+        super().__init__(chunks, title)
+        
+        # Field navigation state
+        self.current_field_index = 0
+        self.field_columns = field_columns or []
+        self.total_fields = len(self.field_columns) if field_columns else 0
+        
+        # Field groups for better organization
+        self.field_groups = self._organize_field_groups()
+        self.current_group_index = 0
+        self.total_groups = len(self.field_groups)
+        
+        # Extended commands for field navigation
+        self.commands.update({
+            'f': self._next_field,
+            'b': self._previous_field,
+            'g': self._next_group,
+            'h': self._previous_group,
+            '?': self._show_help,
+        })
+    
+    def _organize_field_groups(self) -> List[Dict[str, Any]]:
+        """Organize fields into logical groups."""
+        groups = []
+        
+        # Group 1: OHLC (always first)
+        ohlc_fields = [col for col in self.field_columns if col.lower() in ['open', 'high', 'low', 'close', 'volume']]
+        if ohlc_fields:
+            groups.append({
+                'name': 'OHLC',
+                'fields': ohlc_fields,
+                'description': 'Price and Volume Data'
+            })
+        
+        # Group 2: Pressure indicators
+        pressure_fields = [col for col in self.field_columns if 'pressure' in col.lower()]
+        if pressure_fields:
+            groups.append({
+                'name': 'Pressure',
+                'fields': pressure_fields,
+                'description': 'Pressure Indicators'
+            })
+        
+        # Group 3: Predicted values
+        predicted_fields = [col for col in self.field_columns if 'predicted' in col.lower()]
+        if predicted_fields:
+            groups.append({
+                'name': 'Predicted',
+                'fields': predicted_fields,
+                'description': 'Predicted Values'
+            })
+        
+        # Group 4: Other indicators
+        other_fields = [col for col in self.field_columns 
+                       if col not in ohlc_fields and col not in pressure_fields and col not in predicted_fields]
+        if other_fields:
+            groups.append({
+                'name': 'Other',
+                'fields': other_fields,
+                'description': 'Other Indicators'
+            })
+        
+        return groups
+    
+    def _next_field(self) -> bool:
+        """Navigate to next field within current group."""
+        if self.total_groups == 0:
+            logger.print_warning("No field groups available")
+            return False
+        
+        current_group = self.field_groups[self.current_group_index]
+        if self.current_field_index < len(current_group['fields']) - 1:
+            self.current_field_index += 1
+            return True
+        else:
+            # Try to move to next group
+            return self._next_group()
+    
+    def _previous_field(self) -> bool:
+        """Navigate to previous field within current group."""
+        if self.total_groups == 0:
+            logger.print_warning("No field groups available")
+            return False
+        
+        if self.current_field_index > 0:
+            self.current_field_index -= 1
+            return True
+        else:
+            # Try to move to previous group
+            return self._previous_group()
+    
+    def _next_group(self) -> bool:
+        """Navigate to next field group."""
+        if self.current_group_index < self.total_groups - 1:
+            self.current_group_index += 1
+            # Set field index to first field in new group
+            self.current_field_index = 0
+            return True
+        else:
+            logger.print_warning("Already at the last field group")
+            return False
+    
+    def _previous_group(self) -> bool:
+        """Navigate to previous field group."""
+        if self.current_group_index > 0:
+            self.current_group_index -= 1
+            # Set field index to last field in new group
+            group_fields = self.field_groups[self.current_group_index]['fields']
+            self.current_field_index = len(group_fields) - 1
+            return True
+        else:
+            logger.print_warning("Already at the first field group")
+            return False
+    
+    def get_current_field(self) -> str:
+        """Get the current field name."""
+        if self.total_groups == 0:
+            return None
+        
+        current_group = self.field_groups[self.current_group_index]
+        if self.current_field_index < len(current_group['fields']):
+            return current_group['fields'][self.current_field_index]
+        return None
+    
+    def get_current_group_info(self) -> Dict[str, Any]:
+        """Get information about the current field group."""
+        if self.total_groups == 0:
+            return {'name': 'None', 'description': 'No fields available', 'current_field': None}
+        
+        group = self.field_groups[self.current_group_index]
+        current_field = group['fields'][self.current_field_index] if self.current_field_index < len(group['fields']) else None
+        
+        return {
+            'name': group['name'],
+            'description': group['description'],
+            'field_index': self.current_field_index + 1,
+            'total_fields': len(group['fields']),
+            'current_field': current_field
+        }
+    
+    def show_navigation_prompt(self) -> str:
+        """Show extended navigation prompt with field information."""
+        chunk_info = self.get_current_chunk_info()
+        group_info = self.get_current_group_info()
+        
+        print(f"\n[AUTO Navigation: n/p/s/e/c/d for chunks, f/b/g/h for fields, ? for help, q to quit]")
+        print(f"Chunk: {chunk_info['index']}/{chunk_info['total']} ({chunk_info['start_date']} to {chunk_info['end_date']})")
+        print(f"Field: {group_info['name']} - {group_info['description']}")
+        if group_info['current_field']:
+            print(f"Current: {group_info['current_field']} ({group_info['field_index']}/{group_info['total_fields']})")
+        
+        user_input = input("Press Enter to continue or type navigation command: ").strip().lower()
+        return user_input
+    
+    def _show_help(self) -> bool:
+        """Show extended navigation help."""
+        print("=" * 60)
+        print("AUTO TERMINAL NAVIGATION HELP")
+        print("=" * 60)
+        print("Chunk Navigation:")
+        print("  n - Next chunk")
+        print("  p - Previous chunk")
+        print("  s - Start (first chunk)")
+        print("  e - End (last chunk)")
+        print("  c - Choose chunk by number")
+        print("  d - Choose chunk by date (YYYY-MM-DD)")
+        print()
+        print("Field Navigation:")
+        print("  f - Next field")
+        print("  b - Previous field")
+        print("  g - Next field group")
+        print("  h - Previous field group")
+        print()
+        print("System Commands:")
+        print("  ? - Show this help")
+        print("  q - Quit navigation")
+        print("  Enter - Continue to next chunk (original behavior)")
+        print("=" * 60)
+        return True
 
 
 def create_navigation_prompt(chunk_index: int, total_chunks: int, start_date: str, end_date: str) -> str:
