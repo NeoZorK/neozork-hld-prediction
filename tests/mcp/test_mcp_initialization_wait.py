@@ -42,8 +42,13 @@ class TestMCPInitializationWait:
         
         checker = DockerMCPServerChecker(self.project_root)
         
-        # Mock successful ping response
-        with patch.object(checker, '_test_mcp_ping_request', return_value=True):
+        # Mock successful socket connection
+        with patch('socket.socket') as mock_socket:
+            mock_sock = MagicMock()
+            mock_socket.return_value = mock_sock
+            mock_sock.connect_ex.return_value = 0  # Success
+            mock_sock.close.return_value = None
+            
             result = checker._wait_for_mcp_initialization(max_wait_time=5)
             assert result is True
     
@@ -61,8 +66,13 @@ class TestMCPInitializationWait:
             f.write("📊 Scanning project files...\n")
             f.write("✅ Neozork Unified MCP Server initialized successfully\n")
         
-        # Mock failed ping but successful log detection
-        with patch.object(checker, '_test_mcp_ping_request', return_value=False):
+        # Mock failed socket connection but successful log detection
+        with patch('socket.socket') as mock_socket:
+            mock_sock = MagicMock()
+            mock_socket.return_value = mock_sock
+            mock_sock.connect_ex.return_value = 111  # Connection refused
+            mock_sock.close.return_value = None
+            
             result = checker._wait_for_mcp_initialization(max_wait_time=5)
             assert result is True
     
@@ -73,8 +83,13 @@ class TestMCPInitializationWait:
         
         checker = DockerMCPServerChecker(self.project_root)
         
-        # Mock failed ping and no log file
-        with patch.object(checker, '_test_mcp_ping_request', return_value=False):
+        # Mock failed socket connection and no log file
+        with patch('socket.socket') as mock_socket:
+            mock_sock = MagicMock()
+            mock_socket.return_value = mock_sock
+            mock_sock.connect_ex.return_value = 111  # Connection refused
+            mock_sock.close.return_value = None
+            
             result = checker._wait_for_mcp_initialization(max_wait_time=2)
             assert result is False
     
@@ -110,12 +125,22 @@ class TestMCPInitializationWait:
         
         checker = DockerMCPServerChecker(self.project_root)
         
-        # Mock successful initialization wait and ping
+        # Mock successful initialization wait and socket communication
         with patch.object(checker, '_wait_for_mcp_initialization', return_value=True), \
-             patch.object(checker, '_test_mcp_ping_request', return_value=True):
+             patch('socket.socket') as mock_socket:
+            mock_sock = MagicMock()
+            mock_socket.return_value = mock_sock
+            mock_sock.connect.return_value = None
+            mock_sock.recv.return_value = json.dumps({
+                "jsonrpc": "2.0",
+                "id": 1,
+                "result": {"pong": True}
+            }).encode('utf-8')
+            mock_sock.close.return_value = None
+            
             result = checker.test_connection()
             assert result["status"] == "success"
-            assert "MCP server is responding to ping requests" in result["message"]
+            assert "socket communication" in result["message"]
     
     @patch('scripts.mcp.check_mcp_status.is_running_in_docker')
     def test_test_connection_initialization_timeout(self, mock_docker):
@@ -149,16 +174,27 @@ class TestMCPInitializationWait:
         """Test log file reading functionality"""
         checker = DockerMCPServerChecker(self.project_root)
         
-        # Test reading non-existent log file
-        result = checker._wait_for_mcp_initialization(max_wait_time=1)
-        assert result is False
+        # Test reading non-existent log file with failed socket connection
+        with patch('socket.socket') as mock_socket:
+            mock_sock = MagicMock()
+            mock_socket.return_value = mock_sock
+            mock_sock.connect_ex.return_value = 111  # Connection refused
+            mock_sock.close.return_value = None
+            
+            result = checker._wait_for_mcp_initialization(max_wait_time=1)
+            assert result is False
         
         # Test reading log file with initialization message
         log_file = self.logs_dir / "mcp_server.log"
         with open(log_file, 'w') as f:
             f.write("✅ Neozork Unified MCP Server initialized successfully\n")
         
-        with patch.object(checker, '_test_mcp_ping_request', return_value=False):
+        with patch('socket.socket') as mock_socket:
+            mock_sock = MagicMock()
+            mock_socket.return_value = mock_sock
+            mock_sock.connect_ex.return_value = 111  # Connection refused
+            mock_sock.close.return_value = None
+            
             result = checker._wait_for_mcp_initialization(max_wait_time=2)
             assert result is True
 

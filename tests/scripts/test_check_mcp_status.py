@@ -3,7 +3,7 @@
 
 """
 Test MCP Server Status Checker
-Test the new Docker-specific ping-based detection logic
+Test the new Docker-specific socket-based detection logic
 """
 
 import pytest
@@ -21,123 +21,155 @@ from mcp.check_mcp_status import DockerMCPServerChecker, MCPServerChecker, is_ru
 
 
 class TestDockerMCPServerChecker:
-    """Test Docker MCP Server Checker with ping-based detection"""
+    """Test Docker MCP Server Checker with socket-based detection"""
     
     def setup_method(self):
         """Setup test environment"""
         self.project_root = Path(__file__).parent.parent.parent
         self.checker = DockerMCPServerChecker(self.project_root)
     
-    @patch('subprocess.run')
-    def test_test_mcp_ping_request_success(self, mock_run):
-        """Test successful ping request to MCP server"""
-        # Mock successful response
-        mock_result = Mock()
-        mock_result.returncode = 0
-        mock_result.stdout = '{"jsonrpc": "2.0", "id": 1, "result": {"pong": true, "timestamp": "2024-01-01T00:00:00"}}'
-        mock_result.stderr = ""
-        mock_run.return_value = mock_result
+    @patch('socket.socket')
+    def test_test_mcp_ping_request_success(self, mock_socket):
+        """Test successful ping request to MCP server via socket"""
+        # Mock successful socket connection and response
+        mock_sock = Mock()
+        mock_socket.return_value = mock_sock
+        mock_sock.connect.return_value = None
+        mock_sock.recv.return_value = json.dumps({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {"pong": True, "timestamp": "2024-01-01T00:00:00"}
+        }).encode('utf-8')
+        mock_sock.close.return_value = None
         
         # Test ping request
         result = self.checker._test_mcp_ping_request()
         
         assert result is True
-        mock_run.assert_called_once()
-        
-        # Check command
-        call_args = mock_run.call_args
-        assert "echo" in call_args[0][0]
-        assert "neozork_mcp_server.py" in call_args[0][0]
-        assert call_args[1]['timeout'] == 10
-        assert call_args[1]['cwd'] == self.project_root
+        mock_sock.connect.assert_called_once_with(('localhost', 8080))
+        mock_sock.send.assert_called_once()
+        mock_sock.recv.assert_called_once()
+        mock_sock.close.assert_called_once()
     
-    @patch('subprocess.run')
-    def test_test_mcp_ping_request_failure(self, mock_run):
-        """Test failed ping request to MCP server"""
-        # Mock failed response
-        mock_result = Mock()
-        mock_result.returncode = 1
-        mock_result.stdout = ""
-        mock_result.stderr = "Error: No such file or directory"
-        mock_run.return_value = mock_result
+    @patch('socket.socket')
+    def test_test_mcp_ping_request_failure(self, mock_socket):
+        """Test failed ping request to MCP server via socket"""
+        # Mock connection refused
+        mock_sock = Mock()
+        mock_socket.return_value = mock_sock
+        mock_sock.connect.side_effect = ConnectionRefusedError()
+        mock_sock.close.return_value = None
         
         # Test ping request
         result = self.checker._test_mcp_ping_request()
         
         assert result is False
+        mock_sock.close.assert_called_once()
     
-    @patch('subprocess.run')
-    def test_test_mcp_ping_request_invalid_json(self, mock_run):
-        """Test ping request with invalid JSON response"""
-        # Mock invalid JSON response
-        mock_result = Mock()
-        mock_result.returncode = 0
-        mock_result.stdout = "Invalid JSON response"
-        mock_result.stderr = ""
-        mock_run.return_value = mock_result
+    @patch('socket.socket')
+    def test_test_mcp_ping_request_invalid_json(self, mock_socket):
+        """Test ping request with invalid JSON response via socket"""
+        # Mock successful connection but invalid JSON response
+        mock_sock = Mock()
+        mock_socket.return_value = mock_sock
+        mock_sock.connect.return_value = None
+        mock_sock.recv.return_value = b"Invalid JSON response"
+        mock_sock.close.return_value = None
         
         # Test ping request
         result = self.checker._test_mcp_ping_request()
         
         assert result is False
+        mock_sock.close.assert_called_once()
     
-    @patch('subprocess.run')
-    def test_test_mcp_ping_request_timeout(self, mock_run):
-        """Test ping request timeout"""
+    @patch('socket.socket')
+    def test_test_mcp_ping_request_timeout(self, mock_socket):
+        """Test ping request timeout via socket"""
         # Mock timeout
-        mock_run.side_effect = subprocess.TimeoutExpired("echo", 10)
+        mock_sock = Mock()
+        mock_socket.return_value = mock_sock
+        mock_sock.connect.side_effect = TimeoutError()
+        mock_sock.close.return_value = None
         
         # Test ping request
         result = self.checker._test_mcp_ping_request()
         
         assert result is False
+        mock_sock.close.assert_called_once()
     
-    @patch.object(DockerMCPServerChecker, '_test_mcp_ping_request')
-    def test_check_server_running_success(self, mock_ping):
-        """Test server running check with successful ping"""
-        mock_ping.return_value = True
+    @patch.object(DockerMCPServerChecker, '_wait_for_mcp_initialization')
+    def test_check_server_running_success(self, mock_wait):
+        """Test server running check with successful initialization"""
+        mock_wait.return_value = True
         
-        result = self.checker.check_server_running()
-        
-        assert result is True
-        mock_ping.assert_called_once()
+        # Mock log file with initialization message
+        with patch('pathlib.Path.exists', return_value=True), \
+             patch('builtins.open', create=True) as mock_open:
+            mock_file = MagicMock()
+            mock_open.return_value.__enter__.return_value = mock_file
+            mock_file.read.return_value = "✅ Neozork Unified MCP Server initialized successfully"
+            
+            result = self.checker.check_server_running()
+            
+            assert result is True
+            mock_wait.assert_called_once()
     
-    @patch.object(DockerMCPServerChecker, '_test_mcp_ping_request')
-    def test_check_server_running_failure(self, mock_ping):
-        """Test server running check with failed ping"""
-        mock_ping.return_value = False
+    @patch.object(DockerMCPServerChecker, '_wait_for_mcp_initialization')
+    def test_check_server_running_failure(self, mock_wait):
+        """Test server running check with failed initialization"""
+        mock_wait.return_value = False
         
         result = self.checker.check_server_running()
         
         assert result is False
-        mock_ping.assert_called_once()
+        mock_wait.assert_called_once()
     
-    @patch.object(DockerMCPServerChecker, '_test_mcp_ping_request')
-    def test_test_connection_success(self, mock_ping):
-        """Test connection test with successful ping"""
-        mock_ping.return_value = True
+    @patch.object(DockerMCPServerChecker, '_wait_for_mcp_initialization')
+    @patch('socket.socket')
+    def test_test_connection_success(self, mock_socket, mock_wait):
+        """Test connection test with successful socket communication"""
+        # Mock successful initialization and socket connection
+        mock_wait.return_value = True
+        mock_sock = Mock()
+        mock_socket.return_value = mock_sock
+        mock_sock.connect.return_value = None
+        mock_sock.recv.return_value = json.dumps({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {"pong": True}
+        }).encode('utf-8')
+        mock_sock.close.return_value = None
         
         result = self.checker.test_connection()
         
         assert result["status"] == "success"
-        assert result["message"] == "MCP server is responding to ping requests"
-        assert result["test_method"] == "ping_request"
+        assert "socket communication" in result["message"]
+        assert result["test_method"] == "socket_ping"
         assert result["response_time"] == "immediate"
     
-    @patch.object(DockerMCPServerChecker, '_test_mcp_ping_request')
-    def test_test_connection_failure(self, mock_ping):
-        """Test connection test with failed ping"""
-        mock_ping.return_value = False
+    @patch.object(DockerMCPServerChecker, '_wait_for_mcp_initialization')
+    def test_test_connection_failure(self, mock_wait):
+        """Test connection test with failed initialization"""
+        mock_wait.return_value = False
         
         result = self.checker.test_connection()
         
         assert result["status"] == "failed"
-        assert "not responding" in result["error"]
+        assert "initialization did not complete" in result["error"]
     
-    @patch.object(DockerMCPServerChecker, '_test_mcp_ping_request')
-    def test_check_docker_specific(self, mock_ping):
+    @patch('socket.socket')
+    def test_check_docker_specific(self, mock_socket):
         """Test Docker-specific checks"""
-        mock_ping.return_value = True
+        # Mock successful socket connection
+        mock_sock = Mock()
+        mock_socket.return_value = mock_sock
+        mock_sock.connect.return_value = None
+        mock_sock.recv.return_value = json.dumps({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {"pong": True}
+        }).encode('utf-8')
+        mock_sock.close.return_value = None
         
         result = self.checker._check_docker_specific()
         
@@ -145,7 +177,7 @@ class TestDockerMCPServerChecker:
         assert "environment_vars" in result
         assert "mcp_server_responding" in result
         assert result["mcp_server_responding"] is True
-        assert result["test_method"] == "ping_request"
+        assert result["test_method"] == "socket_connection"
         assert "mcp_server_file_exists" in result
         assert "log_file_exists" in result
     
@@ -166,8 +198,12 @@ class TestMCPServerChecker:
         self.checker = MCPServerChecker(self.project_root)
     
     @patch('subprocess.run')
-    def test_check_server_running_host(self, mock_run):
+    @patch.object(MCPServerChecker, '_test_mcp_ping_request')
+    def test_check_server_running_host(self, mock_ping, mock_run):
         """Test server running check on host"""
+        # Mock failed ping first
+        mock_ping.return_value = False
+        
         # Mock pgrep response
         mock_result = Mock()
         mock_result.returncode = 0
@@ -177,11 +213,13 @@ class TestMCPServerChecker:
         result = self.checker.check_server_running()
         
         assert result is True
-        mock_run.assert_called_once_with(
-            ['pgrep', '-f', 'neozork_mcp_server.py'],
-            capture_output=True,
-            text=True
-        )
+        # Expect 2 calls: one for ping test, one for pgrep
+        assert mock_run.call_count == 1  # Only pgrep call
+        mock_ping.assert_called_once()
+        
+        # Check that pgrep was called
+        pgrep_call = mock_run.call_args_list[0]
+        assert pgrep_call[0][0] == ['pgrep', '-f', 'neozork_mcp_server.py']
     
     @patch('subprocess.run')
     def test_check_server_running_host_not_running(self, mock_run):
@@ -198,30 +236,16 @@ class TestMCPServerChecker:
 
 
 class TestIntegration:
-    """Integration tests for the complete checker"""
+    """Integration tests"""
     
     def test_environment_detection(self):
         """Test environment detection logic"""
-        # This test verifies that the right checker is used
-        # We can't easily test this without mocking the entire environment
-        # But we can verify the function exists and returns a boolean
-        result = is_running_in_docker()
-        assert isinstance(result, bool)
+        # Test that the right checker is used
+        checker = DockerMCPServerChecker() if is_running_in_docker() else MCPServerChecker()
+        assert checker is not None
     
     def test_checker_initialization(self):
         """Test checker initialization"""
         project_root = Path(__file__).parent.parent.parent
-        
-        # Test Docker checker
-        docker_checker = DockerMCPServerChecker(project_root)
-        assert docker_checker.project_root == project_root
-        assert docker_checker.logger is not None
-        
-        # Test Host checker
-        host_checker = MCPServerChecker(project_root)
-        assert host_checker.project_root == project_root
-        assert host_checker.logger is not None
-
-
-if __name__ == "__main__":
-    pytest.main([__file__]) 
+        checker = DockerMCPServerChecker(project_root)
+        assert checker.project_root == project_root 

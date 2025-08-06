@@ -114,10 +114,17 @@ class TestSeabornSuperTrendEnhancement:
     
     def test_modern_styling(self, sample_data):
         """Test that modern styling is applied to all elements."""
+        # Use smaller subset for Docker environment
+        test_data = sample_data.head(50)
+        
         with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp_file:
             try:
+                # Set matplotlib backend to non-interactive for Docker
+                import matplotlib
+                matplotlib.use('Agg')
+                
                 fig = plot_dual_chart_seaborn(
-                    df=sample_data,
+                    df=test_data,
                     rule='supertrend:10,3',
                     title='Test Modern Styling',
                     output_path=tmp_file.name
@@ -133,6 +140,10 @@ class TestSeabornSuperTrendEnhancement:
                 # Verify the plot was saved
                 assert os.path.exists(tmp_file.name)
                 
+                # Clean up matplotlib figure to prevent memory leaks
+                import matplotlib.pyplot as plt
+                plt.close(fig)
+                
             finally:
                 if os.path.exists(tmp_file.name):
                     os.unlink(tmp_file.name)
@@ -143,10 +154,17 @@ class TestSeabornSuperTrendEnhancement:
         if 'SuperTrend' in sample_data.columns:
             sample_data = sample_data.drop('SuperTrend', axis=1)
         
+        # Use smaller subset for Docker environment
+        test_data = sample_data.head(50)
+        
         with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp_file:
             try:
+                # Set matplotlib backend to non-interactive for Docker
+                import matplotlib
+                matplotlib.use('Agg')
+                
                 fig = plot_dual_chart_seaborn(
-                    df=sample_data,
+                    df=test_data,
                     rule='supertrend:10,3',
                     title='Test PPrice Fallback',
                     output_path=tmp_file.name
@@ -155,21 +173,32 @@ class TestSeabornSuperTrendEnhancement:
                 assert fig is not None
                 assert os.path.exists(tmp_file.name)
                 
+                # Clean up matplotlib figure to prevent memory leaks
+                import matplotlib.pyplot as plt
+                plt.close(fig)
+                
             finally:
                 if os.path.exists(tmp_file.name):
                     os.unlink(tmp_file.name)
     
     def test_other_indicators_modern_styling(self, sample_data):
         """Test that other indicators also have modern styling in seaborn mode."""
-        # Test RSI
+        # Test RSI with smaller dataset to prevent memory issues
         sample_data['rsi'] = np.random.uniform(0, 100, len(sample_data))
         sample_data['rsi_overbought'] = 70
         sample_data['rsi_oversold'] = 30
         
+        # Use smaller subset for Docker environment
+        test_data = sample_data.head(50)  # Use only first 50 rows
+        
         with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp_file:
             try:
+                # Set matplotlib backend to non-interactive for Docker
+                import matplotlib
+                matplotlib.use('Agg')
+                
                 fig = plot_dual_chart_seaborn(
-                    df=sample_data,
+                    df=test_data,
                     rule='rsi:14,30,70,close',
                     title='Test RSI Modern Styling',
                     output_path=tmp_file.name
@@ -177,6 +206,10 @@ class TestSeabornSuperTrendEnhancement:
                 
                 assert fig is not None
                 assert os.path.exists(tmp_file.name)
+                
+                # Clean up matplotlib figure to prevent memory leaks
+                import matplotlib.pyplot as plt
+                plt.close(fig)
                 
             finally:
                 if os.path.exists(tmp_file.name):
@@ -189,10 +222,17 @@ class TestSeabornSuperTrendEnhancement:
         sample_data['macd_signal'] = sample_data['macd'] + np.random.normal(0, 0.5, len(sample_data))
         sample_data['macd_histogram'] = sample_data['macd'] - sample_data['macd_signal']
         
+        # Use smaller subset for Docker environment
+        test_data = sample_data.head(50)
+        
         with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp_file:
             try:
+                # Set matplotlib backend to non-interactive for Docker
+                import matplotlib
+                matplotlib.use('Agg')
+                
                 fig = plot_dual_chart_seaborn(
-                    df=sample_data,
+                    df=test_data,
                     rule='macd:12,26,9,close',
                     title='Test MACD Modern Styling',
                     output_path=tmp_file.name
@@ -200,6 +240,10 @@ class TestSeabornSuperTrendEnhancement:
                 
                 assert fig is not None
                 assert os.path.exists(tmp_file.name)
+                
+                # Clean up matplotlib figure to prevent memory leaks
+                import matplotlib.pyplot as plt
+                plt.close(fig)
                 
             finally:
                 if os.path.exists(tmp_file.name):
