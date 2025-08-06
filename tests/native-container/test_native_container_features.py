@@ -446,7 +446,7 @@ class TestNativeContainerIntegration:
         mcp_files = [
             "neozork_mcp_server.py",
             "cursor_mcp_config.json",
-            "scripts/mcp/check_mcp_status.py"
+            "scripts/check_mcp_status.py"
         ]
         
         for file_path in mcp_files:

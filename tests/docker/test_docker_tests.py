@@ -124,7 +124,7 @@ class TestDockerEnvironment:
         """Test that MCP scripts exist"""
         mcp_scripts = [
             "scripts/mcp/neozork_mcp_manager.py",
-            "scripts/mcp/check_mcp_status.py",
+            "scripts/check_mcp_status.py",
             "scripts/mcp/start_mcp_server_daemon.py"
         ]
         

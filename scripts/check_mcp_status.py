@@ -72,6 +72,11 @@ class DockerMCPServerChecker:
     def check_server_running(self) -> bool:
         """Check if MCP server is running inside Docker container"""
         try:
+            # First wait for MCP server initialization to complete
+            if not self._wait_for_mcp_initialization():
+                self.logger.warning("MCP server initialization did not complete in time")
+                return False
+            
             # Docker-specific method: send ping request to MCP server
             # MCP server runs on-demand and shuts down after requests
             return self._test_mcp_ping_request()
@@ -79,6 +84,41 @@ class DockerMCPServerChecker:
         except Exception as e:
             self.logger.error(f"Error checking server status in Docker: {e}")
             return False
+
+    def _wait_for_mcp_initialization(self, max_wait_time: int = 60) -> bool:
+        """Wait for MCP server to complete initialization"""
+        self.logger.info(f"Waiting for MCP server initialization (max {max_wait_time}s)...")
+        
+        start_time = time.time()
+        check_interval = 2  # Check every 2 seconds
+        
+        while time.time() - start_time < max_wait_time:
+            try:
+                # Check if MCP server is responding to ping
+                if self._test_mcp_ping_request():
+                    self.logger.info("MCP server initialization completed successfully")
+                    return True
+                    
+                # Check log file for initialization completion message
+                log_file = self.project_root / "logs" / "mcp_server.log"
+                if log_file.exists():
+                    try:
+                        with open(log_file, 'r') as f:
+                            log_content = f.read()
+                            if "✅ Neozork Unified MCP Server initialized successfully" in log_content:
+                                self.logger.info("Found initialization completion message in logs")
+                                return True
+                    except Exception as e:
+                        self.logger.debug(f"Error reading log file: {e}")
+                
+                time.sleep(check_interval)
+                
+            except Exception as e:
+                self.logger.debug(f"Error during initialization check: {e}")
+                time.sleep(check_interval)
+        
+        self.logger.warning(f"MCP server initialization timeout after {max_wait_time}s")
+        return False
 
     def _test_mcp_ping_request(self) -> bool:
         """Test MCP server by sending ping request via echo command"""
@@ -135,6 +175,13 @@ class DockerMCPServerChecker:
         """Test MCP server connection inside Docker"""
         try:
             self.logger.info("Testing MCP server connection in Docker...")
+            
+            # First wait for initialization to complete
+            if not self._wait_for_mcp_initialization():
+                return {
+                    "status": "failed", 
+                    "error": "MCP server initialization did not complete in time"
+                }
             
             # Test MCP server by sending ping request
             server_responding = self._test_mcp_ping_request()

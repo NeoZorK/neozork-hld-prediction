@@ -467,15 +467,18 @@ start_mcp_server() {
             MCP_PID=$!
             echo $MCP_PID > /tmp/mcp_server.pid
             echo -e "\033[1;32mMCP server started in background (PID: $MCP_PID)\033[0m\n"
-            # Wait for mcp_server to initialize
-            sleep 5
             
-            # Check MCP server status
+            # Wait for MCP server initialization to complete
+            echo -e "\033[1;33m=== Waiting for MCP server initialization ===\033[0m\n"
+            echo -e "\033[1;33mThis may take up to 60 seconds for first startup...\033[0m\n"
+            
+            # Check MCP server status with initialization wait
             echo -e "\033[1;33m=== Checking MCP server status ===\033[0m\n"
             if python scripts/check_mcp_status.py; then
                 echo -e "\033[1;32m✅ MCP server is running correctly\033[0m\n"
             else
                 echo -e "\033[1;31m❌ MCP server check failed\033[0m\n"
+                echo -e "\033[1;33m💡 You can check logs with: tail -f /app/logs/mcp_server.log\033[0m\n"
             fi
         else
             echo -e "\033[1;33mSkipping MCP server startup\033[0m\n"

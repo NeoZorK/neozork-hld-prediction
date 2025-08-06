@@ -56,7 +56,7 @@ def test_detection():
     try:
         # Test with debug detection
         result = subprocess.run(
-            ["python3", "scripts/mcp/check_mcp_status.py", "--debug-detect"],
+            ["python3", "scripts/check_mcp_status.py", "--debug-detect"],
             capture_output=True,
             text=True,
             cwd=project_root
