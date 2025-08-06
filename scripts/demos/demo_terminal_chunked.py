@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# scripts/demo_terminal_chunked.py
+# scripts/demos/demo_terminal_chunked.py
 
 """
 Demo script for PHLD terminal chunked plotting functionality.

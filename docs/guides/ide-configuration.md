@@ -18,7 +18,7 @@ python3 -m pytest tests/docker/test_ide_configs.py -v
 ### Manual Verification
 ```bash
 # Check MCP server status
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 
 # Test MCP server connection
 echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
@@ -101,7 +101,7 @@ docker-compose build
 docker-compose run --rm app bash
 
 # Check MCP server status in Docker
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 ```
 
 ### Docker-Specific Features
@@ -122,7 +122,7 @@ DOCKER_CONTAINER=true
 ## 📊 Status Monitoring
 
 ### Status Checker
-The `scripts/check_mcp_status.py` script provides comprehensive monitoring:
+The `scripts/mcp/check_mcp_status.py` script provides comprehensive monitoring:
 
 #### Docker Environment Output
 ```
@@ -198,7 +198,7 @@ The system automatically detects the environment using multiple methods:
 #### MCP Server Not Detected
 ```bash
 # Check if server is running
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 
 # Manual server start (host environment)
 python3 neozork_mcp_server.py
@@ -419,7 +419,7 @@ python3 scripts/setup_ide_configs.py
 ### Check Server Status
 ```bash
 # Comprehensive status check
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 
 # Expected output:
 # 🔍 MCP Server Status Checker
@@ -487,7 +487,7 @@ docker compose run --rm neozork-hld python3 neozork_mcp_server.py
 #### Verification Steps
 ```bash
 # After restart, check if server is running
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 
 # Check logs for any errors
 tail -f logs/neozork_mcp.log
@@ -647,7 +647,7 @@ docker compose ps
 
 #### "Connection refused"
 - Restart Cursor IDE
-- Check if server is running: `python3 scripts/check_mcp_status.py`
+- Check if server is running: `python3 scripts/mcp/check_mcp_status.py`
 - Verify port availability: `lsof -i :8080`
 
 ### File Priority for Cursor IDE
@@ -665,7 +665,7 @@ python3 -m json.tool mcp.json
 python3 -m json.tool cursor_mcp_config.json
 
 # Test MCP server
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 
 # Check IDE setup
 python3 -m pytest tests/docker/test_ide_configs.py -v

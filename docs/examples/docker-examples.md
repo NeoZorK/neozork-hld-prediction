@@ -26,13 +26,13 @@ docker-compose build --build-arg USE_UV=false
 docker-compose run --rm app bash
 
 # Run container with specific command
-docker-compose run --rm app python scripts/check_mcp_status.py
+docker-compose run --rm app python scripts/mcp/check_mcp_status.py
 ```
 
 ### MCP Server in Docker
 ```bash
 # Check MCP server status in Docker container
-docker-compose run --rm app python scripts/check_mcp_status.py
+docker-compose run --rm app python scripts/mcp/check_mcp_status.py
 
 # Expected output:
 # 🔍 MCP Server Status Checker
@@ -66,7 +66,7 @@ docker-compose build
 docker-compose run --rm app bash
 
 # Inside container, check MCP server
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 
 # Test ping request in container
 echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
@@ -189,7 +189,7 @@ services:
       - ./logs:/app/logs
       - ./results:/app/results
     working_dir: /app
-    command: python scripts/check_mcp_status.py
+    command: python scripts/mcp/check_mcp_status.py
 ```
 
 ### Environment Configuration

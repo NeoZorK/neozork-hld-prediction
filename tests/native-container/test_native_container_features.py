@@ -148,7 +148,7 @@ class TestNativeContainerFeatures:
             "nz yfinance AAPL --rule PHLD",
             "nz mql5 BTCUSD --interval H4 --rule PHLD",
             "eda --data-quality-checks",
-            "python scripts/check_mcp_status.py",
+            "python scripts/mcp/check_mcp_status.py",
             "python neozork_mcp_server.py"
         ]
         
@@ -446,7 +446,7 @@ class TestNativeContainerIntegration:
         mcp_files = [
             "neozork_mcp_server.py",
             "cursor_mcp_config.json",
-            "scripts/check_mcp_status.py"
+            "scripts/mcp/check_mcp_status.py"
         ]
         
         for file_path in mcp_files:
@@ -503,7 +503,7 @@ class TestNativeContainerDocumentation:
         mcp_commands = [
             "mcp-start",
             "mcp-check",
-            "python scripts/check_mcp_status.py"
+            "python scripts/mcp/check_mcp_status.py"
         ]
         
         for cmd in mcp_commands:

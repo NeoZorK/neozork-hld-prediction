@@ -149,7 +149,7 @@ Predefined useful commands in bash history:
 "uv run pytest tests -n auto"
 
 # Development commands
-"python scripts/check_mcp_status.py"
+"python scripts/mcp/check_mcp_status.py"
 "python neozork_mcp_server.py"
 ```
 
@@ -164,7 +164,7 @@ MCP_PID=$!
 echo $MCP_PID > /tmp/mcp_server.pid
 
 # Check MCP server status
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 
 # Cleanup on exit
 trap cleanup_mcp_server EXIT
@@ -224,7 +224,7 @@ uv run pytest tests -n auto
 
 ```bash
 # MCP server management
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 python neozork_mcp_server.py
 
 # View MCP logs
@@ -246,7 +246,7 @@ history
 # - nz yfinance AAPL --rule PHLD
 # - eda --data-quality-checks
 # - uv run pytest tests -n auto
-# - python scripts/check_mcp_status.py
+# - python scripts/mcp/check_mcp_status.py
 ```
 
 ## 🔍 Testing and Validation

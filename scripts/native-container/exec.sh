@@ -317,7 +317,7 @@ show_available_commands() {
     echo -e "${BLUE}Development:${NC}"
     echo "  python run_analysis.py -h             # Show help"
     echo "  python scripts/utilities/test_uv_docker.py      # Test UV environment"
-    echo "  python scripts/check_mcp_status.py    # Check MCP server"
+    echo "  python scripts/mcp/check_mcp_status.py    # Check MCP server"
     echo "  python scripts/debug/debug_yfinance.py    # Debug YFinance"
     echo "  python scripts/debug/debug_binance.py     # Debug Binance"
     echo "  python scripts/debug/debug_polygon.py     # Debug Polygon"

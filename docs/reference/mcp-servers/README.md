@@ -421,7 +421,7 @@ Complete documentation for the Model Context Protocol (MCP) servers in the NeoZo
 ### Check MCP Server Status
 ```bash
 # Comprehensive status check
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 
 # Test MCP connection
 echo '{"method": "neozork/ping", "id": 1, "params": {}}' | python3 neozork_mcp_server.py
@@ -459,10 +459,10 @@ The NeoZork HLD Prediction project includes comprehensive MCP server support for
 ## 🔍 MCP Server Status Check
 
 ### Comprehensive Status Check
-The `scripts/check_mcp_status.py` script provides a complete status overview:
+The `scripts/mcp/check_mcp_status.py` script provides a complete status overview:
 
 ```bash
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 ```
 
 **Expected Output:**
@@ -523,7 +523,7 @@ echo '{"method": "neozork/projectInfo", "id": 1, "params": {}}' | python3 neozor
 #### Verification Steps
 ```bash
 # After restart, check if server is running
-python3 scripts/check_mcp_status.py
+python3 scripts/mcp/check_mcp_status.py
 
 # Check logs for any errors
 tail -f logs/neozork_mcp.log
@@ -871,14 +871,14 @@ The project includes an intelligent detection system that automatically adapts t
 ## 📊 Status Monitoring
 
 ### Status Checker
-- **File**: `scripts/check_mcp_status.py`
+- **File**: `scripts/mcp/check_mcp_status.py`
 - **Purpose**: Monitor MCP server status in any environment
 - **Features**: Automatic environment detection, comprehensive reporting
 
 ### Usage Examples
 ```bash
 # Check server status
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 
 # Expected output in Docker:
 # 🐳 Detected Docker environment

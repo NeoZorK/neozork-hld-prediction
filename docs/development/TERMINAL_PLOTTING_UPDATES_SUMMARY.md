@@ -39,7 +39,7 @@ Updated terminal plotting functionality to ensure consistent OHLC candle display
   - All rules now call `draw_ohlc_candles()` consistently
 
 #### Demo Script
-- `scripts/demo_terminal_chunked.py`
+- `scripts/demos/demo_terminal_chunked.py`
   - Simplified to show only PHLD demonstration
   - Removed other rule demonstrations
 

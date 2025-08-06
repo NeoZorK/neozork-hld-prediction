@@ -154,7 +154,7 @@ uv pip install <package>           # Install specific package
 ```bash
 mcp-start                          # Start MCP server
 mcp-check                          # Check MCP server status
-python scripts/check_mcp_status.py # Detailed MCP status
+python scripts/mcp/check_mcp_status.py # Detailed MCP status
 python neozork_mcp_server.py       # Direct MCP server
 ```
 

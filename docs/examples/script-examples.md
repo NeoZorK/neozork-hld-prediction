@@ -9,7 +9,7 @@ Examples demonstrating utility scripts and automation tools in the NeoZork HLD P
 ### MCP Server Status Check
 ```bash
 # Check MCP server status (works in both Docker and host environments)
-python scripts/check_mcp_status.py
+python scripts/mcp/check_mcp_status.py
 
 # Expected output in Docker:
 # 🔍 MCP Server Status Checker
@@ -269,7 +269,7 @@ def build_docker_image():
 def run_docker_container():
     """Run Docker container"""
     print("🚀 Running Docker container...")
-    success, stdout, stderr = run_docker_command("docker-compose run --rm app python scripts/check_mcp_status.py")
+    success, stdout, stderr = run_docker_command("docker-compose run --rm app python scripts/mcp/check_mcp_status.py")
     
     if success:
         print("✅ Docker container ran successfully")

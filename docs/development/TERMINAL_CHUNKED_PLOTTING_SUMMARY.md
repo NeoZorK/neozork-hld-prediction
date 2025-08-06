@@ -182,7 +182,7 @@ python run_analysis.py show csv mn1 -d term --rule rsi_div:20,80,20,close
 ### Demo Script
 ```bash
 # Run the demo script (PHLD only)
-python scripts/demo_terminal_chunked.py
+python scripts/demos/demo_terminal_chunked.py
 ```
 
 ## Documentation Updates

@@ -160,7 +160,7 @@ def stop_server(self):
 ## 📊 Status Monitoring
 
 ### Comprehensive Status Check
-The `scripts/check_mcp_status.py` script provides:
+The `scripts/mcp/check_mcp_status.py` script provides:
 
 - **Environment Detection**: Automatic Docker vs host detection
 - **Server Status**: Running/not running status

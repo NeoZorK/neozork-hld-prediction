@@ -137,7 +137,7 @@ class DockerMCPServerChecker:
                 shell=True,
                 capture_output=True,
                 text=True,
-                timeout=10,
+                timeout=5,  # Reduced timeout for faster response
                 cwd=self.project_root
             )
             
@@ -355,7 +355,7 @@ class MCPServerChecker:
     """Check MCP server status and test connection (non-Docker environment)"""
     
     def __init__(self, project_root: Path = None):
-        self.project_root = project_root or Path(__file__).parent.parent
+        self.project_root = project_root or Path(__file__).parent.parent.parent
         self.logger = self._setup_logging()
         self.server_process = None
         
@@ -377,7 +377,12 @@ class MCPServerChecker:
     def check_server_running(self) -> bool:
         """Check if MCP server is already running"""
         try:
-            # Check for Python processes running the MCP server
+            # First try ping-based detection (like Docker)
+            if self._test_mcp_ping_request():
+                self.logger.info("MCP server is responding to ping requests")
+                return True
+            
+            # Fallback to process-based detection
             result = subprocess.run(
                 ['pgrep', '-f', 'neozork_mcp_server.py'],
                 capture_output=True,
@@ -458,6 +463,57 @@ class MCPServerChecker:
         except Exception as e:
             self.logger.error(f"Error testing connection: {e}")
             return {"status": "failed", "error": str(e)}
+
+    def _test_mcp_ping_request(self) -> bool:
+        """Test MCP server by sending ping request via echo command"""
+        try:
+            self.logger.info("Testing MCP server with ping request...")
+            
+            # Create ping request JSON
+            ping_request = '{"method": "neozork/ping", "id": 1, "params": {}}'
+            
+            # Send request to MCP server via echo command
+            cmd = f'echo \'{ping_request}\' | python3 neozork_mcp_server.py'
+            
+            # Run command with timeout
+            result = subprocess.run(
+                cmd,
+                shell=True,
+                capture_output=True,
+                text=True,
+                timeout=5,  # Reduced timeout for faster response
+                cwd=self.project_root
+            )
+            
+            # Check if we got a valid JSON response
+            if result.returncode == 0 and result.stdout.strip():
+                try:
+                    response = json.loads(result.stdout.strip())
+                    # Check if response contains expected ping response structure
+                    if (response.get("jsonrpc") == "2.0" and 
+                        response.get("id") == 1 and 
+                        response.get("result", {}).get("pong") is True):
+                        self.logger.info("MCP server responded to ping request successfully")
+                        return True
+                    else:
+                        self.logger.warning(f"Unexpected ping response format: {response}")
+                        return False
+                except json.JSONDecodeError as e:
+                    self.logger.warning(f"Invalid JSON response from MCP server: {e}")
+                    self.logger.debug(f"Raw response: {result.stdout}")
+                    return False
+            else:
+                self.logger.info("MCP server did not respond to ping request")
+                if result.stderr:
+                    self.logger.debug(f"Stderr: {result.stderr}")
+                return False
+                
+        except subprocess.TimeoutExpired:
+            self.logger.warning("MCP server ping request timed out")
+            return False
+        except Exception as e:
+            self.logger.error(f"Error testing MCP ping request: {e}")
+            return False
 
     def _get_server_pids(self) -> List[str]:
         """Get server PIDs"""
