@@ -73,7 +73,7 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
                 x_values = list(range(len(df_results)))
 
                 # Set up plot
-                plt.plot_size(140, 35)
+                plt.plot_size(140, 30)  # Reduced height for better text visibility
                 plt.theme('matrix')  # Matrix green theme
 
                 # Prepare OHLC data for candlestick chart
