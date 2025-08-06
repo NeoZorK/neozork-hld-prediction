@@ -77,21 +77,8 @@ class DockerMCPServerChecker:
                 self.logger.warning("MCP server initialization did not complete in time")
                 return False
             
-            # In Docker, MCP server works as on-demand service
-            # If initialization completed (found in logs), consider it running
-            # Ping test is secondary for Docker environment
-            log_file = self.project_root / "logs" / "mcp_server.log"
-            if log_file.exists():
-                try:
-                    with open(log_file, 'r') as f:
-                        log_content = f.read()
-                        if "✅ Neozork Unified MCP Server initialized successfully" in log_content:
-                            self.logger.info("MCP server is running (found initialization message in logs)")
-                            return True
-                except Exception as e:
-                    self.logger.debug(f"Error reading log file: {e}")
-            
-            # Fallback to ping test
+            # Docker-specific method: send ping request to MCP server
+            # MCP server runs on-demand and shuts down after requests
             return self._test_mcp_ping_request()
                 
         except Exception as e:
@@ -99,99 +86,89 @@ class DockerMCPServerChecker:
             return False
 
     def _wait_for_mcp_initialization(self, max_wait_time: int = 60) -> bool:
-        """Wait for MCP server initialization to complete"""
+        """Wait for MCP server to complete initialization"""
         self.logger.info(f"Waiting for MCP server initialization (max {max_wait_time}s)...")
         
         start_time = time.time()
-        check_interval = 2  # Check every 2 seconds instead of every 1 second
+        check_interval = 2  # Check every 2 seconds
         
         while time.time() - start_time < max_wait_time:
-            # Check log file for initialization completion
-            log_file = self.project_root / "logs" / "mcp_server.log"
-            if log_file.exists():
-                try:
-                    with open(log_file, 'r') as f:
-                        log_content = f.read()
-                        if "✅ Neozork Unified MCP Server initialized successfully" in log_content:
-                            self.logger.info("Found initialization completion message in logs")
-                            return True
-                except Exception as e:
-                    self.logger.debug(f"Error reading log file: {e}")
-            
-            # Try socket connection as alternative check
             try:
-                import socket
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.settimeout(1)
-                result = sock.connect_ex(('localhost', 8080))
-                sock.close()
-                
-                if result == 0:
-                    self.logger.info("Socket connection successful - server is ready")
+                # Check if MCP server is responding to ping
+                if self._test_mcp_ping_request():
+                    self.logger.info("MCP server initialization completed successfully")
                     return True
                     
-            except Exception:
-                pass
-            
-            time.sleep(check_interval)
+                # Check log file for initialization completion message
+                log_file = self.project_root / "logs" / "mcp_server.log"
+                if log_file.exists():
+                    try:
+                        with open(log_file, 'r') as f:
+                            log_content = f.read()
+                            if "✅ Neozork Unified MCP Server initialized successfully" in log_content:
+                                self.logger.info("Found initialization completion message in logs")
+                                return True
+                    except Exception as e:
+                        self.logger.debug(f"Error reading log file: {e}")
+                
+                time.sleep(check_interval)
+                
+            except Exception as e:
+                self.logger.debug(f"Error during initialization check: {e}")
+                time.sleep(check_interval)
         
-        self.logger.warning(f"MCP server initialization did not complete within {max_wait_time} seconds")
+        self.logger.warning(f"MCP server initialization timeout after {max_wait_time}s")
         return False
 
     def _test_mcp_ping_request(self) -> bool:
-        """Test MCP server ping request in Docker using socket communication"""
+        """Test MCP server by sending ping request via echo command"""
         try:
-            self.logger.info("Testing MCP server with ping request via socket...")
+            self.logger.info("Testing MCP server with ping request...")
             
-            import socket
+            # Create ping request JSON
+            ping_request = '{"method": "neozork/ping", "id": 1, "params": {}}'
             
-            # Try to connect to MCP socket server
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(3)  # Reduced timeout from 10 to 3 seconds
+            # Send request to MCP server via echo command
+            cmd = f'echo \'{ping_request}\' | python3 neozork_mcp_server.py'
             
-            try:
-                sock.connect(('localhost', 8080))
-                self.logger.info("Connected to MCP socket server")
-                
-                # Create ping request
-                ping_request = {
-                    "jsonrpc": "2.0",
-                    "id": 1,
-                    "method": "neozork/ping",
-                    "params": {}
-                }
-                
-                # Send request
-                sock.send(json.dumps(ping_request).encode('utf-8'))
-                
-                # Receive response
-                response = sock.recv(4096)
-                response_data = json.loads(response.decode('utf-8'))
-                
-                # Check response
-                if (response_data.get("jsonrpc") == "2.0" and
-                    response_data.get("id") == 1 and
-                    response_data.get("result", {}).get("pong") is True):
-                    self.logger.info("MCP server responded to ping request successfully via socket")
-                    return True
-                else:
-                    self.logger.warning(f"Unexpected ping response format: {response_data}")
+            # Run command with timeout
+            result = subprocess.run(
+                cmd,
+                shell=True,
+                capture_output=True,
+                text=True,
+                timeout=10,
+                cwd=self.project_root
+            )
+            
+            # Check if we got a valid JSON response
+            if result.returncode == 0 and result.stdout.strip():
+                try:
+                    response = json.loads(result.stdout.strip())
+                    # Check if response contains expected ping response structure
+                    if (response.get("jsonrpc") == "2.0" and 
+                        response.get("id") == 1 and 
+                        response.get("result", {}).get("pong") is True):
+                        self.logger.info("MCP server responded to ping request successfully")
+                        return True
+                    else:
+                        self.logger.warning(f"Unexpected ping response format: {response}")
+                        return False
+                except json.JSONDecodeError as e:
+                    self.logger.warning(f"Invalid JSON response from MCP server: {e}")
+                    self.logger.debug(f"Raw response: {result.stdout}")
                     return False
+            else:
+                self.logger.info("MCP server did not respond to ping request")
+                if result.stderr:
+                    self.logger.debug(f"Stderr: {result.stderr}")
+                return False
                 
-            except ConnectionRefusedError:
-                self.logger.warning("Connection refused - MCP socket server not running")
-                return False
-            except socket.timeout:
-                self.logger.warning("Socket connection timeout")
-                return False
-            except Exception as e:
-                self.logger.warning(f"Socket communication error: {e}")
-                return False
-            finally:
-                sock.close()
-                
+        except subprocess.TimeoutExpired:
+            self.logger.warning("MCP server ping request timed out")
+            return False
         except Exception as e:
-            self.logger.error(f"Error testing MCP ping request via socket: {e}")
+            self.logger.error(f"Error testing MCP ping request: {e}")
             return False
 
     def test_connection(self) -> Dict[str, Any]:
@@ -202,59 +179,22 @@ class DockerMCPServerChecker:
             # First wait for initialization to complete
             if not self._wait_for_mcp_initialization():
                 return {
-                    "status": "failed",
+                    "status": "failed", 
                     "error": "MCP server initialization did not complete in time"
                 }
             
-            # Try socket communication - single attempt
-            try:
-                import socket
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.settimeout(3)
-                sock.connect(('localhost', 8080))
-                sock.close()
-                
-                # If socket connection works, test ping once
-                server_responding = self._test_mcp_ping_request()
-                
-                if server_responding:
-                    return {
-                        "status": "success",
-                        "message": "MCP server is responding via socket communication",
-                        "test_method": "socket_ping",
-                        "response_time": "immediate"
-                    }
-                else:
-                    return {
-                        "status": "partial",
-                        "message": "Socket connection works but ping failed",
-                        "test_method": "socket_connection",
-                        "response_time": "timeout"
-                    }
-                    
-            except ConnectionRefusedError:
-                self.logger.info("Socket connection failed, checking logs...")
-                
-                # Fallback to log detection
-                log_file = self.project_root / "logs" / "mcp_server.log"
-                if log_file.exists():
-                    try:
-                        with open(log_file, 'r') as f:
-                            log_content = f.read()
-                            if "✅ Neozork Unified MCP Server initialized successfully" in log_content:
-                                return {
-                                    "status": "success",
-                                    "message": "MCP server is running (initialization completed)",
-                                    "test_method": "log_detection",
-                                    "response_time": "verified"
-                                }
-                    except Exception as e:
-                        self.logger.debug(f"Error reading log file: {e}")
-                
+            # Test MCP server by sending ping request
+            server_responding = self._test_mcp_ping_request()
+            
+            if server_responding:
                 return {
-                    "status": "failed", 
-                    "error": "Socket connection refused and no initialization logs found"
+                    "status": "success",
+                    "message": "MCP server is responding to ping requests",
+                    "test_method": "ping_request",
+                    "response_time": "immediate"
                 }
+            else:
+                return {"status": "failed", "error": "Server not responding to ping requests"}
             
         except Exception as e:
             self.logger.error(f"Error testing connection in Docker: {e}")
@@ -370,25 +310,9 @@ class DockerMCPServerChecker:
             "PYTHONUNBUFFERED": os.environ.get("PYTHONUNBUFFERED", "not_set")
         }
         
-        # Test socket connection once
-        try:
-            import socket
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(3)
-            sock.connect(('localhost', 8080))
-            sock.close()
-            docker_info["socket_connection"] = True
-            docker_info["test_method"] = "socket_connection"
-        except Exception as e:
-            docker_info["socket_connection"] = False
-            docker_info["socket_error"] = str(e)
-            docker_info["test_method"] = "ping_request"
-        
-        # Test MCP server with ping request only if socket connection works
-        if docker_info.get("socket_connection"):
-            docker_info["mcp_server_responding"] = self._test_mcp_ping_request()
-        else:
-            docker_info["mcp_server_responding"] = False
+        # Test MCP server with ping request
+        docker_info["mcp_server_responding"] = self._test_mcp_ping_request()
+        docker_info["test_method"] = "ping_request"
         
         # Check if MCP server file exists
         mcp_server_file = self.project_root / "neozork_mcp_server.py"
@@ -431,7 +355,7 @@ class MCPServerChecker:
     """Check MCP server status and test connection (non-Docker environment)"""
     
     def __init__(self, project_root: Path = None):
-        self.project_root = project_root or Path(__file__).parent.parent.parent
+        self.project_root = project_root or Path(__file__).parent.parent
         self.logger = self._setup_logging()
         self.server_process = None
         
@@ -453,12 +377,7 @@ class MCPServerChecker:
     def check_server_running(self) -> bool:
         """Check if MCP server is already running"""
         try:
-            # First try ping-based detection (like Docker)
-            if self._test_mcp_ping_request():
-                self.logger.info("MCP server is responding to ping requests")
-                return True
-            
-            # Fallback to process-based detection
+            # Check for Python processes running the MCP server
             result = subprocess.run(
                 ['pgrep', '-f', 'neozork_mcp_server.py'],
                 capture_output=True,
@@ -539,57 +458,6 @@ class MCPServerChecker:
         except Exception as e:
             self.logger.error(f"Error testing connection: {e}")
             return {"status": "failed", "error": str(e)}
-
-    def _test_mcp_ping_request(self) -> bool:
-        """Test MCP server by sending ping request via echo command"""
-        try:
-            self.logger.info("Testing MCP server with ping request...")
-            
-            # Create ping request JSON
-            ping_request = '{"method": "neozork/ping", "id": 1, "params": {}}'
-            
-            # Send request to MCP server via echo command
-            cmd = f'echo \'{ping_request}\' | python3 neozork_mcp_server.py'
-            
-            # Run command with timeout
-            result = subprocess.run(
-                cmd,
-                shell=True,
-                capture_output=True,
-                text=True,
-                timeout=15,  # Increased timeout for Docker environment
-                cwd=self.project_root
-            )
-            
-            # Check if we got a valid JSON response
-            if result.returncode == 0 and result.stdout.strip():
-                try:
-                    response = json.loads(result.stdout.strip())
-                    # Check if response contains expected ping response structure
-                    if (response.get("jsonrpc") == "2.0" and 
-                        response.get("id") == 1 and 
-                        response.get("result", {}).get("pong") is True):
-                        self.logger.info("MCP server responded to ping request successfully")
-                        return True
-                    else:
-                        self.logger.warning(f"Unexpected ping response format: {response}")
-                        return False
-                except json.JSONDecodeError as e:
-                    self.logger.warning(f"Invalid JSON response from MCP server: {e}")
-                    self.logger.debug(f"Raw response: {result.stdout}")
-                    return False
-            else:
-                self.logger.info("MCP server did not respond to ping request")
-                if result.stderr:
-                    self.logger.debug(f"Stderr: {result.stderr}")
-                return False
-                
-        except subprocess.TimeoutExpired:
-            self.logger.warning("MCP server ping request timed out")
-            return False
-        except Exception as e:
-            self.logger.error(f"Error testing MCP ping request: {e}")
-            return False
 
     def _get_server_pids(self) -> List[str]:
         """Get server PIDs"""
