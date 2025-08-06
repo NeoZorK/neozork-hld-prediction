@@ -206,6 +206,39 @@ class TestTerminalNavigation:
         result = navigator.process_navigation_input("x")
         assert result is False
 
+    def test_process_navigation_input_previous_at_start(self):
+        """Test processing 'p' command when already at start - should continue navigation."""
+        navigator = TerminalNavigator(self.chunks, "Test Navigation")
+        # Already at start (index 0)
+        
+        result = navigator.process_navigation_input("p")
+        assert result is True  # Should continue navigation even if command fails
+        assert navigator.current_chunk_index == 0  # Should stay at start
+
+    def test_process_navigation_input_next_at_end(self):
+        """Test processing 'n' command when already at end - should continue navigation."""
+        navigator = TerminalNavigator(self.chunks, "Test Navigation")
+        navigator.current_chunk_index = navigator.total_chunks - 1  # At end
+        
+        result = navigator.process_navigation_input("n")
+        assert result is True  # Should continue navigation even if command fails
+        assert navigator.current_chunk_index == navigator.total_chunks - 1  # Should stay at end
+
+    def test_process_navigation_input_help(self):
+        """Test processing 'h' command - should continue navigation."""
+        navigator = TerminalNavigator(self.chunks, "Test Navigation")
+        
+        result = navigator.process_navigation_input("h")
+        assert result is True  # Should continue navigation after showing help
+
+    def test_process_navigation_input_quit(self):
+        """Test processing 'q' command - should quit navigation."""
+        navigator = TerminalNavigator(self.chunks, "Test Navigation")
+        
+        result = navigator.process_navigation_input("q")
+        assert result is True  # Should continue navigation (quit is handled in navigate loop)
+        assert navigator.navigation_active is False  # But navigation should be deactivated
+
     def test_create_navigation_prompt(self):
         """Test creating navigation prompt."""
         prompt = create_navigation_prompt(2, 5, "2024-01-01", "2024-01-20")
@@ -241,7 +274,7 @@ class TestTerminalNavigation:
         valid_dates = [
             "2024-01-01",
             "2024-01-01 12:00",
-            "2024-01-01 12:00:00"
+            "2024-01-01 12:00:45"
         ]
         
         for date_str in valid_dates:
