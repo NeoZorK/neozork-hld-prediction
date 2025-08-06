@@ -796,9 +796,10 @@ def _plot_auto_display(args, df, file_info, metrics):
             try:
                 from src.plotting.term_chunked_plot import plot_chunked_terminal
                 
-                # Use chunked plotting for AUTO mode
-                plot_chunked_terminal(df, 'AUTO', plot_title, style="matrix")
-                print(f"Successfully plotted all fields from '{file_info['name']}' using chunked terminal mode.")
+                # Use chunked plotting for AUTO mode with navigation
+                use_navigation = True  # Enable navigation for terminal mode
+                plot_chunked_terminal(df, 'AUTO', plot_title, style="matrix", use_navigation=use_navigation)
+                print(f"Successfully plotted all fields from '{file_info['name']}' using chunked terminal mode with navigation.")
                 
             except ImportError as e:
                 print(f"Could not import chunked plotting functions: {e}. Falling back to standard plotting.")
@@ -956,9 +957,10 @@ def _plot_indicator_calculation_result(args, original_df, result_df, file_info, 
                 try:
                     from src.plotting.term_chunked_plot import plot_chunked_terminal
                     
-                    # Use chunked plotting for the specific rule
-                    plot_chunked_terminal(result_df, args.rule.upper(), plot_title, style="matrix")
-                    print(f"Successfully plotted {args.rule} indicators from '{file_info['name']}' using chunked terminal mode.")
+                    # Use chunked plotting for the specific rule with navigation
+                    use_navigation = True  # Enable navigation for terminal mode
+                    plot_chunked_terminal(result_df, args.rule.upper(), plot_title, style="matrix", use_navigation=use_navigation)
+                    print(f"Successfully plotted {args.rule} indicators from '{file_info['name']}' using chunked terminal mode with navigation.")
                     print(f"Indicator source: {calculation_type}")
                     
                 except ImportError as e:
@@ -1557,9 +1559,10 @@ def _plot_indicator_parquet_file(args, df, file_info, metrics):
                 elif 'RSI' in file_info['name'].upper():
                     rule = 'RSI'
                 
-                # Use chunked plotting
-                plot_chunked_terminal(df, rule, plot_title, style="matrix")
-                print(f"Successfully plotted indicator file '{file_info['name']}' using chunked terminal mode.")
+                # Use chunked plotting with navigation
+                use_navigation = True  # Enable navigation for terminal mode
+                plot_chunked_terminal(df, rule, plot_title, style="matrix", use_navigation=use_navigation)
+                print(f"Successfully plotted indicator file '{file_info['name']}' using chunked terminal mode with navigation.")
                 
             except ImportError as e:
                 print(f"Could not import chunked plotting functions: {e}. Falling back to standard plotting.")
