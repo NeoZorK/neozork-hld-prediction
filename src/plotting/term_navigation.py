@@ -52,8 +52,7 @@ class TerminalNavigator:
             'e': self._end_chunk,
             'c': self._choose_chunk,
             'q': self._quit_navigation,
-            'h': self._show_help,
-            '?': self._show_help
+
         }
     
     def _next_chunk(self) -> bool:
@@ -225,7 +224,7 @@ class TerminalNavigator:
         """Show navigation prompt and get user input."""
         info = self.get_current_chunk_info()
         
-        print(f"\n[Navigation: type 'n/p/s/e/c/d/h/q' -> next/previous/start/end/choose chunk/choose date/help/quit]")
+        print(f"\n[Navigation: type 'n/p/s/e/c/d/q' -> next/previous/start/end/choose chunk/choose date/quit]")
         print(f"Current: Chunk {info['index']}/{info['total']} ({info['start_date']} to {info['end_date']})")
         
         user_input = input("Press Enter to continue or type navigation command: ").strip().lower()
@@ -260,9 +259,9 @@ class TerminalNavigator:
             # (e.g., trying to go previous when at start)
             return True
         
-        # Unknown command
-        logger.print_warning(f"Unknown command '{user_input}'. Type 'h' for help.")
-        return False
+        # Unknown command - continue navigation instead of quitting
+        logger.print_warning(f"Unknown command '{user_input}'. Type 'n/p/s/e/c/d/q' for navigation.")
+        return True
     
     def navigate(self, plot_function: Callable[[pd.DataFrame, int, Dict[str, Any]], None]) -> None:
         """
@@ -307,7 +306,7 @@ def create_navigation_prompt(chunk_index: int, total_chunks: int, start_date: st
     Returns:
         str: Navigation prompt string
     """
-    return f"\n[Navigation: type 'n/p/s/e/c/d/h/q' -> next/previous/start/end/choose chunk/choose date/help/quit]\nCurrent: Chunk {chunk_index}/{total_chunks} ({start_date} to {end_date})\nPress Enter to continue or type navigation command: "
+    return f"\n[Navigation: type 'n/p/s/e/c/d/q' -> next/previous/start/end/choose chunk/choose date/quit]\nCurrent: Chunk {chunk_index}/{total_chunks} ({start_date} to {end_date})\nPress Enter to continue or type navigation command: "
 
 
 def parse_navigation_input(user_input: str) -> Dict[str, Any]:
