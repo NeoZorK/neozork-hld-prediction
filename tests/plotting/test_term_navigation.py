@@ -239,6 +239,42 @@ class TestTerminalNavigation:
         assert result is True  # Should continue navigation (quit is handled in navigate loop)
         assert navigator.navigation_active is False  # But navigation should be deactivated
 
+    def test_process_navigation_input_end(self):
+        """Test processing 'e' command - should go to end and continue navigation."""
+        navigator = TerminalNavigator(self.chunks, "Test Navigation")
+        # Start at first chunk
+        
+        result = navigator.process_navigation_input("e")
+        assert result is True  # Should continue navigation
+        assert navigator.current_chunk_index == navigator.total_chunks - 1  # Should be at last chunk
+
+    def test_process_navigation_input_end_already_at_end(self):
+        """Test processing 'e' command when already at end - should continue navigation."""
+        navigator = TerminalNavigator(self.chunks, "Test Navigation")
+        navigator.current_chunk_index = navigator.total_chunks - 1  # Already at end
+        
+        result = navigator.process_navigation_input("e")
+        assert result is True  # Should continue navigation even if command fails
+        assert navigator.current_chunk_index == navigator.total_chunks - 1  # Should stay at end
+
+    def test_process_navigation_input_start(self):
+        """Test processing 's' command - should go to start and continue navigation."""
+        navigator = TerminalNavigator(self.chunks, "Test Navigation")
+        navigator.current_chunk_index = 2  # Move to middle chunk
+        
+        result = navigator.process_navigation_input("s")
+        assert result is True  # Should continue navigation
+        assert navigator.current_chunk_index == 0  # Should be at first chunk
+
+    def test_process_navigation_input_start_already_at_start(self):
+        """Test processing 's' command when already at start - should continue navigation."""
+        navigator = TerminalNavigator(self.chunks, "Test Navigation")
+        # Already at start (index 0)
+        
+        result = navigator.process_navigation_input("s")
+        assert result is True  # Should continue navigation even if command fails
+        assert navigator.current_chunk_index == 0  # Should stay at start
+
     def test_create_navigation_prompt(self):
         """Test creating navigation prompt."""
         prompt = create_navigation_prompt(2, 5, "2024-01-01", "2024-01-20")
@@ -312,6 +348,28 @@ class TestTerminalNavigation:
         assert info['rows'] == 0
         assert info['start_date'] == 'N/A'
         assert info['end_date'] == 'N/A'
+
+    @patch('builtins.input')
+    def test_navigation_does_not_exit_at_end(self, mock_input):
+        """Test that navigation doesn't automatically exit when reaching the end."""
+        navigator = TerminalNavigator(self.chunks, "Test Navigation")
+        # Move to last chunk
+        navigator.current_chunk_index = navigator.total_chunks - 1
+        
+        # Simulate user pressing 'e' to go to end (already at end)
+        mock_input.return_value = "e"
+        
+        plot_calls = []
+        
+        def mock_plot_function(chunk, chunk_index, chunk_info):
+            plot_calls.append((chunk_index, chunk_info))
+        
+        # Start navigation - it should not exit automatically
+        navigator.navigate(mock_plot_function)
+        
+        # Should have plotted the last chunk
+        assert len(plot_calls) >= 1
+        assert plot_calls[-1][0] == navigator.total_chunks - 1  # Last chunk index
 
 
 if __name__ == "__main__":
