@@ -192,7 +192,7 @@ class TerminalNavigator:
         print("  q - Quit navigation")
         print("  Enter - Continue to next chunk (original behavior)")
         print("="*60)
-        return False
+        return True  # Continue navigation after showing help
     
     def get_current_chunk(self) -> pd.DataFrame:
         """Get current chunk."""
@@ -255,7 +255,10 @@ class TerminalNavigator:
         
         # Check for other navigation commands
         if user_input in self.commands:
-            return self.commands[user_input]()
+            result = self.commands[user_input]()
+            # For navigation commands, always continue navigation even if command fails
+            # (e.g., trying to go previous when at start)
+            return True
         
         # Unknown command
         logger.print_warning(f"Unknown command '{user_input}'. Type 'h' for help.")
