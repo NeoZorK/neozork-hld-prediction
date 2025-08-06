@@ -625,9 +625,10 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
             # Default to OHLCV for unknown rules
             plot_rule = 'OHLCV'
         
-        # Use chunked plotting
-        plot_chunked_terminal(result_df, plot_rule, plot_title, style="matrix")
-        logger.print_success("Chunked terminal plot generated successfully!")
+        # Use chunked plotting with navigation for terminal mode
+        use_navigation = True  # Enable navigation for terminal mode
+        plot_chunked_terminal(result_df, plot_rule, plot_title, style="matrix", use_navigation=use_navigation)
+        logger.print_success("Chunked terminal plot with navigation generated successfully!")
         
     except ImportError as e:
         logger.print_warning(f"Could not import chunked plotting: {e}. Falling back to standard plotting.")

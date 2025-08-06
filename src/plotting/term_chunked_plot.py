@@ -23,6 +23,13 @@ except ImportError:
     from ..common import logger
     from ..common.constants import TradingRule, BUY, SELL, NOTRADE
 
+# Import navigation system
+try:
+    from .term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
+except ImportError:
+    # Fallback to relative imports when run as module
+    from ..plotting.term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
+
 
 def calculate_optimal_chunk_size(total_rows: int, target_chunks: int = 10, min_chunk_size: int = 50, max_chunk_size: int = 200) -> int:
     """
@@ -142,7 +149,7 @@ def draw_ohlc_candles(chunk, x_values):
         logger.print_error("DataFrame must contain OHLC columns (Open, High, Low, Close) for candlestick plot!")
 
 
-def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str = "matrix") -> None:
+def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
     """
     Plot OHLC data in chunks (no volume charts).
     
@@ -150,6 +157,7 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
         df (pd.DataFrame): DataFrame with OHLC data
         title (str): Base title for plots
         style (str): Plot style
+        use_navigation (bool): Whether to use interactive navigation
     """
     try:
         logger.print_info("Generating OHLC chunked plots...")
@@ -169,52 +177,97 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
         
         logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
         
-        # Plot each chunk
-        for i, chunk in enumerate(chunks):
-            chunk_start_idx = i * chunk_size
-            chunk_end_idx = min((i + 1) * chunk_size, total_rows)
+        if use_navigation:
+            # Use navigation system
+            navigator = TerminalNavigator(chunks, title)
             
-            # Clear previous plots
-            plt.clear_data()
-            plt.clear_figure()
+            def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
+                """Plot a single chunk with navigation info."""
+                if len(chunk) == 0:
+                    logger.print_warning("Empty chunk, skipping...")
+                    return
+                
+                # Clear previous plots
+                plt.clear_data()
+                plt.clear_figure()
+                
+                # Set up layout with full screen size - NO VOLUME CHARTS
+                plt.subplots(1, 1)  # Single price panel only
+                plot_size = (200, 50)
+                
+                plt.plot_size(*plot_size)
+                plt.theme(style)
+                
+                # Create time axis with dates for this chunk
+                if hasattr(chunk.index, 'strftime'):
+                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    x_values = list(range(len(chunk)))
+                else:
+                    x_values = list(range(len(chunk)))
+                    x_labels = [str(i) for i in x_values]
+                
+                # OHLC Candlestick Chart
+                draw_ohlc_candles(chunk, x_values)
+                
+                plt.title(f"{title} - OHLC Chart (Chunk {chunk_info['index']}/{chunk_info['total']}) - {chunk_info['start_date']} to {chunk_info['end_date']}")
+                plt.xlabel("Date/Time")
+                if len(x_values) > 0:
+                    step = max(1, len(x_values) // 10)
+                    plt.xticks(x_values[::step], x_labels[::step])
+                plt.ylabel("Price")
+                
+                plt.show()
             
-            # Set up layout with full screen size - NO VOLUME CHARTS
-            plt.subplots(1, 1)  # Single price panel only
-            plot_size = (200, 50)
+            # Start navigation
+            navigator.navigate(plot_chunk_with_navigation)
             
-            plt.plot_size(*plot_size)
-            plt.theme(style)
-            
-            # Create time axis with dates for this chunk
-            if hasattr(chunk.index, 'strftime'):
-                # If index is datetime, use date strings
-                x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
-                x_values = list(range(len(chunk)))
-            else:
-                # Fallback to numeric indices
-                x_values = list(range(len(chunk)))
-                x_labels = [str(i) for i in x_values]
-            
-            # OHLC Candlestick Chart
-            draw_ohlc_candles(chunk, x_values)
-            
-            # Get start and end dates for this chunk
-            start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
-            end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
-            
-            plt.title(f"{title} - OHLC Chart (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
-            plt.xlabel("Date/Time")
-            # Set x-axis ticks to show dates
-            if len(x_values) > 0:
-                step = max(1, len(x_values) // 10)  # Show ~10 date labels
-                plt.xticks(x_values[::step], x_labels[::step])
-            plt.ylabel("Price")
-            
-            plt.show()
-            
-            # Add pause between chunks for better readability
-            if i < len(chunks) - 1:
-                input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
+        else:
+            # Original non-navigation behavior
+            for i, chunk in enumerate(chunks):
+                chunk_start_idx = i * chunk_size
+                chunk_end_idx = min((i + 1) * chunk_size, total_rows)
+                
+                # Clear previous plots
+                plt.clear_data()
+                plt.clear_figure()
+                
+                # Set up layout with full screen size - NO VOLUME CHARTS
+                plt.subplots(1, 1)  # Single price panel only
+                plot_size = (200, 50)
+                
+                plt.plot_size(*plot_size)
+                plt.theme(style)
+                
+                # Create time axis with dates for this chunk
+                if hasattr(chunk.index, 'strftime'):
+                    # If index is datetime, use date strings
+                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    x_values = list(range(len(chunk)))
+                else:
+                    # Fallback to numeric indices
+                    x_values = list(range(len(chunk)))
+                    x_labels = [str(i) for i in x_values]
+                
+                # OHLC Candlestick Chart
+                draw_ohlc_candles(chunk, x_values)
+                
+                # Get start and end dates for this chunk
+                start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
+                end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
+                
+                plt.title(f"{title} - OHLC Chart (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
+                plt.xlabel("Date/Time")
+                # Set x-axis ticks to show dates
+                if len(x_values) > 0:
+                    step = max(1, len(x_values) // 10)  # Show ~10 date labels
+                    plt.xticks(x_values[::step], x_labels[::step])
+                plt.ylabel("Price")
+                
+                plt.show()
+                
+                # Add pause between chunks for better readability
+                if i < len(chunks) - 1:
+                    input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
         
         logger.print_success(f"Successfully displayed {len(chunks)} OHLC chunks!")
         
@@ -222,7 +275,7 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
         logger.print_error(f"Error generating OHLCV chunked plots: {e}")
 
 
-def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = "matrix") -> None:
+def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
     """
     Plot all fields in chunks with separate charts for each field.
     
@@ -230,6 +283,7 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
         df (pd.DataFrame): DataFrame with all fields
         title (str): Base title for plots
         style (str): Plot style
+        use_navigation (bool): Whether to use interactive navigation
     """
     try:
         logger.print_info("Generating AUTO chunked plots for all fields...")
@@ -248,49 +302,96 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
         skip_columns = {'Open', 'High', 'Low', 'Close', 'Volume', 'DateTime', 'Timestamp', 'Date', 'Time', 'Index', 'index'}
         field_columns = [col for col in numeric_columns if col not in skip_columns]
         
-        # Plot each chunk
-        for i, chunk in enumerate(chunks):
-            chunk_start_idx = i * chunk_size
-            chunk_end_idx = min((i + 1) * chunk_size, total_rows)
+        if use_navigation:
+            # Use navigation system
+            navigator = TerminalNavigator(chunks, title)
             
-            logger.print_info(f"Displaying chunk {i+1}/{len(chunks)} (candles {chunk_start_idx+1}-{chunk_end_idx})")
+            def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
+                """Plot a single chunk with navigation info."""
+                if len(chunk) == 0:
+                    logger.print_warning("Empty chunk, skipping...")
+                    return
+                
+                # Get start and end dates for this chunk
+                start_date = chunk_info['start_date']
+                end_date = chunk_info['end_date']
+                
+                logger.print_info(f"Displaying chunk {chunk_info['index']}/{chunk_info['total']} ({start_date} to {end_date})")
+                
+                # Always show OHLC candles if possible
+                if len(chunk) > 0:
+                    if hasattr(chunk.index, 'strftime'):
+                        x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                        x_values = list(range(len(chunk)))
+                    else:
+                        x_values = list(range(len(chunk)))
+                        x_labels = [str(i) for i in x_values]
+                    plt.clear_data()
+                    plt.clear_figure()
+                    plt.subplots(1, 1)
+                    plt.plot_size(200, 50)
+                    plt.theme(style)
+                    draw_ohlc_candles(chunk, x_values)
+                    plt.title(f"{title} - OHLC (Chunk {chunk_info['index']}) - {start_date} to {end_date}")
+                    plt.xlabel("Date/Time")
+                    if len(x_values) > 0:
+                        step = max(1, len(x_values) // 10)
+                        plt.xticks(x_values[::step], x_labels[::step])
+                    plt.ylabel("Price")
+                    plt.show()
+                
+                # Then show each field separately
+                for field in field_columns:
+                    if field in chunk.columns:
+                        _plot_single_field_chunk(chunk, field, f"{title} - {field} (Chunk {chunk_info['index']})", style)
             
-            # Get start and end dates for this chunk
-            start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
-            end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
+            # Start navigation
+            navigator.navigate(plot_chunk_with_navigation)
             
-            logger.print_info(f"Displaying chunk {i+1}/{len(chunks)} ({start_date} to {end_date})")
-            
-            # Always show OHLC candles if possible
-            if len(chunk) > 0:
-                if hasattr(chunk.index, 'strftime'):
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
-                    x_values = list(range(len(chunk)))
-                else:
-                    x_values = list(range(len(chunk)))
-                    x_labels = [str(i) for i in x_values]
-                plt.clear_data()
-                plt.clear_figure()
-                plt.subplots(1, 1)
-                plt.plot_size(200, 50)
-                plt.theme(style)
-                draw_ohlc_candles(chunk, x_values)
-                plt.title(f"{title} - OHLC (Chunk {i+1}) - {start_date} to {end_date}")
-                plt.xlabel("Date/Time")
-                if len(x_values) > 0:
-                    step = max(1, len(x_values) // 10)
-                    plt.xticks(x_values[::step], x_labels[::step])
-                plt.ylabel("Price")
-                plt.show()
-            
-            # Then show each field separately
-            for field in field_columns:
-                if field in chunk.columns:
-                    _plot_single_field_chunk(chunk, field, f"{title} - {field} (Chunk {i+1})", style)
-            
-            # Add pause between chunks
-            if i < len(chunks) - 1:
-                input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
+        else:
+            # Original non-navigation behavior
+            for i, chunk in enumerate(chunks):
+                chunk_start_idx = i * chunk_size
+                chunk_end_idx = min((i + 1) * chunk_size, total_rows)
+                
+                logger.print_info(f"Displaying chunk {i+1}/{len(chunks)} (candles {chunk_start_idx+1}-{chunk_end_idx})")
+                
+                # Get start and end dates for this chunk
+                start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
+                end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
+                
+                logger.print_info(f"Displaying chunk {i+1}/{len(chunks)} ({start_date} to {end_date})")
+                
+                # Always show OHLC candles if possible
+                if len(chunk) > 0:
+                    if hasattr(chunk.index, 'strftime'):
+                        x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                        x_values = list(range(len(chunk)))
+                    else:
+                        x_values = list(range(len(chunk)))
+                        x_labels = [str(i) for i in x_values]
+                    plt.clear_data()
+                    plt.clear_figure()
+                    plt.subplots(1, 1)
+                    plt.plot_size(200, 50)
+                    plt.theme(style)
+                    draw_ohlc_candles(chunk, x_values)
+                    plt.title(f"{title} - OHLC (Chunk {i+1}) - {start_date} to {end_date}")
+                    plt.xlabel("Date/Time")
+                    if len(x_values) > 0:
+                        step = max(1, len(x_values) // 10)
+                        plt.xticks(x_values[::step], x_labels[::step])
+                    plt.ylabel("Price")
+                    plt.show()
+                
+                # Then show each field separately
+                for field in field_columns:
+                    if field in chunk.columns:
+                        _plot_single_field_chunk(chunk, field, f"{title} - {field} (Chunk {i+1})", style)
+                
+                # Add pause between chunks
+                if i < len(chunks) - 1:
+                    input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
         
         logger.print_success(f"Successfully displayed {len(chunks)} AUTO chunks!")
         
@@ -298,7 +399,7 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
         logger.print_error(f"Error generating AUTO chunked plots: {e}")
 
 
-def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "matrix") -> None:
+def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
     """
     Plot PV (Pressure Vector) data in chunks with channels and signals (like PHLD).
     OHLC candles are always shown as the base layer (like in PHLD).
@@ -307,6 +408,7 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
         df (pd.DataFrame): DataFrame with PV data
         title (str): Base title for plots
         style (str): Plot style
+        use_navigation (bool): Whether to use interactive navigation
     """
     try:
         logger.print_info("Generating PV chunked plots with channels and signals (like PHLD)...")
@@ -318,54 +420,106 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
         
         logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
         
-        # Plot each chunk
-        for i, chunk in enumerate(chunks):
-            chunk_start_idx = i * chunk_size
-            chunk_end_idx = min((i + 1) * chunk_size, total_rows)
+        if use_navigation:
+            # Use navigation system
+            navigator = TerminalNavigator(chunks, title)
             
-            # Clear previous plots
-            plt.clear_data()
-            plt.clear_figure()
+            def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
+                """Plot a single chunk with navigation info."""
+                if len(chunk) == 0:
+                    logger.print_warning("Empty chunk, skipping...")
+                    return
+                
+                # Clear previous plots
+                plt.clear_data()
+                plt.clear_figure()
+                
+                # Get start and end dates for this chunk
+                start_date = chunk_info['start_date']
+                end_date = chunk_info['end_date']
+                
+                # Set up plot with full screen size
+                plt.subplots(1, 1)
+                plt.plot_size(200, 50)  # Much larger plot size
+                plt.theme(style)
+                
+                # Create time axis with dates for this chunk
+                if hasattr(chunk.index, 'strftime'):
+                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    x_values = list(range(len(chunk)))
+                else:
+                    x_values = list(range(len(chunk)))
+                    x_labels = [str(i) for i in x_values]
+                
+                # OHLC Candlestick Chart (always as first layer, like in other rules)
+                draw_ohlc_candles(chunk, x_values)
+                
+                # Add PV-specific overlays
+                _add_pv_overlays_to_chunk(chunk, x_values)
+                
+                plt.title(f"{title} - PV Channels with Signals (Chunk {chunk_info['index']}/{chunk_info['total']}) - {start_date} to {end_date}")
+                plt.xlabel("Date/Time")
+                plt.ylabel("Price/Value")
+                
+                # Set x-axis ticks to show dates
+                if len(x_values) > 0:
+                    step = max(1, len(x_values) // 10)  # Show ~10 date labels
+                    plt.xticks(x_values[::step], x_labels[::step])
+                
+                plt.show()
             
-            # Get start and end dates for this chunk
-            start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
-            end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
+            # Start navigation
+            navigator.navigate(plot_chunk_with_navigation)
             
-            # Set up plot with full screen size
-            plt.subplots(1, 1)
-            plt.plot_size(200, 50)  # Much larger plot size
-            plt.theme(style)
-            
-            # Create time axis with dates for this chunk
-            if hasattr(chunk.index, 'strftime'):
-                # If index is datetime, use date strings
-                x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
-                x_values = list(range(len(chunk)))
-            else:
-                # Fallback to numeric indices
-                x_values = list(range(len(chunk)))
-                x_labels = [str(i) for i in x_values]
-            
-            # OHLC Candlestick Chart (always as first layer, like in other rules)
-            draw_ohlc_candles(chunk, x_values)
-            
-            # Add PV-specific overlays
-            _add_pv_overlays_to_chunk(chunk, x_values)
-            
-            plt.title(f"{title} - PV Channels with Signals (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
-            plt.xlabel("Date/Time")
-            plt.ylabel("Price/Value")
-            
-            # Set x-axis ticks to show dates
-            if len(x_values) > 0:
-                step = max(1, len(x_values) // 10)  # Show ~10 date labels
-                plt.xticks(x_values[::step], x_labels[::step])
-            
-            plt.show()
-            
-            # Add pause between chunks
-            if i < len(chunks) - 1:
-                input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
+        else:
+            # Original non-navigation behavior
+            for i, chunk in enumerate(chunks):
+                chunk_start_idx = i * chunk_size
+                chunk_end_idx = min((i + 1) * chunk_size, total_rows)
+                
+                # Clear previous plots
+                plt.clear_data()
+                plt.clear_figure()
+                
+                # Get start and end dates for this chunk
+                start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
+                end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
+                
+                # Set up plot with full screen size
+                plt.subplots(1, 1)
+                plt.plot_size(200, 50)  # Much larger plot size
+                plt.theme(style)
+                
+                # Create time axis with dates for this chunk
+                if hasattr(chunk.index, 'strftime'):
+                    # If index is datetime, use date strings
+                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    x_values = list(range(len(chunk)))
+                else:
+                    # Fallback to numeric indices
+                    x_values = list(range(len(chunk)))
+                    x_labels = [str(i) for i in x_values]
+                
+                # OHLC Candlestick Chart (always as first layer, like in other rules)
+                draw_ohlc_candles(chunk, x_values)
+                
+                # Add PV-specific overlays
+                _add_pv_overlays_to_chunk(chunk, x_values)
+                
+                plt.title(f"{title} - PV Channels with Signals (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
+                plt.xlabel("Date/Time")
+                plt.ylabel("Price/Value")
+                
+                # Set x-axis ticks to show dates
+                if len(x_values) > 0:
+                    step = max(1, len(x_values) // 10)  # Show ~10 date labels
+                    plt.xticks(x_values[::step], x_labels[::step])
+                
+                plt.show()
+                
+                # Add pause between chunks
+                if i < len(chunks) - 1:
+                    input(f"\nPress Enter to view next chunk ({i+2}/{len(chunks)})...")
         
         logger.print_success(f"Successfully displayed {len(chunks)} PV chunks with channels and signals!")
         
@@ -373,7 +527,7 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
         logger.print_error(f"Error generating PV chunked plots: {e}")
 
 
-def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "matrix") -> None:
+def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
     """
     Plot SR (Support/Resistance) data in chunks with two lines.
     
@@ -447,7 +601,7 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
         logger.print_error(f"Error generating SR chunked plots: {e}")
 
 
-def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = "matrix") -> None:
+def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
     """
     Plot PHLD (Predict High Low Direction) data in chunks with two channels and signals.
     
@@ -521,7 +675,7 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
         logger.print_error(f"Error generating PHLD chunked plots: {e}")
 
 
-def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", style: str = "matrix") -> None:
+def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
     """
     Plot RSI data in chunks with different calculations based on rule type.
     
@@ -860,7 +1014,7 @@ def _show_field_statistics(field_series: pd.Series, field_name: str) -> None:
         logger.print_error(f"Error showing field statistics: {e}")
 
 
-def plot_chunked_terminal(df: pd.DataFrame, rule: str, title: str = "Chunked Terminal Plot", style: str = "matrix") -> None:
+def plot_chunked_terminal(df: pd.DataFrame, rule: str, title: str = "Chunked Terminal Plot", style: str = "matrix", use_navigation: bool = False) -> None:
     """
     Main function to plot data in chunks based on the rule.
     
@@ -869,6 +1023,7 @@ def plot_chunked_terminal(df: pd.DataFrame, rule: str, title: str = "Chunked Ter
         rule (str): Trading rule
         title (str): Plot title
         style (str): Plot style
+        use_navigation (bool): Whether to use interactive navigation
     """
     try:
         rule_upper = rule.upper()
@@ -876,23 +1031,23 @@ def plot_chunked_terminal(df: pd.DataFrame, rule: str, title: str = "Chunked Ter
         # Handle RSI variants
         if rule_upper.startswith('RSI'):
             if '(' in rule:  # Parameterized RSI rule
-                plot_rsi_chunks(df, rule, title, style)
+                plot_rsi_chunks(df, rule, title, style, use_navigation)
             else:  # Simple RSI rule
-                plot_rsi_chunks(df, 'rsi(14,70,30,close)', title, style)
+                plot_rsi_chunks(df, 'rsi(14,70,30,close)', title, style, use_navigation)
         elif rule_upper == 'OHLCV':
-            plot_ohlcv_chunks(df, title, style)
+            plot_ohlcv_chunks(df, title, style, use_navigation)
         elif rule_upper == 'AUTO':
-            plot_auto_chunks(df, title, style)
+            plot_auto_chunks(df, title, style, use_navigation)
         elif rule_upper in ['PV', 'PRESSURE_VECTOR']:
-            plot_pv_chunks(df, title, style)
+            plot_pv_chunks(df, title, style, use_navigation)
         elif rule_upper in ['SR', 'SUPPORT_RESISTANTS']:
-            plot_sr_chunks(df, title, style)
+            plot_sr_chunks(df, title, style, use_navigation)
         elif rule_upper in ['PHLD', 'PREDICT_HIGH_LOW_DIRECTION']:
-            plot_phld_chunks(df, title, style)
+            plot_phld_chunks(df, title, style, use_navigation)
         else:
             # Default to OHLCV for unknown rules
             logger.print_warning(f"Unknown rule '{rule}', defaulting to OHLCV")
-            plot_ohlcv_chunks(df, title, style)
+            plot_ohlcv_chunks(df, title, style, use_navigation)
         
     except Exception as e:
         logger.print_error(f"Error in chunked terminal plotting: {e}") 
