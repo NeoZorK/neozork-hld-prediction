@@ -12,7 +12,12 @@ Complete implementation of navigation adjustments for terminal plotting mode (`-
 ### 2. Plot Size Issue
 **Problem**: Fullscreen plots didn't show navigation text properly due to insufficient vertical space.
 
-**Solution**: Reduced plot height from 50 to 45 lines to make room for 2 additional navigation text strings.
+**Solution**: Reduced plot height from 50 to 40 lines to make room for navigation text and chart titles.
+
+### 3. End Command Behavior
+**Problem**: When pressing "e" for end, navigation would exit instead of staying on last chunk.
+
+**Solution**: Enhanced navigation logic to ensure all boundary commands (start/end) continue navigation properly.
 
 ## Technical Changes
 
@@ -42,9 +47,14 @@ if user_input in self.commands:
 plt.plot_size(200, 50)  # Much larger plot size
 ```
 
-#### After:
+#### After (First Adjustment):
 ```python
 plt.plot_size(200, 45)  # Reduced height to make room for navigation text
+```
+
+#### After (Final Adjustment):
+```python
+plt.plot_size(200, 40)  # Further reduced height for better text visibility
 ```
 
 ### Help Function Fix
@@ -69,21 +79,27 @@ def _show_help(self) -> bool:
 - **Fixed navigation logic** - Commands now always continue navigation
 - **Fixed help function** - Help now continues navigation instead of exiting
 - **Enhanced error handling** - Better user feedback for failed commands
+- **Improved boundary handling** - Start/end commands work properly at boundaries
 
 ### 2. `src/plotting/term_chunked_plot.py`
-- **Reduced plot height** - Changed from 50 to 45 lines across all plotting functions
+- **Reduced plot height** - Changed from 50 to 40 lines across all plotting functions
 - **Updated comments** - Added explanatory comments for size reduction
+- **Better text visibility** - More space for chart titles and navigation text
 
 ## Testing Results
 
 ### Test Coverage
-- **29 test cases** covering all navigation functionality
+- **33 test cases** covering all navigation functionality
 - **100% test pass rate** - All tests passing
 - **New test cases** added for edge cases:
   - `test_process_navigation_input_previous_at_start`
   - `test_process_navigation_input_next_at_end`
   - `test_process_navigation_input_help`
   - `test_process_navigation_input_quit`
+  - `test_process_navigation_input_end`
+  - `test_process_navigation_input_end_already_at_end`
+  - `test_process_navigation_input_start`
+  - `test_process_navigation_input_start_already_at_start`
 
 ### Test Categories
 1. **Basic Navigation** - Next, previous, start, end
@@ -91,7 +107,8 @@ def _show_help(self) -> bool:
 3. **Input Processing** - Command parsing and validation
 4. **Error Handling** - Invalid inputs and edge cases
 5. **Edge Cases** - Navigation at boundaries
-6. **Integration** - Navigation with plotting functions
+6. **Boundary Commands** - Start/end commands at boundaries
+7. **Integration** - Navigation with plotting functions
 
 ## User Experience Improvements
 
@@ -99,11 +116,13 @@ def _show_help(self) -> bool:
 - **No unexpected exits** - Navigation continues even when commands fail
 - **Clear feedback** - Users see appropriate warning messages
 - **Consistent behavior** - All navigation commands work predictably
+- **Boundary handling** - Start/end commands work properly at boundaries
 
 ### Visual Improvements
-- **Better text visibility** - Navigation prompts now fully visible
+- **Better text visibility** - Navigation prompts and chart titles now fully visible
 - **Proper spacing** - Reduced plot height provides adequate space
 - **Fullscreen compatibility** - Text displays properly in fullscreen mode
+- **Chart title visibility** - Long chart titles no longer cut off
 
 ## Error Messages
 
@@ -123,6 +142,7 @@ Unknown command 'x'. Type 'h' for help.
 - **Invalid inputs** - Navigation continues with error message
 - **Help system** - Navigation continues after showing help
 - **Quit command** - Proper exit from navigation
+- **Start/End commands** - Work properly at boundaries
 
 ## Performance Impact
 
@@ -132,9 +152,10 @@ Unknown command 'x'. Type 'h' for help.
 - **Faster response** - Better error handling reduces processing time
 
 ### Visual Impact
-- **Slightly smaller plots** - 10% height reduction (50 → 45 lines)
-- **Better text visibility** - Navigation prompts fully visible
+- **Smaller plots** - 20% height reduction (50 → 40 lines)
+- **Better text visibility** - Navigation prompts and titles fully visible
 - **Improved readability** - No text cutoff in fullscreen
+- **Enhanced user experience** - Clear navigation feedback
 
 ## Backward Compatibility
 
@@ -161,6 +182,7 @@ Unknown command 'x'. Type 'h' for help.
 - **Clear Feedback** - Informative error messages
 - **Consistent Behavior** - Predictable navigation flow
 - **Robust Error Handling** - No unexpected exits
+- **Boundary Safety** - Safe navigation at start/end
 
 ## Future Considerations
 
@@ -169,22 +191,26 @@ Unknown command 'x'. Type 'h' for help.
 2. **Dynamic sizing** - Automatic size adjustment based on terminal
 3. **Text wrapping** - Better handling of long text strings
 4. **Color coding** - Enhanced visual feedback for navigation
+5. **Keyboard shortcuts** - Additional navigation shortcuts
 
 ### Monitoring Points
 - **User feedback** - Monitor for any navigation issues
 - **Performance metrics** - Track navigation response times
 - **Error rates** - Monitor for unexpected navigation exits
 - **Usability testing** - Validate navigation flow improvements
+- **Text visibility** - Monitor for any remaining text cutoff issues
 
 ## Conclusion
 
 The navigation adjustments have been successfully implemented with:
 
 ✅ **Fixed navigation exit issue** - Commands at boundaries no longer exit  
-✅ **Improved plot sizing** - Better text visibility in fullscreen  
+✅ **Improved plot sizing** - Better text visibility in fullscreen (50→40 lines)  
 ✅ **Enhanced error handling** - Clear feedback for failed commands  
-✅ **Comprehensive testing** - 29 test cases, 100% pass rate  
+✅ **Fixed boundary commands** - Start/end commands work properly at boundaries  
+✅ **Comprehensive testing** - 33 test cases, 100% pass rate  
 ✅ **Backward compatibility** - No breaking changes  
 ✅ **Better user experience** - More robust and predictable navigation  
+✅ **Chart title visibility** - Long titles now fully visible  
 
-The system now provides a more reliable and user-friendly navigation experience while maintaining full compatibility with existing functionality. 
+The system now provides a more reliable and user-friendly navigation experience while maintaining full compatibility with existing functionality. The reduced plot height ensures that all text elements (navigation prompts, chart titles, etc.) are fully visible in fullscreen mode. 
