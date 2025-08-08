@@ -8,8 +8,12 @@ import numpy as np
 from datetime import datetime, timedelta
 from unittest.mock import patch, MagicMock
 import matplotlib.pyplot as plt
+import threading
 
 from src.plotting.dual_chart_seaborn import plot_dual_chart_seaborn
+
+# Thread lock for matplotlib operations
+matplotlib_lock = threading.Lock()
 
 
 class TestSeabornSuperTrend:
@@ -36,18 +40,19 @@ class TestSeabornSuperTrend:
         df = pd.DataFrame(data, index=dates)
         
         # Mock the plotting function
-        with patch('matplotlib.pyplot.show') as mock_show:
-            with patch('matplotlib.pyplot.savefig') as mock_save:
-                result = plot_dual_chart_seaborn(
-                    df=df,
-                    rule='supertrend:10,3',
-                    output_path='tests/plotting/test_output.png'
-                )
-                
-                # Verify that the function completed successfully
-                assert result is not None
-                mock_save.assert_called_once()
-                mock_show.assert_called_once()
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show:
+                with patch('matplotlib.pyplot.savefig') as mock_save:
+                    result = plot_dual_chart_seaborn(
+                        df=df,
+                        rule='supertrend:10,3',
+                        output_path='tests/plotting/test_output.png'
+                    )
+                    
+                    # Verify that the function completed successfully
+                    assert result is not None
+                    mock_save.assert_called_once()
+                    mock_show.assert_called_once()
 
     def test_supertrend_with_nan_values(self):
         """Test supertrend indicator with NaN values."""
@@ -68,17 +73,18 @@ class TestSeabornSuperTrend:
         
         df = pd.DataFrame(data, index=dates)
         
-        with patch('matplotlib.pyplot.show') as mock_show:
-            with patch('matplotlib.pyplot.savefig') as mock_save:
-                result = plot_dual_chart_seaborn(
-                    df=df,
-                    rule='supertrend:10,3',
-                    output_path='tests/plotting/test_output.png'
-                )
-                
-                assert result is not None
-                mock_save.assert_called_once()
-                mock_show.assert_called_once()
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show:
+                with patch('matplotlib.pyplot.savefig') as mock_save:
+                    result = plot_dual_chart_seaborn(
+                        df=df,
+                        rule='supertrend:10,3',
+                        output_path='tests/plotting/test_output.png'
+                    )
+                    
+                    assert result is not None
+                    mock_save.assert_called_once()
+                    mock_show.assert_called_once()
 
     def test_supertrend_with_mixed_values(self):
         """Test supertrend indicator with mixed valid and NaN values."""
@@ -99,17 +105,18 @@ class TestSeabornSuperTrend:
         
         df = pd.DataFrame(data, index=dates)
         
-        with patch('matplotlib.pyplot.show') as mock_show:
-            with patch('matplotlib.pyplot.savefig') as mock_save:
-                result = plot_dual_chart_seaborn(
-                    df=df,
-                    rule='supertrend:10,3',
-                    output_path='tests/plotting/test_output.png'
-                )
-                
-                assert result is not None
-                mock_save.assert_called_once()
-                mock_show.assert_called_once()
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show:
+                with patch('matplotlib.pyplot.savefig') as mock_save:
+                    result = plot_dual_chart_seaborn(
+                        df=df,
+                        rule='supertrend:10,3',
+                        output_path='tests/plotting/test_output.png'
+                    )
+                    
+                    assert result is not None
+                    mock_save.assert_called_once()
+                    mock_show.assert_called_once()
 
     def test_supertrend_without_required_columns(self):
         """Test supertrend indicator without required columns."""
@@ -127,17 +134,18 @@ class TestSeabornSuperTrend:
         
         df = pd.DataFrame(data, index=dates)
         
-        with patch('matplotlib.pyplot.show') as mock_show:
-            with patch('matplotlib.pyplot.savefig') as mock_save:
-                result = plot_dual_chart_seaborn(
-                    df=df,
-                    rule='supertrend:10,3',
-                    output_path='tests/plotting/test_output.png'
-                )
-                
-                assert result is not None
-                mock_save.assert_called_once()
-                mock_show.assert_called_once()
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show:
+                with patch('matplotlib.pyplot.savefig') as mock_save:
+                    result = plot_dual_chart_seaborn(
+                        df=df,
+                        rule='supertrend:10,3',
+                        output_path='tests/plotting/test_output.png'
+                    )
+                    
+                    assert result is not None
+                    mock_save.assert_called_once()
+                    mock_show.assert_called_once()
 
     def test_supertrend_minimal_data(self):
         """Test supertrend indicator with minimal required data."""
@@ -158,14 +166,15 @@ class TestSeabornSuperTrend:
         
         df = pd.DataFrame(data, index=dates)
         
-        with patch('matplotlib.pyplot.show') as mock_show:
-            with patch('matplotlib.pyplot.savefig') as mock_save:
-                result = plot_dual_chart_seaborn(
-                    df=df,
-                    rule='supertrend:10,3',
-                    output_path='tests/plotting/test_output.png'
-                )
-                
-                assert result is not None
-                mock_save.assert_called_once()
-                mock_show.assert_called_once() 
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show:
+                with patch('matplotlib.pyplot.savefig') as mock_save:
+                    result = plot_dual_chart_seaborn(
+                        df=df,
+                        rule='supertrend:10,3',
+                        output_path='tests/plotting/test_output.png'
+                    )
+                    
+                    assert result is not None
+                    mock_save.assert_called_once()
+                    mock_show.assert_called_once() 
