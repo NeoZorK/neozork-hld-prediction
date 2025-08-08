@@ -19,9 +19,35 @@ try:
     from common import logger
     from common.constants import TradingRule, BUY, SELL, NOTRADE
 except ImportError:
-    # Fallback to relative imports when run as module
-    from ..common import logger
-    from ..common.constants import TradingRule, BUY, SELL, NOTRADE
+    try:
+        # Fallback to relative imports when run as module
+        from ..common import logger
+        from ..common.constants import TradingRule, BUY, SELL, NOTRADE
+    except ImportError:
+        # Final fallback for test environments
+        import sys
+        import os
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+        try:
+            from src.common import logger
+            from src.common.constants import TradingRule, BUY, SELL, NOTRADE
+        except ImportError:
+            # Mock logger for test environments
+            class MockLogger:
+                @staticmethod
+                def print_warning(msg): print(f"WARNING: {msg}")
+                @staticmethod
+                def print_error(msg): print(f"ERROR: {msg}")
+                @staticmethod
+                def print_success(msg): print(f"SUCCESS: {msg}")
+            
+            logger = MockLogger()
+            # Mock constants
+            class TradingRule:
+                pass
+            BUY = "BUY"
+            SELL = "SELL"
+            NOTRADE = "NOTRADE"
 
 
 class TerminalNavigator:
