@@ -388,4 +388,200 @@ def validate_date_input(date_str: str) -> Optional[datetime]:
         except ValueError:
             continue
     
-    return None 
+    return None
+
+
+class AutoTerminalNavigator(TerminalNavigator):
+    """
+    Extended terminal navigator for AUTO mode with field array switching.
+    Supports switching between different field arrays (OHLC, pressure_high, pressure_low, etc.).
+    """
+    
+    def __init__(self, chunks: List[pd.DataFrame], title: str = "AUTO Terminal Navigation", field_columns: List[str] = None):
+        """
+        Initialize the AUTO terminal navigator.
+        
+        Args:
+            chunks (List[pd.DataFrame]): List of data chunks
+            title (str): Navigation title
+            field_columns (List[str]): List of field columns to navigate through
+        """
+        super().__init__(chunks, title)
+        
+        # Field navigation state
+        self.current_field_index = 0
+        self.field_columns = field_columns or []
+        self.total_fields = len(self.field_columns) if field_columns else 0
+        
+        # Field groups for better organization
+        self.field_groups = self._organize_field_groups()
+        self.current_group_index = 0
+        self.total_groups = len(self.field_groups)
+        
+        # Extended commands for field navigation
+        self.commands.update({
+            'f': self._next_field,
+            'b': self._previous_field,
+            'g': self._next_group,
+            'h': self._previous_group,
+            '?': self._show_help,
+        })
+    
+    def _organize_field_groups(self) -> List[Dict[str, Any]]:
+        """Organize fields into logical groups."""
+        groups = []
+        
+        # Group 1: OHLC (always first)
+        ohlc_fields = [col for col in self.field_columns if col.lower() in ['open', 'high', 'low', 'close', 'volume']]
+        if ohlc_fields:
+            groups.append({
+                'name': 'OHLC',
+                'fields': ohlc_fields,
+                'description': 'Price and Volume Data'
+            })
+        
+        # Group 2: Pressure indicators
+        pressure_fields = [col for col in self.field_columns if 'pressure' in col.lower()]
+        if pressure_fields:
+            groups.append({
+                'name': 'Pressure',
+                'fields': pressure_fields,
+                'description': 'Pressure Indicators'
+            })
+        
+        # Group 3: Predicted values
+        predicted_fields = [col for col in self.field_columns if 'predicted' in col.lower()]
+        if predicted_fields:
+            groups.append({
+                'name': 'Predicted',
+                'fields': predicted_fields,
+                'description': 'Predicted Values'
+            })
+        
+        # Group 4: Other indicators
+        other_fields = [col for col in self.field_columns 
+                       if col not in ohlc_fields and col not in pressure_fields and col not in predicted_fields]
+        if other_fields:
+            groups.append({
+                'name': 'Other',
+                'fields': other_fields,
+                'description': 'Other Indicators'
+            })
+        
+        return groups
+    
+    def _next_field(self) -> bool:
+        """Navigate to next field within current group."""
+        if self.total_groups == 0:
+            logger.print_warning("No field groups available")
+            return False
+        
+        current_group = self.field_groups[self.current_group_index]
+        if self.current_field_index < len(current_group['fields']) - 1:
+            self.current_field_index += 1
+            return True
+        else:
+            # Try to move to next group
+            return self._next_group()
+    
+    def _previous_field(self) -> bool:
+        """Navigate to previous field within current group."""
+        if self.total_groups == 0:
+            logger.print_warning("No field groups available")
+            return False
+        
+        if self.current_field_index > 0:
+            self.current_field_index -= 1
+            return True
+        else:
+            # Try to move to previous group
+            return self._previous_group()
+    
+    def _next_group(self) -> bool:
+        """Navigate to next field group."""
+        if self.current_group_index < self.total_groups - 1:
+            self.current_group_index += 1
+            # Set field index to first field in new group
+            self.current_field_index = 0
+            return True
+        else:
+            logger.print_warning("Already at the last field group")
+            return False
+    
+    def _previous_group(self) -> bool:
+        """Navigate to previous field group."""
+        if self.current_group_index > 0:
+            self.current_group_index -= 1
+            # Set field index to last field in new group
+            group_fields = self.field_groups[self.current_group_index]['fields']
+            self.current_field_index = len(group_fields) - 1
+            return True
+        else:
+            logger.print_warning("Already at the first field group")
+            return False
+    
+    def get_current_field(self) -> str:
+        """Get the current field name."""
+        if self.total_groups == 0:
+            return None
+        
+        current_group = self.field_groups[self.current_group_index]
+        if self.current_field_index < len(current_group['fields']):
+            return current_group['fields'][self.current_field_index]
+        return None
+    
+    def get_current_group_info(self) -> Dict[str, Any]:
+        """Get information about the current field group."""
+        if self.total_groups == 0:
+            return {'name': 'None', 'description': 'No fields available', 'current_field': None}
+        
+        group = self.field_groups[self.current_group_index]
+        current_field = group['fields'][self.current_field_index] if self.current_field_index < len(group['fields']) else None
+        
+        return {
+            'name': group['name'],
+            'description': group['description'],
+            'field_index': self.current_field_index + 1,
+            'total_fields': len(group['fields']),
+            'current_field': current_field
+        }
+    
+    def show_navigation_prompt(self) -> str:
+        """Show extended navigation prompt with field information."""
+        chunk_info = self.get_current_chunk_info()
+        group_info = self.get_current_group_info()
+        
+        print(f"\n[AUTO Navigation: n/p/s/e/c/d for chunks, f/b/g/h for fields, ? for help, q to quit]")
+        print(f"Chunk: {chunk_info['index']}/{chunk_info['total']} ({chunk_info['start_date']} to {chunk_info['end_date']})")
+        print(f"Field: {group_info['name']} - {group_info['description']}")
+        if group_info['current_field']:
+            print(f"Current: {group_info['current_field']} ({group_info['field_index']}/{group_info['total_fields']})")
+        
+        user_input = input("Press Enter to continue or type navigation command: ").strip().lower()
+        return user_input
+    
+    def _show_help(self) -> bool:
+        """Show extended navigation help."""
+        print("=" * 60)
+        print("AUTO TERMINAL NAVIGATION HELP")
+        print("=" * 60)
+        print("Chunk Navigation:")
+        print("  n - Next chunk")
+        print("  p - Previous chunk")
+        print("  s - Start (first chunk)")
+        print("  e - End (last chunk)")
+        print("  c - Choose chunk by number")
+        print("  d - Choose chunk by date (YYYY-MM-DD)")
+        print()
+        print("Field Navigation:")
+        print("  f - Next field")
+        print("  b - Previous field")
+        print("  g - Next field group")
+        print("  h - Previous field group")
+        print()
+        print("System Commands:")
+        print("  ? - Show this help")
+        print("  q - Quit navigation")
+        print("  Enter - Continue to next chunk (original behavior)")
+        print("=" * 60)
+        return True 
