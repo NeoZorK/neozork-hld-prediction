@@ -950,9 +950,78 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
         logger.print_error(f"Error generating {rule_type.upper()} chunked plots: {e}")
 
 
+def _get_field_color(field_name: str) -> str:
+    """
+    Get a unique color for a field based on its name.
+    
+    Args:
+        field_name (str): Name of the field
+        
+    Returns:
+        str: Color name for plotext
+    """
+    # Define a comprehensive color palette with high contrast for terminal
+    colors = [
+        "green+", "blue+", "red+", "yellow+", "magenta+", "cyan+",
+        "white+", "orange+", "purple+", "pink+", "brown+", "gray+",
+        "light_green+", "light_blue+", "light_red+", "light_yellow+",
+        "light_magenta+", "light_cyan+", "light_white+", "light_orange+"
+    ]
+    
+    # Create a hash-based color assignment for consistent colors per field
+    import hashlib
+    hash_value = int(hashlib.md5(field_name.encode()).hexdigest(), 16)
+    color_index = hash_value % len(colors)
+    
+    return colors[color_index]
+
+
+def _get_field_color_enhanced(field_name: str) -> str:
+    """
+    Get a unique color for a field with enhanced contrast for terminal display.
+    
+    Args:
+        field_name (str): Name of the field
+        
+    Returns:
+        str: Color name for plotext
+    """
+    # Enhanced color palette with better terminal contrast
+    # Prioritizing colors that are most distinct in terminal
+    colors = [
+        "green+",      # Bright green - very distinct
+        "blue+",       # Bright blue - very distinct  
+        "red+",        # Bright red - very distinct
+        "yellow+",     # Bright yellow - very distinct
+        "magenta+",    # Bright magenta - very distinct
+        "cyan+",       # Bright cyan - very distinct
+        "white+",      # Bright white - very distinct
+        "orange+",     # Bright orange - very distinct
+        "purple+",     # Bright purple - very distinct
+        "pink+",       # Bright pink - very distinct
+        "light_green+", # Light green - distinct from dark green
+        "light_blue+",  # Light blue - distinct from dark blue
+        "light_red+",   # Light red - distinct from dark red
+        "light_yellow+", # Light yellow - distinct from dark yellow
+        "light_magenta+", # Light magenta - distinct from dark magenta
+        "light_cyan+",   # Light cyan - distinct from dark cyan
+        "light_white+",  # Light white - distinct from dark white
+        "light_orange+", # Light orange - distinct from dark orange
+        "brown+",       # Brown - distinct from other colors
+        "gray+"         # Gray - distinct from other colors
+    ]
+    
+    # Create a hash-based color assignment for consistent colors per field
+    import hashlib
+    hash_value = int(hashlib.md5(field_name.encode()).hexdigest(), 16)
+    color_index = hash_value % len(colors)
+    
+    return colors[color_index]
+
+
 def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style: str) -> None:
     """
-    Plot a single field in a chunk.
+    Plot a single field in a chunk with unique color.
     
     Args:
         chunk (pd.DataFrame): DataFrame chunk
@@ -995,7 +1064,9 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
             
             # Only plot if we have valid data
             if any(v is not None for v in values):
-                plt.plot(x_values, values, color="green+", label=field)
+                # Get unique color for this field
+                field_color = _get_field_color(field)
+                plt.plot(x_values, values, color=field_color, label=field)
             
             plt.title(f"{title} - {start_date} to {end_date}")
             plt.xlabel("Date/Time")
