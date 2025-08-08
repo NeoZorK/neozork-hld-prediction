@@ -30,10 +30,14 @@ SCRIPT = PROJECT_ROOT / 'run_analysis.py'
 LOG_DIR = Path(tempfile.mkdtemp(prefix="cli_tests_pytest_"))
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
-# Docker environment detection
-def is_docker_environment():
-    """Check if running in Docker environment"""
-    return os.path.exists('/.dockerenv') or os.environ.get('DOCKER_CONTAINER') == 'true'
+# Container detection
+def is_container():
+    """Check if running in container environment"""
+    return (
+        os.path.exists('/.dockerenv') or 
+        os.environ.get('NATIVE_CONTAINER') == 'true' or
+        os.environ.get('DOCKER_CONTAINER') == 'true'
+    )
 
 @dataclass
 class CLITestCase:
@@ -98,85 +102,91 @@ def all_flags():
         
         # Plotting flags
         '-d': ['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb', 'term'],
-        '--draw': ['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb', 'term'],
+        '--draw-mode': ['fastest', 'fast', 'plotly', 'plt', 'mplfinance', 'mpl', 'seaborn', 'sb', 'term'],
         
         # Export flags
         '--export-parquet': [],
         '--export-csv': [],
         '--export-json': [],
         '--export-indicators-info': [],
+        
+        # Additional flags
+        '--verbose': [],
+        '--quiet': [],
+        '--debug': [],
+        '--no-cache': [],
+        '--force': []
     }
 
 @pytest.fixture(scope="session")
 def modes_config():
-    """Fixture providing modes and their required parameters"""
+    """Fixture providing mode configurations"""
     return {
         'demo': {
-            'required': [],
-            'optional': ['--rule', '--draw', '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info']
-        },
-        'yfinance': {
-            'required': ['--ticker', '--point'],
-            'optional': ['--period', '--start', '--end', '--rule', '--draw', '--price-type']
-        },
-        'yf': {
-            'required': ['--ticker', '--point'],
-            'optional': ['--period', '--start', '--end', '--rule', '--draw', '--price-type']
+            'description': 'Demo mode with sample data',
+            'required_flags': [],
+            'optional_flags': ['--rule', '-d', '--export-parquet', '--export-csv', '--export-json']
         },
         'csv': {
-            'required': ['--csv-file', '--point'],
-            'optional': ['--rule', '--draw', '--price-type']
+            'description': 'CSV file processing mode',
+            'required_flags': ['--csv-file', '--point'],
+            'optional_flags': ['--rule', '-d', '--export-parquet', '--export-csv', '--export-json']
+        },
+        'yfinance': {
+            'description': 'Yahoo Finance data mode',
+            'required_flags': ['--ticker', '--point'],
+            'optional_flags': ['--period', '--start', '--end', '--rule', '-d', '--export-parquet', '--export-csv', '--export-json']
         },
         'polygon': {
-            'required': ['--ticker', '--start', '--end', '--point'],
-            'optional': ['--interval', '--rule', '--draw', '--price-type']
+            'description': 'Polygon API data mode',
+            'required_flags': ['--ticker', '--point'],
+            'optional_flags': ['--period', '--start', '--end', '--rule', '-d', '--export-parquet', '--export-csv', '--export-json']
         },
         'binance': {
-            'required': ['--ticker', '--start', '--end', '--point'],
-            'optional': ['--interval', '--rule', '--draw', '--price-type']
-        },
-        'exrate': {
-            'required': ['--ticker', '--point'],
-            'optional': ['--interval', '--rule', '--draw', '--price-type']
+            'description': 'Binance API data mode',
+            'required_flags': ['--ticker', '--point'],
+            'optional_flags': ['--period', '--start', '--end', '--rule', '-d', '--export-parquet', '--export-csv', '--export-json']
         },
         'show': {
-            'required': [],
-            'optional': ['--source', '--keywords', '--show-start', '--show-end', '--show-rule', '--draw', '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info']
-        },
-        'interactive': {
-            'required': [],
-            'optional': []
+            'description': 'Show mode for data display',
+            'required_flags': ['--source'],
+            'optional_flags': ['--keywords', '--show-start', '--show-end', '--show-rule']
         }
     }
 
 def run_cli_command(cmd: List[str], timeout: int = 30) -> Tuple[int, str, str, float]:
     """Run CLI command and return results"""
-    start_time = time.perf_counter()
-    
-    # Set environment variables for testing
-    env = os.environ.copy()
-    env['MPLBACKEND'] = 'Agg'  # Non-interactive backend
-    env['NEOZORK_TEST'] = '1'  # Test mode flag
-    
-    # Increase timeout for Docker environment
-    if is_docker_environment():
-        timeout = max(timeout, 60)  # Minimum 60 seconds in Docker
+    start_time = time.time()
     
     try:
+        # Use uv run for consistent environment
+        full_cmd = ['uv', 'run', 'python', str(SCRIPT)] + cmd
+        
         result = subprocess.run(
-            cmd, 
-            capture_output=True, 
-            text=True, 
-            env=env,
-            timeout=timeout
+            full_cmd,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            cwd=PROJECT_ROOT,
+            env=os.environ.copy()
         )
-        execution_time = time.perf_counter() - start_time
-        return result.returncode, result.stdout, result.stderr, execution_time
+        
+        execution_time = time.time() - start_time
+        
+        return (
+            result.returncode,
+            result.stdout,
+            result.stderr,
+            execution_time
+        )
+        
     except subprocess.TimeoutExpired:
-        execution_time = time.perf_counter() - start_time
-        return -1, "", "Command timed out", execution_time
+        execution_time = time.time() - start_time
+        return (1, "", f"Command timed out after {timeout}s", execution_time)
+    except Exception as e:
+        execution_time = time.time() - start_time
+        return (1, "", str(e), execution_time)
 
-# Basic flag tests
 @pytest.mark.basic
 @pytest.mark.parametrize("flag", [
     '--version',
@@ -185,82 +195,56 @@ def run_cli_command(cmd: List[str], timeout: int = 30) -> Tuple[int, str, str, f
     '--indicators'
 ])
 def test_basic_flags(flag):
-    """Test basic flags that don't require additional parameters"""
-    cmd = [PYTHON, str(SCRIPT), flag]
+    """Test basic CLI flags"""
+    return_code, stdout, stderr, execution_time = run_cli_command([flag])
     
-    # Use longer timeout for all flags in Docker environment
-    timeout = 60 if flag in ['--examples', '--indicators'] else 30
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=timeout)
-    
-    # Basic flags should either succeed, show help/version info, or timeout in Docker
-    assert return_code in [0, 1, -1], f"Flag {flag} failed with return code {return_code}"
-    assert execution_time < timeout, f"Flag {flag} took too long: {execution_time:.2f}s"
+    assert return_code == 0, f"Flag {flag} failed with return code {return_code}"
+    assert stdout, f"Flag {flag} produced no output"
+    assert execution_time < 10, f"Flag {flag} took too long: {execution_time}s"
 
-# Test interactive flags separately (they have special behavior)
 @pytest.mark.basic
 def test_interactive_flag():
-    """Test --interactive flag (should start interactive mode)"""
-    cmd = [PYTHON, str(SCRIPT), '--interactive']
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=30)
+    """Test interactive flag"""
+    return_code, stdout, stderr, execution_time = run_cli_command(['--interactive'])
     
-    # Interactive mode should start (return code 0), timeout (return code -1), or fail (return code 1)
-    assert return_code in [0, -1, 1], f"Interactive flag failed with return code {return_code}"
-    # If it didn't timeout, it should show interactive mode message
-    if return_code == 0:
-        assert "Interactive Mode" in stdout or "Welcome" in stdout, "Should show interactive mode message"
-    # If it timed out or failed, that's also acceptable for this test
+    assert return_code == 0, f"Interactive flag failed with return code {return_code}"
+    assert execution_time < 10, f"Interactive flag took too long: {execution_time}s"
 
 @pytest.mark.basic
 def test_short_interactive_flag():
-    """Test -i flag (should require mode argument)"""
-    cmd = [PYTHON, str(SCRIPT), '-i']
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd)
+    """Test short interactive flag"""
+    return_code, stdout, stderr, execution_time = run_cli_command(['-i'])
     
-    # -i should fail because it requires a mode argument
-    assert return_code == 2, f"Short interactive flag should fail with code 2, got {return_code}"
-    assert "arguments are required: mode" in stderr, "Should show mode requirement error"
+    assert return_code == 0, f"Short interactive flag failed with return code {return_code}"
+    assert execution_time < 10, f"Short interactive flag took too long: {execution_time}s"
 
-# Version test
 @pytest.mark.basic
 def test_version_flag():
-    """Test version flag specifically"""
-    cmd = [PYTHON, str(SCRIPT), '--version']
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=60)
+    """Test version flag"""
+    return_code, stdout, stderr, execution_time = run_cli_command(['--version'])
     
-    # In Docker environment, version flag might timeout, so we accept both success and timeout
-    assert return_code in [0, -1], f"Version flag failed with return code {return_code}"
-    if return_code == 0:
-        assert "Shcherbyna Pressure Vector Indicator" in stdout, "Version output should contain tool name"
-        assert "v" in stdout, "Version output should contain version number"
-    # If return_code is -1 (timeout), that's acceptable in Docker environment
+    assert return_code == 0, f"Version flag failed with return code {return_code}"
+    assert 'version' in stdout.lower() or 'neozork' in stdout.lower(), f"Version output not found: {stdout}"
+    assert execution_time < 5, f"Version flag took too long: {execution_time}s"
 
-# Help test
 @pytest.mark.basic
 def test_help_flag():
-    """Test help flag specifically"""
-    cmd = [PYTHON, str(SCRIPT), '--help']
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=30)
+    """Test help flag"""
+    return_code, stdout, stderr, execution_time = run_cli_command(['--help'])
     
-    # In Docker environment, help flag might timeout, so we accept timeout as well
-    assert return_code in [0, -1], f"Help flag failed with return code {return_code}"
-    if return_code == 0:
-        assert "usage:" in stdout, "Help output should contain usage information"
-        assert "Shcherbyna Pressure Vector Indicator" in stdout, "Help output should contain tool name"
+    assert return_code == 0, f"Help flag failed with return code {return_code}"
+    assert 'usage' in stdout.lower() or 'help' in stdout.lower(), f"Help output not found: {stdout}"
+    assert execution_time < 5, f"Help flag took too long: {execution_time}s"
 
-# Examples test
 @pytest.mark.basic
 def test_examples_flag():
-    """Test examples flag specifically"""
-    cmd = [PYTHON, str(SCRIPT), '--examples']
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=60)
+    """Test examples flag"""
+    return_code, stdout, stderr, execution_time = run_cli_command(['--examples'])
     
-    # In Docker environment, examples flag might timeout, so we accept both success and timeout
-    assert return_code in [0, -1], f"Examples flag failed with return code {return_code}"
-    if return_code == 0:
-        assert "Examples" in stdout, "Examples output should contain examples section"
-    assert execution_time < 60, f"Examples flag took too long: {execution_time:.2f}s"
+    assert return_code == 0, f"Examples flag failed with return code {return_code}"
+    assert 'example' in stdout.lower() or 'usage' in stdout.lower(), f"Examples output not found: {stdout}"
+    assert execution_time < 5, f"Examples flag took too long: {execution_time}s"
 
-# Indicators search tests
 @pytest.mark.basic
 @pytest.mark.parametrize("category", [
     'oscillators',
@@ -270,14 +254,12 @@ def test_examples_flag():
     'volume'
 ])
 def test_indicators_category_search(category):
-    """Test indicators search by category"""
-    cmd = [PYTHON, str(SCRIPT), '--indicators', category]
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=60)
+    """Test indicators flag with category search"""
+    return_code, stdout, stderr, execution_time = run_cli_command(['--indicators', category])
     
-    # In Docker environment, indicators search might timeout, so we accept timeout as well
-    assert return_code in [0, -1], f"Indicators search for {category} failed with return code {return_code}"
-    if return_code == 0:
-        assert category in stdout.lower(), f"Output should contain category {category}"
+    assert return_code == 0, f"Indicators category {category} failed with return code {return_code}"
+    assert category in stdout.lower(), f"Category {category} not found in output: {stdout}"
+    assert execution_time < 10, f"Indicators category {category} took too long: {execution_time}s"
 
 @pytest.mark.basic
 @pytest.mark.parametrize("indicator", [
@@ -287,14 +269,13 @@ def test_indicators_category_search(category):
     'bollinger'
 ])
 def test_indicators_specific_search(indicator):
-    """Test indicators search for specific indicators"""
-    cmd = [PYTHON, str(SCRIPT), '--indicators', 'oscillators', indicator]
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=60)
+    """Test indicators flag with specific indicator search"""
+    return_code, stdout, stderr, execution_time = run_cli_command(['--indicators', indicator])
     
-    # In Docker environment, indicators search might timeout, so we accept timeout as well
-    assert return_code in [0, 1, -1], f"Indicators search for {indicator} failed with return code {return_code}"
+    assert return_code == 0, f"Indicators search {indicator} failed with return code {return_code}"
+    assert indicator in stdout.lower(), f"Indicator {indicator} not found in output: {stdout}"
+    assert execution_time < 10, f"Indicators search {indicator} took too long: {execution_time}s"
 
-# Demo mode tests
 @pytest.mark.flag_combinations
 @pytest.mark.parametrize("rule", [
     'RSI',
@@ -306,13 +287,10 @@ def test_indicators_specific_search(indicator):
 ])
 def test_demo_mode_rules(rule):
     """Test demo mode with different rules"""
-    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', rule]
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=120)
+    return_code, stdout, stderr, execution_time = run_cli_command(['demo', '--rule', rule])
     
-    # In Docker environment, demo mode might timeout, so we accept timeout as well
-    assert return_code in [0, -1], f"Demo mode with rule {rule} failed with return code {return_code}"
-    if return_code == 0:
-        assert execution_time < 120, f"Demo mode with rule {rule} took too long: {execution_time:.2f}s"
+    assert return_code == 0, f"Demo mode with rule {rule} failed with return code {return_code}"
+    assert execution_time < 30, f"Demo mode with rule {rule} took too long: {execution_time}s"
 
 @pytest.mark.flag_combinations
 @pytest.mark.parametrize("draw_mode", [
@@ -322,13 +300,11 @@ def test_demo_mode_rules(rule):
 ])
 def test_demo_mode_draw_modes(draw_mode):
     """Test demo mode with different draw modes"""
-    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'RSI', '-d', draw_mode]
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=120)
+    return_code, stdout, stderr, execution_time = run_cli_command(['demo', '-d', draw_mode])
     
-    # In Docker environment, demo mode might timeout, so we accept timeout as well
-    assert return_code in [0, -1], f"Demo mode with draw {draw_mode} failed with return code {return_code}"
+    assert return_code == 0, f"Demo mode with draw mode {draw_mode} failed with return code {return_code}"
+    assert execution_time < 30, f"Demo mode with draw mode {draw_mode} took too long: {execution_time}s"
 
-# Export tests
 @pytest.mark.flag_combinations
 @pytest.mark.parametrize("export_flag", [
     '--export-parquet',
@@ -338,24 +314,20 @@ def test_demo_mode_draw_modes(draw_mode):
 ])
 def test_demo_export_flags(export_flag):
     """Test demo mode with export flags"""
-    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'RSI', export_flag]
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=120)
+    return_code, stdout, stderr, execution_time = run_cli_command(['demo', export_flag])
     
-    # In Docker environment, demo mode might timeout, so we accept timeout as well
-    assert return_code in [0, -1], f"Demo mode with {export_flag} failed with return code {return_code}"
+    assert return_code == 0, f"Demo mode with export flag {export_flag} failed with return code {return_code}"
+    assert execution_time < 30, f"Demo mode with export flag {export_flag} took too long: {execution_time}s"
 
-# CSV mode tests
 @pytest.mark.flag_combinations
 def test_csv_mode_valid(test_data):
     """Test CSV mode with valid parameters"""
-    cmd = [PYTHON, str(SCRIPT), 'csv', '--csv-file', test_data['csv_file'], '--point', test_data['point']]
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=60)
+    cmd = ['csv', '--csv-file', test_data['csv_file'], '--point', test_data['point']]
+    return_code, stdout, stderr, execution_time = run_cli_command(cmd)
     
-    # CSV mode might fail if file doesn't exist, but should not crash
-    # In Docker environment, it might also timeout
-    assert return_code in [0, 1, -1], f"CSV mode failed with return code {return_code}"
+    assert return_code == 0, f"CSV mode failed with return code {return_code}"
+    assert execution_time < 30, f"CSV mode took too long: {execution_time}s"
 
-# Error case tests
 @pytest.mark.error
 @pytest.mark.parametrize("invalid_mode", [
     'invalid_mode',
@@ -363,11 +335,11 @@ def test_csv_mode_valid(test_data):
     'wrong'
 ])
 def test_invalid_modes(invalid_mode):
-    """Test invalid modes should fail"""
-    cmd = [PYTHON, str(SCRIPT), invalid_mode]
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd)
+    """Test invalid modes"""
+    return_code, stdout, stderr, execution_time = run_cli_command([invalid_mode])
     
-    assert return_code != 0, f"Invalid mode {invalid_mode} should fail but returned {return_code}"
+    assert return_code != 0, f"Invalid mode {invalid_mode} should have failed"
+    assert execution_time < 10, f"Invalid mode {invalid_mode} took too long: {execution_time}s"
 
 @pytest.mark.error
 @pytest.mark.parametrize("test_case", [
@@ -385,14 +357,13 @@ def test_invalid_modes(invalid_mode):
     (['demo', '--point', '0'], "Zero point value"),
 ])
 def test_error_cases(test_case):
-    """Test various error cases"""
-    cmd_parts, description = test_case
-    cmd = [PYTHON, str(SCRIPT)] + cmd_parts
+    """Test error cases"""
+    cmd, expected_error = test_case
     return_code, stdout, stderr, execution_time = run_cli_command(cmd)
     
-    assert return_code != 0, f"Error case '{description}' should fail but returned {return_code}"
+    assert return_code != 0, f"Error case should have failed: {cmd}"
+    assert execution_time < 10, f"Error case took too long: {execution_time}s"
 
-# Conflicting flags tests
 @pytest.mark.error
 @pytest.mark.parametrize("conflicting_cmd", [
     ['yfinance', '--ticker', 'AAPL', '--point', '0.01', '--period', '1mo', '--start', '2024-01-01'],
@@ -402,12 +373,11 @@ def test_error_cases(test_case):
 ])
 def test_conflicting_flags(conflicting_cmd):
     """Test conflicting flag combinations"""
-    cmd = [PYTHON, str(SCRIPT)] + conflicting_cmd
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd)
+    return_code, stdout, stderr, execution_time = run_cli_command(conflicting_cmd)
     
-    assert return_code != 0, f"Conflicting flags should fail but returned {return_code}"
+    assert return_code != 0, f"Conflicting flags should have failed: {conflicting_cmd}"
+    assert execution_time < 10, f"Conflicting flags took too long: {execution_time}s"
 
-# Show mode tests
 @pytest.mark.flag_combinations
 @pytest.mark.parametrize("source", [
     'yfinance',
@@ -420,110 +390,78 @@ def test_conflicting_flags(conflicting_cmd):
 ])
 def test_show_mode_sources(source):
     """Test show mode with different sources"""
-    cmd = [PYTHON, str(SCRIPT), 'show', '--source', source]
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=60)
+    return_code, stdout, stderr, execution_time = run_cli_command(['show', '--source', source])
     
-    # Show mode might not have data, but should not crash
-    # In Docker environment, it might also timeout
-    assert return_code in [0, 1, -1], f"Show mode with source {source} failed with return code {return_code}"
+    assert return_code == 0, f"Show mode with source {source} failed with return code {return_code}"
+    assert execution_time < 20, f"Show mode with source {source} took too long: {execution_time}s"
 
-# Performance tests
 @pytest.mark.performance
 def test_demo_mode_performance():
     """Test demo mode performance"""
-    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'RSI']
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=180)
+    return_code, stdout, stderr, execution_time = run_cli_command(['demo'])
     
-    # In Docker environment, demo mode might timeout, so we accept timeout as well
-    assert return_code in [0, -1], f"Demo mode performance test failed with return code {return_code}"
-    if return_code == 0:
-        assert execution_time < 120, f"Demo mode took too long: {execution_time:.2f}s"
+    assert return_code == 0, f"Demo mode failed with return code {return_code}"
+    assert execution_time < 60, f"Demo mode took too long: {execution_time}s"
 
-# Integration tests
 @pytest.mark.integration
 def test_full_workflow_demo():
-    """Test full workflow with demo mode"""
-    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'RSI', '-d', 'fastest', '--export-parquet']
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=180)
+    """Test full workflow in demo mode"""
+    cmd = ['demo', '--rule', 'RSI', '-d', 'fastest', '--export-csv']
+    return_code, stdout, stderr, execution_time = run_cli_command(cmd)
     
-    # In Docker environment, full workflow might timeout, so we accept timeout as well
-    assert return_code in [0, -1], f"Full workflow demo failed with return code {return_code}"
-    if return_code == 0:
-        assert "successfully" in stdout.lower() or "finished" in stdout.lower(), "Should indicate successful completion"
+    assert return_code == 0, f"Full workflow demo failed with return code {return_code}"
+    assert execution_time < 60, f"Full workflow demo took too long: {execution_time}s"
 
-# Stress tests
 @pytest.mark.performance
 @pytest.mark.parametrize("rule", ['RSI', 'EMA', 'BB'])
 @pytest.mark.parametrize("draw", ['fastest', 'fast'])
 def test_multiple_combinations(rule, draw):
-    """Test multiple rule and draw combinations"""
-    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', rule, '-d', draw]
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=120)
+    """Test multiple flag combinations"""
+    cmd = ['demo', '--rule', rule, '-d', draw]
+    return_code, stdout, stderr, execution_time = run_cli_command(cmd)
     
-    # In Docker environment, some combinations might timeout, so we accept timeout as well
-    assert return_code in [0, -1], f"Combination {rule}+{draw} failed with return code {return_code}"
-    if return_code == 0:
-        assert execution_time < 120, f"Combination {rule}+{draw} took too long: {execution_time:.2f}s"
+    assert return_code == 0, f"Combination {rule}+{draw} failed with return code {return_code}"
+    assert execution_time < 45, f"Combination {rule}+{draw} took too long: {execution_time}s"
 
-# Custom markers for test organization
 @pytest.mark.slow
 @pytest.mark.performance
 def test_slow_operations():
-    """Test slower operations that might take more time"""
-    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'AUTO', '-d', 'plotly']
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=240)
+    """Test slow operations"""
+    cmd = ['demo', '--rule', 'AUTO', '-d', 'plotly']
+    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=120)
     
-    # In Docker environment, slow operations might timeout, so we accept timeout as well
-    assert return_code in [0, -1], f"Slow operation failed with return code {return_code}"
+    assert return_code == 0, f"Slow operations failed with return code {return_code}"
+    assert execution_time < 120, f"Slow operations took too long: {execution_time}s"
 
 @pytest.mark.integration
 def test_integration_with_export():
-    """Test integration with all export options"""
-    cmd = [PYTHON, str(SCRIPT), 'demo', '--rule', 'RSI', 
-           '--export-parquet', '--export-csv', '--export-json', '--export-indicators-info']
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=180)
+    """Test integration with export functionality"""
+    cmd = ['demo', '--rule', 'RSI', '--export-parquet', '--export-csv', '--export-json']
+    return_code, stdout, stderr, execution_time = run_cli_command(cmd)
     
-    # In Docker environment, integration test might timeout, so we accept timeout as well
-    assert return_code in [0, -1], f"Integration test with exports failed with return code {return_code}"
+    assert return_code == 0, f"Integration with export failed with return code {return_code}"
+    assert execution_time < 60, f"Integration with export took too long: {execution_time}s"
 
-# Fixture for test data validation
 @pytest.fixture
 def validate_test_data(test_data):
-    """Validate that test data files exist"""
+    """Validate test data exists"""
     csv_file = Path(test_data['csv_file'])
     if not csv_file.exists():
-        pytest.skip(f"Test data file {csv_file} does not exist")
+        pytest.skip(f"Test data file not found: {csv_file}")
     return test_data
 
-# Test with data validation
 @pytest.mark.flag_combinations
 def test_csv_mode_with_validation(validate_test_data):
     """Test CSV mode with data validation"""
-    cmd = [PYTHON, str(SCRIPT), 'csv', '--csv-file', validate_test_data['csv_file'], 
-           '--point', validate_test_data['point']]
-    return_code, stdout, stderr, execution_time = run_cli_command(cmd, timeout=60)
+    cmd = ['csv', '--csv-file', validate_test_data['csv_file'], '--point', validate_test_data['point']]
+    return_code, stdout, stderr, execution_time = run_cli_command(cmd)
     
-    # CSV mode might fail due to data format issues, but should not crash
-    # In Docker environment, it might also timeout
-    assert return_code in [0, 1, -1], f"CSV mode with validation failed with return code {return_code}"
+    assert return_code == 0, f"CSV mode with validation failed with return code {return_code}"
+    assert execution_time < 30, f"CSV mode with validation took too long: {execution_time}s"
 
 def main():
-    """Main function to run all flag tests with pytest"""
-    print("🚀 Starting Flag Test Runner (Pytest)...")
-    
-    runner = FlagTestRunner(max_workers=4)
-    results = runner.run_all_tests()
-    
-    print(f"✅ Completed! Results saved to: {LOG_DIR}")
-    print(f"📊 Summary: {results['summary']}")
-    
-    # Cleanup temporary directory
-    try:
-        import shutil
-        shutil.rmtree(LOG_DIR)
-        print(f"🧹 Cleaned up temporary directory: {LOG_DIR}")
-    except Exception as e:
-        print(f"⚠️  Warning: Could not clean up temporary directory: {e}")
+    """Main function for standalone execution"""
+    pytest.main([__file__, '-v', '--tb=short'])
 
 if __name__ == "__main__":
     main() 

@@ -9,17 +9,27 @@ from datetime import datetime, timedelta
 from unittest.mock import patch, MagicMock
 import matplotlib.pyplot as plt
 import threading
+import os
 
 from src.plotting.dual_chart_seaborn import plot_dual_chart_seaborn
 
 # Thread lock for matplotlib operations
 matplotlib_lock = threading.Lock()
 
+# Container detection
+def is_container():
+    """Detect if running in container environment"""
+    return (
+        os.path.exists('/.dockerenv') or 
+        os.environ.get('NATIVE_CONTAINER') == 'true' or
+        os.environ.get('DOCKER_CONTAINER') == 'true'
+    )
 
 class TestSeabornSuperTrend:
     """Test cases for supertrend indicator in seaborn mode."""
 
-    def test_supertrend_indicator_display(self):
+    @pytest.mark.container_safe
+    def test_supertrend_indicator_display(self, mock_plotting_functions):
         """Test that supertrend indicator is displayed correctly."""
         # Create sample data
         start_date = datetime(2020, 1, 1)
@@ -54,7 +64,8 @@ class TestSeabornSuperTrend:
                     mock_save.assert_called_once()
                     mock_show.assert_called_once()
 
-    def test_supertrend_with_nan_values(self):
+    @pytest.mark.container_safe
+    def test_supertrend_with_nan_values(self, mock_plotting_functions):
         """Test supertrend indicator with NaN values."""
         start_date = datetime(2020, 1, 1)
         end_date = datetime(2021, 1, 1)
@@ -86,7 +97,8 @@ class TestSeabornSuperTrend:
                     mock_save.assert_called_once()
                     mock_show.assert_called_once()
 
-    def test_supertrend_with_mixed_values(self):
+    @pytest.mark.container_safe
+    def test_supertrend_with_mixed_values(self, mock_plotting_functions):
         """Test supertrend indicator with mixed valid and NaN values."""
         start_date = datetime(2020, 1, 1)
         end_date = datetime(2021, 1, 1)
@@ -98,9 +110,9 @@ class TestSeabornSuperTrend:
             'Low': np.random.uniform(1.0, 2.0, len(dates)),
             'Close': np.random.uniform(1.0, 2.0, len(dates)),
             'Volume': np.random.randint(1000, 10000, len(dates)),
-            'PPrice1': [1.5 if i % 2 == 0 else np.nan for i in range(len(dates))],
-            'PPrice2': [1.6 if i % 2 == 0 else np.nan for i in range(len(dates))],
-            'Direction': [1 if i % 2 == 0 else 0 for i in range(len(dates))]
+            'PPrice1': [np.nan if i % 3 == 0 else np.random.uniform(1.0, 2.0) for i in range(len(dates))],
+            'PPrice2': [np.nan if i % 4 == 0 else np.random.uniform(1.0, 2.0) for i in range(len(dates))],
+            'Direction': np.random.choice([0, 1, 2], len(dates))
         }
         
         df = pd.DataFrame(data, index=dates)
@@ -118,7 +130,8 @@ class TestSeabornSuperTrend:
                     mock_save.assert_called_once()
                     mock_show.assert_called_once()
 
-    def test_supertrend_without_required_columns(self):
+    @pytest.mark.container_safe
+    def test_supertrend_without_required_columns(self, mock_plotting_functions):
         """Test supertrend indicator without required columns."""
         start_date = datetime(2020, 1, 1)
         end_date = datetime(2021, 1, 1)
@@ -147,10 +160,11 @@ class TestSeabornSuperTrend:
                     mock_save.assert_called_once()
                     mock_show.assert_called_once()
 
-    def test_supertrend_minimal_data(self):
-        """Test supertrend indicator with minimal required data."""
+    @pytest.mark.container_safe
+    def test_supertrend_minimal_data(self, mock_plotting_functions):
+        """Test supertrend indicator with minimal data."""
         start_date = datetime(2020, 1, 1)
-        end_date = datetime(2020, 2, 1)
+        end_date = datetime(2020, 1, 10)  # Only 10 days
         dates = pd.date_range(start_date, end_date, freq='D')
         
         data = {
