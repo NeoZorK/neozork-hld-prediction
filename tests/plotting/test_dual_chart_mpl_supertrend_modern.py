@@ -13,8 +13,12 @@ import matplotlib.pyplot as plt
 from unittest.mock import patch, MagicMock
 import tempfile
 import os
+import threading
 
 from src.plotting.dual_chart_mpl import plot_dual_chart_mpl
+
+# Thread lock for matplotlib operations
+matplotlib_lock = threading.Lock()
 
 
 class TestModernSupertrendStyling:
@@ -53,45 +57,47 @@ class TestModernSupertrendStyling:
     
     def test_modern_color_scheme(self, sample_data):
         """Test that modern color scheme is used."""
-        with patch('matplotlib.pyplot.show'):
-            with patch('matplotlib.pyplot.savefig'):
-                fig = plot_dual_chart_mpl(
-                    sample_data, 
-                    rule='supertrend:10,3,open',
-                    title='Test Modern Supertrend'
-                )
-                
-                # Verify the figure was created
-                assert fig is not None
-                assert hasattr(fig, 'axes')
-                assert len(fig.axes) == 2
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show'):
+                with patch('matplotlib.pyplot.savefig'):
+                    fig = plot_dual_chart_mpl(
+                        sample_data, 
+                        rule='supertrend:10,3,open',
+                        title='Test Modern Supertrend'
+                    )
+                    
+                    # Verify the figure was created
+                    assert fig is not None
+                    assert hasattr(fig, 'axes')
+                    assert len(fig.axes) == 2
     
     def test_supertrend_segmentation(self, sample_data):
         """Test that Supertrend is properly segmented with modern colors."""
-        with patch('matplotlib.pyplot.show'):
-            with patch('matplotlib.pyplot.savefig'):
-                fig = plot_dual_chart_mpl(
-                    sample_data, 
-                    rule='supertrend:10,3,open',
-                    title='Test Segmentation'
-                )
-                
-                ax2 = fig.axes[1]  # Indicator subplot
-                
-                # Check that lines are plotted with modern colors
-                lines = ax2.get_lines()
-                assert len(lines) > 0
-                
-                # Verify modern color scheme is used
-                modern_colors = ['#00C851', '#FF4444', '#FFC107']  # Green, Red, Gold
-                line_colors = [line.get_color() for line in lines]
-                
-                # At least one modern color should be used
-                has_modern_colors = any(
-                    any(color in str(line_color) for color in modern_colors)
-                    for line_color in line_colors
-                )
-                assert has_modern_colors, "Modern color scheme not applied"
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show'):
+                with patch('matplotlib.pyplot.savefig'):
+                    fig = plot_dual_chart_mpl(
+                        sample_data, 
+                        rule='supertrend:10,3,open',
+                        title='Test Segmentation'
+                    )
+                    
+                    ax2 = fig.axes[1]  # Indicator subplot
+                    
+                    # Check that lines are plotted with modern colors
+                    lines = ax2.get_lines()
+                    assert len(lines) > 0
+                    
+                    # Verify modern color scheme is used
+                    modern_colors = ['#00C851', '#FF4444', '#FFC107']  # Green, Red, Gold
+                    line_colors = [line.get_color() for line in lines]
+                    
+                    # At least one modern color should be used
+                    has_modern_colors = any(
+                        any(color in str(line_color) for color in modern_colors)
+                        for line_color in line_colors
+                    )
+                    assert has_modern_colors, "Modern color scheme not applied"
     
     def test_signal_detection(self, sample_data):
         """Test that signal change points are properly detected and styled."""
@@ -123,107 +129,112 @@ class TestModernSupertrendStyling:
         df = pd.DataFrame(data, index=dates[:49])
         df['Direction'] = np.where(df['Close'] > df['PPrice1'], 1, 2)
         
-        with patch('matplotlib.pyplot.show'):
-            with patch('matplotlib.pyplot.savefig'):
-                fig = plot_dual_chart_mpl(
-                    df, 
-                    rule='supertrend:10,3,open',
-                    title='Test Signal Detection'
-                )
-                
-                ax2 = fig.axes[1]
-                
-                # Check for signal markers (may not be present in all test data)
-                collections = ax2.collections
-                # Signal markers are optional - the main test is that the plotting works
-                # and modern styling is applied
-                assert fig is not None, "Figure should be created successfully"
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show'):
+                with patch('matplotlib.pyplot.savefig'):
+                    fig = plot_dual_chart_mpl(
+                        df, 
+                        rule='supertrend:10,3,open',
+                        title='Test Signal Detection'
+                    )
+                    
+                    ax2 = fig.axes[1]
+                    
+                    # Check for signal markers (may not be present in all test data)
+                    collections = ax2.collections
+                    # Signal markers are optional - the main test is that the plotting works
+                    # and modern styling is applied
+                    assert fig is not None, "Figure should be created successfully"
     
     def test_enhanced_styling_features(self, sample_data):
         """Test that enhanced styling features are applied."""
-        with patch('matplotlib.pyplot.show'):
-            with patch('matplotlib.pyplot.savefig'):
-                fig = plot_dual_chart_mpl(
-                    sample_data, 
-                    rule='supertrend:10,3,open',
-                    title='Test Enhanced Styling'
-                )
-                
-                ax2 = fig.axes[1]
-                
-                # Check for glow effects (multiple lines with different alpha)
-                lines = ax2.get_lines()
-                if len(lines) > 1:
-                    # Should have both main lines and glow effects
-                    alphas = [line.get_alpha() for line in lines if line.get_alpha() is not None]
-                    assert len(alphas) > 0, "Alpha effects should be applied"
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show'):
+                with patch('matplotlib.pyplot.savefig'):
+                    fig = plot_dual_chart_mpl(
+                        sample_data, 
+                        rule='supertrend:10,3,open',
+                        title='Test Enhanced Styling'
+                    )
+                    
+                    ax2 = fig.axes[1]
+                    
+                    # Check for glow effects (multiple lines with different alpha)
+                    lines = ax2.get_lines()
+                    if len(lines) > 1:
+                        # Should have both main lines and glow effects
+                        alphas = [line.get_alpha() for line in lines if line.get_alpha() is not None]
+                        assert len(alphas) > 0, "Alpha effects should be applied"
     
     def test_background_zones(self, sample_data):
         """Test that trend background zones are created."""
-        with patch('matplotlib.pyplot.show'):
-            with patch('matplotlib.pyplot.savefig'):
-                fig = plot_dual_chart_mpl(
-                    sample_data, 
-                    rule='supertrend:10,3,open',
-                    title='Test Background Zones'
-                )
-                
-                ax2 = fig.axes[1]
-                
-                # Check for background rectangles (patches)
-                patches = ax2.patches
-                # Note: Background zones might not always be created depending on data
-                # This test verifies the plotting function handles the feature
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show'):
+                with patch('matplotlib.pyplot.savefig'):
+                    fig = plot_dual_chart_mpl(
+                        sample_data, 
+                        rule='supertrend:10,3,open',
+                        title='Test Background Zones'
+                    )
+                    
+                    ax2 = fig.axes[1]
+                    
+                    # Check for background rectangles (patches)
+                    patches = ax2.patches
+                    # Note: Background zones might not always be created depending on data
+                    # This test verifies the plotting function handles the feature
     
     def test_legend_entries(self, sample_data):
         """Test that proper legend entries are created."""
-        with patch('matplotlib.pyplot.show'):
-            with patch('matplotlib.pyplot.savefig'):
-                fig = plot_dual_chart_mpl(
-                    sample_data, 
-                    rule='supertrend:10,3,open',
-                    title='Test Legend'
-                )
-                
-                ax2 = fig.axes[1]
-                
-                # Check legend entries
-                legend = ax2.get_legend()
-                if legend is not None:
-                    legend_texts = [text.get_text() for text in legend.get_texts()]
-                    
-                    # Should have modern legend entries
-                    expected_entries = [
-                        'SuperTrend (Uptrend)',
-                        'SuperTrend (Downtrend)', 
-                        'SuperTrend (Signal Change)',
-                        'BUY Signal',
-                        'SELL Signal'
-                    ]
-                    
-                    # At least some expected entries should be present
-                    found_entries = any(
-                        any(expected in text for expected in expected_entries)
-                        for text in legend_texts
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show'):
+                with patch('matplotlib.pyplot.savefig'):
+                    fig = plot_dual_chart_mpl(
+                        sample_data, 
+                        rule='supertrend:10,3,open',
+                        title='Test Legend'
                     )
-                    assert found_entries, "Modern legend entries should be present"
+                    
+                    ax2 = fig.axes[1]
+                    
+                    # Check legend entries
+                    legend = ax2.get_legend()
+                    if legend is not None:
+                        legend_texts = [text.get_text() for text in legend.get_texts()]
+                        
+                        # Should have modern legend entries
+                        expected_entries = [
+                            'SuperTrend (Uptrend)',
+                            'SuperTrend (Downtrend)', 
+                            'SuperTrend (Signal Change)',
+                            'BUY Signal',
+                            'SELL Signal'
+                        ]
+                        
+                        # At least some expected entries should be present
+                        found_entries = any(
+                            any(expected in text for expected in expected_entries)
+                            for text in legend_texts
+                        )
+                        assert found_entries, "Modern legend entries should be present"
     
     def test_file_output(self, sample_data):
         """Test that the plot can be saved to file."""
         with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp_file:
             try:
-                with patch('matplotlib.pyplot.show'):
-                    fig = plot_dual_chart_mpl(
-                        sample_data, 
-                        rule='supertrend:10,3,open',
-                        title='Test File Output',
-                        output_path=tmp_file.name
-                    )
-                    
-                    # Check that file was created
-                    assert os.path.exists(tmp_file.name)
-                    assert os.path.getsize(tmp_file.name) > 0
-                    
+                with matplotlib_lock:
+                    with patch('matplotlib.pyplot.show'):
+                        fig = plot_dual_chart_mpl(
+                            sample_data, 
+                            rule='supertrend:10,3,open',
+                            title='Test File Output',
+                            output_path=tmp_file.name
+                        )
+                        
+                        # Check that file was created
+                        assert os.path.exists(tmp_file.name)
+                        assert os.path.getsize(tmp_file.name) > 0
+                        
             finally:
                 # Cleanup
                 if os.path.exists(tmp_file.name):
@@ -234,38 +245,40 @@ class TestModernSupertrendStyling:
         # Test with empty DataFrame
         empty_df = pd.DataFrame()
         
-        with patch('matplotlib.pyplot.show'):
-            with patch('matplotlib.pyplot.savefig'):
-                # Should not raise exception
-                fig = plot_dual_chart_mpl(
-                    empty_df, 
-                    rule='supertrend:10,3,open',
-                    title='Test Error Handling'
-                )
-                
-                assert fig is not None
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show'):
+                with patch('matplotlib.pyplot.savefig'):
+                    # Should not raise exception
+                    fig = plot_dual_chart_mpl(
+                        empty_df, 
+                        rule='supertrend:10,3,open',
+                        title='Test Error Handling'
+                    )
+                    
+                    assert fig is not None
     
     def test_performance(self, sample_data):
         """Test that modern styling doesn't significantly impact performance."""
         import time
         
-        with patch('matplotlib.pyplot.show'):
-            with patch('matplotlib.pyplot.savefig'):
-                start_time = time.time()
-                
-                fig = plot_dual_chart_mpl(
-                    sample_data, 
-                    rule='supertrend:10,3,open',
-                    title='Test Performance'
-                )
-                
-                end_time = time.time()
-                execution_time = end_time - start_time
-                
-                # Should complete within reasonable time (less than 5 seconds)
-                assert execution_time < 5.0, f"Plotting took too long: {execution_time:.2f}s"
-                
-                assert fig is not None
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show'):
+                with patch('matplotlib.pyplot.savefig'):
+                    start_time = time.time()
+                    
+                    fig = plot_dual_chart_mpl(
+                        sample_data, 
+                        rule='supertrend:10,3,open',
+                        title='Test Performance'
+                    )
+                    
+                    end_time = time.time()
+                    execution_time = end_time - start_time
+                    
+                    # Should complete within reasonable time (less than 5 seconds)
+                    assert execution_time < 5.0, f"Plotting took too long: {execution_time:.2f}s"
+                    
+                    assert fig is not None
 
 
 if __name__ == "__main__":

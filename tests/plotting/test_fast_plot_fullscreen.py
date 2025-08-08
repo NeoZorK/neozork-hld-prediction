@@ -10,6 +10,7 @@ import sys
 import pandas as pd
 import numpy as np
 from pathlib import Path
+import threading
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
@@ -19,6 +20,9 @@ from src.plotting.fast_plot_fullscreen import (
     calculate_dynamic_height,
     plot_indicator_results_fast_fullscreen
 )
+
+# Thread lock for matplotlib operations
+matplotlib_lock = threading.Lock()
 
 
 class TestFastPlotFullscreen(unittest.TestCase):
@@ -84,19 +88,20 @@ class TestFastPlotFullscreen(unittest.TestCase):
         rule = MockRule("OHLCV")
         
         # Test the plotting function
-        layout = plot_indicator_results_fast_fullscreen(
-            df=self.test_df,
-            rule=rule,
-            title="Test Fullscreen Plot",
-            output_path=self.output_path,
-            height=1200
-        )
-        
-        # Check that the function returns a layout
-        self.assertIsNotNone(layout)
-        
-        # Note: File creation is tested separately to avoid race conditions
-        # when running tests in parallel
+        with matplotlib_lock:
+            layout = plot_indicator_results_fast_fullscreen(
+                df=self.test_df,
+                rule=rule,
+                title="Test Fullscreen Plot",
+                output_path=self.output_path,
+                height=1200
+            )
+            
+            # Check that the function returns a layout
+            self.assertIsNotNone(layout)
+            
+            # Note: File creation is tested separately to avoid race conditions
+            # when running tests in parallel
 
     def test_plot_indicator_results_fast_fullscreen_missing_columns(self):
         """Test handling of missing required columns."""
@@ -115,15 +120,16 @@ class TestFastPlotFullscreen(unittest.TestCase):
         rule = MockRule("OHLCV")
         
         # Test that the function handles missing columns gracefully
-        result = plot_indicator_results_fast_fullscreen(
-            df=invalid_df,
-            rule=rule,
-            title="Test Invalid Data",
-            output_path=self.output_path
-        )
-        
-        # Should return None for invalid data
-        self.assertIsNone(result)
+        with matplotlib_lock:
+            result = plot_indicator_results_fast_fullscreen(
+                df=invalid_df,
+                rule=rule,
+                title="Test Invalid Data",
+                output_path=self.output_path
+            )
+            
+            # Should return None for invalid data
+            self.assertIsNone(result)
 
     def test_plot_indicator_results_fast_fullscreen_dynamic_height(self):
         """Test that dynamic height is used when height is None."""
@@ -134,19 +140,20 @@ class TestFastPlotFullscreen(unittest.TestCase):
         rule = MockRule("OHLCV")
         
         # Test with height=None to trigger dynamic calculation
-        layout = plot_indicator_results_fast_fullscreen(
-            df=self.test_df,
-            rule=rule,
-            title="Test Dynamic Height",
-            output_path=self.output_path,
-            height=None  # Should trigger dynamic calculation
-        )
-        
-        # Check that the function returns a layout
-        self.assertIsNotNone(layout)
-        
-        # Note: File creation is tested separately to avoid race conditions
-        # when running tests in parallel
+        with matplotlib_lock:
+            layout = plot_indicator_results_fast_fullscreen(
+                df=self.test_df,
+                rule=rule,
+                title="Test Dynamic Height",
+                output_path=self.output_path,
+                height=None  # Should trigger dynamic calculation
+            )
+            
+            # Check that the function returns a layout
+            self.assertIsNotNone(layout)
+            
+            # Note: File creation is tested separately to avoid race conditions
+            # when running tests in parallel
 
     def test_plot_indicator_results_fast_fullscreen_different_rules(self):
         """Test plotting with different rule types."""
@@ -156,23 +163,25 @@ class TestFastPlotFullscreen(unittest.TestCase):
         
         # Test with AUTO rule
         auto_rule = MockRule("AUTO")
-        layout_auto = plot_indicator_results_fast_fullscreen(
-            df=self.test_df,
-            rule=auto_rule,
-            title="Test AUTO Rule",
-            output_path=self.output_path
-        )
-        self.assertIsNotNone(layout_auto)
+        with matplotlib_lock:
+            layout_auto = plot_indicator_results_fast_fullscreen(
+                df=self.test_df,
+                rule=auto_rule,
+                title="Test AUTO Rule",
+                output_path=self.output_path
+            )
+            self.assertIsNotNone(layout_auto)
         
         # Test with PHLD rule
         phld_rule = MockRule("PHLD")
-        layout_phld = plot_indicator_results_fast_fullscreen(
-            df=self.test_df,
-            rule=phld_rule,
-            title="Test PHLD Rule",
-            output_path=self.output_path
-        )
-        self.assertIsNotNone(layout_phld)
+        with matplotlib_lock:
+            layout_phld = plot_indicator_results_fast_fullscreen(
+                df=self.test_df,
+                rule=phld_rule,
+                title="Test PHLD Rule",
+                output_path=self.output_path
+            )
+            self.assertIsNotNone(layout_phld)
 
     def test_plot_indicator_results_fast_fullscreen_with_indicators(self):
         """Test plotting with additional indicator columns."""
@@ -189,18 +198,19 @@ class TestFastPlotFullscreen(unittest.TestCase):
         rule = MockRule("OHLCV")
         
         # Test plotting with indicators
-        layout = plot_indicator_results_fast_fullscreen(
-            df=self.test_df,
-            rule=rule,
-            title="Test with Indicators",
-            output_path=self.output_path
-        )
-        
-        # Check that the function returns a layout
-        self.assertIsNotNone(layout)
-        
-        # Check that the output file was created
-        self.assertTrue(os.path.exists(self.output_path))
+        with matplotlib_lock:
+            layout = plot_indicator_results_fast_fullscreen(
+                df=self.test_df,
+                rule=rule,
+                title="Test with Indicators",
+                output_path=self.output_path
+            )
+            
+            # Check that the function returns a layout
+            self.assertIsNotNone(layout)
+            
+            # Check that the output file was created
+            self.assertTrue(os.path.exists(self.output_path))
 
 
 if __name__ == '__main__':
