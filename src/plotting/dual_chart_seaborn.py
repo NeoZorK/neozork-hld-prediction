@@ -146,7 +146,9 @@ def plot_dual_chart_seaborn(
                        color='#FF4444', marker='o', s=180, alpha=0.3, label="", zorder=4)
     
     ax1.set_ylabel('Price', fontsize=12)
-    ax1.legend()
+    # Only show legend if there are labeled artists
+    if ax1.get_legend_handles_labels()[0]:
+        ax1.legend()
     
     # Format x-axis for main chart
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
@@ -822,7 +824,9 @@ def plot_dual_chart_seaborn(
     
     ax2.set_ylabel(indicator_title, fontsize=12)
     ax2.set_xlabel('Date', fontsize=12)
-    ax2.legend()
+    # Only show legend if there are labeled artists
+    if ax2.get_legend_handles_labels()[0]:
+        ax2.legend()
     
     # Format x-axis for indicator chart
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))

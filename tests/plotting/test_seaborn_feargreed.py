@@ -8,8 +8,12 @@ import numpy as np
 from datetime import datetime, timedelta
 from unittest.mock import patch, MagicMock
 import matplotlib.pyplot as plt
+import threading
 
 from src.plotting.dual_chart_seaborn import plot_dual_chart_seaborn
+
+# Thread lock for matplotlib operations
+matplotlib_lock = threading.Lock()
 
 
 class TestSeabornFearGreed:
@@ -38,19 +42,20 @@ class TestSeabornFearGreed:
         
         df = pd.DataFrame(data, index=dates)
         
-        # Mock the plotting function
-        with patch('matplotlib.pyplot.show') as mock_show:
-            with patch('matplotlib.pyplot.savefig') as mock_save:
-                result = plot_dual_chart_seaborn(
-                    df=df,
-                    rule='feargreed:14,close',
-                    output_path='tests/plotting/test_output.png'
-                )
-                
-                # Verify that the function completed successfully
-                assert result is not None
-                mock_save.assert_called_once()
-                mock_show.assert_called_once()
+        # Mock the plotting function with thread safety
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show:
+                with patch('matplotlib.pyplot.savefig') as mock_save:
+                    result = plot_dual_chart_seaborn(
+                        df=df,
+                        rule='feargreed:14,close',
+                        output_path='tests/plotting/test_output.png'
+                    )
+                    
+                    # Verify that the function completed successfully
+                    assert result is not None
+                    mock_save.assert_called_once()
+                    mock_show.assert_called_once()
 
     def test_feargreed_without_signal_line(self):
         """Test feargreed indicator without signal line."""
@@ -72,17 +77,18 @@ class TestSeabornFearGreed:
         
         df = pd.DataFrame(data, index=dates)
         
-        with patch('matplotlib.pyplot.show') as mock_show:
-            with patch('matplotlib.pyplot.savefig') as mock_save:
-                result = plot_dual_chart_seaborn(
-                    df=df,
-                    rule='feargreed:14,close',
-                    output_path='tests/plotting/test_output.png'
-                )
-                
-                assert result is not None
-                mock_save.assert_called_once()
-                mock_show.assert_called_once()
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show:
+                with patch('matplotlib.pyplot.savefig') as mock_save:
+                    result = plot_dual_chart_seaborn(
+                        df=df,
+                        rule='feargreed:14,close',
+                        output_path='tests/plotting/test_output.png'
+                    )
+                    
+                    assert result is not None
+                    mock_save.assert_called_once()
+                    mock_show.assert_called_once()
 
     def test_feargreed_with_histogram(self):
         """Test feargreed indicator with histogram."""
@@ -106,17 +112,18 @@ class TestSeabornFearGreed:
         
         df = pd.DataFrame(data, index=dates)
         
-        with patch('matplotlib.pyplot.show') as mock_show:
-            with patch('matplotlib.pyplot.savefig') as mock_save:
-                result = plot_dual_chart_seaborn(
-                    df=df,
-                    rule='feargreed:14,close',
-                    output_path='tests/plotting/test_output.png'
-                )
-                
-                assert result is not None
-                mock_save.assert_called_once()
-                mock_show.assert_called_once()
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show:
+                with patch('matplotlib.pyplot.savefig') as mock_save:
+                    result = plot_dual_chart_seaborn(
+                        df=df,
+                        rule='feargreed:14,close',
+                        output_path='tests/plotting/test_output.png'
+                    )
+                    
+                    assert result is not None
+                    mock_save.assert_called_once()
+                    mock_show.assert_called_once()
 
     def test_feargreed_short_name(self):
         """Test feargreed indicator with short name 'fg'."""
@@ -140,17 +147,18 @@ class TestSeabornFearGreed:
         
         df = pd.DataFrame(data, index=dates)
         
-        with patch('matplotlib.pyplot.show') as mock_show:
-            with patch('matplotlib.pyplot.savefig') as mock_save:
-                result = plot_dual_chart_seaborn(
-                    df=df,
-                    rule='fg:14,close',
-                    output_path='tests/plotting/test_output.png'
-                )
-                
-                assert result is not None
-                mock_save.assert_called_once()
-                mock_show.assert_called_once()
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show:
+                with patch('matplotlib.pyplot.savefig') as mock_save:
+                    result = plot_dual_chart_seaborn(
+                        df=df,
+                        rule='fg:14,close',
+                        output_path='tests/plotting/test_output.png'
+                    )
+                    
+                    assert result is not None
+                    mock_save.assert_called_once()
+                    mock_show.assert_called_once()
 
     def test_feargreed_minimal_data(self):
         """Test feargreed indicator with minimal required data."""
@@ -169,14 +177,15 @@ class TestSeabornFearGreed:
         
         df = pd.DataFrame(data, index=dates)
         
-        with patch('matplotlib.pyplot.show') as mock_show:
-            with patch('matplotlib.pyplot.savefig') as mock_save:
-                result = plot_dual_chart_seaborn(
-                    df=df,
-                    rule='feargreed:14,close',
-                    output_path='tests/plotting/test_output.png'
-                )
-                
-                assert result is not None
-                mock_save.assert_called_once()
-                mock_show.assert_called_once() 
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show:
+                with patch('matplotlib.pyplot.savefig') as mock_save:
+                    result = plot_dual_chart_seaborn(
+                        df=df,
+                        rule='feargreed:14,close',
+                        output_path='tests/plotting/test_output.png'
+                    )
+                    
+                    assert result is not None
+                    mock_save.assert_called_once()
+                    mock_show.assert_called_once() 
