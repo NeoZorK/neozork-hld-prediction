@@ -73,7 +73,7 @@ def plot_indicator_results_term(df_results: pd.DataFrame,
                 x_values = list(range(len(df_results)))
 
                 # Set up plot
-                plt.plot_size(140, 35)
+                plt.plot_size(140, 30)  # Reduced height for better text visibility
                 plt.theme('matrix')  # Matrix green theme
 
                 # Prepare OHLC data for candlestick chart
@@ -264,15 +264,20 @@ def _add_pv_indicators_term(df: pd.DataFrame, x_values: list) -> None:
 
 
 def _add_auto_indicators_term(df: pd.DataFrame, x_values: list) -> None:
-    """Add all available indicators for AUTO mode with beautiful color scheme."""
+    """Add all available indicators for AUTO mode with unique colors for each field."""
     
-    # Always use green+ as the primary color
-    colors = [
-        "green+", "blue+", "red+", "yellow+", "magenta+", "cyan+",
-        "white+", "orange+", "purple+", "pink+"
-    ]
+    # Import the color function from term_chunked_plot
+    try:
+        from src.plotting.term_chunked_plot import _get_field_color
+    except ImportError:
+        # Fallback color function if import fails
+        def _get_field_color(field_name: str) -> str:
+            colors = ["green+", "blue+", "red+", "yellow+", "magenta+", "cyan+", "white+", "orange+", "purple+", "pink+"]
+            import hashlib
+            hash_value = int(hashlib.md5(field_name.encode()).hexdigest(), 16)
+            return colors[hash_value % len(colors)]
     
-    # Use bold lines with random colors for all plots (cool visual style)
+    # Use bold lines without markers for clean visualization
     marker = ""  # No markers, use bold lines instead
 
     # Standard columns to skip
@@ -280,8 +285,6 @@ def _add_auto_indicators_term(df: pd.DataFrame, x_values: list) -> None:
         'Open', 'High', 'Low', 'Close', 'Volume', 'DateTime', 'Timestamp', 
         'Date', 'Time', 'Index', 'index'
     }
-    
-    color_index = 0
 
     for col in df.columns:
         if col not in skip_columns and pd.api.types.is_numeric_dtype(df[col]):
@@ -291,13 +294,12 @@ def _add_auto_indicators_term(df: pd.DataFrame, x_values: list) -> None:
 
                 # Only plot if we have valid data
                 if any(v != 0 for v in values):
-                    color = colors[color_index % len(colors)]
+                    # Get unique color for this field
+                    color = _get_field_color(col)
 
                     # Simple label without emojis
                     label = col
                     plt.plot(x_values, values, color=color, label=label, marker=marker)
-
-                    color_index += 1
 
             except Exception as e:
                 logger.print_warning(f"Could not plot column {col}: {e}")
