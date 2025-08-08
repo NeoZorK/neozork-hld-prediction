@@ -16,12 +16,23 @@ import os
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
-from plotting.term_navigation import (
-    TerminalNavigator, 
-    create_navigation_prompt, 
-    parse_navigation_input, 
-    validate_date_input
-)
+# Import with error handling for test environments
+try:
+    from plotting.term_navigation import (
+        TerminalNavigator, 
+        create_navigation_prompt, 
+        parse_navigation_input, 
+        validate_date_input
+    )
+except ImportError as e:
+    # Fallback for test environments
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+    from src.plotting.term_navigation import (
+        TerminalNavigator, 
+        create_navigation_prompt, 
+        parse_navigation_input, 
+        validate_date_input
+    )
 
 
 class TestTerminalNavigation:
