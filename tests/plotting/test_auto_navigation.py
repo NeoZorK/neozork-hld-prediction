@@ -216,6 +216,42 @@ class TestAutoTerminalNavigator:
         assert 'h' in navigator.commands  # previous group
         assert '?' in navigator.commands  # help
 
+    def test_help_command(self):
+        """Test that 'help' command shows help information."""
+        navigator = AutoTerminalNavigator(self.chunks, field_columns=self.field_columns)
+        
+        with patch('builtins.print') as mock_print:
+            result = navigator._show_help()
+            
+            # Check that help was shown
+            assert result is True
+            
+            # Check that help content was printed
+            mock_print.assert_called()
+            calls = mock_print.call_args_list
+            
+            # Check for key help sections
+            help_text = ' '.join([str(call) for call in calls])
+            assert 'AUTO TERMINAL NAVIGATION HELP' in help_text
+            assert 'Chunk Navigation:' in help_text
+            assert 'Field Navigation:' in help_text
+            assert 'System Commands:' in help_text
+
+    def test_help_command_in_commands(self):
+        """Test that 'help' command is registered in commands dictionary."""
+        navigator = AutoTerminalNavigator(self.chunks, field_columns=self.field_columns)
+        
+        # Check that 'help' command is available
+        assert 'help' in navigator.commands
+        assert navigator.commands['help'] == navigator._show_help
+
+    def test_help_vs_question_mark(self):
+        """Test that both 'help' and '?' commands work the same way."""
+        navigator = AutoTerminalNavigator(self.chunks, field_columns=self.field_columns)
+        
+        # Both commands should point to the same method
+        assert navigator.commands['help'] == navigator.commands['?']
+
 
 if __name__ == "__main__":
     pytest.main([__file__])
