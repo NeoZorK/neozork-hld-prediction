@@ -328,8 +328,9 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
         field_columns = [col for col in numeric_columns if col not in skip_columns]
         
         if use_navigation:
-            # Use navigation system
-            navigator = TerminalNavigator(chunks, title)
+            # Use AUTO navigation system with field switching
+            from src.plotting.term_navigation import AutoTerminalNavigator
+            navigator = AutoTerminalNavigator(chunks, title, field_columns)
             
             def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
                 """Plot a single chunk with navigation info."""
@@ -343,33 +344,37 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
                 
                 logger.print_info(f"Displaying chunk {chunk_info['index']}/{chunk_info['total']} ({start_date} to {end_date})")
                 
-                # Always show OHLC candles if possible
-                if len(chunk) > 0:
-                    if hasattr(chunk.index, 'strftime'):
-                        x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
-                        x_values = list(range(len(chunk)))
-                    else:
-                        x_values = list(range(len(chunk)))
-                        x_labels = [str(i) for i in x_values]
-                    plt.clear_data()
-                    plt.clear_figure()
-                    plt.subplots(1, 1)
-                    plot_size = get_terminal_plot_size()
-                    plt.plot_size(*plot_size)
-                    plt.theme(style)
-                    draw_ohlc_candles(chunk, x_values)
-                    plt.title(f"{title} - OHLC (Chunk {chunk_info['index']}) - {start_date} to {end_date}")
-                    plt.xlabel("Date/Time")
-                    if len(x_values) > 0:
-                        step = max(1, len(x_values) // 10)
-                        plt.xticks(x_values[::step], x_labels[::step])
-                    plt.ylabel("Price")
-                    plt.show()
+                # Get current field from navigator
+                current_field = navigator.get_current_field()
+                group_info = navigator.get_current_group_info()
                 
-                # Then show each field separately
-                for field in field_columns:
-                    if field in chunk.columns:
-                        _plot_single_field_chunk(chunk, field, f"{title} - {field} (Chunk {chunk_info['index']})", style)
+                # Show OHLC candles for OHLC group or when no specific field is selected
+                if group_info['name'] == 'OHLC' or current_field is None:
+                    if len(chunk) > 0:
+                        if hasattr(chunk.index, 'strftime'):
+                            x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                            x_values = list(range(len(chunk)))
+                        else:
+                            x_values = list(range(len(chunk)))
+                            x_labels = [str(i) for i in x_values]
+                        plt.clear_data()
+                        plt.clear_figure()
+                        plt.subplots(1, 1)
+                        plot_size = get_terminal_plot_size()
+                        plt.plot_size(*plot_size)
+                        plt.theme(style)
+                        draw_ohlc_candles(chunk, x_values)
+                        plt.title(f"{title} - OHLC (Chunk {chunk_info['index']}) - {start_date} to {end_date}")
+                        plt.xlabel("Date/Time")
+                        if len(x_values) > 0:
+                            step = max(1, len(x_values) // 10)
+                            plt.xticks(x_values[::step], x_labels[::step])
+                        plt.ylabel("Price")
+                        plt.show()
+                
+                # Show specific field if selected and it's not OHLC
+                if current_field and current_field in chunk.columns and group_info['name'] != 'OHLC':
+                    _plot_single_field_chunk(chunk, current_field, f"{title} - {current_field} (Chunk {chunk_info['index']})", style)
             
             # Start navigation
             navigator.navigate(plot_chunk_with_navigation)
