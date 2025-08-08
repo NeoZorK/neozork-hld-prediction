@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Native Container Interactive Script for NeoZork HLD Prediction
-# Simplified version with two main commands: Start and Stop
+# Enhanced version with integrated test management and container operations
 
 set -e
 
@@ -16,6 +16,11 @@ NC='\033[0m' # No Color
 
 # Container name
 CONTAINER_NAME="neozork-hld-prediction"
+
+# Test configuration
+TEST_TIMEOUT=300  # 5 minutes
+MAX_WORKERS=2     # Safe worker count for container
+TEST_STAGES=("basic:unit" "indicators:data:export" "plotting" "cli")
 
 # Function to print colored output
 print_status() {
@@ -40,6 +45,326 @@ print_header() {
 
 print_menu() {
     echo -e "${MAGENTA}$1${NC}"
+}
+
+# Function to check if we're in a container environment
+is_container() {
+    [ "$NATIVE_CONTAINER" = "true" ] || [ "$DOCKER_CONTAINER" = "true" ] || [ -f /.dockerenv ]
+}
+
+# Function to setup container environment variables
+setup_container_environment() {
+    print_status "Setting up container environment variables..."
+    
+    # Set thread limits for stability
+    export OMP_NUM_THREADS=1
+    export MKL_NUM_THREADS=1
+    export OPENBLAS_NUM_THREADS=1
+    export PYTHONMALLOC=malloc
+    
+    # Set Python environment
+    export PYTHONUNBUFFERED=1
+    export PYTHONDONTWRITEBYTECODE=1
+    export MPLCONFIGDIR=/tmp/matplotlib-cache
+    
+    # Create necessary directories
+    mkdir -p /tmp/matplotlib-cache
+    mkdir -p logs
+    mkdir -p data/cache/uv_cache
+    
+    print_success "Container environment variables set"
+}
+
+# Function to get safe worker count
+get_safe_worker_count() {
+    if is_container; then
+        # In container, use fewer workers for stability
+        local cpu_count=$(nproc 2>/dev/null || echo 2)
+        local safe_workers=$((cpu_count > 2 ? 2 : cpu_count))
+        echo $safe_workers
+    else
+        # On host, use more workers
+        local cpu_count=$(nproc 2>/dev/null || echo 4)
+        echo $cpu_count
+    fi
+}
+
+# Function to check if timeout command exists
+has_timeout() {
+    command -v timeout >/dev/null 2>&1
+}
+
+# Function to run command with timeout (if available)
+run_with_timeout() {
+    local timeout_seconds=$1
+    shift
+    
+    if has_timeout; then
+        timeout $timeout_seconds "$@"
+    else
+        # Fallback for macOS (no timeout command)
+        "$@"
+    fi
+}
+
+# Function to run safe tests
+run_safe_tests() {
+    local test_args="$1"
+    local worker_count=$(get_safe_worker_count)
+    
+    print_status "Running tests with $worker_count workers..."
+    
+    local cmd="uv run pytest $test_args \
+        -n $worker_count \
+        --maxfail=10 \
+        --durations=10 \
+        --junitxml=logs/test-results.xml \
+        --disable-pytest-warnings \
+        --no-header \
+        --no-summary \
+        --strict-markers"
+    
+    if is_container; then
+        cmd="$cmd -m 'not slow and not performance'"
+    fi
+    
+    print_status "Command: $cmd"
+    
+    if run_with_timeout $TEST_TIMEOUT bash -c "$cmd"; then
+        print_success "Tests completed successfully"
+        return 0
+    else
+        print_warning "Tests completed with some failures"
+        return 1
+    fi
+}
+
+# Function to run staged tests
+run_staged_tests() {
+    print_header "Running Staged Tests"
+    
+    setup_container_environment
+    
+    local total_passed=0
+    local total_failed=0
+    
+    for stage in "${TEST_STAGES[@]}"; do
+        print_header "Stage: $stage"
+        
+        # Use single worker for stability in container
+        local worker_count=1
+        if ! is_container; then
+            worker_count=$(get_safe_worker_count)
+        fi
+        
+        local cmd="uv run pytest tests -m '$stage' \
+            -n $worker_count \
+            --maxfail=5 \
+            --durations=5 \
+            --junitxml=logs/test-results-$stage.xml \
+            --disable-pytest-warnings \
+            --no-header \
+            --no-summary"
+        
+        print_status "Running: $cmd"
+        
+        if run_with_timeout $TEST_TIMEOUT bash -c "$cmd"; then
+            print_success "Stage $stage completed"
+            ((total_passed++))
+        else
+            print_warning "Stage $stage had failures"
+            ((total_failed++))
+        fi
+        
+        # Cleanup between stages
+        print_status "Cleaning up after stage $stage..."
+        uv run python -c "import matplotlib.pyplot as plt; plt.close('all')" 2>/dev/null || true
+        find /tmp -name "*.png" -delete 2>/dev/null || true
+        find /tmp -name "*.pdf" -delete 2>/dev/null || true
+        
+        echo
+    done
+    
+    print_header "Staged Tests Summary"
+    print_success "Passed stages: $total_passed"
+    if [ $total_failed -gt 0 ]; then
+        print_warning "Failed stages: $total_failed"
+    fi
+    
+    return $total_failed
+}
+
+# Function to run basic tests
+run_basic_tests() {
+    print_header "Running Basic Tests"
+    
+    setup_container_environment
+    
+    local cmd="uv run pytest tests -m 'basic or unit' \
+        -n 1 \
+        --maxfail=5 \
+        --durations=5 \
+        --junitxml=logs/test-results-basic.xml \
+        --disable-pytest-warnings \
+        --no-header \
+        --no-summary"
+    
+    print_status "Running: $cmd"
+    
+    if run_with_timeout $TEST_TIMEOUT bash -c "$cmd"; then
+        print_success "Basic tests completed"
+        return 0
+    else
+        print_warning "Basic tests had failures"
+        return 1
+    fi
+}
+
+# Function to run indicator tests
+run_indicator_tests() {
+    print_header "Running Indicator Tests"
+    
+    setup_container_environment
+    
+    local cmd="uv run pytest tests -m 'indicators' \
+        -n 1 \
+        --maxfail=5 \
+        --durations=5 \
+        --junitxml=logs/test-results-indicators.xml \
+        --disable-pytest-warnings \
+        --no-header \
+        --no-summary"
+    
+    print_status "Running: $cmd"
+    
+    if run_with_timeout $TEST_TIMEOUT bash -c "$cmd"; then
+        print_success "Indicator tests completed"
+        return 0
+    else
+        print_warning "Indicator tests had failures"
+        return 1
+    fi
+}
+
+# Function to run plotting tests
+run_plotting_tests() {
+    print_header "Running Plotting Tests"
+    
+    setup_container_environment
+    
+    local cmd="uv run pytest tests -m 'plotting' \
+        -n 1 \
+        --maxfail=5 \
+        --durations=5 \
+        --junitxml=logs/test-results-plotting.xml \
+        --disable-pytest-warnings \
+        --no-header \
+        --no-summary"
+    
+    print_status "Running: $cmd"
+    
+    if run_with_timeout $TEST_TIMEOUT bash -c "$cmd"; then
+        print_success "Plotting tests completed"
+        return 0
+    else
+        print_warning "Plotting tests had failures"
+        return 1
+    fi
+}
+
+# Function to run CLI tests
+run_cli_tests() {
+    print_header "Running CLI Tests"
+    
+    setup_container_environment
+    
+    local cmd="uv run pytest tests -m 'cli' \
+        -n 1 \
+        --maxfail=5 \
+        --durations=5 \
+        --junitxml=logs/test-results-cli.xml \
+        --disable-pytest-warnings \
+        --no-header \
+        --no-summary"
+    
+    print_status "Running: $cmd"
+    
+    if run_with_timeout $TEST_TIMEOUT bash -c "$cmd"; then
+        print_success "CLI tests completed"
+        return 0
+    else
+        print_warning "CLI tests had failures"
+        return 1
+    fi
+}
+
+# Function to run all tests
+run_all_tests() {
+    print_header "Running All Tests"
+    
+    setup_container_environment
+    
+    local worker_count=$(get_safe_worker_count)
+    
+    local cmd="uv run pytest tests \
+        -n $worker_count \
+        --maxfail=10 \
+        --durations=10 \
+        --junitxml=logs/test-results-all.xml \
+        --disable-pytest-warnings \
+        --no-header \
+        --no-summary"
+    
+    if is_container; then
+        cmd="$cmd -m 'not slow and not performance'"
+    fi
+    
+    print_status "Running: $cmd"
+    
+    if run_with_timeout $TEST_TIMEOUT bash -c "$cmd"; then
+        print_success "All tests completed"
+        return 0
+    else
+        print_warning "All tests had failures"
+        return 1
+    fi
+}
+
+# Function to cleanup test environment
+cleanup_test_environment() {
+    print_status "Cleaning up test environment..."
+    
+    # Close matplotlib figures
+    uv run python -c "import matplotlib.pyplot as plt; plt.close('all')" 2>/dev/null || true
+    
+    # Remove temporary files
+    find /tmp -name "*.png" -delete 2>/dev/null || true
+    find /tmp -name "*.pdf" -delete 2>/dev/null || true
+    find /tmp -name "*.svg" -delete 2>/dev/null || true
+    
+    # Clear matplotlib cache
+    rm -rf /tmp/matplotlib-cache/* 2>/dev/null || true
+    
+    print_success "Test environment cleaned up"
+}
+
+# Function to show test results
+show_test_results() {
+    print_header "Test Results"
+    
+    if [ -f "logs/test-results.xml" ]; then
+        print_status "Test results available in logs/test-results.xml"
+    fi
+    
+    if [ -f "logs/test-results-all.xml" ]; then
+        print_status "All test results available in logs/test-results-all.xml"
+    fi
+    
+    # Show recent test logs
+    if [ -f "logs/test.log" ]; then
+        print_status "Recent test logs:"
+        tail -20 logs/test.log 2>/dev/null || true
+    fi
 }
 
 # Function to check if Docker is running
@@ -441,61 +766,34 @@ show_container_status() {
 show_help() {
     print_header "NeoZork HLD Prediction Native Container Manager"
     echo
-    echo "This simplified interface provides main commands:"
+    echo "This enhanced interface provides container management and testing:"
     echo
-    echo -e "${GREEN}1. Start Container${NC}"
-    echo "   Executes the full sequence:"
-    echo "   - Setup container (./scripts/native-container/setup.sh)"
-    echo "   - Start container (./scripts/native-container/run.sh)"
-    echo "   - Check status (./scripts/native-container/run.sh --status)"
-    echo "   - Open enhanced interactive shell (./scripts/native-container/exec.sh --shell)"
-    echo "   - 🆕 Automatically installs all dependencies using UV"
-    echo "   - 🆕 Creates and activates virtual environment"
-    echo "   - 🆕 Sets up pre-configured aliases and environment variables"
-    echo "   - 🆕 Proper Ctrl+D handling for graceful shell exit"
+    echo -e "${GREEN}Container Management:${NC}"
+    echo "1. Start Container - Full setup and interactive shell"
+    echo "2. Stop Container - Full cleanup and resource management"
+    echo "3. Show Status - Current container status"
+    echo "4. Restart Service - Emergency container service restart"
     echo
-    echo -e "${RED}2. Stop Container${NC}"
-    echo "   Executes the full sequence:"
-    echo "   - Stop container (./scripts/native-container/stop.sh)"
-    echo "   - Check status (./scripts/native-container/run.sh --status)"
-    echo "   - Cleanup resources (./scripts/native-container/cleanup.sh --all --force)"
-    echo "   - 🆕 Automatic force restart if normal stop fails"
-    echo "   - 🆕 Interactive prompt for force restart when needed"
-    echo "   - 🆕 Emergency service restart on container deletion failure"
+    echo -e "${CYAN}Testing Features:${NC}"
+    echo "5. Run All Tests - Complete test suite execution"
+    echo "6. Run Staged Tests - Tests in safe stages"
+    echo "7. Run Basic Tests - Core functionality tests"
+    echo "8. Run Indicator Tests - Technical indicator tests"
+    echo "9. Run Plotting Tests - Visualization tests"
+    echo "10. Run CLI Tests - Command line interface tests"
+    echo "11. Show Test Results - Display test outcomes"
+    echo "12. Cleanup Test Environment - Reset test state"
     echo
-    echo -e "${BLUE}3. Show Status${NC}"
-    echo "   Shows current container status"
-    echo
-    echo -e "${CYAN}4. Restart Service${NC}"
-    echo "   Emergency container service restart:"
-    echo "   - Stop container system (container system stop)"
-    echo "   - Start container system (container system start)"
-    echo "   - Check system status (container system status)"
-    echo "   - 🆕 Recommended when container deletion fails"
-    echo "   - 🆕 Helps resolve stuck container issues"
-    echo
-    echo -e "${YELLOW}5. Help${NC}"
-    echo "   Shows this help message"
+    echo -e "${YELLOW}Enhanced Features:${NC}"
+    echo "   - 🆕 Integrated test management"
+    echo "   - 🆕 Safe container testing with memory management"
+    echo "   - 🆕 Staged test execution for stability"
+    echo "   - 🆕 Automatic environment setup and cleanup"
+    echo "   - 🆕 Test result reporting and analysis"
+    echo "   - 🆕 Emergency container service management"
     echo
     echo -e "${MAGENTA}0. Exit${NC}"
     echo "   Exits the script"
-    echo
-    echo -e "${CYAN}🆕 Enhanced Shell Features:${NC}"
-    echo "   - Automatic virtual environment activation (source .venv/bin/activate)"
-    echo "   - Automatic UV dependency installation and updates"
-    echo "   - Pre-configured aliases: nz, eda, uv-install, uv-update, uv-test, uv-pytest"
-    echo "   - Environment variables setup (PYTHONPATH, PYTHONUNBUFFERED, etc.)"
-    echo "   - Dependency health checking and automatic updates"
-    echo "   - No manual 'uv-install' required - everything is automatic"
-    echo "   - Proper Ctrl+D handling for graceful shell exit"
-    echo "   - Custom bash prompt with container indicator"
-    echo
-    echo -e "${CYAN}🆕 Enhanced Stop Features:${NC}"
-    echo "   - Automatic detection of stuck containers"
-    echo "   - Interactive prompt for force restart when needed"
-    echo "   - Automatic container service restart and retry"
-    echo "   - Emergency service restart on deletion failure"
-    echo "   - Graceful error handling and recovery"
     echo
     if [ -t 0 ]; then
         read -p "Press Enter to continue..."
@@ -508,12 +806,23 @@ show_main_menu() {
     print_header "NeoZork HLD Prediction Native Container Manager"
     echo
     print_menu "Main Menu:"
+    echo -e "${GREEN}Container Management:${NC}"
     echo "1) Start Container (Full Sequence)"
     echo "2) Stop Container (Full Sequence)"
     echo "3) Show Container Status"
     echo "4) Restart Service"
-    echo "5) Help"
-    echo "0) Exit"
+    echo
+    echo -e "${CYAN}Testing Features:${NC}"
+    echo "5) Run All Tests"
+    echo "6) Run Staged Tests"
+    echo "7) Run Basic Tests"
+    echo "8) Run Indicator Tests"
+    echo "9) Run Plotting Tests"
+    echo "10) Run CLI Tests"
+    echo "11) Show Test Results"
+    echo "12) Cleanup Test Environment"
+    echo
+    echo -e "${MAGENTA}0) Exit${NC}"
     echo
 }
 
@@ -523,7 +832,7 @@ main() {
         show_main_menu
         
         if [ -t 0 ]; then
-            read -p "Enter your choice (0-5): " choice 2>/dev/null || true
+            read -p "Enter your choice (0-12): " choice 2>/dev/null || true
         else
             # Non-interactive mode - exit gracefully
             print_error "Script requires interactive terminal"
@@ -544,7 +853,28 @@ main() {
                 restart_container_service
                 ;;
             5) 
-                show_help
+                run_all_tests
+                ;;
+            6) 
+                run_staged_tests
+                ;;
+            7) 
+                run_basic_tests
+                ;;
+            8) 
+                run_indicator_tests
+                ;;
+            9) 
+                run_plotting_tests
+                ;;
+            10) 
+                run_cli_tests
+                ;;
+            11) 
+                show_test_results
+                ;;
+            12) 
+                cleanup_test_environment
                 ;;
             0) 
                 print_success "Goodbye!"
@@ -567,11 +897,12 @@ if [ -t 0 ]; then
 else
     # Non-interactive mode - show help
     echo "Usage: $0"
-    echo "This script provides a simplified interface for managing the native Apple Silicon container."
+    echo "This script provides container management and testing for Apple native container."
     echo "Run without arguments to start the interactive menu."
     echo
     echo "Quick commands:"
-    echo "  Start: ./scripts/native-container/setup.sh && ./scripts/native-container/run.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/exec.sh --shell"
-    echo "  Stop:  ./scripts/native-container/stop.sh && ./scripts/native-container/run.sh --status && ./scripts/native-container/cleanup.sh --all --force"
+    echo "  Start: ./scripts/native-container/setup.sh && ./scripts/native-container/run.sh"
+    echo "  Stop:  ./scripts/native-container/stop.sh && ./scripts/native-container/cleanup.sh --all --force"
+    echo "  Tests: uv run pytest tests -n 2 --maxfail=10"
     exit 1
 fi 
