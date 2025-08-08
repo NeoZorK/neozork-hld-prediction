@@ -425,6 +425,7 @@ class AutoTerminalNavigator(TerminalNavigator):
             'g': self._next_group,
             'h': self._previous_group,
             '?': self._show_help,
+            'help': self._show_help,
         })
     
     def _organize_field_groups(self) -> List[Dict[str, Any]]:
@@ -551,7 +552,7 @@ class AutoTerminalNavigator(TerminalNavigator):
         chunk_info = self.get_current_chunk_info()
         group_info = self.get_current_group_info()
         
-        print(f"\n[AUTO Navigation: n/p/s/e/c/d for chunks, f/b/g/h for fields, ? for help, q to quit]")
+        print(f"\n[AUTO Navigation: n/p/s/e/c/d for chunks, f/b/g/h for fields, ?/help for help, q to quit]")
         print(f"Chunk: {chunk_info['index']}/{chunk_info['total']} ({chunk_info['start_date']} to {chunk_info['end_date']})")
         print(f"Field: {group_info['name']} - {group_info['description']}")
         if group_info['current_field']:
