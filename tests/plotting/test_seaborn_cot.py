@@ -8,8 +8,12 @@ import numpy as np
 from datetime import datetime, timedelta
 from unittest.mock import patch, MagicMock
 import matplotlib.pyplot as plt
+import threading
 
 from src.plotting.dual_chart_seaborn import plot_dual_chart_seaborn
+
+# Thread lock for matplotlib operations
+matplotlib_lock = threading.Lock()
 
 
 class TestSeabornCOT:
@@ -39,23 +43,24 @@ class TestSeabornCOT:
         df = pd.DataFrame(data, index=dates)
         
         # Mock plt.show to verify it's called
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='cot:20,close',
-                title='Test COT Chart',
-                output_path='test_output.png'
-            )
-            
-            # Verify plt.show was called
-            mock_show.assert_called_once()
-            
-            # Verify result is returned
-            assert result is not None
-            assert hasattr(result, 'savefig')
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='cot:20,close',
+                    title='Test COT Chart',
+                    output_path='test_output.png'
+                )
+                
+                # Verify plt.show was called
+                mock_show.assert_called_once()
+                
+                # Verify result is returned
+                assert result is not None
+                assert hasattr(result, 'savefig')
 
     def test_cot_without_signal_line(self):
         """Test cot indicator without signal line."""
@@ -79,23 +84,24 @@ class TestSeabornCOT:
         df = pd.DataFrame(data, index=dates)
         
         # Mock plt.show to verify it's called
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='cot:20,close',
-                title='Test COT Chart (No Signal)',
-                output_path='test_output.png'
-            )
-            
-            # Verify plt.show was called
-            mock_show.assert_called_once()
-            
-            # Verify result is returned
-            assert result is not None
-            assert hasattr(result, 'savefig')
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='cot:20,close',
+                    title='Test COT Chart (No Signal)',
+                    output_path='test_output.png'
+                )
+                
+                # Verify plt.show was called
+                mock_show.assert_called_once()
+                
+                # Verify result is returned
+                assert result is not None
+                assert hasattr(result, 'savefig')
 
     def test_cot_with_histogram(self):
         """Test cot indicator with histogram."""
@@ -121,23 +127,24 @@ class TestSeabornCOT:
         df = pd.DataFrame(data, index=dates)
         
         # Mock plt.show to verify it's called
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='cot:20,close',
-                title='Test COT Chart (With Histogram)',
-                output_path='test_output.png'
-            )
-            
-            # Verify plt.show was called
-            mock_show.assert_called_once()
-            
-            # Verify result is returned
-            assert result is not None
-            assert hasattr(result, 'savefig')
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='cot:20,close',
+                    title='Test COT Chart (With Histogram)',
+                    output_path='test_output.png'
+                )
+                
+                # Verify plt.show was called
+                mock_show.assert_called_once()
+                
+                # Verify result is returned
+                assert result is not None
+                assert hasattr(result, 'savefig')
 
     def test_cot_threshold_levels(self):
         """Test cot indicator with threshold levels."""
@@ -162,23 +169,24 @@ class TestSeabornCOT:
         df = pd.DataFrame(data, index=dates)
         
         # Mock plt.show to verify it's called
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='cot:20,close',
-                title='Test COT Chart (Custom Thresholds)',
-                output_path='test_output.png'
-            )
-            
-            # Verify plt.show was called
-            mock_show.assert_called_once()
-            
-            # Verify result is returned
-            assert result is not None
-            assert hasattr(result, 'savefig')
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='cot:20,close',
+                    title='Test COT Chart (Custom Thresholds)',
+                    output_path='test_output.png'
+                )
+                
+                # Verify plt.show was called
+                mock_show.assert_called_once()
+                
+                # Verify result is returned
+                assert result is not None
+                assert hasattr(result, 'savefig')
 
     def test_cot_complete_indicator(self):
         """Test cot indicator with all components."""
@@ -204,23 +212,24 @@ class TestSeabornCOT:
         df = pd.DataFrame(data, index=dates)
         
         # Mock plt.show to verify it's called
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='cot:20,close',
-                title='Test COT Chart (Complete)',
-                output_path='test_output.png'
-            )
-            
-            # Verify plt.show was called
-            mock_show.assert_called_once()
-            
-            # Verify result is returned
-            assert result is not None
-            assert hasattr(result, 'savefig')
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='cot:20,close',
+                    title='Test COT Chart (Complete)',
+                    output_path='test_output.png'
+                )
+                
+                # Verify plt.show was called
+                mock_show.assert_called_once()
+                
+                # Verify result is returned
+                assert result is not None
+                assert hasattr(result, 'savefig')
 
 
 if __name__ == "__main__":
