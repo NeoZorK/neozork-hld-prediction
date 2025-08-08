@@ -20,16 +20,28 @@ try:
     from common import logger
     from common.constants import TradingRule, BUY, SELL, NOTRADE
 except ImportError:
-    # Fallback to relative imports when run as module
-    from ..common import logger
-    from ..common.constants import TradingRule, BUY, SELL, NOTRADE
+    try:
+        # Fallback to relative imports when run as module
+        from ..common import logger
+        from ..common.constants import TradingRule, BUY, SELL, NOTRADE
+    except ImportError:
+        # Final fallback for pytest with -n auto
+        import sys
+        import os
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+        from src.common import logger
+        from src.common.constants import TradingRule, BUY, SELL, NOTRADE
 
 # Import navigation system
 try:
     from .term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
 except ImportError:
-    # Fallback to relative imports when run as module
-    from ..plotting.term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
+    try:
+        # Fallback to relative imports when run as module
+        from ..plotting.term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
+    except ImportError:
+        # Final fallback for pytest with -n auto
+        from src.plotting.term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
 
 
 def get_terminal_plot_size() -> Tuple[int, int]:
