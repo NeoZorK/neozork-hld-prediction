@@ -29,7 +29,7 @@ class TestTermChunkedPlot:
     def setup_method(self):
         """Set up test data."""
         # Create sample OHLCV data
-        dates = pd.date_range('2023-01-01', periods=1000, freq='1H')
+        dates = pd.date_range('2023-01-01', periods=1000, freq='1h')
         self.sample_data = pd.DataFrame({
             'Open': np.random.uniform(100, 200, 1000),
             'High': np.random.uniform(200, 300, 1000),
