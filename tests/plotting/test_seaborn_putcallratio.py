@@ -8,8 +8,12 @@ import numpy as np
 from datetime import datetime, timedelta
 from unittest.mock import patch, MagicMock
 import matplotlib.pyplot as plt
+import threading
 
 from src.plotting.dual_chart_seaborn import plot_dual_chart_seaborn
+
+# Thread lock for matplotlib operations
+matplotlib_lock = threading.Lock()
 
 
 class TestSeabornPutCallRatio:
@@ -39,23 +43,24 @@ class TestSeabornPutCallRatio:
         df = pd.DataFrame(data, index=dates)
         
         # Mock plt.show to verify it's called
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='putcallratio:20,close,60,40',
-                title='Test Put/Call Ratio Chart',
-                output_path='test_output.png'
-            )
-            
-            # Verify plt.show was called
-            mock_show.assert_called_once()
-            
-            # Verify result is returned
-            assert result is not None
-            assert hasattr(result, 'savefig')
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='putcallratio:20,close,60,40',
+                    title='Test Put/Call Ratio Chart',
+                    output_path='test_output.png'
+                )
+                
+                # Verify plt.show was called
+                mock_show.assert_called_once()
+                
+                # Verify result is returned
+                assert result is not None
+                assert hasattr(result, 'savefig')
 
     def test_putcallratio_without_signal_line(self):
         """Test putcallratio indicator without signal line."""
@@ -79,23 +84,24 @@ class TestSeabornPutCallRatio:
         df = pd.DataFrame(data, index=dates)
         
         # Mock plt.show to verify it's called
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='putcallratio:20,close,60,40',
-                title='Test Put/Call Ratio Chart (No Signal)',
-                output_path='test_output.png'
-            )
-            
-            # Verify plt.show was called
-            mock_show.assert_called_once()
-            
-            # Verify result is returned
-            assert result is not None
-            assert hasattr(result, 'savefig')
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='putcallratio:20,close,60,40',
+                    title='Test Put/Call Ratio Chart (No Signal)',
+                    output_path='test_output.png'
+                )
+                
+                # Verify plt.show was called
+                mock_show.assert_called_once()
+                
+                # Verify result is returned
+                assert result is not None
+                assert hasattr(result, 'savefig')
 
     def test_putcallratio_with_histogram(self):
         """Test putcallratio indicator with histogram."""
@@ -121,23 +127,24 @@ class TestSeabornPutCallRatio:
         df = pd.DataFrame(data, index=dates)
         
         # Mock plt.show to verify it's called
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='putcallratio:20,close,60,40',
-                title='Test Put/Call Ratio Chart (With Histogram)',
-                output_path='test_output.png'
-            )
-            
-            # Verify plt.show was called
-            mock_show.assert_called_once()
-            
-            # Verify result is returned
-            assert result is not None
-            assert hasattr(result, 'savefig')
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='putcallratio:20,close,60,40',
+                    title='Test Put/Call Ratio Chart (With Histogram)',
+                    output_path='test_output.png'
+                )
+                
+                # Verify plt.show was called
+                mock_show.assert_called_once()
+                
+                # Verify result is returned
+                assert result is not None
+                assert hasattr(result, 'savefig')
 
     def test_putcallratio_threshold_levels(self):
         """Test putcallratio indicator with threshold levels."""
@@ -162,23 +169,24 @@ class TestSeabornPutCallRatio:
         df = pd.DataFrame(data, index=dates)
         
         # Mock plt.show to verify it's called
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='putcallratio:20,close,65,35',
-                title='Test Put/Call Ratio Chart (Custom Thresholds)',
-                output_path='test_output.png'
-            )
-            
-            # Verify plt.show was called
-            mock_show.assert_called_once()
-            
-            # Verify result is returned
-            assert result is not None
-            assert hasattr(result, 'savefig')
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='putcallratio:20,close,65,35',
+                    title='Test Put/Call Ratio Chart (Custom Thresholds)',
+                    output_path='test_output.png'
+                )
+                
+                # Verify plt.show was called
+                mock_show.assert_called_once()
+                
+                # Verify result is returned
+                assert result is not None
+                assert hasattr(result, 'savefig')
 
     def test_putcallratio_complete_indicator(self):
         """Test putcallratio indicator with all components."""
@@ -204,23 +212,24 @@ class TestSeabornPutCallRatio:
         df = pd.DataFrame(data, index=dates)
         
         # Mock plt.show to verify it's called
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='putcallratio:20,close,60,40',
-                title='Test Put/Call Ratio Chart (Complete)',
-                output_path='test_output.png'
-            )
-            
-            # Verify plt.show was called
-            mock_show.assert_called_once()
-            
-            # Verify result is returned
-            assert result is not None
-            assert hasattr(result, 'savefig')
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='putcallratio:20,close,60,40',
+                    title='Test Put/Call Ratio Chart (Complete)',
+                    output_path='test_output.png'
+                )
+                
+                # Verify plt.show was called
+                mock_show.assert_called_once()
+                
+                # Verify result is returned
+                assert result is not None
+                assert hasattr(result, 'savefig')
 
 
 if __name__ == "__main__":

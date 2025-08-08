@@ -8,8 +8,12 @@ import numpy as np
 from datetime import datetime, timedelta
 from unittest.mock import patch, MagicMock
 import matplotlib.pyplot as plt
+import threading
 
 from src.plotting.dual_chart_seaborn import plot_dual_chart_seaborn
+
+# Thread lock for matplotlib operations
+matplotlib_lock = threading.Lock()
 
 
 class TestSeabornPlotDisplay:
@@ -36,23 +40,24 @@ class TestSeabornPlotDisplay:
         df = pd.DataFrame(data, index=dates)
         
         # Mock plt.show to verify it's called
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='macd:12,26,9,close',
-                title='Test MACD Chart',
-                output_path='test_output.png'
-            )
-            
-            # Verify plt.show was called
-            mock_show.assert_called_once()
-            
-            # Verify result is returned
-            assert result is not None
-            assert hasattr(result, 'savefig')
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='macd:12,26,9,close',
+                    title='Test MACD Chart',
+                    output_path='test_output.png'
+                )
+                
+                # Verify plt.show was called
+                mock_show.assert_called_once()
+                
+                # Verify result is returned
+                assert result is not None
+                assert hasattr(result, 'savefig')
 
     def test_plot_display_without_show_fails(self):
         """Test that plot would not display without plt.show()."""
@@ -75,21 +80,22 @@ class TestSeabornPlotDisplay:
         df = pd.DataFrame(data, index=dates)
         
         # Mock plt.show to verify it's NOT called (simulating old behavior)
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            # Simulate old behavior without plt.show()
-            # This would be the old version of the function
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='rsi:14,30,70,close',
-                title='Test RSI Chart',
-                output_path='test_output.png'
-            )
-            
-            # Verify plt.show was called (new behavior)
-            mock_show.assert_called_once()
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                # Simulate old behavior without plt.show()
+                # This would be the old version of the function
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='rsi:14,30,70,close',
+                    title='Test RSI Chart',
+                    output_path='test_output.png'
+                )
+                
+                # Verify plt.show was called (new behavior)
+                mock_show.assert_called_once()
 
     def test_plot_display_with_different_indicators(self):
         """Test plot display with different indicators."""
@@ -110,19 +116,20 @@ class TestSeabornPlotDisplay:
         df = pd.DataFrame(data, index=dates)
         
         # Test with EMA indicator
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='ema:20,close',
-                title='Test EMA Chart',
-                output_path='test_output.png'
-            )
-            
-            mock_show.assert_called_once()
-            assert result is not None
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='ema:20,close',
+                    title='Test EMA Chart',
+                    output_path='test_output.png'
+                )
+                
+                mock_show.assert_called_once()
+                assert result is not None
 
     def test_plot_display_with_rsi_indicator(self):
         """Test plot display with RSI indicator."""
@@ -145,19 +152,20 @@ class TestSeabornPlotDisplay:
         df = pd.DataFrame(data, index=dates)
         
         # Test with RSI indicator
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='rsi:14,30,70,close',
-                title='Test RSI Chart',
-                output_path='test_output.png'
-            )
-            
-            mock_show.assert_called_once()
-            assert result is not None
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='rsi:14,30,70,close',
+                    title='Test RSI Chart',
+                    output_path='test_output.png'
+                )
+                
+                mock_show.assert_called_once()
+                assert result is not None
 
     def test_plot_display_with_bb_indicator(self):
         """Test plot display with Bollinger Bands indicator."""
@@ -180,19 +188,20 @@ class TestSeabornPlotDisplay:
         df = pd.DataFrame(data, index=dates)
         
         # Test with Bollinger Bands indicator
-        with patch('matplotlib.pyplot.show') as mock_show, \
-             patch('matplotlib.pyplot.savefig'), \
-             patch('os.makedirs'):
-            
-            result = plot_dual_chart_seaborn(
-                df=df,
-                rule='bb:20,2,close',
-                title='Test Bollinger Bands Chart',
-                output_path='test_output.png'
-            )
-            
-            mock_show.assert_called_once()
-            assert result is not None
+        with matplotlib_lock:
+            with patch('matplotlib.pyplot.show') as mock_show, \
+                 patch('matplotlib.pyplot.savefig'), \
+                 patch('os.makedirs'):
+                
+                result = plot_dual_chart_seaborn(
+                    df=df,
+                    rule='bb:20,2,close',
+                    title='Test Bollinger Bands Chart',
+                    output_path='test_output.png'
+                )
+                
+                mock_show.assert_called_once()
+                assert result is not None
 
 
 if __name__ == "__main__":
