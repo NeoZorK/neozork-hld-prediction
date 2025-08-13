@@ -2015,8 +2015,18 @@ def _add_fear_greed_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
 def _add_pivot_points_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add Pivot Points to subplot."""
     try:
-        pivot_columns = ['PP', 'R1', 'R2', 'R3', 'S1', 'S2', 'S3']
-        colors = ['white+', 'green+', 'green+', 'green+', 'red+', 'red+', 'red+']
+        # Check for both possible column naming conventions
+        pivot_columns = []
+        colors = []
+        
+        # Try Pivot_* naming convention first (from calculation function)
+        if 'Pivot_PP' in chunk.columns:
+            pivot_columns = ['Pivot_PP', 'Pivot_R1', 'Pivot_S1']
+            colors = ['white+', 'green+', 'red+']
+        # Fallback to short naming convention
+        elif 'PP' in chunk.columns:
+            pivot_columns = ['PP', 'R1', 'R2', 'R3', 'S1', 'S2', 'S3']
+            colors = ['white+', 'green+', 'green+', 'green+', 'red+', 'red+', 'red+']
         
         # Ensure x_values are numeric for plotext compatibility
         numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
@@ -2024,7 +2034,9 @@ def _add_pivot_points_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
         for i, col in enumerate(pivot_columns):
             if col in chunk.columns:
                 values = chunk[col].fillna(0).tolist()
-                plt.plot(numeric_x_values, values, color=colors[i], label=col)
+                # Only plot if we have valid data
+                if values and any(v != 0 for v in values):
+                    plt.plot(numeric_x_values, values, color=colors[i], label=col)
         
     except Exception as e:
         logger.print_error(f"Error adding Pivot Points: {e}")
