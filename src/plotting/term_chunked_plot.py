@@ -237,7 +237,8 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
                     x_values = list(range(len(chunk)))
@@ -277,11 +278,10 @@ def plot_ohlcv_chunks(df: pd.DataFrame, title: str = "OHLC Chunks", style: str =
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    # If index is datetime, use date strings
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
-                    # Fallback to numeric indices
                     x_values = list(range(len(chunk)))
                     x_labels = [str(i) for i in x_values]
                 
@@ -364,7 +364,8 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
                 if group_info['name'] == 'OHLC' or current_field is None:
                     if len(chunk) > 0:
                         if hasattr(chunk.index, 'strftime'):
-                            x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                            # Use plotext-compatible date format
+                            x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                             x_values = list(range(len(chunk)))
                         else:
                             x_values = list(range(len(chunk)))
@@ -408,7 +409,8 @@ def plot_auto_chunks(df: pd.DataFrame, title: str = "AUTO Chunks", style: str = 
                 # Always show OHLC candles if possible
                 if len(chunk) > 0:
                     if hasattr(chunk.index, 'strftime'):
-                        x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                        # Use plotext-compatible date format
+                        x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                         x_values = list(range(len(chunk)))
                     else:
                         x_values = list(range(len(chunk)))
@@ -490,7 +492,8 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
                     x_values = list(range(len(chunk)))
@@ -538,11 +541,10 @@ def plot_pv_chunks(df: pd.DataFrame, title: str = "PV Chunks", style: str = "mat
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    # If index is datetime, use date strings
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
-                    # Fallback to numeric indices
                     x_values = list(range(len(chunk)))
                     x_labels = [str(i) for i in x_values]
                 
@@ -619,7 +621,8 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
                     x_values = list(range(len(chunk)))
@@ -667,11 +670,10 @@ def plot_sr_chunks(df: pd.DataFrame, title: str = "SR Chunks", style: str = "mat
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    # If index is datetime, use date strings
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
-                    # Fallback to numeric indices
                     x_values = list(range(len(chunk)))
                     x_labels = [str(i) for i in x_values]
                 
@@ -748,7 +750,8 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
                     x_values = list(range(len(chunk)))
@@ -796,11 +799,10 @@ def plot_phld_chunks(df: pd.DataFrame, title: str = "PHLD Chunks", style: str = 
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    # If index is datetime, use date strings
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
-                    # Fallback to numeric indices
                     x_values = list(range(len(chunk)))
                     x_labels = [str(i) for i in x_values]
                 
@@ -879,7 +881,8 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
                     x_values = list(range(len(chunk)))
@@ -927,11 +930,10 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    # If index is datetime, use date strings
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
-                    # Fallback to numeric indices
                     x_values = list(range(len(chunk)))
                     x_labels = [str(i) for i in x_values]
                 
@@ -1004,7 +1006,8 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
                     x_values = list(range(len(chunk)))
@@ -1062,11 +1065,10 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    # If index is datetime, use date strings
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
-                    # Fallback to numeric indices
                     x_values = list(range(len(chunk)))
                     x_labels = [str(i) for i in x_values]
                 
@@ -1151,7 +1153,8 @@ def plot_indicator_chunks(df: pd.DataFrame, indicator_name: str, title: str = "I
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # Use plotext-compatible date format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
                     x_values = list(range(len(chunk)))
@@ -1209,8 +1212,8 @@ def plot_indicator_chunks(df: pd.DataFrame, indicator_name: str, title: str = "I
                 
                 # Create time axis with dates for this chunk
                 if hasattr(chunk.index, 'strftime'):
-                    # If index is datetime, use date strings
-                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    # If index is datetime, use date strings in plotext-compatible format
+                    x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
                     x_values = list(range(len(chunk)))
                 else:
                     # Fallback to numeric indices
@@ -1351,11 +1354,10 @@ def _plot_single_field_chunk(chunk: pd.DataFrame, field: str, title: str, style:
         
         # Create time axis with dates
         if hasattr(chunk.index, 'strftime'):
-            # If index is datetime, use date strings
-            x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+            # Use plotext-compatible date format
+            x_labels = [d.strftime('%d/%m/%Y') for d in chunk.index]
             x_values = list(range(len(chunk)))
         else:
-            # Fallback to numeric indices
             x_values = list(range(len(chunk)))
             x_labels = [str(i) for i in x_values]
         
@@ -1542,7 +1544,7 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
             _add_rsi_indicator_to_subplot(chunk, x_values, rule)
         
         # Stochastic indicators
-        elif indicator_upper == 'STOCHASTIC':
+        elif indicator_upper in ['STOCH', 'STOCHASTIC', 'STOCHOSCILLATOR']:
             _add_stochastic_indicator_to_subplot(chunk, x_values)
         
         # CCI indicator
@@ -1667,12 +1669,31 @@ def _add_rsi_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, rule: str
 def _add_stochastic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add Stochastic indicator to subplot."""
     try:
-        if 'Stochastic_K' in chunk.columns:
-            k_values = chunk['Stochastic_K'].fillna(50).tolist()
+        # Look for different possible column names for Stochastic
+        k_col = None
+        d_col = None
+        
+        # Check for various possible column names
+        for col in chunk.columns:
+            if 'stoch' in col.lower() and 'k' in col.lower():
+                k_col = col
+            elif 'stoch' in col.lower() and 'd' in col.lower():
+                d_col = col
+        
+        # If not found, try exact matches
+        if k_col is None and 'Stoch_K' in chunk.columns:
+            k_col = 'Stoch_K'
+        if d_col is None and 'Stoch_D' in chunk.columns:
+            d_col = 'Stoch_D'
+        
+        # Plot %K line
+        if k_col:
+            k_values = chunk[k_col].fillna(50).tolist()
             plt.plot(x_values, k_values, color="blue+", label="%K")
         
-        if 'Stochastic_D' in chunk.columns:
-            d_values = chunk['Stochastic_D'].fillna(50).tolist()
+        # Plot %D line
+        if d_col:
+            d_values = chunk[d_col].fillna(50).tolist()
             plt.plot(x_values, d_values, color="red+", label="%D")
             
         # Add overbought/oversold lines
