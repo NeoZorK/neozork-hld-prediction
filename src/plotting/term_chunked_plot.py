@@ -1552,7 +1552,7 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
             _add_cci_indicator_to_subplot(chunk, x_values)
         
         # Bollinger Bands
-        elif indicator_upper == 'BOLLINGER_BANDS':
+        elif indicator_upper in ['BOLLINGER_BANDS', 'BB']:
             _add_bollinger_bands_to_subplot(chunk, x_values)
         
         # EMA indicators
@@ -1604,7 +1604,7 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
             _add_kelly_indicator_to_subplot(chunk, x_values)
         
         # Put/Call Ratio
-        elif indicator_upper == 'PUT_CALL_RATIO':
+        elif indicator_upper in ['PUT_CALL_RATIO', 'PUTCALLRATIO']:
             _add_putcall_indicator_to_subplot(chunk, x_values)
         
         # COT indicator
@@ -1616,7 +1616,7 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
             _add_fear_greed_indicator_to_subplot(chunk, x_values)
         
         # Pivot Points
-        elif indicator_upper == 'PIVOT_POINTS':
+        elif indicator_upper in ['PIVOT_POINTS', 'PIVOT']:
             _add_pivot_points_to_subplot(chunk, x_values)
         
         # Fibonacci Retracement
@@ -1723,17 +1723,20 @@ def _add_cci_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 def _add_bollinger_bands_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add Bollinger Bands to subplot."""
     try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         if 'BB_Upper' in chunk.columns:
             upper_values = chunk['BB_Upper'].fillna(0).tolist()
-            plt.plot(x_values, upper_values, color="green+", label="Upper Band")
+            plt.plot(numeric_x_values, upper_values, color="green+", label="Upper Band")
         
         if 'BB_Middle' in chunk.columns:
             middle_values = chunk['BB_Middle'].fillna(0).tolist()
-            plt.plot(x_values, middle_values, color="white+", label="Middle Band")
+            plt.plot(numeric_x_values, middle_values, color="white+", label="Middle Band")
         
         if 'BB_Lower' in chunk.columns:
             lower_values = chunk['BB_Lower'].fillna(0).tolist()
-            plt.plot(x_values, lower_values, color="red+", label="Lower Band")
+            plt.plot(numeric_x_values, lower_values, color="red+", label="Lower Band")
         
     except Exception as e:
         logger.print_error(f"Error adding Bollinger Bands: {e}")
@@ -1744,9 +1747,12 @@ def _add_ema_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     try:
         # Look for EMA columns
         ema_columns = [col for col in chunk.columns if col.startswith('EMA')]
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         for ema_col in ema_columns:
             ema_values = chunk[ema_col].fillna(0).tolist()
-            plt.plot(x_values, ema_values, label=ema_col)
+            plt.plot(numeric_x_values, ema_values, label=ema_col)
         
     except Exception as e:
         logger.print_error(f"Error adding EMA indicator: {e}")
@@ -1891,12 +1897,14 @@ def _add_kelly_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None
 def _add_putcall_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add Put/Call Ratio indicator to subplot."""
     try:
-        if 'Put_Call_Ratio' in chunk.columns:
-            pcr_values = chunk['Put_Call_Ratio'].fillna(1).tolist()
-            plt.plot(x_values, pcr_values, color="red+", label="Put/Call Ratio")
+        if 'PutCallRatio' in chunk.columns:
+            pcr_values = chunk['PutCallRatio'].fillna(50).tolist()
+            # Ensure x_values are numeric for plotext compatibility
+            numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+            plt.plot(numeric_x_values, pcr_values, color="red+", label="Put/Call Ratio")
             
             # Add neutral line
-            plt.plot(x_values, [1] * len(x_values), color="white+")
+            plt.plot(numeric_x_values, [50] * len(numeric_x_values), color="white+")
         
     except Exception as e:
         logger.print_error(f"Error adding Put/Call Ratio indicator: {e}")
@@ -1935,10 +1943,13 @@ def _add_pivot_points_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
         pivot_columns = ['PP', 'R1', 'R2', 'R3', 'S1', 'S2', 'S3']
         colors = ['white+', 'green+', 'green+', 'green+', 'red+', 'red+', 'red+']
         
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         for i, col in enumerate(pivot_columns):
             if col in chunk.columns:
                 values = chunk[col].fillna(0).tolist()
-                plt.plot(x_values, values, color=colors[i], label=col)
+                plt.plot(numeric_x_values, values, color=colors[i], label=col)
         
     except Exception as e:
         logger.print_error(f"Error adding Pivot Points: {e}")
