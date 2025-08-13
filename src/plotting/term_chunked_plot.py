@@ -1920,8 +1920,17 @@ def _add_std_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
         # Ensure x_values are numeric for plotext compatibility
         numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
         
-        if 'Standard_Deviation' in chunk.columns:
-            std_values = chunk['Standard_Deviation'].fillna(0).tolist()
+        # Check for both possible column names
+        std_column = None
+        if 'StDev' in chunk.columns:
+            std_column = 'StDev'
+        elif 'Standard_Deviation' in chunk.columns:
+            std_column = 'Standard_Deviation'
+        elif 'Diff' in chunk.columns:
+            std_column = 'Diff'  # STDEV values are stored in Diff column
+        
+        if std_column:
+            std_values = chunk[std_column].fillna(0).tolist()
             # Only plot if we have valid data
             if std_values and any(v != 0 for v in std_values):
                 plt.plot(numeric_x_values, std_values, color="yellow+", label="Std Dev")
