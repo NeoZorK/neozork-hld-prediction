@@ -1747,12 +1747,18 @@ def _add_ema_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     try:
         # Look for EMA columns
         ema_columns = [col for col in chunk.columns if col.startswith('EMA')]
+        
         # Ensure x_values are numeric for plotext compatibility
         numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
         
         for ema_col in ema_columns:
             ema_values = chunk[ema_col].fillna(0).tolist()
-            plt.plot(numeric_x_values, ema_values, label=ema_col)
+            try:
+                # Try to plot with numeric x_values
+                plt.plot(numeric_x_values, ema_values, label=ema_col)
+            except Exception as plot_error:
+                # If plotting fails, skip this column
+                continue
         
     except Exception as e:
         logger.print_error(f"Error adding EMA indicator: {e}")
@@ -1761,18 +1767,21 @@ def _add_ema_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 def _add_adx_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add ADX indicator to subplot."""
     try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         if 'ADX' in chunk.columns:
             adx_values = chunk['ADX'].fillna(0).tolist()
-            plt.plot(x_values, adx_values, color="blue+", label="ADX")
+            plt.plot(numeric_x_values, adx_values, color="blue+", label="ADX")
             
             # Add DI+ and DI- if available
             if 'DI_Plus' in chunk.columns:
                 di_plus_values = chunk['DI_Plus'].fillna(0).tolist()
-                plt.plot(x_values, di_plus_values, color="green+", label="DI+")
+                plt.plot(numeric_x_values, di_plus_values, color="green+", label="DI+")
             
             if 'DI_Minus' in chunk.columns:
                 di_minus_values = chunk['DI_Minus'].fillna(0).tolist()
-                plt.plot(x_values, di_minus_values, color="red+", label="DI-")
+                plt.plot(numeric_x_values, di_minus_values, color="red+", label="DI-")
         
     except Exception as e:
         logger.print_error(f"Error adding ADX indicator: {e}")
@@ -1781,9 +1790,12 @@ def _add_adx_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 def _add_sar_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add SAR indicator to subplot."""
     try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         if 'SAR' in chunk.columns:
             sar_values = chunk['SAR'].fillna(0).tolist()
-            plt.plot(x_values, sar_values, color="yellow+", label="SAR")
+            plt.plot(numeric_x_values, sar_values, color="yellow+", label="SAR")
         
     except Exception as e:
         logger.print_error(f"Error adding SAR indicator: {e}")
@@ -1792,9 +1804,12 @@ def _add_sar_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 def _add_supertrend_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add SuperTrend indicator to subplot."""
     try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         if 'SuperTrend' in chunk.columns:
             supertrend_values = chunk['SuperTrend'].fillna(0).tolist()
-            plt.plot(x_values, supertrend_values, color="cyan+", label="SuperTrend")
+            plt.plot(numeric_x_values, supertrend_values, color="cyan+", label="SuperTrend")
         
     except Exception as e:
         logger.print_error(f"Error adding SuperTrend indicator: {e}")
@@ -1803,9 +1818,12 @@ def _add_supertrend_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
 def _add_atr_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add ATR indicator to subplot."""
     try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         if 'ATR' in chunk.columns:
             atr_values = chunk['ATR'].fillna(0).tolist()
-            plt.plot(x_values, atr_values, color="magenta+", label="ATR")
+            plt.plot(numeric_x_values, atr_values, color="magenta+", label="ATR")
         
     except Exception as e:
         logger.print_error(f"Error adding ATR indicator: {e}")
@@ -1814,9 +1832,12 @@ def _add_atr_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 def _add_std_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add Standard Deviation indicator to subplot."""
     try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         if 'Standard_Deviation' in chunk.columns:
             std_values = chunk['Standard_Deviation'].fillna(0).tolist()
-            plt.plot(x_values, std_values, color="yellow+", label="Std Dev")
+            plt.plot(numeric_x_values, std_values, color="yellow+", label="Std Dev")
         
     except Exception as e:
         logger.print_error(f"Error adding Standard Deviation indicator: {e}")
@@ -1825,9 +1846,12 @@ def _add_std_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 def _add_obv_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add OBV indicator to subplot."""
     try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         if 'OBV' in chunk.columns:
             obv_values = chunk['OBV'].fillna(0).tolist()
-            plt.plot(x_values, obv_values, color="blue+", label="OBV")
+            plt.plot(numeric_x_values, obv_values, color="blue+", label="OBV")
         
     except Exception as e:
         logger.print_error(f"Error adding OBV indicator: {e}")
@@ -1836,9 +1860,12 @@ def _add_obv_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 def _add_vwap_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add VWAP indicator to subplot."""
     try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         if 'VWAP' in chunk.columns:
             vwap_values = chunk['VWAP'].fillna(0).tolist()
-            plt.plot(x_values, vwap_values, color="orange+", label="VWAP")
+            plt.plot(numeric_x_values, vwap_values, color="orange+", label="VWAP")
         
     except Exception as e:
         logger.print_error(f"Error adding VWAP indicator: {e}")
