@@ -1843,7 +1843,9 @@ def _add_hma_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     try:
         if 'HMA' in chunk.columns:
             hma_values = chunk['HMA'].fillna(0).tolist()
-            plt.plot(x_values, hma_values, color="purple+", label="HMA")
+            # Check if we have valid HMA values
+            if any(v != 0 for v in hma_values):
+                plt.plot(x_values, hma_values, color="purple+", label="HMA")
         
     except Exception as e:
         logger.print_error(f"Error adding HMA indicator: {e}")
