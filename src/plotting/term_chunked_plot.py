@@ -1576,7 +1576,7 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
             _add_atr_indicator_to_subplot(chunk, x_values)
         
         # Standard Deviation
-        elif indicator_upper == 'STANDARD_DEVIATION':
+        elif indicator_upper in ['STANDARD_DEVIATION', 'STDEV']:
             _add_std_indicator_to_subplot(chunk, x_values)
         
         # OBV indicator
@@ -1600,7 +1600,7 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
             _add_monte_carlo_indicator_to_subplot(chunk, x_values)
         
         # Kelly Criterion
-        elif indicator_upper == 'KELLY_CRITERION':
+        elif indicator_upper in ['KELLY_CRITERION', 'KELLY']:
             _add_kelly_indicator_to_subplot(chunk, x_values)
         
         # Put/Call Ratio
@@ -1612,7 +1612,7 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
             _add_cot_indicator_to_subplot(chunk, x_values)
         
         # Fear & Greed
-        elif indicator_upper == 'FEAR_GREED':
+        elif indicator_upper in ['FEAR_GREED', 'FEARGREED']:
             _add_fear_greed_indicator_to_subplot(chunk, x_values)
         
         # Pivot Points
@@ -1620,11 +1620,11 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
             _add_pivot_points_to_subplot(chunk, x_values)
         
         # Fibonacci Retracement
-        elif indicator_upper == 'FIBONACCI_RETRACEMENT':
+        elif indicator_upper in ['FIBONACCI_RETRACEMENT', 'FIBO']:
             _add_fibonacci_indicator_to_subplot(chunk, x_values)
         
         # Donchian Channel
-        elif indicator_upper == 'DONCHIAN_CHANNEL':
+        elif indicator_upper in ['DONCHIAN_CHANNEL', 'DONCHAIN']:
             _add_donchian_indicator_to_subplot(chunk, x_values)
         
         # Default: try to find any column with indicator name
@@ -1728,15 +1728,21 @@ def _add_bollinger_bands_to_subplot(chunk: pd.DataFrame, x_values: list) -> None
         
         if 'BB_Upper' in chunk.columns:
             upper_values = chunk['BB_Upper'].fillna(0).tolist()
-            plt.plot(numeric_x_values, upper_values, color="green+", label="Upper Band")
+            # Only plot if we have valid data
+            if upper_values and any(v != 0 for v in upper_values):
+                plt.plot(numeric_x_values, upper_values, color="green+", label="Upper Band")
         
         if 'BB_Middle' in chunk.columns:
             middle_values = chunk['BB_Middle'].fillna(0).tolist()
-            plt.plot(numeric_x_values, middle_values, color="white+", label="Middle Band")
+            # Only plot if we have valid data
+            if middle_values and any(v != 0 for v in middle_values):
+                plt.plot(numeric_x_values, middle_values, color="white+", label="Middle Band")
         
         if 'BB_Lower' in chunk.columns:
             lower_values = chunk['BB_Lower'].fillna(0).tolist()
-            plt.plot(numeric_x_values, lower_values, color="red+", label="Lower Band")
+            # Only plot if we have valid data
+            if lower_values and any(v != 0 for v in lower_values):
+                plt.plot(numeric_x_values, lower_values, color="red+", label="Lower Band")
         
     except Exception as e:
         logger.print_error(f"Error adding Bollinger Bands: {e}")
@@ -1772,16 +1778,22 @@ def _add_adx_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
         
         if 'ADX' in chunk.columns:
             adx_values = chunk['ADX'].fillna(0).tolist()
-            plt.plot(numeric_x_values, adx_values, color="blue+", label="ADX")
+            # Only plot if we have valid data
+            if adx_values and any(v != 0 for v in adx_values):
+                plt.plot(numeric_x_values, adx_values, color="blue+", label="ADX")
             
             # Add DI+ and DI- if available
             if 'DI_Plus' in chunk.columns:
                 di_plus_values = chunk['DI_Plus'].fillna(0).tolist()
-                plt.plot(numeric_x_values, di_plus_values, color="green+", label="DI+")
+                # Only plot if we have valid data
+                if di_plus_values and any(v != 0 for v in di_plus_values):
+                    plt.plot(numeric_x_values, di_plus_values, color="green+", label="DI+")
             
             if 'DI_Minus' in chunk.columns:
                 di_minus_values = chunk['DI_Minus'].fillna(0).tolist()
-                plt.plot(numeric_x_values, di_minus_values, color="red+", label="DI-")
+                # Only plot if we have valid data
+                if di_minus_values and any(v != 0 for v in di_minus_values):
+                    plt.plot(numeric_x_values, di_minus_values, color="red+", label="DI-")
         
     except Exception as e:
         logger.print_error(f"Error adding ADX indicator: {e}")
@@ -1795,7 +1807,9 @@ def _add_sar_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
         
         if 'SAR' in chunk.columns:
             sar_values = chunk['SAR'].fillna(0).tolist()
-            plt.plot(numeric_x_values, sar_values, color="yellow+", label="SAR")
+            # Only plot if we have valid data
+            if sar_values and any(v != 0 for v in sar_values):
+                plt.plot(numeric_x_values, sar_values, color="yellow+", label="SAR")
         
     except Exception as e:
         logger.print_error(f"Error adding SAR indicator: {e}")
@@ -1809,7 +1823,9 @@ def _add_supertrend_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
         
         if 'SuperTrend' in chunk.columns:
             supertrend_values = chunk['SuperTrend'].fillna(0).tolist()
-            plt.plot(numeric_x_values, supertrend_values, color="cyan+", label="SuperTrend")
+            # Only plot if we have valid data
+            if supertrend_values and any(v != 0 for v in supertrend_values):
+                plt.plot(numeric_x_values, supertrend_values, color="cyan+", label="SuperTrend")
         
     except Exception as e:
         logger.print_error(f"Error adding SuperTrend indicator: {e}")
@@ -1837,7 +1853,9 @@ def _add_std_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
         
         if 'Standard_Deviation' in chunk.columns:
             std_values = chunk['Standard_Deviation'].fillna(0).tolist()
-            plt.plot(numeric_x_values, std_values, color="yellow+", label="Std Dev")
+            # Only plot if we have valid data
+            if std_values and any(v != 0 for v in std_values):
+                plt.plot(numeric_x_values, std_values, color="yellow+", label="Std Dev")
         
     except Exception as e:
         logger.print_error(f"Error adding Standard Deviation indicator: {e}")
@@ -1851,7 +1869,9 @@ def _add_obv_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
         
         if 'OBV' in chunk.columns:
             obv_values = chunk['OBV'].fillna(0).tolist()
-            plt.plot(numeric_x_values, obv_values, color="blue+", label="OBV")
+            # Only plot if we have valid data
+            if obv_values and any(v != 0 for v in obv_values):
+                plt.plot(numeric_x_values, obv_values, color="blue+", label="OBV")
         
     except Exception as e:
         logger.print_error(f"Error adding OBV indicator: {e}")
@@ -1913,9 +1933,23 @@ def _add_monte_carlo_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -
 def _add_kelly_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add Kelly Criterion indicator to subplot."""
     try:
-        if 'Kelly_Criterion' in chunk.columns:
-            kelly_values = chunk['Kelly_Criterion'].fillna(0).tolist()
-            plt.plot(x_values, kelly_values, color="yellow+", label="Kelly")
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
+        # Check for both possible column names
+        kelly_column = None
+        if 'Kelly' in chunk.columns:
+            kelly_column = 'Kelly'
+        elif 'Kelly_Criterion' in chunk.columns:
+            kelly_column = 'Kelly_Criterion'
+        elif 'Diff' in chunk.columns:
+            kelly_column = 'Diff'  # Kelly values are stored in Diff column
+        
+        if kelly_column:
+            kelly_values = chunk[kelly_column].fillna(0).tolist()
+            # Only plot if we have valid data
+            if kelly_values and any(v != 0 for v in kelly_values):
+                plt.plot(numeric_x_values, kelly_values, color="yellow+", label="Kelly")
         
     except Exception as e:
         logger.print_error(f"Error adding Kelly Criterion indicator: {e}")
@@ -1951,14 +1985,19 @@ def _add_cot_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 def _add_fear_greed_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add Fear & Greed indicator to subplot."""
     try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         if 'Fear_Greed' in chunk.columns:
             fg_values = chunk['Fear_Greed'].fillna(50).tolist()
-            plt.plot(x_values, fg_values, color="orange+", label="Fear & Greed")
-            
-            # Add extreme levels
-            plt.plot(x_values, [80] * len(x_values), color="green+")
-            plt.plot(x_values, [20] * len(x_values), color="red+")
-            plt.plot(x_values, [50] * len(x_values), color="white+")
+            # Only plot if we have valid data
+            if fg_values and any(v != 50 for v in fg_values):
+                plt.plot(numeric_x_values, fg_values, color="orange+", label="Fear & Greed")
+                
+                # Add extreme levels
+                plt.plot(numeric_x_values, [80] * len(numeric_x_values), color="green+")
+                plt.plot(numeric_x_values, [20] * len(numeric_x_values), color="red+")
+                plt.plot(numeric_x_values, [50] * len(numeric_x_values), color="white+")
         
     except Exception as e:
         logger.print_error(f"Error adding Fear & Greed indicator: {e}")
@@ -1985,13 +2024,18 @@ def _add_pivot_points_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 def _add_fibonacci_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add Fibonacci Retracement to subplot."""
     try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         fib_columns = ['Fib_0', 'Fib_236', 'Fib_382', 'Fib_500', 'Fib_618', 'Fib_786', 'Fib_100']
         colors = ['white+', 'yellow+', 'orange+', 'red+', 'purple+', 'blue+', 'green+']
         
         for i, col in enumerate(fib_columns):
             if col in chunk.columns:
                 values = chunk[col].fillna(0).tolist()
-                plt.plot(x_values, values, color=colors[i], label=col)
+                # Only plot if we have valid data
+                if values and any(v != 0 for v in values):
+                    plt.plot(numeric_x_values, values, color=colors[i], label=col)
         
     except Exception as e:
         logger.print_error(f"Error adding Fibonacci Retracement: {e}")
@@ -2000,17 +2044,26 @@ def _add_fibonacci_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> 
 def _add_donchian_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add Donchian Channel to subplot."""
     try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
         if 'Donchian_Upper' in chunk.columns:
             upper_values = chunk['Donchian_Upper'].fillna(0).tolist()
-            plt.plot(x_values, upper_values, color="green+", label="Upper")
+            # Only plot if we have valid data
+            if upper_values and any(v != 0 for v in upper_values):
+                plt.plot(numeric_x_values, upper_values, color="green+", label="Upper")
         
         if 'Donchian_Middle' in chunk.columns:
             middle_values = chunk['Donchian_Middle'].fillna(0).tolist()
-            plt.plot(x_values, middle_values, color="white+", label="Middle")
+            # Only plot if we have valid data
+            if middle_values and any(v != 0 for v in middle_values):
+                plt.plot(numeric_x_values, middle_values, color="white+", label="Middle")
         
         if 'Donchian_Lower' in chunk.columns:
             lower_values = chunk['Donchian_Lower'].fillna(0).tolist()
-            plt.plot(x_values, lower_values, color="red+", label="Lower")
+            # Only plot if we have valid data
+            if lower_values and any(v != 0 for v in lower_values):
+                plt.plot(numeric_x_values, lower_values, color="red+", label="Lower")
         
     except Exception as e:
         logger.print_error(f"Error adding Donchian Channel: {e}")
