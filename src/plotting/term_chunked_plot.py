@@ -962,6 +962,136 @@ def plot_rsi_chunks(df: pd.DataFrame, rule: str, title: str = "RSI Chunks", styl
         logger.print_error(f"Error generating {rule_type.upper()} chunked plots: {e}")
 
 
+def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = "matrix", use_navigation: bool = False) -> None:
+    """
+    Plot MACD data in chunks with MACD lines and trading signals.
+    
+    Args:
+        df (pd.DataFrame): DataFrame with MACD data
+        title (str): Base title for plots
+        style (str): Plot style
+        use_navigation (bool): Whether to use interactive navigation
+    """
+    try:
+        logger.print_info(f"Generating MACD chunked plots...")
+        
+        # Calculate optimal chunk size
+        total_rows = len(df)
+        chunk_size = calculate_optimal_chunk_size(total_rows)
+        chunks = split_dataframe_into_chunks(df, chunk_size)
+        
+        logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
+        
+        if use_navigation:
+            # Use navigation system
+            navigator = TerminalNavigator(chunks, title)
+            
+            def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
+                """Plot a single chunk with navigation info."""
+                if len(chunk) == 0:
+                    logger.print_warning("Empty chunk, skipping...")
+                    return
+                
+                # Clear previous plots
+                plt.clear_data()
+                plt.clear_figure()
+                
+                # Get start and end dates for this chunk
+                start_date = chunk_info['start_date']
+                end_date = chunk_info['end_date']
+                
+                # Set up plot with full screen size
+                plt.subplots(1, 1)
+                plot_size = get_terminal_plot_size()
+                plt.plot_size(*plot_size)
+                plt.theme(style)
+                
+                # Create time axis with dates for this chunk
+                if hasattr(chunk.index, 'strftime'):
+                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    x_values = list(range(len(chunk)))
+                else:
+                    x_values = list(range(len(chunk)))
+                    x_labels = [str(i) for i in x_values]
+                
+                # OHLC Candlestick Chart (always as first layer, like in other rules)
+                draw_ohlc_candles(chunk, x_values)
+                
+                # Add MACD-specific overlays
+                _add_macd_overlays_to_chunk(chunk, x_values)
+                
+                plt.title(f"{title} - MACD (Chunk {chunk_info['index']}/{chunk_info['total']}) - {start_date} to {end_date}")
+                plt.xlabel("Date/Time")
+                plt.ylabel("Price/Value")
+                
+                # Set x-axis ticks to show dates
+                if len(x_values) > 0:
+                    step = max(1, len(x_values) // 10)  # Show ~10 date labels
+                    plt.xticks(x_values[::step], x_labels[::step])
+                
+                plt.show()
+            
+            # Start navigation
+            navigator.navigate(plot_chunk_with_navigation)
+            
+        else:
+            # Original non-navigation behavior
+            for i, chunk in enumerate(chunks):
+                chunk_start_idx = i * chunk_size
+                chunk_end_idx = min((i + 1) * chunk_size, total_rows)
+                
+                # Get start and end dates for this chunk
+                start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
+                end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
+                
+                # Clear previous plots
+                plt.clear_data()
+                plt.clear_figure()
+                
+                # Set up plot with full screen size
+                plt.subplots(1, 1)
+                plot_size = get_terminal_plot_size()
+                plt.plot_size(*plot_size)
+                plt.theme(style)
+                
+                # Create time axis with dates for this chunk
+                if hasattr(chunk.index, 'strftime'):
+                    # If index is datetime, use date strings
+                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    x_values = list(range(len(chunk)))
+                else:
+                    # Fallback to numeric indices
+                    x_values = list(range(len(chunk)))
+                    x_labels = [str(i) for i in x_values]
+                
+                # OHLC Candlestick Chart (always as first layer, like in other rules)
+                draw_ohlc_candles(chunk, x_values)
+                
+                # Add MACD-specific overlays
+                _add_macd_overlays_to_chunk(chunk, x_values)
+                
+                plt.title(f"{title} - MACD (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
+                plt.xlabel("Date/Time")
+                plt.ylabel("Price/Value")
+                
+                # Set x-axis ticks to show dates
+                if len(x_values) > 0:
+                    step = max(1, len(x_values) // 10)  # Show ~10 date labels
+                    plt.xticks(x_values[::step], x_labels[::step])
+                
+                plt.show()
+                
+                # Show chunk statistics
+                _show_chunk_statistics(chunk, f"{title} - MACD", chunk_start_idx, chunk_end_idx)
+                
+                # Wait for user input before showing next chunk
+                if i < len(chunks) - 1:  # Don't wait after the last chunk
+                    input("\nPress Enter to continue to next chunk...")
+        
+    except Exception as e:
+        logger.print_error(f"Error in MACD chunked plotting: {e}")
+
+
 def _get_field_color(field_name: str) -> str:
     """
     Get a unique color for a field based on its name.
@@ -1170,6 +1300,32 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
         logger.print_error(f"Error adding RSI overlays: {e}")
 
 
+def _add_macd_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
+    """
+    Add MACD-specific overlays to the chunk plot (MACD lines and trading signals).
+    
+    Args:
+        chunk (pd.DataFrame): DataFrame chunk
+        x_values (list): X-axis values
+    """
+    try:
+        # Add MACD lines
+        if 'MACD_Line' in chunk.columns:
+            macd_values = chunk['MACD_Line'].fillna(0).tolist()
+            plt.plot(x_values, macd_values, color="blue+", label="MACD Line")
+        
+        if 'MACD_Signal' in chunk.columns:
+            signal_values = chunk['MACD_Signal'].fillna(0).tolist()
+            plt.plot(x_values, signal_values, color="orange+", label="Signal Line")
+        
+        # Add trading signals
+        if 'Direction' in chunk.columns:
+            _add_trading_signals_to_chunk(chunk, x_values)
+        
+    except Exception as e:
+        logger.print_error(f"Error adding MACD overlays: {e}")
+
+
 def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
     """
     Add trading signals to the chunk plot.
@@ -1327,6 +1483,8 @@ def plot_chunked_terminal(df: pd.DataFrame, rule: str, title: str = "Chunked Ter
             plot_sr_chunks(df, title, style, use_navigation)
         elif rule_upper in ['PHLD', 'PREDICT_HIGH_LOW_DIRECTION']:
             plot_phld_chunks(df, title, style, use_navigation)
+        elif rule_upper.startswith('MACD'):
+            plot_macd_chunks(df, title, style, use_navigation)
         else:
             # Default to OHLCV for unknown rules
             logger.print_warning(f"Unknown rule '{rule}', defaulting to OHLCV")
