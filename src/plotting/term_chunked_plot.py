@@ -1596,7 +1596,7 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
             _add_tsf_indicator_to_subplot(chunk, x_values)
         
         # Monte Carlo
-        elif indicator_upper == 'MONTE_CARLO':
+        elif indicator_upper in ['MONTE_CARLO', 'MONTE']:
             _add_monte_carlo_indicator_to_subplot(chunk, x_values)
         
         # Kelly Criterion
@@ -1867,9 +1867,11 @@ def _add_tsf_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 def _add_monte_carlo_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add Monte Carlo indicator to subplot."""
     try:
-        if 'Monte_Carlo' in chunk.columns:
-            mc_values = chunk['Monte_Carlo'].fillna(0).tolist()
-            plt.plot(x_values, mc_values, color="green+", label="Monte Carlo")
+        if 'MonteCarlo' in chunk.columns:
+            mc_values = chunk['MonteCarlo'].fillna(0).tolist()
+            # Ensure x_values are numeric for plotext compatibility
+            numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+            plt.plot(numeric_x_values, mc_values, color="green+", label="Monte Carlo")
         
     except Exception as e:
         logger.print_error(f"Error adding Monte Carlo indicator: {e}")
