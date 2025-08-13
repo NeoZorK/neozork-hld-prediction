@@ -1592,7 +1592,7 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
             _add_hma_indicator_to_subplot(chunk, x_values)
         
         # Time Series Forecast
-        elif indicator_upper == 'TIME_SERIES_FORECAST':
+        elif indicator_upper in ['TIME_SERIES_FORECAST', 'TSF']:
             _add_tsf_indicator_to_subplot(chunk, x_values)
         
         # Monte Carlo
@@ -1856,7 +1856,9 @@ def _add_tsf_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     try:
         if 'TSForecast' in chunk.columns:
             tsf_values = chunk['TSForecast'].fillna(0).tolist()
-            plt.plot(x_values, tsf_values, color="cyan+", label="TSF")
+            # Ensure x_values are numeric for plotext compatibility
+            numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+            plt.plot(numeric_x_values, tsf_values, color="cyan+", label="TSF")
         
     except Exception as e:
         logger.print_error(f"Error adding TSF indicator: {e}")
@@ -1988,7 +1990,9 @@ def _add_generic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, indic
         if indicator_columns:
             for col in indicator_columns:
                 values = chunk[col].fillna(0).tolist()
-                plt.plot(x_values, values, label=col)
+                # Ensure x_values are numeric for plotext compatibility
+                numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+                plt.plot(numeric_x_values, values, label=col)
         else:
             logger.print_warning(f"No columns found for indicator: {indicator_name}")
         
