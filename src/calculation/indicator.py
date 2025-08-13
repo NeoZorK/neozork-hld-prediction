@@ -192,6 +192,11 @@ def calculate_pressure_vector(
         cot_columns = ['COT', 'COT_Signal', 'COT_Price_Type']
         output_columns.extend(cot_columns)
     
+    # Add MACD-specific columns for MACD rules
+    if tr_num == TradingRule.MACD:
+        macd_columns = ['MACD_Line', 'MACD_Signal', 'MACD_Histogram', 'MACD_Price_Type']
+        output_columns.extend(macd_columns)
+    
     # Filter to only columns that actually exist in the DataFrame
     final_columns = [col for col in output_columns if col in df_out.columns]
 

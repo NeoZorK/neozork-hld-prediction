@@ -1,0 +1,7 @@
+[
+  "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_chunks_function",
+  "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_columns_presence",
+  "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_overlays_function",
+  "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_rule_detection",
+  "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_rule_parsing"
+]
