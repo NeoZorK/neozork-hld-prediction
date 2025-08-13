@@ -608,7 +608,7 @@ def show_indicator_help(indicator_name: str):
     # Use the new enhanced error handling system
     try:
         from .error_handling import show_enhanced_indicator_help
-        show_enhanced_indicator_help(f"Help requested for indicator: {indicator_name}", indicator_name)
+        show_enhanced_indicator_help(f"Help requested for indicator: {indicator_name}", indicator_name, show_error_header=False)
     except Exception:
         pass
     # Fallback for supertrend (removed, now always through extended help)

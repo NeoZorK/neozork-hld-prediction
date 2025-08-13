@@ -332,6 +332,19 @@ class TestEnhancedHelpDisplay:
         example_calls = [call for call in calls if "atr:14" in str(call)]
         assert len(example_calls) > 0
 
+    @patch('builtins.print')
+    def test_show_enhanced_indicator_help_without_error_header(self, mock_print):
+        """Test that show_enhanced_indicator_help doesn't show error header when show_error_header=False."""
+        show_enhanced_indicator_help("Help requested for indicator: vwap", "vwap", show_error_header=False)
+        
+        # Check that error header was not printed
+        error_header_calls = [call for call in mock_print.call_args_list if "ERROR:" in str(call)]
+        assert len(error_header_calls) == 0, "Error header should not be shown when show_error_header=False"
+        
+        # Check that help content was still printed
+        help_calls = [call for call in mock_print.call_args_list if "VWAP" in str(call)]
+        assert len(help_calls) > 0, "Help content should still be shown"
+
 
 class TestIntegration:
     """Integration tests for error handling."""
