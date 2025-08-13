@@ -1879,45 +1879,22 @@ def _add_supertrend_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
         # Plot SuperTrend
         if supertrend_column:
             supertrend_values = chunk[supertrend_column].fillna(0).tolist()
-            # Debug: Print SuperTrend values for troubleshooting
-            print(f"Debug: SuperTrend column '{supertrend_column}' found with {len(supertrend_values)} values")
-            print(f"Debug: SuperTrend values range: {min(supertrend_values) if supertrend_values else 'N/A'} to {max(supertrend_values) if supertrend_values else 'N/A'}")
-            print(f"Debug: Non-zero SuperTrend values: {sum(1 for v in supertrend_values if v != 0)}")
-            
             # Only plot if we have valid data
             if supertrend_values and any(v != 0 for v in supertrend_values):
                 plt.plot(numeric_x_values, supertrend_values, color="cyan+", label="SuperTrend")
-                print(f"Debug: SuperTrend plotted successfully")
-            else:
-                print(f"Debug: No valid SuperTrend data to plot")
+        
         # Fallback to PPrice* naming convention (support and resistance levels)
         if not supertrend_column and 'PPrice1' in chunk.columns and 'PPrice2' in chunk.columns:
-            print(f"Debug: Using PPrice columns for SuperTrend indicator")
             pprice1_values = chunk['PPrice1'].fillna(0).tolist()
             pprice2_values = chunk['PPrice2'].fillna(0).tolist()
-            print(f"Debug: PPrice1 column found with {len(pprice1_values)} values")
-            print(f"Debug: PPrice1 values range: {min(pprice1_values) if pprice1_values else 'N/A'} to {max(pprice1_values) if pprice1_values else 'N/A'}")
-            print(f"Debug: Non-zero PPrice1 values: {sum(1 for v in pprice1_values if v != 0)}")
-            print(f"Debug: PPrice2 column found with {len(pprice2_values)} values")
-            print(f"Debug: PPrice2 values range: {min(pprice2_values) if pprice2_values else 'N/A'} to {max(pprice2_values) if pprice2_values else 'N/A'}")
-            print(f"Debug: Non-zero PPrice2 values: {sum(1 for v in pprice2_values if v != 0)}")
             
             # Plot PPrice1 (support level - SuperTrend with buffer)
             if pprice1_values and any(v != 0 for v in pprice1_values):
                 plt.plot(numeric_x_values, pprice1_values, color="cyan+", label="SuperTrend Support")
-                print(f"Debug: SuperTrend Support plotted successfully")
-            else:
-                print(f"Debug: No valid SuperTrend Support data to plot")
             
             # Plot PPrice2 (resistance level - SuperTrend with buffer)
             if pprice2_values and any(v != 0 for v in pprice2_values):
                 plt.plot(numeric_x_values, pprice2_values, color="blue+", label="SuperTrend Resistance")
-                print(f"Debug: SuperTrend Resistance plotted successfully")
-            else:
-                print(f"Debug: No valid SuperTrend Resistance data to plot")
-        
-        if not supertrend_column:
-            print(f"Debug: No SuperTrend columns found. Available columns: {list(chunk.columns)}")
         
     except Exception as e:
         logger.print_error(f"Error adding SuperTrend indicator: {e}")
