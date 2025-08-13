@@ -763,7 +763,7 @@ def get_indicator_help_data(indicator_name: str) -> dict:
     return data
 
 
-def show_enhanced_indicator_help(error_message: str, indicator_name: str = None):
+def show_enhanced_indicator_help(error_message: str, indicator_name: str = None, show_error_header: bool = True):
     """Show enhanced help for an indicator with colorful formatting and icons."""
     
     # Extract indicator name from error if not provided
@@ -772,7 +772,8 @@ def show_enhanced_indicator_help(error_message: str, indicator_name: str = None)
     
     if not indicator_name:
         # Fallback to basic error display
-        CLIErrorHandler.print_error_header(error_message)
+        if show_error_header:
+            CLIErrorHandler.print_error_header(error_message)
         CLIErrorHandler.print_help_section("General Help", "Use --indicators to see all available indicators", 'help')
         CLIErrorHandler.print_footer()
         return
@@ -782,14 +783,16 @@ def show_enhanced_indicator_help(error_message: str, indicator_name: str = None)
     
     if not help_data:
         # Unknown indicator
-        CLIErrorHandler.print_error_header(error_message)
+        if show_error_header:
+            CLIErrorHandler.print_error_header(error_message)
         CLIErrorHandler.print_help_section("Unknown Indicator", f"'{indicator_name}' is not a recognized indicator", 'warning')
         CLIErrorHandler.print_help_section("Available Indicators", "Use --indicators to see all available indicators", 'help')
         CLIErrorHandler.print_footer()
         return
     
     # Print enhanced help
-    CLIErrorHandler.print_error_header(error_message)
+    if show_error_header:
+        CLIErrorHandler.print_error_header(error_message)
     
     # Indicator information
     CLIErrorHandler.print_help_section(
