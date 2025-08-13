@@ -451,6 +451,12 @@ def _configure_terminal_plotting_mode(args):
             args.compare_calculated = True  # Flag to indicate we want to compare calculated vs. original
             args.force_calculate = True  # Force calculation of indicators even if they exist in the file
             print("PHLD mode with calculation and visualization of indicators")
+        # Special handling for indicators that need line drawing fixes in terminal mode
+        elif args.rule.upper() in ['KELLY', 'FEARGREED', 'FIBO', 'DONCHAIN', 'ADX', 'SAR', 'SUPERTREND', 'BB', 'STDEV', 'OBV']:
+            # Force calculation and ensure proper line drawing for these indicators in terminal mode
+            args.force_calculate = True  # Force calculation of indicators even if they exist in the file
+            args.ensure_line_drawing = True  # Flag to ensure proper line drawing in terminal mode
+            print(f"Terminal mode with {args.rule} rule - ensuring proper line drawing")
 
 def _handle_indicator_mode(args):
     """Handle indicator files mode ('show ind')."""
