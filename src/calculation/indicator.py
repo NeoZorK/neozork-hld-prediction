@@ -202,6 +202,11 @@ def calculate_pressure_vector(
         hma_columns = ['HMA', 'HMA_Signal', 'HMA_Price_Type']
         output_columns.extend(hma_columns)
     
+    # Add TSF-specific columns for TSF rules
+    if tr_num == TradingRule.TSForecast:
+        tsf_columns = ['TSForecast', 'TSForecast_Signal', 'TSForecast_Price_Type']
+        output_columns.extend(tsf_columns)
+    
     # Filter to only columns that actually exist in the DataFrame
     final_columns = [col for col in output_columns if col in df_out.columns]
 

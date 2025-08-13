@@ -1854,8 +1854,8 @@ def _add_hma_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
 def _add_tsf_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
     """Add Time Series Forecast indicator to subplot."""
     try:
-        if 'TSF' in chunk.columns:
-            tsf_values = chunk['TSF'].fillna(0).tolist()
+        if 'TSForecast' in chunk.columns:
+            tsf_values = chunk['TSForecast'].fillna(0).tolist()
             plt.plot(x_values, tsf_values, color="cyan+", label="TSF")
         
     except Exception as e:
