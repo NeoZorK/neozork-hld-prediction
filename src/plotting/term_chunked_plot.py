@@ -2048,8 +2048,22 @@ def _add_fibonacci_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> 
         # Ensure x_values are numeric for plotext compatibility
         numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
         
-        fib_columns = ['Fib_0', 'Fib_236', 'Fib_382', 'Fib_500', 'Fib_618', 'Fib_786', 'Fib_100']
-        colors = ['white+', 'yellow+', 'orange+', 'red+', 'purple+', 'blue+', 'green+']
+        # Check for both possible column naming conventions
+        fib_columns = []
+        colors = []
+        
+        # Try FibRetr_* naming convention first (from calculation function)
+        if 'FibRetr_236' in chunk.columns:
+            fib_columns = ['FibRetr_236', 'FibRetr_382', 'FibRetr_618']
+            colors = ['yellow+', 'orange+', 'purple+']
+        # Fallback to Fib_* naming convention
+        elif 'Fib_236' in chunk.columns:
+            fib_columns = ['Fib_0', 'Fib_236', 'Fib_382', 'Fib_500', 'Fib_618', 'Fib_786', 'Fib_100']
+            colors = ['white+', 'yellow+', 'orange+', 'red+', 'purple+', 'blue+', 'green+']
+        # Fallback to PPrice* naming convention (support and resistance levels)
+        elif 'PPrice1' in chunk.columns and 'PPrice2' in chunk.columns:
+            fib_columns = ['PPrice1', 'PPrice2']  # Support and resistance levels
+            colors = ['green+', 'red+']  # Support (green), Resistance (red)
         
         for i, col in enumerate(fib_columns):
             if col in chunk.columns:
