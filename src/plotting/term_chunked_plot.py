@@ -2082,21 +2082,61 @@ def _add_donchian_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> N
         # Ensure x_values are numeric for plotext compatibility
         numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
         
-        if 'Donchian_Upper' in chunk.columns:
-            upper_values = chunk['Donchian_Upper'].fillna(0).tolist()
+        # Check for both possible column naming conventions
+        upper_column = None
+        middle_column = None
+        lower_column = None
+        
+        # Try Donchain_* naming convention first (from calculation function)
+        if 'Donchain_Upper' in chunk.columns:
+            upper_column = 'Donchain_Upper'
+        elif 'Donchian_Upper' in chunk.columns:
+            upper_column = 'Donchian_Upper'
+        
+        if 'Donchain_Middle' in chunk.columns:
+            middle_column = 'Donchain_Middle'
+        elif 'Donchian_Middle' in chunk.columns:
+            middle_column = 'Donchian_Middle'
+        
+        if 'Donchain_Lower' in chunk.columns:
+            lower_column = 'Donchain_Lower'
+        elif 'Donchian_Lower' in chunk.columns:
+            lower_column = 'Donchian_Lower'
+        
+        # Plot upper band
+        if upper_column:
+            upper_values = chunk[upper_column].fillna(0).tolist()
             # Only plot if we have valid data
             if upper_values and any(v != 0 for v in upper_values):
                 plt.plot(numeric_x_values, upper_values, color="green+", label="Upper")
         
-        if 'Donchian_Middle' in chunk.columns:
-            middle_values = chunk['Donchian_Middle'].fillna(0).tolist()
+        # Plot middle band
+        if middle_column:
+            middle_values = chunk[middle_column].fillna(0).tolist()
             # Only plot if we have valid data
             if middle_values and any(v != 0 for v in middle_values):
                 plt.plot(numeric_x_values, middle_values, color="white+", label="Middle")
         
-        if 'Donchian_Lower' in chunk.columns:
-            lower_values = chunk['Donchian_Lower'].fillna(0).tolist()
+        # Plot lower band
+        if lower_column:
+            lower_values = chunk[lower_column].fillna(0).tolist()
             # Only plot if we have valid data
+            if lower_values and any(v != 0 for v in lower_values):
+                plt.plot(numeric_x_values, lower_values, color="red+", label="Lower")
+        
+        # Fallback to PPrice* naming convention (support and resistance levels)
+        if not any([upper_column, middle_column, lower_column]) and 'PPrice1' in chunk.columns and 'PPrice2' in chunk.columns:
+            upper_column = 'PPrice2'  # Resistance level (upper band)
+            middle_column = None  # No middle band in PPrice columns
+            lower_column = 'PPrice1'  # Support level (lower band)
+            
+            # Plot upper band (PPrice2)
+            upper_values = chunk[upper_column].fillna(0).tolist()
+            if upper_values and any(v != 0 for v in upper_values):
+                plt.plot(numeric_x_values, upper_values, color="green+", label="Upper")
+            
+            # Plot lower band (PPrice1)
+            lower_values = chunk[lower_column].fillna(0).tolist()
             if lower_values and any(v != 0 for v in lower_values):
                 plt.plot(numeric_x_values, lower_values, color="red+", label="Lower")
         
