@@ -1945,8 +1945,15 @@ def _add_obv_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
         # Ensure x_values are numeric for plotext compatibility
         numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
         
+        # Check for both possible column names
+        obv_column = None
         if 'OBV' in chunk.columns:
-            obv_values = chunk['OBV'].fillna(0).tolist()
+            obv_column = 'OBV'
+        elif 'Diff' in chunk.columns:
+            obv_column = 'Diff'  # OBV values are stored in Diff column
+        
+        if obv_column:
+            obv_values = chunk[obv_column].fillna(0).tolist()
             # Only plot if we have valid data
             if obv_values and any(v != 0 for v in obv_values):
                 plt.plot(numeric_x_values, obv_values, color="blue+", label="OBV")
