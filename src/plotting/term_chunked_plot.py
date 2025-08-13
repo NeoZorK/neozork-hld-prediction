@@ -1881,7 +1881,7 @@ def _add_supertrend_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
             supertrend_values = chunk[supertrend_column].fillna(0).tolist()
             # Only plot if we have valid data
             if supertrend_values and any(v != 0 for v in supertrend_values):
-                plt.plot(numeric_x_values, supertrend_values, color="cyan+", label="SuperTrend")
+                plt.plot(numeric_x_values, supertrend_values, color="green+", label="SuperTrend")
         
         # Fallback to PPrice* naming convention (support and resistance levels)
         if not supertrend_column and 'PPrice1' in chunk.columns and 'PPrice2' in chunk.columns:
@@ -1890,11 +1890,11 @@ def _add_supertrend_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
             
             # Plot PPrice1 (support level - SuperTrend with buffer)
             if pprice1_values and any(v != 0 for v in pprice1_values):
-                plt.plot(numeric_x_values, pprice1_values, color="cyan+", label="SuperTrend Support")
+                plt.plot(numeric_x_values, pprice1_values, color="green+", label="SuperTrend Support")
             
             # Plot PPrice2 (resistance level - SuperTrend with buffer)
             if pprice2_values and any(v != 0 for v in pprice2_values):
-                plt.plot(numeric_x_values, pprice2_values, color="blue+", label="SuperTrend Resistance")
+                plt.plot(numeric_x_values, pprice2_values, color="red+", label="SuperTrend Resistance")
         
     except Exception as e:
         logger.print_error(f"Error adding SuperTrend indicator: {e}")
