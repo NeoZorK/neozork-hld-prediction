@@ -1108,6 +1108,153 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
         logger.print_error(f"Error in MACD chunked plotting: {e}")
 
 
+def plot_indicator_chunks(df: pd.DataFrame, indicator_name: str, title: str = "Indicator Chunks", style: str = "matrix", use_navigation: bool = False, rule: str = "") -> None:
+    """
+    Universal function to plot any indicator data in chunks with dual subplot layout.
+    
+    Args:
+        df (pd.DataFrame): DataFrame with indicator data
+        indicator_name (str): Name of the indicator (RSI, Stochastic, CCI, etc.)
+        title (str): Base title for plots
+        style (str): Plot style
+        use_navigation (bool): Whether to use interactive navigation
+    """
+    try:
+        logger.print_info(f"Generating {indicator_name.upper()} chunked plots...")
+        
+        # Calculate optimal chunk size
+        total_rows = len(df)
+        chunk_size = calculate_optimal_chunk_size(total_rows)
+        chunks = split_dataframe_into_chunks(df, chunk_size)
+        
+        logger.print_info(f"Split {total_rows} rows into {len(chunks)} chunks of ~{chunk_size} candles each")
+        
+        if use_navigation:
+            # Use navigation system
+            navigator = TerminalNavigator(chunks, title)
+            
+            def plot_chunk_with_navigation(chunk: pd.DataFrame, chunk_index: int, chunk_info: dict) -> None:
+                """Plot a single chunk with navigation info."""
+                if len(chunk) == 0:
+                    logger.print_warning("Empty chunk, skipping...")
+                    return
+                
+                # Clear previous plots
+                plt.clear_data()
+                plt.clear_figure()
+                
+                # Set up plot with two subplots: OHLC (50%) and Indicator (50%)
+                plt.subplots(2, 1)  # Two rows, equal heights
+                plot_size = get_terminal_plot_size()
+                plt.plot_size(*plot_size)
+                plt.theme(style)
+                
+                # Create time axis with dates for this chunk
+                if hasattr(chunk.index, 'strftime'):
+                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    x_values = list(range(len(chunk)))
+                else:
+                    x_values = list(range(len(chunk)))
+                    x_labels = [str(i) for i in x_values]
+                
+                # Plot 1: OHLC Candlestick Chart (top 50%)
+                plt.subplot(1, 1)
+                draw_ohlc_candles(chunk, x_values)
+                
+                # Add trading signals to OHLC chart
+                if 'Direction' in chunk.columns:
+                    _add_trading_signals_to_chunk(chunk, x_values)
+                
+                plt.title(f"{title} - OHLC Chart (Chunk {chunk_info['index']}/{chunk_info['total']}) - {chunk_info['start_date']} to {chunk_info['end_date']}")
+                plt.ylabel("Price")
+                
+                # Set x-axis ticks to show dates (only for bottom subplot)
+                plt.xticks([])  # Hide x-axis labels for top subplot
+                
+                # Plot 2: Indicator Chart (bottom 50%)
+                plt.subplot(2, 1)
+                _add_indicator_chart_to_subplot(chunk, x_values, indicator_name, rule)
+                plt.ylabel(f"{indicator_name} Value")
+                plt.xlabel("Date/Time")
+                
+                # Set x-axis ticks to show dates
+                if len(x_values) > 0:
+                    step = max(1, len(x_values) // 10)  # Show ~10 date labels
+                    plt.xticks(x_values[::step], x_labels[::step])
+                
+                plt.show()
+            
+            # Start navigation
+            navigator.navigate(plot_chunk_with_navigation)
+            
+        else:
+            # Original non-navigation behavior
+            for i, chunk in enumerate(chunks):
+                chunk_start_idx = i * chunk_size
+                chunk_end_idx = min((i + 1) * chunk_size, total_rows)
+                
+                # Get start and end dates for this chunk
+                start_date = chunk.index[0] if len(chunk) > 0 else "N/A"
+                end_date = chunk.index[-1] if len(chunk) > 0 else "N/A"
+                
+                # Clear previous plots
+                plt.clear_data()
+                plt.clear_figure()
+                
+                # Set up plot with two subplots: OHLC (50%) and Indicator (50%)
+                plt.subplots(2, 1)  # Two rows, equal heights
+                plot_size = get_terminal_plot_size()
+                plt.plot_size(*plot_size)
+                plt.theme(style)
+                
+                # Create time axis with dates for this chunk
+                if hasattr(chunk.index, 'strftime'):
+                    # If index is datetime, use date strings
+                    x_labels = [d.strftime('%Y-%m-%d %H:%M') for d in chunk.index]
+                    x_values = list(range(len(chunk)))
+                else:
+                    # Fallback to numeric indices
+                    x_values = list(range(len(chunk)))
+                    x_labels = [str(i) for i in x_values]
+                
+                # Plot 1: OHLC Candlestick Chart (top 50%)
+                plt.subplot(1, 1)
+                draw_ohlc_candles(chunk, x_values)
+                
+                # Add trading signals to OHLC chart
+                if 'Direction' in chunk.columns:
+                    _add_trading_signals_to_chunk(chunk, x_values)
+                
+                plt.title(f"{title} - OHLC Chart (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
+                plt.ylabel("Price")
+                
+                # Set x-axis ticks to show dates (only for bottom subplot)
+                plt.xticks([])  # Hide x-axis labels for top subplot
+                
+                # Plot 2: Indicator Chart (bottom 50%)
+                plt.subplot(2, 1)
+                _add_indicator_chart_to_subplot(chunk, x_values, indicator_name, rule)
+                plt.ylabel(f"{indicator_name} Value")
+                plt.xlabel("Date/Time")
+                
+                # Set x-axis ticks to show dates
+                if len(x_values) > 0:
+                    step = max(1, len(x_values) // 10)  # Show ~10 date labels
+                    plt.xticks(x_values[::step], x_labels[::step])
+                
+                plt.show()
+                
+                # Show chunk statistics
+                _show_chunk_statistics(chunk, f"{title} - {indicator_name}", chunk_start_idx, chunk_end_idx)
+                
+                # Wait for user input before showing next chunk
+                if i < len(chunks) - 1:  # Don't wait after the last chunk
+                    input("\nPress Enter to continue to next chunk...")
+        
+    except Exception as e:
+        logger.print_error(f"Error in {indicator_name} chunked plotting: {e}")
+
+
 def _get_field_color(field_name: str) -> str:
     """
     Get a unique color for a field based on its name.
@@ -1377,6 +1524,455 @@ def _add_macd_chart_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
         logger.print_error(f"Error adding MACD chart to subplot: {e}")
 
 
+def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicator_name: str, rule: str = "") -> None:
+    """
+    Add indicator chart to a separate subplot with proper scaling.
+    
+    Args:
+        chunk (pd.DataFrame): DataFrame chunk
+        x_values (list): X-axis values
+        indicator_name (str): Name of the indicator
+        rule (str): Original rule string for parameter extraction
+    """
+    try:
+        indicator_upper = indicator_name.upper()
+        
+        # RSI indicators
+        if indicator_upper.startswith('RSI'):
+            _add_rsi_indicator_to_subplot(chunk, x_values, rule)
+        
+        # Stochastic indicators
+        elif indicator_upper == 'STOCHASTIC':
+            _add_stochastic_indicator_to_subplot(chunk, x_values)
+        
+        # CCI indicator
+        elif indicator_upper == 'CCI':
+            _add_cci_indicator_to_subplot(chunk, x_values)
+        
+        # Bollinger Bands
+        elif indicator_upper == 'BOLLINGER_BANDS':
+            _add_bollinger_bands_to_subplot(chunk, x_values)
+        
+        # EMA indicators
+        elif indicator_upper == 'EMA':
+            _add_ema_indicator_to_subplot(chunk, x_values)
+        
+        # ADX indicator
+        elif indicator_upper == 'ADX':
+            _add_adx_indicator_to_subplot(chunk, x_values)
+        
+        # SAR indicator
+        elif indicator_upper == 'SAR':
+            _add_sar_indicator_to_subplot(chunk, x_values)
+        
+        # SuperTrend indicator
+        elif indicator_upper == 'SUPERTREND':
+            _add_supertrend_indicator_to_subplot(chunk, x_values)
+        
+        # ATR indicator
+        elif indicator_upper == 'ATR':
+            _add_atr_indicator_to_subplot(chunk, x_values)
+        
+        # Standard Deviation
+        elif indicator_upper == 'STANDARD_DEVIATION':
+            _add_std_indicator_to_subplot(chunk, x_values)
+        
+        # OBV indicator
+        elif indicator_upper == 'OBV':
+            _add_obv_indicator_to_subplot(chunk, x_values)
+        
+        # VWAP indicator
+        elif indicator_upper == 'VWAP':
+            _add_vwap_indicator_to_subplot(chunk, x_values)
+        
+        # HMA indicator
+        elif indicator_upper == 'HMA':
+            _add_hma_indicator_to_subplot(chunk, x_values)
+        
+        # Time Series Forecast
+        elif indicator_upper == 'TIME_SERIES_FORECAST':
+            _add_tsf_indicator_to_subplot(chunk, x_values)
+        
+        # Monte Carlo
+        elif indicator_upper == 'MONTE_CARLO':
+            _add_monte_carlo_indicator_to_subplot(chunk, x_values)
+        
+        # Kelly Criterion
+        elif indicator_upper == 'KELLY_CRITERION':
+            _add_kelly_indicator_to_subplot(chunk, x_values)
+        
+        # Put/Call Ratio
+        elif indicator_upper == 'PUT_CALL_RATIO':
+            _add_putcall_indicator_to_subplot(chunk, x_values)
+        
+        # COT indicator
+        elif indicator_upper == 'COT':
+            _add_cot_indicator_to_subplot(chunk, x_values)
+        
+        # Fear & Greed
+        elif indicator_upper == 'FEAR_GREED':
+            _add_fear_greed_indicator_to_subplot(chunk, x_values)
+        
+        # Pivot Points
+        elif indicator_upper == 'PIVOT_POINTS':
+            _add_pivot_points_to_subplot(chunk, x_values)
+        
+        # Fibonacci Retracement
+        elif indicator_upper == 'FIBONACCI_RETRACEMENT':
+            _add_fibonacci_indicator_to_subplot(chunk, x_values)
+        
+        # Donchian Channel
+        elif indicator_upper == 'DONCHIAN_CHANNEL':
+            _add_donchian_indicator_to_subplot(chunk, x_values)
+        
+        # Default: try to find any column with indicator name
+        else:
+            _add_generic_indicator_to_subplot(chunk, x_values, indicator_name)
+        
+    except Exception as e:
+        logger.print_error(f"Error adding {indicator_name} chart to subplot: {e}")
+
+
+def _add_rsi_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, rule: str = "") -> None:
+    """Add RSI indicator to subplot."""
+    try:
+        if 'RSI' in chunk.columns:
+            rsi_values = chunk['RSI'].fillna(50).tolist()
+            plt.plot(x_values, rsi_values, color="purple+", label="RSI")
+            
+            # Extract overbought/oversold levels from rule
+            overbought_level = 70  # default
+            oversold_level = 30    # default
+            
+            if rule and ':' in rule:
+                try:
+                    # Parse rule like "rsi:14,10,90,open" -> extract 10 and 90
+                    params = rule.split(':')[1].split(',')
+                    if len(params) >= 3:
+                        oversold_level = float(params[1])    # second parameter
+                        overbought_level = float(params[2])  # third parameter
+                except (ValueError, IndexError):
+                    # If parsing fails, use defaults
+                    pass
+            
+            # Add overbought/oversold lines with extracted levels
+            plt.plot(x_values, [overbought_level] * len(x_values), color="red+")
+            plt.plot(x_values, [oversold_level] * len(x_values), color="green+")
+            plt.plot(x_values, [50] * len(x_values), color="white+")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding RSI indicator: {e}")
+
+
+def _add_stochastic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Stochastic indicator to subplot."""
+    try:
+        if 'Stochastic_K' in chunk.columns:
+            k_values = chunk['Stochastic_K'].fillna(50).tolist()
+            plt.plot(x_values, k_values, color="blue+", label="%K")
+        
+        if 'Stochastic_D' in chunk.columns:
+            d_values = chunk['Stochastic_D'].fillna(50).tolist()
+            plt.plot(x_values, d_values, color="red+", label="%D")
+            
+        # Add overbought/oversold lines
+        plt.plot(x_values, [80] * len(x_values), color="red+")
+        plt.plot(x_values, [20] * len(x_values), color="green+")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding Stochastic indicator: {e}")
+
+
+def _add_cci_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add CCI indicator to subplot."""
+    try:
+        if 'CCI' in chunk.columns:
+            cci_values = chunk['CCI'].fillna(0).tolist()
+            plt.plot(x_values, cci_values, color="orange+", label="CCI")
+            
+            # Add overbought/oversold lines
+            plt.plot(x_values, [100] * len(x_values), color="red+")
+            plt.plot(x_values, [-100] * len(x_values), color="green+")
+            plt.plot(x_values, [0] * len(x_values), color="white+")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding CCI indicator: {e}")
+
+
+def _add_bollinger_bands_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Bollinger Bands to subplot."""
+    try:
+        if 'BB_Upper' in chunk.columns:
+            upper_values = chunk['BB_Upper'].fillna(0).tolist()
+            plt.plot(x_values, upper_values, color="green+", label="Upper Band")
+        
+        if 'BB_Middle' in chunk.columns:
+            middle_values = chunk['BB_Middle'].fillna(0).tolist()
+            plt.plot(x_values, middle_values, color="white+", label="Middle Band")
+        
+        if 'BB_Lower' in chunk.columns:
+            lower_values = chunk['BB_Lower'].fillna(0).tolist()
+            plt.plot(x_values, lower_values, color="red+", label="Lower Band")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding Bollinger Bands: {e}")
+
+
+def _add_ema_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add EMA indicator to subplot."""
+    try:
+        # Look for EMA columns
+        ema_columns = [col for col in chunk.columns if col.startswith('EMA')]
+        for ema_col in ema_columns:
+            ema_values = chunk[ema_col].fillna(0).tolist()
+            plt.plot(x_values, ema_values, label=ema_col)
+        
+    except Exception as e:
+        logger.print_error(f"Error adding EMA indicator: {e}")
+
+
+def _add_adx_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add ADX indicator to subplot."""
+    try:
+        if 'ADX' in chunk.columns:
+            adx_values = chunk['ADX'].fillna(0).tolist()
+            plt.plot(x_values, adx_values, color="blue+", label="ADX")
+            
+            # Add DI+ and DI- if available
+            if 'DI_Plus' in chunk.columns:
+                di_plus_values = chunk['DI_Plus'].fillna(0).tolist()
+                plt.plot(x_values, di_plus_values, color="green+", label="DI+")
+            
+            if 'DI_Minus' in chunk.columns:
+                di_minus_values = chunk['DI_Minus'].fillna(0).tolist()
+                plt.plot(x_values, di_minus_values, color="red+", label="DI-")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding ADX indicator: {e}")
+
+
+def _add_sar_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add SAR indicator to subplot."""
+    try:
+        if 'SAR' in chunk.columns:
+            sar_values = chunk['SAR'].fillna(0).tolist()
+            plt.plot(x_values, sar_values, color="yellow+", label="SAR")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding SAR indicator: {e}")
+
+
+def _add_supertrend_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add SuperTrend indicator to subplot."""
+    try:
+        if 'SuperTrend' in chunk.columns:
+            supertrend_values = chunk['SuperTrend'].fillna(0).tolist()
+            plt.plot(x_values, supertrend_values, color="cyan+", label="SuperTrend")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding SuperTrend indicator: {e}")
+
+
+def _add_atr_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add ATR indicator to subplot."""
+    try:
+        if 'ATR' in chunk.columns:
+            atr_values = chunk['ATR'].fillna(0).tolist()
+            plt.plot(x_values, atr_values, color="magenta+", label="ATR")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding ATR indicator: {e}")
+
+
+def _add_std_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Standard Deviation indicator to subplot."""
+    try:
+        if 'Standard_Deviation' in chunk.columns:
+            std_values = chunk['Standard_Deviation'].fillna(0).tolist()
+            plt.plot(x_values, std_values, color="yellow+", label="Std Dev")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding Standard Deviation indicator: {e}")
+
+
+def _add_obv_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add OBV indicator to subplot."""
+    try:
+        if 'OBV' in chunk.columns:
+            obv_values = chunk['OBV'].fillna(0).tolist()
+            plt.plot(x_values, obv_values, color="blue+", label="OBV")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding OBV indicator: {e}")
+
+
+def _add_vwap_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add VWAP indicator to subplot."""
+    try:
+        if 'VWAP' in chunk.columns:
+            vwap_values = chunk['VWAP'].fillna(0).tolist()
+            plt.plot(x_values, vwap_values, color="orange+", label="VWAP")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding VWAP indicator: {e}")
+
+
+def _add_hma_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add HMA indicator to subplot."""
+    try:
+        if 'HMA' in chunk.columns:
+            hma_values = chunk['HMA'].fillna(0).tolist()
+            plt.plot(x_values, hma_values, color="purple+", label="HMA")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding HMA indicator: {e}")
+
+
+def _add_tsf_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Time Series Forecast indicator to subplot."""
+    try:
+        if 'TSF' in chunk.columns:
+            tsf_values = chunk['TSF'].fillna(0).tolist()
+            plt.plot(x_values, tsf_values, color="cyan+", label="TSF")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding TSF indicator: {e}")
+
+
+def _add_monte_carlo_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Monte Carlo indicator to subplot."""
+    try:
+        if 'Monte_Carlo' in chunk.columns:
+            mc_values = chunk['Monte_Carlo'].fillna(0).tolist()
+            plt.plot(x_values, mc_values, color="green+", label="Monte Carlo")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding Monte Carlo indicator: {e}")
+
+
+def _add_kelly_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Kelly Criterion indicator to subplot."""
+    try:
+        if 'Kelly_Criterion' in chunk.columns:
+            kelly_values = chunk['Kelly_Criterion'].fillna(0).tolist()
+            plt.plot(x_values, kelly_values, color="yellow+", label="Kelly")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding Kelly Criterion indicator: {e}")
+
+
+def _add_putcall_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Put/Call Ratio indicator to subplot."""
+    try:
+        if 'Put_Call_Ratio' in chunk.columns:
+            pcr_values = chunk['Put_Call_Ratio'].fillna(1).tolist()
+            plt.plot(x_values, pcr_values, color="red+", label="Put/Call Ratio")
+            
+            # Add neutral line
+            plt.plot(x_values, [1] * len(x_values), color="white+")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding Put/Call Ratio indicator: {e}")
+
+
+def _add_cot_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add COT indicator to subplot."""
+    try:
+        if 'COT' in chunk.columns:
+            cot_values = chunk['COT'].fillna(0).tolist()
+            plt.plot(x_values, cot_values, color="blue+", label="COT")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding COT indicator: {e}")
+
+
+def _add_fear_greed_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Fear & Greed indicator to subplot."""
+    try:
+        if 'Fear_Greed' in chunk.columns:
+            fg_values = chunk['Fear_Greed'].fillna(50).tolist()
+            plt.plot(x_values, fg_values, color="orange+", label="Fear & Greed")
+            
+            # Add extreme levels
+            plt.plot(x_values, [80] * len(x_values), color="green+")
+            plt.plot(x_values, [20] * len(x_values), color="red+")
+            plt.plot(x_values, [50] * len(x_values), color="white+")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding Fear & Greed indicator: {e}")
+
+
+def _add_pivot_points_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Pivot Points to subplot."""
+    try:
+        pivot_columns = ['PP', 'R1', 'R2', 'R3', 'S1', 'S2', 'S3']
+        colors = ['white+', 'green+', 'green+', 'green+', 'red+', 'red+', 'red+']
+        
+        for i, col in enumerate(pivot_columns):
+            if col in chunk.columns:
+                values = chunk[col].fillna(0).tolist()
+                plt.plot(x_values, values, color=colors[i], label=col)
+        
+    except Exception as e:
+        logger.print_error(f"Error adding Pivot Points: {e}")
+
+
+def _add_fibonacci_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Fibonacci Retracement to subplot."""
+    try:
+        fib_columns = ['Fib_0', 'Fib_236', 'Fib_382', 'Fib_500', 'Fib_618', 'Fib_786', 'Fib_100']
+        colors = ['white+', 'yellow+', 'orange+', 'red+', 'purple+', 'blue+', 'green+']
+        
+        for i, col in enumerate(fib_columns):
+            if col in chunk.columns:
+                values = chunk[col].fillna(0).tolist()
+                plt.plot(x_values, values, color=colors[i], label=col)
+        
+    except Exception as e:
+        logger.print_error(f"Error adding Fibonacci Retracement: {e}")
+
+
+def _add_donchian_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Donchian Channel to subplot."""
+    try:
+        if 'Donchian_Upper' in chunk.columns:
+            upper_values = chunk['Donchian_Upper'].fillna(0).tolist()
+            plt.plot(x_values, upper_values, color="green+", label="Upper")
+        
+        if 'Donchian_Middle' in chunk.columns:
+            middle_values = chunk['Donchian_Middle'].fillna(0).tolist()
+            plt.plot(x_values, middle_values, color="white+", label="Middle")
+        
+        if 'Donchian_Lower' in chunk.columns:
+            lower_values = chunk['Donchian_Lower'].fillna(0).tolist()
+            plt.plot(x_values, lower_values, color="red+", label="Lower")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding Donchian Channel: {e}")
+
+
+def _add_generic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, indicator_name: str) -> None:
+    """Add generic indicator to subplot by looking for columns with indicator name."""
+    try:
+        # Look for columns containing the indicator name
+        indicator_columns = [col for col in chunk.columns if indicator_name.upper() in col.upper()]
+        
+        if not indicator_columns:
+            # Try exact match
+            if indicator_name in chunk.columns:
+                indicator_columns = [indicator_name]
+        
+        if indicator_columns:
+            for col in indicator_columns:
+                values = chunk[col].fillna(0).tolist()
+                plt.plot(x_values, values, label=col)
+        else:
+            logger.print_warning(f"No columns found for indicator: {indicator_name}")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding generic indicator {indicator_name}: {e}")
+
+
 def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
     """
     Add trading signals to the chunk plot.
@@ -1518,12 +2114,15 @@ def plot_chunked_terminal(df: pd.DataFrame, rule: str, title: str = "Chunked Ter
     try:
         rule_upper = rule.upper()
         
-        # Handle RSI variants
+        # Handle RSI variants with dual subplot
         if rule_upper.startswith('RSI'):
-            if '(' in rule:  # Parameterized RSI rule
-                plot_rsi_chunks(df, rule, title, style, use_navigation)
-            else:  # Simple RSI rule
-                plot_rsi_chunks(df, 'rsi(14,70,30,close)', title, style, use_navigation)
+            plot_indicator_chunks(df, 'RSI', title, style, use_navigation, rule)
+        
+        # Handle MACD (keep existing MACD logic for compatibility)
+        elif rule_upper.startswith('MACD'):
+            plot_macd_chunks(df, title, style, use_navigation)
+        
+        # Handle special rules that don't need dual subplot
         elif rule_upper == 'OHLCV':
             plot_ohlcv_chunks(df, title, style, use_navigation)
         elif rule_upper == 'AUTO':
@@ -1534,12 +2133,24 @@ def plot_chunked_terminal(df: pd.DataFrame, rule: str, title: str = "Chunked Ter
             plot_sr_chunks(df, title, style, use_navigation)
         elif rule_upper in ['PHLD', 'PREDICT_HIGH_LOW_DIRECTION']:
             plot_phld_chunks(df, title, style, use_navigation)
-        elif rule_upper.startswith('MACD'):
-            plot_macd_chunks(df, title, style, use_navigation)
+        
+        # Handle all other indicators with dual subplot
+        elif rule_upper in ['STOCHASTIC', 'CCI', 'BOLLINGER_BANDS', 'EMA', 'ADX', 'SAR', 
+                           'SUPERTREND', 'ATR', 'STANDARD_DEVIATION', 'OBV', 'VWAP',
+                           'HMA', 'TIME_SERIES_FORECAST', 'MONTE_CARLO', 'KELLY_CRITERION',
+                           'PUT_CALL_RATIO', 'COT', 'FEAR_GREED', 'PIVOT_POINTS',
+                           'FIBONACCI_RETRACEMENT', 'DONCHIAN_CHANNEL']:
+            plot_indicator_chunks(df, rule_upper, title, style, use_navigation, rule)
+        
+        # Handle parameterized indicators
+        elif ':' in rule:
+            # Extract indicator name from parameterized rule (e.g., "stochastic:14,3,3" -> "STOCHASTIC")
+            indicator_name = rule.split(':')[0].upper()
+            plot_indicator_chunks(df, indicator_name, title, style, use_navigation, rule)
+        
         else:
-            # Default to OHLCV for unknown rules
-            logger.print_warning(f"Unknown rule '{rule}', defaulting to OHLCV")
-            plot_ohlcv_chunks(df, title, style, use_navigation)
+            # Try to use as generic indicator
+            plot_indicator_chunks(df, rule_upper, title, style, use_navigation, rule)
         
     except Exception as e:
         logger.print_error(f"Error in chunked terminal plotting: {e}") 
