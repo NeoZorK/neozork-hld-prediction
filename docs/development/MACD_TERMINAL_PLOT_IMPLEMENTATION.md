@@ -16,6 +16,8 @@ The requirement was to:
 - Support the `--rule macd` parameter
 - Not affect other rules: `-d term --rule AUTO`, `OHLCV`, `PHLD`, `PV`, `SR`
 - Ensure the indicator displays properly on the plot
+- **Fix MACD height issue**: MACD was laying on the ground and not properly visible
+- **Implement 50/50 layout**: 50% OHLC candles and 50% MACD indicator of total plot height
 
 ## Implementation Details
 
@@ -23,8 +25,10 @@ The requirement was to:
 
 #### `src/plotting/term_chunked_plot.py`
 - **Added MACD rule detection** in `plot_chunked_terminal()` function
-- **Created `plot_macd_chunks()` function** for MACD-specific plotting
-- **Created `_add_macd_overlays_to_chunk()` function** for MACD line overlays
+- **Created `plot_macd_chunks()` function** for MACD-specific plotting with dual subplots
+- **Created `_add_macd_overlays_to_chunk()` function** for MACD line display on OHLC chart
+- **Created `_add_macd_chart_to_subplot()` function** for dedicated MACD subplot
+- **Implemented dual subplot layout**: OHLC (50% height) + MACD (50% height)
 
 #### `src/calculation/indicator.py`
 - **Added MACD column support** in the output columns section
@@ -98,10 +102,18 @@ uv run run_analysis.py show csv gbp -d term --rule PHLD
 
 ## Features
 
-### 1. MACD Line Display
+### 1. Dual Subplot Layout
+- **Top 50%**: OHLC candlestick chart with trading signals
+- **Bottom 50%**: Dedicated MACD indicator subplot
+- **Proper scaling**: Each subplot has its own Y-axis scale
+- **Synchronized X-axis**: Both subplots share the same time axis
+
+### 2. MACD Line Display
 - **Blue line**: MACD line (fast EMA - slow EMA)
 - **Orange line**: Signal line (EMA of MACD line)
-- **Trading signals**: BUY (▲) and SELL (▼) markers
+- **MACD Histogram**: Vertical bars (green for positive, red for negative)
+- **Zero line**: Horizontal reference line at y=0
+- **Trading signals**: BUY (▲) and SELL (▼) markers on OHLC chart
 
 ### 2. Navigation Support
 - Full navigation support with chunk-based viewing
@@ -123,6 +135,32 @@ uv run run_analysis.py show csv gbp -d term --rule macd
 ```bash
 uv run run_analysis.py show csv gbp -d term --rule macd:12,26,9,close
 uv run run_analysis.py show csv gbp -d term --rule macd:8,21,5,open
+```
+
+## Problem Resolution
+
+### Height Issue Solution
+The original implementation had MACD lines overlapping with OHLC candles, making them barely visible due to different value scales. The solution was to implement a dual subplot layout:
+
+1. **Separate Subplots**: Created two independent subplots with equal height (50% each)
+2. **Independent Scaling**: Each subplot has its own Y-axis scale
+3. **Proper MACD Display**: MACD values are now properly visible in their dedicated subplot
+4. **Trading Signals**: BUY/SELL signals remain on the OHLC chart for context
+5. **Synchronized Navigation**: Both subplots navigate together through chunks
+
+### Technical Implementation
+```python
+# Set up plot with two subplots: OHLC (50%) and MACD (50%)
+plt.subplots(2, 1)  # Two rows, equal heights
+
+# Plot 1: OHLC Candlestick Chart (top 50%)
+plt.subplot(1, 1)
+draw_ohlc_candles(chunk, x_values)
+_add_trading_signals_to_chunk(chunk, x_values)
+
+# Plot 2: MACD Chart (bottom 50%)
+plt.subplot(2, 1)
+_add_macd_chart_to_subplot(chunk, x_values)
 ```
 
 ### MACD with Different Data
