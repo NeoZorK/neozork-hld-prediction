@@ -14,12 +14,12 @@ from pathlib import Path
 
 # Import the functions we want to test
 try:
-    from src.plotting.term_chunked_plot import plot_chunked_terminal, plot_macd_chunks, _add_macd_overlays_to_chunk
+    from src.plotting.term_chunked_plot import plot_chunked_terminal, plot_macd_chunks, _add_macd_overlays_to_chunk, _add_macd_chart_to_subplot
 except ImportError:
     # Fallback for different import paths
     import sys
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
-    from src.plotting.term_chunked_plot import plot_chunked_terminal, plot_macd_chunks, _add_macd_overlays_to_chunk
+    from src.plotting.term_chunked_plot import plot_chunked_terminal, plot_macd_chunks, _add_macd_overlays_to_chunk, _add_macd_chart_to_subplot
 
 
 class TestMACDTerminalPlot(unittest.TestCase):
@@ -138,6 +138,24 @@ class TestMACDTerminalPlot(unittest.TestCase):
             rule_upper = input_rule.upper()
             self.assertTrue(rule_upper.startswith('MACD'), 
                           f"Rule '{input_rule}' should be recognized as MACD")
+    
+    def test_add_macd_chart_to_subplot(self):
+        """Test adding MACD chart to subplot."""
+        # Create test data with MACD columns
+        data = {
+            'MACD_Line': [0.1, 0.2, 0.15, 0.25, 0.3],
+            'MACD_Signal': [0.05, 0.15, 0.1, 0.2, 0.25],
+            'MACD_Histogram': [0.05, 0.05, 0.05, 0.05, 0.05]
+        }
+        chunk = pd.DataFrame(data)
+        x_values = [0, 1, 2, 3, 4]
+        
+        # Test that function runs without error
+        try:
+            _add_macd_chart_to_subplot(chunk, x_values)
+            self.assertTrue(True)  # Function executed successfully
+        except Exception as e:
+            self.fail(f"Function failed with error: {e}")
 
 
 if __name__ == '__main__':

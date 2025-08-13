@@ -996,12 +996,8 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
                 plt.clear_data()
                 plt.clear_figure()
                 
-                # Get start and end dates for this chunk
-                start_date = chunk_info['start_date']
-                end_date = chunk_info['end_date']
-                
-                # Set up plot with full screen size
-                plt.subplots(1, 1)
+                # Set up plot with two subplots: OHLC (50%) and MACD (50%)
+                plt.subplots(2, 1)  # Two rows, equal heights
                 plot_size = get_terminal_plot_size()
                 plt.plot_size(*plot_size)
                 plt.theme(style)
@@ -1014,15 +1010,25 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
                     x_values = list(range(len(chunk)))
                     x_labels = [str(i) for i in x_values]
                 
-                # OHLC Candlestick Chart (always as first layer, like in other rules)
+                # Plot 1: OHLC Candlestick Chart (top 50%)
+                plt.subplot(1, 1)
                 draw_ohlc_candles(chunk, x_values)
                 
-                # Add MACD-specific overlays
-                _add_macd_overlays_to_chunk(chunk, x_values)
+                # Add trading signals to OHLC chart
+                if 'Direction' in chunk.columns:
+                    _add_trading_signals_to_chunk(chunk, x_values)
                 
-                plt.title(f"{title} - MACD (Chunk {chunk_info['index']}/{chunk_info['total']}) - {start_date} to {end_date}")
+                plt.title(f"{title} - OHLC Chart (Chunk {chunk_info['index']}/{chunk_info['total']}) - {chunk_info['start_date']} to {chunk_info['end_date']}")
+                plt.ylabel("Price")
+                
+                # Set x-axis ticks to show dates (only for bottom subplot)
+                plt.xticks([])  # Hide x-axis labels for top subplot
+                
+                # Plot 2: MACD Chart (bottom 50%)
+                plt.subplot(2, 1)
+                _add_macd_chart_to_subplot(chunk, x_values)
+                plt.ylabel("MACD Value")
                 plt.xlabel("Date/Time")
-                plt.ylabel("Price/Value")
                 
                 # Set x-axis ticks to show dates
                 if len(x_values) > 0:
@@ -1048,8 +1054,8 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
                 plt.clear_data()
                 plt.clear_figure()
                 
-                # Set up plot with full screen size
-                plt.subplots(1, 1)
+                # Set up plot with two subplots: OHLC (50%) and MACD (50%)
+                plt.subplots(2, 1)  # Two rows, equal heights
                 plot_size = get_terminal_plot_size()
                 plt.plot_size(*plot_size)
                 plt.theme(style)
@@ -1064,15 +1070,25 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
                     x_values = list(range(len(chunk)))
                     x_labels = [str(i) for i in x_values]
                 
-                # OHLC Candlestick Chart (always as first layer, like in other rules)
+                # Plot 1: OHLC Candlestick Chart (top 50%)
+                plt.subplot(1, 1)
                 draw_ohlc_candles(chunk, x_values)
                 
-                # Add MACD-specific overlays
-                _add_macd_overlays_to_chunk(chunk, x_values)
+                # Add trading signals to OHLC chart
+                if 'Direction' in chunk.columns:
+                    _add_trading_signals_to_chunk(chunk, x_values)
                 
-                plt.title(f"{title} - MACD (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
+                plt.title(f"{title} - OHLC Chart (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
+                plt.ylabel("Price")
+                
+                # Set x-axis ticks to show dates (only for bottom subplot)
+                plt.xticks([])  # Hide x-axis labels for top subplot
+                
+                # Plot 2: MACD Chart (bottom 50%)
+                plt.subplot(2, 1)
+                _add_macd_chart_to_subplot(chunk, x_values)
+                plt.ylabel("MACD Value")
                 plt.xlabel("Date/Time")
-                plt.ylabel("Price/Value")
                 
                 # Set x-axis ticks to show dates
                 if len(x_values) > 0:
@@ -1324,6 +1340,41 @@ def _add_macd_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
         
     except Exception as e:
         logger.print_error(f"Error adding MACD overlays: {e}")
+
+
+def _add_macd_chart_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """
+    Add MACD chart to a separate subplot with proper scaling.
+    
+    Args:
+        chunk (pd.DataFrame): DataFrame chunk
+        x_values (list): X-axis values
+    """
+    try:
+        # Add MACD lines with proper scaling
+        if 'MACD_Line' in chunk.columns:
+            macd_values = chunk['MACD_Line'].fillna(0).tolist()
+            plt.plot(x_values, macd_values, color="blue+", label="MACD Line")
+        
+        if 'MACD_Signal' in chunk.columns:
+            signal_values = chunk['MACD_Signal'].fillna(0).tolist()
+            plt.plot(x_values, signal_values, color="orange+", label="Signal Line")
+        
+        # Add MACD histogram if available
+        if 'MACD_Histogram' in chunk.columns:
+            histogram_values = chunk['MACD_Histogram'].fillna(0).tolist()
+            # Use bars for histogram
+            for i, value in enumerate(histogram_values):
+                if value >= 0:
+                    plt.plot([x_values[i], x_values[i]], [0, value], color="green+")
+                else:
+                    plt.plot([x_values[i], x_values[i]], [0, value], color="red+")
+        
+        # Add zero line for reference (plotext doesn't support axhline, so we'll skip it)
+        # plt.axhline(y=0, color="white+", linestyle="-", alpha=0.5)
+        
+    except Exception as e:
+        logger.print_error(f"Error adding MACD chart to subplot: {e}")
 
 
 def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
