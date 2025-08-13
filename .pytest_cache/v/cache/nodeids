@@ -1,4 +1,5 @@
 [
+  "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_add_macd_chart_to_subplot",
   "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_chunks_function",
   "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_columns_presence",
   "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_overlays_function",
