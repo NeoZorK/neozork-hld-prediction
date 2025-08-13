@@ -207,6 +207,11 @@ def calculate_pressure_vector(
         tsf_columns = ['TSForecast', 'TSForecast_Signal', 'TSForecast_Price_Type']
         output_columns.extend(tsf_columns)
     
+    # Add Monte Carlo-specific columns for Monte Carlo rules
+    if tr_num == TradingRule.MonteCarlo:
+        monte_columns = ['MonteCarlo', 'MonteCarlo_Signal', 'MonteCarlo_Histogram', 'MonteCarlo_Upper', 'MonteCarlo_Lower', 'MonteCarlo_Price_Type']
+        output_columns.extend(monte_columns)
+    
     # Filter to only columns that actually exist in the DataFrame
     final_columns = [col for col in output_columns if col in df_out.columns]
 
