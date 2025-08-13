@@ -1776,24 +1776,51 @@ def _add_adx_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
         # Ensure x_values are numeric for plotext compatibility
         numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
         
+        # Check for both possible column naming conventions
+        adx_column = None
+        di_plus_column = None
+        di_minus_column = None
+        
+        # Try ADX_* naming convention first (from calculation function)
         if 'ADX' in chunk.columns:
-            adx_values = chunk['ADX'].fillna(0).tolist()
+            adx_column = 'ADX'
+        
+        if 'ADX_PlusDI' in chunk.columns:
+            di_plus_column = 'ADX_PlusDI'
+        elif 'DI_Plus' in chunk.columns:
+            di_plus_column = 'DI_Plus'
+        
+        if 'ADX_MinusDI' in chunk.columns:
+            di_minus_column = 'ADX_MinusDI'
+        elif 'DI_Minus' in chunk.columns:
+            di_minus_column = 'DI_Minus'
+        
+        # Plot ADX
+        if adx_column:
+            adx_values = chunk[adx_column].fillna(0).tolist()
             # Only plot if we have valid data
             if adx_values and any(v != 0 for v in adx_values):
                 plt.plot(numeric_x_values, adx_values, color="blue+", label="ADX")
-            
-            # Add DI+ and DI- if available
-            if 'DI_Plus' in chunk.columns:
-                di_plus_values = chunk['DI_Plus'].fillna(0).tolist()
-                # Only plot if we have valid data
-                if di_plus_values and any(v != 0 for v in di_plus_values):
-                    plt.plot(numeric_x_values, di_plus_values, color="green+", label="DI+")
-            
-            if 'DI_Minus' in chunk.columns:
-                di_minus_values = chunk['DI_Minus'].fillna(0).tolist()
-                # Only plot if we have valid data
-                if di_minus_values and any(v != 0 for v in di_minus_values):
-                    plt.plot(numeric_x_values, di_minus_values, color="red+", label="DI-")
+        
+        # Plot DI+
+        if di_plus_column:
+            di_plus_values = chunk[di_plus_column].fillna(0).tolist()
+            # Only plot if we have valid data
+            if di_plus_values and any(v != 0 for v in di_plus_values):
+                plt.plot(numeric_x_values, di_plus_values, color="green+", label="DI+")
+        
+        # Plot DI-
+        if di_minus_column:
+            di_minus_values = chunk[di_minus_column].fillna(0).tolist()
+            # Only plot if we have valid data
+            if di_minus_values and any(v != 0 for v in di_minus_values):
+                plt.plot(numeric_x_values, di_minus_values, color="red+", label="DI-")
+        
+        # Fallback to Diff column (DI+ - DI- difference)
+        if not any([adx_column, di_plus_column, di_minus_column]) and 'Diff' in chunk.columns:
+            diff_values = chunk['Diff'].fillna(0).tolist()
+            if diff_values and any(v != 0 for v in diff_values):
+                plt.plot(numeric_x_values, diff_values, color="blue+", label="DI+ - DI-")
         
     except Exception as e:
         logger.print_error(f"Error adding ADX indicator: {e}")
