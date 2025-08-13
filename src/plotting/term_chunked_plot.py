@@ -1988,8 +1988,17 @@ def _add_fear_greed_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) ->
         # Ensure x_values are numeric for plotext compatibility
         numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
         
-        if 'Fear_Greed' in chunk.columns:
-            fg_values = chunk['Fear_Greed'].fillna(50).tolist()
+        # Check for both possible column names
+        fg_column = None
+        if 'FearGreed' in chunk.columns:
+            fg_column = 'FearGreed'
+        elif 'Fear_Greed' in chunk.columns:
+            fg_column = 'Fear_Greed'
+        elif 'Diff' in chunk.columns:
+            fg_column = 'Diff'  # Fear & Greed values are stored in Diff column
+        
+        if fg_column:
+            fg_values = chunk[fg_column].fillna(50).tolist()
             # Only plot if we have valid data
             if fg_values and any(v != 50 for v in fg_values):
                 plt.plot(numeric_x_values, fg_values, color="orange+", label="Fear & Greed")
