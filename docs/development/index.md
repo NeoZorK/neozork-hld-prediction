@@ -53,7 +53,10 @@ Contribution guidelines and workflow.
 Code refactoring guidelines and recent improvements.
 
 ### [Dead Code Analysis](dead-code-analysis.md)
-Tools and workflows for finding and removing dead code and unused libraries.
+Basic tools and workflows for finding and removing dead code and unused libraries.
+
+### [Advanced Dead Code Analysis](advanced-dead-code-analysis.md)
+AST-based accurate analysis with duplicate code detection and interactive menu.
 
 ### [Dead Code Quick Start](DEAD_CODE_QUICK_START.md)
 Quick start guide for dead code analysis.
