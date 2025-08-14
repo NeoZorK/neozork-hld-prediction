@@ -2,170 +2,114 @@
 
 ## Overview
 
-SCHR Direction is a premium predictive indicator that shows the fastest direction of High and Low prices based on Volume Price Ratio (VPR) analysis. This indicator is based on the MQL5 SCHR_DIR.mq5 indicator by Shcherbyna Rostyslav and has been optimized with fixed parameters for optimal performance and MT5 compatibility.
-
-## Description
-
-SCHR Direction calculates direction lines (High and Low) using a sophisticated algorithm that combines:
-- Volume Price Ratio (VPR) analysis
-- Price difference calculations
-- Fixed growth percentage (1%)
-- Both lines always displayed
-
-The indicator predicts price direction by analyzing the relationship between volume and price ranges, providing early signals for potential market movements. All parameters are fixed for optimal performance and consistency with the original MQL5 implementation.
+SCHR Direction is a predictive indicator that shows the fastest direction of High and Low lines based on Volume Price Ratio (VPR) analysis. It provides two separate lines (High and Low) that help identify potential trading opportunities.
 
 ## Key Features
 
-- **Fast Direction Prediction**: Provides quick directional signals based on VPR analysis
-- **Volume-Based Analysis**: Uses volume data to enhance prediction accuracy
-- **Fixed Parameters**: Optimized settings for consistent performance
-- **MT5 Compatibility**: Matches the original MQL5 indicator behavior
-- **Both Lines Always Shown**: Comprehensive analysis with both High and Low direction lines
+- **Dual Line Display**: Shows two separate lines (High and Low) for better analysis
+- **Volume-Based**: Uses Volume Price Ratio (VPR) for calculations
+- **Fixed Parameters**: Optimized parameters for consistent performance
+- **Trading Signals**: Generates BUY/SELL signals based on price position relative to lines
 
-## Mathematical Foundation
+## Trading Rules
 
-### Core Formulas
+### Signal Generation
+- **BUY Signal**: When open price is higher than both High and Low lines
+- **SELL Signal**: When open price is lower than both High and Low lines
+- **NO TRADE**: When open price is between the High and Low lines
 
-1. **VPR Constant**: `C_VPR = 0.5 * log(π)` ≈ 0.57236
-2. **Price Difference**: `DIFF = (High - Low) / Point`
-3. **Volume Price Ratio**: `VPR = Volume / DIFF` (when valid)
-4. **Direction Lines**:
-   - `Dir_High = Price + ((DIFF * C_VPR * Point) - (C_VPR³ * VPR * Point)) * Grow_Factor`
-   - `Dir_Low = Price - ((DIFF * C_VPR * Point) + (C_VPR³ * VPR * Point)) * Grow_Factor`
+### Line Behavior
+- **High Line (Blue)**: Represents resistance levels, colored as SELL signal
+- **Low Line (Gold)**: Represents support levels, colored as BUY signal
+- **Strong Exceed Mode**: Lines only update when they exceed both previous values and current price levels
 
-### Fixed Parameters
+## Fixed Parameters
 
-- **Grow Factor**: `Grow_Factor = 1 / 100` (1% in internal mode)
-- **Price Type**: Always uses Open price
-- **Data Source**: Always uses previous bar data
-- **Exceed Mode**: Always uses strong exceed mode
-- **Lines Display**: Always shows both High and Low lines
+The indicator uses the following fixed parameters for optimal performance:
 
-## Parameters
+- **Grow Percent**: 95% (internal mode)
+- **Shift External/Internal**: False (internal mode)
+- **Fixed Price**: True (always uses Open price)
+- **Fake Line**: False (uses previous bar data)
+- **Strong Exceed**: True (strong exceed mode)
+- **Lines Count**: BothLines (always shows both lines)
 
-**No Parameters Required**
+## Calculation Method
 
-All parameters are fixed for optimal performance:
-- `grow_percent` = 1 (always 1%)
-- `shift_external_internal` = false (always internal mode)
-- `fixed_price` = true (always use Open price)
-- `fake_line` = false (always use previous bar data)
-- `strong_exceed` = true (always strong exceed mode)
-- `lines_count` = both lines (always show both lines)
+### VPR (Volume Price Ratio) Calculation
+```
+DIFF = (High - Low) / Point
+VPR = Volume / DIFF (when DIFF != 0 and Volume != DIFF)
+```
+
+### Direction Lines Calculation
+```
+C_VPR = 0.5 * log(π)
+Grow_Factor = 95 / 100 (internal mode)
+
+Dir_High = Open + ((DIFF * C_VPR * Point) - (C_VPR³ * VPR * Point)) * Grow_Factor
+Dir_Low = Open - ((DIFF * C_VPR * Point) + (C_VPR³ * VPR * Point)) * Grow_Factor
+```
+
+### Line Logic (Strong Exceed Mode)
+- **High Line**: Updates only when new value > previous high AND new value > current high
+- **Low Line**: Updates only when new value < previous low AND new value < current low
 
 ## Usage
 
-### Basic Usage
-
+### Command Line
 ```bash
-# No parameters required - all values are fixed
 uv run run_analysis.py show csv gbp -d fastest --rule SCHR_DIR
 ```
 
-### Command Examples
-
-```bash
-# Standard usage
-uv run run_analysis.py show csv gbp -d fastest --rule SCHR_DIR
-
-# With other indicators
-uv run run_analysis.py show csv gbp -d fastest --rule SCHR_DIR --rule RSI
-```
+### Parameters
+No parameters required - all values are fixed for optimal performance.
 
 ## Output Columns
 
-The indicator generates the following output columns:
+- **PPrice1**: High line values (resistance)
+- **PPrice2**: Low line values (support)
+- **PColor1**: High line color (2 = SELL)
+- **PColor2**: Low line color (1 = BUY)
+- **Direction**: Trading signals (0 = NOTRADE, 1 = BUY, 2 = SELL)
+- **SCHR_DIR_Diff**: Price difference in points
+- **SCHR_DIR_VPR**: Volume Price Ratio
+- **SCHR_DIR_Price_Type**: Always "Open"
+- **SCHR_DIR_Grow_Percent**: Always 95.0
+- **SCHR_DIR_Strong_Exceed**: Always True
+- **SCHR_DIR_Shift_External_Internal**: Always False
 
-| Column | Description |
-|--------|-------------|
-| `PPrice1` | Predicted Low (Support level) |
-| `PPrice2` | Predicted High (Resistance level) |
-| `Direction` | Trading signals (BUY/SELL/NOTRADE) |
-| `SCHR_DIR_High` | High direction line values |
-| `SCHR_DIR_Low` | Low direction line values |
-| `SCHR_DIR_Diff` | Price difference in points |
-| `SCHR_DIR_VPR` | Volume Price Ratio values |
-| `SCHR_DIR_Price_Type` | Price type used (always "Open") |
-| `SCHR_DIR_Grow_Percent` | Applied growth percentage (always 1) |
-| `SCHR_DIR_Strong_Exceed` | Strong exceed mode flag (always true) |
+## Visual Display
 
-## Trading Signals
-
-### Signal Generation Logic
-
-**Strong Exceed Mode (Fixed)**:
-- High Line: `Dir_High > Prev_High AND Dir_High > Current_High`
-- Low Line: `Dir_Low < Prev_Low AND Dir_Low < Current_Low`
-
-### Signal Interpretation
-
-- **BUY Signal**: Generated when Low direction line exceeds previous low
-- **SELL Signal**: Generated when High direction line exceeds previous high
-- **NOTRADE**: No clear directional signal
+The indicator displays as a dual chart with:
+- **Primary Chart**: OHLC candlesticks
+- **Secondary Chart**: Two separate lines
+  - Blue line (High line) - resistance levels
+  - Gold line (Low line) - support levels
+  - Buy/Sell markers at signal points
 
 ## Advantages
 
-✅ **Optimized Performance**: Fixed parameters ensure consistent results
-✅ **MT5 Compatibility**: Matches original MQL5 indicator behavior
-✅ **Fast Direction Prediction**: Provides early directional signals
-✅ **Volume Integration**: Uses volume data for enhanced accuracy
-✅ **Both Lines Always Shown**: Comprehensive analysis
-✅ **No Parameter Tuning**: Ready to use without configuration
+- **Fast Direction Prediction**: Quickly identifies potential price direction
+- **Volume-Based Analysis**: Incorporates volume data for better accuracy
+- **Clear Visual Signals**: Dual line display makes it easy to identify opportunities
+- **Consistent Performance**: Fixed parameters ensure reliable results
 
 ## Limitations
 
-❌ **No Parameter Customization**: Fixed settings cannot be adjusted
-❌ **Volume Dependency**: Requires reliable volume data
-❌ **Market Conditions**: Performance may vary in different market conditions
-
-## Best Practices
-
-### Usage Guidelines
-
-1. **Volume Data**: Ensure sufficient volume data is available
-2. **Timeframes**: Suitable for various timeframes (M1 to MN1)
-3. **Market Conditions**: Works best in trending conditions
-4. **Combination**: Can be effectively combined with other indicators
-
-### Risk Management
-
-- Always use stop-losses based on the predicted levels
-- Consider combining with other indicators for confirmation
-- Monitor volume conditions for signal reliability
-- Test on historical data before live trading
-
-## Integration with Other Indicators
-
-SCHR_DIR can be effectively combined with:
-
-- **Support/Resistance Indicators**: For level confirmation
-- **Volume Indicators**: For volume trend analysis
-- **Trend Indicators**: For trend direction confirmation
-- **Momentum Indicators**: For momentum confirmation
+- **Fixed Parameters**: No customization options
+- **Volume Dependency**: Requires volume data for calculations
+- **Signal Frequency**: May generate fewer signals due to strict criteria
 
 ## Technical Notes
 
-### Fixed Parameter Benefits
+- Based on MQL5 SCHR_DIR.mq5 indicator by Shcherbyna Rostyslav
+- Uses previous bar data for calculations (fake_line = False)
+- Implements strong exceed mode for more reliable signals
+- Optimized for MT5 compatibility and performance
 
-1. **Consistency**: Same results across different sessions
-2. **Performance**: Optimized calculations without parameter overhead
-3. **Compatibility**: Matches original MQL5 implementation
-4. **Simplicity**: No parameter tuning required
+## Related Indicators
 
-### Calculation Optimization
-
-- Uses Open price for consistent base calculations
-- Previous bar data for stable signal generation
-- 1% growth factor for optimal sensitivity
-- Strong exceed mode for reliable signals
-
-## Migration from Previous Version
-
-If you were using SCHR_DIR with custom parameters:
-
-1. **Remove Parameters**: No longer specify parameters in the command
-2. **Update Commands**: Change from `schr_dir:95,false,true,false,true,2` to `schr_dir`
-3. **Verify Results**: Check that the new fixed parameters provide desired performance
-4. **Test Integration**: Ensure compatibility with your existing trading strategy
-
-The new fixed parameters are optimized for the most common use cases and provide consistent performance across different market conditions.
+- **Support/Resistance**: Similar concept but different calculation method
+- **Bollinger Bands**: Also uses dual lines for analysis
+- **Donchian Channels**: Similar high/low line concept

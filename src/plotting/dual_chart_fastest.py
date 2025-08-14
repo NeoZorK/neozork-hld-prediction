@@ -1289,6 +1289,83 @@ def add_feargreed_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     )
 
 
+def add_schr_dir_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add SCHR Direction indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with SCHR Direction data
+    """
+    if 'pprice1' in display_df.columns and 'pprice2' in display_df.columns:
+        # Add High line (PPrice1)
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['pprice1'],
+                mode='lines',
+                name='SCHR High Line',
+                line=dict(color='dodgerblue', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+        # Add Low line (PPrice2)
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['pprice2'],
+                mode='lines',
+                name='SCHR Low Line',
+                line=dict(color='gold', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+        # Add buy/sell signals if available
+        if 'direction' in display_df.columns:
+            buy_signals = display_df[display_df['direction'] == 1]
+            sell_signals = display_df[display_df['direction'] == 2]
+            
+            if not buy_signals.empty:
+                fig.add_trace(
+                    go.Scatter(
+                        x=buy_signals.index,
+                        y=buy_signals['pprice2'] * 0.995,  # Position below the low line
+                        mode='markers',
+                        name='Buy Signal',
+                        marker=dict(
+                            symbol='triangle-up',
+                            size=8,
+                            color='green',
+                            line=dict(color='darkgreen', width=1)
+                        ),
+                        showlegend=False
+                    ),
+                    row=2, col=1
+                )
+            
+            if not sell_signals.empty:
+                fig.add_trace(
+                    go.Scatter(
+                        x=sell_signals.index,
+                        y=sell_signals['pprice1'] * 1.005,  # Position above the high line
+                        mode='markers',
+                        name='Sell Signal',
+                        marker=dict(
+                            symbol='triangle-down',
+                            size=8,
+                            color='red',
+                            line=dict(color='darkred', width=1)
+                        ),
+                        showlegend=False
+                    ),
+                    row=2, col=1
+                )
+
+
 def add_supertrend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     """
     Add SuperTrend indicator to the secondary subplot.
@@ -1897,6 +1974,9 @@ def plot_dual_chart_fastest(
     
     elif indicator_name in ['feargreed', 'fg']:
         add_feargreed_indicator(fig, display_df)
+    
+    elif indicator_name == 'schr_dir':
+        add_schr_dir_indicator(fig, display_df)
     
     elif indicator_name == 'supertrend':
         add_supertrend_indicator(fig, display_df)

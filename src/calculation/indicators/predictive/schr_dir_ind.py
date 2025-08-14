@@ -54,13 +54,10 @@ def calculate_vpr(high_prices: pd.Series, low_prices: pd.Series,
 
 
 def calculate_direction_lines(price_series: pd.Series, diff_series: pd.Series, 
-                             vpr_series: pd.Series, point: float, c_vpr: float) -> tuple[pd.Series, pd.Series]:
+                             vpr_series: pd.Series, point: float, c_vpr: float,
+                             grow_percent: float = 95.0, shift_external_internal: bool = False) -> tuple[pd.Series, pd.Series]:
     """
-    Calculate direction lines (High and Low) with fixed parameters.
-    
-    Fixed parameters:
-    - grow_percent = 1 (always 1%)
-    - shift_external_internal = False (always internal mode)
+    Calculate direction lines (High and Low) according to MQL5 algorithm.
     
     Args:
         price_series (pd.Series): Base price series (Open price)
@@ -68,52 +65,53 @@ def calculate_direction_lines(price_series: pd.Series, diff_series: pd.Series,
         vpr_series (pd.Series): VPR series
         point (float): Instrument point size
         c_vpr (float): VPR constant (0.5 * log(pi))
+        grow_percent (float): Growth percentage (default 95%)
+        shift_external_internal (bool): External/Internal mode (default False)
     
     Returns:
         tuple: (dir_high_series, dir_low_series)
     """
-    # Fixed grow factor: grow_percent = 1, internal mode = False
-    # grow_factor = 1 / 100  # 1% in internal mode (grow_percent / 100)
+    # Calculate grow factor based on MQL5 logic
+    if not shift_external_internal:
+        grow_factor = grow_percent / 100.0  # Internal mode
+    else:
+        grow_factor = (100.0 + grow_percent) / 100.0  # External mode
     
-    # For better visibility and matching the screenshot, use larger grow factor
-    grow_factor = 1.0  # 100% for better visibility
-    
-    # Calculate direction lines according to MQL5 vpr_calculation function:
-    # Dir High = price + ((diff * C_VPR * point) - (C_VPR^3 * vpr * point)) * grow_factor
-    # Dir Low = price - ((diff * C_VPR * point) + (C_VPR^3 * vpr * point)) * grow_factor
-    
-    # Calculate components
+    # Calculate components according to MQL5 formulas
     diff_component = diff_series * c_vpr * point
     vpr_component = np.power(c_vpr, 3) * vpr_series * point
     
-    # Calculate direction lines using MQL5 vpr_calculation formulas
+    # Calculate direction lines using exact MQL5 formulas
+    # Dir High = price + ((diff * C_VPR * point) - (C_VPR^3 * vpr * point)) * grow_factor
+    # Dir Low = price - ((diff * C_VPR * point) + (C_VPR^3 * vpr * point)) * grow_factor
     dir_high = price_series + (diff_component - vpr_component) * grow_factor
     dir_low = price_series - (diff_component + vpr_component) * grow_factor
     
     return dir_high, dir_low
 
 
-def calculate_schr_dir_signals(dir_high: pd.Series, dir_low: pd.Series, 
-                              high_prices: pd.Series, low_prices: pd.Series) -> pd.Series:
+def calculate_schr_dir_lines(dir_high: pd.Series, dir_low: pd.Series, 
+                            high_prices: pd.Series, low_prices: pd.Series,
+                            strong_exceed: bool = True) -> tuple[pd.Series, pd.Series, pd.Series, pd.Series]:
     """
-    Calculate trading signals based on direction lines with fixed parameters.
-    
-    Fixed parameters:
-    - strong_exceed = True (always strong exceed mode)
-    - lines_count = BOTH_LINES (always show both lines)
+    Calculate SCHR Direction lines with proper High and Low line logic.
     
     Args:
-        dir_high (pd.Series): Direction high values
-        dir_low (pd.Series): Direction low values
+        dir_high (pd.Series): Calculated direction high values
+        dir_low (pd.Series): Calculated direction low values
         high_prices (pd.Series): Actual high prices
         low_prices (pd.Series): Actual low prices
+        strong_exceed (bool): Strong exceed mode (default True)
     
     Returns:
-        pd.Series: Trading signals (BUY, SELL, NOTRADE)
+        tuple: (high_line, high_color, low_line, low_color)
     """
-    signals = pd.Series(NOTRADE, index=dir_high.index)
+    high_line = pd.Series(index=dir_high.index, dtype=float)
+    high_color = pd.Series(index=dir_high.index, dtype=int)
+    low_line = pd.Series(index=dir_low.index, dtype=float)
+    low_color = pd.Series(index=dir_low.index, dtype=int)
     
-    # Initialize previous values with first valid values
+    # Initialize previous values
     prev_high = None
     prev_low = None
     
@@ -125,27 +123,100 @@ def calculate_schr_dir_signals(dir_high: pd.Series, dir_low: pd.Series,
         
         # Skip if values are NaN
         if pd.isna(current_dir_high) or pd.isna(current_dir_low):
+            high_line.iloc[i] = np.nan
+            high_color.iloc[i] = NOTRADE
+            low_line.iloc[i] = np.nan
+            low_color.iloc[i] = NOTRADE
             continue
             
         # Initialize previous values on first valid iteration
         if prev_high is None:
             prev_high = current_dir_high
             prev_low = current_dir_low
+            high_line.iloc[i] = current_dir_high
+            high_color.iloc[i] = SELL
+            low_line.iloc[i] = current_dir_low
+            low_color.iloc[i] = BUY
             continue
         
-        # High line logic (strong exceed mode) - according to MQL5
-        if current_dir_high > prev_high and current_dir_high > current_high:
-            prev_high = current_dir_high
-            signals.iloc[i] = SELL
+        # High line logic according to MQL5
+        if strong_exceed:
+            # Strong exceed mode: must exceed both previous high and current high
+            if current_dir_high > prev_high and current_dir_high > current_high:
+                prev_high = current_dir_high
+                high_line.iloc[i] = current_dir_high
+                high_color.iloc[i] = SELL
+            else:
+                high_line.iloc[i] = prev_high
+                high_color.iloc[i] = SELL
         else:
-            signals.iloc[i] = SELL  # Always SELL for high line
+            # Weak exceed mode: only need to exceed previous high
+            if current_dir_high > prev_high:
+                prev_high = current_dir_high
+                high_line.iloc[i] = current_dir_high
+                high_color.iloc[i] = SELL
+            else:
+                high_line.iloc[i] = prev_high
+                high_color.iloc[i] = SELL
         
-        # Low line logic (strong exceed mode) - according to MQL5
-        if current_dir_low < prev_low and current_dir_low < current_low:
-            prev_low = current_dir_low
-            signals.iloc[i] = BUY
+        # Low line logic according to MQL5
+        if strong_exceed:
+            # Strong exceed mode: must be below both previous low and current low
+            if current_dir_low < prev_low and current_dir_low < current_low:
+                prev_low = current_dir_low
+                low_line.iloc[i] = current_dir_low
+                low_color.iloc[i] = BUY
+            else:
+                low_line.iloc[i] = prev_low
+                low_color.iloc[i] = BUY
         else:
-            signals.iloc[i] = BUY  # Always BUY for low line
+            # Weak exceed mode: only need to be below previous low
+            if current_dir_low < prev_low:
+                prev_low = current_dir_low
+                low_line.iloc[i] = current_dir_low
+                low_color.iloc[i] = BUY
+            else:
+                low_line.iloc[i] = prev_low
+                low_color.iloc[i] = BUY
+    
+    return high_line, high_color, low_line, low_color
+
+
+def calculate_schr_dir_signals(high_line: pd.Series, low_line: pd.Series, 
+                              open_prices: pd.Series) -> pd.Series:
+    """
+    Calculate trading signals based on SCHR Direction lines.
+    
+    Trading Rule:
+    - BUY if open price higher than both (high and low) lines
+    - SELL if open price lower than both (high and low) lines
+    - NOTRADE otherwise
+    
+    Args:
+        high_line (pd.Series): High line values
+        low_line (pd.Series): Low line values
+        open_prices (pd.Series): Open prices
+    
+    Returns:
+        pd.Series: Trading signals (BUY, SELL, NOTRADE)
+    """
+    signals = pd.Series(NOTRADE, index=high_line.index)
+    
+    for i in range(len(high_line)):
+        if pd.isna(high_line.iloc[i]) or pd.isna(low_line.iloc[i]):
+            continue
+            
+        open_price = open_prices.iloc[i]
+        high_val = high_line.iloc[i]
+        low_val = low_line.iloc[i]
+        
+        # BUY signal: open price higher than both lines
+        if open_price > high_val and open_price > low_val:
+            signals.iloc[i] = BUY
+        # SELL signal: open price lower than both lines
+        elif open_price < high_val and open_price < low_val:
+            signals.iloc[i] = SELL
+        # NOTRADE: open price between the lines
     
     return signals
 
@@ -155,13 +226,13 @@ def apply_rule_schr_dir(df: pd.DataFrame, point: float,
     """
     Applies SCHR Direction rule logic with fixed parameters for optimal performance.
     
-    Fixed parameters:
-    - grow_percent = 1 (always 1%)
-    - shift_external_internal = False (always internal mode)
+    Fixed parameters (matching MQL5 defaults):
+    - grow_percent = 95 (95%)
+    - shift_external_internal = False (internal mode)
     - fixed_price = True (always use Open price)
     - fake_line = False (always use previous bar data)
     - strong_exceed = True (always strong exceed mode)
-    - lines_count = BOTH_LINES (always show both lines)
+    - lines_count = BothLines (always show both lines)
     
     Args:
         df (pd.DataFrame): Input DataFrame with OHLCV data
@@ -175,7 +246,7 @@ def apply_rule_schr_dir(df: pd.DataFrame, point: float,
     base_price_series = df['Open']
     price_name = "Open"
     
-    # Fixed parameters - always use previous bar data
+    # Fixed parameters - always use previous bar data (fake_line = False)
     high_prices = df['High'].shift(1)
     low_prices = df['Low'].shift(1)
     volume_prices = df['Volume'].shift(1)
@@ -188,71 +259,34 @@ def apply_rule_schr_dir(df: pd.DataFrame, point: float,
     
     # Calculate direction lines with fixed parameters
     dir_high, dir_low = calculate_direction_lines(
-        base_price_series, diff_series, vpr_series, point, c_vpr
+        base_price_series, diff_series, vpr_series, point, c_vpr,
+        grow_percent=95.0, shift_external_internal=False
     )
     
-    # Calculate trading signals with fixed parameters
-    signals = calculate_schr_dir_signals(
-        dir_high, dir_low, high_prices, low_prices
+    # Calculate SCHR Direction lines with proper High and Low logic
+    high_line, high_color, low_line, low_color = calculate_schr_dir_lines(
+        dir_high, dir_low, high_prices, low_prices, strong_exceed=True
     )
+    
+    # Calculate trading signals
+    signals = calculate_schr_dir_signals(high_line, low_line, base_price_series)
     
     # Create a copy to avoid SettingWithCopyWarning
     result_df = df.copy()
     
-    # Create single SCHR Direction line that behaves like MT5
-    # The line should be one line that sometimes splits into two
-    schr_line = pd.Series(index=df.index, dtype=float)
-    schr_color = pd.Series(index=df.index, dtype=int)
-    
-    # Initialize previous values
-    prev_high = None
-    prev_low = None
-    
-    for i in range(len(df)):
-        current_dir_high = dir_high.iloc[i]
-        current_dir_low = dir_low.iloc[i]
-        current_high = high_prices.iloc[i]
-        current_low = low_prices.iloc[i]
-        
-        # Skip if values are NaN
-        if pd.isna(current_dir_high) or pd.isna(current_dir_low):
-            schr_line.iloc[i] = np.nan
-            schr_color.iloc[i] = NOTRADE
-            continue
-            
-        # Initialize previous values on first valid iteration
-        if prev_high is None:
-            prev_high = current_dir_high
-            prev_low = current_dir_low
-            schr_line.iloc[i] = current_dir_high  # Use high as default
-            schr_color.iloc[i] = SELL
-            continue
-        
-        # Determine if lines should be separate or combined
-        # If both lines are close to each other, use single line
-        line_diff = abs(current_dir_high - current_dir_low)
-        price_range = current_high - current_low
-        
-        if line_diff < price_range * 0.1:  # Lines are close - use single line
-            # Use the average of both lines
-            schr_line.iloc[i] = (current_dir_high + current_dir_low) / 2
-            schr_color.iloc[i] = SELL if current_dir_high > prev_high else BUY
-        else:  # Lines are separate - use high line (dominant)
-            schr_line.iloc[i] = current_dir_high
-            schr_color.iloc[i] = SELL
-    
-    # Set main output columns - single line behavior
-    result_df['PPrice1'] = schr_line  # Single SCHR line
-    result_df['PPrice2'] = schr_line  # Same line (for compatibility)
-    result_df['PColor1'] = schr_color  # Dynamic color
-    result_df['PColor2'] = schr_color  # Same color
+    # Set main output columns - two separate lines for dual chart
+    result_df['PPrice1'] = high_line  # High line
+    result_df['PPrice2'] = low_line   # Low line
+    result_df['PColor1'] = high_color  # High line color
+    result_df['PColor2'] = low_color   # Low line color
     result_df['Direction'] = signals
     
     # Additional SCHR_DIR specific columns with fixed values
     result_df['SCHR_DIR_Diff'] = diff_series
     result_df['SCHR_DIR_VPR'] = vpr_series
     result_df['SCHR_DIR_Price_Type'] = price_name
-    result_df['SCHR_DIR_Grow_Percent'] = 1  # Fixed value
+    result_df['SCHR_DIR_Grow_Percent'] = 95.0  # Fixed value
     result_df['SCHR_DIR_Strong_Exceed'] = True  # Fixed value
+    result_df['SCHR_DIR_Shift_External_Internal'] = False  # Fixed value
     
     return result_df

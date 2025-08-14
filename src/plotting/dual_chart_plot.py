@@ -65,7 +65,15 @@ def is_dual_chart_rule(rule: str) -> bool:
     Returns:
         bool: True if rule should use dual chart mode
     """
-    if not rule or ':' not in rule:
+    if not rule:
+        return False
+    
+    # Special case for SCHR_DIR (no parameters but should use dual chart)
+    if rule.lower().strip() == 'schr_dir':
+        return True
+    
+    # Check for parameterized indicators (containing ':')
+    if ':' not in rule:
         return False
     
     # Extract indicator name
@@ -156,6 +164,12 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
     Raises:
         ValueError: If indicator is not supported
     """
+    # Special case for SCHR_DIR (no parameters)
+    if rule.lower().strip() == 'schr_dir':
+        # SCHR_DIR is already calculated in the main DataFrame
+        # Just return the DataFrame as is
+        return df
+    
     if ':' not in rule:
         raise ValueError(f"Invalid rule format: {rule}")
     
@@ -789,6 +803,10 @@ def get_indicator_parameters(rule: str) -> Tuple[str, Dict[str, Any]]:
     Returns:
         Tuple[str, Dict[str, Any]]: (indicator_name, parameters_dict)
     """
+    # Special case for SCHR_DIR (no parameters)
+    if rule.lower().strip() == 'schr_dir':
+        return 'schr_dir', {}
+    
     if ':' not in rule:
         return rule.lower(), {}
     
@@ -826,7 +844,15 @@ def validate_indicator_rule(rule: str) -> bool:
     Returns:
         bool: True if rule is valid
     """
-    if not rule or ':' not in rule:
+    if not rule:
+        return False
+    
+    # Special case for SCHR_DIR (no parameters but valid)
+    if rule.lower().strip() == 'schr_dir':
+        return True
+    
+    # Check for parameterized indicators (containing ':')
+    if ':' not in rule:
         return False
     
     indicator_name = rule.split(':', 1)[0].lower().strip()

@@ -69,10 +69,10 @@ def plot_indicator_results_fastest(
         return None
 
     # Determine if we should show separate charts based on rule
-    # Rules that should show separate charts: OHLCV, AUTO, PHLD, PV, SR, SCHR_DIR
-    # All other rules (like RSI, MACD, etc.) should not show separate charts
+    # Rules that should show separate charts: OHLCV, AUTO, PHLD, PV, SR
+    # All other rules (like RSI, MACD, SCHR_DIR, etc.) should not show separate charts
     rule_str = rule.name.upper() if hasattr(rule, 'name') else str(rule).upper()
-    show_separate_charts = rule_str in ['OHLCV', 'AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS', 'SCHR_DIR']
+    show_separate_charts = rule_str in ['OHLCV', 'AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS']
 
     if show_separate_charts:
         # Create subplots with separate charts

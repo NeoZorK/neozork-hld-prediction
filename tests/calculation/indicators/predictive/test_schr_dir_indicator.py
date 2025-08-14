@@ -11,6 +11,7 @@ import numpy as np
 from src.calculation.indicators.predictive.schr_dir_ind import (
     calculate_vpr,
     calculate_direction_lines,
+    calculate_schr_dir_lines,
     calculate_schr_dir_signals,
     apply_rule_schr_dir
 )
@@ -79,14 +80,31 @@ class TestSCHRDirIndicator:
         assert not dir_high.isna().all()
         assert not dir_low.isna().all()
 
-    def test_calculate_schr_dir_signals_fixed_parameters(self):
-        """Test trading signals calculation with fixed parameters."""
+    def test_calculate_schr_dir_lines_fixed_parameters(self):
+        """Test SCHR Direction lines calculation with fixed parameters."""
         dir_high = pd.Series([1.1, 1.2, 1.3])
         dir_low = pd.Series([0.9, 1.0, 1.1])
         high_prices = pd.Series([1.0, 1.1, 1.2])
         low_prices = pd.Series([0.8, 0.9, 1.0])
         
-        signals = calculate_schr_dir_signals(dir_high, dir_low, high_prices, low_prices)
+        high_line, high_color, low_line, low_color = calculate_schr_dir_lines(
+            dir_high, dir_low, high_prices, low_prices, strong_exceed=True
+        )
+        
+        assert len(high_line) == 3
+        assert len(low_line) == 3
+        assert len(high_color) == 3
+        assert len(low_color) == 3
+        assert not high_line.isna().all()
+        assert not low_line.isna().all()
+
+    def test_calculate_schr_dir_signals_fixed_parameters(self):
+        """Test trading signals calculation with fixed parameters."""
+        high_line = pd.Series([1.1, 1.2, 1.3])
+        low_line = pd.Series([0.9, 1.0, 1.1])
+        open_prices = pd.Series([1.0, 1.1, 1.2])
+        
+        signals = calculate_schr_dir_signals(high_line, low_line, open_prices)
         
         assert len(signals) == 3
         assert not signals.isna().all()
@@ -99,14 +117,15 @@ class TestSCHRDirIndicator:
         required_columns = [
             'PPrice1', 'PPrice2', 'Direction', 'PColor1', 'PColor2',
             'SCHR_DIR_Diff', 'SCHR_DIR_VPR', 'SCHR_DIR_Price_Type',
-            'SCHR_DIR_Grow_Percent', 'SCHR_DIR_Strong_Exceed'
+            'SCHR_DIR_Grow_Percent', 'SCHR_DIR_Strong_Exceed', 'SCHR_DIR_Shift_External_Internal'
         ]
 
         for col in required_columns:
             assert col in result.columns
 
-        # Check that PPrice1 and PPrice2 are the same (single line behavior)
-        np.testing.assert_array_almost_equal(result['PPrice1'], result['PPrice2'])
+        # Check that PPrice1 and PPrice2 are different (dual line behavior)
+        # They should be different lines representing High and Low
+        assert not np.array_equal(result['PPrice1'], result['PPrice2'])
 
     def test_apply_rule_schr_dir_fixed_parameters(self):
         """Test that SCHR_DIR always uses fixed parameters regardless of input."""
@@ -126,16 +145,35 @@ class TestSCHRDirIndicator:
         np.testing.assert_array_almost_equal(
             result_open['PPrice1'], result_close['PPrice1']
         )
+        np.testing.assert_array_almost_equal(
+            result_open['PPrice2'], result_close['PPrice2']
+        )
 
-    def test_apply_rule_schr_dir_single_line_behavior(self):
-        """Test that SCHR_DIR shows single line behavior."""
+    def test_apply_rule_schr_dir_dual_line_behavior(self):
+        """Test that SCHR_DIR shows dual line behavior."""
         result = apply_rule_schr_dir(self.sample_data, self.point)
 
-        # PPrice1 and PPrice2 should be identical (single line)
-        np.testing.assert_array_almost_equal(result['PPrice1'], result['PPrice2'])
+        # PPrice1 and PPrice2 should be different (dual line behavior)
+        # High line (PPrice1) should generally be above Low line (PPrice2)
+        valid_mask = ~(result['PPrice1'].isna() | result['PPrice2'].isna())
+        if valid_mask.any():
+            high_line = result['PPrice1'][valid_mask]
+            low_line = result['PPrice2'][valid_mask]
+            # High line should generally be above or equal to low line
+            assert (high_line >= low_line).all()
         
-        # PColor1 and PColor2 should be identical
-        np.testing.assert_array_almost_equal(result['PColor1'], result['PColor2'])
+        # PColor1 and PColor2 should be different (different signal types)
+        # High line color should be SELL (2), Low line color should be BUY (1)
+        # But first few values might be NOTRADE (0) due to initialization
+        valid_color_mask = ~(result['PColor1'].isna() | result['PColor2'].isna())
+        if valid_color_mask.any():
+            pcolor1 = result['PColor1'][valid_color_mask]
+            pcolor2 = result['PColor2'][valid_color_mask]
+            # After initialization, colors should be SELL (2) and BUY (1)
+            # Skip first few values that might be NOTRADE (0)
+            if len(pcolor1) > 5:
+                assert (pcolor1[5:] == 2).all()  # SELL for high line
+                assert (pcolor2[5:] == 1).all()  # BUY for low line
 
     def test_apply_rule_schr_dir_previous_bar_data(self):
         """Test that SCHR_DIR uses previous bar data (fixed parameter)."""
@@ -232,4 +270,10 @@ class TestSCHRDirIndicator:
         )
         np.testing.assert_array_almost_equal(
             result1['PPrice2'], result2['PPrice2']
+        )
+        np.testing.assert_array_almost_equal(
+            result1['PColor1'], result2['PColor1']
+        )
+        np.testing.assert_array_almost_equal(
+            result1['PColor2'], result2['PColor2']
         )

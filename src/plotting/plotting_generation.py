@@ -753,8 +753,31 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     
     logger.print_info(f"Final plotting mode selected: '{draw_mode}'")
 
-    # Check for dual chart mode (parameterized indicators)
+    # Check for dual chart mode (parameterized indicators or special cases)
     original_rule_with_params = getattr(args, 'original_rule_with_params', None)
+    rule_to_check = original_rule_with_params or str(selected_rule.name if hasattr(selected_rule, 'name') else selected_rule)
+    
+    # Special case for SCHR_DIR (no parameters but should use dual chart)
+    if rule_to_check.lower().strip() == 'schr_dir':
+        try:
+            from ..plotting.dual_chart_plot import plot_dual_chart_results
+            logger.print_info(f"Dual chart mode detected for rule: {rule_to_check}")
+            # Use dual chart plotting for SCHR_DIR
+            plot_dual_chart_results(
+                result_df,
+                rule_to_check,
+                plot_title,
+                mode=draw_mode,
+                output_path=f"results/plots/dual_chart_{draw_mode}.html" if draw_mode in ['fastest', 'fast'] else None,
+                width=1800,
+                height=1100
+            )
+            return
+        except ImportError as e:
+            logger.print_warning(f"Could not import dual chart plotting: {e}. Falling back to standard plotting.")
+        except Exception as e:
+            logger.print_error(f"Error in dual chart plotting: {e}. Falling back to standard plotting.")
+    
     if original_rule_with_params and ':' in original_rule_with_params:
         try:
             from ..plotting.dual_chart_plot import is_dual_chart_rule, plot_dual_chart_results

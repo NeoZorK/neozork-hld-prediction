@@ -1,6 +1,7 @@
 [
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_basic",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_both_lines_always_shown",
+  "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_dual_line_behavior",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_empty_data",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_fake_line",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_fixed_parameters",
@@ -17,6 +18,7 @@
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_calculate_direction_lines",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_calculate_direction_lines_external_shift",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_calculate_direction_lines_fixed_parameters",
+  "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_calculate_schr_dir_lines_fixed_parameters",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_calculate_schr_dir_signals",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_calculate_schr_dir_signals_fixed_parameters",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_calculate_vpr_basic",
