@@ -39,9 +39,21 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     original_rule_with_params = rule_input_str  # Store original rule with parameters
     
     if ':' in rule_input_str:
-        indicator_name, indicator_params = parse_indicator_parameters(rule_input_str)
-        # Update the rule name to the parsed indicator name (always in uppercase)
-        rule_input_str = indicator_name.upper()
+        try:
+            indicator_name, indicator_params = parse_indicator_parameters(rule_input_str)
+            # Update the rule name to the parsed indicator name (always in uppercase)
+            rule_input_str = indicator_name.upper()
+        except SystemExit:
+            # parse_indicator_parameters already showed help and called sys.exit(1)
+            # Just re-raise to exit
+            raise
+        except Exception as e:
+            # Show help for unknown indicators
+            from ..cli.cli import show_indicator_help
+            indicator_name = rule_input_str.split(':', 1)[0].lower().strip()
+            show_indicator_help(indicator_name)
+            import sys
+            sys.exit(1)
     
     # Store original rule with parameters for display purposes
     setattr(args, 'original_rule_with_params', original_rule_with_params)
@@ -70,6 +82,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         # Predictive indicators
         'HMA': 'HMA',
         'TSF': 'TSForecast',
+        'SCHR_DIR': 'SCHR_DIR',
         # Probability indicators
         'MC': 'MonteCarlo',
         'MONTE': 'MonteCarlo',

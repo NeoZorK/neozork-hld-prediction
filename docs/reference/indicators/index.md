@@ -33,6 +33,7 @@ This page provides a categorized list of all technical indicators available in t
 ## Predictive Indicators
 - [HMA Indicator](predictive/hma-indicator.md)
 - [Time Series Forecast](predictive/tsforecast-indicator.md)
+- [SCHR Direction](predictive/schr-direction.md)
 
 ## Probability Indicators
 - [Monte Carlo](probability/montecarlo-indicator.md)

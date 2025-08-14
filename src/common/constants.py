@@ -42,21 +42,22 @@ class TradingRule(Enum):
     # Predictive indicators
     HMA = 18  # Hull Moving Average
     TSForecast = 19  # Time Series Forecast
+    SCHR_DIR = 20  # SCHR Direction (Shcherbyna Direction)
     # Probability indicators
-    MonteCarlo = 20  # Monte Carlo Simulation
-    Kelly = 21  # Kelly Criterion
+    MonteCarlo = 21  # Monte Carlo Simulation
+    Kelly = 22  # Kelly Criterion
     # Sentiment indicators
-    FearGreed = 22  # Fear & Greed Index
-    COT = 23  # Commitment of Traders
-    PutCallRatio = 24  # Put/Call Ratio
+    FearGreed = 23  # Fear & Greed Index
+    COT = 24  # Commitment of Traders
+    PutCallRatio = 25  # Put/Call Ratio
     # Support/Resistance indicators
-    Donchain = 25  # Donchian Channel
-    FiboRetr = 26  # Fibonacci Retracement
+    Donchain = 26  # Donchian Channel
+    FiboRetr = 27  # Fibonacci Retracement
     # Volume indicators
-    OBV = 27  # On Balance Volume
+    OBV = 28  # On Balance Volume
     # Volatility indicators
-    StDev = 28  # Standard Deviation
+    StDev = 30  # Standard Deviation
     # Trend indicators
-    ADX = 29  # Average Directional Index
-    SAR = 30  # Parabolic SAR
-    SuperTrend = 31  # SuperTrend
+    ADX = 32  # Average Directional Index
+    SAR = 33  # Parabolic SAR
+    SuperTrend = 34  # SuperTrend

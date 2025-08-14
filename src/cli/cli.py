@@ -196,7 +196,8 @@ def parse_arguments():
         'PHLD': 'Predict_High_Low_Direction', 
         'PV': 'Pressure_Vector', 
         'SR': 'Support_Resistants',
-        'BB': 'Bollinger_Bands'
+        'BB': 'Bollinger_Bands',
+        'SCHR_DIR': 'SCHR_DIR'
     }
     rule_names = list(TradingRule.__members__.keys())
     all_rule_choices = rule_names + list(rule_aliases_map.keys()) + ['OHLCV', 'AUTO']  # Added 'OHLCV' and 'AUTO' as valid rules
@@ -204,7 +205,7 @@ def parse_arguments():
     indicator_group.add_argument(
         '--rule',
         default=default_rule_name,
-        help=f"Trading rule to apply. Default: {default_rule_name}. Aliases: PHLD=Predict_High_Low_Direction, PV=Pressure_Vector, SR=Support_Resistants, BB=Bollinger_Bands."
+        help=f"Trading rule to apply. Default: {default_rule_name}. Aliases: PHLD=Predict_High_Low_Direction, PV=Pressure_Vector, SR=Support_Resistants, BB=Bollinger_Bands, SCHR_DIR=SCHR_DIR."
     )
     
     # Strategy parameters
@@ -418,7 +419,7 @@ def parse_arguments():
         if ':' in args.rule:
             # Parameterized rule - validate the indicator name part
             indicator_name = args.rule.split(':', 1)[0].lower()
-            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend']
+            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_dir']
             if indicator_name not in valid_indicators:
                 # Provide detailed help for parameterized indicators
                 help_info = {
@@ -436,6 +437,7 @@ def parse_arguments():
                     'adx': 'ADX: adx:period (e.g., adx:14)',
                     'sar': 'SAR: sar:acceleration,maximum (e.g., sar:0.02,0.2)',
                     'supertrend': 'SuperTrend: supertrend:period,multiplier[,price_type] (e.g., supertrend:10,3.0)',
+                    'schr_dir': 'SCHR Direction: schr_dir:grow_percent,shift_external_internal,fixed_price,fake_line,strong_exceed,lines_count (e.g., schr_dir:95,false,true,false,true,2)',
                     'rsi': 'RSI: rsi:period,price_type (e.g., rsi:14,close)',
                     'macd': 'MACD: macd:fast,slow,signal,price_type (e.g., macd:12,26,9,close)',
                     'stoch': 'Stochastic: stoch:k_period,d_period,price_type (e.g., stoch:14,3,close)',
@@ -455,7 +457,7 @@ def parse_arguments():
             # Regular rule - validate against choices
             if args.rule not in all_rule_choices:
                 # Check if it might be a parameterized indicator
-                if args.rule.lower() in ['hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'rsi', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot']:
+                if args.rule.lower() in ['hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_dir', 'rsi', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot']:
                     parser.error(f"Invalid rule '{args.rule}'. This is a parameterized indicator. Use format: {args.rule}:parameters\n\nExamples:\n  {args.rule}:20,close\n  {args.rule}:14,3,close (for stochastic)\n  {args.rule}:1000,252 (for monte carlo)\n\nUse --help for more information about parameterized indicators.")
                 else:
                     parser.error(f"Invalid rule '{args.rule}'. Use one of {all_rule_choices}")
@@ -1473,6 +1475,62 @@ def parse_feargreed_parameters(params_str: str) -> tuple[str, dict]:
     }
 
 
+def parse_schr_dir_parameters(params_str: str) -> tuple[str, dict]:
+    """
+    Parse SCHR_DIR parameters from string.
+    
+    Args:
+        params_str (str): Parameters string like '95,false,true,false,true,2'
+    
+    Returns:
+        tuple: (indicator_name, parameters_dict)
+    """
+    params = [p.strip() for p in params_str.split(',')]
+    
+    # Default parameters
+    grow_percent = 95
+    shift_external_internal = False
+    fixed_price = True
+    fake_line = False
+    strong_exceed = True
+    lines_count = 2  # BOTH_LINES
+    
+    try:
+        if len(params) >= 1:
+            grow_percent = int(params[0])
+            if not 1 <= grow_percent <= 99:
+                raise ValueError("grow_percent must be between 1 and 99")
+        
+        if len(params) >= 2:
+            shift_external_internal = params[1].lower() == 'true'
+        
+        if len(params) >= 3:
+            fixed_price = params[2].lower() == 'true'
+        
+        if len(params) >= 4:
+            fake_line = params[3].lower() == 'true'
+        
+        if len(params) >= 5:
+            strong_exceed = params[4].lower() == 'true'
+        
+        if len(params) >= 6:
+            lines_count = int(params[5])
+            if lines_count not in [0, 1, 2]:
+                raise ValueError("lines_count must be 0 (UPPER_LINE), 1 (LOWER_LINE), or 2 (BOTH_LINES)")
+        
+    except ValueError as e:
+        raise ValueError(f"Invalid SCHR_DIR parameters: {e}")
+    
+    return 'schr_dir', {
+        'grow_percent': grow_percent,
+        'shift_external_internal': shift_external_internal,
+        'fixed_price': fixed_price,
+        'fake_line': fake_line,
+        'strong_exceed': strong_exceed,
+        'lines_count': lines_count
+    }
+
+
 def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
     """
     Parse indicator rule string in format 'indicator:param1,param2,param3,param4'.
@@ -1555,6 +1613,8 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_putcallratio_parameters(params_str)
         elif indicator_name == 'cot':
             return parse_cot_parameters(params_str)
+        elif indicator_name == 'schr_dir':
+            return parse_schr_dir_parameters(params_str)
         else:
             # Unknown indicator, show help and raise error
             raise ValueError(f"Unknown indicator: {indicator_name}")
