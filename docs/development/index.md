@@ -58,6 +58,9 @@ Basic tools and workflows for finding and removing dead code and unused librarie
 ### [Advanced Dead Code Analysis](advanced-dead-code-analysis.md)
 AST-based accurate analysis with duplicate code detection and interactive menu.
 
+### [Dependency Test Analysis](dependency-test-analysis.md)
+Runtime testing of dependencies by disabling them and running tests.
+
 ### [Dead Code Quick Start](DEAD_CODE_QUICK_START.md)
 Quick start guide for dead code analysis.
 

@@ -92,6 +92,17 @@ Find and remove unused code and libraries:
 # See [Advanced Dead Code Analysis](docs/development/advanced-dead-code-analysis.md) for details
 ```
 
+**Dependency Test Analyzer (Most Accurate):**
+```bash
+# Test dependencies by disabling them and running tests
+./scripts/analysis/dead-code/run_dependency_test.sh --dry-run
+
+# Interactive menu for dependency testing
+./scripts/analysis/dead-code/run_dependency_test.sh --interactive
+
+# See [Dependency Test Analysis](docs/development/dependency-test-analysis.md) for details
+```
+
 ## 🔧 UV Package Management
 
 This project uses **UV package manager** exclusively for dependency management, providing 10-100x faster performance than traditional pip.
