@@ -335,5 +335,18 @@
   "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_columns_presence",
   "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_overlays_function",
   "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_rule_detection",
-  "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_rule_parsing"
+  "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_rule_parsing",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_analyze_dead_code_advanced",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_analyze_dead_libraries_advanced",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_analyze_defined_items",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_analyze_duplicate_code",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_analyze_function_calls",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_calculate_similarity",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_find_python_files",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_initialization",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_is_optional_package",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_parse_requirements",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_print_results",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_run_analysis",
+  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAnalysisType::test_enum_values"
 ]
