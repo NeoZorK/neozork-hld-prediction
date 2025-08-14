@@ -66,6 +66,21 @@ uv pip install -r requirements.txt
 uv run run_analysis.py demo --rule PHLD
 ```
 
+## 🔧 Development Tools
+
+### Dead Code Analysis
+Find and remove unused code and libraries:
+```bash
+# Quick analysis
+./scripts/analysis/dead-code/run_dead_code_analysis.sh --all
+
+# Apply fixes safely
+./scripts/analysis/dead-code/run_dead_code_analysis.sh --all --fix --dry-run
+./scripts/analysis/dead-code/run_dead_code_analysis.sh --all --fix
+
+# See [Dead Code Analysis Guide](docs/development/dead-code-analysis.md) for details
+```
+
 ## 🔧 UV Package Management
 
 This project uses **UV package manager** exclusively for dependency management, providing 10-100x faster performance than traditional pip.

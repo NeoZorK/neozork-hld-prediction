@@ -52,6 +52,12 @@ Contribution guidelines and workflow.
 ### [Refactoring](REFACTORING_SUMMARY.md)
 Code refactoring guidelines and recent improvements.
 
+### [Dead Code Analysis](dead-code-analysis.md)
+Tools and workflows for finding and removing dead code and unused libraries.
+
+### [Dead Code Quick Start](DEAD_CODE_QUICK_START.md)
+Quick start guide for dead code analysis.
+
 ## 🔧 UV Package Management
 
 ### UV-Only Mode
