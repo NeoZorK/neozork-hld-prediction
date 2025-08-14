@@ -70,6 +70,8 @@ uv run run_analysis.py demo --rule PHLD
 
 ### Dead Code Analysis
 Find and remove unused code and libraries:
+
+**Basic Analyzer (Fast):**
 ```bash
 # Quick analysis
 ./scripts/analysis/dead-code/run_dead_code_analysis.sh --all
@@ -77,8 +79,17 @@ Find and remove unused code and libraries:
 # Apply fixes safely
 ./scripts/analysis/dead-code/run_dead_code_analysis.sh --all --fix --dry-run
 ./scripts/analysis/dead-code/run_dead_code_analysis.sh --all --fix
+```
 
-# See [Dead Code Analysis Guide](docs/development/dead-code-analysis.md) for details
+**Advanced Analyzer (Accurate):**
+```bash
+# Interactive menu (recommended)
+./scripts/analysis/dead-code/run_advanced_analysis.sh --interactive
+
+# Comprehensive analysis with AST-based detection
+./scripts/analysis/dead-code/run_advanced_analysis.sh --all --verbose
+
+# See [Advanced Dead Code Analysis](docs/development/advanced-dead-code-analysis.md) for details
 ```
 
 ## 🔧 UV Package Management
