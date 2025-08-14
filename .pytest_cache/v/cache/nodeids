@@ -9,6 +9,7 @@
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_large_dataset",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_open_price_always_used",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_output_consistency",
+  "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_parameter_validation",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_parameters",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_previous_bar_data",
   "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_signal_generation",

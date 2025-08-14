@@ -437,7 +437,7 @@ def parse_arguments():
                     'adx': 'ADX: adx:period (e.g., adx:14)',
                     'sar': 'SAR: sar:acceleration,maximum (e.g., sar:0.02,0.2)',
                     'supertrend': 'SuperTrend: supertrend:period,multiplier[,price_type] (e.g., supertrend:10,3.0)',
-                    'schr_dir': 'SCHR Direction: schr_dir (no parameters - all values fixed for optimal performance)',
+                    'schr_dir': 'SCHR Direction: schr_dir:grow_percent (e.g., schr_dir:50 for 50% growth)',
                     'rsi': 'RSI: rsi:period,price_type (e.g., rsi:14,close)',
                     'macd': 'MACD: macd:fast,slow,signal,price_type (e.g., macd:12,26,9,close)',
                     'stoch': 'Stochastic: stoch:k_period,d_period,price_type (e.g., stoch:14,3,close)',
@@ -1479,19 +1479,31 @@ def parse_schr_dir_parameters(params_str: str) -> tuple[str, dict]:
     """
     Parse SCHR_DIR parameters from string.
     
-    Note: SCHR_DIR no longer accepts parameters - all values are fixed for optimal performance.
-    
     Args:
-        params_str (str): Parameters string (ignored)
+        params_str (str): Parameters string (e.g., "95" or "1")
     
     Returns:
-        tuple: (indicator_name, empty_parameters_dict)
+        tuple: (indicator_name, parameters_dict)
     """
-    # SCHR_DIR no longer accepts parameters - all values are fixed
-    if params_str.strip():
-        logger.warning("SCHR_DIR no longer accepts parameters - all values are fixed for optimal performance")
+    if not params_str.strip():
+        # No parameters provided, use default
+        return 'schr_dir', {'grow_percent': 1.0}
     
-    return 'schr_dir', {}
+    try:
+        # Parse grow_percent parameter
+        grow_percent = float(params_str.strip())
+        
+        # Validate range
+        if not (1.0 <= grow_percent <= 95.0):
+            raise ValueError(f"grow_percent must be between 1.0 and 95.0, got: {grow_percent}")
+        
+        return 'schr_dir', {'grow_percent': grow_percent}
+        
+    except ValueError as e:
+        if "grow_percent must be between" in str(e):
+            raise e
+        else:
+            raise ValueError(f"Invalid SCHR_DIR parameter: {params_str}. Expected a number between 1 and 95.")
 
 
 def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:

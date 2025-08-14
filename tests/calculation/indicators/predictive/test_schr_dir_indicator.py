@@ -110,7 +110,7 @@ class TestSCHRDirIndicator:
         assert not signals.isna().all()
 
     def test_apply_rule_schr_dir_basic(self):
-        """Test basic SCHR_DIR rule application with fixed parameters."""
+        """Test basic SCHR_DIR rule application with default parameters."""
         result = apply_rule_schr_dir(self.sample_data, self.point)
 
         # Check that all required columns are present
@@ -126,28 +126,36 @@ class TestSCHRDirIndicator:
         # Check that PPrice1 and PPrice2 are different (dual line behavior)
         # They should be different lines representing High and Low
         assert not np.array_equal(result['PPrice1'], result['PPrice2'])
+        
+        # Check default grow_percent is 1.0
+        assert result['SCHR_DIR_Grow_Percent'].iloc[0] == 1.0
 
-    def test_apply_rule_schr_dir_fixed_parameters(self):
-        """Test that SCHR_DIR always uses fixed parameters regardless of input."""
-        # Test with different price types (should be ignored)
-        result_open = apply_rule_schr_dir(
-            self.sample_data, self.point, price_type=PriceType.OPEN
+    def test_apply_rule_schr_dir_parameters(self):
+        """Test that SCHR_DIR uses configurable grow_percent parameter."""
+        # Test with different grow_percent values
+        result_default = apply_rule_schr_dir(
+            self.sample_data, self.point, grow_percent=1.0
         )
-        result_close = apply_rule_schr_dir(
-            self.sample_data, self.point, price_type=PriceType.CLOSE
+        result_high = apply_rule_schr_dir(
+            self.sample_data, self.point, grow_percent=95.0
+        )
+        result_low = apply_rule_schr_dir(
+            self.sample_data, self.point, grow_percent=50.0
         )
 
-        # Both should use Open price (fixed parameter)
-        assert result_open['SCHR_DIR_Price_Type'].iloc[0] == "Open"
-        assert result_close['SCHR_DIR_Price_Type'].iloc[0] == "Open"
+        # All should use Open price (fixed parameter)
+        assert result_default['SCHR_DIR_Price_Type'].iloc[0] == "Open"
+        assert result_high['SCHR_DIR_Price_Type'].iloc[0] == "Open"
+        assert result_low['SCHR_DIR_Price_Type'].iloc[0] == "Open"
 
-        # Results should be identical since parameters are fixed
-        np.testing.assert_array_almost_equal(
-            result_open['PPrice1'], result_close['PPrice1']
-        )
-        np.testing.assert_array_almost_equal(
-            result_open['PPrice2'], result_close['PPrice2']
-        )
+        # Results should be different due to different grow_percent values
+        assert result_default['SCHR_DIR_Grow_Percent'].iloc[0] == 1.0
+        assert result_high['SCHR_DIR_Grow_Percent'].iloc[0] == 95.0
+        assert result_low['SCHR_DIR_Grow_Percent'].iloc[0] == 50.0
+
+        # Lines should be different due to different grow_percent values
+        assert not np.array_equal(result_default['PPrice1'], result_high['PPrice1'])
+        assert not np.array_equal(result_default['PPrice2'], result_high['PPrice2'])
 
     def test_apply_rule_schr_dir_dual_line_behavior(self):
         """Test that SCHR_DIR shows dual line behavior."""
@@ -259,12 +267,29 @@ class TestSCHRDirIndicator:
         valid_signals = [BUY, SELL, NOTRADE]
         assert all(signal in valid_signals for signal in result['Direction'].dropna())
 
-    def test_apply_rule_schr_dir_output_consistency(self):
-        """Test that SCHR_DIR output is consistent with fixed parameters."""
-        result1 = apply_rule_schr_dir(self.sample_data, self.point)
-        result2 = apply_rule_schr_dir(self.sample_data, self.point)
+    def test_apply_rule_schr_dir_parameter_validation(self):
+        """Test that SCHR_DIR validates grow_percent parameter correctly."""
+        # Test valid parameters
+        apply_rule_schr_dir(self.sample_data, self.point, grow_percent=1.0)
+        apply_rule_schr_dir(self.sample_data, self.point, grow_percent=50.0)
+        apply_rule_schr_dir(self.sample_data, self.point, grow_percent=95.0)
+        
+        # Test invalid parameters
+        with pytest.raises(ValueError, match="grow_percent must be between 1.0 and 95.0"):
+            apply_rule_schr_dir(self.sample_data, self.point, grow_percent=0.0)
+        
+        with pytest.raises(ValueError, match="grow_percent must be between 1.0 and 95.0"):
+            apply_rule_schr_dir(self.sample_data, self.point, grow_percent=96.0)
+        
+        with pytest.raises(ValueError, match="grow_percent must be between 1.0 and 95.0"):
+            apply_rule_schr_dir(self.sample_data, self.point, grow_percent=100.0)
 
-        # Results should be identical since parameters are fixed
+    def test_apply_rule_schr_dir_output_consistency(self):
+        """Test that SCHR_DIR output is consistent with same parameters."""
+        result1 = apply_rule_schr_dir(self.sample_data, self.point, grow_percent=50.0)
+        result2 = apply_rule_schr_dir(self.sample_data, self.point, grow_percent=50.0)
+
+        # Results should be identical since parameters are the same
         np.testing.assert_array_almost_equal(
             result1['PPrice1'], result2['PPrice1']
         )

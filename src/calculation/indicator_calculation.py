@@ -54,6 +54,10 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
             show_indicator_help(indicator_name)
             import sys
             sys.exit(1)
+    else:
+        # For indicators without parameters, set default values
+        if rule_input_str.upper() == 'SCHR_DIR':
+            indicator_params = {'grow_percent': 1.0}
     
     # Store original rule with parameters for display purposes
     setattr(args, 'original_rule_with_params', original_rule_with_params)

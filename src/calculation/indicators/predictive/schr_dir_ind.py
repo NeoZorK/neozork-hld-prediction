@@ -222,12 +222,13 @@ def calculate_schr_dir_signals(high_line: pd.Series, low_line: pd.Series,
 
 
 def apply_rule_schr_dir(df: pd.DataFrame, point: float,
-                        price_type: PriceType = PriceType.CLOSE) -> pd.DataFrame:
+                        price_type: PriceType = PriceType.CLOSE,
+                        grow_percent: float = 1.0) -> pd.DataFrame:
     """
-    Applies SCHR Direction rule logic with fixed parameters for optimal performance.
+    Applies SCHR Direction rule logic with configurable grow percentage.
     
-    Fixed parameters (matching MQL5 defaults):
-    - grow_percent = 95 (95%)
+    Parameters:
+    - grow_percent: Growth percentage for line calculation (1-95, default 1)
     - shift_external_internal = False (internal mode)
     - fixed_price = True (always use Open price)
     - fake_line = False (always use previous bar data)
@@ -238,10 +239,15 @@ def apply_rule_schr_dir(df: pd.DataFrame, point: float,
         df (pd.DataFrame): Input DataFrame with OHLCV data
         point (float): Instrument point size
         price_type (PriceType): Price type for calculation (ignored, always uses Open)
+        grow_percent (float): Growth percentage (1-95, default 1)
     
     Returns:
         pd.DataFrame: DataFrame with SCHR Direction calculations and signals
     """
+    # Validate grow_percent parameter
+    if not (1.0 <= grow_percent <= 95.0):
+        raise ValueError(f"grow_percent must be between 1.0 and 95.0, got: {grow_percent}")
+    
     # Fixed parameters - always use Open price
     base_price_series = df['Open']
     price_name = "Open"
@@ -257,10 +263,10 @@ def apply_rule_schr_dir(df: pd.DataFrame, point: float,
     # Calculate VPR and difference
     diff_series, vpr_series = calculate_vpr(high_prices, low_prices, volume_prices, point)
     
-    # Calculate direction lines with fixed parameters
+    # Calculate direction lines with configurable grow percentage
     dir_high, dir_low = calculate_direction_lines(
         base_price_series, diff_series, vpr_series, point, c_vpr,
-        grow_percent=95.0, shift_external_internal=False
+        grow_percent=grow_percent, shift_external_internal=False
     )
     
     # Calculate SCHR Direction lines with proper High and Low logic
@@ -281,11 +287,11 @@ def apply_rule_schr_dir(df: pd.DataFrame, point: float,
     result_df['PColor2'] = low_color   # Low line color
     result_df['Direction'] = signals
     
-    # Additional SCHR_DIR specific columns with fixed values
+    # Additional SCHR_DIR specific columns with configurable values
     result_df['SCHR_DIR_Diff'] = diff_series
     result_df['SCHR_DIR_VPR'] = vpr_series
     result_df['SCHR_DIR_Price_Type'] = price_name
-    result_df['SCHR_DIR_Grow_Percent'] = 95.0  # Fixed value
+    result_df['SCHR_DIR_Grow_Percent'] = grow_percent  # Configurable value
     result_df['SCHR_DIR_Strong_Exceed'] = True  # Fixed value
     result_df['SCHR_DIR_Shift_External_Internal'] = False  # Fixed value
     

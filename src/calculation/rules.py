@@ -289,8 +289,9 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         tsforecast_period = kwargs.get('tsforecast_period', 14)
         return rule_func(df, point=point, tsforecast_period=tsforecast_period, price_type=price_type_enum)
     elif selected_rule == TradingRule.SCHR_DIR:
-        # SCHR_DIR no longer accepts parameters - all values are fixed
-        return rule_func(df, point=point, price_type=price_type_enum)
+        # Extract SCHR_DIR-specific parameters
+        grow_percent = kwargs.get('grow_percent', 1.0)
+        return rule_func(df, point=point, price_type=price_type_enum, grow_percent=grow_percent)
     elif selected_rule == TradingRule.MonteCarlo:
         # Extract Monte Carlo-specific parameters
         simulations = kwargs.get('simulations', 1000)

@@ -23,11 +23,16 @@ SCHR Direction is a predictive indicator that shows the fastest direction of Hig
 - **Low Line (Gold)**: Represents support levels, colored as BUY signal
 - **Strong Exceed Mode**: Lines only update when they exceed both previous values and current price levels
 
-## Fixed Parameters
+## Parameters
 
-The indicator uses the following fixed parameters for optimal performance:
+### grow_percent (float)
+- **Range**: 1.0 - 95.0
+- **Default**: 1.0
+- **Description**: Growth percentage for line calculation
+  - Lower values (1-25): More aggressive signals, tighter line separation
+  - Higher values (50-95): More conservative signals, wider line separation
 
-- **Grow Percent**: 95% (internal mode)
+### Fixed Parameters
 - **Shift External/Internal**: False (internal mode)
 - **Fixed Price**: True (always uses Open price)
 - **Fake Line**: False (uses previous bar data)
@@ -59,11 +64,18 @@ Dir_Low = Open - ((DIFF * C_VPR * Point) + (C_VPR³ * VPR * Point)) * Grow_Facto
 
 ### Command Line
 ```bash
+# Default usage (1% growth)
 uv run run_analysis.py show csv gbp -d fastest --rule SCHR_DIR
+
+# With custom growth percentage
+uv run run_analysis.py show csv gbp -d fastest --rule schr_dir:50
+uv run run_analysis.py show csv gbp -d fastest --rule schr_dir:95
 ```
 
 ### Parameters
-No parameters required - all values are fixed for optimal performance.
+- **grow_percent** (float): Growth percentage for line calculation (1-95, default: 1)
+  - Lower values (1-25): More aggressive signals, tighter line separation
+  - Higher values (50-95): More conservative signals, wider line separation
 
 ## Output Columns
 

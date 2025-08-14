@@ -753,31 +753,30 @@ def get_indicator_help_data(indicator_name: str) -> dict:
         },
         'schr_dir': {
             'name': 'SCHR Direction (Shcherbyna Direction)',
-            'description': 'Premium directional indicator that uses Volume Price Ratio (VPR) to calculate direction lines and generate trading signals. Optimized with fixed parameters for optimal performance and MT5 compatibility.',
-            'format': 'schr_dir (no parameters)',
+            'description': 'Premium directional indicator that uses Volume Price Ratio (VPR) to calculate direction lines and generate trading signals. Shows two separate lines (High and Low) for dual chart analysis.',
+            'format': 'schr_dir:grow_percent',
             'parameters': [
-                ('Fixed Parameters', 'N/A', 'All parameters are fixed for optimal performance', 'N/A')
+                ('grow_percent', 'float', 'Growth percentage for line calculation (1-95)', '1.0')
             ],
             'examples': [
-                ('schr_dir', 'SCHR Direction with fixed optimal parameters'),
+                ('schr_dir', 'SCHR Direction with default 1% growth'),
+                ('schr_dir:50', 'SCHR Direction with 50% growth (moderate)'),
+                ('schr_dir:95', 'SCHR Direction with 95% growth (conservative)'),
             ],
             'tips': [
-                'Higher grow_percent (90-99) = more conservative signals',
-                'Lower grow_percent (1-50) = more aggressive signals',
-                'Use fixed_price=true for open price analysis',
-                'Use fixed_price=false for close price analysis',
-                'fake_line=true uses current data, false uses previous data',
-                'strong_exceed=true provides stronger signal confirmation',
-                'lines_count=2 shows both upper and lower direction lines',
-                'Combine with volume analysis for best results',
-                'Premium indicator - requires careful parameter tuning'
+                'Lower grow_percent (1-25) = more aggressive signals, tighter line separation',
+                'Higher grow_percent (50-95) = more conservative signals, wider line separation',
+                'Default 1% provides optimal balance for most markets',
+                'Use with volume analysis for best results',
+                'Dual chart display shows High (blue) and Low (gold) lines',
+                'BUY signal: when open price > both lines',
+                'SELL signal: when open price < both lines',
+                'Premium indicator based on MQL5 SCHR_DIR.mq5'
             ],
             'common_errors': [
-                'Invalid grow_percent: Must be between 1 and 99',
-                'Invalid boolean parameters: Use true/false or 1/0',
-                'Invalid lines_count: Must be 1, 2, or 3',
-                'SCHR_DIR no longer accepts parameters - all values are fixed for optimal performance',
-                'SCHR_DIR no longer accepts parameters - all values are fixed for optimal performance'
+                'Invalid grow_percent: Must be between 1.0 and 95.0',
+                'Missing parameter: Use schr_dir:value (e.g., schr_dir:50)',
+                'Invalid format: Expected number between 1 and 95'
             ]
         }
     }
