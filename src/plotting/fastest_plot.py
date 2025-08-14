@@ -69,10 +69,10 @@ def plot_indicator_results_fastest(
         return None
 
     # Determine if we should show separate charts based on rule
-    # Rules that should show separate charts: OHLCV, AUTO, PHLD, PV, SR
+    # Rules that should show separate charts: OHLCV, AUTO, PHLD, PV, SR, SCHR_DIR
     # All other rules (like RSI, MACD, etc.) should not show separate charts
     rule_str = rule.name.upper() if hasattr(rule, 'name') else str(rule).upper()
-    show_separate_charts = rule_str in ['OHLCV', 'AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS']
+    show_separate_charts = rule_str in ['OHLCV', 'AUTO', 'PHLD', 'PREDICT_HIGH_LOW_DIRECTION', 'PV', 'PRESSURE_VECTOR', 'SR', 'SUPPORT_RESISTANTS', 'SCHR_DIR']
 
     if show_separate_charts:
         # Create subplots with separate charts
@@ -114,21 +114,47 @@ def plot_indicator_results_fastest(
 
     # Add predicted high/low lines if they exist (only for non-AUTO rules)
     if rule_str != 'AUTO':
-        for col in ['predicted_high', 'predicted_low']:
-            if col in display_df.columns:
-                fig.add_trace(
-                    go.Scatter(
-                        x=display_df['index'],
-                        y=display_df[col],
-                        mode='lines',
-                        name=col.replace('_', ' ').title(),
-                        line=dict(
-                            color='blue' if col == 'predicted_high' else 'red',
-                            width=1.5
-                        )
-                    ),
-                    row=1, col=1
-                )
+        # Check for PPrice1/PPrice2 columns (used by SCHR_DIR and other indicators)
+        if 'pprice1' in display_df.columns and 'pprice2' in display_df.columns:
+            # Add PPrice1 (Predicted Low)
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df['index'],
+                    y=display_df['pprice1'],
+                    mode='lines',
+                    name='Predicted Low (PPrice1)',
+                    line=dict(color='green', width=1.5)
+                ),
+                row=1, col=1
+            )
+            # Add PPrice2 (Predicted High)
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df['index'],
+                    y=display_df['pprice2'],
+                    mode='lines',
+                    name='Predicted High (PPrice2)',
+                    line=dict(color='red', width=1.5)
+                ),
+                row=1, col=1
+            )
+        else:
+            # Fallback to old predicted_high/predicted_low columns
+            for col in ['predicted_high', 'predicted_low']:
+                if col in display_df.columns:
+                    fig.add_trace(
+                        go.Scatter(
+                            x=display_df['index'],
+                            y=display_df[col],
+                            mode='lines',
+                            name=col.replace('_', ' ').title(),
+                            line=dict(
+                                color='blue' if col == 'predicted_high' else 'red',
+                                width=1.5
+                            )
+                        ),
+                        row=1, col=1
+                    )
 
     # Add volume (only if separate charts are enabled)
     if show_separate_charts and 'volume' in display_df.columns:
@@ -169,31 +195,58 @@ def plot_indicator_results_fastest(
 
         # Add predicted high/low as separate panels for AUTO mode
         if rule_str == 'AUTO':
-            # Predicted Low subplot
-            if 'predicted_low' in display_df.columns:
+            # Check for PPrice1/PPrice2 columns first (used by SCHR_DIR and other indicators)
+            if 'pprice1' in display_df.columns and 'pprice2' in display_df.columns:
+                # Predicted Low subplot (PPrice1)
                 fig.add_trace(
                     go.Scatter(
                         x=display_df['index'],
-                        y=display_df['predicted_low'],
+                        y=display_df['pprice1'],
                         mode='lines',
-                        name='Predicted Low',
+                        name='Predicted Low (PPrice1)',
                         line=dict(color='green', width=2)
                     ),
                     row=3, col=2
                 )
 
-            # Predicted High subplot
-            if 'predicted_high' in display_df.columns:
+                # Predicted High subplot (PPrice2)
                 fig.add_trace(
                     go.Scatter(
                         x=display_df['index'],
-                        y=display_df['predicted_high'],
+                        y=display_df['pprice2'],
                         mode='lines',
-                        name='Predicted High',
+                        name='Predicted High (PPrice2)',
                         line=dict(color='red', width=2)
                     ),
                     row=3, col=2
                 )
+            else:
+                # Fallback to old predicted_high/predicted_low columns
+                # Predicted Low subplot
+                if 'predicted_low' in display_df.columns:
+                    fig.add_trace(
+                        go.Scatter(
+                            x=display_df['index'],
+                            y=display_df['predicted_low'],
+                            mode='lines',
+                            name='Predicted Low',
+                            line=dict(color='green', width=2)
+                        ),
+                        row=3, col=2
+                    )
+
+                # Predicted High subplot
+                if 'predicted_high' in display_df.columns:
+                    fig.add_trace(
+                        go.Scatter(
+                            x=display_df['index'],
+                            y=display_df['predicted_high'],
+                            mode='lines',
+                            name='Predicted High',
+                            line=dict(color='red', width=2)
+                        ),
+                        row=3, col=2
+                    )
 
     # Add rule annotation
     # Check if we have original rule with parameters for display

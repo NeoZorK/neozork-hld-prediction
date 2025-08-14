@@ -753,20 +753,13 @@ def get_indicator_help_data(indicator_name: str) -> dict:
         },
         'schr_dir': {
             'name': 'SCHR Direction (Shcherbyna Direction)',
-            'description': 'Premium directional indicator that uses Volume Price Ratio (VPR) to calculate direction lines and generate trading signals. Combines volume analysis with price momentum for precise entry/exit points.',
-            'format': 'schr_dir:grow_percent,shift_external_internal,fixed_price,fake_line,strong_exceed,lines_count',
+            'description': 'Premium directional indicator that uses Volume Price Ratio (VPR) to calculate direction lines and generate trading signals. Optimized with fixed parameters for optimal performance and MT5 compatibility.',
+            'format': 'schr_dir (no parameters)',
             'parameters': [
-                ('grow_percent', 'int', 'Growth percentage for VPR calculation (1-99)', '95'),
-                ('shift_external_internal', 'bool', 'Use external (false) or internal (true) shift mode', 'false'),
-                ('fixed_price', 'bool', 'Use open (true) or close (false) price for base calculation', 'true'),
-                ('fake_line', 'bool', 'Use current (true) or previous (false) data for calculations', 'false'),
-                ('strong_exceed', 'bool', 'Use strong (true) or weak (false) exceed mode for signals', 'true'),
-                ('lines_count', 'int', 'Number of lines to display: 1=upper, 2=both, 3=lower', '2')
+                ('Fixed Parameters', 'N/A', 'All parameters are fixed for optimal performance', 'N/A')
             ],
             'examples': [
-                ('schr_dir:95,false,true,false,true,2', 'Standard SCHR Direction with both lines'),
-                ('schr_dir:80,true,false,true,false,1', 'Custom SCHR Direction with upper line only'),
-                ('schr_dir:90,false,true,false,true,3', 'SCHR Direction with lower line only')
+                ('schr_dir', 'SCHR Direction with fixed optimal parameters'),
             ],
             'tips': [
                 'Higher grow_percent (90-99) = more conservative signals',
@@ -783,8 +776,8 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Invalid grow_percent: Must be between 1 and 99',
                 'Invalid boolean parameters: Use true/false or 1/0',
                 'Invalid lines_count: Must be 1, 2, or 3',
-                'Too many parameters: SCHR_DIR requires exactly 6 parameters',
-                'Too few parameters: SCHR_DIR requires exactly 6 parameters'
+                'SCHR_DIR no longer accepts parameters - all values are fixed for optimal performance',
+                'SCHR_DIR no longer accepts parameters - all values are fixed for optimal performance'
             ]
         }
     }

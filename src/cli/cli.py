@@ -437,7 +437,7 @@ def parse_arguments():
                     'adx': 'ADX: adx:period (e.g., adx:14)',
                     'sar': 'SAR: sar:acceleration,maximum (e.g., sar:0.02,0.2)',
                     'supertrend': 'SuperTrend: supertrend:period,multiplier[,price_type] (e.g., supertrend:10,3.0)',
-                    'schr_dir': 'SCHR Direction: schr_dir:grow_percent,shift_external_internal,fixed_price,fake_line,strong_exceed,lines_count (e.g., schr_dir:95,false,true,false,true,2)',
+                    'schr_dir': 'SCHR Direction: schr_dir (no parameters - all values fixed for optimal performance)',
                     'rsi': 'RSI: rsi:period,price_type (e.g., rsi:14,close)',
                     'macd': 'MACD: macd:fast,slow,signal,price_type (e.g., macd:12,26,9,close)',
                     'stoch': 'Stochastic: stoch:k_period,d_period,price_type (e.g., stoch:14,3,close)',
@@ -457,7 +457,7 @@ def parse_arguments():
             # Regular rule - validate against choices
             if args.rule not in all_rule_choices:
                 # Check if it might be a parameterized indicator
-                if args.rule.lower() in ['hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_dir', 'rsi', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot']:
+                if args.rule.lower() in ['hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'rsi', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot']:
                     parser.error(f"Invalid rule '{args.rule}'. This is a parameterized indicator. Use format: {args.rule}:parameters\n\nExamples:\n  {args.rule}:20,close\n  {args.rule}:14,3,close (for stochastic)\n  {args.rule}:1000,252 (for monte carlo)\n\nUse --help for more information about parameterized indicators.")
                 else:
                     parser.error(f"Invalid rule '{args.rule}'. Use one of {all_rule_choices}")
@@ -1479,56 +1479,19 @@ def parse_schr_dir_parameters(params_str: str) -> tuple[str, dict]:
     """
     Parse SCHR_DIR parameters from string.
     
+    Note: SCHR_DIR no longer accepts parameters - all values are fixed for optimal performance.
+    
     Args:
-        params_str (str): Parameters string like '95,false,true,false,true,2'
+        params_str (str): Parameters string (ignored)
     
     Returns:
-        tuple: (indicator_name, parameters_dict)
+        tuple: (indicator_name, empty_parameters_dict)
     """
-    params = [p.strip() for p in params_str.split(',')]
+    # SCHR_DIR no longer accepts parameters - all values are fixed
+    if params_str.strip():
+        logger.warning("SCHR_DIR no longer accepts parameters - all values are fixed for optimal performance")
     
-    # Default parameters
-    grow_percent = 95
-    shift_external_internal = False
-    fixed_price = True
-    fake_line = False
-    strong_exceed = True
-    lines_count = 2  # BOTH_LINES
-    
-    try:
-        if len(params) >= 1:
-            grow_percent = int(params[0])
-            if not 1 <= grow_percent <= 99:
-                raise ValueError("grow_percent must be between 1 and 99")
-        
-        if len(params) >= 2:
-            shift_external_internal = params[1].lower() == 'true'
-        
-        if len(params) >= 3:
-            fixed_price = params[2].lower() == 'true'
-        
-        if len(params) >= 4:
-            fake_line = params[3].lower() == 'true'
-        
-        if len(params) >= 5:
-            strong_exceed = params[4].lower() == 'true'
-        
-        if len(params) >= 6:
-            lines_count = int(params[5])
-            if lines_count not in [0, 1, 2]:
-                raise ValueError("lines_count must be 0 (UPPER_LINE), 1 (LOWER_LINE), or 2 (BOTH_LINES)")
-        
-    except ValueError as e:
-        raise ValueError(f"Invalid SCHR_DIR parameters: {e}")
-    
-    return 'schr_dir', {
-        'grow_percent': grow_percent,
-        'shift_external_internal': shift_external_internal,
-        'fixed_price': fixed_price,
-        'fake_line': fake_line,
-        'strong_exceed': strong_exceed,
-        'lines_count': lines_count
-    }
+    return 'schr_dir', {}
 
 
 def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:

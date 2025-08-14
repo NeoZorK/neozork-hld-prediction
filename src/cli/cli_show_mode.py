@@ -686,9 +686,17 @@ def _display_file_info(found_files):
                     print(f"{file_info['last_row']}")
     print("-" * 40)
 
-def _extract_point_size(file_info):
-    """Extract point size from filename or use defaults."""
+def _extract_point_size(file_info, args=None):
+    """Extract point size from filename, args, or use defaults."""
     point_size = None
+    
+    # First check if point size is provided via command line argument
+    if args and hasattr(args, 'point') and args.point is not None:
+        point_size = args.point
+        print(f"Using point size from command line argument: {point_size}")
+        return point_size
+    
+    # Then try to extract from filename
     if 'point' in file_info['name'].lower():
         try:
             name_parts = file_info['name'].lower().split('point_')
@@ -697,14 +705,17 @@ def _extract_point_size(file_info):
                 point_size = float(possible_point)
         except (ValueError, IndexError):
             pass
+    
+    # Use defaults based on filename content
     if point_size is None:
-        if 'forex' in file_info['name'].lower() or 'fx' in file_info['name'].lower():
+        if 'forex' in file_info['name'].lower() or 'fx' in file_info['name'].lower() or 'gbp' in file_info['name'].lower() or 'eur' in file_info['name'].lower():
             point_size = 0.00001
         elif 'btc' in file_info['name'].lower() or 'crypto' in file_info['name'].lower():
             point_size = 0.01
         else:
             point_size = 0.01
         print(f"Point size not found in filename, using default: {point_size}")
+    
     return point_size
 
     # Continue with the rest of the function...
@@ -741,7 +752,7 @@ def _handle_auto_display_mode(args, found_files, metrics):
     if start or end:
         df = _filter_dataframe_by_date(df, start, end)
 
-    point_size = _extract_point_size(found_files[0])
+    point_size = _extract_point_size(found_files[0], args)
 
     # Set a special flag for AUTO mode to be used by plotting functions
     args.auto_display_mode = True
@@ -871,7 +882,7 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
         df = _filter_dataframe_by_date(df, start, end)
     
     # Extract point size from filename or use defaults
-    point_size = _extract_point_size(found_files[0])
+    point_size = _extract_point_size(found_files[0], args)
     
     if not hasattr(args, 'mode'):
         args.mode = 'parquet'
