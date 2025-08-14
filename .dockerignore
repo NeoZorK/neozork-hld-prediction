@@ -44,6 +44,22 @@ ENV/
 /data/indicators/csv/*
 /data/indicators/json/*
 
+# Ignore all CSV files from mql5_feed except specific ones
+/mql5_feed/*.csv
+!/mql5_feed/CSVExport_EURUSD_PERIOD_D1.csv
+
+# Container-related files
+*.tar
+*.tar.gz
+*.img
+*.iso
+*.vmdk
+*.qcow2
+*.ova
+*.ovf
+.containerignore
+*.container
+
 # Test and documentation
 *.log
 .coverage
