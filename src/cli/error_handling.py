@@ -778,6 +778,42 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Missing parameter: Use schr_dir:value (e.g., schr_dir:50)',
                 'Invalid format: Expected number between 1 and 95'
             ]
+        },
+        'schr_rost': {
+            'name': 'SCHR Rost (Shcherbyna Rost) 🚀',
+            'description': '🔥 PREMIUM ADX-based trend prediction indicator with 12 speed modes! Advanced directional movement analysis with customizable speed settings and fast reverse signals. Perfect for trend detection and momentum analysis.',
+            'format': 'schr_rost:speed_period,faster_reverse',
+            'parameters': [
+                ('speed_period', 'string', 'Speed mode: Snail,Turtle,Frog,Mouse,Cat,Rabbit,Gepard,Slowest,Slow,Normal,Fast,Future', 'Future'),
+                ('faster_reverse', 'boolean', 'Enable faster signal reversal (true/false)', 'false')
+            ],
+            'examples': [
+                ('schr_rost', 'SCHR Rost with default Future speed and no fast reverse'),
+                ('schr_rost:Future,true', 'SCHR Rost with Future speed and fast reverse enabled'),
+                ('schr_rost:Normal,false', 'SCHR Rost with Normal speed and standard signals'),
+                ('schr_rost:Snail,true', 'SCHR Rost with Snail speed (slowest) and fast reverse'),
+                ('schr_rost:Fast,false', 'SCHR Rost with Fast speed and standard signals'),
+                ('schr_rost:Gepard,true', 'SCHR Rost with Gepard speed (fastest) and fast reverse'),
+            ],
+            'tips': [
+                '🚀 SPEED MODES: Snail(1000) → Turtle(500) → Frog(200) → Mouse(100) → Cat(50) → Rabbit(30) → Gepard(10) → Slowest(5) → Slow(2) → Normal(1.01) → Fast(0.683) → Future(0.501)',
+                '⚡ Future speed (0.501) = fastest signals, most responsive to market changes',
+                '🐌 Snail speed (1000) = slowest signals, most stable but less responsive',
+                '🔄 faster_reverse=true: Enables quick signal reversal for volatile markets',
+                '🎯 Best for: Trend detection, momentum analysis, and directional trading',
+                '📊 Dual chart display shows main indicator line with signal line and histogram',
+                '💎 Premium indicator based on MQL5 SCHR_ROST.mq5 by Shcherbyna Rostyslav',
+                '🔥 Use with volume analysis and other indicators for best results',
+                '⚡ Fast speeds (Future, Fast) = more signals, higher noise',
+                '🐌 Slow speeds (Snail, Turtle) = fewer signals, more stable',
+                '🎯 Normal speed (1.01) = balanced approach for most markets'
+            ],
+            'common_errors': [
+                'Invalid speed_period: Use one of: Snail,Turtle,Frog,Mouse,Cat,Rabbit,Gepard,Slowest,Slow,Normal,Fast,Future',
+                'Invalid faster_reverse: Use "true" or "false" only',
+                'Missing parameters: Use schr_rost:speed,faster_reverse (e.g., schr_rost:Future,true)',
+                'Invalid format: Expected schr_rost:speed,boolean'
+            ]
         }
     }
     

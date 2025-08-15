@@ -940,6 +940,34 @@ def show_indicator_help(indicator_name: str):
                 'fg:21,open',
                 'fg:10,close'
             ]
+        },
+        'schr_dir': {
+            'name': 'SCHR Direction (Shcherbyna Direction)',
+            'format': 'schr_dir:grow_percent',
+            'parameters': [
+                'grow_percent (float): Growth percentage for line calculation (1-95, default: 1.0)'
+            ],
+            'examples': [
+                'schr_dir',
+                'schr_dir:50',
+                'schr_dir:95'
+            ]
+        },
+        'schr_rost': {
+            'name': 'SCHR Rost (Shcherbyna Rost) 🚀',
+            'format': 'schr_rost:speed_period,faster_reverse',
+            'parameters': [
+                'speed_period (string): Speed mode: Snail,Turtle,Frog,Mouse,Cat,Rabbit,Gepard,Slowest,Slow,Normal,Fast,Future (default: Future)',
+                'faster_reverse (boolean): Enable faster signal reversal (true/false, default: false)'
+            ],
+            'examples': [
+                'schr_rost',
+                'schr_rost:Future,true',
+                'schr_rost:Normal,false',
+                'schr_rost:Snail,true',
+                'schr_rost:Fast,false',
+                'schr_rost:Gepard,true'
+            ]
         }
     }
     
@@ -1571,6 +1599,15 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
         
         indicator_name = parts[0].lower().strip()
         params_str = parts[1].strip()
+        
+        # If parameters string is empty but colon is present, show help
+        if not params_str and indicator_name in ['schr_rost', 'schr_dir', 'rsi', 'macd', 'stoch', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'putcallratio', 'cot', 'feargreed', 'fg']:
+            # Show cool help for parameterized indicators when no parameters provided
+            from .cli import show_indicator_help
+            show_indicator_help(indicator_name)
+            # After showing help, exit with error
+            import sys
+            sys.exit(1)
         
         # Parse parameters based on indicator type
         if indicator_name in ['stoch', 'stochastic', 'stochoscillator']:
