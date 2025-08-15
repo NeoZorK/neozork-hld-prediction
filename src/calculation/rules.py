@@ -35,6 +35,9 @@ from .indicators.predictive.hma_ind import apply_rule_hma
 from .indicators.predictive.tsforecast_ind import apply_rule_tsforecast
 from .indicators.predictive.schr_dir_ind import apply_rule_schr_dir
 
+# Trend indicators
+from .indicators.trend.schr_rost_ind import apply_rule_schr_rost
+
 # Probability indicators
 from .indicators.probability.montecarlo_ind import apply_rule_montecarlo
 from .indicators.probability.kelly_ind import apply_rule_kelly
@@ -201,6 +204,7 @@ RULE_DISPATCHER = {
     TradingRule.ADX: apply_rule_adx,
     TradingRule.SAR: apply_rule_sar,
     TradingRule.SuperTrend: apply_rule_supertrend,
+    TradingRule.SCHR_ROST: apply_rule_schr_rost,
 }
 
 def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, price_type: str = 'close', **kwargs) -> pd.DataFrame:
@@ -347,6 +351,11 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         supertrend_period = kwargs.get('supertrend_period', 10)
         multiplier = kwargs.get('multiplier', 3.0)
         return rule_func(df, point=point, supertrend_period=supertrend_period, multiplier=multiplier, price_type=price_type_enum)
+    elif selected_rule == TradingRule.SCHR_ROST:
+        # Extract SCHR_ROST-specific parameters
+        speed_period = kwargs.get('speed_period', 'Future')
+        faster_reverse = kwargs.get('faster_reverse', False)
+        return rule_func(df, point=point, speed_period=speed_period, faster_reverse=faster_reverse, price_type=price_type_enum)
     else:
         # Default case for any other rules
         return rule_func(df, point=point, price_type=price_type_enum)

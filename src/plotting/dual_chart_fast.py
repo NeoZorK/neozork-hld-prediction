@@ -994,6 +994,39 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
     indicator_fig.add_tools(hover_supertrend)
 
 
+def _plot_schr_rost_indicator(indicator_fig, source, display_df):
+    """Plot SCHR_ROST indicator on the given figure."""
+    if 'schr_rost' in display_df.columns:
+        indicator_fig.line(
+            'index', 'schr_rost',
+            source=source,
+            line_color='#e67e22',
+            line_width=2,
+            legend_label='SCHR_ROST'
+        )
+    
+    # Add signal line if available
+    if 'schr_rost_signal' in display_df.columns:
+        indicator_fig.line(
+            'index', 'schr_rost_signal',
+            source=source,
+            line_color='#3498db',
+            line_width=1,
+            line_dash='dashed',
+            legend_label='SCHR_ROST Signal'
+        )
+    
+    # Add histogram if available
+    if 'schr_rost_histogram' in display_df.columns:
+        indicator_fig.vbar(
+            'index', 0.8, 'schr_rost_histogram',
+            source=source,
+            color='#95a5a6',
+            alpha=0.4,
+            legend_label='SCHR_ROST Histogram'
+        )
+
+
 def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
     """Get appropriate hover tool for the given indicator."""
     if indicator_name == 'macd':
@@ -1277,6 +1310,17 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name == 'schr_rost':
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("SCHR_ROST", "@schr_rost{0.5f}"),
+                ("Signal", "@schr_rost_signal{0.5f}"),
+                ("Histogram", "@schr_rost_histogram{0.5f}")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     else:
         # Generic hover for other indicators
         return HoverTool(
@@ -1318,6 +1362,7 @@ def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
         'feargreed': _plot_feargreed_indicator,  # Added for Fear & Greed support
         'fg': _plot_feargreed_indicator,         # Alias
         'supertrend': _plot_supertrend_indicator,  # Added for SuperTrend support
+        'schr_rost': _plot_schr_rost_indicator,  # Added for SCHR_ROST support
     }
     fibo_columns = None
     if indicator_name == 'fibo':

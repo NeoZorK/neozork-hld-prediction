@@ -1366,6 +1366,88 @@ def add_schr_dir_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 )
 
 
+def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add SCHR_ROST indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with SCHR_ROST data
+    """
+    # Check if SCHR_ROST columns exist
+    schr_rost_cols = [col for col in display_df.columns if 'schr_rost' in col.lower()]
+    if not schr_rost_cols:
+        logger.print_warning("SCHR_ROST columns not found in DataFrame")
+        return
+    
+    # Get SCHR_ROST values
+    schr_rost_values = None
+    for col in ['schr_rost', 'SCHR_ROST']:
+        if col in display_df.columns:
+            schr_rost_values = display_df[col]
+            break
+    
+    if schr_rost_values is None:
+        logger.print_warning("SCHR_ROST values not found")
+        return
+    
+    # Add SCHR_ROST line
+    fig.add_trace(
+        go.Scatter(
+            x=display_df.index,
+            y=schr_rost_values,
+            mode='lines',
+            name='SCHR_ROST',
+            line=dict(color='#e67e22', width=2),
+            opacity=0.8
+        ),
+        row=2, col=1
+    )
+    
+    # Add signal line if available
+    signal_cols = [col for col in display_df.columns if 'schr_rost_signal' in col.lower()]
+    if signal_cols:
+        signal_values = display_df[signal_cols[0]]
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=signal_values,
+                mode='lines',
+                name='SCHR_ROST Signal',
+                line=dict(color='#3498db', width=1, dash='dash'),
+                opacity=0.6
+            ),
+            row=2, col=1
+        )
+    
+    # Add histogram if available
+    histogram_cols = [col for col in display_df.columns if 'schr_rost_histogram' in col.lower()]
+    if histogram_cols:
+        histogram_values = display_df[histogram_cols[0]]
+        fig.add_trace(
+            go.Bar(
+                x=display_df.index,
+                y=histogram_values,
+                name='SCHR_ROST Histogram',
+                marker_color='#95a5a6',
+                opacity=0.4
+            ),
+            row=2, col=1
+        )
+    
+    # Add zero line
+    fig.add_hline(
+        y=0,
+        line_dash="dash",
+        line_color="gray",
+        opacity=0.5,
+        row=2, col=1
+    )
+    
+    # Update y-axis title
+    fig.update_yaxes(title_text="SCHR_ROST", row=2, col=1)
+
+
 def add_supertrend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     """
     Add SuperTrend indicator to the secondary subplot.
@@ -1977,6 +2059,9 @@ def plot_dual_chart_fastest(
     
     elif indicator_name == 'schr_dir':
         add_schr_dir_indicator(fig, display_df)
+    
+    elif indicator_name == 'schr_rost':
+        add_schr_rost_indicator(fig, display_df)
     
     elif indicator_name == 'supertrend':
         add_supertrend_indicator(fig, display_df)

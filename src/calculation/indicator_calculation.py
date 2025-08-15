@@ -58,6 +58,8 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         # For indicators without parameters, set default values
         if rule_input_str.upper() == 'SCHR_DIR':
             indicator_params = {'grow_percent': 1.0}
+        elif rule_input_str.upper() == 'SCHR_ROST':
+            indicator_params = {'speed_period': 'Future', 'faster_reverse': False}
     
     # Store original rule with parameters for display purposes
     setattr(args, 'original_rule_with_params', original_rule_with_params)
@@ -111,7 +113,8 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         # Trend indicators
         'ADX': 'ADX',
         'SAR': 'SAR',
-        'SUPERTREND': 'SuperTrend'
+        'SUPERTREND': 'SuperTrend',
+        'SCHR_ROST': 'SCHR_ROST'
     }
     rule_name_str = rule_aliases_map.get(rule_input_str.upper(), rule_input_str)
     try:

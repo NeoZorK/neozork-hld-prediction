@@ -41,6 +41,7 @@ from ..calculation.indicators.volume.obv_ind import calculate_obv
 from ..calculation.indicators.volatility.stdev_ind import calculate_stdev
 from ..calculation.indicators.trend.adx_ind import calculate_adx
 from ..calculation.indicators.trend.sar_ind import calculate_sar
+from ..calculation.indicators.trend.schr_rost_ind import calculate_schr_rost
 from ..calculation.indicators.sentiment.putcallratio_ind import calculate_putcallratio
 from ..calculation.indicators.sentiment.cot_ind import calculate_cot
 from ..calculation.indicators.sentiment.feargreed_ind import calculate_feargreed
@@ -146,7 +147,7 @@ def get_supported_indicators() -> set:
     return {
         'rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'ema', 'bb', 'atr',
         'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain',
-        'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend'
+        'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_rost'
     }
 
 
@@ -643,6 +644,80 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['supertrend_multiplier'] = multiplier
             result_df['supertrend_price_type'] = price_type
             
+        elif indicator_name == 'schr_rost':
+            # Filter empty parameters
+            params = [p.strip() for p in params if p.strip()]
+            speed_period = params[0] if len(params) > 0 else 'Future'
+            faster_reverse = params[1].lower() in ['true', '1'] if len(params) > 1 else False
+            
+            # Calculate SCHR_ROST indicator using the indicator class
+            from ..calculation.indicators.trend.schr_rost_ind import SCHRRostIndicator, SpeedEnum
+            from ..calculation.indicators.oscillators.rsi_ind_calc import PriceType
+            
+            # Convert speed_period string to SpeedEnum
+            speed_enum = SpeedEnum.FUTURE  # Default
+            speed_name = speed_period.upper()
+            if speed_name == 'SNAIL':
+                speed_enum = SpeedEnum.SNAIL
+            elif speed_name == 'TURTLE':
+                speed_enum = SpeedEnum.TURTLE
+            elif speed_name == 'FROG':
+                speed_enum = SpeedEnum.FROG
+            elif speed_name == 'MOUSE':
+                speed_enum = SpeedEnum.MOUSE
+            elif speed_name == 'CAT':
+                speed_enum = SpeedEnum.CAT
+            elif speed_name == 'RABBIT':
+                speed_enum = SpeedEnum.RABBIT
+            elif speed_name == 'GEPARD':
+                speed_enum = SpeedEnum.GEPARD
+            elif speed_name == 'SLOWEST':
+                speed_enum = SpeedEnum.SLOWEST
+            elif speed_name == 'SLOW':
+                speed_enum = SpeedEnum.SLOW
+            elif speed_name == 'NORMAL':
+                speed_enum = SpeedEnum.NORMAL
+            elif speed_name == 'FAST':
+                speed_enum = SpeedEnum.FAST
+            elif speed_name == 'FUTURE':
+                speed_enum = SpeedEnum.FUTURE
+            
+            # Create indicator instance
+            indicator = SCHRRostIndicator(speed_enum, faster_reverse, PriceType.OPEN)
+            schr_rost_result = indicator.calculate(df)
+            
+            # Handle the result - it might be a DataFrame or Series
+            if isinstance(schr_rost_result, pd.DataFrame):
+                # If it's a DataFrame, extract the main indicator column
+                if 'schr_rost' in schr_rost_result.columns:
+                    schr_rost_values = schr_rost_result['schr_rost']
+                elif 'Direction' in schr_rost_result.columns:
+                    schr_rost_values = schr_rost_result['Direction']
+                else:
+                    # Take the first numeric column
+                    numeric_cols = schr_rost_result.select_dtypes(include=[np.number]).columns
+                    if len(numeric_cols) > 0:
+                        schr_rost_values = schr_rost_result[numeric_cols[0]]
+                    else:
+                        schr_rost_values = pd.Series(index=df.index, dtype=float)
+            else:
+                # If it's a Series, use it directly
+                schr_rost_values = schr_rost_result
+            
+            result_df['schr_rost'] = schr_rost_values
+            
+            # Calculate signal line (EMA of SCHR_ROST)
+            signal_line = schr_rost_values.ewm(span=9, adjust=False).mean()
+            result_df['schr_rost_signal'] = signal_line
+            
+            # Calculate histogram
+            histogram = schr_rost_values - signal_line
+            result_df['schr_rost_histogram'] = histogram
+            
+            # Add speed period and faster reverse info
+            result_df['schr_rost_speed'] = speed_period
+            result_df['schr_rost_faster_reverse'] = faster_reverse
+            
         else:
             raise ValueError(f"Unsupported indicator: {indicator_name}")
             
@@ -692,6 +767,7 @@ def create_dual_chart_layout(mode: str, rule: str) -> Dict[str, Any]:
         'adx': 'ADX',
         'sar': 'SAR',
         'supertrend': 'SuperTrend',
+        'schr_rost': 'SCHR Rost',
         'stoch': 'Stochastic',
         'stochoscillator': 'Stochastic Oscillator'
     }

@@ -61,3 +61,4 @@ class TradingRule(Enum):
     ADX = 32  # Average Directional Index
     SAR = 33  # Parabolic SAR
     SuperTrend = 34  # SuperTrend
+    SCHR_ROST = 35  # SCHR Rost indicator

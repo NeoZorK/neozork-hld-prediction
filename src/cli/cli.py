@@ -419,7 +419,7 @@ def parse_arguments():
         if ':' in args.rule:
             # Parameterized rule - validate the indicator name part
             indicator_name = args.rule.split(':', 1)[0].lower()
-            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_dir']
+            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_dir', 'schr_rost']
             if indicator_name not in valid_indicators:
                 # Provide detailed help for parameterized indicators
                 help_info = {
@@ -438,6 +438,7 @@ def parse_arguments():
                     'sar': 'SAR: sar:acceleration,maximum (e.g., sar:0.02,0.2)',
                     'supertrend': 'SuperTrend: supertrend:period,multiplier[,price_type] (e.g., supertrend:10,3.0)',
                     'schr_dir': 'SCHR Direction: schr_dir:grow_percent (e.g., schr_dir:50 for 50% growth)',
+                    'schr_rost': 'SCHR Rost: schr_rost:speed_period,faster_reverse (e.g., schr_rost:Future,true)',
                     'rsi': 'RSI: rsi:period,price_type (e.g., rsi:14,close)',
                     'macd': 'MACD: macd:fast,slow,signal,price_type (e.g., macd:12,26,9,close)',
                     'stoch': 'Stochastic: stoch:k_period,d_period,price_type (e.g., stoch:14,3,close)',
@@ -457,7 +458,7 @@ def parse_arguments():
             # Regular rule - validate against choices
             if args.rule not in all_rule_choices:
                 # Check if it might be a parameterized indicator
-                if args.rule.lower() in ['hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'rsi', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot']:
+                if args.rule.lower() in ['hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_dir', 'schr_rost', 'rsi', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot']:
                     parser.error(f"Invalid rule '{args.rule}'. This is a parameterized indicator. Use format: {args.rule}:parameters\n\nExamples:\n  {args.rule}:20,close\n  {args.rule}:14,3,close (for stochastic)\n  {args.rule}:1000,252 (for monte carlo)\n\nUse --help for more information about parameterized indicators.")
                 else:
                     parser.error(f"Invalid rule '{args.rule}'. Use one of {all_rule_choices}")
@@ -1506,6 +1507,48 @@ def parse_schr_dir_parameters(params_str: str) -> tuple[str, dict]:
             raise ValueError(f"Invalid SCHR_DIR parameter: {params_str}. Expected a number between 1 and 95.")
 
 
+def parse_schr_rost_parameters(params_str: str) -> tuple[str, dict]:
+    """
+    Parse SCHR_ROST parameters: schr_rost:speed_period,faster_reverse
+    Example: schr_rost:Future,true
+    """
+    try:
+        params = [p.strip() for p in params_str.split(',') if p.strip()]
+        
+        if len(params) == 0:
+            # Default parameters
+            return 'schr_rost', {'speed_period': 'Future', 'faster_reverse': False}
+        elif len(params) == 1:
+            # Only speed_period provided
+            speed_period = params[0]
+            return 'schr_rost', {'speed_period': speed_period, 'faster_reverse': False}
+        elif len(params) == 2:
+            # Both speed_period and faster_reverse provided
+            speed_period = params[0]
+            faster_reverse_str = params[1].lower()
+            
+            # Validate speed_period
+            valid_speeds = ['snail', 'turtle', 'frog', 'mouse', 'cat', 'rabbit', 'gepard', 
+                           'slowest', 'slow', 'normal', 'fast', 'future']
+            if speed_period.lower() not in valid_speeds:
+                raise ValueError(f"Invalid speed_period: {speed_period}. Valid values: {', '.join(valid_speeds)}")
+            
+            # Validate faster_reverse
+            if faster_reverse_str not in ['true', 'false', '1', '0']:
+                raise ValueError(f"Invalid faster_reverse: {params[1]}. Expected: true/false or 1/0")
+            
+            faster_reverse = faster_reverse_str in ['true', '1']
+            
+            return 'schr_rost', {'speed_period': speed_period, 'faster_reverse': faster_reverse}
+        else:
+            raise ValueError(f"Invalid SCHR_ROST parameters: {params_str}. Expected: speed_period,faster_reverse")
+        
+    except ValueError as e:
+        if "Invalid SCHR_ROST parameter" in str(e):
+            raise e
+        raise ValueError(f"Invalid SCHR_ROST parameters: {params_str}. Expected: speed_period,faster_reverse")
+
+
 def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
     """
     Parse indicator rule string in format 'indicator:param1,param2,param3,param4'.
@@ -1590,6 +1633,8 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_cot_parameters(params_str)
         elif indicator_name == 'schr_dir':
             return parse_schr_dir_parameters(params_str)
+        elif indicator_name == 'schr_rost':
+            return parse_schr_rost_parameters(params_str)
         else:
             # Unknown indicator, show help and raise error
             raise ValueError(f"Unknown indicator: {indicator_name}")
