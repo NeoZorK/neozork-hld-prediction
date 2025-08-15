@@ -203,6 +203,7 @@ def calculate_schr_rost(df: pd.DataFrame, speed_period: float = 1.01) -> pd.Seri
 def calculate_schr_rost_signals(rost_values: pd.Series, faster_reverse: bool = False) -> tuple[pd.Series, pd.Series, pd.Series]:
     """
     Calculate trading signals based on SCHR Rost values.
+    Exactly matches MQL5 logic for Direction and Signal calculation.
     
     Args:
         rost_values (pd.Series): SCHR Rost indicator values
@@ -210,41 +211,50 @@ def calculate_schr_rost_signals(rost_values: pd.Series, faster_reverse: bool = F
         
     Returns:
         tuple: (prediction, direction, signal)
+        - prediction: 0=No trend, 1=Up, 2=Down
+        - direction: 0=No Trade, 1=Buy (Up), 2=Sell (Down)
+        - signal: 0=No Signal, 1=Buy (first occurrence), 2=Sell (first occurrence)
     """
     n = len(rost_values)
     prediction = pd.Series(0, index=rost_values.index)
-    direction = pd.Series(NOTRADE, index=rost_values.index)
-    signal = pd.Series(NOTRADE, index=rost_values.index)
+    direction = pd.Series(0, index=rost_values.index)  # 0=NOTRADE, 1=BUY, 2=SELL
+    signal = pd.Series(0, index=rost_values.index)     # 0=No Signal, 1=Buy, 2=Sell
     
-    for i in range(1, n):
-        # Calculate prediction based on value change
-        if rost_values.iloc[i] > rost_values.iloc[i-1]:
-            prediction.iloc[i] = 1  # BUY
-        elif rost_values.iloc[i] < rost_values.iloc[i-1]:
-            prediction.iloc[i] = 2  # SELL
+    for i in range(n):
+        # Calculate prediction - exactly as in MQL5
+        if i > 0:
+            if rost_values.iloc[i] > rost_values.iloc[i-1]:
+                prediction.iloc[i] = 1  # Up trend
+            elif rost_values.iloc[i] < rost_values.iloc[i-1]:
+                prediction.iloc[i] = 2  # Down trend
+            else:
+                prediction.iloc[i] = prediction.iloc[i-1]  # Keep previous trend
         else:
-            prediction.iloc[i] = prediction.iloc[i-1]  # Keep previous
+            prediction.iloc[i] = 0  # First bar
         
-        # Faster reverse logic
-        if faster_reverse and (rost_values.iloc[i] == rost_values.iloc[i-1]):
+        # Faster reverse logic - exactly as in MQL5
+        if i > 0 and faster_reverse and (rost_values.iloc[i] == rost_values.iloc[i-1]):
             if prediction.iloc[i] == 1:
                 prediction.iloc[i] = 2
             elif prediction.iloc[i] == 2:
                 prediction.iloc[i] = 1
         
-        # Set direction
+        # Set direction - exactly as in MQL5
         if prediction.iloc[i] == 0:
-            direction.iloc[i] = NOTRADE
+            direction.iloc[i] = 0  # NOTRADE
         elif prediction.iloc[i] == 1:
-            direction.iloc[i] = BUY
+            direction.iloc[i] = 1  # BUY
         elif prediction.iloc[i] == 2:
-            direction.iloc[i] = SELL
+            direction.iloc[i] = 2  # SELL
         
-        # Generate signals (only when direction changes)
-        if direction.iloc[i] != direction.iloc[i-1]:
-            signal.iloc[i] = direction.iloc[i]
+        # Generate signals - exactly as in MQL5 (only first occurrences)
+        if i > 0:
+            if direction.iloc[i] != direction.iloc[i-1]:
+                signal.iloc[i] = direction.iloc[i]  # Signal on trend change
+            else:
+                signal.iloc[i] = 0  # No signal when trend continues
         else:
-            signal.iloc[i] = NOTRADE
+            signal.iloc[i] = 0  # First bar
     
     return prediction, direction, signal
 
@@ -285,13 +295,13 @@ class SCHRRostIndicator(BaseIndicator):
         
         # Calculate SCHR Rost values
         rost_values = calculate_schr_rost(df, self.speed_period)
-        result_df['SCHR_ROST'] = rost_values
+        result_df['schr_rost'] = rost_values
         
         # Calculate signals
         prediction, direction, signal = calculate_schr_rost_signals(rost_values, self.faster_reverse)
-        result_df['SCHR_ROST_Prediction'] = prediction
-        result_df['SCHR_ROST_Direction'] = direction
-        result_df['SCHR_ROST_Signal'] = signal
+        result_df['schr_rost_prediction'] = prediction
+        result_df['schr_rost_direction'] = direction
+        result_df['schr_rost_signal'] = signal
         
         return result_df
     
@@ -311,11 +321,11 @@ class SCHRRostIndicator(BaseIndicator):
         
         # Set output columns for compatibility with rule system
         result_df['PPrice1'] = result_df['Open']
-        result_df['PColor1'] = result_df['SCHR_ROST_Signal']
-        result_df['PPrice2'] = result_df['SCHR_ROST']
-        result_df['PColor2'] = result_df['SCHR_ROST_Direction']
-        result_df['Direction'] = result_df['SCHR_ROST_Direction']
-        result_df['Diff'] = result_df['SCHR_ROST']
+        result_df['PColor1'] = result_df['schr_rost_signal']
+        result_df['PPrice2'] = result_df['schr_rost']
+        result_df['PColor2'] = result_df['schr_rost_direction']
+        result_df['Direction'] = result_df['schr_rost_direction']
+        result_df['Diff'] = result_df['schr_rost']
         
         return result_df
 

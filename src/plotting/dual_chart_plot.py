@@ -688,31 +688,21 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
             # Handle the result - it might be a DataFrame or Series
             if isinstance(schr_rost_result, pd.DataFrame):
-                # If it's a DataFrame, extract the main indicator column
-                if 'schr_rost' in schr_rost_result.columns:
-                    schr_rost_values = schr_rost_result['schr_rost']
-                elif 'Direction' in schr_rost_result.columns:
-                    schr_rost_values = schr_rost_result['Direction']
-                else:
-                    # Take the first numeric column
+                # Extract all SCHR_ROST columns from the result
+                schr_rost_cols = [col for col in schr_rost_result.columns if 'schr_rost' in col.lower()]
+                for col in schr_rost_cols:
+                    result_df[col] = schr_rost_result[col]
+                
+                # If main schr_rost column not found, use first numeric column
+                if 'schr_rost' not in schr_rost_result.columns:
                     numeric_cols = schr_rost_result.select_dtypes(include=[np.number]).columns
                     if len(numeric_cols) > 0:
-                        schr_rost_values = schr_rost_result[numeric_cols[0]]
+                        result_df['schr_rost'] = schr_rost_result[numeric_cols[0]]
                     else:
-                        schr_rost_values = pd.Series(index=df.index, dtype=float)
+                        result_df['schr_rost'] = pd.Series(index=df.index, dtype=float)
             else:
                 # If it's a Series, use it directly
-                schr_rost_values = schr_rost_result
-            
-            result_df['schr_rost'] = schr_rost_values
-            
-            # Calculate signal line (EMA of SCHR_ROST)
-            signal_line = schr_rost_values.ewm(span=9, adjust=False).mean()
-            result_df['schr_rost_signal'] = signal_line
-            
-            # Calculate histogram
-            histogram = schr_rost_values - signal_line
-            result_df['schr_rost_histogram'] = histogram
+                result_df['schr_rost'] = schr_rost_result
             
             # Add speed period and faster reverse info
             result_df['schr_rost_speed'] = speed_period

@@ -941,33 +941,7 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
             
             indicator_fig.line(**line_kwargs)
     
-    # BUY/SELL signals with white outline and pulse
-    buy_idx = idx_arr[(trend == 1) & (trend.shift(1) == -1)]
-    sell_idx = idx_arr[(trend == -1) & (trend.shift(1) == 1)]
-    buy_y = st_arr[(trend == 1) & (trend.shift(1) == -1)]
-    sell_y = st_arr[(trend == -1) & (trend.shift(1) == 1)]
-    # BUY
-    if len(buy_idx) > 0:
-        indicator_fig.scatter(
-            x=buy_idx, y=buy_y,
-            size=18, color='#00C851', marker='triangle', alpha=0.95, legend_label='BUY Signal',
-            line_color='white', line_width=2.5
-        )
-        indicator_fig.scatter(
-            x=buy_idx, y=buy_y,
-            size=28, color='rgba(0, 200, 81, 0.4)', marker='circle', alpha=0.4
-        )
-    # SELL
-    if len(sell_idx) > 0:
-        indicator_fig.scatter(
-            x=sell_idx, y=sell_y,
-            size=18, color='#FF4444', marker='inverted_triangle', alpha=0.95, legend_label='SELL Signal',
-            line_color='white', line_width=2.5
-        )
-        indicator_fig.scatter(
-            x=sell_idx, y=sell_y,
-            size=28, color='rgba(255, 68, 68, 0.4)', marker='circle', alpha=0.4
-        )
+    # Removed standard BUY/SELL signals - keeping only SCHR signals
     # Transparent trend zones
     trend_changes = idx_arr[trend != trend.shift(1)]
     if len(trend_changes) > 0:
@@ -996,35 +970,55 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
 
 def _plot_schr_rost_indicator(indicator_fig, source, display_df):
     """Plot SCHR_ROST indicator on the given figure."""
+    # Plot Direction line (1=Up, 2=Down)
+    if 'schr_rost_direction' in display_df.columns:
+        indicator_fig.line(
+            'index', 'schr_rost_direction',
+            source=source,
+            line_color='#e67e22',
+            line_width=2,
+            legend_label='SCHR Direction'
+        )
+    
+    # Plot main SCHR_ROST line
     if 'schr_rost' in display_df.columns:
         indicator_fig.line(
             'index', 'schr_rost',
             source=source,
-            line_color='#e67e22',
-            line_width=2,
-            legend_label='SCHR_ROST'
-        )
-    
-    # Add signal line if available
-    if 'schr_rost_signal' in display_df.columns:
-        indicator_fig.line(
-            'index', 'schr_rost_signal',
-            source=source,
             line_color='#3498db',
             line_width=1,
-            line_dash='dashed',
-            legend_label='SCHR_ROST Signal'
+            legend_label='SCHR Rost'
         )
     
-    # Add histogram if available
-    if 'schr_rost_histogram' in display_df.columns:
-        indicator_fig.vbar(
-            'index', 0.8, 'schr_rost_histogram',
-            source=source,
-            color='#95a5a6',
-            alpha=0.4,
-            legend_label='SCHR_ROST Histogram'
-        )
+    # Add colored background based on direction
+    if 'schr_rost_direction' in display_df.columns:
+        # Create separate data sources for up and down trends
+        up_mask = display_df['schr_rost_direction'] == 1
+        down_mask = display_df['schr_rost_direction'] == 2
+        
+        if up_mask.any():
+            up_source = ColumnDataSource(display_df[up_mask])
+            indicator_fig.varea(
+                x='index',
+                y1=0,
+                y2=3,
+                source=up_source,
+                fill_color='green',
+                fill_alpha=0.1,
+                legend_label='Up Trend'
+            )
+        
+        if down_mask.any():
+            down_source = ColumnDataSource(display_df[down_mask])
+            indicator_fig.varea(
+                x='index',
+                y1=0,
+                y2=3,
+                source=down_source,
+                fill_color='red',
+                fill_alpha=0.1,
+                legend_label='Down Trend'
+            )
 
 
 def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
@@ -1494,30 +1488,7 @@ def plot_dual_chart_fast(
             alpha=0.8
         )
     
-    # Add trading signals if available
-    if 'Direction' in display_df.columns:
-        buy_signals = display_df[display_df['Direction'] == 1]
-        sell_signals = display_df[display_df['Direction'] == 2]
-        
-        if not buy_signals.empty:
-            buy_source = ColumnDataSource(buy_signals)
-            main_fig.scatter(
-                'index', 'Low',
-                source=buy_source,
-                size=12, color='green', alpha=0.7,
-                legend_label='Buy Signal',
-                marker='triangle'
-            )
-        
-        if not sell_signals.empty:
-            sell_source = ColumnDataSource(sell_signals)
-            main_fig.scatter(
-                'index', 'High',
-                source=sell_source,
-                size=12, color='red', alpha=0.7,
-                legend_label='Sell Signal',
-                marker='inverted_triangle'
-            )
+    # Removed standard trading signals - keeping only SCHR signals
     
     # Add hover tooltip for main chart - use mouse mode to avoid overlap
     hover_main = HoverTool(

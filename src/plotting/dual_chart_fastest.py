@@ -1329,46 +1329,14 @@ def add_schr_dir_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             buy_signals = display_df[display_df['direction'] == 1]
             sell_signals = display_df[display_df['direction'] == 2]
             
-            if not buy_signals.empty:
-                fig.add_trace(
-                    go.Scatter(
-                        x=buy_signals.index,
-                        y=buy_signals['pprice2'] * 0.995,  # Position below the low line
-                        mode='markers',
-                        name='Buy Signal',
-                        marker=dict(
-                            symbol='triangle-up',
-                            size=8,
-                            color='green',
-                            line=dict(color='darkgreen', width=1)
-                        ),
-                        showlegend=False
-                    ),
-                    row=2, col=1
-                )
-            
-            if not sell_signals.empty:
-                fig.add_trace(
-                    go.Scatter(
-                        x=sell_signals.index,
-                        y=sell_signals['pprice1'] * 1.005,  # Position above the high line
-                        mode='markers',
-                        name='Sell Signal',
-                        marker=dict(
-                            symbol='triangle-down',
-                            size=8,
-                            color='red',
-                            line=dict(color='darkred', width=1)
-                        ),
-                        showlegend=False
-                    ),
-                    row=2, col=1
-                )
+            # Removed standard Buy/Sell signals - keeping only SCHR signals
 
 
 def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     """
-    Add SCHR_ROST indicator to the secondary subplot.
+    Add SCHR_ROST indicator to the chart.
+    Signal (0=No Signal, 1=Buy, 2=Sell) on upper OHLC chart
+    Direction (1=Up, 2=Down) on lower subplot
     
     Args:
         fig (go.Figure): Plotly figure object
@@ -1380,57 +1348,118 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         logger.print_warning("SCHR_ROST columns not found in DataFrame")
         return
     
-    # Get SCHR_ROST values
+    # Get Signal values for upper OHLC chart (0=No Signal, 1=Buy, 2=Sell)
+    signal_values = None
+    for col in ['schr_rost_signal', 'SCHR_ROST_Signal']:
+        if col in display_df.columns:
+            signal_values = display_df[col]
+            break
+    
+    if signal_values is not None:
+        # Add Signal markers on upper OHLC chart
+        # Only show when signal is not 0 (No Signal)
+        buy_signals = signal_values == 1
+        sell_signals = signal_values == 2
+        
+        if buy_signals.any():
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index[buy_signals],
+                    y=display_df['high'][buy_signals] * 1.001,  # Slightly above high
+                    mode='markers',
+                    name='SCHR Buy Signal',
+                    marker=dict(
+                        symbol='triangle-up',
+                        size=12,
+                        color='green',
+                        line=dict(color='darkgreen', width=2)
+                    ),
+                    showlegend=True
+                ),
+                row=1, col=1
+            )
+        
+        if sell_signals.any():
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index[sell_signals],
+                    y=display_df['low'][sell_signals] * 0.999,  # Slightly below low
+                    mode='markers',
+                    name='SCHR Sell Signal',
+                    marker=dict(
+                        symbol='triangle-down',
+                        size=12,
+                        color='red',
+                        line=dict(color='darkred', width=2)
+                    ),
+                    showlegend=True
+                ),
+                row=1, col=1
+            )
+    
+    # Get Direction values for lower subplot (1=Up, 2=Down)
+    direction_values = None
+    for col in ['schr_rost_direction', 'SCHR_ROST_Direction']:
+        if col in display_df.columns:
+            direction_values = display_df[col]
+            break
+    
+    if direction_values is not None:
+        # Add Direction line on lower subplot
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=direction_values,
+                mode='lines',
+                name='SCHR Direction',
+                line=dict(color='#e67e22', width=2),
+                yaxis='y2'
+            ),
+            row=2, col=1
+        )
+        
+        # Add colored background based on direction
+        for i in range(len(display_df)):
+            if direction_values.iloc[i] == 1:  # Up trend
+                fig.add_shape(
+                    type="rect",
+                    x0=display_df.index[i],
+                    x1=display_df.index[i+1] if i < len(display_df)-1 else display_df.index[i],
+                    y0=0,
+                    y1=3,
+                    fillcolor="rgba(0, 255, 0, 0.1)",
+                    line=dict(width=0),
+                    row=2, col=1
+                )
+            elif direction_values.iloc[i] == 2:  # Down trend
+                fig.add_shape(
+                    type="rect",
+                    x0=display_df.index[i],
+                    x1=display_df.index[i+1] if i < len(display_df)-1 else display_df.index[i],
+                    y0=0,
+                    y1=3,
+                    fillcolor="rgba(255, 0, 0, 0.1)",
+                    line=dict(width=0),
+                    row=2, col=1
+                )
+    
+    # Get main SCHR_ROST values for reference
     schr_rost_values = None
     for col in ['schr_rost', 'SCHR_ROST']:
         if col in display_df.columns:
             schr_rost_values = display_df[col]
             break
     
-    if schr_rost_values is None:
-        logger.print_warning("SCHR_ROST values not found")
-        return
-    
-    # Add SCHR_ROST line
-    fig.add_trace(
-        go.Scatter(
-            x=display_df.index,
-            y=schr_rost_values,
-            mode='lines',
-            name='SCHR_ROST',
-            line=dict(color='#e67e22', width=2),
-            opacity=0.8
-        ),
-        row=2, col=1
-    )
-    
-    # Add signal line if available
-    signal_cols = [col for col in display_df.columns if 'schr_rost_signal' in col.lower()]
-    if signal_cols:
-        signal_values = display_df[signal_cols[0]]
+    if schr_rost_values is not None:
+        # Add main SCHR_ROST line on lower subplot
         fig.add_trace(
             go.Scatter(
                 x=display_df.index,
-                y=signal_values,
+                y=schr_rost_values,
                 mode='lines',
-                name='SCHR_ROST Signal',
-                line=dict(color='#3498db', width=1, dash='dash'),
-                opacity=0.6
-            ),
-            row=2, col=1
-        )
-    
-    # Add histogram if available
-    histogram_cols = [col for col in display_df.columns if 'schr_rost_histogram' in col.lower()]
-    if histogram_cols:
-        histogram_values = display_df[histogram_cols[0]]
-        fig.add_trace(
-            go.Bar(
-                x=display_df.index,
-                y=histogram_values,
-                name='SCHR_ROST Histogram',
-                marker_color='#95a5a6',
-                opacity=0.4
+                name='SCHR Rost',
+                line=dict(color='#3498db', width=1),
+                yaxis='y2'
             ),
             row=2, col=1
         )
@@ -1445,7 +1474,7 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     )
     
     # Update y-axis title
-    fig.update_yaxes(title_text="SCHR_ROST", row=2, col=1)
+    fig.update_yaxes(title_text="SCHR Direction", row=2, col=1)
 
 
 def add_supertrend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
@@ -1582,103 +1611,7 @@ def add_supertrend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         buy_idx = idx[(trend == 1) & (trend.shift(1) == -1)]
         sell_idx = idx[(trend == -1) & (trend.shift(1) == 1)]
         
-        # BUY signals with enhanced styling
-        if len(buy_idx) > 0:
-            fig.add_trace(
-                go.Scatter(
-                    x=buy_idx,
-                    y=st.loc[buy_idx],
-                    mode='markers',
-                    name='BUY Signal',
-                    marker=dict(
-                        symbol='triangle-up',
-                        size=18,
-                        color='#00C851',
-                        line=dict(
-                            color='white',
-                            width=2.5
-                        ),
-                        opacity=0.95
-                    ),
-                    showlegend=True,
-                    hoverinfo='x+y+name',
-                    hoverlabel=dict(
-                        bgcolor='#00C851',
-                        font_size=12,
-                        font_color='white',
-                        font_family='Arial, sans-serif'
-                    )
-                ),
-                row=2, col=1
-            )
-            
-            # Add pulse effect for buy signals
-            fig.add_trace(
-                go.Scatter(
-                    x=buy_idx,
-                    y=st.loc[buy_idx],
-                    mode='markers',
-                    name='BUY Pulse',
-                    marker=dict(
-                        symbol='circle',
-                        size=28,
-                        color='rgba(0, 200, 81, 0.4)',
-                        line=dict(width=0)
-                    ),
-                    showlegend=False,
-                    hoverinfo='skip'
-                ),
-                row=2, col=1
-            )
-        
-        # SELL signals with enhanced styling
-        if len(sell_idx) > 0:
-            fig.add_trace(
-                go.Scatter(
-                    x=sell_idx,
-                    y=st.loc[sell_idx],
-                    mode='markers',
-                    name='SELL Signal',
-                    marker=dict(
-                        symbol='triangle-down',
-                        size=18,
-                        color='#FF4444',
-                        line=dict(
-                            color='white',
-                            width=2.5
-                        ),
-                        opacity=0.95
-                    ),
-                    showlegend=True,
-                    hoverinfo='x+y+name',
-                    hoverlabel=dict(
-                        bgcolor='#FF4444',
-                        font_size=12,
-                        font_color='white',
-                        font_family='Arial, sans-serif'
-                    )
-                ),
-                row=2, col=1
-            )
-            
-            # Add pulse effect for sell signals
-            fig.add_trace(
-                go.Scatter(
-                    x=sell_idx,
-                    y=st.loc[sell_idx],
-                    mode='markers',
-                    name='SELL Pulse',
-                    marker=dict(
-                        symbol='circle',
-                        size=28,
-                        color='rgba(255, 68, 68, 0.4)',
-                        line=dict(width=0)
-                    ),
-                    showlegend=False,
-                    hoverinfo='skip'
-                ),
-                row=2, col=1
-            )
+        # Removed standard BUY/SELL signals - keeping only SCHR signals
         
         # Add trend background zones for better visual context
         trend_changes = idx[trend != trend.shift(1)]
@@ -1935,49 +1868,7 @@ def plot_dual_chart_fastest(
             row=1, col=1
         )
     
-    # Add buy/sell signals if available
-    if 'direction' in display_df.columns:
-        # Ensure boolean masks are aligned with DataFrame index
-        buy_mask = (display_df['direction'] == 1)
-        buy_mask = buy_mask.reindex(display_df.index, fill_value=False)
-        buy_signals = display_df[buy_mask]
-        sell_mask = (display_df['direction'] == 2)
-        sell_mask = sell_mask.reindex(display_df.index, fill_value=False)
-        sell_signals = display_df[sell_mask]
-        if not buy_signals.empty:
-            fig.add_trace(
-                go.Scatter(
-                    x=buy_signals.index,
-                    y=buy_signals['low'] * 0.995,  # Position below the low
-                    mode='markers',
-                    name='Buy Signal',
-                    marker=dict(
-                        symbol='triangle-up',
-                        size=10,
-                        color='#27ae60',
-                        line=dict(color='#229954', width=1.5)
-                    ),
-                    showlegend=True
-                ),
-                row=1, col=1
-            )
-        if not sell_signals.empty:
-            fig.add_trace(
-                go.Scatter(
-                    x=sell_signals.index,
-                    y=sell_signals['high'] * 1.005,  # Position above the high
-                    mode='markers',
-                    name='Sell Signal',
-                    marker=dict(
-                        symbol='triangle-down',
-                        size=10,
-                        color='#c0392b',
-                        line=dict(color='#a93226', width=1.5)
-                    ),
-                    showlegend=True
-                ),
-                row=1, col=1
-            )
+    # Removed standard buy/sell signals - keeping only SCHR signals
     
     # Add indicator to secondary subplot based on rule
     indicator_name = rule.split(':', 1)[0].lower().strip()

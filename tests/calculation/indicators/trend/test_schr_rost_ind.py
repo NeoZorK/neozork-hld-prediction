@@ -252,7 +252,7 @@ class TestSCHRRostIndicator(unittest.TestCase):
         self.assertEqual(len(result), len(self.df))
         
         # Check that required columns are added
-        required_cols = ['SCHR_ROST', 'SCHR_ROST_Prediction', 'SCHR_ROST_Direction', 'SCHR_ROST_Signal']
+        required_cols = ['schr_rost', 'schr_rost_prediction', 'schr_rost_direction', 'schr_rost_signal']
         for col in required_cols:
             self.assertIn(col, result.columns)
         
@@ -275,7 +275,7 @@ class TestSCHRRostIndicator(unittest.TestCase):
             self.assertIn(col, result.columns)
         
         # Check that indicator columns are present
-        indicator_cols = ['SCHR_ROST', 'SCHR_ROST_Prediction', 'SCHR_ROST_Direction', 'SCHR_ROST_Signal']
+        indicator_cols = ['schr_rost', 'schr_rost_prediction', 'schr_rost_direction', 'schr_rost_signal']
         for col in indicator_cols:
             self.assertIn(col, result.columns)
     
@@ -357,7 +357,7 @@ class TestApplyRuleSCHRRost(unittest.TestCase):
         self.assertEqual(len(result), len(large_df))
         
         # Check that calculations completed successfully
-        self.assertTrue(np.all(np.isfinite(result['SCHR_ROST'].dropna())))
+        self.assertTrue(np.all(np.isfinite(result['schr_rost'].dropna())))
 
 
 if __name__ == '__main__':
