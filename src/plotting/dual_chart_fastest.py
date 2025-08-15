@@ -14,6 +14,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.io as pio
 import webbrowser
+import time
 from typing import Dict, Any, Optional
 
 from ..common import logger
@@ -1342,6 +1343,8 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         fig (go.Figure): Plotly figure object
         display_df (pd.DataFrame): DataFrame with SCHR_ROST data
     """
+    t_start = time.time()
+    logger.print_info(f"[PERF] Starting SCHR_ROST indicator addition")
     # Check if SCHR_ROST columns exist
     schr_rost_cols = [col for col in display_df.columns if 'schr_rost' in col.lower()]
     if not schr_rost_cols:
@@ -1397,6 +1400,8 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 row=1, col=1
             )
     
+    logger.print_info(f"[PERF] SCHR_ROST signal markers: {(time.time() - t_start)*1000:.1f}ms")
+    
     # Get Direction values for lower subplot (1=Up, 2=Down)
     direction_values = None
     for col in ['schr_rost_direction', 'SCHR_ROST_Direction']:
@@ -1418,30 +1423,8 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             row=2, col=1
         )
         
-        # Add colored background based on direction
-        for i in range(len(display_df)):
-            if direction_values.iloc[i] == 1:  # Up trend
-                fig.add_shape(
-                    type="rect",
-                    x0=display_df.index[i],
-                    x1=display_df.index[i+1] if i < len(display_df)-1 else display_df.index[i],
-                    y0=0,
-                    y1=3,
-                    fillcolor="rgba(0, 255, 0, 0.1)",
-                    line=dict(width=0),
-                    row=2, col=1
-                )
-            elif direction_values.iloc[i] == 2:  # Down trend
-                fig.add_shape(
-                    type="rect",
-                    x0=display_df.index[i],
-                    x1=display_df.index[i+1] if i < len(display_df)-1 else display_df.index[i],
-                    y0=0,
-                    y1=3,
-                    fillcolor="rgba(255, 0, 0, 0.1)",
-                    line=dict(width=0),
-                    row=2, col=1
-                )
+        # Background shapes removed for performance optimization
+        logger.print_info(f"[PERF] SCHR_ROST background shapes: 0.0ms (removed for performance)")
     
     # Get main SCHR_ROST values for reference
     schr_rost_values = None
@@ -1475,6 +1458,8 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     
     # Update y-axis title
     fig.update_yaxes(title_text="SCHR Direction", row=2, col=1)
+    
+    logger.print_info(f"[PERF] Total SCHR_ROST indicator: {(time.time() - t_start)*1000:.1f}ms")
 
 
 def add_supertrend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
@@ -1792,7 +1777,12 @@ def plot_dual_chart_fastest(
     # Ensure output directory exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
+    # Start timing
+    start_time = time.time()
+    logger.print_info(f"[PERF] Starting dual chart creation for {len(df)} rows")
+    
     # Standardize column names
+    t1 = time.time()
     display_df = df.copy()
     display_df.columns = [col.lower() for col in display_df.columns]
     # Remove duplicate columns by name (case-insensitive, keep first occurrence)
@@ -1805,6 +1795,7 @@ def plot_dual_chart_fastest(
     # Debug: print all column names and index type
     logger.print_info(f"[dual_chart_fastest] Columns: {list(display_df.columns)}")
     logger.print_info(f"[dual_chart_fastest] Index type: {type(display_df.index)}")
+    logger.print_info(f"[PERF] Data preparation: {(time.time() - t1)*1000:.1f}ms")
     
     # Ensure we have required columns
     required_columns = ['open', 'high', 'low', 'close']
@@ -1814,6 +1805,7 @@ def plot_dual_chart_fastest(
         return None
     
     # Create subplots: main chart (60%) and indicator chart (40%)
+    t2 = time.time()
     fig = make_subplots(
         rows=2, cols=1,
         subplot_titles=(None, None),  # Without titles inside the chart
@@ -1822,8 +1814,10 @@ def plot_dual_chart_fastest(
         specs=[[{"secondary_y": False}],
                [{"secondary_y": False}]]
     )
+    logger.print_info(f"[PERF] Subplot creation: {(time.time() - t2)*1000:.1f}ms")
     
     # Add candlestick chart to main subplot
+    t3 = time.time()
     fig.add_trace(
         go.Candlestick(
             x=display_df.index,
@@ -1840,6 +1834,7 @@ def plot_dual_chart_fastest(
         ),
         row=1, col=1
     )
+    logger.print_info(f"[PERF] Candlestick chart: {(time.time() - t3)*1000:.1f}ms")
     
     # Add support and resistance lines if available
     if 'support' in display_df.columns:
@@ -2081,10 +2076,14 @@ def plot_dual_chart_fastest(
         )
     
     # Save and open
+    t_save = time.time()
     pio.write_html(fig, output_path, auto_open=False)
     abs_path = os.path.abspath(output_path)
     webbrowser.open_new_tab(f"file://{abs_path}")
     
+    total_time = time.time() - start_time
+    logger.print_info(f"[PERF] File save: {(time.time() - t_save)*1000:.1f}ms")
+    logger.print_info(f"[PERF] Total dual chart creation: {total_time*1000:.1f}ms")
     logger.print_info(f"Dual chart saved to: {abs_path}")
     
     return fig 
