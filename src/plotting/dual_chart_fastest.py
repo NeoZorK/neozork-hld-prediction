@@ -1410,15 +1410,24 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             break
     
     if direction_values is not None:
-        # Add Direction line on lower subplot
+        # Add Direction line on lower subplot with enhanced styling
         fig.add_trace(
             go.Scatter(
                 x=display_df.index,
                 y=direction_values,
                 mode='lines',
                 name='SCHR Direction',
-                line=dict(color='#e67e22', width=2),
-                yaxis='y2'
+                line=dict(
+                    color='#e67e22', 
+                    width=4,
+                    shape='hv'  # Horizontal-vertical steps for clean step-like appearance
+                ),
+                yaxis='y2',
+                hovertemplate='<b>SCHR Direction</b><br>' +
+                             'Value: %{y}<br>' +
+                             'Date: %{x}<br>' +
+                             '<extra></extra>',
+                showlegend=True
             ),
             row=2, col=1
         )
@@ -1434,30 +1443,51 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             break
     
     if schr_rost_values is not None:
-        # Add main SCHR_ROST line on lower subplot
+        # Add main SCHR_ROST line on lower subplot with enhanced styling
+        # Scale the values to make them more visible on the chart (between 0.5 and 1.5)
+        scaled_values = (schr_rost_values - schr_rost_values.min()) / (schr_rost_values.max() - schr_rost_values.min()) * 1.0 + 0.5
+        
         fig.add_trace(
             go.Scatter(
                 x=display_df.index,
-                y=schr_rost_values,
+                y=scaled_values,
                 mode='lines',
                 name='SCHR Rost',
-                line=dict(color='#3498db', width=1),
-                yaxis='y2'
+                line=dict(
+                    color='#3498db', 
+                    width=3,
+                    dash='solid'
+                ),
+                yaxis='y2',
+                hovertemplate='<b>SCHR Rost</b><br>' +
+                             'Value: %{text}<br>' +
+                             'Date: %{x}<br>' +
+                             '<extra></extra>',
+                text=[f'{val:.6f}' for val in schr_rost_values],
+                showlegend=True
             ),
             row=2, col=1
         )
     
-    # Add zero line
+    # Add zero line with enhanced styling
     fig.add_hline(
         y=0,
-        line_dash="dash",
-        line_color="gray",
-        opacity=0.5,
+        line_dash="dot",
+        line_color="#95a5a6",
+        opacity=0.7,
+        line_width=1.5,
         row=2, col=1
     )
     
-    # Update y-axis title
-    fig.update_yaxes(title_text="SCHR Direction", row=2, col=1)
+    # Update y-axis title and range
+    fig.update_yaxes(
+        title_text="SCHR Direction", 
+        row=2, col=1,
+        range=[0.3, 2.2],  # Extended range to show SCHR Rost line
+        tickmode='array',
+        tickvals=[0.5, 1, 1.5, 2],  # Show ticks for SCHR Rost and Direction values
+        ticktext=['', 'Up', '', 'Down']  # Custom labels for better readability
+    )
     
     logger.print_info(f"[PERF] Total SCHR_ROST indicator: {(time.time() - t_start)*1000:.1f}ms")
 
