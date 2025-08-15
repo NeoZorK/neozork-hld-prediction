@@ -1444,8 +1444,8 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     
     if schr_rost_values is not None:
         # Add main SCHR_ROST line on lower subplot with enhanced styling
-        # Scale the values to make them more visible on the chart (between 0.5 and 1.5)
-        scaled_values = (schr_rost_values - schr_rost_values.min()) / (schr_rost_values.max() - schr_rost_values.min()) * 1.0 + 0.5
+        # Scale the values to make them more visible on the chart (between 1.0 and 2.0 - middle of orange line range)
+        scaled_values = (schr_rost_values - schr_rost_values.min()) / (schr_rost_values.max() - schr_rost_values.min()) * 1.0 + 1.0
         
         fig.add_trace(
             go.Scatter(
@@ -1483,10 +1483,10 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     fig.update_yaxes(
         title_text="SCHR Direction", 
         row=2, col=1,
-        range=[0.3, 2.2],  # Extended range to show SCHR Rost line
+        range=[0.8, 2.0],  # Adjusted range for better visibility
         tickmode='array',
-        tickvals=[0.5, 1, 1.5, 2],  # Show ticks for SCHR Rost and Direction values
-        ticktext=['', 'Up', '', 'Down']  # Custom labels for better readability
+        tickvals=[1, 1.5, 2],  # Show ticks for Direction and SCHR Rost values
+        ticktext=['Up', 'SCHR Rost', 'Down']  # Custom labels for better readability
     )
     
     logger.print_info(f"[PERF] Total SCHR_ROST indicator: {(time.time() - t_start)*1000:.1f}ms")
