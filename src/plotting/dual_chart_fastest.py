@@ -1531,7 +1531,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             fig.add_trace(
                 go.Scatter(
                     x=display_df.index[buy_signals],
-                    y=display_df['High'][buy_signals] * 1.001,  # Slightly above high
+                    y=display_df['high'][buy_signals] * 1.001,  # Slightly above high
                     mode='markers',
                     name='SCHR Buy Signal',
                     marker=dict(
@@ -1554,7 +1554,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             fig.add_trace(
                 go.Scatter(
                     x=display_df.index[sell_signals],
-                    y=display_df['Low'][sell_signals] * 0.999,  # Slightly below low
+                    y=display_df['low'][sell_signals] * 0.999,  # Slightly below low
                     mode='markers',
                     name='SCHR Sell Signal',
                     marker=dict(
@@ -1577,7 +1577,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             fig.add_trace(
                 go.Scatter(
                     x=display_df.index[dbl_buy_signals],
-                    y=display_df['High'][dbl_buy_signals] * 1.002,  # Further above high
+                    y=display_df['high'][dbl_buy_signals] * 1.002,  # Further above high
                     mode='markers',
                     name='SCHR DBL Buy Signal',
                     marker=dict(
@@ -1600,7 +1600,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             fig.add_trace(
                 go.Scatter(
                     x=display_df.index[dbl_sell_signals],
-                    y=display_df['Low'][dbl_sell_signals] * 0.998,  # Further below low
+                    y=display_df['low'][dbl_sell_signals] * 0.998,  # Further below low
                     mode='markers',
                     name='SCHR DBL Sell Signal',
                     marker=dict(
@@ -2024,9 +2024,12 @@ def plot_dual_chart_fastest(
     start_time = time.time()
     logger.print_info(f"[PERF] Starting dual chart creation for {len(df)} rows")
     
+    # DataFrame already contains calculated indicators from plot_dual_chart_results
+    # Just use the provided DataFrame directly
+    display_df = df.copy()
+    
     # Standardize column names
     t1 = time.time()
-    display_df = df.copy()
     display_df.columns = [col.lower() for col in display_df.columns]
     # Remove duplicate columns by name (case-insensitive, keep first occurrence)
     cols_lower = pd.Series(display_df.columns)
@@ -2193,7 +2196,14 @@ def plot_dual_chart_fastest(
         add_schr_rost_indicator(fig, display_df)
     
     elif indicator_name == 'schr_trend':
-        add_schr_trend_indicator(fig, display_df)
+        try:
+            logger.print_info("[PERF] Starting SCHR_TREND indicator addition")
+            add_schr_trend_indicator(fig, display_df)
+            logger.print_info("[PERF] SCHR_TREND indicator addition completed")
+        except Exception as e:
+            logger.print_error(f"Error adding SCHR_TREND indicator: {e}")
+            logger.print_debug(f"Display DataFrame columns: {list(display_df.columns)}")
+            logger.print_debug(f"Display DataFrame shape: {display_df.shape}")
     
     elif indicator_name == 'supertrend':
         add_supertrend_indicator(fig, display_df)

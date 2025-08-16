@@ -147,7 +147,7 @@ def get_supported_indicators() -> set:
     return {
         'rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'ema', 'bb', 'atr',
         'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain',
-        'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_rost'
+        'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_rost', 'schr_trend'
     }
 
 
@@ -720,27 +720,38 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             from ..calculation.indicators.trend.schr_trend_ind import SCHRTrendIndicator
             from ..calculation.indicators.oscillators.rsi_ind_calc import PriceType
             
-            # Create indicator instance
+            # Create indicator instance and call calculate first to get indicator columns
             indicator = SCHRTrendIndicator(period, tr_mode, extreme_up, extreme_down, PriceType.OPEN)
-            schr_trend_result = indicator.calculate(df)
+            schr_trend_calc = indicator.calculate(df)
             
-            # Handle the result - it might be a DataFrame or Series
-            if isinstance(schr_trend_result, pd.DataFrame):
-                # Extract all SCHR_TREND columns from the result
-                schr_trend_cols = [col for col in schr_trend_result.columns if 'schr_trend' in col.lower()]
-                for col in schr_trend_cols:
-                    result_df[col] = schr_trend_result[col]
-                
-                # If main schr_trend column not found, use first numeric column
-                if 'schr_trend' not in schr_trend_result.columns:
-                    numeric_cols = schr_trend_result.select_dtypes(include=[np.number]).columns
-                    if len(numeric_cols) > 0:
-                        result_df['schr_trend'] = schr_trend_result[numeric_cols[0]]
-                    else:
-                        result_df['schr_trend'] = pd.Series(index=df.index, dtype=float)
-            else:
-                # If it's a Series, use it directly
-                result_df['schr_trend'] = schr_trend_result
+            # Extract all SCHR_TREND columns from the calculation result
+            schr_trend_cols = [col for col in schr_trend_calc.columns if 'schr_trend' in col.lower()]
+            logger.print_info(f"[DEBUG] SCHR_TREND calculation columns: {list(schr_trend_calc.columns)}")
+            logger.print_info(f"[DEBUG] SCHR_TREND columns to add: {schr_trend_cols}")
+            for col in schr_trend_cols:
+                result_df[col] = schr_trend_calc[col]
+                logger.print_info(f"[DEBUG] Added column {col} to result_df")
+            
+            # Now call apply_rule to get the rule columns
+            schr_trend_rule = indicator.apply_rule(df, point=0.00001)  # Use default point size
+            
+            # Also add the standard rule columns for compatibility
+            result_df['PPrice1'] = schr_trend_rule['PPrice1']
+            result_df['PColor1'] = schr_trend_rule['PColor1']
+            result_df['PPrice2'] = schr_trend_rule['PPrice2']
+            result_df['PColor2'] = schr_trend_rule['PColor2']
+            result_df['Direction'] = schr_trend_rule['Direction']
+            result_df['Diff'] = schr_trend_rule['Diff']
+            
+            logger.print_info(f"[DEBUG] Final result_df columns: {list(result_df.columns)}")
+            
+            # Add the standard rule columns for compatibility
+            result_df['PPrice1'] = schr_trend_rule['PPrice1']
+            result_df['PColor1'] = schr_trend_rule['PColor1']
+            result_df['PPrice2'] = schr_trend_rule['PPrice2']
+            result_df['PColor2'] = schr_trend_rule['PColor2']
+            result_df['Direction'] = schr_trend_rule['Direction']
+            result_df['Diff'] = schr_trend_rule['Diff']
             
             # Add parameters info
             result_df['schr_trend_period'] = period
