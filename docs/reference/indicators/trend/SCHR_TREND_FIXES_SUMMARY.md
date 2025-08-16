@@ -69,6 +69,27 @@ price_type_enum = PriceType.OPEN if price_type == 'open' else PriceType.CLOSE
 indicator = SCHRTrendIndicator(period, tr_mode, extreme_up, extreme_down, price_type_enum)
 ```
 
+### 5. OHLC Candle Colors Mismatch
+**Problem**: OHLC candle colors in Python version didn't match MQL5 colors.
+
+**MQL5 Colors**:
+- BUY (1) = Blue
+- SELL (2) = Yellow  
+- DBL_BUY (3) = Aqua
+- DBL_SELL (4) = Red
+
+**Python Before Fix**:
+```python
+# Used schr_trend_direction for candle coloring (incorrect)
+direction_values = display_df['schr_trend_direction']
+```
+
+**Python After Fix**:
+```python
+# Use schr_trend_color for candle coloring (correct, matches MQL5 _arr_Color)
+color_values = display_df['schr_trend_color']
+```
+
 ## Fixes Applied
 
 ### 1. All Trading Rule Functions Corrected
@@ -93,6 +114,12 @@ indicator = SCHRTrendIndicator(period, tr_mode, extreme_up, extreme_down, price_
 - ✅ `dual_chart_plot.py` now respects `price_type` parameter
 - ✅ Dynamic price type selection based on user input
 - ✅ Proper enum conversion and validation
+
+### 4. OHLC Candle Colors Fixed
+- ✅ Now uses `schr_trend_color` instead of `schr_trend_direction`
+- ✅ Colors exactly match MQL5: Blue, Yellow, Aqua, Red
+- ✅ Proper color assignment for all signal types
+- ✅ Consistent with MQL5 `_arr_Color` behavior
 
 ## Current Status
 

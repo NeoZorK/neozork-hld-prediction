@@ -1514,8 +1514,16 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         logger.print_warning("SCHR_TREND columns not found in DataFrame")
         return
     
-    # Get Direction values for OHLC candle coloring (0=no_signal, 1=buy, 2=sell, 3=dbl_buy, 4=dbl_sell)
-    # Direction shows current trend state, used for candle coloring
+    # Get Color values for OHLC candle coloring (0=no_signal, 1=buy, 2=sell, 3=dbl_buy, 4=dbl_sell)
+    # Color shows the actual color assignment for candles, matching MQL5 _arr_Color behavior
+    color_values = None
+    for col in ['schr_trend_color', 'SCHR_TREND_Color']:
+        if col in display_df.columns:
+            color_values = display_df[col]
+            break
+    
+    # Get Direction values for trend line (0=no_signal, 1=buy, 2=sell, 3=dbl_buy, 4=dbl_sell)
+    # Direction shows current trend state, used for trend line
     direction_values = None
     for col in ['schr_trend_direction', 'SCHR_TREND_Direction']:
         if col in display_df.columns:
@@ -1614,19 +1622,19 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 row=1, col=1
             )
         
-        # Add DBL Buy signals (blue diamonds) - only when Signal != 0
+        # Add DBL Buy signals (aqua triangles up) - only when Signal != 0
         if dbl_buy_signals.any():
             fig.add_trace(
                 go.Scatter(
                     x=display_df.index[dbl_buy_signals],
-                    y=display_df['high'][dbl_buy_signals] * 1.002,  # Further above high
+                    y=display_df['high'][dbl_buy_signals] * 1.001,  # Slightly above high
                     mode='markers',
                     name='SCHR DBL Buy Signal',
                     marker=dict(
-                        symbol='diamond',
-                        size=15,
-                        color='#3498db',
-                        line=dict(width=2, color='#3498db')
+                        symbol='triangle-up',
+                        size=12,
+                        color='#00ffff',
+                        line=dict(width=2, color='#00ffff')
                     ),
                     hovertemplate='<b>SCHR DBL Buy Signal</b><br>' +
                                  'Date: %{x}<br>' +
@@ -1637,25 +1645,128 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 row=1, col=1
             )
         
-        # Add DBL Sell signals (purple diamonds) - only when Signal != 0
+        # Add DBL Sell signals (red triangles down) - only when Signal != 0
         if dbl_sell_signals.any():
             fig.add_trace(
                 go.Scatter(
                     x=display_df.index[dbl_sell_signals],
-                    y=display_df['low'][dbl_sell_signals] * 0.998,  # Further below low
+                    y=display_df['low'][dbl_sell_signals] * 0.999,  # Slightly below low
                     mode='markers',
                     name='SCHR DBL Sell Signal',
                     marker=dict(
-                        symbol='diamond',
-                        size=15,
-                        color='#9b59b6',
-                        line=dict(width=2, color='#9b59b6')
+                        symbol='triangle-down',
+                        size=12,
+                        color='#e74c3c',
+                        line=dict(width=2, color='#e74c3c')
                     ),
                     hovertemplate='<b>SCHR DBL Sell Signal</b><br>' +
                                  'Date: %{x}<br>' +
                                  'Price: %{y}<br>' +
                                  '<extra></extra>',
                     showlegend=True
+                ),
+                row=1, col=1
+            )
+    
+    # Now draw OHLC candles with proper SCHR_TREND coloring
+    # Use color_values (schr_trend_color) for candle coloring, matching MQL5 _arr_Color behavior
+    if color_values is not None:
+        # No Signal (0) - Standard green/red based on OHLC direction
+        no_signal_mask = color_values == 0
+        if no_signal_mask.any():
+            fig.add_trace(
+                go.Candlestick(
+                    x=display_df.index[no_signal_mask],
+                    open=display_df['open'][no_signal_mask],
+                    high=display_df['high'][no_signal_mask],
+                    low=display_df['low'][no_signal_mask],
+                    close=display_df['close'][no_signal_mask],
+                    name="OHLC (No Signal)",
+                    increasing_line_color='#2ecc71',
+                    decreasing_line_color='#e74c3c',
+                    increasing_fillcolor='#2ecc71',
+                    decreasing_fillcolor='#e74c3c',
+                    line=dict(width=1.2)
+                ),
+                row=1, col=1
+            )
+        
+        # Buy (1) - Blue (all candles blue regardless of OHLC direction)
+        buy_mask = color_values == 1
+        if buy_mask.any():
+            fig.add_trace(
+                go.Candlestick(
+                    x=display_df.index[buy_mask],
+                    open=display_df['open'][buy_mask],
+                    high=display_df['high'][buy_mask],
+                    low=display_df['low'][buy_mask],
+                    close=display_df['close'][buy_mask],
+                    name="OHLC (Buy - Blue)",
+                    increasing_line_color='#3498db',
+                    decreasing_line_color='#3498db',
+                    increasing_fillcolor='#3498db',
+                    decreasing_fillcolor='#3498db',
+                    line=dict(width=1.2)
+                ),
+                row=1, col=1
+            )
+        
+        # Sell (2) - Yellow (all candles yellow regardless of OHLC direction)
+        sell_mask = color_values == 2
+        if sell_mask.any():
+            fig.add_trace(
+                go.Candlestick(
+                    x=display_df.index[sell_mask],
+                    open=display_df['open'][sell_mask],
+                    high=display_df['high'][sell_mask],
+                    low=display_df['low'][sell_mask],
+                    close=display_df['close'][sell_mask],
+                    name="OHLC (Sell - Yellow)",
+                    increasing_line_color='#f1c40f',
+                    decreasing_line_color='#f1c40f',
+                    increasing_fillcolor='#f1c40f',
+                    decreasing_fillcolor='#f1c40f',
+                    line=dict(width=1.2)
+                ),
+                row=1, col=1
+            )
+        
+        # DBL Buy (3) - Aqua (all candles aqua regardless of OHLC direction)
+        dbl_buy_mask = color_values == 3
+        if dbl_buy_mask.any():
+            fig.add_trace(
+                go.Candlestick(
+                    x=display_df.index[dbl_buy_mask],
+                    open=display_df['open'][dbl_buy_mask],
+                    high=display_df['high'][dbl_buy_mask],
+                    low=display_df['low'][dbl_buy_mask],
+                    close=display_df['close'][dbl_buy_mask],
+                    name="OHLC (DBL Buy - Aqua)",
+                    increasing_line_color='#00ffff',
+                    decreasing_line_color='#00ffff',
+                    increasing_fillcolor='#00ffff',
+                    decreasing_fillcolor='#00ffff',
+                    line=dict(width=1.2)
+                ),
+                row=1, col=1
+            )
+        
+        # DBL Sell (4) - Red (all candles red regardless of OHLC direction)
+        dbl_sell_mask = color_values == 4
+        if dbl_sell_mask.any():
+            fig.add_trace(
+                go.Candlestick(
+                    x=display_df.index[dbl_sell_mask],
+                    open=display_df['open'][dbl_sell_mask],
+                    high=display_df['high'][dbl_sell_mask],
+                    low=display_df['low'][dbl_sell_mask],
+                    close=display_df['close'][dbl_sell_mask],
+                    name="OHLC (DBL Sell - Red)",
+                    increasing_line_color='#e74c3c',
+                    decreasing_line_color='#e74c3c',
+                    increasing_fillcolor='#e74c3c',
+                    decreasing_fillcolor='#e74c3c',
+                    line=dict(width=1.2)
                 ),
                 row=1, col=1
             )
