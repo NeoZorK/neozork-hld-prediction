@@ -37,6 +37,7 @@ from .indicators.predictive.schr_dir_ind import apply_rule_schr_dir
 
 # Trend indicators
 from .indicators.trend.schr_rost_ind import apply_rule_schr_rost
+from .indicators.trend.schr_trend_ind import apply_rule_schr_trend
 
 # Probability indicators
 from .indicators.probability.montecarlo_ind import apply_rule_montecarlo
@@ -205,6 +206,7 @@ RULE_DISPATCHER = {
     TradingRule.SAR: apply_rule_sar,
     TradingRule.SuperTrend: apply_rule_supertrend,
     TradingRule.SCHR_ROST: apply_rule_schr_rost,
+    TradingRule.SCHR_TREND: apply_rule_schr_trend,
 }
 
 def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, price_type: str = 'close', **kwargs) -> pd.DataFrame:
@@ -356,6 +358,13 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         speed_period = kwargs.get('speed_period', 'Future')
         faster_reverse = kwargs.get('faster_reverse', False)
         return rule_func(df, point=point, speed_period=speed_period, faster_reverse=faster_reverse, price_type=price_type_enum)
+    elif selected_rule == TradingRule.SCHR_TREND:
+        # Extract SCHR_TREND-specific parameters
+        period = kwargs.get('period', 2)
+        tr_mode = kwargs.get('tr_mode', 'zone')
+        extreme_up = kwargs.get('extreme_up', 95)
+        extreme_down = kwargs.get('extreme_down', 5)
+        return rule_func(df, point=point, period=period, tr_mode=tr_mode, extreme_up=extreme_up, extreme_down=extreme_down, price_type=price_type_enum)
     else:
         # Default case for any other rules
         return rule_func(df, point=point, price_type=price_type_enum)

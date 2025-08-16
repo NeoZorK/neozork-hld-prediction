@@ -62,3 +62,4 @@ class TradingRule(Enum):
     SAR = 33  # Parabolic SAR
     SuperTrend = 34  # SuperTrend
     SCHR_ROST = 35  # SCHR Rost indicator
+    SCHR_TREND = 36  # SCHR Trend Helper indicator

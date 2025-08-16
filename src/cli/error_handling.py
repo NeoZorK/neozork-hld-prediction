@@ -814,6 +814,45 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Missing parameters: Use schr_rost:speed,faster_reverse (e.g., schr_rost:Future,true)',
                 'Invalid format: Expected schr_rost:speed,boolean'
             ]
+        },
+        'schr_trend': {
+            'name': 'SCHR Trend Helper (Shcherbyna Trend) 📈',
+            'description': '🔥 PREMIUM RSI-based trend prediction indicator with 10 trading rule modes! Advanced trend detection with multiple analysis methods including Purchase Power analysis using 10 RSI periods. Perfect for trend identification and signal generation.',
+            'format': 'schr_trend:period,tr_mode,extreme_up,extreme_down',
+            'parameters': [
+                ('period', 'int', 'RSI calculation period', '2'),
+                ('tr_mode', 'string', 'Trading rule mode: firstclassic,firsttrend,trend,zone,firstzone,firststrongzone,purchasepower,purchasepower_bycount,purchasepower_extreme,purchasepower_weak', 'zone'),
+                ('extreme_up', 'int', 'Extreme up point (0-100)', '95'),
+                ('extreme_down', 'int', 'Extreme down point (0-100)', '5')
+            ],
+            'examples': [
+                ('schr_trend', 'SCHR Trend with default settings (period=2, zone mode, extreme_up=95, extreme_down=5)'),
+                ('schr_trend:5,zone,90,10', 'SCHR Trend with period 5, zone mode, extreme_up=90, extreme_down=10'),
+                ('schr_trend:3,firstclassic,95,5', 'SCHR Trend with period 3, first classic mode, extreme_up=95, extreme_down=5'),
+                ('schr_trend:2,purchasepower,95,5', 'SCHR Trend with period 2, purchase power mode, extreme_up=95, extreme_down=5'),
+                ('schr_trend:4,trend,85,15', 'SCHR Trend with period 4, trend mode, extreme_up=85, extreme_down=15'),
+                ('schr_trend:1,firstzone,98,2', 'SCHR Trend with period 1, first zone mode, extreme_up=98, extreme_down=2'),
+            ],
+            'tips': [
+                '📊 TRADING RULE MODES: 10 different analysis methods for various trading strategies',
+                '🎯 Zone mode (default): >50 Buy, <50 Sell with extreme detection',
+                '⚡ First Classic: >95 Sell, <5 Buy (classic extreme reversal)',
+                '🔄 First Trend: >95 Buy, <5 Sell (trend following with extremes)',
+                '📈 Trend mode: Best Up 70| Down 30 with trend continuation',
+                '🔥 Purchase Power modes: Analyze 10 RSI periods for consensus signals',
+                '💎 Premium indicator based on MQL5 SCHR_Trend.mq5 by Shcherbyna Rostyslav',
+                '🎯 Best for: Trend detection, signal generation, and multi-timeframe analysis',
+                '📊 Dual chart display shows signal markers and trend direction',
+                '⚡ Short periods = more signals, long periods = more stable',
+                '🎯 Extreme points: Adjust based on market volatility and trading style'
+            ],
+            'common_errors': [
+                'Invalid tr_mode: Use one of: firstclassic,firsttrend,trend,zone,firstzone,firststrongzone,purchasepower,purchasepower_bycount,purchasepower_extreme,purchasepower_weak',
+                'Invalid period: Must be a positive integer',
+                'Invalid extreme points: Must be between 0 and 100',
+                'Missing parameters: Use schr_trend:period,tr_mode,extreme_up,extreme_down (e.g., schr_trend:2,zone,95,5)',
+                'Invalid format: Expected schr_trend:int,string,int,int'
+            ]
         }
     }
     

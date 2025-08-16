@@ -708,6 +708,46 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['schr_rost_speed'] = speed_period
             result_df['schr_rost_faster_reverse'] = faster_reverse
             
+        elif indicator_name == 'schr_trend':
+            # Filter empty parameters
+            params = [p.strip() for p in params if p.strip()]
+            period = int(params[0]) if len(params) > 0 else 2
+            tr_mode = params[1].lower() if len(params) > 1 else 'zone'
+            extreme_up = int(params[2]) if len(params) > 2 else 95
+            extreme_down = int(params[3]) if len(params) > 3 else 5
+            
+            # Calculate SCHR_TREND indicator using the indicator class
+            from ..calculation.indicators.trend.schr_trend_ind import SCHRTrendIndicator
+            from ..calculation.indicators.oscillators.rsi_ind_calc import PriceType
+            
+            # Create indicator instance
+            indicator = SCHRTrendIndicator(period, tr_mode, extreme_up, extreme_down, PriceType.OPEN)
+            schr_trend_result = indicator.calculate(df)
+            
+            # Handle the result - it might be a DataFrame or Series
+            if isinstance(schr_trend_result, pd.DataFrame):
+                # Extract all SCHR_TREND columns from the result
+                schr_trend_cols = [col for col in schr_trend_result.columns if 'schr_trend' in col.lower()]
+                for col in schr_trend_cols:
+                    result_df[col] = schr_trend_result[col]
+                
+                # If main schr_trend column not found, use first numeric column
+                if 'schr_trend' not in schr_trend_result.columns:
+                    numeric_cols = schr_trend_result.select_dtypes(include=[np.number]).columns
+                    if len(numeric_cols) > 0:
+                        result_df['schr_trend'] = schr_trend_result[numeric_cols[0]]
+                    else:
+                        result_df['schr_trend'] = pd.Series(index=df.index, dtype=float)
+            else:
+                # If it's a Series, use it directly
+                result_df['schr_trend'] = schr_trend_result
+            
+            # Add parameters info
+            result_df['schr_trend_period'] = period
+            result_df['schr_trend_tr_mode'] = tr_mode
+            result_df['schr_trend_extreme_up'] = extreme_up
+            result_df['schr_trend_extreme_down'] = extreme_down
+            
         else:
             raise ValueError(f"Unsupported indicator: {indicator_name}")
             

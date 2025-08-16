@@ -1492,6 +1492,219 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     logger.print_info(f"[PERF] Total SCHR_ROST indicator: {(time.time() - t_start)*1000:.1f}ms")
 
 
+def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add SCHR_TREND indicator to the chart.
+    Signal (0=No Signal, 1=Buy, 2=Sell, 3=DBL_BUY, 4=DBL_SELL) on upper OHLC chart
+    Direction (1=Up, 2=Down, 3=DBL_BUY, 4=DBL_SELL) on lower subplot
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with SCHR_TREND data
+    """
+    t_start = time.time()
+    logger.print_info(f"[PERF] Starting SCHR_TREND indicator addition")
+    
+    # Check if SCHR_TREND columns exist
+    schr_trend_cols = [col for col in display_df.columns if 'schr_trend' in col.lower()]
+    if not schr_trend_cols:
+        logger.print_warning("SCHR_TREND columns not found in DataFrame")
+        return
+    
+    # Get Signal values for upper OHLC chart (0=No Signal, 1=Buy, 2=Sell, 3=DBL_BUY, 4=DBL_SELL)
+    signal_values = None
+    for col in ['schr_trend_signal', 'SCHR_TREND_Signal']:
+        if col in display_df.columns:
+            signal_values = display_df[col]
+            break
+    
+    if signal_values is not None:
+        # Add Signal markers on upper OHLC chart
+        # Filter for different signal types
+        buy_signals = signal_values == 1
+        sell_signals = signal_values == 2
+        dbl_buy_signals = signal_values == 3
+        dbl_sell_signals = signal_values == 4
+        
+        # Add Buy signals (green triangles up)
+        if buy_signals.any():
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index[buy_signals],
+                    y=display_df['High'][buy_signals] * 1.001,  # Slightly above high
+                    mode='markers',
+                    name='SCHR Buy Signal',
+                    marker=dict(
+                        symbol='triangle-up',
+                        size=12,
+                        color='#27ae60',
+                        line=dict(width=2, color='#27ae60')
+                    ),
+                    hovertemplate='<b>SCHR Buy Signal</b><br>' +
+                                 'Date: %{x}<br>' +
+                                 'Price: %{y}<br>' +
+                                 '<extra></extra>',
+                    showlegend=True
+                ),
+                row=1, col=1
+            )
+        
+        # Add Sell signals (red triangles down)
+        if sell_signals.any():
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index[sell_signals],
+                    y=display_df['Low'][sell_signals] * 0.999,  # Slightly below low
+                    mode='markers',
+                    name='SCHR Sell Signal',
+                    marker=dict(
+                        symbol='triangle-down',
+                        size=12,
+                        color='#e74c3c',
+                        line=dict(width=2, color='#e74c3c')
+                    ),
+                    hovertemplate='<b>SCHR Sell Signal</b><br>' +
+                                 'Date: %{x}<br>' +
+                                 'Price: %{y}<br>' +
+                                 '<extra></extra>',
+                    showlegend=True
+                ),
+                row=1, col=1
+            )
+        
+        # Add DBL Buy signals (blue diamonds)
+        if dbl_buy_signals.any():
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index[dbl_buy_signals],
+                    y=display_df['High'][dbl_buy_signals] * 1.002,  # Further above high
+                    mode='markers',
+                    name='SCHR DBL Buy Signal',
+                    marker=dict(
+                        symbol='diamond',
+                        size=15,
+                        color='#3498db',
+                        line=dict(width=2, color='#3498db')
+                    ),
+                    hovertemplate='<b>SCHR DBL Buy Signal</b><br>' +
+                                 'Date: %{x}<br>' +
+                                 'Price: %{y}<br>' +
+                                 '<extra></extra>',
+                    showlegend=True
+                ),
+                row=1, col=1
+            )
+        
+        # Add DBL Sell signals (purple diamonds)
+        if dbl_sell_signals.any():
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index[dbl_sell_signals],
+                    y=display_df['Low'][dbl_sell_signals] * 0.998,  # Further below low
+                    mode='markers',
+                    name='SCHR DBL Sell Signal',
+                    marker=dict(
+                        symbol='diamond',
+                        size=15,
+                        color='#9b59b6',
+                        line=dict(width=2, color='#9b59b6')
+                    ),
+                    hovertemplate='<b>SCHR DBL Sell Signal</b><br>' +
+                                 'Date: %{x}<br>' +
+                                 'Price: %{y}<br>' +
+                                 '<extra></extra>',
+                    showlegend=True
+                ),
+                row=1, col=1
+            )
+    
+    # Get Direction values for lower subplot
+    direction_values = None
+    for col in ['schr_trend_direction', 'SCHR_TREND_Direction']:
+        if col in display_df.columns:
+            direction_values = display_df[col]
+            break
+    
+    if direction_values is not None:
+        # Add Direction line on lower subplot with enhanced styling
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=direction_values,
+                mode='lines',
+                name='SCHR Trend Direction',
+                line=dict(
+                    color='#e67e22', 
+                    width=4,
+                    shape='hv'  # Horizontal-vertical steps for clean step-like appearance
+                ),
+                yaxis='y2',
+                hovertemplate='<b>SCHR Trend Direction</b><br>' +
+                             'Value: %{y}<br>' +
+                             'Date: %{x}<br>' +
+                             '<extra></extra>',
+                showlegend=True
+            ),
+            row=2, col=1
+        )
+    
+    # Get main SCHR_TREND values for reference
+    schr_trend_values = None
+    for col in ['schr_trend', 'SCHR_TREND']:
+        if col in display_df.columns:
+            schr_trend_values = display_df[col]
+            break
+    
+    if schr_trend_values is not None:
+        # Add main SCHR_TREND line on lower subplot with enhanced styling
+        # Scale the values to make them more visible on the chart (between 1.0 and 2.0)
+        scaled_values = (schr_trend_values - schr_trend_values.min()) / (schr_trend_values.max() - schr_trend_values.min()) * 1.0 + 1.0
+        
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=scaled_values,
+                mode='lines',
+                name='SCHR Trend',
+                line=dict(
+                    color='#3498db', 
+                    width=3,
+                    dash='solid'
+                ),
+                yaxis='y2',
+                hovertemplate='<b>SCHR Trend</b><br>' +
+                             'Value: %{text}<br>' +
+                             'Date: %{x}<br>' +
+                             '<extra></extra>',
+                text=[f'{val:.6f}' for val in schr_trend_values],
+                showlegend=True
+            ),
+            row=2, col=1
+        )
+    
+    # Add zero line with enhanced styling
+    fig.add_hline(
+        y=0,
+        line_dash="dot",
+        line_color="#95a5a6",
+        opacity=0.7,
+        line_width=1.5,
+        row=2, col=1
+    )
+    
+    # Update y-axis title and range
+    fig.update_yaxes(
+        title_text="SCHR Trend Direction", 
+        row=2, col=1,
+        range=[0.8, 4.2],  # Adjusted range for better visibility
+        tickmode='array',
+        tickvals=[1, 2, 3, 4],  # Show ticks for Direction values
+        ticktext=['Buy', 'Sell', 'DBL Buy', 'DBL Sell']  # Custom labels for better readability
+    )
+    
+    logger.print_info(f"[PERF] Total SCHR_TREND indicator: {(time.time() - t_start)*1000:.1f}ms")
+
+
 def add_supertrend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     """
     Add SuperTrend indicator to the secondary subplot.
@@ -1978,6 +2191,9 @@ def plot_dual_chart_fastest(
     
     elif indicator_name == 'schr_rost':
         add_schr_rost_indicator(fig, display_df)
+    
+    elif indicator_name == 'schr_trend':
+        add_schr_trend_indicator(fig, display_df)
     
     elif indicator_name == 'supertrend':
         add_supertrend_indicator(fig, display_df)
