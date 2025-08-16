@@ -107,7 +107,7 @@ def calculate_schr_trend(df: pd.DataFrame, period: int = 2,
     if len(df) < period + 1:
         logger.print_warning(f"Not enough data for SCHR Trend calculation. Need at least {period + 1} points.")
         empty_series = pd.Series(index=df.index, dtype=float)
-        return empty_series, empty_series, empty_series, empty_series
+        return empty_series, empty_series, empty_series, empty_series, empty_series, empty_series
     
     # Calculate main RSI
     rsi_values = calculate_rsi(df, period, price_type)
@@ -119,7 +119,7 @@ def calculate_schr_trend(df: pd.DataFrame, period: int = 2,
     direction = pd.Series(NOTRADE, index=df.index)   # Direction values
     signal = pd.Series(NOTRADE, index=df.index)      # Signal values (only changes)
     color = pd.Series(NOTRADE, index=df.index)       # Color index
-    purchase_power = pd.Series(0, index=df.index)    # Purchase Power values
+    purchase_power = pd.Series(0.0, index=df.index)    # Purchase Power values
     
     # Get price series based on price type
     if price_type == PriceType.OPEN:
@@ -217,7 +217,8 @@ def _first_classic_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev
         color = NOTRADE
     
     direction = color
-    signal = DBL_BUY if direction != prev_direction and direction != NOTRADE else NOTRADE
+    # Signal shows direction change - exactly like MQL5
+    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
     
     return color, direction, signal
 
@@ -232,7 +233,8 @@ def _first_trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_d
         color = NOTRADE
     
     direction = color
-    signal = DBL_BUY if direction != prev_direction and direction != NOTRADE else NOTRADE
+    # Signal shows direction change - exactly like MQL5
+    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
     
     return color, direction, signal
 
@@ -248,7 +250,8 @@ def _trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_directi
         color = prev_direction if prev_direction != NOTRADE else NOTRADE
     
     direction = color
-    signal = DBL_BUY if direction != prev_direction and direction != NOTRADE else NOTRADE
+    # Signal shows direction change - exactly like MQL5
+    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
     
     return color, direction, signal
 
@@ -267,7 +270,8 @@ def _zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_directio
             color = DBL_SELL
     
     direction = color
-    signal = DBL_BUY if direction != prev_direction and direction != NOTRADE else NOTRADE
+    # Signal shows direction change - exactly like MQL5
+    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
     
     return color, direction, signal
 
@@ -286,9 +290,10 @@ def _first_zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_di
             color = DBL_SELL
     
     direction = color
-    signal = DBL_BUY if direction != prev_direction and direction != NOTRADE else NOTRADE
+    # Signal shows direction change - exactly like MQL5
+    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
     
-    # Draw only First Signal
+    # Draw only First Signal - exactly like MQL5
     final_color = signal if signal != NOTRADE else NOTRADE
     
     return final_color, direction, signal
@@ -302,9 +307,10 @@ def _first_strong_zone_tr(rsi_value: float, prev_direction: float) -> tuple[floa
         color = SELL
     
     direction = color
-    signal = DBL_BUY if direction != prev_direction and direction != NOTRADE else NOTRADE
+    # Signal shows direction change - exactly like MQL5
+    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
     
-    # Draw only First Signal
+    # Draw only First Signal - exactly like MQL5
     final_color = signal if signal != NOTRADE else NOTRADE
     
     return final_color, direction, signal
@@ -352,7 +358,8 @@ def _purchase_power_tr(power_rsis: list, i: int, prev_direction: float) -> tuple
             color = SELL
     
     direction = color
-    signal = DBL_BUY if direction != prev_direction and direction != NOTRADE else NOTRADE
+    # Signal shows direction change - exactly like MQL5
+    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
     
     return color, direction, signal
 
@@ -396,7 +403,8 @@ def _purchase_power_by_count_tr(power_rsis: list, i: int, prev_direction: float)
             color = SELL
     
     direction = color
-    signal = DBL_BUY if direction != prev_direction and direction != NOTRADE else NOTRADE
+    # Signal shows direction change - exactly like MQL5
+    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
     
     return color, direction, signal
 
@@ -440,7 +448,8 @@ def _purchase_power_extreme_tr(power_rsis: list, i: int, prev_direction: float) 
             color = DBL_SELL
     
     direction = color
-    signal = DBL_BUY if direction != prev_direction and direction != NOTRADE else NOTRADE
+    # Signal shows direction change - exactly like MQL5
+    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
     
     return color, direction, signal
 
@@ -487,7 +496,8 @@ def _purchase_power_weak_tr(power_rsis: list, i: int, prev_direction: float) -> 
             color = SELL
     
     direction = color
-    signal = DBL_BUY if direction != prev_direction and direction != NOTRADE else NOTRADE
+    # Signal shows direction change - exactly like MQL5
+    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
     
     return color, direction, signal
 
