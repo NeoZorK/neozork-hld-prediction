@@ -83,7 +83,7 @@ def calculate_rsi(df: pd.DataFrame, period: int, price_type: PriceType = PriceTy
 def calculate_schr_trend(df: pd.DataFrame, period: int = 2, 
                         tr_mode: int = TradingRuleMode.TR_Zone,
                         extreme_up: int = 95, extreme_down: int = 5,
-                        price_type: PriceType = PriceType.OPEN) -> tuple[pd.Series, pd.Series, pd.Series, pd.Series]:
+                        price_type: PriceType = PriceType.OPEN) -> tuple[pd.Series, pd.Series, pd.Series, pd.Series, pd.Series, pd.Series]:
     """
     Calculate SCHR Trend Helper indicator values.
     
@@ -96,11 +96,13 @@ def calculate_schr_trend(df: pd.DataFrame, period: int = 2,
         price_type (PriceType): Price type for calculations
         
     Returns:
-        tuple: (trend, color, direction, signal)
+        tuple: (origin, trend, direction, signal, color, purchase_power)
+        - origin: RSI origin values (like RSI)
         - trend: Trend line values
+        - direction: Direction values (0=no_signal, 1=buy, 2=sell, 3=dbl_buy, 4=dbl_sell)
+        - signal: Signal values (0=no_signal, 1=buy, 2=sell, 3=dbl_buy, 4=dbl_sell) - only changes
         - color: Color index for signals
-        - direction: Direction values
-        - signal: Signal values
+        - purchase_power: Purchase Power values (only when enabled)
     """
     if len(df) < period + 1:
         logger.print_warning(f"Not enough data for SCHR Trend calculation. Need at least {period + 1} points.")
@@ -112,10 +114,12 @@ def calculate_schr_trend(df: pd.DataFrame, period: int = 2,
     
     # Initialize arrays
     n = len(df)
-    trend = pd.Series(index=df.index, dtype=float)
-    color = pd.Series(NOTRADE, index=df.index)
-    direction = pd.Series(NOTRADE, index=df.index)
-    signal = pd.Series(NOTRADE, index=df.index)
+    origin = pd.Series(index=df.index, dtype=float)  # RSI origin values
+    trend = pd.Series(index=df.index, dtype=float)   # Trend line values
+    direction = pd.Series(NOTRADE, index=df.index)   # Direction values
+    signal = pd.Series(NOTRADE, index=df.index)      # Signal values (only changes)
+    color = pd.Series(NOTRADE, index=df.index)       # Color index
+    purchase_power = pd.Series(0, index=df.index)    # Purchase Power values
     
     # Get price series based on price type
     if price_type == PriceType.OPEN:
@@ -136,50 +140,71 @@ def calculate_schr_trend(df: pd.DataFrame, period: int = 2,
     # Main calculation loop
     for i in range(n):
         if i == 0:
-            # First bar - no calculation
+            # First bar - initialize values
+            origin.iloc[i] = rsi_values.iloc[i]
             trend.iloc[i] = prices.iloc[i]
+            direction.iloc[i] = NOTRADE
+            signal.iloc[i] = NOTRADE
+            color.iloc[i] = NOTRADE
+            purchase_power.iloc[i] = 0
             continue
+        
+        # Set origin (RSI values)
+        origin.iloc[i] = rsi_values.iloc[i]
         
         # Set trend line to open price
         trend.iloc[i] = prices.iloc[i]
         
-        # Apply trading rule based on mode
+        # Apply trading rule based on mode to get direction and color
         if tr_mode == TradingRuleMode.TR_FirstClassic:
-            color.iloc[i], direction.iloc[i], signal.iloc[i] = _first_classic_tr(
+            color.iloc[i], direction.iloc[i], _ = _first_classic_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_FirstTrend:
-            color.iloc[i], direction.iloc[i], signal.iloc[i] = _first_trend_tr(
+            color.iloc[i], direction.iloc[i], _ = _first_trend_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_Trend:
-            color.iloc[i], direction.iloc[i], signal.iloc[i] = _trend_tr(
+            color.iloc[i], direction.iloc[i], _ = _trend_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_Zone:
-            color.iloc[i], direction.iloc[i], signal.iloc[i] = _zone_tr(
+            color.iloc[i], direction.iloc[i], _ = _zone_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_FirstZone:
-            color.iloc[i], direction.iloc[i], signal.iloc[i] = _first_zone_tr(
+            color.iloc[i], direction.iloc[i], _ = _first_zone_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_FirstStrongZone:
-            color.iloc[i], direction.iloc[i], signal.iloc[i] = _first_strong_zone_tr(
+            color.iloc[i], direction.iloc[i], _ = _first_strong_zone_tr(
                 rsi_values.iloc[i], direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_PurchasePower:
-            color.iloc[i], direction.iloc[i], signal.iloc[i] = _purchase_power_tr(
+            color.iloc[i], direction.iloc[i], _ = _purchase_power_tr(
                 power_rsis, i, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_PurchasePower_byCount:
-            color.iloc[i], direction.iloc[i], signal.iloc[i] = _purchase_power_by_count_tr(
+            color.iloc[i], direction.iloc[i], _ = _purchase_power_by_count_tr(
                 power_rsis, i, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_PurchasePower_Extreme:
-            color.iloc[i], direction.iloc[i], signal.iloc[i] = _purchase_power_extreme_tr(
+            color.iloc[i], direction.iloc[i], _ = _purchase_power_extreme_tr(
                 power_rsis, i, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_PurchasePower_Weak:
-            color.iloc[i], direction.iloc[i], signal.iloc[i] = _purchase_power_weak_tr(
+            color.iloc[i], direction.iloc[i], _ = _purchase_power_weak_tr(
                 power_rsis, i, direction.iloc[i-1])
         else:
             # Default to Zone mode
-            color.iloc[i], direction.iloc[i], signal.iloc[i] = _zone_tr(
+            color.iloc[i], direction.iloc[i], _ = _zone_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
+        
+        # Calculate signal based on direction change
+        if i > 0:
+            if direction.iloc[i] != direction.iloc[i-1] and direction.iloc[i] != NOTRADE:
+                # Direction changed - signal shows the new direction
+                signal.iloc[i] = direction.iloc[i]
+            else:
+                # Direction unchanged - no signal
+                signal.iloc[i] = NOTRADE
+        
+        # Calculate Purchase Power if enabled
+        if tr_mode >= TradingRuleMode.TR_PurchasePower and len(power_rsis) > 0:
+            purchase_power.iloc[i] = _calculate_purchase_power(power_rsis, i)
     
-    return trend, color, direction, signal
+    return origin, trend, direction, signal, color, purchase_power
 
 
 def _first_classic_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float, float]:
@@ -525,13 +550,15 @@ class SCHRTrendIndicator(BaseIndicator):
         result_df = df.copy()
         
         # Calculate SCHR Trend values
-        trend, color, direction, signal = calculate_schr_trend(
+        origin, trend, direction, signal, color, purchase_power = calculate_schr_trend(
             df, self.period, self.tr_mode, self.extreme_up, self.extreme_down, self.price_type)
         
+        result_df['schr_trend_origin'] = origin
         result_df['schr_trend'] = trend
-        result_df['schr_trend_color'] = color
         result_df['schr_trend_direction'] = direction
         result_df['schr_trend_signal'] = signal
+        result_df['schr_trend_color'] = color
+        result_df['schr_trend_purchase_power'] = purchase_power
         
         return result_df
     
@@ -558,6 +585,35 @@ class SCHRTrendIndicator(BaseIndicator):
         result_df['Diff'] = result_df['schr_trend']
         
         return result_df
+
+
+def _calculate_purchase_power(power_rsis: list, index: int) -> float:
+    """
+    Calculate Purchase Power value based on multiple RSI periods.
+    
+    Args:
+        power_rsis: List of RSI series for different periods
+        index: Current index in the series
+        
+    Returns:
+        float: Purchase Power value (0-100)
+    """
+    if not power_rsis or index >= len(power_rsis[0]):
+        return 0.0
+    
+    # Calculate average RSI value across all periods
+    total_rsi = 0.0
+    valid_count = 0
+    
+    for rsi_series in power_rsis:
+        if index < len(rsi_series) and not pd.isna(rsi_series.iloc[index]):
+            total_rsi += rsi_series.iloc[index]
+            valid_count += 1
+    
+    if valid_count == 0:
+        return 0.0
+    
+    return total_rsi / valid_count
 
 
 def apply_rule_schr_trend(df: pd.DataFrame, point: float, period: int = 2,

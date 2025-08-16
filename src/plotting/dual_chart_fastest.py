@@ -1494,9 +1494,12 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
 
 def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     """
-    Add SCHR_TREND indicator to the chart.
-    Signal (0=No Signal, 1=Buy, 2=Sell, 3=DBL_BUY, 4=DBL_SELL) on upper OHLC chart
-    Direction (1=Up, 2=Down, 3=DBL_BUY, 4=DBL_SELL) on lower subplot
+    Add SCHR_TREND indicator to the chart with 5 fields:
+    - _Origin (RSI-like values)
+    - Trend (Line values)
+    - Direction (0=no_signal, 1=buy, 2=sell, 3=dbl_buy, 4=dbl_sell)
+    - Signal (0=no_signal, 1=buy, 2=sell, 3=dbl_buy, 4=dbl_sell) - only changes
+    - PurchasePower (enabled only for Purchase Power modes)
     
     Args:
         fig (go.Figure): Plotly figure object
@@ -1646,6 +1649,36 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 showlegend=True
             ),
             row=2, col=1
+        )
+    
+    # Get SCHR_TREND Origin (RSI) values for upper OHLC chart
+    origin_values = None
+    for col in ['schr_trend_origin', 'SCHR_TREND_Origin']:
+        if col in display_df.columns:
+            origin_values = display_df[col]
+            break
+    
+    if origin_values is not None:
+        # Add Origin (RSI) line on upper OHLC chart
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=origin_values,
+                mode='lines',
+                name='SCHR Origin (RSI)',
+                line=dict(
+                    color='#f39c12', 
+                    width=2,
+                    dash='dash'
+                ),
+                yaxis='y',
+                hovertemplate='<b>SCHR Origin (RSI)</b><br>' +
+                             'Value: %{y:.2f}<br>' +
+                             'Date: %{x}<br>' +
+                             '<extra></extra>',
+                showlegend=True
+            ),
+            row=1, col=1
         )
     
     # Get main SCHR_TREND values for reference

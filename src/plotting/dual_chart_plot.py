@@ -732,6 +732,14 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
                 result_df[col] = schr_trend_calc[col]
                 logger.print_info(f"[DEBUG] Added column {col} to result_df")
             
+            # Ensure we have all required SCHR_TREND columns
+            required_cols = ['schr_trend_origin', 'schr_trend', 'schr_trend_direction', 'schr_trend_signal', 'schr_trend_color', 'schr_trend_purchase_power']
+            for col in required_cols:
+                if col not in result_df.columns:
+                    logger.print_warning(f"Missing required SCHR_TREND column: {col}")
+                    # Create empty column if missing
+                    result_df[col] = 0.0
+            
             # Now call apply_rule to get the rule columns
             schr_trend_rule = indicator.apply_rule(df, point=0.00001)  # Use default point size
             
