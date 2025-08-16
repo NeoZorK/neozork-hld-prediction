@@ -715,13 +715,17 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             tr_mode = params[1].lower() if len(params) > 1 else 'zone'
             extreme_up = int(params[2]) if len(params) > 2 else 95
             extreme_down = int(params[3]) if len(params) > 3 else 5
+            price_type = params[4].lower() if len(params) > 4 else 'open'  # Default to open
             
             # Calculate SCHR_TREND indicator using the indicator class
             from ..calculation.indicators.trend.schr_trend_ind import SCHRTrendIndicator
             from ..calculation.indicators.oscillators.rsi_ind_calc import PriceType
             
+            # Convert price_type string to PriceType enum
+            price_type_enum = PriceType.OPEN if price_type == 'open' else PriceType.CLOSE
+            
             # Create indicator instance and call calculate first to get indicator columns
-            indicator = SCHRTrendIndicator(period, tr_mode, extreme_up, extreme_down, PriceType.OPEN)
+            indicator = SCHRTrendIndicator(period, tr_mode, extreme_up, extreme_down, price_type_enum)
             schr_trend_calc = indicator.calculate(df)
             
             # Extract all SCHR_TREND columns from the calculation result
@@ -766,6 +770,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['schr_trend_tr_mode'] = tr_mode
             result_df['schr_trend_extreme_up'] = extreme_up
             result_df['schr_trend_extreme_down'] = extreme_down
+            result_df['schr_trend_price_type'] = price_type
             
         else:
             raise ValueError(f"Unsupported indicator: {indicator_name}")

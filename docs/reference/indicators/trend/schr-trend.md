@@ -12,182 +12,127 @@ SCHR_TREND (Shcherbyna Trend Helper) is an advanced RSI-based trend prediction i
 - **RSI-Based**: Built on Relative Strength Index calculations
 - **Open Price Focus**: Designed to work with Open prices for optimal performance
 - **Extreme Signal Detection**: Identifies overbought/oversold conditions
+- **Configurable Price Type**: Supports both Open and Close prices
+
+## Usage
+
+### Command Line Interface
+
+```bash
+# Basic usage with default parameters (Open prices)
+uv run run_analysis.py show csv gbp -d fastest --rule schr_trend:2,zone,95,5
+
+# Explicit Open prices
+uv run run_analysis.py show csv gbp -d fastest --rule schr_trend:2,zone,95,5,open
+
+# Use Close prices instead
+uv run run_analysis.py show csv gbp -d fastest --rule schr_trend:2,zone,95,5,close
+```
+
+### Parameters
+
+The indicator accepts up to 5 parameters:
+
+1. **period** (int): RSI period for calculation (default: 2)
+2. **tr_mode** (str): Trading rule mode (default: 'zone')
+3. **extreme_up** (int): Extreme up point threshold (default: 95)
+4. **extreme_down** (int): Extreme down point threshold (default: 5)
+5. **price_type** (str): Price type for calculations - 'open' or 'close' (default: 'open')
+
+### Trading Rule Modes
+
+- **zone**: Zone-based trading rules (default)
+- **firstclassic**: First Classic trading rules
+- **firsttrend**: First Trend trading rules
+- **trend**: Trend-based trading rules
+- **firstzone**: First Zone trading rules
+- **firststrongzone**: First Strong Zone trading rules
+- **purchasepower**: Purchase Power analysis
+- **purchasepower_bycount**: Purchase Power by Count
+- **purchasepower_extreme**: Purchase Power Extreme
+- **purchasepower_weak**: Purchase Power Weak
 
 ## MQL5 vs Python Implementation Differences
 
 ### Original MQL5 Algorithm
 
-The MQL5 version uses the following logic for signal generation:
+The MQL5 version uses Open prices by default and has specific logic for signal generation:
 
 ```mql5
-// In Zone_TR function
+// Signal shows direction change
 if(_Direction[i] != _Direction[i - 1])
 {
    _Signal[i] = _Direction[i];  // Signal shows the new direction
 }
 ```
 
-### Python Implementation (Corrected)
+### Python Implementation
 
-The Python version now exactly matches the MQL5 logic:
+The Python version now fully supports both Open and Close prices:
 
-```python
-# Signal shows direction change - exactly like MQL5
-signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
-```
+- **Default behavior**: Uses Open prices (same as MQL5)
+- **Configurable**: Can switch to Close prices via parameter
+- **Algorithm parity**: 100% algorithmic compatibility with MQL5
 
-### What Was Fixed
+### Price Type Support
 
-1. **Signal Calculation**: Previously, Python version incorrectly returned `DBL_BUY` for all direction changes
-2. **Return Values**: Fixed function to return 6 values instead of 4 to match MQL5 structure
-3. **Trading Rule Functions**: All TR functions now correctly calculate signals based on direction changes
-4. **Data Types**: Fixed dtype warnings for purchase power calculations
+- **Open prices** (default): Recommended for trend analysis, matches MQL5 behavior
+- **Close prices**: Alternative option for different analysis approaches
 
-### Algorithm Parity
+## Signal Values
 
-The Python implementation now provides **100% algorithmic parity** with the MQL5 version:
+- **0**: No trade signal
+- **1**: Buy signal
+- **2**: Sell signal  
+- **3**: Double Buy signal (strong buy)
+- **4**: Double Sell signal (strong sell)
 
-- ✅ RSI calculation identical
-- ✅ Trading rule logic identical  
-- ✅ Signal generation identical
-- ✅ Direction calculation identical
-- ✅ Color assignment identical
-- ✅ Purchase power calculation identical
+## Output Columns
 
-## Mathematical Foundation
+The indicator generates several output columns:
 
-### Core Calculation
+- **schr_trend_origin**: RSI origin values
+- **schr_trend**: Trend line values (based on selected price type)
+- **schr_trend_direction**: Direction values
+- **schr_trend_signal**: Signal values (only changes)
+- **schr_trend_color**: Color index for signals
+- **schr_trend_purchase_power**: Purchase Power values (when enabled)
 
-The SCHR_TREND indicator uses a sophisticated RSI-based algorithm:
+## Examples
 
-1. **RSI Calculation**:
-   - RSI = 100 - (100 / (1 + RS))
-   - RS = Average Gain / Average Loss
-   - Uses specified period for smoothing
-
-2. **Trading Rule Modes**:
-   - **First Classic**: >95 Sell, <5 Buy
-   - **First Trend**: >95 Buy, <5 Sell
-   - **Trend**: Best Up 70| Down 30 with trend continuation
-   - **Zone**: >50 Buy, <50 Sell with extreme detection
-   - **First Zone**: Include New Extreme Signals
-   - **First Strong Zone**: Without New Extreme Signals
-   - **Purchase Power**: 10 indicators analysis
-   - **Purchase Power by Count**: Count-based analysis
-   - **Purchase Power Extreme**: Only extreme signals
-   - **Purchase Power Weak**: Weak signal analysis
-
-3. **Signal Generation**:
-   - **0.0 (NOTRADE)**: No trading signal
-   - **1.0 (BUY)**: Buy signal - upward trend detected
-   - **2.0 (SELL)**: Sell signal - downward trend detected
-   - **3.0 (DBL_BUY)**: Double buy signal - strong upward trend
-   - **4.0 (DBL_SELL)**: Double sell signal - strong downward trend
-
-### Purchase Power Calculation
-
-For Purchase Power modes, the indicator calculates 10 RSI values with periods:
-- Period 1: `period * 1`
-- Period 2: `period * 2`
-- Period 3: `period * 3`
-- Period 4: `period * 4`
-- Period 5: `period * 5`
-- Period 6: `period * 6`
-- Period 7: `period * 7`
-- Period 8: `period * 8`
-- Period 9: `period * 9`
-- Period 10: `period * 10`
-
-## Usage Examples
-
-### Command Line
-
+### Basic Zone Mode with Open Prices
 ```bash
-# Basic Zone mode (default)
-uv run run_analysis.py show csv gbp -d fastest --rule schr_trend:5,zone,90,10
-
-# First Classic mode
-uv run run_analysis.py show csv gbp -d fastest --rule schr_trend:2,firstclassic,95,5
-
-# Purchase Power mode
-uv run run_analysis.py show csv gbp -d fastest --rule schr_trend:3,purchasepower,90,10
+uv run run_analysis.py show csv gbp -d fastest --rule schr_trend:2,zone,95,5
 ```
 
-### Python API
-
-```python
-from src.calculation.indicators.trend.schr_trend_ind import SCHRTrendIndicator, TradingRuleMode
-
-# Create indicator instance
-indicator = SCHRTrendIndicator(
-    period=2,
-    tr_mode=TradingRuleMode.TR_Zone,
-    extreme_up=95,
-    extreme_down=5
-)
-
-# Calculate indicator
-result = indicator.calculate(df)
+### Custom Parameters with Close Prices
+```bash
+uv run run_analysis.py show csv gbp -d fastest --rule schr_trend:5,trend,90,10,close
 ```
 
-### Rule Application
-
-```python
-from src.calculation.rules import apply_rule_schr_trend
-
-# Apply trading rule
-result = apply_rule_schr_trend(
-    df=df,
-    point=0.0001,
-    period=2,
-    tr_mode='zone',
-    extreme_up=95,
-    extreme_down=5
-)
+### First Classic Mode with Open Prices
+```bash
+uv run run_analysis.py show csv gbp -d fastest --rule schr_trend:3,firstclassic,98,2
 ```
 
-## Performance Characteristics
+## Performance Notes
 
-### Calculation Speed
+- **Open prices**: Generally provide better trend signals for intraday trading
+- **Close prices**: May be preferred for end-of-day analysis
+- **Period 2**: Fastest response, most sensitive to price changes
+- **Higher periods**: More stable signals, less noise
 
-- **Basic Modes**: ~0.03 seconds for 383 monthly bars
-- **Purchase Power Modes**: ~0.05 seconds for 383 monthly bars
-- **Memory Usage**: ~0.05 MB for typical datasets
+## Best Practices
 
-### Signal Quality
+1. **Use Open prices** for most trend analysis scenarios
+2. **Start with period 2** for initial testing
+3. **Adjust extreme points** based on market volatility
+4. **Combine with other indicators** for confirmation
+5. **Test different trading rule modes** for your specific strategy
 
-- **Zone Mode**: Best for trend following strategies
-- **First Classic**: Best for extreme reversal detection
-- **Purchase Power**: Best for multi-timeframe analysis
+## Technical Details
 
-## Testing and Validation
-
-### Test Coverage
-
-The Python implementation includes comprehensive tests:
-
-- ✅ All trading rule modes tested
-- ✅ Edge cases covered
-- ✅ Data validation tested
-- ✅ Performance benchmarks included
-
-### Validation Against MQL5
-
-- ✅ Algorithmic parity verified
-- ✅ Signal generation identical
-- ✅ Direction calculation identical
-- ✅ Color assignment identical
-
-## Related Indicators
-
-- **SCHR_ROST**: ADX-based trend indicator
-- **RSI**: Relative Strength Index (base calculation)
-- **MACD**: Moving Average Convergence Divergence
-- **ADX**: Average Directional Index
-
-## References
-
-- **Original MQL5**: SCHR_Trend.mq5 by Shcherbyna Rostyslav
-- **Algorithm**: RSI-based trend detection with multiple trading rules
-- **Implementation**: Python port with 100% MQL5 algorithmic parity
-- **Version**: 1.11 (Python implementation matches MQL5 v1.11)
+- **RSI Calculation**: Uses standard RSI formula with configurable period
+- **Signal Generation**: Based on direction changes, not absolute values
+- **Memory Efficient**: Optimized for large datasets
+- **Real-time Ready**: Supports streaming data updates

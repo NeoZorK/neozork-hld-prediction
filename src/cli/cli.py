@@ -1580,32 +1580,32 @@ def parse_schr_rost_parameters(params_str: str) -> tuple[str, dict]:
 
 def parse_schr_trend_parameters(params_str: str) -> tuple[str, dict]:
     """
-    Parse SCHR_TREND parameters: schr_trend:period,tr_mode,extreme_up,extreme_down
-    Example: schr_trend:2,zone,95,5
+    Parse SCHR_TREND parameters: schr_trend:period,tr_mode,extreme_up,extreme_down,price_type
+    Example: schr_trend:2,zone,95,5,open
     """
     try:
         params = [p.strip() for p in params_str.split(',') if p.strip()]
         
         if len(params) == 0:
             # Default parameters
-            return 'schr_trend', {'period': 2, 'tr_mode': 'zone', 'extreme_up': 95, 'extreme_down': 5}
+            return 'schr_trend', {'period': 2, 'tr_mode': 'zone', 'extreme_up': 95, 'extreme_down': 5, 'price_type': 'open'}
         elif len(params) == 1:
             # Only period provided
             period = int(params[0])
-            return 'schr_trend', {'period': period, 'tr_mode': 'zone', 'extreme_up': 95, 'extreme_down': 5}
+            return 'schr_trend', {'period': period, 'tr_mode': 'zone', 'extreme_up': 95, 'extreme_down': 5, 'price_type': 'open'}
         elif len(params) == 2:
             # period and tr_mode provided
             period = int(params[0])
             tr_mode = params[1].lower()
-            return 'schr_trend', {'period': period, 'tr_mode': tr_mode, 'extreme_up': 95, 'extreme_down': 5}
+            return 'schr_trend', {'period': period, 'tr_mode': tr_mode, 'extreme_up': 95, 'extreme_down': 5, 'price_type': 'open'}
         elif len(params) == 3:
             # period, tr_mode, and extreme_up provided
             period = int(params[0])
             tr_mode = params[1].lower()
             extreme_up = int(params[2])
-            return 'schr_trend', {'period': period, 'tr_mode': tr_mode, 'extreme_up': extreme_up, 'extreme_down': 5}
+            return 'schr_trend', {'period': period, 'tr_mode': tr_mode, 'extreme_up': extreme_up, 'extreme_down': 5, 'price_type': 'open'}
         elif len(params) == 4:
-            # All parameters provided
+            # All basic parameters provided
             period = int(params[0])
             tr_mode = params[1].lower()
             extreme_up = int(params[2])
@@ -1622,15 +1622,42 @@ def parse_schr_trend_parameters(params_str: str) -> tuple[str, dict]:
                 'period': period, 
                 'tr_mode': tr_mode, 
                 'extreme_up': extreme_up, 
-                'extreme_down': extreme_down
+                'extreme_down': extreme_down,
+                'price_type': 'open'  # Default to open
+            }
+        elif len(params) == 5:
+            # All parameters including price_type provided
+            period = int(params[0])
+            tr_mode = params[1].lower()
+            extreme_up = int(params[2])
+            extreme_down = int(params[3])
+            price_type = params[4].lower()
+            
+            # Validate tr_mode
+            valid_modes = ['firstclassic', 'firsttrend', 'trend', 'zone', 'firstzone', 
+                          'firststrongzone', 'purchasepower', 'purchasepower_bycount', 
+                          'purchasepower_extreme', 'purchasepower_weak']
+            if tr_mode not in valid_modes:
+                raise ValueError(f"Invalid tr_mode: {tr_mode}. Valid values: {', '.join(valid_modes)}")
+            
+            # Validate price_type
+            if price_type not in ['open', 'close']:
+                raise ValueError(f"Invalid price_type: {price_type}. Valid values: open, close")
+            
+            return 'schr_trend', {
+                'period': period, 
+                'tr_mode': tr_mode, 
+                'extreme_up': extreme_up, 
+                'extreme_down': extreme_down,
+                'price_type': price_type
             }
         else:
-            raise ValueError(f"Invalid SCHR_TREND parameters: {params_str}. Expected: period,tr_mode,extreme_up,extreme_down")
+            raise ValueError(f"Invalid SCHR_TREND parameters: {params_str}. Expected: period,tr_mode,extreme_up,extreme_down[,price_type]")
         
     except ValueError as e:
         if "Invalid SCHR_TREND parameter" in str(e):
             raise e
-        raise ValueError(f"Invalid SCHR_TREND parameters: {params_str}. Expected: period,tr_mode,extreme_up,extreme_down")
+        raise ValueError(f"Invalid SCHR_TREND parameters: {params_str}. Expected: period,tr_mode,extreme_up,extreme_down[,price_type]")
 
 
 def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
