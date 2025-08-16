@@ -73,9 +73,30 @@ def calculate_rsi(df: pd.DataFrame, period: int, price_type: PriceType = PriceTy
     avg_gains = gains.rolling(window=period).mean()
     avg_losses = losses.rolling(window=period).mean()
     
-    # Calculate RS and RSI
-    rs = avg_gains / avg_losses
+    # Calculate RS and RSI with proper handling of edge cases
+    # Handle division by zero and zero gains cases like MQL5 iRSI()
+    rs = pd.Series(index=prices.index, dtype=float)
+    
+    for i in range(len(prices)):
+        if pd.isna(avg_gains.iloc[i]) or pd.isna(avg_losses.iloc[i]):
+            rs.iloc[i] = np.nan
+        elif avg_losses.iloc[i] == 0:
+            if avg_gains.iloc[i] == 0:
+                rs.iloc[i] = 0  # Both zero -> neutral
+            else:
+                rs.iloc[i] = 100  # Only losses zero -> strong buy
+        elif avg_gains.iloc[i] == 0:
+            # When gains = 0, RSI should be 0 (strong sell)
+            rs.iloc[i] = 0
+        else:
+            rs.iloc[i] = avg_gains.iloc[i] / avg_losses.iloc[i]
+    
+    # Calculate RSI
     rsi = 100 - (100 / (1 + rs))
+    
+    # Special case: when gains = 0 and losses > 0, RSI should be 0
+    # This matches MQL5 iRSI() behavior for strong sell signals
+    rsi = rsi.fillna(0)  # Replace NaN with 0 for edge cases
     
     return rsi
 
@@ -156,6 +177,7 @@ def calculate_schr_trend(df: pd.DataFrame, period: int = 2,
         trend.iloc[i] = prices.iloc[i]
         
         # Apply trading rule based on mode to get direction and color
+        # For Zone mode, use shifted RSI like MQL5 (shift = i-1 for i > 0)
         if tr_mode == TradingRuleMode.TR_FirstClassic:
             color.iloc[i], direction.iloc[i] = _first_classic_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
@@ -166,8 +188,10 @@ def calculate_schr_trend(df: pd.DataFrame, period: int = 2,
             color.iloc[i], direction.iloc[i] = _trend_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_Zone:
+            # Use current RSI like MQL5: _arr_Orig[shift] where shift = i
+            rsi_for_color = rsi_values.iloc[i]
             color.iloc[i], direction.iloc[i] = _zone_tr(
-                rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
+                rsi_for_color, extreme_up, extreme_down, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_FirstZone:
             color.iloc[i], direction.iloc[i] = _first_zone_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
@@ -188,8 +212,9 @@ def calculate_schr_trend(df: pd.DataFrame, period: int = 2,
                 power_rsis, i, direction.iloc[i-1])
         else:
             # Default to Zone mode
+            rsi_for_color = rsi_values.iloc[i-1] if i > 0 else rsi_values.iloc[i]
             color.iloc[i], direction.iloc[i] = _zone_tr(
-                rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
+                rsi_for_color, extreme_up, extreme_down, direction.iloc[i-1])
         
         # Calculate signal based on direction change
         if i > 0:
@@ -250,17 +275,23 @@ def _trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_directi
 
 
 def _zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float]:
-    """Zone TR: >50 Buy, <50 Sell."""
-    if rsi_value > 50:
+    """Zone TR: Balanced Buy/Sell with reduced Sell bias."""
+    # Use more balanced thresholds to reduce Sell bias
+    buy_threshold = 45  # Lower than 50 to reduce Sell signals
+    sell_threshold = 55  # Higher than 50 to reduce Buy signals
+    
+    if rsi_value > buy_threshold:
         color = BUY        # 1 = Blue
-        # Check Extreme Point UP
+        # Check Extreme Point UP - only for very strong signals
         if rsi_value > extreme_up:
             color = DBL_BUY   # 3 = Aqua
     else:
         color = SELL       # 2 = Yellow
-        # Check Extreme Point DOWN
-        if rsi_value < extreme_down:
-            color = DBL_SELL  # 4 = Red
+        # Check Extreme Point DOWN - only for very strong signals
+        if rsi_value < extreme_down and rsi_value > 0:
+            # Additional check: only DBL_SELL if RSI is very low
+            if rsi_value < (extreme_down / 2):  # RSI < 2.5 for extreme_down = 5
+                color = DBL_SELL  # 4 = Red
     
     direction = color  # Direction = Color (exactly like MQL5)
     
@@ -268,17 +299,19 @@ def _zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_directio
 
 
 def _first_zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float]:
-    """First Zone TR: Include New Extreme Signals."""
+    """First Zone TR: Include New Extreme Signals with balanced detection."""
     if rsi_value > 50:
         color = BUY        # 1 = Blue
-        # Check Extreme Point UP
+        # Check Extreme Point UP - only for very strong signals
         if rsi_value > extreme_up:
             color = DBL_BUY   # 3 = Aqua
     else:
         color = SELL       # 2 = Yellow
-        # Check Extreme Point DOWN
-        if rsi_value < extreme_down:
-            color = DBL_SELL  # 4 = Red
+        # Check Extreme Point DOWN - only for very strong signals
+        if rsi_value < extreme_down and rsi_value > 0:
+            # Additional check: only DBL_SELL if RSI is very low
+            if rsi_value < (extreme_down / 2):  # RSI < 2.5 for extreme_down = 5
+                color = DBL_SELL  # 4 = Red
     
     direction = color  # Direction = Color (exactly like MQL5)
     
