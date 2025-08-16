@@ -90,6 +90,39 @@ direction_values = display_df['schr_trend_direction']
 color_values = display_df['schr_trend_color']
 ```
 
+### 6. Color Structure and Algorithm Correction
+**Problem**: Python version had incorrect color assignments in trading rule functions.
+
+**MQL5 Color Structure**:
+```
+#property indicator_color2  clrNONE,clrBlue,clrYellow,clrAqua,clrRed
+```
+- **0 (NOTRADE)**: clrNONE (Grey/None)
+- **1 (BUY)**: clrBlue (Blue)
+- **2 (SELL)**: clrYellow (Yellow)
+- **3 (DBL_BUY)**: clrAqua (Aqua)
+- **4 (DBL_SELL)**: clrRed (Red)
+
+**Python Before Fix**:
+```python
+# Incorrect color assignments in trading rules
+if rsi_value > extreme_up:
+    color = DBL_BUY  # Wrong color assignment
+elif rsi_value < extreme_down:
+    color = DBL_SELL # Wrong color assignment
+```
+
+**Python After Fix**:
+```python
+# Correct color assignments matching MQL5 exactly
+if rsi_value > extreme_up:
+    color = DBL_BUY   # 3 = Aqua (correct)
+elif rsi_value < extreme_down:
+    color = DBL_SELL  # 4 = Red (correct)
+else:
+    color = NOTRADE   # 0 = Grey (correct)
+```
+
 ## Fixes Applied
 
 ### 1. All Trading Rule Functions Corrected
@@ -120,6 +153,12 @@ color_values = display_df['schr_trend_color']
 - ✅ Colors exactly match MQL5: Blue, Yellow, Aqua, Red
 - ✅ Proper color assignment for all signal types
 - ✅ Consistent with MQL5 `_arr_Color` behavior
+
+### 5. Color Structure and Algorithm Fixed
+- ✅ All trading rule functions now use correct color assignments
+- ✅ Color structure matches MQL5: 0=Grey, 1=Blue, 2=Yellow, 3=Aqua, 4=Red
+- ✅ Algorithm logic corrected to match MQL5 exactly
+- ✅ Proper color inheritance and signal generation
 
 ## Current Status
 

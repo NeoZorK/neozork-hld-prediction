@@ -89,15 +89,15 @@ The Python version now fully supports both Open and Close prices:
 
 ## OHLC Candle Colors
 
-The indicator colors OHLC candles based on signal values, matching the MQL5 implementation:
+The indicator colors OHLC candles based on signal values, matching the MQL5 implementation exactly:
 
-- **0 (No Signal)**: Standard green/red based on OHLC direction
-- **1 (Buy)**: Blue (#3498db) - all candles blue regardless of OHLC direction
-- **2 (Sell)**: Yellow (#f1c40f) - all candles yellow regardless of OHLC direction
-- **3 (DBL Buy)**: Aqua (#00ffff) - all candles aqua regardless of OHLC direction
-- **4 (DBL Sell)**: Red (#e74c3c) - all candles red regardless of OHLC direction
+- **0 (No Signal)**: Grey (#95a5a6) - matches MQL5 clrNONE
+- **1 (Buy)**: Blue (#3498db) - matches MQL5 clrBlue
+- **2 (Sell)**: Yellow (#f1c40f) - matches MQL5 clrYellow
+- **3 (DBL Buy)**: Aqua (#00ffff) - matches MQL5 clrAqua
+- **4 (DBL Sell)**: Red (#e74c3c) - matches MQL5 clrRed
 
-**Note**: This matches the MQL5 `_arr_Color` behavior exactly, where candle colors are determined by the signal value, not by whether the candle is bullish or bearish.
+**Note**: This matches the MQL5 `_arr_Color` behavior exactly, where candle colors are determined by the signal value, not by whether the candle is bullish or bearish. The color structure follows the MQL5 `#property indicator_color2 clrNONE,clrBlue,clrYellow,clrAqua,clrRed` definition.
 
 ## Output Columns
 

@@ -210,11 +210,11 @@ def calculate_schr_trend(df: pd.DataFrame, period: int = 2,
 def _first_classic_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float, float]:
     """First Classic TR: >95 Sell, <5 Buy."""
     if rsi_value > extreme_up:
-        color = DBL_SELL
+        color = DBL_SELL  # 4 = Red
     elif rsi_value < extreme_down:
-        color = DBL_BUY
+        color = DBL_BUY   # 3 = Aqua
     else:
-        color = NOTRADE
+        color = NOTRADE   # 0 = Grey/None
     
     direction = color
     # Signal shows direction change - exactly like MQL5
@@ -226,11 +226,11 @@ def _first_classic_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev
 def _first_trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float, float]:
     """First Trend TR: >95 Buy, <5 Sell."""
     if rsi_value > extreme_up:
-        color = DBL_BUY
+        color = DBL_BUY   # 3 = Aqua
     elif rsi_value < extreme_down:
-        color = DBL_SELL
+        color = DBL_SELL  # 4 = Red
     else:
-        color = NOTRADE
+        color = NOTRADE   # 0 = Grey/None
     
     direction = color
     # Signal shows direction change - exactly like MQL5
@@ -242,9 +242,9 @@ def _first_trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_d
 def _trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float, float]:
     """Trend TR: Best Up 70| Down 30."""
     if rsi_value > extreme_up:
-        color = DBL_BUY
+        color = DBL_BUY   # 3 = Aqua
     elif rsi_value < extreme_down:
-        color = DBL_SELL
+        color = DBL_SELL  # 4 = Red
     else:
         # If no extreme then copy previous color
         color = prev_direction if prev_direction != NOTRADE else NOTRADE
@@ -259,15 +259,15 @@ def _trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_directi
 def _zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float, float]:
     """Zone TR: >50 Buy, <50 Sell."""
     if rsi_value > 50:
-        color = BUY
+        color = BUY        # 1 = Blue
         # Check Extreme Point UP
         if rsi_value > extreme_up:
-            color = DBL_BUY
+            color = DBL_BUY   # 3 = Aqua
     else:
-        color = SELL
+        color = SELL       # 2 = Yellow
         # Check Extreme Point DOWN
         if rsi_value < extreme_down:
-            color = DBL_SELL
+            color = DBL_SELL  # 4 = Red
     
     direction = color
     # Signal shows direction change - exactly like MQL5
@@ -279,15 +279,15 @@ def _zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_directio
 def _first_zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float, float]:
     """First Zone TR: Include New Extreme Signals."""
     if rsi_value > 50:
-        color = BUY
+        color = BUY        # 1 = Blue
         # Check Extreme Point UP
         if rsi_value > extreme_up:
-            color = DBL_BUY
+            color = DBL_BUY   # 3 = Aqua
     else:
-        color = SELL
+        color = SELL       # 2 = Yellow
         # Check Extreme Point DOWN
         if rsi_value < extreme_down:
-            color = DBL_SELL
+            color = DBL_SELL  # 4 = Red
     
     direction = color
     # Signal shows direction change - exactly like MQL5
@@ -302,9 +302,9 @@ def _first_zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_di
 def _first_strong_zone_tr(rsi_value: float, prev_direction: float) -> tuple[float, float, float]:
     """First Strong Zone TR: Without New Extreme Signals."""
     if rsi_value > 50:
-        color = BUY
+        color = BUY        # 1 = Blue
     else:
-        color = SELL
+        color = SELL       # 2 = Yellow
     
     direction = color
     # Signal shows direction change - exactly like MQL5
@@ -343,19 +343,19 @@ def _purchase_power_tr(power_rsis: list, i: int, prev_direction: float) -> tuple
     # Draw Extreme
     if buy_count == 0:
         # Super SELL!
-        color = DBL_SELL
+        color = DBL_SELL    # 4 = Red
     elif sell_count == 0:
         # Super BUY!
-        color = DBL_BUY
+        color = DBL_BUY     # 3 = Aqua
     else:
         # Check Power
         buy_avg = 50 - (buy_power / buy_count)
         sell_avg = 50 - (sell_power / sell_count)
         
         if abs(buy_avg) > sell_avg:
-            color = BUY
+            color = BUY      # 1 = Blue
         else:
-            color = SELL
+            color = SELL     # 2 = Yellow
     
     direction = color
     # Signal shows direction change - exactly like MQL5
@@ -391,16 +391,16 @@ def _purchase_power_by_count_tr(power_rsis: list, i: int, prev_direction: float)
     # Draw Extreme
     if buy_count == 0:
         # Super SELL!
-        color = DBL_SELL
+        color = DBL_SELL    # 4 = Red
     elif sell_count == 0:
         # Super BUY!
-        color = DBL_BUY
+        color = DBL_BUY     # 3 = Aqua
     else:
         # Check BUY Count
         if buy_count > sell_count:
-            color = BUY
+            color = BUY      # 1 = Blue
         else:
-            color = SELL
+            color = SELL     # 2 = Yellow
     
     direction = color
     # Signal shows direction change - exactly like MQL5
@@ -436,16 +436,16 @@ def _purchase_power_extreme_tr(power_rsis: list, i: int, prev_direction: float) 
     # Draw Extreme
     if buy_count == 0:
         # Super SELL!
-        color = DBL_SELL
+        color = DBL_SELL     # 4 = Red
     elif sell_count == 0:
         # Super BUY!
-        color = DBL_BUY
+        color = DBL_BUY      # 3 = Aqua
     else:
         # NOT EXTREME (Who Bigger?)
         if abs(50 - buy_power) > (50 - sell_power):
-            color = DBL_BUY
+            color = DBL_BUY  # 3 = Aqua
         else:
-            color = DBL_SELL
+            color = DBL_SELL # 4 = Red
     
     direction = color
     # Signal shows direction change - exactly like MQL5
@@ -481,19 +481,19 @@ def _purchase_power_weak_tr(power_rsis: list, i: int, prev_direction: float) -> 
     # Draw Extreme
     if buy_count == 0:
         # Super SELL!
-        color = SELL
+        color = SELL          # 2 = Yellow
     elif sell_count == 0:
         # Super BUY!
-        color = BUY
+        color = BUY           # 1 = Blue
     else:
         # Check Power
         buy_avg = 50 - (buy_power / buy_count)
         sell_avg = 50 - (sell_power / sell_count)
         
         if abs(buy_avg) > sell_avg:
-            color = BUY
+            color = BUY       # 1 = Blue
         else:
-            color = SELL
+            color = SELL      # 2 = Yellow
     
     direction = color
     # Signal shows direction change - exactly like MQL5

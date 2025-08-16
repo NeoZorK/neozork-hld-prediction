@@ -1671,7 +1671,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     # Now draw OHLC candles with proper SCHR_TREND coloring
     # Use color_values (schr_trend_color) for candle coloring, matching MQL5 _arr_Color behavior
     if color_values is not None:
-        # No Signal (0) - Standard green/red based on OHLC direction
+        # No Signal (0) - Grey (matches MQL5 clrNONE)
         no_signal_mask = color_values == 0
         if no_signal_mask.any():
             fig.add_trace(
@@ -1681,17 +1681,17 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     high=display_df['high'][no_signal_mask],
                     low=display_df['low'][no_signal_mask],
                     close=display_df['close'][no_signal_mask],
-                    name="OHLC (No Signal)",
-                    increasing_line_color='#2ecc71',
-                    decreasing_line_color='#e74c3c',
-                    increasing_fillcolor='#2ecc71',
-                    decreasing_fillcolor='#e74c3c',
+                    name="OHLC (No Signal - Grey)",
+                    increasing_line_color='#95a5a6',
+                    decreasing_line_color='#95a5a6',
+                    increasing_fillcolor='#95a5a6',
+                    decreasing_fillcolor='#95a5a6',
                     line=dict(width=1.2)
                 ),
                 row=1, col=1
             )
         
-        # Buy (1) - Blue (all candles blue regardless of OHLC direction)
+        # Buy (1) - Blue (matches MQL5 clrBlue)
         buy_mask = color_values == 1
         if buy_mask.any():
             fig.add_trace(
@@ -1711,7 +1711,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 row=1, col=1
             )
         
-        # Sell (2) - Yellow (all candles yellow regardless of OHLC direction)
+        # Sell (2) - Yellow (matches MQL5 clrYellow)
         sell_mask = color_values == 2
         if sell_mask.any():
             fig.add_trace(
@@ -1731,7 +1731,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 row=1, col=1
             )
         
-        # DBL Buy (3) - Aqua (all candles aqua regardless of OHLC direction)
+        # DBL Buy (3) - Aqua (matches MQL5 clrAqua)
         dbl_buy_mask = color_values == 3
         if dbl_buy_mask.any():
             fig.add_trace(
@@ -1751,7 +1751,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 row=1, col=1
             )
         
-        # DBL Sell (4) - Red (all candles red regardless of OHLC direction)
+        # DBL Sell (4) - Red (matches MQL5 clrRed)
         dbl_sell_mask = color_values == 4
         if dbl_sell_mask.any():
             fig.add_trace(
