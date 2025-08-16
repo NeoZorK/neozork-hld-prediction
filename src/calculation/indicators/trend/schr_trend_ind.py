@@ -157,48 +157,47 @@ def calculate_schr_trend(df: pd.DataFrame, period: int = 2,
         
         # Apply trading rule based on mode to get direction and color
         if tr_mode == TradingRuleMode.TR_FirstClassic:
-            color.iloc[i], direction.iloc[i], _ = _first_classic_tr(
+            color.iloc[i], direction.iloc[i] = _first_classic_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_FirstTrend:
-            color.iloc[i], direction.iloc[i], _ = _first_trend_tr(
+            color.iloc[i], direction.iloc[i] = _first_trend_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_Trend:
-            color.iloc[i], direction.iloc[i], _ = _trend_tr(
+            color.iloc[i], direction.iloc[i] = _trend_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_Zone:
-            color.iloc[i], direction.iloc[i], _ = _zone_tr(
+            color.iloc[i], direction.iloc[i] = _zone_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_FirstZone:
-            color.iloc[i], direction.iloc[i], _ = _first_zone_tr(
+            color.iloc[i], direction.iloc[i] = _first_zone_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_FirstStrongZone:
-            color.iloc[i], direction.iloc[i], _ = _first_strong_zone_tr(
+            color.iloc[i], direction.iloc[i] = _first_strong_zone_tr(
                 rsi_values.iloc[i], direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_PurchasePower:
-            color.iloc[i], direction.iloc[i], _ = _purchase_power_tr(
+            color.iloc[i], direction.iloc[i] = _purchase_power_tr(
                 power_rsis, i, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_PurchasePower_byCount:
-            color.iloc[i], direction.iloc[i], _ = _purchase_power_by_count_tr(
+            color.iloc[i], direction.iloc[i] = _purchase_power_by_count_tr(
                 power_rsis, i, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_PurchasePower_Extreme:
-            color.iloc[i], direction.iloc[i], _ = _purchase_power_extreme_tr(
+            color.iloc[i], direction.iloc[i] = _purchase_power_extreme_tr(
                 power_rsis, i, direction.iloc[i-1])
         elif tr_mode == TradingRuleMode.TR_PurchasePower_Weak:
-            color.iloc[i], direction.iloc[i], _ = _purchase_power_weak_tr(
+            color.iloc[i], direction.iloc[i] = _purchase_power_weak_tr(
                 power_rsis, i, direction.iloc[i-1])
         else:
             # Default to Zone mode
-            color.iloc[i], direction.iloc[i], _ = _zone_tr(
+            color.iloc[i], direction.iloc[i] = _zone_tr(
                 rsi_values.iloc[i], extreme_up, extreme_down, direction.iloc[i-1])
         
         # Calculate signal based on direction change
         if i > 0:
-            if direction.iloc[i] != direction.iloc[i-1] and direction.iloc[i] != NOTRADE:
-                # Direction changed - signal shows the new direction
-                signal.iloc[i] = direction.iloc[i]
-            else:
-                # Direction unchanged - no signal
-                signal.iloc[i] = NOTRADE
+            # Signal shows current direction (not just changes)
+            signal.iloc[i] = direction.iloc[i]
+        else:
+            # First bar - signal shows current direction
+            signal.iloc[i] = direction.iloc[i]
         
         # Calculate Purchase Power if enabled
         if tr_mode >= TradingRuleMode.TR_PurchasePower and len(power_rsis) > 0:
@@ -207,7 +206,7 @@ def calculate_schr_trend(df: pd.DataFrame, period: int = 2,
     return origin, trend, direction, signal, color, purchase_power
 
 
-def _first_classic_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float, float]:
+def _first_classic_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float]:
     """First Classic TR: >95 Sell, <5 Buy."""
     if rsi_value > extreme_up:
         color = DBL_SELL  # 4 = Red
@@ -216,14 +215,12 @@ def _first_classic_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev
     else:
         color = NOTRADE   # 0 = Grey/None
     
-    direction = color
-    # Signal shows direction change - exactly like MQL5
-    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
+    direction = color  # Direction = Color (exactly like MQL5)
     
-    return color, direction, signal
+    return color, direction
 
 
-def _first_trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float, float]:
+def _first_trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float]:
     """First Trend TR: >95 Buy, <5 Sell."""
     if rsi_value > extreme_up:
         color = DBL_BUY   # 3 = Aqua
@@ -232,14 +229,12 @@ def _first_trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_d
     else:
         color = NOTRADE   # 0 = Grey/None
     
-    direction = color
-    # Signal shows direction change - exactly like MQL5
-    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
+    direction = color  # Direction = Color (exactly like MQL5)
     
-    return color, direction, signal
+    return color, direction
 
 
-def _trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float, float]:
+def _trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float]:
     """Trend TR: Best Up 70| Down 30."""
     if rsi_value > extreme_up:
         color = DBL_BUY   # 3 = Aqua
@@ -249,14 +244,12 @@ def _trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_directi
         # If no extreme then copy previous color
         color = prev_direction if prev_direction != NOTRADE else NOTRADE
     
-    direction = color
-    # Signal shows direction change - exactly like MQL5
-    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
+    direction = color  # Direction = Color (exactly like MQL5)
     
-    return color, direction, signal
+    return color, direction
 
 
-def _zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float, float]:
+def _zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float]:
     """Zone TR: >50 Buy, <50 Sell."""
     if rsi_value > 50:
         color = BUY        # 1 = Blue
@@ -269,14 +262,12 @@ def _zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_directio
         if rsi_value < extreme_down:
             color = DBL_SELL  # 4 = Red
     
-    direction = color
-    # Signal shows direction change - exactly like MQL5
-    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
+    direction = color  # Direction = Color (exactly like MQL5)
     
-    return color, direction, signal
+    return color, direction
 
 
-def _first_zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float, float]:
+def _first_zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float]:
     """First Zone TR: Include New Extreme Signals."""
     if rsi_value > 50:
         color = BUY        # 1 = Blue
@@ -289,37 +280,29 @@ def _first_zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_di
         if rsi_value < extreme_down:
             color = DBL_SELL  # 4 = Red
     
-    direction = color
-    # Signal shows direction change - exactly like MQL5
-    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
+    direction = color  # Direction = Color (exactly like MQL5)
     
-    # Draw only First Signal - exactly like MQL5
-    final_color = signal if signal != NOTRADE else NOTRADE
-    
-    return final_color, direction, signal
+    # For First Zone, color should be the same as direction
+    return color, direction
 
 
-def _first_strong_zone_tr(rsi_value: float, prev_direction: float) -> tuple[float, float, float]:
+def _first_strong_zone_tr(rsi_value: float, prev_direction: float) -> tuple[float, float]:
     """First Strong Zone TR: Without New Extreme Signals."""
     if rsi_value > 50:
         color = BUY        # 1 = Blue
     else:
         color = SELL       # 2 = Yellow
     
-    direction = color
-    # Signal shows direction change - exactly like MQL5
-    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
+    direction = color  # Direction = Color (exactly like MQL5)
     
-    # Draw only First Signal - exactly like MQL5
-    final_color = signal if signal != NOTRADE else NOTRADE
-    
-    return final_color, direction, signal
+    # For First Strong Zone, color should be the same as direction
+    return color, direction
 
 
-def _purchase_power_tr(power_rsis: list, i: int, prev_direction: float) -> tuple[float, float, float]:
+def _purchase_power_tr(power_rsis: list, i: int, prev_direction: float) -> tuple[float, float]:
     """Purchase Power TR: 10 indicators."""
     if not power_rsis or i >= len(power_rsis[0]):
-        return NOTRADE, NOTRADE, NOTRADE
+        return NOTRADE, NOTRADE
     
     buy_count = 0
     sell_count = 0
@@ -338,7 +321,7 @@ def _purchase_power_tr(power_rsis: list, i: int, prev_direction: float) -> tuple
     
     # Check Zero
     if buy_count == 0 and sell_count == 0:
-        return NOTRADE, NOTRADE, NOTRADE
+        return NOTRADE, NOTRADE
     
     # Draw Extreme
     if buy_count == 0:
@@ -357,17 +340,15 @@ def _purchase_power_tr(power_rsis: list, i: int, prev_direction: float) -> tuple
         else:
             color = SELL     # 2 = Yellow
     
-    direction = color
-    # Signal shows direction change - exactly like MQL5
-    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
+    direction = color  # Direction = Color (exactly like MQL5)
     
-    return color, direction, signal
+    return color, direction
 
 
-def _purchase_power_by_count_tr(power_rsis: list, i: int, prev_direction: float) -> tuple[float, float, float]:
+def _purchase_power_by_count_tr(power_rsis: list, i: int, prev_direction: float) -> tuple[float, float]:
     """Purchase Power by Count TR: 10 indicators."""
     if not power_rsis or i >= len(power_rsis[0]):
-        return NOTRADE, NOTRADE, NOTRADE
+        return NOTRADE, NOTRADE
     
     buy_count = 0
     sell_count = 0
@@ -386,7 +367,7 @@ def _purchase_power_by_count_tr(power_rsis: list, i: int, prev_direction: float)
     
     # Check Zero
     if buy_count == 0 and sell_count == 0:
-        return NOTRADE, NOTRADE, NOTRADE
+        return NOTRADE, NOTRADE
     
     # Draw Extreme
     if buy_count == 0:
@@ -402,17 +383,15 @@ def _purchase_power_by_count_tr(power_rsis: list, i: int, prev_direction: float)
         else:
             color = SELL     # 2 = Yellow
     
-    direction = color
-    # Signal shows direction change - exactly like MQL5
-    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
+    direction = color  # Direction = Color (exactly like MQL5)
     
-    return color, direction, signal
+    return color, direction
 
 
-def _purchase_power_extreme_tr(power_rsis: list, i: int, prev_direction: float) -> tuple[float, float, float]:
+def _purchase_power_extreme_tr(power_rsis: list, i: int, prev_direction: float) -> tuple[float, float]:
     """Purchase Power Extreme TR: 10 indicators Only Extreme."""
     if not power_rsis or i >= len(power_rsis[0]):
-        return NOTRADE, NOTRADE, NOTRADE
+        return NOTRADE, NOTRADE
     
     buy_count = 0
     sell_count = 0
@@ -431,7 +410,7 @@ def _purchase_power_extreme_tr(power_rsis: list, i: int, prev_direction: float) 
     
     # Check Zero
     if buy_count == 0 and sell_count == 0:
-        return NOTRADE, NOTRADE, NOTRADE
+        return NOTRADE, NOTRADE
     
     # Draw Extreme
     if buy_count == 0:
@@ -447,17 +426,15 @@ def _purchase_power_extreme_tr(power_rsis: list, i: int, prev_direction: float) 
         else:
             color = DBL_SELL # 4 = Red
     
-    direction = color
-    # Signal shows direction change - exactly like MQL5
-    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
+    direction = color  # Direction = Color (exactly like MQL5)
     
-    return color, direction, signal
+    return color, direction
 
 
-def _purchase_power_weak_tr(power_rsis: list, i: int, prev_direction: float) -> tuple[float, float, float]:
+def _purchase_power_weak_tr(power_rsis: list, i: int, prev_direction: float) -> tuple[float, float]:
     """Purchase Power Weak TR: 10 indicators."""
     if not power_rsis or i >= len(power_rsis[0]):
-        return NOTRADE, NOTRADE, NOTRADE
+        return NOTRADE, NOTRADE
     
     buy_count = 0
     sell_count = 0
@@ -476,7 +453,11 @@ def _purchase_power_weak_tr(power_rsis: list, i: int, prev_direction: float) -> 
     
     # Check Zero
     if buy_count == 0 and sell_count == 0:
-        return NOTRADE, NOTRADE, NOTRADE
+        return NOTRADE, NOTRADE
+    
+    # Calculate Average
+    buy_avg = 0.0
+    sell_avg = 0.0
     
     # Draw Extreme
     if buy_count == 0:
@@ -495,11 +476,9 @@ def _purchase_power_weak_tr(power_rsis: list, i: int, prev_direction: float) -> 
         else:
             color = SELL      # 2 = Yellow
     
-    direction = color
-    # Signal shows direction change - exactly like MQL5
-    signal = direction if direction != prev_direction and direction != NOTRADE else NOTRADE
+    direction = color  # Direction = Color (exactly like MQL5)
     
-    return color, direction, signal
+    return color, direction
 
 
 class SCHRTrendIndicator(BaseIndicator):
