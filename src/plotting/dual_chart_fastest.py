@@ -1494,7 +1494,7 @@ def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
 
 def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     """
-    Add SCHR_TREND indicator to the chart with 5 fields:
+    Add SCHR_TREND indicator to the chart with simplified legend:
     - _Origin (RSI-like values) - NOT VISIBLE on chart
     - Trend (Line values)
     - Direction (0=no_signal, 1=buy, 2=sell, 3=dbl_buy, 4=dbl_sell)
@@ -1553,120 +1553,8 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             row=2, col=1
         )
     
-    # Get Signal values for upper OHLC chart (0=No Signal, 1=Buy, 2=Sell, 3=DBL_BUY, 4=DBL_SELL)
-    # Note: Signal = 0 means no signal (when Direction hasn't changed)
-    # Signal shows only changes in Direction, not the current Direction value
-    signal_values = None
-    for col in ['schr_trend_signal', 'SCHR_TREND_Signal']:
-        if col in display_df.columns:
-            signal_values = display_df[col]
-            break
-    
-    if signal_values is not None:
-        # Add Signal markers on upper OHLC chart
-        # Filter for different signal types
-        # Signal shows only changes in Direction (0 when Direction is the same)
-        # Signal = 0: No signal (Direction unchanged)
-        # Signal = 1: Buy signal (Direction changed to BUY)
-        # Signal = 2: Sell signal (Direction changed to SELL)
-        # Signal = 3: DBL Buy signal (Direction changed to DBL_BUY)
-        # Signal = 4: DBL Sell signal (Direction changed to DBL_SELL)
-        buy_signals = signal_values == 1
-        sell_signals = signal_values == 2
-        dbl_buy_signals = signal_values == 3
-        dbl_sell_signals = signal_values == 4
-        
-        # Add Buy signals (green triangles up) - only when Signal != 0
-        if buy_signals.any():
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index[buy_signals],
-                    y=display_df['high'][buy_signals] * 1.001,  # Slightly above high
-                    mode='markers',
-                    name='SCHR Buy Signal',
-                    marker=dict(
-                        symbol='triangle-up',
-                        size=12,
-                        color='#27ae60',
-                        line=dict(width=2, color='#27ae60')
-                    ),
-                    hovertemplate='<b>SCHR Buy Signal</b><br>' +
-                                 'Date: %{x}<br>' +
-                                 'Price: %{y}<br>' +
-                                 '<extra></extra>',
-                    showlegend=True
-                ),
-                row=1, col=1
-            )
-        
-        # Add Sell signals (red triangles down) - only when Signal != 0
-        if sell_signals.any():
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index[sell_signals],
-                    y=display_df['low'][sell_signals] * 0.999,  # Slightly below low
-                    mode='markers',
-                    name='SCHR Sell Signal',
-                    marker=dict(
-                        symbol='triangle-down',
-                        size=12,
-                        color='#e74c3c',
-                        line=dict(width=2, color='#e74c3c')
-                    ),
-                    hovertemplate='<b>SCHR Sell Signal</b><br>' +
-                                 'Date: %{x}<br>' +
-                                 'Price: %{y}<br>' +
-                                 '<extra></extra>',
-                    showlegend=True
-                ),
-                row=1, col=1
-            )
-        
-        # Add DBL Buy signals (aqua triangles up) - only when Signal != 0
-        if dbl_buy_signals.any():
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index[dbl_buy_signals],
-                    y=display_df['high'][dbl_buy_signals] * 1.001,  # Slightly above high
-                    mode='markers',
-                    name='SCHR DBL Buy Signal',
-                    marker=dict(
-                        symbol='triangle-up',
-                        size=12,
-                        color='#00ffff',
-                        line=dict(width=2, color='#00ffff')
-                    ),
-                    hovertemplate='<b>SCHR DBL Buy Signal</b><br>' +
-                                 'Date: %{x}<br>' +
-                                 'Price: %{y}<br>' +
-                                 '<extra></extra>',
-                    showlegend=True
-                ),
-                row=1, col=1
-            )
-        
-        # Add DBL Sell signals (red triangles down) - only when Signal != 0
-        if dbl_sell_signals.any():
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index[dbl_sell_signals],
-                    y=display_df['low'][dbl_sell_signals] * 0.999,  # Slightly below low
-                    mode='markers',
-                    name='SCHR DBL Sell Signal',
-                    marker=dict(
-                        symbol='triangle-down',
-                        size=12,
-                        color='#e74c3c',
-                        line=dict(width=2, color='#e74c3c')
-                    ),
-                    hovertemplate='<b>SCHR DBL Sell Signal</b><br>' +
-                                 'Date: %{x}<br>' +
-                                 'Price: %{y}<br>' +
-                                 '<extra></extra>',
-                    showlegend=True
-                ),
-                row=1, col=1
-            )
+    # REMOVED: Triangle signals to simplify legend and avoid duplication
+    # Candle colors already show the signals clearly
     
     # Now draw OHLC candles with proper SCHR_TREND coloring
     # Use color_values (schr_trend_color) for candle coloring, matching MQL5 _arr_Color behavior
@@ -1681,7 +1569,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     high=display_df['high'][no_signal_mask],
                     low=display_df['low'][no_signal_mask],
                     close=display_df['close'][no_signal_mask],
-                    name="OHLC (No Signal - Grey)",
+                    name="SCHR_TREND: No Signal",
                     increasing_line_color='#95a5a6',
                     decreasing_line_color='#95a5a6',
                     increasing_fillcolor='#95a5a6',
@@ -1701,7 +1589,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     high=display_df['high'][buy_mask],
                     low=display_df['low'][buy_mask],
                     close=display_df['close'][buy_mask],
-                    name="OHLC (Buy - Blue)",
+                    name="SCHR_TREND: Buy",
                     increasing_line_color='#3498db',
                     decreasing_line_color='#3498db',
                     increasing_fillcolor='#3498db',
@@ -1721,7 +1609,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     high=display_df['high'][sell_mask],
                     low=display_df['low'][sell_mask],
                     close=display_df['close'][sell_mask],
-                    name="OHLC (Sell - Yellow)",
+                    name="SCHR_TREND: Sell",
                     increasing_line_color='#f1c40f',
                     decreasing_line_color='#f1c40f',
                     increasing_fillcolor='#f1c40f',
@@ -1741,7 +1629,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     high=display_df['high'][dbl_buy_mask],
                     low=display_df['low'][dbl_buy_mask],
                     close=display_df['close'][dbl_buy_mask],
-                    name="OHLC (DBL Buy - Aqua)",
+                    name="SCHR_TREND: DBL Buy",
                     increasing_line_color='#00ffff',
                     decreasing_line_color='#00ffff',
                     increasing_fillcolor='#00ffff',
@@ -1761,7 +1649,7 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     high=display_df['high'][dbl_sell_mask],
                     low=display_df['low'][dbl_sell_mask],
                     close=display_df['close'][dbl_sell_mask],
-                    name="OHLC (DBL Sell - Red)",
+                    name="SCHR_TREND: DBL Sell",
                     increasing_line_color='#e74c3c',
                     decreasing_line_color='#e74c3c',
                     increasing_fillcolor='#e74c3c',
