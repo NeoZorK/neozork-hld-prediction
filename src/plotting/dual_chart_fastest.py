@@ -1720,7 +1720,7 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     """
     Add SCHR_Wave2 indicator to the chart.
     Signal (0=No Signal, 1=Buy, 2=Sell) on upper OHLC chart
-    Direction (1=Up, 2=Down) on lower subplot
+    Modern wave lines (wave, fast_line, ma_line) on lower subplot
     
     Args:
         fig (go.Figure): Plotly figure object
@@ -1801,63 +1801,13 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                         showlegend=False,
                         hovertemplate='<b>SCHR_Wave2 Sell Signal</b><br>' +
                                     'Date: %{x}<br>' +
-                                    'Price: %{y:.4f}<br>' +
+                                    'Value: %{y:.4f}<br>' +
                                     '<extra></extra>'
                     ),
                     row=1, col=1
                 )
     
-    # Get Direction values for lower subplot (1=Up, 2=Down)
-    direction_values = None
-    for col in ['schr_wave2_direction', 'SCHR_Wave2_Direction']:
-        if col in display_df.columns:
-            direction_values = display_df[col]
-            break
-    
-    if direction_values is not None:
-        # Add direction line on lower subplot
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=direction_values,
-                mode='lines',
-                name='SCHR_Wave2 Direction',
-                line=dict(color='purple', width=2),
-                showlegend=False,
-                hovertemplate='<b>SCHR_Wave2 Direction</b><br>' +
-                            'Date: %{x}<br>' +
-                            'Direction: %{y}<br>' +
-                            '<extra></extra>'
-            ),
-            row=2, col=1
-        )
-        
-        # Add reference lines for direction values
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=[1] * len(display_df),
-                mode='lines',
-                name='Up Trend',
-                line=dict(color='green', width=1, dash='dash'),
-                showlegend=False
-            ),
-            row=2, col=1
-        )
-        
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=[2] * len(display_df),
-                mode='lines',
-                name='Down Trend',
-                line=dict(color='red', width=1, dash='dash'),
-                showlegend=False
-            ),
-            row=2, col=1
-        )
-    
-    # Add SCHR_Wave2 main wave line if available
+    # Add SCHR_Wave2 main wave line if available (changes color based on direction)
     wave_values = None
     for col in ['schr_wave2_wave', 'SCHR_Wave2_Wave']:
         if col in display_df.columns:
@@ -1865,23 +1815,55 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             break
     
     if wave_values is not None:
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=wave_values,
-                mode='lines',
-                name='SCHR_Wave2 Wave',
-                line=dict(color='blue', width=2),
-                showlegend=False,
-                hovertemplate='<b>SCHR_Wave2 Wave</b><br>' +
-                            'Date: %{x}<br>' +
-                            'Value: %{y:.4f}<br>' +
-                            '<extra></extra>'
-            ),
-            row=2, col=1
-        )
+        # Create separate traces for positive and negative wave values
+        positive_mask = wave_values >= 0
+        negative_mask = wave_values < 0
+        
+        # Positive wave values (blue)
+        if positive_mask.any():
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index[positive_mask],
+                    y=wave_values[positive_mask],
+                    mode='lines',
+                    name='SCHR_Wave2 Wave (Positive)',
+                    line=dict(
+                        color='blue',
+                        width=3,
+                        shape='spline'
+                    ),
+                    showlegend=True,
+                    hovertemplate='<b>SCHR_Wave2 Wave</b><br>' +
+                                'Date: %{x}<br>' +
+                                'Value: %{y:.4f}<br>' +
+                                '<extra></extra>'
+                ),
+                row=2, col=1
+            )
+        
+        # Negative wave values (red)
+        if negative_mask.any():
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index[negative_mask],
+                    y=wave_values[negative_mask],
+                    mode='lines',
+                    name='SCHR_Wave2 Wave (Negative)',
+                    line=dict(
+                        color='red',
+                        width=3,
+                        shape='spline'
+                    ),
+                    showlegend=True,
+                    hovertemplate='<b>SCHR_Wave2 Wave</b><br>' +
+                                'Date: %{x}<br>' +
+                                'Value: %{y:.4f}<br>' +
+                                '<extra></extra>'
+                ),
+                row=2, col=1
+            )
     
-    # Add SCHR_Wave2 fast line if available
+    # Add SCHR_Wave2 fast line if available (always orange)
     fast_line_values = None
     for col in ['schr_wave2_fast_line', 'SCHR_Wave2_Fast_Line']:
         if col in display_df.columns:
@@ -1895,8 +1877,12 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 y=fast_line_values,
                 mode='lines',
                 name='SCHR_Wave2 Fast Line',
-                line=dict(color='orange', width=2),
-                showlegend=False,
+                line=dict(
+                    color='orange',  # Always orange
+                    width=2.5,
+                    shape='spline'
+                ),
+                showlegend=True,
                 hovertemplate='<b>SCHR_Wave2 Fast Line</b><br>' +
                             'Date: %{x}<br>' +
                             'Value: %{y:.4f}<br>' +
@@ -1905,7 +1891,7 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             row=2, col=1
         )
     
-    # Add SCHR_Wave2 MA line if available
+    # Add SCHR_Wave2 MA line if available (always yellow)
     ma_line_values = None
     for col in ['schr_wave2_ma_line', 'SCHR_Wave2_MA_Line']:
         if col in display_df.columns:
@@ -1919,8 +1905,12 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 y=ma_line_values,
                 mode='lines',
                 name='SCHR_Wave2 MA Line',
-                line=dict(color='yellow', width=3),
-                showlegend=False,
+                line=dict(
+                    color='yellow',  # Always yellow
+                    width=2,
+                    shape='spline'
+                ),
+                showlegend=True,
                 hovertemplate='<b>SCHR_Wave2 MA Line</b><br>' +
                             'Date: %{x}<br>' +
                             'Value: %{y:.4f}<br>' +
@@ -1929,27 +1919,41 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             row=2, col=1
         )
     
-    # Add zero line with enhanced styling
+    # Add zero line with modern styling
     fig.add_hline(
         y=0,
         line_dash="dot",
-        line_color="#95a5a6",
-        opacity=0.7,
+        line_color="#636363",  # Modern gray
+        opacity=0.8,
         line_width=1.5,
         row=2, col=1
     )
     
-    # Update y-axis title and range for SCHR_Wave2
+    # Update y-axis title and styling for SCHR_Wave2
     fig.update_yaxes(
         title_text="SCHR Wave2", 
         row=2, col=1,
         range=[-0.5, 0.5],  # Adjusted range for wave values
         tickmode='auto',
         showgrid=True,
-        gridcolor='rgba(0,0,0,0.1)',
+        gridcolor='rgba(0,0,0,0.08)',  # Subtle grid
         zeroline=True,
-        zerolinecolor='#95a5a6',
-        zerolinewidth=1.5
+        zerolinecolor='#636363',
+        zerolinewidth=1.5,
+        title_font=dict(size=14, color='#2f2f2f'),
+        tickfont=dict(size=11, color='#636363')
+    )
+    
+    # Update legend styling
+    fig.update_layout(
+        legend=dict(
+            x=0.02,
+            y=0.98,
+            bgcolor='rgba(255,255,255,0.9)',
+            bordercolor='rgba(0,0,0,0.1)',
+            borderwidth=1,
+            font=dict(size=12, color='#2f2f2f')
+        )
     )
     
     t_end = time.time()

@@ -247,7 +247,7 @@ def apply_trading_rule(wave: pd.Series, fast_line: pd.Series, tr_enum: int) -> p
 
 
 def apply_global_trading_rule(color1: pd.Series, color2: pd.Series, wave1: pd.Series, 
-                             global_tr_enum: int) -> tuple[pd.Series, pd.Series, pd.Series]:
+                             fast_line1: pd.Series, global_tr_enum: int) -> tuple[pd.Series, pd.Series, pd.Series]:
     """
     Apply global trading rule to combine signals from both waves.
     Exactly matches MQL5 global TR functions.
@@ -256,12 +256,13 @@ def apply_global_trading_rule(color1: pd.Series, color2: pd.Series, wave1: pd.Se
         color1: Color signals from first wave
         color2: Color signals from second wave
         wave1: Wave values from first wave
+        fast_line1: Fast line values from first wave
         global_tr_enum: Global trading rule enum value
         
     Returns:
         tuple: (Final color signals, Final wave values, Final fast line values)
     """
-    if len(color1) < 2 or len(color2) < 2 or len(wave1) < 2:
+    if len(color1) < 2 or len(color2) < 2 or len(wave1) < 2 or len(fast_line1) < 2:
         # Return empty series for insufficient data
         return pd.Series([], dtype=float), pd.Series([], dtype=float), pd.Series([], dtype=float)
     
@@ -272,13 +273,13 @@ def apply_global_trading_rule(color1: pd.Series, color2: pd.Series, wave1: pd.Se
     
     # Set default values
     final_wave.iloc[0] = wave1.iloc[0]
-    final_fast_line.iloc[0] = 0.0
+    final_fast_line.iloc[0] = fast_line1.iloc[0]
     final_color.iloc[0] = NOTRADE
     
     # Apply global trading rule for each bar
     for i in range(1, len(color1)):
         final_wave.iloc[i] = wave1.iloc[i]
-        final_fast_line.iloc[i] = 0.0  # Will be calculated separately
+        final_fast_line.iloc[i] = fast_line1.iloc[i]  # Use actual fast_line1 values
         
         if global_tr_enum == GlobalTradingRuleEnum.G_TR_PRIME:
             # Prime rule: Use both signals when they agree
@@ -403,7 +404,7 @@ def calculate_schr_wave2(df: pd.DataFrame, long1: int = 339, fast1: int = 10, tr
     # Apply global trading rule
     global_tr_enum = get_global_trading_rule_enum(global_tr)
     final_color, final_wave, final_fast_line = apply_global_trading_rule(
-        color1, color2, wave1, global_tr_enum
+        color1, color2, wave1, fast_line1, global_tr_enum
     )
     
     # Calculate SMA
