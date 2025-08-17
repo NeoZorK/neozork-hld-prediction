@@ -1333,6 +1333,68 @@ def add_schr_dir_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             # Removed standard Buy/Sell signals - keeping only SCHR signals
 
 
+def add_rsi_signals(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add RSI buy/sell signals to the upper OHLC chart.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with RSI data
+    """
+    t_start = time.time()
+    logger.print_info(f"[PERF] Starting RSI signals addition")
+    
+    # Check if RSI signal columns exist
+    if 'rsi_signal' not in display_df.columns:
+        logger.print_warning("RSI signal column not found in DataFrame")
+        return
+    
+    # Get RSI signal values (0=No Signal, 1=Buy, 2=Sell)
+    signal_values = display_df['rsi_signal']
+    
+    # Add buy signals (green triangles up)
+    buy_signals = signal_values == 1
+    if buy_signals.any():
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index[buy_signals],
+                y=display_df['high'][buy_signals] * 1.002,  # Slightly above high
+                mode='markers',
+                name='RSI Buy Signal',
+                marker=dict(
+                    symbol='triangle-up',
+                    size=10,
+                    color='lime',
+                    line=dict(color='darkgreen', width=1)
+                ),
+                showlegend=True
+            ),
+            row=1, col=1
+        )
+    
+    # Add sell signals (red triangles down)
+    sell_signals = signal_values == 2
+    if sell_signals.any():
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index[sell_signals],
+                y=display_df['low'][sell_signals] * 0.998,  # Slightly below low
+                mode='markers',
+                name='RSI Sell Signal',
+                marker=dict(
+                    symbol='triangle-down',
+                    size=10,
+                    color='red',
+                    line=dict(color='darkred', width=1)
+                ),
+                showlegend=True
+            ),
+            row=1, col=1
+        )
+    
+    logger.print_info(f"[PERF] RSI signals addition: {(time.time() - t_start)*1000:.1f}ms")
+
+
 def add_schr_rost_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     """
     Add SCHR_ROST indicator to the chart.
@@ -2493,9 +2555,11 @@ def plot_dual_chart_fastest(
     
     if indicator_name == 'rsi':
         add_rsi_indicator(fig, display_df)
+        add_rsi_signals(fig, display_df)  # Add RSI signals to upper chart
     
     elif indicator_name == 'rsi_mom':
         add_rsi_momentum_indicator(fig, display_df)
+        add_rsi_signals(fig, display_df)  # Add RSI signals to upper chart
     
     elif indicator_name == 'macd':
         add_macd_indicator(fig, display_df)
@@ -2550,6 +2614,7 @@ def plot_dual_chart_fastest(
     
     elif indicator_name == 'rsi_div':
         add_rsi_div_indicator(fig, display_df)
+        add_rsi_signals(fig, display_df)  # Add RSI signals to upper chart
     
     elif indicator_name == 'stoch':
         add_stoch_indicator(fig, display_df)

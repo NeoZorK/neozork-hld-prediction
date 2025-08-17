@@ -209,6 +209,32 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['rsi_oversold'] = oversold
             result_df['rsi_overbought'] = overbought
             
+            # Generate RSI signals for upper chart
+            # Buy signal when RSI crosses above oversold level
+            # Sell signal when RSI crosses below overbought level
+            rsi_signals = pd.Series(0, index=df.index)
+            
+            # Buy signals (RSI crosses above oversold)
+            buy_condition = (rsi_values > oversold) & (rsi_values.shift(1) <= oversold)
+            rsi_signals[buy_condition] = 1
+            
+            # Sell signals (RSI crosses below overbought)
+            sell_condition = (rsi_values < overbought) & (rsi_values.shift(1) >= overbought)
+            rsi_signals[sell_condition] = 2
+            
+            # Add signal columns for upper chart
+            result_df['rsi_signal'] = rsi_signals
+            result_df['rsi_buy_signal'] = (rsi_signals == 1).astype(float)
+            result_df['rsi_sell_signal'] = (rsi_signals == 2).astype(float)
+            
+            # Add support/resistance levels for visualization
+            result_df['PPrice1'] = df['Low'] * 0.995  # Support level
+            result_df['PPrice2'] = df['High'] * 1.005  # Resistance level
+            result_df['PColor1'] = rsi_signals.apply(lambda x: 1 if x == 1 else 0)  # Buy signals
+            result_df['PColor2'] = rsi_signals.apply(lambda x: 2 if x == 2 else 0)  # Sell signals
+            result_df['Direction'] = rsi_signals
+            result_df['Diff'] = rsi_values - 50  # RSI deviation from neutral
+            
         elif indicator_name == 'rsi_mom':
             period = int(params[0]) if len(params) > 0 else 14
             oversold = float(params[1]) if len(params) > 1 else 30
@@ -234,6 +260,31 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['rsi_oversold'] = oversold
             result_df['rsi_overbought'] = overbought
             
+            # Generate RSI momentum signals for upper chart
+            rsi_momentum = rsi_values.diff()
+            rsi_signals = pd.Series(0, index=df.index)
+            
+            # Buy signals (positive momentum when RSI is low)
+            buy_condition = (rsi_momentum > 0) & (rsi_values < oversold + 5)
+            rsi_signals[buy_condition] = 1
+            
+            # Sell signals (negative momentum when RSI is high)
+            sell_condition = (rsi_momentum < 0) & (rsi_values > overbought - 5)
+            rsi_signals[sell_condition] = 2
+            
+            # Add signal columns for upper chart
+            result_df['rsi_signal'] = rsi_signals
+            result_df['rsi_buy_signal'] = (rsi_signals == 1).astype(float)
+            result_df['rsi_sell_signal'] = (rsi_signals == 2).astype(float)
+            
+            # Add support/resistance levels for visualization
+            result_df['PPrice1'] = df['Low'] * 0.995  # Support level
+            result_df['PPrice2'] = df['High'] * 1.005  # Resistance level
+            result_df['PColor1'] = rsi_signals.apply(lambda x: 1 if x == 1 else 0)  # Buy signals
+            result_df['PColor2'] = rsi_signals.apply(lambda x: 2 if x == 2 else 0)  # Sell signals
+            result_df['Direction'] = rsi_signals
+            result_df['Diff'] = rsi_momentum  # RSI momentum
+            
         elif indicator_name == 'rsi_div':
             period = int(params[0]) if len(params) > 0 else 14
             oversold = float(params[1]) if len(params) > 1 else 30
@@ -256,6 +307,30 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['rsi_divergence'] = price_diff - rsi_diff
             result_df['rsi_oversold'] = oversold
             result_df['rsi_overbought'] = overbought
+            
+            # Generate RSI divergence signals for upper chart
+            rsi_signals = pd.Series(0, index=df.index)
+            
+            # Bullish divergence: price makes lower low, RSI makes higher low
+            bullish_divergence = (price_diff < 0) & (rsi_diff > 0) & (rsi_values < oversold + 10)
+            rsi_signals[bullish_divergence] = 1
+            
+            # Bearish divergence: price makes higher high, RSI makes lower high
+            bearish_divergence = (price_diff > 0) & (rsi_diff < 0) & (rsi_values > overbought - 10)
+            rsi_signals[bearish_divergence] = 2
+            
+            # Add signal columns for upper chart
+            result_df['rsi_signal'] = rsi_signals
+            result_df['rsi_buy_signal'] = (rsi_signals == 1).astype(float)
+            result_df['rsi_sell_signal'] = (rsi_signals == 2).astype(float)
+            
+            # Add support/resistance levels for visualization
+            result_df['PPrice1'] = df['Low'] * 0.995  # Support level
+            result_df['PPrice2'] = df['High'] * 1.005  # Resistance level
+            result_df['PColor1'] = rsi_signals.apply(lambda x: 1 if x == 1 else 0)  # Buy signals
+            result_df['PColor2'] = rsi_signals.apply(lambda x: 2 if x == 2 else 0)  # Sell signals
+            result_df['Direction'] = rsi_signals
+            result_df['Diff'] = result_df['rsi_divergence']  # RSI divergence
             
         elif indicator_name == 'macd':
             fast_period = int(params[0]) if len(params) > 0 else 12
