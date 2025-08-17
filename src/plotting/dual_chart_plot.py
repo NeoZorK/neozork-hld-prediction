@@ -185,14 +185,17 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
     
     result_df = df.copy()
     
+    # Initialize price_type variable to avoid scope issues
+    price_type = None
+    
     try:
         if indicator_name == 'rsi':
             period = int(params[0]) if len(params) > 0 else 14
             oversold = float(params[1]) if len(params) > 1 else 30
             overbought = float(params[2]) if len(params) > 2 else 70
-            price_type = PriceType.OPEN if len(params) > 3 and params[3].lower() == 'open' else PriceType.CLOSE
+            price_type = 'open' if len(params) > 3 and params[3].lower() == 'open' else 'close'
             
-            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
+            price_series = df['Open'] if price_type == 'open' else df['Close']
             rsi_values = calculate_rsi(price_series, period)
             
             # Check if RSI column already exists and remove it
@@ -210,9 +213,9 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             period = int(params[0]) if len(params) > 0 else 14
             oversold = float(params[1]) if len(params) > 1 else 30
             overbought = float(params[2]) if len(params) > 2 else 70
-            price_type = PriceType.OPEN if len(params) > 3 and params[3].lower() == 'open' else PriceType.CLOSE
+            price_type = 'open' if len(params) > 3 and params[3].lower() == 'open' else 'close'
             
-            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
+            price_series = df['Open'] if price_type == 'open' else df['Close']
             rsi_values = calculate_rsi(price_series, period)
             
             # Check if RSI columns already exist and remove them
@@ -235,9 +238,9 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             period = int(params[0]) if len(params) > 0 else 14
             oversold = float(params[1]) if len(params) > 1 else 30
             overbought = float(params[2]) if len(params) > 2 else 70
-            price_type = PriceType.OPEN if len(params) > 3 and params[3].lower() == 'open' else PriceType.CLOSE
+            price_type = 'open' if len(params) > 3 and params[3].lower() == 'open' else 'close'
             
-            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
+            price_series = df['Open'] if price_type == 'open' else df['Close']
             rsi_values = calculate_rsi(price_series, period)
             
             # Remove possible duplicates
@@ -278,6 +281,8 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
             ema_values = calculate_ema(price_series, period)
             result_df['ema'] = ema_values
+            result_df['ema_period'] = period
+            result_df['ema_price_type'] = price_type
             
         elif indicator_name == 'bb':
             period = int(params[0]) if len(params) > 0 else 20
@@ -292,12 +297,16 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['bb_upper'] = upper
             result_df['bb_middle'] = middle
             result_df['bb_lower'] = lower
+            result_df['bb_period'] = period
+            result_df['bb_std_dev'] = std_dev
+            result_df['bb_price_type'] = price_type
             
         elif indicator_name == 'atr':
             period = int(params[0]) if len(params) > 0 else 14
             
             atr_values = calculate_atr(df, period)
             result_df['atr'] = atr_values
+            result_df['atr_period'] = period
             
         elif indicator_name == 'cci':
             period = int(params[0]) if len(params) > 0 else 20
@@ -306,29 +315,33 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             # Select price series based on price_type
             price_series = df['Open'] if price_type == 'open' else df['Close']
             
-            # Check if CCI column already exists and remove it
-            if 'CCI' in result_df.columns:
-                result_df = result_df.drop(columns=['CCI'])
-            if 'cci' in result_df.columns:
-                result_df = result_df.drop(columns=['cci'])
-            
-            cci_values = calculate_cci(price_series, period)
+            cci_values = calculate_cci(df, period, price_series)
             result_df['cci'] = cci_values
+            result_df['cci_period'] = period
+            result_df['cci_price_type'] = price_type
             
         elif indicator_name == 'vwap':
             price_type = 'open' if len(params) > 0 and params[0].lower() == 'open' else 'close'
             
-            vwap_values = calculate_vwap(df, price_type)
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            
+            vwap_values = calculate_vwap(df, price_series)
             result_df['vwap'] = vwap_values
+            result_df['vwap_price_type'] = price_type
             
         elif indicator_name == 'pivot':
             price_type = 'open' if len(params) > 0 and params[0].lower() == 'open' else 'close'
             
-            # calculate_pivot_points returns tuple: (pivot_point, resistance_1, support_1)
-            pivot_point, resistance_1, support_1 = calculate_pivot_points(df, price_type)
-            result_df['pivot'] = pivot_point
-            result_df['r1'] = resistance_1
-            result_df['s1'] = support_1
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            
+            # Calculate Pivot Points (returns tuple: pp, r1, s1)
+            pp, r1, s1 = calculate_pivot_points(df, price_series)
+            result_df['pivot_pp'] = pp
+            result_df['pivot_r1'] = r1
+            result_df['pivot_s1'] = s1
+            result_df['pivot_price_type'] = price_type
             
         elif indicator_name == 'hma':
             period = int(params[0]) if len(params) > 0 else 20
@@ -339,155 +352,46 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
             hma_values = calculate_hma(price_series, period)
             result_df['hma'] = hma_values
+            result_df['hma_period'] = period
+            result_df['hma_price_type'] = price_type
             
-        elif indicator_name == 'tsf':
+        elif indicator_name == 'tsforecast':
             period = int(params[0]) if len(params) > 0 else 20
             price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
             
             # Select price series based on price_type
             price_series = df['Open'] if price_type == 'open' else df['Close']
             
-            tsf_values = calculate_tsforecast(price_series, period)
-            result_df['tsf'] = tsf_values
+            forecast_values = calculate_tsforecast(price_series, period)
+            result_df['tsforecast'] = forecast_values
+            result_df['tsforecast_period'] = period
+            result_df['tsforecast_price_type'] = price_type
             
         elif indicator_name == 'monte':
-            # Handle empty parameters gracefully
-            simulations = 1000
-            period = 252
+            period = int(params[0]) if len(params) > 0 else 20
+            simulations = int(params[1]) if len(params) > 1 else 1000
+            price_type = 'open' if len(params) > 2 and params[2].lower() == 'open' else 'close'
             
-            if len(params) > 0 and params[0].strip():
-                try:
-                    simulations = int(params[0])
-                except ValueError:
-                    pass  # Use default value
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
             
-            if len(params) > 1 and params[1].strip():
-                try:
-                    period = int(params[1])
-                except ValueError:
-                    pass  # Use default value
-            
-            # Select price series (use Close for Monte Carlo)
-            price_series = df['Close']
-            
-            # Calculate Monte Carlo components
-            monte_values = calculate_montecarlo(price_series, simulations, period)
-            result_df['montecarlo'] = monte_values
-            
-            # Calculate signal line (EMA of forecast)
-            signal_line = monte_values.ewm(span=9, adjust=False).mean()
-            result_df['montecarlo_signal'] = signal_line
-            
-            # Calculate histogram
-            histogram = monte_values - signal_line
-            result_df['montecarlo_histogram'] = histogram
-            
-            # Calculate confidence bands
-            forecast_changes = monte_values.pct_change().rolling(window=20, min_periods=5).std()
-            confidence_interval = 1.96 * forecast_changes * monte_values
-            result_df['montecarlo_upper'] = monte_values + confidence_interval
-            result_df['montecarlo_lower'] = monte_values - confidence_interval
+            monte_values = calculate_montecarlo(price_series, period, simulations)
+            result_df['monte'] = monte_values
+            result_df['monte_period'] = period
+            result_df['monte_simulations'] = simulations
+            result_df['monte_price_type'] = price_type
             
         elif indicator_name == 'kelly':
             period = int(params[0]) if len(params) > 0 else 20
+            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
             
-            # Select price series (use Close for Kelly)
-            price_series = df['Close']
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
             
             kelly_values = calculate_kelly(price_series, period)
             result_df['kelly'] = kelly_values
-            
-            # Calculate signal line (EMA of Kelly values)
-            signal_line = kelly_values.ewm(span=9, adjust=False).mean()
-            result_df['kelly_signal'] = signal_line
-            
-            # Calculate histogram
-            histogram = kelly_values - signal_line
-            result_df['kelly_histogram'] = histogram
-            
-            # Add threshold levels
-            result_df['kelly_threshold_10'] = 0.1  # 10% threshold
-            result_df['kelly_threshold_25'] = 0.25  # 25% threshold (max Kelly)
-            
-        elif indicator_name == 'putcallratio':
-            # Filter empty parameters
-            params = [p.strip() for p in params if p.strip()]
-            period = int(params[0]) if len(params) > 0 else 20
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
-            
-            # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
-            volume_series = df['Volume']
-            
-            # Calculate Put/Call Ratio sentiment
-            putcall_values = calculate_putcallratio(price_series, volume_series, period)
-            result_df['putcallratio'] = putcall_values
-            
-            # Calculate signal line (EMA of Put/Call Ratio)
-            signal_line = putcall_values.ewm(span=9, adjust=False).mean()
-            result_df['putcallratio_signal'] = signal_line
-            
-            # Calculate histogram
-            histogram = putcall_values - signal_line
-            result_df['putcallratio_histogram'] = histogram
-            
-            # Add threshold levels (sentiment scale 0-100, 50 is neutral)
-            result_df['putcallratio_bullish'] = 60  # Bullish threshold
-            result_df['putcallratio_bearish'] = 40  # Bearish threshold
-            result_df['putcallratio_neutral'] = 50  # Neutral level
-            
-        elif indicator_name == 'cot':
-            # Filter empty parameters
-            params = [p.strip() for p in params if p.strip()]
-            period = int(params[0]) if len(params) > 0 else 20
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
-            
-            # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
-            volume_series = df['Volume']
-            
-            # Calculate COT sentiment
-            cot_values = calculate_cot(price_series, volume_series, period)
-            result_df['cot'] = cot_values
-            
-            # Calculate signal line (EMA of COT)
-            signal_line = cot_values.ewm(span=9, adjust=False).mean()
-            result_df['cot_signal'] = signal_line
-            
-            # Calculate histogram
-            histogram = cot_values - signal_line
-            result_df['cot_histogram'] = histogram
-            
-            # Add threshold levels (sentiment scale 0-100, 50 is neutral)
-            result_df['cot_bullish'] = 70  # Bullish threshold
-            result_df['cot_bearish'] = 30  # Bearish threshold
-            result_df['cot_neutral'] = 50  # Neutral level
-            
-        elif indicator_name in ['feargreed', 'fg']:
-            # Filter empty parameters
-            params = [p.strip() for p in params if p.strip()]
-            period = int(params[0]) if len(params) > 0 else 14
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
-            
-            # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
-            
-            # Calculate Fear & Greed Index
-            feargreed_values = calculate_feargreed(price_series, period)
-            result_df['feargreed'] = feargreed_values
-            
-            # Calculate signal line (EMA of Fear & Greed)
-            signal_line = feargreed_values.ewm(span=9, adjust=False).mean()
-            result_df['feargreed_signal'] = signal_line
-            
-            # Calculate histogram
-            histogram = feargreed_values - signal_line
-            result_df['feargreed_histogram'] = histogram
-            
-            # Add threshold levels (Fear & Greed scale 0-100, 50 is neutral)
-            result_df['feargreed_fear'] = 25  # Fear threshold (buy signal)
-            result_df['feargreed_greed'] = 75  # Greed threshold (sell signal)
-            result_df['feargreed_neutral'] = 50  # Neutral level
+            result_df['kelly_period'] = period
+            result_df['kelly_price_type'] = price_type
             
         elif indicator_name == 'donchain':
             period = int(params[0]) if len(params) > 0 else 20
@@ -496,27 +400,18 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             # Select price series based on price_type
             price_series = df['Open'] if price_type == 'open' else df['Close']
             
-            # Calculate Donchian Channels (returns tuple: upper, middle, lower)
-            upper, middle, lower = calculate_donchain(df, period)
-            result_df['donchain_upper'] = upper
-            result_df['donchain_middle'] = middle
-            result_df['donchain_lower'] = lower
-            
-            # Calculate Donchian Channel signals for buy/sell indicators
-            donchain_signals = calculate_donchain_signals(price_series, upper, lower)
-            result_df['Direction'] = donchain_signals
-            
-            # Add support and resistance levels for visualization
-            result_df['PPrice1'] = lower  # Support level (lower band)
-            result_df['PColor1'] = BUY
-            result_df['PPrice2'] = upper  # Resistance level (upper band)
-            result_df['PColor2'] = SELL
-            result_df['Diff'] = price_series - middle  # Price deviation from middle band
+            # Calculate Donchian Channel
+            donchain_values = calculate_donchain(df, period)
+            result_df['donchain_upper'] = donchain_values['upper']
+            result_df['donchain_lower'] = donchain_values['lower']
+            result_df['donchain_middle'] = donchain_values['middle']
+            result_df['donchain_period'] = period
+            result_df['donchain_price_type'] = price_type
             
         elif indicator_name == 'fibo':
-            # Handle fibo parameters - they are float levels, not int period
-            if len(params) > 0 and params[0].lower() == 'all':
-                # Use all standard Fibonacci levels
+            # Parse custom Fibonacci levels if provided
+            if len(params) == 0:
+                # Use default Fibonacci levels
                 fib_levels = [0.236, 0.382, 0.5, 0.618, 0.786]
             else:
                 # Parse custom Fibonacci levels
@@ -567,7 +462,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
         elif indicator_name == 'stoch':
             k_period = int(params[0]) if len(params) > 0 else 14
             d_period = int(params[1]) if len(params) > 1 else 3
-            price_type = PriceType.OPEN if len(params) > 2 and params[2].lower() == 'open' else PriceType.CLOSE
+            price_type = 'open' if len(params) > 2 and params[2].lower() == 'open' else 'close'
             
             # Remove possible duplicates
             for col in ['stoch_k', 'stoch_d', 'Stoch_K', 'Stoch_D']:
@@ -595,7 +490,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
         elif indicator_name == 'stochoscillator':
             k_period = int(params[0]) if len(params) > 0 else 14
             d_period = int(params[1]) if len(params) > 1 else 3
-            price_type = PriceType.OPEN if len(params) > 2 and params[2].lower() == 'open' else PriceType.CLOSE
+            price_type = 'open' if len(params) > 2 and params[2].lower() == 'open' else 'close'
             
             # Remove possible duplicates
             for col in ['stochosc_k', 'stochosc_d', 'StochOsc_K', 'StochOsc_D']:
@@ -683,7 +578,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
                 speed_enum = SpeedEnum.FUTURE
             
             # Create indicator instance
-            indicator = SCHRRostIndicator(speed_enum, faster_reverse, PriceType.OPEN)
+            indicator = SCHRRostIndicator(speed_enum, faster_reverse, 'open')
             schr_rost_result = indicator.calculate(df)
             
             # Handle the result - it might be a DataFrame or Series
@@ -719,13 +614,9 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
             # Calculate SCHR_TREND indicator using the indicator class
             from ..calculation.indicators.trend.schr_trend_ind import SCHRTrendIndicator
-            from ..calculation.indicators.oscillators.rsi_ind_calc import PriceType
-            
-            # Convert price_type string to PriceType enum
-            price_type_enum = PriceType.OPEN if price_type == 'open' else PriceType.CLOSE
             
             # Create indicator instance and call calculate first to get indicator columns
-            indicator = SCHRTrendIndicator(period, tr_mode, extreme_up, extreme_down, price_type_enum)
+            indicator = SCHRTrendIndicator(period, tr_mode, extreme_up, extreme_down, price_type)
             schr_trend_calc = indicator.calculate(df)
             
             # Extract all SCHR_TREND columns from the calculation result
@@ -788,10 +679,9 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
             # Calculate SCHR_Wave2 indicator using the indicator class
             from ..calculation.indicators.trend.schr_wave2_ind import SCHRWave2Indicator
-            from ..calculation.indicators.oscillators.rsi_ind_calc import PriceType
             
             # Create indicator instance and call calculate first to get indicator columns
-            indicator = SCHRWave2Indicator(long1, fast1, trend1, tr1, long2, fast2, trend2, tr2, global_tr, sma_period, PriceType.OPEN)
+            indicator = SCHRWave2Indicator(long1, fast1, trend1, tr1, long2, fast2, trend2, tr2, global_tr, sma_period, 'open')
             schr_wave2_calc = indicator.calculate(df)
             
             # Extract all SCHR_Wave2 columns from the calculation result
