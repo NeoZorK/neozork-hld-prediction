@@ -1736,6 +1736,7 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         return
     
     # Get Signal values for upper OHLC chart (0=No Signal, 1=Buy, 2=Sell)
+    # Use signal column for upper chart (shows only direction changes)
     signal_values = None
     for col in ['schr_wave2_signal', 'SCHR_Wave2_Signal']:
         if col in display_df.columns:
@@ -1770,6 +1771,7 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                         hovertemplate='<b>SCHR_Wave2 Buy Signal</b><br>' +
                                     'Date: %{x}<br>' +
                                     'Price: %{y:.4f}<br>' +
+                                    'Signal: BUY<br>' +
                                     '<extra></extra>'
                     ),
                     row=1, col=1
@@ -1802,6 +1804,7 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                         hovertemplate='<b>SCHR_Wave2 Sell Signal</b><br>' +
                                     'Date: %{x}<br>' +
                                     'Value: %{y:.4f}<br>' +
+                                    'Signal: SELL<br>' +
                                     '<extra></extra>'
                     ),
                     row=1, col=1

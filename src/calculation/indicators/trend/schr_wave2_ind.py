@@ -523,9 +523,9 @@ class SCHRWave2Indicator(BaseIndicator):
         
         # Set output columns for compatibility with rule system
         result_df['PPrice1'] = result_df['schr_wave2_wave']
-        result_df['PColor1'] = result_df['schr_wave2_signal']
+        result_df['PColor1'] = result_df['schr_wave2_signal']  # Use signal for upper chart (only direction changes)
         result_df['PPrice2'] = result_df['schr_wave2_fast_line']
-        result_df['PColor2'] = result_df['schr_wave2_direction']
+        result_df['PColor2'] = result_df['schr_wave2_direction']  # Use direction for compatibility
         result_df['Direction'] = result_df['schr_wave2_direction']
         result_df['Diff'] = result_df['schr_wave2_wave']
         
