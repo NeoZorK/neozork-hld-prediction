@@ -853,6 +853,53 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Missing parameters: Use schr_trend:period,tr_mode,extreme_up,extreme_down (e.g., schr_trend:2,zone,95,5)',
                 'Invalid format: Expected schr_trend:int,string,int,int'
             ]
+        },
+        'schr_wave2': {
+            'name': 'SCHR Wave2 (Shcherbyna Wave2) 🌊',
+            'description': '🚀 PREMIUM dual-wave trend prediction indicator with 10 trading rules and 7 global combinations! Advanced dual-wave analysis combining two independent wave calculations with multiple trading rule modes. Perfect for trend identification, signal generation, and multi-timeframe analysis.',
+            'format': 'schr_wave2:long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period',
+            'parameters': [
+                ('long1', 'int', 'First long period for ECORE calculation', '339'),
+                ('fast1', 'int', 'First fast period for Wave calculation', '10'),
+                ('trend1', 'int', 'First trend period for FastLine calculation', '2'),
+                ('tr1', 'string', 'First trading rule: Fast,Zone,StrongTrend,WeakTrend,FastZoneReverse,BetterTrend,BetterFast,Rost,TrendRost,BetterTrendRost', 'Fast'),
+                ('long2', 'int', 'Second long period for ECORE calculation', '22'),
+                ('fast2', 'int', 'Second fast period for Wave calculation', '11'),
+                ('trend2', 'int', 'Second trend period for FastLine calculation', '4'),
+                ('tr2', 'string', 'Second trading rule: Fast,Zone,StrongTrend,WeakTrend,FastZoneReverse,BetterTrend,BetterFast,Rost,TrendRost,BetterTrendRost', 'Fast'),
+                ('global_tr', 'string', 'Global trading rule: Prime,Reverse,PrimeZone,ReverseZone,NewZone,LongZone,LongZoneReverse', 'Prime'),
+                ('sma_period', 'int', 'SMA period for moving average calculation', '22')
+            ],
+            'examples': [
+                ('schr_wave2', 'SCHR Wave2 with default settings (long1=339, fast1=10, trend1=2, tr1=Fast, long2=22, fast2=11, trend2=4, tr2=Fast, global_tr=Prime, sma_period=22)'),
+                ('schr_wave2:200,20,5,StrongTrend,50,25,10,Zone,PrimeZone,50', 'Conservative settings with strong trend detection'),
+                ('schr_wave2:100,15,3,BetterTrend,30,12,6,Fast,Reverse,30', 'Balanced settings with fast response'),
+                ('schr_wave2:500,30,8,Zone,80,40,15,BetterTrend,LongZone,80', 'Long-term analysis with zone detection'),
+                ('schr_wave2:150,12,4,Fast,25,15,7,WeakTrend,Prime,25', 'Medium-term analysis with weak trend detection')
+            ],
+            'tips': [
+                '🌊 DUAL-WAVE ANALYSIS: Combines two independent wave calculations for enhanced signal accuracy',
+                '🎯 TRADING RULES: 10 different trading rule combinations for flexible signal generation',
+                '🔥 GLOBAL RULES: 7 global trading rules to combine signals from both waves',
+                '⚡ Fast periods (5-15): More responsive, higher signal frequency',
+                '🐌 Slow periods (200-500): More stable, fewer false signals',
+                '📊 Prime rule (default): Combines both waves for strongest signals',
+                '🔄 Reverse rule: Inverts signals for contrarian trading',
+                '💎 Premium indicator based on MQL5 SCHR_Wave2.mq5 by Shcherbyna Rostyslav',
+                '🎯 Best for: Trend detection, momentum analysis, and directional trading',
+                '📈 Dual chart display shows main wave, fast line, and signal markers',
+                '⚡ Use with volume analysis and other indicators for best results',
+                '🎯 Long1/Fast1: Primary wave for main trend analysis',
+                '🎯 Long2/Fast2: Secondary wave for confirmation and filtering'
+            ],
+            'common_errors': [
+                'Invalid trading rule: Use one of: Fast,Zone,StrongTrend,WeakTrend,FastZoneReverse,BetterTrend,BetterFast,Rost,TrendRost,BetterTrendRost',
+                'Invalid global rule: Use one of: Prime,Reverse,PrimeZone,ReverseZone,NewZone,LongZone,LongZoneReverse',
+                'Invalid period: Must be a positive integer',
+                'Missing parameters: Use schr_wave2:long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period',
+                'Invalid format: Expected schr_wave2:int,int,int,string,int,int,int,string,string,int',
+                'Too many parameters: Maximum 10 parameters allowed'
+            ]
         }
     }
     

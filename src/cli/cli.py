@@ -197,7 +197,8 @@ def parse_arguments():
         'PV': 'Pressure_Vector', 
         'SR': 'Support_Resistants',
         'BB': 'Bollinger_Bands',
-        'SCHR_DIR': 'SCHR_DIR'
+        'SCHR_DIR': 'SCHR_DIR',
+        'schr_wave2': 'SCHR_Wave2'
     }
     rule_names = list(TradingRule.__members__.keys())
     all_rule_choices = rule_names + list(rule_aliases_map.keys()) + ['OHLCV', 'AUTO']  # Added 'OHLCV' and 'AUTO' as valid rules
@@ -419,7 +420,7 @@ def parse_arguments():
         if ':' in args.rule:
             # Parameterized rule - validate the indicator name part
             indicator_name = args.rule.split(':', 1)[0].lower()
-            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_dir', 'schr_rost', 'schr_trend']
+            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_dir', 'schr_rost', 'schr_trend', 'schr_wave2']
             if indicator_name not in valid_indicators:
                 # Provide detailed help for parameterized indicators
                 help_info = {
@@ -440,6 +441,7 @@ def parse_arguments():
                     'schr_dir': 'SCHR Direction: schr_dir:grow_percent (e.g., schr_dir:50 for 50% growth)',
                     'schr_rost': 'SCHR Rost: schr_rost:speed_period,faster_reverse (e.g., schr_rost:Future,true)',
                     'schr_trend': 'SCHR Trend: schr_trend:period,tr_mode,extreme_up,extreme_down (e.g., schr_trend:2,zone,95,5)',
+                    'schr_wave2': 'SCHR Wave2 🌊: Dual-wave trend prediction with 10 trading rules & 7 global combinations (e.g., schr_wave2:339,10,2,Fast,22,11,4,Fast,Prime,22)',
                     'rsi': 'RSI: rsi:period,price_type (e.g., rsi:14,close)',
                     'macd': 'MACD: macd:fast,slow,signal,price_type (e.g., macd:12,26,9,close)',
                     'stoch': 'Stochastic: stoch:k_period,d_period,price_type (e.g., stoch:14,3,close)',
@@ -968,6 +970,30 @@ def show_indicator_help(indicator_name: str):
                 'schr_rost:Snail,true',
                 'schr_rost:Fast,false',
                 'schr_rost:Gepard,true'
+            ]
+        },
+        'schr_wave2': {
+            'name': 'SCHR Wave2 (Shcherbyna Wave2) 🌊',
+            'format': 'schr_wave2:long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period',
+            'parameters': [
+                'long1 (int): First long period for ECORE calculation (default: 339)',
+                'fast1 (int): First fast period for Wave calculation (default: 10)',
+                'trend1 (int): First trend period for FastLine calculation (default: 2)',
+                'tr1 (string): First trading rule: Fast,Zone,StrongTrend,WeakTrend,FastZoneReverse,BetterTrend,BetterFast,Rost,TrendRost,BetterTrendRost (default: Fast)',
+                'long2 (int): Second long period for ECORE calculation (default: 22)',
+                'fast2 (int): Second fast period for Wave calculation (default: 11)',
+                'trend2 (int): Second trend period for FastLine calculation (default: 4)',
+                'tr2 (string): Second trading rule: Fast,Zone,StrongTrend,WeakTrend,FastZoneReverse,BetterTrend,BetterFast,Rost,TrendRost,BetterTrendRost (default: Fast)',
+                'global_tr (string): Global trading rule: Prime,Reverse,PrimeZone,ReverseZone,NewZone,LongZone,LongZoneReverse (default: Prime)',
+                'sma_period (int): SMA period for moving average calculation (default: 22)'
+            ],
+            'examples': [
+                'schr_wave2',
+                'schr_wave2:339,10,2,Fast,22,11,4,Fast,Prime,22',
+                'schr_wave2:200,20,5,StrongTrend,50,25,10,Zone,PrimeZone,50',
+                'schr_wave2:100,15,3,BetterTrend,30,12,6,Fast,Reverse,30',
+                'schr_wave2:500,30,8,Zone,80,40,15,BetterTrend,LongZone,80',
+                'schr_wave2:150,12,4,Fast,25,15,7,WeakTrend,Prime,25'
             ]
         }
     }
@@ -1660,6 +1686,155 @@ def parse_schr_trend_parameters(params_str: str) -> tuple[str, dict]:
         raise ValueError(f"Invalid SCHR_TREND parameters: {params_str}. Expected: period,tr_mode,extreme_up,extreme_down[,price_type]")
 
 
+def parse_schr_wave2_parameters(params_str: str) -> tuple[str, dict]:
+    """
+    Parse SCHR_Wave2 parameters: schr_wave2:long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period
+    Example: schr_wave2:339,10,2,Fast,22,11,4,Fast,Prime,22
+    """
+    try:
+        params = [p.strip() for p in params_str.split(',') if p.strip()]
+        
+        if len(params) == 0:
+            # Default parameters
+            return 'schr_wave2', {
+                'long1': 339, 'fast1': 10, 'trend1': 2, 'tr1': 'Fast',
+                'long2': 22, 'fast2': 11, 'trend2': 4, 'tr2': 'Fast',
+                'global_tr': 'Prime', 'sma_period': 22
+            }
+        elif len(params) == 1:
+            # Only long1 provided
+            long1 = int(params[0])
+            return 'schr_wave2', {
+                'long1': long1, 'fast1': 10, 'trend1': 2, 'tr1': 'Fast',
+                'long2': 22, 'fast2': 11, 'trend2': 4, 'tr2': 'Fast',
+                'global_tr': 'Prime', 'sma_period': 22
+            }
+        elif len(params) == 2:
+            # long1 and fast1 provided
+            long1 = int(params[0])
+            fast1 = int(params[1])
+            return 'schr_wave2', {
+                'long1': long1, 'fast1': fast1, 'trend1': 2, 'tr1': 'Fast',
+                'long2': 22, 'fast2': 11, 'trend2': 4, 'tr2': 'Fast',
+                'global_tr': 'Prime', 'sma_period': 22
+            }
+        elif len(params) == 3:
+            # long1, fast1, and trend1 provided
+            long1 = int(params[0])
+            fast1 = int(params[1])
+            trend1 = int(params[2])
+            return 'schr_wave2', {
+                'long1': long1, 'fast1': fast1, 'trend1': trend1, 'tr1': 'Fast',
+                'long2': 22, 'fast2': 11, 'trend2': 4, 'tr2': 'Fast',
+                'global_tr': 'Prime', 'sma_period': 22
+            }
+        elif len(params) == 4:
+            # long1, fast1, trend1, and tr1 provided
+            long1 = int(params[0])
+            fast1 = int(params[1])
+            trend1 = int(params[2])
+            tr1 = params[3]
+            return 'schr_wave2', {
+                'long1': long1, 'fast1': fast1, 'trend1': trend1, 'tr1': tr1,
+                'long2': 22, 'fast2': 11, 'trend2': 4, 'tr2': 'Fast',
+                'global_tr': 'Prime', 'sma_period': 22
+            }
+        elif len(params) == 5:
+            # long1, fast1, trend1, tr1, and long2 provided
+            long1 = int(params[0])
+            fast1 = int(params[1])
+            trend1 = int(params[2])
+            tr1 = params[3]
+            long2 = int(params[4])
+            return 'schr_wave2', {
+                'long1': long1, 'fast1': fast1, 'trend1': trend1, 'tr1': tr1,
+                'long2': long2, 'fast2': 11, 'trend2': 4, 'tr2': 'Fast',
+                'global_tr': 'Prime', 'sma_period': 22
+            }
+        elif len(params) == 6:
+            # long1, fast1, trend1, tr1, long2, and fast2 provided
+            long1 = int(params[0])
+            fast1 = int(params[1])
+            trend1 = int(params[2])
+            tr1 = params[3]
+            long2 = int(params[4])
+            fast2 = int(params[5])
+            return 'schr_wave2', {
+                'long1': long1, 'fast1': fast1, 'trend1': trend1, 'tr1': tr1,
+                'long2': long2, 'fast2': fast2, 'trend2': 4, 'tr2': 'Fast',
+                'global_tr': 'Prime', 'sma_period': 22
+            }
+        elif len(params) == 7:
+            # long1, fast1, trend1, tr1, long2, fast2, and trend2 provided
+            long1 = int(params[0])
+            fast1 = int(params[1])
+            trend1 = int(params[2])
+            tr1 = params[3]
+            long2 = int(params[4])
+            fast2 = int(params[5])
+            trend2 = int(params[6])
+            return 'schr_wave2', {
+                'long1': long1, 'fast1': fast1, 'trend1': trend1, 'tr1': tr1,
+                'long2': long2, 'fast2': fast2, 'trend2': trend2, 'tr2': 'Fast',
+                'global_tr': 'Prime', 'sma_period': 22
+            }
+        elif len(params) == 8:
+            # long1, fast1, trend1, tr1, long2, fast2, trend2, and tr2 provided
+            long1 = int(params[0])
+            fast1 = int(params[1])
+            trend1 = int(params[2])
+            tr1 = params[3]
+            long2 = int(params[4])
+            fast2 = int(params[5])
+            trend2 = int(params[6])
+            tr2 = params[7]
+            return 'schr_wave2', {
+                'long1': long1, 'fast1': fast1, 'trend1': trend1, 'tr1': tr1,
+                'long2': long2, 'fast2': fast2, 'trend2': trend2, 'tr2': tr2,
+                'global_tr': 'Prime', 'sma_period': 22
+            }
+        elif len(params) == 9:
+            # long1, fast1, trend1, tr1, long2, fast2, trend2, tr2, and global_tr provided
+            long1 = int(params[0])
+            fast1 = int(params[1])
+            trend1 = int(params[2])
+            tr1 = params[3]
+            long2 = int(params[4])
+            fast2 = int(params[5])
+            trend2 = int(params[6])
+            tr2 = params[7]
+            global_tr = params[8]
+            return 'schr_wave2', {
+                'long1': long1, 'fast1': fast1, 'trend1': trend1, 'tr1': tr1,
+                'long2': long2, 'fast2': fast2, 'trend2': trend2, 'tr2': tr2,
+                'global_tr': global_tr, 'sma_period': 22
+            }
+        elif len(params) == 10:
+            # All parameters provided
+            long1 = int(params[0])
+            fast1 = int(params[1])
+            trend1 = int(params[2])
+            tr1 = params[3]
+            long2 = int(params[4])
+            fast2 = int(params[5])
+            trend2 = int(params[6])
+            tr2 = params[7]
+            global_tr = params[8]
+            sma_period = int(params[9])
+            return 'schr_wave2', {
+                'long1': long1, 'fast1': fast1, 'trend1': trend1, 'tr1': tr1,
+                'long2': long2, 'fast2': fast2, 'trend2': trend2, 'tr2': tr2,
+                'global_tr': global_tr, 'sma_period': sma_period
+            }
+        else:
+            raise ValueError(f"Invalid SCHR_Wave2 parameters: {params_str}. Expected: long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period")
+        
+    except ValueError as e:
+        if "Invalid SCHR_Wave2 parameter" in str(e):
+            raise e
+        raise ValueError(f"Invalid SCHR_Wave2 parameters: {params_str}. Expected: long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period")
+
+
 def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
     """
     Parse indicator rule string in format 'indicator:param1,param2,param3,param4'.
@@ -1684,7 +1859,7 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
         params_str = parts[1].strip()
         
         # If parameters string is empty but colon is present, show help
-        if not params_str and indicator_name in ['schr_rost', 'schr_trend', 'schr_dir', 'rsi', 'macd', 'stoch', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'putcallratio', 'cot', 'feargreed', 'fg']:
+        if not params_str and indicator_name in ['schr_rost', 'schr_trend', 'schr_dir', 'schr_wave2', 'rsi', 'macd', 'stoch', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'putcallratio', 'cot', 'feargreed', 'fg']:
             # Show cool help for parameterized indicators when no parameters provided
             from .cli import show_indicator_help
             show_indicator_help(indicator_name)
@@ -1757,6 +1932,8 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_schr_rost_parameters(params_str)
         elif indicator_name == 'schr_trend':
             return parse_schr_trend_parameters(params_str)
+        elif indicator_name == 'schr_wave2':
+            return parse_schr_wave2_parameters(params_str)
         else:
             # Unknown indicator, show help and raise error
             raise ValueError(f"Unknown indicator: {indicator_name}")

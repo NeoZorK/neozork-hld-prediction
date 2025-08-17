@@ -1716,6 +1716,230 @@ def add_schr_trend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     logger.print_info(f"[PERF] Total SCHR_TREND indicator: {(time.time() - t_start)*1000:.1f}ms")
 
 
+def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add SCHR_Wave2 indicator to the chart.
+    Signal (0=No Signal, 1=Buy, 2=Sell) on upper OHLC chart
+    Direction (1=Up, 2=Down) on lower subplot
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with SCHR_Wave2 data
+    """
+    t_start = time.time()
+    logger.print_info(f"[PERF] Starting SCHR_Wave2 indicator addition")
+    
+    # Check if SCHR_Wave2 columns exist
+    schr_wave2_cols = [col for col in display_df.columns if 'schr_wave2' in col.lower()]
+    if not schr_wave2_cols:
+        logger.print_warning("SCHR_Wave2 columns not found in DataFrame")
+        return
+    
+    # Get Signal values for upper OHLC chart (0=No Signal, 1=Buy, 2=Sell)
+    signal_values = None
+    for col in ['schr_wave2_signal', 'SCHR_Wave2_Signal']:
+        if col in display_df.columns:
+            signal_values = display_df[col]
+            break
+    
+    if signal_values is not None:
+        # Add buy signals (green triangles pointing up)
+        buy_signals = signal_values == 1
+        if buy_signals.any():
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index[buy_signals],
+                    y=display_df.loc[buy_signals, 'Low'] * 0.9995,  # Slightly below low
+                    mode='markers',
+                    marker=dict(
+                        symbol='triangle-up',
+                        size=12,
+                        color='green',
+                        line=dict(color='darkgreen', width=1)
+                    ),
+                    name='SCHR_Wave2 Buy Signal',
+                    showlegend=False,
+                    hovertemplate='<b>SCHR_Wave2 Buy Signal</b><br>' +
+                                'Date: %{x}<br>' +
+                                'Price: %{y:.4f}<br>' +
+                                '<extra></extra>'
+                ),
+                row=1, col=1
+            )
+        
+        # Add sell signals (red triangles pointing down)
+        sell_signals = signal_values == 2
+        if sell_signals.any():
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index[sell_signals],
+                    y=display_df.loc[sell_signals, 'High'] * 1.0005,  # Slightly above high
+                    mode='markers',
+                    marker=dict(
+                        symbol='triangle-down',
+                        size=12,
+                        color='red',
+                        line=dict(color='darkred', width=1)
+                    ),
+                    name='SCHR_Wave2 Sell Signal',
+                    showlegend=False,
+                    hovertemplate='<b>SCHR_Wave2 Sell Signal</b><br>' +
+                                'Date: %{x}<br>' +
+                                'Price: %{y:.4f}<br>' +
+                                '<extra></extra>'
+                ),
+                row=1, col=1
+            )
+    
+    # Get Direction values for lower subplot (1=Up, 2=Down)
+    direction_values = None
+    for col in ['schr_wave2_direction', 'SCHR_Wave2_Direction']:
+        if col in display_df.columns:
+            direction_values = display_df[col]
+            break
+    
+    if direction_values is not None:
+        # Add direction line on lower subplot
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=direction_values,
+                mode='lines',
+                name='SCHR_Wave2 Direction',
+                line=dict(color='purple', width=2),
+                showlegend=False,
+                hovertemplate='<b>SCHR_Wave2 Direction</b><br>' +
+                            'Date: %{x}<br>' +
+                            'Direction: %{y}<br>' +
+                            '<extra></extra>'
+            ),
+            row=2, col=1
+        )
+        
+        # Add reference lines for direction values
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[1] * len(display_df),
+                mode='lines',
+                name='Up Trend',
+                line=dict(color='green', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=[2] * len(display_df),
+                mode='lines',
+                name='Down Trend',
+                line=dict(color='red', width=1, dash='dash'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+    
+    # Add SCHR_Wave2 main wave line if available
+    wave_values = None
+    for col in ['schr_wave2_wave', 'SCHR_Wave2_Wave']:
+        if col in display_df.columns:
+            wave_values = display_df[col]
+            break
+    
+    if wave_values is not None:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=wave_values,
+                mode='lines',
+                name='SCHR_Wave2 Wave',
+                line=dict(color='blue', width=2),
+                showlegend=False,
+                hovertemplate='<b>SCHR_Wave2 Wave</b><br>' +
+                            'Date: %{x}<br>' +
+                            'Value: %{y:.4f}<br>' +
+                            '<extra></extra>'
+            ),
+            row=2, col=1
+        )
+    
+    # Add SCHR_Wave2 fast line if available
+    fast_line_values = None
+    for col in ['schr_wave2_fast_line', 'SCHR_Wave2_Fast_Line']:
+        if col in display_df.columns:
+            fast_line_values = display_df[col]
+            break
+    
+    if fast_line_values is not None:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=fast_line_values,
+                mode='lines',
+                name='SCHR_Wave2 Fast Line',
+                line=dict(color='orange', width=2),
+                showlegend=False,
+                hovertemplate='<b>SCHR_Wave2 Fast Line</b><br>' +
+                            'Date: %{x}<br>' +
+                            'Value: %{y:.4f}<br>' +
+                            '<extra></extra>'
+            ),
+            row=2, col=1
+        )
+    
+    # Add SCHR_Wave2 MA line if available
+    ma_line_values = None
+    for col in ['schr_wave2_ma_line', 'SCHR_Wave2_MA_Line']:
+        if col in display_df.columns:
+            ma_line_values = display_df[col]
+            break
+    
+    if ma_line_values is not None:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=ma_line_values,
+                mode='lines',
+                name='SCHR_Wave2 MA Line',
+                line=dict(color='yellow', width=3),
+                showlegend=False,
+                hovertemplate='<b>SCHR_Wave2 MA Line</b><br>' +
+                            'Date: %{x}<br>' +
+                            'Value: %{y:.4f}<br>' +
+                            '<extra></extra>'
+            ),
+            row=2, col=1
+        )
+    
+    # Add zero line with enhanced styling
+    fig.add_hline(
+        y=0,
+        line_dash="dot",
+        line_color="#95a5a6",
+        opacity=0.7,
+        line_width=1.5,
+        row=2, col=1
+    )
+    
+    # Update y-axis title and range for SCHR_Wave2
+    fig.update_yaxes(
+        title_text="SCHR Wave2", 
+        row=2, col=1,
+        range=[-0.5, 0.5],  # Adjusted range for wave values
+        tickmode='auto',
+        showgrid=True,
+        gridcolor='rgba(0,0,0,0.1)',
+        zeroline=True,
+        zerolinecolor='#95a5a6',
+        zerolinewidth=1.5
+    )
+    
+    t_end = time.time()
+    logger.print_info(f"[PERF] SCHR_Wave2 indicator addition completed in {t_end - t_start:.3f}s")
+
+
 def add_supertrend_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     """
     Add SuperTrend indicator to the secondary subplot.
@@ -2229,6 +2453,16 @@ def plot_dual_chart_fastest(
             logger.print_info("[PERF] SCHR_TREND indicator addition completed")
         except Exception as e:
             logger.print_error(f"Error adding SCHR_TREND indicator: {e}")
+            logger.print_debug(f"Display DataFrame columns: {list(display_df.columns)}")
+            logger.print_debug(f"Display DataFrame shape: {display_df.shape}")
+    
+    elif indicator_name == 'schr_wave2':
+        try:
+            logger.print_info("[PERF] Starting SCHR_Wave2 indicator addition")
+            add_schr_wave2_indicator(fig, display_df)
+            logger.print_info("[PERF] SCHR_Wave2 indicator addition completed")
+        except Exception as e:
+            logger.print_error(f"Error adding SCHR_Wave2 indicator: {e}")
             logger.print_debug(f"Display DataFrame columns: {list(display_df.columns)}")
             logger.print_debug(f"Display DataFrame shape: {display_df.shape}")
     

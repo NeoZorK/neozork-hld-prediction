@@ -147,7 +147,7 @@ def get_supported_indicators() -> set:
     return {
         'rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'ema', 'bb', 'atr',
         'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain',
-        'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_rost', 'schr_trend'
+        'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'schr_rost', 'schr_trend', 'schr_wave2'
     }
 
 
@@ -772,6 +772,77 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['schr_trend_extreme_down'] = extreme_down
             result_df['schr_trend_price_type'] = price_type
             
+        elif indicator_name == 'schr_wave2':
+            # Filter empty parameters
+            params = [p.strip() for p in params if p.strip()]
+            long1 = int(params[0]) if len(params) > 0 else 339
+            fast1 = int(params[1]) if len(params) > 1 else 10
+            trend1 = int(params[2]) if len(params) > 2 else 2
+            tr1 = params[3] if len(params) > 3 else 'Fast'
+            long2 = int(params[4]) if len(params) > 4 else 22
+            fast2 = int(params[5]) if len(params) > 5 else 11
+            trend2 = int(params[6]) if len(params) > 6 else 4
+            tr2 = params[7] if len(params) > 7 else 'Fast'
+            global_tr = params[8] if len(params) > 8 else 'Prime'
+            sma_period = int(params[9]) if len(params) > 9 else 22
+            
+            # Calculate SCHR_Wave2 indicator using the indicator class
+            from ..calculation.indicators.trend.schr_wave2_ind import SCHRWave2Indicator
+            from ..calculation.indicators.oscillators.rsi_ind_calc import PriceType
+            
+            # Create indicator instance and call calculate first to get indicator columns
+            indicator = SCHRWave2Indicator(long1, fast1, trend1, tr1, long2, fast2, trend2, tr2, global_tr, sma_period, PriceType.OPEN)
+            schr_wave2_calc = indicator.calculate(df)
+            
+            # Extract all SCHR_Wave2 columns from the calculation result
+            schr_wave2_cols = [col for col in schr_wave2_calc.columns if 'schr_wave2' in col.lower()]
+            logger.print_info(f"[DEBUG] SCHR_Wave2 calculation columns: {list(schr_wave2_calc.columns)}")
+            logger.print_info(f"[DEBUG] SCHR_Wave2 columns to add: {schr_wave2_cols}")
+            for col in schr_wave2_cols:
+                result_df[col] = schr_wave2_calc[col]
+                logger.print_info(f"[DEBUG] Added column {col} to result_df")
+            
+            # Ensure we have all required SCHR_Wave2 columns
+            required_cols = ['schr_wave2_wave', 'schr_wave2_fast_line', 'schr_wave2_ma_line', 'schr_wave2_direction', 'schr_wave2_signal']
+            for col in required_cols:
+                if col not in result_df.columns:
+                    logger.print_warning(f"Missing required SCHR_Wave2 column: {col}")
+                    # Create empty column if missing
+                    result_df[col] = 0.0
+            
+            # Now call apply_rule to get the rule columns
+            schr_wave2_rule = indicator.apply_rule(df, point=0.00001)  # Use default point size
+            
+            # Also add the standard rule columns for compatibility
+            result_df['PPrice1'] = schr_wave2_rule['PPrice1']
+            result_df['PColor1'] = schr_wave2_rule['PColor1']
+            result_df['PPrice2'] = schr_wave2_rule['PPrice2']
+            result_df['PColor2'] = schr_wave2_rule['PColor2']
+            result_df['Direction'] = schr_wave2_rule['Direction']
+            result_df['Diff'] = schr_wave2_rule['Diff']
+            
+            logger.print_info(f"[DEBUG] Final result_df columns: {list(result_df.columns)}")
+            
+            # Add the standard rule columns for compatibility
+            result_df['PPrice1'] = schr_wave2_rule['PPrice1']
+            result_df['PColor1'] = schr_wave2_rule['PColor1']
+            result_df['PPrice2'] = schr_wave2_rule['PPrice2']
+            result_df['PColor2'] = schr_wave2_rule['PColor2']
+            result_df['Direction'] = schr_wave2_rule['Direction']
+            result_df['Diff'] = schr_wave2_rule['Diff']
+            
+            # Add parameters info
+            result_df['schr_wave2_long1'] = long1
+            result_df['schr_wave2_fast1'] = fast1
+            result_df['schr_wave2_trend1'] = trend1
+            result_df['schr_wave2_tr1'] = tr1
+            result_df['schr_wave2_long2'] = long2
+            result_df['schr_wave2_fast2'] = fast2
+            result_df['schr_wave2_trend2'] = trend2
+            result_df['schr_wave2_tr2'] = tr2
+            result_df['schr_wave2_global_tr'] = global_tr
+            result_df['schr_wave2_sma_period'] = sma_period
+            
         else:
             raise ValueError(f"Unsupported indicator: {indicator_name}")
             
@@ -822,6 +893,7 @@ def create_dual_chart_layout(mode: str, rule: str) -> Dict[str, Any]:
         'sar': 'SAR',
         'supertrend': 'SuperTrend',
         'schr_rost': 'SCHR Rost',
+        'schr_wave2': 'SCHR Wave2',
         'stoch': 'Stochastic',
         'stochoscillator': 'Stochastic Oscillator'
     }

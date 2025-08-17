@@ -63,3 +63,4 @@ class TradingRule(Enum):
     SuperTrend = 34  # SuperTrend
     SCHR_ROST = 35  # SCHR Rost indicator
     SCHR_TREND = 36  # SCHR Trend Helper indicator
+    SCHR_Wave2 = 37  # SCHR Wave2 dual-wave trend prediction indicator

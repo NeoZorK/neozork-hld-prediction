@@ -38,6 +38,7 @@ from .indicators.predictive.schr_dir_ind import apply_rule_schr_dir
 # Trend indicators
 from .indicators.trend.schr_rost_ind import apply_rule_schr_rost
 from .indicators.trend.schr_trend_ind import apply_rule_schr_trend
+from .indicators.trend.schr_wave2_ind import apply_rule_schr_wave2
 
 # Probability indicators
 from .indicators.probability.montecarlo_ind import apply_rule_montecarlo
@@ -207,6 +208,7 @@ RULE_DISPATCHER = {
     TradingRule.SuperTrend: apply_rule_supertrend,
     TradingRule.SCHR_ROST: apply_rule_schr_rost,
     TradingRule.SCHR_TREND: apply_rule_schr_trend,
+    TradingRule.SCHR_Wave2: apply_rule_schr_wave2,
 }
 
 def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, price_type: str = 'close', **kwargs) -> pd.DataFrame:
@@ -365,6 +367,19 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         extreme_up = kwargs.get('extreme_up', 95)
         extreme_down = kwargs.get('extreme_down', 5)
         return rule_func(df, point=point, period=period, tr_mode=tr_mode, extreme_up=extreme_up, extreme_down=extreme_down, price_type=price_type_enum)
+    elif selected_rule == TradingRule.SCHR_Wave2:
+        # Extract SCHR_Wave2-specific parameters
+        long1 = kwargs.get('long1', 339)
+        fast1 = kwargs.get('fast1', 10)
+        trend1 = kwargs.get('trend1', 2)
+        tr1 = kwargs.get('tr1', 'Fast')
+        long2 = kwargs.get('long2', 22)
+        fast2 = kwargs.get('fast2', 11)
+        trend2 = kwargs.get('trend2', 4)
+        tr2 = kwargs.get('tr2', 'Fast')
+        global_tr = kwargs.get('global_tr', 'Prime')
+        sma_period = kwargs.get('sma_period', 22)
+        return rule_func(df, point=point, long1=long1, fast1=fast1, trend1=trend1, tr1=tr1, long2=long2, fast2=fast2, trend2=trend2, tr2=tr2, global_tr=global_tr, sma_period=sma_period, price_type=price_type_enum)
     else:
         # Default case for any other rules
         return rule_func(df, point=point, price_type=price_type_enum)

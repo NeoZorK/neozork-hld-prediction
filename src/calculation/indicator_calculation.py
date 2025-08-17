@@ -41,8 +41,11 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
     if ':' in rule_input_str:
         try:
             indicator_name, indicator_params = parse_indicator_parameters(rule_input_str)
-            # Update the rule name to the parsed indicator name (always in uppercase)
-            rule_input_str = indicator_name.upper()
+            # Update the rule name to the parsed indicator name (handle special cases)
+            if indicator_name == 'schr_wave2':
+                rule_input_str = 'SCHR_Wave2'
+            else:
+                rule_input_str = indicator_name.upper()
         except SystemExit:
             # parse_indicator_parameters already showed help and called sys.exit(1)
             # Just re-raise to exit
@@ -115,7 +118,10 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         'SAR': 'SAR',
         'SUPERTREND': 'SuperTrend',
         'SCHR_ROST': 'SCHR_ROST',
-        'SCHR_TREND': 'SCHR_TREND'
+        'SCHR_TREND': 'SCHR_TREND',
+        'SCHR_Wave2': 'SCHR_Wave2',
+        'schr_wave2': 'SCHR_Wave2',
+        'schr_wave2': 'SCHR_Wave2'
     }
     rule_name_str = rule_aliases_map.get(rule_input_str.upper(), rule_input_str)
     try:

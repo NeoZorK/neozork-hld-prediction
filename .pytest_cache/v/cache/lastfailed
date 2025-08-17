@@ -1,5 +1,12 @@
 {
   "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_analyze_function_calls": true,
   "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_analyze_dead_code_advanced": true,
-  "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_both_lines_always_shown": true
+  "tests/calculation/indicators/predictive/test_schr_dir_indicator.py::TestSCHRDirIndicator::test_apply_rule_schr_dir_both_lines_always_shown": true,
+  "tests/calculation/indicators/trend/test_schr_wave2_ind.py::TestCalculateEcore::test_calculate_ecore_multiple_values": true,
+  "tests/calculation/indicators/trend/test_schr_wave2_ind.py::TestApplyTradingRule::test_apply_trading_rule_fast_zone_reverse_rule": true,
+  "tests/calculation/indicators/trend/test_schr_wave2_ind.py::TestApplyGlobalTradingRule::test_apply_global_trading_rule_prime_zone_rule": true,
+  "tests/calculation/indicators/trend/test_schr_wave2_ind.py::TestCalculateEcore::test_calculate_ecore_empty_data": true,
+  "tests/calculation/indicators/trend/test_schr_wave2_ind.py::TestCalculateDrawLines::test_calculate_draw_lines_empty_data": true,
+  "tests/calculation/indicators/trend/test_schr_wave2_ind.py::TestApplyTradingRule::test_apply_trading_rule_empty_data": true,
+  "tests/calculation/indicators/trend/test_schr_wave2_ind.py::TestApplyGlobalTradingRule::test_apply_global_trading_rule_empty_data": true
 }
