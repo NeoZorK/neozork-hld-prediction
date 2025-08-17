@@ -40,7 +40,7 @@ class TradingRuleMode:
 
 def calculate_rsi(df: pd.DataFrame, period: int, price_type: PriceType = PriceType.OPEN) -> pd.Series:
     """
-    Calculate RSI indicator.
+    Calculate RSI indicator - simple and reliable implementation.
     
     Args:
         df (pd.DataFrame): DataFrame with OHLCV data
@@ -69,34 +69,27 @@ def calculate_rsi(df: pd.DataFrame, period: int, price_type: PriceType = PriceTy
     gains = delta.where(delta > 0, 0)
     losses = -delta.where(delta < 0, 0)
     
-    # Calculate average gains and losses
-    avg_gains = gains.rolling(window=period).mean()
-    avg_losses = losses.rolling(window=period).mean()
+    # Calculate average gains and losses using simple moving average
+    avg_gains = gains.rolling(window=period, min_periods=period).mean()
+    avg_losses = losses.rolling(window=period, min_periods=period).mean()
     
-    # Calculate RS and RSI with proper handling of edge cases
-    # Handle division by zero and zero gains cases like MQL5 iRSI()
-    rs = pd.Series(index=prices.index, dtype=float)
+    # Calculate RSI using standard formula
+    rsi = pd.Series(index=prices.index, dtype=float)
     
     for i in range(len(prices)):
         if pd.isna(avg_gains.iloc[i]) or pd.isna(avg_losses.iloc[i]):
-            rs.iloc[i] = np.nan
+            rsi.iloc[i] = 50.0  # Default to neutral when not enough data
         elif avg_losses.iloc[i] == 0:
             if avg_gains.iloc[i] == 0:
-                rs.iloc[i] = 0  # Both zero -> neutral
+                rsi.iloc[i] = 50.0  # Both zero -> neutral (50)
             else:
-                rs.iloc[i] = 100  # Only losses zero -> strong buy
+                rsi.iloc[i] = 100.0  # Only losses zero -> strong buy (100)
         elif avg_gains.iloc[i] == 0:
-            # When gains = 0, RSI should be 0 (strong sell)
-            rs.iloc[i] = 0
+            rsi.iloc[i] = 0.0  # Only gains zero -> strong sell (0)
         else:
-            rs.iloc[i] = avg_gains.iloc[i] / avg_losses.iloc[i]
-    
-    # Calculate RSI
-    rsi = 100 - (100 / (1 + rs))
-    
-    # Special case: when gains = 0 and losses > 0, RSI should be 0
-    # This matches MQL5 iRSI() behavior for strong sell signals
-    rsi = rsi.fillna(0)  # Replace NaN with 0 for edge cases
+            # Standard RSI calculation
+            rs = avg_gains.iloc[i] / avg_losses.iloc[i]
+            rsi.iloc[i] = 100.0 - (100.0 / (1.0 + rs))
     
     return rsi
 
@@ -275,23 +268,22 @@ def _trend_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_directi
 
 
 def _zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float]:
-    """Zone TR: Balanced Buy/Sell with reduced Sell bias."""
-    # Use more balanced thresholds to reduce Sell bias
-    buy_threshold = 45  # Lower than 50 to reduce Sell signals
-    sell_threshold = 55  # Higher than 50 to reduce Buy signals
+    """Zone TR: Exact MQL5 implementation."""
+    # Draw by Open (trend line)
+    # _arr_Trend[i] = open[shift];
     
-    if rsi_value > buy_threshold:
+    if rsi_value > 50:
         color = BUY        # 1 = Blue
-        # Check Extreme Point UP - only for very strong signals
+        
+        # Check Extreme Point UP
         if rsi_value > extreme_up:
             color = DBL_BUY   # 3 = Aqua
     else:
         color = SELL       # 2 = Yellow
-        # Check Extreme Point DOWN - only for very strong signals
-        if rsi_value < extreme_down and rsi_value > 0:
-            # Additional check: only DBL_SELL if RSI is very low
-            if rsi_value < (extreme_down / 2):  # RSI < 2.5 for extreme_down = 5
-                color = DBL_SELL  # 4 = Red
+        
+        # Check Extreme Point DOWN
+        if rsi_value < extreme_down:
+            color = DBL_SELL  # 4 = Red
     
     direction = color  # Direction = Color (exactly like MQL5)
     
@@ -299,19 +291,19 @@ def _zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_directio
 
 
 def _first_zone_tr(rsi_value: float, extreme_up: int, extreme_down: int, prev_direction: float) -> tuple[float, float]:
-    """First Zone TR: Include New Extreme Signals with balanced detection."""
+    """First Zone TR: Exact MQL5 implementation."""
     if rsi_value > 50:
         color = BUY        # 1 = Blue
-        # Check Extreme Point UP - only for very strong signals
+        
+        # Check Extreme Point UP
         if rsi_value > extreme_up:
             color = DBL_BUY   # 3 = Aqua
     else:
         color = SELL       # 2 = Yellow
-        # Check Extreme Point DOWN - only for very strong signals
-        if rsi_value < extreme_down and rsi_value > 0:
-            # Additional check: only DBL_SELL if RSI is very low
-            if rsi_value < (extreme_down / 2):  # RSI < 2.5 for extreme_down = 5
-                color = DBL_SELL  # 4 = Red
+        
+        # Check Extreme Point DOWN
+        if rsi_value < extreme_down:
+            color = DBL_SELL  # 4 = Red
     
     direction = color  # Direction = Color (exactly like MQL5)
     
