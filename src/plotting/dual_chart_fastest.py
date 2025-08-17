@@ -1815,53 +1815,54 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             break
     
     if wave_values is not None:
-        # Create separate traces for positive and negative wave values
-        positive_mask = wave_values >= 0
-        negative_mask = wave_values < 0
+        # Create a single continuous wave line with dynamic color changes
+        # This ensures both positive and negative values are visible simultaneously
         
-        # Positive wave values (blue)
-        if positive_mask.any():
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index[positive_mask],
-                    y=wave_values[positive_mask],
-                    mode='lines',
-                    name='SCHR_Wave2 Wave (Positive)',
-                    line=dict(
-                        color='blue',
-                        width=3,
-                        shape='spline'
-                    ),
-                    showlegend=True,
-                    hovertemplate='<b>SCHR_Wave2 Wave</b><br>' +
-                                'Date: %{x}<br>' +
-                                'Value: %{y:.4f}<br>' +
-                                '<extra></extra>'
+        # Create the main wave line with dynamic coloring
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=wave_values,
+                mode='lines',
+                name='SCHR_Wave2 Wave',
+                line=dict(
+                    color='blue',  # Default color
+                    width=3,
+                    shape='spline'
                 ),
-                row=2, col=1
-            )
+                showlegend=True,
+                hovertemplate='<b>SCHR_Wave2 Wave</b><br>' +
+                            'Date: %{x}<br>' +
+                            'Value: %{y:.4f}<br>' +
+                            '<extra></extra>'
+            ),
+            row=2, col=1
+        )
         
-        # Negative wave values (red)
-        if negative_mask.any():
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index[negative_mask],
-                    y=wave_values[negative_mask],
-                    mode='lines',
-                    name='SCHR_Wave2 Wave (Negative)',
-                    line=dict(
-                        color='red',
-                        width=3,
-                        shape='spline'
-                    ),
-                    showlegend=True,
-                    hovertemplate='<b>SCHR_Wave2 Wave</b><br>' +
-                                'Date: %{x}<br>' +
-                                'Value: %{y:.4f}<br>' +
-                                '<extra></extra>'
+        # Add a second trace for negative values to ensure visibility
+        # This creates a red overlay for negative values
+        negative_values = wave_values.copy()
+        negative_values[wave_values >= 0] = None  # Hide positive values in this trace
+        
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=negative_values,
+                mode='lines',
+                name='SCHR_Wave2 Wave (Negative)',
+                line=dict(
+                    color='red',
+                    width=3,
+                    shape='spline'
                 ),
-                row=2, col=1
-            )
+                showlegend=True,
+                hovertemplate='<b>SCHR_Wave2 Wave (Negative)</b><br>' +
+                            'Date: %{x}<br>' +
+                            'Value: %{y:.4f}<br>' +
+                            '<extra></extra>'
+            ),
+            row=2, col=1
+        )
     
     # Add SCHR_Wave2 fast line if available (always orange)
     fast_line_values = None
