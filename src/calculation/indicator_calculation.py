@@ -63,6 +63,14 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
             indicator_params = {'grow_percent': 1.0}
         elif rule_input_str.upper() == 'SCHR_ROST':
             indicator_params = {'speed_period': 'Future', 'faster_reverse': False}
+        elif rule_input_str.lower() == 'schr_wave2':
+            # Set default parameters for SCHR_Wave2
+            indicator_params = {
+                'long1': 339, 'fast1': 10, 'trend1': 2, 'tr1': 'Fast',
+                'long2': 22, 'fast2': 11, 'trend2': 4, 'tr2': 'Fast',
+                'global_tr': 'Prime', 'sma_period': 22
+            }
+            rule_input_str = 'SCHR_Wave2'  # Update to correct enum name
     
     # Store original rule with parameters for display purposes
     setattr(args, 'original_rule_with_params', original_rule_with_params)
