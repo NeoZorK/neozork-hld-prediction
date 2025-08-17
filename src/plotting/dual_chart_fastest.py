@@ -1807,62 +1807,128 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     row=1, col=1
                 )
     
-    # Add SCHR_Wave2 main wave line if available (changes color based on direction)
+    # Add SCHR_Wave2 main wave line if available (color based on trading signals, not values)
     wave_values = None
+    direction_values = None
     for col in ['schr_wave2_wave', 'SCHR_Wave2_Wave']:
         if col in display_df.columns:
             wave_values = display_df[col]
             break
     
+    for col in ['schr_wave2_direction', 'SCHR_Wave2_Direction']:
+        if col in display_df.columns:
+            direction_values = display_df[col]
+            break
+    
     if wave_values is not None:
-        # Create a single continuous wave line with dynamic color changes
-        # This ensures both positive and negative values are visible simultaneously
+        # Create wave line with color based on trading signals (direction), not wave values
+        # This follows the original SCHR Wave2 logic where color depends on TR rules
         
-        # Create the main wave line with dynamic coloring
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=wave_values,
-                mode='lines',
-                name='SCHR_Wave2 Wave',
-                line=dict(
-                    color='blue',  # Default color
-                    width=3,
-                    shape='spline'
+        # Get direction values for coloring (1=BUY/Blue, 2=SELL/Red, 0=NOTRADE/No color)
+        if direction_values is not None:
+            # Create colored segments based on trading signals
+            buy_mask = direction_values == 1  # BUY signals
+            sell_mask = direction_values == 2  # SELL signals
+            no_trade_mask = direction_values == 0  # No trade signals
+            
+            # Add BUY segments (blue)
+            if buy_mask.any():
+                buy_values = wave_values.copy()
+                buy_values[~buy_mask] = None  # Hide non-BUY values
+                
+                fig.add_trace(
+                    go.Scatter(
+                        x=display_df.index,
+                        y=buy_values,
+                        mode='lines',
+                        name='SCHR_Wave2 Wave (BUY)',
+                        line=dict(
+                            color='blue',
+                            width=3,
+                            shape='spline'
+                        ),
+                        showlegend=True,
+                        hovertemplate='<b>SCHR_Wave2 Wave (BUY)</b><br>' +
+                                    'Date: %{x}<br>' +
+                                    'Value: %{y:.4f}<br>' +
+                                    'Signal: BUY<br>' +
+                                    '<extra></extra>'
+                    ),
+                    row=2, col=1
+                )
+            
+            # Add SELL segments (red)
+            if sell_mask.any():
+                sell_values = wave_values.copy()
+                sell_values[~sell_mask] = None  # Hide non-SELL values
+                
+                fig.add_trace(
+                    go.Scatter(
+                        x=display_df.index,
+                        y=sell_values,
+                        mode='lines',
+                        name='SCHR_Wave2 Wave (SELL)',
+                        line=dict(
+                            color='red',
+                            width=3,
+                            shape='spline'
+                        ),
+                        showlegend=True,
+                        hovertemplate='<b>SCHR_Wave2 Wave (SELL)</b><br>' +
+                                    'Date: %{x}<br>' +
+                                    'Value: %{y:.4f}<br>' +
+                                    'Signal: SELL<br>' +
+                                    '<extra></extra>'
+                    ),
+                    row=2, col=1
+                )
+            
+            # Add NO TRADE segments (no color - transparent)
+            if no_trade_mask.any():
+                no_trade_values = wave_values.copy()
+                no_trade_values[~no_trade_mask] = None  # Hide non-NO_TRADE values
+                
+                fig.add_trace(
+                    go.Scatter(
+                        x=display_df.index,
+                        y=no_trade_values,
+                        mode='lines',
+                        name='SCHR_Wave2 Wave (No Trade)',
+                        line=dict(
+                            color='rgba(128, 128, 128, 0.3)',  # Semi-transparent gray
+                            width=2,
+                            shape='spline'
+                        ),
+                        showlegend=True,
+                        hovertemplate='<b>SCHR_Wave2 Wave (No Trade)</b><br>' +
+                                    'Date: %{x}<br>' +
+                                    'Value: %{y:.4f}<br>' +
+                                    'Signal: No Trade<br>' +
+                                    '<extra></extra>'
+                    ),
+                    row=2, col=1
+                )
+        else:
+            # Fallback: if no direction values, show as single line
+            fig.add_trace(
+                go.Scatter(
+                    x=display_df.index,
+                    y=wave_values,
+                    mode='lines',
+                    name='SCHR_Wave2 Wave',
+                    line=dict(
+                        color='blue',
+                        width=3,
+                        shape='spline'
+                    ),
+                    showlegend=True,
+                    hovertemplate='<b>SCHR_Wave2 Wave</b><br>' +
+                                'Date: %{x}<br>' +
+                                'Value: %{y:.4f}<br>' +
+                                '<extra></extra>'
                 ),
-                showlegend=True,
-                hovertemplate='<b>SCHR_Wave2 Wave</b><br>' +
-                            'Date: %{x}<br>' +
-                            'Value: %{y:.4f}<br>' +
-                            '<extra></extra>'
-            ),
-            row=2, col=1
-        )
-        
-        # Add a second trace for negative values to ensure visibility
-        # This creates a red overlay for negative values
-        negative_values = wave_values.copy()
-        negative_values[wave_values >= 0] = None  # Hide positive values in this trace
-        
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=negative_values,
-                mode='lines',
-                name='SCHR_Wave2 Wave (Negative)',
-                line=dict(
-                    color='red',
-                    width=3,
-                    shape='spline'
-                ),
-                showlegend=True,
-                hovertemplate='<b>SCHR_Wave2 Wave (Negative)</b><br>' +
-                            'Date: %{x}<br>' +
-                            'Value: %{y:.4f}<br>' +
-                            '<extra></extra>'
-            ),
-            row=2, col=1
-        )
+                row=2, col=1
+            )
     
     # Add SCHR_Wave2 fast line if available (always orange)
     fast_line_values = None
