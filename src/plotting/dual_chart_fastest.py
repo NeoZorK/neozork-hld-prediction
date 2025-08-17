@@ -1929,11 +1929,47 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         row=2, col=1
     )
     
+    # Calculate dynamic Y-axis range based on SCHR Wave2 data
+    all_schr_values = []
+    if wave_values is not None:
+        all_schr_values.extend(wave_values.dropna())
+    if fast_line_values is not None:
+        all_schr_values.extend(fast_line_values.dropna())
+    if ma_line_values is not None:
+        all_schr_values.extend(ma_line_values.dropna())
+    
+    if all_schr_values:
+        # Calculate min and max values with some padding
+        min_val = min(all_schr_values)
+        max_val = max(all_schr_values)
+        
+        # Add padding (10% of the range)
+        range_val = max_val - min_val
+        padding = range_val * 0.1 if range_val > 0 else 0.1
+        
+        # Ensure we include zero if data spans both positive and negative
+        if min_val < 0 and max_val > 0:
+            y_min = min_val - padding
+            y_max = max_val + padding
+        else:
+            y_min = min_val - padding
+            y_max = max_val + padding
+        
+        # Round to reasonable decimal places
+        y_min = round(y_min, 4)
+        y_max = round(y_max, 4)
+        
+        logger.print_info(f"[SCHR_Wave2] Dynamic Y-axis range: [{y_min}, {y_max}]")
+    else:
+        # Fallback to default range if no data
+        y_min, y_max = -0.2, 0.2
+        logger.print_warning("[SCHR_Wave2] No data available, using default Y-axis range")
+    
     # Update y-axis title and styling for SCHR_Wave2
     fig.update_yaxes(
         title_text="SCHR Wave2", 
         row=2, col=1,
-        range=[-0.2, 0.2],  # Adjusted range for wave values from -0.2 to +0.2
+        range=[y_min, y_max],  # Dynamic range based on data
         tickmode='auto',
         showgrid=True,
         gridcolor='rgba(0,0,0,0.08)',  # Subtle grid
