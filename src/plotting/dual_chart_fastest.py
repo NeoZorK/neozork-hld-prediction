@@ -1746,50 +1746,66 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         # Add buy signals (green triangles pointing up)
         buy_signals = signal_values == 1
         if buy_signals.any():
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index[buy_signals],
-                    y=display_df.loc[buy_signals, 'Low'] * 0.9995,  # Slightly below low
-                    mode='markers',
-                    marker=dict(
-                        symbol='triangle-up',
-                        size=12,
-                        color='green',
-                        line=dict(color='darkgreen', width=1)
+            # Safely get low prices for buy signals
+            low_col = None
+            for col in ['low', 'Low']:
+                if col in display_df.columns:
+                    low_col = col
+                    break
+            
+            if low_col is not None:
+                fig.add_trace(
+                    go.Scatter(
+                        x=display_df.index[buy_signals],
+                        y=display_df.loc[buy_signals, low_col] * 0.9995,  # Slightly below low
+                        mode='markers',
+                        marker=dict(
+                            symbol='triangle-up',
+                            size=12,
+                            color='green',
+                            line=dict(color='darkgreen', width=1)
+                        ),
+                        name='SCHR_Wave2 Buy Signal',
+                        showlegend=False,
+                        hovertemplate='<b>SCHR_Wave2 Buy Signal</b><br>' +
+                                    'Date: %{x}<br>' +
+                                    'Price: %{y:.4f}<br>' +
+                                    '<extra></extra>'
                     ),
-                    name='SCHR_Wave2 Buy Signal',
-                    showlegend=False,
-                    hovertemplate='<b>SCHR_Wave2 Buy Signal</b><br>' +
-                                'Date: %{x}<br>' +
-                                'Price: %{y:.4f}<br>' +
-                                '<extra></extra>'
-                ),
-                row=1, col=1
-            )
+                    row=1, col=1
+                )
         
         # Add sell signals (red triangles pointing down)
         sell_signals = signal_values == 2
         if sell_signals.any():
-            fig.add_trace(
-                go.Scatter(
-                    x=display_df.index[sell_signals],
-                    y=display_df.loc[sell_signals, 'High'] * 1.0005,  # Slightly above high
-                    mode='markers',
-                    marker=dict(
-                        symbol='triangle-down',
-                        size=12,
-                        color='red',
-                        line=dict(color='darkred', width=1)
+            # Safely get high prices for sell signals
+            high_col = None
+            for col in ['high', 'High']:
+                if col in display_df.columns:
+                    high_col = col
+                    break
+            
+            if high_col is not None:
+                fig.add_trace(
+                    go.Scatter(
+                        x=display_df.index[sell_signals],
+                        y=display_df.loc[sell_signals, high_col] * 1.0005,  # Slightly above high
+                        mode='markers',
+                        marker=dict(
+                            symbol='triangle-down',
+                            size=12,
+                            color='red',
+                            line=dict(color='darkred', width=1)
+                        ),
+                        name='SCHR_Wave2 Sell Signal',
+                        showlegend=False,
+                        hovertemplate='<b>SCHR_Wave2 Sell Signal</b><br>' +
+                                    'Date: %{x}<br>' +
+                                    'Price: %{y:.4f}<br>' +
+                                    '<extra></extra>'
                     ),
-                    name='SCHR_Wave2 Sell Signal',
-                    showlegend=False,
-                    hovertemplate='<b>SCHR_Wave2 Sell Signal</b><br>' +
-                                'Date: %{x}<br>' +
-                                'Price: %{y:.4f}<br>' +
-                                '<extra></extra>'
-                ),
-                row=1, col=1
-            )
+                    row=1, col=1
+                )
     
     # Get Direction values for lower subplot (1=Up, 2=Down)
     direction_values = None

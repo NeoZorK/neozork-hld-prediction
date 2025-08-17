@@ -15,6 +15,7 @@ This page provides a categorized list of all technical indicators available in t
 - [ADX Indicator](trend/adx-indicator.md)
 - [SAR Indicator](trend/sar-indicator.md)
 - [SuperTrend Indicator](trend/supertrend-indicator.md)
+- [SCHR Wave2 Indicator](trend/schr_wave2.md)
 
 ## Volatility Indicators
 - [ATR Indicator](volatility/atr-indicator.md)
