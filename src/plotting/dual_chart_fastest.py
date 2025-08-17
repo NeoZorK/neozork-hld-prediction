@@ -1933,7 +1933,7 @@ def add_schr_wave2_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     fig.update_yaxes(
         title_text="SCHR Wave2", 
         row=2, col=1,
-        range=[-0.5, 0.5],  # Adjusted range for wave values
+        range=[-0.2, 0.2],  # Adjusted range for wave values from -0.2 to +0.2
         tickmode='auto',
         showgrid=True,
         gridcolor='rgba(0,0,0,0.08)',  # Subtle grid
