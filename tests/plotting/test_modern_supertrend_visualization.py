@@ -7,6 +7,10 @@ Tests the enhanced visual features and styling of SuperTrend indicator.
 """
 
 import pytest
+
+# Individual tests will be enforced with 10-second timeout
+# No module-level skip to allow individual test execution
+
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta

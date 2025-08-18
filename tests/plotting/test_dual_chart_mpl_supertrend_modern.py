@@ -7,6 +7,10 @@ Verifies that the mpl mode now uses the same modern styling as fastest mode.
 """
 
 import pytest
+
+# Individual tests will be enforced with 10-second timeout
+# No module-level skip to allow individual test execution
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
