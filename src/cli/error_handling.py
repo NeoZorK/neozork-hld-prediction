@@ -342,22 +342,6 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Period too short may give unreliable results'
             ]
         },
-            ],
-            'examples': [
-                ('ema:20,close', 'Standard EMA with close prices'),
-                ('ema:50,open', 'Long-term EMA with open prices'),
-                ('ema:10,close', 'Short-term EMA with close prices')
-            ],
-            'tips': [
-                'Short-term: 10-20 periods for quick signals',
-                'Medium-term: 20-50 periods for trend analysis',
-                'Long-term: 50+ periods for major trends'
-            ],
-            'common_errors': [
-                'Invalid price_type: Use "open" or "close" only',
-                'Invalid period: Must be a positive integer'
-            ]
-        },
         'bb': {
             'name': 'Bollinger Bands',
             'description': 'Volatility indicator with upper and lower bands around a moving average.',
