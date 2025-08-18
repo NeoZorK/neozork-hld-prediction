@@ -224,9 +224,16 @@ The SMA indicator has been successfully implemented as a complete example of how
 
 - ✅ Modern, cool help system restored and working
 - ✅ SMA support for all dual chart modes implemented (`fastest`, `fast`, `mpl`, `sb`, `term`)
+- ✅ SMA added to indicators list (`uv run run_analysis.py --indicators`)
+- ✅ Terminal mode fully functional with SMA line display
 - ✅ Complete documentation and tutorial created
 - ✅ Comprehensive testing and validation completed
 - ✅ Tutorial updated with all improvements
 - ✅ Additional tutorial for remaining modes created
 
 This serves as an excellent template for adding more complex indicators in the future.
+
+## Related Documentation
+
+- **[Adding Custom Indicators](adding-custom-indicators.md)**: Complete tutorial for adding custom indicators
+- **[Adding SMA to Remaining Modes](adding-sma-to-remaining-modes.md)**: Tutorial for adding SMA to matplotlib, seaborn, and terminal modes
