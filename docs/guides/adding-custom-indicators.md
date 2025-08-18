@@ -597,6 +597,10 @@ Now that you have a working SMA indicator, you can:
 2. **Optimize Performance**: Add caching or vectorization for better performance
 3. **Add More Parameters**: Extend the indicator with additional configuration options
 4. **Create Indicator Combinations**: Build composite indicators using multiple base indicators
-5. **Add Support for Other Modes**: See [Adding SMA to Remaining Modes](adding-sma-to-remaining-modes.md) for extending to `-d mpl`, `-d sb`, and `-d term` modes
+5. **Add Support for All Modes**: Follow the [Adding SMA to Remaining Modes](adding-sma-to-remaining-modes.md) tutorial to add your indicator to `-d mpl`, `-d sb`, and `-d term` modes
 
 Your custom indicators will now work seamlessly with the platform's analysis, plotting, and reporting features!
+
+## Related Tutorials
+
+- **[Adding SMA to Remaining Modes](adding-sma-to-remaining-modes.md)**: Learn how to add SMA support to matplotlib, seaborn, and terminal modes
