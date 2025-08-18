@@ -15,13 +15,13 @@ from src.plotting.dual_chart_seaborn import plot_dual_chart_seaborn
 
 # Import from conftest with fallback
 try:
-    from .conftest import matplotlib_lock, is_docker_environment
+    from .conftest import matplotlib_lock, should_skip_plotting_tests
 except ImportError:
     # Fallback if conftest is not available
     matplotlib_lock = threading.Lock()
     
-    def is_docker_environment():
-        """Check if running in Docker environment"""
+    def should_skip_plotting_tests():
+        """Check if plotting tests should be skipped due to threading issues"""
         return os.path.exists('/.dockerenv') or os.environ.get('DOCKER_CONTAINER') == 'true'
 
 
@@ -52,7 +52,7 @@ class TestSeabornFearGreed:
         df = pd.DataFrame(data, index=dates)
         
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping FearGreed plotting test in Docker environment due to threading issues")
         
         # Use thread-safe plotting with error handling
@@ -97,7 +97,7 @@ class TestSeabornFearGreed:
         df = pd.DataFrame(data, index=dates)
         
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping FearGreed plotting test in Docker environment due to threading issues")
         
         with matplotlib_lock:
@@ -141,7 +141,7 @@ class TestSeabornFearGreed:
         df = pd.DataFrame(data, index=dates)
         
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping FearGreed plotting test in Docker environment due to threading issues")
         
         with matplotlib_lock:
@@ -185,7 +185,7 @@ class TestSeabornFearGreed:
         df = pd.DataFrame(data, index=dates)
         
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping FearGreed plotting test in Docker environment due to threading issues")
         
         with matplotlib_lock:
@@ -224,7 +224,7 @@ class TestSeabornFearGreed:
         df = pd.DataFrame(data, index=dates)
         
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping FearGreed plotting test in Docker environment due to threading issues")
         
         with matplotlib_lock:

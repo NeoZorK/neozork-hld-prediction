@@ -15,13 +15,13 @@ from src.plotting.dual_chart_seaborn import plot_dual_chart_seaborn
 
 # Import from conftest with fallback
 try:
-    from .conftest import matplotlib_lock, is_docker_environment
+    from .conftest import matplotlib_lock, should_skip_plotting_tests
 except ImportError:
     # Fallback if conftest is not available
     matplotlib_lock = threading.Lock()
     
-    def is_docker_environment():
-        """Check if running in Docker environment"""
+    def should_skip_plotting_tests():
+        """Check if plotting tests should be skipped due to threading issues"""
         return os.path.exists('/.dockerenv') or os.environ.get('DOCKER_CONTAINER') == 'true'
 
 
@@ -31,7 +31,7 @@ class TestSeabornPlotDisplay:
     def test_plot_display_with_show(self):
         """Test that plot displays correctly with plt.show()."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping plot display test in Docker environment due to threading issues")
         
         # Create sample data
@@ -75,7 +75,7 @@ class TestSeabornPlotDisplay:
     def test_plot_display_without_show_fails(self):
         """Test that plot would not display without plt.show()."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping plot display test in Docker environment due to threading issues")
         
         # Create sample data
@@ -119,7 +119,7 @@ class TestSeabornPlotDisplay:
     def test_plot_display_with_different_indicators(self):
         """Test plot display with different indicators."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping plot display test in Docker environment due to threading issues")
         
         # Create sample data
@@ -160,7 +160,7 @@ class TestSeabornPlotDisplay:
     def test_plot_display_with_rsi_indicator(self):
         """Test plot display with RSI indicator."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping plot display test in Docker environment due to threading issues")
         
         # Create sample data
@@ -202,7 +202,7 @@ class TestSeabornPlotDisplay:
     def test_plot_display_with_bb_indicator(self):
         """Test plot display with Bollinger Bands indicator."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping plot display test in Docker environment due to threading issues")
         
         # Create sample data

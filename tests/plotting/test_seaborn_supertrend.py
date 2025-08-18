@@ -15,13 +15,13 @@ from src.plotting.dual_chart_seaborn import plot_dual_chart_seaborn
 
 # Import from conftest with fallback
 try:
-    from .conftest import matplotlib_lock, is_docker_environment
+    from .conftest import matplotlib_lock, should_skip_plotting_tests
 except ImportError:
     # Fallback if conftest is not available
     matplotlib_lock = threading.Lock()
     
-    def is_docker_environment():
-        """Check if running in Docker environment"""
+    def should_skip_plotting_tests():
+        """Check if plotting tests should be skipped due to threading issues"""
         return os.path.exists('/.dockerenv') or os.environ.get('DOCKER_CONTAINER') == 'true'
 
 
@@ -31,7 +31,7 @@ class TestSeabornSuperTrend:
     def test_supertrend_indicator_display(self):
         """Test that supertrend indicator is displayed correctly."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping SuperTrend plotting test in Docker environment due to threading issues")
         
         # Create sample data
@@ -72,7 +72,7 @@ class TestSeabornSuperTrend:
     def test_supertrend_with_nan_values(self):
         """Test supertrend indicator with NaN values."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping SuperTrend plotting test in Docker environment due to threading issues")
         
         start_date = datetime(2020, 1, 1)
@@ -110,7 +110,7 @@ class TestSeabornSuperTrend:
     def test_supertrend_with_mixed_values(self):
         """Test supertrend indicator with mixed valid and NaN values."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping SuperTrend plotting test in Docker environment due to threading issues")
         
         start_date = datetime(2020, 1, 1)
@@ -148,7 +148,7 @@ class TestSeabornSuperTrend:
     def test_supertrend_without_required_columns(self):
         """Test supertrend indicator without required columns."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping SuperTrend plotting test in Docker environment due to threading issues")
         
         start_date = datetime(2020, 1, 1)
@@ -183,7 +183,7 @@ class TestSeabornSuperTrend:
     def test_supertrend_minimal_data(self):
         """Test supertrend indicator with minimal required data."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping SuperTrend plotting test in Docker environment due to threading issues")
         
         start_date = datetime(2020, 1, 1)

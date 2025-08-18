@@ -15,13 +15,13 @@ from src.plotting.dual_chart_seaborn import plot_dual_chart_seaborn
 
 # Import from conftest with fallback
 try:
-    from .conftest import matplotlib_lock, is_docker_environment
+    from .conftest import matplotlib_lock, should_skip_plotting_tests
 except ImportError:
     # Fallback if conftest is not available
     matplotlib_lock = threading.Lock()
     
-    def is_docker_environment():
-        """Check if running in Docker environment"""
+    def should_skip_plotting_tests():
+        """Check if plotting tests should be skipped due to threading issues"""
         return os.path.exists('/.dockerenv') or os.environ.get('DOCKER_CONTAINER') == 'true'
 
 
@@ -31,7 +31,7 @@ class TestSeabornPutCallRatio:
     def test_putcallratio_indicator_display(self):
         """Test that putcallratio indicator is displayed correctly."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping PutCallRatio plotting test in Docker environment due to threading issues")
         
         # Create sample data
@@ -78,7 +78,7 @@ class TestSeabornPutCallRatio:
     def test_putcallratio_without_signal_line(self):
         """Test putcallratio indicator without signal line."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping PutCallRatio plotting test in Docker environment due to threading issues")
         
         # Create sample data
@@ -123,7 +123,7 @@ class TestSeabornPutCallRatio:
     def test_putcallratio_with_histogram(self):
         """Test putcallratio indicator with histogram."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping PutCallRatio plotting test in Docker environment due to threading issues")
         
         # Create sample data
@@ -170,7 +170,7 @@ class TestSeabornPutCallRatio:
     def test_putcallratio_threshold_levels(self):
         """Test putcallratio indicator with threshold levels."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping PutCallRatio plotting test in Docker environment due to threading issues")
         
         # Create sample data
@@ -216,7 +216,7 @@ class TestSeabornPutCallRatio:
     def test_putcallratio_complete_indicator(self):
         """Test putcallratio indicator with all components."""
         # In Docker environment, skip the actual plotting test
-        if is_docker_environment():
+        if should_skip_plotting_tests():
             pytest.skip("Skipping PutCallRatio plotting test in Docker environment due to threading issues")
         
         # Create sample data
