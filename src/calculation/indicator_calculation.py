@@ -59,6 +59,7 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         'CCI': 'CCI',
         'STOCH': 'Stochastic',
         'EMA': 'EMA',
+        'SMA': 'SMA',
         'BB': 'Bollinger_Bands',
         'ATR': 'ATR',
         'VWAP': 'VWAP',
