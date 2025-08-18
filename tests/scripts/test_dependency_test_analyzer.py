@@ -56,11 +56,20 @@ beautifulsoup4==4.9.3
         """Test environment detection"""
         analyzer = DependencyTestAnalyzer(temp_project)
         
-        # Test native environment (default)
-        env = analyzer.detect_environment()
-        assert env == TestEnvironment.NATIVE
+        # Check if we're in Docker environment
+        is_docker = os.path.exists('/.dockerenv')
         
-        # Test Docker environment
+        # Test environment detection
+        env = analyzer.detect_environment()
+        
+        if is_docker:
+            # In Docker environment, should return DOCKER
+            assert env == TestEnvironment.DOCKER
+        else:
+            # In native environment, should return NATIVE
+            assert env == TestEnvironment.NATIVE
+        
+        # Test Docker environment detection with mock
         with patch('os.path.exists') as mock_exists:
             mock_exists.return_value = True
             env = analyzer.detect_environment()
