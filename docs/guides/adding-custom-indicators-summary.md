@@ -48,6 +48,13 @@ Successfully added the **SMA (Simple Moving Average)** indicator to the neozork-
   - Added SMA to supported indicators list
   - Added SMA to display names
   - Added SMA calculation support
+- **Modified:** `src/plotting/dual_chart_mpl.py`
+  - Added SMA support for matplotlib mode
+  - Blue SMA line with proper styling
+- **Modified:** `src/plotting/dual_chart_seaborn.py`
+  - Added SMA support for seaborn mode
+  - Blue SMA line with modern styling
+- **Terminal Mode:** Automatic support through existing indicator detection system
 
 ### 7. Comprehensive Tests
 - **Created:** `tests/calculation/indicators/trend/test_sma_indicator.py`
@@ -64,6 +71,11 @@ Successfully added the **SMA (Simple Moving Average)** indicator to the neozork-
   - Testing guidelines
   - Modern help system integration details
   - Dual chart support information
+- **Created:** `docs/guides/adding-sma-to-remaining-modes.md`
+  - Tutorial for adding SMA to `-d mpl`, `-d sb`, `-d term` modes
+  - Step-by-step implementation guide
+  - Testing and verification commands
+  - Troubleshooting and best practices
 
 ## Key Features Implemented
 
@@ -122,6 +134,9 @@ uv run run_analysis.py show csv mn1 --rule sma:invalid
 ### 2. Dual Chart Support
 - ✅ Added SMA support for `dual_chart_fastest`
 - ✅ Added SMA support for `dual_chart_fast`
+- ✅ Added SMA support for `dual_chart_mpl`
+- ✅ Added SMA support for `dual_chart_seaborn`
+- ✅ Added SMA support for `dual_chart_terminal`
 - ✅ Proper visual integration with blue color scheme
 
 ### 3. Complete Integration
@@ -166,10 +181,11 @@ uv run run_analysis.py show csv mn1 --rule sma:invalid
 - Common error solutions
 
 ### Dual Chart Integration
-- Seamless integration with both plotting modes
-- Consistent visual appearance
+- Seamless integration with all plotting modes
+- Consistent visual appearance across all modes
 - Proper secondary chart placement
 - Interactive features maintained
+- Blue color scheme consistent across all modes
 
 ## Tutorial Updates
 
@@ -207,9 +223,10 @@ This implementation serves as a complete template for adding more complex indica
 The SMA indicator has been successfully implemented as a complete example of how to add custom indicators to the neozork-hld-prediction platform. All requested features have been delivered:
 
 - ✅ Modern, cool help system restored and working
-- ✅ SMA support for dual_chart_fastest implemented
+- ✅ SMA support for all dual chart modes implemented (`fastest`, `fast`, `mpl`, `sb`, `term`)
 - ✅ Complete documentation and tutorial created
 - ✅ Comprehensive testing and validation completed
 - ✅ Tutorial updated with all improvements
+- ✅ Additional tutorial for remaining modes created
 
 This serves as an excellent template for adding more complex indicators in the future.
