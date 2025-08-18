@@ -224,6 +224,28 @@ def add_ema_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         )
 
 
+def add_sma_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add SMA indicator to the secondary subplot.
+    
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with SMA data
+    """
+    if 'sma' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['sma'],
+                mode='lines',
+                name='SMA',
+                line=dict(color='blue', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
+
 def add_bollinger_bands_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     """
     Add Bollinger Bands indicator to the secondary subplot.
@@ -1834,6 +1856,9 @@ def plot_dual_chart_fastest(
     
     elif indicator_name == 'ema':
         add_ema_indicator(fig, display_df)
+    
+    elif indicator_name == 'sma':
+        add_sma_indicator(fig, display_df)
     
     elif indicator_name == 'bb':
         add_bollinger_bands_indicator(fig, display_df)
