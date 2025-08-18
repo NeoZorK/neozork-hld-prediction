@@ -340,6 +340,8 @@
   "tests/cli/test_supertrend_cli.py::TestSuperTrendCLI::test_parse_supertrend_parameters_whitespace_handling",
   "tests/cli/test_supertrend_cli.py::TestSuperTrendCLI::test_show_indicator_help_supertrend",
   "tests/cli/test_supertrend_cli.py::TestSuperTrendCLI::test_supertrend_in_valid_indicators_list",
+  "tests/native-container/test_mql5_feed_native_access.py::TestMQL5FeedNativeAccess::test_mql5_feed_docker_tracking",
+  "tests/native-container/test_mql5_feed_native_access.py::TestMQL5FeedNativeAccess::test_mql5_feed_git_tracking",
   "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_add_macd_chart_to_subplot",
   "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_chunks_function",
   "tests/plotting/test_macd_terminal_plot.py::TestMACDTerminalPlot::test_macd_columns_presence",
@@ -375,5 +377,7 @@
   "tests/scripts/test_dependency_test_analyzer.py::TestDependencyTestAnalyzer::test_test_package_required",
   "tests/scripts/test_dependency_test_analyzer.py::TestDependencyTestAnalyzer::test_test_package_unused",
   "tests/scripts/test_dependency_test_analyzer.py::TestTestEnvironment::test_enum_values",
-  "tests/scripts/test_dependency_test_analyzer.py::TestTestType::test_enum_values"
+  "tests/scripts/test_dependency_test_analyzer.py::TestTestType::test_enum_values",
+  "tests/scripts/test_fix_dead_code.py::TestDeadCodeFixer::test_remove_unused_imports",
+  "tests/scripts/test_fix_dead_code.py::TestDeadCodeFixer::test_remove_unused_imports_no_unused"
 ]

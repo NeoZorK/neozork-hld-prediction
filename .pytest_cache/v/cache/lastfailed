@@ -1,4 +1,1 @@
-{
-  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_analyze_function_calls": true,
-  "tests/scripts/test_advanced_dead_code_analyzer.py::TestAdvancedDeadCodeAnalyzer::test_analyze_dead_code_advanced": true
-}
+{}
