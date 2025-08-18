@@ -1597,9 +1597,9 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             
     except Exception as e:
         # Show cool help for parameterized indicators on any parsing error
-        from .cli import show_indicator_help
+        from .error_handling import show_enhanced_indicator_help
         indicator_name = rule_str.split(':', 1)[0].lower().strip()
-        show_indicator_help(indicator_name)
+        show_enhanced_indicator_help(f"Invalid parameters for indicator: {indicator_name}", indicator_name, show_error_header=False)
         # After showing help, exit with error
         import sys
         sys.exit(1)
