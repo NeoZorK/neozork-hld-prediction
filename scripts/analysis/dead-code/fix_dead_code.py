@@ -62,29 +62,41 @@ class DeadCodeFixer:
             tree = ast.parse(content)
             lines = content.split('\n')
             
-            # Find unused imports
-            unused_imports = set()
-            defined_names = set()
-            
+            # Find all imports and their aliases
+            imports_info = []
             for node in ast.walk(tree):
                 if isinstance(node, ast.Import):
                     for name in node.names:
-                        if not self._is_name_used(name.name, tree):
-                            unused_imports.add((node.lineno, name.name))
+                        imports_info.append({
+                            'line': node.lineno,
+                            'name': name.name,
+                            'alias': name.asname or name.name,
+                            'type': 'import'
+                        })
                 
                 elif isinstance(node, ast.ImportFrom):
-                    if node.module and not self._is_name_used(node.module, tree):
-                        unused_imports.add((node.lineno, f"from {node.module}"))
-                
-                elif isinstance(node, (ast.FunctionDef, ast.ClassDef)):
-                    defined_names.add(node.name)
+                    if node.module:
+                        for name in node.names:
+                            imports_info.append({
+                                'line': node.lineno,
+                                'name': name.name,
+                                'alias': name.asname or name.name,
+                                'module': node.module,
+                                'type': 'from'
+                            })
+            
+            # Find unused imports
+            unused_imports = []
+            for imp in imports_info:
+                if not self._is_name_used_in_tree(imp['alias'], tree, imp['line']):
+                    unused_imports.append(imp)
             
             # Remove unused imports
             if unused_imports:
                 self.backup_file(file_path)
                 
                 # Remove lines with unused imports
-                lines_to_remove = {line_num for line_num, _ in unused_imports}
+                lines_to_remove = {imp['line'] for imp in unused_imports}
                 new_lines = [line for i, line in enumerate(lines, 1) if i not in lines_to_remove]
                 
                 with open(file_path, 'w', encoding='utf-8') as f:
@@ -99,11 +111,13 @@ class DeadCodeFixer:
             print(f"Error removing unused imports from {file_path}: {e}")
             return False
     
-    def _is_name_used(self, name: str, tree: ast.AST) -> bool:
-        """Check if a name is used in the AST"""
+    def _is_name_used_in_tree(self, name: str, tree: ast.AST, import_line: int) -> bool:
+        """Check if a name is used in the AST, excluding the import line itself"""
         for node in ast.walk(tree):
             if isinstance(node, ast.Name) and node.id == name:
-                return True
+                # Skip if this is the import statement itself
+                if hasattr(node, 'lineno') and node.lineno != import_line:
+                    return True
         return False
     
     def remove_dead_functions(self, file_path: Path, dead_functions: List[str]) -> bool:

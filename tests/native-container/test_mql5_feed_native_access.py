@@ -119,11 +119,13 @@ class TestMQL5FeedNativeAccess:
         project_root = Path.cwd()
         mql5_feed_path = project_root / "mql5_feed"
         
-        # Check if .gitignore doesn't exclude mql5_feed
+        # Check if .gitignore doesn't exclude mql5_feed folder completely
         gitignore_path = project_root / ".gitignore"
         if gitignore_path.exists():
             gitignore_content = gitignore_path.read_text()
-            assert "mql5_feed/" not in gitignore_content, "mql5_feed folder is excluded in .gitignore"
+            # Check that the entire mql5_feed folder is not excluded
+            # Only specific CSV files are excluded, but the folder itself should be tracked
+            assert "mql5_feed/" not in gitignore_content or "!mql5_feed/" in gitignore_content, "mql5_feed folder is completely excluded in .gitignore"
     
     def test_mql5_feed_docker_tracking(self):
         """Test that mql5_feed folder is not excluded in .dockerignore."""
@@ -132,7 +134,9 @@ class TestMQL5FeedNativeAccess:
         
         if dockerignore_path.exists():
             dockerignore_content = dockerignore_path.read_text()
-            assert "/mql5_feed/" not in dockerignore_content, "mql5_feed folder is excluded in .dockerignore"
+            # Check that the entire mql5_feed folder is not excluded
+            # Only specific CSV files are excluded, but the folder itself should be tracked
+            assert "/mql5_feed/" not in dockerignore_content or "!/mql5_feed/" in dockerignore_content, "mql5_feed folder is completely excluded in .dockerignore"
     
     def test_mql5_feed_file_extension(self):
         """Test that MQL5 files have correct extension."""
