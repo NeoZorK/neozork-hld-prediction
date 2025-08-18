@@ -12,6 +12,7 @@ This comprehensive tutorial will guide you through the process of adding your ow
 - ✅ How to write comprehensive tests
 - ✅ How to test your indicator in real scenarios
 - ✅ How to add support for dual chart modes
+- ✅ How to ensure modern help system integration
 
 ## Prerequisites
 
@@ -560,6 +561,33 @@ uv run run_analysis.py show csv mn1 -d fast --rule sma:50,open
 # Short-term analysis
 uv run run_analysis.py show csv mn1 -d fastest --rule sma:10,close
 ```
+
+## Important Notes
+
+### Modern Help System Integration
+The modern help system is now properly integrated and displays beautiful, comprehensive help for all indicators. When users enter invalid parameters, they see:
+
+- 📊 **Indicator name and description**
+- ⚙️ **Format and parameters**
+- 💻 **Usage examples**
+- 💡 **Tips and best practices**
+- ⚠️ **Common errors and solutions**
+- 💻 **Command usage examples**
+
+### Dual Chart Support
+SMA now works seamlessly with both dual chart modes:
+- **Fastest mode**: Uses Plotly with blue SMA line
+- **Fast mode**: Uses Bokeh with blue SMA line
+- **Proper integration**: Shows SMA in secondary chart below main OHLC chart
+
+### Complete Integration
+The SMA indicator is now fully integrated into all platform systems:
+- ✅ CLI parameter parsing
+- ✅ Rules system dispatch
+- ✅ Calculation engine
+- ✅ Plotting systems
+- ✅ Help system
+- ✅ Error handling
 
 ## Next Steps
 
