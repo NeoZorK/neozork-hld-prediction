@@ -418,7 +418,7 @@ def parse_arguments():
         if ':' in args.rule:
             # Parameterized rule - validate the indicator name part
             indicator_name = args.rule.split(':', 1)[0].lower()
-            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend']
+            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'sma', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend']
             if indicator_name not in valid_indicators:
                 # Provide detailed help for parameterized indicators
                 help_info = {
@@ -440,6 +440,7 @@ def parse_arguments():
                     'macd': 'MACD: macd:fast,slow,signal,price_type (e.g., macd:12,26,9,close)',
                     'stoch': 'Stochastic: stoch:k_period,d_period,price_type (e.g., stoch:14,3,close)',
                     'ema': 'EMA: ema:period,price_type (e.g., ema:20,close)',
+                    'sma': 'SMA: sma:period,price_type (e.g., sma:20,close)',
                     'bb': 'Bollinger Bands: bb:period,std_dev,price_type (e.g., bb:20,2.0,close)',
                     'atr': 'ATR: atr:period (e.g., atr:14)',
                     'cci': 'CCI: cci:period,price_type (e.g., cci:20,close)',
@@ -455,7 +456,7 @@ def parse_arguments():
             # Regular rule - validate against choices
             if args.rule not in all_rule_choices:
                 # Check if it might be a parameterized indicator
-                if args.rule.lower() in ['hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'rsi', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'bb', 'atr', 'cci', 'vwap', 'pivot']:
+                if args.rule.lower() in ['hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'rsi', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'sma', 'bb', 'atr', 'cci', 'vwap', 'pivot']:
                     parser.error(f"Invalid rule '{args.rule}'. This is a parameterized indicator. Use format: {args.rule}:parameters\n\nExamples:\n  {args.rule}:20,close\n  {args.rule}:14,3,close (for stochastic)\n  {args.rule}:1000,252 (for monte carlo)\n\nUse --help for more information about parameterized indicators.")
                 else:
                     parser.error(f"Invalid rule '{args.rule}'. Use one of {all_rule_choices}")
@@ -697,6 +698,18 @@ def show_indicator_help(indicator_name: str):
             'examples': [
                 'ema:20,close',
                 'ema:50,open'
+            ]
+        },
+        'sma': {
+            'name': 'SMA (Simple Moving Average)',
+            'format': 'sma:period,price_type',
+            'parameters': [
+                'period (int): SMA period (default: 20)',
+                'price_type (string): Price type for calculation - open or close (default: close)'
+            ],
+            'examples': [
+                'sma:20,close',
+                'sma:50,open'
             ]
         },
         'bb': {
@@ -1071,6 +1084,27 @@ def parse_ema_parameters(params_str: str) -> tuple[str, dict]:
     
     return 'ema', {
         'ema_period': period,
+        'price_type': price_type
+    }
+
+
+def parse_sma_parameters(params_str: str) -> tuple[str, dict]:
+    """Parse SMA parameters: period,price_type"""
+    params = params_str.split(',')
+    if len(params) != 2:
+        raise ValueError(f"SMA requires exactly 2 parameters: period,price_type. Got: {params_str}")
+    
+    try:
+        period = int(float(params[0].strip()))  # Handle float values
+        price_type = params[1].strip().lower()
+    except (ValueError, IndexError) as e:
+        raise ValueError(f"Invalid SMA parameters: {params_str}. Error: {e}")
+    
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"SMA price_type must be 'open' or 'close', got: {price_type}")
+    
+    return 'sma', {
+        'sma_period': period,
         'price_type': price_type
     }
 
@@ -1523,6 +1557,8 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_macd_parameters(params_str)
         elif indicator_name == 'ema':
             return parse_ema_parameters(params_str)
+        elif indicator_name == 'sma':
+            return parse_sma_parameters(params_str)
         elif indicator_name == 'bb':
             return parse_bb_parameters(params_str)
         elif indicator_name == 'atr':
