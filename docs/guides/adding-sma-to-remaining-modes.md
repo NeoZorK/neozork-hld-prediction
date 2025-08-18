@@ -18,25 +18,18 @@ This tutorial demonstrates how to add SMA (Simple Moving Average) indicator supp
 
 ## Prerequisites
 
-- SMA indicator already implemented (from previous tutorial)
-- Basic understanding of matplotlib, seaborn, and terminal plotting
+- SMA indicator already implemented and working with `-d fastest` and `-d fast` modes
+- Basic understanding of the platform's plotting architecture
 - Access to the neozork-hld-prediction codebase
 
-## Step-by-Step Implementation
+## Step 1: Add SMA Support to Matplotlib Mode (-d mpl)
 
-### Step 1: Add SMA Support to Matplotlib Mode (-d mpl)
+### 1.1 Update dual_chart_mpl.py
 
-**File:** `src/plotting/dual_chart_mpl.py`
-
-Add SMA indicator support after the EMA section:
+Add SMA support to the indicator dispatch logic:
 
 ```python
-elif indicator_name == 'ema':
-    y_axis_label = 'Price'
-    if 'ema' in display_df.columns:
-        ax2.plot(display_df.index, display_df['ema'], 
-                color='orange', linewidth=3, label='EMA')
-
+# In src/plotting/dual_chart_mpl.py
 elif indicator_name == 'sma':
     y_axis_label = 'Price'
     if 'sma' in display_df.columns:
@@ -44,275 +37,221 @@ elif indicator_name == 'sma':
                 color='blue', linewidth=3, label='SMA')
 ```
 
-**Key Features:**
-- Uses matplotlib's `ax2.plot()` for line plotting
-- Blue color scheme consistent with other modes
-- Linewidth of 3 for good visibility
-- Proper label for legend
+### 1.2 Test Matplotlib Mode
 
-### Step 2: Add SMA Support to Seaborn Mode (-d sb)
+```bash
+uv run run_analysis.py show csv mn1 -d mpl --rule sma:20,close
+```
 
-**File:** `src/plotting/dual_chart_seaborn.py`
+**Expected Result**: Interactive matplotlib window with OHLC chart on top and SMA line on bottom.
 
-Add SMA indicator support after the EMA section:
+## Step 2: Add SMA Support to Seaborn Mode (-d sb)
+
+### 2.1 Update dual_chart_seaborn.py
+
+Add SMA support to the indicator dispatch logic:
 
 ```python
-elif indicator_name == 'ema':
-    if 'ema' in display_df.columns:
-        sns.lineplot(data=display_df, x=display_df.index, y='ema', 
-                    ax=ax2, color='orange', linewidth=3, label='EMA')
-
+# In src/plotting/dual_chart_seaborn.py
 elif indicator_name == 'sma':
     if 'sma' in display_df.columns:
         sns.lineplot(data=display_df, x=display_df.index, y='sma', 
                     ax=ax2, color='blue', linewidth=3, label='SMA')
 ```
 
-**Key Features:**
-- Uses seaborn's `sns.lineplot()` for modern styling
-- Blue color scheme consistent with other modes
-- Linewidth of 3 for good visibility
-- Proper label for legend
-- Integrates with seaborn's modern aesthetic
-
-### Step 3: Terminal Mode (-d term) Support
-
-The terminal mode (`-d term`) automatically supports SMA through the existing indicator column detection system. The `dual_chart_terminal.py` file already includes logic to:
-
-1. **Detect indicator columns** based on the rule name
-2. **Display indicator data** in tabular format
-3. **Show summary statistics** for the indicator
-
-**Automatic Support:**
-```python
-# Find indicator columns
-indicator_columns = []
-for col in display_df.columns:
-    if col.lower().startswith(indicator_name.lower()):
-        indicator_columns.append(col)
-
-# Display indicator data
-if indicator_columns:
-    # Create indicator table header
-    indicator_header = f"{'Date':<20}"
-    for col in indicator_columns:
-        indicator_header += f" {col:<15}"
-    output_lines.append(indicator_header)
-```
-
-## Testing Your Implementation
-
-### Test Matplotlib Mode
+### 2.2 Test Seaborn Mode
 
 ```bash
-# Test SMA with matplotlib mode
-uv run run_analysis.py show csv mn1 -d mpl --rule sma:20,close
-
-# Test with different parameters
-uv run run_analysis.py show csv mn1 -d mpl --rule sma:50,open
-```
-
-**Expected Output:**
-- Dual chart with OHLC candlesticks on top
-- SMA line in blue on secondary chart
-- Proper legend and axis labels
-- Interactive matplotlib window
-
-### Test Seaborn Mode
-
-```bash
-# Test SMA with seaborn mode
 uv run run_analysis.py show csv mn1 -d sb --rule sma:20,close
-
-# Test with different parameters
-uv run run_analysis.py show csv mn1 -d sb --rule sma:50,open
 ```
 
-**Expected Output:**
-- Modern seaborn-styled dual chart
-- SMA line in blue on secondary chart
-- Clean, professional appearance
-- Saved as PNG file
+**Expected Result**: Interactive seaborn plot with OHLC chart on top and SMA line on bottom.
 
-### Test Terminal Mode
+## Step 3: Add SMA Support to Terminal Mode (-d term)
+
+### 3.1 Update term_chunked_plot.py
+
+Add SMA support to the indicator dispatch logic:
+
+```python
+# In src/plotting/term_chunked_plot.py
+elif indicator_upper == 'SMA':
+    _add_sma_indicator_to_subplot(chunk, x_values)
+```
+
+### 3.2 Add SMA Indicator Function
+
+Create the `_add_sma_indicator_to_subplot` function:
+
+```python
+def _add_sma_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add SMA indicator to subplot."""
+    try:
+        # Look for SMA columns (case insensitive)
+        sma_columns = [col for col in chunk.columns if col.upper().startswith('SMA') or col.lower() == 'sma']
+        
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
+        for sma_col in sma_columns:
+            sma_values = chunk[sma_col].fillna(0).tolist()
+            try:
+                # Try to plot with numeric x_values
+                plt.plot(numeric_x_values, sma_values, color="blue+", label=sma_col)
+            except Exception as plot_error:
+                # If plotting fails, skip this column
+                continue
+        
+        # Debug: print available columns if no SMA found
+        if not sma_columns:
+            logger.print_warning(f"No SMA columns found. Available columns: {list(chunk.columns)}")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding SMA indicator: {e}")
+```
+
+### 3.3 Update Indicator Search Logic
+
+Fix the column search logic in terminal mode:
+
+```python
+# In src/plotting/term_chunked_plot.py
+# Look for columns containing the indicator name
+indicator_columns = [col for col in chunk.columns if indicator_name.upper() in col.upper()]
+
+if not indicator_columns:
+    # Try exact match (case insensitive)
+    if indicator_name.lower() in [col.lower() for col in chunk.columns]:
+        indicator_columns = [col for col in chunk.columns if col.lower() == indicator_name.lower()]
+    elif indicator_name in chunk.columns:
+        indicator_columns = [indicator_name]
+```
+
+### 3.4 Add SMA to Supported Indicators List
+
+Update the list of supported indicators:
+
+```python
+# In src/plotting/term_chunked_plot.py
+elif rule_upper in ['STOCHASTIC', 'CCI', 'BOLLINGER_BANDS', 'EMA', 'SMA', 'ADX', 'SAR', 
+                   'SUPERTREND', 'ATR', 'STANDARD_DEVIATION', 'OBV', 'VWAP',
+                   'HMA', 'TIME_SERIES_FORECAST', 'MONTE_CARLO', 'KELLY_CRITERION',
+                   'PUT_CALL_RATIO', 'COT', 'FEAR_GREED', 'PIVOT_POINTS',
+                   'FIBONACCI_RETRACEMENT', 'DONCHIAN_CHANNEL']:
+    plot_indicator_chunks(df, rule_upper, title, style, use_navigation, rule)
+```
+
+### 3.5 Add SMA Calculation Support
+
+Add SMA calculation support in `cli_show_mode.py`:
+
+```python
+# In src/cli/cli_show_mode.py
+# Calculate additional indicator for terminal mode if needed
+if ':' in args.rule:
+    try:
+        from src.plotting.dual_chart_plot import calculate_additional_indicator
+        result_df = calculate_additional_indicator(result_df, args.rule)
+    except Exception as e:
+        print(f"Could not calculate additional indicator: {e}")
+```
+
+### 3.6 Test Terminal Mode
 
 ```bash
-# Test SMA with terminal mode
-uv run run_analysis.py show csv mn1 -d term --rule sma:20,close
-
-# Test with different parameters
-uv run run_analysis.py show csv mn1 -d term --rule sma:50,open
-```
-
-**Expected Output:**
-- Terminal-based dual chart display
-- SMA data in tabular format
-- Summary statistics
-- Navigation controls for chunked viewing
-
-## Code Integration Details
-
-### Matplotlib Integration
-
-The matplotlib mode uses the standard matplotlib plotting library:
-
-```python
-# Key integration points
-elif indicator_name == 'sma':
-    y_axis_label = 'Price'  # Set Y-axis label
-    if 'sma' in display_df.columns:  # Check if SMA data exists
-        ax2.plot(display_df.index, display_df['sma'],  # Plot SMA line
-                color='blue', linewidth=3, label='SMA')  # Styling
-```
-
-### Seaborn Integration
-
-The seaborn mode uses seaborn's enhanced plotting capabilities:
-
-```python
-# Key integration points
-elif indicator_name == 'sma':
-    if 'sma' in display_df.columns:  # Check if SMA data exists
-        sns.lineplot(data=display_df, x=display_df.index, y='sma',  # Plot SMA line
-                    ax=ax2, color='blue', linewidth=3, label='SMA')  # Styling
-```
-
-### Terminal Integration
-
-The terminal mode automatically handles SMA through its generic indicator system:
-
-```python
-# Automatic indicator detection
-indicator_name = rule.split(':', 1)[0].lower().strip() if ':' in rule else rule
-
-# Find indicator columns
-indicator_columns = []
-for col in display_df.columns:
-    if col.lower().startswith(indicator_name.lower()):
-        indicator_columns.append(col)
-```
-
-## Verification Commands
-
-### 1. Test All Modes
-
-```bash
-# Test all three modes with SMA
-uv run run_analysis.py show csv mn1 -d mpl --rule sma:20,close
-uv run run_analysis.py show csv mn1 -d sb --rule sma:20,close
 uv run run_analysis.py show csv mn1 -d term --rule sma:20,close
 ```
 
-### 2. Test Different Parameters
+**Expected Result**: Terminal-based plot with OHLC chart on top and SMA line on bottom, with navigation controls.
 
-```bash
-# Test with different SMA periods
-uv run run_analysis.py show csv mn1 -d mpl --rule sma:10,close
-uv run run_analysis.py show csv mn1 -d sb --rule sma:50,close
-uv run run_analysis.py show csv mn1 -d term --rule sma:100,close
+## Step 4: Add SMA to Indicators List
 
-# Test with different price types
-uv run run_analysis.py show csv mn1 -d mpl --rule sma:20,open
-uv run run_analysis.py show csv mn1 -d sb --rule sma:20,open
-uv run run_analysis.py show csv mn1 -d term --rule sma:20,open
+### 4.1 Update indicators_search.py
+
+Add SMA to the trend category:
+
+```python
+# In src/cli/indicators_search.py
+categories = {
+    "trend": ["ema_ind.py", "sma_ind.py", "adx_ind.py", "sar_ind.py", "supertrend_ind.py"],
+    # ... other categories
+}
 ```
 
-### 3. Verify Help System
+### 4.2 Test Indicators List
 
 ```bash
-# Test help system for all modes
-uv run run_analysis.py show csv mn1 -d mpl --rule sma:invalid
-uv run run_analysis.py show csv mn1 -d sb --rule sma:invalid
-uv run run_analysis.py show csv mn1 -d term --rule sma:invalid
+uv run run_analysis.py --indicators
 ```
 
-## Expected Results
+**Expected Result**: SMA should appear in the trend category.
 
-### Matplotlib Mode (-d mpl)
-- ✅ Interactive matplotlib window opens
-- ✅ OHLC candlesticks on main chart
-- ✅ Blue SMA line on secondary chart
-- ✅ Proper legend and axis labels
-- ✅ Support/resistance levels displayed
+## Step 5: Verify All Modes Work
 
-### Seaborn Mode (-d sb)
-- ✅ Modern seaborn-styled chart
-- ✅ OHLC candlesticks on main chart
-- ✅ Blue SMA line on secondary chart
-- ✅ Professional appearance
-- ✅ PNG file saved to results/plots/
+Test all modes to ensure SMA works correctly:
 
-### Terminal Mode (-d term)
-- ✅ Terminal-based display
-- ✅ OHLC data in tabular format
-- ✅ SMA values in separate table
-- ✅ Summary statistics
-- ✅ Navigation controls for chunked viewing
+```bash
+# Test all modes
+uv run run_analysis.py show csv mn1 -d fastest --rule sma:20,close
+uv run run_analysis.py show csv mn1 -d fast --rule sma:20,close
+uv run run_analysis.py show csv mn1 -d mpl --rule sma:20,close
+uv run run_analysis.py show csv mn1 -d sb --rule sma:20,close
+uv run run_analysis.py show csv mn1 -d term --rule sma:20,close
+```
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **SMA line not appearing**
-   - Check if 'sma' column exists in display_df
-   - Verify indicator calculation completed successfully
-   - Ensure proper column name matching
+1. **SMA line not appearing in terminal mode**
+   - Check if `calculate_additional_indicator` is being called
+   - Verify that the `sma` column exists in the DataFrame
+   - Check the column search logic in `_add_sma_indicator_to_subplot`
 
 2. **Wrong colors or styling**
-   - Verify color='blue' is set correctly
-   - Check linewidth=3 for visibility
-   - Ensure proper label='SMA' for legend
+   - Ensure consistent color schemes across all modes
+   - Check that the plotting libraries support the specified colors
 
-3. **Terminal mode not showing SMA data**
-   - Check indicator column detection logic
-   - Verify rule parsing works correctly
-   - Ensure SMA calculation added 'sma' column
+3. **Performance issues**
+   - Terminal mode may be slower due to chunked plotting
+   - Consider optimizing the SMA calculation for large datasets
 
 ### Debug Commands
 
 ```bash
-# Debug with verbose output
-uv run run_analysis.py show csv mn1 -d mpl --rule sma:20,close --verbose
+# Check if SMA appears in indicators list
+uv run run_analysis.py --indicators | grep -i sma
 
-# Check data structure
-uv run run_analysis.py show csv mn1 --rule sma:20,close --debug
+# Test with different parameters
+uv run run_analysis.py show csv mn1 -d term --rule sma:50,open
+
+# Check for errors in terminal mode
+uv run run_analysis.py show csv mn1 -d term --rule sma:20,close 2>&1 | grep -i error
 ```
 
 ## Best Practices
 
-### 1. Consistent Styling
-- Use blue color for SMA across all modes
-- Maintain linewidth=3 for good visibility
-- Use consistent label='SMA' for legends
-
-### 2. Error Handling
-- Always check if 'sma' column exists before plotting
-- Provide fallback behavior if data is missing
-- Log appropriate messages for debugging
-
-### 3. Performance
-- Matplotlib mode: Interactive, good for analysis
-- Seaborn mode: Static images, good for reports
-- Terminal mode: Text-based, good for servers/automation
-
-### 4. Integration
-- Follow existing code patterns in each file
-- Maintain consistency with other indicators
-- Ensure proper axis labels and legends
+1. **Consistent Implementation**: Ensure SMA works the same way across all modes
+2. **Error Handling**: Add proper error handling for missing columns or calculation failures
+3. **Performance**: Optimize calculations for large datasets
+4. **Documentation**: Keep documentation updated with new features
+5. **Testing**: Test all modes after making changes
 
 ## Summary
 
-You have successfully added SMA indicator support to all remaining dual chart modes:
+After completing this tutorial, SMA will be fully supported across all dual chart modes:
 
-✅ **Matplotlib Mode (-d mpl)**: Interactive plotting with blue SMA line
-✅ **Seaborn Mode (-d sb)**: Modern styled charts with blue SMA line  
-✅ **Terminal Mode (-d term)**: Text-based display with SMA data tables
+- ✅ **fastest**: Plotly-based interactive charts
+- ✅ **fast**: Bokeh-based interactive charts  
+- ✅ **mpl**: Matplotlib-based interactive charts
+- ✅ **sb**: Seaborn-based interactive charts
+- ✅ **term**: Terminal-based chunked charts
 
-All modes now support:
-- SMA calculation and display
-- Consistent blue color scheme
-- Proper legends and labels
-- Error handling and validation
-- Integration with existing help system
+All modes will display the SMA line in the secondary subplot with consistent styling and functionality.
 
-The SMA indicator is now fully integrated across all dual chart modes in the neozork-hld-prediction platform!
+## Next Steps
+
+1. **Add More Indicators**: Use this pattern to add other indicators to all modes
+2. **Optimize Performance**: Improve calculation and plotting performance
+3. **Add More Features**: Implement additional indicator parameters and options
+4. **Enhance UI**: Improve the user interface and navigation controls
