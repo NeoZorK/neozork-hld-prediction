@@ -150,7 +150,7 @@ uv run pytest tests -n auto
 ### Technical Indicators (50+)
 - **Momentum**: MACD
 - **Oscillators**: RSI, CCI, Stochastic
-- **Trend**: EMA, ADX, SAR, **SuperTrend**
+- **Trend**: EMA, **SMA**, ADX, SAR, **SuperTrend**
 - **Volatility**: ATR, Bollinger Bands
 - **Volume**: OBV, VWAP
 - **Support & Resistance**: Pivot Points, Fibonacci
@@ -186,6 +186,29 @@ uv run pytest tests -n auto
   ```
 - **Parameters:** period (required), multiplier (required), price_type (optional: open/close)
 - **Documentation:** [SuperTrend Indicator](docs/reference/indicators/trend/supertrend-indicator.md)
+
+#### New: SMA (Simple Moving Average) Indicator ⭐ **COMPLETE TUTORIAL**
+- **Category:** Trend
+- **Description:** Simple Moving Average that gives equal weight to all prices in the calculation period. Excellent for trend identification and support/resistance levels. Works across all 6 display modes with modern help system.
+- **CLI Examples:**
+  ```bash
+  # Basic SMA with 20-period close prices
+  uv run run_analysis.py demo --rule sma:20,close -d fastest
+  
+  # Multiple SMAs for trend comparison
+  uv run run_analysis.py demo --rule sma:10,close,sma:20,close,sma:50,close -d plotly
+  
+  # Real data analysis
+  uv run run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule sma:20,close -d fastest
+  ```
+- **Parameters:** period (required), price_type (required: open/close)
+- **Display Modes:** All 6 modes supported (fastest, fast, plotly, mpl, seaborn, term)
+- **Documentation:** 
+  - [Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md) 📖
+  - [Quick Start Guide](docs/guides/sma-quick-start-guide.md) ⚡
+  - [Practical Examples](docs/guides/sma-practical-examples.md) 🎯
+  - [Testing Guide](docs/guides/sma-testing-guide.md) 🧪
+  - [Tutorials Summary](docs/guides/sma-tutorials-summary.md) 📋
 
 #### Fixed: Volume Indicators
 - **OBV (On-Balance Volume):** Fixed dual chart plotting and parameter parsing
@@ -288,6 +311,9 @@ uv run run_analysis.py show csv mn1 -d fastest --rule obv:
 # Demo analysis
 uv run run_analysis.py demo --rule PHLD
 
+# SMA analysis (new!)
+uv run run_analysis.py demo --rule sma:20,close -d fastest
+
 # Yahoo Finance analysis
 uv run run_analysis.py yfinance AAPL --rule RSI
 
@@ -302,6 +328,12 @@ uv run run_analysis.py interactive
 ```bash
 # Multiple indicators
 uv run run_analysis.py demo --rule RSI,MACD,PHLD
+
+# Multiple SMAs for trend analysis
+uv run run_analysis.py demo --rule sma:10,close,sma:20,close,sma:50,close -d plotly
+
+# SMA with real data
+uv run run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule sma:20,close -d fastest
 
 # Custom plotting backend
 uv run run_analysis.py demo --rule PHLD -d plotly
@@ -353,6 +385,13 @@ uv run pytest tests -n auto  # ~30-60 seconds
 - **[Guides](docs/guides/)** - Step-by-step tutorials
 - **[Reference](docs/reference/)** - Technical documentation
 - **[Testing](docs/testing/)** - Testing strategies and examples
+
+### 🎯 SMA Indicator Tutorials (New!)
+- **[Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md)** - Full implementation guide
+- **[Quick Start Guide](docs/guides/sma-quick-start-guide.md)** - Get started in minutes
+- **[Practical Examples](docs/guides/sma-practical-examples.md)** - Real-world scenarios
+- **[Testing Guide](docs/guides/sma-testing-guide.md)** - Comprehensive testing
+- **[Tutorials Summary](docs/guides/sma-tutorials-summary.md)** - Complete overview
 
 ## 🤝 Contributing
 
