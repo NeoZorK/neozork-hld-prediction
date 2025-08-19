@@ -95,7 +95,8 @@ def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):
         # Trend indicators
         'ADX': 'ADX',
         'SAR': 'SAR',
-        'SUPERTREND': 'SuperTrend'
+        'SUPERTREND': 'SuperTrend',
+        'WAVE': 'Wave'
     }
     rule_name_str = rule_aliases_map.get(rule_input_str.upper(), rule_input_str)
     try:
