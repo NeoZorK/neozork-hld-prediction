@@ -136,7 +136,7 @@ def get_supported_indicators() -> set:
         set: Set of supported indicator names
     """
     return {
-        'rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'ema', 'bb', 'atr',
+        'rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'ema', 'sma', 'bb', 'atr',
         'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain',
         'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend'
     }
@@ -263,6 +263,18 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
             ema_values = calculate_ema(price_series, period)
             result_df['ema'] = ema_values
+            
+        elif indicator_name == 'sma':
+            period = int(params[0]) if len(params) > 0 else 20
+            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            
+            # Select price series based on price_type
+            price_series = df['Open'] if price_type == 'open' else df['Close']
+            
+            # Import SMA calculation function
+            from ..calculation.indicators.trend.sma_ind import calculate_sma
+            sma_values = calculate_sma(price_series, period)
+            result_df['sma'] = sma_values
             
         elif indicator_name == 'bb':
             period = int(params[0]) if len(params) > 0 else 20
@@ -658,6 +670,7 @@ def create_dual_chart_layout(mode: str, rule: str) -> Dict[str, Any]:
         'rsi_div': 'RSI Divergence',
         'macd': 'MACD',
         'ema': 'EMA',
+        'sma': 'SMA',
         'bb': 'Bollinger Bands',
         'atr': 'ATR',
         'cci': 'CCI',
