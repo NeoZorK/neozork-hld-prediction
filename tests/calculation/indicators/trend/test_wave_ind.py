@@ -14,6 +14,7 @@ from src.calculation.indicators.trend.wave_ind import (
     g_reverse_tr_zone, g_new_zone_tr, g_long_zone_tr, g_long_zone_reverse_tr,
     ENUM_GLOBAL_TR, BUY, SELL, NOTRADE
 )
+from src.calculation.indicators.base_indicator import PriceType
 
 
 class TestGlobalTRSwitch:
@@ -308,3 +309,47 @@ class TestGlobalTRSwitch:
         assert result_reverse.iloc[2] == SELL
         # Index 3: SELL in positive zone -> should reverse to BUY
         assert result_reverse.iloc[3] == BUY
+
+    def test_wave_signal_calculation(self):
+        """Test that Wave indicator correctly calculates signals."""
+        from src.calculation.indicators.trend.wave_ind import apply_rule_wave, WaveParameters, ENUM_MOM_TR, ENUM_GLOBAL_TR
+        
+        # Create sample data
+        index = pd.date_range('2023-01-01', periods=50, freq='D')
+        df = pd.DataFrame({
+            'Open': [100 + i * 0.1 for i in range(50)],
+            'High': [100.5 + i * 0.1 for i in range(50)],
+            'Low': [99.5 + i * 0.1 for i in range(50)],
+            'Close': [100.2 + i * 0.1 for i in range(50)]
+        }, index=index)
+        
+        # Create Wave parameters
+        wave_params = WaveParameters(
+            long1=10, fast1=5, trend1=2, tr1=ENUM_MOM_TR.TR_Fast,
+            long2=8, fast2=4, trend2=2, tr2=ENUM_MOM_TR.TR_Fast,
+            global_tr=ENUM_GLOBAL_TR.G_TR_PRIME, sma_period=5
+        )
+        
+        # Apply Wave rule
+        result = apply_rule_wave(df, wave_params, price_type=PriceType.OPEN)
+        
+        # Check that required columns exist
+        required_cols = ['_Signal', '_Direction', '_Plot_Wave', '_Plot_FastLine', 'MA_Line']
+        for col in required_cols:
+            assert col in result.columns, f"Missing column: {col}"
+        
+        # Check that signals are calculated
+        assert len(result['_Signal'].dropna()) > 0, "No signals calculated"
+        
+        # Check that signals are only 1 (BUY) or 2 (SELL) when not NOTRADE
+        valid_signals = result['_Signal'][result['_Signal'] != NOTRADE]
+        if len(valid_signals) > 0:
+            assert all(signal in [BUY, SELL] for signal in valid_signals), "Invalid signal values"
+        
+        # Check that direction matches plot color
+        assert all(result['_Direction'] == result['_Plot_Color']), "Direction should match Plot Color"
+        
+        # Check that signal is only generated when direction changes
+        for i in range(1, len(result)):
+            if result['_Signal'].iloc[i] != NOTRADE:
+                assert result['_Direction'].iloc[i] != result['_Direction'].iloc[i-1], "Signal should only be generated when direction changes"

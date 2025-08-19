@@ -253,63 +253,7 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         fig (go.Figure): Plotly figure object
         display_df (pd.DataFrame): DataFrame with Wave data
     """
-    # Add Wave1 line (red)
-    if 'wave1' in display_df.columns:
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=display_df['wave1'],
-                mode='lines',
-                name='Wave 1',
-                line=dict(color='red', width=2),
-                showlegend=True
-            ),
-            row=2, col=1
-        )
-    
-    # Add Wave2 line (blue)
-    if 'wave2' in display_df.columns:
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=display_df['wave2'],
-                mode='lines',
-                name='Wave 2',
-                line=dict(color='blue', width=2),
-                showlegend=True
-            ),
-            row=2, col=1
-        )
-    
-    # Add FastLine1 (orange, dashed)
-    if 'fastline1' in display_df.columns:
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=display_df['fastline1'],
-                mode='lines',
-                name='FastLine 1',
-                line=dict(color='orange', width=1, dash='dash'),
-                showlegend=True
-            ),
-            row=2, col=1
-        )
-    
-    # Add FastLine2 (cyan, dashed)
-    if 'fastline2' in display_df.columns:
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=display_df['fastline2'],
-                mode='lines',
-                name='FastLine 2',
-                line=dict(color='cyan', width=1, dash='dash'),
-                showlegend=True
-            ),
-            row=2, col=1
-        )
-    
-    # Add Plot Wave (main indicator, green) - check both possible cases
+    # Add Plot Wave (main indicator, thick yellow line) - as per MQ5
     plot_wave_col = None
     if '_plot_wave' in display_df.columns:
         plot_wave_col = '_plot_wave'
@@ -322,14 +266,14 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 x=display_df.index,
                 y=display_df[plot_wave_col],
                 mode='lines',
-                name='Plot Wave',
-                line=dict(color='green', width=3),
+                name='Wave',
+                line=dict(color='yellow', width=5),  # Thick yellow line as in MQ5
                 showlegend=True
             ),
             row=2, col=1
         )
     
-    # Add Plot FastLine (purple) - check both possible cases
+    # Add Plot FastLine (thin red line) - as per MQ5
     plot_fastline_col = None
     if '_plot_fastline' in display_df.columns:
         plot_fastline_col = '_plot_fastline'
@@ -342,14 +286,14 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 x=display_df.index,
                 y=display_df[plot_fastline_col],
                 mode='lines',
-                name='Plot FastLine',
-                line=dict(color='purple', width=2),
+                name='Fast Line',
+                line=dict(color='red', width=1, dash='dot'),  # Thin red dashed line as in MQ5
                 showlegend=True
             ),
             row=2, col=1
         )
     
-    # Add MA Line (yellow) - check both possible cases
+    # Add MA Line (thin light blue line) - as per MQ5
     ma_line_col = None
     if 'ma_line' in display_df.columns:
         ma_line_col = 'ma_line'
@@ -363,7 +307,7 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                 y=display_df[ma_line_col],
                 mode='lines',
                 name='MA Line',
-                line=dict(color='yellow', width=2),
+                line=dict(color='lightblue', width=1),  # Thin light blue line as in MQ5
                 showlegend=True
             ),
             row=2, col=1
@@ -1923,7 +1867,50 @@ def plot_dual_chart_fastest(
         )
     
     # Add buy/sell signals if available
-    if 'direction' in display_df.columns:
+    if '_signal' in display_df.columns:
+        # Ensure boolean masks are aligned with DataFrame index
+        buy_mask = (display_df['_signal'] == 1)  # BUY signal
+        buy_mask = buy_mask.reindex(display_df.index, fill_value=False)
+        buy_signals = display_df[buy_mask]
+        sell_mask = (display_df['_signal'] == 2)  # SELL signal
+        sell_mask = sell_mask.reindex(display_df.index, fill_value=False)
+        sell_signals = display_df[sell_mask]
+        if not buy_signals.empty:
+            fig.add_trace(
+                go.Scatter(
+                    x=buy_signals.index,
+                    y=buy_signals['low'] * 0.995,  # Position below the low
+                    mode='markers',
+                    name='Buy Signal',
+                    marker=dict(
+                        symbol='triangle-up',
+                        size=10,
+                        color='#27ae60',
+                        line=dict(color='#229954', width=1.5)
+                    ),
+                    showlegend=True
+                ),
+                row=1, col=1
+            )
+        if not sell_signals.empty:
+            fig.add_trace(
+                go.Scatter(
+                    x=sell_signals.index,
+                    y=sell_signals['high'] * 1.005,  # Position above the high
+                    mode='markers',
+                    name='Sell Signal',
+                    marker=dict(
+                        symbol='triangle-down',
+                        size=10,
+                        color='#c0392b',
+                        line=dict(color='#a93226', width=1.5)
+                    ),
+                    showlegend=True
+                ),
+                row=1, col=1
+            )
+    # Fallback to direction if _signal not available
+    elif 'direction' in display_df.columns:
         # Ensure boolean masks are aligned with DataFrame index
         buy_mask = (display_df['direction'] == 1)
         buy_mask = buy_mask.reindex(display_df.index, fill_value=False)
