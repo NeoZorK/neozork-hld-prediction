@@ -778,6 +778,50 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Period too short may give unreliable results',
                 'ADX requires only one parameter: period'
             ]
+        },
+        'wave': {
+            'name': 'WAVE (Wave Momentum Indicator)',
+            'description': 'Wave is a sophisticated trend-following indicator that combines multiple momentum calculations to generate strong trading signals based on open price movements. It utilizes a dual-wave system with configurable trading rules and global signal filtering.',
+            'format': 'wave:339,10,2,fast,22,11,4,fast,prime,22,open',
+            'parameters': [
+                ('long1', 'int','Wave Long 1 Period', '339'),
+                ('fast1', 'int', 'Wave Fast 1 Period', '10'),
+                ('trend1', 'int', 'Wave trend 1 Period', '2'),
+                ('tr1', 'ENUM_MOM_TR', 'Wave First Trading Rule', 'Fast'),
+                ('long2', 'int', 'Wave Long 2 Period', '22'),
+                ('fast2', 'int', 'Wave Fast 2 Period', '11'),
+                ('trend2', 'int', 'Wave trend 2 Period', '4'),
+                ('tr2', 'ENUM_MOM_TR', 'Wave Second Trading Rule', 'Fast'),
+                ('global_tr', 'ENUM_GLOBAL_TR', 'Wave Global Trading Rule', 'Prime'),
+                ('sma_period', 'int', 'Wave SMA Period', '22')
+            ],
+            'examples': [
+                ('wave:339,10,2,fast,22,11,4,fast,prime,22,open', 'Wave with 339-period window'),
+                ('wave:33,10,2,fast,22,11,4,fast,reverse,22,open', 'Reverse Wave with 33-period window')
+            ],
+            'tips': [
+                'Start with Default Settings: Begin with the default parameters (339/10/2 and 22/11/4) before customization',
+                'Test on Multiple Timeframes: Validate settings across different timeframes to ensure consistency',
+                'Use Walk-Forward Analysis: Test parameters on out-of-sample data to avoid over-optimization',
+                'Balance Sensitivity: Adjust fast and trend parameters to balance signal frequency vs. quality',
+                'Trending Markets: Use Strong Trend or Better Trend rules for optimal performance',
+                'Ranging Markets: Consider Weak Trend or Zone rules for counter-trend opportunities',
+                'Volatile Markets: Increase long periods to reduce noise and false signals',
+                'Low Volatility: Decrease fast periods to capture smaller price movements',
+                'Wait for Confirmation: Don`t trade on single wave signals; wait for both waves to align',
+                'Check Zone Position: Verify signal direction matches the current zone (positive/negative)',
+                'Monitor Color Changes: Pay attention to wave line color changes for trend shifts',
+                'Use SMA Confirmation: Confirm signals with the yellow SMA line direction',
+                'Set Stop Losses: Always use stop losses as signals can lag in fast-moving markets',
+                'Position Sizing: Reduce position size during parameter testing or uncertain market conditions',
+                'Avoid Overtrading: Dont force trades when signals are unclear or conflicting',
+                'Monitor Performance: Track win rate and drawdown to assess parameter effectiveness'
+            ],
+            'common_errors': [
+                'Insufficient Historical Data: Not having enough data for proper calculation',
+                'Buffer Overflow: Using too many indicators simultaneously',
+                'Calculation Delays: Not accounting for calculation time in fast markets'
+            ]
         }
     }
     
