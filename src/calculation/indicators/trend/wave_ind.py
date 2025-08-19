@@ -44,6 +44,19 @@ from src.common.constants import BUY,SELL,NOTRADE
 
 """Trading Rules for Wave Momentum"""
 class ENUM_MOM_TR(Enum):
+    """Trading Rules for Wave Momentum
+
+    TR_Fast: Basic momentum comparison
+    TR_Zone: Simple zone-based signals
+    TR_StrongTrend: Strong trend confirmation
+    TR_WeakTrend: Weak trend signals
+    TR_FastZoneReverse: Reverse signals in zones
+    TR_BetterTrend: Enhanced trend signals avoiding false signals by comparing with previous values
+    TR_BetterFast: Improved fast trading
+    TR_Rost: Reverse momentum signals
+    TR_TrendRost: Trend-based reverse signals
+    TR_BetterTrendRost: Enhanced trend reverse signals
+    """
     TR_Fast = "Fast"
     TR_Zone = "Zone Plus/Minus"
     TR_StrongTrend = "Strong Trend"
@@ -153,21 +166,18 @@ def calculate_wave(price_series: pd.Series, wave_input_parameters: WaveParameter
 
 
 
+# 1
 def calculate_ecore(div_long: float, price: pd.Series) -> pd.Series:
     """
     Calculates ECORE values based on price series and divisor.
 
     Args:
-        div (float): Divisor value for ECORE calculation
+        div_long (float): Divisor value for ECORE calculation
         price (pd.Series): Price series data
 
     Returns:
         pd.Series: Calculated ECORE values
     """
-    if not isinstance(price, pd.Series):
-        raise ValueError("price must be pandas Series")
-    if not isinstance(div_long, float):
-        raise ValueError("div must be float")
 
     # Initialize ECORE series with zeros
     ecore = pd.Series(0.0, index=price.index)
@@ -182,7 +192,7 @@ def calculate_ecore(div_long: float, price: pd.Series) -> pd.Series:
 
     return ecore
 
-
+# 2
 def calc_draw_lines(div_fast: float, div_dir: float, ecore: pd.Series) -> tuple[pd.Series, pd.Series]:
     """
     Calculates and returns two time series: 'wave' and 'fastline', representing smoothed versions
@@ -205,7 +215,147 @@ def calc_draw_lines(div_fast: float, div_dir: float, ecore: pd.Series) -> tuple[
 
     return wave, fastline
 
+# 3
+def tr_switch(tr_rule: ENUM_MOM_TR, wave: pd.Series, fastline: pd.Series,
+              prev_signal: float, prev_wave: float) -> pd.Series:
+    """
+    Applies trading rules to determine buy/sell signals based on Wave indicator values.
 
+    Args:
+        tr_rule: Trading rule to apply
+        wave: Wave indicator values
+        fastline: Fast line indicator values
+        prev_signal: Previous trading signal
+        prev_wave: Previous wave value
+
+    Returns:
+        colors: Series to store signal colors/values 
+    """
+
+    #
+    colors = pd.Series(NOTRADE, index=wave.index)
+
+    if len(wave) != len(fastline):
+        raise ValueError("wave and fastline must have same length")
+
+    for index in range(1, len(wave)):
+        if tr_rule == ENUM_MOM_TR.TR_Zone:
+            colors.iloc[index] = BUY if wave.iloc[index] > 0 else SELL
+
+        elif tr_rule == ENUM_MOM_TR.TR_Fast:
+            colors.iloc[index] = BUY if wave.iloc[index] > fastline.iloc[index] else SELL
+
+        elif tr_rule == ENUM_MOM_TR.TR_StrongTrend:
+            if wave.iloc[index] > 0:
+                # PlusZone
+                if wave.iloc[index] > fastline.iloc[index]:
+                    colors.iloc[index] = BUY
+                else:
+                    colors.iloc[index] = NOTRADE
+            else:
+                # MinusZone 
+                if wave.iloc[index] < fastline.iloc[index]:
+                    colors.iloc[index] = SELL
+                else:
+                    colors.iloc[index] = NOTRADE
+
+        elif tr_rule == ENUM_MOM_TR.TR_WeakTrend:
+            if wave.iloc[index] > 0:
+                # PlusZone
+                if wave.iloc[index] < fastline.iloc[index]:
+                    colors.iloc[index] = BUY
+                else:
+                    colors.iloc[index] = NOTRADE
+            else:
+                # MinusZone
+                if wave.iloc[index] > fastline.iloc[index]:
+                    colors.iloc[index] = SELL
+                else:
+                    colors.iloc[index] = NOTRADE
+
+        elif tr_rule == ENUM_MOM_TR.TR_FastZoneReverse:
+            if wave.iloc[index] > 0:
+                # PlusZone
+                if wave.iloc[index] < fastline.iloc[index]:
+                    colors.iloc[index] = SELL
+                else:
+                    colors.iloc[index] = NOTRADE
+            else:
+                # MinusZone
+                if wave.iloc[index] > fastline.iloc[index]:
+                    colors.iloc[index] = BUY
+                else:
+                    colors.iloc[index] = NOTRADE
+
+        elif tr_rule == ENUM_MOM_TR.TR_BetterTrend:
+            if (wave.iloc[index - 1] < 0) and (wave.iloc[index] > 0):
+                if wave.iloc[index] > fastline.iloc[index]:
+                    prev_signal = BUY
+                    prev_wave = wave.iloc[index]
+                    colors.iloc[index] = BUY
+            elif (wave.iloc[index - 1] > 0) and (wave.iloc[index] < 0):
+                if wave.iloc[index] < fastline.iloc[index]:
+                    prev_signal = SELL
+                    prev_wave = wave.iloc[index]
+                    colors.iloc[index] = SELL
+            elif wave.iloc[index] > fastline.iloc[index]:
+                if prev_signal == BUY and wave.iloc[index] > prev_wave:
+                    colors.iloc[index] = BUY
+                    prev_wave = wave.iloc[index]
+            elif wave.iloc[index] < fastline.iloc[index]:
+                if prev_signal == SELL and wave.iloc[index] < prev_wave:
+                    colors.iloc[index] = SELL
+                    prev_wave = wave.iloc[index]
+            else:
+                colors.iloc[index] = NOTRADE
+
+        elif tr_rule == ENUM_MOM_TR.TR_BetterFast:
+            # First signals in positive/negative zones
+            if (wave.iloc[index - 1] < 0) and (wave.iloc[index] > 0):
+                if wave.iloc[index] > fastline.iloc[index]:
+                    prev_signal = BUY
+                    prev_wave = wave.iloc[index]
+                    colors.iloc[index] = BUY
+                    continue
+            elif (wave.iloc[index - 1] > 0) and (wave.iloc[index] < 0):
+                if wave.iloc[index] < fastline.iloc[index]:
+                    prev_signal = SELL
+                    prev_wave = wave.iloc[index]
+                    colors.iloc[index] = SELL
+                    continue
+
+            # Second signals in same zone
+            if wave.iloc[index] > fastline.iloc[index]:
+                if prev_signal == BUY:
+                    if wave.iloc[index] > prev_wave:
+                        colors.iloc[index] = BUY
+                        prev_wave = wave.iloc[index]
+                    else:
+                        colors.iloc[index] = SELL
+                    continue
+
+            if wave.iloc[index] < fastline.iloc[index]:
+                if prev_signal == SELL:
+                    if wave.iloc[index] < prev_wave:
+                        colors.iloc[index] = SELL
+                        prev_wave = wave.iloc[index]
+                    else:
+                        colors.iloc[index] = BUY
+                    continue
+
+            # Reverse signals
+            if (wave.iloc[index] < 0) and (wave.iloc[index] > fastline.iloc[index]):
+                colors.iloc[index] = BUY
+                continue
+
+            if (wave.iloc[index] > 0) and (wave.iloc[index] < fastline.iloc[index]):
+                colors.iloc[index] = SELL
+                continue
+
+    return colors
+
+
+# 0
 def apply_rule_wave(df: pd.DataFrame, wave_inputs: WaveParameters, price_type: PriceType = PriceType.OPEN):
     """
     Applies Wave rule logic to calculate trading signals and price levels.
@@ -239,6 +389,16 @@ def apply_rule_wave(df: pd.DataFrame, wave_inputs: WaveParameters, price_type: P
     # Calculate Draw Lines 1 and 2
     df['wave1'], df['fastline1'] = calc_draw_lines(wave_inputs.div_fast1, wave_inputs.div_direction1, df['ecore1'])
     df['wave2'], df['fastline2'] = calc_draw_lines(wave_inputs.div_fast2, wave_inputs.div_direction2, df['ecore2'])
+
+    # Check length of wave and fastline series
+    if len(df['wave1']) != len(df['fastline1']):
+        raise ValueError("wave and fastline must have same length")
+    if len(df['wave2']) != len(df['fastline2']):
+        raise ValueError("wave and fastline must have same length")
+
+    # Switch Trading Rules
+    df['Wave1'] = tr_switch(wave_inputs.tr1, df['wave1'], df['fastline1'], NOTRADE, NOTRADE)
+    df['Wave2'] = tr_switch(wave_inputs.tr2, df['wave2'], df['fastline2'], NOTRADE, NOTRADE)
 
     #
 
