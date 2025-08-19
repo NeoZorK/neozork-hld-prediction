@@ -39,7 +39,7 @@ import pandas as pd
 
 from src.calculation.indicators.base_indicator import PriceType
 from src.common import logger
-from src.common.constants import BUY,SELL
+from src.common.constants import BUY,SELL,NOTRADE
 
 
 """Trading Rules for Wave Momentum"""
@@ -96,6 +96,17 @@ class WaveParameters:
     global_tr: ENUM_GLOBAL_TR = ENUM_GLOBAL_TR.G_TR_PRIME
     sma_period: int = 22
 
+    def __post_init__(self):
+        # Init
+        self.div_long1 = 2.0 / max(self.long1, 1)
+        self.div_fast1 = 2.0 / max(self.fast1, 1)
+        self.div_direction1 = 2.0 / (max(self.trend1, 1) + 1)
+        self.div_long2 = 2.0 / max(self.long2, 1)
+        self.div_fast2 = 2.0 / max(self.fast2, 1)
+        self.div_direction2 = 2.0 / (max(self.trend2, 1) + 1)
+
+
+
 
 def calculate_wave(price_series: pd.Series, wave_input_parameters: WaveParameters ) -> pd.Series:
     """
@@ -112,6 +123,7 @@ def calculate_wave(price_series: pd.Series, wave_input_parameters: WaveParameter
     Raises:
         ValueError: If any numeric parameter is not positive or if trading rules are invalid
     """
+    print(f"div_long1 value: {wave_input_parameters.div_long1}")
     # Validate numeric parameters
     if wave_input_parameters.long1 <= 0:
         raise ValueError("long1 period must be positive")
@@ -134,9 +146,64 @@ def calculate_wave(price_series: pd.Series, wave_input_parameters: WaveParameter
         logger.print_warning(f"Not enough data for Wave calculation. Need at least {max(wave_input_parameters.long1, wave_input_parameters.fast1, wave_input_parameters.trend1, wave_input_parameters.long2, wave_input_parameters.fast2, wave_input_parameters.trend2, wave_input_parameters.sma_period)} points, got {len(price_series)}")
         return pd.Series(index=price_series.index, dtype=float)
 
+
     # Calculate wave
     wave = price_series.rolling(window=wave_input_parameters.long1, min_periods=wave_input_parameters.long1).mean()
     return wave
+
+
+
+def calculate_ecore(div_long: float, price: pd.Series) -> pd.Series:
+    """
+    Calculates ECORE values based on price series and divisor.
+
+    Args:
+        div (float): Divisor value for ECORE calculation
+        price (pd.Series): Price series data
+
+    Returns:
+        pd.Series: Calculated ECORE values
+    """
+    if not isinstance(price, pd.Series):
+        raise ValueError("price must be pandas Series")
+    if not isinstance(div_long, float):
+        raise ValueError("div must be float")
+
+    # Initialize ECORE series with zeros
+    ecore = pd.Series(0.0, index=price.index)
+
+    # Calculate initial diff
+    prev_price = price.shift(1)
+    diff = (price / prev_price - 1) * 100
+
+    # Calculate ECORE recursively
+    for i in range(1, len(price)):
+        ecore.iloc[i] = ecore.iloc[i - 1] + div_long * (diff.iloc[i] - ecore.iloc[i - 1])
+
+    return ecore
+
+
+def calc_draw_lines(div_fast: float, div_dir: float, ecore: pd.Series) -> tuple[pd.Series, pd.Series]:
+    """
+    Calculates and returns two time series: 'wave' and 'fastline', representing smoothed versions
+    of an input energy core series ('ecore'). The calculations are based on two divergence factors,
+    'div_fast' and 'div_dir', which control the smoothing rate for each series respectively. The
+    output is presented as a tuple of pandas Series.
+
+    :param div_fast: A divergence factor controlling the smoothing of the 'wave' series.
+    :param div_dir: A divergence factor controlling the smoothing of the 'fastline' series.
+    :param ecore: A pandas Series representing the input energy core data, with index as time.
+    :return: A tuple of two pandas Series, where the first element is the 'wave' series and the
+        second element is the 'fastline' series.
+    """
+    wave = pd.Series(0.0, index=ecore.index)
+    fastline = pd.Series(0.0, index=ecore.index)
+
+    for i in range(1, len(ecore)):
+        wave.iloc[i] = wave.iloc[i - 1] + div_fast * (ecore.iloc[i] - wave.iloc[i - 1])
+        fastline.iloc[i] = fastline.iloc[i - 1] + div_dir * (wave.iloc[i] - fastline.iloc[i - 1])
+
+    return wave, fastline
 
 
 def apply_rule_wave(df: pd.DataFrame, wave_inputs: WaveParameters, price_type: PriceType = PriceType.OPEN):
@@ -159,6 +226,23 @@ def apply_rule_wave(df: pd.DataFrame, wave_inputs: WaveParameters, price_type: P
     else:
         price_series = df['Close']
         price_name = "Close"
+
+    # Default Signals
+    df['_Signal'] = NOTRADE
+    df['_Direction'] = NOTRADE
+    df['_LastSignal'] = NOTRADE
+
+    # Calculate ECORE 1 and 2
+    df['ecore1'] = calculate_ecore(wave_inputs.div_long1, price_series)
+    df['ecore2'] = calculate_ecore(wave_inputs.div_long2, price_series)
+
+    # Calculate Draw Lines 1 and 2
+    df['wave1'], df['fastline1'] = calc_draw_lines(wave_inputs.div_fast1, wave_inputs.div_direction1, df['ecore1'])
+    df['wave2'], df['fastline2'] = calc_draw_lines(wave_inputs.div_fast2, wave_inputs.div_direction2, df['ecore2'])
+
+    #
+
+
 
     # Calculate Wave
     df['Wave'] = calculate_wave(price_series, wave_inputs)
