@@ -761,8 +761,37 @@ def plot_dual_chart_results(
     if not is_dual_chart_rule(rule):
         raise ValueError(f"Invalid rule for dual chart: {rule}")
     
-    # Calculate additional indicator
-    df_with_indicator = calculate_additional_indicator(df, rule)
+    # Check if DataFrame already has calculated indicators
+    indicator_name = rule.split(':', 1)[0].lower()
+    has_indicators = False
+    
+    # Debug: print input DataFrame columns
+    from src.common.logger import logger
+    logger.print_info(f"[dual_chart_plot] Input DataFrame columns: {list(df.columns)}")
+    logger.print_info(f"[dual_chart_plot] Checking for indicator: {indicator_name}")
+    
+    # Check for various indicator columns based on indicator type
+    if indicator_name == 'wave':
+        wave_cols = ['wave1', 'wave2', 'Wave1', 'Wave2', '_Plot_Wave', '_Plot_FastLine', 'fastline1', 'fastline2', 'MA_Line']
+        found_cols = [col for col in wave_cols if col in df.columns]
+        has_indicators = len(found_cols) > 0
+        logger.print_info(f"[dual_chart_plot] Found Wave columns: {found_cols}")
+    elif indicator_name == 'rsi':
+        has_indicators = 'rsi' in df.columns or 'RSI' in df.columns
+    elif indicator_name == 'macd':
+        has_indicators = any(col in df.columns for col in ['macd', 'MACD', 'macd_signal', 'MACD_Signal'])
+    # Add more indicator checks as needed...
+    
+    logger.print_info(f"[dual_chart_plot] Has indicators: {has_indicators}")
+    
+    # Use existing DataFrame if indicators are already calculated, otherwise calculate them
+    if has_indicators:
+        df_with_indicator = df.copy()
+        logger.print_info(f"[dual_chart_plot] Using existing DataFrame with {len(df_with_indicator.columns)} columns")
+    else:
+        logger.print_info(f"[dual_chart_plot] Calculating indicators anew...")
+        df_with_indicator = calculate_additional_indicator(df, rule)
+        logger.print_info(f"[dual_chart_plot] After calculation: {len(df_with_indicator.columns)} columns")
     
     # Create layout configuration
     layout = create_dual_chart_layout(mode, rule)

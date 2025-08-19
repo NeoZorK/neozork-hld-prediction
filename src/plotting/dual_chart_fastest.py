@@ -253,15 +253,118 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         fig (go.Figure): Plotly figure object
         display_df (pd.DataFrame): DataFrame with Wave data
     """
-    if 'wave' in display_df.columns:
+    # Add Wave1 line (red)
+    if 'wave1' in display_df.columns:
         fig.add_trace(
             go.Scatter(
                 x=display_df.index,
-                y=display_df['wave'],
+                y=display_df['wave1'],
                 mode='lines',
-                name='Wave',
-                line=dict(color='red', width=3),
-                showlegend=False
+                name='Wave 1',
+                line=dict(color='red', width=2),
+                showlegend=True
+            ),
+            row=2, col=1
+        )
+    
+    # Add Wave2 line (blue)
+    if 'wave2' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['wave2'],
+                mode='lines',
+                name='Wave 2',
+                line=dict(color='blue', width=2),
+                showlegend=True
+            ),
+            row=2, col=1
+        )
+    
+    # Add FastLine1 (orange, dashed)
+    if 'fastline1' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['fastline1'],
+                mode='lines',
+                name='FastLine 1',
+                line=dict(color='orange', width=1, dash='dash'),
+                showlegend=True
+            ),
+            row=2, col=1
+        )
+    
+    # Add FastLine2 (cyan, dashed)
+    if 'fastline2' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['fastline2'],
+                mode='lines',
+                name='FastLine 2',
+                line=dict(color='cyan', width=1, dash='dash'),
+                showlegend=True
+            ),
+            row=2, col=1
+        )
+    
+    # Add Plot Wave (main indicator, green) - check both possible cases
+    plot_wave_col = None
+    if '_plot_wave' in display_df.columns:
+        plot_wave_col = '_plot_wave'
+    elif '_Plot_Wave' in display_df.columns:
+        plot_wave_col = '_Plot_Wave'
+    
+    if plot_wave_col:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df[plot_wave_col],
+                mode='lines',
+                name='Plot Wave',
+                line=dict(color='green', width=3),
+                showlegend=True
+            ),
+            row=2, col=1
+        )
+    
+    # Add Plot FastLine (purple) - check both possible cases
+    plot_fastline_col = None
+    if '_plot_fastline' in display_df.columns:
+        plot_fastline_col = '_plot_fastline'
+    elif '_Plot_FastLine' in display_df.columns:
+        plot_fastline_col = '_Plot_FastLine'
+    
+    if plot_fastline_col:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df[plot_fastline_col],
+                mode='lines',
+                name='Plot FastLine',
+                line=dict(color='purple', width=2),
+                showlegend=True
+            ),
+            row=2, col=1
+        )
+    
+    # Add MA Line (yellow) - check both possible cases
+    ma_line_col = None
+    if 'ma_line' in display_df.columns:
+        ma_line_col = 'ma_line'
+    elif 'MA_Line' in display_df.columns:
+        ma_line_col = 'MA_Line'
+    
+    if ma_line_col:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df[ma_line_col],
+                mode='lines',
+                name='MA Line',
+                line=dict(color='yellow', width=2),
+                showlegend=True
             ),
             row=2, col=1
         )
