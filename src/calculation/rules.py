@@ -20,6 +20,7 @@ from .indicators.oscillators.rsi_ind_calc import apply_rule_rsi, apply_rule_rsi_
 from .indicators.oscillators.cci_ind import apply_rule_cci
 from .indicators.oscillators.stoch_ind import apply_rule_stochastic
 from .indicators.trend.ema_ind import apply_rule_ema
+from .indicators.trend.sma_ind import apply_rule_sma
 from .indicators.volatility.bb_ind import apply_rule_bollinger_bands
 from .indicators.volatility.atr_ind import apply_rule_atr
 from .indicators.volume.vwap_ind import apply_rule_vwap
@@ -170,6 +171,7 @@ RULE_DISPATCHER = {
     TradingRule.CCI: apply_rule_cci,
     TradingRule.Stochastic: apply_rule_stochastic,
     TradingRule.EMA: apply_rule_ema,
+    TradingRule.SMA: apply_rule_sma,
     TradingRule.Bollinger_Bands: apply_rule_bollinger_bands,
     TradingRule.ATR: apply_rule_atr,
     TradingRule.VWAP: apply_rule_vwap,
@@ -257,6 +259,10 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         # Extract EMA-specific parameters
         ema_period = kwargs.get('ema_period', 20)
         return rule_func(df, point=point, ema_period=ema_period, price_type=price_type_enum)
+    elif selected_rule == TradingRule.SMA:
+        # Extract SMA-specific parameters
+        sma_period = kwargs.get('sma_period', 20)
+        return rule_func(df, point=point, sma_period=sma_period, price_type=price_type_enum)
     elif selected_rule == TradingRule.Bollinger_Bands:
         # Extract Bollinger Bands-specific parameters
         bb_period = kwargs.get('bb_period', 20)

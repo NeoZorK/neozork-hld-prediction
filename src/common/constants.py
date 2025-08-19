@@ -32,31 +32,32 @@ class TradingRule(Enum):
     CCI = 9  # Commodity Channel Index
     Stochastic = 10  # Stochastic Oscillator
     EMA = 11  # Exponential Moving Average
-    Bollinger_Bands = 12  # Bollinger Bands
-    ATR = 13  # Average True Range
-    VWAP = 14  # Volume Weighted Average Price
-    Pivot_Points = 15  # Pivot Points
+    SMA = 12  # Simple Moving Average
+    Bollinger_Bands = 13  # Bollinger Bands
+    ATR = 14  # Average True Range
+    VWAP = 15  # Volume Weighted Average Price
+    Pivot_Points = 16  # Pivot Points
     # Momentum indicators
-    MACD = 16  # Moving Average Convergence Divergence
-    StochOscillator = 17  # Stochastic Oscillator (momentum)
+    MACD = 17  # Moving Average Convergence Divergence
+    StochOscillator = 18  # Stochastic Oscillator (momentum)
     # Predictive indicators
-    HMA = 18  # Hull Moving Average
-    TSForecast = 19  # Time Series Forecast
+    HMA = 19  # Hull Moving Average
+    TSForecast = 20  # Time Series Forecast
     # Probability indicators
-    MonteCarlo = 20  # Monte Carlo Simulation
-    Kelly = 21  # Kelly Criterion
+    MonteCarlo = 21  # Monte Carlo Simulation
+    Kelly = 22  # Kelly Criterion
     # Sentiment indicators
-    FearGreed = 22  # Fear & Greed Index
-    COT = 23  # Commitment of Traders
-    PutCallRatio = 24  # Put/Call Ratio
+    FearGreed = 23  # Fear & Greed Index
+    COT = 24  # Commitment of Traders
+    PutCallRatio = 25  # Put/Call Ratio
     # Support/Resistance indicators
-    Donchain = 25  # Donchian Channel
-    FiboRetr = 26  # Fibonacci Retracement
+    Donchain = 26  # Donchian Channel
+    FiboRetr = 27  # Fibonacci Retracement
     # Volume indicators
-    OBV = 27  # On Balance Volume
+    OBV = 28  # On Balance Volume
     # Volatility indicators
-    StDev = 28  # Standard Deviation
+    StDev = 29  # Standard Deviation
     # Trend indicators
-    ADX = 29  # Average Directional Index
-    SAR = 30  # Parabolic SAR
-    SuperTrend = 31  # SuperTrend
+    ADX = 30  # Average Directional Index
+    SAR = 31  # Parabolic SAR
+    SuperTrend = 32  # SuperTrend

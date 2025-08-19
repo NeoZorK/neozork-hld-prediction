@@ -155,6 +155,18 @@ def _plot_ema_indicator(indicator_fig, source, display_df):
         )
 
 
+def _plot_sma_indicator(indicator_fig, source, display_df):
+    """Plot SMA indicator on the given figure."""
+    if 'sma' in display_df.columns:
+        indicator_fig.line(
+            'index', 'sma',
+            source=source,
+            line_color='blue',
+            line_width=3,
+            legend_label='SMA'
+        )
+
+
 def _plot_bb_indicator(indicator_fig, source, display_df):
     """Plot Bollinger Bands indicator on the given figure."""
     # Ensure BB data is available in the source for hover
@@ -1294,6 +1306,7 @@ def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
         'rsi': _plot_rsi_indicator,
         'macd': _plot_macd_indicator,
         'ema': _plot_ema_indicator,
+        'sma': _plot_sma_indicator,
         'bb': _plot_bb_indicator,
         'atr': _plot_atr_indicator,
         'cci': _plot_cci_indicator,
