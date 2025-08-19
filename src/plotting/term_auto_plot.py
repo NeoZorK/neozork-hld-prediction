@@ -16,7 +16,7 @@ try:
     from common import logger
 except ImportError:
     # Fallback to relative imports when run as module
-    from ..common import logger
+    from src.common import logger
 
 
 def auto_plot_from_dataframe(df: pd.DataFrame, title: str = "Auto Terminal Plot", style: str = "matrix") -> None:

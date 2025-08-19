@@ -15,7 +15,7 @@ import matplotlib.dates as mdates
 from matplotlib.patches import Rectangle
 from typing import Dict, Any, Optional
 
-from ..common import logger
+from src.common import logger
 
 
 def plot_dual_chart_mpl(
@@ -773,7 +773,7 @@ def plot_dual_chart_mpl_display(
         Any: Plot object
     """
     # Calculate additional indicator first
-    from ..plotting.dual_chart_plot import calculate_additional_indicator
+    from src.plotting.dual_chart_plot import calculate_additional_indicator
     df_with_indicator = calculate_additional_indicator(df, rule)
     
     return plot_dual_chart_mpl(df_with_indicator, rule, title, None, width, height, layout, **kwargs) 

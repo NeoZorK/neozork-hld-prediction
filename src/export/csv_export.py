@@ -9,7 +9,7 @@ All comments are in English.
 import os
 import pandas as pd
 from pathlib import Path
-from ..common import logger
+from src.common import logger
 
 
 def export_indicator_to_csv(result_df, data_info, selected_rule, args):

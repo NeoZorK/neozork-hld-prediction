@@ -5,7 +5,7 @@ General utility functions, including point size estimation using yfinance info.
 All comments are in English.
 """
 import yfinance as yf
-from ..common import logger
+from src.common import logger
 
 def determine_point_size(ticker: str) -> float | None:
     """

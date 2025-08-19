@@ -17,12 +17,12 @@ import os
 # Use absolute imports when possible, fallback to relative
 try:
     from common import logger
-    from common.constants import TradingRule, BUY, SELL, NOTRADE
+    from src.common.constants import TradingRule, BUY, SELL, NOTRADE
 except ImportError:
     try:
         # Fallback to relative imports when run as module
-        from ..common import logger
-        from ..common.constants import TradingRule, BUY, SELL, NOTRADE
+        from src.common import logger
+        from src.common.constants import TradingRule, BUY, SELL, NOTRADE
     except ImportError:
         # Final fallback for test environments
         import sys

@@ -13,11 +13,11 @@ import matplotlib.dates as mdates
 from datetime import datetime
 from typing import Optional, Tuple
 
-from ...calculation.indicators.oscillators.rsi_ind_calc import (
+from src.calculation.indicators.oscillators.rsi_ind_calc import (
     calculate_rsi, calculate_rsi_signals, PriceType
 )
-from ...common import logger
-from ...common.constants import BUY, SELL, NOTRADE
+from src.common import logger
+from src.common.constants import BUY, SELL, NOTRADE
 
 
 def parse_rsi_rule(rule_str: str) -> Tuple[int, float, float, PriceType]:
