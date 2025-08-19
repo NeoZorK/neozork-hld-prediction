@@ -89,9 +89,18 @@ def test_wave_indicator():
             ma_values = result['MA_Line'].dropna()
             print(f"📏 MA Line values range: {ma_values.min():.6f} to {ma_values.max():.6f}")
         
+        # Check color values for Wave line
+        if '_Plot_Color' in result.columns:
+            color_values = result['_Plot_Color'].dropna()
+            unique_colors = color_values.unique()
+            print(f"🎨 Wave line colors: {unique_colors}")
+            print(f"   - Black (NOTRADE=0): {(color_values == 0).sum()} points")
+            print(f"   - Red (BUY=1): {(color_values == 1).sum()} points")
+            print(f"   - Blue (SELL=2): {(color_values == 2).sum()} points")
+        
         # Show sample of results
         print("\n📋 Sample results (last 5 rows):")
-        sample_cols = ['Open', '_Signal', '_Direction', '_Plot_Wave', '_Plot_FastLine', 'MA_Line']
+        sample_cols = ['Open', '_Signal', '_Direction', '_Plot_Wave', '_Plot_FastLine', 'MA_Line', '_Plot_Color']
         available_cols = [col for col in sample_cols if col in result.columns]
         print(result[available_cols].tail())
         
@@ -116,6 +125,8 @@ def main():
         print("   - Fixed signal generation logic (only when _Direction changes)")
         print("   - Corrected SMA calculation source (_Plot_FastLine)")
         print("   - Fixed signal display on upper chart (_Signal column)")
+        print("   - 🆕 Wave line now shows correct colors: Black (NOTRADE=0), Red (BUY=1), Blue (SELL=2)")
+        print("   - 🆕 Signals only display when _Signal == 1 (BUY) or _Signal == 2 (SELL)")
     else:
         print("\n❌ Wave indicator test failed!")
         return 1
