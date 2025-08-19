@@ -139,3 +139,16 @@ def calculate_wave(price_series: pd.Series, wave_input_parameters: WaveParameter
     return wave
 
 
+def apply_rule_wave(df: pd.DataFrame, wave_inputs: WaveParameters, price_type: PriceType = PriceType.OPEN):
+    """
+    Applies Wave rule logic to calculate trading signals and price levels.
+
+    Args:
+        df (pd.DataFrame): Input DataFrame with OHLCV data
+        wave_inputs (WaveParameters): Wave indicator configuration parameters
+        price_type (PriceType): Price type to use for calculation (OPEN or CLOSE)
+
+    Returns:
+          pd.DataFrame: DataFrame with Wave calculations and signals
+    """
+    return df

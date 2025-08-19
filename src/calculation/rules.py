@@ -21,6 +21,7 @@ from .indicators.oscillators.cci_ind import apply_rule_cci
 from .indicators.oscillators.stoch_ind import apply_rule_stochastic
 from .indicators.trend.ema_ind import apply_rule_ema
 from .indicators.trend.sma_ind import apply_rule_sma
+from .indicators.trend.wave_ind import apply_rule_wave
 from .indicators.volatility.bb_ind import apply_rule_bollinger_bands
 from .indicators.volatility.atr_ind import apply_rule_atr
 from .indicators.volume.vwap_ind import apply_rule_vwap
@@ -172,6 +173,7 @@ RULE_DISPATCHER = {
     TradingRule.Stochastic: apply_rule_stochastic,
     TradingRule.EMA: apply_rule_ema,
     TradingRule.SMA: apply_rule_sma,
+    TradingRule.Wave: apply_rule_wave,
     TradingRule.Bollinger_Bands: apply_rule_bollinger_bands,
     TradingRule.ATR: apply_rule_atr,
     TradingRule.VWAP: apply_rule_vwap,
@@ -263,6 +265,19 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         # Extract SMA-specific parameters
         sma_period = kwargs.get('sma_period', 20)
         return rule_func(df, point=point, sma_period=sma_period, price_type=price_type_enum)
+    elif selected_rule == TradingRule.Wave:
+        # Extract WAVE-specific parameters
+        wave_long1 = kwargs.get('long1', 339)
+        wave_fast1 = kwargs.get('fast1', 10)
+        wave_trend1 = kwargs.get('trend1', 2)
+        wave_tr1 = kwargs.get('tr1','fast')
+        wave_long2 = kwargs.get('long2', 339)
+        wave_fast2 = kwargs.get('fast2', 10)
+        wave_trend2 = kwargs.get('trend2', 2)
+        wave_tr2 = kwargs.get('tr2','fast')
+        wave_global_tr = kwargs.get('global_tr','prime')
+        wave_sma_period = kwargs.get('sma_period', 22)
+        return rule_func(df, point=point, wave_long1=wave_long1, wave_fast1=wave_fast1,wave_trend1=wave_trend1,wave_tr1=wave_tr1,wave_long2=wave_long2, wave_fast2=wave_fast2,wave_trend2=wave_trend2,wave_tr2=wave_tr2, wave_global_tr=wave_global_tr,wave_sma_period=wave_sma_period, price_type=price_type_enum)
     elif selected_rule == TradingRule.Bollinger_Bands:
         # Extract Bollinger Bands-specific parameters
         bb_period = kwargs.get('bb_period', 20)
