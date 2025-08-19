@@ -61,3 +61,4 @@ class TradingRule(Enum):
     ADX = 30  # Average Directional Index
     SAR = 31  # Parabolic SAR
     SuperTrend = 32  # SuperTrend
+    Wave = 33 # Wave

@@ -34,3 +34,7 @@ Cons-:
 -Market Dependency: Best in trending markets, weaker in ranging conditions
 This analysis provides traders with a balanced view of the indicator's strengths and limitations, helping them make informed decisions about whether Wave2 fits their trading style and market conditions.
 """
+import pandas as pd
+from ....common import logger
+from ....common import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
+from ..base_indicator import BaseIndicator, PriceType
