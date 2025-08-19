@@ -277,7 +277,28 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         wave_tr2 = kwargs.get('tr2','fast')
         wave_global_tr = kwargs.get('global_tr','prime')
         wave_sma_period = kwargs.get('sma_period', 22)
-        return rule_func(df, point=point, wave_long1=wave_long1, wave_fast1=wave_fast1,wave_trend1=wave_trend1,wave_tr1=wave_tr1,wave_long2=wave_long2, wave_fast2=wave_fast2,wave_trend2=wave_trend2,wave_tr2=wave_tr2, wave_global_tr=wave_global_tr,wave_sma_period=wave_sma_period, price_type=price_type_enum)
+        # Create WaveParameters object
+        from .indicators.trend.wave_ind import WaveParameters, ENUM_MOM_TR, ENUM_GLOBAL_TR
+        
+        # Convert string parameters to enum values
+        tr1_enum = wave_tr1 if isinstance(wave_tr1, ENUM_MOM_TR) else ENUM_MOM_TR.TR_Fast
+        tr2_enum = wave_tr2 if isinstance(wave_tr2, ENUM_MOM_TR) else ENUM_MOM_TR.TR_Fast
+        global_tr_enum = wave_global_tr if isinstance(wave_global_tr, ENUM_GLOBAL_TR) else ENUM_GLOBAL_TR.G_TR_PRIME
+        
+        wave_params = WaveParameters(
+            long1=wave_long1,
+            fast1=wave_fast1,
+            trend1=wave_trend1,
+            tr1=tr1_enum,
+            long2=wave_long2,
+            fast2=wave_fast2,
+            trend2=wave_trend2,
+            tr2=tr2_enum,
+            global_tr=global_tr_enum,
+            sma_period=wave_sma_period
+        )
+        
+        return rule_func(df, wave_params, price_type=price_type_enum)
     elif selected_rule == TradingRule.Bollinger_Bands:
         # Extract Bollinger Bands-specific parameters
         bb_period = kwargs.get('bb_period', 20)
