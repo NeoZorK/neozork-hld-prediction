@@ -128,10 +128,10 @@ def calculate_wave(price_series: pd.Series, wave_input_parameters: WaveParameter
     if wave_input_parameters.sma_period <= 0:
         raise ValueError("sma_period must be positive")
 
-    # Validate trading rules
-    if not isinstance(wave_input_parameters.tr1, ENUM_MOM_TR):
-        raise ValueError("tr1 must be a valid ENUM_MOM_TR value")
-    if not isinstance(wave_input_parameters.tr2, ENUM_MOM_TR):
-        raise ValueError("tr2 must be a valid ENUM_MOM_TR value")
-    if not isinstance(wave_input_parameters.global_tr, ENUM_GLOBAL_TR):
-        raise ValueError("global_tr must be a valid ENUM_GLOBAL_TR value")
+    
+    # Check length of price series
+    if len(price_series) < max(wave_input_parameters.long1, wave_input_parameters.fast1, wave_input_parameters.trend1, wave_input_parameters.long2, wave_input_parameters.fast2, wave_input_parameters.trend2, wave_input_parameters.sma_period):
+        logger.print_warning(f"Not enough data for Wave calculation. Need at least {max(wave_input_parameters.long1, wave_input_parameters.fast1, wave_input_parameters.trend1, wave_input_parameters.long2, wave_input_parameters.fast2, wave_input_parameters.trend2, wave_input_parameters.sma_period)} points, got {len(price_series)}")
+        return pd.Series(index=price_series.index, dtype=float)
+
+    #
