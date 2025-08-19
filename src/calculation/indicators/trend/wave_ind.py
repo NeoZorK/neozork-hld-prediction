@@ -234,6 +234,10 @@ def tr_switch(tr_rule: ENUM_MOM_TR, wave: pd.Series, fastline: pd.Series,
 
     #
     colors = pd.Series(NOTRADE, index=wave.index)
+    
+    # Initialize previous values for tracking
+    current_prev_signal = prev_signal
+    current_prev_wave = prev_wave
 
     if len(wave) != len(fastline):
         raise ValueError("wave and fastline must have same length")
@@ -290,22 +294,22 @@ def tr_switch(tr_rule: ENUM_MOM_TR, wave: pd.Series, fastline: pd.Series,
         elif tr_rule == ENUM_MOM_TR.TR_BetterTrend:
             if (wave.iloc[index - 1] < 0) and (wave.iloc[index] > 0):
                 if wave.iloc[index] > fastline.iloc[index]:
-                    prev_signal = BUY
-                    prev_wave = wave.iloc[index]
+                    current_prev_signal = BUY
+                    current_prev_wave = wave.iloc[index]
                     colors.loc[colors.index[index]] = BUY
             elif (wave.iloc[index - 1] > 0) and (wave.iloc[index] < 0):
                 if wave.iloc[index] < fastline.iloc[index]:
-                    prev_signal = SELL
-                    prev_wave = wave.iloc[index]
+                    current_prev_signal = SELL
+                    current_prev_wave = wave.iloc[index]
                     colors.loc[colors.index[index]] = SELL
             elif wave.iloc[index] > fastline.iloc[index]:
-                if prev_signal == BUY and wave.iloc[index] > prev_wave:
+                if current_prev_signal == BUY and wave.iloc[index] > current_prev_wave:
                     colors.loc[colors.index[index]] = BUY
-                    prev_wave = wave.iloc[index]
+                    current_prev_wave = wave.iloc[index]
             elif wave.iloc[index] < fastline.iloc[index]:
-                if prev_signal == SELL and wave.iloc[index] < prev_wave:
+                if current_prev_signal == SELL and wave.iloc[index] < current_prev_wave:
                     colors.loc[colors.index[index]] = SELL
-                    prev_wave = wave.iloc[index]
+                    current_prev_wave = wave.iloc[index]
             else:
                 colors.loc[colors.index[index]] = NOTRADE
 
@@ -313,32 +317,32 @@ def tr_switch(tr_rule: ENUM_MOM_TR, wave: pd.Series, fastline: pd.Series,
             # First signals in positive/negative zones
             if (wave.iloc[index - 1] < 0) and (wave.iloc[index] > 0):
                 if wave.iloc[index] > fastline.iloc[index]:
-                    prev_signal = BUY
-                    prev_wave = wave.iloc[index]
+                    current_prev_signal = BUY
+                    current_prev_wave = wave.iloc[index]
                     colors.loc[colors.index[index]] = BUY
                     continue
             elif (wave.iloc[index - 1] > 0) and (wave.iloc[index] < 0):
                 if wave.iloc[index] < fastline.iloc[index]:
-                    prev_signal = SELL
-                    prev_wave = wave.iloc[index]
+                    current_prev_signal = SELL
+                    current_prev_wave = wave.iloc[index]
                     colors.loc[colors.index[index]] = SELL
                     continue
 
             # Second signals in same zone
             if wave.iloc[index] > fastline.iloc[index]:
-                if prev_signal == BUY:
-                    if wave.iloc[index] > prev_wave:
+                if current_prev_signal == BUY:
+                    if wave.iloc[index] > current_prev_wave:
                         colors.loc[colors.index[index]] = BUY
-                        prev_wave = wave.iloc[index]
+                        current_prev_wave = wave.iloc[index]
                     else:
                         colors.loc[colors.index[index]] = SELL
                     continue
 
             if wave.iloc[index] < fastline.iloc[index]:
-                if prev_signal == SELL:
-                    if wave.iloc[index] < prev_wave:
+                if current_prev_signal == SELL:
+                    if wave.iloc[index] < current_prev_wave:
                         colors.loc[colors.index[index]] = SELL
-                        prev_wave = wave.iloc[index]
+                        current_prev_wave = wave.iloc[index]
                     else:
                         colors.loc[colors.index[index]] = BUY
                     continue
@@ -421,7 +425,7 @@ def sma_calculation(period: int, source_arr: pd.Series) -> pd.Series:
     if period <= 0:
         raise ValueError("Period must be positive")
 
-    # Check if index is valid
+    # Check if we have enough data
     if len(source_arr) < period:
         raise ValueError("Not enough data points")
 
@@ -728,8 +732,8 @@ def apply_rule_wave(df: pd.DataFrame, wave_inputs: WaveParameters, price_type: P
         raise ValueError("wave and fastline must have same length")
 
     # Switch Trading Rules
-    df['Wave1'] = tr_switch(wave_inputs.tr1, df['wave1'], df['fastline1'], NOTRADE, NOTRADE)
-    df['Wave2'] = tr_switch(wave_inputs.tr2, df['wave2'], df['fastline2'], NOTRADE, NOTRADE)
+    df['Wave1'] = tr_switch(wave_inputs.tr1, df['wave1'], df['fastline1'], NOTRADE, 0.0)
+    df['Wave2'] = tr_switch(wave_inputs.tr2, df['wave2'], df['fastline2'], NOTRADE, 0.0)
 
     # Global TR Switch - Combine signals from both wave indicators
     df['_Plot_Color'], df['_Plot_Wave'], df['_Plot_FastLine'] = global_tr_switch(
@@ -737,13 +741,13 @@ def apply_rule_wave(df: pd.DataFrame, wave_inputs: WaveParameters, price_type: P
         df['fastline1'], df['fastline2'], df['Wave1'], df['Wave2']
     )
 
-    # SMA Calculation
+    # SMA Calculation - Use _Plot_FastLine as source (as in MQ5)
     df['MA_Line'] = sma_calculation(wave_inputs.sma_period, df['_Plot_FastLine'])
 
     # Direction
     df['_Direction'] = df['_Plot_Color']
 
-    # Signal
+    # Signal - Only when _Direction changes (as in MQ5)
     for i in range(1, len(df)):
         if df['_Direction'].iloc[i] != df['_Direction'].iloc[i - 1]:
             df.loc[df.index[i], '_Signal'] = df['_Direction'].iloc[i]
