@@ -403,19 +403,19 @@ def global_tr_switch(global_tr: ENUM_GLOBAL_TR, wave1: pd.Series, wave2: pd.Seri
 # 5
 
 
-def sma_calculation(period: int, source_arr: pd.Series) -> float:
+def sma_calculation(period: int, source_arr: pd.Series) -> pd.Series:
     """
-    Calculates Simple Moving Average (SMA) for the given period and index.
+    Calculates Simple Moving Average (SMA) for the given period and source array.
 
     Args:
         period (int): Calculation period for SMA
         source_arr (pd.Series): Source data array
 
     Returns:
-        float: Calculated SMA value for the current index
+        pd.Series: Series with SMA values for each index
 
     Raises:
-        ValueError: If period is not positive or index is invalid
+        ValueError: If period is not positive or not enough data points
     """
     # Check if period is positive
     if period <= 0:
@@ -425,20 +425,22 @@ def sma_calculation(period: int, source_arr: pd.Series) -> float:
     if len(source_arr) < period:
         raise ValueError("Not enough data points")
 
-    #
+    # Create result series with same index
+    result = pd.Series(0.0, index=source_arr.index)
+    
+    # Calculate SMA for each index
     for i in range(len(source_arr)):
-        if i < 0 or i >= len(source_arr):
-            raise ValueError("Invalid index")
-
-        # For initial values, return current value
-        if i <= period:
-            return source_arr.iloc[i]
-
-        # Calculate sum for the period
-        sum_values = sum(source_arr.iloc[i - period + 1:i + 1])
-
-    # Return SMA
-    return sum_values / period
+        if i < period - 1:
+            # For initial values (before we have enough data), use the current value
+            result.iloc[i] = source_arr.iloc[i]
+        else:
+            # Calculate SMA for the period ending at current index
+            start_idx = i - period + 1
+            end_idx = i + 1
+            sma_value = source_arr.iloc[start_idx:end_idx].mean()
+            result.iloc[i] = sma_value
+    
+    return result
 
 
 def g_prime_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series,
