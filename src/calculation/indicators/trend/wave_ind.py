@@ -188,7 +188,7 @@ def calculate_ecore(div_long: float, price: pd.Series) -> pd.Series:
 
     # Calculate ECORE recursively
     for i in range(1, len(price)):
-        ecore.iloc[i] = ecore.iloc[i - 1] + div_long * (diff.iloc[i] - ecore.iloc[i - 1])
+        ecore.loc[ecore.index[i]] = ecore.iloc[i - 1] + div_long * (diff.iloc[i] - ecore.iloc[i - 1])
 
     return ecore
 
@@ -210,8 +210,8 @@ def calc_draw_lines(div_fast: float, div_dir: float, ecore: pd.Series) -> tuple[
     fastline = pd.Series(0.0, index=ecore.index)
 
     for i in range(1, len(ecore)):
-        wave.iloc[i] = wave.iloc[i - 1] + div_fast * (ecore.iloc[i] - wave.iloc[i - 1])
-        fastline.iloc[i] = fastline.iloc[i - 1] + div_dir * (wave.iloc[i] - fastline.iloc[i - 1])
+        wave.loc[wave.index[i]] = wave.iloc[i - 1] + div_fast * (ecore.iloc[i] - wave.iloc[i - 1])
+        fastline.loc[fastline.index[i]] = fastline.iloc[i - 1] + div_dir * (wave.iloc[i] - fastline.iloc[i - 1])
 
     return wave, fastline
 
@@ -240,74 +240,74 @@ def tr_switch(tr_rule: ENUM_MOM_TR, wave: pd.Series, fastline: pd.Series,
 
     for index in range(1, len(wave)):
         if tr_rule == ENUM_MOM_TR.TR_Zone:
-            colors.iloc[index] = BUY if wave.iloc[index] > 0 else SELL
+            colors.loc[colors.index[index]] = BUY if wave.iloc[index] > 0 else SELL
 
         elif tr_rule == ENUM_MOM_TR.TR_Fast:
-            colors.iloc[index] = BUY if wave.iloc[index] > fastline.iloc[index] else SELL
+            colors.loc[colors.index[index]] = BUY if wave.iloc[index] > fastline.iloc[index] else SELL
 
         elif tr_rule == ENUM_MOM_TR.TR_StrongTrend:
             if wave.iloc[index] > 0:
                 # PlusZone
                 if wave.iloc[index] > fastline.iloc[index]:
-                    colors.iloc[index] = BUY
+                    colors.loc[colors.index[index]] = BUY
                 else:
-                    colors.iloc[index] = NOTRADE
+                    colors.loc[colors.index[index]] = NOTRADE
             else:
                 # MinusZone 
                 if wave.iloc[index] < fastline.iloc[index]:
-                    colors.iloc[index] = SELL
+                    colors.loc[colors.index[index]] = SELL
                 else:
-                    colors.iloc[index] = NOTRADE
+                    colors.loc[colors.index[index]] = NOTRADE
 
         elif tr_rule == ENUM_MOM_TR.TR_WeakTrend:
             if wave.iloc[index] > 0:
                 # PlusZone
                 if wave.iloc[index] < fastline.iloc[index]:
-                    colors.iloc[index] = BUY
+                    colors.loc[colors.index[index]] = BUY
                 else:
-                    colors.iloc[index] = NOTRADE
+                    colors.loc[colors.index[index]] = NOTRADE
             else:
                 # MinusZone
                 if wave.iloc[index] > fastline.iloc[index]:
-                    colors.iloc[index] = SELL
+                    colors.loc[colors.index[index]] = SELL
                 else:
-                    colors.iloc[index] = NOTRADE
+                    colors.loc[colors.index[index]] = NOTRADE
 
         elif tr_rule == ENUM_MOM_TR.TR_FastZoneReverse:
             if wave.iloc[index] > 0:
                 # PlusZone
                 if wave.iloc[index] < fastline.iloc[index]:
-                    colors.iloc[index] = SELL
+                    colors.loc[colors.index[index]] = SELL
                 else:
-                    colors.iloc[index] = NOTRADE
+                    colors.loc[colors.index[index]] = NOTRADE
             else:
                 # MinusZone
                 if wave.iloc[index] > fastline.iloc[index]:
-                    colors.iloc[index] = BUY
+                    colors.loc[colors.index[index]] = BUY
                 else:
-                    colors.iloc[index] = NOTRADE
+                    colors.loc[colors.index[index]] = NOTRADE
 
         elif tr_rule == ENUM_MOM_TR.TR_BetterTrend:
             if (wave.iloc[index - 1] < 0) and (wave.iloc[index] > 0):
                 if wave.iloc[index] > fastline.iloc[index]:
                     prev_signal = BUY
                     prev_wave = wave.iloc[index]
-                    colors.iloc[index] = BUY
+                    colors.loc[colors.index[index]] = BUY
             elif (wave.iloc[index - 1] > 0) and (wave.iloc[index] < 0):
                 if wave.iloc[index] < fastline.iloc[index]:
                     prev_signal = SELL
                     prev_wave = wave.iloc[index]
-                    colors.iloc[index] = SELL
+                    colors.loc[colors.index[index]] = SELL
             elif wave.iloc[index] > fastline.iloc[index]:
                 if prev_signal == BUY and wave.iloc[index] > prev_wave:
-                    colors.iloc[index] = BUY
+                    colors.loc[colors.index[index]] = BUY
                     prev_wave = wave.iloc[index]
             elif wave.iloc[index] < fastline.iloc[index]:
                 if prev_signal == SELL and wave.iloc[index] < prev_wave:
-                    colors.iloc[index] = SELL
+                    colors.loc[colors.index[index]] = SELL
                     prev_wave = wave.iloc[index]
             else:
-                colors.iloc[index] = NOTRADE
+                colors.loc[colors.index[index]] = NOTRADE
 
         elif tr_rule == ENUM_MOM_TR.TR_BetterFast:
             # First signals in positive/negative zones
@@ -315,41 +315,41 @@ def tr_switch(tr_rule: ENUM_MOM_TR, wave: pd.Series, fastline: pd.Series,
                 if wave.iloc[index] > fastline.iloc[index]:
                     prev_signal = BUY
                     prev_wave = wave.iloc[index]
-                    colors.iloc[index] = BUY
+                    colors.loc[colors.index[index]] = BUY
                     continue
             elif (wave.iloc[index - 1] > 0) and (wave.iloc[index] < 0):
                 if wave.iloc[index] < fastline.iloc[index]:
                     prev_signal = SELL
                     prev_wave = wave.iloc[index]
-                    colors.iloc[index] = SELL
+                    colors.loc[colors.index[index]] = SELL
                     continue
 
             # Second signals in same zone
             if wave.iloc[index] > fastline.iloc[index]:
                 if prev_signal == BUY:
                     if wave.iloc[index] > prev_wave:
-                        colors.iloc[index] = BUY
+                        colors.loc[colors.index[index]] = BUY
                         prev_wave = wave.iloc[index]
                     else:
-                        colors.iloc[index] = SELL
+                        colors.loc[colors.index[index]] = SELL
                     continue
 
             if wave.iloc[index] < fastline.iloc[index]:
                 if prev_signal == SELL:
                     if wave.iloc[index] < prev_wave:
-                        colors.iloc[index] = SELL
+                        colors.loc[colors.index[index]] = SELL
                         prev_wave = wave.iloc[index]
                     else:
-                        colors.iloc[index] = BUY
+                        colors.loc[colors.index[index]] = BUY
                     continue
 
             # Reverse signals
             if (wave.iloc[index] < 0) and (wave.iloc[index] > fastline.iloc[index]):
-                colors.iloc[index] = BUY
+                colors.loc[colors.index[index]] = BUY
                 continue
 
             if (wave.iloc[index] > 0) and (wave.iloc[index] < fastline.iloc[index]):
-                colors.iloc[index] = SELL
+                colors.loc[colors.index[index]] = SELL
                 continue
 
     return colors
@@ -432,10 +432,10 @@ def sma_calculation(period: int, source_arr: pd.Series) -> float:
 
         # For initial values, return current value
         if i <= period:
-            return source_arr[i]
+            return source_arr.iloc[i]
 
         # Calculate sum for the period
-        sum_values = sum(source_arr[i - period + 1:i + 1])
+        sum_values = sum(source_arr.iloc[i - period + 1:i + 1])
 
     # Return SMA
     return sum_values / period
@@ -467,7 +467,7 @@ def g_prime_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series,
             
         # If same, then signal to trade
         if color1.iloc[i] == color2.iloc[i]:
-            plot_color.iloc[i] = color1.iloc[i]
+            plot_color.loc[plot_color.index[i]] = color1.iloc[i]
     
     return plot_color
 
@@ -497,7 +497,7 @@ def g_reverse_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series,
             
         # If same, then reverse signal to trade
         if color1.iloc[i] == color2.iloc[i]:
-            plot_color.iloc[i] = SELL if color1.iloc[i] == BUY else BUY
+            plot_color.loc[plot_color.index[i]] = SELL if color1.iloc[i] == BUY else BUY
     
     return plot_color
 
@@ -529,10 +529,10 @@ def g_prime_tr_zone(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series,
         if color1.iloc[i] == color2.iloc[i]:
             # Check BUY in lower zone (wave1 < 0)
             if wave1.iloc[i] < 0 and color1.iloc[i] == BUY:
-                plot_color.iloc[i] = color1.iloc[i]
+                plot_color.loc[plot_color.index[i]] = color1.iloc[i]
             # Check SELL in upper zone (wave1 > 0)
             elif wave1.iloc[i] > 0 and color1.iloc[i] == SELL:
-                plot_color.iloc[i] = color1.iloc[i]
+                plot_color.loc[plot_color.index[i]] = color1.iloc[i]
     
     return plot_color
 
@@ -564,10 +564,10 @@ def g_reverse_tr_zone(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series,
         if color1.iloc[i] == color2.iloc[i]:
             # Check BUY in lower zone (wave1 < 0) -> reverse to SELL
             if wave1.iloc[i] < 0 and color1.iloc[i] == BUY:
-                plot_color.iloc[i] = SELL
+                plot_color.loc[plot_color.index[i]] = SELL
             # Check SELL in upper zone (wave1 > 0) -> reverse to BUY
             elif wave1.iloc[i] > 0 and color1.iloc[i] == SELL:
-                plot_color.iloc[i] = BUY
+                plot_color.loc[plot_color.index[i]] = BUY
     
     return plot_color
 
@@ -594,18 +594,18 @@ def g_new_zone_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series,
     for i in range(len(color1)):
         # Update last signal
         if i > 0:
-            last_signal.iloc[i] = last_signal.iloc[i-1]
+            last_signal.loc[last_signal.index[i]] = last_signal.iloc[i-1]
         
         # Update last signal when both agree
         if color1.iloc[i] == color2.iloc[i] and color1.iloc[i] != NOTRADE:
-            last_signal.iloc[i] = color1.iloc[i]
+            last_signal.loc[last_signal.index[i]] = color1.iloc[i]
         
         # When signals are not the same, generate opposite signal
         if color1.iloc[i] != color2.iloc[i]:
             if last_signal.iloc[i] == BUY:
-                plot_color.iloc[i] = SELL
+                plot_color.loc[plot_color.index[i]] = SELL
             elif last_signal.iloc[i] == SELL:
-                plot_color.iloc[i] = BUY
+                plot_color.loc[plot_color.index[i]] = BUY
     
     return plot_color
 
@@ -632,11 +632,11 @@ def g_long_zone_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series,
     for i in range(len(color1)):
         # Update last signal
         if i > 0:
-            last_signal.iloc[i] = last_signal.iloc[i-1]
+            last_signal.loc[last_signal.index[i]] = last_signal.iloc[i-1]
         
         # Update last signal when both agree
         if color1.iloc[i] == color2.iloc[i] and color1.iloc[i] != NOTRADE:
-            last_signal.iloc[i] = color1.iloc[i]
+            last_signal.loc[last_signal.index[i]] = color1.iloc[i]
         
         # Main signal - always opposite to last signal
         if last_signal.iloc[i] == BUY:
@@ -669,14 +669,14 @@ def g_long_zone_reverse_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Ser
     for i in range(len(color1)):
         # Update last signal
         if i > 0:
-            last_signal.iloc[i] = last_signal.iloc[i-1]
+            last_signal.loc[last_signal.index[i]] = last_signal.iloc[i-1]
         
         # Update last signal when both agree
         if color1.iloc[i] == color2.iloc[i] and color1.iloc[i] != NOTRADE:
-            last_signal.iloc[i] = color1.iloc[i]
+            last_signal.loc[last_signal.index[i]] = color1.iloc[i]
         
         # Main signal - always use last signal
-        plot_color.iloc[i] = last_signal.iloc[i]
+        plot_color.loc[plot_color.index[i]] = last_signal.iloc[i]
     
     return plot_color
 
@@ -744,7 +744,7 @@ def apply_rule_wave(df: pd.DataFrame, wave_inputs: WaveParameters, price_type: P
     # Signal
     for i in range(1, len(df)):
         if df['_Direction'].iloc[i] != df['_Direction'].iloc[i - 1]:
-            df['_Signal'].iloc[i] = df['_Direction'].iloc[i]
+            df.loc[df.index[i], '_Signal'] = df['_Direction'].iloc[i]
 
     # DONE
 
