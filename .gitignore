@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *.class
 
+# Pytest cache
+.pytest_cache/
+
 # Virtual Environment
 venv/
 env/
@@ -41,6 +44,22 @@ scripts/test_mcp_connection.sh
 data/indicators/parquet/*
 data/indicators/csv/*
 data/indicators/json/*
+
+# Ignore all CSV files from mql5_feed except specific ones
+mql5_feed/*.csv
+!mql5_feed/CSVExport_EURUSD_PERIOD_D1.csv
+
+# Container-related files
+*.tar
+*.tar.gz
+*.img
+*.iso
+*.vmdk
+*.qcow2
+*.ova
+*.ovf
+.containerignore
+*.container
 
 # Ignore log files from batch EDA and any other logs
 *.log

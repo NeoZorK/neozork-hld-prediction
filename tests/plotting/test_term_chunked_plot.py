@@ -28,25 +28,25 @@ class TestTermChunkedPlot:
     
     def setup_method(self):
         """Set up test data."""
-        # Create sample OHLCV data
-        dates = pd.date_range('2023-01-01', periods=1000, freq='1h')
+        # Create sample OHLCV data - reduced from 1000 to 100 for faster tests
+        dates = pd.date_range('2023-01-01', periods=100, freq='1h')
         self.sample_data = pd.DataFrame({
-            'Open': np.random.uniform(100, 200, 1000),
-            'High': np.random.uniform(200, 300, 1000),
-            'Low': np.random.uniform(50, 100, 1000),
-            'Close': np.random.uniform(100, 200, 1000),
-            'Volume': np.random.randint(1000, 10000, 1000)
+            'Open': np.random.uniform(100, 200, 100),
+            'High': np.random.uniform(200, 300, 100),
+            'Low': np.random.uniform(50, 100, 100),
+            'Close': np.random.uniform(100, 200, 100),
+            'Volume': np.random.randint(1000, 10000, 100)
         }, index=dates)
         
         # Create sample indicator data
         self.indicator_data = self.sample_data.copy()
         self.indicator_data['PPrice1'] = self.sample_data['Low'] * 0.95  # Support
         self.indicator_data['PPrice2'] = self.sample_data['High'] * 1.05  # Resistance
-        self.indicator_data['Direction'] = np.random.choice([0, 1, 2], 1000)  # NOTRADE, BUY, SELL
-        self.indicator_data['RSI'] = np.random.uniform(0, 100, 1000)
-        self.indicator_data['PV'] = np.random.uniform(-1, 1, 1000)
-        self.indicator_data['RSI_Momentum'] = np.random.uniform(-5, 5, 1000)
-        self.indicator_data['Diff'] = np.random.uniform(0, 1, 1000)
+        self.indicator_data['Direction'] = np.random.choice([0, 1, 2], 100)  # NOTRADE, BUY, SELL
+        self.indicator_data['RSI'] = np.random.uniform(0, 100, 100)
+        self.indicator_data['PV'] = np.random.uniform(-1, 1, 100)
+        self.indicator_data['RSI_Momentum'] = np.random.uniform(-5, 5, 100)
+        self.indicator_data['Diff'] = np.random.uniform(0, 1, 100)
     
     def test_calculate_optimal_chunk_size(self):
         """Test optimal chunk size calculation."""

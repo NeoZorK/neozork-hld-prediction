@@ -33,21 +33,21 @@ class TestFastestPlot(unittest.TestCase):
     """Unittest for fastest_plot.py using plot_indicator_results_fastest."""
 
     def setUp(self):
-        # Generate a DataFrame with synthetic OHLCV data
-        date_index = pd.date_range(start="2024-01-01", periods=1000, freq="min")  # was freq="T"
+        # Generate a DataFrame with synthetic OHLCV data - reduced from 1000 to 100 for faster tests
+        date_index = pd.date_range(start="2024-01-01", periods=100, freq="min")  # was freq="T"
         self.df = pd.DataFrame({
             "index": date_index,
-            "Open": np.random.rand(1000) * 100,
-            "High": np.random.rand(1000) * 100 + 1,
-            "Low": np.random.rand(1000) * 100 - 1,
-            "Close": np.random.rand(1000) * 100,
-            "Volume": np.random.randint(1000, 10000, size=1000),
-            "PV": np.random.randn(1000) * 2,
+            "Open": np.random.rand(100) * 100,
+            "High": np.random.rand(100) * 100 + 1,
+            "Low": np.random.rand(100) * 100 - 1,
+            "Close": np.random.rand(100) * 100,
+            "Volume": np.random.randint(1000, 10000, size=100),
+            "PV": np.random.randn(100) * 2,
             "HL": None,
-            "Pressure": np.random.randn(1000) * 1.5,
+            "Pressure": np.random.randn(100) * 1.5,
             "PPrice1": None,
             "PPrice2": None,
-            "Direction": np.random.choice([1, 2], size=1000, p=[0.5, 0.5]),
+            "Direction": np.random.choice([1, 2], size=100, p=[0.5, 0.5]),
         })
         # Calculate HL as the difference between High and Low
         self.df["HL"] = self.df["High"] - self.df["Low"]

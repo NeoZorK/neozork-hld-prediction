@@ -259,6 +259,11 @@ def plot_dual_chart_seaborn(
             sns.lineplot(data=display_df, x=display_df.index, y='ema', 
                         ax=ax2, color='orange', linewidth=3, label='EMA')
     
+    elif indicator_name == 'sma':
+        if 'sma' in display_df.columns:
+            sns.lineplot(data=display_df, x=display_df.index, y='sma', 
+                        ax=ax2, color='blue', linewidth=3, label='SMA')
+    
     elif indicator_name == 'bb':
         if 'bb_upper' in display_df.columns:
             sns.lineplot(data=display_df, x=display_df.index, y='bb_upper', 

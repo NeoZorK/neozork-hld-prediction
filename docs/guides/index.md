@@ -114,6 +114,72 @@ Using technical indicators for analysis.
 - Probability indicators
 - Sentiment indicators
 
+### [SMA Indicator Tutorial](adding-sma-indicator-tutorial.md) ⭐ **NEW**
+Complete tutorial for adding SMA indicator to all display modes.
+
+**Highlights:**
+- **Multi-Mode Support**: SMA works in all 6 display modes
+- **Modern Help System**: Comprehensive help with examples
+- **CLI Integration**: Full command-line support
+- **Best Practices**: Implementation guidelines
+- **Testing**: Complete test coverage across modes
+- **Real Examples**: Practical usage scenarios
+
+### [SMA Quick Start Guide](sma-quick-start-guide.md) ⭐ **NEW**
+Quick start guide for using SMA indicator effectively.
+
+**Features:**
+- **Basic Usage**: Simple commands to get started
+- **Display Modes**: All 6 modes explained
+- **Parameter Format**: Clear parameter documentation
+- **Common Use Cases**: Real-world scenarios
+- **Troubleshooting**: Quick problem resolution
+- **Best Practices**: Optimal usage guidelines
+
+### [SMA Practical Examples](sma-practical-examples.md) ⭐ **NEW**
+Practical examples and real-world scenarios for SMA usage.
+
+**Includes:**
+- **Stock Analysis**: Apple, Tesla, S&P 500 examples
+- **Cryptocurrency**: Bitcoin trading strategies
+- **Forex Trading**: EUR/USD analysis
+- **Day Trading**: Intraday SMA signals
+- **Portfolio Analysis**: Multi-asset strategies
+- **Technical Combinations**: SMA with other indicators
+
+### [SMA Testing Guide](sma-testing-guide.md) ⭐ **NEW**
+Comprehensive testing guide for SMA indicator validation.
+
+**Features:**
+- **Automated Testing**: Unit, integration, and plotting tests
+- **Manual Testing**: All display modes validation
+- **Performance Testing**: Large dataset and memory usage tests
+- **Error Testing**: Invalid parameters and edge cases
+- **Regression Testing**: Consistency and version comparison
+- **Load Testing**: Concurrent usage and stress testing
+
+### [SMA Tutorials Summary](sma-tutorials-summary.md) ⭐ **NEW**
+Complete overview and quick reference for all SMA tutorials.
+
+**Highlights:**
+- **Tutorial Overview**: Summary of all 4 SMA tutorials
+- **Quick Reference**: Essential commands and examples
+- **Implementation Status**: Complete feature coverage
+- **Best Practices**: Period selection and mode recommendations
+- **Common Use Cases**: Real-world scenarios and examples
+- **Troubleshooting**: Quick problem resolution guide
+
+### [SMA Complete Implementation Summary](SMA_TUTORIALS_COMPLETE_SUMMARY.md) ⭐ **NEW**
+Final summary of the complete SMA indicator implementation.
+
+**Highlights:**
+- **Mission Accomplished**: Complete implementation across all display modes
+- **Tutorial Suite**: 5 comprehensive guides created
+- **Implementation Status**: 100% feature coverage
+- **Testing Results**: Verified working across all modes
+- **Success Metrics**: Documentation and quality metrics
+- **Key Achievements**: Complete implementation with modern help system
+
 ### [Analysis Tools Guide](analysis-tools.md)
 
 ### [Plotting Modes Comparison](plotting-modes-comparison.md) ⭐ **NEW**

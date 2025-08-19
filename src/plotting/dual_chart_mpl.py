@@ -285,6 +285,12 @@ def plot_dual_chart_mpl(
             ax2.plot(display_df.index, display_df['ema'], 
                     color='orange', linewidth=3, label='EMA')
     
+    elif indicator_name == 'sma':
+        y_axis_label = 'Price'
+        if 'sma' in display_df.columns:
+            ax2.plot(display_df.index, display_df['sma'], 
+                    color='blue', linewidth=3, label='SMA')
+    
     elif indicator_name == 'bb':
         y_axis_label = 'Price'
         if 'bb_upper' in display_df.columns:

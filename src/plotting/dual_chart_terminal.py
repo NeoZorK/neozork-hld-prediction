@@ -97,7 +97,7 @@ def plot_dual_chart_terminal(
     # Find indicator columns
     indicator_columns = []
     for col in display_df.columns:
-        if col.lower().startswith(indicator_name.lower()):
+        if col.lower().startswith(indicator_name.lower()) or col.lower() == indicator_name.lower():
             indicator_columns.append(col)
     
     if indicator_columns:

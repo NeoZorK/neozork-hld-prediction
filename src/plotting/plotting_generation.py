@@ -621,9 +621,19 @@ def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_inf
             plot_rule = 'SR'
         elif rule_upper in ['RSI', 'RSI_MOM', 'RSI_DIV']:
             plot_rule = rule_upper
+        elif rule_upper == 'SMA':
+            plot_rule = 'SMA'
         else:
             # Default to OHLCV for unknown rules
             plot_rule = 'OHLCV'
+        
+        # Calculate additional indicator for terminal mode if needed
+        if ':' in rule_str and plot_rule not in ['OHLCV', 'AUTO', 'PHLD', 'PV', 'SR']:
+            try:
+                from src.plotting.dual_chart_plot import calculate_additional_indicator
+                result_df = calculate_additional_indicator(result_df, rule_str)
+            except Exception as e:
+                logger.print_warning(f"Could not calculate additional indicator: {e}")
         
         # Use chunked plotting with navigation for terminal mode
         use_navigation = True  # Enable navigation for terminal mode

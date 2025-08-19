@@ -963,6 +963,14 @@ def _plot_indicator_calculation_result(args, original_df, result_df, file_info, 
                 try:
                     from src.plotting.term_chunked_plot import plot_chunked_terminal
                     
+                    # Calculate additional indicator for terminal mode if needed
+                    if ':' in args.rule:
+                        try:
+                            from src.plotting.dual_chart_plot import calculate_additional_indicator
+                            result_df = calculate_additional_indicator(result_df, args.rule)
+                        except Exception as e:
+                            print(f"Could not calculate additional indicator: {e}")
+                    
                     # Use chunked plotting for the specific rule with navigation
                     use_navigation = True  # Enable navigation for terminal mode
                     plot_chunked_terminal(result_df, args.rule.upper(), plot_title, style="matrix", use_navigation=use_navigation)

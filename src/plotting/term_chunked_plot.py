@@ -1559,6 +1559,10 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
         elif indicator_upper == 'EMA':
             _add_ema_indicator_to_subplot(chunk, x_values)
         
+        # SMA indicators
+        elif indicator_upper == 'SMA':
+            _add_sma_indicator_to_subplot(chunk, x_values)
+        
         # ADX indicator
         elif indicator_upper == 'ADX':
             _add_adx_indicator_to_subplot(chunk, x_values)
@@ -1768,6 +1772,32 @@ def _add_ema_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
         
     except Exception as e:
         logger.print_error(f"Error adding EMA indicator: {e}")
+
+
+def _add_sma_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add SMA indicator to subplot."""
+    try:
+        # Look for SMA columns (case insensitive)
+        sma_columns = [col for col in chunk.columns if col.upper().startswith('SMA') or col.lower() == 'sma']
+        
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
+        for sma_col in sma_columns:
+            sma_values = chunk[sma_col].fillna(0).tolist()
+            try:
+                # Try to plot with numeric x_values
+                plt.plot(numeric_x_values, sma_values, color="blue+", label=sma_col)
+            except Exception as plot_error:
+                # If plotting fails, skip this column
+                continue
+        
+        # Debug: print available columns if no SMA found
+        if not sma_columns:
+            logger.print_warning(f"No SMA columns found. Available columns: {list(chunk.columns)}")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding SMA indicator: {e}")
 
 
 def _add_adx_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
@@ -2236,8 +2266,10 @@ def _add_generic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, indic
         indicator_columns = [col for col in chunk.columns if indicator_name.upper() in col.upper()]
         
         if not indicator_columns:
-            # Try exact match
-            if indicator_name in chunk.columns:
+            # Try exact match (case insensitive)
+            if indicator_name.lower() in [col.lower() for col in chunk.columns]:
+                indicator_columns = [col for col in chunk.columns if col.lower() == indicator_name.lower()]
+            elif indicator_name in chunk.columns:
                 indicator_columns = [indicator_name]
         
         if indicator_columns:
@@ -2415,7 +2447,7 @@ def plot_chunked_terminal(df: pd.DataFrame, rule: str, title: str = "Chunked Ter
             plot_phld_chunks(df, title, style, use_navigation)
         
         # Handle all other indicators with dual subplot
-        elif rule_upper in ['STOCHASTIC', 'CCI', 'BOLLINGER_BANDS', 'EMA', 'ADX', 'SAR', 
+        elif rule_upper in ['STOCHASTIC', 'CCI', 'BOLLINGER_BANDS', 'EMA', 'SMA', 'ADX', 'SAR', 
                            'SUPERTREND', 'ATR', 'STANDARD_DEVIATION', 'OBV', 'VWAP',
                            'HMA', 'TIME_SERIES_FORECAST', 'MONTE_CARLO', 'KELLY_CRITERION',
                            'PUT_CALL_RATIO', 'COT', 'FEAR_GREED', 'PIVOT_POINTS',

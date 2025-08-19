@@ -305,13 +305,41 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 ('ema:10,close', 'Short-term EMA with close prices')
             ],
             'tips': [
-                'Short-term: 10-20 periods for quick signals',
-                'Medium-term: 20-50 periods for trend analysis',
-                'Long-term: 50+ periods for major trends'
+                'Use period 20 for standard analysis',
+                'Shorter periods are more responsive to price changes',
+                'Longer periods provide smoother signals',
+                'Open prices are more volatile, close prices are more stable'
             ],
             'common_errors': [
                 'Invalid price_type: Use "open" or "close" only',
-                'Invalid period: Must be a positive integer'
+                'Invalid period: Must be a positive integer',
+                'Period too short may give unreliable results'
+            ]
+        },
+        'sma': {
+            'name': 'SMA (Simple Moving Average)',
+            'description': 'Simple moving average that gives equal weight to all prices in the calculation period.',
+            'format': 'sma:period,price_type',
+            'parameters': [
+                ('period', 'int', 'SMA period', '20'),
+                ('price_type', 'string', 'Price type for calculation', 'close')
+            ],
+            'examples': [
+                ('sma:20,close', 'Standard SMA with close prices'),
+                ('sma:50,open', 'Long-term SMA with open prices'),
+                ('sma:10,close', 'Short-term SMA with close prices')
+            ],
+            'tips': [
+                'Use period 20 for standard analysis',
+                'Shorter periods are more responsive to price changes',
+                'Longer periods provide smoother signals',
+                'SMA is less responsive than EMA but more stable',
+                'Open prices are more volatile, close prices are more stable'
+            ],
+            'common_errors': [
+                'Invalid price_type: Use "open" or "close" only',
+                'Invalid period: Must be a positive integer',
+                'Period too short may give unreliable results'
             ]
         },
         'bb': {
