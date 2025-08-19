@@ -770,26 +770,7 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
             from src.plotting.dual_chart_plot import is_dual_chart_rule, plot_dual_chart_results
             if is_dual_chart_rule(original_rule_with_params):
                 logger.print_info(f"Dual chart mode detected for rule: {original_rule_with_params}")
-                # For mpl mode, use dual chart plotting with display
-                if draw_mode in ['mpl', 'mplfinance']:
-                    logger.print_info(f"Using dual chart plotting for mpl mode with parameterized indicator")
-                    # Use dual chart with display instead of PNG
-                    from src.plotting.dual_chart_mpl import plot_dual_chart_mpl_display
-                    from src.plotting.dual_chart_plot import create_dual_chart_layout
-                    
-                    # Create layout configuration for proper indicator title
-                    layout = create_dual_chart_layout(draw_mode, original_rule_with_params)
-                    
-                    plot_dual_chart_mpl_display(
-                        result_df,
-                        original_rule_with_params,
-                        plot_title,
-                        width=1800,
-                        height=1100,
-                        layout=layout
-                    )
-                    return
-                # Use dual chart plotting for other modes
+                # Use dual chart plotting for ALL modes including fastest
                 plot_dual_chart_results(
                     result_df,
                     original_rule_with_params,

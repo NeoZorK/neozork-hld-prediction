@@ -122,6 +122,25 @@ def is_dual_chart_rule(rule: str) -> bool:
             float(params[1])  # std_dev
             if params[2].lower() not in ['open', 'close']:
                 return False
+        elif indicator_name == 'wave':
+            if len(params) < 11:
+                return False
+            # Check if first 10 parameters are numeric
+            int(float(params[0]))  # long1
+            int(float(params[1]))  # fast1
+            int(float(params[2]))  # trend1
+            if params[3].lower() not in ['fast', 'zone', 'strongtrend', 'weaktrend', 'fastzonereverse', 'bettertrend', 'betterfast']:
+                return False
+            int(float(params[4]))  # long2
+            int(float(params[5]))  # fast2
+            int(float(params[6]))  # trend2
+            if params[7].lower() not in ['fast', 'zone', 'strongtrend', 'weaktrend', 'fastzonereverse', 'bettertrend', 'betterfast']:
+                return False
+            if params[8].lower() not in ['prime', 'zone', 'strongtrend', 'weaktrend']:
+                return False
+            int(float(params[9]))  # sma_period
+            if params[10].lower() not in ['open', 'close', 'high', 'low']:
+                return False
     except (ValueError, IndexError):
         return False
     
@@ -138,7 +157,7 @@ def get_supported_indicators() -> set:
     return {
         'rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'ema', 'sma', 'bb', 'atr',
         'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain',
-        'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend'
+        'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'wave'
     }
 
 
@@ -641,6 +660,48 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['supertrend_multiplier'] = multiplier
             result_df['supertrend_price_type'] = price_type
             
+        elif indicator_name == 'wave':
+            # Use centralized wave parameter parser
+            try:
+                from src.cli.cli import parse_wave_parameters
+                _, wave_params = parse_wave_parameters(','.join(params))
+            except Exception as e:
+                raise ValueError(f"Error parsing wave parameters: {e}")
+            
+            # Remove possible duplicates
+            for col in ['wave1', 'wave2', 'Wave1', 'Wave2', '_Plot_Wave', '_Plot_FastLine', 'fastline1', 'fastline2', 'MA_Line']:
+                if col in result_df.columns:
+                    result_df = result_df.drop(columns=[col])
+            
+            # Calculate Wave indicator using the existing calculation logic
+            from src.calculation.rules import apply_rule_wave
+            from src.calculation.indicators.trend.wave_ind import WaveParameters
+            
+            # Create WaveParameters object
+            wave_params_obj = WaveParameters(
+                long1=wave_params['long1'],
+                fast1=wave_params['fast1'],
+                trend1=wave_params['trend1'],
+                tr1=wave_params['tr1'],
+                long2=wave_params['long2'],
+                fast2=wave_params['fast2'],
+                trend2=wave_params['trend2'],
+                tr2=wave_params['tr2'],
+                global_tr=wave_params['global_tr'],
+                sma_period=wave_params['sma_period']
+            )
+            
+            # Convert price_type string to PriceType enum
+            from src.calculation.indicators.base_indicator import PriceType
+            price_type_enum = PriceType.OPEN if wave_params['price_type'] == 'open' else PriceType.CLOSE
+            
+            wave_result = apply_rule_wave(df, wave_params_obj, price_type_enum)
+            
+            # Add Wave columns to result DataFrame
+            for col in wave_result.columns:
+                if col not in result_df.columns:
+                    result_df[col] = wave_result[col]
+            
         else:
             raise ValueError(f"Unsupported indicator: {indicator_name}")
             
@@ -692,7 +753,8 @@ def create_dual_chart_layout(mode: str, rule: str) -> Dict[str, Any]:
         'sar': 'SAR',
         'supertrend': 'SuperTrend',
         'stoch': 'Stochastic',
-        'stochoscillator': 'Stochastic Oscillator'
+        'stochoscillator': 'Stochastic Oscillator',
+        'wave': 'Wave'
     }
     
     display_name = indicator_display_names.get(indicator_name, indicator_name.upper())
@@ -766,7 +828,7 @@ def plot_dual_chart_results(
     has_indicators = False
     
     # Debug: print input DataFrame columns
-    from src.common.logger import logger
+    from src.common import logger
     logger.print_info(f"[dual_chart_plot] Input DataFrame columns: {list(df.columns)}")
     logger.print_info(f"[dual_chart_plot] Checking for indicator: {indicator_name}")
     
