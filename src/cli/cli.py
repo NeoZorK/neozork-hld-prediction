@@ -1134,19 +1134,82 @@ def parse_sma_parameters(params_str: str) -> tuple[str, dict]:
 def parse_wave_parameters(prams_str: str) -> tuple[str, dict]:
     """Parse Wave parameters: long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type"""
     params = prams_str.split(',')
-    if len(params) != 10:
-        raise ValueError(f"Wave requires exactly 10 parameters: long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type. Got: {prams_str}")
+    if len(params) != 11:
+        raise ValueError(f"Wave requires exactly 11 parameters: long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type. Got: {prams_str}")
 
     try:
         long1 = int(float(params[0].strip())) # Handle float values like 14.0
         fast1 = int(float(params[1].strip()))
         trend1 = int(float(params[2].strip()))
-        tr1 = ENUM_MOM_TR[params[3].strip().upper()]
+        tr1_str = params[3].strip().upper()
+        if tr1_str == 'FAST':
+            tr1 = ENUM_MOM_TR.TR_Fast
+        elif tr1_str == 'ZONE':
+            tr1 = ENUM_MOM_TR.TR_Zone
+        elif tr1_str == 'STRONGTREND':
+            tr1 = ENUM_MOM_TR.TR_StrongTrend
+        elif tr1_str == 'WEAKTREND':
+            tr1 = ENUM_MOM_TR.TR_WeakTrend
+        elif tr1_str == 'FASTZONEREVERSE':
+            tr1 = ENUM_MOM_TR.TR_FastZoneReverse
+        elif tr1_str == 'BETTERTREND':
+            tr1 = ENUM_MOM_TR.TR_BetterTrend
+        elif tr1_str == 'BETTERFAST':
+            tr1 = ENUM_MOM_TR.TR_BetterFast
+        elif tr1_str == 'ROST':
+            tr1 = ENUM_MOM_TR.TR_Rost
+        elif tr1_str == 'TRENDROST':
+            tr1 = ENUM_MOM_TR.TR_TrendRost
+        elif tr1_str == 'BETTERTRENDROST':
+            tr1 = ENUM_MOM_TR.TR_BetterTrendRost
+        else:
+            raise ValueError(f"Invalid tr1 value: {tr1_str}")
+        
         long2 = int(float(params[4].strip()))
         fast2 = int(float(params[5].strip()))
         trend2 = int(float(params[6].strip()))
-        tr2 = ENUM_MOM_TR[params[7].strip().upper()]
-        global_tr = ENUM_GLOBAL_TR[params[8].strip().upper()]
+        
+        tr2_str = params[7].strip().upper()
+        if tr2_str == 'FAST':
+            tr2 = ENUM_MOM_TR.TR_Fast
+        elif tr2_str == 'ZONE':
+            tr2 = ENUM_MOM_TR.TR_Zone
+        elif tr2_str == 'STRONGTREND':
+            tr2 = ENUM_MOM_TR.TR_StrongTrend
+        elif tr2_str == 'WEAKTREND':
+            tr2 = ENUM_MOM_TR.TR_WeakTrend
+        elif tr2_str == 'FASTZONEREVERSE':
+            tr2 = ENUM_MOM_TR.TR_FastZoneReverse
+        elif tr2_str == 'BETTERTREND':
+            tr2 = ENUM_MOM_TR.TR_BetterTrend
+        elif tr2_str == 'BETTERFAST':
+            tr2 = ENUM_MOM_TR.TR_BetterFast
+        elif tr2_str == 'ROST':
+            tr2 = ENUM_MOM_TR.TR_Rost
+        elif tr2_str == 'TRENDROST':
+            tr2 = ENUM_MOM_TR.TR_TrendRost
+        elif tr2_str == 'BETTERTRENDROST':
+            tr2 = ENUM_MOM_TR.TR_BetterTrendRost
+        else:
+            raise ValueError(f"Invalid tr2 value: {tr2_str}")
+        
+        global_tr_str = params[8].strip().upper()
+        if global_tr_str == 'PRIME':
+            global_tr = ENUM_GLOBAL_TR.G_TR_PRIME
+        elif global_tr_str == 'REVERSE':
+            global_tr = ENUM_GLOBAL_TR.G_TR_REVERSE
+        elif global_tr_str == 'PRIMEZONE':
+            global_tr = ENUM_GLOBAL_TR.G_TR_PRIME_ZONE
+        elif global_tr_str == 'REVERSEZONE':
+            global_tr = ENUM_GLOBAL_TR.G_TR_REVERSE_ZONE
+        elif global_tr_str == 'NEWZONE':
+            global_tr = ENUM_GLOBAL_TR.G_TR_NEW_ZONE
+        elif global_tr_str == 'LONGZONE':
+            global_tr = ENUM_GLOBAL_TR.G_TR_LONG_ZONE
+        elif global_tr_str == 'LONGZONEREVERSE':
+            global_tr = ENUM_GLOBAL_TR.G_TR_LONG_ZONE_REVERSE
+        else:
+            raise ValueError(f"Invalid global_tr value: {global_tr_str}")
         sma_period = int(float(params[9].strip()))
         price_type = params[10].strip().lower()
     except (ValueError, IndexError) as e:
