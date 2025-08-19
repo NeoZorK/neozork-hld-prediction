@@ -21,10 +21,10 @@ try:
     from src.export.json_export import export_indicator_to_json
 except ImportError:
     try:
-        from ..calculation.indicator_calculation import calculate_indicator
-        from ..export.parquet_export import export_indicator_to_parquet
-        from ..export.csv_export import export_indicator_to_csv
-        from ..export.json_export import export_indicator_to_json
+        from src.calculation.indicator_calculation import calculate_indicator
+        from src.export.parquet_export import export_indicator_to_parquet
+        from src.export.csv_export import export_indicator_to_csv
+        from src.export.json_export import export_indicator_to_json
     except ImportError:
         # Last resort: assume running from src directory
         calculate_indicator = None
@@ -159,7 +159,7 @@ def import_generate_plot():
     """
     Dynamically imports the generate_plot function for plotting.
     """
-    from ..plotting.plotting_generation import generate_plot
+    from src.plotting.plotting_generation import generate_plot
     return generate_plot
 
 def get_search_dirs(args):

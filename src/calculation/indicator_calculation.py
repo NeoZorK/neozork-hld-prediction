@@ -9,12 +9,12 @@ All comments are in English.
 import pandas as pd
 import numpy as np # Added for comparison
 # Use relative imports within the src package
-from ..common import logger
-from ..common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
+from src.common import logger
+from src.common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
 # Import the main calculation function from indicator module
 from .indicator import calculate_pressure_vector
 from .rules import apply_trading_rule
-from ..cli.cli import parse_indicator_parameters
+from src.cli.cli import parse_indicator_parameters
 
 # Definition of the calculate_indicator function
 def calculate_indicator(args, ohlcv_df: pd.DataFrame, point_size: float):

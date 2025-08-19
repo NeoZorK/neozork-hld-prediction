@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 from typing import Dict, Any, Optional
 
-from ..common import logger
+from src.common import logger
 
 
 def plot_dual_chart_terminal(

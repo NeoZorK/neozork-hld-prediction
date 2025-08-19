@@ -16,7 +16,7 @@ import plotly.io as pio
 import webbrowser
 from typing import Dict, Any, Optional
 
-from ..common import logger
+from src.common import logger
 
 
 def add_rsi_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:

@@ -18,8 +18,8 @@ All comments and texts in English.
 
 import pandas as pd
 import numpy as np
-from ....common import logger
-from ....common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
+from src.common import logger
+from src.common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
 from enum import Enum
 
 

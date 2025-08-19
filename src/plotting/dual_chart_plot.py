@@ -22,30 +22,30 @@ import numpy as np
 from typing import Dict, Any, Optional, Tuple
 import re
 
-from ..common import logger
-from ..calculation.indicators.oscillators.rsi_ind_calc import calculate_rsi, PriceType
-from ..calculation.indicators.momentum.macd_ind import calculate_macd
-from ..calculation.indicators.trend.ema_ind import calculate_ema
-from ..calculation.indicators.volatility.bb_ind import calculate_bollinger_bands
-from ..calculation.indicators.volatility.atr_ind import calculate_atr
-from ..calculation.indicators.oscillators.cci_ind import calculate_cci
-from ..calculation.indicators.volume.vwap_ind import calculate_vwap
-from ..calculation.indicators.suportresist.pivot_ind import calculate_pivot_points
-from ..calculation.indicators.predictive.hma_ind import calculate_hma
-from ..calculation.indicators.predictive.tsforecast_ind import calculate_tsforecast
-from ..calculation.indicators.probability.montecarlo_ind import calculate_montecarlo
-from ..calculation.indicators.probability.kelly_ind import calculate_kelly
-from ..calculation.indicators.suportresist.donchain_ind import calculate_donchain, calculate_donchain_signals
-from ..calculation.indicators.suportresist.fiboretr_ind import calculate_fiboretr
-from ..calculation.indicators.volume.obv_ind import calculate_obv
-from ..calculation.indicators.volatility.stdev_ind import calculate_stdev
-from ..calculation.indicators.trend.adx_ind import calculate_adx
-from ..calculation.indicators.trend.sar_ind import calculate_sar
-from ..calculation.indicators.sentiment.putcallratio_ind import calculate_putcallratio
-from ..calculation.indicators.sentiment.cot_ind import calculate_cot
-from ..calculation.indicators.sentiment.feargreed_ind import calculate_feargreed
-from ..common.constants import BUY, SELL, NOTRADE
-from ..cli.cli import parse_supertrend_parameters
+from src.common import logger
+from src.calculation.indicators.oscillators.rsi_ind_calc import calculate_rsi, PriceType
+from src.calculation.indicators.momentum.macd_ind import calculate_macd
+from src.calculation.indicators.trend.ema_ind import calculate_ema
+from src.calculation.indicators.volatility.bb_ind import calculate_bollinger_bands
+from src.calculation.indicators.volatility.atr_ind import calculate_atr
+from src.calculation.indicators.oscillators.cci_ind import calculate_cci
+from src.calculation.indicators.volume.vwap_ind import calculate_vwap
+from src.calculation.indicators.suportresist.pivot_ind import calculate_pivot_points
+from src.calculation.indicators.predictive.hma_ind import calculate_hma
+from src.calculation.indicators.predictive.tsforecast_ind import calculate_tsforecast
+from src.calculation.indicators.probability.montecarlo_ind import calculate_montecarlo
+from src.calculation.indicators.probability.kelly_ind import calculate_kelly
+from src.calculation.indicators.suportresist.donchain_ind import calculate_donchain, calculate_donchain_signals
+from src.calculation.indicators.suportresist.fiboretr_ind import calculate_fiboretr
+from src.calculation.indicators.volume.obv_ind import calculate_obv
+from src.calculation.indicators.volatility.stdev_ind import calculate_stdev
+from src.calculation.indicators.trend.adx_ind import calculate_adx
+from src.calculation.indicators.trend.sar_ind import calculate_sar
+from src.calculation.indicators.sentiment.putcallratio_ind import calculate_putcallratio
+from src.calculation.indicators.sentiment.cot_ind import calculate_cot
+from src.calculation.indicators.sentiment.feargreed_ind import calculate_feargreed
+from src.common.constants import BUY, SELL, NOTRADE
+from src.cli.cli import parse_supertrend_parameters
 
 # Import dual chart plotting functions
 from .dual_chart_fastest import plot_dual_chart_fastest
@@ -272,7 +272,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             price_series = df['Open'] if price_type == 'open' else df['Close']
             
             # Import SMA calculation function
-            from ..calculation.indicators.trend.sma_ind import calculate_sma
+            from src.calculation.indicators.trend.sma_ind import calculate_sma
             sma_values = calculate_sma(price_series, period)
             result_df['sma'] = sma_values
             
@@ -630,7 +630,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             for col in ['supertrend', 'Supertrend', 'SUPERTREND']:
                 if col in result_df.columns:
                     result_df = result_df.drop(columns=[col])
-            from ..calculation.indicators.trend.supertrend_ind import calculate_supertrend
+            from src.calculation.indicators.trend.supertrend_ind import calculate_supertrend
             if price_type == 'open':
                 price_series = df['Open']
             else:

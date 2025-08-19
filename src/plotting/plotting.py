@@ -17,12 +17,12 @@ from .term_separate_plots import plot_separate_fields_terminal, plot_specific_fi
 
 # Use absolute imports when possible, fallback to relative
 try:
-    from common.constants import TradingRule
+    from src.common.constants import TradingRule
     from common import logger
 except ImportError:
     # Fallback to relative imports when run as module
-    from ..common.constants import TradingRule
-    from ..common import logger
+    from src.common.constants import TradingRule
+    from src.common import logger
 
 # Check if running in Docker
 IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
