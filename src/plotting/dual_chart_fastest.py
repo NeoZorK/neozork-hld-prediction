@@ -253,25 +253,68 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         fig (go.Figure): Plotly figure object
         display_df (pd.DataFrame): DataFrame with Wave data
     """
-    # Add Plot Wave (main indicator, thick yellow line) - as per MQ5
+    # Add Plot Wave (main indicator, single line with dynamic colors) - as per MQ5
     plot_wave_col = None
+    plot_color_col = None
     if '_plot_wave' in display_df.columns:
         plot_wave_col = '_plot_wave'
     elif '_Plot_Wave' in display_df.columns:
         plot_wave_col = '_Plot_Wave'
     
-    if plot_wave_col:
+    if '_plot_color' in display_df.columns:
+        plot_color_col = '_plot_color'
+    elif '_Plot_Color' in display_df.columns:
+        plot_color_col = '_Plot_Color'
+    
+    if plot_wave_col and plot_color_col:
+        # Create a single Wave line that changes color based on _Plot_Color values
+        # This mimics MQ5's DRAW_COLOR_LINE behavior
         fig.add_trace(
             go.Scatter(
                 x=display_df.index,
                 y=display_df[plot_wave_col],
                 mode='lines',
                 name='Wave',
-                line=dict(color='yellow', width=5),  # Thick yellow line as in MQ5
+                line=dict(color='black', width=2),  # Default color
                 showlegend=True
             ),
             row=2, col=1
         )
+        
+        # Add colored segments for different signal types
+        # Red segments (BUY = 1)
+        red_mask = (display_df[plot_color_col] == 1)
+        if red_mask.any():
+            red_data = display_df[red_mask]
+            fig.add_trace(
+                go.Scatter(
+                    x=red_data.index,
+                    y=red_data[plot_wave_col],
+                    mode='lines',
+                    name='Wave (BUY)',
+                    line=dict(color='red', width=2),
+                    showlegend=False,  # Don't show in legend to avoid clutter
+                    hoverinfo='skip'  # Skip hover for colored segments
+                ),
+                row=2, col=1
+            )
+        
+        # Blue segments (SELL = 2)
+        blue_mask = (display_df[plot_color_col] == 2)
+        if blue_mask.any():
+            blue_data = display_df[blue_mask]
+            fig.add_trace(
+                go.Scatter(
+                    x=blue_data.index,
+                    y=blue_data[plot_wave_col],
+                    mode='lines',
+                    name='Wave (SELL)',
+                    line=dict(color='blue', width=2),
+                    showlegend=False,  # Don't show in legend to avoid clutter
+                    hoverinfo='skip'  # Skip hover for colored segments
+                ),
+                row=2, col=1
+            )
     
     # Add Plot FastLine (thin red line) - as per MQ5
     plot_fastline_col = None
@@ -1866,22 +1909,24 @@ def plot_dual_chart_fastest(
             row=1, col=1
         )
     
-    # Add buy/sell signals if available
+    # Add buy/sell signals if available - ONLY when _Signal == 1 (BUY) or _Signal == 2 (SELL)
     if '_signal' in display_df.columns:
         # Ensure boolean masks are aligned with DataFrame index
-        buy_mask = (display_df['_signal'] == 1)  # BUY signal
+        buy_mask = (display_df['_signal'] == 1)  # BUY signal ONLY
         buy_mask = buy_mask.reindex(display_df.index, fill_value=False)
         buy_signals = display_df[buy_mask]
-        sell_mask = (display_df['_signal'] == 2)  # SELL signal
+        sell_mask = (display_df['_signal'] == 2)  # SELL signal ONLY
         sell_mask = sell_mask.reindex(display_df.index, fill_value=False)
         sell_signals = display_df[sell_mask]
+        
+        # Only add BUY signals when _Signal == 1
         if not buy_signals.empty:
             fig.add_trace(
                 go.Scatter(
                     x=buy_signals.index,
                     y=buy_signals['low'] * 0.995,  # Position below the low
                     mode='markers',
-                    name='Buy Signal',
+                    name='Buy Signal (_Signal=1)',
                     marker=dict(
                         symbol='triangle-up',
                         size=10,
@@ -1892,13 +1937,15 @@ def plot_dual_chart_fastest(
                 ),
                 row=1, col=1
             )
+        
+        # Only add SELL signals when _Signal == 2
         if not sell_signals.empty:
             fig.add_trace(
                 go.Scatter(
                     x=sell_signals.index,
                     y=sell_signals['high'] * 1.005,  # Position above the high
                     mode='markers',
-                    name='Sell Signal',
+                    name='Sell Signal (_Signal=2)',
                     marker=dict(
                         symbol='triangle-down',
                         size=10,
@@ -1909,7 +1956,8 @@ def plot_dual_chart_fastest(
                 ),
                 row=1, col=1
             )
-    # Fallback to direction if _signal not available
+    
+    # Fallback to direction if _signal not available (for backward compatibility)
     elif 'direction' in display_df.columns:
         # Ensure boolean masks are aligned with DataFrame index
         buy_mask = (display_df['direction'] == 1)
@@ -1924,7 +1972,7 @@ def plot_dual_chart_fastest(
                     x=buy_signals.index,
                     y=buy_signals['low'] * 0.995,  # Position below the low
                     mode='markers',
-                    name='Buy Signal',
+                    name='Buy Signal (direction=1)',
                     marker=dict(
                         symbol='triangle-up',
                         size=10,
@@ -1941,7 +1989,7 @@ def plot_dual_chart_fastest(
                     x=sell_signals.index,
                     y=sell_signals['high'] * 1.005,  # Position above the high
                     mode='markers',
-                    name='Sell Signal',
+                    name='Sell Signal (direction=2)',
                     marker=dict(
                         symbol='triangle-down',
                         size=10,
