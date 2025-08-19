@@ -135,7 +135,7 @@ def calculate_wave(price_series: pd.Series, wave_input_parameters: WaveParameter
         return pd.Series(index=price_series.index, dtype=float)
 
     # Calculate wave
-    wave = pd.Series.rolling(window=wave_input_parameters.long1, min_periods=wave_input_parameters.long1).mean()
+    wave = price_series.rolling(window=wave_input_parameters.long1, min_periods=wave_input_parameters.long1).mean()
     return wave
 
 
@@ -151,4 +151,40 @@ def apply_rule_wave(df: pd.DataFrame, wave_inputs: WaveParameters, price_type: P
     Returns:
           pd.DataFrame: DataFrame with Wave calculations and signals
     """
+
+    # Select price series based on price_type
+    if price_type == PriceType.OPEN:
+        price_series = df['Open']
+        price_name = "Open"
+    else:
+        price_series = df['Close']
+        price_name = "Close"
+
+    # Calculate Wave
+    df['Wave'] = calculate_wave(price_series, wave_inputs)
+
+    # Add price type info to column name
+    df['Wave_Price_Type'] = price_name
+
+    # Calculate Wave signals
+    df['Wave_Signal'] = BUY
+
+    # Calculate Support and Resistance levels based on Wave
+    # Use Wave as dynamic support/resistance
+    wave_values = df['Wave']
+
+    # Support level: Wave with small buffer
+    support_levels = wave_values * 0.995 # 0.5% below Wave
+
+    # Resistance level: Wave with small buffer
+    resistance_levels = wave_values * 1.005 # 0.5% above Wave
+
+    # Set output columns
+    df['PPrice1'] = support_levels
+    df['PColor1'] = BUY
+    df['PPrice2'] = resistance_levels
+    df['PColor2'] = SELL
+    df['Direction'] = df['Wave_Signal']
+    df['Diff'] = price_series - wave_values
+
     return df
