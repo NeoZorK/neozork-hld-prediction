@@ -2,392 +2,309 @@
 # tests/calculation/indicators/trend/test_wave_ind.py
 
 """
-Test module for Wave indicator calculations.
+Tests for Wave indicator Global TR Switch functions.
 """
 
 import pytest
 import pandas as pd
 import numpy as np
+
 from src.calculation.indicators.trend.wave_ind import (
-    calculate_wave, 
-    apply_rule_wave, 
-    WaveParameters, 
-    TrendType, 
-    GlobalTrendType
+    global_tr_switch, g_prime_tr, g_reverse_tr, g_prime_tr_zone,
+    g_reverse_tr_zone, g_new_zone_tr, g_long_zone_tr, g_long_zone_reverse_tr,
+    ENUM_GLOBAL_TR, BUY, SELL, NOTRADE
 )
-from src.common.constants import BUY, SELL, NOTRADE, PriceType
 
 
-class TestWaveParameters:
-    """Test WaveParameters dataclass."""
+class TestGlobalTRSwitch:
+    """Test cases for Global TR Switch functions."""
     
-    def test_default_parameters(self):
-        """Test default parameter values."""
-        params = WaveParameters()
+    @pytest.fixture
+    def sample_data(self):
+        """Create sample data for testing."""
+        index = pd.date_range('2023-01-01', periods=10, freq='D')
         
-        assert params.long1 == 339
-        assert params.fast1 == 10
-        assert params.trend1 == 2
-        assert params.tr1 == TrendType.FAST
-        assert params.long2 == 22
-        assert params.fast2 == 11
-        assert params.trend2 == 4
-        assert params.tr2 == TrendType.FAST
-        assert params.global_tr == GlobalTrendType.PRIME
-        assert params.sma_period == 22
-        assert params.price_type == PriceType.CLOSE
+        # Create sample wave and fastline data
+        wave1 = pd.Series([1.0, 2.0, -1.0, -2.0, 1.5, -1.5, 0.5, -0.5, 2.5, -2.5], index=index)
+        wave2 = pd.Series([0.5, 1.5, -0.5, -1.5, 1.0, -1.0, 0.3, -0.3, 2.0, -2.0], index=index)
+        fastline1 = pd.Series([0.8, 1.8, -0.8, -1.8, 1.3, -1.3, 0.4, -0.4, 2.3, -2.3], index=index)
+        fastline2 = pd.Series([0.3, 1.3, -0.3, -1.3, 0.8, -0.8, 0.2, -0.2, 1.8, -1.8], index=index)
+        
+        # Create sample color signals
+        color1 = pd.Series([BUY, BUY, SELL, SELL, BUY, SELL, BUY, SELL, BUY, SELL], index=index)
+        color2 = pd.Series([BUY, SELL, SELL, BUY, BUY, SELL, BUY, SELL, BUY, SELL], index=index)
+        
+        return wave1, wave2, fastline1, fastline2, color1, color2
     
-    def test_custom_parameters(self):
-        """Test custom parameter values."""
-        params = WaveParameters(
-            long1=200,
-            fast1=5,
-            trend1=1,
-            tr1=TrendType.SLOW,
-            long2=15,
-            fast2=8,
-            trend2=3,
-            tr2=TrendType.MEDIUM,
-            global_tr=GlobalTrendType.SECONDARY,
-            sma_period=20,
-            price_type=PriceType.OPEN
-        )
+    def test_g_prime_tr_basic(self, sample_data):
+        """Test G Prime TR with basic signals."""
+        wave1, wave2, fastline1, fastline2, color1, color2 = sample_data
         
-        assert params.long1 == 200
-        assert params.fast1 == 5
-        assert params.trend1 == 1
-        assert params.tr1 == TrendType.SLOW
-        assert params.long2 == 15
-        assert params.fast2 == 8
-        assert params.trend2 == 3
-        assert params.tr2 == TrendType.MEDIUM
-        assert params.global_tr == GlobalTrendType.SECONDARY
-        assert params.sma_period == 20
-        assert params.price_type == PriceType.OPEN
-
-
-class TestTrendType:
-    """Test TrendType enum."""
+        result = g_prime_tr(wave1, wave2, fastline1, fastline2, color1, color2)
+        
+        # Check that signals are only generated when both colors agree
+        assert result.iloc[0] == BUY  # Both BUY
+        assert result.iloc[1] == NOTRADE  # BUY vs SELL
+        assert result.iloc[2] == SELL  # Both SELL
+        assert result.iloc[3] == NOTRADE  # SELL vs BUY
+        assert result.iloc[4] == BUY  # Both BUY
+        assert result.iloc[5] == SELL  # Both SELL
+        assert result.iloc[6] == BUY  # Both BUY
+        assert result.iloc[7] == SELL  # Both SELL
+        assert result.iloc[8] == BUY  # Both BUY
+        assert result.iloc[9] == SELL  # Both SELL
     
-    def test_trend_type_values(self):
-        """Test TrendType enum values."""
-        assert TrendType.FAST.value == "fast"
-        assert TrendType.SLOW.value == "slow"
-        assert TrendType.MEDIUM.value == "medium"
+    def test_g_reverse_tr_basic(self, sample_data):
+        """Test G Reverse TR with basic signals."""
+        wave1, wave2, fastline1, fastline2, color1, color2 = sample_data
+        
+        result = g_reverse_tr(wave1, wave2, fastline1, fastline2, color1, color2)
+        
+        # Check that signals are reversed when both colors agree
+        assert result.iloc[0] == SELL  # Both BUY -> SELL
+        assert result.iloc[1] == NOTRADE  # BUY vs SELL
+        assert result.iloc[2] == BUY  # Both SELL -> BUY
+        assert result.iloc[3] == NOTRADE  # SELL vs BUY
+        assert result.iloc[4] == SELL  # Both BUY -> SELL
+        assert result.iloc[5] == BUY  # Both SELL -> BUY
+        assert result.iloc[6] == SELL  # Both BUY -> SELL
+        assert result.iloc[7] == BUY  # Both SELL -> BUY
+        assert result.iloc[8] == SELL  # Both BUY -> SELL
+        assert result.iloc[9] == BUY  # Both SELL -> BUY
     
-    def test_trend_type_from_string(self):
-        """Test creating TrendType from string."""
-        assert TrendType("fast") == TrendType.FAST
-        assert TrendType("slow") == TrendType.SLOW
-        assert TrendType("medium") == TrendType.MEDIUM
+    def test_g_prime_tr_zone(self, sample_data):
+        """Test G Prime TR Zone with zone filtering."""
+        wave1, wave2, fastline1, fastline2, color1, color2 = sample_data
+        
+        result = g_prime_tr_zone(wave1, wave2, fastline1, fastline2, color1, color2)
+        
+        # Check zone filtering: BUY only in negative zone, SELL only in positive zone
+        # Index 0: wave1=1.0 (positive), color1=BUY, color2=BUY -> BUY in positive zone = NOTRADE
+        assert result.iloc[0] == NOTRADE  # BUY in positive zone (wave1 > 0)
+        # Index 1: wave1=2.0 (positive), color1=BUY, color2=SELL -> different signals = NOTRADE
+        assert result.iloc[1] == NOTRADE  # BUY vs SELL
+        # Index 2: wave1=-1.0 (negative), color1=SELL, color2=SELL -> SELL in negative zone = NOTRADE
+        assert result.iloc[2] == NOTRADE  # SELL in negative zone (wave1 < 0) - should be NOTRADE
+        # Index 3: wave1=-2.0 (negative), color1=SELL, color2=BUY -> different signals = NOTRADE
+        assert result.iloc[3] == NOTRADE  # SELL vs BUY
+        # Index 4: wave1=1.5 (positive), color1=BUY, color2=BUY -> BUY in positive zone = NOTRADE
+        assert result.iloc[4] == NOTRADE  # BUY in positive zone (wave1 > 0)
+        # Index 5: wave1=-1.5 (negative), color1=SELL, color2=SELL -> SELL in negative zone = NOTRADE
+        assert result.iloc[5] == NOTRADE  # SELL in negative zone (wave1 < 0) - should be NOTRADE
+        # Index 6: wave1=0.5 (positive), color1=BUY, color2=BUY -> BUY in positive zone = NOTRADE
+        assert result.iloc[6] == NOTRADE  # BUY in positive zone (wave1 > 0)
+        # Index 7: wave1=-0.5 (negative), color1=SELL, color2=SELL -> SELL in negative zone = NOTRADE
+        assert result.iloc[7] == NOTRADE  # SELL in negative zone (wave1 < 0) - should be NOTRADE
+        # Index 8: wave1=2.5 (positive), color1=BUY, color2=BUY -> BUY in positive zone = NOTRADE
+        assert result.iloc[8] == NOTRADE  # BUY in positive zone (wave1 > 0)
+        # Index 9: wave1=-2.5 (negative), color1=SELL, color2=SELL -> SELL in negative zone = NOTRADE
+        assert result.iloc[9] == NOTRADE  # SELL in negative zone (wave1 < 0) - should be NOTRADE
     
-    def test_invalid_trend_type(self):
-        """Test invalid trend type raises ValueError."""
-        with pytest.raises(ValueError):
-            TrendType("invalid")
-
-
-class TestGlobalTrendType:
-    """Test GlobalTrendType enum."""
+    def test_g_reverse_tr_zone(self, sample_data):
+        """Test G Reverse TR Zone with reversed zone filtering."""
+        wave1, wave2, fastline1, fastline2, color1, color2 = sample_data
+        
+        result = g_reverse_tr_zone(wave1, wave2, fastline1, fastline2, color1, color2)
+        
+        # Check reversed zone filtering: BUY in negative zone -> SELL, SELL in positive zone -> BUY
+        # Index 0: wave1=1.0 (positive), color1=BUY, color2=BUY -> BUY in positive zone = NOTRADE
+        assert result.iloc[0] == NOTRADE  # BUY in positive zone -> no signal
+        # Index 1: wave1=2.0 (positive), color1=BUY, color2=SELL -> different signals = NOTRADE
+        assert result.iloc[1] == NOTRADE  # BUY vs SELL
+        # Index 2: wave1=-1.0 (negative), color1=SELL, color2=SELL -> SELL in negative zone = NOTRADE
+        assert result.iloc[2] == NOTRADE  # SELL in negative zone -> no signal
+        # Index 3: wave1=-2.0 (negative), color1=SELL, color2=BUY -> different signals = NOTRADE
+        assert result.iloc[3] == NOTRADE  # SELL vs BUY
+        # Index 4: wave1=1.5 (positive), color1=BUY, color2=BUY -> BUY in positive zone = NOTRADE
+        assert result.iloc[4] == NOTRADE  # BUY in positive zone -> no signal
+        # Index 5: wave1=-1.5 (negative), color1=SELL, color2=SELL -> SELL in negative zone = NOTRADE
+        assert result.iloc[5] == NOTRADE  # SELL in negative zone -> no signal
+        # Index 6: wave1=0.5 (positive), color1=BUY, color2=BUY -> BUY in positive zone = NOTRADE
+        assert result.iloc[6] == NOTRADE  # BUY in positive zone -> no signal
+        # Index 7: wave1=-0.5 (negative), color1=SELL, color2=SELL -> SELL in negative zone = NOTRADE
+        assert result.iloc[7] == NOTRADE  # SELL in negative zone -> no signal
+        # Index 8: wave1=2.5 (positive), color1=BUY, color2=BUY -> BUY in positive zone = NOTRADE
+        assert result.iloc[8] == NOTRADE  # BUY in positive zone -> no signal
+        # Index 9: wave1=-2.5 (negative), color1=SELL, color2=SELL -> SELL in negative zone = NOTRADE
+        assert result.iloc[9] == NOTRADE  # SELL in negative zone -> no signal
     
-    def test_global_trend_type_values(self):
-        """Test GlobalTrendType enum values."""
-        assert GlobalTrendType.PRIME.value == "prime"
-        assert GlobalTrendType.SECONDARY.value == "secondary"
-        assert GlobalTrendType.TERTIARY.value == "tertiary"
+    def test_g_new_zone_tr(self, sample_data):
+        """Test G New Zone TR with signal disagreement logic."""
+        wave1, wave2, fastline1, fastline2, color1, color2 = sample_data
+        
+        result = g_new_zone_tr(wave1, wave2, fastline1, fastline2, color1, color2)
+        
+        # Check that signals are generated when colors disagree
+        assert result.iloc[0] == NOTRADE  # Both BUY (agree)
+        assert result.iloc[1] == SELL  # BUY vs SELL (disagree) -> opposite of last signal (BUY)
+        assert result.iloc[2] == NOTRADE  # Both SELL (agree)
+        assert result.iloc[3] == BUY  # SELL vs BUY (disagree) -> opposite of last signal (SELL)
+        assert result.iloc[4] == NOTRADE  # Both BUY (agree)
+        assert result.iloc[5] == NOTRADE  # Both SELL (agree)
+        assert result.iloc[6] == NOTRADE  # Both BUY (agree)
+        assert result.iloc[7] == NOTRADE  # Both SELL (agree)
+        assert result.iloc[8] == NOTRADE  # Both BUY (agree)
+        assert result.iloc[9] == NOTRADE  # Both SELL (agree)
     
-    def test_global_trend_type_from_string(self):
-        """Test creating GlobalTrendType from string."""
-        assert GlobalTrendType("prime") == GlobalTrendType.PRIME
-        assert GlobalTrendType("secondary") == GlobalTrendType.SECONDARY
-        assert GlobalTrendType("tertiary") == GlobalTrendType.TERTIARY
+    def test_g_long_zone_tr(self, sample_data):
+        """Test G Long Zone TR with opposite signal generation."""
+        wave1, wave2, fastline1, fastline2, color1, color2 = sample_data
+        
+        result = g_long_zone_tr(wave1, wave2, fastline1, fastline2, color1, color2)
+        
+        # Check that opposite signals are always generated
+        assert result.iloc[0] == SELL  # Last signal BUY -> SELL
+        assert result.iloc[1] == SELL  # Last signal BUY -> SELL
+        assert result.iloc[2] == BUY  # Last signal SELL -> BUY
+        assert result.iloc[3] == BUY  # Last signal SELL -> BUY
+        assert result.iloc[4] == SELL  # Last signal BUY -> SELL
+        assert result.iloc[5] == BUY  # Last signal SELL -> BUY
+        assert result.iloc[6] == SELL  # Last signal BUY -> SELL
+        assert result.iloc[7] == BUY  # Last signal SELL -> BUY
+        assert result.iloc[8] == SELL  # Last signal BUY -> SELL
+        assert result.iloc[9] == BUY  # Last signal SELL -> BUY
     
-    def test_invalid_global_trend_type(self):
-        """Test invalid global trend type raises ValueError."""
-        with pytest.raises(ValueError):
-            GlobalTrendType("invalid")
-
-
-class TestCalculateWave:
-    """Test calculate_wave function."""
+    def test_g_long_zone_reverse_tr(self, sample_data):
+        """Test G Long Zone Reverse TR with same signal generation."""
+        wave1, wave2, fastline1, fastline2, color1, color2 = sample_data
+        
+        result = g_long_zone_reverse_tr(wave1, wave2, fastline1, fastline2, color1, color2)
+        
+        # Check that same signals are always generated
+        assert result.iloc[0] == BUY  # Last signal BUY -> BUY
+        assert result.iloc[1] == BUY  # Last signal BUY -> BUY
+        assert result.iloc[2] == SELL  # Last signal SELL -> SELL
+        assert result.iloc[3] == SELL  # Last signal SELL -> SELL
+        assert result.iloc[4] == BUY  # Last signal BUY -> BUY
+        assert result.iloc[5] == SELL  # Last signal SELL -> SELL
+        assert result.iloc[6] == BUY  # Last signal BUY -> BUY
+        assert result.iloc[7] == SELL  # Last signal SELL -> SELL
+        assert result.iloc[8] == BUY  # Last signal BUY -> BUY
+        assert result.iloc[9] == SELL  # Last signal SELL -> SELL
     
-    def setup_method(self):
-        """Set up test data."""
-        # Create test price series
-        np.random.seed(42)
-        dates = pd.date_range('2023-01-01', periods=500, freq='D')
-        self.price_series = pd.Series(
-            np.random.randn(500).cumsum() + 100,  # Random walk starting at 100
-            index=dates
-        )
+    def test_global_tr_switch_all_rules(self, sample_data):
+        """Test global_tr_switch with all trading rules."""
+        wave1, wave2, fastline1, fastline2, color1, color2 = sample_data
         
-        # Default parameters
-        self.default_params = WaveParameters()
-    
-    def test_calculate_wave_default_parameters(self):
-        """Test wave calculation with default parameters."""
-        wave_values, wave_signals = calculate_wave(self.price_series, self.default_params)
+        # Test all global trading rules
+        rules = [
+            ENUM_GLOBAL_TR.G_TR_PRIME,
+            ENUM_GLOBAL_TR.G_TR_REVERSE,
+            ENUM_GLOBAL_TR.G_TR_PRIME_ZONE,
+            ENUM_GLOBAL_TR.G_TR_REVERSE_ZONE,
+            ENUM_GLOBAL_TR.G_TR_NEW_ZONE,
+            ENUM_GLOBAL_TR.G_TR_LONG_ZONE,
+            ENUM_GLOBAL_TR.G_TR_LONG_ZONE_REVERSE
+        ]
         
-        # Check that we get the expected output types
-        assert isinstance(wave_values, pd.Series)
-        assert isinstance(wave_signals, pd.Series)
-        
-        # Check that the series have the same index as input
-        assert wave_values.index.equals(self.price_series.index)
-        assert wave_signals.index.equals(self.price_series.index)
-        
-        # Check that wave values are numeric
-        assert not wave_values.isna().all()
-        assert wave_values.dtype in ['float64', 'float32']
-        
-        # Check that signals contain valid values
-        valid_signals = [NOTRADE, BUY, SELL]
-        assert all(signal in valid_signals for signal in wave_signals.dropna())
-    
-    def test_calculate_wave_custom_parameters(self):
-        """Test wave calculation with custom parameters."""
-        custom_params = WaveParameters(
-            long1=50,
-            fast1=5,
-            trend1=10,
-            tr1=TrendType.SLOW,
-            long2=20,
-            fast2=3,
-            trend2=7,
-            tr2=TrendType.FAST,
-            global_tr=GlobalTrendType.SECONDARY,
-            sma_period=15
-        )
-        
-        wave_values, wave_signals = calculate_wave(self.price_series, custom_params)
-        
-        # Check that we get the expected output types
-        assert isinstance(wave_values, pd.Series)
-        assert isinstance(wave_signals, pd.Series)
-        
-        # Check that the series have the same index as input
-        assert wave_values.index.equals(self.price_series.index)
-        assert wave_signals.index.equals(self.price_series.index)
-    
-    def test_calculate_wave_insufficient_data(self):
-        """Test wave calculation with insufficient data."""
-        short_series = self.price_series.head(10)  # Only 10 data points
-        
-        wave_values, wave_signals = calculate_wave(short_series, self.default_params)
-        
-        # Should return empty series with NOTRADE signals
-        assert wave_values.isna().all()
-        assert all(signal == NOTRADE for signal in wave_signals)
-    
-    def test_calculate_wave_different_trend_types(self):
-        """Test wave calculation with different trend type combinations."""
-        # Test FAST trend type
-        fast_params = WaveParameters(tr1=TrendType.FAST, tr2=TrendType.FAST)
-        wave_values_fast, _ = calculate_wave(self.price_series, fast_params)
-        
-        # Test SLOW trend type
-        slow_params = WaveParameters(tr1=TrendType.SLOW, tr2=TrendType.SLOW)
-        wave_values_slow, _ = calculate_wave(self.price_series, slow_params)
-        
-        # Test MEDIUM trend type
-        medium_params = WaveParameters(tr1=TrendType.MEDIUM, tr2=TrendType.MEDIUM)
-        wave_values_medium, _ = calculate_wave(self.price_series, medium_params)
-        
-        # Values should be different for different trend types
-        assert not wave_values_fast.equals(wave_values_slow)
-        assert not wave_values_slow.equals(wave_values_medium)
-        assert not wave_values_fast.equals(wave_values_medium)
-    
-    def test_calculate_wave_different_global_trends(self):
-        """Test wave calculation with different global trend types."""
-        # Test PRIME global trend
-        prime_params = WaveParameters(global_tr=GlobalTrendType.PRIME, sma_period=20)
-        wave_values_prime, _ = calculate_wave(self.price_series, prime_params)
-        
-        # Test SECONDARY global trend
-        secondary_params = WaveParameters(global_tr=GlobalTrendType.SECONDARY, sma_period=20)
-        wave_values_secondary, _ = calculate_wave(self.price_series, secondary_params)
-        
-        # Test TERTIARY global trend
-        tertiary_params = WaveParameters(global_tr=GlobalTrendType.TERTIARY, sma_period=20)
-        wave_values_tertiary, _ = calculate_wave(self.price_series, tertiary_params)
-        
-        # Values should be different for different global trend types
-        assert not wave_values_prime.equals(wave_values_secondary)
-        assert not wave_values_secondary.equals(wave_values_tertiary)
-        assert not wave_values_prime.equals(wave_values_tertiary)
-    
-    def test_calculate_wave_signal_generation(self):
-        """Test that wave signals are generated correctly."""
-        # Create a simple price series with clear trends
-        dates = pd.date_range('2023-01-01', periods=100, freq='D')
-        # Create a series that goes up then down
-        prices = pd.Series([100 + i for i in range(50)] + [150 - i for i in range(50)], index=dates)
-        
-        simple_params = WaveParameters(long1=10, fast1=5, trend1=3, long2=8, fast2=4, trend2=2, sma_period=5)
-        wave_values, wave_signals = calculate_wave(prices, simple_params)
-        
-        # Should have some BUY and SELL signals
-        assert BUY in wave_signals.values
-        assert SELL in wave_signals.values
-        assert NOTRADE in wave_signals.values
-
-
-class TestApplyRuleWave:
-    """Test apply_rule_wave function."""
-    
-    def setup_method(self):
-        """Set up test data."""
-        # Create test DataFrame
-        np.random.seed(42)
-        dates = pd.date_range('2023-01-01', periods=100, freq='D')
-        
-        self.test_df = pd.DataFrame({
-            'Open': np.random.randn(100).cumsum() + 100,
-            'High': np.random.randn(100).cumsum() + 102,
-            'Low': np.random.randn(100).cumsum() + 98,
-            'Close': np.random.randn(100).cumsum() + 100,
-            'Volume': np.random.randint(1000, 10000, 100)
-        }, index=dates)
-    
-    def test_apply_rule_wave_default_parameters(self):
-        """Test wave rule application with default parameters."""
-        result_df = apply_rule_wave(self.test_df, point=0.01)
-        
-        # Check that required columns are added
-        assert 'wave' in result_df.columns
-        assert 'wave_signal' in result_df.columns
-        assert 'wave_price_type' in result_df.columns
-        assert 'wave_upper' in result_df.columns
-        assert 'wave_lower' in result_df.columns
-        
-        # Check that original data is preserved
-        assert all(col in result_df.columns for col in self.test_df.columns)
-        
-        # Check data types
-        assert result_df['wave'].dtype in ['float64', 'float32']
-        assert result_df['wave_signal'].dtype in ['float64', 'float32']
-        assert result_df['wave_price_type'].dtype == 'object'
-        
-        # Check that price type is set correctly
-        assert result_df['wave_price_type'].iloc[0] == "Close"
-    
-    def test_apply_rule_wave_open_price(self):
-        """Test wave rule application with Open price."""
-        result_df = apply_rule_wave(self.test_df, point=0.01, price_type=PriceType.OPEN)
-        
-        # Check that price type is set correctly
-        assert result_df['wave_price_type'].iloc[0] == "Open"
-    
-    def test_apply_rule_wave_custom_parameters(self):
-        """Test wave rule application with custom parameters."""
-        result_df = apply_rule_wave(
-            self.test_df, 
-            point=0.01,
-            wave_long1=50,
-            wave_fast1=5,
-            wave_trend1=10,
-            wave_tr1='slow',
-            wave_long2=20,
-            wave_fast2=3,
-            wave_trend2=7,
-            wave_tr2='fast',
-            wave_global_tr='secondary',
-            wave_sma_period=15
-        )
-        
-        # Check that required columns are added
-        assert 'wave' in result_df.columns
-        assert 'wave_signal' in result_df.columns
-        assert 'wave_price_type' in result_df.columns
-        assert 'wave_upper' in result_df.columns
-        assert 'wave_lower' in result_df.columns
-    
-    def test_apply_rule_wave_invalid_trend_type(self):
-        """Test wave rule application with invalid trend type."""
-        with pytest.raises(ValueError):
-            apply_rule_wave(
-                self.test_df, 
-                point=0.01,
-                wave_tr1='invalid_trend_type'
+        for rule in rules:
+            plot_color, plot_wave, plot_fastline = global_tr_switch(
+                rule, wave1, wave2, fastline1, fastline2, color1, color2
             )
+            
+            # Check that output series have correct length
+            assert len(plot_color) == len(wave1)
+            assert len(plot_wave) == len(wave1)
+            assert len(plot_fastline) == len(wave1)
+            
+            # Check that plot_wave and plot_fastline are copies of wave1 and fastline1
+            pd.testing.assert_series_equal(plot_wave, wave1)
+            pd.testing.assert_series_equal(plot_fastline, fastline1)
     
-    def test_apply_rule_wave_invalid_global_trend(self):
-        """Test wave rule application with invalid global trend type."""
-        with pytest.raises(ValueError):
-            apply_rule_wave(
-                self.test_df, 
-                point=0.01,
-                wave_global_tr='invalid_global_trend'
-            )
+    def test_global_tr_switch_invalid_rule(self, sample_data):
+        """Test global_tr_switch with invalid rule (should default to G_TR_PRIME)."""
+        wave1, wave2, fastline1, fastline2, color1, color2 = sample_data
+        
+        # Create an invalid rule (not in enum)
+        class InvalidRule:
+            pass
+        
+        invalid_rule = InvalidRule()
+        
+        plot_color, plot_wave, plot_fastline = global_tr_switch(
+            invalid_rule, wave1, wave2, fastline1, fastline2, color1, color2
+        )
+        
+        # Should default to G_TR_PRIME behavior
+        expected_result = g_prime_tr(wave1, wave2, fastline1, fastline2, color1, color2)
+        pd.testing.assert_series_equal(plot_color, expected_result)
     
-    def test_apply_rule_wave_price_levels(self):
-        """Test that price levels are calculated correctly."""
-        result_df = apply_rule_wave(self.test_df, point=0.01)
+    def test_empty_signals(self):
+        """Test functions with empty signals (all NOTRADE)."""
+        index = pd.date_range('2023-01-01', periods=5, freq='D')
+        wave1 = pd.Series([1.0, -1.0, 0.5, -0.5, 1.5], index=index)
+        wave2 = pd.Series([0.5, -0.5, 0.3, -0.3, 1.0], index=index)
+        fastline1 = pd.Series([0.8, -0.8, 0.4, -0.4, 1.3], index=index)
+        fastline2 = pd.Series([0.3, -0.3, 0.2, -0.2, 0.8], index=index)
+        color1 = pd.Series([NOTRADE, NOTRADE, NOTRADE, NOTRADE, NOTRADE], index=index)
+        color2 = pd.Series([NOTRADE, NOTRADE, NOTRADE, NOTRADE, NOTRADE], index=index)
         
-        # Check that upper and lower bands are calculated
-        assert 'wave_upper' in result_df.columns
-        assert 'wave_lower' in result_df.columns
+        # Test all functions with empty signals
+        functions = [
+            g_prime_tr, g_reverse_tr, g_prime_tr_zone, g_reverse_tr_zone,
+            g_new_zone_tr, g_long_zone_tr, g_long_zone_reverse_tr
+        ]
         
-        # Check that upper band is above wave values
-        assert all(result_df['wave_upper'] >= result_df['wave'])
-        
-        # Check that lower band is below wave values
-        assert all(result_df['wave_lower'] <= result_df['wave'])
-        
-        # Check that bands are separated by the expected distance
-        expected_distance = 0.01 * 10 * 2  # point * 10 * 2 (upper and lower)
-        actual_distance = result_df['wave_upper'] - result_df['wave_lower']
-        assert all(actual_distance >= expected_distance)
+        for func in functions:
+            result = func(wave1, wave2, fastline1, fastline2, color1, color2)
+            # All results should be NOTRADE
+            assert all(result == NOTRADE)
     
-    def test_apply_rule_wave_signal_values(self):
-        """Test that signal values are valid."""
-        result_df = apply_rule_wave(self.test_df, point=0.01)
+    def test_mixed_signals(self):
+        """Test functions with mixed signals (some NOTRADE, some BUY/SELL)."""
+        index = pd.date_range('2023-01-01', periods=6, freq='D')
+        wave1 = pd.Series([1.0, -1.0, 0.5, -0.5, 1.5, -1.5], index=index)
+        wave2 = pd.Series([0.5, -0.5, 0.3, -0.3, 1.0, -1.0], index=index)
+        fastline1 = pd.Series([0.8, -0.8, 0.4, -0.4, 1.3, -1.3], index=index)
+        fastline2 = pd.Series([0.3, -0.3, 0.2, -0.2, 0.8, -0.8], index=index)
+        color1 = pd.Series([BUY, NOTRADE, SELL, BUY, NOTRADE, SELL], index=index)
+        color2 = pd.Series([BUY, SELL, NOTRADE, NOTRADE, BUY, SELL], index=index)
         
-        # Check that signals contain valid values
-        valid_signals = [NOTRADE, BUY, SELL]
-        assert all(signal in valid_signals for signal in result_df['wave_signal'].dropna())
-    
-    def test_apply_rule_wave_empty_dataframe(self):
-        """Test wave rule application with empty DataFrame."""
-        empty_df = pd.DataFrame()
-        result_df = apply_rule_wave(empty_df, point=0.01)
+        # Test g_prime_tr with mixed signals
+        result = g_prime_tr(wave1, wave2, fastline1, fastline2, color1, color2)
         
-        # Should return empty DataFrame with wave columns
-        assert result_df.empty
-        assert 'wave' in result_df.columns
-        assert 'wave_signal' in result_df.columns
-        assert 'wave_price_type' in result_df.columns
-        assert 'wave_upper' in result_df.columns
-        assert 'wave_lower' in result_df.columns
-
-
-class TestWaveIndicatorIntegration:
-    """Test Wave indicator integration with the system."""
+        # Only index 0 and 5 should have signals (both colors agree)
+        assert result.iloc[0] == BUY  # Both BUY
+        assert result.iloc[1] == NOTRADE  # BUY vs SELL
+        assert result.iloc[2] == NOTRADE  # SELL vs NOTRADE
+        assert result.iloc[3] == NOTRADE  # BUY vs NOTRADE
+        assert result.iloc[4] == NOTRADE  # NOTRADE vs BUY
+        assert result.iloc[5] == SELL  # Both SELL
     
-    def test_wave_indicator_import(self):
-        """Test that Wave indicator can be imported correctly."""
-        from src.calculation.indicators.trend.wave_ind import apply_rule_wave
-        assert callable(apply_rule_wave)
-    
-    def test_wave_indicator_docstring(self):
-        """Test that Wave indicator has proper documentation."""
-        from src.calculation.indicators.trend.wave_ind import apply_rule_wave
+    def test_zone_filtering_with_valid_signals(self):
+        """Test zone filtering with signals that should pass the zone filter."""
+        index = pd.date_range('2023-01-01', periods=4, freq='D')
         
-        doc = apply_rule_wave.__doc__
-        assert doc is not None
-        assert "Wave" in doc
-        assert "DataFrame" in doc
-        assert "point" in doc
-    
-    def test_wave_indicator_info(self):
-        """Test that Wave indicator has proper INDICATOR INFO."""
-        import src.calculation.indicators.trend.wave_ind as wave_module
+        # Test data where signals should pass zone filtering
+        wave1 = pd.Series([-1.0, 1.0, -2.0, 2.0], index=index)  # negative, positive, negative, positive
+        wave2 = pd.Series([-0.5, 0.5, -1.5, 1.5], index=index)
+        fastline1 = pd.Series([-0.8, 0.8, -1.8, 1.8], index=index)
+        fastline2 = pd.Series([-0.3, 0.3, -1.3, 1.3], index=index)
         
-        module_doc = wave_module.__doc__
-        assert module_doc is not None
-        assert "INDICATOR INFO:" in module_doc
-        assert "Name: Wave" in module_doc
-        assert "Category: Trend" in module_doc
-        assert "Usage:" in module_doc
-        assert "Parameters:" in module_doc
+        # BUY in negative zone, SELL in positive zone (should pass zone filter)
+        color1 = pd.Series([BUY, SELL, BUY, SELL], index=index)
+        color2 = pd.Series([BUY, SELL, BUY, SELL], index=index)
+        
+        # Test g_prime_tr_zone
+        result = g_prime_tr_zone(wave1, wave2, fastline1, fastline2, color1, color2)
+        
+        # Index 0: BUY in negative zone (-1.0) -> should pass
+        assert result.iloc[0] == BUY
+        # Index 1: SELL in positive zone (1.0) -> should pass
+        assert result.iloc[1] == SELL
+        # Index 2: BUY in negative zone (-2.0) -> should pass
+        assert result.iloc[2] == BUY
+        # Index 3: SELL in positive zone (2.0) -> should pass
+        assert result.iloc[3] == SELL
+        
+        # Test g_reverse_tr_zone
+        result_reverse = g_reverse_tr_zone(wave1, wave2, fastline1, fastline2, color1, color2)
+        
+        # Index 0: BUY in negative zone -> should reverse to SELL
+        assert result_reverse.iloc[0] == SELL
+        # Index 1: SELL in positive zone -> should reverse to BUY
+        assert result_reverse.iloc[1] == BUY
+        # Index 2: BUY in negative zone -> should reverse to SELL
+        assert result_reverse.iloc[2] == SELL
+        # Index 3: SELL in positive zone -> should reverse to BUY
+        assert result_reverse.iloc[3] == BUY

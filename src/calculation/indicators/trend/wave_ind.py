@@ -121,7 +121,7 @@ class WaveParameters:
 
 
 
-def calculate_wave(price_series: pd.Series, wave_input_parameters: WaveParameters ) -> pd.Series:
+def init_wave(price_series: pd.Series, wave_input_parameters: WaveParameters ):
     """
     Calculates Wave indicator values based on price series and input parameters.
 
@@ -354,6 +354,332 @@ def tr_switch(tr_rule: ENUM_MOM_TR, wave: pd.Series, fastline: pd.Series,
 
     return colors
 
+# 4
+def global_tr_switch(global_tr: ENUM_GLOBAL_TR, wave1: pd.Series, wave2: pd.Series, 
+                    fastline1: pd.Series, fastline2: pd.Series, color1: pd.Series, 
+                    color2: pd.Series) -> tuple[pd.Series, pd.Series, pd.Series]:
+    """
+    Applies global trading rules to combine signals from two wave indicators.
+
+    Args:
+        global_tr: Global trading rule to apply
+        wave1: First wave indicator values
+        wave2: Second wave indicator values
+        fastline1: First fast line indicator values
+        fastline2: Second fast line indicator values
+        color1: First wave trading signals
+        color2: Second wave trading signals
+
+    Returns:
+        tuple: (plot_color, plot_wave, plot_fastline) - Combined signals and values
+    """
+    
+    # Initialize output series
+    plot_color = pd.Series(NOTRADE, index=wave1.index)
+    plot_wave = wave1.copy()
+    plot_fastline = fastline1.copy()
+    
+    # Apply global trading rule
+    if global_tr == ENUM_GLOBAL_TR.G_TR_PRIME:
+        plot_color = g_prime_tr(wave1, wave2, fastline1, fastline2, color1, color2)
+    elif global_tr == ENUM_GLOBAL_TR.G_TR_REVERSE:
+        plot_color = g_reverse_tr(wave1, wave2, fastline1, fastline2, color1, color2)
+    elif global_tr == ENUM_GLOBAL_TR.G_TR_PRIME_ZONE:
+        plot_color = g_prime_tr_zone(wave1, wave2, fastline1, fastline2, color1, color2)
+    elif global_tr == ENUM_GLOBAL_TR.G_TR_REVERSE_ZONE:
+        plot_color = g_reverse_tr_zone(wave1, wave2, fastline1, fastline2, color1, color2)
+    elif global_tr == ENUM_GLOBAL_TR.G_TR_NEW_ZONE:
+        plot_color = g_new_zone_tr(wave1, wave2, fastline1, fastline2, color1, color2)
+    elif global_tr == ENUM_GLOBAL_TR.G_TR_LONG_ZONE:
+        plot_color = g_long_zone_tr(wave1, wave2, fastline1, fastline2, color1, color2)
+    elif global_tr == ENUM_GLOBAL_TR.G_TR_LONG_ZONE_REVERSE:
+        plot_color = g_long_zone_reverse_tr(wave1, wave2, fastline1, fastline2, color1, color2)
+    else:
+        # Default to G_TR_PRIME
+        plot_color = g_prime_tr(wave1, wave2, fastline1, fastline2, color1, color2)
+    
+    return plot_color, plot_wave, plot_fastline
+
+# 5
+
+
+def sma_calculation(period: int, source_arr: pd.Series) -> float:
+    """
+    Calculates Simple Moving Average (SMA) for the given period and index.
+
+    Args:
+        period (int): Calculation period for SMA
+        source_arr (pd.Series): Source data array
+
+    Returns:
+        float: Calculated SMA value for the current index
+
+    Raises:
+        ValueError: If period is not positive or index is invalid
+    """
+    # Check if period is positive
+    if period <= 0:
+        raise ValueError("Period must be positive")
+
+    # Check if index is valid
+    if len(source_arr) < period:
+        raise ValueError("Not enough data points")
+
+    #
+    for i in range(len(source_arr)):
+        if i < 0 or i >= len(source_arr):
+            raise ValueError("Invalid index")
+
+        # For initial values, return current value
+        if i <= period:
+            return source_arr[i]
+
+        # Calculate sum for the period
+        sum_values = sum(source_arr[i - period + 1:i + 1])
+
+    # Return SMA
+    return sum_values / period
+
+
+def g_prime_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series,
+               fastline2: pd.Series, color1: pd.Series, color2: pd.Series) -> pd.Series:
+    """
+    Global Prime TR - Use mix of Wave1 & Wave2 and FastLine1 & FastLine2 and Color1 & Color2.
+    If both signals are the same, then signal to trade.
+
+    Args:
+        wave1: First wave indicator values
+        wave2: Second wave indicator values
+        fastline1: First fast line indicator values
+        fastline2: Second fast line indicator values
+        color1: First wave trading signals
+        color2: Second wave trading signals
+
+    Returns:
+        pd.Series: Combined trading signals
+    """
+    plot_color = pd.Series(NOTRADE, index=color1.index)
+    
+    for i in range(len(color1)):
+        # Exit when empty one of two
+        if color1.iloc[i] == NOTRADE or color2.iloc[i] == NOTRADE:
+            continue
+            
+        # If same, then signal to trade
+        if color1.iloc[i] == color2.iloc[i]:
+            plot_color.iloc[i] = color1.iloc[i]
+    
+    return plot_color
+
+
+def g_reverse_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series, 
+                fastline2: pd.Series, color1: pd.Series, color2: pd.Series) -> pd.Series:
+    """
+    Global Reverse TR - Reverse the signals when both are the same.
+
+    Args:
+        wave1: First wave indicator values
+        wave2: Second wave indicator values
+        fastline1: First fast line indicator values
+        fastline2: Second fast line indicator values
+        color1: First wave trading signals
+        color2: Second wave trading signals
+
+    Returns:
+        pd.Series: Reversed trading signals
+    """
+    plot_color = pd.Series(NOTRADE, index=color1.index)
+    
+    for i in range(len(color1)):
+        # Exit when empty one of two
+        if color1.iloc[i] == NOTRADE or color2.iloc[i] == NOTRADE:
+            continue
+            
+        # If same, then reverse signal to trade
+        if color1.iloc[i] == color2.iloc[i]:
+            plot_color.iloc[i] = SELL if color1.iloc[i] == BUY else BUY
+    
+    return plot_color
+
+
+def g_prime_tr_zone(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series, 
+                   fastline2: pd.Series, color1: pd.Series, color2: pd.Series) -> pd.Series:
+    """
+    Global Prime TR + Zone - Sell only in upper zone & buy only in lower zone.
+
+    Args:
+        wave1: First wave indicator values
+        wave2: Second wave indicator values
+        fastline1: First fast line indicator values
+        fastline2: Second fast line indicator values
+        color1: First wave trading signals
+        color2: Second wave trading signals
+
+    Returns:
+        pd.Series: Zone-filtered trading signals
+    """
+    plot_color = pd.Series(NOTRADE, index=color1.index)
+    
+    for i in range(len(color1)):
+        # Exit when empty one of two
+        if color1.iloc[i] == NOTRADE or color2.iloc[i] == NOTRADE:
+            continue
+            
+        # If same, then check zone conditions
+        if color1.iloc[i] == color2.iloc[i]:
+            # Check BUY in lower zone (wave1 < 0)
+            if wave1.iloc[i] < 0 and color1.iloc[i] == BUY:
+                plot_color.iloc[i] = color1.iloc[i]
+            # Check SELL in upper zone (wave1 > 0)
+            elif wave1.iloc[i] > 0 and color1.iloc[i] == SELL:
+                plot_color.iloc[i] = color1.iloc[i]
+    
+    return plot_color
+
+
+def g_reverse_tr_zone(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series, 
+                     fastline2: pd.Series, color1: pd.Series, color2: pd.Series) -> pd.Series:
+    """
+    Global Reverse TR + Zone - Reversed sell only in upper zone & buy only in lower zone.
+
+    Args:
+        wave1: First wave indicator values
+        wave2: Second wave indicator values
+        fastline1: First fast line indicator values
+        fastline2: Second fast line indicator values
+        color1: First wave trading signals
+        color2: Second wave trading signals
+
+    Returns:
+        pd.Series: Reversed zone-filtered trading signals
+    """
+    plot_color = pd.Series(NOTRADE, index=color1.index)
+    
+    for i in range(len(color1)):
+        # Exit when empty one of two
+        if color1.iloc[i] == NOTRADE or color2.iloc[i] == NOTRADE:
+            continue
+            
+        # If same, then check zone conditions with reverse
+        if color1.iloc[i] == color2.iloc[i]:
+            # Check BUY in lower zone (wave1 < 0) -> reverse to SELL
+            if wave1.iloc[i] < 0 and color1.iloc[i] == BUY:
+                plot_color.iloc[i] = SELL
+            # Check SELL in upper zone (wave1 > 0) -> reverse to BUY
+            elif wave1.iloc[i] > 0 and color1.iloc[i] == SELL:
+                plot_color.iloc[i] = BUY
+    
+    return plot_color
+
+
+def g_new_zone_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series, 
+                 fastline2: pd.Series, color1: pd.Series, color2: pd.Series) -> pd.Series:
+    """
+    Global New Zone TR - Generate signals when wave indicators disagree.
+
+    Args:
+        wave1: First wave indicator values
+        wave2: Second wave indicator values
+        fastline1: First fast line indicator values
+        fastline2: Second fast line indicator values
+        color1: First wave trading signals
+        color2: Second wave trading signals
+
+    Returns:
+        pd.Series: New zone trading signals
+    """
+    plot_color = pd.Series(NOTRADE, index=color1.index)
+    last_signal = pd.Series(NOTRADE, index=color1.index)
+    
+    for i in range(len(color1)):
+        # Update last signal
+        if i > 0:
+            last_signal.iloc[i] = last_signal.iloc[i-1]
+        
+        # Update last signal when both agree
+        if color1.iloc[i] == color2.iloc[i] and color1.iloc[i] != NOTRADE:
+            last_signal.iloc[i] = color1.iloc[i]
+        
+        # When signals are not the same, generate opposite signal
+        if color1.iloc[i] != color2.iloc[i]:
+            if last_signal.iloc[i] == BUY:
+                plot_color.iloc[i] = SELL
+            elif last_signal.iloc[i] == SELL:
+                plot_color.iloc[i] = BUY
+    
+    return plot_color
+
+
+def g_long_zone_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series, 
+                  fastline2: pd.Series, color1: pd.Series, color2: pd.Series) -> pd.Series:
+    """
+    Global Long Zone TR - Always generate opposite signal to last signal.
+
+    Args:
+        wave1: First wave indicator values
+        wave2: Second wave indicator values
+        fastline1: First fast line indicator values
+        fastline2: Second fast line indicator values
+        color1: First wave trading signals
+        color2: Second wave trading signals
+
+    Returns:
+        pd.Series: Long zone trading signals
+    """
+    plot_color = pd.Series(NOTRADE, index=color1.index)
+    last_signal = pd.Series(NOTRADE, index=color1.index)
+    
+    for i in range(len(color1)):
+        # Update last signal
+        if i > 0:
+            last_signal.iloc[i] = last_signal.iloc[i-1]
+        
+        # Update last signal when both agree
+        if color1.iloc[i] == color2.iloc[i] and color1.iloc[i] != NOTRADE:
+            last_signal.iloc[i] = color1.iloc[i]
+        
+        # Main signal - always opposite to last signal
+        if last_signal.iloc[i] == BUY:
+            plot_color.iloc[i] = SELL
+        elif last_signal.iloc[i] == SELL:
+            plot_color.iloc[i] = BUY
+    
+    return plot_color
+
+
+def g_long_zone_reverse_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series, 
+                          fastline2: pd.Series, color1: pd.Series, color2: pd.Series) -> pd.Series:
+    """
+    Global Long Zone Reverse TR - Always use the last signal.
+
+    Args:
+        wave1: First wave indicator values
+        wave2: Second wave indicator values
+        fastline1: First fast line indicator values
+        fastline2: Second fast line indicator values
+        color1: First wave trading signals
+        color2: Second wave trading signals
+
+    Returns:
+        pd.Series: Long zone reverse trading signals
+    """
+    plot_color = pd.Series(NOTRADE, index=color1.index)
+    last_signal = pd.Series(NOTRADE, index=color1.index)
+    
+    for i in range(len(color1)):
+        # Update last signal
+        if i > 0:
+            last_signal.iloc[i] = last_signal.iloc[i-1]
+        
+        # Update last signal when both agree
+        if color1.iloc[i] == color2.iloc[i] and color1.iloc[i] != NOTRADE:
+            last_signal.iloc[i] = color1.iloc[i]
+        
+        # Main signal - always use last signal
+        plot_color.iloc[i] = last_signal.iloc[i]
+    
+    return plot_color
+
 
 # 0
 def apply_rule_wave(df: pd.DataFrame, wave_inputs: WaveParameters, price_type: PriceType = PriceType.OPEN):
@@ -376,6 +702,9 @@ def apply_rule_wave(df: pd.DataFrame, wave_inputs: WaveParameters, price_type: P
     else:
         price_series = df['Close']
         price_name = "Close"
+
+    # Init Wave
+    init_wave(price_series, wave_inputs)
 
     # Default Signals
     df['_Signal'] = NOTRADE
@@ -400,35 +729,23 @@ def apply_rule_wave(df: pd.DataFrame, wave_inputs: WaveParameters, price_type: P
     df['Wave1'] = tr_switch(wave_inputs.tr1, df['wave1'], df['fastline1'], NOTRADE, NOTRADE)
     df['Wave2'] = tr_switch(wave_inputs.tr2, df['wave2'], df['fastline2'], NOTRADE, NOTRADE)
 
-    #
+    # Global TR Switch - Combine signals from both wave indicators
+    df['_Plot_Color'], df['_Plot_Wave'], df['_Plot_FastLine'] = global_tr_switch(
+        wave_inputs.global_tr, df['wave1'], df['wave2'], 
+        df['fastline1'], df['fastline2'], df['Wave1'], df['Wave2']
+    )
 
+    # SMA Calculation
+    df['MA_Line'] = sma_calculation(wave_inputs.sma_period, df['_Plot_FastLine'])
 
+    # Direction
+    df['_Direction'] = df['_Plot_Color']
 
-    # Calculate Wave
-    df['Wave'] = calculate_wave(price_series, wave_inputs)
+    # Signal
+    for i in range(1, len(df)):
+        if df['_Direction'].iloc[i] != df['_Direction'].iloc[i - 1]:
+            df['_Signal'].iloc[i] = df['_Direction'].iloc[i]
 
-    # Add price type info to column name
-    df['Wave_Price_Type'] = price_name
-
-    # Calculate Wave signals
-    df['Wave_Signal'] = BUY
-
-    # Calculate Support and Resistance levels based on Wave
-    # Use Wave as dynamic support/resistance
-    wave_values = df['Wave']
-
-    # Support level: Wave with small buffer
-    support_levels = wave_values * 0.995 # 0.5% below Wave
-
-    # Resistance level: Wave with small buffer
-    resistance_levels = wave_values * 1.005 # 0.5% above Wave
-
-    # Set output columns
-    df['PPrice1'] = support_levels
-    df['PColor1'] = BUY
-    df['PPrice2'] = resistance_levels
-    df['PColor2'] = SELL
-    df['Direction'] = df['Wave_Signal']
-    df['Diff'] = price_series - wave_values
+    # DONE
 
     return df
