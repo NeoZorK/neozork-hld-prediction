@@ -180,6 +180,17 @@ Final summary of the complete SMA indicator implementation.
 - **Success Metrics**: Documentation and quality metrics
 - **Key Achievements**: Complete implementation with modern help system
 
+### [Adding Complex Wave Indicator](adding-wave-indicator-tutorial.md) ⭐ **NEW**
+Advanced tutorial for adding complex indicators with multiple parameters.
+
+**Highlights:**
+- **Complex Parameter Management**: Using dataclasses and enums
+- **Advanced Validation**: Enum-based parameter validation
+- **Multiple Components**: Combining multiple calculation components
+- **CLI Integration**: Full CLI system integration
+- **Plotting Support**: Advanced visualization features
+- **Error Handling**: Comprehensive error handling and validation
+
 ### [Analysis Tools Guide](analysis-tools.md)
 
 ### [Plotting Modes Comparison](plotting-modes-comparison.md) ⭐ **NEW**
