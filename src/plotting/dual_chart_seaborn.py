@@ -16,7 +16,7 @@ import matplotlib.dates as mdates
 from matplotlib.patches import Rectangle
 from typing import Dict, Any, Optional
 
-from ..common import logger
+from src.common import logger
 
 
 def plot_dual_chart_seaborn(

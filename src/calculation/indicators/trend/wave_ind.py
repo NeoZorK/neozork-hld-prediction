@@ -4,7 +4,6 @@
 """
 INDICATOR INFO:
 Name: WAVE
-Category Trend
 Description: Wave is a sophisticated trend-following indicator that combines multiple momentum calculations
 to generate strong trading signals based on open price movements. It utilizes a dual-wave system with configurable
 trading rules and global signal filtering.
@@ -37,9 +36,10 @@ This analysis provides traders with a balanced view of the indicator's strengths
 from enum import Enum
 from dataclasses import dataclass
 import pandas as pd
-from ....common import logger
-from ....common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
-from ..base_indicator import BaseIndicator, PriceType
+
+from src.calculation.indicators.base_indicator import PriceType
+from src.common import logger
+from src.common.constants import BUY,SELL
 
 
 """Trading Rules for Wave Momentum"""

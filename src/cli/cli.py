@@ -11,15 +11,15 @@ import sys  # Import sys for exit
 import src.cli.cli_examples as cli_examples
 from colorama import init, Fore, Style
 
-from calculation.indicators.trend.wave_ind import ENUM_MOM_TR, ENUM_GLOBAL_TR
+from src.calculation.indicators.trend.wave_ind import ENUM_MOM_TR, ENUM_GLOBAL_TR
 from src.cli.indicators_search import IndicatorSearcher
 
 # Initialize colorama for cross-platform colored output
 init(autoreset=True)
 
-# Use relative imports for constants and version within the src package
-from ..common.constants import TradingRule
-from .. import __version__  # Make sure version is updated in src/__init__.py
+# Use absolute imports for constants and version within the src package
+from src.common.constants import TradingRule
+from src import __version__  # Make sure version is updated in src/__init__.py
 
 
 # Custom help formatter to use colors and improve alignment

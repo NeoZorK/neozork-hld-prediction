@@ -18,7 +18,7 @@ from bokeh.models import (
 import webbrowser
 from typing import Dict, Any, Optional
 
-from ..common import logger
+from src.common import logger
 
 
 def get_screen_height():

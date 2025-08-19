@@ -5,7 +5,7 @@ Workflow Step 2: Determines the point size to use.
 All comments are in English.
 """
 # Use relative imports within the src package
-from ..common import logger
+from src.common import logger
 from .utils import determine_point_size # For yfinance estimation
 
 # Definition of the get_point_size function
