@@ -245,6 +245,27 @@ def add_sma_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             row=2, col=1
         )
 
+def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add Wave indicator to the secondary subplot.
+
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with Wave data
+    """
+    if 'wave' in display_df.columns:
+        fig.add_trace(
+            go.Scatter(
+                x=display_df.index,
+                y=display_df['wave'],
+                mode='lines',
+                name='Wave',
+                line=dict(color='red', width=3),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+
 
 def add_bollinger_bands_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     """
@@ -1859,6 +1880,9 @@ def plot_dual_chart_fastest(
     
     elif indicator_name == 'sma':
         add_sma_indicator(fig, display_df)
+
+    elif indicator_name == 'wave':
+        add_wave_indicator(fig, display_df)
     
     elif indicator_name == 'bb':
         add_bollinger_bands_indicator(fig, display_df)
