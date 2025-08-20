@@ -98,10 +98,12 @@ python run_analysis.py demo --rule PHLD
 - [Tutorials Summary](guides/sma-tutorials-summary.md) - Complete overview and quick reference
 
 ### 🌊 Wave Indicator Tutorials (New!)
-- [Complete Wave Tutorial](guides/adding-wave-indicator-tutorial.md) - Advanced dual-system indicator implementation
-- [Wave Indicator Documentation](reference/indicators/trend/wave-indicator.md) - Comprehensive technical reference
+- [Complete Wave Tutorial](guides/adding-wave-indicator-tutorial.md) - Advanced dual-system indicator implementation with fast mode support
+- [Wave Indicator Documentation](reference/indicators/trend/wave-indicator.md) - Comprehensive technical reference with display modes
 - [Wave Implementation Summary](guides/adding-wave-indicator-summary.md) - Quick implementation overview
 - [Wave Testing and Fixes](guides/wave-indicator-fixes-summary.md) - Testing framework and bug fixes
+- [Wave Fast Mode Support](guides/wave-indicator-fast-mode-support.md) - ⭐ **NEW** Fast mode implementation details
+- [Wave Fast-Fastest Parity](guides/wave-indicator-fast-fastest-parity-final-summary.md) - ⭐ **NEW** Visual parity implementation
 
 ### Reference
 - [API Reference](reference/index.md) - Complete API documentation

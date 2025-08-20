@@ -100,7 +100,7 @@ Working with different financial data sources.
 - MQL5 MetaTrader data
 
 ### [Adding Wave Indicator Tutorial](adding-wave-indicator-tutorial.md) ⭐ **NEW**
-Comprehensive tutorial for adding complex indicators.
+Comprehensive tutorial for adding complex indicators with fast mode support.
 
 **Highlights:**
 - **Complex Parameter Management**: Using dataclasses and enums
@@ -109,6 +109,19 @@ Comprehensive tutorial for adding complex indicators.
 - **CLI Integration**: Full command-line interface support
 - **Testing Strategy**: Comprehensive test coverage
 - **Documentation Standards**: Complete documentation workflow
+- **Fast Mode Support**: ⭐ **NEW** Bokeh-based dual chart integration
+- **Display Modes**: All 6 modes with specialized visualization
+
+### [Adding Wave Indicator with Fast Mode](adding-wave-indicator-fast-mode-tutorial.md) ⭐ **NEW**
+Complete tutorial for implementing Wave indicator with fast mode support.
+
+**Highlights:**
+- **Fast Mode Implementation**: Step-by-step Bokeh integration
+- **Discontinuous Lines**: Proper segment handling for wave visualization
+- **Color-Coded Signals**: Red/blue signal display implementation
+- **Hover Tooltips**: Detailed information display
+- **Signal Markers**: Buy/sell signal visualization on main chart
+- **Testing Framework**: Comprehensive test coverage for fast mode
 
 ### [Wave Documentation Update Summary](wave-documentation-update-summary.md) ⭐ **NEW**
 Complete overview of Wave indicator documentation updates.
@@ -129,6 +142,27 @@ Final comprehensive summary of all Wave indicator documentation.
 - **Impact Assessment**: Benefits for users, developers, and platform
 - **Maintenance Guide**: Future maintenance and synchronization notes
 - Data quality assessment
+
+### [Wave Fast Mode Support](wave-indicator-fast-mode-support.md) ⭐ **NEW**
+Complete implementation guide for Wave indicator in fast display mode.
+
+**Highlights:**
+- **Fast Mode Integration**: Bokeh-based dual chart implementation
+- **Discontinuous Lines**: Wave indicator displays only where signals exist
+- **Color-Coded Signals**: Red for BUY, blue for SELL signals
+- **Hover Tooltips**: Detailed information on hover
+- **Signal Markers**: Buy/sell signals on main chart
+- **Real-Time Updates**: Responsive Bokeh interface
+
+### [Wave Fast-Fastest Parity](wave-indicator-fast-fastest-parity-final-summary.md) ⭐ **NEW**
+Implementation summary for visual parity between fast and fastest modes.
+
+**Highlights:**
+- **Visual Consistency**: Fast mode matches fastest mode appearance
+- **Discontinuous Line Logic**: Proper segment handling for wave lines
+- **Color Accuracy**: Correct red/blue color coding
+- **Signal Display**: Proper buy/sell signal visualization
+- **Technical Implementation**: Function for discontinuous line segments
 
 ### [Technical Indicators Guide](indicators.md)
 Using technical indicators for analysis.

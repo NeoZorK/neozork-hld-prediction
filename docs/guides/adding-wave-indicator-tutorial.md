@@ -477,7 +477,29 @@ uv run python -m src.cli.cli --mode csv --csv-file data/test_data.csv --point 0.
 ```bash
 # Test with plotting
 uv run python -m src.cli.cli --mode csv --csv-file data/test_data.csv --point 0.01 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,close --plot
+
+# Test with fast display mode
+uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+
+# Test with fastest display mode for comparison
+uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
 ```
+
+### 4. Fast Mode Integration Test
+
+The Wave indicator now supports the `-d fast` display mode with Bokeh-based visualization:
+
+```bash
+# Test fast mode with wave indicator
+uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+```
+
+**Key Features of Fast Mode:**
+- **Bokeh-based dual chart**: Interactive charts with real-time updates
+- **Discontinuous wave lines**: Wave indicator displays only where signals exist
+- **Color-coded signals**: Red for BUY signals, blue for SELL signals
+- **Hover tooltips**: Detailed information on hover
+- **Signal markers**: Buy/sell signals displayed on the main chart
 
 ## Common Issues and Solutions
 
@@ -535,6 +557,7 @@ The Wave indicator is **fully implemented** and integrated into the system:
 - **Testing**: Complete test suite with 100% coverage
 - **Documentation**: Full technical documentation and tutorials
 - **Plotting**: Integration with all display modes
+- **Fast Mode Support**: ⭐ **NEW** Bokeh-based dual chart with discontinuous wave lines
 
 ### 🎯 Key Features
 - **Dual Signal Validation**: Two-wave system for improved reliability
@@ -553,7 +576,23 @@ uv run run_analysis.py demo --rule wave:33,10,2,strongtrend,22,11,4,fast,reverse
 
 # Wave with zone-based filtering
 uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,primezone,22,open -d fastest
+
+# Wave with fast display mode (Bokeh-based)
+uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+
+# Wave with real data in fast mode
+uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
 ```
+
+### 🎨 Display Modes Support
+The Wave indicator supports all display modes:
+
+- **`-d fastest`**: Plotly-based dual chart with interactive features
+- **`-d fast`**: Bokeh-based dual chart with real-time updates ⭐ **NEW**
+- **`-d plotly`**: Single Plotly chart
+- **`-d mpl`**: Matplotlib-based visualization
+- **`-d seaborn`**: Seaborn-based statistical plots
+- **`-d term`**: Terminal-based text output
 
 ### 📚 Documentation
 - [Wave Indicator Reference](docs/reference/indicators/trend/wave-indicator.md)
