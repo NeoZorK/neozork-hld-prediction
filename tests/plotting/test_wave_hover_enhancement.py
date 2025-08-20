@@ -54,8 +54,9 @@ class TestWaveHoverEnhancement:
         # Check that first trace has correct hover template
         first_trace = traces[0]
         assert isinstance(first_trace, go.Scatter)
-        assert 'Color: Red (BUY)' in first_trace.hovertemplate
-        assert 'Value: %{y:.6f}' in first_trace.hovertemplate
+        # The function now disables hover for segments to avoid duplicates
+        assert first_trace.hoverinfo == 'skip'
+        assert first_trace.hovertemplate is None
     
     def test_wave_indicator_hover_templates(self):
         """Test that Wave indicator creates traces with enhanced hover templates."""
@@ -65,19 +66,15 @@ class TestWaveHoverEnhancement:
         # Call add_wave_indicator
         add_wave_indicator(mock_fig, self.test_df)
         
-        # Check that add_trace was called for Wave segments
-        add_trace_calls = [call for call in mock_fig.add_trace.call_args_list 
-                          if call[0][0].name == 'Wave']
-        
-        # Should have calls for red and blue segments
-        assert len(add_trace_calls) > 0
+        # Check that add_trace was called
+        assert mock_fig.add_trace.call_count > 0
         
         # Check that at least one trace has enhanced hover template
         has_enhanced_hover = False
-        for call in add_trace_calls:
+        for call in mock_fig.add_trace.call_args_list:
             trace = call[0][0]
             if hasattr(trace, 'hovertemplate') and trace.hovertemplate:
-                if 'Color:' in trace.hovertemplate:
+                if 'Signal:' in trace.hovertemplate:
                     has_enhanced_hover = True
                     break
         
@@ -135,7 +132,7 @@ class TestWaveHoverEnhancement:
         assert wave_trace.mode == 'markers'
         assert wave_trace.showlegend == False
         assert wave_trace.hoverinfo == 'y+name'
-        assert '<b>wave</b><br>Value: %{y:.6f}<extra></extra>' in wave_trace.hovertemplate
+        assert '<b>Wave</b><br>Value: %{y:.6f}<br>Signal: %{text}<extra></extra>' in wave_trace.hovertemplate
         
         # Check that markers are invisible
         assert wave_trace.marker.size == 0
@@ -184,7 +181,9 @@ class TestWaveHoverEnhancement:
         )
         
         if traces_red:
-            assert 'Color: Red (BUY)' in traces_red[0].hovertemplate
+            # The function now disables hover for segments to avoid duplicates
+            assert traces_red[0].hoverinfo == 'skip'
+            assert traces_red[0].hovertemplate is None
         
         # Test blue color mapping
         traces_blue = create_discontinuous_line_traces(
@@ -195,18 +194,22 @@ class TestWaveHoverEnhancement:
         )
         
         if traces_blue:
-            assert 'Color: Blue (SELL)' in traces_blue[0].hovertemplate
+            # The function now disables hover for segments to avoid duplicates
+            assert traces_blue[0].hoverinfo == 'skip'
+            assert traces_blue[0].hovertemplate is None
         
-        # Test black color mapping (should not be visible but template should exist)
+                # Test black color mapping (should not be visible but template should exist)
         traces_black = create_discontinuous_line_traces(
-            self.test_df.index, 
-            self.test_df['_Plot_Wave'], 
-            self.test_df['_Plot_Color'] == 0, 
+            self.test_df.index,
+            self.test_df['_Plot_Wave'],
+            self.test_df['_Plot_Color'] == 0,
             'Wave', 'black', width=2, showlegend=True
         )
         
         if traces_black:
-            assert 'Color: Black (NOTRADE)' in traces_black[0].hovertemplate
+            # The function now disables hover for segments to avoid duplicates
+            assert traces_black[0].hoverinfo == 'skip'
+            assert traces_black[0].hovertemplate is None
 
 
 def test_wave_hover_enhancement_integration():
