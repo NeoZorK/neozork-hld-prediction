@@ -15,6 +15,7 @@
 6. **🆕 No Interpolation Between Segments** - Lines no longer interpolate between points where there are no signals, matching MQL5 behavior
 7. **🆕 No Black Lines (NOTRADE)** - Black segments are completely hidden, only red (BUY) and blue (SELL) lines are shown
 8. **🆕 Clean Legend Names** - Simplified legend names without "traces" or signal type suffixes
+9. **🆕 No Hover Hints** - Disabled hover tooltips to avoid "traces" hints on lower chart
 
 ---
 
@@ -126,6 +127,34 @@ blue_segments = create_discontinuous_line_traces(
 # This matches MQL5 behavior where NOTRADE segments are not shown
 ```
 
+### 7. Disabled Hover Tooltips
+```python
+# In create_discontinuous_line_traces function
+traces.append(go.Scatter(
+    x=segment_x,
+    y=segment_y,
+    mode='lines',
+    name=trace_name,
+    line=dict(color=color, width=width),
+    showlegend=trace_showlegend,
+    hoverinfo='skip'  # Always skip hover for wave segments to avoid "traces" hints
+))
+
+# For Fast Line and MA Line
+fig.add_trace(
+    go.Scatter(
+        x=fastline_valid_data.index,
+        y=fastline_valid_data[plot_fastline_col],
+        mode='lines',
+        name='Fast Line',
+        line=dict(color='red', width=1, dash='dot'),
+        showlegend=True,
+        hoverinfo='skip'  # Skip hover to avoid "traces" hints
+    ),
+    row=2, col=1
+)
+```
+
 ## Files Modified
 
 ### 1. `src/plotting/dual_chart_fastest.py`
@@ -154,6 +183,7 @@ blue_segments = create_discontinuous_line_traces(
 - ✅ Discontinuous line traces create separate segments
 - ✅ No interpolation between different signal segments
 - ✅ No black lines for NOTRADE signals (invisible)
+- ✅ No hover hints with "traces" on lower chart
 
 ### Test Results
 ```
@@ -174,12 +204,14 @@ uv run run_analysis.py show csv mn1 -d fastest --rule wave:339,10,2,fast,22,11,4
   - Lines interpolated between signal segments, creating continuous connections
   - Black lines were shown for NOTRADE signals
   - Legend showed confusing names like "Wave (BUY)", "Wave (SELL)"
+  - Hover tooltips showed "traces" hints on lower chart
 - **After Fix**: 
   - Lines only appear where there are valid signal values
   - Lines are discontinuous, with gaps between different signal segments
   - No interpolation between points where signals don't exist
   - Black lines (NOTRADE) are completely hidden
   - Clean legend names: "Wave" for both red and blue segments
+  - No hover tooltips to avoid "traces" hints
 - **Visual Result**: Cleaner, more accurate representation matching MQL5 behavior
 
 ## Technical Details
