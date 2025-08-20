@@ -86,7 +86,7 @@ python run_analysis.py demo --rule PHLD
 
 ### Features
 - [Data Sources](guides/data-sources.md) - Supported financial data sources
-- [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](guides/adding-sma-indicator-tutorial.md))
+- [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](reference/indicators/trend/sma-indicator.md), [Wave](reference/indicators/trend/wave-indicator.md) with full seaborn mode support)
 - [Analysis Tools](guides/analysis-tools.md) - Analysis and visualization tools
 - [CLI Interface](guides/cli-interface.md) - Command-line interface usage
 
@@ -97,6 +97,20 @@ python run_analysis.py demo --rule PHLD
 - [Testing Guide](guides/sma-testing-guide.md) - Comprehensive testing framework
 - [Tutorials Summary](guides/sma-tutorials-summary.md) - Complete overview and quick reference
 
+### 🌊 Wave Indicator Tutorials (New!)
+- [Complete Wave Tutorial](guides/adding-wave-indicator-tutorial.md) - Advanced dual-system indicator implementation with fast mode support
+- [Wave Indicator Documentation](reference/indicators/trend/wave-indicator.md) - Comprehensive technical reference with display modes
+- [Wave Implementation Summary](guides/adding-wave-indicator-summary.md) - Quick implementation overview
+- [Wave Testing and Fixes](guides/wave-indicator-fixes-summary.md) - Testing framework and bug fixes
+- [Wave Fast Mode Support](guides/wave-indicator-fast-mode-support.md) - ⭐ **NEW** Fast mode implementation details
+- [Wave Fast-Fastest Parity](guides/wave-indicator-fast-fastest-parity-final-summary.md) - ⭐ **NEW** Visual parity implementation
+- [Wave MPL Color Changes](guides/wave-mpl-color-changes.md) - ⭐ **NEW** MPL mode color customization for prime rule
+- [Wave Prime Rule Fix](guides/wave-prime-rule-fix-all-modes.md) - ⭐ **NEW** Global trading rule fixes across all display modes
+- [Wave Seaborn Mode](guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete Wave indicator support for seaborn mode (-d sb)
+- [Wave Seaborn Integration Summary](guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation summary for seaborn mode
+- [Wave Terminal Mode](guides/wave-indicator-terminal-mode.md) - ⭐ **NEW** Complete Wave indicator support for terminal mode (-d term)
+- [Wave Terminal Signals Fix](development/WAVE_TERMINAL_SIGNALS_IMPLEMENTATION.md) - ⭐ **NEW** Signal display logic fixes for terminal mode
+
 ### Reference
 - [API Reference](reference/index.md) - Complete API documentation
 - [Configuration](reference/configuration.md) - Configuration options
@@ -106,6 +120,14 @@ python run_analysis.py demo --rule PHLD
 - [COT Indicator](reference/indicators/sentiment/cot-indicator.md) - **NEW**: Sentiment indicator documentation
 - [Put/Call Ratio Indicator](reference/indicators/sentiment/putcallratio-indicator.md) - **NEW**: Sentiment indicator documentation
 - [SuperTrend Indicator](reference/indicators/trend/supertrend-indicator.md) - **NEW**: Trend indicator documentation
+- [SMA Indicator](reference/indicators/trend/sma-indicator.md) - **NEW**: Simple Moving Average documentation
+
+### Release Notes
+- [Release Notes](release-notes/index.md) - **NEW**: Complete release history and migration guides
+- [v0.6.0 Release](release-notes/v0.6.0-release-summary.md) - **NEW**: Latest release with documentation updates
+
+### Documentation Updates
+- [v0.6.0 Documentation Update Summary](meta/DOCUMENTATION_UPDATE_V0.6.0_SUMMARY.md) - **NEW**: Comprehensive documentation update report
 
 ## 🔧 Key Features
 
@@ -263,6 +285,9 @@ nz yfinance AAPL --rule PHLD
 
 # Custom timeframe
 nz mql5 EURUSD --interval H4 --rule PHLD
+
+# Wave indicator with seaborn mode
+nz csv --csv-file data/mn1.csv --point 50 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d sb
 ```
 
 ### UV Package Management

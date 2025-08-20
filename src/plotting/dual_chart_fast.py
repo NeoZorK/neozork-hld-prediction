@@ -18,7 +18,58 @@ from bokeh.models import (
 import webbrowser
 from typing import Dict, Any, Optional
 
-from ..common import logger
+from src.common import logger
+
+
+def _create_discontinuous_line_segments(x_data, y_data, mask):
+    """
+    Create discontinuous line segments where mask is True.
+    This prevents interpolation between points where there are no signals.
+    
+    Args:
+        x_data: X-axis data (index)
+        y_data: Y-axis data (values)
+        mask: Boolean mask indicating where to draw lines
+    
+    Returns:
+        List of DataFrames, each containing a continuous segment
+    """
+    segments = []
+    
+    if not mask.any():
+        return segments
+    
+    # Convert mask to numpy array for easier processing
+    mask_array = mask.values
+    
+    # Find continuous segments where mask is True
+    # Use numpy diff to find transitions
+    transitions = np.diff(np.concatenate(([False], mask_array, [False])).astype(int))
+    starts = np.where(transitions == 1)[0]  # Transitions from False to True
+    ends = np.where(transitions == -1)[0] - 1  # Transitions from True to False (adjust index)
+    
+    # Create segments for each continuous segment
+    for start_idx, end_idx in zip(starts, ends):
+        if start_idx <= end_idx:  # Valid segment
+            # Handle both Series and Index for x_data
+            if hasattr(x_data, 'iloc'):
+                segment_x = x_data.iloc[start_idx:end_idx+1]
+            else:
+                segment_x = x_data[start_idx:end_idx+1]
+            
+            # y_data should always be a Series
+            segment_y = y_data.iloc[start_idx:end_idx+1]
+            
+            # Only create segment if we have at least one point
+            if len(segment_x) > 0:
+                # Create DataFrame for this segment
+                segment_df = pd.DataFrame({
+                    'index': segment_x,
+                    y_data.name: segment_y
+                })
+                segments.append(segment_df)
+    
+    return segments
 
 
 def get_screen_height():
@@ -1006,6 +1057,109 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
     indicator_fig.add_tools(hover_supertrend)
 
 
+def _plot_wave_indicator(indicator_fig, source, display_df):
+    """Plot Wave indicator on the given figure."""
+    # Add Plot Wave (main indicator, single line with dynamic colors) - as per MQ5
+    plot_wave_col = None
+    plot_color_col = None
+    if '_plot_wave' in display_df.columns:
+        plot_wave_col = '_plot_wave'
+    elif '_Plot_Wave' in display_df.columns:
+        plot_wave_col = '_Plot_Wave'
+    
+    if '_plot_color' in display_df.columns:
+        plot_color_col = '_plot_color'
+    elif '_Plot_Color' in display_df.columns:
+        plot_color_col = '_Plot_Color'
+    
+    if plot_wave_col and plot_color_col:
+        # Create discontinuous line segments like in fastest mode
+        valid_data_mask = display_df[plot_wave_col].notna() & (display_df[plot_wave_col] != 0)
+        if valid_data_mask.any():
+            wave_data = display_df[valid_data_mask].copy()
+            
+            # Create masks for different signal types
+            red_mask = wave_data[plot_color_col] == 1
+            blue_mask = wave_data[plot_color_col] == 2
+            
+            # Create discontinuous line segments for red (BUY = 1)
+            if red_mask.any():
+                red_segments = _create_discontinuous_line_segments(
+                    wave_data.index, 
+                    wave_data[plot_wave_col], 
+                    red_mask
+                )
+                for segment_data in red_segments:
+                    segment_source = ColumnDataSource(segment_data)
+                    indicator_fig.line(
+                        'index', plot_wave_col,
+                        source=segment_source,
+                        line_color='red',
+                        line_width=2,
+                        legend_label='Wave'
+                    )
+            
+            # Create discontinuous line segments for blue (SELL = 2)
+            if blue_mask.any():
+                blue_segments = _create_discontinuous_line_segments(
+                    wave_data.index, 
+                    wave_data[plot_wave_col], 
+                    blue_mask
+                )
+                for segment_data in blue_segments:
+                    segment_source = ColumnDataSource(segment_data)
+                    indicator_fig.line(
+                        'index', plot_wave_col,
+                        source=segment_source,
+                        line_color='blue',
+                        line_width=2,
+                        legend_label='Wave'
+                    )
+    
+    # Add Plot FastLine (thin red dotted line) - as per MQ5
+    plot_fastline_col = None
+    if '_plot_fastline' in display_df.columns:
+        plot_fastline_col = '_plot_fastline'
+    elif '_Plot_FastLine' in display_df.columns:
+        plot_fastline_col = '_Plot_FastLine'
+    
+    if plot_fastline_col:
+        # Only show Fast Line when there are valid values
+        fastline_valid_mask = display_df[plot_fastline_col].notna() & (display_df[plot_fastline_col] != 0)
+        if fastline_valid_mask.any():
+            fastline_valid_data = display_df[fastline_valid_mask]
+            fastline_source = ColumnDataSource(fastline_valid_data)
+            indicator_fig.line(
+                'index', plot_fastline_col,
+                source=fastline_source,
+                line_color='red',
+                line_width=1,
+                line_dash='dotted',
+                legend_label='Fast Line'
+            )
+    
+    # Add MA Line (light blue line) - as per MQ5
+    ma_line_col = None
+    if 'ma_line' in display_df.columns:
+        ma_line_col = 'ma_line'
+    elif 'MA_Line' in display_df.columns:
+        ma_line_col = 'MA_Line'
+    
+    if ma_line_col:
+        # Only show MA Line when there are valid values
+        ma_valid_mask = display_df[ma_line_col].notna() & (display_df[ma_line_col] != 0)
+        if ma_valid_mask.any():
+            ma_valid_data = display_df[ma_valid_mask]
+            ma_source = ColumnDataSource(ma_valid_data)
+            indicator_fig.line(
+                'index', ma_line_col,
+                source=ma_source,
+                line_color='lightblue',
+                line_width=1,
+                legend_label='MA Line'
+            )
+
+
 def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
     """Get appropriate hover tool for the given indicator."""
     if indicator_name == 'macd':
@@ -1289,6 +1443,19 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name == 'wave':
+        # Special hover for Wave indicator
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Wave", "@_Plot_Wave{0.5f}"),
+                ("Fast Line", "@_Plot_FastLine{0.5f}"),
+                ("MA Line", "@MA_Line{0.5f}"),
+                ("Signal", "@_Plot_Color")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     else:
         # Generic hover for other indicators
         return HoverTool(
@@ -1331,6 +1498,7 @@ def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
         'feargreed': _plot_feargreed_indicator,  # Added for Fear & Greed support
         'fg': _plot_feargreed_indicator,         # Alias
         'supertrend': _plot_supertrend_indicator,  # Added for SuperTrend support
+        'wave': _plot_wave_indicator, # Added for Wave indicator support
     }
     fibo_columns = None
     if indicator_name == 'fibo':
@@ -1462,10 +1630,16 @@ def plot_dual_chart_fast(
             alpha=0.8
         )
     
-    # Add trading signals if available
-    if 'Direction' in display_df.columns:
-        buy_signals = display_df[display_df['Direction'] == 1]
-        sell_signals = display_df[display_df['Direction'] == 2]
+    # Add trading signals if available - check both _Signal and Direction columns
+    signal_col = None
+    if '_Signal' in display_df.columns:
+        signal_col = '_Signal'
+    elif 'Direction' in display_df.columns:
+        signal_col = 'Direction'
+    
+    if signal_col:
+        buy_signals = display_df[display_df[signal_col] == 1]
+        sell_signals = display_df[display_df[signal_col] == 2]
         
         if not buy_signals.empty:
             buy_source = ColumnDataSource(buy_signals)

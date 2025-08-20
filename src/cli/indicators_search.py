@@ -51,7 +51,8 @@ class IndicatorInfo:
     """Container for indicator information."""
     
     def __init__(self, name: str, category: str, description: str, 
-                 usage: str, parameters: str, pros: str, cons: str, file_path: str):
+                 usage: str, parameters: str, pros: str, cons: str, file_path: str,
+                 trading_rules: str = "", global_rules: str = ""):
         self.name = name
         self.category = category
         self.description = description
@@ -60,6 +61,8 @@ class IndicatorInfo:
         self.pros = pros
         self.cons = cons
         self.file_path = file_path
+        self.trading_rules = trading_rules
+        self.global_rules = global_rules
     
     def __str__(self) -> str:
         return f"{self.name} ({self.category})"
@@ -90,21 +93,53 @@ class IndicatorInfo:
         pros_lines = self.pros.split(', ')
         pros_formatted = []
         for pro in pros_lines:
-            if pro.startswith('+'):
-                pros_formatted.append(f"{Fore.GREEN}✅ {pro[1:].strip()}{Style.RESET_ALL}")
+            pro_clean = pro.strip()
+            if pro_clean.startswith('+'):
+                pros_formatted.append(f"{Fore.GREEN}✅ {pro_clean[1:].strip()}{Style.RESET_ALL}")
             else:
-                pros_formatted.append(f"{Fore.GREEN}✅ {pro.strip()}{Style.RESET_ALL}")
-        output.append(f"{Fore.GREEN}👍 Pros:{Style.RESET_ALL} {', '.join(pros_formatted)}")
+                pros_formatted.append(f"{Fore.GREEN}✅ {pro_clean}{Style.RESET_ALL}")
+        
+        # Display pros with each item on a new line
+        output.append(f"{Fore.GREEN}👍 Pros:{Style.RESET_ALL}")
+        for pro in pros_formatted:
+            output.append(f"  {pro}")
         
         # Cons
         cons_lines = self.cons.split(', ')
         cons_formatted = []
         for con in cons_lines:
-            if con.startswith('-'):
-                cons_formatted.append(f"{Fore.RED}❌ {con[1:].strip()}{Style.RESET_ALL}")
+            con_clean = con.strip()
+            if con_clean.startswith('-'):
+                cons_formatted.append(f"{Fore.RED}❌ {con_clean[1:].strip()}{Style.RESET_ALL}")
             else:
-                cons_formatted.append(f"{Fore.RED}❌ {con.strip()}{Style.RESET_ALL}")
-        output.append(f"{Fore.RED}👎 Cons:{Style.RESET_ALL} {', '.join(cons_formatted)}")
+                cons_formatted.append(f"{Fore.RED}❌ {con_clean}{Style.RESET_ALL}")
+        
+        # Display cons with each item on a new line
+        output.append(f"{Fore.RED}👎 Cons:{Style.RESET_ALL}")
+        for con in cons_formatted:
+            output.append(f"  {con}")
+        
+        # Trading Rules (ENUM_MOM_TR) - only for wave indicator
+        if self.trading_rules and self.name == "WAVE":
+            output.append(f"{Fore.YELLOW}🎯 Trading Rules (ENUM_MOM_TR):{Style.RESET_ALL}")
+            trading_rules_lines = self.trading_rules.split('\n')
+            for line in trading_rules_lines:
+                line = line.strip()
+                if line.startswith('- '):
+                    output.append(f"  {Fore.CYAN}{line}{Style.RESET_ALL}")
+                elif line and not line.startswith('Trading Rules'):
+                    output.append(f"  {Fore.WHITE}{line}{Style.RESET_ALL}")
+        
+        # Global Trading Rules (ENUM_GLOBAL_TR) - only for wave indicator
+        if self.global_rules and self.name == "WAVE":
+            output.append(f"{Fore.YELLOW}🌐 Global Trading Rules (ENUM_GLOBAL_TR):{Style.RESET_ALL}")
+            global_rules_lines = self.global_rules.split('\n')
+            for line in global_rules_lines:
+                line = line.strip()
+                if line.startswith('- '):
+                    output.append(f"  {Fore.CYAN}{line}{Style.RESET_ALL}")
+                elif line and not line.startswith('Global Trading Rules'):
+                    output.append(f"  {Fore.WHITE}{line}{Style.RESET_ALL}")
         
         # File path
         output.append(f"{Fore.WHITE}📁 File:{Style.RESET_ALL} {Style.DIM}{self.file_path}{Style.RESET_ALL}")
@@ -131,7 +166,7 @@ class IndicatorSearcher:
         
         # Define categories and their subdirectories
         categories = {
-            "trend": ["ema_ind.py", "sma_ind.py", "adx_ind.py", "sar_ind.py", "supertrend_ind.py"],
+            "trend": ["ema_ind.py", "sma_ind.py", "adx_ind.py", "sar_ind.py", "supertrend_ind.py", "wave_ind.py"],
             "momentum": ["rsi_ind.py", "macd_ind.py"],
             "volatility": ["bb_ind.py", "atr_ind.py", "stdev_ind.py"],
             "volume": ["obv_ind.py", "vwap_ind.py"],
@@ -168,7 +203,7 @@ class IndicatorSearcher:
 
             # Extract indicator info from docstring
             info_match = re.search(r'INDICATOR INFO:(.*?)(?=\n\n|$)', docstring, re.DOTALL | re.IGNORECASE)
-
+            
             if not info_match:
                 # Create default info for empty files
                 name = file_path.stem.replace('_ind', '').upper()
@@ -192,6 +227,14 @@ class IndicatorSearcher:
             parameters = self._extract_field(info_text, "Parameters", "Not specified")
             pros = self._extract_field(info_text, "Pros", "Not specified")
             cons = self._extract_field(info_text, "Cons", "Not specified")
+            
+            # Extract trading rules for wave indicator
+            trading_rules = ""
+            global_rules = ""
+            if name == "WAVE":
+                # Extract from full docstring, not just INDICATOR INFO section
+                trading_rules = self._extract_field(docstring, "Trading Rules", "")
+                global_rules = self._extract_field(docstring, "Global Trading Rules", "")
 
             return IndicatorInfo(
                 name=name,
@@ -201,7 +244,9 @@ class IndicatorSearcher:
                 parameters=parameters,
                 pros=pros,
                 cons=cons,
-                file_path=str(file_path)
+                file_path=str(file_path),
+                trading_rules=trading_rules,
+                global_rules=global_rules
             )
 
         except Exception as e:
@@ -210,7 +255,15 @@ class IndicatorSearcher:
     
     def _extract_field(self, text: str, field_name: str, default: str) -> str:
         """Extract a field value from indicator info text."""
-        pattern = rf"{field_name}:\s*(.*?)(?=\n[A-Z][a-z]+:|$)"
+        # Special handling for multi-line fields like Trading Rules
+        if field_name == "Trading Rules":
+            # Look for Trading Rules section, stop at Global Trading Rules
+            pattern = rf"Trading Rules \(ENUM_MOM_TR\):\s*(.*?)(?=\nGlobal Trading Rules|$)"
+        elif field_name == "Global Trading Rules":
+            # Look for Global Trading Rules section, stop at end
+            pattern = rf"Global Trading Rules \(ENUM_GLOBAL_TR\):\s*(.*?)(?=\n[A-Z][a-zA-Z\s]+:|$)"
+        else:
+            pattern = rf"{field_name}:\s*(.*?)(?=\n[A-Z][a-z]+:|$)"
         match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
         return match.group(1).strip() if match else default
     

@@ -11,8 +11,8 @@ from .term_plot import plot_indicator_results_term  # Standard terminal plotting
 # Import safe alternative implementation
 from .fixed_term_phld_plot import safe_plot_phld_terminal  # Fixed version without DataFrame ambiguity
 from src.calculation.core_calculations import calculate_hl, calculate_pressure, calculate_pv
-from ..calculation.indicator_calculation import calculate_indicator
-from ..plotting.term_auto_plot import auto_plot_from_dataframe  # Auto plotting function
+from src.calculation.indicator_calculation import calculate_indicator
+from src.plotting.term_auto_plot import auto_plot_from_dataframe  # Auto plotting function
 import plotext as plt  # Add import for plotext
 from typing import List, Dict, Optional, Union, Tuple  # Add necessary types from typing module
 
@@ -28,8 +28,8 @@ import subprocess
 import os
 import sys
 
-from ..common import logger
-from ..common.constants import TradingRule
+from src.common import logger
+from src.common.constants import TradingRule
 
 # Check if running in Docker
 IN_DOCKER = os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv')
@@ -767,29 +767,10 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
     original_rule_with_params = getattr(args, 'original_rule_with_params', None)
     if original_rule_with_params and ':' in original_rule_with_params:
         try:
-            from ..plotting.dual_chart_plot import is_dual_chart_rule, plot_dual_chart_results
+            from src.plotting.dual_chart_plot import is_dual_chart_rule, plot_dual_chart_results
             if is_dual_chart_rule(original_rule_with_params):
                 logger.print_info(f"Dual chart mode detected for rule: {original_rule_with_params}")
-                # For mpl mode, use dual chart plotting with display
-                if draw_mode in ['mpl', 'mplfinance']:
-                    logger.print_info(f"Using dual chart plotting for mpl mode with parameterized indicator")
-                    # Use dual chart with display instead of PNG
-                    from ..plotting.dual_chart_mpl import plot_dual_chart_mpl_display
-                    from ..plotting.dual_chart_plot import create_dual_chart_layout
-                    
-                    # Create layout configuration for proper indicator title
-                    layout = create_dual_chart_layout(draw_mode, original_rule_with_params)
-                    
-                    plot_dual_chart_mpl_display(
-                        result_df,
-                        original_rule_with_params,
-                        plot_title,
-                        width=1800,
-                        height=1100,
-                        layout=layout
-                    )
-                    return
-                # Use dual chart plotting for other modes
+                # Use dual chart plotting for ALL modes including fastest
                 plot_dual_chart_results(
                     result_df,
                     original_rule_with_params,
@@ -815,7 +796,7 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
         elif draw_mode == 'term':
             # If no rule is specified, default to OHLCV rule for terminal mode
             if selected_rule is None or (isinstance(selected_rule, str) and selected_rule.lower() == 'none'):
-                from ..common.constants import TradingRule
+                from src.common.constants import TradingRule
                 logger.print_info("No rule specified, defaulting to OHLCV for terminal plotting")
                 selected_rule = TradingRule.OHLCV
 

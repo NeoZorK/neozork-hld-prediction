@@ -16,7 +16,7 @@ import plotly.io as pio
 import webbrowser
 from typing import Dict, Any, Optional
 
-from ..common import logger
+from src.common import logger
 
 
 def add_rsi_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
@@ -244,6 +244,226 @@ def add_sma_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             ),
             row=2, col=1
         )
+
+def create_discontinuous_line_traces(x_data, y_data, mask, name, color, width=2, showlegend=True):
+    """
+    Create line traces that are discontinuous where mask is False.
+    This prevents interpolation between points where there are no signals.
+    
+    Args:
+        x_data: X-axis data (index)
+        y_data: Y-axis data (values)
+        mask: Boolean mask indicating where to draw lines
+        name: Name for the trace
+        color: Line color
+        width: Line width
+        showlegend: Whether to show in legend
+    
+    Returns:
+        List of traces
+    """
+    traces = []
+    
+    if not mask.any():
+        return traces
+    
+    # Convert mask to numpy array for easier processing
+    mask_array = mask.values
+    
+    # Find continuous segments where mask is True
+    # Use numpy diff to find transitions
+    transitions = np.diff(np.concatenate(([False], mask_array, [False])).astype(int))
+    starts = np.where(transitions == 1)[0]  # Transitions from False to True
+    ends = np.where(transitions == -1)[0] - 1  # Transitions from True to False (adjust index)
+    
+    # Create traces for each continuous segment
+    for i, (start_idx, end_idx) in enumerate(zip(starts, ends)):
+        if start_idx <= end_idx:  # Valid segment
+            # Handle both Series and Index for x_data
+            if hasattr(x_data, 'iloc'):
+                segment_x = x_data.iloc[start_idx:end_idx+1]
+            else:
+                segment_x = x_data[start_idx:end_idx+1]
+            
+            # y_data should always be a Series
+            segment_y = y_data.iloc[start_idx:end_idx+1]
+            
+            # Only create trace if we have at least one point
+            if len(segment_x) > 0:
+                # Only show legend for first segment to avoid duplicates
+                trace_name = name if i == 0 else None
+                trace_showlegend = showlegend if i == 0 else False
+                
+                # Determine color name for hover display
+                color_name = "Red (BUY)" if color == 'red' else "Blue (SELL)" if color == 'blue' else "Black (NOTRADE)"
+                
+                traces.append(go.Scatter(
+                    x=segment_x,
+                    y=segment_y,
+                    mode='lines',
+                    name=trace_name,
+                    line=dict(color=color, width=width),
+                    showlegend=trace_showlegend,
+                    hoverinfo='skip',  # Disable hover for all segments to avoid duplicates
+                    hovertemplate=None  # No hover template for segments
+                ))
+    
+    return traces
+
+
+def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
+    """
+    Add Wave indicator to the secondary subplot.
+
+    Args:
+        fig (go.Figure): Plotly figure object
+        display_df (pd.DataFrame): DataFrame with Wave data
+    """
+    # Add Plot Wave (main indicator, single line with dynamic colors) - as per MQ5
+    plot_wave_col = None
+    plot_color_col = None
+    if '_plot_wave' in display_df.columns:
+        plot_wave_col = '_plot_wave'
+    elif '_Plot_Wave' in display_df.columns:
+        plot_wave_col = '_Plot_Wave'
+    
+    if '_plot_color' in display_df.columns:
+        plot_color_col = '_plot_color'
+    elif '_Plot_Color' in display_df.columns:
+        plot_color_col = '_Plot_Color'
+    
+    if plot_wave_col and plot_color_col:
+        # Create a single Wave line that changes color based on _Plot_Color values
+        # This mimics MQ5's DRAW_COLOR_LINE behavior
+        
+        # Create Wave line segments that are discontinuous based on _Plot_Color values
+        # This mimics MQL5's DRAW_COLOR_LINE behavior without interpolation between gaps
+        
+        # Create masks for different signal types
+        valid_data_mask = display_df[plot_wave_col].notna() & (display_df[plot_wave_col] != 0)
+        red_mask = (display_df[plot_color_col] == 1) & valid_data_mask
+        blue_mask = (display_df[plot_color_col] == 2) & valid_data_mask
+        notrade_mask = (display_df[plot_color_col] == 0) & valid_data_mask
+        
+        # Create segments without hover info to avoid duplicate hovers
+        red_segments = create_discontinuous_line_traces(
+            display_df.index, 
+            display_df[plot_wave_col], 
+            red_mask, 
+            'Wave', 
+            'red', 
+            width=2, 
+            showlegend=True
+        )
+        for segment in red_segments:
+            # Disable hover for individual segments
+            segment.hoverinfo = 'skip'
+            segment.hovertemplate = None
+            fig.add_trace(segment, row=2, col=1)
+        
+        # Add blue segments (SELL = 2) as discontinuous lines
+        blue_segments = create_discontinuous_line_traces(
+            display_df.index, 
+            display_df[plot_wave_col], 
+            blue_mask, 
+            'Wave', 
+            'blue', 
+            width=2, 
+            showlegend=True
+        )
+        for segment in blue_segments:
+            # Disable hover for individual segments
+            segment.hoverinfo = 'skip'
+            segment.hovertemplate = None
+            fig.add_trace(segment, row=2, col=1)
+        
+        # Do NOT display black segments (NOTRADE = 0) - they should be invisible
+        # This matches MQL5 behavior where NOTRADE segments are not shown
+        
+        # Create unified hover trace that shows only one signal type per point
+        red_blue_mask = red_mask | blue_mask
+        if red_blue_mask.any():
+            red_blue_data = display_df[red_blue_mask]
+            
+            # Create color array for hover display
+            hover_colors = []
+            for idx in red_blue_data.index:
+                if red_mask.loc[idx]:
+                    hover_colors.append("Red (BUY)")
+                elif blue_mask.loc[idx]:
+                    hover_colors.append("Blue (SELL)")
+                else:
+                    hover_colors.append("Unknown")
+            
+            fig.add_trace(
+                go.Scatter(
+                    x=red_blue_data.index,
+                    y=red_blue_data[plot_wave_col],
+                    mode='markers',  # Use markers to show only at specific points
+                    name='wave',
+                    marker=dict(
+                        size=0,  # Invisible markers
+                        color='rgba(0,0,0,0)'  # Transparent
+                    ),
+                    showlegend=False,  # Don't show in legend
+                    hoverinfo='y+name',  # Show value and name
+                    hovertemplate='<b>Wave</b><br>Value: %{y:.6f}<br>Signal: %{text}<extra></extra>',  # Custom hover template
+                    text=hover_colors  # Add color information to hover
+                ),
+                row=2, col=1
+            )
+    
+    # Add Plot FastLine (thin red line) - as per MQ5
+    plot_fastline_col = None
+    if '_plot_fastline' in display_df.columns:
+        plot_fastline_col = '_plot_fastline'
+    elif '_Plot_FastLine' in display_df.columns:
+        plot_fastline_col = '_Plot_FastLine'
+    
+    if plot_fastline_col:
+        # Only show Fast Line when there are valid values
+        fastline_valid_mask = display_df[plot_fastline_col].notna() & (display_df[plot_fastline_col] != 0)
+        if fastline_valid_mask.any():
+            fastline_valid_data = display_df[fastline_valid_mask]
+            fig.add_trace(
+                go.Scatter(
+                    x=fastline_valid_data.index,
+                    y=fastline_valid_data[plot_fastline_col],
+                    mode='lines',
+                    name='Fast Line',
+                    line=dict(color='red', width=1, dash='dot'),  # Thin red dashed line as in MQ5
+                    showlegend=True,
+                    hoverinfo='y+name',  # Show value and name
+                    hovertemplate='<b>Fast Line</b><br>Value: %{y:.6f}<br>Color: Red (Signal)<extra></extra>'  # Custom hover template
+                ),
+                row=2, col=1
+            )
+    
+    # Add MA Line (thin light blue line) - as per MQ5
+    ma_line_col = None
+    if 'ma_line' in display_df.columns:
+        ma_line_col = 'ma_line'
+    elif 'MA_Line' in display_df.columns:
+        ma_line_col = 'MA_Line'
+    
+    if ma_line_col:
+        # Only show MA Line when there are valid values
+        ma_valid_mask = display_df[ma_line_col].notna() & (display_df[ma_line_col] != 0)
+        if ma_valid_mask.any():
+            ma_valid_data = display_df[ma_valid_mask]
+            fig.add_trace(
+                go.Scatter(
+                    x=ma_valid_data.index,
+                    y=ma_valid_data[ma_line_col],
+                    mode='lines',
+                    name='MA Line',
+                    line=dict(color='lightblue', width=1),  # Thin light blue line as in MQ5
+                    showlegend=True,
+                    hoverinfo='y+name',  # Show value and name
+                    hovertemplate='<b>MA Line</b><br>Value: %{y:.6f}<br>Color: Light Blue (MA)<extra></extra>'  # Custom hover template
+                ),
+                row=2, col=1
+            )
 
 
 def add_bollinger_bands_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
@@ -1798,8 +2018,56 @@ def plot_dual_chart_fastest(
             row=1, col=1
         )
     
-    # Add buy/sell signals if available
-    if 'direction' in display_df.columns:
+    # Add buy/sell signals if available - ONLY when _Signal == 1 (BUY) or _Signal == 2 (SELL)
+    if '_signal' in display_df.columns:
+        # Ensure boolean masks are aligned with DataFrame index
+        buy_mask = (display_df['_signal'] == 1)  # BUY signal ONLY
+        buy_mask = buy_mask.reindex(display_df.index, fill_value=False)
+        buy_signals = display_df[buy_mask]
+        sell_mask = (display_df['_signal'] == 2)  # SELL signal ONLY
+        sell_mask = sell_mask.reindex(display_df.index, fill_value=False)
+        sell_signals = display_df[sell_mask]
+        
+        # Only add BUY signals when _Signal == 1
+        if not buy_signals.empty:
+            fig.add_trace(
+                go.Scatter(
+                    x=buy_signals.index,
+                    y=buy_signals['low'] * 0.995,  # Position below the low
+                    mode='markers',
+                    name='Buy Signal (_Signal=1)',
+                    marker=dict(
+                        symbol='triangle-up',
+                        size=10,
+                        color='#27ae60',
+                        line=dict(color='#229954', width=1.5)
+                    ),
+                    showlegend=True
+                ),
+                row=1, col=1
+            )
+        
+        # Only add SELL signals when _Signal == 2
+        if not sell_signals.empty:
+            fig.add_trace(
+                go.Scatter(
+                    x=sell_signals.index,
+                    y=sell_signals['high'] * 1.005,  # Position above the high
+                    mode='markers',
+                    name='Sell Signal (_Signal=2)',
+                    marker=dict(
+                        symbol='triangle-down',
+                        size=10,
+                        color='#c0392b',
+                        line=dict(color='#a93226', width=1.5)
+                    ),
+                    showlegend=True
+                ),
+                row=1, col=1
+            )
+    
+    # Fallback to direction if _signal not available (for backward compatibility)
+    elif 'direction' in display_df.columns:
         # Ensure boolean masks are aligned with DataFrame index
         buy_mask = (display_df['direction'] == 1)
         buy_mask = buy_mask.reindex(display_df.index, fill_value=False)
@@ -1813,7 +2081,7 @@ def plot_dual_chart_fastest(
                     x=buy_signals.index,
                     y=buy_signals['low'] * 0.995,  # Position below the low
                     mode='markers',
-                    name='Buy Signal',
+                    name='Buy Signal (direction=1)',
                     marker=dict(
                         symbol='triangle-up',
                         size=10,
@@ -1830,7 +2098,7 @@ def plot_dual_chart_fastest(
                     x=sell_signals.index,
                     y=sell_signals['high'] * 1.005,  # Position above the high
                     mode='markers',
-                    name='Sell Signal',
+                    name='Sell Signal (direction=2)',
                     marker=dict(
                         symbol='triangle-down',
                         size=10,
@@ -1859,6 +2127,9 @@ def plot_dual_chart_fastest(
     
     elif indicator_name == 'sma':
         add_sma_indicator(fig, display_df)
+
+    elif indicator_name == 'wave':
+        add_wave_indicator(fig, display_df)
     
     elif indicator_name == 'bb':
         add_bollinger_bands_indicator(fig, display_df)
