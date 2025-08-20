@@ -21,6 +21,57 @@ from typing import Dict, Any, Optional
 from src.common import logger
 
 
+def _create_discontinuous_line_segments(x_data, y_data, mask):
+    """
+    Create discontinuous line segments where mask is True.
+    This prevents interpolation between points where there are no signals.
+    
+    Args:
+        x_data: X-axis data (index)
+        y_data: Y-axis data (values)
+        mask: Boolean mask indicating where to draw lines
+    
+    Returns:
+        List of DataFrames, each containing a continuous segment
+    """
+    segments = []
+    
+    if not mask.any():
+        return segments
+    
+    # Convert mask to numpy array for easier processing
+    mask_array = mask.values
+    
+    # Find continuous segments where mask is True
+    # Use numpy diff to find transitions
+    transitions = np.diff(np.concatenate(([False], mask_array, [False])).astype(int))
+    starts = np.where(transitions == 1)[0]  # Transitions from False to True
+    ends = np.where(transitions == -1)[0] - 1  # Transitions from True to False (adjust index)
+    
+    # Create segments for each continuous segment
+    for start_idx, end_idx in zip(starts, ends):
+        if start_idx <= end_idx:  # Valid segment
+            # Handle both Series and Index for x_data
+            if hasattr(x_data, 'iloc'):
+                segment_x = x_data.iloc[start_idx:end_idx+1]
+            else:
+                segment_x = x_data[start_idx:end_idx+1]
+            
+            # y_data should always be a Series
+            segment_y = y_data.iloc[start_idx:end_idx+1]
+            
+            # Only create segment if we have at least one point
+            if len(segment_x) > 0:
+                # Create DataFrame for this segment
+                segment_df = pd.DataFrame({
+                    'index': segment_x,
+                    y_data.name: segment_y
+                })
+                segments.append(segment_df)
+    
+    return segments
+
+
 def get_screen_height():
     """
     Get the screen height in pixels.
@@ -1022,47 +1073,48 @@ def _plot_wave_indicator(indicator_fig, source, display_df):
         plot_color_col = '_Plot_Color'
     
     if plot_wave_col and plot_color_col:
-        # Create masks for different signal types
+        # Create discontinuous line segments like in fastest mode
         valid_data_mask = display_df[plot_wave_col].notna() & (display_df[plot_wave_col] != 0)
-        red_mask = (display_df[plot_color_col] == 1) & valid_data_mask
-        blue_mask = (display_df[plot_color_col] == 2) & valid_data_mask
-        
-        # Add red segments (BUY = 1) as discontinuous lines
-        if red_mask.any():
-            red_data = display_df[red_mask]
-            red_source = ColumnDataSource(red_data)
-            indicator_fig.line(
-                'index', plot_wave_col,
-                source=red_source,
-                line_color='red',
-                line_width=2,
-                legend_label='Wave (BUY)'
-            )
-        
-        # Add blue segments (SELL = 2) as discontinuous lines
-        if blue_mask.any():
-            blue_data = display_df[blue_mask]
-            blue_source = ColumnDataSource(blue_data)
-            indicator_fig.line(
-                'index', plot_wave_col,
-                source=blue_source,
-                line_color='blue',
-                line_width=2,
-                legend_label='Wave (SELL)'
-            )
-        
-        # Add main wave line (black) for all valid data points
         if valid_data_mask.any():
-            wave_data = display_df[valid_data_mask]
-            wave_source = ColumnDataSource(wave_data)
-            indicator_fig.line(
-                'index', plot_wave_col,
-                source=wave_source,
-                line_color='black',
-                line_width=1,
-                legend_label='Wave Line',
-                alpha=0.3
-            )
+            wave_data = display_df[valid_data_mask].copy()
+            
+            # Create masks for different signal types
+            red_mask = wave_data[plot_color_col] == 1
+            blue_mask = wave_data[plot_color_col] == 2
+            
+            # Create discontinuous line segments for red (BUY = 1)
+            if red_mask.any():
+                red_segments = _create_discontinuous_line_segments(
+                    wave_data.index, 
+                    wave_data[plot_wave_col], 
+                    red_mask
+                )
+                for segment_data in red_segments:
+                    segment_source = ColumnDataSource(segment_data)
+                    indicator_fig.line(
+                        'index', plot_wave_col,
+                        source=segment_source,
+                        line_color='red',
+                        line_width=2,
+                        legend_label='Wave'
+                    )
+            
+            # Create discontinuous line segments for blue (SELL = 2)
+            if blue_mask.any():
+                blue_segments = _create_discontinuous_line_segments(
+                    wave_data.index, 
+                    wave_data[plot_wave_col], 
+                    blue_mask
+                )
+                for segment_data in blue_segments:
+                    segment_source = ColumnDataSource(segment_data)
+                    indicator_fig.line(
+                        'index', plot_wave_col,
+                        source=segment_source,
+                        line_color='blue',
+                        line_width=2,
+                        legend_label='Wave'
+                    )
     
     # Add Plot FastLine (thin red dotted line) - as per MQ5
     plot_fastline_col = None
