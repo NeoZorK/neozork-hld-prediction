@@ -159,7 +159,6 @@ def plot_dual_chart_mpl(
                        color='#E74C3C', marker='v', s=80, label='Sell Signal', zorder=5, alpha=0.9)
     
     ax1.set_ylabel('Price', fontsize=11, fontweight='bold')
-    ax1.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
     
     # Format x-axis for main chart
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
@@ -765,6 +764,28 @@ def plot_dual_chart_mpl(
     elif indicator_name == 'wave':
         y_axis_label = 'Wave Value'
         
+        # Add Wave signals to the main chart (ax1)
+        plot_color_col = None
+        if '_plot_color' in display_df.columns:
+            plot_color_col = '_plot_color'
+        elif '_Plot_Color' in display_df.columns:
+            plot_color_col = '_Plot_Color'
+        
+        if plot_color_col:
+            # Get Wave buy and sell signals
+            wave_buy_signals = display_df[display_df[plot_color_col] == 1]  # BUY = 1
+            wave_sell_signals = display_df[display_df[plot_color_col] == 2]  # SELL = 2
+            
+            # Add buy signals to main chart
+            if not wave_buy_signals.empty:
+                ax1.scatter(wave_buy_signals.index, wave_buy_signals['Low'] * 0.995, 
+                           color='#FF4444', marker='^', s=100, label='Wave BUY', zorder=5, alpha=0.9)
+            
+            # Add sell signals to main chart
+            if not wave_sell_signals.empty:
+                ax1.scatter(wave_sell_signals.index, wave_sell_signals['High'] * 1.005, 
+                           color='#0066CC', marker='v', s=100, label='Wave SELL', zorder=5, alpha=0.9)
+        
         # Add Plot Wave (main indicator, single line with dynamic colors) - as per MQ5
         plot_wave_col = None
         plot_color_col = None
@@ -849,6 +870,8 @@ def plot_dual_chart_mpl(
         # Add zero line for reference
         ax2.axhline(y=0, color='#95A5A6', linestyle='--', linewidth=0.8, alpha=0.6)
 
+    # Add legend to main chart after all signals are added
+    ax1.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
     
     # Set y-axis label
     ax2.set_ylabel(y_axis_label, fontsize=11, fontweight='bold')
