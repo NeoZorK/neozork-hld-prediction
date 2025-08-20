@@ -2369,7 +2369,7 @@ def _add_generic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, indic
 
 def _has_trading_signals(chunk: pd.DataFrame) -> bool:
     """Check if chunk has any trading signals."""
-    return any(col in chunk.columns for col in ['Direction', '_Plot_Color', '_Signal'])
+    return any(col in chunk.columns for col in ['Direction', '_Signal'])
 
 
 def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
@@ -2378,19 +2378,16 @@ def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
     BUY: large yellow triangle below Low
     SELL: large magenta triangle above High
     
-    Supports multiple signal sources:
-    - Direction column (standard)
-    - _Plot_Color column (wave indicator)
-    - _Signal column (wave indicator)
+    Supports signal sources (same as other modes):
+    - _Signal column (wave indicator - only direction changes)
+    - Direction column (standard indicator)
     """
     try:
-        # Check for different signal sources
+        # Check for different signal sources (same priority as other modes)
         signal_source = None
-        if '_Plot_Color' in chunk.columns:
-            signal_source = '_Plot_Color'
-        elif '_Signal' in chunk.columns:
+        if '_Signal' in chunk.columns:
             signal_source = '_Signal'
-        elif _has_trading_signals(chunk):
+        elif 'Direction' in chunk.columns:
             signal_source = 'Direction'
         else:
             return
@@ -2400,22 +2397,8 @@ def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
         
         for i, signal in enumerate(chunk[signal_source]):
             # Handle different signal formats
-            if signal_source == '_Plot_Color':
-                # Wave indicator: 1 = BUY, 2 = SELL, 0 = NO TRADE
-                if signal == 1:  # BUY
-                    buy_x.append(x_values[i])
-                    if 'Low' in chunk.columns:
-                        buy_y.append(chunk['Low'].iloc[i] * 0.99)
-                    else:
-                        buy_y.append(chunk['Close'].iloc[i] * 0.99 if 'Close' in chunk.columns else 0)
-                elif signal == 2:  # SELL
-                    sell_x.append(x_values[i])
-                    if 'High' in chunk.columns:
-                        sell_y.append(chunk['High'].iloc[i] * 1.01)
-                    else:
-                        sell_y.append(chunk['Close'].iloc[i] * 1.01 if 'Close' in chunk.columns else 0)
-            elif signal_source == '_Signal':
-                # Wave indicator signal: 1 = BUY, 2 = SELL, 0 = NO TRADE
+            if signal_source == '_Signal':
+                # Wave indicator signal: 1 = BUY, 2 = SELL, 0 = NO TRADE (only direction changes)
                 if signal == 1:  # BUY
                     buy_x.append(x_values[i])
                     if 'Low' in chunk.columns:
