@@ -15,7 +15,7 @@
 6. **🆕 No Interpolation Between Segments** - Lines no longer interpolate between points where there are no signals, matching MQL5 behavior
 7. **🆕 No Black Lines (NOTRADE)** - Black segments are completely hidden, only red (BUY) and blue (SELL) lines are shown
 8. **🆕 Clean Legend Names** - Simplified legend names without "traces" or signal type suffixes
-9. **🆕 No Hover Hints** - Disabled hover tooltips to avoid "traces" hints on lower chart
+9. **🆕 Labeled Hover Hints** - Custom hover tooltips with clear labels for Wave, Fast Line, and MA Line
 
 ---
 
@@ -127,7 +127,7 @@ blue_segments = create_discontinuous_line_traces(
 # This matches MQL5 behavior where NOTRADE segments are not shown
 ```
 
-### 7. Disabled Hover Tooltips
+### 7. Labeled Hover Tooltips
 ```python
 # In create_discontinuous_line_traces function
 traces.append(go.Scatter(
@@ -137,10 +137,11 @@ traces.append(go.Scatter(
     name=trace_name,
     line=dict(color=color, width=width),
     showlegend=trace_showlegend,
-    hoverinfo='skip'  # Always skip hover for wave segments to avoid "traces" hints
+    hoverinfo='y+name' if i == 0 else 'skip',  # Show hover only for first segment to avoid duplicates
+    hovertemplate='<b>Wave</b><br>Value: %{y:.6f}<extra></extra>' if i == 0 else None  # Custom hover template only for first segment
 ))
 
-# For Fast Line and MA Line
+# For Fast Line
 fig.add_trace(
     go.Scatter(
         x=fastline_valid_data.index,
@@ -149,7 +150,23 @@ fig.add_trace(
         name='Fast Line',
         line=dict(color='red', width=1, dash='dot'),
         showlegend=True,
-        hoverinfo='skip'  # Skip hover to avoid "traces" hints
+        hoverinfo='y+name',  # Show value and name
+        hovertemplate='<b>Fast Line</b><br>Value: %{y:.6f}<extra></extra>'  # Custom hover template
+    ),
+    row=2, col=1
+)
+
+# For MA Line
+fig.add_trace(
+    go.Scatter(
+        x=ma_valid_data.index,
+        y=ma_valid_data[ma_line_col],
+        mode='lines',
+        name='MA Line',
+        line=dict(color='lightblue', width=1),
+        showlegend=True,
+        hoverinfo='y+name',  # Show value and name
+        hovertemplate='<b>MA Line</b><br>Value: %{y:.6f}<extra></extra>'  # Custom hover template
     ),
     row=2, col=1
 )
@@ -183,7 +200,7 @@ fig.add_trace(
 - ✅ Discontinuous line traces create separate segments
 - ✅ No interpolation between different signal segments
 - ✅ No black lines for NOTRADE signals (invisible)
-- ✅ No hover hints with "traces" on lower chart
+- ✅ Labeled hover hints with clear Wave, Fast Line, and MA Line labels
 
 ### Test Results
 ```
@@ -205,13 +222,15 @@ uv run run_analysis.py show csv mn1 -d fastest --rule wave:339,10,2,fast,22,11,4
   - Black lines were shown for NOTRADE signals
   - Legend showed confusing names like "Wave (BUY)", "Wave (SELL)"
   - Hover tooltips showed "traces" hints on lower chart
+  - Multiple hover tooltips appeared for overlapping wave segments
 - **After Fix**: 
   - Lines only appear where there are valid signal values
   - Lines are discontinuous, with gaps between different signal segments
   - No interpolation between points where signals don't exist
   - Black lines (NOTRADE) are completely hidden
   - Clean legend names: "Wave" for both red and blue segments
-  - No hover tooltips to avoid "traces" hints
+  - Labeled hover tooltips with clear Wave, Fast Line, and MA Line labels
+  - No duplicate hover tooltips for wave segments
 - **Visual Result**: Cleaner, more accurate representation matching MQL5 behavior
 
 ## Technical Details
