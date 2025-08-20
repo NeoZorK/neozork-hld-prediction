@@ -7,18 +7,20 @@ The Wave indicator is now fully supported in terminal mode using the `-d term` o
 ## Key Features
 
 ### ✅ Dual Chart Display
-- **Upper Chart**: OHLC candlestick chart with **BUY/SELL signals**
+- **Upper Chart**: OHLC candlestick chart with **BUY/SELL signals** (only direction changes)
 - **Lower Chart**: Wave indicator values with color-coded signals
 
 ### ✅ Trading Signals on Price Chart
 - **BUY Signals**: Yellow triangles (▲▲) displayed below the Low price
 - **SELL Signals**: Magenta triangles (▼▼) displayed above the High price
-- **Signal Source**: Automatically detects `_Plot_Color`, `_Signal`, or `Direction` columns
+- **Signal Source**: Uses `_Signal` column (only when direction changes) - same as other modes
+- **Signal Logic**: Only displays signals when wave direction actually changes, not continuous signals
 
-### ✅ Interactive Navigation
-- Navigate between chunks with `n/p/s/e/c/d/q` commands
-- Real-time signal visualization
-- Comprehensive statistics display
+### ✅ Wave Indicator Display
+- **Wave Line**: Discontinuous colored segments (red for BUY, blue for SELL)
+- **Fast Line**: Thin red dotted line
+- **MA Line**: Light blue moving average line
+- **Zero Line**: Reference line at zero level
 
 ## Usage
 
@@ -48,83 +50,94 @@ wave:long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_ty
 |-----------|-------------|---------|
 | long1 | First long period | 339 |
 | fast1 | First fast period | 10 |
-| trend1 | First trend period | 2 |
+| trend1 | First trend filter | 2 |
 | tr1 | First trend type | fast |
 | long2 | Second long period | 22 |
 | fast2 | Second fast period | 11 |
-| trend2 | Second trend period | 4 |
+| trend2 | Second trend filter | 4 |
 | tr2 | Second trend type | fast |
 | global_tr | Global trend type | prime |
 | sma_period | SMA period | 22 |
-| price_type | Price type to use | open |
+| price_type | Price type | open |
 
-## Signal Interpretation
+## Signal Logic
 
-### Signal Values
-- **0**: NO TRADE (no signal)
-- **1**: BUY signal (yellow triangle)
-- **2**: SELL signal (magenta triangle)
+### Signal Display Priority
+1. **`_Signal` column**: Primary source for trading signals (only direction changes)
+2. **`Direction` column**: Fallback for standard indicators
 
-### Signal Display
-- **Upper Chart**: Trading signals are displayed directly on the OHLC candlestick chart
-- **Lower Chart**: Wave indicator values with color-coded signal segments
+### Signal Types
+- **BUY (1)**: Wave direction changes to bullish
+- **SELL (2)**: Wave direction changes to bearish  
+- **NO TRADE (0)**: No direction change
 
-## Navigation Commands
+### Signal Positioning
+- **BUY signals**: Positioned below the Low price (Low * 0.99)
+- **SELL signals**: Positioned above the High price (High * 1.01)
 
-| Command | Action |
-|---------|--------|
-| `n` | Next chunk |
-| `p` | Previous chunk |
-| `s` | Start (first chunk) |
-| `e` | End (last chunk) |
-| `c` | Choose specific chunk |
-| `d` | Choose specific date |
-| `q` | Quit |
+## Navigation
 
-## Technical Implementation
+The terminal mode supports interactive navigation:
 
-### Signal Detection
-The system automatically detects trading signals from multiple sources:
-1. `_Plot_Color` column (Wave indicator primary)
-2. `_Signal` column (Wave indicator alternative)
-3. `Direction` column (Standard indicator format)
-
-### Chart Rendering
-- **OHLC Chart**: ASCII-based candlestick representation
-- **Signal Markers**: Unicode triangles for BUY/SELL signals
-- **Wave Chart**: Color-coded indicator values with signal segments
-
-## Error Handling
-- **Robust Error Management**: Graceful handling of missing data
-- **Column Flexibility**: Support for multiple naming conventions
-- **Fallback Rendering**: Automatic fallback for unsupported Unicode characters
+- **n**: Next chunk
+- **p**: Previous chunk
+- **s**: Start (first chunk)
+- **e**: End (last chunk)
+- **c**: Choose chunk number
+- **d**: Choose specific date
+- **q**: Quit
 
 ## Performance
-- **Fast Rendering**: Optimized for terminal environments
-- **Memory Efficient**: Chunked processing for large datasets
-- **SSH Compatible**: Works perfectly over remote connections
 
-## Examples
+- **Fast rendering**: Optimized for terminal environments
+- **Low memory usage**: Efficient chunked processing
+- **SSH compatible**: Works over remote connections
+- **Unicode support**: Enhanced visual markers when available
 
-### Basic Wave Indicator
-```bash
-uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d term
-```
+## Comparison with Other Modes
 
-### Real Data Analysis
-```bash
-uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d term
-```
+| Feature | Terminal Mode | MPL Mode | Fastest Mode |
+|---------|---------------|----------|--------------|
+| Signal Source | `_Signal` only | `_Signal` only | `_Signal` only |
+| Signal Frequency | Direction changes | Direction changes | Direction changes |
+| Chart Type | ASCII | Matplotlib | Plotly |
+| Navigation | Interactive | Static | Interactive |
+| Performance | Fast | Medium | Very Fast |
 
 ## Troubleshooting
 
-### Common Issues
-1. **No signals displayed**: Check if `_Plot_Color` or `_Signal` columns exist
-2. **Unicode errors**: Terminal may not support triangle characters
-3. **Performance issues**: Use smaller chunk sizes for large datasets
+### No Signals Displayed
+- Check if `_Signal` column exists in data
+- Verify wave indicator parameters are correct
+- Ensure sufficient data for calculation (minimum 339 points)
 
-### Debug Mode
-Enable debug output to see detailed signal processing:
+### Poor Signal Quality
+- Review wave indicator parameters
+- Check data quality and time period
+- Consider adjusting trend filters
+
+### Display Issues
+- Ensure terminal supports Unicode characters
+- Check terminal window size
+- Verify color support in terminal
+
+## Examples
+
+### Basic Wave Analysis
 ```bash
-uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d term --debug
+# Analyze GBPUSD monthly data
+uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d term
 ```
+
+### Demo Mode Testing
+```bash
+# Test with demo data
+uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d term
+```
+
+## Technical Notes
+
+- **Signal Consistency**: Uses same signal logic as other plotting modes
+- **Memory Efficient**: Processes data in chunks to handle large datasets
+- **Cross-Platform**: Works on macOS, Linux, and Windows terminals
+- **Real-time Ready**: Suitable for live trading signal monitoring
