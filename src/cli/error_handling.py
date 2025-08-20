@@ -778,6 +778,81 @@ def get_indicator_help_data(indicator_name: str) -> dict:
                 'Period too short may give unreliable results',
                 'ADX requires only one parameter: period'
             ]
+        },
+        'wave': {
+            'name': 'WAVE (Wave Momentum Indicator)',
+            'description': 'Wave is a sophisticated trend-following indicator that combines multiple momentum calculations to generate strong trading signals based on open price movements. It utilizes a dual-wave system with configurable trading rules and global signal filtering.',
+            'format': 'wave:339,10,2,fast,22,11,4,fast,prime,22,open',
+            'parameters': [
+                ('long1', 'int','Wave Long 1 Period', '339'),
+                ('fast1', 'int', 'Wave Fast 1 Period', '10'),
+                ('trend1', 'int', 'Wave trend 1 Period', '2'),
+                ('tr1', 'ENUM_MOM_TR', 'Wave First Trading Rule', 'Fast'),
+                ('long2', 'int', 'Wave Long 2 Period', '22'),
+                ('fast2', 'int', 'Wave Fast 2 Period', '11'),
+                ('trend2', 'int', 'Wave trend 2 Period', '4'),
+                ('tr2', 'ENUM_MOM_TR', 'Wave Second Trading Rule', 'Fast'),
+                ('global_tr', 'ENUM_GLOBAL_TR', 'Wave Global Trading Rule', 'Prime'),
+                ('sma_period', 'int', 'Wave SMA Period', '22')
+            ],
+            'examples': [
+                ('wave:339,10,2,fast,22,11,4,fast,prime,22,open', 'Wave with 339-period window'),
+                ('wave:33,10,2,fast,22,11,4,fast,reverse,22,open', 'Reverse Wave with 33-period window')
+            ],
+            'tips': [
+                'Start with Default Settings: Begin with the default parameters (339/10/2 and 22/11/4) before customization',
+                'Test on Multiple Timeframes: Validate settings across different timeframes to ensure consistency',
+                'Use Walk-Forward Analysis: Test parameters on out-of-sample data to avoid over-optimization',
+                'Balance Sensitivity: Adjust fast and trend parameters to balance signal frequency vs. quality',
+                'Trending Markets: Use Strong Trend or Better Trend rules for optimal performance',
+                'Ranging Markets: Consider Weak Trend or Zone rules for counter-trend opportunities',
+                'Volatile Markets: Increase long periods to reduce noise and false signals',
+                'Low Volatility: Decrease fast periods to capture smaller price movements',
+                'Wait for Confirmation: Don`t trade on single wave signals; wait for both waves to align',
+                'Check Zone Position: Verify signal direction matches the current zone (positive/negative)',
+                'Monitor Color Changes: Pay attention to wave line color changes for trend shifts',
+                'Use SMA Confirmation: Confirm signals with the yellow SMA line direction',
+                'Set Stop Losses: Always use stop losses as signals can lag in fast-moving markets',
+                'Position Sizing: Reduce position size during parameter testing or uncertain market conditions',
+                'Avoid Overtrading: Dont force trades when signals are unclear or conflicting',
+                'Monitor Performance: Track win rate and drawdown to assess parameter effectiveness'
+            ],
+            'common_errors': [
+                'Insufficient Historical Data: Not having enough data for proper calculation',
+                'Buffer Overflow: Using too many indicators simultaneously',
+                'Calculation Delays: Not accounting for calculation time in fast markets'
+            ],
+            'enum_details': {
+                'ENUM_MOM_TR': {
+                    'name': 'Individual Trading Rules (ENUM_MOM_TR)',
+                    'description': 'These rules control how individual wave indicators generate buy/sell signals based on wave and fastline relationships.',
+                    'values': [
+                        ('fast', 'TR_Fast', 'Basic momentum comparison - BUY when wave > fastline, SELL when wave < fastline'),
+                        ('zone', 'TR_Zone', 'Simple zone-based signals - BUY when wave > 0, SELL when wave < 0'),
+                        ('strongtrend', 'TR_StrongTrend', 'Strong trend confirmation - BUY in positive zone when wave > fastline, SELL in negative zone when wave < fastline'),
+                        ('weaktrend', 'TR_WeakTrend', 'Weak trend signals - BUY in positive zone when wave < fastline, SELL in negative zone when wave > fastline'),
+                        ('fastzonereverse', 'TR_FastZoneReverse', 'Reverse signals in zones - SELL in positive zone when wave < fastline, BUY in negative zone when wave > fastline'),
+                        ('bettertrend', 'TR_BetterTrend', 'Enhanced trend signals avoiding false signals by comparing with previous values'),
+                        ('betterfast', 'TR_BetterFast', 'Improved fast trading with enhanced signal validation'),
+                        ('rost', 'TR_Rost', 'Reverse momentum signals - opposite of standard momentum'),
+                        ('trendrost', 'TR_TrendRost', 'Trend-based reverse signals - reverse signals in trend direction'),
+                        ('bettertrendrost', 'TR_BetterTrendRost', 'Enhanced trend reverse signals with improved validation')
+                    ]
+                },
+                'ENUM_GLOBAL_TR': {
+                    'name': 'Global Trading Rules (ENUM_GLOBAL_TR)',
+                    'description': 'These rules control how signals from both wave indicators are combined to generate final trading signals.',
+                    'values': [
+                        ('prime', 'G_TR_PRIME', 'Prime rule - generates signals when both wave indicators agree (same signal)'),
+                        ('reverse', 'G_TR_REVERSE', 'Reverse rule - reverses signals when both wave indicators agree (opposite signal)'),
+                        ('primezone', 'G_TR_PRIME_ZONE', 'Prime Zone rule - BUY only in negative zone, SELL only in positive zone when both agree'),
+                        ('reversezone', 'G_TR_REVERSE_ZONE', 'Reverse Zone rule - reverses zone-filtered signals when both agree'),
+                        ('newzone', 'G_TR_NEW_ZONE', 'New Zone rule - generates signals when wave indicators disagree (opposite to last signal)'),
+                        ('longzone', 'G_TR_LONG_ZONE', 'Long Zone rule - always generates opposite signal to last confirmed signal'),
+                        ('longzonereverse', 'G_TR_LONG_ZONE_REVERSE', 'Long Zone Reverse rule - always uses the last confirmed signal')
+                    ]
+                }
+            }
         }
     }
     
@@ -853,6 +928,13 @@ def show_enhanced_indicator_help(error_message: str, indicator_name: str = None,
         CLIErrorHandler.print_help_section("Common Errors", "", 'warning')
         for error in help_data['common_errors']:
             CLIErrorHandler.print_fix(error)
+    
+    # Enum details for wave indicator
+    if help_data.get('enum_details'):
+        for enum_name, enum_data in help_data['enum_details'].items():
+            CLIErrorHandler.print_help_section(enum_data['name'], enum_data['description'], 'parameter')
+            for value, enum_value, description in enum_data['values']:
+                CLIErrorHandler.print_parameter_info(value, description, enum_value, '')
     
     # Command usage examples
     CLIErrorHandler.print_help_section("Command Usage", "", 'example')

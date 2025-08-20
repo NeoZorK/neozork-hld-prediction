@@ -9,8 +9,8 @@ Each function updates the DataFrame with rule-specific outputs
 
 import pandas as pd
 import numpy as np
-from ..common import logger
-from ..common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
+from src.common import logger
+from src.common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
 from typing import Any
 
 # Import RSI calculation functions from new structure
@@ -21,6 +21,7 @@ from .indicators.oscillators.cci_ind import apply_rule_cci
 from .indicators.oscillators.stoch_ind import apply_rule_stochastic
 from .indicators.trend.ema_ind import apply_rule_ema
 from .indicators.trend.sma_ind import apply_rule_sma
+from .indicators.trend.wave_ind import apply_rule_wave
 from .indicators.volatility.bb_ind import apply_rule_bollinger_bands
 from .indicators.volatility.atr_ind import apply_rule_atr
 from .indicators.volume.vwap_ind import apply_rule_vwap
@@ -172,6 +173,7 @@ RULE_DISPATCHER = {
     TradingRule.Stochastic: apply_rule_stochastic,
     TradingRule.EMA: apply_rule_ema,
     TradingRule.SMA: apply_rule_sma,
+    TradingRule.Wave: apply_rule_wave,
     TradingRule.Bollinger_Bands: apply_rule_bollinger_bands,
     TradingRule.ATR: apply_rule_atr,
     TradingRule.VWAP: apply_rule_vwap,
@@ -263,6 +265,40 @@ def apply_trading_rule(df: pd.DataFrame, rule: TradingRule | Any, point: float, 
         # Extract SMA-specific parameters
         sma_period = kwargs.get('sma_period', 20)
         return rule_func(df, point=point, sma_period=sma_period, price_type=price_type_enum)
+    elif selected_rule == TradingRule.Wave:
+        # Extract WAVE-specific parameters
+        wave_long1 = kwargs.get('long1', 339)
+        wave_fast1 = kwargs.get('fast1', 10)
+        wave_trend1 = kwargs.get('trend1', 2)
+        wave_tr1 = kwargs.get('tr1','fast')
+        wave_long2 = kwargs.get('long2', 339)
+        wave_fast2 = kwargs.get('fast2', 10)
+        wave_trend2 = kwargs.get('trend2', 2)
+        wave_tr2 = kwargs.get('tr2','fast')
+        wave_global_tr = kwargs.get('global_tr','prime')
+        wave_sma_period = kwargs.get('sma_period', 22)
+        # Create WaveParameters object
+        from .indicators.trend.wave_ind import WaveParameters, ENUM_MOM_TR, ENUM_GLOBAL_TR
+        
+        # Convert string parameters to enum values
+        tr1_enum = wave_tr1 if isinstance(wave_tr1, ENUM_MOM_TR) else ENUM_MOM_TR.TR_Fast
+        tr2_enum = wave_tr2 if isinstance(wave_tr2, ENUM_MOM_TR) else ENUM_MOM_TR.TR_Fast
+        global_tr_enum = wave_global_tr if isinstance(wave_global_tr, ENUM_GLOBAL_TR) else ENUM_GLOBAL_TR.G_TR_PRIME
+        
+        wave_params = WaveParameters(
+            long1=wave_long1,
+            fast1=wave_fast1,
+            trend1=wave_trend1,
+            tr1=tr1_enum,
+            long2=wave_long2,
+            fast2=wave_fast2,
+            trend2=wave_trend2,
+            tr2=tr2_enum,
+            global_tr=global_tr_enum,
+            sma_period=wave_sma_period
+        )
+        
+        return rule_func(df, wave_params, price_type=price_type_enum)
     elif selected_rule == TradingRule.Bollinger_Bands:
         # Extract Bollinger Bands-specific parameters
         bb_period = kwargs.get('bb_period', 20)

@@ -10,14 +10,16 @@ import textwrap
 import sys  # Import sys for exit
 import src.cli.cli_examples as cli_examples
 from colorama import init, Fore, Style
+
+from src.calculation.indicators.trend.wave_ind import ENUM_MOM_TR, ENUM_GLOBAL_TR
 from src.cli.indicators_search import IndicatorSearcher
 
 # Initialize colorama for cross-platform colored output
 init(autoreset=True)
 
-# Use relative imports for constants and version within the src package
-from ..common.constants import TradingRule
-from .. import __version__  # Make sure version is updated in src/__init__.py
+# Use absolute imports for constants and version within the src package
+from src.common.constants import TradingRule
+from src import __version__  # Make sure version is updated in src/__init__.py
 
 
 # Custom help formatter to use colors and improve alignment
@@ -418,7 +420,7 @@ def parse_arguments():
         if ':' in args.rule:
             # Parameterized rule - validate the indicator name part
             indicator_name = args.rule.split(':', 1)[0].lower()
-            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'sma', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend']
+            valid_indicators = ['rsi', 'rsi_mom', 'rsi_div', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'sma', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'wave']
             if indicator_name not in valid_indicators:
                 # Provide detailed help for parameterized indicators
                 help_info = {
@@ -445,7 +447,8 @@ def parse_arguments():
                     'atr': 'ATR: atr:period (e.g., atr:14)',
                     'cci': 'CCI: cci:period,price_type (e.g., cci:20,close)',
                     'vwap': 'VWAP: vwap:price_type (e.g., vwap:close)',
-                    'pivot': 'Pivot Points: pivot:price_type (e.g., pivot:close)'
+                    'pivot': 'Pivot Points: pivot:price_type (e.g., pivot:close)',
+                    'wave': 'wave:339,10,2,fast,22,11,4,fast,prime,22,open'
                 }
                 
                 if indicator_name in help_info:
@@ -456,7 +459,7 @@ def parse_arguments():
             # Regular rule - validate against choices
             if args.rule not in all_rule_choices:
                 # Check if it might be a parameterized indicator
-                if args.rule.lower() in ['hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'rsi', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'sma', 'bb', 'atr', 'cci', 'vwap', 'pivot']:
+                if args.rule.lower() in ['hma', 'tsf', 'monte', 'montecarlo', 'kelly', 'putcallratio', 'cot', 'feargreed', 'fg', 'donchain', 'fibo', 'obv', 'stdev', 'adx', 'sar', 'supertrend', 'rsi', 'macd', 'stoch', 'stochastic', 'stochoscillator', 'ema', 'sma', 'bb', 'atr', 'cci', 'vwap', 'pivot', 'wave']:
                     parser.error(f"Invalid rule '{args.rule}'. This is a parameterized indicator. Use format: {args.rule}:parameters\n\nExamples:\n  {args.rule}:20,close\n  {args.rule}:14,3,close (for stochastic)\n  {args.rule}:1000,252 (for monte carlo)\n\nUse --help for more information about parameterized indicators.")
                 else:
                     parser.error(f"Invalid rule '{args.rule}'. Use one of {all_rule_choices}")
@@ -899,6 +902,26 @@ def show_indicator_help(indicator_name: str):
                 'supertrend:50,2.5,close'
             ]
         },
+        'wave': {
+            'name': 'Wave',
+            'format': 'wave:long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type',
+            'parameters': [
+                        'long1 (int): First long period (default: 339)',
+                        'fast1 (int): First fast period (default: 10)',
+                        'trend1 (int): First trend period (default: 2)',
+                        'tr1 (ENUM_MOM_TR): First trading rule (default: TR_Fast)',
+                        'long2 (int): Second long period (default: 22)',
+                        'fast2 (int): Second fast period (default: 11)',
+                        'trend2 (int): Second trend period (default: 4)',
+                        'tr2 (ENUM_MOM_TR): Second trading rule (default: TR_Fast)',
+                        'global_tr (ENUM_GLOBAL_TR): Global trading rule (default: G_TR_PRIME)',
+                        'sma_period (int): SMA calculation period (default: 22)'
+            ],
+            'examples': [
+                'wave:339,10,2,fast,22,11,4,fast,prime,22,open',
+                'wave:33,10,2,fast,22,11,4,fast,reverse,22,open'
+            ]
+        },
         'putcallratio': {
             'name': 'Put/Call Ratio',
             'format': 'putcallratio:period,price_type[,bullish_threshold,bearish_threshold]',
@@ -1105,6 +1128,107 @@ def parse_sma_parameters(params_str: str) -> tuple[str, dict]:
     
     return 'sma', {
         'sma_period': period,
+        'price_type': price_type
+    }
+
+def parse_wave_parameters(prams_str: str) -> tuple[str, dict]:
+    """Parse Wave parameters: long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type"""
+    params = prams_str.split(',')
+    if len(params) != 11:
+        raise ValueError(f"Wave requires exactly 11 parameters: long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type. Got: {prams_str}")
+
+    try:
+        long1 = int(float(params[0].strip())) # Handle float values like 14.0
+        fast1 = int(float(params[1].strip()))
+        trend1 = int(float(params[2].strip()))
+        tr1_str = params[3].strip().upper()
+        if tr1_str == 'FAST':
+            tr1 = ENUM_MOM_TR.TR_Fast
+        elif tr1_str == 'ZONE':
+            tr1 = ENUM_MOM_TR.TR_Zone
+        elif tr1_str == 'STRONGTREND':
+            tr1 = ENUM_MOM_TR.TR_StrongTrend
+        elif tr1_str == 'WEAKTREND':
+            tr1 = ENUM_MOM_TR.TR_WeakTrend
+        elif tr1_str == 'FASTZONEREVERSE':
+            tr1 = ENUM_MOM_TR.TR_FastZoneReverse
+        elif tr1_str == 'BETTERTREND':
+            tr1 = ENUM_MOM_TR.TR_BetterTrend
+        elif tr1_str == 'BETTERFAST':
+            tr1 = ENUM_MOM_TR.TR_BetterFast
+        elif tr1_str == 'ROST':
+            tr1 = ENUM_MOM_TR.TR_Rost
+        elif tr1_str == 'TRENDROST':
+            tr1 = ENUM_MOM_TR.TR_TrendRost
+        elif tr1_str == 'BETTERTRENDROST':
+            tr1 = ENUM_MOM_TR.TR_BetterTrendRost
+        else:
+            raise ValueError(f"Invalid tr1 value: {tr1_str}")
+        
+        long2 = int(float(params[4].strip()))
+        fast2 = int(float(params[5].strip()))
+        trend2 = int(float(params[6].strip()))
+        
+        tr2_str = params[7].strip().upper()
+        if tr2_str == 'FAST':
+            tr2 = ENUM_MOM_TR.TR_Fast
+        elif tr2_str == 'ZONE':
+            tr2 = ENUM_MOM_TR.TR_Zone
+        elif tr2_str == 'STRONGTREND':
+            tr2 = ENUM_MOM_TR.TR_StrongTrend
+        elif tr2_str == 'WEAKTREND':
+            tr2 = ENUM_MOM_TR.TR_WeakTrend
+        elif tr2_str == 'FASTZONEREVERSE':
+            tr2 = ENUM_MOM_TR.TR_FastZoneReverse
+        elif tr2_str == 'BETTERTREND':
+            tr2 = ENUM_MOM_TR.TR_BetterTrend
+        elif tr2_str == 'BETTERFAST':
+            tr2 = ENUM_MOM_TR.TR_BetterFast
+        elif tr2_str == 'ROST':
+            tr2 = ENUM_MOM_TR.TR_Rost
+        elif tr2_str == 'TRENDROST':
+            tr2 = ENUM_MOM_TR.TR_TrendRost
+        elif tr2_str == 'BETTERTRENDROST':
+            tr2 = ENUM_MOM_TR.TR_BetterTrendRost
+        else:
+            raise ValueError(f"Invalid tr2 value: {tr2_str}")
+        
+        global_tr_str = params[8].strip().upper()
+        if global_tr_str == 'PRIME':
+            global_tr = ENUM_GLOBAL_TR.G_TR_PRIME
+        elif global_tr_str == 'REVERSE':
+            global_tr = ENUM_GLOBAL_TR.G_TR_REVERSE
+        elif global_tr_str == 'PRIMEZONE':
+            global_tr = ENUM_GLOBAL_TR.G_TR_PRIME_ZONE
+        elif global_tr_str == 'REVERSEZONE':
+            global_tr = ENUM_GLOBAL_TR.G_TR_REVERSE_ZONE
+        elif global_tr_str == 'NEWZONE':
+            global_tr = ENUM_GLOBAL_TR.G_TR_NEW_ZONE
+        elif global_tr_str == 'LONGZONE':
+            global_tr = ENUM_GLOBAL_TR.G_TR_LONG_ZONE
+        elif global_tr_str == 'LONGZONEREVERSE':
+            global_tr = ENUM_GLOBAL_TR.G_TR_LONG_ZONE_REVERSE
+        else:
+            raise ValueError(f"Invalid global_tr value: {global_tr_str}")
+        sma_period = int(float(params[9].strip()))
+        price_type = params[10].strip().lower()
+    except (ValueError, IndexError) as e:
+        raise ValueError(f"Invalid Wave parameters: {prams_str}. Error: {e}")
+
+    if price_type not in ['open', 'close']:
+        raise ValueError(f"Wave price_type must be 'open' or 'close', got: {price_type}")
+
+    return 'wave', {
+        'long1': long1,
+        'fast1': fast1,
+        'trend1': trend1,
+        'tr1': tr1,
+        'long2': long2,
+        'fast2': fast2,
+        'trend2': trend2,
+        'tr2': tr2,
+        'global_tr': global_tr,
+        'sma_period': sma_period,
         'price_type': price_type
     }
 
@@ -1591,6 +1715,8 @@ def parse_indicator_parameters(rule_str: str) -> tuple[str, dict]:
             return parse_putcallratio_parameters(params_str)
         elif indicator_name == 'cot':
             return parse_cot_parameters(params_str)
+        elif indicator_name == 'wave':
+            return parse_wave_parameters(params_str)
         else:
             # Unknown indicator, show help and raise error
             raise ValueError(f"Unknown indicator: {indicator_name}")

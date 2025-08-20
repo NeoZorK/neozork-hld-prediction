@@ -21,10 +21,10 @@ try:
     from src.export.json_export import export_indicator_to_json
 except ImportError:
     try:
-        from ..calculation.indicator_calculation import calculate_indicator
-        from ..export.parquet_export import export_indicator_to_parquet
-        from ..export.csv_export import export_indicator_to_csv
-        from ..export.json_export import export_indicator_to_json
+        from src.calculation.indicator_calculation import calculate_indicator
+        from src.export.parquet_export import export_indicator_to_parquet
+        from src.export.csv_export import export_indicator_to_csv
+        from src.export.json_export import export_indicator_to_json
     except ImportError:
         # Last resort: assume running from src directory
         calculate_indicator = None
@@ -159,7 +159,7 @@ def import_generate_plot():
     """
     Dynamically imports the generate_plot function for plotting.
     """
-    from ..plotting.plotting_generation import generate_plot
+    from src.plotting.plotting_generation import generate_plot
     return generate_plot
 
 def get_search_dirs(args):
@@ -283,6 +283,13 @@ def _get_relevant_columns_for_rule(rule_name: str, all_columns=None) -> list:
         # Show all standard and indicator-specific columns
         # (names may differ, but usually these are PutCallRatio, PutCallSignal, PutCallLabel)
         return base_cols + ['PutCallRatio', 'PutCallSignal', 'PutCallLabel']
+    elif canonical_rule.lower() == 'wave' or (rule_name and 'wave:' in rule_name.lower()):
+        # Show WAVE-specific columns including signals and plots
+        wave_cols = ['_Signal', '_Direction', '_LastSignal', 'ecore1', 'ecore2', 
+                    'wave1', 'fastline1', 'wave2', 'fastline2', 'Wave1', 'Wave2',
+                    '_Plot_Color', '_Plot_Wave', '_Plot_FastLine', 'MA_Line']
+
+        return base_cols + wave_cols
     else:
         return base_cols + ['PPrice1', 'PPrice2', 'Direction']
 
@@ -318,6 +325,8 @@ def _print_indicator_result(df, rule_name, datetime_column=None):
         print(f"\n=== CALCULATED INDICATOR DATA === ({df_to_show.shape[0]} rows in selected range)")
 
     columns_to_show_existing = [col for col in columns_to_show if col in df_to_show.columns]
+    
+
     row_count = df_to_show.shape[0]
 
     # Limit to first 100 rows
@@ -884,6 +893,7 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
         t_calc_end = time.perf_counter()
         metrics["calc_duration"] = t_calc_end - t_calc_start
         
+
         # Update point size info
         metrics["point_size"] = point_size
         metrics["estimated_point"] = True
@@ -897,9 +907,22 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
             lot_size = getattr(args, 'lot_size', 1.0)
             risk_reward_ratio = getattr(args, 'risk_reward_ratio', 2.0)
             fee_per_trade = getattr(args, 'fee_per_trade', 0.07)
+            
+            # Auto-detect signal column for different indicators
+            signal_col = 'Direction'  # Default
+            if '_Signal' in result_df.columns:
+                signal_col = '_Signal'
+            elif '_Direction' in result_df.columns:
+                signal_col = '_Direction'
+            elif 'Signal' in result_df.columns:
+                signal_col = 'Signal'
+            
+
+            
             display_universal_trading_metrics(
                 result_df,
                 selected_rule,
+                signal_col=signal_col,
                 lot_size=lot_size,
                 risk_reward_ratio=risk_reward_ratio,
                 fee_per_trade=fee_per_trade

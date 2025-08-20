@@ -164,7 +164,10 @@ class TestUniversalTradingMetrics:
             )
             
             assert metrics == {}
-            mock_error.assert_called_once_with("Signal column 'Direction' not found in data")
+            # Check that error was called with the correct message
+            mock_error.assert_called_once()
+            error_message = mock_error.call_args[0][0]
+            assert "Signal column 'Direction' not found in data" in error_message
     
     def test_calculate_and_display_metrics_custom_columns(self, calculator, sample_data):
         """Test calculation with custom column names."""
@@ -433,9 +436,9 @@ class TestDisplayUniversalTradingMetrics:
             # Check that class was instantiated with default parameters
             mock_class.assert_called_once_with(1.0, 2.0, 0.07)
             
-            # Check that method was called
+            # Check that method was called with correct parameters
             mock_instance.calculate_and_display_metrics.assert_called_once_with(
-                sample_data, "Test_Rule"
+                sample_data, "Test_Rule", signal_col='Direction'
             )
             
             # Check return value
@@ -459,9 +462,9 @@ class TestDisplayUniversalTradingMetrics:
             # Check that class was instantiated with custom parameters
             mock_class.assert_called_once_with(2.5, 3.0, 0.1)
             
-            # Check that method was called
+            # Check that method was called with correct parameters
             mock_instance.calculate_and_display_metrics.assert_called_once_with(
-                sample_data, "Test_Rule"
+                sample_data, "Test_Rule", signal_col='Direction'
             )
             
             # Check return value

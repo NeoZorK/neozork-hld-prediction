@@ -14,11 +14,11 @@ from typing import Optional, Union, List
 # Use absolute imports when possible, fallback to relative
 try:
     from common import logger
-    from common.constants import TradingRule, BUY, SELL, NOTRADE
+    from src.common.constants import TradingRule, BUY, SELL, NOTRADE
 except ImportError:
     # Fallback to relative imports when run as module
-    from ..common import logger
-    from ..common.constants import TradingRule, BUY, SELL, NOTRADE
+    from src.common import logger
+    from src.common.constants import TradingRule, BUY, SELL, NOTRADE
 
 
 def plot_separate_fields_terminal(df: pd.DataFrame, 

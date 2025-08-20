@@ -202,6 +202,11 @@ uv run run_analysis.py interactive --preset stock_analysis
 9. **COT** - Commitments of Traders
 10. **Put/Call Ratio** - Options sentiment indicator
 
+#### New Trend Indicators ⭐ **NEW**
+11. **SMA** - Simple Moving Average (complete tutorial available)
+12. **SuperTrend** - Advanced trend-following indicator
+13. **Wave** - Advanced dual-system indicator with 10 trading rules
+
 ### Rule Combinations
 
 ```bash

@@ -98,7 +98,83 @@ Working with different financial data sources.
 - YFinance data access
 - Binance cryptocurrency data
 - MQL5 MetaTrader data
+
+### [Adding Wave Indicator Tutorial](adding-wave-indicator-tutorial.md) ⭐ **NEW**
+Comprehensive tutorial for adding complex indicators with all display modes support.
+
+**Highlights:**
+- **Complex Parameter Management**: Using dataclasses and enums
+- **Dual Signal Systems**: Implementing multi-wave indicators
+- **Advanced Trading Rules**: Global and individual rule systems
+- **CLI Integration**: Full command-line interface support
+- **Testing Strategy**: Comprehensive test coverage
+- **Documentation Standards**: Complete documentation workflow
+- **Fast Mode Support**: ⭐ **NEW** Bokeh-based dual chart integration
+- **Terminal Mode Support**: ⭐ **NEW** ASCII-based visualization with signal fixes
+- **Display Modes**: All 6 modes with specialized visualization
+
+### [Adding Wave Indicator with Fast Mode](adding-wave-indicator-fast-mode-tutorial.md) ⭐ **NEW**
+Complete tutorial for implementing Wave indicator with fast mode support.
+
+**Highlights:**
+- **Fast Mode Implementation**: Step-by-step Bokeh integration
+- **Discontinuous Lines**: Proper segment handling for wave visualization
+- **Color-Coded Signals**: Red/blue signal display implementation
+- **Hover Tooltips**: Detailed information display
+- **Signal Markers**: Buy/sell signal visualization on main chart
+- **Testing Framework**: Comprehensive test coverage for fast mode
+
+### [Wave Documentation Update Summary](wave-documentation-update-summary.md) ⭐ **NEW**
+Complete overview of Wave indicator documentation updates.
+
+**Highlights:**
+- **Implementation Status**: Current feature completeness
+- **Documentation Updates**: All files updated and synchronized
+- **Usage Examples**: CLI and programmatic examples
+- **Technical Details**: Implementation architecture
+- **Testing Coverage**: Comprehensive test framework
+
+### [Wave Documentation Complete Summary](wave-documentation-complete-summary.md) ⭐ **NEW**
+Final comprehensive summary of all Wave indicator documentation.
+
+**Highlights:**
+- **Complete Status**: 100% implementation and documentation coverage
+- **Verification Results**: All tests passing, CLI working
+- **Impact Assessment**: Benefits for users, developers, and platform
+- **Maintenance Guide**: Future maintenance and synchronization notes
 - Data quality assessment
+
+### [Wave Fast Mode Support](wave-indicator-fast-mode-support.md) ⭐ **NEW**
+Complete implementation guide for Wave indicator in fast display mode.
+
+**Highlights:**
+- **Fast Mode Integration**: Bokeh-based dual chart implementation
+- **Discontinuous Lines**: Wave indicator displays only where signals exist
+- **Color-Coded Signals**: Red for BUY, blue for SELL signals
+- **Hover Tooltips**: Detailed information on hover
+- **Signal Markers**: Buy/sell signals on main chart
+- **Real-Time Updates**: Responsive Bokeh interface
+
+### [Wave Fast-Fastest Parity](wave-indicator-fast-fastest-parity-final-summary.md) ⭐ **NEW**
+Implementation summary for visual parity between fast and fastest modes.
+
+**Highlights:**
+- **Visual Consistency**: Fast mode matches fastest mode appearance
+- **Discontinuous Line Logic**: Proper segment handling for wave lines
+- **Color Accuracy**: Correct red/blue color coding
+- **Signal Display**: Proper buy/sell signal visualization
+- **Technical Implementation**: Function for discontinuous line segments
+
+### [Wave Terminal Mode](wave-indicator-terminal-mode.md) ⭐ **NEW**
+Complete guide for Wave indicator in terminal mode with signal fixes.
+
+**Highlights:**
+- **ASCII-Based Visualization**: High-quality text-based charts
+- **Dual Chart Display**: OHLC and Wave indicator charts
+- **Smart Signal Logic**: Uses `_Signal` column for meaningful signals
+- **Interactive Navigation**: Keyboard-based chunk navigation
+- **SSH Compatible**: Perfect for remote server analysis
+- **Signal Fixes**: Consistent with other display modes
 
 ### [Technical Indicators Guide](indicators.md)
 Using technical indicators for analysis.
@@ -179,6 +255,17 @@ Final summary of the complete SMA indicator implementation.
 - **Testing Results**: Verified working across all modes
 - **Success Metrics**: Documentation and quality metrics
 - **Key Achievements**: Complete implementation with modern help system
+
+### [Adding Complex Wave Indicator](adding-wave-indicator-tutorial.md) ⭐ **NEW**
+Advanced tutorial for adding complex indicators with multiple parameters.
+
+**Highlights:**
+- **Complex Parameter Management**: Using dataclasses and enums
+- **Advanced Validation**: Enum-based parameter validation
+- **Multiple Components**: Combining multiple calculation components
+- **CLI Integration**: Full CLI system integration
+- **Plotting Support**: Advanced visualization features
+- **Error Handling**: Comprehensive error handling and validation
 
 ### [Analysis Tools Guide](analysis-tools.md)
 
