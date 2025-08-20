@@ -245,6 +245,67 @@ def add_sma_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             row=2, col=1
         )
 
+def create_discontinuous_line_traces(x_data, y_data, mask, name, color, width=2, showlegend=True):
+    """
+    Create line traces that are discontinuous where mask is False.
+    This prevents interpolation between points where there are no signals.
+    
+    Args:
+        x_data: X-axis data (index)
+        y_data: Y-axis data (values)
+        mask: Boolean mask indicating where to draw lines
+        name: Name for the trace
+        color: Line color
+        width: Line width
+        showlegend: Whether to show in legend
+    
+    Returns:
+        List of traces
+    """
+    traces = []
+    
+    if not mask.any():
+        return traces
+    
+    # Convert mask to numpy array for easier processing
+    mask_array = mask.values
+    
+    # Find continuous segments where mask is True
+    # Use numpy diff to find transitions
+    transitions = np.diff(np.concatenate(([False], mask_array, [False])).astype(int))
+    starts = np.where(transitions == 1)[0]  # Transitions from False to True
+    ends = np.where(transitions == -1)[0] - 1  # Transitions from True to False (adjust index)
+    
+    # Create traces for each continuous segment
+    for i, (start_idx, end_idx) in enumerate(zip(starts, ends)):
+        if start_idx <= end_idx:  # Valid segment
+            # Handle both Series and Index for x_data
+            if hasattr(x_data, 'iloc'):
+                segment_x = x_data.iloc[start_idx:end_idx+1]
+            else:
+                segment_x = x_data[start_idx:end_idx+1]
+            
+            # y_data should always be a Series
+            segment_y = y_data.iloc[start_idx:end_idx+1]
+            
+            # Only create trace if we have at least one point
+            if len(segment_x) > 0:
+                trace_name = name if i == 0 else None  # Only show legend for first segment
+                trace_showlegend = showlegend if i == 0 else False
+                
+                traces.append(go.Scatter(
+                    x=segment_x,
+                    y=segment_y,
+                    mode='lines',
+                    name=trace_name,
+                    line=dict(color=color, width=width),
+                    showlegend=trace_showlegend,
+                    hoverinfo='skip' if not showlegend else None
+                ))
+    
+    return traces
+
+
 def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     """
     Add Wave indicator to the secondary subplot.
@@ -269,52 +330,54 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
     if plot_wave_col and plot_color_col:
         # Create a single Wave line that changes color based on _Plot_Color values
         # This mimics MQ5's DRAW_COLOR_LINE behavior
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=display_df[plot_wave_col],
-                mode='lines',
-                name='Wave',
-                line=dict(color='black', width=2),  # Default color
-                showlegend=True
-            ),
-            row=2, col=1
+        
+        # Create Wave line segments that are discontinuous based on _Plot_Color values
+        # This mimics MQL5's DRAW_COLOR_LINE behavior without interpolation between gaps
+        
+        # Create masks for different signal types
+        valid_data_mask = display_df[plot_wave_col].notna() & (display_df[plot_wave_col] != 0)
+        red_mask = (display_df[plot_color_col] == 1) & valid_data_mask
+        blue_mask = (display_df[plot_color_col] == 2) & valid_data_mask
+        notrade_mask = (display_df[plot_color_col] == 0) & valid_data_mask
+        
+        # Add red segments (BUY = 1) as discontinuous lines
+        red_traces = create_discontinuous_line_traces(
+            display_df.index, 
+            display_df[plot_wave_col], 
+            red_mask, 
+            'Wave (BUY)', 
+            'red', 
+            width=2, 
+            showlegend=True
         )
+        for trace in red_traces:
+            fig.add_trace(trace, row=2, col=1)
         
-        # Add colored segments for different signal types
-        # Red segments (BUY = 1)
-        red_mask = (display_df[plot_color_col] == 1)
-        if red_mask.any():
-            red_data = display_df[red_mask]
-            fig.add_trace(
-                go.Scatter(
-                    x=red_data.index,
-                    y=red_data[plot_wave_col],
-                    mode='lines',
-                    name='Wave (BUY)',
-                    line=dict(color='red', width=2),
-                    showlegend=False,  # Don't show in legend to avoid clutter
-                    hoverinfo='skip'  # Skip hover for colored segments
-                ),
-                row=2, col=1
-            )
+        # Add blue segments (SELL = 2) as discontinuous lines
+        blue_traces = create_discontinuous_line_traces(
+            display_df.index, 
+            display_df[plot_wave_col], 
+            blue_mask, 
+            'Wave (SELL)', 
+            'blue', 
+            width=2, 
+            showlegend=True
+        )
+        for trace in blue_traces:
+            fig.add_trace(trace, row=2, col=1)
         
-        # Blue segments (SELL = 2)
-        blue_mask = (display_df[plot_color_col] == 2)
-        if blue_mask.any():
-            blue_data = display_df[blue_mask]
-            fig.add_trace(
-                go.Scatter(
-                    x=blue_data.index,
-                    y=blue_data[plot_wave_col],
-                    mode='lines',
-                    name='Wave (SELL)',
-                    line=dict(color='blue', width=2),
-                    showlegend=False,  # Don't show in legend to avoid clutter
-                    hoverinfo='skip'  # Skip hover for colored segments
-                ),
-                row=2, col=1
-            )
+        # Add black segments (NOTRADE = 0) as discontinuous lines
+        notrade_traces = create_discontinuous_line_traces(
+            display_df.index, 
+            display_df[plot_wave_col], 
+            notrade_mask, 
+            'Wave (NOTRADE)', 
+            'black', 
+            width=2, 
+            showlegend=True
+        )
+        for trace in notrade_traces:
+            fig.add_trace(trace, row=2, col=1)
     
     # Add Plot FastLine (thin red line) - as per MQ5
     plot_fastline_col = None
@@ -324,17 +387,21 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         plot_fastline_col = '_Plot_FastLine'
     
     if plot_fastline_col:
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=display_df[plot_fastline_col],
-                mode='lines',
-                name='Fast Line',
-                line=dict(color='red', width=1, dash='dot'),  # Thin red dashed line as in MQ5
-                showlegend=True
-            ),
-            row=2, col=1
-        )
+        # Only show Fast Line when there are valid values
+        fastline_valid_mask = display_df[plot_fastline_col].notna() & (display_df[plot_fastline_col] != 0)
+        if fastline_valid_mask.any():
+            fastline_valid_data = display_df[fastline_valid_mask]
+            fig.add_trace(
+                go.Scatter(
+                    x=fastline_valid_data.index,
+                    y=fastline_valid_data[plot_fastline_col],
+                    mode='lines',
+                    name='Fast Line',
+                    line=dict(color='red', width=1, dash='dot'),  # Thin red dashed line as in MQ5
+                    showlegend=True
+                ),
+                row=2, col=1
+            )
     
     # Add MA Line (thin light blue line) - as per MQ5
     ma_line_col = None
@@ -344,17 +411,21 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         ma_line_col = 'MA_Line'
     
     if ma_line_col:
-        fig.add_trace(
-            go.Scatter(
-                x=display_df.index,
-                y=display_df[ma_line_col],
-                mode='lines',
-                name='MA Line',
-                line=dict(color='lightblue', width=1),  # Thin light blue line as in MQ5
-                showlegend=True
-            ),
-            row=2, col=1
-        )
+        # Only show MA Line when there are valid values
+        ma_valid_mask = display_df[ma_line_col].notna() & (display_df[ma_line_col] != 0)
+        if ma_valid_mask.any():
+            ma_valid_data = display_df[ma_valid_mask]
+            fig.add_trace(
+                go.Scatter(
+                    x=ma_valid_data.index,
+                    y=ma_valid_data[ma_line_col],
+                    mode='lines',
+                    name='MA Line',
+                    line=dict(color='lightblue', width=1),  # Thin light blue line as in MQ5
+                    showlegend=True
+                ),
+                row=2, col=1
+            )
 
 
 def add_bollinger_bands_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
