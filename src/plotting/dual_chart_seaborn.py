@@ -19,6 +19,45 @@ from typing import Dict, Any, Optional
 from src.common import logger
 
 
+def _create_wave_line_segments(index, values, mask):
+    """
+    Create discontinuous line segments for Wave indicator.
+    
+    Args:
+        index: Index array
+        values: Values array
+        mask: Boolean mask for valid segments
+        
+    Returns:
+        list: List of (x, y) segment tuples
+    """
+    segments = []
+    if not mask.any():
+        return segments
+    
+    # Find continuous segments
+    segment_start = None
+    for i, is_valid in enumerate(mask):
+        if is_valid and segment_start is None:
+            segment_start = i
+        elif not is_valid and segment_start is not None:
+            # End of segment
+            segments.append((
+                index[segment_start:i],
+                values[segment_start:i]
+            ))
+            segment_start = None
+    
+    # Handle last segment
+    if segment_start is not None:
+        segments.append((
+            index[segment_start:],
+            values[segment_start:]
+        ))
+    
+    return segments
+
+
 def plot_dual_chart_seaborn(
     df: pd.DataFrame,
     rule: str,
@@ -144,6 +183,40 @@ def plot_dual_chart_seaborn(
             # Add pulse effect for sell signals
             ax1.scatter(sell_signals.index, sell_signals['High'] * 1.005, 
                        color='#FF4444', marker='o', s=180, alpha=0.3, label="", zorder=4)
+    
+    # Add Wave indicator signals to main chart if available
+    plot_color_col = None
+    if '_plot_color' in display_df.columns:
+        plot_color_col = '_plot_color'
+    elif '_Plot_Color' in display_df.columns:
+        plot_color_col = '_Plot_Color'
+    
+    if plot_color_col:
+        # Get Wave buy and sell signals - use _Signal for actual trading signals (only when direction changes)
+        signal_col = None
+        if '_signal' in display_df.columns:
+            signal_col = '_signal'
+        elif '_Signal' in display_df.columns:
+            signal_col = '_Signal'
+        
+        if signal_col:
+            # Use _Signal for actual trading signals (only when direction changes)
+            wave_buy_signals = display_df[display_df[signal_col] == 1]  # BUY = 1
+            wave_sell_signals = display_df[display_df[signal_col] == 2]  # SELL = 2
+        else:
+            # Fallback to _Plot_Color if _Signal not available
+            wave_buy_signals = display_df[display_df[plot_color_col] == 1]  # BUY = 1
+            wave_sell_signals = display_df[display_df[plot_color_col] == 2]  # SELL = 2
+        
+        # Add buy signals to main chart
+        if not wave_buy_signals.empty:
+            ax1.scatter(wave_buy_signals.index, wave_buy_signals['Low'] * 0.995, 
+                       color='#0066CC', marker='^', s=100, label='Wave BUY', zorder=5, alpha=0.9)
+        
+        # Add sell signals to main chart
+        if not wave_sell_signals.empty:
+            ax1.scatter(wave_sell_signals.index, wave_sell_signals['High'] * 1.005, 
+                       color='#FF4444', marker='v', s=100, label='Wave SELL', zorder=5, alpha=0.9)
     
     ax1.set_ylabel('Price', fontsize=12)
     # Only show legend if there are labeled artists
@@ -808,6 +881,91 @@ def plot_dual_chart_seaborn(
                 # Add legend entries
                 ax2.plot([], [], color=uptrend_color, linewidth=3, label='SuperTrend (Uptrend)')
                 ax2.plot([], [], color=downtrend_color, linewidth=3, label='SuperTrend (Downtrend)')
+    
+    elif indicator_name == 'wave':
+        # Add Plot Wave (main indicator, single line with dynamic colors) - as per MQ5
+        plot_wave_col = None
+        plot_color_col = None
+        if '_plot_wave' in display_df.columns:
+            plot_wave_col = '_plot_wave'
+        elif '_Plot_Wave' in display_df.columns:
+            plot_wave_col = '_Plot_Wave'
+        
+        if '_plot_color' in display_df.columns:
+            plot_color_col = '_plot_color'
+        elif '_Plot_Color' in display_df.columns:
+            plot_color_col = '_Plot_Color'
+        
+        if plot_wave_col and plot_color_col:
+            # Create discontinuous line segments like in fastest mode
+            valid_data_mask = display_df[plot_wave_col].notna() & (display_df[plot_wave_col] != 0)
+            if valid_data_mask.any():
+                wave_data = display_df[valid_data_mask].copy()
+                
+                # Create masks for different signal types
+                red_mask = wave_data[plot_color_col] == 1  # BUY
+                blue_mask = wave_data[plot_color_col] == 2  # SELL
+                
+                # Create discontinuous line segments for red (BUY = 1)
+                if red_mask.any():
+                    red_segments = _create_wave_line_segments(
+                        wave_data.index, 
+                        wave_data[plot_wave_col], 
+                        red_mask
+                    )
+                    # Plot first segment with label, others without
+                    for i, (seg_x, seg_y) in enumerate(red_segments):
+                        if i == 0:
+                            ax2.plot(seg_x, seg_y, color='#FF4444', linewidth=1.5, label='Wave (BUY)', alpha=0.9)
+                        else:
+                            ax2.plot(seg_x, seg_y, color='#FF4444', linewidth=1.5, alpha=0.9)
+                
+                # Create discontinuous line segments for blue (SELL = 2)
+                if blue_mask.any():
+                    blue_segments = _create_wave_line_segments(
+                        wave_data.index, 
+                        wave_data[plot_wave_col], 
+                        blue_mask
+                    )
+                    # Plot first segment with label, others without
+                    for i, (seg_x, seg_y) in enumerate(blue_segments):
+                        if i == 0:
+                            ax2.plot(seg_x, seg_y, color='#0066CC', linewidth=1.5, label='Wave (SELL)', alpha=0.9)
+                        else:
+                            ax2.plot(seg_x, seg_y, color='#0066CC', linewidth=1.5, alpha=0.9)
+        
+        # Add Plot FastLine (thin red dotted line) - as per MQ5
+        plot_fastline_col = None
+        if '_plot_fastline' in display_df.columns:
+            plot_fastline_col = '_plot_fastline'
+        elif '_Plot_FastLine' in display_df.columns:
+            plot_fastline_col = '_Plot_FastLine'
+        
+        if plot_fastline_col:
+            # Only show Fast Line when there are valid values
+            fastline_valid_mask = display_df[plot_fastline_col].notna() & (display_df[plot_fastline_col] != 0)
+            if fastline_valid_mask.any():
+                fastline_valid_data = display_df[fastline_valid_mask]
+                ax2.plot(fastline_valid_data.index, fastline_valid_data[plot_fastline_col],
+                        color='#FF6B6B', linewidth=0.8, linestyle=':', label='Fast Line', alpha=0.7)
+        
+        # Add MA Line (light blue line) - as per MQ5
+        ma_line_col = None
+        if 'ma_line' in display_df.columns:
+            ma_line_col = 'ma_line'
+        elif 'MA_Line' in display_df.columns:
+            ma_line_col = 'MA_Line'
+        
+        if ma_line_col:
+            # Only show MA Line when there are valid values
+            ma_valid_mask = display_df[ma_line_col].notna() & (display_df[ma_line_col] != 0)
+            if ma_valid_mask.any():
+                ma_valid_data = display_df[ma_valid_mask]
+                ax2.plot(ma_valid_data.index, ma_valid_data[ma_line_col],
+                        color='#4ECDC4', linewidth=0.8, label='MA Line', alpha=0.8)
+        
+        # Add zero line for reference
+        ax2.axhline(y=0, color='#95A5A6', linestyle='--', linewidth=0.8, alpha=0.6)
     
     elif indicator_name == 'adx':
         if 'adx' in display_df.columns:
