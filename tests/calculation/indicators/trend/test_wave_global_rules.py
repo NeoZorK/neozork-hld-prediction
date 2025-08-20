@@ -44,8 +44,8 @@ class TestWaveGlobalRules:
             sample_wave_data['color2']
         )
         
-        # Since both color1 and color2 are the same, all signals should be reversed
-        expected = pd.Series([SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY], index=sample_wave_data.index)
+        # Since both color1 and color2 are the same, all signals should be preserved
+        expected = pd.Series([BUY, SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY, SELL], index=sample_wave_data.index)
         pd.testing.assert_series_equal(result, expected, check_names=False)
 
     def test_g_prime_tr_different_signals(self, sample_wave_data):
@@ -80,8 +80,8 @@ class TestWaveGlobalRules:
             sample_wave_data['color2']
         )
         
-        # Only positions 0, 1, 2, 6, 8, 9 should have signals (where colors match) - but reversed
-        expected_signals = [SELL, BUY, SELL, NOTRADE, NOTRADE, BUY, SELL, BUY, SELL, BUY]
+        # Only positions 0, 1, 2, 6, 8, 9 should have signals (where colors match) - preserved
+        expected_signals = [BUY, SELL, BUY, NOTRADE, NOTRADE, SELL, BUY, SELL, BUY, SELL]
         expected = pd.Series(expected_signals, index=sample_wave_data.index)
         pd.testing.assert_series_equal(result, expected, check_names=False)
 
@@ -96,8 +96,8 @@ class TestWaveGlobalRules:
             sample_wave_data['color2']
         )
         
-        # Since both color1 and color2 are the same, all signals should be preserved
-        expected = sample_wave_data['color1']
+        # Since both color1 and color2 are the same, all signals should be reversed
+        expected = pd.Series([SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY], index=sample_wave_data.index)
         pd.testing.assert_series_equal(result, expected, check_names=False)
 
     def test_g_prime_tr_zone_basic_functionality(self, sample_wave_data):
@@ -134,8 +134,8 @@ class TestWaveGlobalRules:
             sample_wave_data['color2']
         )
         
-        # Only positions 0, 3, 7, 8, 9 should have signals (where both are not NOTRADE and match) - but reversed
-        expected_signals = [SELL, NOTRADE, NOTRADE, BUY, NOTRADE, NOTRADE, SELL, BUY, SELL, BUY]
+        # Only positions 0, 3, 6, 7, 8, 9 should have signals (where both are not NOTRADE and match) - preserved
+        expected_signals = [BUY, NOTRADE, NOTRADE, SELL, NOTRADE, NOTRADE, BUY, SELL, BUY, SELL]
         expected = pd.Series(expected_signals, index=sample_wave_data.index)
         pd.testing.assert_series_equal(result, expected, check_names=False)
 

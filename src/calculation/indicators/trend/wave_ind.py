@@ -41,8 +41,8 @@ Trading Rules (ENUM_MOM_TR):
 - bettertrendrost: Enhanced trend reverse signals with improved validation
 
 Global Trading Rules (ENUM_GLOBAL_TR):
-- prime: Prime rule - reverses signals when both wave indicators agree (opposite signal)
-- reverse: Reverse rule - generates signals when both wave indicators agree (same signal)
+- prime: Prime rule - generates signals when both wave indicators agree (same signal)
+- reverse: Reverse rule - reverses signals when both wave indicators agree (opposite signal)
 - primezone: Prime Zone rule - BUY only in negative zone, SELL only in positive zone when both agree
 - reversezone: Reverse Zone rule - reverses zone-filtered signals when both agree
 - newzone: New Zone rule - generates signals when wave indicators disagree (opposite to last signal)
@@ -460,7 +460,37 @@ def g_prime_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series,
                fastline2: pd.Series, color1: pd.Series, color2: pd.Series) -> pd.Series:
     """
     Global Prime TR - Use mix of Wave1 & Wave2 and FastLine1 & FastLine2 and Color1 & Color2.
-    If both signals are the same, then reverse signal to trade.
+    If both signals are the same, then signal to trade.
+
+    Args:
+        wave1: First wave indicator values
+        wave2: Second wave indicator values
+        fastline1: First fast line indicator values
+        fastline2: Second fast line indicator values
+        color1: First wave trading signals
+        color2: Second wave trading signals
+
+    Returns:
+        pd.Series: Prime trading signals
+    """
+    plot_color = pd.Series(NOTRADE, index=color1.index)
+    
+    for i in range(len(color1)):
+        # Exit when empty one of two
+        if color1.iloc[i] == NOTRADE or color2.iloc[i] == NOTRADE:
+            continue
+            
+        # If same, then signal to trade
+        if color1.iloc[i] == color2.iloc[i]:
+            plot_color.loc[plot_color.index[i]] = color1.iloc[i]
+    
+    return plot_color
+
+
+def g_reverse_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series, 
+                fastline2: pd.Series, color1: pd.Series, color2: pd.Series) -> pd.Series:
+    """
+    Global Reverse TR - Reverse the signals when both are the same.
 
     Args:
         wave1: First wave indicator values
@@ -483,36 +513,6 @@ def g_prime_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series,
         # If same, then reverse signal to trade
         if color1.iloc[i] == color2.iloc[i]:
             plot_color.loc[plot_color.index[i]] = SELL if color1.iloc[i] == BUY else BUY
-    
-    return plot_color
-
-
-def g_reverse_tr(wave1: pd.Series, wave2: pd.Series, fastline1: pd.Series, 
-                fastline2: pd.Series, color1: pd.Series, color2: pd.Series) -> pd.Series:
-    """
-    Global Reverse TR - Preserve the signals when both are the same.
-
-    Args:
-        wave1: First wave indicator values
-        wave2: Second wave indicator values
-        fastline1: First fast line indicator values
-        fastline2: Second fast line indicator values
-        color1: First wave trading signals
-        color2: Second wave trading signals
-
-    Returns:
-        pd.Series: Preserved trading signals
-    """
-    plot_color = pd.Series(NOTRADE, index=color1.index)
-    
-    for i in range(len(color1)):
-        # Exit when empty one of two
-        if color1.iloc[i] == NOTRADE or color2.iloc[i] == NOTRADE:
-            continue
-            
-        # If same, then preserve signal to trade
-        if color1.iloc[i] == color2.iloc[i]:
-            plot_color.loc[plot_color.index[i]] = color1.iloc[i]
     
     return plot_color
 

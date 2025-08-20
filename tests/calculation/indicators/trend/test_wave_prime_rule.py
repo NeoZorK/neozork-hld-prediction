@@ -78,8 +78,8 @@ class TestWavePrimeRule:
                 elif prime_result.iloc[i] == SELL:
                     assert reverse_result.iloc[i] == BUY, f"Position {i}: Prime=SELL, Reverse should be BUY"
 
-    def test_prime_rule_reverses_signals(self):
-        """Test that Prime rule reverses signals when both indicators agree."""
+    def test_prime_rule_preserves_signals(self):
+        """Test that Prime rule preserves signals when both indicators agree."""
         dates = pd.date_range('2023-01-01', periods=10, freq='D')
         wave1 = pd.Series([0.1, -0.2, 0.3, -0.1, 0.2, -0.3, 0.1, -0.2, 0.3, -0.1], index=dates)
         wave2 = pd.Series([0.15, -0.25, 0.35, -0.15, 0.25, -0.35, 0.15, -0.25, 0.35, -0.15], index=dates)
@@ -90,12 +90,12 @@ class TestWavePrimeRule:
         
         result = g_prime_tr(wave1, wave2, fastline1, fastline2, color1, color2)
         
-        # Prime should reverse the original signals
-        expected = pd.Series([SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY], index=dates)
+        # Prime should preserve the original signals
+        expected = pd.Series([BUY, SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY, SELL], index=dates)
         pd.testing.assert_series_equal(result, expected, check_names=False)
 
-    def test_reverse_rule_preserves_signals(self):
-        """Test that Reverse rule preserves signals when both indicators agree."""
+    def test_reverse_rule_reverses_signals(self):
+        """Test that Reverse rule reverses signals when both indicators agree."""
         dates = pd.date_range('2023-01-01', periods=10, freq='D')
         wave1 = pd.Series([0.1, -0.2, 0.3, -0.1, 0.2, -0.3, 0.1, -0.2, 0.3, -0.1], index=dates)
         wave2 = pd.Series([0.15, -0.25, 0.35, -0.15, 0.25, -0.35, 0.15, -0.25, 0.35, -0.15], index=dates)
@@ -106,8 +106,9 @@ class TestWavePrimeRule:
         
         result = g_reverse_tr(wave1, wave2, fastline1, fastline2, color1, color2)
         
-        # Reverse should preserve the signals
-        pd.testing.assert_series_equal(result, color1, check_names=False)
+        # Reverse should reverse the signals
+        expected = pd.Series([SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY], index=dates)
+        pd.testing.assert_series_equal(result, expected, check_names=False)
 
     def test_wave_parameters_creation(self):
         """Test creating WaveParameters from user command."""
@@ -132,7 +133,7 @@ class TestWavePrimeRule:
 
     def test_prime_rule_documentation_accuracy(self):
         """Test that Prime rule behavior matches documentation."""
-        # Documentation says: "reverses signals when both wave indicators agree (opposite signal)"
+        # Documentation says: "generates signals when both wave indicators agree (same signal)"
         dates = pd.date_range('2023-01-01', periods=10, freq='D')
         wave1 = pd.Series([0.1, -0.2, 0.3, -0.1, 0.2, -0.3, 0.1, -0.2, 0.3, -0.1], index=dates)
         wave2 = pd.Series([0.15, -0.25, 0.35, -0.15, 0.25, -0.35, 0.15, -0.25, 0.35, -0.15], index=dates)
@@ -145,8 +146,8 @@ class TestWavePrimeRule:
         
         result = g_prime_tr(wave1, wave2, fastline1, fastline2, color1, color2)
         
-        # Should reverse signals when both agree
-        expected = pd.Series([SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY], index=dates)
+        # Should preserve signals when both agree
+        expected = pd.Series([BUY, SELL, BUY, SELL, BUY, SELL, BUY, SELL, BUY, SELL], index=dates)
         pd.testing.assert_series_equal(result, expected, check_names=False)
         
         # Test case 2: Indicators disagree
