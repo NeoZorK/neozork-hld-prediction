@@ -1050,8 +1050,21 @@ def _plot_wave_indicator(indicator_fig, source, display_df):
                 line_width=2,
                 legend_label='Wave (SELL)'
             )
+        
+        # Add main wave line (black) for all valid data points
+        if valid_data_mask.any():
+            wave_data = display_df[valid_data_mask]
+            wave_source = ColumnDataSource(wave_data)
+            indicator_fig.line(
+                'index', plot_wave_col,
+                source=wave_source,
+                line_color='black',
+                line_width=1,
+                legend_label='Wave Line',
+                alpha=0.3
+            )
     
-    # Add Plot FastLine (thin red line) - as per MQ5
+    # Add Plot FastLine (thin red dotted line) - as per MQ5
     plot_fastline_col = None
     if '_plot_fastline' in display_df.columns:
         plot_fastline_col = '_plot_fastline'
@@ -1565,10 +1578,16 @@ def plot_dual_chart_fast(
             alpha=0.8
         )
     
-    # Add trading signals if available
-    if 'Direction' in display_df.columns:
-        buy_signals = display_df[display_df['Direction'] == 1]
-        sell_signals = display_df[display_df['Direction'] == 2]
+    # Add trading signals if available - check both _Signal and Direction columns
+    signal_col = None
+    if '_Signal' in display_df.columns:
+        signal_col = '_Signal'
+    elif 'Direction' in display_df.columns:
+        signal_col = 'Direction'
+    
+    if signal_col:
+        buy_signals = display_df[display_df[signal_col] == 1]
+        sell_signals = display_df[display_df[signal_col] == 2]
         
         if not buy_signals.empty:
             buy_source = ColumnDataSource(buy_signals)
