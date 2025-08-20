@@ -86,7 +86,7 @@ python run_analysis.py demo --rule PHLD
 
 ### Features
 - [Data Sources](guides/data-sources.md) - Supported financial data sources
-- [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](guides/adding-sma-indicator-tutorial.md), [Wave](reference/indicators/trend/wave-indicator.md))
+- [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](reference/indicators/trend/sma-indicator.md), [Wave](reference/indicators/trend/wave-indicator.md))
 - [Analysis Tools](guides/analysis-tools.md) - Analysis and visualization tools
 - [CLI Interface](guides/cli-interface.md) - Command-line interface usage
 
@@ -112,6 +112,14 @@ python run_analysis.py demo --rule PHLD
 - [COT Indicator](reference/indicators/sentiment/cot-indicator.md) - **NEW**: Sentiment indicator documentation
 - [Put/Call Ratio Indicator](reference/indicators/sentiment/putcallratio-indicator.md) - **NEW**: Sentiment indicator documentation
 - [SuperTrend Indicator](reference/indicators/trend/supertrend-indicator.md) - **NEW**: Trend indicator documentation
+- [SMA Indicator](reference/indicators/trend/sma-indicator.md) - **NEW**: Simple Moving Average documentation
+
+### Release Notes
+- [Release Notes](release-notes/index.md) - **NEW**: Complete release history and migration guides
+- [v0.6.0 Release](release-notes/v0.6.0-release-summary.md) - **NEW**: Latest release with documentation updates
+
+### Documentation Updates
+- [v0.6.0 Documentation Update Summary](meta/DOCUMENTATION_UPDATE_V0.6.0_SUMMARY.md) - **NEW**: Comprehensive documentation update report
 
 ## 🔧 Key Features
 
