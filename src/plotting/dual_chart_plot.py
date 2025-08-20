@@ -239,9 +239,9 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             period = int(params[0]) if len(params) > 0 else 14
             oversold = float(params[1]) if len(params) > 1 else 30
             overbought = float(params[2]) if len(params) > 2 else 70
-            price_type = PriceType.OPEN if len(params) > 3 and params[3].lower() == 'open' else PriceType.CLOSE
+            price_type = 'open' if len(params) > 3 and params[3].lower() == 'open' else 'close'
             
-            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
+            price_series = df['Open'] if price_type == 'open' else df['Close']
             rsi_values = calculate_rsi(price_series, period)
             
             # Remove possible duplicates
