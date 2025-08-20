@@ -301,7 +301,7 @@ def create_discontinuous_line_traces(x_data, y_data, mask, name, color, width=2,
                     name=trace_name,
                     line=dict(color=color, width=width),
                     showlegend=trace_showlegend,
-                    hoverinfo='skip' if not showlegend else None
+                    hoverinfo='skip'  # Always skip hover for wave segments to avoid "traces" hints
                 ))
     
     return traces
@@ -389,7 +389,8 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     mode='lines',
                     name='Fast Line',
                     line=dict(color='red', width=1, dash='dot'),  # Thin red dashed line as in MQ5
-                    showlegend=True
+                    showlegend=True,
+                    hoverinfo='skip'  # Skip hover to avoid "traces" hints
                 ),
                 row=2, col=1
             )
@@ -413,7 +414,8 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     mode='lines',
                     name='MA Line',
                     line=dict(color='lightblue', width=1),  # Thin light blue line as in MQ5
-                    showlegend=True
+                    showlegend=True,
+                    hoverinfo='skip'  # Skip hover to avoid "traces" hints
                 ),
                 row=2, col=1
             )
