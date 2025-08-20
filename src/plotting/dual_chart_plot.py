@@ -136,7 +136,7 @@ def is_dual_chart_rule(rule: str) -> bool:
             int(float(params[6]))  # trend2
             if params[7].lower() not in ['fast', 'zone', 'strongtrend', 'weaktrend', 'fastzonereverse', 'bettertrend', 'betterfast']:
                 return False
-            if params[8].lower() not in ['prime', 'zone', 'strongtrend', 'weaktrend']:
+            if params[8].lower() not in ['prime', 'reverse', 'primezone', 'reversezone', 'newzone', 'longzone', 'longzonereverse']:
                 return False
             int(float(params[9]))  # sma_period
             if params[10].lower() not in ['open', 'close', 'high', 'low']:
