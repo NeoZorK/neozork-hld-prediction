@@ -90,21 +90,31 @@ class IndicatorInfo:
         pros_lines = self.pros.split(', ')
         pros_formatted = []
         for pro in pros_lines:
-            if pro.startswith('+'):
-                pros_formatted.append(f"{Fore.GREEN}✅ {pro[1:].strip()}{Style.RESET_ALL}")
+            pro_clean = pro.strip()
+            if pro_clean.startswith('+'):
+                pros_formatted.append(f"{Fore.GREEN}✅ {pro_clean[1:].strip()}{Style.RESET_ALL}")
             else:
-                pros_formatted.append(f"{Fore.GREEN}✅ {pro.strip()}{Style.RESET_ALL}")
-        output.append(f"{Fore.GREEN}👍 Pros:{Style.RESET_ALL} {', '.join(pros_formatted)}")
+                pros_formatted.append(f"{Fore.GREEN}✅ {pro_clean}{Style.RESET_ALL}")
+        
+        # Display pros with each item on a new line
+        output.append(f"{Fore.GREEN}👍 Pros:{Style.RESET_ALL}")
+        for pro in pros_formatted:
+            output.append(f"  {pro}")
         
         # Cons
         cons_lines = self.cons.split(', ')
         cons_formatted = []
         for con in cons_lines:
-            if con.startswith('-'):
-                cons_formatted.append(f"{Fore.RED}❌ {con[1:].strip()}{Style.RESET_ALL}")
+            con_clean = con.strip()
+            if con_clean.startswith('-'):
+                cons_formatted.append(f"{Fore.RED}❌ {con_clean[1:].strip()}{Style.RESET_ALL}")
             else:
-                cons_formatted.append(f"{Fore.RED}❌ {con.strip()}{Style.RESET_ALL}")
-        output.append(f"{Fore.RED}👎 Cons:{Style.RESET_ALL} {', '.join(cons_formatted)}")
+                cons_formatted.append(f"{Fore.RED}❌ {con_clean}{Style.RESET_ALL}")
+        
+        # Display cons with each item on a new line
+        output.append(f"{Fore.RED}👎 Cons:{Style.RESET_ALL}")
+        for con in cons_formatted:
+            output.append(f"  {con}")
         
         # File path
         output.append(f"{Fore.WHITE}📁 File:{Style.RESET_ALL} {Style.DIM}{self.file_path}{Style.RESET_ALL}")
