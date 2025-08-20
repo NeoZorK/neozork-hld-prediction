@@ -4,6 +4,8 @@
 **Issues**: 
 1. Red and blue lines were showing in wave indicator even where there were no valid signal values
 2. Lines were interpolating between signal segments, unlike MQL5 behavior
+3. Black lines (NOTRADE) were being displayed unnecessarily
+4. Legend names were confusing with "traces" and signal type suffixes
 
 **Command**: `uv run run_analysis.py show csv mn1 -d fastest --rule wave:339,10,2,fast,22,11,4,fast,prime,55,open`
 
@@ -26,6 +28,16 @@
 - Lines no longer interpolate between signal segments
 - Each continuous signal segment becomes a separate trace
 - Matches MQL5 behavior where lines are discontinuous
+
+### 5. **🆕 No Black Lines (NOTRADE)**
+- Black segments are completely hidden
+- Only red (BUY) and blue (SELL) lines are shown
+- Matches MQL5 behavior where NOTRADE is invisible
+
+### 6. **🆕 Clean Legend Names**
+- Simplified names: "Wave" instead of "Wave (BUY)", "Wave (SELL)"
+- No more confusing "traces" terminology
+- Clean, professional appearance
 
 ## 📁 Files Modified
 
@@ -50,6 +62,8 @@
 ✅ Command runs successfully without errors
 ✅ Visual output is now clean and accurate
 ✅ Discontinuous lines match MQL5 behavior
+✅ No black lines for NOTRADE signals
+✅ Clean legend names without "traces"
 ```
 
 ## 🚀 Impact
@@ -57,9 +71,13 @@
 - **Before**: 
   - Red/blue lines appeared even with no signal values
   - Lines interpolated between signal segments
+  - Black lines showed for NOTRADE signals
+  - Confusing legend names with "traces"
 - **After**: 
   - Lines only appear where there are valid signal values
   - Lines are discontinuous with gaps between segments
+  - Black lines (NOTRADE) are completely hidden
+  - Clean legend names: "Wave" for all segments
 - **Result**: Cleaner, more accurate visual representation matching MQL5
 
 ## 📋 Usage
