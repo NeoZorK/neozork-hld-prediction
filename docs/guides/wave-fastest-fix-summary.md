@@ -40,10 +40,10 @@
 - No more confusing "traces" terminology
 - Clean, professional appearance
 
-### 7. **🆕 No Hover Hints**
-- Disabled hover tooltips for all wave indicator lines
-- No more "traces" hints when hovering over lower chart
-- Clean user experience without distracting tooltips
+### 7. **🆕 Labeled Hover Hints**
+- Custom hover tooltips with clear labels for Wave, Fast Line, and MA Line
+- Shows labeled values (e.g., "Wave: 1.234567")
+- No duplicate hover tooltips for overlapping wave segments
 
 ## 📁 Files Modified
 
@@ -70,7 +70,8 @@
 ✅ Discontinuous lines match MQL5 behavior
 ✅ No black lines for NOTRADE signals
 ✅ Clean legend names without "traces"
-✅ No hover hints with "traces"
+✅ Labeled hover hints with clear Wave, Fast Line, and MA Line labels
+✅ No duplicate hover tooltips for wave segments
 ```
 
 ## 🚀 Impact
@@ -81,12 +82,14 @@
   - Black lines showed for NOTRADE signals
   - Confusing legend names with "traces"
   - Hover tooltips showed "traces" hints
+  - Multiple hover tooltips for overlapping wave segments
 - **After**: 
   - Lines only appear where there are valid signal values
   - Lines are discontinuous with gaps between segments
   - Black lines (NOTRADE) are completely hidden
   - Clean legend names: "Wave" for all segments
-  - No hover tooltips to avoid "traces" hints
+  - Labeled hover tooltips with clear Wave, Fast Line, and MA Line labels
+  - No duplicate hover tooltips for wave segments
 - **Result**: Cleaner, more accurate visual representation matching MQL5
 
 ## 📋 Usage

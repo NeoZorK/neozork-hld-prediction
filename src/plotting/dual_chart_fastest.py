@@ -301,7 +301,8 @@ def create_discontinuous_line_traces(x_data, y_data, mask, name, color, width=2,
                     name=trace_name,
                     line=dict(color=color, width=width),
                     showlegend=trace_showlegend,
-                    hoverinfo='skip'  # Always skip hover for wave segments to avoid "traces" hints
+                    hoverinfo='y+name' if i == 0 else 'skip',  # Show hover only for first segment to avoid duplicates
+                    hovertemplate='<b>Wave</b><br>Value: %{y:.6f}<extra></extra>' if i == 0 else None  # Custom hover template only for first segment
                 ))
     
     return traces
@@ -390,7 +391,8 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     name='Fast Line',
                     line=dict(color='red', width=1, dash='dot'),  # Thin red dashed line as in MQ5
                     showlegend=True,
-                    hoverinfo='skip'  # Skip hover to avoid "traces" hints
+                    hoverinfo='y+name',  # Show value and name
+                    hovertemplate='<b>Fast Line</b><br>Value: %{y:.6f}<extra></extra>'  # Custom hover template
                 ),
                 row=2, col=1
             )
@@ -415,7 +417,8 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     name='MA Line',
                     line=dict(color='lightblue', width=1),  # Thin light blue line as in MQ5
                     showlegend=True,
-                    hoverinfo='skip'  # Skip hover to avoid "traces" hints
+                    hoverinfo='y+name',  # Show value and name
+                    hovertemplate='<b>MA Line</b><br>Value: %{y:.6f}<extra></extra>'  # Custom hover template
                 ),
                 row=2, col=1
             )
