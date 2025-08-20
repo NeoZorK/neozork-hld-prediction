@@ -283,6 +283,13 @@ def _get_relevant_columns_for_rule(rule_name: str, all_columns=None) -> list:
         # Show all standard and indicator-specific columns
         # (names may differ, but usually these are PutCallRatio, PutCallSignal, PutCallLabel)
         return base_cols + ['PutCallRatio', 'PutCallSignal', 'PutCallLabel']
+    elif canonical_rule.lower() == 'wave' or (rule_name and 'wave:' in rule_name.lower()):
+        # Show WAVE-specific columns including signals and plots
+        wave_cols = ['_Signal', '_Direction', '_LastSignal', 'ecore1', 'ecore2', 
+                    'wave1', 'fastline1', 'wave2', 'fastline2', 'Wave1', 'Wave2',
+                    '_Plot_Color', '_Plot_Wave', '_Plot_FastLine', 'MA_Line']
+
+        return base_cols + wave_cols
     else:
         return base_cols + ['PPrice1', 'PPrice2', 'Direction']
 
@@ -318,6 +325,8 @@ def _print_indicator_result(df, rule_name, datetime_column=None):
         print(f"\n=== CALCULATED INDICATOR DATA === ({df_to_show.shape[0]} rows in selected range)")
 
     columns_to_show_existing = [col for col in columns_to_show if col in df_to_show.columns]
+    
+
     row_count = df_to_show.shape[0]
 
     # Limit to first 100 rows
@@ -884,6 +893,7 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
         t_calc_end = time.perf_counter()
         metrics["calc_duration"] = t_calc_end - t_calc_start
         
+
         # Update point size info
         metrics["point_size"] = point_size
         metrics["estimated_point"] = True
@@ -907,11 +917,7 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
             elif 'Signal' in result_df.columns:
                 signal_col = 'Signal'
             
-            # Debug: Print available signal columns
-            print(f"\n🔍 DEBUG: All columns: {list(result_df.columns)}")
-            print(f"🔍 DEBUG: Available signal columns: {[col for col in result_df.columns if any(keyword in col.lower() for keyword in ['signal', 'direction', 'color'])]}")
-            print(f"🔍 DEBUG: Selected signal column: {signal_col}")
-            print(f"🔍 DEBUG: Signal column values: {result_df[signal_col].value_counts().to_dict() if signal_col in result_df.columns else 'NOT FOUND'}")
+
             
             display_universal_trading_metrics(
                 result_df,
