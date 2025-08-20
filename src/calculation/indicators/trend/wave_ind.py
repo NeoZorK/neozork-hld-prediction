@@ -11,8 +11,22 @@ Usage: --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 Parameters: period_long1, period_short1, period_trend1, tr1,
  period_long2, period_short2, period_trend2, tr2,
  global_tr, sma_period
-Pros: Dual Signal Validation: Two-wave system for improved reliability, Flexible Configuration: Multiple trading rules and filters, Strong Trend Identification: Excellent for trending markets, Zone-Based Filtering: Helps avoid counter-trend trades, Momentum Validation: Advanced signal filtering algorithms, Visual Clarity: Clear color coding and multiple visual elements, Comprehensive Signal Types: Various signal combinations, Professional Grade: Sophisticated algorithms for advanced strategies
-Cons: Complex Setup: Requires extensive parameter testing, Lag in Ranging Markets: May be slow in sideways markets, Parameter Sensitivity: Performance depends heavily on proper settings, Resource Intensive: Multiple calculations may impact performance, Learning Curve: Complex rules require significant study time, Over-Optimization Risk: Multiple parameters increase curve-fitting risk, Signal Frequency: May generate fewer signals than simpler indicators, Market Dependency: Best in trending markets, weaker in ranging conditions
+Pros: Dual Signal Validation: Two-wave system for improved reliability, 
+Flexible Configuration: Multiple trading rules and filters, 
+Strong Trend Identification: Excellent for trending markets, 
+Zone-Based Filtering: Helps avoid counter-trend trades, 
+Momentum Validation: Advanced signal filtering algorithms, 
+Visual Clarity: Clear color coding and multiple visual elements, 
+Comprehensive Signal Types: Various signal combinations, 
+Professional Grade: Sophisticated algorithms for advanced strategies
+Cons: Complex Setup: Requires extensive parameter testing, 
+Lag in Ranging Markets: May be slow in sideways markets, 
+Parameter Sensitivity: Performance depends heavily on proper settings, 
+Resource Intensive: Multiple calculations may impact performance, 
+Learning Curve: Complex rules require significant study time, 
+Over-Optimization Risk: Multiple parameters increase curve-fitting risk, 
+Signal Frequency: May generate fewer signals than simpler indicators, 
+Market Dependency: Best in trending markets, weaker in ranging conditions
 """
 from enum import Enum
 from dataclasses import dataclass
