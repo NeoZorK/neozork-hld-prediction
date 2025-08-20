@@ -290,7 +290,8 @@ def create_discontinuous_line_traces(x_data, y_data, mask, name, color, width=2,
             
             # Only create trace if we have at least one point
             if len(segment_x) > 0:
-                trace_name = name if i == 0 else None  # Only show legend for first segment
+                # Only show legend for first segment to avoid duplicates
+                trace_name = name if i == 0 else None
                 trace_showlegend = showlegend if i == 0 else False
                 
                 traces.append(go.Scatter(
@@ -341,43 +342,33 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         notrade_mask = (display_df[plot_color_col] == 0) & valid_data_mask
         
         # Add red segments (BUY = 1) as discontinuous lines
-        red_traces = create_discontinuous_line_traces(
+        red_segments = create_discontinuous_line_traces(
             display_df.index, 
             display_df[plot_wave_col], 
             red_mask, 
-            'Wave (BUY)', 
+            'Wave', 
             'red', 
             width=2, 
             showlegend=True
         )
-        for trace in red_traces:
-            fig.add_trace(trace, row=2, col=1)
+        for segment in red_segments:
+            fig.add_trace(segment, row=2, col=1)
         
         # Add blue segments (SELL = 2) as discontinuous lines
-        blue_traces = create_discontinuous_line_traces(
+        blue_segments = create_discontinuous_line_traces(
             display_df.index, 
             display_df[plot_wave_col], 
             blue_mask, 
-            'Wave (SELL)', 
+            'Wave', 
             'blue', 
             width=2, 
             showlegend=True
         )
-        for trace in blue_traces:
-            fig.add_trace(trace, row=2, col=1)
+        for segment in blue_segments:
+            fig.add_trace(segment, row=2, col=1)
         
-        # Add black segments (NOTRADE = 0) as discontinuous lines
-        notrade_traces = create_discontinuous_line_traces(
-            display_df.index, 
-            display_df[plot_wave_col], 
-            notrade_mask, 
-            'Wave (NOTRADE)', 
-            'black', 
-            width=2, 
-            showlegend=True
-        )
-        for trace in notrade_traces:
-            fig.add_trace(trace, row=2, col=1)
+        # Do NOT display black segments (NOTRADE = 0) - they should be invisible
+        # This matches MQL5 behavior where NOTRADE segments are not shown
     
     # Add Plot FastLine (thin red line) - as per MQ5
     plot_fastline_col = None

@@ -13,6 +13,8 @@
 4. **MA Line Filtering** - MA Line now only shows when `MA_Line` has valid values
 5. **Colored Segments Filtering** - Red and blue colored segments only show when `_Plot_Color` has valid signals (BUY=1 or SELL=2)
 6. **🆕 No Interpolation Between Segments** - Lines no longer interpolate between points where there are no signals, matching MQL5 behavior
+7. **🆕 No Black Lines (NOTRADE)** - Black segments are completely hidden, only red (BUY) and blue (SELL) lines are shown
+8. **🆕 Clean Legend Names** - Simplified legend names without "traces" or signal type suffixes
 
 ---
 
@@ -112,18 +114,16 @@ def create_discontinuous_line_traces(x_data, y_data, mask, name, color, width=2,
 ### 6. Updated Wave Line Logic
 ```python
 # Create discontinuous traces for each signal type
-red_traces = create_discontinuous_line_traces(
+red_segments = create_discontinuous_line_traces(
     display_df.index, display_df[plot_wave_col], red_mask, 
-    'Wave (BUY)', 'red', width=2, showlegend=True
+    'Wave', 'red', width=2, showlegend=True
 )
-blue_traces = create_discontinuous_line_traces(
+blue_segments = create_discontinuous_line_traces(
     display_df.index, display_df[plot_wave_col], blue_mask, 
-    'Wave (SELL)', 'blue', width=2, showlegend=True
+    'Wave', 'blue', width=2, showlegend=True
 )
-notrade_traces = create_discontinuous_line_traces(
-    display_df.index, display_df[plot_wave_col], notrade_mask, 
-    'Wave (NOTRADE)', 'black', width=2, showlegend=True
-)
+# Do NOT display black segments (NOTRADE = 0) - they should be invisible
+# This matches MQL5 behavior where NOTRADE segments are not shown
 ```
 
 ## Files Modified
@@ -153,6 +153,7 @@ notrade_traces = create_discontinuous_line_traces(
 - ✅ Wave signal display only for valid signals
 - ✅ Discontinuous line traces create separate segments
 - ✅ No interpolation between different signal segments
+- ✅ No black lines for NOTRADE signals (invisible)
 
 ### Test Results
 ```
@@ -171,10 +172,14 @@ uv run run_analysis.py show csv mn1 -d fastest --rule wave:339,10,2,fast,22,11,4
 - **Before Fix**: 
   - Red and blue lines appeared even where there were no signal values
   - Lines interpolated between signal segments, creating continuous connections
+  - Black lines were shown for NOTRADE signals
+  - Legend showed confusing names like "Wave (BUY)", "Wave (SELL)"
 - **After Fix**: 
   - Lines only appear where there are valid signal values
   - Lines are discontinuous, with gaps between different signal segments
   - No interpolation between points where signals don't exist
+  - Black lines (NOTRADE) are completely hidden
+  - Clean legend names: "Wave" for both red and blue segments
 - **Visual Result**: Cleaner, more accurate representation matching MQL5 behavior
 
 ## Technical Details

@@ -261,8 +261,8 @@ class TestWaveIndicatorFixes:
         # Should have blue traces for SELL signals (indices 4,5)
         assert len(blue_traces) >= 1, "Should have blue traces for SELL signals"
         
-        # Should have black traces for NOTRADE signals (indices 2,3,6,9)
-        assert len(black_traces) >= 1, "Should have black traces for NOTRADE signals"
+        # Should NOT have black traces for NOTRADE signals (they should be invisible)
+        assert len(black_traces) == 0, "Should NOT have black traces for NOTRADE signals"
 
 
 if __name__ == "__main__":
