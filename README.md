@@ -198,6 +198,15 @@ uv run pytest tests -n auto
   # Multiple SMAs for trend comparison
   uv run run_analysis.py demo --rule sma:10,close,sma:20,close,sma:50,close -d plotly
   ```
+- **Parameters:** period (required), price_type (required: open/close)
+- **Display Modes:** All 6 modes supported (fastest, fast, plotly, mpl, seaborn, term)
+- **Documentation:** 
+  - [Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md) 📖
+  - [SMA Reference](docs/reference/indicators/trend/sma-indicator.md) 📋
+  - [Quick Start Guide](docs/guides/sma-quick-start-guide.md) ⚡
+  - [Practical Examples](docs/guides/sma-practical-examples.md) 🎯
+  - [Testing Guide](docs/guides/sma-testing-guide.md) 🧪
+  - [Tutorials Summary](docs/guides/sma-tutorials-summary.md) 📋
 
 #### New: Wave Indicator ⭐ **ADVANCED DUAL-SYSTEM**
 - **Category:** Trend
