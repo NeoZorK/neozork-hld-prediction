@@ -6,6 +6,7 @@
 2. Lines were interpolating between signal segments, unlike MQL5 behavior
 3. Black lines (NOTRADE) were being displayed unnecessarily
 4. Legend names were confusing with "traces" and signal type suffixes
+5. Hover tooltips showed "traces" hints on lower chart
 
 **Command**: `uv run run_analysis.py show csv mn1 -d fastest --rule wave:339,10,2,fast,22,11,4,fast,prime,55,open`
 
@@ -39,6 +40,11 @@
 - No more confusing "traces" terminology
 - Clean, professional appearance
 
+### 7. **🆕 No Hover Hints**
+- Disabled hover tooltips for all wave indicator lines
+- No more "traces" hints when hovering over lower chart
+- Clean user experience without distracting tooltips
+
 ## 📁 Files Modified
 
 1. **`src/plotting/dual_chart_fastest.py`**
@@ -64,6 +70,7 @@
 ✅ Discontinuous lines match MQL5 behavior
 ✅ No black lines for NOTRADE signals
 ✅ Clean legend names without "traces"
+✅ No hover hints with "traces"
 ```
 
 ## 🚀 Impact
@@ -73,11 +80,13 @@
   - Lines interpolated between signal segments
   - Black lines showed for NOTRADE signals
   - Confusing legend names with "traces"
+  - Hover tooltips showed "traces" hints
 - **After**: 
   - Lines only appear where there are valid signal values
   - Lines are discontinuous with gaps between segments
   - Black lines (NOTRADE) are completely hidden
   - Clean legend names: "Wave" for all segments
+  - No hover tooltips to avoid "traces" hints
 - **Result**: Cleaner, more accurate visual representation matching MQL5
 
 ## 📋 Usage
