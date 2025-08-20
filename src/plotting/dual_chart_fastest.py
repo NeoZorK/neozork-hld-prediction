@@ -294,6 +294,9 @@ def create_discontinuous_line_traces(x_data, y_data, mask, name, color, width=2,
                 trace_name = name if i == 0 else None
                 trace_showlegend = showlegend if i == 0 else False
                 
+                # Determine color name for hover display
+                color_name = "Red (BUY)" if color == 'red' else "Blue (SELL)" if color == 'blue' else "Black (NOTRADE)"
+                
                 traces.append(go.Scatter(
                     x=segment_x,
                     y=segment_y,
@@ -302,7 +305,7 @@ def create_discontinuous_line_traces(x_data, y_data, mask, name, color, width=2,
                     line=dict(color=color, width=width),
                     showlegend=trace_showlegend,
                     hoverinfo='y+name' if i == 0 else 'skip',  # Show hover only for first segment to avoid duplicates
-                    hovertemplate='<b>Wave</b><br>Value: %{y:.6f}<extra></extra>' if i == 0 else None  # Custom hover template only for first segment
+                    hovertemplate='<b>Wave</b><br>Value: %{y:.6f}<br>Color: ' + color_name + '<extra></extra>' if i == 0 else None  # Custom hover template only for first segment
                 ))
     
     return traces
@@ -370,6 +373,28 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         
         # Do NOT display black segments (NOTRADE = 0) - they should be invisible
         # This matches MQL5 behavior where NOTRADE segments are not shown
+        
+        # Add third hover trace named "wave" that shows values only for red/blue segments
+        # This creates a single trace that shows values only where there are valid red/blue signals
+        red_blue_mask = red_mask | blue_mask
+        if red_blue_mask.any():
+            red_blue_data = display_df[red_blue_mask]
+            fig.add_trace(
+                go.Scatter(
+                    x=red_blue_data.index,
+                    y=red_blue_data[plot_wave_col],
+                    mode='markers',  # Use markers to show only at specific points
+                    name='wave',
+                    marker=dict(
+                        size=0,  # Invisible markers
+                        color='rgba(0,0,0,0)'  # Transparent
+                    ),
+                    showlegend=False,  # Don't show in legend
+                    hoverinfo='y+name',  # Show value and name
+                    hovertemplate='<b>wave</b><br>Value: %{y:.6f}<extra></extra>'  # Custom hover template
+                ),
+                row=2, col=1
+            )
     
     # Add Plot FastLine (thin red line) - as per MQ5
     plot_fastline_col = None
@@ -392,7 +417,7 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     line=dict(color='red', width=1, dash='dot'),  # Thin red dashed line as in MQ5
                     showlegend=True,
                     hoverinfo='y+name',  # Show value and name
-                    hovertemplate='<b>Fast Line</b><br>Value: %{y:.6f}<extra></extra>'  # Custom hover template
+                    hovertemplate='<b>Fast Line</b><br>Value: %{y:.6f}<br>Color: Red (Signal)<extra></extra>'  # Custom hover template
                 ),
                 row=2, col=1
             )
@@ -418,7 +443,7 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     line=dict(color='lightblue', width=1),  # Thin light blue line as in MQ5
                     showlegend=True,
                     hoverinfo='y+name',  # Show value and name
-                    hovertemplate='<b>MA Line</b><br>Value: %{y:.6f}<extra></extra>'  # Custom hover template
+                    hovertemplate='<b>MA Line</b><br>Value: %{y:.6f}<br>Color: Light Blue (MA)<extra></extra>'  # Custom hover template
                 ),
                 row=2, col=1
             )
