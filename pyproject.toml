@@ -146,6 +146,7 @@ version = {attr = "__version__"}
 
 [dependency-groups]
 dev = [
+    "pytest-cov>=6.2.1",
     "pytest-xdist>=3.7.0",
 ]
 
