@@ -184,13 +184,25 @@ class UniversalTradingMetrics:
                 print(f"   📈 Price Volatility:  {close_prices.std():.5f}")
         
         # Signal statistics
-        if 'Direction' in df.columns:
-            signals = df['Direction'].value_counts()
+        signal_col = self._get_signal_column(df)
+        if signal_col:
+            signals = df[signal_col].value_counts()
             print(f"\n🎯 SIGNAL STATISTICS:")
             print(f"   Buy Signals:       {signals.get(BUY, 0)}")
             print(f"   Sell Signals:      {signals.get(SELL, 0)}")
             print(f"   No Trade Signals:  {signals.get(NOTRADE, 0)}")
-            print(f"   Total Signals:     {len(df[df['Direction'] != NOTRADE])}")
+            print(f"   Total Signals:     {len(df[df[signal_col] != NOTRADE])}")
+    
+    def _get_signal_column(self, df: pd.DataFrame) -> str:
+        """Get the appropriate signal column for the DataFrame."""
+        # Priority order for signal columns
+        signal_columns = ['_Signal', '_Direction', 'Direction', 'Signal']
+        
+        for col in signal_columns:
+            if col in df.columns:
+                return col
+        
+        return None
     
     def _display_core_metrics(self, metrics: Dict[str, float]) -> None:
         """Display core trading performance metrics."""
