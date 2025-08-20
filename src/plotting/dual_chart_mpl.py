@@ -772,9 +772,21 @@ def plot_dual_chart_mpl(
             plot_color_col = '_Plot_Color'
         
         if plot_color_col:
-            # Get Wave buy and sell signals
-            wave_buy_signals = display_df[display_df[plot_color_col] == 1]  # BUY = 1
-            wave_sell_signals = display_df[display_df[plot_color_col] == 2]  # SELL = 2
+            # Get Wave buy and sell signals - use _Signal for actual trading signals (only when direction changes)
+            signal_col = None
+            if '_signal' in display_df.columns:
+                signal_col = '_signal'
+            elif '_Signal' in display_df.columns:
+                signal_col = '_Signal'
+            
+            if signal_col:
+                # Use _Signal for actual trading signals (only when direction changes)
+                wave_buy_signals = display_df[display_df[signal_col] == 1]  # BUY = 1
+                wave_sell_signals = display_df[display_df[signal_col] == 2]  # SELL = 2
+            else:
+                # Fallback to _Plot_Color if _Signal not available
+                wave_buy_signals = display_df[display_df[plot_color_col] == 1]  # BUY = 1
+                wave_sell_signals = display_df[display_df[plot_color_col] == 2]  # SELL = 2
             
             # Add buy signals to main chart
             if not wave_buy_signals.empty:
