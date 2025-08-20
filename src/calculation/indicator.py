@@ -147,6 +147,13 @@ def calculate_pressure_vector(
             rsi_columns.append('RSI_Momentum')
         output_columns.extend(rsi_columns)
     
+    # Add WAVE-specific columns for WAVE rules
+    if tr_num == TradingRule.Wave:
+        wave_columns = ['_Signal', '_Direction', '_LastSignal', 'ecore1', 'ecore2', 
+                       'wave1', 'fastline1', 'wave2', 'fastline2', 'Wave1', 'Wave2',
+                       '_Plot_Color', '_Plot_Wave', '_Plot_FastLine', 'MA_Line']
+        output_columns.extend(wave_columns)
+    
     # Add CCI-specific columns for CCI rules
     if tr_num == TradingRule.CCI:
         cci_columns = ['CCI', 'CCI_Signal', 'CCI_Price_Type']
