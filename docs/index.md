@@ -86,7 +86,7 @@ python run_analysis.py demo --rule PHLD
 
 ### Features
 - [Data Sources](guides/data-sources.md) - Supported financial data sources
-- [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](reference/indicators/trend/sma-indicator.md), [Wave](reference/indicators/trend/wave-indicator.md))
+- [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](reference/indicators/trend/sma-indicator.md), [Wave](reference/indicators/trend/wave-indicator.md) with full seaborn mode support)
 - [Analysis Tools](guides/analysis-tools.md) - Analysis and visualization tools
 - [CLI Interface](guides/cli-interface.md) - Command-line interface usage
 
@@ -106,6 +106,8 @@ python run_analysis.py demo --rule PHLD
 - [Wave Fast-Fastest Parity](guides/wave-indicator-fast-fastest-parity-final-summary.md) - ⭐ **NEW** Visual parity implementation
 - [Wave MPL Color Changes](guides/wave-mpl-color-changes.md) - ⭐ **NEW** MPL mode color customization for prime rule
 - [Wave Prime Rule Fix](guides/wave-prime-rule-fix-all-modes.md) - ⭐ **NEW** Global trading rule fixes across all display modes
+- [Wave Seaborn Mode](guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete Wave indicator support for seaborn mode (-d sb)
+- [Wave Seaborn Integration Summary](guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation summary for seaborn mode
 
 ### Reference
 - [API Reference](reference/index.md) - Complete API documentation
@@ -281,6 +283,9 @@ nz yfinance AAPL --rule PHLD
 
 # Custom timeframe
 nz mql5 EURUSD --interval H4 --rule PHLD
+
+# Wave indicator with seaborn mode
+nz csv --csv-file data/mn1.csv --point 50 --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d sb
 ```
 
 ### UV Package Management
