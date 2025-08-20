@@ -304,8 +304,8 @@ def create_discontinuous_line_traces(x_data, y_data, mask, name, color, width=2,
                     name=trace_name,
                     line=dict(color=color, width=width),
                     showlegend=trace_showlegend,
-                    hoverinfo='y+name' if i == 0 else 'skip',  # Show hover only for first segment to avoid duplicates
-                    hovertemplate='<b>Wave</b><br>Value: %{y:.6f}<br>Color: ' + color_name + '<extra></extra>' if i == 0 else None  # Custom hover template only for first segment
+                    hoverinfo='skip',  # Disable hover for all segments to avoid duplicates
+                    hovertemplate=None  # No hover template for segments
                 ))
     
     return traces
@@ -345,7 +345,7 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
         blue_mask = (display_df[plot_color_col] == 2) & valid_data_mask
         notrade_mask = (display_df[plot_color_col] == 0) & valid_data_mask
         
-        # Add red segments (BUY = 1) as discontinuous lines
+        # Create segments without hover info to avoid duplicate hovers
         red_segments = create_discontinuous_line_traces(
             display_df.index, 
             display_df[plot_wave_col], 
@@ -356,6 +356,9 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             showlegend=True
         )
         for segment in red_segments:
+            # Disable hover for individual segments
+            segment.hoverinfo = 'skip'
+            segment.hovertemplate = None
             fig.add_trace(segment, row=2, col=1)
         
         # Add blue segments (SELL = 2) as discontinuous lines
@@ -369,16 +372,29 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
             showlegend=True
         )
         for segment in blue_segments:
+            # Disable hover for individual segments
+            segment.hoverinfo = 'skip'
+            segment.hovertemplate = None
             fig.add_trace(segment, row=2, col=1)
         
         # Do NOT display black segments (NOTRADE = 0) - they should be invisible
         # This matches MQL5 behavior where NOTRADE segments are not shown
         
-        # Add third hover trace named "wave" that shows values only for red/blue segments
-        # This creates a single trace that shows values only where there are valid red/blue signals
+        # Create unified hover trace that shows only one signal type per point
         red_blue_mask = red_mask | blue_mask
         if red_blue_mask.any():
             red_blue_data = display_df[red_blue_mask]
+            
+            # Create color array for hover display
+            hover_colors = []
+            for idx in red_blue_data.index:
+                if red_mask.loc[idx]:
+                    hover_colors.append("Red (BUY)")
+                elif blue_mask.loc[idx]:
+                    hover_colors.append("Blue (SELL)")
+                else:
+                    hover_colors.append("Unknown")
+            
             fig.add_trace(
                 go.Scatter(
                     x=red_blue_data.index,
@@ -391,7 +407,8 @@ def add_wave_indicator(fig: go.Figure, display_df: pd.DataFrame) -> None:
                     ),
                     showlegend=False,  # Don't show in legend
                     hoverinfo='y+name',  # Show value and name
-                    hovertemplate='<b>wave</b><br>Value: %{y:.6f}<extra></extra>'  # Custom hover template
+                    hovertemplate='<b>Wave</b><br>Value: %{y:.6f}<br>Signal: %{text}<extra></extra>',  # Custom hover template
+                    text=hover_colors  # Add color information to hover
                 ),
                 row=2, col=1
             )
