@@ -29,6 +29,12 @@ uv run run_analysis.py demo --rule wave:33,10,2,strongtrend,22,11,4,fast,reverse
 # Wave with zone-based filtering
 uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,primezone,22,open -d fastest
 
+# Wave with fast display mode (Bokeh-based)
+uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+
+# Wave with real data in fast mode
+uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+
 # Get help for wave indicator
 uv run run_analysis.py demo --rule wave --help
 ```
@@ -253,6 +259,44 @@ uv run run_analysis.py demo --rule wave --help
 uv run run_analysis.py demo --rule wave:invalid --help
 ```
 
+## Display Modes
+
+The Wave indicator supports all display modes with specialized visualization features:
+
+### Fastest Mode (`-d fastest`)
+- **Technology**: Plotly-based dual chart
+- **Features**: Interactive charts with zoom, pan, and hover
+- **Wave Visualization**: Continuous line with dynamic colors
+- **Signal Display**: Buy/sell signals on main chart
+- **Best For**: Detailed analysis and exploration
+
+### Fast Mode (`-d fast`) ⭐ **NEW**
+- **Technology**: Bokeh-based dual chart
+- **Features**: Real-time updates and responsive interface
+- **Wave Visualization**: Discontinuous lines (only where signals exist)
+- **Signal Display**: Color-coded signals (red=BUY, blue=SELL)
+- **Hover Tooltips**: Detailed information on hover
+- **Best For**: Real-time monitoring and fast analysis
+
+### Other Modes
+- **Plotly Mode (`-d plotly`)**: Single chart visualization
+- **Matplotlib Mode (`-d mpl`)**: Static charts for reports
+- **Seaborn Mode (`-d seaborn`)**: Statistical visualization
+- **Terminal Mode (`-d term`)**: Text-based output
+
+### Fast Mode Features
+```bash
+# Test fast mode with wave indicator
+uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+```
+
+**Key Fast Mode Advantages:**
+- **Discontinuous Wave Lines**: Only displays where signals exist
+- **Color-Coded Signals**: Red for BUY, blue for SELL signals
+- **Real-Time Updates**: Responsive Bokeh interface
+- **Signal Markers**: Clear buy/sell indicators on main chart
+- **Hover Information**: Detailed tooltips for analysis
+
 ## Best Practices
 
 1. **Parameter Testing**: Test different parameter combinations on historical data
@@ -281,6 +325,13 @@ uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,primezone,22,
 
 # Multiple Wave configurations for comparison
 uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open,wave:33,10,2,strongtrend,22,11,4,fast,reverse,22,open -d plotly
+
+# Wave with fast display mode for real-time analysis
+uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+
+# Compare fast vs fastest modes
+uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
 ```
 
 ### Programmatic Examples
