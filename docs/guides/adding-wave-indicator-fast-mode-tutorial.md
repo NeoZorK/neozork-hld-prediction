@@ -386,6 +386,12 @@ uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4
 uv run run_analysis.py demo --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,22,open -d fast
 ```
 
+### 4. Seaborn Mode Test
+```bash
+# Test seaborn mode functionality
+uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
+```
+
 ## Common Issues and Solutions
 
 ### 1. Lines Not Displaying
@@ -406,24 +412,26 @@ uv run run_analysis.py demo --rule wave:339,10,2,fastzonereverse,22,11,4,fast,pr
 
 ## Best Practices
 
-1. **Test Both Modes**: Always test fast and fastest modes for comparison
+1. **Test All Modes**: Always test fast, fastest, and seaborn modes for comparison
 2. **Signal Validation**: Ensure signals are properly generated and displayed
 3. **Color Consistency**: Maintain consistent color coding across modes
 4. **Performance**: Monitor rendering performance with large datasets
 5. **Error Handling**: Implement proper error handling for missing data
+6. **Scientific Presentation**: Use seaborn mode for professional reports and publications
 
 ## Summary
 
-This tutorial demonstrated how to add comprehensive fast mode support to the Wave indicator. The implementation includes:
+This tutorial demonstrated how to add comprehensive fast mode and seaborn mode support to the Wave indicator. The implementation includes:
 
 1. **Discontinuous line visualization** for clear signal display
 2. **Color-coded signals** for easy interpretation
 3. **Signal markers** on the main chart
 4. **Comprehensive hover tooltips** for detailed information
 5. **Real-time updates** with Bokeh interface
-6. **Full testing coverage** for all functionality
+6. **Scientific presentation style** with seaborn mode
+7. **Full testing coverage** for all functionality
 
-The Wave indicator now provides a complete visualization experience across all display modes, with fast mode offering specialized features for real-time analysis and monitoring.
+The Wave indicator now provides a complete visualization experience across all display modes, with fast mode offering specialized features for real-time analysis and monitoring, and seaborn mode providing scientific presentation style for professional reports and publications.
 
 ## Current Implementation Status ✅
 
@@ -438,6 +446,7 @@ The Wave indicator with fast mode support is **fully implemented** and integrate
 - **Documentation**: Full technical documentation and tutorials
 - **Plotting**: Integration with all display modes
 - **Fast Mode Support**: ⭐ **NEW** Bokeh-based dual chart with discontinuous wave lines
+- **Seaborn Mode Support**: ⭐ **NEW** Scientific presentation style with full functionality
 
 ### 🎯 Key Features
 - **Dual Signal Validation**: Two-wave system for improved reliability
@@ -446,6 +455,7 @@ The Wave indicator with fast mode support is **fully implemented** and integrate
 - **Professional Grade**: Complex algorithms for advanced strategies
 - **Full CLI Support**: Complete parameter validation and help system
 - **Fast Mode Visualization**: Discontinuous lines with color-coded signals
+- **Seaborn Mode Visualization**: Scientific presentation style with dynamic color segments
 
 ### 📊 Usage Examples
 ```bash
@@ -463,7 +473,9 @@ uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 
 # Wave with real data in fast mode
 uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
-```
+
+# Wave with seaborn mode (NEW!) - Scientific presentation style
+uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 
 ### 📚 Documentation
 - [Wave Indicator Reference](docs/reference/indicators/trend/wave-indicator.md)
@@ -471,3 +483,5 @@ uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4
 - [Testing and Fixes](docs/guides/wave-indicator-fixes-summary.md)
 - [Fast Mode Support](docs/guides/wave-indicator-fast-mode-support.md)
 - [Fast-Fastest Parity](docs/guides/wave-indicator-fast-fastest-parity-final-summary.md)
+- [Wave Seaborn Mode](docs/guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete seaborn mode support
+- [Wave Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation details

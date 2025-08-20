@@ -582,7 +582,9 @@ uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 
 # Wave with real data in fast mode
 uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
-```
+
+# Wave with seaborn mode (NEW!) - Scientific presentation style
+uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 
 ### 🎨 Display Modes Support
 The Wave indicator supports all display modes:
@@ -591,7 +593,7 @@ The Wave indicator supports all display modes:
 - **`-d fast`**: Bokeh-based dual chart with real-time updates ⭐ **NEW**
 - **`-d plotly`**: Single Plotly chart
 - **`-d mpl`**: Matplotlib-based visualization with customizable colors ⭐ **NEW**
-- **`-d seaborn`**: Seaborn-based statistical plots
+- **`-d sb`**: Seaborn-based scientific presentation style ⭐ **NEW**
 - **`-d term`**: Terminal-based text output
 
 ### 🎨 MPL Mode Color Customization ⭐ **NEW**
@@ -617,9 +619,39 @@ uv run run_analysis.py show csv mn1 -d mpl --rule wave:339,10,2,fast,22,11,4,fas
 #### Documentation
 - [Wave MPL Color Changes](docs/guides/wave-mpl-color-changes.md) - Detailed color customization guide
 
+### 🎨 Seaborn Mode Support ⭐ **NEW**
+
+The Wave indicator in Seaborn mode (`-d sb`) provides scientific presentation style with full functionality:
+
+#### Visual Features
+- **Scientific Styling**: Modern seaborn aesthetic with enhanced grid and typography
+- **Dynamic Color Segments**: Red segments for BUY signals, blue segments for SELL signals
+- **Smart Signal Filtering**: Uses `_Signal` column for actual trading signals (only when direction changes)
+- **Professional Legend**: Clean styling with shadow and rounded corners
+- **High-Quality Output**: PNG format with 300 DPI resolution
+
+#### Usage Example
+```bash
+# Wave indicator with seaborn mode - scientific presentation style
+uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
+```
+
+#### Technical Implementation
+- **Discontinuous Line Segments**: Clear visual separation of different signal types
+- **Fast Line Support**: Red dotted line for momentum indicator
+- **MA Line Support**: Light blue line for moving average
+- **Zero Line Reference**: Gray dashed line for reference
+- **Signal Positioning**: BUY signals below Low price, SELL signals above High price
+
+#### Documentation
+- [Wave Seaborn Mode](docs/guides/wave-indicator-seaborn-mode.md) - Complete seaborn mode guide
+- [Wave Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md) - Technical implementation details
+
 ### 📚 Documentation
 - [Wave Indicator Reference](docs/reference/indicators/trend/wave-indicator.md)
 - [Implementation Summary](docs/guides/adding-wave-indicator-summary.md)
 - [Testing and Fixes](docs/guides/wave-indicator-fixes-summary.md)
 - [Wave MPL Color Changes](docs/guides/wave-mpl-color-changes.md) - MPL mode color customization
 - [Wave Prime Rule Fix](docs/guides/wave-prime-rule-fix-all-modes.md) - Global trading rule fixes
+- [Wave Seaborn Mode](docs/guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete seaborn mode support
+- [Wave Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation details
