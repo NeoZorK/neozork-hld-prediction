@@ -104,6 +104,8 @@ python run_analysis.py demo --rule PHLD
 - [Wave Testing and Fixes](guides/wave-indicator-fixes-summary.md) - Testing framework and bug fixes
 - [Wave Fast Mode Support](guides/wave-indicator-fast-mode-support.md) - ⭐ **NEW** Fast mode implementation details
 - [Wave Fast-Fastest Parity](guides/wave-indicator-fast-fastest-parity-final-summary.md) - ⭐ **NEW** Visual parity implementation
+- [Wave MPL Color Changes](guides/wave-mpl-color-changes.md) - ⭐ **NEW** MPL mode color customization for prime rule
+- [Wave Prime Rule Fix](guides/wave-prime-rule-fix-all-modes.md) - ⭐ **NEW** Global trading rule fixes across all display modes
 
 ### Reference
 - [API Reference](reference/index.md) - Complete API documentation
