@@ -224,6 +224,55 @@ class TestTradingMetricsCalculator:
         assert metrics['sell_count'] == 0
         assert metrics['total_trades'] == 0
 
+    def test_extract_trades_with_wave_indicator(self):
+        """Test trade extraction with Wave indicator data."""
+        # Create test data with Wave indicator format
+        test_data = {
+            'Close': [1.5000, 1.5100, 1.5200, 1.5150, 1.5300, 1.5250, 1.5400, 1.5350],
+            '_Signal': [0, 1, 0, 2, 0, 1, 0, 2],  # Wave indicator signal format
+            '_Direction': [0, 1, 1, 2, 2, 1, 1, 2]  # Wave indicator direction format
+        }
+        test_df = pd.DataFrame(test_data)
+        
+        # Test with _Signal column
+        trades = self.calculator._extract_trades(test_df, 'Close', '_Signal')
+        
+        # Should extract trades based on BUY (1) and SELL (2) signals
+        assert len(trades) > 0, "Should extract trades from Wave indicator data"
+        
+        # Test with _Direction column
+        trades_direction = self.calculator._extract_trades(test_df, 'Close', '_Direction')
+        
+        # Should also work with _Direction column
+        assert len(trades_direction) > 0, "Should extract trades using _Direction column"
+    
+    def test_strategy_metrics_edge_cases(self):
+        """Test strategy metrics calculation with edge cases."""
+        # Test with no trades
+        empty_df = pd.DataFrame({'Close': [1.0, 1.1, 1.2], '_Signal': [0, 0, 0]})
+        metrics = self.calculator._calculate_strategy_metrics(
+            empty_df, 'Close', '_Signal', 1.0, 2.0, 0.07
+        )
+        
+        # Should return default values when no trades
+        assert metrics['kelly_fraction'] == 0.0
+        assert metrics['optimal_position_size'] == 0.0
+        assert metrics['strategy_efficiency'] == 0.0
+        assert metrics['strategy_sustainability'] == 0.0
+        
+        # Test with all break-even trades
+        breakeven_df = pd.DataFrame({
+            'Close': [1.0, 1.0, 1.0, 1.0],  # No price change
+            '_Signal': [0, 1, 2, 0]  # One buy-sell cycle
+        })
+        metrics_breakeven = self.calculator._calculate_strategy_metrics(
+            breakeven_df, 'Close', '_Signal', 1.0, 2.0, 0.07
+        )
+        
+        # Should handle break-even trades correctly
+        assert metrics_breakeven['kelly_fraction'] == 0.0
+        assert metrics_breakeven['strategy_efficiency'] == 0.0
+
 
 class TestCalculateTradingMetrics:
     """Test cases for calculate_trading_metrics function."""
