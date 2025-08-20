@@ -1631,6 +1631,10 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
         elif indicator_upper in ['DONCHIAN_CHANNEL', 'DONCHAIN']:
             _add_donchian_indicator_to_subplot(chunk, x_values)
         
+        # Wave indicator
+        elif indicator_upper == 'WAVE':
+            _add_wave_indicator_to_subplot(chunk, x_values)
+        
         # Default: try to find any column with indicator name
         else:
             _add_generic_indicator_to_subplot(chunk, x_values, indicator_name)
@@ -2257,6 +2261,84 @@ def _add_donchian_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> N
         
     except Exception as e:
         logger.print_error(f"Error adding Donchian Channel: {e}")
+
+
+def _add_wave_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Wave indicator to subplot."""
+    try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
+        # Check for Wave indicator columns with different naming conventions
+        plot_wave_col = None
+        plot_color_col = None
+        plot_fastline_col = None
+        ma_line_col = None
+        
+        # Try different column naming conventions
+        if '_plot_wave' in chunk.columns:
+            plot_wave_col = '_plot_wave'
+        elif '_Plot_Wave' in chunk.columns:
+            plot_wave_col = '_Plot_Wave'
+        
+        if '_plot_color' in chunk.columns:
+            plot_color_col = '_plot_color'
+        elif '_Plot_Color' in chunk.columns:
+            plot_color_col = '_Plot_Color'
+        
+        if '_plot_fastline' in chunk.columns:
+            plot_fastline_col = '_plot_fastline'
+        elif '_Plot_FastLine' in chunk.columns:
+            plot_fastline_col = '_Plot_FastLine'
+        
+        if 'MA_Line' in chunk.columns:
+            ma_line_col = 'MA_Line'
+        
+        # Plot Wave line with dynamic colors based on signals
+        if plot_wave_col and plot_color_col:
+            wave_values = chunk[plot_wave_col].fillna(0).tolist()
+            color_values = chunk[plot_color_col].fillna(0).tolist()
+            
+            # Create separate arrays for different signal types
+            red_x = []
+            red_y = []
+            blue_x = []
+            blue_y = []
+            
+            for i, (wave_val, color_val) in enumerate(zip(wave_values, color_values)):
+                if wave_val != 0 and not pd.isna(wave_val):
+                    if color_val == 1:  # BUY signal
+                        red_x.append(numeric_x_values[i])
+                        red_y.append(wave_val)
+                    elif color_val == 2:  # SELL signal
+                        blue_x.append(numeric_x_values[i])
+                        blue_y.append(wave_val)
+            
+            # Plot red segments (BUY signals)
+            if red_x and red_y:
+                plt.plot(red_x, red_y, color="red+", label="Wave (BUY)")
+            
+            # Plot blue segments (SELL signals)
+            if blue_x and blue_y:
+                plt.plot(blue_x, blue_y, color="blue+", label="Wave (SELL)")
+        
+        # Plot Fast Line (thin red dotted line)
+        if plot_fastline_col:
+            fastline_values = chunk[plot_fastline_col].fillna(0).tolist()
+            if fastline_values and any(v != 0 for v in fastline_values):
+                plt.plot(numeric_x_values, fastline_values, color="red+", label="Fast Line")
+        
+        # Plot MA Line (light blue line)
+        if ma_line_col:
+            ma_values = chunk[ma_line_col].fillna(0).tolist()
+            if ma_values and any(v != 0 for v in ma_values):
+                plt.plot(numeric_x_values, ma_values, color="cyan+", label="MA Line")
+        
+        # Add zero line for reference
+        plt.plot(numeric_x_values, [0] * len(numeric_x_values), color="white+", label="Zero Line")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding Wave indicator: {e}")
 
 
 def _add_generic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, indicator_name: str) -> None:
