@@ -897,9 +897,26 @@ def _handle_indicator_calculation_mode(args, found_files, metrics):
             lot_size = getattr(args, 'lot_size', 1.0)
             risk_reward_ratio = getattr(args, 'risk_reward_ratio', 2.0)
             fee_per_trade = getattr(args, 'fee_per_trade', 0.07)
+            
+            # Auto-detect signal column for different indicators
+            signal_col = 'Direction'  # Default
+            if '_Signal' in result_df.columns:
+                signal_col = '_Signal'
+            elif '_Direction' in result_df.columns:
+                signal_col = '_Direction'
+            elif 'Signal' in result_df.columns:
+                signal_col = 'Signal'
+            
+            # Debug: Print available signal columns
+            print(f"\n🔍 DEBUG: All columns: {list(result_df.columns)}")
+            print(f"🔍 DEBUG: Available signal columns: {[col for col in result_df.columns if any(keyword in col.lower() for keyword in ['signal', 'direction', 'color'])]}")
+            print(f"🔍 DEBUG: Selected signal column: {signal_col}")
+            print(f"🔍 DEBUG: Signal column values: {result_df[signal_col].value_counts().to_dict() if signal_col in result_df.columns else 'NOT FOUND'}")
+            
             display_universal_trading_metrics(
                 result_df,
                 selected_rule,
+                signal_col=signal_col,
                 lot_size=lot_size,
                 risk_reward_ratio=risk_reward_ratio,
                 fee_per_trade=fee_per_trade

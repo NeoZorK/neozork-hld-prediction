@@ -27,6 +27,27 @@ Learning Curve: Complex rules require significant study time,
 Over-Optimization Risk: Multiple parameters increase curve-fitting risk, 
 Signal Frequency: May generate fewer signals than simpler indicators, 
 Market Dependency: Best in trending markets, weaker in ranging conditions
+
+Trading Rules (ENUM_MOM_TR):
+- fast: Basic momentum comparison - BUY when wave > fastline, SELL when wave < fastline
+- zone: Simple zone-based signals - BUY when wave > 0, SELL when wave < 0
+- strongtrend: Strong trend confirmation - BUY in positive zone when wave > fastline, SELL in negative zone when wave < fastline
+- weaktrend: Weak trend signals - BUY in positive zone when wave < fastline, SELL in negative zone when wave > fastline
+- fastzonereverse: Reverse signals in zones - SELL in positive zone when wave < fastline, BUY in negative zone when wave > fastline
+- bettertrend: Enhanced trend signals avoiding false signals by comparing with previous values
+- betterfast: Improved fast trading with enhanced signal validation
+- rost: Reverse momentum signals - opposite of standard momentum
+- trendrost: Trend-based reverse signals - reverse signals in trend direction
+- bettertrendrost: Enhanced trend reverse signals with improved validation
+
+Global Trading Rules (ENUM_GLOBAL_TR):
+- prime: Prime rule - generates signals when both wave indicators agree (same signal)
+- reverse: Reverse rule - reverses signals when both wave indicators agree (opposite signal)
+- primezone: Prime Zone rule - BUY only in negative zone, SELL only in positive zone when both agree
+- reversezone: Reverse Zone rule - reverses zone-filtered signals when both agree
+- newzone: New Zone rule - generates signals when wave indicators disagree (opposite to last signal)
+- longzone: Long Zone rule - always generates opposite signal to last confirmed signal
+- longzonereverse: Long Zone Reverse rule - always uses the last confirmed signal
 """
 from enum import Enum
 from dataclasses import dataclass
