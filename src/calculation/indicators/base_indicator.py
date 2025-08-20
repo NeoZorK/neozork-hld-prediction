@@ -9,7 +9,7 @@ Provides common functionality for all indicators.
 import pandas as pd
 from enum import Enum
 from typing import Optional, Union
-from ...common import logger
+from src.common import logger
 
 
 class PriceType(Enum):

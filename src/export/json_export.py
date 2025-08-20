@@ -10,7 +10,7 @@ import os
 import pandas as pd
 import json
 from pathlib import Path
-from ..common import logger
+from src.common import logger
 
 
 def export_indicator_to_json(result_df, data_info, selected_rule, args):

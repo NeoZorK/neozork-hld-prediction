@@ -15,7 +15,46 @@ import matplotlib.dates as mdates
 from matplotlib.patches import Rectangle
 from typing import Dict, Any, Optional
 
-from ..common import logger
+from src.common import logger
+
+
+def _create_wave_line_segments(index, values, mask):
+    """
+    Create discontinuous line segments for Wave indicator.
+    
+    Args:
+        index: Index array
+        values: Values array
+        mask: Boolean mask for valid segments
+        
+    Returns:
+        list: List of (x, y) segment tuples
+    """
+    segments = []
+    if not mask.any():
+        return segments
+    
+    # Find continuous segments
+    segment_start = None
+    for i, is_valid in enumerate(mask):
+        if is_valid and segment_start is None:
+            segment_start = i
+        elif not is_valid and segment_start is not None:
+            # End of segment
+            segments.append((
+                index[segment_start:i],
+                values[segment_start:i]
+            ))
+            segment_start = None
+    
+    # Handle last segment
+    if segment_start is not None:
+        segments.append((
+            index[segment_start:],
+            values[segment_start:]
+        ))
+    
+    return segments
 
 
 def plot_dual_chart_mpl(
@@ -69,20 +108,24 @@ def plot_dual_chart_mpl(
                                    sharex=True)
     
     # Main chart (OHLC)
-    ax1.set_title(title, fontsize=14, fontweight='bold')
+    ax1.set_title(title, fontsize=13, fontweight='bold', pad=20)
+    
+    # Enhanced grid for main chart
+    ax1.grid(True, alpha=0.2, linestyle='-', linewidth=0.5)
+    ax1.set_axisbelow(True)  # Put grid behind data
     
     # Plot candlesticks
     for i, (date, row) in enumerate(display_df.iterrows()):
         # Determine color based on open/close
         if row['Close'] >= row['Open']:
-            color = 'green'
-            body_color = 'lightgreen'
+            color = '#2ECC71'  # Modern green
+            body_color = '#A8E6CF'  # Light green
         else:
-            color = 'red'
-            body_color = 'lightcoral'
+            color = '#E74C3C'  # Modern red
+            body_color = '#FADBD8'  # Light red
         
         # Plot high-low line
-        ax1.plot([date, date], [row['Low'], row['High']], color=color, linewidth=1)
+        ax1.plot([date, date], [row['Low'], row['High']], color=color, linewidth=0.8, alpha=0.8)
         
         # Plot open-close body
         body_height = abs(row['Close'] - row['Open'])
@@ -90,17 +133,17 @@ def plot_dual_chart_mpl(
         
         rect = Rectangle((date - pd.Timedelta(hours=6), body_bottom), 
                         pd.Timedelta(hours=12), body_height,
-                        facecolor=body_color, edgecolor=color, linewidth=1)
+                        facecolor=body_color, edgecolor=color, linewidth=0.8, alpha=0.9)
         ax1.add_patch(rect)
     
     # Add support and resistance lines if available
     if 'Support' in display_df.columns:
         ax1.plot(display_df.index, display_df['Support'], 
-                color='blue', linestyle='--', linewidth=2, alpha=0.8, label='Support')
+                color='#3498DB', linestyle='--', linewidth=1.5, alpha=0.8, label='Support')
     
     if 'Resistance' in display_df.columns:
         ax1.plot(display_df.index, display_df['Resistance'], 
-                color='red', linestyle='--', linewidth=2, alpha=0.8, label='Resistance')
+                color='#E67E22', linestyle='--', linewidth=1.5, alpha=0.8, label='Resistance')
     
     # Add buy/sell signals if available
     if 'Direction' in display_df.columns:
@@ -109,15 +152,13 @@ def plot_dual_chart_mpl(
         
         if not buy_signals.empty:
             ax1.scatter(buy_signals.index, buy_signals['Low'] * 0.995, 
-                       color='green', marker='^', s=100, label='Buy Signal', zorder=5)
+                       color='#2ECC71', marker='^', s=80, label='Buy Signal', zorder=5, alpha=0.9)
         
         if not sell_signals.empty:
             ax1.scatter(sell_signals.index, sell_signals['High'] * 1.005, 
-                       color='red', marker='v', s=100, label='Sell Signal', zorder=5)
+                       color='#E74C3C', marker='v', s=80, label='Sell Signal', zorder=5, alpha=0.9)
     
-    ax1.set_ylabel('Price', fontsize=12)
-    ax1.grid(True, alpha=0.3)
-    ax1.legend()
+    ax1.set_ylabel('Price', fontsize=11, fontweight='bold')
     
     # Format x-axis for main chart
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
@@ -719,14 +760,141 @@ def plot_dual_chart_mpl(
                            alpha=0.95, label='SELL Signal', zorder=5)
                 ax2.scatter(sell_idx, sell_values, color=downtrend_color, s=150, 
                            marker='o', alpha=0.4, label="", zorder=4)
+    
+    elif indicator_name == 'wave':
+        y_axis_label = 'Wave Value'
+        
+        # Add Wave signals to the main chart (ax1)
+        plot_color_col = None
+        if '_plot_color' in display_df.columns:
+            plot_color_col = '_plot_color'
+        elif '_Plot_Color' in display_df.columns:
+            plot_color_col = '_Plot_Color'
+        
+        if plot_color_col:
+            # Get Wave buy and sell signals - use _Signal for actual trading signals (only when direction changes)
+            signal_col = None
+            if '_signal' in display_df.columns:
+                signal_col = '_signal'
+            elif '_Signal' in display_df.columns:
+                signal_col = '_Signal'
             
+            if signal_col:
+                # Use _Signal for actual trading signals (only when direction changes)
+                wave_buy_signals = display_df[display_df[signal_col] == 1]  # BUY = 1
+                wave_sell_signals = display_df[display_df[signal_col] == 2]  # SELL = 2
+            else:
+                # Fallback to _Plot_Color if _Signal not available
+                wave_buy_signals = display_df[display_df[plot_color_col] == 1]  # BUY = 1
+                wave_sell_signals = display_df[display_df[plot_color_col] == 2]  # SELL = 2
+            
+            # Add buy signals to main chart
+            if not wave_buy_signals.empty:
+                ax1.scatter(wave_buy_signals.index, wave_buy_signals['Low'] * 0.995, 
+                           color='#0066CC', marker='^', s=100, label='Wave BUY', zorder=5, alpha=0.9)
+            
+            # Add sell signals to main chart
+            if not wave_sell_signals.empty:
+                ax1.scatter(wave_sell_signals.index, wave_sell_signals['High'] * 1.005, 
+                           color='#FF4444', marker='v', s=100, label='Wave SELL', zorder=5, alpha=0.9)
+        
+        # Add Plot Wave (main indicator, single line with dynamic colors) - as per MQ5
+        plot_wave_col = None
+        plot_color_col = None
+        if '_plot_wave' in display_df.columns:
+            plot_wave_col = '_plot_wave'
+        elif '_Plot_Wave' in display_df.columns:
+            plot_wave_col = '_Plot_Wave'
+        
+        if '_plot_color' in display_df.columns:
+            plot_color_col = '_plot_color'
+        elif '_Plot_Color' in display_df.columns:
+            plot_color_col = '_Plot_Color'
+        
+        if plot_wave_col and plot_color_col:
+            # Create discontinuous line segments like in fastest mode
+            valid_data_mask = display_df[plot_wave_col].notna() & (display_df[plot_wave_col] != 0)
+            if valid_data_mask.any():
+                wave_data = display_df[valid_data_mask].copy()
+                
+                # Create masks for different signal types
+                red_mask = wave_data[plot_color_col] == 1  # BUY
+                blue_mask = wave_data[plot_color_col] == 2  # SELL
+                
+                # Create discontinuous line segments for red (BUY = 1)
+                if red_mask.any():
+                    red_segments = _create_wave_line_segments(
+                        wave_data.index, 
+                        wave_data[plot_wave_col], 
+                        red_mask
+                    )
+                    # Plot first segment with label, others without
+                    for i, (seg_x, seg_y) in enumerate(red_segments):
+                        if i == 0:
+                            ax2.plot(seg_x, seg_y, color='#FF4444', linewidth=1.5, label='Wave (BUY)', alpha=0.9)
+                        else:
+                            ax2.plot(seg_x, seg_y, color='#FF4444', linewidth=1.5, alpha=0.9)
+                
+                # Create discontinuous line segments for blue (SELL = 2)
+                if blue_mask.any():
+                    blue_segments = _create_wave_line_segments(
+                        wave_data.index, 
+                        wave_data[plot_wave_col], 
+                        blue_mask
+                    )
+                    # Plot first segment with label, others without
+                    for i, (seg_x, seg_y) in enumerate(blue_segments):
+                        if i == 0:
+                            ax2.plot(seg_x, seg_y, color='#0066CC', linewidth=1.5, label='Wave (SELL)', alpha=0.9)
+                        else:
+                            ax2.plot(seg_x, seg_y, color='#0066CC', linewidth=1.5, alpha=0.9)
+        
+        # Add Plot FastLine (thin red dotted line) - as per MQ5
+        plot_fastline_col = None
+        if '_plot_fastline' in display_df.columns:
+            plot_fastline_col = '_plot_fastline'
+        elif '_Plot_FastLine' in display_df.columns:
+            plot_fastline_col = '_Plot_FastLine'
+        
+        if plot_fastline_col:
+            # Only show Fast Line when there are valid values
+            fastline_valid_mask = display_df[plot_fastline_col].notna() & (display_df[plot_fastline_col] != 0)
+            if fastline_valid_mask.any():
+                fastline_valid_data = display_df[fastline_valid_mask]
+                ax2.plot(fastline_valid_data.index, fastline_valid_data[plot_fastline_col],
+                        color='#FF6B6B', linewidth=0.8, linestyle=':', label='Fast Line', alpha=0.7)
+        
+        # Add MA Line (light blue line) - as per MQ5
+        ma_line_col = None
+        if 'ma_line' in display_df.columns:
+            ma_line_col = 'ma_line'
+        elif 'MA_Line' in display_df.columns:
+            ma_line_col = 'MA_Line'
+        
+        if ma_line_col:
+            # Only show MA Line when there are valid values
+            ma_valid_mask = display_df[ma_line_col].notna() & (display_df[ma_line_col] != 0)
+            if ma_valid_mask.any():
+                ma_valid_data = display_df[ma_valid_mask]
+                ax2.plot(ma_valid_data.index, ma_valid_data[ma_line_col],
+                        color='#4ECDC4', linewidth=0.8, label='MA Line', alpha=0.8)
+        
+        # Add zero line for reference
+        ax2.axhline(y=0, color='#95A5A6', linestyle='--', linewidth=0.8, alpha=0.6)
 
+    # Add legend to main chart after all signals are added
+    ax1.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
     
     # Set y-axis label
-    ax2.set_ylabel(y_axis_label, fontsize=12)
-    ax2.set_xlabel('Date', fontsize=12)
-    ax2.grid(True, alpha=0.3)
-    ax2.legend()
+    ax2.set_ylabel(y_axis_label, fontsize=11, fontweight='bold')
+    ax2.set_xlabel('Date', fontsize=11, fontweight='bold')
+    
+    # Enhanced grid styling
+    ax2.grid(True, alpha=0.2, linestyle='-', linewidth=0.5)
+    ax2.set_axisbelow(True)  # Put grid behind data
+    
+    # Enhanced legend
+    ax2.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
     
     # Format x-axis for indicator chart
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
@@ -773,7 +941,7 @@ def plot_dual_chart_mpl_display(
         Any: Plot object
     """
     # Calculate additional indicator first
-    from ..plotting.dual_chart_plot import calculate_additional_indicator
+    from src.plotting.dual_chart_plot import calculate_additional_indicator
     df_with_indicator = calculate_additional_indicator(df, rule)
     
     return plot_dual_chart_mpl(df_with_indicator, rule, title, None, width, height, layout, **kwargs) 

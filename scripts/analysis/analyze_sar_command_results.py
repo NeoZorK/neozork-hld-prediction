@@ -16,8 +16,8 @@ import sys
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from calculation.indicators.trend.sar_ind import calculate_sar, calculate_sar_signals, apply_rule_sar
-from common.constants import BUY, SELL, NOTRADE
+from src.calculation.indicators.trend.sar_ind import calculate_sar, calculate_sar_signals, apply_rule_sar
+from src.common.constants import BUY, SELL, NOTRADE
 
 
 def load_mn1_data():

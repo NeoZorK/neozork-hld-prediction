@@ -86,13 +86,24 @@ Technical indicator calculation and usage examples.
 **Covers:**
 - Momentum indicators (MACD, Stochastic)
 - Oscillators (RSI, CCI)
-- Trend indicators (EMA, ADX, SuperTrend)
+- Trend indicators (EMA, ADX, SuperTrend, Wave)
 - Volatility indicators (ATR, Bollinger Bands)
 - Volume indicators (OBV, VWAP)
 - Support & Resistance (Pivot Points, Fibonacci)
 - Predictive indicators (HMA, Time Series)
 - Probability indicators (Monte Carlo, Kelly)
 - Sentiment indicators (Fear & Greed, COT, Put/Call Ratio)
+
+### [Wave Indicator Examples](wave-indicator-examples.md) ⭐ **NEW**
+Advanced examples for the complex Wave indicator.
+
+**Highlights:**
+- **Complex Parameter Management**: Multiple parameter combinations
+- **Real-World Scenarios**: Stock, crypto, and forex analysis
+- **Trading Strategies**: Conservative, aggressive, and balanced approaches
+- **Market Conditions**: Bull market, bear market, and sector-specific analysis
+- **Parameter Optimization**: Guidelines for different market types
+- **Troubleshooting**: Common issues and solutions
 
 ### Volume Indicators Examples ⭐ **FIXED**
 ```bash

@@ -16,8 +16,8 @@ CCI (Commodity Channel Index) indicator calculation module.
 
 import pandas as pd
 import numpy as np
-from ....common import logger
-from ....common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
+from src.common import logger
+from src.common.constants import TradingRule, NOTRADE, BUY, SELL, EMPTY_VALUE
 from ..base_indicator import BaseIndicator, PriceType
 
 

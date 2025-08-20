@@ -10,8 +10,8 @@ import pandas as pd
 import numpy as np
 
 # Use relative imports within the src package
-from ..common import logger
-from ..common.constants import TradingRule, EMPTY_VALUE
+from src.common import logger
+from src.common.constants import TradingRule, EMPTY_VALUE
 from .core_calculations import (
     calculate_hl, calculate_pressure, calculate_pv
 )
@@ -146,6 +146,13 @@ def calculate_pressure_vector(
         if tr_num == TradingRule.RSI_Momentum:
             rsi_columns.append('RSI_Momentum')
         output_columns.extend(rsi_columns)
+    
+    # Add WAVE-specific columns for WAVE rules
+    if tr_num == TradingRule.Wave:
+        wave_columns = ['_Signal', '_Direction', '_LastSignal', 'ecore1', 'ecore2', 
+                       'wave1', 'fastline1', 'wave2', 'fastline2', 'Wave1', 'Wave2',
+                       '_Plot_Color', '_Plot_Wave', '_Plot_FastLine', 'MA_Line']
+        output_columns.extend(wave_columns)
     
     # Add CCI-specific columns for CCI rules
     if tr_num == TradingRule.CCI:

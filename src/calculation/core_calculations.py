@@ -10,7 +10,7 @@ import numpy as np
 
 # Import logger for error reporting
 try:
-    from ..common import logger
+    from src.common import logger
 except ImportError:
     # Fallback for direct imports
     try:

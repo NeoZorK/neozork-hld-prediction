@@ -343,27 +343,65 @@ class TradingMetricsCalculator:
             in_position = False
             entry_price = 0.0
             
+            # Handle different signal column formats
+            actual_signal_col = signal_col
+            if signal_col not in df.columns:
+                # Try alternative signal columns for Wave and other indicators
+                alternative_cols = ['_Signal', '_Direction', 'Direction', 'Signal']
+                for col in alternative_cols:
+                    if col in df.columns:
+                        actual_signal_col = col
+                        break
+                else:
+                    logger.print_debug(f"Signal column '{signal_col}' not found. Available columns: {list(df.columns)}")
+                    return []
+            
+            # Get signal values (handle both numeric and string formats)
+            signals = df[actual_signal_col].fillna(0)
+            
+            # Convert signals to standard format if needed
+            if signals.dtype == 'object':
+                # Handle string signals
+                signal_map = {'buy': BUY, 'sell': SELL, 'notrade': NOTRADE, '0': NOTRADE, '1': BUY, '2': SELL}
+                signals = signals.str.lower().map(signal_map).fillna(NOTRADE)
+            else:
+                # Handle numeric signals
+                signals = signals.astype(int)
+            
             for i in range(1, len(df)):
-                current_signal = df[signal_col].iloc[i]
+                current_signal = signals.iloc[i]
                 current_price = df[price_col].iloc[i]
                 prev_price = df[price_col].iloc[i-1]
                 
-                # Check for entry signals
+                # Skip if price data is invalid
+                if pd.isna(current_price) or pd.isna(prev_price) or current_price <= 0 or prev_price <= 0:
+                    continue
+                
+                # Check for entry signals (BUY = 1)
                 if not in_position and current_signal == BUY:
                     in_position = True
                     entry_price = current_price
                 
-                # Check for exit signals or position reversal
-                elif in_position and (current_signal == SELL or current_signal == BUY):
+                # Check for exit signals (SELL = 2) or position reversal
+                elif in_position and current_signal == SELL:
                     # Calculate trade return
                     trade_return = (current_price - entry_price) / entry_price * 100
                     trades.append(trade_return)
-                    
-                    # Update position
-                    if current_signal == BUY:
-                        entry_price = current_price  # New position
-                    else:
-                        in_position = False  # Exit position
+                    in_position = False  # Exit position
+                
+                # Handle position reversal (new BUY signal while in position)
+                elif in_position and current_signal == BUY:
+                    # Close current position and open new one
+                    trade_return = (current_price - entry_price) / entry_price * 100
+                    trades.append(trade_return)
+                    entry_price = current_price  # New position entry price
+            
+            # Close any remaining open position at the end
+            if in_position and len(df) > 0:
+                final_price = df[price_col].iloc[-1]
+                if not pd.isna(final_price) and final_price > 0:
+                    trade_return = (final_price - entry_price) / entry_price * 100
+                    trades.append(trade_return)
             
             return trades
             
@@ -379,31 +417,75 @@ class TradingMetricsCalculator:
             entry_price = 0.0
             entry_volume = 0.0
             
+            # Handle different signal column formats
+            actual_signal_col = signal_col
+            if signal_col not in df.columns:
+                # Try alternative signal columns for Wave and other indicators
+                alternative_cols = ['_Signal', '_Direction', 'Direction', 'Signal']
+                for col in alternative_cols:
+                    if col in df.columns:
+                        actual_signal_col = col
+                        break
+                else:
+                    logger.print_debug(f"Signal column '{signal_col}' not found. Available columns: {list(df.columns)}")
+                    return []
+            
+            # Get signal values (handle both numeric and string formats)
+            signals = df[actual_signal_col].fillna(0)
+            
+            # Convert signals to standard format if needed
+            if signals.dtype == 'object':
+                # Handle string signals
+                signal_map = {'buy': BUY, 'sell': SELL, 'notrade': NOTRADE, '0': NOTRADE, '1': BUY, '2': SELL}
+                signals = signals.str.lower().map(signal_map).fillna(NOTRADE)
+            else:
+                # Handle numeric signals
+                signals = signals.astype(int)
+            
             for i in range(1, len(df)):
-                current_signal = df[signal_col].iloc[i]
+                current_signal = signals.iloc[i]
                 current_price = df[price_col].iloc[i]
                 current_volume = df[volume_col].iloc[i]
                 prev_price = df[price_col].iloc[i-1]
                 
-                # Check for entry signals
+                # Skip if price or volume data is invalid
+                if (pd.isna(current_price) or pd.isna(prev_price) or 
+                    current_price <= 0 or prev_price <= 0 or 
+                    pd.isna(current_volume) or current_volume <= 0):
+                    continue
+                
+                # Check for entry signals (BUY = 1)
                 if not in_position and current_signal == BUY:
                     in_position = True
                     entry_price = current_price
                     entry_volume = current_volume
                 
-                # Check for exit signals or position reversal
-                elif in_position and (current_signal == SELL or current_signal == BUY):
+                # Check for exit signals (SELL = 2)
+                elif in_position and current_signal == SELL:
                     # Calculate trade return
                     trade_return = (current_price - entry_price) / entry_price * 100
                     avg_volume = (entry_volume + current_volume) / 2
                     trades.append((trade_return, avg_volume))
-                    
-                    # Update position
-                    if current_signal == BUY:
-                        entry_price = current_price  # New position
-                        entry_volume = current_volume
-                    else:
-                        in_position = False  # Exit position
+                    in_position = False  # Exit position
+                
+                # Handle position reversal (new BUY signal while in position)
+                elif in_position and current_signal == BUY:
+                    # Close current position and open new one
+                    trade_return = (current_price - entry_price) / entry_price * 100
+                    avg_volume = (entry_volume + current_volume) / 2
+                    trades.append((trade_return, avg_volume))
+                    entry_price = current_price  # New position entry price
+                    entry_volume = current_volume
+            
+            # Close any remaining open position at the end
+            if in_position and len(df) > 0:
+                final_price = df[price_col].iloc[-1]
+                final_volume = df[volume_col].iloc[-1]
+                if (not pd.isna(final_price) and final_price > 0 and 
+                    not pd.isna(final_volume) and final_volume > 0):
+                    trade_return = (final_price - entry_price) / entry_price * 100
+                    avg_volume = (entry_volume + final_volume) / 2
+                    trades.append((trade_return, avg_volume))
             
             return trades
             
@@ -417,12 +499,42 @@ class TradingMetricsCalculator:
             returns = []
             in_position = False
             
+            # Handle different signal column formats
+            actual_signal_col = signal_col
+            if signal_col not in df.columns:
+                # Try alternative signal columns for Wave and other indicators
+                alternative_cols = ['_Signal', '_Direction', 'Direction', 'Signal']
+                for col in alternative_cols:
+                    if col in df.columns:
+                        actual_signal_col = col
+                        break
+                else:
+                    logger.print_debug(f"Signal column '{signal_col}' not found. Available columns: {list(df.columns)}")
+                    return pd.Series()
+            
+            # Get signal values (handle both numeric and string formats)
+            signals = df[actual_signal_col].fillna(0)
+            
+            # Convert signals to standard format if needed
+            if signals.dtype == 'object':
+                # Handle string signals
+                signal_map = {'buy': BUY, 'sell': SELL, 'notrade': NOTRADE, '0': NOTRADE, '1': BUY, '2': SELL}
+                signals = signals.str.lower().map(signal_map).fillna(NOTRADE)
+            else:
+                # Handle numeric signals
+                signals = signals.astype(int)
+            
             for i in range(1, len(df)):
-                current_signal = df[signal_col].iloc[i]
+                current_signal = signals.iloc[i]
                 current_price = df[price_col].iloc[i]
                 prev_price = df[price_col].iloc[i-1]
                 
-                # Check for entry signals
+                # Skip if price data is invalid
+                if pd.isna(current_price) or pd.isna(prev_price) or current_price <= 0 or prev_price <= 0:
+                    returns.append(0.0)
+                    continue
+                
+                # Check for entry signals (BUY = 1)
                 if not in_position and current_signal == BUY:
                     in_position = True
                 
@@ -433,7 +545,7 @@ class TradingMetricsCalculator:
                 else:
                     returns.append(0.0)
                 
-                # Check for exit signals
+                # Check for exit signals (SELL = 2)
                 if in_position and current_signal == SELL:
                     in_position = False
             
@@ -680,19 +792,63 @@ class TradingMetricsCalculator:
             # Extract trades
             trades = self._extract_trades(df, price_col, signal_col)
             if not trades:
-                return metrics
+                # Return default metrics when no trades are found
+                return {
+                    'position_size': lot_size,
+                    'risk_reward_setting': risk_reward_ratio,
+                    'fee_per_trade': fee_per_trade,
+                    'kelly_fraction': 0.0,
+                    'optimal_position_size': 0.0,
+                    'fee_impact': 0.0,
+                    'net_return': 0.0,
+                    'max_risk_per_trade': 0.0,
+                    'expected_risk_per_trade': 0.0,
+                    'expected_reward_per_trade': 0.0,
+                    'break_even_win_rate': 50.0,
+                    'strategy_efficiency': 0.0,
+                    'risk_adjusted_return_with_fees': 0.0,
+                    'min_win_rate_for_profit': 50.0,
+                    'strategy_sustainability': 0.0
+                }
             
             # Calculate strategy metrics
             winning_trades = [t for t in trades if t > 0]
             losing_trades = [t for t in trades if t < 0]
             
-            if not winning_trades or not losing_trades:
-                return metrics
+            # Handle edge cases
+            if not winning_trades and not losing_trades:
+                # All trades are break-even
+                return {
+                    'position_size': lot_size,
+                    'risk_reward_setting': risk_reward_ratio,
+                    'fee_per_trade': fee_per_trade,
+                    'kelly_fraction': 0.0,
+                    'optimal_position_size': 0.0,
+                    'fee_impact': 0.0,
+                    'net_return': 0.0,
+                    'max_risk_per_trade': 0.0,
+                    'expected_risk_per_trade': 0.0,
+                    'expected_reward_per_trade': 0.0,
+                    'break_even_win_rate': 50.0,
+                    'strategy_efficiency': 0.0,
+                    'risk_adjusted_return_with_fees': 0.0,
+                    'min_win_rate_for_profit': 50.0,
+                    'strategy_sustainability': 0.0
+                }
             
             # Basic strategy calculations
             win_rate = len(winning_trades) / len(trades)
-            avg_win = np.mean(winning_trades)
-            avg_loss = abs(np.mean(losing_trades))
+            
+            # Handle cases where there are no winning or losing trades
+            if not winning_trades:
+                avg_win = 0.0
+            else:
+                avg_win = np.mean(winning_trades)
+            
+            if not losing_trades:
+                avg_loss = 0.0
+            else:
+                avg_loss = abs(np.mean(losing_trades))
             
             # Position sizing metrics
             metrics['position_size'] = lot_size
@@ -700,8 +856,11 @@ class TradingMetricsCalculator:
             metrics['fee_per_trade'] = fee_per_trade
             
             # Kelly Criterion for optimal position sizing
-            kelly_fraction = (win_rate * avg_win - (1 - win_rate) * avg_loss) / avg_win
-            metrics['kelly_fraction'] = max(0, min(1, kelly_fraction))  # Clamp between 0 and 1
+            if avg_win > 0:
+                kelly_fraction = (win_rate * avg_win - (1 - win_rate) * avg_loss) / avg_win
+                metrics['kelly_fraction'] = max(0, min(1, kelly_fraction))  # Clamp between 0 and 1
+            else:
+                metrics['kelly_fraction'] = 0.0
             
             # Risk-adjusted position sizing
             metrics['optimal_position_size'] = lot_size * metrics['kelly_fraction']
@@ -710,7 +869,12 @@ class TradingMetricsCalculator:
             total_fees = len(trades) * fee_per_trade
             gross_return = sum(trades)
             net_return = gross_return - total_fees
-            metrics['fee_impact'] = (total_fees / abs(gross_return)) * 100 if gross_return != 0 else 0
+            
+            if abs(gross_return) > 0:
+                metrics['fee_impact'] = (total_fees / abs(gross_return)) * 100
+            else:
+                metrics['fee_impact'] = 0.0
+            
             metrics['net_return'] = net_return
             
             # Risk management metrics
@@ -719,25 +883,34 @@ class TradingMetricsCalculator:
             metrics['expected_reward_per_trade'] = avg_win * lot_size * win_rate
             
             # Break-even analysis
-            break_even_win_rate = avg_loss / (avg_win + avg_loss)
-            metrics['break_even_win_rate'] = break_even_win_rate * 100
+            if avg_win + avg_loss > 0:
+                break_even_win_rate = avg_loss / (avg_win + avg_loss)
+                metrics['break_even_win_rate'] = break_even_win_rate * 100
+            else:
+                metrics['break_even_win_rate'] = 50.0
             
             # Strategy efficiency
-            metrics['strategy_efficiency'] = (net_return / abs(gross_return)) * 100 if gross_return != 0 else 0
+            if abs(gross_return) > 0:
+                metrics['strategy_efficiency'] = (net_return / abs(gross_return)) * 100
+            else:
+                metrics['strategy_efficiency'] = 0.0
             
             # Risk-adjusted returns with fees
             if metrics['expected_risk_per_trade'] > 0:
                 metrics['risk_adjusted_return_with_fees'] = metrics['expected_reward_per_trade'] / metrics['expected_risk_per_trade']
             else:
-                metrics['risk_adjusted_return_with_fees'] = 0
+                metrics['risk_adjusted_return_with_fees'] = 0.0
             
             # Minimum win rate needed for profitability
-            min_win_rate = (avg_loss + fee_per_trade) / (avg_win + avg_loss + 2 * fee_per_trade)
-            metrics['min_win_rate_for_profit'] = min_win_rate * 100
+            if avg_win + avg_loss + 2 * fee_per_trade > 0:
+                min_win_rate = (avg_loss + fee_per_trade) / (avg_win + avg_loss + 2 * fee_per_trade)
+                metrics['min_win_rate_for_profit'] = min_win_rate * 100
+            else:
+                metrics['min_win_rate_for_profit'] = 50.0
             
             # Strategy sustainability score
             sustainability_score = 0
-            if win_rate > min_win_rate:
+            if win_rate > metrics['min_win_rate_for_profit'] / 100:
                 sustainability_score += 40  # Base score for profitability
             if metrics['kelly_fraction'] > 0.1:
                 sustainability_score += 30  # Good position sizing

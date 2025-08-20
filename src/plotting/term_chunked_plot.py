@@ -18,12 +18,12 @@ import sys
 # Use absolute imports when possible, fallback to relative
 try:
     from common import logger
-    from common.constants import TradingRule, BUY, SELL, NOTRADE
+    from src.common.constants import TradingRule, BUY, SELL, NOTRADE
 except ImportError:
     try:
         # Fallback to relative imports when run as module
-        from ..common import logger
-        from ..common.constants import TradingRule, BUY, SELL, NOTRADE
+        from src.common import logger
+        from src.common.constants import TradingRule, BUY, SELL, NOTRADE
     except ImportError:
         # Final fallback for pytest with -n auto
         import sys
@@ -38,7 +38,7 @@ try:
 except ImportError:
     try:
         # Fallback to relative imports when run as module
-        from ..plotting.term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
+        from src.plotting.term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
     except ImportError:
         # Final fallback for pytest with -n auto
         from src.plotting.term_navigation import TerminalNavigator, create_navigation_prompt, parse_navigation_input
@@ -1018,7 +1018,7 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
                 draw_ohlc_candles(chunk, x_values)
                 
                 # Add trading signals to OHLC chart
-                if 'Direction' in chunk.columns:
+                if _has_trading_signals(chunk):
                     _add_trading_signals_to_chunk(chunk, x_values)
                 
                 plt.title(f"{title} - OHLC Chart (Chunk {chunk_info['index']}/{chunk_info['total']}) - {chunk_info['start_date']} to {chunk_info['end_date']}")
@@ -1077,7 +1077,7 @@ def plot_macd_chunks(df: pd.DataFrame, title: str = "MACD Chunks", style: str = 
                 draw_ohlc_candles(chunk, x_values)
                 
                 # Add trading signals to OHLC chart
-                if 'Direction' in chunk.columns:
+                if _has_trading_signals(chunk):
                     _add_trading_signals_to_chunk(chunk, x_values)
                 
                 plt.title(f"{title} - OHLC Chart (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
@@ -1165,7 +1165,7 @@ def plot_indicator_chunks(df: pd.DataFrame, indicator_name: str, title: str = "I
                 draw_ohlc_candles(chunk, x_values)
                 
                 # Add trading signals to OHLC chart
-                if 'Direction' in chunk.columns:
+                if _has_trading_signals(chunk):
                     _add_trading_signals_to_chunk(chunk, x_values)
                 
                 plt.title(f"{title} - OHLC Chart (Chunk {chunk_info['index']}/{chunk_info['total']}) - {chunk_info['start_date']} to {chunk_info['end_date']}")
@@ -1225,7 +1225,7 @@ def plot_indicator_chunks(df: pd.DataFrame, indicator_name: str, title: str = "I
                 draw_ohlc_candles(chunk, x_values)
                 
                 # Add trading signals to OHLC chart
-                if 'Direction' in chunk.columns:
+                if _has_trading_signals(chunk):
                     _add_trading_signals_to_chunk(chunk, x_values)
                 
                 plt.title(f"{title} - OHLC Chart (Chunk {i+1}/{len(chunks)}) - {start_date} to {end_date}")
@@ -1399,7 +1399,7 @@ def _add_pv_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
     """
     try:
         # Only BUY/SELL signals
-        if 'Direction' in chunk.columns:
+        if _has_trading_signals(chunk):
             _add_trading_signals_to_chunk(chunk, x_values)
     except Exception as e:
         logger.print_error(f"Error adding PV overlays: {e}")
@@ -1446,7 +1446,7 @@ def _add_phld_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
             plt.plot(x_values, pprice2_values, color="red+", label="Resistance Channel")
         
         # Add trading signals
-        if 'Direction' in chunk.columns:
+        if _has_trading_signals(chunk):
             _add_trading_signals_to_chunk(chunk, x_values)
         
     except Exception as e:
@@ -1459,7 +1459,7 @@ def _add_rsi_overlays_to_chunk(chunk: pd.DataFrame, x_values: list, rule_type: s
     """
     try:
         # Only BUY/SELL signals
-        if 'Direction' in chunk.columns:
+        if _has_trading_signals(chunk):
             _add_trading_signals_to_chunk(chunk, x_values)
     except Exception as e:
         logger.print_error(f"Error adding RSI overlays: {e}")
@@ -1484,7 +1484,7 @@ def _add_macd_overlays_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
             plt.plot(x_values, signal_values, color="orange+", label="Signal Line")
         
         # Add trading signals
-        if 'Direction' in chunk.columns:
+        if _has_trading_signals(chunk):
             _add_trading_signals_to_chunk(chunk, x_values)
         
     except Exception as e:
@@ -1630,6 +1630,10 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
         # Donchian Channel
         elif indicator_upper in ['DONCHIAN_CHANNEL', 'DONCHAIN']:
             _add_donchian_indicator_to_subplot(chunk, x_values)
+        
+        # Wave indicator
+        elif indicator_upper == 'WAVE':
+            _add_wave_indicator_to_subplot(chunk, x_values)
         
         # Default: try to find any column with indicator name
         else:
@@ -2259,6 +2263,84 @@ def _add_donchian_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> N
         logger.print_error(f"Error adding Donchian Channel: {e}")
 
 
+def _add_wave_indicator_to_subplot(chunk: pd.DataFrame, x_values: list) -> None:
+    """Add Wave indicator to subplot."""
+    try:
+        # Ensure x_values are numeric for plotext compatibility
+        numeric_x_values = [float(x) if isinstance(x, (int, float)) else i for i, x in enumerate(x_values)]
+        
+        # Check for Wave indicator columns with different naming conventions
+        plot_wave_col = None
+        plot_color_col = None
+        plot_fastline_col = None
+        ma_line_col = None
+        
+        # Try different column naming conventions
+        if '_plot_wave' in chunk.columns:
+            plot_wave_col = '_plot_wave'
+        elif '_Plot_Wave' in chunk.columns:
+            plot_wave_col = '_Plot_Wave'
+        
+        if '_plot_color' in chunk.columns:
+            plot_color_col = '_plot_color'
+        elif '_Plot_Color' in chunk.columns:
+            plot_color_col = '_Plot_Color'
+        
+        if '_plot_fastline' in chunk.columns:
+            plot_fastline_col = '_plot_fastline'
+        elif '_Plot_FastLine' in chunk.columns:
+            plot_fastline_col = '_Plot_FastLine'
+        
+        if 'MA_Line' in chunk.columns:
+            ma_line_col = 'MA_Line'
+        
+        # Plot Wave line with dynamic colors based on signals
+        if plot_wave_col and plot_color_col:
+            wave_values = chunk[plot_wave_col].fillna(0).tolist()
+            color_values = chunk[plot_color_col].fillna(0).tolist()
+            
+            # Create separate arrays for different signal types
+            red_x = []
+            red_y = []
+            blue_x = []
+            blue_y = []
+            
+            for i, (wave_val, color_val) in enumerate(zip(wave_values, color_values)):
+                if wave_val != 0 and not pd.isna(wave_val):
+                    if color_val == 1:  # BUY signal
+                        red_x.append(numeric_x_values[i])
+                        red_y.append(wave_val)
+                    elif color_val == 2:  # SELL signal
+                        blue_x.append(numeric_x_values[i])
+                        blue_y.append(wave_val)
+            
+            # Plot red segments (BUY signals)
+            if red_x and red_y:
+                plt.plot(red_x, red_y, color="red+", label="Wave (BUY)")
+            
+            # Plot blue segments (SELL signals)
+            if blue_x and blue_y:
+                plt.plot(blue_x, blue_y, color="blue+", label="Wave (SELL)")
+        
+        # Plot Fast Line (thin red dotted line)
+        if plot_fastline_col:
+            fastline_values = chunk[plot_fastline_col].fillna(0).tolist()
+            if fastline_values and any(v != 0 for v in fastline_values):
+                plt.plot(numeric_x_values, fastline_values, color="red+", label="Fast Line")
+        
+        # Plot MA Line (light blue line)
+        if ma_line_col:
+            ma_values = chunk[ma_line_col].fillna(0).tolist()
+            if ma_values and any(v != 0 for v in ma_values):
+                plt.plot(numeric_x_values, ma_values, color="cyan+", label="MA Line")
+        
+        # Add zero line for reference
+        plt.plot(numeric_x_values, [0] * len(numeric_x_values), color="white+", label="Zero Line")
+        
+    except Exception as e:
+        logger.print_error(f"Error adding Wave indicator: {e}")
+
+
 def _add_generic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, indicator_name: str) -> None:
     """Add generic indicator to subplot by looking for columns with indicator name."""
     try:
@@ -2285,32 +2367,65 @@ def _add_generic_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, indic
         logger.print_error(f"Error adding generic indicator {indicator_name}: {e}")
 
 
+def _has_trading_signals(chunk: pd.DataFrame) -> bool:
+    """Check if chunk has any trading signals."""
+    return any(col in chunk.columns for col in ['Direction', '_Signal'])
+
+
 def _add_trading_signals_to_chunk(chunk: pd.DataFrame, x_values: list) -> None:
     """
     Add trading signals to the chunk plot.
     BUY: large yellow triangle below Low
     SELL: large magenta triangle above High
+    
+    Supports signal sources (same as other modes):
+    - _Signal column (wave indicator - only direction changes)
+    - Direction column (standard indicator)
     """
     try:
-        if 'Direction' not in chunk.columns:
+        # Check for different signal sources (same priority as other modes)
+        signal_source = None
+        if '_Signal' in chunk.columns:
+            signal_source = '_Signal'
+        elif 'Direction' in chunk.columns:
+            signal_source = 'Direction'
+        else:
             return
+        
         # Get buy/sell signals
         buy_x, buy_y, sell_x, sell_y = [], [], [], []
-        for i, direction in enumerate(chunk['Direction']):
-            # BUY: below Low
-            if direction == BUY:
-                buy_x.append(x_values[i])
-                if 'Low' in chunk.columns:
-                    buy_y.append(chunk['Low'].iloc[i] * 0.99)
-                else:
-                    buy_y.append(chunk['Close'].iloc[i] * 0.99 if 'Close' in chunk.columns else 0)
-            # SELL: above High
-            elif direction == SELL:
-                sell_x.append(x_values[i])
-                if 'High' in chunk.columns:
-                    sell_y.append(chunk['High'].iloc[i] * 1.01)
-                else:
-                    sell_y.append(chunk['Close'].iloc[i] * 1.01 if 'Close' in chunk.columns else 0)
+        
+        for i, signal in enumerate(chunk[signal_source]):
+            # Handle different signal formats
+            if signal_source == '_Signal':
+                # Wave indicator signal: 1 = BUY, 2 = SELL, 0 = NO TRADE (only direction changes)
+                if signal == 1:  # BUY
+                    buy_x.append(x_values[i])
+                    if 'Low' in chunk.columns:
+                        buy_y.append(chunk['Low'].iloc[i] * 0.99)
+                    else:
+                        buy_y.append(chunk['Close'].iloc[i] * 0.99 if 'Close' in chunk.columns else 0)
+                elif signal == 2:  # SELL
+                    sell_x.append(x_values[i])
+                    if 'High' in chunk.columns:
+                        sell_y.append(chunk['High'].iloc[i] * 1.01)
+                    else:
+                        sell_y.append(chunk['Close'].iloc[i] * 1.01 if 'Close' in chunk.columns else 0)
+            else:
+                # Standard Direction column
+                if signal == BUY:
+                    buy_x.append(x_values[i])
+                    if 'Low' in chunk.columns:
+                        buy_y.append(chunk['Low'].iloc[i] * 0.99)
+                    else:
+                        buy_y.append(chunk['Close'].iloc[i] * 0.99 if 'Close' in chunk.columns else 0)
+                elif signal == SELL:
+                    sell_x.append(x_values[i])
+                    if 'High' in chunk.columns:
+                        sell_y.append(chunk['High'].iloc[i] * 1.01)
+                    else:
+                        sell_y.append(chunk['Close'].iloc[i] * 1.01 if 'Close' in chunk.columns else 0)
+        
         # Draw large markers (if Unicode is supported)
         try:
             if buy_x:
@@ -2364,7 +2479,7 @@ def _show_chunk_statistics(chunk: pd.DataFrame, title: str, start_idx: int, end_
             print(f"   Max:   {volume.max():.0f}")
         
         # Trading signals
-        if 'Direction' in chunk.columns:
+        if _has_trading_signals(chunk):
             buy_count = (chunk['Direction'] == BUY).sum()
             sell_count = (chunk['Direction'] == SELL).sum()
             notrade_count = (chunk['Direction'] == NOTRADE).sum()

@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: neozork-hld-prediction
-Version: 0.5.1
+Version: 0.5.2
 Summary: Machine Learning enhancement of proprietary trading indicators using Python
 Requires-Python: >=3.11
 Requires-Dist: anyio==4.9.0
