@@ -100,7 +100,7 @@ Working with different financial data sources.
 - MQL5 MetaTrader data
 
 ### [Adding Wave Indicator Tutorial](adding-wave-indicator-tutorial.md) ⭐ **NEW**
-Comprehensive tutorial for adding complex indicators with fast mode support.
+Comprehensive tutorial for adding complex indicators with all display modes support.
 
 **Highlights:**
 - **Complex Parameter Management**: Using dataclasses and enums
@@ -110,6 +110,7 @@ Comprehensive tutorial for adding complex indicators with fast mode support.
 - **Testing Strategy**: Comprehensive test coverage
 - **Documentation Standards**: Complete documentation workflow
 - **Fast Mode Support**: ⭐ **NEW** Bokeh-based dual chart integration
+- **Terminal Mode Support**: ⭐ **NEW** ASCII-based visualization with signal fixes
 - **Display Modes**: All 6 modes with specialized visualization
 
 ### [Adding Wave Indicator with Fast Mode](adding-wave-indicator-fast-mode-tutorial.md) ⭐ **NEW**
@@ -163,6 +164,17 @@ Implementation summary for visual parity between fast and fastest modes.
 - **Color Accuracy**: Correct red/blue color coding
 - **Signal Display**: Proper buy/sell signal visualization
 - **Technical Implementation**: Function for discontinuous line segments
+
+### [Wave Terminal Mode](wave-indicator-terminal-mode.md) ⭐ **NEW**
+Complete guide for Wave indicator in terminal mode with signal fixes.
+
+**Highlights:**
+- **ASCII-Based Visualization**: High-quality text-based charts
+- **Dual Chart Display**: OHLC and Wave indicator charts
+- **Smart Signal Logic**: Uses `_Signal` column for meaningful signals
+- **Interactive Navigation**: Keyboard-based chunk navigation
+- **SSH Compatible**: Perfect for remote server analysis
+- **Signal Fixes**: Consistent with other display modes
 
 ### [Technical Indicators Guide](indicators.md)
 Using technical indicators for analysis.

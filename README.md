@@ -210,7 +210,7 @@ uv run pytest tests -n auto
 
 #### New: Wave Indicator ⭐ **ADVANCED DUAL-SYSTEM**
 - **Category:** Trend
-- **Description:** Sophisticated trend-following indicator that combines multiple momentum calculations with dual-wave system, configurable trading rules, and global signal filtering. Features 10 individual trading rules and 7 global trading rules for advanced strategies. **Now supports all display modes including fast mode with discontinuous wave lines, MPL mode with customizable colors, and seaborn mode with scientific presentation style.**
+- **Description:** Sophisticated trend-following indicator that combines multiple momentum calculations with dual-wave system, configurable trading rules, and global signal filtering. Features 10 individual trading rules and 7 global trading rules for advanced strategies. **Now supports all display modes including fast mode with discontinuous wave lines, MPL mode with customizable colors, seaborn mode with scientific presentation style, and terminal mode with ASCII-based visualization for SSH/remote connections.**
 - **CLI Examples:**
   ```bash
   # Basic Wave with default parameters
@@ -233,6 +233,9 @@ uv run pytest tests -n auto
 
   # Wave with seaborn mode (NEW!) - Scientific presentation style
   uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
+
+  # Wave with terminal mode (NEW!) - ASCII-based visualization for SSH/remote
+  uv run run_analysis.py show csv mn1 -d term --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
   ```
 - **Parameters:** long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type
 - **Documentation:** [Wave Indicator](docs/reference/indicators/trend/wave-indicator.md)
@@ -242,6 +245,8 @@ uv run pytest tests -n auto
   - [Global Trading Rule Fixes](docs/guides/wave-prime-rule-fix-all-modes.md) - Fixed prime/reverse rules
   - [Seaborn Mode Support](docs/guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete seaborn mode support
   - [Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation details
+  - [Terminal Mode Support](docs/guides/wave-indicator-terminal-mode.md) - ⭐ **NEW** Complete terminal mode support with signal fixes
+  - [Terminal Signals Fix](docs/development/WAVE_TERMINAL_SIGNALS_IMPLEMENTATION.md) - ⭐ **NEW** Signal display logic improvements
   
   # Real data analysis
   uv run run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule sma:20,close -d fastest

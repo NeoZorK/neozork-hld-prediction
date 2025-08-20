@@ -586,6 +586,9 @@ uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4
 # Wave with seaborn mode (NEW!) - Scientific presentation style
 uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
 
+# Wave with terminal mode (NEW!) - ASCII-based visualization for SSH/remote
+uv run run_analysis.py show csv mn1 -d term --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
+
 ### 🎨 Display Modes Support
 The Wave indicator supports all display modes:
 
@@ -594,7 +597,7 @@ The Wave indicator supports all display modes:
 - **`-d plotly`**: Single Plotly chart
 - **`-d mpl`**: Matplotlib-based visualization with customizable colors ⭐ **NEW**
 - **`-d sb`**: Seaborn-based scientific presentation style ⭐ **NEW**
-- **`-d term`**: Terminal-based text output
+- **`-d term`**: Terminal-based ASCII visualization with signal fixes ⭐ **NEW**
 
 ### 🎨 MPL Mode Color Customization ⭐ **NEW**
 
@@ -647,6 +650,50 @@ uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast
 - [Wave Seaborn Mode](docs/guides/wave-indicator-seaborn-mode.md) - Complete seaborn mode guide
 - [Wave Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md) - Technical implementation details
 
+### 🖥️ Terminal Mode Support ⭐ **NEW**
+
+The Wave indicator in Terminal mode (`-d term`) provides ASCII-based visualization perfect for SSH connections and remote environments:
+
+#### Visual Features
+- **ASCII-Based Charts**: High-quality text-based OHLC candlestick charts
+- **Dual Chart Display**: Upper chart (OHLC) and lower chart (Wave indicator)
+- **Smart Signal Display**: Uses `_Signal` column for meaningful trading signals (only direction changes)
+- **Interactive Navigation**: Navigate between chunks with keyboard commands
+- **Color-Coded Signals**: Yellow triangles (▲▲) for BUY, magenta triangles (▼▼) for SELL
+- **Wave Line Segments**: Discontinuous colored segments for different signal types
+
+#### Usage Example
+```bash
+# Wave indicator with terminal mode - ASCII-based visualization
+uv run run_analysis.py show csv mn1 -d term --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open
+```
+
+#### Navigation Commands
+- **n**: Next chunk
+- **p**: Previous chunk
+- **s**: Start (first chunk)
+- **e**: End (last chunk)
+- **c**: Choose chunk number
+- **d**: Choose specific date
+- **q**: Quit
+
+#### Signal Logic
+- **Signal Source**: Uses `_Signal` column (same as other modes)
+- **Signal Frequency**: Only displays signals when wave direction changes
+- **Signal Positioning**: BUY signals below Low price, SELL signals above High price
+- **Signal Quality**: Meaningful trading signals without clutter
+
+#### Technical Implementation
+- **Signal Detection**: Consistent with other display modes
+- **Memory Efficient**: Chunked processing for large datasets
+- **Cross-Platform**: Works on macOS, Linux, and Windows terminals
+- **SSH Compatible**: Perfect for remote server analysis
+- **Unicode Support**: Enhanced visual markers when available
+
+#### Documentation
+- [Wave Terminal Mode](docs/guides/wave-indicator-terminal-mode.md) - Complete terminal mode guide
+- [Wave Terminal Signals Fix](docs/development/WAVE_TERMINAL_SIGNALS_IMPLEMENTATION.md) - Signal display logic improvements
+
 ### 📚 Documentation
 - [Wave Indicator Reference](docs/reference/indicators/trend/wave-indicator.md)
 - [Implementation Summary](docs/guides/adding-wave-indicator-summary.md)
@@ -655,3 +702,5 @@ uv run run_analysis.py show csv mn1 -d sb --rule wave:339,10,2,fast,22,11,4,fast
 - [Wave Prime Rule Fix](docs/guides/wave-prime-rule-fix-all-modes.md) - Global trading rule fixes
 - [Wave Seaborn Mode](docs/guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete seaborn mode support
 - [Wave Seaborn Integration Summary](docs/guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation details
+- [Wave Terminal Mode](docs/guides/wave-indicator-terminal-mode.md) - ⭐ **NEW** Complete terminal mode support
+- [Wave Terminal Signals Fix](docs/development/WAVE_TERMINAL_SIGNALS_IMPLEMENTATION.md) - ⭐ **NEW** Signal display logic improvements
