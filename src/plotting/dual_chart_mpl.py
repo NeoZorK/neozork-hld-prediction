@@ -791,12 +791,12 @@ def plot_dual_chart_mpl(
             # Add buy signals to main chart
             if not wave_buy_signals.empty:
                 ax1.scatter(wave_buy_signals.index, wave_buy_signals['Low'] * 0.995, 
-                           color='#FF4444', marker='^', s=100, label='Wave BUY', zorder=5, alpha=0.9)
+                           color='#0066CC', marker='^', s=100, label='Wave BUY', zorder=5, alpha=0.9)
             
             # Add sell signals to main chart
             if not wave_sell_signals.empty:
                 ax1.scatter(wave_sell_signals.index, wave_sell_signals['High'] * 1.005, 
-                           color='#0066CC', marker='v', s=100, label='Wave SELL', zorder=5, alpha=0.9)
+                           color='#FF4444', marker='v', s=100, label='Wave SELL', zorder=5, alpha=0.9)
         
         # Add Plot Wave (main indicator, single line with dynamic colors) - as per MQ5
         plot_wave_col = None
