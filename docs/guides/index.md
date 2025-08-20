@@ -98,6 +98,36 @@ Working with different financial data sources.
 - YFinance data access
 - Binance cryptocurrency data
 - MQL5 MetaTrader data
+
+### [Adding Wave Indicator Tutorial](adding-wave-indicator-tutorial.md) ⭐ **NEW**
+Comprehensive tutorial for adding complex indicators.
+
+**Highlights:**
+- **Complex Parameter Management**: Using dataclasses and enums
+- **Dual Signal Systems**: Implementing multi-wave indicators
+- **Advanced Trading Rules**: Global and individual rule systems
+- **CLI Integration**: Full command-line interface support
+- **Testing Strategy**: Comprehensive test coverage
+- **Documentation Standards**: Complete documentation workflow
+
+### [Wave Documentation Update Summary](wave-documentation-update-summary.md) ⭐ **NEW**
+Complete overview of Wave indicator documentation updates.
+
+**Highlights:**
+- **Implementation Status**: Current feature completeness
+- **Documentation Updates**: All files updated and synchronized
+- **Usage Examples**: CLI and programmatic examples
+- **Technical Details**: Implementation architecture
+- **Testing Coverage**: Comprehensive test framework
+
+### [Wave Documentation Complete Summary](wave-documentation-complete-summary.md) ⭐ **NEW**
+Final comprehensive summary of all Wave indicator documentation.
+
+**Highlights:**
+- **Complete Status**: 100% implementation and documentation coverage
+- **Verification Results**: All tests passing, CLI working
+- **Impact Assessment**: Benefits for users, developers, and platform
+- **Maintenance Guide**: Future maintenance and synchronization notes
 - Data quality assessment
 
 ### [Technical Indicators Guide](indicators.md)

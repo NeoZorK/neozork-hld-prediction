@@ -38,15 +38,36 @@ class UniversalTradingMetrics:
     def calculate_and_display_metrics(self, df: pd.DataFrame, rule: Union[str, object], 
                                     price_col: str = 'Close', signal_col: str = 'Direction',
                                     volume_col: Optional[str] = 'Volume') -> Dict[str, float]:
+        """
+        Calculate and display comprehensive trading metrics for any rule type.
+        
+        Args:
+            df (pd.DataFrame): DataFrame with OHLCV data and trading signals
+            rule (Union[str, object]): Trading rule name or object
+            price_col (str): Column name for price data (default: 'Close')
+            signal_col (str): Column name for trading signals (default: 'Direction')
+            volume_col (str, optional): Column name for volume data (default: 'Volume')
+        
+        Returns:
+            Dict[str, float]: Dictionary containing all calculated metrics
+        """
         try:
             # Validate input data
             if df is None or df.empty:
                 self._display_error("DataFrame is None or empty")
                 return {}
             
+            # Auto-detect signal column for Wave indicator
             if signal_col not in df.columns:
-                self._display_error(f"Signal column '{signal_col}' not found in data")
-                return {}
+                # Try to find the correct signal column
+                possible_signal_cols = ['_Signal', '_Direction', 'Direction', 'Signal']
+                for col in possible_signal_cols:
+                    if col in df.columns:
+                        signal_col = col
+                        break
+                else:
+                    self._display_error(f"Signal column '{signal_col}' not found in data. Available columns: {list(df.columns)}")
+                    return {}
             
             # Get rule name
             rule_name = self._get_rule_name(rule)
@@ -563,9 +584,9 @@ class UniversalTradingMetrics:
 
 def display_universal_trading_metrics(df: pd.DataFrame, rule: Union[str, object], 
                                     lot_size: float = 1.0, risk_reward_ratio: float = 2.0, 
-                                    fee_per_trade: float = 0.07) -> Dict[str, float]:
+                                    fee_per_trade: float = 0.07, signal_col: str = 'Direction') -> Dict[str, float]:
     """
     Universal function to calculate and display trading metrics for any rule type.
     """
     calculator = UniversalTradingMetrics(lot_size, risk_reward_ratio, fee_per_trade)
-    return calculator.calculate_and_display_metrics(df, rule) 
+    return calculator.calculate_and_display_metrics(df, rule, signal_col=signal_col) 

@@ -197,6 +197,25 @@ uv run pytest tests -n auto
   
   # Multiple SMAs for trend comparison
   uv run run_analysis.py demo --rule sma:10,close,sma:20,close,sma:50,close -d plotly
+  ```
+
+#### New: Wave Indicator ⭐ **ADVANCED DUAL-SYSTEM**
+- **Category:** Trend
+- **Description:** Sophisticated trend-following indicator that combines multiple momentum calculations with dual-wave system, configurable trading rules, and global signal filtering. Features 10 individual trading rules and 7 global trading rules for advanced strategies.
+- **CLI Examples:**
+  ```bash
+  # Basic Wave with default parameters
+  uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
+  
+  # Wave with custom trading rules
+  uv run run_analysis.py demo --rule wave:33,10,2,strongtrend,22,11,4,fast,reverse,22,open -d plotly
+  
+  # Wave with zone-based filtering
+  uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,primezone,22,open -d fastest
+  ```
+- **Parameters:** long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type
+- **Documentation:** [Wave Indicator](docs/reference/indicators/trend/wave-indicator.md)
+- **Tutorial:** [Adding Wave Indicator](docs/guides/adding-wave-indicator-tutorial.md)
   
   # Real data analysis
   uv run run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule sma:20,close -d fastest
