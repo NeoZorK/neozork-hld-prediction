@@ -1006,6 +1006,95 @@ def _plot_supertrend_indicator(indicator_fig, source, display_df):
     indicator_fig.add_tools(hover_supertrend)
 
 
+def _plot_wave_indicator(indicator_fig, source, display_df):
+    """Plot Wave indicator on the given figure."""
+    # Add Plot Wave (main indicator, single line with dynamic colors) - as per MQ5
+    plot_wave_col = None
+    plot_color_col = None
+    if '_plot_wave' in display_df.columns:
+        plot_wave_col = '_plot_wave'
+    elif '_Plot_Wave' in display_df.columns:
+        plot_wave_col = '_Plot_Wave'
+    
+    if '_plot_color' in display_df.columns:
+        plot_color_col = '_plot_color'
+    elif '_Plot_Color' in display_df.columns:
+        plot_color_col = '_Plot_Color'
+    
+    if plot_wave_col and plot_color_col:
+        # Create masks for different signal types
+        valid_data_mask = display_df[plot_wave_col].notna() & (display_df[plot_wave_col] != 0)
+        red_mask = (display_df[plot_color_col] == 1) & valid_data_mask
+        blue_mask = (display_df[plot_color_col] == 2) & valid_data_mask
+        
+        # Add red segments (BUY = 1) as discontinuous lines
+        if red_mask.any():
+            red_data = display_df[red_mask]
+            red_source = ColumnDataSource(red_data)
+            indicator_fig.line(
+                'index', plot_wave_col,
+                source=red_source,
+                line_color='red',
+                line_width=2,
+                legend_label='Wave (BUY)'
+            )
+        
+        # Add blue segments (SELL = 2) as discontinuous lines
+        if blue_mask.any():
+            blue_data = display_df[blue_mask]
+            blue_source = ColumnDataSource(blue_data)
+            indicator_fig.line(
+                'index', plot_wave_col,
+                source=blue_source,
+                line_color='blue',
+                line_width=2,
+                legend_label='Wave (SELL)'
+            )
+    
+    # Add Plot FastLine (thin red line) - as per MQ5
+    plot_fastline_col = None
+    if '_plot_fastline' in display_df.columns:
+        plot_fastline_col = '_plot_fastline'
+    elif '_Plot_FastLine' in display_df.columns:
+        plot_fastline_col = '_Plot_FastLine'
+    
+    if plot_fastline_col:
+        # Only show Fast Line when there are valid values
+        fastline_valid_mask = display_df[plot_fastline_col].notna() & (display_df[plot_fastline_col] != 0)
+        if fastline_valid_mask.any():
+            fastline_valid_data = display_df[fastline_valid_mask]
+            fastline_source = ColumnDataSource(fastline_valid_data)
+            indicator_fig.line(
+                'index', plot_fastline_col,
+                source=fastline_source,
+                line_color='red',
+                line_width=1,
+                line_dash='dotted',
+                legend_label='Fast Line'
+            )
+    
+    # Add MA Line (light blue line) - as per MQ5
+    ma_line_col = None
+    if 'ma_line' in display_df.columns:
+        ma_line_col = 'ma_line'
+    elif 'MA_Line' in display_df.columns:
+        ma_line_col = 'MA_Line'
+    
+    if ma_line_col:
+        # Only show MA Line when there are valid values
+        ma_valid_mask = display_df[ma_line_col].notna() & (display_df[ma_line_col] != 0)
+        if ma_valid_mask.any():
+            ma_valid_data = display_df[ma_valid_mask]
+            ma_source = ColumnDataSource(ma_valid_data)
+            indicator_fig.line(
+                'index', ma_line_col,
+                source=ma_source,
+                line_color='lightblue',
+                line_width=1,
+                legend_label='MA Line'
+            )
+
+
 def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
     """Get appropriate hover tool for the given indicator."""
     if indicator_name == 'macd':
@@ -1289,6 +1378,19 @@ def _get_indicator_hover_tool(indicator_name, display_df, fibo_columns=None):
             formatters={'@index': 'datetime'},
             mode='vline'
         )
+    elif indicator_name == 'wave':
+        # Special hover for Wave indicator
+        return HoverTool(
+            tooltips=[
+                ("Date", "@index{%F %H:%M}"),
+                ("Wave", "@_Plot_Wave{0.5f}"),
+                ("Fast Line", "@_Plot_FastLine{0.5f}"),
+                ("MA Line", "@MA_Line{0.5f}"),
+                ("Signal", "@_Plot_Color")
+            ],
+            formatters={'@index': 'datetime'},
+            mode='vline'
+        )
     else:
         # Generic hover for other indicators
         return HoverTool(
@@ -1331,6 +1433,7 @@ def _plot_indicator_by_type(indicator_fig, source, display_df, indicator_name):
         'feargreed': _plot_feargreed_indicator,  # Added for Fear & Greed support
         'fg': _plot_feargreed_indicator,         # Alias
         'supertrend': _plot_supertrend_indicator,  # Added for SuperTrend support
+        'wave': _plot_wave_indicator, # Added for Wave indicator support
     }
     fibo_columns = None
     if indicator_name == 'fibo':
