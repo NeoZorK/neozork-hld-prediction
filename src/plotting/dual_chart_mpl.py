@@ -108,20 +108,24 @@ def plot_dual_chart_mpl(
                                    sharex=True)
     
     # Main chart (OHLC)
-    ax1.set_title(title, fontsize=14, fontweight='bold')
+    ax1.set_title(title, fontsize=13, fontweight='bold', pad=20)
+    
+    # Enhanced grid for main chart
+    ax1.grid(True, alpha=0.2, linestyle='-', linewidth=0.5)
+    ax1.set_axisbelow(True)  # Put grid behind data
     
     # Plot candlesticks
     for i, (date, row) in enumerate(display_df.iterrows()):
         # Determine color based on open/close
         if row['Close'] >= row['Open']:
-            color = 'green'
-            body_color = 'lightgreen'
+            color = '#2ECC71'  # Modern green
+            body_color = '#A8E6CF'  # Light green
         else:
-            color = 'red'
-            body_color = 'lightcoral'
+            color = '#E74C3C'  # Modern red
+            body_color = '#FADBD8'  # Light red
         
         # Plot high-low line
-        ax1.plot([date, date], [row['Low'], row['High']], color=color, linewidth=1)
+        ax1.plot([date, date], [row['Low'], row['High']], color=color, linewidth=0.8, alpha=0.8)
         
         # Plot open-close body
         body_height = abs(row['Close'] - row['Open'])
@@ -129,17 +133,17 @@ def plot_dual_chart_mpl(
         
         rect = Rectangle((date - pd.Timedelta(hours=6), body_bottom), 
                         pd.Timedelta(hours=12), body_height,
-                        facecolor=body_color, edgecolor=color, linewidth=1)
+                        facecolor=body_color, edgecolor=color, linewidth=0.8, alpha=0.9)
         ax1.add_patch(rect)
     
     # Add support and resistance lines if available
     if 'Support' in display_df.columns:
         ax1.plot(display_df.index, display_df['Support'], 
-                color='blue', linestyle='--', linewidth=2, alpha=0.8, label='Support')
+                color='#3498DB', linestyle='--', linewidth=1.5, alpha=0.8, label='Support')
     
     if 'Resistance' in display_df.columns:
         ax1.plot(display_df.index, display_df['Resistance'], 
-                color='red', linestyle='--', linewidth=2, alpha=0.8, label='Resistance')
+                color='#E67E22', linestyle='--', linewidth=1.5, alpha=0.8, label='Resistance')
     
     # Add buy/sell signals if available
     if 'Direction' in display_df.columns:
@@ -148,15 +152,14 @@ def plot_dual_chart_mpl(
         
         if not buy_signals.empty:
             ax1.scatter(buy_signals.index, buy_signals['Low'] * 0.995, 
-                       color='green', marker='^', s=100, label='Buy Signal', zorder=5)
+                       color='#2ECC71', marker='^', s=80, label='Buy Signal', zorder=5, alpha=0.9)
         
         if not sell_signals.empty:
             ax1.scatter(sell_signals.index, sell_signals['High'] * 1.005, 
-                       color='red', marker='v', s=100, label='Sell Signal', zorder=5)
+                       color='#E74C3C', marker='v', s=80, label='Sell Signal', zorder=5, alpha=0.9)
     
-    ax1.set_ylabel('Price', fontsize=12)
-    ax1.grid(True, alpha=0.3)
-    ax1.legend()
+    ax1.set_ylabel('Price', fontsize=11, fontweight='bold')
+    ax1.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
     
     # Format x-axis for main chart
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
@@ -792,8 +795,12 @@ def plot_dual_chart_mpl(
                         wave_data[plot_wave_col], 
                         red_mask
                     )
-                    for seg_x, seg_y in red_segments:
-                        ax2.plot(seg_x, seg_y, color='red', linewidth=2, label='Wave (BUY)')
+                    # Plot first segment with label, others without
+                    for i, (seg_x, seg_y) in enumerate(red_segments):
+                        if i == 0:
+                            ax2.plot(seg_x, seg_y, color='#FF4444', linewidth=1.5, label='Wave (BUY)', alpha=0.9)
+                        else:
+                            ax2.plot(seg_x, seg_y, color='#FF4444', linewidth=1.5, alpha=0.9)
                 
                 # Create discontinuous line segments for blue (SELL = 2)
                 if blue_mask.any():
@@ -802,8 +809,12 @@ def plot_dual_chart_mpl(
                         wave_data[plot_wave_col], 
                         blue_mask
                     )
-                    for seg_x, seg_y in blue_segments:
-                        ax2.plot(seg_x, seg_y, color='blue', linewidth=2, label='Wave (SELL)')
+                    # Plot first segment with label, others without
+                    for i, (seg_x, seg_y) in enumerate(blue_segments):
+                        if i == 0:
+                            ax2.plot(seg_x, seg_y, color='#0066CC', linewidth=1.5, label='Wave (SELL)', alpha=0.9)
+                        else:
+                            ax2.plot(seg_x, seg_y, color='#0066CC', linewidth=1.5, alpha=0.9)
         
         # Add Plot FastLine (thin red dotted line) - as per MQ5
         plot_fastline_col = None
@@ -818,7 +829,7 @@ def plot_dual_chart_mpl(
             if fastline_valid_mask.any():
                 fastline_valid_data = display_df[fastline_valid_mask]
                 ax2.plot(fastline_valid_data.index, fastline_valid_data[plot_fastline_col],
-                        color='red', linewidth=1, linestyle=':', label='Fast Line')
+                        color='#FF6B6B', linewidth=0.8, linestyle=':', label='Fast Line', alpha=0.7)
         
         # Add MA Line (light blue line) - as per MQ5
         ma_line_col = None
@@ -833,17 +844,22 @@ def plot_dual_chart_mpl(
             if ma_valid_mask.any():
                 ma_valid_data = display_df[ma_valid_mask]
                 ax2.plot(ma_valid_data.index, ma_valid_data[ma_line_col],
-                        color='lightblue', linewidth=1, label='MA Line')
+                        color='#4ECDC4', linewidth=0.8, label='MA Line', alpha=0.8)
         
         # Add zero line for reference
-        ax2.axhline(y=0, color='gray', linestyle='--', linewidth=1, alpha=0.5)
+        ax2.axhline(y=0, color='#95A5A6', linestyle='--', linewidth=0.8, alpha=0.6)
 
     
     # Set y-axis label
-    ax2.set_ylabel(y_axis_label, fontsize=12)
-    ax2.set_xlabel('Date', fontsize=12)
-    ax2.grid(True, alpha=0.3)
-    ax2.legend()
+    ax2.set_ylabel(y_axis_label, fontsize=11, fontweight='bold')
+    ax2.set_xlabel('Date', fontsize=11, fontweight='bold')
+    
+    # Enhanced grid styling
+    ax2.grid(True, alpha=0.2, linestyle='-', linewidth=0.5)
+    ax2.set_axisbelow(True)  # Put grid behind data
+    
+    # Enhanced legend
+    ax2.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
     
     # Format x-axis for indicator chart
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
