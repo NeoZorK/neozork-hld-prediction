@@ -157,13 +157,6 @@ def init_wave(price_series: pd.Series, wave_input_parameters: WaveParameters ):
     # Check length of price series
     if len(price_series) < max(wave_input_parameters.long1, wave_input_parameters.fast1, wave_input_parameters.trend1, wave_input_parameters.long2, wave_input_parameters.fast2, wave_input_parameters.trend2, wave_input_parameters.sma_period):
         logger.print_warning(f"Not enough data for Wave calculation. Need at least {max(wave_input_parameters.long1, wave_input_parameters.fast1, wave_input_parameters.trend1, wave_input_parameters.long2, wave_input_parameters.fast2, wave_input_parameters.trend2, wave_input_parameters.sma_period)} points, got {len(price_series)}")
-        return pd.Series(index=price_series.index, dtype=float)
-
-
-    # Calculate wave
-    wave = price_series.rolling(window=wave_input_parameters.long1, min_periods=wave_input_parameters.long1).mean()
-    return wave
-
 
 
 # 1
