@@ -86,7 +86,7 @@ python run_analysis.py demo --rule PHLD
 
 ### Features
 - [Data Sources](guides/data-sources.md) - Supported financial data sources
-- [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](guides/adding-sma-indicator-tutorial.md))
+- [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](guides/adding-sma-indicator-tutorial.md), [Wave](reference/indicators/trend/wave-indicator.md))
 - [Analysis Tools](guides/analysis-tools.md) - Analysis and visualization tools
 - [CLI Interface](guides/cli-interface.md) - Command-line interface usage
 
@@ -96,6 +96,12 @@ python run_analysis.py demo --rule PHLD
 - [Practical Examples](guides/sma-practical-examples.md) - Real-world trading scenarios
 - [Testing Guide](guides/sma-testing-guide.md) - Comprehensive testing framework
 - [Tutorials Summary](guides/sma-tutorials-summary.md) - Complete overview and quick reference
+
+### 🌊 Wave Indicator Tutorials (New!)
+- [Complete Wave Tutorial](guides/adding-wave-indicator-tutorial.md) - Advanced dual-system indicator implementation
+- [Wave Indicator Documentation](reference/indicators/trend/wave-indicator.md) - Comprehensive technical reference
+- [Wave Implementation Summary](guides/adding-wave-indicator-summary.md) - Quick implementation overview
+- [Wave Testing and Fixes](guides/wave-indicator-fixes-summary.md) - Testing framework and bug fixes
 
 ### Reference
 - [API Reference](reference/index.md) - Complete API documentation

@@ -17,8 +17,26 @@ The Wave indicator is a sophisticated trend-following indicator that combines mu
 
 ## Usage
 
+### CLI Usage
+
+```bash
+# Basic Wave with default parameters
+uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
+
+# Wave with custom trading rules
+uv run run_analysis.py demo --rule wave:33,10,2,strongtrend,22,11,4,fast,reverse,22,open -d plotly
+
+# Wave with zone-based filtering
+uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,primezone,22,open -d fastest
+
+# Get help for wave indicator
+uv run run_analysis.py demo --rule wave --help
+```
+
+### Programmatic Usage
+
 ```python
-from src.calculation.indicators.trend.wave_ind import apply_rule_wave, WaveParameters, ENUM_GLOBAL_TR
+from src.calculation.indicators.trend.wave_ind import apply_rule_wave, WaveParameters, ENUM_GLOBAL_TR, ENUM_MOM_TR
 
 # Create parameters
 params = WaveParameters(
@@ -194,6 +212,47 @@ The indicator adds the following columns to the DataFrame:
 - **Signal Frequency**: May generate fewer signals than simpler indicators
 - **Market Dependency**: Best in trending markets, weaker in ranging conditions
 
+## CLI Integration
+
+The Wave indicator is fully integrated into the CLI system with comprehensive parameter validation and help support.
+
+### Parameter Format
+```
+wave:long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type
+```
+
+### Trading Rule Values
+
+#### Individual Trading Rules (tr1, tr2)
+- `fast` - Basic momentum comparison
+- `zone` - Simple zone-based signals
+- `strongtrend` - Strong trend confirmation
+- `weaktrend` - Weak trend signals
+- `fastzonereverse` - Reverse signals in zones
+- `bettertrend` - Enhanced trend signals
+- `betterfast` - Improved fast trading
+- `rost` - Reverse momentum signals
+- `trendrost` - Trend-based reverse signals
+- `bettertrendrost` - Enhanced trend reverse signals
+
+#### Global Trading Rules (global_tr)
+- `prime` - Basic signal combination
+- `reverse` - Reverse combined signals
+- `primezone` - Zone-filtered signal combination
+- `reversezone` - Reversed zone-filtered signals
+- `newzone` - Signal generation on disagreement
+- `longzone` - Continuous opposite signal generation
+- `longzonereverse` - Continuous same signal generation
+
+### Help System
+```bash
+# Get detailed help for wave indicator
+uv run run_analysis.py demo --rule wave --help
+
+# Get help for specific parameter
+uv run run_analysis.py demo --rule wave:invalid --help
+```
+
 ## Best Practices
 
 1. **Parameter Testing**: Test different parameter combinations on historical data
@@ -201,8 +260,30 @@ The indicator adds the following columns to the DataFrame:
 3. **Risk Management**: Combine with proper position sizing and stop-loss strategies
 4. **Confirmation**: Use with other technical indicators for signal confirmation
 5. **Timeframe Selection**: Choose appropriate periods based on trading timeframe
+6. **CLI Usage**: Use the built-in help system to understand parameter options
 
 ## Example Usage
+
+### CLI Examples
+
+```bash
+# Basic Wave analysis with demo data
+uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fastest
+
+# Wave with strong trend configuration
+uv run run_analysis.py demo --rule wave:339,10,2,strongtrend,22,11,4,fast,primezone,22,open -d plotly
+
+# Wave with reverse signals for contrarian strategy
+uv run run_analysis.py demo --rule wave:33,10,2,fast,22,11,4,fast,reverse,22,open -d fastest
+
+# Wave with zone-based filtering
+uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,primezone,22,open -d fastest
+
+# Multiple Wave configurations for comparison
+uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open,wave:33,10,2,strongtrend,22,11,4,fast,reverse,22,open -d plotly
+```
+
+### Programmatic Examples
 
 ```python
 import pandas as pd
@@ -229,9 +310,13 @@ trend_params = WaveParameters(
 result = apply_rule_wave(df, trend_params)
 
 # Get buy signals
-buy_signals = result[result['Wave_Signal'] == 1.0]
-sell_signals = result[result['Wave_Signal'] == 2.0]
+buy_signals = result[result['_Signal'] == 1.0]
+sell_signals = result[result['_Signal'] == 2.0]
 
 print(f"Buy signals: {len(buy_signals)}")
 print(f"Sell signals: {len(sell_signals)}")
+
+# Analyze wave values
+print(f"Wave1 range: {result['wave1'].min():.2f} to {result['wave1'].max():.2f}")
+print(f"Wave2 range: {result['wave2'].min():.2f} to {result['wave2'].max():.2f}")
 ```
