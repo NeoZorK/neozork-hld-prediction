@@ -16,15 +16,15 @@ from src.plotting.term_chunked_plot import _has_trading_signals, _add_trading_si
 class TestWaveTerminalSignals:
     """Test cases for Wave indicator trading signals in terminal mode."""
 
-    def test_has_trading_signals_with_wave_plot_color(self):
-        """Test _has_trading_signals function with _Plot_Color column."""
+    def test_has_trading_signals_with_wave_signal(self):
+        """Test _has_trading_signals function with _Signal column."""
         # Create sample data with wave indicator signals
         chunk = pd.DataFrame({
             'Open': [1.0, 1.1, 1.2],
             'High': [1.05, 1.15, 1.25],
             'Low': [0.95, 1.05, 1.15],
             'Close': [1.02, 1.12, 1.22],
-            '_Plot_Color': [0, 1, 2]  # 0=NO TRADE, 1=BUY, 2=SELL
+            '_Signal': [0, 1, 2]  # 0=NO TRADE, 1=BUY, 2=SELL
         })
         
         assert _has_trading_signals(chunk) == True
@@ -67,15 +67,15 @@ class TestWaveTerminalSignals:
         
         assert _has_trading_signals(chunk) == False
 
-    def test_add_trading_signals_to_chunk_wave_plot_color(self):
-        """Test _add_trading_signals_to_chunk with wave _Plot_Color signals."""
+    def test_add_trading_signals_to_chunk_wave_signal(self):
+        """Test _add_trading_signals_to_chunk with wave _Signal signals."""
         # Create sample data with wave indicator signals
         chunk = pd.DataFrame({
             'Open': [1.0, 1.1, 1.2, 1.3],
             'High': [1.05, 1.15, 1.25, 1.35],
             'Low': [0.95, 1.05, 1.15, 1.25],
             'Close': [1.02, 1.12, 1.22, 1.32],
-            '_Plot_Color': [0, 1, 2, 1]  # NO TRADE, BUY, SELL, BUY
+            '_Signal': [0, 1, 2, 1]  # NO TRADE, BUY, SELL, BUY
         })
         
         x_values = [0, 1, 2, 3]
@@ -117,8 +117,8 @@ class TestWaveTerminalSignals:
             'High': [1.05, 1.15, 1.25, 1.35],
             'Low': [0.95, 1.05, 1.15, 1.25],
             'Close': [1.02, 1.12, 1.22, 1.32],
-            '_Plot_Color': [0, 1, 2, 0],  # NO TRADE, BUY, SELL, NO TRADE
-            '_Signal': [0, 1, 2, 0]      # Same signals
+            '_Signal': [0, 1, 2, 0],  # NO TRADE, BUY, SELL, NO TRADE
+            'Direction': [0, 1, 2, 0]  # Same signals
         })
         
         x_values = [0, 1, 2, 3]
@@ -137,7 +137,7 @@ class TestWaveTerminalSignals:
             'High': [1.05, 1.15, 1.25],
             'Low': [0.95, 1.05, 1.15],
             'Close': [1.02, 1.12, 1.22],
-            '_Plot_Color': [0, 0, 0]  # All NO TRADE
+            '_Signal': [0, 0, 0]  # All NO TRADE
         })
         
         x_values = [0, 1, 2]
@@ -156,7 +156,7 @@ class TestWaveTerminalSignals:
             'High': [1.05, 1.15, 1.25],
             'Low': [0.95, 1.05, 1.15],
             'Close': [1.02, 1.12, 1.22],
-            '_Plot_Color': [0, 1, 2]
+            '_Signal': [0, 1, 2]
         })
         
         x_values = [0, 1, 2]
@@ -172,15 +172,14 @@ class TestWaveTerminalSignals:
             assert mock_plt.scatter.called
 
     def test_wave_signal_priority_order(self):
-        """Test that _Plot_Color takes priority over _Signal over Direction."""
+        """Test that _Signal takes priority over Direction."""
         # Create sample data with multiple signal sources
         chunk = pd.DataFrame({
             'Open': [1.0, 1.1, 1.2],
             'High': [1.05, 1.15, 1.25],
             'Low': [0.95, 1.05, 1.15],
             'Close': [1.02, 1.12, 1.22],
-            '_Plot_Color': [0, 1, 2],  # Should be used
-            '_Signal': [2, 0, 1],      # Should be ignored
+            '_Signal': [0, 1, 2],      # Should be used
             'Direction': [1, 2, 0]     # Should be ignored
         })
         
@@ -189,7 +188,7 @@ class TestWaveTerminalSignals:
         with patch('src.plotting.term_chunked_plot.plt') as mock_plt:
             _add_trading_signals_to_chunk(chunk, x_values)
             
-            # Should use _Plot_Color signals (0, 1, 2)
+            # Should use _Signal signals (0, 1, 2)
             assert mock_plt.scatter.called
 
     def test_wave_signal_values_interpretation(self):
@@ -200,7 +199,7 @@ class TestWaveTerminalSignals:
             'High': [1.05, 1.15, 1.25, 1.35, 1.45],
             'Low': [0.95, 1.05, 1.15, 1.25, 1.35],
             'Close': [1.02, 1.12, 1.22, 1.32, 1.42],
-            '_Plot_Color': [0, 1, 2, 1, 2]  # NO TRADE, BUY, SELL, BUY, SELL
+            '_Signal': [0, 1, 2, 1, 2]  # NO TRADE, BUY, SELL, BUY, SELL
         })
         
         x_values = [0, 1, 2, 3, 4]
