@@ -239,9 +239,9 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             period = int(params[0]) if len(params) > 0 else 14
             oversold = float(params[1]) if len(params) > 1 else 30
             overbought = float(params[2]) if len(params) > 2 else 70
-            price_type = 'open' if len(params) > 3 and params[3].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 3 and params[3].lower() == 'open' else PriceType.CLOSE
             
-            price_series = df['Open'] if price_type == 'open' else df['Close']
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             rsi_values = calculate_rsi(price_series, period)
             
             # Remove possible duplicates
@@ -262,10 +262,10 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             fast_period = int(params[0]) if len(params) > 0 else 12
             slow_period = int(params[1]) if len(params) > 1 else 26
             signal_period = int(params[2]) if len(params) > 2 else 9
-            price_type = 'open' if len(params) > 3 and params[3].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 3 and params[3].lower() == 'open' else PriceType.CLOSE
             
             # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             
             # Calculate MACD (returns tuple: macd_line, signal_line, histogram)
             macd_line, signal_line, histogram = calculate_macd(price_series, fast_period, slow_period, signal_period)
@@ -275,20 +275,20 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
         elif indicator_name == 'ema':
             period = int(params[0]) if len(params) > 0 else 20
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 1 and params[1].lower() == 'open' else PriceType.CLOSE
             
             # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             
             ema_values = calculate_ema(price_series, period)
             result_df['ema'] = ema_values
             
         elif indicator_name == 'sma':
             period = int(params[0]) if len(params) > 0 else 20
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 1 and params[1].lower() == 'open' else PriceType.CLOSE
             
             # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             
             # Import SMA calculation function
             from src.calculation.indicators.trend.sma_ind import calculate_sma
@@ -298,7 +298,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
         elif indicator_name == 'bb':
             period = int(params[0]) if len(params) > 0 else 20
             std_dev = float(params[1]) if len(params) > 1 else 2.0
-            price_type = 'open' if len(params) > 2 and params[2].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 2 and params[2].lower() == 'open' else PriceType.CLOSE
             
             # Select price series based on price_type
             price_series = df['Open'] if price_type == 'open' else df['Close']
@@ -317,10 +317,10 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
         elif indicator_name == 'cci':
             period = int(params[0]) if len(params) > 0 else 20
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 1 and params[1].lower() == 'open' else PriceType.CLOSE
             
             # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             
             # Check if CCI column already exists and remove it
             if 'CCI' in result_df.columns:
@@ -332,13 +332,13 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['cci'] = cci_values
             
         elif indicator_name == 'vwap':
-            price_type = 'open' if len(params) > 0 and params[0].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 0 and params[0].lower() == 'open' else PriceType.CLOSE
             
             vwap_values = calculate_vwap(df, price_type)
             result_df['vwap'] = vwap_values
             
         elif indicator_name == 'pivot':
-            price_type = 'open' if len(params) > 0 and params[0].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 0 and params[0].lower() == 'open' else PriceType.CLOSE
             
             # calculate_pivot_points returns tuple: (pivot_point, resistance_1, support_1)
             pivot_point, resistance_1, support_1 = calculate_pivot_points(df, price_type)
@@ -348,20 +348,20 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
         elif indicator_name == 'hma':
             period = int(params[0]) if len(params) > 0 else 20
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 1 and params[1].lower() == 'open' else PriceType.CLOSE
             
             # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             
             hma_values = calculate_hma(price_series, period)
             result_df['hma'] = hma_values
             
         elif indicator_name == 'tsf':
             period = int(params[0]) if len(params) > 0 else 20
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 1 and params[1].lower() == 'open' else PriceType.CLOSE
             
             # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             
             tsf_values = calculate_tsforecast(price_series, period)
             result_df['tsf'] = tsf_values
@@ -429,10 +429,10 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             # Filter empty parameters
             params = [p.strip() for p in params if p.strip()]
             period = int(params[0]) if len(params) > 0 else 20
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 1 and params[1].lower() == 'open' else PriceType.CLOSE
             
             # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             volume_series = df['Volume']
             
             # Calculate Put/Call Ratio sentiment
@@ -456,10 +456,10 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             # Filter empty parameters
             params = [p.strip() for p in params if p.strip()]
             period = int(params[0]) if len(params) > 0 else 20
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 1 and params[1].lower() == 'open' else PriceType.CLOSE
             
             # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             volume_series = df['Volume']
             
             # Calculate COT sentiment
@@ -483,10 +483,10 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             # Filter empty parameters
             params = [p.strip() for p in params if p.strip()]
             period = int(params[0]) if len(params) > 0 else 14
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 1 and params[1].lower() == 'open' else PriceType.CLOSE
             
             # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             
             # Calculate Fear & Greed Index
             feargreed_values = calculate_feargreed(price_series, period)
@@ -507,10 +507,10 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
         elif indicator_name == 'donchain':
             period = int(params[0]) if len(params) > 0 else 20
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 1 and params[1].lower() == 'open' else PriceType.CLOSE
             
             # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             
             # Calculate Donchian Channels (returns tuple: upper, middle, lower)
             upper, middle, lower = calculate_donchain(df, period)
@@ -556,10 +556,10 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             
         elif indicator_name == 'stdev':
             period = int(params[0]) if len(params) > 0 else 20
-            price_type = 'open' if len(params) > 1 and params[1].lower() == 'open' else 'close'
+            price_type = PriceType.OPEN if len(params) > 1 and params[1].lower() == 'open' else PriceType.CLOSE
             
             # Select price series based on price_type
-            price_series = df['Open'] if price_type == 'open' else df['Close']
+            price_series = df['Open'] if price_type == PriceType.OPEN else df['Close']
             
             stdev_values = calculate_stdev(price_series, period)
             result_df['stdev'] = stdev_values
@@ -692,7 +692,6 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             )
             
             # Convert price_type string to PriceType enum
-            from src.calculation.indicators.base_indicator import PriceType
             price_type_enum = PriceType.OPEN if wave_params['price_type'] == 'open' else PriceType.CLOSE
             
             wave_result = apply_rule_wave(df, wave_params_obj, price_type_enum)
