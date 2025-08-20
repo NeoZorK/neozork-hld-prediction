@@ -590,11 +590,36 @@ The Wave indicator supports all display modes:
 - **`-d fastest`**: Plotly-based dual chart with interactive features
 - **`-d fast`**: Bokeh-based dual chart with real-time updates ⭐ **NEW**
 - **`-d plotly`**: Single Plotly chart
-- **`-d mpl`**: Matplotlib-based visualization
+- **`-d mpl`**: Matplotlib-based visualization with customizable colors ⭐ **NEW**
 - **`-d seaborn`**: Seaborn-based statistical plots
 - **`-d term`**: Terminal-based text output
+
+### 🎨 MPL Mode Color Customization ⭐ **NEW**
+
+The Wave indicator in MPL mode (`-d mpl`) features customizable colors for the "prime" global trading rule:
+
+#### Color Scheme
+- **BUY Signals**: Blue color (`#0066CC`) with upward triangle markers (^)
+- **SELL Signals**: Red color (`#FF4444`) with downward triangle markers (v)
+
+#### Usage Example
+```bash
+# Wave indicator with prime rule and custom MPL colors
+uv run run_analysis.py show csv mn1 -d mpl --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
+```
+
+#### Visual Features
+- **Signal Positioning**: BUY signals below Low price, SELL signals above High price
+- **Professional Colors**: Standard trading color conventions
+- **Clear Legend**: Color-coded legend entries matching signal colors
+- **High Visibility**: Optimal alpha transparency and marker sizing
+
+#### Documentation
+- [Wave MPL Color Changes](docs/guides/wave-mpl-color-changes.md) - Detailed color customization guide
 
 ### 📚 Documentation
 - [Wave Indicator Reference](docs/reference/indicators/trend/wave-indicator.md)
 - [Implementation Summary](docs/guides/adding-wave-indicator-summary.md)
 - [Testing and Fixes](docs/guides/wave-indicator-fixes-summary.md)
+- [Wave MPL Color Changes](docs/guides/wave-mpl-color-changes.md) - MPL mode color customization
+- [Wave Prime Rule Fix](docs/guides/wave-prime-rule-fix-all-modes.md) - Global trading rule fixes

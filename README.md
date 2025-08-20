@@ -210,7 +210,7 @@ uv run pytest tests -n auto
 
 #### New: Wave Indicator ⭐ **ADVANCED DUAL-SYSTEM**
 - **Category:** Trend
-- **Description:** Sophisticated trend-following indicator that combines multiple momentum calculations with dual-wave system, configurable trading rules, and global signal filtering. Features 10 individual trading rules and 7 global trading rules for advanced strategies. **Now supports all display modes including fast mode with discontinuous wave lines.**
+- **Description:** Sophisticated trend-following indicator that combines multiple momentum calculations with dual-wave system, configurable trading rules, and global signal filtering. Features 10 individual trading rules and 7 global trading rules for advanced strategies. **Now supports all display modes including fast mode with discontinuous wave lines and MPL mode with customizable colors.**
 - **CLI Examples:**
   ```bash
   # Basic Wave with default parameters
@@ -220,16 +220,23 @@ uv run pytest tests -n auto
   uv run run_analysis.py demo --rule wave:33,10,2,strongtrend,22,11,4,fast,reverse,22,open -d plotly
   
   # Wave with zone-based filtering
-uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,primezone,22,open -d fastest
+  uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,primezone,22,open -d fastest
 
-# Wave with fast display mode (Bokeh-based)
-uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
+  # Wave with fast display mode (Bokeh-based)
+  uv run run_analysis.py demo --rule wave:339,10,2,fast,22,11,4,fast,prime,22,open -d fast
 
-# Wave with real data in fast mode
-uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+  # Wave with real data in fast mode
+  uv run run_analysis.py show csv mn1 --rule wave:339,10,2,fastzonereverse,22,11,4,fast,prime,10,close -d fast
+
+  # Wave with MPL mode and custom colors (NEW!)
+  uv run run_analysis.py show csv mn1 -d mpl --rule wave:339,10,2,fast,22,11,4,fast,prime,10,close
+  ```
 - **Parameters:** long1,fast1,trend1,tr1,long2,fast2,trend2,tr2,global_tr,sma_period,price_type
 - **Documentation:** [Wave Indicator](docs/reference/indicators/trend/wave-indicator.md)
 - **Tutorial:** [Adding Wave Indicator](docs/guides/adding-wave-indicator-tutorial.md)
+- **New Features:** 
+  - [MPL Color Customization](docs/guides/wave-mpl-color-changes.md) - Custom colors for prime rule
+  - [Global Trading Rule Fixes](docs/guides/wave-prime-rule-fix-all-modes.md) - Fixed prime/reverse rules
   
   # Real data analysis
   uv run run_analysis.py yfinance --ticker AAPL --period 1y --point 0.01 --rule sma:20,close -d fastest
@@ -425,6 +432,12 @@ uv run pytest tests -n auto  # ~30-60 seconds
 - **[Practical Examples](docs/guides/sma-practical-examples.md)** - Real-world scenarios
 - **[Testing Guide](docs/guides/sma-testing-guide.md)** - Comprehensive testing
 - **[Tutorials Summary](docs/guides/sma-tutorials-summary.md)** - Complete overview
+
+### 🌊 Wave Indicator Tutorials (New!)
+- **[Complete Wave Tutorial](docs/guides/adding-wave-indicator-tutorial.md)** - Advanced dual-system implementation
+- **[Wave MPL Color Changes](docs/guides/wave-mpl-color-changes.md)** - MPL mode color customization
+- **[Wave Prime Rule Fix](docs/guides/wave-prime-rule-fix-all-modes.md)** - Global trading rule fixes
+- **[Wave Reference](docs/reference/indicators/trend/wave-indicator.md)** - Technical documentation
 
 ## 🤝 Contributing
 
