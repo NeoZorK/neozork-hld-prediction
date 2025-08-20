@@ -18,6 +18,45 @@ from typing import Dict, Any, Optional
 from src.common import logger
 
 
+def _create_wave_line_segments(index, values, mask):
+    """
+    Create discontinuous line segments for Wave indicator.
+    
+    Args:
+        index: Index array
+        values: Values array
+        mask: Boolean mask for valid segments
+        
+    Returns:
+        list: List of (x, y) segment tuples
+    """
+    segments = []
+    if not mask.any():
+        return segments
+    
+    # Find continuous segments
+    segment_start = None
+    for i, is_valid in enumerate(mask):
+        if is_valid and segment_start is None:
+            segment_start = i
+        elif not is_valid and segment_start is not None:
+            # End of segment
+            segments.append((
+                index[segment_start:i],
+                values[segment_start:i]
+            ))
+            segment_start = None
+    
+    # Handle last segment
+    if segment_start is not None:
+        segments.append((
+            index[segment_start:],
+            values[segment_start:]
+        ))
+    
+    return segments
+
+
 def plot_dual_chart_mpl(
     df: pd.DataFrame,
     rule: str,
@@ -719,7 +758,85 @@ def plot_dual_chart_mpl(
                            alpha=0.95, label='SELL Signal', zorder=5)
                 ax2.scatter(sell_idx, sell_values, color=downtrend_color, s=150, 
                            marker='o', alpha=0.4, label="", zorder=4)
-            
+    
+    elif indicator_name == 'wave':
+        y_axis_label = 'Wave Value'
+        
+        # Add Plot Wave (main indicator, single line with dynamic colors) - as per MQ5
+        plot_wave_col = None
+        plot_color_col = None
+        if '_plot_wave' in display_df.columns:
+            plot_wave_col = '_plot_wave'
+        elif '_Plot_Wave' in display_df.columns:
+            plot_wave_col = '_Plot_Wave'
+        
+        if '_plot_color' in display_df.columns:
+            plot_color_col = '_plot_color'
+        elif '_Plot_Color' in display_df.columns:
+            plot_color_col = '_Plot_Color'
+        
+        if plot_wave_col and plot_color_col:
+            # Create discontinuous line segments like in fastest mode
+            valid_data_mask = display_df[plot_wave_col].notna() & (display_df[plot_wave_col] != 0)
+            if valid_data_mask.any():
+                wave_data = display_df[valid_data_mask].copy()
+                
+                # Create masks for different signal types
+                red_mask = wave_data[plot_color_col] == 1  # BUY
+                blue_mask = wave_data[plot_color_col] == 2  # SELL
+                
+                # Create discontinuous line segments for red (BUY = 1)
+                if red_mask.any():
+                    red_segments = _create_wave_line_segments(
+                        wave_data.index, 
+                        wave_data[plot_wave_col], 
+                        red_mask
+                    )
+                    for seg_x, seg_y in red_segments:
+                        ax2.plot(seg_x, seg_y, color='red', linewidth=2, label='Wave (BUY)')
+                
+                # Create discontinuous line segments for blue (SELL = 2)
+                if blue_mask.any():
+                    blue_segments = _create_wave_line_segments(
+                        wave_data.index, 
+                        wave_data[plot_wave_col], 
+                        blue_mask
+                    )
+                    for seg_x, seg_y in blue_segments:
+                        ax2.plot(seg_x, seg_y, color='blue', linewidth=2, label='Wave (SELL)')
+        
+        # Add Plot FastLine (thin red dotted line) - as per MQ5
+        plot_fastline_col = None
+        if '_plot_fastline' in display_df.columns:
+            plot_fastline_col = '_plot_fastline'
+        elif '_Plot_FastLine' in display_df.columns:
+            plot_fastline_col = '_Plot_FastLine'
+        
+        if plot_fastline_col:
+            # Only show Fast Line when there are valid values
+            fastline_valid_mask = display_df[plot_fastline_col].notna() & (display_df[plot_fastline_col] != 0)
+            if fastline_valid_mask.any():
+                fastline_valid_data = display_df[fastline_valid_mask]
+                ax2.plot(fastline_valid_data.index, fastline_valid_data[plot_fastline_col],
+                        color='red', linewidth=1, linestyle=':', label='Fast Line')
+        
+        # Add MA Line (light blue line) - as per MQ5
+        ma_line_col = None
+        if 'ma_line' in display_df.columns:
+            ma_line_col = 'ma_line'
+        elif 'MA_Line' in display_df.columns:
+            ma_line_col = 'MA_Line'
+        
+        if ma_line_col:
+            # Only show MA Line when there are valid values
+            ma_valid_mask = display_df[ma_line_col].notna() & (display_df[ma_line_col] != 0)
+            if ma_valid_mask.any():
+                ma_valid_data = display_df[ma_valid_mask]
+                ax2.plot(ma_valid_data.index, ma_valid_data[ma_line_col],
+                        color='lightblue', linewidth=1, label='MA Line')
+        
+        # Add zero line for reference
+        ax2.axhline(y=0, color='gray', linestyle='--', linewidth=1, alpha=0.5)
 
     
     # Set y-axis label
