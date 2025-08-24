@@ -24,13 +24,21 @@ The project reorganization aimed to:
 - `ML_DOCUMENTATION_MOVE_SUMMARY.md` → `docs/ml/ML_DOCUMENTATION_MOVE_SUMMARY.md`
 
 ### **Moved to `scripts/`**
-- `test_system.py` → `scripts/test_system.py`
-- `eda_fe` → `scripts/eda_fe`
-- `nz_interactive` → `scripts/nz_interactive`
+- `test_system.py` → `scripts/ml/test_system.py`
+- `eda_fe` → `scripts/main/eda_fe`
+- `nz_interactive` → `scripts/main/nz_interactive`
+- `eda_feature_engineering.py` → `scripts/ml/eda_feature_engineering.py`
+- `interactive_system.py` → `scripts/ml/interactive_system.py`
+- `demo_feature_engineering.py` → `scripts/ml/demo_feature_engineering.py`
+- `create_test_data.py` → `scripts/eda/create_test_data.py`
+- `debug_*.py` → `scripts/debug/`
+- `run_*.sh` → `scripts/testing/`
+- `test_*.sh` → `scripts/testing/`
+- `check_mcp_status.py` → `scripts/mcp/check_mcp_status.py`
 
 ### **Symbolic Links Created**
-- `./eda_fe` → `scripts/eda_fe`
-- `./nz_interactive` → `scripts/nz_interactive`
+- `./eda_fe` → `scripts/main/eda_fe`
+- `./nz_interactive` → `scripts/main/nz_interactive`
 
 ---
 
@@ -53,17 +61,30 @@ The project reorganization aimed to:
 ### **File Structure After**
 ```
 /
-├── eda_fe (symlink → scripts/eda_fe)
-├── nz_interactive (symlink → scripts/nz_interactive)
+├── eda_fe (symlink → scripts/main/eda_fe)
+├── nz_interactive (symlink → scripts/main/nz_interactive)
 ├── scripts/
-│   ├── eda_fe
-│   ├── nz_interactive
-│   ├── test_system.py
-│   ├── eda_feature_engineering.py
-│   ├── interactive_system.py
+│   ├── main/
+│   │   ├── eda_fe
+│   │   └── nz_interactive
+│   ├── ml/
+│   │   ├── eda_feature_engineering.py
+│   │   ├── interactive_system.py
+│   │   ├── demo_feature_engineering.py
+│   │   └── test_system.py
+│   ├── eda/
+│   │   └── create_test_data.py
+│   ├── testing/
+│   │   ├── run_*.sh
+│   │   └── test_*.sh
+│   ├── debug/
+│   │   └── debug_*.py
+│   ├── mcp/
+│   │   └── check_mcp_status.py
 │   └── ...
 └── docs/
     ├── SYSTEM_STATUS_REPORT.md
+    ├── SCRIPTS_STRUCTURE_GUIDE.md
     ├── ml/
     │   ├── ML_DOCUMENTATION_*.md
     │   ├── index.md

@@ -17,7 +17,7 @@ Quick guide to using the NeoZork HLD Prediction ML module and integrated EDA sys
 ./eda_fe --file your_data.csv --features-only
 ```
 
-**Note:** The `./eda_fe` and `./nz_interactive` scripts are symbolic links to `scripts/eda_fe` and `scripts/nz_interactive` for convenience.
+**Note:** The `./eda_fe` and `./nz_interactive` scripts are symbolic links to `scripts/main/eda_fe` and `scripts/main/nz_interactive` for convenience.
 ```
 
 ### 2. Interactive System (Best for exploration)
@@ -34,22 +34,39 @@ Quick guide to using the NeoZork HLD Prediction ML module and integrated EDA sys
 
 ```bash
 # Feature engineering demo
-python scripts/demo_feature_engineering.py
+python scripts/ml/demo_feature_engineering.py
 
 # Integrated pipeline
-python scripts/eda_feature_engineering.py --file data.csv --full-pipeline
+python scripts/ml/eda_feature_engineering.py --file data.csv --full-pipeline
 
 # Interactive system
-python scripts/interactive_system.py
+python scripts/ml/interactive_system.py
+
+# Test data generation
+python scripts/eda/create_test_data.py
 ```
 
 ## 📁 File Structure
 
 ```
 scripts/
-├── eda_feature_engineering.py    # Integrated EDA + Feature Engineering
-├── interactive_system.py         # Interactive menu system
-└── demo_feature_engineering.py   # Feature engineering demo
+├── main/
+│   ├── eda_fe                    # EDA + Feature Engineering pipeline
+│   └── nz_interactive            # Interactive system launcher
+├── ml/
+│   ├── eda_feature_engineering.py    # Integrated EDA + Feature Engineering
+│   ├── interactive_system.py         # Interactive menu system
+│   ├── demo_feature_engineering.py   # Feature engineering demo
+│   └── test_system.py                # System testing script
+├── eda/
+│   └── create_test_data.py           # Test data generation
+├── testing/                           # Test execution scripts
+├── debug/                             # Debugging utilities
+├── mcp/                               # MCP server scripts
+├── utilities/                         # Utility scripts
+├── analysis/                          # Analysis tools
+├── docker/                            # Docker utilities
+└── native-container/                  # Native container scripts
 
 src/ml/
 ├── feature_engineering/          # Feature generation system

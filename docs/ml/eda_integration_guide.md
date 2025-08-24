@@ -16,7 +16,7 @@ Complete guide to using the integrated EDA and Feature Engineering system in Neo
 ./eda_fe --file data.csv --features-only
 ```
 
-**Note:** The `./eda_fe` script is a symbolic link to `scripts/eda_fe` for convenience.
+**Note:** The `./eda_fe` script is a symbolic link to `scripts/main/eda_fe` for convenience.
 
 ### 2. Interactive System
 ```bash
@@ -33,13 +33,16 @@ Complete guide to using the integrated EDA and Feature Engineering system in Neo
 ### 3. Direct Python Scripts
 ```bash
 # Integrated pipeline
-python scripts/eda_feature_engineering.py --file data.csv --full-pipeline
+python scripts/ml/eda_feature_engineering.py --file data.csv --full-pipeline
 
 # Interactive system
-python scripts/interactive_system.py
+python scripts/ml/interactive_system.py
 
 # Feature engineering demo
-python scripts/demo_feature_engineering.py
+python scripts/ml/demo_feature_engineering.py
+
+# Test data generation
+python scripts/eda/create_test_data.py
 ```
 
 ## 🔧 System Architecture

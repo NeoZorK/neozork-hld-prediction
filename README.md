@@ -86,7 +86,7 @@ uv run python scripts/demo_feature_engineering.py
 uv run pytest tests/ml/ -n auto
 ```
 
-**Note:** The `./eda_fe` and `./nz_interactive` scripts are symbolic links to `scripts/eda_fe` and `scripts/nz_interactive` for convenience.
+**Note:** The `./eda_fe` and `./nz_interactive` scripts are symbolic links to `scripts/main/eda_fe` and `scripts/main/nz_interactive` for convenience.
 ```
 
 **Documentation:** [Complete ML Documentation](docs/ml/index.md)
