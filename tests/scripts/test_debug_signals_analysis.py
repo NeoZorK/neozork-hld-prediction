@@ -11,7 +11,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 # Add root to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 
 class TestDebugSignalsAnalysis:
@@ -37,9 +37,9 @@ class TestDebugSignalsAnalysis:
     def test_no_syntax_errors(self):
         """Test that the file has no syntax errors."""
         try:
-            with open('debug_signals_analysis.py', 'r') as f:
+            with open('scripts/debug/debug_signals_analysis.py', 'r') as f:
                 content = f.read()
-            compile(content, 'debug_signals_analysis.py', 'exec')
+            compile(content, 'scripts/debug/debug_signals_analysis.py', 'exec')
             assert True
         except (FileNotFoundError, SyntaxError) as e:
             pytest.skip(f"File not found or has syntax errors: {e}")
@@ -61,7 +61,7 @@ class TestDebugSignalsAnalysis:
     def test_file_permissions(self):
         """Test that the file is readable."""
         try:
-            with open('debug_signals_analysis.py', 'r') as f:
+            with open('scripts/debug/debug_signals_analysis.py', 'r') as f:
                 content = f.read()
             assert len(content) > 0
         except FileNotFoundError:
