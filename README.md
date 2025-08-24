@@ -69,12 +69,18 @@ uv run run_analysis.py demo --rule PHLD
 ## 🔧 Development Tools
 
 ### Machine Learning Platform
-Advanced ML capabilities with automated feature engineering:
+Advanced ML capabilities with automated feature engineering and integrated EDA:
 
 **Quick Start:**
 ```bash
 # Run feature engineering demo
 uv run python scripts/demo_feature_engineering.py
+
+# Run integrated EDA + Feature Engineering pipeline
+./eda_fe --file data.csv --full-pipeline
+
+# Run interactive system
+./nz_interactive --full
 
 # Run ML tests
 uv run pytest tests/ml/ -n auto
@@ -83,6 +89,7 @@ uv run pytest tests/ml/ -n auto
 **Documentation:** [Complete ML Documentation](docs/ml/index.md)
 - [Feature Engineering Guide](docs/ml/feature_engineering_guide.md)
 - [ML Module Overview](docs/ml/ml-module-overview.md)
+- [EDA Integration Guide](docs/ml/eda_integration_guide.md)
 
 ### Dead Code Analysis
 Find and remove unused code and libraries:

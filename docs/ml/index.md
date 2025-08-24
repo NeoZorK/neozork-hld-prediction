@@ -28,6 +28,16 @@ Comprehensive guide for the automated feature engineering system.
 - Testing and validation
 - Practical examples and use cases
 
+### [EDA Integration Guide](eda_integration_guide.md) ⭐ **NEW**
+Complete guide to using the integrated EDA and Feature Engineering system.
+
+**Includes:**
+- Unified EDA + Feature Engineering pipeline
+- Interactive system interface
+- Configuration and optimization
+- Troubleshooting and best practices
+- Integration with existing tools
+
 ### [Usage Instructions](USAGE_INSTRUCTIONS.md) ⭐ **NEW**
 Complete guide for navigating and using ML documentation.
 
@@ -98,29 +108,51 @@ ML Module
 
 ## 🚀 Quick Start
 
-### 1. Install Dependencies
+### 1. Integrated EDA + Feature Engineering (Recommended)
 
 ```bash
-# From project root
-uv pip install -r requirements.txt
+# Run complete pipeline
+./eda_fe --file data.csv --full-pipeline
+
+# EDA only
+./eda_fe --file data.csv --eda-only
+
+# Feature Engineering only
+./eda_fe --file data.csv --features-only
 ```
 
-### 2. Run Demo
+### 2. Interactive System
 
 ```bash
-# Run the complete feature engineering demo
+# Start full interactive system
+./nz_interactive --full
+
+# Demo mode
+./nz_interactive --demo
+```
+
+### 3. Direct Scripts
+
+```bash
+# Feature Engineering Demo
 uv run python scripts/demo_feature_engineering.py
+
+# Integrated Pipeline
+python scripts/eda_feature_engineering.py --file data.csv --full-pipeline
+
+# Interactive System
+python scripts/interactive_system.py
 ```
 
-### 3. Basic Usage
+### 4. Basic Usage (Python API)
 
 ```python
-from ml.feature_engineering import FeatureGenerator, MasterFeatureConfig
+from src.ml.feature_engineering import FeatureGenerator, MasterFeatureConfig
 
 # Configure system
 config = MasterFeatureConfig(
-    max_features=200,
-    min_importance=0.3,
+    max_features=150,
+    min_importance=0.2,
     enable_proprietary=True,
     enable_technical=True
 )
@@ -129,7 +161,7 @@ config = MasterFeatureConfig(
 generator = FeatureGenerator(config)
 df_features = generator.generate_features(your_ohlcv_data)
 
-print(f"Generated {generator.get_feature_count()} features")
+print(f"Generated {len(generator.get_feature_summary())} features")
 ```
 
 ## 🧪 Testing
