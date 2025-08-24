@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# -*- coding: utf-8 -*-
+# EDA Feature Engineering Integration Script
+# 
+# This script provides a unified interface for EDA and Feature Engineering analysis.
+# It integrates existing EDA capabilities with the new Feature Engineering system.
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$SCRIPT_DIR"
+
+# Add project root to Python path
+export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}"
+
+# Function to detect environment
+detect_environment() {
+    if [ -f "/.dockerenv" ] || [ -f "/app/.dockerenv" ]; then
+        echo "Docker environment detected"
+        return 0
+    elif command -v uv >/dev/null 2>&1; then
+        echo "UV environment detected"
+        return 1
+    else
+        echo "Native Python environment detected"
+        return 2
+    fi
+}
+
+# Function to run Python command
+run_python() {
+    local env_type=$1
+    shift
+    
+    case $env_type in
+        0)  # Docker
+            python "$@"
+            ;;
+        1)  # UV
+            uv run python "$@"
+            ;;
+        2)  # Native
+            python "$@"
+            ;;
+    esac
+}
+
+# Main script logic
+echo "EDA Feature Engineering Integration Tool"
+echo "======================================="
+
+# Detect environment
+detect_environment
+env_type=$?
+
+# Change to project root
+cd "$PROJECT_ROOT"
+
+# Add script directory to PATH
+echo "Adding $SCRIPT_DIR to PATH"
+export PATH="$SCRIPT_DIR:$PATH"
+
+# Parse arguments
+if [ $# -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    echo "Usage: $0 [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --help                    Show this help message"
+    echo "  --file FILE               Input data file (CSV, Parquet, etc.)"
+    echo "  --output-dir DIR          Output directory for reports (default: ./reports)"
+    echo "  --config CONFIG           Configuration file for feature engineering"
+    echo "  --eda-only                Run only EDA analysis (no feature engineering)"
+    echo "  --features-only           Run only feature engineering (no EDA)"
+    echo "  --full-pipeline           Run complete EDA + Feature Engineering pipeline"
+    echo "  --version                 Show version information"
+    echo ""
+    echo "Examples:"
+    echo "  # Run complete pipeline"
+    echo "  $0 --file data.csv --full-pipeline"
+    echo ""
+    echo "  # EDA only"
+    echo "  $0 --file data.csv --eda-only"
+    echo ""
+    echo "  # Feature engineering only"
+    echo "  $0 --file data.csv --features-only"
+    echo ""
+    echo "  # Custom configuration"
+    echo "  $0 --file data.csv --config config.json --full-pipeline"
+    echo ""
+    echo "Environment:"
+    echo "  Automatically detects Docker, UV, or native Python environment"
+    echo ""
+    exit 0
+fi
+
+# Check if file argument is provided
+if [[ "$*" != *"--file"* ]]; then
+    echo "Error: --file argument is required"
+    echo "Use --help for usage information"
+    exit 1
+fi
+
+# Run the Python script
+echo "Running EDA Feature Engineering pipeline..."
+run_python $env_type scripts/eda_feature_engineering.py "$@"

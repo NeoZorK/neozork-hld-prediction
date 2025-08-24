@@ -16,6 +16,8 @@ Complete guide to using the integrated EDA and Feature Engineering system in Neo
 ./eda_fe --file data.csv --features-only
 ```
 
+**Note:** The `./eda_fe` script is a symbolic link to `scripts/eda_fe` for convenience.
+
 ### 2. Interactive System
 ```bash
 # Start full interactive system

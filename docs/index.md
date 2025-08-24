@@ -96,6 +96,9 @@ python run_analysis.py demo --rule PHLD
 - [ML Documentation](ml/index.md) - **NEW**: Comprehensive machine learning platform documentation
 - [Feature Engineering](ml/feature_engineering_guide.md) - Automated feature generation system
 - [ML Module Overview](ml/ml-module-overview.md) - Complete ML module architecture and roadmap
+- [EDA Integration Guide](ml/eda_integration_guide.md) - **NEW**: Integrated EDA and Feature Engineering system
+- [Usage Instructions](ml/USAGE_INSTRUCTIONS.md) - **NEW**: Comprehensive usage guide for the integrated system
+- [System Status Report](SYSTEM_STATUS_REPORT.md) - **NEW**: Current system status and Phase 1 completion report
 
 ### 🎯 SMA Indicator Tutorials (New!)
 - [Complete SMA Tutorial](guides/adding-sma-indicator-tutorial.md) - Full implementation guide across all display modes

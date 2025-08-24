@@ -17,6 +17,9 @@ Quick guide to using the NeoZork HLD Prediction ML module and integrated EDA sys
 ./eda_fe --file your_data.csv --features-only
 ```
 
+**Note:** The `./eda_fe` and `./nz_interactive` scripts are symbolic links to `scripts/eda_fe` and `scripts/nz_interactive` for convenience.
+```
+
 ### 2. Interactive System (Best for exploration)
 
 ```bash

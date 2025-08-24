@@ -38,6 +38,16 @@ Complete guide to using the integrated EDA and Feature Engineering system.
 - Troubleshooting and best practices
 - Integration with existing tools
 
+### [System Status Report](../SYSTEM_STATUS_REPORT.md) 📊 **NEW**
+Comprehensive status report of the current system state, including:
+- Phase 1 completion status
+- Performance metrics
+- Known issues and solutions
+- Next steps for Phase 2
+
+### [ML Documentation Reorganization](../ML_DOCUMENTATION_REORGANIZATION_COMPLETE.md) 📚
+Complete overview of the ML documentation restructuring and improvements.
+
 ### [Usage Instructions](USAGE_INSTRUCTIONS.md) ⭐ **NEW**
 Complete guide for navigating and using ML documentation.
 
