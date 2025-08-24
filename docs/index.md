@@ -92,6 +92,11 @@ python run_analysis.py demo --rule PHLD
 - [Analysis Tools](guides/analysis-tools.md) - Analysis and visualization tools
 - [CLI Interface](guides/cli-interface.md) - Command-line interface usage
 
+### Machine Learning
+- [ML Documentation](ml/index.md) - **NEW**: Comprehensive machine learning platform documentation
+- [Feature Engineering](ml/feature_engineering_guide.md) - Automated feature generation system
+- [ML Module Overview](ml/ml-module-overview.md) - Complete ML module architecture and roadmap
+
 ### 🎯 SMA Indicator Tutorials (New!)
 - [Complete SMA Tutorial](guides/adding-sma-indicator-tutorial.md) - Full implementation guide across all display modes
 - [Quick Start Guide](guides/sma-quick-start-guide.md) - Get started with SMA in minutes

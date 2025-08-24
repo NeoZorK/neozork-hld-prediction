@@ -99,6 +99,16 @@ Working with different financial data sources.
 - Binance cryptocurrency data
 - MQL5 MetaTrader data
 
+### [Machine Learning Guide](../ml/index.md) ⭐ **NEW**
+Comprehensive machine learning platform documentation.
+
+**Highlights:**
+- **Feature Engineering**: Automated feature generation system
+- **ML Models**: XGBoost, LightGBM, LSTM models
+- **Validation**: Walk Forward Analysis and time series CV
+- **Risk Management**: Monte Carlo simulations and backtesting
+- **Automation**: End-to-end ML pipeline automation
+
 ### [Adding Wave Indicator Tutorial](adding-wave-indicator-tutorial.md) ⭐ **NEW**
 Comprehensive tutorial for adding complex indicators with all display modes support.
 
