@@ -70,10 +70,12 @@ python run_analysis.py demo --rule PHLD
 - [Testing Guide](development/testing.md) - Running tests and validation
 - [Code Style](development/code-style.md) - Coding standards and conventions
 - [Debugging](development/debugging.md) - Debugging tools and techniques
+- [Scripts Structure](development/scripts-structure.md) - **NEW**: Utility scripts organization and structure
 - [Refactoring Guide](development/REFACTORING_SUMMARY.md) - **NEW**: Code refactoring guidelines and recent improvements
 
 ### Testing
 - [Testing Documentation](testing/index.md) - Comprehensive testing documentation
+- [Test Structure](testing/test-structure.md) - **NEW**: Detailed test organization and structure
 - [UV-Only Mode Tests](testing/docker/uv-only-mode-tests.md) - Docker UV testing
 - [CLI Testing](testing/cli/comprehensive-testing.md) - Command-line interface testing
 

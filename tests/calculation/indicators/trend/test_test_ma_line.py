@@ -11,7 +11,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 # Add root to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent.parent))
 
 
 class TestTestMaLine:
@@ -37,9 +37,9 @@ class TestTestMaLine:
     def test_no_syntax_errors(self):
         """Test that the file has no syntax errors."""
         try:
-            with open('test_ma_line.py', 'r') as f:
+            with open('tests/calculation/indicators/trend/test_ma_line.py', 'r') as f:
                 content = f.read()
-            compile(content, 'test_ma_line.py', 'exec')
+            compile(content, 'tests/calculation/indicators/trend/test_ma_line.py', 'exec')
             assert True
         except (FileNotFoundError, SyntaxError) as e:
             pytest.skip(f"File not found or has syntax errors: {e}")
