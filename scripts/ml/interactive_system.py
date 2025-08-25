@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List
 
 # Add project root to path
-project_root = Path(__file__).parent.parent
+project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
 try:
@@ -42,6 +42,14 @@ class InteractiveSystem:
         self.feature_generator = None
         self.current_data = None
         self.current_results = {}
+    
+    def safe_input(self, prompt="\nPress Enter to continue..."):
+        """Safely handle input with EOF protection."""
+        try:
+            return input(prompt)
+        except EOFError:
+            print("\n👋 Goodbye!")
+            return None
         
     def print_banner(self):
         """Print system banner."""
@@ -64,24 +72,25 @@ class InteractiveSystem:
         print("6. 🧪 Testing & Validation")
         print("7. 📚 Documentation & Help")
         print("8. ⚙️  System Configuration")
-        print("9. 🚪 Exit")
+        print("0. 🚪 Exit")
         print("-" * 50)
         
     def print_eda_menu(self):
         """Print EDA menu options."""
         print("\n🔍 EDA ANALYSIS MENU:")
+        print("0. 🔙 Back to Main Menu")
         print("1. 📊 Basic Statistics")
         print("2. 🧹 Data Quality Check")
         print("3. 🔗 Correlation Analysis")
         print("4. 📈 Time Series Analysis")
         print("5. 🎯 Feature Importance")
         print("6. 📋 Generate EDA Report")
-        print("7. 🔙 Back to Main Menu")
         print("-" * 50)
         
     def print_feature_engineering_menu(self):
         """Print Feature Engineering menu options."""
         print("\n⚙️  FEATURE ENGINEERING MENU:")
+        print("0. 🔙 Back to Main Menu")
         print("1. 🚀 Generate All Features")
         print("2. 🎯 Proprietary Features (PHLD/Wave)")
         print("3. 📊 Technical Indicators")
@@ -90,7 +99,6 @@ class InteractiveSystem:
         print("6. 🔄 Cross-Timeframe Features")
         print("7. 🎛️  Feature Selection & Optimization")
         print("8. 📋 Feature Summary Report")
-        print("9. 🔙 Back to Main Menu")
         print("-" * 50)
         
     def print_visualization_menu(self):
@@ -144,7 +152,11 @@ class InteractiveSystem:
         print("3. 🔍 Load files by mask (e.g., 'gbpusd' for all GBPUSD files)")
         print("-" * 30)
         
-        choice = input("Enter choice (1-3): ").strip()
+        try:
+            choice = input("Enter choice (1-3): ").strip()
+        except EOFError:
+            print("\n👋 Goodbye!")
+            return False
         
         if choice == "1":
             return self._load_single_file()
@@ -563,7 +575,10 @@ class InteractiveSystem:
             print(f"🎯 Top 20 features by importance:")
             
             for i, (feature, importance) in enumerate(sorted_features[:20], 1):
-                print(f"   {i:2d}. {feature:<35} {importance:.4f}")
+                if isinstance(importance, (int, float)):
+                    print(f"   {i:2d}. {feature:<35} {importance:.4f}")
+                else:
+                    print(f"   {i:2d}. {feature:<35} {importance}")
             
             # Feature categories
             categories = {}
@@ -667,9 +682,15 @@ class InteractiveSystem:
         """Run EDA analysis menu."""
         while True:
             self.print_eda_menu()
-            choice = input("Select option (1-7): ").strip()
+            try:
+                choice = input("Select option (0-6): ").strip()
+            except EOFError:
+                print("\n👋 Goodbye!")
+                break
             
-            if choice == '1':
+            if choice == '0':
+                break
+            elif choice == '1':
                 self.run_basic_statistics()
             elif choice == '2':
                 self.run_data_quality_check()
@@ -681,20 +702,26 @@ class InteractiveSystem:
                 print("⏳ Feature Importance - Coming soon!")
             elif choice == '6':
                 print("⏳ EDA Report Generation - Coming soon!")
-            elif choice == '7':
-                break
             else:
-                print("❌ Invalid choice. Please select 1-7.")
+                print("❌ Invalid choice. Please select 0-6.")
             
-            input("\nPress Enter to continue...")
+            if choice != '0':
+                if self.safe_input() is None:
+                    break
     
     def run_feature_engineering_analysis(self):
         """Run Feature Engineering analysis menu."""
         while True:
             self.print_feature_engineering_menu()
-            choice = input("Select option (1-9): ").strip()
+            try:
+                choice = input("Select option (0-8): ").strip()
+            except EOFError:
+                print("\n👋 Goodbye!")
+                break
             
-            if choice == '1':
+            if choice == '0':
+                break
+            elif choice == '1':
                 self.generate_all_features()
             elif choice == '2':
                 print("⏳ Proprietary Features - Coming soon!")
@@ -710,12 +737,12 @@ class InteractiveSystem:
                 print("⏳ Feature Selection - Coming soon!")
             elif choice == '8':
                 self.show_feature_summary()
-            elif choice == '9':
-                break
             else:
-                print("❌ Invalid choice. Please select 1-9.")
+                print("❌ Invalid choice. Please select 0-8.")
             
-            input("\nPress Enter to continue...")
+            if choice != '0':
+                if self.safe_input() is None:
+                    break
     
     def run_visualization_analysis(self):
         """Run visualization analysis menu."""
@@ -723,7 +750,7 @@ class InteractiveSystem:
         print("-" * 30)
         print("⏳ Visualization features coming soon!")
         print("   This will include interactive charts, plots, and export capabilities.")
-        input("\nPress Enter to continue...")
+        self.safe_input()
     
     def run_model_development(self):
         """Run model development menu."""
@@ -731,7 +758,7 @@ class InteractiveSystem:
         print("-" * 30)
         print("⏳ Model development features coming soon!")
         print("   This will include ML pipeline, model training, and evaluation.")
-        input("\nPress Enter to continue...")
+        self.safe_input()
     
     def show_help(self):
         """Show help information."""
@@ -751,7 +778,7 @@ class InteractiveSystem:
         print("   • Ensure your data has at least 500 rows for optimal feature generation")
         print("   • Use OHLCV (Open, High, Low, Close, Volume) format for best results")
         print("   • The system automatically handles missing values and data validation")
-        input("\nPress Enter to continue...")
+        self.safe_input()
     
     def show_system_info(self):
         """Show system information."""
@@ -765,7 +792,7 @@ class InteractiveSystem:
         if self.current_data is not None:
             print(f"   Shape: {self.current_data.shape}")
         print(f"📋 Results available: {len(self.current_results)}")
-        input("\nPress Enter to continue...")
+        self.safe_input()
     
     def run(self):
         """Run the interactive system."""
@@ -773,7 +800,11 @@ class InteractiveSystem:
         
         while True:
             self.print_main_menu()
-            choice = input("Select option (1-9): ").strip()
+            try:
+                choice = input("Select option (0-8): ").strip()
+            except EOFError:
+                print("\n👋 Goodbye!")
+                break
             
             if choice == '1':
                 self.load_data()
@@ -791,15 +822,16 @@ class InteractiveSystem:
                 self.show_help()
             elif choice == '8':
                 self.show_system_info()
-            elif choice == '9':
+            elif choice == '0':
                 print("\n👋 Thank you for using NeoZork HLD Prediction Interactive System!")
                 print("   Goodbye!")
                 break
             else:
-                print("❌ Invalid choice. Please select 1-9.")
+                print("❌ Invalid choice. Please select 0-8.")
             
-            if choice != '9':
-                input("\nPress Enter to continue...")
+            if choice != '0':
+                if self.safe_input() is None:
+                    break
 
 
 def main():
