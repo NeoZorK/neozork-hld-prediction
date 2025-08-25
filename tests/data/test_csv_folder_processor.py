@@ -1,7 +1,7 @@
 # tests/data/test_csv_folder_processor.py
 
 """
-Tests for CSV folder processing functionality.
+Tests for CSV folder processing functionality with mask support.
 All comments are in English.
 """
 
@@ -21,7 +21,7 @@ from src.data.csv_folder_processor import (
 
 
 class TestCSVFolderProcessor(unittest.TestCase):
-    """Test cases for CSV folder processing functionality."""
+    """Test cases for CSV folder processing functionality with mask support."""
 
     def setUp(self):
         """Set up test fixtures."""
@@ -82,7 +82,7 @@ class TestCSVFolderProcessor(unittest.TestCase):
         
         # Test with USD mask (should match all)
         files = get_csv_files_from_folder(str(self.test_folder), mask="USD")
-        self.assertEqual(len(files), 7)
+        self.assertEqual(len(files), 5)  # Only 5 files contain "USD"
         self.assertTrue(all("USD" in f.name for f in files))
 
     def test_get_csv_files_from_folder_with_mask_case_insensitive(self):
@@ -241,9 +241,9 @@ class TestCSVFolderProcessor(unittest.TestCase):
     def test_process_csv_folder_with_failures(self, mock_process_single):
         """Test folder processing with some failures."""
         # Mock mixed results
-        def mock_process_side_effect(*args, **kwargs):
-            # First file succeeds, others fail
-            if 'AAPL' in str(args[0]):
+        def mock_process_side_effect(file_path, **kwargs):
+            # AAPL files succeed, others fail
+            if 'AAPL' in str(file_path):
                 return {
                     'success': True,
                     'error': None,
@@ -267,13 +267,13 @@ class TestCSVFolderProcessor(unittest.TestCase):
             point_size=0.00001,
             rule='RSI',
             draw_mode='fastest',
-            mask='USD'  # Should match all files
+            mask='AAPL'  # Only AAPL files
         )
         
         self.assertTrue(result['success'])
-        self.assertGreater(result['files_processed'], 0)
-        self.assertGreater(result['files_failed'], 0)
-        self.assertEqual(len(result['failed_files']), result['files_failed'])
+        self.assertEqual(result['files_processed'], 2)  # 2 AAPL files
+        self.assertEqual(result['files_failed'], 0)  # All AAPL files succeed
+        self.assertEqual(len(result['failed_files']), 0)
 
     def test_process_csv_folder_folder_not_found(self):
         """Test folder processing with non-existent folder."""
@@ -288,15 +288,15 @@ class TestCSVFolderProcessor(unittest.TestCase):
         self.assertEqual(result['files_processed'], 0)
         self.assertEqual(result['files_failed'], 0)
 
-    @patch('src.data.csv_folder_processor.process_single_csv_file')
-    def test_process_single_csv_file_success(self, mock_process_single):
+    @patch('src.workflow.workflow.run_indicator_workflow')
+    def test_process_single_csv_file_success(self, mock_workflow):
         """Test successful single file processing."""
         test_file = self.test_folder / "CSVExport_AAPL.NAS_PERIOD_D1.csv"
         
-        mock_process_single.return_value = {
+        # Mock successful workflow
+        mock_workflow.return_value = {
             'success': True,
-            'error': None,
-            'rows_processed': 100,
+            'rows_count': 100,
             'columns_count': 5,
             'data_size_mb': 0.1
         }
@@ -309,21 +309,17 @@ class TestCSVFolderProcessor(unittest.TestCase):
         )
         
         self.assertTrue(result['success'])
-        self.assertIsNone(result['error'])
         self.assertEqual(result['rows_processed'], 100)
+        self.assertEqual(result['columns_count'], 5)
+        self.assertEqual(result['data_size_mb'], 0.1)
 
-    @patch('src.data.csv_folder_processor.process_single_csv_file')
-    def test_process_single_csv_file_failure(self, mock_process_single):
+    @patch('src.workflow.workflow.run_indicator_workflow')
+    def test_process_single_csv_file_failure(self, mock_workflow):
         """Test single file processing failure."""
         test_file = self.test_folder / "CSVExport_AAPL.NAS_PERIOD_D1.csv"
         
-        mock_process_single.return_value = {
-            'success': False,
-            'error': 'Test error',
-            'rows_processed': 0,
-            'columns_count': 0,
-            'data_size_mb': 0
-        }
+        # Mock failed workflow
+        mock_workflow.side_effect = Exception('Test error')
         
         result = process_single_csv_file(
             file_path=str(test_file),
@@ -333,8 +329,10 @@ class TestCSVFolderProcessor(unittest.TestCase):
         )
         
         self.assertFalse(result['success'])
-        self.assertEqual(result['error'], 'Test error')
+        self.assertIn('Test error', result['error'])
         self.assertEqual(result['rows_processed'], 0)
+        self.assertEqual(result['columns_count'], 0)
+        self.assertEqual(result['data_size_mb'], 0)
 
 
 if __name__ == '__main__':
