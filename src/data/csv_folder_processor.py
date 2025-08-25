@@ -198,96 +198,64 @@ def process_csv_folder(
             import sys
             sys.stdout.flush()
             
-            # Create file-specific progress bar
-            with tqdm(
-                total=1,
-                desc=f"File {i+1}/{len(csv_files)}: {file_name}",
-                unit="file",
-                position=1,
-                leave=True,
-                ncols=100,
-                ascii=False,
-                dynamic_ncols=True,
-                mininterval=0.1,
-                maxinterval=1.0,
-                disable=False,
-                file=sys.stdout,
-                bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]'
-            ) as file_pbar:
+            try:
+                file_start_time = time.time()
                 
-                try:
-                    file_start_time = time.time()
-                    
-                    # Process single CSV file
-                    file_result = process_single_csv_file(
-                        file_path=str(file_path),
-                        point_size=point_size,
-                        rule=rule,
-                        draw_mode=draw_mode,
-                        export_formats=export_formats,
-                        suppress_browser=True,  # Suppress browser opening for folder processing
-                        suppress_plots=True     # Suppress plot saving for folder processing
-                    )
-                    
-                    file_end_time = time.time()
-                    file_duration = file_end_time - file_start_time
-                    
-                    # Update file progress
-                    file_pbar.update(1)
-                    file_pbar.set_postfix({
-                        'size': f"{file_size_mb:.1f}MB",
-                        'time': f"{file_duration:.1f}s"
-                    })
-                    file_pbar.refresh()
-                    
-                    # Force flush to ensure progress bars are visible
-                    import sys
-                    sys.stdout.flush()
-                    
-                    # Store file result
-                    file_result['file_name'] = file_name
-                    file_result['file_size_mb'] = file_size_mb
-                    file_result['processing_time'] = file_duration
-                    results['file_results'].append(file_result)
-                    
-                    if file_result.get('success', False):
-                        results['files_processed'] += 1
-                    else:
-                        results['files_failed'] += 1
-                        results['failed_files'].append(file_name)
-                    
-                except Exception as e:
-                    file_duration = time.time() - file_start_time
-                    file_pbar.update(1)
-                    file_pbar.set_postfix({
-                        'size': f"{file_size_mb:.1f}MB",
-                        'time': f"{file_duration:.1f}s",
-                        'error': 'Failed'
-                    })
-                    file_pbar.refresh()
-                    
-                    # Force flush to ensure progress bars are visible
-                    import sys
-                    sys.stdout.flush()
-                    
-                    results['files_failed'] += 1
-                    results['failed_files'].append(file_name)
-                    # Log error details for debugging but don't print to avoid interfering with progress bars
-                    print_debug(f"❌ Error processing {file_name}: {e}")
-                    print_debug(f"Traceback: {traceback.format_exc()}")
+                # Process single CSV file
+                file_result = process_single_csv_file(
+                    file_path=str(file_path),
+                    point_size=point_size,
+                    rule=rule,
+                    draw_mode=draw_mode,
+                    export_formats=export_formats,
+                    suppress_browser=True,  # Suppress browser opening for folder processing
+                    suppress_plots=True     # Suppress plot saving for folder processing
+                )
                 
-                # Update overall progress
-                overall_pbar.update(1)
-                overall_pbar.set_postfix({
-                    'processed': results['files_processed'],
-                    'failed': results['files_failed'],
-                    'size': f"{total_size_mb:.1f}MB"
-                })
-                overall_pbar.refresh()
+                file_end_time = time.time()
+                file_duration = file_end_time - file_start_time
                 
                 # Force flush to ensure progress bars are visible
                 import sys
                 sys.stdout.flush()
+                
+                # Store file result
+                file_result['file_name'] = file_name
+                file_result['file_size_mb'] = file_size_mb
+                file_result['processing_time'] = file_duration
+                results['file_results'].append(file_result)
+                
+                if file_result.get('success', False):
+                    results['files_processed'] += 1
+                else:
+                    results['files_failed'] += 1
+                    results['failed_files'].append(file_name)
+                
+            except Exception as e:
+                file_duration = time.time() - file_start_time
+                
+                # Force flush to ensure progress bars are visible
+                import sys
+                sys.stdout.flush()
+                
+                results['files_failed'] += 1
+                results['failed_files'].append(file_name)
+                # Log error details for debugging but don't print to avoid interfering with progress bars
+                print_debug(f"❌ Error processing {file_name}: {e}")
+                print_debug(f"Traceback: {traceback.format_exc()}")
+            
+            # Update overall progress
+            overall_pbar.update(1)
+            overall_pbar.set_postfix({
+                'processed': results['files_processed'],
+                'failed': results['files_failed'],
+                'size': f"{total_size_mb:.1f}MB"
+            })
+            overall_pbar.refresh()
+            
+            # Force flush to ensure progress bars are visible
+            import sys
+            sys.stdout.flush()
     
     # Calculate total processing time
     total_time = time.time() - start_time
