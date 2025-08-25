@@ -66,8 +66,9 @@ class TestWaveHelpEnhancement:
         script_path = project_root / "run_analysis.py"
         
         # Run the command with invalid parameters to trigger help
+        # Use a specific file search to ensure single file mode is triggered
         result = subprocess.run(
-            [sys.executable, str(script_path), "show", "csv", "mn1", "-d", "fastest", "--rule", "wave:invalid"],
+            [sys.executable, str(script_path), "show", "csv", "EURUSD", "MN1", "-d", "fastest", "--rule", "wave:invalid"],
             capture_output=True,
             text=True,
             cwd=project_root
