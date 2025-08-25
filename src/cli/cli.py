@@ -173,7 +173,9 @@ def parse_arguments():
     data_source_group = parser.add_argument_group('Data Source Options')
     # CSV options
     data_source_group.add_argument('--csv-file', metavar='PATH',
-                                   help="Path to input CSV file (required for 'csv' mode)")
+                                   help="Path to input CSV file (required for 'csv' mode when processing single file)")
+    data_source_group.add_argument('--csv-folder', metavar='PATH',
+                                   help="Path to folder containing CSV files (required for 'csv' mode when processing multiple files)")
     # API options (Yahoo Finance / Polygon.io / Binance)
     data_source_group.add_argument('--ticker', metavar='SYMBOL',
                                    help="Ticker symbol. Examples: 'EURUSD=X' (yfinance), 'AAPL' (polygon), 'BTCUSDT' (binance)")
@@ -488,10 +490,17 @@ def parse_arguments():
 
     # Check requirements for CSV mode
     if effective_mode == 'csv':
-        if not args.csv_file:
-            parser.error("argument --csv-file is required when mode is 'csv'")
+        if not args.csv_file and not args.csv_folder:
+            parser.error("argument --csv-file or --csv-folder is required when mode is 'csv'")
+        if args.csv_file and args.csv_folder:
+            parser.error("cannot use both --csv-file and --csv-folder together")
         if args.point is None:
-            parser.error("argument --point is required when mode is 'csv'")
+            # Set default point value for folder processing
+            if args.csv_folder:
+                args.point = 0.00001
+                print(f"{Fore.YELLOW}Using default point value 0.00001 for folder processing{Style.RESET_ALL}")
+            else:
+                parser.error("argument --point is required when mode is 'csv' with --csv-file")
 
     # Check requirements for API modes (yfinance, polygon, binance, exrate)
     api_modes = ['yfinance', 'polygon', 'binance', 'exrate']
@@ -586,11 +595,16 @@ def parse_arguments():
         args.fee_per_trade = 0.07
 
     # --- Restrict export flags for forbidden modes ---
-    # Allow export flags only for demo and show (except show ind)
-    forbidden_export_modes = ['yfinance', 'csv', 'polygon', 'binance', 'exrate']
+    # Allow export flags only for demo, show (except show ind), and csv folder mode
+    forbidden_export_modes = ['yfinance', 'polygon', 'binance', 'exrate']
     if effective_mode in forbidden_export_modes:
         if getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False) or getattr(args, 'export_indicators_info', False):
             parser.error("Export flags (--export-parquet, --export-csv, --export-json, --export-indicators-info) are only allowed in 'demo' and 'show' modes (except 'show ind'). Use 'show' mode to export indicators from downloaded data.")
+    
+    # Special handling for CSV mode - allow export only for folder processing
+    if effective_mode == 'csv':
+        if args.csv_file and (getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False) or getattr(args, 'export_indicators_info', False)):
+            parser.error("Export flags (--export-parquet, --export-csv, --export-json, --export-indicators-info) are only allowed in 'demo', 'show' modes, and CSV folder processing. Use 'show' mode to export indicators from single CSV files.")
     # Disallow export flags for 'show ind' (indicator viewing)
     if effective_mode == 'show' and hasattr(args, 'source') and args.source == 'ind':
         if getattr(args, 'export_parquet', False) or getattr(args, 'export_csv', False) or getattr(args, 'export_json', False) or getattr(args, 'export_indicators_info', False):

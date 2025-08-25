@@ -99,12 +99,39 @@ uv run run_analysis.py csv --csv-file data/custom.csv --point 0.01 --rule MACD \
 ```
 
 #### CSV Options
-- **`--csv-file`** - Path to CSV file (required)
-- **`--point`** - Price precision (required)
+- **`--csv-file`** - Path to CSV file (required for single file processing)
+- **`--csv-folder`** - Path to folder containing CSV files (required for batch processing)
+- **`--point`** - Price precision (required for single file, defaults to 0.00001 for folder)
 - **`--rule`** - Trading rule(s) to apply
 - **`--date-col`** - Column name for timestamps
 - **`--price-cols`** - Comma-separated OHLC column names
 - **`--volume-col`** - Column name for volume data
+
+### 4b. CSV Folder Mode ⭐ **NEW**
+
+Process all CSV files in a folder with progress bars and ETA.
+
+```bash
+# Process all CSV files in folder
+uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001
+
+# Process folder with specific rule
+uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --rule RSI
+
+# Process folder with fastest backend
+uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 -d fastest
+
+# Process folder with export
+uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --export-parquet
+```
+
+#### CSV Folder Features
+- **Batch processing** - Process all CSV files in a folder
+- **Progress bars** - Two-level progress tracking (overall + per file)
+- **ETA calculation** - Estimated time remaining
+- **File information** - Size and processing time per file
+- **Error handling** - Continue processing even if some files fail
+- **Default point value** - Automatically uses 0.00001 for folder processing
 
 ### 5. Exchange Rate Mode
 

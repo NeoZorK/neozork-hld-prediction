@@ -99,6 +99,16 @@ Working with different financial data sources.
 - Binance cryptocurrency data
 - MQL5 MetaTrader data
 
+### [CSV Folder Processing Guide](csv-folder-processing.md) ⭐ **NEW**
+Batch processing multiple CSV files with progress tracking.
+
+**Features:**
+- **Batch Processing**: Process all CSV files in a folder automatically
+- **Progress Bars**: Two-level progress tracking (overall + per file)
+- **ETA Calculation**: Estimated time remaining for completion
+- **Error Handling**: Continue processing even if some files fail
+- **Export Support**: Export results in multiple formats
+
 ### [Machine Learning Guide](../ml/index.md) ⭐ **NEW**
 Comprehensive machine learning platform documentation.
 

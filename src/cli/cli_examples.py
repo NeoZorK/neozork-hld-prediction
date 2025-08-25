@@ -54,6 +54,12 @@ def show_cli_examples_colored():
     print(f"  {Fore.GREEN}CSV with PV rule, seaborn backend:{Style.RESET_ALL}     python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d seaborn")
     print(f"  {Fore.GREEN}CSV with PV rule, terminal backend:{Style.RESET_ALL}    python run_analysis.py csv --csv-file data.csv --point 0.01 --rule PV -d term")
     print()
+    print(f"{Fore.YELLOW}{Style.BRIGHT}4b. CSV FOLDER MODES (NEW){Style.RESET_ALL}")
+    print(f"  {Fore.GREEN}Process all CSV files in folder:{Style.RESET_ALL}       python run_analysis.py csv --csv-folder mql5_feed --point 0.00001")
+    print(f"  {Fore.GREEN}Process folder with RSI rule:{Style.RESET_ALL}          python run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --rule RSI")
+    print(f"  {Fore.GREEN}Process folder with fastest backend:{Style.RESET_ALL}    python run_analysis.py csv --csv-folder mql5_feed --point 0.00001 -d fastest")
+    print(f"  {Fore.GREEN}Process folder with export:{Style.RESET_ALL}            python run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --export-parquet")
+    print()
 
     print(f"{Fore.YELLOW}{Style.BRIGHT}5. YAHOO FINANCE (YF) MODES{Style.RESET_ALL}")
     print(f"  {Fore.GREEN}EURUSD=X, 1mo, point size:{Style.RESET_ALL}            python run_analysis.py yf -t EURUSD=X --period 1mo --point 0.00001")

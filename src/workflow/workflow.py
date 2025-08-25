@@ -126,7 +126,31 @@ def run_indicator_workflow(args):
 
         ohlcv_df = data_info.get("ohlcv_df") # Get DataFrame
 
-        # --- Critical Check ---
+        # --- Special handling for CSV folder processing ---
+        if (args.mode == 'csv' and hasattr(args, 'csv_folder') and args.csv_folder and 
+            data_info.get("folder_processing_results")):
+            
+            # For folder processing, we already have results from the processor
+            folder_results = data_info.get("folder_processing_results", {})
+            
+            # Update workflow results with folder processing info
+            workflow_results.update({
+                "success": folder_results.get('success', False),
+                "files_processed": folder_results.get('files_processed', 0),
+                "files_failed": folder_results.get('files_failed', 0),
+                "total_processing_time": folder_results.get('total_time', 0),
+                "total_size_mb": folder_results.get('total_size_mb', 0),
+                "failed_files": folder_results.get('failed_files', []),
+                "folder_processing_results": folder_results
+            })
+            
+            # For folder processing, we skip the normal workflow steps
+            # since each file was processed individually in the folder processor
+            logger.print_success(f"CSV folder processing completed: {folder_results.get('files_processed', 0)} files processed, {folder_results.get('files_failed', 0)} failed")
+            
+            return workflow_results
+
+        # --- Critical Check for single file processing ---
         if ohlcv_df is None or ohlcv_df.empty:
             error_msg_from_data = data_info.get("error_message") or "Data acquisition returned None or empty DataFrame."
             raise ValueError(error_msg_from_data)

@@ -400,6 +400,11 @@ uv run run_analysis.py yfinance AAPL --rule RSI
 # CSV analysis (fixed volume indicators)
 uv run run_analysis.py show csv mn1 -d fastest --rule obv:
 
+# CSV folder processing (NEW!)
+uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001
+uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --rule RSI
+uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 -d fastest
+
 # Interactive analysis
 uv run run_analysis.py interactive
 ```

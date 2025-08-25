@@ -118,27 +118,75 @@ def acquire_data(args) -> dict:
             return data_info
 
         elif effective_mode == 'csv':
-            data_info["data_source_label"] = args.csv_file
-            csv_column_mapping = {
-                'Open': 'Open,', 'High': 'High,', 'Low': 'Low,',
-                'Close': 'Close,', 'Volume': 'TickVolume,'
-            }
-            csv_datetime_column = 'DateTime,'
-            df = fetch_csv_data(
-                file_path=args.csv_file, ohlc_columns=csv_column_mapping,
-                datetime_column=csv_datetime_column, skiprows=1, separator=','
-            )
-            if df is None or df.empty:
-                error_msg = f"Failed to read or process CSV file: {args.csv_file}. Check logs for details."
-                raise ValueError(error_msg)
-            if args.csv_file and Path(args.csv_file).exists():
-                try:
-                    combined_metrics["file_size_bytes"] = Path(args.csv_file).stat().st_size
-                except Exception:
-                    pass
-            combined_metrics["api_latency_sec"] = 0.0;
-            combined_metrics["api_calls"] = 0
-            data_info["ohlcv_df"] = df
+            # Check if processing folder or single file
+            if hasattr(args, 'csv_folder') and args.csv_folder:
+                # Process folder with multiple CSV files
+                from src.data.csv_folder_processor import process_csv_folder
+                
+                data_info["data_source_label"] = f"CSV Folder: {args.csv_folder}"
+                
+                # Determine export formats
+                export_formats = []
+                if getattr(args, 'export_parquet', False):
+                    export_formats.append('parquet')
+                if getattr(args, 'export_csv', False):
+                    export_formats.append('csv')
+                if getattr(args, 'export_json', False):
+                    export_formats.append('json')
+                
+                # Process the folder
+                folder_results = process_csv_folder(
+                    folder_path=args.csv_folder,
+                    point_size=args.point,
+                    rule=getattr(args, 'rule', 'OHLCV'),
+                    draw_mode=getattr(args, 'draw', None),
+                    export_formats=export_formats if export_formats else None
+                )
+                
+                # Store folder processing results
+                data_info["folder_processing_results"] = folder_results
+                data_info["files_processed"] = folder_results.get('files_processed', 0)
+                data_info["files_failed"] = folder_results.get('files_failed', 0)
+                data_info["total_processing_time"] = folder_results.get('total_time', 0)
+                data_info["total_size_mb"] = folder_results.get('total_size_mb', 0)
+                
+                # For folder processing, we don't return a single DataFrame
+                # Instead, we return success status and processing results
+                if folder_results.get('success', False):
+                    data_info["success"] = True
+                    # Create a dummy DataFrame for compatibility
+                    df = pd.DataFrame({'dummy': [1]})
+                    data_info["ohlcv_df"] = df
+                else:
+                    error_msg = f"Failed to process CSV folder: {args.csv_folder}"
+                    raise ValueError(error_msg)
+                
+                combined_metrics["api_latency_sec"] = 0.0
+                combined_metrics["api_calls"] = 0
+                
+            else:
+                # Process single CSV file (existing logic)
+                data_info["data_source_label"] = args.csv_file
+                csv_column_mapping = {
+                    'Open': 'Open,', 'High': 'High,', 'Low': 'Low,',
+                    'Close': 'Close,', 'Volume': 'TickVolume,'
+                }
+                csv_datetime_column = 'DateTime,'
+                df = fetch_csv_data(
+                    file_path=args.csv_file, ohlc_columns=csv_column_mapping,
+                    datetime_column=csv_datetime_column, skiprows=1, separator=','
+                )
+                if df is None or df.empty:
+                    error_msg = f"Failed to read or process CSV file: {args.csv_file}. Check logs for details."
+                    raise ValueError(error_msg)
+                if args.csv_file and Path(args.csv_file).exists():
+                    try:
+                        combined_metrics["file_size_bytes"] = Path(args.csv_file).stat().st_size
+                    except Exception:
+                        pass
+                combined_metrics["api_latency_sec"] = 0.0;
+                combined_metrics["api_calls"] = 0
+                data_info["ohlcv_df"] = df
 
         elif effective_mode in ['yfinance', 'polygon', 'binance', 'exrate']:
             is_period_request = effective_mode == 'yfinance' and args.period
