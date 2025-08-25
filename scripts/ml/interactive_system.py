@@ -148,20 +148,18 @@ class InteractiveSystem:
         print("-" * 30)
         print("Choose loading method:")
         print("0. 🔙 Back to Main Menu")
-        print("1. 📄 Load single file")
-        print("2. 📁 Load all files from folder")
-        print("3. 🔍 Load files by mask (e.g., 'gbpusd' for all GBPUSD files)")
+        print("1. 📄 Load single file from data folder")
+        print("2. 📁 Load all files from folder (with optional mask)")
         print("-" * 30)
-        print("\n💡 Examples for 'data' folder:")
-        print("   Single file: data/sample_ohlcv_1000.csv")
-        print("   Folder: data/")
-        print("   Mask: 'sample' (finds sample_ohlcv_*.csv files)")
-        print("   Mask: 'parquet' (finds *.parquet files)")
-        print("   Mask: 'binance' (finds binance_*.parquet files)")
+        print("\n💡 Examples:")
+        print("   Single file: sample_ohlcv_1000.csv")
+        print("   Folder: data")
+        print("   Folder with mask: data gbpusd (loads all files with 'gbpusd' in name)")
+        print("   Folder with mask: data parquet (loads all .parquet files)")
         print("-" * 30)
         
         try:
-            choice = input("Enter choice (0-3): ").strip()
+            choice = input("Enter choice (0-2): ").strip()
         except EOFError:
             print("\n👋 Goodbye!")
             return False
@@ -172,34 +170,60 @@ class InteractiveSystem:
             return self._load_single_file()
         elif choice == "2":
             return self._load_folder_files()
-        elif choice == "3":
-            return self._load_files_by_mask()
         else:
-            print("❌ Invalid choice. Please select 0-3.")
+            print("❌ Invalid choice. Please select 0-2.")
             return False
     
     def _load_single_file(self) -> bool:
-        """Load a single data file."""
-        print("\n📄 LOAD SINGLE FILE")
-        print("-" * 30)
-        print("💡 Available files in 'data' folder:")
-        print("   • data/sample_ohlcv_1000.csv (1000 rows)")
-        print("   • data/sample_ohlcv_2000.csv (2000 rows)")
-        print("   • data/sample_ohlcv_1000.parquet (1000 rows)")
-        print("   • data/sample_ohlcv_2000.parquet (2000 rows)")
-        print("   • data/raw_parquet/binance_BTCUSDT_H1.parquet (420 rows)")
-        print("   • data/raw_parquet/yfinance_AAPL_D1.parquet (11 rows)")
+        """Load a single data file from data folder."""
+        print("\n📄 LOAD SINGLE FILE FROM DATA FOLDER")
         print("-" * 30)
         
-        file_path = input("Enter data file path (CSV, Parquet, etc.): ").strip()
+        # Scan data folder for available files
+        data_folder = Path("data")
+        if not data_folder.exists():
+            print("❌ Data folder not found. Please ensure 'data' folder exists.")
+            return False
+        
+        # Find all data files in data folder and subfolders
+        data_files = []
+        for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
+            data_files.extend(data_folder.rglob(f"*{ext}"))
+        
+        if not data_files:
+            print("❌ No data files found in data folder")
+            return False
+        
+        print("💡 Available files in 'data' folder:")
+        for i, file in enumerate(data_files[:10], 1):  # Show first 10 files
+            rel_path = file.relative_to(data_folder)
+            print(f"   {i}. {rel_path}")
+        
+        if len(data_files) > 10:
+            print(f"   ... and {len(data_files) - 10} more files")
+        
+        print("-" * 30)
+        file_name = input("Enter file name (e.g., sample_ohlcv_1000.csv): ").strip()
+        
+        if not file_name:
+            print("❌ No file name provided")
+            return False
+        
+        # Try to find the file
+        file_path = None
+        for file in data_files:
+            if file.name == file_name or str(file.relative_to(data_folder)) == file_name:
+                file_path = file
+                break
         
         if not file_path:
-            print("❌ No file path provided")
+            print(f"❌ File '{file_name}' not found in data folder")
             return False
             
         try:
-            self.current_data = self.load_data_from_file(file_path)
+            self.current_data = self.load_data_from_file(str(file_path))
             print(f"✅ Data loaded successfully!")
+            print(f"   File: {file_path.relative_to(data_folder)}")
             print(f"   Shape: {self.current_data.shape[0]} rows × {self.current_data.shape[1]} columns")
             print(f"   Columns: {list(self.current_data.columns)}")
             
@@ -217,21 +241,32 @@ class InteractiveSystem:
             return False
     
     def _load_folder_files(self) -> bool:
-        """Load all data files from a folder."""
+        """Load all data files from a folder with optional mask."""
         print("\n📁 LOAD ALL FILES FROM FOLDER")
         print("-" * 30)
         print("💡 Available folders:")
-        print("   • data/ (main data folder with CSV and Parquet files)")
-        print("   • data/raw_parquet/ (raw data files)")
-        print("   • data/indicators/ (calculated indicators)")
-        print("   • data/cache/csv_converted/ (converted CSV files)")
+        print("   • data (main data folder)")
+        print("   • data/raw_parquet (raw data files)")
+        print("   • data/indicators (calculated indicators)")
+        print("   • data/cache/csv_converted (converted CSV files)")
+        print("-" * 30)
+        print("💡 Examples:")
+        print("   • data (loads all files from data folder)")
+        print("   • data gbpusd (loads all files with 'gbpusd' in name)")
+        print("   • data parquet (loads all .parquet files)")
+        print("   • data binance (loads all files with 'binance' in name)")
         print("-" * 30)
         
-        folder_path = input("Enter folder path: ").strip()
+        input_text = input("Enter folder path (with optional mask): ").strip()
         
-        if not folder_path:
+        if not input_text:
             print("❌ No folder path provided")
             return False
+        
+        # Parse input for folder and mask
+        parts = input_text.split()
+        folder_path = parts[0]
+        mask = parts[1].lower() if len(parts) > 1 else None
             
         folder_path = Path(folder_path)
         if not folder_path.exists() or not folder_path.is_dir():
@@ -241,10 +276,27 @@ class InteractiveSystem:
         # Find all data files
         data_files = []
         for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
-            data_files.extend(folder_path.glob(f"*{ext}"))
+            if mask:
+                # Apply mask filter
+                pattern = f"*{mask}*{ext}"
+                data_files.extend(folder_path.glob(pattern))
+                # Also try case-insensitive search
+                pattern = f"*{mask.upper()}*{ext}"
+                data_files.extend(folder_path.glob(pattern))
+                pattern = f"*{mask.lower()}*{ext}"
+                data_files.extend(folder_path.glob(pattern))
+            else:
+                # No mask, get all files
+                data_files.extend(folder_path.glob(f"*{ext}"))
+        
+        # Remove duplicates
+        data_files = list(set(data_files))
         
         if not data_files:
-            print(f"❌ No data files found in {folder_path}")
+            if mask:
+                print(f"❌ No files found matching mask '{mask}' in {folder_path}")
+            else:
+                print(f"❌ No data files found in {folder_path}")
             return False
         
         print(f"📁 Found {len(data_files)} data files:")
@@ -271,6 +323,8 @@ class InteractiveSystem:
         print(f"\n✅ Combined data loaded successfully!")
         print(f"   Total shape: {self.current_data.shape[0]} rows × {self.current_data.shape[1]} columns")
         print(f"   Files loaded: {len(all_data)}")
+        if mask:
+            print(f"   Mask used: '{mask}'")
         print(f"   Columns: {list(self.current_data.columns)}")
         
         # Show data preview
@@ -282,89 +336,7 @@ class InteractiveSystem:
         
         return True
     
-    def _load_files_by_mask(self) -> bool:
-        """Load files by mask pattern."""
-        print("\n🔍 LOAD FILES BY MASK")
-        print("-" * 30)
-        print("💡 Example combinations:")
-        print("   Folder: data/")
-        print("   • Mask: 'sample' → finds sample_ohlcv_*.csv files")
-        print("   • Mask: 'parquet' → finds *.parquet files")
-        print("   • Mask: '1000' → finds *1000* files")
-        print("   • Mask: '2000' → finds *2000* files")
-        print("")
-        print("   Folder: data/raw_parquet/")
-        print("   • Mask: 'binance' → finds binance_*.parquet files")
-        print("   • Mask: 'yfinance' → finds yfinance_*.parquet files")
-        print("   • Mask: 'BTC' → finds *BTC* files")
-        print("   • Mask: 'AAPL' → finds *AAPL* files")
-        print("-" * 30)
-        
-        folder_path = input("Enter folder path: ").strip()
-        mask = input("Enter file mask (e.g., 'sample', 'parquet'): ").strip().lower()
-        
-        if not folder_path or not mask:
-            print("❌ Both folder path and mask are required")
-            return False
-            
-        folder_path = Path(folder_path)
-        if not folder_path.exists() or not folder_path.is_dir():
-            print(f"❌ Folder not found: {folder_path}")
-            return False
-        
-        # Find files matching mask
-        data_files = []
-        for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
-            pattern = f"*{mask}*{ext}"
-            data_files.extend(folder_path.glob(pattern))
-            # Also try case-insensitive search
-            pattern = f"*{mask.upper()}*{ext}"
-            data_files.extend(folder_path.glob(pattern))
-            pattern = f"*{mask.lower()}*{ext}"
-            data_files.extend(folder_path.glob(pattern))
-        
-        # Remove duplicates
-        data_files = list(set(data_files))
-        
-        if not data_files:
-            print(f"❌ No files found matching mask '{mask}' in {folder_path}")
-            return False
-        
-        print(f"📁 Found {len(data_files)} files matching '{mask}':")
-        for i, file in enumerate(data_files, 1):
-            print(f"   {i}. {file.name}")
-        
-        # Load all matching files
-        all_data = []
-        for file in data_files:
-            try:
-                df = self.load_data_from_file(str(file))
-                df['source_file'] = file.name  # Add source file info
-                all_data.append(df)
-                print(f"✅ Loaded: {file.name} ({df.shape[0]} rows)")
-            except Exception as e:
-                print(f"❌ Error loading {file.name}: {e}")
-        
-        if not all_data:
-            print("❌ No files could be loaded")
-            return False
-        
-        # Combine all data
-        self.current_data = pd.concat(all_data, ignore_index=True)
-        print(f"\n✅ Combined data loaded successfully!")
-        print(f"   Total shape: {self.current_data.shape[0]} rows × {self.current_data.shape[1]} columns")
-        print(f"   Files loaded: {len(all_data)}")
-        print(f"   Mask used: '{mask}'")
-        print(f"   Columns: {list(self.current_data.columns)}")
-        
-        # Show data preview
-        show_preview = input("\nShow data preview? (y/n): ").strip().lower()
-        if show_preview in ['y', 'yes']:
-            print("\n📋 DATA PREVIEW:")
-            print(self.current_data.head())
-            print(f"\nData types:\n{self.current_data.dtypes}")
-        
-        return True
+
     
     def run_basic_statistics(self):
         """Run basic statistical analysis."""
