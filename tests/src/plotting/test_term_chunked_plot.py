@@ -335,20 +335,22 @@ class TestTermChunkedPlot:
     def test_plot_chunked_terminal_with_navigation(self):
         """Test chunked terminal plotting with navigation."""
         with patch('builtins.print') as mock_print:
-            with patch('builtins.input', return_value='n'):  # Next chunk
+            # Mock input to return 'q' (quit) after first call to avoid infinite loop
+            with patch('builtins.input', side_effect=['n', 'q']):
                 plot_chunked_terminal(self.test_df, rule="ohlcv", use_navigation=True)
                 mock_print.assert_called()
     
     def test_plot_chunked_terminal_with_quit(self):
         """Test chunked terminal plotting with quit command."""
         with patch('builtins.print') as mock_print:
-            with patch('builtins.input', return_value='q'):  # Quit
+            with patch('builtins.input', return_value='q'):  # Quit immediately
                 plot_chunked_terminal(self.test_df, rule="ohlcv", use_navigation=True)
                 mock_print.assert_called()
     
     def test_plot_chunked_terminal_with_invalid_input(self):
         """Test chunked terminal plotting with invalid input."""
         with patch('builtins.print') as mock_print:
-            with patch('builtins.input', return_value='invalid'):
+            # Mock input to return invalid command, then quit to avoid infinite loop
+            with patch('builtins.input', side_effect=['invalid', 'q']):
                 plot_chunked_terminal(self.test_df, rule="ohlcv", use_navigation=True)
                 mock_print.assert_called()
