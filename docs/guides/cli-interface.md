@@ -101,6 +101,7 @@ uv run run_analysis.py csv --csv-file data/custom.csv --point 0.01 --rule MACD \
 #### CSV Options
 - **`--csv-file`** - Path to CSV file (required for single file processing)
 - **`--csv-folder`** - Path to folder containing CSV files (required for batch processing)
+- **`--csv-mask`** - Optional mask to filter CSV files by name (case-insensitive, used with --csv-folder)
 - **`--point`** - Price precision (required for single file, defaults to 0.00001 for folder)
 - **`--rule`** - Trading rule(s) to apply
 - **`--date-col`** - Column name for timestamps
@@ -123,6 +124,15 @@ uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 -d fastest
 
 # Process folder with export
 uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --export-parquet
+
+# Process folder with mask filtering (positional argument)
+uv run run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001
+
+# Process folder with mask filtering (flag)
+uv run run_analysis.py csv --csv-folder mql5_feed --csv-mask AAPL --point 0.00001 --rule RSI
+
+# Process folder with mask and export
+uv run run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001 --export-parquet
 ```
 
 #### CSV Folder Features

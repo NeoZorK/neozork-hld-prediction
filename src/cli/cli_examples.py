@@ -59,6 +59,9 @@ def show_cli_examples_colored():
     print(f"  {Fore.GREEN}Process folder with RSI rule:{Style.RESET_ALL}          python run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --rule RSI")
     print(f"  {Fore.GREEN}Process folder with fastest backend:{Style.RESET_ALL}    python run_analysis.py csv --csv-folder mql5_feed --point 0.00001 -d fastest")
     print(f"  {Fore.GREEN}Process folder with export:{Style.RESET_ALL}            python run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --export-parquet")
+    print(f"  {Fore.GREEN}Process folder with mask (EURUSD files only):{Style.RESET_ALL} python run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001")
+    print(f"  {Fore.GREEN}Process folder with mask and RSI rule:{Style.RESET_ALL}  python run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001 --rule RSI")
+    print(f"  {Fore.GREEN}Process folder with mask and export:{Style.RESET_ALL}    python run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001 --export-parquet")
     print()
 
     print(f"{Fore.YELLOW}{Style.BRIGHT}5. YAHOO FINANCE (YF) MODES{Style.RESET_ALL}")

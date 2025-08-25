@@ -405,6 +405,11 @@ uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001
 uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --rule RSI
 uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 -d fastest
 
+# CSV folder with mask filtering (NEW!)
+uv run run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001
+uv run run_analysis.py csv --csv-folder mql5_feed --csv-mask AAPL --point 0.00001 --rule RSI
+uv run run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001 --export-parquet
+
 # Interactive analysis
 uv run run_analysis.py interactive
 ```

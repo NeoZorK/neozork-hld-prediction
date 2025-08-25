@@ -140,7 +140,8 @@ def acquire_data(args) -> dict:
                     point_size=args.point,
                     rule=getattr(args, 'rule', 'OHLCV'),
                     draw_mode=getattr(args, 'draw', None),
-                    export_formats=export_formats if export_formats else None
+                    export_formats=export_formats if export_formats else None,
+                    mask=getattr(args, 'csv_mask', None)
                 )
                 
                 # Store folder processing results

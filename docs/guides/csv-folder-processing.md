@@ -13,6 +13,7 @@ The CSV folder processing feature allows you to process multiple CSV files in a 
 - **Error Handling**: Continue processing even if some files fail
 - **Default Point Value**: Automatically uses 0.00001 for folder processing
 - **Export Support**: Export results in multiple formats (parquet, CSV, JSON)
+- **Mask Filtering**: Filter files by name using case-insensitive patterns
 
 ## Basic Usage
 
@@ -32,7 +33,48 @@ uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 -d fastest
 uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --export-parquet
 ```
 
+### Process CSV Files with Mask Filtering ⭐ **NEW**
+
+Filter files by name using mask patterns:
+
+```bash
+# Using positional argument (recommended)
+uv run run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001
+
+# Using --csv-mask flag
+uv run run_analysis.py csv --csv-folder mql5_feed --csv-mask AAPL --point 0.00001
+
+# With trading rule
+uv run run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001 --rule RSI
+
+# With export
+uv run run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001 --export-parquet
+
+# Case-insensitive filtering
+uv run run_analysis.py csv --csv-folder mql5_feed eurusd --point 0.00001
+```
+
 ### Advanced Usage
+
+#### Mask Filtering
+
+Filter files by name using mask patterns:
+
+```bash
+# Filter by currency pair
+uv run run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001
+
+# Filter by stock symbol
+uv run run_analysis.py csv --csv-folder mql5_feed --csv-mask AAPL --point 0.00001
+
+# Filter by time period
+uv run run_analysis.py csv --csv-folder mql5_feed D1 --point 0.00001
+
+# Filter by multiple criteria (files containing both EURUSD and D1)
+uv run run_analysis.py csv --csv-folder mql5_feed EURUSD_D1 --point 0.00001
+```
+
+#### Export and Processing Options
 
 ```bash
 # Process folder with multiple export formats
@@ -43,6 +85,9 @@ uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --rule PV -d p
 
 # Process folder with terminal backend for SSH/remote connections
 uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --rule RSI -d term
+
+# Combine mask filtering with export
+uv run run_analysis.py csv --csv-folder mql5_feed EURUSD --point 0.00001 --export-parquet
 ```
 
 ## Command Line Options
@@ -54,6 +99,7 @@ uv run run_analysis.py csv --csv-folder mql5_feed --point 0.00001 --rule RSI -d 
 
 ### Optional Arguments
 
+- **`--csv-mask`**: Filter CSV files by name (case-insensitive, used with --csv-folder)
 - **`--rule`**: Trading rule to apply (default: OHLCV)
 - **`-d`** or **`--draw`**: Drawing backend (fastest, fast, plotly, mpl, seaborn, term)
 - **`--export-parquet`**: Export results to Parquet format
@@ -80,6 +126,11 @@ The folder processing shows two progress bars:
 Found 95 CSV files in folder: mql5_feed
 Total estimated processing time: 47.5 seconds
 Total data size: 6831.5 MB
+
+# With mask filtering:
+Found 12 CSV files in folder 'mql5_feed' matching mask 'EURUSD'
+Total estimated processing time: 6.0 seconds
+Total data size: 864.0 MB
 
 Processing: CSVExport_AAPL.NAS_PERIOD_D1.csv...: 100%|██████████| 95/95 [00:45<00:00, 2.1file/s, processed=93, failed=2, size=6831.5MB]
 

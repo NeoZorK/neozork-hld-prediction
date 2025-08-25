@@ -18,12 +18,13 @@ from src.common.logger import print_info, print_warning, print_error, print_debu
 from src.data.fetchers.csv_fetcher import fetch_csv_data
 
 
-def get_csv_files_from_folder(folder_path: str) -> List[Path]:
+def get_csv_files_from_folder(folder_path: str, mask: Optional[str] = None) -> List[Path]:
     """
-    Get all CSV files from the specified folder.
+    Get all CSV files from the specified folder, optionally filtered by mask.
     
     Args:
         folder_path (str): Path to the folder containing CSV files
+        mask (Optional[str]): Optional mask to filter files by name (case-insensitive)
         
     Returns:
         List[Path]: List of CSV file paths
@@ -41,6 +42,14 @@ def get_csv_files_from_folder(folder_path: str) -> List[Path]:
     
     if not csv_files:
         raise ValueError(f"No CSV files found in folder: {folder_path}")
+    
+    # Apply mask filter if provided
+    if mask:
+        mask_lower = mask.lower()
+        csv_files = [f for f in csv_files if mask_lower in f.name.lower()]
+        
+        if not csv_files:
+            raise ValueError(f"No CSV files found in folder '{folder_path}' matching mask '{mask}'")
     
     # Sort files by name for consistent processing order
     csv_files.sort(key=lambda x: x.name)
@@ -90,7 +99,8 @@ def process_csv_folder(
     point_size: float,
     rule: str = 'OHLCV',
     draw_mode: Optional[str] = None,
-    export_formats: Optional[List[str]] = None
+    export_formats: Optional[List[str]] = None,
+    mask: Optional[str] = None
 ) -> Dict[str, any]:
     """
     Process all CSV files in a folder with progress bars and ETA.
@@ -101,15 +111,16 @@ def process_csv_folder(
         rule (str): Trading rule to apply
         draw_mode (Optional[str]): Drawing mode for plots
         export_formats (Optional[List[str]]): List of export formats
+        mask (Optional[str]): Optional mask to filter files by name (case-insensitive)
         
     Returns:
         Dict[str, any]: Processing results and statistics
     """
     start_time = time.time()
     
-    # Get all CSV files
+    # Get all CSV files (with optional mask filtering)
     try:
-        csv_files = get_csv_files_from_folder(folder_path)
+        csv_files = get_csv_files_from_folder(folder_path, mask)
     except Exception as e:
         print_error(f"Error getting CSV files: {e}")
         return {
@@ -120,7 +131,11 @@ def process_csv_folder(
             'total_time': 0
         }
     
-    print_info(f"Found {len(csv_files)} CSV files in folder: {folder_path}")
+    # Display file count with mask information
+    if mask:
+        print_info(f"Found {len(csv_files)} CSV files in folder '{folder_path}' matching mask '{mask}'")
+    else:
+        print_info(f"Found {len(csv_files)} CSV files in folder: {folder_path}")
     
     # Get file information for all files
     file_infos = []

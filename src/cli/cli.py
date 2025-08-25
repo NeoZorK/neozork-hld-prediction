@@ -176,6 +176,8 @@ def parse_arguments():
                                    help="Path to input CSV file (required for 'csv' mode when processing single file)")
     data_source_group.add_argument('--csv-folder', metavar='PATH',
                                    help="Path to folder containing CSV files (required for 'csv' mode when processing multiple files)")
+    data_source_group.add_argument('--csv-mask', metavar='MASK',
+                                   help="Optional mask to filter CSV files by name (case-insensitive, used with --csv-folder)")
     # API options (Yahoo Finance / Polygon.io / Binance)
     data_source_group.add_argument('--ticker', metavar='SYMBOL',
                                    help="Ticker symbol. Examples: 'EURUSD=X' (yfinance), 'AAPL' (polygon), 'BTCUSDT' (binance)")
@@ -488,12 +490,23 @@ def parse_arguments():
             if len(args.show_args) > 1:
                 args.keywords = args.show_args[1:]
 
+    # Handle positional arguments for 'csv' mode (mask support)
+    if effective_mode == 'csv' and args.show_args:
+        # If positional arguments are provided for CSV mode, treat first as mask
+        if not args.csv_mask:
+            args.csv_mask = args.show_args[0]
+            print(f"{Fore.YELLOW}Using positional argument '{args.csv_mask}' as CSV mask{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.YELLOW}Warning: Both --csv-mask '{args.csv_mask}' and positional argument '{args.show_args[0]}' provided. Using --csv-mask.{Style.RESET_ALL}")
+
     # Check requirements for CSV mode
     if effective_mode == 'csv':
         if not args.csv_file and not args.csv_folder:
             parser.error("argument --csv-file or --csv-folder is required when mode is 'csv'")
         if args.csv_file and args.csv_folder:
             parser.error("cannot use both --csv-file and --csv-folder together")
+        if args.csv_mask and not args.csv_folder:
+            parser.error("argument --csv-mask can only be used with --csv-folder")
         if args.point is None:
             # Set default point value for folder processing
             if args.csv_folder:
