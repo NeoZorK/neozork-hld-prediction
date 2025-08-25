@@ -147,25 +147,28 @@ class InteractiveSystem:
         print("\n📁 LOAD DATA")
         print("-" * 30)
         print("Choose loading method:")
+        print("0. 🔙 Back to Main Menu")
         print("1. 📄 Load single file")
         print("2. 📁 Load all files from folder")
         print("3. 🔍 Load files by mask (e.g., 'gbpusd' for all GBPUSD files)")
         print("-" * 30)
         
         try:
-            choice = input("Enter choice (1-3): ").strip()
+            choice = input("Enter choice (0-3): ").strip()
         except EOFError:
             print("\n👋 Goodbye!")
             return False
         
-        if choice == "1":
+        if choice == "0":
+            return False
+        elif choice == "1":
             return self._load_single_file()
         elif choice == "2":
             return self._load_folder_files()
         elif choice == "3":
             return self._load_files_by_mask()
         else:
-            print("❌ Invalid choice")
+            print("❌ Invalid choice. Please select 0-3.")
             return False
     
     def _load_single_file(self) -> bool:
