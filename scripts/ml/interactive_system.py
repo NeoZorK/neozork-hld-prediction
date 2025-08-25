@@ -135,11 +135,29 @@ class InteractiveSystem:
             raise ValueError(f"Unsupported file format: {file_path.suffix}")
     
     def load_data(self) -> bool:
-        """Load data interactively."""
+        """Load data interactively with support for multiple files."""
         print("\n📁 LOAD DATA")
         print("-" * 30)
+        print("Choose loading method:")
+        print("1. 📄 Load single file")
+        print("2. 📁 Load all files from folder")
+        print("3. 🔍 Load files by mask (e.g., 'gbpusd' for all GBPUSD files)")
+        print("-" * 30)
         
-        # Get file path
+        choice = input("Enter choice (1-3): ").strip()
+        
+        if choice == "1":
+            return self._load_single_file()
+        elif choice == "2":
+            return self._load_folder_files()
+        elif choice == "3":
+            return self._load_files_by_mask()
+        else:
+            print("❌ Invalid choice")
+            return False
+    
+    def _load_single_file(self) -> bool:
+        """Load a single data file."""
         file_path = input("Enter data file path (CSV, Parquet, etc.): ").strip()
         
         if not file_path:
@@ -164,6 +182,131 @@ class InteractiveSystem:
         except Exception as e:
             print(f"❌ Error loading data: {e}")
             return False
+    
+    def _load_folder_files(self) -> bool:
+        """Load all data files from a folder."""
+        folder_path = input("Enter folder path: ").strip()
+        
+        if not folder_path:
+            print("❌ No folder path provided")
+            return False
+            
+        folder_path = Path(folder_path)
+        if not folder_path.exists() or not folder_path.is_dir():
+            print(f"❌ Folder not found: {folder_path}")
+            return False
+        
+        # Find all data files
+        data_files = []
+        for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
+            data_files.extend(folder_path.glob(f"*{ext}"))
+        
+        if not data_files:
+            print(f"❌ No data files found in {folder_path}")
+            return False
+        
+        print(f"📁 Found {len(data_files)} data files:")
+        for i, file in enumerate(data_files, 1):
+            print(f"   {i}. {file.name}")
+        
+        # Load all files
+        all_data = []
+        for file in data_files:
+            try:
+                df = self.load_data_from_file(str(file))
+                df['source_file'] = file.name  # Add source file info
+                all_data.append(df)
+                print(f"✅ Loaded: {file.name} ({df.shape[0]} rows)")
+            except Exception as e:
+                print(f"❌ Error loading {file.name}: {e}")
+        
+        if not all_data:
+            print("❌ No files could be loaded")
+            return False
+        
+        # Combine all data
+        self.current_data = pd.concat(all_data, ignore_index=True)
+        print(f"\n✅ Combined data loaded successfully!")
+        print(f"   Total shape: {self.current_data.shape[0]} rows × {self.current_data.shape[1]} columns")
+        print(f"   Files loaded: {len(all_data)}")
+        print(f"   Columns: {list(self.current_data.columns)}")
+        
+        # Show data preview
+        show_preview = input("\nShow data preview? (y/n): ").strip().lower()
+        if show_preview in ['y', 'yes']:
+            print("\n📋 DATA PREVIEW:")
+            print(self.current_data.head())
+            print(f"\nData types:\n{self.current_data.dtypes}")
+        
+        return True
+    
+    def _load_files_by_mask(self) -> bool:
+        """Load files by mask pattern."""
+        folder_path = input("Enter folder path: ").strip()
+        mask = input("Enter file mask (e.g., 'gbpusd', 'eurusd'): ").strip().lower()
+        
+        if not folder_path or not mask:
+            print("❌ Both folder path and mask are required")
+            return False
+            
+        folder_path = Path(folder_path)
+        if not folder_path.exists() or not folder_path.is_dir():
+            print(f"❌ Folder not found: {folder_path}")
+            return False
+        
+        # Find files matching mask
+        data_files = []
+        for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
+            pattern = f"*{mask}*{ext}"
+            data_files.extend(folder_path.glob(pattern))
+            # Also try case-insensitive search
+            pattern = f"*{mask.upper()}*{ext}"
+            data_files.extend(folder_path.glob(pattern))
+            pattern = f"*{mask.lower()}*{ext}"
+            data_files.extend(folder_path.glob(pattern))
+        
+        # Remove duplicates
+        data_files = list(set(data_files))
+        
+        if not data_files:
+            print(f"❌ No files found matching mask '{mask}' in {folder_path}")
+            return False
+        
+        print(f"📁 Found {len(data_files)} files matching '{mask}':")
+        for i, file in enumerate(data_files, 1):
+            print(f"   {i}. {file.name}")
+        
+        # Load all matching files
+        all_data = []
+        for file in data_files:
+            try:
+                df = self.load_data_from_file(str(file))
+                df['source_file'] = file.name  # Add source file info
+                all_data.append(df)
+                print(f"✅ Loaded: {file.name} ({df.shape[0]} rows)")
+            except Exception as e:
+                print(f"❌ Error loading {file.name}: {e}")
+        
+        if not all_data:
+            print("❌ No files could be loaded")
+            return False
+        
+        # Combine all data
+        self.current_data = pd.concat(all_data, ignore_index=True)
+        print(f"\n✅ Combined data loaded successfully!")
+        print(f"   Total shape: {self.current_data.shape[0]} rows × {self.current_data.shape[1]} columns")
+        print(f"   Files loaded: {len(all_data)}")
+        print(f"   Mask used: '{mask}'")
+        print(f"   Columns: {list(self.current_data.columns)}")
+        
+        # Show data preview
+        show_preview = input("\nShow data preview? (y/n): ").strip().lower()
+        if show_preview in ['y', 'yes']:
+            print("\n📋 DATA PREVIEW:")
+            print(self.current_data.head())
+            print(f"\nData types:\n{self.current_data.dtypes}")
+        
+        return True
     
     def run_basic_statistics(self):
         """Run basic statistical analysis."""

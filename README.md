@@ -74,19 +74,23 @@ Advanced ML capabilities with automated feature engineering and integrated EDA:
 **Quick Start:**
 ```bash
 # Run feature engineering demo
-uv run python scripts/demo_feature_engineering.py
+uv run python scripts/ml/demo_feature_engineering.py
 
 # Run integrated EDA + Feature Engineering pipeline
-./eda_fe --file data.csv --full-pipeline
+python scripts/main/eda_fe --file data.csv --full-pipeline
+
+# Run with multiple files from folder
+python scripts/main/eda_fe --folder data/ --full-pipeline
+
+# Run with files by mask (e.g., all GBPUSD files)
+python scripts/main/eda_fe --folder data/ --mask gbpusd --full-pipeline
 
 # Run interactive system
-./nz_interactive --full
+python scripts/ml/interactive_system.py
 
 # Run ML tests
 uv run pytest tests/ml/ -n auto
 ```
-
-**Note:** The `./eda_fe` and `./nz_interactive` scripts are symbolic links to `scripts/main/eda_fe` and `scripts/main/nz_interactive` for convenience.
 ```
 
 **Documentation:** [Complete ML Documentation](docs/ml/index.md)

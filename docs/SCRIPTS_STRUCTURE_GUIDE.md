@@ -78,10 +78,7 @@ These scripts are accessible from the project root via symbolic links:
 #### `eda_fe` - EDA + Feature Engineering Pipeline
 ```bash
 # From project root
-./eda_fe --file data.csv --full-pipeline
-
-# Direct access
-scripts/main/eda_fe --file data.csv --full-pipeline
+python scripts/main/eda_fe --file data.csv --full-pipeline
 ```
 
 **Features:**
@@ -229,20 +226,20 @@ For user convenience, main scripts are accessible from the project root:
 
 ```bash
 # Symbolic links in project root
-./eda_fe -> scripts/main/eda_fe
-./nz_interactive -> scripts/main/nz_interactive
+# Removed symbolic link - use direct path
+# Removed symbolic link - use direct path
 ```
 
 ### **Usage Examples**
 
 ```bash
 # From project root (recommended)
-./eda_fe --file data.csv --full-pipeline
-./nz_interactive --full
+python scripts/main/eda_fe --file data.csv --full-pipeline
+python scripts/ml/interactive_system.py
 
 # Direct access (for developers)
-scripts/main/eda_fe --file data.csv --full-pipeline
-scripts/main/nz_interactive --full
+python scripts/main/eda_fe --file data.csv --full-pipeline
+python scripts/ml/interactive_system.py
 ```
 
 ---
@@ -268,10 +265,10 @@ scripts/main/nz_interactive --full
 ### **Most Common Commands**
 ```bash
 # EDA + Feature Engineering
-./eda_fe --file data.csv --full-pipeline
+python scripts/main/eda_fe --file data.csv --full-pipeline
 
 # Interactive System
-./nz_interactive --full
+python scripts/ml/interactive_system.py
 
 # Feature Engineering Demo
 python scripts/ml/demo_feature_engineering.py

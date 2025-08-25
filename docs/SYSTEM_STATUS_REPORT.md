@@ -43,7 +43,7 @@ The NeoZork HLD Prediction system has successfully completed Phase 1 integration
 - **Results Export**: JSON, Parquet, and text summaries
 
 ### 4. **Automated Pipeline** ⚙️
-- **Unified Script**: `./eda_fe` for complete EDA + Feature Engineering pipeline
+- **Unified Script**: `python scripts/main/eda_fe` for complete EDA + Feature Engineering pipeline
 - **Flexible Modes**: Full pipeline, EDA-only, features-only
 - **Environment Detection**: Automatic Docker, UV, and native Python support
 - **Comprehensive Reporting**: Text and JSON outputs
@@ -67,11 +67,11 @@ src/ml/feature_engineering/
 ```
 
 ### **Key Scripts**
-- `./eda_fe` - Main pipeline execution
-- `./nz_interactive` - Interactive system launcher
-- `scripts/eda_feature_engineering.py` - Core pipeline logic
-- `scripts/interactive_system.py` - Interactive interface
-- `scripts/demo_feature_engineering.py` - Demonstration script
+- `python scripts/main/eda_fe` - Main pipeline execution
+- `python scripts/ml/interactive_system.py` - Interactive system launcher
+- `scripts/ml/eda_feature_engineering.py` - Core pipeline logic
+- `scripts/ml/interactive_system.py` - Interactive interface
+- `scripts/ml/demo_feature_engineering.py` - Demonstration script
 
 ### **Configuration**
 - **MasterFeatureConfig**: Central system configuration
@@ -108,22 +108,22 @@ src/ml/feature_engineering/
 ### **Quick Start - Full Pipeline**
 ```bash
 # Complete EDA + Feature Engineering
-./eda_fe --file data/sample_ohlcv_1000.csv --full-pipeline
+python scripts/main/eda_fe --file data/sample_ohlcv_1000.csv --full-pipeline
 
 # EDA only
-./eda_fe --file data/sample_ohlcv_1000.csv --eda-only
+python scripts/main/eda_fe --file data/sample_ohlcv_1000.csv --eda-only
 
 # Feature Engineering only
-./eda_fe --file data/sample_ohlcv_1000.csv --features-only
+python scripts/main/eda_fe --file data/sample_ohlcv_1000.csv --features-only
 ```
 
 ### **Interactive System**
 ```bash
 # Full interactive system
-./nz_interactive --full
+python scripts/ml/interactive_system.py
 
 # Demo mode
-./nz_interactive --demo
+python scripts/ml/interactive_system.py --demo
 ```
 
 ### **Direct Scripts**
@@ -132,7 +132,7 @@ src/ml/feature_engineering/
 uv run python scripts/demo_feature_engineering.py
 
 # Integrated Pipeline
-python scripts/eda_feature_engineering.py --file data.csv --full-pipeline
+python scripts/ml/eda_feature_engineering.py --file data.csv --full-pipeline
 ```
 
 ---

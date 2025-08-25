@@ -7,27 +7,31 @@ Quick guide to using the NeoZork HLD Prediction ML module and integrated EDA sys
 ### 1. Integrated Pipeline (Recommended for most users)
 
 ```bash
-# Complete EDA + Feature Engineering pipeline
-./eda_fe --file your_data.csv --full-pipeline
+# Complete EDA + Feature Engineering pipeline with single file
+python scripts/main/eda_fe --file your_data.csv --full-pipeline
 
-# EDA analysis only
-./eda_fe --file your_data.csv --eda-only
+# Complete EDA + Feature Engineering pipeline with multiple files
+python scripts/main/eda_fe --folder data/ --full-pipeline
 
-# Feature engineering only
-./eda_fe --file your_data.csv --features-only
+# Complete EDA + Feature Engineering pipeline with files by mask
+python scripts/main/eda_fe --folder data/ --mask gbpusd --full-pipeline
+
+# EDA analysis only with single file
+python scripts/main/eda_fe --file your_data.csv --eda-only
+
+# Feature engineering only with multiple files
+python scripts/main/eda_fe --folder data/ --features-only
 ```
-
-**Note:** The `./eda_fe` and `./nz_interactive` scripts are symbolic links to `scripts/main/eda_fe` and `scripts/main/nz_interactive` for convenience.
 ```
 
 ### 2. Interactive System (Best for exploration)
 
 ```bash
 # Start full interactive system
-./nz_interactive --full
+python scripts/ml/interactive_system.py
 
 # Demo mode
-./nz_interactive --demo
+python scripts/ml/interactive_system.py --demo
 ```
 
 ### 3. Direct Scripts (For developers)
@@ -51,8 +55,7 @@ python scripts/eda/create_test_data.py
 ```
 scripts/
 ├── main/
-│   ├── eda_fe                    # EDA + Feature Engineering pipeline
-│   └── nz_interactive            # Interactive system launcher
+│   └── eda_fe                    # EDA + Feature Engineering pipeline
 ├── ml/
 │   ├── eda_feature_engineering.py    # Integrated EDA + Feature Engineering
 │   ├── interactive_system.py         # Interactive menu system
@@ -91,19 +94,19 @@ docs/ml/
 ### Use Case 1: First-Time User
 ```bash
 # 1. Start interactive system
-./nz_interactive --full
+python scripts/ml/interactive_system.py
 
 # 2. Follow menu prompts:
-#    - Load Data → Select your CSV file
+#    - Load Data → Choose loading method (single file, folder, or mask)
 #    - EDA Analysis → Run quality checks
 #    - Feature Engineering → Generate features
 #    - Export Results → Save reports
 ```
 
-### Use Case 2: Batch Processing
+### Use Case 2: Batch Processing with Single File
 ```bash
-# 1. Run complete pipeline
-./eda_fe --file data/AAPL.csv --full-pipeline --output-dir reports/
+# 1. Run complete pipeline with single file
+python scripts/main/eda_fe --file data/AAPL.csv --full-pipeline --output-dir reports/
 
 # 2. Check results in reports/ directory
 ls reports/
@@ -111,10 +114,27 @@ ls reports/
 # eda_feature_engineering_results.json
 ```
 
-### Use Case 3: EDA Only
+### Use Case 3: Batch Processing with Multiple Files
 ```bash
-# Run EDA analysis without feature engineering
-./eda_fe --file data/BTC-USD.csv --eda-only
+# 1. Run complete pipeline with all files in folder
+python scripts/main/eda_fe --folder data/ --full-pipeline --output-dir reports/
+
+# 2. Run complete pipeline with files by mask
+python scripts/main/eda_fe --folder data/ --mask gbpusd --full-pipeline --output-dir reports/
+
+# 3. Check results in reports/ directory
+ls reports/
+# eda_feature_engineering_report.html
+# eda_feature_engineering_results.json
+```
+
+### Use Case 4: EDA Only
+```bash
+# Run EDA analysis without feature engineering (single file)
+python scripts/main/eda_fe --file data/BTC-USD.csv --eda-only
+
+# Run EDA analysis without feature engineering (multiple files)
+python scripts/main/eda_fe --folder data/ --mask btc --eda-only
 
 # This generates:
 # - Data quality report
@@ -123,10 +143,13 @@ ls reports/
 # - HTML report
 ```
 
-### Use Case 4: Feature Engineering Only
+### Use Case 5: Feature Engineering Only
 ```bash
-# Generate features from existing clean data
-./eda_fe --file data/ETH-USD.csv --features-only
+# Generate features from existing clean data (single file)
+python scripts/main/eda_fe --file data/ETH-USD.csv --features-only
+
+# Generate features from existing clean data (multiple files)
+python scripts/main/eda_fe --folder data/ --mask eth --features-only
 
 # This generates:
 # - 150+ engineered features
@@ -140,13 +163,19 @@ ls reports/
 ### Basic Configuration
 ```bash
 # Use default settings (recommended for most users)
-./eda_fe --file data.csv --full-pipeline
+python scripts/main/eda_fe --file data.csv --full-pipeline
+
+# Use default settings with multiple files
+python scripts/main/eda_fe --folder data/ --full-pipeline
+
+# Use default settings with files by mask
+python scripts/main/eda_fe --folder data/ --mask gbpusd --full-pipeline
 
 # Custom output directory
-./eda_fe --file data.csv --full-pipeline --output-dir ./my_reports
+python scripts/main/eda_fe --file data.csv --full-pipeline --output-dir ./my_reports
 
 # Custom configuration file
-./eda_fe --file data.csv --config my_config.json --full-pipeline
+python scripts/main/eda_fe --file data.csv --config my_config.json --full-pipeline
 ```
 
 ### Advanced Configuration
@@ -244,7 +273,7 @@ Solution: Ensure file exists and use correct path
 # Check current directory
 ls -la *.csv
 # Use absolute path if needed
-./eda_fe --file /full/path/to/data.csv --full-pipeline
+python scripts/main/eda_fe --file /full/path/to/data.csv --full-pipeline
 ```
 
 #### Issue 2: "Insufficient data"
@@ -287,7 +316,7 @@ pwd
 ./eda --data-quality-checks
 
 # Then run integrated pipeline
-./eda_fe --file data.csv --full-pipeline
+python scripts/main/eda_fe --file data.csv --full-pipeline
 ```
 
 ### Existing Analysis Script
@@ -296,16 +325,16 @@ pwd
 ./nz demo --rule PHLD
 
 # Then enhance with feature engineering
-./eda_fe --file data.csv --features-only
+python scripts/main/eda_fe --file data.csv --features-only
 ```
 
 ### Docker Environment
 ```bash
 # Run in Docker container
-docker compose run --rm neozork-hld ./eda_fe --file data.csv --full-pipeline
+docker compose run --rm neozork-hld python scripts/main/eda_fe --file data.csv --full-pipeline
 
 # Run interactive system in Docker
-docker compose run --rm neozork-hld ./nz_interactive --full
+docker compose run --rm neozork-hld python scripts/ml/interactive_system.py
 ```
 
 ## 📚 Next Steps
@@ -334,4 +363,4 @@ docker compose run --rm neozork-hld ./nz_interactive --full
 
 ---
 
-**Need Help?** Check the [EDA Integration Guide](eda_integration_guide.md) for detailed information or use the interactive system with `./nz_interactive --full`.
+**Need Help?** Check the [EDA Integration Guide](eda_integration_guide.md) for detailed information or use the interactive system with `python scripts/ml/interactive_system.py`.

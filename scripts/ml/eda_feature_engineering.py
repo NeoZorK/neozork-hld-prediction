@@ -100,6 +100,116 @@ class EDAFeatureEngineeringPipeline:
         
         return data
     
+    def load_data_from_folder(self, folder_path: str) -> pd.DataFrame:
+        """Load all data files from a folder."""
+        folder_path = Path(folder_path)
+        
+        if not folder_path.exists() or not folder_path.is_dir():
+            raise FileNotFoundError(f"Folder not found: {folder_path}")
+        
+        # Find all data files
+        data_files = []
+        for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
+            data_files.extend(folder_path.glob(f"*{ext}"))
+        
+        if not data_files:
+            raise FileNotFoundError(f"No data files found in {folder_path}")
+        
+        print(f"Found {len(data_files)} data files in {folder_path}:")
+        for file in data_files:
+            print(f"  - {file.name}")
+        
+        # Load all files
+        all_data = []
+        for file in data_files:
+            try:
+                df = self.load_data_from_file(str(file))
+                df['source_file'] = file.name  # Add source file info
+                all_data.append(df)
+                print(f"✅ Loaded: {file.name} ({df.shape[0]} rows)")
+            except Exception as e:
+                print(f"❌ Error loading {file.name}: {e}")
+        
+        if not all_data:
+            raise ValueError("No files could be loaded")
+        
+        # Combine all data
+        combined_data = pd.concat(all_data, ignore_index=True)
+        print(f"\n✅ Combined data loaded successfully!")
+        print(f"   Total shape: {combined_data.shape[0]} rows × {combined_data.shape[1]} columns")
+        print(f"   Files loaded: {len(all_data)}")
+        
+        return combined_data
+    
+    def load_data_by_mask(self, folder_path: str, mask: str) -> pd.DataFrame:
+        """Load files by mask pattern."""
+        folder_path = Path(folder_path)
+        
+        if not folder_path.exists() or not folder_path.is_dir():
+            raise FileNotFoundError(f"Folder not found: {folder_path}")
+        
+        # Find files matching mask
+        data_files = []
+        for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
+            pattern = f"*{mask}*{ext}"
+            data_files.extend(folder_path.glob(pattern))
+            # Also try case-insensitive search
+            pattern = f"*{mask.upper()}*{ext}"
+            data_files.extend(folder_path.glob(pattern))
+            pattern = f"*{mask.lower()}*{ext}"
+            data_files.extend(folder_path.glob(pattern))
+        
+        # Remove duplicates
+        data_files = list(set(data_files))
+        
+        if not data_files:
+            raise FileNotFoundError(f"No files found matching mask '{mask}' in {folder_path}")
+        
+        print(f"Found {len(data_files)} files matching '{mask}':")
+        for file in data_files:
+            print(f"  - {file.name}")
+        
+        # Load all matching files
+        all_data = []
+        for file in data_files:
+            try:
+                df = self.load_data_from_file(str(file))
+                df['source_file'] = file.name  # Add source file info
+                all_data.append(df)
+                print(f"✅ Loaded: {file.name} ({df.shape[0]} rows)")
+            except Exception as e:
+                print(f"❌ Error loading {file.name}: {e}")
+        
+        if not all_data:
+            raise ValueError("No files could be loaded")
+        
+        # Combine all data
+        combined_data = pd.concat(all_data, ignore_index=True)
+        print(f"\n✅ Combined data loaded successfully!")
+        print(f"   Total shape: {combined_data.shape[0]} rows × {combined_data.shape[1]} columns")
+        print(f"   Files loaded: {len(all_data)}")
+        print(f"   Mask used: '{mask}'")
+        
+        return combined_data
+    
+    def load_data_from_file(self, file_path: str) -> pd.DataFrame:
+        """Load data from a single file."""
+        file_path = Path(file_path)
+        
+        if not file_path.exists():
+            raise FileNotFoundError(f"File not found: {file_path}")
+        
+        if file_path.suffix.lower() == '.csv':
+            data = pd.read_csv(file_path)
+        elif file_path.suffix.lower() == '.parquet':
+            data = pd.read_parquet(file_path)
+        elif file_path.suffix.lower() in ['.xlsx', '.xls']:
+            data = pd.read_excel(file_path)
+        else:
+            raise ValueError(f"Unsupported file format: {file_path.suffix}")
+        
+        return data
+    
     def run_data_quality_analysis(self, data: pd.DataFrame) -> Dict[str, Any]:
         """Run comprehensive data quality analysis."""
         print("\n" + "="*60)
@@ -515,21 +625,39 @@ class EDAFeatureEngineeringPipeline:
             print(f"Error generating report: {e}")
             return ""
     
-    def run_pipeline(self, file_path: str, output_dir: str, 
-                    run_eda: bool = True, run_features: bool = True) -> Dict[str, Any]:
+    def run_pipeline(self, file_path: str = None, folder_path: str = None, mask: str = None,
+                    output_dir: str = './reports', run_eda: bool = True, run_features: bool = True) -> Dict[str, Any]:
         """Run the complete pipeline."""
         print("="*80)
         print("EDA FEATURE ENGINEERING INTEGRATED PIPELINE")
         print("="*80)
-        print(f"Input file: {file_path}")
+        
+        # Determine input type
+        if file_path:
+            print(f"Input file: {file_path}")
+        elif folder_path and mask:
+            print(f"Input folder: {folder_path}")
+            print(f"File mask: {mask}")
+        elif folder_path:
+            print(f"Input folder: {folder_path}")
+        else:
+            raise ValueError("Must provide either --file, --folder, or --folder with --mask")
+            
         print(f"Output directory: {output_dir}")
         print(f"Run EDA: {run_eda}")
         print(f"Run Feature Engineering: {run_features}")
         print("="*80)
         
         try:
-            # Load data
-            data = self.load_data(file_path)
+            # Load data based on input type
+            if file_path:
+                data = self.load_data(file_path)
+            elif folder_path and mask:
+                data = self.load_data_by_mask(folder_path, mask)
+            elif folder_path:
+                data = self.load_data_from_folder(folder_path)
+            else:
+                raise ValueError("Invalid input parameters")
             
             # Run EDA components
             if run_eda:
@@ -579,8 +707,12 @@ def main():
         epilog=__doc__
     )
     
-    parser.add_argument('--file', '-f', required=True,
+    parser.add_argument('--file', '-f',
                        help='Input data file (CSV, Parquet, etc.)')
+    parser.add_argument('--folder', '-d',
+                       help='Input folder path (load all data files)')
+    parser.add_argument('--mask', '-m',
+                       help='File mask pattern (e.g., "gbpusd" for all GBPUSD files)')
     parser.add_argument('--output-dir', '-o', default='./reports',
                        help='Output directory for reports (default: ./reports)')
     parser.add_argument('--config', '-c',
@@ -619,9 +751,20 @@ def main():
     # Initialize and run pipeline
     pipeline = EDAFeatureEngineeringPipeline(config)
     
+    # Validate input arguments
+    if not args.file and not args.folder:
+        print("Error: Must provide either --file or --folder argument")
+        return 1
+    
+    if args.mask and not args.folder:
+        print("Error: --mask requires --folder argument")
+        return 1
+    
     try:
         results = pipeline.run_pipeline(
             file_path=args.file,
+            folder_path=args.folder,
+            mask=args.mask,
             output_dir=args.output_dir,
             run_eda=run_eda,
             run_features=run_features

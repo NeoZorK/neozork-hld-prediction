@@ -122,23 +122,23 @@ ML Module
 
 ```bash
 # Run complete pipeline
-./eda_fe --file data.csv --full-pipeline
+python scripts/main/eda_fe --file data.csv --full-pipeline
 
 # EDA only
-./eda_fe --file data.csv --eda-only
+python scripts/main/eda_fe --file data.csv --eda-only
 
 # Feature Engineering only
-./eda_fe --file data.csv --features-only
+python scripts/main/eda_fe --file data.csv --features-only
 ```
 
 ### 2. Interactive System
 
 ```bash
 # Start full interactive system
-./nz_interactive --full
+python scripts/ml/interactive_system.py
 
 # Demo mode
-./nz_interactive --demo
+python scripts/ml/interactive_system.py --demo
 ```
 
 ### 3. Direct Scripts
@@ -148,7 +148,7 @@ ML Module
 uv run python scripts/demo_feature_engineering.py
 
 # Integrated Pipeline
-python scripts/eda_feature_engineering.py --file data.csv --full-pipeline
+python scripts/ml/eda_feature_engineering.py --file data.csv --full-pipeline
 
 # Interactive System
 python scripts/interactive_system.py

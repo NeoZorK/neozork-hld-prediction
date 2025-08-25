@@ -66,6 +66,8 @@ if [ $# -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "Options:"
     echo "  --help                    Show this help message"
     echo "  --file FILE               Input data file (CSV, Parquet, etc.)"
+    echo "  --folder DIR              Input folder path (load all data files)"
+    echo "  --mask PATTERN            File mask pattern (e.g., 'gbpusd' for all GBPUSD files)"
     echo "  --output-dir DIR          Output directory for reports (default: ./reports)"
     echo "  --config CONFIG           Configuration file for feature engineering"
     echo "  --eda-only                Run only EDA analysis (no feature engineering)"
@@ -74,17 +76,23 @@ if [ $# -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "  --version                 Show version information"
     echo ""
     echo "Examples:"
-    echo "  # Run complete pipeline"
+    echo "  # Run complete pipeline with single file"
     echo "  $0 --file data.csv --full-pipeline"
     echo ""
-    echo "  # EDA only"
+    echo "  # Run complete pipeline with all files in folder"
+    echo "  $0 --folder data/ --full-pipeline"
+    echo ""
+    echo "  # Run complete pipeline with files by mask"
+    echo "  $0 --folder data/ --mask gbpusd --full-pipeline"
+    echo ""
+    echo "  # EDA only with single file"
     echo "  $0 --file data.csv --eda-only"
     echo ""
-    echo "  # Feature engineering only"
-    echo "  $0 --file data.csv --features-only"
+    echo "  # Feature engineering only with multiple files"
+    echo "  $0 --folder data/ --features-only"
     echo ""
-    echo "  # Custom configuration"
-    echo "  $0 --file data.csv --config config.json --full-pipeline"
+    echo "  # Custom configuration with mask"
+    echo "  $0 --folder data/ --mask eurusd --config config.json --full-pipeline"
     echo ""
     echo "Environment:"
     echo "  Automatically detects Docker, UV, or native Python environment"
@@ -92,13 +100,20 @@ if [ $# -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     exit 0
 fi
 
-# Check if file argument is provided
-if [[ "$*" != *"--file"* ]]; then
-    echo "Error: --file argument is required"
+# Check if required arguments are provided
+if [[ "$*" != *"--file"* ]] && [[ "$*" != *"--folder"* ]]; then
+    echo "Error: Either --file or --folder argument is required"
+    echo "Use --help for usage information"
+    exit 1
+fi
+
+# Check if mask is used with folder
+if [[ "$*" == *"--mask"* ]] && [[ "$*" != *"--folder"* ]]; then
+    echo "Error: --mask requires --folder argument"
     echo "Use --help for usage information"
     exit 1
 fi
 
 # Run the Python script
 echo "Running EDA Feature Engineering pipeline..."
-run_python $env_type scripts/eda_feature_engineering.py "$@"
+run_python $env_type scripts/ml/eda_feature_engineering.py "$@"

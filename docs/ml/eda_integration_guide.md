@@ -7,27 +7,25 @@ Complete guide to using the integrated EDA and Feature Engineering system in Neo
 ### 1. Integrated Pipeline (Recommended)
 ```bash
 # Run complete EDA + Feature Engineering pipeline
-./eda_fe --file data.csv --full-pipeline
+python scripts/main/eda_fe --file data.csv --full-pipeline
 
 # EDA only
-./eda_fe --file data.csv --eda-only
+python scripts/main/eda_fe --file data.csv --eda-only
 
 # Feature Engineering only
-./eda_fe --file data.csv --features-only
+python scripts/main/eda_fe --file data.csv --features-only
 ```
-
-**Note:** The `./eda_fe` script is a symbolic link to `scripts/main/eda_fe` for convenience.
 
 ### 2. Interactive System
 ```bash
 # Start full interactive system
-./nz_interactive --full
+python scripts/ml/interactive_system.py
 
 # Demo mode
-./nz_interactive --demo
+python scripts/ml/interactive_system.py --demo
 
 # EDA mode
-./nz_interactive --eda
+python scripts/ml/interactive_system.py --eda
 ```
 
 ### 3. Direct Python Scripts
@@ -171,7 +169,7 @@ FeatureSelectionConfig(
 ### Example 1: Complete Pipeline
 ```bash
 # Run complete analysis
-./eda_fe --file data/AAPL.csv --full-pipeline --output-dir reports/
+python scripts/main/eda_fe --file data/AAPL.csv --full-pipeline --output-dir reports/
 
 # This will:
 # 1. Load AAPL data
@@ -184,7 +182,7 @@ FeatureSelectionConfig(
 ### Example 2: EDA Only
 ```bash
 # Run EDA analysis only
-./eda_fe --file data/BTC-USD.csv --eda-only
+python scripts/main/eda_fe --file data/BTC-USD.csv --eda-only
 
 # This will:
 # 1. Load Bitcoin data
@@ -197,7 +195,7 @@ FeatureSelectionConfig(
 ### Example 3: Feature Engineering Only
 ```bash
 # Run feature engineering only
-./eda_fe --file data/ETH-USD.csv --features-only
+python scripts/main/eda_fe --file data/ETH-USD.csv --features-only
 
 # This will:
 # 1. Load Ethereum data
@@ -209,7 +207,7 @@ FeatureSelectionConfig(
 ### Example 4: Interactive Mode
 ```bash
 # Start interactive system
-./nz_interactive --full
+python scripts/ml/interactive_system.py
 
 # Navigate through menus:
 # 1. Load Data → Select your CSV/Parquet file
@@ -304,7 +302,7 @@ Solution: Convert to CSV, Parquet, or Excel format
 ./eda --data-quality-checks
 
 # Then run integrated pipeline
-./eda_fe --file data.csv --full-pipeline
+python scripts/main/eda_fe --file data.csv --full-pipeline
 ```
 
 ### Analysis Script Integration
@@ -313,16 +311,16 @@ Solution: Convert to CSV, Parquet, or Excel format
 ./nz demo --rule PHLD
 
 # Then enhance with feature engineering
-./eda_fe --file data.csv --features-only
+python scripts/main/eda_fe --file data.csv --features-only
 ```
 
 ### Docker Integration
 ```bash
 # Run in Docker container
-docker compose run --rm neozork-hld ./eda_fe --file data.csv --full-pipeline
+docker compose run --rm neozork-hld python scripts/main/eda_fe --file data.csv --full-pipeline
 
 # Run interactive system in Docker
-docker compose run --rm neozork-hld ./nz_interactive --full
+docker compose run --rm neozork-hld python scripts/ml/interactive_system.py
 ```
 
 ## 📚 Additional Resources

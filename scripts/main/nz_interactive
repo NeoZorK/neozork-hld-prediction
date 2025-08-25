@@ -94,19 +94,19 @@ fi
 case "$1" in
     --demo)
         echo "Running demo mode..."
-        run_python $env_type scripts/demo_feature_engineering.py
+        run_python $env_type scripts/ml/demo_feature_engineering.py
         ;;
     --eda)
         echo "Running EDA analysis..."
-        run_python $env_type scripts/eda_feature_engineering.py --file data.csv --eda-only
+        run_python $env_type scripts/ml/eda_feature_engineering.py --file data.csv --eda-only
         ;;
     --features)
         echo "Running feature engineering..."
-        run_python $env_type scripts/eda_feature_engineering.py --file data.csv --features-only
+        run_python $env_type scripts/ml/eda_feature_engineering.py --file data.csv --features-only
         ;;
     --full)
         echo "Starting full interactive system..."
-        run_python $env_type scripts/interactive_system.py
+        run_python $env_type scripts/ml/interactive_system.py
         ;;
     --version|-v)
         echo "NeoZork Interactive System v1.0.0"
