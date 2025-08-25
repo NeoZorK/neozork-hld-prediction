@@ -152,6 +152,13 @@ class InteractiveSystem:
         print("2. 📁 Load all files from folder")
         print("3. 🔍 Load files by mask (e.g., 'gbpusd' for all GBPUSD files)")
         print("-" * 30)
+        print("\n💡 Examples for 'data' folder:")
+        print("   Single file: data/sample_ohlcv_1000.csv")
+        print("   Folder: data/")
+        print("   Mask: 'sample' (finds sample_ohlcv_*.csv files)")
+        print("   Mask: 'parquet' (finds *.parquet files)")
+        print("   Mask: 'binance' (finds binance_*.parquet files)")
+        print("-" * 30)
         
         try:
             choice = input("Enter choice (0-3): ").strip()
@@ -173,6 +180,17 @@ class InteractiveSystem:
     
     def _load_single_file(self) -> bool:
         """Load a single data file."""
+        print("\n📄 LOAD SINGLE FILE")
+        print("-" * 30)
+        print("💡 Available files in 'data' folder:")
+        print("   • data/sample_ohlcv_1000.csv (1000 rows)")
+        print("   • data/sample_ohlcv_2000.csv (2000 rows)")
+        print("   • data/sample_ohlcv_1000.parquet (1000 rows)")
+        print("   • data/sample_ohlcv_2000.parquet (2000 rows)")
+        print("   • data/raw_parquet/binance_BTCUSDT_H1.parquet (420 rows)")
+        print("   • data/raw_parquet/yfinance_AAPL_D1.parquet (11 rows)")
+        print("-" * 30)
+        
         file_path = input("Enter data file path (CSV, Parquet, etc.): ").strip()
         
         if not file_path:
@@ -200,6 +218,15 @@ class InteractiveSystem:
     
     def _load_folder_files(self) -> bool:
         """Load all data files from a folder."""
+        print("\n📁 LOAD ALL FILES FROM FOLDER")
+        print("-" * 30)
+        print("💡 Available folders:")
+        print("   • data/ (main data folder with CSV and Parquet files)")
+        print("   • data/raw_parquet/ (raw data files)")
+        print("   • data/indicators/ (calculated indicators)")
+        print("   • data/cache/csv_converted/ (converted CSV files)")
+        print("-" * 30)
+        
         folder_path = input("Enter folder path: ").strip()
         
         if not folder_path:
@@ -257,8 +284,24 @@ class InteractiveSystem:
     
     def _load_files_by_mask(self) -> bool:
         """Load files by mask pattern."""
+        print("\n🔍 LOAD FILES BY MASK")
+        print("-" * 30)
+        print("💡 Example combinations:")
+        print("   Folder: data/")
+        print("   • Mask: 'sample' → finds sample_ohlcv_*.csv files")
+        print("   • Mask: 'parquet' → finds *.parquet files")
+        print("   • Mask: '1000' → finds *1000* files")
+        print("   • Mask: '2000' → finds *2000* files")
+        print("")
+        print("   Folder: data/raw_parquet/")
+        print("   • Mask: 'binance' → finds binance_*.parquet files")
+        print("   • Mask: 'yfinance' → finds yfinance_*.parquet files")
+        print("   • Mask: 'BTC' → finds *BTC* files")
+        print("   • Mask: 'AAPL' → finds *AAPL* files")
+        print("-" * 30)
+        
         folder_path = input("Enter folder path: ").strip()
-        mask = input("Enter file mask (e.g., 'gbpusd', 'eurusd'): ").strip().lower()
+        mask = input("Enter file mask (e.g., 'sample', 'parquet'): ").strip().lower()
         
         if not folder_path or not mask:
             print("❌ Both folder path and mask are required")
