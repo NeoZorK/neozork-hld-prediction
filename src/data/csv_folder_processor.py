@@ -150,6 +150,9 @@ def process_csv_folder(
     print_info(f"Total estimated processing time: {total_estimated_time:.1f} seconds")
     print_info(f"Total data size: {total_size_mb:.1f} MB")
     
+    # Clear some space for progress bars
+    print("\n" * 10)
+    
     # Initialize results
     results = {
         'success': True,
@@ -162,13 +165,25 @@ def process_csv_folder(
     }
     
     # Create overall progress bar
+    import sys
     with tqdm(
         total=len(csv_files),
         desc="Processing CSV files",
         unit="file",
         position=0,
-        leave=True
+        leave=True,
+        ncols=100,
+        ascii=False,
+        dynamic_ncols=True,
+        mininterval=0.1,
+        maxinterval=1.0,
+        disable=False,
+        file=sys.stdout
     ) as overall_pbar:
+        # Force initial display
+        overall_pbar.refresh()
+        import sys
+        sys.stdout.flush()
         
         for i, file_info in enumerate(file_infos):
             file_path = file_info['path']
@@ -177,6 +192,11 @@ def process_csv_folder(
             
             # Update overall progress bar description
             overall_pbar.set_description(f"Processing: {file_name[:30]}...")
+            overall_pbar.refresh()
+            
+            # Force flush to ensure progress bars are visible
+            import sys
+            sys.stdout.flush()
             
             # Create file-specific progress bar
             with tqdm(
@@ -184,7 +204,14 @@ def process_csv_folder(
                 desc=f"File {i+1}/{len(csv_files)}: {file_name}",
                 unit="file",
                 position=1,
-                leave=False,
+                leave=True,
+                ncols=100,
+                ascii=False,
+                dynamic_ncols=True,
+                mininterval=0.1,
+                maxinterval=1.0,
+                disable=False,
+                file=sys.stdout,
                 bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]'
             ) as file_pbar:
                 
@@ -197,7 +224,9 @@ def process_csv_folder(
                         point_size=point_size,
                         rule=rule,
                         draw_mode=draw_mode,
-                        export_formats=export_formats
+                        export_formats=export_formats,
+                        suppress_browser=True,  # Suppress browser opening for folder processing
+                        suppress_plots=True     # Suppress plot saving for folder processing
                     )
                     
                     file_end_time = time.time()
@@ -209,6 +238,11 @@ def process_csv_folder(
                         'size': f"{file_size_mb:.1f}MB",
                         'time': f"{file_duration:.1f}s"
                     })
+                    file_pbar.refresh()
+                    
+                    # Force flush to ensure progress bars are visible
+                    import sys
+                    sys.stdout.flush()
                     
                     # Store file result
                     file_result['file_name'] = file_name
@@ -218,11 +252,9 @@ def process_csv_folder(
                     
                     if file_result.get('success', False):
                         results['files_processed'] += 1
-                        print_info(f"✅ Successfully processed: {file_name}")
                     else:
                         results['files_failed'] += 1
                         results['failed_files'].append(file_name)
-                        print_warning(f"❌ Failed to process: {file_name}")
                     
                 except Exception as e:
                     file_duration = time.time() - file_start_time
@@ -232,10 +264,16 @@ def process_csv_folder(
                         'time': f"{file_duration:.1f}s",
                         'error': 'Failed'
                     })
+                    file_pbar.refresh()
+                    
+                    # Force flush to ensure progress bars are visible
+                    import sys
+                    sys.stdout.flush()
                     
                     results['files_failed'] += 1
                     results['failed_files'].append(file_name)
-                    print_error(f"❌ Error processing {file_name}: {e}")
+                    # Log error details for debugging but don't print to avoid interfering with progress bars
+                    print_debug(f"❌ Error processing {file_name}: {e}")
                     print_debug(f"Traceback: {traceback.format_exc()}")
                 
                 # Update overall progress
@@ -245,6 +283,11 @@ def process_csv_folder(
                     'failed': results['files_failed'],
                     'size': f"{total_size_mb:.1f}MB"
                 })
+                overall_pbar.refresh()
+                
+                # Force flush to ensure progress bars are visible
+                import sys
+                sys.stdout.flush()
     
     # Calculate total processing time
     total_time = time.time() - start_time
@@ -268,7 +311,9 @@ def process_single_csv_file(
     point_size: float,
     rule: str = 'OHLCV',
     draw_mode: Optional[str] = None,
-    export_formats: Optional[List[str]] = None
+    export_formats: Optional[List[str]] = None,
+    suppress_browser: bool = False,
+    suppress_plots: bool = False
 ) -> Dict[str, any]:
     """
     Process a single CSV file using the existing workflow.
@@ -302,6 +347,10 @@ def process_single_csv_file(
                 self.period = None
                 self.start = None
                 self.end = None
+                # Add flag to suppress browser opening for folder processing
+                self.suppress_browser = suppress_browser
+                # Add flag to suppress plot saving for folder processing
+                self.suppress_plots = suppress_plots
         
         args = MockArgs()
         

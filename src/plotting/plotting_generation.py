@@ -369,7 +369,7 @@ def handle_plotly_in_docker(fig, filepath):
         logger.print_debug(f"Traceback (handle Plotly in Docker):\n{tb_str}")
 
 
-def handle_plotly_plot(fig, data_info, selected_rule):
+def handle_plotly_plot(fig, data_info, selected_rule, args=None):
     """
     Handles saving and displaying Plotly plot
 
@@ -377,6 +377,7 @@ def handle_plotly_plot(fig, data_info, selected_rule):
         fig: Plotly figure object
         data_info (dict): Dictionary containing data source information.
         selected_rule (TradingRule | str): The selected trading rule.
+        args (argparse.Namespace, optional): Command-line arguments.
     """
     if fig is None:
         logger.print_warning("Plotly generation returned None. Skipping save.")
@@ -411,9 +412,17 @@ def handle_plotly_plot(fig, data_info, selected_rule):
         # Check if running in Docker
         in_docker = os.path.exists('/.dockerenv') or os.environ.get('RUNNING_IN_DOCKER') == 'true'
 
-        # Always open browser for tests to satisfy test expectations
-        webbrowser.open(file_uri)
-        logger.print_info(f"Attempting to open {filepath} in default browser...")
+        # Check if browser opening should be suppressed
+        suppress_browser = False
+        if args and hasattr(args, 'suppress_browser'):
+            suppress_browser = args.suppress_browser
+
+        # Open browser unless suppressed
+        if not suppress_browser:
+            webbrowser.open(file_uri)
+            logger.print_info(f"Attempting to open {filepath} in default browser...")
+        else:
+            logger.print_info(f"Browser opening suppressed for folder processing. Plot saved to: {filepath}")
 
         # Handle Docker-specific steps if in Docker environment
         if in_docker:
@@ -556,7 +565,7 @@ def generate_fast_plot(result_df, selected_rule, plot_title, args=None):
         )
 
 
-def generate_plotly_plot(result_df, selected_rule, plot_title, data_info):
+def generate_plotly_plot(result_df, selected_rule, plot_title, data_info, args=None):
     """
     Generates plot using Plotly
 
@@ -565,6 +574,7 @@ def generate_plotly_plot(result_df, selected_rule, plot_title, data_info):
         selected_rule (TradingRule | str): The selected trading rule.
         plot_title (str): Title for the plot.
         data_info (dict): Dictionary containing data source information.
+        args (argparse.Namespace, optional): Command-line arguments.
     """
     logger.print_info("Generating plot using Plotly...")
     fig = plot_indicator_results_plotly(
@@ -572,7 +582,7 @@ def generate_plotly_plot(result_df, selected_rule, plot_title, data_info):
         selected_rule,
         plot_title
     )
-    handle_plotly_plot(fig, data_info, selected_rule)
+    handle_plotly_plot(fig, data_info, selected_rule, args)
 
 
 def generate_term_plot(result_df, selected_rule, plot_title, args=None, data_info=None):
@@ -803,7 +813,7 @@ def generate_plot(args, data_info, result_df, selected_rule, point_size, estimat
             # Pass args and data_info to terminal plot function
             generate_term_plot(result_df, selected_rule, plot_title, args, data_info)
         else:
-            generate_plotly_plot(result_df, selected_rule, plot_title, data_info)
+            generate_plotly_plot(result_df, selected_rule, plot_title, data_info, args)
     except Exception as e:
         # Log error with exception type and message
         logger.print_error(f"An error occurred during plot generation: {type(e).__name__}: {e}")

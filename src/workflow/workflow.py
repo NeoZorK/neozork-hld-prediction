@@ -207,13 +207,21 @@ def run_indicator_workflow(args):
             logger.print_error(f"Traceback: {traceback.format_exc()}")
 
         # --- Step 4: Generate Plot ---
-        logger.print_info("--- Step 4: Generating Plot ---")
-        t_plot_start = time.perf_counter()
-        # Pass data_info, result_df (which might be None/empty), selected_rule etc.
-        generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
-        t_plot_end = time.perf_counter()
-        workflow_results["plot_duration"] = t_plot_end - t_plot_start
-        workflow_results["steps_duration"]["plot"] = workflow_results["plot_duration"]
+        # Check if plot generation should be suppressed
+        suppress_plots = getattr(args, 'suppress_plots', False)
+        
+        if not suppress_plots:
+            logger.print_info("--- Step 4: Generating Plot ---")
+            t_plot_start = time.perf_counter()
+            # Pass data_info, result_df (which might be None/empty), selected_rule etc.
+            generate_plot(args, data_info, result_df, selected_rule, point_size, estimated_point)
+            t_plot_end = time.perf_counter()
+            workflow_results["plot_duration"] = t_plot_end - t_plot_start
+            workflow_results["steps_duration"]["plot"] = workflow_results["plot_duration"]
+        else:
+            logger.print_info("--- Step 4: Plot generation suppressed for folder processing ---")
+            workflow_results["plot_duration"] = 0
+            workflow_results["steps_duration"]["plot"] = 0
 
         # --- Step 5: Export Indicator Data (if requested) ---
         export_results = {}
