@@ -762,6 +762,8 @@ class InteractiveSystem:
     def _create_statistics_plots(self, numeric_data):
         """Create comprehensive statistical visualizations."""
         try:
+            import matplotlib
+            matplotlib.use('Agg')  # Use non-interactive backend to avoid multiprocessing issues
             import matplotlib.pyplot as plt
             import seaborn as sns
             from tqdm import tqdm
@@ -929,10 +931,18 @@ class InteractiveSystem:
             print(f"   ⏱️  Average time per plot: {avg_time_per_plot:.1f}s")
             print(f"   🚀 Optimizations: Reduced DPI (300→200), smaller figures, fewer bins")
             
+            # Clean up matplotlib to prevent resource leaks
+            plt.close('all')
+            
         except ImportError:
             print("⚠️  matplotlib/seaborn not available - skipping visualizations")
         except Exception as e:
             print(f"⚠️  Error creating visualizations: {e}")
+            # Clean up matplotlib even on error
+            try:
+                plt.close('all')
+            except:
+                pass
     
     def run_data_quality_check(self):
         """Run data quality check."""
@@ -1542,6 +1552,72 @@ class InteractiveSystem:
                     <h3>Generated Features</h3>
                     <p>Advanced features have been generated and are ready for modeling.</p>
                 """)
+            
+            # Add basic statistics recommendations and summary if available
+            if 'basic_statistics' in self.current_results:
+                bs_results = self.current_results['basic_statistics']
+                if 'analysis_summary' in bs_results:
+                    summary = bs_results['analysis_summary']
+                    
+                    # Create recommendations section
+                    recommendations_html = "<h3>Data Quality Recommendations</h3><ul>"
+                    
+                    if summary.get('skewed_columns'):
+                        recommendations_html += f"<li><strong>Skewed Data:</strong> Consider log/box-cox transformation for columns: {', '.join(summary['skewed_columns'][:3])}{'...' if len(summary['skewed_columns']) > 3 else ''}</li>"
+                    
+                    if summary.get('high_outlier_columns'):
+                        recommendations_html += f"<li><strong>Outliers:</strong> Investigate and potentially treat outliers in columns: {', '.join(summary['high_outlier_columns'][:3])}{'...' if len(summary['high_outlier_columns']) > 3 else ''}</li>"
+                    
+                    if summary.get('high_variability_columns'):
+                        recommendations_html += f"<li><strong>High Variability:</strong> Consider standardization for columns: {', '.join(summary['high_variability_columns'][:3])}{'...' if len(summary['high_variability_columns']) > 3 else ''}</li>"
+                    
+                    if not any([summary.get('skewed_columns'), summary.get('high_outlier_columns'), summary.get('high_variability_columns')]):
+                        recommendations_html += "<li><strong>Data Quality:</strong> ✅ Data looks good for most analyses</li>"
+                    
+                    recommendations_html += "</ul>"
+                    
+                    html_report.add_section("Recommendations", recommendations_html)
+                    
+                    # Create summary section
+                    summary_html = f"""
+                        <h3>Analysis Summary</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <strong>Total Columns:</strong> {summary.get('total_columns', 0)}
+                            </div>
+                            <div class="summary-item">
+                                <strong>Total Observations:</strong> {summary.get('total_observations', 0):,}
+                            </div>
+                            <div class="summary-item">
+                                <strong>Columns with Issues:</strong> {summary.get('columns_with_issues', 0)}
+                            </div>
+                            <div class="summary-item">
+                                <strong>Skewed Columns:</strong> {len(summary.get('skewed_columns', []))}
+                            </div>
+                            <div class="summary-item">
+                                <strong>High Outlier Columns:</strong> {len(summary.get('high_outlier_columns', []))}
+                            </div>
+                            <div class="summary-item">
+                                <strong>High Variability Columns:</strong> {len(summary.get('high_variability_columns', []))}
+                            </div>
+                        </div>
+                        <style>
+                            .summary-grid {{
+                                display: grid;
+                                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                                gap: 15px;
+                                margin: 20px 0;
+                            }}
+                            .summary-item {{
+                                background: #f8f9fa;
+                                padding: 15px;
+                                border-radius: 8px;
+                                border-left: 4px solid #007bff;
+                            }}
+                        </style>
+                    """
+                    
+                    html_report.add_section("Analysis Summary", summary_html)
             
             # Generate and save report
             report_path = reports_dir / f"interactive_report_{timestamp}.html"
