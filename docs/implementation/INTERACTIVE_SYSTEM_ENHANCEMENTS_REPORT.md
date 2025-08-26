@@ -98,7 +98,9 @@ Completely redesigned basic statistics with comprehensive analysis:
 - **Next Steps**: Clear guidance on what to do next
 - **Analysis Summary**: Comprehensive overview before plot generation
 - **Browser Integration**: Option to view plots in Safari with detailed explanations
-- **Modern Visualizations**: 4 professional seaborn plots
+- **Modern Visualizations**: 4 professional seaborn plots with progress bar
+- **Performance Optimizations**: Reduced DPI (300→200), smaller figures, fewer bins
+- **Progress Tracking**: Real-time ETA and progress bar during plot generation
 - **Error Handling**: Fixed runtime warnings from infinite values
 
 #### **New Features:**
@@ -130,6 +132,13 @@ def run_basic_statistics(self):
 - **Professional Layout**: Modern CSS styling with responsive design
 - **Interactive Experience**: Easy navigation between different plots
 - **Temporary Files**: Creates temporary HTML files that are automatically cleaned up
+
+#### **Performance Optimizations:**
+- **Reduced DPI**: From 300 to 200 (33% faster rendering)
+- **Smaller Figures**: Optimized figure sizes for better performance
+- **Fewer Bins**: Reduced histogram bins from 50 to 30 for faster computation
+- **Progress Tracking**: Real-time progress bar with ETA estimation
+- **Timing Information**: Shows total time and average time per plot
 
 ### 4. HTML Report Generation
 

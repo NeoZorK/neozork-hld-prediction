@@ -17,6 +17,7 @@ import tempfile
 import shutil
 import sys
 import os
+import time
 from unittest.mock import patch, MagicMock
 
 # Add project root to path
@@ -204,7 +205,7 @@ class TestEnhancedInteractiveSystem:
             plots_dir = Path("results/plots/statistics")
             plots_dir.mkdir(parents=True, exist_ok=True)
             
-            # Test plot creation
+            # Test plot creation with progress bar
             numeric_data = sample_data.select_dtypes(include=[np.number])
             interactive_system._create_statistics_plots(numeric_data)
             
@@ -213,6 +214,12 @@ class TestEnhancedInteractiveSystem:
             for plot in expected_plots:
                 plot_path = plots_dir / plot
                 assert plot_path.exists(), f"Plot {plot} was not created"
+                
+            # Check that plots have reasonable file sizes (not empty)
+            for plot in expected_plots:
+                plot_path = plots_dir / plot
+                file_size = plot_path.stat().st_size
+                assert file_size > 1000, f"Plot {plot} is too small ({file_size} bytes)"
                 
         finally:
             os.chdir(original_cwd)
@@ -255,6 +262,41 @@ class TestEnhancedInteractiveSystem:
         
         # Check that browser was called
         mock_browser.open.assert_called_once()
+    
+    def test_plot_optimizations(self, interactive_system, sample_data, tmp_path):
+        """Test that plot optimizations are working correctly."""
+        interactive_system.current_data = sample_data
+        
+        # Change to temp directory for testing
+        original_cwd = os.getcwd()
+        os.chdir(tmp_path)
+        
+        try:
+            # Create plots directory
+            plots_dir = Path("results/plots/statistics")
+            plots_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Test plot creation with optimizations
+            numeric_data = sample_data.select_dtypes(include=[np.number])
+            start_time = time.time()
+            interactive_system._create_statistics_plots(numeric_data)
+            end_time = time.time()
+            
+            # Check that plots were created quickly (optimized)
+            total_time = end_time - start_time
+            assert total_time < 10.0, f"Plot generation took too long: {total_time:.1f}s"
+            
+            # Check that plots have reasonable file sizes (optimized DPI)
+            expected_plots = ['distributions.png', 'boxplots.png', 'correlation_heatmap.png', 'statistical_summary.png']
+            for plot in expected_plots:
+                plot_path = plots_dir / plot
+                assert plot_path.exists(), f"Plot {plot} was not created"
+                file_size = plot_path.stat().st_size
+                # Optimized plots should be smaller than high-DPI versions
+                assert file_size < 500000, f"Plot {plot} is too large ({file_size} bytes) - optimization failed"
+                
+        finally:
+            os.chdir(original_cwd)
     
     def test_data_folder_structure_detection(self, interactive_system):
         """Test that data folder structure is detected correctly."""
