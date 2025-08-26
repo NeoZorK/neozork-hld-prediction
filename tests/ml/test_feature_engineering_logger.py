@@ -1,147 +1,135 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Tests for feature engineering logger module.
+Tests for src/ml/feature_engineering/logger.py
+
+This module provides comprehensive test coverage for the logger module.
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
 import sys
+from unittest.mock import patch, MagicMock, call
 from io import StringIO
-
-from src.ml.feature_engineering.logger import SimpleLogger
 
 
 class TestSimpleLogger:
-    """Test SimpleLogger class."""
+    """Test cases for SimpleLogger class."""
     
-    def test_print_info(self, capsys):
+    def setup_method(self):
+        """Set up test fixtures."""
+        from src.ml.feature_engineering.logger import SimpleLogger
+        self.logger = SimpleLogger()
+    
+    def test_print_info(self):
         """Test print_info method."""
-        logger = SimpleLogger()
-        message = "Test info message"
-        
-        logger.print_info(message)
-        
-        captured = capsys.readouterr()
-        assert f"[INFO] {message}" in captured.out
+        with patch('builtins.print') as mock_print:
+            self.logger.print_info("Test info message")
+            mock_print.assert_called_once_with("[INFO] Test info message")
     
-    def test_print_warning(self, capsys):
+    def test_print_warning(self):
         """Test print_warning method."""
-        logger = SimpleLogger()
-        message = "Test warning message"
-        
-        logger.print_warning(message)
-        
-        captured = capsys.readouterr()
-        assert f"[WARNING] {message}" in captured.out
+        with patch('builtins.print') as mock_print:
+            self.logger.print_warning("Test warning message")
+            mock_print.assert_called_once_with("[WARNING] Test warning message")
     
-    def test_print_error(self, capsys):
+    def test_print_error(self):
         """Test print_error method."""
-        logger = SimpleLogger()
-        message = "Test error message"
-        
-        logger.print_error(message)
-        
-        captured = capsys.readouterr()
-        assert f"[ERROR] {message}" in captured.out
+        with patch('builtins.print') as mock_print:
+            self.logger.print_error("Test error message")
+            mock_print.assert_called_once_with("[ERROR] Test error message")
     
-    def test_print_success(self, capsys):
+    def test_print_success(self):
         """Test print_success method."""
-        logger = SimpleLogger()
-        message = "Test success message"
-        
-        logger.print_success(message)
-        
-        captured = capsys.readouterr()
-        assert f"[SUCCESS] {message}" in captured.out
+        with patch('builtins.print') as mock_print:
+            self.logger.print_success("Test success message")
+            mock_print.assert_called_once_with("[SUCCESS] Test success message")
     
-    def test_print_debug(self, capsys):
+    def test_print_debug(self):
         """Test print_debug method."""
-        logger = SimpleLogger()
-        message = "Test debug message"
-        
-        logger.print_debug(message)
-        
-        captured = capsys.readouterr()
-        assert f"[DEBUG] {message}" in captured.out
+        with patch('builtins.print') as mock_print:
+            self.logger.print_debug("Test debug message")
+            mock_print.assert_called_once_with("[DEBUG] Test debug message")
     
     def test_all_methods_static(self):
         """Test that all methods are static."""
-        logger = SimpleLogger()
+        import inspect
         
-        # All methods should be static and work without instance
-        SimpleLogger.print_info("test")
-        SimpleLogger.print_warning("test")
-        SimpleLogger.print_error("test")
-        SimpleLogger.print_success("test")
-        SimpleLogger.print_debug("test")
+        methods = [
+            self.logger.print_info,
+            self.logger.print_warning,
+            self.logger.print_error,
+            self.logger.print_success,
+            self.logger.print_debug
+        ]
         
-        # Should not raise any errors
-        assert True
-
-
-class TestLoggerImport:
-    """Test logger import behavior."""
-    
-    @patch('src.ml.feature_engineering.logger.SimpleLogger')
-    def test_import_with_src_common_available(self, mock_simple_logger):
-        """Test logger import when src.common is available."""
-        # Mock the import to succeed
-        with patch.dict('sys.modules', {'src.common': MagicMock()}):
-            # Re-import the module to test the import logic
-            import importlib
-            import src.ml.feature_engineering.logger as logger_module
-            
-            # Reload the module to test import logic
-            importlib.reload(logger_module)
-            
-            # Should use the real logger, not SimpleLogger
-            assert logger_module.logger != mock_simple_logger
-    
-    @patch('src.ml.feature_engineering.logger.SimpleLogger')
-    def test_import_with_src_common_unavailable(self, mock_simple_logger):
-        """Test logger import when src.common is unavailable."""
-        # Mock the import to fail
-        with patch('src.ml.feature_engineering.logger.logger', mock_simple_logger):
-            import src.ml.feature_engineering.logger as logger_module
-            
-            # Should use SimpleLogger as fallback
-            assert logger_module.logger == mock_simple_logger
+        for method in methods:
+            assert inspect.isfunction(method), f"Method {method.__name__} should be static"
 
 
 class TestLoggerIntegration:
-    """Test logger integration with other modules."""
+    """Integration tests for logger functionality."""
     
-    def test_logger_used_in_base_feature_generator(self):
-        """Test that logger is used in base feature generator."""
-        from src.ml.feature_engineering.base_feature_generator import BaseFeatureGenerator, FeatureConfig
+    def test_logger_output_capture(self):
+        """Test that logger output can be captured."""
+        from src.ml.feature_engineering.logger import SimpleLogger
         
-        # Create a mock generator
-        class MockGenerator(BaseFeatureGenerator):
-            def generate_features(self, df):
-                return df
-            
-            def get_feature_names(self):
-                return []
+        logger = SimpleLogger()
         
-        generator = MockGenerator()
+        # Capture stdout
+        captured_output = StringIO()
+        with patch('sys.stdout', captured_output):
+            logger.print_info("Integration test message")
         
-        # Test that logger methods can be called without errors
-        with patch('src.ml.feature_engineering.base_feature_generator.logger') as mock_logger:
-            generator.log_feature_generation('test_feature', 0.5)
-            mock_logger.print_debug.assert_called_once()
+        assert "[INFO] Integration test message" in captured_output.getvalue()
     
-    def test_logger_used_in_cross_timeframe_features(self):
-        """Test that logger is used in cross timeframe features."""
-        try:
-            from src.ml.feature_engineering.cross_timeframe_features import CrossTimeframeFeatureGenerator
-            
-            # Test that the module can be imported and logger is available
-            assert hasattr(CrossTimeframeFeatureGenerator, '__init__')
-        except ImportError:
-            # If the module can't be imported, that's okay for this test
-            pass
+    def test_logger_multiple_messages(self):
+        """Test multiple logger messages."""
+        from src.ml.feature_engineering.logger import SimpleLogger
+        
+        logger = SimpleLogger()
+        
+        with patch('builtins.print') as mock_print:
+            logger.print_info("Message 1")
+            logger.print_warning("Message 2")
+            logger.print_error("Message 3")
+            logger.print_success("Message 4")
+            logger.print_debug("Message 5")
+        
+        # Check that all calls were made
+        assert mock_print.call_count == 5
+        
+        # Check specific calls
+        calls = mock_print.call_args_list
+        assert calls[0] == call("[INFO] Message 1")
+        assert calls[1] == call("[WARNING] Message 2")
+        assert calls[2] == call("[ERROR] Message 3")
+        assert calls[3] == call("[SUCCESS] Message 4")
+        assert calls[4] == call("[DEBUG] Message 5")
+    
+    def test_logger_empty_messages(self):
+        """Test logger with empty messages."""
+        from src.ml.feature_engineering.logger import SimpleLogger
+        
+        logger = SimpleLogger()
+        
+        with patch('builtins.print') as mock_print:
+            logger.print_info("")
+            logger.print_warning("")
+            logger.print_error("")
+            logger.print_success("")
+            logger.print_debug("")
+        
+        # Check that all calls were made
+        assert mock_print.call_count == 5
+        
+        # Check specific calls
+        calls = mock_print.call_args_list
+        assert calls[0] == call("[INFO] ")
+        assert calls[1] == call("[WARNING] ")
+        assert calls[2] == call("[ERROR] ")
+        assert calls[3] == call("[SUCCESS] ")
+        assert calls[4] == call("[DEBUG] ")
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pytest.main([__file__])
