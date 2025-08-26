@@ -322,6 +322,9 @@ class InteractiveSystem:
             for dtype, count in dtype_counts.items():
                 print(f"  {dtype}: {count} columns")
             
+            # Get numeric columns for analysis
+            numeric_cols = self.current_data.select_dtypes(include=[np.number]).columns
+            
             # Run comprehensive basic statistics
             print(f"\n🔍 Running comprehensive basic statistics...")
             
@@ -333,7 +336,6 @@ class InteractiveSystem:
             
             # Descriptive stats
             print(f"\n2️⃣  Computing descriptive statistics...")
-            numeric_cols = self.current_data.select_dtypes(include=[np.number]).columns
             with tqdm(total=len(numeric_cols), desc="Descriptive stats", leave=False) as pbar:
                 desc_stats_result = basic_stats.descriptive_stats(self.current_data)
                 pbar.update(len(numeric_cols))
@@ -350,11 +352,20 @@ class InteractiveSystem:
                 outlier_analysis_result = basic_stats.outlier_analysis(self.current_data)
                 pbar.update(len(numeric_cols))
             
-            # Time series analysis (if applicable)
+            # Time series analysis (with size check)
             print(f"\n5️⃣  Time series analysis...")
-            with tqdm(total=1, desc="Time series analysis", leave=False) as pbar:
-                ts_analysis_result = basic_stats.time_series_analysis(self.current_data)
-                pbar.update(1)
+            ts_analysis_result = {'error': 'Skipped - dataset too large for time series analysis'}
+            
+            # Only run time series analysis for smaller datasets
+            if len(self.current_data) <= 100000:  # Limit to 100k rows
+                try:
+                    with tqdm(total=1, desc="Time series analysis", leave=False) as pbar:
+                        ts_analysis_result = basic_stats.time_series_analysis(self.current_data)
+                        pbar.update(1)
+                except Exception as ts_error:
+                    ts_analysis_result = {'error': f'Time series analysis failed: {str(ts_error)}'}
+            else:
+                print(f"   ⚠️  Skipping time series analysis for large dataset ({len(self.current_data):,} rows)")
             
             # Generate comprehensive summary
             print(f"\n" + "="*60)
@@ -415,6 +426,9 @@ class InteractiveSystem:
                                         if 'error' not in result and result['is_stationary'])
                     print(f"   • Stationary series: {stationary_cols}")
                     print(f"   • Non-stationary series: {len(ts_analysis_result['stationarity']) - stationary_cols}")
+            else:
+                print(f"\n🕒 Time Series Summary:")
+                print(f"   • {ts_analysis_result['error']}")
             
             # Save comprehensive results
             self.current_results['comprehensive_basic_statistics'] = {
@@ -446,8 +460,9 @@ class InteractiveSystem:
             print("\n🔍 STATISTICAL INTERPRETATIONS")
             print("=" * 50)
             
-            for col in numeric_data.columns:
-                col_data = numeric_data[col].dropna()
+            # Use numeric_cols instead of numeric_data
+            for col in numeric_cols:
+                col_data = self.current_data[col].dropna()
                 if len(col_data) == 0:
                     continue
                     
@@ -555,9 +570,9 @@ class InteractiveSystem:
             print(f"\n📋 ANALYSIS SUMMARY")
             print("=" * 50)
             print(f"📊 Dataset Overview:")
-            print(f"  • Total numeric columns: {len(numeric_data.columns)}")
-            print(f"  • Total observations: {len(numeric_data):,}")
-            print(f"  • Columns with missing values: {len([col for col in numeric_data.columns if numeric_data[col].isna().sum() > 0])}")
+            print(f"  • Total numeric columns: {len(numeric_cols)}")
+            print(f"  • Total observations: {len(self.current_data):,}")
+            print(f"  • Columns with missing values: {len([col for col in numeric_cols if self.current_data[col].isna().sum() > 0])}")
             
             # Summary of key findings
             print(f"\n🔍 Key Findings:")
@@ -565,8 +580,8 @@ class InteractiveSystem:
             high_outlier_cols = []
             high_cv_cols = []
             
-            for col in numeric_data.columns:
-                col_data = numeric_data[col].dropna()
+            for col in numeric_cols:
+                col_data = self.current_data[col].dropna()
                 if len(col_data) == 0:
                     continue
                     
@@ -606,43 +621,8 @@ class InteractiveSystem:
             print(f"  • Consider feature scaling for machine learning")
             print(f"  • Investigate outliers if percentage is high")
             
-            # Create visualizations
-            print(f"\n📊 GENERATING VISUALIZATIONS...")
-            self._create_statistics_plots(numeric_data)
-            
-            # Ask user if they want to view plots in browser
-            print(f"\n🌐 VIEW PLOTS IN BROWSER")
-            print("-" * 30)
-            print("📊 Generated 4 visualization files:")
-            print("  • distributions.png - Histograms with KDE and statistics")
-            print("  • boxplots.png - Outlier detection with counts")
-            print("  • correlation_heatmap.png - Feature relationships")
-            print("  • statistical_summary.png - Comparative analysis charts")
-            
-            show_plots = input("\nShow plots in Safari browser? (y/n): ").strip().lower()
-            if show_plots in ['y', 'yes']:
-                self._show_plots_in_browser()
-            
-            # Save results
-            self.current_results['basic_statistics'] = {
-                'descriptive_stats': desc_stats.to_dict(),
-                'numeric_columns': list(numeric_data.columns),
-                'analysis_summary': {
-                    'total_columns': len(numeric_data.columns),
-                    'total_observations': len(numeric_data),
-                    'columns_with_issues': len([col for col in numeric_data.columns 
-                                              if numeric_data[col].isna().sum() > 0]),
-                    'skewed_columns': skewed_cols,
-                    'high_outlier_columns': high_outlier_cols,
-                    'high_variability_columns': high_cv_cols
-                }
-            }
-            
-            print("\n✅ Comprehensive basic statistics completed and saved!")
-            print("📁 Plots saved to: results/plots/statistics/")
-            
         except Exception as e:
-            print(f"❌ Error in basic statistics: {e}")
+            print(f"❌ Error in comprehensive basic statistics: {e}")
             import traceback
             traceback.print_exc()
     

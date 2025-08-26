@@ -10,7 +10,12 @@ import time
 import signal
 import os
 import sys
+import pytest
 from pathlib import Path
+
+# Add project root to path
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
 def start_mcp_server_background():
     """Start MCP server in background mode"""
@@ -101,37 +106,59 @@ def stop_mcp_server(process):
     except FileNotFoundError:
         pass
 
-def main():
-    """Main test function"""
-    print("🧪 MCP Server Detection Test")
-    print("=" * 40)
+class TestMCPServerDetection:
+    """Test class for MCP server detection"""
     
-    # Check if we're in Docker
-    if os.path.exists("/.dockerenv"):
-        print("🐳 Running in Docker container")
-    else:
-        print("💻 Running on host system")
-    
-    # Start MCP server
-    process = start_mcp_server_background()
-    if not process:
-        print("❌ Cannot continue without MCP server")
-        return 1
-    
-    try:
-        # Test detection
-        detected = test_detection()
+    def test_mcp_server_detection(self):
+        """Test MCP server detection functionality"""
+        print("🧪 Testing MCP server detection...")
         
-        if detected:
-            print("✅ MCP server successfully detected!")
-            return 0
-        else:
-            print("❌ MCP server not detected")
-            return 1
+        process = None
+        try:
+            # Start MCP server
+            process = start_mcp_server_background()
+            assert process is not None, "Failed to start MCP server"
             
+            # Test detection
+            detection_success = test_detection()
+            assert detection_success, "MCP server detection failed"
+            
+            print("✅ MCP server detection test passed!")
+            
+        except Exception as e:
+            print(f"❌ MCP server detection test failed: {e}")
+            pytest.fail(f"Test failed: {e}")
+        finally:
+            # Always stop the server
+            stop_mcp_server(process)
+
+def main():
+    """Run the test manually"""
+    print("🧪 Running MCP server detection test...")
+    
+    process = None
+    try:
+        # Start MCP server
+        process = start_mcp_server_background()
+        if process is None:
+            print("❌ Failed to start MCP server")
+            return False
+        
+        # Test detection
+        if test_detection():
+            print("✅ MCP server detection test passed!")
+            return True
+        else:
+            print("❌ MCP server detection test failed!")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Test failed with error: {e}")
+        return False
     finally:
-        # Always clean up
+        # Always stop the server
         stop_mcp_server(process)
 
 if __name__ == "__main__":
-    sys.exit(main()) 
+    success = main()
+    sys.exit(0 if success else 1)

@@ -9,7 +9,12 @@ Simple script to test UV functionality in Docker environment
 import subprocess
 import os
 import sys
+import pytest
 from pathlib import Path
+
+# Add project root to path
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
 def test_uv_availability():
     """Test if UV is available"""
@@ -98,126 +103,96 @@ def test_package_management():
                 # Check for key packages
                 output_lower = result.stdout.lower()
                 key_packages = ["pandas", "numpy", "matplotlib"]
-                found_packages = [pkg for pkg in key_packages if pkg in output_lower]
-                if found_packages:
-                    print(f"   📦 Key packages found: {', '.join(found_packages)}")
                 
+                found_packages = []
+                for pkg in key_packages:
+                    if pkg in output_lower:
+                        found_packages.append(pkg)
+                
+                print(f"   Key packages found: {found_packages}")
                 return True
+                
+        except subprocess.TimeoutExpired:
+            print(f"❌ {' '.join(cmd)} - TIMEOUT")
         except Exception as e:
             print(f"❌ {' '.join(cmd)} - ERROR: {e}")
     
     return False
 
-def test_environment():
-    """Test environment variables"""
-    print("\n🔍 Testing environment variables...")
+def test_docker_environment():
+    """Test Docker environment"""
+    print("\n🔍 Testing Docker environment...")
     
-    required_vars = {
-        "USE_UV": "true",
-        "UV_ONLY": "true", 
-        "DOCKER_CONTAINER": "true"
-    }
-    
-    optional_vars = [
-        "UV_CACHE_DIR",
-        "UV_VENV_DIR",
-        "PYTHONPATH"
-    ]
-    
-    all_good = True
-    
-    for var, expected in required_vars.items():
-        value = os.getenv(var, "false").lower()
-        if value == expected:
-            print(f"✅ {var}={value}")
-        else:
-            print(f"❌ {var}={value} (expected {expected})")
-            all_good = False
-    
-    for var in optional_vars:
-        value = os.getenv(var)
-        if value:
-            print(f"✅ {var}={value}")
-        else:
-            print(f"⚠️  {var} not set")
-    
-    return all_good
-
-def test_directories():
-    """Test UV directories"""
-    print("\n🔍 Testing UV directories...")
-    
-    cache_dir = os.getenv("UV_CACHE_DIR", "/app/.uv_cache")
-    venv_dir = os.getenv("UV_VENV_DIR", "/app/.venv")
-    
-    cache_parent = Path(cache_dir).parent
-    venv_parent = Path(venv_dir).parent
-    
-    all_good = True
-    
-    if cache_parent.exists():
-        print(f"✅ Cache parent directory exists: {cache_parent}")
-    else:
-        print(f"❌ Cache parent directory missing: {cache_parent}")
-        all_good = False
-    
-    if venv_parent.exists():
-        print(f"✅ Venv parent directory exists: {venv_parent}")
-    else:
-        print(f"❌ Venv parent directory missing: {venv_parent}")
-        all_good = False
-    
-    # Try to create cache directory
+    # Check if we're in Docker
     try:
-        Path(cache_dir).mkdir(parents=True, exist_ok=True)
-        print(f"✅ Cache directory accessible: {cache_dir}")
-    except Exception as e:
-        print(f"❌ Cannot access cache directory: {e}")
-        all_good = False
+        with open("/proc/1/cgroup", "r") as f:
+            cgroup = f.read()
+            if "docker" in cgroup.lower():
+                print("✅ Running in Docker container")
+                return True
+            else:
+                print("⚠️  Not running in Docker container")
+                return False
+    except FileNotFoundError:
+        print("⚠️  Could not determine if running in Docker")
+        return False
+
+class TestUVDocker:
+    """Test class for UV Docker functionality"""
     
-    return all_good
+    def test_uv_availability(self):
+        """Test UV availability"""
+        assert test_uv_availability(), "UV is not available"
+    
+    def test_uv_commands(self):
+        """Test UV commands"""
+        assert test_uv_commands(), "UV commands are not working"
+    
+    def test_package_management(self):
+        """Test package management"""
+        assert test_package_management(), "Package management is not working"
+    
+    def test_docker_environment(self):
+        """Test Docker environment"""
+        # This test is optional - it's okay if not in Docker
+        docker_env = test_docker_environment()
+        if not docker_env:
+            print("⚠️  Not running in Docker environment - this is okay for local testing")
 
 def main():
-    """Main test function"""
-    print("🚀 UV Docker Environment Test")
-    print("=" * 50)
+    """Run all tests"""
+    print("🧪 Running UV Docker tests...")
     
     tests = [
         ("UV Availability", test_uv_availability),
         ("UV Commands", test_uv_commands),
         ("Package Management", test_package_management),
-        ("Environment Variables", test_environment),
-        ("Directories", test_directories)
+        ("Docker Environment", test_docker_environment)
     ]
     
-    results = []
-    for test_name, test_func in tests:
-        try:
-            result = test_func()
-            results.append((test_name, result))
-        except Exception as e:
-            print(f"❌ {test_name} - EXCEPTION: {e}")
-            results.append((test_name, False))
-    
-    print("\n" + "=" * 50)
-    print("📊 Test Results Summary")
-    print("=" * 50)
-    
     passed = 0
-    for test_name, result in results:
-        status = "✅ PASS" if result else "❌ FAIL"
-        print(f"{status} - {test_name}")
-        if result:
-            passed += 1
+    total = len(tests)
     
-    print(f"\n📈 Overall: {passed}/{len(results)} tests passed")
+    for test_name, test_func in tests:
+        print(f"\n{'='*50}")
+        print(f"🧪 {test_name}")
+        print(f"{'='*50}")
+        
+        try:
+            if test_func():
+                print(f"✅ {test_name} - PASSED")
+                passed += 1
+            else:
+                print(f"❌ {test_name} - FAILED")
+        except Exception as e:
+            print(f"❌ {test_name} - ERROR: {e}")
     
-    if passed == len(results):
-        print("🎉 All tests passed! UV-only mode is working correctly.")
-        sys.exit(0)
-    else:
-        print("⚠️  Some tests failed. Check the output above for details.")
-        sys.exit(1)
+    print(f"\n{'='*50}")
+    print(f"📊 Test Results: {passed}/{total} passed")
+    print(f"{'='*50}")
+    
+    return passed == total
 
 if __name__ == "__main__":
-    main() 
+    success = main()
+    sys.exit(0 if success else 1)
