@@ -482,6 +482,149 @@ class InteractiveSystem:
         except Exception as e:
             print(f"❌ Error in correlation analysis: {e}")
     
+    def run_time_series_analysis(self):
+        """Run time series analysis."""
+        if self.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return
+            
+        print("\n📈 TIME SERIES ANALYSIS")
+        print("-" * 30)
+        
+        try:
+            from src.eda.time_series_analysis import TimeSeriesAnalyzer
+            
+            # Initialize analyzer
+            analyzer = TimeSeriesAnalyzer(self.current_data)
+            
+            # Get column to analyze
+            numeric_cols = self.current_data.select_dtypes(include=[np.number]).columns
+            if len(numeric_cols) == 0:
+                print("❌ No numeric columns found in data")
+                return
+                
+            print(f"📊 Available numeric columns: {list(numeric_cols)}")
+            
+            if len(numeric_cols) == 1:
+                column = numeric_cols[0]
+                print(f"🎯 Using column: {column}")
+            else:
+                column = input(f"Enter column to analyze ({', '.join(numeric_cols)}): ").strip()
+                if column not in numeric_cols:
+                    print(f"❌ Invalid column. Using first column: {numeric_cols[0]}")
+                    column = numeric_cols[0]
+            
+            # Run comprehensive analysis
+            print(f"\n🔍 Starting comprehensive time series analysis for column: {column}")
+            print("   This will include:")
+            print("   • Stationarity testing (ADF, KPSS)")
+            print("   • Trend analysis (linear, moving averages)")
+            print("   • Seasonality detection (decomposition, FFT)")
+            print("   • Volatility analysis (clustering, persistence)")
+            print("   • Autocorrelation analysis (ACF, PACF)")
+            print("   • Forecasting (naive, seasonal, ARIMA)")
+            print("   • Summary and recommendations")
+            
+            results = analyzer.comprehensive_analysis(column)
+            
+            # Display summary
+            if 'summary' in results:
+                summary = results['summary']
+                
+                print(f"\n📋 ANALYSIS SUMMARY:")
+                print("-" * 30)
+                
+                if 'key_findings' in summary and summary['key_findings']:
+                    print(f"🔍 Key Findings:")
+                    for i, finding in enumerate(summary['key_findings'], 1):
+                        print(f"   {i}. {finding}")
+                
+                if 'recommendations' in summary and summary['recommendations']:
+                    print(f"\n💡 Recommendations:")
+                    for i, rec in enumerate(summary['recommendations'], 1):
+                        print(f"   {i}. {rec}")
+                
+                if not summary.get('key_findings') and not summary.get('recommendations'):
+                    print("   No significant patterns detected in the data.")
+            
+            # Show detailed results
+            show_details = input("\nShow detailed results? (y/n): ").strip().lower()
+            if show_details in ['y', 'yes']:
+                print(f"\n📊 DETAILED RESULTS:")
+                print("-" * 30)
+                
+                analyses = results.get('analyses', {})
+                
+                # Stationarity results
+                if 'stationarity' in analyses and 'error' not in analyses['stationarity']:
+                    stationarity = analyses['stationarity']
+                    print(f"\n📈 Stationarity Analysis:")
+                    if 'tests' in stationarity:
+                        tests = stationarity['tests']
+                        if 'adf' in tests and 'error' not in tests['adf']:
+                            adf = tests['adf']
+                            print(f"   ADF Test: p-value={adf.get('p_value', 'N/A'):.4f}, "
+                                  f"Stationary={adf.get('is_stationary', 'N/A')}")
+                        if 'kpss' in tests and 'error' not in tests['kpss']:
+                            kpss = tests['kpss']
+                            print(f"   KPSS Test: p-value={kpss.get('p_value', 'N/A'):.4f}, "
+                                  f"Stationary={kpss.get('is_stationary', 'N/A')}")
+                
+                # Trend results
+                if 'trends' in analyses and 'error' not in analyses['trends']:
+                    trends = analyses['trends']
+                    print(f"\n📈 Trend Analysis:")
+                    if 'trend_analysis' in trends:
+                        trend_analysis = trends['trend_analysis']
+                        if 'linear' in trend_analysis:
+                            linear = trend_analysis['linear']
+                            print(f"   Linear Trend: {linear.get('trend_direction', 'N/A')}, "
+                                  f"R²={linear.get('r_squared', 'N/A'):.4f}")
+                
+                # Seasonality results
+                if 'seasonality' in analyses and 'error' not in analyses['seasonality']:
+                    seasonality = analyses['seasonality']
+                    print(f"\n🔄 Seasonality Analysis:")
+                    print(f"   Detected Period: {seasonality.get('detected_period', 'N/A')}")
+                    if 'seasonality_analysis' in seasonality:
+                        seasonality_analysis = seasonality['seasonality_analysis']
+                        if 'decomposition' in seasonality_analysis and 'error' not in seasonality_analysis['decomposition']:
+                            decomp = seasonality_analysis['decomposition']
+                            print(f"   Seasonal Strength: {decomp.get('seasonal_strength', 'N/A'):.4f}")
+                            print(f"   Has Seasonality: {decomp.get('has_seasonality', 'N/A')}")
+                
+                # Volatility results
+                if 'volatility' in analyses and 'error' not in analyses['volatility']:
+                    volatility = analyses['volatility']
+                    print(f"\n📊 Volatility Analysis:")
+                    if 'volatility_analysis' in volatility:
+                        vol_analysis = volatility['volatility_analysis']
+                        print(f"   Mean Volatility: {vol_analysis.get('mean_volatility', 'N/A'):.4f}")
+                        print(f"   Volatility Clustering: {vol_analysis.get('has_clustering', 'N/A')}")
+                
+                # Autocorrelation results
+                if 'autocorrelation' in analyses and 'error' not in analyses['autocorrelation']:
+                    autocorr = analyses['autocorrelation']
+                    print(f"\n🔗 Autocorrelation Analysis:")
+                    if 'autocorrelation_analysis' in autocorr:
+                        acf_analysis = autocorr['autocorrelation_analysis']
+                        print(f"   Max ACF Lag: {acf_analysis.get('max_acf_lag', 'N/A')}")
+                        print(f"   Max PACF Lag: {acf_analysis.get('max_pacf_lag', 'N/A')}")
+            
+            # Save results
+            self.current_results['time_series_analysis'] = results
+            print(f"\n✅ Time series analysis completed!")
+            print(f"   Results saved to: {results.get('results_file', 'N/A')}")
+            print(f"   Plots saved to: results/plots/time_series/")
+            
+        except ImportError as e:
+            print(f"❌ Error importing time series analysis module: {e}")
+            print("   Please ensure all dependencies are installed.")
+        except Exception as e:
+            print(f"❌ Error in time series analysis: {e}")
+            import traceback
+            traceback.print_exc()
+    
     def generate_all_features(self):
         """Generate all features using the Feature Engineering system."""
         if self.current_data is None:
@@ -715,7 +858,7 @@ class InteractiveSystem:
             elif choice == '3':
                 self.run_correlation_analysis()
             elif choice == '4':
-                print("⏳ Time Series Analysis - Coming soon!")
+                self.run_time_series_analysis()
             elif choice == '5':
                 print("⏳ Feature Importance - Coming soon!")
             elif choice == '6':

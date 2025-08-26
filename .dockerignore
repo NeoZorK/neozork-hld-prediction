@@ -42,6 +42,9 @@ ENV/
 *.svg
 *.webp
 
+# Results and analysis outputs
+/results/
+
 # Explicitly ignore indicators folder content
 /data/indicators/parquet/*
 /data/indicators/csv/*
