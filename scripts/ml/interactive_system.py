@@ -44,6 +44,80 @@ class InteractiveSystem:
         self.feature_generator = None
         self.current_data = None
         self.current_results = {}
+        # Track used submenus for showing green checkmarks
+        self.used_menus = {
+            'eda': {
+                'basic_statistics': False,
+                'data_quality_check': False,
+                'correlation_analysis': False,
+                'time_series_analysis': False,
+                'feature_importance': False,
+                'fix_data_issues': False,
+                'generate_html_report': False,
+                'restore_from_backup': False
+            },
+            'feature_engineering': {
+                'generate_all_features': False,
+                'proprietary_features': False,
+                'technical_indicators': False,
+                'statistical_features': False,
+                'temporal_features': False,
+                'cross_timeframe_features': False,
+                'feature_selection': False,
+                'feature_summary': False
+            },
+            'visualization': {
+                'price_charts': False,
+                'feature_distributions': False,
+                'correlation_heatmaps': False,
+                'time_series_plots': False,
+                'feature_importance_charts': False,
+                'export_visualizations': False
+            },
+            'model_development': {
+                'data_preparation': False,
+                'feature_engineering_pipeline': False,
+                'ml_model_training': False,
+                'model_evaluation': False,
+                'hyperparameter_tuning': False,
+                'model_report': False
+            }
+        }
+    
+    def mark_menu_as_used(self, menu_category, menu_item):
+        """Mark a submenu item as successfully used."""
+        if menu_category in self.used_menus and menu_item in self.used_menus[menu_category]:
+            self.used_menus[menu_category][menu_item] = True
+            print(f"✅ {menu_item.replace('_', ' ').title()} marked as completed!")
+    
+    def reset_menu_status(self, menu_category=None):
+        """Reset menu status for all or specific category."""
+        if menu_category:
+            if menu_category in self.used_menus:
+                for item in self.used_menus[menu_category]:
+                    self.used_menus[menu_category][item] = False
+                print(f"🔄 Reset status for {menu_category} menu")
+        else:
+            for category in self.used_menus:
+                for item in self.used_menus[category]:
+                    self.used_menus[category][item] = False
+            print("🔄 Reset status for all menus")
+    
+    def show_menu_status(self):
+        """Show current menu usage status."""
+        print("\n📊 MENU USAGE STATUS")
+        print("-" * 30)
+        
+        for category, items in self.used_menus.items():
+            print(f"\n{category.upper().replace('_', ' ')}:")
+            used_count = sum(1 for item in items.values() if item)
+            total_count = len(items)
+            print(f"  Progress: {used_count}/{total_count} items completed")
+            
+            for item, used in items.items():
+                status = "✅" if used else "⏳"
+                item_name = item.replace('_', ' ').title()
+                print(f"    {status} {item_name}")
     
     def safe_input(self, prompt="\nPress Enter to continue..."):
         """Safely handle input with EOF protection."""
@@ -74,58 +148,147 @@ class InteractiveSystem:
         print("6. 🧪 Testing & Validation")
         print("7. 📚 Documentation & Help")
         print("8. ⚙️  System Configuration")
+        print("9. 📊 Menu Status")
         print("0. 🚪 Exit")
         print("-" * 50)
         
     def print_eda_menu(self):
-        """Print EDA menu options."""
+        """Print EDA menu options with green checkmarks for used items."""
         print("\n🔍 EDA ANALYSIS MENU:")
         print("0. 🔙 Back to Main Menu")
-        print("1. 📊 Basic Statistics")
-        print("2. 🧹 Comprehensive Data Quality Check")
-        print("3. 🔗 Correlation Analysis")
-        print("4. 📈 Time Series Analysis")
-        print("5. 🎯 Feature Importance")
-        print("6. 🛠️  Fix Data Issues")
-        print("7. 📋 Generate HTML Report")
-        print("8. 🔄 Restore from Backup")
+        
+        # Basic Statistics
+        checkmark = " ✅" if self.used_menus['eda']['basic_statistics'] else ""
+        print(f"1. 📊 Basic Statistics{checkmark}")
+        
+        # Data Quality Check
+        checkmark = " ✅" if self.used_menus['eda']['data_quality_check'] else ""
+        print(f"2. 🧹 Comprehensive Data Quality Check{checkmark}")
+        
+        # Correlation Analysis
+        checkmark = " ✅" if self.used_menus['eda']['correlation_analysis'] else ""
+        print(f"3. 🔗 Correlation Analysis{checkmark}")
+        
+        # Time Series Analysis
+        checkmark = " ✅" if self.used_menus['eda']['time_series_analysis'] else ""
+        print(f"4. 📈 Time Series Analysis{checkmark}")
+        
+        # Feature Importance
+        checkmark = " ✅" if self.used_menus['eda']['feature_importance'] else ""
+        print(f"5. 🎯 Feature Importance{checkmark}")
+        
+        # Fix Data Issues
+        checkmark = " ✅" if self.used_menus['eda']['fix_data_issues'] else ""
+        print(f"6. 🛠️  Fix Data Issues{checkmark}")
+        
+        # Generate HTML Report
+        checkmark = " ✅" if self.used_menus['eda']['generate_html_report'] else ""
+        print(f"7. 📋 Generate HTML Report{checkmark}")
+        
+        # Restore from Backup
+        checkmark = " ✅" if self.used_menus['eda']['restore_from_backup'] else ""
+        print(f"8. 🔄 Restore from Backup{checkmark}")
+        
         print("-" * 50)
         
     def print_feature_engineering_menu(self):
-        """Print Feature Engineering menu options."""
+        """Print Feature Engineering menu options with green checkmarks for used items."""
         print("\n⚙️  FEATURE ENGINEERING MENU:")
         print("0. 🔙 Back to Main Menu")
-        print("1. 🚀 Generate All Features")
-        print("2. 🎯 Proprietary Features (PHLD/Wave)")
-        print("3. 📊 Technical Indicators")
-        print("4. 📈 Statistical Features")
-        print("5. ⏰ Temporal Features")
-        print("6. 🔄 Cross-Timeframe Features")
-        print("7. 🎛️  Feature Selection & Optimization")
-        print("8. 📋 Feature Summary Report")
+        
+        # Generate All Features
+        checkmark = " ✅" if self.used_menus['feature_engineering']['generate_all_features'] else ""
+        print(f"1. 🚀 Generate All Features{checkmark}")
+        
+        # Proprietary Features
+        checkmark = " ✅" if self.used_menus['feature_engineering']['proprietary_features'] else ""
+        print(f"2. 🎯 Proprietary Features (PHLD/Wave){checkmark}")
+        
+        # Technical Indicators
+        checkmark = " ✅" if self.used_menus['feature_engineering']['technical_indicators'] else ""
+        print(f"3. 📊 Technical Indicators{checkmark}")
+        
+        # Statistical Features
+        checkmark = " ✅" if self.used_menus['feature_engineering']['statistical_features'] else ""
+        print(f"4. 📈 Statistical Features{checkmark}")
+        
+        # Temporal Features
+        checkmark = " ✅" if self.used_menus['feature_engineering']['temporal_features'] else ""
+        print(f"5. ⏰ Temporal Features{checkmark}")
+        
+        # Cross-Timeframe Features
+        checkmark = " ✅" if self.used_menus['feature_engineering']['cross_timeframe_features'] else ""
+        print(f"6. 🔄 Cross-Timeframe Features{checkmark}")
+        
+        # Feature Selection
+        checkmark = " ✅" if self.used_menus['feature_engineering']['feature_selection'] else ""
+        print(f"7. 🎛️  Feature Selection & Optimization{checkmark}")
+        
+        # Feature Summary
+        checkmark = " ✅" if self.used_menus['feature_engineering']['feature_summary'] else ""
+        print(f"8. 📋 Feature Summary Report{checkmark}")
+        
         print("-" * 50)
         
     def print_visualization_menu(self):
-        """Print visualization menu options."""
+        """Print visualization menu options with green checkmarks for used items."""
         print("\n📊 DATA VISUALIZATION MENU:")
-        print("1. 📈 Price Charts (OHLCV)")
-        print("2. 📊 Feature Distribution Plots")
-        print("3. 🔗 Correlation Heatmaps")
-        print("4. 📈 Time Series Plots")
-        print("5. 🎯 Feature Importance Charts")
-        print("6. 📋 Export Visualizations")
+        
+        # Price Charts
+        checkmark = " ✅" if self.used_menus['visualization']['price_charts'] else ""
+        print(f"1. 📈 Price Charts (OHLCV){checkmark}")
+        
+        # Feature Distribution Plots
+        checkmark = " ✅" if self.used_menus['visualization']['feature_distributions'] else ""
+        print(f"2. 📊 Feature Distribution Plots{checkmark}")
+        
+        # Correlation Heatmaps
+        checkmark = " ✅" if self.used_menus['visualization']['correlation_heatmaps'] else ""
+        print(f"3. 🔗 Correlation Heatmaps{checkmark}")
+        
+        # Time Series Plots
+        checkmark = " ✅" if self.used_menus['visualization']['time_series_plots'] else ""
+        print(f"4. 📈 Time Series Plots{checkmark}")
+        
+        # Feature Importance Charts
+        checkmark = " ✅" if self.used_menus['visualization']['feature_importance_charts'] else ""
+        print(f"5. 🎯 Feature Importance Charts{checkmark}")
+        
+        # Export Visualizations
+        checkmark = " ✅" if self.used_menus['visualization']['export_visualizations'] else ""
+        print(f"6. 📋 Export Visualizations{checkmark}")
+        
         print("7. 🔙 Back to Main Menu")
         print("-" * 50)
         
     def print_model_development_menu(self):
-        """Print model development menu options."""
+        """Print model development menu options with green checkmarks for used items."""
         print("\n📈 MODEL DEVELOPMENT MENU:")
-        print("1. 🎯 Data Preparation")
-        print("2. 🔄 Feature Engineering Pipeline")
-        print("3. 🤖 ML Model Training")
-        print("4. 📊 Model Evaluation")
-        print("5. 🧪 Hyperparameter Tuning")
-        print("6. 📋 Model Report")
+        
+        # Data Preparation
+        checkmark = " ✅" if self.used_menus['model_development']['data_preparation'] else ""
+        print(f"1. 🎯 Data Preparation{checkmark}")
+        
+        # Feature Engineering Pipeline
+        checkmark = " ✅" if self.used_menus['model_development']['feature_engineering_pipeline'] else ""
+        print(f"2. 🔄 Feature Engineering Pipeline{checkmark}")
+        
+        # ML Model Training
+        checkmark = " ✅" if self.used_menus['model_development']['ml_model_training'] else ""
+        print(f"3. 🤖 ML Model Training{checkmark}")
+        
+        # Model Evaluation
+        checkmark = " ✅" if self.used_menus['model_development']['model_evaluation'] else ""
+        print(f"4. 📊 Model Evaluation{checkmark}")
+        
+        # Hyperparameter Tuning
+        checkmark = " ✅" if self.used_menus['model_development']['hyperparameter_tuning'] else ""
+        print(f"5. 🧪 Hyperparameter Tuning{checkmark}")
+        
+        # Model Report
+        checkmark = " ✅" if self.used_menus['model_development']['model_report'] else ""
+        print(f"6. 📋 Model Report{checkmark}")
+        
         print("7. 🔙 Back to Main Menu")
         print("-" * 50)
         
@@ -468,6 +631,9 @@ class InteractiveSystem:
             
             print("\n✅ Comprehensive basic statistics completed and saved!")
             print("📁 Plots saved to: results/plots/statistics/")
+            
+            # Mark as used
+            self.mark_menu_as_used('eda', 'basic_statistics')
             
         except Exception as e:
             print(f"❌ Error in basic statistics: {e}")
@@ -1472,6 +1638,9 @@ class InteractiveSystem:
             print(f"\n✅ Comprehensive data quality check completed!")
             print(f"   Results saved for further analysis")
             
+            # Mark as used
+            self.mark_menu_as_used('eda', 'data_quality_check')
+            
             # Ask if user wants to fix issues (only if not in test mode)
             print(f"\n" + "="*60)
             print("🔧 DATA FIXING OPTIONS")
@@ -1545,6 +1714,9 @@ class InteractiveSystem:
             }
             
             print("\n✅ Correlation analysis completed and saved!")
+            
+            # Mark as used
+            self.mark_menu_as_used('eda', 'correlation_analysis')
             
         except Exception as e:
             print(f"❌ Error in correlation analysis: {e}")
@@ -1684,6 +1856,9 @@ class InteractiveSystem:
             print(f"   Results saved to: {results.get('results_file', 'N/A')}")
             print(f"   Plots saved to: results/plots/time_series/")
             
+            # Mark as used
+            self.mark_menu_as_used('eda', 'time_series_analysis')
+            
         except ImportError as e:
             print(f"❌ Error importing time series analysis module: {e}")
             print("   Please ensure all dependencies are installed.")
@@ -1775,6 +1950,9 @@ class InteractiveSystem:
             # Update current data
             self.current_data = data_with_features
             
+            # Mark as used
+            self.mark_menu_as_used('feature_engineering', 'generate_all_features')
+            
         except Exception as e:
             print(f"❌ Error in feature generation: {e}")
             import traceback
@@ -1827,6 +2005,9 @@ class InteractiveSystem:
             print(f"\n📂 Feature Categories:")
             for category, count in categories.items():
                 print(f"   {category.title()}: {count} features")
+            
+            # Mark as used
+            self.mark_menu_as_used('feature_engineering', 'feature_summary')
             
         except Exception as e:
             print(f"❌ Error showing feature summary: {e}")
@@ -1983,6 +2164,9 @@ class InteractiveSystem:
                     'nan_fixed': len(nan_cols) > 0,
                     'duplicates_removed': duplicates > 0
                 }
+                
+                # Mark as used
+                self.mark_menu_as_used('eda', 'fix_data_issues')
             else:
                 self.current_data = backup_data
                 print("🔄 Changes reverted")
@@ -2125,6 +2309,9 @@ class InteractiveSystem:
             
             print(f"✅ HTML report generated: {report_path}")
             print(f"   Open the file in your web browser to view the complete report")
+            
+            # Mark as used
+            self.mark_menu_as_used('eda', 'generate_html_report')
             
         except Exception as e:
             print(f"❌ Error generating HTML report: {e}")
@@ -2279,12 +2466,14 @@ class InteractiveSystem:
                 self.show_help()
             elif choice == '8':
                 self.show_system_info()
+            elif choice == '9':
+                self.show_menu_status()
             elif choice == '0':
                 print("\n👋 Thank you for using NeoZorK HLD Prediction Interactive System!")
                 print("   Goodbye!")
                 break
             else:
-                print("❌ Invalid choice. Please select 0-8.")
+                print("❌ Invalid choice. Please select 0-9.")
             
             if choice != '0':
                 if self.safe_input() is None:
@@ -2316,6 +2505,9 @@ class InteractiveSystem:
                             self.current_data = pd.read_parquet(backup_file)
                             print(f"✅ Data restored successfully!")
                             print(f"   Shape: {self.current_data.shape}")
+                            
+                            # Mark as used
+                            self.mark_menu_as_used('eda', 'restore_from_backup')
                             return
                     except (EOFError, OSError):
                         # Handle test environment where input is not available
@@ -2568,6 +2760,9 @@ class InteractiveSystem:
             
             print(f"\n✅ All data fixes completed successfully!")
             print(f"💾 Backup saved to: {backup_file}")
+            
+            # Mark as used
+            self.mark_menu_as_used('eda', 'fix_data_issues')
             
             # Ask if user wants to restore (only if not in test mode)
             print(f"\n" + "="*60)
