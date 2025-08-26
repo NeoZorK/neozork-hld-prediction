@@ -1121,8 +1121,25 @@ class InteractiveSystem:
             plots_dir = Path("results/plots/statistics")
             plots_dir.mkdir(parents=True, exist_ok=True)
             
-            # Limit to first 6 columns for visualization
-            cols_to_plot = numeric_data.columns[:6]
+            # Select important columns for visualization (prioritize key fields)
+            important_cols = ['open', 'high', 'low', 'close', 'volume', 'predicted_low', 'predicted_high', 'pressure', 'pressure_vector']
+            
+            # Find available important columns
+            available_important = []
+            for col in important_cols:
+                for numeric_col in numeric_data.columns:
+                    if col.lower() in numeric_col.lower():
+                        available_important.append(numeric_col)
+                        break
+            
+            # Add other numeric columns if we have space
+            other_cols = [col for col in numeric_data.columns if col not in available_important]
+            
+            # Combine important columns first, then others (limit to 6 total)
+            cols_to_plot = available_important + other_cols
+            cols_to_plot = cols_to_plot[:6]
+            
+            print(f"📊 Selected columns for visualization: {cols_to_plot}")
             
             # Define plot tasks with estimated complexity
             plot_tasks = [
@@ -2681,8 +2698,14 @@ class InteractiveSystem:
                 print(f"\n1️⃣  Fixing NaN values in {len(nan_summary)} columns...")
                 with tqdm(total=len(nan_summary), desc="Fixing NaN", leave=False) as pbar:
                     for nan_issue in nan_summary:
-                        col = nan_issue['column']
-                        if col in self.current_data.columns:
+                        # Handle different possible structures of nan_issue
+                        if isinstance(nan_issue, dict):
+                            col = nan_issue.get('column', '')
+                        else:
+                            # If nan_issue is not a dict, try to extract column name
+                            col = str(nan_issue) if nan_issue else ''
+                        
+                        if col and col in self.current_data.columns:
                             # Apply appropriate fix based on column type
                             if pd.api.types.is_numeric_dtype(self.current_data[col]):
                                 # For numeric columns, fill with median
@@ -2713,6 +2736,8 @@ class InteractiveSystem:
                     removed_rows = initial_rows - len(self.current_data)
                     if removed_rows > 0:
                         fixes_applied.append(f"Removed {removed_rows} duplicate rows")
+                    else:
+                        fixes_applied.append(f"No duplicate rows found to remove")
                     pbar.update(1)
             
             # 3. Fix gaps in time series
@@ -2720,17 +2745,26 @@ class InteractiveSystem:
                 print(f"\n3️⃣  Fixing time series gaps...")
                 with tqdm(total=len(gap_summary), desc="Fixing gaps", leave=False) as pbar:
                     for gap_issue in gap_summary:
-                        if 'datetime_col' in gap_issue:
-                            dt_col = gap_issue['datetime_col']
-                            if dt_col in self.current_data.columns:
-                                # Sort by datetime and interpolate
-                                self.current_data = self.current_data.sort_values(dt_col)
-                                # Interpolate numeric columns
-                                numeric_cols = self.current_data.select_dtypes(include=[np.number]).columns
-                                for col in numeric_cols:
-                                    if col != dt_col:
-                                        self.current_data[col] = self.current_data[col].interpolate(method='linear')
-                                fixes_applied.append(f"Interpolated gaps in time series using {dt_col}")
+                        # Handle different possible structures of gap_issue
+                        if isinstance(gap_issue, dict):
+                            dt_col = gap_issue.get('datetime_col', '')
+                        else:
+                            # If gap_issue is not a dict, try to find datetime column
+                            dt_col = None
+                            for col in self.current_data.columns:
+                                if pd.api.types.is_datetime64_any_dtype(self.current_data[col]):
+                                    dt_col = col
+                                    break
+                        
+                        if dt_col and dt_col in self.current_data.columns:
+                            # Sort by datetime and interpolate
+                            self.current_data = self.current_data.sort_values(dt_col)
+                            # Interpolate numeric columns
+                            numeric_cols = self.current_data.select_dtypes(include=[np.number]).columns
+                            for col in numeric_cols:
+                                if col != dt_col:
+                                    self.current_data[col] = self.current_data[col].interpolate(method='linear')
+                            fixes_applied.append(f"Interpolated gaps in time series using {dt_col}")
                         pbar.update(1)
             
             # 4. Fix zero values (with caution)
@@ -2738,27 +2772,41 @@ class InteractiveSystem:
                 print(f"\n4️⃣  Analyzing zero values...")
                 with tqdm(total=len(zero_summary), desc="Analyzing zeros", leave=False) as pbar:
                     for zero_issue in zero_summary:
-                        col = zero_issue.get('column', '')
-                        if col and col in self.current_data.columns:
+                        # Handle different possible structures of zero_issue
+                        if isinstance(zero_issue, dict):
+                            col = zero_issue.get('column', '')
                             # Handle different possible keys for count
                             zero_count = zero_issue.get('count', 0)
                             if isinstance(zero_count, (list, tuple)):
                                 zero_count = len(zero_count)
                             elif not isinstance(zero_count, (int, float)):
                                 zero_count = 0
-                            
+                        else:
+                            # If zero_issue is not a dict, try to extract column name
+                            col = str(zero_issue) if zero_issue else ''
+                            zero_count = 0
+                        
+                        if col and col in self.current_data.columns:
+                            # Count actual zeros in the column
+                            actual_zeros = (self.current_data[col] == 0).sum()
                             total_count = len(self.current_data)
-                            zero_percentage = (zero_count / total_count) * 100 if total_count > 0 else 0
+                            zero_percentage = (actual_zeros / total_count) * 100 if total_count > 0 else 0
                             
                             # Only fix if zero percentage is very high (likely error)
                             if zero_percentage > 50:
                                 # Replace zeros with median of non-zero values
-                                non_zero_median = self.current_data[self.current_data[col] != 0][col].median()
-                                if not pd.isna(non_zero_median):
-                                    self.current_data.loc[self.current_data[col] == 0, col] = non_zero_median
-                                    fixes_applied.append(f"Replaced {zero_count} zeros in {col} with median")
+                                non_zero_data = self.current_data[self.current_data[col] != 0][col]
+                                if len(non_zero_data) > 0:
+                                    non_zero_median = non_zero_data.median()
+                                    if not pd.isna(non_zero_median):
+                                        self.current_data.loc[self.current_data[col] == 0, col] = non_zero_median
+                                        fixes_applied.append(f"Replaced {actual_zeros} zeros in {col} with median")
+                                    else:
+                                        fixes_applied.append(f"Kept {actual_zeros} zeros in {col} (no valid median)")
+                                else:
+                                    fixes_applied.append(f"Kept {actual_zeros} zeros in {col} (no non-zero values)")
                             else:
-                                fixes_applied.append(f"Kept {zero_count} zeros in {col} (likely legitimate)")
+                                fixes_applied.append(f"Kept {actual_zeros} zeros in {col} (likely legitimate)")
                         pbar.update(1)
             
             # 5. Fix negative values (with caution)
@@ -2766,25 +2814,33 @@ class InteractiveSystem:
                 print(f"\n5️⃣  Analyzing negative values...")
                 with tqdm(total=len(negative_summary), desc="Analyzing negatives", leave=False) as pbar:
                     for neg_issue in negative_summary:
-                        col = neg_issue.get('column', '')
-                        if col and col in self.current_data.columns:
+                        # Handle different possible structures of neg_issue
+                        if isinstance(neg_issue, dict):
+                            col = neg_issue.get('column', '')
                             # Handle different possible keys for count
                             neg_count = neg_issue.get('count', 0)
                             if isinstance(neg_count, (list, tuple)):
                                 neg_count = len(neg_count)
                             elif not isinstance(neg_count, (int, float)):
                                 neg_count = 0
-                            
+                        else:
+                            # If neg_issue is not a dict, try to extract column name
+                            col = str(neg_issue) if neg_issue else ''
+                            neg_count = 0
+                        
+                        if col and col in self.current_data.columns:
+                            # Count actual negative values in the column
+                            actual_negatives = (self.current_data[col] < 0).sum()
                             total_count = len(self.current_data)
-                            neg_percentage = (neg_count / total_count) * 100 if total_count > 0 else 0
+                            neg_percentage = (actual_negatives / total_count) * 100 if total_count > 0 else 0
                             
                             # Only fix if negative percentage is very high (likely error)
                             if neg_percentage > 30:
                                 # Replace negatives with absolute values
                                 self.current_data[col] = self.current_data[col].abs()
-                                fixes_applied.append(f"Converted {neg_count} negative values in {col} to absolute values")
+                                fixes_applied.append(f"Converted {actual_negatives} negative values in {col} to absolute values")
                             else:
-                                fixes_applied.append(f"Kept {neg_count} negative values in {col} (likely legitimate)")
+                                fixes_applied.append(f"Kept {actual_negatives} negative values in {col} (likely legitimate)")
                         pbar.update(1)
             
             # 6. Fix infinity values
@@ -2792,8 +2848,14 @@ class InteractiveSystem:
                 print(f"\n6️⃣  Fixing infinity values...")
                 with tqdm(total=len(inf_summary), desc="Fixing infinities", leave=False) as pbar:
                     for inf_issue in inf_summary:
-                        col = inf_issue['column']
-                        if col in self.current_data.columns:
+                        # Handle different possible structures of inf_issue
+                        if isinstance(inf_issue, dict):
+                            col = inf_issue.get('column', '')
+                        else:
+                            # If inf_issue is not a dict, try to extract column name
+                            col = str(inf_issue) if inf_issue else ''
+                        
+                        if col and col in self.current_data.columns:
                             # Replace infinities with large finite values
                             max_val = self.current_data[col].replace([np.inf, -np.inf], np.nan).max()
                             min_val = self.current_data[col].replace([np.inf, -np.inf], np.nan).min()
