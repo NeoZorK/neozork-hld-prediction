@@ -149,36 +149,6 @@ class InteractiveSystem:
         """Load data interactively with support for multiple files."""
         print("\n📁 LOAD DATA")
         print("-" * 30)
-        print("Choose loading method:")
-        print("0. 🔙 Back to Main Menu")
-        print("1. 📁 Load all files from folder (with optional mask)")
-        print("-" * 30)
-        print("\n💡 Examples:")
-        print("   Folder: data")
-        print("   Folder with mask: data gbpusd (loads all files with 'gbpusd' in name)")
-        print("   Folder with mask: data parquet (loads all .parquet files)")
-        print("-" * 30)
-        
-        try:
-            choice = input("Enter choice (0-1): ").strip()
-        except EOFError:
-            print("\n👋 Goodbye!")
-            return False
-        
-        if choice == "0":
-            return False
-        elif choice == "1":
-            return self._load_folder_files()
-        else:
-            print("❌ Invalid choice. Please select 0-1.")
-            return False
-    
-
-    
-    def _load_folder_files(self) -> bool:
-        """Load all data files from a folder with optional mask."""
-        print("\n📁 LOAD ALL FILES FROM FOLDER")
-        print("-" * 30)
         
         # Get all subfolders in data directory
         data_folder = Path("data")
@@ -197,12 +167,13 @@ class InteractiveSystem:
                         subfolders.append(subitem)
         
         print("💡 Available folders:")
+        print("0. 🔙 Back to Main Menu")
         for i, folder in enumerate(subfolders, 1):
             try:
                 rel_path = folder.relative_to(Path.cwd())
             except ValueError:
                 rel_path = folder
-            print(f"   {i}: {rel_path}/")
+            print(f"{i}. 📁 {rel_path}/")
         
         print("-" * 30)
         print("💡 Examples:")
@@ -211,10 +182,18 @@ class InteractiveSystem:
         print("   • Or enter folder path with file type (e.g., data parquet)")
         print("-" * 30)
         
-        input_text = input("Enter folder number or path (with optional mask): ").strip()
+        try:
+            input_text = input("Enter folder number or path (with optional mask): ").strip()
+        except EOFError:
+            print("\n👋 Goodbye!")
+            return False
         
         if not input_text:
             print("❌ No input provided")
+            return False
+        
+        # Check if user wants to go back
+        if input_text == "0":
             return False
         
         # Parse input for folder and mask
@@ -227,7 +206,7 @@ class InteractiveSystem:
                 folder_path = subfolders[folder_idx]
                 mask = parts[1].lower() if len(parts) > 1 else None
             else:
-                print(f"❌ Invalid folder number. Please select 1-{len(subfolders)}")
+                print(f"❌ Invalid folder number. Please select 0-{len(subfolders)}")
                 return False
         else:
             # Parse input for folder path and mask
@@ -301,6 +280,10 @@ class InteractiveSystem:
             print(f"\nData types:\n{self.current_data.dtypes}")
         
         return True
+    
+
+    
+
     
 
     

@@ -10,25 +10,26 @@ This report documents the enhancements made to the `interactive_system.py` scrip
 
 #### **Changes Made:**
 - **Removed single file loading option** - Simplified to folder-based loading only
+- **Removed intermediate menu** - Direct folder selection without extra steps
 - **Added subfolder detection** - Automatically scans and displays all subfolders in `data/`
-- **Improved user interface** - Shows numbered list of available folders
+- **Improved user interface** - Shows numbered list of available folders with "Back" option
+- **Streamlined workflow** - One-step process from main menu to folder selection
 
 #### **New User Experience:**
 ```
-📁 LOAD DATA MENU:
-0. 🔙 Back to Main Menu
-1. 📁 Load all files from folder (with optional mask)
-
+📁 LOAD DATA
+------------------------------
 💡 Available folders:
-   1: data/
-   2: data/cache/
-   3: data/cache/csv_converted/
-   4: data/indicators/
-   5: data/indicators/csv/
-   6: data/indicators/json/
-   7: data/indicators/parquet/
-   8: data/raw_parquet/
-
+0. 🔙 Back to Main Menu
+1. 📁 data/
+2. 📁 data/cache/
+3. 📁 data/cache/csv_converted/
+4. 📁 data/indicators/
+5. 📁 data/indicators/json/
+6. 📁 data/indicators/csv/
+7. 📁 data/indicators/parquet/
+8. 📁 data/raw_parquet/
+------------------------------
 💡 Examples:
    • Enter folder number (e.g., 1 for data/)
    • Or enter folder path with mask (e.g., data gbpusd)
@@ -138,6 +139,13 @@ Integrated HTML report generation from `html_report_generator.py`:
 - **Fixed folder selection with mask**: Corrected parsing logic to handle "3 eurusd" format
 - **Improved input parsing**: Now properly separates folder number from mask
 - **Enhanced error handling**: Better validation of user input
+- **Simplified data loading menu**: Removed intermediate menu, direct folder selection
+
+### **Menu Simplification:**
+- **Removed intermediate menu**: No more "Choose loading method" step
+- **Direct folder selection**: Shows available folders immediately
+- **Added "Back" option**: Option 0 to return to main menu
+- **Streamlined workflow**: One-step process from main menu to folder selection
 
 ### **New Imports:**
 ```python

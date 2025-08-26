@@ -62,8 +62,8 @@ class TestEnhancedInteractiveSystem:
         # Check that _load_single_file method is removed
         assert not hasattr(interactive_system, '_load_single_file')
         
-        # Check that _load_folder_files method exists
-        assert hasattr(interactive_system, '_load_folder_files')
+        # Check that _load_folder_files method is removed (functionality merged into load_data)
+        assert not hasattr(interactive_system, '_load_folder_files')
         
         # Check that load_data method is updated
         assert hasattr(interactive_system, 'load_data')
