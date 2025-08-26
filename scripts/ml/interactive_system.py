@@ -95,6 +95,20 @@ class InteractiveSystem:
             }
         }
     
+    def calculate_submenu_completion_percentage(self, menu_category):
+        """Calculate completion percentage for a submenu category."""
+        if menu_category not in self.used_menus:
+            return 0
+        
+        items = self.used_menus[menu_category]
+        if not items:
+            return 0
+        
+        completed_items = sum(1 for item in items.values() if item)
+        total_items = len(items)
+        
+        return round((completed_items / total_items) * 100) if total_items > 0 else 0
+    
     def mark_menu_as_used(self, menu_category, menu_item):
         """Mark a submenu item as successfully used."""
         if menu_category in self.used_menus and menu_item in self.used_menus[menu_category]:
@@ -149,7 +163,7 @@ class InteractiveSystem:
         print("="*80)
         
     def print_main_menu(self):
-        """Print main menu options with green checkmarks for used items."""
+        """Print main menu options with green checkmarks and completion percentages for used items."""
         print("\n📋 MAIN MENU:")
         
         # Load Data
@@ -158,19 +172,27 @@ class InteractiveSystem:
         
         # EDA Analysis
         checkmark = " ✅" if self.used_menus['main']['eda_analysis'] else ""
-        print(f"2. 🔍 EDA Analysis{checkmark}")
+        eda_percentage = self.calculate_submenu_completion_percentage('eda')
+        percentage_text = f" ({eda_percentage}%)" if eda_percentage > 0 else ""
+        print(f"2. 🔍 EDA Analysis{checkmark}{percentage_text}")
         
         # Feature Engineering
         checkmark = " ✅" if self.used_menus['main']['feature_engineering'] else ""
-        print(f"3. ⚙️  Feature Engineering{checkmark}")
+        fe_percentage = self.calculate_submenu_completion_percentage('feature_engineering')
+        percentage_text = f" ({fe_percentage}%)" if fe_percentage > 0 else ""
+        print(f"3. ⚙️  Feature Engineering{checkmark}{percentage_text}")
         
         # Data Visualization
         checkmark = " ✅" if self.used_menus['main']['data_visualization'] else ""
-        print(f"4. 📊 Data Visualization{checkmark}")
+        viz_percentage = self.calculate_submenu_completion_percentage('visualization')
+        percentage_text = f" ({viz_percentage}%)" if viz_percentage > 0 else ""
+        print(f"4. 📊 Data Visualization{checkmark}{percentage_text}")
         
         # Model Development
         checkmark = " ✅" if self.used_menus['main']['model_development'] else ""
-        print(f"5. 📈 Model Development{checkmark}")
+        model_percentage = self.calculate_submenu_completion_percentage('model_development')
+        percentage_text = f" ({model_percentage}%)" if model_percentage > 0 else ""
+        print(f"5. 📈 Model Development{checkmark}{percentage_text}")
         
         # Testing & Validation
         checkmark = " ✅" if self.used_menus['main']['testing_validation'] else ""

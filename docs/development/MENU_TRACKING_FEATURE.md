@@ -8,9 +8,10 @@ The interactive system now includes a comprehensive menu tracking feature that d
 
 ### Visual Progress Tracking
 - **Green Checkmarks**: Successfully used submenu items display a green ✅ symbol
-- **Real-time Updates**: Checkmarks appear immediately after completing a function
+- **Completion Percentages**: Main menu shows completion percentages for submenu sections
+- **Real-time Updates**: Checkmarks and percentages update immediately after completing functions
 - **Session Persistence**: Status is maintained throughout the current session
-- **Clear Visual Feedback**: Users can easily see what they've accomplished
+- **Clear Visual Feedback**: Users can easily see what they've accomplished and how much remains
 
 ### Menu Categories Tracked
 
@@ -94,9 +95,9 @@ Users can view their progress through the main menu:
 ```
 📋 MAIN MENU:
 1. 📁 Load Data ✅
-2. 🔍 EDA Analysis ✅
-3. ⚙️  Feature Engineering ✅
-4. 📊 Data Visualization
+2. 🔍 EDA Analysis ✅ (50%)
+3. ⚙️  Feature Engineering ✅ (25%)
+4. 📊 Data Visualization ✅ (50%)
 5. 📈 Model Development
 6. 🧪 Testing & Validation
 7. 📚 Documentation & Help
@@ -142,6 +143,25 @@ self.used_menus = {
 ```
 
 ### Key Methods
+
+#### `calculate_submenu_completion_percentage(menu_category)`
+Calculates the completion percentage for a submenu category.
+
+```python
+def calculate_submenu_completion_percentage(self, menu_category):
+    """Calculate completion percentage for a submenu category."""
+    if menu_category not in self.used_menus:
+        return 0
+    
+    items = self.used_menus[menu_category]
+    if not items:
+        return 0
+    
+    completed_items = sum(1 for item in items.values() if item)
+    total_items = len(items)
+    
+    return round((completed_items / total_items) * 100) if total_items > 0 else 0
+```
 
 #### `mark_menu_as_used(menu_category, menu_item)`
 Marks a specific menu item as successfully used.

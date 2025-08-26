@@ -532,6 +532,72 @@ class TestInteractiveSystemMenuTracking:
             assert any('MAIN:' in line for line in printed_lines)
             assert any('Load Data' in line for line in printed_lines)
             assert any('Eda Analysis' in line for line in printed_lines)
+    
+    def test_calculate_submenu_completion_percentage(self):
+        """Test calculation of submenu completion percentage."""
+        # Test empty menu
+        percentage = self.system.calculate_submenu_completion_percentage('eda')
+        assert percentage == 0
+        
+        # Test with some items completed
+        self.system.mark_menu_as_used('eda', 'basic_statistics')
+        self.system.mark_menu_as_used('eda', 'data_quality_check')
+        
+        percentage = self.system.calculate_submenu_completion_percentage('eda')
+        assert percentage == 25  # 2 out of 8 items = 25%
+        
+        # Test with all items completed
+        for item in self.system.used_menus['eda']:
+            self.system.used_menus['eda'][item] = True
+        
+        percentage = self.system.calculate_submenu_completion_percentage('eda')
+        assert percentage == 100
+    
+    def test_main_menu_with_percentages(self):
+        """Test main menu display with completion percentages."""
+        # Mark some EDA items as used
+        self.system.mark_menu_as_used('eda', 'basic_statistics')
+        self.system.mark_menu_as_used('eda', 'data_quality_check')
+        
+        # Mark main menu as accessed
+        self.system.mark_menu_as_used('main', 'eda_analysis')
+        
+        # Capture main menu output
+        with patch('builtins.print') as mock_print:
+            self.system.print_main_menu()
+            
+            # Get all printed lines
+            printed_lines = [call[0][0] for call in mock_print.call_args_list]
+            
+            # Check that EDA Analysis shows percentage
+            eda_line = next((line for line in printed_lines if 'EDA Analysis' in line), None)
+            assert eda_line and '✅' in eda_line
+            assert '(25%)' in eda_line
+            
+            # Check that other items don't show percentage when not accessed
+            fe_line = next((line for line in printed_lines if 'Feature Engineering' in line), None)
+            assert fe_line and '✅' not in fe_line
+            assert '(0%)' not in fe_line
+    
+    def test_percentage_calculation_edge_cases(self):
+        """Test percentage calculation edge cases."""
+        # Test invalid category
+        percentage = self.system.calculate_submenu_completion_percentage('invalid_category')
+        assert percentage == 0
+        
+        # Test with all items completed
+        for item in self.system.used_menus['feature_engineering']:
+            self.system.used_menus['feature_engineering'][item] = True
+        
+        percentage = self.system.calculate_submenu_completion_percentage('feature_engineering')
+        assert percentage == 100
+        
+        # Test with no items completed
+        for item in self.system.used_menus['visualization']:
+            self.system.used_menus['visualization'][item] = False
+        
+        percentage = self.system.calculate_submenu_completion_percentage('visualization')
+        assert percentage == 0
 
 
 if __name__ == "__main__":
