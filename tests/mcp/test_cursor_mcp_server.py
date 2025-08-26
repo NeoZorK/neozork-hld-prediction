@@ -20,7 +20,7 @@ import logging
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from neozork_mcp_server import NeozorkMCPServer, CompletionItem, CompletionItemKind, ProjectFile, FinancialData
+from neozork_mcp_server import NeoZorKMCPServer, CompletionItem, CompletionItemKind, ProjectFile, FinancialData
 
 class TestNeozorkMCPServer:
     """Test Neozork Unified MCP Server functionality"""
@@ -80,7 +80,7 @@ def backtest_strategy(data, strategy_params):
     @pytest.fixture
     def server(self, temp_project):
         """Create server instance"""
-        server = NeozorkMCPServer(project_root=temp_project)
+        server = NeoZorKMCPServer(project_root=temp_project)
         yield server
     
     def test_initialization(self, server):
@@ -385,7 +385,7 @@ class TestErrorHandling:
     def test_handles_invalid_python_files(self, temp_project_with_errors):
         """Test handling of invalid Python files"""
         # Should not crash and should log warnings
-        server = NeozorkMCPServer(project_root=temp_project_with_errors)
+        server = NeoZorKMCPServer(project_root=temp_project_with_errors)
         assert server.project_root is not None
         assert server.logger is not None
     

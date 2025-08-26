@@ -21,7 +21,7 @@ import logging
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from scripts.mcp.neozork_mcp_manager import NeoZorKMCPManager, NeoZorKMCPManagerCLI
+from scripts.mcp.neozork_mcp_manager import NeozorkMCPManager, NeozorkMCPManagerCLI
 
 class TestNeoZorKMCPManager:
     """Test NeoZorK MCP Manager functionality"""
@@ -314,13 +314,13 @@ print("Test MCP server")
         success = manager.create_ide_config("unsupported")
         assert success is False
 
-class TestNeoZorKMCPManagerCLI:
+class TestNeozorkMCPManagerCLI:
     """Test CLI interface"""
     
     @pytest.fixture
     def cli(self):
         """Create CLI instance"""
-        cli = NeoZorKMCPManagerCLI()
+        cli = NeozorkMCPManagerCLI()
         yield cli
     
     def test_start(self, cli):

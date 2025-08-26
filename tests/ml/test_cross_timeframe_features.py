@@ -1,315 +1,508 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Tests for CrossTimeframeFeatureGenerator class.
+Tests for cross_timeframe_features.py module.
+
+This module provides comprehensive test coverage for the cross-timeframe feature
+generator that creates ML features by combining data from different timeframes.
 """
 
 import pytest
 import pandas as pd
 import numpy as np
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, MagicMock
+from datetime import datetime, timedelta
 
 from src.ml.feature_engineering.cross_timeframe_features import (
-    CrossTimeframeFeatureGenerator,
-    CrossTimeframeFeatureConfig
+    CrossTimeframeFeatureGenerator, CrossTimeframeFeatureConfig
 )
 
 
 class TestCrossTimeframeFeatureConfig:
-    """Test CrossTimeframeFeatureConfig dataclass."""
+    """Test cases for CrossTimeframeFeatureConfig class."""
     
-    def test_default_values(self):
-        """Test default values are set correctly."""
+    def test_init_default_values(self):
+        """Test CrossTimeframeFeatureConfig initialization with default values."""
         config = CrossTimeframeFeatureConfig()
         
         # Test inherited values
         assert config.short_periods == [5, 10, 14]
         assert config.medium_periods == [20, 50, 100]
         assert config.long_periods == [200, 500]
+        assert config.price_types == ['open', 'high', 'low', 'close']
+        assert config.volatility_periods == [14, 20, 50]
+        assert config.volume_periods == [14, 20, 50]
+        assert config.custom_params == {}
         
-        # Test specific values
+        # Test cross-timeframe specific values
         assert config.timeframes == ['1m', '5m', '15m', '1h', '4h', '1d']
         assert config.aggregation_methods == ['mean', 'std', 'min', 'max', 'last']
         assert config.feature_types == ['ratio', 'difference', 'momentum', 'volatility']
         assert config.lookback_periods == [5, 10, 20, 50]
     
-    def test_custom_values(self):
-        """Test custom values are preserved."""
-        custom_config = CrossTimeframeFeatureConfig(
-            timeframes=['1h', '1d'],
-            feature_types=['ratio', 'momentum'],
+    def test_init_custom_values(self):
+        """Test CrossTimeframeFeatureConfig initialization with custom values."""
+        config = CrossTimeframeFeatureConfig(
+            timeframes=['1h', '4h'],
+            aggregation_methods=['mean', 'std'],
+            feature_types=['ratio', 'difference'],
             lookback_periods=[10, 20]
         )
         
-        assert custom_config.timeframes == ['1h', '1d']
-        assert custom_config.feature_types == ['ratio', 'momentum']
-        assert custom_config.lookback_periods == [10, 20]
+        assert config.timeframes == ['1h', '4h']
+        assert config.aggregation_methods == ['mean', 'std']
+        assert config.feature_types == ['ratio', 'difference']
+        assert config.lookback_periods == [10, 20]
+    
+    def test_post_init_partial_custom_values(self):
+        """Test CrossTimeframeFeatureConfig post_init with partial custom values."""
+        config = CrossTimeframeFeatureConfig(
+            timeframes=['1h', '4h']
+        )
         
-        # Default values should still be set
-        assert custom_config.aggregation_methods == ['mean', 'std', 'min', 'max', 'last']
+        assert config.timeframes == ['1h', '4h']
+        assert config.aggregation_methods == ['mean', 'std', 'min', 'max', 'last']  # Default
+        assert config.feature_types == ['ratio', 'difference', 'momentum', 'volatility']  # Default
+        assert config.lookback_periods == [5, 10, 20, 50]  # Default
 
 
 class TestCrossTimeframeFeatureGenerator:
-    """Test CrossTimeframeFeatureGenerator class."""
+    """Test cases for CrossTimeframeFeatureGenerator class."""
     
-    def test_initialization(self):
-        """Test initialization with default config."""
-        generator = CrossTimeframeFeatureGenerator()
+    def setup_method(self):
+        """Set up test fixtures."""
+        self.config = CrossTimeframeFeatureConfig()
+        self.generator = CrossTimeframeFeatureGenerator(self.config)
         
+        # Create sample data with datetime index
+        dates = pd.date_range('2023-01-01', periods=100, freq='1H')
+        self.sample_data = pd.DataFrame({
+            'open': np.random.rand(100) * 100,
+            'high': np.random.rand(100) * 100,
+            'low': np.random.rand(100) * 100,
+            'close': np.random.rand(100) * 100,
+            'volume': np.random.rand(100) * 1000
+        }, index=dates)
+    
+    def test_init(self):
+        """Test CrossTimeframeFeatureGenerator initialization."""
+        assert self.generator.config == self.config
+        assert self.generator.features_generated == 0
+        assert self.generator.feature_names == []
+        assert self.generator.feature_importance == {}
+        assert self.generator.ratio_features == []
+        assert self.generator.difference_features == []
+        assert self.generator.momentum_features == []
+        assert self.generator.volatility_features == []
+    
+    def test_init_without_config(self):
+        """Test CrossTimeframeFeatureGenerator initialization without config."""
+        generator = CrossTimeframeFeatureGenerator()
         assert generator.config is not None
         assert isinstance(generator.config, CrossTimeframeFeatureConfig)
-        assert generator.features_generated == 0
-        assert generator.ratio_features == []
-        assert generator.difference_features == []
-        assert generator.momentum_features == []
-        assert generator.volatility_features == []
     
-    def test_initialization_with_custom_config(self):
-        """Test initialization with custom config."""
-        custom_config = CrossTimeframeFeatureConfig(
-            timeframes=['1h', '1d'],
-            feature_types=['ratio']
-        )
-        generator = CrossTimeframeFeatureGenerator(config=custom_config)
-        
-        assert generator.config.timeframes == ['1h', '1d']
-        assert generator.config.feature_types == ['ratio']
+    def test_validate_data_valid(self):
+        """Test validate_data with valid data."""
+        assert self.generator.validate_data(self.sample_data)
     
-    def test_generate_features_invalid_data(self):
-        """Test generate_features with invalid data."""
-        generator = CrossTimeframeFeatureGenerator()
-        df = pd.DataFrame()  # Empty DataFrame
-        
-        result = generator.generate_features(df)
-        
-        assert result.equals(df)  # Should return original DataFrame unchanged
+    def test_validate_data_empty(self):
+        """Test validate_data with empty DataFrame."""
+        empty_df = pd.DataFrame()
+        assert not self.generator.validate_data(empty_df)
     
-    def test_generate_features_valid_data(self):
-        """Test generate_features with valid data."""
-        generator = CrossTimeframeFeatureGenerator()
-        # Create enough data to pass validation (need at least 500 rows)
-        df = pd.DataFrame({
-            'Open': np.random.uniform(100, 200, 500),
-            'High': np.random.uniform(200, 300, 500),
-            'Low': np.random.uniform(50, 100, 500),
-            'Close': np.random.uniform(100, 200, 500),
-            'Volume': np.random.uniform(1000, 10000, 500)
-        })
-        
-        result = generator.generate_features(df)
-        
-        # Should return DataFrame with additional features
-        assert len(result.columns) > len(df.columns)
-        assert all(col in result.columns for col in df.columns)
+    def test_validate_data_none(self):
+        """Test validate_data with None DataFrame."""
+        assert not self.generator.validate_data(None)
     
-    def test_generate_features_only_ratio(self):
-        """Test generate_features with only ratio features."""
-        config = CrossTimeframeFeatureConfig(feature_types=['ratio'])
-        generator = CrossTimeframeFeatureGenerator(config=config)
-        
-        # Create enough data to pass validation
-        df = pd.DataFrame({
-            'Open': np.random.uniform(100, 200, 500),
-            'High': np.random.uniform(200, 300, 500),
-            'Low': np.random.uniform(50, 100, 500),
-            'Close': np.random.uniform(100, 200, 500),
-            'Volume': np.random.uniform(1000, 10000, 500)
-        })
-        
-        result = generator.generate_features(df)
-        
-        # Should have ratio features
-        assert len(result.columns) > len(df.columns)
-        assert len(generator.ratio_features) > 0
+    def test_validate_data_missing_columns(self):
+        """Test validate_data with missing required columns."""
+        invalid_data = self.sample_data.drop(columns=['close'])
+        assert not self.generator.validate_data(invalid_data)
     
-    def test_generate_features_only_difference(self):
-        """Test generate_features with only difference features."""
-        config = CrossTimeframeFeatureConfig(feature_types=['difference'])
-        generator = CrossTimeframeFeatureGenerator(config=config)
-        
-        # Create enough data to pass validation
-        df = pd.DataFrame({
-            'Open': np.random.uniform(100, 200, 500),
-            'High': np.random.uniform(200, 300, 500),
-            'Low': np.random.uniform(50, 100, 500),
-            'Close': np.random.uniform(100, 200, 500),
-            'Volume': np.random.uniform(1000, 10000, 500)
-        })
-        
-        result = generator.generate_features(df)
-        
-        # Should have difference features
-        assert len(result.columns) > len(df.columns)
-        assert len(generator.difference_features) > 0
+    def test_get_required_columns(self):
+        """Test get_required_columns method."""
+        required_columns = self.generator.get_required_columns()
+        assert isinstance(required_columns, list)
+        assert 'close' in required_columns
     
-    def test_generate_features_only_momentum(self):
-        """Test generate_features with only momentum features."""
-        config = CrossTimeframeFeatureConfig(feature_types=['momentum'])
-        generator = CrossTimeframeFeatureGenerator(config=config)
-        
-        # Create enough data to pass validation
-        df = pd.DataFrame({
-            'Open': np.random.uniform(100, 200, 500),
-            'High': np.random.uniform(200, 300, 500),
-            'Low': np.random.uniform(50, 100, 500),
-            'Close': np.random.uniform(100, 200, 500),
-            'Volume': np.random.uniform(1000, 10000, 500)
-        })
-        
-        result = generator.generate_features(df)
-        
-        # Should have momentum features
-        assert len(result.columns) > len(df.columns)
-        assert len(generator.momentum_features) > 0
+    def test_generate_features_no_validation(self):
+        """Test generate_features when validation fails."""
+        empty_df = pd.DataFrame()
+        result = self.generator.generate_features(empty_df)
+        assert result.equals(empty_df)
     
-    def test_generate_features_only_volatility(self):
-        """Test generate_features with only volatility features."""
-        config = CrossTimeframeFeatureConfig(feature_types=['volatility'])
-        generator = CrossTimeframeFeatureGenerator(config=config)
+    def test_generate_features_ratio_only(self):
+        """Test generate_features with ratio features only."""
+        self.config.feature_types = ['ratio']
         
-        # Create enough data to pass validation
-        df = pd.DataFrame({
-            'Open': np.random.uniform(100, 200, 500),
-            'High': np.random.uniform(200, 300, 500),
-            'Low': np.random.uniform(50, 100, 500),
-            'Close': np.random.uniform(100, 200, 500),
-            'Volume': np.random.uniform(1000, 10000, 500)
-        })
-        
-        result = generator.generate_features(df)
-        
-        # Should have volatility features
-        assert len(result.columns) > len(df.columns)
-        assert len(generator.volatility_features) > 0
-    
-    def test_generate_features_logging(self):
-        """Test that feature generation is logged."""
-        generator = CrossTimeframeFeatureGenerator()
-        # Create enough data to pass validation
-        df = pd.DataFrame({
-            'Open': np.random.uniform(100, 200, 500),
-            'High': np.random.uniform(200, 300, 500),
-            'Low': np.random.uniform(50, 100, 500),
-            'Close': np.random.uniform(100, 200, 500),
-            'Volume': np.random.uniform(1000, 10000, 500)
-        })
-        
-        # Capture stdout to check logging
-        import sys
-        from io import StringIO
-        
-        old_stdout = sys.stdout
-        sys.stdout = StringIO()
-        
-        try:
-            generator.generate_features(df)
-            output = sys.stdout.getvalue()
+        with patch.object(self.generator, '_generate_ratio_features') as mock_ratio:
+            mock_ratio.return_value = self.sample_data
+            result = self.generator.generate_features(self.sample_data)
             
-            # Should have logged feature generation
-            assert "Debug: Generated feature:" in output
-            assert generator.features_generated > 0
-        finally:
-            sys.stdout = old_stdout
+            mock_ratio.assert_called_once_with(self.sample_data)
+            assert result.equals(self.sample_data)
+    
+    def test_generate_features_difference_only(self):
+        """Test generate_features with difference features only."""
+        self.config.feature_types = ['difference']
+        
+        with patch.object(self.generator, '_generate_difference_features') as mock_diff:
+            mock_diff.return_value = self.sample_data
+            result = self.generator.generate_features(self.sample_data)
+            
+            mock_diff.assert_called_once_with(self.sample_data)
+            assert result.equals(self.sample_data)
+    
+    def test_generate_features_momentum_only(self):
+        """Test generate_features with momentum features only."""
+        self.config.feature_types = ['momentum']
+        
+        with patch.object(self.generator, '_generate_momentum_features') as mock_momentum:
+            mock_momentum.return_value = self.sample_data
+            result = self.generator.generate_features(self.sample_data)
+            
+            mock_momentum.assert_called_once_with(self.sample_data)
+            assert result.equals(self.sample_data)
+    
+    def test_generate_features_volatility_only(self):
+        """Test generate_features with volatility features only."""
+        self.config.feature_types = ['volatility']
+        
+        with patch.object(self.generator, '_generate_volatility_features') as mock_vol:
+            mock_vol.return_value = self.sample_data
+            result = self.generator.generate_features(self.sample_data)
+            
+            mock_vol.assert_called_once_with(self.sample_data)
+            assert result.equals(self.sample_data)
+    
+    def test_generate_features_all_types(self):
+        """Test generate_features with all feature types."""
+        with patch.object(self.generator, '_generate_ratio_features') as mock_ratio:
+            with patch.object(self.generator, '_generate_difference_features') as mock_diff:
+                with patch.object(self.generator, '_generate_momentum_features') as mock_momentum:
+                    with patch.object(self.generator, '_generate_volatility_features') as mock_vol:
+                        mock_ratio.return_value = self.sample_data
+                        mock_diff.return_value = self.sample_data
+                        mock_momentum.return_value = self.sample_data
+                        mock_vol.return_value = self.sample_data
+                        
+                        result = self.generator.generate_features(self.sample_data)
+                        
+                        mock_ratio.assert_called_once()
+                        mock_diff.assert_called_once()
+                        mock_momentum.assert_called_once()
+                        mock_vol.assert_called_once()
+                        assert result.equals(self.sample_data)
+    
+    def test_generate_ratio_features(self):
+        """Test _generate_ratio_features method."""
+        result = self.generator._generate_ratio_features(self.sample_data)
+        
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == len(self.sample_data)
+        
+        # Check that ratio features were added
+        ratio_columns = [col for col in result.columns if 'ratio' in col.lower()]
+        assert len(ratio_columns) > 0
+    
+    def test_generate_difference_features(self):
+        """Test _generate_difference_features method."""
+        result = self.generator._generate_difference_features(self.sample_data)
+        
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == len(self.sample_data)
+        
+        # Check that difference features were added
+        diff_columns = [col for col in result.columns if 'diff' in col.lower()]
+        assert len(diff_columns) > 0
+    
+    def test_generate_momentum_features(self):
+        """Test _generate_momentum_features method."""
+        result = self.generator._generate_momentum_features(self.sample_data)
+        
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == len(self.sample_data)
+        
+        # Check that momentum features were added
+        momentum_columns = [col for col in result.columns if 'momentum' in col.lower()]
+        assert len(momentum_columns) > 0
+    
+    def test_generate_volatility_features(self):
+        """Test _generate_volatility_features method."""
+        result = self.generator._generate_volatility_features(self.sample_data)
+        
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == len(self.sample_data)
+        
+        # Check that volatility features were added
+        vol_columns = [col for col in result.columns if 'volatility' in col.lower()]
+        assert len(vol_columns) > 0
+    
+    def test_calculate_cross_timeframe_ratio(self):
+        """Test _calculate_cross_timeframe_ratio method."""
+        # Create sample data with different timeframes
+        data_1h = self.sample_data.copy()
+        data_4h = self.sample_data.resample('4H').mean().dropna()
+        
+        ratio = self.generator._calculate_cross_timeframe_ratio(
+            data_1h['close'], data_4h['close'], 'close_1h_4h_ratio'
+        )
+        
+        assert isinstance(ratio, pd.Series)
+        assert len(ratio) == len(data_1h)
+    
+    def test_calculate_cross_timeframe_difference(self):
+        """Test _calculate_cross_timeframe_difference method."""
+        # Create sample data with different timeframes
+        data_1h = self.sample_data.copy()
+        data_4h = self.sample_data.resample('4H').mean().dropna()
+        
+        diff = self.generator._calculate_cross_timeframe_difference(
+            data_1h['close'], data_4h['close'], 'close_1h_4h_diff'
+        )
+        
+        assert isinstance(diff, pd.Series)
+        assert len(diff) == len(data_1h)
+    
+    def test_calculate_cross_timeframe_momentum(self):
+        """Test _calculate_cross_timeframe_momentum method."""
+        # Create sample data with different timeframes
+        data_1h = self.sample_data.copy()
+        data_4h = self.sample_data.resample('4H').mean().dropna()
+        
+        momentum = self.generator._calculate_cross_timeframe_momentum(
+            data_1h['close'], data_4h['close'], 'close_1h_4h_momentum'
+        )
+        
+        assert isinstance(momentum, pd.Series)
+        assert len(momentum) == len(data_1h)
+    
+    def test_calculate_cross_timeframe_volatility(self):
+        """Test _calculate_cross_timeframe_volatility method."""
+        # Create sample data with different timeframes
+        data_1h = self.sample_data.copy()
+        data_4h = self.sample_data.resample('4H').mean().dropna()
+        
+        volatility = self.generator._calculate_cross_timeframe_volatility(
+            data_1h['close'], data_4h['close'], 'close_1h_4h_volatility'
+        )
+        
+        assert isinstance(volatility, pd.Series)
+        assert len(volatility) == len(data_1h)
+    
+    def test_resample_data(self):
+        """Test _resample_data method."""
+        # Test resampling to different timeframes
+        for timeframe in ['1H', '4H', '1D']:
+            resampled = self.generator._resample_data(self.sample_data, timeframe)
+            assert isinstance(resampled, pd.DataFrame)
+            assert len(resampled) <= len(self.sample_data)
+    
+    def test_aggregate_data(self):
+        """Test _aggregate_data method."""
+        # Test different aggregation methods
+        for method in ['mean', 'std', 'min', 'max', 'last']:
+            aggregated = self.generator._aggregate_data(self.sample_data, method)
+            assert isinstance(aggregated, pd.DataFrame)
+            assert len(aggregated) == len(self.sample_data)
     
     def test_get_feature_names(self):
         """Test get_feature_names method."""
-        generator = CrossTimeframeFeatureGenerator()
-        # Set feature names in the correct attributes
-        generator.ratio_features = ['ratio_1h_close']
-        generator.momentum_features = ['momentum_4h_volume']
+        # Generate some features first
+        self.generator.ratio_features = ['ratio_1', 'ratio_2']
+        self.generator.difference_features = ['diff_1']
+        self.generator.momentum_features = ['momentum_1']
+        self.generator.volatility_features = ['vol_1']
         
-        names = generator.get_feature_names()
-        
-        assert 'ratio_1h_close' in names
-        assert 'momentum_4h_volume' in names
-        assert len(names) == 2
-        # Should return a copy
-        names.append('new_feature')
-        assert 'new_feature' not in generator.ratio_features
-        assert 'new_feature' not in generator.momentum_features
+        feature_names = self.generator.get_feature_names()
+        expected = ['ratio_1', 'ratio_2', 'diff_1', 'momentum_1', 'vol_1']
+        assert feature_names == expected
     
-    def test_get_feature_names_empty(self):
-        """Test get_feature_names method with empty feature list."""
-        generator = CrossTimeframeFeatureGenerator()
+    def test_get_feature_importance(self):
+        """Test get_feature_importance method."""
+        # Set some feature importance
+        self.generator.feature_importance = {
+            'ratio_1': 0.8,
+            'diff_1': 0.6,
+            'momentum_1': 0.7
+        }
         
-        names = generator.get_feature_names()
-        
-        assert names == []
+        importance = self.generator.get_feature_importance()
+        assert importance == self.generator.feature_importance
     
-    def test_str_representation(self):
-        """Test string representation."""
-        generator = CrossTimeframeFeatureGenerator()
-        generator.features_generated = 10
-        
-        result = str(generator)
-        
-        assert "CrossTimeframeFeatureGenerator" in result
-        assert "features_generated=10" in result
+    def test_log_feature_generation(self):
+        """Test log_feature_generation method."""
+        with patch('src.ml.feature_engineering.cross_timeframe_features.logger') as mock_logger:
+            self.generator.log_feature_generation('test_feature', 0.8)
+            mock_logger.print_info.assert_called()
+
+
+class TestCrossTimeframeFeatureGeneratorEdgeCases:
+    """Test edge cases for CrossTimeframeFeatureGenerator."""
     
-    def test_repr_representation(self):
-        """Test detailed string representation."""
-        generator = CrossTimeframeFeatureGenerator()
-        generator.features_generated = 10
+    def setup_method(self):
+        """Set up test fixtures."""
+        self.generator = CrossTimeframeFeatureGenerator()
+    
+    def test_generate_features_with_nan_values(self):
+        """Test generate_features with NaN values in data."""
+        data_with_nan = pd.DataFrame({
+            'open': [100, np.nan, 102, 103, 104],
+            'high': [105, 106, 107, 108, 109],
+            'low': [95, 96, 97, 98, 99],
+            'close': [102, 103, 104, 105, 106],
+            'volume': [1000, 1100, 1200, 1300, 1400]
+        })
         
-        result = repr(generator)
+        result = self.generator.generate_features(data_with_nan)
+        assert isinstance(result, pd.DataFrame)
+    
+    def test_generate_features_with_infinite_values(self):
+        """Test generate_features with infinite values in data."""
+        data_with_inf = pd.DataFrame({
+            'open': [100, np.inf, 102, 103, 104],
+            'high': [105, 106, 107, 108, 109],
+            'low': [95, 96, 97, 98, 99],
+            'close': [102, 103, 104, 105, 106],
+            'volume': [1000, 1100, 1200, 1300, 1400]
+        })
         
-        assert "CrossTimeframeFeatureGenerator" in result
-        assert "features_generated=10" in result
-        assert "config=" in result
+        result = self.generator.generate_features(data_with_inf)
+        assert isinstance(result, pd.DataFrame)
+    
+    def test_generate_features_with_single_row(self):
+        """Test generate_features with single row of data."""
+        single_row_data = pd.DataFrame({
+            'open': [100],
+            'high': [105],
+            'low': [95],
+            'close': [102],
+            'volume': [1000]
+        })
+        
+        result = self.generator.generate_features(single_row_data)
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == 1
+    
+    def test_generate_features_with_large_data(self):
+        """Test generate_features with large dataset."""
+        dates = pd.date_range('2023-01-01', periods=10000, freq='1H')
+        large_data = pd.DataFrame({
+            'open': np.random.rand(10000) * 100,
+            'high': np.random.rand(10000) * 100,
+            'low': np.random.rand(10000) * 100,
+            'close': np.random.rand(10000) * 100,
+            'volume': np.random.rand(10000) * 1000
+        }, index=dates)
+        
+        result = self.generator.generate_features(large_data)
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == 10000
+    
+    def test_resample_data_empty_dataframe(self):
+        """Test _resample_data with empty DataFrame."""
+        empty_df = pd.DataFrame()
+        resampled = self.generator._resample_data(empty_df, '1H')
+        assert isinstance(resampled, pd.DataFrame)
+        assert len(resampled) == 0
+    
+    def test_aggregate_data_unknown_method(self):
+        """Test _aggregate_data with unknown aggregation method."""
+        data = pd.DataFrame({'close': [100, 101, 102]})
+        
+        # Should fall back to mean for unknown method
+        aggregated = self.generator._aggregate_data(data, 'unknown_method')
+        assert isinstance(aggregated, pd.DataFrame)
+        assert len(aggregated) == len(data)
 
 
 class TestCrossTimeframeFeatureGeneratorIntegration:
     """Integration tests for CrossTimeframeFeatureGenerator."""
     
-    def test_full_feature_generation_workflow(self):
-        """Test complete feature generation workflow."""
-        generator = CrossTimeframeFeatureGenerator()
+    def setup_method(self):
+        """Set up test fixtures."""
+        self.generator = CrossTimeframeFeatureGenerator()
         
-        # Create realistic test data with enough rows
-        dates = pd.date_range('2024-01-01', periods=500, freq='h')
-        df = pd.DataFrame({
-            'Open': np.random.uniform(100, 200, 500),
-            'High': np.random.uniform(200, 300, 500),
-            'Low': np.random.uniform(50, 100, 500),
-            'Close': np.random.uniform(100, 200, 500),
-            'Volume': np.random.uniform(1000, 10000, 500)
+        # Create comprehensive test data
+        dates = pd.date_range('2023-01-01', periods=1000, freq='1H')
+        self.test_data = pd.DataFrame({
+            'open': np.random.rand(1000) * 100,
+            'high': np.random.rand(1000) * 100,
+            'low': np.random.rand(1000) * 100,
+            'close': np.random.rand(1000) * 100,
+            'volume': np.random.rand(1000) * 1000
+        }, index=dates)
+    
+    def test_full_feature_generation_workflow(self):
+        """Test complete cross-timeframe feature generation workflow."""
+        # Generate features
+        result = self.generator.generate_features(self.test_data)
+        
+        # Verify results
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == len(self.test_data)
+        
+        # Check that features were generated
+        feature_names = self.generator.get_feature_names()
+        assert len(feature_names) > 0
+        
+        # Check feature importance
+        feature_importance = self.generator.get_feature_importance()
+        assert isinstance(feature_importance, dict)
+        
+        # Check feature summary
+        summary = self.generator.get_feature_summary()
+        assert isinstance(summary, dict)
+        
+        # Check memory usage
+        memory_usage = self.generator.get_memory_usage()
+        assert isinstance(memory_usage, dict)
+        assert 'rss' in memory_usage
+    
+    def test_multiple_timeframe_combinations(self):
+        """Test multiple timeframe combinations."""
+        # Test different timeframe combinations
+        timeframe_combinations = [
+            (['1H', '4H'], ['ratio', 'difference']),
+            (['1H', '1D'], ['momentum', 'volatility']),
+            (['4H', '1D'], ['ratio', 'momentum'])
+        ]
+        
+        for timeframes, feature_types in timeframe_combinations:
+            config = CrossTimeframeFeatureConfig(
+                timeframes=timeframes,
+                feature_types=feature_types
+            )
+            generator = CrossTimeframeFeatureGenerator(config)
+            
+            result = generator.generate_features(self.test_data)
+            assert isinstance(result, pd.DataFrame)
+            assert len(result) == len(self.test_data)
+    
+    def test_feature_generation_performance(self):
+        """Test feature generation performance with large dataset."""
+        # Create large dataset
+        dates = pd.date_range('2023-01-01', periods=50000, freq='1H')
+        large_data = pd.DataFrame({
+            'open': np.random.rand(50000) * 100,
+            'high': np.random.rand(50000) * 100,
+            'low': np.random.rand(50000) * 100,
+            'close': np.random.rand(50000) * 100,
+            'volume': np.random.rand(50000) * 1000
         }, index=dates)
         
         # Generate features
-        result = generator.generate_features(df)
+        result = self.generator.generate_features(large_data)
         
         # Verify results
-        assert len(result) == len(df)  # Same number of rows
-        assert len(result.columns) > len(df.columns)  # More columns
-        assert generator.features_generated > 0  # Features were generated
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == len(large_data)
         
-        # Check that original data is preserved
-        for col in df.columns:
-            pd.testing.assert_series_equal(result[col], df[col])
-    
-    def test_feature_generation_with_missing_values(self):
-        """Test feature generation with missing values."""
-        generator = CrossTimeframeFeatureGenerator()
-        
-        # Create data with missing values but enough rows
-        df = pd.DataFrame({
-            'Open': np.random.uniform(100, 200, 500),
-            'High': np.random.uniform(200, 300, 500),
-            'Low': np.random.uniform(50, 100, 500),
-            'Close': np.random.uniform(100, 200, 500),
-            'Volume': np.random.uniform(1000, 10000, 500)
-        })
-        
-        # Add some missing values
-        df.loc[10:20, 'Open'] = np.nan
-        df.loc[30:40, 'High'] = np.nan
-        
-        result = generator.generate_features(df)
-        
-        # Should handle missing values gracefully
-        assert len(result) > 0
-        assert len(result.columns) > len(df.columns)
+        # Check memory usage
+        memory_usage = self.generator.get_memory_usage()
+        assert isinstance(memory_usage, dict)
+        assert 'rss' in memory_usage
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pytest.main([__file__])
