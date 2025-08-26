@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Neozork Unified MCP Server
+NeoZorK Unified MCP Server
 Modern, unified Model Context Protocol server for financial analysis projects
 Supports all IDEs (Cursor, PyCharm, VS Code) with intelligent autocompletion and AI integration
 """
@@ -95,8 +95,8 @@ def print_to_stderr(*args, **kwargs):
     """Print to stderr to avoid interfering with MCP protocol"""
     print(*args, **kwargs, file=sys.stderr)
 
-class NeozorkMCPServer:
-    """Unified MCP Server for Neozork HLD Prediction Project"""
+class NeoZorKMCPServer:
+    """Unified MCP Server for NeoZorK HLD Prediction Project"""
     
     def __init__(self, project_root: Path = None, config: Dict[str, Any] = None):
         self.project_root = project_root or Path(__file__).parent
@@ -106,7 +106,7 @@ class NeozorkMCPServer:
         self.start_time = datetime.now()  # Add start time for uptime tracking
         
         # Print startup message
-        print_to_stderr("🚀 Starting Neozork Unified MCP Server...")
+        print_to_stderr("🚀 Starting NeoZorK Unified MCP Server...")
         print_to_stderr(f"📁 Project root: {self.project_root}")
         print_to_stderr(f"🐍 Python version: {sys.version}")
         print_to_stderr(f"📅 Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -168,8 +168,8 @@ class NeozorkMCPServer:
         print_to_stderr("🔍 Indexing code...")
         self._index_code()
         
-        self.logger.info("Neozork Unified MCP Server initialized successfully")
-        print_to_stderr("✅ Neozork Unified MCP Server initialized successfully")
+        self.logger.info("NeoZorK Unified MCP Server initialized successfully")
+print_to_stderr("✅ NeoZorK Unified MCP Server initialized successfully")
         print_to_stderr("📈 Server Statistics:")
         print_to_stderr(f"   - Project files: {len(self.project_files)}")
         print_to_stderr(f"   - Financial symbols: {len(self.available_symbols)}")
@@ -195,7 +195,7 @@ class NeozorkMCPServer:
         # Default configuration
         return {
             "server_mode": "unified",
-            "server_name": "Neozork Unified MCP Server",
+            "server_name": "NeoZorK Unified MCP Server",
             "version": "2.0.0",
             "features": {
                 "financial_data": True,
@@ -578,7 +578,7 @@ class NeozorkMCPServer:
                 }
             },
             "serverInfo": {
-                "name": self.config.get("server_name", "Neozork Unified MCP Server"),
+                "name": self.config.get("server_name", "NeoZorK Unified MCP Server"),
                 "version": self.config.get("version", "2.0.0")
             }
         }
@@ -737,7 +737,7 @@ class NeozorkMCPServer:
         return {
             "contents": {
                 "kind": "markdown",
-                "value": "**Neozork Unified MCP Server**\n\nEnhanced MCP server for financial data analysis with AI integration"
+                "value": "**NeoZorK Unified MCP Server**\n\nEnhanced MCP server for financial data analysis with AI integration"
             }
         }
 
@@ -796,7 +796,7 @@ class NeozorkMCPServer:
     def _handle_project_info(self, request_id: Any, params: Dict) -> Dict:
         """Handle project info request"""
         return {
-            "name": "Neozork HLD Prediction",
+            "name": "NeoZorK HLD Prediction",
             "files_count": len(self.project_files),
             "financial_data_count": len(self.financial_data),
             "available_symbols": list(self.available_symbols),
@@ -1298,7 +1298,7 @@ class NeozorkMCPServer:
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(
-        description="Neozork Unified MCP Server",
+        description="NeoZorK Unified MCP Server",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -1331,7 +1331,7 @@ Examples:
     parser.add_argument(
         "--version", "-v",
         action="version",
-        version="Neozork Unified MCP Server 2.0.0"
+        version="NeoZorK Unified MCP Server 2.0.0"
     )
     
     args = parser.parse_args()
@@ -1352,7 +1352,7 @@ Examples:
         if args.debug:
             os.environ["LOG_LEVEL"] = "DEBUG"
         
-        server = NeozorkMCPServer(config=config)
+        server = NeoZorKMCPServer(config=config)
         server.start()
         
     except Exception as e:

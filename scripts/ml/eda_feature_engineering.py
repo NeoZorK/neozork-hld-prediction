@@ -587,7 +587,7 @@ class EDAFeatureEngineeringPipeline:
             report_path = output_path / f'eda_feature_engineering_report_{timestamp}.txt'
             
             with open(report_path, 'w') as f:
-                f.write("NEOZORK HLD PREDICTION - EDA FEATURE ENGINEERING REPORT\n")
+                f.write("NEOZORk HLD PREDICTION - EDA FEATURE ENGINEERING REPORT\n")
                 f.write("=" * 60 + "\n\n")
                 f.write(f"Generated: {time.strftime('%Y-%m-%d %H:%M:%S')}\n\n")
                 

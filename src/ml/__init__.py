@@ -2,7 +2,7 @@
 # src/ml/__init__.py
 
 """
-Machine Learning module for NeoZork HLD Prediction.
+Machine Learning module for NeoZorK HLD Prediction.
 
 This module provides comprehensive ML capabilities including:
 - Feature Engineering with proprietary PHLD and Wave indicators

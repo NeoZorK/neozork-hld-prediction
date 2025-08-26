@@ -2,7 +2,7 @@
 # src/ml/feature_engineering/technical_features.py
 
 """
-Technical feature generator for NeoZork HLD Prediction.
+Technical feature generator for NeoZorK HLD Prediction.
 
 This module creates ML features based on standard technical indicators,
 providing a comprehensive set of features for the ML trading system.

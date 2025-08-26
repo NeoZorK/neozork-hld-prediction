@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Time Series Analysis Module for NeoZork HLD Prediction.
+Time Series Analysis Module for NeoZorK HLD Prediction.
 
 This module provides comprehensive time series analysis capabilities including:
 - Stationarity testing

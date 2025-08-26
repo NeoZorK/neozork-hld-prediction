@@ -2,7 +2,7 @@
 # src/ml/feature_engineering/cross_timeframe_features.py
 
 """
-Cross-timeframe feature generator for NeoZork HLD Prediction.
+Cross-timeframe feature generator for NeoZorK HLD Prediction.
 
 This module creates ML features by combining data from different timeframes,
 providing multi-scale analysis for the ML trading system.

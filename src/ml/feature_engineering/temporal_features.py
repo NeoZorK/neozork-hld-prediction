@@ -2,7 +2,7 @@
 # src/ml/feature_engineering/temporal_features.py
 
 """
-Temporal feature generator for NeoZork HLD Prediction.
+Temporal feature generator for NeoZorK HLD Prediction.
 
 This module creates ML features based on time and date information,
 providing temporal patterns for the ML trading system.

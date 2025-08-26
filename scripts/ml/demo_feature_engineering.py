@@ -208,7 +208,7 @@ def configure_feature_generators():
 def run_feature_generation_demo():
     """Run the complete feature generation demo."""
     print("=" * 80)
-    print("NEOZORK HLD PREDICTION - FEATURE ENGINEERING DEMO")
+    print("NEOZORk HLD PREDICTION - FEATURE ENGINEERING DEMO")
     print("=" * 80)
     print()
     

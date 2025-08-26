@@ -2,7 +2,7 @@
 # src/ml/feature_engineering/feature_selector.py
 
 """
-Feature selector for NeoZork HLD Prediction.
+Feature selector for NeoZorK HLD Prediction.
 
 This module provides intelligent feature selection and optimization
 to reduce dimensionality and improve ML model performance.
@@ -356,7 +356,7 @@ class FeatureSelector:
             
             with open(output_path, 'w', encoding='utf-8') as f:
                 f.write("=" * 80 + "\n")
-                f.write("NEOZORK HLD PREDICTION - FEATURE SELECTION REPORT\n")
+                f.write("NEOZORk HLD PREDICTION - FEATURE SELECTION REPORT\n")
                 f.write("=" * 80 + "\n\n")
                 
                 # Configuration

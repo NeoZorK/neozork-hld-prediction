@@ -2,7 +2,7 @@
 # src/ml/feature_engineering/base_feature_generator.py
 
 """
-Base class for all feature generators in the NeoZork ML system.
+Base class for all feature generators in the NeoZorK ML system.
 
 This module provides the foundation for creating technical, statistical,
 and proprietary features from financial time series data.

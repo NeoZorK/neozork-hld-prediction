@@ -2,7 +2,7 @@
 # src/ml/feature_engineering/feature_generator.py
 
 """
-Main feature generator for NeoZork HLD Prediction.
+Main feature generator for NeoZorK HLD Prediction.
 
 This module orchestrates the generation of all types of features:
 - Proprietary PHLD and Wave features
@@ -305,7 +305,7 @@ class FeatureGenerator(BaseFeatureGenerator):
             
             with open(output_path, 'w', encoding='utf-8') as f:
                 f.write("=" * 80 + "\n")
-                f.write("NEOZORK HLD PREDICTION - FEATURE GENERATION REPORT\n")
+                f.write("NEOZORk HLD PREDICTION - FEATURE GENERATION REPORT\n")
                 f.write("=" * 80 + "\n\n")
                 
                 # Summary

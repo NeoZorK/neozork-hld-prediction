@@ -2,7 +2,7 @@
 # src/ml/feature_engineering/proprietary_features.py
 
 """
-Proprietary feature generator for NeoZork HLD Prediction.
+Proprietary feature generator for NeoZorK HLD Prediction.
 
 This module creates ML features based on the proprietary PHLD and Wave indicators,
 providing the foundation for the ML trading system.

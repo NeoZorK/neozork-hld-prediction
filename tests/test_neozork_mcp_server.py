@@ -14,7 +14,7 @@ from unittest.mock import patch, MagicMock
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
-class TestNeozorkMcpServer:
+class TestNeoZorKMcpServer:
     """Basic test cases for neozork_mcp_server.py."""
     
     def test_file_exists(self):

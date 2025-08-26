@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Tests for Neozork MCP Manager
+Tests for NeoZorK MCP Manager
 Comprehensive test suite for the unified MCP manager
 """
 
@@ -21,10 +21,10 @@ import logging
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from scripts.mcp.neozork_mcp_manager import NeozorkMCPManager, NeozorkMCPManagerCLI
+from scripts.mcp.neozork_mcp_manager import NeoZorKMCPManager, NeoZorKMCPManagerCLI
 
-class TestNeozorkMCPManager:
-    """Test Neozork MCP Manager functionality"""
+class TestNeoZorKMCPManager:
+    """Test NeoZorK MCP Manager functionality"""
     
     @pytest.fixture
     def temp_project(self):
@@ -314,18 +314,18 @@ print("Test MCP server")
         success = manager.create_ide_config("unsupported")
         assert success is False
 
-class TestNeozorkMCPManagerCLI:
+class TestNeoZorKMCPManagerCLI:
     """Test CLI interface"""
     
     @pytest.fixture
     def cli(self):
         """Create CLI instance"""
-        cli = NeozorkMCPManagerCLI()
+        cli = NeoZorKMCPManagerCLI()
         yield cli
     
     def test_start(self, cli):
         """Test CLI start command"""
-        with patch('scripts.mcp.neozork_mcp_manager.NeozorkMCPManager') as mock_manager_class:
+        with patch('scripts.mcp.neozork_mcp_manager.NeoZorKMCPManager') as mock_manager_class:
             mock_manager = Mock()
             mock_manager_class.return_value = mock_manager
             cli.manager = mock_manager
@@ -334,7 +334,7 @@ class TestNeozorkMCPManagerCLI:
     
     def test_status(self, cli):
         """Test CLI status command"""
-        with patch('scripts.mcp.neozork_mcp_manager.NeozorkMCPManager') as mock_manager_class:
+        with patch('scripts.mcp.neozork_mcp_manager.NeoZorKMCPManager') as mock_manager_class:
             mock_manager = Mock()
             mock_manager_class.return_value = mock_manager
             
@@ -359,7 +359,7 @@ class TestNeozorkMCPManagerCLI:
     
     def test_stop(self, cli):
         """Test CLI stop command"""
-        with patch('scripts.mcp.neozork_mcp_manager.NeozorkMCPManager') as mock_manager_class:
+        with patch('scripts.mcp.neozork_mcp_manager.NeoZorKMCPManager') as mock_manager_class:
             mock_manager = Mock()
             mock_manager_class.return_value = mock_manager
             
@@ -369,7 +369,7 @@ class TestNeozorkMCPManagerCLI:
     
     def test_restart(self, cli):
         """Test CLI restart command"""
-        with patch('scripts.mcp.neozork_mcp_manager.NeozorkMCPManager') as mock_manager_class:
+        with patch('scripts.mcp.neozork_mcp_manager.NeoZorKMCPManager') as mock_manager_class:
             mock_manager = Mock()
             mock_manager_class.return_value = mock_manager
             
@@ -380,7 +380,7 @@ class TestNeozorkMCPManagerCLI:
     
     def test_manual_start(self, cli):
         """Test CLI manual start command"""
-        with patch('scripts.mcp.neozork_mcp_manager.NeozorkMCPManager') as mock_manager_class:
+        with patch('scripts.mcp.neozork_mcp_manager.NeoZorKMCPManager') as mock_manager_class:
             mock_manager = Mock()
             mock_manager_class.return_value = mock_manager
             mock_manager.start_server.return_value = True
@@ -391,7 +391,7 @@ class TestNeozorkMCPManagerCLI:
     
     def test_create_config(self, cli):
         """Test CLI create config command"""
-        with patch('scripts.mcp.neozork_mcp_manager.NeozorkMCPManager') as mock_manager_class:
+        with patch('scripts.mcp.neozork_mcp_manager.NeoZorKMCPManager') as mock_manager_class:
             mock_manager = Mock()
             mock_manager_class.return_value = mock_manager
             mock_manager.create_ide_config.return_value = True
@@ -414,7 +414,7 @@ class TestIDEConfigCreation:
     def test_create_cursor_config(self, temp_project):
         """Test Cursor configuration creation"""
         with patch('scripts.mcp.neozork_mcp_manager.Observer') as mock_observer:
-            manager = NeozorkMCPManager(project_root=temp_project)
+            manager = NeoZorKMCPManager(project_root=temp_project)
             # Mock the run method
             manager.run = Mock()
             
@@ -433,7 +433,7 @@ class TestIDEConfigCreation:
     def test_create_pycharm_config(self, temp_project):
         """Test PyCharm configuration creation"""
         with patch('scripts.mcp.neozork_mcp_manager.Observer') as mock_observer:
-            manager = NeozorkMCPManager(project_root=temp_project)
+            manager = NeoZorKMCPManager(project_root=temp_project)
             # Mock the run method
             manager.run = Mock()
             
@@ -452,7 +452,7 @@ class TestIDEConfigCreation:
     def test_create_vscode_config(self, temp_project):
         """Test VS Code configuration creation"""
         with patch('scripts.mcp.neozork_mcp_manager.Observer') as mock_observer:
-            manager = NeozorkMCPManager(project_root=temp_project)
+            manager = NeoZorKMCPManager(project_root=temp_project)
             # Mock the run method
             manager.run = Mock()
             

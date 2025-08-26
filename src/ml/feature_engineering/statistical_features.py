@@ -2,7 +2,7 @@
 # src/ml/feature_engineering/statistical_features.py
 
 """
-Statistical feature generator for NeoZork HLD Prediction.
+Statistical feature generator for NeoZorK HLD Prediction.
 
 This module creates ML features based on statistical analysis of price and volume data,
 providing mathematical insights for the ML trading system.

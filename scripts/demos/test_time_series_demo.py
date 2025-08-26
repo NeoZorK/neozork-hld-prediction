@@ -4,7 +4,7 @@
 Demo script for Time Series Analysis functionality.
 
 This script demonstrates the comprehensive time series analysis capabilities
-of the NeoZork HLD Prediction system.
+of the NeoZorK HLD Prediction system.
 """
 
 import pandas as pd
@@ -21,7 +21,7 @@ from src.eda.time_series_analysis import TimeSeriesAnalyzer, analyze_time_series
 
 def main():
     """Run time series analysis demo."""
-    print("🚀 NEOZORK HLD PREDICTION - TIME SERIES ANALYSIS DEMO")
+    print("🚀 NEOZORk HLD PREDICTION - TIME SERIES ANALYSIS DEMO")
     print("=" * 60)
     
     # Load sample data

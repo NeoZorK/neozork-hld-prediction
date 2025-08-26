@@ -2,7 +2,7 @@
 # src/ml/feature_engineering/__init__.py
 
 """
-Feature Engineering module for NeoZork HLD Prediction.
+Feature Engineering module for NeoZorK HLD Prediction.
 
 This module provides comprehensive feature engineering capabilities:
 - Automatic generation of 100+ technical indicators as features
