@@ -28,6 +28,8 @@ try:
     import numpy as np
     from src.ml.feature_engineering.feature_generator import FeatureGenerator, MasterFeatureConfig
     from src.ml.feature_engineering.feature_selector import FeatureSelectionConfig
+    # Import EDA modules for data fixing and reporting
+    from src.eda import fix_files, html_report_generator
 except ImportError as e:
     print(f"Error importing modules: {e}")
     print("Please ensure all dependencies are installed and the project structure is correct.")
@@ -84,7 +86,8 @@ class InteractiveSystem:
         print("3. 🔗 Correlation Analysis")
         print("4. 📈 Time Series Analysis")
         print("5. 🎯 Feature Importance")
-        print("6. 📋 Generate EDA Report")
+        print("6. 🛠️  Fix Data Issues")
+        print("7. 📋 Generate HTML Report")
         print("-" * 50)
         
     def print_feature_engineering_menu(self):
@@ -148,18 +151,16 @@ class InteractiveSystem:
         print("-" * 30)
         print("Choose loading method:")
         print("0. 🔙 Back to Main Menu")
-        print("1. 📄 Load single file from data folder")
-        print("2. 📁 Load all files from folder (with optional mask)")
+        print("1. 📁 Load all files from folder (with optional mask)")
         print("-" * 30)
         print("\n💡 Examples:")
-        print("   Single file: sample_ohlcv_1000.csv")
         print("   Folder: data")
         print("   Folder with mask: data gbpusd (loads all files with 'gbpusd' in name)")
         print("   Folder with mask: data parquet (loads all .parquet files)")
         print("-" * 30)
         
         try:
-            choice = input("Enter choice (0-2): ").strip()
+            choice = input("Enter choice (0-1): ").strip()
         except EOFError:
             print("\n👋 Goodbye!")
             return False
@@ -167,111 +168,74 @@ class InteractiveSystem:
         if choice == "0":
             return False
         elif choice == "1":
-            return self._load_single_file()
-        elif choice == "2":
             return self._load_folder_files()
         else:
-            print("❌ Invalid choice. Please select 0-2.")
+            print("❌ Invalid choice. Please select 0-1.")
             return False
     
-    def _load_single_file(self) -> bool:
-        """Load a single data file from data folder."""
-        print("\n📄 LOAD SINGLE FILE FROM DATA FOLDER")
-        print("-" * 30)
-        
-        # Scan data folder for available files
-        data_folder = Path("data")
-        if not data_folder.exists():
-            print("❌ Data folder not found. Please ensure 'data' folder exists.")
-            return False
-        
-        # Find all data files in data folder and subfolders
-        data_files = []
-        for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
-            data_files.extend(data_folder.rglob(f"*{ext}"))
-        
-        if not data_files:
-            print("❌ No data files found in data folder")
-            return False
-        
-        print("💡 Available files in 'data' folder:")
-        for i, file in enumerate(data_files[:10], 1):  # Show first 10 files
-            rel_path = file.relative_to(data_folder)
-            print(f"   {i}. {rel_path}")
-        
-        if len(data_files) > 10:
-            print(f"   ... and {len(data_files) - 10} more files")
-        
-        print("-" * 30)
-        file_name = input("Enter file name (e.g., sample_ohlcv_1000.csv): ").strip()
-        
-        if not file_name:
-            print("❌ No file name provided")
-            return False
-        
-        # Try to find the file
-        file_path = None
-        for file in data_files:
-            if file.name == file_name or str(file.relative_to(data_folder)) == file_name:
-                file_path = file
-                break
-        
-        if not file_path:
-            print(f"❌ File '{file_name}' not found in data folder")
-            return False
-            
-        try:
-            self.current_data = self.load_data_from_file(str(file_path))
-            print(f"✅ Data loaded successfully!")
-            print(f"   File: {file_path.relative_to(data_folder)}")
-            print(f"   Shape: {self.current_data.shape[0]} rows × {self.current_data.shape[1]} columns")
-            print(f"   Columns: {list(self.current_data.columns)}")
-            
-            # Show data preview
-            show_preview = input("\nShow data preview? (y/n): ").strip().lower()
-            if show_preview in ['y', 'yes']:
-                print("\n📋 DATA PREVIEW:")
-                print(self.current_data.head())
-                print(f"\nData types:\n{self.current_data.dtypes}")
-                
-            return True
-            
-        except Exception as e:
-            print(f"❌ Error loading data: {e}")
-            return False
+
     
     def _load_folder_files(self) -> bool:
         """Load all data files from a folder with optional mask."""
         print("\n📁 LOAD ALL FILES FROM FOLDER")
         print("-" * 30)
+        
+        # Get all subfolders in data directory
+        data_folder = Path("data")
+        if not data_folder.exists():
+            print("❌ Data folder not found. Please ensure 'data' folder exists.")
+            return False
+        
+        # Find all subfolders
+        subfolders = [data_folder]  # Include main data folder
+        for item in data_folder.iterdir():
+            if item.is_dir():
+                subfolders.append(item)
+                # Also include sub-subfolders
+                for subitem in item.iterdir():
+                    if subitem.is_dir():
+                        subfolders.append(subitem)
+        
         print("💡 Available folders:")
-        print("   • data (main data folder)")
-        print("   • data/raw_parquet (raw data files)")
-        print("   • data/indicators (calculated indicators)")
-        print("   • data/cache/csv_converted (converted CSV files)")
+        for i, folder in enumerate(subfolders, 1):
+            try:
+                rel_path = folder.relative_to(Path.cwd())
+            except ValueError:
+                rel_path = folder
+            print(f"   {i}: {rel_path}/")
+        
         print("-" * 30)
         print("💡 Examples:")
-        print("   • data (loads all files from data folder)")
-        print("   • data gbpusd (loads all files with 'gbpusd' in name)")
-        print("   • data parquet (loads all .parquet files)")
-        print("   • data binance (loads all files with 'binance' in name)")
+        print("   • Enter folder number (e.g., 1 for data/)")
+        print("   • Or enter folder path with mask (e.g., data gbpusd)")
+        print("   • Or enter folder path with file type (e.g., data parquet)")
         print("-" * 30)
         
-        input_text = input("Enter folder path (with optional mask): ").strip()
+        input_text = input("Enter folder number or path (with optional mask): ").strip()
         
         if not input_text:
-            print("❌ No folder path provided")
+            print("❌ No input provided")
             return False
         
-        # Parse input for folder and mask
-        parts = input_text.split()
-        folder_path = parts[0]
-        mask = parts[1].lower() if len(parts) > 1 else None
-            
-        folder_path = Path(folder_path)
-        if not folder_path.exists() or not folder_path.is_dir():
-            print(f"❌ Folder not found: {folder_path}")
-            return False
+        # Check if input is a number (folder selection)
+        if input_text.isdigit():
+            folder_idx = int(input_text) - 1
+            if 0 <= folder_idx < len(subfolders):
+                folder_path = subfolders[folder_idx]
+                mask = None
+            else:
+                print(f"❌ Invalid folder number. Please select 1-{len(subfolders)}")
+                return False
+        else:
+            # Parse input for folder and mask
+            parts = input_text.split()
+            folder_path = parts[0]
+            mask = parts[1].lower() if len(parts) > 1 else None
+                
+            folder_path = Path(folder_path)
+            if not folder_path.exists() or not folder_path.is_dir():
+                print(f"❌ Folder not found: {folder_path}")
+                return False
         
         # Find all data files
         data_files = []
@@ -839,12 +803,171 @@ class InteractiveSystem:
         except Exception as e:
             print(f"❌ Error exporting results: {e}")
     
+    def fix_data_issues(self):
+        """Fix common data quality issues in the current dataset."""
+        if self.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return
+            
+        print("\n🛠️  FIX DATA ISSUES")
+        print("-" * 30)
+        
+        try:
+            # Create backup
+            backup_data = self.current_data.copy()
+            print("✅ Backup created")
+            
+            # Check for issues
+            print("\n🔍 Checking for data issues...")
+            
+            # NaN values
+            nan_cols = [col for col in self.current_data.columns if self.current_data[col].isna().any()]
+            if nan_cols:
+                print(f"   Found NaN values in {len(nan_cols)} columns: {nan_cols}")
+                self.current_data = fix_files.fix_nan(self.current_data)
+                print("   ✅ NaN values fixed")
+            else:
+                print("   ✅ No NaN values found")
+            
+            # Duplicates
+            duplicates = self.current_data.duplicated().sum()
+            if duplicates > 0:
+                print(f"   Found {duplicates} duplicate rows")
+                self.current_data = fix_files.fix_duplicates(self.current_data)
+                print("   ✅ Duplicates removed")
+            else:
+                print("   ✅ No duplicates found")
+            
+            # Zero values in OHLCV columns
+            ohlcv_cols = [col for col in self.current_data.columns if any(x in col.lower() for x in ['open', 'high', 'low', 'close', 'volume'])]
+            zero_issues = []
+            for col in ohlcv_cols:
+                if col in self.current_data.columns and (self.current_data[col] == 0).any():
+                    zero_count = (self.current_data[col] == 0).sum()
+                    zero_issues.append((col, zero_count))
+            
+            if zero_issues:
+                print(f"   Found zero values in OHLCV columns:")
+                for col, count in zero_issues:
+                    print(f"     {col}: {count} zero values")
+                # Note: We don't auto-fix zeros as they might be legitimate
+                print("   ⚠️  Zero values detected but not auto-fixed (may be legitimate)")
+            
+            # Negative values in OHLCV columns
+            negative_issues = []
+            for col in ohlcv_cols:
+                if col in self.current_data.columns and (self.current_data[col] < 0).any():
+                    neg_count = (self.current_data[col] < 0).sum()
+                    negative_issues.append((col, neg_count))
+            
+            if negative_issues:
+                print(f"   Found negative values in OHLCV columns:")
+                for col, count in negative_issues:
+                    print(f"     {col}: {count} negative values")
+                print("   ⚠️  Negative values detected but not auto-fixed (may be legitimate)")
+            
+            print(f"\n✅ Data issues check completed!")
+            print(f"   Original shape: {backup_data.shape}")
+            print(f"   Current shape: {self.current_data.shape}")
+            
+            # Ask if user wants to keep changes
+            keep_changes = input("\nKeep the fixes? (y/n): ").strip().lower()
+            if keep_changes in ['y', 'yes']:
+                print("✅ Changes applied")
+                self.current_results['data_fixes'] = {
+                    'original_shape': backup_data.shape,
+                    'current_shape': self.current_data.shape,
+                    'nan_fixed': len(nan_cols) > 0,
+                    'duplicates_removed': duplicates > 0
+                }
+            else:
+                self.current_data = backup_data
+                print("🔄 Changes reverted")
+                
+        except Exception as e:
+            print(f"❌ Error fixing data issues: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def generate_html_report(self):
+        """Generate comprehensive HTML report for current data and analysis."""
+        if self.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return
+            
+        print("\n📋 GENERATE HTML REPORT")
+        print("-" * 30)
+        
+        try:
+            # Create reports directory
+            reports_dir = Path("reports")
+            reports_dir.mkdir(exist_ok=True)
+            
+            timestamp = time.strftime("%Y%m%d_%H%M%S")
+            report_title = f"Interactive System Analysis Report - {timestamp}"
+            
+            # Initialize HTML report
+            html_report = html_report_generator.HTMLReport(report_title, "interactive_analysis")
+            
+            # Add data overview
+            html_report.add_section("Data Overview", f"""
+                <h3>Dataset Information</h3>
+                <p><strong>Shape:</strong> {self.current_data.shape[0]} rows × {self.current_data.shape[1]} columns</p>
+                <p><strong>Memory Usage:</strong> {self.current_data.memory_usage(deep=True).sum() / 1024**2:.2f} MB</p>
+                <p><strong>Data Types:</strong></p>
+                <ul>
+                    {''.join([f'<li>{col}: {dtype}</li>' for col, dtype in self.current_data.dtypes.items()])}
+                </ul>
+            """)
+            
+            # Add data quality information if available
+            if 'data_quality' in self.current_results:
+                dq = self.current_results['data_quality']
+                html_report.add_section("Data Quality Analysis", f"""
+                    <h3>Quality Metrics</h3>
+                    <p><strong>Missing Values:</strong> {dq.get('total_missing', 0)} ({dq.get('missing_percentage', 0):.2f}%)</p>
+                    <p><strong>Duplicates:</strong> {dq.get('duplicates', 0)} ({dq.get('duplicate_percentage', 0):.2f}%)</p>
+                """)
+            
+            # Add correlation analysis if available
+            if 'correlation_analysis' in self.current_results:
+                html_report.add_section("Correlation Analysis", """
+                    <h3>Feature Correlations</h3>
+                    <p>High correlation pairs detected and analyzed.</p>
+                """)
+            
+            # Add time series analysis if available
+            if 'time_series_analysis' in self.current_results:
+                html_report.add_section("Time Series Analysis", """
+                    <h3>Time Series Insights</h3>
+                    <p>Comprehensive time series analysis including stationarity, trends, and seasonality.</p>
+                """)
+            
+            # Add feature engineering results if available
+            if 'feature_engineering' in self.current_results:
+                html_report.add_section("Feature Engineering", """
+                    <h3>Generated Features</h3>
+                    <p>Advanced features have been generated and are ready for modeling.</p>
+                """)
+            
+            # Generate and save report
+            report_path = reports_dir / f"interactive_report_{timestamp}.html"
+            html_report.save(str(report_path))
+            
+            print(f"✅ HTML report generated: {report_path}")
+            print(f"   Open the file in your web browser to view the complete report")
+            
+        except Exception as e:
+            print(f"❌ Error generating HTML report: {e}")
+            import traceback
+            traceback.print_exc()
+    
     def run_eda_analysis(self):
         """Run EDA analysis menu."""
         while True:
             self.print_eda_menu()
             try:
-                choice = input("Select option (0-6): ").strip()
+                choice = input("Select option (0-7): ").strip()
             except EOFError:
                 print("\n👋 Goodbye!")
                 break
@@ -862,9 +985,11 @@ class InteractiveSystem:
             elif choice == '5':
                 print("⏳ Feature Importance - Coming soon!")
             elif choice == '6':
-                print("⏳ EDA Report Generation - Coming soon!")
+                self.fix_data_issues()
+            elif choice == '7':
+                self.generate_html_report()
             else:
-                print("❌ Invalid choice. Please select 0-6.")
+                print("❌ Invalid choice. Please select 0-7.")
             
             if choice != '0':
                 if self.safe_input() is None:
