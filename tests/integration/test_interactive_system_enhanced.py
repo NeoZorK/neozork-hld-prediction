@@ -17,6 +17,7 @@ import tempfile
 import shutil
 import sys
 import os
+from unittest.mock import patch, MagicMock
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
@@ -170,8 +171,10 @@ class TestEnhancedInteractiveSystem:
         """Test enhanced basic statistics functionality."""
         interactive_system.current_data = sample_data
         
-        # Test that the function runs without errors
-        interactive_system.run_basic_statistics()
+        # Mock input to avoid browser opening
+        with patch('builtins.input', return_value='n'):
+            # Test that the function runs without errors
+            interactive_system.run_basic_statistics()
         
         # Check that results were saved
         assert 'basic_statistics' in interactive_system.current_results
@@ -181,6 +184,12 @@ class TestEnhancedInteractiveSystem:
         assert 'analysis_summary' in stats
         assert 'total_columns' in stats['analysis_summary']
         assert 'total_observations' in stats['analysis_summary']
+        
+        # Check for new summary fields
+        summary = stats['analysis_summary']
+        assert 'skewed_columns' in summary
+        assert 'high_outlier_columns' in summary
+        assert 'high_variability_columns' in summary
     
     def test_statistics_plots_creation(self, interactive_system, sample_data, tmp_path):
         """Test that statistics plots are created correctly."""
@@ -220,11 +229,32 @@ class TestEnhancedInteractiveSystem:
         
         interactive_system.current_data = data
         
-        # This should not raise warnings or errors
-        interactive_system.run_basic_statistics()
+        # Mock input to avoid browser opening
+        with patch('builtins.input', return_value='n'):
+            # This should not raise warnings or errors
+            interactive_system.run_basic_statistics()
         
         # Check that results were processed
         assert 'basic_statistics' in interactive_system.current_results
+    
+    def test_browser_plot_viewing(self, interactive_system, sample_data, monkeypatch):
+        """Test browser plot viewing functionality."""
+        interactive_system.current_data = sample_data
+        
+        # Mock webbrowser to avoid actually opening browser
+        mock_browser = MagicMock()
+        monkeypatch.setattr('webbrowser.get', lambda x: mock_browser)
+        
+        # Mock tempfile to avoid creating actual files
+        mock_tempfile = MagicMock()
+        mock_tempfile.name = '/tmp/test.html'
+        monkeypatch.setattr('tempfile.NamedTemporaryFile', lambda **kwargs: mock_tempfile)
+        
+        # Test the browser viewing function
+        interactive_system._show_plots_in_browser()
+        
+        # Check that browser was called
+        mock_browser.open.assert_called_once()
     
     def test_data_folder_structure_detection(self, interactive_system):
         """Test that data folder structure is detected correctly."""

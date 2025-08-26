@@ -96,6 +96,8 @@ Completely redesigned basic statistics with comprehensive analysis:
 - **Interpretations**: What good/bad values mean and why
 - **Recommendations**: Specific suggestions for data improvement
 - **Next Steps**: Clear guidance on what to do next
+- **Analysis Summary**: Comprehensive overview before plot generation
+- **Browser Integration**: Option to view plots in Safari with detailed explanations
 - **Modern Visualizations**: 4 professional seaborn plots
 - **Error Handling**: Fixed runtime warnings from infinite values
 
@@ -121,6 +123,13 @@ def run_basic_statistics(self):
 2. **boxplots.png** - Outlier detection with counts
 3. **correlation_heatmap.png** - Feature relationships
 4. **statistical_summary.png** - Comparative analysis charts
+
+#### **Browser Integration:**
+- **Safari Browser**: Opens plots in Safari with embedded HTML
+- **Detailed Explanations**: Each plot includes interpretation guide
+- **Professional Layout**: Modern CSS styling with responsive design
+- **Interactive Experience**: Easy navigation between different plots
+- **Temporary Files**: Creates temporary HTML files that are automatically cleaned up
 
 ### 4. HTML Report Generation
 

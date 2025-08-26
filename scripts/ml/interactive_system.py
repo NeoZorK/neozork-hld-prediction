@@ -430,9 +430,77 @@ class InteractiveSystem:
                 print(f"  • Consider feature scaling for machine learning")
                 print(f"  • Investigate outliers if percentage is high")
             
+            # Generate summary before creating plots
+            print(f"\n📋 ANALYSIS SUMMARY")
+            print("=" * 50)
+            print(f"📊 Dataset Overview:")
+            print(f"  • Total numeric columns: {len(numeric_data.columns)}")
+            print(f"  • Total observations: {len(numeric_data):,}")
+            print(f"  • Columns with missing values: {len([col for col in numeric_data.columns if numeric_data[col].isna().sum() > 0])}")
+            
+            # Summary of key findings
+            print(f"\n🔍 Key Findings:")
+            skewed_cols = []
+            high_outlier_cols = []
+            high_cv_cols = []
+            
+            for col in numeric_data.columns:
+                col_data = numeric_data[col].dropna()
+                if len(col_data) == 0:
+                    continue
+                    
+                skew_val = col_data.skew()
+                if abs(skew_val) > 1:
+                    skewed_cols.append(col)
+                
+                # Outlier analysis
+                q25 = col_data.quantile(0.25)
+                q75 = col_data.quantile(0.75)
+                iqr = q75 - q25
+                outliers = col_data[(col_data < q25 - 1.5*iqr) | (col_data > q75 + 1.5*iqr)]
+                outlier_pct = len(outliers) / len(col_data) * 100
+                if outlier_pct > 5:
+                    high_outlier_cols.append(col)
+                
+                # Coefficient of variation
+                mean_val = col_data.mean()
+                std_val = col_data.std()
+                cv = std_val / mean_val if mean_val != 0 else 0
+                if cv > 1:
+                    high_cv_cols.append(col)
+            
+            if skewed_cols:
+                print(f"  ⚠️  Skewed columns ({len(skewed_cols)}): {skewed_cols[:3]}{'...' if len(skewed_cols) > 3 else ''}")
+            if high_outlier_cols:
+                print(f"  ⚠️  High outlier columns ({len(high_outlier_cols)}): {high_outlier_cols[:3]}{'...' if len(high_outlier_cols) > 3 else ''}")
+            if high_cv_cols:
+                print(f"  ⚠️  High variability columns ({len(high_cv_cols)}): {high_cv_cols[:3]}{'...' if len(high_cv_cols) > 3 else ''}")
+            
+            if not skewed_cols and not high_outlier_cols and not high_cv_cols:
+                print(f"  ✅ Data quality looks good across all columns")
+            
+            print(f"\n📈 Next Steps:")
+            print(f"  • Run correlation analysis to understand relationships")
+            print(f"  • Check for seasonality in time series data")
+            print(f"  • Consider feature scaling for machine learning")
+            print(f"  • Investigate outliers if percentage is high")
+            
             # Create visualizations
             print(f"\n📊 GENERATING VISUALIZATIONS...")
             self._create_statistics_plots(numeric_data)
+            
+            # Ask user if they want to view plots in browser
+            print(f"\n🌐 VIEW PLOTS IN BROWSER")
+            print("-" * 30)
+            print("📊 Generated 4 visualization files:")
+            print("  • distributions.png - Histograms with KDE and statistics")
+            print("  • boxplots.png - Outlier detection with counts")
+            print("  • correlation_heatmap.png - Feature relationships")
+            print("  • statistical_summary.png - Comparative analysis charts")
+            
+            show_plots = input("\nShow plots in Safari browser? (y/n): ").strip().lower()
+            if show_plots in ['y', 'yes']:
+                self._show_plots_in_browser()
             
             # Save results
             self.current_results['basic_statistics'] = {
@@ -442,7 +510,10 @@ class InteractiveSystem:
                     'total_columns': len(numeric_data.columns),
                     'total_observations': len(numeric_data),
                     'columns_with_issues': len([col for col in numeric_data.columns 
-                                              if numeric_data[col].isna().sum() > 0])
+                                              if numeric_data[col].isna().sum() > 0]),
+                    'skewed_columns': skewed_cols,
+                    'high_outlier_columns': high_outlier_cols,
+                    'high_variability_columns': high_cv_cols
                 }
             }
             
@@ -453,6 +524,240 @@ class InteractiveSystem:
             print(f"❌ Error in basic statistics: {e}")
             import traceback
             traceback.print_exc()
+    
+    def _show_plots_in_browser(self):
+        """Show generated plots in Safari browser with detailed explanations."""
+        try:
+            import webbrowser
+            import tempfile
+            import os
+            
+            # Create HTML file with plots and explanations
+            html_content = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoZork HLD Prediction - Statistical Analysis Plots</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        .content {
+            padding: 30px;
+        }
+        .plot-section {
+            margin-bottom: 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .plot-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .plot-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.5em;
+        }
+        .plot-description {
+            margin: 10px 0 0 0;
+            color: #666;
+            line-height: 1.6;
+        }
+        .plot-image {
+            text-align: center;
+            padding: 20px;
+            background: white;
+        }
+        .plot-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .interpretation {
+            background: #f8f9fa;
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .interpretation h3 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 1.2em;
+        }
+        .interpretation ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .interpretation li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+        .timestamp {
+            color: #95a5a6;
+            font-size: 0.8em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Statistical Analysis Results</h1>
+            <p>NeoZork HLD Prediction Interactive System</p>
+        </div>
+        
+        <div class="content">
+"""
+            
+            # Add each plot with explanations
+            plots_info = [
+                {
+                    'file': 'distributions.png',
+                    'title': 'Distribution Analysis',
+                    'description': 'Histograms with Kernel Density Estimation (KDE) showing the distribution of each variable',
+                    'interpretation': [
+                        'Shows the shape and spread of data for each variable',
+                        'KDE curve helps identify the underlying distribution pattern',
+                        'Look for symmetry, skewness, and modality (single vs multiple peaks)',
+                        'Statistics box shows mean, standard deviation, and skewness values'
+                    ]
+                },
+                {
+                    'file': 'boxplots.png',
+                    'title': 'Box Plot Analysis (Outlier Detection)',
+                    'description': 'Box plots showing the median, quartiles, and outliers for each variable',
+                    'interpretation': [
+                        'Box shows the interquartile range (IQR) - middle 50% of data',
+                        'Whiskers extend to the most extreme non-outlier points',
+                        'Points beyond whiskers are considered outliers',
+                        'Outlier count shows how many extreme values exist'
+                    ]
+                },
+                {
+                    'file': 'correlation_heatmap.png',
+                    'title': 'Correlation Matrix',
+                    'description': 'Heatmap showing pairwise correlations between all variables',
+                    'interpretation': [
+                        'Values range from -1 (perfect negative correlation) to +1 (perfect positive correlation)',
+                        'Red indicates positive correlations, blue indicates negative correlations',
+                        'Darker colors indicate stronger correlations',
+                        'Look for patterns that might indicate multicollinearity'
+                    ]
+                },
+                {
+                    'file': 'statistical_summary.png',
+                    'title': 'Statistical Summary',
+                    'description': 'Comparative analysis charts showing key statistical measures across variables',
+                    'interpretation': [
+                        'Mean vs Median comparison helps identify skewness',
+                        'Coefficient of Variation shows relative variability',
+                        'Skewness and Kurtosis indicate distribution shape',
+                        'Use these to decide on data transformations'
+                    ]
+                }
+            ]
+            
+            plots_dir = Path("results/plots/statistics")
+            
+            for plot_info in plots_info:
+                plot_path = plots_dir / plot_info['file']
+                if plot_path.exists():
+                    # Convert plot to base64 for embedding in HTML
+                    import base64
+                    with open(plot_path, 'rb') as img_file:
+                        img_data = base64.b64encode(img_file.read()).decode()
+                    
+                    html_content += f"""
+            <div class="plot-section">
+                <div class="plot-header">
+                    <h2>{plot_info['title']}</h2>
+                    <p class="plot-description">{plot_info['description']}</p>
+                </div>
+                <div class="plot-image">
+                    <img src="data:image/png;base64,{img_data}" alt="{plot_info['title']}">
+                </div>
+                <div class="interpretation">
+                    <h3>How to Interpret:</h3>
+                    <ul>
+"""
+                    
+                    for item in plot_info['interpretation']:
+                        html_content += f"                        <li>{item}</li>\n"
+                    
+                    html_content += """
+                    </ul>
+                </div>
+            </div>
+"""
+            
+            # Close HTML
+            html_content += f"""
+        </div>
+        
+        <div class="footer">
+            <p>Generated by NeoZork HLD Prediction Interactive System</p>
+            <p class="timestamp">Generated on: {time.strftime('%Y-%m-%d %H:%M:%S')}</p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+            
+            # Create temporary HTML file
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False, encoding='utf-8') as f:
+                f.write(html_content)
+                temp_html_path = f.name
+            
+            # Open in Safari
+            webbrowser.get('safari').open(f'file://{temp_html_path}')
+            
+            print("✅ Opening plots in Safari browser...")
+            print(f"📄 HTML file created: {temp_html_path}")
+            
+        except Exception as e:
+            print(f"❌ Error opening plots in browser: {e}")
+            print("📁 Plots are still available in: results/plots/statistics/")
     
     def _create_statistics_plots(self, numeric_data):
         """Create comprehensive statistical visualizations."""
