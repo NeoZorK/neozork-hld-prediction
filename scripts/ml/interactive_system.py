@@ -29,7 +29,7 @@ try:
     from src.ml.feature_engineering.feature_generator import FeatureGenerator, MasterFeatureConfig
     from src.ml.feature_engineering.feature_selector import FeatureSelectionConfig
     # Import EDA modules for data fixing and reporting
-    from src.eda import fix_files, html_report_generator
+    from src.eda import fix_files, html_report_generator, data_quality, file_info
 except ImportError as e:
     print(f"Error importing modules: {e}")
     print("Please ensure all dependencies are installed and the project structure is correct.")
@@ -82,12 +82,13 @@ class InteractiveSystem:
         print("\n🔍 EDA ANALYSIS MENU:")
         print("0. 🔙 Back to Main Menu")
         print("1. 📊 Basic Statistics")
-        print("2. 🧹 Data Quality Check")
+        print("2. 🧹 Comprehensive Data Quality Check")
         print("3. 🔗 Correlation Analysis")
         print("4. 📈 Time Series Analysis")
         print("5. 🎯 Feature Importance")
         print("6. 🛠️  Fix Data Issues")
         print("7. 📋 Generate HTML Report")
+        print("8. 🔄 Restore from Backup")
         print("-" * 50)
         
     def print_feature_engineering_menu(self):
@@ -299,7 +300,7 @@ class InteractiveSystem:
 
     
     def run_basic_statistics(self):
-        """Run comprehensive basic statistical analysis with explanations and visualizations."""
+        """Run comprehensive basic statistics analysis with modern methods."""
         if self.current_data is None:
             print("❌ No data loaded. Please load data first.")
             return
@@ -308,18 +309,138 @@ class InteractiveSystem:
         print("=" * 50)
         
         try:
-            # Filter out infinite values and handle NaN values
-            numeric_data = self.current_data.select_dtypes(include=[np.number]).copy()
+            from tqdm import tqdm
+            import time
+            from src.eda import basic_stats
             
-            # Replace infinite values with NaN to avoid warnings
-            numeric_data = numeric_data.replace([np.inf, -np.inf], np.nan)
+            # Basic info
+            print(f"📈 Dataset Shape: {self.current_data.shape[0]} rows × {self.current_data.shape[1]} columns")
             
-            # Descriptive statistics
-            desc_stats = numeric_data.describe()
+            # Data types
+            dtype_counts = self.current_data.dtypes.value_counts()
+            print(f"\n🔧 Data Types:")
+            for dtype, count in dtype_counts.items():
+                print(f"  {dtype}: {count} columns")
             
-            print("\n📈 DESCRIPTIVE STATISTICS")
-            print("-" * 30)
-            print(desc_stats)
+            # Run comprehensive basic statistics
+            print(f"\n🔍 Running comprehensive basic statistics...")
+            
+            # Basic stats with progress bar
+            print(f"\n1️⃣  Computing basic statistics...")
+            with tqdm(total=1, desc="Basic stats", leave=False) as pbar:
+                basic_stats_result = basic_stats.compute_basic_stats(self.current_data)
+                pbar.update(1)
+            
+            # Descriptive stats
+            print(f"\n2️⃣  Computing descriptive statistics...")
+            numeric_cols = self.current_data.select_dtypes(include=[np.number]).columns
+            with tqdm(total=len(numeric_cols), desc="Descriptive stats", leave=False) as pbar:
+                desc_stats_result = basic_stats.descriptive_stats(self.current_data)
+                pbar.update(len(numeric_cols))
+            
+            # Distribution analysis
+            print(f"\n3️⃣  Analyzing distributions...")
+            with tqdm(total=len(numeric_cols), desc="Distribution analysis", leave=False) as pbar:
+                dist_analysis_result = basic_stats.distribution_analysis(self.current_data)
+                pbar.update(len(numeric_cols))
+            
+            # Outlier analysis
+            print(f"\n4️⃣  Detecting outliers...")
+            with tqdm(total=len(numeric_cols), desc="Outlier detection", leave=False) as pbar:
+                outlier_analysis_result = basic_stats.outlier_analysis(self.current_data)
+                pbar.update(len(numeric_cols))
+            
+            # Time series analysis (if applicable)
+            print(f"\n5️⃣  Time series analysis...")
+            with tqdm(total=1, desc="Time series analysis", leave=False) as pbar:
+                ts_analysis_result = basic_stats.time_series_analysis(self.current_data)
+                pbar.update(1)
+            
+            # Generate comprehensive summary
+            print(f"\n" + "="*60)
+            print("📋 COMPREHENSIVE STATISTICS SUMMARY")
+            print("="*60)
+            
+            # Basic summary
+            print(f"📊 Basic Statistics:")
+            print(f"   • Total rows: {self.current_data.shape[0]:,}")
+            print(f"   • Total columns: {self.current_data.shape[1]}")
+            print(f"   • Numeric columns: {len(numeric_cols)}")
+            print(f"   • Memory usage: {self.current_data.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
+            
+            # Missing values summary
+            missing_data = self.current_data.isna().sum()
+            total_missing = missing_data.sum()
+            missing_percentage = (total_missing / (self.current_data.shape[0] * self.current_data.shape[1])) * 100
+            
+            print(f"\n❌ Missing Values Summary:")
+            print(f"   • Total missing: {total_missing:,} ({missing_percentage:.2f}%)")
+            if total_missing > 0:
+                missing_cols = missing_data[missing_data > 0]
+                print(f"   • Columns with missing values: {len(missing_cols)}")
+                print(f"   • Most missing values: {missing_cols.idxmax()} ({missing_cols.max():,})")
+            
+            # Distribution summary
+            normal_cols = 0
+            skewed_cols = 0
+            for col, stats in dist_analysis_result.items():
+                if 'error' not in stats:
+                    if stats['is_normal'] == 'Yes':
+                        normal_cols += 1
+                    if abs(stats['skewness']) > 1:
+                        skewed_cols += 1
+            
+            print(f"\n📈 Distribution Summary:")
+            print(f"   • Normal distributions: {normal_cols}/{len(numeric_cols)} ({normal_cols/len(numeric_cols)*100:.1f}%)")
+            print(f"   • Skewed distributions: {skewed_cols}/{len(numeric_cols)} ({skewed_cols/len(numeric_cols)*100:.1f}%)")
+            
+            # Outlier summary
+            high_outliers = 0
+            for col, stats in outlier_analysis_result.items():
+                if 'error' not in stats:
+                    iqr_pct = stats['iqr_method']['outlier_percentage']
+                    z_pct = stats['z_score_method']['outlier_percentage']
+                    max_pct = max(iqr_pct, z_pct)
+                    if max_pct > 5:
+                        high_outliers += 1
+            
+            print(f"\n🎯 Outlier Summary:")
+            print(f"   • Columns with >5% outliers: {high_outliers}/{len(numeric_cols)} ({high_outliers/len(numeric_cols)*100:.1f}%)")
+            
+            # Time series summary
+            if 'error' not in ts_analysis_result:
+                print(f"\n🕒 Time Series Summary:")
+                if 'stationarity' in ts_analysis_result:
+                    stationary_cols = sum(1 for col, result in ts_analysis_result['stationarity'].items() 
+                                        if 'error' not in result and result['is_stationary'])
+                    print(f"   • Stationary series: {stationary_cols}")
+                    print(f"   • Non-stationary series: {len(ts_analysis_result['stationarity']) - stationary_cols}")
+            
+            # Save comprehensive results
+            self.current_results['comprehensive_basic_statistics'] = {
+                'basic_stats': basic_stats_result,
+                'descriptive_stats': desc_stats_result,
+                'distribution_analysis': dist_analysis_result,
+                'outlier_analysis': outlier_analysis_result,
+                'time_series_analysis': ts_analysis_result,
+                'summary': {
+                    'shape': self.current_data.shape,
+                    'memory_usage_mb': self.current_data.memory_usage(deep=True).sum() / 1024**2,
+                    'missing_percentage': missing_percentage,
+                    'normal_distributions': normal_cols,
+                    'skewed_distributions': skewed_cols,
+                    'high_outlier_columns': high_outliers
+                },
+                'timestamp': time.time()
+            }
+            
+            print(f"\n✅ Comprehensive basic statistics completed!")
+            print(f"   Results saved for further analysis")
+            
+        except Exception as e:
+            print(f"❌ Error in comprehensive basic statistics: {e}")
+            import traceback
+            traceback.print_exc()
             
             # Statistical explanations and interpretations
             print("\n🔍 STATISTICAL INTERPRETATIONS")
@@ -945,58 +1066,196 @@ class InteractiveSystem:
                 pass
     
     def run_data_quality_check(self):
-        """Run data quality check."""
+        """Run comprehensive data quality check using modern methods."""
         if self.current_data is None:
             print("❌ No data loaded. Please load data first.")
             return
             
-        print("\n🧹 DATA QUALITY CHECK")
-        print("-" * 30)
+        print("\n🧹 COMPREHENSIVE DATA QUALITY CHECK")
+        print("=" * 50)
         
         try:
-            # Missing values
-            missing_data = self.current_data.isna().sum()
-            total_missing = missing_data.sum()
-            total_cells = self.current_data.shape[0] * self.current_data.shape[1]
-            missing_percentage = (total_missing / total_cells) * 100
+            from tqdm import tqdm
+            import time
             
-            print(f"📊 Missing Values Analysis:")
-            print(f"  Total missing values: {total_missing}")
-            print(f"  Missing percentage: {missing_percentage:.2f}%")
+            # Initialize summary collections
+            nan_summary = []
+            dupe_summary = []
+            gap_summary = []
+            zero_summary = []
+            negative_summary = []
+            inf_summary = []
             
-            if total_missing > 0:
-                print(f"  Missing by column:")
-                for col, missing in missing_data[missing_data > 0].items():
-                    print(f"    {col}: {missing} ({missing/self.current_data.shape[0]*100:.2f}%)")
-            
-            # Duplicates
-            duplicates = self.current_data.duplicated().sum()
-            duplicate_percentage = (duplicates / self.current_data.shape[0]) * 100
-            
-            print(f"\n🔄 Duplicate Analysis:")
-            print(f"  Total duplicates: {duplicates}")
-            print(f"  Duplicate percentage: {duplicate_percentage:.2f}%")
-            
-            # Data types
-            dtype_counts = self.current_data.dtypes.value_counts()
-            print(f"\n🔧 Data Types:")
-            for dtype, count in dtype_counts.items():
-                print(f"  {dtype}: {count} columns")
-            
-            # Save results
-            self.current_results['data_quality'] = {
-                'missing_values': missing_data.to_dict(),
-                'total_missing': total_missing,
-                'missing_percentage': missing_percentage,
-                'duplicates': duplicates,
-                'duplicate_percentage': duplicate_percentage,
-                'data_types': dtype_counts.to_dict()
+            # Get file info for better analysis
+            print("📊 Analyzing data structure...")
+            file_info_dict = {
+                'file_path': 'current_data',
+                'file_name': 'current_data',
+                'n_rows': self.current_data.shape[0],
+                'n_cols': self.current_data.shape[1],
+                'columns': list(self.current_data.columns),
+                'dtypes': self.current_data.dtypes.to_dict(),
+                'datetime_or_timestamp_fields': []
             }
             
-            print("\n✅ Data quality check completed and saved!")
+            # Detect datetime fields
+            for col in self.current_data.columns:
+                if pd.api.types.is_datetime64_any_dtype(self.current_data[col]):
+                    file_info_dict['datetime_or_timestamp_fields'].append(col)
+            
+            print(f"   📈 Shape: {self.current_data.shape[0]} rows × {self.current_data.shape[1]} columns")
+            print(f"   🕒 Datetime columns: {len(file_info_dict['datetime_or_timestamp_fields'])}")
+            print(f"   🔢 Numeric columns: {len(self.current_data.select_dtypes(include=[np.number]).columns)}")
+            
+            # Run comprehensive quality checks with progress tracking
+            print("\n🔍 Running comprehensive data quality checks...")
+            
+            # Import colorama for colored output
+            from colorama import Fore, Style
+            
+            # 1. NaN Check
+            print("\n1️⃣  Checking for missing values (NaN)...")
+            with tqdm(total=1, desc="NaN analysis", leave=False) as pbar:
+                data_quality.nan_check(self.current_data, nan_summary, Fore, Style)
+                pbar.update(1)
+            
+            # 2. Duplicate Check
+            print("\n2️⃣  Checking for duplicates...")
+            with tqdm(total=1, desc="Duplicate analysis", leave=False) as pbar:
+                data_quality.duplicate_check(self.current_data, dupe_summary, Fore, Style)
+                pbar.update(1)
+            
+            # 3. Gap Check
+            print("\n3️⃣  Checking for time series gaps...")
+            with tqdm(total=1, desc="Gap analysis", leave=False) as pbar:
+                data_quality.gap_check(
+                    self.current_data, gap_summary, Fore, Style,
+                    schema_datetime_fields=file_info_dict['datetime_or_timestamp_fields'],
+                    file_name=file_info_dict['file_path']
+                )
+                pbar.update(1)
+            
+            # 4. Zero Check
+            print("\n4️⃣  Checking for zero values...")
+            with tqdm(total=1, desc="Zero value analysis", leave=False) as pbar:
+                data_quality.zero_check(
+                    self.current_data, zero_summary, Fore, Style,
+                    file_name=file_info_dict['file_path']
+                )
+                pbar.update(1)
+            
+            # 5. Negative Check
+            print("\n5️⃣  Checking for negative values...")
+            with tqdm(total=1, desc="Negative value analysis", leave=False) as pbar:
+                data_quality.negative_check(
+                    self.current_data, negative_summary, Fore, Style,
+                    file_name=file_info_dict['file_path']
+                )
+                pbar.update(1)
+            
+            # 6. Infinity Check
+            print("\n6️⃣  Checking for infinity values...")
+            with tqdm(total=1, desc="Infinity analysis", leave=False) as pbar:
+                data_quality.inf_check(
+                    self.current_data, inf_summary, Fore, Style,
+                    file_name=file_info_dict['file_path']
+                )
+                pbar.update(1)
+            
+            # Generate comprehensive summary
+            print("\n" + "="*60)
+            print("📋 COMPREHENSIVE DATA QUALITY SUMMARY")
+            print("="*60)
+            
+            # Calculate overall quality score
+            total_issues = len(nan_summary) + len(dupe_summary) + len(gap_summary) + len(zero_summary) + len(negative_summary) + len(inf_summary)
+            quality_score = max(0, 100 - (total_issues * 10))
+            
+            print(f"🎯 Overall Data Quality Score: {quality_score}/100")
+            
+            # Detailed breakdown
+            print(f"\n📊 Issue Breakdown:")
+            print(f"   • Missing values (NaN): {len(nan_summary)} columns affected")
+            print(f"   • Duplicates: {len(dupe_summary)} issues found")
+            print(f"   • Time series gaps: {len(gap_summary)} issues found")
+            print(f"   • Zero values: {len(zero_summary)} columns affected")
+            print(f"   • Negative values: {len(negative_summary)} columns affected")
+            print(f"   • Infinity values: {len(inf_summary)} columns affected")
+            
+            # Critical issues
+            critical_issues = []
+            if len(nan_summary) > 0:
+                critical_issues.append(f"Missing values in {len(nan_summary)} columns")
+            if len(dupe_summary) > 0:
+                critical_issues.append(f"Duplicate data found")
+            if len(gap_summary) > 0:
+                critical_issues.append(f"Time series gaps detected")
+            
+            if critical_issues:
+                print(f"\n⚠️  Critical Issues Found:")
+                for issue in critical_issues:
+                    print(f"   • {issue}")
+            else:
+                print(f"\n✅ No critical issues detected!")
+            
+            # Recommendations
+            print(f"\n💡 Recommendations:")
+            if len(nan_summary) > 0:
+                print(f"   • Consider imputation strategies for missing values")
+            if len(dupe_summary) > 0:
+                print(f"   • Remove duplicate records to avoid bias")
+            if len(gap_summary) > 0:
+                print(f"   • Interpolate time series gaps for continuity")
+            if len(zero_summary) > 0:
+                print(f"   • Verify if zero values are legitimate or errors")
+            if len(negative_summary) > 0:
+                print(f"   • Check for data entry errors in negative values")
+            if len(inf_summary) > 0:
+                print(f"   • Handle infinity values that may cause computational issues")
+            
+            # Save comprehensive results
+            self.current_results['comprehensive_data_quality'] = {
+                'quality_score': quality_score,
+                'total_issues': total_issues,
+                'nan_summary': nan_summary,
+                'dupe_summary': dupe_summary,
+                'gap_summary': gap_summary,
+                'zero_summary': zero_summary,
+                'negative_summary': negative_summary,
+                'inf_summary': inf_summary,
+                'critical_issues': critical_issues,
+                'file_info': file_info_dict,
+                'timestamp': time.time()
+            }
+            
+            print(f"\n✅ Comprehensive data quality check completed!")
+            print(f"   Results saved for further analysis")
+            
+            # Ask if user wants to fix issues (only if not in test mode)
+            print(f"\n" + "="*60)
+            print("🔧 DATA FIXING OPTIONS")
+            print("="*60)
+            
+            if total_issues > 0:
+                print(f"Found {total_issues} data quality issues that can be automatically fixed.")
+                try:
+                    fix_choice = input("Would you like to fix corrupted data (all what need to be fixed)? (Yes/No): ").strip().lower()
+                    
+                    if fix_choice in ['yes', 'y']:
+                        print("\n🛠️  Starting automatic data fixing...")
+                        self.fix_all_data_issues()
+                    else:
+                        print("⏭️  Skipping automatic fixes. You can run fixes later from the EDA menu.")
+                except (EOFError, OSError):
+                    # Handle test environment where input is not available
+                    print("⏭️  Skipping automatic fixes (test mode). You can run fixes later from the EDA menu.")
+            else:
+                print("✅ No issues found that require fixing!")
             
         except Exception as e:
-            print(f"❌ Error in data quality check: {e}")
+            print(f"❌ Error in comprehensive data quality check: {e}")
+            import traceback
+            traceback.print_exc()
     
     def run_correlation_analysis(self):
         """Run correlation analysis."""
@@ -1636,7 +1895,7 @@ class InteractiveSystem:
         while True:
             self.print_eda_menu()
             try:
-                choice = input("Select option (0-7): ").strip()
+                choice = input("Select option (0-8): ").strip()
             except EOFError:
                 print("\n👋 Goodbye!")
                 break
@@ -1657,8 +1916,10 @@ class InteractiveSystem:
                 self.fix_data_issues()
             elif choice == '7':
                 self.generate_html_report()
+            elif choice == '8':
+                self.restore_from_backup()
             else:
-                print("❌ Invalid choice. Please select 0-7.")
+                print("❌ Invalid choice. Please select 0-8.")
             
             if choice != '0':
                 if self.safe_input() is None:
@@ -1787,6 +2048,313 @@ class InteractiveSystem:
             if choice != '0':
                 if self.safe_input() is None:
                     break
+    
+    def restore_from_backup(self):
+        """Restore data from backup file."""
+        if self.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return
+            
+        print("\n🔄 RESTORE FROM BACKUP")
+        print("=" * 50)
+        
+        try:
+            from pathlib import Path
+            import glob
+            
+            # Check if we have backup info
+            if 'data_fixes' in self.current_results:
+                backup_file = self.current_results['data_fixes'].get('backup_file')
+                if backup_file and Path(backup_file).exists():
+                    print(f"📁 Found backup file: {backup_file}")
+                    try:
+                        restore_choice = input("Would you like to restore from this backup? (Yes/No): ").strip().lower()
+                        
+                        if restore_choice in ['yes', 'y']:
+                            print(f"🔄 Restoring from backup...")
+                            self.current_data = pd.read_parquet(backup_file)
+                            print(f"✅ Data restored successfully!")
+                            print(f"   Shape: {self.current_data.shape}")
+                            return
+                    except (EOFError, OSError):
+                        # Handle test environment where input is not available
+                        print(f"🔄 Restoring from backup (test mode)...")
+                        self.current_data = pd.read_parquet(backup_file)
+                        print(f"✅ Data restored successfully!")
+                        print(f"   Shape: {self.current_data.shape}")
+                        return
+            
+            # Look for other backup files
+            backup_dir = Path("data/backups")
+            if backup_dir.exists():
+                backup_files = list(backup_dir.glob("backup_*.parquet"))
+                if backup_files:
+                    print(f"📁 Found {len(backup_files)} backup files:")
+                    for i, backup_file in enumerate(backup_files, 1):
+                        file_size = backup_file.stat().st_size / (1024 * 1024)  # MB
+                        print(f"   {i}. {backup_file.name} ({file_size:.1f} MB)")
+                    
+                    try:
+                        choice = int(input(f"\nSelect backup to restore (1-{len(backup_files)}): ").strip())
+                        if 1 <= choice <= len(backup_files):
+                            selected_backup = backup_files[choice - 1]
+                            print(f"🔄 Restoring from {selected_backup.name}...")
+                            self.current_data = pd.read_parquet(selected_backup)
+                            print(f"✅ Data restored successfully!")
+                            print(f"   Shape: {self.current_data.shape}")
+                        else:
+                            print("❌ Invalid choice.")
+                    except ValueError:
+                        print("❌ Invalid input. Please enter a number.")
+                else:
+                    print("❌ No backup files found in data/backups/")
+            else:
+                print("❌ No backup directory found.")
+                
+        except Exception as e:
+            print(f"❌ Error restoring from backup: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def fix_all_data_issues(self):
+        """Fix all detected data quality issues with backup and restore system."""
+        if self.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return
+            
+        print("\n🛠️  COMPREHENSIVE DATA FIXING")
+        print("=" * 50)
+        
+        try:
+            from tqdm import tqdm
+            import time
+            import os
+            from datetime import datetime
+            
+            # Create backup with timestamp
+            backup_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            backup_data = self.current_data.copy()
+            
+            # Save backup to file
+            backup_dir = Path("data/backups")
+            backup_dir.mkdir(parents=True, exist_ok=True)
+            backup_file = backup_dir / f"backup_{backup_timestamp}.parquet"
+            
+            print(f"💾 Creating backup: {backup_file}")
+            backup_data.to_parquet(backup_file, index=False)
+            print(f"✅ Backup saved successfully")
+            
+            # Get quality issues from previous analysis
+            if 'comprehensive_data_quality' not in self.current_results:
+                print("❌ No quality analysis found. Please run data quality check first.")
+                return
+            
+            quality_data = self.current_results['comprehensive_data_quality']
+            nan_summary = quality_data.get('nan_summary', [])
+            dupe_summary = quality_data.get('dupe_summary', [])
+            gap_summary = quality_data.get('gap_summary', [])
+            zero_summary = quality_data.get('zero_summary', [])
+            negative_summary = quality_data.get('negative_summary', [])
+            inf_summary = quality_data.get('inf_summary', [])
+            
+            # Track fixes applied
+            fixes_applied = []
+            original_shape = self.current_data.shape
+            
+            print(f"\n🔧 Starting automatic fixes...")
+            print(f"   Original shape: {original_shape}")
+            
+            # 1. Fix NaN values
+            if nan_summary:
+                print(f"\n1️⃣  Fixing NaN values in {len(nan_summary)} columns...")
+                with tqdm(total=len(nan_summary), desc="Fixing NaN", leave=False) as pbar:
+                    for nan_issue in nan_summary:
+                        col = nan_issue['column']
+                        if col in self.current_data.columns:
+                            # Apply appropriate fix based on column type
+                            if pd.api.types.is_numeric_dtype(self.current_data[col]):
+                                # For numeric columns, fill with median
+                                median_val = self.current_data[col].median()
+                                self.current_data[col] = self.current_data[col].fillna(median_val)
+                                fixes_applied.append(f"NaN in {col}: filled with median ({median_val})")
+                            elif pd.api.types.is_datetime64_any_dtype(self.current_data[col]):
+                                # For datetime, use forward fill then backward fill
+                                self.current_data[col] = self.current_data[col].ffill().bfill()
+                                fixes_applied.append(f"NaN in {col}: forward/backward fill")
+                            else:
+                                # For other types, use mode or empty string
+                                if self.current_data[col].count() > 0:
+                                    mode_val = self.current_data[col].mode().iloc[0] if not self.current_data[col].mode().empty else ""
+                                    self.current_data[col] = self.current_data[col].fillna(mode_val)
+                                    fixes_applied.append(f"NaN in {col}: filled with mode")
+                                else:
+                                    self.current_data[col] = self.current_data[col].fillna("")
+                                    fixes_applied.append(f"NaN in {col}: filled with empty string")
+                        pbar.update(1)
+            
+            # 2. Fix duplicates
+            if dupe_summary:
+                print(f"\n2️⃣  Fixing duplicate rows...")
+                with tqdm(total=1, desc="Fixing duplicates", leave=False) as pbar:
+                    initial_rows = len(self.current_data)
+                    self.current_data = self.current_data.drop_duplicates(keep='first')
+                    removed_rows = initial_rows - len(self.current_data)
+                    if removed_rows > 0:
+                        fixes_applied.append(f"Removed {removed_rows} duplicate rows")
+                    pbar.update(1)
+            
+            # 3. Fix gaps in time series
+            if gap_summary:
+                print(f"\n3️⃣  Fixing time series gaps...")
+                with tqdm(total=len(gap_summary), desc="Fixing gaps", leave=False) as pbar:
+                    for gap_issue in gap_summary:
+                        if 'datetime_col' in gap_issue:
+                            dt_col = gap_issue['datetime_col']
+                            if dt_col in self.current_data.columns:
+                                # Sort by datetime and interpolate
+                                self.current_data = self.current_data.sort_values(dt_col)
+                                # Interpolate numeric columns
+                                numeric_cols = self.current_data.select_dtypes(include=[np.number]).columns
+                                for col in numeric_cols:
+                                    if col != dt_col:
+                                        self.current_data[col] = self.current_data[col].interpolate(method='linear')
+                                fixes_applied.append(f"Interpolated gaps in time series using {dt_col}")
+                        pbar.update(1)
+            
+            # 4. Fix zero values (with caution)
+            if zero_summary:
+                print(f"\n4️⃣  Analyzing zero values...")
+                with tqdm(total=len(zero_summary), desc="Analyzing zeros", leave=False) as pbar:
+                    for zero_issue in zero_summary:
+                        col = zero_issue.get('column', '')
+                        if col and col in self.current_data.columns:
+                            # Handle different possible keys for count
+                            zero_count = zero_issue.get('count', 0)
+                            if isinstance(zero_count, (list, tuple)):
+                                zero_count = len(zero_count)
+                            elif not isinstance(zero_count, (int, float)):
+                                zero_count = 0
+                            
+                            total_count = len(self.current_data)
+                            zero_percentage = (zero_count / total_count) * 100 if total_count > 0 else 0
+                            
+                            # Only fix if zero percentage is very high (likely error)
+                            if zero_percentage > 50:
+                                # Replace zeros with median of non-zero values
+                                non_zero_median = self.current_data[self.current_data[col] != 0][col].median()
+                                if not pd.isna(non_zero_median):
+                                    self.current_data.loc[self.current_data[col] == 0, col] = non_zero_median
+                                    fixes_applied.append(f"Replaced {zero_count} zeros in {col} with median")
+                            else:
+                                fixes_applied.append(f"Kept {zero_count} zeros in {col} (likely legitimate)")
+                        pbar.update(1)
+            
+            # 5. Fix negative values (with caution)
+            if negative_summary:
+                print(f"\n5️⃣  Analyzing negative values...")
+                with tqdm(total=len(negative_summary), desc="Analyzing negatives", leave=False) as pbar:
+                    for neg_issue in negative_summary:
+                        col = neg_issue.get('column', '')
+                        if col and col in self.current_data.columns:
+                            # Handle different possible keys for count
+                            neg_count = neg_issue.get('count', 0)
+                            if isinstance(neg_count, (list, tuple)):
+                                neg_count = len(neg_count)
+                            elif not isinstance(neg_count, (int, float)):
+                                neg_count = 0
+                            
+                            total_count = len(self.current_data)
+                            neg_percentage = (neg_count / total_count) * 100 if total_count > 0 else 0
+                            
+                            # Only fix if negative percentage is very high (likely error)
+                            if neg_percentage > 30:
+                                # Replace negatives with absolute values
+                                self.current_data[col] = self.current_data[col].abs()
+                                fixes_applied.append(f"Converted {neg_count} negative values in {col} to absolute values")
+                            else:
+                                fixes_applied.append(f"Kept {neg_count} negative values in {col} (likely legitimate)")
+                        pbar.update(1)
+            
+            # 6. Fix infinity values
+            if inf_summary:
+                print(f"\n6️⃣  Fixing infinity values...")
+                with tqdm(total=len(inf_summary), desc="Fixing infinities", leave=False) as pbar:
+                    for inf_issue in inf_summary:
+                        col = inf_issue['column']
+                        if col in self.current_data.columns:
+                            # Replace infinities with large finite values
+                            max_val = self.current_data[col].replace([np.inf, -np.inf], np.nan).max()
+                            min_val = self.current_data[col].replace([np.inf, -np.inf], np.nan).min()
+                            
+                            if not pd.isna(max_val) and not pd.isna(min_val):
+                                # Replace +inf with max * 1.1, -inf with min * 0.9
+                                self.current_data[col] = self.current_data[col].replace(np.inf, max_val * 1.1)
+                                self.current_data[col] = self.current_data[col].replace(-np.inf, min_val * 0.9)
+                                fixes_applied.append(f"Replaced infinity values in {col} with finite bounds")
+                        pbar.update(1)
+            
+            # Final shape check
+            final_shape = self.current_data.shape
+            rows_removed = original_shape[0] - final_shape[0]
+            cols_removed = original_shape[1] - final_shape[1]
+            
+            # Generate comprehensive fix summary
+            print(f"\n" + "="*60)
+            print("📋 COMPREHENSIVE FIX SUMMARY")
+            print("="*60)
+            
+            print(f"🎯 Fixes Applied: {len(fixes_applied)}")
+            print(f"📊 Shape Changes:")
+            print(f"   • Rows: {original_shape[0]} → {final_shape[0]} ({rows_removed:+d})")
+            print(f"   • Columns: {original_shape[1]} → {final_shape[1]} ({cols_removed:+d})")
+            
+            if fixes_applied:
+                print(f"\n🔧 Detailed Fixes:")
+                for i, fix in enumerate(fixes_applied, 1):
+                    print(f"   {i}. {fix}")
+            
+            # Save fix results
+            self.current_results['data_fixes'] = {
+                'backup_file': str(backup_file),
+                'backup_timestamp': backup_timestamp,
+                'original_shape': original_shape,
+                'final_shape': final_shape,
+                'fixes_applied': fixes_applied,
+                'rows_removed': rows_removed,
+                'cols_removed': cols_removed,
+                'timestamp': time.time()
+            }
+            
+            print(f"\n✅ All data fixes completed successfully!")
+            print(f"💾 Backup saved to: {backup_file}")
+            
+            # Ask if user wants to restore (only if not in test mode)
+            print(f"\n" + "="*60)
+            print("🔄 RESTORE OPTIONS")
+            print("="*60)
+            
+            try:
+                restore_choice = input("Would you like to restore original data from backup? (Yes/No): ").strip().lower()
+                if restore_choice in ['yes', 'y']:
+                    print(f"🔄 Restoring original data from backup...")
+                    self.current_data = backup_data
+                    print(f"✅ Original data restored!")
+                else:
+                    print(f"✅ Keeping fixed data. Original backup preserved at: {backup_file}")
+            except (EOFError, OSError):
+                # Handle test environment where input is not available
+                print(f"✅ Keeping fixed data. Original backup preserved at: {backup_file}")
+            
+        except Exception as e:
+            print(f"❌ Error in data fixing: {e}")
+            import traceback
+            traceback.print_exc()
+            
+            # Try to restore from backup if available
+            if 'backup_data' in locals():
+                print(f"🔄 Attempting to restore from backup...")
+                self.current_data = backup_data
+                print(f"✅ Data restored from backup")
 
 
 def main():
