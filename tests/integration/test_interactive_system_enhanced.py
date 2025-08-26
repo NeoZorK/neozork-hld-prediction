@@ -178,19 +178,20 @@ class TestEnhancedInteractiveSystem:
             interactive_system.run_basic_statistics()
         
         # Check that results were saved
-        assert 'basic_statistics' in interactive_system.current_results
+        assert 'comprehensive_basic_statistics' in interactive_system.current_results
         
         # Check that analysis summary was created
-        stats = interactive_system.current_results['basic_statistics']
-        assert 'analysis_summary' in stats
-        assert 'total_columns' in stats['analysis_summary']
-        assert 'total_observations' in stats['analysis_summary']
+        stats = interactive_system.current_results['comprehensive_basic_statistics']
+        assert 'basic_stats' in stats
+        assert 'descriptive_stats' in stats
+        assert 'distribution_analysis' in stats
+        assert 'outlier_analysis' in stats
         
-        # Check for new summary fields
-        summary = stats['analysis_summary']
-        assert 'skewed_columns' in summary
-        assert 'high_outlier_columns' in summary
-        assert 'high_variability_columns' in summary
+        # Check for summary fields
+        summary = stats['summary']
+        assert 'shape' in summary
+        assert 'memory_usage_mb' in summary
+        assert 'missing_percentage' in summary
     
     def test_statistics_plots_creation(self, interactive_system, sample_data, tmp_path):
         """Test that statistics plots are created correctly."""
@@ -242,7 +243,7 @@ class TestEnhancedInteractiveSystem:
             interactive_system.run_basic_statistics()
         
         # Check that results were processed
-        assert 'basic_statistics' in interactive_system.current_results
+        assert 'comprehensive_basic_statistics' in interactive_system.current_results
     
     def test_browser_plot_viewing(self, interactive_system, sample_data, monkeypatch):
         """Test browser plot viewing functionality."""

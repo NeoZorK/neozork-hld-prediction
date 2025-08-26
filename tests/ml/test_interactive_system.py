@@ -356,11 +356,13 @@ class TestInteractiveSystem:
         self.system.current_data = self.sample_data
         
         with patch('matplotlib.pyplot') as mock_plt:
-            with patch('seaborn.sns') as mock_sns:
-                with patch('pathlib.Path.mkdir'):
-                    with patch('builtins.print') as mock_print:
-                        self.system._create_statistics_plots(self.sample_data.select_dtypes(include=[np.number]))
-                        mock_print.assert_called()
+            with patch('seaborn.histplot') as mock_histplot:
+                with patch('seaborn.boxplot') as mock_boxplot:
+                    with patch('seaborn.heatmap') as mock_heatmap:
+                        with patch('pathlib.Path.mkdir'):
+                            with patch('builtins.print') as mock_print:
+                                self.system._create_statistics_plots(self.sample_data.select_dtypes(include=[np.number]))
+                                mock_print.assert_called()
     
     def test_show_plots_in_browser(self):
         """Test _show_plots_in_browser method."""
@@ -429,7 +431,7 @@ class TestInteractiveSystemIntegration:
         
         # Verify results
         assert 'feature_engineering' in self.system.current_results
-        assert 'basic_statistics' in self.system.current_results
+        assert 'comprehensive_basic_statistics' in self.system.current_results
 
 
 if __name__ == '__main__':

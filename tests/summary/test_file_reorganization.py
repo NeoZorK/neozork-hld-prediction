@@ -139,7 +139,7 @@ def test_neozork_mcp_server_exists():
     # Check that the file has the correct content (basic check)
     with open(path, 'r') as f:
         content = f.read()
-        assert "NeozorkMCPServer" in content, "File should contain NeozorkMCPServer class"
+        assert "NeoZorKMCPServer" in content, "File should contain NeoZorKMCPServer class"
 
 def test_neozork_mcp_manager_exists():
     """Test that neozork_mcp_manager.py exists in scripts/mcp/"""

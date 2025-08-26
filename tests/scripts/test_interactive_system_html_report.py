@@ -46,8 +46,8 @@ def test_html_and_plots():
         system.run_basic_statistics()
     
     # Verify that basic statistics results are saved
-    assert 'basic_statistics' in system.current_results
-    assert 'analysis_summary' in system.current_results['basic_statistics']
+    assert 'comprehensive_basic_statistics' in system.current_results
+    assert 'summary' in system.current_results['comprehensive_basic_statistics']
     
     print("\n2. Generating HTML Report...")
     system.generate_html_report()

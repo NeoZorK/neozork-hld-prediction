@@ -72,6 +72,45 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
         self.momentum_features = []
         self.volatility_features = []
         
+    def get_required_columns(self) -> List[str]:
+        """
+        Get list of required columns for feature generation.
+        
+        Returns:
+            List of required column names
+        """
+        return ['Open', 'High', 'Low', 'Close']
+        
+    def validate_data(self, df: pd.DataFrame) -> bool:
+        """
+        Validate input data for cross-timeframe feature generation.
+        
+        Args:
+            df: Input DataFrame
+            
+        Returns:
+            True if data is valid, False otherwise
+        """
+        if df is None or df.empty:
+            logger.print_error("DataFrame is None or empty")
+            return False
+            
+        required_columns = self.get_required_columns()
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        
+        if missing_columns:
+            logger.print_error(f"Missing required columns: {missing_columns}")
+            return False
+            
+        # Check for sufficient data
+        lookback_periods = getattr(self.config, 'lookback_periods', None)
+        min_required = max(lookback_periods) if lookback_periods else 50
+        if len(df) < min_required:
+            logger.print_warning(f"Insufficient data: {len(df)} rows, need at least {min_required}")
+            return False
+            
+        return True
+        
     def generate_features(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         Generate cross-timeframe features from the input DataFrame.
@@ -110,7 +149,8 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
         """Generate ratio-based cross-timeframe features."""
         try:
             # Price ratios across different lookback periods
-            for period in self.config.lookback_periods:
+            lookback_periods = getattr(self.config, 'lookback_periods', [5, 10, 20, 50])
+            for period in lookback_periods:
                 if len(df) > period:
                     try:
                         # Current price vs historical averages
@@ -150,7 +190,8 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
         """Generate difference-based cross-timeframe features."""
         try:
             # Price differences across different lookback periods
-            for period in self.config.lookback_periods:
+            lookback_periods = getattr(self.config, 'lookback_periods', [5, 10, 20, 50])
+            for period in lookback_periods:
                 if len(df) > period:
                     try:
                         # Price differences
@@ -196,7 +237,8 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
         """Generate momentum-based cross-timeframe features."""
         try:
             # Momentum across different timeframes
-            for period in self.config.lookback_periods:
+            lookback_periods = getattr(self.config, 'lookback_periods', [5, 10, 20, 50])
+            for period in lookback_periods:
                 if len(df) > period:
                     try:
                         # Price momentum
@@ -242,7 +284,8 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
         """Generate volatility-based cross-timeframe features."""
         try:
             # Volatility across different timeframes
-            for period in self.config.lookback_periods:
+            lookback_periods = getattr(self.config, 'lookback_periods', [5, 10, 20, 50])
+            for period in lookback_periods:
                 if len(df) > period:
                     try:
                         # Price volatility
@@ -289,6 +332,98 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
             logger.print_error(f"Error generating volatility features: {e}")
             
         return df
+    
+    def _calculate_cross_timeframe_ratio(self, df: pd.DataFrame, price_col: str, period: int) -> pd.Series:
+        """Calculate cross-timeframe ratio for a specific price column and period."""
+        if price_col not in df.columns:
+            return pd.Series(dtype=float)
+        
+        current_price = df[price_col]
+        historical_avg = df[price_col].rolling(window=period).mean()
+        return current_price / (historical_avg + 1e-8)
+    
+    def _calculate_cross_timeframe_difference(self, df: pd.DataFrame, price_col: str, period: int) -> pd.Series:
+        """Calculate cross-timeframe difference for a specific price column and period."""
+        if price_col not in df.columns:
+            return pd.Series(dtype=float)
+        
+        current_price = df[price_col]
+        historical_avg = df[price_col].rolling(window=period).mean()
+        return current_price - historical_avg
+    
+    def _calculate_cross_timeframe_momentum(self, df: pd.DataFrame, price_col: str, period: int) -> pd.Series:
+        """Calculate cross-timeframe momentum for a specific price column and period."""
+        if price_col not in df.columns:
+            return pd.Series(dtype=float)
+        
+        return df[price_col].pct_change(period)
+    
+    def _calculate_cross_timeframe_volatility(self, df: pd.DataFrame, price_col: str, period: int) -> pd.Series:
+        """Calculate cross-timeframe volatility for a specific price column and period."""
+        if price_col not in df.columns:
+            return pd.Series(dtype=float)
+        
+        returns = df[price_col].pct_change()
+        return returns.rolling(window=period).std()
+    
+    def _resample_data(self, df: pd.DataFrame, timeframe: str) -> pd.DataFrame:
+        """Resample data to a different timeframe."""
+        if df.empty or not isinstance(df.index, pd.DatetimeIndex):
+            return df
+        
+        try:
+            resampled = df.resample(timeframe).agg({
+                'Open': 'first',
+                'High': 'max',
+                'Low': 'min',
+                'Close': 'last',
+                'Volume': 'sum'
+            })
+            return resampled.dropna()
+        except Exception as e:
+            logger.print_warning(f"Error resampling data to {timeframe}: {e}")
+            return df
+    
+    def _aggregate_data(self, df: pd.DataFrame, method: str, window: int) -> pd.DataFrame:
+        """Aggregate data using specified method and window."""
+        if df.empty:
+            return df
+        
+        try:
+            if method == 'mean':
+                return df.rolling(window=window).mean()
+            elif method == 'std':
+                return df.rolling(window=window).std()
+            elif method == 'min':
+                return df.rolling(window=window).min()
+            elif method == 'max':
+                return df.rolling(window=window).max()
+            elif method == 'last':
+                return df.rolling(window=window).apply(lambda x: x.iloc[-1])
+            else:
+                logger.print_warning(f"Unknown aggregation method: {method}")
+                return df
+        except Exception as e:
+            logger.print_warning(f"Error aggregating data with method {method}: {e}")
+            return df
+    
+    def get_memory_usage(self) -> Dict[str, float]:
+        """Get memory usage information for the feature generator."""
+        import sys
+        import psutil
+        
+        memory_info = {
+            'config_size': sys.getsizeof(self.config),
+            'features_generated': self.features_generated,
+            'feature_names_count': len(self.feature_names),
+            'ratio_features_count': len(self.ratio_features),
+            'difference_features_count': len(self.difference_features),
+            'momentum_features_count': len(self.momentum_features),
+            'volatility_features_count': len(self.volatility_features),
+            'rss': psutil.Process().memory_info().rss / 1024 / 1024  # MB
+        }
+        
+        return memory_info
     
     def get_feature_names(self) -> List[str]:
         """Get list of generated cross-timeframe feature names."""

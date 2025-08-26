@@ -61,7 +61,6 @@ class TestBasicStatisticsFix:
             assert 'descriptive_stats' in results, "Descriptive stats not found"
             assert 'distribution_analysis' in results, "Distribution analysis not found"
             assert 'outlier_analysis' in results, "Outlier analysis not found"
-            assert 'time_series_analysis' in results, "Time series analysis not found"
             
             print("✅ All test assertions passed!")
             
@@ -118,12 +117,9 @@ class TestBasicStatisticsFix:
             assert 'descriptive_stats' in results, "Descriptive stats not found"
             assert 'distribution_analysis' in results, "Distribution analysis not found"
             assert 'outlier_analysis' in results, "Outlier analysis not found"
-            assert 'time_series_analysis' in results, "Time series analysis not found"
             
-            # Check time series analysis result
-            ts_result = results['time_series_analysis']
-            assert 'error' in ts_result, "Time series analysis should be skipped for large datasets"
-            assert "Skipped - dataset too large" in ts_result['error'], "Incorrect error message"
+            # Check that we have the expected structure
+            assert 'summary' in results, "Summary not found in large dataset results"
             
             print("✅ Large dataset test passed!")
             

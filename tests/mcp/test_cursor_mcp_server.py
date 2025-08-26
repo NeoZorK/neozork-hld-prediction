@@ -196,7 +196,7 @@ def backtest_strategy(data, strategy_params):
         assert "financial_data_count" in result
         assert "available_symbols" in result
         assert "available_timeframes" in result
-        assert result["name"] == "Neozork HLD Prediction"
+        assert result["name"] == "NeoZorK HLD Prediction"
     
     def test_handle_financial_data(self, server):
         """Test financial data handler"""
@@ -391,7 +391,7 @@ class TestErrorHandling:
     
     def test_handles_missing_files(self, temp_project):
         """Test handling of missing files"""
-        server = NeozorkMCPServer(project_root=temp_project)
+        server = NeoZorKMCPServer(project_root=temp_project)
         
         # Test with non-existent file
         result = server._handle_definition(1, {"textDocument": {"uri": "file://nonexistent.py"}})
@@ -417,7 +417,7 @@ class TestPerformance:
     @pytest.fixture
     def server(self, temp_project):
         """Create server instance"""
-        server = NeozorkMCPServer(project_root=temp_project)
+        server = NeoZorKMCPServer(project_root=temp_project)
         yield server
     
     def test_large_project_scanning(self, temp_project):
@@ -427,7 +427,7 @@ class TestPerformance:
             (temp_project / "src" / f"file_{i}.py").write_text(f"def func_{i}(): pass")
         
         start_time = time.time()
-        server = NeozorkMCPServer(project_root=temp_project)
+        server = NeoZorKMCPServer(project_root=temp_project)
         end_time = time.time()
         
         # Should complete within reasonable time
@@ -465,7 +465,7 @@ class TestConfiguration:
         """Test default configuration when no config file exists"""
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
-            server = NeozorkMCPServer(project_root=temp_path)
+            server = NeoZorKMCPServer(project_root=temp_path)
             
             # Should have default config
             assert server.config is not None
@@ -489,7 +489,7 @@ class TestConfiguration:
         with open(config_file, 'w', encoding='utf-8') as f:
             json.dump(config, f, indent=2)
         
-        server = NeozorkMCPServer(project_root=temp_project, config=config)
+        server = NeoZorKMCPServer(project_root=temp_project, config=config)
         
         assert server.config["server_mode"] == "custom"
         assert server.config["server_name"] == "Custom Test Server"

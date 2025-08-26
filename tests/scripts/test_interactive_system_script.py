@@ -134,10 +134,10 @@ class TestInteractiveSystemScript:
                 'load_data_from_file',
                 'load_data_from_folder',
                 'calculate_submenu_completion_percentage',
-                'display_main_menu',
+                'print_main_menu',
                 'run_eda_analysis',
-                'run_feature_engineering',
-                'run_data_visualization',
+                'run_feature_engineering_analysis',
+                'run_visualization_analysis',
                 'run_model_development'
             ]
             
@@ -174,11 +174,11 @@ class TestInteractiveSystemScript:
             
             # Test display methods (they should exist even if they don't do much in tests)
             display_methods = [
-                'display_main_menu',
-                'display_eda_menu',
-                'display_feature_engineering_menu',
-                'display_visualization_menu',
-                'display_model_development_menu'
+                'print_main_menu',
+                'print_eda_menu',
+                'print_feature_engineering_menu',
+                'print_visualization_menu',
+                'print_model_development_menu'
             ]
             
             for method_name in display_methods:

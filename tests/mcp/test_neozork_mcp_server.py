@@ -87,7 +87,7 @@ def backtest_strategy(data, strategy_params):
     @pytest.fixture
     def server(self, temp_project):
         """Create server instance"""
-        server = NeozorkMCPServer(project_root=temp_project)
+        server = NeoZorKMCPServer(project_root=temp_project)
         yield server
     
     def test_initialization(self, server):
@@ -228,7 +228,7 @@ def backtest_strategy(data, strategy_params):
         assert "available_timeframes" in result
         assert "functions_count" in result
         assert "classes_count" in result
-        assert result["name"] == "Neozork HLD Prediction"
+        assert result["name"] == "NeoZorK HLD Prediction"
         assert result["files_count"] > 0
         assert result["financial_data_count"] > 0
     
@@ -503,7 +503,7 @@ def backtest_strategy(data, strategy_params):
         """Test handling of invalid Python files"""
         # Should not crash and should log warnings
         try:
-            server = NeozorkMCPServer(project_root=temp_project_with_errors)
+            server = NeoZorKMCPServer(project_root=temp_project_with_errors)
             assert server.project_root is not None
             assert server.logger is not None
         except Exception as e:
@@ -512,7 +512,7 @@ def backtest_strategy(data, strategy_params):
     
     def test_handles_missing_files(self, temp_project):
         """Test handling of missing files"""
-        server = NeozorkMCPServer(project_root=temp_project)
+        server = NeoZorKMCPServer(project_root=temp_project)
         
         # Test with non-existent file - should return empty result
         try:
@@ -580,7 +580,7 @@ def backtest_strategy(data, strategy_params):
     @pytest.fixture
     def server(self, temp_project):
         """Create server instance for performance tests"""
-        server = NeozorkMCPServer(project_root=temp_project)
+        server = NeoZorKMCPServer(project_root=temp_project)
         yield server
     
     def test_large_project_scanning(self, temp_project):
@@ -591,7 +591,7 @@ def backtest_strategy(data, strategy_params):
         
         start_time = time.time()
         try:
-            server = NeozorkMCPServer(project_root=temp_project)
+            server = NeoZorKMCPServer(project_root=temp_project)
             end_time = time.time()
             
             # Should complete within reasonable time
@@ -675,7 +675,7 @@ def backtest_strategy(data, strategy_params):
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
             try:
-                server = NeozorkMCPServer(project_root=temp_path)
+                server = NeoZorKMCPServer(project_root=temp_path)
                 
                 # Should have default config
                 assert server.config is not None
@@ -699,7 +699,7 @@ def backtest_strategy(data, strategy_params):
         }
         
         try:
-            server = NeozorkMCPServer(project_root=temp_project, config=config)
+            server = NeoZorKMCPServer(project_root=temp_project, config=config)
             
             assert server.config["server_mode"] == "custom"
             assert server.config["server_name"] == "Custom Test Server"

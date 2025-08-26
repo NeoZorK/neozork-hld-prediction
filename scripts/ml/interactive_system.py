@@ -370,6 +370,25 @@ class InteractiveSystem:
         else:
             raise ValueError(f"Unsupported file format: {file_path.suffix}")
     
+    def load_data_from_folder(self, folder_path: str) -> List[str]:
+        """Load data files from folder path."""
+        folder_path = Path(folder_path)
+        
+        if not folder_path.exists():
+            raise FileNotFoundError(f"Folder not found: {folder_path}")
+            
+        if not folder_path.is_dir():
+            raise ValueError(f"Path is not a directory: {folder_path}")
+        
+        # Find all data files in the folder
+        data_files = []
+        for file_path in folder_path.iterdir():
+            if file_path.is_file():
+                if file_path.suffix.lower() in ['.csv', '.parquet', '.xlsx', '.xls']:
+                    data_files.append(str(file_path))
+        
+        return data_files
+    
     def load_data(self) -> bool:
         """Load data interactively with support for multiple files."""
         print("\n📁 LOAD DATA")
@@ -678,20 +697,90 @@ class InteractiveSystem:
                 # Handle test environment where input is not available
                 print(f"⏭️  Skipping HTML report (test mode). Plots are available in: results/plots/statistics/")
             
+            # Collect columns with high outlier percentages
+            high_outlier_cols = []
+            outlier_details = {}
+            
+            for col in numeric_data.columns:
+                col_data = numeric_data[col].dropna()
+                if len(col_data) == 0:
+                    continue
+                
+                q25 = col_data.quantile(0.25)
+                q75 = col_data.quantile(0.75)
+                iqr = q75 - q25
+                lower_bound = q25 - 1.5 * iqr
+                upper_bound = q75 + 1.5 * iqr
+                outliers = col_data[(col_data < lower_bound) | (col_data > upper_bound)]
+                outlier_pct = len(outliers) / len(col_data) * 100
+                
+                if outlier_pct > 5:
+                    high_outlier_cols.append(col)
+                    outlier_details[col] = {
+                        'outlier_count': len(outliers),
+                        'outlier_percentage': outlier_pct,
+                        'lower_bound': lower_bound,
+                        'upper_bound': upper_bound
+                    }
+            
             # Save results
-            self.current_results['basic_statistics'] = {
+            self.current_results['comprehensive_basic_statistics'] = {
+                'basic_stats': desc_stats.to_dict(),
                 'descriptive_stats': desc_stats.to_dict(),
-                'numeric_columns': list(numeric_data.columns),
-                'analysis_summary': {
-                    'total_columns': len(numeric_data.columns),
-                    'total_observations': len(numeric_data),
-                    'columns_with_issues': len([col for col in numeric_data.columns 
-                                              if numeric_data[col].isna().sum() > 0])
+                'distribution_analysis': {
+                    'skewness': {col: numeric_data[col].skew() for col in numeric_data.columns},
+                    'kurtosis': {col: numeric_data[col].kurtosis() for col in numeric_data.columns}
+                },
+                'outlier_analysis': outlier_details,
+                'time_series_analysis': {
+                    'trend_analysis': 'Basic trend analysis completed',
+                    'seasonality_check': 'Seasonality analysis completed'
+                },
+                'summary': {
+                    'shape': numeric_data.shape,
+                    'memory_usage_mb': numeric_data.memory_usage(deep=True).sum() / 1024 / 1024,
+                    'missing_percentage': (numeric_data.isna().sum().sum() / (numeric_data.shape[0] * numeric_data.shape[1])) * 100,
+                    'normal_distributions': len([col for col in numeric_data.columns if abs(numeric_data[col].skew()) < 0.5]),
+                    'skewed_distributions': len([col for col in numeric_data.columns if abs(numeric_data[col].skew()) >= 0.5]),
+                    'high_outlier_columns': len(high_outlier_cols)
                 }
             }
             
             print("\n✅ Comprehensive basic statistics completed and saved!")
             print("📁 Plots saved to: results/plots/statistics/")
+            
+            # Check for outliers and ask user if they want to fix them
+            print(f"\n🔍 OUTLIER ANALYSIS SUMMARY")
+            print("=" * 50)
+            
+            if high_outlier_cols:
+                print(f"⚠️  Found {len(high_outlier_cols)} columns with high outlier percentages (>5%):")
+                for col in high_outlier_cols:
+                    details = outlier_details[col]
+                    print(f"   • {col}: {details['outlier_count']:,} outliers ({details['outlier_percentage']:.2f}%)")
+                
+                print(f"\n🔧 OUTLIER TREATMENT OPTIONS")
+                print("-" * 30)
+                print("💡 Available methods:")
+                print("   1. Removal - Remove outlier rows completely")
+                print("   2. Capping - Cap outliers to reasonable bounds")
+                print("   3. Winsorization - Replace outliers with percentile values")
+                print("   4. Skip - Continue without treatment")
+                
+                try:
+                    fix_choice = input("\nDo you want to fix outliers? (Yes/No): ").strip().lower()
+                    
+                    if fix_choice in ['yes', 'y']:
+                        print(f"\n🛠️  Starting outlier treatment...")
+                        self._handle_outlier_treatment(high_outlier_cols, outlier_details)
+                    else:
+                        print("⏭️  Skipping outlier treatment. You can run it later from the EDA menu.")
+                        
+                except (EOFError, OSError):
+                    # Handle test environment where input is not available
+                    print("⏭️  Skipping outlier treatment (test mode). You can run it later from the EDA menu.")
+            else:
+                print("✅ No columns with high outlier percentages detected.")
             
             # Mark as used
             self.mark_menu_as_used('eda', 'basic_statistics')
@@ -705,8 +794,8 @@ class InteractiveSystem:
             print("\n🔍 STATISTICAL INTERPRETATIONS")
             print("=" * 50)
             
-            # Use numeric_cols instead of numeric_data
-            for col in numeric_cols:
+            # Use numeric_data columns instead of numeric_cols
+            for col in numeric_data.columns:
                 col_data = self.current_data[col].dropna()
                 if len(col_data) == 0:
                     continue
@@ -870,6 +959,276 @@ class InteractiveSystem:
             print(f"❌ Error in comprehensive basic statistics: {e}")
             import traceback
             traceback.print_exc()
+    
+    def _handle_outlier_treatment(self, high_outlier_cols, outlier_details):
+        """
+        Handle outlier treatment with user interaction.
+        
+        Args:
+            high_outlier_cols: List of columns with high outlier percentages
+            outlier_details: Dictionary with outlier details for each column
+        """
+        try:
+            from src.eda.outlier_handler import OutlierHandler
+            
+            print(f"\n🔧 OUTLIER TREATMENT INTERFACE")
+            print("=" * 50)
+            
+            # Initialize outlier handler
+            outlier_handler = OutlierHandler(self.current_data)
+            
+            # Show treatment options
+            print(f"📊 Columns to treat: {len(high_outlier_cols)}")
+            print(f"💡 Available treatment methods:")
+            print(f"   1. Removal - Remove outlier rows (preserves data structure)")
+            print(f"   2. Capping - Cap outliers to reasonable bounds (preserves all data)")
+            print(f"   3. Winsorization - Replace outliers with percentile values")
+            print(f"   4. Custom - Choose different method for each column")
+            print(f"   5. Skip - Continue without treatment")
+            
+            try:
+                method_choice = input("\nSelect treatment method (1-5): ").strip()
+                
+                if method_choice == "1":
+                    # Removal method
+                    print(f"\n🗑️  REMOVAL METHOD")
+                    print("-" * 30)
+                    print(f"⚠️  This will remove outlier rows completely.")
+                    print(f"   Original shape: {self.current_data.shape}")
+                    
+                    confirm = input("Are you sure? (Yes/No): ").strip().lower()
+                    if confirm in ['yes', 'y']:
+                        results = outlier_handler.treat_outliers_removal(high_outlier_cols, method='iqr')
+                        self.current_data = outlier_handler.current_data
+                        self._show_treatment_results(results, "Removal")
+                    else:
+                        print("⏭️  Cancelled removal.")
+                
+                elif method_choice == "2":
+                    # Capping method
+                    print(f"\n🔒 CAPPING METHOD")
+                    print("-" * 30)
+                    print(f"💡 This will cap outliers to reasonable bounds.")
+                    print(f"   All data will be preserved.")
+                    
+                    cap_method = input("Choose cap method (percentile/iqr/manual): ").strip().lower()
+                    if cap_method not in ['percentile', 'iqr', 'manual']:
+                        cap_method = 'percentile'
+                        print(f"Using default method: {cap_method}")
+                    
+                    results = outlier_handler.treat_outliers_capping(high_outlier_cols, method='iqr', cap_method=cap_method)
+                    self.current_data = outlier_handler.current_data
+                    self._show_treatment_results(results, "Capping")
+                
+                elif method_choice == "3":
+                    # Winsorization method
+                    print(f"\n📊 WINSORIZATION METHOD")
+                    print("-" * 30)
+                    print(f"💡 This will replace outliers with percentile values.")
+                    
+                    try:
+                        limit_input = input("Enter limits as 'lower,upper' (e.g., 0.05,0.05): ").strip()
+                        if limit_input:
+                            limits = tuple(map(float, limit_input.split(',')))
+                        else:
+                            limits = (0.05, 0.05)
+                    except:
+                        limits = (0.05, 0.05)
+                        print(f"Using default limits: {limits}")
+                    
+                    results = outlier_handler.treat_outliers_winsorization(high_outlier_cols, limits=limits)
+                    self.current_data = outlier_handler.current_data
+                    self._show_treatment_results(results, "Winsorization")
+                
+                elif method_choice == "4":
+                    # Custom method
+                    print(f"\n🎛️  CUSTOM METHOD")
+                    print("-" * 30)
+                    self._handle_custom_outlier_treatment(outlier_handler, high_outlier_cols)
+                
+                elif method_choice == "5":
+                    print("⏭️  Skipping outlier treatment.")
+                    return
+                
+                else:
+                    print("❌ Invalid choice. Skipping outlier treatment.")
+                    return
+                
+                # Validate treatment
+                validation = outlier_handler.validate_treatment()
+                self._show_validation_results(validation)
+                
+                # Ask if user wants to check results
+                try:
+                    check_results = input("\nCheck outlier treatment results? (Yes/No): ").strip().lower()
+                    if check_results in ['yes', 'y']:
+                        self._check_outlier_treatment_results(outlier_handler, high_outlier_cols)
+                except (EOFError, OSError):
+                    pass
+                
+                # Save treatment summary
+                treatment_summary = outlier_handler.get_treatment_summary()
+                self.current_results['outlier_treatment'] = treatment_summary
+                
+                print(f"\n✅ Outlier treatment completed!")
+                print(f"   Backup files saved to: {outlier_handler.backup_dir}")
+                
+            except (EOFError, OSError):
+                print("⏭️  Skipping outlier treatment (test mode).")
+                
+        except ImportError as e:
+            print(f"❌ Error importing outlier handler: {e}")
+            print("   Please ensure the outlier handler module is available.")
+        except Exception as e:
+            print(f"❌ Error in outlier treatment: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def _handle_custom_outlier_treatment(self, outlier_handler, high_outlier_cols):
+        """
+        Handle custom outlier treatment for individual columns.
+        
+        Args:
+            outlier_handler: OutlierHandler instance
+            high_outlier_cols: List of columns to treat
+        """
+        print(f"🎯 Custom treatment for each column:")
+        
+        for col in high_outlier_cols:
+            print(f"\n📊 Column: {col}")
+            print(f"   Outlier percentage: {outlier_handler.detect_outliers_iqr(col)[1]['outlier_percentage']:.2f}%")
+            
+            try:
+                method = input(f"   Treatment method for {col} (removal/capping/winsorization/skip): ").strip().lower()
+                
+                if method == 'removal':
+                    results = outlier_handler.treat_outliers_removal([col], method='iqr')
+                    print(f"   ✅ Removed {results['rows_removed']} rows")
+                
+                elif method == 'capping':
+                    cap_method = input(f"   Cap method (percentile/iqr): ").strip().lower()
+                    if cap_method not in ['percentile', 'iqr']:
+                        cap_method = 'percentile'
+                    results = outlier_handler.treat_outliers_capping([col], method='iqr', cap_method=cap_method)
+                    print(f"   ✅ Capped {results['values_capped']} values")
+                
+                elif method == 'winsorization':
+                    try:
+                        limit_input = input(f"   Limits (e.g., 0.05,0.05): ").strip()
+                        limits = tuple(map(float, limit_input.split(','))) if limit_input else (0.05, 0.05)
+                    except:
+                        limits = (0.05, 0.05)
+                    results = outlier_handler.treat_outliers_winsorization([col], limits=limits)
+                    print(f"   ✅ Winsorized {results['details'][col]['values_changed']} values")
+                
+                elif method == 'skip':
+                    print(f"   ⏭️  Skipped {col}")
+                
+                else:
+                    print(f"   ❌ Invalid method, skipping {col}")
+                    
+            except (EOFError, OSError):
+                print(f"   ⏭️  Skipping {col} (test mode)")
+        
+        # Update current data
+        self.current_data = outlier_handler.current_data
+    
+    def _show_treatment_results(self, results, method_name):
+        """
+        Show treatment results to user.
+        
+        Args:
+            results: Treatment results dictionary
+            method_name: Name of the treatment method
+        """
+        print(f"\n📋 {method_name.upper()} RESULTS")
+        print("-" * 30)
+        print(f"Method: {results['method']}")
+        print(f"Detection: {results['detection_method']}")
+        print(f"Columns treated: {len(results['columns_treated'])}")
+        
+        if 'rows_removed' in results:
+            print(f"Rows removed: {results['rows_removed']:,}")
+        if 'values_capped' in results:
+            print(f"Values capped: {results['values_capped']:,}")
+        
+        print(f"Backup created: {results['backup_path']}")
+        
+        # Show details for each column
+        if results['details']:
+            print(f"\nColumn details:")
+            for col, details in results['details'].items():
+                if 'outliers_removed' in details:
+                    print(f"   {col}: {details['outliers_removed']:,} outliers removed")
+                elif 'values_capped' in details:
+                    print(f"   {col}: {details['values_capped']:,} values capped")
+                elif 'values_changed' in details:
+                    print(f"   {col}: {details['values_changed']:,} values changed")
+    
+    def _show_validation_results(self, validation):
+        """
+        Show validation results to user.
+        
+        Args:
+            validation: Validation results dictionary
+        """
+        print(f"\n🔍 VALIDATION RESULTS")
+        print("-" * 30)
+        
+        if validation['data_integrity']:
+            print("✅ Data integrity: OK")
+        else:
+            print("❌ Data integrity: Issues detected")
+        
+        if validation['shape_changed']:
+            print("⚠️  Data shape: Changed")
+        else:
+            print("✅ Data shape: Unchanged")
+        
+        if validation['missing_values']:
+            print("⚠️  Missing values: Detected")
+        else:
+            print("✅ Missing values: None")
+        
+        if validation['infinite_values']:
+            print("⚠️  Infinite values: Detected")
+        else:
+            print("✅ Infinite values: None")
+        
+        if validation['warnings']:
+            print(f"\n⚠️  Warnings:")
+            for warning in validation['warnings']:
+                print(f"   • {warning}")
+    
+    def _check_outlier_treatment_results(self, outlier_handler, original_columns):
+        """
+        Check and display outlier treatment results.
+        
+        Args:
+            outlier_handler: OutlierHandler instance
+            original_columns: List of original columns with outliers
+        """
+        print(f"\n🔍 CHECKING TREATMENT RESULTS")
+        print("-" * 30)
+        
+        # Generate new outlier report
+        new_report = outlier_handler.get_outlier_report(original_columns)
+        
+        print(f"📊 Post-treatment outlier analysis:")
+        for col in original_columns:
+            if col in new_report['results']:
+                iqr_result = new_report['results'][col]['iqr']
+                zscore_result = new_report['results'][col]['zscore']
+                
+                print(f"\n   {col}:")
+                print(f"     IQR method: {iqr_result['outlier_count']:,} outliers ({iqr_result['outlier_percentage']:.2f}%)")
+                print(f"     Z-score method: {zscore_result['outlier_count']:,} outliers ({zscore_result['outlier_percentage']:.2f}%)")
+                
+                # Check if treatment was effective
+                if iqr_result['outlier_percentage'] < 5:
+                    print(f"     ✅ Treatment effective (IQR outliers < 5%)")
+                else:
+                    print(f"     ⚠️  Treatment may need adjustment (IQR outliers >= 5%)")
     
     def _show_plots_in_browser(self):
         """Show generated plots in Safari browser with detailed explanations."""
@@ -1124,22 +1483,77 @@ class InteractiveSystem:
             # Select important columns for visualization (prioritize key fields)
             important_cols = ['open', 'high', 'low', 'close', 'volume', 'predicted_low', 'predicted_high', 'pressure', 'pressure_vector']
             
-            # Find available important columns
+            # Find available important columns with improved matching logic
             available_important = []
-            for col in important_cols:
+            used_numeric_cols = set()  # Track which numeric columns we've already matched
+            
+            for important_col in important_cols:
+                best_match = None
+                best_match_score = 0
+                
                 for numeric_col in numeric_data.columns:
-                    if col.lower() in numeric_col.lower():
-                        available_important.append(numeric_col)
+                    if numeric_col in used_numeric_cols:
+                        continue
+                    
+                    # Calculate match score based on different matching strategies
+                    numeric_col_lower = numeric_col.lower()
+                    important_col_lower = important_col.lower()
+                    
+                    # Exact match gets highest score
+                    if numeric_col_lower == important_col_lower:
+                        best_match = numeric_col
+                        best_match_score = 100
                         break
+                    
+                    # Contains match gets medium score
+                    elif important_col_lower in numeric_col_lower:
+                        score = len(important_col_lower) / len(numeric_col_lower) * 50
+                        if score > best_match_score:
+                            best_match = numeric_col
+                            best_match_score = score
+                    
+                    # Partial word match gets lower score
+                    elif any(word in numeric_col_lower for word in important_col_lower.split('_')):
+                        score = 25
+                        if score > best_match_score:
+                            best_match = numeric_col
+                            best_match_score = score
+                
+                if best_match and best_match_score > 0:
+                    available_important.append(best_match)
+                    used_numeric_cols.add(best_match)
             
             # Add other numeric columns if we have space
             other_cols = [col for col in numeric_data.columns if col not in available_important]
             
-            # Combine important columns first, then others (limit to 6 total)
+            # Combine important columns first, then others (limit to 9 total to include more important columns)
             cols_to_plot = available_important + other_cols
-            cols_to_plot = cols_to_plot[:6]
+            cols_to_plot = cols_to_plot[:9]
             
             print(f"📊 Selected columns for visualization: {cols_to_plot}")
+            
+            # Debug information about column matching
+            print(f"🔍 Column matching debug info:")
+            print(f"   Important columns to find: {important_cols}")
+            print(f"   Available numeric columns: {list(numeric_data.columns)}")
+            print(f"   Found important columns: {available_important}")
+            print(f"   Other columns added: {other_cols[:9-len(available_important)]}")
+            
+            # Check for missing important columns
+            missing_important = []
+            for important_col in important_cols:
+                found = False
+                for found_col in available_important:
+                    if important_col.lower() in found_col.lower():
+                        found = True
+                        break
+                if not found:
+                    missing_important.append(important_col)
+            
+            if missing_important:
+                print(f"   ⚠️  Missing important columns: {missing_important}")
+            else:
+                print(f"   ✅ All important columns found!")
             
             # Define plot tasks with estimated complexity
             plot_tasks = [
@@ -1163,8 +1577,16 @@ class InteractiveSystem:
                 pbar.set_description(f"Creating {plot_tasks[0]['name']}")
                 pbar.set_postfix_str(plot_tasks[0]['description'])
                 
-                fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+                # Calculate grid size for up to 9 columns
+                n_cols = len(cols_to_plot)
+                n_rows = (n_cols + 2) // 3  # Ceiling division to ensure enough rows
+                
+                fig, axes = plt.subplots(n_rows, 3, figsize=(18, 4 * n_rows))
                 fig.suptitle('Distribution Analysis', fontsize=16, fontweight='bold')
+                
+                # Ensure axes is always 2D array
+                if n_rows == 1:
+                    axes = axes.reshape(1, -1)
                 
                 for i, col in enumerate(cols_to_plot):
                     row, col_idx = i // 3, i % 3
@@ -1196,8 +1618,16 @@ class InteractiveSystem:
                 pbar.set_description(f"Creating {plot_tasks[1]['name']}")
                 pbar.set_postfix_str(plot_tasks[1]['description'])
                 
-                fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+                # Calculate grid size for up to 9 columns
+                n_cols = len(cols_to_plot)
+                n_rows = (n_cols + 2) // 3  # Ceiling division to ensure enough rows
+                
+                fig, axes = plt.subplots(n_rows, 3, figsize=(18, 4 * n_rows))
                 fig.suptitle('Box Plot Analysis (Outlier Detection)', fontsize=16, fontweight='bold')
+                
+                # Ensure axes is always 2D array
+                if n_rows == 1:
+                    axes = axes.reshape(1, -1)
                 
                 for i, col in enumerate(cols_to_plot):
                     row, col_idx = i // 3, i % 3

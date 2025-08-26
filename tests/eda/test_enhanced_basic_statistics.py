@@ -107,9 +107,9 @@ def test_enhanced_basic_statistics():
         print(f"❌ Error in Enhanced Basic Statistics: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        assert False, f"Enhanced Basic Statistics failed: {e}"
     
-    return True
+    assert True, "Enhanced Basic Statistics completed successfully"
 
 if __name__ == "__main__":
     success = test_enhanced_basic_statistics()

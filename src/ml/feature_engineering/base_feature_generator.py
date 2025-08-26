@@ -41,6 +41,9 @@ class FeatureConfig:
     # Volume parameters
     volume_periods: List[int] = None
     
+    # Feature types to generate
+    feature_types: List[str] = None
+    
     # Custom parameters for proprietary indicators
     custom_params: Dict[str, Any] = None
     
@@ -58,6 +61,8 @@ class FeatureConfig:
             self.volatility_periods = [14, 20, 50]
         if self.volume_periods is None:
             self.volume_periods = [14, 20, 50]
+        if self.feature_types is None:
+            self.feature_types = ['ratio', 'difference', 'momentum', 'volatility']
         if self.custom_params is None:
             self.custom_params = {}
 

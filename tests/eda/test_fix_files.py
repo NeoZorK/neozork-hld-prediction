@@ -328,15 +328,18 @@ def test_fix_file(mock_print, temp_parquet_file):
 @patch('builtins.print')
 def test_batch_fix_files(mock_print, tmp_path):
     """Test batch_fix_files function properly processes multiple parquet files."""
-    # Create a few test parquet files
+    # Create a few test parquet files with issues that need fixing
     for i in range(3):
         file_path = tmp_path / f"test_{i}.parquet"
-        df = pd.DataFrame({'value': [i, i+1, i+2]})
+        # Create DataFrame with NaN values and zeros that need fixing
+        df = pd.DataFrame({
+            'value': [i, np.nan, i+2, 0.0],
+            'price': [10.0, 0.0, 15.0, 20.0]
+        })
         df.to_parquet(str(file_path))
 
-    # Run batch fix with tqdm mock and fix_file mock
-    with patch('tqdm.tqdm', new=lambda *args, **kwargs: args[0]), \
-         patch('src.eda.fix_files.fix_file', return_value=True) as mock_fix_file:
+    # Run batch fix with tqdm mock
+    with patch('tqdm.tqdm', new=lambda *args, **kwargs: args[0]):
         fixed_count, total_count = batch_fix_files(
             str(tmp_path),
             fix_nan_flag=True,
@@ -346,6 +349,3 @@ def test_batch_fix_files(mock_print, tmp_path):
     # Check the results
     assert fixed_count == 3  # All 3 files should be "fixed"
     assert total_count == 3  # Total count should be 3
-
-    # The fix_file function should have been called 3 times
-    assert mock_fix_file.call_count == 3

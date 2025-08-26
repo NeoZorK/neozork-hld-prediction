@@ -228,13 +228,13 @@ def backtest_strategy(data, strategy_params):
     def server(self, temp_project):
         """Create server instance"""
         with patch('neozork_mcp_server.print_to_stderr'):
-            server = NeozorkMCPServer(project_root=temp_project)
+            server = NeoZorKMCPServer(project_root=temp_project)
             yield server
     
     def test_server_initialization(self, temp_project):
         """Test server initialization"""
         with patch('neozork_mcp_server.print_to_stderr'):
-            server = NeozorkMCPServer(project_root=temp_project)
+            server = NeoZorKMCPServer(project_root=temp_project)
             
             assert server.project_root == temp_project
             assert server.logger is not None
@@ -248,7 +248,7 @@ def backtest_strategy(data, strategy_params):
     def test_load_config(self, temp_project):
         """Test configuration loading"""
         with patch('neozork_mcp_server.print_to_stderr'):
-            server = NeozorkMCPServer(project_root=temp_project)
+            server = NeoZorKMCPServer(project_root=temp_project)
             
             config = server.config
             assert "server_mode" in config
@@ -263,7 +263,7 @@ def backtest_strategy(data, strategy_params):
         with patch('neozork_mcp_server.print_to_stderr'):
             with tempfile.TemporaryDirectory() as temp_dir:
                 temp_path = Path(temp_dir)
-                server = NeozorkMCPServer(project_root=temp_path)
+                server = NeoZorKMCPServer(project_root=temp_path)
                 
                 config = server.config
                 assert "server_mode" in config
@@ -271,12 +271,12 @@ def backtest_strategy(data, strategy_params):
                 assert "version" in config
                 assert "features" in config
                 assert config["server_mode"] == "unified"
-                assert config["server_name"] == "Neozork Unified MCP Server"
+                assert config["server_name"] == "NeoZorK Unified MCP Server"
     
     def test_setup_logging(self, temp_project):
         """Test logging setup"""
         with patch('neozork_mcp_server.print_to_stderr'):
-            server = NeozorkMCPServer(project_root=temp_project)
+            server = NeoZorKMCPServer(project_root=temp_project)
             
             logger = server.logger
             assert logger is not None

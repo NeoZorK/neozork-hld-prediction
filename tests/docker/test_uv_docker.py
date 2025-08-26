@@ -37,13 +37,14 @@ def test_uv_availability():
         version = result.stdout.strip()
         print(f"✅ UV version: {version}")
         
-        return True
+        assert True, "UV is available"
+        
     except subprocess.CalledProcessError as e:
         print(f"❌ UV not available: {e}")
-        return False
+        assert False, f"UV not available: {e}"
     except Exception as e:
         print(f"❌ Error checking UV: {e}")
-        return False
+        assert False, f"Error checking UV: {e}"
 
 def test_uv_commands():
     """Test various UV commands"""
@@ -77,7 +78,7 @@ def test_uv_commands():
             print(f"❌ {' '.join(cmd)} - ERROR: {e}")
     
     print(f"📊 {working_commands}/{len(commands_to_test)} commands working")
-    return working_commands > 0
+    assert working_commands > 0, f"Only {working_commands}/{len(commands_to_test)} commands working"
 
 def test_package_management():
     """Test package management functionality"""
@@ -86,10 +87,11 @@ def test_package_management():
     # Try different package listing methods
     package_commands = [
         ["uv", "pip", "list"],
-        ["pip", "list"],
+        ["uv", "pip", "freeze"],
         ["python", "-m", "pip", "list"]
     ]
     
+    success = False
     for cmd in package_commands:
         try:
             result = subprocess.run(cmd, 
@@ -110,14 +112,19 @@ def test_package_management():
                         found_packages.append(pkg)
                 
                 print(f"   Key packages found: {found_packages}")
-                return True
+                if len(found_packages) > 0:
+                    success = True
+                    break
                 
         except subprocess.TimeoutExpired:
             print(f"❌ {' '.join(cmd)} - TIMEOUT")
         except Exception as e:
             print(f"❌ {' '.join(cmd)} - ERROR: {e}")
     
-    return False
+    if success:
+        assert True, "Package management working"
+    else:
+        assert False, "Package management failed - no key packages found"
 
 def test_docker_environment():
     """Test Docker environment"""
@@ -129,35 +136,41 @@ def test_docker_environment():
             cgroup = f.read()
             if "docker" in cgroup.lower():
                 print("✅ Running in Docker container")
-                return True
+                assert True, "Running in Docker container"
             else:
                 print("⚠️  Not running in Docker container")
-                return False
+                # Don't fail on non-Docker environments
+                print("ℹ️  This is expected on local development machines")
+                return
     except FileNotFoundError:
         print("⚠️  Could not determine if running in Docker")
-        return False
+        print("ℹ️  This is expected on macOS and other non-Linux systems")
+        # Don't fail on systems that don't have /proc/1/cgroup
+        return
 
 class TestUVDocker:
     """Test class for UV Docker functionality"""
     
     def test_uv_availability(self):
         """Test UV availability"""
-        assert test_uv_availability(), "UV is not available"
+        test_uv_availability()
     
     def test_uv_commands(self):
         """Test UV commands"""
-        assert test_uv_commands(), "UV commands are not working"
+        test_uv_commands()
     
     def test_package_management(self):
         """Test package management"""
-        assert test_package_management(), "Package management is not working"
+        test_package_management()
     
     def test_docker_environment(self):
         """Test Docker environment"""
         # This test is optional - it's okay if not in Docker
-        docker_env = test_docker_environment()
-        if not docker_env:
+        try:
+            test_docker_environment()
+        except AssertionError:
             print("⚠️  Not running in Docker environment - this is okay for local testing")
+            # Don't fail the test since it's optional
 
 def main():
     """Run all tests"""
