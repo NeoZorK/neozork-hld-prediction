@@ -34,6 +34,17 @@ This report documents the enhancements made to the `interactive_system.py` scrip
    • Enter folder number (e.g., 1 for data/)
    • Or enter folder path with mask (e.g., data gbpusd)
    • Or enter folder path with file type (e.g., data parquet)
+
+📋 More Examples:
+   • 3 eurusd     (folder 3 with 'eurusd' in filename)
+   • 8 btcusdt    (folder 8 with 'btcusdt' in filename)
+   • data gbpusd  (data folder with 'gbpusd' in filename)
+   • data sample  (data folder with 'sample' in filename)
+   • 3 csv        (folder 3 with '.csv' files)
+   • 7 parquet    (folder 7 with '.parquet' files)
+   • 8 aapl       (folder 8 with 'aapl' in filename)
+   • 3 btcusd     (folder 3 with 'btcusd' in filename)
+   • data test    (data folder with 'test' in filename)
 ```
 
 #### **Usage Examples:**

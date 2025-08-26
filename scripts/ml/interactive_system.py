@@ -180,6 +180,17 @@ class InteractiveSystem:
         print("   • Enter folder number (e.g., 1 for data/)")
         print("   • Or enter folder path with mask (e.g., data gbpusd)")
         print("   • Or enter folder path with file type (e.g., data parquet)")
+        print("")
+        print("📋 More Examples:")
+        print("   • 3 eurusd     (folder 3 with 'eurusd' in filename)")
+        print("   • 8 btcusdt    (folder 8 with 'btcusdt' in filename)")
+        print("   • data gbpusd  (data folder with 'gbpusd' in filename)")
+        print("   • data sample  (data folder with 'sample' in filename)")
+        print("   • 3 csv        (folder 3 with '.csv' files)")
+        print("   • 7 parquet    (folder 7 with '.parquet' files)")
+        print("   • 8 aapl       (folder 8 with 'aapl' in filename)")
+        print("   • 3 btcusd     (folder 3 with 'btcusd' in filename)")
+        print("   • data test    (data folder with 'test' in filename)")
         print("-" * 30)
         
         try:
