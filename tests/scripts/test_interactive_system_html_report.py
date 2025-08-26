@@ -5,10 +5,16 @@ Test script for HTML report with Recommendations/Summary and seaborn fixes.
 """
 
 import sys
+import warnings
 import pandas as pd
 import numpy as np
 from pathlib import Path
 from unittest.mock import patch
+
+# Suppress seaborn and matplotlib deprecation warnings
+warnings.filterwarnings("ignore", category=PendingDeprecationWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", message="vert: bool will be deprecated")
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent

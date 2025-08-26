@@ -1634,7 +1634,7 @@ class InteractiveSystem:
                     col_data = numeric_data[col].dropna()
                     
                     if len(col_data) > 0:
-                        sns.boxplot(y=col_data, ax=axes[row, col_idx])
+                        sns.boxplot(y=col_data, ax=axes[row, col_idx], orientation='vertical')
                         axes[row, col_idx].set_title(f'{col} Box Plot')
                         
                         # Add outlier count
