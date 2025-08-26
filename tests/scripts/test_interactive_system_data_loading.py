@@ -45,8 +45,6 @@ def test_data_folder_scanning():
     for i, file in enumerate(data_files[:5], 1):
         rel_path = file.relative_to(data_folder)
         print(f"   {i}. {rel_path}")
-    
-    return True
 
 
 def test_single_file_loading():
@@ -72,10 +70,9 @@ def test_single_file_loading():
         print(f"✅ Successfully loaded file with shape: {data.shape}")
         assert data.shape[0] > 0, "Loaded data should have rows"
         assert data.shape[1] > 0, "Loaded data should have columns"
-        return True
     except Exception as e:
         print(f"❌ Error loading file: {e}")
-        return False
+        raise
 
 
 def test_folder_loading_with_mask():
@@ -122,8 +119,6 @@ def test_folder_loading_with_mask():
                 print(f"     - {file.name}")
             if len(data_files) > 3:
                 print(f"     ... and {len(data_files) - 3} more")
-    
-    return True
 
 
 def test_file_discovery():
@@ -154,8 +149,6 @@ def test_file_discovery():
             print(f"     - {file}")
         if len(files) > 3:
             print(f"     ... and {len(files) - 3} more")
-    
-    return True
 
 
 def main():
@@ -175,13 +168,11 @@ def main():
     
     for test in tests:
         try:
-            if test():
-                passed += 1
-                print("✅ Test passed")
-            else:
-                print("❌ Test failed")
+            test()
+            passed += 1
+            print("✅ Test passed")
         except Exception as e:
-            print(f"❌ Test failed with exception: {e}")
+            print(f"❌ Test failed: {e}")
     
     print("\n" + "=" * 50)
     print(f"📊 Test Results: {passed}/{total} tests passed")

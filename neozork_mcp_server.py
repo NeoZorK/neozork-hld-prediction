@@ -169,7 +169,7 @@ class NeoZorKMCPServer:
         self._index_code()
         
         self.logger.info("NeoZorK Unified MCP Server initialized successfully")
-print_to_stderr("✅ NeoZorK Unified MCP Server initialized successfully")
+        print_to_stderr("✅ NeoZorK Unified MCP Server initialized successfully")
         print_to_stderr("📈 Server Statistics:")
         print_to_stderr(f"   - Project files: {len(self.project_files)}")
         print_to_stderr(f"   - Financial symbols: {len(self.available_symbols)}")

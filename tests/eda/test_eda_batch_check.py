@@ -239,9 +239,8 @@ class TestEdaBatchCheck(unittest.TestCase):
 
     @patch('src.eda.eda_batch_check.file_info')
     @patch('src.eda.eda_batch_check.folder_stats')
-    @patch('src.eda.data_quality.nan_check')
-    @patch('src.eda.data_quality.duplicate_check')
-    def test_file_selection_with_data_quality_checks(self, mock_duplicate_check, mock_nan_check, mock_folder_stats, mock_file_info):
+    @patch('src.eda.eda_batch_check.data_quality')
+    def test_file_selection_with_data_quality_checks(self, mock_data_quality, mock_folder_stats, mock_file_info):
         """Test file selection with data quality checks"""
         mock_file_info.get_file_info.return_value = {
             'file_path': '/fake/path/test_file.parquet',
@@ -258,6 +257,17 @@ class TestEdaBatchCheck(unittest.TestCase):
             'total_size_mb': 1.23,
             'file_count': 1
         }
+        
+        # Set up data quality mock return values
+        mock_data_quality.nan_check.return_value = {
+            'total_nan_count': 0,
+            'columns_with_nan': [],
+            'nan_summary': []
+        }
+        mock_data_quality.duplicate_check.return_value = {
+            'total_duplicates': 0,
+            'duplicate_summary': []
+        }
 
         with patch('os.walk') as mock_walk, patch('glob.glob') as mock_glob:
             mock_walk.return_value = [('/fake/path', [], ['test_file.parquet'])]
@@ -266,16 +276,17 @@ class TestEdaBatchCheck(unittest.TestCase):
                 mock_df = pd.DataFrame({'a': [1,2,3], 'b': [1.1,2.2,3.3]})
                 mock_read_parquet.return_value = mock_df
                 with patch('builtins.print') as mock_print, \
+                     patch('tqdm.tqdm', new=lambda *args, **kwargs: args[0]), \
                      patch.object(sys, 'argv', ['eda_batch_check.py', '--file', 'test_file.parquet', '--data-quality-checks']):
                     eda_batch_check.main()
                     # Verify that data quality checks were called only once (single file)
-                    self.assertEqual(mock_nan_check.call_count, 1)
-                    self.assertEqual(mock_duplicate_check.call_count, 1)
+                    self.assertEqual(mock_data_quality.nan_check.call_count, 1)
+                    self.assertEqual(mock_data_quality.duplicate_check.call_count, 1)
 
     @patch('src.eda.eda_batch_check.file_info')
     @patch('src.eda.eda_batch_check.folder_stats')
-    @patch('src.eda.fix_files.fix_file')
-    def test_file_selection_with_fix_operations(self, mock_fix_file, mock_folder_stats, mock_file_info):
+    @patch('src.eda.eda_batch_check.fix_files')
+    def test_file_selection_with_fix_operations(self, mock_fix_files, mock_folder_stats, mock_file_info):
         """Test file selection with fix operations"""
         mock_file_info.get_file_info.return_value = {
             'file_path': '/fake/path/test_file.parquet',
@@ -292,7 +303,7 @@ class TestEdaBatchCheck(unittest.TestCase):
             'total_size_mb': 1.23,
             'file_count': 1
         }
-        mock_fix_file.return_value = True
+        mock_fix_files.fix_file.return_value = True
 
         with patch('os.walk') as mock_walk, patch('glob.glob') as mock_glob:
             mock_walk.return_value = [('/fake/path', [], ['test_file.parquet'])]
@@ -305,9 +316,9 @@ class TestEdaBatchCheck(unittest.TestCase):
                      patch.object(sys, 'argv', ['eda_batch_check.py', '--file', 'test_file.parquet', '--fix-files', '--fix-duplicates']):
                     eda_batch_check.main()
                     # Verify that fix operation was called only once (single file)
-                    self.assertEqual(mock_fix_file.call_count, 1)
+                    self.assertEqual(mock_fix_files.fix_file.call_count, 1)
                     # Verify fix operation was called with correct parameters
-                    mock_fix_file.assert_called_with(
+                    mock_fix_files.fix_file.assert_called_with(
                         '/fake/path/test_file.parquet',
                         fix_nan_flag=False,
                         fix_duplicates_flag=True,

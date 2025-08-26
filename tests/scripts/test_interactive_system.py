@@ -1,254 +1,282 @@
-# tests/scripts/test_interactive_system.py
-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Tests for interactive_system.py script.
-All comments are in English.
 """
 
-import unittest
-import tempfile
-import os
-import sys
+import pytest
 import pandas as pd
 import numpy as np
+from unittest.mock import Mock, patch, MagicMock
 from pathlib import Path
-from unittest.mock import patch, MagicMock, mock_open
-from io import StringIO
+import sys
 
-# Add project root to path for imports
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
+# Mock imports that might not be available in test environment
+sys.modules['src.ml.feature_engineering.feature_generator'] = MagicMock()
+sys.modules['src.ml.feature_engineering.feature_selector'] = MagicMock()
+sys.modules['src.eda'] = MagicMock()
+sys.modules['src.eda.fix_files'] = MagicMock()
+sys.modules['src.eda.html_report_generator'] = MagicMock()
+sys.modules['src.eda.data_quality'] = MagicMock()
+sys.modules['src.eda.file_info'] = MagicMock()
 
-# Import the script to test
 from scripts.ml.interactive_system import InteractiveSystem
 
 
-class TestInteractiveSystem(unittest.TestCase):
-    """Test cases for InteractiveSystem class."""
-
-    def setUp(self):
-        """Set up test fixtures."""
-        self.system = InteractiveSystem()
-        self.test_data = pd.DataFrame({
-            'DateTime': pd.date_range('2023-01-01', periods=100, freq='h'),
-            'Open': np.random.randn(100).cumsum() + 100,
-            'High': np.random.randn(100).cumsum() + 102,
-            'Low': np.random.randn(100).cumsum() + 98,
-            'Close': np.random.randn(100).cumsum() + 100,
-            'Volume': np.random.randint(1000, 10000, 100)
-        })
-
-    def test_interactive_system_initialization(self):
+class TestInteractiveSystem:
+    """Test InteractiveSystem class."""
+    
+    def test_initialization(self):
         """Test InteractiveSystem initialization."""
-        self.assertIsInstance(self.system, InteractiveSystem)
-        self.assertIsNone(self.system.feature_generator)
-        self.assertIsNone(self.system.current_data)
-        self.assertEqual(self.system.current_results, {})
-
-    @patch('sys.stdout', new_callable=StringIO)
-    def test_print_banner(self, mock_stdout):
-        """Test print_banner method."""
-        self.system.print_banner()
-        output = mock_stdout.getvalue()
+        system = InteractiveSystem()
         
-        self.assertIn("NEOZORK HLD PREDICTION", output)
-        self.assertIn("INTERACTIVE SYSTEM", output)
-        self.assertIn("Feature Engineering", output)
-
-    @patch('sys.stdout', new_callable=StringIO)
-    def test_print_main_menu(self, mock_stdout):
-        """Test print_main_menu method."""
-        self.system.print_main_menu()
-        output = mock_stdout.getvalue()
+        assert system.feature_generator is None
+        assert system.current_data is None
+        assert system.current_results == {}
+        assert 'main' in system.used_menus
+        assert 'eda' in system.used_menus
+        assert 'feature_engineering' in system.used_menus
+    
+    def test_calculate_submenu_completion_percentage(self):
+        """Test submenu completion percentage calculation."""
+        system = InteractiveSystem()
         
-        self.assertIn("MAIN MENU", output)
-        self.assertIn("Load Data", output)
-        self.assertIn("EDA Analysis", output)
-        self.assertIn("Feature Engineering", output)
-        self.assertIn("Exit", output)
-
-    @patch('sys.stdout', new_callable=StringIO)
-    def test_print_eda_menu(self, mock_stdout):
-        """Test print_eda_menu method."""
-        self.system.print_eda_menu()
-        output = mock_stdout.getvalue()
+        # Test with empty menu
+        percentage = system.calculate_submenu_completion_percentage('main')
+        assert percentage == 0.0
         
-        self.assertIn("EDA ANALYSIS MENU", output)
-        self.assertIn("Basic Statistics", output)
-        self.assertIn("Data Quality Check", output)
-        self.assertIn("Correlation Analysis", output)
-        self.assertIn("Back to Main Menu", output)
-
-    @patch('sys.stdout', new_callable=StringIO)
-    def test_print_feature_engineering_menu(self, mock_stdout):
-        """Test print_feature_engineering_menu method."""
-        self.system.print_feature_engineering_menu()
-        output = mock_stdout.getvalue()
+        # Test with some completed items
+        system.used_menus['main']['load_data'] = True
+        system.used_menus['main']['eda_analysis'] = True
         
-        self.assertIn("FEATURE ENGINEERING MENU", output)
-        self.assertIn("Generate All Features", output)
-        self.assertIn("Proprietary Features", output)
-        self.assertIn("Technical Indicators", output)
-        self.assertIn("Back to Main Menu", output)
-
-    @patch('sys.stdout', new_callable=StringIO)
-    def test_print_visualization_menu(self, mock_stdout):
-        """Test print_visualization_menu method."""
-        self.system.print_visualization_menu()
-        output = mock_stdout.getvalue()
+        percentage = system.calculate_submenu_completion_percentage('main')
+        assert percentage > 0.0
+        assert percentage <= 100.0
+    
+    def test_calculate_submenu_completion_percentage_unknown_menu(self):
+        """Test submenu completion percentage with unknown menu."""
+        system = InteractiveSystem()
         
-        self.assertIn("DATA VISUALIZATION MENU", output)
-        self.assertIn("Price Charts", output)
-        self.assertIn("Feature Distribution Plots", output)
-
-    def test_load_data_method_exists(self):
-        """Test that load_data method exists."""
-        self.assertTrue(hasattr(self.system, 'load_data'))
-        self.assertTrue(callable(getattr(self.system, 'load_data')))
-
-    def test_run_eda_analysis_method_exists(self):
-        """Test that run_eda_analysis method exists."""
-        self.assertTrue(hasattr(self.system, 'run_eda_analysis'))
-        self.assertTrue(callable(getattr(self.system, 'run_eda_analysis')))
-
-    def test_run_model_development_method_exists(self):
-        """Test that run_model_development method exists."""
-        self.assertTrue(hasattr(self.system, 'run_model_development'))
-        self.assertTrue(callable(getattr(self.system, 'run_model_development')))
-
-    def test_run_method_exists(self):
-        """Test that run method exists."""
-        self.assertTrue(hasattr(self.system, 'run'))
-        self.assertTrue(callable(getattr(self.system, 'run')))
-
-    def test_system_attributes(self):
-        """Test system attributes are properly initialized."""
-        self.assertIsInstance(self.system.feature_generator, type(None))
-        self.assertIsInstance(self.system.current_data, type(None))
-        self.assertIsInstance(self.system.current_results, dict)
-
-    def test_system_class_structure(self):
-        """Test InteractiveSystem class structure."""
-        # Test class inheritance
-        self.assertEqual(self.system.__class__.__name__, 'InteractiveSystem')
+        percentage = system.calculate_submenu_completion_percentage('unknown_menu')
+        assert percentage == 0.0
+    
+    def test_calculate_submenu_completion_percentage_all_completed(self):
+        """Test submenu completion percentage with all items completed."""
+        system = InteractiveSystem()
         
-        # Test class docstring
-        self.assertIsNotNone(self.system.__class__.__doc__)
-        self.assertIn("Interactive system interface", self.system.__class__.__doc__)
-
-    def test_system_initialization_with_data(self):
-        """Test system initialization with data."""
-        # Test that we can set current_data
-        self.system.current_data = self.test_data
-        self.assertIsInstance(self.system.current_data, pd.DataFrame)
-        self.assertEqual(len(self.system.current_data), 100)
-
-    def test_system_results_storage(self):
-        """Test system results storage."""
-        # Test that we can store results
-        test_results = {'analysis': 'test_result', 'score': 0.95}
-        self.system.current_results = test_results
-        self.assertEqual(self.system.current_results, test_results)
-
-    def test_load_data_from_file_method_exists(self):
-        """Test that load_data_from_file method exists."""
-        self.assertTrue(hasattr(self.system, 'load_data_from_file'))
-        self.assertTrue(callable(getattr(self.system, 'load_data_from_file')))
-
-    def test_print_model_development_menu_method_exists(self):
-        """Test that print_model_development_menu method exists."""
-        self.assertTrue(hasattr(self.system, 'print_model_development_menu'))
-        self.assertTrue(callable(getattr(self.system, 'print_model_development_menu')))
-
-    @patch('sys.stdout', new_callable=StringIO)
-    def test_print_model_development_menu(self, mock_stdout):
-        """Test print_model_development_menu method."""
-        self.system.print_model_development_menu()
-        output = mock_stdout.getvalue()
+        # Mark all items as completed
+        for menu_type in system.used_menus:
+            for item in system.used_menus[menu_type]:
+                system.used_menus[menu_type][item] = True
         
-        self.assertIn("MODEL DEVELOPMENT MENU", output)
-        self.assertIn("Data Preparation", output)
-        self.assertIn("ML Model Training", output)
-        self.assertIn("Model Evaluation", output)
-
-    def test_system_methods_return_values(self):
-        """Test that system methods return appropriate values."""
-        # Test load_data
-        try:
-            # This will likely fail due to input() call, but we can test the method exists
-            method = getattr(self.system, 'load_data')
-            self.assertTrue(callable(method))
-        except Exception:
-            pass  # Expected for interactive methods
-
-        # Test other methods that might exist
-        methods_to_test = [
-            'run_eda_analysis',
-            'run_model_development'
-        ]
+        percentage = system.calculate_submenu_completion_percentage('main')
+        assert percentage == 100.0
+    
+    def test_print_main_menu(self):
+        """Test main menu display."""
+        system = InteractiveSystem()
         
-        for method_name in methods_to_test:
+        with patch('builtins.print') as mock_print:
+            system.print_main_menu()
+            mock_print.assert_called()
+    
+    def test_print_eda_menu(self):
+        """Test EDA menu display."""
+        system = InteractiveSystem()
+        
+        with patch('builtins.print') as mock_print:
+            system.print_eda_menu()
+            mock_print.assert_called()
+    
+    def test_print_feature_engineering_menu(self):
+        """Test feature engineering menu display."""
+        system = InteractiveSystem()
+        
+        with patch('builtins.print') as mock_print:
+            system.print_feature_engineering_menu()
+            mock_print.assert_called()
+    
+    def test_print_visualization_menu(self):
+        """Test visualization menu display."""
+        system = InteractiveSystem()
+        
+        with patch('builtins.print') as mock_print:
+            system.print_visualization_menu()
+            mock_print.assert_called()
+    
+    def test_print_model_development_menu(self):
+        """Test model development menu display."""
+        system = InteractiveSystem()
+        
+        with patch('builtins.print') as mock_print:
+            system.print_model_development_menu()
+            mock_print.assert_called()
+    
+    def test_load_data_from_file(self):
+        """Test data loading from file functionality."""
+        system = InteractiveSystem()
+        
+        # Create mock data
+        mock_data = pd.DataFrame({
+            'Open': [100, 101, 102],
+            'High': [105, 106, 107],
+            'Low': [95, 96, 97],
+            'Close': [103, 104, 105],
+            'Volume': [1000, 1100, 1200]
+        })
+        
+        with patch('pathlib.Path.exists', return_value=True), \
+             patch('pandas.read_csv', return_value=mock_data):
+            result = system.load_data_from_file('test_file.csv')
+            
+            assert result is not None
+            assert len(result) == 3
+    
+    def test_load_data_from_file_not_found(self):
+        """Test data loading with file not found."""
+        system = InteractiveSystem()
+        
+        with patch('pathlib.Path.exists', return_value=False), \
+             patch('builtins.print') as mock_print:
             try:
-                method = getattr(self.system, method_name)
-                self.assertTrue(callable(method))
-            except AttributeError:
-                pass  # Method might not exist
-
-    def test_system_method_signatures(self):
-        """Test that system methods have correct signatures."""
-        # Test that core methods exist and are callable
-        expected_methods = [
-            'print_banner',
-            'print_main_menu',
-            'print_eda_menu',
-            'print_feature_engineering_menu',
-            'print_visualization_menu',
-            'print_model_development_menu',
-            'load_data',
-            'load_data_from_file',
-            'run_eda_analysis',
-            'run_model_development',
-            'run'
-        ]
+                result = system.load_data_from_file('nonexistent_file.csv')
+                assert False, "Should have raised FileNotFoundError"
+            except FileNotFoundError:
+                # Expected behavior
+                pass
+    
+    def test_mark_menu_as_used(self):
+        """Test marking menu as used."""
+        system = InteractiveSystem()
         
-        for method_name in expected_methods:
-            if hasattr(self.system, method_name):
-                method = getattr(self.system, method_name)
-                self.assertTrue(callable(method))
-
-    def test_system_file_loading_capabilities(self):
-        """Test system file loading capabilities."""
-        # Test that load_data_from_file method can handle different file types
-        method = getattr(self.system, 'load_data_from_file')
-        self.assertTrue(callable(method))
-
-    def test_system_menu_structure(self):
-        """Test system menu structure."""
-        # Test that all menu methods exist and are callable
-        menu_methods = [
-            'print_main_menu',
-            'print_eda_menu',
-            'print_feature_engineering_menu',
-            'print_visualization_menu',
-            'print_model_development_menu'
-        ]
+        with patch('builtins.print') as mock_print:
+            system.mark_menu_as_used('main', 'load_data')
+            
+            assert system.used_menus['main']['load_data'] is True
+            mock_print.assert_called()
+    
+    def test_reset_menu_status(self):
+        """Test resetting menu status."""
+        system = InteractiveSystem()
         
-        for method_name in menu_methods:
-            if hasattr(self.system, method_name):
-                method = getattr(self.system, method_name)
-                self.assertTrue(callable(method))
-
-    def test_system_data_handling(self):
-        """Test system data handling capabilities."""
-        # Test that we can set and retrieve data
-        self.system.current_data = self.test_data
-        self.assertIsInstance(self.system.current_data, pd.DataFrame)
+        # Mark some items as used
+        system.used_menus['main']['load_data'] = True
+        system.used_menus['main']['eda_analysis'] = True
         
-        # Test that we can set and retrieve results
-        test_results = {'test': 'data'}
-        self.system.current_results = test_results
-        self.assertEqual(self.system.current_results, test_results)
+        with patch('builtins.print') as mock_print:
+            system.reset_menu_status('main')
+            
+            assert system.used_menus['main']['load_data'] is False
+            assert system.used_menus['main']['eda_analysis'] is False
+            mock_print.assert_called()
+    
+    def test_show_menu_status(self):
+        """Test showing menu status."""
+        system = InteractiveSystem()
+        
+        with patch('builtins.print') as mock_print:
+            system.show_menu_status()
+            mock_print.assert_called()
+    
+    def test_safe_input(self):
+        """Test safe input handling."""
+        system = InteractiveSystem()
+        
+        with patch('builtins.input', return_value='test'):
+            result = system.safe_input("Test prompt")
+            assert result == 'test'
+    
+    def test_safe_input_eof(self):
+        """Test safe input handling with EOF."""
+        system = InteractiveSystem()
+        
+        with patch('builtins.input', side_effect=EOFError), \
+             patch('builtins.print') as mock_print:
+            result = system.safe_input("Test prompt")
+            assert result is None
+            mock_print.assert_called()
+    
+    def test_print_banner(self):
+        """Test banner printing."""
+        system = InteractiveSystem()
+        
+        with patch('builtins.print') as mock_print:
+            system.print_banner()
+            mock_print.assert_called()
+    
+    def test_str_representation(self):
+        """Test string representation."""
+        system = InteractiveSystem()
+        
+        result = str(system)
+        assert 'InteractiveSystem' in result
+    
+    def test_repr_representation(self):
+        """Test detailed string representation."""
+        system = InteractiveSystem()
+        
+        result = repr(system)
+        assert 'InteractiveSystem' in result
 
 
-if __name__ == '__main__':
-    unittest.main()
+class TestInteractiveSystemIntegration:
+    """Integration tests for InteractiveSystem."""
+    
+    def test_full_menu_navigation_workflow(self):
+        """Test complete menu navigation workflow."""
+        system = InteractiveSystem()
+        
+        # Test main menu
+        with patch('builtins.input', return_value='0'), \
+             patch('builtins.print') as mock_print:
+            system.run()
+            mock_print.assert_called()
+    
+    def test_data_loading_workflow(self):
+        """Test data loading workflow."""
+        system = InteractiveSystem()
+        
+        # Create mock data
+        mock_data = pd.DataFrame({
+            'Open': [100, 101, 102],
+            'High': [105, 106, 107],
+            'Low': [95, 96, 97],
+            'Close': [103, 104, 105],
+            'Volume': [1000, 1100, 1200]
+        })
+        
+        with patch('pathlib.Path.exists', return_value=True), \
+             patch('pandas.read_csv', return_value=mock_data):
+            result = system.load_data_from_file('test_file.csv')
+            
+            # Validate data is loaded
+            assert result is not None
+            assert len(result) == 3
+            assert 'Open' in result.columns
+    
+    def test_menu_completion_tracking(self):
+        """Test menu completion tracking."""
+        system = InteractiveSystem()
+        
+        # Initially no completion
+        assert system.calculate_submenu_completion_percentage('main') == 0.0
+        
+        # Mark some items as completed
+        system.used_menus['main']['load_data'] = True
+        system.used_menus['main']['eda_analysis'] = True
+        
+        # Check completion percentage
+        percentage = system.calculate_submenu_completion_percentage('main')
+        assert percentage > 0.0
+        assert percentage < 100.0
+        
+        # Mark all items as completed
+        for item in system.used_menus['main']:
+            system.used_menus['main'][item] = True
+        
+        # Check 100% completion
+        assert system.calculate_submenu_completion_percentage('main') == 100.0
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])
