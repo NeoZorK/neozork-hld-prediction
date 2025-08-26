@@ -435,9 +435,24 @@ class InteractiveSystem:
             print(f"\n📊 GENERATING VISUALIZATIONS...")
             self._create_statistics_plots(numeric_data)
             
-            # Show plots in browser
-            print(f"\n🌐 OPENING PLOTS IN BROWSER...")
-            self._show_plots_in_browser()
+            # Ask user if they want to show HTML plots
+            print(f"\n🌐 HTML PLOTS OPTION")
+            print("-" * 30)
+            print("📋 Generated visualization files are available in: results/plots/statistics/")
+            print("💡 You can also view them in an interactive HTML report with explanations")
+            
+            try:
+                show_html = input("Show HTML Plot with explanations? (Yes/No): ").strip().lower()
+                
+                if show_html in ['yes', 'y']:
+                    print(f"\n🌐 OPENING PLOTS IN BROWSER...")
+                    self._show_plots_in_browser()
+                else:
+                    print(f"⏭️  Skipping HTML report. Plots are available in: results/plots/statistics/")
+                    
+            except (EOFError, OSError):
+                # Handle test environment where input is not available
+                print(f"⏭️  Skipping HTML report (test mode). Plots are available in: results/plots/statistics/")
             
             # Save results
             self.current_results['basic_statistics'] = {
@@ -864,10 +879,12 @@ class InteractiveSystem:
             print("📁 Plots are still available in: results/plots/statistics/")
     
     def _create_statistics_plots(self, numeric_data):
-        """Create comprehensive statistical visualizations."""
+        """Create comprehensive statistical visualizations with progress tracking."""
         try:
             import matplotlib.pyplot as plt
             import seaborn as sns
+            from tqdm import tqdm
+            import time
             
             # Set modern style
             plt.style.use('seaborn-v0_8')
@@ -880,125 +897,175 @@ class InteractiveSystem:
             # Limit to first 6 columns for visualization
             cols_to_plot = numeric_data.columns[:6]
             
-            # 1. Distribution plots
-            fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-            fig.suptitle('Distribution Analysis', fontsize=16, fontweight='bold')
+            # Define plot tasks with estimated complexity
+            plot_tasks = [
+                {'name': 'Distribution Analysis', 'complexity': 1.0, 'description': 'Creating histograms with KDE'},
+                {'name': 'Box Plot Analysis', 'complexity': 0.8, 'description': 'Creating box plots with outlier detection'},
+                {'name': 'Correlation Heatmap', 'complexity': 0.6, 'description': 'Creating correlation matrix heatmap'},
+                {'name': 'Statistical Summary', 'complexity': 1.2, 'description': 'Creating comparative statistics charts'}
+            ]
             
-            for i, col in enumerate(cols_to_plot):
-                row, col_idx = i // 3, i % 3
-                col_data = numeric_data[col].dropna()
+            # Calculate total complexity for ETA estimation
+            total_complexity = sum(task['complexity'] for task in plot_tasks)
+            
+            # Start progress tracking
+            start_time = time.time()
+            print(f"📊 Generating {len(plot_tasks)} visualization files...")
+            
+            with tqdm(total=len(plot_tasks), desc="Creating plots", unit="plot", 
+                     bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]') as pbar:
                 
-                if len(col_data) > 0:
-                    # Histogram with KDE
-                    sns.histplot(col_data, kde=True, ax=axes[row, col_idx], bins=50)
-                    axes[row, col_idx].set_title(f'{col} Distribution')
-                    axes[row, col_idx].set_xlabel(col)
-                    axes[row, col_idx].set_ylabel('Frequency')
+                # 1. Distribution plots
+                pbar.set_description(f"Creating {plot_tasks[0]['name']}")
+                pbar.set_postfix_str(plot_tasks[0]['description'])
+                
+                fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+                fig.suptitle('Distribution Analysis', fontsize=16, fontweight='bold')
+                
+                for i, col in enumerate(cols_to_plot):
+                    row, col_idx = i // 3, i % 3
+                    col_data = numeric_data[col].dropna()
                     
-                    # Add statistics text
-                    mean_val = col_data.mean()
-                    std_val = col_data.std()
-                    skew_val = col_data.skew()
-                    axes[row, col_idx].text(0.02, 0.98, 
-                                          f'Mean: {mean_val:.4f}\nStd: {std_val:.4f}\nSkew: {skew_val:.4f}',
-                                          transform=axes[row, col_idx].transAxes,
-                                          verticalalignment='top',
-                                          bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
-            
-            plt.tight_layout()
-            plt.savefig(plots_dir / 'distributions.png', dpi=300, bbox_inches='tight')
-            plt.close()
-            
-            # 2. Box plots
-            fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-            fig.suptitle('Box Plot Analysis (Outlier Detection)', fontsize=16, fontweight='bold')
-            
-            for i, col in enumerate(cols_to_plot):
-                row, col_idx = i // 3, i % 3
-                col_data = numeric_data[col].dropna()
-                
-                if len(col_data) > 0:
-                    sns.boxplot(y=col_data, ax=axes[row, col_idx])
-                    axes[row, col_idx].set_title(f'{col} Box Plot')
-                    
-                    # Add outlier count
-                    q1 = col_data.quantile(0.25)
-                    q3 = col_data.quantile(0.75)
-                    iqr = q3 - q1
-                    outliers = col_data[(col_data < q1 - 1.5*iqr) | (col_data > q3 + 1.5*iqr)]
-                    axes[row, col_idx].text(0.02, 0.98, 
-                                          f'Outliers: {len(outliers):,}',
-                                          transform=axes[row, col_idx].transAxes,
-                                          verticalalignment='top',
-                                          bbox=dict(boxstyle='round', facecolor='lightcoral', alpha=0.8))
-            
-            plt.tight_layout()
-            plt.savefig(plots_dir / 'boxplots.png', dpi=300, bbox_inches='tight')
-            plt.close()
-            
-            # 3. Correlation heatmap
-            if len(cols_to_plot) > 1:
-                fig, ax = plt.subplots(figsize=(10, 8))
-                corr_matrix = numeric_data[cols_to_plot].corr()
-                
-                sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0,
-                           square=True, ax=ax, fmt='.3f')
-                ax.set_title('Correlation Matrix', fontsize=16, fontweight='bold')
+                    if len(col_data) > 0:
+                        # Histogram with KDE
+                        sns.histplot(col_data, kde=True, ax=axes[row, col_idx], bins=50)
+                        axes[row, col_idx].set_title(f'{col} Distribution')
+                        axes[row, col_idx].set_xlabel(col)
+                        axes[row, col_idx].set_ylabel('Frequency')
+                        
+                        # Add statistics text
+                        mean_val = col_data.mean()
+                        std_val = col_data.std()
+                        skew_val = col_data.skew()
+                        axes[row, col_idx].text(0.02, 0.98, 
+                                              f'Mean: {mean_val:.4f}\nStd: {std_val:.4f}\nSkew: {skew_val:.4f}',
+                                              transform=axes[row, col_idx].transAxes,
+                                              verticalalignment='top',
+                                              bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
                 
                 plt.tight_layout()
-                plt.savefig(plots_dir / 'correlation_heatmap.png', dpi=300, bbox_inches='tight')
+                plt.savefig(plots_dir / 'distributions.png', dpi=300, bbox_inches='tight')
                 plt.close()
+                pbar.update(1)
+                
+                # 2. Box plots
+                pbar.set_description(f"Creating {plot_tasks[1]['name']}")
+                pbar.set_postfix_str(plot_tasks[1]['description'])
+                
+                fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+                fig.suptitle('Box Plot Analysis (Outlier Detection)', fontsize=16, fontweight='bold')
+                
+                for i, col in enumerate(cols_to_plot):
+                    row, col_idx = i // 3, i % 3
+                    col_data = numeric_data[col].dropna()
+                    
+                    if len(col_data) > 0:
+                        sns.boxplot(y=col_data, ax=axes[row, col_idx])
+                        axes[row, col_idx].set_title(f'{col} Box Plot')
+                        
+                        # Add outlier count
+                        q1 = col_data.quantile(0.25)
+                        q3 = col_data.quantile(0.75)
+                        iqr = q3 - q1
+                        outliers = col_data[(col_data < q1 - 1.5*iqr) | (col_data > q3 + 1.5*iqr)]
+                        axes[row, col_idx].text(0.02, 0.98, 
+                                              f'Outliers: {len(outliers):,}',
+                                              transform=axes[row, col_idx].transAxes,
+                                              verticalalignment='top',
+                                              bbox=dict(boxstyle='round', facecolor='lightcoral', alpha=0.8))
+                
+                plt.tight_layout()
+                plt.savefig(plots_dir / 'boxplots.png', dpi=300, bbox_inches='tight')
+                plt.close()
+                pbar.update(1)
+                
+                # 3. Correlation heatmap
+                pbar.set_description(f"Creating {plot_tasks[2]['name']}")
+                pbar.set_postfix_str(plot_tasks[2]['description'])
+                
+                if len(cols_to_plot) > 1:
+                    fig, ax = plt.subplots(figsize=(10, 8))
+                    corr_matrix = numeric_data[cols_to_plot].corr()
+                    
+                    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0,
+                               square=True, ax=ax, fmt='.3f')
+                    ax.set_title('Correlation Matrix', fontsize=16, fontweight='bold')
+                    
+                    plt.tight_layout()
+                    plt.savefig(plots_dir / 'correlation_heatmap.png', dpi=300, bbox_inches='tight')
+                    plt.close()
+                else:
+                    # Create empty correlation plot if not enough columns
+                    fig, ax = plt.subplots(figsize=(10, 8))
+                    ax.text(0.5, 0.5, 'Not enough columns\nfor correlation analysis', 
+                           ha='center', va='center', transform=ax.transAxes, fontsize=14)
+                    ax.set_title('Correlation Matrix', fontsize=16, fontweight='bold')
+                    plt.savefig(plots_dir / 'correlation_heatmap.png', dpi=300, bbox_inches='tight')
+                    plt.close()
+                
+                pbar.update(1)
+                
+                # 4. Summary statistics visualization
+                pbar.set_description(f"Creating {plot_tasks[3]['name']}")
+                pbar.set_postfix_str(plot_tasks[3]['description'])
+                
+                fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+                fig.suptitle('Statistical Summary', fontsize=16, fontweight='bold')
+                
+                # Mean vs Median comparison
+                means = [numeric_data[col].mean() for col in cols_to_plot]
+                medians = [numeric_data[col].median() for col in cols_to_plot]
+                
+                x = range(len(cols_to_plot))
+                width = 0.35
+                
+                axes[0, 0].bar([i - width/2 for i in x], means, width, label='Mean', alpha=0.8)
+                axes[0, 0].bar([i + width/2 for i in x], medians, width, label='Median', alpha=0.8)
+                axes[0, 0].set_title('Mean vs Median Comparison')
+                axes[0, 0].set_xticks(x)
+                axes[0, 0].set_xticklabels(cols_to_plot, rotation=45)
+                axes[0, 0].legend()
+                
+                # Coefficient of Variation
+                cvs = [numeric_data[col].std() / numeric_data[col].mean() 
+                       if numeric_data[col].mean() != 0 else 0 for col in cols_to_plot]
+                axes[0, 1].bar(cols_to_plot, cvs, color='skyblue', alpha=0.8)
+                axes[0, 1].set_title('Coefficient of Variation')
+                axes[0, 1].tick_params(axis='x', rotation=45)
+                
+                # Skewness
+                skews = [numeric_data[col].skew() for col in cols_to_plot]
+                colors = ['red' if abs(s) > 0.5 else 'green' for s in skews]
+                axes[1, 0].bar(cols_to_plot, skews, color=colors, alpha=0.8)
+                axes[1, 0].set_title('Skewness (Red = High Skew)')
+                axes[1, 0].tick_params(axis='x', rotation=45)
+                axes[1, 0].axhline(y=0, color='black', linestyle='-', alpha=0.3)
+                
+                # Kurtosis
+                kurts = [numeric_data[col].kurtosis() for col in cols_to_plot]
+                colors = ['red' if abs(k) > 2 else 'green' for k in kurts]
+                axes[1, 1].bar(cols_to_plot, kurts, color=colors, alpha=0.8)
+                axes[1, 1].set_title('Kurtosis (Red = High Kurtosis)')
+                axes[1, 1].tick_params(axis='x', rotation=45)
+                axes[1, 1].axhline(y=0, color='black', linestyle='-', alpha=0.3)
+                
+                plt.tight_layout()
+                plt.savefig(plots_dir / 'statistical_summary.png', dpi=300, bbox_inches='tight')
+                plt.close()
+                
+                pbar.update(1)
             
-            # 4. Summary statistics visualization
-            fig, axes = plt.subplots(2, 2, figsize=(15, 12))
-            fig.suptitle('Statistical Summary', fontsize=16, fontweight='bold')
+            # Calculate and display timing information
+            end_time = time.time()
+            total_time = end_time - start_time
+            avg_time_per_plot = total_time / len(plot_tasks)
             
-            # Mean vs Median comparison
-            means = [numeric_data[col].mean() for col in cols_to_plot]
-            medians = [numeric_data[col].median() for col in cols_to_plot]
-            
-            x = range(len(cols_to_plot))
-            width = 0.35
-            
-            axes[0, 0].bar([i - width/2 for i in x], means, width, label='Mean', alpha=0.8)
-            axes[0, 0].bar([i + width/2 for i in x], medians, width, label='Median', alpha=0.8)
-            axes[0, 0].set_title('Mean vs Median Comparison')
-            axes[0, 0].set_xticks(x)
-            axes[0, 0].set_xticklabels(cols_to_plot, rotation=45)
-            axes[0, 0].legend()
-            
-            # Coefficient of Variation
-            cvs = [numeric_data[col].std() / numeric_data[col].mean() 
-                   if numeric_data[col].mean() != 0 else 0 for col in cols_to_plot]
-            axes[0, 1].bar(cols_to_plot, cvs, color='skyblue', alpha=0.8)
-            axes[0, 1].set_title('Coefficient of Variation')
-            axes[0, 1].tick_params(axis='x', rotation=45)
-            
-            # Skewness
-            skews = [numeric_data[col].skew() for col in cols_to_plot]
-            colors = ['red' if abs(s) > 0.5 else 'green' for s in skews]
-            axes[1, 0].bar(cols_to_plot, skews, color=colors, alpha=0.8)
-            axes[1, 0].set_title('Skewness (Red = High Skew)')
-            axes[1, 0].tick_params(axis='x', rotation=45)
-            axes[1, 0].axhline(y=0, color='black', linestyle='-', alpha=0.3)
-            
-            # Kurtosis
-            kurts = [numeric_data[col].kurtosis() for col in cols_to_plot]
-            colors = ['red' if abs(k) > 2 else 'green' for k in kurts]
-            axes[1, 1].bar(cols_to_plot, kurts, color=colors, alpha=0.8)
-            axes[1, 1].set_title('Kurtosis (Red = High Kurtosis)')
-            axes[1, 1].tick_params(axis='x', rotation=45)
-            axes[1, 1].axhline(y=0, color='black', linestyle='-', alpha=0.3)
-            
-            plt.tight_layout()
-            plt.savefig(plots_dir / 'statistical_summary.png', dpi=300, bbox_inches='tight')
-            plt.close()
-            
-            print(f"✅ Generated 4 visualization files:")
+            print(f"\n✅ Generated {len(plot_tasks)} visualization files in {total_time:.1f}s:")
             print(f"   • distributions.png - Distribution analysis")
             print(f"   • boxplots.png - Outlier detection")
             print(f"   • correlation_heatmap.png - Feature relationships")
             print(f"   • statistical_summary.png - Statistical comparisons")
+            print(f"   ⏱️  Average time per plot: {avg_time_per_plot:.1f}s")
             
         except ImportError:
             print("⚠️  matplotlib/seaborn not available - skipping visualizations")
