@@ -266,7 +266,7 @@ class TestPutCallRatioPeriodFix:
         import numpy as np
         
         # Create realistic data similar to mn1
-        dates = pd.date_range('1993-01-01', periods=383, freq='M')
+        dates = pd.date_range('1993-01-01', periods=383, freq='ME')
         np.random.seed(42)
         
         # Generate realistic price data

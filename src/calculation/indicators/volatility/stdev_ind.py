@@ -41,7 +41,7 @@ def calculate_stdev(price_series: pd.Series, period: int = 20) -> pd.Series:
         return pd.Series(index=price_series.index, dtype=float)
     
     # Calculate price changes
-    price_changes = price_series.pct_change().dropna()
+    price_changes = price_series.pct_change(fill_method=None).dropna()
     
     if len(price_changes) < period:
         logger.print_warning("Not enough price change data for Standard Deviation calculation")
@@ -70,7 +70,7 @@ def calculate_stdev_signals(stdev_values: pd.Series, price_series: pd.Series,
     signals = pd.Series(NOTRADE, index=stdev_values.index)
     
     # Calculate price momentum
-    price_momentum = price_series.pct_change()
+    price_momentum = price_series.pct_change(fill_method=None)
     
     # BUY signal: Low volatility and positive momentum (breakout potential)
     buy_condition = (stdev_values < low_volatility_threshold) & (price_momentum > 0) & (price_momentum > price_momentum.shift(1))

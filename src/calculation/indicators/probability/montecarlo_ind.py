@@ -120,7 +120,7 @@ def calculate_montecarlo_confidence_bands(mc_forecast: pd.Series, confidence_lev
         tuple[pd.Series, pd.Series]: Upper and lower confidence bands
     """
     # Calculate rolling standard deviation of forecast changes
-    forecast_changes = mc_forecast.pct_change().rolling(window=20, min_periods=5).std()
+    forecast_changes = mc_forecast.pct_change(fill_method=None).rolling(window=20, min_periods=5).std()
     
     # Calculate confidence interval
     z_score = 1.96  # For 95% confidence level

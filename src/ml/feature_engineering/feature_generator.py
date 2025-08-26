@@ -218,7 +218,7 @@ class FeatureGenerator(BaseFeatureGenerator):
             X = df[feature_columns].fillna(0)
             
             # Calculate feature importance (using correlation with price changes as proxy)
-            price_changes = df['Close'].pct_change().fillna(0)
+            price_changes = df['Close'].pct_change(fill_method=None).fillna(0)
             feature_importance = {}
             
             for col in feature_columns:

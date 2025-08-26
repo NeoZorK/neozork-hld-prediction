@@ -103,7 +103,7 @@ def calculate_atr_signals_enhanced(atr_values: pd.Series, atr_period: int) -> pd
     atr_std = atr_values.rolling(window=atr_period).std()
     
     # Calculate ATR change rate
-    atr_change = atr_values.pct_change()
+    atr_change = atr_values.pct_change(fill_method=None)
     atr_change_ma = atr_change.rolling(window=short_window).mean()
     
     # Enhanced BUY signals with period sensitivity

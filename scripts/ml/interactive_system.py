@@ -3292,8 +3292,8 @@ class InteractiveSystem:
                             
                             if not pd.isna(max_val) and not pd.isna(min_val):
                                 # Replace +inf with max * 1.1, -inf with min * 0.9
-                                self.current_data[col] = self.current_data[col].replace(np.inf, max_val * 1.1)
-                                self.current_data[col] = self.current_data[col].replace(-np.inf, min_val * 0.9)
+                                self.current_data.loc[:, col] = self.current_data[col].replace(np.inf, max_val * 1.1)
+                                self.current_data.loc[:, col] = self.current_data[col].replace(-np.inf, min_val * 0.9)
                                 fixes_applied.append(f"Replaced infinity values in {col} with finite bounds")
                         pbar.update(1)
             

@@ -35,7 +35,7 @@ class TestInteractiveSystemImprovements:
         np.random.seed(42)
         
         # Create sample OHLCV data with issues
-        dates = pd.date_range('2023-01-01', periods=1000, freq='H')
+        dates = pd.date_range('2023-01-01', periods=1000, freq='h')
         
         data = {
             'datetime': dates,

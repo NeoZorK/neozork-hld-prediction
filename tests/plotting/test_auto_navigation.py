@@ -24,7 +24,7 @@ class TestAutoTerminalNavigator:
     def setup_method(self):
         """Set up test data."""
         # Create sample data with multiple field types
-        dates = pd.date_range('2024-01-01', periods=100, freq='H')
+        dates = pd.date_range('2024-01-01', periods=100, freq='h')
         self.sample_data = pd.DataFrame({
             'DateTime': dates,
             'Open': np.random.uniform(1.0, 2.0, 100),

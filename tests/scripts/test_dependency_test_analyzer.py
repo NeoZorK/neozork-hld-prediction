@@ -18,9 +18,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts" / "analys
 from dependency_test_analyzer import (
     DependencyTestAnalyzer, 
     DependencyTestResult, 
-    TestSummary,
-    TestEnvironment,
-    TestType
+    DependencyTestSummary,
+    DependencyTestEnvironment,
+    DependencyTestType
 )
 
 class TestDependencyTestAnalyzer:
@@ -64,16 +64,16 @@ beautifulsoup4==4.9.3
         
         if is_docker:
             # In Docker environment, should return DOCKER
-            assert env == TestEnvironment.DOCKER
+            assert env == DependencyTestEnvironment.DOCKER
         else:
             # In native environment, should return NATIVE
-            assert env == TestEnvironment.NATIVE
+            assert env == DependencyTestEnvironment.NATIVE
         
         # Test Docker environment detection with mock
         with patch('os.path.exists') as mock_exists:
             mock_exists.return_value = True
             env = analyzer.detect_environment()
-            assert env == TestEnvironment.DOCKER
+            assert env == DependencyTestEnvironment.DOCKER
     
     def test_parse_requirements(self, temp_project):
         """Test requirements parsing"""
@@ -205,7 +205,7 @@ beautifulsoup4==4.9.3
         mock_run_pytest.return_value = (1, "", "ModuleNotFoundError")
         
         # Test package
-        result = analyzer.test_package("numpy", TestEnvironment.NATIVE, TestType.PYTEST)
+        result = analyzer.test_package("numpy", DependencyTestEnvironment.NATIVE, DependencyTestType.PYTEST)
         
         assert result.package_name == "numpy"
         assert result.is_required == True
@@ -225,7 +225,7 @@ beautifulsoup4==4.9.3
         mock_run_pytest.return_value = (0, "passed", "")
         
         # Test package
-        result = analyzer.test_package("numpy", TestEnvironment.NATIVE, TestType.PYTEST)
+        result = analyzer.test_package("numpy", DependencyTestEnvironment.NATIVE, DependencyTestType.PYTEST)
         
         assert result.package_name == "numpy"
         assert result.is_required == False
@@ -268,8 +268,8 @@ beautifulsoup4==4.9.3
         
         # Run analysis
         summary = analyzer.run_analysis(
-            environment=TestEnvironment.NATIVE,
-            test_type=TestType.PYTEST,
+            environment=DependencyTestEnvironment.NATIVE,
+            test_type=DependencyTestType.PYTEST,
             packages=["numpy", "pandas"]
         )
         
@@ -285,8 +285,8 @@ beautifulsoup4==4.9.3
         analyzer = DependencyTestAnalyzer(temp_project)
         
         summary = analyzer.run_analysis(
-            environment=TestEnvironment.NATIVE,
-            test_type=TestType.PYTEST,
+            environment=DependencyTestEnvironment.NATIVE,
+            test_type=DependencyTestType.PYTEST,
             packages=["numpy", "pandas"],
             dry_run=True
         )
@@ -301,8 +301,8 @@ beautifulsoup4==4.9.3
         analyzer = DependencyTestAnalyzer(temp_project)
         
         summary = analyzer.run_analysis(
-            environment=TestEnvironment.NATIVE,
-            test_type=TestType.PYTEST,
+            environment=DependencyTestEnvironment.NATIVE,
+            test_type=DependencyTestType.PYTEST,
             packages=[]
         )
         
@@ -356,23 +356,23 @@ beautifulsoup4==4.9.3
         assert "REQUIRED PACKAGES" in captured.out
         assert "UNUSED PACKAGES" in captured.out
 
-class TestTestEnvironment:
-    """Test TestEnvironment enum"""
+class TestDependencyTestEnvironment:
+    """Test DependencyTestEnvironment enum"""
     
     def test_enum_values(self):
         """Test enum values"""
-        assert TestEnvironment.NATIVE.value == "native"
-        assert TestEnvironment.DOCKER.value == "docker"
-        assert TestEnvironment.CONTAINER.value == "container"
+        assert DependencyTestEnvironment.NATIVE.value == "native"
+        assert DependencyTestEnvironment.DOCKER.value == "docker"
+        assert DependencyTestEnvironment.CONTAINER.value == "container"
 
-class TestTestType:
-    """Test TestType enum"""
+class TestDependencyTestType:
+    """Test DependencyTestType enum"""
     
     def test_enum_values(self):
         """Test enum values"""
-        assert TestType.PYTEST.value == "pytest"
-        assert TestType.MCP.value == "mcp"
-        assert TestType.ALL.value == "all"
+        assert DependencyTestType.PYTEST.value == "pytest"
+        assert DependencyTestType.MCP.value == "mcp"
+        assert DependencyTestType.ALL.value == "all"
 
 if __name__ == "__main__":
     pytest.main([__file__])

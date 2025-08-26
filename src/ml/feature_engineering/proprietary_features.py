@@ -248,7 +248,7 @@ class ProprietaryFeatureGenerator(BaseFeatureGenerator):
                     self.log_feature_generation(f"{feature}_derivative2", importance=0.5)
                     
                     # Rate of change percentage
-                    df[f"{feature}_roc"] = df[feature].pct_change()
+                    df[f"{feature}_roc"] = df[feature].pct_change(fill_method=None)
                     self.log_feature_generation(f"{feature}_roc", importance=0.6)
                     
                     # Moving average ratios

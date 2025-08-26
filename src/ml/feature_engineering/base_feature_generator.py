@@ -182,7 +182,7 @@ class BaseFeatureGenerator(ABC):
             logger.print_error(f"Price column '{price_col}' not found")
             return pd.Series(dtype=float)
             
-        returns = df[price_col].pct_change()
+        returns = df[price_col].pct_change(fill_method=None)
         return returns
     
     def calculate_log_returns(self, df: pd.DataFrame, price_col: str = 'Close') -> pd.Series:

@@ -620,7 +620,7 @@ class TestUniversalTradingMetricsEdgeCases:
     def test_large_dataframe(self, calculator):
         """Test handling of large DataFrame."""
         # Create large DataFrame
-        dates = pd.date_range('2020-01-01', periods=10000, freq='H')
+        dates = pd.date_range('2020-01-01', periods=10000, freq='h')
         np.random.seed(42)
         
         base_price = 100.0

@@ -40,7 +40,7 @@ class TestEnhancedInteractiveSystem:
         """Create sample data with issues for testing."""
         # Create data with various issues
         data = pd.DataFrame({
-            'timestamp': pd.date_range('2023-01-01', periods=100, freq='H'),
+            'timestamp': pd.date_range('2023-01-01', periods=100, freq='h'),
             'open': [100 + i * 0.1 + np.random.normal(0, 0.5) for i in range(100)],
             'high': [101 + i * 0.1 + np.random.normal(0, 0.5) for i in range(100)],
             'low': [99 + i * 0.1 + np.random.normal(0, 0.5) for i in range(100)],

@@ -191,6 +191,8 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
         try:
             # Price differences across different lookback periods
             lookback_periods = getattr(self.config, 'lookback_periods', [5, 10, 20, 50])
+            new_features = {}
+            
             for period in lookback_periods:
                 if len(df) > period:
                     try:
@@ -201,32 +203,36 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
                                 # Current vs short-term average difference
                                 short_avg = df[price_col].rolling(window=period//2).mean()
                                 feature_name = f"diff_{price_type}_current_short_{period}"
-                                df[feature_name] = df[price_col] - short_avg
+                                new_features[feature_name] = df[price_col] - short_avg
                                 self.log_feature_generation(feature_name, importance=0.6)
                                 self.difference_features.append(feature_name)
                                 
                                 # Current vs long-term average difference
                                 long_avg = df[price_col].rolling(window=period).mean()
                                 feature_name = f"diff_{price_type}_current_long_{period}"
-                                df[feature_name] = df[price_col] - long_avg
+                                new_features[feature_name] = df[price_col] - long_avg
                                 self.log_feature_generation(feature_name, importance=0.7)
                                 self.difference_features.append(feature_name)
                                 
                                 # Short-term vs long-term average difference
                                 feature_name = f"diff_{price_type}_short_long_{period}"
-                                df[feature_name] = short_avg - long_avg
+                                new_features[feature_name] = short_avg - long_avg
                                 self.log_feature_generation(feature_name, importance=0.6)
                                 self.difference_features.append(feature_name)
                                 
                                 # Normalized differences
                                 feature_name = f"norm_diff_{price_type}_current_long_{period}"
-                                df[feature_name] = (df[price_col] - long_avg) / long_avg
+                                new_features[feature_name] = (df[price_col] - long_avg) / long_avg
                                 self.log_feature_generation(feature_name, importance=0.6)
                                 self.difference_features.append(feature_name)
                                 
                     except Exception as e:
                         logger.print_warning(f"Error generating difference features for period {period}: {e}")
                         continue
+            
+            # Add all new features at once to avoid fragmentation
+            if new_features:
+                df = pd.concat([df, pd.DataFrame(new_features, index=df.index)], axis=1)
                         
         except Exception as e:
             logger.print_error(f"Error generating difference features: {e}")
@@ -293,14 +299,14 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
                             price_col = price_type.capitalize()
                             if price_col in df.columns:
                                 # Short-term volatility
-                                short_vol = df[price_col].pct_change().rolling(window=period//2).std()
+                                short_vol = df[price_col].pct_change(fill_method=None).rolling(window=period//2).std()
                                 feature_name = f"volatility_{price_type}_short_{period}"
                                 df[feature_name] = short_vol
                                 self.log_feature_generation(feature_name, importance=0.6)
                                 self.volatility_features.append(feature_name)
                                 
                                 # Long-term volatility
-                                long_vol = df[price_col].pct_change().rolling(window=period).std()
+                                long_vol = df[price_col].pct_change(fill_method=None).rolling(window=period).std()
                                 feature_name = f"volatility_{price_type}_long_{period}"
                                 df[feature_name] = long_vol
                                 self.log_feature_generation(feature_name, importance=0.7)
@@ -320,7 +326,7 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
                                 
                                 # Volatility momentum
                                 feature_name = f"volatility_momentum_{price_type}_{period}"
-                                df[feature_name] = long_vol.pct_change()
+                                df[feature_name] = long_vol.pct_change(fill_method=None)
                                 self.log_feature_generation(feature_name, importance=0.5)
                                 self.volatility_features.append(feature_name)
                                 
@@ -363,7 +369,7 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
         if price_col not in df.columns:
             return pd.Series(dtype=float)
         
-        returns = df[price_col].pct_change()
+        returns = df[price_col].pct_change(fill_method=None)
         return returns.rolling(window=period).std()
     
     def _resample_data(self, df: pd.DataFrame, timeframe: str) -> pd.DataFrame:

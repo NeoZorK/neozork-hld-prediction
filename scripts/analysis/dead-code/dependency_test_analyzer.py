@@ -41,13 +41,13 @@ except ImportError:
 # Project root directory
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 
-class TestEnvironment(Enum):
+class DependencyTestEnvironment(Enum):
     """Test environments"""
     NATIVE = "native"
     DOCKER = "docker"
     CONTAINER = "container"
 
-class TestType(Enum):
+class DependencyTestType(Enum):
     """Types of tests to run"""
     PYTEST = "pytest"
     MCP = "mcp"
@@ -65,7 +65,7 @@ class DependencyTestResult:
     confidence: float = 1.0
 
 @dataclass
-class TestSummary:
+class DependencyTestSummary:
     """Summary of dependency testing"""
     total_packages: int
     required_packages: int
@@ -90,17 +90,17 @@ class DependencyTestAnalyzer:
         
         # Test configurations
         self.test_configs = {
-            TestEnvironment.NATIVE: {
+            DependencyTestEnvironment.NATIVE: {
                 'pytest_cmd': ['uv', 'run', 'pytest', 'tests', '-n', 'auto'],
                 'mcp_cmd': ['uv', 'run', 'python', 'scripts/mcp/check_mcp_status.py'],
                 'install_cmd': ['uv', 'pip', 'install', '-r', 'requirements.txt']
             },
-            TestEnvironment.DOCKER: {
+            DependencyTestEnvironment.DOCKER: {
                 'pytest_cmd': ['docker', 'exec', 'neozork-container', 'uv', 'run', 'pytest', 'tests', '-n', 'auto'],
                 'mcp_cmd': ['docker', 'exec', 'neozork-container', 'uv', 'run', 'python', 'scripts/mcp/check_mcp_status.py'],
                 'install_cmd': ['docker', 'exec', 'neozork-container', 'uv', 'pip', 'install', '-r', 'requirements.txt']
             },
-            TestEnvironment.CONTAINER: {
+            DependencyTestEnvironment.CONTAINER: {
                 'pytest_cmd': ['podman', 'exec', 'neozork-container', 'uv', 'run', 'pytest', 'tests', '-n', 'auto'],
                 'mcp_cmd': ['podman', 'exec', 'neozork-container', 'uv', 'run', 'python', 'scripts/mcp/check_mcp_status.py'],
                 'install_cmd': ['podman', 'exec', 'neozork-container', 'uv', 'pip', 'install', '-r', 'requirements.txt']
@@ -148,14 +148,14 @@ class DependencyTestAnalyzer:
             'polygon-api-client',  # Polygon API
         }
     
-    def detect_environment(self) -> TestEnvironment:
+    def detect_environment(self) -> DependencyTestEnvironment:
         """Detect the current test environment"""
         if os.path.exists('/.dockerenv'):
-            return TestEnvironment.DOCKER
+            return DependencyTestEnvironment.DOCKER
         elif os.path.exists('/.container'):
-            return TestEnvironment.CONTAINER
+            return DependencyTestEnvironment.CONTAINER
         else:
-            return TestEnvironment.NATIVE
+            return DependencyTestEnvironment.NATIVE
     
     def parse_requirements(self) -> List[str]:
         """Parse requirements.txt and return list of packages"""
@@ -265,7 +265,7 @@ class DependencyTestAnalyzer:
         except Exception as e:
             return -1, "", str(e)
     
-    def install_dependencies(self, environment: TestEnvironment) -> bool:
+    def install_dependencies(self, environment: DependencyTestEnvironment) -> bool:
         """Install dependencies in the specified environment"""
         config = self.test_configs[environment]
         cmd = config['install_cmd']
@@ -280,7 +280,7 @@ class DependencyTestAnalyzer:
             self.logger.error(f"Failed to install dependencies: {stderr}")
             return False
     
-    def run_pytest(self, environment: TestEnvironment) -> Tuple[int, str, str]:
+    def run_pytest(self, environment: DependencyTestEnvironment) -> Tuple[int, str, str]:
         """Run pytest in the specified environment"""
         config = self.test_configs[environment]
         cmd = config['pytest_cmd']
@@ -288,7 +288,7 @@ class DependencyTestAnalyzer:
         self.logger.info(f"Running pytest in {environment.value} environment...")
         return self.run_command(cmd, timeout=600)
     
-    def run_mcp_test(self, environment: TestEnvironment) -> Tuple[int, str, str]:
+    def run_mcp_test(self, environment: DependencyTestEnvironment) -> Tuple[int, str, str]:
         """Run MCP server test in the specified environment"""
         config = self.test_configs[environment]
         cmd = config['mcp_cmd']
@@ -331,7 +331,7 @@ class DependencyTestAnalyzer:
         # If no clear success/failure indicators, assume failure
         return False, "No clear success indicators found"
     
-    def test_package(self, package_name: str, environment: TestEnvironment, test_type: TestType) -> DependencyTestResult:
+    def test_package(self, package_name: str, environment: DependencyTestEnvironment, test_type: DependencyTestType) -> DependencyTestResult:
         """Test a single package by disabling it and running tests"""
         start_time = time.time()
         
@@ -363,11 +363,11 @@ class DependencyTestAnalyzer:
                 )
             
             # Run tests based on test type
-            if test_type == TestType.PYTEST:
+            if test_type == DependencyTestType.PYTEST:
                 exit_code, stdout, stderr = self.run_pytest(environment)
-            elif test_type == TestType.MCP:
+            elif test_type == DependencyTestType.MCP:
                 exit_code, stdout, stderr = self.run_mcp_test(environment)
-            elif test_type == TestType.ALL:
+            elif test_type == DependencyTestType.ALL:
                 # Run both pytest and MCP tests
                 pytest_exit, pytest_out, pytest_err = self.run_pytest(environment)
                 mcp_exit, mcp_out, mcp_err = self.run_mcp_test(environment)
@@ -396,8 +396,8 @@ class DependencyTestAnalyzer:
             # Always re-enable the package
             self.enable_package(package_name)
     
-    def run_analysis(self, environment: TestEnvironment = None, test_type: TestType = TestType.ALL, 
-                    packages: List[str] = None, dry_run: bool = False) -> TestSummary:
+    def run_analysis(self, environment: DependencyTestEnvironment = None, test_type: DependencyTestType = DependencyTestType.ALL, 
+                                          packages: List[str] = None, dry_run: bool = False) -> DependencyTestSummary:
         """Run dependency analysis"""
         if environment is None:
             environment = self.detect_environment()
@@ -411,7 +411,7 @@ class DependencyTestAnalyzer:
         
         if not packages:
             self.logger.error("No packages to test")
-            return TestSummary(
+            return DependencyTestSummary(
                 total_packages=0,
                 required_packages=0,
                 unused_packages=0,
@@ -427,7 +427,7 @@ class DependencyTestAnalyzer:
             self.logger.info("DRY RUN: Would test the following packages:")
             for pkg in packages:
                 self.logger.info(f"  - {pkg}")
-            return TestSummary(
+            return DependencyTestSummary(
                 total_packages=len(packages),
                 required_packages=0,
                 unused_packages=len(packages),
@@ -440,7 +440,7 @@ class DependencyTestAnalyzer:
         # Create backup
         if not self.create_backup():
             self.logger.error("Failed to create backup, aborting")
-            return TestSummary(
+            return DependencyTestSummary(
                 total_packages=len(packages),
                 required_packages=0,
                 unused_packages=0,
@@ -471,7 +471,7 @@ class DependencyTestAnalyzer:
         required_count = sum(1 for r in results if r.is_required)
         unused_count = len(results) - required_count
         
-        return TestSummary(
+        return DependencyTestSummary(
             total_packages=len(packages),
             required_packages=required_count,
             unused_packages=unused_count,
@@ -481,7 +481,7 @@ class DependencyTestAnalyzer:
             results=results
         )
     
-    def print_results(self, summary: TestSummary, verbose: bool = False):
+    def print_results(self, summary: DependencyTestSummary, verbose: bool = False):
         """Print analysis results"""
         print("\n" + "="*80)
         print("DEPENDENCY TEST ANALYSIS RESULTS")
@@ -538,12 +538,12 @@ def main():
     
     # Determine environment
     if args.environment:
-        environment = TestEnvironment(args.environment)
+        environment = DependencyTestEnvironment(args.environment)
     else:
         environment = None  # Will be auto-detected
     
     # Determine test type
-    test_type = TestType(args.test_type)
+    test_type = DependencyTestType(args.test_type)
     
     # Initialize analyzer
     analyzer = DependencyTestAnalyzer(PROJECT_ROOT)

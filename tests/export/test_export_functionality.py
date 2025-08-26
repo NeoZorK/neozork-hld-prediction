@@ -31,7 +31,7 @@ class TestExportFunctionality:
     @pytest.fixture
     def sample_ohlcv_data(self):
         """Create sample OHLCV data with indicators for testing."""
-        dates = pd.date_range('2024-01-01', periods=100, freq='H')
+        dates = pd.date_range('2024-01-01', periods=100, freq='h')
         
         # Generate realistic OHLCV data
         close_prices = 100 + np.cumsum(np.random.randn(100) * 0.1)

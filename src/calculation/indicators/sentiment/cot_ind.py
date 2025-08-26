@@ -42,7 +42,7 @@ def calculate_cot(price_series: pd.Series, volume_series: pd.Series, period: int
         return pd.Series(index=price_series.index, dtype=float)
     
     # Calculate price changes
-    price_changes = price_series.pct_change().dropna()
+    price_changes = price_series.pct_change(fill_method=None).dropna()
     
     if len(price_changes) < period:
         logger.print_warning("Not enough price change data for COT calculation")
@@ -62,7 +62,7 @@ def calculate_cot(price_series: pd.Series, volume_series: pd.Series, period: int
             vwap_change = price_window.mean()
         
         # Calculate volume momentum
-        volume_momentum = volume_window.pct_change().mean()
+        volume_momentum = volume_window.pct_change(fill_method=None).mean()
         
         # Calculate price momentum
         price_momentum = price_window.mean()

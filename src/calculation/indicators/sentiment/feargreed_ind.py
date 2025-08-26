@@ -41,7 +41,7 @@ def calculate_feargreed(price_series: pd.Series, period: int = 14) -> pd.Series:
         return pd.Series([np.nan]*len(price_series), index=price_series.index, dtype=float)
     
     # Calculate price changes
-    price_changes = price_series.pct_change()
+    price_changes = price_series.pct_change(fill_method=None)
     
     feargreed_values = pd.Series([np.nan]*len(price_series), index=price_series.index, dtype=float)
     

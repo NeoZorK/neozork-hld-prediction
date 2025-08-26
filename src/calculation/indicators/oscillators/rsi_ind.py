@@ -116,13 +116,13 @@ def apply_rule_rsi(df: pd.DataFrame, point: float,
         price_name = "Close"
     
     # Calculate RSI
-    df['RSI'] = calculate_rsi(price_series, rsi_period)
+    df.loc[:, 'RSI'] = calculate_rsi(price_series, rsi_period)
     
     # Add price type info to column name
-    df['RSI_Price_Type'] = price_name
+    df.loc[:, 'RSI_Price_Type'] = price_name
     
     # Calculate RSI signals
-    df['RSI_Signal'] = calculate_rsi_signals(df['RSI'], overbought, oversold)
+    df.loc[:, 'RSI_Signal'] = calculate_rsi_signals(df['RSI'], overbought, oversold)
     
     # Calculate support and resistance levels based on RSI
     volatility_factor = 0.02  # 2% volatility assumption
@@ -134,11 +134,11 @@ def apply_rule_rsi(df: pd.DataFrame, point: float,
     resistance_levels = open_prices * (1 + volatility_factor)
     
     # Set output columns
-    df['PPrice1'] = support_levels  # Support level
-    df['PColor1'] = BUY
-    df['PPrice2'] = resistance_levels  # Resistance level
-    df['PColor2'] = SELL
-    df['Direction'] = df['RSI_Signal']
-    df['Diff'] = df['RSI']  # Use RSI value as difference indicator
+    df.loc[:, 'PPrice1'] = support_levels  # Support level
+    df.loc[:, 'PColor1'] = BUY
+    df.loc[:, 'PPrice2'] = resistance_levels  # Resistance level
+    df.loc[:, 'PColor2'] = SELL
+    df.loc[:, 'Direction'] = df['RSI_Signal']
+    df.loc[:, 'Diff'] = df['RSI']  # Use RSI value as difference indicator
     
     return df

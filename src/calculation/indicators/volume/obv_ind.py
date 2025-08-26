@@ -42,7 +42,7 @@ def calculate_obv(price_series: pd.Series, volume_series: pd.Series, period: int
         return pd.Series(index=price_series.index, dtype=float)
     
     # Calculate price changes
-    price_changes = price_series.pct_change().dropna()
+    price_changes = price_series.pct_change(fill_method=None).dropna()
     
     if len(price_changes) < 1:
         logger.print_warning("Not enough price change data for OBV calculation")
@@ -85,8 +85,8 @@ def calculate_obv_signals(obv_values: pd.Series, price_series: pd.Series) -> pd.
     signals = pd.Series(NOTRADE, index=obv_values.index)
     
     # Calculate OBV momentum
-    obv_momentum = obv_values.pct_change()
-    price_momentum = price_series.pct_change()
+    obv_momentum = obv_values.pct_change(fill_method=None)
+    price_momentum = price_series.pct_change(fill_method=None)
     
     # BUY signal: OBV increasing and price momentum positive
     buy_condition = (obv_momentum > 0) & (price_momentum > 0) & (obv_momentum > obv_momentum.shift(1))
@@ -139,7 +139,7 @@ def apply_rule_obv(df: pd.DataFrame, point: float,
     obv_values = df['OBV']
     
     # Use OBV momentum to determine volatility
-    obv_momentum = obv_values.pct_change().abs()
+    obv_momentum = obv_values.pct_change(fill_method=None).abs()
     volatility_factor = 0.02 + obv_momentum * 0.1  # Base 2% + OBV momentum adjustment
     
     # Support level: Open price minus volatility

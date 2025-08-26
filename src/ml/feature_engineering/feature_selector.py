@@ -172,7 +172,7 @@ class FeatureSelector:
         """Apply mutual information-based feature selection."""
         try:
             # Create target variable (price changes)
-            y = X['Close'].pct_change().fillna(0) if 'Close' in X.columns else pd.Series(0, index=X.index)
+            y = X['Close'].pct_change(fill_method=None).fillna(0) if 'Close' in X.columns else pd.Series(0, index=X.index)
             
             # Remove non-numeric columns and target
             X_numeric = X.select_dtypes(include=[np.number])
@@ -204,7 +204,7 @@ class FeatureSelector:
         """Apply Lasso-based feature selection."""
         try:
             # Create target variable
-            y = X['Close'].pct_change().fillna(0) if 'Close' in X.columns else pd.Series(0, index=X.index)
+            y = X['Close'].pct_change(fill_method=None).fillna(0) if 'Close' in X.columns else pd.Series(0, index=X.index)
             
             # Remove non-numeric columns and target
             X_numeric = X.select_dtypes(include=[np.number])
@@ -244,7 +244,7 @@ class FeatureSelector:
         """Apply Random Forest-based feature selection."""
         try:
             # Create target variable
-            y = X['Close'].pct_change().fillna(0) if 'Close' in X.columns else pd.Series(0, index=X.index)
+            y = X['Close'].pct_change(fill_method=None).fillna(0) if 'Close' in X.columns else pd.Series(0, index=X.index)
             
             # Remove non-numeric columns and target
             X_numeric = X.select_dtypes(include=[np.number])
