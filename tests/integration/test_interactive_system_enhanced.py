@@ -166,6 +166,66 @@ class TestEnhancedInteractiveSystem:
         except ImportError as e:
             pytest.fail(f"Import failed: {e}")
     
+    def test_enhanced_basic_statistics(self, interactive_system, sample_data):
+        """Test enhanced basic statistics functionality."""
+        interactive_system.current_data = sample_data
+        
+        # Test that the function runs without errors
+        interactive_system.run_basic_statistics()
+        
+        # Check that results were saved
+        assert 'basic_statistics' in interactive_system.current_results
+        
+        # Check that analysis summary was created
+        stats = interactive_system.current_results['basic_statistics']
+        assert 'analysis_summary' in stats
+        assert 'total_columns' in stats['analysis_summary']
+        assert 'total_observations' in stats['analysis_summary']
+    
+    def test_statistics_plots_creation(self, interactive_system, sample_data, tmp_path):
+        """Test that statistics plots are created correctly."""
+        interactive_system.current_data = sample_data
+        
+        # Change to temp directory for testing
+        original_cwd = os.getcwd()
+        os.chdir(tmp_path)
+        
+        try:
+            # Create plots directory
+            plots_dir = Path("results/plots/statistics")
+            plots_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Test plot creation
+            numeric_data = sample_data.select_dtypes(include=[np.number])
+            interactive_system._create_statistics_plots(numeric_data)
+            
+            # Check that plots were created
+            expected_plots = ['distributions.png', 'boxplots.png', 'correlation_heatmap.png', 'statistical_summary.png']
+            for plot in expected_plots:
+                plot_path = plots_dir / plot
+                assert plot_path.exists(), f"Plot {plot} was not created"
+                
+        finally:
+            os.chdir(original_cwd)
+    
+    def test_infinite_value_handling(self, interactive_system):
+        """Test handling of infinite values in statistics."""
+        # Create data with infinite values
+        data = pd.DataFrame({
+            'normal': [1, 2, 3, 4, 5],
+            'with_inf': [1, 2, np.inf, 4, 5],
+            'with_neg_inf': [1, 2, -np.inf, 4, 5],
+            'with_nan': [1, 2, np.nan, 4, 5]
+        })
+        
+        interactive_system.current_data = data
+        
+        # This should not raise warnings or errors
+        interactive_system.run_basic_statistics()
+        
+        # Check that results were processed
+        assert 'basic_statistics' in interactive_system.current_results
+    
     def test_data_folder_structure_detection(self, interactive_system):
         """Test that data folder structure is detected correctly."""
         data_folder = Path("data")

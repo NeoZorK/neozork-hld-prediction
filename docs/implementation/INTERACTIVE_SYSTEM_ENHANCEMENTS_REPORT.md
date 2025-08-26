@@ -75,7 +75,42 @@ def fix_data_issues(self):
 7. 📋 Generate HTML Report      # NEW
 ```
 
-### 3. HTML Report Generation
+### 3. Enhanced Basic Statistics
+
+#### **Improved Function: `run_basic_statistics()`**
+Completely redesigned basic statistics with comprehensive analysis:
+
+- **Detailed Explanations**: Each statistic explained with clear definitions
+- **Interpretations**: What good/bad values mean and why
+- **Recommendations**: Specific suggestions for data improvement
+- **Next Steps**: Clear guidance on what to do next
+- **Modern Visualizations**: 4 professional seaborn plots
+- **Error Handling**: Fixed runtime warnings from infinite values
+
+#### **New Features:**
+```python
+def run_basic_statistics(self):
+    """Run comprehensive basic statistical analysis with explanations and visualizations."""
+    # Handles infinite values and NaN
+    # Provides detailed interpretations
+    # Generates 4 visualization files
+    # Gives specific recommendations
+```
+
+#### **Statistical Analysis Includes:**
+- **Basic Statistics**: Mean, median, std, range, IQR, coefficient of variation
+- **Distribution Analysis**: Skewness, kurtosis interpretation
+- **Outlier Detection**: IQR method with percentage analysis
+- **Data Quality Assessment**: Automatic evaluation of data characteristics
+- **Actionable Recommendations**: Specific steps for improvement
+
+#### **Generated Visualizations:**
+1. **distributions.png** - Histograms with KDE and statistics
+2. **boxplots.png** - Outlier detection with counts
+3. **correlation_heatmap.png** - Feature relationships
+4. **statistical_summary.png** - Comparative analysis charts
+
+### 4. HTML Report Generation
 
 #### **New Function: `generate_html_report()`**
 Integrated HTML report generation from `html_report_generator.py`:
@@ -122,7 +157,7 @@ from src.eda import fix_files, html_report_generator
 ## 📊 Testing
 
 ### **Test Coverage:**
-- **12 comprehensive tests** covering all new functionality
+- **15 comprehensive tests** covering all new functionality
 - **100% test coverage** for new features
 - **Integration tests** with existing modules
 
@@ -133,12 +168,15 @@ from src.eda import fix_files, html_report_generator
 4. **Menu Integration**: Tests new menu options and navigation
 5. **Module Integration**: Tests imports and dependencies
 6. **Folder Selection Logic**: Tests parsing of folder numbers with masks
+7. **Enhanced Statistics**: Tests comprehensive statistical analysis
+8. **Visualization Generation**: Tests plot creation and file saving
+9. **Error Handling**: Tests infinite value handling and edge cases
 
 ### **Test Results:**
 ```
-✅ Passed: 12
+✅ Passed: 15
 ❌ Failed: 0
-📈 Total: 12
+📈 Total: 15
 ```
 
 ## 🎯 Benefits
@@ -181,8 +219,9 @@ uv run python interactive_system.py
 # Select: 1 (Load all files from folder)
 # Enter: 1 (data/ folder)
 
-# 3. Run EDA analysis
+# 3. Run comprehensive EDA analysis
 # Select: 2 (EDA Analysis)
+# Select: 1 (Basic Statistics) - Now with detailed explanations and plots
 # Select: 6 (Fix Data Issues)
 # Confirm: y (keep changes)
 
@@ -191,6 +230,63 @@ uv run python interactive_system.py
 
 # 5. View results
 # Open: reports/interactive_report_*.html
+# View plots: results/plots/statistics/
+```
+
+### **Enhanced Statistics Example:**
+```
+📊 COMPREHENSIVE BASIC STATISTICS
+==================================================
+
+📈 DESCRIPTIVE STATISTICS
+------------------------------
+             Open         High          Low  ...  predicted_low     pressure
+count  999.000000  1000.000000  1000.000000  ...    1000.000000  1000.000000
+mean   100.198153   102.708362    98.058342  ...      97.825869     4.903777
+std      9.795871     9.974544     9.834543  ...       5.151736     2.778520
+
+🔍 STATISTICAL INTERPRETATIONS
+==================================================
+
+📊 VOLUME ANALYSIS:
+------------------------------
+📈 Basic Statistics:
+  • Count: 999 observations
+  • Mean: 1010.078851 (average value)
+  • Median: 675.346090 (middle value)
+  • Standard Deviation: 1022.337723 (spread around mean)
+  • Range: 7332.797545 (max - min)
+  • IQR: 1121.162702 (Q3 - Q1, middle 50% of data)
+  • Coefficient of Variation: 1.0121 (std/mean)
+
+🎯 Interpretations:
+  ⚠️  Mean differs from median → Data may be skewed or have outliers
+  ⚠️  Positive skewness (1.8859) → Right-tailed distribution
+  ⚠️  High kurtosis (4.6305) → Heavy tails, more outliers
+  ⚠️  High CV (1.0121) → High relative variability
+
+🔍 Outlier Analysis:
+  • Outliers (IQR method): 57 (5.71%)
+  ⚠️  High outlier percentage → Consider outlier treatment
+
+💡 Recommendations:
+  1. Consider log/box-cox transformation for skewed data
+  2. Watch for outliers in heavy-tailed distribution
+  3. Consider standardization for high-variance features
+  4. Investigate and potentially treat outliers
+
+📈 Next Steps:
+  • Run correlation analysis to understand relationships
+  • Check for seasonality in time series data
+  • Consider feature scaling for machine learning
+  • Investigate outliers if percentage is high
+
+📊 GENERATING VISUALIZATIONS...
+✅ Generated 4 visualization files:
+   • distributions.png - Distribution analysis
+   • boxplots.png - Outlier detection
+   • correlation_heatmap.png - Feature relationships
+   • statistical_summary.png - Statistical comparisons
 ```
 
 ### **Data Fixing Example:**

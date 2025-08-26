@@ -305,43 +305,302 @@ class InteractiveSystem:
 
     
     def run_basic_statistics(self):
-        """Run basic statistical analysis."""
+        """Run comprehensive basic statistical analysis with explanations and visualizations."""
         if self.current_data is None:
             print("❌ No data loaded. Please load data first.")
             return
             
-        print("\n📊 BASIC STATISTICS")
-        print("-" * 30)
+        print("\n📊 COMPREHENSIVE BASIC STATISTICS")
+        print("=" * 50)
         
         try:
+            # Filter out infinite values and handle NaN values
+            numeric_data = self.current_data.select_dtypes(include=[np.number]).copy()
+            
+            # Replace infinite values with NaN to avoid warnings
+            numeric_data = numeric_data.replace([np.inf, -np.inf], np.nan)
+            
             # Descriptive statistics
-            desc_stats = self.current_data.describe()
-            print("\n📈 Descriptive Statistics:")
+            desc_stats = numeric_data.describe()
+            
+            print("\n📈 DESCRIPTIVE STATISTICS")
+            print("-" * 30)
             print(desc_stats)
             
-            # Additional statistics for numeric columns
-            numeric_cols = self.current_data.select_dtypes(include=[np.number]).columns
-            if len(numeric_cols) > 0:
-                print(f"\n📊 Additional Statistics for {len(numeric_cols)} numeric columns:")
-                for col in numeric_cols[:5]:  # Show first 5 columns
-                    col_data = self.current_data[col].dropna()
-                    if len(col_data) > 0:
-                        print(f"\n{col}:")
-                        print(f"  Skewness: {col_data.skew():.4f}")
-                        print(f"  Kurtosis: {col_data.kurtosis():.4f}")
-                        print(f"  Range: {col_data.max() - col_data.min():.4f}")
-                        print(f"  IQR: {col_data.quantile(0.75) - col_data.quantile(0.25):.4f}")
+            # Statistical explanations and interpretations
+            print("\n🔍 STATISTICAL INTERPRETATIONS")
+            print("=" * 50)
+            
+            for col in numeric_data.columns:
+                col_data = numeric_data[col].dropna()
+                if len(col_data) == 0:
+                    continue
+                    
+                print(f"\n📊 {col.upper()} ANALYSIS:")
+                print("-" * 30)
+                
+                # Basic statistics
+                mean_val = col_data.mean()
+                median_val = col_data.median()
+                std_val = col_data.std()
+                skew_val = col_data.skew()
+                kurt_val = col_data.kurtosis()
+                q25 = col_data.quantile(0.25)
+                q75 = col_data.quantile(0.75)
+                iqr = q75 - q25
+                range_val = col_data.max() - col_data.min()
+                cv = std_val / mean_val if mean_val != 0 else 0
+                
+                print(f"📈 Basic Statistics:")
+                print(f"  • Count: {len(col_data):,} observations")
+                print(f"  • Mean: {mean_val:.6f} (average value)")
+                print(f"  • Median: {median_val:.6f} (middle value)")
+                print(f"  • Standard Deviation: {std_val:.6f} (spread around mean)")
+                print(f"  • Range: {range_val:.6f} (max - min)")
+                print(f"  • IQR: {iqr:.6f} (Q3 - Q1, middle 50% of data)")
+                print(f"  • Coefficient of Variation: {cv:.4f} (std/mean)")
+                
+                # Interpretations
+                print(f"\n🎯 Interpretations:")
+                
+                # Mean vs Median
+                if abs(mean_val - median_val) / mean_val > 0.1:
+                    print(f"  ⚠️  Mean ({mean_val:.6f}) differs from median ({median_val:.6f})")
+                    print(f"     → Data may be skewed or have outliers")
+                else:
+                    print(f"  ✅ Mean and median are similar → Data is well-centered")
+                
+                # Skewness interpretation
+                if abs(skew_val) < 0.5:
+                    print(f"  ✅ Skewness ({skew_val:.4f}) is low → Data is approximately symmetric")
+                elif skew_val > 0.5:
+                    print(f"  ⚠️  Positive skewness ({skew_val:.4f}) → Right-tailed distribution")
+                    print(f"     → Many small values, few large values")
+                else:
+                    print(f"  ⚠️  Negative skewness ({skew_val:.4f}) → Left-tailed distribution")
+                    print(f"     → Many large values, few small values")
+                
+                # Kurtosis interpretation
+                if abs(kurt_val) < 2:
+                    print(f"  ✅ Kurtosis ({kurt_val:.4f}) is moderate → Normal-like tails")
+                elif kurt_val > 2:
+                    print(f"  ⚠️  High kurtosis ({kurt_val:.4f}) → Heavy tails, more outliers")
+                else:
+                    print(f"  ⚠️  Low kurtosis ({kurt_val:.4f}) → Light tails, fewer outliers")
+                
+                # Coefficient of Variation
+                if cv > 1:
+                    print(f"  ⚠️  High CV ({cv:.4f}) → High relative variability")
+                elif cv < 0.1:
+                    print(f"  ✅ Low CV ({cv:.4f}) → Low relative variability")
+                else:
+                    print(f"  ✅ Moderate CV ({cv:.4f}) → Reasonable variability")
+                
+                # Outlier detection using IQR method
+                lower_bound = q25 - 1.5 * iqr
+                upper_bound = q75 + 1.5 * iqr
+                outliers = col_data[(col_data < lower_bound) | (col_data > upper_bound)]
+                outlier_pct = len(outliers) / len(col_data) * 100
+                
+                print(f"\n🔍 Outlier Analysis:")
+                print(f"  • Outliers (IQR method): {len(outliers):,} ({outlier_pct:.2f}%)")
+                if outlier_pct > 5:
+                    print(f"  ⚠️  High outlier percentage → Consider outlier treatment")
+                else:
+                    print(f"  ✅ Reasonable outlier percentage")
+                
+                # Recommendations
+                print(f"\n💡 Recommendations:")
+                recommendations = []
+                
+                if abs(skew_val) > 1:
+                    recommendations.append("Consider log/box-cox transformation for skewed data")
+                if kurt_val > 3:
+                    recommendations.append("Watch for outliers in heavy-tailed distribution")
+                if cv > 1:
+                    recommendations.append("Consider standardization for high-variance features")
+                if outlier_pct > 5:
+                    recommendations.append("Investigate and potentially treat outliers")
+                if len(col_data) < 100:
+                    recommendations.append("Small sample size - consider collecting more data")
+                
+                if recommendations:
+                    for i, rec in enumerate(recommendations, 1):
+                        print(f"  {i}. {rec}")
+                else:
+                    print(f"  ✅ Data looks good for most analyses")
+                
+                print(f"\n📈 Next Steps:")
+                print(f"  • Run correlation analysis to understand relationships")
+                print(f"  • Check for seasonality in time series data")
+                print(f"  • Consider feature scaling for machine learning")
+                print(f"  • Investigate outliers if percentage is high")
+            
+            # Create visualizations
+            print(f"\n📊 GENERATING VISUALIZATIONS...")
+            self._create_statistics_plots(numeric_data)
             
             # Save results
             self.current_results['basic_statistics'] = {
                 'descriptive_stats': desc_stats.to_dict(),
-                'numeric_columns': list(numeric_cols)
+                'numeric_columns': list(numeric_data.columns),
+                'analysis_summary': {
+                    'total_columns': len(numeric_data.columns),
+                    'total_observations': len(numeric_data),
+                    'columns_with_issues': len([col for col in numeric_data.columns 
+                                              if numeric_data[col].isna().sum() > 0])
+                }
             }
             
-            print("\n✅ Basic statistics completed and saved!")
+            print("\n✅ Comprehensive basic statistics completed and saved!")
+            print("📁 Plots saved to: results/plots/statistics/")
             
         except Exception as e:
             print(f"❌ Error in basic statistics: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def _create_statistics_plots(self, numeric_data):
+        """Create comprehensive statistical visualizations."""
+        try:
+            import matplotlib.pyplot as plt
+            import seaborn as sns
+            
+            # Set modern style
+            plt.style.use('seaborn-v0_8')
+            sns.set_palette("husl")
+            
+            # Create plots directory
+            plots_dir = Path("results/plots/statistics")
+            plots_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Limit to first 6 columns for visualization
+            cols_to_plot = numeric_data.columns[:6]
+            
+            # 1. Distribution plots
+            fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+            fig.suptitle('Distribution Analysis', fontsize=16, fontweight='bold')
+            
+            for i, col in enumerate(cols_to_plot):
+                row, col_idx = i // 3, i % 3
+                col_data = numeric_data[col].dropna()
+                
+                if len(col_data) > 0:
+                    # Histogram with KDE
+                    sns.histplot(col_data, kde=True, ax=axes[row, col_idx], bins=50)
+                    axes[row, col_idx].set_title(f'{col} Distribution')
+                    axes[row, col_idx].set_xlabel(col)
+                    axes[row, col_idx].set_ylabel('Frequency')
+                    
+                    # Add statistics text
+                    mean_val = col_data.mean()
+                    std_val = col_data.std()
+                    skew_val = col_data.skew()
+                    axes[row, col_idx].text(0.02, 0.98, 
+                                          f'Mean: {mean_val:.4f}\nStd: {std_val:.4f}\nSkew: {skew_val:.4f}',
+                                          transform=axes[row, col_idx].transAxes,
+                                          verticalalignment='top',
+                                          bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
+            
+            plt.tight_layout()
+            plt.savefig(plots_dir / 'distributions.png', dpi=300, bbox_inches='tight')
+            plt.close()
+            
+            # 2. Box plots
+            fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+            fig.suptitle('Box Plot Analysis (Outlier Detection)', fontsize=16, fontweight='bold')
+            
+            for i, col in enumerate(cols_to_plot):
+                row, col_idx = i // 3, i % 3
+                col_data = numeric_data[col].dropna()
+                
+                if len(col_data) > 0:
+                    sns.boxplot(y=col_data, ax=axes[row, col_idx])
+                    axes[row, col_idx].set_title(f'{col} Box Plot')
+                    
+                    # Add outlier count
+                    q1 = col_data.quantile(0.25)
+                    q3 = col_data.quantile(0.75)
+                    iqr = q3 - q1
+                    outliers = col_data[(col_data < q1 - 1.5*iqr) | (col_data > q3 + 1.5*iqr)]
+                    axes[row, col_idx].text(0.02, 0.98, 
+                                          f'Outliers: {len(outliers):,}',
+                                          transform=axes[row, col_idx].transAxes,
+                                          verticalalignment='top',
+                                          bbox=dict(boxstyle='round', facecolor='lightcoral', alpha=0.8))
+            
+            plt.tight_layout()
+            plt.savefig(plots_dir / 'boxplots.png', dpi=300, bbox_inches='tight')
+            plt.close()
+            
+            # 3. Correlation heatmap
+            if len(cols_to_plot) > 1:
+                fig, ax = plt.subplots(figsize=(10, 8))
+                corr_matrix = numeric_data[cols_to_plot].corr()
+                
+                sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0,
+                           square=True, ax=ax, fmt='.3f')
+                ax.set_title('Correlation Matrix', fontsize=16, fontweight='bold')
+                
+                plt.tight_layout()
+                plt.savefig(plots_dir / 'correlation_heatmap.png', dpi=300, bbox_inches='tight')
+                plt.close()
+            
+            # 4. Summary statistics visualization
+            fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+            fig.suptitle('Statistical Summary', fontsize=16, fontweight='bold')
+            
+            # Mean vs Median comparison
+            means = [numeric_data[col].mean() for col in cols_to_plot]
+            medians = [numeric_data[col].median() for col in cols_to_plot]
+            
+            x = range(len(cols_to_plot))
+            width = 0.35
+            
+            axes[0, 0].bar([i - width/2 for i in x], means, width, label='Mean', alpha=0.8)
+            axes[0, 0].bar([i + width/2 for i in x], medians, width, label='Median', alpha=0.8)
+            axes[0, 0].set_title('Mean vs Median Comparison')
+            axes[0, 0].set_xticks(x)
+            axes[0, 0].set_xticklabels(cols_to_plot, rotation=45)
+            axes[0, 0].legend()
+            
+            # Coefficient of Variation
+            cvs = [numeric_data[col].std() / numeric_data[col].mean() 
+                   if numeric_data[col].mean() != 0 else 0 for col in cols_to_plot]
+            axes[0, 1].bar(cols_to_plot, cvs, color='skyblue', alpha=0.8)
+            axes[0, 1].set_title('Coefficient of Variation')
+            axes[0, 1].tick_params(axis='x', rotation=45)
+            
+            # Skewness
+            skews = [numeric_data[col].skew() for col in cols_to_plot]
+            colors = ['red' if abs(s) > 0.5 else 'green' for s in skews]
+            axes[1, 0].bar(cols_to_plot, skews, color=colors, alpha=0.8)
+            axes[1, 0].set_title('Skewness (Red = High Skew)')
+            axes[1, 0].tick_params(axis='x', rotation=45)
+            axes[1, 0].axhline(y=0, color='black', linestyle='-', alpha=0.3)
+            
+            # Kurtosis
+            kurts = [numeric_data[col].kurtosis() for col in cols_to_plot]
+            colors = ['red' if abs(k) > 2 else 'green' for k in kurts]
+            axes[1, 1].bar(cols_to_plot, kurts, color=colors, alpha=0.8)
+            axes[1, 1].set_title('Kurtosis (Red = High Kurtosis)')
+            axes[1, 1].tick_params(axis='x', rotation=45)
+            axes[1, 1].axhline(y=0, color='black', linestyle='-', alpha=0.3)
+            
+            plt.tight_layout()
+            plt.savefig(plots_dir / 'statistical_summary.png', dpi=300, bbox_inches='tight')
+            plt.close()
+            
+            print(f"✅ Generated 4 visualization files:")
+            print(f"   • distributions.png - Distribution analysis")
+            print(f"   • boxplots.png - Outlier detection")
+            print(f"   • correlation_heatmap.png - Feature relationships")
+            print(f"   • statistical_summary.png - Statistical comparisons")
+            
+        except ImportError:
+            print("⚠️  matplotlib/seaborn not available - skipping visualizations")
+        except Exception as e:
+            print(f"⚠️  Error creating visualizations: {e}")
     
     def run_data_quality_check(self):
         """Run data quality check."""
