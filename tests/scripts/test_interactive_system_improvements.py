@@ -433,7 +433,7 @@ class TestInteractiveSystemMenuTracking:
     
     def test_menu_structure_completeness(self):
         """Test that all menu categories and items are properly defined."""
-        expected_categories = ['eda', 'feature_engineering', 'visualization', 'model_development']
+        expected_categories = ['main', 'eda', 'feature_engineering', 'visualization', 'model_development']
         
         for category in expected_categories:
             assert category in self.system.used_menus, f"Category {category} should be defined"
@@ -472,6 +472,66 @@ class TestInteractiveSystemMenuTracking:
         # Check that original system still has marked items
         assert self.system.used_menus['eda']['basic_statistics']
         assert self.system.used_menus['feature_engineering']['generate_all_features']
+    
+    def test_main_menu_checkmarks(self):
+        """Test main menu checkmarks."""
+        # Mark some main menu items as used
+        self.system.mark_menu_as_used('main', 'load_data')
+        self.system.mark_menu_as_used('main', 'eda_analysis')
+        self.system.mark_menu_as_used('main', 'feature_engineering')
+        
+        # Capture main menu output
+        with patch('builtins.print') as mock_print:
+            self.system.print_main_menu()
+            
+            # Get all printed lines
+            printed_lines = [call[0][0] for call in mock_print.call_args_list]
+            
+            # Check that used items show checkmarks
+            load_data_line = next((line for line in printed_lines if 'Load Data' in line), None)
+            eda_analysis_line = next((line for line in printed_lines if 'EDA Analysis' in line), None)
+            feature_engineering_line = next((line for line in printed_lines if 'Feature Engineering' in line), None)
+            
+            assert load_data_line and '✅' in load_data_line
+            assert eda_analysis_line and '✅' in eda_analysis_line
+            assert feature_engineering_line and '✅' in feature_engineering_line
+            
+            # Check that unused items don't show checkmarks
+            visualization_line = next((line for line in printed_lines if 'Data Visualization' in line), None)
+            assert visualization_line and '✅' not in visualization_line
+    
+    def test_main_menu_structure(self):
+        """Test that main menu structure is properly defined."""
+        # Check that main menu category exists
+        assert 'main' in self.system.used_menus, "Main menu category should be defined"
+        
+        # Check main menu items
+        expected_main_items = [
+            'load_data', 'eda_analysis', 'feature_engineering', 'data_visualization',
+            'model_development', 'testing_validation', 'documentation_help',
+            'system_configuration', 'menu_status'
+        ]
+        
+        for item in expected_main_items:
+            assert item in self.system.used_menus['main'], f"Main menu item {item} should be defined"
+    
+    def test_main_menu_status_display(self):
+        """Test that main menu status is included in status display."""
+        # Mark some main menu items as used
+        self.system.mark_menu_as_used('main', 'load_data')
+        self.system.mark_menu_as_used('main', 'eda_analysis')
+        
+        # Capture status display output
+        with patch('builtins.print') as mock_print:
+            self.system.show_menu_status()
+            
+            # Get all printed lines
+            printed_lines = [call[0][0] for call in mock_print.call_args_list]
+            
+            # Check that main menu status is displayed
+            assert any('MAIN:' in line for line in printed_lines)
+            assert any('Load Data' in line for line in printed_lines)
+            assert any('Eda Analysis' in line for line in printed_lines)
 
 
 if __name__ == "__main__":

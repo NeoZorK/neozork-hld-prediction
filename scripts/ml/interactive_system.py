@@ -46,6 +46,17 @@ class InteractiveSystem:
         self.current_results = {}
         # Track used submenus for showing green checkmarks
         self.used_menus = {
+            'main': {
+                'load_data': False,
+                'eda_analysis': False,
+                'feature_engineering': False,
+                'data_visualization': False,
+                'model_development': False,
+                'testing_validation': False,
+                'documentation_help': False,
+                'system_configuration': False,
+                'menu_status': False
+            },
             'eda': {
                 'basic_statistics': False,
                 'data_quality_check': False,
@@ -138,17 +149,45 @@ class InteractiveSystem:
         print("="*80)
         
     def print_main_menu(self):
-        """Print main menu options."""
+        """Print main menu options with green checkmarks for used items."""
         print("\n📋 MAIN MENU:")
-        print("1. 📁 Load Data")
-        print("2. 🔍 EDA Analysis")
-        print("3. ⚙️  Feature Engineering")
-        print("4. 📊 Data Visualization")
-        print("5. 📈 Model Development")
-        print("6. 🧪 Testing & Validation")
-        print("7. 📚 Documentation & Help")
-        print("8. ⚙️  System Configuration")
-        print("9. 📊 Menu Status")
+        
+        # Load Data
+        checkmark = " ✅" if self.used_menus['main']['load_data'] else ""
+        print(f"1. 📁 Load Data{checkmark}")
+        
+        # EDA Analysis
+        checkmark = " ✅" if self.used_menus['main']['eda_analysis'] else ""
+        print(f"2. 🔍 EDA Analysis{checkmark}")
+        
+        # Feature Engineering
+        checkmark = " ✅" if self.used_menus['main']['feature_engineering'] else ""
+        print(f"3. ⚙️  Feature Engineering{checkmark}")
+        
+        # Data Visualization
+        checkmark = " ✅" if self.used_menus['main']['data_visualization'] else ""
+        print(f"4. 📊 Data Visualization{checkmark}")
+        
+        # Model Development
+        checkmark = " ✅" if self.used_menus['main']['model_development'] else ""
+        print(f"5. 📈 Model Development{checkmark}")
+        
+        # Testing & Validation
+        checkmark = " ✅" if self.used_menus['main']['testing_validation'] else ""
+        print(f"6. 🧪 Testing & Validation{checkmark}")
+        
+        # Documentation & Help
+        checkmark = " ✅" if self.used_menus['main']['documentation_help'] else ""
+        print(f"7. 📚 Documentation & Help{checkmark}")
+        
+        # System Configuration
+        checkmark = " ✅" if self.used_menus['main']['system_configuration'] else ""
+        print(f"8. ⚙️  System Configuration{checkmark}")
+        
+        # Menu Status
+        checkmark = " ✅" if self.used_menus['main']['menu_status'] else ""
+        print(f"9. 📊 Menu Status{checkmark}")
+        
         print("0. 🚪 Exit")
         print("-" * 50)
         
@@ -2452,22 +2491,40 @@ class InteractiveSystem:
             
             if choice == '1':
                 self.load_data()
+                # Mark as used
+                self.mark_menu_as_used('main', 'load_data')
             elif choice == '2':
                 self.run_eda_analysis()
+                # Mark as used
+                self.mark_menu_as_used('main', 'eda_analysis')
             elif choice == '3':
                 self.run_feature_engineering_analysis()
+                # Mark as used
+                self.mark_menu_as_used('main', 'feature_engineering')
             elif choice == '4':
                 self.run_visualization_analysis()
+                # Mark as used
+                self.mark_menu_as_used('main', 'data_visualization')
             elif choice == '5':
                 self.run_model_development()
+                # Mark as used
+                self.mark_menu_as_used('main', 'model_development')
             elif choice == '6':
                 print("⏳ Testing & Validation - Coming soon!")
+                # Mark as used
+                self.mark_menu_as_used('main', 'testing_validation')
             elif choice == '7':
                 self.show_help()
+                # Mark as used
+                self.mark_menu_as_used('main', 'documentation_help')
             elif choice == '8':
                 self.show_system_info()
+                # Mark as used
+                self.mark_menu_as_used('main', 'system_configuration')
             elif choice == '9':
                 self.show_menu_status()
+                # Mark as used
+                self.mark_menu_as_used('main', 'menu_status')
             elif choice == '0':
                 print("\n👋 Thank you for using NeoZorK HLD Prediction Interactive System!")
                 print("   Goodbye!")

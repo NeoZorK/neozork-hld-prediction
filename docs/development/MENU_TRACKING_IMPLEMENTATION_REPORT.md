@@ -30,6 +30,7 @@ Successfully implemented a comprehensive menu tracking system with green checkma
 - **Visual Display**: Green checkmarks (✅) appear next to used menu items
 
 #### 2. Menu Categories Tracked
+- **Main Menu**: 9 menu items
 - **EDA Analysis**: 8 submenu items
 - **Feature Engineering**: 8 submenu items  
 - **Data Visualization**: 6 submenu items
@@ -48,17 +49,31 @@ Successfully implemented a comprehensive menu tracking system with green checkma
 ### Integration Points
 
 #### Automatic Marking in Functions
-- `run_basic_statistics()` → marks 'basic_statistics'
-- `run_data_quality_check()` → marks 'data_quality_check'
-- `run_correlation_analysis()` → marks 'correlation_analysis'
-- `run_time_series_analysis()` → marks 'time_series_analysis'
-- `fix_data_issues()` → marks 'fix_data_issues'
-- `generate_html_report()` → marks 'generate_html_report'
-- `restore_from_backup()` → marks 'restore_from_backup'
-- `generate_all_features()` → marks 'generate_all_features'
-- `show_feature_summary()` → marks 'feature_summary'
+- **Main Menu Functions**:
+  - `load_data()` → marks 'load_data'
+  - `run_eda_analysis()` → marks 'eda_analysis'
+  - `run_feature_engineering_analysis()` → marks 'feature_engineering'
+  - `run_visualization_analysis()` → marks 'data_visualization'
+  - `run_model_development()` → marks 'model_development'
+  - `show_help()` → marks 'documentation_help'
+  - `show_system_info()` → marks 'system_configuration'
+  - `show_menu_status()` → marks 'menu_status'
+
+- **EDA Functions**:
+  - `run_basic_statistics()` → marks 'basic_statistics'
+  - `run_data_quality_check()` → marks 'data_quality_check'
+  - `run_correlation_analysis()` → marks 'correlation_analysis'
+  - `run_time_series_analysis()` → marks 'time_series_analysis'
+  - `fix_data_issues()` → marks 'fix_data_issues'
+  - `generate_html_report()` → marks 'generate_html_report'
+  - `restore_from_backup()` → marks 'restore_from_backup'
+
+- **Feature Engineering Functions**:
+  - `generate_all_features()` → marks 'generate_all_features'
+  - `show_feature_summary()` → marks 'feature_summary'
 
 #### Menu Display Updates
+- `print_main_menu()` - Shows checkmarks for main menu items
 - `print_eda_menu()` - Shows checkmarks for EDA items
 - `print_feature_engineering_menu()` - Shows checkmarks for FE items
 - `print_visualization_menu()` - Shows checkmarks for visualization items

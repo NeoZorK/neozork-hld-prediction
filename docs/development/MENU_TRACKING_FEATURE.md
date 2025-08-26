@@ -14,7 +14,18 @@ The interactive system now includes a comprehensive menu tracking feature that d
 
 ### Menu Categories Tracked
 
-#### 1. EDA Analysis Menu
+#### 1. Main Menu
+- ✅ Load Data
+- ✅ EDA Analysis
+- ✅ Feature Engineering
+- ✅ Data Visualization
+- ✅ Model Development
+- ✅ Testing & Validation
+- ✅ Documentation & Help
+- ✅ System Configuration
+- ✅ Menu Status
+
+#### 2. EDA Analysis Menu
 - ✅ Basic Statistics
 - ✅ Comprehensive Data Quality Check
 - ✅ Correlation Analysis
@@ -24,7 +35,7 @@ The interactive system now includes a comprehensive menu tracking feature that d
 - ✅ Generate HTML Report
 - ✅ Restore from Backup
 
-#### 2. Feature Engineering Menu
+#### 3. Feature Engineering Menu
 - ✅ Generate All Features
 - ✅ Proprietary Features (PHLD/Wave)
 - ✅ Technical Indicators
@@ -34,7 +45,7 @@ The interactive system now includes a comprehensive menu tracking feature that d
 - ✅ Feature Selection & Optimization
 - ✅ Feature Summary Report
 
-#### 3. Data Visualization Menu
+#### 4. Data Visualization Menu
 - ✅ Price Charts (OHLCV)
 - ✅ Feature Distribution Plots
 - ✅ Correlation Heatmaps
@@ -42,7 +53,7 @@ The interactive system now includes a comprehensive menu tracking feature that d
 - ✅ Feature Importance Charts
 - ✅ Export Visualizations
 
-#### 4. Model Development Menu
+#### 5. Model Development Menu
 - ✅ Data Preparation
 - ✅ Feature Engineering Pipeline
 - ✅ ML Model Training
@@ -79,6 +90,22 @@ Users can view their progress through the main menu:
 
 ### Example Menu Display with Checkmarks
 
+#### Main Menu
+```
+📋 MAIN MENU:
+1. 📁 Load Data ✅
+2. 🔍 EDA Analysis ✅
+3. ⚙️  Feature Engineering ✅
+4. 📊 Data Visualization
+5. 📈 Model Development
+6. 🧪 Testing & Validation
+7. 📚 Documentation & Help
+8. ⚙️  System Configuration
+9. 📊 Menu Status
+0. 🚪 Exit
+```
+
+#### EDA Menu
 ```
 🔍 EDA ANALYSIS MENU:
 0. 🔙 Back to Main Menu
