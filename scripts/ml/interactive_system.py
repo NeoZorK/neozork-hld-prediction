@@ -217,18 +217,20 @@ class InteractiveSystem:
             print("❌ No input provided")
             return False
         
-        # Check if input is a number (folder selection)
-        if input_text.isdigit():
-            folder_idx = int(input_text) - 1
+        # Parse input for folder and mask
+        parts = input_text.split()
+        
+        # Check if first part is a number (folder selection)
+        if parts[0].isdigit():
+            folder_idx = int(parts[0]) - 1
             if 0 <= folder_idx < len(subfolders):
                 folder_path = subfolders[folder_idx]
-                mask = None
+                mask = parts[1].lower() if len(parts) > 1 else None
             else:
                 print(f"❌ Invalid folder number. Please select 1-{len(subfolders)}")
                 return False
         else:
-            # Parse input for folder and mask
-            parts = input_text.split()
+            # Parse input for folder path and mask
             folder_path = parts[0]
             mask = parts[1].lower() if len(parts) > 1 else None
                 

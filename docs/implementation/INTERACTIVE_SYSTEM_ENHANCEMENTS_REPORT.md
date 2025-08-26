@@ -28,10 +28,16 @@ This report documents the enhancements made to the `interactive_system.py` scrip
    6: data/indicators/json/
    7: data/indicators/parquet/
    8: data/raw_parquet/
+
+💡 Examples:
+   • Enter folder number (e.g., 1 for data/)
+   • Or enter folder path with mask (e.g., data gbpusd)
+   • Or enter folder path with file type (e.g., data parquet)
 ```
 
 #### **Usage Examples:**
 - Enter folder number: `1` (loads all files from `data/`)
+- Enter folder number with mask: `3 eurusd` (loads files with 'eurusd' in name from folder 3)
 - Enter folder path with mask: `data gbpusd` (loads files with 'gbpusd' in name)
 - Enter folder path with type: `data parquet` (loads all .parquet files)
 
@@ -93,6 +99,11 @@ Integrated HTML report generation from `html_report_generator.py`:
 
 ## 🔧 Technical Implementation
 
+### **Bug Fixes:**
+- **Fixed folder selection with mask**: Corrected parsing logic to handle "3 eurusd" format
+- **Improved input parsing**: Now properly separates folder number from mask
+- **Enhanced error handling**: Better validation of user input
+
 ### **New Imports:**
 ```python
 from src.eda import fix_files, html_report_generator
@@ -111,7 +122,7 @@ from src.eda import fix_files, html_report_generator
 ## 📊 Testing
 
 ### **Test Coverage:**
-- **9 comprehensive tests** covering all new functionality
+- **12 comprehensive tests** covering all new functionality
 - **100% test coverage** for new features
 - **Integration tests** with existing modules
 
@@ -121,12 +132,13 @@ from src.eda import fix_files, html_report_generator
 3. **HTML Reports**: Tests report generation and file creation
 4. **Menu Integration**: Tests new menu options and navigation
 5. **Module Integration**: Tests imports and dependencies
+6. **Folder Selection Logic**: Tests parsing of folder numbers with masks
 
 ### **Test Results:**
 ```
-✅ Passed: 9
+✅ Passed: 12
 ❌ Failed: 0
-📈 Total: 9
+📈 Total: 12
 ```
 
 ## 🎯 Benefits

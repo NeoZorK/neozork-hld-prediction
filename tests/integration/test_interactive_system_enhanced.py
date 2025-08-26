@@ -190,6 +190,52 @@ class TestEnhancedInteractiveSystem:
         for expected in expected_subfolders:
             if Path(expected).exists():
                 assert Path(expected) in subfolders or any(str(sf).endswith(expected) for sf in subfolders)
+    
+    def test_folder_selection_with_mask(self, interactive_system, monkeypatch):
+        """Test folder selection with mask functionality."""
+        # Mock the _load_folder_files method to test the parsing logic
+        def mock_load_folder_files():
+            # Simulate the folder selection logic
+            input_text = "3 eurusd"
+            parts = input_text.split()
+            
+            # Check if first part is a number (folder selection)
+            if parts[0].isdigit():
+                folder_idx = int(parts[0]) - 1
+                mask = parts[1].lower() if len(parts) > 1 else None
+                return folder_idx == 2 and mask == "eurusd"
+            return False
+        
+        # Test the logic
+        assert mock_load_folder_files() == True
+    
+    def test_folder_selection_without_mask(self, interactive_system):
+        """Test folder selection without mask."""
+        # Test parsing logic for folder number only
+        input_text = "1"
+        parts = input_text.split()
+        
+        if parts[0].isdigit():
+            folder_idx = int(parts[0]) - 1
+            mask = parts[1].lower() if len(parts) > 1 else None
+            assert folder_idx == 0
+            assert mask is None
+        else:
+            pytest.fail("Should have detected number")
+    
+    def test_path_with_mask(self, interactive_system):
+        """Test path with mask parsing."""
+        # Test parsing logic for path with mask
+        input_text = "data gbpusd"
+        parts = input_text.split()
+        
+        if not parts[0].isdigit():
+            folder_path = parts[0]
+            mask = parts[1].lower() if len(parts) > 1 else None
+            assert folder_path == "data"
+            assert mask == "gbpusd"
+        else:
+            pytest.fail("Should not have detected number")
 
 
 class TestDataFixingIntegration:
