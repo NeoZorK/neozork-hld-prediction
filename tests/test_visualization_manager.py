@@ -96,7 +96,8 @@ class TestVisualizationManager:
     
     def test_show_plots_in_browser_no_plots_directory(self, visualization_manager, mock_system, capsys):
         """Test show_plots_in_browser with no plots directory."""
-        result = visualization_manager.show_plots_in_browser(mock_system)
+        with patch('pathlib.Path.exists', return_value=False):
+            result = visualization_manager.show_plots_in_browser(mock_system)
         
         captured = capsys.readouterr()
         assert result is False

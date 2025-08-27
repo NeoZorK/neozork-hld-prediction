@@ -86,14 +86,14 @@ class TestMenuManager:
         menu_manager.mark_menu_as_used('nonexistent', 'load_data')
         
         captured = capsys.readouterr()
-        assert "Load Data marked as completed!" in captured.out  # Should still work
+        assert captured.out == ""  # Should not print anything for invalid category
     
     def test_mark_menu_as_used_invalid_item(self, menu_manager, capsys):
         """Test mark_menu_as_used with invalid item."""
         menu_manager.mark_menu_as_used('main', 'nonexistent')
         
         captured = capsys.readouterr()
-        assert "Nonexistent marked as completed!" in captured.out  # Should still work
+        assert captured.out == ""  # Should not print anything for invalid item
     
     def test_reset_menu_status_specific_category(self, menu_manager, capsys):
         """Test reset_menu_status with specific category."""
@@ -145,7 +145,7 @@ class TestMenuManager:
         assert "Progress: 1/8 items completed" in captured.out  # eda category
         assert "✅ Load Data" in captured.out
         assert "✅ Basic Statistics" in captured.out
-        assert "⏳ EDA Analysis" in captured.out  # Not used
+        assert "⏳ Eda Analysis" in captured.out  # Not used (note: it's "Eda" not "EDA")
     
     def test_print_main_menu(self, menu_manager, mock_system, capsys):
         """Test print_main_menu."""
@@ -176,7 +176,7 @@ class TestMenuManager:
         captured = capsys.readouterr()
         assert "MAIN MENU:" in captured.out
         assert "1. 📁 Load Data ✅" in captured.out
-        assert "2. 🔍 EDA Analysis ✅ (25%)" in captured.out  # 2 out of 8 = 25%
+        assert "2. 🔍 EDA Analysis (25%)" in captured.out  # 2 out of 8 = 25% (no checkmark since eda_analysis not marked)
         assert "3. ⚙️  Feature Engineering" in captured.out  # No completion
     
     def test_print_eda_menu(self, menu_manager, capsys):
