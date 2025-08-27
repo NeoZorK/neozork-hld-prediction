@@ -269,6 +269,18 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "native_container: Native container-specific tests"
     )
+    config.addinivalue_line(
+        "markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+    )
+    config.addinivalue_line(
+        "markers", "basic: Basic functionality tests"
+    )
+    config.addinivalue_line(
+        "markers", "flag_combinations: Flag combination tests"
+    )
+    config.addinivalue_line(
+        "markers", "error: Error handling tests"
+    )
 
 def pytest_collection_modifyitems(config, items):
     """Modify test collection for better organization"""
