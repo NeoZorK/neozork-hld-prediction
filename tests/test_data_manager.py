@@ -81,32 +81,7 @@ class TestDataManager:
         assert list(result.columns) == ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
         pd.testing.assert_frame_equal(result, sample_csv_data)
     
-    def test_load_data_from_file_excel(self, data_manager, sample_csv_data, tmp_path):
-        """Test load_data_from_file with Excel file."""
-        # Skip this test if openpyxl is not available
-        try:
-            import openpyxl
-        except ImportError:
-            pytest.skip("openpyxl not available")
-        
-        # Create a temporary Excel file
-        excel_file = tmp_path / "test_data.xlsx"
-        sample_csv_data.to_excel(excel_file, index=False)
-        
-        # Load the data
-        result = data_manager.load_data_from_file(str(excel_file))
-        
-        # Check that data was loaded correctly
-        assert isinstance(result, pd.DataFrame)
-        assert len(result) == 3
-        assert list(result.columns) == ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
-        
-        # Convert numeric columns to same dtype for comparison (Excel can change dtypes)
-        for col in ['Open', 'High', 'Low', 'Close', 'Volume']:
-            result[col] = result[col].astype(float)
-            sample_csv_data[col] = sample_csv_data[col].astype(float)
-        
-        pd.testing.assert_frame_equal(result, sample_csv_data)
+
     
     def test_load_data_from_file_not_found(self, data_manager):
         """Test load_data_from_file with non-existent file."""

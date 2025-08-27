@@ -35,8 +35,6 @@ class DataManager:
             return pd.read_csv(file_path)
         elif file_path.suffix.lower() == '.parquet':
             return pd.read_parquet(file_path)
-        elif file_path.suffix.lower() in ['.xlsx', '.xls']:
-            return pd.read_excel(file_path)
         else:
             raise ValueError(f"Unsupported file format: {file_path.suffix}")
     
@@ -54,7 +52,7 @@ class DataManager:
         data_files = []
         for file_path in folder_path.iterdir():
             if file_path.is_file():
-                if file_path.suffix.lower() in ['.csv', '.parquet', '.xlsx', '.xls']:
+                if file_path.suffix.lower() in ['.csv', '.parquet']:
                     data_files.append(str(file_path))
         
         return data_files

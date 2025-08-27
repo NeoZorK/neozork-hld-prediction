@@ -90,8 +90,7 @@ class EDAFeatureEngineeringPipeline:
             data = pd.read_csv(file_path)
         elif file_path.suffix.lower() == '.parquet':
             data = pd.read_parquet(file_path)
-        elif file_path.suffix.lower() in ['.xlsx', '.xls']:
-            data = pd.read_excel(file_path)
+
         else:
             raise ValueError(f"Unsupported file format: {file_path.suffix}")
             
@@ -109,7 +108,7 @@ class EDAFeatureEngineeringPipeline:
         
         # Find all data files
         data_files = []
-        for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
+        for ext in ['.csv', '.parquet']:
             data_files.extend(folder_path.glob(f"*{ext}"))
         
         if not data_files:
@@ -150,7 +149,7 @@ class EDAFeatureEngineeringPipeline:
         
         # Find files matching mask
         data_files = []
-        for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
+        for ext in ['.csv', '.parquet']:
             pattern = f"*{mask}*{ext}"
             data_files.extend(folder_path.glob(pattern))
             # Also try case-insensitive search

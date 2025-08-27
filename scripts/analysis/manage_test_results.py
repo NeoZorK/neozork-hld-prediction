@@ -182,10 +182,8 @@ class TestResultsManager:
         
         if output_path.suffix.lower() == '.csv':
             df.to_csv(output_path, index=False)
-        elif output_path.suffix.lower() in ['.xlsx', '.xls']:
-            df.to_excel(output_path, index=False)
         else:
-            print("Unsupported file format. Use .csv or .xlsx")
+            print("Unsupported file format. Use .csv")
             return
         
         print(f"Test results exported to: {output_path}")

@@ -280,8 +280,17 @@ class TestAnalysisRunner:
         mock_system.current_data = sample_data
         
         with tempfile.TemporaryDirectory() as temp_dir:
-            with patch('pathlib.Path') as mock_path:
-                mock_path.return_value = Path(temp_dir)
+            with patch('src.interactive.analysis_runner.Path') as mock_path:
+                # Create a proper mock that behaves like Path
+                mock_path_instance = Mock()
+                mock_path_instance.__truediv__ = Mock(return_value=mock_path_instance)
+                mock_path_instance.exists = Mock(return_value=True)
+                mock_path_instance.mkdir = Mock()
+                mock_path_instance.parent = mock_path_instance
+                mock_path_instance.name = "test_report.html"
+                mock_path_instance.__str__ = Mock(return_value=f"{temp_dir}/test_report.html")
+                mock_path_instance.__fspath__ = Mock(return_value=f"{temp_dir}/test_report.html")
+                mock_path.return_value = mock_path_instance
                 
                 analysis_runner.generate_html_report(mock_system)
                 

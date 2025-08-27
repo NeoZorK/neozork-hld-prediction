@@ -58,6 +58,7 @@ COPY run_analysis.py ./
 COPY neozork_mcp_server.py ./
 COPY cursor_mcp_config.json ./
 COPY docker.env ./
+COPY conftest.py ./
 COPY src/ ./src/
 COPY scripts/ ./scripts/
 COPY tests/ ./tests/

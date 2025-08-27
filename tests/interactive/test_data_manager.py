@@ -70,17 +70,7 @@ class TestDataManager:
         assert len(result) == 3
         assert list(result.columns) == ['col1', 'col2']
     
-    def test_load_data_from_file_excel(self, data_manager, tmp_path):
-        """Test load_data_from_file with Excel file."""
-        # Create test Excel file
-        excel_file = tmp_path / "test.xlsx"
-        test_data = pd.DataFrame({'col1': [1, 2, 3], 'col2': [4, 5, 6]})
-        test_data.to_excel(excel_file, index=False)
-        
-        result = data_manager.load_data_from_file(str(excel_file))
-        assert isinstance(result, pd.DataFrame)
-        assert len(result) == 3
-        assert list(result.columns) == ['col1', 'col2']
+
     
     def test_load_data_from_file_unsupported_format(self, data_manager, tmp_path):
         """Test load_data_from_file with unsupported format."""
