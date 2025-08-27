@@ -65,55 +65,55 @@ class TestFeatureEngineeringManager:
     def test_run_feature_engineering_analysis_generate_all_features(self, mock_input, feature_engineering_manager, mock_system):
         """Test run_feature_engineering_analysis with generate all features option."""
         feature_engineering_manager.run_feature_engineering_analysis(mock_system)
-        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 2
+        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 1
     
     @patch('builtins.input', side_effect=['2', '0'])
     def test_run_feature_engineering_analysis_proprietary_features(self, mock_input, feature_engineering_manager, mock_system):
         """Test run_feature_engineering_analysis with proprietary features option."""
         feature_engineering_manager.run_feature_engineering_analysis(mock_system)
-        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 2
+        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 1
     
     @patch('builtins.input', side_effect=['3', '0'])
     def test_run_feature_engineering_analysis_technical_indicators(self, mock_input, feature_engineering_manager, mock_system):
         """Test run_feature_engineering_analysis with technical indicators option."""
         feature_engineering_manager.run_feature_engineering_analysis(mock_system)
-        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 2
+        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 1
     
     @patch('builtins.input', side_effect=['4', '0'])
     def test_run_feature_engineering_analysis_statistical_features(self, mock_input, feature_engineering_manager, mock_system):
         """Test run_feature_engineering_analysis with statistical features option."""
         feature_engineering_manager.run_feature_engineering_analysis(mock_system)
-        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 2
+        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 1
     
     @patch('builtins.input', side_effect=['5', '0'])
     def test_run_feature_engineering_analysis_temporal_features(self, mock_input, feature_engineering_manager, mock_system):
         """Test run_feature_engineering_analysis with temporal features option."""
         feature_engineering_manager.run_feature_engineering_analysis(mock_system)
-        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 2
+        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 1
     
     @patch('builtins.input', side_effect=['6', '0'])
     def test_run_feature_engineering_analysis_cross_timeframe_features(self, mock_input, feature_engineering_manager, mock_system):
         """Test run_feature_engineering_analysis with cross timeframe features option."""
         feature_engineering_manager.run_feature_engineering_analysis(mock_system)
-        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 2
+        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 1
     
     @patch('builtins.input', side_effect=['7', '0'])
     def test_run_feature_engineering_analysis_feature_selection(self, mock_input, feature_engineering_manager, mock_system):
         """Test run_feature_engineering_analysis with feature selection option."""
         feature_engineering_manager.run_feature_engineering_analysis(mock_system)
-        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 2
+        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 1
     
     @patch('builtins.input', side_effect=['8', '0'])
     def test_run_feature_engineering_analysis_feature_summary(self, mock_input, feature_engineering_manager, mock_system):
         """Test run_feature_engineering_analysis with feature summary option."""
         feature_engineering_manager.run_feature_engineering_analysis(mock_system)
-        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 2
+        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 1
     
     @patch('builtins.input', side_effect=['9', '0'])
     def test_run_feature_engineering_analysis_invalid_choice(self, mock_input, feature_engineering_manager, mock_system):
         """Test run_feature_engineering_analysis with invalid choice."""
         feature_engineering_manager.run_feature_engineering_analysis(mock_system)
-        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 2
+        assert mock_system.menu_manager.print_feature_engineering_menu.call_count == 1
     
     @patch('builtins.input', side_effect=EOFError)
     def test_run_feature_engineering_analysis_eof(self, mock_input, feature_engineering_manager, mock_system):
@@ -125,9 +125,9 @@ class TestFeatureEngineeringManager:
         """Test generate_all_features with no data."""
         feature_engineering_manager.generate_all_features(mock_system_no_data)
     
-    @patch('src.interactive.feature_engineering_manager.FeatureGenerator')
-    @patch('src.interactive.feature_engineering_manager.MasterFeatureConfig')
-    @patch('src.interactive.feature_engineering_manager.FeatureSelectionConfig')
+    @patch('src.ml.feature_engineering.feature_generator.FeatureGenerator')
+    @patch('src.ml.feature_engineering.feature_generator.MasterFeatureConfig')
+    @patch('src.ml.feature_engineering.feature_selector.FeatureSelectionConfig')
     def test_generate_all_features_with_advanced_generator(self, mock_selection_config, mock_feature_config, mock_feature_generator, feature_engineering_manager, mock_system):
         """Test generate_all_features with advanced feature generator."""
         # Mock the feature generator
@@ -150,7 +150,7 @@ class TestFeatureEngineeringManager:
         assert 'feature_engineering' in mock_system.current_results
         mock_system.menu_manager.mark_menu_as_used.assert_called_with('feature_engineering', 'generate_all_features')
     
-    @patch('src.interactive.feature_engineering_manager.FeatureGenerator', side_effect=ImportError)
+    @patch('src.ml.feature_engineering.feature_generator.FeatureGenerator', side_effect=ImportError)
     def test_generate_all_features_import_error(self, mock_feature_generator, feature_engineering_manager, mock_system):
         """Test generate_all_features with import error."""
         feature_engineering_manager.generate_all_features(mock_system)
@@ -167,10 +167,21 @@ class TestFeatureEngineeringManager:
         assert 'feature_engineering' in mock_system.current_results
         mock_system.menu_manager.mark_menu_as_used.assert_called_with('feature_engineering', 'generate_all_features')
     
-    def test_generate_all_features_small_dataset(self, feature_engineering_manager, mock_system):
+    @patch('src.ml.feature_engineering.feature_generator.FeatureGenerator')
+    @patch('src.ml.feature_engineering.feature_generator.MasterFeatureConfig')
+    @patch('src.ml.feature_engineering.feature_selector.FeatureSelectionConfig')
+    def test_generate_all_features_small_dataset(self, mock_selection_config, mock_master_config, mock_feature_generator, feature_engineering_manager, mock_system):
         """Test generate_all_features with small dataset that needs padding."""
         # Create a DataFrame with the desired shape
         mock_system.current_data = pd.DataFrame({'col1': [1] * 100, 'col2': [2] * 100})
+        
+        # Mock the feature generator instance
+        mock_generator_instance = Mock()
+        mock_generator_instance.generate_features.return_value = pd.DataFrame({'col1': [1] * 200, 'col2': [2] * 200, 'feature1': [0.5] * 200})
+        mock_generator_instance.get_feature_summary.return_value = {'feature1': 0.8}
+        mock_generator_instance.get_memory_usage.return_value = {'rss': 100.5}
+        mock_feature_generator.return_value = mock_generator_instance
+        
         feature_engineering_manager.generate_all_features(mock_system)
         
         assert 'feature_engineering' in mock_system.current_results

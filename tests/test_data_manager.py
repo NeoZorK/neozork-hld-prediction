@@ -100,6 +100,12 @@ class TestDataManager:
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 3
         assert list(result.columns) == ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        
+        # Convert numeric columns to same dtype for comparison (Excel can change dtypes)
+        for col in ['Open', 'High', 'Low', 'Close', 'Volume']:
+            result[col] = result[col].astype(float)
+            sample_csv_data[col] = sample_csv_data[col].astype(float)
+        
         pd.testing.assert_frame_equal(result, sample_csv_data)
     
     def test_load_data_from_file_not_found(self, data_manager):

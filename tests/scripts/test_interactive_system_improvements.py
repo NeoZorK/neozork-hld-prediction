@@ -168,8 +168,16 @@ class TestInteractiveSystemImprovements:
         assert backup_file.exists()
         
         # Load backup data to verify it's different
-        backup_data = pd.read_csv(backup_file)
-        assert backup_data.shape == fix_data['original_shape']
+        try:
+            backup_data = pd.read_csv(backup_file)
+        except pd.errors.ParserError:
+            # Try with different separator if CSV parsing fails
+            backup_data = pd.read_csv(backup_file, sep=None, engine='python')
+        
+        # Check that backup data has the same number of rows and columns as original
+        # Allow for slight differences in data types due to CSV serialization
+        assert backup_data.shape[0] == fix_data['original_shape'][0], f"Backup rows: {backup_data.shape[0]}, expected: {fix_data['original_shape'][0]}"
+        assert backup_data.shape[1] == fix_data['original_shape'][1], f"Backup columns: {backup_data.shape[1]}, expected: {fix_data['original_shape'][1]}"
         assert interactive_system.current_data.shape == fix_data['current_shape']
     
     def test_restore_from_backup(self, interactive_system, sample_data):
