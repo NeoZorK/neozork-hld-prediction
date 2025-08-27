@@ -336,7 +336,7 @@ beautifulsoup4==4.9.3
             )
         ]
         
-        summary = TestSummary(
+        summary = DependencyTestSummary(
             total_packages=2,
             required_packages=1,
             unused_packages=1,

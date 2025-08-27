@@ -244,6 +244,8 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
         try:
             # Momentum across different timeframes
             lookback_periods = getattr(self.config, 'lookback_periods', [5, 10, 20, 50])
+            new_features = {}
+            
             for period in lookback_periods:
                 if len(df) > period:
                     try:
@@ -252,34 +254,38 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
                             price_col = price_type.capitalize()
                             if price_col in df.columns:
                                 # Short-term momentum
-                                short_momentum = df[price_col].pct_change(period//2)
+                                short_momentum = df[price_col].pct_change(period//2, fill_method=None)
                                 feature_name = f"momentum_{price_type}_short_{period}"
-                                df[feature_name] = short_momentum
+                                new_features[feature_name] = short_momentum
                                 self.log_feature_generation(feature_name, importance=0.6)
                                 self.momentum_features.append(feature_name)
                                 
                                 # Long-term momentum
-                                long_momentum = df[price_col].pct_change(period)
+                                long_momentum = df[price_col].pct_change(period, fill_method=None)
                                 feature_name = f"momentum_{price_type}_long_{period}"
-                                df[feature_name] = long_momentum
+                                new_features[feature_name] = long_momentum
                                 self.log_feature_generation(feature_name, importance=0.7)
                                 self.momentum_features.append(feature_name)
                                 
                                 # Momentum acceleration
                                 feature_name = f"momentum_accel_{price_type}_{period}"
-                                df[feature_name] = short_momentum - long_momentum
+                                new_features[feature_name] = short_momentum - long_momentum
                                 self.log_feature_generation(feature_name, importance=0.6)
                                 self.momentum_features.append(feature_name)
                                 
                                 # Momentum ratio
                                 feature_name = f"momentum_ratio_{price_type}_{period}"
-                                df[feature_name] = short_momentum / (long_momentum + 1e-8)  # Avoid division by zero
+                                new_features[feature_name] = short_momentum / (long_momentum + 1e-8)  # Avoid division by zero
                                 self.log_feature_generation(feature_name, importance=0.6)
                                 self.momentum_features.append(feature_name)
                                 
                     except Exception as e:
                         logger.print_warning(f"Error generating momentum features for period {period}: {e}")
                         continue
+            
+            # Add all new features at once to avoid fragmentation
+            if new_features:
+                df = pd.concat([df, pd.DataFrame(new_features, index=df.index)], axis=1)
                         
         except Exception as e:
             logger.print_error(f"Error generating momentum features: {e}")
@@ -291,6 +297,8 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
         try:
             # Volatility across different timeframes
             lookback_periods = getattr(self.config, 'lookback_periods', [5, 10, 20, 50])
+            new_features = {}
+            
             for period in lookback_periods:
                 if len(df) > period:
                     try:
@@ -301,38 +309,42 @@ class CrossTimeframeFeatureGenerator(BaseFeatureGenerator):
                                 # Short-term volatility
                                 short_vol = df[price_col].pct_change(fill_method=None).rolling(window=period//2).std()
                                 feature_name = f"volatility_{price_type}_short_{period}"
-                                df[feature_name] = short_vol
+                                new_features[feature_name] = short_vol
                                 self.log_feature_generation(feature_name, importance=0.6)
                                 self.volatility_features.append(feature_name)
                                 
                                 # Long-term volatility
                                 long_vol = df[price_col].pct_change(fill_method=None).rolling(window=period).std()
                                 feature_name = f"volatility_{price_type}_long_{period}"
-                                df[feature_name] = long_vol
+                                new_features[feature_name] = long_vol
                                 self.log_feature_generation(feature_name, importance=0.7)
                                 self.volatility_features.append(feature_name)
                                 
                                 # Volatility ratio
                                 feature_name = f"volatility_ratio_{price_type}_{period}"
-                                df[feature_name] = short_vol / (long_vol + 1e-8)
+                                new_features[feature_name] = short_vol / (long_vol + 1e-8)
                                 self.log_feature_generation(feature_name, importance=0.6)
                                 self.volatility_features.append(feature_name)
                                 
                                 # Volatility difference
                                 feature_name = f"volatility_diff_{price_type}_{period}"
-                                df[feature_name] = short_vol - long_vol
+                                new_features[feature_name] = short_vol - long_vol
                                 self.log_feature_generation(feature_name, importance=0.6)
                                 self.volatility_features.append(feature_name)
                                 
                                 # Volatility momentum
                                 feature_name = f"volatility_momentum_{price_type}_{period}"
-                                df[feature_name] = long_vol.pct_change(fill_method=None)
+                                new_features[feature_name] = long_vol.pct_change(fill_method=None)
                                 self.log_feature_generation(feature_name, importance=0.5)
                                 self.volatility_features.append(feature_name)
                                 
                     except Exception as e:
                         logger.print_warning(f"Error generating volatility features for period {period}: {e}")
                         continue
+            
+            # Add all new features at once to avoid fragmentation
+            if new_features:
+                df = pd.concat([df, pd.DataFrame(new_features, index=df.index)], axis=1)
                         
         except Exception as e:
             logger.print_error(f"Error generating volatility features: {e}")

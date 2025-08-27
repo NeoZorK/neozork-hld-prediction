@@ -99,7 +99,11 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
         # Enhanced segmentation with signal change detection (like fastest mode)
         segments = []
         last_color = color_arr[0]
-        seg_x, seg_y = [df_results.index[0]], [supertrend_values[0]]
+        # Handle both pandas.Series and numpy.ndarray
+        if hasattr(supertrend_values, 'iloc'):
+            seg_x, seg_y = [df_results.index[0]], [supertrend_values.iloc[0]]
+        else:
+            seg_x, seg_y = [df_results.index[0]], [supertrend_values[0]]
         
         for i in range(1, len(df_results.index)):
             current_color = color_arr[i]
@@ -111,21 +115,35 @@ def plot_indicator_results_mplfinance(df_results: pd.DataFrame, rule: TradingRul
                     segments.append((seg_x.copy(), seg_y.copy(), last_color))
                 
                 # Add signal change point with golden color
-                segments.append(([df_results.index[i-1], df_results.index[i]], 
-                              [supertrend_values[i-1], supertrend_values[i]], 
-                              signal_change_color))
-                
-                # Start new segment
-                seg_x, seg_y = [df_results.index[i]], [supertrend_values[i]]
+                if hasattr(supertrend_values, 'iloc'):
+                    segments.append(([df_results.index[i-1], df_results.index[i]], 
+                                  [supertrend_values.iloc[i-1], supertrend_values.iloc[i]], 
+                                  signal_change_color))
+                    
+                    # Start new segment
+                    seg_x, seg_y = [df_results.index[i]], [supertrend_values.iloc[i]]
+                else:
+                    segments.append(([df_results.index[i-1], df_results.index[i]], 
+                                  [supertrend_values[i-1], supertrend_values[i]], 
+                                  signal_change_color))
+                    
+                    # Start new segment
+                    seg_x, seg_y = [df_results.index[i]], [supertrend_values[i]]
                 last_color = current_color
             elif current_color != last_color:
                 # Regular trend change (not a signal)
                 segments.append((seg_x.copy(), seg_y.copy(), last_color))
-                seg_x, seg_y = [df_results.index[i-1]], [supertrend_values[i-1]]
+                if hasattr(supertrend_values, 'iloc'):
+                    seg_x, seg_y = [df_results.index[i-1]], [supertrend_values.iloc[i-1]]
+                else:
+                    seg_x, seg_y = [df_results.index[i-1]], [supertrend_values[i-1]]
                 last_color = current_color
             
             seg_x.append(df_results.index[i])
-            seg_y.append(supertrend_values[i])
+            if hasattr(supertrend_values, 'iloc'):
+                seg_y.append(supertrend_values.iloc[i])
+            else:
+                seg_y.append(supertrend_values[i])
         
         # Add final segment
         if len(seg_x) > 0:

@@ -105,24 +105,26 @@ def apply_rule_rsi(df: pd.DataFrame, point: float,
     Returns:
         pd.DataFrame: DataFrame with RSI calculations and signals
     """
-    open_prices = df['Open']
+    # Create a copy to avoid SettingWithCopyWarning
+    result_df = df.copy()
+    open_prices = result_df['Open']
     
     # Select price series based on price_type
     if price_type == PriceType.OPEN:
-        price_series = df['Open']
+        price_series = result_df['Open']
         price_name = "Open"
     else:  # PriceType.CLOSE
-        price_series = df['Close']
+        price_series = result_df['Close']
         price_name = "Close"
     
     # Calculate RSI
-    df.loc[:, 'RSI'] = calculate_rsi(price_series, rsi_period)
+    result_df.loc[:, 'RSI'] = calculate_rsi(price_series, rsi_period)
     
     # Add price type info to column name
-    df.loc[:, 'RSI_Price_Type'] = price_name
+    result_df.loc[:, 'RSI_Price_Type'] = price_name
     
     # Calculate RSI signals
-    df.loc[:, 'RSI_Signal'] = calculate_rsi_signals(df['RSI'], overbought, oversold)
+    result_df.loc[:, 'RSI_Signal'] = calculate_rsi_signals(result_df['RSI'], overbought, oversold)
     
     # Calculate support and resistance levels based on RSI
     volatility_factor = 0.02  # 2% volatility assumption
@@ -134,11 +136,11 @@ def apply_rule_rsi(df: pd.DataFrame, point: float,
     resistance_levels = open_prices * (1 + volatility_factor)
     
     # Set output columns
-    df.loc[:, 'PPrice1'] = support_levels  # Support level
-    df.loc[:, 'PColor1'] = BUY
-    df.loc[:, 'PPrice2'] = resistance_levels  # Resistance level
-    df.loc[:, 'PColor2'] = SELL
-    df.loc[:, 'Direction'] = df['RSI_Signal']
-    df.loc[:, 'Diff'] = df['RSI']  # Use RSI value as difference indicator
+    result_df.loc[:, 'PPrice1'] = support_levels  # Support level
+    result_df.loc[:, 'PColor1'] = BUY
+    result_df.loc[:, 'PPrice2'] = resistance_levels  # Resistance level
+    result_df.loc[:, 'PColor2'] = SELL
+    result_df.loc[:, 'Direction'] = result_df['RSI_Signal']
+    result_df.loc[:, 'Diff'] = result_df['RSI']  # Use RSI value as difference indicator
     
-    return df
+    return result_df

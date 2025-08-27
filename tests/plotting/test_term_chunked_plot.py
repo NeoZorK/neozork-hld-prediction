@@ -157,6 +157,7 @@ class TestTermChunkedPlot:
         test_df = self.sample_data.head(200)
         
         # Add some additional fields for AUTO mode
+        test_df = test_df.copy()
         test_df.loc[:, 'RSI'] = np.random.uniform(0, 100, len(test_df))
         test_df.loc[:, 'MACD'] = np.random.uniform(-1, 1, len(test_df))
         

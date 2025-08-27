@@ -399,7 +399,7 @@ def calculate_additional_indicator(df: pd.DataFrame, rule: str) -> pd.DataFrame:
             result_df['montecarlo_histogram'] = histogram
             
             # Calculate confidence bands
-            forecast_changes = monte_values.pct_change().rolling(window=20, min_periods=5).std()
+            forecast_changes = monte_values.pct_change(fill_method=None).rolling(window=20, min_periods=5).std()
             confidence_interval = 1.96 * forecast_changes * monte_values
             result_df['montecarlo_upper'] = monte_values + confidence_interval
             result_df['montecarlo_lower'] = monte_values - confidence_interval
