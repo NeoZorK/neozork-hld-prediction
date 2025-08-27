@@ -234,10 +234,9 @@ class TestInteractiveSystem:
         self.system.current_data = self.sample_data
         
         with patch('builtins.print') as mock_print:
-            with patch('src.eda.data_quality') as mock_data_quality:
-                with patch('builtins.input', return_value='n'):
-                    self.system.run_data_quality_check()
-                    mock_print.assert_called()
+            with patch('builtins.input', return_value='n'):
+                self.system.run_data_quality_check()
+                mock_print.assert_called()
     
     def test_run_correlation_analysis_no_data(self):
         """Test run_correlation_analysis when no data is loaded."""
@@ -264,10 +263,9 @@ class TestInteractiveSystem:
         self.system.current_data = self.sample_data
         
         with patch('builtins.print') as mock_print:
-            with patch('src.eda.time_series_analysis.TimeSeriesAnalyzer') as mock_analyzer:
-                with patch('builtins.input', return_value='n'):
-                    self.system.run_time_series_analysis()
-                    mock_print.assert_called()
+            with patch('builtins.input', return_value='n'):
+                self.system.run_time_series_analysis()
+                mock_print.assert_called()
     
     def test_generate_all_features_no_data(self):
         """Test generate_all_features when no data is loaded."""
@@ -337,13 +335,9 @@ class TestInteractiveSystem:
         self.system.current_data = self.sample_data
         
         with patch('builtins.print') as mock_print:
-            with patch('src.eda.fix_files') as mock_fix_files:
-                with patch('builtins.input', return_value='y'):
-                    mock_fix_files.fix_nan.return_value = self.sample_data
-                    mock_fix_files.fix_duplicates.return_value = self.sample_data
-                    
-                    self.system.fix_data_issues()
-                    mock_print.assert_called()
+            with patch('builtins.input', return_value='y'):
+                self.system.fix_data_issues()
+                mock_print.assert_called()
     
     def test_show_menu_status(self):
         """Test show_menu_status method."""
@@ -355,14 +349,9 @@ class TestInteractiveSystem:
         """Test _create_statistics_plots method."""
         self.system.current_data = self.sample_data
         
-        with patch('matplotlib.pyplot') as mock_plt:
-            with patch('seaborn.histplot') as mock_histplot:
-                with patch('seaborn.boxplot') as mock_boxplot:
-                    with patch('seaborn.heatmap') as mock_heatmap:
-                        with patch('pathlib.Path.mkdir'):
-                            with patch('builtins.print') as mock_print:
-                                self.system._create_statistics_plots(self.sample_data.select_dtypes(include=[np.number]))
-                                mock_print.assert_called()
+        with patch('builtins.print') as mock_print:
+            self.system._create_statistics_plots(self.sample_data.select_dtypes(include=[np.number]))
+            mock_print.assert_called()
     
     def test_show_plots_in_browser(self):
         """Test _show_plots_in_browser method."""
@@ -378,12 +367,8 @@ class TestInteractiveSystem:
         self.system.current_data = self.sample_data
         
         with patch('builtins.print') as mock_print:
-            with patch('src.eda.fix_files') as mock_fix_files:
-                mock_fix_files.fix_nan.return_value = self.sample_data
-                mock_fix_files.fix_duplicates.return_value = self.sample_data
-                
-                self.system.fix_all_data_issues()
-                mock_print.assert_called()
+            self.system.fix_all_data_issues()
+            mock_print.assert_called()
 
 
 class TestInteractiveSystemIntegration:

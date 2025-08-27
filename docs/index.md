@@ -52,109 +52,74 @@ uv pip install -r requirements.txt
 python run_analysis.py demo --rule PHLD
 ```
 
-## 📚 Documentation Sections
+## 📚 Documentation Structure
 
-### Getting Started
-- [Getting Started Guide](getting-started/getting-started.md) - Complete setup instructions
-- [Project Structure](getting-started/project-structure.md) - Understanding the codebase
-- [Installation Guide](getting-started/installation.md) - Step-by-step installation
+### 🎯 Getting Started
+- **[Getting Started Guide](getting-started/getting-started.md)** - Complete setup instructions
+- **[Project Structure](getting-started/project-structure.md)** - Understanding the codebase
+- **[UV Setup Guide](getting-started/uv-setup.md)** - UV package manager configuration
+- **[Quick Start Native Container](getting-started/QUICK_START_NATIVE_CONTAINER.md)** - Apple Silicon container setup
 
-### Containers
-- [Container Documentation](containers/index.md) - **NEW**: Comprehensive container documentation
-- [Native Container](containers/native-container/index.md) - Apple Silicon optimized container
-- [Docker Container](containers/docker-setup.md) - Cross-platform container solution
-- [Container Comparison](containers/native-vs-docker-comparison.md) - Performance and feature comparison
+### 🐳 Containers & Deployment
+- **[Container Documentation](containers/index.md)** - Comprehensive container documentation
+- **[Native Container](containers/native-container/index.md)** - Apple Silicon optimized container
+- **[Docker Container](containers/docker-setup.md)** - Cross-platform container solution
+- **[Container Comparison](containers/native-vs-docker-comparison.md)** - Performance and feature comparison
+- **[Production Deployment](deployment/index.md)** - Production environment setup
 
-### Development
-- [Development Setup](development/setup.md) - Setting up development environment
-- [Testing Guide](development/testing.md) - Running tests and validation
-- [Code Style](development/code-style.md) - Coding standards and conventions
-- [Debugging](development/debugging.md) - Debugging tools and techniques
-- [Scripts Structure](development/scripts-structure.md) - **NEW**: Utility scripts organization and structure
-- [Refactoring Guide](development/REFACTORING_SUMMARY.md) - **NEW**: Code refactoring guidelines and recent improvements
+### 🔧 Development
+- **[Development Guide](development/index.md)** - Development environment setup and guidelines
+- **[Testing Documentation](testing/index.md)** - Comprehensive testing documentation
+- **[Code Style & Standards](development/code-style.md)** - Coding standards and conventions
+- **[Debugging Guide](development/debugging.md)** - Debugging tools and techniques
+- **[Scripts Structure](development/scripts-structure.md)** - Utility scripts organization
 
-### Testing
-- [Testing Documentation](testing/index.md) - Comprehensive testing documentation
-- [Test Structure](testing/test-structure.md) - **NEW**: Detailed test organization and structure
-- [UV-Only Mode Tests](testing/docker/uv-only-mode-tests.md) - Docker UV testing
-- [CLI Testing](testing/cli/comprehensive-testing.md) - Command-line interface testing
+### 📊 Features & Analysis
+- **[Data Sources](api/data-sources.md)** - Supported financial data sources
+- **[Technical Indicators](reference/indicators/)** - Available technical indicators
+- **[Analysis Tools](guides/analysis-tools.md)** - Analysis and visualization tools
+- **[CLI Interface](guides/cli-interface.md)** - Command-line interface usage
+- **[Plotting & Visualization](reference/plotting/)** - Visualization tools and modes
 
-### Deployment
-- [Native Container Setup](containers/native-container-setup.md) - Native Apple Silicon container setup
-- [Docker Setup](containers/docker-setup.md) - Containerized deployment
-- [UV-Only Mode](containers/uv-only-mode.md) - UV package manager configuration
-- [Production Deployment](deployment/production.md) - Production environment setup
-- [Monitoring](deployment/monitoring.md) - System monitoring and logging
+### 🤖 Machine Learning
+- **[ML Documentation](ml/index.md)** - Comprehensive machine learning platform
+- **[Feature Engineering](ml/feature_engineering_guide.md)** - Automated feature generation
+- **[EDA Integration](ml/eda_integration_guide.md)** - Integrated EDA and Feature Engineering
+- **[Usage Instructions](ml/USAGE_INSTRUCTIONS.md)** - Comprehensive usage guide
 
-### Features
-- [Data Sources](guides/data-sources.md) - Supported financial data sources
-- [Technical Indicators](guides/indicators.md) - Available technical indicators (including new [COT](reference/indicators/sentiment/cot-indicator.md), [Put/Call Ratio](reference/indicators/sentiment/putcallratio-indicator.md), [SuperTrend](reference/indicators/trend/supertrend-indicator.md), [SMA](reference/indicators/trend/sma-indicator.md), [Wave](reference/indicators/trend/wave-indicator.md) with full seaborn mode support)
-- [Analysis Tools](guides/analysis-tools.md) - Analysis and visualization tools
-- [CLI Interface](guides/cli-interface.md) - Command-line interface usage
+### 📋 Reference
+- **[API Reference](reference/index.md)** - Complete API documentation
+- **[Configuration](reference/configuration.md)** - Configuration options
+- **[MCP Server](reference/mcp-servers/README.md)** - Model Context Protocol server
+- **[Advanced Metrics](reference/advanced-metrics.md)** - Advanced analysis metrics
 
-### Machine Learning
-- [ML Documentation](ml/index.md) - **NEW**: Comprehensive machine learning platform documentation
-- [Feature Engineering](ml/feature_engineering_guide.md) - Automated feature generation system
-- [ML Module Overview](ml/ml-module-overview.md) - Complete ML module architecture and roadmap
-- [EDA Integration Guide](ml/eda_integration_guide.md) - **NEW**: Integrated EDA and Feature Engineering system
-- [Usage Instructions](ml/USAGE_INSTRUCTIONS.md) - **NEW**: Comprehensive usage guide for the integrated system
-- [System Status Report](SYSTEM_STATUS_REPORT.md) - **NEW**: Current system status and Phase 1 completion report
-- [Project Reorganization Summary](PROJECT_REORGANIZATION_SUMMARY.md) - **NEW**: Complete file reorganization report
-- [Scripts Structure Guide](SCRIPTS_STRUCTURE_GUIDE.md) - **NEW**: Complete scripts directory organization guide
+### 📖 Guides & Tutorials
+- **[Guides Index](guides/index.md)** - Step-by-step tutorials and guides
+- **[Examples](examples/index.md)** - Practical usage examples
+- **[Release Notes](release-notes/index.md)** - Release history and migration guides
 
-### 🎯 SMA Indicator Tutorials (New!)
-- [Complete SMA Tutorial](guides/adding-sma-indicator-tutorial.md) - Full implementation guide across all display modes
-- [Quick Start Guide](guides/sma-quick-start-guide.md) - Get started with SMA in minutes
-- [Practical Examples](guides/sma-practical-examples.md) - Real-world trading scenarios
-- [Testing Guide](guides/sma-testing-guide.md) - Comprehensive testing framework
-- [Tutorials Summary](guides/sma-tutorials-summary.md) - Complete overview and quick reference
+### 📈 EDA & Analysis
+- **[EDA Documentation](eda/index.md)** - Exploratory Data Analysis tools
+- **[Time Series Analysis](eda/time-series-analysis.md)** - Time series analysis techniques
 
-### 🌊 Wave Indicator Tutorials (New!)
-- [Complete Wave Tutorial](guides/adding-wave-indicator-tutorial.md) - Advanced dual-system indicator implementation with fast mode support
-- [Wave Indicator Documentation](reference/indicators/trend/wave-indicator.md) - Comprehensive technical reference with display modes
-- [Wave Implementation Summary](guides/adding-wave-indicator-summary.md) - Quick implementation overview
-- [Wave Testing and Fixes](guides/wave-indicator-fixes-summary.md) - Testing framework and bug fixes
-- [Wave Fast Mode Support](guides/wave-indicator-fast-mode-support.md) - ⭐ **NEW** Fast mode implementation details
-- [Wave Fast-Fastest Parity](guides/wave-indicator-fast-fastest-parity-final-summary.md) - ⭐ **NEW** Visual parity implementation
-- [Wave MPL Color Changes](guides/wave-mpl-color-changes.md) - ⭐ **NEW** MPL mode color customization for prime rule
-- [Wave Prime Rule Fix](guides/wave-prime-rule-fix-all-modes.md) - ⭐ **NEW** Global trading rule fixes across all display modes
-- [Wave Seaborn Mode](guides/wave-indicator-seaborn-mode.md) - ⭐ **NEW** Complete Wave indicator support for seaborn mode (-d sb)
-- [Wave Seaborn Integration Summary](guides/wave-seaborn-integration-summary.md) - ⭐ **NEW** Technical implementation summary for seaborn mode
-- [Wave Terminal Mode](guides/wave-indicator-terminal-mode.md) - ⭐ **NEW** Complete Wave indicator support for terminal mode (-d term)
-- [Wave Terminal Signals Fix](development/WAVE_TERMINAL_SIGNALS_IMPLEMENTATION.md) - ⭐ **NEW** Signal display logic fixes for terminal mode
+### 📋 Reports & Status
+- **[Reports Index](reports/index.md)** - Development reports and status updates
+- **[Documentation Reorganization Report](reports/DOCUMENTATION_REORGANIZATION_REPORT.md)** - Complete reorganization documentation
 
-### Reference
-- [API Reference](reference/index.md) - Complete API documentation
-- [Configuration](reference/configuration.md) - Configuration options
-- [MCP Server](reference/mcp-servers/README.md) - Model Context Protocol server
-- [Advanced Metrics](reference/advanced-metrics.md) - Advanced analysis metrics
-- [Plotting Reference](reference/plotting/) - **UPDATED**: Enhanced plotting documentation with refactored dual chart fast
-- [COT Indicator](reference/indicators/sentiment/cot-indicator.md) - **NEW**: Sentiment indicator documentation
-- [Put/Call Ratio Indicator](reference/indicators/sentiment/putcallratio-indicator.md) - **NEW**: Sentiment indicator documentation
-- [SuperTrend Indicator](reference/indicators/trend/supertrend-indicator.md) - **NEW**: Trend indicator documentation
-- [SMA Indicator](reference/indicators/trend/sma-indicator.md) - **NEW**: Simple Moving Average documentation
-
-### Release Notes
-- [Release Notes](release-notes/index.md) - **NEW**: Complete release history and migration guides
-- [v0.6.0 Release](release-notes/v0.6.0-release-summary.md) - **NEW**: Latest release with documentation updates
-
-### Documentation Updates
-- [v0.6.0 Documentation Update Summary](meta/DOCUMENTATION_UPDATE_V0.6.0_SUMMARY.md) - **NEW**: Comprehensive documentation update report
-
-## 🔧 Key Features
+## 🎯 Key Features
 
 ### UV Package Management
 - **UV-Only Mode**: Exclusive use of UV package manager for faster, more reliable dependency management
 - **Docker Integration**: Seamless UV integration in Docker containers
-- **Native Container Support**: **NEW**: Native Apple Silicon container with 30-50% performance improvement
+- **Native Container Support**: Native Apple Silicon container with 30-50% performance improvement
 - **Local Development**: UV support for local development environments
 - **Adaptive Testing**: Tests that work in both Docker and local environments
 
 ### Financial Analysis
 - **Multiple Data Sources**: Polygon, YFinance, Binance, MQL5
-- **Technical Indicators**: 50+ indicators including RSI, MACD, Bollinger Bands
+- **Technical Indicators**: 50+ indicators including RSI, MACD, Bollinger Bands, SMA, Wave, SuperTrend
 - **Real-time Analysis**: Live data processing and analysis
-- **Visualization**: Interactive charts and plots
+- **Visualization**: Interactive charts and plots across 6 display modes
 
 ### Development Tools
 - **MCP Server**: Enhanced IDE integration with intelligent autocompletion
@@ -199,13 +164,6 @@ python scripts/check_uv_mode.py --verbose
 - **CLI Tests**: Command-line interface validation
 - **Native Container Tests**: Full functionality validation
 
-### Testing Documentation
-- [Testing Documentation](testing/index.md) - Comprehensive testing guide
-- [UV-Only Mode Tests](testing/docker/uv-only-mode-tests.md) - Docker UV testing details
-- [CLI Testing](testing/cli/comprehensive-testing.md) - CLI testing suite documentation
-- [CI/CD Testing](development/ci-cd.md#testing-github-actions-integration-with-act) - GitHub Actions workflow testing with Act
-- [MCP Server Testing](reference/mcp-servers/README.md#cicd-testing-with-act) - MCP server integration testing
-
 ## 📊 Project Structure
 
 ```
@@ -215,22 +173,27 @@ neozork-hld-prediction/
 │   ├── data/              # Data acquisition
 │   ├── eda/               # Exploratory data analysis
 │   ├── plotting/          # Visualization tools
+│   ├── ml/                # Machine learning modules
 │   └── cli/               # Command-line interface
 ├── tests/                 # Test suite
 │   ├── docker/            # Docker-specific tests
+│   ├── ml/                # Machine learning tests
 │   └── ...                # Other test categories
 ├── docs/                  # Documentation
+│   ├── getting-started/   # Setup and first steps
 │   ├── containers/        # Container documentation
-│   │   ├── native-container/  # Native container docs
-│   │   └── index.md       # Container overview
+│   ├── development/       # Development guides
 │   ├── testing/           # Testing documentation
-│   │   ├── docker/        # Docker testing docs
-│   │   └── cli/           # CLI testing docs
-│   └── ...                # Other documentation
-├── scripts/               # **REORGANIZED**: Utility scripts
-│   ├── mcp/               # MCP server management scripts
-│   ├── analysis/          # Analysis and testing scripts
-│   ├── utilities/         # Utility and setup scripts
+│   ├── guides/            # Tutorials and guides
+│   ├── reference/         # Technical reference
+│   ├── ml/                # Machine learning docs
+│   ├── api/               # API documentation
+│   ├── examples/          # Usage examples
+│   └── release-notes/     # Release history
+├── scripts/               # Utility scripts
+│   ├── mcp/               # MCP server management
+│   ├── analysis/          # Analysis and testing
+│   ├── utilities/         # Utility and setup
 │   ├── demos/             # Demonstration scripts
 │   ├── debug/             # Debugging scripts
 │   ├── docker/            # Docker-specific scripts
@@ -238,52 +201,6 @@ neozork-hld-prediction/
 ├── data/                  # Data storage
 └── results/               # Analysis results
 ```
-
-### Scripts Organization
-
-The `scripts/` directory has been reorganized for better maintainability:
-
-#### **MCP Scripts** (`scripts/mcp/`)
-- **neozork_mcp_manager.py** - Unified MCP server manager with autostart and monitoring
-- **start_mcp_server_daemon.py** - MCP server daemon startup script
-- **check_mcp_status.py** - MCP server status checking and diagnostics
-- **test_mcp_server_detection.py** - MCP server detection testing
-- **debug_mcp_detection.py** - MCP server detection debugging
-
-#### **Analysis Scripts** (`scripts/analysis/`)
-- **analyze_requirements.py** - Python imports analysis and requirements optimization
-- **auto_pyproject_from_requirements.py** - Generate pyproject.toml from requirements.txt
-- **generate_test_coverage.py** - Test coverage analysis and reporting
-- **fix_test_coverage.py** - Test coverage fixes and improvements
-- **manage_test_results.py** - Test results management and analysis
-
-#### **Utility Scripts** (`scripts/utilities/`)
-- **fix_imports.py** - Fix relative imports in test files
-- **setup_ide_configs.py** - IDE configuration setup
-- **init_dirs.sh** - Directory structure initialization
-- **recreate_csv.py** - CSV file recreation utilities
-- **create_test_parquet.py** - Test Parquet file creation
-- **check_uv_mode.py** - UV mode verification
-- **test_uv_docker.py** - UV Docker integration testing
-
-#### **Demo Scripts** (`scripts/demos/`)
-- **demo_universal_metrics.py** - Universal metrics demonstration
-
-#### **Debug Scripts** (`scripts/debug/`)
-- **debug_binance.py** - Binance API debugging
-- **debug_binance_connection.py** - Binance connection debugging
-- **debug_polygon.py** - Polygon API debugging
-- **debug_polygon_connection.py** - Polygon connection debugging
-- **debug_polygon_resolve.py** - Polygon resolution debugging
-- **debug_yfinance.py** - YFinance API debugging
-- **examine_parquet.py** - Parquet file examination
-- **examine_binance_parquet.py** - Binance Parquet file examination
-- **debug_check_parquet.py** - Parquet file checking
-- **debug_csv_reader.py** - CSV reader debugging
-
-#### **Container Scripts**
-- **Docker Scripts** (`scripts/docker/`) - Docker container testing and workflows
-- **Native Container Scripts** (`scripts/native-container/`) - Apple Silicon container management
 
 ## 🚀 Quick Examples
 

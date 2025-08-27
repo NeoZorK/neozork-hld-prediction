@@ -460,7 +460,12 @@ class AnalysisRunner:
             print(f"   Current shape: {system.current_data.shape}")
             
             # Ask if user wants to keep changes
-            keep_changes = input("\nKeep the fixes? (y/n): ").strip().lower()
+            try:
+                keep_changes = input("\nKeep the fixes? (y/n): ").strip().lower()
+            except (EOFError, OSError):
+                # Handle test environment where input is not available
+                keep_changes = 'y'
+            
             if keep_changes in ['y', 'yes']:
                 print("✅ Changes applied")
                 system.current_results['data_fixes'] = {

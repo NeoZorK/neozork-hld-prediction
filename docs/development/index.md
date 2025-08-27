@@ -64,6 +64,12 @@ Runtime testing of dependencies by disabling them and running tests.
 ### [Dead Code Quick Start](DEAD_CODE_QUICK_START.md)
 Quick start guide for dead code analysis.
 
+### [Interactive System Enhancements](INTERACTIVE_SYSTEM_ENHANCEMENTS_REPORT.md)
+Report on interactive system improvements and enhancements.
+
+### [Time Series Analysis Implementation](TIME_SERIES_ANALYSIS_IMPLEMENTATION_REPORT.md)
+Report on time series analysis implementation and features.
+
 ## 🔧 UV Package Management
 
 ### UV-Only Mode

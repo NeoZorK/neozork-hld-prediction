@@ -197,11 +197,16 @@ class TestInteractiveSystem:
         
         # Mock data folder structure
         with patch('pathlib.Path.exists', return_value=True):
-            with patch('pathlib.Path.iterdir') as mock_iterdir:
-                mock_iterdir.return_value = [Mock(is_dir=lambda: True)]
-                
-                result = interactive_system.load_data()
-                assert result is False  # User chose to go back
+            with patch('pathlib.Path.is_dir', return_value=True):
+                with patch('pathlib.Path.iterdir') as mock_iterdir:
+                    # Create a proper mock that returns an iterable
+                    mock_folder = Mock()
+                    mock_folder.is_dir.return_value = True
+                    mock_folder.iterdir.return_value = []  # Empty subfolder
+                    mock_iterdir.return_value = [mock_folder]
+                    
+                    result = interactive_system.load_data()
+                    assert result is False  # User chose to go back
     
     def test_run_basic_statistics_no_data(self, interactive_system, capsys):
         """Test running basic statistics with no data loaded."""

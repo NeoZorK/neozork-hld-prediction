@@ -473,11 +473,14 @@ uv run pytest tests -n auto  # ~30-60 seconds
 
 ## 📚 Documentation
 
+- **[Documentation Index](docs/index.md)** - Complete documentation overview
 - **[Getting Started](docs/getting-started/)** - Setup and first steps
-- **[Examples](docs/examples/)** - Practical usage examples
-- **[Guides](docs/guides/)** - Step-by-step tutorials
+- **[Guides & Tutorials](docs/guides/)** - Step-by-step tutorials and guides
 - **[Reference](docs/reference/)** - Technical documentation
+- **[API Documentation](docs/api/)** - API references and data sources
+- **[Examples](docs/examples/)** - Practical usage examples
 - **[Testing](docs/testing/)** - Testing strategies and examples
+- **[Reports](docs/reports/)** - Development reports and status updates
 
 ### 🎯 SMA Indicator Tutorials (New!)
 - **[Complete SMA Tutorial](docs/guides/adding-sma-indicator-tutorial.md)** - Full implementation guide

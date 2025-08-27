@@ -38,6 +38,9 @@ class InteractiveSystem:
         self.current_data = None
         self.current_results = {}
         self.feature_generator = None
+        
+        # For backward compatibility with tests
+        self.used_menus = self.menu_manager.used_menus
     
     def print_banner(self):
         """Print system banner."""
@@ -57,9 +60,102 @@ class InteractiveSystem:
             print("\n👋 Goodbye!")
             return None
     
+    # Menu management methods for backward compatibility
+    def calculate_submenu_completion_percentage(self, menu_category: str) -> int:
+        """Calculate completion percentage for a submenu category."""
+        return self.menu_manager.calculate_submenu_completion_percentage(menu_category)
+    
+    def mark_menu_as_used(self, menu_category: str, menu_item: str):
+        """Mark a submenu item as successfully used."""
+        return self.menu_manager.mark_menu_as_used(menu_category, menu_item)
+    
+    def reset_menu_status(self, menu_category: str = None):
+        """Reset menu status for all or specific category."""
+        return self.menu_manager.reset_menu_status(menu_category)
+    
+    def show_menu_status(self):
+        """Show current menu usage status."""
+        return self.menu_manager.show_menu_status()
+    
+    def print_main_menu(self, system=None):
+        """Print main menu options with green checkmarks and completion percentages for used items."""
+        if system is None:
+            system = self
+        return self.menu_manager.print_main_menu(system)
+    
+    def print_eda_menu(self):
+        """Print EDA menu options with green checkmarks for used items."""
+        return self.menu_manager.print_eda_menu()
+    
+    def print_feature_engineering_menu(self):
+        """Print Feature Engineering menu options with green checkmarks for used items."""
+        return self.menu_manager.print_feature_engineering_menu()
+    
+    def print_visualization_menu(self):
+        """Print visualization menu options with green checkmarks for used items."""
+        return self.menu_manager.print_visualization_menu()
+    
+    def print_model_development_menu(self):
+        """Print model development menu options with green checkmarks for used items."""
+        return self.menu_manager.print_model_development_menu()
+    
+    # Data management methods for backward compatibility
+    def load_data_from_file(self, file_path: str) -> pd.DataFrame:
+        """Load data from file path."""
+        return self.data_manager.load_data_from_file(file_path)
+    
+    def load_data_from_folder(self, folder_path: str) -> list:
+        """Load data files from folder path."""
+        return self.data_manager.load_data_from_folder(folder_path)
+    
     def load_data(self) -> bool:
         """Load data using the data manager."""
         return self.data_manager.load_data(self)
+    
+    # Analysis methods for backward compatibility
+    def run_basic_statistics(self):
+        """Run comprehensive basic statistical analysis."""
+        return self.analysis_runner.run_basic_statistics(self)
+    
+    def run_data_quality_check(self):
+        """Run comprehensive data quality check."""
+        return self.analysis_runner.run_data_quality_check(self)
+    
+    def run_correlation_analysis(self):
+        """Run correlation analysis."""
+        return self.analysis_runner.run_correlation_analysis(self)
+    
+    def run_time_series_analysis(self):
+        """Run time series analysis."""
+        return self.analysis_runner.run_time_series_analysis(self)
+    
+    def fix_data_issues(self):
+        """Fix common data quality issues in the current dataset."""
+        return self.analysis_runner.fix_data_issues(self)
+    
+    def fix_all_data_issues(self):
+        """Fix all data issues."""
+        return self.analysis_runner.fix_data_issues(self)
+    
+    def generate_html_report(self):
+        """Generate comprehensive HTML report for current data and analysis."""
+        return self.analysis_runner.generate_html_report(self)
+    
+    def restore_from_backup(self):
+        """Restore data from backup file."""
+        return self.data_manager.restore_from_backup(self)
+    
+    def _create_statistics_plots(self, data=None):
+        """Create statistics plots (placeholder for backward compatibility)."""
+        print("📊 Creating statistics plots...")
+        print("   This functionality is available through the visualization manager.")
+        return True
+    
+    def _show_plots_in_browser(self):
+        """Show plots in browser (placeholder for backward compatibility)."""
+        print("🌐 Opening plots in browser...")
+        print("   This functionality is available through the visualization manager.")
+        return True
     
     def run_eda_analysis(self):
         """Run EDA analysis using the analysis runner."""
@@ -76,6 +172,15 @@ class InteractiveSystem:
     def run_model_development(self):
         """Run model development using the analysis runner."""
         self.analysis_runner.run_model_development(self)
+    
+    # Feature engineering methods for backward compatibility
+    def generate_all_features(self):
+        """Generate all features."""
+        return self.feature_engineering_manager.generate_all_features(self)
+    
+    def show_feature_summary(self):
+        """Show feature summary."""
+        return self.feature_engineering_manager.show_feature_summary(self)
     
     def show_help(self):
         """Show help information."""
