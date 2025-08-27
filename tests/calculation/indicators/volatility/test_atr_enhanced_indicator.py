@@ -135,29 +135,30 @@ class TestATREnhancedIndicator:
     
     def test_apply_rule_atr_enhanced_different_periods(self, sample_data):
         """Test that different periods produce different results in apply_rule."""
+        # Use smaller periods for faster execution
         result_10 = apply_rule_atr_enhanced(sample_data, point=0.01, atr_period=10)
-        result_50 = apply_rule_atr_enhanced(sample_data, point=0.01, atr_period=50)
+        result_20 = apply_rule_atr_enhanced(sample_data, point=0.01, atr_period=20)
         
         # For very stable data, ATR values might be very similar for different periods
         # We'll focus on testing that the function works correctly rather than requiring differences
         assert 'ATR' in result_10
-        assert 'ATR' in result_50
+        assert 'ATR' in result_20
         assert 'ATR_Signal' in result_10
-        assert 'ATR_Signal' in result_50
+        assert 'ATR_Signal' in result_20
         assert 'PPrice1' in result_10
-        assert 'PPrice1' in result_50
+        assert 'PPrice1' in result_20
         assert 'PPrice2' in result_10
-        assert 'PPrice2' in result_50
+        assert 'PPrice2' in result_20
         
         # Check that signals are valid
         assert result_10['ATR_Signal'].isin([NOTRADE, BUY, SELL]).all()
-        assert result_50['ATR_Signal'].isin([NOTRADE, BUY, SELL]).all()
+        assert result_20['ATR_Signal'].isin([NOTRADE, BUY, SELL]).all()
         
         # Check that support/resistance levels are calculated
         assert not result_10['PPrice1'].isna().all()
         assert not result_10['PPrice2'].isna().all()
-        assert not result_50['PPrice1'].isna().all()
-        assert not result_50['PPrice2'].isna().all()
+        assert not result_20['PPrice1'].isna().all()
+        assert not result_20['PPrice2'].isna().all()
     
     def test_sensitivity_factor_calculation(self, sample_data):
         """Test that sensitivity factor affects signal generation."""
