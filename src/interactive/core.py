@@ -30,7 +30,7 @@ class InteractiveSystem:
         # Initialize managers
         self.menu_manager = MenuManager()
         self.data_manager = DataManager()
-        self.analysis_runner = AnalysisRunner()
+        self.analysis_runner = AnalysisRunner(self)
         self.visualization_manager = VisualizationManager()
         self.feature_engineering_manager = FeatureEngineeringManager()
         

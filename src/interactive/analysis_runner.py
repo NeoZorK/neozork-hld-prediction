@@ -9,18 +9,21 @@ statistical analysis, and data quality checks.
 
 import time
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, TYPE_CHECKING
 
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
+import sys
 
+if TYPE_CHECKING:
+    from .core import InteractiveSystem
 
 class AnalysisRunner:
-    """Manages analysis operations and EDA functionality."""
+    """Handles analysis operations and data processing."""
     
-    def __init__(self):
-        """Initialize the analysis runner."""
-        pass
+    def __init__(self, system: 'InteractiveSystem'):
+        self.system = system
     
     def run_eda_analysis(self, system):
         """Run EDA analysis menu."""
