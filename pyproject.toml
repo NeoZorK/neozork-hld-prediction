@@ -131,6 +131,7 @@ dependencies = [
     "datashader",
     "pandas-stubs==2.2.3.250527",
     "watchdog==4.0.0",
+    "websockets>=14.2",
 ]
 
 [build-system]
