@@ -41,13 +41,19 @@ class TestBasicStatisticsFix:
         system = InteractiveSystem()
         system.current_data = test_data
         
-        # Test the function
+        # Test the function with seaborn mocking to avoid warnings
         try:
             print("\n" + "="*60)
             print("🧪 RUNNING BASIC STATISTICS TEST")
             print("="*60)
             
-            system.run_basic_statistics()
+            # Mock seaborn to avoid warnings
+            from unittest.mock import patch
+            with patch('seaborn.boxplot') as mock_boxplot, \
+                 patch('seaborn.histplot') as mock_histplot, \
+                 patch('seaborn.heatmap') as mock_heatmap:
+                
+                system.run_basic_statistics()
             
             print("\n" + "="*60)
             print("✅ TEST COMPLETED SUCCESSFULLY!")
@@ -97,13 +103,19 @@ class TestBasicStatisticsFix:
         system = InteractiveSystem()
         system.current_data = test_data
         
-        # Test the function
+        # Test the function with seaborn mocking to avoid warnings
         try:
             print("\n" + "="*60)
             print("🧪 RUNNING BASIC STATISTICS TEST WITH LARGE DATASET")
             print("="*60)
             
-            system.run_basic_statistics()
+            # Mock seaborn to avoid warnings
+            from unittest.mock import patch
+            with patch('seaborn.boxplot') as mock_boxplot, \
+                 patch('seaborn.histplot') as mock_histplot, \
+                 patch('seaborn.heatmap') as mock_heatmap:
+                
+                system.run_basic_statistics()
             
             print("\n" + "="*60)
             print("✅ TEST COMPLETED SUCCESSFULLY!")

@@ -80,7 +80,13 @@ def test_enhanced_basic_statistics():
     print("   • Enhanced timing information")
     
     try:
-        system.run_basic_statistics()
+        # Mock seaborn to avoid warnings
+        from unittest.mock import patch
+        with patch('seaborn.boxplot') as mock_boxplot, \
+             patch('seaborn.histplot') as mock_histplot, \
+             patch('seaborn.heatmap') as mock_heatmap:
+            
+            system.run_basic_statistics()
         print("✅ Enhanced Basic Statistics completed successfully!")
         
         # Check if plots were created

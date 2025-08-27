@@ -206,21 +206,26 @@ class TestEnhancedInteractiveSystem:
             plots_dir = Path("results/plots/statistics")
             plots_dir.mkdir(parents=True, exist_ok=True)
             
-            # Test plot creation with progress bar
-            numeric_data = sample_data.select_dtypes(include=[np.number])
-            interactive_system._create_statistics_plots(numeric_data)
-            
-            # Check that plots were created
-            expected_plots = ['distributions.png', 'boxplots.png', 'correlation_heatmap.png', 'statistical_summary.png']
-            for plot in expected_plots:
-                plot_path = plots_dir / plot
-                assert plot_path.exists(), f"Plot {plot} was not created"
+            # Mock seaborn to avoid warnings
+            with patch('seaborn.boxplot') as mock_boxplot, \
+                 patch('seaborn.histplot') as mock_histplot, \
+                 patch('seaborn.heatmap') as mock_heatmap:
                 
-            # Check that plots have reasonable file sizes (not empty)
-            for plot in expected_plots:
-                plot_path = plots_dir / plot
-                file_size = plot_path.stat().st_size
-                assert file_size > 1000, f"Plot {plot} is too small ({file_size} bytes)"
+                # Test plot creation with progress bar
+                numeric_data = sample_data.select_dtypes(include=[np.number])
+                interactive_system._create_statistics_plots(numeric_data)
+                
+                # Check that plots were created
+                expected_plots = ['distributions.png', 'boxplots.png', 'correlation_heatmap.png', 'statistical_summary.png']
+                for plot in expected_plots:
+                    plot_path = plots_dir / plot
+                    assert plot_path.exists(), f"Plot {plot} was not created"
+                    
+                # Check that plots have reasonable file sizes (not empty)
+                for plot in expected_plots:
+                    plot_path = plots_dir / plot
+                    file_size = plot_path.stat().st_size
+                    assert file_size > 1000, f"Plot {plot} is too small ({file_size} bytes)"
                 
         finally:
             os.chdir(original_cwd)

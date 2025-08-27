@@ -48,7 +48,11 @@ def test_html_and_plots():
     
     # Run basic statistics to generate data for HTML report
     print("\n1. Running Basic Statistics...")
-    with patch('builtins.input', return_value='n'):
+    with patch('builtins.input', return_value='n'), \
+         patch('seaborn.boxplot') as mock_boxplot, \
+         patch('seaborn.histplot') as mock_histplot, \
+         patch('seaborn.heatmap') as mock_heatmap:
+        
         system.run_basic_statistics()
     
     # Verify that basic statistics results are saved

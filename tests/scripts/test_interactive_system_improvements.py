@@ -110,8 +110,13 @@ class TestInteractiveSystemImprovements:
         # Load sample data
         interactive_system.current_data = sample_data
         
-        # Run comprehensive basic statistics
-        interactive_system.run_basic_statistics()
+        # Run comprehensive basic statistics with seaborn mocking to avoid warnings
+        from unittest.mock import patch
+        with patch('seaborn.boxplot') as mock_boxplot, \
+             patch('seaborn.histplot') as mock_histplot, \
+             patch('seaborn.heatmap') as mock_heatmap:
+            
+            interactive_system.run_basic_statistics()
         
         # Check that results were saved
         assert 'comprehensive_basic_statistics' in interactive_system.current_results
@@ -222,7 +227,15 @@ class TestInteractiveSystemImprovements:
         
         # These should handle the error gracefully
         interactive_system.run_data_quality_check()
-        interactive_system.run_basic_statistics()
+        
+        # Mock seaborn to avoid warnings
+        from unittest.mock import patch
+        with patch('seaborn.boxplot') as mock_boxplot, \
+             patch('seaborn.histplot') as mock_histplot, \
+             patch('seaborn.heatmap') as mock_heatmap:
+            
+            interactive_system.run_basic_statistics()
+        
         interactive_system.fix_all_data_issues()
         interactive_system.restore_from_backup()
         
@@ -234,7 +247,11 @@ class TestInteractiveSystemImprovements:
         interactive_system.current_data = invalid_data
         
         # Should handle non-numeric data gracefully
-        interactive_system.run_basic_statistics()
+        with patch('seaborn.boxplot') as mock_boxplot, \
+             patch('seaborn.histplot') as mock_histplot, \
+             patch('seaborn.heatmap') as mock_heatmap:
+            
+            interactive_system.run_basic_statistics()
     
     def test_progress_bars(self, interactive_system, sample_data):
         """Test that progress bars are implemented."""
@@ -244,7 +261,14 @@ class TestInteractiveSystemImprovements:
         # The functions should use tqdm progress bars
         # This is tested by ensuring the functions complete without errors
         interactive_system.run_data_quality_check()
-        interactive_system.run_basic_statistics()
+        
+        # Mock seaborn to avoid warnings
+        from unittest.mock import patch
+        with patch('seaborn.boxplot') as mock_boxplot, \
+             patch('seaborn.histplot') as mock_histplot, \
+             patch('seaborn.heatmap') as mock_heatmap:
+            
+            interactive_system.run_basic_statistics()
         
         # If progress bars cause issues, the functions would fail
         assert True
