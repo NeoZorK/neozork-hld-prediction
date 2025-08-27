@@ -197,31 +197,17 @@ class TestInteractiveSystem:
         # This method calls the analysis runner's run_eda_analysis method
     
     @patch('builtins.input', return_value='')
-    def test_run_feature_engineering_analysis(self, mock_input, interactive_system):
+    @patch('src.interactive.feature_engineering_manager.FeatureEngineeringManager.run_feature_engineering_analysis')
+    def test_run_feature_engineering_analysis(self, mock_feature_analysis, mock_input, interactive_system):
         """Test run_feature_engineering_analysis method."""
-        # Add timeout to prevent hanging
-        import signal
+        # Mock the feature engineering manager to prevent hanging
+        mock_feature_analysis.return_value = None
         
-        def timeout_handler(signum, frame):
-            raise TimeoutError("Test timed out")
+        # Call the method - it should not hang now
+        interactive_system.run_feature_engineering_analysis()
         
-        # Set timeout for 5 seconds
-        signal.signal(signal.SIGALRM, timeout_handler)
-        signal.alarm(5)
-        
-        try:
-            interactive_system.run_feature_engineering_analysis()
-            signal.alarm(0)  # Cancel alarm
-        except TimeoutError:
-            signal.alarm(0)  # Cancel alarm
-            # If timeout occurs, that's acceptable for this test
-            pass
-        except Exception:
-            signal.alarm(0)  # Cancel alarm
-            # Other exceptions are also acceptable
-            pass
-        
-        # This method calls the feature engineering manager's run_feature_engineering_analysis method
+        # Verify the mock was called
+        mock_feature_analysis.assert_called_once()
     
     @patch('builtins.input', return_value='')
     def test_run_visualization_analysis(self, mock_input, interactive_system):
