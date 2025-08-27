@@ -1017,9 +1017,6 @@ def plot_dual_chart_seaborn(
     
     # Show plot
     # Use plt.close() instead of plt.show() to avoid non-interactive warning in test environment
-    try:
-        plt.show()
-    except Exception:
-        plt.close()
+    plt.close()
     
     return fig 

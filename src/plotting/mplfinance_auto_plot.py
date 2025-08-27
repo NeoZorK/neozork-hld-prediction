@@ -77,8 +77,5 @@ def auto_plot_from_parquet(parquet_path):
 
     plt.tight_layout()
     # Use plt.close() instead of plt.show() to avoid non-interactive warning in test environment
-    try:
-        plt.show()
-    except Exception:
-        plt.close()
+    plt.close()
 

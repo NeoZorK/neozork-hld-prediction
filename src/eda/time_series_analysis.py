@@ -31,11 +31,11 @@ from pathlib import Path
 import os
 import json
 from datetime import datetime, timedelta
-
 # Suppress warnings for cleaner output
 warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
+warnings.filterwarnings("ignore", category=UserWarning, module="statsmodels")
 
 # Set seaborn style
 sns.set(style="whitegrid", palette="husl")

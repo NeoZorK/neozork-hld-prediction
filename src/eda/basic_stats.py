@@ -458,7 +458,7 @@ def generate_outlier_analysis_report(df, file_path):
             fig.suptitle(f'Outlier Analysis for {col}', fontsize=16)
 
             # 1. Box plot
-            sns.boxplot(data=col_data, ax=ax1, color='lightblue', orient='h')
+            sns.boxplot(data=col_data, ax=ax1, color='lightblue', orientation='horizontal')
             ax1.set_title('Box Plot (IQR Method)')
 
             # 2. Scatter plot with IQR bounds
