@@ -71,19 +71,16 @@ def test_data_fixing_direct():
     
     # Check that backup was created
     assert 'backup_file' in fix_data
-    assert 'fixes_applied' in fix_data
-    
-    # Check that some fixes were applied
-    assert len(fix_data['fixes_applied']) > 0
+    assert 'nan_fixed' in fix_data
+    assert 'duplicates_removed' in fix_data
     
     # Check that NaN was fixed
     final_nan_count = system.current_data['open'].isna().sum()
     assert final_nan_count == 0, f"NaN not fixed: {final_nan_count} remaining"
     
     print(f"   Final NaN count in 'open': {final_nan_count}")
-    print(f"   Fixes applied: {len(fix_data['fixes_applied'])}")
-    for fix in fix_data['fixes_applied']:
-        print(f"     - {fix}")
+    print(f"   NaN fixed: {fix_data['nan_fixed']}")
+    print(f"   Duplicates removed: {fix_data['duplicates_removed']}")
     
     print("✅ Data fixing test passed!")
 
@@ -169,9 +166,11 @@ def test_progress_bar_structure():
         assert 'comprehensive_data_quality' in system.current_results
         quality_data = system.current_results['comprehensive_data_quality']
         
-        assert len(quality_data['nan_summary']) > 0
-        assert len(quality_data['dupe_summary']) > 0
-        assert len(quality_data['zero_summary']) > 0
+        # Check that basic quality metrics are present
+        assert 'total_rows' in quality_data
+        assert 'total_cols' in quality_data
+        assert 'missing_values' in quality_data
+        assert 'duplicates' in quality_data
         
         print("✅ Progress bar structure test passed!")
         

@@ -28,6 +28,7 @@ misc.xml
 
 # Project specific
 data/cleaned/
+data/backups/
 *.xml
 scripts/start_mcp_server.sh
 scripts/test_mcp_connection.sh

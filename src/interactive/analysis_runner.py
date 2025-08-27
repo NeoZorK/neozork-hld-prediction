@@ -189,6 +189,12 @@ class AnalysisRunner:
                 print(f"  • Consider feature scaling for machine learning")
                 print(f"  • Investigate outliers if percentage is high")
             
+            # Import outlier analysis function
+            from ..eda.basic_stats import outlier_analysis
+            
+            # Perform outlier analysis
+            outlier_results = outlier_analysis(numeric_data)
+            
             # Save results
             system.current_results['comprehensive_basic_statistics'] = {
                 'basic_stats': desc_stats.to_dict(),
@@ -197,6 +203,7 @@ class AnalysisRunner:
                     'skewness': {col: numeric_data[col].skew() for col in numeric_data.columns},
                     'kurtosis': {col: numeric_data[col].kurtosis() for col in numeric_data.columns}
                 },
+                'outlier_analysis': outlier_results,
                 'summary': {
                     'shape': numeric_data.shape,
                     'memory_usage_mb': numeric_data.memory_usage(deep=True).sum() / 1024 / 1024,
@@ -256,7 +263,7 @@ class AnalysisRunner:
                     print(f"   • {col}: {col_missing:,} missing ({col_missing_pct:.2f}%)")
             
             # Save results
-            system.current_results['data_quality'] = {
+            system.current_results['comprehensive_data_quality'] = {
                 'total_rows': total_rows,
                 'total_cols': total_cols,
                 'missing_values': missing_data,
@@ -266,6 +273,9 @@ class AnalysisRunner:
                 'numeric_columns': len(system.current_data.select_dtypes(include=[np.number]).columns),
                 'datetime_columns': len(system.current_data.select_dtypes(include=['datetime']).columns)
             }
+            
+            # Also save under the old key for backward compatibility
+            system.current_results['data_quality'] = system.current_results['comprehensive_data_quality']
             
             print(f"\n✅ Data quality check completed!")
             
@@ -468,11 +478,19 @@ class AnalysisRunner:
             
             if keep_changes in ['y', 'yes']:
                 print("✅ Changes applied")
+                
+                # Create backup file
+                backup_file = f"backup_{int(time.time())}.csv"
+                backup_path = Path("data/backups") / backup_file
+                backup_path.parent.mkdir(parents=True, exist_ok=True)
+                backup_data.to_csv(backup_path, index=False)
+                
                 system.current_results['data_fixes'] = {
                     'original_shape': backup_data.shape,
                     'current_shape': system.current_data.shape,
                     'nan_fixed': len(nan_cols) > 0,
-                    'duplicates_removed': duplicates > 0
+                    'duplicates_removed': duplicates > 0,
+                    'backup_file': backup_file
                 }
                 
                 # Mark as used
@@ -538,14 +556,29 @@ class AnalysisRunner:
         <h2>Analysis Results</h2>
 """
                 
+                # Add Data Quality Analysis section
+                if 'comprehensive_data_quality' in system.current_results or 'data_quality' in system.current_results:
+                    html_content += """
+    <div class="section">
+        <h2>Data Quality Analysis</h2>
+"""
+                    quality_data = system.current_results.get('comprehensive_data_quality', system.current_results.get('data_quality', {}))
+                    html_content += f"        <p><strong>Total Rows:</strong> {quality_data.get('total_rows', 'N/A')}</p>\n"
+                    html_content += f"        <p><strong>Total Columns:</strong> {quality_data.get('total_cols', 'N/A')}</p>\n"
+                    html_content += f"        <p><strong>Missing Values:</strong> {quality_data.get('missing_values', quality_data.get('total_missing', 'N/A'))} ({quality_data.get('missing_percentage', 'N/A'):.2f}%)</p>\n"
+                    html_content += f"        <p><strong>Duplicates:</strong> {quality_data.get('duplicates', 'N/A')} ({quality_data.get('duplicate_percentage', 'N/A'):.2f}%)</p>\n"
+                    html_content += "    </div>\n"
+                
+                # Add other analysis results
                 for key, value in system.current_results.items():
-                    html_content += f"        <h3>{key.replace('_', ' ').title()}</h3>\n"
-                    if isinstance(value, dict):
-                        for k, v in value.items():
-                            if k != 'data_with_features':
-                                html_content += f"        <p><strong>{k}:</strong> {v}</p>\n"
-                    else:
-                        html_content += f"        <p>{value}</p>\n"
+                    if key != 'comprehensive_data_quality':  # Skip as it's handled above
+                        html_content += f"        <h3>{key.replace('_', ' ').title()}</h3>\n"
+                        if isinstance(value, dict):
+                            for k, v in value.items():
+                                if k != 'data_with_features':
+                                    html_content += f"        <p><strong>{k}:</strong> {v}</p>\n"
+                        else:
+                            html_content += f"        <p>{value}</p>\n"
                 
                 html_content += "    </div>\n"
             

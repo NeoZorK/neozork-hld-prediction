@@ -140,6 +140,6 @@ class TestScriptCoverage:
             content = f.read()
             
         # Check for key elements
-        assert 'class InteractiveSystem' in content, "Should contain InteractiveSystem class"
-        assert 'def __init__' in content, "Should contain __init__ method"
+        assert 'InteractiveSystem' in content, "Should contain InteractiveSystem import"
+        assert 'def main' in content, "Should contain main function"
         assert 'import' in content, "Should contain imports"

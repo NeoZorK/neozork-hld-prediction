@@ -38,6 +38,7 @@ ENV/
 
 # Data files (will be mounted as volumes)
 /data/
+/data/backups/
 /logs/
 *.svg
 *.webp

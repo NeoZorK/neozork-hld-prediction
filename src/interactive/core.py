@@ -146,16 +146,12 @@ class InteractiveSystem:
         return self.data_manager.restore_from_backup(self)
     
     def _create_statistics_plots(self, data=None):
-        """Create statistics plots (placeholder for backward compatibility)."""
-        print("📊 Creating statistics plots...")
-        print("   This functionality is available through the visualization manager.")
-        return True
+        """Create statistics plots using visualization manager."""
+        return self.visualization_manager.create_statistics_plots(self, data)
     
     def _show_plots_in_browser(self):
-        """Show plots in browser (placeholder for backward compatibility)."""
-        print("🌐 Opening plots in browser...")
-        print("   This functionality is available through the visualization manager.")
-        return True
+        """Show plots in browser using visualization manager."""
+        return self.visualization_manager.show_plots_in_browser(self)
     
     def run_eda_analysis(self):
         """Run EDA analysis using the analysis runner."""
