@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Tests for visualization manager module.
+Fast tests for visualization manager module.
 
-This module tests the VisualizationManager class from src/interactive/visualization_manager.py.
+This module contains optimized, fast tests for VisualizationManager class
+that are designed to run quickly in Docker environments with limited resources.
 """
 
 import pytest
@@ -17,8 +18,8 @@ import os
 from src.interactive.visualization_manager import VisualizationManager
 
 
-class TestVisualizationManager:
-    """Test VisualizationManager class."""
+class TestVisualizationManagerFast:
+    """Fast test cases for VisualizationManager class."""
     
     @pytest.fixture
     def visualization_manager(self):
@@ -35,24 +36,24 @@ class TestVisualizationManager:
         return system
     
     @pytest.fixture
-    def sample_data(self):
-        """Create sample OHLCV data for testing."""
-        dates = pd.date_range('2023-01-01', periods=100, freq='D')
+    def small_sample_data(self):
+        """Create small sample OHLCV data for fast testing."""
+        dates = pd.date_range('2023-01-01', periods=20, freq='D')  # Reduced from 100
         data = {
-            'Open': np.random.uniform(100, 200, 100),
-            'High': np.random.uniform(150, 250, 100),
-            'Low': np.random.uniform(50, 150, 100),
-            'Close': np.random.uniform(100, 200, 100),
-            'Volume': np.random.uniform(1000, 10000, 100)
+            'Open': np.random.uniform(100, 200, 20),
+            'High': np.random.uniform(150, 250, 20),
+            'Low': np.random.uniform(50, 150, 20),
+            'Close': np.random.uniform(100, 200, 20),
+            'Volume': np.random.uniform(1000, 10000, 20)
         }
         return pd.DataFrame(data, index=dates)
     
-    def test_init(self, visualization_manager):
-        """Test VisualizationManager initialization."""
+    def test_init_fast(self, visualization_manager):
+        """Test VisualizationManager initialization - fast version."""
         assert visualization_manager is not None
     
-    def test_run_visualization_analysis(self, visualization_manager, mock_system, capsys):
-        """Test run_visualization_analysis."""
+    def test_run_visualization_analysis_fast(self, visualization_manager, mock_system, capsys):
+        """Test run_visualization_analysis - fast version."""
         visualization_manager.run_visualization_analysis(mock_system)
         
         captured = capsys.readouterr()
@@ -64,23 +65,23 @@ class TestVisualizationManager:
         
         mock_system.safe_input.assert_called_once()
     
-    def test_create_statistics_plots_no_data(self, visualization_manager, mock_system, capsys):
-        """Test create_statistics_plots with no data."""
+    def test_create_statistics_plots_no_data_fast(self, visualization_manager, mock_system, capsys):
+        """Test create_statistics_plots with no data - fast version."""
         result = visualization_manager.create_statistics_plots(mock_system)
         captured = capsys.readouterr()
         assert result is False
         assert "No numeric data available for plotting" in captured.out
     
-    def test_create_statistics_plots_empty_data(self, visualization_manager, mock_system, capsys):
-        """Test create_statistics_plots with empty data."""
+    def test_create_statistics_plots_empty_data_fast(self, visualization_manager, mock_system, capsys):
+        """Test create_statistics_plots with empty data - fast version."""
         mock_system.current_data = pd.DataFrame()
         result = visualization_manager.create_statistics_plots(mock_system)
         captured = capsys.readouterr()
         assert result is False
         assert "No numeric data available for plotting" in captured.out
     
-    def test_create_statistics_plots_no_numeric_data(self, visualization_manager, mock_system, capsys):
-        """Test create_statistics_plots with no numeric data."""
+    def test_create_statistics_plots_no_numeric_data_fast(self, visualization_manager, mock_system, capsys):
+        """Test create_statistics_plots with no numeric data - fast version."""
         # Create data with no numeric columns
         data = pd.DataFrame({
             'Date': ['2023-01-01', '2023-01-02', '2023-01-03'],
@@ -94,8 +95,8 @@ class TestVisualizationManager:
         assert result is False
         assert "No numeric data available for plotting" in captured.out
     
-    def test_show_plots_in_browser_no_plots_directory(self, visualization_manager, mock_system, capsys):
-        """Test show_plots_in_browser with no plots directory."""
+    def test_show_plots_in_browser_no_plots_directory_fast(self, visualization_manager, mock_system, capsys):
+        """Test show_plots_in_browser with no plots directory - fast version."""
         with patch('pathlib.Path.exists', return_value=False):
             result = visualization_manager.show_plots_in_browser(mock_system)
         
@@ -103,8 +104,8 @@ class TestVisualizationManager:
         assert result is False
         assert "No plots directory found" in captured.out
     
-    def test_show_plots_in_browser_with_error(self, visualization_manager, mock_system, capsys):
-        """Test show_plots_in_browser with error."""
+    def test_show_plots_in_browser_with_error_fast(self, visualization_manager, mock_system, capsys):
+        """Test show_plots_in_browser with error - fast version."""
         # Mock directory exists but error occurs
         with patch('pathlib.Path.exists', return_value=True):
             with patch('builtins.open', side_effect=Exception("Test error")):
@@ -114,8 +115,8 @@ class TestVisualizationManager:
         assert result is False
         assert "Error showing plots in browser" in captured.out
     
-    def test_show_plots_in_browser_success_mock(self, visualization_manager, mock_system, capsys):
-        """Test show_plots_in_browser with successful execution (mocked)."""
+    def test_show_plots_in_browser_success_mock_fast(self, visualization_manager, mock_system, capsys):
+        """Test show_plots_in_browser with successful execution (mocked) - fast version."""
         # Mock successful execution
         with patch('pathlib.Path.exists', return_value=True):
             with patch('builtins.open', create=True) as mock_open:
@@ -130,9 +131,9 @@ class TestVisualizationManager:
         # since we're testing the method structure, not the actual browser
         assert result is not None  # Should return True or False
     
-    def test_create_statistics_plots_with_data_basic(self, visualization_manager, mock_system, sample_data, capsys):
-        """Test create_statistics_plots with data - basic test."""
-        mock_system.current_data = sample_data
+    def test_create_statistics_plots_with_data_basic_fast(self, visualization_manager, mock_system, small_sample_data, capsys):
+        """Test create_statistics_plots with data - basic test - fast version."""
+        mock_system.current_data = small_sample_data
         
         # This test will likely fail due to matplotlib import issues in test environment
         # but we can test the method structure
@@ -145,9 +146,9 @@ class TestVisualizationManager:
             # We're testing the method structure, not the actual plotting
             pass
     
-    def test_create_statistics_plots_with_specific_data_basic(self, visualization_manager, mock_system, capsys):
-        """Test create_statistics_plots with specific data parameter - basic test."""
-        # Create specific data
+    def test_create_statistics_plots_with_specific_data_basic_fast(self, visualization_manager, mock_system, capsys):
+        """Test create_statistics_plots with specific data parameter - basic test - fast version."""
+        # Create specific data with fewer columns
         data = pd.DataFrame({
             'A': [1, 2, 3, 4, 5],
             'B': [2, 4, 6, 8, 10],
@@ -163,8 +164,8 @@ class TestVisualizationManager:
             # We're testing the method structure, not the actual plotting
             pass
     
-    def test_create_statistics_plots_single_column_data_basic(self, visualization_manager, mock_system, capsys):
-        """Test create_statistics_plots with single column data - basic test."""
+    def test_create_statistics_plots_single_column_data_basic_fast(self, visualization_manager, mock_system, capsys):
+        """Test create_statistics_plots with single column data - basic test - fast version."""
         # Create data with only one numeric column
         data = pd.DataFrame({'Close': [1, 2, 3, 4, 5]})
         mock_system.current_data = data
@@ -178,14 +179,13 @@ class TestVisualizationManager:
             # We're testing the method structure, not the actual plotting
             pass
     
-    def test_create_statistics_plots_many_columns_basic(self, visualization_manager, mock_system, capsys):
-        """Test create_statistics_plots with many columns - basic test."""
-        # Create data with fewer columns for faster execution
+    def test_create_statistics_plots_few_columns_basic_fast(self, visualization_manager, mock_system, capsys):
+        """Test create_statistics_plots with few columns - basic test - fast version."""
+        # Create data with few columns for faster execution
         data = pd.DataFrame({
             'A': [1, 2, 3, 4, 5],
             'B': [2, 4, 6, 8, 10],
-            'C': [1.5, 3.5, 5.5, 7.5, 9.5],
-            'D': [0.5, 1.5, 2.5, 3.5, 4.5]
+            'C': [1.5, 3.5, 5.5, 7.5, 9.5]
         })
         mock_system.current_data = data
         

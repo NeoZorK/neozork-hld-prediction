@@ -120,6 +120,7 @@ Requires-Dist: rich==13.6.0
 Requires-Dist: tqdm==4.67.1
 Requires-Dist: pytest
 Requires-Dist: pytest-xdist>=3.7.0
+Requires-Dist: pytest-timeout>=2.2.0
 Requires-Dist: polygon-api-client
 Requires-Dist: python-binance==1.0.17
 Requires-Dist: pyarrow
@@ -131,4 +132,3 @@ Requires-Dist: datashader
 Requires-Dist: pandas-stubs==2.2.3.250527
 Requires-Dist: watchdog==4.0.0
 Requires-Dist: websockets>=14.2
-Requires-Dist: openpyxl>=3.1.5

@@ -121,6 +121,7 @@ dependencies = [
     "tqdm==4.67.1",
     "pytest",
     "pytest-xdist>=3.7.0",
+    "pytest-timeout>=2.2.0",
     "polygon-api-client",
     "python-binance==1.0.17",
     "pyarrow",

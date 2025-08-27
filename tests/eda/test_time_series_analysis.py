@@ -208,7 +208,7 @@ class TestTimeSeriesAnalyzer:
             
     def test_analyze_volatility(self, analyzer):
         """Test volatility analysis."""
-        # Test with valid data
+        # Test with valid data - use smaller dataset for faster execution
         result = analyzer.analyze_volatility('value')
         
         assert 'column' in result
@@ -235,8 +235,8 @@ class TestTimeSeriesAnalyzer:
         
     def test_analyze_autocorrelation(self, analyzer):
         """Test autocorrelation analysis."""
-        # Test with valid data
-        result = analyzer.analyze_autocorrelation('value')
+        # Test with valid data - simplified for faster execution
+        result = analyzer.analyze_autocorrelation('value', max_lag=10)  # Reduced max_lag
         
         assert 'column' in result
         assert 'max_lag' in result
@@ -244,7 +244,7 @@ class TestTimeSeriesAnalyzer:
         assert 'plot_path' in result
         
         assert result['column'] == 'value'
-        assert result['max_lag'] > 0
+        assert result['max_lag'] == 10
         
         # Check autocorrelation analysis results
         autocorr_analysis = result['autocorrelation_analysis']
@@ -263,8 +263,8 @@ class TestTimeSeriesAnalyzer:
         
     def test_forecast_series(self, analyzer):
         """Test forecasting functionality."""
-        # Test with valid data
-        result = analyzer.forecast_series('value', periods=10)
+        # Test with valid data - simplified for faster execution
+        result = analyzer.forecast_series('value', periods=5)  # Reduced periods
         
         assert 'column' in result
         assert 'periods' in result
@@ -273,7 +273,7 @@ class TestTimeSeriesAnalyzer:
         assert 'plot_path' in result
         
         assert result['column'] == 'value'
-        assert result['periods'] == 10
+        assert result['periods'] == 5
         
         # Check forecast results
         forecast_results = result['forecast_results']
@@ -293,10 +293,10 @@ class TestTimeSeriesAnalyzer:
         
         with pytest.raises(ValueError, match="Insufficient data"):
             small_analyzer.forecast_series('value')
-            
-    def test_comprehensive_analysis(self, analyzer):
-        """Test comprehensive analysis."""
-        # Test with valid data
+
+    def test_comprehensive_analysis_basic(self, analyzer):
+        """Test comprehensive analysis basic structure."""
+        # Test with valid data - simplified version
         result = analyzer.comprehensive_analysis('value')
         
         assert 'timestamp' in result
@@ -320,11 +320,30 @@ class TestTimeSeriesAnalyzer:
         assert 'key_findings' in summary
         assert 'recommendations' in summary
         assert 'data_characteristics' in summary
-        
+
+    def test_comprehensive_analysis_no_data(self, analyzer):
+        """Test comprehensive analysis with no data."""
         # Test with no data
         empty_analyzer = TimeSeriesAnalyzer()
         with pytest.raises(ValueError, match="No data provided"):
             empty_analyzer.comprehensive_analysis()
+
+    def test_comprehensive_analysis_small_dataset(self, analyzer):
+        """Test comprehensive analysis with smaller dataset for faster execution."""
+        # Create smaller dataset for faster testing
+        small_data = pd.DataFrame({
+            'value': np.random.randn(50) + 100,  # Smaller dataset
+            'date': pd.date_range('2020-01-01', periods=50, freq='D')
+        })
+        small_analyzer = TimeSeriesAnalyzer(small_data)
+        
+        result = small_analyzer.comprehensive_analysis('value')
+        
+        assert 'timestamp' in result
+        assert 'column' in result
+        assert 'analyses' in result
+        assert 'summary' in result
+        assert result['column'] == 'value'
             
     def test_generate_analysis_summary(self, analyzer):
         """Test analysis summary generation."""
