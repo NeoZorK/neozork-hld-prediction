@@ -123,9 +123,11 @@ class TestAnalysisRunner:
         analysis_runner.run_eda_analysis(mock_system)
         mock_system.menu_manager.print_eda_menu.assert_called_once()
     
-    def test_run_basic_statistics_no_data(self, analysis_runner, mock_system_no_data):
+    def test_run_basic_statistics_no_data(self, analysis_runner, mock_system_no_data, capsys):
         """Test run_basic_statistics with no data."""
         analysis_runner.run_basic_statistics(mock_system_no_data)
+        captured = capsys.readouterr()
+        assert "No data loaded" in captured.out
     
     def test_run_basic_statistics_with_data(self, analysis_runner, mock_system):
         """Test run_basic_statistics with data."""

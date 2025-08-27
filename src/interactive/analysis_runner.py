@@ -215,6 +215,135 @@ class AnalysisRunner:
             
             print("\n✅ Comprehensive basic statistics completed and saved!")
             
+            # Ask user if they want to see plots
+            try:
+                show_plots = input("\n📊 Show Plots Yes/No ? ").strip().lower()
+            except (EOFError, OSError):
+                # Handle test environment where input is not available
+                show_plots = 'n'
+            
+            if show_plots in ['y', 'yes']:
+                print("\n📊 GENERATING VISUALIZATIONS...")
+                
+                # Create statistics plots with specific fields
+                target_fields = ['predicted_high', 'predicted_low', 'pressure', 'pressure_vector']
+                available_fields = [field for field in target_fields if field in numeric_data.columns]
+                
+                if available_fields:
+                    # Use only available fields
+                    plot_data = numeric_data[available_fields]
+                    print(f"   📈 Creating plots for fields: {', '.join(available_fields)}")
+                else:
+                    # Use all numeric data if target fields not found
+                    plot_data = numeric_data
+                    print(f"   📈 Creating plots for all numeric fields: {', '.join(numeric_data.columns[:4])}")
+                
+                # Create plots using visualization manager
+                plots_created = system.visualization_manager.create_statistics_plots(system, plot_data)
+                
+                if plots_created:
+                    print("✅ Generated 4 visualization files:")
+                    print("   • distributions.png - Distribution analysis")
+                    print("   • boxplots.png - Outlier detection")
+                    print("   • correlation_heatmap.png - Feature relationships")
+                    print("   • statistical_summary.png - Statistical comparisons")
+                    
+                    # Show plots in browser
+                    print("\n🌐 Opening plots in Safari browser...")
+                    browser_opened = system.visualization_manager.show_plots_in_browser(system)
+                    
+                    if browser_opened:
+                        print("✅ Plots opened in Safari browser with detailed descriptions")
+                    else:
+                        print("⚠️  Could not open browser automatically. Check the plots directory manually.")
+                else:
+                    print("❌ Failed to create plots")
+            
+            # Check for outliers and ask if user wants to fix them
+            has_outliers = False
+            outlier_summary = []
+            
+            for col, result in outlier_results.items():
+                if 'error' not in result:
+                    iqr_outliers = result['iqr_method']['outlier_percentage']
+                    zscore_outliers = result['z_score_method']['outlier_percentage']
+                    max_outliers = max(iqr_outliers, zscore_outliers)
+                    
+                    if max_outliers > 1:  # More than 1% outliers
+                        has_outliers = True
+                        outlier_summary.append((col, max_outliers))
+            
+            if has_outliers:
+                print(f"\n⚠️  OUTLIER DETECTION SUMMARY:")
+                print(f"   Found significant outliers in {len(outlier_summary)} columns:")
+                for col, pct in sorted(outlier_summary, key=lambda x: x[1], reverse=True)[:5]:
+                    print(f"   • {col}: {pct:.2f}% outliers")
+                
+                try:
+                    fix_outliers = input("\n🛠️  Do you want to fix data outliners ? ").strip().lower()
+                except (EOFError, OSError):
+                    # Handle test environment where input is not available
+                    fix_outliers = 'n'
+                
+                if fix_outliers in ['y', 'yes']:
+                    print("\n🛠️  FIXING DATA OUTLIERS...")
+                    
+                    # Create backup before fixing
+                    backup_data = system.current_data.copy()
+                    print("✅ Backup created")
+                    
+                    # Fix outliers using outlier handler
+                    from ..eda.outlier_handler import OutlierHandler
+                    outlier_handler = OutlierHandler(system.current_data)
+                    
+                    fixed_columns = []
+                    for col, pct in outlier_summary:
+                        if col in system.current_data.columns:
+                            try:
+                                # Use IQR method for outlier treatment
+                                result = outlier_handler.treat_outliers_capping([col], method='iqr')
+                                if result['values_capped'] > 0:
+                                    fixed_columns.append((col, result['values_capped']))
+                                    print(f"   ✅ Fixed {result['values_capped']} outliers in {col}")
+                            except Exception as e:
+                                print(f"   ❌ Error fixing outliers in {col}: {e}")
+                    
+                    if fixed_columns:
+                        print(f"\n✅ Successfully fixed outliers in {len(fixed_columns)} columns")
+                        print("   Summary of fixes:")
+                        for col, count in fixed_columns:
+                            print(f"   • {col}: {count} outliers capped")
+                        
+                        # Ask if user wants to keep the fixes
+                        try:
+                            keep_fixes = input("\nKeep the outlier fixes? (y/n): ").strip().lower()
+                        except (EOFError, OSError):
+                            keep_fixes = 'y'
+                        
+                        if keep_fixes in ['y', 'yes']:
+                            print("✅ Outlier fixes applied and saved")
+                            
+                            # Save backup file
+                            import time
+                            backup_file = f"backup_outliers_{int(time.time())}.csv"
+                            backup_path = Path("data/backups") / backup_file
+                            backup_path.parent.mkdir(parents=True, exist_ok=True)
+                            backup_data.to_csv(backup_path, index=False)
+                            
+                            # Update results
+                            system.current_results['outlier_fixes'] = {
+                                'original_shape': backup_data.shape,
+                                'current_shape': system.current_data.shape,
+                                'fixed_columns': fixed_columns,
+                                'backup_file': backup_file
+                            }
+                        else:
+                            # Revert changes
+                            system.current_data = backup_data
+                            print("🔄 Outlier fixes reverted")
+                    else:
+                        print("⚠️  No outliers were fixed")
+            
             # Mark as used
             system.menu_manager.mark_menu_as_used('eda', 'basic_statistics')
             

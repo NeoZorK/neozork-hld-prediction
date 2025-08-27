@@ -204,13 +204,16 @@ class TestVisualizationManager:
     @patch('pathlib.Path.exists', return_value=True)
     def test_show_plots_in_browser_exception(self, mock_exists, mock_open, mock_webbrowser, visualization_manager, mock_system):
         """Test show_plots_in_browser with exception."""
+        # Mock both webbrowser.get('safari').open() and webbrowser.open() to raise exceptions
         mock_webbrowser.side_effect = Exception("Test error")
         
         mock_plot_files = [Mock(name='distributions.png')]
         with patch('pathlib.Path.glob', return_value=mock_plot_files):
             with patch('pathlib.Path.iterdir', return_value=mock_plot_files):
-                result = visualization_manager.show_plots_in_browser(mock_system)
-                assert result is False
+                # Mock webbrowser.get to also raise exception
+                with patch('webbrowser.get', side_effect=Exception("Safari not found")):
+                    result = visualization_manager.show_plots_in_browser(mock_system)
+                    assert result is False
     
     @patch('webbrowser.open')
     @patch('builtins.open', create=True)

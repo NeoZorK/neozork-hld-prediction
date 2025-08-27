@@ -142,46 +142,303 @@ class VisualizationManager:
                 print("❌ No plots directory found")
                 return False
             
-            # Create a simple HTML file to display plots
+            # Create a comprehensive HTML file to display plots with detailed descriptions
             html_content = """
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Statistics Plots</title>
+    <title>Statistics Plots - NeoZorK HLD Prediction</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .plot { margin: 20px 0; text-align: center; }
-        img { max-width: 100%; height: auto; border: 1px solid #ddd; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 20px; 
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        .plot { 
+            margin: 30px 0; 
+            text-align: center; 
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fafafa;
+        }
+        .plot h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        .plot-description {
+            text-align: left;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-left: 4px solid #2196F3;
+            border-radius: 5px;
+        }
+        .plot-description h3 {
+            color: #1976D2;
+            margin-top: 0;
+        }
+        .plot-description ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .plot-description li {
+            margin: 5px 0;
+        }
+        img { 
+            max-width: 100%; 
+            height: auto; 
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .field-highlight {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .field-highlight strong {
+            color: #856404;
+        }
+        .interpretation {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .interpretation h4 {
+            color: #0c5460;
+            margin-top: 0;
+        }
+        .recommendations {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .recommendations h4 {
+            color: #155724;
+            margin-top: 0;
+        }
+        .timestamp {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
     </style>
 </head>
 <body>
-    <h1>Statistics Plots</h1>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Statistics Plots - NeoZorK HLD Prediction</h1>
+            <p>Comprehensive Data Analysis and Visualization Report</p>
+        </div>
 """
             
+            # Define plot descriptions with detailed explanations
+            plot_descriptions = {
+                'distributions.png': {
+                    'title': 'Distribution Analysis',
+                    'description': 'Histograms with Kernel Density Estimation (KDE) showing the distribution of values for each field.',
+                    'interpretation': {
+                        'predicted_high': 'Shows the distribution of predicted high values. Look for normal distribution, skewness, and potential outliers.',
+                        'predicted_low': 'Shows the distribution of predicted low values. Compare with predicted_high to understand prediction ranges.',
+                        'pressure': 'Shows the distribution of pressure values. This indicates market pressure levels and their frequency.',
+                        'pressure_vector': 'Shows the distribution of pressure vector values. This represents directional pressure strength.'
+                    },
+                    'what_to_look_for': [
+                        'Normal distribution (bell-shaped curve)',
+                        'Skewness (asymmetric distributions)',
+                        'Outliers (extreme values)',
+                        'Bimodal distributions (two peaks)',
+                        'Gaps or unusual patterns'
+                    ],
+                    'recommendations': [
+                        'If distributions are skewed, consider log transformations',
+                        'If outliers are present, investigate their validity',
+                        'For bimodal distributions, consider if data comes from different regimes',
+                        'Check for data quality issues if distributions look unusual'
+                    ]
+                },
+                'boxplots.png': {
+                    'title': 'Outlier Detection (Box Plots)',
+                    'description': 'Box plots showing the median, quartiles, and outliers for each field. Points outside the whiskers are considered outliers.',
+                    'interpretation': {
+                        'predicted_high': 'Outliers in predicted high may indicate extreme market conditions or prediction errors.',
+                        'predicted_low': 'Outliers in predicted low may indicate extreme market conditions or prediction errors.',
+                        'pressure': 'Outliers in pressure may indicate unusual market pressure events.',
+                        'pressure_vector': 'Outliers in pressure vector may indicate extreme directional pressure.'
+                    },
+                    'what_to_look_for': [
+                        'Outliers (points beyond whiskers)',
+                        'Box symmetry (median position)',
+                        'Whisker length (data spread)',
+                        'Box height (interquartile range)',
+                        'Overall data range'
+                    ],
+                    'recommendations': [
+                        'Investigate outliers to determine if they are errors or valid extreme values',
+                        'Consider outlier treatment methods (capping, removal, transformation)',
+                        'Check for data quality issues if many outliers are present',
+                        'Use robust statistics if outliers are valid but extreme'
+                    ]
+                },
+                'correlation_heatmap.png': {
+                    'title': 'Feature Relationships (Correlation Matrix)',
+                    'description': 'Heatmap showing correlations between different fields. Red indicates positive correlation, blue indicates negative correlation.',
+                    'interpretation': {
+                        'predicted_high': 'Correlation with other fields shows which factors influence high predictions.',
+                        'predicted_low': 'Correlation with other fields shows which factors influence low predictions.',
+                        'pressure': 'Correlation shows how pressure relates to other market indicators.',
+                        'pressure_vector': 'Correlation shows how directional pressure relates to other factors.'
+                    },
+                    'what_to_look_for': [
+                        'Strong positive correlations (dark red)',
+                        'Strong negative correlations (dark blue)',
+                        'Weak correlations (light colors)',
+                        'Correlation patterns between related fields',
+                        'Unexpected correlations that need investigation'
+                    ],
+                    'recommendations': [
+                        'Highly correlated features may be redundant for modeling',
+                        'Negative correlations may indicate inverse relationships',
+                        'Use correlation to understand feature relationships',
+                        'Consider feature selection based on correlation patterns'
+                    ]
+                },
+                'statistical_summary.png': {
+                    'title': 'Statistical Summary Comparison',
+                    'description': 'Bar charts comparing key statistical measures (mean, std, min, max) across all fields.',
+                    'interpretation': {
+                        'predicted_high': 'Compare mean and range with other fields to understand prediction scales.',
+                        'predicted_low': 'Compare mean and range with other fields to understand prediction scales.',
+                        'pressure': 'Compare pressure statistics with other market indicators.',
+                        'pressure_vector': 'Compare pressure vector statistics with other directional indicators.'
+                    },
+                    'what_to_look_for': [
+                        'Relative scales of different fields',
+                        'Fields with high variability (large std)',
+                        'Fields with extreme ranges (min to max)',
+                        'Consistent patterns across related fields',
+                        'Anomalous values that need investigation'
+                    ],
+                    'recommendations': [
+                        'Consider feature scaling if scales vary greatly',
+                        'Investigate fields with unusually high variability',
+                        'Check for data quality issues in extreme ranges',
+                        'Use appropriate scaling methods for machine learning'
+                    ]
+                }
+            }
+            
             plot_files = ['distributions.png', 'boxplots.png', 'correlation_heatmap.png', 'statistical_summary.png']
+            
             for plot_file in plot_files:
                 plot_path = plots_dir / plot_file
                 if plot_path.exists():
+                    desc = plot_descriptions.get(plot_file, {})
+                    
                     html_content += f"""
-    <div class="plot">
-        <h2>{plot_file.replace('.png', '').replace('_', ' ').title()}</h2>
-        <img src="{plot_path}" alt="{plot_file}">
-    </div>
+        <div class="plot">
+            <h2>{desc.get('title', plot_file.replace('.png', '').replace('_', ' ').title())}</h2>
+            <img src="{plot_path}" alt="{plot_file}">
+            
+            <div class="plot-description">
+                <h3>📋 Description</h3>
+                <p>{desc.get('description', 'Statistical visualization showing data patterns and relationships.')}</p>
+                
+                <div class="field-highlight">
+                    <strong>🎯 Key Fields Analysis:</strong>
+                    <ul>
+"""
+                    
+                    # Add field-specific interpretations
+                    field_interpretations = desc.get('interpretation', {})
+                    for field, interpretation in field_interpretations.items():
+                        html_content += f"                        <li><strong>{field}:</strong> {interpretation}</li>\n"
+                    
+                    html_content += """
+                    </ul>
+                </div>
+                
+                <div class="interpretation">
+                    <h4>🔍 What to Look For:</h4>
+                    <ul>
+"""
+                    
+                    for item in desc.get('what_to_look_for', []):
+                        html_content += f"                        <li>{item}</li>\n"
+                    
+                    html_content += """
+                    </ul>
+                </div>
+                
+                <div class="recommendations">
+                    <h4>💡 Recommendations:</h4>
+                    <ul>
+"""
+                    
+                    for item in desc.get('recommendations', []):
+                        html_content += f"                        <li>{item}</li>\n"
+                    
+                    html_content += """
+                    </ul>
+                </div>
+            </div>
+        </div>
 """
             
-            html_content += """
+            # Add timestamp
+            import time
+            html_content += f"""
+        <div class="timestamp">
+            <p>Report generated on: {time.strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p>NeoZorK HLD Prediction System - Interactive Analysis</p>
+        </div>
+    </div>
 </body>
 </html>
 """
             
             # Save HTML file
             html_path = plots_dir / 'plots_viewer.html'
-            with open(html_path, 'w') as f:
+            with open(html_path, 'w', encoding='utf-8') as f:
                 f.write(html_content)
             
-            # Open in browser
-            webbrowser.open(f'file://{html_path.absolute()}')
-            print(f"✅ Plots opened in browser: {html_path}")
+            # Open in Safari browser
+            try:
+                webbrowser.get('safari').open(f'file://{html_path.absolute()}')
+                print(f"✅ Plots opened in Safari browser: {html_path}")
+            except:
+                # Fallback to default browser if Safari is not available
+                webbrowser.open(f'file://{html_path.absolute()}')
+                print(f"✅ Plots opened in default browser: {html_path}")
+            
             return True
             
         except Exception as e:
