@@ -603,6 +603,68 @@ class AnalysisRunner:
             import traceback
             traceback.print_exc()
     
+    def run_outlier_detection(self, system):
+        """Run outlier detection analysis."""
+        if system.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return
+            
+        print("\n🔍 OUTLIER DETECTION ANALYSIS")
+        print("=" * 50)
+        
+        try:
+            from src.eda.outlier_handler import OutlierHandler
+            
+            # Create outlier handler
+            outlier_handler = OutlierHandler(system.current_data)
+            
+            # Get numeric columns
+            numeric_cols = system.current_data.select_dtypes(include=[np.number]).columns.tolist()
+            
+            if not numeric_cols:
+                print("❌ No numeric columns found for outlier detection.")
+                return
+            
+            print(f"📊 Analyzing {len(numeric_cols)} numeric columns for outliers...")
+            print("-" * 50)
+            
+            outlier_results = {}
+            
+            for col in numeric_cols:
+                print(f"\n🔍 Analyzing column: {col}")
+                
+                # IQR method
+                iqr_mask, iqr_stats = outlier_handler.detect_outliers_iqr(col)
+                iqr_count = iqr_mask.sum()
+                
+                # Z-score method
+                zscore_mask, zscore_stats = outlier_handler.detect_outliers_zscore(col)
+                zscore_count = zscore_mask.sum()
+                
+                print(f"   IQR method: {iqr_count} outliers detected")
+                print(f"   Z-score method: {zscore_count} outliers detected")
+                
+                outlier_results[col] = {
+                    'iqr_outliers': iqr_count,
+                    'zscore_outliers': zscore_count,
+                    'iqr_stats': iqr_stats,
+                    'zscore_stats': zscore_stats
+                }
+            
+            # Store results
+            system.current_results['outlier_detection'] = outlier_results
+            
+            print(f"\n✅ Outlier detection completed for {len(numeric_cols)} columns")
+            print("   Results stored in system.current_results['outlier_detection']")
+            
+            # Mark as used
+            system.menu_manager.mark_menu_as_used('eda', 'outlier_detection')
+            
+        except Exception as e:
+            print(f"❌ Error in outlier detection: {e}")
+            import traceback
+            traceback.print_exc()
+    
     def run_model_development(self, system):
         """Run model development menu."""
         print("\n📈 MODEL DEVELOPMENT")

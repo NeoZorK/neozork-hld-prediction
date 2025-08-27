@@ -366,7 +366,8 @@ class TimeSeriesAnalyzer:
                 'seasonal': decomposition.seasonal.tolist(),
                 'residual': decomposition.resid.tolist(),
                 'seasonal_strength': seasonal_strength,
-                'has_seasonality': seasonal_strength > 0.1
+                'has_seasonality': seasonal_strength > 0.1,
+                'seasonal_period': period
             }
             
         except Exception as e:

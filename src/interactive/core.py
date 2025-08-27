@@ -129,6 +129,10 @@ class InteractiveSystem:
         """Run time series analysis."""
         return self.analysis_runner.run_time_series_analysis(self)
     
+    def run_outlier_detection(self):
+        """Run outlier detection analysis."""
+        return self.analysis_runner.run_outlier_detection(self)
+    
     def fix_data_issues(self):
         """Fix common data quality issues in the current dataset."""
         return self.analysis_runner.fix_data_issues(self)

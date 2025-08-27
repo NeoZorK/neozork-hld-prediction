@@ -171,10 +171,11 @@ class TestInteractiveSystemFast:
         # This method doesn't exist, so we'll skip it
         pass
     
-    def test_show_data_info_fast(self, interactive_system):
+    @patch('builtins.input', return_value='')
+    def test_show_data_info_fast(self, mock_input, interactive_system):
         """Test show_data_info method - fast version."""
-        interactive_system.show_data_info()
-        # This method calls the data manager's show_data_info method
+        interactive_system.show_system_info()
+        # This method calls the menu manager's show_system_info method
     
     def test_run_basic_statistics_fast(self, interactive_system):
         """Test run_basic_statistics method - fast version."""
