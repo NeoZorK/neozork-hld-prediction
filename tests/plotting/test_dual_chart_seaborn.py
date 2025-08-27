@@ -51,14 +51,17 @@ class TestDualChartSeaborn:
         
         # Test that the function runs without errors
         try:
-            fig = plot_dual_chart_seaborn(
-                df=sample_data,
-                rule='stoch:14,3,close',
-                title='Test Stochastic Indicator',
-                output_path=str(output_path),
-                width=800,
-                height=600
-            )
+            # Mock matplotlib to avoid warnings
+            from unittest.mock import patch
+            with patch('matplotlib.pyplot.show') as mock_show:
+                fig = plot_dual_chart_seaborn(
+                    df=sample_data,
+                    rule='stoch:14,3,close',
+                    title='Test Stochastic Indicator',
+                    output_path=str(output_path),
+                    width=800,
+                    height=600
+                )
             
             # Check that the figure was created
             assert fig is not None
@@ -81,14 +84,17 @@ class TestDualChartSeaborn:
         
         # Test that the function runs without errors
         try:
-            fig = plot_dual_chart_seaborn(
-                df=sample_data,
-                rule='stochoscillator:14,3,close',
-                title='Test Stochastic Oscillator Indicator',
-                output_path=str(output_path),
-                width=800,
-                height=600
-            )
+            # Mock matplotlib to avoid warnings
+            from unittest.mock import patch
+            with patch('matplotlib.pyplot.show') as mock_show:
+                fig = plot_dual_chart_seaborn(
+                    df=sample_data,
+                    rule='stochoscillator:14,3,close',
+                    title='Test Stochastic Oscillator Indicator',
+                    output_path=str(output_path),
+                    width=800,
+                    height=600
+                )
             
             # Check that the figure was created
             assert fig is not None

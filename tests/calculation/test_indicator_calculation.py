@@ -185,7 +185,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         mock_calc_pv_func.return_value = mock_result_df
         
         # Mock corrcoef to return safe values and avoid numpy warnings
-        def safe_corrcoef(x, **kwargs):
+        def safe_corrcoef(x, y=None, **kwargs):
             return np.array([[1.0, 0.5], [0.5, 1.0]])
         mock_corrcoef.side_effect = safe_corrcoef
         
