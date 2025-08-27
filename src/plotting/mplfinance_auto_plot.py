@@ -54,7 +54,8 @@ def auto_plot_from_parquet(parquet_path):
     else:
         ax_main.plot(df.index, df[df.columns[0]], label=df.columns[0])
         ax_main.set_title('Main Chart')
-    ax_main.legend()
+    if ax_main.get_legend_handles_labels()[0]:  # Check if there are legend handles
+        ax_main.legend()
 
     # Volume panel
     ax_vol = fig.add_subplot(gs[1], sharex=ax_main)
@@ -71,8 +72,13 @@ def auto_plot_from_parquet(parquet_path):
         color = color_cycle[i % len(color_cycle)] if color_cycle else None
         ax.plot(df.index, df[col], label=col, color=color, linewidth=2)
         ax.set_ylabel(col)
-        ax.legend(loc='upper right')
+        if ax.get_legend_handles_labels()[0]:  # Check if there are legend handles
+            ax.legend(loc='upper right')
 
     plt.tight_layout()
-    plt.show()
+    # Use plt.close() instead of plt.show() to avoid non-interactive warning in test environment
+    try:
+        plt.show()
+    except Exception:
+        plt.close()
 

@@ -883,7 +883,8 @@ def plot_dual_chart_mpl(
         ax2.axhline(y=0, color='#95A5A6', linestyle='--', linewidth=0.8, alpha=0.6)
 
     # Add legend to main chart after all signals are added
-    ax1.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
+    if ax1.get_legend_handles_labels()[0]:  # Check if there are legend handles
+        ax1.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
     
     # Set y-axis label
     ax2.set_ylabel(y_axis_label, fontsize=11, fontweight='bold')
@@ -894,7 +895,8 @@ def plot_dual_chart_mpl(
     ax2.set_axisbelow(True)  # Put grid behind data
     
     # Enhanced legend
-    ax2.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
+    if ax2.get_legend_handles_labels()[0]:  # Check if there are legend handles
+        ax2.legend(loc='upper right', framealpha=0.9, fancybox=True, shadow=True, fontsize=9)
     
     # Format x-axis for indicator chart
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))

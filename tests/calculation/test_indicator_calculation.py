@@ -173,7 +173,7 @@ class TestIndicatorCalculationStep(unittest.TestCase):
     # Test validation logic execution in CSV mode
     # *** FIX: Patch specific logger methods needed ***
     @patch('src.calculation.indicator_calculation.logger.print_info')
-    @patch('numpy.isclose', return_value=np.array([True])) # Keep isclose mock simple
+    @patch('numpy.isclose') # Mock isclose to avoid numpy warnings
     @patch('src.calculation.indicator_calculation.calculate_pressure_vector')
     def test_calculate_indicator_csv_validation_called(self, mock_calc_pv_func, mock_isclose, mock_print_info):
         # Create args for CSV mode
@@ -182,6 +182,11 @@ class TestIndicatorCalculationStep(unittest.TestCase):
         mock_result_df['Pressure'] = 10.1 # Ensure calc columns exist
         mock_result_df['PV'] = 0.1
         mock_calc_pv_func.return_value = mock_result_df
+        
+        # Mock isclose to return safe values and avoid numpy warnings
+        def safe_isclose(a, b, **kwargs):
+            return np.array([True] * len(a) if hasattr(a, '__len__') else [True])
+        mock_isclose.side_effect = safe_isclose
 
         calculate_indicator(args, self.ohlcv_df, self.point_size)
 

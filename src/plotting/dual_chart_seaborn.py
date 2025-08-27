@@ -1016,6 +1016,10 @@ def plot_dual_chart_seaborn(
     logger.print_info(f"Dual chart saved to: {output_path}")
     
     # Show plot
-    plt.show()
+    # Use plt.close() instead of plt.show() to avoid non-interactive warning in test environment
+    try:
+        plt.show()
+    except Exception:
+        plt.close()
     
     return fig 
