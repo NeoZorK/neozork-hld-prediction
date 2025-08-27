@@ -12,9 +12,32 @@ from unittest.mock import Mock, patch, MagicMock
 from pathlib import Path
 import tempfile
 import os
+from typing import List
 
 # Import the module to test
 from src.ml.feature_engineering.base_feature_generator import BaseFeatureGenerator, FeatureConfig, BUY, SELL, NOTRADE
+
+
+class ConcreteFeatureGenerator(BaseFeatureGenerator):
+    """Concrete implementation of BaseFeatureGenerator for testing."""
+    
+    def generate_features(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Generate simple features for testing."""
+        if not self.validate_data(df):
+            return df
+            
+        df_result = df.copy()
+        
+        # Add a simple feature
+        df_result['test_feature'] = df_result['Close'] / df_result['Close'].rolling(window=5).mean()
+        
+        self.log_feature_generation('test_feature', 0.5)
+        
+        return df_result
+    
+    def get_feature_names(self) -> List[str]:
+        """Get list of generated feature names."""
+        return self.feature_names.copy()
 
 
 class TestFeatureConfig:
@@ -66,25 +89,25 @@ class TestBaseFeatureGenerator:
     
     @pytest.fixture
     def base_generator(self, feature_config):
-        """Create BaseFeatureGenerator instance for testing."""
-        return BaseFeatureGenerator(config=feature_config)
+        """Create ConcreteFeatureGenerator instance for testing."""
+        return ConcreteFeatureGenerator(config=feature_config)
     
     @pytest.fixture
     def sample_data(self):
         """Create sample OHLCV data for testing."""
-        dates = pd.date_range('2023-01-01', periods=100, freq='D')
+        dates = pd.date_range('2023-01-01', periods=600, freq='D')  # More data for validation
         data = {
-            'Open': np.random.uniform(100, 200, 100),
-            'High': np.random.uniform(150, 250, 100),
-            'Low': np.random.uniform(50, 150, 100),
-            'Close': np.random.uniform(100, 200, 100),
-            'Volume': np.random.uniform(1000, 10000, 100)
+            'Open': np.random.uniform(100, 200, 600),
+            'High': np.random.uniform(150, 250, 600),
+            'Low': np.random.uniform(50, 150, 600),
+            'Close': np.random.uniform(100, 200, 600),
+            'Volume': np.random.uniform(1000, 10000, 600)
         }
         return pd.DataFrame(data, index=dates)
     
     def test_init_with_config(self, feature_config):
-        """Test BaseFeatureGenerator initialization with config."""
-        generator = BaseFeatureGenerator(config=feature_config)
+        """Test ConcreteFeatureGenerator initialization with config."""
+        generator = ConcreteFeatureGenerator(config=feature_config)
         
         assert generator.config == feature_config
         assert generator.features_generated == 0
@@ -92,8 +115,8 @@ class TestBaseFeatureGenerator:
         assert generator.feature_importance == {}
     
     def test_init_without_config(self):
-        """Test BaseFeatureGenerator initialization without config."""
-        generator = BaseFeatureGenerator()
+        """Test ConcreteFeatureGenerator initialization without config."""
+        generator = ConcreteFeatureGenerator()
         
         assert generator.config is not None
         assert isinstance(generator.config, FeatureConfig)
@@ -135,8 +158,8 @@ class TestBaseFeatureGenerator:
     
     def test_handle_missing_values_forward_fill(self, base_generator, sample_data):
         """Test handle_missing_values with forward fill method."""
-        # Add some NaN values
-        sample_data.loc[10:15, 'Close'] = np.nan
+        # Add some NaN values using iloc for positional indexing
+        sample_data.iloc[10:15, sample_data.columns.get_loc('Close')] = np.nan
         
         result = base_generator.handle_missing_values(sample_data, method='forward_fill')
         
@@ -146,8 +169,8 @@ class TestBaseFeatureGenerator:
     
     def test_handle_missing_values_backward_fill(self, base_generator, sample_data):
         """Test handle_missing_values with backward fill method."""
-        # Add some NaN values
-        sample_data.loc[10:15, 'Close'] = np.nan
+        # Add some NaN values using iloc for positional indexing
+        sample_data.iloc[10:15, sample_data.columns.get_loc('Close')] = np.nan
         
         result = base_generator.handle_missing_values(sample_data, method='backward_fill')
         
@@ -157,8 +180,8 @@ class TestBaseFeatureGenerator:
     
     def test_handle_missing_values_interpolate(self, base_generator, sample_data):
         """Test handle_missing_values with interpolate method."""
-        # Add some NaN values
-        sample_data.loc[10:15, 'Close'] = np.nan
+        # Add some NaN values using iloc for positional indexing
+        sample_data.iloc[10:15, sample_data.columns.get_loc('Close')] = np.nan
         
         result = base_generator.handle_missing_values(sample_data, method='interpolate')
         
@@ -168,8 +191,8 @@ class TestBaseFeatureGenerator:
     
     def test_handle_missing_values_unknown_method(self, base_generator, sample_data):
         """Test handle_missing_values with unknown method."""
-        # Add some NaN values
-        sample_data.loc[10:15, 'Close'] = np.nan
+        # Add some NaN values using iloc for positional indexing
+        sample_data.iloc[10:15, sample_data.columns.get_loc('Close')] = np.nan
         
         result = base_generator.handle_missing_values(sample_data, method='unknown_method')
         
@@ -183,7 +206,7 @@ class TestBaseFeatureGenerator:
         
         assert isinstance(result, pd.Series)
         assert len(result) == len(sample_data)
-        assert result.iloc[0] == np.nan  # First value should be NaN (no previous value)
+        assert pd.isna(result.iloc[0])  # First value should be NaN (no previous value)
         assert not result.iloc[1:].isna().all()  # Other values should not be all NaN
     
     def test_calculate_returns_invalid_column(self, base_generator, sample_data):
@@ -199,7 +222,7 @@ class TestBaseFeatureGenerator:
         
         assert isinstance(result, pd.Series)
         assert len(result) == len(sample_data)
-        assert result.iloc[0] == np.nan  # First value should be NaN (no previous value)
+        assert pd.isna(result.iloc[0])  # First value should be NaN (no previous value)
         assert not result.iloc[1:].isna().all()  # Other values should not be all NaN
     
     def test_calculate_log_returns_invalid_column(self, base_generator, sample_data):
@@ -282,7 +305,7 @@ class TestBaseFeatureGenerator:
         
         result = str(base_generator)
         
-        assert "BaseFeatureGenerator" in result
+        assert "ConcreteFeatureGenerator" in result
         assert "features_generated=5" in result
     
     def test_repr_representation(self, base_generator):
@@ -291,7 +314,7 @@ class TestBaseFeatureGenerator:
         
         result = repr(base_generator)
         
-        assert "BaseFeatureGenerator" in result
+        assert "ConcreteFeatureGenerator" in result
         assert "config=" in result
         assert "features_generated=5" in result
     
