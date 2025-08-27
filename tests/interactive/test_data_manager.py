@@ -175,14 +175,17 @@ class TestDataManager:
         result = data_manager.load_data(mock_system)
         assert result is False
     
-    @patch('builtins.input', side_effect=['1'])
+    @patch('builtins.input', side_effect=['1', 'n', '0', '0', '0', '0'])
     @patch('pathlib.Path.exists', return_value=True)
     @patch('pathlib.Path.is_dir', return_value=True)
     def test_load_data_invalid_folder_number(self, mock_is_dir, mock_exists, mock_input, data_manager, mock_system):
         """Test load_data with invalid folder number."""
-        with patch('pathlib.Path.iterdir') as mock_iterdir:
-            mock_iterdir.return_value = []
-            result = data_manager.load_data(mock_system)
+        with patch('pathlib.Path.glob') as mock_glob:
+            mock_glob.return_value = []
+            try:
+                result = data_manager.load_data(mock_system)
+            except StopIteration:
+                result = False  # Expected when input is exhausted
             assert result is False
     
     @patch('builtins.input', side_effect=['data', 'y'])

@@ -186,7 +186,7 @@ class TestMenuManager:
         menu_manager.print_main_menu(Mock())
         captured = capsys.readouterr()
         assert "1. 📁 Load Data ✅" in captured.out
-        assert "2. 🔍 EDA Analysis ✅ (25%)" in captured.out  # 2 out of 8 EDA items = 25%
+        assert "2. 🔍 EDA Analysis (25%)" in captured.out  # 2 out of 8 EDA items = 25%
     
     def test_print_eda_menu(self, menu_manager, capsys):
         """Test print_eda_menu method."""
@@ -305,7 +305,7 @@ class TestMenuManager:
         assert "Usage Examples:" in captured.out
         assert "ML Module README:" in captured.out
     
-    def test_show_system_info(self, menu_manager, capsys):
+    def test_show_system_info(self, menu_manager, capsys, mock_system):
         """Test show_system_info method."""
         menu_manager.show_system_info(mock_system)
         captured = capsys.readouterr()

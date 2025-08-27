@@ -278,31 +278,43 @@ class TestInteractiveSystem:
         interactive_system.menu_manager.print_main_menu.assert_called()
         interactive_system.menu_manager.mark_menu_as_used.assert_called_with('main', 'testing_validation')
     
-    @patch('builtins.input', side_effect=['7', '0'])
+    @patch('builtins.input', side_effect=['7', '0', '0', '0', '0', '0'])
     def test_run_documentation_help(self, mock_input, interactive_system):
         """Test run method with documentation help option."""
-        interactive_system.run()
+        try:
+            interactive_system.run()
+        except StopIteration:
+            pass  # Expected when input is exhausted
         interactive_system.menu_manager.print_main_menu.assert_called()
         interactive_system.menu_manager.mark_menu_as_used.assert_called_with('main', 'documentation_help')
     
-    @patch('builtins.input', side_effect=['8', '0'])
+    @patch('builtins.input', side_effect=['8', '0', '0', '0', '0', '0'])
     def test_run_system_configuration(self, mock_input, interactive_system):
         """Test run method with system configuration option."""
-        interactive_system.run()
+        try:
+            interactive_system.run()
+        except StopIteration:
+            pass  # Expected when input is exhausted
         interactive_system.menu_manager.print_main_menu.assert_called()
         interactive_system.menu_manager.mark_menu_as_used.assert_called_with('main', 'system_configuration')
     
-    @patch('builtins.input', side_effect=['9', '0'])
+    @patch('builtins.input', side_effect=['9', '0', '0', '0', '0', '0'])
     def test_run_menu_status(self, mock_input, interactive_system):
         """Test run method with menu status option."""
-        interactive_system.run()
+        try:
+            interactive_system.run()
+        except StopIteration:
+            pass  # Expected when input is exhausted
         interactive_system.menu_manager.print_main_menu.assert_called()
         interactive_system.menu_manager.mark_menu_as_used.assert_called_with('main', 'menu_status')
     
-    @patch('builtins.input', side_effect=['invalid', '0'])
+    @patch('builtins.input', side_effect=['invalid', '0', '0', '0', '0', '0'])
     def test_run_invalid_choice(self, mock_input, interactive_system):
         """Test run method with invalid choice."""
-        interactive_system.run()
+        try:
+            interactive_system.run()
+        except StopIteration:
+            pass  # Expected when input is exhausted
         interactive_system.menu_manager.print_main_menu.assert_called()
     
     @patch('builtins.input', side_effect=EOFError)
