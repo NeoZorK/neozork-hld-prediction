@@ -191,8 +191,11 @@ class TimeSeriesAnalyzer:
         
         plt.tight_layout()
         
-        # Save plot
-        plot_path = self.plots_dir / f"stationarity_analysis_{column}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        # Save plot with thread-safe naming
+        import threading
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        thread_id = threading.current_thread().ident or 0
+        plot_path = self.plots_dir / f"stationarity_analysis_{column}_{timestamp}_{thread_id}.png"
         plt.savefig(plot_path, dpi=300, bbox_inches='tight')
         plt.close()
         
@@ -298,8 +301,11 @@ class TimeSeriesAnalyzer:
         
         plt.tight_layout()
         
-        # Save plot
-        plot_path = self.plots_dir / f"trend_analysis_{column}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        # Save plot with thread-safe naming
+        import threading
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        thread_id = threading.current_thread().ident or 0
+        plot_path = self.plots_dir / f"trend_analysis_{column}_{timestamp}_{thread_id}.png"
         plt.savefig(plot_path, dpi=300, bbox_inches='tight')
         plt.close()
         
@@ -398,8 +404,11 @@ class TimeSeriesAnalyzer:
         
         plt.tight_layout()
         
-        # Save plot
-        plot_path = self.plots_dir / f"seasonality_analysis_{column}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        # Save plot with thread-safe naming
+        import threading
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        thread_id = threading.current_thread().ident or 0
+        plot_path = self.plots_dir / f"seasonality_analysis_{column}_{timestamp}_{thread_id}.png"
         plt.savefig(plot_path, dpi=300, bbox_inches='tight')
         plt.close()
         
@@ -493,8 +502,11 @@ class TimeSeriesAnalyzer:
         
         plt.tight_layout()
         
-        # Save plot
-        plot_path = self.plots_dir / f"volatility_analysis_{column}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        # Save plot with thread-safe naming
+        import threading
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        thread_id = threading.current_thread().ident or 0
+        plot_path = self.plots_dir / f"volatility_analysis_{column}_{timestamp}_{thread_id}.png"
         plt.savefig(plot_path, dpi=300, bbox_inches='tight')
         plt.close()
         
@@ -574,8 +586,11 @@ class TimeSeriesAnalyzer:
         
         plt.tight_layout()
         
-        # Save plot
-        plot_path = self.plots_dir / f"autocorrelation_analysis_{column}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        # Save plot with thread-safe naming
+        import threading
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        thread_id = threading.current_thread().ident or 0
+        plot_path = self.plots_dir / f"autocorrelation_analysis_{column}_{timestamp}_{thread_id}.png"
         plt.savefig(plot_path, dpi=300, bbox_inches='tight')
         plt.close()
         
@@ -684,8 +699,11 @@ class TimeSeriesAnalyzer:
         
         plt.tight_layout()
         
-        # Save plot
-        plot_path = self.plots_dir / f"forecast_analysis_{column}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        # Save plot with thread-safe naming
+        import threading
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        thread_id = threading.current_thread().ident or 0
+        plot_path = self.plots_dir / f"forecast_analysis_{column}_{timestamp}_{thread_id}.png"
         plt.savefig(plot_path, dpi=300, bbox_inches='tight')
         plt.close()
         
@@ -755,9 +773,11 @@ class TimeSeriesAnalyzer:
         # Generate summary
         comprehensive_results['summary'] = self._generate_analysis_summary(comprehensive_results['analyses'])
         
-        # Save results
+        # Save results with thread-safe naming
+        import threading
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        results_path = self.plots_dir / f"comprehensive_analysis_{column}_{timestamp}.json"
+        thread_id = threading.current_thread().ident or 0
+        results_path = self.plots_dir / f"comprehensive_analysis_{column}_{timestamp}_{thread_id}.json"
         
         with open(results_path, 'w') as f:
             json.dump(comprehensive_results, f, indent=2, default=str)
@@ -848,8 +868,11 @@ class TimeSeriesAnalyzer:
     def export_results(self, filepath: str = None) -> str:
         """Export all results to a JSON file."""
         if filepath is None:
+            import os
+            import threading
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            filepath = self.plots_dir / f"time_series_analysis_results_{timestamp}.json"
+            thread_id = threading.current_thread().ident or 0
+            filepath = self.plots_dir / f"time_series_analysis_results_{timestamp}_{thread_id}.json"
             
         with open(filepath, 'w') as f:
             json.dump(self.results, f, indent=2, default=str)
