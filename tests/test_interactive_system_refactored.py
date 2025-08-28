@@ -209,13 +209,14 @@ class TestAnalysisRunner:
     
     def test_initialization(self):
         """Test analysis runner initialization."""
-        runner = AnalysisRunner()
+        system = InteractiveSystem()
+        runner = AnalysisRunner(system)
         assert runner is not None
     
     def test_run_basic_statistics_no_data(self, capsys):
         """Test basic statistics with no data."""
-        runner = AnalysisRunner()
         system = InteractiveSystem()
+        runner = AnalysisRunner(system)
         
         runner.run_basic_statistics(system)
         
@@ -224,8 +225,8 @@ class TestAnalysisRunner:
     
     def test_run_basic_statistics_with_data(self, capsys):
         """Test basic statistics with data."""
-        runner = AnalysisRunner()
         system = InteractiveSystem()
+        runner = AnalysisRunner(system)
         
         # Create test data
         system.current_data = pd.DataFrame({
@@ -244,8 +245,8 @@ class TestAnalysisRunner:
     
     def test_run_data_quality_check_no_data(self, capsys):
         """Test data quality check with no data."""
-        runner = AnalysisRunner()
         system = InteractiveSystem()
+        runner = AnalysisRunner(system)
         
         runner.run_data_quality_check(system)
         
@@ -254,8 +255,8 @@ class TestAnalysisRunner:
     
     def test_run_data_quality_check_with_data(self, capsys):
         """Test data quality check with data."""
-        runner = AnalysisRunner()
         system = InteractiveSystem()
+        runner = AnalysisRunner(system)
         
         # Create test data with some quality issues
         system.current_data = pd.DataFrame({
@@ -275,8 +276,8 @@ class TestAnalysisRunner:
     
     def test_run_correlation_analysis_no_data(self, capsys):
         """Test correlation analysis with no data."""
-        runner = AnalysisRunner()
         system = InteractiveSystem()
+        runner = AnalysisRunner(system)
         
         runner.run_correlation_analysis(system)
         
@@ -285,8 +286,8 @@ class TestAnalysisRunner:
     
     def test_run_correlation_analysis_with_data(self, capsys):
         """Test correlation analysis with data."""
-        runner = AnalysisRunner()
         system = InteractiveSystem()
+        runner = AnalysisRunner(system)
         
         # Create test data
         system.current_data = pd.DataFrame({
@@ -305,8 +306,8 @@ class TestAnalysisRunner:
     
     def test_fix_data_issues_no_data(self, capsys):
         """Test data fixing with no data."""
-        runner = AnalysisRunner()
         system = InteractiveSystem()
+        runner = AnalysisRunner(system)
         
         runner.fix_data_issues(system)
         

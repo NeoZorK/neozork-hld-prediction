@@ -227,7 +227,7 @@ class TestInteractiveSystem:
     
     def test_run_data_quality_check_no_data(self, interactive_system, capsys):
         """Test running data quality check with no data loaded."""
-        interactive_system.run_data_quality_check()
+        interactive_system.run_comprehensive_data_quality_check()
         captured = capsys.readouterr()
         assert "No data loaded" in captured.out
     
@@ -236,7 +236,7 @@ class TestInteractiveSystem:
         interactive_system.current_data = sample_data
         
         with patch('builtins.input', return_value='n'):  # Don't fix issues
-            interactive_system.run_data_quality_check()
+            interactive_system.run_comprehensive_data_quality_check()
         
         captured = capsys.readouterr()
         assert "COMPREHENSIVE DATA QUALITY CHECK" in captured.out
@@ -303,7 +303,7 @@ class TestInteractiveSystemMenuPrinting:
         captured = capsys.readouterr()
         assert "EDA ANALYSIS MENU:" in captured.out
         assert "Basic Statistics" in captured.out
-        assert "Data Quality Check" in captured.out
+        assert "Comprehensive Data Quality Check" in captured.out
     
     def test_print_feature_engineering_menu(self, interactive_system, capsys):
         """Test feature engineering menu printing."""

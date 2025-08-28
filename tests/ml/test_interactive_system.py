@@ -226,7 +226,7 @@ class TestInteractiveSystem:
     def test_run_data_quality_check_no_data(self):
         """Test run_data_quality_check when no data is loaded."""
         with patch('builtins.print') as mock_print:
-            self.system.run_data_quality_check()
+            self.system.run_comprehensive_data_quality_check()
             mock_print.assert_called_with("❌ No data loaded. Please load data first.")
     
     def test_run_data_quality_check_with_data(self):
@@ -235,7 +235,7 @@ class TestInteractiveSystem:
         
         with patch('builtins.print') as mock_print:
             with patch('builtins.input', return_value='n'):
-                self.system.run_data_quality_check()
+                self.system.run_comprehensive_data_quality_check()
                 mock_print.assert_called()
     
     def test_run_correlation_analysis_no_data(self):

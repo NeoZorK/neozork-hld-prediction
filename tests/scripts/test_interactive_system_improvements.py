@@ -78,7 +78,7 @@ class TestInteractiveSystemImprovements:
         interactive_system.current_data = sample_data
         
         # Run comprehensive data quality check
-        interactive_system.run_data_quality_check()
+        interactive_system.run_comprehensive_data_quality_check()
         
         # Check that results were saved
         assert 'comprehensive_data_quality' in interactive_system.current_results
@@ -133,7 +133,7 @@ class TestInteractiveSystemImprovements:
         interactive_system.current_data = sample_data
         
         # First run quality check to get issues
-        interactive_system.run_data_quality_check()
+        interactive_system.run_comprehensive_data_quality_check()
         
         # Store original shape
         original_shape = interactive_system.current_data.shape
@@ -186,7 +186,7 @@ class TestInteractiveSystemImprovements:
         interactive_system.current_data = sample_data
         
         # Run quality check and fixes to create backup
-        interactive_system.run_data_quality_check()
+        interactive_system.run_comprehensive_data_quality_check()
         interactive_system.fix_all_data_issues()
         
         # Store current state
@@ -217,7 +217,7 @@ class TestInteractiveSystemImprovements:
         interactive_system.current_data = None
         
         # These should handle the error gracefully
-        interactive_system.run_data_quality_check()
+        interactive_system.run_comprehensive_data_quality_check()
         
         # Mock seaborn to avoid warnings
         from unittest.mock import patch
@@ -251,7 +251,7 @@ class TestInteractiveSystemImprovements:
         
         # The functions should use tqdm progress bars
         # This is tested by ensuring the functions complete without errors
-        interactive_system.run_data_quality_check()
+        interactive_system.run_comprehensive_data_quality_check()
         
         # Mock seaborn to avoid warnings
         from unittest.mock import patch
@@ -270,7 +270,7 @@ class TestInteractiveSystemImprovements:
         interactive_system.current_data = sample_data
         
         # Run fixes to trigger backup creation
-        interactive_system.run_data_quality_check()
+        interactive_system.run_comprehensive_data_quality_check()
         interactive_system.fix_all_data_issues()
         
         # Check that backup directory exists
@@ -312,7 +312,7 @@ class TestInteractiveSystemMenuTracking:
         """Test resetting menu status for specific category."""
         # Mark some items as used
         self.system.mark_menu_as_used('eda', 'basic_statistics')
-        self.system.mark_menu_as_used('eda', 'data_quality_check')
+        self.system.mark_menu_as_used('eda', 'comprehensive_data_quality_check')
         self.system.mark_menu_as_used('feature_engineering', 'generate_all_features')
         
         # Reset only EDA menu
@@ -320,7 +320,7 @@ class TestInteractiveSystemMenuTracking:
         
         # Check EDA items are reset
         assert not self.system.used_menus['eda']['basic_statistics']
-        assert not self.system.used_menus['eda']['data_quality_check']
+        assert not self.system.used_menus['eda']['comprehensive_data_quality_check']
         
         # Check feature engineering items are still marked
         assert self.system.used_menus['feature_engineering']['generate_all_features']
@@ -344,7 +344,7 @@ class TestInteractiveSystemMenuTracking:
         """Test displaying menu status."""
         # Mark some items as used
         self.system.mark_menu_as_used('eda', 'basic_statistics')
-        self.system.mark_menu_as_used('eda', 'data_quality_check')
+        self.system.mark_menu_as_used('eda', 'comprehensive_data_quality_check')
         self.system.mark_menu_as_used('feature_engineering', 'generate_all_features')
         
         # Capture output
@@ -455,9 +455,9 @@ class TestInteractiveSystemMenuTracking:
         
         # Check EDA menu items
         expected_eda_items = [
-            'basic_statistics', 'data_quality_check', 'correlation_analysis',
+            'basic_statistics', 'comprehensive_data_quality_check', 'correlation_analysis',
             'time_series_analysis', 'feature_importance', 'fix_data_issues',
-            'generate_html_report', 'restore_from_backup'
+            'generate_html_report', 'restore_from_backup', 'clear_data_backup'
         ]
         for item in expected_eda_items:
             assert item in self.system.used_menus['eda'], f"EDA item {item} should be defined"
@@ -556,10 +556,10 @@ class TestInteractiveSystemMenuTracking:
         
         # Test with some items completed
         self.system.mark_menu_as_used('eda', 'basic_statistics')
-        self.system.mark_menu_as_used('eda', 'data_quality_check')
+        self.system.mark_menu_as_used('eda', 'comprehensive_data_quality_check')
         
         percentage = self.system.calculate_submenu_completion_percentage('eda')
-        assert percentage == 25  # 2 out of 8 items = 25%
+        assert percentage == 22  # 2 out of 9 items = 22%
         
         # Test with all items completed
         for item in self.system.used_menus['eda']:
@@ -572,7 +572,7 @@ class TestInteractiveSystemMenuTracking:
         """Test main menu display with completion percentages."""
         # Mark some EDA items as used
         self.system.mark_menu_as_used('eda', 'basic_statistics')
-        self.system.mark_menu_as_used('eda', 'data_quality_check')
+        self.system.mark_menu_as_used('eda', 'comprehensive_data_quality_check')
         
         # Mark main menu as accessed
         self.system.mark_menu_as_used('main', 'eda_analysis')
@@ -587,7 +587,7 @@ class TestInteractiveSystemMenuTracking:
             # Check that EDA Analysis shows percentage
             eda_line = next((line for line in printed_lines if 'EDA Analysis' in line), None)
             assert eda_line and '✅' in eda_line
-            assert '(25%)' in eda_line
+            assert '(22%)' in eda_line
             
             # Check that other items don't show percentage when not accessed
             fe_line = next((line for line in printed_lines if 'Feature Engineering' in line), None)

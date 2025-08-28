@@ -302,7 +302,7 @@ class TestDataManager:
         
         captured = capsys.readouterr()
         assert "RESTORE FROM BACKUP" in captured.out
-        assert "Found 1 backup files" in captured.out
+        assert "Found 1 backup files:" in captured.out
         assert "Data restored successfully" in captured.out
     
     @patch('pathlib.Path.exists', return_value=False)

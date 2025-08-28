@@ -377,7 +377,7 @@ class TestInteractiveSystemScript:
             system = InteractiveSystem()
             
             with patch('builtins.print') as mock_print:
-                system.run_data_quality_check()
+                system.run_comprehensive_data_quality_check()
                 mock_print.assert_called_with("❌ No data loaded. Please load data first.")
             
         except ImportError as e:
@@ -393,7 +393,7 @@ class TestInteractiveSystemScript:
             with patch('builtins.print') as mock_print:
                 with patch('src.eda.data_quality') as mock_data_quality:
                     with patch('builtins.input', return_value='n'):
-                        system.run_data_quality_check()
+                        system.run_comprehensive_data_quality_check()
                         mock_print.assert_called()
             
         except ImportError as e:

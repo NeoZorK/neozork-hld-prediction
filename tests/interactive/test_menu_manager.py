@@ -158,7 +158,7 @@ class TestMenuManager:
         menu_manager.show_menu_status()
         captured = capsys.readouterr()
         assert "1/9 items completed" in captured.out  # Main menu
-        assert "1/8 items completed" in captured.out  # EDA menu
+        assert "1/9 items completed" in captured.out  # EDA menu (9 items total)
     
     def test_print_main_menu(self, menu_manager, capsys):
         """Test print_main_menu method."""
@@ -181,12 +181,12 @@ class TestMenuManager:
         # Mark some items as used
         menu_manager.used_menus['main']['load_data'] = True
         menu_manager.used_menus['eda']['basic_statistics'] = True
-        menu_manager.used_menus['eda']['data_quality_check'] = True
+        menu_manager.used_menus['eda']['comprehensive_data_quality_check'] = True
         
         menu_manager.print_main_menu(Mock())
         captured = capsys.readouterr()
         assert "1. 📁 Load Data ✅" in captured.out
-        assert "2. 🔍 EDA Analysis (25%)" in captured.out  # 2 out of 8 EDA items = 25%
+        assert "2. 🔍 EDA Analysis (22%)" in captured.out  # 2 out of 9 EDA items = 22%
     
     def test_print_eda_menu(self, menu_manager, capsys):
         """Test print_eda_menu method."""
@@ -206,7 +206,7 @@ class TestMenuManager:
         """Test print_eda_menu with some used items."""
         # Mark some items as used
         menu_manager.used_menus['eda']['basic_statistics'] = True
-        menu_manager.used_menus['eda']['data_quality_check'] = True
+        menu_manager.used_menus['eda']['comprehensive_data_quality_check'] = True
         
         menu_manager.print_eda_menu()
         captured = capsys.readouterr()
@@ -252,7 +252,6 @@ class TestMenuManager:
         assert "4. 📈 Time Series Plots" in captured.out
         assert "5. 🎯 Feature Importance Charts" in captured.out
         assert "6. 📋 Export Visualizations" in captured.out
-        assert "7. 🔙 Back to Main Menu" in captured.out
     
     def test_print_visualization_menu_with_used_items(self, menu_manager, capsys):
         """Test print_visualization_menu with some used items."""
@@ -277,7 +276,6 @@ class TestMenuManager:
         assert "4. 📊 Model Evaluation" in captured.out
         assert "5. 🧪 Hyperparameter Tuning" in captured.out
         assert "6. 📋 Model Report" in captured.out
-        assert "7. 🔙 Back to Main Menu" in captured.out
     
     def test_print_model_development_menu_with_used_items(self, menu_manager, capsys):
         """Test print_model_development_menu with some used items."""

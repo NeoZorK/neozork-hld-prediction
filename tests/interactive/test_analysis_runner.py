@@ -68,7 +68,7 @@ class TestAnalysisRunner:
     def test_run_eda_analysis_data_quality(self, analysis_runner, mock_system):
         """Test EDA analysis menu data quality option."""
         with patch('builtins.input', side_effect=["1", "0"]):
-            with patch.object(analysis_runner, 'run_data_quality_check') as mock_quality:
+            with patch.object(analysis_runner, 'run_comprehensive_data_quality_check') as mock_quality:
                 analysis_runner.run_eda_analysis(mock_system)
                 mock_quality.assert_called_once_with(mock_system)
     
@@ -152,12 +152,12 @@ class TestAnalysisRunner:
     def test_run_data_quality_check_no_data(self, analysis_runner, mock_system):
         """Test data quality check with no data."""
         mock_system.current_data = None
-        analysis_runner.run_data_quality_check(mock_system)
+        analysis_runner.run_comprehensive_data_quality_check(mock_system)
     
     def test_run_data_quality_check_with_data(self, analysis_runner, mock_system, sample_data):
         """Test data quality check with data."""
         mock_system.current_data = sample_data['dataframe']
-        analysis_runner.run_data_quality_check(mock_system)
+        analysis_runner.run_comprehensive_data_quality_check(mock_system)
     
     def test_run_correlation_analysis_no_data(self, analysis_runner, mock_system):
         """Test correlation analysis with no data."""

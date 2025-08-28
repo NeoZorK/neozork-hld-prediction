@@ -23,7 +23,8 @@ class TestAnalysisRunner:
     @pytest.fixture
     def analysis_runner(self):
         """Create AnalysisRunner instance for testing."""
-        return AnalysisRunner()
+        mock_system = Mock()
+        return AnalysisRunner(mock_system)
     
     @pytest.fixture
     def mock_system(self):
@@ -51,6 +52,7 @@ class TestAnalysisRunner:
     def test_init(self, analysis_runner):
         """Test AnalysisRunner initialization."""
         assert analysis_runner is not None
+        assert analysis_runner.system is not None
     
     @patch('builtins.input', side_effect=['0'])
     def test_run_eda_analysis_exit(self, mock_input, analysis_runner, mock_system, capsys):

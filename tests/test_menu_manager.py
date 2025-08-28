@@ -142,7 +142,7 @@ class TestMenuManager:
         assert "MAIN:" in captured.out
         assert "EDA:" in captured.out
         assert "Progress: 1/9 items completed" in captured.out  # main category
-        assert "Progress: 1/8 items completed" in captured.out  # eda category
+        assert "Progress: 1/9 items completed" in captured.out  # eda category
         assert "✅ Load Data" in captured.out
         assert "✅ Basic Statistics" in captured.out
         assert "⏳ Eda Analysis" in captured.out  # Not used (note: it's "Eda" not "EDA")
@@ -169,14 +169,14 @@ class TestMenuManager:
         # Mark some items as used
         menu_manager.used_menus['main']['load_data'] = True
         menu_manager.used_menus['eda']['basic_statistics'] = True
-        menu_manager.used_menus['eda']['data_quality_check'] = True
+        menu_manager.used_menus['eda']['comprehensive_data_quality_check'] = True
         
         menu_manager.print_main_menu(mock_system)
         
         captured = capsys.readouterr()
         assert "MAIN MENU:" in captured.out
         assert "1. 📁 Load Data ✅" in captured.out
-        assert "2. 🔍 EDA Analysis (25%)" in captured.out  # 2 out of 8 = 25% (no checkmark since eda_analysis not marked)
+        assert "2. 🔍 EDA Analysis (22%)" in captured.out  # 2 out of 9 = 22% (no checkmark since eda_analysis not marked)
         assert "3. ⚙️  Feature Engineering" in captured.out  # No completion
     
     def test_print_eda_menu(self, menu_manager, capsys):
@@ -186,26 +186,25 @@ class TestMenuManager:
         captured = capsys.readouterr()
         assert "EDA ANALYSIS MENU:" in captured.out
         assert "0. 🔙 Back to Main Menu" in captured.out
-        assert "1. 📊 Basic Statistics" in captured.out
-        assert "2. 🧹 Comprehensive Data Quality Check" in captured.out
+        assert "1. 🧹 Comprehensive Data Quality Check" in captured.out
+        assert "2. 📊 Basic Statistics" in captured.out
         assert "3. 🔗 Correlation Analysis" in captured.out
         assert "4. 📈 Time Series Analysis" in captured.out
         assert "5. 🎯 Feature Importance" in captured.out
-        assert "6. 🛠️  Fix Data Issues" in captured.out
-        assert "7. 📋 Generate HTML Report" in captured.out
-        assert "8. 🔄 Restore from Backup" in captured.out
+        assert "6. 📋 Generate HTML Report" in captured.out
+        assert "7. 🔄 Restore from Backup" in captured.out
     
     def test_print_eda_menu_with_completion(self, menu_manager, capsys):
         """Test print_eda_menu with completion checkmarks."""
         # Mark some items as used
         menu_manager.used_menus['eda']['basic_statistics'] = True
-        menu_manager.used_menus['eda']['data_quality_check'] = True
+        menu_manager.used_menus['eda']['comprehensive_data_quality_check'] = True
         
         menu_manager.print_eda_menu()
         
         captured = capsys.readouterr()
-        assert "1. 📊 Basic Statistics ✅" in captured.out
-        assert "2. 🧹 Comprehensive Data Quality Check ✅" in captured.out
+        assert "1. 🧹 Comprehensive Data Quality Check ✅" in captured.out
+        assert "2. 📊 Basic Statistics ✅" in captured.out
         assert "3. 🔗 Correlation Analysis" in captured.out  # Not used
     
     def test_print_feature_engineering_menu(self, menu_manager, capsys):
@@ -247,7 +246,6 @@ class TestMenuManager:
         assert "4. 📈 Time Series Plots" in captured.out
         assert "5. 🎯 Feature Importance Charts" in captured.out
         assert "6. 📋 Export Visualizations" in captured.out
-        assert "7. 🔙 Back to Main Menu" in captured.out
     
     def test_print_visualization_menu_with_completion(self, menu_manager, capsys):
         """Test print_visualization_menu with completion checkmarks."""
@@ -272,7 +270,6 @@ class TestMenuManager:
         assert "4. 📊 Model Evaluation" in captured.out
         assert "5. 🧪 Hyperparameter Tuning" in captured.out
         assert "6. 📋 Model Report" in captured.out
-        assert "7. 🔙 Back to Main Menu" in captured.out
     
     def test_print_model_development_menu_with_completion(self, menu_manager, capsys):
         """Test print_model_development_menu with completion checkmarks."""

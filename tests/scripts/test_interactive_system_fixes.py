@@ -94,7 +94,7 @@ def test_progress_bars():
         data_quality.inf_check = mock_inf_check
         
         # Run data quality check
-        system.run_data_quality_check()
+        system.run_comprehensive_data_quality_check()
         
         # Check that results were saved
         assert 'comprehensive_data_quality' in system.current_results
