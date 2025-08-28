@@ -557,12 +557,20 @@ class AnalysisRunner:
                         # Create backup before fixing
                         backup_data = system.current_data.copy()
                         
-                        # Fix all issues
+                        # Fix all issues with additional duplicate removal after each fix
                         if nan_summary:
                             print("   • Fixing NaN values...")
                             fixed_data = fix_files.fix_nan(system.current_data, nan_summary)
                             if fixed_data is not None:
                                 system.current_data = fixed_data
+                                # Remove any new duplicates created by NaN fixing
+                                initial_dupes = system.current_data.duplicated().sum()
+                                if initial_dupes > 0:
+                                    system.current_data = system.current_data.drop_duplicates(keep='first')
+                                    final_dupes = system.current_data.duplicated().sum()
+                                    removed_dupes = initial_dupes - final_dupes
+                                    if removed_dupes > 0:
+                                        print(f"   🔄 Removed {removed_dupes} new duplicate rows created by NaN fixing")
                                 print(f"   ✅ NaN values fixed. Data shape: {system.current_data.shape}")
                         
                         if dupe_summary:
@@ -583,6 +591,14 @@ class AnalysisRunner:
                             fixed_data = fix_files.fix_gaps(system.current_data, gap_summary, datetime_col)
                             if fixed_data is not None:
                                 system.current_data = fixed_data
+                                # Remove any new duplicates created by gap fixing
+                                initial_dupes = system.current_data.duplicated().sum()
+                                if initial_dupes > 0:
+                                    system.current_data = system.current_data.drop_duplicates(keep='first')
+                                    final_dupes = system.current_data.duplicated().sum()
+                                    removed_dupes = initial_dupes - final_dupes
+                                    if removed_dupes > 0:
+                                        print(f"   🔄 Removed {removed_dupes} new duplicate rows created by gap fixing")
                                 print(f"   ✅ Time series gaps fixed. Data shape: {system.current_data.shape}")
                         
                         if zero_summary:
@@ -590,6 +606,14 @@ class AnalysisRunner:
                             fixed_data = fix_files.fix_zeros(system.current_data, zero_summary)
                             if fixed_data is not None:
                                 system.current_data = fixed_data
+                                # Remove any new duplicates created by zero fixing
+                                initial_dupes = system.current_data.duplicated().sum()
+                                if initial_dupes > 0:
+                                    system.current_data = system.current_data.drop_duplicates(keep='first')
+                                    final_dupes = system.current_data.duplicated().sum()
+                                    removed_dupes = initial_dupes - final_dupes
+                                    if removed_dupes > 0:
+                                        print(f"   🔄 Removed {removed_dupes} new duplicate rows created by zero fixing")
                                 print(f"   ✅ Zero values fixed. Data shape: {system.current_data.shape}")
                         
                         if negative_summary:
@@ -597,6 +621,14 @@ class AnalysisRunner:
                             fixed_data = fix_files.fix_negatives(system.current_data, negative_summary)
                             if fixed_data is not None:
                                 system.current_data = fixed_data
+                                # Remove any new duplicates created by negative fixing
+                                initial_dupes = system.current_data.duplicated().sum()
+                                if initial_dupes > 0:
+                                    system.current_data = system.current_data.drop_duplicates(keep='first')
+                                    final_dupes = system.current_data.duplicated().sum()
+                                    removed_dupes = initial_dupes - final_dupes
+                                    if removed_dupes > 0:
+                                        print(f"   🔄 Removed {removed_dupes} new duplicate rows created by negative fixing")
                                 print(f"   ✅ Negative values fixed. Data shape: {system.current_data.shape}")
                         
                         if inf_summary:
@@ -604,7 +636,22 @@ class AnalysisRunner:
                             fixed_data = fix_files.fix_infs(system.current_data, inf_summary)
                             if fixed_data is not None:
                                 system.current_data = fixed_data
+                                # Remove any new duplicates created by infinity fixing
+                                initial_dupes = system.current_data.duplicated().sum()
+                                if initial_dupes > 0:
+                                    system.current_data = system.current_data.drop_duplicates(keep='first')
+                                    final_dupes = system.current_data.duplicated().sum()
+                                    removed_dupes = initial_dupes - final_dupes
+                                    if removed_dupes > 0:
+                                        print(f"   🔄 Removed {removed_dupes} new duplicate rows created by infinity fixing")
                                 print(f"   ✅ Infinity values fixed. Data shape: {system.current_data.shape}")
+                        
+                        # Final duplicate removal to ensure no duplicates remain
+                        final_dupe_check = system.current_data.duplicated().sum()
+                        if final_dupe_check > 0:
+                            print(f"   • Final duplicate removal...")
+                            system.current_data = system.current_data.drop_duplicates(keep='first')
+                            print(f"   ✅ Removed {final_dupe_check} remaining duplicate rows")
                         
                         print("\n✅ All issues have been fixed!")
                         print(f"   • Original data shape: {backup_data.shape}")
@@ -625,6 +672,8 @@ class AnalysisRunner:
                         if dup_count > 0:
                             print(f"   ⚠️  {dup_count} duplicate rows still remain")
                             remaining_issues += 1
+                        else:
+                            print(f"   ✅ No duplicate rows remain")
                         
                         # Note: We don't check for duplicated values in metadata columns as they are expected
                         

@@ -33,6 +33,15 @@ Successfully resolved all issues with the Comprehensive Data Quality Check funct
 - Added exclusion list for metadata columns that are expected to have duplicated values
 - System now ignores duplicated values in columns like `source_file`, `filename`, `batch_id`, etc.
 
+### 4. ✅ Multiple Attempts Required for Complete Fix
+
+**Problem**: System required multiple runs to fix all issues because fixing one type of issue could create new duplicate rows, requiring additional runs.
+
+**Solution**:
+- Added automatic duplicate removal after each fix operation
+- Added final duplicate removal step to ensure no duplicates remain
+- Enhanced verification to catch any remaining issues
+
 ## Key Improvements
 
 ### Enhanced DateTime Detection
@@ -78,9 +87,34 @@ dup_count = system.current_data.duplicated().sum()
 if dup_count > 0:
     print(f"   ⚠️  {dup_count} duplicate rows still remain")
     remaining_issues += 1
+else:
+    print(f"   ✅ No duplicate rows remain")
 
 if remaining_issues == 0:
     print("   ✅ All issues have been successfully resolved!")
+```
+
+### One-Try Fix Implementation
+```python
+# Fix all issues with additional duplicate removal after each fix
+if nan_summary:
+    print("   • Fixing NaN values...")
+    fixed_data = fix_files.fix_nan(system.current_data, nan_summary)
+    if fixed_data is not None:
+        system.current_data = fixed_data
+        # Remove any new duplicates created by NaN fixing
+        initial_dupes = system.current_data.duplicated().sum()
+        if initial_dupes > 0:
+            system.current_data = system.current_data.drop_duplicates(keep='first')
+            print(f"   🔄 Removed {initial_dupes} new duplicate rows created by NaN fixing")
+        print(f"   ✅ NaN values fixed. Data shape: {system.current_data.shape}")
+
+# Final duplicate removal to ensure no duplicates remain
+final_dupe_check = system.current_data.duplicated().sum()
+if final_dupe_check > 0:
+    print(f"   • Final duplicate removal...")
+    system.current_data = system.current_data.drop_duplicates(keep='first')
+    print(f"   ✅ Removed {final_dupe_check} remaining duplicate rows")
 ```
 
 ## User Experience Improvements
@@ -145,11 +179,11 @@ data/backups/
 
 ### Unit Tests
 ```
-✅ Passed: 13
+✅ Passed: 14
 ❌ Failed: 0
 ⏭️  Skipped: 0
 💥 Errors: 0
-📈 Total: 13
+📈 Total: 14
 ```
 
 ### Integration Tests
@@ -159,6 +193,7 @@ data/backups/
 - ✅ Metadata columns are handled correctly
 - ✅ Backup system works reliably
 - ✅ Verification system catches any remaining issues
+- ✅ One-try fix works correctly (all issues fixed in single run)
 
 ## Usage Instructions
 
@@ -174,10 +209,11 @@ data/backups/
 
 ### Expected Behavior
 
-- **First run**: System detects and fixes all real issues
+- **First run**: System detects and fixes all real issues in one attempt
 - **Second run**: System shows no issues (or only legitimate remaining issues)
 - **Metadata columns**: No false positives from columns like `source_file`
 - **Backup safety**: Original data is always preserved
+- **One-try fix**: All issues resolved without requiring multiple runs
 
 ## Quality Assurance
 
@@ -213,10 +249,11 @@ The Comprehensive Data Quality Check now works reliably on the first try:
 ✅ **User experience is smooth and intuitive**  
 
 Users can now confidently use this feature knowing that:
-- All real data quality issues will be detected and fixed
+- All real data quality issues will be detected and fixed in one attempt
 - No false positives from metadata columns
 - All fixes will persist and be verified
 - Original data is always safely backed up
 - The system works correctly on the first try
+- No multiple runs required to fix all issues
 
 The feature is production-ready and provides a robust, user-friendly data quality assessment and fixing solution.

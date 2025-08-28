@@ -254,6 +254,49 @@ class TestComprehensiveDataQualityCheck:
                 output_calls = [call[0][0] for call in mock_print.call_args_list]
                 assert any("Verifying fixes" in str(call) for call in output_calls)
                 assert any("All issues have been successfully resolved" in str(call) for call in output_calls)
+    
+    def test_one_try_fix(self, system):
+        """Test that all issues are fixed in one try."""
+        # Create test data with multiple issues
+        dates = pd.date_range('2023-01-01', periods=50, freq='h')
+        data = {
+            'datetime': dates,
+            'open': [100 + i for i in range(50)],
+            'high': [105 + i for i in range(50)],
+            'low': [95 + i for i in range(50)],
+            'close': [102 + i for i in range(50)],
+            'volume': [1000 for _ in range(50)],
+            'source_file': ['test.parquet'] * 50
+        }
+        df = pd.DataFrame(data)
+        
+        # Add issues
+        df.loc[10, 'open'] = np.nan
+        df.loc[20, 'high'] = np.nan
+        df.loc[30] = df.loc[29]  # Duplicate
+        df.loc[40, 'low'] = -5   # Negative
+        
+        system.current_data = df
+        
+        # Mock user input to fix all issues
+        with patch('builtins.input', return_value='y'):
+            with patch('builtins.print') as mock_print:
+                system.analysis_runner.run_comprehensive_data_quality_check(system)
+                
+                # Check that all fixes were applied
+                output_calls = [call[0][0] for call in mock_print.call_args_list]
+                
+                # Should have applied fixes
+                assert any("FIXING ALL DETECTED ISSUES" in str(call) for call in output_calls)
+                assert any("All issues have been fixed" in str(call) for call in output_calls)
+                
+                # Should have verified fixes
+                assert any("Verifying fixes" in str(call) for call in output_calls)
+                
+                # Check that data was actually fixed
+                assert system.current_data.isna().sum().sum() == 0, "NaN values should be fixed"
+                assert system.current_data.duplicated().sum() == 0, "Duplicates should be fixed"
+                assert (system.current_data['low'] < 0).sum() == 0, "Negative values should be fixed"
 
 
 if __name__ == "__main__":
