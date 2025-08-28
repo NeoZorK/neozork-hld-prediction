@@ -104,6 +104,7 @@ class NeoZorKMCPServer:
         self.config = config or self._load_config()
         self.running = True
         self.start_time = datetime.now()  # Add start time for uptime tracking
+        self.ready = False  # Add ready flag
         
         # Print startup message
         print_to_stderr("🚀 Starting NeoZorK Unified MCP Server...")
@@ -167,6 +168,9 @@ class NeoZorKMCPServer:
         self._scan_project()
         print_to_stderr("🔍 Indexing code...")
         self._index_code()
+        
+        # Set ready flag after initialization
+        self.ready = True
         
         self.logger.info("NeoZorK Unified MCP Server initialized successfully")
         print_to_stderr("✅ NeoZorK Unified MCP Server initialized successfully")
@@ -960,6 +964,8 @@ class NeoZorKMCPServer:
         """Handle status request"""
         return {
             "status": "running" if self.running else "stopped",
+            "ready": self.ready,
+            "initialization_status": "ready" if self.ready else "initializing",
             "uptime": (datetime.now() - self.start_time).total_seconds() if hasattr(self, 'start_time') else 0,
             "server_mode": self.config.get("server_mode", "unified"),
             "version": self.config.get("version", "2.0.0"),
@@ -982,6 +988,11 @@ class NeoZorKMCPServer:
             health_status = "unhealthy"
             issues.append("Server is not running")
         
+        # Check if server is ready
+        if not self.ready:
+            health_status = "initializing"
+            issues.append("Server is still initializing")
+        
         # Check project files
         if len(self.project_files) == 0:
             health_status = "warning"
@@ -999,9 +1010,12 @@ class NeoZorKMCPServer:
         
         return {
             "status": health_status,
+            "ready": self.ready,
+            "initialization_status": "ready" if self.ready else "initializing",
             "issues": issues,
             "checks": {
                 "server_running": self.running,
+                "server_ready": self.ready,
                 "project_files_count": len(self.project_files),
                 "financial_data_count": len(self.financial_data),
                 "functions_indexed": len(self.code_index['functions']),
@@ -1014,12 +1028,20 @@ class NeoZorKMCPServer:
 
     def _handle_ping(self, request_id: Any, params: Dict) -> Dict:
         """Handle ping request"""
-        return {
+        response = {
             "pong": True,
             "timestamp": datetime.now().isoformat(),
             "server_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "timezone": "UTC"
+            "timezone": "UTC",
+            "ready": self.ready,
+            "initialization_status": "ready" if self.ready else "initializing"
         }
+        
+        if not self.ready:
+            response["message"] = "Server is still initializing, please wait..."
+            response["estimated_wait"] = "5-30 seconds"
+        
+        return response
 
     def _handle_metrics(self, request_id: Any, params: Dict) -> Dict:
         """Handle metrics request"""

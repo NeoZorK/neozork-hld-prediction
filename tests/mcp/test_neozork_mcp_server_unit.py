@@ -513,6 +513,8 @@ def backtest_strategy(data, strategy_params):
         result = server._handle_status(1, {})
         
         assert "status" in result
+        assert "ready" in result
+        assert "initialization_status" in result
         assert "uptime" in result
         assert "server_mode" in result
         assert "version" in result
@@ -523,17 +525,25 @@ def backtest_strategy(data, strategy_params):
         assert "cpu_usage" in result
         assert "active_connections" in result
         assert "last_activity" in result
+        assert result["ready"] is True
+        assert result["initialization_status"] == "ready"
     
     def test_handle_health(self, server):
         """Test health handler"""
         result = server._handle_health(1, {})
         
         assert "status" in result
+        assert "ready" in result
+        assert "initialization_status" in result
         assert "issues" in result
         assert "checks" in result
         assert "timestamp" in result
         assert isinstance(result["issues"], list)
         assert isinstance(result["checks"], dict)
+        assert result["ready"] is True
+        assert result["initialization_status"] == "ready"
+        assert "server_ready" in result["checks"]
+        assert result["checks"]["server_ready"] is True
     
     def test_handle_ping(self, server):
         """Test ping handler"""
@@ -544,6 +554,10 @@ def backtest_strategy(data, strategy_params):
         assert "timestamp" in result
         assert "server_time" in result
         assert "timezone" in result
+        assert "ready" in result
+        assert "initialization_status" in result
+        assert result["ready"] is True
+        assert result["initialization_status"] == "ready"
     
     def test_handle_metrics(self, server):
         """Test metrics handler"""
