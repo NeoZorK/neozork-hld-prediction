@@ -657,45 +657,146 @@ class AnalysisRunner:
                         print(f"   • Original data shape: {backup_data.shape}")
                         print(f"   • Fixed data shape: {system.current_data.shape}")
                         
-                        # Verify that fixes were applied
+                        # Verify that fixes were applied and continue fixing if needed
                         print("\n🔍 Verifying fixes...")
                         remaining_issues = 0
+                        max_iterations = 5  # Prevent infinite loops
+                        iteration = 1
                         
-                        # Check for remaining NaN values
-                        nan_count = system.current_data.isna().sum().sum()
-                        if nan_count > 0:
-                            print(f"   ⚠️  {nan_count} NaN values still remain")
-                            remaining_issues += 1
-                        
-                        # Check for remaining duplicates
-                        dup_count = system.current_data.duplicated().sum()
-                        if dup_count > 0:
-                            print(f"   ⚠️  {dup_count} duplicate rows still remain")
-                            remaining_issues += 1
-                        else:
-                            print(f"   ✅ No duplicate rows remain")
-                        
-                        # Note: We don't check for duplicated values in metadata columns as they are expected
-                        
-                        # Check for remaining negative values in OHLCV columns
-                        ohlcv_cols = [col for col in system.current_data.columns if any(keyword in col.lower() for keyword in ['open', 'high', 'low', 'close', 'volume'])]
-                        for col in ohlcv_cols:
-                            if pd.api.types.is_numeric_dtype(system.current_data[col]):
-                                neg_count = (system.current_data[col] < 0).sum()
-                                if neg_count > 0:
-                                    print(f"   ⚠️  {neg_count} negative values still remain in {col}")
-                                    remaining_issues += 1
-                        
-                        # Check for remaining infinity values
-                        inf_count = np.isinf(system.current_data.select_dtypes(include=[np.number])).sum().sum()
-                        if inf_count > 0:
-                            print(f"   ⚠️  {inf_count} infinity values still remain")
-                            remaining_issues += 1
-                        
-                        if remaining_issues == 0:
-                            print("   ✅ All issues have been successfully resolved!")
-                        else:
-                            print(f"   ⚠️  {remaining_issues} types of issues still remain")
+                        while iteration <= max_iterations:
+                            print(f"\n🔄 Verification iteration {iteration}/{max_iterations}")
+                            
+                            # Check for remaining issues
+                            remaining_issues = 0
+                            
+                            # Check for remaining NaN values
+                            nan_count = system.current_data.isna().sum().sum()
+                            if nan_count > 0:
+                                print(f"   ⚠️  {nan_count} NaN values still remain")
+                                remaining_issues += 1
+                            
+                            # Check for remaining duplicates
+                            dup_count = system.current_data.duplicated().sum()
+                            if dup_count > 0:
+                                print(f"   ⚠️  {dup_count} duplicate rows still remain")
+                                remaining_issues += 1
+                            else:
+                                print(f"   ✅ No duplicate rows remain")
+                            
+                            # Note: We don't check for duplicated values in metadata columns as they are expected
+                            
+                            # Check for remaining negative values in OHLCV columns
+                            ohlcv_cols = [col for col in system.current_data.columns if any(keyword in col.lower() for keyword in ['open', 'high', 'low', 'close', 'volume'])]
+                            for col in ohlcv_cols:
+                                if pd.api.types.is_numeric_dtype(system.current_data[col]):
+                                    neg_count = (system.current_data[col] < 0).sum()
+                                    if neg_count > 0:
+                                        print(f"   ⚠️  {neg_count} negative values still remain in {col}")
+                                        remaining_issues += 1
+                            
+                            # Check for remaining infinity values
+                            inf_count = np.isinf(system.current_data.select_dtypes(include=[np.number])).sum().sum()
+                            if inf_count > 0:
+                                print(f"   ⚠️  {inf_count} infinity values still remain")
+                                remaining_issues += 1
+                            
+                            # Check for remaining zero values in problematic columns
+                            zero_issues = 0
+                            for col in system.current_data.select_dtypes(include=[np.number]).columns:
+                                if any(keyword in col.lower() for keyword in ['predicted', 'pressure']):
+                                    zero_count = (system.current_data[col] == 0).sum()
+                                    if zero_count > 0:
+                                        print(f"   ⚠️  {zero_count} zero values still remain in {col}")
+                                        zero_issues += 1
+                            remaining_issues += zero_issues
+                            
+                            if remaining_issues == 0:
+                                print("   ✅ All issues have been successfully resolved!")
+                                break
+                            else:
+                                print(f"   ⚠️  {remaining_issues} types of issues still remain")
+                                
+                                if iteration < max_iterations:
+                                    print(f"\n🔄 Automatically fixing remaining issues (iteration {iteration + 1})...")
+                                    
+                                    # Re-run quality checks to get updated summaries
+                                    nan_summary = []
+                                    dupe_summary = []
+                                    gap_summary = []
+                                    zero_summary = []
+                                    negative_summary = []
+                                    inf_summary = []
+                                    
+                                    # Re-run all quality checks
+                                    data_quality.nan_check(system.current_data, nan_summary, SimpleFore(), SimpleStyle())
+                                    data_quality.duplicate_check(system.current_data, dupe_summary, SimpleFore(), SimpleStyle())
+                                    data_quality.gap_check(system.current_data, gap_summary, SimpleFore(), SimpleStyle())
+                                    data_quality.zero_check(system.current_data, zero_summary, SimpleFore(), SimpleStyle())
+                                    data_quality.negative_check(system.current_data, negative_summary, SimpleFore(), SimpleStyle())
+                                    data_quality.inf_check(system.current_data, inf_summary, SimpleFore(), SimpleStyle())
+                                    
+                                    # Apply fixes for remaining issues
+                                    if nan_summary:
+                                        print("   • Fixing remaining NaN values...")
+                                        fixed_data = fix_files.fix_nan(system.current_data, nan_summary)
+                                        if fixed_data is not None:
+                                            system.current_data = fixed_data
+                                            print(f"   ✅ NaN values fixed. Data shape: {system.current_data.shape}")
+                                    
+                                    if dupe_summary:
+                                        print("   • Fixing remaining duplicate rows...")
+                                        fixed_data = fix_files.fix_duplicates(system.current_data, dupe_summary)
+                                        if fixed_data is not None:
+                                            system.current_data = fixed_data
+                                            print(f"   ✅ Duplicate rows fixed. Data shape: {system.current_data.shape}")
+                                    
+                                    if zero_summary:
+                                        print("   • Fixing remaining zero values...")
+                                        fixed_data = fix_files.fix_zeros(system.current_data, zero_summary)
+                                        if fixed_data is not None:
+                                            system.current_data = fixed_data
+                                            # Remove any new duplicates created by zero fixing
+                                            initial_dupes = system.current_data.duplicated().sum()
+                                            if initial_dupes > 0:
+                                                system.current_data = system.current_data.drop_duplicates(keep='first')
+                                                print(f"   🔄 Removed {initial_dupes} new duplicate rows created by zero fixing")
+                                            print(f"   ✅ Zero values fixed. Data shape: {system.current_data.shape}")
+                                    
+                                    if negative_summary:
+                                        print("   • Fixing remaining negative values...")
+                                        fixed_data = fix_files.fix_negatives(system.current_data, negative_summary)
+                                        if fixed_data is not None:
+                                            system.current_data = fixed_data
+                                            # Remove any new duplicates created by negative fixing
+                                            initial_dupes = system.current_data.duplicated().sum()
+                                            if initial_dupes > 0:
+                                                system.current_data = system.current_data.drop_duplicates(keep='first')
+                                                print(f"   🔄 Removed {initial_dupes} new duplicate rows created by negative fixing")
+                                            print(f"   ✅ Negative values fixed. Data shape: {system.current_data.shape}")
+                                    
+                                    if inf_summary:
+                                        print("   • Fixing remaining infinity values...")
+                                        fixed_data = fix_files.fix_infs(system.current_data, inf_summary)
+                                        if fixed_data is not None:
+                                            system.current_data = fixed_data
+                                            # Remove any new duplicates created by infinity fixing
+                                            initial_dupes = system.current_data.duplicated().sum()
+                                            if initial_dupes > 0:
+                                                system.current_data = system.current_data.drop_duplicates(keep='first')
+                                                print(f"   🔄 Removed {initial_dupes} new duplicate rows created by infinity fixing")
+                                            print(f"   ✅ Infinity values fixed. Data shape: {system.current_data.shape}")
+                                    
+                                    # Final duplicate removal
+                                    final_dupe_check = system.current_data.duplicated().sum()
+                                    if final_dupe_check > 0:
+                                        print(f"   • Final duplicate removal...")
+                                        system.current_data = system.current_data.drop_duplicates(keep='first')
+                                        print(f"   ✅ Removed {final_dupe_check} remaining duplicate rows")
+                                else:
+                                    print(f"   ⚠️  Maximum iterations ({max_iterations}) reached. Some issues may remain.")
+                                    break
+                            
+                            iteration += 1
                         
                         # Save backup
                         backup_path = os.path.join('data', 'backups', f'data_backup_{int(time.time())}.parquet')

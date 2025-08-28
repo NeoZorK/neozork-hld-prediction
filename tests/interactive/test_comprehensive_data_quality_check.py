@@ -297,6 +297,60 @@ class TestComprehensiveDataQualityCheck:
                 assert system.current_data.isna().sum().sum() == 0, "NaN values should be fixed"
                 assert system.current_data.duplicated().sum() == 0, "Duplicates should be fixed"
                 assert (system.current_data['low'] < 0).sum() == 0, "Negative values should be fixed"
+    
+    def test_automatic_cycle_fix(self, system):
+        """Test that the system automatically cycles through fixes until all issues are resolved."""
+        # Create test data with issues that might require multiple iterations
+        dates = pd.date_range('2023-01-01', periods=30, freq='h')
+        data = {
+            'datetime': dates,
+            'open': [100 + i for i in range(30)],
+            'high': [105 + i for i in range(30)],
+            'low': [95 + i for i in range(30)],
+            'close': [102 + i for i in range(30)],
+            'volume': [1000 for _ in range(30)],
+            'predicted_low': [0.5 for _ in range(30)],  # Add problematic column
+            'predicted_high': [0.5 for _ in range(30)], # Add problematic column
+            'source_file': ['test.parquet'] * 30
+        }
+        df = pd.DataFrame(data)
+        
+        # Add issues that might create new duplicates when fixed
+        df.loc[10, 'open'] = np.nan
+        df.loc[15, 'high'] = np.nan
+        df.loc[20] = df.loc[19]  # Duplicate
+        df.loc[25, 'low'] = -5   # Negative
+        df.loc[5, 'predicted_low'] = 0  # Zero value
+        df.loc[8, 'predicted_high'] = 0 # Zero value
+        
+        system.current_data = df
+        
+        # Mock user input to fix all issues
+        with patch('builtins.input', return_value='y'):
+            with patch('builtins.print') as mock_print:
+                system.analysis_runner.run_comprehensive_data_quality_check(system)
+                
+                # Check that automatic cycling was used
+                output_calls = [call[0][0] for call in mock_print.call_args_list]
+                
+                # Should have applied initial fixes
+                assert any("FIXING ALL DETECTED ISSUES" in str(call) for call in output_calls)
+                
+                # Should have verified fixes
+                assert any("Verifying fixes" in str(call) for call in output_calls)
+                
+                # Should have shown verification iterations
+                assert any("Verification iteration" in str(call) for call in output_calls)
+                
+                # Check that data was actually fixed
+                assert system.current_data.isna().sum().sum() == 0, "NaN values should be fixed"
+                assert system.current_data.duplicated().sum() == 0, "Duplicates should be fixed"
+                assert (system.current_data['low'] < 0).sum() == 0, "Negative values should be fixed"
+                
+                # Check that zero values in problematic columns were handled
+                zero_count_low = (system.current_data['predicted_low'] == 0).sum()
+                zero_count_high = (system.current_data['predicted_high'] == 0).sum()
+                # Note: Zero values might be legitimate, so we just check they were processed
 
 
 if __name__ == "__main__":

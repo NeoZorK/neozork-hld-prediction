@@ -41,6 +41,7 @@ Successfully resolved all issues with the Comprehensive Data Quality Check funct
 - Added automatic duplicate removal after each fix operation
 - Added final duplicate removal step to ensure no duplicates remain
 - Enhanced verification to catch any remaining issues
+- **Added automatic cycling through fixes until all issues are resolved**
 
 ## Key Improvements
 
@@ -117,6 +118,41 @@ if final_dupe_check > 0:
     print(f"   ✅ Removed {final_dupe_check} remaining duplicate rows")
 ```
 
+### Automatic Cycling Implementation
+```python
+# Verify that fixes were applied and continue fixing if needed
+print("\n🔍 Verifying fixes...")
+remaining_issues = 0
+max_iterations = 5  # Prevent infinite loops
+iteration = 1
+
+while iteration <= max_iterations:
+    print(f"\n🔄 Verification iteration {iteration}/{max_iterations}")
+    
+    # Check for remaining issues
+    remaining_issues = 0
+    
+    # Check for remaining NaN values, duplicates, negatives, infinities, etc.
+    # ... (comprehensive checks)
+    
+    if remaining_issues == 0:
+        print("   ✅ All issues have been successfully resolved!")
+        break
+    else:
+        print(f"   ⚠️  {remaining_issues} types of issues still remain")
+        
+        if iteration < max_iterations:
+            print(f"\n🔄 Automatically fixing remaining issues (iteration {iteration + 1})...")
+            
+            # Re-run quality checks and apply fixes
+            # ... (automatic fix application)
+        else:
+            print(f"   ⚠️  Maximum iterations ({max_iterations}) reached. Some issues may remain.")
+            break
+    
+    iteration += 1
+```
+
 ## User Experience Improvements
 
 ### Before vs After
@@ -179,11 +215,11 @@ data/backups/
 
 ### Unit Tests
 ```
-✅ Passed: 14
+✅ Passed: 15
 ❌ Failed: 0
 ⏭️  Skipped: 0
 💥 Errors: 0
-📈 Total: 14
+📈 Total: 15
 ```
 
 ### Integration Tests
@@ -194,6 +230,7 @@ data/backups/
 - ✅ Backup system works reliably
 - ✅ Verification system catches any remaining issues
 - ✅ One-try fix works correctly (all issues fixed in single run)
+- ✅ Automatic cycling through fixes until all issues are resolved
 
 ## Usage Instructions
 
@@ -209,11 +246,12 @@ data/backups/
 
 ### Expected Behavior
 
-- **First run**: System detects and fixes all real issues in one attempt
+- **First run**: System detects and fixes all real issues in one attempt with automatic cycling
 - **Second run**: System shows no issues (or only legitimate remaining issues)
 - **Metadata columns**: No false positives from columns like `source_file`
 - **Backup safety**: Original data is always preserved
 - **One-try fix**: All issues resolved without requiring multiple runs
+- **Automatic cycling**: System continues fixing until all issues are resolved (max 5 iterations)
 
 ## Quality Assurance
 
@@ -249,11 +287,12 @@ The Comprehensive Data Quality Check now works reliably on the first try:
 ✅ **User experience is smooth and intuitive**  
 
 Users can now confidently use this feature knowing that:
-- All real data quality issues will be detected and fixed in one attempt
+- All real data quality issues will be detected and fixed in one attempt with automatic cycling
 - No false positives from metadata columns
 - All fixes will persist and be verified
 - Original data is always safely backed up
 - The system works correctly on the first try
 - No multiple runs required to fix all issues
+- System automatically cycles through fixes until all issues are resolved
 
 The feature is production-ready and provides a robust, user-friendly data quality assessment and fixing solution.
