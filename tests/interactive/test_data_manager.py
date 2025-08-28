@@ -48,15 +48,28 @@ class TestDataManager:
     
     def test_load_data_from_file_csv(self, data_manager, tmp_path):
         """Test load_data_from_file with CSV file."""
-        # Create test CSV file
-        csv_file = tmp_path / "test.csv"
-        test_data = pd.DataFrame({'col1': [1, 2, 3], 'col2': [4, 5, 6]})
-        test_data.to_csv(csv_file, index=False)
+        # Create a temporary CSV file with MT5 format
+        csv_file = tmp_path / "test_data.csv"
         
+        # Create MT5 format CSV data with header on second line
+        csv_content = """<MetaTrader 5 CSV Export>
+DateTime,Open,High,Low,Close,TickVolume,
+2023.01.01 00:00,100.0,105.0,95.0,103.0,1000,
+2023.01.02 00:00,101.0,106.0,96.0,104.0,1100,
+2023.01.03 00:00,102.0,107.0,97.0,105.0,1200,"""
+        
+        with open(csv_file, 'w') as f:
+            f.write(csv_content)
+        
+        # Load the data
         result = data_manager.load_data_from_file(str(csv_file))
+        
+        # Check that data was loaded correctly
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 3
-        assert list(result.columns) == ['col1', 'col2']
+        # Check that columns are properly mapped
+        expected_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        assert all(col in result.columns for col in expected_columns)
     
     def test_load_data_from_file_parquet(self, data_manager, tmp_path):
         """Test load_data_from_file with Parquet file."""

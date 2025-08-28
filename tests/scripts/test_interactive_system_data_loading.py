@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import tempfile
 import shutil
+import pandas as pd
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
@@ -48,31 +49,40 @@ def test_data_folder_scanning():
 
 
 def test_single_file_loading():
-    """Test single file loading functionality."""
-    print("\n🧪 Testing single file loading...")
+    """Test loading a single data file."""
+    from src.interactive import InteractiveSystem
     
     system = InteractiveSystem()
     
-    # Find a test file
-    data_folder = Path("data")
-    test_files = list(data_folder.glob("*.csv")) + list(data_folder.glob("*.parquet"))
+    # Create a temporary CSV file with MT5 format
+    import tempfile
+    import os
     
-    if not test_files:
-        print("⚠️  No test files found, skipping single file test")
-        return True
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
+        # Create MT5 format CSV data with header on second line
+        csv_content = """<MetaTrader 5 CSV Export>
+DateTime,Open,High,Low,Close,TickVolume,
+2023.01.01 00:00,100.0,105.0,95.0,103.0,1000,
+2023.01.02 00:00,101.0,106.0,96.0,104.0,1100,
+2023.01.03 00:00,102.0,107.0,97.0,105.0,1200,"""
+        
+        f.write(csv_content)
+        csv_file = f.name
     
-    test_file = test_files[0]
-    print(f"📄 Testing with file: {test_file.relative_to(data_folder)}")
-    
-    # Test loading the file
     try:
-        data = system.load_data_from_file(str(test_file))
-        print(f"✅ Successfully loaded file with shape: {data.shape}")
-        assert data.shape[0] > 0, "Loaded data should have rows"
-        assert data.shape[1] > 0, "Loaded data should have columns"
-    except Exception as e:
-        print(f"❌ Error loading file: {e}")
-        raise
+        # Load the data
+        result = system.data_manager.load_data_from_file(csv_file)
+        
+        # Check that data was loaded correctly
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == 3
+        # Check that columns are properly mapped
+        expected_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        assert all(col in result.columns for col in expected_columns)
+        
+    finally:
+        # Clean up
+        os.unlink(csv_file)
 
 
 def test_folder_loading_with_mask():

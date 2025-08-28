@@ -10,6 +10,8 @@ import numpy as np
 from unittest.mock import Mock, patch, MagicMock
 from pathlib import Path
 import sys
+import tempfile
+import os
 
 # Mock imports that might not be available in test environment
 sys.modules['src.ml.feature_engineering.feature_generator'] = MagicMock()
@@ -25,6 +27,10 @@ from scripts.ml.interactive_system import InteractiveSystem
 
 class TestInteractiveSystem:
     """Test InteractiveSystem class."""
+    
+    def setup_method(self):
+        """Setup method for tests."""
+        self.system = InteractiveSystem()
     
     def test_initialization(self):
         """Test InteractiveSystem initialization."""
@@ -113,24 +119,33 @@ class TestInteractiveSystem:
             mock_print.assert_called()
     
     def test_load_data_from_file(self):
-        """Test data loading from file functionality."""
-        system = InteractiveSystem()
-        
-        # Create mock data
-        mock_data = pd.DataFrame({
-            'Open': [100, 101, 102],
-            'High': [105, 106, 107],
-            'Low': [95, 96, 97],
-            'Close': [103, 104, 105],
-            'Volume': [1000, 1100, 1200]
-        })
-        
-        with patch('pathlib.Path.exists', return_value=True), \
-             patch('pandas.read_csv', return_value=mock_data):
-            result = system.load_data_from_file('test_file.csv')
+        """Test loading data from file."""
+        # Create a temporary CSV file with MT5 format
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
+            # Create MT5 format CSV data with header on second line
+            csv_content = """<MetaTrader 5 CSV Export>
+DateTime,Open,High,Low,Close,TickVolume,
+2023.01.01 00:00,100.0,105.0,95.0,103.0,1000,
+2023.01.02 00:00,101.0,106.0,96.0,104.0,1100,
+2023.01.03 00:00,102.0,107.0,97.0,105.0,1200,"""
             
-            assert result is not None
+            f.write(csv_content)
+            csv_file = f.name
+        
+        try:
+            # Load the data
+            result = self.system.data_manager.load_data_from_file(csv_file)
+            
+            # Check that data was loaded correctly
+            assert isinstance(result, pd.DataFrame)
             assert len(result) == 3
+            # Check that columns are properly mapped
+            expected_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+            assert all(col in result.columns for col in expected_columns)
+            
+        finally:
+            # Clean up
+            os.unlink(csv_file)
     
     def test_load_data_from_file_not_found(self):
         """Test data loading with file not found."""

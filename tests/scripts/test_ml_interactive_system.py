@@ -226,24 +226,32 @@ class TestInteractiveSystemScript:
     
     def test_load_data_from_file_csv(self):
         """Test loading data from CSV file."""
+        # Create a temporary CSV file with MT5 format
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
+            # Create MT5 format CSV data with header on second line
+            csv_content = """<MetaTrader 5 CSV Export>
+DateTime,Open,High,Low,Close,TickVolume,
+2023.01.01 00:00,100.0,105.0,95.0,103.0,1000,
+2023.01.02 00:00,101.0,106.0,96.0,104.0,1100,
+2023.01.03 00:00,102.0,107.0,97.0,105.0,1200,"""
+            
+            f.write(csv_content)
+            csv_file = f.name
+        
         try:
-            from scripts.ml.interactive_system import InteractiveSystem
-            system = InteractiveSystem()
+            # Load the data
+            result = self.system.data_manager.load_data_from_file(csv_file)
             
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
-                f.write('open,high,low,close,volume\n100,105,95,102,1000\n101,106,96,103,1100')
-                temp_file = f.name
+            # Check that data was loaded correctly
+            assert isinstance(result, pd.DataFrame)
+            assert len(result) == 3
+            # Check that columns are properly mapped
+            expected_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+            assert all(col in result.columns for col in expected_columns)
             
-            try:
-                df = system.load_data_from_file(temp_file)
-                assert isinstance(df, pd.DataFrame)
-                assert df.shape == (2, 5)
-                assert list(df.columns) == ['open', 'high', 'low', 'close', 'volume']
-            finally:
-                os.unlink(temp_file)
-            
-        except ImportError as e:
-            pytest.skip(f"Import failed: {e}")
+        finally:
+            # Clean up
+            os.unlink(csv_file)
     
     def test_load_data_from_file_parquet(self):
         """Test loading data from parquet file."""

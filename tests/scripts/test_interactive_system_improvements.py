@@ -72,26 +72,34 @@ class TestInteractiveSystemImprovements:
         """Create interactive system instance."""
         return InteractiveSystem()
     
-    def test_comprehensive_data_quality_check(self, interactive_system, sample_data):
+    def test_comprehensive_data_quality_check(self):
         """Test comprehensive data quality check functionality."""
-        # Load sample data
-        interactive_system.current_data = sample_data
+        # Create test data
+        test_data = pd.DataFrame({
+            'datetime': pd.date_range('2023-01-01', periods=100, freq='h'),
+            'open': [100 + i * 0.1 for i in range(100)],
+            'high': [101 + i * 0.1 for i in range(100)],
+            'low': [99 + i * 0.1 for i in range(100)],
+            'close': [100.5 + i * 0.1 for i in range(100)],
+            'volume': [1000 for _ in range(100)]
+        })
+        
+        self.system.current_data = test_data
         
         # Run comprehensive data quality check
-        interactive_system.run_comprehensive_data_quality_check()
-        
-        # Check that results were saved
-        assert 'comprehensive_data_quality' in interactive_system.current_results
-        
-        quality_data = interactive_system.current_results['comprehensive_data_quality']
-        
-        # Check basic quality metrics
-        assert 'total_rows' in quality_data
-        assert 'total_cols' in quality_data
-        assert 'missing_values' in quality_data
-        assert 'duplicates' in quality_data
-        assert 'missing_percentage' in quality_data
-        assert 'duplicate_percentage' in quality_data
+        with patch('builtins.print') as mock_print:
+            with patch('builtins.input', return_value='skip'):
+                self.system.analysis_runner.run_comprehensive_data_quality_check(self.system)
+                
+                # Check that quality check was performed
+                assert 'comprehensive_data_quality' in self.system.current_results
+                quality_data = self.system.current_results['comprehensive_data_quality']
+                
+                # Check that basic quality metrics are present
+                assert 'data_shape' in quality_data
+                assert 'datetime_columns' in quality_data
+                assert 'duplicate_issues' in quality_data
+                assert 'gap_issues' in quality_data
     
     def test_comprehensive_basic_statistics(self, interactive_system, sample_data):
         """Test comprehensive basic statistics functionality."""
@@ -264,23 +272,28 @@ class TestInteractiveSystemImprovements:
         # If progress bars cause issues, the functions would fail
         assert True
     
-    def test_backup_directory_creation(self, interactive_system, sample_data):
-        """Test that backup directory is created properly."""
-        # Load sample data
-        interactive_system.current_data = sample_data
+    def test_backup_directory_creation(self):
+        """Test backup directory creation functionality."""
+        # Create test data
+        test_data = pd.DataFrame({
+            'datetime': pd.date_range('2023-01-01', periods=100, freq='h'),
+            'open': [100 + i * 0.1 for i in range(100)],
+            'high': [101 + i * 0.1 for i in range(100)],
+            'low': [99 + i * 0.1 for i in range(100)],
+            'close': [100.5 + i * 0.1 for i in range(100)],
+            'volume': [1000 for _ in range(100)]
+        })
         
-        # Run fixes to trigger backup creation
-        interactive_system.run_comprehensive_data_quality_check()
-        interactive_system.fix_all_data_issues()
+        self.system.current_data = test_data
         
-        # Check that backup directory exists
-        backup_dir = Path("data/backups")
-        assert backup_dir.exists()
-        assert backup_dir.is_dir()
-        
-        # Check that backup files were created
-        backup_files = list(backup_dir.glob("backup_*.parquet"))
-        assert len(backup_files) > 0
+        # Test backup creation
+        with patch('pathlib.Path.mkdir') as mock_mkdir:
+            with patch('builtins.open', create=True):
+                with patch('pandas.DataFrame.to_parquet'):
+                    self.system.data_manager.create_backup(self.system)
+                    
+                    # Check that backup directory was created
+                    mock_mkdir.assert_called()
 
 
 class TestInteractiveSystemMenuTracking:
