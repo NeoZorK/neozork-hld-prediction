@@ -78,20 +78,21 @@ class YFinanceDownloader:
         pd.set_option('display.max_rows', 10)
         pd.set_option('display.max_columns', 10)
 
-        # Rate limiting parameters
-        self.request_delay = 3.0  # Base delay between requests in seconds
-        self.retry_delay_base = 5.0  # Base delay for retry
+        # Rate limiting parameters - optimized for Docker
+        self.request_delay = 1.0  # Reduced from 3.0 to 1.0 for Docker
+        self.retry_delay_base = 2.0  # Reduced from 5.0 to 2.0 for Docker
         # Set max_retries based on input parameter
-        self.max_retries = 1 if single_attempt else 2
-        self.backoff_factor = 2.0
-        self.jitter = 0.5  # Random jitter to add to delays
+        self.max_retries = 1 if single_attempt else 1  # Always 1 in Docker
+        self.backoff_factor = 1.5  # Reduced from 2.0 to 1.5
+        self.jitter = 0.2  # Reduced from 0.5 to 0.2
 
         # Results tracking
         self.successful_downloads = []
         self.failed_downloads = []
 
-        # Check if we can reach Yahoo Finance
-        self.check_connectivity()
+        # Skip connectivity check in Docker for speed
+        if not os.environ.get('DOCKER_CONTAINER', False) and not os.path.exists('/.dockerenv'):
+            self.check_connectivity()
 
     def check_connectivity(self) -> bool:
         """
@@ -101,7 +102,7 @@ class YFinanceDownloader:
         test_url = "https://finance.yahoo.com"
         try:
             logger.info(f"Testing connectivity to Yahoo Finance...")
-            response = self.session.get(test_url, timeout=10)
+            response = self.session.get(test_url, timeout=5)  # Reduced timeout from 10 to 5
             if response.status_code == 200:
                 logger.info(f"Successfully connected to Yahoo Finance!")
                 return True
@@ -143,7 +144,7 @@ class YFinanceDownloader:
             return self.request_delay + random.uniform(0, self.jitter)
 
         delay = self.retry_delay_base * (self.backoff_factor ** (attempt)) + random.uniform(0, self.jitter * attempt)
-        return min(delay, 30.0)  # Cap at 30 seconds
+        return min(delay, 10.0)  # Reduced cap from 30.0 to 10.0 seconds
 
     def direct_api_request(self, ticker: str, period: str, interval: str) -> Optional[pd.DataFrame]:
         """
@@ -184,7 +185,7 @@ class YFinanceDownloader:
 
         try:
             logger.info(f"Making direct API request to {url} with params: {params}")
-            response = self.session.get(url, params=params, timeout=15)
+            response = self.session.get(url, params=params, timeout=10)  # Reduced timeout from 15 to 10
 
             if response.status_code == 200:
                 data = response.json()
@@ -289,7 +290,7 @@ class YFinanceDownloader:
 
                 # Add extra delay if we hit rate limits
                 if "429" in str(e) or "Too Many Requests" in str(e):
-                    extra_delay = 60.0 + random.uniform(0, 30.0)  # 1-1.5 minute delay
+                    extra_delay = 10.0 + random.uniform(0, 5.0)  # Reduced from 60.0 to 10.0 seconds
                     logger.warning(f"Rate limit hit, waiting {extra_delay:.2f}s before next attempt")
                     time.sleep(extra_delay)
 
@@ -322,7 +323,7 @@ class YFinanceDownloader:
 
             # Add delay between ticker requests to avoid rate limiting
             if i > 0:
-                between_delay = self.request_delay * 2 + random.uniform(0, 2.0)
+                between_delay = self.request_delay + random.uniform(0, 1.0)  # Reduced from 2.0 to 1.0
                 logger.info(f"Waiting {between_delay:.2f}s before processing next ticker...")
                 time.sleep(between_delay)
 
@@ -364,8 +365,17 @@ class YFinanceDownloader:
 
         print("="*50)
 
+def get_tickers_for_docker() -> List[str]:
+    """Get tickers for Docker environment - no interactive input."""
+    # In Docker, use only the first ticker for speed
+    return [DEFAULT_TICKERS[0]]
+
 def prompt_for_tickers() -> List[str]:
     """Ask user which tickers to run tests for."""
+    # Check if we're in Docker environment
+    if os.environ.get('DOCKER_CONTAINER', False) or os.path.exists('/.dockerenv'):
+        return get_tickers_for_docker()
+    
     # Use a simpler approach with fewer input prompts to avoid hangs
     selected_tickers = []
 
@@ -432,15 +442,17 @@ def main():
     if in_docker:
         print("Running in Docker environment - using single attempt mode")
         print("Max attempts per ticker: 1")
-        tickers = prompt_for_tickers()
+        tickers = get_tickers_for_docker()  # Use non-interactive function
         if not tickers:
             print("No tickers selected. Exiting.")
             return
     else:
-        tickers = DEFAULT_TICKERS
-        print(f"Tickers: {', '.join(tickers)}")
-        print(f"Max attempts per ticker: 2")
+        tickers = prompt_for_tickers()
+        if not tickers:
+            print("No tickers selected. Exiting.")
+            return
 
+    print(f"Tickers: {', '.join(tickers)}")
     print(f"Period: {PERIOD}, Interval: {INTERVAL}")
     print(f"Cache directory: {CACHE_DIR}")
     print("-" * 40)

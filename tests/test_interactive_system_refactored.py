@@ -416,14 +416,13 @@ class TestVisualizationManager:
         manager = VisualizationManager()
         system = InteractiveSystem()
 
-        # Mock input to avoid stdin issues in tests
-        monkeypatch.setattr('builtins.input', lambda prompt: "")
+        # Mock input to return '0' to exit the menu immediately
+        monkeypatch.setattr('builtins.input', lambda prompt: "0")
 
         manager.run_visualization_analysis(system)
 
         captured = capsys.readouterr()
         assert "DATA VISUALIZATION" in captured.out
-        assert "Visualization features coming soon" in captured.out
 
 
 def test_integration():

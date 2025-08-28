@@ -35,6 +35,11 @@ def run_docker_tests():
         "scripts/debug/examine_parquet.py"
     ]
     
+    # Debug script tests (unit tests instead of running scripts)
+    debug_script_tests = [
+        "tests/test_debug_yfinance.py"
+    ]
+    
     print("=== Running Docker Tests ===")
     
     # Run test files with compact output
@@ -92,8 +97,31 @@ def run_docker_tests():
     # Test debug scripts with detailed output like v0.4.3
     print("\n=== Testing Debug Scripts ===")
     
-    # Test debug scripts
+    # First run unit tests for debug scripts (faster and more reliable)
+    print("Running debug script unit tests...")
+    for test_file in debug_script_tests:
+        if Path(test_file).exists():
+            print(f"Running {test_file}...", end=" ")
+            result = subprocess.run([
+                sys.executable, "-m", "pytest", test_file, 
+                "--tb=no", "-q", "--disable-warnings"
+            ], capture_output=True, text=True)
+            
+            if result.returncode == 0:
+                print("✅")
+            else:
+                print(f"❌ (Unit test failed)")
+        else:
+            print(f"❌ {test_file} - Not found")
+    
+    # Test debug scripts (only for non-interactive ones)
+    print("\nTesting debug script execution...")
     for script in debug_scripts:
+        # Skip interactive scripts in Docker
+        if "debug_yfinance.py" in script:
+            print(f"Testing {script}... ⏭️ (Skipped - using unit tests instead)")
+            continue
+            
         start_time = time.time()
         try:
             result = subprocess.run(
@@ -111,10 +139,7 @@ def run_docker_tests():
                 # Analyze error reason
                 error_reason = "❗ Unknown error"
                 
-                # Special handling for interactive scripts
-                if "debug_yfinance.py" in script:
-                    error_reason = "⏰ (Interactive script - requires user input)"
-                elif "BINANCE_API_KEY" in result.stdout or "BINANCE_API_SECRET" in result.stdout:
+                if "BINANCE_API_KEY" in result.stdout or "BINANCE_API_SECRET" in result.stdout:
                     error_reason = "❗ no API_KEY found on env file in path: /app/docker.env"
                 elif "POLYGON_API_KEY" in result.stdout:
                     error_reason = "❗ no API_KEY found on env file in path: /app/docker.env"

@@ -423,6 +423,11 @@ def run_local_tests():
         "scripts/debug/examine_parquet.py"
     ]
     
+    # Debug script tests (unit tests instead of running scripts)
+    debug_script_tests = [
+        "tests/test_debug_yfinance.py"
+    ]
+    
     print("=== Running Local Tests ===")
     
     # Run test files with compact output
@@ -441,16 +446,17 @@ def run_local_tests():
             # Parse output to count results
             output_lines = result.stdout.split('\n')
             for line in output_lines:
-                if 'passed' in line and 'failed' in line:
-                    # Extract numbers from line like "3 passed, 1 failed in 2.34s"
+                # Look for lines like "19 passed in 12.54s" or "3 passed, 1 failed in 2.34s"
+                if 'passed' in line and any(word in line for word in ['failed', 'skipped', 'in']):
+                    # Extract numbers from line
                     parts = line.split()
                     for i, part in enumerate(parts):
-                        if part.isdigit() and i > 0 and parts[i-1].isdigit():
-                            if 'passed' in line:
+                        if part.isdigit():
+                            if i + 1 < len(parts) and parts[i + 1] == 'passed':
                                 passed_tests += int(part)
-                            elif 'failed' in line:
+                            elif i + 1 < len(parts) and parts[i + 1] == 'failed':
                                 failed_tests += int(part)
-                            elif 'skipped' in line:
+                            elif i + 1 < len(parts) and parts[i + 1] == 'skipped':
                                 skipped_tests += int(part)
                     break
             
@@ -468,7 +474,34 @@ def run_local_tests():
     debug_passed = 0
     debug_failed = 0
     
+    # First run unit tests for debug scripts (faster and more reliable)
+    print("Running debug script unit tests...")
+    for test_file in debug_script_tests:
+        if Path(test_file).exists():
+            print(f"Running {test_file}...", end=" ")
+            result = subprocess.run([
+                sys.executable, "-m", "pytest", test_file, 
+                "--tb=no", "-q", "--disable-warnings"
+            ], capture_output=True, text=True)
+            
+            if result.returncode == 0:
+                print("✅")
+                debug_passed += 1
+            else:
+                print("❌")
+                debug_failed += 1
+        else:
+            print(f"❌ {test_file} - Not found")
+            debug_failed += 1
+    
+    # Test debug scripts (only for non-interactive ones)
+    print("\nTesting debug script execution...")
     for script in debug_scripts:
+        # Skip interactive scripts
+        if "debug_yfinance.py" in script:
+            print(f"Testing {script}... ⏭️ (Skipped - using unit tests instead)")
+            continue
+            
         if Path(script).exists():
             print(f"Testing {script}...", end=" ")
             try:

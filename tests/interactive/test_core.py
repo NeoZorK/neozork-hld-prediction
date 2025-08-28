@@ -209,7 +209,7 @@ class TestInteractiveSystem:
         # Verify the mock was called
         mock_feature_analysis.assert_called_once()
     
-    @patch('builtins.input', return_value='')
+    @patch('builtins.input', return_value='0')
     def test_run_visualization_analysis(self, mock_input, interactive_system):
         """Test run_visualization_analysis method."""
         interactive_system.run_visualization_analysis()
