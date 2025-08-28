@@ -28,11 +28,40 @@ class VisualizationManager:
     
     def run_visualization_analysis(self, system):
         """Run visualization analysis menu."""
-        print("\n📊 DATA VISUALIZATION")
-        print("-" * 30)
-        print("⏳ Visualization features coming soon!")
-        print("   This will include interactive charts, plots, and export capabilities.")
-        system.safe_input()
+        while True:
+            system.menu_manager.print_visualization_menu()
+            try:
+                choice = input("Select option (0-6): ").strip()
+            except EOFError:
+                print("\n👋 Goodbye!")
+                break
+            
+            # Handle exit commands
+            if choice.lower() in ['exit', 'quit', 'q']:
+                print("\n👋 Thank you for using NeoZorK HLD Prediction Interactive System!")
+                print("   Goodbye!")
+                break
+            
+            if choice == '0' or choice == '00':
+                break
+            elif choice == '1':
+                print("⏳ Price Charts - Coming soon!")
+            elif choice == '2':
+                print("⏳ Feature Distribution Plots - Coming soon!")
+            elif choice == '3':
+                print("⏳ Correlation Heatmaps - Coming soon!")
+            elif choice == '4':
+                print("⏳ Time Series Plots - Coming soon!")
+            elif choice == '5':
+                print("⏳ Feature Importance Charts - Coming soon!")
+            elif choice == '6':
+                print("⏳ Export Visualizations - Coming soon!")
+            else:
+                print("❌ Invalid choice. Please select 0-6.")
+            
+            if choice not in ['0', '00']:
+                if system.safe_input() is None:
+                    break
     
     def create_statistics_plots(self, system, data=None):
         """Create comprehensive statistics plots for all fields with separate HTML files."""

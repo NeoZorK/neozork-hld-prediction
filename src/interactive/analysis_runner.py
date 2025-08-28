@@ -36,6 +36,12 @@ class AnalysisRunner:
                 print("\n👋 Goodbye!")
                 break
             
+            # Handle exit commands
+            if choice.lower() in ['exit', 'quit', 'q']:
+                print("\n👋 Thank you for using NeoZorK HLD Prediction Interactive System!")
+                print("   Goodbye!")
+                break
+            
             if choice == '0' or choice == '00':
                 break
             elif choice == '1':
@@ -57,7 +63,7 @@ class AnalysisRunner:
             else:
                 print("❌ Invalid choice. Please select 0-8.")
             
-            if choice != '0':
+            if choice not in ['0', '00']:
                 if system.safe_input() is None:
                     break
     
@@ -1160,11 +1166,40 @@ class AnalysisRunner:
     
     def run_model_development(self, system):
         """Run model development menu."""
-        print("\n📈 MODEL DEVELOPMENT")
-        print("-" * 30)
-        print("⏳ Model development features coming soon!")
-        print("   This will include ML pipeline, model training, and evaluation.")
-        system.safe_input()
+        while True:
+            system.menu_manager.print_model_development_menu()
+            try:
+                choice = input("Select option (0-6): ").strip()
+            except EOFError:
+                print("\n👋 Goodbye!")
+                break
+            
+            # Handle exit commands
+            if choice.lower() in ['exit', 'quit', 'q']:
+                print("\n👋 Thank you for using NeoZorK HLD Prediction Interactive System!")
+                print("   Goodbye!")
+                break
+            
+            if choice == '0' or choice == '00':
+                break
+            elif choice == '1':
+                print("⏳ Data Preparation - Coming soon!")
+            elif choice == '2':
+                print("⏳ Feature Engineering Pipeline - Coming soon!")
+            elif choice == '3':
+                print("⏳ ML Model Training - Coming soon!")
+            elif choice == '4':
+                print("⏳ Model Evaluation - Coming soon!")
+            elif choice == '5':
+                print("⏳ Hyperparameter Tuning - Coming soon!")
+            elif choice == '6':
+                print("⏳ Model Report - Coming soon!")
+            else:
+                print("❌ Invalid choice. Please select 0-6.")
+            
+            if choice not in ['0', '00']:
+                if system.safe_input() is None:
+                    break
     
     def show_individual_fix_menu(self, system, nan_summary, dupe_summary, gap_summary, 
                                 zero_summary, negative_summary, inf_summary):
@@ -1242,43 +1277,25 @@ class AnalysisRunner:
                 break
             
             if choice == '0':
-                # Save backup if any fixes were applied
-                if any(fixes_applied.values()) and backup_data is not None:
-                    try:
-                        import time
-                        backup_file = f"backup_individual_fixes_{int(time.time())}.parquet"
-                        backup_path = Path("data/backups") / backup_file
-                        backup_path.parent.mkdir(parents=True, exist_ok=True)
-                        backup_data.to_parquet(backup_path)
-                        print(f"\n💾 Backup saved to: {backup_path}")
-                        
-                        # Save fixed data
-                        fixed_data_path = Path("data/backups") / f"data_fixed_individual_{int(time.time())}.parquet"
-                        system.current_data.to_parquet(fixed_data_path)
-                        print(f"💾 Fixed data saved to: {fixed_data_path}")
-                    except Exception as e:
-                        print(f"⚠️  Could not save backup: {e}")
+                # Show summary of applied fixes
+                if any(fixes_applied.values()):
+                    print(f"\n📊 Summary of applied fixes:")
+                    for fix_type, applied in fixes_applied.items():
+                        if applied:
+                            print(f"   ✅ {fix_type.title()} fix applied")
+                    print(f"💾 All backups and fixed data have been saved to data/backups/")
                 break
             elif choice == str(option_num):  # Fix All
                 print("\n🚀 FIXING ALL REMAINING ISSUES...")
                 self.apply_all_remaining_fixes(system, available_fixes, fixes_applied, backup_data, backup_created)
                 
-                # Save backup after fixing all issues
-                if any(fixes_applied.values()) and backup_data is not None:
-                    try:
-                        import time
-                        backup_file = f"backup_all_fixes_{int(time.time())}.parquet"
-                        backup_path = Path("data/backups") / backup_file
-                        backup_path.parent.mkdir(parents=True, exist_ok=True)
-                        backup_data.to_parquet(backup_path)
-                        print(f"\n💾 Backup saved to: {backup_path}")
-                        
-                        # Save fixed data
-                        fixed_data_path = Path("data/backups") / f"data_fixed_all_{int(time.time())}.parquet"
-                        system.current_data.to_parquet(fixed_data_path)
-                        print(f"💾 Fixed data saved to: {fixed_data_path}")
-                    except Exception as e:
-                        print(f"⚠️  Could not save backup: {e}")
+                # Show summary of applied fixes
+                if any(fixes_applied.values()):
+                    print(f"\n📊 Summary of applied fixes:")
+                    for fix_type, applied in fixes_applied.items():
+                        if applied:
+                            print(f"   ✅ {fix_type.title()} fix applied")
+                    print(f"💾 All backups and fixed data have been saved to data/backups/")
                 break
             elif choice == str(option_num + 1):  # Show Status
                 self.show_fix_status(system, available_fixes, fixes_applied)
@@ -1296,10 +1313,19 @@ class AnalysisRunner:
             
             print(f"\n🔧 Applying {fix_type} fix...")
             
-            # Create backup on first fix if not already created
+            # Create and save backup on first fix if not already created
             if not backup_created and backup_data is not None:
                 print("💾 Creating backup before applying fixes...")
-                backup_created = True
+                try:
+                    import time
+                    backup_file = f"backup_individual_fixes_{int(time.time())}.parquet"
+                    backup_path = Path("data/backups") / backup_file
+                    backup_path.parent.mkdir(parents=True, exist_ok=True)
+                    backup_data.to_parquet(backup_path)
+                    print(f"💾 Backup saved to: {backup_path}")
+                    backup_created = True
+                except Exception as e:
+                    print(f"⚠️  Could not save backup: {e}")
             
             if fix_type == 'nan':
                 fixed_data = fix_files.fix_nan(system.current_data, fix_summary)
@@ -1349,6 +1375,16 @@ class AnalysisRunner:
                 system.current_data = system.current_data.drop_duplicates(keep='first')
                 print(f"🔄 Removed {initial_dupes} new duplicate rows created by {fix_type} fixing")
             
+            # Save current fixed data after each fix
+            if fixes_applied[fix_type]:
+                try:
+                    import time
+                    fixed_data_path = Path("data/backups") / f"data_fixed_{fix_type}_{int(time.time())}.parquet"
+                    system.current_data.to_parquet(fixed_data_path)
+                    print(f"💾 Current fixed data saved to: {fixed_data_path}")
+                except Exception as e:
+                    print(f"⚠️  Could not save current fixed data: {e}")
+            
             return backup_created
             
         except Exception as e:
@@ -1359,6 +1395,20 @@ class AnalysisRunner:
         """Apply all remaining fixes that haven't been applied yet."""
         try:
             from src.eda import fix_files
+            
+            # Create and save backup on first fix if not already created
+            if not backup_created and backup_data is not None:
+                print("💾 Creating backup before applying fixes...")
+                try:
+                    import time
+                    backup_file = f"backup_all_fixes_{int(time.time())}.parquet"
+                    backup_path = Path("data/backups") / backup_file
+                    backup_path.parent.mkdir(parents=True, exist_ok=True)
+                    backup_data.to_parquet(backup_path)
+                    print(f"💾 Backup saved to: {backup_path}")
+                    backup_created = True
+                except Exception as e:
+                    print(f"⚠️  Could not save backup: {e}")
             
             for fix_type, fix_summary in available_fixes:
                 if not fixes_applied[fix_type]:

@@ -32,7 +32,13 @@ class FeatureEngineeringManager:
                 print("\n👋 Goodbye!")
                 break
             
-            if choice == '0':
+            # Handle exit commands
+            if choice.lower() in ['exit', 'quit', 'q']:
+                print("\n👋 Thank you for using NeoZorK HLD Prediction Interactive System!")
+                print("   Goodbye!")
+                break
+            
+            if choice == '0' or choice == '00':
                 break
             elif choice == '1':
                 self.generate_all_features(system)
@@ -53,7 +59,7 @@ class FeatureEngineeringManager:
             else:
                 print("❌ Invalid choice. Please select 0-8.")
             
-            if choice != '0':
+            if choice not in ['0', '00']:
                 if system.safe_input() is None:
                     break
     

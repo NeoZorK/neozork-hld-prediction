@@ -254,6 +254,6 @@ class InteractiveSystem:
             else:
                 print("❌ Invalid choice. Please select 0-9.")
             
-            if choice != '0':
+            if choice not in ['0', '00']:
                 if self.safe_input() is None:
                     break
