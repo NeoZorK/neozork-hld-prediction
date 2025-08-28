@@ -15,6 +15,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import sys
+import os
 
 if TYPE_CHECKING:
     from .core import InteractiveSystem
@@ -38,21 +39,23 @@ class AnalysisRunner:
             if choice == '0':
                 break
             elif choice == '1':
-                self.run_data_quality_check(system)
+                self.run_comprehensive_data_quality_check(system)
             elif choice == '2':
-                self.run_basic_statistics(system)
+                self.run_data_quality_check(system)
             elif choice == '3':
-                self.run_correlation_analysis(system)
+                self.run_basic_statistics(system)
             elif choice == '4':
-                self.run_time_series_analysis(system)
+                self.run_correlation_analysis(system)
             elif choice == '5':
-                print("⏳ Feature Importance - Coming soon!")
+                self.run_time_series_analysis(system)
             elif choice == '6':
-                self.generate_html_report(system)
+                print("⏳ Feature Importance - Coming soon!")
             elif choice == '7':
+                self.generate_html_report(system)
+            elif choice == '8':
                 system.data_manager.restore_from_backup(system)
             else:
-                print("❌ Invalid choice. Please select 0-7.")
+                print("❌ Invalid choice. Please select 0-8.")
             
             if choice != '0':
                 if system.safe_input() is None:
@@ -414,6 +417,175 @@ class AnalysisRunner:
             
         except Exception as e:
             print(f"❌ Error in data quality check: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def run_comprehensive_data_quality_check(self, system):
+        """Run comprehensive data quality check using eda_batch_check functionality."""
+        if system.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return
+            
+        print("\n🧹 COMPREHENSIVE DATA QUALITY CHECK")
+        print("=" * 50)
+        
+        try:
+            # Import required modules
+            from src.eda import data_quality, fix_files, file_info
+            
+            # Initialize summary lists
+            nan_summary = []
+            dupe_summary = []
+            gap_summary = []
+            zero_summary = []
+            negative_summary = []
+            inf_summary = []
+            
+            # Get file info for datetime detection
+            file_info_data = file_info.get_file_info_from_dataframe(system.current_data)
+            
+            print("🔍 Running comprehensive data quality checks...")
+            print("-" * 50)
+            
+            # Create simple color classes for compatibility
+            class SimpleFore:
+                MAGENTA = ""
+                YELLOW = ""
+                RED = ""
+                GREEN = ""
+                CYAN = ""
+                BLUE = ""
+                RESET = ""
+            
+            class SimpleStyle:
+                BRIGHT = ""
+                RESET = ""
+                RESET_ALL = ""
+            
+            # Run all data quality checks
+            data_quality.nan_check(system.current_data, nan_summary, SimpleFore(), SimpleStyle())
+            data_quality.duplicate_check(system.current_data, dupe_summary, SimpleFore(), SimpleStyle())
+            data_quality.gap_check(system.current_data, gap_summary, SimpleFore(), SimpleStyle(), 
+                                 schema_datetime_fields=file_info_data.get('datetime_or_timestamp_fields'))
+            data_quality.zero_check(system.current_data, zero_summary, SimpleFore(), SimpleStyle())
+            data_quality.negative_check(system.current_data, negative_summary, SimpleFore(), SimpleStyle())
+            data_quality.inf_check(system.current_data, inf_summary, SimpleFore(), SimpleStyle())
+            
+            # Check if DateTime columns exist and are being used
+            datetime_cols = system.current_data.select_dtypes(include=['datetime']).columns.tolist()
+            if datetime_cols:
+                print(f"\n📅 DateTime columns found: {datetime_cols}")
+            else:
+                print("\n⚠️  No DateTime columns found in the dataset!")
+                print("   This may affect time series analysis and gap detection.")
+                print("   Consider converting timestamp columns to datetime format.")
+            
+            # Summary of issues found
+            total_issues = len(nan_summary) + len(dupe_summary) + len(gap_summary) + len(zero_summary) + len(negative_summary) + len(inf_summary)
+            
+            print(f"\n📊 QUALITY CHECK SUMMARY:")
+            print(f"   • NaN issues: {len(nan_summary)}")
+            print(f"   • Duplicate issues: {len(dupe_summary)}")
+            print(f"   • Gap issues: {len(gap_summary)}")
+            print(f"   • Zero value issues: {len(zero_summary)}")
+            print(f"   • Negative value issues: {len(negative_summary)}")
+            print(f"   • Infinity issues: {len(inf_summary)}")
+            print(f"   • Total issues found: {total_issues}")
+            
+            # Ask user if they want to fix all issues
+            if total_issues > 0:
+                print(f"\n🔧 ISSUES DETECTED - FIX OPTIONS:")
+                print("   • Option 1: Fix all issues automatically")
+                print("   • Option 2: Review and fix issues individually")
+                print("   • Option 3: Skip fixing for now")
+                
+                try:
+                    fix_choice = input("\nDo you want to fix all issues? (y/n/skip): ").strip().lower()
+                    
+                    if fix_choice in ['y', 'yes']:
+                        print("\n🔧 FIXING ALL DETECTED ISSUES...")
+                        print("-" * 50)
+                        
+                        # Create backup before fixing
+                        backup_data = system.current_data.copy()
+                        
+                        # Fix all issues
+                        if nan_summary:
+                            print("   • Fixing NaN values...")
+                            system.current_data = fix_files.fix_nan(system.current_data, nan_summary)
+                        
+                        if dupe_summary:
+                            print("   • Fixing duplicate rows...")
+                            system.current_data = fix_files.fix_duplicates(system.current_data, dupe_summary)
+                        
+                        if gap_summary:
+                            print("   • Fixing time series gaps...")
+                            # Find datetime column
+                            datetime_col = None
+                            for col in system.current_data.columns:
+                                if pd.api.types.is_datetime64_any_dtype(system.current_data[col]):
+                                    datetime_col = col
+                                    break
+                            system.current_data = fix_files.fix_gaps(system.current_data, gap_summary, datetime_col)
+                        
+                        if zero_summary:
+                            print("   • Fixing zero values...")
+                            system.current_data = fix_files.fix_zeros(system.current_data, zero_summary)
+                        
+                        if negative_summary:
+                            print("   • Fixing negative values...")
+                            system.current_data = fix_files.fix_negatives(system.current_data, negative_summary)
+                        
+                        if inf_summary:
+                            print("   • Fixing infinity values...")
+                            system.current_data = fix_files.fix_infs(system.current_data, inf_summary)
+                        
+                        print("\n✅ All issues have been fixed!")
+                        print(f"   • Original data shape: {backup_data.shape}")
+                        print(f"   • Fixed data shape: {system.current_data.shape}")
+                        
+                        # Save backup
+                        backup_path = os.path.join('data', 'backups', f'data_backup_{int(time.time())}.parquet')
+                        os.makedirs(os.path.dirname(backup_path), exist_ok=True)
+                        backup_data.to_parquet(backup_path)
+                        print(f"   • Backup saved to: {backup_path}")
+                        
+                    elif fix_choice in ['n', 'no']:
+                        print("\n📋 INDIVIDUAL FIX OPTIONS:")
+                        print("   • NaN values: Use --fix-nan")
+                        print("   • Duplicates: Use --fix-duplicates")
+                        print("   • Gaps: Use --fix-gaps")
+                        print("   • Zeros: Use --fix-zeros")
+                        print("   • Negatives: Use --fix-negatives")
+                        print("   • Infinities: Use --fix-infs")
+                        print("   • All issues: Use --fix-all")
+                        
+                    else:
+                        print("\n⏭️  Skipping fixes for now. You can run fixes later.")
+                        
+                except EOFError:
+                    print("\n⏭️  Skipping fixes due to input error.")
+            
+            # Save results
+            system.current_results['comprehensive_data_quality'] = {
+                'nan_issues': nan_summary,
+                'duplicate_issues': dupe_summary,
+                'gap_issues': gap_summary,
+                'zero_issues': zero_summary,
+                'negative_issues': negative_summary,
+                'infinity_issues': inf_summary,
+                'total_issues': total_issues,
+                'datetime_columns': datetime_cols,
+                'data_shape': system.current_data.shape
+            }
+            
+            print(f"\n✅ Comprehensive data quality check completed!")
+            
+            # Mark as used
+            system.menu_manager.mark_menu_as_used('eda', 'comprehensive_data_quality_check')
+            
+        except Exception as e:
+            print(f"❌ Error in comprehensive data quality check: {e}")
             import traceback
             traceback.print_exc()
     

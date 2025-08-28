@@ -121,6 +121,10 @@ class InteractiveSystem:
         """Run comprehensive data quality check."""
         return self.analysis_runner.run_data_quality_check(self)
     
+    def run_comprehensive_data_quality_check(self):
+        """Run comprehensive data quality check using eda_batch_check functionality."""
+        return self.analysis_runner.run_comprehensive_data_quality_check(self)
+    
     def run_correlation_analysis(self):
         """Run correlation analysis."""
         return self.analysis_runner.run_correlation_analysis(self)
