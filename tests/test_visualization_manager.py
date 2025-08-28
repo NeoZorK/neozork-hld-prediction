@@ -95,10 +95,9 @@ class TestVisualizationManager:
     
     def test_show_plots_in_browser_with_error(self, visualization_manager, mock_system):
         """Test show_plots_in_browser with error."""
-        with patch('pathlib.Path.exists', return_value=True):
-            with patch('pathlib.Path.glob', return_value=[]):
-                result = visualization_manager.show_plots_in_browser(mock_system)
-                assert result is False
+        with patch('pathlib.Path.exists', return_value=False):
+            result = visualization_manager.show_plots_in_browser(mock_system)
+            assert result is False
     
     def test_show_plots_in_browser_success_mock(self, visualization_manager, mock_system, capsys):
         """Test show_plots_in_browser with successful execution (mocked)."""

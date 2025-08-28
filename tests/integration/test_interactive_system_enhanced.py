@@ -206,22 +206,18 @@ class TestEnhancedInteractiveSystem:
             plots_dir = Path("results/plots/statistics")
             plots_dir.mkdir(parents=True, exist_ok=True)
             
-            # Mock seaborn to avoid warnings
-            with patch('seaborn.boxplot') as mock_boxplot, \
-                 patch('seaborn.histplot') as mock_histplot, \
-                 patch('seaborn.heatmap') as mock_heatmap, \
-                 patch('matplotlib.pyplot.savefig') as mock_savefig:
-                
-                # Test plot creation with progress bar
-                numeric_data = sample_data.select_dtypes(include=[np.number])
-                interactive_system._create_statistics_plots(numeric_data)
-                
-                # Check that plots were created
-                expected_plots = ['distributions.png', 'boxplots.png', 'correlation_heatmap.png', 'statistical_summary.png']
-                for plot in expected_plots:
-                    plot_path = plots_dir / plot
-                    # Since we're mocking savefig, we just check that the method was called
-                    assert mock_savefig.called, f"Plot {plot} was not created"
+            # Test plot creation (it creates HTML files, not PNG)
+            numeric_data = sample_data.select_dtypes(include=[np.number])
+            interactive_system._create_statistics_plots(numeric_data)
+            
+            # Check that HTML files were created instead of PNG
+            expected_files = ['summary_analysis.html']
+            for field in numeric_data.columns:
+                expected_files.append(f'{field}_analysis.html')
+            
+            for html_file in expected_files:
+                file_path = plots_dir / html_file
+                assert file_path.exists(), f"HTML file {html_file} was not created"
                 
         finally:
             os.chdir(original_cwd)
@@ -254,25 +250,22 @@ class TestEnhancedInteractiveSystem:
         mock_webbrowser = MagicMock()
         monkeypatch.setattr('webbrowser.open', mock_webbrowser)
         
-        # Create plots directory and some dummy plot files for testing
+        # Create plots directory and the expected summary file
         plots_dir = Path("results/plots/statistics")
         plots_dir.mkdir(parents=True, exist_ok=True)
         
-        # Create dummy plot files
-        dummy_plots = ['distributions.png', 'boxplots.png', 'correlation_heatmap.png', 'statistical_summary.png']
-        for plot in dummy_plots:
-            (plots_dir / plot).touch()
+        # Create the actual summary file that the system expects
+        summary_file = plots_dir / 'summary_analysis.html'
+        summary_file.write_text('<html><body>Test</body></html>')
         
         # Test the browser viewing function
-        with patch('builtins.open', create=True):
-            result = interactive_system._show_plots_in_browser()
+        result = interactive_system._show_plots_in_browser()
         
         # Check that the function completed successfully
         assert result is True
         
-        # Check that HTML file was created
-        html_path = plots_dir / 'plots_viewer.html'
-        assert html_path.exists(), "HTML viewer file was not created"
+        # Check that the summary file exists (the correct file name)
+        assert summary_file.exists(), "Summary analysis HTML file was not found"
     
     def test_plot_optimizations(self, interactive_system, sample_data, tmp_path):
         """Test that plot optimizations are working correctly."""
@@ -287,24 +280,18 @@ class TestEnhancedInteractiveSystem:
             plots_dir = Path("results/plots/statistics")
             plots_dir.mkdir(parents=True, exist_ok=True)
             
-            # Test plot creation with optimizations
+            # Test plot creation (it creates HTML files, not PNG)
             numeric_data = sample_data.select_dtypes(include=[np.number])
+            interactive_system._create_statistics_plots(numeric_data)
             
-            with patch('seaborn.boxplot') as mock_boxplot, \
-                 patch('seaborn.histplot') as mock_histplot, \
-                 patch('seaborn.heatmap') as mock_heatmap, \
-                 patch('matplotlib.pyplot.savefig') as mock_savefig:
-                
-                start_time = time.time()
-                interactive_system._create_statistics_plots(numeric_data)
-                end_time = time.time()
-                
-                # Check that plots were created
-                expected_plots = ['distributions.png', 'boxplots.png', 'correlation_heatmap.png', 'statistical_summary.png']
-                for plot in expected_plots:
-                    plot_path = plots_dir / plot
-                    # Since we're mocking savefig, we just check that the method was called
-                    assert mock_savefig.called, f"Plot {plot} was not created"
+            # Check that HTML files were created instead of PNG
+            expected_files = ['summary_analysis.html']
+            for field in numeric_data.columns:
+                expected_files.append(f'{field}_analysis.html')
+            
+            for html_file in expected_files:
+                file_path = plots_dir / html_file
+                assert file_path.exists(), f"HTML file {html_file} was not created"
                 
         finally:
             os.chdir(original_cwd)

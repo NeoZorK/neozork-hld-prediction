@@ -260,14 +260,15 @@ class TestInteractiveSystemIntegration:
             'Volume': [1000, 1100, 1200]
         })
         
-        with patch('pathlib.Path.exists', return_value=True), \
-             patch('pandas.read_csv', return_value=mock_data):
+        # Mock the entire data loading chain
+        with patch.object(system.data_manager, 'load_data_from_file', return_value=mock_data) as mock_load:
             result = system.load_data_from_file('test_file.csv')
             
             # Validate data is loaded
             assert result is not None
             assert len(result) == 3
             assert 'Open' in result.columns
+            mock_load.assert_called_once_with('test_file.csv')
     
     def test_menu_completion_tracking(self):
         """Test menu completion tracking."""

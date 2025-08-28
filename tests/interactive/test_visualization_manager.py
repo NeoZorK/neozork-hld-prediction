@@ -49,7 +49,7 @@ class TestVisualizationManager:
     
     def test_run_visualization_analysis(self, visualization_manager, mock_system):
         """Test run_visualization_analysis."""
-        with patch.object(mock_system, 'safe_input'):
+        with patch('builtins.input', return_value='0'):
             visualization_manager.run_visualization_analysis(mock_system)
     
     def test_create_statistics_plots_no_data(self, visualization_manager, mock_system):

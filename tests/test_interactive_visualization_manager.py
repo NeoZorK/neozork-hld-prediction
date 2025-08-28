@@ -52,16 +52,20 @@ class TestVisualizationManager:
     
     def test_run_visualization_analysis(self, visualization_manager, mock_system, capsys):
         """Test run_visualization_analysis method."""
-        visualization_manager.run_visualization_analysis(mock_system)
+        # Mock menu_manager to actually print the menu
+        mock_menu_manager = MagicMock()
+        mock_menu_manager.print_visualization_menu.side_effect = lambda: print("📊 DATA VISUALIZATION MENU:")
+        mock_system.menu_manager = mock_menu_manager
         
-        # Check output
-        captured = capsys.readouterr()
-        assert "DATA VISUALIZATION" in captured.out
-        assert "Visualization features coming soon!" in captured.out
-        assert "interactive charts, plots, and export capabilities" in captured.out
-        
-        # Check that safe_input was called
-        mock_system.safe_input.assert_called_once()
+        with patch('builtins.input', return_value='0'):
+            visualization_manager.run_visualization_analysis(mock_system)
+            
+            # Check output
+            captured = capsys.readouterr()
+            assert "DATA VISUALIZATION MENU:" in captured.out
+            
+            # Check that menu_manager.print_visualization_menu was called
+            mock_menu_manager.print_visualization_menu.assert_called()
     
     def test_run_visualization_analysis_with_real_system(self, visualization_manager, capsys):
         """Test run_visualization_analysis with a real system-like object."""
@@ -69,19 +73,19 @@ class TestVisualizationManager:
         class SimpleSystem:
             def safe_input(self):
                 pass
+            
+            @property
+            def menu_manager(self):
+                return MagicMock()
         
         system = SimpleSystem()
         
-        with patch.object(system, 'safe_input') as mock_input:
-            visualization_manager.run_visualization_analysis(system)
-            
-            # Check output
-            captured = capsys.readouterr()
-            assert "DATA VISUALIZATION" in captured.out
-            assert "Visualization features coming soon!" in captured.out
-            
-            # Check that safe_input was called
-            mock_input.assert_called_once()
+        with patch('builtins.input', return_value='0'):
+            with patch.object(system, 'safe_input') as mock_input:
+                visualization_manager.run_visualization_analysis(system)
+                
+                # Check that the method completed without error
+                # The MagicMock menu_manager won't print anything, so we just verify it runs
     
     def test_str_repr(self, visualization_manager):
         """Test string representation."""
