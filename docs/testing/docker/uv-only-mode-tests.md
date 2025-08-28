@@ -95,7 +95,7 @@ The container includes a UV test script that can be run in both environments:
 
 ```bash
 # Run the UV environment test
-python scripts/test_uv_docker.py
+python scripts/utilities/test_uv_docker.py
 
 # Or use the wrapper command (Docker only)
 uv-test
@@ -197,7 +197,7 @@ uv pip list
 pip list
 
 # Run UV test script with verbose output
-python scripts/test_uv_docker.py
+python scripts/utilities/test_uv_docker.py
 ```
 
 #### Local Environment

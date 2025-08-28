@@ -258,7 +258,7 @@ pytest tests/data/
 python run_analysis.py -h
 
 # Test UV environment
-python scripts/test_uv_docker.py
+python scripts/utilities/test_uv_docker.py
 
 # Check MCP server
 python scripts/check_mcp_status.py

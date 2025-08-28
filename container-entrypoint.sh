@@ -286,7 +286,7 @@ EOF
 #!/bin/bash
 echo "Running UV environment test..."
 source /app/.venv/bin/activate
-python /app/scripts/test_uv_docker.py
+python /app/scripts/utilities/test_uv_docker.py
 EOF
     chmod +x /tmp/bin/uv-test
 
