@@ -130,22 +130,25 @@ def test_docker_environment():
     """Test Docker environment"""
     print("\n🔍 Testing Docker environment...")
     
-    # Check if we're in Docker
-    try:
-        with open("/proc/1/cgroup", "r") as f:
-            cgroup = f.read()
-            if "docker" in cgroup.lower():
-                print("✅ Running in Docker container")
-                return True
-            else:
-                print("⚠️  Not running in Docker container")
-                # Don't fail on non-Docker environments
-                print("ℹ️  This is expected on local development machines")
-                return True  # Consider this a pass for local development
-    except FileNotFoundError:
-        print("⚠️  Could not determine if running in Docker")
-        print("ℹ️  This is expected on macOS and other non-Linux systems")
-        # Don't fail on systems that don't have /proc/1/cgroup
+    # Check if we're in Docker using the same method as other tests
+    in_docker = (
+        os.getenv("DOCKER_CONTAINER", "false").lower() == "true" or
+        os.path.exists("/.dockerenv") or
+        os.path.exists("/app")
+    )
+    
+    if in_docker:
+        print("✅ Running in Docker container")
+        print(f"   DOCKER_CONTAINER env: {os.getenv('DOCKER_CONTAINER', 'not set')}")
+        print(f"   /.dockerenv exists: {os.path.exists('/.dockerenv')}")
+        print(f"   /app exists: {os.path.exists('/app')}")
+        return True
+    else:
+        print("⚠️  Not running in Docker container")
+        print("ℹ️  This is expected on local development machines")
+        print(f"   DOCKER_CONTAINER env: {os.getenv('DOCKER_CONTAINER', 'not set')}")
+        print(f"   /.dockerenv exists: {os.path.exists('/.dockerenv')}")
+        print(f"   /app exists: {os.path.exists('/app')}")
         return True  # Consider this a pass for local development
 
 class TestUVDocker:
