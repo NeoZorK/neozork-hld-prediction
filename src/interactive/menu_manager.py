@@ -176,13 +176,13 @@ class MenuManager:
         print("\n🔍 EDA ANALYSIS MENU:")
         print("0. 🔙 Back to Main Menu")
         
-        # Basic Statistics
-        checkmark = " ✅" if self.used_menus['eda']['basic_statistics'] else ""
-        print(f"1. 📊 Basic Statistics{checkmark}")
-        
-        # Data Quality Check
+        # Data Quality Check (moved from position 2 to 1)
         checkmark = " ✅" if self.used_menus['eda']['data_quality_check'] else ""
-        print(f"2. 🧹 Comprehensive Data Quality Check{checkmark}")
+        print(f"1. 🧹 Comprehensive Data Quality Check{checkmark}")
+        
+        # Basic Statistics (moved from position 1 to 2)
+        checkmark = " ✅" if self.used_menus['eda']['basic_statistics'] else ""
+        print(f"2. 📊 Basic Statistics{checkmark}")
         
         # Correlation Analysis
         checkmark = " ✅" if self.used_menus['eda']['correlation_analysis'] else ""
@@ -196,17 +196,13 @@ class MenuManager:
         checkmark = " ✅" if self.used_menus['eda']['feature_importance'] else ""
         print(f"5. 🎯 Feature Importance{checkmark}")
         
-        # Fix Data Issues
-        checkmark = " ✅" if self.used_menus['eda']['fix_data_issues'] else ""
-        print(f"6. 🛠️  Fix Data Issues{checkmark}")
-        
-        # Generate HTML Report
+        # Generate HTML Report (moved from position 7 to 6)
         checkmark = " ✅" if self.used_menus['eda']['generate_html_report'] else ""
-        print(f"7. 📋 Generate HTML Report{checkmark}")
+        print(f"6. 📋 Generate HTML Report{checkmark}")
         
-        # Restore from Backup
+        # Restore from Backup (moved from position 8 to 7)
         checkmark = " ✅" if self.used_menus['eda']['restore_from_backup'] else ""
-        print(f"8. 🔄 Restore from Backup{checkmark}")
+        print(f"7. 🔄 Restore from Backup{checkmark}")
         
         print("-" * 50)
     

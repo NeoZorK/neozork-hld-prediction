@@ -65,19 +65,19 @@ class TestAnalysisRunner:
             analysis_runner.run_eda_analysis(mock_system)
             mock_system.menu_manager.print_eda_menu.assert_called_once()
     
-    def test_run_eda_analysis_basic_statistics(self, analysis_runner, mock_system):
-        """Test EDA analysis menu basic statistics option."""
-        with patch('builtins.input', side_effect=["1", "0"]):
-            with patch.object(analysis_runner, 'run_basic_statistics') as mock_basic:
-                analysis_runner.run_eda_analysis(mock_system)
-                mock_basic.assert_called_once_with(mock_system)
-    
     def test_run_eda_analysis_data_quality(self, analysis_runner, mock_system):
         """Test EDA analysis menu data quality option."""
-        with patch('builtins.input', side_effect=["2", "0"]):
+        with patch('builtins.input', side_effect=["1", "0"]):
             with patch.object(analysis_runner, 'run_data_quality_check') as mock_quality:
                 analysis_runner.run_eda_analysis(mock_system)
                 mock_quality.assert_called_once_with(mock_system)
+    
+    def test_run_eda_analysis_basic_statistics(self, analysis_runner, mock_system):
+        """Test EDA analysis menu basic statistics option."""
+        with patch('builtins.input', side_effect=["2", "0"]):
+            with patch.object(analysis_runner, 'run_basic_statistics') as mock_basic:
+                analysis_runner.run_eda_analysis(mock_system)
+                mock_basic.assert_called_once_with(mock_system)
     
     def test_run_eda_analysis_correlation(self, analysis_runner, mock_system):
         """Test EDA analysis menu correlation option."""
@@ -99,23 +99,16 @@ class TestAnalysisRunner:
             analysis_runner.run_eda_analysis(mock_system)
             # Should print "Feature Importance - Coming soon!"
     
-    def test_run_eda_analysis_fix_data(self, analysis_runner, mock_system):
-        """Test EDA analysis menu fix data option."""
-        with patch('builtins.input', side_effect=["6", "0"]):
-            with patch.object(analysis_runner, 'fix_data_issues') as mock_fix:
-                analysis_runner.run_eda_analysis(mock_system)
-                mock_fix.assert_called_once_with(mock_system)
-    
     def test_run_eda_analysis_html_report(self, analysis_runner, mock_system):
         """Test EDA analysis menu HTML report option."""
-        with patch('builtins.input', side_effect=["7", "0"]):
+        with patch('builtins.input', side_effect=["6", "0"]):
             with patch.object(analysis_runner, 'generate_html_report') as mock_html:
                 analysis_runner.run_eda_analysis(mock_system)
                 mock_html.assert_called_once_with(mock_system)
     
     def test_run_eda_analysis_restore_backup(self, analysis_runner, mock_system):
         """Test EDA analysis menu restore backup option."""
-        with patch('builtins.input', side_effect=["8", "0"]):
+        with patch('builtins.input', side_effect=["7", "0"]):
             analysis_runner.run_eda_analysis(mock_system)
             mock_system.data_manager.restore_from_backup.assert_called_once_with(mock_system)
     

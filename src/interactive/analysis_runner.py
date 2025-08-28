@@ -30,7 +30,7 @@ class AnalysisRunner:
         while True:
             system.menu_manager.print_eda_menu()
             try:
-                choice = input("Select option (0-8): ").strip()
+                choice = input("Select option (0-7): ").strip()
             except EOFError:
                 print("\n👋 Goodbye!")
                 break
@@ -38,9 +38,9 @@ class AnalysisRunner:
             if choice == '0':
                 break
             elif choice == '1':
-                self.run_basic_statistics(system)
-            elif choice == '2':
                 self.run_data_quality_check(system)
+            elif choice == '2':
+                self.run_basic_statistics(system)
             elif choice == '3':
                 self.run_correlation_analysis(system)
             elif choice == '4':
@@ -48,13 +48,11 @@ class AnalysisRunner:
             elif choice == '5':
                 print("⏳ Feature Importance - Coming soon!")
             elif choice == '6':
-                self.fix_data_issues(system)
-            elif choice == '7':
                 self.generate_html_report(system)
-            elif choice == '8':
+            elif choice == '7':
                 system.data_manager.restore_from_backup(system)
             else:
-                print("❌ Invalid choice. Please select 0-8.")
+                print("❌ Invalid choice. Please select 0-7.")
             
             if choice != '0':
                 if system.safe_input() is None:
