@@ -36,28 +36,28 @@ TEST_CATEGORIES = {
     "yfinance": {
         "description": "Yahoo Finance API tests",
         "scripts": [
-            "scripts/debug_scripts/debug_yfinance.py"
+            "scripts/debug/debug_yfinance.py"
         ],
         "docker_image": "neozork-yfinance"
     },
     "binance": {
         "description": "Binance API tests",
         "scripts": [
-            "scripts/debug_scripts/debug_binance.py"
+            "scripts/debug/debug_binance.py"
         ],
         "docker_image": "neozork-binance"
     },
     "polygon": {
         "description": "Polygon.io API tests",
         "scripts": [
-            "scripts/debug_scripts/debug_polygon.py"
+            "scripts/debug/debug_polygon.py"
         ],
         "docker_image": "neozork-polygon"
     },
     "parquet": {
         "description": "Parquet file operations tests",
         "scripts": [
-            "scripts/debug_scripts/examine_parquet.py"
+            "scripts/debug/examine_parquet.py"
         ],
         "docker_image": "neozork-parquet"
     }

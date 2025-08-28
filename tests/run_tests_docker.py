@@ -73,18 +73,21 @@ def run_docker_tests():
                 elif result.stderr.strip():
                     error_reason = result.stderr.strip().split('\n')[-1]
             
-            # Parsing results
+            # Parse output to count results
             output_lines = result.stdout.split('\n')
             for line in output_lines:
-                if 'passed' in line:
+                # Look for lines like "19 passed in 12.54s" or "3 passed, 1 failed in 2.34s"
+                if 'passed' in line and any(word in line for word in ['failed', 'skipped', 'in']):
+                    # Extract numbers from line
                     parts = line.split()
                     for i, part in enumerate(parts):
-                        if part.isdigit() and i < len(parts) - 1 and parts[i+1] == 'passed':
-                            passed_tests += int(part)
-                        elif part.isdigit() and i < len(parts) - 1 and parts[i+1] == 'failed':
-                            failed_tests += int(part)
-                        elif part.isdigit() and i < len(parts) - 1 and parts[i+1] == 'skipped':
-                            skipped_tests += int(part)
+                        if part.isdigit():
+                            if i + 1 < len(parts) and parts[i + 1] == 'passed':
+                                passed_tests += int(part)
+                            elif i + 1 < len(parts) and parts[i + 1] == 'failed':
+                                failed_tests += int(part)
+                            elif i + 1 < len(parts) and parts[i + 1] == 'skipped':
+                                skipped_tests += int(part)
                     break
             
             if result.returncode == 0:
