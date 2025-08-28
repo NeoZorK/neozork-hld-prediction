@@ -355,30 +355,44 @@ class DataManager:
             # Look for other backup files
             backup_dir = Path("data/backups")
             if backup_dir.exists():
+                # Look for all types of backup files
                 backup_files = list(backup_dir.glob("backup_*.parquet"))
-                if backup_files:
-                    print(f"📁 Found {len(backup_files)} backup files:")
-                    for i, backup_file in enumerate(backup_files, 1):
+                data_backup_files = list(backup_dir.glob("data_backup_*.parquet"))
+                data_fixed_files = list(backup_dir.glob("data_fixed_*.parquet"))
+                
+                # Combine all backup files
+                all_backup_files = backup_files + data_backup_files + data_fixed_files
+                
+                if all_backup_files:
+                    print(f"📁 Found {len(all_backup_files)} backup files:")
+                    for i, backup_file in enumerate(all_backup_files, 1):
                         file_size = backup_file.stat().st_size / (1024 * 1024)  # MB
-                        print(f"   {i}. {backup_file.name} ({file_size:.1f} MB)")
+                        file_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(backup_file.stat().st_mtime))
+                        print(f"   {i}. {backup_file.name} ({file_size:.1f} MB, {file_time})")
                     
                     try:
-                        choice = int(input(f"\nSelect backup to restore (1-{len(backup_files)}): ").strip())
-                        if 1 <= choice <= len(backup_files):
-                            selected_backup = backup_files[choice - 1]
+                        choice = int(input(f"\nSelect backup to restore (1-{len(all_backup_files)}): ").strip())
+                        if 1 <= choice <= len(all_backup_files):
+                            selected_backup = all_backup_files[choice - 1]
                             print(f"🔄 Restoring from {selected_backup.name}...")
                             system.current_data = pd.read_parquet(selected_backup)
                             print(f"✅ Data restored successfully!")
                             print(f"   Shape: {system.current_data.shape}")
+                            
+                            # Mark as used
+                            system.menu_manager.mark_menu_as_used('eda', 'restore_from_backup')
                         else:
                             print("❌ Invalid choice.")
                     except (ValueError, EOFError, OSError):
                         # Handle test environment where input is not available
                         print("🔄 Restoring from first backup (test mode)...")
-                        selected_backup = backup_files[0]
+                        selected_backup = all_backup_files[0]
                         system.current_data = pd.read_parquet(selected_backup)
                         print(f"✅ Data restored successfully!")
                         print(f"   Shape: {system.current_data.shape}")
+                        
+                        # Mark as used
+                        system.menu_manager.mark_menu_as_used('eda', 'restore_from_backup')
                 else:
                     print("❌ No backup files found in data/backups/")
             else:
