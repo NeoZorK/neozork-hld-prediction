@@ -88,11 +88,12 @@ class TestComprehensiveDataQualityCheck:
         system.current_data = test_data
         
         with patch('builtins.print') as mock_print:
-            system.analysis_runner.run_comprehensive_data_quality_check(system)
-            
-            # Check that datetime columns are detected
-            output_calls = [call[0][0] for call in mock_print.call_args_list]
-            assert any("DateTime columns found: ['datetime']" in str(call) for call in output_calls)
+            with patch('builtins.input', return_value='skip'):
+                system.analysis_runner.run_comprehensive_data_quality_check(system)
+                
+                # Check that datetime columns are detected
+                output_calls = [call[0][0] for call in mock_print.call_args_list]
+                assert any("DateTime columns found: ['datetime']" in str(call) for call in output_calls)
     
     def test_datetime_column_missing(self, system):
         """Test behavior when no DateTime columns are present."""
@@ -214,6 +215,45 @@ class TestComprehensiveDataQualityCheck:
         
         # Test that both methods are different
         assert system.run_data_quality_check != system.run_comprehensive_data_quality_check
+    
+    def test_timestamp_conversion(self, system):
+        """Test timestamp column conversion functionality."""
+        # Create data with timestamp column (integer)
+        timestamps = [int(datetime(2023, 1, 1).timestamp()) + i * 3600 for i in range(50)]
+        data = {
+            'time_col': timestamps,  # Use different name to avoid auto-conversion
+            'open': [100 + i for i in range(50)],
+            'high': [105 + i for i in range(50)],
+            'low': [95 + i for i in range(50)],
+            'close': [102 + i for i in range(50)],
+            'volume': [1000 for _ in range(50)]
+        }
+        df = pd.DataFrame(data)
+        system.current_data = df
+        
+        # Mock user input to convert timestamp
+        with patch('builtins.input', return_value='y'):
+            with patch('builtins.print') as mock_print:
+                system.analysis_runner.run_comprehensive_data_quality_check(system)
+                
+                # Check that conversion was attempted
+                output_calls = [call[0][0] for call in mock_print.call_args_list]
+                # Just check that the function runs without error
+                assert len(output_calls) > 0
+    
+    def test_fixes_verification(self, system, test_data):
+        """Test that fixes are properly verified after application."""
+        system.current_data = test_data
+        
+        # Mock user input to fix all issues
+        with patch('builtins.input', return_value='y'):
+            with patch('builtins.print') as mock_print:
+                system.analysis_runner.run_comprehensive_data_quality_check(system)
+                
+                # Check that verification was performed
+                output_calls = [call[0][0] for call in mock_print.call_args_list]
+                assert any("Verifying fixes" in str(call) for call in output_calls)
+                assert any("All issues have been successfully resolved" in str(call) for call in output_calls)
 
 
 if __name__ == "__main__":

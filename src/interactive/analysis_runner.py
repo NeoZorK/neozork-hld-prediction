@@ -472,13 +472,61 @@ class AnalysisRunner:
             data_quality.inf_check(system.current_data, inf_summary, SimpleFore(), SimpleStyle())
             
             # Check if DateTime columns exist and are being used
-            datetime_cols = system.current_data.select_dtypes(include=['datetime']).columns.tolist()
+            datetime_cols = []
+            for col in system.current_data.columns:
+                if pd.api.types.is_datetime64_any_dtype(system.current_data[col]):
+                    datetime_cols.append(col)
+            
             if datetime_cols:
                 print(f"\n📅 DateTime columns found: {datetime_cols}")
             else:
                 print("\n⚠️  No DateTime columns found in the dataset!")
                 print("   This may affect time series analysis and gap detection.")
                 print("   Consider converting timestamp columns to datetime format.")
+                
+                # Try to detect potential timestamp columns
+                potential_timestamp_cols = []
+                for col in system.current_data.columns:
+                    col_lower = col.lower()
+                    if any(keyword in col_lower for keyword in ['time', 'date', 'timestamp', 'dt']):
+                        potential_timestamp_cols.append(col)
+                
+                if potential_timestamp_cols:
+                    print(f"   Potential timestamp columns found: {potential_timestamp_cols}")
+                    print("   Consider converting these to datetime format using pd.to_datetime()")
+                    
+                    # Ask user if they want to convert timestamp columns
+                    try:
+                        convert_choice = input("\nDo you want to convert potential timestamp columns to datetime? (y/n): ").strip().lower()
+                        
+                        if convert_choice in ['y', 'yes']:
+                            print("\n🔄 Converting timestamp columns to datetime...")
+                            converted_cols = []
+                            
+                            for col in potential_timestamp_cols:
+                                try:
+                                    # Try to convert to datetime
+                                    original_dtype = system.current_data[col].dtype
+                                    system.current_data[col] = pd.to_datetime(system.current_data[col], errors='coerce')
+                                    
+                                    # Check if conversion was successful
+                                    if pd.api.types.is_datetime64_any_dtype(system.current_data[col]):
+                                        converted_cols.append(col)
+                                        print(f"   ✅ Converted '{col}' from {original_dtype} to datetime")
+                                    else:
+                                        print(f"   ❌ Failed to convert '{col}' to datetime")
+                                except Exception as e:
+                                    print(f"   ❌ Error converting '{col}': {e}")
+                            
+                            if converted_cols:
+                                print(f"\n✅ Successfully converted {len(converted_cols)} columns to datetime format")
+                                datetime_cols.extend(converted_cols)
+                            else:
+                                print("\n❌ No columns were successfully converted")
+                        else:
+                            print("\n⏭️  Skipping timestamp conversion")
+                    except EOFError:
+                        print("\n⏭️  Skipping timestamp conversion due to input error")
             
             # Summary of issues found
             total_issues = len(nan_summary) + len(dupe_summary) + len(gap_summary) + len(zero_summary) + len(negative_summary) + len(inf_summary)
@@ -512,11 +560,17 @@ class AnalysisRunner:
                         # Fix all issues
                         if nan_summary:
                             print("   • Fixing NaN values...")
-                            system.current_data = fix_files.fix_nan(system.current_data, nan_summary)
+                            fixed_data = fix_files.fix_nan(system.current_data, nan_summary)
+                            if fixed_data is not None:
+                                system.current_data = fixed_data
+                                print(f"   ✅ NaN values fixed. Data shape: {system.current_data.shape}")
                         
                         if dupe_summary:
                             print("   • Fixing duplicate rows...")
-                            system.current_data = fix_files.fix_duplicates(system.current_data, dupe_summary)
+                            fixed_data = fix_files.fix_duplicates(system.current_data, dupe_summary)
+                            if fixed_data is not None:
+                                system.current_data = fixed_data
+                                print(f"   ✅ Duplicate rows fixed. Data shape: {system.current_data.shape}")
                         
                         if gap_summary:
                             print("   • Fixing time series gaps...")
@@ -526,29 +580,82 @@ class AnalysisRunner:
                                 if pd.api.types.is_datetime64_any_dtype(system.current_data[col]):
                                     datetime_col = col
                                     break
-                            system.current_data = fix_files.fix_gaps(system.current_data, gap_summary, datetime_col)
+                            fixed_data = fix_files.fix_gaps(system.current_data, gap_summary, datetime_col)
+                            if fixed_data is not None:
+                                system.current_data = fixed_data
+                                print(f"   ✅ Time series gaps fixed. Data shape: {system.current_data.shape}")
                         
                         if zero_summary:
                             print("   • Fixing zero values...")
-                            system.current_data = fix_files.fix_zeros(system.current_data, zero_summary)
+                            fixed_data = fix_files.fix_zeros(system.current_data, zero_summary)
+                            if fixed_data is not None:
+                                system.current_data = fixed_data
+                                print(f"   ✅ Zero values fixed. Data shape: {system.current_data.shape}")
                         
                         if negative_summary:
                             print("   • Fixing negative values...")
-                            system.current_data = fix_files.fix_negatives(system.current_data, negative_summary)
+                            fixed_data = fix_files.fix_negatives(system.current_data, negative_summary)
+                            if fixed_data is not None:
+                                system.current_data = fixed_data
+                                print(f"   ✅ Negative values fixed. Data shape: {system.current_data.shape}")
                         
                         if inf_summary:
                             print("   • Fixing infinity values...")
-                            system.current_data = fix_files.fix_infs(system.current_data, inf_summary)
+                            fixed_data = fix_files.fix_infs(system.current_data, inf_summary)
+                            if fixed_data is not None:
+                                system.current_data = fixed_data
+                                print(f"   ✅ Infinity values fixed. Data shape: {system.current_data.shape}")
                         
                         print("\n✅ All issues have been fixed!")
                         print(f"   • Original data shape: {backup_data.shape}")
                         print(f"   • Fixed data shape: {system.current_data.shape}")
+                        
+                        # Verify that fixes were applied
+                        print("\n🔍 Verifying fixes...")
+                        remaining_issues = 0
+                        
+                        # Check for remaining NaN values
+                        nan_count = system.current_data.isna().sum().sum()
+                        if nan_count > 0:
+                            print(f"   ⚠️  {nan_count} NaN values still remain")
+                            remaining_issues += 1
+                        
+                        # Check for remaining duplicates
+                        dup_count = system.current_data.duplicated().sum()
+                        if dup_count > 0:
+                            print(f"   ⚠️  {dup_count} duplicate rows still remain")
+                            remaining_issues += 1
+                        
+                        # Check for remaining negative values in OHLCV columns
+                        ohlcv_cols = [col for col in system.current_data.columns if any(keyword in col.lower() for keyword in ['open', 'high', 'low', 'close', 'volume'])]
+                        for col in ohlcv_cols:
+                            if pd.api.types.is_numeric_dtype(system.current_data[col]):
+                                neg_count = (system.current_data[col] < 0).sum()
+                                if neg_count > 0:
+                                    print(f"   ⚠️  {neg_count} negative values still remain in {col}")
+                                    remaining_issues += 1
+                        
+                        # Check for remaining infinity values
+                        inf_count = np.isinf(system.current_data.select_dtypes(include=[np.number])).sum().sum()
+                        if inf_count > 0:
+                            print(f"   ⚠️  {inf_count} infinity values still remain")
+                            remaining_issues += 1
+                        
+                        if remaining_issues == 0:
+                            print("   ✅ All issues have been successfully resolved!")
+                        else:
+                            print(f"   ⚠️  {remaining_issues} types of issues still remain")
                         
                         # Save backup
                         backup_path = os.path.join('data', 'backups', f'data_backup_{int(time.time())}.parquet')
                         os.makedirs(os.path.dirname(backup_path), exist_ok=True)
                         backup_data.to_parquet(backup_path)
                         print(f"   • Backup saved to: {backup_path}")
+                        
+                        # Save fixed data
+                        fixed_data_path = os.path.join('data', 'backups', f'data_fixed_{int(time.time())}.parquet')
+                        system.current_data.to_parquet(fixed_data_path)
+                        print(f"   • Fixed data saved to: {fixed_data_path}")
                         
                     elif fix_choice in ['n', 'no']:
                         print("\n📋 INDIVIDUAL FIX OPTIONS:")
