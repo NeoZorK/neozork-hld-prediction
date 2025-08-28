@@ -671,6 +671,23 @@ class VisualizationManager:
         plots['summary'] = fig_summary.to_html(full_html=False, include_plotlyjs=False)
         
         # Generate summary HTML
+        # Create table rows for statistics
+        table_rows = []
+        for stat in summary_stats.index:
+            row_cells = [f'<td>{stat}</td>']
+            for col in summary_stats.columns:
+                value = summary_stats.loc[stat, col]
+                if pd.isna(value):
+                    row_cells.append('<td>N/A</td>')
+                else:
+                    row_cells.append(f'<td>{value:.6f}</td>')
+            table_rows.append(f'<tr>{"".join(row_cells)}</tr>')
+        
+        # Create field links
+        field_links = []
+        for col in data.columns:
+            field_links.append(f'<a href="{col}_analysis.html" class="field-link">{col}</a>')
+        
         html_content = f"""
 <!DOCTYPE html>
 <html>
@@ -767,12 +784,12 @@ class VisualizationManager:
                 <th>Statistic</th>
                 {''.join(f'<th>{col}</th>' for col in summary_stats.columns)}
             </tr>
-            {''.join(f'<tr><td>{stat}</td>{''.join(f"<td>{summary_stats.loc[stat, col]:.6f}</td>" for col in summary_stats.columns)}</tr>' for stat in summary_stats.index)}
+            {''.join(table_rows)}
         </table>
         
         <h2>🔗 Individual Field Reports</h2>
         <div class="field-links">
-            {''.join(f'<a href="{col}_analysis.html" class="field-link">{col}</a>' for col in data.columns)}
+            {''.join(field_links)}
         </div>
         
         <div class="plot-container">
