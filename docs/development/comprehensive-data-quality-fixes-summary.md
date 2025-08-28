@@ -280,12 +280,48 @@ data/backups/
 - ✅ Troubleshooting information
 - ✅ Backup and recovery procedures
 
+## Additional Fix: Metadata Column Handling
+
+### Problem with Metadata Columns
+
+**Issue**: System was treating duplicated values in metadata columns (like `source_file`, `batch_id`, etc.) as data quality issues, causing repeated false positives.
+
+**Root Cause**: The duplicate check function was flagging all string columns with duplicated values as problems, but metadata columns naturally contain duplicated values.
+
+**Solution**: Added exclusion list for metadata columns that are expected to have duplicated values.
+
+### Metadata Column Exclusion
+
+**File: `src/eda/data_quality.py`**
+
+```python
+# Define columns that are expected to have duplicated values (metadata columns)
+expected_duplicate_cols = [
+    'source_file', 'filename', 'file_name', 'file', 'source', 
+    'dataset', 'data_source', 'table', 'partition', 'batch',
+    'date', 'time', 'datetime', 'timestamp', 'period', 'interval'
+]
+
+# Skip columns that are expected to have duplicated values
+if any(expected_name in col.lower() for expected_name in expected_duplicate_cols):
+    continue
+```
+
+### Supported Metadata Columns
+
+The system now automatically excludes these column types from duplicate checking:
+- **File metadata**: `source_file`, `filename`, `file_name`, `file`
+- **Data source**: `source`, `dataset`, `data_source`
+- **Processing metadata**: `table`, `partition`, `batch`
+- **Time metadata**: `date`, `time`, `datetime`, `timestamp`, `period`, `interval`
+
 ## Conclusion
 
-The fixes address both reported issues:
+The fixes address all reported issues:
 
 1. **DateTime Column Detection**: Now properly detects existing DateTime columns and offers automatic conversion of timestamp columns
 2. **Fix Persistence**: All fixes are now properly applied and verified, with comprehensive backup system
+3. **Metadata Column Handling**: System no longer treats duplicated values in metadata columns as data quality issues
 
 The system now provides:
 - ✅ Reliable DateTime column detection
@@ -293,6 +329,7 @@ The system now provides:
 - ✅ Persistent data fixes
 - ✅ Comprehensive verification
 - ✅ Automatic backup system
+- ✅ Smart metadata column handling
 - ✅ Enhanced user experience
 
 Users can now confidently use the Comprehensive Data Quality Check feature knowing that:
@@ -301,3 +338,4 @@ Users can now confidently use the Comprehensive Data Quality Check feature knowi
 - All fixes will be properly applied and persist
 - Original data is safely backed up
 - Fixed data is verified and saved
+- Metadata columns won't cause false positive issues

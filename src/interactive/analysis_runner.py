@@ -626,6 +626,8 @@ class AnalysisRunner:
                             print(f"   ⚠️  {dup_count} duplicate rows still remain")
                             remaining_issues += 1
                         
+                        # Note: We don't check for duplicated values in metadata columns as they are expected
+                        
                         # Check for remaining negative values in OHLCV columns
                         ohlcv_cols = [col for col in system.current_data.columns if any(keyword in col.lower() for keyword in ['open', 'high', 'low', 'close', 'volume'])]
                         for col in ohlcv_cols:

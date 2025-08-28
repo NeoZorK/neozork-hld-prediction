@@ -34,8 +34,19 @@ def duplicate_check(df, dupe_summary, Fore, Style):
         dupe_summary.append({'type': 'full_row', 'count': n_dupes})
     else:
         print(f"  {Fore.MAGENTA}No fully duplicated rows found.{Style.RESET_ALL}")
+    # Define columns that are expected to have duplicated values (metadata columns)
+    expected_duplicate_cols = [
+        'source_file', 'filename', 'file_name', 'file', 'source', 
+        'dataset', 'data_source', 'table', 'partition', 'batch',
+        'date', 'time', 'datetime', 'timestamp', 'period', 'interval'
+    ]
+    
     string_cols = [col for col in df.columns if df[col].dtype == 'object' or str(df[col].dtype).startswith('string')]
     for col in string_cols:
+        # Skip columns that are expected to have duplicated values
+        if any(expected_name in col.lower() for expected_name in expected_duplicate_cols):
+            continue
+            
         dupe_vals = df[col][df[col].duplicated(keep=False)]
         if not dupe_vals.empty:
             n_col_dupes = dupe_vals.duplicated().sum()
