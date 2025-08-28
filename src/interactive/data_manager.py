@@ -208,7 +208,21 @@ class DataManager:
             return False
         
         # Combine all data
-        system.current_data = pd.concat(all_data, ignore_index=True)
+        # Check if any DataFrame has a DatetimeIndex
+        has_datetime_index = any(isinstance(df.index, pd.DatetimeIndex) for df in all_data)
+        
+        if has_datetime_index:
+            # If any DataFrame has DatetimeIndex, preserve it during concatenation
+            system.current_data = pd.concat(all_data, axis=0, sort=False)
+            # Reset index to make datetime a column if it was the index
+            if isinstance(system.current_data.index, pd.DatetimeIndex):
+                system.current_data = system.current_data.reset_index()
+                # Rename the datetime column to 'Timestamp' for consistency
+                if 'index' in system.current_data.columns:
+                    system.current_data = system.current_data.rename(columns={'index': 'Timestamp'})
+        else:
+            # No DatetimeIndex, use normal concatenation
+            system.current_data = pd.concat(all_data, ignore_index=True)
         print(f"\n✅ Combined data loaded successfully!")
         print(f"   Total shape: {system.current_data.shape[0]} rows × {system.current_data.shape[1]} columns")
         print(f"   Files loaded: {len(all_data)}")

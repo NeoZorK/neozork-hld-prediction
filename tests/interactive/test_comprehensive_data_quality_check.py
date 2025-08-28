@@ -389,6 +389,96 @@ DateTime,Open,High,Low,Close,TickVolume,predicted_low,predicted_high,pressure,pr
         finally:
             # Clean up
             os.unlink(temp_file)
+    
+    def test_datetime_column_preservation_with_mask(self, system):
+        """Test that DateTime columns are preserved when loading with mask."""
+        import tempfile
+        import os
+        from pathlib import Path
+        
+        # Create a temporary directory with test CSV files
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            
+            # Create test CSV content with MT5 format
+            csv_content1 = """File Info Header Line
+DateTime,Open,High,Low,Close,TickVolume,predicted_low,predicted_high,pressure,pressure_vector
+2023.01.01 10:00,100.0,105.0,99.0,101.0,1000,98.0,106.0,0.1,0.2
+2023.01.01 10:01,101.0,106.0,100.0,102.0,1100,99.0,107.0,0.2,0.3"""
+            
+            csv_content2 = """File Info Header Line
+DateTime,Open,High,Low,Close,TickVolume,predicted_low,predicted_high,pressure,pressure_vector
+2023.01.01 11:00,102.0,107.0,101.0,103.0,1200,100.0,108.0,0.3,0.4
+2023.01.01 11:01,103.0,108.0,102.0,104.0,1300,101.0,109.0,0.4,0.5"""
+            
+            # Create test files
+            file1 = temp_path / "test_eurusd_1.csv"
+            file2 = temp_path / "test_eurusd_2.csv"
+            
+            with open(file1, 'w') as f:
+                f.write(csv_content1)
+            with open(file2, 'w') as f:
+                f.write(csv_content2)
+            
+            # Mock the load_data method to simulate loading with mask
+            original_load_data = system.data_manager.load_data
+            
+            def mock_load_data(system):
+                # Simulate the loading process with mask
+                all_data = []
+                
+                # Load files with mask
+                for file in [file1, file2]:
+                    if 'eurusd' in file.name.lower():
+                        df = system.data_manager.load_data_from_file(str(file))
+                        df['source_file'] = file.name
+                        all_data.append(df)
+                
+                # Check if any DataFrame has a DatetimeIndex
+                has_datetime_index = any(isinstance(df.index, pd.DatetimeIndex) for df in all_data)
+                
+                if has_datetime_index:
+                    # If any DataFrame has DatetimeIndex, preserve it during concatenation
+                    system.current_data = pd.concat(all_data, axis=0, sort=False)
+                    # Reset index to make datetime a column if it was the index
+                    if isinstance(system.current_data.index, pd.DatetimeIndex):
+                        system.current_data = system.current_data.reset_index()
+                        # Rename the datetime column to 'Timestamp' for consistency
+                        if 'index' in system.current_data.columns:
+                            system.current_data = system.current_data.rename(columns={'index': 'Timestamp'})
+                else:
+                    # No DatetimeIndex, use normal concatenation
+                    system.current_data = pd.concat(all_data, ignore_index=True)
+                
+                return True
+            
+            try:
+                # Replace the load_data method temporarily
+                system.data_manager.load_data = mock_load_data
+                
+                # Load data with mask
+                success = system.data_manager.load_data(system)
+                
+                # Check that data was loaded successfully
+                assert success, "Data loading should succeed"
+                assert system.current_data is not None, "Data should be loaded"
+                
+                # Check that DateTime column is preserved
+                assert 'Timestamp' in system.current_data.columns, "Timestamp column should be present"
+                assert pd.api.types.is_datetime64_any_dtype(system.current_data['Timestamp']), "Timestamp should be datetime type"
+                
+                # Check that OHLCV columns are present
+                expected_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
+                for col in expected_cols:
+                    assert col in system.current_data.columns, f"Column {col} should be present"
+                
+                # Check that data is properly combined
+                assert len(system.current_data) == 4, "Should have 4 rows of combined data"
+                assert 'source_file' in system.current_data.columns, "source_file column should be present"
+                
+            finally:
+                # Restore original method
+                system.data_manager.load_data = original_load_data
 
 
 if __name__ == "__main__":

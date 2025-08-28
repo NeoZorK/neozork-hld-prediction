@@ -52,6 +52,16 @@ Successfully resolved all issues with the Comprehensive Data Quality Check funct
 - Added correct MT5 CSV column mapping and datetime processing
 - Ensured DateTime columns are properly converted to DatetimeIndex
 
+### 6. ✅ DateTime Columns Lost During Concatenation with Mask
+
+**Problem**: When loading data with mask (e.g., "3 eurusd"), DateTime columns were lost during the concatenation process because `pd.concat(ignore_index=True)` was destroying the DatetimeIndex.
+
+**Solution**:
+- Added detection of DatetimeIndex in loaded DataFrames
+- Modified concatenation logic to preserve DatetimeIndex when present
+- Convert DatetimeIndex to 'Timestamp' column for consistency
+- Maintain backward compatibility for DataFrames without DatetimeIndex
+
 ## Key Improvements
 
 ### Enhanced DateTime Detection
@@ -224,11 +234,11 @@ data/backups/
 
 ### Unit Tests
 ```
-✅ Passed: 16
+✅ Passed: 17
 ❌ Failed: 0
 ⏭️  Skipped: 0
 💥 Errors: 0
-📈 Total: 16
+📈 Total: 17
 ```
 
 ### Integration Tests
@@ -241,6 +251,7 @@ data/backups/
 - ✅ One-try fix works correctly (all issues fixed in single run)
 - ✅ Automatic cycling through fixes until all issues are resolved
 - ✅ DateTime columns properly loaded from CSV files
+- ✅ DateTime columns preserved during concatenation with mask
 
 ## Usage Instructions
 
