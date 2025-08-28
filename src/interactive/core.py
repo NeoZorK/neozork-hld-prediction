@@ -214,6 +214,12 @@ class InteractiveSystem:
                 print("\n👋 Goodbye!")
                 break
             
+            # Handle exit commands
+            if choice.lower() in ['exit', 'quit', 'q']:
+                print("\n👋 Thank you for using NeoZorK HLD Prediction Interactive System!")
+                print("   Goodbye!")
+                break
+            
             if choice == '1':
                 self.load_data()
                 self.menu_manager.mark_menu_as_used('main', 'load_data')

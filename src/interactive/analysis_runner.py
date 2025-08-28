@@ -31,7 +31,7 @@ class AnalysisRunner:
         while True:
             system.menu_manager.print_eda_menu()
             try:
-                choice = input("Select option (0-7): ").strip()
+                choice = input("Select option (0-8): ").strip()
             except EOFError:
                 print("\n👋 Goodbye!")
                 break
@@ -1172,6 +1172,10 @@ class AnalysisRunner:
         print("\n📋 INDIVIDUAL FIX OPTIONS:")
         print("=" * 50)
         
+        # Create backup before any fixes
+        backup_data = system.current_data.copy()
+        backup_created = False
+        
         # Track which fixes have been applied
         fixes_applied = {
             'nan': False,
@@ -1238,26 +1242,64 @@ class AnalysisRunner:
                 break
             
             if choice == '0':
+                # Save backup if any fixes were applied
+                if any(fixes_applied.values()) and backup_data is not None:
+                    try:
+                        import time
+                        backup_file = f"backup_individual_fixes_{int(time.time())}.parquet"
+                        backup_path = Path("data/backups") / backup_file
+                        backup_path.parent.mkdir(parents=True, exist_ok=True)
+                        backup_data.to_parquet(backup_path)
+                        print(f"\n💾 Backup saved to: {backup_path}")
+                        
+                        # Save fixed data
+                        fixed_data_path = Path("data/backups") / f"data_fixed_individual_{int(time.time())}.parquet"
+                        system.current_data.to_parquet(fixed_data_path)
+                        print(f"💾 Fixed data saved to: {fixed_data_path}")
+                    except Exception as e:
+                        print(f"⚠️  Could not save backup: {e}")
                 break
             elif choice == str(option_num):  # Fix All
                 print("\n🚀 FIXING ALL REMAINING ISSUES...")
-                self.apply_all_remaining_fixes(system, available_fixes, fixes_applied)
+                self.apply_all_remaining_fixes(system, available_fixes, fixes_applied, backup_data, backup_created)
+                
+                # Save backup after fixing all issues
+                if any(fixes_applied.values()) and backup_data is not None:
+                    try:
+                        import time
+                        backup_file = f"backup_all_fixes_{int(time.time())}.parquet"
+                        backup_path = Path("data/backups") / backup_file
+                        backup_path.parent.mkdir(parents=True, exist_ok=True)
+                        backup_data.to_parquet(backup_path)
+                        print(f"\n💾 Backup saved to: {backup_path}")
+                        
+                        # Save fixed data
+                        fixed_data_path = Path("data/backups") / f"data_fixed_all_{int(time.time())}.parquet"
+                        system.current_data.to_parquet(fixed_data_path)
+                        print(f"💾 Fixed data saved to: {fixed_data_path}")
+                    except Exception as e:
+                        print(f"⚠️  Could not save backup: {e}")
                 break
             elif choice == str(option_num + 1):  # Show Status
                 self.show_fix_status(system, available_fixes, fixes_applied)
             elif choice.isdigit() and 1 <= int(choice) <= len(available_fixes):
                 fix_index = int(choice) - 1
                 fix_type, fix_summary = available_fixes[fix_index]
-                self.apply_single_fix(system, fix_type, fix_summary, fixes_applied)
+                backup_created = self.apply_single_fix(system, fix_type, fix_summary, fixes_applied, backup_data, backup_created)
             else:
                 print("❌ Invalid choice. Please select a valid option.")
     
-    def apply_single_fix(self, system, fix_type, fix_summary, fixes_applied):
+    def apply_single_fix(self, system, fix_type, fix_summary, fixes_applied, backup_data=None, backup_created=False):
         """Apply a single fix based on type."""
         try:
             from src.eda import fix_files
             
             print(f"\n🔧 Applying {fix_type} fix...")
+            
+            # Create backup on first fix if not already created
+            if not backup_created and backup_data is not None:
+                print("💾 Creating backup before applying fixes...")
+                backup_created = True
             
             if fix_type == 'nan':
                 fixed_data = fix_files.fix_nan(system.current_data, fix_summary)
@@ -1307,10 +1349,13 @@ class AnalysisRunner:
                 system.current_data = system.current_data.drop_duplicates(keep='first')
                 print(f"🔄 Removed {initial_dupes} new duplicate rows created by {fix_type} fixing")
             
+            return backup_created
+            
         except Exception as e:
             print(f"❌ Error applying {fix_type} fix: {e}")
+            return backup_created
     
-    def apply_all_remaining_fixes(self, system, available_fixes, fixes_applied):
+    def apply_all_remaining_fixes(self, system, available_fixes, fixes_applied, backup_data=None, backup_created=False):
         """Apply all remaining fixes that haven't been applied yet."""
         try:
             from src.eda import fix_files
@@ -1318,7 +1363,7 @@ class AnalysisRunner:
             for fix_type, fix_summary in available_fixes:
                 if not fixes_applied[fix_type]:
                     print(f"   • Applying {fix_type} fix...")
-                    self.apply_single_fix(system, fix_type, fix_summary, fixes_applied)
+                    backup_created = self.apply_single_fix(system, fix_type, fix_summary, fixes_applied, backup_data, backup_created)
             
             print("\n✅ All remaining issues have been fixed!")
             

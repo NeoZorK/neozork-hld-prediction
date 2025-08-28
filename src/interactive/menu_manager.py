@@ -171,7 +171,7 @@ class MenuManager:
         
         print("0. 🚪 Exit")
         print("-" * 50)
-        print("💡 Exit or ctrl+c to Exit")
+        print("💡 Exit or CTRL+C to Exit")
     
     def print_eda_menu(self):
         """Print EDA menu options with green checkmarks for used items."""
@@ -212,7 +212,7 @@ class MenuManager:
         print(f"8. 🗑️  Clear Data Backup{checkmark}")
         
         print("-" * 50)
-        print("💡 Exit or ctrl+c to Exit")
+        print("💡 Exit or CTRL+C to Exit")
     
     def print_feature_engineering_menu(self):
         """Print Feature Engineering menu options with green checkmarks for used items."""
@@ -253,7 +253,7 @@ class MenuManager:
         print(f"8. 📋 Feature Summary Report{checkmark}")
         
         print("-" * 50)
-        print("💡 Exit or ctrl+c to Exit")
+        print("💡 Exit or CTRL+C to Exit")
     
     def print_visualization_menu(self):
         """Print visualization menu options with green checkmarks for used items."""
@@ -286,7 +286,7 @@ class MenuManager:
         print(f"6. 📋 Export Visualizations{checkmark}")
         
         print("-" * 50)
-        print("💡 Exit or ctrl+c to Exit")
+        print("💡 Exit or CTRL+C to Exit")
     
     def print_model_development_menu(self):
         """Print model development menu options with green checkmarks for used items."""
@@ -319,7 +319,7 @@ class MenuManager:
         print(f"6. 📋 Model Report{checkmark}")
         
         print("-" * 50)
-        print("💡 Exit or ctrl+c to Exit")
+        print("💡 Exit or CTRL+C to Exit")
     
     def show_help(self):
         """Show help information."""
