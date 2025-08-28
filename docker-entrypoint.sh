@@ -174,15 +174,27 @@ if [ "$run_mcp" = "y" ] || [ "$run_mcp" = "Y" ]; then
   echo $MCP_PID > /tmp/mcp_server.pid
   echo -e "\033[1;32mMCP server started in background (PID: $MCP_PID)\033[0m\n"
   
-  # Wait for mcp_server to initialize
-  sleep 10
+  # Wait for MCP server to be ready with retry logic
+  echo -e "\033[1;33m=== Waiting for MCP server to be ready ===\033[0m\n"
+  max_attempts=30
+  attempt=1
   
-  # Check MCP server status
-  echo -e "\033[1;33m=== Checking MCP server status ===\033[0m\n"
-  if python /app/scripts/mcp/check_mcp_status.py; then
-    echo -e "\033[1;32m✅ MCP server is running correctly\033[0m\n"
-  else
-    echo -e "\033[1;31m❌ MCP server check failed\033[0m\n"
+  while [ $attempt -le $max_attempts ]; do
+    echo -e "\033[1;34mAttempt $attempt/$max_attempts: Checking MCP server status...\033[0m"
+    
+    if python /app/scripts/mcp/check_mcp_ready.py; then
+      echo -e "\033[1;32m✅ MCP server is ready and responding\033[0m\n"
+      break
+    else
+      echo -e "\033[1;33m⏳ MCP server is still initializing... (attempt $attempt/$max_attempts)\033[0m"
+      sleep 2
+      attempt=$((attempt + 1))
+    fi
+  done
+  
+  if [ $attempt -gt $max_attempts ]; then
+    echo -e "\033[1;31m❌ MCP server failed to become ready after $max_attempts attempts\033[0m\n"
+    echo -e "\033[1;33mYou can still use the container, but MCP features may not be available\033[0m\n"
   fi
 else
   echo -e "\033[1;33mSkipping MCP server startup\033[0m\n"

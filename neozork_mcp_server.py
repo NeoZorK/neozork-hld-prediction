@@ -113,6 +113,15 @@ class NeoZorKMCPServer:
         print_to_stderr(f"📅 Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print_to_stderr(f"🎯 Server mode: {self.config.get('server_mode', 'unified')}")
         
+        # Clear any existing ready flag file
+        ready_file = self.project_root / "logs" / "mcp_server_ready.flag"
+        try:
+            if ready_file.exists():
+                ready_file.unlink()
+                print_to_stderr("🗑️  Cleared existing ready flag file")
+        except Exception as e:
+            print_to_stderr(f"⚠️  Could not clear ready flag file: {e}")
+        
         # Project state
         self.project_files: Dict[str, ProjectFile] = {}
         self.financial_data: Dict[str, FinancialData] = {}
@@ -171,6 +180,16 @@ class NeoZorKMCPServer:
         
         # Set ready flag after initialization
         self.ready = True
+        
+        # Create ready file for Docker integration
+        ready_file = self.project_root / "logs" / "mcp_server_ready.flag"
+        try:
+            ready_file.parent.mkdir(exist_ok=True)
+            with open(ready_file, 'w') as f:
+                f.write(f"ready:{datetime.now().isoformat()}\n")
+            print_to_stderr(f"📄 Ready flag file created: {ready_file}")
+        except Exception as e:
+            print_to_stderr(f"⚠️  Could not create ready flag file: {e}")
         
         self.logger.info("NeoZorK Unified MCP Server initialized successfully")
         print_to_stderr("✅ NeoZorK Unified MCP Server initialized successfully")
