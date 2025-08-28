@@ -120,10 +120,6 @@ def run_docker_tests():
     # Test debug scripts (only for non-interactive ones)
     print("\nTesting debug script execution...")
     for script in debug_scripts:
-        # Skip interactive scripts in Docker
-        if "debug_yfinance.py" in script:
-            print(f"Testing {script}... ⏭️ (Skipped - using unit tests instead)")
-            continue
             
         start_time = time.time()
         try:

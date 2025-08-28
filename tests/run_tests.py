@@ -497,10 +497,6 @@ def run_local_tests():
     # Test debug scripts (only for non-interactive ones)
     print("\nTesting debug script execution...")
     for script in debug_scripts:
-        # Skip interactive scripts
-        if "debug_yfinance.py" in script:
-            print(f"Testing {script}... ⏭️ (Skipped - using unit tests instead)")
-            continue
             
         if Path(script).exists():
             print(f"Testing {script}...", end=" ")
