@@ -41,21 +41,19 @@ class AnalysisRunner:
             elif choice == '1':
                 self.run_comprehensive_data_quality_check(system)
             elif choice == '2':
-                self.run_data_quality_check(system)
-            elif choice == '3':
                 self.run_basic_statistics(system)
-            elif choice == '4':
+            elif choice == '3':
                 self.run_correlation_analysis(system)
-            elif choice == '5':
+            elif choice == '4':
                 self.run_time_series_analysis(system)
-            elif choice == '6':
+            elif choice == '5':
                 print("⏳ Feature Importance - Coming soon!")
-            elif choice == '7':
+            elif choice == '6':
                 self.generate_html_report(system)
-            elif choice == '8':
+            elif choice == '7':
                 system.data_manager.restore_from_backup(system)
             else:
-                print("❌ Invalid choice. Please select 0-8.")
+                print("❌ Invalid choice. Please select 0-7.")
             
             if choice != '0':
                 if system.safe_input() is None:
@@ -356,69 +354,7 @@ class AnalysisRunner:
             import traceback
             traceback.print_exc()
     
-    def run_data_quality_check(self, system):
-        """Run comprehensive data quality check."""
-        if system.current_data is None:
-            print("❌ No data loaded. Please load data first.")
-            return
-            
-        print("\n🧹 COMPREHENSIVE DATA QUALITY CHECK")
-        print("=" * 50)
-        
-        try:
-            # Basic quality checks
-            print("📊 Analyzing data structure...")
-            
-            # Get basic info
-            total_rows, total_cols = system.current_data.shape
-            missing_data = system.current_data.isnull().sum().sum()
-            missing_percentage = (missing_data / (total_rows * total_cols)) * 100
-            duplicate_rows = system.current_data.duplicated().sum()
-            duplicate_percentage = (duplicate_rows / total_rows) * 100
-            
-            print(f"   📈 Shape: {total_rows} rows × {total_cols} columns")
-            print(f"   🔢 Numeric columns: {len(system.current_data.select_dtypes(include=[np.number]).columns)}")
-            print(f"   📅 Datetime columns: {len(system.current_data.select_dtypes(include=['datetime']).columns)}")
-            
-            # Quality metrics
-            print(f"\n📋 QUALITY METRICS:")
-            print(f"   • Missing values: {missing_data:,} ({missing_percentage:.2f}%)")
-            print(f"   • Duplicate rows: {duplicate_rows:,} ({duplicate_percentage:.2f}%)")
-            
-            # Column-specific analysis
-            print(f"\n🔍 COLUMN ANALYSIS:")
-            for col in system.current_data.columns:
-                col_data = system.current_data[col]
-                col_missing = col_data.isnull().sum()
-                col_missing_pct = (col_missing / len(col_data)) * 100
-                
-                if col_missing > 0:
-                    print(f"   • {col}: {col_missing:,} missing ({col_missing_pct:.2f}%)")
-            
-            # Save results
-            system.current_results['comprehensive_data_quality'] = {
-                'total_rows': total_rows,
-                'total_cols': total_cols,
-                'missing_values': missing_data,
-                'missing_percentage': missing_percentage,
-                'duplicates': duplicate_rows,
-                'duplicate_percentage': duplicate_percentage,
-                'numeric_columns': len(system.current_data.select_dtypes(include=[np.number]).columns),
-                'datetime_columns': len(system.current_data.select_dtypes(include=['datetime']).columns)
-            }
-            
-            # Also save under the old key for backward compatibility
-            system.current_results['data_quality'] = system.current_results['comprehensive_data_quality']
-            
-            print(f"\n✅ Data quality check completed!")
-            
-            # Mark as used
-            system.menu_manager.mark_menu_as_used('eda', 'data_quality_check')
-            
-        except Exception as e:
-            print(f"❌ Error in data quality check: {e}")
-            import traceback
-            traceback.print_exc()
+
     
     def run_comprehensive_data_quality_check(self, system):
         """Run comprehensive data quality check using eda_batch_check functionality."""

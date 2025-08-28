@@ -35,7 +35,6 @@ class MenuManager:
             },
             'eda': {
                 'basic_statistics': False,
-                'data_quality_check': False,
                 'comprehensive_data_quality_check': False,
                 'correlation_analysis': False,
                 'time_series_analysis': False,
@@ -181,33 +180,29 @@ class MenuManager:
         checkmark = " ✅" if self.used_menus['eda']['comprehensive_data_quality_check'] else ""
         print(f"1. 🧹 Comprehensive Data Quality Check{checkmark}")
         
-        # Basic Data Quality Check (original simple version)
-        checkmark = " ✅" if self.used_menus['eda']['data_quality_check'] else ""
-        print(f"2. 🔍 Basic Data Quality Check{checkmark}")
-        
-        # Basic Statistics (moved from position 1 to 3)
+        # Basic Statistics
         checkmark = " ✅" if self.used_menus['eda']['basic_statistics'] else ""
-        print(f"3. 📊 Basic Statistics{checkmark}")
+        print(f"2. 📊 Basic Statistics{checkmark}")
         
         # Correlation Analysis
         checkmark = " ✅" if self.used_menus['eda']['correlation_analysis'] else ""
-        print(f"4. 🔗 Correlation Analysis{checkmark}")
+        print(f"3. 🔗 Correlation Analysis{checkmark}")
         
         # Time Series Analysis
         checkmark = " ✅" if self.used_menus['eda']['time_series_analysis'] else ""
-        print(f"5. 📈 Time Series Analysis{checkmark}")
+        print(f"4. 📈 Time Series Analysis{checkmark}")
         
         # Feature Importance
         checkmark = " ✅" if self.used_menus['eda']['feature_importance'] else ""
-        print(f"6. 🎯 Feature Importance{checkmark}")
+        print(f"5. 🎯 Feature Importance{checkmark}")
         
-        # Generate HTML Report (moved from position 7 to 7)
+        # Generate HTML Report
         checkmark = " ✅" if self.used_menus['eda']['generate_html_report'] else ""
-        print(f"7. 📋 Generate HTML Report{checkmark}")
+        print(f"6. 📋 Generate HTML Report{checkmark}")
         
-        # Restore from Backup (moved from position 8 to 8)
+        # Restore from Backup
         checkmark = " ✅" if self.used_menus['eda']['restore_from_backup'] else ""
-        print(f"8. 🔄 Restore from Backup{checkmark}")
+        print(f"7. 🔄 Restore from Backup{checkmark}")
         
         print("-" * 50)
     

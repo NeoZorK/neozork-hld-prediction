@@ -209,12 +209,22 @@ class TestComprehensiveDataQualityCheck:
     
     def test_backward_compatibility(self, system):
         """Test that the new functionality doesn't break existing features."""
-        # Test that the original data quality check still works
-        assert hasattr(system, 'run_data_quality_check')
+        # Test that comprehensive data quality check works
         assert hasattr(system, 'run_comprehensive_data_quality_check')
         
-        # Test that both methods are different
-        assert system.run_data_quality_check != system.run_comprehensive_data_quality_check
+        # Test that comprehensive data quality check works
+        system.current_data = pd.DataFrame({
+            'A': [1, 2, 3, np.nan, 5],
+            'B': [1, 1, 2, 2, 3],
+            'C': [1, 2, 3, 4, 5]
+        })
+        
+        with patch('builtins.input', return_value='skip'):
+            system.analysis_runner.run_comprehensive_data_quality_check(system)
+        
+        # Check that results are saved
+        assert 'comprehensive_data_quality' in system.current_results
+        assert system.menu_manager.used_menus['eda']['comprehensive_data_quality_check']
     
     def test_timestamp_conversion(self, system):
         """Test timestamp column conversion functionality."""
