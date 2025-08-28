@@ -351,6 +351,44 @@ class TestComprehensiveDataQualityCheck:
                 zero_count_low = (system.current_data['predicted_low'] == 0).sum()
                 zero_count_high = (system.current_data['predicted_high'] == 0).sum()
                 # Note: Zero values might be legitimate, so we just check they were processed
+    
+    def test_datetime_column_loading(self, system):
+        """Test that DateTime columns are properly loaded from CSV files."""
+        # Create a test CSV file with MT5 format
+        import tempfile
+        import os
+        
+        # Create test CSV content with MT5 format
+        csv_content = """File Info Header Line
+DateTime,Open,High,Low,Close,TickVolume,predicted_low,predicted_high,pressure,pressure_vector
+2023.01.01 10:00,100.0,105.0,99.0,101.0,1000,98.0,106.0,0.1,0.2
+2023.01.01 10:01,101.0,106.0,100.0,102.0,1100,99.0,107.0,0.2,0.3
+2023.01.01 10:02,102.0,107.0,101.0,103.0,1200,100.0,108.0,0.3,0.4"""
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
+            f.write(csv_content)
+            temp_file = f.name
+        
+        try:
+            # Load the test file
+            df = system.data_manager.load_data_from_file(temp_file)
+            
+            # Check that DateTime column is properly loaded as index
+            assert isinstance(df.index, pd.DatetimeIndex), "DataFrame should have DatetimeIndex"
+            assert df.index.name == 'Timestamp', "Index should be named 'Timestamp'"
+            
+            # Check that OHLCV columns are present
+            expected_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
+            for col in expected_cols:
+                assert col in df.columns, f"Column {col} should be present"
+            
+            # Check that data is properly loaded
+            assert len(df) == 3, "Should have 3 rows of data"
+            assert df['Open'].iloc[0] == 100.0, "First Open value should be 100.0"
+            
+        finally:
+            # Clean up
+            os.unlink(temp_file)
 
 
 if __name__ == "__main__":

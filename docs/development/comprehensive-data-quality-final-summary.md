@@ -43,6 +43,15 @@ Successfully resolved all issues with the Comprehensive Data Quality Check funct
 - Enhanced verification to catch any remaining issues
 - **Added automatic cycling through fixes until all issues are resolved**
 
+### 5. ✅ DateTime Columns Not Loading from CSV Files
+
+**Problem**: When loading data from CSV files (especially MT5 format), DateTime columns were not being properly loaded, causing the system to show "No DateTime columns found" warnings.
+
+**Solution**:
+- Updated `data_manager.py` to use proper `fetch_csv_data()` function instead of simple `pd.read_csv()`
+- Added correct MT5 CSV column mapping and datetime processing
+- Ensured DateTime columns are properly converted to DatetimeIndex
+
 ## Key Improvements
 
 ### Enhanced DateTime Detection
@@ -215,11 +224,11 @@ data/backups/
 
 ### Unit Tests
 ```
-✅ Passed: 15
+✅ Passed: 16
 ❌ Failed: 0
 ⏭️  Skipped: 0
 💥 Errors: 0
-📈 Total: 15
+📈 Total: 16
 ```
 
 ### Integration Tests
@@ -231,6 +240,7 @@ data/backups/
 - ✅ Verification system catches any remaining issues
 - ✅ One-try fix works correctly (all issues fixed in single run)
 - ✅ Automatic cycling through fixes until all issues are resolved
+- ✅ DateTime columns properly loaded from CSV files
 
 ## Usage Instructions
 

@@ -32,7 +32,28 @@ class DataManager:
             
         # Load data based on file type
         if file_path.suffix.lower() == '.csv':
-            return pd.read_csv(file_path)
+            # Use the proper CSV fetcher for MT5 format files
+            from src.data.fetchers.csv_fetcher import fetch_csv_data
+            
+            # Default MT5 CSV column mapping
+            csv_column_mapping = {
+                'Open': 'Open,', 'High': 'High,', 'Low': 'Low,',
+                'Close': 'Close,', 'Volume': 'TickVolume,'
+            }
+            csv_datetime_column = 'DateTime,'
+            
+            df = fetch_csv_data(
+                file_path=str(file_path),
+                ohlc_columns=csv_column_mapping,
+                datetime_column=csv_datetime_column,
+                separator=','
+            )
+            
+            if df is None or df.empty:
+                raise ValueError(f"Failed to load CSV file: {file_path}")
+            
+            return df
+            
         elif file_path.suffix.lower() == '.parquet':
             return pd.read_parquet(file_path)
         else:
