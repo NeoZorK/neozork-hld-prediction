@@ -36,7 +36,7 @@ class AnalysisRunner:
                 print("\n👋 Goodbye!")
                 break
             
-            if choice == '0':
+            if choice == '0' or choice == '00':
                 break
             elif choice == '1':
                 self.run_comprehensive_data_quality_check(system)
@@ -52,8 +52,10 @@ class AnalysisRunner:
                 self.generate_html_report(system)
             elif choice == '7':
                 system.data_manager.restore_from_backup(system)
+            elif choice == '8':
+                system.data_manager.clear_data_backup(system)
             else:
-                print("❌ Invalid choice. Please select 0-7.")
+                print("❌ Invalid choice. Please select 0-8.")
             
             if choice != '0':
                 if system.safe_input() is None:
@@ -746,14 +748,8 @@ class AnalysisRunner:
                         print(f"   • Fixed data saved to: {fixed_data_path}")
                         
                     elif fix_choice in ['n', 'no']:
-                        print("\n📋 INDIVIDUAL FIX OPTIONS:")
-                        print("   • NaN values: Use --fix-nan")
-                        print("   • Duplicates: Use --fix-duplicates")
-                        print("   • Gaps: Use --fix-gaps")
-                        print("   • Zeros: Use --fix-zeros")
-                        print("   • Negatives: Use --fix-negatives")
-                        print("   • Infinities: Use --fix-infs")
-                        print("   • All issues: Use --fix-all")
+                        self.show_individual_fix_menu(system, nan_summary, dupe_summary, gap_summary, 
+                                                    zero_summary, negative_summary, inf_summary)
                         
                     else:
                         print("\n⏭️  Skipping fixes for now. You can run fixes later.")
@@ -1169,3 +1165,179 @@ class AnalysisRunner:
         print("⏳ Model development features coming soon!")
         print("   This will include ML pipeline, model training, and evaluation.")
         system.safe_input()
+    
+    def show_individual_fix_menu(self, system, nan_summary, dupe_summary, gap_summary, 
+                                zero_summary, negative_summary, inf_summary):
+        """Show individual fix options menu with status indicators."""
+        print("\n📋 INDIVIDUAL FIX OPTIONS:")
+        print("=" * 50)
+        
+        # Track which fixes have been applied
+        fixes_applied = {
+            'nan': False,
+            'duplicates': False,
+            'gaps': False,
+            'zeros': False,
+            'negatives': False,
+            'infinities': False
+        }
+        
+        while True:
+            print("\n🔧 Available Fixes:")
+            print("0. 🔙 Back to main quality check")
+            
+            # Show available fixes with status
+            option_num = 1
+            available_fixes = []
+            
+            if nan_summary:
+                status = " ✅" if fixes_applied['nan'] else ""
+                print(f"{option_num}. 🧹 Fix NaN values{status}")
+                available_fixes.append(('nan', nan_summary))
+                option_num += 1
+            
+            if dupe_summary:
+                status = " ✅" if fixes_applied['duplicates'] else ""
+                print(f"{option_num}. 🔄 Fix Duplicates{status}")
+                available_fixes.append(('duplicates', dupe_summary))
+                option_num += 1
+            
+            if gap_summary:
+                status = " ✅" if fixes_applied['gaps'] else ""
+                print(f"{option_num}. 📅 Fix Gaps{status}")
+                available_fixes.append(('gaps', gap_summary))
+                option_num += 1
+            
+            if zero_summary:
+                status = " ✅" if fixes_applied['zeros'] else ""
+                print(f"{option_num}. 🔢 Fix Zeros{status}")
+                available_fixes.append(('zeros', zero_summary))
+                option_num += 1
+            
+            if negative_summary:
+                status = " ✅" if fixes_applied['negatives'] else ""
+                print(f"{option_num}. ➖ Fix Negatives{status}")
+                available_fixes.append(('negatives', negative_summary))
+                option_num += 1
+            
+            if inf_summary:
+                status = " ✅" if fixes_applied['infinities'] else ""
+                print(f"{option_num}. ♾️  Fix Infinities{status}")
+                available_fixes.append(('infinities', inf_summary))
+                option_num += 1
+            
+            print(f"{option_num}. 🚀 Fix All Remaining Issues")
+            print(f"{option_num + 1}. 📊 Show Current Status")
+            
+            print("-" * 50)
+            
+            try:
+                choice = input("Select option (0-{}): ".format(option_num + 1)).strip()
+            except (EOFError, OSError):
+                print("⏭️  Returning to main quality check due to input error.")
+                break
+            
+            if choice == '0':
+                break
+            elif choice == str(option_num):  # Fix All
+                print("\n🚀 FIXING ALL REMAINING ISSUES...")
+                self.apply_all_remaining_fixes(system, available_fixes, fixes_applied)
+                break
+            elif choice == str(option_num + 1):  # Show Status
+                self.show_fix_status(system, available_fixes, fixes_applied)
+            elif choice.isdigit() and 1 <= int(choice) <= len(available_fixes):
+                fix_index = int(choice) - 1
+                fix_type, fix_summary = available_fixes[fix_index]
+                self.apply_single_fix(system, fix_type, fix_summary, fixes_applied)
+            else:
+                print("❌ Invalid choice. Please select a valid option.")
+    
+    def apply_single_fix(self, system, fix_type, fix_summary, fixes_applied):
+        """Apply a single fix based on type."""
+        try:
+            from src.eda import fix_files
+            
+            print(f"\n🔧 Applying {fix_type} fix...")
+            
+            if fix_type == 'nan':
+                fixed_data = fix_files.fix_nan(system.current_data, fix_summary)
+                if fixed_data is not None:
+                    system.current_data = fixed_data
+                    fixes_applied['nan'] = True
+                    print(f"✅ NaN values fixed. Data shape: {system.current_data.shape}")
+            
+            elif fix_type == 'duplicates':
+                fixed_data = fix_files.fix_duplicates(system.current_data, fix_summary)
+                if fixed_data is not None:
+                    system.current_data = fixed_data
+                    fixes_applied['duplicates'] = True
+                    print(f"✅ Duplicates fixed. Data shape: {system.current_data.shape}")
+            
+            elif fix_type == 'gaps':
+                fixed_data = fix_files.fix_gaps(system.current_data, fix_summary)
+                if fixed_data is not None:
+                    system.current_data = fixed_data
+                    fixes_applied['gaps'] = True
+                    print(f"✅ Gaps fixed. Data shape: {system.current_data.shape}")
+            
+            elif fix_type == 'zeros':
+                fixed_data = fix_files.fix_zeros(system.current_data, fix_summary)
+                if fixed_data is not None:
+                    system.current_data = fixed_data
+                    fixes_applied['zeros'] = True
+                    print(f"✅ Zero values fixed. Data shape: {system.current_data.shape}")
+            
+            elif fix_type == 'negatives':
+                fixed_data = fix_files.fix_negatives(system.current_data, fix_summary)
+                if fixed_data is not None:
+                    system.current_data = fixed_data
+                    fixes_applied['negatives'] = True
+                    print(f"✅ Negative values fixed. Data shape: {system.current_data.shape}")
+            
+            elif fix_type == 'infinities':
+                fixed_data = fix_files.fix_infs(system.current_data, fix_summary)
+                if fixed_data is not None:
+                    system.current_data = fixed_data
+                    fixes_applied['infinities'] = True
+                    print(f"✅ Infinity values fixed. Data shape: {system.current_data.shape}")
+            
+            # Remove any new duplicates created by the fix
+            initial_dupes = system.current_data.duplicated().sum()
+            if initial_dupes > 0:
+                system.current_data = system.current_data.drop_duplicates(keep='first')
+                print(f"🔄 Removed {initial_dupes} new duplicate rows created by {fix_type} fixing")
+            
+        except Exception as e:
+            print(f"❌ Error applying {fix_type} fix: {e}")
+    
+    def apply_all_remaining_fixes(self, system, available_fixes, fixes_applied):
+        """Apply all remaining fixes that haven't been applied yet."""
+        try:
+            from src.eda import fix_files
+            
+            for fix_type, fix_summary in available_fixes:
+                if not fixes_applied[fix_type]:
+                    print(f"   • Applying {fix_type} fix...")
+                    self.apply_single_fix(system, fix_type, fix_summary, fixes_applied)
+            
+            print("\n✅ All remaining issues have been fixed!")
+            
+        except Exception as e:
+            print(f"❌ Error applying all fixes: {e}")
+    
+    def show_fix_status(self, system, available_fixes, fixes_applied):
+        """Show current status of fixes."""
+        print("\n📊 CURRENT FIX STATUS:")
+        print("-" * 30)
+        
+        total_fixes = len(available_fixes)
+        applied_fixes = sum(1 for fix_type, _ in available_fixes if fixes_applied[fix_type])
+        
+        print(f"📈 Progress: {applied_fixes}/{total_fixes} fixes applied")
+        print(f"📊 Data shape: {system.current_data.shape}")
+        
+        for fix_type, fix_summary in available_fixes:
+            status = "✅ Applied" if fixes_applied[fix_type] else "⏳ Pending"
+            print(f"   • {fix_type.title()}: {status}")
+        
+        print("-" * 30)

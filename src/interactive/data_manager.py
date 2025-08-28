@@ -402,3 +402,105 @@ class DataManager:
             print(f"❌ Error restoring from backup: {e}")
             import traceback
             traceback.print_exc()
+    
+    def clear_data_backup(self, system):
+        """Clear all backup files from the backup directory."""
+        print("\n🗑️  CLEAR DATA BACKUP")
+        print("=" * 50)
+        
+        try:
+            from pathlib import Path
+            import time
+            
+            backup_dir = Path("data/backups")
+            if not backup_dir.exists():
+                print("❌ No backup directory found.")
+                return
+            
+            # Find all backup files
+            backup_files = list(backup_dir.glob("backup_*.parquet"))
+            data_backup_files = list(backup_dir.glob("data_backup_*.parquet"))
+            data_fixed_files = list(backup_dir.glob("data_fixed_*.parquet"))
+            
+            all_backup_files = backup_files + data_backup_files + data_fixed_files
+            
+            if not all_backup_files:
+                print("❌ No backup files found to clear.")
+                return
+            
+            # Calculate total size
+            total_size = sum(f.stat().st_size for f in all_backup_files)
+            total_size_mb = total_size / (1024 * 1024)
+            
+            # Get oldest and newest file dates
+            file_times = [f.stat().st_mtime for f in all_backup_files]
+            oldest_time = min(file_times)
+            newest_time = max(file_times)
+            
+            print(f"📁 Found {len(all_backup_files)} backup files:")
+            print(f"   • Total size: {total_size_mb:.1f} MB")
+            print(f"   • Oldest backup: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(oldest_time))}")
+            print(f"   • Newest backup: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(newest_time))}")
+            
+            print("\n📋 Backup files to be deleted:")
+            for i, backup_file in enumerate(all_backup_files, 1):
+                file_size = backup_file.stat().st_size / (1024 * 1024)  # MB
+                file_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(backup_file.stat().st_mtime))
+                print(f"   {i}. {backup_file.name} ({file_size:.1f} MB, {file_time})")
+            
+            try:
+                confirm = input(f"\n⚠️  Are you sure you want to delete all {len(all_backup_files)} backup files? (yes/no): ").strip().lower()
+                
+                if confirm in ['yes', 'y']:
+                    print(f"\n🗑️  Deleting {len(all_backup_files)} backup files...")
+                    
+                    deleted_count = 0
+                    deleted_size = 0
+                    
+                    for backup_file in all_backup_files:
+                        try:
+                            file_size = backup_file.stat().st_size
+                            backup_file.unlink()
+                            deleted_count += 1
+                            deleted_size += file_size
+                            print(f"   ✅ Deleted: {backup_file.name}")
+                        except Exception as e:
+                            print(f"   ❌ Failed to delete {backup_file.name}: {e}")
+                    
+                    deleted_size_mb = deleted_size / (1024 * 1024)
+                    print(f"\n✅ Successfully deleted {deleted_count}/{len(all_backup_files)} backup files")
+                    print(f"   • Freed space: {deleted_size_mb:.1f} MB")
+                    
+                    # Mark as used
+                    system.menu_manager.mark_menu_as_used('eda', 'clear_data_backup')
+                    
+                else:
+                    print("❌ Backup clearing cancelled.")
+                    
+            except (EOFError, OSError):
+                # Handle test environment where input is not available
+                print("🔄 Clearing backups (test mode)...")
+                
+                deleted_count = 0
+                deleted_size = 0
+                
+                for backup_file in all_backup_files:
+                    try:
+                        file_size = backup_file.stat().st_size
+                        backup_file.unlink()
+                        deleted_count += 1
+                        deleted_size += file_size
+                    except Exception as e:
+                        print(f"   ❌ Failed to delete {backup_file.name}: {e}")
+                
+                deleted_size_mb = deleted_size / (1024 * 1024)
+                print(f"✅ Successfully deleted {deleted_count}/{len(all_backup_files)} backup files")
+                print(f"   • Freed space: {deleted_size_mb:.1f} MB")
+                
+                # Mark as used
+                system.menu_manager.mark_menu_as_used('eda', 'clear_data_backup')
+                
+        except Exception as e:
+            print(f"❌ Error clearing backup files: {e}")
+            import traceback
+            traceback.print_exc()

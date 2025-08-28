@@ -41,7 +41,8 @@ class MenuManager:
                 'feature_importance': False,
                 'fix_data_issues': False,
                 'generate_html_report': False,
-                'restore_from_backup': False
+                'restore_from_backup': False,
+                'clear_data_backup': False
             },
             'feature_engineering': {
                 'generate_all_features': False,
@@ -170,10 +171,12 @@ class MenuManager:
         
         print("0. 🚪 Exit")
         print("-" * 50)
+        print("💡 Exit or ctrl+c to Exit")
     
     def print_eda_menu(self):
         """Print EDA menu options with green checkmarks for used items."""
         print("\n🔍 EDA ANALYSIS MENU:")
+        print("00. 🏠 Main Menu")
         print("0. 🔙 Back to Main Menu")
         
         # Comprehensive Data Quality Check (new enhanced version)
@@ -204,11 +207,17 @@ class MenuManager:
         checkmark = " ✅" if self.used_menus['eda']['restore_from_backup'] else ""
         print(f"7. 🔄 Restore from Backup{checkmark}")
         
+        # Clear Data Backup
+        checkmark = " ✅" if self.used_menus['eda']['clear_data_backup'] else ""
+        print(f"8. 🗑️  Clear Data Backup{checkmark}")
+        
         print("-" * 50)
+        print("💡 Exit or ctrl+c to Exit")
     
     def print_feature_engineering_menu(self):
         """Print Feature Engineering menu options with green checkmarks for used items."""
         print("\n⚙️  FEATURE ENGINEERING MENU:")
+        print("00. 🏠 Main Menu")
         print("0. 🔙 Back to Main Menu")
         
         # Generate All Features
@@ -244,10 +253,13 @@ class MenuManager:
         print(f"8. 📋 Feature Summary Report{checkmark}")
         
         print("-" * 50)
+        print("💡 Exit or ctrl+c to Exit")
     
     def print_visualization_menu(self):
         """Print visualization menu options with green checkmarks for used items."""
         print("\n📊 DATA VISUALIZATION MENU:")
+        print("00. 🏠 Main Menu")
+        print("0. 🔙 Back to Main Menu")
         
         # Price Charts
         checkmark = " ✅" if self.used_menus['visualization']['price_charts'] else ""
@@ -273,12 +285,14 @@ class MenuManager:
         checkmark = " ✅" if self.used_menus['visualization']['export_visualizations'] else ""
         print(f"6. 📋 Export Visualizations{checkmark}")
         
-        print("7. 🔙 Back to Main Menu")
         print("-" * 50)
+        print("💡 Exit or ctrl+c to Exit")
     
     def print_model_development_menu(self):
         """Print model development menu options with green checkmarks for used items."""
         print("\n📈 MODEL DEVELOPMENT MENU:")
+        print("00. 🏠 Main Menu")
+        print("0. 🔙 Back to Main Menu")
         
         # Data Preparation
         checkmark = " ✅" if self.used_menus['model_development']['data_preparation'] else ""
@@ -304,8 +318,8 @@ class MenuManager:
         checkmark = " ✅" if self.used_menus['model_development']['model_report'] else ""
         print(f"6. 📋 Model Report{checkmark}")
         
-        print("7. 🔙 Back to Main Menu")
         print("-" * 50)
+        print("💡 Exit or ctrl+c to Exit")
     
     def show_help(self):
         """Show help information."""

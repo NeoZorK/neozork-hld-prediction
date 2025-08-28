@@ -151,6 +151,10 @@ class InteractiveSystem:
         """Restore data from backup file."""
         return self.data_manager.restore_from_backup(self)
     
+    def clear_data_backup(self):
+        """Clear all backup files from the backup directory."""
+        return self.data_manager.clear_data_backup(self)
+    
     def _create_statistics_plots(self, data=None):
         """Create statistics plots using visualization manager."""
         return self.visualization_manager.create_statistics_plots(self, data)
@@ -237,7 +241,7 @@ class InteractiveSystem:
             elif choice == '9':
                 self.menu_manager.show_menu_status()
                 self.menu_manager.mark_menu_as_used('main', 'menu_status')
-            elif choice == '0':
+            elif choice == '0' or choice == '00':
                 print("\n👋 Thank you for using NeoZorK HLD Prediction Interactive System!")
                 print("   Goodbye!")
                 break
