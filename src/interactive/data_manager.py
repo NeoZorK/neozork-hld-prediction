@@ -9,8 +9,10 @@ exporting, and data management functionality.
 
 import json
 import time
+import gc
+import os
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 import pandas as pd
 import numpy as np
@@ -21,15 +23,124 @@ class DataManager:
     
     def __init__(self):
         """Initialize the data manager."""
-        pass
+        # Memory management settings
+        self.max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '2048'))  # 2GB default
+        self.chunk_size = int(os.environ.get('CHUNK_SIZE', '100000'))  # 100k rows per chunk
+        self.enable_memory_optimization = os.environ.get('ENABLE_MEMORY_OPTIMIZATION', 'true').lower() == 'true'
     
-    def load_data_from_file(self, file_path: str) -> pd.DataFrame:
-        """Load data from file path."""
+    def _estimate_memory_usage(self, df: pd.DataFrame) -> int:
+        """Estimate memory usage of DataFrame in MB."""
+        try:
+            memory_usage = df.memory_usage(deep=True).sum()
+            memory_mb = int(memory_usage / (1024 * 1024))  # Convert to MB
+            # Ensure we return at least 1 MB for any DataFrame
+            return max(1, memory_mb)
+        except:
+            # Fallback estimation - use a more conservative estimate
+            estimated_bytes = df.shape[0] * df.shape[1] * 64  # 64 bytes per cell for mixed types
+            memory_mb = estimated_bytes // (1024 * 1024)
+            return max(1, memory_mb)
+    
+    def _check_memory_available(self) -> bool:
+        """Check if we have enough memory available."""
+        try:
+            import psutil
+            available_memory = psutil.virtual_memory().available / (1024 * 1024)  # MB
+            return available_memory > self.max_memory_mb * 0.5  # Keep 50% buffer
+        except ImportError:
+            # If psutil not available, assume we're OK
+            return True
+    
+    def _load_data_in_chunks(self, file_path: str, chunk_size: Optional[int] = None) -> pd.DataFrame:
+        """Load data in chunks to manage memory usage."""
+        if chunk_size is None:
+            chunk_size = self.chunk_size
+            
         file_path = Path(file_path)
         
         if not file_path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
+        
+        print(f"🔄 Loading {file_path.name} in chunks of {chunk_size:,} rows...")
+        
+        if file_path.suffix.lower() == '.parquet':
+            # For parquet files, we can use pyarrow's memory mapping
+            try:
+                import pyarrow.parquet as pq
+                
+                # Get file info first
+                parquet_file = pq.ParquetFile(file_path)
+                total_rows = parquet_file.metadata.num_rows
+                
+                if total_rows <= chunk_size:
+                    # Small file, load directly
+                    return pd.read_parquet(file_path)
+                
+                # Large file, load in chunks
+                chunks = []
+                for i, chunk in enumerate(parquet_file.iter_batches(batch_size=chunk_size)):
+                    chunk_df = chunk.to_pandas()
+                    chunks.append(chunk_df)
+                    
+                    # Memory management
+                    if self.enable_memory_optimization:
+                        gc.collect()
+                    
+                    # Progress indicator
+                    if (i + 1) % 10 == 0:
+                        rows_loaded = (i + 1) * chunk_size
+                        progress = min(100, (rows_loaded / total_rows) * 100)
+                        print(f"   📊 Progress: {progress:.1f}% ({rows_loaded:,}/{total_rows:,} rows)")
+                
+                # Combine chunks
+                result = pd.concat(chunks, ignore_index=True)
+                del chunks
+                gc.collect()
+                
+                return result
+                
+            except ImportError:
+                # Fallback to pandas
+                return pd.read_parquet(file_path)
+                
+        elif file_path.suffix.lower() == '.csv':
+            # For CSV files, use pandas chunking
+            chunks = []
+            chunk_iter = pd.read_csv(file_path, chunksize=chunk_size)
             
+            for i, chunk in enumerate(chunk_iter):
+                chunks.append(chunk)
+                
+                # Memory management
+                if self.enable_memory_optimization:
+                    gc.collect()
+                
+                # Progress indicator
+                if (i + 1) % 10 == 0:
+                    print(f"   📊 Loaded {i + 1} chunks...")
+            
+            result = pd.concat(chunks, ignore_index=True)
+            del chunks
+            gc.collect()
+            
+            return result
+        else:
+            raise ValueError(f"Unsupported file format: {file_path.suffix}")
+    
+    def load_data_from_file(self, file_path: str) -> pd.DataFrame:
+        """Load data from file path with memory optimization."""
+        file_path = Path(file_path)
+        
+        if not file_path.exists():
+            raise FileNotFoundError(f"File not found: {file_path}")
+        
+        # Check file size for large files
+        file_size_mb = file_path.stat().st_size / (1024 * 1024)
+        
+        if file_size_mb > 100 and self.enable_memory_optimization:  # Files larger than 100MB
+            print(f"📁 Large file detected ({file_size_mb:.1f}MB), using chunked loading...")
+            return self._load_data_in_chunks(str(file_path))
+        
         # Load data based on file type
         if file_path.suffix.lower() == '.csv':
             # Use the proper CSV fetcher for MT5 format files
@@ -192,22 +303,56 @@ class DataManager:
         for i, file in enumerate(data_files, 1):
             print(f"   {i}. {file.name}")
         
-        # Load all files
+        # Load all files with memory management
         all_data = []
-        for file in data_files:
+        total_rows = 0
+        total_memory_mb = 0
+        
+        for i, file in enumerate(data_files):
             try:
+                print(f"\n🔄 Loading file {i+1}/{len(data_files)}: {file.name}")
+                
+                # Check memory before loading
+                if self.enable_memory_optimization and not self._check_memory_available():
+                    print(f"⚠️  Low memory detected, skipping {file.name}")
+                    continue
+                
                 df = self.load_data_from_file(str(file))
                 df['source_file'] = file.name  # Add source file info
+                
+                # Memory usage estimation
+                memory_mb = self._estimate_memory_usage(df)
+                total_memory_mb += memory_mb
+                total_rows += df.shape[0]
+                
                 all_data.append(df)
-                print(f"✅ Loaded: {file.name} ({df.shape[0]} rows)")
+                print(f"✅ Loaded: {file.name} ({df.shape[0]:,} rows, ~{memory_mb}MB)")
+                
+                # Memory management after each file
+                if self.enable_memory_optimization:
+                    gc.collect()
+                
+                # Check if we're approaching memory limits
+                if total_memory_mb > self.max_memory_mb * 0.8:
+                    print(f"⚠️  Memory usage high ({total_memory_mb}MB), stopping file loading")
+                    break
+                    
             except Exception as e:
                 print(f"❌ Error loading {file.name}: {e}")
+                continue
         
         if not all_data:
             print("❌ No files could be loaded")
             return False
         
-        # Combine all data
+        print(f"\n📊 Memory Summary:")
+        print(f"   Total files loaded: {len(all_data)}")
+        print(f"   Total rows: {total_rows:,}")
+        print(f"   Estimated memory usage: {total_memory_mb}MB")
+        
+        # Combine all data with memory optimization
+        print("\n🔄 Combining data...")
+        
         # Check if any DataFrame has a DatetimeIndex
         has_datetime_index = any(isinstance(df.index, pd.DatetimeIndex) for df in all_data)
         
@@ -223,11 +368,17 @@ class DataManager:
         else:
             # No DatetimeIndex, use normal concatenation
             system.current_data = pd.concat(all_data, ignore_index=True)
+        
+        # Clean up intermediate data
+        del all_data
+        gc.collect()
+        
         print(f"\n✅ Combined data loaded successfully!")
-        print(f"   Total shape: {system.current_data.shape[0]} rows × {system.current_data.shape[1]} columns")
-        print(f"   Files loaded: {len(all_data)}")
+        print(f"   Total shape: {system.current_data.shape[0]:,} rows × {system.current_data.shape[1]} columns")
+        print(f"   Files loaded: {len(data_files)}")
         if mask:
             print(f"   Mask used: '{mask}'")
+        print(f"   Final memory usage: ~{self._estimate_memory_usage(system.current_data)}MB")
         print(f"   Columns: {list(system.current_data.columns)}")
         
         # Show data preview

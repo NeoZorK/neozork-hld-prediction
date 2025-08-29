@@ -32,6 +32,15 @@ services:
     tty: true
     # Use the entrypoint script instead of direct commands
     entrypoint: ["/app/docker-entrypoint.sh"]
+    # Memory and resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+          cpus: '2.0'
+        reservations:
+          memory: 2G
+          cpus: '0.5'
 
 volumes:
   uv_cache:
