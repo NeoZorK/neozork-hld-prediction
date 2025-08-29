@@ -29,7 +29,7 @@ def _estimate_memory_usage(df) -> int:
         fallback_mb = total_bytes // (1024 * 1024)
         return max(1, fallback_mb)  # Ensure at least 1MB
 
-def _check_memory_available(max_memory_mb: int = 512) -> bool:
+def _check_memory_available(max_memory_mb: int = 1024) -> bool:
     """Check if we have enough memory available."""
     try:
         import psutil
@@ -39,7 +39,7 @@ def _check_memory_available(max_memory_mb: int = 512) -> bool:
         # If psutil not available, assume we're OK
         return True
 
-def _process_large_dataframe_in_chunks(df, operation_func, chunk_size: int = 5000, max_memory_mb: int = 512):
+def _process_large_dataframe_in_chunks(df, operation_func, chunk_size: int = 10000, max_memory_mb: int = 1024):
     """Process large DataFrame in chunks to manage memory usage."""
     total_rows = len(df)
     
@@ -51,6 +51,8 @@ def _process_large_dataframe_in_chunks(df, operation_func, chunk_size: int = 500
     results = []
     processed_rows = 0
     
+    print(f"    📊 Processing {total_rows:,} rows in chunks of {chunk_size:,}...")
+    
     for start_idx in range(0, total_rows, chunk_size):
         end_idx = min(start_idx + chunk_size, total_rows)
         chunk = df.iloc[start_idx:end_idx]
@@ -60,6 +62,12 @@ def _process_large_dataframe_in_chunks(df, operation_func, chunk_size: int = 500
             chunk_result = operation_func(chunk)
             results.append(chunk_result)
             processed_rows = end_idx
+            
+            # Show progress for very large datasets
+            if total_rows > 100000 and processed_rows % (chunk_size * 10) == 0:
+                progress = (processed_rows / total_rows) * 100
+                print(f"    📈 Progress: {progress:.1f}% ({processed_rows:,}/{total_rows:,} rows)")
+                
         except Exception as e:
             print(f"⚠️  Error processing chunk at rows {start_idx}-{end_idx}: {e}")
             # Continue with next chunk instead of failing completely
@@ -73,6 +81,7 @@ def _process_large_dataframe_in_chunks(df, operation_func, chunk_size: int = 500
         if processed_rows % (chunk_size * 2) == 0:
             if not _check_memory_available(max_memory_mb):
                 print(f"⚠️  Low memory detected during processing, stopping at row {end_idx}")
+                print(f"    📊 Processed {processed_rows:,} out of {total_rows:,} rows")
                 break
     
     # Combine results
@@ -108,16 +117,10 @@ def nan_check(df, nan_summary, Fore, Style):
     
     # Check if DataFrame is too large for direct processing
     memory_mb = _estimate_memory_usage(df)
-    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '512'))
-    
-    # For extremely large datasets, skip the check entirely to prevent OOM
-    if memory_mb > max_memory_mb * 2:
-        print(f"    📊 Extremely large dataset detected ({memory_mb}MB), skipping NaN check to prevent memory issues...")
-        print(f"    💡 Consider using a smaller dataset or increasing container memory")
-        return
+    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '1024'))
     
     # For very large datasets, use sampling approach
-    elif memory_mb > max_memory_mb * 1.0:
+    if memory_mb > max_memory_mb * 1.0:
         print(f"    📊 Very large dataset detected ({memory_mb}MB), using sampling approach...")
         
         try:
@@ -144,8 +147,8 @@ def nan_check(df, nan_summary, Fore, Style):
             
         except Exception as e:
             print(f"    ⚠️  Error in sampling approach: {e}")
-            print(f"    Skipping NaN check for very large dataset")
-            return
+            print(f"    Falling back to chunked processing...")
+            # Fall back to chunked processing instead of skipping
     
     elif memory_mb > max_memory_mb * 0.5:
         print(f"    📊 Large dataset detected ({memory_mb}MB), using chunked processing...")
@@ -230,16 +233,10 @@ def duplicate_check(df, dupe_summary, Fore, Style):
     """
     # Check if DataFrame is too large for direct processing
     memory_mb = _estimate_memory_usage(df)
-    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '512'))
-    
-    # For extremely large datasets, skip the check entirely to prevent OOM
-    if memory_mb > max_memory_mb * 2:
-        print(f"    📊 Extremely large dataset detected ({memory_mb}MB), skipping duplicate check to prevent memory issues...")
-        print(f"    💡 Consider using a smaller dataset or increasing container memory")
-        return
+    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '1024'))
     
     # For very large datasets, use sampling approach
-    elif memory_mb > max_memory_mb * 1.0:
+    if memory_mb > max_memory_mb * 1.0:
         print(f"    📊 Very large dataset detected ({memory_mb}MB), using sampling for duplicate detection...")
         
         try:

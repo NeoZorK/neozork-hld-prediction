@@ -379,18 +379,17 @@ class AnalysisRunner:
             
             # Check if DataFrame is too large for quality checks
             memory_mb = data_quality._estimate_memory_usage(system.current_data)
-            max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '512'))
+            max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '1024'))
             
-            # For extremely large datasets, skip all checks to prevent OOM
+            # For very large datasets, warn but continue with processing
             if memory_mb > max_memory_mb * 2:
-                print(f"📊 Extremely large dataset detected ({memory_mb}MB)")
-                print(f"⚠️  Skipping all quality checks to prevent memory issues...")
-                print(f"💡 Recommendations:")
-                print(f"   • Use a smaller dataset (sample)")
-                print(f"   • Increase container memory limit")
-                print(f"   • Process data in smaller chunks")
-                print(f"   • Use external data quality tools")
-                return
+                print(f"📊 Very large dataset detected ({memory_mb}MB)")
+                print(f"⚠️  This may take a while and use significant memory...")
+                print(f"💡 Processing will use chunked approach and sampling where needed")
+                print(f"   • Consider using a smaller dataset for faster results")
+                print(f"   • Increase container memory limit if needed")
+                print(f"   • Processing will continue with optimizations...")
+                print(f"-" * 50)
             
             # Initialize summary lists
             nan_summary = []
