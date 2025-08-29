@@ -25,19 +25,19 @@ class DataManager:
     
     def __init__(self):
         """Initialize the data manager with aggressive memory optimization."""
-        # Memory management settings - more conservative defaults
-        self.max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '4096'))  # 4GB default (increased)
-        self.chunk_size = int(os.environ.get('CHUNK_SIZE', '50000'))  # 50k rows per chunk (increased)
+        # Memory management settings - optimized for Docker with 8GB limit
+        self.max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '6144'))  # 6GB default (optimized for 8GB container)
+        self.chunk_size = int(os.environ.get('CHUNK_SIZE', '50000'))  # 50k rows per chunk
         self.enable_memory_optimization = os.environ.get('ENABLE_MEMORY_OPTIMIZATION', 'true').lower() == 'true'
         
-        # Aggressive memory settings
-        self.max_file_size_mb = int(os.environ.get('MAX_FILE_SIZE_MB', '200'))  # 200MB threshold (increased)
+        # Memory settings optimized for large datasets
+        self.max_file_size_mb = int(os.environ.get('MAX_FILE_SIZE_MB', '200'))  # 200MB threshold
         self.sample_size = int(os.environ.get('SAMPLE_SIZE', '10000'))  # 10k rows for sampling
         self.enable_streaming = os.environ.get('ENABLE_STREAMING', 'true').lower() == 'true'
         
-        # Memory monitoring
-        self.memory_warning_threshold = 0.8  # 80% of max memory (increased)
-        self.memory_critical_threshold = 0.95  # 95% of max memory (increased)
+        # Memory monitoring - more permissive for large datasets
+        self.memory_warning_threshold = float(os.environ.get('MEMORY_WARNING_THRESHOLD', '0.8'))  # 80% of max memory
+        self.memory_critical_threshold = float(os.environ.get('MEMORY_CRITICAL_THRESHOLD', '0.95'))  # 95% of max memory
         
         print(f"🔧 DataManager initialized with memory optimization:")
         print(f"   Max memory: {self.max_memory_mb}MB")
@@ -480,9 +480,13 @@ class DataManager:
                     gc.collect()
                 
                 # Check if we're approaching memory limits - more permissive
-                if total_memory_mb > self.max_memory_mb * 0.9:
-                    print(f"⚠️  Memory usage high ({total_memory_mb}MB), stopping file loading")
+                if total_memory_mb > self.max_memory_mb * 0.95:
+                    print(f"⚠️  Memory usage critical ({total_memory_mb}MB), stopping file loading")
                     break
+                elif total_memory_mb > self.max_memory_mb * 0.8:
+                    print(f"⚠️  Memory usage high ({total_memory_mb}MB), but continuing...")
+                    # Continue loading but with more aggressive memory management
+                    gc.collect()
                     
             except Exception as e:
                 print(f"❌ Error loading {file.name}: {e}")
