@@ -517,98 +517,145 @@ class AnalysisRunner:
                         # Fix all issues with additional duplicate removal after each fix
                         if nan_summary:
                             print("   • Fixing NaN values...")
-                            fixed_data = fix_files.fix_nan(system.current_data, nan_summary)
-                            if fixed_data is not None:
-                                system.current_data = fixed_data
-                                # Remove any new duplicates created by NaN fixing
-                                initial_dupes = system.current_data.duplicated().sum()
-                                if initial_dupes > 0:
-                                    system.current_data = system.current_data.drop_duplicates(keep='first')
-                                    final_dupes = system.current_data.duplicated().sum()
-                                    removed_dupes = initial_dupes - final_dupes
-                                    if removed_dupes > 0:
-                                        print(f"   🔄 Removed {removed_dupes} new duplicate rows created by NaN fixing")
-                                print(f"   ✅ NaN values fixed. Data shape: {system.current_data.shape}")
+                            try:
+                                fixed_data = fix_files.fix_nan(system.current_data, nan_summary)
+                                if fixed_data is not None:
+                                    system.current_data = fixed_data
+                                    # Remove any new duplicates created by NaN fixing
+                                    initial_dupes = system.current_data.duplicated().sum()
+                                    if initial_dupes > 0:
+                                        system.current_data = system.current_data.drop_duplicates(keep='first')
+                                        final_dupes = system.current_data.duplicated().sum()
+                                        removed_dupes = initial_dupes - final_dupes
+                                        if removed_dupes > 0:
+                                            print(f"   🔄 Removed {removed_dupes} new duplicate rows created by NaN fixing")
+                                    print(f"   ✅ NaN values fixed. Data shape: {system.current_data.shape}")
+                                else:
+                                    print("   ⚠️  NaN fixing returned None, skipping...")
+                            except Exception as e:
+                                print(f"   ❌ Error fixing NaN values: {e}")
+                                import traceback
+                                traceback.print_exc()
                         
                         if dupe_summary:
                             print("   • Fixing duplicate rows...")
-                            fixed_data = fix_files.fix_duplicates(system.current_data, dupe_summary)
-                            if fixed_data is not None:
-                                system.current_data = fixed_data
-                                print(f"   ✅ Duplicate rows fixed. Data shape: {system.current_data.shape}")
+                            try:
+                                fixed_data = fix_files.fix_duplicates(system.current_data, dupe_summary)
+                                if fixed_data is not None:
+                                    system.current_data = fixed_data
+                                    print(f"   ✅ Duplicate rows fixed. Data shape: {system.current_data.shape}")
+                                else:
+                                    print("   ⚠️  Duplicate fixing returned None, skipping...")
+                            except Exception as e:
+                                print(f"   ❌ Error fixing duplicate rows: {e}")
+                                import traceback
+                                traceback.print_exc()
                         
                         if gap_summary:
                             print("   • Fixing time series gaps...")
-                            # Find datetime column
-                            datetime_col = None
-                            for col in system.current_data.columns:
-                                if pd.api.types.is_datetime64_any_dtype(system.current_data[col]):
-                                    datetime_col = col
-                                    break
-                            fixed_data = fix_files.fix_gaps(system.current_data, gap_summary, datetime_col)
-                            if fixed_data is not None:
-                                system.current_data = fixed_data
-                                # Remove any new duplicates created by gap fixing
-                                initial_dupes = system.current_data.duplicated().sum()
-                                if initial_dupes > 0:
-                                    system.current_data = system.current_data.drop_duplicates(keep='first')
-                                    final_dupes = system.current_data.duplicated().sum()
-                                    removed_dupes = initial_dupes - final_dupes
-                                    if removed_dupes > 0:
-                                        print(f"   🔄 Removed {removed_dupes} new duplicate rows created by gap fixing")
-                                print(f"   ✅ Time series gaps fixed. Data shape: {system.current_data.shape}")
+                            try:
+                                # Find datetime column
+                                datetime_col = None
+                                for col in system.current_data.columns:
+                                    if pd.api.types.is_datetime64_any_dtype(system.current_data[col]):
+                                        datetime_col = col
+                                        break
+                                fixed_data = fix_files.fix_gaps(system.current_data, gap_summary, datetime_col)
+                                if fixed_data is not None:
+                                    system.current_data = fixed_data
+                                    # Remove any new duplicates created by gap fixing
+                                    initial_dupes = system.current_data.duplicated().sum()
+                                    if initial_dupes > 0:
+                                        system.current_data = system.current_data.drop_duplicates(keep='first')
+                                        final_dupes = system.current_data.duplicated().sum()
+                                        removed_dupes = initial_dupes - final_dupes
+                                        if removed_dupes > 0:
+                                            print(f"   🔄 Removed {removed_dupes} new duplicate rows created by gap fixing")
+                                    print(f"   ✅ Time series gaps fixed. Data shape: {system.current_data.shape}")
+                                else:
+                                    print("   ⚠️  Gap fixing returned None, skipping...")
+                            except Exception as e:
+                                print(f"   ❌ Error fixing time series gaps: {e}")
+                                import traceback
+                                traceback.print_exc()
                         
                         if zero_summary:
                             print("   • Fixing zero values...")
-                            fixed_data = fix_files.fix_zeros(system.current_data, zero_summary)
-                            if fixed_data is not None:
-                                system.current_data = fixed_data
-                                # Remove any new duplicates created by zero fixing
-                                initial_dupes = system.current_data.duplicated().sum()
-                                if initial_dupes > 0:
-                                    system.current_data = system.current_data.drop_duplicates(keep='first')
-                                    final_dupes = system.current_data.duplicated().sum()
-                                    removed_dupes = initial_dupes - final_dupes
-                                    if removed_dupes > 0:
-                                        print(f"   🔄 Removed {removed_dupes} new duplicate rows created by zero fixing")
-                                print(f"   ✅ Zero values fixed. Data shape: {system.current_data.shape}")
+                            try:
+                                fixed_data = fix_files.fix_zeros(system.current_data, zero_summary)
+                                if fixed_data is not None:
+                                    system.current_data = fixed_data
+                                    # Remove any new duplicates created by zero fixing
+                                    initial_dupes = system.current_data.duplicated().sum()
+                                    if initial_dupes > 0:
+                                        system.current_data = system.current_data.drop_duplicates(keep='first')
+                                        final_dupes = system.current_data.duplicated().sum()
+                                        removed_dupes = initial_dupes - final_dupes
+                                        if removed_dupes > 0:
+                                            print(f"   🔄 Removed {removed_dupes} new duplicate rows created by zero fixing")
+                                    print(f"   ✅ Zero values fixed. Data shape: {system.current_data.shape}")
+                                else:
+                                    print("   ⚠️  Zero fixing returned None, skipping...")
+                            except Exception as e:
+                                print(f"   ❌ Error fixing zero values: {e}")
+                                import traceback
+                                traceback.print_exc()
                         
                         if negative_summary:
                             print("   • Fixing negative values...")
-                            fixed_data = fix_files.fix_negatives(system.current_data, negative_summary)
-                            if fixed_data is not None:
-                                system.current_data = fixed_data
-                                # Remove any new duplicates created by negative fixing
-                                initial_dupes = system.current_data.duplicated().sum()
-                                if initial_dupes > 0:
-                                    system.current_data = system.current_data.drop_duplicates(keep='first')
-                                    final_dupes = system.current_data.duplicated().sum()
-                                    removed_dupes = initial_dupes - final_dupes
-                                    if removed_dupes > 0:
-                                        print(f"   🔄 Removed {removed_dupes} new duplicate rows created by negative fixing")
-                                print(f"   ✅ Negative values fixed. Data shape: {system.current_data.shape}")
+                            try:
+                                fixed_data = fix_files.fix_negatives(system.current_data, negative_summary)
+                                if fixed_data is not None:
+                                    system.current_data = fixed_data
+                                    # Remove any new duplicates created by negative fixing
+                                    initial_dupes = system.current_data.duplicated().sum()
+                                    if initial_dupes > 0:
+                                        system.current_data = system.current_data.drop_duplicates(keep='first')
+                                        final_dupes = system.current_data.duplicated().sum()
+                                        removed_dupes = initial_dupes - final_dupes
+                                        if removed_dupes > 0:
+                                            print(f"   🔄 Removed {removed_dupes} new duplicate rows created by negative fixing")
+                                    print(f"   ✅ Negative values fixed. Data shape: {system.current_data.shape}")
+                                else:
+                                    print("   ⚠️  Negative fixing returned None, skipping...")
+                            except Exception as e:
+                                print(f"   ❌ Error fixing negative values: {e}")
+                                import traceback
+                                traceback.print_exc()
                         
                         if inf_summary:
                             print("   • Fixing infinity values...")
-                            fixed_data = fix_files.fix_infs(system.current_data, inf_summary)
-                            if fixed_data is not None:
-                                system.current_data = fixed_data
-                                # Remove any new duplicates created by infinity fixing
-                                initial_dupes = system.current_data.duplicated().sum()
-                                if initial_dupes > 0:
-                                    system.current_data = system.current_data.drop_duplicates(keep='first')
-                                    final_dupes = system.current_data.duplicated().sum()
-                                    removed_dupes = initial_dupes - final_dupes
-                                    if removed_dupes > 0:
-                                        print(f"   🔄 Removed {removed_dupes} new duplicate rows created by infinity fixing")
-                                print(f"   ✅ Infinity values fixed. Data shape: {system.current_data.shape}")
+                            try:
+                                fixed_data = fix_files.fix_infs(system.current_data, inf_summary)
+                                if fixed_data is not None:
+                                    system.current_data = fixed_data
+                                    # Remove any new duplicates created by infinity fixing
+                                    initial_dupes = system.current_data.duplicated().sum()
+                                    if initial_dupes > 0:
+                                        system.current_data = system.current_data.drop_duplicates(keep='first')
+                                        final_dupes = system.current_data.duplicated().sum()
+                                        removed_dupes = initial_dupes - final_dupes
+                                        if removed_dupes > 0:
+                                            print(f"   🔄 Removed {removed_dupes} new duplicate rows created by infinity fixing")
+                                    print(f"   ✅ Infinity values fixed. Data shape: {system.current_data.shape}")
+                                else:
+                                    print("   ⚠️  Infinity fixing returned None, skipping...")
+                            except Exception as e:
+                                print(f"   ❌ Error fixing infinity values: {e}")
+                                import traceback
+                                traceback.print_exc()
                         
                         # Final duplicate removal to ensure no duplicates remain
-                        final_dupe_check = system.current_data.duplicated().sum()
-                        if final_dupe_check > 0:
-                            print(f"   • Final duplicate removal...")
-                            system.current_data = system.current_data.drop_duplicates(keep='first')
-                            print(f"   ✅ Removed {final_dupe_check} remaining duplicate rows")
+                        try:
+                            final_dupe_check = system.current_data.duplicated().sum()
+                            if final_dupe_check > 0:
+                                print(f"   • Final duplicate removal...")
+                                system.current_data = system.current_data.drop_duplicates(keep='first')
+                                print(f"   ✅ Removed {final_dupe_check} remaining duplicate rows")
+                        except Exception as e:
+                            print(f"   ❌ Error in final duplicate removal: {e}")
+                            import traceback
+                            traceback.print_exc()
                         
                         print("\n✅ All issues have been fixed!")
                         print(f"   • Original data shape: {backup_data.shape}")
@@ -759,15 +806,21 @@ class AnalysisRunner:
                             iteration += 1
                         
                         # Save backup
-                        backup_path = os.path.join('data', 'backups', f'data_backup_{int(time.time())}.parquet')
-                        os.makedirs(os.path.dirname(backup_path), exist_ok=True)
-                        backup_data.to_parquet(backup_path)
-                        print(f"   • Backup saved to: {backup_path}")
+                        try:
+                            backup_path = os.path.join('data', 'backups', f'data_backup_{int(time.time())}.parquet')
+                            os.makedirs(os.path.dirname(backup_path), exist_ok=True)
+                            backup_data.to_parquet(backup_path)
+                            print(f"   • Backup saved to: {backup_path}")
+                        except Exception as e:
+                            print(f"   ❌ Error saving backup: {e}")
                         
                         # Save fixed data
-                        fixed_data_path = os.path.join('data', 'backups', f'data_fixed_{int(time.time())}.parquet')
-                        system.current_data.to_parquet(fixed_data_path)
-                        print(f"   • Fixed data saved to: {fixed_data_path}")
+                        try:
+                            fixed_data_path = os.path.join('data', 'backups', f'data_fixed_{int(time.time())}.parquet')
+                            system.current_data.to_parquet(fixed_data_path)
+                            print(f"   • Fixed data saved to: {fixed_data_path}")
+                        except Exception as e:
+                            print(f"   ❌ Error saving fixed data: {e}")
                         
                     elif fix_choice in ['n', 'no']:
                         self.show_individual_fix_menu(system, nan_summary, dupe_summary, gap_summary, 
