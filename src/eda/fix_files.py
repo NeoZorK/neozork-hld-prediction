@@ -319,16 +319,24 @@ def fix_negatives(df, negative_summary=None):
     if negative_summary:
         columns_to_fix = [item['column'] for item in negative_summary]
     else:
-        # Try to detect OHLCV columns
+        # Try to detect OHLCV columns (exclude pressure_vector which can be negative)
         ohlcv_keys = ['open', 'high', 'low', 'close', 'volume', 'amount', 'qty']
         for col in df.select_dtypes(include=[np.number]).columns:
             col_lower = col.lower()
+            # Skip pressure_vector as it can legitimately be negative
+            if col_lower == 'pressure_vector':
+                continue
             if any(key in col_lower for key in ohlcv_keys):
                 columns_to_fix.append(col)
 
     for col in columns_to_fix:
         if col not in df.columns:
             print(f"Warning: Column '{col}' not found in DataFrame")
+            continue
+
+        # Skip pressure_vector as it can legitimately be negative
+        if col.lower() == 'pressure_vector':
+            print(f"Skipping pressure_vector column as it can legitimately contain negative values")
             continue
 
         # Count negatives

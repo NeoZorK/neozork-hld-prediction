@@ -45,8 +45,8 @@ def _check_memory_available(max_memory_mb: int = 1024) -> bool:
 def _get_memory_settings() -> Dict[str, int]:
     """Get memory optimization settings from environment."""
     return {
-        'max_memory_mb': int(os.environ.get('MAX_MEMORY_MB', '1024')),
-        'chunk_size': int(os.environ.get('CHUNK_SIZE', '25000')),
+        'max_memory_mb': int(os.environ.get('MAX_MEMORY_MB', '4096')),  # Increased from 1024 to 4096
+        'chunk_size': int(os.environ.get('CHUNK_SIZE', '50000')),  # Increased from 25000 to 50000
         'sample_size': int(os.environ.get('SAMPLE_SIZE', '10000')),
         'enable_memory_optimization': os.environ.get('ENABLE_MEMORY_OPTIMIZATION', 'true').lower() == 'true'
     }
@@ -135,7 +135,7 @@ def nan_check(df, nan_summary, Fore, Style):
     max_memory_mb = settings['max_memory_mb']
     
     # For extremely large datasets, use aggressive sampling
-    if memory_mb > max_memory_mb * 2.0:
+    if memory_mb > max_memory_mb * 3.0:  # Increased from 2.0 to 3.0
         print(f"    📊 Extremely large dataset detected ({memory_mb}MB), using aggressive sampling...")
         
         try:
@@ -166,7 +166,7 @@ def nan_check(df, nan_summary, Fore, Style):
             return
     
     # For very large datasets, use sampling approach
-    elif memory_mb > max_memory_mb * 1.0:
+    elif memory_mb > max_memory_mb * 1.5:  # Increased from 1.0 to 1.5
         print(f"    📊 Very large dataset detected ({memory_mb}MB), using sampling approach...")
         
         try:
@@ -275,7 +275,7 @@ def duplicate_check(df, dupe_summary, Fore, Style):
     max_memory_mb = settings['max_memory_mb']
     
     # For extremely large datasets, use aggressive sampling
-    if memory_mb > max_memory_mb * 2.0:
+    if memory_mb > max_memory_mb * 3.0:  # Increased from 2.0 to 3.0
         print(f"    📊 Extremely large dataset detected ({memory_mb}MB), using aggressive sampling for duplicate detection...")
         
         try:
@@ -399,11 +399,60 @@ def gap_check(df, gap_summary, Fore, Style):
     memory_mb = _estimate_memory_usage(df)
     max_memory_mb = settings['max_memory_mb']
     
-    # For very large datasets, skip gap analysis to save memory
-    if memory_mb > max_memory_mb * 1.0:
-        print(f"    📊 Large dataset detected ({memory_mb}MB), skipping gap analysis to save memory...")
-        print(f"    ⚠️  Gap Check: Skipped for large dataset to prevent memory issues")
-        return
+    # For very large datasets, use aggressive sampling instead of skipping
+    if memory_mb > max_memory_mb * 1.5:
+        print(f"    📊 Very large dataset detected ({memory_mb}MB), using aggressive sampling for gap analysis...")
+        
+        try:
+            # Use very small sample for extremely large datasets
+            sample_size = min(5000, len(df) // 100)  # Sample 1% or 5k rows, whichever is smaller
+            sample_df = df.sample(n=sample_size, random_state=42)
+            
+            # Find datetime column
+            datetime_col = None
+            for col in sample_df.columns:
+                if any(keyword in col.lower() for keyword in ['date', 'time', 'datetime', 'timestamp']):
+                    datetime_col = col
+                    break
+            
+            if datetime_col and pd.api.types.is_datetime64_any_dtype(sample_df[datetime_col]):
+                # Sort by datetime
+                sample_df = sample_df.sort_values(datetime_col)
+                
+                # Calculate time differences
+                time_diffs = sample_df[datetime_col].diff().dropna()
+                
+                if not time_diffs.empty:
+                    # Find gaps (unusual time differences)
+                    mean_diff = time_diffs.mean()
+                    std_diff = time_diffs.std()
+                    threshold = mean_diff + 2 * std_diff
+                    
+                    gaps = time_diffs[time_diffs > threshold]
+                    if not gaps.empty:
+                        print(f"    {Fore.YELLOW}Gaps detected in {datetime_col} (sampled data){Style.RESET_ALL}: {len(gaps)} gaps")
+                        print(f"      Largest gap: {gaps.max()}")
+                        print(f"      Note: Analysis based on {sample_size:,} sample rows")
+                        
+                        gap_summary.append({
+                            'column': datetime_col,
+                            'gaps_count': len(gaps),
+                            'largest_gap': str(gaps.max()),
+                            'method': 'aggressive_sampling',
+                            'sample_size': sample_size
+                        })
+                    else:
+                        print(f"    {Fore.GREEN}No significant gaps detected in sample{Style.RESET_ALL}")
+                        print(f"      Note: Analysis based on {sample_size:,} sample rows")
+                else:
+                    print(f"    {Fore.YELLOW}Insufficient data for gap analysis{Style.RESET_ALL}")
+            else:
+                print(f"    {Fore.YELLOW}No suitable datetime column found for gap analysis{Style.RESET_ALL}")
+                
+        except Exception as e:
+            print(f"    ⚠️  Error in gap analysis: {e}")
+            print(f"    Skipping gap check due to error")
+            return
     
     # For large datasets, use sampling
     elif memory_mb > max_memory_mb * 0.5:
@@ -613,7 +662,7 @@ def negative_check(df, negative_summary, Fore, Style):
     max_memory_mb = settings['max_memory_mb']
     
     # For very large datasets, use sampling
-    if memory_mb > max_memory_mb * 1.0:
+    if memory_mb > max_memory_mb * 1.5:  # Increased from 1.0 to 1.5
         print(f"    📊 Large dataset detected ({memory_mb}MB), using sampling for negative value detection...")
         
         try:
@@ -623,6 +672,15 @@ def negative_check(df, negative_summary, Fore, Style):
             
             for col in sample_df.columns:
                 if pd.api.types.is_numeric_dtype(sample_df[col]):
+                    # Skip pressure_vector as it can legitimately be negative
+                    if col.lower() == 'pressure_vector':
+                        n_negatives_sample = (sample_df[col] < 0).sum()
+                        if n_negatives_sample > 0:
+                            estimated_negatives = int((n_negatives_sample / sample_size) * len(df))
+                            estimated_percent = 100 * estimated_negatives / len(df)
+                            print(f"    {Fore.CYAN}{col}{Style.RESET_ALL}: ~{estimated_negatives} negatives ({estimated_percent:.2f}%) [expected for pressure_vector]")
+                        continue
+                    
                     n_negatives_sample = (sample_df[col] < 0).sum()
                     if n_negatives_sample > 0:
                         # Estimate total negative values
@@ -650,6 +708,10 @@ def negative_check(df, negative_summary, Fore, Style):
             chunk_negative_summary = []
             for col in chunk.columns:
                 if pd.api.types.is_numeric_dtype(chunk[col]):
+                    # Skip pressure_vector as it can legitimately be negative
+                    if col.lower() == 'pressure_vector':
+                        continue
+                    
                     n_negatives = (chunk[col] < 0).sum()
                     if n_negatives > 0:
                         percent = 100 * n_negatives / len(chunk)
@@ -690,6 +752,14 @@ def negative_check(df, negative_summary, Fore, Style):
         # Process normally for smaller DataFrames
         for col in df.columns:
             if pd.api.types.is_numeric_dtype(df[col]):
+                # Skip pressure_vector as it can legitimately be negative
+                if col.lower() == 'pressure_vector':
+                    n_negatives = (df[col] < 0).sum()
+                    if n_negatives > 0:
+                        percent = 100 * n_negatives / len(df)
+                        print(f"    {Fore.CYAN}{col}{Style.RESET_ALL}: {n_negatives} negatives ({percent:.2f}%) [expected for pressure_vector]")
+                    continue
+                
                 n_negatives = (df[col] < 0).sum()
                 if n_negatives > 0:
                     percent = 100 * n_negatives / len(df)
