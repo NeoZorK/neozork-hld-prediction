@@ -17,6 +17,25 @@ from tqdm import tqdm
 import sys
 import os
 
+# Import colorama for data quality checks
+try:
+    from colorama import Fore, Style
+except ImportError:
+    # Fallback classes if colorama is not available
+    class Fore:
+        MAGENTA = ""
+        YELLOW = ""
+        RED = ""
+        GREEN = ""
+        CYAN = ""
+        BLUE = ""
+        RESET = ""
+    
+    class Style:
+        BRIGHT = ""
+        RESET = ""
+        RESET_ALL = ""
+
 if TYPE_CHECKING:
     from .core import InteractiveSystem
 
@@ -405,28 +424,13 @@ class AnalysisRunner:
             print("🔍 Running comprehensive data quality checks...")
             print("-" * 50)
             
-            # Create simple color classes for compatibility
-            class SimpleFore:
-                MAGENTA = ""
-                YELLOW = ""
-                RED = ""
-                GREEN = ""
-                CYAN = ""
-                BLUE = ""
-                RESET = ""
-            
-            class SimpleStyle:
-                BRIGHT = ""
-                RESET = ""
-                RESET_ALL = ""
-            
             # Run all data quality checks with memory optimization
-            data_quality.nan_check(system.current_data, nan_summary, SimpleFore(), SimpleStyle())
-            data_quality.duplicate_check(system.current_data, dupe_summary, SimpleFore(), SimpleStyle())
-            data_quality.gap_check(system.current_data, gap_summary, SimpleFore(), SimpleStyle())
-            data_quality.zero_check(system.current_data, zero_summary, SimpleFore(), SimpleStyle())
-            data_quality.negative_check(system.current_data, negative_summary, SimpleFore(), SimpleStyle())
-            data_quality.inf_check(system.current_data, inf_summary, SimpleFore(), SimpleStyle())
+            data_quality.nan_check(system.current_data, nan_summary, Fore, Style)
+            data_quality.duplicate_check(system.current_data, dupe_summary, Fore, Style)
+            data_quality.gap_check(system.current_data, gap_summary, Fore, Style)
+            data_quality.zero_check(system.current_data, zero_summary, Fore, Style)
+            data_quality.negative_check(system.current_data, negative_summary, Fore, Style)
+            data_quality.inf_check(system.current_data, inf_summary, Fore, Style)
             
             # Check if DateTime columns exist and are being used
             datetime_cols = []
@@ -735,12 +739,12 @@ class AnalysisRunner:
                                     inf_summary = []
                                     
                                     # Re-run all quality checks
-                                    data_quality.nan_check(system.current_data, nan_summary, SimpleFore(), SimpleStyle())
-                                    data_quality.duplicate_check(system.current_data, dupe_summary, SimpleFore(), SimpleStyle())
-                                    data_quality.gap_check(system.current_data, gap_summary, SimpleFore(), SimpleStyle())
-                                    data_quality.zero_check(system.current_data, zero_summary, SimpleFore(), SimpleStyle())
-                                    data_quality.negative_check(system.current_data, negative_summary, SimpleFore(), SimpleStyle())
-                                    data_quality.inf_check(system.current_data, inf_summary, SimpleFore(), SimpleStyle())
+                                    data_quality.nan_check(system.current_data, nan_summary, Fore, Style)
+                                    data_quality.duplicate_check(system.current_data, dupe_summary, Fore, Style)
+                                    data_quality.gap_check(system.current_data, gap_summary, Fore, Style)
+                                    data_quality.zero_check(system.current_data, zero_summary, Fore, Style)
+                                    data_quality.negative_check(system.current_data, negative_summary, Fore, Style)
+                                    data_quality.inf_check(system.current_data, inf_summary, Fore, Style)
                                     
                                     # Apply fixes for remaining issues
                                     if nan_summary:
