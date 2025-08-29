@@ -1,7 +1,8 @@
-# Handles data quality checks
+# Handles data quality checks with aggressive memory optimization
 import gc
 import os
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
+import warnings
 
 def _estimate_memory_usage(df) -> int:
     """Estimate memory usage of DataFrame in MB."""
@@ -9,13 +10,13 @@ def _estimate_memory_usage(df) -> int:
         memory_usage = df.memory_usage(deep=True).sum()
         memory_mb = int(memory_usage / (1024 * 1024))  # Convert to MB
         return max(1, memory_mb)  # Ensure at least 1MB
-    except:
-        # Fallback estimation - more accurate for different data types
+    except Exception:
+        # Conservative fallback estimation
         total_bytes = 0
         for col in df.columns:
             if df[col].dtype == 'object':
-                # String columns: estimate 50 bytes per value
-                total_bytes += df[col].shape[0] * 50
+                # String columns: estimate 32 bytes per value
+                total_bytes += df[col].shape[0] * 32
             elif df[col].dtype in ['int64', 'float64']:
                 # Numeric columns: 8 bytes per value
                 total_bytes += df[col].shape[0] * 8
@@ -34,12 +35,21 @@ def _check_memory_available(max_memory_mb: int = 1024) -> bool:
     try:
         import psutil
         available_memory = psutil.virtual_memory().available / (1024 * 1024)  # MB
-        return available_memory > max_memory_mb * 0.5  # Keep 50% buffer
+        return available_memory > max_memory_mb * 0.3  # Keep 30% buffer
     except ImportError:
         # If psutil not available, assume we're OK
         return True
 
-def _process_large_dataframe_in_chunks(df, operation_func, chunk_size: int = 10000, max_memory_mb: int = 1024):
+def _get_memory_settings() -> Dict[str, int]:
+    """Get memory optimization settings from environment."""
+    return {
+        'max_memory_mb': int(os.environ.get('MAX_MEMORY_MB', '1024')),
+        'chunk_size': int(os.environ.get('CHUNK_SIZE', '25000')),
+        'sample_size': int(os.environ.get('SAMPLE_SIZE', '10000')),
+        'enable_memory_optimization': os.environ.get('ENABLE_MEMORY_OPTIMIZATION', 'true').lower() == 'true'
+    }
+
+def _process_large_dataframe_in_chunks(df, operation_func, chunk_size: int = 25000, max_memory_mb: int = 1024):
     """Process large DataFrame in chunks to manage memory usage."""
     total_rows = len(df)
     
@@ -64,7 +74,7 @@ def _process_large_dataframe_in_chunks(df, operation_func, chunk_size: int = 100
             processed_rows = end_idx
             
             # Show progress for very large datasets
-            if total_rows > 100000 and processed_rows % (chunk_size * 10) == 0:
+            if total_rows > 100000 and processed_rows % (chunk_size * 5) == 0:
                 progress = (processed_rows / total_rows) * 100
                 print(f"    📈 Progress: {progress:.1f}% ({processed_rows:,}/{total_rows:,} rows)")
                 
@@ -99,33 +109,67 @@ def _process_large_dataframe_in_chunks(df, operation_func, chunk_size: int = 100
                     else:
                         combined[key] = value
             return combined
-        elif isinstance(results[0], (int, float)):
-            # Sum numeric results
-            return sum(results)
+        elif isinstance(results[0], list):
+            # Combine lists
+            combined = []
+            for result in results:
+                combined.extend(result)
+            return combined
         else:
-            # Return list of results
+            # For other types, return the list
             return results
     
     return None
 
 def nan_check(df, nan_summary, Fore, Style):
     """
-    Performs NaN check: for each column, print count and percent of NaNs, and show example rows with NaN.
-    Also, collect summary info in nan_summary list.
+    Performs NaN check with aggressive memory optimization for large datasets.
     """
     print(f"  {Fore.MAGENTA}Data Quality Check: Missing values (NaN){Style.RESET_ALL}")
     
-    # Check if DataFrame is too large for direct processing
+    # Get memory settings
+    settings = _get_memory_settings()
     memory_mb = _estimate_memory_usage(df)
-    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '1024'))
+    max_memory_mb = settings['max_memory_mb']
+    
+    # For extremely large datasets, use aggressive sampling
+    if memory_mb > max_memory_mb * 2.0:
+        print(f"    📊 Extremely large dataset detected ({memory_mb}MB), using aggressive sampling...")
+        
+        try:
+            # Use very small sample for extremely large datasets
+            sample_size = min(5000, len(df) // 50)  # Sample 2% or 5k rows, whichever is smaller
+            sample_df = df.sample(n=sample_size, random_state=42)
+            
+            for col in sample_df.columns:
+                n_missing_sample = sample_df[col].isna().sum()
+                if n_missing_sample > 0:
+                    # Estimate total missing values
+                    estimated_missing = int((n_missing_sample / sample_size) * len(df))
+                    estimated_percent = 100 * estimated_missing / len(df)
+                    
+                    print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: ~{estimated_missing} missing ({estimated_percent:.2f}%) [estimated from sample]")
+                    
+                    nan_summary.append({
+                        'column': col,
+                        'missing': estimated_missing,
+                        'percent': estimated_percent,
+                        'method': 'aggressive_sampling'
+                    })
+            return
+            
+        except Exception as e:
+            print(f"    ⚠️  Error in aggressive sampling: {e}")
+            print(f"    Skipping NaN check for extremely large dataset")
+            return
     
     # For very large datasets, use sampling approach
-    if memory_mb > max_memory_mb * 1.0:
+    elif memory_mb > max_memory_mb * 1.0:
         print(f"    📊 Very large dataset detected ({memory_mb}MB), using sampling approach...")
         
         try:
             # Use sampling for very large datasets
-            sample_size = min(25000, len(df) // 20)  # Sample 5% or 25k rows, whichever is smaller
+            sample_size = min(settings['sample_size'], len(df) // 20)  # Sample 5% or sample_size rows
             sample_df = df.sample(n=sample_size, random_state=42)
             
             for col in sample_df.columns:
@@ -147,9 +191,10 @@ def nan_check(df, nan_summary, Fore, Style):
             
         except Exception as e:
             print(f"    ⚠️  Error in sampling approach: {e}")
-            print(f"    Falling back to chunked processing...")
-            # Fall back to chunked processing instead of skipping
+            print(f"    Skipping NaN check for very large dataset")
+            return
     
+    # For large datasets, use chunked processing
     elif memory_mb > max_memory_mb * 0.5:
         print(f"    📊 Large dataset detected ({memory_mb}MB), using chunked processing...")
         
@@ -166,8 +211,8 @@ def nan_check(df, nan_summary, Fore, Style):
                     })
             return chunk_nan_summary
         
-        # Process in chunks with smaller chunk size for very large datasets
-        chunk_size = min(10000, int(os.environ.get('CHUNK_SIZE', '100000')))
+        # Process in chunks with smaller chunk size for large datasets
+        chunk_size = min(settings['chunk_size'], 10000)
         chunk_results = _process_large_dataframe_in_chunks(df, process_nan_chunk, chunk_size=chunk_size)
         
         if chunk_results:
@@ -185,16 +230,6 @@ def nan_check(df, nan_summary, Fore, Style):
             for col, info in column_nan_counts.items():
                 percent = 100 * info['missing'] / len(df)
                 print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {info['missing']} missing ({percent:.2f}%)")
-                
-                # Skip showing example rows for very large datasets to save memory
-                if memory_mb < max_memory_mb * 1.0 and len(nan_summary) < 2:
-                    try:
-                        nan_rows = df[df[col].isna()].head(2)
-                        if not nan_rows.empty:
-                            print(f"      Example rows with NaN in {col}:")
-                            print(nan_rows.to_string())
-                    except Exception as e:
-                        print(f"      Could not display example rows: {e}")
                 
                 nan_summary.append({
                     'column': col,
@@ -228,20 +263,22 @@ def nan_check(df, nan_summary, Fore, Style):
 
 def duplicate_check(df, dupe_summary, Fore, Style):
     """
-    Performs duplicate check: print count and examples of fully duplicated rows, and check string columns for duplicated values.
-    Also, collect summary info in dupe_summary list.
+    Performs duplicate check with aggressive memory optimization for large datasets.
     """
-    # Check if DataFrame is too large for direct processing
-    memory_mb = _estimate_memory_usage(df)
-    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '1024'))
+    print(f"  {Fore.MAGENTA}Data Quality Check: Duplicates{Style.RESET_ALL}")
     
-    # For very large datasets, use sampling approach
-    if memory_mb > max_memory_mb * 1.0:
-        print(f"    📊 Very large dataset detected ({memory_mb}MB), using sampling for duplicate detection...")
+    # Get memory settings
+    settings = _get_memory_settings()
+    memory_mb = _estimate_memory_usage(df)
+    max_memory_mb = settings['max_memory_mb']
+    
+    # For extremely large datasets, use aggressive sampling
+    if memory_mb > max_memory_mb * 2.0:
+        print(f"    📊 Extremely large dataset detected ({memory_mb}MB), using aggressive sampling for duplicate detection...")
         
         try:
-            # Use sampling for very large datasets
-            sample_size = min(25000, len(df) // 20)  # Sample 5% or 25k rows, whichever is smaller
+            # Use very small sample for extremely large datasets
+            sample_size = min(5000, len(df) // 50)  # Sample 2% or 5k rows
             sample_df = df.sample(n=sample_size, random_state=42)
             
             # Check for duplicates in sample
@@ -249,489 +286,520 @@ def duplicate_check(df, dupe_summary, Fore, Style):
             if n_dupes_sample > 0:
                 # Estimate total duplicates
                 estimated_dupes = int((n_dupes_sample / sample_size) * len(df))
-                print(f"  {Fore.MAGENTA}Data Quality Check: Duplicates{Style.RESET_ALL}")
-                print(f"    {Fore.YELLOW}Estimated fully duplicated rows:{Style.RESET_ALL} ~{estimated_dupes} [from sample]")
+                estimated_percent = 100 * estimated_dupes / len(df)
                 
-                dupe_summary.append({'type': 'full_row', 'count': estimated_dupes, 'method': 'sampling'})
+                print(f"    {Fore.YELLOW}Estimated fully duplicated rows{Style.RESET_ALL}: ~{estimated_dupes} ({estimated_percent:.2f}%) [from sample]")
+                
+                dupe_summary.append({
+                    'type': 'full_duplicates',
+                    'count': estimated_dupes,
+                    'percent': estimated_percent,
+                    'method': 'aggressive_sampling'
+                })
             else:
-                print(f"  {Fore.MAGENTA}No duplicated rows found in sample.{Style.RESET_ALL}")
+                print(f"    {Fore.GREEN}No duplicates detected in sample{Style.RESET_ALL}")
+                
+        except Exception as e:
+            print(f"    ⚠️  Error in aggressive sampling: {e}")
+            print(f"    Skipping duplicate check for extremely large dataset")
+            return
+    
+    # For very large datasets, use sampling approach
+    elif memory_mb > max_memory_mb * 1.0:
+        print(f"    📊 Very large dataset detected ({memory_mb}MB), using sampling for duplicate detection...")
+        
+        try:
+            # Use sampling for very large datasets
+            sample_size = min(settings['sample_size'], len(df) // 20)  # Sample 5% or sample_size rows
+            sample_df = df.sample(n=sample_size, random_state=42)
+            
+            # Check for duplicates in sample
+            n_dupes_sample = sample_df.duplicated().sum()
+            if n_dupes_sample > 0:
+                # Estimate total duplicates
+                estimated_dupes = int((n_dupes_sample / sample_size) * len(df))
+                estimated_percent = 100 * estimated_dupes / len(df)
+                
+                print(f"    {Fore.YELLOW}Estimated fully duplicated rows{Style.RESET_ALL}: ~{estimated_dupes} ({estimated_percent:.2f}%) [from sample]")
+                
+                dupe_summary.append({
+                    'type': 'full_duplicates',
+                    'count': estimated_dupes,
+                    'percent': estimated_percent,
+                    'method': 'sampling'
+                })
+            else:
+                print(f"    {Fore.GREEN}No duplicates detected in sample{Style.RESET_ALL}")
                 
         except Exception as e:
             print(f"    ⚠️  Error in sampling approach: {e}")
             print(f"    Skipping duplicate check for very large dataset")
             return
     
+    # For large datasets, use chunked processing
     elif memory_mb > max_memory_mb * 0.5:
-        print(f"    📊 Large dataset detected ({memory_mb}MB), using optimized duplicate detection...")
+        print(f"    📊 Large dataset detected ({memory_mb}MB), using chunked processing for duplicate detection...")
         
-        # For large DataFrames, use more memory-efficient duplicate detection
-        try:
-            # Use hash-based duplicate detection for large DataFrames
-            df_hash = df.apply(lambda x: hash(tuple(x)), axis=1)
-            n_dupes = df_hash.duplicated().sum()
-            
-            if n_dupes > 0:
-                print(f"  {Fore.MAGENTA}Data Quality Check: Duplicates{Style.RESET_ALL}")
-                print(f"    {Fore.YELLOW}Total fully duplicated rows:{Style.RESET_ALL} {n_dupes}")
+        def process_dupe_chunk(chunk):
+            n_dupes = chunk.duplicated().sum()
+            return {'duplicates': n_dupes}
+        
+        # Process in chunks
+        chunk_size = min(settings['chunk_size'], 10000)
+        chunk_results = _process_large_dataframe_in_chunks(df, process_dupe_chunk, chunk_size=chunk_size)
+        
+        if chunk_results:
+            total_dupes = sum(result['duplicates'] for result in chunk_results)
+            if total_dupes > 0:
+                percent = 100 * total_dupes / len(df)
+                print(f"    {Fore.YELLOW}Total duplicated rows{Style.RESET_ALL}: {total_dupes} ({percent:.2f}%)")
                 
-                # Show only a few example rows to save memory
-                try:
-                    duplicate_indices = df_hash[df_hash.duplicated()].index[:2]
-                    example_dupes = df.loc[duplicate_indices]
-                    print(f"    {Fore.YELLOW}Example duplicated rows:{Style.RESET_ALL}")
-                    print(example_dupes.to_string())
-                except Exception as e:
-                    print(f"    Could not display example rows: {e}")
-                
-                dupe_summary.append({'type': 'full_row', 'count': n_dupes, 'method': 'hash_based'})
+                dupe_summary.append({
+                    'type': 'full_duplicates',
+                    'count': total_dupes,
+                    'percent': percent,
+                    'method': 'chunked'
+                })
             else:
-                print(f"  {Fore.MAGENTA}No fully duplicated rows found.{Style.RESET_ALL}")
-                
-        except Exception as e:
-            print(f"    ⚠️  Error in duplicate detection: {e}")
-            print(f"    Skipping duplicate check for large dataset")
-            return
+                print(f"    {Fore.GREEN}No duplicates detected{Style.RESET_ALL}")
     else:
         # Process normally for smaller DataFrames
         n_dupes = df.duplicated().sum()
         if n_dupes > 0:
-            print(f"  {Fore.MAGENTA}Data Quality Check: Duplicates{Style.RESET_ALL}")
-            print(f"    {Fore.YELLOW}Total fully duplicated rows:{Style.RESET_ALL} {n_dupes}")
-            print(f"    {Fore.YELLOW}Example duplicated rows:{Style.RESET_ALL}")
-            print(df[df.duplicated()].head(3).to_string())
-            dupe_summary.append({'type': 'full_row', 'count': n_dupes, 'method': 'direct'})
-        else:
-            print(f"  {Fore.MAGENTA}No fully duplicated rows found.{Style.RESET_ALL}")
-    
-    # Check string columns for duplicated values (only for smaller datasets)
-    if memory_mb <= max_memory_mb * 0.3:  # Only for smaller datasets
-        # Define columns that are expected to have duplicated values (metadata columns)
-        expected_duplicate_cols = [
-            'source_file', 'filename', 'file_name', 'file', 'source', 
-            'dataset', 'data_source', 'table', 'partition', 'batch',
-            'date', 'time', 'datetime', 'timestamp', 'period', 'interval'
-        ]
-        
-        string_cols = [col for col in df.columns if df[col].dtype == 'object' or str(df[col].dtype).startswith('string')]
-        for col in string_cols:
-            # Skip columns that are expected to have duplicated values
-            if any(expected_name in col.lower() for expected_name in expected_duplicate_cols):
-                continue
-                
+            percent = 100 * n_dupes / len(df)
+            print(f"    {Fore.YELLOW}Fully duplicated rows{Style.RESET_ALL}: {n_dupes} ({percent:.2f}%)")
+            
+            # Show example duplicates
             try:
-                dupe_vals = df[col][df[col].duplicated(keep=False)]
-                if not dupe_vals.empty:
-                    n_col_dupes = dupe_vals.duplicated().sum()
-                    print(f"    {Fore.YELLOW}Column '{col}' has {n_col_dupes} duplicated values.{Style.RESET_ALL}")
-                    print(f"      Example duplicated values in '{col}': {dupe_vals.unique()[:5]}")
-                    dupe_summary.append({'type': 'column', 'column': col, 'count': n_col_dupes, 'examples': dupe_vals.unique()[:5]})
+                dupes = df[df.duplicated()].head(3)
+                print(f"      Example duplicated rows:")
+                print(dupes.to_string())
             except Exception as e:
-                print(f"    ⚠️  Error checking duplicates in column '{col}': {e}")
-                continue
+                print(f"      Could not display example duplicates: {e}")
+            
+            dupe_summary.append({
+                'type': 'full_duplicates',
+                'count': n_dupes,
+                'percent': percent,
+                'method': 'direct'
+            })
+        else:
+            print(f"    {Fore.GREEN}No duplicates detected{Style.RESET_ALL}")
 
-def gap_check(df, gap_summary, Fore, Style, datetime_col=None, freq=None, schema_datetime_fields=None, file_name=None):
+def gap_check(df, gap_summary, Fore, Style):
     """
-    Checks for gaps in a datetime column: finds abnormally large time intervals between consecutive records.
-    If datetime_col is None, tries to auto-detect the first datetime column by dtype, name, or schema info.
-    freq can be set to expected frequency (e.g. '1H', '1D') for more precise gap detection.
-    Adds info to gap_summary.
+    Performs gap check with aggressive memory optimization for large datasets.
     """
-    import pandas as pd
+    print(f"  {Fore.MAGENTA}Data Quality Check: Gaps{Style.RESET_ALL}")
     
-    # Check if DataFrame is too large for gap analysis
+    # Get memory settings
+    settings = _get_memory_settings()
     memory_mb = _estimate_memory_usage(df)
-    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '2048'))
+    max_memory_mb = settings['max_memory_mb']
     
-    if memory_mb > max_memory_mb * 0.7:
+    # For very large datasets, skip gap analysis to save memory
+    if memory_mb > max_memory_mb * 1.0:
         print(f"    📊 Large dataset detected ({memory_mb}MB), skipping gap analysis to save memory...")
         print(f"    ⚠️  Gap Check: Skipped for large dataset to prevent memory issues")
         return
     
-    dt_col = None
-    # 1. Try explicit argument
-    if datetime_col and datetime_col in df.columns:
-        dt_col = datetime_col
-    # 2. Try dtype
-    if not dt_col:
-        for col in df.columns:
-            if pd.api.types.is_datetime64_any_dtype(df[col]):
-                dt_col = col
-                break
-    # 3. Try name
-    if not dt_col:
-        for col in df.columns:
-            if any(name in col.lower() for name in ["date", "time", "datetime", "timestamp"]):
-                try:
-                    if not pd.api.types.is_datetime64_any_dtype(df[col]):
-                        df[col] = pd.to_datetime(df[col], errors='coerce')
-                    if pd.api.types.is_datetime64_any_dtype(df[col]):
-                        dt_col = col
-                        break
-                except Exception:
-                    continue
-    # 4. Try schema info (case-insensitive match, partial match, try convert from int/float)
-    if not dt_col and schema_datetime_fields:
-        found_in_schema = False
-        for schema_col in schema_datetime_fields:
-            schema_col_norm = schema_col.lower().replace('_', '')
-            for col in df.columns:
-                col_norm = col.lower().replace('_', '')
-                if col_norm == schema_col_norm:
-                    found_in_schema = True
-                    try:
-                        if not pd.api.types.is_datetime64_any_dtype(df[col]):
-                            if pd.api.types.is_integer_dtype(df[col]) or pd.api.types.is_float_dtype(df[col]):
-                                try:
-                                    df[col] = pd.to_datetime(df[col], unit='s', errors='coerce')
-                                except Exception:
-                                    df[col] = pd.to_datetime(df[col], unit='ms', errors='coerce')
-                            else:
-                                df[col] = pd.to_datetime(df[col], errors='coerce')
-                        if pd.api.types.is_datetime64_any_dtype(df[col]):
-                            dt_col = col
-                            break
-                    except Exception:
-                        continue
-            if dt_col:
-                break
-        # Partial match if exact not found
-        if not dt_col:
-            for schema_col in schema_datetime_fields:
-                schema_col_norm = schema_col.lower().replace('_', '')
-                for col in df.columns:
-                    col_norm = col.lower().replace('_', '')
-                    if schema_col_norm in col_norm or col_norm in schema_col_norm:
-                        print(f"  {Fore.YELLOW}Gap Check: Using partial match for datetime column: '{col}' ~ '{schema_col}'{Style.RESET_ALL}")
-                        try:
-                            if not pd.api.types.is_datetime64_any_dtype(df[col]):
-                                df[col] = pd.to_datetime(df[col], errors='coerce')
-                            if pd.api.types.is_datetime64_any_dtype(df[col]):
-                                dt_col = col
-                                break
-                        except Exception:
-                            continue
-                if dt_col:
+    # For large datasets, use sampling
+    elif memory_mb > max_memory_mb * 0.5:
+        print(f"    📊 Large dataset detected ({memory_mb}MB), using sampling for gap analysis...")
+        
+        try:
+            # Use sampling for large datasets
+            sample_size = min(settings['sample_size'], len(df) // 10)  # Sample 10% or sample_size rows
+            sample_df = df.sample(n=sample_size, random_state=42)
+            
+            # Find datetime column
+            datetime_col = None
+            for col in sample_df.columns:
+                if any(keyword in col.lower() for keyword in ['date', 'time', 'datetime', 'timestamp']):
+                    datetime_col = col
                     break
-        if not found_in_schema:
-            print(f"  {Fore.YELLOW}Gap Check: Columns from schema {schema_datetime_fields} not found in DataFrame columns {list(df.columns)}{Style.RESET_ALL}")
-    # 5. Try index if still not found
-    if not dt_col:
-        if pd.api.types.is_datetime64_any_dtype(df.index):
-            dt_col = None  # special marker: use index
-            print(f"  {Fore.YELLOW}Gap Check: Using DataFrame index as datetime column.{Style.RESET_ALL}")
-        else:
-            print(f"  {Fore.MAGENTA}Gap Check: No datetime-like column or index found (by dtype, name, or schema, tried columns: {list(df.columns)}, schema: {schema_datetime_fields}){Style.RESET_ALL}")
-            return
-    # Ensure sorted by datetime
-    if dt_col is not None:
-        df_sorted = df.sort_values(dt_col)
-        datetimes = df_sorted[dt_col]
-        use_iloc = True
-    else:
-        df_sorted = df.sort_index()
-        datetimes = df_sorted.index
-        use_iloc = False
-    # Fix datetime column if needed
-    time_deltas = datetimes.diff().dropna()
-    if freq is not None:
-        expected = pd.to_timedelta(freq)
-        gaps = time_deltas[time_deltas > expected]
-    else:
-        expected = time_deltas.median()
-        gaps = time_deltas[time_deltas > expected * 2]
-    if not gaps.empty:
-        print(f"  {Fore.MAGENTA}Gap Check: Found {len(gaps)} gaps in '{dt_col if dt_col else 'index'}' (interval > {expected * 2}){Style.RESET_ALL}")
-        # Transform gaps to timedelta for better readability
-        import pandas as pd
-        gaps_series = pd.Series(gaps)
-        for i, (idx, delta) in enumerate(gaps_series.items()):
-            # idx is the index in datetimes where the gap is detected
-            try:
-                if use_iloc:
-                    # For non-datetime index - use iloc to get the previous and current elements
-                    curr_pos = datetimes.index.get_loc(idx)
-                    prev_time = datetimes.iloc[curr_pos - 1]
-                    curr_time = datetimes.iloc[curr_pos]
-                    # Calculate the real difference again
-                    delta = curr_time - prev_time
-                else:
-                    # For datetime index - use the index directly
-                    # The index is already sorted, so we can use it directly
-
-                    # Check if idx is a valid index in datetimes
-                    if isinstance(idx, (int, float)) and pd.api.types.is_datetime64_dtype(datetimes):
-                        # If idx is an integer, convert it to the corresponding datetime
-                        if idx >= 0 and idx < len(datetimes):
-                            curr_pos = int(idx)
-                            prev_pos = max(0, curr_pos - 1)
-                            if curr_pos > prev_pos:  # Not the first element
-                                prev_time = datetimes[prev_pos]
-                                curr_time = datetimes[curr_pos]
-                                # Calculate the real difference again
-                                delta = curr_time - prev_time
-                            else:
-                                # If this is the first element, take it twice
-                                prev_time = datetimes[0]
-                                curr_time = datetimes[0]
-                                delta = pd.Timedelta(0)
-                        else:
-                            raise ValueError(f"Index position {idx} out of bounds for DatetimeIndex of size {len(datetimes)}")
-                    elif idx in datetimes:
-                        curr_pos = datetimes.get_loc(idx)
-                        # Get the previous and current elements
-                        if curr_pos > 0:
-                            prev_time = datetimes[curr_pos - 1]
-                            curr_time = datetimes[curr_pos]
-                            # Get the real difference again
-                            delta = curr_time - prev_time
-                        else:
-                            # If this is the first element, take it twice
-                            prev_time = datetimes[0]
-                            curr_time = datetimes[0]
-                            delta = pd.Timedelta(0)
+            
+            if datetime_col and pd.api.types.is_datetime64_any_dtype(sample_df[datetime_col]):
+                # Sort by datetime
+                sample_df = sample_df.sort_values(datetime_col)
+                
+                # Calculate time differences
+                time_diffs = sample_df[datetime_col].diff().dropna()
+                
+                if not time_diffs.empty:
+                    # Find gaps (unusual time differences)
+                    mean_diff = time_diffs.mean()
+                    std_diff = time_diffs.std()
+                    threshold = mean_diff + 2 * std_diff
+                    
+                    gaps = time_diffs[time_diffs > threshold]
+                    if not gaps.empty:
+                        print(f"    {Fore.YELLOW}Gaps detected in {datetime_col}{Style.RESET_ALL}: {len(gaps)} gaps")
+                        print(f"      Largest gap: {gaps.max()}")
+                        
+                        gap_summary.append({
+                            'column': datetime_col,
+                            'gaps_count': len(gaps),
+                            'largest_gap': str(gaps.max()),
+                            'method': 'sampling'
+                        })
                     else:
-                        # Search for the nearest index
-
-                        # Check if idx is a valid index in datetimes
-                        try:
-                            if pd.api.types.is_datetime64_dtype(datetimes) and not pd.api.types.is_datetime64_dtype(pd.Index([idx])):
-                                # Transform idx to datetime
-                                idx = pd.to_datetime(idx)
-                        except Exception:
-                            # If idx is not a valid datetime, try to convert it to a timestamp
-                            if isinstance(idx, (int, float)) and idx >= 0 and idx < len(datetimes):
-                                curr_pos = int(idx)
-                                prev_pos = max(0, curr_pos - 1)
-                                prev_time = datetimes[prev_pos]
-                                curr_time = datetimes[curr_pos]
-                                # Calculate the real difference again
-                                delta = curr_time - prev_time if curr_pos > prev_pos else pd.Timedelta(0)
-                                if i < 5:
-                                    print(f"    Gap from {prev_time} to {curr_time}: {delta}")
-                                gap_summary.append({'file': file_name, 'column': dt_col if dt_col else 'index', 'from': prev_time, 'to': curr_time, 'delta': delta})
-                                continue
-
-                        # Try to find the nearest index
-                        try:
-                            nearest_pos = datetimes.get_indexer([idx], method='nearest')[0]
-                            if nearest_pos >= 0:
-                                curr_pos = nearest_pos
-                                prev_pos = max(0, curr_pos - 1)
-                                prev_time = datetimes[prev_pos]
-                                curr_time = datetimes[curr_pos]
-                                # Calculate the real difference again
-                                delta = curr_time - prev_time if curr_pos > prev_pos else pd.Timedelta(0)
-                            else:
-                                # If the nearest position is negative, it means the index is not found
-                                raise ValueError(f"Index {idx} not found in datetime index and no nearest match")
-                        except Exception as e:
-                            # If the nearest position is negative, it means the index is not found
-                            if isinstance(idx, (int, float)):
-                                idx_pos = min(max(0, int(idx)), len(datetimes) - 1)
-                                prev_pos = max(0, idx_pos - 1)
-                                prev_time = datetimes[prev_pos]
-                                curr_time = datetimes[idx_pos]
-                                # Calculate the real difference again
-                                delta = curr_time - prev_time if idx_pos > prev_pos else pd.Timedelta(0)
-                            else:
-                                raise ValueError(f"Cannot process index {idx} of type {type(idx)} with datetime index")
-
-                if i < 5:
-                    print(f"    Gap from {prev_time} to {curr_time}: {delta}")
-                gap_summary.append({'file': file_name, 'column': dt_col if dt_col else 'index', 'from': prev_time, 'to': curr_time, 'delta': delta})
-            except Exception as e:
-                print(f"    {Fore.RED}Error processing gap at index {idx} (type {type(idx)}): {e}{Style.RESET_ALL}")
+                        print(f"    {Fore.GREEN}No significant gaps detected{Style.RESET_ALL}")
+                else:
+                    print(f"    {Fore.YELLOW}Insufficient data for gap analysis{Style.RESET_ALL}")
+            else:
+                print(f"    {Fore.YELLOW}No suitable datetime column found for gap analysis{Style.RESET_ALL}")
+                
+        except Exception as e:
+            print(f"    ⚠️  Error in gap analysis: {e}")
+            print(f"    Skipping gap check for large dataset")
+            return
     else:
-        print(f"  {Fore.MAGENTA}Gap Check: No significant gaps found in '{dt_col if dt_col else 'index'}'.{Style.RESET_ALL}")
+        # Process normally for smaller DataFrames
+        try:
+            # Find datetime column
+            datetime_col = None
+            for col in df.columns:
+                if any(keyword in col.lower() for keyword in ['date', 'time', 'datetime', 'timestamp']):
+                    datetime_col = col
+                    break
+            
+            if datetime_col and pd.api.types.is_datetime64_any_dtype(df[datetime_col]):
+                # Sort by datetime
+                df_sorted = df.sort_values(datetime_col)
+                
+                # Calculate time differences
+                time_diffs = df_sorted[datetime_col].diff().dropna()
+                
+                if not time_diffs.empty:
+                    # Find gaps (unusual time differences)
+                    mean_diff = time_diffs.mean()
+                    std_diff = time_diffs.std()
+                    threshold = mean_diff + 2 * std_diff
+                    
+                    gaps = time_diffs[time_diffs > threshold]
+                    if not gaps.empty:
+                        print(f"    {Fore.YELLOW}Gaps detected in {datetime_col}{Style.RESET_ALL}: {len(gaps)} gaps")
+                        print(f"      Largest gap: {gaps.max()}")
+                        
+                        gap_summary.append({
+                            'column': datetime_col,
+                            'gaps_count': len(gaps),
+                            'largest_gap': str(gaps.max()),
+                            'method': 'direct'
+                        })
+                    else:
+                        print(f"    {Fore.GREEN}No significant gaps detected{Style.RESET_ALL}")
+                else:
+                    print(f"    {Fore.YELLOW}Insufficient data for gap analysis{Style.RESET_ALL}")
+            else:
+                print(f"    {Fore.YELLOW}No suitable datetime column found for gap analysis{Style.RESET_ALL}")
+                
+        except Exception as e:
+            print(f"    ⚠️  Error in gap analysis: {e}")
 
-def zero_check(df, zero_summary, Fore, Style, file_name=None):
+def zero_check(df, zero_summary, Fore, Style):
     """
-    Checks for zero values in numeric columns. Prints columns with zeros and their counts.
-    Marks columns where zeros are likely normal (e.g., volume) or likely anomalous (e.g., price).
-    Adds info to zero_summary.
+    Performs zero value check with aggressive memory optimization for large datasets.
     """
-    import numpy as np
+    print(f"  {Fore.MAGENTA}Data Quality Check: Zero Values{Style.RESET_ALL}")
     
-    # Check if DataFrame is too large for zero analysis
+    # Get memory settings
+    settings = _get_memory_settings()
     memory_mb = _estimate_memory_usage(df)
-    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '2048'))
+    max_memory_mb = settings['max_memory_mb']
     
-    if memory_mb > max_memory_mb * 0.8:
+    # For very large datasets, use sampling
+    if memory_mb > max_memory_mb * 1.0:
         print(f"    📊 Large dataset detected ({memory_mb}MB), using optimized zero value detection...")
         
-        # For large DataFrames, use more memory-efficient zero detection
         try:
-            numeric_cols = df.select_dtypes(include=[np.number]).columns
-            for col in numeric_cols:
-                # Use more memory-efficient method for large DataFrames
-                try:
-                    # Sample the column to estimate zero count
-                    sample_size = min(10000, len(df))
-                    sample = df[col].sample(n=sample_size, random_state=42)
-                    sample_zeros = (sample == 0).sum()
-                    estimated_zeros = int((sample_zeros / sample_size) * len(df))
-                    
-                    if estimated_zeros > 0:
-                        # Heuristic: columns with 'volume' or 'qty' in name are likely to allow zeros
-                        col_lower = col.lower()
-                        if any(key in col_lower for key in ['volume', 'qty', 'amount']):
-                            note = f"{Fore.GREEN}OK (likely normal){Style.RESET_ALL}"
-                            anomaly = False
-                        elif any(key in col_lower for key in ['price', 'close', 'open', 'high', 'low']):
-                            note = f"{Fore.RED}ANOMALY? (check!){Style.RESET_ALL}"
-                            anomaly = True
-                        else:
-                            note = f"{Fore.YELLOW}Check meaning{Style.RESET_ALL}"
-                            anomaly = None
-                        print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: ~{estimated_zeros} zeros (estimated). {note}")
-                        zero_summary.append({'column': col, 'zeros': estimated_zeros, 'anomaly': anomaly, 'df': df, 'file': file_name})
-                        
-                except Exception as e:
-                    print(f"    ⚠️  Error checking zeros in column '{col}': {e}")
-                    continue
-                    
-        except Exception as e:
-            print(f"    ⚠️  Error in zero value detection: {e}")
-            print(f"    Skipping zero check for large dataset")
-            return
-    else:
-        # Process normally for smaller DataFrames
-        print(f"  {Fore.MAGENTA}Data Quality Check: Zero values (0){Style.RESET_ALL}")
-        numeric_cols = df.select_dtypes(include=[np.number]).columns
-        for col in numeric_cols:
-            n_zeros = (df[col] == 0).sum()
-            if n_zeros > 0:
-                # Heuristic: columns with 'volume' or 'qty' in name are likely to allow zeros
-                col_lower = col.lower()
-                if any(key in col_lower for key in ['volume', 'qty', 'amount']):
-                    note = f"{Fore.GREEN}OK (likely normal){Style.RESET_ALL}"
-                    anomaly = False
-                elif any(key in col_lower for key in ['price', 'close', 'open', 'high', 'low']):
-                    note = f"{Fore.RED}ANOMALY? (check!){Style.RESET_ALL}"
-                    anomaly = True
-                else:
-                    note = f"{Fore.YELLOW}Check meaning{Style.RESET_ALL}"
-                    anomaly = None
-                print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {n_zeros} zeros. {note}")
-                zero_summary.append({'column': col, 'zeros': n_zeros, 'anomaly': anomaly, 'df': df, 'file': file_name})
-
-def negative_check(df, negative_summary, Fore, Style, file_name=None):
-    """
-    Checks for negative values in OHLCV and datetime columns. Prints columns with negatives and their counts.
-    Shows example rows with negative values (index and row number).
-    Adds info to negative_summary.
-    """
-    import numpy as np
-    import pandas as pd
-    
-    # Check if DataFrame is too large for negative analysis
-    memory_mb = _estimate_memory_usage(df)
-    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '2048'))
-    
-    if memory_mb > max_memory_mb * 0.8:
-        print(f"    📊 Large dataset detected ({memory_mb}MB), using optimized negative value detection...")
-        
-        # For large DataFrames, use more memory-efficient negative detection
-        try:
-            # Define relevant columns by name
-            ohlcv_keys = ['open', 'high', 'low', 'close', 'volume', 'amount', 'qty']
-            # Numeric columns with OHLCV-like names
-            numeric_cols = df.select_dtypes(include=[np.number]).columns
-            check_cols = [col for col in numeric_cols if any(key in col.lower() for key in ohlcv_keys)]
+            # Use sampling for very large datasets
+            sample_size = min(settings['sample_size'], len(df) // 20)  # Sample 5% or sample_size rows
+            sample_df = df.sample(n=sample_size, random_state=42)
             
-            for col in check_cols:
-                try:
-                    # Sample the column to estimate negative count
-                    sample_size = min(10000, len(df))
-                    sample = df[col].sample(n=sample_size, random_state=42)
-                    sample_neg = (sample < 0).sum()
-                    estimated_neg = int((sample_neg / sample_size) * len(df))
-                    
-                    if estimated_neg > 0:
-                        print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: ~{estimated_neg} negative values (estimated). {Fore.RED}ANOMALY!{Style.RESET_ALL}")
-                        negative_summary.append({'column': col, 'negatives': estimated_neg, 'df': df, 'file': file_name})
+            for col in sample_df.columns:
+                if pd.api.types.is_numeric_dtype(sample_df[col]):
+                    n_zeros_sample = (sample_df[col] == 0).sum()
+                    if n_zeros_sample > 0:
+                        # Estimate total zero values
+                        estimated_zeros = int((n_zeros_sample / sample_size) * len(df))
+                        estimated_percent = 100 * estimated_zeros / len(df)
                         
-                except Exception as e:
-                    print(f"    ⚠️  Error checking negatives in column '{col}': {e}")
-                    continue
-                    
+                        print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: ~{estimated_zeros} zeros ({estimated_percent:.2f}%) [estimated from sample]")
+                        
+                        zero_summary.append({
+                            'column': col,
+                            'zeros': estimated_zeros,
+                            'percent': estimated_percent,
+                            'method': 'sampling'
+                        })
+                        
         except Exception as e:
-            print(f"    ⚠️  Error in negative value detection: {e}")
-            print(f"    Skipping negative check for large dataset")
+            print(f"    ⚠️  Error in zero value check: {e}")
             return
-    else:
-        # Process normally for smaller DataFrames
-        print(f"  {Fore.MAGENTA}Data Quality Check: Negative values{Style.RESET_ALL}")
-        # Define relevant columns by name
-        ohlcv_keys = ['open', 'high', 'low', 'close', 'volume', 'amount', 'qty']
-        # Numeric columns with OHLCV-like names
-        numeric_cols = df.select_dtypes(include=[np.number]).columns
-        check_cols = [col for col in numeric_cols if any(key in col.lower() for key in ohlcv_keys)]
-        # Add datetime columns (as int/float)
-        datetime_cols = [col for col in df.columns if pd.api.types.is_datetime64_any_dtype(df[col])]
-        for col in check_cols:
-            n_neg = (df[col] < 0).sum()
-            if n_neg > 0:
-                print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {n_neg} negative values. {Fore.RED}ANOMALY!{Style.RESET_ALL}")
-                negative_summary.append({'column': col, 'negatives': n_neg, 'df': df, 'file': file_name})
-        for col in datetime_cols:
-            # Check if any datetime values are negative (as timestamp)
-            # Convert to int64 (nanoseconds since epoch)
-            negatives = df[col].dropna().astype('int64') < 0
-            n_neg = negatives.sum()
-            if n_neg > 0:
-                print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {n_neg} negative datetime values. {Fore.RED}ANOMALY!{Style.RESET_ALL}")
-                negative_summary.append({'column': col, 'negatives': n_neg, 'df': df, 'file': file_name, 'is_datetime': True})
-
-def inf_check(df, inf_summary, Fore, Style, file_name=None):
-    """
-    Checks for -inf and +inf values in numeric columns. Prints columns with infs and their counts.
-    Adds info to inf_summary.
-    """
-    import numpy as np
     
-    # Check if DataFrame is too large for infinity analysis
-    memory_mb = _estimate_memory_usage(df)
-    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '2048'))
-    
-    if memory_mb > max_memory_mb * 0.8:
-        print(f"    📊 Large dataset detected ({memory_mb}MB), using optimized infinity value detection...")
+    # For large datasets, use chunked processing
+    elif memory_mb > max_memory_mb * 0.5:
+        print(f"    📊 Large dataset detected ({memory_mb}MB), using chunked processing for zero values...")
         
-        # For large DataFrames, use more memory-efficient infinity detection
-        try:
-            numeric_cols = df.select_dtypes(include=[np.number]).columns
-            for col in numeric_cols:
-                try:
-                    # Sample the column to estimate infinity count
-                    sample_size = min(10000, len(df))
-                    sample = df[col].sample(n=sample_size, random_state=42)
-                    sample_posinf = (sample == np.inf).sum()
-                    sample_neginf = (sample == -np.inf).sum()
-                    estimated_posinf = int((sample_posinf / sample_size) * len(df))
-                    estimated_neginf = int((sample_neginf / sample_size) * len(df))
-                    
-                    if estimated_posinf > 0 or estimated_neginf > 0:
-                        print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: +inf: ~{estimated_posinf}, -inf: ~{estimated_neginf} (estimated)")
-                        inf_summary.append({'column': col, 'posinf': estimated_posinf, 'neginf': estimated_neginf, 'df': df, 'file': file_name})
-                        
-                except Exception as e:
-                    print(f"    ⚠️  Error checking infinity values in column '{col}': {e}")
-                    continue
-                    
-        except Exception as e:
-            print(f"    ⚠️  Error in infinity value detection: {e}")
-            print(f"    Skipping infinity check for large dataset")
-            return
+        def process_zero_chunk(chunk):
+            chunk_zero_summary = []
+            for col in chunk.columns:
+                if pd.api.types.is_numeric_dtype(chunk[col]):
+                    n_zeros = (chunk[col] == 0).sum()
+                    if n_zeros > 0:
+                        percent = 100 * n_zeros / len(chunk)
+                        chunk_zero_summary.append({
+                            'column': col,
+                            'zeros': n_zeros,
+                            'percent': percent
+                        })
+            return chunk_zero_summary
+        
+        # Process in chunks
+        chunk_size = min(settings['chunk_size'], 10000)
+        chunk_results = _process_large_dataframe_in_chunks(df, process_zero_chunk, chunk_size=chunk_size)
+        
+        if chunk_results:
+            # Aggregate results from chunks
+            column_zero_counts = {}
+            for chunk_result in chunk_results:
+                for item in chunk_result:
+                    col = item['column']
+                    if col in column_zero_counts:
+                        column_zero_counts[col]['zeros'] += item['zeros']
+                    else:
+                        column_zero_counts[col] = item.copy()
+            
+            # Calculate percentages and display results
+            for col, info in column_zero_counts.items():
+                percent = 100 * info['zeros'] / len(df)
+                print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {info['zeros']} zeros ({percent:.2f}%)")
+                
+                zero_summary.append({
+                    'column': col,
+                    'zeros': info['zeros'],
+                    'percent': percent,
+                    'method': 'chunked'
+                })
     else:
         # Process normally for smaller DataFrames
-        print(f"  {Fore.MAGENTA}Data Quality Check: Inf values (+inf, -inf){Style.RESET_ALL}")
-        numeric_cols = df.select_dtypes(include=[np.number]).columns
-        for col in numeric_cols:
-            n_posinf = (df[col] == np.inf).sum()
-            n_neginf = (df[col] == -np.inf).sum()
-            if n_posinf > 0 or n_neginf > 0:
-                print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: +inf: {n_posinf}, -inf: {n_neginf}")
-                inf_summary.append({'column': col, 'posinf': n_posinf, 'neginf': n_neginf, 'df': df, 'file': file_name})
+        for col in df.columns:
+            if pd.api.types.is_numeric_dtype(df[col]):
+                n_zeros = (df[col] == 0).sum()
+                if n_zeros > 0:
+                    percent = 100 * n_zeros / len(df)
+                    print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {n_zeros} zeros ({percent:.2f}%)")
+                    
+                    zero_summary.append({
+                        'column': col,
+                        'zeros': n_zeros,
+                        'percent': percent,
+                        'method': 'direct'
+                    })
+
+def negative_check(df, negative_summary, Fore, Style):
+    """
+    Performs negative value check with aggressive memory optimization for large datasets.
+    """
+    print(f"  {Fore.MAGENTA}Data Quality Check: Negative Values{Style.RESET_ALL}")
+    
+    # Get memory settings
+    settings = _get_memory_settings()
+    memory_mb = _estimate_memory_usage(df)
+    max_memory_mb = settings['max_memory_mb']
+    
+    # For very large datasets, use sampling
+    if memory_mb > max_memory_mb * 1.0:
+        print(f"    📊 Large dataset detected ({memory_mb}MB), using sampling for negative value detection...")
+        
+        try:
+            # Use sampling for very large datasets
+            sample_size = min(settings['sample_size'], len(df) // 20)  # Sample 5% or sample_size rows
+            sample_df = df.sample(n=sample_size, random_state=42)
+            
+            for col in sample_df.columns:
+                if pd.api.types.is_numeric_dtype(sample_df[col]):
+                    n_negatives_sample = (sample_df[col] < 0).sum()
+                    if n_negatives_sample > 0:
+                        # Estimate total negative values
+                        estimated_negatives = int((n_negatives_sample / sample_size) * len(df))
+                        estimated_percent = 100 * estimated_negatives / len(df)
+                        
+                        print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: ~{estimated_negatives} negatives ({estimated_percent:.2f}%) [estimated from sample]")
+                        
+                        negative_summary.append({
+                            'column': col,
+                            'negatives': estimated_negatives,
+                            'percent': estimated_percent,
+                            'method': 'sampling'
+                        })
+                        
+        except Exception as e:
+            print(f"    ⚠️  Error in negative value check: {e}")
+            return
+    
+    # For large datasets, use chunked processing
+    elif memory_mb > max_memory_mb * 0.5:
+        print(f"    📊 Large dataset detected ({memory_mb}MB), using chunked processing for negative values...")
+        
+        def process_negative_chunk(chunk):
+            chunk_negative_summary = []
+            for col in chunk.columns:
+                if pd.api.types.is_numeric_dtype(chunk[col]):
+                    n_negatives = (chunk[col] < 0).sum()
+                    if n_negatives > 0:
+                        percent = 100 * n_negatives / len(chunk)
+                        chunk_negative_summary.append({
+                            'column': col,
+                            'negatives': n_negatives,
+                            'percent': percent
+                        })
+            return chunk_negative_summary
+        
+        # Process in chunks
+        chunk_size = min(settings['chunk_size'], 10000)
+        chunk_results = _process_large_dataframe_in_chunks(df, process_negative_chunk, chunk_size=chunk_size)
+        
+        if chunk_results:
+            # Aggregate results from chunks
+            column_negative_counts = {}
+            for chunk_result in chunk_results:
+                for item in chunk_result:
+                    col = item['column']
+                    if col in column_negative_counts:
+                        column_negative_counts[col]['negatives'] += item['negatives']
+                    else:
+                        column_negative_counts[col] = item.copy()
+            
+            # Calculate percentages and display results
+            for col, info in column_negative_counts.items():
+                percent = 100 * info['negatives'] / len(df)
+                print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {info['negatives']} negatives ({percent:.2f}%)")
+                
+                negative_summary.append({
+                    'column': col,
+                    'negatives': info['negatives'],
+                    'percent': percent,
+                    'method': 'chunked'
+                })
+    else:
+        # Process normally for smaller DataFrames
+        for col in df.columns:
+            if pd.api.types.is_numeric_dtype(df[col]):
+                n_negatives = (df[col] < 0).sum()
+                if n_negatives > 0:
+                    percent = 100 * n_negatives / len(df)
+                    print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {n_negatives} negatives ({percent:.2f}%)")
+                    
+                    negative_summary.append({
+                        'column': col,
+                        'negatives': n_negatives,
+                        'percent': percent,
+                        'method': 'direct'
+                    })
+
+def inf_check(df, inf_summary, Fore, Style):
+    """
+    Performs infinite value check with aggressive memory optimization for large datasets.
+    """
+    print(f"  {Fore.MAGENTA}Data Quality Check: Infinite Values{Style.RESET_ALL}")
+    
+    # Get memory settings
+    settings = _get_memory_settings()
+    memory_mb = _estimate_memory_usage(df)
+    max_memory_mb = settings['max_memory_mb']
+    
+    # For very large datasets, use sampling
+    if memory_mb > max_memory_mb * 1.0:
+        print(f"    📊 Large dataset detected ({memory_mb}MB), using sampling for infinite value detection...")
+        
+        try:
+            # Use sampling for very large datasets
+            sample_size = min(settings['sample_size'], len(df) // 20)  # Sample 5% or sample_size rows
+            sample_df = df.sample(n=sample_size, random_state=42)
+            
+            for col in sample_df.columns:
+                if pd.api.types.is_numeric_dtype(sample_df[col]):
+                    n_infs_sample = np.isinf(sample_df[col]).sum()
+                    if n_infs_sample > 0:
+                        # Estimate total infinite values
+                        estimated_infs = int((n_infs_sample / sample_size) * len(df))
+                        estimated_percent = 100 * estimated_infs / len(df)
+                        
+                        print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: ~{estimated_infs} infinite values ({estimated_percent:.2f}%) [estimated from sample]")
+                        
+                        inf_summary.append({
+                            'column': col,
+                            'infs': estimated_infs,
+                            'percent': estimated_percent,
+                            'method': 'sampling'
+                        })
+                        
+        except Exception as e:
+            print(f"    ⚠️  Error in infinite value check: {e}")
+            return
+    
+    # For large datasets, use chunked processing
+    elif memory_mb > max_memory_mb * 0.5:
+        print(f"    📊 Large dataset detected ({memory_mb}MB), using chunked processing for infinite values...")
+        
+        def process_inf_chunk(chunk):
+            chunk_inf_summary = []
+            for col in chunk.columns:
+                if pd.api.types.is_numeric_dtype(chunk[col]):
+                    n_infs = np.isinf(chunk[col]).sum()
+                    if n_infs > 0:
+                        percent = 100 * n_infs / len(chunk)
+                        chunk_inf_summary.append({
+                            'column': col,
+                            'infs': n_infs,
+                            'percent': percent
+                        })
+            return chunk_inf_summary
+        
+        # Process in chunks
+        chunk_size = min(settings['chunk_size'], 10000)
+        chunk_results = _process_large_dataframe_in_chunks(df, process_inf_chunk, chunk_size=chunk_size)
+        
+        if chunk_results:
+            # Aggregate results from chunks
+            column_inf_counts = {}
+            for chunk_result in chunk_results:
+                for item in chunk_result:
+                    col = item['column']
+                    if col in column_inf_counts:
+                        column_inf_counts[col]['infs'] += item['infs']
+                    else:
+                        column_inf_counts[col] = item.copy()
+            
+            # Calculate percentages and display results
+            for col, info in column_inf_counts.items():
+                percent = 100 * info['infs'] / len(df)
+                print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {info['infs']} infinite values ({percent:.2f}%)")
+                
+                inf_summary.append({
+                    'column': col,
+                    'infs': info['infs'],
+                    'percent': percent,
+                    'method': 'chunked'
+                })
+    else:
+        # Process normally for smaller DataFrames
+        for col in df.columns:
+            if pd.api.types.is_numeric_dtype(df[col]):
+                n_infs = np.isinf(df[col]).sum()
+                if n_infs > 0:
+                    percent = 100 * n_infs / len(df)
+                    print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {n_infs} infinite values ({percent:.2f}%)")
+                    
+                    inf_summary.append({
+                        'column': col,
+                        'infs': n_infs,
+                        'percent': percent,
+                        'method': 'direct'
+                    })
 
 def data_quality_checks(df, nan_summary, dupe_summary, gap_summary, Fore, Style, schema_datetime_fields=None, file_name=None, zero_summary=None, negative_summary=None, inf_summary=None):
     nan_check(df, nan_summary, Fore, Style)
@@ -762,10 +830,8 @@ def print_duplicate_summary(dupe_summary, Fore, Style):
     if dupe_summary:
         print(f"\n{Fore.MAGENTA}Duplicate Summary for all files:{Style.RESET_ALL}")
         for entry in dupe_summary:
-            if entry['type'] == 'full_row':
-                print(f"  {Fore.YELLOW}Fully duplicated rows:{Style.RESET_ALL} {entry['count']}")
-            elif entry['type'] == 'column':
-                print(f"  {Fore.YELLOW}Column '{entry['column']}' duplicated values:{Style.RESET_ALL} {entry['count']}, examples: {entry['examples']}")
+            if entry['type'] == 'full_duplicates':
+                print(f"  {Fore.YELLOW}Fully duplicated rows:{Style.RESET_ALL} {entry['count']} ({entry['percent']:.2f}%)")
     else:
         print(f"\n{Fore.MAGENTA}Duplicate Summary for all files: No duplicates found.{Style.RESET_ALL}")
 

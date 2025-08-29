@@ -32,15 +32,22 @@ services:
     tty: true
     # Use the entrypoint script instead of direct commands
     entrypoint: ["/app/docker-entrypoint.sh"]
-    # Memory and resource limits
+    # Memory and resource limits - Increased for large dataset processing
     deploy:
       resources:
         limits:
-          memory: 6G
-          cpus: '2.0'
+          memory: 8G
+          cpus: '4.0'
         reservations:
-          memory: 2G
-          cpus: '0.5'
+          memory: 4G
+          cpus: '1.0'
+    # Health check to monitor container status
+    healthcheck:
+      test: ["CMD", "python", "-c", "import psutil; print('Memory:', psutil.virtual_memory().percent, '%')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   uv_cache:
