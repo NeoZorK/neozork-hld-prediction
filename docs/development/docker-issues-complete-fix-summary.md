@@ -20,13 +20,14 @@ This document provides a comprehensive summary of all fixes applied to resolve i
 
 ### 2. ✅ Gap Fixing Issue
 
-**Problem**: Gaps in time series data were detected but not properly fixed in Docker.
+**Problem**: Gaps in time series data were detected but not properly fixed in Docker, especially when there were NaN values in datetime columns.
 
-**Solution**: Enhanced gap fixing functionality with better error handling and interpolation.
+**Solution**: Enhanced gap fixing functionality with better error handling, interpolation, and NaN handling.
 
 **Files Modified**:
-- `src/eda/fix_files.py` - Enhanced gap fixing functionality
+- `src/eda/fix_files.py` - Enhanced gap fixing functionality with NaN handling
 - `tests/interactive/test_gap_fixing_issue.py` - Added comprehensive test suite
+- `tests/interactive/test_gap_fixing_with_nan.py` - Added NaN handling test suite
 - `scripts/docker/test_docker_gap_fixing.sh` - Added Docker test script
 
 ## Technical Details
@@ -232,6 +233,7 @@ docker-compose exec neozork-hld bash -c 'echo -e "1\n1\nsample_ohlcv_with_issues
 ### Tests
 - `tests/interactive/test_docker_eof_fix.py` - EOF fix test suite
 - `tests/interactive/test_gap_fixing_issue.py` - Gap fixing test suite
+- `tests/interactive/test_gap_fixing_with_nan.py` - Gap fixing with NaN test suite
 
 ### Scripts
 - `scripts/docker/test_docker_eof_fix.sh` - EOF fix Docker test
@@ -241,6 +243,7 @@ docker-compose exec neozork-hld bash -c 'echo -e "1\n1\nsample_ohlcv_with_issues
 ### Documentation
 - `docs/development/docker-eof-fix-summary.md` - EOF fix documentation
 - `docs/development/docker-gap-fixing-fix-summary.md` - Gap fixing documentation
+- `docs/development/gap-fixing-nan-handling-fix.md` - Gap fixing with NaN documentation
 - `docs/development/docker-eof-fix-quick-summary.md` - Quick EOF fix summary
 
 ## Impact Summary

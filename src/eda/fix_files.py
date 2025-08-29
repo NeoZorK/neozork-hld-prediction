@@ -188,11 +188,24 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
                 print(f"Warning: Could not convert '{dt_col}' to datetime: {e}")
                 return df
 
+        # Remove rows with NaN in datetime column for frequency analysis
+        original_count = len(df)
+        df_clean = df.dropna(subset=[dt_col])
+        clean_count = len(df_clean)
+        skipped_count = original_count - clean_count
+        
+        if df_clean.empty:
+            print(f"Warning: No valid datetime values found in '{dt_col}', skipping gap fixing")
+            return df
+        
+        if skipped_count > 0:
+            print(f"Note: Skipped {skipped_count} rows with NaN values in '{dt_col}' for gap analysis")
+        
         # Sort by datetime column
-        df = df.sort_values(dt_col)
+        df_clean = df_clean.sort_values(dt_col)
 
         # Get unique frequencies in the data
-        time_diffs = df[dt_col].diff().dropna()
+        time_diffs = df_clean[dt_col].diff().dropna()
         if time_diffs.empty:
             print("No time differences found, cannot determine frequency")
             return df
@@ -212,8 +225,8 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
             most_common_freq = median_freq
 
         # Reindex with the most common frequency
-        start_time = df[dt_col].min()
-        end_time = df[dt_col].max()
+        start_time = df_clean[dt_col].min()
+        end_time = df_clean[dt_col].max()
         
         # Ensure start and end times are valid
         if pd.isna(start_time) or pd.isna(end_time):
@@ -259,7 +272,7 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
                 merged_df[col] = merged_df[col].interpolate(method='linear')
 
         print(f"Fixed gaps in '{dt_col}' by reindexing with frequency {most_common_freq}")
-        print(f"Original row count: {len(df)}, New row count: {len(merged_df)}")
+        print(f"Original row count: {len(df)}, Clean data rows: {len(df_clean)}, New row count: {len(merged_df)}")
 
         return merged_df
 
