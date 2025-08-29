@@ -220,9 +220,21 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
             print("Warning: Invalid start or end time, skipping gap fixing")
             return df
 
+        # Check if the gap is too large (more than 30 days)
+        total_duration = end_time - start_time
+        if total_duration > pd.Timedelta(days=30):
+            print(f"Warning: Very large time range detected ({total_duration}), this may take a long time to process")
+            print("Consider using a smaller time range or different frequency")
+        
         # Create a new index with regular frequency
         try:
             new_index = pd.date_range(start=start_time, end=end_time, freq=most_common_freq)
+            
+            # Check if the resulting index is too large
+            if len(new_index) > 1000000:  # More than 1 million rows
+                print(f"Warning: Very large index created ({len(new_index)} rows), this may cause memory issues")
+                print("Consider using a larger frequency or smaller time range")
+                
         except Exception as e:
             print(f"Warning: Could not create date range with frequency {most_common_freq}: {e}")
             print("Skipping gap fixing")
@@ -230,7 +242,21 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
 
         # Create a new DataFrame with the regular index and merge with original data
         temp_df = pd.DataFrame({dt_col: new_index})
-        merged_df = pd.merge_asof(temp_df, df, on=dt_col, direction='nearest')
+        
+        # Use merge_asof for better handling of large gaps
+        try:
+            merged_df = pd.merge_asof(temp_df, df, on=dt_col, direction='nearest')
+        except Exception as e:
+            print(f"Warning: merge_asof failed, using regular merge: {e}")
+            # Fallback to regular merge
+            merged_df = pd.merge(temp_df, df, on=dt_col, how='left')
+        
+        # Interpolate missing values for numeric columns
+        numeric_cols = merged_df.select_dtypes(include=[np.number]).columns
+        for col in numeric_cols:
+            if col != dt_col:  # Skip datetime column
+                # Use linear interpolation instead of time-weighted
+                merged_df[col] = merged_df[col].interpolate(method='linear')
 
         print(f"Fixed gaps in '{dt_col}' by reindexing with frequency {most_common_freq}")
         print(f"Original row count: {len(df)}, New row count: {len(merged_df)}")
@@ -270,9 +296,21 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
             print("Warning: Invalid start or end time, skipping gap fixing")
             return df
 
+        # Check if the gap is too large (more than 30 days)
+        total_duration = end_time - start_time
+        if total_duration > pd.Timedelta(days=30):
+            print(f"Warning: Very large time range detected ({total_duration}), this may take a long time to process")
+            print("Consider using a smaller time range or different frequency")
+        
         # Create a new index with regular frequency
         try:
             new_index = pd.date_range(start=start_time, end=end_time, freq=most_common_freq)
+            
+            # Check if the resulting index is too large
+            if len(new_index) > 1000000:  # More than 1 million rows
+                print(f"Warning: Very large index created ({len(new_index)} rows), this may cause memory issues")
+                print("Consider using a larger frequency or smaller time range")
+                
         except Exception as e:
             print(f"Warning: Could not create date range with frequency {most_common_freq}: {e}")
             print("Skipping gap fixing")
