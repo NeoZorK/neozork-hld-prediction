@@ -715,6 +715,42 @@ class AnalysisRunner:
                                 print(f"   ⚠️  {inf_count} infinity values still remain")
                                 remaining_issues += 1
                             
+                            # Check for remaining gaps in time series
+                            gap_issues = 0
+                            datetime_cols = []
+                            for col in system.current_data.columns:
+                                if pd.api.types.is_datetime64_any_dtype(system.current_data[col]):
+                                    datetime_cols.append(col)
+                            
+                            for datetime_col in datetime_cols:
+                                try:
+                                    # Sort by datetime
+                                    df_sorted = system.current_data.sort_values(datetime_col)
+                                    
+                                    # Calculate time differences
+                                    time_diffs = df_sorted[datetime_col].diff().dropna()
+                                    
+                                    if not time_diffs.empty:
+                                        # Find gaps (unusual time differences)
+                                        mean_diff = time_diffs.mean()
+                                        std_diff = time_diffs.std()
+                                        threshold = mean_diff + 2 * std_diff
+                                        
+                                        gaps = time_diffs[time_diffs > threshold]
+                                        if not gaps.empty:
+                                            print(f"   ⚠️  {len(gaps)} gaps still remain in {datetime_col}")
+                                            gap_issues += 1
+                                        else:
+                                            print(f"   ✅ No gaps remain in {datetime_col}")
+                                    else:
+                                        print(f"   ⚠️  Insufficient data for gap analysis in {datetime_col}")
+                                        gap_issues += 1
+                                except Exception as e:
+                                    print(f"   ⚠️  Error checking gaps in {datetime_col}: {e}")
+                                    gap_issues += 1
+                            
+                            remaining_issues += gap_issues
+                            
                             # Check for remaining zero values in problematic columns
                             zero_issues = 0
                             for col in system.current_data.select_dtypes(include=[np.number]).columns:
@@ -800,6 +836,34 @@ class AnalysisRunner:
                                                 system.current_data = system.current_data.drop_duplicates(keep='first')
                                                 print(f"   🔄 Removed {initial_dupes} new duplicate rows created by infinity fixing")
                                             print(f"   ✅ Infinity values fixed. Data shape: {system.current_data.shape}")
+                                    
+                                    if gap_summary:
+                                        print("   • Fixing remaining gaps...")
+                                        try:
+                                            # Find datetime column
+                                            datetime_col = None
+                                            for col in system.current_data.columns:
+                                                if pd.api.types.is_datetime64_any_dtype(system.current_data[col]):
+                                                    datetime_col = col
+                                                    break
+                                            fixed_data = fix_files.fix_gaps(system.current_data, gap_summary, datetime_col)
+                                            if fixed_data is not None:
+                                                system.current_data = fixed_data
+                                                # Remove any new duplicates created by gap fixing
+                                                initial_dupes = system.current_data.duplicated().sum()
+                                                if initial_dupes > 0:
+                                                    system.current_data = system.current_data.drop_duplicates(keep='first')
+                                                    final_dupes = system.current_data.duplicated().sum()
+                                                    removed_dupes = initial_dupes - final_dupes
+                                                    if removed_dupes > 0:
+                                                        print(f"   🔄 Removed {removed_dupes} new duplicate rows created by gap fixing")
+                                                print(f"   ✅ Gaps fixed. Data shape: {system.current_data.shape}")
+                                            else:
+                                                print("   ⚠️  Gap fixing returned None, skipping...")
+                                        except Exception as e:
+                                            print(f"   ❌ Error fixing gaps: {e}")
+                                            import traceback
+                                            traceback.print_exc()
                                     
                                     # Final duplicate removal
                                     final_dupe_check = system.current_data.duplicated().sum()
