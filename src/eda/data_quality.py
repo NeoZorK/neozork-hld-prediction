@@ -217,7 +217,7 @@ def nan_check(df, nan_summary, Fore, Style):
         chunk_size = min(settings['chunk_size'], 10000)
         chunk_results = _process_large_dataframe_in_chunks(df, process_nan_chunk, chunk_size=chunk_size)
         
-        if chunk_results:
+        if chunk_results and isinstance(chunk_results, list):
             # Aggregate results from chunks
             column_nan_counts = {}
             for chunk_result in chunk_results:
@@ -350,8 +350,8 @@ def duplicate_check(df, dupe_summary, Fore, Style):
         chunk_size = min(settings['chunk_size'], 10000)
         chunk_results = _process_large_dataframe_in_chunks(df, process_dupe_chunk, chunk_size=chunk_size)
         
-        if chunk_results:
-            total_dupes = sum(result['duplicates'] for result in chunk_results)
+        if chunk_results and isinstance(chunk_results, dict):
+            total_dupes = chunk_results.get('duplicates', 0)
             if total_dupes > 0:
                 percent = 100 * total_dupes / len(df)
                 print(f"    {Fore.YELLOW}Total duplicated rows{Style.RESET_ALL}: {total_dupes} ({percent:.2f}%)")
@@ -563,7 +563,7 @@ def zero_check(df, zero_summary, Fore, Style):
         chunk_size = min(settings['chunk_size'], 10000)
         chunk_results = _process_large_dataframe_in_chunks(df, process_zero_chunk, chunk_size=chunk_size)
         
-        if chunk_results:
+        if chunk_results and isinstance(chunk_results, list):
             # Aggregate results from chunks
             column_zero_counts = {}
             for chunk_result in chunk_results:
@@ -664,7 +664,7 @@ def negative_check(df, negative_summary, Fore, Style):
         chunk_size = min(settings['chunk_size'], 10000)
         chunk_results = _process_large_dataframe_in_chunks(df, process_negative_chunk, chunk_size=chunk_size)
         
-        if chunk_results:
+        if chunk_results and isinstance(chunk_results, list):
             # Aggregate results from chunks
             column_negative_counts = {}
             for chunk_result in chunk_results:
@@ -765,7 +765,7 @@ def inf_check(df, inf_summary, Fore, Style):
         chunk_size = min(settings['chunk_size'], 10000)
         chunk_results = _process_large_dataframe_in_chunks(df, process_inf_chunk, chunk_size=chunk_size)
         
-        if chunk_results:
+        if chunk_results and isinstance(chunk_results, list):
             # Aggregate results from chunks
             column_inf_counts = {}
             for chunk_result in chunk_results:
