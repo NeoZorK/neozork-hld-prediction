@@ -200,13 +200,33 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
         # Find the most common frequency (mode of time differences)
         freq_counts = time_diffs.value_counts()
         most_common_freq = freq_counts.index[0]
+        
+        # Validate the frequency - it should be a valid timedelta
+        if pd.isna(most_common_freq) or most_common_freq == pd.Timedelta(0):
+            print(f"Warning: Invalid frequency detected ({most_common_freq}), using median frequency")
+            # Use median frequency instead
+            median_freq = time_diffs.median()
+            if pd.isna(median_freq) or median_freq == pd.Timedelta(0):
+                print("Warning: Cannot determine valid frequency, skipping gap fixing")
+                return df
+            most_common_freq = median_freq
 
         # Reindex with the most common frequency
         start_time = df[dt_col].min()
         end_time = df[dt_col].max()
+        
+        # Ensure start and end times are valid
+        if pd.isna(start_time) or pd.isna(end_time):
+            print("Warning: Invalid start or end time, skipping gap fixing")
+            return df
 
         # Create a new index with regular frequency
-        new_index = pd.date_range(start=start_time, end=end_time, freq=most_common_freq)
+        try:
+            new_index = pd.date_range(start=start_time, end=end_time, freq=most_common_freq)
+        except Exception as e:
+            print(f"Warning: Could not create date range with frequency {most_common_freq}: {e}")
+            print("Skipping gap fixing")
+            return df
 
         # Create a new DataFrame with the regular index and merge with original data
         temp_df = pd.DataFrame({dt_col: new_index})
@@ -230,13 +250,33 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
         # Find the most common frequency
         freq_counts = time_diffs.value_counts()
         most_common_freq = freq_counts.index[0]
+        
+        # Validate the frequency - it should be a valid timedelta
+        if pd.isna(most_common_freq) or most_common_freq == pd.Timedelta(0):
+            print(f"Warning: Invalid frequency detected ({most_common_freq}), using median frequency")
+            # Use median frequency instead
+            median_freq = time_diffs.median()
+            if pd.isna(median_freq) or median_freq == pd.Timedelta(0):
+                print("Warning: Cannot determine valid frequency, skipping gap fixing")
+                return df
+            most_common_freq = median_freq
 
         # Reindex with the most common frequency
         start_time = df.index.min()
         end_time = df.index.max()
+        
+        # Ensure start and end times are valid
+        if pd.isna(start_time) or pd.isna(end_time):
+            print("Warning: Invalid start or end time, skipping gap fixing")
+            return df
 
         # Create a new index with regular frequency
-        new_index = pd.date_range(start=start_time, end=end_time, freq=most_common_freq)
+        try:
+            new_index = pd.date_range(start=start_time, end=end_time, freq=most_common_freq)
+        except Exception as e:
+            print(f"Warning: Could not create date range with frequency {most_common_freq}: {e}")
+            print("Skipping gap fixing")
+            return df
 
         # Reindex and interpolate
         fixed_df = df.reindex(new_index).interpolate(method='time')
