@@ -379,10 +379,10 @@ class AnalysisRunner:
             
             # Check if DataFrame is too large for quality checks
             memory_mb = data_quality._estimate_memory_usage(system.current_data)
-            max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '1024'))
+            max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '512'))
             
             # For extremely large datasets, skip all checks to prevent OOM
-            if memory_mb > max_memory_mb * 3:
+            if memory_mb > max_memory_mb * 2:
                 print(f"📊 Extremely large dataset detected ({memory_mb}MB)")
                 print(f"⚠️  Skipping all quality checks to prevent memory issues...")
                 print(f"💡 Recommendations:")

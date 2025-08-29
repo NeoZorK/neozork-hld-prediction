@@ -29,7 +29,7 @@ def _estimate_memory_usage(df) -> int:
         fallback_mb = total_bytes // (1024 * 1024)
         return max(1, fallback_mb)  # Ensure at least 1MB
 
-def _check_memory_available(max_memory_mb: int = 2048) -> bool:
+def _check_memory_available(max_memory_mb: int = 512) -> bool:
     """Check if we have enough memory available."""
     try:
         import psutil
@@ -39,7 +39,7 @@ def _check_memory_available(max_memory_mb: int = 2048) -> bool:
         # If psutil not available, assume we're OK
         return True
 
-def _process_large_dataframe_in_chunks(df, operation_func, chunk_size: int = 100000, max_memory_mb: int = 2048):
+def _process_large_dataframe_in_chunks(df, operation_func, chunk_size: int = 5000, max_memory_mb: int = 512):
     """Process large DataFrame in chunks to manage memory usage."""
     total_rows = len(df)
     
@@ -108,16 +108,16 @@ def nan_check(df, nan_summary, Fore, Style):
     
     # Check if DataFrame is too large for direct processing
     memory_mb = _estimate_memory_usage(df)
-    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '2048'))
+    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '512'))
     
     # For extremely large datasets, skip the check entirely to prevent OOM
-    if memory_mb > max_memory_mb * 3:
+    if memory_mb > max_memory_mb * 2:
         print(f"    📊 Extremely large dataset detected ({memory_mb}MB), skipping NaN check to prevent memory issues...")
         print(f"    💡 Consider using a smaller dataset or increasing container memory")
         return
     
     # For very large datasets, use sampling approach
-    elif memory_mb > max_memory_mb * 1.5:
+    elif memory_mb > max_memory_mb * 1.0:
         print(f"    📊 Very large dataset detected ({memory_mb}MB), using sampling approach...")
         
         try:
@@ -230,16 +230,16 @@ def duplicate_check(df, dupe_summary, Fore, Style):
     """
     # Check if DataFrame is too large for direct processing
     memory_mb = _estimate_memory_usage(df)
-    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '2048'))
+    max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '512'))
     
     # For extremely large datasets, skip the check entirely to prevent OOM
-    if memory_mb > max_memory_mb * 3:
+    if memory_mb > max_memory_mb * 2:
         print(f"    📊 Extremely large dataset detected ({memory_mb}MB), skipping duplicate check to prevent memory issues...")
         print(f"    💡 Consider using a smaller dataset or increasing container memory")
         return
     
     # For very large datasets, use sampling approach
-    elif memory_mb > max_memory_mb * 1.5:
+    elif memory_mb > max_memory_mb * 1.0:
         print(f"    📊 Very large dataset detected ({memory_mb}MB), using sampling for duplicate detection...")
         
         try:
