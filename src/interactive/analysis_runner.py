@@ -379,10 +379,10 @@ class AnalysisRunner:
             
             # Check if DataFrame is too large for quality checks
             memory_mb = data_quality._estimate_memory_usage(system.current_data)
-            max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '1024'))
+            max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '4096'))  # Updated to match new settings
             
             # For very large datasets, warn but continue with processing
-            if memory_mb > max_memory_mb * 2:
+            if memory_mb > max_memory_mb * 3:  # Updated to match new thresholds
                 print(f"📊 Very large dataset detected ({memory_mb}MB)")
                 print(f"⚠️  This may take a while and use significant memory...")
                 print(f"💡 Processing will use chunked approach and sampling where needed")
@@ -642,9 +642,12 @@ class AnalysisRunner:
                             
                             # Note: We don't check for duplicated values in metadata columns as they are expected
                             
-                            # Check for remaining negative values in OHLCV columns
+                            # Check for remaining negative values in OHLCV columns (exclude pressure_vector)
                             ohlcv_cols = [col for col in system.current_data.columns if any(keyword in col.lower() for keyword in ['open', 'high', 'low', 'close', 'volume'])]
                             for col in ohlcv_cols:
+                                # Skip pressure_vector as it can legitimately be negative
+                                if col.lower() == 'pressure_vector':
+                                    continue
                                 if pd.api.types.is_numeric_dtype(system.current_data[col]):
                                     neg_count = (system.current_data[col] < 0).sum()
                                     if neg_count > 0:
