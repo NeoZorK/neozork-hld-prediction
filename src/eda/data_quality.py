@@ -32,22 +32,31 @@ def _process_large_dataframe_in_chunks(df, operation_func, chunk_size: int = 100
     
     # Large DataFrame, process in chunks
     results = []
+    processed_rows = 0
+    
     for start_idx in range(0, total_rows, chunk_size):
         end_idx = min(start_idx + chunk_size, total_rows)
         chunk = df.iloc[start_idx:end_idx]
         
         # Process chunk
-        chunk_result = operation_func(chunk)
-        results.append(chunk_result)
+        try:
+            chunk_result = operation_func(chunk)
+            results.append(chunk_result)
+            processed_rows = end_idx
+        except Exception as e:
+            print(f"⚠️  Error processing chunk at rows {start_idx}-{end_idx}: {e}")
+            # Continue with next chunk instead of failing completely
+            continue
+        finally:
+            # Memory management - always clean up
+            del chunk
+            gc.collect()
         
-        # Memory management
-        del chunk
-        gc.collect()
-        
-        # Check memory availability
-        if not _check_memory_available(max_memory_mb):
-            print(f"⚠️  Low memory detected during processing, stopping at row {end_idx}")
-            break
+        # Check memory availability more frequently for very large datasets
+        if processed_rows % (chunk_size * 2) == 0:
+            if not _check_memory_available(max_memory_mb):
+                print(f"⚠️  Low memory detected during processing, stopping at row {end_idx}")
+                break
     
     # Combine results
     if results:
@@ -84,7 +93,38 @@ def nan_check(df, nan_summary, Fore, Style):
     memory_mb = _estimate_memory_usage(df)
     max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '2048'))
     
-    if memory_mb > max_memory_mb * 0.5:
+    # For extremely large datasets, use sampling approach
+    if memory_mb > max_memory_mb * 2:
+        print(f"    📊 Extremely large dataset detected ({memory_mb}MB), using sampling approach...")
+        
+        try:
+            # Use sampling for extremely large datasets
+            sample_size = min(50000, len(df) // 10)  # Sample 10% or 50k rows, whichever is smaller
+            sample_df = df.sample(n=sample_size, random_state=42)
+            
+            for col in sample_df.columns:
+                n_missing_sample = sample_df[col].isna().sum()
+                if n_missing_sample > 0:
+                    # Estimate total missing values
+                    estimated_missing = int((n_missing_sample / sample_size) * len(df))
+                    estimated_percent = 100 * estimated_missing / len(df)
+                    
+                    print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: ~{estimated_missing} missing ({estimated_percent:.2f}%) [estimated from sample]")
+                    
+                    nan_summary.append({
+                        'column': col,
+                        'missing': estimated_missing,
+                        'percent': estimated_percent,
+                        'method': 'sampling'
+                    })
+            return
+            
+        except Exception as e:
+            print(f"    ⚠️  Error in sampling approach: {e}")
+            print(f"    Skipping NaN check for extremely large dataset")
+            return
+    
+    elif memory_mb > max_memory_mb * 0.5:
         print(f"    📊 Large dataset detected ({memory_mb}MB), using chunked processing...")
         
         def process_nan_chunk(chunk):
@@ -100,8 +140,9 @@ def nan_check(df, nan_summary, Fore, Style):
                     })
             return chunk_nan_summary
         
-        # Process in chunks
-        chunk_results = _process_large_dataframe_in_chunks(df, process_nan_chunk)
+        # Process in chunks with smaller chunk size for very large datasets
+        chunk_size = min(25000, int(os.environ.get('CHUNK_SIZE', '100000')))
+        chunk_results = _process_large_dataframe_in_chunks(df, process_nan_chunk, chunk_size=chunk_size)
         
         if chunk_results:
             # Aggregate results from chunks
@@ -119,8 +160,8 @@ def nan_check(df, nan_summary, Fore, Style):
                 percent = 100 * info['missing'] / len(df)
                 print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {info['missing']} missing ({percent:.2f}%)")
                 
-                # Show example rows with NaN (only for first few columns to save memory)
-                if len(nan_summary) < 3:  # Limit to first 3 columns
+                # Skip showing example rows for very large datasets to save memory
+                if memory_mb < max_memory_mb * 1.5 and len(nan_summary) < 3:
                     try:
                         nan_rows = df[df[col].isna()].head(3)
                         if not nan_rows.empty:
@@ -132,7 +173,8 @@ def nan_check(df, nan_summary, Fore, Style):
                 nan_summary.append({
                     'column': col,
                     'missing': info['missing'],
-                    'percent': percent
+                    'percent': percent,
+                    'method': 'chunked'
                 })
     else:
         # Process normally for smaller DataFrames
@@ -154,7 +196,8 @@ def nan_check(df, nan_summary, Fore, Style):
                 nan_summary.append({
                     'column': col,
                     'missing': n_missing,
-                    'percent': percent
+                    'percent': percent,
+                    'method': 'direct'
                 })
 
 def duplicate_check(df, dupe_summary, Fore, Style):
@@ -166,7 +209,33 @@ def duplicate_check(df, dupe_summary, Fore, Style):
     memory_mb = _estimate_memory_usage(df)
     max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '2048'))
     
-    if memory_mb > max_memory_mb * 0.5:
+    # For extremely large datasets, use sampling approach
+    if memory_mb > max_memory_mb * 2:
+        print(f"    📊 Extremely large dataset detected ({memory_mb}MB), using sampling for duplicate detection...")
+        
+        try:
+            # Use sampling for extremely large datasets
+            sample_size = min(50000, len(df) // 10)  # Sample 10% or 50k rows, whichever is smaller
+            sample_df = df.sample(n=sample_size, random_state=42)
+            
+            # Check for duplicates in sample
+            n_dupes_sample = sample_df.duplicated().sum()
+            if n_dupes_sample > 0:
+                # Estimate total duplicates
+                estimated_dupes = int((n_dupes_sample / sample_size) * len(df))
+                print(f"  {Fore.MAGENTA}Data Quality Check: Duplicates{Style.RESET_ALL}")
+                print(f"    {Fore.YELLOW}Estimated fully duplicated rows:{Style.RESET_ALL} ~{estimated_dupes} [from sample]")
+                
+                dupe_summary.append({'type': 'full_row', 'count': estimated_dupes, 'method': 'sampling'})
+            else:
+                print(f"  {Fore.MAGENTA}No duplicated rows found in sample.{Style.RESET_ALL}")
+                
+        except Exception as e:
+            print(f"    ⚠️  Error in sampling approach: {e}")
+            print(f"    Skipping duplicate check for extremely large dataset")
+            return
+    
+    elif memory_mb > max_memory_mb * 0.5:
         print(f"    📊 Large dataset detected ({memory_mb}MB), using optimized duplicate detection...")
         
         # For large DataFrames, use more memory-efficient duplicate detection
@@ -188,7 +257,7 @@ def duplicate_check(df, dupe_summary, Fore, Style):
                 except Exception as e:
                     print(f"    Could not display example rows: {e}")
                 
-                dupe_summary.append({'type': 'full_row', 'count': n_dupes})
+                dupe_summary.append({'type': 'full_row', 'count': n_dupes, 'method': 'hash_based'})
             else:
                 print(f"  {Fore.MAGENTA}No fully duplicated rows found.{Style.RESET_ALL}")
                 
@@ -204,7 +273,7 @@ def duplicate_check(df, dupe_summary, Fore, Style):
             print(f"    {Fore.YELLOW}Total fully duplicated rows:{Style.RESET_ALL} {n_dupes}")
             print(f"    {Fore.YELLOW}Example duplicated rows:{Style.RESET_ALL}")
             print(df[df.duplicated()].head(3).to_string())
-            dupe_summary.append({'type': 'full_row', 'count': n_dupes})
+            dupe_summary.append({'type': 'full_row', 'count': n_dupes, 'method': 'direct'})
         else:
             print(f"  {Fore.MAGENTA}No fully duplicated rows found.{Style.RESET_ALL}")
     
