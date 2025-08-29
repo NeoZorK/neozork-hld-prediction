@@ -26,18 +26,18 @@ class DataManager:
     def __init__(self):
         """Initialize the data manager with aggressive memory optimization."""
         # Memory management settings - more conservative defaults
-        self.max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '1024'))  # 1GB default
-        self.chunk_size = int(os.environ.get('CHUNK_SIZE', '25000'))  # 25k rows per chunk
+        self.max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '4096'))  # 4GB default (increased)
+        self.chunk_size = int(os.environ.get('CHUNK_SIZE', '50000'))  # 50k rows per chunk (increased)
         self.enable_memory_optimization = os.environ.get('ENABLE_MEMORY_OPTIMIZATION', 'true').lower() == 'true'
         
         # Aggressive memory settings
-        self.max_file_size_mb = int(os.environ.get('MAX_FILE_SIZE_MB', '50'))  # 50MB threshold
+        self.max_file_size_mb = int(os.environ.get('MAX_FILE_SIZE_MB', '200'))  # 200MB threshold (increased)
         self.sample_size = int(os.environ.get('SAMPLE_SIZE', '10000'))  # 10k rows for sampling
         self.enable_streaming = os.environ.get('ENABLE_STREAMING', 'true').lower() == 'true'
         
         # Memory monitoring
-        self.memory_warning_threshold = 0.7  # 70% of max memory
-        self.memory_critical_threshold = 0.9  # 90% of max memory
+        self.memory_warning_threshold = 0.8  # 80% of max memory (increased)
+        self.memory_critical_threshold = 0.95  # 95% of max memory (increased)
         
         print(f"🔧 DataManager initialized with memory optimization:")
         print(f"   Max memory: {self.max_memory_mb}MB")
@@ -73,7 +73,7 @@ class DataManager:
             available_mb = memory_info['available_mb']
             
             if required_mb is None:
-                required_mb = self.max_memory_mb * 0.3  # Require 30% of max memory
+                required_mb = self.max_memory_mb * 0.1  # Require only 10% of max memory (more permissive)
             
             return available_mb > required_mb
         except Exception:
@@ -97,6 +97,29 @@ class DataManager:
             return file_path.stat().st_size / (1024 * 1024)
         except Exception:
             return 0.0
+    
+    def _handle_datetime_index(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Handle datetime index and convert it to a column if needed."""
+        # Check if the DataFrame has a datetime index
+        if isinstance(df.index, pd.DatetimeIndex):
+            print(f"✅ Found datetime index: {df.index.name or 'unnamed'}")
+            # Reset index to make datetime a column
+            df = df.reset_index()
+            # Rename the index column if it's unnamed
+            if df.columns[0] == 'index':
+                df = df.rename(columns={'index': 'datetime'})
+            return df
+        
+        # Check if any column is datetime
+        datetime_columns = []
+        for col in df.columns:
+            if pd.api.types.is_datetime64_any_dtype(df[col]):
+                datetime_columns.append(col)
+        
+        if datetime_columns:
+            print(f"✅ Found datetime columns: {datetime_columns}")
+        
+        return df
     
     def _should_use_chunked_loading(self, file_path: Path) -> bool:
         """Determine if file should be loaded in chunks."""
@@ -164,7 +187,7 @@ class DataManager:
                     except Exception as e:
                         print(f"⚠️  Could not parse datetime column {col}: {e}")
             
-            return df
+            return self._handle_datetime_index(df)
         except Exception as e:
             print(f"❌ Error loading CSV directly: {e}")
             raise
@@ -209,7 +232,7 @@ class DataManager:
                 result = pd.concat(chunks, ignore_index=True)
                 del chunks
                 gc.collect()
-                return result
+                return self._handle_datetime_index(result)
             else:
                 raise ValueError("No chunks were loaded")
                 
@@ -218,7 +241,7 @@ class DataManager:
             raise
     
     def _load_parquet_with_optimization(self, file_path: Path) -> pd.DataFrame:
-        """Load parquet file with memory optimization."""
+        """Load parquet file with memory optimization and datetime index handling."""
         print(f"🔄 Loading Parquet: {file_path.name}")
         
         try:
@@ -229,8 +252,9 @@ class DataManager:
             total_rows = parquet_file.metadata.num_rows
             
             if total_rows <= self.chunk_size:
-                # Small file, load directly
-                return pd.read_parquet(file_path)
+                # Small file, load directly with datetime index handling
+                df = pd.read_parquet(file_path)
+                return self._handle_datetime_index(df)
             
             # Large file, load in chunks
             print(f"📊 Loading {file_path.name} in chunks of {self.chunk_size:,} rows...")
@@ -260,13 +284,14 @@ class DataManager:
                 result = pd.concat(chunks, ignore_index=True)
                 del chunks
                 gc.collect()
-                return result
+                return self._handle_datetime_index(result)
             else:
                 raise ValueError("No chunks were loaded")
                 
         except ImportError:
             # Fallback to pandas
-            return pd.read_parquet(file_path)
+            df = pd.read_parquet(file_path)
+            return self._handle_datetime_index(df)
         except Exception as e:
             print(f"❌ Error loading parquet: {e}")
             raise
@@ -454,8 +479,8 @@ class DataManager:
                 if self.enable_memory_optimization:
                     gc.collect()
                 
-                # Check if we're approaching memory limits
-                if total_memory_mb > self.max_memory_mb * 0.8:
+                # Check if we're approaching memory limits - more permissive
+                if total_memory_mb > self.max_memory_mb * 0.9:
                     print(f"⚠️  Memory usage high ({total_memory_mb}MB), stopping file loading")
                     break
                     
