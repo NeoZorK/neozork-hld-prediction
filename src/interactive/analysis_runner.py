@@ -377,6 +377,21 @@ class AnalysisRunner:
             # Import required modules
             from src.eda import data_quality, fix_files, file_info
             
+            # Check if DataFrame is too large for quality checks
+            memory_mb = data_quality._estimate_memory_usage(system.current_data)
+            max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '1024'))
+            
+            # For extremely large datasets, skip all checks to prevent OOM
+            if memory_mb > max_memory_mb * 3:
+                print(f"📊 Extremely large dataset detected ({memory_mb}MB)")
+                print(f"⚠️  Skipping all quality checks to prevent memory issues...")
+                print(f"💡 Recommendations:")
+                print(f"   • Use a smaller dataset (sample)")
+                print(f"   • Increase container memory limit")
+                print(f"   • Process data in smaller chunks")
+                print(f"   • Use external data quality tools")
+                return
+            
             # Initialize summary lists
             nan_summary = []
             dupe_summary = []
@@ -406,7 +421,7 @@ class AnalysisRunner:
                 RESET = ""
                 RESET_ALL = ""
             
-            # Run all data quality checks
+            # Run all data quality checks with memory optimization
             data_quality.nan_check(system.current_data, nan_summary, SimpleFore(), SimpleStyle())
             data_quality.duplicate_check(system.current_data, dupe_summary, SimpleFore(), SimpleStyle())
             data_quality.gap_check(system.current_data, gap_summary, SimpleFore(), SimpleStyle(), 

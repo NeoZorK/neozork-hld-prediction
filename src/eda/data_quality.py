@@ -7,10 +7,27 @@ def _estimate_memory_usage(df) -> int:
     """Estimate memory usage of DataFrame in MB."""
     try:
         memory_usage = df.memory_usage(deep=True).sum()
-        return int(memory_usage / (1024 * 1024))  # Convert to MB
+        memory_mb = int(memory_usage / (1024 * 1024))  # Convert to MB
+        return max(1, memory_mb)  # Ensure at least 1MB
     except:
-        # Fallback estimation
-        return df.shape[0] * df.shape[1] * 64 // (1024 * 1024)  # 64 bytes per cell
+        # Fallback estimation - more accurate for different data types
+        total_bytes = 0
+        for col in df.columns:
+            if df[col].dtype == 'object':
+                # String columns: estimate 50 bytes per value
+                total_bytes += df[col].shape[0] * 50
+            elif df[col].dtype in ['int64', 'float64']:
+                # Numeric columns: 8 bytes per value
+                total_bytes += df[col].shape[0] * 8
+            elif df[col].dtype in ['int32', 'float32']:
+                # 32-bit columns: 4 bytes per value
+                total_bytes += df[col].shape[0] * 4
+            else:
+                # Default: 16 bytes per value
+                total_bytes += df[col].shape[0] * 16
+        
+        fallback_mb = total_bytes // (1024 * 1024)
+        return max(1, fallback_mb)  # Ensure at least 1MB
 
 def _check_memory_available(max_memory_mb: int = 2048) -> bool:
     """Check if we have enough memory available."""
@@ -93,13 +110,19 @@ def nan_check(df, nan_summary, Fore, Style):
     memory_mb = _estimate_memory_usage(df)
     max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '2048'))
     
-    # For extremely large datasets, use sampling approach
-    if memory_mb > max_memory_mb * 2:
-        print(f"    📊 Extremely large dataset detected ({memory_mb}MB), using sampling approach...")
+    # For extremely large datasets, skip the check entirely to prevent OOM
+    if memory_mb > max_memory_mb * 3:
+        print(f"    📊 Extremely large dataset detected ({memory_mb}MB), skipping NaN check to prevent memory issues...")
+        print(f"    💡 Consider using a smaller dataset or increasing container memory")
+        return
+    
+    # For very large datasets, use sampling approach
+    elif memory_mb > max_memory_mb * 1.5:
+        print(f"    📊 Very large dataset detected ({memory_mb}MB), using sampling approach...")
         
         try:
-            # Use sampling for extremely large datasets
-            sample_size = min(50000, len(df) // 10)  # Sample 10% or 50k rows, whichever is smaller
+            # Use sampling for very large datasets
+            sample_size = min(25000, len(df) // 20)  # Sample 5% or 25k rows, whichever is smaller
             sample_df = df.sample(n=sample_size, random_state=42)
             
             for col in sample_df.columns:
@@ -121,7 +144,7 @@ def nan_check(df, nan_summary, Fore, Style):
             
         except Exception as e:
             print(f"    ⚠️  Error in sampling approach: {e}")
-            print(f"    Skipping NaN check for extremely large dataset")
+            print(f"    Skipping NaN check for very large dataset")
             return
     
     elif memory_mb > max_memory_mb * 0.5:
@@ -141,7 +164,7 @@ def nan_check(df, nan_summary, Fore, Style):
             return chunk_nan_summary
         
         # Process in chunks with smaller chunk size for very large datasets
-        chunk_size = min(25000, int(os.environ.get('CHUNK_SIZE', '100000')))
+        chunk_size = min(10000, int(os.environ.get('CHUNK_SIZE', '100000')))
         chunk_results = _process_large_dataframe_in_chunks(df, process_nan_chunk, chunk_size=chunk_size)
         
         if chunk_results:
@@ -161,9 +184,9 @@ def nan_check(df, nan_summary, Fore, Style):
                 print(f"    {Fore.YELLOW}{col}{Style.RESET_ALL}: {info['missing']} missing ({percent:.2f}%)")
                 
                 # Skip showing example rows for very large datasets to save memory
-                if memory_mb < max_memory_mb * 1.5 and len(nan_summary) < 3:
+                if memory_mb < max_memory_mb * 1.0 and len(nan_summary) < 2:
                     try:
-                        nan_rows = df[df[col].isna()].head(3)
+                        nan_rows = df[df[col].isna()].head(2)
                         if not nan_rows.empty:
                             print(f"      Example rows with NaN in {col}:")
                             print(nan_rows.to_string())
@@ -209,13 +232,19 @@ def duplicate_check(df, dupe_summary, Fore, Style):
     memory_mb = _estimate_memory_usage(df)
     max_memory_mb = int(os.environ.get('MAX_MEMORY_MB', '2048'))
     
-    # For extremely large datasets, use sampling approach
-    if memory_mb > max_memory_mb * 2:
-        print(f"    📊 Extremely large dataset detected ({memory_mb}MB), using sampling for duplicate detection...")
+    # For extremely large datasets, skip the check entirely to prevent OOM
+    if memory_mb > max_memory_mb * 3:
+        print(f"    📊 Extremely large dataset detected ({memory_mb}MB), skipping duplicate check to prevent memory issues...")
+        print(f"    💡 Consider using a smaller dataset or increasing container memory")
+        return
+    
+    # For very large datasets, use sampling approach
+    elif memory_mb > max_memory_mb * 1.5:
+        print(f"    📊 Very large dataset detected ({memory_mb}MB), using sampling for duplicate detection...")
         
         try:
-            # Use sampling for extremely large datasets
-            sample_size = min(50000, len(df) // 10)  # Sample 10% or 50k rows, whichever is smaller
+            # Use sampling for very large datasets
+            sample_size = min(25000, len(df) // 20)  # Sample 5% or 25k rows, whichever is smaller
             sample_df = df.sample(n=sample_size, random_state=42)
             
             # Check for duplicates in sample
@@ -232,7 +261,7 @@ def duplicate_check(df, dupe_summary, Fore, Style):
                 
         except Exception as e:
             print(f"    ⚠️  Error in sampling approach: {e}")
-            print(f"    Skipping duplicate check for extremely large dataset")
+            print(f"    Skipping duplicate check for very large dataset")
             return
     
     elif memory_mb > max_memory_mb * 0.5:
@@ -250,7 +279,7 @@ def duplicate_check(df, dupe_summary, Fore, Style):
                 
                 # Show only a few example rows to save memory
                 try:
-                    duplicate_indices = df_hash[df_hash.duplicated()].index[:3]
+                    duplicate_indices = df_hash[df_hash.duplicated()].index[:2]
                     example_dupes = df.loc[duplicate_indices]
                     print(f"    {Fore.YELLOW}Example duplicated rows:{Style.RESET_ALL}")
                     print(example_dupes.to_string())
