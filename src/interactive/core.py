@@ -59,6 +59,9 @@ class InteractiveSystem:
         except EOFError:
             print("\n👋 Goodbye!")
             return None
+        except KeyboardInterrupt:
+            print("\n👋 Goodbye!")
+            return None
     
     # Menu management methods for backward compatibility
     def calculate_submenu_completion_percentage(self, menu_category: str) -> int:
@@ -259,5 +262,9 @@ class InteractiveSystem:
                 print("❌ Invalid choice. Please select 0-9.")
             
             if choice not in ['0', '00']:
-                if self.safe_input() is None:
+                try:
+                    if self.safe_input() is None:
+                        break
+                except EOFError:
+                    print("\n👋 Goodbye!")
                     break

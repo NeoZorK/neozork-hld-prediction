@@ -83,7 +83,11 @@ class AnalysisRunner:
                 print("❌ Invalid choice. Please select 0-8.")
             
             if choice not in ['0', '00']:
-                if system.safe_input() is None:
+                try:
+                    if system.safe_input() is None:
+                        break
+                except EOFError:
+                    print("\n👋 Goodbye!")
                     break
     
     def run_basic_statistics(self, system):
@@ -835,6 +839,7 @@ class AnalysisRunner:
                         
                 except EOFError:
                     print("\n⏭️  Skipping fixes due to input error.")
+                    print("   Continuing with data quality check...")
             
             # Save results
             system.current_results['comprehensive_data_quality'] = {
