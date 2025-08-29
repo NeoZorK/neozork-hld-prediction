@@ -423,8 +423,7 @@ class AnalysisRunner:
             # Run all data quality checks with memory optimization
             data_quality.nan_check(system.current_data, nan_summary, SimpleFore(), SimpleStyle())
             data_quality.duplicate_check(system.current_data, dupe_summary, SimpleFore(), SimpleStyle())
-            data_quality.gap_check(system.current_data, gap_summary, SimpleFore(), SimpleStyle(), 
-                                 schema_datetime_fields=file_info_data.get('datetime_or_timestamp_fields'))
+            data_quality.gap_check(system.current_data, gap_summary, SimpleFore(), SimpleStyle())
             data_quality.zero_check(system.current_data, zero_summary, SimpleFore(), SimpleStyle())
             data_quality.negative_check(system.current_data, negative_summary, SimpleFore(), SimpleStyle())
             data_quality.inf_check(system.current_data, inf_summary, SimpleFore(), SimpleStyle())

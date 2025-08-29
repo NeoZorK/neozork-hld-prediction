@@ -15,6 +15,8 @@ services:
       - ./results:/app/results
       # Mount tests directory for pytest
       - ./tests:/app/tests
+      # Mount source code for development
+      - ./src:/app/src
       # Mount UV cache for better performance
       - uv_cache:/app/.uv_cache
     env_file:

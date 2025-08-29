@@ -1,6 +1,8 @@
 # Handles data quality checks with aggressive memory optimization
 import gc
 import os
+import pandas as pd
+import numpy as np
 from typing import List, Dict, Any, Optional
 import warnings
 

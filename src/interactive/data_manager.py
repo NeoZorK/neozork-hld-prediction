@@ -118,16 +118,28 @@ class DataManager:
         try:
             # Read first few rows to detect datetime columns
             sample_df = pd.read_csv(file_path, nrows=1000)
+            
+            # Check for existing datetime columns first
             for col in sample_df.columns:
-                if any(keyword in col.lower() for keyword in ['date', 'time', 'datetime', 'timestamp']):
+                if pd.api.types.is_datetime64_any_dtype(sample_df[col]):
                     datetime_columns.append(col)
-                elif sample_df[col].dtype == 'object':
-                    # Try to parse as datetime
-                    try:
-                        pd.to_datetime(sample_df[col].iloc[0], errors='raise')
+                    print(f"✅ Found existing datetime column: {col}")
+            
+            # If no existing datetime columns, try to detect by name
+            if not datetime_columns:
+                for col in sample_df.columns:
+                    col_lower = col.lower()
+                    if any(keyword in col_lower for keyword in ['date', 'time', 'datetime', 'timestamp']):
                         datetime_columns.append(col)
-                    except:
-                        pass
+                        print(f"✅ Detected potential datetime column by name: {col}")
+                    elif sample_df[col].dtype == 'object':
+                        # Try to parse as datetime
+                        try:
+                            pd.to_datetime(sample_df[col].iloc[0], errors='raise')
+                            datetime_columns.append(col)
+                            print(f"✅ Detected datetime column by parsing: {col}")
+                        except:
+                            pass
         except Exception as e:
             print(f"⚠️  Warning: Could not detect datetime columns: {e}")
         
@@ -471,6 +483,17 @@ class DataManager:
             del all_data
             gc.collect()
             
+            # Check and preserve datetime columns after concatenation
+            datetime_columns = []
+            for col in system.current_data.columns:
+                if pd.api.types.is_datetime64_any_dtype(system.current_data[col]):
+                    datetime_columns.append(col)
+            
+            if datetime_columns:
+                print(f"✅ Preserved {len(datetime_columns)} datetime column(s) after concatenation: {datetime_columns}")
+            else:
+                print(f"⚠️  No datetime columns found after concatenation")
+            
             print(f"\n✅ Combined data loaded successfully!")
             print(f"   Total shape: {system.current_data.shape[0]:,} rows × {system.current_data.shape[1]} columns")
             print(f"   Files loaded: {len(data_files)}")
@@ -507,15 +530,145 @@ class DataManager:
     def restore_from_backup(self, system):
         """Restore data from backup file."""
         print("\n📥 RESTORE FROM BACKUP")
-        print("-" * 30)
+        print("=" * 50)
         
-        # Implementation for backup restoration
-        print("📥 Backup restoration coming soon...")
+        # Check if data is loaded
+        if system.current_data is None or system.current_data.empty:
+            print("❌ No data loaded. Please load some data first.")
+            return False
+        
+        # Define backup directory
+        backup_dir = Path('data/backups')
+        
+        if not backup_dir.exists():
+            print(f"❌ Backup directory not found: {backup_dir}")
+            return False
+        
+        # Look for all types of backup files
+        backup_files = list(backup_dir.glob("backup_*.parquet"))
+        data_backup_files = list(backup_dir.glob("data_backup_*.parquet"))
+        data_fixed_files = list(backup_dir.glob("data_fixed_*.parquet"))
+        
+        # Combine all backup files
+        all_backup_files = backup_files + data_backup_files + data_fixed_files
+        
+        if not all_backup_files:
+            print(f"❌ No backup files found in {backup_dir}/")
+            return False
+        
+        # Sort files by modification time (newest first)
+        all_backup_files.sort(key=lambda x: x.stat().st_mtime, reverse=True)
+        
+        print(f"✅ Found {len(all_backup_files)} backup files:")
+        import time
+        for i, backup_file in enumerate(all_backup_files, 1):
+            file_size = backup_file.stat().st_size / (1024 * 1024)  # MB
+            file_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(backup_file.stat().st_mtime))
+            print(f"   {i}. {backup_file.name} ({file_size:.1f} MB, {file_time})")
+        
+        # Get user choice
+        try:
+            choice = input(f"\nSelect backup file to restore (1-{len(all_backup_files)}) or 'q' to quit: ").strip()
+            
+            if choice.lower() == 'q':
+                print("❌ Restore cancelled.")
+                return False
+            
+            choice_idx = int(choice) - 1
+            if choice_idx < 0 or choice_idx >= len(all_backup_files):
+                print("❌ Invalid choice.")
+                return False
+            
+            selected_backup = all_backup_files[choice_idx]
+            
+            # Confirm restoration
+            confirm = input(f"\nAre you sure you want to restore from {selected_backup.name}? (y/n): ").strip().lower()
+            if confirm not in ['y', 'yes']:
+                print("❌ Restore cancelled.")
+                return False
+            
+            # Load backup data
+            print(f"\n🔄 Restoring from {selected_backup.name}...")
+            backup_data = pd.read_parquet(selected_backup)
+            
+            # Replace current data
+            system.current_data = backup_data
+            
+            print(f"✅ Data restored successfully!")
+            print(f"   Shape: {backup_data.shape[0]:,} rows × {backup_data.shape[1]} columns")
+            print(f"   Columns: {list(backup_data.columns)}")
+            
+            # Mark menu as used
+            system.menu_manager.mark_menu_as_used('eda', 'restore_from_backup')
+            
+            return True
+            
+        except ValueError:
+            print("❌ Invalid input. Please enter a number.")
+            return False
+        except Exception as e:
+            print(f"❌ Error restoring backup: {e}")
+            return False
     
     def clear_data_backup(self, system):
         """Clear all backup files from the backup directory."""
         print("\n🗑️ CLEAR DATA BACKUP")
-        print("-" * 30)
+        print("=" * 50)
         
-        # Implementation for clearing backups
-        print("🗑️ Backup clearing coming soon...")
+        # Define backup directory
+        backup_dir = Path('data/backups')
+        
+        if not backup_dir.exists():
+            print(f"❌ Backup directory not found: {backup_dir}")
+            return False
+        
+        # Look for all types of backup files
+        backup_files = list(backup_dir.glob("backup_*.parquet"))
+        data_backup_files = list(backup_dir.glob("data_backup_*.parquet"))
+        data_fixed_files = list(backup_dir.glob("data_fixed_*.parquet"))
+        
+        # Combine all backup files
+        all_backup_files = backup_files + data_backup_files + data_fixed_files
+        
+        if not all_backup_files:
+            print(f"✅ No backup files found in {backup_dir}/")
+            return True
+        
+        # Calculate total size
+        total_size_mb = sum(f.stat().st_size for f in all_backup_files) / (1024 * 1024)
+        
+        print(f"⚠️  Found {len(all_backup_files)} backup files ({total_size_mb:.1f} MB total):")
+        import time
+        for i, backup_file in enumerate(all_backup_files, 1):
+            file_size = backup_file.stat().st_size / (1024 * 1024)  # MB
+            file_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(backup_file.stat().st_mtime))
+            print(f"   {i}. {backup_file.name} ({file_size:.1f} MB, {file_time})")
+        
+        # Confirm deletion
+        confirm = input(f"\nAre you sure you want to delete ALL {len(all_backup_files)} backup files? (y/n): ").strip().lower()
+        if confirm not in ['y', 'yes']:
+            print("❌ Backup clearing cancelled.")
+            return False
+        
+        # Delete files
+        deleted_count = 0
+        deleted_size_mb = 0
+        
+        for backup_file in all_backup_files:
+            try:
+                file_size = backup_file.stat().st_size / (1024 * 1024)
+                backup_file.unlink()
+                deleted_count += 1
+                deleted_size_mb += file_size
+                print(f"✅ Deleted: {backup_file.name}")
+            except Exception as e:
+                print(f"❌ Error deleting {backup_file.name}: {e}")
+        
+        print(f"\n✅ Backup clearing completed!")
+        print(f"   Files deleted: {deleted_count}/{len(all_backup_files)}")
+        print(f"   Space freed: {deleted_size_mb:.1f} MB")
+        
+        # Mark menu as used
+        system.menu_manager.mark_menu_as_used('eda', 'clear_data_backup')
+        
+        return True
