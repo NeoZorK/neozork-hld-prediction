@@ -220,8 +220,9 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
             # Use median frequency instead
             median_freq = time_diffs.median()
             if pd.isna(median_freq) or median_freq == pd.Timedelta(0):
-                print("Warning: Cannot determine valid frequency, skipping gap fixing")
-                return df
+                print("Warning: Cannot determine valid frequency, using alternative gap fixing method")
+                # Use alternative method for irregular time series
+                return _fix_gaps_irregular(df_clean, dt_col)
             most_common_freq = median_freq
 
         # Reindex with the most common frequency
@@ -236,8 +237,8 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
         # Check if the gap is too large (more than 30 days)
         total_duration = end_time - start_time
         if total_duration > pd.Timedelta(days=30):
-            print(f"Warning: Very large time range detected ({total_duration}), this may take a long time to process")
-            print("Consider using a smaller time range or different frequency")
+            print(f"Warning: Very large time range detected ({total_duration}), using alternative gap fixing method")
+            return _fix_gaps_irregular(df_clean, dt_col)
         
         # Create a new index with regular frequency
         try:
@@ -245,24 +246,24 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
             
             # Check if the resulting index is too large
             if len(new_index) > 1000000:  # More than 1 million rows
-                print(f"Warning: Very large index created ({len(new_index)} rows), this may cause memory issues")
-                print("Consider using a larger frequency or smaller time range")
+                print(f"Warning: Very large index created ({len(new_index)} rows), using alternative gap fixing method")
+                return _fix_gaps_irregular(df_clean, dt_col)
                 
         except Exception as e:
             print(f"Warning: Could not create date range with frequency {most_common_freq}: {e}")
-            print("Skipping gap fixing")
-            return df
+            print("Using alternative gap fixing method")
+            return _fix_gaps_irregular(df_clean, dt_col)
 
         # Create a new DataFrame with the regular index and merge with original data
         temp_df = pd.DataFrame({dt_col: new_index})
         
         # Use merge_asof for better handling of large gaps
         try:
-            merged_df = pd.merge_asof(temp_df, df, on=dt_col, direction='nearest')
+            merged_df = pd.merge_asof(temp_df, df_clean, on=dt_col, direction='nearest')
         except Exception as e:
             print(f"Warning: merge_asof failed, using regular merge: {e}")
             # Fallback to regular merge
-            merged_df = pd.merge(temp_df, df, on=dt_col, how='left')
+            merged_df = pd.merge(temp_df, df_clean, on=dt_col, how='left')
         
         # Interpolate missing values for numeric columns
         numeric_cols = merged_df.select_dtypes(include=[np.number]).columns
@@ -340,6 +341,105 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
     else:
         print(f"Warning: Could not find datetime column '{dt_col}' in DataFrame")
         return df
+
+
+def _fix_gaps_irregular(df, dt_col):
+    """
+    Alternative gap fixing method for irregular time series data.
+    This method identifies large gaps and fills them with interpolated values
+    without creating a regular time index.
+    
+    Args:
+        df: pandas DataFrame with datetime column
+        dt_col: Name of datetime column
+        
+    Returns:
+        DataFrame with gaps filled using interpolation
+    """
+    print(f"Using irregular gap fixing method for '{dt_col}'")
+    
+    # Sort by datetime
+    df_sorted = df.sort_values(dt_col).copy()
+    
+    # Calculate time differences
+    time_diffs = df_sorted[dt_col].diff().dropna()
+    
+    if time_diffs.empty:
+        print("No time differences found, cannot fix gaps")
+        return df_sorted
+    
+    # Find large gaps (more than 2 standard deviations from mean)
+    mean_diff = time_diffs.mean()
+    std_diff = time_diffs.std()
+    threshold = mean_diff + 2 * std_diff
+    
+    large_gaps = time_diffs[time_diffs > threshold]
+    
+    if large_gaps.empty:
+        print("No large gaps detected, returning original data")
+        return df_sorted
+    
+    print(f"Found {len(large_gaps)} large gaps to fill")
+    
+    # For each large gap, insert interpolated rows
+    result_rows = []
+    prev_idx = 0
+    
+    for i, (idx, gap_size) in enumerate(large_gaps.items()):
+        # Add all rows up to the gap
+        result_rows.append(df_sorted.iloc[prev_idx:idx])
+        
+        # Calculate how many interpolated rows to insert
+        # Use a reasonable maximum to avoid creating too many rows
+        max_interpolated_rows = min(1000, max(2, int(gap_size / mean_diff)))
+        
+        if max_interpolated_rows > 1:
+            # Create interpolated timestamps
+            start_time = df_sorted.iloc[idx-1][dt_col]
+            end_time = df_sorted.iloc[idx][dt_col]
+            
+            # Create evenly spaced timestamps
+            interpolated_times = pd.date_range(
+                start=start_time, 
+                end=end_time, 
+                periods=max_interpolated_rows + 2  # +2 to include start and end
+            )[1:-1]  # Remove start and end points as they already exist
+            
+            # Create interpolated rows
+            for interp_time in interpolated_times:
+                # Create a new row with interpolated values
+                new_row = df_sorted.iloc[idx-1].copy()
+                new_row[dt_col] = interp_time
+                
+                # Interpolate numeric columns
+                numeric_cols = df_sorted.select_dtypes(include=[np.number]).columns
+                for col in numeric_cols:
+                    if col != dt_col:
+                        # Simple linear interpolation between surrounding values
+                        prev_val = df_sorted.iloc[idx-1][col]
+                        next_val = df_sorted.iloc[idx][col]
+                        
+                        # Calculate interpolation factor
+                        total_gap = (end_time - start_time).total_seconds()
+                        current_gap = (interp_time - start_time).total_seconds()
+                        factor = current_gap / total_gap if total_gap > 0 else 0.5
+                        
+                        new_row[col] = prev_val + factor * (next_val - prev_val)
+                
+                result_rows.append(pd.DataFrame([new_row]))
+        
+        prev_idx = idx
+    
+    # Add remaining rows
+    result_rows.append(df_sorted.iloc[prev_idx:])
+    
+    # Combine all rows
+    if result_rows:
+        result_df = pd.concat(result_rows, ignore_index=True)
+        print(f"Fixed gaps using irregular method. Original: {len(df_sorted)}, Result: {len(result_df)}")
+        return result_df
+    else:
+        return df_sorted
 
 
 def fix_zeros(df, zero_summary=None):
