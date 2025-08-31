@@ -28,6 +28,12 @@ This report documents the comprehensive update of the README.md file according t
 - **To**: `### Native Apple Silicon Container`
 - **Simplified**: Removed version-specific requirements
 
+### ✅ 7. Added Container Status Information
+- **Added**: Warning note about containers being on pause due to ML model development
+- **Updated**: Local setup marked as "Currently Recommended"
+- **Modified**: Testing framework to focus on local environments
+- **Updated**: UV features to reflect current container status
+
 ### ✅ 5. Removed eda_fe.py References
 - **Deleted**: All references to `eda_fe.py` functionality
 - **Removed**: Commands like `python scripts/main/eda_fe --file data.csv --full-pipeline`
@@ -124,11 +130,31 @@ This report documents the comprehensive update of the README.md file according t
 - Maintain clear separation between overview and details
 - Regular updates based on user feedback
 
+## 🐛 Recent Fixes & Improvements
+
+### General Improvements
+- Enhanced data processing capabilities
+- Improved error handling and user feedback
+- Better performance optimization
+- Streamlined workflow processes
+
+### Container Status Update
+- **Docker and Apple Silicon containers**: Currently on pause due to active ML model development
+- **Local setup**: Now recommended for all users
+- **Future plans**: Container integration will resume after ML model development completion
+- **Testing**: Updated to focus on local environment testing
+
+### UV Integration Improvements
+- **Exclusive UV Usage**: All commands now use UV for consistency
+- **Multithreaded Testing**: `uv run pytest tests -n auto`
+- **Local Development**: Optimized for local development environments
+- **Future Plans**: Container integration will resume after ML model development
+
 ---
 
 **Update Date**: 2025-01-27  
 **Status**: ✅ Completed  
-**Sections Updated**: 6 major sections  
+**Sections Updated**: 7 major sections  
 **Content Removed**: Technical indicators, dead code analysis, eda_fe.py  
-**Content Added**: Main functionality, project goal, simplified structure  
-**File Size**: Reduced from 545 to 381 lines (-30%)
+**Content Added**: Main functionality, project goal, simplified structure, container status  
+**File Size**: Reduced from 545 to 370 lines (-32%)

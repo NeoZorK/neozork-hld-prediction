@@ -58,6 +58,8 @@ If you find this project helpful and would like to support the development, cons
 
 ## 🚀 Quick Start
 
+> ⚠️ **Note**: Docker and Apple Silicon containers are currently on pause due to active ML model development. Please use local setup for now.
+
 ### Native Apple Silicon Container
 ```bash
 # Clone and run interactive container manager
@@ -97,7 +99,7 @@ docker-compose up -d
 docker-compose exec neozork uv run run_analysis.py demo --rule PHLD
 ```
 
-### Local Setup with UV
+### Local Setup with UV (Currently Recommended)
 ```bash
 # Clone repository
 git clone https://github.com/username/neozork-hld-prediction.git
@@ -135,11 +137,9 @@ This project uses **UV package manager** exclusively for dependency management, 
 
 ### UV-Only Mode Features
 - **Exclusive UV Usage**: No fallback to pip
-- **Docker Integration**: Seamless UV in containers
-- **Native Container Integration**: Full UV support in Apple Silicon containers
 - **Local Development**: UV support for local environments
-- **Adaptive Testing**: Tests that work in both Docker and local
 - **Performance**: Lightning-fast dependency resolution
+- **Future Plans**: Container integration will resume after ML model development
 
 ### UV Commands
 ```bash
@@ -207,20 +207,14 @@ uv run pytest tests -n auto
 ## 🧪 Testing
 
 ### Adaptive Testing Framework
-Tests are designed to work in both Docker and local environments:
+Tests are designed to work in local environments (container support temporarily paused):
 
 ```bash
-# Docker environment
-docker-compose exec neozork pytest tests/docker/test_uv_simple.py -v
-
-# Local environment
+# Local environment (currently recommended)
 pytest tests/docker/test_uv_simple.py -v
 
 # Check UV status
 python scripts/check_uv_mode.py --verbose
-
-# Native container tests
-uv run pytest tests/native-container/test_native_container_full_functionality.py -v
 
 # Run all tests with UV (multithreaded)
 uv run pytest tests -n auto
@@ -263,8 +257,8 @@ act -l
 ### UV Integration Improvements
 - **Exclusive UV Usage**: All commands now use UV for consistency
 - **Multithreaded Testing**: `uv run pytest tests -n auto`
-- **Docker Integration**: Seamless UV in containers
-- **Native Container Support**: Full UV support in Apple Silicon containers
+- **Local Development**: Optimized for local development environments
+- **Future Plans**: Container integration will resume after ML model development
 
 ## 📋 Quick Examples
 
