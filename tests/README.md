@@ -1,213 +1,208 @@
-# Test Suite Documentation
+# Tests Directory
 
-This directory contains the comprehensive test suite for the Neozork HLD Prediction project, optimized for both local development and Docker environments.
+This directory contains all test files for the NeoZork HLD Prediction project.
 
-## Test Structure
+## 📁 Directory Structure
 
-### Core Test Files
-- `eda/` - Exploratory Data Analysis tests
-- `interactive/` - Interactive system tests
-- `ml/` - Machine learning tests
-- `data/` - Data processing tests
-- `calculation/` - Technical indicator calculation tests
-- `plotting/` - Visualization tests
-- `cli/` - Command line interface tests
+### 🐳 Docker Tests (`docker/`)
+- **test_docker_complete_workflow.py** - Complete workflow testing for Docker environment
+- **test_docker_fix_verification.py** - Verification of Docker fixes
+- **test_docker_interactive_input.py** - Interactive input testing in Docker
+- **test_docker_fix_issue.py** - Docker issue diagnosis and testing
+- **fix_docker_input_issue.py** - Docker input handling fixes
+- **test_uv_docker.py** - UV package manager in Docker
+- **test_uv_only_mode.py** - UV-only mode testing
+- **test_uv_simple.py** - Simple UV tests
+- **test_container.py** - Container functionality testing
+- **test_container_mql5_feed_paths.py** - MQL5 feed path testing
+- **test_docker_base.py** - Base Docker functionality
+- **test_docker_config.py** - Docker configuration testing
+- **test_docker_tests.py** - Docker test framework
+- **test_dockerfile.py** - Dockerfile validation
+- **test_ide_configs.py** - IDE configuration testing
+- **test_interactive_mode.py** - Interactive mode in Docker
+- **test_mql5_feed_access.py** - MQL5 feed access testing
+- **test_uv_commands.py** - UV command testing
 
-### Fast Test Files (Docker Optimized)
-- `eda/test_time_series_analysis_fast.py` - Fast time series analysis tests
-- `test_visualization_manager_fast.py` - Fast visualization tests
-- `interactive/test_core_fast.py` - Fast interactive system tests
+### 🎮 Interactive Tests (`interactive/`)
+- **test_interactive_automated.py** - Automated interactive system testing
+- **test_gap_verification_fix.py** - Gap verification and fixing
+- **test_gap_fixing_with_nan.py** - Gap fixing with NaN handling
+- **test_gap_fixing_issue.py** - Gap fixing issue resolution
+- **test_docker_eof_fix.py** - Docker EOF handling fixes
+- **test_data_fixing_error_handling.py** - Data fixing error handling
+- **test_data_manager_memory_fix.py** - Data manager memory fixes
+- **test_analysis_runner_fixes.py** - Analysis runner fixes
+- **test_data_manager_fixes.py** - Data manager fixes
+- **test_data_manager_memory_optimization.py** - Memory optimization
+- **test_data_manager_memory.py** - Memory management testing
+- **test_core.py** - Core interactive system testing
+- **test_core_fast.py** - Fast core testing
+- **test_visualization_manager.py** - Visualization manager testing
+- **test_menu_manager.py** - Menu manager testing
+- **test_restore_backup.py** - Backup restoration testing
+- **test_menu_improvements.py** - Menu improvements
+- **test_interactive_system_fixes.py** - Interactive system fixes
+- **test_menu_exit_commands.py** - Menu exit command testing
+- **test_data_manager.py** - Data manager testing
+- **test_feature_engineering_manager.py** - Feature engineering testing
+- **test_comprehensive_data_quality_check.py** - Comprehensive data quality testing
+- **test_analysis_runner.py** - Analysis runner testing
 
-### Test Runners
-- `run_fast_tests.py` - Python script for running fast tests
-- `run_optimized_tests.py` - Optimized test runner
+### 🔧 Common Tests (`common/`)
+- **test_environment_check.py** - Environment checking utilities
+- **test_logger.py** - Logging functionality testing
 
-## Docker Optimization
+### 🛠️ Utility Tests (`utils/`)
+- **backup_functions.py** - Backup functionality utilities
+- **test_backup_fix.py** - Backup fixing testing
+- **test_point_size_determination.py** - Point size determination
+- **test_utils.py** - General utility testing
 
-### Problem
-Some tests were failing in Docker when running with `pytest -n >= 5` due to:
-- Timeouts (> 10 seconds)
-- Resource constraints
-- Large datasets
-- Complex computations
+### 📊 Calculation Tests (`calculation/`)
+- Technical indicator calculation testing
+- Mathematical function validation
+- Performance optimization testing
 
-### Solution
-1. **Test Splitting**: Large tests split into smaller, focused tests
-2. **Fast Test Versions**: Optimized test files with smaller datasets
-3. **Timeout Protection**: Added timeout mechanisms
-4. **Resource Limits**: Reduced parallel processes and dataset sizes
+### 🎯 CLI Tests (`cli/`)
+- Command-line interface testing
+- Argument parsing validation
+- User interaction testing
 
-### Optimized Tests
-- `test_analyze_volatility` → Split into multiple focused tests
-- `test_comprehensive_analysis` → Split into basic, no-data, and small-dataset versions
-- `test_create_statistics_plots_many_columns_basic` → Reduced columns and dataset size
-- `test_run_feature_engineering_analysis` → Added timeout protection
+### 📈 Data Tests (`data/`)
+- Data loading and validation
+- Data format testing
+- Data source integration testing
 
-## Running Tests
+### 🔍 EDA Tests (`eda/`)
+- Exploratory data analysis testing
+- Data quality assessment
+- Statistical analysis validation
 
-### Local Development
+### 📤 Export Tests (`export/`)
+- Data export functionality
+- Format conversion testing
+- Output validation
+
+### 🔗 Integration Tests (`integration/`)
+- End-to-end workflow testing
+- Component integration testing
+- System-wide functionality validation
+
+### 🤖 ML Tests (`ml/`)
+- Machine learning model testing
+- Feature engineering validation
+- Prediction accuracy testing
+
+### 🖥️ MCP Tests (`mcp/`)
+- Model Context Protocol testing
+- Server communication validation
+- IDE integration testing
+
+### 🐳 Native Container Tests (`native-container/`)
+- Apple Silicon container testing
+- Native performance validation
+- Container optimization testing
+
+### 📊 Plotting Tests (`plotting/`)
+- Visualization functionality testing
+- Chart generation validation
+- Plot customization testing
+
+### 📝 Script Tests (`scripts/`)
+- Utility script testing
+- Automation validation
+- Script integration testing
+
+### 📁 Source Tests (`src/`)
+- Source code functionality testing
+- Module integration validation
+- Core feature testing
+
+### 📋 Summary Tests (`summary/`)
+- Test result summarization
+- Coverage reporting
+- Performance metrics
+
+### 🔄 Workflow Tests (`workflow/`)
+- Workflow automation testing
+- Process validation
+- Pipeline testing
+
+## 🚀 Running Tests
+
+### Run All Tests
 ```bash
-# Run all tests
 uv run pytest tests -n auto
-
-# Run only fast tests
-uv run pytest tests -m "fast"
-
-# Run excluding slow tests
-uv run pytest tests -m "not slow"
-
-# Run specific test file
-uv run pytest tests/eda/test_time_series_analysis.py
 ```
 
-### Docker Environment
+### Run Specific Test Categories
 ```bash
-# Run fast tests only
-uv run python tests/run_fast_tests.py
+# Docker tests
+uv run pytest tests/docker/ -n auto
 
-# Run specific failing tests
-uv run python tests/run_fast_tests.py --specific
+# Interactive tests
+uv run pytest tests/interactive/ -n auto
 
-# Run with shell script
-./scripts/testing/run_tests_docker_optimized.sh fast
+# ML tests
+uv run pytest tests/ml/ -n auto
 
-# Run with limited parallelism
-uv run pytest tests -n 4 --timeout=15
+# All calculation tests
+uv run pytest tests/calculation/ -n auto
 ```
 
-### Test Categories
+### Run with Coverage
 ```bash
-# Unit tests
-uv run pytest tests -m "unit"
-
-# Integration tests
-uv run pytest tests -m "integration"
-
-# Docker-specific tests
-uv run pytest tests -m "docker"
+uv run pytest tests/ --cov=src -n auto
 ```
 
-## Configuration
-
-### pytest.ini
-- Global timeout: 30 seconds
-- Parallel processes: auto (limited to 4 in Docker)
-- Worker distribution: worksteal
-- Max worker restarts: 3
-
-### Environment Variables
-- `MAX_WORKERS`: Number of parallel workers (default: 4)
-- `TIMEOUT`: Test timeout in seconds (default: 15)
-- `MAX_FAIL`: Maximum number of failures (default: 5)
-
-## Test Markers
-
-### Built-in Markers
-- `@pytest.mark.fast` - Fast tests for Docker
-- `@pytest.mark.slow` - Slow tests (exclude in Docker)
-- `@pytest.mark.unit` - Unit tests
-- `@pytest.mark.integration` - Integration tests
-- `@pytest.mark.docker` - Docker-specific tests
-
-### Usage
-```python
-import pytest
-
-@pytest.mark.fast
-def test_fast_function():
-    """This test runs quickly and is safe for Docker."""
-    pass
-
-@pytest.mark.slow
-def test_slow_function():
-    """This test is slow and should be excluded in Docker."""
-    pass
-```
-
-## Best Practices
-
-### Writing Tests
-1. **Use Small Datasets**: 20-50 data points for fast tests
-2. **Add Timeouts**: Use `signal.alarm()` for long operations
-3. **Handle Exceptions**: Gracefully handle plotting issues
-4. **Mock Dependencies**: Mock external services and heavy operations
-5. **Clean Up**: Clean up resources after tests
-
-### Test Organization
-1. **One Test Per Function**: Each test should test one specific behavior
-2. **Descriptive Names**: Use clear, descriptive test names
-3. **Arrange-Act-Assert**: Structure tests with clear sections
-4. **Fixtures**: Use fixtures for common setup
-5. **Documentation**: Document complex test logic
-
-### Performance
-1. **Dataset Size**: Use appropriate dataset sizes for test type
-2. **Parallelization**: Design tests to run in parallel
-3. **Resource Management**: Clean up files, connections, etc.
-4. **Caching**: Cache expensive operations when possible
-
-## Troubleshooting
-
-### Common Issues
-1. **Timeout Errors**: Increase timeout or optimize test
-2. **Memory Errors**: Reduce dataset size
-3. **Import Errors**: Check dependencies in Docker
-4. **Plotting Errors**: Add exception handling
-
-### Debug Commands
+### Run Fast Tests Only
 ```bash
-# Run single test with verbose output
-uv run pytest tests/eda/test_time_series_analysis_fast.py::TestTimeSeriesAnalyzerFast::test_analyze_volatility_fast -v -s
-
-# Run with coverage
-uv run pytest tests --cov=src --cov-report=html
-
-# Run with memory profiling
-uv run pytest tests --memray
-
-# Run with performance profiling
-uv run pytest tests --durations=10
+uv run pytest tests/ -m "not slow" -n auto
 ```
 
-## Continuous Integration
+## 📋 Test Categories
 
-### GitHub Actions
-Tests are automatically run on:
-- Pull requests
-- Push to main branch
-- Scheduled runs
+### 🔴 Critical Tests
+- Core functionality validation
+- Data integrity checks
+- Security validation
 
-### Docker CI
-- Uses optimized test settings
-- Runs fast tests only
-- Limited to 4 parallel processes
-- 15-second timeout per test
+### 🟡 Important Tests
+- Feature functionality
+- Integration testing
+- Performance validation
 
-## Monitoring
+### 🟢 Nice-to-Have Tests
+- Edge case handling
+- Documentation examples
+- User experience testing
 
-### Performance Metrics
-- Test execution time
-- Memory usage
-- CPU utilization
-- Success rate
+## 🧪 Test Development
 
-### Regular Maintenance
-- Monitor test performance
-- Update timeout values
-- Optimize slow tests
-- Add new fast tests for new features
+### Adding New Tests
+1. Create test file in appropriate subdirectory
+2. Follow naming convention: `test_*.py`
+3. Use descriptive test names
+4. Include proper assertions and error handling
+5. Add to appropriate test category
 
-## Documentation
+### Test Standards
+- Use pytest framework
+- Follow AAA pattern (Arrange, Act, Assert)
+- Include proper error handling
+- Use descriptive test names
+- Maintain test isolation
 
-For detailed information about test optimization for Docker, see:
-- `docs/testing/test-optimization-docker.md` - Comprehensive optimization guide
-- `docs/testing/` - Additional testing documentation
+### Test Documentation
+- Document complex test scenarios
+- Explain test purpose and expected behavior
+- Include setup and teardown instructions
+- Document test dependencies
 
-## Contributing
+---
 
-When adding new tests:
-1. Follow the established patterns
-2. Add appropriate markers
-3. Optimize for Docker if needed
-4. Update documentation
-5. Run tests locally and in Docker
+**Last Updated**: 2025-01-27  
+**Total Test Files**: 100+  
+**Test Coverage**: Comprehensive  
+**Framework**: pytest with UV

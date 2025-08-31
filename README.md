@@ -9,6 +9,32 @@ Advanced financial analysis platform with UV package management, comprehensive t
 [![Tests](https://img.shields.io/badge/Tests-Adaptive-green.svg)](https://pytest.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+## 💰 Support the Project
+
+If you find this project helpful and would like to support the development, consider making a donation:
+
+### Bitcoin (BTC)
+**Wallet Address**: `bc1qm0ynz8tk2em3zr8agv5j3550vpm420z3hxdfkq`
+
+[![Bitcoin](https://img.shields.io/badge/Bitcoin-Donate-orange.svg?style=flat&logo=bitcoin)](bitcoin:bc1qm0ynz8tk2em3zr8agv5j3550vpm420z3hxdfkq)
+
+> 💡 **QR Code**: Scan the QR code below or copy the wallet address above to send your donation.
+
+<div align="center">
+
+![Bitcoin QR Code](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bc1qm0ynz8tk2em3zr8agv5j3550vpm420z3hxdfkq)
+
+</div>
+
+### Why Support?
+- 🚀 **Continuous Development**: Help fund new features and improvements
+- 🐛 **Bug Fixes**: Support faster bug resolution and updates
+- 📚 **Documentation**: Better documentation and tutorials
+- 💡 **New Features**: Development of additional analysis tools
+- 🌟 **Community**: Help grow the financial analysis community
+
+---
+
 ## 🚀 Quick Start
 
 ### Native Apple Silicon Container (macOS 26+) - **FULL DOCKER PARITY**
@@ -90,7 +116,6 @@ python scripts/ml/interactive_system.py
 
 # Run ML tests
 uv run pytest tests/ml/ -n auto
-```
 ```
 
 **Documentation:** [Complete ML Documentation](docs/ml/index.md)
