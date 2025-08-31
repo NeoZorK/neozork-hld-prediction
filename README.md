@@ -120,15 +120,9 @@ Advanced ML capabilities with automated feature engineering and integrated EDA:
 
 **Quick Start:**
 ```bash
-# Run feature engineering demo
-uv run python scripts/ml/demo_feature_engineering.py
-
 # Run interactive system
 python scripts/ml/interactive_system.py
 
-# Run ML tests
-uv run pytest tests/ml/ -n auto
-```
 
 **Documentation:** [Complete ML Documentation](docs/ml/index.md)
 - [Feature Engineering Guide](docs/ml/feature_engineering_guide.md)
