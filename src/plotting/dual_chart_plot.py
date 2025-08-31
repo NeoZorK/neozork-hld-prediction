@@ -871,8 +871,10 @@ def plot_dual_chart_results(
             df_with_indicator, rule, title, output_path, width, height, layout, **kwargs
         )
     elif mode in ['sb', 'seaborn']:
-        return plot_dual_chart_seaborn(
-            df_with_indicator, rule, title, output_path, width, height, layout, **kwargs
+        # For seaborn mode, always use display function to show plot in browser
+        from .dual_chart_seaborn import plot_dual_chart_seaborn_display
+        return plot_dual_chart_seaborn_display(
+            df_with_indicator, rule, title, width, height, layout, **kwargs
         )
     elif mode == 'term':
         return plot_dual_chart_terminal(

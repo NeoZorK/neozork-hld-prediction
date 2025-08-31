@@ -84,12 +84,13 @@ def plot_dual_chart_seaborn(
     Returns:
         matplotlib.figure.Figure: Figure object
     """
-    # Set default output path
+    # Set default output path only if we need to save
     if output_path is None:
-        output_path = "results/plots/dual_chart_seaborn.png"
-    
-    # Ensure output directory exists
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        # Don't set default path - we want to display, not save
+        pass
+    else:
+        # Ensure output directory exists only if we're saving
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
     # Set modern seaborn style with enhanced aesthetics
     sns.set_style("whitegrid", {
@@ -1010,13 +1011,51 @@ def plot_dual_chart_seaborn(
     # Adjust layout
     plt.tight_layout()
     
-    # Save plot
-    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    # Save plot only if output_path is provided
+    if output_path:
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        logger.print_info(f"Dual chart saved to: {output_path}")
     
-    logger.print_info(f"Dual chart saved to: {output_path}")
+    # Show plot if output_path is None, otherwise close it
+    if output_path is None:
+        plt.show()
+        logger.print_info("Dual chart displayed.")
+    else:
+        # Use plt.close() instead of plt.show() to avoid non-interactive warning in test environment
+        plt.close()
     
-    # Show plot
-    # Use plt.close() instead of plt.show() to avoid non-interactive warning in test environment
-    plt.close()
+    return fig
+
+
+def plot_dual_chart_seaborn_display(
+    df: pd.DataFrame,
+    rule: str,
+    title: str = '',
+    width: int = 1800,
+    height: int = 1100,
+    layout: Optional[Dict[str, Any]] = None,
+    **kwargs
+) -> Any:
+    """
+    Create and display dual chart for seaborn mode without saving to file.
+    
+    Args:
+        df (pd.DataFrame): OHLCV data with indicators
+        rule (str): Rule string (e.g., 'rsi:14,30,70,close')
+        title (str): Plot title
+        width (int): Plot width
+        height (int): Plot height
+        layout (dict, optional): Layout configuration
+        **kwargs: Additional arguments
+        
+    Returns:
+        Any: Plot object
+    """
+    # Calculate additional indicator first
+    from src.plotting.dual_chart_plot import calculate_additional_indicator
+    df_with_indicator = calculate_additional_indicator(df, rule)
+    
+    # Create the plot without saving - this will show the plot
+    fig = plot_dual_chart_seaborn(df_with_indicator, rule, title, None, width, height, layout, **kwargs)
     
     return fig 
