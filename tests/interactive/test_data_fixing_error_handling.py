@@ -141,6 +141,7 @@ class TestDataFixingErrorHandling:
             
                             print("   🔧 Testing NaN fix None return...")
                             fixed_data = fix_files.fix_nan(self.system.current_data, nan_summary)
+                            # The mock returns None, so this should pass
                             assert fixed_data is None
                             print("   ✅ NaN fix None return handled correctly")
                             

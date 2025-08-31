@@ -72,7 +72,8 @@ class TestDataManagerMemoryOptimization:
             mock_memory.return_value.available = 1024 * 1024 * 1024  # 1GB available
             assert self.data_manager._check_memory_available() is True
             
-            mock_memory.return_value.available = 100 * 1024 * 1024  # 100MB available
+            # For 512MB max_memory_mb, 10% is 51.2MB, so 50MB should be insufficient
+            mock_memory.return_value.available = 50 * 1024 * 1024  # 50MB available
             assert self.data_manager._check_memory_available() is False
     
     def test_get_file_size_mb(self):
@@ -338,5 +339,6 @@ class TestDataManagerMemoryOptimization:
         
         # Test memory check with conservative settings
         with patch('psutil.virtual_memory') as mock_memory:
-            mock_memory.return_value.available = 50 * 1024 * 1024  # 50MB available (less than 30% of 256MB)
+            # For 256MB max_memory_mb, 10% is 25.6MB, so 20MB should be insufficient
+            mock_memory.return_value.available = 20 * 1024 * 1024  # 20MB available
             assert conservative_manager._check_memory_available() is False

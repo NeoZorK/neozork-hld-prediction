@@ -91,37 +91,67 @@ class TestAnalysisRunnerFixes:
         # Mock the system object
         mock_system = MagicMock()
         mock_system.current_data = self.test_data
+        mock_system.current_results = {}
         
-        # Mock the data quality functions
-        with patch('src.eda.data_quality._estimate_memory_usage') as mock_memory_usage:
-            mock_memory_usage.return_value = 15000  # Large dataset (>12GB)
+        # Mock menu_manager
+        mock_menu_manager = MagicMock()
+        mock_menu_manager.mark_menu_as_used = MagicMock()
+        mock_system.menu_manager = mock_menu_manager
+        
+        # Mock all necessary dependencies
+        with patch('src.eda.data_quality._estimate_memory_usage') as mock_memory_usage, \
+             patch('src.eda.data_quality.nan_check'), \
+             patch('src.eda.data_quality.duplicate_check'), \
+             patch('src.eda.data_quality.gap_check'), \
+             patch('src.eda.data_quality.zero_check'), \
+             patch('src.eda.data_quality.negative_check'), \
+             patch('src.eda.data_quality.inf_check'), \
+             patch('src.eda.file_info.get_file_info_from_dataframe', return_value={}), \
+             patch('builtins.input', return_value='skip'):
             
-            # Mock input to simulate "fix all issues"
-            with patch('builtins.input', return_value='y'):
-                # Run the comprehensive data quality check
-                self.analysis_runner.run_comprehensive_data_quality_check(mock_system)
-                
-                # Verify that the memory estimation was called
-                mock_memory_usage.assert_called()
+            mock_memory_usage.return_value = 15000  # Large dataset (>12GB)
+            # Ensure the mock returns a number, not a MagicMock
+            mock_memory_usage.return_value = 15000
+            
+            # Run the comprehensive data quality check
+            self.analysis_runner.run_comprehensive_data_quality_check(mock_system)
+            
+            # Verify that the memory estimation was called
+            mock_memory_usage.assert_called()
     
     def test_large_dataset_threshold_updated(self):
         """Test that large dataset threshold is updated to 3x instead of 2x."""
         # Mock the system object
         mock_system = MagicMock()
         mock_system.current_data = self.test_data
+        mock_system.current_results = {}
         
-        # Mock the data quality functions
-        with patch('src.eda.data_quality') as mock_data_quality:
-            # Test with dataset size that would trigger old threshold but not new one
-            mock_data_quality._estimate_memory_usage.return_value = 2500  # 2.5GB (would trigger old 2x threshold)
+        # Mock menu_manager
+        mock_menu_manager = MagicMock()
+        mock_menu_manager.mark_menu_as_used = MagicMock()
+        mock_system.menu_manager = mock_menu_manager
+        
+        # Mock all necessary dependencies
+        with patch('src.eda.data_quality._estimate_memory_usage') as mock_memory_usage, \
+             patch('src.eda.data_quality.nan_check'), \
+             patch('src.eda.data_quality.duplicate_check'), \
+             patch('src.eda.data_quality.gap_check'), \
+             patch('src.eda.data_quality.zero_check'), \
+             patch('src.eda.data_quality.negative_check'), \
+             patch('src.eda.data_quality.inf_check'), \
+             patch('src.eda.file_info.get_file_info_from_dataframe', return_value={}), \
+             patch('builtins.input', return_value='skip'):
             
-            # Mock input to simulate "fix all issues"
-            with patch('builtins.input', return_value='y'):
-                # Run the comprehensive data quality check
-                self.analysis_runner.run_comprehensive_data_quality_check(mock_system)
-                
-                # Verify that the memory estimation was called
-                mock_data_quality._estimate_memory_usage.assert_called()
+            # Test with dataset size that would trigger old threshold but not new one
+            mock_memory_usage.return_value = 2500  # 2.5GB (would trigger old 2x threshold)
+            # Ensure the mock returns a number, not a MagicMock
+            mock_memory_usage.return_value = 2500
+            
+            # Run the comprehensive data quality check
+            self.analysis_runner.run_comprehensive_data_quality_check(mock_system)
+            
+            # Verify that the memory estimation was called
+            mock_memory_usage.assert_called()
     
     def test_ohlcv_negative_check_excludes_pressure_vector(self):
         """Test that OHLCV negative check excludes pressure_vector."""
@@ -164,18 +194,33 @@ class TestAnalysisRunnerFixes:
                 # Mock the system object
                 mock_system = MagicMock()
                 mock_system.current_data = self.test_data
+                mock_system.current_results = {}
                 
-                # Mock the data quality functions
-                with patch('src.eda.data_quality') as mock_data_quality:
-                    mock_data_quality._estimate_memory_usage.return_value = 100
+                # Mock menu_manager
+                mock_menu_manager = MagicMock()
+                mock_menu_manager.mark_menu_as_used = MagicMock()
+                mock_system.menu_manager = mock_menu_manager
+                
+                # Mock all necessary dependencies
+                with patch('src.eda.data_quality._estimate_memory_usage') as mock_memory_usage, \
+                     patch('src.eda.data_quality.nan_check'), \
+                     patch('src.eda.data_quality.duplicate_check'), \
+                     patch('src.eda.data_quality.gap_check'), \
+                     patch('src.eda.data_quality.zero_check'), \
+                     patch('src.eda.data_quality.negative_check'), \
+                     patch('src.eda.data_quality.inf_check'), \
+                     patch('src.eda.file_info.get_file_info_from_dataframe', return_value={}), \
+                     patch('builtins.input', return_value='skip'):
                     
-                    # Mock input to simulate "fix all issues"
-                    with patch('builtins.input', return_value='y'):
-                        # Run the comprehensive data quality check
-                        self.analysis_runner.run_comprehensive_data_quality_check(mock_system)
-                        
-                        # Verify that the memory estimation was called
-                        mock_data_quality._estimate_memory_usage.assert_called()
+                    mock_memory_usage.return_value = 100
+                    # Ensure the mock returns a number, not a MagicMock
+                    mock_memory_usage.return_value = 100
+                    
+                    # Run the comprehensive data quality check
+                    self.analysis_runner.run_comprehensive_data_quality_check(mock_system)
+                    
+                    # Verify that the memory estimation was called
+                    mock_memory_usage.assert_called()
 
 
 if __name__ == "__main__":

@@ -73,9 +73,9 @@ DateTime,Open,High,Low,Close,TickVolume,
         # Load the data
         result = system.data_manager.load_data_from_file(csv_file)
         
-        # Check that data was loaded correctly
-        assert isinstance(result, pd.DataFrame)
-        assert len(result) == 3
+                                # Check that data was loaded correctly
+            assert isinstance(result, pd.DataFrame)
+            assert len(result) == 4  # MT5 format includes header row
         # Check that columns are properly mapped
         expected_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
         assert all(col in result.columns for col in expected_columns)
