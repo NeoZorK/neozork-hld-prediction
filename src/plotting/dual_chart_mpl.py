@@ -192,20 +192,21 @@ def plot_dual_chart_mpl(
     # Add indicator based on type
     if indicator_name == 'rsi':
         y_axis_label = 'RSI Value'
+        
         if 'rsi' in display_df.columns:
             ax2.plot(display_df.index, display_df['rsi'], 
                     color='purple', linewidth=3, label='RSI')
-            
-            # Add overbought/oversold lines
-            if 'rsi_overbought' in display_df.columns:
-                overbought = display_df['rsi_overbought'].iloc[0]
-                ax2.axhline(y=overbought, color='red', linestyle='--', 
-                           linewidth=2, label=f'Overbought ({overbought})')
-            
-            if 'rsi_oversold' in display_df.columns:
-                oversold = display_df['rsi_oversold'].iloc[0]
-                ax2.axhline(y=oversold, color='green', linestyle='--', 
-                           linewidth=2, label=f'Oversold ({oversold})')
+        
+        # Add overbought/oversold lines
+        if 'rsi_overbought' in display_df.columns:
+            overbought = display_df['rsi_overbought'].iloc[0]
+            ax2.axhline(y=overbought, color='red', linestyle='--', 
+                       linewidth=2, label=f'Overbought ({overbought})')
+        
+        if 'rsi_oversold' in display_df.columns:
+            oversold = display_df['rsi_oversold'].iloc[0]
+            ax2.axhline(y=oversold, color='green', linestyle='--', 
+                       linewidth=2, label=f'Oversold ({oversold})')
     
     elif indicator_name == 'rsi_mom':
         y_axis_label = 'RSI Momentum'

@@ -1646,8 +1646,15 @@ def _add_indicator_chart_to_subplot(chunk: pd.DataFrame, x_values: list, indicat
 def _add_rsi_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, rule: str = "") -> None:
     """Add RSI indicator to subplot."""
     try:
-        if 'RSI' in chunk.columns:
-            rsi_values = chunk['RSI'].fillna(50).tolist()
+        # Look for RSI column in different cases
+        rsi_col = None
+        if 'rsi' in chunk.columns:
+            rsi_col = 'rsi'
+        elif 'RSI' in chunk.columns:
+            rsi_col = 'RSI'
+        
+        if rsi_col:
+            rsi_values = chunk[rsi_col].fillna(50).tolist()
             plt.plot(x_values, rsi_values, color="purple+", label="RSI")
             
             # Extract overbought/oversold levels from rule
@@ -1669,6 +1676,8 @@ def _add_rsi_indicator_to_subplot(chunk: pd.DataFrame, x_values: list, rule: str
             plt.plot(x_values, [overbought_level] * len(x_values), color="red+")
             plt.plot(x_values, [oversold_level] * len(x_values), color="green+")
             plt.plot(x_values, [50] * len(x_values), color="white+")
+        else:
+            logger.print_warning(f"RSI column not found in chunk. Available columns: {chunk.columns.tolist()}")
         
     except Exception as e:
         logger.print_error(f"Error adding RSI indicator: {e}")
@@ -2490,8 +2499,14 @@ def _show_chunk_statistics(chunk: pd.DataFrame, title: str, start_idx: int, end_
             print(f"   NO TRADE: {notrade_count}")
         
         # RSI statistics
-        if 'RSI' in chunk.columns:
-            rsi = chunk['RSI'].dropna()
+        rsi_col = None
+        if 'rsi' in chunk.columns:
+            rsi_col = 'rsi'
+        elif 'RSI' in chunk.columns:
+            rsi_col = 'RSI'
+            
+        if rsi_col:
+            rsi = chunk[rsi_col].dropna()
             if len(rsi) > 0:
                 print(f"RSI STATISTICS:")
                 print(f"   Min: {rsi.min():.2f}")
