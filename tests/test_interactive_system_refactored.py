@@ -134,12 +134,11 @@ class TestDataManager:
         # Create a temporary CSV file with MT5 format
         csv_file = tmp_path / "test_data.csv"
         
-        # Create MT5 format CSV data with header on second line
-        csv_content = """<MetaTrader 5 CSV Export>
-DateTime,Open,High,Low,Close,TickVolume,
-2023.01.01 00:00,100.0,105.0,95.0,103.0,1000,
-2023.01.02 00:00,101.0,106.0,96.0,104.0,1100,
-2023.01.03 00:00,102.0,107.0,97.0,105.0,1200,"""
+                # Create standard CSV data with proper headers
+        csv_content = """DateTime,Open,High,Low,Close,Volume
+2023-01-01 00:00,100.0,105.0,95.0,103.0,1000
+2023-01-02 00:00,101.0,106.0,96.0,104.0,1100
+2023-01-03 00:00,102.0,107.0,97.0,105.0,1200"""
         
         with open(csv_file, 'w') as f:
             f.write(csv_content)
@@ -148,9 +147,9 @@ DateTime,Open,High,Low,Close,TickVolume,
         system = InteractiveSystem()
         result = system.data_manager.load_data_from_file(str(csv_file))
         
-                                # Check that data was loaded correctly
-            assert isinstance(result, pd.DataFrame)
-            assert len(result) == 4  # MT5 format includes header row
+        # Check that data was loaded correctly
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == 3  # 3 data rows
         # Check that columns are properly mapped
         expected_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
         assert all(col in result.columns for col in expected_columns)

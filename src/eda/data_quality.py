@@ -730,12 +730,14 @@ def negative_check(df, negative_summary, Fore, Style):
             # Aggregate results from chunks
             column_negative_counts = {}
             for chunk_result in chunk_results:
-                for item in chunk_result:
-                    col = item['column']
-                    if col in column_negative_counts:
-                        column_negative_counts[col]['negatives'] += item['negatives']
-                    else:
-                        column_negative_counts[col] = item.copy()
+                if isinstance(chunk_result, list):
+                    for item in chunk_result:
+                        if isinstance(item, dict) and 'column' in item and 'negatives' in item:
+                            col = item['column']
+                            if col in column_negative_counts:
+                                column_negative_counts[col]['negatives'] += item['negatives']
+                            else:
+                                column_negative_counts[col] = item.copy()
             
             # Calculate percentages and display results
             for col, info in column_negative_counts.items():
