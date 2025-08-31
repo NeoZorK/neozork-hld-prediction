@@ -12,21 +12,24 @@ import time
 from pathlib import Path
 import sys
 import os
+from unittest.mock import Mock, patch, MagicMock
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from neozork_mcp_server import NeoZorKMCPServer
-
 
 class TestReadyFlag:
     """Test the ready flag functionality"""
     
-    def test_ready_flag_initialization(self):
+    @patch('neozork_mcp_server.NeoZorKMCPServer._scan_project')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._index_code')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._setup_logging')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._load_config')
+    def test_ready_flag_initialization(self, mock_load_config, mock_setup_logging, mock_index_code, mock_scan_project):
         """Test that ready flag starts as False and becomes True after initialization"""
-        # Create a minimal config for faster testing
-        config = {
+        # Mock the config to return fast test settings
+        mock_load_config.return_value = {
             "server_mode": "test",
             "server_name": "Test MCP Server",
             "version": "2.0.0",
@@ -36,15 +39,31 @@ class TestReadyFlag:
             }
         }
         
-        # Create server instance
-        server = NeoZorKMCPServer(config=config)
+        # Mock logging setup
+        mock_logger = Mock()
+        mock_setup_logging.return_value = mock_logger
+        
+        # Import here to avoid slow initialization during import
+        from neozork_mcp_server import NeoZorKMCPServer
+        
+        # Create server instance with mocked methods
+        server = NeoZorKMCPServer()
+        
+        # Verify that the heavy methods were called
+        mock_scan_project.assert_called_once()
+        mock_index_code.assert_called_once()
         
         # Check that ready flag is True after initialization
         assert server.ready is True, "Server should be ready after initialization"
         
-    def test_ping_response_with_ready_flag(self):
+    @patch('neozork_mcp_server.NeoZorKMCPServer._scan_project')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._index_code')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._setup_logging')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._load_config')
+    def test_ping_response_with_ready_flag(self, mock_load_config, mock_setup_logging, mock_index_code, mock_scan_project):
         """Test that ping response includes ready flag information"""
-        config = {
+        # Mock the config
+        mock_load_config.return_value = {
             "server_mode": "test",
             "server_name": "Test MCP Server",
             "version": "2.0.0",
@@ -54,7 +73,15 @@ class TestReadyFlag:
             }
         }
         
-        server = NeoZorKMCPServer(config=config)
+        # Mock logging setup
+        mock_logger = Mock()
+        mock_setup_logging.return_value = mock_logger
+        
+        # Import here to avoid slow initialization during import
+        from neozork_mcp_server import NeoZorKMCPServer
+        
+        # Create server instance
+        server = NeoZorKMCPServer()
         
         # Test ping response
         response = server._handle_ping(1, {})
@@ -73,9 +100,14 @@ class TestReadyFlag:
         assert "message" not in response
         assert "estimated_wait" not in response
         
-    def test_status_response_with_ready_flag(self):
+    @patch('neozork_mcp_server.NeoZorKMCPServer._scan_project')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._index_code')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._setup_logging')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._load_config')
+    def test_status_response_with_ready_flag(self, mock_load_config, mock_setup_logging, mock_index_code, mock_scan_project):
         """Test that status response includes ready flag information"""
-        config = {
+        # Mock the config
+        mock_load_config.return_value = {
             "server_mode": "test",
             "server_name": "Test MCP Server",
             "version": "2.0.0",
@@ -85,7 +117,15 @@ class TestReadyFlag:
             }
         }
         
-        server = NeoZorKMCPServer(config=config)
+        # Mock logging setup
+        mock_logger = Mock()
+        mock_setup_logging.return_value = mock_logger
+        
+        # Import here to avoid slow initialization during import
+        from neozork_mcp_server import NeoZorKMCPServer
+        
+        # Create server instance
+        server = NeoZorKMCPServer()
         
         # Test status response
         response = server._handle_status(1, {})
@@ -99,9 +139,14 @@ class TestReadyFlag:
         assert response["ready"] is True
         assert response["initialization_status"] == "ready"
         
-    def test_health_response_with_ready_flag(self):
+    @patch('neozork_mcp_server.NeoZorKMCPServer._scan_project')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._index_code')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._setup_logging')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._load_config')
+    def test_health_response_with_ready_flag(self, mock_load_config, mock_setup_logging, mock_index_code, mock_scan_project):
         """Test that health response includes ready flag information"""
-        config = {
+        # Mock the config
+        mock_load_config.return_value = {
             "server_mode": "test",
             "server_name": "Test MCP Server",
             "version": "2.0.0",
@@ -111,7 +156,15 @@ class TestReadyFlag:
             }
         }
         
-        server = NeoZorKMCPServer(config=config)
+        # Mock logging setup
+        mock_logger = Mock()
+        mock_setup_logging.return_value = mock_logger
+        
+        # Import here to avoid slow initialization during import
+        from neozork_mcp_server import NeoZorKMCPServer
+        
+        # Create server instance
+        server = NeoZorKMCPServer()
         
         # Test health response
         response = server._handle_health(1, {})
@@ -128,9 +181,14 @@ class TestReadyFlag:
         assert "server_ready" in response["checks"]
         assert response["checks"]["server_ready"] is True
         
-    def test_ready_flag_in_metrics(self):
+    @patch('neozork_mcp_server.NeoZorKMCPServer._scan_project')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._index_code')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._setup_logging')
+    @patch('neozork_mcp_server.NeoZorKMCPServer._load_config')
+    def test_ready_flag_in_metrics(self, mock_load_config, mock_setup_logging, mock_index_code, mock_scan_project):
         """Test that metrics include ready flag information"""
-        config = {
+        # Mock the config
+        mock_load_config.return_value = {
             "server_mode": "test",
             "server_name": "Test MCP Server",
             "version": "2.0.0",
@@ -140,7 +198,15 @@ class TestReadyFlag:
             }
         }
         
-        server = NeoZorKMCPServer(config=config)
+        # Mock logging setup
+        mock_logger = Mock()
+        mock_setup_logging.return_value = mock_logger
+        
+        # Import here to avoid slow initialization during import
+        from neozork_mcp_server import NeoZorKMCPServer
+        
+        # Create server instance
+        server = NeoZorKMCPServer()
         
         try:
             # Test metrics response

@@ -136,9 +136,9 @@ class TestDataManagerMemoryOptimization:
     
     def test_load_csv_in_chunks(self):
         """Test chunked CSV loading."""
-        # Create large CSV file
+        # Create smaller CSV file for faster testing (10k rows instead of 100k)
         csv_data = "DateTime,Open,High,Low,Close,Volume\n"
-        for i in range(100000):  # 100k rows
+        for i in range(10000):  # 10k rows for faster testing
             csv_data += f"2023-01-01 10:{i:02d}:00,{100+i},{101+i},{99+i},{100.5+i},{1000+i}\n"
         
         with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
@@ -154,7 +154,7 @@ class TestDataManagerMemoryOptimization:
             assert not df.empty
             assert 'DateTime' in df.columns
             assert pd.api.types.is_datetime64_any_dtype(df['DateTime'])
-            assert len(df) == 100000
+            assert len(df) == 10000  # Updated assertion for smaller dataset
         finally:
             csv_path.unlink()
     

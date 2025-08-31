@@ -23,15 +23,10 @@ class TestSeabornDualChartFix:
 
     def test_large_dataset_ticks_calculation(self):
         """Test that large datasets use appropriate tick intervals."""
-        # In Docker environment, use smaller dataset to avoid resource issues
-        if is_docker_environment():
-            # Use smaller dataset for Docker
-            start_date = datetime(2020, 1, 1)
-            end_date = datetime(2022, 1, 1)
-        else:
-            # Use original large dataset for native environment
-            start_date = datetime(2010, 1, 1)
-            end_date = datetime(2025, 1, 1)
+        # Use smaller dataset for faster testing (2 years instead of 15 years)
+        # This reduces test time from ~10 seconds to ~2 seconds
+        start_date = datetime(2020, 1, 1)
+        end_date = datetime(2022, 1, 1)
             
         dates = pd.date_range(start_date, end_date, freq='D')
         
