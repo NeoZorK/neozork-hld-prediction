@@ -122,50 +122,49 @@ class TestDataFixingErrorHandling:
         """Test handling of None returns from fix functions."""
         print("\n🧪 Testing None return handling...")
         
-        # Mock fix functions to return None
-        with patch('src.eda.fix_files.fix_nan', return_value=None):
-            with patch('src.eda.fix_files.fix_duplicates', return_value=None):
-                with patch('src.eda.fix_files.fix_zeros', return_value=None):
-                    with patch('src.eda.fix_files.fix_negatives', return_value=None):
-                        with patch('src.eda.fix_files.fix_infs', return_value=None):
-                            
-                            # Create quality check summaries
-                            nan_summary = [{'column': 'open', 'count': 1}]
-                            dupe_summary = [{'type': 'row', 'count': 1}]
-                            zero_summary = [{'column': 'volume', 'count': 1, 'anomaly': True}]
-                            negative_summary = [{'column': 'close', 'count': 1}]
-                            inf_summary = [{'column': 'high', 'count': 1}]
-                            
-                            # Test that None returns are handled gracefully
-                            from src.eda import fix_files
-            
-                            print("   🔧 Testing NaN fix None return...")
-                            fixed_data = fix_files.fix_nan(self.system.current_data, nan_summary)
-                            # The mock returns None, so this should pass
-                            assert fixed_data is None
-                            print("   ✅ NaN fix None return handled correctly")
-                            
-                            print("   🔧 Testing duplicate fix None return...")
-                            fixed_data = fix_files.fix_duplicates(self.system.current_data, dupe_summary)
-                            assert fixed_data is None
-                            print("   ✅ Duplicate fix None return handled correctly")
-                            
-                            print("   🔧 Testing zero fix None return...")
-                            fixed_data = fix_files.fix_zeros(self.system.current_data, zero_summary)
-                            assert fixed_data is None
-                            print("   ✅ Zero fix None return handled correctly")
-                            
-                            print("   🔧 Testing negative fix None return...")
-                            fixed_data = fix_files.fix_negatives(self.system.current_data, negative_summary)
-                            assert fixed_data is None
-                            print("   ✅ Negative fix None return handled correctly")
-                            
-                            print("   🔧 Testing infinity fix None return...")
-                            fixed_data = fix_files.fix_infs(self.system.current_data, inf_summary)
-                            assert fixed_data is None
-                            print("   ✅ Infinity fix None return handled correctly")
-                            
-                            print("✅ All None return handling tests passed!")
+        # Create quality check summaries
+        nan_summary = [{'column': 'open', 'count': 1}]
+        dupe_summary = [{'type': 'row', 'count': 1}]
+        zero_summary = [{'column': 'volume', 'count': 1, 'anomaly': True}]
+        negative_summary = [{'column': 'close', 'count': 1}]
+        inf_summary = [{'column': 'high', 'count': 1}]
+        
+        # Test that None returns are handled gracefully
+        from src.eda import fix_files
+
+        print("   🔧 Testing NaN fix None return...")
+        # Mock the function directly
+        with patch.object(fix_files, 'fix_nan', return_value=None):
+            fixed_data = fix_files.fix_nan(self.system.current_data, nan_summary)
+            # The mock returns None, so this should pass
+            assert fixed_data is None, "Expected None return from mocked fix_nan function"
+            print("   ✅ NaN fix None return handled correctly")
+        
+        print("   🔧 Testing duplicate fix None return...")
+        with patch.object(fix_files, 'fix_duplicates', return_value=None):
+            fixed_data = fix_files.fix_duplicates(self.system.current_data, dupe_summary)
+            assert fixed_data is None
+            print("   ✅ Duplicate fix None return handled correctly")
+        
+        print("   🔧 Testing zero fix None return...")
+        with patch.object(fix_files, 'fix_zeros', return_value=None):
+            fixed_data = fix_files.fix_zeros(self.system.current_data, zero_summary)
+            assert fixed_data is None
+            print("   ✅ Zero fix None return handled correctly")
+        
+        print("   🔧 Testing negative fix None return...")
+        with patch.object(fix_files, 'fix_negatives', return_value=None):
+            fixed_data = fix_files.fix_negatives(self.system.current_data, negative_summary)
+            assert fixed_data is None
+            print("   ✅ Negative fix None return handled correctly")
+        
+        print("   🔧 Testing infinity fix None return...")
+        with patch.object(fix_files, 'fix_infs', return_value=None):
+            fixed_data = fix_files.fix_infs(self.system.current_data, inf_summary)
+            assert fixed_data is None
+            print("   ✅ Infinity fix None return handled correctly")
+        
+        print("✅ All None return handling tests passed!")
     
     def test_data_integrity_after_errors(self):
         """Test that data integrity is maintained after errors."""
