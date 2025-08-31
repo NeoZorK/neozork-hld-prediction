@@ -62,7 +62,9 @@ class TestDataManagerMemory:
             mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
             assert self.data_manager._check_memory_available() is True
             
-            mock_vm.return_value.available = 1 * 1024 * 1024 * 1024  # 1GB available
+            # Test with insufficient memory (less than 10% of max_memory_mb)
+            # max_memory_mb is 6144MB by default, so 10% is 614.4MB
+            mock_vm.return_value.available = 500 * 1024 * 1024  # 500MB available (less than 614.4MB required)
             assert self.data_manager._check_memory_available() is False
         
         # Test without psutil (should return True)

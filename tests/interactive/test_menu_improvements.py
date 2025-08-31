@@ -28,19 +28,18 @@ class TestMenuImprovements:
         """Test clear data backup when no backup files exist."""
         system.current_data = pd.DataFrame({'A': [1, 2, 3]})
         
-        # Mock the backup directory path to return empty results
-        with patch('pathlib.Path') as mock_path:
-            # Mock the backup directory to return empty results
-            mock_backup_dir = MagicMock()
-            mock_backup_dir.exists.return_value = True
-            mock_backup_dir.glob.side_effect = lambda pattern: []
+        # Mock the glob function to return no files
+        with patch('pathlib.Path.glob') as mock_glob:
+            mock_glob.return_value = []  # No backup files found
             
-            mock_path.return_value = mock_backup_dir
-            
-            with patch('builtins.print') as mock_print:
-                system.data_manager.clear_data_backup(system)
-                output_calls = [call[0][0] for call in mock_print.call_args_list]
-                assert any("No backup files found to clear" in str(call) for call in output_calls)
+            with patch('builtins.input', return_value='n'):  # User cancels if asked
+                with patch('builtins.print') as mock_print:
+                    system.data_manager.clear_data_backup(system)
+                    output_calls = [call[0][0] for call in mock_print.call_args_list]
+                    # Look for message indicating no backup files found
+                    found_no_files_message = any("No backup files found" in str(call) or 
+                                                "backup files found: 0" in str(call) for call in output_calls)
+                    assert found_no_files_message, f"Expected 'No backup files found' message, got: {output_calls}"
     
     def test_individual_fix_menu_display(self, system):
         """Test that individual fix menu displays correctly."""

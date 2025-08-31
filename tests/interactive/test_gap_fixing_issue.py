@@ -56,6 +56,15 @@ class TestGapFixingIssue:
         """Create mock system with sample data."""
         system = InteractiveSystem()
         system.current_data = sample_data_with_large_gaps
+        system.current_results = {}
+        
+        # Mock menu_manager to avoid errors
+        class MockMenuManager:
+            def mark_menu_as_used(self, menu_type, action):
+                pass
+        
+        system.menu_manager = MockMenuManager()
+        
         return system
     
     def test_gap_detection_with_large_gaps(self, sample_data_with_large_gaps):
