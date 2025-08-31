@@ -1,5 +1,7 @@
 # NeoZorK HLD Prediction
 
+**NeoZorK HLD Prediction** helps developers and traders build robust trading algorithms and machine learning prediction models from scratch, with tools for development, deployment, and monitoring. The platform provides a complete workflow from data analysis to model deployment.
+
 Advanced financial analysis platform with UV package management, comprehensive technical indicators, and adaptive testing.
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
@@ -25,9 +27,8 @@ This project provides two core components to help build robust trading algorithm
 - Machine learning model development
 - Real-time data quality monitoring
 
-## 🚀 Project Goal
 
-**NeoZorK HLD Prediction** helps developers and traders build robust trading algorithms and machine learning prediction models from scratch, with tools for development, deployment, and monitoring. The platform provides a complete workflow from data analysis to model deployment.
+
 
 ## 💰 Support the Project
 
