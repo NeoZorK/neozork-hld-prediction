@@ -219,6 +219,12 @@ class DataManager:
             # Load with appropriate header setting
             df = pd.read_csv(file_path, header=header_row)
             
+            # Remove unnamed/empty columns
+            unnamed_cols_to_drop = [col for col in df.columns if str(col).startswith('Unnamed:') or str(col) == '']
+            if unnamed_cols_to_drop:
+                print(f"✅ Dropping unnamed/empty columns: {unnamed_cols_to_drop}")
+                df = df.drop(columns=unnamed_cols_to_drop)
+            
             # Parse datetime columns
             for col in datetime_columns:
                 if col in df.columns:
@@ -247,6 +253,11 @@ class DataManager:
             chunk_iter = pd.read_csv(file_path, chunksize=chunk_size, header=header_row)
             
             for i, chunk in enumerate(chunk_iter):
+                # Remove unnamed/empty columns from chunk
+                unnamed_cols_to_drop = [col for col in chunk.columns if str(col).startswith('Unnamed:') or str(col) == '']
+                if unnamed_cols_to_drop:
+                    chunk = chunk.drop(columns=unnamed_cols_to_drop)
+                
                 # Parse datetime columns in chunk
                 for col in datetime_columns:
                     if col in chunk.columns:
@@ -424,15 +435,15 @@ class DataManager:
         print("   • Or enter folder path with file type (e.g., data parquet)")
         print("")
         print("📋 More Examples:")
-        print("   • 3 eurusd     (folder 3 with 'eurusd' in filename)")
-        print("   • 8 btcusdt    (folder 8 with 'btcusdt' in filename)")
-        print("   • data gbpusd  (data folder with 'gbpusd' in filename)")
+        print("   • 2 eurusd     (folder 2 with 'eurusd' in filename)")
+        print("   • 2 gbpusd     (folder 2 with 'gbpusd' in filename)")
         print("   • data sample  (data folder with 'sample' in filename)")
-        print("   • 3 csv        (folder 3 with '.csv' files)")
+        print("   • 1 csv        (folder 1 with '.csv' files)")
         print("   • 7 parquet    (folder 7 with '.parquet' files)")
-        print("   • 8 aapl       (folder 8 with 'aapl' in filename)")
-        print("   • 3 btcusd     (folder 3 with 'btcusd' in filename)")
         print("   • data test    (data folder with 'test' in filename)")
+        print("")
+        print("🗑️  Cache Management:")
+        print("   • Enter 'clear cache' to clear all cached files")
         print("-" * 30)
         
         try:
@@ -448,6 +459,10 @@ class DataManager:
         # Check if user wants to go back
         if input_text == "0":
             return False
+        
+        # Check if user wants to clear cache
+        if input_text.lower() == "clear cache":
+            return self.clear_cache(system)
         
         # Parse input for folder and mask
         parts = input_text.split()
@@ -619,6 +634,85 @@ class DataManager:
         
         # Implementation for exporting results
         print("📤 Export functionality coming soon...")
+    
+    def clear_cache(self, system):
+        """Clear all cached files."""
+        print("\n🗑️  CLEAR CACHE")
+        print("=" * 50)
+        
+        # Define cache directories
+        cache_dirs = [
+            Path('data/cache'),
+            Path('data/cache/csv_converted'),
+            Path('data/cache/uv_cache'),
+            Path('logs'),
+            Path('reports')
+        ]
+        
+        total_files = 0
+        total_size_mb = 0
+        cleared_files = []
+        
+        for cache_dir in cache_dirs:
+            if not cache_dir.exists():
+                continue
+                
+            print(f"🔍 Scanning {cache_dir}...")
+            
+            # Find all files in cache directory
+            for file_path in cache_dir.rglob('*'):
+                if file_path.is_file():
+                    file_size_mb = file_path.stat().st_size / (1024 * 1024)
+                    total_files += 1
+                    total_size_mb += file_size_mb
+                    cleared_files.append((file_path, file_size_mb))
+        
+        if total_files == 0:
+            print("✅ No cached files found to clear.")
+            return True
+        
+        print(f"📁 Found {total_files} cached files ({total_size_mb:.1f} MB total)")
+        print("\n🗂️  Files to be cleared:")
+        
+        # Show first 10 files
+        for i, (file_path, file_size_mb) in enumerate(cleared_files[:10], 1):
+            rel_path = file_path.relative_to(Path.cwd())
+            print(f"   {i}. {rel_path} ({file_size_mb:.1f} MB)")
+        
+        if len(cleared_files) > 10:
+            print(f"   ... and {len(cleared_files) - 10} more files")
+        
+        # Ask for confirmation
+        try:
+            confirm = input(f"\n⚠️  Are you sure you want to clear {total_files} files ({total_size_mb:.1f} MB)? (y/N): ").strip().lower()
+        except EOFError:
+            print("\n👋 Goodbye!")
+            return False
+        
+        if confirm not in ['y', 'yes']:
+            print("❌ Cache clearing cancelled.")
+            return False
+        
+        # Clear cache files
+        print("\n🗑️  Clearing cache...")
+        cleared_count = 0
+        cleared_size_mb = 0
+        
+        for file_path, file_size_mb in cleared_files:
+            try:
+                file_path.unlink()
+                cleared_count += 1
+                cleared_size_mb += file_size_mb
+                if cleared_count % 100 == 0:
+                    print(f"   ✅ Cleared {cleared_count}/{total_files} files...")
+            except Exception as e:
+                print(f"   ⚠️  Could not delete {file_path}: {e}")
+        
+        print(f"\n✅ Cache cleared successfully!")
+        print(f"   • Files cleared: {cleared_count}/{total_files}")
+        print(f"   • Space freed: {cleared_size_mb:.1f} MB")
+        
+        return True
     
     def restore_from_backup(self, system):
         """Restore data from backup file."""
