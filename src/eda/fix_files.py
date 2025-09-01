@@ -267,10 +267,16 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
         
         # Interpolate missing values for numeric columns
         numeric_cols = merged_df.select_dtypes(include=[np.number]).columns
-        for col in numeric_cols:
-            if col != dt_col:  # Skip datetime column
-                # Use linear interpolation instead of time-weighted
-                merged_df[col] = merged_df[col].interpolate(method='linear')
+        numeric_cols = [col for col in numeric_cols if col != dt_col]  # Skip datetime column
+        
+        if numeric_cols:
+            print(f"Interpolating {len(numeric_cols)} numeric columns...")
+            with tqdm(total=len(numeric_cols), desc="Interpolating columns", unit="col") as pbar:
+                for col in numeric_cols:
+                    # Use linear interpolation instead of time-weighted
+                    merged_df[col] = merged_df[col].interpolate(method='linear')
+                    pbar.update(1)
+                    pbar.set_postfix({'column': col})
 
         print(f"Fixed gaps in '{dt_col}' by reindexing with frequency {most_common_freq}")
         print(f"Original row count: {len(df)}, Clean data rows: {len(df_clean)}, New row count: {len(merged_df)}")
@@ -330,8 +336,11 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
             print("Skipping gap fixing")
             return df
 
-        # Reindex and interpolate
-        fixed_df = df.reindex(new_index).interpolate(method='time')
+        # Reindex and interpolate with progress bar
+        print(f"Reindexing with frequency {most_common_freq}...")
+        with tqdm(total=1, desc="Reindexing and interpolating", unit="step") as pbar:
+            fixed_df = df.reindex(new_index).interpolate(method='time')
+            pbar.update(1)
 
         print(f"Fixed gaps in index by reindexing with frequency {most_common_freq}")
         print(f"Original row count: {len(df)}, New row count: {len(fixed_df)}")
@@ -385,50 +394,57 @@ def _fix_gaps_irregular(df, dt_col):
     result_rows = []
     prev_idx = 0
     
-    for i, (idx, gap_size) in enumerate(large_gaps.items()):
-        # Add all rows up to the gap
-        result_rows.append(df_sorted.iloc[prev_idx:idx])
-        
-        # Calculate how many interpolated rows to insert
-        # Use a reasonable maximum to avoid creating too many rows
-        max_interpolated_rows = min(1000, max(2, int(gap_size / mean_diff)))
-        
-        if max_interpolated_rows > 1:
-            # Create interpolated timestamps
-            start_time = df_sorted.iloc[idx-1][dt_col]
-            end_time = df_sorted.iloc[idx][dt_col]
+    # Add progress bar for gap processing
+    with tqdm(total=len(large_gaps), desc="Fixing time series gaps", unit="gap") as pbar:
+        for i, (idx, gap_size) in enumerate(large_gaps.items()):
+            # Add all rows up to the gap
+            result_rows.append(df_sorted.iloc[prev_idx:idx])
             
-            # Create evenly spaced timestamps
-            interpolated_times = pd.date_range(
-                start=start_time, 
-                end=end_time, 
-                periods=max_interpolated_rows + 2  # +2 to include start and end
-            )[1:-1]  # Remove start and end points as they already exist
+            # Calculate how many interpolated rows to insert
+            # Use a reasonable maximum to avoid creating too many rows
+            max_interpolated_rows = min(1000, max(2, int(gap_size / mean_diff)))
             
-            # Create interpolated rows
-            for interp_time in interpolated_times:
-                # Create a new row with interpolated values
-                new_row = df_sorted.iloc[idx-1].copy()
-                new_row[dt_col] = interp_time
+            if max_interpolated_rows > 1:
+                # Create interpolated timestamps
+                start_time = df_sorted.iloc[idx-1][dt_col]
+                end_time = df_sorted.iloc[idx][dt_col]
                 
-                # Interpolate numeric columns
-                numeric_cols = df_sorted.select_dtypes(include=[np.number]).columns
-                for col in numeric_cols:
-                    if col != dt_col:
-                        # Simple linear interpolation between surrounding values
-                        prev_val = df_sorted.iloc[idx-1][col]
-                        next_val = df_sorted.iloc[idx][col]
-                        
-                        # Calculate interpolation factor
-                        total_gap = (end_time - start_time).total_seconds()
-                        current_gap = (interp_time - start_time).total_seconds()
-                        factor = current_gap / total_gap if total_gap > 0 else 0.5
-                        
-                        new_row[col] = prev_val + factor * (next_val - prev_val)
+                # Create evenly spaced timestamps
+                interpolated_times = pd.date_range(
+                    start=start_time, 
+                    end=end_time, 
+                    periods=max_interpolated_rows + 2  # +2 to include start and end
+                )[1:-1]  # Remove start and end points as they already exist
                 
-                result_rows.append(pd.DataFrame([new_row]))
-        
-        prev_idx = idx
+                # Create interpolated rows
+                for interp_time in interpolated_times:
+                    # Create a new row with interpolated values
+                    new_row = df_sorted.iloc[idx-1].copy()
+                    new_row[dt_col] = interp_time
+                    
+                    # Interpolate numeric columns
+                    numeric_cols = df_sorted.select_dtypes(include=[np.number]).columns
+                    for col in numeric_cols:
+                        if col != dt_col:
+                            # Simple linear interpolation between surrounding values
+                            prev_val = df_sorted.iloc[idx-1][col]
+                            next_val = df_sorted.iloc[idx][col]
+                            
+                            # Calculate interpolation factor
+                            total_gap = (end_time - start_time).total_seconds()
+                            current_gap = (interp_time - start_time).total_seconds()
+                            factor = current_gap / total_gap if total_gap > 0 else 0.5
+                            
+                            new_row[col] = prev_val + factor * (next_val - prev_val)
+                    
+                    result_rows.append(pd.DataFrame([new_row]))
+            
+            prev_idx = idx
+            pbar.update(1)
+            pbar.set_postfix({
+                'gap_size': str(gap_size).split('.')[0],  # Show gap size without microseconds
+                'interpolated': max_interpolated_rows if max_interpolated_rows > 1 else 0
+            })
     
     # Add remaining rows
     result_rows.append(df_sorted.iloc[prev_idx:])
