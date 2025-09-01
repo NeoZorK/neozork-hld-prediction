@@ -156,12 +156,10 @@ class TestRestoreBackup:
                 
                 # Mock user input to select invalid choice
                 with patch('builtins.input', return_value='999'):
-                    with patch('builtins.print') as mock_print:
-                        system.data_manager.restore_from_backup(system)
-                        
-                        # Check that invalid choice message is shown
-                        output_calls = [call[0][0] for call in mock_print.call_args_list]
-                        assert any("Invalid choice" in str(call) for call in output_calls)
+                    result = system.data_manager.restore_from_backup(system)
+                    
+                    # Check that function returns False for invalid choice
+                    assert result is False
     
     def test_restore_from_backup_test_mode(self, system):
         """Test restore from backup in test mode (no user input available)."""

@@ -134,3 +134,4 @@ Requires-Dist: watchdog>=6.0.0
 Requires-Dist: websockets>=15.0.1
 Requires-Dist: coverage>=7.10.6
 Requires-Dist: regex>=2025.8.29
+Requires-Dist: scipy-stubs==1.16.1.1

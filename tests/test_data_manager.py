@@ -254,12 +254,20 @@ DateTime,Open,High,Low,Close,TickVolume,
     
     @patch('builtins.input', return_value='yes')
     @patch('pathlib.Path.exists', return_value=True)
-    def test_restore_from_backup_with_backup_info(self, mock_exists, mock_input, data_manager, mock_system, sample_csv_data, capsys):
+    @patch('pathlib.Path.glob')
+    def test_restore_from_backup_with_backup_info(self, mock_glob, mock_exists, mock_input, data_manager, mock_system, sample_csv_data, capsys):
         """Test restore_from_backup with backup info."""
         mock_system.current_data = sample_csv_data
         mock_system.current_results = {
             'data_fixes': {'backup_file': 'backup_test.parquet'}
         }
+        
+        # Mock backup files
+        mock_backup_file = Mock()
+        mock_backup_file.name = 'backup_test.parquet'
+        mock_backup_file.stat.return_value.st_size = 1024 * 1024  # 1MB
+        mock_backup_file.stat.return_value.st_mtime = 1704067200  # Unix timestamp
+        mock_glob.side_effect = lambda pattern: [mock_backup_file] if "backup_*.parquet" in pattern else []
         
         # Mock parquet reading
         with patch('pandas.read_parquet', return_value=sample_csv_data):
@@ -267,23 +275,31 @@ DateTime,Open,High,Low,Close,TickVolume,
         
         captured = capsys.readouterr()
         assert "RESTORE FROM BACKUP" in captured.out
-        assert "Found" in captured.out and "backup files" in captured.out
+        assert "Found 2 backup files:" in captured.out
         # Note: mark_menu_as_used might not be called depending on implementation
     
     @patch('builtins.input', return_value='no')
     @patch('pathlib.Path.exists', return_value=True)
-    def test_restore_from_backup_decline_restore(self, mock_exists, mock_input, data_manager, mock_system, sample_csv_data, capsys):
+    @patch('pathlib.Path.glob')
+    def test_restore_from_backup_decline_restore(self, mock_glob, mock_exists, mock_input, data_manager, mock_system, sample_csv_data, capsys):
         """Test restore_from_backup when user declines restore."""
         mock_system.current_data = sample_csv_data
         mock_system.current_results = {
             'data_fixes': {'backup_file': 'backup_test.parquet'}
         }
         
+        # Mock backup files
+        mock_backup_file = Mock()
+        mock_backup_file.name = 'backup_test.parquet'
+        mock_backup_file.stat.return_value.st_size = 1024 * 1024  # 1MB
+        mock_backup_file.stat.return_value.st_mtime = 1704067200  # Unix timestamp
+        mock_glob.side_effect = lambda pattern: [mock_backup_file] if "backup_*.parquet" in pattern else []
+        
         data_manager.restore_from_backup(mock_system)
         
         captured = capsys.readouterr()
         assert "RESTORE FROM BACKUP" in captured.out
-        assert "Found" in captured.out and "backup files" in captured.out
+        assert "Found 2 backup files:" in captured.out
         # Should not call mark_menu_as_used since restore was declined
         mock_system.menu_manager.mark_menu_as_used.assert_not_called()
     
