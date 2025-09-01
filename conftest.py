@@ -22,6 +22,11 @@ warnings.filterwarnings("ignore")
 os.environ['MPLBACKEND'] = 'Agg'
 os.environ['DISPLAY'] = ':99'
 
+# Additional thread-safety settings
+os.environ['OMP_NUM_THREADS'] = '1'
+os.environ['MKL_NUM_THREADS'] = '1'
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+
 # Configure pytest to ignore all warnings
 def pytest_configure(config):
     """Configure pytest to ignore all warnings."""
@@ -63,6 +68,9 @@ def cleanup_matplotlib():
     try:
         plt.close('all')
         matplotlib.pyplot.close('all')
+        # Force garbage collection for matplotlib objects
+        import gc
+        gc.collect()
     except Exception:
         pass  # Ignore cleanup errors
 
@@ -79,10 +87,16 @@ def setup_test_environment():
     """Setup test environment for thread safety."""
     import os
     import tempfile
+    import threading
     
     # Create unique temp directory for each test
-    temp_dir = tempfile.mkdtemp(prefix=f"test_{os.getpid()}_")
+    thread_id = threading.current_thread().ident or 0
+    temp_dir = tempfile.mkdtemp(prefix=f"test_{os.getpid()}_{thread_id}_")
     os.environ['TMPDIR'] = temp_dir
+    
+    # Set matplotlib backend for this thread
+    import matplotlib
+    matplotlib.use('Agg')
     
     yield
     

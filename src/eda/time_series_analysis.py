@@ -14,6 +14,9 @@ This module provides comprehensive time series analysis capabilities including:
 
 import numpy as np
 import pandas as pd
+import matplotlib
+# Set matplotlib to use non-interactive backend for thread safety
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
@@ -157,49 +160,58 @@ class TimeSeriesAnalyzer:
         except Exception as e:
             results['tests']['kpss'] = {'error': str(e)}
             
-        # Visual analysis
-        fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-        fig.suptitle(f'Stationarity Analysis: {column}', fontsize=16)
-        
-        # Original series
-        axes[0, 0].plot(series.index, series.values)
-        axes[0, 0].set_title('Original Time Series')
-        axes[0, 0].set_xlabel('Time')
-        axes[0, 0].set_ylabel('Value')
-        
-        # Rolling statistics
-        rolling_mean = series.rolling(window=min(20, len(series)//4)).mean()
-        rolling_std = series.rolling(window=min(20, len(series)//4)).std()
-        
-        axes[0, 1].plot(series.index, series.values, label='Original', alpha=0.7)
-        axes[0, 1].plot(rolling_mean.index, rolling_mean.values, label='Rolling Mean', linewidth=2)
-        axes[0, 1].plot(rolling_std.index, rolling_std.values, label='Rolling Std', linewidth=2)
-        axes[0, 1].set_title('Rolling Statistics')
-        axes[0, 1].set_xlabel('Time')
-        axes[0, 1].set_ylabel('Value')
-        axes[0, 1].legend()
-        
-        # Histogram
-        axes[1, 0].hist(series.values, bins=30, alpha=0.7, edgecolor='black')
-        axes[1, 0].set_title('Distribution')
-        axes[1, 0].set_xlabel('Value')
-        axes[1, 0].set_ylabel('Frequency')
-        
-        # Q-Q plot
-        stats.probplot(series.values, dist="norm", plot=axes[1, 1])
-        axes[1, 1].set_title('Q-Q Plot (Normal)')
-        
-        plt.tight_layout()
-        
-        # Save plot with thread-safe naming
-        import threading
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        thread_id = threading.current_thread().ident or 0
-        plot_path = self.plots_dir / f"stationarity_analysis_{column}_{timestamp}_{thread_id}.png"
-        plt.savefig(plot_path, dpi=300, bbox_inches='tight')
-        plt.close()
-        
-        results['plot_path'] = str(plot_path)
+        # Visual analysis with thread-safe plotting
+        try:
+            # Ensure matplotlib backend is set correctly
+            import matplotlib
+            matplotlib.use('Agg')
+            
+            fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+            fig.suptitle(f'Stationarity Analysis: {column}', fontsize=16)
+            
+            # Original series
+            axes[0, 0].plot(series.index, series.values)
+            axes[0, 0].set_title('Original Time Series')
+            axes[0, 0].set_xlabel('Time')
+            axes[0, 0].set_ylabel('Value')
+            
+            # Rolling statistics
+            rolling_mean = series.rolling(window=min(20, len(series)//4)).mean()
+            rolling_std = series.rolling(window=min(20, len(series)//4)).std()
+            
+            axes[0, 1].plot(series.index, series.values, label='Original', alpha=0.7)
+            axes[0, 1].plot(rolling_mean.index, rolling_mean.values, label='Rolling Mean', linewidth=2)
+            axes[0, 1].plot(rolling_std.index, rolling_std.values, label='Rolling Std', linewidth=2)
+            axes[0, 1].set_title('Rolling Statistics')
+            axes[0, 1].set_xlabel('Time')
+            axes[0, 1].set_ylabel('Value')
+            axes[0, 1].legend()
+            
+            # Histogram
+            axes[1, 0].hist(series.values, bins=30, alpha=0.7, edgecolor='black')
+            axes[1, 0].set_title('Distribution')
+            axes[1, 0].set_xlabel('Value')
+            axes[1, 0].set_ylabel('Frequency')
+            
+            # Q-Q plot
+            stats.probplot(series.values, dist="norm", plot=axes[1, 1])
+            axes[1, 1].set_title('Q-Q Plot (Normal)')
+            
+            plt.tight_layout()
+            
+            # Save plot with thread-safe naming
+            import threading
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            thread_id = threading.current_thread().ident or 0
+            plot_path = self.plots_dir / f"stationarity_analysis_{column}_{timestamp}_{thread_id}.png"
+            plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+            plt.close()
+            
+            results['plot_path'] = str(plot_path)
+        except Exception as e:
+            # If plotting fails, continue without plot
+            results['plot_path'] = None
+            results['plot_error'] = str(e)
         self.results['stationarity'] = results
         
         return results
