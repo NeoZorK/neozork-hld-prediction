@@ -1322,7 +1322,109 @@ class DataManager:
             # Mark menu as used
             print(f"\n✅ Gap fixing marked as completed!")
             
+            # Ask if user wants to verify the fixes
+            print(f"\n🔍 Verification:")
+            verify_fixes = input(f"Would you like to verify that gaps were fixed? (y/n): ").strip().lower()
+            
+            if verify_fixes in ['y', 'yes']:
+                print(f"\n🔍 Running verification check...")
+                self._verify_gap_fixes(file_paths, Fore, Style)
+            
         except Exception as e:
             print(f"❌ Error during gap fixing: {e}")
+            import traceback
+            traceback.print_exc()
+
+    def _verify_gap_fixes(self, file_paths: List[Path], Fore, Style):
+        """Verify that gaps were properly fixed by running gap analysis again."""
+        print(f"\n🔍 VERIFICATION: CHECKING GAPS AFTER FIXING")
+        print("=" * 60)
+        
+        try:
+            from ..eda import data_quality
+            
+            total_files = len(file_paths)
+            verification_results = []
+            
+            print(f"📊 Re-analyzing {total_files} files for gaps...")
+            
+            for i, file_path in enumerate(file_paths, 1):
+                print(f"\n📁 Verifying file {i}/{total_files}: {file_path.name}")
+                
+                try:
+                    # Load file
+                    if file_path.suffix.lower() == '.parquet':
+                        df = pd.read_parquet(file_path)
+                    elif file_path.suffix.lower() == '.csv':
+                        df = pd.read_csv(file_path)
+                    else:
+                        print(f"   ⚠️  Skipping unsupported format: {file_path.suffix}")
+                        continue
+                    
+                    # Create gap summary for this file
+                    file_gap_summary = []
+                    data_quality.gap_check(df, file_gap_summary, Fore, Style, file_name=file_path.name)
+                    
+                    if file_gap_summary:
+                        total_gaps = sum(entry.get('gaps_count', 0) for entry in file_gap_summary)
+                        print(f"   ⚠️  Found {total_gaps} gaps remaining")
+                        verification_results.append({
+                            'file': file_path.name,
+                            'gaps_remaining': total_gaps,
+                            'status': 'gaps_found'
+                        })
+                    else:
+                        print(f"   ✅ No gaps found - file is clean!")
+                        verification_results.append({
+                            'file': file_path.name,
+                            'gaps_remaining': 0,
+                            'status': 'clean'
+                        })
+                    
+                    # Memory cleanup
+                    del df
+                    gc.collect()
+                    
+                except Exception as e:
+                    print(f"   ❌ Error analyzing {file_path.name}: {e}")
+                    verification_results.append({
+                        'file': file_path.name,
+                        'gaps_remaining': -1,
+                        'status': 'error'
+                    })
+            
+            # Summary
+            print(f"\n🔍 VERIFICATION SUMMARY")
+            print("=" * 40)
+            
+            clean_files = sum(1 for r in verification_results if r['status'] == 'clean')
+            files_with_gaps = sum(1 for r in verification_results if r['status'] == 'gaps_found')
+            error_files = sum(1 for r in verification_results if r['status'] == 'error')
+            total_gaps_remaining = sum(r['gaps_remaining'] for r in verification_results if r['status'] == 'gaps_found')
+            
+            print(f"📊 Results:")
+            print(f"   ✅ Clean files (no gaps): {clean_files}")
+            print(f"   ⚠️  Files with remaining gaps: {files_with_gaps}")
+            print(f"   ❌ Files with errors: {error_files}")
+            
+            if total_gaps_remaining > 0:
+                print(f"   📈 Total gaps remaining: {total_gaps_remaining:,}")
+                print(f"   💡 Some gaps may still exist - consider re-running gap fixing")
+            else:
+                print(f"   🎉 All gaps successfully fixed!")
+            
+            # Show detailed results
+            if verification_results:
+                print(f"\n📋 Detailed Verification Results:")
+                for result in verification_results:
+                    if result['status'] == 'clean':
+                        print(f"   ✅ {result['file']}: Clean (no gaps)")
+                    elif result['status'] == 'gaps_found':
+                        print(f"   ⚠️  {result['file']}: {result['gaps_remaining']} gaps remaining")
+                    else:
+                        print(f"   ❌ {result['file']}: Error during verification")
+            
+        except Exception as e:
+            print(f"❌ Error during verification: {e}")
             import traceback
             traceback.print_exc()
