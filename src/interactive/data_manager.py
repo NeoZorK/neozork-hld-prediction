@@ -1363,7 +1363,7 @@ class DataManager:
                     
                     # Create gap summary for this file
                     file_gap_summary = []
-                    data_quality.gap_check(df, file_gap_summary, Fore, Style, file_name=file_path.name)
+                    data_quality.gap_check(df, file_gap_summary, Fore, Style)
                     
                     if file_gap_summary:
                         total_gaps = sum(entry.get('gaps_count', 0) for entry in file_gap_summary)
