@@ -383,21 +383,30 @@ class DataManager:
         print("\n📁 LOAD DATA")
         print("-" * 30)
         
-        # Get all subfolders in data directory
+        # Get all subfolders in data directory and other important folders
         data_folder = Path("data")
+        mql5_feed_folder = Path("mql5_feed")
+        
         if not data_folder.exists():
             print("❌ Data folder not found. Please ensure 'data' folder exists.")
             return False
         
-        # Find all subfolders
+        # Find all subfolders (exclude cache folders)
         subfolders = [data_folder]  # Include main data folder
+        
+        # Add mql5_feed folder if it exists
+        if mql5_feed_folder.exists() and mql5_feed_folder.is_dir():
+            subfolders.append(mql5_feed_folder)
+        
         for item in data_folder.iterdir():
             if item.is_dir():
-                subfolders.append(item)
-                # Also include sub-subfolders
-                for subitem in item.iterdir():
-                    if subitem.is_dir():
-                        subfolders.append(subitem)
+                # Skip cache folders to avoid loading cached files
+                if 'cache' not in item.name.lower():
+                    subfolders.append(item)
+                    # Also include sub-subfolders (but skip cache)
+                    for subitem in item.iterdir():
+                        if subitem.is_dir() and 'cache' not in subitem.name.lower():
+                            subfolders.append(subitem)
         
         print("💡 Available folders:")
         print("0. 🔙 Back to Main Menu")
@@ -462,21 +471,32 @@ class DataManager:
                 print(f"❌ Folder not found: {folder_path}")
                 return False
         
-        # Find all data files
+        # Find all data files (exclude temporary files)
         data_files = []
         for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
             if mask:
                 # Apply mask filter
                 pattern = f"*{mask}*{ext}"
-                data_files.extend(folder_path.glob(pattern))
+                files = list(folder_path.glob(pattern))
+                # Filter out temporary files
+                files = [f for f in files if not f.name.startswith('tmp')]
+                data_files.extend(files)
+                
                 # Also try case-insensitive search
                 pattern = f"*{mask.upper()}*{ext}"
-                data_files.extend(folder_path.glob(pattern))
+                files = list(folder_path.glob(pattern))
+                files = [f for f in files if not f.name.startswith('tmp')]
+                data_files.extend(files)
+                
                 pattern = f"*{mask.lower()}*{ext}"
-                data_files.extend(folder_path.glob(pattern))
+                files = list(folder_path.glob(pattern))
+                files = [f for f in files if not f.name.startswith('tmp')]
+                data_files.extend(files)
             else:
-                # No mask, get all files
-                data_files.extend(folder_path.glob(f"*{ext}"))
+                # No mask, get all files (but exclude temporary files)
+                files = list(folder_path.glob(f"*{ext}"))
+                files = [f for f in files if not f.name.startswith('tmp')]
+                data_files.extend(files)
         
         # Remove duplicates
         data_files = list(set(data_files))
