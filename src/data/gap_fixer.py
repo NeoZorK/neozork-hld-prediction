@@ -389,15 +389,11 @@ class GapFixer:
         """Fix gaps using linear interpolation."""
         df_copy = df.copy()
         
-        # Create complete time index
-        start_time = gap_info['time_range']['start']
-        end_time = gap_info['time_range']['end']
-        expected_freq = gap_info['expected_frequency']
+        # Sort by timestamp
+        df_copy = df_copy.sort_values(timestamp_col)
         
-        complete_times = pd.date_range(start=start_time, end=end_time, freq=expected_freq)
-        
-        # Reindex and interpolate
-        df_copy = df_copy.set_index(timestamp_col).reindex(complete_times)
+        # Set timestamp as index for proper time-based operations
+        df_copy = df_copy.set_index(timestamp_col)
         
         # Linear interpolation for numeric columns
         numeric_columns = df_copy.select_dtypes(include=[np.number]).columns
@@ -407,16 +403,34 @@ class GapFixer:
         non_numeric_columns = df_copy.select_dtypes(exclude=[np.number]).columns
         df_copy[non_numeric_columns] = df_copy[non_numeric_columns].fillna(method='ffill')
         
-        # Reset index
+        # Reset index to restore timestamp column
         df_copy = df_copy.reset_index()
-        df_copy = df_copy.rename(columns={'index': timestamp_col})
         
         return df_copy
     
     def _fix_gaps_cubic(self, df: pd.DataFrame, timestamp_col: str,
                         gap_info: Dict, show_progress: bool) -> pd.DataFrame:
         """Fix gaps using cubic interpolation."""
-        return self._fix_gaps_linear(df, timestamp_col, gap_info, show_progress)
+        df_copy = df.copy()
+        
+        # Sort by timestamp
+        df_copy = df_copy.sort_values(timestamp_col)
+        
+        # Set timestamp as index for proper time-based operations
+        df_copy = df_copy.set_index(timestamp_col)
+        
+        # Cubic interpolation for numeric columns
+        numeric_columns = df_copy.select_dtypes(include=[np.number]).columns
+        df_copy[numeric_columns] = df_copy[numeric_columns].interpolate(method='cubic')
+        
+        # Forward fill for non-numeric columns
+        non_numeric_columns = df_copy.select_dtypes(exclude=[np.number]).columns
+        df_copy[non_numeric_columns] = df_copy[non_numeric_columns].fillna(method='ffill')
+        
+        # Reset index to restore timestamp column
+        df_copy = df_copy.reset_index()
+        
+        return df_copy
     
     def _fix_gaps_forward_fill(self, df: pd.DataFrame, timestamp_col: str,
                                gap_info: Dict, show_progress: bool) -> pd.DataFrame:
