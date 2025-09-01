@@ -335,6 +335,13 @@ class DataManager:
             parquet_file = pq.ParquetFile(file_path)
             total_rows = parquet_file.metadata.num_rows
             
+            # First, check if the file has a datetime index by reading a small sample
+            # Use pyarrow to read just the first row group to check the index
+            first_row_group = parquet_file.read_row_group(0)
+            sample_df = first_row_group.to_pandas()
+            has_datetime_index = isinstance(sample_df.index, pd.DatetimeIndex)
+            datetime_index_name = sample_df.index.name if has_datetime_index else None
+            
             if total_rows <= self.chunk_size:
                 # Small file, load directly with datetime index handling
                 df = pd.read_parquet(file_path)
@@ -343,34 +350,51 @@ class DataManager:
             # Large file, load in chunks
             print(f"📊 Loading {file_path.name} in chunks of {self.chunk_size:,} rows...")
             
-            chunks = []
-            for i, chunk in enumerate(parquet_file.iter_batches(batch_size=self.chunk_size)):
-                chunk_df = chunk.to_pandas()
-                chunks.append(chunk_df)
+            if has_datetime_index:
+                print(f"📅 Detected DatetimeIndex: {datetime_index_name}, preserving during chunked loading...")
                 
-                # Memory management
-                if self.enable_memory_optimization:
-                    gc.collect()
-                
-                # Progress indicator
-                if (i + 1) % 10 == 0:
-                    rows_loaded = (i + 1) * self.chunk_size
-                    progress = min(100, (rows_loaded / total_rows) * 100)
-                    print(f"   📈 Progress: {progress:.1f}% ({rows_loaded:,}/{total_rows:,} rows)")
-                
-                # Check memory
-                if not self._check_memory_available():
-                    print(f"⚠️  Low memory detected, stopping at chunk {i + 1}")
-                    break
-            
-            # Combine chunks
-            if chunks:
-                result = pd.concat(chunks, ignore_index=True)
-                del chunks
-                gc.collect()
-                return self._handle_datetime_index(result)
+                # For files with DatetimeIndex, we need to load the entire file to preserve the index
+                # This is because pyarrow chunks don't preserve the index structure
+                # However, we'll try to load in chunks if the file is extremely large
+                if total_rows > 5000000:  # 5M rows threshold
+                    print(f"⚠️  Very large file with DatetimeIndex detected ({total_rows:,} rows).")
+                    print(f"   Loading entire file to preserve index structure (this may use significant memory)...")
+                    df = pd.read_parquet(file_path)
+                    return self._handle_datetime_index(df)
+                else:
+                    print(f"   Loading entire file to preserve index structure...")
+                    df = pd.read_parquet(file_path)
+                    return self._handle_datetime_index(df)
             else:
-                raise ValueError("No chunks were loaded")
+                # No DatetimeIndex, safe to load in chunks
+                chunks = []
+                for i, chunk in enumerate(parquet_file.iter_batches(batch_size=self.chunk_size)):
+                    chunk_df = chunk.to_pandas()
+                    chunks.append(chunk_df)
+                    
+                    # Memory management
+                    if self.enable_memory_optimization:
+                        gc.collect()
+                    
+                    # Progress indicator
+                    if (i + 1) % 10 == 0:
+                        rows_loaded = (i + 1) * self.chunk_size
+                        progress = min(100, (rows_loaded / total_rows) * 100)
+                        print(f"   📈 Progress: {progress:.1f}% ({rows_loaded:,}/{total_rows:,} rows)")
+                    
+                    # Check memory
+                    if not self._check_memory_available():
+                        print(f"⚠️  Low memory detected, stopping at chunk {i + 1}")
+                        break
+                
+                # Combine chunks
+                if chunks:
+                    result = pd.concat(chunks, ignore_index=True)
+                    del chunks
+                    gc.collect()
+                    return self._handle_datetime_index(result)
+                else:
+                    raise ValueError("No chunks were loaded")
                 
         except ImportError:
             # Fallback to pandas
