@@ -51,7 +51,7 @@ from src.cli.cli import parse_supertrend_parameters
 from .dual_chart_fastest import plot_dual_chart_fastest
 from .dual_chart_fast import plot_dual_chart_fast
 from .dual_chart_mpl import plot_dual_chart_mpl
-from .dual_chart_seaborn import plot_dual_chart_seaborn
+from .dual_chart_seaborn import plot_dual_chart_seaborn, plot_dual_chart_seaborn_display
 from .dual_chart_terminal import plot_dual_chart_terminal
 
 

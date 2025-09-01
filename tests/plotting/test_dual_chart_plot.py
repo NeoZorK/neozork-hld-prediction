@@ -255,10 +255,10 @@ class TestDualChartPlot:
         assert result is not None
         mock_plot_mpl.assert_called_once()
 
-    @patch('src.plotting.dual_chart_plot.plot_dual_chart_seaborn')
-    def test_plot_dual_chart_results_seaborn(self, mock_plot_seaborn):
+    @patch('src.plotting.dual_chart_seaborn.plot_dual_chart_seaborn_display')
+    def test_plot_dual_chart_results_seaborn(self, mock_plot_seaborn_display):
         """Test dual chart plotting for seaborn mode."""
-        mock_plot_seaborn.return_value = Mock()
+        mock_plot_seaborn_display.return_value = Mock()
         
         result = plot_dual_chart_results(
             self.sample_data,
@@ -268,7 +268,7 @@ class TestDualChartPlot:
         )
         
         assert result is not None
-        mock_plot_seaborn.assert_called_once()
+        mock_plot_seaborn_display.assert_called_once()
 
     @patch('src.plotting.dual_chart_plot.plot_dual_chart_terminal')
     def test_plot_dual_chart_results_terminal(self, mock_plot_terminal):
