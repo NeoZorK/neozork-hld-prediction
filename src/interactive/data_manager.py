@@ -1336,17 +1336,21 @@ class DataManager:
             traceback.print_exc()
 
     def _verify_gap_fixes(self, file_paths: List[Path], Fore, Style):
-        """Verify that gaps were properly fixed by running gap analysis again."""
+        """Verify that gaps were properly fixed by running gap analysis again using GapFixer."""
         print(f"\n🔍 VERIFICATION: CHECKING GAPS AFTER FIXING")
         print("=" * 60)
         
         try:
-            from ..eda import data_quality
+            from ..data import GapFixer
             
             total_files = len(file_paths)
             verification_results = []
             
-            print(f"📊 Re-analyzing {total_files} files for gaps...")
+            print(f"📊 Re-analyzing {total_files} files for gaps using GapFixer...")
+            print(f"💡 Note: Using reliable full-data analysis instead of sampling")
+            
+            # Initialize GapFixer
+            gap_fixer = GapFixer(memory_limit_mb=self.max_memory_mb)
             
             for i, file_path in enumerate(file_paths, 1):
                 print(f"\n📁 Verifying file {i}/{total_files}: {file_path.name}")
@@ -1361,24 +1365,35 @@ class DataManager:
                         print(f"   ⚠️  Skipping unsupported format: {file_path.suffix}")
                         continue
                     
-                    # Create gap summary for this file
-                    file_gap_summary = []
-                    data_quality.gap_check(df, file_gap_summary, Fore, Style)
-                    
-                    if file_gap_summary:
-                        total_gaps = sum(entry.get('gaps_count', 0) for entry in file_gap_summary)
-                        print(f"   ⚠️  Found {total_gaps} gaps remaining")
-                        verification_results.append({
-                            'file': file_path.name,
-                            'gaps_remaining': total_gaps,
-                            'status': 'gaps_found'
-                        })
+                    # Use GapFixer's reliable gap detection
+                    timestamp_col = gap_fixer._find_timestamp_column(df)
+                    if timestamp_col:
+                        gap_info = gap_fixer._detect_gaps(df, timestamp_col)
+                        
+                        if gap_info['has_gaps']:
+                            total_gaps = gap_info['gap_count']
+                            print(f"   ⚠️  Found {total_gaps:,} gaps remaining")
+                            verification_results.append({
+                                'file': file_path.name,
+                                'gaps_remaining': total_gaps,
+                                'status': 'gaps_found',
+                                'method': 'GapFixer (full data)'
+                            })
+                        else:
+                            print(f"   ✅ No gaps found - file is clean!")
+                            verification_results.append({
+                                'file': file_path.name,
+                                'gaps_remaining': 0,
+                                'status': 'clean',
+                                'method': 'GapFixer (full data)'
+                            })
                     else:
-                        print(f"   ✅ No gaps found - file is clean!")
+                        print(f"   ❌ No timestamp column found")
                         verification_results.append({
                             'file': file_path.name,
-                            'gaps_remaining': 0,
-                            'status': 'clean'
+                            'gaps_remaining': -1,
+                            'status': 'error',
+                            'method': 'GapFixer'
                         })
                     
                     # Memory cleanup
@@ -1390,7 +1405,8 @@ class DataManager:
                     verification_results.append({
                         'file': file_path.name,
                         'gaps_remaining': -1,
-                        'status': 'error'
+                        'status': 'error',
+                        'method': 'GapFixer'
                     })
             
             # Summary
@@ -1412,17 +1428,18 @@ class DataManager:
                 print(f"   💡 Some gaps may still exist - consider re-running gap fixing")
             else:
                 print(f"   🎉 All gaps successfully fixed!")
+                print(f"   💡 Note: This verification uses reliable full-data analysis")
             
             # Show detailed results
             if verification_results:
                 print(f"\n📋 Detailed Verification Results:")
                 for result in verification_results:
                     if result['status'] == 'clean':
-                        print(f"   ✅ {result['file']}: Clean (no gaps)")
+                        print(f"   ✅ {result['file']}: Clean (no gaps) - {result['method']}")
                     elif result['status'] == 'gaps_found':
-                        print(f"   ⚠️  {result['file']}: {result['gaps_remaining']} gaps remaining")
+                        print(f"   ⚠️  {result['file']}: {result['gaps_remaining']:,} gaps remaining - {result['method']}")
                     else:
-                        print(f"   ❌ {result['file']}: Error during verification")
+                        print(f"   ❌ {result['file']}: Error during verification - {result['method']}")
             
         except Exception as e:
             print(f"❌ Error during verification: {e}")
