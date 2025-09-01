@@ -136,11 +136,53 @@ class DataManager:
             
         print(f"🔄 Loading CSV: {file_path.name}")
         
-        # Try to detect datetime columns first
+        # Determine header row first
+        header_row = self._determine_header_row(file_path)
+        
+        # Try to detect datetime columns with correct header
+        datetime_columns = self._detect_datetime_columns(file_path, header_row)
+        
+        # Load data in chunks if needed
+        if self._should_use_chunked_loading(file_path):
+            return self._load_csv_in_chunks(file_path, datetime_columns, chunk_size)
+        else:
+            return self._load_csv_direct(file_path, datetime_columns)
+    
+    def _determine_header_row(self, file_path: Path) -> int:
+        """Determine the correct header row for CSV file."""
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                first_line = f.readline().strip()
+                second_line = f.readline().strip()
+            
+            # Check if second line contains 'DateTime' (indicating it's the header)
+            if 'DateTime' in second_line:
+                # First line is metadata, second line is header
+                print(f"✅ Detected metadata header, using row 1 as column headers")
+                return 1
+            elif 'DateTime' in first_line:
+                # First line is header
+                print(f"✅ Using first row as column headers")
+                return 0
+            else:
+                # Try to detect by checking if first line looks like data
+                # Check for common data patterns (digits, dots, colons)
+                if any(char.isdigit() for char in first_line[:20]):  # Check first 20 chars
+                    print(f"⚠️  No header detected, using first row as data")
+                    return None  # No header
+                else:
+                    print(f"✅ Using first row as column headers")
+                    return 0
+        except Exception as e:
+            print(f"⚠️  Warning: Could not determine header row: {e}")
+            return 0  # Default to first row as header
+    
+    def _detect_datetime_columns(self, file_path: Path, header_row: int) -> List[str]:
+        """Detect datetime columns in CSV file with correct header."""
         datetime_columns = []
         try:
-            # Read first few rows to detect datetime columns
-            sample_df = pd.read_csv(file_path, nrows=1000)
+            # Read first few rows to detect datetime columns with correct header
+            sample_df = pd.read_csv(file_path, nrows=1000, header=header_row)
             
             # Check for existing datetime columns first
             for col in sample_df.columns:
@@ -166,17 +208,16 @@ class DataManager:
         except Exception as e:
             print(f"⚠️  Warning: Could not detect datetime columns: {e}")
         
-        # Load data in chunks if needed
-        if self._should_use_chunked_loading(file_path):
-            return self._load_csv_in_chunks(file_path, datetime_columns, chunk_size)
-        else:
-            return self._load_csv_direct(file_path, datetime_columns)
+        return datetime_columns
     
     def _load_csv_direct(self, file_path: Path, datetime_columns: List[str]) -> pd.DataFrame:
         """Load CSV file directly with datetime parsing."""
         try:
-            # Load with datetime parsing
-            df = pd.read_csv(file_path)
+            # Determine header row
+            header_row = self._determine_header_row(file_path)
+            
+            # Load with appropriate header setting
+            df = pd.read_csv(file_path, header=header_row)
             
             # Parse datetime columns
             for col in datetime_columns:
@@ -196,11 +237,14 @@ class DataManager:
         """Load CSV file in chunks with datetime parsing."""
         print(f"📊 Loading {file_path.name} in chunks of {chunk_size:,} rows...")
         
+        # Determine header row
+        header_row = self._determine_header_row(file_path)
+        
         chunks = []
         total_rows = 0
         
         try:
-            chunk_iter = pd.read_csv(file_path, chunksize=chunk_size)
+            chunk_iter = pd.read_csv(file_path, chunksize=chunk_size, header=header_row)
             
             for i, chunk in enumerate(chunk_iter):
                 # Parse datetime columns in chunk
