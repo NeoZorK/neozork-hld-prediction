@@ -108,13 +108,25 @@ class GapFixer:
             else:
                 return False, {'error': f'Unsupported file format: {file_path.suffix}'}
             
-            # Check if timestamp column exists
+            # Check if timestamp column exists or if we have a DatetimeIndex
             timestamp_col = self._find_timestamp_column(df)
-            if timestamp_col is None:
+            
+            if timestamp_col is None and not isinstance(df.index, pd.DatetimeIndex):
                 return False, {'error': 'No timestamp column found'}
             
+            # Handle DatetimeIndex case
+            if isinstance(df.index, pd.DatetimeIndex):
+                print(f"   📅 Converting DatetimeIndex to column for gap analysis...")
+                # Convert DatetimeIndex to a column
+                df = df.reset_index()
+                timestamp_col = df.index.name or 'index'
+                # Rename the index column if it's unnamed
+                if timestamp_col == 'index':
+                    timestamp_col = 'Timestamp'
+                    df = df.rename(columns={'index': 'Timestamp'})
+            
             # Convert timestamp to datetime if needed
-            if not pd.api.types.is_datetime64_any_dtype(df[timestamp_col]):
+            if timestamp_col and not pd.api.types.is_datetime64_any_dtype(df[timestamp_col]):
                 df[timestamp_col] = pd.to_datetime(df[timestamp_col], errors='coerce')
             
             # Detect gaps
@@ -240,8 +252,20 @@ class GapFixer:
     
     def _find_timestamp_column(self, df: pd.DataFrame) -> Optional[str]:
         """Find the timestamp column in the dataframe."""
+        # First, check if the index is a DatetimeIndex
+        if isinstance(df.index, pd.DatetimeIndex):
+            print(f"   📅 Found DatetimeIndex: {df.index.name or 'unnamed'}")
+            return None  # We'll handle DatetimeIndex separately
+        
+        # Check for exact matches (case-insensitive)
         timestamp_candidates = ['timestamp', 'time', 'date', 'datetime', 'ts']
         
+        for col in df.columns:
+            col_lower = col.lower()
+            if any(candidate == col_lower for candidate in timestamp_candidates):
+                return col
+        
+        # Then check for partial matches (case-insensitive)
         for col in df.columns:
             col_lower = col.lower()
             if any(candidate in col_lower for candidate in timestamp_candidates):
@@ -251,6 +275,9 @@ class GapFixer:
         for col in df.columns:
             if pd.api.types.is_datetime64_any_dtype(df[col]):
                 return col
+        
+        # Debug: print available columns
+        print(f"   🔍 Available columns: {list(df.columns)}")
         
         return None
     

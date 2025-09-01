@@ -1193,25 +1193,61 @@ class DataManager:
         print(explain_why_fix_gaps())
         
         # Extract file paths from gap summary
+        print(f"\n🔍 Searching for files to fix gaps...")
         file_paths = []
         for entry in gap_summary:
             file_name = entry.get('file', '')
+            print(f"   🔍 Looking for: {file_name}")
             if file_name:
-                # Try to find the actual file path
+                # Try to find the actual file path in various locations
                 possible_paths = [
                     Path('data') / file_name,
                     Path('data/indicators/parquet') / file_name,
                     Path('data/indicators/csv') / file_name,
-                    Path('mql5_feed') / file_name
+                    Path('data/raw_parquet') / file_name,
+                    Path('data/cache/csv_converted') / file_name,  # Add this path
+                    Path('mql5_feed') / file_name,
+                    Path('mql5_feed/indicators') / file_name
                 ]
                 
+                # Also try with .csv extension if it's a .parquet file
+                if file_name.endswith('.parquet'):
+                    csv_name = file_name.replace('.parquet', '.csv')
+                    possible_paths.extend([
+                        Path('data') / csv_name,
+                        Path('data/indicators/csv') / csv_name,
+                        Path('mql5_feed') / csv_name
+                    ])
+                
+                # Also try with .parquet extension if it's a .csv file
+                elif file_name.endswith('.csv'):
+                    parquet_name = file_name.replace('.csv', '.parquet')
+                    possible_paths.extend([
+                        Path('data') / parquet_name,
+                        Path('data/indicators/parquet') / parquet_name,
+                        Path('data/raw_parquet') / parquet_name
+                    ])
+                
+                file_found = False
                 for path in possible_paths:
                     if path.exists():
-                        file_paths.append(path)
+                        file_paths.append(path)  # Keep as Path object
+                        file_found = True
+                        print(f"   📁 Found: {path}")
                         break
+                
+                if not file_found:
+                    print(f"   ⚠️  File not found: {file_name}")
         
         if not file_paths:
             print("❌ No valid file paths found for gap fixing.")
+            print("   💡 Please check if the files exist in the expected locations:")
+            print("      • data/")
+            print("      • data/indicators/parquet/")
+            print("      • data/indicators/csv/")
+            print("      • data/raw_parquet/")
+            print("      • data/cache/csv_converted/")
+            print("      • mql5_feed/")
             return
         
         print(f"\n📁 Files to process: {len(file_paths)}")
