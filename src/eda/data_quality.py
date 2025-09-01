@@ -923,7 +923,12 @@ def print_gap_summary(gap_summary, Fore, Style):
         for file, gaps in gaps_by_file.items():
             print(f"  {Fore.CYAN}File: {file} | Total gaps: {len(gaps)}{Style.RESET_ALL}")
             for entry in gaps:
-                print(f"    {Fore.YELLOW}Gap in '{entry['column']}':{Style.RESET_ALL} from {entry['from']} to {entry['to']} (delta: {entry['delta']})")
+                if 'from' in entry and 'to' in entry and 'delta' in entry:
+                    print(f"    {Fore.YELLOW}Gap in '{entry['column']}':{Style.RESET_ALL} from {entry['from']} to {entry['to']} (delta: {entry['delta']})")
+                elif 'gaps_count' in entry and 'largest_gap' in entry:
+                    print(f"    {Fore.YELLOW}Gap in '{entry['column']}':{Style.RESET_ALL} {entry['gaps_count']} gaps, largest: {entry['largest_gap']}")
+                else:
+                    print(f"    {Fore.YELLOW}Gap in '{entry['column']}':{Style.RESET_ALL} gaps detected")
     else:
         print(f"\n{Fore.MAGENTA}Gap Summary for all files: No significant gaps found.{Style.RESET_ALL}")
 

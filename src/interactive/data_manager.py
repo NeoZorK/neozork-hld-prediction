@@ -19,6 +19,8 @@ import warnings
 import pandas as pd
 import numpy as np
 
+from ..eda import data_quality
+
 
 class DataManager:
     """Manages data loading, exporting, and data operations with aggressive memory optimization."""
@@ -38,6 +40,9 @@ class DataManager:
         # Memory monitoring - more permissive for large datasets
         self.memory_warning_threshold = float(os.environ.get('MEMORY_WARNING_THRESHOLD', '0.8'))  # 80% of max memory
         self.memory_critical_threshold = float(os.environ.get('MEMORY_CRITICAL_THRESHOLD', '0.95'))  # 95% of max memory
+        
+        # Initialize gap analysis settings
+        self.gap_analysis_enabled = True
         
         print(f"🔧 DataManager initialized with memory optimization:")
         print(f"   Max memory: {self.max_memory_mb}MB")
@@ -744,11 +749,194 @@ class DataManager:
                 print(system.current_data.head())
                 print(f"\nData types:\n{system.current_data.dtypes}")
             
+            # Ask if user wants to analyze time series gaps
+            try:
+                analyze_gaps = input("\n🔍 Analyze time series gaps? (y/n): ").strip().lower()
+                if analyze_gaps in ['y', 'yes']:
+                    # Determine expected frequency based on data
+                    expected_frequency = self._determine_expected_frequency(system.current_data, datetime_column='Timestamp')
+                    
+                    # Analyze gaps
+                    self.analyze_time_series_gaps(data_files, 'Timestamp', expected_frequency)
+            except EOFError:
+                pass
+            
             return True
             
         except Exception as e:
             print(f"❌ Error combining data: {e}")
             return False
+    
+    def analyze_time_series_gaps(self, data_files: List[Path], 
+                                datetime_column: str = 'Timestamp',
+                                expected_frequency: str = '1H') -> bool:
+        """
+        Analyze time series gaps in loaded files using existing EDA functionality.
+        
+        Args:
+            data_files: List of file paths that were loaded
+            datetime_column: Name of the datetime column to analyze
+            expected_frequency: Expected frequency of the data
+            
+        Returns:
+            True if analysis completed successfully
+        """
+        print(f"\n🔍 ANALYZING TIME SERIES GAPS")
+        print("-" * 40)
+        print(f"📊 Analyzing {len(data_files)} files for gaps...")
+        print(f"📅 Using datetime column: '{datetime_column}'")
+        print(f"⏱️  Expected frequency: {expected_frequency}")
+        
+        try:
+            # Import colorama for colored output
+            import colorama
+            from colorama import Fore, Style
+            colorama.init(autoreset=True)
+            
+            # Initialize gap summary list
+            gap_summary = []
+            
+            # Analyze each file using existing data_quality.gap_check
+            for i, file_path in enumerate(data_files, 1):
+                print(f"\n📁 Analyzing file {i}/{len(data_files)}: {file_path.name}")
+                
+                try:
+                    # Load file
+                    if file_path.suffix.lower() == '.csv':
+                        df = pd.read_csv(file_path)
+                    elif file_path.suffix.lower() == '.parquet':
+                        df = pd.read_parquet(file_path)
+                    else:
+                        print(f"  ⚠️  Skipping unsupported file format: {file_path.suffix}")
+                        continue
+                    
+                    # Add file info to gap summary entries
+                    def gap_check_wrapper(df, gap_summary, Fore, Style):
+                        # Call the original gap_check function
+                        data_quality.gap_check(df, gap_summary, Fore, Style)
+                        # Add file information to all entries
+                        for entry in gap_summary:
+                            if 'file' not in entry:
+                                entry['file'] = file_path.name
+                    
+                    # Check if DataFrame has datetime index and convert to column if needed
+                    if isinstance(df.index, pd.DatetimeIndex):
+                        print(f"  📅 Converting DatetimeIndex to column for gap analysis...")
+                        df = df.reset_index()
+                        if df.columns[0] == 'index':
+                            df = df.rename(columns={'index': 'Timestamp'})
+                    
+                    # Run gap check
+                    gap_check_wrapper(df, gap_summary, Fore, Style)
+                    
+                except Exception as e:
+                    print(f"  ❌ Error analyzing {file_path.name}: {e}")
+                    continue
+            
+            # Print gap summary using existing function
+            if gap_summary:
+                data_quality.print_gap_summary(gap_summary, Fore, Style)
+                
+                # Ask user if they want to see detailed gap information
+                try:
+                    show_details = input(f"\nShow detailed gap information? (y/n): ").strip().lower()
+                    if show_details in ['y', 'yes']:
+                        self._show_detailed_gap_info_from_eda(gap_summary, Fore, Style)
+                except EOFError:
+                    pass
+            else:
+                print(f"\n✅ No gaps found in any files!")
+            
+            return True
+            
+        except Exception as e:
+            print(f"❌ Error analyzing time series gaps: {e}")
+            return False
+    
+    def _show_detailed_gap_info_from_eda(self, gap_summary: List[Dict], Fore, Style):
+        """Show detailed gap information for files with gaps using EDA results."""
+        print(f"\n📋 DETAILED GAP INFORMATION")
+        print("=" * 50)
+        
+        if not gap_summary:
+            print("No gaps found in any files.")
+            return
+        
+        # Group gaps by file
+        from collections import defaultdict
+        gaps_by_file = defaultdict(list)
+        for entry in gap_summary:
+            gaps_by_file[entry.get('file', 'Unknown file')].append(entry)
+        
+        for file_name, gaps in gaps_by_file.items():
+            print(f"\n📁 {file_name}")
+            print(f"   📊 Summary:")
+            print(f"      • Total gaps: {len(gaps)}")
+            
+            # Show gap details
+            for i, gap in enumerate(gaps, 1):
+                print(f"   ⏰ Gap {i}:")
+                if 'column' in gap:
+                    print(f"      • Column: {gap['column']}")
+                if 'gaps_count' in gap:
+                    print(f"      • Gaps count: {gap['gaps_count']}")
+                if 'largest_gap' in gap:
+                    print(f"      • Largest gap: {gap['largest_gap']}")
+                if 'method' in gap:
+                    print(f"      • Analysis method: {gap['method']}")
+                # Check for different gap information formats
+                if 'from' in gap and 'to' in gap and 'delta' in gap:
+                    print(f"      • Period: {gap['from']} → {gap['to']} (delta: {gap['delta']})")
+                elif 'largest_gap' in gap:
+                    print(f"      • Largest gap: {gap['largest_gap']}")
+            
+            print("-" * 40)
+    
+    def _determine_expected_frequency(self, df: pd.DataFrame, datetime_column: str = 'Timestamp') -> str:
+        """
+        Determine the expected frequency of time series data.
+        
+        Args:
+            df: DataFrame with time series data
+            datetime_column: Name of the datetime column
+            
+        Returns:
+            Expected frequency string (e.g., '1H', '1D', '1T')
+        """
+        if datetime_column not in df.columns:
+            return '1H'  # Default to hourly
+        
+        # Get datetime column
+        dt_col = df[datetime_column]
+        
+        # Remove NaT values
+        dt_col_clean = dt_col.dropna()
+        
+        if len(dt_col_clean) < 2:
+            return '1H'  # Default to hourly
+        
+        # Sort and get time differences
+        dt_col_sorted = dt_col_clean.sort_values()
+        time_diffs = dt_col_sorted.diff().dropna()
+        
+        if len(time_diffs) == 0:
+            return '1H'  # Default to hourly
+        
+        # Calculate median time difference
+        median_diff = time_diffs.median()
+        median_hours = median_diff.total_seconds() / 3600
+        
+        # Determine frequency based on median difference
+        if median_hours < 0.1:  # Less than 6 minutes
+            return '1T'  # 1 minute
+        elif median_hours < 1:  # Less than 1 hour
+            return '15T'  # 15 minutes
+        elif median_hours < 24:  # Less than 1 day
+            return '1H'  # 1 hour
+        elif median_hours < 168:  # Less than 1 week
+            return '1D'  # 1 day
+        else:
+            return '1W'  # 1 week
     
     def export_results(self, system):
         """Export current results to files."""
