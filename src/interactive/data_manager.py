@@ -20,6 +20,7 @@ import pandas as pd
 import numpy as np
 
 from ..eda import data_quality
+from ..data import GapFixer, explain_why_fix_gaps
 
 
 class DataManager:
@@ -891,6 +892,14 @@ class DataManager:
                     print(f"      • Largest gap: {gap['largest_gap']}")
             
             print("-" * 40)
+        
+        # Ask user if they want to fix gaps
+        try:
+            fix_gaps = input(f"\nDo you want to fix these gaps? (y/n): ").strip().lower()
+            if fix_gaps in ['y', 'yes']:
+                self._fix_gaps_interactive(gap_summary, Fore, Style)
+        except EOFError:
+            pass
     
     def _determine_expected_frequency(self, df: pd.DataFrame, datetime_column: str = 'Timestamp') -> str:
         """
@@ -1174,3 +1183,110 @@ class DataManager:
         system.menu_manager.mark_menu_as_used('eda', 'clear_data_backup')
         
         return True
+
+    def _fix_gaps_interactive(self, gap_summary: List[Dict], Fore, Style):
+        """Interactive gap fixing with user choice of algorithm and progress tracking."""
+        print(f"\n🔧 GAP FIXING INTERFACE")
+        print("=" * 50)
+        
+        # Show explanation of why gaps need to be fixed
+        print(explain_why_fix_gaps())
+        
+        # Extract file paths from gap summary
+        file_paths = []
+        for entry in gap_summary:
+            file_name = entry.get('file', '')
+            if file_name:
+                # Try to find the actual file path
+                possible_paths = [
+                    Path('data') / file_name,
+                    Path('data/indicators/parquet') / file_name,
+                    Path('data/indicators/csv') / file_name,
+                    Path('mql5_feed') / file_name
+                ]
+                
+                for path in possible_paths:
+                    if path.exists():
+                        file_paths.append(path)
+                        break
+        
+        if not file_paths:
+            print("❌ No valid file paths found for gap fixing.")
+            return
+        
+        print(f"\n📁 Files to process: {len(file_paths)}")
+        for i, path in enumerate(file_paths, 1):
+            print(f"   {i}. {path.name}")
+        
+        # Algorithm selection
+        print(f"\n🔧 Available algorithms:")
+        algorithms = ['auto', 'linear', 'cubic', 'interpolate', 'forward_fill', 'backward_fill']
+        for i, algo in enumerate(algorithms, 1):
+            print(f"   {i}. {algo}")
+        
+        try:
+            algo_choice = input(f"\nSelect algorithm (1-{len(algorithms)}, default: auto): ").strip()
+            if algo_choice == '':
+                algorithm = 'auto'
+            else:
+                choice_idx = int(algo_choice) - 1
+                if 0 <= choice_idx < len(algorithms):
+                    algorithm = algorithms[choice_idx]
+                else:
+                    print("❌ Invalid choice, using 'auto'")
+                    algorithm = 'auto'
+        except (ValueError, EOFError):
+            algorithm = 'auto'
+        
+        print(f"\n🔧 Selected algorithm: {algorithm}")
+        
+        # Confirm gap fixing
+        confirm = input(f"\nProceed with gap fixing? (y/n): ").strip().lower()
+        if confirm not in ['y', 'yes']:
+            print("❌ Gap fixing cancelled.")
+            return
+        
+        # Initialize gap fixer
+        try:
+            gap_fixer = GapFixer(memory_limit_mb=self.max_memory_mb)
+        except Exception as e:
+            print(f"❌ Error initializing gap fixer: {e}")
+            return
+        
+        # Fix gaps with progress tracking
+        print(f"\n🚀 Starting gap fixing process...")
+        start_time = time.time()
+        
+        try:
+            results = gap_fixer.fix_multiple_files(file_paths, algorithm, show_progress=True)
+            
+            # Process results
+            successful_fixes = sum(1 for r in results.values() if r.get('success', False))
+            total_gaps_fixed = sum(r.get('gaps_fixed', 0) for r in results.values() if r.get('success', False))
+            
+            total_time = time.time() - start_time
+            
+            print(f"\n🎉 Gap fixing completed!")
+            print(f"📊 Summary:")
+            print(f"   • Files processed: {len(file_paths)}")
+            print(f"   • Successful fixes: {successful_fixes}")
+            print(f"   • Total gaps fixed: {total_gaps_fixed:,}")
+            print(f"   • Algorithm used: {algorithm}")
+            print(f"   • Total time: {total_time:.1f} seconds")
+            
+            # Show detailed results
+            if results:
+                print(f"\n📋 Detailed Results:")
+                for file_path, result in results.items():
+                    if result.get('success', False):
+                        print(f"   ✅ {Path(file_path).name}: {result['gaps_fixed']} gaps fixed")
+                    else:
+                        print(f"   ❌ {Path(file_path).name}: {result.get('error', 'Unknown error')}")
+            
+            # Mark menu as used
+            print(f"\n✅ Gap fixing marked as completed!")
+            
+        except Exception as e:
+            print(f"❌ Error during gap fixing: {e}")
+            import traceback
+            traceback.print_exc()
