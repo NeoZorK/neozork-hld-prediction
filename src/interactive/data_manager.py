@@ -148,6 +148,25 @@ class DataManager:
         else:
             return self._load_csv_direct(file_path, datetime_columns)
     
+    def _clean_column_names(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Clean column names by removing tabs, extra spaces, and trailing commas."""
+        original_columns = df.columns.tolist()
+        cleaned_columns = []
+        
+        for col in original_columns:
+            # Remove tabs, extra spaces, and trailing commas
+            cleaned_col = str(col).replace('\t', '').strip().rstrip(',')
+            cleaned_columns.append(cleaned_col)
+        
+        # Check if any columns were actually cleaned
+        if cleaned_columns != original_columns:
+            print(f"✅ Cleaned column names (removed tabs and trailing commas)")
+            print(f"   Before: {original_columns}")
+            print(f"   After:  {cleaned_columns}")
+            df.columns = cleaned_columns
+        
+        return df
+    
     def _determine_header_row(self, file_path: Path) -> int:
         """Determine the correct header row for CSV file."""
         try:
@@ -184,6 +203,9 @@ class DataManager:
             # Read first few rows to detect datetime columns with correct header
             sample_df = pd.read_csv(file_path, nrows=1000, header=header_row)
             
+            # Clean column names to match what will be used in actual loading
+            sample_df = self._clean_column_names(sample_df)
+            
             # Check for existing datetime columns first
             for col in sample_df.columns:
                 if pd.api.types.is_datetime64_any_dtype(sample_df[col]):
@@ -219,6 +241,9 @@ class DataManager:
             # Load with appropriate header setting
             df = pd.read_csv(file_path, header=header_row)
             
+            # Clean column names (remove tabs, trailing commas, etc.)
+            df = self._clean_column_names(df)
+            
             # Remove unnamed/empty columns
             unnamed_cols_to_drop = [col for col in df.columns if str(col).startswith('Unnamed:') or str(col) == '']
             if unnamed_cols_to_drop:
@@ -253,6 +278,10 @@ class DataManager:
             chunk_iter = pd.read_csv(file_path, chunksize=chunk_size, header=header_row)
             
             for i, chunk in enumerate(chunk_iter):
+                # Clean column names for first chunk only (to avoid duplicate messages)
+                if i == 0:
+                    chunk = self._clean_column_names(chunk)
+                
                 # Remove unnamed/empty columns from chunk
                 unnamed_cols_to_drop = [col for col in chunk.columns if str(col).startswith('Unnamed:') or str(col) == '']
                 if unnamed_cols_to_drop:
