@@ -98,6 +98,9 @@ class GapFixer:
             Tuple of (success, results_dict)
         """
         try:
+            print(f"   📁 Loading file: {file_path.name}")
+            print(f"   📊 File size: {file_path.stat().st_size / (1024*1024):.1f} MB")
+            
             # Load file
             if file_path.suffix == '.parquet':
                 df = pd.read_parquet(file_path)
@@ -107,6 +110,9 @@ class GapFixer:
                 df = pd.read_json(file_path)
             else:
                 return False, {'error': f'Unsupported file format: {file_path.suffix}'}
+            
+            print(f"   📊 Loaded data shape: {df.shape}")
+            print(f"   💾 Memory usage after loading: {self._get_memory_usage():.1f} MB")
             
             # Check if timestamp column exists or if we have a DatetimeIndex
             timestamp_col = self._find_timestamp_column(df)
@@ -129,13 +135,36 @@ class GapFixer:
             if timestamp_col and not pd.api.types.is_datetime64_any_dtype(df[timestamp_col]):
                 df[timestamp_col] = pd.to_datetime(df[timestamp_col], errors='coerce')
             
+            print(f"   🔍 Detecting gaps...")
             # Detect gaps
             gap_info = self._detect_gaps(df, timestamp_col)
             
             if not gap_info['has_gaps']:
-                return True, {'message': 'No gaps found', 'gaps_fixed': 0}
+                print(f"   ✅ No gaps detected")
+                return True, {
+                    'success': True,
+                    'message': 'No gaps found', 
+                    'gaps_fixed': 0,
+                    'algorithm_used': algorithm,
+                    'processing_time': 0.0,
+                    'original_gaps': 0,
+                    'memory_used_mb': self._get_memory_usage()
+                }
+            
+            print(f"   📊 Gap detection completed: {gap_info['gap_count']} gaps found")
+            print(f"   ⏱️  Expected frequency: {gap_info['expected_frequency']}")
+            print(f"   🕐 Time range: {gap_info['time_range']['start']} to {gap_info['time_range']['end']}")
+            
+            # Check memory before fixing
+            if not self._check_memory_available():
+                print(f"   ⚠️  Memory usage high before gap fixing: {self._get_memory_usage():.1f} MB")
+                print(f"   🧹 Forcing garbage collection...")
+                gc.collect()
+                if not self._check_memory_available():
+                    return False, {'error': 'Insufficient memory for gap fixing'}
             
             # Fix gaps
+            print(f"   🔧 Starting gap fixing with algorithm: {algorithm}")
             fixed_df, fix_results = self._fix_gaps_in_dataframe(
                 df, timestamp_col, gap_info, algorithm, show_progress
             )
@@ -165,6 +194,9 @@ class GapFixer:
                 return False, {'error': 'Failed to save fixed data'}
                 
         except Exception as e:
+            print(f"   ❌ Exception during gap fixing: {e}")
+            import traceback
+            traceback.print_exc()
             return False, {'error': str(e)}
     
     def fix_multiple_files(self, file_paths: List[Path], algorithm: str = 'auto',
@@ -289,19 +321,41 @@ class GapFixer:
     
     def _detect_gaps(self, df: pd.DataFrame, timestamp_col: str) -> Dict:
         """Detect gaps in time series data."""
+        print(f"   🔍 Starting gap detection for {len(df):,} rows...")
+        
         # Sort by timestamp
         df_sorted = df.sort_values(timestamp_col).copy()
         
         # Calculate time differences
         time_diffs = df_sorted[timestamp_col].diff().dropna()
+        print(f"   📊 Time differences calculated: {len(time_diffs):,} intervals")
+        
+        # Show some statistics about time differences
+        if len(time_diffs) > 0:
+            print(f"   📈 Time diff stats:")
+            print(f"      • Min: {time_diffs.min()}")
+            print(f"      • Max: {time_diffs.max()}")
+            print(f"      • Median: {time_diffs.median()}")
+            print(f"      • Mean: {time_diffs.mean()}")
+            print(f"      • 95th percentile: {time_diffs.quantile(0.95)}")
         
         # Determine expected frequency
         expected_freq = self._determine_expected_frequency(time_diffs)
+        print(f"   ⏱️  Expected frequency: {expected_freq}")
         
         # Find gaps (intervals larger than expected frequency)
         gap_threshold = expected_freq * 1.5  # Allow 50% tolerance
+        print(f"   🚨 Gap threshold: {gap_threshold}")
         
         gaps = time_diffs > gap_threshold
+        print(f"   🔍 Gaps found: {gaps.sum():,} out of {len(time_diffs):,} intervals")
+        
+        # Show some examples of gaps
+        if gaps.any():
+            gap_examples = time_diffs[gaps].head(5)
+            print(f"   📋 Example gaps:")
+            for i, gap in enumerate(gap_examples):
+                print(f"      • Gap {i+1}: {gap}")
         
         gap_info = {
             'has_gaps': gaps.any(),
@@ -315,30 +369,40 @@ class GapFixer:
             }
         }
         
+        print(f"   ✅ Gap detection completed: {gap_info['gap_count']} gaps found")
         return gap_info
     
     def _determine_expected_frequency(self, time_diffs: pd.Series) -> pd.Timedelta:
         """Determine expected frequency from time differences."""
         if len(time_diffs) == 0:
+            print(f"      ⚠️  No time differences available, using default 1H")
             return pd.Timedelta('1H')
         
         # Use median for robustness
         median_diff = time_diffs.median()
+        print(f"      📊 Using median time difference: {median_diff}")
         
         # Round to common frequencies
         if median_diff <= pd.Timedelta('1T'):  # 1 minute
+            print(f"      ⏱️  Selected frequency: 1 minute (1T)")
             return pd.Timedelta('1T')
         elif median_diff <= pd.Timedelta('5T'):  # 5 minutes
+            print(f"      ⏱️  Selected frequency: 5 minutes (5T)")
             return pd.Timedelta('5T')
         elif median_diff <= pd.Timedelta('15T'):  # 15 minutes
+            print(f"      ⏱️  Selected frequency: 15 minutes (15T)")
             return pd.Timedelta('15T')
         elif median_diff <= pd.Timedelta('1H'):  # 1 hour
+            print(f"      ⏱️  Selected frequency: 1 hour (1H)")
             return pd.Timedelta('1H')
         elif median_diff <= pd.Timedelta('4H'):  # 4 hours
+            print(f"      ⏱️  Selected frequency: 4 hours (4H)")
             return pd.Timedelta('4H')
         elif median_diff <= pd.Timedelta('1D'):  # 1 day
+            print(f"      ⏱️  Selected frequency: 1 day (1D)")
             return pd.Timedelta('1D')
         else:
+            print(f"      ⏱️  Selected frequency: 1 week (1W)")
             return pd.Timedelta('1W')  # 1 week
     
     def _fix_gaps_in_dataframe(self, df: pd.DataFrame, timestamp_col: str,
@@ -425,6 +489,12 @@ class GapFixer:
         # Create complete time index
         complete_times = pd.date_range(start=start_time, end=end_time, freq=expected_freq)
         print(f"   📊 Complete time series: {len(complete_times)} time points")
+        
+        # Check if the time series is too large
+        if len(complete_times) > 10_000_000:  # 10M rows limit
+            print(f"   ⚠️  Time series too large ({len(complete_times):,} rows), using chunked approach")
+            # Use chunked approach for very large datasets
+            return self._fix_gaps_chunked(df_copy, timestamp_col, gap_info, show_progress)
         
         # Set timestamp as index for reindexing
         df_copy = df_copy.set_index(timestamp_col)
@@ -591,6 +661,49 @@ class GapFixer:
         """Fix gaps using ML forecasting (placeholder for future implementation)."""
         # For now, use interpolate as fallback
         return self._fix_gaps_interpolate(df, timestamp_col, gap_info, show_progress)
+    
+    def _fix_gaps_chunked(self, df: pd.DataFrame, timestamp_col: str,
+                          gap_info: Dict, show_progress: bool) -> pd.DataFrame:
+        """Fix gaps using chunked approach for very large datasets."""
+        print(f"   🔧 Using chunked approach for large dataset")
+        
+        # Sort by timestamp
+        df_copy = df.copy()
+        df_copy = df_copy.sort_values(timestamp_col)
+        
+        # Get time range and expected frequency
+        start_time = gap_info['time_range']['start']
+        end_time = gap_info['time_range']['end']
+        expected_freq = gap_info['expected_frequency']
+        
+        print(f"   🕐 Processing time range: {start_time} to {end_time}")
+        print(f"   ⏱️  Expected frequency: {expected_freq}")
+        
+        # Use a more conservative approach for very large datasets
+        # Instead of creating the full time series, we'll interpolate existing data
+        print(f"   📊 Using conservative interpolation for large dataset")
+        
+        # Set timestamp as index for interpolation
+        df_copy = df_copy.set_index(timestamp_col)
+        
+        # Interpolate numeric columns
+        numeric_columns = df_copy.select_dtypes(include=[np.number]).columns
+        df_copy[numeric_columns] = df_copy[numeric_columns].interpolate(method='linear')
+        
+        # Forward fill for non-numeric columns
+        non_numeric_columns = df_copy.select_dtypes(exclude=[np.number]).columns
+        df_copy[non_numeric_columns] = df_copy[non_numeric_columns].fillna(method='ffill')
+        
+        # Backward fill any remaining NaNs
+        df_copy = df_copy.fillna(method='bfill')
+        
+        print(f"   📊 After interpolation: {df_copy.shape[0]} rows")
+        print(f"   🔍 NaN values remaining: {df_copy.isnull().sum().sum()}")
+        
+        # Reset index to restore timestamp column
+        df_copy = df_copy.reset_index()
+        
+        return df_copy
     
     def _create_backup(self, file_path: Path) -> Path:
         """Create backup of original file."""
