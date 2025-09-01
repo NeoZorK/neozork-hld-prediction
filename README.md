@@ -60,7 +60,7 @@ If you find this project helpful and would like to support the development, cons
 
 > ⚠️ **Note**: Docker and Apple Silicon containers are currently on pause due to active ML model development. Please use local setup for now.
 
-### Native Apple Silicon Container
+### Native Apple Silicon Container (FULL DOCKER PARITY)
 ```bash
 # Clone and run interactive container manager
 git clone https://github.com/username/neozork-hld-prediction.git
