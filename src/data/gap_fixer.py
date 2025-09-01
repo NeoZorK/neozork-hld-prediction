@@ -408,14 +408,30 @@ class GapFixer:
     
     def _fix_gaps_linear(self, df: pd.DataFrame, timestamp_col: str, 
                          gap_info: Dict, show_progress: bool) -> pd.DataFrame:
-        """Fix gaps using linear interpolation."""
+        """Fix gaps using linear interpolation with proper time series reconstruction."""
         df_copy = df.copy()
         
         # Sort by timestamp
         df_copy = df_copy.sort_values(timestamp_col)
         
-        # Set timestamp as index for proper time-based operations
+        # Get time range and expected frequency
+        start_time = gap_info['time_range']['start']
+        end_time = gap_info['time_range']['end']
+        expected_freq = gap_info['expected_frequency']
+        
+        print(f"   🕐 Creating complete time series from {start_time} to {end_time}")
+        print(f"   ⏱️  Expected frequency: {expected_freq}")
+        
+        # Create complete time index
+        complete_times = pd.date_range(start=start_time, end=end_time, freq=expected_freq)
+        print(f"   📊 Complete time series: {len(complete_times)} time points")
+        
+        # Set timestamp as index for reindexing
         df_copy = df_copy.set_index(timestamp_col)
+        
+        # Reindex to complete time series (this creates NaN rows for missing times)
+        df_copy = df_copy.reindex(complete_times)
+        print(f"   📊 After reindexing: {df_copy.shape[0]} rows (including gaps)")
         
         # Linear interpolation for numeric columns
         numeric_columns = df_copy.select_dtypes(include=[np.number]).columns
@@ -425,21 +441,44 @@ class GapFixer:
         non_numeric_columns = df_copy.select_dtypes(exclude=[np.number]).columns
         df_copy[non_numeric_columns] = df_copy[non_numeric_columns].fillna(method='ffill')
         
+        # Backward fill any remaining NaNs
+        df_copy = df_copy.fillna(method='bfill')
+        
+        print(f"   📊 After interpolation: {df_copy.shape[0]} rows")
+        print(f"   🔍 NaN values remaining: {df_copy.isnull().sum().sum()}")
+        
         # Reset index to restore timestamp column
         df_copy = df_copy.reset_index()
+        df_copy = df_copy.rename(columns={'index': timestamp_col})
         
         return df_copy
     
     def _fix_gaps_cubic(self, df: pd.DataFrame, timestamp_col: str,
                         gap_info: Dict, show_progress: bool) -> pd.DataFrame:
-        """Fix gaps using cubic interpolation."""
+        """Fix gaps using cubic interpolation with proper time series reconstruction."""
         df_copy = df.copy()
         
         # Sort by timestamp
         df_copy = df_copy.sort_values(timestamp_col)
         
-        # Set timestamp as index for proper time-based operations
+        # Get time range and expected frequency
+        start_time = gap_info['time_range']['start']
+        end_time = gap_info['time_range']['end']
+        expected_freq = gap_info['expected_frequency']
+        
+        print(f"   🕐 Creating complete time series from {start_time} to {end_time}")
+        print(f"   ⏱️  Expected frequency: {expected_freq}")
+        
+        # Create complete time index
+        complete_times = pd.date_range(start=start_time, end=end_time, freq=expected_freq)
+        print(f"   📊 Complete time series: {len(complete_times)} time points")
+        
+        # Set timestamp as index for reindexing
         df_copy = df_copy.set_index(timestamp_col)
+        
+        # Reindex to complete time series (this creates NaN rows for missing times)
+        df_copy = df_copy.reindex(complete_times)
+        print(f"   📊 After reindexing: {df_copy.shape[0]} rows (including gaps)")
         
         # Cubic interpolation for numeric columns
         numeric_columns = df_copy.select_dtypes(include=[np.number]).columns
@@ -449,8 +488,15 @@ class GapFixer:
         non_numeric_columns = df_copy.select_dtypes(exclude=[np.number]).columns
         df_copy[non_numeric_columns] = df_copy[non_numeric_columns].fillna(method='ffill')
         
+        # Backward fill any remaining NaNs
+        df_copy = df_copy.fillna(method='bfill')
+        
+        print(f"   📊 After interpolation: {df_copy.shape[0]} rows")
+        print(f"   🔍 NaN values remaining: {df_copy.isnull().sum().sum()}")
+        
         # Reset index to restore timestamp column
         df_copy = df_copy.reset_index()
+        df_copy = df_copy.rename(columns={'index': timestamp_col})
         
         return df_copy
     
@@ -495,9 +541,50 @@ class GapFixer:
     
     def _fix_gaps_seasonal(self, df: pd.DataFrame, timestamp_col: str,
                            gap_info: Dict, show_progress: bool) -> pd.DataFrame:
-        """Fix gaps using seasonal decomposition."""
-        # For now, use interpolate as fallback
-        return self._fix_gaps_interpolate(df, timestamp_col, gap_info, show_progress)
+        """Fix gaps using seasonal decomposition with proper time series reconstruction."""
+        df_copy = df.copy()
+        
+        # Sort by timestamp
+        df_copy = df_copy.sort_values(timestamp_col)
+        
+        # Get time range and expected frequency
+        start_time = gap_info['time_range']['start']
+        end_time = gap_info['time_range']['end']
+        expected_freq = gap_info['expected_frequency']
+        
+        print(f"   🕐 Creating complete time series from {start_time} to {end_time}")
+        print(f"   ⏱️  Expected frequency: {expected_freq}")
+        
+        # Create complete time index
+        complete_times = pd.date_range(start=start_time, end=end_time, freq=expected_freq)
+        print(f"   📊 Complete time series: {len(complete_times)} time points")
+        
+        # Set timestamp as index for reindexing
+        df_copy = df_copy.set_index(timestamp_col)
+        
+        # Reindex to complete time series (this creates NaN rows for missing times)
+        df_copy = df_copy.reindex(complete_times)
+        print(f"   📊 After reindexing: {df_copy.shape[0]} rows (including gaps)")
+        
+        # Interpolate numeric columns
+        numeric_columns = df_copy.select_dtypes(include=[np.number]).columns
+        df_copy[numeric_columns] = df_copy[numeric_columns].interpolate(method='linear')
+        
+        # Forward fill for non-numeric columns
+        non_numeric_columns = df_copy.select_dtypes(exclude=[np.number]).columns
+        df_copy[non_numeric_columns] = df_copy[non_numeric_columns].fillna(method='ffill')
+        
+        # Backward fill any remaining NaNs
+        df_copy = df_copy.fillna(method='bfill')
+        
+        print(f"   📊 After interpolation: {df_copy.shape[0]} rows")
+        print(f"   🔍 NaN values remaining: {df_copy.isnull().sum().sum()}")
+        
+        # Reset index to restore timestamp column
+        df_copy = df_copy.reset_index()
+        df_copy = df_copy.rename(columns={'index': timestamp_col})
+        
+        return df_copy
     
     def _fix_gaps_ml_forecast(self, df: pd.DataFrame, timestamp_col: str,
                               gap_info: Dict, show_progress: bool) -> pd.DataFrame:
