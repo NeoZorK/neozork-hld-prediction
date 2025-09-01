@@ -236,8 +236,13 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
 
         # Check if the gap is too large (more than 30 days)
         total_duration = end_time - start_time
-        if total_duration > pd.Timedelta(days=30):
-            print(f"Warning: Very large time range detected ({total_duration}), using alternative gap fixing method")
+        total_days = total_duration.days
+        
+        if total_days > 3650:  # More than 10 years
+            print(f"Warning: Very large time range detected ({total_duration}), using specialized large range gap fixing method")
+            return _fix_gaps_very_large_range(df_clean, dt_col)
+        elif total_days > 30:  # More than 30 days but less than 10 years
+            print(f"Warning: Large time range detected ({total_duration}), using alternative gap fixing method")
             return _fix_gaps_irregular(df_clean, dt_col)
         
         # Create a new index with regular frequency
@@ -318,8 +323,14 @@ def fix_gaps(df, gap_summary=None, datetime_col=None):
 
         # Check if the gap is too large (more than 30 days)
         total_duration = end_time - start_time
-        if total_duration > pd.Timedelta(days=30):
-            print(f"Warning: Very large time range detected ({total_duration}), this may take a long time to process")
+        total_days = total_duration.days
+        
+        if total_days > 3650:  # More than 10 years
+            print(f"Warning: Very large time range detected ({total_duration}), this may take a very long time to process")
+            print("Consider using a smaller time range or different frequency")
+            print("For very large ranges, consider using the column-based gap fixing method instead")
+        elif total_days > 30:  # More than 30 days but less than 10 years
+            print(f"Warning: Large time range detected ({total_duration}), this may take a long time to process")
             print("Consider using a smaller time range or different frequency")
         
         # Create a new index with regular frequency
@@ -453,6 +464,140 @@ def _fix_gaps_irregular(df, dt_col):
     if result_rows:
         result_df = pd.concat(result_rows, ignore_index=True)
         print(f"Fixed gaps using irregular method. Original: {len(df_sorted)}, Result: {len(result_df)}")
+        return result_df
+    else:
+        return df_sorted
+
+
+def _fix_gaps_very_large_range(df, dt_col):
+    """
+    Specialized gap fixing method for very large time ranges (10+ years).
+    This method uses a more efficient approach to avoid creating too many interpolated rows.
+    
+    Args:
+        df: pandas DataFrame with datetime column
+        dt_col: Name of datetime column
+        
+    Returns:
+        DataFrame with gaps filled using efficient interpolation
+    """
+    print(f"Using very large range gap fixing method for '{dt_col}'")
+    
+    # Sort by datetime
+    df_sorted = df.sort_values(dt_col).copy()
+    
+    # Calculate time differences
+    time_diffs = df_sorted[dt_col].diff().dropna()
+    
+    if time_diffs.empty:
+        print("No time differences found, cannot fix gaps")
+        return df_sorted
+    
+    # Calculate total time range
+    total_range = df_sorted[dt_col].max() - df_sorted[dt_col].min()
+    total_days = total_range.days
+    
+    print(f"Total time range: {total_days} days ({total_days/365.25:.1f} years)")
+    
+    # For very large ranges, use a more conservative approach
+    # Only fix gaps that are significantly larger than the typical gap
+    mean_diff = time_diffs.mean()
+    median_diff = time_diffs.median()
+    
+    # Use a more conservative threshold for very large ranges
+    if total_days > 3650:  # More than 10 years
+        # Use 5x median instead of 2x std for very large ranges
+        threshold = median_diff * 5
+        print(f"Using conservative threshold: {threshold} (5x median)")
+    else:
+        # Use standard threshold for smaller ranges
+        std_diff = time_diffs.std()
+        threshold = mean_diff + 2 * std_diff
+        print(f"Using standard threshold: {threshold} (mean + 2*std)")
+    
+    large_gaps = time_diffs[time_diffs > threshold]
+    
+    if large_gaps.empty:
+        print("No large gaps detected, returning original data")
+        return df_sorted
+    
+    print(f"Found {len(large_gaps)} large gaps to fill")
+    
+    # For very large ranges, limit the number of interpolated rows per gap
+    if total_days > 3650:  # More than 10 years
+        max_rows_per_gap = 10  # Very conservative
+        print(f"Limiting to {max_rows_per_gap} interpolated rows per gap for large time range")
+    else:
+        max_rows_per_gap = 100  # Standard limit
+    
+    # For each large gap, insert interpolated rows
+    result_rows = []
+    prev_idx = 0
+    
+    # Add progress bar for gap processing
+    with tqdm(total=len(large_gaps), desc="Fixing time series gaps", unit="gap") as pbar:
+        for i, (idx, gap_size) in enumerate(large_gaps.items()):
+            # Add all rows up to the gap
+            result_rows.append(df_sorted.iloc[prev_idx:idx])
+            
+            # Calculate how many interpolated rows to insert
+            # Use a very conservative approach for large ranges
+            if total_days > 3650:
+                # For very large ranges, use fixed number of interpolated rows
+                max_interpolated_rows = min(max_rows_per_gap, max(1, int(gap_size / pd.Timedelta(days=30))))
+            else:
+                # For smaller ranges, use the original logic
+                max_interpolated_rows = min(max_rows_per_gap, max(2, int(gap_size / mean_diff)))
+            
+            if max_interpolated_rows > 1:
+                # Create interpolated timestamps
+                start_time = df_sorted.iloc[idx-1][dt_col]
+                end_time = df_sorted.iloc[idx][dt_col]
+                
+                # Create evenly spaced timestamps
+                interpolated_times = pd.date_range(
+                    start=start_time, 
+                    end=end_time, 
+                    periods=max_interpolated_rows + 2  # +2 to include start and end
+                )[1:-1]  # Remove start and end points as they already exist
+                
+                # Create interpolated rows
+                for interp_time in interpolated_times:
+                    # Create a new row with interpolated values
+                    new_row = df_sorted.iloc[idx-1].copy()
+                    new_row[dt_col] = interp_time
+                    
+                    # Interpolate numeric columns
+                    numeric_cols = df_sorted.select_dtypes(include=[np.number]).columns
+                    for col in numeric_cols:
+                        if col != dt_col:
+                            # Simple linear interpolation between surrounding values
+                            prev_val = df_sorted.iloc[idx-1][col]
+                            next_val = df_sorted.iloc[idx][col]
+                            
+                            # Calculate interpolation factor
+                            total_gap = (end_time - start_time).total_seconds()
+                            current_gap = (interp_time - start_time).total_seconds()
+                            factor = current_gap / total_gap if total_gap > 0 else 0.5
+                            
+                            new_row[col] = prev_val + factor * (next_val - prev_val)
+                    
+                    result_rows.append(pd.DataFrame([new_row]))
+            
+            prev_idx = idx
+            pbar.update(1)
+            pbar.set_postfix({
+                'gap_size': str(gap_size).split('.')[0],  # Show gap size without microseconds
+                'interpolated': max_interpolated_rows if max_interpolated_rows > 1 else 0
+            })
+    
+    # Add remaining rows
+    result_rows.append(df_sorted.iloc[prev_idx:])
+    
+    # Combine all rows
+    if result_rows:
+        result_df = pd.concat(result_rows, ignore_index=True)
+        print(f"Gap fixing completed. Original rows: {len(df_sorted)}, New rows: {len(result_df)}")
         return result_df
     else:
         return df_sorted
