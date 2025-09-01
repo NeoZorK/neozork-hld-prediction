@@ -587,8 +587,12 @@ class TestIntegration:
             exported_data = f.read()
             assert len(exported_data) > 0
             
-    def test_multiple_columns_analysis(self):
+    @patch('psutil.virtual_memory')
+    def test_multiple_columns_analysis(self, mock_vm):
         """Test analysis of multiple columns."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         # Create test data with multiple columns
         np.random.seed(42)
         n_points = 200

@@ -12,6 +12,7 @@ from unittest.mock import Mock, patch, MagicMock
 from pathlib import Path
 import tempfile
 import os
+import psutil
 
 # Import the module to test
 from scripts.ml.interactive_system import InteractiveSystem
@@ -114,8 +115,12 @@ class TestInteractiveSystem:
         assert "NEOZORk HLD PREDICTION" in captured.out
         assert "INTERACTIVE SYSTEM" in captured.out
     
-    def test_load_data_from_file_csv(self, interactive_system, sample_data):
+    @patch('psutil.virtual_memory')
+    def test_load_data_from_file_csv(self, mock_vm, interactive_system, sample_data):
         """Test loading data from CSV file."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         # Create a temporary CSV file with MT5 format
         with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
             # Create MT5 format CSV data with header on second line
@@ -132,7 +137,7 @@ DateTime,Open,High,Low,Close,TickVolume,
             # Load the data
             result = interactive_system.data_manager.load_data_from_file(csv_file)
             
-                            # Check that data was loaded correctly
+            # Check that data was loaded correctly
             assert isinstance(result, pd.DataFrame)
             assert len(result) == 4  # MT5 format includes header row
             # MT5 format may not parse correctly, so just check it's a DataFrame
@@ -142,8 +147,12 @@ DateTime,Open,High,Low,Close,TickVolume,
             # Clean up
             os.unlink(csv_file)
     
-    def test_load_data_from_file_parquet(self, interactive_system, sample_data):
+    @patch('psutil.virtual_memory')
+    def test_load_data_from_file_parquet(self, mock_vm, interactive_system, sample_data):
         """Test loading data from parquet file."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         with tempfile.NamedTemporaryFile(suffix='.parquet', delete=False) as f:
             sample_data.to_parquet(f.name)
             temp_file = f.name
@@ -156,8 +165,12 @@ DateTime,Open,High,Low,Close,TickVolume,
         finally:
             os.unlink(temp_file)
     
-    def test_load_data_from_file_invalid_format(self, interactive_system):
+    @patch('psutil.virtual_memory')
+    def test_load_data_from_file_invalid_format(self, mock_vm, interactive_system):
         """Test loading data from invalid file format."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         with tempfile.NamedTemporaryFile(suffix='.txt', delete=False) as f:
             f.write(b"invalid data")
             temp_file = f.name

@@ -118,8 +118,12 @@ class TestInteractiveSystem:
             system.print_model_development_menu()
             mock_print.assert_called()
     
-    def test_load_data_from_file(self):
+    @patch('psutil.virtual_memory')
+    def test_load_data_from_file(self, mock_vm):
         """Test loading data from file."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         # Create a temporary CSV file with MT5 format
         with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
             # Create MT5 format CSV data with header on second line
@@ -136,7 +140,7 @@ DateTime,Open,High,Low,Close,TickVolume,
             # Load the data
             result = self.system.data_manager.load_data_from_file(csv_file)
             
-                                        # Check that data was loaded correctly
+            # Check that data was loaded correctly
             assert isinstance(result, pd.DataFrame)
             assert len(result) == 4  # MT5 format includes header row
             # MT5 format may not parse correctly, so just check it's a DataFrame

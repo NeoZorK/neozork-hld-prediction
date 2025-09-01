@@ -51,6 +51,7 @@ def test_data_folder_scanning():
 def test_single_file_loading():
     """Test loading a single data file."""
     from src.interactive import InteractiveSystem
+    from unittest.mock import patch
     
     system = InteractiveSystem()
     
@@ -69,15 +70,19 @@ def test_single_file_loading():
         csv_file = f.name
     
     try:
-        # Load the data
-        result = system.data_manager.load_data_from_file(csv_file)
-        
-        # Check that data was loaded correctly
-        assert isinstance(result, pd.DataFrame)
-        assert len(result) == 3  # 3 data rows
-        # Check that columns are properly mapped
-        expected_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
-        assert all(col in result.columns for col in expected_columns)
+        # Mock memory check to return True (sufficient memory)
+        with patch('psutil.virtual_memory') as mock_vm:
+            mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+            
+            # Load the data
+            result = system.data_manager.load_data_from_file(csv_file)
+            
+            # Check that data was loaded correctly
+            assert isinstance(result, pd.DataFrame)
+            assert len(result) == 3  # 3 data rows
+            # Check that columns are properly mapped
+            expected_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+            assert all(col in result.columns for col in expected_columns)
         
     finally:
         # Clean up

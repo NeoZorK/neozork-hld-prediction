@@ -129,12 +129,16 @@ class TestDataManager:
         manager = DataManager()
         assert manager is not None
     
-    def test_load_data_from_file_csv(self, tmp_path):
+    @patch('psutil.virtual_memory')
+    def test_load_data_from_file_csv(self, mock_vm, tmp_path):
         """Test loading data from CSV file."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         # Create a temporary CSV file with MT5 format
         csv_file = tmp_path / "test_data.csv"
         
-                # Create standard CSV data with proper headers
+        # Create standard CSV data with proper headers
         csv_content = """DateTime,Open,High,Low,Close,Volume
 2023-01-01 00:00,100.0,105.0,95.0,103.0,1000
 2023-01-02 00:00,101.0,106.0,96.0,104.0,1100
@@ -154,8 +158,12 @@ class TestDataManager:
         expected_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
         assert all(col in result.columns for col in expected_columns)
     
-    def test_load_data_from_file_parquet(self, tmp_path):
+    @patch('psutil.virtual_memory')
+    def test_load_data_from_file_parquet(self, mock_vm, tmp_path):
         """Test loading Parquet data."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         manager = DataManager()
         
         # Create test parquet file
@@ -172,8 +180,12 @@ class TestDataManager:
         assert result.shape == (3, 2)
         assert list(result.columns) == ['A', 'B']
     
-    def test_load_data_from_file_unsupported(self, tmp_path):
+    @patch('psutil.virtual_memory')
+    def test_load_data_from_file_unsupported(self, mock_vm, tmp_path):
         """Test loading unsupported file format."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         manager = DataManager()
         
         # Create unsupported file

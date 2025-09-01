@@ -14,6 +14,7 @@ import tempfile
 import os
 from pathlib import Path
 import sys
+import psutil
 
 
 class TestInteractiveSystemScript:
@@ -270,8 +271,12 @@ DateTime,Open,High,Low,Close,TickVolume,
         except ImportError as e:
             pytest.skip(f"Import failed: {e}")
     
-    def test_load_data_from_file_parquet(self):
+    @patch('psutil.virtual_memory')
+    def test_load_data_from_file_parquet(self, mock_vm):
         """Test loading data from parquet file."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         try:
             from scripts.ml.interactive_system import InteractiveSystem
             system = InteractiveSystem()
@@ -290,8 +295,12 @@ DateTime,Open,High,Low,Close,TickVolume,
         except ImportError as e:
             pytest.skip(f"Import failed: {e}")
     
-    def test_load_data_from_file_unsupported(self):
+    @patch('psutil.virtual_memory')
+    def test_load_data_from_file_unsupported(self, mock_vm):
         """Test loading data from unsupported file format."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         try:
             from scripts.ml.interactive_system import InteractiveSystem
             system = InteractiveSystem()

@@ -46,8 +46,12 @@ class TestDataManager:
         """Test DataManager initialization."""
         assert data_manager is not None
     
-    def test_load_data_from_file_csv(self, data_manager, tmp_path):
+    @patch('psutil.virtual_memory')
+    def test_load_data_from_file_csv(self, mock_vm, data_manager, tmp_path):
         """Test load_data_from_file with CSV file."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         # Create a temporary CSV file
         csv_file = tmp_path / "test_data.csv"
         
@@ -71,8 +75,12 @@ class TestDataManager:
         assert 'Open' in result.columns
         assert 'High' in result.columns
     
-    def test_load_data_from_file_parquet(self, data_manager, tmp_path):
+    @patch('psutil.virtual_memory')
+    def test_load_data_from_file_parquet(self, mock_vm, data_manager, tmp_path):
         """Test load_data_from_file with Parquet file."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         # Create test Parquet file
         parquet_file = tmp_path / "test.parquet"
         test_data = pd.DataFrame({'col1': [1, 2, 3], 'col2': [4, 5, 6]})
@@ -83,10 +91,12 @@ class TestDataManager:
         assert len(result) == 3
         assert list(result.columns) == ['col1', 'col2']
     
-
-    
-    def test_load_data_from_file_unsupported_format(self, data_manager, tmp_path):
+    @patch('psutil.virtual_memory')
+    def test_load_data_from_file_unsupported_format(self, mock_vm, data_manager, tmp_path):
         """Test load_data_from_file with unsupported format."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
+        
         # Create test file with unsupported extension
         unsupported_file = tmp_path / "test.txt"
         unsupported_file.write_text("test data")

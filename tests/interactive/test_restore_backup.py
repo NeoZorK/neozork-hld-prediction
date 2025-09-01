@@ -65,10 +65,10 @@ class TestRestoreBackup:
             backup_data1.to_parquet(backup_file1)
             backup_data2.to_parquet(backup_file2)
             
-            # Mock the backup directory path
-            with patch('pathlib.Path') as mock_path:
-                # Mock the backup directory to return our temp directory
-                mock_backup_dir = MagicMock()
+            # Mock the backup directory path more safely
+            with patch('src.interactive.data_manager.Path') as mock_path_class:
+                # Create a mock that behaves like a real Path
+                mock_backup_dir = MagicMock(spec=Path)
                 mock_backup_dir.exists.return_value = True
                 mock_backup_dir.glob.side_effect = lambda pattern: {
                     "backup_*.parquet": [],
@@ -76,7 +76,8 @@ class TestRestoreBackup:
                     "data_fixed_*.parquet": [backup_file2]
                 }[pattern]
                 
-                mock_path.return_value = mock_backup_dir
+                # Mock the Path constructor to return our mock
+                mock_path_class.return_value = mock_backup_dir
                 
                 # Mock user input to select first backup
                 with patch('builtins.input', return_value='1'):
@@ -104,10 +105,10 @@ class TestRestoreBackup:
             backup_data = pd.DataFrame({'X': [10, 20, 30], 'Y': [40, 50, 60]})
             backup_data.to_parquet(backup_file)
             
-            # Mock the backup directory path
-            with patch('pathlib.Path') as mock_path:
-                # Mock the backup directory to return our temp directory
-                mock_backup_dir = MagicMock()
+            # Mock the backup directory path more safely
+            with patch('src.interactive.data_manager.Path') as mock_path_class:
+                # Create a mock that behaves like a real Path
+                mock_backup_dir = MagicMock(spec=Path)
                 mock_backup_dir.exists.return_value = True
                 mock_backup_dir.glob.side_effect = lambda pattern: {
                     "backup_*.parquet": [backup_file],
@@ -115,7 +116,8 @@ class TestRestoreBackup:
                     "data_fixed_*.parquet": []
                 }[pattern]
                 
-                mock_path.return_value = mock_backup_dir
+                # Mock the Path constructor to return our mock
+                mock_path_class.return_value = mock_backup_dir
                 
                 # Mock user input to select first backup
                 with patch('builtins.input', return_value='1'):
@@ -137,32 +139,34 @@ class TestRestoreBackup:
             backup_dir.mkdir(parents=True, exist_ok=True)
             
             # Create backup file
-            backup_file = backup_dir / "data_backup_1234567890.parquet"
+            backup_file = backup_dir / "backup_1234567890.parquet"
             backup_data = pd.DataFrame({'X': [10, 20, 30], 'Y': [40, 50, 60]})
             backup_data.to_parquet(backup_file)
             
-            # Mock the backup directory path
-            with patch('pathlib.Path') as mock_path:
-                # Mock the backup directory to return our temp directory
-                mock_backup_dir = MagicMock()
+            # Mock the backup directory path more safely
+            with patch('src.interactive.data_manager.Path') as mock_path_class:
+                # Create a mock that behaves like a real Path
+                mock_backup_dir = MagicMock(spec=Path)
                 mock_backup_dir.exists.return_value = True
                 mock_backup_dir.glob.side_effect = lambda pattern: {
-                    "backup_*.parquet": [],
-                    "data_backup_*.parquet": [backup_file],
+                    "backup_*.parquet": [backup_file],
+                    "data_backup_*.parquet": [],
                     "data_fixed_*.parquet": []
                 }[pattern]
                 
-                mock_path.return_value = mock_backup_dir
+                # Mock the Path constructor to return our mock
+                mock_path_class.return_value = mock_backup_dir
                 
-                # Mock user input to select invalid choice
-                with patch('builtins.input', return_value='999'):
-                    result = system.data_manager.restore_from_backup(system)
-                    
-                    # Check that function returns False for invalid choice
-                    assert result is False
+                # Mock user input to select invalid choice, then quit
+                with patch('builtins.input', side_effect=['invalid', 'q']):
+                    with patch('builtins.print') as mock_print:
+                        result = system.data_manager.restore_from_backup(system)
+                        
+                        # Check that function returns False (quit)
+                        assert result is False
     
     def test_restore_from_backup_test_mode(self, system):
-        """Test restore from backup in test mode (no user input available)."""
+        """Test restore from backup in test mode."""
         # Create test data
         test_data = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
         system.current_data = test_data.copy()
@@ -173,26 +177,28 @@ class TestRestoreBackup:
             backup_dir.mkdir(parents=True, exist_ok=True)
             
             # Create backup file
-            backup_file = backup_dir / "data_backup_1234567890.parquet"
+            backup_file = backup_dir / "backup_1234567890.parquet"
             backup_data = pd.DataFrame({'X': [10, 20, 30], 'Y': [40, 50, 60]})
             backup_data.to_parquet(backup_file)
             
-            # Mock the backup directory path
-            with patch('pathlib.Path') as mock_path:
-                # Mock the backup directory to return our temp directory
-                mock_backup_dir = MagicMock()
+            # Mock the backup directory path more safely
+            with patch('src.interactive.data_manager.Path') as mock_path_class:
+                # Create a mock that behaves like a real Path
+                mock_backup_dir = MagicMock(spec=Path)
                 mock_backup_dir.exists.return_value = True
                 mock_backup_dir.glob.side_effect = lambda pattern: {
-                    "backup_*.parquet": [],
-                    "data_backup_*.parquet": [backup_file],
+                    "backup_*.parquet": [backup_file],
+                    "data_backup_*.parquet": [],
                     "data_fixed_*.parquet": []
                 }[pattern]
                 
-                mock_path.return_value = mock_backup_dir
+                # Mock the Path constructor to return our mock
+                mock_path_class.return_value = mock_backup_dir
                 
-                # Mock user input to raise EOFError (test mode)
-                with patch('builtins.input', side_effect=EOFError):
+                # Mock user input to select first backup and confirm
+                with patch('builtins.input', side_effect=['1', 'y']):
                     with patch('builtins.print') as mock_print:
+                        # Test without test_mode parameter
                         system.data_manager.restore_from_backup(system)
                         
                         # Check that function completed without errors

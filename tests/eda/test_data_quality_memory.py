@@ -27,8 +27,11 @@ class TestDataQualityMemory:
         os.environ['CHUNK_SIZE'] = '100000'
         os.environ['ENABLE_MEMORY_OPTIMIZATION'] = 'true'
     
-    def test_memory_optimization_enabled(self):
+    @patch('psutil.virtual_memory')
+    def test_memory_optimization_enabled(self, mock_vm):
         """Test that memory optimization is enabled by default."""
+        # Mock memory check to return True (sufficient memory)
+        mock_vm.return_value.available = 4 * 1024 * 1024 * 1024  # 4GB available
         assert data_quality._check_memory_available() is True
     
     def test_estimate_memory_usage(self):
