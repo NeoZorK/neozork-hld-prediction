@@ -425,28 +425,41 @@ class DataManager:
         
         # Get all subfolders in data directory and other important folders
         data_folder = Path("data")
-        mql5_feed_folder = Path("mql5_feed")
         
         if not data_folder.exists():
             print("❌ Data folder not found. Please ensure 'data' folder exists.")
             return False
         
-        # Find all subfolders (exclude cache folders)
-        subfolders = [data_folder]  # Include main data folder
+        # Create necessary cache directories if they don't exist
+        cache_dirs = [
+            data_folder / "cache",
+            data_folder / "cache" / "csv_converted",
+            data_folder / "cache" / "uv_cache",
+            data_folder / "backups"
+        ]
         
-        # Add mql5_feed folder if it exists
-        if mql5_feed_folder.exists() and mql5_feed_folder.is_dir():
-            subfolders.append(mql5_feed_folder)
+        for cache_dir in cache_dirs:
+            if not cache_dir.exists():
+                cache_dir.mkdir(parents=True, exist_ok=True)
+                print(f"✅ Created cache directory: {cache_dir}")
+        
+        # Find all subfolders (exclude cache folders and mql5_feed)
+        subfolders = [data_folder]  # Include main data folder
         
         for item in data_folder.iterdir():
             if item.is_dir():
-                # Skip cache folders to avoid loading cached files
-                if 'cache' not in item.name.lower():
+                # Skip cache folders and mql5_feed to avoid loading cached files
+                if 'cache' not in item.name.lower() and item.name != 'mql5_feed':
                     subfolders.append(item)
-                    # Also include sub-subfolders (but skip cache)
+                    # Also include sub-subfolders (but skip cache and mql5_feed)
                     for subitem in item.iterdir():
                         if subitem.is_dir() and 'cache' not in subitem.name.lower():
                             subfolders.append(subitem)
+        
+        # Add csv_converted folder specifically if it exists
+        csv_converted_folder = data_folder / "cache" / "csv_converted"
+        if csv_converted_folder.exists() and csv_converted_folder.is_dir():
+            subfolders.append(csv_converted_folder)
         
         print("💡 Available folders:")
         print("0. 🔙 Back to Main Menu")
@@ -456,6 +469,10 @@ class DataManager:
             except ValueError:
                 rel_path = folder
             print(f"{i}. 📁 {rel_path}/")
+        
+        print("\n💡 Note: mql5_feed directory is excluded from this list")
+        print("   (it's only used with run_analysis.py for CSV to Parquet conversion)")
+        print("   data/cache/csv_converted is included for loading converted CSV files")
         
         print("-" * 30)
         print("💡 Examples:")
