@@ -141,10 +141,15 @@ class GapFixer:
             )
             
             # Save fixed data
+            print(f"   🔄 Creating backup...")
             backup_path = self._create_backup(file_path)
+            print(f"   📦 Backup created: {backup_path}")
+            
+            print(f"   💾 Saving fixed data...")
             success = self._save_fixed_data(fixed_df, file_path)
             
             if success:
+                print(f"   ✅ Data saved successfully")
                 results = {
                     'success': True,
                     'gaps_fixed': fix_results['gaps_fixed'],
@@ -156,6 +161,7 @@ class GapFixer:
                 }
                 return True, results
             else:
+                print(f"   ❌ Failed to save fixed data")
                 return False, {'error': 'Failed to save fixed data'}
                 
         except Exception as e:
@@ -349,9 +355,25 @@ class GapFixer:
             algorithm = 'interpolate'  # Default fallback
         
         print(f"🔧 Using algorithm: {algorithm}")
+        print(f"   📊 Original data shape: {df.shape}")
+        print(f"   📊 Gaps detected: {gap_info['gap_count']}")
         
         # Fix gaps
         fixed_df = self.algorithms[algorithm](df, timestamp_col, gap_info, show_progress)
+        
+        print(f"   📊 Fixed data shape: {fixed_df.shape}")
+        print(f"   🔍 Checking for NaN values in fixed data...")
+        
+        # Check for NaN values in the fixed data
+        nan_counts = fixed_df.isnull().sum()
+        total_nans = nan_counts.sum()
+        print(f"   📊 Total NaN values in fixed data: {total_nans}")
+        
+        if total_nans > 0:
+            print(f"   ⚠️  NaN values found in columns:")
+            for col, nan_count in nan_counts.items():
+                if nan_count > 0:
+                    print(f"      • {col}: {nan_count} NaN values")
         
         # Results
         processing_time = time.time() - start_time
@@ -501,17 +523,33 @@ class GapFixer:
     def _save_fixed_data(self, df: pd.DataFrame, original_path: Path) -> bool:
         """Save fixed data to file."""
         try:
+            print(f"   💾 Saving fixed data to: {original_path}")
+            print(f"   📊 Data shape to save: {df.shape}")
+            
             if original_path.suffix == '.parquet':
                 df.to_parquet(original_path, index=False)
+                print(f"   ✅ Saved as Parquet file")
             elif original_path.suffix == '.csv':
                 df.to_csv(original_path, index=False)
+                print(f"   ✅ Saved as CSV file")
             elif original_path.suffix == '.json':
                 df.to_json(original_path, orient='records', indent=2)
+                print(f"   ✅ Saved as JSON file")
             else:
+                print(f"   ❌ Unsupported file format: {original_path.suffix}")
                 return False
             
-            return True
-        except Exception:
+            # Verify file was saved
+            if original_path.exists():
+                file_size = original_path.stat().st_size
+                print(f"   📁 File saved successfully, size: {file_size / (1024*1024):.1f} MB")
+                return True
+            else:
+                print(f"   ❌ File was not created")
+                return False
+                
+        except Exception as e:
+            print(f"   ❌ Error saving file: {e}")
             return False
     
     def _get_memory_usage(self) -> float:
