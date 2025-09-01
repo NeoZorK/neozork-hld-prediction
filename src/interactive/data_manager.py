@@ -630,8 +630,65 @@ class DataManager:
         print("\n🔄 Combining data...")
         
         try:
-            # Combine DataFrames
-            system.current_data = pd.concat(all_data, ignore_index=True)
+            # Check if any DataFrames have DatetimeIndex
+            has_datetime_index = any(isinstance(df.index, pd.DatetimeIndex) for df in all_data)
+            
+            if has_datetime_index:
+                print("📅 Detected DatetimeIndex in loaded DataFrames, preserving during concatenation...")
+                
+                # Convert DatetimeIndex to 'Timestamp' column for consistent concatenation
+                processed_data = []
+                for df in all_data:
+                    df_copy = df.copy()
+                    if isinstance(df_copy.index, pd.DatetimeIndex):
+                        # Reset index to make datetime a column
+                        df_copy = df_copy.reset_index()
+                        # Rename the index column if it's unnamed
+                        if df_copy.columns[0] == 'index':
+                            df_copy = df_copy.rename(columns={'index': 'Timestamp'})
+                    processed_data.append(df_copy)
+                
+                # Combine DataFrames with consistent column structure
+                system.current_data = pd.concat(processed_data, ignore_index=True)
+                
+                # Clean up intermediate data
+                del processed_data
+                gc.collect()
+                
+                print("✅ Successfully preserved datetime information during concatenation")
+            else:
+                # Check for mixed structures (some files have Timestamp column, others don't)
+                has_timestamp_column = any('Timestamp' in df.columns for df in all_data)
+                missing_timestamp_column = any('Timestamp' not in df.columns for df in all_data)
+                
+                if has_timestamp_column and missing_timestamp_column:
+                    print("⚠️  Detected mixed file structures (some with Timestamp column, some without)")
+                    print("📅 Normalizing file structures for consistent concatenation...")
+                    
+                    # Process all DataFrames to ensure consistent structure
+                    processed_data = []
+                    for i, df in enumerate(all_data):
+                        df_copy = df.copy()
+                        
+                        if 'Timestamp' not in df_copy.columns:
+                            # Create a dummy Timestamp column for files without it
+                            # This will be filled with NaT (missing values)
+                            df_copy['Timestamp'] = pd.NaT
+                            print(f"   Added Timestamp column to file {i+1} (will be filled with missing values)")
+                        
+                        processed_data.append(df_copy)
+                    
+                    # Combine DataFrames with consistent column structure
+                    system.current_data = pd.concat(processed_data, ignore_index=True)
+                    
+                    # Clean up intermediate data
+                    del processed_data
+                    gc.collect()
+                    
+                    print("✅ Successfully normalized file structures for concatenation")
+                else:
+                    # All files have consistent structure, use standard concatenation
+                    system.current_data = pd.concat(all_data, ignore_index=True)
             
             # Clean up intermediate data
             del all_data
