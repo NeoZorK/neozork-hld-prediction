@@ -1243,82 +1243,160 @@ class DataManager:
         print("   instead of mixing them in one DataFrame.")
         print("-" * 50)
         
-        # Ask user for mask filter
-        print("\n🔍 FILE FILTERING")
-        print("-" * 30)
-        print("💡 You can filter files by mask (e.g., 'eurusd', 'gbpusd', 'btcusdt')")
-        print("   This will only load files containing the specified mask in their filename.")
-        print("   Leave empty to load all files.")
-        print("")
-        print("📋 Examples:")
-        print("   • eurusd     (only EURUSD files)")
-        print("   • gbpusd     (only GBPUSD files)")
-        print("   • btcusdt    (only BTCUSDT files)")
-        print("   • sample     (only sample files)")
-        print("   • test       (only test files)")
-        print("-" * 30)
-        
-        try:
-            mask = input("Enter file mask (or press Enter for all files): ").strip().lower()
-        except EOFError:
-            print("\n👋 Goodbye!")
-            return False
-        
-        # Get all data files with timeframe detection
+        # Get all subfolders in data directory and other important folders
         data_folder = Path("data")
         
         if not data_folder.exists():
             print("❌ Data folder not found. Please ensure 'data' folder exists.")
             return False
         
-        # Find all data files and detect timeframes
-        timeframe_data = {}
-        
-        # Search in multiple locations
-        search_locations = [
-            data_folder,
-            data_folder / "raw_parquet",
-            data_folder / "indicators" / "parquet",
+        # Create necessary cache directories if they don't exist
+        cache_dirs = [
+            data_folder / "cache",
             data_folder / "cache" / "csv_converted",
-            Path("mql5_feed")
+            data_folder / "cache" / "uv_cache",
+            data_folder / "backups"
         ]
         
-        for location in search_locations:
-            if not location.exists():
-                continue
+        for cache_dir in cache_dirs:
+            if not cache_dir.exists():
+                cache_dir.mkdir(parents=True, exist_ok=True)
+                print(f"✅ Created cache directory: {cache_dir}")
+        
+        # Find all subfolders (exclude cache folders and mql5_feed)
+        subfolders = [data_folder]  # Include main data folder
+        
+        for item in data_folder.iterdir():
+            if item.is_dir():
+                # Skip cache folders and mql5_feed to avoid loading cached files
+                if 'cache' not in item.name.lower() and item.name != 'mql5_feed':
+                    subfolders.append(item)
+                    # Also include sub-subfolders (but skip cache and mql5_feed)
+                    for subitem in item.iterdir():
+                        if subitem.is_dir() and 'cache' not in subitem.name.lower():
+                            subfolders.append(subitem)
+        
+        # Add csv_converted folder specifically if it exists
+        csv_converted_folder = data_folder / "cache" / "csv_converted"
+        if csv_converted_folder.exists() and csv_converted_folder.is_dir():
+            subfolders.append(csv_converted_folder)
+        
+        # Add mql5_feed folder if it exists
+        mql5_feed_folder = Path("mql5_feed")
+        if mql5_feed_folder.exists() and mql5_feed_folder.is_dir():
+            subfolders.append(mql5_feed_folder)
+        
+        print("💡 Available folders:")
+        print("0. 🔙 Back to Main Menu")
+        for i, folder in enumerate(subfolders, 1):
+            try:
+                rel_path = folder.relative_to(Path.cwd())
+            except ValueError:
+                rel_path = folder
+            print(f"{i}. 📁 {rel_path}/")
+        
+        print("\n💡 Note: Cache directories are excluded from this list")
+        print("   data/cache/csv_converted is included for loading converted CSV files")
+        print("   mql5_feed is included for loading MQL5 data")
+        
+        print("-" * 30)
+        print("💡 Examples:")
+        print("   • Enter folder number (e.g., 1 for data/)")
+        print("   • Or enter folder path with mask (e.g., data eurusd)")
+        print("   • Or enter folder path with file type (e.g., data parquet)")
+        print("")
+        print("📋 More Examples:")
+        print("   • 2 eurusd     (folder 2 with 'eurusd' in filename)")
+        print("   • 2 gbpusd     (folder 2 with 'gbpusd' in filename)")
+        print("   • data sample  (data folder with 'sample' in filename)")
+        print("   • 1 csv        (folder 1 with '.csv' files)")
+        print("   • 7 parquet    (folder 7 with '.parquet' files)")
+        print("   • data test    (data folder with 'test' in filename)")
+        print("")
+        print("🗑️  Cache Management:")
+        print("   • Enter 'clear cache' to clear all cached files")
+        print("-" * 30)
+        
+        try:
+            input_text = input("Enter folder number or path (with optional mask): ").strip()
+        except EOFError:
+            print("\n👋 Goodbye!")
+            return False
+        
+        if not input_text:
+            print("❌ No input provided")
+            return False
+        
+        # Check if user wants to go back
+        if input_text == "0":
+            return False
+        
+        # Check if user wants to clear cache
+        if input_text.lower() == "clear cache":
+            return self.clear_cache(system)
+        
+        # Parse input for folder and mask
+        parts = input_text.split()
+        
+        # Check if first part is a number (folder selection)
+        if parts[0].isdigit():
+            folder_idx = int(parts[0]) - 1
+            if 0 <= folder_idx < len(subfolders):
+                folder_path = subfolders[folder_idx]
+                mask = parts[1].lower() if len(parts) > 1 else None
+            else:
+                print(f"❌ Invalid folder number. Please select 0-{len(subfolders)}")
+                return False
+        else:
+            # Parse input for folder path and mask
+            folder_path = parts[0]
+            mask = parts[1].lower() if len(parts) > 1 else None
                 
-            for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
-                if mask:
-                    # Apply mask filter
-                    pattern = f"*{mask}*{ext}"
-                    files = list(location.glob(pattern))
-                    # Also try case-insensitive search
-                    pattern_upper = f"*{mask.upper()}*{ext}"
-                    files.extend(location.glob(pattern_upper))
-                    pattern_lower = f"*{mask.lower()}*{ext}"
-                    files.extend(location.glob(pattern_lower))
-                else:
-                    # No mask, get all files
-                    files = list(location.glob(f"*{ext}"))
+            folder_path = Path(folder_path)
+            if not folder_path.exists() or not folder_path.is_dir():
+                print(f"❌ Folder not found: {folder_path}")
+                return False
+        
+        print(f"\n📁 Selected folder: {folder_path}")
+        if mask:
+            print(f"🔍 Filter mask: '{mask}'")
+        
+        # Find all data files with timeframe detection
+        timeframe_data = {}
+        
+        # Search in the selected folder
+        for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
+            if mask:
+                # Apply mask filter
+                pattern = f"*{mask}*{ext}"
+                files = list(folder_path.glob(pattern))
+                # Also try case-insensitive search
+                pattern_upper = f"*{mask.upper()}*{ext}"
+                files.extend(folder_path.glob(pattern_upper))
+                pattern_lower = f"*{mask.lower()}*{ext}"
+                files.extend(folder_path.glob(pattern_lower))
+            else:
+                # No mask, get all files
+                files = list(folder_path.glob(f"*{ext}"))
+            
+            # Filter out temporary files and remove duplicates
+            files = [f for f in files if not f.name.startswith('tmp')]
+            files = list(set(files))  # Remove duplicates
+            
+            for file in files:
+                # Detect timeframe from filename
+                timeframe = self._detect_timeframe_from_filename(file.name)
                 
-                # Filter out temporary files and remove duplicates
-                files = [f for f in files if not f.name.startswith('tmp')]
-                files = list(set(files))  # Remove duplicates
+                if timeframe not in timeframe_data:
+                    timeframe_data[timeframe] = []
                 
-                for file in files:
-                    # Detect timeframe from filename
-                    timeframe = self._detect_timeframe_from_filename(file.name)
-                    
-                    if timeframe not in timeframe_data:
-                        timeframe_data[timeframe] = []
-                    
-                    timeframe_data[timeframe].append(file)
+                timeframe_data[timeframe].append(file)
         
         if not timeframe_data:
             if mask:
-                print(f"❌ No files found matching mask '{mask}'")
+                print(f"❌ No files found matching mask '{mask}' in {folder_path}")
             else:
-                print("❌ No data files found")
+                print(f"❌ No data files found in {folder_path}")
             return False
         
         # Display found timeframes
@@ -1391,10 +1469,12 @@ class DataManager:
             'base_timeframe': base_timeframe,
             'available_timeframes': timeframe_data,
             'cross_timeframes': {tf: files for tf, files in timeframe_data.items() if tf != base_timeframe},
-            'mask_used': mask if mask else None
+            'mask_used': mask if mask else None,
+            'folder_path': str(folder_path)
         }
         
         print(f"✅ Base dataset created: {system.current_data.shape[0]:,} rows, {system.current_data.shape[1]} columns")
+        print(f"   Folder: {folder_path}")
         if mask:
             print(f"   Filter applied: '{mask}'")
         
@@ -1419,6 +1499,7 @@ class DataManager:
         print(f"   Base timeframe: {base_timeframe}")
         print(f"   Total rows: {system.current_data.shape[0]:,}")
         print(f"   Total columns: {system.current_data.shape[1]}")
+        print(f"   Folder: {folder_path}")
         if mask:
             print(f"   Filter applied: '{mask}'")
         
