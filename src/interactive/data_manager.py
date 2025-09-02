@@ -1236,17 +1236,17 @@ class DataManager:
         1. Identifies timeframes from filenames
         2. Loads each timeframe separately 
         3. Creates hierarchical timeframe structure
-        4. Synchronizes timeframes to base timeframe
-        5. Generates cross-timeframe features
+        4. Fixes time series gaps in each file
+        5. Combines data into base dataset
         
         Returns:
             bool: True if successful, False otherwise
         """
         print("\n📁 LOAD MULTI-TIMEFRAME DATA")
         print("-" * 50)
-        print("🎯 This method creates robust ML features by properly handling")
+        print("🎯 This method loads and prepares data by properly handling")
         print("   multiple timeframes (M1, M5, M15, M30, H1, H4, D1, W1, MN1) as separate datasets")
-        print("   instead of mixing them in one DataFrame.")
+        print("   and fixing time series gaps before combining.")
         print("-" * 50)
         
         # Get all subfolders in data directory and other important folders
@@ -1423,8 +1423,8 @@ class DataManager:
         # Ask user to select base timeframe
         print("\n🎯 SELECT BASE TIMEFRAME")
         print("-" * 30)
-        print("💡 Base timeframe will be the primary timeframe for ML model.")
-        print("   Other timeframes will be used as cross-timeframe features.")
+        print("💡 Base timeframe will be the primary dataset for analysis.")
+        print("   Other timeframes are available for separate analysis.")
         print("")
         
         available_timeframes = list(timeframe_data.keys())
@@ -1588,32 +1588,14 @@ class DataManager:
         if mask:
             print(f"   Filter applied: '{mask}'")
         
-        # Ask if user wants to add cross-timeframe features
+        # Show information about available timeframes (no feature generation)
         if system.timeframe_info['cross_timeframes']:
-            print(f"\n🔄 CROSS-TIMEFRAME FEATURES")
+            print(f"\n📊 AVAILABLE TIMEFRAMES")
             print("-" * 30)
-            print("💡 Add features from other timeframes to enhance ML model:")
+            print("💡 Other timeframes found (available for separate analysis):")
             for tf, files in system.timeframe_info['cross_timeframes'].items():
-                print(f"   • {tf}: {len(files)} files available")
-            
-            try:
-                add_cross = input("\nAdd cross-timeframe features? (y/n, default: y): ").strip().lower()
-            except EOFError:
-                print("\n👋 Goodbye!")
-                return False
-            
-            if add_cross in ['', 'y', 'yes']:
-                # Ask if user wants to fix gaps in cross-timeframe files too
-                try:
-                    fix_cross_gaps = input("\nFix gaps in cross-timeframe files as well? (y/n, default: y): ").strip().lower()
-                except EOFError:
-                    fix_cross_gaps = 'y'
-                
-                if fix_cross_gaps in ['', 'y', 'yes']:
-                    print(f"\n🔧 Fixing gaps in cross-timeframe files before feature generation...")
-                    return self._add_cross_timeframe_features_with_gap_fixing(system)
-                else:
-                    return self._add_cross_timeframe_features(system)
+                print(f"   • {tf}: {len(files)} files")
+            print("   💡 Use 'Feature Engineering' menu to generate features from these timeframes")
         
         print(f"\n✅ Multi-timeframe data loading completed!")
         print(f"   Base timeframe: {base_timeframe}")
