@@ -136,150 +136,157 @@ class DataManager:
             print("❌ No base timeframe data could be loaded")
             return False
         
-        # Time Series Gap Analysis and Fixing for each file separately
-        print(f"\n🔧 TIME SERIES GAP ANALYSIS & FIXING")
-        print("-" * 50)
-        print("💡 Analyzing and fixing time series gaps in each file before combining...")
-        print("   This ensures data quality and prevents issues during ML model training.")
+        # Check if data is from cleaned_data folder
+        is_cleaned_data = "cleaned_data" in str(folder_path)
         
-        # Ask user if they want to fix gaps
-        try:
-            fix_gaps = input("\nFix time series gaps in each file? (y/n, default: y): ").strip().lower()
-        except EOFError:
-            print("\n👋 Goodbye!")
-            return False
-        
-        if fix_gaps in ['', 'y', 'yes']:
-            print(f"\n🔧 Starting gap analysis and fixing for {len(base_data)} files...")
-            
-            # Initialize GapFixer
-            try:
-                from ..data import GapFixer
-                gap_fixer = GapFixer(memory_limit_mb=self.max_memory_mb)
-                print("✅ GapFixer initialized successfully")
-            except Exception as e:
-                print(f"❌ Error initializing GapFixer: {e}")
-                print("⚠️  Continuing without gap fixing...")
-                gap_fixer = None
-            
-            if gap_fixer:
-                # Create overall progress bar for gap analysis and fixing
-                total_files = len(base_data)
-                overall_start_time = time.time()
-                
-                print(f"   📊 Overall progress: Starting gap analysis and fixing for {total_files} files...")
-                
-                # Process each file separately with progress bar and ETA
-                for i, df in enumerate(base_data):
-                    file_name = df['source_file'].iloc[0] if 'source_file' in df.columns else f"file_{i+1}"
-                    
-                    # Calculate overall progress and ETA
-                    elapsed_time = time.time() - overall_start_time
-                    if elapsed_time > 0 and i > 0:
-                        avg_time_per_file = elapsed_time / i
-                        remaining_files = total_files - i
-                        eta_seconds = remaining_files * avg_time_per_file
-                        
-                        # Format ETA
-                        if eta_seconds < 60:
-                            eta_str = f"{eta_seconds:.0f}s"
-                        elif eta_seconds < 3600:
-                            eta_str = f"{eta_seconds/60:.0f}m {eta_seconds%60:.0f}s"
-                        else:
-                            eta_str = f"{eta_seconds/3600:.0f}h {(eta_seconds%3600)/60:.0f}m"
-                        
-                        # Calculate speed (files per second)
-                        speed = i / elapsed_time
-                        
-                        print(f"\n📁 Processing file {i+1}/{total_files}: {file_name}")
-                        print(f"   📈 Overall progress: {(i/total_files)*100:.1f}% ({i+1}/{total_files} files) "
-                              f"🚀 {speed:.2f} files/s ⏱️ ETA: {eta_str}")
-                    else:
-                        print(f"\n📁 Processing file {i+1}/{total_files}: {file_name}")
-                    
-                    try:
-                        # Find timestamp column (only once)
-                        timestamp_col = gap_fixer.utils.find_timestamp_column(df)
-                        
-                        if timestamp_col:
-                            # Detect gaps (only once)
-                            gap_info = gap_fixer.utils.detect_gaps(df, timestamp_col)
-                            
-                            if gap_info['has_gaps']:
-                                print(f"   ⚠️  Found {gap_info['gap_count']:,} gaps, fixing...")
-                                
-                                # Ask user for algorithm choice
-                                print(f"   🔧 Available algorithms: auto, linear, cubic, interpolate, forward_fill, backward_fill")
-                                try:
-                                    algo_choice = input(f"   Select algorithm (default: auto): ").strip().lower()
-                                    if algo_choice == '':
-                                        algorithm = 'auto'
-                                    elif algo_choice in ['auto', 'linear', 'cubic', 'interpolate', 'forward_fill', 'backward_fill']:
-                                        algorithm = 'auto'
-                                    else:
-                                        print(f"   ⚠️  Invalid choice, using 'auto'")
-                                        algorithm = 'auto'
-                                except EOFError:
-                                    algorithm = 'auto'
-                                
-                                print(f"   🔧 Using algorithm: {algorithm}")
-                                
-                                # Fix gaps with progress bar and ETA
-                                file_start_time = time.time()
-                                print(f"   🔧 Gap fixing progress: ", end="", flush=True)
-                                
-                                # Create progress bar for gap fixing
-                                with tqdm(total=gap_info['gap_count'], desc="Fixing gaps", unit="gap") as pbar:
-                                    # Use the apply_algorithm method from GapFixingStrategy
-                                    fixed_df = gap_fixer.algorithms.apply_algorithm(df, algorithm, gap_info)
-                                    results = {
-                                        'algorithm_used': algorithm,
-                                        'gaps_fixed': gap_info['gap_count'],
-                                        'memory_used_mb': 0.0  # Placeholder
-                                    }
-                                
-                                file_end_time = time.time()
-                                file_processing_time = file_end_time - file_start_time
-                                
-                                if fixed_df is not None:
-                                    print(f"\r   ✅ Gap fixing completed in {file_processing_time:.2f}s")
-                                    print(f"      • Algorithm used: {results['algorithm_used']}")
-                                    print(f"      • Gaps fixed: {results['gaps_fixed']:,}")
-                                    print(f"      • Processing time: {file_processing_time:.2f}s")
-                                    print(f"      • Memory used: {results['memory_used_mb']:.1f}MB")
-                                    
-                                    # Replace original dataframe with fixed one
-                                    base_data[i] = fixed_df
-                                    
-                                    # Memory cleanup
-                                    del fixed_df
-                                    gc.collect()
-                                else:
-                                    print(f"   ❌ Gap fixing failed, keeping original data")
-                            else:
-                                print(f"   ✅ No gaps found, file is clean")
-                        else:
-                            print(f"   ⚠️  No timestamp column found, skipping gap fixing")
-                        
-                    except Exception as e:
-                        print(f"   ❌ Error processing {file_name}: {e}")
-                        print(f"   💡 Continuing with original data...")
-                        continue
-                    
-                    # Memory management
-                    if self.enable_memory_optimization:
-                        gc.collect()
-                
-                # Final overall progress summary
-                total_time = time.time() - overall_start_time
-                final_speed = total_files / total_time if total_time > 0 else 0
-                print(f"\n✅ Gap analysis and fixing completed for all files!")
-                print(f"   📊 Summary: {total_files} files processed in {total_time:.2f}s")
-                print(f"   🚀 Average speed: {final_speed:.2f} files/s")
-            else:
-                print("⚠️  Skipping gap fixing due to initialization error")
+        if is_cleaned_data:
+            print(f"\n✅ Data loaded from cleaned_data folder - skipping gap analysis and cross-timeframes")
+            print("💡 Data is already cleaned and ready for ML use")
         else:
-            print("⏭️  Skipping time series gap fixing...")
+            # Time Series Gap Analysis and Fixing for each file separately
+            print(f"\n🔧 TIME SERIES GAP ANALYSIS & FIXING")
+            print("-" * 50)
+            print("💡 Analyzing and fixing time series gaps in each file before combining...")
+            print("   This ensures data quality and prevents issues during ML model training.")
+            
+            # Ask user if they want to fix gaps
+            try:
+                fix_gaps = input("\nFix time series gaps in each file? (y/n, default: y): ").strip().lower()
+            except EOFError:
+                print("\n👋 Goodbye!")
+                return False
+            
+            if fix_gaps in ['', 'y', 'yes']:
+                print(f"\n🔧 Starting gap analysis and fixing for {len(base_data)} files...")
+                
+                # Initialize GapFixer
+                try:
+                    from ..data import GapFixer
+                    gap_fixer = GapFixer(memory_limit_mb=self.max_memory_mb)
+                    print("✅ GapFixer initialized successfully")
+                except Exception as e:
+                    print(f"❌ Error initializing GapFixer: {e}")
+                    print("⚠️  Continuing without gap fixing...")
+                    gap_fixer = None
+                
+                if gap_fixer:
+                    # Create overall progress bar for gap analysis and fixing
+                    total_files = len(base_data)
+                    overall_start_time = time.time()
+                    
+                    print(f"   📊 Overall progress: Starting gap analysis and fixing for {total_files} files...")
+                    
+                    # Process each file separately with progress bar and ETA
+                    for i, df in enumerate(base_data):
+                        file_name = df['source_file'].iloc[0] if 'source_file' in df.columns else f"file_{i+1}"
+                        
+                        # Calculate overall progress and ETA
+                        elapsed_time = time.time() - overall_start_time
+                        if elapsed_time > 0 and i > 0:
+                            avg_time_per_file = elapsed_time / i
+                            remaining_files = total_files - i
+                            eta_seconds = remaining_files * avg_time_per_file
+                            
+                            # Format ETA
+                            if eta_seconds < 60:
+                                eta_str = f"{eta_seconds:.0f}s"
+                            elif eta_seconds < 3600:
+                                eta_str = f"{eta_seconds/60:.0f}m {eta_seconds%60:.0f}s"
+                            else:
+                                eta_str = f"{eta_seconds/3600:.0f}h {(eta_seconds%3600)/60:.0f}m"
+                            
+                            # Calculate speed (files per second)
+                            speed = i / elapsed_time
+                            
+                            print(f"\n📁 Processing file {i+1}/{total_files}: {file_name}")
+                            print(f"   📈 Overall progress: {(i/total_files)*100:.1f}% ({i+1}/{total_files} files) "
+                                  f"🚀 {speed:.2f} files/s ⏱️ ETA: {eta_str}")
+                        else:
+                            print(f"\n📁 Processing file {i+1}/{total_files}: {file_name}")
+                        
+                        try:
+                            # Find timestamp column (only once)
+                            timestamp_col = gap_fixer.utils.find_timestamp_column(df)
+                            
+                            if timestamp_col:
+                                # Detect gaps (only once)
+                                gap_info = gap_fixer.utils.detect_gaps(df, timestamp_col)
+                                
+                                if gap_info['has_gaps']:
+                                    print(f"   ⚠️  Found {gap_info['gap_count']:,} gaps, fixing...")
+                                    
+                                    # Ask user for algorithm choice
+                                    print(f"   🔧 Available algorithms: auto, linear, cubic, interpolate, forward_fill, backward_fill")
+                                    try:
+                                        algo_choice = input(f"   Select algorithm (default: auto): ").strip().lower()
+                                        if algo_choice == '':
+                                            algorithm = 'auto'
+                                        elif algo_choice in ['auto', 'linear', 'cubic', 'interpolate', 'forward_fill', 'backward_fill']:
+                                            algorithm = 'auto'
+                                        else:
+                                            print(f"   ⚠️  Invalid choice, using 'auto'")
+                                            algorithm = 'auto'
+                                    except EOFError:
+                                        algorithm = 'auto'
+                                    
+                                    print(f"   🔧 Using algorithm: {algorithm}")
+                                    
+                                    # Fix gaps with progress bar and ETA
+                                    file_start_time = time.time()
+                                    print(f"   🔧 Gap fixing progress: ", end="", flush=True)
+                                    
+                                    # Create progress bar for gap fixing
+                                    with tqdm(total=gap_info['gap_count'], desc="Fixing gaps", unit="gap") as pbar:
+                                        # Use the apply_algorithm method from GapFixingStrategy
+                                        fixed_df = gap_fixer.algorithms.apply_algorithm(df, algorithm, gap_info)
+                                        results = {
+                                            'algorithm_used': algorithm,
+                                            'gaps_fixed': gap_info['gap_count'],
+                                            'memory_used_mb': 0.0  # Placeholder
+                                        }
+                                    
+                                    file_end_time = time.time()
+                                    file_processing_time = file_end_time - file_start_time
+                                    
+                                    if fixed_df is not None:
+                                        print(f"\r   ✅ Gap fixing completed in {file_processing_time:.2f}s")
+                                        print(f"      • Algorithm used: {results['algorithm_used']}")
+                                        print(f"      • Gaps fixed: {results['gaps_fixed']:,}")
+                                        print(f"      • Processing time: {file_processing_time:.2f}s")
+                                        print(f"      • Memory used: {results['memory_used_mb']:.1f}MB")
+                                        
+                                        # Replace original dataframe with fixed one
+                                        base_data[i] = fixed_df
+                                        
+                                        # Memory cleanup
+                                        del fixed_df
+                                        gc.collect()
+                                    else:
+                                        print(f"   ❌ Gap fixing failed, keeping original data")
+                                else:
+                                    print(f"   ✅ No gaps found, file is clean")
+                            else:
+                                print(f"   ⚠️  No timestamp column found, skipping gap fixing")
+                            
+                        except Exception as e:
+                            print(f"   ❌ Error processing {file_name}: {e}")
+                            print(f"   💡 Continuing with original data...")
+                            continue
+                        
+                        # Memory management
+                        if self.enable_memory_optimization:
+                            gc.collect()
+                    
+                    # Final overall progress summary
+                    total_time = time.time() - overall_start_time
+                    final_speed = total_files / total_time if total_time > 0 else 0
+                    print(f"\n✅ Gap analysis and fixing completed for all files!")
+                    print(f"   📊 Summary: {total_files} files processed in {total_time:.2f}s")
+                    print(f"   🚀 Average speed: {final_speed:.2f} files/s")
+                else:
+                    print("⚠️  Skipping gap fixing due to initialization error")
+            else:
+                print("⏭️  Skipping time series gap fixing...")
         
         # Create timeframe_info before using it
         cross_timeframes = {tf: files for tf, files in timeframe_data.items() if tf != base_timeframe}
@@ -287,11 +294,14 @@ class DataManager:
             base_timeframe, timeframe_data, cross_timeframes, mask, folder_path
         )
         
-        # Load other timeframes if available
-        if cross_timeframes:
+        # Load other timeframes if available (only if not from cleaned_data)
+        if cross_timeframes and not is_cleaned_data:
             other_timeframes_data = self.multi_timeframe_manager.load_other_timeframes(cross_timeframes)
             if other_timeframes_data:
                 system.other_timeframes_data = other_timeframes_data
+        elif is_cleaned_data:
+            print(f"   📊 Skipping cross-timeframes for cleaned_data (not needed)")
+            system.other_timeframes_data = {}
         
         # Combine base timeframe data
         print(f"\n🔄 Combining base timeframe data...")

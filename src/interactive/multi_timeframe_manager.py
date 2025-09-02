@@ -185,11 +185,31 @@ class MultiTimeframeManager:
         print("")
         
         available_timeframes = list(timeframe_data.keys())
+        
+        # Try to find M1 as default
+        default_timeframe = None
+        default_index = None
+        for i, tf in enumerate(available_timeframes):
+            if tf == 'M1':
+                default_timeframe = tf
+                default_index = i + 1
+                break
+        
+        # Display timeframes with M1 highlighted as default
         for i, tf in enumerate(available_timeframes, 1):
-            print(f"{i}. {tf} ({len(timeframe_data[tf])} files)")
+            if tf == default_timeframe:
+                print(f"{i}. {tf} ({len(timeframe_data[tf])} files) [DEFAULT - press Enter]")
+            else:
+                print(f"{i}. {tf} ({len(timeframe_data[tf])} files)")
         
         try:
-            choice = input("\nSelect base timeframe (number): ").strip()
+            choice = input(f"\nSelect base timeframe (number, default: {default_index if default_index else '1'}): ").strip()
+            
+            # If user just presses Enter and M1 is available, use it as default
+            if choice == '' and default_timeframe:
+                print(f"\n✅ Using default timeframe: {default_timeframe}")
+                return default_timeframe
+            
             if not choice.isdigit():
                 print("❌ Invalid choice")
                 return None
