@@ -99,11 +99,14 @@ class TestDockerfile(DockerBaseTest):
             stdout, stderr = self.assert_command_success(
                 f"docker build -t {image_name} -f Dockerfile .",
                 cwd=self.project_root,
-                msg="Docker image build failed"
+                msg="Docker build failed"
             )
         finally:
             # Clean up the test image
-            self.run_command(f"docker rmi {image_name}")
+            try:
+                self.run_command(f"docker rmi {image_name}")
+            except:
+                pass  # Ignore cleanup errors
 
 
 if __name__ == '__main__':

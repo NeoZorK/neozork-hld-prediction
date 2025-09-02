@@ -34,7 +34,7 @@ class TestIDESetupManager:
     @pytest.fixture
     def project_root(self):
         """Get project root path"""
-        return Path(__file__).parent.parent.parent.parent
+        return Path(__file__).parent.parent.parent
     
     @pytest.fixture
     def setup_manager(self, project_root):
@@ -51,6 +51,9 @@ class TestIDESetupManager:
         assert (project_root / "src").exists()
         assert (project_root / "tests").exists()
         assert (project_root / "data").exists()
+        # Check for key project files
+        assert (project_root / "pyproject.toml").exists()
+        assert (project_root / "requirements.txt").exists()
     
     @pytest.mark.skipif(not is_docker_environment(), reason="This test should only run in Docker environment")
     def test_cursor_config_creation(self, setup_manager, project_root):
@@ -349,7 +352,7 @@ class TestIDEConfigValidation:
     @pytest.fixture
     def project_root(self):
         """Get project root path"""
-        return Path(__file__).parent.parent.parent.parent
+        return Path(__file__).parent.parent.parent
     
     def test_cursor_config_validation(self, project_root):
         """Test Cursor configuration validation"""

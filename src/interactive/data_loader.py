@@ -147,6 +147,12 @@ class DataLoader:
             cleaned_columns.append(col_str)
         
         df.columns = cleaned_columns
+        
+        # Remove unnamed columns (columns that start with 'Unnamed:' or are empty)
+        unnamed_cols = [col for col in df.columns if col.startswith('Unnamed') or col == '']
+        if unnamed_cols:
+            df = df.drop(columns=unnamed_cols)
+        
         return df
     
     def determine_header_row(self, file_path: Path) -> int:
