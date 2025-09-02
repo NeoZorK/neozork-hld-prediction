@@ -56,16 +56,27 @@ class DataLoader:
                 except Exception:
                     continue
         
-        # If no datetime column found, try to convert first column
+        # If no datetime column found, check if this might be OHLCV data without timestamp
         if len(df.columns) > 0:
-            first_col = df.columns[0]
-            try:
-                df[first_col] = pd.to_datetime(df[first_col], errors='coerce')
-                df.set_index(first_col, inplace=True)
-                print(f"✅ Set '{first_col}' as datetime index")
+            # Check if this looks like OHLCV data (Open, High, Low, Close, Volume)
+            ohlcv_indicators = ['open', 'high', 'low', 'close', 'volume']
+            has_ohlcv = any(indicator in str(col).lower() for col in df.columns for indicator in ohlcv_indicators)
+            
+            if has_ohlcv:
+                print(f"⚠️  No timestamp column found in OHLCV data. Data will be loaded without datetime index.")
+                print(f"   Available columns: {list(df.columns)}")
                 return df
-            except Exception:
-                pass
+            else:
+                # Try to convert first column only if it doesn't look like OHLCV data
+                first_col = df.columns[0]
+                try:
+                    df[first_col] = pd.to_datetime(df[first_col], errors='coerce')
+                    df.set_index(first_col, inplace=True)
+                    print(f"✅ Set '{first_col}' as datetime index")
+                    return df
+                except Exception:
+                    print(f"⚠️  Could not convert '{first_col}' to datetime. Data will be loaded without datetime index.")
+                    return df
         
         return df
     
