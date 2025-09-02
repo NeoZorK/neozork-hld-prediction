@@ -6,8 +6,10 @@ Coordinates data loading, gap analysis, and multi-timeframe processing.
 
 import pandas as pd
 import gc
+import time
 from pathlib import Path
 from typing import List, Dict, Optional
+from tqdm import tqdm
 from .memory_manager import MemoryManager
 from .data_loader import DataLoader
 from .gap_analyzer import GapAnalyzer
@@ -28,6 +30,10 @@ class DataManager:
         self.chunk_size = 50000
         self.enable_memory_optimization = True
         self.max_memory_mb = 6144
+        
+        # Create cleaned data directory
+        self.cleaned_data_dir = Path("data/cleaned_data")
+        self.cleaned_data_dir.mkdir(exist_ok=True)
     
     def load_data(self, system) -> bool:
         """
@@ -157,22 +163,17 @@ class DataManager:
                 gap_fixer = None
             
             if gap_fixer:
-                # Process each file separately
+                # Process each file separately with progress bar
                 for i, df in enumerate(base_data):
                     file_name = df['source_file'].iloc[0] if 'source_file' in df.columns else f"file_{i+1}"
                     print(f"\n📁 Processing file {i+1}/{len(base_data)}: {file_name}")
                     
                     try:
-                        # Find timestamp column
+                        # Find timestamp column (only once)
                         timestamp_col = gap_fixer._find_timestamp_column(df)
                         
                         if timestamp_col:
-                            if timestamp_col == "DATETIME_INDEX":
-                                print(f"   📅 Found DatetimeIndex: {df.index.name or 'unnamed'}")
-                            else:
-                                print(f"   📅 Found timestamp column: {timestamp_col}")
-                            
-                            # Detect gaps
+                            # Detect gaps (only once)
                             gap_info = gap_fixer._detect_gaps(df, timestamp_col)
                             
                             if gap_info['has_gaps']:
@@ -194,18 +195,24 @@ class DataManager:
                                 
                                 print(f"   🔧 Using algorithm: {algorithm}")
                                 
-                                # Fix gaps with progress
-                                print(f"   🔧 Gap fixing progress: Starting...", end="", flush=True)
-                                fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
-                                    df, timestamp_col, gap_info, algorithm, show_progress=True
-                                )
-                                print(f"\r   ✅ Gap fixing completed")
+                                # Fix gaps with progress bar and ETA
+                                start_time = time.time()
+                                print(f"   🔧 Gap fixing progress: ", end="", flush=True)
+                                
+                                # Create progress bar for gap fixing
+                                with tqdm(total=gap_info['gap_count'], desc="Fixing gaps", unit="gap") as pbar:
+                                    fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
+                                        df, timestamp_col, gap_info, algorithm, show_progress=True, progress_bar=pbar
+                                    )
+                                
+                                end_time = time.time()
+                                processing_time = end_time - start_time
                                 
                                 if fixed_df is not None:
-                                    print(f"   ✅ Gaps fixed successfully!")
+                                    print(f"\r   ✅ Gap fixing completed in {processing_time:.2f}s")
                                     print(f"      • Algorithm used: {results['algorithm_used']}")
                                     print(f"      • Gaps fixed: {results['gaps_fixed']:,}")
-                                    print(f"      • Processing time: {results['processing_time']:.2f}s")
+                                    print(f"      • Processing time: {processing_time:.2f}s")
                                     print(f"      • Memory used: {results['memory_used_mb']:.1f}MB")
                                     
                                     # Replace original dataframe with fixed one
@@ -272,7 +279,88 @@ class DataManager:
             system, base_timeframe, folder_path, mask
         )
         
+        # Ask user if they want to save cleaned data
+        try:
+            save_cleaned = input("\n💾 Save cleaned data to 'data/cleaned_data' folder for future ML use? (y/n, default: y): ").strip().lower()
+        except EOFError:
+            save_cleaned = 'y'
+        
+        if save_cleaned in ['', 'y', 'yes']:
+            self._save_cleaned_data(system, folder_path, mask, base_timeframe)
+        
         return True
+    
+    def _save_cleaned_data(self, system, folder_path, mask, base_timeframe):
+        """
+        Save cleaned data to the cleaned_data folder for future ML use.
+        
+        Args:
+            system: InteractiveSystem instance
+            folder_path: Path to the original data folder
+            mask: Filter mask used
+            base_timeframe: Base timeframe used
+        """
+        try:
+            print(f"\n💾 SAVING CLEANED DATA FOR ML USE")
+            print("-" * 50)
+            
+            # Create filename based on folder and mask
+            folder_name = folder_path.name
+            mask_suffix = f"_{mask}" if mask else ""
+            timeframe_suffix = f"_{base_timeframe}" if base_timeframe else ""
+            
+            # Generate filename
+            timestamp = time.strftime("%Y%m%d_%H%M%S")
+            filename = f"cleaned_{folder_name}{mask_suffix}{timeframe_suffix}_{timestamp}.parquet"
+            filepath = self.cleaned_data_dir / filename
+            
+            # Save data
+            print(f"📁 Saving to: {filepath}")
+            system.current_data.to_parquet(filepath, index=False, compression='snappy')
+            
+            # Get file size
+            file_size_mb = filepath.stat().st_size / (1024 * 1024)
+            
+            print(f"✅ Cleaned data saved successfully!")
+            print(f"   📊 File: {filename}")
+            print(f"   💾 Size: {file_size_mb:.1f} MB")
+            print(f"   📈 Rows: {len(system.current_data):,}")
+            print(f"   🔢 Columns: {len(system.current_data.columns)}")
+            print(f"   📅 Timeframe: {base_timeframe}")
+            print(f"   🎯 Format: Parquet (optimized for ML)")
+            
+            # Show ML benefits
+            print(f"\n🚀 ML MODEL BENEFITS:")
+            print(f"   • Fast loading with pandas/pyarrow")
+            print(f"   • Efficient memory usage")
+            print(f"   • Column-oriented storage")
+            print(f"   • Built-in compression")
+            print(f"   • Compatible with all major ML libraries")
+            print(f"   • No need to re-process data each time")
+            
+            # Create metadata file
+            metadata_file = filepath.with_suffix('.json')
+            metadata = {
+                'original_folder': str(folder_path),
+                'mask_applied': mask,
+                'base_timeframe': base_timeframe,
+                'creation_timestamp': timestamp,
+                'data_shape': list(system.current_data.shape),
+                'columns': list(system.current_data.columns),
+                'data_types': system.current_data.dtypes.to_dict(),
+                'memory_usage_mb': system.current_data.memory_usage(deep=True).sum() / (1024 * 1024),
+                'description': 'Cleaned data ready for ML model training and prediction'
+            }
+            
+            import json
+            with open(metadata_file, 'w') as f:
+                json.dump(metadata, f, indent=2, default=str)
+            
+            print(f"📋 Metadata saved: {metadata_file.name}")
+            
+        except Exception as e:
+            print(f"❌ Error saving cleaned data: {e}")
+            print("💡 Data will not be saved, but you can continue working with it in memory")
     
     def analyze_time_series_gaps(self, data_files: List[Path], Fore, Style) -> List[Dict]:
         """
@@ -299,47 +387,33 @@ class DataManager:
         """
         self.gap_analyzer.show_detailed_gap_info(gap_summary, Fore, Style)
     
-    def fix_gaps_interactive(self, gap_summary: List[Dict], Fore, Style) -> List[Dict]:
+    def load_data_from_file(self, file_path: str) -> pd.DataFrame:
         """
-        Interactively fix gaps in data files.
+        Load data from file path.
         
         Args:
-            gap_summary: List of gap analysis results
-            Fore: Colorama Fore object
-            Style: Colorama Style object
+            file_path: Path to the file
             
         Returns:
-            List of updated gap summary with fixed data
+            DataFrame with loaded data
         """
-        return self.gap_analyzer.fix_gaps_interactive(gap_summary, Fore, Style)
+        return self.data_loader.load_data_from_file(file_path)
     
-    def export_results(self, system) -> bool:
+    def load_data_from_folder(self, folder_path: str) -> list:
         """
-        Export current results to file.
+        Load data files from folder path.
         
         Args:
-            system: InteractiveSystem instance
+            folder_path: Path to the folder
             
         Returns:
-            bool: True if successful
+            List of loaded DataFrames
         """
-        return self.cache_manager.export_results(system)
-    
-    def clear_cache(self, system) -> bool:
-        """
-        Clear all cached files.
-        
-        Args:
-            system: InteractiveSystem instance
-            
-        Returns:
-            bool: True if successful
-        """
-        return self.cache_manager.clear_cache(system)
+        return self.data_loader.load_data_from_folder(folder_path)
     
     def restore_from_backup(self, system) -> bool:
         """
-        Restore data from backup.
+        Restore data from backup file.
         
         Args:
             system: InteractiveSystem instance
@@ -351,7 +425,7 @@ class DataManager:
     
     def clear_data_backup(self, system) -> bool:
         """
-        Clear data backup files.
+        Clear all backup files from the backup directory.
         
         Args:
             system: InteractiveSystem instance
@@ -360,3 +434,12 @@ class DataManager:
             bool: True if successful
         """
         return self.cache_manager.clear_data_backup(system)
+    
+    def export_results(self, system) -> None:
+        """
+        Export current results to files.
+        
+        Args:
+            system: InteractiveSystem instance
+        """
+        self.cache_manager.export_results(system)

@@ -292,7 +292,6 @@ class GapFixer:
         """Find the timestamp column in the dataframe."""
         # First, check if the index is a DatetimeIndex
         if isinstance(df.index, pd.DatetimeIndex):
-            print(f"   📅 Found DatetimeIndex: {df.index.name or 'unnamed'}")
             return "DATETIME_INDEX"  # Special marker for DatetimeIndex
         
         # Check for exact matches (case-insensitive)
@@ -314,7 +313,7 @@ class GapFixer:
             if pd.api.types.is_datetime64_any_dtype(df[col]):
                 return col
         
-        # Debug: print available columns
+        # Debug: print available columns only if no timestamp found
         print(f"   🔍 Available columns: {list(df.columns)}")
         
         return None
@@ -335,7 +334,6 @@ class GapFixer:
         
         # Calculate time differences
         time_diffs = time_series.diff().dropna()
-        print(f"   📊 Time differences calculated: {len(time_diffs):,} intervals")
         
         # Show some statistics about time differences
         if len(time_diffs) > 0:
@@ -427,7 +425,8 @@ class GapFixer:
             return pd.Timedelta('1W')  # 1 week
     
     def _fix_gaps_in_dataframe(self, df: pd.DataFrame, timestamp_col: str,
-                               gap_info: Dict, algorithm: str, show_progress: bool) -> Tuple[pd.DataFrame, Dict]:
+                               gap_info: Dict, algorithm: str, show_progress: bool, 
+                               progress_bar=None) -> Tuple[pd.DataFrame, Dict]:
         """Fix gaps in dataframe using specified algorithm."""
         start_time = time.time()
         initial_memory = self._get_memory_usage()
@@ -452,8 +451,8 @@ class GapFixer:
         else:
             df_copy = df.copy()
         
-        # Fix gaps
-        fixed_df = self.algorithms[algorithm](df_copy, timestamp_col, gap_info, show_progress)
+        # Fix gaps with progress bar support
+        fixed_df = self.algorithms[algorithm](df_copy, timestamp_col, gap_info, show_progress, progress_bar)
         
         # If we were working with DatetimeIndex, restore it
         if gap_info.get('is_datetime_index', False):
@@ -505,8 +504,8 @@ class GapFixer:
         else:  # High gap ratio
             return 'seasonal'  # Use seasonal for high gap ratios
     
-    def _fix_gaps_linear(self, df: pd.DataFrame, timestamp_col: str, 
-                         gap_info: Dict, show_progress: bool) -> pd.DataFrame:
+    def _fix_gaps_linear(self, df: pd.DataFrame, timestamp_col: str,
+                         gap_info: Dict, show_progress: bool, progress_bar=None) -> pd.DataFrame:
         """Fix gaps using linear interpolation with proper time series reconstruction."""
         df_copy = df.copy()
         
@@ -529,7 +528,7 @@ class GapFixer:
         if len(complete_times) > 10_000_000:  # 10M rows limit
             print(f"   ⚠️  Time series too large ({len(complete_times):,} rows), using chunked approach")
             # Use chunked approach for very large datasets
-            return self._fix_gaps_chunked(df_copy, timestamp_col, gap_info, show_progress)
+            return self._fix_gaps_chunked(df_copy, timestamp_col, gap_info, show_progress, progress_bar)
         
         # Set timestamp as index for reindexing
         df_copy = df_copy.set_index(timestamp_col)
@@ -537,6 +536,11 @@ class GapFixer:
         # Reindex to complete time series (this creates NaN rows for missing times)
         df_copy = df_copy.reindex(complete_times)
         print(f"   📊 After reindexing: {df_copy.shape[0]} rows (including gaps)")
+        
+        # Update progress bar if provided
+        if progress_bar:
+            progress_bar.set_description("Linear interpolation")
+            progress_bar.update(gap_info['gap_count'])
         
         # Linear interpolation for numeric columns
         numeric_columns = df_copy.select_dtypes(include=[np.number]).columns
@@ -559,7 +563,7 @@ class GapFixer:
         return df_copy
     
     def _fix_gaps_cubic(self, df: pd.DataFrame, timestamp_col: str,
-                        gap_info: Dict, show_progress: bool) -> pd.DataFrame:
+                        gap_info: Dict, show_progress: bool, progress_bar=None) -> pd.DataFrame:
         """Fix gaps using cubic interpolation with proper time series reconstruction."""
         df_copy = df.copy()
         
@@ -585,6 +589,11 @@ class GapFixer:
         df_copy = df_copy.reindex(complete_times)
         print(f"   📊 After reindexing: {df_copy.shape[0]} rows (including gaps)")
         
+        # Update progress bar if provided
+        if progress_bar:
+            progress_bar.set_description("Cubic interpolation")
+            progress_bar.update(gap_info['gap_count'])
+        
         # Cubic interpolation for numeric columns
         numeric_columns = df_copy.select_dtypes(include=[np.number]).columns
         df_copy[numeric_columns] = df_copy[numeric_columns].interpolate(method='cubic')
@@ -606,10 +615,15 @@ class GapFixer:
         return df_copy
     
     def _fix_gaps_forward_fill(self, df: pd.DataFrame, timestamp_col: str,
-                               gap_info: Dict, show_progress: bool) -> pd.DataFrame:
+                               gap_info: Dict, show_progress: bool, progress_bar=None) -> pd.DataFrame:
         """Fix gaps using forward fill method."""
         df_copy = df.copy()
         df_copy = df_copy.sort_values(timestamp_col)
+        
+        # Update progress bar if provided
+        if progress_bar:
+            progress_bar.set_description("Forward fill")
+            progress_bar.update(gap_info['gap_count'])
         
         # Forward fill all columns
         df_copy = df_copy.fillna(method='ffill')
@@ -617,10 +631,15 @@ class GapFixer:
         return df_copy
     
     def _fix_gaps_backward_fill(self, df: pd.DataFrame, timestamp_col: str,
-                                gap_info: Dict, show_progress: bool) -> pd.DataFrame:
+                                gap_info: Dict, show_progress: bool, progress_bar=None) -> pd.DataFrame:
         """Fix gaps using backward fill method."""
         df_copy = df.copy()
         df_copy = df_copy.sort_values(timestamp_col)
+        
+        # Update progress bar if provided
+        if progress_bar:
+            progress_bar.set_description("Backward fill")
+            progress_bar.update(gap_info['gap_count'])
         
         # Backward fill all columns
         df_copy = df_copy.fillna(method='bfill')
@@ -628,10 +647,15 @@ class GapFixer:
         return df_copy
     
     def _fix_gaps_interpolate(self, df: pd.DataFrame, timestamp_col: str,
-                              gap_info: Dict, show_progress: bool) -> pd.DataFrame:
+                              gap_info: Dict, show_progress: bool, progress_bar=None) -> pd.DataFrame:
         """Fix gaps using advanced interpolation."""
         df_copy = df.copy()
         df_copy = df_copy.sort_values(timestamp_col)
+        
+        # Update progress bar if provided
+        if progress_bar:
+            progress_bar.set_description("Advanced interpolation")
+            progress_bar.update(gap_info['gap_count'])
         
         # Interpolate numeric columns using linear method (more robust)
         numeric_columns = df_copy.select_dtypes(include=[np.number]).columns
@@ -645,7 +669,7 @@ class GapFixer:
         return df_copy
     
     def _fix_gaps_seasonal(self, df: pd.DataFrame, timestamp_col: str,
-                           gap_info: Dict, show_progress: bool) -> pd.DataFrame:
+                           gap_info: Dict, show_progress: bool, progress_bar=None) -> pd.DataFrame:
         """Fix gaps using seasonal decomposition with proper time series reconstruction."""
         df_copy = df.copy()
         
@@ -671,6 +695,11 @@ class GapFixer:
         df_copy = df_copy.reindex(complete_times)
         print(f"   📊 After reindexing: {df_copy.shape[0]} rows (including gaps)")
         
+        # Update progress bar if provided
+        if progress_bar:
+            progress_bar.set_description("Seasonal decomposition")
+            progress_bar.update(gap_info['gap_count'])
+        
         # Interpolate numeric columns
         numeric_columns = df_copy.select_dtypes(include=[np.number]).columns
         df_copy[numeric_columns] = df_copy[numeric_columns].interpolate(method='linear')
@@ -692,13 +721,13 @@ class GapFixer:
         return df_copy
     
     def _fix_gaps_ml_forecast(self, df: pd.DataFrame, timestamp_col: str,
-                              gap_info: Dict, show_progress: bool) -> pd.DataFrame:
+                              gap_info: Dict, show_progress: bool, progress_bar=None) -> pd.DataFrame:
         """Fix gaps using ML forecasting (placeholder for future implementation)."""
         # For now, use interpolate as fallback
-        return self._fix_gaps_interpolate(df, timestamp_col, gap_info, show_progress)
+        return self._fix_gaps_interpolate(df, timestamp_col, gap_info, show_progress, progress_bar)
     
     def _fix_gaps_chunked(self, df: pd.DataFrame, timestamp_col: str,
-                          gap_info: Dict, show_progress: bool) -> pd.DataFrame:
+                          gap_info: Dict, show_progress: bool, progress_bar=None) -> pd.DataFrame:
         """Fix gaps using chunked approach for very large datasets."""
         print(f"   🔧 Using chunked approach for large dataset")
         
