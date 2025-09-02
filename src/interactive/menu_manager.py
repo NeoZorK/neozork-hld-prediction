@@ -39,6 +39,13 @@ class MenuManager:
                 'correlation_analysis': False,
                 'time_series_analysis': False,
                 'feature_importance': False,
+                'duplicates_analysis': False,
+                'nan_analysis': False,
+                'zero_analysis': False,
+                'negative_analysis': False,
+                'infinity_analysis': False,
+                'outliers_analysis': False,
+                'time_series_gaps_analysis': False,
                 'fix_data_issues': False,
                 'generate_html_report': False,
                 'restore_from_backup': False,
@@ -199,17 +206,45 @@ class MenuManager:
         checkmark = " ✅" if self.used_menus['eda']['feature_importance'] else ""
         print(f"5. 🎯 Feature Importance{checkmark}")
         
+        # Duplicates Analysis
+        checkmark = " ✅" if self.used_menus['eda']['duplicates_analysis'] else ""
+        print(f"6. 🔄 Duplicates Analysis{checkmark}")
+        
+        # NAN Analysis
+        checkmark = " ✅" if self.used_menus['eda']['nan_analysis'] else ""
+        print(f"7. ❓ NAN Analysis{checkmark}")
+        
+        # Zero Analysis
+        checkmark = " ✅" if self.used_menus['eda']['zero_analysis'] else ""
+        print(f"8. 0️⃣ Zero Analysis{checkmark}")
+        
+        # Negative Analysis
+        checkmark = " ✅" if self.used_menus['eda']['negative_analysis'] else ""
+        print(f"9. ➖ Negative Analysis{checkmark}")
+        
+        # Infinity Analysis
+        checkmark = " ✅" if self.used_menus['eda']['infinity_analysis'] else ""
+        print(f"10. ♾️ Infinity Analysis{checkmark}")
+        
+        # Outliers Analysis
+        checkmark = " ✅" if self.used_menus['eda']['outliers_analysis'] else ""
+        print(f"11. 📊 Outliers Analysis{checkmark}")
+        
+        # Time Series Gaps Analysis
+        checkmark = " ✅" if self.used_menus['eda']['time_series_gaps_analysis'] else ""
+        print(f"12. ⏱️ Time Series Gaps Analysis{checkmark}")
+        
         # Generate HTML Report
         checkmark = " ✅" if self.used_menus['eda']['generate_html_report'] else ""
-        print(f"6. 📋 Generate HTML Report{checkmark}")
+        print(f"13. 📋 Generate HTML Report{checkmark}")
         
         # Restore from Backup
         checkmark = " ✅" if self.used_menus['eda']['restore_from_backup'] else ""
-        print(f"7. 🔄 Restore from Backup{checkmark}")
+        print(f"14. 🔄 Restore from Backup{checkmark}")
         
         # Clear Data Backup
         checkmark = " ✅" if self.used_menus['eda']['clear_data_backup'] else ""
-        print(f"8. 🗑️  Clear Data Backup{checkmark}")
+        print(f"15. 🗑️ Clear Data Backup{checkmark}")
         
         print("-" * 50)
         print("💡 Exit or CTRL+C to Exit")

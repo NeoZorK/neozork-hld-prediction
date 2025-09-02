@@ -544,3 +544,374 @@ class EDAAnalyzer:
         except Exception as e:
             print(f"❌ Error in feature importance analysis: {e}")
             return False
+
+    def run_duplicates_analysis(self, system) -> bool:
+        """
+        Run detailed duplicates analysis on the dataset.
+        
+        Args:
+            system: InteractiveSystem instance
+            
+        Returns:
+            bool: True if successful
+        """
+        print(f"\n🔄 DUPLICATES ANALYSIS")
+        print("-" * 50)
+        
+        if not hasattr(system, 'current_data') or system.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return False
+        
+        df = system.current_data
+        dupe_summary = self._analyze_duplicates(df)
+        
+        # Show detailed duplicates info
+        if dupe_summary.get('total_duplicates', 0) > 0:
+            print(f"\n📊 Duplicates Summary:")
+            print(f"   • Total duplicates: {dupe_summary['total_duplicates']:,}")
+            print(f"   • Duplicate percentage: {dupe_summary['duplicate_percent']:.2f}%")
+            
+            if dupe_summary.get('key_columns'):
+                print(f"   • Key columns with duplicates:")
+                for key_col in dupe_summary['key_columns']:
+                    print(f"     - {key_col['column']}: {key_col['duplicate_count']:,} duplicates")
+        else:
+            print("✅ No duplicates found in the dataset")
+        
+        return True
+
+    def run_nan_analysis(self, system) -> bool:
+        """
+        Run detailed NAN analysis on the dataset.
+        
+        Args:
+            system: InteractiveSystem instance
+            
+        Returns:
+            bool: True if successful
+        """
+        print(f"\n❓ NAN ANALYSIS")
+        print("-" * 50)
+        
+        if not hasattr(system, 'current_data') or system.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return False
+        
+        df = system.current_data
+        nan_summary = self._analyze_missing_values(df)
+        
+        if nan_summary:
+            print(f"\n📊 NAN Summary:")
+            print(f"   • Columns with NAN values: {len(nan_summary)}")
+            
+            # Show top columns by NAN count
+            print(f"   • Top columns by NAN count:")
+            for i, item in enumerate(nan_summary[:10], 1):
+                print(f"     {i:2d}. {item['column']:<25} | {item['missing_count']:,} ({item['missing_percent']:.1f}%)")
+            
+            if len(nan_summary) > 10:
+                print(f"     ... and {len(nan_summary) - 10} more columns")
+        else:
+            print("✅ No NAN values found in the dataset")
+        
+        return True
+
+    def run_zero_analysis(self, system) -> bool:
+        """
+        Run zero values analysis on numeric columns.
+        
+        Args:
+            system: InteractiveSystem instance
+            
+        Returns:
+            bool: True if successful
+        """
+        print(f"\n0️⃣ ZERO ANALYSIS")
+        print("-" * 50)
+        
+        if not hasattr(system, 'current_data') or system.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return False
+        
+        df = system.current_data
+        
+        # Find numeric columns
+        numeric_cols = df.select_dtypes(include=[np.number]).columns
+        
+        if len(numeric_cols) == 0:
+            print("❌ No numeric columns found for zero analysis")
+            return False
+        
+        print(f"📊 Analyzing {len(numeric_cols)} numeric columns for zero values...")
+        
+        zero_summary = []
+        for col in numeric_cols:
+            zero_count = (df[col] == 0).sum()
+            zero_percent = (zero_count / len(df)) * 100 if len(df) > 0 else 0
+            
+            if zero_count > 0:
+                zero_summary.append({
+                    'column': col,
+                    'zero_count': zero_count,
+                    'zero_percent': zero_percent,
+                    'total_rows': len(df)
+                })
+        
+        if zero_summary:
+            print(f"\n📊 Zero Values Summary:")
+            print(f"   • Columns with zero values: {len(zero_summary)}")
+            
+            # Sort by zero count
+            zero_summary.sort(key=lambda x: x['zero_count'], reverse=True)
+            
+            print(f"   • Top columns by zero count:")
+            for i, item in enumerate(zero_summary[:10], 1):
+                print(f"     {i:2d}. {item['column']:<25} | {item['zero_count']:,} ({item['zero_percent']:.1f}%)")
+            
+            if len(zero_summary) > 10:
+                print(f"     ... and {len(zero_summary) - 10} more columns")
+        else:
+            print("✅ No zero values found in numeric columns")
+        
+        return True
+
+    def run_negative_analysis(self, system) -> bool:
+        """
+        Run negative values analysis on numeric columns.
+        
+        Args:
+            system: InteractiveSystem instance
+            
+        Returns:
+            bool: True if successful
+        """
+        print(f"\n➖ NEGATIVE ANALYSIS")
+        print("-" * 50)
+        
+        if not hasattr(system, 'current_data') or system.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return False
+        
+        df = system.current_data
+        
+        # Find numeric columns
+        numeric_cols = df.select_dtypes(include=[np.number]).columns
+        
+        if len(numeric_cols) == 0:
+            print("❌ No numeric columns found for negative analysis")
+            return False
+        
+        print(f"📊 Analyzing {len(numeric_cols)} numeric columns for negative values...")
+        
+        negative_summary = []
+        for col in numeric_cols:
+            negative_count = (df[col] < 0).sum()
+            negative_percent = (negative_count / len(df)) * 100 if len(df) > 0 else 0
+            
+            if negative_count > 0:
+                negative_summary.append({
+                    'column': col,
+                    'negative_count': negative_count,
+                    'negative_percent': negative_percent,
+                    'total_rows': len(df)
+                })
+        
+        if negative_summary:
+            print(f"\n📊 Negative Values Summary:")
+            print(f"   • Columns with negative values: {len(negative_summary)}")
+            
+            # Sort by negative count
+            negative_summary.sort(key=lambda x: x['negative_count'], reverse=True)
+            
+            print(f"   • Top columns by negative count:")
+            for i, item in enumerate(negative_summary[:10], 1):
+                print(f"     {i:2d}. {item['column']:<25} | {item['negative_count']:,} ({item['negative_percent']:.1f}%)")
+            
+            if len(negative_summary) > 10:
+                print(f"     ... and {len(negative_summary) - 10} more columns")
+        else:
+            print("✅ No negative values found in numeric columns")
+        
+        return True
+
+    def run_infinity_analysis(self, system) -> bool:
+        """
+        Run infinity values analysis on numeric columns.
+        
+        Args:
+            system: InteractiveSystem instance
+            
+        Returns:
+            bool: True if successful
+        """
+        print(f"\n♾️ INFINITY ANALYSIS")
+        print("-" * 50)
+        
+        if not hasattr(system, 'current_data') or system.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return False
+        
+        df = system.current_data
+        
+        # Find numeric columns
+        numeric_cols = df.select_dtypes(include=[np.number]).columns
+        
+        if len(numeric_cols) == 0:
+            print("❌ No numeric columns found for infinity analysis")
+            return False
+        
+        print(f"📊 Analyzing {len(numeric_cols)} numeric columns for infinity values...")
+        
+        infinity_summary = []
+        for col in numeric_cols:
+            # Check for positive and negative infinity
+            pos_inf_count = np.isinf(df[col]) & (df[col] > 0)
+            neg_inf_count = np.isinf(df[col]) & (df[col] < 0)
+            
+            total_inf = pos_inf_count.sum() + neg_inf_count.sum()
+            inf_percent = (total_inf / len(df)) * 100 if len(df) > 0 else 0
+            
+            if total_inf > 0:
+                infinity_summary.append({
+                    'column': col,
+                    'positive_infinity': pos_inf_count.sum(),
+                    'negative_infinity': neg_inf_count.sum(),
+                    'total_infinity': total_inf,
+                    'infinity_percent': inf_percent,
+                    'total_rows': len(df)
+                })
+        
+        if infinity_summary:
+            print(f"\n📊 Infinity Values Summary:")
+            print(f"   • Columns with infinity values: {len(infinity_summary)}")
+            
+            # Sort by total infinity count
+            infinity_summary.sort(key=lambda x: x['total_infinity'], reverse=True)
+            
+            print(f"   • Top columns by infinity count:")
+            for i, item in enumerate(infinity_summary[:10], 1):
+                print(f"     {i:2d}. {item['column']:<25} | +∞: {item['positive_infinity']:,}, -∞: {item['negative_infinity']:,} ({item['infinity_percent']:.1f}%)")
+            
+            if len(infinity_summary) > 10:
+                print(f"     ... and {len(infinity_summary) - 10} more columns")
+        else:
+            print("✅ No infinity values found in numeric columns")
+        
+        return True
+
+    def run_outliers_analysis(self, system) -> bool:
+        """
+        Run outliers analysis using IQR method on numeric columns.
+        
+        Args:
+            system: InteractiveSystem instance
+            
+        Returns:
+            bool: True if successful
+        """
+        print(f"\n📊 OUTLIERS ANALYSIS")
+        print("-" * 50)
+        
+        if not hasattr(system, 'current_data') or system.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return False
+        
+        df = system.current_data
+        
+        # Find numeric columns
+        numeric_cols = df.select_dtypes(include=[np.number]).columns
+        
+        if len(numeric_cols) == 0:
+            print("❌ No numeric columns found for outliers analysis")
+            return False
+        
+        print(f"📊 Analyzing {len(numeric_cols)} numeric columns for outliers using IQR method...")
+        
+        outliers_summary = []
+        for col in numeric_cols[:20]:  # Limit to first 20 columns for performance
+            try:
+                data = df[col].dropna()
+                if len(data) == 0:
+                    continue
+                
+                q1 = data.quantile(0.25)
+                q3 = data.quantile(0.75)
+                iqr = q3 - q1
+                
+                lower_bound = q1 - 1.5 * iqr
+                upper_bound = q3 + 1.5 * iqr
+                
+                outliers_mask = (df[col] < lower_bound) | (df[col] > upper_bound)
+                outliers_count = outliers_mask.sum()
+                outliers_percent = (outliers_count / len(df)) * 100 if len(df) > 0 else 0
+                
+                if outliers_count > 0:
+                    outliers_summary.append({
+                        'column': col,
+                        'outliers_count': outliers_count,
+                        'outliers_percent': outliers_percent,
+                        'q1': q1,
+                        'q3': q3,
+                        'iqr': iqr,
+                        'lower_bound': lower_bound,
+                        'upper_bound': upper_bound,
+                        'total_rows': len(df)
+                    })
+            except Exception as e:
+                print(f"   ⚠️  Error analyzing column {col}: {e}")
+                continue
+        
+        if outliers_summary:
+            print(f"\n📊 Outliers Summary:")
+            print(f"   • Columns with outliers: {len(outliers_summary)}")
+            
+            # Sort by outliers count
+            outliers_summary.sort(key=lambda x: x['outliers_count'], reverse=True)
+            
+            print(f"   • Top columns by outliers count:")
+            for i, item in enumerate(outliers_summary[:10], 1):
+                print(f"     {i:2d}. {item['column']:<25} | {item['outliers_count']:,} ({item['outliers_percent']:.1f}%)")
+                print(f"         Q1: {item['q1']:.4f}, Q3: {item['q3']:.4f}, IQR: {item['iqr']:.4f}")
+                print(f"         Bounds: [{item['lower_bound']:.4f}, {item['upper_bound']:.4f}]")
+            
+            if len(outliers_summary) > 10:
+                print(f"     ... and {len(outliers_summary) - 10} more columns")
+        else:
+            print("✅ No outliers detected in numeric columns")
+        
+        return True
+
+    def run_time_series_gaps_analysis(self, system) -> bool:
+        """
+        Run detailed time series gaps analysis.
+        
+        Args:
+            system: InteractiveSystem instance
+            
+        Returns:
+            bool: True if successful
+        """
+        print(f"\n⏱️ TIME SERIES GAPS ANALYSIS")
+        print("-" * 50)
+        
+        if not hasattr(system, 'current_data') or system.current_data is None:
+            print("❌ No data loaded. Please load data first.")
+            return False
+        
+        df = system.current_data
+        gap_summary = self._analyze_time_series_gaps(df)
+        
+        if gap_summary:
+            print(f"\n📊 Time Series Gaps Summary:")
+            print(f"   • Columns with gaps: {len(gap_summary)}")
+            
+            for gap_info in gap_summary:
+                print(f"\n   📅 {gap_info['column']}:")
+                print(f"      • Gaps found: {gap_info['gap_count']:,}")
+                print(f"      • Expected frequency: {gap_info['expected_frequency']}")
+                print(f"      • Median interval: {gap_info['median_interval']}")
+                print(f"      • Total intervals: {gap_info['total_intervals']:,}")
+        else:
+            print("✅ No time series gaps detected")
+        
+        return True
