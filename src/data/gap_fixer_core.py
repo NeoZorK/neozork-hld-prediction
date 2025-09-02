@@ -18,7 +18,7 @@ import numpy as np
 from tqdm import tqdm
 import psutil
 
-from .gap_fixer_algorithms import GapFixingAlgorithms
+from .gap_fixer_algorithms import GapFixingStrategy
 from .gap_fixer_utils import GapFixingUtils
 
 # Suppress warnings for cleaner output
@@ -45,7 +45,7 @@ class GapFixer:
         self.supported_formats = ['.parquet', '.csv', '.json']
         
         # Initialize algorithm and utility modules
-        self.algorithms = GapFixingAlgorithms()
+        self.algorithms = GapFixingStrategy()
         self.utils = GapFixingUtils()
         
         print(f"🔧 GapFixer initialized with memory limit: {memory_limit_mb}MB")

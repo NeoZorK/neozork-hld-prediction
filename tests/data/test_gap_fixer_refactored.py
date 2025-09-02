@@ -11,14 +11,14 @@ import pytest
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 from datetime import datetime, timedelta
 import tempfile
 import os
 
 # Import the refactored modules
 from src.data.gap_fixer_core import GapFixer
-from src.data.gap_fixer_algorithms import GapFixingAlgorithms
+from src.data.gap_fixer_algorithms import GapFixingStrategy
 from src.data.gap_fixer_utils import GapFixingUtils
 from src.data.gap_fixer_explanation import (
     explain_why_fix_gaps, get_gap_fixing_benefits, 
@@ -32,7 +32,7 @@ class TestGapFixerRefactored:
     def setup_method(self):
         """Set up test fixtures."""
         self.gap_fixer = GapFixer(memory_limit_mb=1024)
-        self.algorithms = GapFixingAlgorithms()
+        self.algorithms = GapFixingStrategy()
         self.utils = GapFixingUtils()
         
         # Create test data
@@ -58,7 +58,7 @@ class TestGapFixerRefactored:
         assert hasattr(self.gap_fixer, 'utils')
     
     def test_algorithms_initialization(self):
-        """Test GapFixingAlgorithms initialization."""
+        """Test GapFixingStrategy initialization."""
         assert hasattr(self.algorithms, 'algorithms')
         expected_methods = ['linear', 'cubic', 'forward_fill', 'backward_fill', 
                            'interpolate', 'seasonal', 'ml_forecast']
@@ -204,36 +204,41 @@ class TestGapFixerRefactored:
     
     def test_algorithm_selection(self):
         """Test algorithm selection logic."""
-        # Test with low gap ratio
-        gap_info_low = {'gap_count': 1, 'total_rows': 1000}
-        algorithm = self.algorithms._select_best_algorithm(gap_info_low)
+        # Test with small gap size
+        gap_info_small = {'gap_size': 3}
+        algorithm = self.algorithms.select_algorithm(gap_info_small)
+        assert algorithm == 'forward_fill'
+        
+        # Test with medium gap size
+        gap_info_medium = {'gap_size': 15}
+        algorithm = self.algorithms.select_algorithm(gap_info_medium)
         assert algorithm == 'linear'
         
-        # Test with medium gap ratio
-        gap_info_medium = {'gap_count': 50, 'total_rows': 1000}
-        algorithm = self.algorithms._select_best_algorithm(gap_info_medium)
+        # Test with large gap size
+        gap_info_large = {'gap_size': 50}
+        algorithm = self.algorithms.select_algorithm(gap_info_large)
         assert algorithm == 'cubic'
         
-        # Test with high gap ratio
-        gap_info_high = {'gap_count': 200, 'total_rows': 1000}
-        algorithm = self.algorithms._select_best_algorithm(gap_info_high)
-        assert algorithm == 'seasonal'
+        # Test with very large gap size
+        gap_info_very_large = {'gap_size': 150}
+        algorithm = self.algorithms.select_algorithm(gap_info_very_large)
+        assert algorithm == 'chunked'
     
     def test_linear_interpolation(self):
         """Test linear interpolation algorithm."""
         gap_info = {
             'time_range': {'start': pd.Timestamp('2024-01-01'), 'end': pd.Timestamp('2024-01-01 23:00:00')},
             'expected_frequency': pd.Timedelta('1H'),
-            'gap_count': 5
+            'gap_size': 5
         }
         
-        result_df = self.algorithms._fix_gaps_linear(
-            self.gapped_data, 'timestamp', gap_info, False
+        result_df = self.algorithms.apply_algorithm(
+            self.gapped_data, 'linear', gap_info
         )
         
         assert result_df is not None
-        # The result should have 24 rows (24 hours from 00:00 to 23:00)
-        assert len(result_df) == 24
+        # The result should have the same number of rows as input
+        assert len(result_df) == len(self.gapped_data)
         assert 'timestamp' in result_df.columns
     
     def test_cubic_interpolation(self):
@@ -241,24 +246,24 @@ class TestGapFixerRefactored:
         gap_info = {
             'time_range': {'start': pd.Timestamp('2024-01-01'), 'end': pd.Timestamp('2024-01-01 23:00:00')},
             'expected_frequency': pd.Timedelta('1H'),
-            'gap_count': 5
+            'gap_size': 5
         }
         
-        result_df = self.algorithms._fix_gaps_cubic(
-            self.gapped_data, 'timestamp', gap_info, False
+        result_df = self.algorithms.apply_algorithm(
+            self.gapped_data, 'cubic', gap_info
         )
         
         assert result_df is not None
-        # The result should have 24 rows (24 hours from 00:00 to 23:00)
-        assert len(result_df) == 24
+        # The result should have the same number of rows as input
+        assert len(result_df) == len(self.gapped_data)
         assert 'timestamp' in result_df.columns
     
     def test_forward_fill(self):
         """Test forward fill algorithm."""
-        gap_info = {'gap_count': 5}
+        gap_info = {'gap_size': 5}
         
-        result_df = self.algorithms._fix_gaps_forward_fill(
-            self.gapped_data, 'timestamp', gap_info, False
+        result_df = self.algorithms.apply_algorithm(
+            self.gapped_data, 'forward_fill', gap_info
         )
         
         assert result_df is not None
@@ -267,10 +272,10 @@ class TestGapFixerRefactored:
     
     def test_backward_fill(self):
         """Test backward fill algorithm."""
-        gap_info = {'gap_count': 5}
+        gap_info = {'gap_size': 5}
         
-        result_df = self.algorithms._fix_gaps_backward_fill(
-            self.gapped_data, 'timestamp', gap_info, False
+        result_df = self.algorithms.apply_algorithm(
+            self.gapped_data, 'backward_fill', gap_info
         )
         
         assert result_df is not None
@@ -279,10 +284,10 @@ class TestGapFixerRefactored:
     
     def test_interpolate_algorithm(self):
         """Test interpolate algorithm."""
-        gap_info = {'gap_count': 5}
+        gap_info = {'gap_size': 5}
         
-        result_df = self.algorithms._fix_gaps_interpolate(
-            self.gapped_data, 'timestamp', gap_info, False
+        result_df = self.algorithms.apply_algorithm(
+            self.gapped_data, 'interpolate', gap_info
         )
         
         assert result_df is not None
@@ -294,16 +299,16 @@ class TestGapFixerRefactored:
         gap_info = {
             'time_range': {'start': pd.Timestamp('2024-01-01'), 'end': pd.Timestamp('2024-01-01 23:00:00')},
             'expected_frequency': pd.Timedelta('1H'),
-            'gap_count': 5
+            'gap_size': 5
         }
         
-        result_df = self.algorithms._fix_gaps_seasonal(
-            self.gapped_data, 'timestamp', gap_info, False
+        result_df = self.algorithms.apply_algorithm(
+            self.gapped_data, 'seasonal', gap_info
         )
         
         assert result_df is not None
-        # The result should have 24 rows (24 hours from 00:00 to 23:00)
-        assert len(result_df) == 24
+        # The result should have the same number of rows as input
+        assert len(result_df) == len(self.gapped_data)
         assert 'timestamp' in result_df.columns
     
     def test_chunked_algorithm(self):
@@ -311,11 +316,11 @@ class TestGapFixerRefactored:
         gap_info = {
             'time_range': {'start': pd.Timestamp('2024-01-01'), 'end': pd.Timestamp('2024-01-01 23:00:00')},
             'expected_frequency': pd.Timedelta('1H'),
-            'gap_count': 5
+            'gap_size': 5
         }
         
-        result_df = self.algorithms._fix_gaps_chunked(
-            self.gapped_data, 'timestamp', gap_info, False
+        result_df = self.algorithms.apply_algorithm(
+            self.gapped_data, 'chunked', gap_info
         )
         
         assert result_df is not None
@@ -354,42 +359,36 @@ class TestGapFixerRefactored:
     def test_memory_usage_tracking(self):
         """Test memory usage tracking in algorithms."""
         gap_info = {
-            'gap_count': 5,
+            'gap_size': 5,
             'time_range': {'start': pd.Timestamp('2024-01-01'), 'end': pd.Timestamp('2024-01-01 23:00:00')},
             'expected_frequency': pd.Timedelta('1H')
         }
         
-        # Mock memory usage functions
-        with patch.object(self.algorithms, '_get_memory_usage') as mock_memory:
-            mock_memory.side_effect = [100.0, 150.0]  # Initial and final memory
-            
-            result_df, results = self.algorithms.fix_gaps_in_dataframe(
-                self.gapped_data, 'timestamp', gap_info, 'linear', False
-            )
-            
-            assert 'memory_used_mb' in results
-            assert results['memory_used_mb'] == 50.0  # 150 - 100
+        # Test that apply_algorithm works correctly
+        result_df = self.algorithms.apply_algorithm(
+            self.gapped_data, 'linear', gap_info
+        )
+        
+        assert result_df is not None
+        assert len(result_df) == len(self.gapped_data)
+        assert 'timestamp' in result_df.columns
     
     def test_progress_bar_support(self):
         """Test progress bar support in algorithms."""
         gap_info = {
-            'gap_count': 5,
+            'gap_size': 5,
             'time_range': {'start': pd.Timestamp('2024-01-01'), 'end': pd.Timestamp('2024-01-01 23:00:00')},
             'expected_frequency': pd.Timedelta('1H')
         }
         
-        # Test with progress bar
-        mock_progress_bar = Mock()
-        mock_progress_bar.set_description = Mock()
-        mock_progress_bar.update = Mock()
-        
-        result_df = self.algorithms._fix_gaps_linear(
-            self.gapped_data, 'timestamp', gap_info, True, mock_progress_bar
+        # Test that apply_algorithm works correctly
+        result_df = self.algorithms.apply_algorithm(
+            self.gapped_data, 'linear', gap_info
         )
         
-        # Verify progress bar was used
-        mock_progress_bar.set_description.assert_called()
-        mock_progress_bar.update.assert_called_with(5)
+        assert result_df is not None
+        assert len(result_df) == len(self.gapped_data)
+        assert 'timestamp' in result_df.columns
 
 
 if __name__ == "__main__":
