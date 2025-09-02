@@ -97,7 +97,7 @@ class GapFixingUtils:
             # Sort by timestamp column with progress bar for large files
             if total_rows > 100000:
                 print(f"   🔄 Sorting data by timestamp column...")
-                with tqdm(total=1, desc="Sorting data", unit="step") as pbar:
+                with tqdm(total=1, desc="Sorting data", unit="step", leave=False) as pbar:
                     df_sorted = df.sort_values(timestamp_col).copy()
                     pbar.update(1)
             else:
@@ -107,7 +107,7 @@ class GapFixingUtils:
         # Calculate time differences with progress bar for large files
         if total_rows > 100000:
             print(f"   🔄 Calculating time differences...")
-            with tqdm(total=1, desc="Calculating time diffs", unit="step") as pbar:
+            with tqdm(total=1, desc="Calculating time diffs", unit="step", leave=False) as pbar:
                 time_diffs = time_series.diff().dropna()
                 pbar.update(1)
         else:
@@ -117,42 +117,48 @@ class GapFixingUtils:
         if len(time_diffs) > 0:
             print(f"   📈 Time diff stats:")
             
-            # Show progress for large files
-            if total_rows > 100000:
-                print(f"   🔄 Calculating statistics...")
-                with tqdm(total=4, desc="Calculating stats", unit="stat") as pbar:
-                    print(f"      • Min: {time_diffs.min()}")
-                    pbar.update(1)
-                    print(f"      • Max: {time_diffs.max()}")
-                    pbar.update(1)
-                    print(f"      • Median: {time_diffs.median()}")
-                    pbar.update(1)
-                    print(f"      • Mean: {time_diffs.mean()}")
-                    pbar.update(1)
-            else:
-                print(f"      • Min: {time_diffs.min()}")
-                print(f"      • Max: {time_diffs.max()}")
-                print(f"      • Median: {time_diffs.median()}")
-                print(f"      • Mean: {time_diffs.mean()}")
+                    # Show progress for large files
+        if total_rows > 100000:
+            print(f"   🔄 Calculating statistics...")
+            with tqdm(total=4, desc="Calculating stats", unit="stat", leave=False) as pbar:
+                min_val = time_diffs.min()
+                pbar.update(1)
+                max_val = time_diffs.max()
+                pbar.update(1)
+                median_val = time_diffs.median()
+                pbar.update(1)
+                mean_val = time_diffs.mean()
+                pbar.update(1)
+            
+            # Print results after progress bar is complete
+            print(f"      • Min: {min_val}")
+            print(f"      • Max: {max_val}")
+            print(f"      • Median: {median_val}")
+            print(f"      • Mean: {mean_val}")
+        else:
+            print(f"      • Min: {time_diffs.min()}")
+            print(f"      • Max: {time_diffs.max()}")
+            print(f"      • Median: {time_diffs.median()}")
+            print(f"      • Mean: {time_diffs.mean()}")
             
             # Handle TimedeltaIndex which doesn't have quantile method
             try:
                 if total_rows > 100000:
-                    with tqdm(total=1, desc="Calculating 95th percentile", unit="stat") as pbar:
+                    with tqdm(total=1, desc="Calculating 95th percentile", unit="stat", leave=False) as pbar:
                         percentile_95 = time_diffs.quantile(0.95)
-                        print(f"      • 95th percentile: {percentile_95}")
                         pbar.update(1)
+                    print(f"      • 95th percentile: {percentile_95}")
                 else:
                     print(f"      • 95th percentile: {time_diffs.quantile(0.95)}")
             except AttributeError:
                 # For TimedeltaIndex, calculate approximate 95th percentile
                 if total_rows > 100000:
                     print(f"   🔄 Calculating 95th percentile (approximate)...")
-                    with tqdm(total=1, desc="Calculating 95th percentile", unit="stat") as pbar:
+                    with tqdm(total=1, desc="Calculating 95th percentile", unit="stat", leave=False) as pbar:
                         sorted_diffs = sorted(time_diffs)
                         idx_95 = int(len(sorted_diffs) * 0.95)
-                        print(f"      • 95th percentile: {sorted_diffs[idx_95]}")
                         pbar.update(1)
+                    print(f"      • 95th percentile: {sorted_diffs[idx_95]}")
                 else:
                     sorted_diffs = sorted(time_diffs)
                     idx_95 = int(len(sorted_diffs) * 0.95)
@@ -169,7 +175,7 @@ class GapFixingUtils:
         # Find gaps with progress bar for large files
         if total_rows > 100000:
             print(f"   🔄 Finding gaps...")
-            with tqdm(total=1, desc="Finding gaps", unit="step") as pbar:
+            with tqdm(total=1, desc="Finding gaps", unit="step", leave=False) as pbar:
                 gaps = time_diffs > gap_threshold
                 pbar.update(1)
         else:
