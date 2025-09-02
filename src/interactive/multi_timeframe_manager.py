@@ -415,8 +415,20 @@ class MultiTimeframeManager:
                 print(f"      • {tf}: {df.shape[0]:,} rows × {df.shape[1]} columns")
         
         print(f"   📁 Timeframe info: system.timeframe_info")
-        print(f"      • Available: {list(system.timeframe_info['available_timeframes'].keys())}")
-        print(f"      • Cross-timeframes: {list(system.timeframe_info['cross_timeframes'].keys())}")
+        
+        # Handle available_timeframes (can be dict or list)
+        available_tfs = system.timeframe_info.get('available_timeframes', [])
+        if isinstance(available_tfs, dict):
+            print(f"      • Available: {list(available_tfs.keys())}")
+        else:
+            print(f"      • Available: {available_tfs}")
+        
+        # Handle cross_timeframes (can be dict or list)
+        cross_tfs = system.timeframe_info.get('cross_timeframes', [])
+        if isinstance(cross_tfs, dict):
+            print(f"      • Cross-timeframes: {list(cross_tfs.keys())}")
+        else:
+            print(f"      • Cross-timeframes: {cross_tfs}")
         
         if mask:
             print(f"   🔍 Filter applied: '{mask}'")

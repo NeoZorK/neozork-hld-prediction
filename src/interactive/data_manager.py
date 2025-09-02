@@ -305,6 +305,18 @@ class DataManager:
             
             # Try to load cross-timeframes from cleaned_data if available
             self._load_cross_timeframes_from_cleaned_data(system, folder_path, mask, base_timeframe)
+            
+            # Update timeframe_info with loaded cross-timeframes
+            if system.other_timeframes_data:
+                # Create cross_timeframes info from loaded data
+                cross_timeframes_info = {}
+                for tf, df in system.other_timeframes_data.items():
+                    if df is not None and not df.empty:
+                        cross_timeframes_info[tf] = [f"loaded_{tf}_dataframe"]
+                
+                # Update timeframe_info with cross-timeframes
+                system.timeframe_info['cross_timeframes'] = cross_timeframes_info
+                system.timeframe_info['available_timeframes'] = [base_timeframe] + list(cross_timeframes_info.keys())
         
         # Combine base timeframe data
         print(f"\n🔄 Combining base timeframe data...")
