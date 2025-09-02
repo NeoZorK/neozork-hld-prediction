@@ -6,6 +6,7 @@ Handles CSV, Parquet, and other data file loading with optimization.
 
 import pandas as pd
 import gc
+import time
 from pathlib import Path
 from typing import List, Optional
 from .memory_manager import MemoryManager
@@ -197,7 +198,7 @@ class DataLoader:
     
     def load_csv_in_chunks(self, file_path: Path, datetime_columns: List[str], chunk_size: int) -> pd.DataFrame:
         """
-        Load CSV file in chunks with progress bar.
+        Load CSV file in chunks with progress bar and ETA.
         
         Args:
             file_path: Path to CSV file
@@ -213,8 +214,19 @@ class DataLoader:
         chunks = []
         total_rows = 0
         
+        # First pass to count total rows for accurate progress
+        print("   🔍 Counting total rows for accurate progress...")
+        try:
+            # Count total rows efficiently
+            total_file_rows = sum(1 for _ in open(file_path)) - 1  # Subtract header
+            print(f"   📊 Total rows in file: {total_file_rows:,}")
+        except Exception:
+            total_file_rows = None
+            print("   ⚠️  Could not determine total rows, using estimated progress")
+        
         try:
             chunk_iter = pd.read_csv(file_path, chunksize=chunk_size, header=header_row)
+            start_time = time.time()
             
             for i, chunk in enumerate(chunk_iter):
                 # Clean column names for first chunk only
@@ -240,10 +252,34 @@ class DataLoader:
                 # Memory management
                 self.memory_manager.optimize_memory()
                 
-                # Progress indicator with percentage
-                if (i + 1) % 5 == 0:
-                    progress = min(100, (total_rows / (total_rows + 1000)) * 100)
-                    print(f"\r   📈 Progress: {progress:.1f}% - Loaded {i + 1} chunks ({total_rows:,} rows)", end="", flush=True)
+                # Progress indicator with percentage, ETA, and speed
+                if (i + 1) % 5 == 0 or i == 0:
+                    elapsed_time = time.time() - start_time
+                    if elapsed_time > 0:
+                        # Calculate ETA
+                        if total_file_rows and total_rows > 0:
+                            estimated_total_chunks = total_file_rows / chunk_size
+                            progress = min(100, (total_rows / total_file_rows) * 100)
+                            remaining_chunks = estimated_total_chunks - (i + 1)
+                            eta_seconds = (remaining_chunks * elapsed_time) / (i + 1)
+                            
+                            # Format ETA
+                            if eta_seconds < 60:
+                                eta_str = f"{eta_seconds:.0f}s"
+                            elif eta_seconds < 3600:
+                                eta_str = f"{eta_seconds/60:.0f}m {eta_seconds%60:.0f}s"
+                            else:
+                                eta_str = f"{eta_seconds/3600:.0f}h {(eta_seconds%3600)/60:.0f}m"
+                            
+                            # Calculate speed (rows per second)
+                            speed = total_rows / elapsed_time
+                            
+                            print(f"\r   📈 Progress: {progress:.1f}% ({total_rows:,}/{total_file_rows:,} rows) "
+                                  f"[{i+1} chunks] 🚀 {speed:.0f} rows/s ⏱️ ETA: {eta_str}", end="", flush=True)
+                        else:
+                            # Fallback progress without ETA
+                            progress = min(100, (total_rows / (total_rows + 1000)) * 100)
+                            print(f"\r   📈 Progress: {progress:.1f}% - Loaded {i + 1} chunks ({total_rows:,} rows)", end="", flush=True)
                 
                 # Check memory
                 if not self.memory_manager.check_memory_available():
@@ -252,7 +288,10 @@ class DataLoader:
             
             # Combine chunks
             if chunks:
-                print(f"\r   📈 Loaded {len(chunks)} chunks ({total_rows:,} rows) ✅")
+                total_time = time.time() - start_time
+                final_speed = total_rows / total_time if total_time > 0 else 0
+                print(f"\r   📈 Progress: 100.0% ({total_rows:,} rows loaded) ✅ [{len(chunks)} chunks] "
+                      f"⏱️ Total time: {total_time:.1f}s 🚀 Avg speed: {final_speed:.0f} rows/s")
                 result = pd.concat(chunks, ignore_index=True)
                 del chunks
                 gc.collect()
@@ -313,6 +352,8 @@ class DataLoader:
             else:
                 # No DatetimeIndex, safe to load in chunks
                 chunks = []
+                start_time = time.time()
+                
                 for i, chunk in enumerate(parquet_file.iter_batches(batch_size=self.chunk_size)):
                     chunk_df = chunk.to_pandas()
                     chunks.append(chunk_df)
@@ -320,11 +361,30 @@ class DataLoader:
                     # Memory management
                     self.memory_manager.optimize_memory()
                     
-                    # Progress indicator with percentage
-                    if (i + 1) % 10 == 0:
-                        rows_loaded = (i + 1) * self.chunk_size
-                        progress = min(100, (rows_loaded / total_rows) * 100)
-                        print(f"\r   📈 Progress: {progress:.1f}% ({rows_loaded:,}/{total_rows:,} rows) [{i+1} chunks]", end="", flush=True)
+                    # Progress indicator with percentage, ETA, and speed
+                    if (i + 1) % 10 == 0 or i == 0:
+                        elapsed_time = time.time() - start_time
+                        if elapsed_time > 0:
+                            rows_loaded = (i + 1) * self.chunk_size
+                            progress = min(100, (rows_loaded / total_rows) * 100)
+                            
+                            # Calculate ETA
+                            remaining_chunks = (total_rows / self.chunk_size) - (i + 1)
+                            eta_seconds = (remaining_chunks * elapsed_time) / (i + 1)
+                            
+                            # Format ETA
+                            if eta_seconds < 60:
+                                eta_str = f"{eta_seconds:.0f}s"
+                            elif eta_seconds < 3600:
+                                eta_str = f"{eta_seconds/60:.0f}m {eta_seconds%60:.0f}s"
+                            else:
+                                eta_str = f"{eta_seconds/3600:.0f}h {(eta_seconds%3600)/60:.0f}m"
+                            
+                            # Calculate speed (rows per second)
+                            speed = rows_loaded / elapsed_time
+                            
+                            print(f"\r   📈 Progress: {progress:.1f}% ({rows_loaded:,}/{total_rows:,} rows) "
+                                  f"[{i+1} chunks] 🚀 {speed:.0f} rows/s ⏱️ ETA: {eta_str}", end="", flush=True)
                     
                     # Check memory
                     if not self.memory_manager.check_memory_available():
@@ -333,7 +393,10 @@ class DataLoader:
                 
                 # Combine chunks
                 if chunks:
-                    print(f"\r   📈 Progress: 100.0% ({total_rows:,} rows loaded) ✅")
+                    total_time = time.time() - start_time
+                    final_speed = total_rows / total_time if total_time > 0 else 0
+                    print(f"\r   📈 Progress: 100.0% ({total_rows:,} rows loaded) ✅ [{len(chunks)} chunks] "
+                          f"⏱️ Total time: {total_time:.1f}s 🚀 Avg speed: {final_speed:.0f} rows/s")
                     result = pd.concat(chunks, ignore_index=True)
                     del chunks
                     gc.collect()
