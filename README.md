@@ -23,6 +23,7 @@ This project provides two core components to help build robust trading algorithm
 
 ### 🤖 **interactive_system.py** - Interactive ML Development
 - Interactive data exploration and analysis
+- **🆕 Automatic time series gap fixing** - Detect and fix data gaps before analysis
 - Automated feature engineering
 - Machine learning model development
 - Real-time data quality monitoring

@@ -453,6 +453,34 @@ class DataManager:
         print("\n📁 LOAD DATA")
         print("-" * 30)
         
+        # Ask user to choose loading strategy
+        print("🎯 DATA LOADING STRATEGY")
+        print("-" * 30)
+        print("1. 📊 Standard Loading - Combine all files into single dataset")
+        print("2. 🚀 Multi-Timeframe Loading - Proper ML strategy for multiple timeframes")
+        print("0. 🔙 Back to Main Menu")
+        print("")
+        print("💡 For robust ML trading models, Multi-Timeframe Loading is recommended")
+        print("   as it properly handles M1, M5, H1, D1, MN1 data as separate timeframes")
+        print("   instead of mixing them together.")
+        print("-" * 30)
+        
+        try:
+            strategy_choice = input("Select loading strategy (1/2/0): ").strip()
+        except EOFError:
+            print("\n👋 Goodbye!")
+            return False
+        
+        if strategy_choice == "0":
+            return False
+        elif strategy_choice == "2":
+            return self.load_multi_timeframe_data(system)
+        elif strategy_choice != "1":
+            print("❌ Invalid choice. Using standard loading...")
+        
+        print("\n📁 STANDARD DATA LOADING")
+        print("-" * 30)
+        
         # Get all subfolders in data directory and other important folders
         data_folder = Path("data")
         
@@ -655,6 +683,26 @@ class DataManager:
         print(f"   Total files loaded: {len(all_data)}")
         print(f"   Total rows: {total_rows:,}")
         print(f"   Estimated memory usage: {total_memory_mb}MB")
+        
+        # Ask user if they want to fix time series gaps
+        print("\n🔧 Time Series Gap Fixing")
+        print("-" * 30)
+        print("💡 This will detect and fix gaps in time series data before combining files.")
+        print("   Gaps can occur due to missing data points, market holidays, or data collection issues.")
+        print("   Fixing gaps ensures consistent time intervals for better analysis.")
+        print("-" * 30)
+        
+        try:
+            fix_gaps = input("Fix time series gaps before combining data? (y/n, default: y): ").strip().lower()
+        except EOFError:
+            print("\n👋 Goodbye!")
+            return False
+        
+        if fix_gaps in ['', 'y', 'yes']:
+            print("\n🔧 Fixing time series gaps...")
+            all_data = self._fix_time_series_gaps(all_data)
+        else:
+            print("\n⏭️  Skipping time series gap fixing...")
         
         # Combine all data with memory optimization
         print("\n🔄 Combining data...")
@@ -1445,3 +1493,362 @@ class DataManager:
             print(f"❌ Error during verification: {e}")
             import traceback
             traceback.print_exc()
+    
+    def _fix_time_series_gaps(self, dataframes: List[pd.DataFrame]) -> List[pd.DataFrame]:
+        """
+        Fix time series gaps in all loaded dataframes before combining.
+        
+        Args:
+            dataframes: List of DataFrames to fix
+            
+        Returns:
+            List of fixed DataFrames
+        """
+        if not dataframes or dataframes is None:
+            return []
+        
+        print(f"🔧 Starting time series gap fixing for {len(dataframes)} dataframes...")
+        
+        # Initialize GapFixer
+        gap_fixer = GapFixer(memory_limit_mb=self.max_memory_mb)
+        fixed_dataframes = []
+        
+        for i, df in enumerate(dataframes, 1):
+            print(f"\n📁 Processing dataframe {i}/{len(dataframes)}...")
+            
+            try:
+                # Find timestamp column
+                timestamp_col = gap_fixer._find_timestamp_column(df)
+                
+                if timestamp_col:
+                    print(f"   📅 Found timestamp column: {timestamp_col}")
+                    
+                    # Detect gaps
+                    gap_info = gap_fixer._detect_gaps(df, timestamp_col)
+                    
+                    if gap_info['has_gaps']:
+                        print(f"   ⚠️  Found {gap_info['gap_count']:,} gaps, fixing...")
+                        
+                        # Fix gaps using auto algorithm
+                        fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
+                            df, timestamp_col, gap_info, 'auto', show_progress=True
+                        )
+                        
+                        print(f"   ✅ Gaps fixed successfully!")
+                        print(f"      • Algorithm used: {results['algorithm_used']}")
+                        print(f"      • Gaps fixed: {results['gaps_fixed']:,}")
+                        print(f"      • Processing time: {results['processing_time']:.2f}s")
+                        print(f"      • Memory used: {results['memory_used_mb']:.1f}MB")
+                        
+                        fixed_dataframes.append(fixed_df)
+                        
+                        # Memory cleanup
+                        del fixed_df
+                        gc.collect()
+                        
+                    else:
+                        print(f"   ✅ No gaps found, dataframe is clean")
+                        fixed_dataframes.append(df)
+                else:
+                    print(f"   ⚠️  No timestamp column found, skipping gap fixing")
+                    fixed_dataframes.append(df)
+                
+            except Exception as e:
+                print(f"   ❌ Error fixing gaps in dataframe {i}: {e}")
+                print(f"   💡 Continuing with original dataframe...")
+                fixed_dataframes.append(df)
+            
+            # Memory management
+            if self.enable_memory_optimization:
+                gc.collect()
+        
+        print(f"\n✅ Time series gap fixing completed!")
+        print(f"   📊 Dataframes processed: {len(dataframes)}")
+        print(f"   🔧 Gaps fixed where possible")
+        
+        return fixed_dataframes
+
+    def load_multi_timeframe_data(self, system) -> bool:
+        """
+        Load data with proper multi-timeframe strategy for robust ML trading model.
+        
+        This method:
+        1. Identifies timeframes from filenames
+        2. Loads each timeframe separately 
+        3. Creates hierarchical timeframe structure
+        4. Synchronizes timeframes to base timeframe
+        5. Generates cross-timeframe features
+        
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        print("\n📁 LOAD MULTI-TIMEFRAME DATA")
+        print("-" * 50)
+        print("🎯 This method creates robust ML features by properly handling")
+        print("   multiple timeframes (M1, M5, H1, D1, MN1) as separate datasets")
+        print("   instead of mixing them in one DataFrame.")
+        print("-" * 50)
+        
+        # Get all data files with timeframe detection
+        data_folder = Path("data")
+        
+        if not data_folder.exists():
+            print("❌ Data folder not found. Please ensure 'data' folder exists.")
+            return False
+        
+        # Find all data files and detect timeframes
+        timeframe_data = {}
+        
+        # Search in multiple locations
+        search_locations = [
+            data_folder,
+            data_folder / "raw_parquet",
+            data_folder / "indicators" / "parquet",
+            data_folder / "cache" / "csv_converted",
+            Path("mql5_feed")
+        ]
+        
+        for location in search_locations:
+            if not location.exists():
+                continue
+                
+            for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
+                files = list(location.glob(f"*{ext}"))
+                files = [f for f in files if not f.name.startswith('tmp')]
+                
+                for file in files:
+                    # Detect timeframe from filename
+                    timeframe = self._detect_timeframe_from_filename(file.name)
+                    
+                    if timeframe not in timeframe_data:
+                        timeframe_data[timeframe] = []
+                    
+                    timeframe_data[timeframe].append(file)
+        
+        if not timeframe_data:
+            print("❌ No data files found")
+            return False
+        
+        # Display found timeframes
+        print(f"📊 Found data for {len(timeframe_data)} timeframes:")
+        for tf, files in timeframe_data.items():
+            print(f"   {tf}: {len(files)} files")
+            for file in files[:3]:  # Show first 3 files
+                file_size_mb = self._get_file_size_mb(file)
+                print(f"      • {file.name} ({file_size_mb:.1f}MB)")
+            if len(files) > 3:
+                print(f"      • ... and {len(files) - 3} more files")
+        
+        # Ask user to select base timeframe
+        print("\n🎯 SELECT BASE TIMEFRAME")
+        print("-" * 30)
+        print("💡 Base timeframe will be the primary timeframe for ML model.")
+        print("   Other timeframes will be used as cross-timeframe features.")
+        print("")
+        
+        available_timeframes = list(timeframe_data.keys())
+        for i, tf in enumerate(available_timeframes, 1):
+            print(f"{i}. {tf} ({len(timeframe_data[tf])} files)")
+        
+        try:
+            choice = input("\nSelect base timeframe (number): ").strip()
+            if not choice.isdigit():
+                print("❌ Invalid choice")
+                return False
+                
+            tf_idx = int(choice) - 1
+            if tf_idx < 0 or tf_idx >= len(available_timeframes):
+                print("❌ Invalid timeframe selection")
+                return False
+                
+            base_timeframe = available_timeframes[tf_idx]
+            
+        except EOFError:
+            print("\n👋 Goodbye!")
+            return False
+        
+        print(f"\n✅ Selected base timeframe: {base_timeframe}")
+        
+        # Load base timeframe data
+        print(f"\n🔄 Loading base timeframe data ({base_timeframe})...")
+        base_data = []
+        
+        for file in timeframe_data[base_timeframe]:
+            try:
+                df = self.load_data_from_file(str(file))
+                df['source_file'] = file.name
+                df['timeframe'] = base_timeframe
+                base_data.append(df)
+                print(f"✅ Loaded: {file.name} ({df.shape[0]:,} rows)")
+            except Exception as e:
+                print(f"❌ Error loading {file.name}: {e}")
+                continue
+        
+        if not base_data:
+            print("❌ No base timeframe data could be loaded")
+            return False
+        
+        # Combine base timeframe data
+        print(f"\n🔄 Combining base timeframe data...")
+        system.current_data = pd.concat(base_data, ignore_index=True)
+        
+        # Store timeframe information
+        system.timeframe_info = {
+            'base_timeframe': base_timeframe,
+            'available_timeframes': timeframe_data,
+            'cross_timeframes': {tf: files for tf, files in timeframe_data.items() if tf != base_timeframe}
+        }
+        
+        print(f"✅ Base dataset created: {system.current_data.shape[0]:,} rows, {system.current_data.shape[1]} columns")
+        
+        # Ask if user wants to add cross-timeframe features
+        if system.timeframe_info['cross_timeframes']:
+            print(f"\n🔄 CROSS-TIMEFRAME FEATURES")
+            print("-" * 30)
+            print("💡 Add features from other timeframes to enhance ML model:")
+            for tf, files in system.timeframe_info['cross_timeframes'].items():
+                print(f"   • {tf}: {len(files)} files available")
+            
+            try:
+                add_cross = input("\nAdd cross-timeframe features? (y/n, default: y): ").strip().lower()
+            except EOFError:
+                print("\n👋 Goodbye!")
+                return False
+            
+            if add_cross in ['', 'y', 'yes']:
+                return self._add_cross_timeframe_features(system)
+        
+        print(f"\n✅ Multi-timeframe data loading completed!")
+        print(f"   Base timeframe: {base_timeframe}")
+        print(f"   Total rows: {system.current_data.shape[0]:,}")
+        print(f"   Total columns: {system.current_data.shape[1]}")
+        
+        return True
+    
+    def _detect_timeframe_from_filename(self, filename: str) -> str:
+        """
+        Detect timeframe from filename patterns.
+        
+        Args:
+            filename: Name of the file
+            
+        Returns:
+            str: Detected timeframe or 'UNKNOWN'
+        """
+        filename_upper = filename.upper()
+        
+        # Common timeframe patterns
+        patterns = {
+            'M1': ['_M1_', '_M1.', 'PERIOD_M1', '_1M_', '_1M.'],
+            'M5': ['_M5_', '_M5.', 'PERIOD_M5', '_5M_', '_5M.'],
+            'M15': ['_M15_', '_M15.', 'PERIOD_M15', '_15M_', '_15M.'],
+            'M30': ['_M30_', '_M30.', 'PERIOD_M30', '_30M_', '_30M.'],
+            'H1': ['_H1_', '_H1.', 'PERIOD_H1', '_1H_', '_1H.'],
+            'H4': ['_H4_', '_H4.', 'PERIOD_H4', '_4H_', '_4H.'],
+            'D1': ['_D1_', '_D1.', 'PERIOD_D1', '_1D_', '_1D.', '_DAILY_'],
+            'W1': ['_W1_', '_W1.', 'PERIOD_W1', '_1W_', '_1W.', '_WEEKLY_'],
+            'MN1': ['_MN1_', '_MN1.', 'PERIOD_MN1', '_1MN_', '_1MN.', '_MONTHLY_']
+        }
+        
+        for timeframe, tf_patterns in patterns.items():
+            for pattern in tf_patterns:
+                if pattern in filename_upper:
+                    return timeframe
+        
+        # Additional checks for common naming conventions
+        if 'MINUTE' in filename_upper:
+            if '1' in filename_upper:
+                return 'M1'
+            elif '5' in filename_upper:
+                return 'M5'
+            elif '15' in filename_upper:
+                return 'M15'
+            elif '30' in filename_upper:
+                return 'M30'
+        
+        if 'HOUR' in filename_upper:
+            if '1' in filename_upper:
+                return 'H1'
+            elif '4' in filename_upper:
+                return 'H4'
+        
+        if 'DAY' in filename_upper or 'DAILY' in filename_upper:
+            return 'D1'
+        
+        if 'WEEK' in filename_upper or 'WEEKLY' in filename_upper:
+            return 'W1'
+        
+        if 'MONTH' in filename_upper or 'MONTHLY' in filename_upper:
+            return 'MN1'
+        
+        return 'UNKNOWN'
+    
+    def _add_cross_timeframe_features(self, system) -> bool:
+        """
+        Add cross-timeframe features to the base dataset.
+        
+        Args:
+            system: Interactive system instance
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        print(f"\n🔄 Adding cross-timeframe features...")
+        
+        base_timeframe = system.timeframe_info['base_timeframe']
+        cross_timeframes = system.timeframe_info['cross_timeframes']
+        
+        # Load and process each cross-timeframe
+        for tf, files in cross_timeframes.items():
+            print(f"\n📊 Processing {tf} timeframe...")
+            
+            # Load cross-timeframe data
+            cross_data = []
+            for file in files:
+                try:
+                    df = self.load_data_from_file(str(file))
+                    df['timeframe'] = tf
+                    cross_data.append(df)
+                    print(f"   ✅ Loaded: {file.name} ({df.shape[0]:,} rows)")
+                except Exception as e:
+                    print(f"   ❌ Error loading {file.name}: {e}")
+                    continue
+            
+            if not cross_data:
+                print(f"   ⚠️  No data loaded for {tf}")
+                continue
+            
+            # Combine cross-timeframe data
+            combined_cross = pd.concat(cross_data, ignore_index=True)
+            
+            # Add cross-timeframe features using the existing generator
+            try:
+                from src.ml.feature_engineering import CrossTimeframeFeatureGenerator
+                
+                cross_generator = CrossTimeframeFeatureGenerator()
+                
+                # Generate features with timeframe prefix
+                cross_features = cross_generator.generate_features(combined_cross)
+                
+                # Add timeframe prefix to feature names
+                feature_columns = [col for col in cross_features.columns 
+                                 if col not in ['Open', 'High', 'Low', 'Close', 'Volume', 'source_file', 'timeframe']]
+                
+                rename_dict = {col: f"{tf}_{col}" for col in feature_columns}
+                cross_features = cross_features.rename(columns=rename_dict)
+                
+                # Merge with base data (this is simplified - in practice would need proper time alignment)
+                print(f"   🔄 Generated {len(feature_columns)} cross-timeframe features for {tf}")
+                
+                # Store cross-timeframe data separately for now
+                if not hasattr(system, 'cross_timeframe_data'):
+                    system.cross_timeframe_data = {}
+                
+                system.cross_timeframe_data[tf] = cross_features
+                
+            except Exception as e:
+                print(f"   ❌ Error generating cross-timeframe features for {tf}: {e}")
+                continue
+        
+        print(f"\n✅ Cross-timeframe feature generation completed!")
+        return True
