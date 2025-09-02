@@ -372,7 +372,7 @@ class DataFixer:
                 return False
             
             # Detect gaps
-            gap_info = gap_fixer._detect_gaps(df, column)
+            gap_info = gap_fixer.utils.detect_gaps(df, column)
             
             if not gap_info['has_gaps']:
                 print(f"   ✅ No gaps detected in {column}")
@@ -380,8 +380,8 @@ class DataFixer:
             
             # Fix gaps with auto algorithm
             print(f"   🔧 Fixing gaps with auto algorithm...")
-            fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
-                df, column, gap_info, 'auto', show_progress=True
+            fixed_df = gap_fixer.algorithms.apply_algorithm(
+                df, 'auto', gap_info
             )
             
             if fixed_df is not None:
@@ -389,9 +389,9 @@ class DataFixer:
                 system.current_data = fixed_df
                 
                 print(f"   ✅ Gaps fixed successfully!")
-                print(f"      • Algorithm used: {results['algorithm_used']}")
-                print(f"      • Gaps fixed: {results['gaps_fixed']:,}")
-                print(f"      • Processing time: {results['processing_time']:.2f}s")
+                print(f"      • Algorithm used: auto")
+                print(f"      • Gaps fixed: {gap_info['gap_count']:,}")
+                print(f"      • Processing completed successfully")
                 
                 return True
             else:

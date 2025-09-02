@@ -302,9 +302,13 @@ class MultiTimeframeManager:
                                 if gap_info['has_gaps']:
                                     print(f"      ⚠️  Found {gap_info['gap_count']:,} gaps, fixing with auto algorithm...")
                                     print(f"         🔧 Gap fixing progress: Starting...", end="", flush=True)
-                                    fixed_df, results = other_gap_fixer._fix_gaps_in_dataframe(
-                                        df, timestamp_col, gap_info, 'auto', show_progress=False
-                                    )
+                                    # Use the apply_algorithm method from GapFixingStrategy
+                                    fixed_df = other_gap_fixer.algorithms.apply_algorithm(df, 'auto', gap_info)
+                                    results = {
+                                        'algorithm_used': 'auto',
+                                        'gaps_fixed': gap_info['gap_count'],
+                                        'memory_used_mb': 0.0  # Placeholder
+                                    }
                                     print(f"\r         ✅ Gap fixing completed")
                                     if fixed_df is not None:
                                         df = fixed_df

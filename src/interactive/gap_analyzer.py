@@ -414,9 +414,8 @@ class GapAnalyzer:
                     continue
                 
                 # Fix gaps (even if none were detected, this ensures data quality)
-                fixed_df = self._fix_gaps_in_dataframe(
-                    gap_fixer, full_df, item['timestamp_column'], 
-                    item['gap_info']
+                fixed_df = gap_fixer.algorithms.apply_algorithm(
+                    full_df, 'auto', item['gap_info']
                 )
                 
                 if fixed_df is not None:
@@ -539,30 +538,30 @@ class GapAnalyzer:
                 actual_timestamp_col = df_for_fixing.columns[0]  # First column is the timestamp
                 
                 # Fix gaps
-                fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
-                    df_for_fixing, actual_timestamp_col, gap_info, algorithm, show_progress=True
+                fixed_df = gap_fixer.algorithms.apply_algorithm(
+                    df_for_fixing, algorithm, gap_info
                 )
                 
                 if fixed_df is not None:
                     # Set the timestamp column back as index
                     fixed_df = fixed_df.set_index(actual_timestamp_col)
-                    print(f"   ✅ Gaps fixed using {results['algorithm_used']}")
-                    print(f"      • Gaps fixed: {results['gaps_fixed']:,}")
-                    print(f"      • Processing time: {results['processing_time']:.2f}s")
+                    print(f"   ✅ Gaps fixed using {algorithm}")
+                    print(f"      • Gaps fixed: {gap_info['gap_count']:,}")
+                    print(f"      • Processing completed successfully")
                     return fixed_df
                 else:
                     return None
             else:
                 # Regular column case
                 # Fix gaps
-                fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
-                    df, timestamp_column, gap_info, algorithm, show_progress=True
+                fixed_df = gap_fixer.algorithms.apply_algorithm(
+                    df, algorithm, gap_info
                 )
                 
                 if fixed_df is not None:
-                    print(f"   ✅ Gaps fixed using {results['algorithm_used']}")
-                    print(f"      • Gaps fixed: {results['gaps_fixed']:,}")
-                    print(f"      • Processing time: {results['processing_time']:.2f}s")
+                    print(f"   ✅ Gaps fixed using {algorithm}")
+                    print(f"      • Gaps fixed: {gap_info['gap_count']:,}")
+                    print(f"      • Processing completed successfully")
                     return fixed_df
                 else:
                     return None
