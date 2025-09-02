@@ -1,24 +1,40 @@
+#!/usr/bin/env python3
 """
-Interactive System Package for NeoZorK HLD Prediction
-
-This package provides an interactive interface for the entire system,
-including EDA, Feature Engineering, and other capabilities.
+Interactive system modules for data analysis and visualization.
 """
 
 from .core import InteractiveSystem
-from .menu_manager import MenuManager
 from .data_manager import DataManager
+from .memory_manager import MemoryManager
+from .data_loader import DataLoader
+from .gap_analyzer import GapAnalyzer
+from .multi_timeframe_manager import MultiTimeframeManager
+from .cache_manager import CacheManager
+from .eda_analyzer import EDAAnalyzer
+from .data_fixer import DataFixer
+from .plot_generator import PlotGenerator
+from .html_report_generator import HTMLReportGenerator
+from .menu_manager import MenuManager
 from .analysis_runner import AnalysisRunner
-from .visualization_manager import VisualizationManager
 from .feature_engineering_manager import FeatureEngineeringManager
+from .visualization_manager import VisualizationManager
 
 __all__ = [
     'InteractiveSystem',
-    'MenuManager', 
     'DataManager',
+    'MemoryManager',
+    'DataLoader',
+    'GapAnalyzer',
+    'MultiTimeframeManager',
+    'CacheManager',
+    'EDAAnalyzer',
+    'DataFixer',
+    'PlotGenerator',
+    'HTMLReportGenerator',
+    'MenuManager',
     'AnalysisRunner',
-    'VisualizationManager',
-    'FeatureEngineeringManager'
+    'FeatureEngineeringManager',
+    'VisualizationManager'
 ]
 
 __version__ = '1.0.0'
