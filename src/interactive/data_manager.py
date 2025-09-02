@@ -453,368 +453,22 @@ class DataManager:
         print("\n📁 LOAD DATA")
         print("-" * 30)
         
-        # Ask user to choose loading strategy
-        print("🎯 DATA LOADING STRATEGY")
-        print("-" * 30)
-        print("1. 📊 Standard Loading - Combine all files into single dataset")
-        print("2. 🚀 Multi-Timeframe Loading - Proper ML strategy for multiple timeframes")
-        print("0. 🔙 Back to Main Menu")
+        # Multi-Timeframe Loading is the only strategy now
+        print("🎯 MULTI-TIMEFRAME LOADING STRATEGY")
+        print("-" * 50)
+        print("🚀 This method creates robust ML features by properly handling")
+        print("   multiple timeframes (M1, M5, M15, M30, H1, H4, D1, W1, MN1)")
+        print("   as separate datasets instead of mixing them in one DataFrame.")
         print("")
-        print("💡 For robust ML trading models, Multi-Timeframe Loading is recommended")
-        print("   as it properly handles M1, M5, H1, D1, MN1 data as separate timeframes")
-        print("   instead of mixing them together.")
-        print("-" * 30)
+        print("💡 Benefits:")
+        print("   • Proper ML strategy for multiple timeframes")
+        print("   • Hierarchical timeframe structure")
+        print("   • Cross-timeframe feature generation")
+        print("   • Better memory management")
+        print("-" * 50)
         
-        try:
-            strategy_choice = input("Select loading strategy (1/2/0): ").strip()
-        except EOFError:
-            print("\n👋 Goodbye!")
-            return False
-        
-        if strategy_choice == "0":
-            return False
-        elif strategy_choice == "2":
-            return self.load_multi_timeframe_data(system)
-        elif strategy_choice != "1":
-            print("❌ Invalid choice. Using standard loading...")
-        
-        print("\n📁 STANDARD DATA LOADING")
-        print("-" * 30)
-        
-        # Get all subfolders in data directory and other important folders
-        data_folder = Path("data")
-        
-        if not data_folder.exists():
-            print("❌ Data folder not found. Please ensure 'data' folder exists.")
-            return False
-        
-        # Create necessary cache directories if they don't exist
-        cache_dirs = [
-            data_folder / "cache",
-            data_folder / "cache" / "csv_converted",
-            data_folder / "cache" / "uv_cache",
-            data_folder / "backups"
-        ]
-        
-        for cache_dir in cache_dirs:
-            if not cache_dir.exists():
-                cache_dir.mkdir(parents=True, exist_ok=True)
-                print(f"✅ Created cache directory: {cache_dir}")
-        
-        # Find all subfolders (exclude cache folders and mql5_feed)
-        subfolders = [data_folder]  # Include main data folder
-        
-        for item in data_folder.iterdir():
-            if item.is_dir():
-                # Skip cache folders and mql5_feed to avoid loading cached files
-                if 'cache' not in item.name.lower() and item.name != 'mql5_feed':
-                    subfolders.append(item)
-                    # Also include sub-subfolders (but skip cache and mql5_feed)
-                    for subitem in item.iterdir():
-                        if subitem.is_dir() and 'cache' not in subitem.name.lower():
-                            subfolders.append(subitem)
-        
-        # Add csv_converted folder specifically if it exists
-        csv_converted_folder = data_folder / "cache" / "csv_converted"
-        if csv_converted_folder.exists() and csv_converted_folder.is_dir():
-            subfolders.append(csv_converted_folder)
-        
-        print("💡 Available folders:")
-        print("0. 🔙 Back to Main Menu")
-        for i, folder in enumerate(subfolders, 1):
-            try:
-                rel_path = folder.relative_to(Path.cwd())
-            except ValueError:
-                rel_path = folder
-            print(f"{i}. 📁 {rel_path}/")
-        
-        print("\n💡 Note: mql5_feed directory is excluded from this list")
-        print("   (it's only used with run_analysis.py for CSV to Parquet conversion)")
-        print("   data/cache/csv_converted is included for loading converted CSV files")
-        
-        print("-" * 30)
-        print("💡 Examples:")
-        print("   • Enter folder number (e.g., 1 for data/)")
-        print("   • Or enter folder path with mask (e.g., data gbpusd)")
-        print("   • Or enter folder path with file type (e.g., data parquet)")
-        print("")
-        print("📋 More Examples:")
-        print("   • 2 eurusd     (folder 2 with 'eurusd' in filename)")
-        print("   • 2 gbpusd     (folder 2 with 'gbpusd' in filename)")
-        print("   • data sample  (data folder with 'sample' in filename)")
-        print("   • 1 csv        (folder 1 with '.csv' files)")
-        print("   • 7 parquet    (folder 7 with '.parquet' files)")
-        print("   • data test    (data folder with 'test' in filename)")
-        print("")
-        print("🗑️  Cache Management:")
-        print("   • Enter 'clear cache' to clear all cached files")
-        print("-" * 30)
-        
-        try:
-            input_text = input("Enter folder number or path (with optional mask): ").strip()
-        except EOFError:
-            print("\n👋 Goodbye!")
-            return False
-        
-        if not input_text:
-            print("❌ No input provided")
-            return False
-        
-        # Check if user wants to go back
-        if input_text == "0":
-            return False
-        
-        # Check if user wants to clear cache
-        if input_text.lower() == "clear cache":
-            return self.clear_cache(system)
-        
-        # Parse input for folder and mask
-        parts = input_text.split()
-        
-        # Check if first part is a number (folder selection)
-        if parts[0].isdigit():
-            folder_idx = int(parts[0]) - 1
-            if 0 <= folder_idx < len(subfolders):
-                folder_path = subfolders[folder_idx]
-                mask = parts[1].lower() if len(parts) > 1 else None
-            else:
-                print(f"❌ Invalid folder number. Please select 0-{len(subfolders)}")
-                return False
-        else:
-            # Parse input for folder path and mask
-            folder_path = parts[0]
-            mask = parts[1].lower() if len(parts) > 1 else None
-                
-            folder_path = Path(folder_path)
-            if not folder_path.exists() or not folder_path.is_dir():
-                print(f"❌ Folder not found: {folder_path}")
-                return False
-        
-        # Find all data files (exclude temporary files)
-        data_files = []
-        for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
-            if mask:
-                # Apply mask filter
-                pattern = f"*{mask}*{ext}"
-                files = list(folder_path.glob(pattern))
-                # Filter out temporary files
-                files = [f for f in files if not f.name.startswith('tmp')]
-                data_files.extend(files)
-                
-                # Also try case-insensitive search
-                pattern = f"*{mask.upper()}*{ext}"
-                files = list(folder_path.glob(pattern))
-                files = [f for f in files if not f.name.startswith('tmp')]
-                data_files.extend(files)
-                
-                pattern = f"*{mask.lower()}*{ext}"
-                files = list(folder_path.glob(pattern))
-                files = [f for f in files if not f.name.startswith('tmp')]
-                data_files.extend(files)
-            else:
-                # No mask, get all files (but exclude temporary files)
-                files = list(folder_path.glob(f"*{ext}"))
-                files = [f for f in files if not f.name.startswith('tmp')]
-                data_files.extend(files)
-        
-        # Remove duplicates
-        data_files = list(set(data_files))
-        
-        if not data_files:
-            if mask:
-                print(f"❌ No files found matching mask '{mask}' in {folder_path}")
-            else:
-                print(f"❌ No data files found in {folder_path}")
-            return False
-        
-        print(f"📁 Found {len(data_files)} data files:")
-        for i, file in enumerate(data_files, 1):
-            file_size_mb = self._get_file_size_mb(file)
-            print(f"   {i}. {file.name} ({file_size_mb:.1f}MB)")
-        
-        # Load files with aggressive memory management
-        all_data = []
-        total_rows = 0
-        total_memory_mb = 0
-        
-        for i, file in enumerate(data_files):
-            try:
-                print(f"\n🔄 Loading file {i+1}/{len(data_files)}: {file.name}")
-                
-                # Check memory before loading
-                if not self._check_memory_available():
-                    print(f"⚠️  Low memory detected, skipping {file.name}")
-                    continue
-                
-                # Load file
-                df = self.load_data_from_file(str(file))
-                df['source_file'] = file.name  # Add source file info
-                
-                # Memory usage estimation
-                memory_mb = self._estimate_memory_usage(df)
-                total_memory_mb += memory_mb
-                total_rows += df.shape[0]
-                
-                all_data.append(df)
-                print(f"✅ Loaded: {file.name} ({df.shape[0]:,} rows, ~{memory_mb}MB)")
-                
-                # Memory management after each file
-                if self.enable_memory_optimization:
-                    gc.collect()
-                
-                # Check if we're approaching memory limits - more permissive
-                if total_memory_mb > self.max_memory_mb * 0.95:
-                    print(f"⚠️  Memory usage critical ({total_memory_mb}MB), stopping file loading")
-                    break
-                elif total_memory_mb > self.max_memory_mb * 0.8:
-                    print(f"⚠️  Memory usage high ({total_memory_mb}MB), but continuing...")
-                    # Continue loading but with more aggressive memory management
-                    gc.collect()
-                    
-            except Exception as e:
-                print(f"❌ Error loading {file.name}: {e}")
-                continue
-        
-        if not all_data:
-            print("❌ No files could be loaded")
-            return False
-        
-        print(f"\n📊 Memory Summary:")
-        print(f"   Total files loaded: {len(all_data)}")
-        print(f"   Total rows: {total_rows:,}")
-        print(f"   Estimated memory usage: {total_memory_mb}MB")
-        
-        # Ask user if they want to fix time series gaps
-        print("\n🔧 Time Series Gap Fixing")
-        print("-" * 30)
-        print("💡 This will detect and fix gaps in time series data before combining files.")
-        print("   Gaps can occur due to missing data points, market holidays, or data collection issues.")
-        print("   Fixing gaps ensures consistent time intervals for better analysis.")
-        print("-" * 30)
-        
-        try:
-            fix_gaps = input("Fix time series gaps before combining data? (y/n, default: y): ").strip().lower()
-        except EOFError:
-            print("\n👋 Goodbye!")
-            return False
-        
-        if fix_gaps in ['', 'y', 'yes']:
-            print("\n🔧 Fixing time series gaps...")
-            all_data = self._fix_time_series_gaps(all_data)
-        else:
-            print("\n⏭️  Skipping time series gap fixing...")
-        
-        # Combine all data with memory optimization
-        print("\n🔄 Combining data...")
-        
-        try:
-            # Check if any DataFrames have DatetimeIndex
-            has_datetime_index = any(isinstance(df.index, pd.DatetimeIndex) for df in all_data)
-            
-            if has_datetime_index:
-                print("📅 Detected DatetimeIndex in loaded DataFrames, preserving during concatenation...")
-                
-                # Convert DatetimeIndex to 'Timestamp' column for consistent concatenation
-                processed_data = []
-                for df in all_data:
-                    df_copy = df.copy()
-                    if isinstance(df_copy.index, pd.DatetimeIndex):
-                        # Reset index to make datetime a column
-                        df_copy = df_copy.reset_index()
-                        # Rename the index column if it's unnamed
-                        if df_copy.columns[0] == 'index':
-                            df_copy = df_copy.rename(columns={'index': 'Timestamp'})
-                    processed_data.append(df_copy)
-                
-                # Combine DataFrames with consistent column structure
-                system.current_data = pd.concat(processed_data, ignore_index=True)
-                
-                # Clean up intermediate data
-                del processed_data
-                gc.collect()
-                
-                print("✅ Successfully preserved datetime information during concatenation")
-            else:
-                # Check for mixed structures (some files have Timestamp column, others don't)
-                has_timestamp_column = any('Timestamp' in df.columns for df in all_data)
-                missing_timestamp_column = any('Timestamp' not in df.columns for df in all_data)
-                
-                if has_timestamp_column and missing_timestamp_column:
-                    print("⚠️  Detected mixed file structures (some with Timestamp column, some without)")
-                    print("📅 Normalizing file structures for consistent concatenation...")
-                    
-                    # Process all DataFrames to ensure consistent structure
-                    processed_data = []
-                    for i, df in enumerate(all_data):
-                        df_copy = df.copy()
-                        
-                        if 'Timestamp' not in df_copy.columns:
-                            # Create a dummy Timestamp column for files without it
-                            # This will be filled with NaT (missing values)
-                            df_copy['Timestamp'] = pd.NaT
-                            print(f"   Added Timestamp column to file {i+1} (will be filled with missing values)")
-                        
-                        processed_data.append(df_copy)
-                    
-                    # Combine DataFrames with consistent column structure
-                    system.current_data = pd.concat(processed_data, ignore_index=True)
-                    
-                    # Clean up intermediate data
-                    del processed_data
-                    gc.collect()
-                    
-                    print("✅ Successfully normalized file structures for concatenation")
-                else:
-                    # All files have consistent structure, use standard concatenation
-                    system.current_data = pd.concat(all_data, ignore_index=True)
-            
-            # Clean up intermediate data
-            del all_data
-            gc.collect()
-            
-            # Check and preserve datetime columns after concatenation
-            datetime_columns = []
-            for col in system.current_data.columns:
-                if pd.api.types.is_datetime64_any_dtype(system.current_data[col]):
-                    datetime_columns.append(col)
-            
-            if datetime_columns:
-                print(f"✅ Preserved {len(datetime_columns)} datetime column(s) after concatenation: {datetime_columns}")
-            else:
-                print(f"⚠️  No datetime columns found after concatenation")
-            
-            print(f"\n✅ Combined data loaded successfully!")
-            print(f"   Total shape: {system.current_data.shape[0]:,} rows × {system.current_data.shape[1]} columns")
-            print(f"   Files loaded: {len(data_files)}")
-            if mask:
-                print(f"   Mask used: '{mask}'")
-            print(f"   Final memory usage: ~{self._estimate_memory_usage(system.current_data)}MB")
-            print(f"   Columns: {list(system.current_data.columns)}")
-            
-            # Show data preview
-            show_preview = input("\nShow data preview? (y/n): ").strip().lower()
-            if show_preview in ['y', 'yes']:
-                print("\n📋 DATA PREVIEW:")
-                print(system.current_data.head())
-                print(f"\nData types:\n{system.current_data.dtypes}")
-            
-            # Ask if user wants to analyze time series gaps
-            try:
-                analyze_gaps = input("\n🔍 Analyze time series gaps? (y/n): ").strip().lower()
-                if analyze_gaps in ['y', 'yes']:
-                    # Determine expected frequency based on data
-                    expected_frequency = self._determine_expected_frequency(system.current_data, datetime_column='Timestamp')
-                    
-                    # Analyze gaps
-                    self.analyze_time_series_gaps(data_files, 'Timestamp', expected_frequency)
-            except EOFError:
-                pass
-            
-            return True
-            
-        except Exception as e:
-            print(f"❌ Error combining data: {e}")
-            return False
+        # Go directly to multi-timeframe loading
+        return self.load_multi_timeframe_data(system)
     
     def analyze_time_series_gaps(self, data_files: List[Path], 
                                 datetime_column: str = 'Timestamp',
@@ -1585,9 +1239,30 @@ class DataManager:
         print("\n📁 LOAD MULTI-TIMEFRAME DATA")
         print("-" * 50)
         print("🎯 This method creates robust ML features by properly handling")
-        print("   multiple timeframes (M1, M5, H1, D1, MN1) as separate datasets")
+        print("   multiple timeframes (M1, M5, M15, M30, H1, H4, D1, W1, MN1) as separate datasets")
         print("   instead of mixing them in one DataFrame.")
         print("-" * 50)
+        
+        # Ask user for mask filter
+        print("\n🔍 FILE FILTERING")
+        print("-" * 30)
+        print("💡 You can filter files by mask (e.g., 'eurusd', 'gbpusd', 'btcusdt')")
+        print("   This will only load files containing the specified mask in their filename.")
+        print("   Leave empty to load all files.")
+        print("")
+        print("📋 Examples:")
+        print("   • eurusd     (only EURUSD files)")
+        print("   • gbpusd     (only GBPUSD files)")
+        print("   • btcusdt    (only BTCUSDT files)")
+        print("   • sample     (only sample files)")
+        print("   • test       (only test files)")
+        print("-" * 30)
+        
+        try:
+            mask = input("Enter file mask (or press Enter for all files): ").strip().lower()
+        except EOFError:
+            print("\n👋 Goodbye!")
+            return False
         
         # Get all data files with timeframe detection
         data_folder = Path("data")
@@ -1613,8 +1288,22 @@ class DataManager:
                 continue
                 
             for ext in ['.csv', '.parquet', '.xlsx', '.xls']:
-                files = list(location.glob(f"*{ext}"))
+                if mask:
+                    # Apply mask filter
+                    pattern = f"*{mask}*{ext}"
+                    files = list(location.glob(pattern))
+                    # Also try case-insensitive search
+                    pattern_upper = f"*{mask.upper()}*{ext}"
+                    files.extend(location.glob(pattern_upper))
+                    pattern_lower = f"*{mask.lower()}*{ext}"
+                    files.extend(location.glob(pattern_lower))
+                else:
+                    # No mask, get all files
+                    files = list(location.glob(f"*{ext}"))
+                
+                # Filter out temporary files and remove duplicates
                 files = [f for f in files if not f.name.startswith('tmp')]
+                files = list(set(files))  # Remove duplicates
                 
                 for file in files:
                     # Detect timeframe from filename
@@ -1626,11 +1315,16 @@ class DataManager:
                     timeframe_data[timeframe].append(file)
         
         if not timeframe_data:
-            print("❌ No data files found")
+            if mask:
+                print(f"❌ No files found matching mask '{mask}'")
+            else:
+                print("❌ No data files found")
             return False
         
         # Display found timeframes
-        print(f"📊 Found data for {len(timeframe_data)} timeframes:")
+        print(f"\n📊 Found data for {len(timeframe_data)} timeframes:")
+        if mask:
+            print(f"   Filter applied: '{mask}'")
         for tf, files in timeframe_data.items():
             print(f"   {tf}: {len(files)} files")
             for file in files[:3]:  # Show first 3 files
@@ -1696,10 +1390,13 @@ class DataManager:
         system.timeframe_info = {
             'base_timeframe': base_timeframe,
             'available_timeframes': timeframe_data,
-            'cross_timeframes': {tf: files for tf, files in timeframe_data.items() if tf != base_timeframe}
+            'cross_timeframes': {tf: files for tf, files in timeframe_data.items() if tf != base_timeframe},
+            'mask_used': mask if mask else None
         }
         
         print(f"✅ Base dataset created: {system.current_data.shape[0]:,} rows, {system.current_data.shape[1]} columns")
+        if mask:
+            print(f"   Filter applied: '{mask}'")
         
         # Ask if user wants to add cross-timeframe features
         if system.timeframe_info['cross_timeframes']:
@@ -1722,6 +1419,8 @@ class DataManager:
         print(f"   Base timeframe: {base_timeframe}")
         print(f"   Total rows: {system.current_data.shape[0]:,}")
         print(f"   Total columns: {system.current_data.shape[1]}")
+        if mask:
+            print(f"   Filter applied: '{mask}'")
         
         return True
     
