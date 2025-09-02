@@ -1469,6 +1469,107 @@ class DataManager:
             print("❌ No base timeframe data could be loaded")
             return False
         
+        # Time Series Gap Analysis and Fixing for each file separately
+        print(f"\n🔧 TIME SERIES GAP ANALYSIS & FIXING")
+        print("-" * 50)
+        print("💡 Analyzing and fixing time series gaps in each file before combining...")
+        print("   This ensures data quality and prevents issues during ML model training.")
+        
+        # Ask user if they want to fix gaps
+        try:
+            fix_gaps = input("\nFix time series gaps in each file? (y/n, default: y): ").strip().lower()
+        except EOFError:
+            print("\n👋 Goodbye!")
+            return False
+        
+        if fix_gaps in ['', 'y', 'yes']:
+            print(f"\n🔧 Starting gap analysis and fixing for {len(base_data)} files...")
+            
+            # Initialize GapFixer
+            try:
+                from ..data import GapFixer
+                gap_fixer = GapFixer(memory_limit_mb=self.max_memory_mb)
+                print("✅ GapFixer initialized successfully")
+            except Exception as e:
+                print(f"❌ Error initializing GapFixer: {e}")
+                print("⚠️  Continuing without gap fixing...")
+                gap_fixer = None
+            
+            if gap_fixer:
+                # Process each file separately
+                for i, df in enumerate(base_data):
+                    file_name = df['source_file'].iloc[0] if 'source_file' in df.columns else f"file_{i+1}"
+                    print(f"\n📁 Processing file {i+1}/{len(base_data)}: {file_name}")
+                    
+                    try:
+                        # Find timestamp column
+                        timestamp_col = gap_fixer._find_timestamp_column(df)
+                        
+                        if timestamp_col:
+                            print(f"   📅 Found timestamp column: {timestamp_col}")
+                            
+                            # Detect gaps
+                            gap_info = gap_fixer._detect_gaps(df, timestamp_col)
+                            
+                            if gap_info['has_gaps']:
+                                print(f"   ⚠️  Found {gap_info['gap_count']:,} gaps, fixing...")
+                                
+                                # Ask user for algorithm choice
+                                print(f"   🔧 Available algorithms: auto, linear, cubic, interpolate, forward_fill, backward_fill")
+                                try:
+                                    algo_choice = input(f"   Select algorithm (default: auto): ").strip().lower()
+                                    if algo_choice == '':
+                                        algorithm = 'auto'
+                                    elif algo_choice in ['auto', 'linear', 'cubic', 'interpolate', 'forward_fill', 'backward_fill']:
+                                        algorithm = algo_choice
+                                    else:
+                                        print(f"   ⚠️  Invalid choice, using 'auto'")
+                                        algorithm = 'auto'
+                                except EOFError:
+                                    algorithm = 'auto'
+                                
+                                print(f"   🔧 Using algorithm: {algorithm}")
+                                
+                                # Fix gaps
+                                fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
+                                    df, timestamp_col, gap_info, algorithm, show_progress=True
+                                )
+                                
+                                if fixed_df is not None:
+                                    print(f"   ✅ Gaps fixed successfully!")
+                                    print(f"      • Algorithm used: {results['algorithm_used']}")
+                                    print(f"      • Gaps fixed: {results['gaps_fixed']:,}")
+                                    print(f"      • Processing time: {results['processing_time']:.2f}s")
+                                    print(f"      • Memory used: {results['memory_used_mb']:.1f}MB")
+                                    
+                                    # Replace original dataframe with fixed one
+                                    base_data[i] = fixed_df
+                                    
+                                    # Memory cleanup
+                                    del fixed_df
+                                    gc.collect()
+                                else:
+                                    print(f"   ❌ Gap fixing failed, keeping original data")
+                            else:
+                                print(f"   ✅ No gaps found, file is clean")
+                        else:
+                            print(f"   ⚠️  No timestamp column found, skipping gap fixing")
+                        
+                    except Exception as e:
+                        print(f"   ❌ Error processing {file_name}: {e}")
+                        print(f"   💡 Continuing with original data...")
+                        continue
+                    
+                    # Memory management
+                    if self.enable_memory_optimization:
+                        gc.collect()
+                
+                print(f"\n✅ Gap analysis and fixing completed for all files!")
+            else:
+                print("⚠️  Skipping gap fixing due to initialization error")
+        else:
+            print("⏭️  Skipping time series gap fixing...")
+        
         # Combine base timeframe data
         print(f"\n🔄 Combining base timeframe data...")
         system.current_data = pd.concat(base_data, ignore_index=True)
@@ -1502,7 +1603,17 @@ class DataManager:
                 return False
             
             if add_cross in ['', 'y', 'yes']:
-                return self._add_cross_timeframe_features(system)
+                # Ask if user wants to fix gaps in cross-timeframe files too
+                try:
+                    fix_cross_gaps = input("\nFix gaps in cross-timeframe files as well? (y/n, default: y): ").strip().lower()
+                except EOFError:
+                    fix_cross_gaps = 'y'
+                
+                if fix_cross_gaps in ['', 'y', 'yes']:
+                    print(f"\n🔧 Fixing gaps in cross-timeframe files before feature generation...")
+                    return self._add_cross_timeframe_features_with_gap_fixing(system)
+                else:
+                    return self._add_cross_timeframe_features(system)
         
         print(f"\n✅ Multi-timeframe data loading completed!")
         print(f"   Base timeframe: {base_timeframe}")
@@ -1662,4 +1773,137 @@ class DataManager:
                 continue
         
         print(f"\n✅ Cross-timeframe feature generation completed!")
+        return True
+    
+    def _add_cross_timeframe_features_with_gap_fixing(self, system) -> bool:
+        """
+        Add cross-timeframe features to the base dataset with gap fixing.
+        
+        Args:
+            system: Interactive system instance
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        print(f"\n🔄 Adding cross-timeframe features with gap fixing...")
+        
+        base_timeframe = system.timeframe_info['base_timeframe']
+        cross_timeframes = system.timeframe_info['cross_timeframes']
+        
+        # Initialize GapFixer for gap fixing
+        try:
+            from ..data import GapFixer
+            gap_fixer = GapFixer(memory_limit_mb=self.max_memory_mb)
+            print("✅ GapFixer initialized for cross-timeframe gap fixing")
+        except Exception as e:
+            print(f"❌ Error initializing GapFixer: {e}")
+            print("⚠️  Continuing without gap fixing...")
+            gap_fixer = None
+        
+        # Load and process each cross-timeframe
+        for tf, files in cross_timeframes.items():
+            print(f"\n📊 Processing {tf} timeframe...")
+            
+            # Load cross-timeframe data
+            cross_data = []
+            for file in files:
+                try:
+                    df = self.load_data_from_file(str(file))
+                    df['timeframe'] = tf
+                    df['source_file'] = file.name
+                    cross_data.append(df)
+                    print(f"   ✅ Loaded: {file.name} ({df.shape[0]:,} rows)")
+                except Exception as e:
+                    print(f"   ❌ Error loading {file.name}: {e}")
+                    continue
+            
+            if not cross_data:
+                print(f"   ⚠️  No data loaded for {tf}")
+                continue
+            
+            # Fix gaps in each cross-timeframe file if GapFixer is available
+            if gap_fixer:
+                print(f"   🔧 Fixing gaps in {tf} timeframe files...")
+                
+                for i, df in enumerate(cross_data):
+                    file_name = df['source_file'].iloc[0] if 'source_file' in df.columns else f"file_{i+1}"
+                    print(f"      📁 Processing: {file_name}")
+                    
+                    try:
+                        # Find timestamp column
+                        timestamp_col = gap_fixer._find_timestamp_column(df)
+                        
+                        if timestamp_col:
+                            # Detect gaps
+                            gap_info = gap_fixer._detect_gaps(df, timestamp_col)
+                            
+                            if gap_info['has_gaps']:
+                                print(f"         ⚠️  Found {gap_info['gap_count']:,} gaps, fixing...")
+                                
+                                # Use auto algorithm for cross-timeframe files (faster)
+                                algorithm = 'auto'
+                                
+                                # Fix gaps
+                                fixed_df, results = gap_fixer._fix_gaps_in_dataframe(
+                                    df, timestamp_col, gap_info, algorithm, show_progress=False
+                                )
+                                
+                                if fixed_df is not None:
+                                    print(f"         ✅ Gaps fixed: {results['gaps_fixed']:,} gaps")
+                                    # Replace original dataframe with fixed one
+                                    cross_data[i] = fixed_df
+                                    
+                                    # Memory cleanup
+                                    del fixed_df
+                                    gc.collect()
+                                else:
+                                    print(f"         ❌ Gap fixing failed, keeping original data")
+                            else:
+                                print(f"         ✅ No gaps found")
+                        else:
+                            print(f"         ⚠️  No timestamp column found")
+                        
+                    except Exception as e:
+                        print(f"         ❌ Error fixing gaps: {e}")
+                        continue
+                    
+                    # Memory management
+                    if self.enable_memory_optimization:
+                        gc.collect()
+                
+                print(f"   ✅ Gap fixing completed for {tf} timeframe")
+            
+            # Combine cross-timeframe data
+            combined_cross = pd.concat(cross_data, ignore_index=True)
+            
+            # Add cross-timeframe features using the existing generator
+            try:
+                from src.ml.feature_engineering import CrossTimeframeFeatureGenerator
+                
+                cross_generator = CrossTimeframeFeatureGenerator()
+                
+                # Generate features with timeframe prefix
+                cross_features = cross_generator.generate_features(combined_cross)
+                
+                # Add timeframe prefix to feature names
+                feature_columns = [col for col in cross_features.columns 
+                                 if col not in ['Open', 'High', 'Low', 'Close', 'Volume', 'source_file', 'timeframe']]
+                
+                rename_dict = {col: f"{tf}_{col}" for col in feature_columns}
+                cross_features = cross_features.rename(columns=rename_dict)
+                
+                # Merge with base data (this is simplified - in practice would need proper time alignment)
+                print(f"   🔄 Generated {len(feature_columns)} cross-timeframe features for {tf}")
+                
+                # Store cross-timeframe data separately for now
+                if not hasattr(system, 'cross_timeframe_data'):
+                    system.cross_timeframe_data = {}
+                
+                system.cross_timeframe_data[tf] = cross_features
+                
+            except Exception as e:
+                print(f"   ❌ Error generating cross-timeframe features for {tf}: {e}")
+                continue
+        
+        print(f"\n✅ Cross-timeframe feature generation with gap fixing completed!")
         return True
