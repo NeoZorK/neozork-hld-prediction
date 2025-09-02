@@ -370,18 +370,9 @@ class DataLoader:
                 else:
                     print(f"📅 Detected timestamp column, preserving during loading...")
                 
-                # For files with DatetimeIndex or timestamp column, load entire file to preserve structure
-                if total_rows > 5000000:  # 5M rows threshold
-                    print(f"⚠️  Very large file with timestamp data detected ({total_rows:,} rows).")
-                    print(f"   Loading entire file to preserve timestamp structure...")
-                    df = pd.read_parquet(file_path)
-                    return self.handle_datetime_index(df)
-                else:
-                    print(f"   Loading entire file to preserve timestamp structure...")
-                    df = pd.read_parquet(file_path)
-                    return self.handle_datetime_index(df)
-            else:
-                # No DatetimeIndex, safe to load in chunks
+                # For files with DatetimeIndex or timestamp column, load in chunks to preserve memory
+                print(f"   Loading in chunks to preserve timestamp structure...")
+                
                 chunks = []
                 start_time = time.time()
                 

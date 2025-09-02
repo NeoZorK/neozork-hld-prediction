@@ -168,12 +168,21 @@ class GapFixingUtils:
         expected_freq = self._determine_expected_frequency(time_diffs)
         print(f"   ⏱️  Expected frequency: {expected_freq}")
         
+        # Check if we have perfect data (all intervals identical)
+        is_perfect = time_diffs.std() == pd.Timedelta(0)
+        if is_perfect:
+            print(f"   ✅ Perfect time series detected - all intervals are identical")
+            # Use the actual median as frequency for perfect data
+            expected_freq = time_diffs.median()
+            print(f"   ⏱️  Using actual frequency from data: {expected_freq}")
+        
         # Find gaps (intervals larger than expected frequency)
         # Use more flexible threshold for monthly data
-        if expected_freq >= pd.Timedelta('30D'):  # Monthly or longer intervals
+        if expected_freq >= pd.Timedelta('30d'):  # Monthly or longer intervals
             gap_threshold = expected_freq * 1.2  # Allow only 20% tolerance for monthly data
             print(f"   🚨 Gap threshold: {gap_threshold} (monthly data - strict tolerance)")
         else:
+            # Use more flexible threshold for regular data
             gap_threshold = expected_freq * 1.5  # Allow 50% tolerance for other frequencies
             print(f"   🚨 Gap threshold: {gap_threshold}")
         
